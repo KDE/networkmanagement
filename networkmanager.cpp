@@ -123,7 +123,7 @@ QString NetworkManager::determineNewIcon()
     } else if (data["Status"].toString() == "Unconnected") {
         return "action-nm_no_connection";
     } else if (data["Status"].toString() == "Connecting") {
-        return 
+        return "action-nm_connecting";
     }
     kDebug() << "Network Management source not found.";
     return QString();
