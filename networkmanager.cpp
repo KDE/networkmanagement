@@ -28,8 +28,11 @@ NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
       m_svgFile("widgets/networkmanager"),
       m_networkEngine(0),
       m_iconText("app-knetworkmanager"),
-      m_iconSize(32,32),
-      m_lastSignalStrength(0)
+      m_iconSize(48,48),
+      m_lastSignalStrength(0),
+      m_activeNetworkInterface(),
+      m_activeNetwork(),
+      m_connectionStatus()
 {
     setDrawStandardBackground(false);
     setHasConfigurationInterface(false);
@@ -43,11 +46,18 @@ void NetworkManager::init()
     
     m_networkEngine = dataEngine("networkmanager");
     m_networkEngine->connectSource("Network Management", this);
+    Plasma::DataEngine::Data nmData = m_networkEngine->query("Network Management");
 
-   foreach (QString uni, m_networkEngine->query("Network Management")["Network Interfaces"].toStringList()) {
-        m_networkEngine->connectSource(uni, this);
+    m_activeNetworkInterface = nmData["Active NetworkInterface"].toString();
+    if (!m_activeNetworkInterface.isEmpty()) {
+        m_networkEngine->connectSource(m_activeNetworkInterface, this);
+        m_activeNetwork = m_networkEngine->query(m_activeNetworkInterface)["Active Network"].toString();
+        if (!m_activeNetwork.isEmpty()) {
+            m_networkEngine->connectSource(m_activeNetwork, this);
+        }
     }
-
+    m_connectionStatus = nmData["Status"].toString();
+    
     //update status icon
     setIcon(determineNewIcon());
 
@@ -67,7 +77,7 @@ NetworkManager::~NetworkManager()
 
 void NetworkManager::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
 {
-    Applet::paintInterface(p,option,rect);
+    m_icon->update();
 }
 
 void NetworkManager::constraintsUpdated(Plasma::Constraints constraints)
@@ -98,60 +108,70 @@ void NetworkManager::constraintsUpdated(Plasma::Constraints constraints)
     }
 }
 
+QRectF NetworkManager::boundingRect()
+{
+    return m_icon->boundingRect();
+}
+
+QSizeF NetworkManager::sizeHint() const
+{
+    if (m_icon) { 
+        return m_icon->sizeFromIconSize(m_iconSize.width());
+    } else {
+        return m_iconSize;
+    }
+}
+
 void NetworkManager::dataUpdated(const QString &source, const Plasma::DataEngine::Data &data)
 {
     if (source == "Network Management") {
+        QString activeIface = data["Active NetworkInterface"].toString();
+        if (activeIface != m_activeNetworkInterface) {
+            //disconnect the active iface and network
+            m_networkEngine->disconnectSource(m_activeNetworkInterface, this);
+            m_networkEngine->disconnectSource(m_activeNetwork, this);
+            if (!activeIface.isEmpty()) {
+                m_networkEngine->connectSource(activeIface, this);
+                QString activeNetwork = m_networkEngine->query(activeIface)["Active Network"].toString();
+                if (!activeNetwork.isEmpty()) {
+                     m_networkEngine->connectSource(activeNetwork, this);
+                }
+            }
+        }
+        m_activeNetworkInterface = activeIface;
+        m_connectionStatus = data["Status"].toString();
         setIcon(determineNewIcon());
     } else if(data["NetworkType"] == "NetworkInterface") {
-        setIcon(determineNewIcon(source, data));
+        if (m_activeNetworkInterface == source) {
+            m_activeNetwork = data["Active Network"].toString();
+            setIcon(determineNewIcon());
+        }
     }
-    kDebug() << m_iconText;
+    kDebug() << "m_iconText = " << m_iconText;
     update();
 }
 
 QString NetworkManager::determineNewIcon()
 {
-    Plasma::DataEngine::Data data = m_networkEngine->query("Network Management");
-    if (data.contains("Active NetworkInterface")) {
-        QString activeUni = data["Active NetworkInterface"].toString();
-        kDebug() << "Active network found.  " << activeUni;
-        if (!activeUni.isEmpty()) {
-            return determineNewIcon(activeUni, m_networkEngine->query(activeUni));
-        } else {
-            return QString();
-        }
-    } else if (data["Status"].toString() == "Unconnected") {
-        return "action-nm_no_connection";
-    } else if (data["Status"].toString() == "Connecting") {
-        return "action-nm_connecting";
-    }
-    kDebug() << "Network Management source not found.";
-    return QString();
-}
-
-QString NetworkManager::determineNewIcon(const QString &source, const Plasma::DataEngine::Data &data)
-{
     kDebug() << "Determining new icon.";
-    Plasma::DataEngine::Data nmData = m_networkEngine->query("Network Management");
-    if (nmData["Status"].toString() == "Unconnected") {
-        return "action-nm_no_connection";
-    } else if (data["Connection State"].toString() != "Activated") {
-        kDebug() << "Determining Connection State.";
-        return determineStageOfConnection(data["Connection State"].toString());
-    } else {
-        if (source == nmData["Active NetworkInterface"].toString()) {
-            if (data["Type"].toString() == "Ieee8023") {
+    kDebug() << "Connections status: " << m_connectionStatus;
+    if (!m_activeNetworkInterface.isEmpty()) {
+        kDebug() << "Active network found.  " << m_activeNetworkInterface;
+        Plasma::DataEngine::Data data = m_networkEngine->query(m_activeNetworkInterface);
+        if (data["Type"].toString() == "Ieee8023") {
                 return "action-nm_device_wired";
-            } else if (data["Type"].toString() == "Ieee80211") {
-                kDebug() << "Determining Signal Stength.";
-                return determineSignalIcon(data["Signal Strength"].toInt());
-            } else {
-                return QString();
-            }
+        } else if (data["Type"].toString() == "Ieee80211") {
+            kDebug() << "Determining Signal Stength.";
+            return determineSignalIcon(data["Signal Strength"].toInt());
         } else {
             return QString();
         }
+    } else if (m_connectionStatus == "Unconnected") {
+        return "action-nm_no_connection";
+    } else if (m_connectionStatus == "Connecting") {
+        return determineStageOfConnection(m_networkEngine->query(m_activeNetworkInterface)["Connection State"].toString());
     }
+    return QString();
 }
 
 QString NetworkManager::determineStageOfConnection(const QString &connectionState)

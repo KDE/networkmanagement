@@ -29,7 +29,7 @@
      inkscape:zoom="11.8125"
      inkscape:cx="16"
      inkscape:cy="16"
-     inkscape:current-layer="layer12"
+     inkscape:current-layer="svg2236"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
@@ -49,7 +49,7 @@
     </rdf:RDF>
   </metadata>
   <g
-     id="layer1"
+     id="action-nm_signal_100"
      inkscape:label="action-nm_signal_100"
      inkscape:groupmode="layer"
      style="display:inline">
@@ -64,7 +64,7 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer2"
+     id="action-nm_signal_75"
      inkscape:label="action-nm_signal_75"
      style="display:inline">
     <image
@@ -78,7 +78,7 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer3"
+     id="action-nm_signal_50"
      inkscape:label="action-nm_signal_50"
      style="display:inline">
     <image
@@ -92,7 +92,7 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer4"
+     id="action-nm_signal_25"
      inkscape:label="action-nm_signal_25"
      style="display:inline">
     <image
@@ -106,7 +106,7 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer5"
+     id="action-nm_signal_00"
      inkscape:label="action-nm_signal_00"
      style="display:inline">
     <image
@@ -120,7 +120,7 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer6"
+     id="action-modem"
      inkscape:label="action-modem"
      style="display:inline">
     <image
@@ -134,7 +134,7 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer7"
+     id="action-nm_adhoc"
      inkscape:label="action-nm_adhoc"
      style="display:inline">
     <image
@@ -148,7 +148,7 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer8"
+     id="action-nm_device_wired"
      inkscape:label="action-nm_device_wired"
      style="display:inline">
     <image
@@ -162,7 +162,7 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer9"
+     id="action-nm_no_connection"
      inkscape:label="action-nm_no_connection"
      style="display:inline">
     <image
@@ -176,7 +176,7 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer10"
+     id="action-wired"
      inkscape:label="action-wired"
      style="display:inline">
     <image
@@ -190,7 +190,7 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer11"
+     id="action-wireless"
      inkscape:label="action-wireless"
      style="display:inline">
     <image
@@ -204,7 +204,7 @@
   </g>
   <g
      inkscape:groupmode="layer"
-     id="layer12"
+     id="app-knetworkmanager"
      inkscape:label="app-knetworkmanager"
      style="display:inline">
     <image

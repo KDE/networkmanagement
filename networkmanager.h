@@ -36,6 +36,8 @@ class NetworkManager : public Plasma::Applet
         void init();
         void constraintsUpdated(Plasma::Constraints constraints);
         void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
+        QRectF boundingRect();
+        QSizeF sizeHint() const;
 
     public Q_SLOTS:
         void dataUpdated(const QString &source, const Plasma::DataEngine::Data &data);
@@ -54,6 +56,9 @@ class NetworkManager : public Plasma::Applet
         QString m_iconText;
         QSizeF m_iconSize;
         int m_lastSignalStrength;
+        QString m_activeNetworkInterface;
+        QString m_activeNetwork;
+        QString m_connectionStatus;
 
         static const int signalStrengthResolution = 25;
         static const int hysteresis = 5;
