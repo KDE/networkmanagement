@@ -23,6 +23,7 @@
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
 #include <plasma/widgets/icon.h>
+#include <plasma/svg.h>
 #include <KIcon>
 
 class NetworkManager : public Plasma::Applet
@@ -36,7 +37,7 @@ class NetworkManager : public Plasma::Applet
         void init();
         void constraintsUpdated(Plasma::Constraints constraints);
         void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
-        QRectF boundingRect();
+        QRectF boundingRect() const;
         QSizeF sizeHint() const;
 
     public Q_SLOTS:
@@ -52,6 +53,7 @@ class NetworkManager : public Plasma::Applet
         
         Plasma::Icon *m_icon;
         QString m_svgFile;
+        Plasma::Svg m_backgroundSvg;
         Plasma::DataEngine *m_networkEngine;
         QString m_iconText;
         QSizeF m_iconSize;

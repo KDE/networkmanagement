@@ -26,6 +26,7 @@ NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_icon(0),
       m_svgFile("widgets/networkmanager"),
+      m_backgroundSvg("widgets/background", this),
       m_networkEngine(0),
       m_iconText("app-knetworkmanager"),
       m_iconSize(48,48),
@@ -77,6 +78,13 @@ NetworkManager::~NetworkManager()
 
 void NetworkManager::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
 {
+    p->setRenderHint(QPainter::SmoothPixmapTransform);
+    p->setRenderHint(QPainter::Antialiasing);
+ 
+    // Now we draw the applet, starting with our svg background
+    m_backgroundSvg.resize((int)contentRect().width(), (int)contentRect().height());
+    m_backgroundSvg.paint(p, (int)contentRect().left(), (int)contentRect().top());
+    
     m_icon->update();
 }
 
@@ -108,9 +116,13 @@ void NetworkManager::constraintsUpdated(Plasma::Constraints constraints)
     }
 }
 
-QRectF NetworkManager::boundingRect()
+QRectF NetworkManager::boundingRect() const
 {
-    return m_icon->boundingRect();
+if (m_icon) { 
+        return m_icon->boundingRect();
+    } else {
+        return QRectF(QPointF(0,0),m_iconSize);
+    }
 }
 
 QSizeF NetworkManager::sizeHint() const
