@@ -20,15 +20,15 @@
 #include "networkmanager.h"
 
 #include <QPainter>
-#include <KIconLoader>
+#include <QPointF>
+#include <QGraphicsSceneMouseEvent>
 
 NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_icon(0),
       m_svgFile("widgets/networkmanager"),
-      m_backgroundSvg("widgets/background", this),
+      m_elementName("app-knetworkmanager"),
       m_networkEngine(0),
-      m_iconText("app-knetworkmanager"),
       m_iconSize(48,48),
       m_lastSignalStrength(0),
       m_activeNetworkInterface(),
@@ -37,13 +37,16 @@ NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
 {
     setDrawStandardBackground(false);
     setHasConfigurationInterface(false);
+    setContentSize(64, 64);
 }
 
 void NetworkManager::init()
 {
-    m_icon = new Plasma::Icon(m_iconText, this);
-    m_icon->setSvg(m_svgFile, m_iconText);
-    connect(m_icon, SIGNAL(clicked()), this, SLOT(showMenu()));
+    connect(this, SIGNAL(clicked()), this, SLOT(showMenu()));
+
+    m_icon = new Plasma::Svg(m_svgFile, this);
+    m_icon->setContentType(Plasma::Svg::ImageSet);
+    m_icon->resize(contentSize());
     
     m_networkEngine = dataEngine("networkmanager");
     m_networkEngine->connectSource("Network Management", this);
@@ -59,10 +62,7 @@ void NetworkManager::init()
     }
     m_connectionStatus = nmData["Status"].toString();
     
-    //update status icon
-    setIcon(determineNewIcon());
-
-    if (m_iconText.isEmpty()) {
+    if (m_elementName.isEmpty()) {
         setFailedToLaunch(true, "Icon could not be found.");
     }
 }
@@ -71,66 +71,83 @@ NetworkManager::~NetworkManager()
 {
     if (!failedToLaunch()) {
         m_networkEngine = 0;
-        disconnect(m_icon, SIGNAL(clicked()), this, SLOT(showMenu()));
+        disconnect(this, SIGNAL(clicked()), this, SLOT(showMenu()));
         delete m_icon;
     }
 }
 
 void NetworkManager::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
 {
-    p->setRenderHint(QPainter::SmoothPixmapTransform);
-    p->setRenderHint(QPainter::Antialiasing);
- 
-    // Now we draw the applet, starting with our svg background
-    m_backgroundSvg.resize((int)contentRect().width(), (int)contentRect().height());
-    m_backgroundSvg.paint(p, (int)contentRect().left(), (int)contentRect().top());
-    
-    m_icon->update();
+    Applet::paintInterface(p,option,rect);
+    paintNetworkStatus(p,rect);
+}
+
+void NetworkManager::paintNetworkStatus(QPainter *p, const QRect &contentsRect)
+{
+    m_elementName = determineIcon();
+
+    if(!m_elementName.isEmpty()) {
+        m_icon->paint(p,contentsRect,m_elementName);
+        kDebug() << "Using icon: " << m_elementName;
+    } else {
+        kDebug() << "Couldn't find an valid icon.";
+    }
 }
 
 void NetworkManager::constraintsUpdated(Plasma::Constraints constraints)
 {
     setDrawStandardBackground(false);
-
-    if (constraints & Plasma::FormFactorConstraint) {
-        if (formFactor() == Plasma::Planar ||
-            formFactor() == Plasma::MediaCenter) {
-            m_icon->setText(m_iconText);
-            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Desktop)));
-            m_icon->setToolTip(Plasma::ToolTipData());
-            m_icon->setDrawBackground(false);
-        } else {
-            m_icon->setText(QString());
-            setMinimumContentSize(m_icon->sizeFromIconSize(IconSize(KIconLoader::Small)));
-            Plasma::ToolTipData data;
-            data.mainText = m_iconText;
-            data.image = m_icon->icon().pixmap(IconSize(KIconLoader::Desktop));
-            m_icon->setToolTip(data);
-            m_icon->setDrawBackground(false);
-        }
-    }
-
-    if (constraints & Plasma::SizeConstraint) {
+    if (m_icon && constraints & Plasma::SizeConstraint) {
         m_icon->resize(contentSize());
-        update();
     }
 }
 
-QRectF NetworkManager::boundingRect() const
+Qt::Orientations NetworkManager::expandingDirections() const
 {
-if (m_icon) { 
-        return m_icon->boundingRect();
+    if (formFactor() == Plasma::Horizontal) {
+        return Qt::Vertical;
     } else {
-        return QRectF(QPointF(0,0),m_iconSize);
+        return Qt::Horizontal;
     }
 }
 
-QSizeF NetworkManager::sizeHint() const
+QSizeF NetworkManager::contentSizeHint() const
 {
-    if (m_icon) { 
-        return m_icon->sizeFromIconSize(m_iconSize.width());
-    } else {
-        return m_iconSize;
+    QSizeF sizeHint = contentSize();
+    switch (formFactor()) {
+    case Plasma::Vertical:
+        sizeHint.setHeight(sizeHint.width());
+        break;
+    case Plasma::Horizontal:
+        sizeHint.setWidth(sizeHint.height());
+        break;
+    default:
+        break;
+    }
+
+    return sizeHint;
+}
+
+void NetworkManager::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (event->button() != Qt::LeftButton) {
+        Widget::mousePressEvent(event);
+        return;
+    }
+
+    m_clickStartPos = scenePos();
+}
+
+void NetworkManager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (event->button() != Qt::LeftButton) {
+        Widget::mousePressEvent(event);
+        return;
+    }
+    if (m_clickStartPos != scenePos()) {
+        if (boundingRect().contains(event->pos())) {
+            emit clicked();
+        }
     }
 }
 
@@ -152,18 +169,17 @@ void NetworkManager::dataUpdated(const QString &source, const Plasma::DataEngine
         }
         m_activeNetworkInterface = activeIface;
         m_connectionStatus = data["Status"].toString();
-        setIcon(determineNewIcon());
+        m_elementName = determineIcon();
     } else if(data["NetworkType"] == "NetworkInterface") {
         if (m_activeNetworkInterface == source) {
             m_activeNetwork = data["Active Network"].toString();
-            setIcon(determineNewIcon());
+            m_elementName = determineIcon();
         }
     }
-    kDebug() << "m_iconText = " << m_iconText;
     update();
 }
 
-QString NetworkManager::determineNewIcon()
+QString NetworkManager::determineIcon()
 {
     kDebug() << "Determining new icon.";
     kDebug() << "Connections status: " << m_connectionStatus;

@@ -22,9 +22,10 @@
 
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
-#include <plasma/widgets/icon.h>
 #include <plasma/svg.h>
-#include <KIcon>
+
+class QPointF;
+class QGraphicsSceneMouseEvent;
 
 class NetworkManager : public Plasma::Applet
 {
@@ -36,41 +37,40 @@ class NetworkManager : public Plasma::Applet
 
         void init();
         void constraintsUpdated(Plasma::Constraints constraints);
+        Qt::Orientations expandingDirections() const;
         void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
-        QRectF boundingRect() const;
-        QSizeF sizeHint() const;
+        QSizeF contentSizeHint() const;
 
     public Q_SLOTS:
         void dataUpdated(const QString &source, const Plasma::DataEngine::Data &data);
         void showMenu();
 
+    Q_SIGNALS:
+        void clicked();
+
     private:
-        QString determineNewIcon();
-        QString determineNewIcon(const QString &source, const Plasma::DataEngine::Data &data);
+        void paintNetworkStatus(QPainter *p, const QRect &contentsRect);
+        QString determineIcon();
         QString determineStageOfConnection(const QString &connectionState);
         QString determineSignalIcon(int strength);
-        inline void setIcon(const QString &newIconText);
+
+        void mousePressEvent(QGraphicsSceneMouseEvent *event);
+        void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
         
-        Plasma::Icon *m_icon;
+        Plasma::Svg *m_icon;
         QString m_svgFile;
-        Plasma::Svg m_backgroundSvg;
+        QString m_elementName;
         Plasma::DataEngine *m_networkEngine;
-        QString m_iconText;
         QSizeF m_iconSize;
         int m_lastSignalStrength;
         QString m_activeNetworkInterface;
         QString m_activeNetwork;
         QString m_connectionStatus;
+        QPointF m_clickStartPos;
 
         static const int signalStrengthResolution = 25;
         static const int hysteresis = 5;
 };
-
-void NetworkManager::setIcon(const QString &newIconText)
-{
-    m_iconText = (newIconText.isEmpty()) ? m_iconText : newIconText;
-    m_icon->setSvg(m_svgFile, m_iconText);
-}
 
 K_EXPORT_PLASMA_APPLET(networkmanager, NetworkManager)
 
