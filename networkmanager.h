@@ -50,9 +50,6 @@ class NetworkManager : public Plasma::Applet
 
     private:
         void paintNetworkStatus(QPainter *p, const QRect &contentsRect);
-        QString determineIcon();
-        QString determineStageOfConnection(const QString &connectionState);
-        QString determineSignalIcon(int strength);
 
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
@@ -62,14 +59,7 @@ class NetworkManager : public Plasma::Applet
         QString m_elementName;
         Plasma::DataEngine *m_networkEngine;
         QSizeF m_iconSize;
-        int m_lastSignalStrength;
-        QString m_activeNetworkInterface;
-        QString m_activeNetwork;
-        QString m_connectionStatus;
         QPointF m_clickStartPos;
-
-        static const int signalStrengthResolution = 25;
-        static const int hysteresis = 5;
 };
 
 K_EXPORT_PLASMA_APPLET(networkmanager, NetworkManager)
