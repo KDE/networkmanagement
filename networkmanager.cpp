@@ -64,8 +64,15 @@ NetworkManager::~NetworkManager()
 
 void NetworkManager::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
 {
-    Applet::paintInterface(p,option,rect);
+    //Applet::paintInterface(p,option,rect);
     paintNetworkStatus(p,rect);
+
+    p->save();
+    p->setPen(Qt::white);
+    p->drawText(rect,
+                Qt::AlignBottom | Qt::AlignHCenter,
+                (!m_elementName.isEmpty()) ? m_elementName : QString("Nothing"));
+    p->restore();
 }
 
 void NetworkManager::paintNetworkStatus(QPainter *p, const QRect &contentsRect)
