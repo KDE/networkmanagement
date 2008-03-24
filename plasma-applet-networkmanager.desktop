@@ -1,7 +1,9 @@
 [Desktop Entry]
 Name=Network Manager
+Name[et]=Võrguhaldur
 Name[sv]=Nätverkshantering
 Comment=Network Manager Plasmoid
+Comment[et]=Võrguhalduri plasmoid
 Comment[sv]=Plasmoid för nätverkshantering
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
