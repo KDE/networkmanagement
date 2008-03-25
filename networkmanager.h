@@ -54,8 +54,8 @@ class NetworkManager : public Plasma::Applet
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
         
-        Plasma::Svg *m_icon;
         QString m_svgFile;
+        Plasma::Svg m_icon;
         QString m_elementName;
         Plasma::DataEngine *m_networkEngine;
         QSizeF m_iconSize;

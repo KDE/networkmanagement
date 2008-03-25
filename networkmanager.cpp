@@ -25,13 +25,13 @@
 
 NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_icon(0),
       m_svgFile("widgets/networkmanager"),
+      m_icon(m_svgFile, this),
       m_elementName("app-knetworkmanager"),
       m_networkEngine(0),
       m_iconSize(48,48)
 {
-    setDrawStandardBackground(false);
+    setDrawStandardBackground(true);
     setHasConfigurationInterface(false);
     setContentSize(48, 48);
 }
@@ -40,9 +40,8 @@ void NetworkManager::init()
 {
     connect(this, SIGNAL(clicked()), this, SLOT(showMenu()));
 
-    m_icon = new Plasma::Svg(m_svgFile, this);
-    m_icon->setContentType(Plasma::Svg::ImageSet);
-    m_icon->resize(contentSize());
+    m_icon.setContentType(Plasma::Svg::SingleImage);
+    m_icon.resize(contentSize());
     
     m_networkEngine = dataEngine("networkmanager");
     m_networkEngine->connectSource("Network Management", this);
@@ -56,15 +55,17 @@ void NetworkManager::init()
 NetworkManager::~NetworkManager()
 {
     if (!failedToLaunch()) {
-        m_networkEngine = 0;
         disconnect(this, SIGNAL(clicked()), this, SLOT(showMenu()));
-        delete m_icon;
     }
 }
 
 void NetworkManager::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
 {
-    //Applet::paintInterface(p,option,rect);
+    if (&rect == 0) {
+        Applet::paintInterface(p,option,rect);
+        return;
+    }
+    
     paintNetworkStatus(p,rect);
 
     p->save();
@@ -73,12 +74,13 @@ void NetworkManager::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
                 Qt::AlignBottom | Qt::AlignHCenter,
                 (!m_elementName.isEmpty()) ? m_elementName : QString("Nothing"));
     p->restore();
+    Applet::paintInterface(p,option,rect);
 }
 
 void NetworkManager::paintNetworkStatus(QPainter *p, const QRect &contentsRect)
 {
     if(!m_elementName.isEmpty()) {
-        m_icon->paint(p,contentsRect,m_elementName);
+        m_icon.paint(p,contentsRect,m_elementName);
         kDebug() << "Using icon: " << m_elementName;
     } else {
         kDebug() << "Couldn't find a valid icon. Tried: " << m_elementName;
@@ -88,8 +90,8 @@ void NetworkManager::paintNetworkStatus(QPainter *p, const QRect &contentsRect)
 void NetworkManager::constraintsUpdated(Plasma::Constraints constraints)
 {
     setDrawStandardBackground(false);
-    if (m_icon && constraints & Plasma::SizeConstraint) {
-        m_icon->resize(contentSize());
+    if (constraints & Plasma::SizeConstraint) {
+        m_icon.resize(contentSize());
     }
 }
 
