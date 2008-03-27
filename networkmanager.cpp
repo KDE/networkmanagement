@@ -22,6 +22,8 @@
 #include <QPainter>
 #include <QPointF>
 #include <QGraphicsSceneMouseEvent>
+#include <QAction>
+#include <QMenu>
 
 NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
@@ -34,13 +36,23 @@ NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
     setDrawStandardBackground(true);
     setHasConfigurationInterface(false);
     setContentSize(48, 48);
+
+    //temporary hack until dynamic menus can be created.
+    QAction *home = new QAction("Home", this);
+    m_menuMap.insert(home, "Home");
+    connect(home, SIGNAL(triggered()), this, SLOT(launchProfile()));
+    QAction *work = new QAction("Work", this);
+    m_menuMap.insert(work, "Work");
+    connect(work, SIGNAL(triggered()), this, SLOT(launchProfile()));
+    QAction *cafe = new QAction("Cafe", this);
+    m_menuMap.insert(cafe, "Cafe");
+    connect(cafe, SIGNAL(triggered()), this, SLOT(launchProfile()));
 }
 
 void NetworkManager::init()
 {
-    connect(this, SIGNAL(clicked()), this, SLOT(showMenu()));
+    connect(this, SIGNAL(clicked(QPointF)), this, SLOT(showMenu(QPointF)));
 
-    m_icon.setContentType(Plasma::Svg::SingleImage);
     m_icon.resize(contentSize());
     
     m_networkEngine = dataEngine("networkmanager");
@@ -55,7 +67,7 @@ void NetworkManager::init()
 NetworkManager::~NetworkManager()
 {
     if (!failedToLaunch()) {
-        disconnect(this, SIGNAL(clicked()), this, SLOT(showMenu()));
+        disconnect(this, SIGNAL(clicked(QPointF)), this, SLOT(showMenu(QPointF)));
     }
 }
 
@@ -67,14 +79,15 @@ void NetworkManager::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
     }
     
     paintNetworkStatus(p,rect);
+    //Applet::paintInterface(p,option,rect);
 
-    p->save();
+
+    /*p->save();
     p->setPen(Qt::white);
     p->drawText(rect,
                 Qt::AlignBottom | Qt::AlignHCenter,
                 (!m_elementName.isEmpty()) ? m_elementName : QString("Nothing"));
-    p->restore();
-    Applet::paintInterface(p,option,rect);
+    p->restore();*/
 }
 
 void NetworkManager::paintNetworkStatus(QPainter *p, const QRect &contentsRect)
@@ -89,7 +102,6 @@ void NetworkManager::paintNetworkStatus(QPainter *p, const QRect &contentsRect)
 
 void NetworkManager::constraintsUpdated(Plasma::Constraints constraints)
 {
-    setDrawStandardBackground(false);
     if (constraints & Plasma::SizeConstraint) {
         m_icon.resize(contentSize());
     }
@@ -139,7 +151,7 @@ void NetworkManager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
     }
     if (m_clickStartPos == scenePos()) {
         if (boundingRect().contains(event->pos())) {
-            emit clicked();
+            emit clicked(event->scenePos());
         }
     }
 }
@@ -152,9 +164,26 @@ void NetworkManager::dataUpdated(const QString &source, const Plasma::DataEngine
     update();
 }
 
-void NetworkManager::showMenu()
+void NetworkManager::showMenu(QPointF clickedPos)
 {
-    kDebug() << "Menu activated.";
+    profileMenu.clear();
+    foreach (QAction* item, m_menuMap.keys()) {
+        profileMenu.addAction(item);
+    }
+    
+    QAction *sep = new QAction(this);
+    sep->setSeparator(true);
+    profileMenu.addAction(sep);
+
+    QAction *addProfile = new QAction("Add new profile . . . ", this);
+    profileMenu.addAction(addProfile);
+
+    profileMenu.popup(clickedPos.toPoint());
+}
+
+void NetworkManager::launchProfile()
+{
+    kDebug() << m_menuMap.value((QAction*)sender()) << " has been launched.";
 }
 
 #include "networkmanager.moc"

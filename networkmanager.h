@@ -20,12 +20,16 @@
 #ifndef NETWORKMANAGER_H
 #define NETWORKMANAGER_H
 
+#include <QHash>
+#include <QMenu>
+
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
 #include <plasma/svg.h>
 
 class QPointF;
 class QGraphicsSceneMouseEvent;
+class QAction;
 
 class NetworkManager : public Plasma::Applet
 {
@@ -43,10 +47,11 @@ class NetworkManager : public Plasma::Applet
 
     public Q_SLOTS:
         void dataUpdated(const QString &source, const Plasma::DataEngine::Data &data);
-        void showMenu();
+        void showMenu(QPointF clickedPos);
+        void launchProfile();
 
     Q_SIGNALS:
-        void clicked();
+        void clicked(QPointF clickedPos);
 
     private:
         void paintNetworkStatus(QPainter *p, const QRect &contentsRect);
@@ -60,6 +65,9 @@ class NetworkManager : public Plasma::Applet
         Plasma::DataEngine *m_networkEngine;
         QSizeF m_iconSize;
         QPointF m_clickStartPos;
+
+        QHash<QAction*,QString> m_menuMap;
+        QMenu profileMenu;
 };
 
 K_EXPORT_PLASMA_APPLET(networkmanager, NetworkManager)
