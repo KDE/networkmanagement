@@ -20,6 +20,8 @@
 #ifndef NETWORKMANAGER_H
 #define NETWORKMANAGER_H
 
+#include "nmmenu.h"
+
 #include <QHash>
 #include <QMenu>
 
@@ -48,7 +50,9 @@ class NetworkManager : public Plasma::Applet
     public Q_SLOTS:
         void dataUpdated(const QString &source, const Plasma::DataEngine::Data &data);
         void showMenu(QPointF clickedPos);
-        void launchProfile();
+        void createProfile();
+        void scanForNetworks();
+        void launchProfile(const QString &profile);
 
     Q_SIGNALS:
         void clicked(QPointF clickedPos);
@@ -66,8 +70,7 @@ class NetworkManager : public Plasma::Applet
         QSizeF m_iconSize;
         QPointF m_clickStartPos;
 
-        QHash<QAction*,QString> m_menuMap;
-        QMenu profileMenu;
+        NMMenu *m_profileMenu;
 };
 
 K_EXPORT_PLASMA_APPLET(networkmanager, NetworkManager)

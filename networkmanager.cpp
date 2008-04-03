@@ -23,52 +23,58 @@
 #include <QPointF>
 #include <QGraphicsSceneMouseEvent>
 #include <QAction>
-#include <QMenu>
 
 NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
-      m_svgFile("widgets/networkmanager"),
+      m_svgFile("networkmanager/networkmanager"),
       m_icon(m_svgFile, this),
       m_elementName("app-knetworkmanager"),
       m_networkEngine(0),
-      m_iconSize(48,48)
+      m_iconSize(48,48),
+      m_profileMenu(new NMMenu())
 {
     setDrawStandardBackground(true);
     setHasConfigurationInterface(false);
     setContentSize(48, 48);
-
-    //temporary hack until dynamic menus can be created.
-    QAction *home = new QAction("Home", this);
-    m_menuMap.insert(home, "Home");
-    connect(home, SIGNAL(triggered()), this, SLOT(launchProfile()));
-    QAction *work = new QAction("Work", this);
-    m_menuMap.insert(work, "Work");
-    connect(work, SIGNAL(triggered()), this, SLOT(launchProfile()));
-    QAction *cafe = new QAction("Cafe", this);
-    m_menuMap.insert(cafe, "Cafe");
-    connect(cafe, SIGNAL(triggered()), this, SLOT(launchProfile()));
 }
 
 void NetworkManager::init()
 {
+    m_profileMenu->setConfig(globalConfig());
+    connect(m_profileMenu, SIGNAL(createProfileRequested()), this, SLOT(createProfile()));
+    connect(m_profileMenu, SIGNAL(scanForNetworksRequested()), this, SLOT(scanForNetworks()));
+    connect(m_profileMenu, SIGNAL(launchProfileRequested(const QString&)), this, SLOT(launchProfile(const QString&)));
     connect(this, SIGNAL(clicked(QPointF)), this, SLOT(showMenu(QPointF)));
 
     m_icon.resize(contentSize());
     
     m_networkEngine = dataEngine("networkmanager");
+    if (!m_networkEngine) {
+        setFailedToLaunch(true, "The Network Manager data engine could not be loaded.  Please check to ensure it is installed.");
+    }
     m_networkEngine->connectSource("Network Management", this);
-    m_elementName = m_networkEngine->query("Network Management")["icon"].toString();
+
+    Plasma::DataEngine::Data data = m_networkEngine->query("Network Management");
+    if (data["Status"].toString() == "Unknown") {
+        setFailedToLaunch(true, "Solid could not determine your connection status.  Ensure that you have a network backend installed.");
+    }
+    m_elementName = data["icon"].toString();
 
     if (m_elementName.isEmpty()) {
-        setFailedToLaunch(true, "Icon could not be found.");
+        //something is wrong here.
+        setFailedToLaunch(true, "Network Manager could not determine you connection status.");
     }
 }
 
 NetworkManager::~NetworkManager()
 {
     if (!failedToLaunch()) {
+        disconnect(m_profileMenu, SIGNAL(createProfileRequested()), this, SLOT(createProfile()));
+        disconnect(m_profileMenu, SIGNAL(scanForNetworksRequested()), this, SLOT(scanForNetworks()));
+        disconnect(m_profileMenu, SIGNAL(launchProfileRequested(const QString&)), this, SLOT(launchProfile(const QString&)));
         disconnect(this, SIGNAL(clicked(QPointF)), this, SLOT(showMenu(QPointF)));
     }
+    delete m_profileMenu;
 }
 
 void NetworkManager::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
@@ -166,24 +172,22 @@ void NetworkManager::dataUpdated(const QString &source, const Plasma::DataEngine
 
 void NetworkManager::showMenu(QPointF clickedPos)
 {
-    profileMenu.clear();
-    foreach (QAction* item, m_menuMap.keys()) {
-        profileMenu.addAction(item);
-    }
-    
-    QAction *sep = new QAction(this);
-    sep->setSeparator(true);
-    profileMenu.addAction(sep);
-
-    QAction *addProfile = new QAction("Add new profile . . . ", this);
-    profileMenu.addAction(addProfile);
-
-    profileMenu.popup(clickedPos.toPoint());
+    m_profileMenu->popup(clickedPos.toPoint());
 }
 
-void NetworkManager::launchProfile()
+void NetworkManager::createProfile()
 {
-    kDebug() << m_menuMap.value((QAction*)sender()) << " has been launched.";
+    kDebug() << "Creating a new profile.";
+}
+
+void NetworkManager::scanForNetworks()
+{
+    kDebug() << "Scanning for networks.";
+}
+
+void NetworkManager::launchProfile(const QString &profile)
+{
+    kDebug() << profile << " has been launched.";
 }
 
 #include "networkmanager.moc"
