@@ -35,7 +35,7 @@ NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
 {
     setDrawStandardBackground(true);
     setHasConfigurationInterface(false);
-    setContentSize(48, 48);
+    resize(48, 48);
 }
 
 void NetworkManager::init()
@@ -46,7 +46,7 @@ void NetworkManager::init()
     connect(m_profileMenu, SIGNAL(launchProfileRequested(const QString&)), this, SLOT(launchProfile(const QString&)));
     connect(this, SIGNAL(clicked(QPointF)), this, SLOT(showMenu(QPointF)));
 
-    m_icon.resize(contentSize());
+    m_icon.resize(geometry().size());
     
     m_networkEngine = dataEngine("networkmanager");
     if (!m_networkEngine) {
@@ -109,7 +109,7 @@ void NetworkManager::paintNetworkStatus(QPainter *p, const QRect &contentsRect)
 void NetworkManager::constraintsUpdated(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::SizeConstraint) {
-        m_icon.resize(contentSize());
+        m_icon.resize(geometry().size());
     }
 }
 
@@ -124,7 +124,7 @@ Qt::Orientations NetworkManager::expandingDirections() const
 
 QSizeF NetworkManager::contentSizeHint() const
 {
-    QSizeF sizeHint = contentSize();
+    QSizeF sizeHint = geometry().size();
     switch (formFactor()) {
     case Plasma::Vertical:
         sizeHint.setHeight(sizeHint.width());
