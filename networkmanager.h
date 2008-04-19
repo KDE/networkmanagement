@@ -45,7 +45,6 @@ class NetworkManager : public Plasma::Applet
         void constraintsUpdated(Plasma::Constraints constraints);
         Qt::Orientations expandingDirections() const;
         void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
-        QSizeF contentSizeHint() const;
 
     public Q_SLOTS:
         void dataUpdated(const QString &source, const Plasma::DataEngine::Data &data);

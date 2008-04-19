@@ -33,9 +33,7 @@ NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
       m_iconSize(48,48),
       m_profileMenu(new NMMenu())
 {
-    setDrawStandardBackground(true);
     setHasConfigurationInterface(false);
-    resize(48, 48);
 }
 
 void NetworkManager::init()
@@ -46,7 +44,8 @@ void NetworkManager::init()
     connect(m_profileMenu, SIGNAL(launchProfileRequested(const QString&)), this, SLOT(launchProfile(const QString&)));
     connect(this, SIGNAL(clicked(QPointF)), this, SLOT(showMenu(QPointF)));
 
-    m_icon.resize(geometry().size());
+    m_icon.setContainsMultipleImages(false);
+    m_icon.resize(size());
     
     m_networkEngine = dataEngine("networkmanager");
     if (!m_networkEngine) {
@@ -68,13 +67,41 @@ void NetworkManager::init()
 
 NetworkManager::~NetworkManager()
 {
-    if (!failedToLaunch()) {
+    if (!hasFailedToLaunch()) {
         disconnect(m_profileMenu, SIGNAL(createProfileRequested()), this, SLOT(createProfile()));
         disconnect(m_profileMenu, SIGNAL(scanForNetworksRequested()), this, SLOT(scanForNetworks()));
         disconnect(m_profileMenu, SIGNAL(launchProfileRequested(const QString&)), this, SLOT(launchProfile(const QString&)));
         disconnect(this, SIGNAL(clicked(QPointF)), this, SLOT(showMenu(QPointF)));
     }
     delete m_profileMenu;
+}
+
+void NetworkManager::constraintsUpdated(Plasma::Constraints constraints)
+{
+    if (constraints & Plasma::FormFactorConstraint) {
+        if (formFactor() == Plasma::Vertical) {
+            kDebug() << "Vertical FormFactor";
+            // TODO: set background(true) on panel causes 0 height, so do not use it
+            setDrawStandardBackground(false);
+        } else if (formFactor() == Plasma::Horizontal) {
+            kDebug() << "Horizontal FormFactor";
+            // TODO: set background(true) on panel causes 0 height, so do not use it
+            setDrawStandardBackground(false);
+        } else if (formFactor() == Plasma::Planar) {
+            kDebug() << "Planar FormFactor";
+            setDrawStandardBackground(true);
+        } else if (formFactor() == Plasma::MediaCenter) {
+            kDebug() << "MediaCenter FormFactor";
+            setDrawStandardBackground(true);
+        } else {
+            kDebug() << "Other FormFactor" << formFactor();
+            setDrawStandardBackground(true);
+        }
+    }
+
+    if (constraints & Plasma::SizeConstraint) {
+        m_icon.resize(size());
+    }
 }
 
 void NetworkManager::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
@@ -85,15 +112,6 @@ void NetworkManager::paintInterface(QPainter *p, const QStyleOptionGraphicsItem 
     }
     
     paintNetworkStatus(p,rect);
-    //Applet::paintInterface(p,option,rect);
-
-
-    /*p->save();
-    p->setPen(Qt::white);
-    p->drawText(rect,
-                Qt::AlignBottom | Qt::AlignHCenter,
-                (!m_elementName.isEmpty()) ? m_elementName : QString("Nothing"));
-    p->restore();*/
 }
 
 void NetworkManager::paintNetworkStatus(QPainter *p, const QRect &contentsRect)
@@ -106,13 +124,6 @@ void NetworkManager::paintNetworkStatus(QPainter *p, const QRect &contentsRect)
     }
 }
 
-void NetworkManager::constraintsUpdated(Plasma::Constraints constraints)
-{
-    if (constraints & Plasma::SizeConstraint) {
-        m_icon.resize(geometry().size());
-    }
-}
-
 Qt::Orientations NetworkManager::expandingDirections() const
 {
     if (formFactor() == Plasma::Horizontal) {
@@ -122,27 +133,10 @@ Qt::Orientations NetworkManager::expandingDirections() const
     }
 }
 
-QSizeF NetworkManager::contentSizeHint() const
-{
-    QSizeF sizeHint = geometry().size();
-    switch (formFactor()) {
-    case Plasma::Vertical:
-        sizeHint.setHeight(sizeHint.width());
-        break;
-    case Plasma::Horizontal:
-        sizeHint.setWidth(sizeHint.height());
-        break;
-    default:
-        break;
-    }
-
-    return sizeHint;
-}
-
 void NetworkManager::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() != Qt::LeftButton) {
-        Widget::mousePressEvent(event);
+        QGraphicsItem::mousePressEvent(event);
         return;
     }
 
@@ -152,12 +146,12 @@ void NetworkManager::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void NetworkManager::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->button() != Qt::LeftButton) {
-        Widget::mousePressEvent(event);
+        QGraphicsItem::mousePressEvent(event);
         return;
     }
     if (m_clickStartPos == scenePos()) {
         if (boundingRect().contains(event->pos())) {
-            emit clicked(event->scenePos());
+            emit clicked(event->pos());
         }
     }
 }
