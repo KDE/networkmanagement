@@ -85,20 +85,20 @@ void NetworkManager::constraintsUpdated(Plasma::Constraints constraints)
         if (formFactor() == Plasma::Vertical) {
             kDebug() << "Vertical FormFactor";
             // TODO: set background(true) on panel causes 0 height, so do not use it
-            setDrawStandardBackground(false);
+            setBackgroundHints(NoBackground);
         } else if (formFactor() == Plasma::Horizontal) {
             kDebug() << "Horizontal FormFactor";
             // TODO: set background(true) on panel causes 0 height, so do not use it
-            setDrawStandardBackground(false);
+            setBackgroundHints(NoBackground);
         } else if (formFactor() == Plasma::Planar) {
             kDebug() << "Planar FormFactor";
-            setDrawStandardBackground(true);
+            setBackgroundHints(DefaultBackground);
         } else if (formFactor() == Plasma::MediaCenter) {
             kDebug() << "MediaCenter FormFactor";
-            setDrawStandardBackground(true);
+            setBackgroundHints(DefaultBackground);
         } else {
             kDebug() << "Other FormFactor" << formFactor();
-            setDrawStandardBackground(true);
+            setBackgroundHints(DefaultBackground);
         }
     }
 
