@@ -27,13 +27,14 @@
 NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
       m_svgFile("networkmanager/networkmanager"),
-      m_icon(m_svgFile, this),
+      m_icon(this),
       m_elementName("app-knetworkmanager"),
       m_networkEngine(0),
-      m_iconSize(48,48),
+      m_iconSize(64,64),
       m_profileMenu(new NMMenu())
 {
     setHasConfigurationInterface(false);
+    m_icon.setImagePath(m_svgFile);
 }
 
 void NetworkManager::init()
@@ -46,6 +47,8 @@ void NetworkManager::init()
 
     m_icon.setContainsMultipleImages(false);
     m_icon.resize(size());
+
+    setSizePolicy(QSizePolicy::Fixed,QSizePolicy::Fixed);
     
     m_networkEngine = dataEngine("networkmanager");
     if (!m_networkEngine) {
@@ -104,24 +107,23 @@ void NetworkManager::constraintsUpdated(Plasma::Constraints constraints)
     }
 }
 
-void NetworkManager::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect)
+void NetworkManager::paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
-    if (&rect == 0) {
-        Applet::paintInterface(p,option,rect);
+    if (&contentsRect == 0) {
+        Applet::paintInterface(p,option,contentsRect);
         return;
     }
-    
-    paintNetworkStatus(p,rect);
+
+    paintNetworkStatus(p,contentsRect);
 }
 
 void NetworkManager::paintNetworkStatus(QPainter *p, const QRect &contentsRect)
 {
     if(!m_elementName.isEmpty()) {
         m_icon.paint(p,contentsRect,m_elementName);
-        kDebug() << "Using icon: " << m_elementName;
-    } else {
+    } /*else {
         kDebug() << "Couldn't find a valid icon. Tried: " << m_elementName;
-    }
+    }*/
 }
 
 Qt::Orientations NetworkManager::expandingDirections() const
@@ -166,7 +168,7 @@ void NetworkManager::dataUpdated(const QString &source, const Plasma::DataEngine
 
 void NetworkManager::showMenu(QPointF clickedPos)
 {
-    m_profileMenu->popup(clickedPos.toPoint());
+    m_profileMenu->popup(popupPosition(m_profileMenu->geometry().size()));
 }
 
 void NetworkManager::createProfile()
