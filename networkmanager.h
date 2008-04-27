@@ -42,7 +42,6 @@ class NetworkManager : public Plasma::Applet
         ~NetworkManager();
 
         void init();
-        void constraintsUpdated(Plasma::Constraints constraints);
         Qt::Orientations expandingDirections() const;
         void paintInterface(QPainter *p, const QStyleOptionGraphicsItem *option, const QRect &rect);
 
@@ -55,6 +54,9 @@ class NetworkManager : public Plasma::Applet
 
     Q_SIGNALS:
         void clicked(QPointF clickedPos);
+
+    protected:
+        void constraintsEvent(Plasma::Constraints constraints);
 
     private:
         void paintNetworkStatus(QPainter *p, const QRect &contentsRect);

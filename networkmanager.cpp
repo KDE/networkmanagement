@@ -79,7 +79,7 @@ NetworkManager::~NetworkManager()
     delete m_profileMenu;
 }
 
-void NetworkManager::constraintsUpdated(Plasma::Constraints constraints)
+void NetworkManager::constraintsEvent(Plasma::Constraints constraints)
 {
     if (constraints & Plasma::FormFactorConstraint) {
         if (formFactor() == Plasma::Vertical) {
