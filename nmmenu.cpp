@@ -22,8 +22,8 @@
 NMMenu::NMMenu(QWidget *parent)
     : KMenu(parent),
       networkConfig(),
-      m_addProfile(new QAction("Manage profiles . . . ", this)),
-      m_wifiNetworks(new QAction("Connect to wireless networks . . . ", this)),
+      m_addProfile(new QAction(i18n("Manage profiles..."), this)),
+      m_wifiNetworks(new QAction(i18n("Connect to wireless networks..."), this)),
       m_sep1(new QAction(this)),
       m_sep2(new QAction(this))
 {

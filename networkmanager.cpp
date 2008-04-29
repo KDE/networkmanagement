@@ -52,19 +52,19 @@ void NetworkManager::init()
     
     m_networkEngine = dataEngine("networkmanager");
     if (!m_networkEngine) {
-        setFailedToLaunch(true, "The Network Manager data engine could not be loaded.  Please check to ensure it is installed.");
+        setFailedToLaunch(true, i18n("The Network Manager data engine could not be loaded.  Please check to ensure it is installed."));
     }
     m_networkEngine->connectSource("Network Management", this);
 
     Plasma::DataEngine::Data data = m_networkEngine->query("Network Management");
     if (data["Status"].toString() == "Unknown") {
-        setFailedToLaunch(true, "Solid could not determine your connection status.  Ensure that you have a network backend installed.");
+        setFailedToLaunch(true, i18n("Solid could not determine your connection status.  Ensure that you have a network backend installed."));
     }
     m_elementName = data["icon"].toString();
 
     if (m_elementName.isEmpty()) {
         //something is wrong here.
-        setFailedToLaunch(true, "Network Manager could not determine you connection status.");
+        setFailedToLaunch(true, i18n("Network Manager could not determine you connection status."));
     }
 }
 
