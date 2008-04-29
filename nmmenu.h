@@ -42,7 +42,7 @@ class NMMenu : public KMenu
         void itemClicked();
 
     Q_SIGNALS:
-        void createProfileRequested();
+        void editProfileRequested();
         void scanForNetworksRequested();
         void launchProfileRequested(const QString &profile);
 

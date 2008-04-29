@@ -71,7 +71,7 @@ void NetworkManager::init()
 NetworkManager::~NetworkManager()
 {
     if (!hasFailedToLaunch()) {
-        disconnect(m_profileMenu, SIGNAL(createProfileRequested()), this, SLOT(createProfile()));
+        disconnect(m_profileMenu, SIGNAL(editProfileRequested()), this, SLOT(editProfile()));
         disconnect(m_profileMenu, SIGNAL(scanForNetworksRequested()), this, SLOT(scanForNetworks()));
         disconnect(m_profileMenu, SIGNAL(launchProfileRequested(const QString&)), this, SLOT(launchProfile(const QString&)));
         disconnect(this, SIGNAL(clicked(QPointF)), this, SLOT(showMenu(QPointF)));
@@ -171,7 +171,7 @@ void NetworkManager::showMenu(QPointF clickedPos)
     m_profileMenu->popup(popupPosition(m_profileMenu->geometry().size()));
 }
 
-void NetworkManager::createProfile()
+void NetworkManager::editProfile()
 {
     kDebug() << "Creating a new profile.";
 }

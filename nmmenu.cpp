@@ -22,12 +22,12 @@
 NMMenu::NMMenu(QWidget *parent)
     : KMenu(parent),
       networkConfig(),
-      m_addProfile(new QAction("Add new profile . . . ", this)),
-      m_wifiNetworks(new QAction("Scan for wireless networks . . . ", this)),
+      m_addProfile(new QAction("Manage profiles . . . ", this)),
+      m_wifiNetworks(new QAction("Connect to wireless networks . . . ", this)),
       m_sep1(new QAction(this)),
       m_sep2(new QAction(this))
 {
-    connect(m_addProfile, SIGNAL(triggered()), this, SIGNAL(createProfileRequested()));
+    connect(m_addProfile, SIGNAL(triggered()), this, SIGNAL(editProfileRequested()));
     connect(m_wifiNetworks, SIGNAL(triggered()), this, SIGNAL(scanForNetworksRequested()));
     m_sep1->setSeparator(true);
     m_sep2->setSeparator(true);

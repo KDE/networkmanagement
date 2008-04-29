@@ -48,7 +48,7 @@ class NetworkManager : public Plasma::Applet
     public Q_SLOTS:
         void dataUpdated(const QString &source, const Plasma::DataEngine::Data &data);
         void showMenu(QPointF clickedPos);
-        void createProfile();
+        void editProfile();
         void scanForNetworks();
         void launchProfile(const QString &profile);
 
