@@ -1,5 +1,7 @@
 TODO:
-- Create a network scanning view
+- Create a network scanning view - In Progress
+    - Create Scrolling View
+    - Scan Actual APs
 - Create a profile class which describes network settings
 - Create a profile creation view/wizard
 - Create a profile editing view

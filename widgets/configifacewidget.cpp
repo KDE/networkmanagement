@@ -41,10 +41,6 @@ ConfigIfaceWidget::ConfigIfaceWidget(QWidget *parent)
 
 ConfigIfaceWidget::~ConfigIfaceWidget()
 {
-    delete m_ipGroupBox;
-    delete m_mainLayout;
-    delete m_ipLayout;
-    delete m_ipGroup;
     delete m_dynamicButton;
     delete m_staticButton;
     delete m_ipLabel;
@@ -53,6 +49,10 @@ ConfigIfaceWidget::~ConfigIfaceWidget()
     delete m_ipAddressEdit;
     delete m_netmaskEdit;
     delete m_broadcastEdit;
+    delete m_mainLayout;
+    delete m_ipLayout;
+    delete m_ipGroup;
+    delete m_ipGroupBox;
 }
 
 void ConfigIfaceWidget::layoutIpWidget()
@@ -96,6 +96,12 @@ void ConfigIfaceWidget::layoutIpWidget()
     m_ipLayout->addLayout(broadcastLabelLayout);
 
     m_ipGroupBox->setLayout(m_ipLayout);
+
+    //ghost out static IP items
+    enableStaticItems(false);
+
+    connect(m_dynamicButton, SIGNAL(clicked()), this, SLOT(onDynamicClicked()));
+    connect(m_staticButton, SIGNAL(clicked()), this, SLOT(onStaticClicked()));
 }
 
 KConfig* ConfigIfaceWidget::config() const
@@ -106,6 +112,27 @@ KConfig* ConfigIfaceWidget::config() const
 void ConfigIfaceWidget::setConfig(KConfig *config)
 {
     m_config = config;
+}
+
+void ConfigIfaceWidget::onDynamicClicked()
+{
+    enableStaticItems(false);
+}
+
+void ConfigIfaceWidget::onStaticClicked()
+{
+    enableStaticItems();
+}
+
+void ConfigIfaceWidget::enableStaticItems(bool enable)
+{
+    //enable or un-enable all the items
+    m_ipLabel->setEnabled(enable);
+    m_ipAddressEdit->setEnabled(enable);
+    m_netmaskLabel->setEnabled(enable);
+    m_netmaskEdit->setEnabled(enable);
+    m_broadcastLabel->setEnabled(enable);
+    m_broadcastEdit->setEnabled(enable);
 }
 
 WiredConfigIfaceWidget::WiredConfigIfaceWidget(QWidget *parent)
@@ -132,12 +159,18 @@ WifiConfigIfaceWidget::WifiConfigIfaceWidget(QWidget *parent)
     : ConfigIfaceWidget(parent),
       m_wifiGroupBox(0),
       m_wifiLayout(0),
+      m_essidLayout(0),
       m_wifiGroup(0),
       m_anyButton(0),
       m_specificButton(0),
       m_essidLabel(0),
       m_essidEdit(0),
-      m_essidButton(0)
+      m_scanButton(0),
+      m_scandlg(0),
+      m_scanView(0),
+      m_scanModel(0),
+      m_scanDelegate(0),
+      m_scanSelectionModel(0)
 {
     layoutIpWidget();
 
@@ -149,19 +182,19 @@ WifiConfigIfaceWidget::WifiConfigIfaceWidget(QWidget *parent)
     m_wifiGroup->addButton(m_specificButton);
     m_anyButton->setChecked(true);
 
-    QHBoxLayout *essidLayout = new QHBoxLayout();
+    m_essidLayout = new QHBoxLayout();
     m_essidEdit = new QLineEdit(this);
     m_essidLabel = new QLabel(i18n("ESSID:"), this);
-    m_essidButton = new QPushButton(i18n("Scan"), this);
+    m_scanButton = new QPushButton(i18n("Scan"), this);
     m_essidLabel->setBuddy(m_essidEdit);
-    essidLayout->addWidget(m_essidLabel);
-    essidLayout->addWidget(m_essidEdit);
-    essidLayout->addWidget(m_essidButton);
+    m_essidLayout->addWidget(m_essidLabel);
+    m_essidLayout->addWidget(m_essidEdit);
+    m_essidLayout->addWidget(m_scanButton);
 
     m_wifiLayout = new QVBoxLayout();
     m_wifiLayout->addWidget(m_anyButton);
     m_wifiLayout->addWidget(m_specificButton);
-    m_wifiLayout->addLayout(essidLayout);
+    m_wifiLayout->addLayout(m_essidLayout);
 
     m_wifiGroupBox->setLayout(m_wifiLayout);
 
@@ -170,23 +203,67 @@ WifiConfigIfaceWidget::WifiConfigIfaceWidget(QWidget *parent)
     m_mainLayout->addWidget(m_ipGroupBox);
 
     setLayout(m_mainLayout);
+
+    enableScanningItems(false);
+    connect(m_anyButton, SIGNAL(clicked()), this, SLOT(onAnyButtonClicked()));
+    connect(m_specificButton, SIGNAL(clicked()), this, SLOT(onSpecificButtonClicked()));
+    connect(m_scanButton, SIGNAL(clicked()), this, SLOT(onScanClicked()));
 }
 
 WifiConfigIfaceWidget::~WifiConfigIfaceWidget()
 {
-    delete m_wifiGroupBox;
-    delete m_wifiLayout;
-    delete m_wifiGroup;
     delete m_anyButton;
     delete m_specificButton;
     delete m_essidLabel;
     delete m_essidEdit;
-    delete m_essidButton;
+    delete m_scanButton;
+    delete m_essidLayout;
+    delete m_wifiLayout;
+    delete m_wifiGroup;
+    delete m_wifiGroupBox;
 }
 
 ConfigIfaceWidget::Type WifiConfigIfaceWidget::ifaceType() const
 {
     return Ieee80211;
+}
+
+void WifiConfigIfaceWidget::onAnyButtonClicked()
+{
+    enableScanningItems(false);
+}
+
+void WifiConfigIfaceWidget::onSpecificButtonClicked()
+{
+    enableScanningItems();
+}
+
+void WifiConfigIfaceWidget::enableScanningItems(bool enable)
+{
+    m_essidEdit->setEnabled(enable);
+    m_essidLabel->setEnabled(enable);
+    m_scanButton->setEnabled(enable);
+}
+
+void WifiConfigIfaceWidget::onScanClicked()
+{
+    if (m_scandlg == 0) {
+        //setup scanview if it doesn't already exist
+        m_scanView = new ApItemView();
+        m_scanModel = new ApItemModel("eth0");
+        m_scanDelegate = new ApItemDelegate(m_scanView);
+        m_scanSelectionModel = new QItemSelectionModel(m_scanModel);
+        m_scanModel->init();
+        m_scanView->setModel(m_scanModel);
+        m_scanView->setItemDelegate(m_scanDelegate);
+        m_scanView->setSelectionModel(m_scanSelectionModel);
+        
+        m_scandlg = new KDialog();
+        m_scandlg->setButtons( KDialog::Ok | KDialog::Cancel);
+        m_scandlg->setCaption(i18n("Available Access Points"));
+        m_scandlg->setMainWidget(m_scanView);
+    }
+    m_scandlg->show();
 }
 
 #include "configifacewidget.moc"

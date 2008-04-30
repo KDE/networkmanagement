@@ -46,6 +46,7 @@ class AddProfileWidget : public QWidget
         ~AddProfileWidget();
 
     private Q_SLOTS:
+        void onItemViewClicked(const QModelIndex &index);
         void onConfigClicked();
 
     private:

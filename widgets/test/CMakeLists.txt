@@ -5,6 +5,10 @@ set(testAddProfile_SRCS
  ../addprofilewidget.cpp
  ../ifaceitemmodel.cpp
  ../configifacewidget.cpp
+ ../apitemview.cpp
+ ../apitemmodel.cpp
+ ../accesspoint.cpp
+ ../apitemdelegate.cpp
 )
 
 # search for packages used by KDE

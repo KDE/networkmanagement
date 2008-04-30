@@ -20,6 +20,10 @@
 #ifndef CONFIGIFACEWIDGET_H
 #define CONFIGIFACEWIDGET_H
 
+#include "apitemview.h"
+#include "apitemmodel.h"
+#include "apitemdelegate.h"
+
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QRadioButton>
@@ -30,6 +34,7 @@
 #include <QGroupBox>
 
 #include <KConfig>
+#include <KDialog>
 #include <klocalizedstring.h>
 
 class ConfigIfaceWidget : public QWidget
@@ -46,8 +51,13 @@ class ConfigIfaceWidget : public QWidget
         void setConfig(KConfig *config);
         virtual Type ifaceType() const = 0;
 
+    private Q_SLOTS:
+        void onDynamicClicked();
+        void onStaticClicked();
+
     protected:
         void layoutIpWidget();
+        void enableStaticItems(bool enable=true);
         
         KConfig *m_config;
         QGroupBox *m_ipGroupBox;
@@ -79,14 +89,29 @@ class WifiConfigIfaceWidget : public ConfigIfaceWidget
 
         Type ifaceType() const;
 
+    private Q_SLOTS:
+        void onAnyButtonClicked();
+        void onSpecificButtonClicked();
+        void onScanClicked();
+
     private:
+        void enableScanningItems(bool enable=true);
+        
         QGroupBox *m_wifiGroupBox;
         QVBoxLayout *m_wifiLayout;
+        QHBoxLayout *m_essidLayout;
         QButtonGroup *m_wifiGroup;
         QRadioButton *m_anyButton, *m_specificButton;
         QLabel *m_essidLabel;
         QLineEdit *m_essidEdit;
-        QPushButton *m_essidButton;
+        QPushButton *m_scanButton;
+
+        //scan view
+        KDialog *m_scandlg;
+        ApItemView *m_scanView;
+        ApItemModel *m_scanModel;
+        ApItemDelegate *m_scanDelegate;
+        QItemSelectionModel *m_scanSelectionModel;
 };
 
 #endif

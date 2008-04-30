@@ -32,6 +32,8 @@ class IfaceItemModel : public QAbstractItemModel
     Q_OBJECT
 
     public:
+        enum UserRoles {Type = Qt::UserRole};
+        
         IfaceItemModel(QObject *parent=0);
         ~IfaceItemModel();
 

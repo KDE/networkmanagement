@@ -89,6 +89,8 @@ QVariant IfaceItemModel::data(const QModelIndex &index, int role) const
                 default:
                     return KIcon("Unknown");
             }
+        case Type:
+            return QVariant(m_ifaceList.value(index.row()).type());
         default:
             return QVariant();
     }

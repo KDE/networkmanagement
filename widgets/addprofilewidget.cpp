@@ -20,6 +20,7 @@
 #include "addprofilewidget.h"
 
 #include <KIcon>
+#include <KDebug>
 
 AddProfileWidget::AddProfileWidget(QWidget *parent)
     : QWidget(parent),
@@ -54,6 +55,8 @@ AddProfileWidget::AddProfileWidget(QWidget *parent)
     priorityHLayout->addWidget(m_ifaceView);
     priorityHLayout->addLayout(priorityVLayout);
     m_configureIface = new QPushButton(i18n("Configure Interface"));
+    //no interface is selected at first so do not allow it to be clicked
+    m_configureIface->setEnabled(false);
     priorityVLayout->addWidget(m_configureIface);
     m_priorityBox->setLayout(priorityHLayout);
 
@@ -64,6 +67,7 @@ AddProfileWidget::AddProfileWidget(QWidget *parent)
 
     m_configdlg = new KDialog();
     m_configdlg->setButtons( KDialog::Ok | KDialog::Cancel);
+    connect(m_ifaceView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onItemViewClicked(const QModelIndex&)));
     connect(m_configureIface, SIGNAL(clicked()), this, SLOT(onConfigClicked()));
 }
 
@@ -75,16 +79,41 @@ AddProfileWidget::~AddProfileWidget()
     delete m_profileNameEdit;
     delete m_profileName;
     delete m_configureIface;
+    delete m_configWidget;
+}
+
+void AddProfileWidget::onItemViewClicked(const QModelIndex &index)
+{
+    m_configureIface->setEnabled(index.isValid());
 }
 
 void AddProfileWidget::onConfigClicked()
 {
-    if (m_configWidget == 0) {
-        m_configdlg->setCaption("Wifi Configuration");
-        m_configWidget = new WifiConfigIfaceWidget(m_configdlg);
-        m_configdlg->setMainWidget(m_configWidget);
-        m_configdlg->show();
+    QModelIndex currIndex = m_ifaceView->currentIndex();
+    if (!currIndex.isValid()) {
+        kDebug() << "No device is selected.";
+        return;
     }
+    
+    Solid::Control::NetworkInterface::Type type = (Solid::Control::NetworkInterface::Type)currIndex.data(IfaceItemModel::Type).toInt();
+    if (m_configWidget != 0) {
+        delete m_configWidget;
+        m_configWidget = 0;
+    }
+
+    if (type == Solid::Control::NetworkInterface::Ieee80211) {
+        m_configdlg->setCaption(i18n("Wireless Configuration"));
+        m_configWidget = new WifiConfigIfaceWidget(m_configdlg);
+    } else if (type == Solid::Control::NetworkInterface::Ieee8023) {
+        m_configdlg->setCaption(i18n("IP Configuration"));
+        m_configWidget = new WiredConfigIfaceWidget(m_configdlg);
+    } else {
+        kDebug() << "Device type could not be determined.";
+        return;
+    }
+    
+    m_configdlg->setMainWidget(m_configWidget);
+    m_configdlg->show();
 }
 
 #include "addprofilewidget.moc"
