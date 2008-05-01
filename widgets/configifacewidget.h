@@ -93,6 +93,7 @@ class WifiConfigIfaceWidget : public ConfigIfaceWidget
         void onAnyButtonClicked();
         void onSpecificButtonClicked();
         void onScanClicked();
+        void onApChosen();
 
     private:
         void enableScanningItems(bool enable=true);

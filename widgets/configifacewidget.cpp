@@ -262,8 +262,19 @@ void WifiConfigIfaceWidget::onScanClicked()
         m_scandlg->setButtons( KDialog::Ok | KDialog::Cancel);
         m_scandlg->setCaption(i18n("Available Access Points"));
         m_scandlg->setMainWidget(m_scanView);
+
+        connect(m_scandlg, SIGNAL(okClicked()), this, SLOT(onApChosen()));
     }
     m_scandlg->show();
+}
+
+void WifiConfigIfaceWidget::onApChosen()
+{
+    QModelIndex index = m_scanView->currentIndex();
+    if (!index.isValid()) {
+        return;
+    }
+    m_essidEdit->setText(index.data().toString());
 }
 
 #include "configifacewidget.moc"
