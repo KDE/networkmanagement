@@ -73,6 +73,7 @@ AddProfileWidget::AddProfileWidget(QWidget *parent)
 
 AddProfileWidget::~AddProfileWidget()
 {
+    disconnect(m_ifaceView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onItemViewClicked(const QModelIndex&)));
     delete m_mainLayout;
     delete m_priorityBox;
     delete m_ifaceView;
