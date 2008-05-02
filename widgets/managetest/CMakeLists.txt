@@ -12,6 +12,7 @@ set(testManageProfiles_SRCS
  ../profileitemmodel.cpp
  ../networkprofile.cpp
  ../manageprofilewidget.cpp
+ ../encryptionsettingswidget.cpp
 )
 
 # search for packages used by KDE

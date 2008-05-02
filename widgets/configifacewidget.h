@@ -23,6 +23,7 @@
 #include "apitemview.h"
 #include "apitemmodel.h"
 #include "apitemdelegate.h"
+#include "encryptionsettingswidget.h"
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -94,18 +95,20 @@ class WifiConfigIfaceWidget : public ConfigIfaceWidget
         void onSpecificButtonClicked();
         void onScanClicked();
         void onApChosen();
+        void onEncryptClicked();
+        void onEncryptionSet();
 
     private:
-        void enableScanningItems(bool enable=true);
+        void enableSpecificItems(bool enable=true);
         
         QGroupBox *m_wifiGroupBox;
         QVBoxLayout *m_wifiLayout;
-        QHBoxLayout *m_essidLayout;
+        QHBoxLayout *m_essidLayout, *m_wifiButtonLayout;
         QButtonGroup *m_wifiGroup;
         QRadioButton *m_anyButton, *m_specificButton;
         QLabel *m_essidLabel;
         QLineEdit *m_essidEdit;
-        QPushButton *m_scanButton;
+        QPushButton *m_scanButton, *m_encryptButton;
 
         //scan view
         KDialog *m_scandlg;
@@ -113,6 +116,10 @@ class WifiConfigIfaceWidget : public ConfigIfaceWidget
         ApItemModel *m_scanModel;
         ApItemDelegate *m_scanDelegate;
         QItemSelectionModel *m_scanSelectionModel;
+
+        //encrypt widget
+        KDialog *m_encryptdlg;
+        EncryptionSettingsWidget *m_encryptionWidget;
 };
 
 #endif

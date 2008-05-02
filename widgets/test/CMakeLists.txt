@@ -9,6 +9,7 @@ set(testAddProfile_SRCS
  ../apitemmodel.cpp
  ../accesspoint.cpp
  ../apitemdelegate.cpp
+ ../encryptionsettingswidget.cpp
 )
 
 # search for packages used by KDE

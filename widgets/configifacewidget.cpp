@@ -21,6 +21,8 @@
 
 #include <QHBoxLayout>
 
+#include <KDebug>
+
 ConfigIfaceWidget::ConfigIfaceWidget(QWidget *parent)
     : QWidget(parent),
       m_config(0),
@@ -160,17 +162,20 @@ WifiConfigIfaceWidget::WifiConfigIfaceWidget(QWidget *parent)
       m_wifiGroupBox(0),
       m_wifiLayout(0),
       m_essidLayout(0),
+      m_wifiButtonLayout(0),
       m_wifiGroup(0),
       m_anyButton(0),
       m_specificButton(0),
       m_essidLabel(0),
       m_essidEdit(0),
       m_scanButton(0),
+      m_encryptButton(0),
       m_scandlg(0),
       m_scanView(0),
       m_scanModel(0),
       m_scanDelegate(0),
-      m_scanSelectionModel(0)
+      m_scanSelectionModel(0),
+      m_encryptdlg(0)
 {
     layoutIpWidget();
 
@@ -185,16 +190,21 @@ WifiConfigIfaceWidget::WifiConfigIfaceWidget(QWidget *parent)
     m_essidLayout = new QHBoxLayout();
     m_essidEdit = new QLineEdit(this);
     m_essidLabel = new QLabel(i18n("ESSID:"), this);
-    m_scanButton = new QPushButton(i18n("Scan"), this);
     m_essidLabel->setBuddy(m_essidEdit);
     m_essidLayout->addWidget(m_essidLabel);
     m_essidLayout->addWidget(m_essidEdit);
-    m_essidLayout->addWidget(m_scanButton);
+
+    m_wifiButtonLayout = new QHBoxLayout();
+    m_scanButton = new QPushButton(i18n("Scan"), this);
+    m_encryptButton = new QPushButton(i18n("Encryption"), this);
+    m_wifiButtonLayout->addWidget(m_scanButton);
+    m_wifiButtonLayout->addWidget(m_encryptButton);
 
     m_wifiLayout = new QVBoxLayout();
     m_wifiLayout->addWidget(m_anyButton);
     m_wifiLayout->addWidget(m_specificButton);
     m_wifiLayout->addLayout(m_essidLayout);
+    m_wifiLayout->addLayout(m_wifiButtonLayout);
 
     m_wifiGroupBox->setLayout(m_wifiLayout);
 
@@ -204,10 +214,11 @@ WifiConfigIfaceWidget::WifiConfigIfaceWidget(QWidget *parent)
 
     setLayout(m_mainLayout);
 
-    enableScanningItems(false);
+    enableSpecificItems(false);
     connect(m_anyButton, SIGNAL(clicked()), this, SLOT(onAnyButtonClicked()));
     connect(m_specificButton, SIGNAL(clicked()), this, SLOT(onSpecificButtonClicked()));
     connect(m_scanButton, SIGNAL(clicked()), this, SLOT(onScanClicked()));
+    connect(m_encryptButton, SIGNAL(clicked()), this, SLOT(onEncryptClicked()));
 }
 
 WifiConfigIfaceWidget::~WifiConfigIfaceWidget()
@@ -217,8 +228,12 @@ WifiConfigIfaceWidget::~WifiConfigIfaceWidget()
     delete m_essidLabel;
     delete m_essidEdit;
     delete m_scanButton;
+    delete m_encryptButton;
+    delete m_scandlg;
+    delete m_encryptdlg;
     delete m_essidLayout;
     delete m_wifiLayout;
+    delete m_wifiButtonLayout;
     delete m_wifiGroup;
     delete m_wifiGroupBox;
 }
@@ -230,19 +245,20 @@ ConfigIfaceWidget::Type WifiConfigIfaceWidget::ifaceType() const
 
 void WifiConfigIfaceWidget::onAnyButtonClicked()
 {
-    enableScanningItems(false);
+    enableSpecificItems(false);
 }
 
 void WifiConfigIfaceWidget::onSpecificButtonClicked()
 {
-    enableScanningItems();
+    enableSpecificItems();
 }
 
-void WifiConfigIfaceWidget::enableScanningItems(bool enable)
+void WifiConfigIfaceWidget::enableSpecificItems(bool enable)
 {
     m_essidEdit->setEnabled(enable);
     m_essidLabel->setEnabled(enable);
     m_scanButton->setEnabled(enable);
+    m_encryptButton->setEnabled(enable);
 }
 
 void WifiConfigIfaceWidget::onScanClicked()
@@ -275,6 +291,24 @@ void WifiConfigIfaceWidget::onApChosen()
         return;
     }
     m_essidEdit->setText(index.data().toString());
+}
+
+void WifiConfigIfaceWidget::onEncryptClicked()
+{
+    if (m_encryptdlg == 0) {
+        m_encryptionWidget = new EncryptionSettingsWidget(m_encryptdlg);
+        m_encryptdlg = new KDialog();
+        m_encryptdlg->setButtons( KDialog::Ok | KDialog::Cancel);
+        m_encryptdlg->setCaption(i18n("Encryption Settings"));
+        m_encryptdlg->setMainWidget(m_encryptionWidget);
+        connect(m_encryptdlg, SIGNAL(okClicked()), this, SLOT(onEncryptionSet()));
+    }
+    m_encryptdlg->show();
+}
+
+void WifiConfigIfaceWidget::onEncryptionSet()
+{
+    kDebug() << "Encryption was accepted.";
 }
 
 #include "configifacewidget.moc"
