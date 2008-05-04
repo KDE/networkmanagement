@@ -51,6 +51,7 @@ ManageProfileWidget::ManageProfileWidget(QWidget *parent)
 
     m_profiledlg = new KDialog();
     m_profileWidget = new AddProfileWidget(m_profiledlg);
+    m_editProfileWidget =  new EditProfileWidget(m_profiledlg);
 
     connect(profileView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onItemViewClicked(const QModelIndex&)));
     connect(addProfileButton, SIGNAL(clicked()), this, SLOT(onAddProfileClicked()));
@@ -95,7 +96,9 @@ void ManageProfileWidget::onAddProfileClicked()
 
 void ManageProfileWidget::onEditProfileClicked()
 {
-    kDebug() << "Not yet implemented.";
+    m_profiledlg->setCaption("Edit Profile");
+    m_profiledlg->setMainWidget(m_editProfileWidget);
+    m_profiledlg->show();
 }
 
 #include "manageprofilewidget.moc"

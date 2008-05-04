@@ -17,58 +17,49 @@
 
 */
 
-#ifndef MANAGEPROFILEWIDGET_H
-#define MANAGEPROFILEWIDGET_H
+#ifndef GENERALSETTINGSWIDGET_H
+#define GENERALSETTINGSWIDGET_H
 
-#include "addprofilewidget.h"
-#include "profileitemmodel.h"
-#include "networkprofile.h"
-#include "editprofilewidget.h"
+#include "ifaceitemmodel.h"
 
-#include <QWidget>
-#include <QVBoxLayout>
-#include <QHBoxLayout>
+#include <QListView>
+#include <QGridLayout>
 #include <QRadioButton>
 #include <QLineEdit>
 #include <QLabel>
 #include <QButtonGroup>
 #include <QPushButton>
 #include <QGroupBox>
-#include <QListView>
+#include <QComboBox>
+#include <QCheckBox>
 
 #include <KConfig>
 #include <KDialog>
-#include <KConfigGroup>
 #include <klocalizedstring.h>
 
-class ManageProfileWidget : public QWidget
+class GeneralSettingsWidget : public QWidget
 {
     Q_OBJECT
 
     public:
-        ManageProfileWidget(QWidget *parent=0);
-        ~ManageProfileWidget();
+        GeneralSettingsWidget(QWidget *parent=0);
+        ~GeneralSettingsWidget();
 
-        KConfigGroup config();
-        void setConfig(const KConfigGroup &config);
-
-        QHBoxLayout *mainLayout;
-        QVBoxLayout *buttonLayout;
-        QListView *profileView;
-        QPushButton *addProfileButton, *editProfileButton;
+        QGridLayout *m_mainLayout;
+        QLabel *m_profileNameLabel, *m_connectionTypeLabel;
+        QComboBox *m_profileType, *m_connectionType;
+        QLineEdit *m_profileName;
+        QListView *m_priorityList;
+        QPushButton *m_upButton, *m_downButton;
 
     private Q_SLOTS:
-        void onAddProfileClicked();
-        void onEditProfileClicked();
-        void onItemViewClicked(const QModelIndex &index);
+        void onConnectionTypeChanged(int index);
 
     private:
-        KConfigGroup m_config;
-        ProfileItemModel *m_profileModel;
-        KDialog *m_profiledlg;
-        AddProfileWidget *m_profileWidget;
-        EditProfileWidget *m_editProfileWidget;
+        QStringList m_connectionTypes;
+        QStringList m_connectionTypeIcons;
+
+        IfaceItemModel *m_ifaceModel;
 };
 
 #endif
-

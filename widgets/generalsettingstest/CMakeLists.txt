@@ -1,16 +1,10 @@
-project(testAddProfile)
+project(testGeneral)
 
-set(testAddProfile_SRCS
- commontest.cpp
- ../addprofilewidget.cpp
+set(testGeneral_SRCS
+ generalsettingstest.cpp
+ ../networkprofile.cpp
  ../ifaceitemmodel.cpp
- ../configifacewidget.cpp
- ../apitemview.cpp
- ../apitemmodel.cpp
- ../accesspoint.cpp
- ../apitemdelegate.cpp
- ../encryptionsettingswidget.cpp
- ../wirelesssettingswidget.cpp
+ ../generalsettingswidget.cpp
 )
 
 # search for packages used by KDE
@@ -26,6 +20,6 @@ add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
 link_directories(${KDE4_LIB_DIR})
 
 
-kde4_add_executable(testAddProfile ${testAddProfile_SRCS})
+kde4_add_executable(testGeneral ${testGeneral_SRCS})
 
-target_link_libraries(testAddProfile  ${KDE4_KDEUI_LIBS} solidcontrol)
+target_link_libraries(testGeneral  ${KDE4_KDEUI_LIBS} solidcontrol)

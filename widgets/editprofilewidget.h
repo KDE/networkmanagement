@@ -17,36 +17,25 @@
 
 */
 
-#ifndef NETWORKPROFILE_H
-#define NETWORKPROFILE_H
+#ifndef EDITPROFILEWIDGET_H
+#define EDITPROFILEWIDGET_H
 
-#include <QString>
+#include "generalsettingswidget.h"
+#include "wirelesssettingswidget.h"
 
-class NetworkProfile
+#include <QTabWidget>
+
+class EditProfileWidget : public QWidget
 {
+    Q_OBJECT
+
     public:
-        enum Type {UnknownType=0, Home, Work, Airport, Cafe, Hotel};
-        
-        NetworkProfile();
-        NetworkProfile(const QString &name, Type profileType);
+        EditProfileWidget(QWidget *parent=0);
+        ~EditProfileWidget();
 
-        QString name() const;
-        void setName(const QString &name);
-
-        Type type() const;
-        void setType(Type profileType);
-
-        QString icon() const;
-
-        static QString typeAsString(Type profileType);
-        static Type stringAsType(const QString &profileString);
-        static QStringList types();
-        static QString icon(Type type);
-        static QString icon(const QString &type);
-
-    private:
-        QString m_name;
-        Type m_type;
+        QTabWidget *m_tabWidget;
+        GeneralSettingsWidget *m_gsWidget;
+        WirelessSettingsWidget *m_wsWidget;
 };
 
 #endif

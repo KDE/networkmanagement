@@ -296,7 +296,7 @@ void WifiConfigIfaceWidget::onApChosen()
 void WifiConfigIfaceWidget::onEncryptClicked()
 {
     if (m_encryptdlg == 0) {
-        m_encryptionWidget = new EncryptionSettingsWidget(m_encryptdlg);
+        m_encryptionWidget = new WepSettingsWidget(m_encryptdlg);
         m_encryptdlg = new KDialog();
         m_encryptdlg->setButtons( KDialog::Ok | KDialog::Cancel);
         m_encryptdlg->setCaption(i18n("Encryption Settings"));

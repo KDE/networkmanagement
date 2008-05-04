@@ -43,17 +43,48 @@ class EncryptionSettingsWidget : public QWidget
         EncryptionSettingsWidget(QWidget *parent=0);
         ~EncryptionSettingsWidget();
 
+        KConfig* config() const;
+        void setConfig(KConfig *config);
+
+    protected:
+        KConfig *m_config;
+};
+
+class WepSettingsWidget : public EncryptionSettingsWidget
+{
+    Q_OBJECT
+
+    public:
+        WepSettingsWidget(QWidget *parent=0);
+        ~WepSettingsWidget();
+
         QVBoxLayout *m_mainLayout;
-        QHBoxLayout *m_encTypeLayout, *m_keyTypeLayout, *m_passwordLayout;
-        QComboBox *m_encType, *m_keyType;
-        QLineEdit *m_password;
-        QLabel *m_encTypeLabel, *m_keyTypeLabel, *m_passwordLabel;
+        QHBoxLayout *m_apAuthLayout, *m_dataEncLayout, *m_encKeyTypeLayout;
+        QLabel *m_apAuthLabel, *m_dataEncLabel, *m_encKeyTypeLabel;
+        QComboBox *m_apAuth, *m_dataEnc, *m_encKeyType;
+
+        //static wep keys
+        QGroupBox *m_securityKeyGroup;
+        QVBoxLayout *m_securityKeyLayout;
+        QHBoxLayout *m_keySelectionLayout, *m_key1Layout, *m_key2Layout, *m_key3Layout, *m_key4Layout;
+        QLabel *m_encryptKeyLabel, *m_key1Label, *m_key2Label, *m_key3Label, *m_key4Label;
+        QLineEdit *m_key1Edit, *m_key2Edit, *m_key3Edit, *m_key4Edit;
+        QComboBox *m_encryptKey;
+
+        //passphrase
+        QWidget *m_passphraseWidget;
+        QGridLayout *m_passphraseLayout;
+        QLabel *m_passphraseLabel;
+        QLineEdit *m_passphrase;
         QCheckBox *m_showKey;
+
 
     private Q_SLOTS:
         void onShowKeyChanged(int state);
+        void onEncKeyTypeChanged(int index);
 
     private:
+        QStringList m_authTypes;
         QStringList m_encTypes;
         QStringList m_keyTypes;
 };

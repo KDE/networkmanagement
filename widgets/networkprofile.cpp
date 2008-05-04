@@ -52,20 +52,7 @@ void NetworkProfile::setType(Type profileType)
 
 QString NetworkProfile::icon() const
 {
-    switch (m_type) {
-        case Home:
-            return QString("go-home");
-        case Work:
-            return QString("work");
-        case Airport:
-            return QString("airport");
-        case Cafe:
-            return QString("cafe");
-        case Hotel:
-            return QString("hotel");
-        default:
-            return QString();
-    }
+    return icon(m_type);
 }
 
 QString NetworkProfile::typeAsString(Type profileType)
@@ -101,4 +88,34 @@ NetworkProfile::Type NetworkProfile::stringAsType(const QString &profileString)
     } else {
         return UnknownType;
     }
+}
+
+QStringList NetworkProfile::types()
+{
+    QStringList stringTypes;
+    stringTypes << "Home" << "Work" << "Airport" << "Cafe" << "Hotel";
+    return stringTypes;
+}
+
+QString NetworkProfile::icon(Type type)
+{
+    switch (type) {
+        case Home:
+            return QString("go-home");
+        case Work:
+            return QString("work");
+        case Airport:
+            return QString("airport");
+        case Cafe:
+            return QString("cafe");
+        case Hotel:
+            return QString("hotel");
+        default:
+            return QString();
+    }
+}
+
+QString NetworkProfile::icon(const QString &type)
+{
+    return icon(stringAsType(type));
 }

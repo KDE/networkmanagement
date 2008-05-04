@@ -34,7 +34,10 @@ class IfaceItemModel : public QAbstractItemModel
     Q_OBJECT
 
     public:
+        enum FilterType {Ieee8023 = 1, Ieee80211=2};
         enum UserRoles {Type = Qt::UserRole};
+
+        Q_DECLARE_FLAGS(FilterTypes, FilterType)
         
         IfaceItemModel(QObject *parent=0);
         ~IfaceItemModel();
@@ -46,10 +49,14 @@ class IfaceItemModel : public QAbstractItemModel
         int columnCount(const QModelIndex &parent=QModelIndex()) const;
         QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
         void sort(int column=0, Qt::SortOrder order=Qt::DescendingOrder);
+        void filter(FilterTypes types);
+        void moveIndexUp(const QModelIndex &index);
+        void moveIndexDown(const QModelIndex &index);
 
     private:
         Solid::Control::NetworkInterfaceList m_ifaceList;
-        QList<Solid::Control::NetworkInterface::Type> m_priorityList;
+        Solid::Control::NetworkInterfaceList m_priorityList;
+        QList<Solid::Control::NetworkInterface::Type> m_priorityTypeList;
 };
 
 #endif

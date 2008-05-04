@@ -1,21 +1,13 @@
-project(testManagedProfiles)
+project(testWireless)
 
-set(testManageProfiles_SRCS
- manageprofiles.cpp
- ../configifacewidget.cpp
- ../addprofilewidget.cpp
- ../ifaceitemmodel.cpp
+set(testWireless_SRCS
+ wirelesssettingstest.cpp
  ../apitemview.cpp
  ../apitemmodel.cpp
  ../accesspoint.cpp
  ../apitemdelegate.cpp
- ../profileitemmodel.cpp
- ../networkprofile.cpp
- ../manageprofilewidget.cpp
  ../encryptionsettingswidget.cpp
  ../wirelesssettingswidget.cpp
- ../generalsettingswidget.cpp
- ../editprofilewidget.cpp
 )
 
 # search for packages used by KDE
@@ -31,6 +23,6 @@ add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
 link_directories(${KDE4_LIB_DIR})
 
 
-kde4_add_executable(testManageProfiles ${testManageProfiles_SRCS})
+kde4_add_executable(testWireless ${testWireless_SRCS})
 
-target_link_libraries(testManageProfiles  ${KDE4_KDEUI_LIBS} solidcontrol)
+target_link_libraries(testWireless  ${KDE4_KDEUI_LIBS} solidcontrol)
