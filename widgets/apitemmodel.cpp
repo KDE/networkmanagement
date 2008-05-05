@@ -24,6 +24,7 @@
 #include <QMap>
 
 #include <KIcon>
+#include <KDebug>
 
 ApItemModel::ApItemModel(QString uni, QObject *parent)
     : QAbstractItemModel(parent),
@@ -83,8 +84,6 @@ QVariant ApItemModel::data(const QModelIndex &index, int role) const
             return m_accessPoints.value(index.row()).signalStrength();
         case MacAddress:
             return m_accessPoints.value(index.row()).macAddress();
-        case ConnectionType:
-            return m_accessPoints.value(index.row()).type();
         case EncryptionRole:
             return (m_accessPoints.value(index.row()).encrypted()) ? QString("object-locked") : QString("object-unlocked");
         default:
@@ -115,8 +114,14 @@ void ApItemModel::sort(int column, Qt::SortOrder order)
 void ApItemModel::scan()
 {
     m_accessPoints.clear();
-    //TODO: Make this dynamic
-    AccessPoint ap("linksys", AccessPoint::Home, 89, "some:address", false);
+
+    emit scanComplete();
+}
+
+void ApItemModel::onScanComplete()
+{
+    //Used for testing
+    /*AccessPoint ap("linksys", AccessPoint::Home, 89, "some:address", false);
     m_accessPoints << ap;
 
     ap.setData("Starbucks", AccessPoint::Cafe, 67, "some:other:address", false);
@@ -126,13 +131,25 @@ void ApItemModel::scan()
     m_accessPoints << ap;
 
     ap.setData("Neighbor's Wifi", AccessPoint::Wireless, 45, "other:address", false);
-    m_accessPoints << ap;
-    emit scanComplete();
-}
+    m_accessPoints << ap;*/
+    Solid::Control::NetworkInterface iface(m_uni);
+    if (!iface.isValid()) {
+        kDebug() << "Could not create a valid network interface.";
+        return;
+    } else if (iface.type() != Solid::Control::NetworkInterface::Ieee80211) {
+        kDebug() << "Network Interface is not of type IEEE 80211";
+    }
 
-void ApItemModel::onScanComplete()
-{
-        sort();
+    Solid::Control::NetworkList netList = iface.networks();
+    if (netList.size() == 0) {
+        kDebug() << "No networks found.";
+    }
+    foreach (Solid::Control::Network *network, netList) {
+        Solid::Control::WirelessNetwork *wifiNet = (Solid::Control::WirelessNetwork*)network;
+        AccessPoint ap(wifiNet->essid(), wifiNet->signalStrength(), wifiNet->bssList()[0], wifiNet->isEncrypted());
+        m_accessPoints << ap;
+    }
+    sort();
 }
 
 #include "apitemmodel.moc"

@@ -39,4 +39,11 @@ EditProfileWidget::~EditProfileWidget()
 {
 }
 
+void EditProfileWidget::resizeEvent(QResizeEvent *event)
+{
+    Q_UNUSED(event)
+    kDebug() << "New size is: " << event->size();
+    emit(event->size());
+}
+
 #include "editprofilewidget.moc"

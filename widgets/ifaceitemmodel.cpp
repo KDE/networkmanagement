@@ -20,6 +20,7 @@
 #include "ifaceitemmodel.h"
 
 #include <KIcon>
+#include <KDebug>
 
 IfaceItemModel::IfaceItemModel(QObject *parent)
     : QAbstractItemModel(parent),
@@ -130,7 +131,7 @@ void IfaceItemModel::filter(FilterTypes types)
 
 void IfaceItemModel::moveIndexUp(const QModelIndex &index)
 {
-    if (index.row() == 0 || index.row() >= m_priorityList.size()) {
+    if (index.row() == 0) {
         return;
     }
 
@@ -140,12 +141,29 @@ void IfaceItemModel::moveIndexUp(const QModelIndex &index)
 
 void IfaceItemModel::moveIndexDown(const QModelIndex &index)
 {
-    if (index.row() == 0 || index.row() >= m_priorityList.size()) {
+    if (index.row() >= m_priorityList.size()) {
+        kDebug() << "Index is too high.";
         return;
     }
 
-    m_priorityList.swap(index.row(), index.row()-1);
+    m_priorityList.swap(index.row(), index.row()+1);
     emit dataChanged(this->index(0,0), this->index(rowCount(),0));
+}
+
+QString IfaceItemModel::priorityInterface() const
+{
+    return m_priorityList[0].uni();
+}
+
+QString IfaceItemModel::priorityInterface(FilterTypes types) const
+{
+    foreach (const Solid::Control::NetworkInterface &iface, m_priorityList) {
+        if (types & Ieee8023 && iface.type() == Solid::Control::NetworkInterface::Ieee8023) {
+            return iface.uni();
+        } else if (types & Ieee80211 && iface.type() == Solid::Control::NetworkInterface::Ieee80211) {
+            return iface.uni();
+        }
+    }
 }
 
 #include "ifaceitemmodel.moc"

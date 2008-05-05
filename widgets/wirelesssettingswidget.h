@@ -48,6 +48,11 @@ class WirelessSettingsWidget : public QWidget
         WirelessSettingsWidget(QWidget *parent=0);
         ~WirelessSettingsWidget();
 
+        QString wirelessInterface() const;
+        void setWirelessInterface(const QString &uni);
+
+        void enableAdhoc(bool enable);
+
         QGridLayout *m_mainLayout;
         QLabel *m_wirelessConfigLabel, *m_essidLabel, *m_connectionTypeLabel, *m_wirelessModeLabel, *m_securityTypeLabel;
         QLineEdit *m_essid;
@@ -57,6 +62,7 @@ class WirelessSettingsWidget : public QWidget
     private Q_SLOTS:
         void onScanClicked();
         void onApChosen();
+        void onSecurityTypeChanged(int index);
         void onEncryptClicked();
         void onEncryptionSet();
 
@@ -75,6 +81,7 @@ class WirelessSettingsWidget : public QWidget
 
         //encryption
         EncryptionSettingsWidget *m_encryptionWidget;
+        QString m_wirelessInterface;
 };
 
 #endif

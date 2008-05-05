@@ -26,6 +26,12 @@
 #include <QModelIndex>
 #include <QVariant>
 
+#include <solid/control/networkmanager.h>
+#include <solid/control/networkinterface.h>
+#include <solid/control/network.h>
+#include <solid/control/wirelessnetwork.h>
+#include <solid/control/authentication.h>
+
 class ApItemModel : public QAbstractItemModel
 {
     Q_OBJECT

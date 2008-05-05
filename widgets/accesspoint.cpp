@@ -30,10 +30,9 @@ AccessPoint::AccessPoint()
     
 }
 
-AccessPoint::AccessPoint(QString essid, ApType type, int signalStrength, QString macAddress, bool isEncrypted)
+AccessPoint::AccessPoint(QString essid, int signalStrength, QString macAddress, bool isEncrypted)
     : m_essid(essid),
       m_macAddress(macAddress),
-      m_type(type),
       m_signalStrength(signalStrength),
       m_isEncrypted(isEncrypted),
       m_isValid(true)
@@ -44,10 +43,9 @@ AccessPoint::~AccessPoint()
 {
 }
 
-void AccessPoint::setData(QString essid, ApType type, int signalStrength, QString macAddress, bool isEncrypted)
+void AccessPoint::setData(QString essid, int signalStrength, QString macAddress, bool isEncrypted)
 {
     m_essid = essid;
-    m_type = type;
     m_signalStrength = signalStrength;
     m_macAddress = macAddress;
     m_isEncrypted = isEncrypted;
@@ -57,11 +55,6 @@ void AccessPoint::setData(QString essid, ApType type, int signalStrength, QStrin
 QString AccessPoint::essid() const
 {
         return m_essid;
-}
-
-AccessPoint::ApType AccessPoint::type() const
-{
-    return m_type;
 }
 
 QString AccessPoint::macAddress() const

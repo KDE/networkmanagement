@@ -28,12 +28,11 @@ class AccessPoint
         enum ApType {UnknownType, Wireless, Home, Work, Cafe, Airport};
         
         AccessPoint();
-        AccessPoint(QString essid, ApType type, int signalStrength, QString macAddress, bool isEncrypted);
+        AccessPoint(QString essid, int signalStrength, QString macAddress, bool isEncrypted);
         ~AccessPoint();
 
-        void setData(QString essid, ApType type, int signalStrength, QString macAddress, bool isEncrypted);
+        void setData(QString essid, int signalStrength, QString macAddress, bool isEncrypted);
         QString essid() const;
-        ApType type() const;
         QString macAddress() const;
         int signalStrength() const;
         bool encrypted() const;

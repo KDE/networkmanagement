@@ -44,7 +44,7 @@ WirelessSettingsWidget::WirelessSettingsWidget(QWidget *parent)
       m_scanSelectionModel(0),
       m_encryptionWidget(0)
 {
-    m_connectionTypes << i18n("Managed") << i18n("Infrastructure");
+    m_connectionTypes << i18n("Managed") << i18n("Adhoc");
     m_wirelessModes << i18n("Auto") << i18n("802.11a") << i18n("802.11b") << i18n("802.11g") << i18n("802.11n");
     m_securityTypes << i18n("None") << i18n("WEP") << i18n("WPA");
 
@@ -68,6 +68,7 @@ WirelessSettingsWidget::WirelessSettingsWidget(QWidget *parent)
     m_securityType = new QComboBox();
     m_securityType->addItems(m_securityTypes);
     m_securitySettingsButton = new QPushButton(i18n("Settings"));
+    m_securitySettingsButton->setEnabled(false);
 
     //layout items
     //left pane
@@ -88,6 +89,7 @@ WirelessSettingsWidget::WirelessSettingsWidget(QWidget *parent)
     m_mainLayout->setColumnMinimumWidth(3, 40);
     m_mainLayout->setColumnStretch(3, 10);
 
+    connect(m_securityType, SIGNAL(activated(int)), this, SLOT(onSecurityTypeChanged(int)));
     connect(m_scanButton, SIGNAL(clicked()), this, SLOT(onScanClicked()));
     connect(m_securitySettingsButton, SIGNAL(clicked()), this, SLOT(onEncryptClicked()));
 }
@@ -116,12 +118,31 @@ WirelessSettingsWidget::~WirelessSettingsWidget()
     delete m_mainLayout;
 }
 
+QString WirelessSettingsWidget::wirelessInterface() const
+{
+    return m_wirelessInterface;
+}
+
+void WirelessSettingsWidget::setWirelessInterface(const QString &uni)
+{
+    m_wirelessInterface = uni;
+}
+
+void WirelessSettingsWidget::enableAdhoc(bool enable)
+{
+    if (!enable && m_connectionType->count() == 2) {
+        m_connectionType->removeItem(1);
+    } else if(m_connectionType->count() == 1) {
+        m_connectionType->insertItem(1, m_connectionTypes[1]);
+    }
+}
+
 void WirelessSettingsWidget::onScanClicked()
 {
     if (m_scandlg == 0) {
         //setup scanview if it doesn't already exist
         m_scanView = new ApItemView();
-        m_scanModel = new ApItemModel("eth0");
+        m_scanModel = new ApItemModel(m_wirelessInterface);
         m_scanDelegate = new ApItemDelegate(m_scanView);
         m_scanSelectionModel = new QItemSelectionModel(m_scanModel);
         m_scanModel->init();
@@ -146,6 +167,18 @@ void WirelessSettingsWidget::onApChosen()
         return;
     }
     m_essid->setText(index.data().toString());
+}
+
+void WirelessSettingsWidget::onSecurityTypeChanged(int index)
+{
+    switch (index) {
+        case 0:
+            m_securitySettingsButton->setEnabled(false);
+            break;
+        case 1:
+        case 2:
+            m_securitySettingsButton->setEnabled(true);
+    }
 }
 
 void WirelessSettingsWidget::onEncryptClicked()

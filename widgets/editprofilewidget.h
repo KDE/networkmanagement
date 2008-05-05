@@ -36,6 +36,12 @@ class EditProfileWidget : public QWidget
         QTabWidget *m_tabWidget;
         GeneralSettingsWidget *m_gsWidget;
         WirelessSettingsWidget *m_wsWidget;
+
+    Q_SIGNALS:
+        void widgetResized(const QSize &size);
+
+    private:
+        void resizeEvent(QResizeEvent *event);
 };
 
 #endif

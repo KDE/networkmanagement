@@ -20,6 +20,8 @@
 #include "manageprofilewidget.h"
 
 #include <KDebug>
+#include <KDialog>
+#include <KConfigSkeleton>
 
 ManageProfileWidget::ManageProfileWidget(QWidget *parent)
     : QWidget(parent),
@@ -30,8 +32,10 @@ ManageProfileWidget::ManageProfileWidget(QWidget *parent)
       editProfileButton(0),
       m_config(),
       m_profileModel(0),
-      m_profiledlg(0),
-      m_profileWidget(0)
+      m_addProfiledlg(0),
+      m_editProfiledlg(0),
+      m_wirelessWidget(0),
+      m_generalWidget(0)
 {
     addProfileButton = new QPushButton(i18n("Add Profile"));
     editProfileButton = new QPushButton(i18n("Edit Profile"));
@@ -49,10 +53,21 @@ ManageProfileWidget::ManageProfileWidget(QWidget *parent)
     mainLayout->addWidget(profileView);
     mainLayout->addLayout(buttonLayout);
 
-    m_profiledlg = new KDialog();
-    m_profileWidget = new AddProfileWidget(m_profiledlg);
-    m_editProfileWidget =  new EditProfileWidget(m_profiledlg);
+    m_wirelessWidget = new WirelessSettingsWidget();
+    m_generalWidget =  new GeneralSettingsWidget();
+    m_generalWidget->setWirelessSettings(m_wirelessWidget);
 
+    m_addProfiledlg = new KAssistantDialog(this);
+    m_addProfiledlg->setCaption("Add Profile");
+    m_page1 = m_addProfiledlg->addPage(m_generalWidget, i18n("General Settings"));
+    m_page2 = m_addProfiledlg->addPage(m_wirelessWidget, i18n("Wireless Settings"));
+    
+    m_editProfiledlg = new KConfigDialog(this, "Add Profile", new KConfigSkeleton(0));
+    m_editProfiledlg->setCaption("Edit Profile");
+    m_editProfiledlg->addPage(m_generalWidget, i18n("General Settings"));
+    m_editProfiledlg->addPage(m_wirelessWidget, i18n("Wireless Settings"));
+    //m_editProfiledlg->resize(390,420);
+    
     connect(profileView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onItemViewClicked(const QModelIndex&)));
     connect(addProfileButton, SIGNAL(clicked()), this, SLOT(onAddProfileClicked()));
     connect(editProfileButton, SIGNAL(clicked()), this, SLOT(onEditProfileClicked()));
@@ -88,17 +103,13 @@ void ManageProfileWidget::onItemViewClicked(const QModelIndex &index)
 
 void ManageProfileWidget::onAddProfileClicked()
 {
-    m_profiledlg->setCaption("Add Profile");
-    m_profiledlg->setButtons( KDialog::Ok | KDialog::Cancel);
-    m_profiledlg->setMainWidget(m_profileWidget);
-    m_profiledlg->show();
+    m_addProfiledlg->setCurrentPage(m_page1);
+    m_addProfiledlg->show();
 }
 
 void ManageProfileWidget::onEditProfileClicked()
 {
-    m_profiledlg->setCaption("Edit Profile");
-    m_profiledlg->setMainWidget(m_editProfileWidget);
-    m_profiledlg->show();
+    m_editProfiledlg->show();
 }
 
 #include "manageprofilewidget.moc"

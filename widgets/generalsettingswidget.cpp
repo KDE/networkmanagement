@@ -48,7 +48,9 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget *parent)
     m_priorityList->setModel(m_ifaceModel);
 
     m_upButton = new QPushButton(KIcon("arrow-up"), QString());
+    m_upButton->setEnabled(false);
     m_downButton = new QPushButton(KIcon("arrow-down"), QString());
+    m_downButton->setEnabled(false);
 
     //layout items
     m_mainLayout->addWidget(m_profileNameLabel, 0, 0, 1, 2);
@@ -61,6 +63,10 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget *parent)
     m_mainLayout->addWidget(m_downButton, 7, 3);
 
     connect(m_connectionType, SIGNAL(activated(int)), this, SLOT(onConnectionTypeChanged(int)));
+    connect(m_priorityList, SIGNAL(activated(const QModelIndex&)), this, SLOT(onPriorityListActivated(const QModelIndex&)));
+    connect(m_priorityList, SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(onCuurrentChanged(const QModelIndex&, const QModelIndex&)));
+    connect(m_upButton, SIGNAL(clicked()), this, SLOT(onUpButtonClicked()));
+    connect(m_downButton, SIGNAL(clicked()), this, SLOT(onDownButtonClicked()));
 }
 
 GeneralSettingsWidget::~GeneralSettingsWidget()
@@ -69,20 +75,72 @@ GeneralSettingsWidget::~GeneralSettingsWidget()
 
 void GeneralSettingsWidget::onConnectionTypeChanged(int index)
 {
-    kDebug() << "Connection Type changed to: " << index;
     switch (index) {
-        case 0:
+        case 0: //Best Available
             m_ifaceModel->filter((IfaceItemModel::FilterTypes)(IfaceItemModel::Ieee8023 | IfaceItemModel::Ieee80211));
+            m_wifiSettings->setWirelessInterface(m_ifaceModel->priorityInterface(IfaceItemModel::Ieee80211));
+            m_wifiSettings->enableAdhoc(false);
             break;
-        case 1:
+        case 1: // Wireless
             m_ifaceModel->filter(IfaceItemModel::Ieee80211);
+            m_wifiSettings->setWirelessInterface(m_ifaceModel->priorityInterface(IfaceItemModel::Ieee80211));
+            m_wifiSettings->enableAdhoc(true);
             break;
-        case 2:
+        case 2: // Wired
             m_ifaceModel->filter(IfaceItemModel::Ieee8023);
         default:
             break;
     }
     return;
+}
+
+void GeneralSettingsWidget::onPriorityListActivated(const QModelIndex &index)
+{
+    m_priorityList->setCurrentIndex(m_ifaceModel->index(index.row(), 0));
+}
+
+void GeneralSettingsWidget::onCuurrentChanged(const QModelIndex &current, const QModelIndex &previous)
+{
+    if (!current.isValid()) {
+        m_upButton->setEnabled(false);
+        m_downButton->setEnabled(false);
+    } else if(current.row() == 0) {
+        m_upButton->setEnabled(false);
+        m_downButton->setEnabled(true);
+    } else if(current.row() == m_ifaceModel->rowCount()-1) {
+        m_upButton->setEnabled(true);
+        m_downButton->setEnabled(false);
+    } else {
+        m_upButton->setEnabled(true);
+        m_downButton->setEnabled(true);
+    }
+}
+
+void GeneralSettingsWidget::onUpButtonClicked()
+{
+    QModelIndex index = m_priorityList->currentIndex();
+    //kDebug() << "Index row " << index.row() << " with data " << index.data() << " was clicked.";
+    if (index.row() > 0) {
+        m_ifaceModel->moveIndexUp(index);
+        m_priorityList->setCurrentIndex(m_ifaceModel->index(index.row()-1, 0));
+    }
+}
+
+void GeneralSettingsWidget::onDownButtonClicked()
+{
+    QModelIndex index = m_priorityList->currentIndex();
+    //kDebug() << "Index row " << index.row() << " with data " << index.data() << " was clicked.";
+    if (index.row() != m_ifaceModel->rowCount()-1) {
+        m_ifaceModel->moveIndexDown(index);
+        m_priorityList->setCurrentIndex(m_ifaceModel->index(index.row()+1, 0));
+    }
+}
+
+void GeneralSettingsWidget::setWirelessSettings(WirelessSettingsWidget *wifiSettings)
+{
+    m_wifiSettings = wifiSettings;
+    m_wifiSettings->setWirelessInterface(m_ifaceModel->priorityInterface(IfaceItemModel::Ieee80211));
+    m_wifiSettings->enableAdhoc(false);
 }
 
 #include "generalsettingswidget.moc"

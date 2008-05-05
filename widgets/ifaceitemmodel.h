@@ -53,6 +53,9 @@ class IfaceItemModel : public QAbstractItemModel
         void moveIndexUp(const QModelIndex &index);
         void moveIndexDown(const QModelIndex &index);
 
+        QString priorityInterface() const;
+        QString priorityInterface(FilterTypes types) const;
+
     private:
         Solid::Control::NetworkInterfaceList m_ifaceList;
         Solid::Control::NetworkInterfaceList m_priorityList;

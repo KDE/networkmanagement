@@ -21,6 +21,7 @@
 #define GENERALSETTINGSWIDGET_H
 
 #include "ifaceitemmodel.h"
+#include "wirelesssettingswidget.h"
 
 #include <QListView>
 #include <QGridLayout>
@@ -44,6 +45,8 @@ class GeneralSettingsWidget : public QWidget
     public:
         GeneralSettingsWidget(QWidget *parent=0);
         ~GeneralSettingsWidget();
+        
+        void setWirelessSettings(WirelessSettingsWidget *wifiSettings);
 
         QGridLayout *m_mainLayout;
         QLabel *m_profileNameLabel, *m_connectionTypeLabel;
@@ -54,12 +57,17 @@ class GeneralSettingsWidget : public QWidget
 
     private Q_SLOTS:
         void onConnectionTypeChanged(int index);
+        void onPriorityListActivated(const QModelIndex &index);
+        void onCuurrentChanged(const QModelIndex &current, const QModelIndex &previous);
+        void onUpButtonClicked();
+        void onDownButtonClicked();
 
     private:
         QStringList m_connectionTypes;
         QStringList m_connectionTypeIcons;
 
         IfaceItemModel *m_ifaceModel;
+        WirelessSettingsWidget *m_wifiSettings;
 };
 
 #endif

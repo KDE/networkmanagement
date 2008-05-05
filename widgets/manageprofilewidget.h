@@ -24,6 +24,8 @@
 #include "profileitemmodel.h"
 #include "networkprofile.h"
 #include "editprofilewidget.h"
+#include "generalsettingswidget.h"
+#include "wirelesssettingswidget.h"
 
 #include <QWidget>
 #include <QVBoxLayout>
@@ -37,8 +39,10 @@
 #include <QListView>
 
 #include <KConfig>
-#include <KDialog>
+#include <KConfigDialog>
+#include <KAssistantDialog>
 #include <KConfigGroup>
+#include <KPageWidgetItem>
 #include <klocalizedstring.h>
 
 class ManageProfileWidget : public QWidget
@@ -65,9 +69,11 @@ class ManageProfileWidget : public QWidget
     private:
         KConfigGroup m_config;
         ProfileItemModel *m_profileModel;
-        KDialog *m_profiledlg;
-        AddProfileWidget *m_profileWidget;
-        EditProfileWidget *m_editProfileWidget;
+        KAssistantDialog *m_addProfiledlg;
+        KConfigDialog *m_editProfiledlg;
+        WirelessSettingsWidget *m_wirelessWidget;
+        GeneralSettingsWidget *m_generalWidget;
+        KPageWidgetItem *m_page1, *m_page2;
 };
 
 #endif
