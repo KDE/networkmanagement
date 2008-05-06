@@ -2,8 +2,6 @@ project(testManagedProfiles)
 
 set(testManageProfiles_SRCS
  manageprofiles.cpp
- ../configifacewidget.cpp
- ../addprofilewidget.cpp
  ../ifaceitemmodel.cpp
  ../apitemview.cpp
  ../apitemmodel.cpp

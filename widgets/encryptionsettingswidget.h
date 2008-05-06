@@ -43,11 +43,7 @@ class EncryptionSettingsWidget : public QWidget
         EncryptionSettingsWidget(QWidget *parent=0);
         ~EncryptionSettingsWidget();
 
-        KConfig* config() const;
-        void setConfig(KConfig *config);
-
-    protected:
-        KConfig *m_config;
+        virtual void saveConfig(KConfigGroup &config) = 0;
 };
 
 class WepSettingsWidget : public EncryptionSettingsWidget
@@ -57,6 +53,17 @@ class WepSettingsWidget : public EncryptionSettingsWidget
     public:
         WepSettingsWidget(QWidget *parent=0);
         ~WepSettingsWidget();
+
+        void saveConfig(KConfigGroup &config);
+
+    private Q_SLOTS:
+        void onShowKeyChanged(int state);
+        void onEncKeyTypeChanged(int index);
+
+    private:
+        QStringList m_authTypes;
+        QStringList m_encTypes;
+        QStringList m_keyTypes;
 
         QVBoxLayout *m_mainLayout;
         QHBoxLayout *m_apAuthLayout, *m_dataEncLayout, *m_encKeyTypeLayout;
@@ -77,16 +84,6 @@ class WepSettingsWidget : public EncryptionSettingsWidget
         QLabel *m_passphraseLabel;
         QLineEdit *m_passphrase;
         QCheckBox *m_showKey;
-
-
-    private Q_SLOTS:
-        void onShowKeyChanged(int state);
-        void onEncKeyTypeChanged(int index);
-
-    private:
-        QStringList m_authTypes;
-        QStringList m_encTypes;
-        QStringList m_keyTypes;
 };
 
 #endif

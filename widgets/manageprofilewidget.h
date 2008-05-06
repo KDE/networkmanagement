@@ -54,25 +54,27 @@ class ManageProfileWidget : public QWidget
         ~ManageProfileWidget();
 
         KConfigGroup config();
-        void setConfig(const KConfigGroup &config);
-
-        QHBoxLayout *mainLayout;
-        QVBoxLayout *buttonLayout;
-        QListView *profileView;
-        QPushButton *addProfileButton, *editProfileButton;
+        void setConfig(KConfigGroup &config);
 
     private Q_SLOTS:
         void onAddProfileClicked();
         void onEditProfileClicked();
         void onItemViewClicked(const QModelIndex &index);
+        void onProfileAdded();
+        void onProfileChanged();
 
     private:
+        QHBoxLayout *mainLayout;
+        QVBoxLayout *buttonLayout;
+        QListView *m_profileView;
+        QPushButton *addProfileButton, *editProfileButton;
+        
         KConfigGroup m_config;
         ProfileItemModel *m_profileModel;
         KAssistantDialog *m_addProfiledlg;
         KConfigDialog *m_editProfiledlg;
-        WirelessSettingsWidget *m_wirelessWidget;
-        GeneralSettingsWidget *m_generalWidget;
+        WirelessSettingsWidget *m_wirelessAddWidget, *m_wirelessEditWidget;
+        GeneralSettingsWidget *m_generalAddWidget, *m_generalEditWidget;
         KPageWidgetItem *m_page1, *m_page2;
 };
 

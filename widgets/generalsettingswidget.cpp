@@ -64,13 +64,38 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget *parent)
 
     connect(m_connectionType, SIGNAL(activated(int)), this, SLOT(onConnectionTypeChanged(int)));
     connect(m_priorityList, SIGNAL(activated(const QModelIndex&)), this, SLOT(onPriorityListActivated(const QModelIndex&)));
-    connect(m_priorityList, SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(onCuurrentChanged(const QModelIndex&, const QModelIndex&)));
+    connect(m_priorityList->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(onCurrentChanged(const QModelIndex&, const QModelIndex&)));
     connect(m_upButton, SIGNAL(clicked()), this, SLOT(onUpButtonClicked()));
     connect(m_downButton, SIGNAL(clicked()), this, SLOT(onDownButtonClicked()));
 }
 
 GeneralSettingsWidget::~GeneralSettingsWidget()
 {
+}
+
+QString GeneralSettingsWidget::profileName() const
+{
+    return m_profileName->text();
+}
+
+bool GeneralSettingsWidget::wiredProfile() const
+{
+    return (m_connectionType->currentIndex() == 2);
+}
+
+void GeneralSettingsWidget::saveConfig(KConfigGroup &config)
+{
+    kDebug() << "Saving General Config.";
+    config.writeEntry("ProfileType", m_profileType->currentIndex());
+    config.writeEntry("ConnectionType", m_connectionType->currentIndex());
+
+    //get the list of interfaces
+    QAbstractItemModel *ifaceModel = m_priorityList->model();
+    QStringList ifaceList;
+    for(int index=0; index < ifaceModel->rowCount(); index++) {
+        ifaceList << ifaceModel->data(ifaceModel->index(index,0), IfaceItemModel::UniRole).toString();
+    }
+    config.writeEntry("InterfaceList", ifaceList);
 }
 
 void GeneralSettingsWidget::onConnectionTypeChanged(int index)
@@ -99,7 +124,7 @@ void GeneralSettingsWidget::onPriorityListActivated(const QModelIndex &index)
     m_priorityList->setCurrentIndex(m_ifaceModel->index(index.row(), 0));
 }
 
-void GeneralSettingsWidget::onCuurrentChanged(const QModelIndex &current, const QModelIndex &previous)
+void GeneralSettingsWidget::onCurrentChanged(const QModelIndex &current, const QModelIndex &previous)
 {
     if (!current.isValid()) {
         m_upButton->setEnabled(false);

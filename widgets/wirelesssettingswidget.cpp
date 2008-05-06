@@ -35,7 +35,6 @@ WirelessSettingsWidget::WirelessSettingsWidget(QWidget *parent)
       m_securityType(0),
       m_scanButton(0),
       m_securitySettingsButton(0),
-      m_config(0),
       m_scandlg(0),
       m_encryptdlg(0),
       m_scanView(0),
@@ -107,7 +106,6 @@ WirelessSettingsWidget::~WirelessSettingsWidget()
     delete m_securityType;
     delete m_scanButton;
     delete m_securitySettingsButton;
-    delete m_config;
     delete m_scandlg;
     delete m_encryptdlg;
     delete m_scanView;
@@ -125,6 +123,14 @@ QString WirelessSettingsWidget::wirelessInterface() const
 
 void WirelessSettingsWidget::setWirelessInterface(const QString &uni)
 {
+    Solid::Control::NetworkInterface iface(uni);
+    if (!iface.isValid()) {
+        kDebug() << "Interface was invalid.";
+        return;
+    } else if (iface.type() != Solid::Control::NetworkInterface::Ieee80211) {
+        kDebug() << "Interface was not of type IEEE 80211.";
+    }
+    
     m_wirelessInterface = uni;
 }
 
@@ -135,6 +141,15 @@ void WirelessSettingsWidget::enableAdhoc(bool enable)
     } else if(m_connectionType->count() == 1) {
         m_connectionType->insertItem(1, m_connectionTypes[1]);
     }
+}
+
+void WirelessSettingsWidget::saveConfig(KConfigGroup &config)
+{
+    kDebug() << "Saving Wireless Config.";
+    config.writeEntry("ESSID", m_essid->text());
+    config.writeEntry("WirelessConnectionType", m_connectionType->currentIndex());
+    config.writeEntry("WirelessMode", m_wirelessMode->currentIndex());
+    config.writeEntry("WirelessSecurityType", m_securityType->currentIndex());
 }
 
 void WirelessSettingsWidget::onScanClicked()

@@ -53,11 +53,7 @@ class WirelessSettingsWidget : public QWidget
 
         void enableAdhoc(bool enable);
 
-        QGridLayout *m_mainLayout;
-        QLabel *m_wirelessConfigLabel, *m_essidLabel, *m_connectionTypeLabel, *m_wirelessModeLabel, *m_securityTypeLabel;
-        QLineEdit *m_essid;
-        QComboBox *m_connectionType, *m_wirelessMode, *m_securityType;
-        QPushButton *m_scanButton, *m_securitySettingsButton;
+        void saveConfig(KConfigGroup &config);
 
     private Q_SLOTS:
         void onScanClicked();
@@ -69,9 +65,16 @@ class WirelessSettingsWidget : public QWidget
     private:
         void enableSpecificItems(bool enable=true);
 
-        KConfig *m_config;
         QStringList m_connectionTypes, m_wirelessModes, m_securityTypes;
+
+        QGridLayout *m_mainLayout;
+        QLabel *m_wirelessConfigLabel, *m_essidLabel, *m_connectionTypeLabel, *m_wirelessModeLabel, *m_securityTypeLabel;
+        QLineEdit *m_essid;
+        QComboBox *m_connectionType, *m_wirelessMode, *m_securityType;
+        QPushButton *m_scanButton, *m_securitySettingsButton;
+
         KDialog *m_scandlg, *m_encryptdlg;
+        QString m_wirelessInterface;
 
         //scanview
         ApItemView *m_scanView;
@@ -81,7 +84,6 @@ class WirelessSettingsWidget : public QWidget
 
         //encryption
         EncryptionSettingsWidget *m_encryptionWidget;
-        QString m_wirelessInterface;
 };
 
 #endif

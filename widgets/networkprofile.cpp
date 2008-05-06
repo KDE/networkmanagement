@@ -20,6 +20,7 @@
 #include "networkprofile.h"
 
 #include <klocalizedstring.h>
+#include <KDebug>
 
 NetworkProfile::NetworkProfile()
 {
@@ -58,6 +59,8 @@ QString NetworkProfile::icon() const
 QString NetworkProfile::typeAsString(Type profileType)
 {
     switch (profileType) {
+        case Wireless:
+            return QString(i18n("Wireless"));
         case Home:
             return QString(i18n("Home"));
         case Work:
@@ -69,13 +72,15 @@ QString NetworkProfile::typeAsString(Type profileType)
         case Hotel:
             return QString(i18n("Hotel"));
         default:
-            return QString(i18n("Unknown"));
+            return QString(i18n("Default"));
     }
 }
 
 NetworkProfile::Type NetworkProfile::stringAsType(const QString &profileString)
 {
-    if (profileString == "Home") {
+    if (profileString == "Wireless"){
+        return Wireless;
+    } else if (profileString == "Home") {
         return Home;
     } else if (profileString == "Work") {
         return Work;
@@ -86,20 +91,24 @@ NetworkProfile::Type NetworkProfile::stringAsType(const QString &profileString)
     } else if (profileString == "Hotel") {
         return Hotel;
     } else {
-        return UnknownType;
+        return Default;
     }
 }
 
 QStringList NetworkProfile::types()
 {
     QStringList stringTypes;
-    stringTypes << "Home" << "Work" << "Airport" << "Cafe" << "Hotel";
+    stringTypes << i18n("Default") << i18n("Wireless") << i18n("Home") << i18n("Work") << i18n("Airport") << i18n("Cafe") << i18n("Hotel");
     return stringTypes;
 }
 
 QString NetworkProfile::icon(Type type)
 {
     switch (type) {
+        case Default:
+            return QString("default");
+        case Wireless:
+            return QString("network-wireless");
         case Home:
             return QString("go-home");
         case Work:

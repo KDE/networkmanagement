@@ -22,22 +22,12 @@
 #include <KDebug>
 
 EncryptionSettingsWidget::EncryptionSettingsWidget(QWidget *parent)
-    : QWidget(parent),
-      m_config(0)
+    : QWidget(parent)
 {
 }
 
 EncryptionSettingsWidget::~EncryptionSettingsWidget()
 {
-}
-
-KConfig* EncryptionSettingsWidget::config() const
-{
-    return m_config;
-}
-void EncryptionSettingsWidget::setConfig(KConfig* config)
-{
-    m_config = config;
 }
 
 
@@ -172,6 +162,18 @@ WepSettingsWidget::~WepSettingsWidget()
     delete m_passphraseLabel;
     delete m_passphrase;
     delete m_showKey;
+}
+
+void WepSettingsWidget::saveConfig(KConfigGroup &config)
+{
+    config.writeEntry("WEPAuthentication", m_apAuth->currentText());
+    config.writeEntry("WEPType", m_dataEnc->currentText());
+    config.writeEntry("WEPEncryptionKeyType", m_encKeyType->currentText());
+    config.writeEntry("WEPStaticKey1", m_key1Edit->text());
+    config.writeEntry("WEPStaticKey2", m_key2Edit->text());
+    config.writeEntry("WEPStaticKey3", m_key3Edit->text());
+    config.writeEntry("WEPStaticKey4", m_key4Edit->text());
+    config.writeEntry("WEPPassphrase", m_passphrase->text());
 }
 
 void WepSettingsWidget::onShowKeyChanged(int state)

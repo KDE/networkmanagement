@@ -25,7 +25,7 @@
 class NetworkProfile
 {
     public:
-        enum Type {UnknownType=0, Home, Work, Airport, Cafe, Hotel};
+        enum Type {Default=0, Wireless, Home, Work, Airport, Cafe, Hotel};
         
         NetworkProfile();
         NetworkProfile(const QString &name, Type profileType);

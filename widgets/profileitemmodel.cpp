@@ -20,25 +20,38 @@
 #include "profileitemmodel.h"
 
 #include <KIcon>
+#include <KDebug>
 
 ProfileItemModel::ProfileItemModel(QObject *parent)
     : QAbstractItemModel(parent),
-      m_profileList()
+      m_profileList(),
+      m_config()
 {
-    m_profileList << NetworkProfile("Home", NetworkProfile::Home) << NetworkProfile("Work", NetworkProfile::Work) << NetworkProfile("Cafe", NetworkProfile::Cafe);
 }
 
 ProfileItemModel::~ProfileItemModel()
 {
 }
 
+void ProfileItemModel::updateConfig(const KConfigGroup &config)
+{
+    m_profileList.clear();
+    foreach (const QString &groupName, config.groupList()) {
+        kDebug() << "Adding profile: " << groupName;
+        const KConfigGroup configGroup = config.group(groupName);
+        int profileType = configGroup.readEntry("ProfileType", (int)NetworkProfile::Default);
+        m_profileList << NetworkProfile(groupName, (NetworkProfile::Type)profileType);
+    }
+    emit dataChanged(index(0,0), index(rowCount()-1, 0));
+}
+
 QModelIndex ProfileItemModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    if (row >= 0 && row < rowCount() && column >= 0 && column < columnCount()) {
-        return createIndex(row, column);
+    if (row < 0 || row > rowCount()-1 || column != 0) {
+        return QModelIndex();
     }
-    return QModelIndex();
+    return createIndex(row, column);
 }
 
 QModelIndex ProfileItemModel::parent(const QModelIndex &index) const

@@ -27,6 +27,8 @@
 #include <QVariant>
 #include <QList>
 
+#include <KConfigGroup>
+
 class ProfileItemModel : public QAbstractItemModel
 {
     Q_OBJECT
@@ -35,6 +37,7 @@ class ProfileItemModel : public QAbstractItemModel
         ProfileItemModel(QObject *parent=0);
         ~ProfileItemModel();
 
+        void updateConfig(const KConfigGroup &config);
         QModelIndex index(int row, int column, const QModelIndex &parent=QModelIndex()) const;
         QModelIndex parent(const QModelIndex &index) const;
         int rowCount(const QModelIndex &parent=QModelIndex()) const;
@@ -43,6 +46,7 @@ class ProfileItemModel : public QAbstractItemModel
         
     private:
         QList<NetworkProfile> m_profileList;
+        KConfigGroup m_config;
 };
 
 #endif

@@ -35,14 +35,13 @@ class IfaceItemModel : public QAbstractItemModel
 
     public:
         enum FilterType {Ieee8023 = 1, Ieee80211=2};
-        enum UserRoles {Type = Qt::UserRole};
+        enum UserRoles {TypeRole = Qt::UserRole, UniRole};
 
         Q_DECLARE_FLAGS(FilterTypes, FilterType)
         
         IfaceItemModel(QObject *parent=0);
         ~IfaceItemModel();
 
-        void init();
         QModelIndex index(int row, int column, const QModelIndex &parent=QModelIndex()) const;
         QModelIndex parent(const QModelIndex &index) const;
         int rowCount(const QModelIndex &parent=QModelIndex()) const;

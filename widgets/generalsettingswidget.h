@@ -48,23 +48,28 @@ class GeneralSettingsWidget : public QWidget
         
         void setWirelessSettings(WirelessSettingsWidget *wifiSettings);
 
-        QGridLayout *m_mainLayout;
-        QLabel *m_profileNameLabel, *m_connectionTypeLabel;
-        QComboBox *m_profileType, *m_connectionType;
-        QLineEdit *m_profileName;
-        QListView *m_priorityList;
-        QPushButton *m_upButton, *m_downButton;
+        QString profileName() const;
+        bool wiredProfile() const;
+
+        void saveConfig(KConfigGroup &config);
 
     private Q_SLOTS:
         void onConnectionTypeChanged(int index);
         void onPriorityListActivated(const QModelIndex &index);
-        void onCuurrentChanged(const QModelIndex &current, const QModelIndex &previous);
+        void onCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
         void onUpButtonClicked();
         void onDownButtonClicked();
 
     private:
         QStringList m_connectionTypes;
         QStringList m_connectionTypeIcons;
+
+        QGridLayout *m_mainLayout;
+        QLabel *m_profileNameLabel, *m_connectionTypeLabel;
+        QComboBox *m_profileType, *m_connectionType;
+        QLineEdit *m_profileName;
+        QListView *m_priorityList;
+        QPushButton *m_upButton, *m_downButton;
 
         IfaceItemModel *m_ifaceModel;
         WirelessSettingsWidget *m_wifiSettings;

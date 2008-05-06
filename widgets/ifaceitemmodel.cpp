@@ -35,10 +35,6 @@ IfaceItemModel::~IfaceItemModel()
 {
 }
 
-void IfaceItemModel::init()
-{
-}
-
 QModelIndex IfaceItemModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
@@ -93,8 +89,10 @@ QVariant IfaceItemModel::data(const QModelIndex &index, int role) const
                 default:
                     return KIcon("Unknown");
             }
-        case Type:
+        case TypeRole:
             return QVariant(m_priorityList.value(index.row()).type());
+        case UniRole:
+            return QVariant(m_priorityList.value(index.row()).uni());
         default:
             return QVariant();
     }
@@ -142,7 +140,6 @@ void IfaceItemModel::moveIndexUp(const QModelIndex &index)
 void IfaceItemModel::moveIndexDown(const QModelIndex &index)
 {
     if (index.row() >= m_priorityList.size()) {
-        kDebug() << "Index is too high.";
         return;
     }
 
