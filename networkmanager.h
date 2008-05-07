@@ -21,6 +21,7 @@
 #define NETWORKMANAGER_H
 
 #include "nmmenu.h"
+#include "widgets/manageprofilewidget.h"
 
 #include <QHash>
 #include <QMenu>
@@ -48,9 +49,10 @@ class NetworkManager : public Plasma::Applet
     public Q_SLOTS:
         void dataUpdated(const QString &source, const Plasma::DataEngine::Data &data);
         void showMenu(QPointF clickedPos);
-        void editProfile();
+        void manageProfiles();
         void scanForNetworks();
         void launchProfile(const QString &profile);
+        void saveConfig();
 
     Q_SIGNALS:
         void clicked(QPointF clickedPos);
@@ -63,7 +65,11 @@ class NetworkManager : public Plasma::Applet
 
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-        
+
+        void connectWiredNetwork(Solid::Control::NetworkInterface &iface, const KConfigGroup &config);
+        void connectWirelessNetwork(Solid::Control::NetworkInterface &iface, const KConfigGroup &config);
+
+        KConfigGroup m_profileConfig;
         QString m_svgFile;
         Plasma::Svg m_icon;
         QString m_elementName;
@@ -72,6 +78,8 @@ class NetworkManager : public Plasma::Applet
         QPointF m_clickStartPos;
 
         NMMenu *m_profileMenu;
+        KDialog *m_profileDlg;
+        ManageProfileWidget *m_manageProfile;
 };
 
 K_EXPORT_PLASMA_APPLET(networkmanager, NetworkManager)

@@ -40,13 +40,15 @@ class NMMenu : public KMenu
         void profileAdded(const QString &profile);
         void profileRemoved(const QString &profile);
         void itemClicked();
+        void reloadProfiles();
 
     Q_SIGNALS:
-        void editProfileRequested();
+        void manageProfilesRequested();
         void scanForNetworksRequested();
         void launchProfileRequested(const QString &profile);
 
     private:
+        void deleteAllProfiles();
         KConfigGroup networkConfig;
         QHash<QAction*,QString> m_menuMap;
         QAction *m_addProfile, *m_wifiNetworks, *m_sep1, *m_sep2;

@@ -19,6 +19,8 @@
 
 #include "nmmenu.h"
 
+#include <klocalizedstring.h>
+
 NMMenu::NMMenu(QWidget *parent)
     : KMenu(parent),
       networkConfig(),
@@ -27,7 +29,7 @@ NMMenu::NMMenu(QWidget *parent)
       m_sep1(new QAction(this)),
       m_sep2(new QAction(this))
 {
-    connect(m_addProfile, SIGNAL(triggered()), this, SIGNAL(editProfileRequested()));
+    connect(m_addProfile, SIGNAL(triggered()), this, SIGNAL(manageProfilesRequested()));
     connect(m_wifiNetworks, SIGNAL(triggered()), this, SIGNAL(scanForNetworksRequested()));
     m_sep1->setSeparator(true);
     m_sep2->setSeparator(true);
@@ -35,11 +37,8 @@ NMMenu::NMMenu(QWidget *parent)
 
 NMMenu::~NMMenu()
 {
-    foreach (QAction *action, m_menuMap.keys()) {
-        disconnect(action, SIGNAL(triggered()), this, SLOT(itemClicked()));
-        delete action;
-    }
-    disconnect(m_addProfile, SIGNAL(triggered()), this, SIGNAL(createProfileRequested()));
+    deleteAllProfiles();
+    disconnect(m_addProfile, SIGNAL(triggered()), this, SIGNAL(manageProfilesRequested()));
     disconnect(m_wifiNetworks, SIGNAL(triggered()), this, SIGNAL(scanForNetworksRequested()));
 }
 
@@ -59,12 +58,9 @@ void NMMenu::setConfig(KConfigGroup config)
     this->addAction(m_sep2);
 
     //load network profiles
-    //temporary hack until dynamic menus can be created.
-    profileAdded(QString("Home"));
-    profileAdded(QString("Work"));
-    profileAdded(QString("Cafe"));
-
-    
+    foreach (const QString &profile, networkConfig.groupList()) {
+        profileAdded(profile);
+    }
 }
 
 void NMMenu::profileAdded(const QString &profile)
@@ -81,6 +77,23 @@ void NMMenu::profileRemoved(const QString &profile)
     disconnect(action, SIGNAL(triggered()), this, SLOT(itemClicked()));
     this->removeAction(action);
     delete action;
+}
+
+void NMMenu::reloadProfiles()
+{
+    deleteAllProfiles();
+    foreach (const QString &profile, networkConfig.groupList()) {
+        profileAdded(profile);
+    }
+}
+
+void NMMenu::deleteAllProfiles()
+{
+    foreach (QAction *action, m_menuMap.keys()) {
+        disconnect(action, SIGNAL(triggered()), this, SLOT(itemClicked()));
+        removeAction(action);
+        delete action;
+    }
 }
 
 void NMMenu::itemClicked()
