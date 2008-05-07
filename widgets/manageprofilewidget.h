@@ -59,15 +59,19 @@ class ManageProfileWidget : public QWidget
     private Q_SLOTS:
         void onAddProfileClicked();
         void onEditProfileClicked();
+        void onDeleteProfileClicked();
         void onItemViewClicked(const QModelIndex &index);
         void onProfileAdded();
         void onProfileChanged();
+        void onPage1Valid(bool valid);
+        void onPage2Valid(bool valid);
+        void onPage2Appropriate(bool appropriate);
 
     private:
         QHBoxLayout *mainLayout;
         QVBoxLayout *buttonLayout;
         QListView *m_profileView;
-        QPushButton *addProfileButton, *editProfileButton;
+        QPushButton *addProfileButton, *editProfileButton, *m_deleteProfileButton;
         
         KConfigGroup m_config;
         ProfileItemModel *m_profileModel;

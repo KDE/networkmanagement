@@ -40,10 +40,17 @@ class EncryptionSettingsWidget : public QWidget
     Q_OBJECT
 
     public:
+        enum EncryptionType {None=0, Wep, Wpa};
+        enum KeyType {Ascii=0, Hex, Passphrase};
+        
         EncryptionSettingsWidget(QWidget *parent=0);
         ~EncryptionSettingsWidget();
 
         virtual void saveConfig(KConfigGroup &config) = 0;
+        virtual EncryptionType type() const = 0;
+        
+    Q_SIGNALS:
+        void validationChanged(bool);
 };
 
 class WepSettingsWidget : public EncryptionSettingsWidget
@@ -51,14 +58,23 @@ class WepSettingsWidget : public EncryptionSettingsWidget
     Q_OBJECT
 
     public:
+        enum WepType {Wep64, Wep128}; //, Ckip64, Ckip128};TODO
         WepSettingsWidget(QWidget *parent=0);
         ~WepSettingsWidget();
 
         void saveConfig(KConfigGroup &config);
+        EncryptionType type() const;
+
+        //validation
+        bool isValid() const;
 
     private Q_SLOTS:
         void onShowKeyChanged(int state);
-        void onEncKeyTypeChanged(int index);
+        //validation
+        void onKeyTypeChanged(int index);
+        void onWepTypeChanged(int type);
+        void onKeyChanged(int key);
+        void onDataEntered(const QString &text);
 
     private:
         QStringList m_authTypes;
@@ -84,6 +100,14 @@ class WepSettingsWidget : public EncryptionSettingsWidget
         QLabel *m_passphraseLabel;
         QLineEdit *m_passphrase;
         QCheckBox *m_showKey;
+
+        //validation
+        bool isStringHex(const QString &str) const;
+        bool isStringAscii(const QString &str) const;
+        bool validate(const QString &input) const;
+        EncryptionSettingsWidget::KeyType m_keyType;
+        int m_keyLength, m_keyUsed;
+        QString m_hexLetters;
 };
 
 #endif

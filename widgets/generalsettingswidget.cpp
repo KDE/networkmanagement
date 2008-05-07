@@ -67,10 +67,16 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget *parent)
     connect(m_priorityList->selectionModel(), SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(onCurrentChanged(const QModelIndex&, const QModelIndex&)));
     connect(m_upButton, SIGNAL(clicked()), this, SLOT(onUpButtonClicked()));
     connect(m_downButton, SIGNAL(clicked()), this, SLOT(onDownButtonClicked()));
+    connect(m_profileName, SIGNAL(textChanged(const QString&)), this, SLOT(onDataEntered(const QString&)));
 }
 
 GeneralSettingsWidget::~GeneralSettingsWidget()
 {
+}
+
+void GeneralSettingsWidget::setExistingProfiles(const QStringList profiles)
+{
+    m_existingProfiles = profiles;
 }
 
 QString GeneralSettingsWidget::profileName() const
@@ -80,7 +86,7 @@ QString GeneralSettingsWidget::profileName() const
 
 bool GeneralSettingsWidget::wiredProfile() const
 {
-    return (m_connectionType->currentIndex() == 2);
+    return (m_connectionType->currentIndex() == Wired);
 }
 
 void GeneralSettingsWidget::saveConfig(KConfigGroup &config)
@@ -98,6 +104,26 @@ void GeneralSettingsWidget::saveConfig(KConfigGroup &config)
     config.writeEntry("InterfaceList", ifaceList);
 }
 
+void GeneralSettingsWidget::loadConfig(const KConfigGroup &config)
+{
+    m_profileName->setText(config.name());
+    m_profileType->setCurrentIndex(config.readEntry("ProfileType", 0));
+    m_connectionType->setCurrentIndex(config.readEntry("ConnectionType", 0));
+}
+
+bool GeneralSettingsWidget::isValid() const
+{
+    if (m_profileName->text().isEmpty()) {
+        kDebug() << "Profile name is empty.";
+        return false;
+    }
+    if (m_existingProfiles.contains(m_profileName->text())) {
+        kDebug() << "Profile already exists.";
+        return false;
+    }
+    return true;
+}
+
 void GeneralSettingsWidget::onConnectionTypeChanged(int index)
 {
     switch (index) {
@@ -105,18 +131,21 @@ void GeneralSettingsWidget::onConnectionTypeChanged(int index)
             m_ifaceModel->filter((IfaceItemModel::FilterTypes)(IfaceItemModel::Ieee8023 | IfaceItemModel::Ieee80211));
             m_wifiSettings->setWirelessInterface(m_ifaceModel->priorityInterface(IfaceItemModel::Ieee80211));
             m_wifiSettings->enableAdhoc(false);
+            emit wirelessAppropriate(true);
             break;
         case 1: // Wireless
             m_ifaceModel->filter(IfaceItemModel::Ieee80211);
             m_wifiSettings->setWirelessInterface(m_ifaceModel->priorityInterface(IfaceItemModel::Ieee80211));
             m_wifiSettings->enableAdhoc(true);
+            emit wirelessAppropriate(true);
             break;
         case 2: // Wired
             m_ifaceModel->filter(IfaceItemModel::Ieee8023);
+            emit wirelessAppropriate(false);
         default:
             break;
     }
-    return;
+    m_priorityList->setCurrentIndex(QModelIndex());
 }
 
 void GeneralSettingsWidget::onPriorityListActivated(const QModelIndex &index)
@@ -126,18 +155,21 @@ void GeneralSettingsWidget::onPriorityListActivated(const QModelIndex &index)
 
 void GeneralSettingsWidget::onCurrentChanged(const QModelIndex &current, const QModelIndex &previous)
 {
+    Q_UNUSED(previous)
+
+    //enable and disable if appropriate
+    m_upButton->setEnabled(true);
+    m_downButton->setEnabled(true);
     if (!current.isValid()) {
         m_upButton->setEnabled(false);
         m_downButton->setEnabled(false);
-    } else if(current.row() == 0) {
+        return;
+    }
+    if(current.row() == 0) {
         m_upButton->setEnabled(false);
-        m_downButton->setEnabled(true);
-    } else if(current.row() == m_ifaceModel->rowCount()-1) {
-        m_upButton->setEnabled(true);
+    }
+    if(current.row() == m_ifaceModel->rowCount()-1) {
         m_downButton->setEnabled(false);
-    } else {
-        m_upButton->setEnabled(true);
-        m_downButton->setEnabled(true);
     }
 }
 
@@ -159,6 +191,13 @@ void GeneralSettingsWidget::onDownButtonClicked()
         m_ifaceModel->moveIndexDown(index);
         m_priorityList->setCurrentIndex(m_ifaceModel->index(index.row()+1, 0));
     }
+}
+
+void GeneralSettingsWidget::onDataEntered(const QString &text)
+{
+    Q_UNUSED(text)
+
+    emit validationChanged(isValid());
 }
 
 void GeneralSettingsWidget::setWirelessSettings(WirelessSettingsWidget *wifiSettings)

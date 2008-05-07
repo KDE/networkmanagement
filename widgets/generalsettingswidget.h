@@ -43,15 +43,26 @@ class GeneralSettingsWidget : public QWidget
     Q_OBJECT
 
     public:
+        enum ConnectionType {BestAvailable=0, Wireless, Wired};
+        
         GeneralSettingsWidget(QWidget *parent=0);
         ~GeneralSettingsWidget();
         
         void setWirelessSettings(WirelessSettingsWidget *wifiSettings);
+        void setExistingProfiles(const QStringList profiles);
 
         QString profileName() const;
         bool wiredProfile() const;
 
         void saveConfig(KConfigGroup &config);
+        void loadConfig(const KConfigGroup &config);
+
+        //validation
+        bool isValid() const;
+
+    Q_SIGNALS:
+        void validationChanged(bool);
+        void wirelessAppropriate(bool);
 
     private Q_SLOTS:
         void onConnectionTypeChanged(int index);
@@ -59,10 +70,12 @@ class GeneralSettingsWidget : public QWidget
         void onCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
         void onUpButtonClicked();
         void onDownButtonClicked();
+        void onDataEntered(const QString &text);
 
     private:
         QStringList m_connectionTypes;
         QStringList m_connectionTypeIcons;
+        QStringList m_existingProfiles;
 
         QGridLayout *m_mainLayout;
         QLabel *m_profileNameLabel, *m_connectionTypeLabel;

@@ -30,13 +30,13 @@ EncryptionSettingsWidget::~EncryptionSettingsWidget()
 {
 }
 
-
 WepSettingsWidget::WepSettingsWidget(QWidget *parent)
     : EncryptionSettingsWidget(parent),
-      m_mainLayout(0)
+      m_mainLayout(0),
+      m_hexLetters("abcdef")
 {
     m_authTypes << i18n("Open") << i18n("Shared");
-    m_encTypes << i18n("WEP-64") << i18n("WEP-128") << i18n("CKIP-128") << i18n("CKIP-128");
+    m_encTypes << i18n("WEP-64") << i18n("WEP-128"); // << i18n("CKIP-128") << i18n("CKIP-128");TODO
     m_keyTypes << i18n("ASCII") << i18n("Hex") << i18n("Passphrase");
     
     m_mainLayout = new QVBoxLayout(this);
@@ -129,8 +129,20 @@ WepSettingsWidget::WepSettingsWidget(QWidget *parent)
     m_mainLayout->addLayout(m_encKeyTypeLayout);
     m_mainLayout->addWidget(m_securityKeyGroup);
 
+    //initialize validation variables
+    m_keyType = Ascii;
+    m_keyLength = 5; //wep-64
+    m_keyUsed=1;
+
     connect(m_showKey, SIGNAL(stateChanged(int)), this, SLOT(onShowKeyChanged(int)));
-    connect(m_encKeyType, SIGNAL(activated(int)), this, SLOT(onEncKeyTypeChanged(int)));
+    connect(m_encKeyType, SIGNAL(activated(int)), this, SLOT(onKeyTypeChanged(int)));
+    connect(m_encryptKey, SIGNAL(activated(int)), this, SLOT(onKeyChanged(int)));
+    connect(m_dataEnc, SIGNAL(activated(int)), this, SLOT(onWepTypeChanged(int)));
+    connect(m_key1Edit, SIGNAL(textChanged(const QString&)), this, SLOT(onDataEntered(const QString&)));
+    connect(m_key2Edit, SIGNAL(textChanged(const QString&)), this, SLOT(onDataEntered(const QString&)));
+    connect(m_key3Edit, SIGNAL(textChanged(const QString&)), this, SLOT(onDataEntered(const QString&)));
+    connect(m_key4Edit, SIGNAL(textChanged(const QString&)), this, SLOT(onDataEntered(const QString&)));
+    connect(m_passphrase, SIGNAL(textChanged(const QString&)), this, SLOT(onDataEntered(const QString&)));
 }
 
 WepSettingsWidget::~WepSettingsWidget()
@@ -166,6 +178,7 @@ WepSettingsWidget::~WepSettingsWidget()
 
 void WepSettingsWidget::saveConfig(KConfigGroup &config)
 {
+    kDebug() << "Saving encryption settings.";
     config.writeEntry("WEPAuthentication", m_apAuth->currentText());
     config.writeEntry("WEPType", m_dataEnc->currentText());
     config.writeEntry("WEPEncryptionKeyType", m_encKeyType->currentText());
@@ -174,6 +187,91 @@ void WepSettingsWidget::saveConfig(KConfigGroup &config)
     config.writeEntry("WEPStaticKey3", m_key3Edit->text());
     config.writeEntry("WEPStaticKey4", m_key4Edit->text());
     config.writeEntry("WEPPassphrase", m_passphrase->text());
+}
+
+EncryptionSettingsWidget::EncryptionType WepSettingsWidget::type() const
+{
+    return Wep;
+}
+
+
+bool WepSettingsWidget::validate(const QString &input) const
+{
+    kDebug() << "Validating input: " << input;
+    //get the easy less expensive disqualifications out of the way
+    if (m_keyType == Passphrase && !input.isEmpty()){
+        kDebug() << "Passphrase is valid.";
+        return true;
+    }
+    if (input.isEmpty() || input.size() > m_keyLength) {
+        kDebug() << "Key is empty or too long.";
+        return false;
+    }
+
+    switch (m_keyType) {
+        case Ascii:
+        case Passphrase:
+            if (!isStringAscii(input)) {
+                kDebug() << "Key contains non-alphanumeric charachters.";
+                return false;
+            }
+            break;
+        case Hex:
+            if (!isStringHex(input)) {
+                kDebug() << "Key contains non-hex charachters.";
+                return false;
+            }
+            break;
+    }
+    if (input.size() == m_keyLength) {
+        kDebug() << "Key is valid.";
+        return true;
+    }
+    kDebug() << "Key is not yet valid.";
+    return false;
+}
+
+bool WepSettingsWidget::isStringHex(const QString &str) const
+{
+    for (int index=0; index < str.size(); index++) {
+        QChar charachter = str.at(index);
+        if (!charachter.isDigit() && !m_hexLetters.contains(charachter, Qt::CaseInsensitive)) {
+            kDebug() << "Key contains non-hex charachter: " << charachter;
+            return false;
+        }
+    }
+    return true;
+}
+
+bool WepSettingsWidget::isStringAscii(const QString &str) const
+{
+    for (int index=0; index < str.size(); index++) {
+        QChar charachter = str.at(index);
+        if (!charachter.isLetterOrNumber()) {
+            kDebug() << "Key contains non-alphanumeric charachter: " << charachter;
+            return false;
+        }
+    }
+    return true;
+}
+
+bool WepSettingsWidget::isValid() const
+{
+    if(m_keyType == Passphrase && validate(m_passphrase->text())) {
+        return true;
+    }
+    switch (m_keyUsed) {
+        case 1:
+             return validate(m_key1Edit->text());
+        case 2:
+            return validate(m_key2Edit->text());
+        case 3:
+            return validate(m_key3Edit->text());
+        case 4:
+            return validate(m_key4Edit->text());
+        default:
+            return false;
+    }
 }
 
 void WepSettingsWidget::onShowKeyChanged(int state)
@@ -185,17 +283,19 @@ void WepSettingsWidget::onShowKeyChanged(int state)
     }
 }
 
-void WepSettingsWidget::onEncKeyTypeChanged(int index)
+void WepSettingsWidget::onKeyTypeChanged(int index)
 {
+    m_keyType = (KeyType)index;
     kDebug() << "Index was changed to: " << index;
     QLayoutItem *layoutItem = m_mainLayout->itemAt(3);
     if (layoutItem == 0) {
         return;
     }
 
+    //change the widget
     switch (index) {
-        case 0:
-        case 1:
+        case Ascii:
+        case Hex:
             if (m_securityKeyGroup != (QGroupBox*)(layoutItem)) {
                 //remove the last item
                 m_mainLayout->takeAt(3);
@@ -203,8 +303,8 @@ void WepSettingsWidget::onEncKeyTypeChanged(int index)
                 m_mainLayout->addWidget(m_securityKeyGroup);
                 m_securityKeyGroup->setVisible(true);
             }
-            return;
-        case 2:
+            break;
+        case Passphrase:
             if (m_passphraseWidget != (QWidget*)(layoutItem)) {
                 //remove the last item
                 m_mainLayout->takeAt(3);
@@ -212,9 +312,66 @@ void WepSettingsWidget::onEncKeyTypeChanged(int index)
                 m_mainLayout->addWidget(m_passphraseWidget);
                 m_passphraseWidget->setVisible(true);
             }
-            return;
+            break;
         default:
-            return;
+            break;
+    }
+
+    //validation
+    kDebug() << "Key type change.  Validating . . . ";
+    bool valid = isValid();
+    kDebug() << "Input is Valid: " << valid;
+    emit validationChanged(valid);
+}
+
+void WepSettingsWidget::onWepTypeChanged(int type)
+{
+    kDebug() << "Changing wep type.";
+    
+    switch (type) {
+        case Wep64:
+            m_keyLength = 5;
+            break;
+        case Wep128:
+            m_keyLength = 10;
+            break;
+        default:
+            kDebug() << "Wep type not recognized.";
+            emit validationChanged(false);
+    }
+
+    bool valid =  isValid();
+    kDebug() << "Input is Valid: " << valid;
+    emit validationChanged(valid);
+}
+
+void WepSettingsWidget::onKeyChanged(int key)
+{
+    kDebug() << "Key changed to: " << key+1 << ".  Validating . . . ";
+    m_keyUsed = key+1; //HACK: the index returned from the QComboBox is 0 indexed
+    
+    bool valid =  isValid();
+    kDebug() << "Input is Valid: " << valid;
+    emit validationChanged(valid);
+}
+
+void WepSettingsWidget::onDataEntered(const QString &text)
+{
+    if (m_keyType == Passphrase && (QLineEdit*)sender() == m_passphrase) {
+        kDebug() << "Passphrase was chosen.";
+        emit validationChanged(isValid());
+    } else if(m_keyUsed == 1 && (QLineEdit*)sender() == m_key1Edit) {
+        kDebug() << "Key1 was chosen.";
+        emit validationChanged(isValid());
+    } else if(m_keyUsed == 2 && (QLineEdit*)sender() == m_key2Edit) {
+        kDebug() << "Key2 was chosen.";
+        emit validationChanged(isValid());
+    } else if(m_keyUsed == 3 && (QLineEdit*)sender() == m_key3Edit) {
+        kDebug() << "Key3 was chosen.";
+        emit validationChanged(isValid());
+    } else if(m_keyUsed == 4 && (QLineEdit*)sender() == m_key4Edit) {
+        kDebug() << "Key4 was chosen.";
+        emit validationChanged(isValid());
     }
 }
 

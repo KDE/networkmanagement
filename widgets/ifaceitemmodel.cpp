@@ -117,6 +117,7 @@ void IfaceItemModel::sort(int column, Qt::SortOrder order)
 void IfaceItemModel::filter(FilterTypes types)
 {
     m_priorityList.clear();
+    reset();
     foreach (const Solid::Control::NetworkInterface &iface, m_ifaceList) {
         if (types & Ieee8023 && iface.type() == Solid::Control::NetworkInterface::Ieee8023) {
             m_priorityList << iface;
@@ -124,7 +125,7 @@ void IfaceItemModel::filter(FilterTypes types)
             m_priorityList << iface;
         }
     }
-    emit dataChanged(index(0,0), index(rowCount(),0));
+    emit dataChanged(index(0,0), index(rowCount()-1,0));
 }
 
 void IfaceItemModel::moveIndexUp(const QModelIndex &index)
@@ -134,7 +135,7 @@ void IfaceItemModel::moveIndexUp(const QModelIndex &index)
     }
 
     m_priorityList.swap(index.row(), index.row()-1);
-    emit dataChanged(this->index(0,0), this->index(rowCount(),0));
+    emit dataChanged(this->index(0,0), this->index(rowCount()-1,0));
 }
 
 void IfaceItemModel::moveIndexDown(const QModelIndex &index)
@@ -144,7 +145,7 @@ void IfaceItemModel::moveIndexDown(const QModelIndex &index)
     }
 
     m_priorityList.swap(index.row(), index.row()+1);
-    emit dataChanged(this->index(0,0), this->index(rowCount(),0));
+    emit dataChanged(this->index(0,0), this->index(rowCount()-1,0));
 }
 
 QString IfaceItemModel::priorityInterface() const

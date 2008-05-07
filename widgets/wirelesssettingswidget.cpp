@@ -45,7 +45,7 @@ WirelessSettingsWidget::WirelessSettingsWidget(QWidget *parent)
 {
     m_connectionTypes << i18n("Managed") << i18n("Adhoc");
     m_wirelessModes << i18n("Auto") << i18n("802.11a") << i18n("802.11b") << i18n("802.11g") << i18n("802.11n");
-    m_securityTypes << i18n("None") << i18n("WEP") << i18n("WPA");
+    m_securityTypes << i18n("None") << i18n("WEP");// << i18n("WPA");TODO
 
     //initialize elements
     m_mainLayout = new QGridLayout(this);
@@ -68,6 +68,7 @@ WirelessSettingsWidget::WirelessSettingsWidget(QWidget *parent)
     m_securityType->addItems(m_securityTypes);
     m_securitySettingsButton = new QPushButton(i18n("Settings"));
     m_securitySettingsButton->setEnabled(false);
+    m_savedSecurityType = EncryptionSettingsWidget::None;
 
     //layout items
     //left pane
@@ -91,6 +92,7 @@ WirelessSettingsWidget::WirelessSettingsWidget(QWidget *parent)
     connect(m_securityType, SIGNAL(activated(int)), this, SLOT(onSecurityTypeChanged(int)));
     connect(m_scanButton, SIGNAL(clicked()), this, SLOT(onScanClicked()));
     connect(m_securitySettingsButton, SIGNAL(clicked()), this, SLOT(onEncryptClicked()));
+    connect(m_essid, SIGNAL(textChanged(const QString&)), this, SLOT(onEssidChanged(const QString&)));
 }
 
 WirelessSettingsWidget::~WirelessSettingsWidget()
@@ -129,6 +131,7 @@ void WirelessSettingsWidget::setWirelessInterface(const QString &uni)
         return;
     } else if (iface.type() != Solid::Control::NetworkInterface::Ieee80211) {
         kDebug() << "Interface was not of type IEEE 80211.";
+        return;
     }
     
     m_wirelessInterface = uni;
@@ -150,6 +153,22 @@ void WirelessSettingsWidget::saveConfig(KConfigGroup &config)
     config.writeEntry("WirelessConnectionType", m_connectionType->currentIndex());
     config.writeEntry("WirelessMode", m_wirelessMode->currentIndex());
     config.writeEntry("WirelessSecurityType", m_securityType->currentIndex());
+    if (m_securityType->currentIndex() != 0) {
+        m_encryptionWidget->saveConfig(config);
+    }
+}
+
+bool WirelessSettingsWidget::isValid() const
+{
+    if (m_essid->text().isEmpty()) {
+        kDebug() << "ESSID is empty.";
+        return false;
+    }
+    if (m_securityType->currentIndex() != 0 && m_securityType->currentIndex() != (int)m_savedSecurityType) {
+        kDebug() << "Security Type does not match encryption.";
+        return false;
+    }
+    return true;
 }
 
 void WirelessSettingsWidget::onScanClicked()
@@ -194,6 +213,7 @@ void WirelessSettingsWidget::onSecurityTypeChanged(int index)
         case 2:
             m_securitySettingsButton->setEnabled(true);
     }
+    emit validationChanged(isValid());
 }
 
 void WirelessSettingsWidget::onEncryptClicked()
@@ -205,6 +225,8 @@ void WirelessSettingsWidget::onEncryptClicked()
         m_encryptdlg->setCaption(i18n("Encryption Settings"));
         m_encryptdlg->setMainWidget(m_encryptionWidget);
         connect(m_encryptdlg, SIGNAL(okClicked()), this, SLOT(onEncryptionSet()));
+        connect(m_encryptionWidget, SIGNAL(validationChanged(bool)), m_encryptdlg, SLOT(enableButtonOk(bool)));
+        m_encryptdlg->enableButtonOk(false);
     }
     m_encryptdlg->show();
 }
@@ -212,6 +234,15 @@ void WirelessSettingsWidget::onEncryptClicked()
 void WirelessSettingsWidget::onEncryptionSet()
 {
     kDebug() << "Encryption was accepted.";
+    m_savedSecurityType = m_encryptionWidget->type();
+    bool valid = isValid();
+    kDebug() << "Widget is valid: " << valid;
+    emit validationChanged(valid);
+}
+
+void WirelessSettingsWidget::onEssidChanged(const QString &text)
+{
+    emit validationChanged(isValid());
 }
 
 #include "wirelesssettingswidget.moc"

@@ -36,6 +36,7 @@ ProfileItemModel::~ProfileItemModel()
 void ProfileItemModel::updateConfig(const KConfigGroup &config)
 {
     m_profileList.clear();
+    reset();
     foreach (const QString &groupName, config.groupList()) {
         kDebug() << "Adding profile: " << groupName;
         const KConfigGroup configGroup = config.group(groupName);
@@ -88,6 +89,53 @@ QVariant ProfileItemModel::data(const QModelIndex &index, int role) const
         default:
             return QVariant();
     }
+}
+
+bool ProfileItemModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (index.row() < 0 || index.row() >= m_profileList.size()) {
+        return false;
+    }
+
+    switch (role) {
+        case Qt::DisplayRole:
+            m_profileList[index.row()].setName(value.toString());
+            break;
+        case Qt::DecorationRole:
+            m_profileList[index.row()].setType((NetworkProfile::Type)value.toInt());
+            break;
+        default:
+            return false;
+    }
+    emit dataChanged(index,index);
+    return true;
+}
+
+bool ProfileItemModel::insertRows(int row, int count, const QModelIndex &parent)
+{
+    if (row < 0 || row > m_profileList.size()) {
+        return false;
+    }
+    
+    beginInsertRows(parent, row, row+count);
+    for(int index=0; index < count; index++) {
+        m_profileList.insert(row+index, NetworkProfile());
+    }
+    endInsertRows();
+    return true;
+}
+bool ProfileItemModel::removeRows(int row, int count, const QModelIndex &parent)
+{
+    if (row < 0 || row >= m_profileList.size()) {
+        return false;
+    }
+
+    beginRemoveRows(parent, row, row+count);
+    for(int index=0; index < count; index++) {
+        m_profileList.removeAt(row+index);
+    }
+    endRemoveRows();
+    return true;
 }
 
 #include "profileitemmodel.moc"

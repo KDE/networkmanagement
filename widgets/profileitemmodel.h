@@ -38,11 +38,16 @@ class ProfileItemModel : public QAbstractItemModel
         ~ProfileItemModel();
 
         void updateConfig(const KConfigGroup &config);
+        
         QModelIndex index(int row, int column, const QModelIndex &parent=QModelIndex()) const;
         QModelIndex parent(const QModelIndex &index) const;
         int rowCount(const QModelIndex &parent=QModelIndex()) const;
         int columnCount(const QModelIndex &parent=QModelIndex()) const;
         QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
+
+        bool setData(const QModelIndex &index, const QVariant &value, int role);
+        bool insertRows(int row, int count, const QModelIndex &parent=QModelIndex());
+        bool removeRows(int row, int count, const QModelIndex &parent=QModelIndex());
         
     private:
         QList<NetworkProfile> m_profileList;

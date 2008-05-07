@@ -55,12 +55,19 @@ class WirelessSettingsWidget : public QWidget
 
         void saveConfig(KConfigGroup &config);
 
+        //validation
+        bool isValid() const;
+
+    Q_SIGNALS:
+        void validationChanged(bool);
+        
     private Q_SLOTS:
         void onScanClicked();
         void onApChosen();
         void onSecurityTypeChanged(int index);
         void onEncryptClicked();
         void onEncryptionSet();
+        void onEssidChanged(const QString &text);
 
     private:
         void enableSpecificItems(bool enable=true);
@@ -84,6 +91,10 @@ class WirelessSettingsWidget : public QWidget
 
         //encryption
         EncryptionSettingsWidget *m_encryptionWidget;
+        EncryptionSettingsWidget::EncryptionType m_savedSecurityType;
+
+        //validation
+        bool isInputValid;
 };
 
 #endif
