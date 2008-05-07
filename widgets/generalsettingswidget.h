@@ -57,6 +57,8 @@ class GeneralSettingsWidget : public QWidget
         void saveConfig(KConfigGroup &config);
         void loadConfig(const KConfigGroup &config);
 
+        void setStaticMode(bool disable=true);
+
         //validation
         bool isValid() const;
 

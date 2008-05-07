@@ -139,6 +139,14 @@ void ManageProfileWidget::onEditProfileClicked()
     m_wirelessEditWidget = new WirelessSettingsWidget();
     m_generalEditWidget = new GeneralSettingsWidget();
     m_generalEditWidget->setWirelessSettings(m_wirelessEditWidget);
+
+    //load configuration into the dialog
+    QModelIndex index = m_profileView->currentIndex();
+    kDebug() << "Loading profile: " << index.data().toString();
+    m_generalEditWidget->loadConfig(KConfigGroup(&m_config, index.data().toString()));
+
+    //disable non-editable rows
+    m_generalEditWidget->setStaticMode();
     m_editProfiledlg->setCaption(i18n("Edit Profile"));
     m_editProfiledlg->addPage(m_generalEditWidget, i18n("General Settings"));
     m_editProfiledlg->addPage(m_wirelessEditWidget, i18n("Wireless Settings"));
@@ -157,6 +165,7 @@ void ManageProfileWidget::onDeleteProfileClicked()
         return;
     }
     m_config.deleteGroup(profileName);
+    m_config.sync();
     m_profileModel->removeRow(current.row());
 }
 

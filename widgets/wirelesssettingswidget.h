@@ -54,6 +54,7 @@ class WirelessSettingsWidget : public QWidget
         void enableAdhoc(bool enable);
 
         void saveConfig(KConfigGroup &config);
+        void loadConfig(const KConfigGroup &config);
 
         //validation
         bool isValid() const;
@@ -71,6 +72,7 @@ class WirelessSettingsWidget : public QWidget
 
     private:
         void enableSpecificItems(bool enable=true);
+        void createEncryptionWidget();
 
         QStringList m_connectionTypes, m_wirelessModes, m_securityTypes;
 

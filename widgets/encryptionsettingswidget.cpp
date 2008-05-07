@@ -147,20 +147,10 @@ WepSettingsWidget::WepSettingsWidget(QWidget *parent)
 
 WepSettingsWidget::~WepSettingsWidget()
 {
-    delete m_mainLayout;
-    delete m_apAuthLayout;
-    delete m_dataEncLayout;
     delete m_apAuthLabel;
     delete m_dataEncLabel;
     delete m_apAuth;
     delete m_dataEnc;
-    delete m_securityKeyGroup;
-    delete m_securityKeyLayout;
-    delete m_keySelectionLayout;
-    delete m_key1Layout;
-    delete m_key2Layout;
-    delete m_key3Layout;
-    delete m_key4Layout;
     delete m_encryptKeyLabel;
     delete m_key1Label;
     delete m_key2Label;
@@ -170,23 +160,46 @@ WepSettingsWidget::~WepSettingsWidget()
     delete m_key2Edit;
     delete m_key3Edit;
     delete m_key4Edit;
-    delete m_passphraseLayout;
     delete m_passphraseLabel;
     delete m_passphrase;
     delete m_showKey;
+    delete m_passphraseLayout;
+    delete m_key1Layout;
+    delete m_key2Layout;
+    delete m_key3Layout;
+    delete m_key4Layout;
+    delete m_keySelectionLayout;
+    delete m_securityKeyLayout;
+    delete m_securityKeyGroup;
+    delete m_apAuthLayout;
+    delete m_dataEncLayout;
+    delete m_mainLayout;
 }
 
 void WepSettingsWidget::saveConfig(KConfigGroup &config)
 {
     kDebug() << "Saving encryption settings.";
-    config.writeEntry("WEPAuthentication", m_apAuth->currentText());
-    config.writeEntry("WEPType", m_dataEnc->currentText());
-    config.writeEntry("WEPEncryptionKeyType", m_encKeyType->currentText());
+    config.writeEntry("WEPAuthentication", m_apAuth->currentIndex());
+    config.writeEntry("WEPType", m_dataEnc->currentIndex());
+    config.writeEntry("WEPEncryptionKeyType", m_encKeyType->currentIndex());
     config.writeEntry("WEPStaticKey1", m_key1Edit->text());
     config.writeEntry("WEPStaticKey2", m_key2Edit->text());
     config.writeEntry("WEPStaticKey3", m_key3Edit->text());
     config.writeEntry("WEPStaticKey4", m_key4Edit->text());
     config.writeEntry("WEPPassphrase", m_passphrase->text());
+}
+
+void WepSettingsWidget::loadConfig(const KConfigGroup &config)
+{
+    m_apAuth->setCurrentIndex(config.readEntry("WEPAuthentication", 0));
+    m_dataEnc->setCurrentIndex(config.readEntry("WEPType", 0));
+    m_encKeyType->setCurrentIndex(config.readEntry("WEPEncryptionKeyType", 0));
+    onKeyTypeChanged(m_encKeyType->currentIndex());
+    m_key1Edit->setText(config.readEntry("WEPStaticKey1", QString()));
+    m_key2Edit->setText(config.readEntry("WEPStaticKey2", QString()));
+    m_key3Edit->setText(config.readEntry("WEPStaticKey3", QString()));
+    m_key4Edit->setText(config.readEntry("WEPStaticKey4", QString()));
+    m_passphrase->setText(config.readEntry("WEPPassphrase", QString()));
 }
 
 EncryptionSettingsWidget::EncryptionType WepSettingsWidget::type() const

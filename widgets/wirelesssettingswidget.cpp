@@ -109,12 +109,10 @@ WirelessSettingsWidget::~WirelessSettingsWidget()
     delete m_scanButton;
     delete m_securitySettingsButton;
     delete m_scandlg;
-    delete m_encryptdlg;
-    delete m_scanView;
-    delete m_scanModel;
-    delete m_scanDelegate;
-    delete m_scanSelectionModel;
     delete m_encryptionWidget;
+    delete m_encryptdlg;
+    delete m_scanSelectionModel;
+    delete m_scanModel;
     delete m_mainLayout;
 }
 
@@ -154,7 +152,25 @@ void WirelessSettingsWidget::saveConfig(KConfigGroup &config)
     config.writeEntry("WirelessMode", m_wirelessMode->currentIndex());
     config.writeEntry("WirelessSecurityType", m_securityType->currentIndex());
     if (m_securityType->currentIndex() != 0) {
-        m_encryptionWidget->saveConfig(config);
+        KConfigGroup encConfig(&config, "Encryption");
+        m_encryptionWidget->saveConfig(encConfig);
+    }
+}
+
+void WirelessSettingsWidget::loadConfig(const KConfigGroup &config)
+{
+    kDebug() << "Loading wireless settings.";
+    m_essid->setText(config.readEntry("ESSID", QString()));
+    m_connectionType->setCurrentIndex(config.readEntry("WirelessConnectionType", 0));
+    m_wirelessMode->setCurrentIndex(config.readEntry("WirelessMode", 0));
+    m_securityType->setCurrentIndex(config.readEntry("WirelessSecurityType",0));
+    if (m_securityType->currentIndex() != 0 && config.hasGroup("Encryption")) {
+        //create the encryption widget and enable the settings button if applicable
+        createEncryptionWidget();
+        m_securitySettingsButton->setEnabled(m_securityType->currentIndex() != EncryptionSettingsWidget::None);
+        
+        KConfigGroup encConfig(&config, "Encryption");
+        m_encryptionWidget->loadConfig(encConfig);
     }
 }
 
@@ -218,16 +234,7 @@ void WirelessSettingsWidget::onSecurityTypeChanged(int index)
 
 void WirelessSettingsWidget::onEncryptClicked()
 {
-    if (m_encryptdlg == 0) {
-        m_encryptionWidget = new WepSettingsWidget(m_encryptdlg);
-        m_encryptdlg = new KDialog();
-        m_encryptdlg->setButtons( KDialog::Ok | KDialog::Cancel);
-        m_encryptdlg->setCaption(i18n("Encryption Settings"));
-        m_encryptdlg->setMainWidget(m_encryptionWidget);
-        connect(m_encryptdlg, SIGNAL(okClicked()), this, SLOT(onEncryptionSet()));
-        connect(m_encryptionWidget, SIGNAL(validationChanged(bool)), m_encryptdlg, SLOT(enableButtonOk(bool)));
-        m_encryptdlg->enableButtonOk(false);
-    }
+    createEncryptionWidget();
     m_encryptdlg->show();
 }
 
@@ -243,6 +250,20 @@ void WirelessSettingsWidget::onEncryptionSet()
 void WirelessSettingsWidget::onEssidChanged(const QString &text)
 {
     emit validationChanged(isValid());
+}
+
+void WirelessSettingsWidget::createEncryptionWidget()
+{
+    if (m_encryptdlg == 0) {
+        m_encryptionWidget = new WepSettingsWidget(m_encryptdlg);
+        m_encryptdlg = new KDialog();
+        m_encryptdlg->setButtons( KDialog::Ok | KDialog::Cancel);
+        m_encryptdlg->setCaption(i18n("Encryption Settings"));
+        m_encryptdlg->setMainWidget(m_encryptionWidget);
+        connect(m_encryptdlg, SIGNAL(okClicked()), this, SLOT(onEncryptionSet()));
+        connect(m_encryptionWidget, SIGNAL(validationChanged(bool)), m_encryptdlg, SLOT(enableButtonOk(bool)));
+        m_encryptdlg->enableButtonOk(m_encryptionWidget->isValid());
+    }
 }
 
 #include "wirelesssettingswidget.moc"

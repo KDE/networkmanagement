@@ -109,6 +109,16 @@ void GeneralSettingsWidget::loadConfig(const KConfigGroup &config)
     m_profileName->setText(config.name());
     m_profileType->setCurrentIndex(config.readEntry("ProfileType", 0));
     m_connectionType->setCurrentIndex(config.readEntry("ConnectionType", 0));
+
+    if(!wiredProfile()) {
+        m_wifiSettings->loadConfig(config);
+    }
+}
+
+void GeneralSettingsWidget::setStaticMode(bool disable)
+{
+    m_profileName->setEnabled(!disable);
+    m_connectionType->setEnabled(!disable);
 }
 
 bool GeneralSettingsWidget::isValid() const

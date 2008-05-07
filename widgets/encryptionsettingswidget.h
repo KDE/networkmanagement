@@ -47,7 +47,12 @@ class EncryptionSettingsWidget : public QWidget
         ~EncryptionSettingsWidget();
 
         virtual void saveConfig(KConfigGroup &config) = 0;
+        virtual void loadConfig(const KConfigGroup &config) = 0;
+        
         virtual EncryptionType type() const = 0;
+
+        //validation
+        virtual bool isValid() const = 0;
         
     Q_SIGNALS:
         void validationChanged(bool);
@@ -63,6 +68,8 @@ class WepSettingsWidget : public EncryptionSettingsWidget
         ~WepSettingsWidget();
 
         void saveConfig(KConfigGroup &config);
+        void loadConfig(const KConfigGroup &config);
+        
         EncryptionType type() const;
 
         //validation
