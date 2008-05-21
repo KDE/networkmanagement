@@ -25,6 +25,8 @@
 #include <QVariant>
 
 #include <solid/control/networkinterface.h>
+#include <solid/control/wirednetworkinterface.h>
+#include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/networkmanager.h>
 #include <solid/networkinterface.h>
 //#include <solid/devicemanager.h>
@@ -59,6 +61,8 @@ class IfaceItemModel : public QAbstractItemModel
         Solid::Control::NetworkInterfaceList m_ifaceList;
         Solid::Control::NetworkInterfaceList m_priorityList;
         QList<Solid::Control::NetworkInterface::Type> m_priorityTypeList;
+
+        static const int m_numColumns = 3;
 };
 
 #endif

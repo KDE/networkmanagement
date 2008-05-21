@@ -29,8 +29,9 @@
 ApItemModel::ApItemModel(QString uni, QObject *parent)
     : QAbstractItemModel(parent),
       m_accessPoints(),
-      m_uni(uni)
+      m_networkInterface(0)
 {
+    setNetworkInterface(uni);
 }
 
 ApItemModel::~ApItemModel()
@@ -40,7 +41,6 @@ ApItemModel::~ApItemModel()
 void ApItemModel::init()
 {
     connect(this, SIGNAL(scanComplete()), this, SLOT(onScanComplete()));
-    scan();
 }
 
 QModelIndex ApItemModel::index(int row, int column, const QModelIndex &parent) const
@@ -64,7 +64,8 @@ int ApItemModel::rowCount(const QModelIndex &parent) const
 int ApItemModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return 1;
+    //columns are: essid(QString), signal strength(int), encrypted(bool/QString), mac address(QString)
+    return m_numColumns;
 }
 
 QVariant ApItemModel::data(const QModelIndex &index, int role) const
@@ -72,43 +73,110 @@ QVariant ApItemModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if (index.row() >= m_accessPoints.size() || index.row() < 0)
+    if (index.row() >= m_accessPoints.size() || index.row() < 0 || index.column() >= m_numColumns || index.column() < 0)
         return QVariant();
 
-    switch (role){
-        case Qt::DisplayRole:
-            return m_accessPoints.value(index.row()).essid();
-        case Qt::DecorationRole:
-            return KIcon("network-wireless");
-        case SignalStrength:
-            return m_accessPoints.value(index.row()).signalStrength();
-        case MacAddress:
-            return m_accessPoints.value(index.row()).macAddress();
-        case EncryptionRole:
-            return (m_accessPoints.value(index.row()).encrypted()) ? QString("object-locked") : QString("object-unlocked");
+    Solid::Control::AccessPoint *accessPoint = m_accessPoints.value(index.row());
+    if (accessPoint == 0) {
+        kDebug() << "Access point could not be found.";
+        return QVariant();
+    }
+    switch (index.column()) {
+        case 0:
+            switch (role){
+                case Qt::DisplayRole:
+                    return accessPoint->ssid();
+                case Qt::DecorationRole:
+                    return KIcon("network-wireless");
+                case SignalStrength:
+                    return accessPoint->signalStrength();
+                case MacAddress:
+                    return accessPoint->hardwareAddress();
+                case EncryptionRole:
+                    return (accessPoint->wpaFlags() != 0) ? QString("object-locked") : QString("object-unlocked");
+                default:
+                    return QVariant();
+            }
+        case 1:
+            return accessPoint->ssid();
+        case 2:
+            return (accessPoint->wpaFlags() != 0) ? QString("Yes") : QString("No");
+        case 3:
+            return accessPoint->hardwareAddress();
         default:
             return QVariant();
     }
 }
 
-void ApItemModel::setNewtorkDevice(const QString &uni)
+QVariant ApItemModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    m_uni = uni;
+    switch (orientation) {
+        case Qt::Horizontal:
+            if (section < 0 || section >= m_numColumns) {
+                kDebug() << "Section is out of bounds: " << section;
+                return QVariant();
+            }
+
+            switch (section) {
+                case 0:
+                    return QVariant("Name");
+                case 1:
+                    return QVariant("Signal Strength");
+                case 2:
+                    return QVariant("Encrypted");
+                case 3:
+                    return QVariant("Mac Address");
+                default:
+                    return QVariant();
+            }
+        case Qt::Vertical:
+            return QVariant(section);
+    }
+    return QVariant();
 }
 
-QString ApItemModel::networkDevice() const
+void ApItemModel::setNetworkInterface(const QString &uni)
 {
-    return m_uni;
+    if (uni.isEmpty()) {
+        return;
+    }
+    
+    Solid::Control::NetworkInterface *networkInterface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+    if (networkInterface == 0) {
+        kDebug() << "Could not create a valid network interface.";
+        m_networkInterface=0;
+        return;
+    } else if (networkInterface->type() != Solid::Control::NetworkInterface::Ieee80211) {
+        kDebug() << "Network Interface is not of type IEEE 80211";
+        m_networkInterface=0;
+        return;
+    }
+    m_networkInterface = (Solid::Control::WirelessNetworkInterface*)networkInterface;
+}
+
+Solid::Control::WirelessNetworkInterface* ApItemModel::networkInterface() const
+{
+    return m_networkInterface;
 }
 
 void ApItemModel::sort(int column, Qt::SortOrder order)
 {
     Q_UNUSED(column)
     if (order == Qt::DescendingOrder) {
-        qSort(m_accessPoints.begin(), m_accessPoints.end(), qGreater<AccessPoint>());
+        qSort(m_accessPoints.begin(), m_accessPoints.end(), ApItemModel::isSignalStrengthGreater);
     } else {
         qSort(m_accessPoints);
     }
+}
+
+bool ApItemModel::isSignalStrengthGreater(Solid::Control::AccessPoint *first, Solid::Control::AccessPoint *second)
+{
+    return (first->signalStrength() > second->signalStrength());
+}
+
+bool ApItemModel::isSignalStrengthLesser(Solid::Control::AccessPoint *first, Solid::Control::AccessPoint *second)
+{
+    return (first->signalStrength() < second->signalStrength());
 }
 
 void ApItemModel::scan()
@@ -132,22 +200,30 @@ void ApItemModel::onScanComplete()
 
     ap.setData("Neighbor's Wifi", AccessPoint::Wireless, 45, "other:address", false);
     m_accessPoints << ap;*/
-    Solid::Control::NetworkInterface iface(m_uni);
-    if (!iface.isValid()) {
-        kDebug() << "Could not create a valid network interface.";
-        return;
-    } else if (iface.type() != Solid::Control::NetworkInterface::Ieee80211) {
-        kDebug() << "Network Interface is not of type IEEE 80211";
-    }
 
-    Solid::Control::NetworkList netList = iface.networks();
-    if (netList.size() == 0) {
+    m_ssids.clear();
+    m_accessPoints.clear();
+    reset();
+
+    if (m_networkInterface == 0) {
+        kDebug() << "Primary interface not set.";
+    }
+    Solid::Control::AccessPointList apList = m_networkInterface->accessPoints();
+    kDebug() << apList.size() << " access points were found.";
+    if (apList.size() == 0) {
         kDebug() << "No networks found.";
     }
-    foreach (Solid::Control::Network *network, netList) {
-        Solid::Control::WirelessNetwork *wifiNet = (Solid::Control::WirelessNetwork*)network;
-        AccessPoint ap(wifiNet->essid(), wifiNet->signalStrength(), wifiNet->bssList()[0], wifiNet->isEncrypted());
-        m_accessPoints << ap;
+    
+    foreach (const QString &ap, apList) {
+        kDebug() << "Proccessing ap: " << ap;
+        Solid::Control::AccessPoint *accesspoint = m_networkInterface->findAccessPoint(ap);
+        if (accesspoint == 0) {
+            continue;
+        }
+        kDebug() << "Adding to AP list.";
+        
+        m_ssids << ap;
+        m_accessPoints << accesspoint;
     }
     sort();
 }

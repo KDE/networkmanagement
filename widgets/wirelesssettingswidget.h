@@ -20,9 +20,7 @@
 #ifndef WIRELESSSETTINGSWIDGET_H
 #define WIRELESSSETTINGSWIDGET_H
 
-#include "apitemview.h"
-#include "apitemmodel.h"
-#include "apitemdelegate.h"
+#include "scanwidget.h"
 #include "encryptionsettingswidget.h"
 
 #include <QWidget>
@@ -86,11 +84,8 @@ class WirelessSettingsWidget : public QWidget
         QString m_wirelessInterface;
 
         //scanview
-        ApItemView *m_scanView;
-        ApItemModel *m_scanModel;
-        ApItemDelegate *m_scanDelegate;
-        QItemSelectionModel *m_scanSelectionModel;
-
+        ScanWidget *m_scanWidget;
+        
         //encryption
         EncryptionSettingsWidget *m_encryptionWidget;
         EncryptionSettingsWidget::EncryptionType m_savedSecurityType;

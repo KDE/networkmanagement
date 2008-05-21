@@ -39,8 +39,6 @@ ApItemView::ApItemView(QWidget *parent)
       m_itemHeight(0),
       m_itemWidth(0)
 {
-    setMinimumWidth(viewMinWidth);
-    setMinimumHeight(viewMinHeight);
     initStyleOptions();
 }
 
@@ -108,7 +106,7 @@ void ApItemView::setCurrentIndex(const QModelIndex &index)
 
 QModelIndex ApItemView::indexAt(const QPoint &p) const
 {
-    foreach (QModelIndex index, m_apLayout.keys()) {
+    foreach (const QModelIndex &index, m_apLayout.keys()) {
         QRect rect = m_apLayout[index];
         if (rect.contains(p)) {
             return index;

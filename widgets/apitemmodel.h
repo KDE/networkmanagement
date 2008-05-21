@@ -20,17 +20,14 @@
 #ifndef APITEMMODEL_H
 #define APITEMMODEL_H
 
-#include "accesspoint.h"
-
 #include <QAbstractItemModel>
 #include <QModelIndex>
 #include <QVariant>
 
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
-#include <solid/control/network.h>
-#include <solid/control/wirelessnetwork.h>
-#include <solid/control/authentication.h>
+#include <solid/control/wirelessnetworkinterface.h>
+#include <solid/control/wirelessaccesspoint.h>
 
 class ApItemModel : public QAbstractItemModel
 {
@@ -48,10 +45,11 @@ class ApItemModel : public QAbstractItemModel
         int rowCount(const QModelIndex &parent=QModelIndex()) const;
         int columnCount(const QModelIndex &parent=QModelIndex()) const;
         QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
+        QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
         void sort(int column=0, Qt::SortOrder order=Qt::DescendingOrder);
 
-        void setNewtorkDevice(const QString &uni);
-        QString networkDevice() const;
+        void setNetworkInterface(const QString &uni);
+        Solid::Control::WirelessNetworkInterface* networkInterface() const;
 
         void scan();
 
@@ -62,8 +60,14 @@ class ApItemModel : public QAbstractItemModel
         void onScanComplete();
 
     private:
-        QList<AccessPoint> m_accessPoints;
-        QString m_uni;
+        static bool isSignalStrengthLesser(Solid::Control::AccessPoint *first, Solid::Control::AccessPoint *second);
+        static bool isSignalStrengthGreater(Solid::Control::AccessPoint *first, Solid::Control::AccessPoint *second);
+        
+        Solid::Control::AccessPointList m_ssids;
+        QList<Solid::Control::AccessPoint*> m_accessPoints;
+        Solid::Control::WirelessNetworkInterface *m_networkInterface;
+
+        static const int m_numColumns = 4;
 };
 
 #endif

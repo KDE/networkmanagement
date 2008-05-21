@@ -1,2 +1,2 @@
 #! /usr/bin/env bash
-$XGETTEXT *.cpp -o $podir/plasma_applet_networkmanager.pot
+$XGETTEXT *.cpp widgets/*.cpp -o $podir/plasma_applet_networkmanager.pot

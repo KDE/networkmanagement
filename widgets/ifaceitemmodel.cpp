@@ -59,7 +59,7 @@ int IfaceItemModel::rowCount(const QModelIndex &parent) const
 int IfaceItemModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    return 1;
+    return m_numColumns;
 }
 
 QVariant IfaceItemModel::data(const QModelIndex &index, int role) const
@@ -67,32 +67,75 @@ QVariant IfaceItemModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if (index.row() >= m_priorityList.size() || index.row() < 0)
+    if (index.row() >= m_priorityList.size() || index.row() < 0 || index.column() < 0 || index.column() >= m_numColumns) {
+        kDebug() << "An out-of-bounds index was requested.";
         return QVariant();
+    }
 
-    switch (role) {
-        case Qt::DisplayRole:
-            switch (m_priorityList.value(index.row()).type()) {
-                case Solid::Control::NetworkInterface::Ieee80211:
-                    return QString("Wireless");
-                case Solid::Control::NetworkInterface::Ieee8023:
-                    return QString("Ethernet");
+    //kDebug() << "Requesting column: " << index.column();
+    switch (index.column()) {
+        case 0:
+            switch (role) {
+                case Qt::DisplayRole:
+                    //kDebug() << "Returning: " << m_priorityList.value(index.row())->type();
+                    switch (m_priorityList.value(index.row())->type()) {
+                        case Solid::Control::NetworkInterface::Ieee80211:
+                            return QString("Wireless");
+                        case Solid::Control::NetworkInterface::Ieee8023:
+                            return QString("Ethernet");
+                        default:
+                            return QString("Unknown");
+                    }
+                case Qt::DecorationRole:
+                    switch (m_priorityList.value(index.row())->type()) {
+                        case Solid::Control::NetworkInterface::Ieee80211:
+                            return KIcon("network-wireless");
+                        case Solid::Control::NetworkInterface::Ieee8023:
+                            return KIcon("network-wired");
+                        default:
+                            return KIcon("Unknown");
+                    }
+                case TypeRole:
+                    return QVariant(m_priorityList.value(index.row())->type());
+                case UniRole:
+                    return QVariant(m_priorityList.value(index.row())->uni());
                 default:
-                    return QString("Unknown");
+                    return QVariant();
             }
-        case Qt::DecorationRole:
-            switch (m_priorityList.value(index.row()).type()) {
-                case Solid::Control::NetworkInterface::Ieee80211:
-                    return KIcon("network-wireless");
-                case Solid::Control::NetworkInterface::Ieee8023:
-                    return KIcon("network-wired");
+        case 1:
+            switch (role) {
+                case Qt::DisplayRole:
+                    //kDebug() << "Returning: " << m_priorityList.value(index.row())->uni();
+                    return QVariant(m_priorityList.value(index.row())->uni());
+                case Qt::DecorationRole:
+                    switch (m_priorityList.value(index.row())->type()) {
+                        case Solid::Control::NetworkInterface::Ieee80211:
+                            return KIcon("network-wireless");
+                        case Solid::Control::NetworkInterface::Ieee8023:
+                            return KIcon("network-wired");
+                        default:
+                            return KIcon("Unknown");
+                    }
                 default:
-                    return KIcon("Unknown");
+                    return QVariant();
             }
-        case TypeRole:
-            return QVariant(m_priorityList.value(index.row()).type());
-        case UniRole:
-            return QVariant(m_priorityList.value(index.row()).uni());
+        case 2:
+            switch (role) {
+                case Qt::DisplayRole:
+                    //kDebug() << "Returning: " << m_priorityList.value(index.row())->interfaceName();
+                    return QVariant(m_priorityList.value(index.row())->interfaceName());
+                case Qt::DecorationRole:
+                    switch (m_priorityList.value(index.row())->type()) {
+                        case Solid::Control::NetworkInterface::Ieee80211:
+                            return KIcon("network-wireless");
+                        case Solid::Control::NetworkInterface::Ieee8023:
+                            return KIcon("network-wired");
+                        default:
+                            return KIcon("Unknown");
+                    }
+                default:
+                    return QVariant();
+            }
         default:
             return QVariant();
     }
@@ -103,10 +146,10 @@ void IfaceItemModel::sort(int column, Qt::SortOrder order)
     Q_UNUSED(column)
     Q_UNUSED(order)
     
-    QList<Solid::Control::NetworkInterface> sortedList;
-    foreach (const Solid::Control::NetworkInterface::Type &type, m_priorityTypeList) {
-        foreach (const Solid::Control::NetworkInterface &iface, m_priorityList) {
-            if (iface.type() == type) {
+    Solid::Control::NetworkInterfaceList sortedList;
+    foreach (Solid::Control::NetworkInterface::Type type, m_priorityTypeList) {
+        foreach (Solid::Control::NetworkInterface *iface, m_priorityList) {
+            if (iface->type() == type) {
                 sortedList << iface;
             }
         }
@@ -118,10 +161,10 @@ void IfaceItemModel::filter(FilterTypes types)
 {
     m_priorityList.clear();
     reset();
-    foreach (const Solid::Control::NetworkInterface &iface, m_ifaceList) {
-        if (types & Ieee8023 && iface.type() == Solid::Control::NetworkInterface::Ieee8023) {
+    foreach (Solid::Control::NetworkInterface *iface, m_ifaceList) {
+        if (types & Ieee8023 && iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
             m_priorityList << iface;
-        } else if (types & Ieee80211 && iface.type() == Solid::Control::NetworkInterface::Ieee80211) {
+        } else if (types & Ieee80211 && iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             m_priorityList << iface;
         }
     }
@@ -150,16 +193,16 @@ void IfaceItemModel::moveIndexDown(const QModelIndex &index)
 
 QString IfaceItemModel::priorityInterface() const
 {
-    return m_priorityList[0].uni();
+    return m_priorityList[0]->uni();
 }
 
 QString IfaceItemModel::priorityInterface(FilterTypes types) const
 {
-    foreach (const Solid::Control::NetworkInterface &iface, m_priorityList) {
-        if (types & Ieee8023 && iface.type() == Solid::Control::NetworkInterface::Ieee8023) {
-            return iface.uni();
-        } else if (types & Ieee80211 && iface.type() == Solid::Control::NetworkInterface::Ieee80211) {
-            return iface.uni();
+    foreach (Solid::Control::NetworkInterface *iface, m_priorityList) {
+        if (types & Ieee8023 && iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+            return iface->uni();
+        } else if (types & Ieee80211 && iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+            return iface->uni();
         }
     }
 }

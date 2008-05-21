@@ -56,6 +56,12 @@ class EncryptionSettingsWidget : public QWidget
         
     Q_SIGNALS:
         void validationChanged(bool);
+
+    protected:
+        //conveniance validation functions
+        bool isStringHex(const QString &str) const;
+        bool isStringAscii(const QString &str) const;
+        QString m_hexLetters;
 };
 
 class WepSettingsWidget : public EncryptionSettingsWidget
@@ -109,12 +115,36 @@ class WepSettingsWidget : public EncryptionSettingsWidget
         QCheckBox *m_showKey;
 
         //validation
-        bool isStringHex(const QString &str) const;
-        bool isStringAscii(const QString &str) const;
         bool validate(const QString &input) const;
         EncryptionSettingsWidget::KeyType m_keyType;
         int m_keyLength, m_keyUsed;
-        QString m_hexLetters;
+};
+
+class WpaSettingsWidget : public EncryptionSettingsWidget
+{
+    Q_OBJECT
+
+    public:
+        enum WpaType {None=0};
+        WpaSettingsWidget(QWidget *parent=0);
+        ~WpaSettingsWidget();
+
+        void saveConfig(KConfigGroup &config);
+        void loadConfig(const KConfigGroup &config);
+        
+        EncryptionType type() const;
+
+        //validation
+        bool isValid() const;
+
+    private:
+        QStringList m_authTypes;
+        QStringList m_encTypes;
+
+        QGridLayout *m_mainLayout;
+        QLabel *m_apAuthLabel, *m_encTypeLabel, *m_sharedKeyLabel;
+        QComboBox *m_apAuth, *m_encType;
+        QLineEdit *m_sharedKey;
 };
 
 #endif

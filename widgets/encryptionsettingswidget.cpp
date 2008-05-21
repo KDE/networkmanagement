@@ -22,7 +22,8 @@
 #include <KDebug>
 
 EncryptionSettingsWidget::EncryptionSettingsWidget(QWidget *parent)
-    : QWidget(parent)
+    : QWidget(parent),
+      m_hexLetters("abcdef")
 {
 }
 
@@ -30,10 +31,33 @@ EncryptionSettingsWidget::~EncryptionSettingsWidget()
 {
 }
 
+bool EncryptionSettingsWidget::isStringHex(const QString &str) const
+{
+    for (int index=0; index < str.size(); index++) {
+        QChar charachter = str.at(index);
+        if (!charachter.isDigit() && !m_hexLetters.contains(charachter, Qt::CaseInsensitive)) {
+            kDebug() << "Key contains non-hex charachter: " << charachter;
+            return false;
+        }
+    }
+    return true;
+}
+
+bool EncryptionSettingsWidget::isStringAscii(const QString &str) const
+{
+    for (int index=0; index < str.size(); index++) {
+        QChar charachter = str.at(index);
+        if (!charachter.isLetterOrNumber()) {
+            kDebug() << "Key contains non-alphanumeric charachter: " << charachter;
+            return false;
+        }
+    }
+    return true;
+}
+
 WepSettingsWidget::WepSettingsWidget(QWidget *parent)
     : EncryptionSettingsWidget(parent),
-      m_mainLayout(0),
-      m_hexLetters("abcdef")
+      m_mainLayout(0)
 {
     m_authTypes << i18n("Open") << i18n("Shared");
     m_encTypes << i18n("WEP-64") << i18n("WEP-128"); // << i18n("CKIP-128") << i18n("CKIP-128");TODO
@@ -182,6 +206,7 @@ void WepSettingsWidget::saveConfig(KConfigGroup &config)
     config.writeEntry("WEPAuthentication", m_apAuth->currentIndex());
     config.writeEntry("WEPType", m_dataEnc->currentIndex());
     config.writeEntry("WEPEncryptionKeyType", m_encKeyType->currentIndex());
+    config.writeEntry("WEPKey", m_encryptKey->currentIndex());
     config.writeEntry("WEPStaticKey1", m_key1Edit->text());
     config.writeEntry("WEPStaticKey2", m_key2Edit->text());
     config.writeEntry("WEPStaticKey3", m_key3Edit->text());
@@ -195,6 +220,7 @@ void WepSettingsWidget::loadConfig(const KConfigGroup &config)
     m_dataEnc->setCurrentIndex(config.readEntry("WEPType", 0));
     m_encKeyType->setCurrentIndex(config.readEntry("WEPEncryptionKeyType", 0));
     onKeyTypeChanged(m_encKeyType->currentIndex());
+    m_encryptKey->setCurrentIndex(config.readEntry("WEPKey", 0));
     m_key1Edit->setText(config.readEntry("WEPStaticKey1", QString()));
     m_key2Edit->setText(config.readEntry("WEPStaticKey2", QString()));
     m_key3Edit->setText(config.readEntry("WEPStaticKey3", QString()));
@@ -242,30 +268,6 @@ bool WepSettingsWidget::validate(const QString &input) const
     }
     kDebug() << "Key is not yet valid.";
     return false;
-}
-
-bool WepSettingsWidget::isStringHex(const QString &str) const
-{
-    for (int index=0; index < str.size(); index++) {
-        QChar charachter = str.at(index);
-        if (!charachter.isDigit() && !m_hexLetters.contains(charachter, Qt::CaseInsensitive)) {
-            kDebug() << "Key contains non-hex charachter: " << charachter;
-            return false;
-        }
-    }
-    return true;
-}
-
-bool WepSettingsWidget::isStringAscii(const QString &str) const
-{
-    for (int index=0; index < str.size(); index++) {
-        QChar charachter = str.at(index);
-        if (!charachter.isLetterOrNumber()) {
-            kDebug() << "Key contains non-alphanumeric charachter: " << charachter;
-            return false;
-        }
-    }
-    return true;
 }
 
 bool WepSettingsWidget::isValid() const
@@ -370,6 +372,8 @@ void WepSettingsWidget::onKeyChanged(int key)
 
 void WepSettingsWidget::onDataEntered(const QString &text)
 {
+    Q_UNUSED(text)
+            
     if (m_keyType == Passphrase && (QLineEdit*)sender() == m_passphrase) {
         kDebug() << "Passphrase was chosen.";
         emit validationChanged(isValid());
@@ -386,6 +390,68 @@ void WepSettingsWidget::onDataEntered(const QString &text)
         kDebug() << "Key4 was chosen.";
         emit validationChanged(isValid());
     }
+}
+
+WpaSettingsWidget::WpaSettingsWidget(QWidget *parent)
+    : EncryptionSettingsWidget(parent),
+      m_mainLayout(0)
+{
+    m_authTypes << "WPA1" << "WPA2";
+    m_encTypes << "TKIP" << "AES";
+    
+    m_mainLayout = new QGridLayout(this);
+
+    m_apAuthLabel = new QLabel(i18n("Access Point Authentication"));
+    m_apAuth = new QComboBox();
+    m_apAuth->addItems(m_authTypes);
+    m_apAuthLabel->setBuddy(m_apAuth);
+
+    m_encTypeLabel = new QLabel(i18n("Data Encryption"));
+    m_encType = new QComboBox();
+    m_encType->addItems(m_encTypes);
+    m_encTypeLabel->setBuddy(m_encType);
+    
+    m_sharedKeyLabel = new QLabel(i18n("Pre-Shared Key"));
+    m_sharedKey = new QLineEdit();
+    m_sharedKeyLabel->setBuddy(m_sharedKey);
+
+    m_mainLayout->addWidget(m_apAuthLabel, 0, 0, 1, 2);
+    m_mainLayout->addWidget(m_apAuth, 0, 2);
+    m_mainLayout->addWidget(m_encTypeLabel, 1, 0, 1, 2);
+    m_mainLayout->addWidget(m_encType, 1, 2);
+    m_mainLayout->addWidget(m_sharedKeyLabel, 2, 0, 1, 2);
+    m_mainLayout->addWidget(m_sharedKey, 2, 2);
+}
+
+WpaSettingsWidget::~WpaSettingsWidget()
+{
+}
+
+void WpaSettingsWidget::saveConfig(KConfigGroup &config)
+{
+    Q_UNUSED(config)
+            
+    kDebug() << "Saving encryption settings.";
+}
+
+void WpaSettingsWidget::loadConfig(const KConfigGroup &config)
+{
+    Q_UNUSED(config)
+            
+    return;
+}
+
+EncryptionSettingsWidget::EncryptionType WpaSettingsWidget::type() const
+{
+    return Wpa;
+}
+
+
+//bool WpaSettingsWidget::validate(const QString &input) const
+bool WpaSettingsWidget::isValid() const
+{
+    //kDebug() << "Validating input: " << input;
+    return true;
 }
 
 #include "encryptionsettingswidget.moc"

@@ -37,15 +37,11 @@ WirelessSettingsWidget::WirelessSettingsWidget(QWidget *parent)
       m_securitySettingsButton(0),
       m_scandlg(0),
       m_encryptdlg(0),
-      m_scanView(0),
-      m_scanModel(0),
-      m_scanDelegate(0),
-      m_scanSelectionModel(0),
       m_encryptionWidget(0)
 {
     m_connectionTypes << i18n("Managed") << i18n("Adhoc");
     m_wirelessModes << i18n("Auto") << i18n("802.11a") << i18n("802.11b") << i18n("802.11g") << i18n("802.11n");
-    m_securityTypes << i18n("None") << i18n("WEP");// << i18n("WPA");TODO
+    m_securityTypes << i18n("None") << i18n("WEP") << i18n("WPA");
 
     //initialize elements
     m_mainLayout = new QGridLayout(this);
@@ -111,8 +107,6 @@ WirelessSettingsWidget::~WirelessSettingsWidget()
     delete m_scandlg;
     delete m_encryptionWidget;
     delete m_encryptdlg;
-    delete m_scanSelectionModel;
-    delete m_scanModel;
     delete m_mainLayout;
 }
 
@@ -123,15 +117,6 @@ QString WirelessSettingsWidget::wirelessInterface() const
 
 void WirelessSettingsWidget::setWirelessInterface(const QString &uni)
 {
-    Solid::Control::NetworkInterface iface(uni);
-    if (!iface.isValid()) {
-        kDebug() << "Interface was invalid.";
-        return;
-    } else if (iface.type() != Solid::Control::NetworkInterface::Ieee80211) {
-        kDebug() << "Interface was not of type IEEE 80211.";
-        return;
-    }
-    
     m_wirelessInterface = uni;
 }
 
@@ -190,20 +175,14 @@ bool WirelessSettingsWidget::isValid() const
 void WirelessSettingsWidget::onScanClicked()
 {
     if (m_scandlg == 0) {
-        //setup scanview if it doesn't already exist
-        m_scanView = new ApItemView();
-        m_scanModel = new ApItemModel(m_wirelessInterface);
-        m_scanDelegate = new ApItemDelegate(m_scanView);
-        m_scanSelectionModel = new QItemSelectionModel(m_scanModel);
-        m_scanModel->init();
-        m_scanView->setModel(m_scanModel);
-        m_scanView->setItemDelegate(m_scanDelegate);
-        m_scanView->setSelectionModel(m_scanSelectionModel);
+        m_scanWidget = new ScanWidget();
+        m_scanWidget->setWirelessInterface(m_wirelessInterface);
         
         m_scandlg = new KDialog();
         m_scandlg->setButtons( KDialog::Ok | KDialog::Cancel);
         m_scandlg->setCaption(i18n("Available Access Points"));
-        m_scandlg->setMainWidget(m_scanView);
+        m_scandlg->setMainWidget(m_scanWidget);
+        m_scandlg->resize(640, 420);
 
         connect(m_scandlg, SIGNAL(okClicked()), this, SLOT(onApChosen()));
     }
@@ -212,11 +191,7 @@ void WirelessSettingsWidget::onScanClicked()
 
 void WirelessSettingsWidget::onApChosen()
 {
-    QModelIndex index = m_scanView->currentIndex();
-    if (!index.isValid()) {
-        return;
-    }
-    m_essid->setText(index.data().toString());
+    m_essid->setText(m_scanWidget->currentAccessPoint());
 }
 
 void WirelessSettingsWidget::onSecurityTypeChanged(int index)
@@ -249,21 +224,44 @@ void WirelessSettingsWidget::onEncryptionSet()
 
 void WirelessSettingsWidget::onEssidChanged(const QString &text)
 {
+    Q_UNUSED(text)
+            
     emit validationChanged(isValid());
 }
 
 void WirelessSettingsWidget::createEncryptionWidget()
 {
     if (m_encryptdlg == 0) {
-        m_encryptionWidget = new WepSettingsWidget(m_encryptdlg);
         m_encryptdlg = new KDialog();
         m_encryptdlg->setButtons( KDialog::Ok | KDialog::Cancel);
         m_encryptdlg->setCaption(i18n("Encryption Settings"));
+    }
+    if (m_encryptionWidget == 0) {
+        if (m_securityType->currentIndex() == EncryptionSettingsWidget::Wep) {
+            m_encryptionWidget = new WepSettingsWidget(m_encryptdlg);
+        } else if (m_securityType->currentIndex() == EncryptionSettingsWidget::Wpa) {
+            m_encryptionWidget = new WpaSettingsWidget(m_encryptdlg);
+        }
+
         m_encryptdlg->setMainWidget(m_encryptionWidget);
         connect(m_encryptdlg, SIGNAL(okClicked()), this, SLOT(onEncryptionSet()));
         connect(m_encryptionWidget, SIGNAL(validationChanged(bool)), m_encryptdlg, SLOT(enableButtonOk(bool)));
-        m_encryptdlg->enableButtonOk(m_encryptionWidget->isValid());
+    } else if (m_securityType->currentIndex() != m_encryptionWidget->type()) {
+        //clean up
+        disconnect(m_encryptionWidget, SIGNAL(validationChanged(bool)), m_encryptdlg, SLOT(enableButtonOk(bool)));
+        delete m_encryptionWidget;
+        
+        if (m_securityType->currentIndex() == EncryptionSettingsWidget::Wep) {
+            m_encryptionWidget = new WepSettingsWidget(m_encryptdlg);
+        } else if (m_securityType->currentIndex() == EncryptionSettingsWidget::Wpa) {
+            m_encryptionWidget = new WpaSettingsWidget(m_encryptdlg);
+        }
+        
+        m_encryptdlg->setMainWidget(m_encryptionWidget);
+        connect(m_encryptionWidget, SIGNAL(validationChanged(bool)), m_encryptdlg, SLOT(enableButtonOk(bool)));
     }
+    
+    m_encryptdlg->enableButtonOk(m_encryptionWidget->isValid());
 }
 
 #include "wirelesssettingswidget.moc"

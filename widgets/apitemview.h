@@ -73,8 +73,6 @@ class ApItemView : public QWidget
         static const int itemCharWidth = 10;
         static const int computerHeight = 44;
         static const int padding = 3;
-        static const int viewMinWidth = 640;
-        static const int viewMinHeight = 480;
 };
 
 #endif

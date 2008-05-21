@@ -25,6 +25,7 @@
 #include <QAction>
 
 //solid specific includes
+//solid is only used directly until Plasma::Services are complete.
 #include <solid/device.h>
 #include <solid/networking.h>
 #include <solid/control/networkmanager.h>
@@ -49,7 +50,11 @@ NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
       m_networkEngine(0),
       m_iconSize(64,64),
       m_profileMenu(new NMMenu()),
-      m_profileDlg(0)
+      m_profileDlg(0),
+      m_interfaceList(),
+      m_activeProfile(),
+      m_currentInterfaceIndex(-1),
+      m_stayConnected(false)
 {
     setHasConfigurationInterface(false);
     m_icon.setImagePath(m_svgFile);
@@ -182,6 +187,26 @@ void NetworkManager::dataUpdated(const QString &source, const Plasma::DataEngine
 {
     if (source == "Network Management") {
         m_elementName = data["icon"].toString();
+    } else if (data["NetworkType"].toString() == "NetworkInterface") {
+        int index = m_interfaceList.indexOf(source);
+        if (index == -1) {
+            kDebug() << "Source could not be found.  Ensure that signals are being cleaned up when a new profile is loaded.";
+            return;
+        }
+        if (index == m_currentInterfaceIndex && data["Connection State"] == "Failed") {
+            kDebug() << "Network Connection failed.  Trying next . . . ";
+            onNetworkConnectionFailed();
+        }
+        if (data["Link Up"].toBool() != m_interfaceUpList[index]) {
+            if (data["Link Up"].toBool()) {
+                kDebug() << "A new interface has come online.";
+                onInterfaceLinkUp(index);
+            } else {
+                kDebug() << "A new interface has gone offline.";
+                onNetworkConnectionFailed();
+            }
+        }
+        m_interfaceUpList[index] = data["Link Up"].toBool();
     }
     update();
 }
@@ -218,21 +243,89 @@ void NetworkManager::launchProfile(const QString &profile)
 {
     kDebug() << profile << " has been launched.";
 
-    KConfigGroup activeGroup(&m_profileConfig, profile);
-    QStringList unis = activeGroup.readEntry("InterfaceList", QStringList());
-    foreach (const QString &uni, unis) {
-        Solid::Control::NetworkInterface iface(uni);
-        if (iface.signalStrength() != -1) { //wireless
-            kDebug() << "Connecting to a wireless network.";
-            connectWirelessNetwork(iface, activeGroup);
-        }
+    deactivateCurrentProfile();
+    loadProfile(profile);
+    activateCurrentProfile();
+}
+
+void NetworkManager::deactivateCurrentProfile()
+{
+    //don't try to reconnect when the network is taken down
+    m_stayConnected = false;
+    disconnectInterface(m_currentInterfaceIndex);
+    m_activeProfile.clear();
+    m_currentInterfaceIndex=-1;
+
+    if (m_interfaceList.isEmpty()) {
+        return;
     }
 }
 
-void NetworkManager::connectWiredNetwork(Solid::Control::NetworkInterface &iface, const KConfigGroup &config)
+void NetworkManager::loadProfile(const QString &profile)
 {
-    Q_UNUSED(config)
+    //unload previous profile
+    foreach (const QString &interface, m_interfaceList) {
+        //disconnect all sources
+        m_networkEngine->disconnectSource(interface, this);
+    }
+    m_interfaceList.clear();
+    m_interfaceUpList.clear();
 
+    //load the new profile
+    m_stayConnected = true;
+    m_activeProfile = profile;
+
+    KConfigGroup config(&m_profileConfig, profile);
+    m_interfaceList = config.readEntry("InterfaceList", QStringList());
+    foreach (const QString &interface, m_interfaceList) {
+        m_networkEngine->connectSource(interface, this);
+        m_interfaceUpList << m_networkEngine->query(interface)["Link Up"].toBool();
+    }
+}
+
+void NetworkManager::activateCurrentProfile()
+{
+    if (m_interfaceList.isEmpty()) {
+        kDebug() << "No profile has been loaded.";
+        return;
+    }
+
+    connectInterface(0);//connect to the first interface
+}
+
+void NetworkManager::disconnectInterface(int interfaceIndex)
+{
+    if (interfaceIndex < 0 || interfaceIndex >= m_interfaceList.size()) {
+        kDebug() << "Tried to load an out-of-bound interface number: " << interfaceIndex << ".  Only " << m_interfaceList.size() << " are known.";
+        return;
+    }
+    
+    Solid::Control::NetworkInterface iface(m_interfaceList[interfaceIndex]);
+    Solid::Control::Network *activeNetwork = iface.findNetwork(iface.activeNetwork());
+    if (activeNetwork != 0) {
+        return;//FIXME: the instruction below causes a crash.  This should change with the Solid::Control::Network* re-write
+        //activeNetwork->setActivated(false);
+    }
+}
+
+void NetworkManager::connectInterface(int interfaceIndex)
+{
+    if (interfaceIndex < 0 || interfaceIndex >= m_interfaceList.size()) {
+        kDebug() << "Tried to load an out-of-bound interface number: " << interfaceIndex << ".  Only " << m_interfaceList.size() << " are known.";
+        return;
+    }
+    m_currentInterfaceIndex = interfaceIndex;
+    
+    Solid::Control::NetworkInterface iface(m_interfaceList[m_currentInterfaceIndex]);
+    if (iface.type() == Solid::Control::NetworkInterface::Ieee8023) {
+        connectWiredNetwork(iface);
+    } else if(iface.type() == Solid::Control::NetworkInterface::Ieee80211) {
+        connectWirelessNetwork(iface);
+    }
+}
+
+void NetworkManager::connectWiredNetwork(Solid::Control::NetworkInterface &iface)
+{
     if (!iface.isValid() ) {
         kDebug() << "Wired interface could not be created.";
         return;
@@ -242,55 +335,85 @@ void NetworkManager::connectWiredNetwork(Solid::Control::NetworkInterface &iface
     network->setActivated(true);
 }
 
-void NetworkManager::connectWirelessNetwork(Solid::Control::NetworkInterface &iface, const KConfigGroup &config)
+void NetworkManager::connectWirelessNetwork(Solid::Control::NetworkInterface &iface)
 {
     if (!iface.isValid() ) {
         kDebug() << "Wired interface could not be created.";
         return;
     }
 
-    Solid::Control::NetworkList networks = iface.networks();
-    KConfigGroup authGroup(&config, "Encryption");
-    Solid::Control::Authentication *auth;
-    Solid::Control::Authentication::SecretMap secrets;
-
-    foreach (Solid::Control::Network *network, networks) {
+    KConfigGroup config(&m_profileConfig, m_activeProfile);
+    foreach (Solid::Control::Network *network, iface.networks()) {
         Solid::Control::WirelessNetwork *wifiNet = (Solid::Control::WirelessNetwork*)network;
         if(wifiNet->essid() == config.readEntry("ESSID", QString())) {
             kDebug() << wifiNet->essid() << " found.  Connecting . . . ";
-            switch (authGroup.readEntry("WirelessSecurityType", (int)EncryptionSettingsWidget::None)) {
-                case EncryptionSettingsWidget::None:
-                    kDebug() << "No encryption loaded.";
-                     auth = new Solid::Control::AuthenticationNone();
-                    break;
-                case EncryptionSettingsWidget::Wep:
-                    kDebug() << "Using Wep.";
-                    Solid::Control::AuthenticationWep *authwep = new Solid::Control::AuthenticationWep();;
-                    authwep->setType((Solid::Control::AuthenticationWep::WepType)authGroup.readEntry("WEPEncryptionKeyType", 0));
-                    authwep->setMethod((Solid::Control::AuthenticationWep::WepMethod)authGroup.readEntry("WEPAuthentication", 0));
-                    int wepType = authGroup.readEntry("WEPType", 0);
-                    if (wepType == 0) {
-                        authwep->setKeyLength(64);
-                    } else {
-                        authwep->setKeyLength(128);
-                    }
-                    switch(authwep->type()) {
-                        case EncryptionSettingsWidget::Ascii:
-                        case EncryptionSettingsWidget::Hex:
-                            secrets["key"] = authGroup.readEntry(QString("WEPKey%1").arg(authGroup.readEntry("WEPStaticKey1", QString())), QString());
-                            authwep->setSecrets(secrets);
-                            break;
-                        case EncryptionSettingsWidget::Passphrase:
-                            secrets["key"] = authGroup.readEntry("WEPPassphrase", QString());
-                            authwep->setSecrets(secrets);
-                            break;
-                    }
-                    auth = dynamic_cast<Solid::Control::Authentication*>(authwep);
-                    break;
-            }
-            wifiNet->setAuthentication(auth);
+            loadEncryption((Solid::Control::WirelessNetwork*)network, config);
             network->setActivated(true);
         }
+    }
+}
+
+void NetworkManager::loadEncryption(Solid::Control::WirelessNetwork *wifiNet, const KConfigGroup &config)
+{
+    int encType = config.readEntry("WirelessSecurityType", (int)EncryptionSettingsWidget::None);
+    kDebug() << "Using encryption type: " << encType;
+
+    KConfigGroup authGroup(&config, "Encryption");
+    Solid::Control::Authentication *auth;
+    Solid::Control::Authentication::SecretMap secrets;
+    
+    switch (encType) {
+        case EncryptionSettingsWidget::None:
+            kDebug() << "No encryption loaded.";
+            auth = new Solid::Control::AuthenticationNone();
+            break;
+        case EncryptionSettingsWidget::Wep:
+            kDebug() << "Using Wep.";
+            Solid::Control::AuthenticationWep *authwep = new Solid::Control::AuthenticationWep();;
+            authwep->setType((Solid::Control::AuthenticationWep::WepType)authGroup.readEntry("WEPEncryptionKeyType", 0));
+            authwep->setMethod((Solid::Control::AuthenticationWep::WepMethod)authGroup.readEntry("WEPAuthentication", 0));
+            int wepType = authGroup.readEntry("WEPType", 0);
+            if (wepType == 0) {
+                authwep->setKeyLength(64);
+            } else {
+                authwep->setKeyLength(128);
+            }
+            switch(authwep->type()) {
+                case EncryptionSettingsWidget::Ascii:
+                case EncryptionSettingsWidget::Hex:
+                    secrets["key"] = authGroup.readEntry(QString("WEPStaticKey%1").arg(authGroup.readEntry("WEPKey", 0)+1), QString());//key is zero indexed.
+                    authwep->setSecrets(secrets);
+                    break;
+                case EncryptionSettingsWidget::Passphrase:
+                    secrets["key"] = authGroup.readEntry("WEPPassphrase", QString());
+                    authwep->setSecrets(secrets);
+                    break;
+            }
+            auth = dynamic_cast<Solid::Control::Authentication*>(authwep);
+            break;
+    }
+    wifiNet->setAuthentication(auth);
+}
+
+void NetworkManager::onNetworkConnectionFailed()
+{
+    kDebug() << "Connection failed.";
+    //connection failed.  Try to connect to the next network.
+    if (m_currentInterfaceIndex+1 == m_interfaceList.size()) {
+        kDebug() << "All interfaces have failed.  Aborting.";
+        return;
+    }
+
+    if (m_stayConnected) {
+        connectInterface(m_currentInterfaceIndex+1);
+    }
+}
+
+void NetworkManager::onInterfaceLinkUp(int interfaceIndex)
+{
+    if (interfaceIndex < m_currentInterfaceIndex) {
+        disconnectInterface(m_currentInterfaceIndex);
+        connectInterface(interfaceIndex); //note that if this fails the previous interface will eventually become active again.
     }
 }
 

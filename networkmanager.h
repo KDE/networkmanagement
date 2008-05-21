@@ -32,7 +32,6 @@
 
 class QPointF;
 class QGraphicsSceneMouseEvent;
-class QAction;
 
 class NetworkManager : public Plasma::Applet
 {
@@ -66,8 +65,18 @@ class NetworkManager : public Plasma::Applet
         void mousePressEvent(QGraphicsSceneMouseEvent *event);
         void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
 
-        void connectWiredNetwork(Solid::Control::NetworkInterface &iface, const KConfigGroup &config);
-        void connectWirelessNetwork(Solid::Control::NetworkInterface &iface, const KConfigGroup &config);
+        //interface activation methods
+        //TODO: move these to the dataengine once Plasma::Services are implemented
+        void loadProfile(const QString &profile);
+        void activateCurrentProfile();
+        void deactivateCurrentProfile();
+        void connectInterface(int interfaceIndex);
+        void disconnectInterface(int interfaceIndex);
+        void connectWiredNetwork(Solid::Control::NetworkInterface &iface);
+        void connectWirelessNetwork(Solid::Control::NetworkInterface &iface);
+        void loadEncryption(Solid::Control::WirelessNetwork *wifiNet, const KConfigGroup &config);
+        void onNetworkConnectionFailed();
+        void onInterfaceLinkUp(int interfaceIndex);
 
         KConfigGroup m_profileConfig;
         QString m_svgFile;
@@ -77,9 +86,17 @@ class NetworkManager : public Plasma::Applet
         QSizeF m_iconSize;
         QPointF m_clickStartPos;
 
+        //creation and selection of profiles
         NMMenu *m_profileMenu;
         KDialog *m_profileDlg;
         ManageProfileWidget *m_manageProfile;
+
+        //connection management
+        QStringList m_interfaceList;
+        QList<bool> m_interfaceUpList;
+        QString m_activeProfile;
+        int m_currentInterfaceIndex;
+        bool m_stayConnected;
 };
 
 K_EXPORT_PLASMA_APPLET(networkmanager, NetworkManager)
