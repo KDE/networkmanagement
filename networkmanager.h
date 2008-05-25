@@ -21,14 +21,22 @@
 #define NETWORKMANAGER_H
 
 #include "nmmenu.h"
-#include "widgets/manageprofilewidget.h"
+//#include "widgets/manageprofilewidget.h"
 
 #include <QHash>
 #include <QMenu>
 
+#include <KDialog>
+
 #include <plasma/applet.h>
 #include <plasma/dataengine.h>
 #include <plasma/svg.h>
+
+#include <solid/control/networkmanager.h>
+#include <solid/control/networkinterface.h>
+#include <solid/control/wirednetworkinterface.h>
+#include <solid/control/wirelessnetworkinterface.h>
+#include <solid/control/wirelessaccesspoint.h>
 
 class QPointF;
 class QGraphicsSceneMouseEvent;
@@ -72,9 +80,9 @@ class NetworkManager : public Plasma::Applet
         void deactivateCurrentProfile();
         void connectInterface(int interfaceIndex);
         void disconnectInterface(int interfaceIndex);
-        void connectWiredNetwork(Solid::Control::NetworkInterface &iface);
-        void connectWirelessNetwork(Solid::Control::NetworkInterface &iface);
-        void loadEncryption(Solid::Control::WirelessNetwork *wifiNet, const KConfigGroup &config);
+        void connectWiredNetwork(Solid::Control::NetworkInterface *iface);
+        void connectWirelessNetwork(Solid::Control::NetworkInterface *iface);
+        void loadEncryption(Solid::Control::WirelessNetworkInterface *wifiNet, const KConfigGroup &config);
         void onNetworkConnectionFailed();
         void onInterfaceLinkUp(int interfaceIndex);
 
@@ -89,7 +97,7 @@ class NetworkManager : public Plasma::Applet
         //creation and selection of profiles
         NMMenu *m_profileMenu;
         KDialog *m_profileDlg;
-        ManageProfileWidget *m_manageProfile;
+        //ManageProfileWidget *m_manageProfile;
 
         //connection management
         QStringList m_interfaceList;

@@ -26,20 +26,17 @@
 
 //solid specific includes
 //solid is only used directly until Plasma::Services are complete.
-#include <solid/device.h>
-#include <solid/networking.h>
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
-#include <solid/control/network.h>
-#include <solid/control/wirelessnetwork.h>
-#include <solid/control/authentication.h>
+#include <solid/control/wirednetworkinterface.h>
+#include <solid/control/wirelessnetworkinterface.h>
+#include <solid/control/wirelessaccesspoint.h>
 
 //kde specific includes
-#include <kcomponentdata.h>
+#include <KComponentData>
 #include <kcmdlineargs.h>
-#include <klocale.h>
-#include <kdebug.h>
-#include <klocalizedstring.h>
+#include <KLocale>
+#include <KDebug>
 
 NetworkManager::NetworkManager(QObject *parent, const QVariantList &args)
     : Plasma::Applet(parent, args),
@@ -220,7 +217,7 @@ void NetworkManager::showMenu(QPointF clickedPos)
 
 void NetworkManager::manageProfiles()
 {
-    if (m_profileDlg == 0) {
+    /*if (m_profileDlg == 0) {
         kDebug() << "Creating a new profile.";
         m_profileDlg = new KDialog();
         m_profileDlg->setCaption("Manage Profiles");
@@ -231,7 +228,7 @@ void NetworkManager::manageProfiles()
         connect(m_profileDlg, SIGNAL(okClicked()), m_profileMenu, SLOT(reloadProfiles()));
         connect(m_profileDlg, SIGNAL(okClicked()), this, SLOT(saveConfig()));
     }
-    m_profileDlg->show();
+    m_profileDlg->show();*/
 }
 
 void NetworkManager::scanForNetworks()
@@ -243,9 +240,9 @@ void NetworkManager::launchProfile(const QString &profile)
 {
     kDebug() << profile << " has been launched.";
 
-    deactivateCurrentProfile();
-    loadProfile(profile);
-    activateCurrentProfile();
+//     deactivateCurrentProfile();
+//     loadProfile(profile);
+//     activateCurrentProfile();
 }
 
 void NetworkManager::deactivateCurrentProfile()
@@ -264,7 +261,7 @@ void NetworkManager::deactivateCurrentProfile()
 void NetworkManager::loadProfile(const QString &profile)
 {
     //unload previous profile
-    foreach (const QString &interface, m_interfaceList) {
+    /*foreach (const QString &interface, m_interfaceList) {
         //disconnect all sources
         m_networkEngine->disconnectSource(interface, this);
     }
@@ -280,22 +277,24 @@ void NetworkManager::loadProfile(const QString &profile)
     foreach (const QString &interface, m_interfaceList) {
         m_networkEngine->connectSource(interface, this);
         m_interfaceUpList << m_networkEngine->query(interface)["Link Up"].toBool();
-    }
+    }*/
+    return;
 }
 
 void NetworkManager::activateCurrentProfile()
 {
-    if (m_interfaceList.isEmpty()) {
+    /*if (m_interfaceList.isEmpty()) {
         kDebug() << "No profile has been loaded.";
         return;
     }
 
-    connectInterface(0);//connect to the first interface
+    connectInterface(0);//connect to the first interface*/
+    return;
 }
 
 void NetworkManager::disconnectInterface(int interfaceIndex)
 {
-    if (interfaceIndex < 0 || interfaceIndex >= m_interfaceList.size()) {
+    /*if (interfaceIndex < 0 || interfaceIndex >= m_interfaceList.size()) {
         kDebug() << "Tried to load an out-of-bound interface number: " << interfaceIndex << ".  Only " << m_interfaceList.size() << " are known.";
         return;
     }
@@ -305,12 +304,13 @@ void NetworkManager::disconnectInterface(int interfaceIndex)
     if (activeNetwork != 0) {
         return;//FIXME: the instruction below causes a crash.  This should change with the Solid::Control::Network* re-write
         //activeNetwork->setActivated(false);
-    }
+    }*/
+    return;
 }
 
 void NetworkManager::connectInterface(int interfaceIndex)
 {
-    if (interfaceIndex < 0 || interfaceIndex >= m_interfaceList.size()) {
+    /*if (interfaceIndex < 0 || interfaceIndex >= m_interfaceList.size()) {
         kDebug() << "Tried to load an out-of-bound interface number: " << interfaceIndex << ".  Only " << m_interfaceList.size() << " are known.";
         return;
     }
@@ -321,23 +321,23 @@ void NetworkManager::connectInterface(int interfaceIndex)
         connectWiredNetwork(iface);
     } else if(iface.type() == Solid::Control::NetworkInterface::Ieee80211) {
         connectWirelessNetwork(iface);
-    }
+    }*/return;
 }
 
-void NetworkManager::connectWiredNetwork(Solid::Control::NetworkInterface &iface)
+void NetworkManager::connectWiredNetwork(Solid::Control::NetworkInterface *iface)
 {
-    if (!iface.isValid() ) {
+    /*if (!iface.isValid() ) {
         kDebug() << "Wired interface could not be created.";
         return;
     }
 
     Solid::Control::Network *network = iface.networks()[0];
-    network->setActivated(true);
+    network->setActivated(true);*/return;
 }
 
-void NetworkManager::connectWirelessNetwork(Solid::Control::NetworkInterface &iface)
+void NetworkManager::connectWirelessNetwork(Solid::Control::NetworkInterface *iface)
 {
-    if (!iface.isValid() ) {
+    /*if (!iface.isValid() ) {
         kDebug() << "Wired interface could not be created.";
         return;
     }
@@ -350,12 +350,12 @@ void NetworkManager::connectWirelessNetwork(Solid::Control::NetworkInterface &if
             loadEncryption((Solid::Control::WirelessNetwork*)network, config);
             network->setActivated(true);
         }
-    }
+    }*/return;
 }
 
-void NetworkManager::loadEncryption(Solid::Control::WirelessNetwork *wifiNet, const KConfigGroup &config)
+void NetworkManager::loadEncryption(Solid::Control::WirelessNetworkInterface *wifiNet, const KConfigGroup &config)
 {
-    int encType = config.readEntry("WirelessSecurityType", (int)EncryptionSettingsWidget::None);
+    /*int encType = config.readEntry("WirelessSecurityType", (int)EncryptionSettingsWidget::None);
     kDebug() << "Using encryption type: " << encType;
 
     KConfigGroup authGroup(&config, "Encryption");
@@ -392,12 +392,12 @@ void NetworkManager::loadEncryption(Solid::Control::WirelessNetwork *wifiNet, co
             auth = dynamic_cast<Solid::Control::Authentication*>(authwep);
             break;
     }
-    wifiNet->setAuthentication(auth);
+    wifiNet->setAuthentication(auth);*/return;
 }
 
 void NetworkManager::onNetworkConnectionFailed()
 {
-    kDebug() << "Connection failed.";
+    /*kDebug() << "Connection failed.";
     //connection failed.  Try to connect to the next network.
     if (m_currentInterfaceIndex+1 == m_interfaceList.size()) {
         kDebug() << "All interfaces have failed.  Aborting.";
@@ -406,15 +406,15 @@ void NetworkManager::onNetworkConnectionFailed()
 
     if (m_stayConnected) {
         connectInterface(m_currentInterfaceIndex+1);
-    }
+    }*/return;
 }
 
 void NetworkManager::onInterfaceLinkUp(int interfaceIndex)
 {
-    if (interfaceIndex < m_currentInterfaceIndex) {
+    /*if (interfaceIndex < m_currentInterfaceIndex) {
         disconnectInterface(m_currentInterfaceIndex);
         connectInterface(interfaceIndex); //note that if this fails the previous interface will eventually become active again.
-    }
+    }*/return;
 }
 
 void NetworkManager::saveConfig()

@@ -36,7 +36,7 @@
 
 #include <KConfig>
 #include <KDialog>
-#include <klocalizedstring.h>
+#include <KLocale>
 
 class WirelessSettingsWidget : public QWidget
 {
