@@ -29,7 +29,6 @@
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/networkmanager.h>
 #include <solid/networkinterface.h>
-//#include <solid/devicemanager.h>
 
 class IfaceItemModel : public QAbstractItemModel
 {

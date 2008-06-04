@@ -39,7 +39,6 @@ class ApItemModel : public QAbstractItemModel
         ApItemModel(QString uni, QObject *parent=0);
         ~ApItemModel();
 
-        void init();
         QModelIndex index(int row, int column, const QModelIndex &parent=QModelIndex()) const;
         QModelIndex parent(const QModelIndex &index) const;
         int rowCount(const QModelIndex &parent=QModelIndex()) const;

@@ -38,7 +38,7 @@ IfaceItemModel::~IfaceItemModel()
 QModelIndex IfaceItemModel::index(int row, int column, const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
-    if (row < 0 || row > rowCount()-1 || column != 0) {
+    if (row < 0 || row > rowCount()-1 || column < 0 || column > columnCount()-1) {
         return QModelIndex();
     }
     return createIndex(row, column);

@@ -19,7 +19,7 @@
 
 #include "networkprofile.h"
 
-#include <klocalizedstring.h>
+#include <KLocale>
 #include <KDebug>
 
 NetworkProfile::NetworkProfile()

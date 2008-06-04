@@ -21,7 +21,7 @@
 #define NETWORKMANAGER_H
 
 #include "nmmenu.h"
-//#include "widgets/manageprofilewidget.h"
+#include "widgets/manageprofilewidget.h"
 
 #include <QHash>
 #include <QMenu>
@@ -97,7 +97,7 @@ class NetworkManager : public Plasma::Applet
         //creation and selection of profiles
         NMMenu *m_profileMenu;
         KDialog *m_profileDlg;
-        //ManageProfileWidget *m_manageProfile;
+        ManageProfileWidget *m_manageProfile;
 
         //connection management
         QStringList m_interfaceList;

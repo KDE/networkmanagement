@@ -31,16 +31,12 @@ ApItemModel::ApItemModel(QString uni, QObject *parent)
       m_accessPoints(),
       m_networkInterface(0)
 {
+    connect(this, SIGNAL(scanComplete()), this, SLOT(onScanComplete()));
     setNetworkInterface(uni);
 }
 
 ApItemModel::~ApItemModel()
 {
-}
-
-void ApItemModel::init()
-{
-    connect(this, SIGNAL(scanComplete()), this, SLOT(onScanComplete()));
 }
 
 QModelIndex ApItemModel::index(int row, int column, const QModelIndex &parent) const
@@ -137,10 +133,11 @@ QVariant ApItemModel::headerData(int section, Qt::Orientation orientation, int r
 
 void ApItemModel::setNetworkInterface(const QString &uni)
 {
-    if (uni.isEmpty()) {
+    if (uni.isEmpty() || (m_networkInterface != 0 && m_networkInterface->uni() == uni)) {
         return;
     }
-    
+
+    kDebug() << "Requesting the interface: " << uni;
     Solid::Control::NetworkInterface *networkInterface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     if (networkInterface == 0) {
         kDebug() << "Could not create a valid network interface.";
@@ -152,6 +149,7 @@ void ApItemModel::setNetworkInterface(const QString &uni)
         return;
     }
     m_networkInterface = (Solid::Control::WirelessNetworkInterface*)networkInterface;
+    scan();
 }
 
 Solid::Control::WirelessNetworkInterface* ApItemModel::networkInterface() const
@@ -188,19 +186,7 @@ void ApItemModel::scan()
 
 void ApItemModel::onScanComplete()
 {
-    //Used for testing
-    /*AccessPoint ap("linksys", AccessPoint::Home, 89, "some:address", false);
-    m_accessPoints << ap;
-
-    ap.setData("Starbucks", AccessPoint::Cafe, 67, "some:other:address", false);
-    m_accessPoints << ap;
-
-    ap.setData("LAX", AccessPoint::Airport, 78, "some:airport:address", true);
-    m_accessPoints << ap;
-
-    ap.setData("Neighbor's Wifi", AccessPoint::Wireless, 45, "other:address", false);
-    m_accessPoints << ap;*/
-
+    kDebug() << "Scan complete.";
     m_ssids.clear();
     m_accessPoints.clear();
     reset();

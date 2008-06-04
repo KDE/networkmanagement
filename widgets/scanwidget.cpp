@@ -39,10 +39,9 @@ ScanWidget::ScanWidget(QWidget *parent)
     QRect scanRect = m_scanView->geometry();
     m_scanView = new ApItemView(main);
     m_scanView->setGeometry(scanRect);
-    m_scanModel = new ApItemModel(QString());
+    m_scanModel = new ApItemModel(m_ifaceModel->data(m_ifaceModel->index(m_interface->currentIndex(),0),IfaceItemModel::UniRole).toString());
     m_scanDelegate = new ApItemDelegate(m_scanView);
     m_scanSelectionModel = new QItemSelectionModel(m_scanModel);
-    m_scanModel->init();
 
     ApItemView *scanView = (ApItemView*)m_scanView;
     scanView->setModel(m_scanModel);
@@ -76,7 +75,7 @@ QString ScanWidget::currentAccessPoint() const
         return QString();
     }
 
-    return m_scanModel->data(index, IfaceItemModel::UniRole).toString();
+    return m_scanModel->data(m_scanModel->index(index.row(),0)).toString();
 }
 
 void ScanWidget::onInterfaceChanged(int index)

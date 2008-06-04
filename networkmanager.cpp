@@ -217,7 +217,7 @@ void NetworkManager::showMenu(QPointF clickedPos)
 
 void NetworkManager::manageProfiles()
 {
-    /*if (m_profileDlg == 0) {
+    if (m_profileDlg == 0) {
         kDebug() << "Creating a new profile.";
         m_profileDlg = new KDialog();
         m_profileDlg->setCaption("Manage Profiles");
@@ -228,7 +228,7 @@ void NetworkManager::manageProfiles()
         connect(m_profileDlg, SIGNAL(okClicked()), m_profileMenu, SLOT(reloadProfiles()));
         connect(m_profileDlg, SIGNAL(okClicked()), this, SLOT(saveConfig()));
     }
-    m_profileDlg->show();*/
+    m_profileDlg->show();
 }
 
 void NetworkManager::scanForNetworks()
@@ -240,22 +240,22 @@ void NetworkManager::launchProfile(const QString &profile)
 {
     kDebug() << profile << " has been launched.";
 
-//     deactivateCurrentProfile();
-//     loadProfile(profile);
-//     activateCurrentProfile();
+     deactivateCurrentProfile();
+     loadProfile(profile);
+     activateCurrentProfile();
 }
 
 void NetworkManager::deactivateCurrentProfile()
 {
     //don't try to reconnect when the network is taken down
-    m_stayConnected = false;
+    /*m_stayConnected = false;
     disconnectInterface(m_currentInterfaceIndex);
     m_activeProfile.clear();
     m_currentInterfaceIndex=-1;
 
     if (m_interfaceList.isEmpty()) {
         return;
-    }
+    }*/
 }
 
 void NetworkManager::loadProfile(const QString &profile)
@@ -277,8 +277,7 @@ void NetworkManager::loadProfile(const QString &profile)
     foreach (const QString &interface, m_interfaceList) {
         m_networkEngine->connectSource(interface, this);
         m_interfaceUpList << m_networkEngine->query(interface)["Link Up"].toBool();
-    }*/
-    return;
+    }*/return;
 }
 
 void NetworkManager::activateCurrentProfile()
@@ -299,13 +298,16 @@ void NetworkManager::disconnectInterface(int interfaceIndex)
         return;
     }
     
-    Solid::Control::NetworkInterface iface(m_interfaceList[interfaceIndex]);
+    Solid::Control::NetworkInterface *iface = Solid::Control::NetworkManager::findNetworkInterface(m_interfaceList[interfaceIndex]);
+    if (iface == 0) {
+        kDebug() << "The interface \"" << m_interfaceList[interfaceIndex] << "\" could not be found.";
+        return;
+    }
     Solid::Control::Network *activeNetwork = iface.findNetwork(iface.activeNetwork());
     if (activeNetwork != 0) {
         return;//FIXME: the instruction below causes a crash.  This should change with the Solid::Control::Network* re-write
         //activeNetwork->setActivated(false);
-    }*/
-    return;
+    }*/return;
 }
 
 void NetworkManager::connectInterface(int interfaceIndex)
@@ -316,7 +318,7 @@ void NetworkManager::connectInterface(int interfaceIndex)
     }
     m_currentInterfaceIndex = interfaceIndex;
     
-    Solid::Control::NetworkInterface iface(m_interfaceList[m_currentInterfaceIndex]);
+    Solid::Control::NetworkInterface *iface(m_interfaceList[m_currentInterfaceIndex]);
     if (iface.type() == Solid::Control::NetworkInterface::Ieee8023) {
         connectWiredNetwork(iface);
     } else if(iface.type() == Solid::Control::NetworkInterface::Ieee80211) {
