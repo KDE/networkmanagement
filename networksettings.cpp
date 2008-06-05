@@ -18,22 +18,50 @@
 */
 
 #include "networksettings.h"
+#include "networksettingsadaptor.h"
+#include "marshallarguments.h"
+
+#include <QDbusObjectPath>
+
+#include "NetworkManager.h"
 
 NetworkSettings::NetworkSettings()
 {
+    //declare types
+    qDBusRegisterMetaType< QList<QDBusObjectPath> >();
 
+    new NetworkSettingsAdaptor(this);
+
+    QDBusConnection dbus = QDBusConnection::systemBus();
+    dbus.registerObject(objectPath(), this);
 }
 
 NetworkSettings::~NetworkSettings()
 {
+    QDBusConnection dbus = QDBusConnection::systemBus();
+    dbus.unregisterObject(objectPath());
 }
 
 bool NetworkSettings::loadSettings(const KConfigGroup &settings)
 {
 }
 
-QList<QVariant> NetworkSettings::ListConnections() const
+QList<QDbusObjectPath> NetworkSettings::ListConnections() const
 {
+    
+}
+
+void NetworkSettings::clearConnections()
+{
+    foreach (const QString &conn, connectionMap.keys()) {
+        connectionMap[conn]->Delete();
+        connectionMap.remove(conn);
+    }
+}
+
+QString NetworkSettings::objectPath()
+{
+    return QString(NM_DBUS_PATH_SETTINGS);
 }
 
 #include "networksettings.moc"

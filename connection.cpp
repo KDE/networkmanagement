@@ -22,6 +22,8 @@
 Connection::Connection(QObject *parent)
     : QObject(parent)
 {
+    qDBusRegisterMetaType< QMap<QString, QMap<QString, QDBusVariant> > >();
+    qDBusRegisterMetaType< QMap<QString, QDBusVariant> >();
 }
 
 Connection::~Connection()
@@ -43,7 +45,7 @@ void Connection::Delete()
     emit Removed()
 }
 
-QMap<QString, QMap<QString, QVariant> > Connection::GetSettings()
+QMap<QString, QMap<QString, QDBusVariant> > Connection::GetSettings()
 {
     return settingsMap;
 }

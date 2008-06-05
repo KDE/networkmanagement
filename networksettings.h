@@ -43,7 +43,10 @@ class NetworkSettings : public QObject
         void NewConnection(QVariant);
 
     private:
-        QStringList connectionList;
+        void clearConnections();
+        QString objectPath() const;
+        
+        QMap<QString, Connection*> connectionMap;
 };
 
 #endif

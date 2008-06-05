@@ -23,6 +23,8 @@ IP4Config::IP4Config(const Solid::Control::IPv4Config &config, QObejct *parent=0
     : QObject(parent),
       ipv4Config(config)
 {
+    qDBusRegisterMetaType< QList< QList<uint> > >();
+    qDBusRegisterMetaType< QList<uint> >();
 }
 
 IP4Config::~IP4Config()
