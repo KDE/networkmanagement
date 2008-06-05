@@ -34,6 +34,8 @@ class Connection : public QObject
         Connection(QObject *parent=0);
         ~Connections();
 
+        QString objectPath();
+
         //export to dbus
         Q_SCRIPTABLE QString GetID() const;
         Q_SCRIPTABLE void Update(QMap<QString, QMap<QString, QVariant> >);

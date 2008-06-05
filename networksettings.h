@@ -37,10 +37,10 @@ class NetworkSettings : public QObject
         ~NetworkSettings();
 
         bool loadSettings(const KConfigGroup &settings);
-        Q_SCRIPTABLE QList<QVariant> ListConnections() const;
+        Q_SCRIPTABLE QList<QDbusObjectPath> ListConnections() const;
 
     Q_SIGNALS:
-        void NewConnection(QVariant);
+        void NewConnection(QDbusObjectPath);
 
     private:
         void clearConnections();

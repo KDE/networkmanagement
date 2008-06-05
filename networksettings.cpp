@@ -48,7 +48,11 @@ bool NetworkSettings::loadSettings(const KConfigGroup &settings)
 
 QList<QDbusObjectPath> NetworkSettings::ListConnections() const
 {
-    
+    QList<QDbusObjectPath> pathList;
+    foreach(const QString &connName, connectionMap) {
+        pathList << QDBusObjectPath(connectionMap[connName]->objectPath());
+    }
+    return pathList;
 }
 
 void NetworkSettings::clearConnections()

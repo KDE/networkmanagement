@@ -18,6 +18,7 @@
 */
 
 #include "connection.h"
+#include "connectionadaptor.h"
 
 Connection::Connection(QObject *parent)
     : QObject(parent)

@@ -18,6 +18,7 @@
 */
 
 #include "ip4config.h"
+#include "ip4config.h"
 
 IP4Config::IP4Config(const Solid::Control::IPv4Config &config, QObejct *parent=0)
     : QObject(parent),
