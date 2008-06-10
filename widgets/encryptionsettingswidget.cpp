@@ -203,6 +203,7 @@ WepSettingsWidget::~WepSettingsWidget()
 void WepSettingsWidget::saveConfig(KConfigGroup &config)
 {
     kDebug() << "Saving encryption settings.";
+    config.writeEntry("AuthenticationType", "WEP");
     config.writeEntry("WEPAuthentication", m_apAuth->currentIndex());
     config.writeEntry("WEPType", m_dataEnc->currentIndex());
     config.writeEntry("WEPEncryptionKeyType", m_encKeyType->currentIndex());
@@ -430,7 +431,7 @@ WpaSettingsWidget::~WpaSettingsWidget()
 void WpaSettingsWidget::saveConfig(KConfigGroup &config)
 {
     Q_UNUSED(config)
-            
+    config.writeEntry("AuthenticationType", "WPA");
     kDebug() << "Saving encryption settings.";
 }
 

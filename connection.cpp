@@ -19,26 +19,44 @@
 
 #include "connection.h"
 #include "connectionadaptor.h"
+#include "marshallarguments.h"
+
+#include <NetworkManager.h>
 
 Connection::Connection(QObject *parent)
     : QObject(parent)
 {
-    qDBusRegisterMetaType< QMap<QString, QMap<QString, QDBusVariant> > >();
-    qDBusRegisterMetaType< QMap<QString, QDBusVariant> >();
+    qDBusRegisterMetaType< QMap<QString, QMap<QString, QVariant> > >();
+    qDBusRegisterMetaType< QMap<QString, QVariant> >();
+
+    new ConnectionAdaptor(this);
+
+    QDBusConnection::systemBus().registerObject(objectPath(), this);
 }
 
 Connection::~Connection()
 {
+    QDBusConnection::systemBus().unregisterObject(objectPath());
+}
+
+QString Connection::objectPath()
+{
+    return QString(NM_DBUS_PATH_SETTINGS_CONNECTION);
 }
 
 QString Connection::GetID() const
 {
-    return connectionMap["name"];
+    return settingsMap["name"];
 }
-void Connection::Update(QMap<QString, QMap<QString, QVariant> > param)
+
+void Connection::Update(QMap<QString, QMap<QString, QVariant> > changedParameters)
 {
-    settingsMap = param;
-    emit Updated(settingsMap);
+    foreach (const QString &key1, changedParameters.keys()) {
+        foreach (const QString &key2, changedParameters[key1].keys()) {
+            connectionMap[key1][key2] = changedParameters[key1][key2];
+        }
+    }
+    emit Updated(changedParameters);
 }
 
 void Connection::Delete()
@@ -46,7 +64,7 @@ void Connection::Delete()
     emit Removed()
 }
 
-QMap<QString, QMap<QString, QDBusVariant> > Connection::GetSettings()
+QMap<QString, QMap<QString, QVariant> > Connection::GetSettings()
 {
     return settingsMap;
 }

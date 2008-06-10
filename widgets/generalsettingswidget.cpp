@@ -36,7 +36,7 @@ GeneralSettingsWidget::GeneralSettingsWidget(QWidget *parent)
     foreach (const QString &type, NetworkProfile::types()) {
         m_profileType->addItem(KIcon(NetworkProfile::icon(type)), type);
     }
-    
+
     m_connectionTypeLabel = new QLabel(i18n("Type of Connection"));
     m_connectionType = new QComboBox();
     for (int index=0; index < m_connectionTypes.size(); index++) {
@@ -97,11 +97,13 @@ void GeneralSettingsWidget::saveConfig(KConfigGroup &config)
 
     //get the list of interfaces
     QAbstractItemModel *ifaceModel = m_priorityList->model();
-    QStringList ifaceList;
+    QStringList ifaceList, ifaceNameList;
     for(int index=0; index < ifaceModel->rowCount(); index++) {
         ifaceList << ifaceModel->data(ifaceModel->index(index,0), IfaceItemModel::UniRole).toString();
+        ifaceList << ifaceModel->data(ifaceModel->index(index,2)).toString();
     }
     config.writeEntry("InterfaceList", ifaceList);
+    config.writeEntry("InterfaceNameList", ifaceList);
 }
 
 void GeneralSettingsWidget::loadConfig(const KConfigGroup &config)

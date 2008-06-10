@@ -25,6 +25,9 @@
 #include <QMap>
 #include <QString>
 
+//DBus specific includes
+#include <QDBusObjectPath>
+
 #include <KConfigGroup>
 
 class NetworkSettings : public QObject

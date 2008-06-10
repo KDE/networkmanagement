@@ -28,8 +28,8 @@
 QT_DECLARE_METATYPE(QList<uint>)
 QT_DECLARE_METATYPE(QList< QList<uint> >)
 QT_DECLARE_METATYPE(QList<QDbusObjectPath>)
-QT_DECLARE_METATYPE(QMap<QString, QDBusVariant>)
-QT_DECLARE_METATYPE(QMap<QString, QMap<QString, QDBusVariant> >)
+QT_DECLARE_METATYPE(QMap<QString, QVariant>)
+QT_DECLARE_METATYPE(QMap<QString, QMap<QString, QVariant> >)
 
 QDBusArgument &operator<<(QDBusArgument &argument, const QList< QList<uint> > &myarray)
 {
@@ -56,9 +56,9 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, QList< QList<uint
     return argument;
 }
 
-QDBusArgument &operator<<(QDBusArgument &argument, const QMap<QString, QMap<QString, QDBusVariant> > &mymap)
+QDBusArgument &operator<<(QDBusArgument &argument, const QMap<QString, QMap<QString, QVariant> > &mymap)
 {
-    argument.beginMap( QVariant::String, qMetaTypeId<QMap<QString, QDBusVariant> >() );
+    argument.beginMap( QVariant::String, qMetaTypeId<QMap<QString, QVariant> >() );
     for ( int i = 0; i < mydict.length; ++i ) {
         argument.beginMapEntry();
         argument << mymap.data[i].key << mymap.data[i].value;
@@ -68,14 +68,14 @@ QDBusArgument &operator<<(QDBusArgument &argument, const QMap<QString, QMap<QStr
     return argument;
 }
 
-const QDBusArgument &operator>>(const QDBusArgument &argument, QMap<QString, QMap<QString, QDBusVariant> > &mymap)
+const QDBusArgument &operator>>(const QDBusArgument &argument, QMap<QString, QMap<QString, QVariant> > &mymap)
 {
     argument.beginMap();
     mymap.clear();
 
     while ( !argument.atEnd() ) {
         QString key;
-        QMap<QString, QDBusVariant> value;
+        QMap<QString, QVariant> value;
         argument.beginMapEntry();
         argument >> key >> value;
         argument.endMapEntry();

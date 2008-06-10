@@ -44,12 +44,18 @@ NetworkSettings::~NetworkSettings()
 
 bool NetworkSettings::loadSettings(const KConfigGroup &settings)
 {
+    clearConnections();
+    QStringList interfaceNames = settings.readEntry("InterfaceNameList", QStringList()).toStringList();
+    foreach (const QString &interfaceName, interfacesNames) {
+
+    }
+    return true;
 }
 
 QList<QDbusObjectPath> NetworkSettings::ListConnections() const
 {
     QList<QDbusObjectPath> pathList;
-    foreach(const QString &connName, connectionMap) {
+    foreach(const QString &connName, connectionMap.keys()) {
         pathList << QDBusObjectPath(connectionMap[connName]->objectPath());
     }
     return pathList;

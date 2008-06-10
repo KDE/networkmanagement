@@ -17,36 +17,48 @@
 
 */
 
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#ifndef SECRETS_H
+#define SECRETS_H
 
 #include <QObject>
 #include <QVariant>
 #include <QMap>
 #include <QString>
 
-class Connection : public QObject
+//DBus specific includes
+#include <QDBusObjectPath>
+#include <QDBusContext>
+#include <QDBusConnection>
+#include <QDBusMessage>
+
+#include <KConfigGroup>
+
+class Secrets : public QObject, protected QDBusContext
 {
     Q_OBJECT
-    Q_CLASSINFO("Settings Interface", "org.freedesktop.NetworkManagerSettings.Connection")
+    Q_CLASSINFO("Secrets Interface", "org.freedesktop.NetworkManagerSettings.Connection.Secrets")
 
     public:
-        Connection(QObject *parent=0);
-        ~Connections();
+        Secrets(QObject *parent=0);
+        ~Secrets();
 
-        QString objectPath();
+        bool loadSettings(const KConfigGroup &group);
 
-        //export to dbus
-        Q_SCRIPTABLE QString GetID() const;
-        Q_SCRIPTABLE void Update(QMap<QString, QMap<QString, QVariant> > changedParameters);
-        Q_SCRIPTABLE void Delete();
-        Q_SCRIPTABLE QMap<QString, QMap<QString, QVariant> > GetSettings();
+        Q_SCRIPTABLE QMap<QString, QMap<QString, QVariant> > GetSecrets(QString setting_name, QStringList hints, bool request_new);
 
-    Q_SIGNALS:
-        void Updated(QMap<QString, QMap<QString, QVariant> >);
-        void Removed();
     private:
-        QMap<QString, QMap<QString, QVariant> > settingsMap;
+        Q_INVOKABLE void processRequest();
+        KConfigGroup config;
+        QMap<QString, QMap<QString, QVariant> > secrets;
+
+        //dbus objects
+        QDBusConnection conn;
+        QDBusMessage message;
+
+        //stored settings for the delayed response
+        QString settingName;
+        QStringList hints;
+        bool requestNew;
 };
 
 #endif
