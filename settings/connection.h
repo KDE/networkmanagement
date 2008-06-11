@@ -25,28 +25,38 @@
 #include <QMap>
 #include <QString>
 
+#include <NetworkManager.h>
+
 class Connection : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("Settings Interface", "org.freedesktop.NetworkManagerSettings.Connection")
+    Q_CLASSINFO("D-Bus Interface", NM_DBUS_SERVICE_USER_SETTINGS)
 
     public:
-        Connection(QObject *parent=0);
+        enum ConnectionType {Unknown=0. Wired, Wireless};
+
+        Connection(const QString &connName, const KConfigGroup &config, QObject *parent=0);
         ~Connections();
 
         QString objectPath();
 
         //export to dbus
         Q_SCRIPTABLE QString GetID() const;
-        Q_SCRIPTABLE void Update(QMap<QString, QMap<QString, QVariant> > changedParameters);
+        Q_SCRIPTABLE void Update(QMap<QString, QMap<QString, QVariant> > updates);
         Q_SCRIPTABLE void Delete();
-        Q_SCRIPTABLE QMap<QString, QMap<QString, QVariant> > GetSettings();
+        Q_SCRIPTABLE QMap<QString, QMap<QString, QVariant> > GetSettings() const;
 
     Q_SIGNALS:
         void Updated(QMap<QString, QMap<QString, QVariant> >);
         void Removed();
     private:
-        QMap<QString, QMap<QString, QVariant> > settingsMap;
+        QMap<QString, QMap<QString, QVariant> > toMap() const;
+
+        QString connName;
+        ConnectionType connType;
+        KConfigGroup settings;
+
+        WiredConnectionSetting *wired;
 };
 
 #endif

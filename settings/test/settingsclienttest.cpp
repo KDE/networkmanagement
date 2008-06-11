@@ -17,43 +17,26 @@
 
 */
 
-#ifndef NETWORK_SETTINGS_H
-#define NETWORK_SETTINGS_H
+//QT specific includes
+#include <QList>
+#include <QtDBus/QtDBus>
 
-#include <QObject>
-#include <QVariant>
-#include <QMap>
-#include <QString>
+//kde specific includes
+#include <kcomponentdata.h>
+#include <kcmdlineargs.h>
+#include <klocale.h>
+#include <kdebug.h>
 
-//DBus specific includes
-#include <QDBusObjectPath>
+#include <iostream>
 
-#include <KConfigGroup>
+using namespace std;
 
-#include <NetworkManager.h>
-
-class NetworkSettings : public QObject
+int main(int args, char **argv)
 {
-    Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", NM_DBUS_IFACE_SETTINGS)
+    KComponentData componentData("settingsclienttest");
 
-    public:
-        NetworkSettings(const KConfigGroup &settings, QObject *parent=0);
-        ~NetworkSettings();
 
-        bool loadProfile(const QString &profile);
+    return 0;
+}
 
-        Q_SCRIPTABLE QList<QDbusObjectPath> ListConnections() const;
-
-    Q_SIGNALS:
-        void NewConnection(QDbusObjectPath);
-
-    private:
-        void clearConnections();
-        QString objectPath() const;
-
-        KConfigGroup settings;
-        QMap<QString, Connection*> connectionMap;
-};
-
-#endif
+#include "settingsclienttest.moc"

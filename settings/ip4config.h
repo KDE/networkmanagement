@@ -30,7 +30,7 @@
 class IP4Config : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("IPV4 Configuration Interface", "org.freedesktop.NetworkManagerSettings.IP4Config")
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.IP4Config")
 
     public:
         IPV4Config(const Solid::Control::IPv4Config &config, QObejct *parent=0);

@@ -102,7 +102,7 @@ QVariant IfaceItemModel::data(const QModelIndex &index, int role) const
                 default:
                     return QVariant();
             }
-        case 1:
+        case 1: //UNI
             switch (role) {
                 case Qt::DisplayRole:
                     //kDebug() << "Returning: " << m_priorityList.value(index.row())->uni();
@@ -119,7 +119,7 @@ QVariant IfaceItemModel::data(const QModelIndex &index, int role) const
                 default:
                     return QVariant();
             }
-        case 2:
+        case 2://interface name
             switch (role) {
                 case Qt::DisplayRole:
                     //kDebug() << "Returning: " << m_priorityList.value(index.row())->interfaceName();
@@ -145,7 +145,7 @@ void IfaceItemModel::sort(int column, Qt::SortOrder order)
 {
     Q_UNUSED(column)
     Q_UNUSED(order)
-    
+
     Solid::Control::NetworkInterfaceList sortedList;
     foreach (Solid::Control::NetworkInterface::Type type, m_priorityTypeList) {
         foreach (Solid::Control::NetworkInterface *iface, m_priorityList) {

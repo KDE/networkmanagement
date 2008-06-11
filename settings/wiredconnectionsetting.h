@@ -17,43 +17,28 @@
 
 */
 
-#ifndef NETWORK_SETTINGS_H
-#define NETWORK_SETTINGS_H
+#ifndef WIRED_CONNECTION_H
+#define WIRED_CONNECTION_H
 
 #include <QObject>
 #include <QVariant>
 #include <QMap>
 #include <QString>
 
-//DBus specific includes
-#include <QDBusObjectPath>
-
-#include <KConfigGroup>
-
-#include <NetworkManager.h>
-
-class NetworkSettings : public QObject
+class WiredConnectionSetting : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", NM_DBUS_IFACE_SETTINGS)
 
     public:
-        NetworkSettings(const KConfigGroup &settings, QObject *parent=0);
-        ~NetworkSettings();
+        WiredConnectionSetting(const KConfigGroup &config, QObject *parent=0);
+        ~WiredConnectionSetting();
 
-        bool loadProfile(const QString &profile);
-
-        Q_SCRIPTABLE QList<QDbusObjectPath> ListConnections() const;
-
-    Q_SIGNALS:
-        void NewConnection(QDbusObjectPath);
-
+        QMap<QString, QVariant> toMap() const;
+        void update(const QMap<QString, QVariant> &updates);
     private:
-        void clearConnections();
-        QString objectPath() const;
-
-        KConfigGroup settings;
-        QMap<QString, Connection*> connectionMap;
+        QString name;
+        QByteArray macAddress;
+        uint32 mtu;
 };
 
 #endif

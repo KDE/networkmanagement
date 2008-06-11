@@ -18,20 +18,36 @@
 */
 
 #include "connection.h"
-#include "connectionadaptor.h"
 #include "marshallarguments.h"
 
-#include <NetworkManager.h>
+#include <nm-setting-wired.h>
+#include <nm-setting-wireless.h>
 
-Connection::Connection(QObject *parent)
-    : QObject(parent)
+Connection::Connection(const QString profile, const QString &interfaceName, const KConfigGroup &config, QObject *parent)
+    : QObject(parent),
+      wired(0)
 {
     qDBusRegisterMetaType< QMap<QString, QMap<QString, QVariant> > >();
     qDBusRegisterMetaType< QMap<QString, QVariant> >();
 
     new ConnectionAdaptor(this);
 
+    //connection name = "profile - interfaceName"
+    QString connName = profile + '-';
+    connName += interfaceName;
     QDBusConnection::systemBus().registerObject(objectPath(), this);
+
+    QStringList ifaceTypes = config.readEntry("InterfaceTypeList", QStringList()).toStringList();
+    QStringList ifaceNames = config.readEntry("InterfaceNameList", QStringList()).toStringList();
+
+    int nameIndex = ifaceNames.indexOf(interfaceName);
+    if (nameIndex != -1) {
+        if (ifaceTypes[nameIndex] == "Wired") {
+            connType = Wired;
+            wired = new WiredConnectionSetting(config, this);
+        } else if (ifaceTypes[nameIndex] == "Wireless") {
+            connType = Wireless;
+        }
 }
 
 Connection::~Connection()
@@ -41,22 +57,26 @@ Connection::~Connection()
 
 QString Connection::objectPath()
 {
-    return QString(NM_DBUS_PATH_SETTINGS_CONNECTION);
+    return QString(NM_DBUS_PATH_SETTINGS_CONNECTION + "/" + connectionName);
 }
 
 QString Connection::GetID() const
 {
-    return settingsMap["name"];
+    return connectionName;
 }
 
-void Connection::Update(QMap<QString, QMap<QString, QVariant> > changedParameters)
+void Connection::Update(QMap<QString, QMap<QString, QVariant> > updates)
 {
-    foreach (const QString &key1, changedParameters.keys()) {
-        foreach (const QString &key2, changedParameters[key1].keys()) {
-            connectionMap[key1][key2] = changedParameters[key1][key2];
+    if (updates.exists(NM_SETTING_WIRED_SETTING_NAME)) {
+        if (wired == 0) {
+            wired = new WiredConnectionSetting(setting, this);
+        }
+        if (wired) {
+            wired->update(updates[NM_SETTING_WIRED_SETTING_NAME]);
         }
     }
-    emit Updated(changedParameters);
+    /*if (updates.exists(NM_SETTING_WIRELESS_SETTING_NAME)) {
+    }*/
 }
 
 void Connection::Delete()
@@ -64,9 +84,13 @@ void Connection::Delete()
     emit Removed()
 }
 
-QMap<QString, QMap<QString, QVariant> > Connection::GetSettings()
+QMap<QString, QMap<QString, QVariant> > Connection::GetSettings() const
 {
-    return settingsMap;
+    QMap<QString, QMap<QString, QVariant> > retVal;
+    switch (connType) {
+        case Wired:
+
+    }
 }
 
 #include "connection.moc"

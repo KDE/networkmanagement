@@ -97,13 +97,15 @@ void GeneralSettingsWidget::saveConfig(KConfigGroup &config)
 
     //get the list of interfaces
     QAbstractItemModel *ifaceModel = m_priorityList->model();
-    QStringList ifaceList, ifaceNameList;
+    QStringList ifaceList, ifaceTypeList, ifaceNameList;
     for(int index=0; index < ifaceModel->rowCount(); index++) {
         ifaceList << ifaceModel->data(ifaceModel->index(index,0), IfaceItemModel::UniRole).toString();
-        ifaceList << ifaceModel->data(ifaceModel->index(index,2)).toString();
+        ifaceTypeList << ifaceModel->data(ifaceModel->index(index,0)).toString();
+        ifaceNameList << ifaceModel->data(ifaceModel->index(index,2)).toString();
     }
     config.writeEntry("InterfaceList", ifaceList);
-    config.writeEntry("InterfaceNameList", ifaceList);
+    config.writeEntry("InterfaceTypeList", ifaceTypeList);
+    config.writeEntry("InterfaceNameList", ifaceNameList);
 }
 
 void GeneralSettingsWidget::loadConfig(const KConfigGroup &config)

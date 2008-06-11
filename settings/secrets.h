@@ -36,13 +36,13 @@
 class Secrets : public QObject, protected QDBusContext
 {
     Q_OBJECT
-    Q_CLASSINFO("Secrets Interface", "org.freedesktop.NetworkManagerSettings.Connection.Secrets")
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection.Secrets")
 
     public:
         Secrets(QObject *parent=0);
         ~Secrets();
 
-        bool loadSettings(const KConfigGroup &group);
+        bool loadSettings(const Setting &setting);
 
         Q_SCRIPTABLE QMap<QString, QMap<QString, QVariant> > GetSecrets(QString setting_name, QStringList hints, bool request_new);
 

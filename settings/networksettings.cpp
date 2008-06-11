@@ -25,7 +25,8 @@
 
 #include "NetworkManager.h"
 
-NetworkSettings::NetworkSettings()
+NetworkSettings::NetworkSettings(const KConfigGroup &settings, QObject *parent)
+    : QObject(parent)
 {
     //declare types
     qDBusRegisterMetaType< QList<QDBusObjectPath> >();
@@ -38,16 +39,18 @@ NetworkSettings::NetworkSettings()
 
 NetworkSettings::~NetworkSettings()
 {
+    clearConnections();
+
     QDBusConnection dbus = QDBusConnection::systemBus();
     dbus.unregisterObject(objectPath());
 }
 
-bool NetworkSettings::loadSettings(const KConfigGroup &settings)
+bool NetworkSettings::loadProfile(const QString &profile)
 {
     clearConnections();
     QStringList interfaceNames = settings.readEntry("InterfaceNameList", QStringList()).toStringList();
     foreach (const QString &interfaceName, interfacesNames) {
-
+        connectionMap[connName] = new Connection(profile, interfaceName, setttings, this);
     }
     return true;
 }
