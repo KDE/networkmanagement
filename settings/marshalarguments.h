@@ -17,31 +17,32 @@
 
 */
 
-#ifndef MARSHALL_ARGUMENTS_H
-#define MARSHALL_ARGUMENTS_H
+#ifndef MARSHAL_ARGUMENTS_H
+#define MARSHAL_ARGUMENTS_H
 
 #include <QMap>
 #include <QVariant>
-#include <QDbus>
-#include <QDbusArgument>
+#include <QtDBus/QtDBus>
+#include <QtDBus/QDBusArgument>
 
-QT_DECLARE_METATYPE(QList<uint>)
-QT_DECLARE_METATYPE(QList< QList<uint> >)
-QT_DECLARE_METATYPE(QList<QDbusObjectPath>)
-QT_DECLARE_METATYPE(QMap<QString, QVariant>)
-QT_DECLARE_METATYPE(QMap<QString, QMap<QString, QVariant> >)
+Q_DECLARE_METATYPE(QList<uint>)
+Q_DECLARE_METATYPE(QList< QList<uint> >)
+typedef QMap<QString, QVariant> QVariantMap;
+Q_DECLARE_METATYPE(QVariantMap)
+typedef QMap<QString, QMap<QString, QVariant> > QVariantMapMap;
+Q_DECLARE_METATYPE(QVariantMapMap)
 
-QDBusArgument &operator<<(QDBusArgument &argument, const QList< QList<uint> > &myarray)
+inline QDBusArgument &operator<<(QDBusArgument &argument, const QList< QList<uint> > &myarray)
 {
     argument.beginArray( qMetaTypeId<QList<uint> >() );
-    for ( int i = 0; i < myarray.length; ++i ) {
-        argument << myarray.elements[i];
+    for ( int i = 0; i < myarray.count(); ++i ) {
+        argument << myarray[i];
     }
     argument.endArray();
     return argument;
 }
 
-const QDBusArgument &operator>>(const QDBusArgument &argument, QList< QList<uint> > &myarray)
+inline const QDBusArgument &operator>>(const QDBusArgument &argument, QList< QList<uint> > &myarray)
 {
     argument.beginArray();
     myarray.clear();
@@ -56,30 +57,33 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, QList< QList<uint
     return argument;
 }
 
-QDBusArgument &operator<<(QDBusArgument &argument, const QMap<QString, QMap<QString, QVariant> > &mymap)
+inline QDBusArgument &operator<<(QDBusArgument &argument, const QVariantMapMap &mymap)
 {
-    argument.beginMap( QVariant::String, qMetaTypeId<QMap<QString, QVariant> >() );
-    for ( int i = 0; i < mydict.length; ++i ) {
+    argument.beginMap( QVariant::String, qMetaTypeId<QVariantMap>() );
+
+    QVariantMapMap::const_iterator i = mymap.constBegin();
+    while (i != mymap.constEnd()) {
         argument.beginMapEntry();
-        argument << mymap.data[i].key << mymap.data[i].value;
+        argument << i.key() << i.value();
         argument.endMapEntry();
+        ++i;
     }
     argument.endMap();
     return argument;
 }
 
-const QDBusArgument &operator>>(const QDBusArgument &argument, QMap<QString, QMap<QString, QVariant> > &mymap)
+inline const QDBusArgument &operator>>(const QDBusArgument &argument, QVariantMapMap &mymap)
 {
     argument.beginMap();
     mymap.clear();
 
     while ( !argument.atEnd() ) {
         QString key;
-        QMap<QString, QVariant> value;
+        QVariantMap value;
         argument.beginMapEntry();
         argument >> key >> value;
         argument.endMapEntry();
-        mymap.append( key, value );
+        mymap.insert( key, value );
     }
 
     argument.endMap();

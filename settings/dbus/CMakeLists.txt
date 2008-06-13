@@ -14,16 +14,7 @@ set( FILES_TO_BUILD activeconnection.cpp
    nm-ip4-configinterface.cpp
 )
 
-set( UNUSED_GENERATED_FILES
-   nm-vpn-connectioninterface.cpp
-   nm-exported-connectioninterface.cpp
-   nm-vpn-managerinterface.cpp
-   nm-vpn-plugininterface.cpp
-)
-
-QT4_ADD_DBUS_INTERFACES( FILES_TO_BUILD ${INTERFACE_INTROSPECTION_XML_FILES} )
-
-kde4_add_library(networkmanagerdbus ${FILES_TO_BUILD})
+QT4_ADD_DBUS_ADAPTER( FILES_TO_BUILD ${ADAPTER_INTROSPECTION_XML_FILES} )
 
 TARGET_LINK_LIBRARIES(networkmanagerdbus ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY})
 

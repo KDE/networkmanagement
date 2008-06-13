@@ -22,21 +22,36 @@
 #include <QtDBus/QtDBus>
 
 //kde specific includes
-#include <kcomponentdata.h>
-#include <kcmdlineargs.h>
-#include <klocale.h>
-#include <kdebug.h>
+#include <KUniqueApplication>
+#include <KCmdLineArgs>
+#include <KCmdLineOptions>
+#include <KAboutData>
+#include <KLocale>
+#include <KDebug>
 
-#include <iostream>
+#include "client.h"
 
-using namespace std;
+#include <NetworkManager.h>
 
 int main(int args, char **argv)
 {
-    KComponentData componentData("settingsclienttest");
+KAboutData aboutData(QByteArray("SettingsClientTest"), 0, ki18n("SettingsClientTest"),
+                         KDE_VERSION_STRING, ki18n("test"), KAboutData::License_GPL,
+                         ki18n("test"));
+    KCmdLineArgs::init(args, argv, &aboutData);
+    KApplication app;
 
-
-    return 0;
+    Client settings;
+    QStringList connections = settings.connections();
+    kDebug() << "Current connections are: " << connections;
+    if (!connections.isEmpty()) {
+        kDebug() << "Getting Settings . . . ";
+        QVariantMapMap map = settings.settings(connections[0]);
+        foreach (const QString &key1, map.keys()) {
+            foreach(const QString &key2, map[key1].keys()) {
+                kDebug() << "map[" << key1 << "][" << key2 << "] = " << map[key1][key2];
+            }
+        }
+    }
+    return app.exec();
 }
-
-#include "settingsclienttest.moc"

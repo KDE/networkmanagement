@@ -20,31 +20,41 @@
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
+#include "marshalarguments.h"
+
 #include <QObject>
 #include <QVariant>
 #include <QMap>
 #include <QString>
+
+//DBus specific includes
+#include <QtDBus/QtDBus>
+#include <QDBusObjectPath>
+
+#include <KConfigGroup>
 
 #include <NetworkManager.h>
 
 class Connection : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", NM_DBUS_SERVICE_USER_SETTINGS)
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection")
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection.Secrets")
 
     public:
-        enum ConnectionType {Unknown=0. Wired, Wireless};
+        enum ConnectionType {Unknown=0, Wired, Wireless};
 
-        Connection(const QString &connName, const KConfigGroup &config, QObject *parent=0);
-        ~Connections();
+        Connection(const QDBusConnection &connection, const QString &connPath, const QString &connName, const KConfigGroup &config, QObject *parent);
+        ~Connection();
 
-        QString objectPath();
+        QString objectPath() const;
 
         //export to dbus
         Q_SCRIPTABLE QString GetID() const;
-        Q_SCRIPTABLE void Update(QMap<QString, QMap<QString, QVariant> > updates);
+        Q_SCRIPTABLE void Update(QVariantMapMap updates);
         Q_SCRIPTABLE void Delete();
-        Q_SCRIPTABLE QMap<QString, QMap<QString, QVariant> > GetSettings() const;
+        Q_SCRIPTABLE QVariantMapMap GetSettings() const;
+        Q_SCRIPTABLE QVariantMap GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new);
 
     Q_SIGNALS:
         void Updated(QMap<QString, QMap<QString, QVariant> >);
@@ -52,11 +62,13 @@ class Connection : public QObject
     private:
         QMap<QString, QMap<QString, QVariant> > toMap() const;
 
+        QDBusConnection conn;
         QString connName;
+        QString connPath;
         ConnectionType connType;
         KConfigGroup settings;
 
-        WiredConnectionSetting *wired;
+        //WiredConnectionSetting *wired;
 };
 
 #endif

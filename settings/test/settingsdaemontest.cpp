@@ -31,11 +31,9 @@
 #include <KConfigGroup>
 #include <KDebug>
 
-//#include "networksettings.h"
+#include "networksettings.h"
 
 #include <NetworkManager.h>
-
-using namespace std;
 
 int main(int args, char **argv)
 {
@@ -45,11 +43,6 @@ int main(int args, char **argv)
     KCmdLineArgs::init(args, argv, &aboutData);
     KApplication app;
 
-    if (!QDBusConnection::sessionBus().registerService(NM_DBUS_SERVICE_USER_SETTINGS)) {
-        kDebug() << qPrintable(QDBusConnection::sessionBus().lastError().message());
-        exit(1);
-    }
-
     KConfig config("/etc/networkconfig");
     KConfigGroup configGroup(&config, "Profiles");
     kDebug() << "Available profiles . . . ";
@@ -58,7 +51,15 @@ int main(int args, char **argv)
         }
 
     //load wired
-    KConfigGroup wiredGroup(&configGroup, "Wired");
-    NetworkSettings nmSettings(wiredGroup);
+    NetworkSettings nmSettings(configGroup);
+    if (nmSettings.isValid()) {
+        if (!nmSettings.loadProfile("Wired")) {
+            kDebug() << "Profile could not be loaded.";
+        } else {
+            kDebug() << "Profile loaded.";
+        }
+    } else {
+        return 1;
+    }
     return app.exec();
 }

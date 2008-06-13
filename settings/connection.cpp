@@ -18,56 +18,63 @@
 */
 
 #include "connection.h"
-#include "marshallarguments.h"
+#include "nm-settings-connectionadaptor.h"
 
-#include <nm-setting-wired.h>
-#include <nm-setting-wireless.h>
+#include <KDebug>
 
-Connection::Connection(const QString profile, const QString &interfaceName, const KConfigGroup &config, QObject *parent)
+//#include <nm-setting-wired.h>
+//#include <nm-setting-wireless.h>
+
+Connection::Connection(const QDBusConnection &connection, const QString &connPath, const QString &connName, const KConfigGroup &config, QObject *parent)
     : QObject(parent),
-      wired(0)
+      conn(connection)
+      //wired(0)
 {
-    qDBusRegisterMetaType< QMap<QString, QMap<QString, QVariant> > >();
-    qDBusRegisterMetaType< QMap<QString, QVariant> >();
+    qDBusRegisterMetaType<QVariantMapMap>();
+    qDBusRegisterMetaType<QVariantMap>();
 
     new ConnectionAdaptor(this);
+    new SecretsAdaptor(this);
 
-    //connection name = "profile - interfaceName"
-    QString connName = profile + '-';
-    connName += interfaceName;
-    QDBusConnection::systemBus().registerObject(objectPath(), this);
+    this->connPath = connPath;
+    this->connName = connName;
+    conn.registerObject(objectPath(), this);
 
-    QStringList ifaceTypes = config.readEntry("InterfaceTypeList", QStringList()).toStringList();
-    QStringList ifaceNames = config.readEntry("InterfaceNameList", QStringList()).toStringList();
+    QStringList ifaceTypes = config.readEntry("InterfaceTypeList", QStringList());
+    QStringList ifaceNames = config.readEntry("InterfaceNameList", QStringList());
 
-    int nameIndex = ifaceNames.indexOf(interfaceName);
+    int nameIndex = ifaceNames.indexOf(connName.split("/").last());
     if (nameIndex != -1) {
         if (ifaceTypes[nameIndex] == "Wired") {
             connType = Wired;
-            wired = new WiredConnectionSetting(config, this);
+            //wired = new WiredConnectionSetting(config, this);
         } else if (ifaceTypes[nameIndex] == "Wireless") {
             connType = Wireless;
         }
+    } else {
+        kDebug() << "Could not find interface name.";
+    }
 }
 
 Connection::~Connection()
 {
-    QDBusConnection::systemBus().unregisterObject(objectPath());
+    conn.unregisterObject(objectPath());
 }
 
-QString Connection::objectPath()
+QString Connection::objectPath() const
 {
-    return QString(NM_DBUS_PATH_SETTINGS_CONNECTION + "/" + connectionName);
+    return connPath;
 }
 
 QString Connection::GetID() const
 {
-    return connectionName;
+    return connName;
 }
 
-void Connection::Update(QMap<QString, QMap<QString, QVariant> > updates)
+void Connection::Update(QVariantMapMap updates)
 {
-    if (updates.exists(NM_SETTING_WIRED_SETTING_NAME)) {
+    Q_UNUSED(updates)
+    /*if (updates.exists(NM_SETTING_WIRED_SETTING_NAME)) {
         if (wired == 0) {
             wired = new WiredConnectionSetting(setting, this);
         }
@@ -81,16 +88,31 @@ void Connection::Update(QMap<QString, QMap<QString, QVariant> > updates)
 
 void Connection::Delete()
 {
-    emit Removed()
+    emit Removed();
 }
 
-QMap<QString, QMap<QString, QVariant> > Connection::GetSettings() const
+QVariantMapMap Connection::GetSettings() const
 {
-    QMap<QString, QMap<QString, QVariant> > retVal;
+    QVariantMapMap retVal;
+    kDebug() << "Retrieving settings.";
     switch (connType) {
         case Wired:
-
+            kDebug() << "Retrieving wired settings.";
+            retVal["802-3-ethernet"]["name"] = QVariant("802-3-ethernet");
+            break;
+        default:
+            break;
     }
+    return retVal;
+}
+
+QVariantMap Connection::GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new)
+{
+    Q_UNUSED(setting_name)
+    Q_UNUSED(hints)
+    Q_UNUSED(request_new)
+
+    return QVariantMap();
 }
 
 #include "connection.moc"

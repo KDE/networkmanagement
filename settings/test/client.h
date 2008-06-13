@@ -17,8 +17,8 @@
 
 */
 
-#ifndef NETWORK_SETTINGS_H
-#define NETWORK_SETTINGS_H
+#ifndef CLIENT_H
+#define CLIENT_H
 
 #include <QObject>
 #include <QVariant>
@@ -29,43 +29,25 @@
 #include <QtDBus/QtDBus>
 #include <QDBusObjectPath>
 
-#include <KConfigGroup>
-
-#include <NetworkManager.h>
-
-#include "connection.h"
 #include "marshalarguments.h"
 
-class NetworkSettings : public QObject
+class Client : public QObject
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings")
 
     public:
-        NetworkSettings(const KConfigGroup &settings, QObject *parent=0);
-        ~NetworkSettings();
+        Client(QObject *parent=0);
+        ~Client();
 
-        bool loadProfile(const QString &profile);
-        bool isValid() const;
-
-        QDBusConnection dbusConnection() const;
-
-        Q_SCRIPTABLE QList<QDBusObjectPath> ListConnections() const;
+        QStringList connections() const;
+        QVariantMapMap settings(const QString &connPath) const;
 
     public Q_SLOTS:
-        void onConnectionRemoved();
-
-    Q_SIGNALS:
-        void NewConnection(QDBusObjectPath);
+        void onNewConnection(const QString &name);
 
     private:
-        void clearConnections();
-        QString objectPath() const;
-
-        KConfigGroup m_settings;
-        QDBusConnection m_conn;
-        QMap<QString, Connection*> m_connectionMap;
-        bool m_valid;
+        QDBusConnection m_bus;
+        QDBusInterface *m_settings;
 };
 
 #endif
