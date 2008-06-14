@@ -205,6 +205,7 @@ QString IfaceItemModel::priorityInterface(FilterTypes types) const
             return iface->uni();
         }
     }
+    return QString();
 }
 
 #include "ifaceitemmodel.moc"
