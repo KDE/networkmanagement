@@ -24,8 +24,9 @@
       <arg name="setting_name" type="s" direction="in"/>
       <arg name="hints" type="as" direction="in"/>
       <arg name="request_new" type="b" direction="in"/>
-      <arg name="secrets" type="a{sv}" direction="out"/>
-      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMap"/>
+      <arg name="secrets" type="a{sa{sv}}" direction="out"/>
+      <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMapMap"/>
     </method>
   </interface>
 </node>
+

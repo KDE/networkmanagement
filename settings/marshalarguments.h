@@ -27,7 +27,6 @@
 
 Q_DECLARE_METATYPE(QList<uint>)
 Q_DECLARE_METATYPE(QList< QList<uint> >)
-typedef QMap<QString, QVariant> QVariantMap;
 Q_DECLARE_METATYPE(QVariantMap)
 typedef QMap<QString, QMap<QString, QVariant> > QVariantMapMap;
 Q_DECLARE_METATYPE(QVariantMapMap)
@@ -59,7 +58,7 @@ inline const QDBusArgument &operator>>(const QDBusArgument &argument, QList< QLi
 
 inline QDBusArgument &operator<<(QDBusArgument &argument, const QVariantMapMap &mymap)
 {
-    argument.beginMap( QVariant::String, qMetaTypeId<QVariantMap>() );
+    argument.beginMap( QVariant::String, QVariant::Map );
 
     QVariantMapMap::const_iterator i = mymap.constBegin();
     while (i != mymap.constEnd()) {

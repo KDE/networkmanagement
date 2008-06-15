@@ -25,6 +25,8 @@
 #include <QMap>
 #include <QString>
 
+#include <KConfigGroup>
+
 class WiredConnectionSetting : public QObject
 {
     Q_OBJECT
@@ -33,12 +35,11 @@ class WiredConnectionSetting : public QObject
         WiredConnectionSetting(const KConfigGroup &config, QObject *parent=0);
         ~WiredConnectionSetting();
 
-        QMap<QString, QVariant> toMap() const;
+        QMap<QString, QVariant> settingsMap() const;
         void update(const QMap<QString, QVariant> &updates);
     private:
-        QString name;
         QByteArray macAddress;
-        uint32 mtu;
+        quint32 mtu;
 };
 
 #endif

@@ -22,6 +22,10 @@
 
 #include "marshalarguments.h"
 
+//setting objects
+#include "wiredconnectionsetting.h"
+#include "wirelessconnectionsetting.h"
+
 #include <QObject>
 #include <QVariant>
 #include <QMap>
@@ -54,7 +58,7 @@ class Connection : public QObject
         Q_SCRIPTABLE void Update(QVariantMapMap updates);
         Q_SCRIPTABLE void Delete();
         Q_SCRIPTABLE QVariantMapMap GetSettings() const;
-        Q_SCRIPTABLE QVariantMap GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new);
+        Q_SCRIPTABLE QVariantMapMap GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new);
 
     Q_SIGNALS:
         void Updated(QMap<QString, QMap<QString, QVariant> >);
@@ -67,8 +71,10 @@ class Connection : public QObject
         QString connPath;
         ConnectionType connType;
         KConfigGroup settings;
+        QVariantMap connectionMap;
 
-        //WiredConnectionSetting *wired;
+        WiredConnectionSetting *wired;
+        WirelessConnectionSetting *wireless;
 };
 
 #endif

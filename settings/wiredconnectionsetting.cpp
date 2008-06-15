@@ -17,14 +17,21 @@
 
 */
 
-#include "wiredconnection.h"
+#include "wiredconnectionsetting.h"
 
-#include <nm-setting-wired.h>
+//from nm-setting-wired.h
+#define NM_SETTING_WIRED_SETTING_NAME "802-3-ethernet"
+#define NM_SETTING_WIRED_PORT "port"
+#define NM_SETTING_WIRED_SPEED "speed"
+#define NM_SETTING_WIRED_DUPLEX "duplex"
+#define NM_SETTING_WIRED_AUTO_NEGOTIATE "auto-negotiate"
+#define NM_SETTING_WIRED_MAC_ADDRESS "mac-address"
+#define NM_SETTING_WIRED_MTU "mtu"
 
 WiredConnectionSetting::WiredConnectionSetting(const KConfigGroup &config, QObject *parent)
-    : QObject(parent),
-      name(NM_SETTING_WIRED_SETTING_NAME)
+    : QObject(parent)
 {
+    Q_UNUSED(config)
     //take the config and initialize settings
     mtu = 1500;
 }
@@ -36,20 +43,22 @@ WiredConnectionSetting::~WiredConnectionSetting()
 void WiredConnectionSetting::update(const QMap<QString, QVariant> &updates)
 {
     //TODO: use interators
-    if (updates.exists(NM_SETTING_WIRED_MAC_ADDRESS)) {
+    if (updates.keys().contains(NM_SETTING_WIRED_MAC_ADDRESS)) {
         macAddress = updates[NM_SETTING_WIRED_MAC_ADDRESS].toByteArray();
     }
-    if (updates.exists(NM_SETTING_WIRED_MTU)) {
+    if (updates.keys().contains(NM_SETTING_WIRED_MTU)) {
         mtu = updates[NM_SETTING_WIRED_MTU].toUInt();
     }
 }
 
-QMap<QString, QVariant> WiredConnectionSetting::toMap() const
+QMap<QString, QVariant> WiredConnectionSetting::settingsMap() const
 {
     QMap<QString, QVariant> retVal;
-    retVal["name"] = QVariant(name);
+    retVal["name"] = QVariant(NM_SETTING_WIRED_SETTING_NAME);
     retVal[NM_SETTING_WIRED_MAC_ADDRESS] = QVariant(macAddress);
     retVal[NM_SETTING_WIRED_MTU] = QVariant(mtu);
+
+    return retVal;
 }
 
 #include "wiredconnectionsetting.moc"

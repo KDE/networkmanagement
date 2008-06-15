@@ -30,6 +30,10 @@
 #include <QDBusObjectPath>
 
 #include "marshalarguments.h"
+#include "connectioninterface.h"
+
+typedef OrgFreedesktopNetworkManagerSettingsConnectionInterface ConnectionInterface;
+typedef OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface SecretsInterface;
 
 class Client : public QObject
 {

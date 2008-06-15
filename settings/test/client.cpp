@@ -63,13 +63,15 @@ QVariantMapMap Client::settings(const QString &connPath) const
 {
     kDebug() << "connPath = " << connPath;
     QVariantMapMap retVal;
-    QDBusInterface *connection = new QDBusInterface(NM_DBUS_SERVICE_USER_SETTINGS, connPath, NM_DBUS_IFACE_SETTINGS_CONNECTION, m_bus, (QObject*)this);
+    ConnectionInterface *connection = new ConnectionInterface(NM_DBUS_SERVICE_USER_SETTINGS, connPath, m_bus, (QObject*)this);
 
-    QDBusReply<QVariantMapMap> reply = connection->call("GetSettings");
+    //QDBusReply<QVariantMapMap> reply = connection->GetSettings();
+    QDBusReply<QMap<QString, QVariantMap> > reply = connection->call("GetSettings");
     if(reply.isValid()) {
         retVal =  reply.value();
     } else {
         kDebug() << QDBusError::errorString(reply.error().type());
+        kDebug() << reply.error().message();
     }
     delete connection;
     return retVal;
