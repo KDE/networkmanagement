@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>ConnectionSettingsWidget</class>
- <widget class="QWidget" name="ConnectionSettingsWidget" >
+ <class>ConnectionSettings</class>
+ <widget class="QWidget" name="ConnectionSettings" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -39,6 +39,9 @@
    </item>
    <item>
     <widget class="QCheckBox" name="system" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
      <property name="text" >
       <string>&amp;System connection</string>
      </property>
