@@ -1,0 +1,42 @@
+Serializer converts between kconfig storage and qvariantmapmaps
+and between kconfig storage and UI contents (like kconfigdialog).
+
+Uses a .kcfg file to define settings.  Since .kcfg allows multiple groups should be able to define all in one .kcfg file.
+
+Use nested groups in rcfile.
+
+Load kcfg, create in memory representation?  Or just work from XML tree?
+
+READ
+Open rcfile.
+enumerate connections (top level value).
+For each connection:
+  get ID
+  enumerate settings:
+  For each setting:
+    pass setting to handler
+    enumerate values:
+	For each value:
+	  lookup name(entry) for setting(group) in kcfg
+	  lookup value of entry
+	  lookup type for entry
+	  lookup min, max if present (or if numeric type)
+      pass these to appropriate handler for type
+	  WHAT IF ITS A SECRET?
+
+handler settings:
+  map handler: create new qvariantmap, insert it using setting name, set this on the map handler as current map.
+  ui handler: locate child widget called "$name_setting_widget", set it on the ui handler as current widget
+handler values:
+  map handler: insert qvariant into setting's map with name
+  ui handler: locate child widget named "$name_item_widget" and set value, min, max using methods appropriate to widget type 
+
+The UI case is nearly the same as what KConfigXT already does, the difference is that it operates on a top level group only instead of the whole file. Could we use KConfigDialogManager with a custom KConfigSkeleton?
+
+Todo: figure out KConfigSkeleton.  Can we point it at an arbitrary KConfigGroup?  Can we set it up with custom Items read from the kcfg.  Will it read/write those correctly?  
+
+I thought that KConfigDialog only allows a single managed widget but KConfigDialog can handle an arbitrary number of widgets and their children.  Still might have to use the Manager directly to work on a widget in a KCM.
+
+WRITE
+From ui:
+

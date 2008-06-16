@@ -1,0 +1,178 @@
+<ui version="4.0" >
+ <class>SettingsIp4Config</class>
+ <widget class="QWidget" name="SettingsIp4Config" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>278</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+     <item>
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>&amp;Method:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>kcfg_method</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KComboBox" name="kcfg_method" >
+       <item>
+        <property name="text" >
+         <string>DHCP</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Auto IP</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Manual</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>DHCP with manual DNS</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QLabel" name="label_2" >
+     <property name="text" >
+      <string>Addr&amp;esses</string>
+     </property>
+     <property name="buddy" >
+      <cstring>addressesTable</cstring>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableWidget" name="addressesTable" >
+     <column>
+      <property name="text" >
+       <string>Address</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Netmask</string>
+      </property>
+     </column>
+     <column>
+      <property name="text" >
+       <string>Gateway</string>
+      </property>
+     </column>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4" >
+     <item>
+      <widget class="KPushButton" name="btnAddAddress" >
+       <property name="text" >
+        <string>&amp;Add</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KPushButton" name="btnRemoveAddress" >
+       <property name="text" >
+        <string>&amp;Remove</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QGridLayout" name="gridLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label_3" >
+       <property name="text" >
+        <string>&amp;DNS servers:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>kcfg_dns</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="KLineEdit" name="kcfg_dns" />
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="label_4" >
+       <property name="text" >
+        <string>&amp;Search domains:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>kcfg_dns_search</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="KLineEdit" name="kcfg_dns_search" />
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>69</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

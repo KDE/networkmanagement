@@ -1,0 +1,143 @@
+<ui version="4.0" >
+ <class>Settings80211Wireless</class>
+ <widget class="QWidget" name="Settings80211Wireless" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>253</width>
+    <height>179</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <layout class="QGridLayout" name="gridLayout" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label" >
+       <property name="text" >
+        <string>&amp;ESSID:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>kcfg_essid</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="KLineEdit" name="kcfg_essid" />
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="label_2" >
+       <property name="text" >
+        <string>&amp;Mode:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>kcfg_mode</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <widget class="KComboBox" name="kcfg_mode" >
+       <item>
+        <property name="text" >
+         <string>Infrastructure</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Ad-hoc</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="label_3" >
+       <property name="text" >
+        <string>&amp;BSSID:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>kcfg_bssid</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1" >
+      <widget class="KLineEdit" name="kcfg_bssid" >
+       <property name="inputMask" >
+        <string>HH:HH:HH:HH:HH:HH; </string>
+       </property>
+       <property name="text" >
+        <string>:::::</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" >
+      <widget class="QLabel" name="label_4" >
+       <property name="text" >
+        <string>MAC &amp;Address:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>kcfg_macaddress</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" >
+      <widget class="KLineEdit" name="kcfg_macaddress" >
+       <property name="inputMask" >
+        <string>HH:HH:HH:HH:HH:HH; </string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0" >
+      <widget class="QLabel" name="label_5" >
+       <property name="text" >
+        <string>&amp;MTU:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>kcfg_mtu</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1" >
+      <widget class="QSpinBox" name="kcfg_mtu" >
+       <property name="suffix" >
+        <string> bytes</string>
+       </property>
+       <property name="maximum" >
+        <number>32000</number>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>43</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

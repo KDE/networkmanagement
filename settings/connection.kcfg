@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+  http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile arg="true"/>
+  <group name="connection">
+    <entry name="id" type="String">
+      <label>Identifier</label>
+      <whatsthis>A name that uniquely identifies a connection</whatsthis>
+    </entry>
+    <entry name="type" type="String">
+      <label>Type</label>
+      <whatsthis>Specifies the connection type, defines which devices it can activate and which other settings the connection should contain</whatsthis>
+    </entry>
+    <entry name="autoconnect" type="Bool">
+      <label>Connect automatically</label>
+      <whatsthis>Should the networking system always try to activate this connection?</whatsthis>
+    </entry>
+    <entry name="timestamp" type="ULongLong">
+      <label>Last used</label>
+      <whatsthis>The date and time that the connection was last activated</whatsthis>
+    </entry>
+  </group>
+</kcfg>
+
+<!--
+  <group name="">
+    <entry name="" type="">
+      <label></label>
+      <whatsthis></whatsthis>
+    </entry>
+  </group>
+  -->
+

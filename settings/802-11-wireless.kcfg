@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+  http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile arg="true"/>
+  <group name="802-11-wireless">
+    <entry name="ssid" type="IntList">
+      <label>SSID</label>
+      <whatsthis>Service Set IDentifier (network name) </whatsthis>
+    </entry>
+    <entry name="mode" type="String">
+      <label>Mode</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="band" type="String">
+      <label>Band</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="channel" type="UInt">
+      <label>Channel</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="bssid" type="IntList">
+      <label>BSSID</label>
+      <whatsthis>Basic Service Set IDentifier of the access point to use</whatsthis>
+    </entry>
+    <entry name="rate" type="UInt">
+      <label>Data rate</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="tx-power" type="UInt">
+      <label>Transmit power</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="mac-address" type="IntList">
+      <label>MAC Address</label>
+      <whatsthis>Hardware address to set on the wireless network interface</whatsthis>
+    </entry>
+    <entry name="seen-bssids" type="StringList">
+      <label>Seen BSSIDs</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="security" type="String">
+      <label></label>
+      <whatsthis></whatsthis>
+    </entry>
+  </group>
+</kcfg>
+
+<!--
+  <group name="">
+    <entry name="" type="">
+      <label></label>
+      <whatsthis></whatsthis>
+    </entry>
+  </group>
+  -->
+

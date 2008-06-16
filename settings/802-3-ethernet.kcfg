@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+  http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile arg="true"/>
+  <group name="802-3-ethernet">
+    <entry name="port" type="String">
+      <label>Port</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="speed" type="UInt">
+      <label>Speed</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="duplex" type="String">
+      <label>Duplex</label>
+      <whatsthis>Whether the Ethernet interface should use duplex communications</whatsthis>
+    </entry>
+    <entry name="auto-negotiate" type="Bool">
+      <label>Auto negotatiate</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <!-- generally mac-address should be ByteArray -->
+    <entry name="mac-address" type="String">
+      <label>MAC Address</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="mtu" type="UInt">
+      <label>MTU</label>
+      <whatsthis>Maximum Transfer Unit to use</whatsthis>
+    </entry>
+  </group>
+</kcfg>
+
+<!--
+  <group name="">
+    <entry name="" type="">
+      <label></label>
+      <whatsthis></whatsthis>
+    </entry>
+  </group>
+  -->
+

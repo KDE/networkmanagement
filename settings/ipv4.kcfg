@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+  http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile arg="true"/>
+  <group name="ipv4">
+    <entry name="method" type="String">
+      <label>Method</label>
+      <whatsthis>Choose the way to set the IP address of this connection</whatsthis>
+    </entry>
+    <entry name="dns" type="StringList">
+      <label>DNS Servers</label>
+      <whatsthis>List of Domain Name System servers to use</whatsthis>
+    </entry>
+    <entry name="dnssearch" type="Bool">
+      <label>Search Domains</label>
+      <whatsthis>List of domains to search for a hostname</whatsthis>
+    </entry>
+    <!-- addresses is actually UIntListList -->
+    <entry name="addresses" type="StringList">
+      <label>IP Addresses</label>
+      <whatsthis>List of IP addresses to configure on this connection</whatsthis>
+    </entry>
+    <entry name="ignoredhcpdns" type="Bool">
+      <label>Ignore DHCP DNS</label>
+      <whatsthis>Ignore DNS servers returned by DHCP and use the configured servers instead</whatssthis>
+    </entry>
+  </group>
+</kcfg>
+
+<!--
+  <group name="">
+    <entry name="" type="">
+      <label></label>
+      <whatsthis></whatsthis>
+    </entry>
+  </group>
+  -->
+
