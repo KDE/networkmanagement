@@ -88,8 +88,9 @@ void TestService::configure()
         configDialog.setMainWidget(mp);
         break;
     }
-    configDialog.exec();
-    mp->save();
+    if ( configDialog.exec() == QDialog::Accepted ) {
+        mp->save();
+    }
 }
 
 static const char description[] =
