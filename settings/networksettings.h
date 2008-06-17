@@ -37,6 +37,8 @@ class Connection;
 #include "connection.h"
 #include "marshalarguments.h"
 
+typedef QMap<QString,QVariantMap> QVariantMapMap;
+
 class NetworkSettings : public QObject
 {
     Q_OBJECT
@@ -55,7 +57,7 @@ class NetworkSettings : public QObject
         /**
          * add/update a connection
          */
-        void addConnection(Connection *);
+        void addConnection(const QVariantMapMap & settings);
         /**
          * remove a connection
          */

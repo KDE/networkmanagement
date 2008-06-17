@@ -47,12 +47,19 @@ public:
     void addOrUpdate(const QString & id);
     QList<QPair<const QString&, const QString&> > keyMappings() const;
 private:
+    // map from a) keys that have been munged to be legal variable names 
+    // to b) actual networkmanager parameter keys
     QString convertKey(const QString &) const;
+    // utility method to do last minute value conversions, if required
     QVariant convertValue(const QString& key, const QVariant& value) const;
+    // restore the given connection and add it to the service
     void restoreConnection(const QString & connectionId);
+    // deserialize a single settings group
     QVariantMap handleGroup(const QString & name, const QString & configFile);
+    // initialise the giant, bogus set of mappings needed for convertKey
+    void initKeyMappings();
 private:
     NetworkSettings * m_service;
-    QMap<const QString, const QString> m_keyMappings;
+    QMap<QString, QString> m_keyMappings;
 };
 

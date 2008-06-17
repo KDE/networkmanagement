@@ -39,12 +39,13 @@ class Connection : public QObject
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection")
-    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection.Secrets")
+    // Can QtDbus handle multiple interfaces being provided by one object like this?
+    //Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection.Secrets")
 
     public:
         enum ConnectionType {Unknown=0, Wired, Wireless};
 
-        Connection(QObject *parent=0);
+        Connection(const QString & id, const QVariantMapMap & settingsMap, QObject *parent=0);
         ~Connection();
         QString id() const;
 
