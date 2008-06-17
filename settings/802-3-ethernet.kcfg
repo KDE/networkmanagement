@@ -17,11 +17,13 @@
       <label>Duplex</label>
       <whatsthis>Whether the Ethernet interface should use duplex communications</whatsthis>
     </entry>
-    <entry name="auto-negotiate" type="Bool">
+    <!-- nb "auto-negotiate" in NM -->
+    <entry name="autonegotiate" type="Bool">
       <label>Auto negotatiate</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="mac-address" type="ByteArray">
+    <!-- nb "mac-address" in NM -->
+    <entry name="macaddress" type="ByteArray">
       <label>MAC Address</label>
       <whatsthis></whatsthis>
     </entry>

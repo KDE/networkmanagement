@@ -80,13 +80,16 @@ void TestService::configure()
     KDialog configDialog(this);
     QList<KService::Ptr> services = KServiceTypeTrader::self()->query( "KCModule", "'knetworkmanager' in [X-KDE-ParentComponents]" );
     kDebug() << "found " << services.count() << " config plugins";
+    KCModuleProxy *mp;
     foreach (const KService::Ptr &servicePtr, services) {
         KCModuleInfo moduleInfo(servicePtr);
-        KCModuleProxy *mp = new KCModuleProxy(moduleInfo, this);
+        mp = new KCModuleProxy(moduleInfo, this);
+        mp->load();
         configDialog.setMainWidget(mp);
         break;
     }
     configDialog.exec();
+    mp->save();
 }
 
 static const char description[] =
