@@ -13,7 +13,7 @@
       <label>DNS Servers</label>
       <whatsthis>List of Domain Name System servers to use</whatsthis>
     </entry>
-    <entry name="dnssearch" type="Bool">
+    <entry name="dnssearch" type="StringList">
       <label>Search Domains</label>
       <whatsthis>List of domains to search for a hostname</whatsthis>
     </entry>
