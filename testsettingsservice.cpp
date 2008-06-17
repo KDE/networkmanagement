@@ -82,8 +82,8 @@ void TestService::configure()
     kDebug() << "found " << services.count() << " config plugins";
     foreach (const KService::Ptr &servicePtr, services) {
         KCModuleInfo moduleInfo(servicePtr);
-        KCModuleProxy *currentModuleProxy = new KCModuleProxy(moduleInfo, this);
-        configDialog.setMainWidget(currentModuleProxy);
+        KCModuleProxy *mp = new KCModuleProxy(moduleInfo, this);
+        configDialog.setMainWidget(mp);
         break;
     }
     configDialog.exec();

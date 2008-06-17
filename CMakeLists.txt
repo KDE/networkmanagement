@@ -11,6 +11,7 @@ include_directories(
    ${CMAKE_CURRENT_BUILD_DIR}
 )
 
+## target: networkmanager applet
 
 set(networkmanager_SRCS
     networkmanager.cpp
@@ -34,7 +35,18 @@ kde4_add_ui_files(networkmanager_SRCS widgets/scanwidget.ui)
 kde4_add_plugin(plasma_applet_networkmanager ${networkmanager_SRCS})
 target_link_libraries(plasma_applet_networkmanager plasma ${KDE4_KIO_LIBS} solidcontrol)
 
+## next target: test for ConfigXml to make sure it can handle our connections
+
+set(testconfigxml_SRCS
+   testconfigxml.cpp
+   settings/configxml.cpp
+)
+
+kde4_add_executable(testconfigxml ${testconfigxml_SRCS})
+target_link_libraries(testconfigxml ${KDE4_KDEUI_LIBS})
+
 ## next target: test service
+
 set(testservice_SRCS
    testsettingsservice.cpp
    #   settings/connection.cpp

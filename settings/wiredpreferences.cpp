@@ -32,19 +32,17 @@ K_EXPORT_PLUGIN( WiredPreferencesFactory( "kcm_knetworkmanager_wired" ) )
 WiredPreferences::WiredPreferences(QWidget *parent, const QVariantList &args)
 : KCModule( WiredPreferencesFactory::componentData(), parent, args )
 {
-    QVBoxLayout * layout = new QVBoxLayout(this);
-    QWidget * contents = new QWidget(this);
-    QWidget * wiredWidget = new QWidget(this);
-    QWidget * ipv4Widget = new QWidget(this);
+    QWidget * contents = new QWidget;
+    QWidget * wiredWidget = new QWidget;
+    QWidget * ipv4Widget = new QWidget;
     Ui_ConnectionSettings connUi;
     Ui_Settings8023Ethernet wiredUi;
     Ui_SettingsIp4Config ipv4Ui;
-    connUi.setupUi(contents);
     wiredUi.setupUi(wiredWidget);
     ipv4Ui.setupUi(ipv4Widget);
-    layout->addWidget(contents);
     connUi.tabwidget->addTab(wiredWidget,QLatin1String("Ethernet"));
     connUi.tabwidget->addTab(ipv4Widget,QLatin1String("IP"));
+    connUi.setupUi(contents);
 
     //addConfig(/*some Skeleton*/, wiredWidget);
     //addConfig(/*some Skeleton*/, ipv4Widget);

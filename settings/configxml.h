@@ -66,6 +66,29 @@
  **/
 
 #define THIS_IS_WHY_IT_WONT_LINK
+
+/**
+ * Class for handling ByteArrays
+ */
+class THIS_IS_WHY_IT_WONT_LINK ItemByteArray : public KConfigSkeletonGenericItem<QByteArray>
+{
+public:
+    ItemByteArray(const QString & _group, const QString & _key,
+            QByteArray & reference, const QByteArray & defaultValue = QByteArray());
+
+    /** @copydoc KConfigSkeletonItem::readConfig(KConfig*) */
+    void readConfig(KConfig * config);
+
+    /** @copydoc KConfigSkeletonItem::setProperty(const QVariant&) */
+    void setProperty(const QVariant & p);
+
+    /** @copydoc KConfigSkeletonItem::isEqual(const QVariant &) */
+    bool isEqual(const QVariant &p) const;
+
+    /** @copydoc KConfigSkeletonItem::property() */
+    QVariant property() const;
+};
+
 class THIS_IS_WHY_IT_WONT_LINK ConfigXml : public KConfigSkeleton
 {
 public:

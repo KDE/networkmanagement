@@ -50,6 +50,7 @@ class ConfigXml::Private
             qDeleteAll(sizes);
             qDeleteAll(ulonglongs);
             qDeleteAll(urllists);
+            qDeleteAll(bytearrays);
         }
 
         bool* newBool()
@@ -171,6 +172,13 @@ class ConfigXml::Private
             return v;
         }
 
+        QByteArray* newByteArray()
+        {
+            QByteArray* v = new QByteArray;
+            bytearrays.append(v);
+            return v;
+        }
+
         void parse(ConfigXml *configXml, QIODevice *xml);
 
         QList<bool*> bools;
@@ -191,7 +199,39 @@ class ConfigXml::Private
         QList<quint64*> ulonglongs;
         QList<KUrl::List*> urllists;
         QMap<QString, QString> keysToNames;
+        QList<QByteArray*> bytearrays;
 };
+
+ItemByteArray::ItemByteArray(const QString & _group, const QString & _key,
+            QByteArray & reference, const QByteArray & defaultValue)
+: KConfigSkeletonGenericItem<QByteArray>(_group, _key, reference, defaultValue)
+{
+}
+
+void ItemByteArray::readConfig(KConfig * config)
+{
+    KConfigGroup cg(config, mGroup );
+
+    mReference = cg.readEntry<QByteArray>( mKey, mDefault );
+    mLoadedValue = mReference;
+
+    readImmutability( cg );
+}
+
+void ItemByteArray::setProperty(const QVariant & p)
+{
+    mReference = p.toByteArray();
+}
+
+bool ItemByteArray::isEqual(const QVariant &p) const
+{
+    return mReference == p.toByteArray();
+}
+
+QVariant ItemByteArray::property() const
+{
+    return QVariant(mReference);
+}
 
 class ConfigXmlHandler : public QXmlDefaultHandler
 {
@@ -469,7 +509,13 @@ void ConfigXmlHandler::addItem()
             defaultList.append(KUrl(tmp));
         }
         item = m_config->addItemUrlList(m_name, *d->newUrlList(), defaultList, m_key);*/
+    } else if (m_type == "bytearray") {
+        QString keyToUse = (m_key.isEmpty() ? m_name : m_key );
+        item = new ItemByteArray( m_config->currentGroup(), keyToUse, *d->newByteArray(), QByteArray());
+        kDebug() << "Adding bytearray with name: " << item->name() << "m_name:" << m_name << "m_key:" << m_key;
+        m_config->addItem(item, keyToUse);
     }
+
 
     if (item) {
         item->setLabel(m_label);

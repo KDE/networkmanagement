@@ -21,8 +21,7 @@
       <label>Auto negotatiate</label>
       <whatsthis></whatsthis>
     </entry>
-    <!-- generally mac-address should be ByteArray -->
-    <entry name="mac-address" type="String">
+    <entry name="mac-address" type="ByteArray">
       <label>MAC Address</label>
       <whatsthis></whatsthis>
     </entry>
