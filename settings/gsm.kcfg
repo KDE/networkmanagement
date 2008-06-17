@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+  http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile arg="true"/>
+  <group name="gsm">
+    <entry name="number" type="String">
+      <label>Number</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="username" type="String">
+      <label>Username</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="password" type="String">
+      <label>Password</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="apn" type="String">
+      <label>APN</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="networkid" type="String">
+      <label>Network ID</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="networktype" type="Int">
+      <label>Network Type</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="band" type="Int">
+      <label>Band</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="pin" type="String">
+      <label>PIN</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="puk" type="String">
+      <label>PUK</label>
+      <whatsthis></whatsthis>
+    </entry>
+  </group>
+</kcfg>
+

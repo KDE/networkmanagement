@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+  http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile arg="true"/>
+  <group name="802-1x">
+    <entry name="eap" type="StringList">
+      <label>EAP</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="identity" type="String">
+      <label>Identity</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="anonymousidentity" type="String">
+      <label>Anonymous identity</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="cacert" type="ByteArray">
+      <label>CA Cert</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="capath" type="Path">
+      <label>CA Path</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="clientcert" type="ByteArray">
+      <label>Client Cert</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="phase1peapver" type="String">
+      <label>Phase 1 PEAP version</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="phase1peaplabel" type="String">
+      <label>Phase 1 PEAP label</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="phase1fastprovisioning" type="String">
+      <label>Phase 1 fast provisioning</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="phase2auth" type="String">
+      <label>Phase 2 auth</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="phase2autheap" type="String">
+      <label>Phase 2 auth eap</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="phase2cacert" type="ByteArray">
+      <label>Phase 2 CA Cert</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="phase2capath" type="Path">
+      <label>Phase 2 CA Path</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="phase2clientcert" type="ByteArray">
+      <label>Phase 2 client cert</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="password" type="String">
+      <label>Password</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="privatekey" type="ByteArray">
+      <label>Private key</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="phase2privatekey" type="ByteArray">
+      <label>Phase 2 private key</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="pin" type="String">
+      <label>PIN</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="psk" type="String">
+      <label>PSK</label>
+      <whatsthis></whatsthis>
+    </entry>
+  </group>
+</kcfg>
+
+<!--
+  <group name="">
+    <entry name="" type="">
+      <label></label>
+      <whatsthis></whatsthis>
+    </entry>
+  </group>
+  -->
+

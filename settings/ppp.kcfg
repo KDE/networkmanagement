@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+  http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile arg="true"/>
+  <group name="ppp">
+    <entry name="noauth" type="Bool">
+      <label>No Auth</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="refuseeap" type="Bool">
+      <label>Refuse EAP</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="refusepap" type="Bool">
+      <label>Refuse PAP</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="refusechap" type="Bool">
+      <label>Refuse CHAP</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="refusemschap" type="Bool">
+      <label>Refuse MS CHAP</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="refusemschapv2" type="Bool">
+      <label>Refuse MS CHAP V2</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="nobsdcomp" type="Bool">
+      <label>No BSD comp.</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="nodeflate" type="Bool">
+      <label>No deflate</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="novjcomp" type="Bool">
+      <label>No VJ comp.</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="requiremppe" type="Bool">
+      <label>Require MPPE</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="requiremppe128" type="Bool">
+      <label>Require MPPE 128</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="mpppestateful" type="Bool">
+      <label>MPPPE Stateful</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="crtscts" type="Bool">
+      <label>CRTSCTS</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="baud" type="UInt">
+      <label>Baud</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="mru" type="UInt">
+      <label>MRU</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="mtu" type="UInt">
+      <label>MTU</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="lcpechofailure" type="UInt">
+      <label>LCP echo Failure</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="lcpechointerval" type="UInt">
+      <label>LCP echo interval</label>
+      <whatsthis></whatsthis>
+    </entry>
+  </group>
+</kcfg>

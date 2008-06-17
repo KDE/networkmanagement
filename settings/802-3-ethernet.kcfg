@@ -19,7 +19,7 @@
     </entry>
     <!-- nb "auto-negotiate" in NM -->
     <entry name="autonegotiate" type="Bool">
-      <label>Auto negotatiate</label>
+      <label>Auto negotiate</label>
       <whatsthis></whatsthis>
     </entry>
     <!-- nb "mac-address" in NM -->

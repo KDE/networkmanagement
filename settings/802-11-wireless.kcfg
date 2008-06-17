@@ -5,7 +5,7 @@
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
   <kcfgfile arg="true"/>
   <group name="802-11-wireless">
-    <entry name="ssid" type="IntList">
+    <entry name="ssid" type="ByteArray">
       <label>SSID</label>
       <whatsthis>Service Set IDentifier (network name) </whatsthis>
     </entry>
@@ -21,7 +21,7 @@
       <label>Channel</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="bssid" type="IntList">
+    <entry name="bssid" type="ByteArray">
       <label>BSSID</label>
       <whatsthis>Basic Service Set IDentifier of the access point to use</whatsthis>
     </entry>
@@ -33,10 +33,11 @@
       <label>Transmit power</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="mac-address" type="IntList">
+    <entry name="mac-address" type="ByteArray">
       <label>MAC Address</label>
       <whatsthis>Hardware address to set on the wireless network interface</whatsthis>
     </entry>
+    <!-- another unspecified list probably bytearrays -->
     <entry name="seen-bssids" type="StringList">
       <label>Seen BSSIDs</label>
       <whatsthis></whatsthis>
@@ -47,13 +48,4 @@
     </entry>
   </group>
 </kcfg>
-
-<!--
-  <group name="">
-    <entry name="" type="">
-      <label></label>
-      <whatsthis></whatsthis>
-    </entry>
-  </group>
-  -->
 
