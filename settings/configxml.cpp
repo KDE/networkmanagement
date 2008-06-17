@@ -220,7 +220,11 @@ void ItemByteArray::readConfig(KConfig * config)
 
 void ItemByteArray::setProperty(const QVariant & p)
 {
-    mReference = p.toByteArray();
+    //at this point this is probably a string in dotted format
+    // we don't know if NM expects this or some other series of bytes
+    if (p.toString() != QLatin1String(":::::")) {
+        mReference = p.toByteArray();
+    }
 }
 
 bool ItemByteArray::isEqual(const QVariant &p) const
