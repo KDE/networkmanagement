@@ -64,7 +64,8 @@ set(knmui_SRCS dummy.cpp)
 
 set(kcm_knetworkmanager_wired_SRCS
    # UI logic
-   settings/wiredpreferences.cpp)
+   settings/wiredpreferences.cpp
+   settings/configxml.cpp)
 kde4_add_ui_files(kcm_knetworkmanager_wired_SRCS settings/connection.ui settings/wired.ui settings/ipv4.ui)
 kde4_add_plugin(kcm_knetworkmanager_wired ${kcm_knetworkmanager_wired_SRCS})
 
