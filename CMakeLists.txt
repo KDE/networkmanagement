@@ -49,8 +49,10 @@ target_link_libraries(testconfigxml ${KDE4_KDEUI_LIBS})
 
 set(testservice_SRCS
    testsettingsservice.cpp
-   #   settings/connection.cpp
-   # settings/networksettings.cpp
+   settings/connection.cpp
+   settings/kconfigtoservice.cpp
+   settings/networksettings.cpp
+   settings/configxml.cpp
    )
 
 kde4_add_ui_files(testservice_SRCS settings/connection.ui settings/wired.ui settings/ipv4.ui)

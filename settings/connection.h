@@ -22,10 +22,6 @@
 
 #include "marshalarguments.h"
 
-//setting objects
-#include "wiredconnectionsetting.h"
-#include "wirelessconnectionsetting.h"
-
 #include <QObject>
 #include <QVariant>
 #include <QMap>
@@ -48,33 +44,26 @@ class Connection : public QObject
     public:
         enum ConnectionType {Unknown=0, Wired, Wireless};
 
-        Connection(const QDBusConnection &connection, const QString &connPath, const QString &connName, const KConfigGroup &config, QObject *parent);
+        Connection(QObject *parent=0);
         ~Connection();
-
-        QString objectPath() const;
+        QString id() const;
 
         //export to dbus
         Q_SCRIPTABLE QString GetID() const;
         Q_SCRIPTABLE void Update(QVariantMapMap updates);
         Q_SCRIPTABLE void Delete();
         Q_SCRIPTABLE QVariantMapMap GetSettings() const;
-        Q_SCRIPTABLE QVariantMapMap GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new);
+        Q_SCRIPTABLE QVariantMap GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new);
 
     Q_SIGNALS:
-        void Updated(QMap<QString, QMap<QString, QVariant> >);
-        void Removed();
+        Q_SCRIPTABLE void Updated(QMap<QString, QMap<QString, QVariant> >);
+        Q_SCRIPTABLE void Removed();
     private:
-        QMap<QString, QMap<QString, QVariant> > toMap() const;
+        QString mId;
+        QMap<QString, QMap<QString, QVariant> > mSettingsMap;
 
-        QDBusConnection conn;
-        QString connName;
-        QString connPath;
-        ConnectionType connType;
-        KConfigGroup settings;
-        QVariantMap connectionMap;
-
-        WiredConnectionSetting *wired;
-        WirelessConnectionSetting *wireless;
+        //ConnectionType connType;
+        //WiredConnectionSetting *wired;
 };
 
 #endif

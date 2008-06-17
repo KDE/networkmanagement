@@ -21,7 +21,6 @@
 #define NETWORK_SETTINGS_H
 
 #include <QObject>
-#include <QVariant>
 #include <QMap>
 #include <QString>
 
@@ -29,7 +28,9 @@
 #include <QtDBus/QtDBus>
 #include <QDBusObjectPath>
 
-#include <KConfigGroup>
+//#include <KConfigGroup>
+
+class Connection;
 
 #include <NetworkManager.h>
 
@@ -42,30 +43,39 @@ class NetworkSettings : public QObject
     Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings")
 
     public:
-        NetworkSettings(const KConfigGroup &settings, QObject *parent=0);
-        ~NetworkSettings();
+        NetworkSettings(QObject *parent=0);
+        virtual ~NetworkSettings();
 
-        bool loadProfile(const QString &profile);
-        bool isValid() const;
-
-        QDBusConnection dbusConnection() const;
-
+        // Move to Storage
+        //bool loadSettings(const KConfigGroup &settings);
+        /**
+         * Method from org.freedesktop.NetworkManagerSettings, exported via DBus
+         */
         Q_SCRIPTABLE QList<QDBusObjectPath> ListConnections() const;
+        /**
+         * add/update a connection
+         */
+        void addConnection(Connection *);
+        /**
+         * remove a connection
+         */
+        void removeConnection(const QString & id);
 
     public Q_SLOTS:
         void onConnectionRemoved();
 
     Q_SIGNALS:
-        void NewConnection(QDBusObjectPath);
+        /**
+         * Signal from org.freedesktop.NetworkManagerSettings, exported via DBus
+         */
+        Q_SCRIPTABLE void NewConnection(QDBusObjectPath);
 
     private:
         void clearConnections();
-        QString objectPath() const;
 
-        KConfigGroup m_settings;
-        QDBusConnection m_conn;
+        // Map of connection path to Connection
         QMap<QString, Connection*> m_connectionMap;
-        bool m_valid;
+        uint mNextConnectionId;
 };
 
 #endif

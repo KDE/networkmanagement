@@ -18,43 +18,38 @@
 */
 
 #include "networksettings.h"
-#include "nm-settingsadaptor.h"
 
+#include <NetworkManager.h>
+#include <QDBusConnection>
 #include <QDBusObjectPath>
-
+#include <QDBusMetaType>
+#include <KDebug>
 #include <KDebug>
 
-NetworkSettings::NetworkSettings(const KConfigGroup &config, QObject *parent)
-    : QObject(parent),
-      m_settings(config),
-      m_conn(QDBusConnection::systemBus()),
-      m_valid(false)
+#include "connection.h"
+
+//#include "networksettingsadaptor.h"
+//#include "marshallarguments.h"
+
+
+NetworkSettings::NetworkSettings(QObject * parent)
+: QObject(parent), mNextConnectionId(0)
 {
     //declare types
-    qDBusRegisterMetaType< QList<QDBusObjectPath> >();
+    qDBusRegisterMetaType<QList<QDBusObjectPath> >();
 
-    new NetworkManagerSettingsAdaptor(this);
+    //new NetworkSettingsAdaptor(this);
 
-    if (m_conn.registerService(NM_DBUS_SERVICE_USER_SETTINGS)) {
-        m_conn.registerObject(objectPath(), this);
-        m_valid=true;
-    } else {
-        kDebug() << "Service is already occupied.";
-        m_valid=false;
-    }
+    QDBusConnection dbus = QDBusConnection::systemBus();
+    dbus.registerObject(QLatin1String(NM_DBUS_PATH_SETTINGS), this, QDBusConnection::ExportScriptableContents);
 }
 
 NetworkSettings::~NetworkSettings()
 {
-    if (m_valid) {
-        clearConnections();
-
-        m_conn.unregisterObject(objectPath());
-        m_conn.unregisterService(NM_DBUS_SERVICE_USER_SETTINGS);
-    }
 }
 
-bool NetworkSettings::loadProfile(const QString &profile)
+/*
+bool NetworkSettings::loadSettings(const KConfigGroup &settings)
 {
     kDebug() << "Loading " << profile;
     clearConnections();
@@ -74,30 +69,35 @@ bool NetworkSettings::loadProfile(const QString &profile)
     }
     return true;
 }
+*/
 
-bool NetworkSettings::isValid() const
+void NetworkSettings::addConnection(Connection * connection)
 {
-    return m_valid;
+    kDebug();
+    QString objectPath = QString::fromLatin1("%1/%2").arg(QLatin1String(NM_DBUS_PATH_SETTINGS_CONNECTION)).arg(mNextConnectionId);
+    m_connectionMap.insert(objectPath, connection);
+    QDBusConnection::systemBus().registerObject(objectPath, connection, QDBusConnection::ExportScriptableContents);
 }
 
-QDBusConnection NetworkSettings::dbusConnection() const
+void NetworkSettings::removeConnection(const QString & id)
 {
-    return m_conn;
+    kDebug();
+    //connectionMap.take(id);
 }
 
 QList<QDBusObjectPath> NetworkSettings::ListConnections() const
 {
     QList<QDBusObjectPath> pathList;
     kDebug() << "There are " << m_connectionMap.keys().count() << " known connections";
-    foreach(const QString &connName, m_connectionMap.keys()) {
-        pathList << QDBusObjectPath(m_connectionMap[connName]->objectPath());
-        kDebug() << connName << " = " << m_connectionMap[connName]->objectPath();
+    foreach(const QString &connPath, m_connectionMap.keys()) {
+        pathList << QDBusObjectPath(connPath);
     }
     return pathList;
 }
 
 void NetworkSettings::onConnectionRemoved()
 {
+#if 0
     foreach (const QString connName, m_connectionMap.keys()) {
         if (sender() == m_connectionMap[connName]) {
             disconnect(m_connectionMap[connName], SIGNAL(Removed()));
@@ -105,6 +105,7 @@ void NetworkSettings::onConnectionRemoved()
             m_connectionMap.remove(connName);
         }
     }
+#endif
 }
 
 void NetworkSettings::clearConnections()
@@ -112,11 +113,6 @@ void NetworkSettings::clearConnections()
     foreach (const QString &conn, m_connectionMap.keys()) {
         m_connectionMap[conn]->Delete();
     }
-}
-
-QString NetworkSettings::objectPath() const
-{
-    return QString(NM_DBUS_PATH_SETTINGS);
 }
 
 #include "networksettings.moc"

@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KCModuleProxy>
 #include <KServiceTypeTrader>
 
+#include "settings/kconfigtoservice.h"
 #include "settings/networksettings.h"
 #include "ui_connection.h"
 #include "ui_wired.h"
@@ -60,7 +61,9 @@ TestService::TestService() : KMainWindow( 0 )
     connect( QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString & ) ), SLOT(serviceOwnerChanged(const QString&, const QString&, const QString & ) ) );
 
     setCaption( QLatin1String("NetworkManager 0.7 Test Service") );
-    //mNetworkSettings = new NetworkSettings(this);
+    mNetworkSettings = new NetworkSettings(this);
+    KConfigToService * kConfigConverter = new KConfigToService(mNetworkSettings);
+    kConfigConverter->init();
 }
 
 TestService::~TestService()

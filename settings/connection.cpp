@@ -18,69 +18,43 @@
 */
 
 #include "connection.h"
-#include "nm-settings-connectionadaptor.h"
 
+#include <QDBusMetaType>
 #include <KDebug>
 
-Connection::Connection(const QDBusConnection &connection, const QString &connPath, const QString &connName, const KConfigGroup &config, QObject *parent)
-    : QObject(parent),
-      conn(connection),
-      wired(0),
-      wireless(0)
+//#include "connectionadaptor.h"
+//#include "marshallarguments.h"
+//#include <nm-setting-wireless.h>
+typedef QMap<QString,QVariantMap> QVariantMapMap;
+//Q_DECLARE_METATYPE(QVariantMapMap)
+
+Connection::Connection(QObject *parent)
+    : QObject(parent)
 {
     qDBusRegisterMetaType<QVariantMapMap>();
-    qDBusRegisterMetaType<QVariantMap>();
-
-    new ConnectionAdaptor(this);
-    new SecretsAdaptor(this);
-
-    this->connPath = connPath;
-    this->connName = connName;
-    conn.registerObject(objectPath(), this);
-
-    QStringList ifaceTypes = config.readEntry("InterfaceTypeList", QStringList());
-    QStringList ifaceNames = config.readEntry("InterfaceNameList", QStringList());
-
-    connectionMap["name"] = "connection";
-    connectionMap["id"] = connName;
-    connectionMap["autoconnect"] = true;
-
-    int nameIndex = ifaceNames.indexOf(connName.split("/").last());
-    if (nameIndex != -1) {
-        if (ifaceTypes[nameIndex] == "Wired") {
-            connType = Wired;
-            wired = new WiredConnectionSetting(config, this);
-        } else if (ifaceTypes[nameIndex] == "Wireless") {
-            connType = Wireless;
-            wireless = new WirelessConnectionSetting(config, this);
-        }
-    } else {
-        kDebug() << "Could not find interface name.";
-    }
 }
 
 Connection::~Connection()
 {
-    delete wired;
-    conn.unregisterObject(objectPath());
+    emit Removed();
 }
 
-QString Connection::objectPath() const
+QString Connection::id() const
 {
-    return connPath;
+    return mId;
 }
 
 QString Connection::GetID() const
 {
-    return connName;
+    return id();
 }
 
 void Connection::Update(QVariantMapMap updates)
 {
-    Q_UNUSED(updates)
-    /*if (updates.exists(NM_SETTING_WIRED_SETTING_NAME)) {
-        if (wired == 0) {
-            wired = new WiredConnectionSetting(setting, this);
+#if 0
+    foreach (const QString &key1, changedParameters.keys()) {
+        foreach (const QString &key2, changedParameters[key1].keys()) {
+            connectionMap[key1][key2] = changedParameters[key1][key2];
         }
         if (wired) {
             wired->update(updates[NM_SETTING_WIRED_SETTING_NAME]);
@@ -88,61 +62,26 @@ void Connection::Update(QVariantMapMap updates)
     }
     /*if (updates.exists(NM_SETTING_WIRELESS_SETTING_NAME)) {
     }*/
+#endif
 }
 
 void Connection::Delete()
 {
-    emit Removed();
+    deleteLater();
 }
 
 QVariantMapMap Connection::GetSettings() const
 {
-    QVariantMapMap retVal;
-    kDebug() << "Retrieving settings.";
-
-    switch (connType) {
-        case Wired:
-            kDebug() << "Retrieving wired settings.";
-            if (wired) {
-                retVal["802-3-ethernet"] = wired->settingsMap();
-            } else {
-                kDebug() << "Mode is ethernet but a settings object has not been initialized.";
-            }
-            break;
-        case Wireless:
-            kDebug() << "Retrieving wireless settings.";
-            if (wireless) {
-                retVal["802-11-wireless"] = wireless->settingsMap();
-                retVal["802-11-wireless-security"] = wireless->secretsKeyMap();
-            } else {
-                kDebug() << "Mode is wireless but a settings object has not been initialized.";
-            }
-            break;
-        default:
-            break;
-    }
-    retVal["connection"] = connectionMap;
-    kDebug() << "Returning: " << retVal;
-    return retVal;
+    return mSettingsMap;
 }
 
-QVariantMapMap Connection::GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new)
+QVariantMap Connection::GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new)
 {
+    Q_UNUSED(setting_name)
     Q_UNUSED(hints)
     Q_UNUSED(request_new)
 
-    QVariantMapMap retVal;
-
-    if (setting_name == "802-11-wireless-security") {
-        if (wireless) {
-            retVal["802-11-wireless"] = wireless->settingsMap();
-        } else {
-            kDebug() << "Mode is wireless but a settings object has not been initialized.";
-        }
-    }
-    retVal["connection"] = connectionMap;
-    kDebug() << "Returning: " << retVal;
-    return retVal;
+    return QVariantMap();
 }
 
 #include "connection.moc"
