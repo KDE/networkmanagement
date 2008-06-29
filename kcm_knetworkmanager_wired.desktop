@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Wired Connection
+Name[et]=Kaabliga ühendus
 Comment=Configure a wired connection
+Comment[et]=Kaabliga võrguühenduste seadistamine
 Type=Service
 X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_knetworkmanager_wired
