@@ -3,11 +3,13 @@ macro_optional_find_package(NetworkManager)
 macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager (any version)" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
 if (NETWORKMANAGER_FOUND)
    macro_ensure_version( "0.7.0" ${NETWORKMANAGER_VERSION} NM_0_7)
+   find_package(GLIB2 REQUIRED)
    if (NM_0_7)
 
 include_directories(
    ${NETWORKMANAGER_INCLUDE_DIRS}
    ${NM-UTIL_INCLUDE_DIRS}
+   ${GLIB2_INCLUDE_DIR}
    ${CMAKE_CURRENT_BUILD_DIR}
 )
 
