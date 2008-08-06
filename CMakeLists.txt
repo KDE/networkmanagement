@@ -85,7 +85,7 @@ set(kcm_knetworkmanager_wired_SRCS
 kde4_add_ui_files(kcm_knetworkmanager_wired_SRCS settings/connection.ui settings/wired.ui settings/ipv4.ui)
 kde4_add_plugin(kcm_knetworkmanager_wired ${kcm_knetworkmanager_wired_SRCS})
 
-target_link_libraries(kcm_knetworkmanager_wired ${KDE4_KDEUI_LIBS})
+target_link_libraries(kcm_knetworkmanager_wired ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY})
 
 install(TARGETS kcm_knetworkmanager_wired DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES kcm_knetworkmanager_wired.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
