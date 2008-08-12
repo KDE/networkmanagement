@@ -1,2 +1,4 @@
 #! /usr/bin/env bash
+$EXTRACTRC `find . -name '*.ui' -o -name '*.rc'` >> rc.cpp
 $XGETTEXT *.cpp widgets/*.cpp -o $podir/plasma_applet_networkmanager.pot
+rm -f rc.cpp
