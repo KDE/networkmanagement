@@ -29,7 +29,7 @@ typedef QMap<QString,QVariantMap> QVariantMapMap;
 //Q_DECLARE_METATYPE(QVariantMapMap)
 
 Connection::Connection(const QString & id, const QVariantMapMap & settingsMap, QObject *parent)
-    : mId(id), mSettingsMap(settingsMap), QObject(parent)
+    : QObject(parent), mId(id), mSettingsMap(settingsMap)
 {
     qDBusRegisterMetaType<QVariantMapMap>();
 }

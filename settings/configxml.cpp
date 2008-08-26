@@ -582,3 +582,8 @@ KConfigSkeletonItem* ConfigXml::findItem(const QString &group, const QString &ke
     return KConfigSkeleton::findItem(d->keysToNames[group + key]);
 }
 
+bool ConfigXml::hasGroup(const QString &group) const
+{
+    return d->keysToNames.contains(group);
+}
+
