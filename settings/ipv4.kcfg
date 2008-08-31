@@ -24,7 +24,7 @@
     </entry>
     <entry name="ignoredhcpdns" type="Bool">
       <label>Ignore DHCP DNS</label>
-      <whatsthis>Ignore DNS servers returned by DHCP and use the configured servers instead</whatssthis>
+      <whatsthis>Ignore DNS servers returned by DHCP and use the configured servers instead</whatsthis>
     </entry>
   </group>
 </kcfg>
