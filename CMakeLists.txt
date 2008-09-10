@@ -41,6 +41,7 @@ target_link_libraries(plasma_applet_networkmanager plasma ${KDE4_KIO_LIBS} solid
 
 set(testconfigxml_SRCS
    testconfigxml.cpp
+   secretstoragehelper.cpp
    settings/configxml.cpp
 )
 
@@ -50,6 +51,7 @@ target_link_libraries(testconfigxml ${KDE4_KDEUI_LIBS})
 ## next target: test service
 
 set(testservice_SRCS
+   secretstoragehelper.cpp
    testsettingsservice.cpp
    settings/connection.cpp
    settings/kconfigtoservice.cpp
@@ -81,6 +83,7 @@ set(knmui_SRCS dummy.cpp)
 set(kcm_knetworkmanager_wired_SRCS
    # UI logic
    settings/wiredpreferences.cpp
+   secretstoragehelper.cpp
    settings/configxml.cpp)
 kde4_add_ui_files(kcm_knetworkmanager_wired_SRCS settings/connection.ui settings/wired.ui settings/ipv4.ui)
 kde4_add_plugin(kcm_knetworkmanager_wired ${kcm_knetworkmanager_wired_SRCS})

@@ -49,7 +49,7 @@
       <label>WEP key 3</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="psk" type="String">
+    <entry name="psk" type="String" secret="true">
       <label>PSK</label>
       <whatsthis></whatsthis>
     </entry>

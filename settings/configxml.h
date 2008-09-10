@@ -1,5 +1,6 @@
 /*
  *   Copyright 2007 Aaron Seigo <aseigo@kde.org>
+ *   Copyright 2008 Will Stephenson <wstephenson@kde.org>
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU Library General Public License as
@@ -17,12 +18,11 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-#ifndef CONFIGXML_H
-#define CONFIGXML_H
-
 #include <KDE/KConfigGroup>
 #include <KDE/KConfigSkeleton>
 #include <KDE/KSharedConfig>
+
+class SecretStorageHelper;
 
 //#include <plasma/plasma_export.h>
 
@@ -63,6 +63,7 @@
  * @li sizes
  * @li ulonglongs
  * @li url lists
+ * @li byte arrays
  **/
 
 #define THIS_IS_WHY_IT_WONT_LINK
@@ -98,9 +99,10 @@ public:
      *
      * @param configFile path to the configuration file to use
      * @param xml the xml data; must be valid KConfigXT data
+     * @param helper helper object for storing secrets securely
      * @param parent optional QObject parent
      **/
-    ConfigXml(const QString &configFile, QIODevice *xml, QObject *parent = 0);
+    ConfigXml(const QString &configFile, QIODevice *xml, SecretStorageHelper *helper, QObject *parent = 0);
 
     /**
      * Creates a KConfigSkeleton populated using the definition found in
@@ -108,19 +110,22 @@ public:
      *
      * @param config the configuration object to use
      * @param xml the xml data; must be valid KConfigXT data
+     * @param helper helper object for storing secrets securely
      * @param parent optional QObject parent
      **/
-    ConfigXml(KSharedConfigPtr config, QIODevice *xml, QObject *parent = 0);
+    ConfigXml(KSharedConfigPtr config, QIODevice *xml, SecretStorageHelper *helper, QObject *parent = 0);
 
     /**
      * Creates a KConfigSkeleton populated using the definition found in
      * the XML data passed in.
      *
+     * NB this version is broken due to kconfigskeleton being unable to work with kconfiggroup!
+     *
      * @param config the group to use as the root for configuration items
      * @param xml the xml data; must be valid KConfigXT data
      * @param parent optional QObject parent
      **/
-    ConfigXml(const KConfigGroup *config, QIODevice *xml, QObject *parent = 0);
+    ConfigXml(const KConfigGroup *config, QIODevice *xml, SecretStorageHelper *helper, QObject *parent = 0);
     ~ConfigXml();
 
     KConfigSkeletonItem* findItem(const QString &group, const QString &key);
@@ -138,4 +143,3 @@ private:
     Private * const d;
 };
 
-#endif //multiple inclusion guard

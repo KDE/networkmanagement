@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "configxml.h"
 #include "networksettings.h"
+#include "secretstoragehelper.h"
 
 KConfigToService::KConfigToService(NetworkSettings * service)
     : m_service(service)
@@ -58,9 +59,9 @@ void KConfigToService::init()
     }
 
  /*
- * how to know which ConfigXml are needed?  
+ * how to know which ConfigXml are needed?
  * a) peek connection/type and use a static list of settings per connection type
- * b) use the config's groups list to instantiate multiple configxmls as needed
+ * ** b) use the config's groups list to instantiate multiple configxmls as needed
  * c) use the config's groups list to generate a synthetic configxml containing the needed sections
  *
  * for each group, create a QVariantMap containing its settings and store them in the master
@@ -72,29 +73,42 @@ void KConfigToService::init()
 
 void KConfigToService::restoreConnection(const QString & connectionId)
 {
+    kDebug() << connectionId;
+    m_configFile = connectionId;
     // eventually, take the connectionId and look up a file in appData
     // for now, it is an absolute path
     QMap<QString, QVariantMap> connectionMap;
     KSharedConfig::Ptr config = KSharedConfig::openConfig(connectionId, KConfig::NoGlobals);
     foreach (QString group, config->groupList()) {
-        connectionMap.insert(group, handleGroup(group, connectionId));
+        QVariantMap groupSettings = handleGroup(group);
+        if (groupSettings.isEmpty()) {
+            kDebug() << "Settings group '" << group << "' contains no settings!";
+        } else {
+            connectionMap.insert(group, groupSettings );
+        }
     }
     kDebug() << connectionMap;
     m_service->addConnection(connectionMap);
 }
 
-QVariantMap KConfigToService::handleGroup(const QString & groupName, const QString & configFile)
+QVariantMap KConfigToService::handleGroup(const QString & groupName)
 {
     kDebug() << groupName;
     QVariantMap map;
-    QFile * kcfgFile = new QFile(QString("settings/%1.kcfg").arg(groupName));
-    ConfigXml * config = new ConfigXml(configFile, kcfgFile);
+    QFile schemaFile(QString("settings/%1.kcfg").arg(groupName));
+    if (!schemaFile.exists()) {
+        kDebug() << "groupName file not found!";
+        return QVariantMap();
+    }
+    ConfigXml * config = new ConfigXml(m_configFile, &schemaFile,
+            new SecretStorageHelper(/*connection id*/QLatin1String("testconfigxml"), groupName));
+
     foreach (KConfigSkeletonItem * item, config->items()) {
         item->swapDefault();
         QVariant defaultV = item->property();
         item->swapDefault();
-        if (defaultV != item->property()) { // only serialise non-default values
-            kDebug() << item->key() << item->property() << item->property().type() << (defaultV == item->property() ? "IS" : "IS NOT") << " default";
+        if (defaultV != item->property()) { // only deserialise non-default values
+            kDebug() << item->key() << " : '" << item->property() << "' is a " << item->property().type() << ", and " << (defaultV == item->property() ? "IS" : "IS NOT") << " default";
             map.insert(convertKey(item->key()), convertValue(item->key(), item->property()));
         }
     }
@@ -114,7 +128,6 @@ QString KConfigToService::convertKey(const QString & storedKey) const
 
 QVariant KConfigToService::convertValue(const QString& key, const QVariant& value) const
 {
-    //kDebug() << key << "UNIMPLEMENTED";
     Q_UNUSED(key);
     return value;
 }

@@ -55,11 +55,12 @@ private:
     // restore the given connection and add it to the service
     void restoreConnection(const QString & connectionId);
     // deserialize a single settings group
-    QVariantMap handleGroup(const QString & name, const QString & configFile);
+    QVariantMap handleGroup(const QString & name);
     // initialise the giant, bogus set of mappings needed for convertKey
     void initKeyMappings();
 private:
     NetworkSettings * m_service;
     QMap<QString, QString> m_keyMappings;
+    QString m_configFile;
 };
 

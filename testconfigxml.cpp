@@ -28,6 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 
 #include "settings/configxml.h"
+#include "secretstoragehelper.h"
 
 static const char description[] =
     I18N_NOOP("Test harness for extended ConfigXml class");
@@ -45,10 +46,28 @@ int main( int argc, char** argv )
     KApplication app;
 
     QFile file("settings/802-3-ethernet.kcfg");
-    ConfigXml config("/tmp/testconfigxmlrc", &file);
+    if (!file.exists()) {
+        kDebug() << "settings/802-3-ethernet.kcfg not found!";
+        return 0;
+    }
+    // all settings will be in one file so we'll have to pass in a kconfiggroup
+    // the secrets need to be stored by connection and setting name
+    // could use the kwallet map type - map name=connection-settinggroup 
+    // BUT a map is to be stored in the wallet as an entire map, so the mapped settings
+    // would have to be collated during writeConfig and written at the end
+    // otherwise connection-settinggroup-settingname with single entries.
+    // How to obtain the required context to produce these keys?
+    // ideal solution: pass a reference to a 'wallet location' into the kconfigskeletonitem as with
+    // writeConfig().
+    // WHAT IF we could pass it a KConfig* that is actually a KWallet::Wallet?
+    // This would require changes in KCoreConfigSkeleton to manage both the config and the wallet
+    // Pass a SecretStorageHelper in to ConfigXml ctor with Id and group being managed.  Then pass
+    // this down to all ItemSecrets for use when reading/writing secrets.
+    ConfigXml config("/tmp/testconfigxmlrc", &file, new SecretStorageHelper(QLatin1String("testconfigxml"), QLatin1String("802-3-ethernet")));
     QStringList keys;
+    kDebug() << "dumping config contents";
     foreach (KConfigSkeletonItem * item, config.items()) {
-        kDebug() << item->key() << item->property();
+        kDebug() << item << " - " << item->key() << item->property();
     }
 #if 0
     KConfigSkeletonItem * item = config.findItem(QLatin1String("802-3-ethernet"), "port");
@@ -60,11 +79,21 @@ int main( int argc, char** argv )
     item = config.findItem(QLatin1String("802-3-ethernet"), "auto-negotiate");
     item->setProperty(true);
 #endif
-    KConfigSkeletonItem * item = config.findItem(QLatin1String("802-3-ethernet"), "mac-address");
-    item->setProperty(QByteArray("1234"));
-    item = config.findItem(QLatin1String("802-3-ethernet"), "mtu");
-    item->setProperty(1500);
-    config.writeConfig();
+    kDebug() << "trying to change mtu and macaddress";
+    KConfigSkeletonItem * item = config.findItem(QLatin1String("802-3-ethernet"), "macaddress");
+    if (item) {
+        item->setProperty(QByteArray("1234"));
+        item = config.findItem(QLatin1String("802-3-ethernet"), "mtu");
+        item->setProperty(1500);
+        item = config.findItem(QLatin1String("802-3-ethernet"), "dummysecret");
+        item->setProperty("hi i'm a secret");
+        config.writeConfig();
+    } else {
+        kDebug() << "  macaddress not found!";
+        foreach (KConfigSkeletonItem * item, config.items() ) {
+            kDebug() << item->key() << item->property();
+        }
+    }
 //#endif
     return app.exec();
 }
