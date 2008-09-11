@@ -1,7 +1,20 @@
-TODO:
+TODO CB:
 - Create a network scanning view - In Progress
     - Create Scrolling View
     - Scan Actual APs
 - Create a profile class which describes network settings
 - Create a profile creation view/wizard
 - Create a profile editing view
+
+TODO WS:
+- Implement settings service
+  - Check for changes in the NM API
+  - per-setting group helper class for complex settings, where needed for ipv4 config write
+  - convert prototype to kded module
+  - implement dbus interface for configuration()
+  - Secrets
+- Implement control module
+- Make sure system tray+engine does what we need
+- Update Solid
+  - Check for changes in the NM API
+    - Implement PPPManager and new VPNManager, only in Solid if appropriate

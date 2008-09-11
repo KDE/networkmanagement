@@ -1,3 +1,78 @@
+DESIGN
+
+Split system
+
+i) KCModule performs connection configuration
+
+ii) Plasmoid gives user feedback and connection control, launches KCM.
+
+iii) Settings service exists on the system bus and provides information to NetworkManager
+
+
+PLASMOID
+Functions
+* Show current merged connection status
+* Show any in-progress operations
+* List currently appropriate connections
+* Allow activation of appropriate connections
+* Show status of current connections
+* Allow disconnect of active connections
+* Allow user to select flight mode
+* Allow user to select offline mode
+* Allow user to launch KCM
+* Show extended connection information
+* Perform notifications
+ 
+KCM
+Functions
+* Show currently configured connections
+** show name, type, date of last use
+* Allow import of system connections
+* Add new connection
+** Save connection data to kconfig and kwallet
+* Edit existing connection
+** Read connection data from kconfig and kwallet
+* Delete existing connection
+* Secrets may not be stored at all for extreme security, provide kioskable setting for this
+
+Characteristics
+* Use storage layer shared with service.
+
+SERVICE
+Functions
+* Provide service on system dbus containing configured connections
+* Update configured connections following configuration changes
+* Emit NewConnection on dbus as needed
+* Provide dbus settings objects that provide org.freedesktop.NetworkManagerSettings.Connection and org.freedesktop.NetworkManagerSettings.Connection.Secrets
+* Request secrets if required
+* Persist changed secrets to kwallet
+
+Characteristics
+* Lives in kded
+* Watches config file for changes or has simple dbus api with configure() method like kscreensaver
+* Uses storage layer shared with KCM
+** Added connections
+** Updated connections (how? dbus signal? sequence number in config file?)
+** Removed connections (compare list of configured connections with active connections)
+
+Implementation
+* kded module
+* readConfiguration (KConfigToService::init())
+** Read central knetworkmanagerrc for connection IDs - DONE
+** Read connections from apps/knetworkmanager/connections - DONE
+** Read config schemas from apps knetworkmanager/configschema
+** per-setting group helper class for complex settings, where needed. DONE for ipv4 config read
+*** How to figure out whether these are needed at runtime? put in shlib to use with kcm, but separate from UI.
+*** ipv4 (really only ipv4 afaics)
+* configure method accessible over dbus
+** calls rereadConfiguration (KConfigToService::update())
+* Connection.Settings interface for lazy load of secrets.  Change configxml classes to not read wallet on start
+* GetSecrets. will be received by Connection. emit signal received by NetworkSettings, relayed up ( NetworkSettings knows nothing of storage).  Catch in KConfigToService and ask each configxml for that setting's groups to get secrets?
+
+STORAGE LAYER
+Functions
+
+Characteristics
 Serializer converts between kconfig storage and qvariantmapmaps
 and between kconfig storage and UI contents (like kconfigdialog).
 
@@ -33,10 +108,12 @@ handler values:
 
 The UI case is nearly the same as what KConfigXT already does, the difference is that it operates on a top level group only instead of the whole file. Could we use KConfigDialogManager with a custom KConfigSkeleton?
 
-Todo: figure out KConfigSkeleton.  Can we point it at an arbitrary KConfigGroup?  Can we set it up with custom Items read from the kcfg.  Will it read/write those correctly?  
+Assessed KConfigSkeleton.  Can we point it at an arbitrary KConfigGroup?  Can we set it up with custom Items read from the kcfg.  Will it read/write those correctly?  
+
+** Yes, all of this is already done, using ConfigXml from Plasma.  Our copy adds support for KWallet and storing byte arrays
 
 I thought that KConfigDialog only allows a single managed widget but KConfigDialog can handle an arbitrary number of widgets and their children.  Still might have to use the Manager directly to work on a widget in a KCM.
 
 WRITE
 From ui:
-
+KCModule::writeConfig();
