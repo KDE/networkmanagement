@@ -18,35 +18,21 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef NM07_CONNECTION_EDITOR_H
+#define NM07_CONNECTION_EDITOR_H
+
 #include "connectioneditor.h"
 
-#include <KPluginFactory>
+#include <KCModule>
 
-#include "ui_connectioneditor.h"
-
-K_PLUGIN_FACTORY( ConnectionEditorFactory, registerPlugin<ConnectionEditor>();)
-K_EXPORT_PLUGIN( ConnectionEditorFactory( "kcm_knetworkmanager" ) )
-
-ConnectionEditor::ConnectionEditor(QWidget *parent, const QVariantList &args)
-: KCModule( ConnectionEditorFactory::componentData(), parent, args )
+class ConnectionEditor : public KCModule
 {
-    QWidget * contents = new QWidget(this);
-    Ui_ConnectionEditor connEditUi;
-    connEditUi.setupUi(contents);
-}
+Q_OBJECT
+public:
+    ConnectionEditor(QWidget * parent = 0, const QVariantList & args = QVariantList());
+    virtual ~ConnectionEditor();
+    virtual void save();
+    virtual void load();
+};
 
-ConnectionEditor::~ConnectionEditor()
-{
-}
-
-void ConnectionEditor::load()
-{
-    KCModule::load();
-}
-
-void ConnectionEditor::save()
-{
-    KCModule::save();
-}
-
-#include "connectioneditor.moc"
+#endif

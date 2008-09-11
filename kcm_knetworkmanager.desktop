@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Network Settings
+Comment=Configure network settings
+Type=Service
+X-KDE-ServiceTypes=KCModule
+X-KDE-Library=kcm_knetworkmanager
+X-KDE-FactoryName=kcm_knetworkmanager
+X-KDE-ParentApp=knetworkmanager
+X-KDE-ParentComponents=knetworkmanager
+
+

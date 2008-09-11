@@ -75,7 +75,6 @@ kde4_add_kcfg_files(testservice_SRCS settings/networksettingsprefs.kcfgc)
 
 qt4_add_dbus_adaptor(testservice_SRCS settings/org.kde.knetworkmanagerd.xml settings/kconfigtoservice.h KConfigToService knetworkmanagerserviceadaptor KNetworkManagerServiceAdaptor )
 
-message(STATUS "testservice_SRCS is ${testservice_SRCS}")
 kde4_add_ui_files(testservice_SRCS settings/connection.ui settings/wired.ui settings/ipv4.ui)
 kde4_add_executable(testservice ${testservice_SRCS})
 target_link_libraries(testservice knmstorage ${KDE4_KUTILS_LIBS} solidcontrol)
@@ -99,14 +98,12 @@ install(TARGETS knmui ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 set(kcm_knetworkmanager_wired_SRCS
    # UI logic
-   #settings/wiredpreferences.cpp
-   #secretstoragehelper.cpp
-   #settings/configxml.cpp
+   settings/wiredpreferences.cpp
    dummy.cpp)
 kde4_add_ui_files(kcm_knetworkmanager_wired_SRCS settings/connection.ui settings/wired.ui settings/ipv4.ui)
 kde4_add_plugin(kcm_knetworkmanager_wired ${kcm_knetworkmanager_wired_SRCS})
 
-target_link_libraries(kcm_knetworkmanager_wired ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY})
+target_link_libraries(kcm_knetworkmanager_wired knmstorage ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY})
 
 install(TARGETS kcm_knetworkmanager_wired DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES kcm_knetworkmanager_wired.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
@@ -122,8 +119,8 @@ kde4_add_plugin(kcm_knetworkmanager ${kcm_knetworkmanager_SRCS})
 
 target_link_libraries(kcm_knetworkmanager ${KDE4_KDEUI_LIBS})
 
-install(TARGETS kcm_knetworkmanager_wired DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES kcm_knetworkmanager_wired.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
+install(TARGETS kcm_knetworkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
+install(FILES kcm_knetworkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kconfiguredialog)
 
 
 ## next target: applet
