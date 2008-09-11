@@ -41,6 +41,7 @@ Connection::~Connection()
 
 QString Connection::objectPath()
 {
+    kDebug() << "returning incorrect path, fix this function!";
     return QString(NM_DBUS_PATH_SETTINGS_CONNECTION);
 }
 
