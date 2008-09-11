@@ -20,9 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QString>
 
+#include "knm_export.h"
+
 class KConfigSkeletonItem;
-#define THIS_IS_WHY_IT_WONT_LINK
-class THIS_IS_WHY_IT_WONT_LINK SecretStorageHelper
+
+class KNM_EXPORT SecretStorageHelper
 {
 public:
     SecretStorageHelper( const QString &connectionName, const QString &settingGroup);

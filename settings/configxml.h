@@ -22,6 +22,8 @@
 #include <KDE/KConfigSkeleton>
 #include <KDE/KSharedConfig>
 
+#include "knm_export.h"
+
 class SecretStorageHelper;
 
 //#include <plasma/plasma_export.h>
@@ -66,12 +68,10 @@ class SecretStorageHelper;
  * @li byte arrays
  **/
 
-#define THIS_IS_WHY_IT_WONT_LINK
-
 /**
  * Class for handling ByteArrays
  */
-class THIS_IS_WHY_IT_WONT_LINK ItemByteArray : public KConfigSkeletonGenericItem<QByteArray>
+class KNM_EXPORT ItemByteArray : public KConfigSkeletonGenericItem<QByteArray>
 {
 public:
     ItemByteArray(const QString & _group, const QString & _key,
@@ -90,7 +90,7 @@ public:
     QVariant property() const;
 };
 
-class THIS_IS_WHY_IT_WONT_LINK ConfigXml : public KConfigSkeleton
+class KNM_EXPORT ConfigXml : public KConfigSkeleton
 {
 public:
     /**

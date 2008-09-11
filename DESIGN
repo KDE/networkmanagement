@@ -34,6 +34,7 @@ Functions
 ** Read connection data from kconfig and kwallet
 * Delete existing connection
 * Secrets may not be stored at all for extreme security, provide kioskable setting for this
+* Show warning label if NM is not running.
 
 Characteristics
 * Use storage layer shared with service.
