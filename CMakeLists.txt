@@ -61,6 +61,8 @@ set(testservice_SRCS
 
 kde4_add_kcfg_files(testservice_SRCS settings/networksettingsprefs.kcfgc)
 
+qt4_add_dbus_adaptor(testservice_SRCS settings/org.kde.knetworkmanagerd.xml settings/kconfigtoservice.h KConfigToService knetworkmanagerserviceadaptor KNetworkManagerServiceAdaptor )
+
 message(STATUS "testservice_SRCS is ${testservice_SRCS}")
 kde4_add_ui_files(testservice_SRCS settings/connection.ui settings/wired.ui settings/ipv4.ui)
 kde4_add_executable(testservice ${testservice_SRCS})

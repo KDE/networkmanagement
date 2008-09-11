@@ -55,9 +55,14 @@ class NetworkSettings : public QObject
          */
         Q_SCRIPTABLE QList<QDBusObjectPath> ListConnections() const;
         /**
-         * add/update a connection
+         * add a connection
+         * @return object path of the new connection
          */
-        void addConnection(const QVariantMapMap & settings);
+        QString addConnection(const QVariantMapMap & settings);
+        /**
+         * update a connection
+         */
+        void updateConnection(const QString & objectPath, const QVariantMapMap & settings);
         /**
          * remove a connection
          */
@@ -73,7 +78,15 @@ class NetworkSettings : public QObject
         Q_SCRIPTABLE void NewConnection(QDBusObjectPath);
 
     private:
+        /**
+         * Delete all listed connection objects
+         */
         void clearConnections();
+        /**
+         * utility to generate the next unused object path for a connection
+         * TODO: reuse deleted connections' object paths?
+         */
+        QString nextObjectPath();
 
         // Map of connection path to Connection
         QMap<QString, Connection*> m_connectionMap;

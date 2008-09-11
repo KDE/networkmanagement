@@ -11,7 +11,6 @@ TODO WS:
   - Check for changes in the NM API
   - per-setting group helper class for complex settings, where needed for ipv4 config write
   - convert prototype to kded module
-  - implement dbus interface for configuration()
   - Secrets
 - Implement control module
 - Make sure system tray+engine does what we need

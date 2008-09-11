@@ -35,14 +35,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KStandardDirs>
 
 #include "configxml.h"
-#include "marshalarguments.h"
 #include "networksettings.h"
 #include "networksettingsprefs.h"
 #include "secretstoragehelper.h"
+#include "knetworkmanagerserviceadaptor.h"
 
 KConfigToService::KConfigToService(NetworkSettings * service)
     : m_service(service)
 {
+    (void) new KNetworkManagerServiceAdaptor( this );
+    QDBusConnection::sessionBus().registerService( "org.kde.knetworkmanagerd" ) ;
+    QDBusConnection::sessionBus().registerObject( "/Configuration", this );
+
     initKeyMappings();
     NetworkSettingsPrefs::instance(KStandardDirs::locate("config",
                 QLatin1String("knetworkmanagerrc")));
@@ -60,8 +64,10 @@ void KConfigToService::init()
     connectionIds = NetworkSettingsPrefs::self()->connections();
     // 2) open each connection's file and create 1 or more ConfigXml for it
     foreach (QString connectionId, connectionIds) {
-        restoreConnection(connectionId);
+        QVariantMapMap connectionMap = restoreConnection(connectionId);
+        m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connectionMap));
     }
+}
 
  /*
  * how to know which ConfigXml are needed?
@@ -74,14 +80,13 @@ void KConfigToService::init()
  * check key for key name conversion
  *   check value for any value conversions needed
  */
-}
 
-void KConfigToService::restoreConnection(const QString & connectionId)
+QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
 {
     kDebug() << connectionId;
     m_configFile = KStandardDirs::locate("data",
                 QLatin1String("knetworkmanager/connections/") + connectionId);
-    QMap<QString, QVariantMap> connectionMap;
+    QVariantMapMap connectionMap;
     KSharedConfig::Ptr config = KSharedConfig::openConfig(m_configFile, KConfig::NoGlobals);
     kDebug() << config->name() << " is at " << m_configFile;
     foreach (QString group, config->groupList()) {
@@ -93,7 +98,7 @@ void KConfigToService::restoreConnection(const QString & connectionId)
         }
     }
     kDebug() << connectionMap;
-    m_service->addConnection(connectionMap);
+    return connectionMap;
 }
 
 QVariantMap KConfigToService::handleGroup(const QString & groupName)
@@ -143,6 +148,48 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
         }
     }
     return map;
+}
+
+/* 
+ * Update the NetworkService's connections
+ * - determine which connectionids are new and call restoreConnection on them
+ * - take the list of changed and update those, or do it automatically
+ * -
+ */
+void KConfigToService::configure(const QStringList& changedConnections)
+{
+    kDebug();
+    QStringList addedConnections, deletedConnections;
+    // figure out which connections were added
+    QStringList existingConnections = m_connectionIdToObjectPath.keys();
+    foreach (QString connectionId, NetworkSettingsPrefs::self()->connections()) {
+        if (!existingConnections.contains(connectionId)) {
+            addedConnections.append(connectionId);
+        }
+    }
+    // figure out which connections were deleted
+    foreach (QString connectionId, existingConnections) {
+        if (!NetworkSettingsPrefs::self()->connections().contains(connectionId)) {
+            deletedConnections.append(connectionId);
+        }
+    }
+    // update the service
+    foreach (QString connectionId, deletedConnections) {
+        QString objectPath = m_connectionIdToObjectPath.take(connectionId);
+        m_service->removeConnection(objectPath);
+    }
+    foreach (QString connectionId, changedConnections) {
+        if (m_connectionIdToObjectPath.contains(connectionId)) {
+            QVariantMapMap changedConnection = restoreConnection(connectionId);
+            if (!changedConnection.isEmpty()) {
+                m_service->updateConnection(m_connectionIdToObjectPath[connectionId], changedConnection);
+            }
+        }
+    }
+    foreach (QString connectionId, addedConnections) {
+        QVariantMapMap changedConnection = restoreConnection(connectionId);
+        m_service->addConnection(restoreConnection(connectionId));
+    }
 }
 
 QString KConfigToService::convertKey(const QString & storedKey) const

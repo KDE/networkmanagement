@@ -18,10 +18,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef SETTINGS_KCONFIGTOSERVICE_H
+#define SETTINGS_KCONFIGTOSERVICE_H
+
+#include <QObject>
 #include <QMap>
 #include <QPair>
 #include <QString>
 #include <QVariant>
+
+#include "marshalarguments.h"
 
 /**
  * This class extracts stored connections and puts them on the settings service
@@ -38,22 +44,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 class NetworkSettings;
 
-class KConfigToService
+class KConfigToService : public QObject
 {
+Q_OBJECT
 public:
     KConfigToService(NetworkSettings * service);
     ~KConfigToService();
     void init();
     void addOrUpdate(const QString & id);
     QList<QPair<const QString&, const QString&> > keyMappings() const;
+    void configure(const QStringList & changedConnections);
 private:
     // map from a) keys that have been munged to be legal variable names 
     // to b) actual networkmanager parameter keys
     QString convertKey(const QString &) const;
     // utility method to do last minute value conversions, if required
     QVariant convertValue(const QString& key, const QVariant& value) const;
-    // restore the given connection and add it to the service
-    void restoreConnection(const QString & connectionId);
+    // restore the given connection from storage to a map
+    QVariantMapMap restoreConnection(const QString & connectionId);
     // deserialize a single settings group
     QVariantMap handleGroup(const QString & name);
     // initialise the giant, bogus set of mappings needed for convertKey
@@ -61,6 +69,8 @@ private:
 private:
     NetworkSettings * m_service;
     QMap<QString, QString> m_keyMappings;
+    QMap<QString, QString> m_connectionIdToObjectPath;
     QString m_configFile;
 };
 
+#endif // SETTINGS_KCONFIGTOSERVICE_H

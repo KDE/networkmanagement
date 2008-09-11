@@ -73,7 +73,7 @@ bool NetworkSettings::loadSettings(const KConfigGroup &settings)
 }
 */
 
-void NetworkSettings::addConnection(const QVariantMapMap& settings)
+QString NetworkSettings::addConnection(const QVariantMapMap& settings)
 {
     kDebug();
     QVariantMapMap::const_iterator it = settings.find(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
@@ -82,19 +82,32 @@ void NetworkSettings::addConnection(const QVariantMapMap& settings)
         QVariantMap::const_iterator connectionSettingsIt = connectionSettings.find(QLatin1String(NM_SETTING_CONNECTION_ID));
         if (connectionSettingsIt != connectionSettings.end()) {
             Connection * connection = new Connection(connectionSettingsIt.value().toString(), settings, this);
-            QString objectPath = QString::fromLatin1("%1/%2").arg(QLatin1String(NM_DBUS_PATH_SETTINGS_CONNECTION)).arg(mNextConnectionId++);
+            QString objectPath = nextObjectPath();
             m_connectionMap.insert(objectPath, connection);
             QDBusConnection::systemBus().registerObject(objectPath, connection, QDBusConnection::ExportScriptableContents);
             emit NewConnection(QDBusObjectPath(objectPath));
+            return objectPath;
         } else {
         kDebug() << "Received connection settings map without a connection ID! " << NM_SETTING_CONNECTION_ID;
         }
     } else {
         kDebug() << "Received connection settings map without a name! " << NM_SETTING_CONNECTION_SETTING_NAME;
     }
+    return QString();
 }
 
-void NetworkSettings::removeConnection(const QString & id)
+void NetworkSettings::updateConnection(const QString & objectPath, const QVariantMapMap & settings )
+{
+    kDebug();
+    if (m_connectionMap.contains(objectPath)) {
+        Connection * conn = m_connectionMap[objectPath];
+        if (conn) {
+            conn->Update(settings);
+        }
+    }
+}
+
+void NetworkSettings::removeConnection(const QString & objectPath)
 {
     kDebug();
     //connectionMap.take(id);
@@ -108,6 +121,11 @@ QList<QDBusObjectPath> NetworkSettings::ListConnections() const
         pathList << QDBusObjectPath(connPath);
     }
     return pathList;
+}
+
+QString NetworkSettings::nextObjectPath()
+{
+    return QString::fromLatin1("%1/%2").arg(QLatin1String(NM_DBUS_PATH_SETTINGS_CONNECTION)).arg(mNextConnectionId++);
 }
 
 void NetworkSettings::onConnectionRemoved()
