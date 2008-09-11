@@ -32,15 +32,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 #include <KSharedConfig>
+#include <KStandardDirs>
 
 #include "configxml.h"
+#include "marshalarguments.h"
 #include "networksettings.h"
+#include "networksettingsprefs.h"
 #include "secretstoragehelper.h"
 
 KConfigToService::KConfigToService(NetworkSettings * service)
     : m_service(service)
 {
     initKeyMappings();
+    NetworkSettingsPrefs::instance(KStandardDirs::locate("config",
+                QLatin1String("knetworkmanagerrc")));
 }
 
 KConfigToService::~KConfigToService()
@@ -52,7 +57,7 @@ void KConfigToService::init()
     // 1) get the names of all the connections from the main config file
     // (this could also be just the connections in one profile, after removing all connections)
     QStringList connectionIds;
-    connectionIds << "/tmp/testconfigxmlrc";
+    connectionIds = NetworkSettingsPrefs::self()->connections();
     // 2) open each connection's file and create 1 or more ConfigXml for it
     foreach (QString connectionId, connectionIds) {
         restoreConnection(connectionId);
@@ -74,11 +79,11 @@ void KConfigToService::init()
 void KConfigToService::restoreConnection(const QString & connectionId)
 {
     kDebug() << connectionId;
-    m_configFile = connectionId;
-    // eventually, take the connectionId and look up a file in appData
-    // for now, it is an absolute path
+    m_configFile = KStandardDirs::locate("data",
+                QLatin1String("knetworkmanager/connections/") + connectionId);
     QMap<QString, QVariantMap> connectionMap;
-    KSharedConfig::Ptr config = KSharedConfig::openConfig(connectionId, KConfig::NoGlobals);
+    KSharedConfig::Ptr config = KSharedConfig::openConfig(m_configFile, KConfig::NoGlobals);
+    kDebug() << config->name() << " is at " << m_configFile;
     foreach (QString group, config->groupList()) {
         QVariantMap groupSettings = handleGroup(group);
         if (groupSettings.isEmpty()) {
@@ -95,9 +100,15 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
 {
     kDebug() << groupName;
     QVariantMap map;
-    QFile schemaFile(QString("settings/%1.kcfg").arg(groupName));
+    QFile schemaFile(KStandardDirs::locate("data",
+            QString::fromLatin1("knetworkmanager/schemas/%1.kcfg").arg( groupName)));
     if (!schemaFile.exists()) {
-        kDebug() << "groupName file not found!";
+        kDebug() << groupName << " config file at " << schemaFile.fileName() << " not found!";
+        return QVariantMap();
+    }
+    QFile configFile(m_configFile);
+    if (!configFile.exists()) {
+        kDebug() << "configuration file: " << m_configFile << " not found!";
         return QVariantMap();
     }
     ConfigXml * config = new ConfigXml(m_configFile, &schemaFile,
@@ -110,6 +121,25 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
         if (defaultV != item->property()) { // only deserialise non-default values
             kDebug() << item->key() << " : '" << item->property() << "' is a " << item->property().type() << ", and " << (defaultV == item->property() ? "IS" : "IS NOT") << " default";
             map.insert(convertKey(item->key()), convertValue(item->key(), item->property()));
+        }
+    }
+    // special case for ipv4 "addresses" field, which isn't KConfigSkeletonItem-friendly
+    if ( groupName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
+        KSharedConfig::Ptr ipv4Config = KSharedConfig::openConfig(m_configFile, KConfig::NoGlobals);
+        KConfigGroup ipv4Group(ipv4Config, groupName);
+        uint addressCount = ipv4Group.readEntry("addressCount", 0 );
+        kDebug() << "#addresses:" << addressCount;
+        UintListList addresses;
+        for (uint i = 0; i < addressCount; i++) {
+            QList<uint> addressList = ipv4Group.readEntry(QString::fromLatin1("address%1").arg(i), QList<uint>());
+            kDebug() << "address " << i << " " << addressList;
+            // a valid address must have 3 values: ip, netmask, broadcast
+            if ( addressList.count() == 3 ) {
+                addresses.append(addressList);
+            }
+        }
+        if (!addresses.isEmpty()) {
+            map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES), QVariant::fromValue(addresses));
         }
     }
     return map;

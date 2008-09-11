@@ -27,6 +27,7 @@
 
 Q_DECLARE_METATYPE(QList<uint>)
 Q_DECLARE_METATYPE(QList< QList<uint> >)
+typedef QList< QList<uint> > UintListList;
 Q_DECLARE_METATYPE(QVariantMap)
 typedef QMap<QString, QMap<QString, QVariant> > QVariantMapMap;
 Q_DECLARE_METATYPE(QVariantMapMap)

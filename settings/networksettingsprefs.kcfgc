@@ -1,0 +1,4 @@
+File=networksettingsprefs.kcfg
+ClassName=NetworkSettingsPrefs
+Singleton=true
+Mutators=true

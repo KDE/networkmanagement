@@ -41,17 +41,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 TestService::TestService() : KMainWindow( 0 )
 {
+    QWidget * window = new QWidget(this);
+    QVBoxLayout * layout = new QVBoxLayout;
+
     if ( !QDBusConnection::systemBus().registerService( "org.freedesktop.NetworkManagerUserSettings" ) ) {
         kDebug() << "Unable to register service";
+        QLabel * label = new QLabel("Unable to register service", window);
+        layout->addWidget(label);
     }
-
-    QWidget * window = new QWidget(this);
-
     QPushButton * configure = new QPushButton(QLatin1String("Configure"), window );
     QPushButton * quit = new QPushButton(QLatin1String("Quit"), window );
     connect(configure,SIGNAL(clicked()),this,SLOT(configure()));
     connect(quit,SIGNAL(clicked()),this,SLOT(close()));
-    QVBoxLayout * layout = new QVBoxLayout;
     layout->addWidget(configure);
     layout->addWidget(quit);
     window->setLayout(layout);

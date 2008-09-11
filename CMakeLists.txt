@@ -59,6 +59,9 @@ set(testservice_SRCS
    settings/configxml.cpp
    )
 
+kde4_add_kcfg_files(testservice_SRCS settings/networksettingsprefs.kcfgc)
+
+message(STATUS "testservice_SRCS is ${testservice_SRCS}")
 kde4_add_ui_files(testservice_SRCS settings/connection.ui settings/wired.ui settings/ipv4.ui)
 kde4_add_executable(testservice ${testservice_SRCS})
 target_link_libraries(testservice ${KDE4_KUTILS_LIBS} solidcontrol)
@@ -98,6 +101,19 @@ install(FILES kcm_knetworkmanager_wired.desktop DESTINATION ${SERVICES_INSTALL_D
 install(TARGETS plasma_applet_networkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-networkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 install(FILES networkmanager.svg DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/networkmanager/)
+install(FILES settings/802-11-wireless.kcfg
+   settings/802-3-ethernet.kcfg
+   settings/gsm.kcfg
+   settings/ppp.kcfg
+   settings/vpn.kcfg
+   settings/802-11-wireless-security.kcfg
+   settings/cdma.kcfg
+   settings/ipv4.kcfg
+   settings/pppoe.kcfg
+   settings/802-1x.kcfg
+   settings/connection.kcfg
+   settings/serial.kcfg
+   DESTINATION ${DATA_INSTALL_DIR}/knetworkmanager/schemas/)
 
 else(NM_0_7)
       macro_log_feature(NM_0_7 "NetworkManager ${NETWORKMANAGER_VERSION}" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")

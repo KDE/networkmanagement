@@ -82,11 +82,15 @@ void NetworkSettings::addConnection(const QVariantMapMap& settings)
         QVariantMap::const_iterator connectionSettingsIt = connectionSettings.find(QLatin1String(NM_SETTING_CONNECTION_ID));
         if (connectionSettingsIt != connectionSettings.end()) {
             Connection * connection = new Connection(connectionSettingsIt.value().toString(), settings, this);
-            QString objectPath = QString::fromLatin1("%1/%2").arg(QLatin1String(NM_DBUS_PATH_SETTINGS_CONNECTION)).arg(mNextConnectionId);
+            QString objectPath = QString::fromLatin1("%1/%2").arg(QLatin1String(NM_DBUS_PATH_SETTINGS_CONNECTION)).arg(mNextConnectionId++);
             m_connectionMap.insert(objectPath, connection);
             QDBusConnection::systemBus().registerObject(objectPath, connection, QDBusConnection::ExportScriptableContents);
             emit NewConnection(QDBusObjectPath(objectPath));
+        } else {
+        kDebug() << "Received connection settings map without a connection ID! " << NM_SETTING_CONNECTION_ID;
         }
+    } else {
+        kDebug() << "Received connection settings map without a name! " << NM_SETTING_CONNECTION_SETTING_NAME;
     }
 }
 
