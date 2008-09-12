@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>Form</class>
- <widget class="QWidget" name="Form" >
+ <class>Wireless80211Config</class>
+ <widget class="QWidget" name="Wireless80211Config" >
   <property name="geometry" >
    <rect>
     <x>0</x>

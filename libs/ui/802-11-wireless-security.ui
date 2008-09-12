@@ -1,5 +1,5 @@
 <ui version="4.0" >
- <class>Form</class>
+ <class>Wireless80211SecurityConfig</class>
  <widget class="QWidget" name="Form" >
   <property name="geometry" >
    <rect>
