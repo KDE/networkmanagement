@@ -5,6 +5,8 @@ include_directories(
 
 set(knmui_SRCS
    settingwidget.cpp
+   connectionwidgetfactory.cpp
+   connectionwidget.cpp
    ipv4widget.cpp
    wiredwidget.cpp
    802_11_wirelesswidget.cpp
