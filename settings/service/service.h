@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _TEST_SERVICE_H
-#define _TEST_SERVICE_H
+#ifndef KNM07_SERVICE_H
+#define KNM07_SERVICE_H
 
 #include <KMainWindow>
 

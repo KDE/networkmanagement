@@ -8,6 +8,16 @@ ii) Plasmoid gives user feedback and connection control, launches KCM.
 
 iii) Settings service exists on the system bus and provides information to NetworkManager
 
+Directory structure of project
+.                           Plasmoid sources
+./libs                      Headers shared by all code
+./libs/storage              Storage layer shared library (libknmstorage) for loading and saving NM settings
+./libs/ui                   UI shared library (libknmui) for settings config widgets
+./settings                  (Any source code in this directory is unused)
+./settings/service          Settings service using libknmstorage
+./settings/config           KCM for configuring settings using libknmstorage and libknmui
+./settings/test             (Unused test code, scheduled for merging/moving)
+./tests                     Proof-of-concept code, not proper unit tests yet
 
 PLASMOID
 Functions

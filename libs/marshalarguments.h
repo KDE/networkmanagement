@@ -20,17 +20,7 @@
 #ifndef MARSHAL_ARGUMENTS_H
 #define MARSHAL_ARGUMENTS_H
 
-#include <QMap>
-#include <QVariant>
-#include <QtDBus/QtDBus>
-#include <QtDBus/QDBusArgument>
-
-Q_DECLARE_METATYPE(QList<uint>)
-Q_DECLARE_METATYPE(QList< QList<uint> >)
-typedef QList< QList<uint> > UintListList;
-Q_DECLARE_METATYPE(QVariantMap)
-typedef QMap<QString, QMap<QString, QVariant> > QVariantMapMap;
-Q_DECLARE_METATYPE(QVariantMapMap)
+#include "types.h"
 
 inline QDBusArgument &operator<<(QDBusArgument &argument, const QList< QList<uint> > &myarray)
 {

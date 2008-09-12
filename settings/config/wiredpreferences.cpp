@@ -22,7 +22,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QFile>
 #include <KPluginFactory>
-#include "networksettings.h"
 #include "ui_connection.h"
 #include "ui_wired.h"
 #include "ui_ipv4.h"

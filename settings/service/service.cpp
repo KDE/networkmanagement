@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "testsettingsservice.h"
+#include "service.h"
 
 #include <QtGui>
 #include <QtDBus>
@@ -33,11 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KCModuleProxy>
 #include <KServiceTypeTrader>
 
-#include "settings/kconfigtoservice.h"
-#include "settings/networksettings.h"
-#include "ui_connection.h"
-#include "ui_wired.h"
-#include "ui_ipv4.h"
+#include "kconfigtoservice.h"
+#include "networksettings.h"
 
 TestService::TestService() : KMainWindow( 0 )
 {
@@ -117,4 +114,4 @@ int main( int argc, char** argv )
     return app.exec();
 }
 
-#include "testsettingsservice.moc"
+#include "service.moc"

@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDialog>
 #include <KLocale>
 
-#include "settings/configxml.h"
+#include "configxml.h"
 #include "secretstoragehelper.h"
 
 static const char description[] =
