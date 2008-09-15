@@ -21,8 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef WIREDWIDGET_H
 #define WIREDWIDGET_H
 
-#include "ui_wired.h"
-
 #include "settingwidget.h"
 
 #include "knm_export.h"
@@ -35,7 +33,8 @@ public:
     QString label() const;
     QString settingName() const;
 private:
-    Ui_Settings8023Ethernet m_ui;
+    class Private; 
+    Private * d;
 };
 
 #endif

@@ -20,14 +20,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ipv4widget.h"
 
-IpV4Widget::IpV4Widget(const QString& connectionId, QWidget * parent) : SettingWidget(connectionId, parent)
+#include <KLocale>
+
+#include "ui_ipv4.h"
+
+class IpV4Widget::Private
 {
-    m_ui.setupUi(this);
+public:
+    Ui_SettingsIp4Config ui;
+};
+
+IpV4Widget::IpV4Widget(const QString& connectionId, QWidget * parent)
+    : SettingWidget(connectionId, parent), d(new IpV4Widget::Private)
+{
+    d->ui.setupUi(this);
     init();
 }
 
 IpV4Widget::~IpV4Widget()
 {
+    delete d;
 }
 
 QString IpV4Widget::label() const

@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIREDWIDGET_H
-#define WIREDWIDGET_H
+#ifndef WIRELESS_802_11_SECURITY_WIDGET_H
+#define WIRELESS_802_11_SECURITY_WIDGET_H
 
 #include "ui_802-11-wireless-security.h"
 
@@ -35,7 +35,8 @@ public:
     QString settingName() const;
     QString label() const;
 private:
-    Ui_Wireless80211SecurityConfig m_ui;
+    class Private;
+    Private * d;
 };
 
-#endif
+#endif // 802_11_WIRELESS_SECURITY_WIDGET_H

@@ -43,7 +43,6 @@ SettingWidget::SettingWidget(const QString& connectionId, QWidget* parent) : QWi
 
 SettingWidget::~SettingWidget()
 {
-    delete d->secretStorage;
     delete d->configXml;
     delete d;
 }
@@ -66,6 +65,11 @@ void SettingWidget::readConfig(KConfig *)
 
 void SettingWidget::writeConfig(KConfig *)
 {
+}
+
+ConfigXml * SettingWidget::configXml() const
+{
+    return d->configXml;
 }
 
 // vim: sw=4 sts=4 et tw=100

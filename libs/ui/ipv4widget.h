@@ -18,10 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIREDWIDGET_H
-#define WIREDWIDGET_H
-
-#include "ui_ipv4.h"
+#ifndef IPV4WIDGET_H
+#define IPV4WIDGET_H
 
 #include "settingwidget.h"
 
@@ -35,7 +33,8 @@ public:
     QString label() const;
     QString settingName() const;
 private:
-    Ui_SettingsIp4Config m_ui;
+    class Private;
+    Private * d;
 };
 
 #endif

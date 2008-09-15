@@ -20,14 +20,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wiredwidget.h"
 
-WiredWidget::WiredWidget(const QString& connectionId, QWidget * parent) : SettingWidget(connectionId, parent)
+#include "ui_wired.h"
+
+class WiredWidget::Private
 {
-    m_ui.setupUi(this);
+public:
+    Ui_Settings8023Ethernet ui;
+};
+
+WiredWidget::WiredWidget(const QString& connectionId, QWidget * parent)
+: SettingWidget(connectionId, parent), d(new WiredWidget::Private)
+{
+    d->ui.setupUi(this);
     init();
 }
 
 WiredWidget::~WiredWidget()
 {
+    delete d;
 }
 
 QString WiredWidget::label() const

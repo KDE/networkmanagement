@@ -20,14 +20,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "802_11_wirelesswidget.h"
 
-Wireless80211Widget::Wireless80211Widget(const QString& connectionId, QWidget * parent) : SettingWidget(connectionId, parent)
+class Wireless80211Widget::Private
 {
-    m_ui.setupUi(this);
+    public:
+    Ui_Wireless80211Config ui;
+};
+
+Wireless80211Widget::Wireless80211Widget(const QString& connectionId, QWidget * parent) : SettingWidget(connectionId, parent), d(new Wireless80211Widget::Private)
+{
+    d->ui.setupUi(this);
     init();
 }
 
 Wireless80211Widget::~Wireless80211Widget()
 {
+    delete d;
 }
 
 QString Wireless80211Widget::label() const
