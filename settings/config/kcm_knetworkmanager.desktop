@@ -18,6 +18,7 @@ Name[pt_BR]=Configurações de Rede
 Name[sv]=Nätverksinställningar
 Name[xx]=xxNetwork Settingsxx
 Comment=Configure network settings
+Comment[sv]=Anpassa nätverksanslutningar
 Type=Service
 X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_knetworkmanager
