@@ -18,6 +18,7 @@ Directory structure of project
 ./settings/config           KCM for configuring settings using libknmstorage and libknmui
 ./settings/test             (Unused test code, scheduled for merging/moving)
 ./tests                     Proof-of-concept code, not proper unit tests yet
+./widgets                   Components for the plasmoid
 
 PLASMOID
 Functions
@@ -45,6 +46,13 @@ Functions
 * Delete existing connection
 * Secrets may not be stored at all for extreme security, provide kioskable setting for this
 * Show warning label if NM is not running.
+Connection types:
+wired: connection wired 8021x ipv4
+wireless: connection wireless wirelesssecurity ipv4
+mobilebb:
+vpn: connection ipv4
+dsl: connection dsl wired ppp
+
 
 Characteristics
 * Use storage layer shared with service.
