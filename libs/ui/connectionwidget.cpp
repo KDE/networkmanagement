@@ -28,9 +28,10 @@ public:
     Ui_ConnectionSettings ui;
 };
 
-ConnectionWidget::ConnectionWidget(QWidget * parent) : QWidget(parent), d(new ConnectionWidget::Private())
+ConnectionWidget::ConnectionWidget(const QString& connectionId, QWidget * parent) : SettingWidget(connectionId, parent), d(new ConnectionWidget::Private())
 {
     d->ui.setupUi(this);
+    init();
 }
 
 ConnectionWidget::~ConnectionWidget()
@@ -42,5 +43,16 @@ QTabWidget * ConnectionWidget::connectionSettingsWidget()
 {
     return d->ui.tabwidget;
 }
+
+QString ConnectionWidget::label() const
+{
+    return i18n("Connection");
+}
+
+QString ConnectionWidget::settingName() const
+{
+    return QLatin1String("connection");
+}
+
 
 // vim: sw=4 sts=4 et tw=100

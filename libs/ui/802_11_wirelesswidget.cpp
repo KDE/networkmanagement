@@ -20,13 +20,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "802_11_wirelesswidget.h"
 
-Wireless80211Widget::Wireless80211Widget(QWidget * parent) : SettingWidget(parent)
+Wireless80211Widget::Wireless80211Widget(const QString& connectionId, QWidget * parent) : SettingWidget(connectionId, parent)
 {
     m_ui.setupUi(this);
+    init();
 }
 
 Wireless80211Widget::~Wireless80211Widget()
 {
+}
+
+QString Wireless80211Widget::label() const
+{
+    return i18nc("Label for wireless network setting", "Wireless");
+}
+
+QString Wireless80211Widget::settingName() const
+{
+    return QLatin1String("802-11-wireless");
 }
 
 // vim: sw=4 sts=4 et tw=100

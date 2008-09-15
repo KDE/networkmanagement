@@ -30,8 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class KNM_EXPORT Wireless80211Widget : public SettingWidget
 {
 public:
-    Wireless80211Widget(QWidget * parent = 0 );
+    Wireless80211Widget(const QString & connectionId, QWidget * parent = 0 );
     virtual ~Wireless80211Widget();
+    QString settingName() const;
+    QString label() const;
 private:
     Ui_Wireless80211Config m_ui;
 };

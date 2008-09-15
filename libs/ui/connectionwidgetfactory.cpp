@@ -20,7 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionwidgetfactory.h"
 
+#include <KDebug>
+
 #include "connectionwidget.h"
+
+class ConnectionWidgetFactory::Private
+{
+public:
+};
 
 ConnectionWidgetFactory::ConnectionWidgetFactory() : d(0)
 {
@@ -34,10 +41,25 @@ ConnectionWidgetFactory::~ConnectionWidgetFactory()
 
 ConnectionWidget * ConnectionWidgetFactory::widgetForConnection(const QString & type) const
 {
-// instantiate a ConnectionWidget
+    // instantiate a ConnectionWidget
+    ConnectionWidget * wid = new ConnectionWidget(0);
 // add connection widgets to its tabwidget
+    if (type == QLatin1String("wired")) {
+
+    } else if ( type == QLatin1String("wireless")) {
+
+    } else if ( type == QLatin1String("cellular")) {
+
+    } else if ( type == QLatin1String("vpn")) {
+
+    } else if ( type == QLatin1String("dsl")) {
+
+    } else {
+        kDebug() << "Connection type '" << type << "' is unknown!";
+    }
 // register it?
 // return it
+    return wid;
 }
 
 // vim: sw=4 sts=4 et tw=100

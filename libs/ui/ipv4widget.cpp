@@ -20,13 +20,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ipv4widget.h"
 
-IpV4Widget::IpV4Widget(QWidget * parent) : SettingWidget(parent)
+IpV4Widget::IpV4Widget(const QString& connectionId, QWidget * parent) : SettingWidget(connectionId, parent)
 {
     m_ui.setupUi(this);
+    init();
 }
 
 IpV4Widget::~IpV4Widget()
 {
+}
+
+QString IpV4Widget::label() const
+{
+    return i18nc("Label for IPv4 address settings", "IP Address");
+}
+
+QString IpV4Widget::settingName() const
+{
+    return QLatin1String("ipv4");
 }
 
 // vim: sw=4 sts=4 et tw=100

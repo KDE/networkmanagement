@@ -23,16 +23,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QWidget>
 
+#include "settingwidget.h"
+
 #include "knm_export.h"
 
 class QTabWidget;
 
-class KNM_EXPORT ConnectionWidget : public QWidget
+class KNM_EXPORT ConnectionWidget : public SettingWidget
 {
 public:
-    ConnectionWidget(QWidget * parent = 0);
+    ConnectionWidget(const QString& connectionId, QWidget * parent = 0);
     ~ConnectionWidget();
     QTabWidget * connectionSettingsWidget();
+    QString label() const;
+    QString settingName() const;
 private:
     class Private;
     Private * d;

@@ -20,22 +20,45 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "settingwidget.h"
 
+#include <QFile>
+#include <KStandardDirs>
+#include "configxml.h"
+#include "secretstoragehelper.h"
+
 class SettingWidget::Private
 {
-    
+public:
+    QString connectionId;
+    ConfigXml * configXml;
+    SecretStorageHelper * secretStorage;
 };
 
 
-SettingWidget::SettingWidget(QWidget* parent) : QWidget(parent), d(0)
+SettingWidget::SettingWidget(const QString& connectionId, QWidget* parent) : QWidget(parent), d(new Private)
 {
-
+    d->connectionId = connectionId;
+    d->secretStorage = 0;
+    d->configXml = 0;
 }
 
 SettingWidget::~SettingWidget()
 {
-
+    delete d->secretStorage;
+    delete d->configXml;
+    delete d;
 }
 
+void SettingWidget::init()
+{
+    QFile schemaFile(KStandardDirs::locate("data",
+            QString::fromLatin1("knetworkmanager/schemas/%1.kcfg").arg( settingName())));
+    if (schemaFile.exists()) {
+        d->secretStorage = new SecretStorageHelper(d->connectionId, settingName());
+        QString configFile = KStandardDirs::locate("data",
+                QLatin1String("knetworkmanager/connections/") + d->connectionId);
+        d->configXml = new ConfigXml(configFile, &schemaFile, d->secretStorage);
+    }
+}
 
 void SettingWidget::readConfig(KConfig *)
 {

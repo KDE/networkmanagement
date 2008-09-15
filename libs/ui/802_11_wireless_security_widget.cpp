@@ -20,13 +20,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "802_11_wireless_security_widget.h"
 
-Wireless80211SecurityWidget::Wireless80211SecurityWidget(QWidget * parent) : SettingWidget(parent)
+Wireless80211SecurityWidget::Wireless80211SecurityWidget(const QString& connectionId, QWidget * parent)
+: SettingWidget(connectionId, parent)
 {
     m_ui.setupUi(this);
+    init();
 }
 
 Wireless80211SecurityWidget::~Wireless80211SecurityWidget()
 {
 }
 
+QString Wireless80211SecurityWidget::label() const
+{
+    return i18nc("Label text for->", "Wireless Security");
+}
+
+QString Wireless80211SecurityWidget::settingName() const
+{
+    return QLatin1String("802-11-wireless-security");
+}
 // vim: sw=4 sts=4 et tw=100

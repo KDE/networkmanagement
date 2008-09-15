@@ -24,6 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QWidget>
 
+class ConfigXml;
 class KConfig;
 
 #include "knm_export.h"
@@ -31,7 +32,7 @@ class KConfig;
 class KNM_EXPORT SettingWidget : public QWidget
 {
 public:
-    SettingWidget(QWidget * parent = 0);
+    SettingWidget(const QString & connectionId, QWidget * parent = 0);
     virtual ~SettingWidget();
     /**
      * read in any configuration that ConfigXml can't handle
@@ -41,6 +42,25 @@ public:
      * write any configuration that ConfigXml can't handle
      */
     virtual void writeConfig(KConfig *);
+    /**
+     * get the label describing the widget contents
+     */
+    virtual QString label() const = 0;
+    /**
+     * get the name of the settings group configured by the widget
+     */
+    virtual QString settingName() const = 0;
+
+    /**
+     * The configuration management object belonging to this widget
+     */
+    ConfigXml * configXml() const;
+protected:
+    /**
+     * Setup ConfigXml for this widget
+     * Separate from ctor since it depends upon settingsName from concrete subclasses
+     */
+    void init();
 private:
     class Private;
     Private * d;

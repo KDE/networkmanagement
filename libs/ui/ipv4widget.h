@@ -30,8 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class KNM_EXPORT IpV4Widget : public SettingWidget
 {
 public:
-    IpV4Widget(QWidget * parent = 0 );
+    IpV4Widget(const QString& connectionId, QWidget * parent = 0 );
     virtual ~IpV4Widget();
+    QString label() const;
+    QString settingName() const;
 private:
     Ui_SettingsIp4Config m_ui;
 };

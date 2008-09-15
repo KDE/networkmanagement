@@ -30,8 +30,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class KNM_EXPORT WiredWidget : public SettingWidget
 {
 public:
-    WiredWidget(QWidget * parent = 0 );
+    WiredWidget(const QString& connectionId, QWidget * parent = 0 );
     virtual ~WiredWidget();
+    QString label() const;
+    QString settingName() const;
 private:
     Ui_Settings8023Ethernet m_ui;
 };

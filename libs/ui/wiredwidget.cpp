@@ -20,13 +20,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wiredwidget.h"
 
-WiredWidget::WiredWidget(QWidget * parent) : SettingWidget(parent)
+WiredWidget::WiredWidget(const QString& connectionId, QWidget * parent) : SettingWidget(connectionId, parent)
 {
     m_ui.setupUi(this);
+    init();
 }
 
 WiredWidget::~WiredWidget()
 {
+}
+
+QString WiredWidget::label() const
+{
+    return i18nc("Label for wired Ethernet settings", "Ethernet");
+}
+
+QString WiredWidget::settingName() const
+{
+    return QLatin1String("802-3-ethernet");
 }
 
 // vim: sw=4 sts=4 et tw=100
