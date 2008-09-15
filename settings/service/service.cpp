@@ -84,7 +84,9 @@ void TestService::configure()
     KCModuleProxy *mp;
     foreach (const KService::Ptr &servicePtr, services) {
         KCModuleInfo moduleInfo(servicePtr);
-        mp = new KCModuleProxy(moduleInfo, this);
+        QStringList args;
+        args << "testconfigxml";
+        mp = new KCModuleProxy(moduleInfo, this, args);
         mp->load();
         configDialog.setMainWidget(mp);
         break;

@@ -23,6 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KCModule>
 
+/**
+ * Configuration module for wired connections
+ */
 class WiredPreferences : public KCModule
 {
 Q_OBJECT
