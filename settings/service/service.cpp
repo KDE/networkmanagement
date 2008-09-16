@@ -83,6 +83,7 @@ void TestService::configure()
     kDebug() << "found " << services.count() << " config plugins";
     KCModuleProxy *mp;
     foreach (const KService::Ptr &servicePtr, services) {
+        kDebug() << "showing kcm for " << servicePtr->storageId();
         KCModuleInfo moduleInfo(servicePtr);
         QStringList args;
         args << "testconfigxml";

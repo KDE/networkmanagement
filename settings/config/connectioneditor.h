@@ -21,9 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NM07_CONNECTION_EDITOR_H
 #define NM07_CONNECTION_EDITOR_H
 
+#include <KCModule>
+
 #include "connectioneditor.h"
 
-#include <KCModule>
+#include "ui_connectioneditor.h"
 
 class ConnectionEditor : public KCModule
 {
@@ -33,6 +35,25 @@ public:
     virtual ~ConnectionEditor();
     virtual void save();
     virtual void load();
+private slots:
+    void addWiredClicked();
+    void editWiredClicked();
+    void deleteWiredClicked();
+    void addWirelessClicked();
+    void editWirelessClicked();
+    void deleteWirelessClicked();
+    void addCellularClicked();
+    void editCellularClicked();
+    void deleteCellularClicked();
+    void addVpnClicked();
+    void editVpnClicked();
+    void deleteVpnClicked();
+    void addPppoeClicked();
+    void editPppoeClicked();
+    void deletePppoeClicked();
+private:
+    void restoreConnections();
+    Ui_ConnectionEditor mConnEditUi;
 };
 
 #endif

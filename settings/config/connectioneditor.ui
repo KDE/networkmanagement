@@ -9,19 +9,39 @@
     <height>287</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" >
+  <layout class="QHBoxLayout" name="horizontalLayout_6" >
    <item>
     <widget class="QTabWidget" name="tabWidget" >
      <property name="currentIndex" >
       <number>2</number>
      </property>
-     <widget class="QWidget" name="tab" >
+     <widget class="QWidget" name="tabWired" >
       <attribute name="title" >
        <string>Wired</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout" >
        <item>
-        <widget class="QListWidget" name="wiredList" />
+        <widget class="QTreeWidget" name="listWired" >
+         <property name="rootIsDecorated" >
+          <bool>false</bool>
+         </property>
+         <property name="allColumnsShowFocus" >
+          <bool>true</bool>
+         </property>
+         <property name="headerHidden" >
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text" >
+           <string>Connection</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Last used</string>
+          </property>
+         </column>
+        </widget>
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout" >
@@ -63,13 +83,30 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_2" >
+     <widget class="QWidget" name="tabWireless" >
       <attribute name="title" >
        <string>Wireless</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_2" >
        <item>
-        <widget class="QListWidget" name="listWireless" />
+        <widget class="QTreeWidget" name="listWireless" >
+         <property name="allColumnsShowFocus" >
+          <bool>true</bool>
+         </property>
+         <property name="headerHidden" >
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text" >
+           <string>Connection</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Last used</string>
+          </property>
+         </column>
+        </widget>
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_3" >
@@ -111,32 +148,49 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_3" >
+     <widget class="QWidget" name="tabCellular" >
       <attribute name="title" >
        <string>Mobile Broadband</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_3" >
        <item>
-        <widget class="QListWidget" name="listMobile" />
+        <widget class="QTreeWidget" name="listCellular" >
+         <property name="allColumnsShowFocus" >
+          <bool>true</bool>
+         </property>
+         <property name="headerHidden" >
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text" >
+           <string>Connection</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Last used</string>
+          </property>
+         </column>
+        </widget>
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_4" >
          <item>
-          <widget class="QPushButton" name="addMobile" >
+          <widget class="QPushButton" name="addCellular" >
            <property name="text" >
             <string>&amp;Add</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="editMobile" >
+          <widget class="QPushButton" name="editCellular" >
            <property name="text" >
             <string>&amp;Edit</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="deleteMobile" >
+          <widget class="QPushButton" name="deleteCellular" >
            <property name="text" >
             <string>&amp;Delete</string>
            </property>
@@ -159,13 +213,30 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_4" >
+     <widget class="QWidget" name="tabVpn" >
       <attribute name="title" >
        <string>VPN</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_4" >
        <item>
-        <widget class="QListWidget" name="listVpn" />
+        <widget class="QTreeWidget" name="listVpn" >
+         <property name="allColumnsShowFocus" >
+          <bool>true</bool>
+         </property>
+         <property name="headerHidden" >
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text" >
+           <string>Connection</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Last used</string>
+          </property>
+         </column>
+        </widget>
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -191,7 +262,7 @@
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer" >
+          <spacer name="verticalSpacer_2" >
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
@@ -207,39 +278,56 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tab_5" >
+     <widget class="QWidget" name="tabPppoe" >
       <attribute name="title" >
        <string>DSL</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_5" >
        <item>
-        <widget class="QListWidget" name="listDsl" />
+        <widget class="QTreeWidget" name="listPppoe" >
+         <property name="allColumnsShowFocus" >
+          <bool>true</bool>
+         </property>
+         <property name="headerHidden" >
+          <bool>true</bool>
+         </property>
+         <column>
+          <property name="text" >
+           <string>Connection</string>
+          </property>
+         </column>
+         <column>
+          <property name="text" >
+           <string>Last used</string>
+          </property>
+         </column>
+        </widget>
        </item>
        <item>
         <layout class="QVBoxLayout" name="verticalLayout_6" >
          <item>
-          <widget class="QPushButton" name="addDsl" >
+          <widget class="QPushButton" name="addPppoe" >
            <property name="text" >
             <string>&amp;Add</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="editDsl" >
+          <widget class="QPushButton" name="editPppoe" >
            <property name="text" >
             <string>&amp;Edit</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="deleteDsl" >
+          <widget class="QPushButton" name="deletePppoe" >
            <property name="text" >
             <string>&amp;Delete</string>
            </property>
           </widget>
          </item>
          <item>
-          <spacer name="verticalSpacer" >
+          <spacer name="verticalSpacer_3" >
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
            </property>
