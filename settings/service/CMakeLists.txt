@@ -11,7 +11,7 @@ set(testservice_SRCS
    networksettings.cpp
    )
 
-kde4_add_kcfg_files(testservice_SRCS networksettingsprefs.kcfgc)
+kde4_add_kcfg_files(testservice_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/knmserviceprefs.kcfgc)
 
 qt4_add_dbus_adaptor(testservice_SRCS org.kde.knetworkmanagerd.xml kconfigtoservice.h KConfigToService knetworkmanagerserviceadaptor KNetworkManagerServiceAdaptor )
 

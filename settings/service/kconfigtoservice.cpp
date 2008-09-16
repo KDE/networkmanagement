@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "configxml.h"
 #include "networksettings.h"
-#include "networksettingsprefs.h"
+#include "knmserviceprefs.h"
 #include "secretstoragehelper.h"
 #include "knetworkmanagerserviceadaptor.h"
 
@@ -48,7 +48,7 @@ KConfigToService::KConfigToService(NetworkSettings * service)
     QDBusConnection::sessionBus().registerObject( "/Configuration", this );
 
     initKeyMappings();
-    NetworkSettingsPrefs::instance(KStandardDirs::locate("config",
+    KNetworkManagerServicePrefs::instance(KStandardDirs::locate("config",
                 QLatin1String("knetworkmanagerrc")));
 }
 
@@ -61,7 +61,7 @@ void KConfigToService::init()
     // 1) get the names of all the connections from the main config file
     // (this could also be just the connections in one profile, after removing all connections)
     QStringList connectionIds;
-    connectionIds = NetworkSettingsPrefs::self()->connections();
+    connectionIds = KNetworkManagerServicePrefs::self()->connections();
     // 2) open each connection's file and create 1 or more ConfigXml for it
     foreach (QString connectionId, connectionIds) {
         QVariantMapMap connectionMap = restoreConnection(connectionId);
@@ -162,14 +162,14 @@ void KConfigToService::configure(const QStringList& changedConnections)
     QStringList addedConnections, deletedConnections;
     // figure out which connections were added
     QStringList existingConnections = m_connectionIdToObjectPath.keys();
-    foreach (QString connectionId, NetworkSettingsPrefs::self()->connections()) {
+    foreach (QString connectionId, KNetworkManagerServicePrefs::self()->connections()) {
         if (!existingConnections.contains(connectionId)) {
             addedConnections.append(connectionId);
         }
     }
     // figure out which connections were deleted
     foreach (QString connectionId, existingConnections) {
-        if (!NetworkSettingsPrefs::self()->connections().contains(connectionId)) {
+        if (!KNetworkManagerServicePrefs::self()->connections().contains(connectionId)) {
             deletedConnections.append(connectionId);
         }
     }

@@ -1,0 +1,4 @@
+File=knmserviceprefs.kcfg
+ClassName=KNetworkManagerServicePrefs
+Singleton=true
+Mutators=true
