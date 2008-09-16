@@ -20,6 +20,8 @@
 #ifndef GENERALSETTINGSWIDGET_H
 #define GENERALSETTINGSWIDGET_H
 
+#include "ui_generalsettingswidget.h"
+
 #include "ifaceitemmodel.h"
 #include "wirelesssettingswidget.h"
 
@@ -38,16 +40,16 @@
 #include <KDialog>
 #include <klocalizedstring.h>
 
-class GeneralSettingsWidget : public QWidget
+class GeneralSettingsWidget : public QWidget, public Ui::GeneralSettingsWidget
 {
     Q_OBJECT
 
     public:
         enum ConnectionType {BestAvailable=0, Wireless, Wired};
-        
+
         GeneralSettingsWidget(QWidget *parent=0);
         ~GeneralSettingsWidget();
-        
+
         void setWirelessSettings(WirelessSettingsWidget *wifiSettings);
         void setExistingProfiles(const QStringList profiles);
 
@@ -64,27 +66,19 @@ class GeneralSettingsWidget : public QWidget
 
     Q_SIGNALS:
         void validationChanged(bool);
-        void wirelessAppropriate(bool);
 
     private Q_SLOTS:
         void onConnectionTypeChanged(int index);
         void onPriorityListActivated(const QModelIndex &index);
         void onCurrentChanged(const QModelIndex &current, const QModelIndex &previous);
-        void onUpButtonClicked();
-        void onDownButtonClicked();
+        void onAddButtonClicked();
+        void onDeleteButtonClicked();
         void onDataEntered(const QString &text);
 
     private:
         QStringList m_connectionTypes;
         QStringList m_connectionTypeIcons;
         QStringList m_existingProfiles;
-
-        QGridLayout *m_mainLayout;
-        QLabel *m_profileNameLabel, *m_connectionTypeLabel;
-        QComboBox *m_profileType, *m_connectionType;
-        QLineEdit *m_profileName;
-        QListView *m_priorityList;
-        QPushButton *m_upButton, *m_downButton;
 
         IfaceItemModel *m_ifaceModel;
         WirelessSettingsWidget *m_wifiSettings;

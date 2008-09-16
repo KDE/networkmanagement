@@ -23,7 +23,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../
 add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
 link_directories(${KDE4_LIB_DIR})
 
-kde4_add_ui_files( testGeneral_SRCS ../scanwidget.ui)
+kde4_add_ui_files( testGeneral_SRCS ../generalsettingswidget.ui)
 kde4_add_executable(testGeneral ${testGeneral_SRCS})
 
 target_link_libraries(testGeneral  ${KDE4_KDEUI_LIBS} solidcontrol)
