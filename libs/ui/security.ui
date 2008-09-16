@@ -1,0 +1,433 @@
+<ui version="4.0" >
+ <class>Security</class>
+ <widget class="QWidget" name="Security" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>383</width>
+    <height>321</height>
+   </rect>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_5" >
+   <item>
+    <layout class="QGridLayout" name="gridLayout_2" >
+     <item row="0" column="0" >
+      <widget class="QLabel" name="label_5" >
+       <property name="text" >
+        <string>&amp;Authentication:</string>
+       </property>
+       <property name="buddy" >
+        <cstring>kcombobox_4</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="KComboBox" name="kcombobox_4" >
+       <property name="toolTip" >
+        <string>Authentication scheme to use</string>
+       </property>
+       <item>
+        <property name="text" >
+         <string>TLS</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Tunneled TLS</string>
+        </property>
+       </item>
+       <item>
+        <property name="text" >
+         <string>Protected EAP (PEAP)</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QStackedWidget" name="stackedwidget" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="tlsPage" >
+      <layout class="QVBoxLayout" name="verticalLayout_2" >
+       <item>
+        <layout class="QGridLayout" name="gridLayout" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label" >
+           <property name="text" >
+            <string>Identity</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="KLineEdit" name="kcfg_identity" />
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="label_2" >
+           <property name="text" >
+            <string>User Certificate</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="KUrlRequester" name="kcfg_clientcert" />
+         </item>
+         <item row="2" column="0" >
+          <widget class="QLabel" name="label_3" >
+           <property name="text" >
+            <string>CA Certificate</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="KUrlRequester" name="kcfg_cacert" />
+         </item>
+         <item row="3" column="0" >
+          <widget class="QLabel" name="label_4" >
+           <property name="text" >
+            <string>Private Key</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" >
+          <widget class="KUrlRequester" name="kcfg_privatekey" />
+         </item>
+         <item row="4" column="0" >
+          <widget class="QLabel" name="label_6" >
+           <property name="text" >
+            <string>Private Key Password</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1" >
+          <widget class="KLineEdit" name="kcfg_privkeypw" />
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="leapPage" >
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <item>
+        <layout class="QGridLayout" name="gridLayout_3" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label_8" >
+           <property name="text" >
+            <string>&amp;Username</string>
+           </property>
+           <property name="buddy" >
+            <cstring>kcfg_username</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="KLineEdit" name="kcfg_username" />
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="label_9" >
+           <property name="text" >
+            <string>&amp;Password</string>
+           </property>
+           <property name="buddy" >
+            <cstring>kcfg_password</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="KLineEdit" name="kcfg_password" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>130</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="ttlsPage" >
+      <layout class="QVBoxLayout" name="verticalLayout_3" >
+       <item>
+        <layout class="QGridLayout" name="gridLayout_4" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label_12" >
+           <property name="text" >
+            <string>&amp;Identity</string>
+           </property>
+           <property name="buddy" >
+            <cstring>kcfg_identity</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="KLineEdit" name="kcfg_identity_2" />
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="label_7" >
+           <property name="text" >
+            <string>&amp;CA Certificate</string>
+           </property>
+           <property name="buddy" >
+            <cstring>kcfg_cacert</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="KUrlRequester" name="kcfg_cacert_2" />
+         </item>
+         <item row="2" column="0" >
+          <widget class="QLabel" name="label_13" >
+           <property name="text" >
+            <string>Inner &amp;authentication</string>
+           </property>
+           <property name="buddy" >
+            <cstring>kcombobox</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="KComboBox" name="kcombobox" >
+           <item>
+            <property name="text" >
+             <string>PAP</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>MSCHAP</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>MSCHAPv2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>CHAP</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="3" column="0" >
+          <widget class="QLabel" name="label_10" >
+           <property name="text" >
+            <string>&amp;Username</string>
+           </property>
+           <property name="buddy" >
+            <cstring>klineedit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" >
+          <widget class="KLineEdit" name="klineedit" />
+         </item>
+         <item row="4" column="0" >
+          <widget class="QLabel" name="label_11" >
+           <property name="text" >
+            <string>&amp;Password</string>
+           </property>
+           <property name="buddy" >
+            <cstring>klineedit_2</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1" >
+          <widget class="KLineEdit" name="klineedit_2" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>32</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="peapPage" >
+      <layout class="QVBoxLayout" name="verticalLayout_4" >
+       <item>
+        <layout class="QGridLayout" name="gridLayout_5" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label_14" >
+           <property name="text" >
+            <string>Anonymous &amp;identity</string>
+           </property>
+           <property name="buddy" >
+            <cstring>kcfg_identity</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="KLineEdit" name="kcfg_identity_3" />
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="label_16" >
+           <property name="text" >
+            <string>&amp;CA Certificate</string>
+           </property>
+           <property name="buddy" >
+            <cstring>kcfg_cacert</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="KUrlRequester" name="kcfg_cacert_3" />
+         </item>
+         <item row="2" column="0" >
+          <widget class="QLabel" name="label_18" >
+           <property name="text" >
+            <string>PEAP &amp;version</string>
+           </property>
+           <property name="buddy" >
+            <cstring>kcfg_phase1peapver</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="KComboBox" name="kcfg_phase1peapver" >
+           <item>
+            <property name="text" >
+             <string>Version 0</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>Version 1</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="3" column="0" >
+          <widget class="QLabel" name="label_19" >
+           <property name="text" >
+            <string>Inner &amp;authentication</string>
+           </property>
+           <property name="buddy" >
+            <cstring>kcombobox</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1" >
+          <widget class="KComboBox" name="kcombobox_2" >
+           <item>
+            <property name="text" >
+             <string>PAP</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>MSCHAP</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>MSCHAPv2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text" >
+             <string>CHAP</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="4" column="0" >
+          <widget class="QLabel" name="label_15" >
+           <property name="text" >
+            <string>&amp;Username</string>
+           </property>
+           <property name="buddy" >
+            <cstring>klineedit</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1" >
+          <widget class="KLineEdit" name="klineedit_4" />
+         </item>
+         <item row="5" column="0" >
+          <widget class="QLabel" name="label_17" >
+           <property name="text" >
+            <string>&amp;Password</string>
+           </property>
+           <property name="buddy" >
+            <cstring>klineedit_2</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1" >
+          <widget class="KLineEdit" name="klineedit_3" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+   <item>
+    <spacer name="verticalSpacer_2" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>141</width>
+       <height>85</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KUrlRequester</class>
+   <extends>QFrame</extends>
+   <header>kurlrequester.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

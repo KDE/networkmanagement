@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Broadband
+Comment=Configure a DSL connection
+Type=Service
+X-KDE-ServiceTypes=KCModule
+X-KDE-Library=kcm_knetworkmanager_cellular
+X-KDE-FactoryName=kcm_knetworkmanager_cellular
+X-KDE-ParentApp=knetworkmanager
+X-KDE-ParentComponents=knetworkmanager
+
+

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Wi-Fi
+Comment=Configure a Wi-Fi connection
+Type=Service
+X-KDE-ServiceTypes=KCModule
+X-KDE-Library=kcm_knetworkmanager_wireless
+X-KDE-FactoryName=kcm_knetworkmanager_wireless
+X-KDE-ParentApp=knetworkmanager
+X-KDE-ParentComponents=knetworkmanager
+
+

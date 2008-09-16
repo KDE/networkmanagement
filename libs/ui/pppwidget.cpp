@@ -18,26 +18,36 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIRELESS_802_11_SECURITY_WIDGET_H
-#define WIRELESS_802_11_SECURITY_WIDGET_H
+#include "pppwidget.h"
 
-#include "settingwidget.h"
+#include "ui_ppp.h"
 
-#include "knm_export.h"
-
-class KNM_EXPORT Wireless80211SecurityWidget : public SettingWidget
+class PppWidget::Private
 {
-Q_OBJECT
 public:
-    Wireless80211SecurityWidget(const QString& connectionId, QWidget * parent = 0 );
-    virtual ~Wireless80211SecurityWidget();
-    QString settingName() const;
-    QString label() const;
-protected Q_SLOTS:
-    void securityTypeChanged(int index);
-private:
-    class Private;
-    Private * d;
+    Ui_Ppp ui;
 };
 
-#endif // 802_11_WIRELESS_SECURITY_WIDGET_H
+PppWidget::PppWidget(const QString& connectionId, QWidget * parent)
+: SettingWidget(connectionId, parent), d(new PppWidget::Private)
+{
+    d->ui.setupUi(this);
+    init();
+}
+
+PppWidget::~PppWidget()
+{
+    delete d;
+}
+
+QString PppWidget::label() const
+{
+    return i18nc("Label for PPP connection settings", "PPP");
+}
+
+QString PppWidget::settingName() const
+{
+    return QLatin1String("ppp");
+}
+
+// vim: sw=4 sts=4 et tw=100

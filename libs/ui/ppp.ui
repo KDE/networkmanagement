@@ -1,0 +1,133 @@
+<ui version="4.0" >
+ <class>Ppp</class>
+ <widget class="QWidget" name="Ppp" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>295</width>
+    <height>460</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
+    <widget class="QGroupBox" name="auth" >
+     <property name="title" >
+      <string>Authentication</string>
+     </property>
+     <property name="checkable" >
+      <bool>true</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4" >
+      <item>
+       <widget class="QCheckBox" name="pap" >
+        <property name="text" >
+         <string>PAP</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="chap" >
+        <property name="text" >
+         <string>CHAP</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="mschapv2" >
+        <property name="text" >
+         <string>MSCHAPv2</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="mschap" >
+        <property name="text" >
+         <string>MSCHAP</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="eap" >
+        <property name="text" >
+         <string>EAP</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2" >
+     <property name="title" >
+      <string>Compression</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3" >
+      <item>
+       <widget class="QGroupBox" name="kcfg_requiremppe" >
+        <property name="title" >
+         <string>Point-to-Point Encryption (MPPE)</string>
+        </property>
+        <property name="checkable" >
+         <bool>true</bool>
+        </property>
+        <property name="checked" >
+         <bool>false</bool>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2" >
+         <item>
+          <widget class="QCheckBox" name="kcfg_requiremppe128" >
+           <property name="text" >
+            <string>Require 128-bit encryption</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="kcfg_mppestateful" >
+           <property name="text" >
+            <string>Stateful MPPE</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="bsdcomp" >
+        <property name="text" >
+         <string>Allow BSD Compression</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="deflate" >
+        <property name="text" >
+         <string>Allow Deflate compression</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="checkBox_10" >
+        <property name="text" >
+         <string>Use TCP Header compression</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="checkBox_11" >
+     <property name="text" >
+      <string>Send PPP Echo packets</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

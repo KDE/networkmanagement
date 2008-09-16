@@ -18,19 +18,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIRELESS_802_11_SECURITY_WIDGET_H
-#define WIRELESS_802_11_SECURITY_WIDGET_H
+#ifndef SECURITY_802_1x_WIDGET_H
+#define SECURITY_802_1x_WIDGET_H
 
 #include "settingwidget.h"
 
 #include "knm_export.h"
 
-class KNM_EXPORT Wireless80211SecurityWidget : public SettingWidget
+class KNM_EXPORT Wired8021xSecurityWidget : public SettingWidget
 {
 Q_OBJECT
 public:
-    Wireless80211SecurityWidget(const QString& connectionId, QWidget * parent = 0 );
-    virtual ~Wireless80211SecurityWidget();
+    Wired8021xSecurityWidget(const QString& connectionId, QWidget * parent = 0 );
+    virtual ~Wired8021xSecurityWidget();
     QString settingName() const;
     QString label() const;
 protected Q_SLOTS:
@@ -40,4 +40,4 @@ private:
     Private * d;
 };
 
-#endif // 802_11_WIRELESS_SECURITY_WIDGET_H
+#endif // 802_1x_SECURITY_WIDGET_H

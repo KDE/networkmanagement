@@ -16,8 +16,8 @@ TODO WS:
 - Implement control module
   - Show configured connections in the main lists
     - Write a nice class to turn a QDateTime into "3 minutes ago", "5 hours ago" instead of using KLocale::formatDate(), or extend KLocale with formatDateRelative(QDateTime in, QDateTime relativeTo)
-  - Make widgets from the .ui files in knmui
-  - Write a factory class that generates a complete tabwidget for each type of connection using above widgets
+  - Write a KCM containing a complete tabwidget for each type of connection using above widgets (INPROGRESS)
+      - Add UI for selecting cellular connection type, detect and disable for existing connections
   - Show appropriate dialog when an Add or Edit button is clicked
   - Replace Ok button with Close in main connectioneditor, or implement storage of changed/added connection settings in temp files until the Ok button is clicked, and enable deleting temp files if Cancel is clicked
 - Make sure system tray+engine does what we need

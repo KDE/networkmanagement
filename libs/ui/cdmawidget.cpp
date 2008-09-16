@@ -18,26 +18,36 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIRELESS_802_11_SECURITY_WIDGET_H
-#define WIRELESS_802_11_SECURITY_WIDGET_H
+#include "cdmawidget.h"
 
-#include "settingwidget.h"
+#include "ui_cdma.h"
 
-#include "knm_export.h"
-
-class KNM_EXPORT Wireless80211SecurityWidget : public SettingWidget
+class CdmaWidget::Private
 {
-Q_OBJECT
 public:
-    Wireless80211SecurityWidget(const QString& connectionId, QWidget * parent = 0 );
-    virtual ~Wireless80211SecurityWidget();
-    QString settingName() const;
-    QString label() const;
-protected Q_SLOTS:
-    void securityTypeChanged(int index);
-private:
-    class Private;
-    Private * d;
+    Ui_Cdma ui;
 };
 
-#endif // 802_11_WIRELESS_SECURITY_WIDGET_H
+CdmaWidget::CdmaWidget(const QString& connectionId, QWidget * parent)
+: SettingWidget(connectionId, parent), d(new CdmaWidget::Private)
+{
+    d->ui.setupUi(this);
+    init();
+}
+
+CdmaWidget::~CdmaWidget()
+{
+    delete d;
+}
+
+QString CdmaWidget::label() const
+{
+    return i18nc("Label for CDMA Cellular (3G) network connection", "Mobile Broadband");
+}
+
+QString CdmaWidget::settingName() const
+{
+    return QLatin1String("cdma");
+}
+
+// vim: sw=4 sts=4 et tw=100

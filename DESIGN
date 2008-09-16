@@ -46,13 +46,22 @@ Functions
 * Delete existing connection
 * Secrets may not be stored at all for extreme security, provide kioskable setting for this
 * Show warning label if NM is not running.
-Connection types:
+
+Implementation:
+* List connections by type in main KCM
+* Pass connectionId to connection specific KCM for new or edited connections
+* Connect up non-trivial UI to save settings (esp wireless security, 802.1x and ppp)
+* Connect up wireless security type combo to tabWidget
+* Delete connections deletes config file and wallet entries
+
+Connection types (as used in nm-applet)
 wired: connection wired 8021x ipv4
 wireless: connection wireless wirelesssecurity ipv4
 mobilebb:
+  cdma: cdma ppp
+  gsm: gsm ppp
 vpn: connection ipv4
 dsl: connection dsl wired ppp
-
 
 Characteristics
 * Use storage layer shared with service.

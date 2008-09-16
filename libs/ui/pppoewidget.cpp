@@ -18,26 +18,36 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIRELESS_802_11_SECURITY_WIDGET_H
-#define WIRELESS_802_11_SECURITY_WIDGET_H
+#include "pppoewidget.h"
 
-#include "settingwidget.h"
+#include "ui_pppoe.h"
 
-#include "knm_export.h"
-
-class KNM_EXPORT Wireless80211SecurityWidget : public SettingWidget
+class PppoeWidget::Private
 {
-Q_OBJECT
 public:
-    Wireless80211SecurityWidget(const QString& connectionId, QWidget * parent = 0 );
-    virtual ~Wireless80211SecurityWidget();
-    QString settingName() const;
-    QString label() const;
-protected Q_SLOTS:
-    void securityTypeChanged(int index);
-private:
-    class Private;
-    Private * d;
+    Ui_Pppoe ui;
 };
 
-#endif // 802_11_WIRELESS_SECURITY_WIDGET_H
+PppoeWidget::PppoeWidget(const QString& connectionId, QWidget * parent)
+: SettingWidget(connectionId, parent), d(new PppoeWidget::Private)
+{
+    d->ui.setupUi(this);
+    init();
+}
+
+PppoeWidget::~PppoeWidget()
+{
+    delete d;
+}
+
+QString PppoeWidget::label() const
+{
+    return i18nc("Label for PPPoE DSL network connections", "DSL");
+}
+
+QString PppoeWidget::settingName() const
+{
+    return QLatin1String("pppoe");
+}
+
+// vim: sw=4 sts=4 et tw=100

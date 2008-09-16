@@ -18,26 +18,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIRELESS_802_11_SECURITY_WIDGET_H
-#define WIRELESS_802_11_SECURITY_WIDGET_H
+#ifndef NM07_CELLULAR_CONNECTION_PREFERENCES_H
+#define NM07_CELLULAR_CONNECTION_PREFERENCES_H
 
-#include "settingwidget.h"
+#include <KCModule>
 
-#include "knm_export.h"
-
-class KNM_EXPORT Wireless80211SecurityWidget : public SettingWidget
+/**
+ * Configuration module for cellular connections
+ */
+class CellularPreferences : public KCModule
 {
 Q_OBJECT
 public:
-    Wireless80211SecurityWidget(const QString& connectionId, QWidget * parent = 0 );
-    virtual ~Wireless80211SecurityWidget();
-    QString settingName() const;
-    QString label() const;
-protected Q_SLOTS:
-    void securityTypeChanged(int index);
-private:
-    class Private;
-    Private * d;
+    CellularPreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
+    virtual ~CellularPreferences();
+    virtual void save();
+    virtual void load();
 };
 
-#endif // 802_11_WIRELESS_SECURITY_WIDGET_H
+#endif

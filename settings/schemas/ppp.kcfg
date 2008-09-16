@@ -49,8 +49,8 @@
       <label>Require MPPE 128</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="mpppestateful" type="Bool">
-      <label>MPPPE Stateful</label>
+    <entry name="mppestateful" type="Bool">
+      <label>MPPE Stateful</label>
       <whatsthis></whatsthis>
     </entry>
     <entry name="crtscts" type="Bool">

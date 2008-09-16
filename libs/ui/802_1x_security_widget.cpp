@@ -18,40 +18,40 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "802_11_wireless_security_widget.h"
+#include "802_1x_security_widget.h"
 
-#include "ui_802-11-wireless-security.h"
+#include "ui_802_1x.h"
 
-class Wireless80211SecurityWidget::Private
+class Wired8021xSecurityWidget::Private
 {
 public:
-    Ui_Wireless80211Security ui;
+    Ui_Wired8021xSecurity ui;
 };
 
-Wireless80211SecurityWidget::Wireless80211SecurityWidget(const QString& connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent), d(new Wireless80211SecurityWidget::Private)
+Wired8021xSecurityWidget::Wired8021xSecurityWidget(const QString& connectionId, QWidget * parent)
+: SettingWidget(connectionId, parent), d(new Wired8021xSecurityWidget::Private)
 {
     d->ui.setupUi(this);
-    connect(d->ui.type, SIGNAL(currentIndexChanged(int)), this, SLOT(securityTypeChanged(int)));
+    //connect(d->ui.type, SIGNAL(currentIndexChanged(int)), this, SLOT(securityTypeChanged(int)));
     init();
 }
 
-Wireless80211SecurityWidget::~Wireless80211SecurityWidget()
+Wired8021xSecurityWidget::~Wired8021xSecurityWidget()
 {
     delete d;
 }
 
-QString Wireless80211SecurityWidget::label() const
+QString Wired8021xSecurityWidget::label() const
 {
     return i18nc("Label text for->", "Wireless Security");
 }
 
-QString Wireless80211SecurityWidget::settingName() const
+QString Wired8021xSecurityWidget::settingName() const
 {
     return QLatin1String("802-11-wireless-security");
 }
 
-void Wireless80211SecurityWidget::securityTypeChanged(int index)
+void Wired8021xSecurityWidget::securityTypeChanged(int index)
 {
     // None 0 -> 0
     // Wep 1,2,3 -> 1
@@ -59,6 +59,7 @@ void Wireless80211SecurityWidget::securityTypeChanged(int index)
     // Dynamic WEP 5 -> 4
     // WPA PSK 6 ->  3
     // WPA EAP 7 -> 4
+#if 0
     switch (index) {
         case 0: // None
             d->ui.stackedWidget->setCurrentIndex(0);
@@ -83,8 +84,9 @@ void Wireless80211SecurityWidget::securityTypeChanged(int index)
         default:
             break;
     }
+#endif
 }
 
-#include "802_11_wireless_security_widget.moc"
+#include "802_1x_security_widget.moc"
 
 // vim: sw=4 sts=4 et tw=100

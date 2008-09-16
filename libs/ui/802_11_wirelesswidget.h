@@ -21,8 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef WIRELESS802_11_WIDGET_H
 #define WIRELESS802_11_WIDGET_H
 
-#include "ui_802-11-wireless.h"
-
 #include "settingwidget.h"
 
 #include "knm_export.h"

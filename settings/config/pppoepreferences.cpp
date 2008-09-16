@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wiredpreferences.h"
+#include "pppoepreferences.h"
 
 #include <QVBoxLayout>
 #include <QFile>
@@ -28,46 +28,50 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "configxml.h"
 #include "secretstoragehelper.h"
+#include "pppoewidget.h"
+#include "pppwidget.h"
 #include "wiredwidget.h"
 #include "ipv4widget.h"
 #include "connectionwidget.h"
-#include "802_1x_security_widget.h"
 
-K_PLUGIN_FACTORY( WiredPreferencesFactory, registerPlugin<WiredPreferences>();)
-K_EXPORT_PLUGIN( WiredPreferencesFactory( "kcm_knetworkmanager_wired" ) )
+K_PLUGIN_FACTORY( PppoePreferencesFactory, registerPlugin<PppoePreferences>();)
+K_EXPORT_PLUGIN( PppoePreferencesFactory( "kcm_knetworkmanager_pppoe" ) )
 
-WiredPreferences::WiredPreferences(QWidget *parent, const QVariantList &args)
-: KCModule( WiredPreferencesFactory::componentData(), parent, args )
+PppoePreferences::PppoePreferences(QWidget *parent, const QVariantList &args)
+: KCModule( PppoePreferencesFactory::componentData(), parent, args )
 {
     QString connectionId = args[0].toString();
     QVBoxLayout * layout = new QVBoxLayout(this);
     ConnectionWidget * contents = new ConnectionWidget(connectionId, this);
     layout->addWidget(contents);
+    PppoeWidget * pppoeWidget = new PppoeWidget(connectionId, this);
     WiredWidget * wiredWidget = new WiredWidget(connectionId, this);
+    PppWidget * pppWidget = new PppWidget(connectionId, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(connectionId, this);
-    Wired8021xSecurityWidget * securityWidget = new Wired8021xSecurityWidget(connectionId, this);
     // Must setup initial widget before adding its contents, or all child widgets are added in this
     // run
     addConfig(contents->configXml(), contents);
 
+    contents->connectionSettingsWidget()->addTab(pppoeWidget,pppoeWidget->label());
     contents->connectionSettingsWidget()->addTab(wiredWidget,wiredWidget->label());
-    contents->connectionSettingsWidget()->addTab(securityWidget,securityWidget->label());
     contents->connectionSettingsWidget()->addTab(ipv4Widget,ipv4Widget->label());
-    addConfig(wiredWidget->configXml(), wiredWidget);
-    addConfig(securityWidget->configXml(), securityWidget);
+    contents->connectionSettingsWidget()->addTab(pppWidget,pppWidget->label());
+    addConfig(pppoeWidget->configXml(), pppoeWidget);
     addConfig(ipv4Widget->configXml(), ipv4Widget);
+    addConfig(pppWidget->configXml(), pppWidget);
+    addConfig(wiredWidget->configXml(), wiredWidget);
 }
 
-WiredPreferences::~WiredPreferences()
+PppoePreferences::~PppoePreferences()
 {
 }
 
-void WiredPreferences::load()
+void PppoePreferences::load()
 {
     KCModule::load();
 }
 
-void WiredPreferences::save()
+void PppoePreferences::save()
 {
     KCModule::save();
     // this is where tab specific stuff should happen?

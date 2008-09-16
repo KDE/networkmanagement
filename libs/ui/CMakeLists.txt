@@ -5,6 +5,12 @@ include_directories(
 ## next target: ui library
 
 set(knmui_SRCS
+   cdmawidget.cpp
+   gsmwidget.cpp
+   pppwidget.cpp
+   pppoewidget.cpp
+   802_1x_security_widget.cpp
+   securitywidget.cpp
    settingwidget.cpp
    connectionwidgetfactory.cpp
    connectionwidget.cpp
@@ -13,7 +19,7 @@ set(knmui_SRCS
    802_11_wirelesswidget.cpp
    802_11_wireless_security_widget.cpp
    )
-kde4_add_ui_files(knmui_SRCS connection.ui wired.ui ipv4.ui 802-11-wireless.ui 802-11-wireless-security.ui)
+kde4_add_ui_files(knmui_SRCS cdma.ui gsm.ui ppp.ui pppoe.ui 802_1x.ui security.ui connection.ui wired.ui ipv4.ui 802-11-wireless.ui 802-11-wireless-security.ui)
 kde4_add_library(knmui SHARED ${knmui_SRCS})
 target_link_libraries(knmui knmstorage ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS})
 

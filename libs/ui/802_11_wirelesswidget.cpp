@@ -20,6 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "802_11_wirelesswidget.h"
 
+#include "ui_802-11-wireless.h"
+
+
 class Wireless80211Widget::Private
 {
     public:

@@ -1,12 +1,12 @@
 <ui version="4.0" >
- <class>Wireless80211SecurityConfig</class>
- <widget class="QWidget" name="Form" >
+ <class>Wireless80211Security</class>
+ <widget class="QWidget" name="Wireless80211Security" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>340</width>
-    <height>305</height>
+    <width>383</width>
+    <height>321</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5" >
@@ -16,12 +16,12 @@
       <string>&amp;Security:</string>
      </property>
      <property name="buddy" >
-      <cstring>kcombobox</cstring>
+      <cstring>type</cstring>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="KComboBox" name="kcombobox" >
+    <widget class="KComboBox" name="type" >
      <item>
       <property name="text" >
        <string>None</string>
@@ -69,315 +69,8 @@
      <property name="currentIndex" >
       <number>1</number>
      </property>
-     <widget class="QWidget" name="page" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>332</width>
-        <height>241</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout" >
-       <item>
-        <layout class="QGridLayout" name="gridLayout" >
-         <item row="0" column="0" >
-          <widget class="QLabel" name="label_6" >
-           <property name="text" >
-            <string>&amp;User Name:</string>
-           </property>
-           <property name="buddy" >
-            <cstring>kcfg_leapusername</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <widget class="KLineEdit" name="kcfg_leapusername" >
-           <property name="toolTip" >
-            <string>User name on this network</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QLabel" name="label_7" >
-           <property name="text" >
-            <string>&amp;Password:</string>
-           </property>
-           <property name="buddy" >
-            <cstring>kcfg_leappassword</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" >
-          <widget class="KLineEdit" name="kcfg_leappassword" >
-           <property name="toolTip" >
-            <string>Password on this network</string>
-           </property>
-           <property name="echoMode" >
-            <enum>QLineEdit::PasswordEchoOnEdit</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1" >
-          <widget class="QCheckBox" name="btnLeapShowPass" >
-           <property name="text" >
-            <string>&amp;Show password</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer" >
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0" >
-          <size>
-           <width>20</width>
-           <height>133</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="page_3" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>332</width>
-        <height>245</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2" >
-       <item>
-        <layout class="QGridLayout" name="gridLayout_2" >
-         <item row="0" column="0" >
-          <widget class="QLabel" name="label_5" >
-           <property name="text" >
-            <string>&amp;Authentication:</string>
-           </property>
-           <property name="buddy" >
-            <cstring>kcombobox_4</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <widget class="KComboBox" name="kcombobox_4" >
-           <property name="toolTip" >
-            <string>Authentication scheme to use</string>
-           </property>
-           <item>
-            <property name="text" >
-             <string>TLS</string>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>LEAP</string>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>Tunneled TLS</string>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>Protected EAP (PEAP)</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item row="1" column="0" >
-          <widget class="QLabel" name="label_8" >
-           <property name="text" >
-            <string>&amp;Identity:</string>
-           </property>
-           <property name="buddy" >
-            <cstring>kcfg_identity</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" >
-          <widget class="KLineEdit" name="kcfg_identity" >
-           <property name="toolTip" >
-            <string>Your identity</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" >
-          <widget class="QLabel" name="label_9" >
-           <property name="text" >
-            <string>&amp;User Certificate:</string>
-           </property>
-           <property name="buddy" >
-            <cstring>clientcertPath</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1" >
-          <widget class="KUrlRequester" name="clientcertPath" >
-           <property name="toolTip" >
-            <string>Your certificate</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0" >
-          <widget class="QLabel" name="label_10" >
-           <property name="text" >
-            <string>&amp;CA Certificate:</string>
-           </property>
-           <property name="buddy" >
-            <cstring>cacertPath</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1" >
-          <widget class="KUrlRequester" name="cacertPath" >
-           <property name="toolTip" >
-            <string>Certification Authority Certificate</string>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="0" >
-          <widget class="QLabel" name="label_11" >
-           <property name="text" >
-            <string>Private &amp;Key:</string>
-           </property>
-           <property name="buddy" >
-            <cstring>privatekeyPath</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="4" column="1" >
-          <widget class="KUrlRequester" name="privatekeyPath" >
-           <property name="toolTip" >
-            <string>Private Key File</string>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0" >
-          <widget class="QLabel" name="label_12" >
-           <property name="text" >
-            <string>&amp;Private Key Password:</string>
-           </property>
-           <property name="buddy" >
-            <cstring>kcfg_password</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="1" >
-          <widget class="KLineEdit" name="kcfg_password" >
-           <property name="toolTip" >
-            <string>Password to unlock the private key</string>
-           </property>
-           <property name="text" >
-            <string/>
-           </property>
-           <property name="echoMode" >
-            <enum>QLineEdit::PasswordEchoOnEdit</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="6" column="1" >
-          <widget class="QCheckBox" name="btnLeapShowPass_2" >
-           <property name="text" >
-            <string>&amp;Show password</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_2" >
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0" >
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="page_4" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>332</width>
-        <height>245</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3" >
-       <item>
-        <layout class="QGridLayout" name="gridLayout_3" >
-         <item row="0" column="0" >
-          <widget class="QLabel" name="label_13" >
-           <property name="text" >
-            <string>&amp;Password:</string>
-           </property>
-           <property name="buddy" >
-            <cstring>kcfg_psk</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <widget class="KLineEdit" name="kcfg_psk" >
-           <property name="echoMode" >
-            <enum>QLineEdit::PasswordEchoOnEdit</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" >
-          <widget class="QCheckBox" name="btnWpaShowPassword" >
-           <property name="text" >
-            <string>&amp;Show password</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <spacer name="verticalSpacer_3" >
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0" >
-          <size>
-           <width>20</width>
-           <height>167</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="page_5" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>332</width>
-        <height>245</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QWidget" name="page_2" >
-      <property name="geometry" >
-       <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>332</width>
-        <height>284</height>
-       </rect>
-      </property>
+     <widget class="QWidget" name="nonePage" />
+     <widget class="QWidget" name="wepPage" >
       <layout class="QVBoxLayout" name="verticalLayout_4" >
        <item>
         <layout class="QGridLayout" name="gridLayout_4" >
@@ -480,6 +173,119 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="leapPage" >
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <item>
+        <layout class="QGridLayout" name="gridLayout" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label_6" >
+           <property name="text" >
+            <string>&amp;User Name:</string>
+           </property>
+           <property name="buddy" >
+            <cstring>kcfg_leapusername</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="KLineEdit" name="kcfg_leapusername" >
+           <property name="toolTip" >
+            <string>User name on this network</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="label_7" >
+           <property name="text" >
+            <string>&amp;Password:</string>
+           </property>
+           <property name="buddy" >
+            <cstring>kcfg_leappassword</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="KLineEdit" name="kcfg_leappassword" >
+           <property name="toolTip" >
+            <string>Password on this network</string>
+           </property>
+           <property name="echoMode" >
+            <enum>QLineEdit::PasswordEchoOnEdit</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <widget class="QCheckBox" name="btnLeapShowPass" >
+           <property name="text" >
+            <string>&amp;Show password</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>133</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="wpapskPage" >
+      <layout class="QVBoxLayout" name="verticalLayout_3" >
+       <item>
+        <layout class="QGridLayout" name="gridLayout_3" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="label_13" >
+           <property name="text" >
+            <string>&amp;Password:</string>
+           </property>
+           <property name="buddy" >
+            <cstring>kcfg_psk</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="KLineEdit" name="kcfg_psk" >
+           <property name="echoMode" >
+            <enum>QLineEdit::PasswordEchoOnEdit</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" >
+          <widget class="QCheckBox" name="btnWpaShowPassword" >
+           <property name="text" >
+            <string>&amp;Show password</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_3" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>167</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="wpaeapPage" >
+      <layout class="QVBoxLayout" name="verticalLayout_2" />
+     </widget>
     </widget>
    </item>
   </layout>
@@ -494,11 +300,6 @@
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KUrlRequester</class>
-   <extends>QFrame</extends>
-   <header>kurlrequester.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
