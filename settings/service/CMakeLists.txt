@@ -15,7 +15,6 @@ kde4_add_kcfg_files(testservice_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/stor
 
 qt4_add_dbus_adaptor(testservice_SRCS org.kde.knetworkmanagerd.xml kconfigtoservice.h KConfigToService knetworkmanagerserviceadaptor KNetworkManagerServiceAdaptor )
 
-#kde4_add_ui_files(testservice_SRCS settings/connection.ui settings/wired.ui settings/ipv4.ui)
 kde4_add_executable(testservice ${testservice_SRCS})
 target_link_libraries(testservice knmstorage ${KDE4_KUTILS_LIBS} solidcontrol)
 
