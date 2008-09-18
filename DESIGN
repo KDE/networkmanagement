@@ -48,13 +48,14 @@ Functions
 * Show warning label if NM is not running.
 
 Implementation:
-* List connections by type in main KCM
-  * Store connectionId using KTreeWidgetItem::setData()
-* Figure out how to load the right KCM for a connection type; the qstring ctor in kcmoduleproxy isn't finding the right service.
-* Pass connectionId to connection specific KCM for new or edited connections
+* List connections by type in main KCM DONE
+  * Store connectionId using KTreeWidgetItem::setData() DONE
+* There is only one KCM plugin; the other widgets are KCMs (to take advantage of KCModule's good KConfigSkeleton integration) but are not loaded as plugins DONE
+* Pass connectionId to connection specific KCM for new or edited connections DONE
 * Connect up non-trivial UI to save settings (esp wireless security, 802.1x and ppp)
 * Connect up wireless security type combo to tabWidget
-* Delete connections deletes config file and wallet entries
+* Delete connections deletes config file DONE
+  * and wallet entries
 
 Connection types (as used in nm-applet)
 wired: connection wired 8021x ipv4
