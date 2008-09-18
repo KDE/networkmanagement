@@ -1,0 +1,85 @@
+<ui version="4.0" >
+ <class>ManageProfileWidget</class>
+ <widget class="QWidget" name="ManageProfileWidget" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>387</width>
+    <height>202</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <widget class="QWidget" name="gridLayoutWidget" >
+   <property name="geometry" >
+    <rect>
+     <x>9</x>
+     <y>9</y>
+     <width>361</width>
+     <height>191</height>
+    </rect>
+   </property>
+   <layout class="QGridLayout" name="mainLayout" >
+    <item row="0" column="0" >
+     <widget class="QListView" name="m_profileView" />
+    </item>
+    <item row="0" column="1" >
+     <layout class="QVBoxLayout" name="m_buttonLayout" >
+      <item>
+       <widget class="QPushButton" name="m_addProfileButton" >
+        <property name="text" >
+         <string>Add Profile</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="m_editProfileButton" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="text" >
+         <string>Edit Profile</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="m_deleteProfileButton" >
+        <property name="enabled" >
+         <bool>false</bool>
+        </property>
+        <property name="text" >
+         <string>Delete Profile</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="verticalSpacer" >
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0" >
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+   </layout>
+   <zorder>m_profileView</zorder>
+   <zorder>verticalLayoutWidget</zorder>
+   <zorder>pushButton</zorder>
+   <zorder>pushButton_2</zorder>
+   <zorder>verticalLayoutWidget</zorder>
+   <zorder>m_addProfileButton</zorder>
+   <zorder>pushButton_2</zorder>
+   <zorder>verticalLayoutWidget</zorder>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

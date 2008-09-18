@@ -20,6 +20,8 @@
 #ifndef WIRELESSSETTINGSWIDGET_H
 #define WIRELESSSETTINGSWIDGET_H
 
+#include "ui_wirelesssettingswidget.h"
+
 #include "scanwidget.h"
 #include "encryptionsettingswidget.h"
 
@@ -38,7 +40,7 @@
 #include <KDialog>
 #include <KLocale>
 
-class WirelessSettingsWidget : public QWidget
+class WirelessSettingsWidget : public QWidget, public Ui::WirelessSettingsWidget
 {
     Q_OBJECT
 
@@ -59,7 +61,7 @@ class WirelessSettingsWidget : public QWidget
 
     Q_SIGNALS:
         void validationChanged(bool);
-        
+
     private Q_SLOTS:
         void onScanClicked();
         void onApChosen();
@@ -74,18 +76,12 @@ class WirelessSettingsWidget : public QWidget
 
         QStringList m_connectionTypes, m_wirelessModes, m_securityTypes;
 
-        QGridLayout *m_mainLayout;
-        QLabel *m_wirelessConfigLabel, *m_essidLabel, *m_connectionTypeLabel, *m_wirelessModeLabel, *m_securityTypeLabel;
-        QLineEdit *m_essid;
-        QComboBox *m_connectionType, *m_wirelessMode, *m_securityType;
-        QPushButton *m_scanButton, *m_securitySettingsButton;
-
         KDialog *m_scandlg, *m_encryptdlg;
         QString m_wirelessInterface;
 
         //scanview
         ScanWidget *m_scanWidget;
-        
+
         //encryption
         EncryptionSettingsWidget *m_encryptionWidget;
         EncryptionSettingsWidget::EncryptionType m_savedSecurityType;

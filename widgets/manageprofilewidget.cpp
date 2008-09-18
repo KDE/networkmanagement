@@ -25,12 +25,6 @@
 
 ManageProfileWidget::ManageProfileWidget(QWidget *parent)
     : QWidget(parent),
-      mainLayout(0),
-      buttonLayout(0),
-      m_profileView(0),
-      addProfileButton(0),
-      editProfileButton(0),
-      m_deleteProfileButton(0),
       m_config(),
       m_profileModel(0),
       m_addProfiledlg(0),
@@ -40,45 +34,25 @@ ManageProfileWidget::ManageProfileWidget(QWidget *parent)
       m_generalAddWidget(0),
       m_generalEditWidget(0)
 {
-    addProfileButton = new QPushButton(i18n("Add Profile"));
-    editProfileButton = new QPushButton(i18n("Edit Profile"));
-    m_deleteProfileButton = new QPushButton(i18n("Delete Profile"));
-    //disable until a profile is selected
-    editProfileButton->setEnabled(false);
-    m_deleteProfileButton->setEnabled(false);
-    
-    buttonLayout = new QVBoxLayout();
-    buttonLayout->addWidget(addProfileButton);
-    buttonLayout->addWidget(editProfileButton);
-    buttonLayout->addWidget(m_deleteProfileButton);
+    QWidget *main = new QWidget(this);
+    setupUi(main);
 
-    m_profileView = new QListView();
     m_profileModel = new ProfileItemModel();
     m_profileView->setModel(m_profileModel);
 
-    mainLayout = new QHBoxLayout(this);
-    mainLayout->addWidget(m_profileView);
-    mainLayout->addLayout(buttonLayout);
-
     connect(m_profileView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onItemViewClicked(const QModelIndex&)));
-    connect(addProfileButton, SIGNAL(clicked()), this, SLOT(onAddProfileClicked()));
-    connect(editProfileButton, SIGNAL(clicked()), this, SLOT(onEditProfileClicked()));
+    connect(m_addProfileButton, SIGNAL(clicked()), this, SLOT(onAddProfileClicked()));
+    connect(m_editProfileButton, SIGNAL(clicked()), this, SLOT(onEditProfileClicked()));
     connect(m_deleteProfileButton, SIGNAL(clicked()), this, SLOT(onDeleteProfileClicked()));
 }
 ManageProfileWidget::~ManageProfileWidget()
 {
     disconnect(m_profileView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(onItemViewClicked(const QModelIndex&)));
-    disconnect(addProfileButton, SIGNAL(clicked()), this, SLOT(onAddProfileClicked()));
-    disconnect(editProfileButton, SIGNAL(clicked()), this, SLOT(onEditProfileClicked()));
+    disconnect(m_addProfileButton, SIGNAL(clicked()), this, SLOT(onAddProfileClicked()));
+    disconnect(m_editProfileButton, SIGNAL(clicked()), this, SLOT(onEditProfileClicked()));
     disconnect(m_deleteProfileButton, SIGNAL(clicked()), this, SLOT(onDeleteProfileClicked()));
-    
-    delete addProfileButton;
-    delete editProfileButton;
-    delete m_deleteProfileButton;
+
     delete m_profileModel;
-    delete m_profileView;
-    delete buttonLayout;
-    delete mainLayout;
 }
 
 KConfigGroup ManageProfileWidget::config()
@@ -94,7 +68,7 @@ void ManageProfileWidget::setConfig(KConfigGroup &config)
 
 void ManageProfileWidget::onItemViewClicked(const QModelIndex &index)
 {
-    editProfileButton->setEnabled(index.isValid());
+    m_editProfileButton->setEnabled(index.isValid());
     m_deleteProfileButton->setEnabled(index.isValid());
 }
 
@@ -104,11 +78,11 @@ void ManageProfileWidget::onAddProfileClicked()
     disconnect(m_generalAddWidget, SIGNAL(validationChanged(bool)), this, SLOT(onPage1Valid(bool)));
     disconnect(m_generalAddWidget, SIGNAL(wirelessInAppropriate(bool)), this, SLOT(onPage2Inappropriate(bool)));
     disconnect(m_wirelessAddWidget, SIGNAL(validationChanged(bool)), this, SLOT(onPage2Valid(bool)));
-    
+
     delete m_wirelessAddWidget;
     delete m_generalAddWidget;
     delete m_addProfiledlg;
-    
+
     m_wirelessAddWidget = new WirelessSettingsWidget();
     m_generalAddWidget =  new GeneralSettingsWidget();
     m_generalAddWidget->setExistingProfiles(m_config.groupList());
@@ -118,7 +92,7 @@ void ManageProfileWidget::onAddProfileClicked()
     m_addProfiledlg->setCaption("Add Profile");
     m_page1 = m_addProfiledlg->addPage(m_generalAddWidget, i18n("General Settings"));
     m_page2 = m_addProfiledlg->addPage(m_wirelessAddWidget, i18n("Wireless Settings"));
-    
+
     m_addProfiledlg->setCurrentPage(m_page1);
     m_addProfiledlg->setValid(m_page1, false);
     m_addProfiledlg->setValid(m_page2, false);

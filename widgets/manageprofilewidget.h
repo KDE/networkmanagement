@@ -20,6 +20,8 @@
 #ifndef MANAGEPROFILEWIDGET_H
 #define MANAGEPROFILEWIDGET_H
 
+#include "ui_manageprofilewidget.h"
+
 #include "addprofilewidget.h"
 #include "profileitemmodel.h"
 #include "networkprofile.h"
@@ -45,7 +47,7 @@
 #include <KPageWidgetItem>
 #include <klocalizedstring.h>
 
-class ManageProfileWidget : public QWidget
+class ManageProfileWidget : public QWidget, public Ui::ManageProfileWidget
 {
     Q_OBJECT
 
@@ -68,11 +70,6 @@ class ManageProfileWidget : public QWidget
         void onPage2Appropriate(bool appropriate);
 
     private:
-        QHBoxLayout *mainLayout;
-        QVBoxLayout *buttonLayout;
-        QListView *m_profileView;
-        QPushButton *addProfileButton, *editProfileButton, *m_deleteProfileButton;
-        
         KConfigGroup m_config;
         ProfileItemModel *m_profileModel;
         KAssistantDialog *m_addProfiledlg;

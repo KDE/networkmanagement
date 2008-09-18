@@ -22,6 +22,7 @@ add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS} -DHAVE_CONFIG_H=1)
 link_directories(${KDE4_LIB_DIR})
 
 kde4_add_ui_files( testWireless_SRCS ../scanwidget.ui)
+kde4_add_ui_files( testWireless_SRCS ../wirelesssettingswidget.ui)
 kde4_add_executable(testWireless ${testWireless_SRCS})
 
 target_link_libraries(testWireless ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} solidcontrol)
