@@ -4,18 +4,21 @@ include_directories(
    )
    ## next target: test service
 
-set(testservice_SRCS
+set(kded_knetworkmanager_SRCS
    service.cpp
    connection.cpp
    kconfigtoservice.cpp
    networksettings.cpp
    )
 
-kde4_add_kcfg_files(testservice_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/knmserviceprefs.kcfgc)
+kde4_add_kcfg_files(kded_knetworkmanager_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/knmserviceprefs.kcfgc)
 
-qt4_add_dbus_adaptor(testservice_SRCS org.kde.knetworkmanagerd.xml kconfigtoservice.h KConfigToService knetworkmanagerserviceadaptor KNetworkManagerServiceAdaptor )
+qt4_add_dbus_adaptor(kded_knetworkmanager_SRCS org.kde.knetworkmanagerd.xml kconfigtoservice.h KConfigToService knetworkmanagerserviceadaptor KNetworkManagerServiceAdaptor )
 
-kde4_add_executable(testservice ${testservice_SRCS})
-target_link_libraries(testservice knmstorage ${KDE4_KUTILS_LIBS} solidcontrol)
+kde4_add_plugin(kded_knetworkmanager ${kded_knetworkmanager_SRCS})
+target_link_libraries(kded_knetworkmanager knmstorage ${KDE4_KUTILS_LIBS} solidcontrol)
 
+install(TARGETS kded_knetworkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
+
+install( FILES knetworkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded)
 

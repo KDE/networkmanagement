@@ -18,22 +18,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM07_SERVICE_H
-#define KNM07_SERVICE_H
+#ifndef KNM07_KDED_SERVICE_H
+#define KNM07_KDED_SERVICE_H
 
-#include <KMainWindow>
+#include <QVariant>
+
+#include <KDEDModule>
 
 class NetworkSettings;
 
-class TestService : public KMainWindow {
+class KNetworkManagerService : public KDEDModule {
 Q_OBJECT
 public:
-	TestService();
-	virtual ~TestService();
-	int status( const QString & network );
+    KNetworkManagerService(QObject * parent, const QVariantList&);
+    virtual ~KNetworkManagerService();
+    int status( const QString & network );
 protected slots:
     void serviceOwnerChanged( const QString& service,const QString& oldOwner, const QString& newOwner );
-    void configure();
 private:
     void registerService();
     NetworkSettings * mNetworkSettings;
