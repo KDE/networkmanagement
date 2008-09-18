@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectioneditor.h"
 
 #include <QDateTime>
+#include <QDBusInterface>
 #include <QFile>
 
 #include <KCModuleProxy>
@@ -154,6 +155,7 @@ void ConnectionEditor::addClicked()
             config.writeEntry("Name", cprefs->connectionName());
             config.writeEntry("Type", cprefs->connectionType());
             prefs->writeConfig();
+            updateService();
             restoreConnections();
         }
     }
@@ -183,6 +185,9 @@ void ConnectionEditor::editClicked()
         configDialog.setMainWidget(kcm);
         if (configDialog.exec() == QDialog::Accepted) {
             kcm->save();
+            QStringList changed;
+            changed << connectionId;
+            updateService(changed);
             restoreConnections();
         }
     }
@@ -220,6 +225,7 @@ void ConnectionEditor::deleteClicked()
         connectionIds.removeAll(connectionId);
         prefs->setConnections(connectionIds);
         prefs->writeConfig();
+        updateService();
         restoreConnections();
     }
 }
@@ -284,6 +290,14 @@ void ConnectionEditor::load()
 void ConnectionEditor::save()
 {
     KCModule::save();
+}
+
+void ConnectionEditor::updateService(const QStringList & changedConnections) const
+{
+    QDBusInterface iface(QLatin1String("org.kde.knetworkmanagerd"),
+            QLatin1String("/Configuration"), 
+            QLatin1String("org.kde.knetworkmanagerd"));
+    iface.call(QLatin1String("configure"), changedConnections);
 }
 
 #include "connectioneditor.moc"

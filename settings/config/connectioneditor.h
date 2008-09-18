@@ -38,12 +38,37 @@ public:
     virtual void save();
     virtual void load();
 private slots:
+    /** 
+     * Add a new connection 
+     */
     void addClicked();
+    /**
+     * Edit selected connection
+     */
     void editClicked();
+    /**
+     * Delete selected connection
+     */
     void deleteClicked();
 private:
+    /**
+     * Tell the UserSettings service to reload its configuration (via DBUS)
+     * Provide a list of changed connection IDs so the service can notify NetworkManager
+     */
+    void updateService(const QStringList& changedConnections = QStringList()) const;
+    /**
+     * Construct an editor widget for the selected connection tab.
+     * Returns 0 if no tab is selected.
+     */
     ConnectionPreferences * editorForCurrentIndex(QWidget * parent, const QVariantList & args) const;
+    /**
+     * Get the selected item on the current tab.
+     * Returns 0 if no selection.
+     */
     QTreeWidgetItem * selectedItem() const;
+    /**
+     * Reparse knetworkmanagerrc (the main connection file) and rebuild the list of connections
+     */
     void restoreConnections();
     Ui_ConnectionEditor mConnEditUi;
     QTreeWidget * mWiredList;
