@@ -21,12 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NM07_PPPOE_CONNECTION_PREFERENCES_H
 #define NM07_PPPOE_CONNECTION_PREFERENCES_H
 
-#include <KCModule>
+#include "connectionprefs.h"
 
 /**
  * Configuration module for wired connections
  */
-class PppoePreferences : public KCModule
+class PppoePreferences : public ConnectionPreferences
 {
 Q_OBJECT
 public:

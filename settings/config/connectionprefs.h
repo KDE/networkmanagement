@@ -18,22 +18,30 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM07_CELLULAR_CONNECTION_PREFERENCES_H
-#define NM07_CELLULAR_CONNECTION_PREFERENCES_H
+#ifndef CONNECTIONPREFS_H
+#define CONNECTIONPREFS_H
 
-#include "connectionprefs.h"
+#include <KCModule>
+
+class ConnectionWidget;
 
 /**
- * Configuration module for cellular connections
+ * Base class for connection configuration widgets.  Exists to provide
+ * name() and type() so these values can be cached in the main
+ * knetworkmanagerrc file
  */
-class CellularPreferences : public ConnectionPreferences
+class ConnectionPreferences : public KCModule
 {
 Q_OBJECT
 public:
-    CellularPreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
-    virtual ~CellularPreferences();
-    virtual void save();
-    virtual void load();
+    ConnectionPreferences(const KComponentData&, QWidget * parent = 0, const QVariantList & args = QVariantList());
+    virtual ~ConnectionPreferences();
+    QString connectionName() const;
+    QString connectionType() const ;
+protected:
+    ConnectionWidget * m_contents;
+    QString m_connectionName;
+    QString m_connectionType;
 };
 
-#endif
+#endif // CONNECTIONPREFS_H

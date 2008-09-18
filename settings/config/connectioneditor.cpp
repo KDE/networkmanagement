@@ -24,10 +24,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KCModuleProxy>
 #include <KLocale>
+#include <KMessageBox>
 #include <KPluginFactory>
+#include <KRandom>
 #include <KStandardDirs>
 
 #include "knmserviceprefs.h"
+#include "connectionprefs.h"
+#include "wiredpreferences.h"
+#include "wirelesspreferences.h"
+#include "cellularpreferences.h"
+#include "pppoepreferences.h"
+
+#define ConnectionIdRole 1812
 
 K_PLUGIN_FACTORY( ConnectionEditorFactory, registerPlugin<ConnectionEditor>();)
 K_EXPORT_PLUGIN( ConnectionEditorFactory( "kcm_knetworkmanager" ) )
@@ -35,25 +44,13 @@ K_EXPORT_PLUGIN( ConnectionEditorFactory( "kcm_knetworkmanager" ) )
 ConnectionEditor::ConnectionEditor(QWidget *parent, const QVariantList &args)
 : KCModule( ConnectionEditorFactory::componentData(), parent, args )
 {
-    QWidget * contents = new QWidget(this);
-    mConnEditUi.setupUi(contents);
+    mConnEditUi.setupUi(this);
+    mConnEditUi.tabWidget->setTabEnabled(3, false);
     KNetworkManagerServicePrefs::instance(KStandardDirs::locate("config",
                 QLatin1String("knetworkmanagerrc")));
-    connect(mConnEditUi.addWired, SIGNAL(clicked()), SLOT(addWiredClicked()));
-    connect(mConnEditUi.addWireless, SIGNAL(clicked()), SLOT(addWirelessClicked()));
-    connect(mConnEditUi.addCellular, SIGNAL(clicked()), SLOT(addCellularClicked()));
-    connect(mConnEditUi.addVpn, SIGNAL(clicked()), SLOT(addVpnClicked()));
-    connect(mConnEditUi.addPppoe, SIGNAL(clicked()), SLOT(addPppoeClicked()));
-    connect(mConnEditUi.editWired, SIGNAL(clicked()), SLOT(editWiredClicked()));
-    connect(mConnEditUi.editWireless, SIGNAL(clicked()), SLOT(editWirelessClicked()));
-    connect(mConnEditUi.editCellular, SIGNAL(clicked()), SLOT(editCellularClicked()));
-    connect(mConnEditUi.editVpn, SIGNAL(clicked()), SLOT(editVpnClicked()));
-    connect(mConnEditUi.editPppoe, SIGNAL(clicked()), SLOT(editPppoeClicked()));
-    connect(mConnEditUi.deleteWired, SIGNAL(clicked()), SLOT(deleteWiredClicked()));
-    connect(mConnEditUi.deleteWireless, SIGNAL(clicked()), SLOT(deleteWirelessClicked()));
-    connect(mConnEditUi.deleteCellular, SIGNAL(clicked()), SLOT(deleteCellularClicked()));
-    connect(mConnEditUi.deleteVpn, SIGNAL(clicked()), SLOT(deleteVpnClicked()));
-    connect(mConnEditUi.deletePppoe, SIGNAL(clicked()), SLOT(deletePppoeClicked()));
+    connect(mConnEditUi.addConnection, SIGNAL(clicked()), SLOT(addClicked()));
+    connect(mConnEditUi.editConnection, SIGNAL(clicked()), SLOT(editClicked()));
+    connect(mConnEditUi.deleteConnection, SIGNAL(clicked()), SLOT(deleteClicked()));
     restoreConnections();
 }
 
@@ -88,22 +85,24 @@ void ConnectionEditor::restoreConnections()
             itemContents << i18nc("Label for last used time for a"
                     "network connection that has never been used", "Never");
         }
+        QTreeWidgetItem * item;
         if (type == QLatin1String("Wired")) {
-            QTreeWidgetItem * item = new QTreeWidgetItem(mConnEditUi.listWired, itemContents);
+            item = new QTreeWidgetItem(mConnEditUi.listWired, itemContents);
             wiredItems.append(item);
         } else if (type == QLatin1String("Wireless")) {
-            QTreeWidgetItem * item = new QTreeWidgetItem(mConnEditUi.listWireless, itemContents);
+            item = new QTreeWidgetItem(mConnEditUi.listWireless, itemContents);
             wirelessItems.append(item);
         } else if (type == QLatin1String("Cellular")) {
-            QTreeWidgetItem * item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
+            item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
             cellularItems.append(item);
         } else if (type == QLatin1String("VPN")) {
-            QTreeWidgetItem * item = new QTreeWidgetItem(mConnEditUi.listVpn, itemContents);
+            item = new QTreeWidgetItem(mConnEditUi.listVpn, itemContents);
             vpnItems.append(item);
         } else if (type == QLatin1String("PPPoE")) {
-            QTreeWidgetItem * item = new QTreeWidgetItem(mConnEditUi.listPppoe, itemContents);
+            item = new QTreeWidgetItem(mConnEditUi.listPppoe, itemContents);
             pppoeItems.append(item);
         }
+        item->setData(0, ConnectionIdRole, connectionId);
     }
     mConnEditUi.listWired->insertTopLevelItems(0, wiredItems);
     mConnEditUi.listWired->resizeColumnToContents(0);
@@ -117,76 +116,131 @@ void ConnectionEditor::restoreConnections()
     mConnEditUi.listPppoe->resizeColumnToContents(0);
 }
 
-void ConnectionEditor::addWiredClicked()
+void ConnectionEditor::addClicked()
 {
+    // show connection settings widget for the active tab
     KDialog configDialog(this);
-    QStringList args;
-    args << "testconfigxml";
-    KCModuleProxy kcm(QLatin1String("kcm_networkmanager_wired"), &configDialog, args);
-    configDialog.setMainWidget(&kcm);
-    configDialog.exec();
+    QString connectionId = KRandom::randomString(10);
+    QVariantList args;
+    args << connectionId;
+    ConnectionPreferences * cprefs = editorForCurrentIndex(&configDialog, args);
 
+    if (!cprefs) {
+        return;
+    }
+
+    configDialog.setMainWidget(cprefs);
+    if ( configDialog.exec() == QDialog::Accepted ) {
+        cprefs->save();
+        // add to the service prefs
+        KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
+        QStringList connectionIds = prefs->connections();
+        connectionIds << connectionId;
+        prefs->setConnections(connectionIds);
+        KConfigGroup config(prefs->config(), QLatin1String("Connection_") + connectionId);
+        config.writeEntry("Name", cprefs->connectionName());
+        config.writeEntry("Type", cprefs->connectionType());
+        prefs->writeConfig();
+    }
 }
 
-void ConnectionEditor::editWiredClicked()
+void ConnectionEditor::editClicked()
 {
+    //edit might be clicked on a system connection, in which case we need a connectionid for it
+    KDialog configDialog(this);
+    QTreeWidgetItem * item = selectedItem();
+    if ( !item ) {
+        kDebug() << "edit clicked, but no selection!";
+        return;
+    }
+    QString connectionId = item->data(0, ConnectionIdRole).toString();
+    if (connectionId.isEmpty()) {
+        kDebug() << "selected item had no connectionId!";
+        return;
+    }
 
-}
-void ConnectionEditor::deleteWiredClicked()
-{
+    QVariantList args;
+    args << connectionId;
 
-}
+    KCModule * kcm = editorForCurrentIndex(&configDialog, args);
 
-void ConnectionEditor::addWirelessClicked()
-{
-}
-
-void ConnectionEditor::editWirelessClicked()
-{
-
-}
-void ConnectionEditor::deleteWirelessClicked()
-{
-
-}
-
-void ConnectionEditor::addCellularClicked()
-{
-}
-
-void ConnectionEditor::editCellularClicked()
-{
-
-}
-void ConnectionEditor::deleteCellularClicked()
-{
-
+    if (kcm) {
+        configDialog.setMainWidget(kcm);
+        if (configDialog.exec() == QDialog::Accepted) {
+            kcm->save();
+        }
+    }
 }
 
-void ConnectionEditor::addVpnClicked()
+void ConnectionEditor::deleteClicked()
 {
+    QTreeWidgetItem * item = selectedItem();
+    if ( !item ) {
+        kDebug() << "delete clicked, but no selection!";
+        return;
+    }
+    QString connectionId = item->data(0, ConnectionIdRole).toString();
+    if (connectionId.isEmpty()) {
+        kDebug() << "item to be deleted had no connectionId!";
+        return;
+    }
+    KMessageBox::Options options;
+    options |= KMessageBox::Dangerous;
+    if ( KMessageBox::warningYesNo(this, i18nc("Warning message on attempting to delete a connection", "Do you really want to delete the connection '%1'?",item->data(0, Qt::DisplayRole).toString()), i18n("Confirm delete") /*, QLatin1String("ConfirmDeleteConnection")*/) == KMessageBox::Yes) {
+        // delete it
+    }
 }
 
-void ConnectionEditor::editVpnClicked()
+ConnectionPreferences * ConnectionEditor::editorForCurrentIndex(QWidget * parent, const QVariantList & args) const
 {
-
+    kDebug() << args;
+    int i = mConnEditUi.tabWidget->currentIndex();
+    ConnectionPreferences * wid = 0;
+    switch (i) {
+        case 0:
+            wid = new WiredPreferences(parent, args);
+            break;
+        case 1:
+            wid = new WirelessPreferences(parent, args);
+            break;
+        case 2:
+            wid = new CellularPreferences(parent, args);
+            break;
+        case 3:
+            kDebug() << "VPN connections are not yet supported";
+            break;
+        case 4:
+            wid = new PppoePreferences(parent, args);
+            break;
+        default:
+            break;
+    }
+    return wid;
 }
-void ConnectionEditor::deleteVpnClicked()
+
+QTreeWidgetItem * ConnectionEditor::selectedItem() const
 {
-
-}
-
-void ConnectionEditor::addPppoeClicked()
-{
-}
-
-void ConnectionEditor::editPppoeClicked()
-{
-
-}
-void ConnectionEditor::deletePppoeClicked()
-{
-
+    kDebug();
+    QTreeWidgetItem * item = 0;
+    QTreeWidget * list = 0;
+    if ( mConnEditUi.tabWidget->currentWidget() == mConnEditUi.tabWired ) {
+        list = mConnEditUi.listWired;
+    } else if ( mConnEditUi.tabWidget->currentWidget() == mConnEditUi.tabWireless ) {
+        list = mConnEditUi.listWireless;
+    } else if ( mConnEditUi.tabWidget->currentWidget() == mConnEditUi.tabCellular ) {
+        list = mConnEditUi.listCellular;
+    } else if ( mConnEditUi.tabWidget->currentWidget() == mConnEditUi.tabVpn ) {
+        list = mConnEditUi.listVpn;
+    } else if ( mConnEditUi.tabWidget->currentWidget() == mConnEditUi.tabPppoe ) {
+        list = mConnEditUi.listPppoe;
+    }
+    if (list) {
+        QList<QTreeWidgetItem*> selected = list->selectedItems();
+        if (selected.count() == 1) {
+            item = selected.first();
+        }
+    }
+    return item;
 }
 
 void ConnectionEditor::load()

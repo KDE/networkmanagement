@@ -5,15 +5,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>420</width>
-    <height>287</height>
+    <width>526</width>
+    <height>316</height>
    </rect>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_6" >
    <item>
     <widget class="QTabWidget" name="tabWidget" >
      <property name="currentIndex" >
-      <number>2</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="tabWired" >
       <attribute name="title" >
@@ -43,44 +43,6 @@
          </column>
         </widget>
        </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout" >
-         <item>
-          <widget class="QPushButton" name="addWired" >
-           <property name="text" >
-            <string>&amp;Add</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="editWired" >
-           <property name="text" >
-            <string>&amp;Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="deleteWired" >
-           <property name="text" >
-            <string>&amp;Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer" >
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tabWireless" >
@@ -107,44 +69,6 @@
           </property>
          </column>
         </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_3" >
-         <item>
-          <widget class="QPushButton" name="addWireless" >
-           <property name="text" >
-            <string>&amp;Add</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="editWireless" >
-           <property name="text" >
-            <string>&amp;Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="deleteWireless" >
-           <property name="text" >
-            <string>&amp;Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer" >
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
        </item>
       </layout>
      </widget>
@@ -173,44 +97,6 @@
          </column>
         </widget>
        </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_4" >
-         <item>
-          <widget class="QPushButton" name="addCellular" >
-           <property name="text" >
-            <string>&amp;Add</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="editCellular" >
-           <property name="text" >
-            <string>&amp;Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="deleteCellular" >
-           <property name="text" >
-            <string>&amp;Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer" >
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tabVpn" >
@@ -237,44 +123,6 @@
           </property>
          </column>
         </widget>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_5" >
-         <item>
-          <widget class="QPushButton" name="addVpn" >
-           <property name="text" >
-            <string>&amp;Add</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="editVpn" >
-           <property name="text" >
-            <string>&amp;Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="deleteVpn" >
-           <property name="text" >
-            <string>&amp;Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer_2" >
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
        </item>
       </layout>
      </widget>
@@ -303,47 +151,60 @@
          </column>
         </widget>
        </item>
-       <item>
-        <layout class="QVBoxLayout" name="verticalLayout_6" >
-         <item>
-          <widget class="QPushButton" name="addPppoe" >
-           <property name="text" >
-            <string>&amp;Add</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="editPppoe" >
-           <property name="text" >
-            <string>&amp;Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="deletePppoe" >
-           <property name="text" >
-            <string>&amp;Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="verticalSpacer_3" >
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" stdset="0" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
       </layout>
      </widget>
     </widget>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="verticalLayout" >
+     <item>
+      <spacer name="verticalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="addConnection" >
+       <property name="text" >
+        <string>&amp;Add</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="editConnection" >
+       <property name="text" >
+        <string>&amp;Edit</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="verticalSpacer_2" >
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="deleteConnection" >
+       <property name="text" >
+        <string>&amp;Delete</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

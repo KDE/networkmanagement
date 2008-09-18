@@ -18,22 +18,33 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM07_CELLULAR_CONNECTION_PREFERENCES_H
-#define NM07_CELLULAR_CONNECTION_PREFERENCES_H
-
 #include "connectionprefs.h"
 
-/**
- * Configuration module for cellular connections
- */
-class CellularPreferences : public ConnectionPreferences
-{
-Q_OBJECT
-public:
-    CellularPreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
-    virtual ~CellularPreferences();
-    virtual void save();
-    virtual void load();
-};
+#include <kcoreconfigskeleton.h>
 
-#endif
+#include "configxml.h"
+#include "connectionwidget.h"
+
+ConnectionPreferences::ConnectionPreferences(const KComponentData& cdata, QWidget * parent, const QVariantList & args) : KCModule( cdata, parent, args )
+{
+
+}
+
+ConnectionPreferences::~ConnectionPreferences()
+{
+}
+
+QString ConnectionPreferences::connectionType() const
+{
+    KConfigSkeletonItem * configItem = m_contents->configXml()->findItem(m_contents->settingName(), "type");
+    return configItem->property().toString();
+}
+
+QString ConnectionPreferences::connectionName() const
+{
+    return m_connectionName;
+}
+
+// vim: sw=4 sts=4 et tw=100
+
+

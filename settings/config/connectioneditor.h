@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_connectioneditor.h"
 
+class ConnectionPreferences;
+
 class ConnectionEditor : public KCModule
 {
 Q_OBJECT
@@ -36,24 +38,15 @@ public:
     virtual void save();
     virtual void load();
 private slots:
-    void addWiredClicked();
-    void editWiredClicked();
-    void deleteWiredClicked();
-    void addWirelessClicked();
-    void editWirelessClicked();
-    void deleteWirelessClicked();
-    void addCellularClicked();
-    void editCellularClicked();
-    void deleteCellularClicked();
-    void addVpnClicked();
-    void editVpnClicked();
-    void deleteVpnClicked();
-    void addPppoeClicked();
-    void editPppoeClicked();
-    void deletePppoeClicked();
+    void addClicked();
+    void editClicked();
+    void deleteClicked();
 private:
+    ConnectionPreferences * editorForCurrentIndex(QWidget * parent, const QVariantList & args) const;
+    QTreeWidgetItem * selectedItem() const;
     void restoreConnections();
     Ui_ConnectionEditor mConnEditUi;
+    QTreeWidget * mWiredList;
 };
 
 #endif

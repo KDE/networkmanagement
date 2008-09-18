@@ -21,12 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NM07_WIRED_CONNECTION_PREFERENCES_H
 #define NM07_WIRED_CONNECTION_PREFERENCES_H
 
-#include <KCModule>
+#include "connectionprefs.h"
 
 /**
  * Configuration module for wired connections
  */
-class WiredPreferences : public KCModule
+class WiredPreferences : public ConnectionPreferences
 {
 Q_OBJECT
 public:

@@ -34,11 +34,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "ipv4widget.h"
 #include "connectionwidget.h"
 
-K_PLUGIN_FACTORY( PppoePreferencesFactory, registerPlugin<PppoePreferences>();)
-K_EXPORT_PLUGIN( PppoePreferencesFactory( "kcm_knetworkmanager_pppoe" ) )
+//K_PLUGIN_FACTORY( PppoePreferencesFactory, registerPlugin<PppoePreferences>();)
+//K_EXPORT_PLUGIN( PppoePreferencesFactory( "kcm_knetworkmanager_pppoe" ) )
 
 PppoePreferences::PppoePreferences(QWidget *parent, const QVariantList &args)
-: KCModule( PppoePreferencesFactory::componentData(), parent, args )
+: ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
     QString connectionId = args[0].toString();
     QVBoxLayout * layout = new QVBoxLayout(this);

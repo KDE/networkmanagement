@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settingwidget.h"
 
 #include <QFile>
+#include <KDebug>
 #include <KStandardDirs>
 #include "configxml.h"
 #include "secretstoragehelper.h"
@@ -53,9 +54,10 @@ void SettingWidget::init()
             QString::fromLatin1("knetworkmanager/schemas/%1.kcfg").arg( settingName())));
     if (schemaFile.exists()) {
         d->secretStorage = new SecretStorageHelper(d->connectionId, settingName());
-        QString configFile = KStandardDirs::locate("data",
+        QString configFile = KStandardDirs::locateLocal("data",
                 QLatin1String("knetworkmanager/connections/") + d->connectionId);
-        d->configXml = new ConfigXml(configFile, &schemaFile, d->secretStorage);
+        kDebug() << "Opening config file: " << configFile;
+        d->configXml = new ConfigXml(KSharedConfig::openConfig(configFile), &schemaFile, d->secretStorage);
     }
 }
 

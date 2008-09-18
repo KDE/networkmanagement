@@ -33,11 +33,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "pppwidget.h"
 #include "connectionwidget.h"
 
-K_PLUGIN_FACTORY( CellularPreferencesFactory, registerPlugin<CellularPreferences>();)
-K_EXPORT_PLUGIN( CellularPreferencesFactory( "kcm_knetworkmanager_cellular" ) )
+//K_PLUGIN_FACTORY( CellularPreferencesFactory, registerPlugin<CellularPreferences>();)
+//K_EXPORT_PLUGIN( CellularPreferencesFactory( "kcm_knetworkmanager_cellular" ) )
 
 CellularPreferences::CellularPreferences(QWidget *parent, const QVariantList &args)
-: KCModule( CellularPreferencesFactory::componentData(), parent, args )
+: ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
     QString connectionId = args[0].toString();
     // check if connection is gsm or cdma and set the appropriate widget

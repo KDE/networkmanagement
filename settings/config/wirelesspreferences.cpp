@@ -33,11 +33,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "ipv4widget.h"
 #include "connectionwidget.h"
 
-K_PLUGIN_FACTORY( WirelessPreferencesFactory, registerPlugin<WirelessPreferences>();)
-K_EXPORT_PLUGIN( WirelessPreferencesFactory( "kcm_knetworkmanager_wireless" ) )
+//K_PLUGIN_FACTORY( WirelessPreferencesFactory, registerPlugin<WirelessPreferences>();)
+//K_EXPORT_PLUGIN( WirelessPreferencesFactory( "kcm_knetworkmanager_wireless" ) )
 
 WirelessPreferences::WirelessPreferences(QWidget *parent, const QVariantList &args)
-: KCModule( WirelessPreferencesFactory::componentData(), parent, args )
+: ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
     Q_ASSERT(args.count() == 1);
     QString connectionId = args[0].toString();

@@ -49,6 +49,8 @@ Functions
 
 Implementation:
 * List connections by type in main KCM
+  * Store connectionId using KTreeWidgetItem::setData()
+* Figure out how to load the right KCM for a connection type; the qstring ctor in kcmoduleproxy isn't finding the right service.
 * Pass connectionId to connection specific KCM for new or edited connections
 * Connect up non-trivial UI to save settings (esp wireless security, 802.1x and ppp)
 * Connect up wireless security type combo to tabWidget

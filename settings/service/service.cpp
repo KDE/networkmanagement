@@ -79,6 +79,7 @@ void TestService::serviceOwnerChanged( const QString& service,const QString& old
 void TestService::configure()
 {
     KDialog configDialog(this);
+#if 1
     QList<KService::Ptr> services = KServiceTypeTrader::self()->query( "KCModule", "'knetworkmanager' in [X-KDE-ParentComponents]" );
     kDebug() << "found " << services.count() << " config plugins";
     KCModuleProxy *mp;
@@ -92,6 +93,16 @@ void TestService::configure()
         configDialog.setMainWidget(mp);
         break;
     }
+#else
+    KService::Ptr service = KService::serviceByDesktopName("kcm_networkmanager");
+    if (service) {
+        kDebug() << "Found service!";
+    } else {
+        kDebug() << "service kcm_networkmanager not found";
+    }
+#endif
+
+
     if ( configDialog.exec() == QDialog::Accepted ) {
         mp->save();
     }
