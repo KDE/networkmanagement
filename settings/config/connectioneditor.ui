@@ -52,6 +52,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_2" >
        <item>
         <widget class="QTreeWidget" name="listWireless" >
+         <property name="rootIsDecorated" >
+          <bool>false</bool>
+         </property>
          <property name="allColumnsShowFocus" >
           <bool>true</bool>
          </property>
@@ -79,6 +82,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_3" >
        <item>
         <widget class="QTreeWidget" name="listCellular" >
+         <property name="rootIsDecorated" >
+          <bool>false</bool>
+         </property>
          <property name="allColumnsShowFocus" >
           <bool>true</bool>
          </property>
@@ -106,6 +112,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_4" >
        <item>
         <widget class="QTreeWidget" name="listVpn" >
+         <property name="rootIsDecorated" >
+          <bool>false</bool>
+         </property>
          <property name="allColumnsShowFocus" >
           <bool>true</bool>
          </property>
@@ -133,6 +142,9 @@
       <layout class="QHBoxLayout" name="horizontalLayout_5" >
        <item>
         <widget class="QTreeWidget" name="listPppoe" >
+         <property name="rootIsDecorated" >
+          <bool>false</bool>
+         </property>
          <property name="allColumnsShowFocus" >
           <bool>true</bool>
          </property>
