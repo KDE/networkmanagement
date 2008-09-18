@@ -38,6 +38,10 @@ set(networkmanager_SRCS
 )
 
 kde4_add_ui_files(networkmanager_SRCS widgets/scanwidget.ui)
+kde4_add_ui_files(networkmanager_SRCS widgets/generalsettingswidget.ui)
+kde4_add_ui_files(networkmanager_SRCS widgets/manageprofilewidget.ui)
+kde4_add_ui_files(networkmanager_SRCS widgets/manageprofilewidget.ui)
+kde4_add_ui_files(networkmanager_SRCS widgets/wirelesssettingswidget.ui)
 kde4_add_plugin(plasma_applet_networkmanager ${networkmanager_SRCS})
 target_link_libraries(plasma_applet_networkmanager plasma ${KDE4_KIO_LIBS} solidcontrol)
 
