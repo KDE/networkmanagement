@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Broadband
+Name[sv]=Bredband
 Comment=Configure a DSL connection
+Comment[sv]=Anpassa en DSL-anslutning
 Type=Service
 X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_knetworkmanager_pppoe
