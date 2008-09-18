@@ -28,6 +28,7 @@ link_directories(${KDE4_LIB_DIR})
 kde4_add_ui_files( testManageProfiles_SRCS ../scanwidget.ui)
 kde4_add_ui_files( testManageProfiles_SRCS ../generalsettingswidget.ui)
 kde4_add_ui_files( testManageProfiles_SRCS ../manageprofilewidget.ui)
+kde4_add_ui_files( testManageProfiles_SRCS ../wirelesssettingswidget.ui)
 kde4_add_executable(testManageProfiles ${testManageProfiles_SRCS})
 
 target_link_libraries(testManageProfiles  ${KDE4_KDEUI_LIBS} solidcontrol)
