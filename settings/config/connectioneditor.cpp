@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectioneditor.h"
 
 #include <QDateTime>
+#include <QFile>
 
 #include <KCModuleProxy>
 #include <KLocale>
@@ -146,10 +147,10 @@ void ConnectionEditor::addClicked()
             kDebug() << "new connection has missing name ('" << name << "') or type ('" << type << "')";
         } else {
             KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
+            KConfigGroup config(prefs->config(), QLatin1String("Connection_") + connectionId);
             QStringList connectionIds = prefs->connections();
             connectionIds << connectionId;
             prefs->setConnections(connectionIds);
-            KConfigGroup config(prefs->config(), QLatin1String("Connection_") + connectionId);
             config.writeEntry("Name", cprefs->connectionName());
             config.writeEntry("Type", cprefs->connectionType());
             prefs->writeConfig();
@@ -203,6 +204,23 @@ void ConnectionEditor::deleteClicked()
     options |= KMessageBox::Dangerous;
     if ( KMessageBox::warningYesNo(this, i18nc("Warning message on attempting to delete a connection", "Do you really want to delete the connection '%1'?",item->data(0, Qt::DisplayRole).toString()), i18n("Confirm delete") /*, QLatin1String("ConfirmDeleteConnection")*/) == KMessageBox::Yes) {
         // delete it
+        // remove connection file
+        QFile connFile(KStandardDirs::locateLocal("data",
+                    QLatin1String("knetworkmanager/connections/") + connectionId));
+        if (!connFile.exists()) {
+            kDebug() << "Connection file not found: " << connFile.fileName();
+        }
+        connFile.remove();
+
+        // remove from knetworkmanagerrc
+        KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
+        prefs->config()->deleteGroup(QLatin1String("Connection_") + connectionId);
+
+        QStringList connectionIds = prefs->connections();
+        connectionIds.removeAll(connectionId);
+        prefs->setConnections(connectionIds);
+        prefs->writeConfig();
+        restoreConnections();
     }
 }
 
