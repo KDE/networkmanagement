@@ -41,21 +41,22 @@ PppoePreferences::PppoePreferences(QWidget *parent, const QVariantList &args)
 : ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
     QString connectionId = args[0].toString();
+    m_connectionType = "PPPoeE";
     QVBoxLayout * layout = new QVBoxLayout(this);
-    ConnectionWidget * contents = new ConnectionWidget(connectionId, this);
-    layout->addWidget(contents);
+    m_contents = new ConnectionWidget(connectionId, this);
+    layout->addWidget(m_contents);
     PppoeWidget * pppoeWidget = new PppoeWidget(connectionId, this);
     WiredWidget * wiredWidget = new WiredWidget(connectionId, this);
     PppWidget * pppWidget = new PppWidget(connectionId, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(connectionId, this);
     // Must setup initial widget before adding its contents, or all child widgets are added in this
     // run
-    addConfig(contents->configXml(), contents);
+    addConfig(m_contents->configXml(), m_contents);
 
-    contents->connectionSettingsWidget()->addTab(pppoeWidget,pppoeWidget->label());
-    contents->connectionSettingsWidget()->addTab(wiredWidget,wiredWidget->label());
-    contents->connectionSettingsWidget()->addTab(ipv4Widget,ipv4Widget->label());
-    contents->connectionSettingsWidget()->addTab(pppWidget,pppWidget->label());
+    m_contents->connectionSettingsWidget()->addTab(pppoeWidget,pppoeWidget->label());
+    m_contents->connectionSettingsWidget()->addTab(wiredWidget,wiredWidget->label());
+    m_contents->connectionSettingsWidget()->addTab(ipv4Widget,ipv4Widget->label());
+    m_contents->connectionSettingsWidget()->addTab(pppWidget,pppWidget->label());
     addConfig(pppoeWidget->configXml(), pppoeWidget);
     addConfig(ipv4Widget->configXml(), ipv4Widget);
     addConfig(pppWidget->configXml(), pppWidget);

@@ -36,13 +36,25 @@ ConnectionPreferences::~ConnectionPreferences()
 
 QString ConnectionPreferences::connectionType() const
 {
+    return m_connectionType;
+#if 0
     KConfigSkeletonItem * configItem = m_contents->configXml()->findItem(m_contents->settingName(), "type");
-    return configItem->property().toString();
+    if (configItem) {
+        return configItem->property().toString();
+    } else {
+        return QString();
+    }
+#endif
 }
 
 QString ConnectionPreferences::connectionName() const
 {
-    return m_connectionName;
+    KConfigSkeletonItem * configItem = m_contents->configXml()->findItem(m_contents->settingName(), "id");
+    if (configItem) {
+        return configItem->property().toString();
+    } else {
+        return QString();
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

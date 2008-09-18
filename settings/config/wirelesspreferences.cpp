@@ -41,18 +41,19 @@ WirelessPreferences::WirelessPreferences(QWidget *parent, const QVariantList &ar
 {
     Q_ASSERT(args.count() == 1);
     QString connectionId = args[0].toString();
+    m_connectionType = "Wireless";
     QVBoxLayout * layout = new QVBoxLayout(this);
-    ConnectionWidget * contents = new ConnectionWidget(connectionId, this);
-    layout->addWidget(contents);
+    m_contents = new ConnectionWidget(connectionId, this);
+    layout->addWidget(m_contents);
     Wireless80211Widget * wirelessWidget = new Wireless80211Widget(connectionId, this);
     Wireless80211SecurityWidget * wirelessSecurityWidget = new Wireless80211SecurityWidget(connectionId, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(connectionId, this);
     // Must setup initial widget 
-    addConfig(contents->configXml(), contents);
+    addConfig(m_contents->configXml(), m_contents);
 
-    contents->connectionSettingsWidget()->addTab(wirelessWidget,wirelessWidget->label());
-    contents->connectionSettingsWidget()->addTab(wirelessSecurityWidget,wirelessSecurityWidget->label());
-    contents->connectionSettingsWidget()->addTab(ipv4Widget,ipv4Widget->label());
+    m_contents->connectionSettingsWidget()->addTab(wirelessWidget,wirelessWidget->label());
+    m_contents->connectionSettingsWidget()->addTab(wirelessSecurityWidget,wirelessSecurityWidget->label());
+    m_contents->connectionSettingsWidget()->addTab(ipv4Widget,ipv4Widget->label());
     addConfig(wirelessWidget->configXml(), wirelessWidget);
     addConfig(wirelessSecurityWidget->configXml(), wirelessSecurityWidget);
     addConfig(ipv4Widget->configXml(), ipv4Widget);

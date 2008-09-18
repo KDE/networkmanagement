@@ -60,6 +60,13 @@ ConnectionEditor::~ConnectionEditor()
 
 void ConnectionEditor::restoreConnections()
 {
+    //clean up the lists
+    mConnEditUi.listWired->clear();
+    mConnEditUi.listWireless->clear();
+    mConnEditUi.listCellular->clear();
+    mConnEditUi.listVpn->clear();
+    mConnEditUi.listPppoe->clear();
+
     QStringList connectionIds = KNetworkManagerServicePrefs::self()->connections();
     QList<QTreeWidgetItem *> wiredItems, wirelessItems, cellularItems, vpnItems, pppoeItems;
     foreach (QString connectionId, connectionIds) {
@@ -133,14 +140,21 @@ void ConnectionEditor::addClicked()
     if ( configDialog.exec() == QDialog::Accepted ) {
         cprefs->save();
         // add to the service prefs
-        KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
-        QStringList connectionIds = prefs->connections();
-        connectionIds << connectionId;
-        prefs->setConnections(connectionIds);
-        KConfigGroup config(prefs->config(), QLatin1String("Connection_") + connectionId);
-        config.writeEntry("Name", cprefs->connectionName());
-        config.writeEntry("Type", cprefs->connectionType());
-        prefs->writeConfig();
+        QString name = cprefs->connectionName();
+        QString type = cprefs->connectionType();
+        if (name.isEmpty() || type.isEmpty()) {
+            kDebug() << "new connection has missing name ('" << name << "') or type ('" << type << "')";
+        } else {
+            KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
+            QStringList connectionIds = prefs->connections();
+            connectionIds << connectionId;
+            prefs->setConnections(connectionIds);
+            KConfigGroup config(prefs->config(), QLatin1String("Connection_") + connectionId);
+            config.writeEntry("Name", cprefs->connectionName());
+            config.writeEntry("Type", cprefs->connectionType());
+            prefs->writeConfig();
+            restoreConnections();
+        }
     }
 }
 
@@ -168,6 +182,7 @@ void ConnectionEditor::editClicked()
         configDialog.setMainWidget(kcm);
         if (configDialog.exec() == QDialog::Accepted) {
             kcm->save();
+            restoreConnections();
         }
     }
 }

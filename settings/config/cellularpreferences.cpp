@@ -40,18 +40,19 @@ CellularPreferences::CellularPreferences(QWidget *parent, const QVariantList &ar
 : ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
     QString connectionId = args[0].toString();
+    m_connectionType = "Cellular";
     // check if connection is gsm or cdma and set the appropriate widget
     QVBoxLayout * layout = new QVBoxLayout(this);
-    ConnectionWidget * contents = new ConnectionWidget(connectionId, this);
-    layout->addWidget(contents);
+    m_contents = new ConnectionWidget(connectionId, this);
+    layout->addWidget(m_contents);
     //CellularWidget * cellularWidget = new CellularWidget(connectionId, this);
     PppWidget * pppWidget = new PppWidget(connectionId, this);
     // Must setup initial widget before adding its contents, or all child widgets are added in this
     // run
-    addConfig(contents->configXml(), contents);
+    addConfig(m_contents->configXml(), m_contents);
 
-    //contents->connectionSettingsWidget()->addTab(cellularWidget,wiredWidget->label());
-    contents->connectionSettingsWidget()->addTab(pppWidget,pppWidget->label());
+    //m_contents->connectionSettingsWidget()->addTab(cellularWidget,wiredWidget->label());
+    m_contents->connectionSettingsWidget()->addTab(pppWidget,pppWidget->label());
     //addConfig(cellularWidget->configXml(), cellularWidget);
     addConfig(pppWidget->configXml(), pppWidget);
 }

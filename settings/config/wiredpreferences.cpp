@@ -43,6 +43,7 @@ WiredPreferences::WiredPreferences(QWidget *parent, const QVariantList &args)
     QString connectionId = args[0].toString();
     QVBoxLayout * layout = new QVBoxLayout(this);
     m_contents = new ConnectionWidget(connectionId, this);
+    m_connectionType = "Wired";
     layout->addWidget(m_contents);
     WiredWidget * wiredWidget = new WiredWidget(connectionId, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(connectionId, this);
