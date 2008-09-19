@@ -20,10 +20,12 @@ Name[xx]=xxNetwork Settingsxx
 Comment=Configure network settings
 Comment[sv]=Anpassa nätverksanslutningar
 Type=Service
+Exec=kcmshell4 kcm_knetworkmanager
+Icon=networkmanager
 X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_knetworkmanager
 X-KDE-FactoryName=kcm_knetworkmanager
-X-KDE-ParentApp=knetworkmanager
-X-KDE-ParentComponents=knetworkmanager
-
+X-KDE-ParentApp=kcontrol
+X-KDE-System-Settings-Parent-Category=system
+Categories=Qt;KDE;X-KDE-settings-system;
 
