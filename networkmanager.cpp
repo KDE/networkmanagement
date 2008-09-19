@@ -86,7 +86,7 @@ void NetworkManager::init()
 
     if (m_elementName.isEmpty()) {
         //something is wrong here.
-        setFailedToLaunch(true, i18n("Network Manager could not determine you connection status."));
+        setFailedToLaunch(true, i18n("Network Manager could not determine your connection status."));
     }
 }
 
