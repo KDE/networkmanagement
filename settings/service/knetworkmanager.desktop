@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=NetworkManager User Settings Service
+Name[sv]=Nätverkshanterarens användarinställningstjänst
 Comment=Provides network configuration to the NetworkManager daemon
+Comment[sv]=Tillhandahåller nätverksinställning för nätverkshanteringsdemonen
 Type=Service
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-ModuleType=Library
