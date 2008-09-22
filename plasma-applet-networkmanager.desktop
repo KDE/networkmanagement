@@ -1,10 +1,30 @@
 [Desktop Entry]
 Name=Network Manager
+Name[el]=Διαχειριστής δικτύου
 Name[et]=Võrguhaldur
+Name[ga]=Bainisteoir an Líonra
+Name[gl]=Xestor da rede
+Name[km]=កម្មវិធី​គ្រប់គ្រង​បណ្ដាញ
+Name[pt]=Gestor de Rede
+Name[pt_BR]=Gestor de Rede
 Name[sv]=Nätverkshantering
+Name[tr]=Ağ Yöneticisi
+Name[uk]=Менеджер мережі
+Name[x-test]=xxNetwork Managerxx
 Comment=Network Manager Plasmoid
+Comment[el]=Πλασμοειδές διαχείρισης δικτύου
+Comment[es]=Plasmoide Network Manager
 Comment[et]=Võrguhalduri plasmoid
+Comment[fr]=Plasmoïde de gestion du réseau
+Comment[ga]=Plasmoid Bainisteora Líonra
+Comment[gl]=Plasmoide de xestión da rede
+Comment[km]=Plasmoid កម្មវិធី​គ្រប់គ្រង​បណ្ដាញ
+Comment[pt]=Plasmóide de Gestão da Rede
+Comment[pt_BR]=Plasmóide de Gestão da Rede
 Comment[sv]=Plasmoid för nätverkshantering
+Comment[tr]=Ağ Yönetici Programcığı
+Comment[uk]=Плазмоїд менеджера мережі
+Comment[x-test]=xxNetwork Manager Plasmoidxx
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 
