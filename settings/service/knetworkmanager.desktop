@@ -1,12 +1,8 @@
 [Desktop Entry]
 Name=NetworkManager User Settings Service
-Name[pt]=Serviço de Configuração do Utilizador do NetworkManager
-Name[pt_BR]=Serviço de Configuração do Utilizador do NetworkManager
-Name[uk]=Служба параметрів користувача NetworkManager
+Name[sv]=Nätverkshanterarens användarinställningstjänst
 Comment=Provides network configuration to the NetworkManager daemon
-Comment[pt]=Oferece a configuração da rede ao servidor do NetworkManager
-Comment[pt_BR]=Oferece a configuração da rede ao servidor do NetworkManager
-Comment[uk]=Надає налаштування мережі фоновій службі NetworkManager
+Comment[sv]=Tillhandahåller nätverksinställning för nätverkshanteringsdemonen
 Type=Service
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-ModuleType=Library
