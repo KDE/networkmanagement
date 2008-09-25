@@ -218,7 +218,7 @@ void KConfigToService::initKeyMappings()
     m_keyMappings.insert(QLatin1String("autonegotiate"), QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE));
     // nm-setting-ip4-config.h
     m_keyMappings.insert(QLatin1String("dnssearch"), QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH));
-    m_keyMappings.insert(QLatin1String("ignoredhcpdns"), QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_DHCP_DNS));
+    m_keyMappings.insert(QLatin1String("ignoredhcpdns"), QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS));
     // nm-setting-8021x.h
     m_keyMappings.insert(QLatin1String("anonymousidentity"), QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY));
     m_keyMappings.insert(QLatin1String("cacert"), QLatin1String(NM_SETTING_802_1X_CA_CERT));
