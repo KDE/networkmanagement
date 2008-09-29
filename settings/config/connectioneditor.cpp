@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDateTime>
 #include <QDBusInterface>
 #include <QFile>
+#include <QUuid>
 
 #include <KCModuleProxy>
 #include <KLocale>
@@ -48,7 +49,7 @@ ConnectionEditor::ConnectionEditor(QWidget *parent, const QVariantList &args)
 {
     mConnEditUi.setupUi(this);
     mConnEditUi.tabWidget->setTabEnabled(3, false);
-    KNetworkManagerServicePrefs::instance(KStandardDirs::locate("config",
+    KNetworkManagerServicePrefs::instance(KStandardDirs::locateLocal("config",
                 QLatin1String("knetworkmanagerrc")));
     connect(mConnEditUi.addConnection, SIGNAL(clicked()), SLOT(addClicked()));
     connect(mConnEditUi.editConnection, SIGNAL(clicked()), SLOT(editClicked()));
@@ -129,7 +130,7 @@ void ConnectionEditor::addClicked()
 {
     // show connection settings widget for the active tab
     KDialog configDialog(this);
-    QString connectionId = KRandom::randomString(10);
+    QString connectionId = QUuid::createUuid().toString();
     QVariantList args;
     args << connectionId;
     ConnectionPreferences * cprefs = editorForCurrentIndex(&configDialog, args);
