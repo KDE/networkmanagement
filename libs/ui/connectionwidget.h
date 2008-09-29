@@ -37,6 +37,7 @@ public:
     QTabWidget * connectionSettingsWidget();
     QString label() const;
     QString settingName() const;
+    void writeConfig(KConfig *);
 private:
     class Private;
     Private * d;

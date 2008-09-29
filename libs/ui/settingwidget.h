@@ -61,6 +61,7 @@ protected:
      * Separate from ctor since it depends upon settingsName from concrete subclasses
      */
     void init();
+    QString connectionId() const;
 private:
     class Private;
     Private * d;

@@ -21,6 +21,10 @@
       <label>Last used</label>
       <whatsthis>The date and time that the connection was last activated</whatsthis>
     </entry>
+    <entry name="uuid" type="String">
+      <label>UUID</label>
+      <whatsthis>Unique connection identifier</whatsthis>
+    </entry>
   </group>
 </kcfg>
 

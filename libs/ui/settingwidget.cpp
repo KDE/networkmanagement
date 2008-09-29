@@ -61,6 +61,11 @@ void SettingWidget::init()
     }
 }
 
+QString SettingWidget::connectionId() const
+{
+    return d->connectionId;
+}
+
 void SettingWidget::readConfig(KConfig *)
 {
 }
