@@ -66,12 +66,14 @@ QString SettingWidget::connectionId() const
     return d->connectionId;
 }
 
-void SettingWidget::readConfig(KConfig *)
+void SettingWidget::readConfig()
 {
+    //default impl does nothing
 }
 
-void SettingWidget::writeConfig(KConfig *)
+void SettingWidget::writeConfig()
 {
+    //default impl does nothing
 }
 
 ConfigXml * SettingWidget::configXml() const

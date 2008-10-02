@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KStandardDirs>
 
+#include "configxml.h"
 #include "ui_connection.h"
 
 class ConnectionWidget::Private
@@ -58,13 +59,10 @@ QString ConnectionWidget::settingName() const
     return QLatin1String("connection");
 }
 
-void ConnectionWidget::writeConfig(KConfig *)
+void ConnectionWidget::writeConfig()
 {
     kDebug();
-    QString configFile = KStandardDirs::locateLocal("data",
-            QLatin1String("knetworkmanager/connections/") + connectionId());
-    KSharedConfig::Ptr config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
-    KConfigGroup group(config, settingName());
+    KConfigGroup group(configXml()->config(), settingName());
     group.writeEntry("uuid", connectionId());
 }
 

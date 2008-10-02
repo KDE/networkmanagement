@@ -37,11 +37,11 @@ public:
     /**
      * read in any configuration that ConfigXml can't handle
      */
-    virtual void readConfig(KConfig *);
+    virtual void readConfig();
     /**
      * write any configuration that ConfigXml can't handle
      */
-    virtual void writeConfig(KConfig *);
+    virtual void writeConfig();
     /**
      * get the label describing the widget contents
      */

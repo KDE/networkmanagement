@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "pppoewidget.h"
 
+#include <nm-setting-pppoe.h>
+
 #include "ui_pppoe.h"
 
 class PppoeWidget::Private
@@ -47,7 +49,7 @@ QString PppoeWidget::label() const
 
 QString PppoeWidget::settingName() const
 {
-    return QLatin1String("pppoe");
+    return QLatin1String(NM_SETTING_PPPOE_SETTING_NAME);
 }
 
 // vim: sw=4 sts=4 et tw=100

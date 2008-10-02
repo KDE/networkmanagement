@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "gsmwidget.h"
 
+#include <nm-setting-gsm.h>
+
 #include "ui_gsm.h"
 
 class GsmWidget::Private
@@ -47,7 +49,7 @@ QString GsmWidget::label() const
 
 QString GsmWidget::settingName() const
 {
-    return QLatin1String("gsm");
+    return QLatin1String(NM_SETTING_GSM_SETTING_NAME);
 }
 
 // vim: sw=4 sts=4 et tw=100

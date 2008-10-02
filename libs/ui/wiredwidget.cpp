@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "wiredwidget.h"
-
+#include <nm-setting-wired.h>
 #include "ui_wired.h"
 
 class WiredWidget::Private
@@ -47,7 +47,7 @@ QString WiredWidget::label() const
 
 QString WiredWidget::settingName() const
 {
-    return QLatin1String("802-3-ethernet");
+    return QLatin1String(NM_SETTING_WIRED_SETTING_NAME);
 }
 
 // vim: sw=4 sts=4 et tw=100

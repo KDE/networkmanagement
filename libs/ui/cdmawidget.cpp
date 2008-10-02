@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "cdmawidget.h"
 
+#include <nm-setting-cdma.h>
+
 #include "ui_cdma.h"
 
 class CdmaWidget::Private
@@ -47,7 +49,7 @@ QString CdmaWidget::label() const
 
 QString CdmaWidget::settingName() const
 {
-    return QLatin1String("cdma");
+    return QLatin1String(NM_SETTING_CDMA_SETTING_NAME);
 }
 
 // vim: sw=4 sts=4 et tw=100

@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "802_11_wirelesswidget.h"
 
+#include <nm-setting-wireless.h>
+
 #include "ui_802-11-wireless.h"
 
 
@@ -47,7 +49,7 @@ QString Wireless80211Widget::label() const
 
 QString Wireless80211Widget::settingName() const
 {
-    return QLatin1String("802-11-wireless");
+    return QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME);
 }
 
 // vim: sw=4 sts=4 et tw=100
