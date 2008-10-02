@@ -43,7 +43,12 @@ NetworkSettings::NetworkSettings(QObject * parent)
     //new NetworkSettingsAdaptor(this);
 
     QDBusConnection dbus = QDBusConnection::systemBus();
-    dbus.registerObject(QLatin1String(NM_DBUS_PATH_SETTINGS), this, QDBusConnection::ExportScriptableContents);
+    if (!dbus.registerObject(QLatin1String(NM_DBUS_PATH_SETTINGS), this, QDBusConnection::ExportScriptableContents)) {
+        kDebug() << "Unable to register settings object " << NM_DBUS_PATH_SETTINGS;
+    } else {
+        kDebug() << "Registered settings object " << NM_DBUS_PATH_SETTINGS;
+
+    }
 }
 
 NetworkSettings::~NetworkSettings()

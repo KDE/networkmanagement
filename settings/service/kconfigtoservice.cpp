@@ -159,6 +159,7 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
 void KConfigToService::configure(const QStringList& changedConnections)
 {
     kDebug();
+    KNetworkManagerServicePrefs::self()->readConfig();
     QStringList addedConnections, deletedConnections;
     // figure out which connections were added
     QStringList existingConnections = m_connectionIdToObjectPath.keys();
@@ -176,18 +177,21 @@ void KConfigToService::configure(const QStringList& changedConnections)
     // update the service
     foreach (QString connectionId, deletedConnections) {
         QString objectPath = m_connectionIdToObjectPath.take(connectionId);
+        kDebug() << "removing connection with id: " << connectionId;
         m_service->removeConnection(objectPath);
     }
     foreach (QString connectionId, changedConnections) {
         if (m_connectionIdToObjectPath.contains(connectionId)) {
             QVariantMapMap changedConnection = restoreConnection(connectionId);
             if (!changedConnection.isEmpty()) {
+                kDebug() << "updating connection with id: " << connectionId;
                 m_service->updateConnection(m_connectionIdToObjectPath[connectionId], changedConnection);
             }
         }
     }
     foreach (QString connectionId, addedConnections) {
         QVariantMapMap changedConnection = restoreConnection(connectionId);
+        kDebug() << "adding connection with id: " << connectionId;
         m_service->addConnection(restoreConnection(connectionId));
     }
 }
