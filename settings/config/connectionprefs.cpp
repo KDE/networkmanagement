@@ -20,12 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionprefs.h"
 
+#include <KTabWidget>
+
 #include <kcoreconfigskeleton.h>
 
 #include "configxml.h"
 #include "connectionwidget.h"
 
-ConnectionPreferences::ConnectionPreferences(const KComponentData& cdata, QWidget * parent, const QVariantList & args) : KCModule( cdata, parent, args )
+ConnectionPreferences::ConnectionPreferences(const KComponentData& cdata, QWidget * parent, const QVariantList & args) : KCModule( cdata, parent, args ),
+    m_contents(0), m_connectionTypeWidget(0)
 {
 
 }
@@ -55,6 +58,46 @@ QString ConnectionPreferences::connectionName() const
     } else {
         return QString();
     }
+}
+
+void ConnectionPreferences::addToTabWidget(SettingWidget * wid)
+{
+    m_contents->connectionSettingsWidget()->addTab(wid,wid->label());
+    addConfig(wid->configXml(), wid);
+    m_settingWidgets.append(wid);
+}
+
+void ConnectionPreferences::load()
+{
+    // first, do the KCModule's load, to give the widgets' load routine a free hand
+    KCModule::load();
+    foreach (SettingWidget * wid, m_settingWidgets) {
+        wid->readConfig();
+    }
+    // then read the connection settings
+    m_contents->readConfig();
+}
+
+void ConnectionPreferences::save()
+{
+    // first, set the type on the connection settings
+    // using the type specific widget set in derived classes
+    Q_ASSERT( m_connectionTypeWidget);
+
+    KConfigSkeletonItem * typeItem = m_contents->configXml()->findItem(QLatin1String("connection"), QLatin1String("type"));
+    if (typeItem) {
+        typeItem->setProperty(m_connectionTypeWidget->settingName());
+    }
+
+    // secondly, do the KCModule's save, to give the widgets' save routine a free hand
+    KCModule::save();
+
+    // thirdly, call each widget's custom save method
+    foreach (SettingWidget * wid, m_settingWidgets) {
+        wid->writeConfig();
+    }
+    // finally write the connection settings
+    m_contents->writeConfig();
 }
 
 // vim: sw=4 sts=4 et tw=100

@@ -45,18 +45,15 @@ WirelessPreferences::WirelessPreferences(QWidget *parent, const QVariantList &ar
     QVBoxLayout * layout = new QVBoxLayout(this);
     m_contents = new ConnectionWidget(connectionId, this);
     layout->addWidget(m_contents);
-    Wireless80211Widget * wirelessWidget = new Wireless80211Widget(connectionId, this);
+    m_connectionTypeWidget = new Wireless80211Widget(connectionId, this);
     Wireless80211SecurityWidget * wirelessSecurityWidget = new Wireless80211SecurityWidget(connectionId, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(connectionId, this);
-    // Must setup initial widget 
+    // Must setup initial widget first
     addConfig(m_contents->configXml(), m_contents);
 
-    m_contents->connectionSettingsWidget()->addTab(wirelessWidget,wirelessWidget->label());
-    m_contents->connectionSettingsWidget()->addTab(wirelessSecurityWidget,wirelessSecurityWidget->label());
-    m_contents->connectionSettingsWidget()->addTab(ipv4Widget,ipv4Widget->label());
-    addConfig(wirelessWidget->configXml(), wirelessWidget);
-    addConfig(wirelessSecurityWidget->configXml(), wirelessSecurityWidget);
-    addConfig(ipv4Widget->configXml(), ipv4Widget);
+    addToTabWidget(m_connectionTypeWidget);
+    addToTabWidget(wirelessSecurityWidget);
+    addToTabWidget(ipv4Widget);
 }
 
 WirelessPreferences::~WirelessPreferences()
@@ -65,12 +62,12 @@ WirelessPreferences::~WirelessPreferences()
 
 void WirelessPreferences::load()
 {
-    KCModule::load();
+    ConnectionPreferences::load();
 }
 
 void WirelessPreferences::save()
 {
-    KCModule::save();
+    ConnectionPreferences::save();
     // this is where tab specific stuff should happen?
     // that should be in the shared config widget code not connection code, as groups are shared.
     // editing existing connections

@@ -45,22 +45,17 @@ PppoePreferences::PppoePreferences(QWidget *parent, const QVariantList &args)
     QVBoxLayout * layout = new QVBoxLayout(this);
     m_contents = new ConnectionWidget(connectionId, this);
     layout->addWidget(m_contents);
-    PppoeWidget * pppoeWidget = new PppoeWidget(connectionId, this);
+    m_connectionTypeWidget = new PppoeWidget(connectionId, this);
     WiredWidget * wiredWidget = new WiredWidget(connectionId, this);
     PppWidget * pppWidget = new PppWidget(connectionId, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(connectionId, this);
-    // Must setup initial widget before adding its contents, or all child widgets are added in this
-    // run
+    // Must setup initial widget before adding its contents, or all child widgets are added in this parse run
     addConfig(m_contents->configXml(), m_contents);
 
-    m_contents->connectionSettingsWidget()->addTab(pppoeWidget,pppoeWidget->label());
-    m_contents->connectionSettingsWidget()->addTab(wiredWidget,wiredWidget->label());
-    m_contents->connectionSettingsWidget()->addTab(ipv4Widget,ipv4Widget->label());
-    m_contents->connectionSettingsWidget()->addTab(pppWidget,pppWidget->label());
-    addConfig(pppoeWidget->configXml(), pppoeWidget);
-    addConfig(ipv4Widget->configXml(), ipv4Widget);
-    addConfig(pppWidget->configXml(), pppWidget);
-    addConfig(wiredWidget->configXml(), wiredWidget);
+    addToTabWidget(m_connectionTypeWidget);
+    addToTabWidget(wiredWidget);
+    addToTabWidget(ipv4Widget);
+    addToTabWidget(pppWidget);
 }
 
 PppoePreferences::~PppoePreferences()
@@ -69,12 +64,12 @@ PppoePreferences::~PppoePreferences()
 
 void PppoePreferences::load()
 {
-    KCModule::load();
+    ConnectionPreferences::load();
 }
 
 void PppoePreferences::save()
 {
-    KCModule::save();
+    ConnectionPreferences::save();
     // this is where tab specific stuff should happen?
     // that should be in the shared config widget code not connection code, as groups are shared.
     // editing existing connections

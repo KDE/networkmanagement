@@ -51,10 +51,8 @@ CellularPreferences::CellularPreferences(QWidget *parent, const QVariantList &ar
     // run
     addConfig(m_contents->configXml(), m_contents);
 
-    //m_contents->connectionSettingsWidget()->addTab(cellularWidget,wiredWidget->label());
-    m_contents->connectionSettingsWidget()->addTab(pppWidget,pppWidget->label());
-    //addConfig(cellularWidget->configXml(), cellularWidget);
-    addConfig(pppWidget->configXml(), pppWidget);
+    //addToTabWidget(cellularWidget);
+    addToTabWidget(pppWidget);
 }
 
 CellularPreferences::~CellularPreferences()
@@ -63,12 +61,12 @@ CellularPreferences::~CellularPreferences()
 
 void CellularPreferences::load()
 {
-    KCModule::load();
+    ConnectionPreferences::load();
 }
 
 void CellularPreferences::save()
 {
-    KCModule::save();
+    ConnectionPreferences::save();
     // this is where tab specific stuff should happen?
     // that should be in the shared config widget code not connection code, as groups are shared.
     // editing existing connections

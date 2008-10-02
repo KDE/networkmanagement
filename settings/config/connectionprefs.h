@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KCModule>
 
 class ConnectionWidget;
+class SettingWidget;
 
 /**
  * Base class for connection configuration widgets.  Exists to provide
@@ -38,8 +39,21 @@ public:
     virtual ~ConnectionPreferences();
     QString connectionName() const;
     QString connectionType() const ;
+public slots:
+    // reimplemented from KCModule, to call embedded settingswidgets' load/save methods
+    virtual void load();
+    virtual void save();
 protected:
+    /**
+     * Add widgets to the tabs in the connection widget
+     */
+    void addToTabWidget(SettingWidget *);
+    /** Main widget for connection UI, common to all connections **/
     ConnectionWidget * m_contents;
+    /** Type specific widget, used to set the connection type field */
+    SettingWidget * m_connectionTypeWidget;
+    /** All setting widgets except m_contents, including connectionTypeWidget*/
+    QList<SettingWidget*> m_settingWidgets;
     QString m_connectionName;
     QString m_connectionType;
 };

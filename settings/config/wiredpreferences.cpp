@@ -20,12 +20,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wiredpreferences.h"
 
+#include <nm-setting-wired.h>
+
 #include <QVBoxLayout>
 #include <QFile>
 
 #include <KGlobal>
 #include <KPluginFactory>
-#include <KTabWidget>
 
 #include "configxml.h"
 #include "secretstoragehelper.h"
@@ -45,19 +46,17 @@ WiredPreferences::WiredPreferences(QWidget *parent, const QVariantList &args)
     m_contents = new ConnectionWidget(connectionId, this);
     m_connectionType = "Wired";
     layout->addWidget(m_contents);
-    WiredWidget * wiredWidget = new WiredWidget(connectionId, this);
+    m_connectionTypeWidget = new WiredWidget(connectionId, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(connectionId, this);
     Wired8021xSecurityWidget * securityWidget = new Wired8021xSecurityWidget(connectionId, this);
+
     // Must setup initial widget before adding its contents, or all child widgets are added in this
     // run
     addConfig(m_contents->configXml(), m_contents);
 
-    m_contents->connectionSettingsWidget()->addTab(wiredWidget,wiredWidget->label());
-    m_contents->connectionSettingsWidget()->addTab(securityWidget,securityWidget->label());
-    m_contents->connectionSettingsWidget()->addTab(ipv4Widget,ipv4Widget->label());
-    addConfig(wiredWidget->configXml(), wiredWidget);
-    addConfig(securityWidget->configXml(), securityWidget);
-    addConfig(ipv4Widget->configXml(), ipv4Widget);
+    addToTabWidget(m_connectionTypeWidget);
+    addToTabWidget(ipv4Widget);
+    addToTabWidget(securityWidget);
 }
 
 WiredPreferences::~WiredPreferences()
@@ -66,27 +65,12 @@ WiredPreferences::~WiredPreferences()
 
 void WiredPreferences::load()
 {
-    KCModule::load();
+    ConnectionPreferences::load();
 }
 
 void WiredPreferences::save()
 {
-    
-    KCModule::save();
-    // this is where tab specific stuff should happen?
-    // that should be in the shared config widget code not connection code, as groups are shared.
-    // editing existing connections
-    // creating new connection
-    // popup to prompt for single missing secret
-    // interaction between tray and kcm
-    //   tray: new connection: launch kcm
-    //   tray: Edit connections?
-    //   Enable connection - does this need to go through UserSettingsService
-    //   Enable wireless
-    // interaction between kcm and service
-    // interaction between tray and service
-    // location of service (in-tray, in plasma)
-    //
+    ConnectionPreferences::save();
 }
 
 // vim: sw=4 sts=4 et tw=100
