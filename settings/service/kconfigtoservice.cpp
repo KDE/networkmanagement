@@ -104,6 +104,7 @@ QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
     // reading the config.
     if (!connectionMap.isEmpty() && !connectionMap.contains(m_currentConnectionType)) {
         connectionMap.insert(m_currentConnectionType, QVariantMap());
+        m_currentConnectionType = QString();
     }
     return connectionMap;
 }
@@ -137,6 +138,7 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
         }
     }
     // special case for ipv4 "addresses" field, which isn't KConfigSkeletonItem-friendly
+    // TODO put this somewhere else - not every special case can live in this function.
     if ( groupName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
         KSharedConfig::Ptr ipv4Config = KSharedConfig::openConfig(m_configFile, KConfig::NoGlobals);
         KConfigGroup ipv4Group(ipv4Config, groupName);
