@@ -23,7 +23,7 @@
       </widget>
      </item>
      <item>
-      <widget class="KComboBox" name="kcfg_method" >
+      <widget class="KComboBox" name="method" >
        <item>
         <property name="text" >
          <string>DHCP</string>

@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionwidget.h"
 
+#include <nm-setting-connection.h>
+
 #include <KDebug>
 #include <KStandardDirs>
 
@@ -56,14 +58,14 @@ QString ConnectionWidget::label() const
 
 QString ConnectionWidget::settingName() const
 {
-    return QLatin1String("connection");
+    return QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME);
 }
 
 void ConnectionWidget::writeConfig()
 {
     kDebug();
     KConfigGroup group(configXml()->config(), settingName());
-    group.writeEntry("uuid", connectionId());
+    group.writeEntry(NM_SETTING_CONNECTION_UUID, connectionId());
 }
 
 

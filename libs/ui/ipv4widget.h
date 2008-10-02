@@ -32,6 +32,8 @@ public:
     virtual ~IpV4Widget();
     QString label() const;
     QString settingName() const;
+    void readConfig();
+    void writeConfig();
 private:
     class Private;
     Private * d;
