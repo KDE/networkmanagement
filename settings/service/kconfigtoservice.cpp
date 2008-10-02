@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "kconfigtoservice.h"
 
+#include <nm-setting-connection.h>
 #include <nm-setting-wired.h>
 #include <nm-setting-ip4-config.h>
 #include <nm-setting-8021x.h>
@@ -41,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knetworkmanagerserviceadaptor.h"
 
 KConfigToService::KConfigToService(NetworkSettings * service)
-    : m_service(service)
+    : m_service(service), m_error(false)
 {
     (void) new KNetworkManagerServiceAdaptor( this );
     QDBusConnection::sessionBus().registerService( "org.kde.knetworkmanagerd" ) ;
@@ -98,12 +99,19 @@ QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
         }
     }
     kDebug() << connectionMap;
+    // NM requires that a map exists for the connection's type.  If the settings are all defaults,
+    // our config won't contain that group.  So create that map (empty) if it hasn't been created by
+    // reading the config.
+    if (!connectionMap.isEmpty() && !connectionMap.contains(m_currentConnectionType)) {
+        connectionMap.insert(m_currentConnectionType, QVariantMap());
+    }
     return connectionMap;
 }
 
 QVariantMap KConfigToService::handleGroup(const QString & groupName)
 {
     kDebug() << groupName;
+
     QVariantMap map;
     QFile schemaFile(KStandardDirs::locate("data",
             QString::fromLatin1("knetworkmanager/schemas/%1.kcfg").arg( groupName)));
@@ -147,6 +155,14 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
             map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES), QVariant::fromValue(addresses));
         }
     }
+    // special case for connection's "type" field, for which a corresponding QVariantMap must exist
+    // for NM to accept the connection
+    if (groupName == QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME)) {
+        KConfigSkeletonItem * item = config->findItem(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME), QLatin1String(NM_SETTING_CONNECTION_TYPE));
+        Q_ASSERT(item);
+        m_currentConnectionType = item->property().toString();
+    }
+    
     return map;
 }
 

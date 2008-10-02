@@ -71,6 +71,8 @@ private:
     QMap<QString, QString> m_keyMappings;
     QMap<QString, QString> m_connectionIdToObjectPath;
     QString m_configFile;
+    QString m_currentConnectionType;
+    bool m_error;
 };
 
 #endif // SETTINGS_KCONFIGTOSERVICE_H
