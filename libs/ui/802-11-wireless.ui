@@ -18,12 +18,12 @@
         <string>&amp;SSID:</string>
        </property>
        <property name="buddy" >
-        <cstring>klineedit</cstring>
+        <cstring>kcfg_ssid</cstring>
        </property>
       </widget>
      </item>
      <item row="0" column="1" >
-      <widget class="KLineEdit" name="klineedit" >
+      <widget class="KLineEdit" name="kcfg_ssid" >
        <property name="toolTip" >
         <string>The name of the wireless network</string>
        </property>
@@ -68,12 +68,12 @@
         <string>&amp;BSSID:</string>
        </property>
        <property name="buddy" >
-        <cstring>klineedit_2</cstring>
+        <cstring>kcfg_bssid</cstring>
        </property>
       </widget>
      </item>
      <item row="2" column="1" >
-      <widget class="KLineEdit" name="klineedit_2" >
+      <widget class="KLineEdit" name="kcfg_bssid" >
        <property name="toolTip" >
         <string>Only connect to the station with this hardware address</string>
        </property>
@@ -91,12 +91,12 @@
         <string>&amp;MAC address:</string>
        </property>
        <property name="buddy" >
-        <cstring>klineedit_3</cstring>
+        <cstring>kcfg_macaddress</cstring>
        </property>
       </widget>
      </item>
      <item row="3" column="1" >
-      <widget class="KLineEdit" name="klineedit_3" >
+      <widget class="KLineEdit" name="kcfg_macaddress" >
        <property name="toolTip" >
         <string>Override hardware address</string>
        </property>
@@ -114,12 +114,12 @@
         <string>MT&amp;U:</string>
        </property>
        <property name="buddy" >
-        <cstring>spinBox</cstring>
+        <cstring>kcfg_mtu</cstring>
        </property>
       </widget>
      </item>
      <item row="4" column="1" >
-      <widget class="QSpinBox" name="spinBox" >
+      <widget class="QSpinBox" name="kcfg_mtu" >
        <property name="toolTip" >
         <string>Maximum Transmission Unit</string>
        </property>

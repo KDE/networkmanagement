@@ -29,16 +29,20 @@
       <label>Data rate</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="tx-power" type="UInt">
+    <entry name="txpower" type="UInt">
       <label>Transmit power</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="mac-address" type="ByteArray">
+    <entry name="macaddress" type="ByteArray">
       <label>MAC Address</label>
       <whatsthis>Hardware address to set on the wireless network interface</whatsthis>
     </entry>
+    <entry name="mtu" type="UInt">
+      <label>MTU</label>
+      <whatsthis>Maximum Transmit Unit</whatsthis>
+    </entry>
     <!-- another unspecified list probably bytearrays -->
-    <entry name="seen-bssids" type="StringList">
+    <entry name="seenbssids" type="StringList">
       <label>Seen BSSIDs</label>
       <whatsthis></whatsthis>
     </entry>
