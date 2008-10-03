@@ -4,9 +4,15 @@ Split system
 
 i) KCModule performs connection configuration
 
-ii) Plasmoid gives user feedback and connection control, launches KCM.
+ii) Settings service exists on the system bus and provides information to NetworkManager
 
-iii) Settings service exists on the system bus and provides information to NetworkManager
+iii) Plasmoid gives user feedback i
+      Notifications
+      Status in popup
+    and connection control
+      Calls DBUS methods on manager, passing references to objects supplied by the setings service
+    launches KCModule on request
+
 
 Directory structure of project
 .                           Plasmoid sources
@@ -97,7 +103,6 @@ Implementation
 *** ipv4 (really only ipv4 afaics)
 * configure method accessible over dbus DONE
 ** calls rereadConfiguration (KConfigToService::update()) DONE
-* Connection.Settings interface for lazy load of secrets.  Change configxml classes to not read wallet on start
 * GetSecrets. will be received by Connection. emit signal received by NetworkSettings, relayed up ( NetworkSettings knows nothing of storage).  Catch in KConfigToService and ask each configxml for that setting's groups to get secrets?
 
 STORAGE LAYER

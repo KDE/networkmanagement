@@ -1,3 +1,15 @@
+KEY (by Lubos)
+==============
+* = not done, will be either done by me, or should be at least discussed first with me
++ = not done, I don't plan on doing it that soon
+    - in other words, these should be the best ones for you if you want to help
+! = like +, but they should be relatively simple
+    - in other words, these should be the best if you want to get started with the code
+/ = work in progress
+? = should it be done?
+% = should be probably done later, during cleanups and preparations for being stable
+
+
 TODO CB:
 - Create a network scanning view - In Progress
     - Create Scrolling View
@@ -7,18 +19,46 @@ TODO CB:
 - Create a profile editing view
 
 TODO WS:
-- Implement settings service
-  - Check for changes in the NM API
-  - per-setting group helper class for complex settings, where needed for ipv4 config write
-  - also for 802.1x /wireless security
-  - convert settings/service/testservice to kded module
-  - Create Secrets objects and do lazy secret loading
-  - write LastUsed to knetworkmanagerrc on successful connection activation
-- Implement control module
-  - Write a nice class to turn a QDateTime into "3 minutes ago", "5 hours ago" instead of using KLocale::formatDate(), or extend KLocale with formatDateRelative(QDateTime in, QDateTime relativeTo)
-  - Add UI for selecting cellular connection type, detect and disable for existing connections
-  - Replace Ok button with Close in main connectioneditor, or implement storage of changed/added connection settings in temp files until the Ok button is clicked, and enable deleting temp files if Cancel is clicked
-- Make sure system tray+engine does what we need
+- SERVICE: Complete settings service
+  * per-setting group helper class for complex settings, where needed for ipv4 config write
+  * wireless security
+  + also for 802.1x 
+  * Create Connnection.Secrets objects and do lazy secret loading. Change configxml classes to not read wallet on start
+
+- CONFIG: Implement control module
+  + Write a nice class to turn a QDateTime into "3 minutes ago", "5 hours ago" instead of using KLocale::formatDate(), or extend KLocale with formatDateRelative(QDateTime in, QDateTime relativeTo)
+  ! Add UI for selecting cellular connection type, detect and disable for existing connections
+  ! Replace Ok button with Close in main connectioneditor, or implement storage of changed/added connection settings in temp files until the Ok button is clicked, and enable deleting temp files if Cancel is clicked
+  ! Edit on double click existing entry
+  / Complete most settings widgets' complex (non-KConfigSkeleton-managed) UI plumbing and reimplemented save routines
+  + Option to display system-provided connections and import them so they can be edited
+ 
+- APPLET: Make sure system tray+engine does what we need
+  ! write LastUsed to knetworkmanagerrc on successful connection activation
+  * Popup menu
+    * Connection List
+       * Two possible connection list display styles
+         * List connections appropriate to currently active hardware
+           + Extend to profiles
+         + a list of all currently seen APs (like trad applet)
+       * Group connections by device (or by device type if connection could be activated on >1 device)
+         * Item contents
+           * Name
+           * Type
+           * Signal strength for wifi
+           ! Extended information (System/user connection; IP config; libnl bytes up/down stats etc)
+        * Disconnect button
+    * Connection editor
+    * Flight mode toggle
+    * Disconnected toggle
+    + Adhoc network button
+
+
+      
+  % Option to have one icon per device, (like in Windows, hschaa's request)
+
+ 
+
+   
 - Update Solid
-  - Check for changes in the NM API
-    - Implement PPPManager (after NM 0.7.0 is released) and new VPNManager, only in Solid if appropriate
+  % Implement ModemManager (after NM 0.7.0 is released) and new VPNManager, if appropriate, in Solid, else in applet
