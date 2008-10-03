@@ -92,12 +92,6 @@ void NetworkManager::init()
 
 NetworkManager::~NetworkManager()
 {
-    if (!hasFailedToLaunch()) {
-        disconnect(m_profileMenu, SIGNAL(manageProfilesRequested()), this, SLOT(manageProfiles()));
-        disconnect(m_profileMenu, SIGNAL(scanForNetworksRequested()), this, SLOT(scanForNetworks()));
-        disconnect(m_profileMenu, SIGNAL(launchProfileRequested(const QString&)), this, SLOT(launchProfile(const QString&)));
-        disconnect(this, SIGNAL(clicked(QPointF)), this, SLOT(showMenu(QPointF)));
-    }
     delete m_profileMenu;
 }
 
