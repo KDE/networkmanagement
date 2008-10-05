@@ -13,6 +13,7 @@ include_directories(
    ${CMAKE_CURRENT_BUILD_DIR}
 )
 
+add_subdirectory(applet)
 add_subdirectory(libs)
 add_subdirectory(tests)
 add_subdirectory(settings)

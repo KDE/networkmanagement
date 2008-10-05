@@ -51,13 +51,13 @@ TODO WS:
     * Connection editor
     * Flight mode toggle
     * Disconnected toggle
+    * Hardware wifi switch indicator
     + Adhoc network button
-
-
-      
-  % Option to have one icon per device, (like in Windows, hschaa's request)
-
- 
+  / Show network status in tray icon
+    % Option to have one icon per device, (like in Windows, hschaa's request)
+    / Show network interface's status that is most important to the
+      user when showing single icon
+    + Animation during connection state
 
    
 - Update Solid
