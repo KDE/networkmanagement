@@ -20,9 +20,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkmanagerpopup.h"
 
+#include <NetworkManager.h>
+#include <nm-setting-cdma.h>
+#include <nm-setting-gsm.h>
+#include <nm-setting-pppoe.h>
+#include <nm-setting-vpn.h>
+#include <nm-setting-wired.h>
+#include <nm-setting-wireless.h>
+
+#include <QtDBus>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
 #include <QLabel>
+#include <QSignalMapper>
 
 #include <KDebug>
 #include <KLocale>
@@ -34,20 +44,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkmanager.h>
 
+#include "../libs/marshalarguments.h"
+#include "nm-exported-connectioninterface.h"
+#include "nm-settingsinterface.h"
+#include "networkmanagersettings.h"
+
 NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
-    : QGraphicsWidget(parent)
+    : QGraphicsWidget(parent),
+    m_connectionActivationSignalMapper(new QSignalMapper(this)),
+    m_connectionDeactivationSignalMapper(new QSignalMapper(this))
 {
+    qDBusRegisterMetaType<QMap<QString, QVariant> >();
+    qDBusRegisterMetaType<QMap<QString, QMap<QString, QVariant> > >();
+
     m_layout = new QGraphicsLinearLayout(Qt::Vertical);
     // a vertical list of appropriate connections
+    // header label
     m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical, m_layout);
-    // just show the interfaces for now; graduate to showing appropriate connections later
-    foreach (Solid::Control::NetworkInterface * interface,
-            Solid::Control::NetworkManager::networkInterfaces()) {
-        Plasma::Label * ifaceLabel = new Plasma::Label(this);
-        ifaceLabel->setText(interface->interfaceName());
-        m_connectionLayout->addItem(ifaceLabel);
-    }
+    Plasma::Label * header = new Plasma::Label(this);
+    header->setText(i18nc("Label for connection list popup","<b>Network Connections</b>"));
+    m_connectionLayout->addItem(header);
+    //build a list of connections
+    m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
+    m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
+    populateConnectionList(m_userSettings);
+    populateConnectionList(m_systemSettings);
     m_layout->addItem(m_connectionLayout);
+
     // then a block of status labels and buttons
     // +----------------------------+
     // |              | [Manage...] |
@@ -60,7 +83,9 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     gridLayout->addItem(m_btnManageConnections, 0, 1, 1, 1);
     m_lblRfkill = new Plasma::Label(this);
     m_lblRfkill->nativeWidget()->setWordWrap(false);
+    //sets the label text
     managerWirelessHardwareEnabledChanged(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+
     gridLayout->addItem(m_lblRfkill, 1, 0, 1, 2);
     m_btnEnableNetworking = new Plasma::PushButton(this);
     m_btnEnableWireless = new Plasma::PushButton(this);
@@ -88,12 +113,30 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
             this, SLOT(userNetworkingEnabledChanged(bool)));
     QObject::connect(m_btnEnableWireless->nativeWidget(), SIGNAL(toggled(bool)),
             this, SLOT(userWirelessEnabledChanged(bool)));
+    QObject::connect(m_connectionActivationSignalMapper, SIGNAL(mapped(const QString&)),
+            this, SLOT(activateConnection(const QString&)));
+    QObject::connect(m_connectionDeactivationSignalMapper, SIGNAL(mapped(const QString&)),
+            this, SLOT(deactivateConnection(const QString&)));
 }
 
 NetworkManagerPopup::~NetworkManagerPopup()
 {
     delete m_layout;
 
+}
+
+void NetworkManagerPopup::populateConnectionList(NetworkManagerSettings * service)
+{
+    foreach (QString connectionPath, service->connections() ) {
+        OrgFreedesktopNetworkManagerSettingsConnectionInterface * connection = service->findConnection(connectionPath);
+        QVariantMapMap settings = connection->GetSettings();
+        QVariantMap connectionSetting = settings.value("connection");
+        Plasma::PushButton * connectionButton = new Plasma::PushButton(this);
+        m_connectionActivationSignalMapper->setMapping(connectionButton, service->service() + QChar('%') + connectionPath);
+        QObject::connect(connectionButton, SIGNAL(clicked()), m_connectionActivationSignalMapper, SLOT(map()));
+        connectionButton->setText(connectionSetting.value("id").toString());
+        m_connectionLayout->addItem(connectionButton);
+    }
 }
 
 void NetworkManagerPopup::networkInterfaceAdded(const QString&)
@@ -143,6 +186,66 @@ void NetworkManagerPopup::manageConnections()
     QStringList args;
     args << "kcm_knetworkmanager";
     KToolInvocation::kdeinitExec("kcmshell4", args);
+}
+
+void NetworkManagerPopup::activateConnection(const QString& connection)
+{
+    kDebug() << connection;
+    NetworkManagerSettings* service;
+    if (connection.startsWith(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS))) {
+        service = m_systemSettings;
+    } else {
+        service = m_userSettings;
+    }
+    // get the actual connection interface
+    OrgFreedesktopNetworkManagerSettingsConnectionInterface * connectionIface =
+        service->findConnection(connection.section('%', 1) );
+    if (connectionIface) {
+        QVariantMapMap settings = connectionIface->GetSettings();
+        foreach (QString key, settings.keys()) {
+            kDebug() << key << " - " << settings.value(key);
+        }
+    }
+    QStringList possibleInterfaces = interfacesForConnection(connectionIface);
+    // for now, always take the first
+    // eventually popup a dialog to ask which one to use
+    if (possibleInterfaces.count()) {
+        kDebug() << "Activating connection " << service->service() + " " +connectionIface->path() << " on device " << possibleInterfaces.first();
+        Solid::Control::NetworkManager::activateConnection(possibleInterfaces.first(), service->service() + " " + connectionIface->path(), QVariantMap());
+    }
+}
+
+void NetworkManagerPopup::deactivateConnection(const QString& connection)
+{
+    kDebug() << connection;
+}
+
+QStringList NetworkManagerPopup::interfacesForConnection(OrgFreedesktopNetworkManagerSettingsConnectionInterface* connection) const
+{
+    QStringList matchingInterfaces;
+    const Solid::Control::NetworkInterface::Type type = typeForConnection(connection->path());
+    foreach (Solid::Control::NetworkInterface * interface,
+            Solid::Control::NetworkManager::networkInterfaces()) {
+        if (interface->type() == type) {
+            matchingInterfaces.append(interface->uni());
+        }
+    }
+    return matchingInterfaces;
+}
+
+Solid::Control::NetworkInterface::Type NetworkManagerPopup::typeForConnection(const QString &connectionString) const
+{
+    if (connectionString == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
+        return Solid::Control::NetworkInterface::Gsm;
+    } else if (connectionString == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
+        return Solid::Control::NetworkInterface::Serial;
+    } else if (connectionString == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
+        return Solid::Control::NetworkInterface::Cdma;
+    } else if (connectionString == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
+        return Solid::Control::NetworkInterface::Ieee8023;
+    } else {
+        return Solid::Control::NetworkInterface::Ieee80211;
+    }
 }
 
 #include "networkmanagerpopup.moc"

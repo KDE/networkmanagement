@@ -28,12 +28,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 
 class QGraphicsLinearLayout;
+class QSignalMapper;
+
 namespace Plasma
 {
 class Label;
 class PushButton;
 } // namespace Plasma
 
+class NetworkManagerSettings;
+class OrgFreedesktopNetworkManagerSettingsConnectionInterface;
+
+/**
+ * Widget that pops up when the menu is clicked
+ */
 class NetworkManagerPopup : public QGraphicsWidget
 {
 Q_OBJECT
@@ -41,8 +49,14 @@ public:
     NetworkManagerPopup(QGraphicsItem *parent);
     virtual ~NetworkManagerPopup();
 private Q_SLOTS:
+    /** slots called when a connection in the popup is clicked */
+    void activateConnection(const QString&);
+    void deactivateConnection(const QString&);
+
     void networkInterfaceAdded(const QString&);
+
     void networkInterfaceRemoved(const QString&);
+
     void overallStatusChanged(Solid::Networking::Status);
     /**
      * Handle signals from NM if wireless was disabled in software
@@ -65,11 +79,19 @@ private Q_SLOTS:
      */
     void manageConnections();
 private:
+    void populateConnectionList(NetworkManagerSettings*);
+    QStringList interfacesForConnection(OrgFreedesktopNetworkManagerSettingsConnectionInterface*) const;
+    Solid::Control::NetworkInterface::Type typeForConnection(const QString &connectionString) const;
+
     QGraphicsLinearLayout * m_layout;
     QGraphicsLinearLayout * m_connectionLayout;
     Plasma::Label * m_lblRfkill;
     Plasma::PushButton * m_btnEnableNetworking;
     Plasma::PushButton * m_btnEnableWireless;
     Plasma::PushButton * m_btnManageConnections;
+    NetworkManagerSettings * m_userSettings;
+    NetworkManagerSettings * m_systemSettings;
+    QSignalMapper * m_connectionActivationSignalMapper;
+    QSignalMapper * m_connectionDeactivationSignalMapper;
 };
 #endif // NETWORKMANAGERPOPUP_H

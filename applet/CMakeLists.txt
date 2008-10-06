@@ -1,9 +1,13 @@
 set(networkmanager_SRCS
     networkmanager.cpp
-    networkmanagerpopup.cpp)
+    networkmanagerpopup.cpp
+    networkmanagersettings.cpp
+    nm-settingsinterface.cpp
+    nm-exported-connectioninterface.cpp
+    )
 
 kde4_add_plugin(plasma_applet_networkmanager_alpha ${networkmanager_SRCS})
-target_link_libraries(plasma_applet_networkmanager_alpha plasma ${KDE4_KIO_LIBS} solidcontrol)
+target_link_libraries(plasma_applet_networkmanager_alpha plasma ${KDE4_KIO_LIBS} knmsettingsclient solidcontrol)
 
 install(TARGETS plasma_applet_networkmanager_alpha DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-networkmanager_alpha.desktop DESTINATION ${SERVICES_INSTALL_DIR})
