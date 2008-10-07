@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <NetworkManager.h>
 #include <nm-setting-cdma.h>
+#include <nm-setting-connection.h>
 #include <nm-setting-gsm.h>
 #include <nm-setting-pppoe.h>
 #include <nm-setting-vpn.h>
@@ -223,7 +224,10 @@ void NetworkManagerPopup::deactivateConnection(const QString& connection)
 QStringList NetworkManagerPopup::interfacesForConnection(OrgFreedesktopNetworkManagerSettingsConnectionInterface* connection) const
 {
     QStringList matchingInterfaces;
-    const Solid::Control::NetworkInterface::Type type = typeForConnection(connection->path());
+    QVariantMapMap settings = connection->GetSettings();
+    QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
+    const Solid::Control::NetworkInterface::Type type =
+        typeForConnection(connectionSetting.value(QLatin1String(NM_SETTING_CONNECTION_TYPE)).toString());
     foreach (Solid::Control::NetworkInterface * interface,
             Solid::Control::NetworkManager::networkInterfaces()) {
         if (interface->type() == type) {
@@ -235,6 +239,7 @@ QStringList NetworkManagerPopup::interfacesForConnection(OrgFreedesktopNetworkMa
 
 Solid::Control::NetworkInterface::Type NetworkManagerPopup::typeForConnection(const QString &connectionString) const
 {
+    kDebug() << "converting connection type string " << connectionString << " to Type";
     if (connectionString == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
         return Solid::Control::NetworkInterface::Gsm;
     } else if (connectionString == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
@@ -243,8 +248,10 @@ Solid::Control::NetworkInterface::Type NetworkManagerPopup::typeForConnection(co
         return Solid::Control::NetworkInterface::Cdma;
     } else if (connectionString == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
         return Solid::Control::NetworkInterface::Ieee8023;
-    } else {
+    } else if (connectionString == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
         return Solid::Control::NetworkInterface::Ieee80211;
+    } else {
+        kWarning() << "Connection has unrecognised type string " << connectionString;
     }
 }
 
