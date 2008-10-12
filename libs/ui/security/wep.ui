@@ -1,0 +1,117 @@
+<ui version="4.0" >
+ <class>Wep</class>
+ <widget class="QWidget" name="Wep" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>251</width>
+    <height>152</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2" >
+   <property name="margin" >
+    <number>0</number>
+   </property>
+   <item row="0" column="0" >
+    <widget class="QLabel" name="label_5" >
+     <property name="text" >
+      <string>&amp;Key:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>key</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" >
+    <widget class="KLineEdit" name="key" >
+     <property name="echoMode" >
+      <enum>QLineEdit::PasswordEchoOnEdit</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QCheckBox" name="chkShowPass" >
+     <property name="text" >
+      <string>&amp;Show password</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="label_8" >
+     <property name="text" >
+      <string>&amp;WEP Index:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>weptxkeyindex</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="KComboBox" name="weptxkeyindex" >
+     <item>
+      <property name="text" >
+       <string>1 (Default)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>2</string>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>3</string>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>4</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="label_9" >
+     <property name="text" >
+      <string>&amp;Authentication:</string>
+     </property>
+     <property name="buddy" >
+      <cstring>authalg</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="KComboBox" name="authalg" >
+     <item>
+      <property name="text" >
+       <string>Open System</string>
+      </property>
+     </item>
+     <item>
+      <property name="text" >
+       <string>Shared Key</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

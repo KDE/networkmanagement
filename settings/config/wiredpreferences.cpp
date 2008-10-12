@@ -33,7 +33,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wiredwidget.h"
 #include "ipv4widget.h"
 #include "connectionwidget.h"
-#include "802_1x_security_widget.h"
+#include "security/802_1x_security_widget.h"
 
 //K_PLUGIN_FACTORY( WiredPreferencesFactory, registerPlugin<WiredPreferences>();)
 //K_EXPORT_PLUGIN( WiredPreferencesFactory( "kcm_knetworkmanager_wired" ) )

@@ -29,7 +29,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "configxml.h"
 #include "secretstoragehelper.h"
 #include "802_11_wirelesswidget.h"
-#include "802_11_wireless_security_widget.h"
+#include "security/802_11_wireless_security_widget.h"
 #include "ipv4widget.h"
 #include "connectionwidget.h"
 

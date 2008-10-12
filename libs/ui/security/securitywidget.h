@@ -18,31 +18,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "securitywidget.h"
+#ifndef SECURITYWIDGET_H
+#define SECURITYWIDGET_H
 
-#include "ui_security.h"
+#include "settingwidget.h"
 
-class SecurityWidget::Private
+#include "knm_export.h"
+
+class KNM_EXPORT SecurityWidget : public QWidget
 {
+Q_OBJECT
 public:
-    Ui_Security ui;
+    SecurityWidget(const QString & connectionId, QWidget * parent = 0 );
+    virtual ~SecurityWidget();
+    virtual void readConfig() = 0;
+    virtual void writeConfig() = 0;
+protected:
+    QString m_connectionId;
 };
 
-SecurityWidget::SecurityWidget(const QString& connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent), d(new SecurityWidget::Private)
-{
-    d->ui.setupUi(this);
-    init();
-}
-
-SecurityWidget::~SecurityWidget()
-{
-    delete d;
-}
-
-QString SecurityWidget::settingName() const
-{
-    return QLatin1String("CORRECTMEsecurity");
-}
-
-// vim: sw=4 sts=4 et tw=100
+#endif

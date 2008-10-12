@@ -62,7 +62,7 @@ QString ConnectionPreferences::connectionName() const
 
 void ConnectionPreferences::addToTabWidget(SettingWidget * wid)
 {
-    m_contents->connectionSettingsWidget()->addTab(wid,wid->label());
+    m_contents->connectionSettingsWidget()->addTab(wid,wid->windowTitle());
     addConfig(wid->configXml(), wid);
     m_settingWidgets.append(wid);
 }

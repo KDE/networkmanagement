@@ -18,32 +18,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIRELESS_802_11_SECURITY_WIDGET_H
-#define WIRELESS_802_11_SECURITY_WIDGET_H
+#include "securitywidget.h"
 
-#include "settingwidget.h"
+#include "ui_security.h"
 
-#include "knm_export.h"
-
-class KNM_EXPORT Wireless80211SecurityWidget : public SettingWidget
+SecurityWidget::SecurityWidget(const QString & theConnectionId, QWidget * parent)
+: QWidget(parent), m_connectionId(theConnectionId)
 {
-Q_OBJECT
-public:
-    Wireless80211SecurityWidget(const QString& connectionId, QWidget * parent = 0 );
-    virtual ~Wireless80211SecurityWidget();
-    QString settingName() const;
-    void readConfig();
-    void writeConfig();
-    static const QString KEY_MGMT_NONE;
-    static const QString KEY_MGMT_802_1X;
-    static const QString KEY_MGMT_WPA_NONE;
-    static const QString KEY_MGMT_WPA_PSK;
-    static const QString KEY_MGMT_WPA_EAP;
-protected Q_SLOTS:
-    void securityTypeChanged(int index);
-private:
-    class Private;
-    Private * d;
-};
+}
 
-#endif // 802_11_WIRELESS_SECURITY_WIDGET_H
+SecurityWidget::~SecurityWidget()
+{
+}
+
+// vim: sw=4 sts=4 et tw=100

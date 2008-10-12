@@ -35,6 +35,11 @@ class ConnectionPreferences : public KCModule
 {
 Q_OBJECT
 public:
+    /**
+     * args contains 1) The connection id
+     * Subsequent args are type dependent.
+     * Hint: @see WirelessPreferences
+     */
     ConnectionPreferences(const KComponentData&, QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~ConnectionPreferences();
     QString connectionName() const;

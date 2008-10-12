@@ -25,7 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 
 #include "configxml.h"
-#include "ui_802-11-wireless-security.h"
+#include "ui_802_11_wireless_security.h"
+#include "wepwidget.h"
 
 const QString Wireless80211SecurityWidget::KEY_MGMT_NONE = QLatin1String("none");
 const QString Wireless80211SecurityWidget::KEY_MGMT_802_1X = QLatin1String("ieee8021x");
@@ -37,14 +38,30 @@ class Wireless80211SecurityWidget::Private
 {
 public:
     Ui_Wireless80211Security ui;
+    QHash<int, SecurityWidget *> securityWidgetHash;
+    int noSecurityIndex;
+    int staticWepHexIndex;
 };
 
 Wireless80211SecurityWidget::Wireless80211SecurityWidget(const QString& connectionId, QWidget * parent)
 : SettingWidget(connectionId, parent), d(new Wireless80211SecurityWidget::Private)
 {
+    d->noSecurityIndex = -1;
+    d->staticWepHexIndex = - 1;
     d->ui.setupUi(this);
-    connect(d->ui.type, SIGNAL(currentIndexChanged(int)), this, SLOT(securityTypeChanged(int)));
     init();
+    // cache ap and device capabilities here
+    // populate cmbType with appropriate wireless security types
+    int index = 0;
+    d->ui.cmbType->insertItem(index, i18nc("Label for no wireless security", "None"));
+    d->noSecurityIndex = index++;
+    // Fixme: add distinct types of WEP
+    d->ui.cmbType->insertItem(index, i18nc("Label for WEP wireless security", "WEP"));
+    SecurityWidget * sw = new WepWidget(WepWidget::Hex, configXml()->config(), connectionId, this);
+    d->securityWidgetHash.insert(index, sw);
+    d->ui.stackedWidget->insertWidget(index, sw);
+    d->staticWepHexIndex = index++;
+    connect(d->ui.cmbType, SIGNAL(currentIndexChanged(int)), this, SLOT(securityTypeChanged(int)));
 }
 
 Wireless80211SecurityWidget::~Wireless80211SecurityWidget()
@@ -54,7 +71,7 @@ Wireless80211SecurityWidget::~Wireless80211SecurityWidget()
 
 QString Wireless80211SecurityWidget::settingName() const
 {
-    return QLatin1String("802-11-wireless-security");
+    return QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
 }
 
 void Wireless80211SecurityWidget::securityTypeChanged(int index)
@@ -93,29 +110,41 @@ void Wireless80211SecurityWidget::securityTypeChanged(int index)
 
 void Wireless80211SecurityWidget::writeConfig()
 {
-#if 0
-    // save security type (key-mgmt)
-    QString type;
-    KConfigGroup group(configXml()->config(), settingName());
-    switch ( d->ui.type->currentIndex()) {
-        case 0:
-        case 1: // I hope this is correct for WEP
-        case 2:
-        case 3:
-            type = KEY_MGMT_NONE;
-            break;
-            
-
+    SecurityWidget * sw = d->securityWidgetHash.value(d->ui.cmbType->currentIndex());
+    if (sw) {
+        sw->writeConfig();
     }
-#endif
 }
+
 void Wireless80211SecurityWidget::readConfig()
 {
+    if (!configXml()->config()->hasGroup(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME)) {
+        kDebug() << "Unsecured wireless network";
+        d->ui.cmbType->setCurrentIndex(d->noSecurityIndex);
+    }
+
+    KConfigSkeletonItem * item = configXml()->findItem(settingName(), QLatin1String("keymgmt"));
+    if ( item) {
+        if (item->property().toString() == QLatin1String("none")) {
+            kDebug() << "WEP";
+            d->ui.cmbType->setCurrentIndex(d->staticWepHexIndex);
+            SecurityWidget * sw = d->securityWidgetHash.value(d->staticWepHexIndex);
+            sw->readConfig();
+        } else {
+            kDebug() << "Key management setting not found!";
+        }
+    }
 #if 0
+    // First, figure out what type of security is stored.
+    //
     KConfigSkeletonItem * item = configXml()->findItem(settingName(), QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT));
     Q_ASSERT(item);
     QString keyMgmt = item->property().toString();
     kDebug() << keyMgmt;
+    SecurityWidget * sw = d->securityWidgetHash->value(d->ui.cmbType->currentIndex());
+    if (sw) {
+        sw->writeConfig();
+    }
 #endif
 }
 

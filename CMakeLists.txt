@@ -1,4 +1,14 @@
 project(plasma-networkmanager)
+
+find_package(KDE4 REQUIRED)
+include (KDE4Defaults)
+include(MacroOptionalAddSubdirectory)
+
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+include_directories (${KDE4_INCLUDES})
+
+#include(ConfigureChecks.cmake)
+find_package(Plasma REQUIRED)
 macro_optional_find_package(NetworkManager)
 macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager (any version)" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
 if (NETWORKMANAGER_FOUND)
