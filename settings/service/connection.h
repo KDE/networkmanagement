@@ -47,10 +47,8 @@ class Connection : public QObject
 
         Connection(const QString & id, const QVariantMapMap & settingsMap, QObject *parent=0);
         ~Connection();
-        QString id() const;
 
         //export to dbus
-        Q_SCRIPTABLE QString GetID() const;
         Q_SCRIPTABLE void Update(QVariantMapMap updates);
         Q_SCRIPTABLE void Delete();
         Q_SCRIPTABLE QVariantMapMap GetSettings() const;

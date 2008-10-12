@@ -39,16 +39,6 @@ Connection::~Connection()
     emit Removed();
 }
 
-QString Connection::id() const
-{
-    return mId;
-}
-
-QString Connection::GetID() const
-{
-    return id();
-}
-
 void Connection::Update(QVariantMapMap updates)
 {
 #if 0
