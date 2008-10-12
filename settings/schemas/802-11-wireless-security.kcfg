@@ -33,19 +33,19 @@
       <label>LEAP Username</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="wepkey0" type="String">
+    <entry name="wepkey0" type="String" secret="true">
       <label>WEP key 0</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="wepkey1" type="String">
+    <entry name="wepkey1" type="String" secret="true">
       <label>WEP key 1</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="wepkey2" type="String">
+    <entry name="wepkey2" type="String" secret="true">
       <label>WEP key 2</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="wepkey3" type="String">
+    <entry name="wepkey3" type="String" secret="true">
       <label>WEP key 3</label>
       <whatsthis></whatsthis>
     </entry>
