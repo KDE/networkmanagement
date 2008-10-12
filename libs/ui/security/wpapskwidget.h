@@ -18,29 +18,27 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WEPWIDGET_H
-#define WEPWIDGET_H
+#ifndef WPAPSKWIDGET_H
+#define WPAPSKWIDGET_H
 
 #include "securitywidget.h"
 
 #include <KSharedConfig>
 
-class WepWidget : public SecurityWidget
+class WpaPskWidget : public SecurityWidget
 {
 Q_OBJECT
 public:
-    enum KeyFormat { Hex, Passphrase };
-    WepWidget(KeyFormat keyFormat, KConfig * config, const QString & connectionId, QWidget * parent = 0);
-    virtual ~WepWidget();
+    WpaPskWidget(KConfig * config, const QString & connectionId, QWidget * parent = 0);
+    virtual ~WpaPskWidget();
     bool validate() const;
     void readConfig();
     void writeConfig();
 private slots:
     void chkShowPassToggled(bool);
-    void keyIndexChanged(int);
 private:
     class Private;
     Private * d;
 };
 
-#endif // WEPWIDGET_H
+#endif // WPAPSKWIDGET_H

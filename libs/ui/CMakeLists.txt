@@ -19,13 +19,16 @@ set(knmui_SRCS
    802_11_wirelesswidget.cpp
    security/802_11_wireless_security_widget.cpp
    security/wepwidget.cpp
+   security/wpapskwidget.cpp
    )
 
 kde4_add_ui_files(knmui_SRCS cdma.ui gsm.ui ppp.ui pppoe.ui 
    #802_1x.ui #security.ui 
    connection.ui wired.ui ipv4.ui 802-11-wireless.ui 
    security/802_11_wireless_security.ui
-   security/wep.ui)
+   security/wep.ui
+   security/wpapsk.ui
+   )
 
 kde4_add_library(knmui SHARED ${knmui_SRCS})
 target_link_libraries(knmui knmstorage ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS})

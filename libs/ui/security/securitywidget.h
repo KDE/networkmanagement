@@ -31,6 +31,8 @@ Q_OBJECT
 public:
     SecurityWidget(const QString & connectionId, QWidget * parent = 0 );
     virtual ~SecurityWidget();
+    static const QString AUTH_ALG_OPEN;
+    static const QString AUTH_ALG_SHARED;
     virtual void readConfig() = 0;
     virtual void writeConfig() = 0;
 protected:

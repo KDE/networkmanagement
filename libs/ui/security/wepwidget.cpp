@@ -27,9 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "secretstoragehelper.h"
 #include "ui_wep.h"
 
-const QString WepWidget::AUTH_ALG_OPEN = QLatin1String("open");
-const QString WepWidget::AUTH_ALG_SHARED = QLatin1String("shared");
-
 class WepWidget::Private
 {
 public:
