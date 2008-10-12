@@ -132,8 +132,8 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
         item->swapDefault();
         QVariant defaultV = item->property();
         item->swapDefault();
+        kDebug() << item->key() << " : '" << item->property() << "' is a " << item->property().type() << ", and " << (defaultV == item->property() ? "IS" : "IS NOT") << " default";
         if (defaultV != item->property()) { // only deserialise non-default values
-            kDebug() << item->key() << " : '" << item->property() << "' is a " << item->property().type() << ", and " << (defaultV == item->property() ? "IS" : "IS NOT") << " default";
             map.insert(convertKey(item->key()), convertValue(item->key(), item->property()));
         }
     }
