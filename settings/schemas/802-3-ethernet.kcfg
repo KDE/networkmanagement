@@ -13,10 +13,6 @@
       <label>Speed</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="dummysecret" type="String" secret="true">
-      <label>Dummy Secret</label>
-      <whatsthis>A dummy secret for testing wallet storage.</whatsthis>
-    </entry>
     <entry name="duplex" type="String">
       <label>Duplex</label>
       <whatsthis>Whether the Ethernet interface should use duplex communications</whatsthis>
@@ -33,6 +29,7 @@
     </entry>
     <entry name="mtu" type="UInt">
       <label>MTU</label>
+      <default>1500</default>
       <whatsthis>Maximum Transfer Unit to use</whatsthis>
     </entry>
   </group>
