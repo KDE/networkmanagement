@@ -9,6 +9,9 @@
     <height>321</height>
    </rect>
   </property>
+  <property name="windowTitle" >
+   <string>802.1x</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout" >
    <item>
     <widget class="QCheckBox" name="checkBox" >

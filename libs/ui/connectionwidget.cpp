@@ -51,11 +51,6 @@ QTabWidget * ConnectionWidget::connectionSettingsWidget()
     return d->ui.tabwidget;
 }
 
-QString ConnectionWidget::label() const
-{
-    return i18n("Connection");
-}
-
 QString ConnectionWidget::settingName() const
 {
     return QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME);

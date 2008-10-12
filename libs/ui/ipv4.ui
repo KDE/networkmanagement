@@ -6,8 +6,11 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>278</height>
+    <height>291</height>
    </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>IP Address</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout" >
    <item>

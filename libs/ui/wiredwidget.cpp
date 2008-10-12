@@ -40,11 +40,6 @@ WiredWidget::~WiredWidget()
     delete d;
 }
 
-QString WiredWidget::label() const
-{
-    return i18nc("Label for wired Ethernet settings", "Ethernet");
-}
-
 QString WiredWidget::settingName() const
 {
     return QLatin1String(NM_SETTING_WIRED_SETTING_NAME);

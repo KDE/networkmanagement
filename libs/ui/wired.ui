@@ -9,6 +9,9 @@
     <height>65</height>
    </rect>
   </property>
+  <property name="windowTitle" >
+   <string>Ethernet</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout" >
    <property name="spacing" >
     <number>0</number>
@@ -76,6 +79,9 @@
        </property>
        <property name="singleStep" >
         <number>10</number>
+       </property>
+       <property name="value" >
+        <number>1500</number>
        </property>
       </widget>
      </item>

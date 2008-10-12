@@ -20,7 +20,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "802_11_wireless_security_widget.h"
 
+#include <nm-setting-wireless-security.h>
+
+#include <KDebug>
+
+#include "configxml.h"
 #include "ui_802-11-wireless-security.h"
+
+const QString Wireless80211SecurityWidget::KEY_MGMT_NONE = QLatin1String("none");
+const QString Wireless80211SecurityWidget::KEY_MGMT_802_1X = QLatin1String("ieee8021x");
+const QString Wireless80211SecurityWidget::KEY_MGMT_WPA_NONE = QLatin1String("wpa-none");
+const QString Wireless80211SecurityWidget::KEY_MGMT_WPA_PSK = QLatin1String("wpa-psk");
+const QString Wireless80211SecurityWidget::KEY_MGMT_WPA_EAP = QLatin1String("wpa-eap");
 
 class Wireless80211SecurityWidget::Private
 {
@@ -39,11 +50,6 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(const QString& connecti
 Wireless80211SecurityWidget::~Wireless80211SecurityWidget()
 {
     delete d;
-}
-
-QString Wireless80211SecurityWidget::label() const
-{
-    return i18nc("Label text for->", "Wireless Security");
 }
 
 QString Wireless80211SecurityWidget::settingName() const
@@ -83,6 +89,34 @@ void Wireless80211SecurityWidget::securityTypeChanged(int index)
         default:
             break;
     }
+}
+
+void Wireless80211SecurityWidget::writeConfig()
+{
+#if 0
+    // save security type (key-mgmt)
+    QString type;
+    KConfigGroup group(configXml()->config(), settingName());
+    switch ( d->ui.type->currentIndex()) {
+        case 0:
+        case 1: // I hope this is correct for WEP
+        case 2:
+        case 3:
+            type = KEY_MGMT_NONE;
+            break;
+            
+
+    }
+#endif
+}
+void Wireless80211SecurityWidget::readConfig()
+{
+#if 0
+    KConfigSkeletonItem * item = configXml()->findItem(settingName(), QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT));
+    Q_ASSERT(item);
+    QString keyMgmt = item->property().toString();
+    kDebug() << keyMgmt;
+#endif
 }
 
 #include "802_11_wireless_security_widget.moc"

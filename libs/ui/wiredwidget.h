@@ -30,7 +30,6 @@ class KNM_EXPORT WiredWidget : public SettingWidget
 public:
     WiredWidget(const QString& connectionId, QWidget * parent = 0 );
     virtual ~WiredWidget();
-    QString label() const;
     QString settingName() const;
 private:
     class Private; 

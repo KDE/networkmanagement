@@ -47,11 +47,6 @@ IpV4Widget::~IpV4Widget()
     delete d;
 }
 
-QString IpV4Widget::label() const
-{
-    return i18nc("Label for IPv4 address settings", "IP Address");
-}
-
 QString IpV4Widget::settingName() const
 {
     return QLatin1String("ipv4");

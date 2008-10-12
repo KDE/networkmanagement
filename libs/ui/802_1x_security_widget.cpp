@@ -41,11 +41,6 @@ Wired8021xSecurityWidget::~Wired8021xSecurityWidget()
     delete d;
 }
 
-QString Wired8021xSecurityWidget::label() const
-{
-    return i18nc("Label text for->", "Wireless Security");
-}
-
 QString Wired8021xSecurityWidget::settingName() const
 {
     return QLatin1String("802-11-wireless-security");

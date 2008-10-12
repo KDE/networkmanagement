@@ -42,11 +42,6 @@ CdmaWidget::~CdmaWidget()
     delete d;
 }
 
-QString CdmaWidget::label() const
-{
-    return i18nc("Label for CDMA Cellular (3G) network connection", "Mobile Broadband");
-}
-
 QString CdmaWidget::settingName() const
 {
     return QLatin1String(NM_SETTING_CDMA_SETTING_NAME);

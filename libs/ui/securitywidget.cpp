@@ -40,11 +40,6 @@ SecurityWidget::~SecurityWidget()
     delete d;
 }
 
-QString SecurityWidget::label() const
-{
-    return i18nc("Label for security settings", "Security");
-}
-
 QString SecurityWidget::settingName() const
 {
     return QLatin1String("CORRECTMEsecurity");

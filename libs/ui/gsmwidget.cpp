@@ -42,11 +42,6 @@ GsmWidget::~GsmWidget()
     delete d;
 }
 
-QString GsmWidget::label() const
-{
-    return i18nc("Label for GSM Cellular (3G) network connection", "Mobile Broadband");
-}
-
 QString GsmWidget::settingName() const
 {
     return QLatin1String(NM_SETTING_GSM_SETTING_NAME);

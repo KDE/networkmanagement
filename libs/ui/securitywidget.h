@@ -31,7 +31,6 @@ Q_OBJECT
 public:
     SecurityWidget(const QString& connectionId, QWidget * parent = 0 );
     virtual ~SecurityWidget();
-    QString label() const;
     QString settingName() const;
 private:
     class Private;

@@ -40,11 +40,6 @@ PppWidget::~PppWidget()
     delete d;
 }
 
-QString PppWidget::label() const
-{
-    return i18nc("Label for PPP connection settings", "PPP");
-}
-
 QString PppWidget::settingName() const
 {
     return QLatin1String("ppp");

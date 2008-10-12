@@ -35,7 +35,6 @@ public:
     ConnectionWidget(const QString& connectionId, QWidget * parent = 0);
     ~ConnectionWidget();
     QTabWidget * connectionSettingsWidget();
-    QString label() const;
     QString settingName() const;
     void writeConfig();
 private:

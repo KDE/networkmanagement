@@ -42,11 +42,6 @@ PppoeWidget::~PppoeWidget()
     delete d;
 }
 
-QString PppoeWidget::label() const
-{
-    return i18nc("Label for PPPoE DSL network connections", "DSL");
-}
-
 QString PppoeWidget::settingName() const
 {
     return QLatin1String(NM_SETTING_PPPOE_SETTING_NAME);

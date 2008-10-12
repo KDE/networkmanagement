@@ -30,7 +30,6 @@ class KNM_EXPORT PppWidget : public SettingWidget
 public:
     PppWidget(const QString& connectionId, QWidget * parent = 0 );
     virtual ~PppWidget();
-    QString label() const;
     QString settingName() const;
 private:
     class Private;

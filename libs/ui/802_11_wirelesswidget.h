@@ -31,7 +31,10 @@ public:
     Wireless80211Widget(const QString & connectionId, QWidget * parent = 0 );
     virtual ~Wireless80211Widget();
     QString settingName() const;
-    QString label() const;
+    static const QString INFRA_MODE;
+    static const QString ADHOC_MODE;
+    void readConfig();
+    void writeConfig();
 private:
     class Private;
     Private * d;

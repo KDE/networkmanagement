@@ -30,7 +30,6 @@ class KNM_EXPORT IpV4Widget : public SettingWidget
 public:
     IpV4Widget(const QString& connectionId, QWidget * parent = 0 );
     virtual ~IpV4Widget();
-    QString label() const;
     QString settingName() const;
     void readConfig();
     void writeConfig();

@@ -32,7 +32,6 @@ public:
     Wired8021xSecurityWidget(const QString& connectionId, QWidget * parent = 0 );
     virtual ~Wired8021xSecurityWidget();
     QString settingName() const;
-    QString label() const;
 protected Q_SLOTS:
     void securityTypeChanged(int index);
 private:

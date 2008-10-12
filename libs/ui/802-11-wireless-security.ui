@@ -5,9 +5,12 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>383</width>
-    <height>321</height>
+    <width>271</width>
+    <height>235</height>
    </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Wireless Security</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_5" >
    <item>
@@ -67,7 +70,7 @@
    <item>
     <widget class="QStackedWidget" name="stackedWidget" >
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="nonePage" />
      <widget class="QWidget" name="wepPage" >

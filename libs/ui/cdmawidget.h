@@ -30,7 +30,6 @@ class KNM_EXPORT CdmaWidget : public SettingWidget
 public:
     CdmaWidget(const QString& connectionId, QWidget * parent = 0 );
     virtual ~CdmaWidget();
-    QString label() const;
     QString settingName() const;
 private:
     class Private;

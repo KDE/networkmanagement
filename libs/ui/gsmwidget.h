@@ -30,7 +30,6 @@ class KNM_EXPORT GsmWidget : public SettingWidget
 public:
     GsmWidget(const QString& connectionId, QWidget * parent = 0 );
     virtual ~GsmWidget();
-    QString label() const;
     QString settingName() const;
 private:
     class Private;

@@ -43,14 +43,9 @@ public:
      */
     virtual void writeConfig();
     /**
-     * get the label describing the widget contents
-     */
-    virtual QString label() const = 0;
-    /**
      * get the name of the settings group configured by the widget
      */
     virtual QString settingName() const = 0;
-
     /**
      * The configuration management object belonging to this widget
      */

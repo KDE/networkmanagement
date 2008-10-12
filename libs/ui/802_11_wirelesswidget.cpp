@@ -21,9 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "802_11_wirelesswidget.h"
 
 #include <nm-setting-wireless.h>
+#include <KDebug>
+
+#include "configxml.h"
 
 #include "ui_802-11-wireless.h"
 
+const QString Wireless80211Widget::INFRA_MODE = QLatin1String("infrastructure");
+const QString Wireless80211Widget::ADHOC_MODE = QLatin1String("adhoc");
 
 class Wireless80211Widget::Private
 {
@@ -42,14 +47,39 @@ Wireless80211Widget::~Wireless80211Widget()
     delete d;
 }
 
-QString Wireless80211Widget::label() const
-{
-    return i18nc("Label for wireless network setting", "Wireless");
-}
-
 QString Wireless80211Widget::settingName() const
 {
     return QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME);
+}
+
+void Wireless80211Widget::readConfig()
+{
+    kDebug();
+    KConfigSkeletonItem * item = configXml()->findItem(settingName(), QLatin1String(NM_SETTING_WIRELESS_MODE));
+    Q_ASSERT(item);
+    QString mode = item->property().toString();
+    if ( mode == QLatin1String("infrastructure")) {
+        d->ui.cmbMode->setCurrentIndex(0);
+    } else if ( mode == QLatin1String("adhoc")) {
+        d->ui.cmbMode->setCurrentIndex(1);
+    } else if ( !mode.isEmpty()) {
+        kDebug() << "Found unrecognised mode value: " << mode;
+    }
+}
+
+void Wireless80211Widget::writeConfig()
+{
+    kDebug();
+    // save method
+    KConfigGroup group(configXml()->config(), settingName());
+    switch ( d->ui.cmbMode->currentIndex()) {
+        case 0:
+            group.writeEntry(NM_SETTING_WIRELESS_MODE, INFRA_MODE);
+            break;
+        case 1:
+            group.writeEntry(NM_SETTING_WIRELESS_MODE, ADHOC_MODE);
+            break;
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100
