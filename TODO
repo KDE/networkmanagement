@@ -22,6 +22,10 @@ TODO WS:
 - SERVICE: Complete settings service
   * per-setting group helper class for complex settings, where needed for ipv4 config write
   * wireless security
+    / WEP
+    / WPA-PSK
+    * LEAP
+    * WPA-EAP
   + also for 802.1x 
   * Create Connnection.Secrets objects and do lazy secret loading. Change configxml classes to not read wallet on start
 
