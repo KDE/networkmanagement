@@ -7,6 +7,8 @@ include_directories(
 set(kded_knetworkmanager_SRCS
    service.cpp
    connection.cpp
+   connectionsecretsjob.cpp
+   exportedconnection.cpp
    kconfigtoservice.cpp
    networksettings.cpp
    )

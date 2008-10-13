@@ -22,6 +22,8 @@
 #include <QDBusMetaType>
 #include <KDebug>
 
+#include "connectionsecretsjob.h"
+
 //#include "connectionadaptor.h"
 //#include "marshallarguments.h"
 //#include <nm-setting-wireless.h>
@@ -29,7 +31,7 @@ typedef QMap<QString,QVariantMap> QVariantMapMap;
 //Q_DECLARE_METATYPE(QVariantMapMap)
 
 Connection::Connection(const QString & id, const QVariantMapMap & settingsMap, QObject *parent)
-    : QObject(parent), mId(id), mSettingsMap(settingsMap)
+    : QObject(parent), mId(id), mSettingsMap(settingsMap), mHasSecrets(false)
 {
     qDBusRegisterMetaType<QVariantMapMap>();
 }
@@ -39,8 +41,15 @@ Connection::~Connection()
     emit Removed();
 }
 
+
+bool Connection::hasSecrets() const
+{
+    return mHasSecrets;
+}
+
 void Connection::Update(QVariantMapMap updates)
 {
+    kDebug();
 #if 0
     foreach (const QString &key1, changedParameters.keys()) {
         foreach (const QString &key2, changedParameters[key1].keys()) {
@@ -57,21 +66,67 @@ void Connection::Update(QVariantMapMap updates)
 
 void Connection::Delete()
 {
+    kDebug();
     deleteLater();
 }
 
 QVariantMapMap Connection::GetSettings() const
 {
+    kDebug();
     return mSettingsMap;
 }
 
-QVariantMap Connection::GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new)
+QVariantMapMap Connection::GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new, const QDBusMessage& message)
 {
-    Q_UNUSED(setting_name)
-    Q_UNUSED(hints)
-    Q_UNUSED(request_new)
+    kDebug();
+    if (!request_new && hasSecrets()) {
+        QVariantMapMap replyOuterMap;
+        QVariantMap replyInnerMap;
+        if (mSettingsMap.contains(setting_name)) {
+            QVariantMap settingGroup = mSettingsMap.value(setting_name);
+            foreach (QString setting, hints) {
+                replyInnerMap.insert(setting, settingGroup.value(setting));
+            }
+            replyOuterMap.insert(setting_name, replyInnerMap);
+            return replyOuterMap;
+        }
+    }
+    message.setDelayedReply(true);
+    QDBusMessage reply = message.createReply();
+    QDBusConnection::systemBus().send(reply);
+    KJob * secretsJob = new ConnectionSecretsJob(mId, setting_name, hints, request_new, reply);
+    connect(secretsJob, SIGNAL(finished(KJob*)), this, SLOT(gotSecrets(KJob*)));
+    secretsJob->start();
+    return QVariantMapMap();
+}
 
-    return QVariantMap();
+void Connection::gotSecrets(KJob *job)
+{
+    kDebug();
+    ConnectionSecretsJob * csj = static_cast<ConnectionSecretsJob*>(job);
+    if (csj->error() == ConnectionSecretsJob::NoError) {
+        QVariantMap retrievedSecrets = csj->secrets();
+        // update myself
+        QVariantMap existingSetting = mSettingsMap.value(csj->settingName());
+        QMapIterator<QString,QVariant> i(retrievedSecrets);
+        while (i.hasNext()) {
+            i.next();
+            existingSetting.insert(i.key(), i.value());
+        }
+        kDebug() << "Updating existing settings for " << csj->settingName() << existingSetting;
+        mSettingsMap.insert(csj->settingName(), existingSetting);
+
+        // setup reply
+        QVariantMapMap replyOuterMap;
+        replyOuterMap.insert(csj->settingName(), retrievedSecrets);
+        QDBusMessage reply = csj->message();
+
+        QDBusArgument arg;
+        arg << replyOuterMap;
+        reply << arg;
+        kDebug() << "Sending reply: " << reply.arguments() << " with signature: " << reply.signature();
+        QDBusConnection::systemBus().send(reply);
+    }
 }
 
 #include "connection.moc"

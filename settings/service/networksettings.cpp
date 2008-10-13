@@ -29,6 +29,7 @@
 #include <KDebug>
 
 #include "connection.h"
+#include "exportedconnection.h"
 
 //#include "networksettingsadaptor.h"
 //#include "marshallarguments.h"
@@ -87,9 +88,11 @@ QString NetworkSettings::addConnection(const QVariantMapMap& settings)
         QVariantMap::const_iterator connectionSettingsIt = connectionSettings.find(QLatin1String(NM_SETTING_CONNECTION_ID));
         if (connectionSettingsIt != connectionSettings.end()) {
             Connection * connection = new Connection(connectionSettingsIt.value().toString(), settings, this);
+            new ConnectionAdaptor(connection);
+            new SecretsAdaptor(connection);
             QString objectPath = nextObjectPath();
             m_connectionMap.insert(objectPath, connection);
-            QDBusConnection::systemBus().registerObject(objectPath, connection, QDBusConnection::ExportScriptableContents);
+            QDBusConnection::systemBus().registerObject(objectPath, connection, QDBusConnection::ExportAdaptors);
             emit NewConnection(QDBusObjectPath(objectPath));
             return objectPath;
         } else {

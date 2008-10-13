@@ -35,12 +35,14 @@
 
 #include <NetworkManager.h>
 
+class KJob;
+
 class Connection : public QObject
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection")
     // Can QtDbus handle multiple interfaces being provided by one object like this?
-    //Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection.Secrets")
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection.Secrets")
 
     public:
         enum ConnectionType {Unknown=0, Wired, Wireless};
@@ -52,14 +54,19 @@ class Connection : public QObject
         Q_SCRIPTABLE void Update(QVariantMapMap updates);
         Q_SCRIPTABLE void Delete();
         Q_SCRIPTABLE QVariantMapMap GetSettings() const;
-        Q_SCRIPTABLE QVariantMap GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new);
+        Q_SCRIPTABLE QVariantMapMap GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new, const QDBusMessage&);
+        bool hasSecrets() const;
 
     Q_SIGNALS:
         Q_SCRIPTABLE void Updated(QMap<QString, QMap<QString, QVariant> >);
         Q_SCRIPTABLE void Removed();
+
+    public Q_SLOTS:
+        void gotSecrets(KJob*);
     private:
         QString mId;
         QMap<QString, QMap<QString, QVariant> > mSettingsMap;
+        bool mHasSecrets;
 
         //ConnectionType connType;
         //WiredConnectionSetting *wired;
