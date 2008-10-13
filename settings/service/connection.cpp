@@ -24,11 +24,7 @@
 
 #include "connectionsecretsjob.h"
 
-//#include "connectionadaptor.h"
-//#include "marshallarguments.h"
-//#include <nm-setting-wireless.h>
 typedef QMap<QString,QVariantMap> QVariantMapMap;
-//Q_DECLARE_METATYPE(QVariantMapMap)
 
 Connection::Connection(const QString & id, const QVariantMapMap & settingsMap, QObject *parent)
     : QObject(parent), mId(id), mSettingsMap(settingsMap), mHasSecrets(false)
@@ -121,10 +117,13 @@ void Connection::gotSecrets(KJob *job)
         replyOuterMap.insert(csj->settingName(), retrievedSecrets);
         QDBusMessage reply = csj->message();
 
-        QDBusArgument arg;
-        arg << replyOuterMap;
-        reply << arg;
-        kDebug() << "Sending reply: " << reply.arguments() << " with signature: " << reply.signature();
+        QVariant arg = QVariant::fromValue(replyOuterMap);
+        //reply << arg;
+        reply << QStringList();
+        kDebug() << "Meta type id for QVariantMapMap: " << qMetaTypeId<QVariantMapMap>();
+        kDebug() << "Meta type id for arg: " << arg.userType();
+        kDebug() << "Meta type id for unregistered type: " << qMetaTypeId<QStringList>();
+        kDebug() << "Sending reply: " << reply.arguments() << " count: " << reply.arguments().count() << " with signature: " << reply.signature();
         QDBusConnection::systemBus().send(reply);
     }
 }
