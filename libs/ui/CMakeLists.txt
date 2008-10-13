@@ -28,6 +28,7 @@ kde4_add_ui_files(knmui_SRCS cdma.ui gsm.ui ppp.ui pppoe.ui
    security/802_11_wireless_security.ui
    security/wep.ui
    security/wpapsk.ui
+   security/802_1x.ui
    )
 
 kde4_add_library(knmui SHARED ${knmui_SRCS})

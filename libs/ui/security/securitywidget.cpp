@@ -20,8 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "securitywidget.h"
 
-#include "ui_security.h"
-
 const QString SecurityWidget::AUTH_ALG_OPEN = QLatin1String("open");
 const QString SecurityWidget::AUTH_ALG_SHARED = QLatin1String("shared");
 
