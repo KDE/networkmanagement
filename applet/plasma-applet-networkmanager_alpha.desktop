@@ -7,6 +7,7 @@ Name[pt_BR]=Gestor de Rede (Alpha de uma versão Alpha)
 Name[ru]=Менеджер сети (тестовая версия)
 Name[sv]=Nätverkshanterare (alfa av en alfautgåva)
 Name[uk]=Керування мережею (Альфа альфа версії)
+Name[x-test]=xxNetwork Manager (Alpha of an Alpha edition)xx
 Comment=Configure network interfaces
 Comment[gl]=Configura as interfaces de rede
 Comment[km]=កំណត់​រចនាសម្ព័ន្ធ​ចំណុច​ប្រទាក់​បណ្ដាញ
@@ -14,6 +15,7 @@ Comment[pt]=Configurar as interfaces de rede
 Comment[pt_BR]=Configurar as interfaces de rede
 Comment[sv]=Anpassa nätverksgränssnitt
 Comment[uk]=Налаштуйте параметри мережі
+Comment[x-test]=xxConfigure network interfacesxx
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 
