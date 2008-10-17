@@ -94,6 +94,7 @@ QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
         QVariantMap groupSettings = handleGroup(group);
         if (groupSettings.isEmpty()) {
             kDebug() << "Settings group '" << group << "' contains no settings!";
+            connectionMap.insert(group, QVariantMap());
         } else {
             connectionMap.insert(group, groupSettings );
         }
@@ -104,7 +105,25 @@ QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
     // reading the config.
     if (!connectionMap.isEmpty() && !connectionMap.contains(m_currentConnectionType)) {
         connectionMap.insert(m_currentConnectionType, QVariantMap());
-        m_currentConnectionType = QString();
+        //m_currentConnectionType = QString();
+    }
+    // Special case #2, NM requires that a setting group for "gsm" is accompannied by a "serial"
+    // group
+    QString serialSetting = QLatin1String("serial");
+    if (!connectionMap.isEmpty() && !connectionMap.contains(serialSetting)) {
+        connectionMap.insert(serialSetting, QVariantMap());
+    }
+    // Special case #3, NM requires that a setting group for "serial" is accompanied by a "ppp"
+    // group
+    QString pppSetting = QLatin1String("ppp");
+    if (connectionMap.contains(serialSetting) && !connectionMap.contains(pppSetting)) {
+        connectionMap.insert(pppSetting, QVariantMap());
+    }
+    // Special case #4, NM requires that a setting group for "pppoe" is accompanied by a "ppp"
+    // group
+    QString pppoeSetting = QLatin1String("pppoe");
+    if (connectionMap.contains(pppoeSetting) && !connectionMap.contains(pppSetting)) {
+        connectionMap.insert(pppSetting, QVariantMap());
     }
     return connectionMap;
 }
