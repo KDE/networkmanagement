@@ -37,6 +37,11 @@ public:
     virtual ~ConnectionEditor();
     virtual void save();
     virtual void load();
+public slots:
+    /**
+     * Check if a newly added or removed device should enable or disable tabs
+     */
+    void updateTabStates();
 private slots:
     /** 
      * Add a new connection 

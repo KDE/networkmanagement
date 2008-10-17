@@ -19,7 +19,7 @@ kde4_add_kcfg_files(kcm_knetworkmanager_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../l
 kde4_add_ui_files(kcm_knetworkmanager_SRCS connectioneditor.ui)
 kde4_add_plugin(kcm_knetworkmanager ${kcm_knetworkmanager_SRCS})
 
-target_link_libraries(kcm_knetworkmanager knmui knmstorage ${KDE4_KDEUI_LIBS} ${KDE4_KUTILS_LIBS})
+target_link_libraries(kcm_knetworkmanager knmui knmstorage solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KUTILS_LIBS})
 
 install(TARGETS kcm_knetworkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
 

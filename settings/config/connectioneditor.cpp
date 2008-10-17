@@ -31,6 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KPluginFactory>
 #include <KRandom>
 #include <KStandardDirs>
+#include <solid/control/networkmanager.h>
+#include <solid/control/networkinterface.h>
 
 #include "knmserviceprefs.h"
 #include "connectionprefs.h"
@@ -54,6 +56,10 @@ ConnectionEditor::ConnectionEditor(QWidget *parent, const QVariantList &args)
     connect(mConnEditUi.addConnection, SIGNAL(clicked()), SLOT(addClicked()));
     connect(mConnEditUi.editConnection, SIGNAL(clicked()), SLOT(editClicked()));
     connect(mConnEditUi.deleteConnection, SIGNAL(clicked()), SLOT(deleteClicked()));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+            SLOT(updateTabStates()));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+            SLOT(updateTabStates()));
     restoreConnections();
 }
 
@@ -124,6 +130,35 @@ void ConnectionEditor::restoreConnections()
     mConnEditUi.listVpn->resizeColumnToContents(0);
     mConnEditUi.listPppoe->insertTopLevelItems(0, pppoeItems);
     mConnEditUi.listPppoe->resizeColumnToContents(0);
+
+    // check which tabs should be enabled depending on the existing hardware
+    updateTabStates();
+}
+
+void ConnectionEditor::updateTabStates()
+{
+    bool hasWired = false, hasWireless = false, hasCellular = false, hasDsl = false;
+    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+        switch (iface->type()) {
+            case Solid::Control::NetworkInterface::Ieee8023:
+                hasWired = true;
+                break;
+            case Solid::Control::NetworkInterface::Ieee80211:
+                hasWireless = true;
+                break;
+            case Solid::Control::NetworkInterface::Serial:
+                hasDsl = true;
+                break;
+            case Solid::Control::NetworkInterface::Gsm:
+            case Solid::Control::NetworkInterface::Cdma:
+                hasCellular = true;
+                break;
+        }
+    }
+    mConnEditUi.tabWidget->setTabEnabled(0, (hasWired || mConnEditUi.listWired->topLevelItemCount()));
+    mConnEditUi.tabWidget->setTabEnabled(1, (hasWireless || mConnEditUi.listWireless->topLevelItemCount()));
+    mConnEditUi.tabWidget->setTabEnabled(2, (hasCellular || mConnEditUi.listCellular->topLevelItemCount()));
+    mConnEditUi.tabWidget->setTabEnabled(4, (hasDsl || mConnEditUi.listPppoe->topLevelItemCount()));
 }
 
 void ConnectionEditor::addClicked()
