@@ -111,12 +111,15 @@ Functions
 Characteristics
 Serializer converts between kconfig storage and qvariantmapmaps
 and between kconfig storage and UI contents (like kconfigdialog).
+and kwallet
 
 Uses a .kcfg file to define settings.  Since .kcfg allows multiple groups should be able to define all in one .kcfg file.
 
 Use nested groups in rcfile.
 
 Load kcfg, create in memory representation?  Or just work from XML tree?
+
+Flag passed to ConfigXml controls whether it should load secrets or skip this (for the dbus service, which should not open the wallet until queried by the NM daemon)
 
 READ
 Open rcfile.
@@ -133,7 +136,7 @@ For each connection:
 	  lookup type for entry
 	  lookup min, max if present (or if numeric type)
       pass these to appropriate handler for type
-	  WHAT IF ITS A SECRET?
+      if a secret=true entry, create an Item that reads KWallet instead of KConfig
 
 handler settings:
   map handler: create new qvariantmap, insert it using setting name, set this on the map handler as current map.
@@ -153,3 +156,4 @@ I thought that KConfigDialog only allows a single managed widget but KConfigDial
 WRITE
 From ui:
 KCModule::writeConfig();
+// todo, document how custom settings are saved
