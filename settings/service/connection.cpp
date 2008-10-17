@@ -89,7 +89,6 @@ QVariantMapMap Connection::GetSecrets(const QString &setting_name, const QString
     }
     message.setDelayedReply(true);
     QDBusMessage reply = message.createReply();
-    QDBusConnection::systemBus().send(reply);
     KJob * secretsJob = new ConnectionSecretsJob(mId, setting_name, hints, request_new, reply);
     connect(secretsJob, SIGNAL(finished(KJob*)), this, SLOT(gotSecrets(KJob*)));
     secretsJob->start();
@@ -118,12 +117,7 @@ void Connection::gotSecrets(KJob *job)
         QDBusMessage reply = csj->message();
 
         QVariant arg = QVariant::fromValue(replyOuterMap);
-        //reply << arg;
-        reply << QStringList();
-        kDebug() << "Meta type id for QVariantMapMap: " << qMetaTypeId<QVariantMapMap>();
-        kDebug() << "Meta type id for arg: " << arg.userType();
-        kDebug() << "Meta type id for unregistered type: " << qMetaTypeId<QStringList>();
-        kDebug() << "Sending reply: " << reply.arguments() << " count: " << reply.arguments().count() << " with signature: " << reply.signature();
+        reply << arg;
         QDBusConnection::systemBus().send(reply);
     }
 }
