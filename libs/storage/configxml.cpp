@@ -36,16 +36,20 @@ class ItemSecret : public KCoreConfigSkeleton::ItemString
 /** @copydoc KConfigSkeletonGenericItem::KConfigSkeletonGenericItem */
 public:
     ItemSecret(const QString & _group, const QString & _key,
-            QString & _reference, SecretStorageHelper * secretStorage)
-        : KCoreConfigSkeleton::ItemString(_group, _key, _reference, QLatin1String("")), m_secretStorage(secretStorage)
+            QString & _reference, bool readSecrets, SecretStorageHelper * secretStorage)
+        : KCoreConfigSkeleton::ItemString(_group, _key, _reference, QLatin1String("")),
+        m_readSecrets(readSecrets),
+        m_secretStorage(secretStorage)
     {
     }
     virtual void readConfig(KConfig * config)
     {
-        KCoreConfigSkeleton::ItemString::readConfig(config);
-        QString secret;
-        m_secretStorage->readSecret(name(), secret);
-        kDebug() << "got secret: " << secret;
+        if (!m_readSecrets) {
+            //KCoreConfigSkeleton::ItemString::readConfig(config);
+            QString secret;
+            m_secretStorage->readSecret(name(), secret);
+            kDebug() << "got secret: " << secret;
+        }
     }
     virtual void writeConfig(KConfig * config)
     {
@@ -54,13 +58,14 @@ public:
         m_secretStorage->writeSecret(name(), KCoreConfigSkeleton::ItemString::property().toString());
     }
 private:
+    bool m_readSecrets;
     SecretStorageHelper * m_secretStorage;
 };
 
 class ConfigXml::Private
 {
     public:
-        Private(SecretStorageHelper * helper) : secretStorageHelper(helper)
+        Private(bool theReadSecrets, SecretStorageHelper * helper) : readSecrets(theReadSecrets), secretStorageHelper(helper)
         {
         }
         ~Private()
@@ -233,6 +238,7 @@ class ConfigXml::Private
         QList<KUrl::List*> urllists;
         QMap<QString, QString> keysToNames;
         QList<QByteArray*> bytearrays;
+        bool readSecrets;
         SecretStorageHelper * secretStorageHelper;
 };
 
@@ -274,7 +280,7 @@ QVariant ItemByteArray::property() const
 class ConfigXmlHandler : public QXmlDefaultHandler
 {
 public:
-    ConfigXmlHandler(ConfigXml* config, ConfigXml::Private* d, SecretStorageHelper * storage);
+    ConfigXmlHandler(ConfigXml* config, ConfigXml::Private* d, bool readSecrets, SecretStorageHelper * storage);
     bool startElement(const QString &namespaceURI, const QString & localName, const QString &qName, const QXmlAttributes &atts);
     bool endElement(const QString &namespaceURI, const QString &localName, const QString &qName);
     bool characters(const QString &ch);
@@ -285,6 +291,7 @@ private:
 
     ConfigXml* m_config;
     ConfigXml::Private* d;
+    bool m_readSecrets;
     SecretStorageHelper * m_secretStorage;
     int m_min;
     int m_max;
@@ -307,15 +314,16 @@ void ConfigXml::Private::parse(ConfigXml *configXml, QIODevice *xml)
 {
     QXmlInputSource source(xml);
     QXmlSimpleReader reader;
-    ConfigXmlHandler handler(configXml, this, secretStorageHelper );
+    ConfigXmlHandler handler(configXml, this, readSecrets, secretStorageHelper );
     reader.setContentHandler(&handler);
     reader.parse(&source, false);
 }
 
-ConfigXmlHandler::ConfigXmlHandler(ConfigXml* config, ConfigXml::Private* d, SecretStorageHelper * storage)
+ConfigXmlHandler::ConfigXmlHandler(ConfigXml* config, ConfigXml::Private* d, bool readSecrets, SecretStorageHelper * storage)
     : QXmlDefaultHandler(),
       m_config(config),
       d(d),
+      m_readSecrets(readSecrets),
       m_secretStorage(storage)
 {
     resetState();
@@ -459,7 +467,8 @@ void ConfigXmlHandler::addItem()
         if (m_secret) {
             kDebug() << "Adding a secret item:" << m_name;
             QString keyToUse = (m_key.isEmpty() ? m_name : m_key );
-            ItemSecret * item = new ItemSecret(m_config->currentGroup(), keyToUse, *d->newString(), m_secretStorage);
+            ItemSecret * item = new ItemSecret(m_config->currentGroup(), keyToUse, *d->newString(),
+                    m_readSecrets, m_secretStorage);
             m_config->addItem( item, keyToUse );
         } else {
             kDebug() << "Adding a normal string" << m_name;
@@ -594,9 +603,9 @@ void ConfigXmlHandler::resetState()
     m_secret = false;
 }
 
-ConfigXml::ConfigXml(const QString &configFile, QIODevice *xml, SecretStorageHelper *helper, QObject *parent)
+ConfigXml::ConfigXml(const QString &configFile, QIODevice *xml, bool readSecrets, SecretStorageHelper *helper, QObject *parent)
     : KConfigSkeleton(configFile, parent),
-      d(new Private(helper))
+      d(new Private(readSecrets, helper))
 {
 #if 0
     QXmlInputSource source(xml);
@@ -608,9 +617,9 @@ ConfigXml::ConfigXml(const QString &configFile, QIODevice *xml, SecretStorageHel
     d->parse(this, xml);
 }
 
-ConfigXml::ConfigXml(KSharedConfigPtr config, QIODevice *xml, SecretStorageHelper *helper, QObject *parent)
+ConfigXml::ConfigXml(KSharedConfigPtr config, QIODevice *xml, bool readSecrets, SecretStorageHelper *helper, QObject *parent)
     : KConfigSkeleton(config, parent),
-      d(new Private(helper))
+      d(new Private(readSecrets, helper))
 {
     d->parse(this, xml);
 }
@@ -618,9 +627,9 @@ ConfigXml::ConfigXml(KSharedConfigPtr config, QIODevice *xml, SecretStorageHelpe
 //FIXME: obviously this is broken and should be using the group as the root, 
 //       but KConfigSkeleton does not currently support this. it will eventually though,
 //       at which point this can be addressed properly
-ConfigXml::ConfigXml(const KConfigGroup *config, QIODevice *xml, SecretStorageHelper *helper, QObject *parent)
+ConfigXml::ConfigXml(const KConfigGroup *config, QIODevice *xml, bool readSecrets, SecretStorageHelper *helper, QObject *parent)
     : KConfigSkeleton(KSharedConfig::openConfig(config->config()->name()), parent),
-      d(new Private(helper))
+      d(new Private(readSecrets, helper))
 {
     d->parse(this, xml);
 }

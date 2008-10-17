@@ -99,10 +99,11 @@ public:
      *
      * @param configFile path to the configuration file to use
      * @param xml the xml data; must be valid KConfigXT data
+     * @param readSecrets indicate if secrets should be immediately loaded
      * @param helper helper object for storing secrets securely
      * @param parent optional QObject parent
      **/
-    ConfigXml(const QString &configFile, QIODevice *xml, SecretStorageHelper *helper, QObject *parent = 0);
+    ConfigXml(const QString &configFile, QIODevice *xml, bool readSecrets, SecretStorageHelper *helper, QObject *parent = 0);
 
     /**
      * Creates a KConfigSkeleton populated using the definition found in
@@ -110,10 +111,11 @@ public:
      *
      * @param config the configuration object to use
      * @param xml the xml data; must be valid KConfigXT data
+     * @param readSecrets indicate if secrets should be immediately loaded
      * @param helper helper object for storing secrets securely
      * @param parent optional QObject parent
      **/
-    ConfigXml(KSharedConfigPtr config, QIODevice *xml, SecretStorageHelper *helper, QObject *parent = 0);
+    ConfigXml(KSharedConfigPtr config, QIODevice *xml, bool readSecrets, SecretStorageHelper *helper, QObject *parent = 0);
 
     /**
      * Creates a KConfigSkeleton populated using the definition found in
@@ -122,10 +124,11 @@ public:
      * NB this version is broken due to kconfigskeleton being unable to work with kconfiggroup!
      *
      * @param config the group to use as the root for configuration items
+     * @param readSecrets indicate if secrets should be immediately loaded
      * @param xml the xml data; must be valid KConfigXT data
      * @param parent optional QObject parent
      **/
-    ConfigXml(const KConfigGroup *config, QIODevice *xml, SecretStorageHelper *helper, QObject *parent = 0);
+    ConfigXml(const KConfigGroup *config, QIODevice *xml, bool readSecrets, SecretStorageHelper *helper, QObject *parent = 0);
     ~ConfigXml();
 
     KConfigSkeletonItem* findItem(const QString &group, const QString &key);

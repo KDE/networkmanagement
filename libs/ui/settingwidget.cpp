@@ -57,7 +57,7 @@ void SettingWidget::init()
         QString configFile = KStandardDirs::locateLocal("data",
                 QLatin1String("knetworkmanager/connections/") + d->connectionId);
         kDebug() << "Opening config file: " << configFile;
-        d->configXml = new ConfigXml(KSharedConfig::openConfig(configFile), &schemaFile, d->secretStorage);
+        d->configXml = new ConfigXml(KSharedConfig::openConfig(configFile), &schemaFile, true, d->secretStorage);
     }
 }
 

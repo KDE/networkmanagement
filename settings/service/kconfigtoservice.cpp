@@ -144,7 +144,7 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
         kDebug() << "configuration file: " << m_configFile << " not found!";
         return QVariantMap();
     }
-    ConfigXml * config = new ConfigXml(m_configFile, &schemaFile,
+    ConfigXml * config = new ConfigXml(m_configFile, &schemaFile, false,
             new SecretStorageHelper(/*connection id*/QLatin1String("testconfigxml"), groupName));
 
     foreach (KConfigSkeletonItem * item, config->items()) {

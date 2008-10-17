@@ -63,7 +63,7 @@ int main( int argc, char** argv )
     // This would require changes in KCoreConfigSkeleton to manage both the config and the wallet
     // Pass a SecretStorageHelper in to ConfigXml ctor with Id and group being managed.  Then pass
     // this down to all ItemSecrets for use when reading/writing secrets.
-    ConfigXml config("/tmp/testconfigxmlrc", &file, new SecretStorageHelper(QLatin1String("testconfigxml"), QLatin1String("802-3-ethernet")));
+    ConfigXml config("/tmp/testconfigxmlrc", &file, true, new SecretStorageHelper(QLatin1String("testconfigxml"), QLatin1String("802-3-ethernet")));
     QStringList keys;
     kDebug() << "dumping config contents";
     foreach (KConfigSkeletonItem * item, config.items()) {
