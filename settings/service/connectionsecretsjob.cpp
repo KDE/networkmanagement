@@ -47,6 +47,9 @@ void ConnectionSecretsJob::start()
 void ConnectionSecretsJob::doWork()
 {
     if (mRequestNew) {
+        kDebug() << "FIXME: implement doAskUser()";
+    }
+    if (false/*mRequestNew*/) {
         doAskUser();
     } else {
         // do wallet lookup
@@ -90,7 +93,9 @@ void ConnectionSecretsJob::walletOpenedForRead(bool success)
                 }
             }
             if (missingSecret) {
-                doAskUser();
+                kDebug() << "FIXME: missing secrets - implement doAskUser()";
+                //doAskUser();
+                emitResult();
             } else {
                 emitResult();
             }
