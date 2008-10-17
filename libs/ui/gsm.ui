@@ -30,7 +30,11 @@
        </widget>
       </item>
       <item row="0" column="1" >
-       <widget class="KLineEdit" name="kcfg_number" />
+       <widget class="KLineEdit" name="kcfg_number" >
+        <property name="text" >
+         <string>*99#</string>
+        </property>
+       </widget>
       </item>
       <item row="1" column="0" >
        <widget class="QLabel" name="label_8" >
@@ -86,12 +90,12 @@
          <string>Net&amp;work</string>
         </property>
         <property name="buddy" >
-         <cstring>kcfg_network</cstring>
+         <cstring>network</cstring>
         </property>
        </widget>
       </item>
       <item row="1" column="1" >
-       <widget class="KLineEdit" name="kcfg_network" />
+       <widget class="KLineEdit" name="network" />
       </item>
       <item row="2" column="0" >
        <widget class="QLabel" name="label_3" >
@@ -112,22 +116,22 @@
         </item>
         <item>
          <property name="text" >
-          <string>GPRS</string>
+          <string>3G (UMTS/HSPA)</string>
          </property>
         </item>
         <item>
          <property name="text" >
-          <string>GSM</string>
+          <string>2G (GPRS/EDGE)</string>
          </property>
         </item>
         <item>
          <property name="text" >
-          <string>Prefer GPRS</string>
+          <string>Prefer 3G</string>
          </property>
         </item>
         <item>
          <property name="text" >
-          <string>Prefer GSM</string>
+          <string>Prefer 2G</string>
          </property>
         </item>
        </widget>
