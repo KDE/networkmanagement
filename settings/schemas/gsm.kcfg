@@ -8,6 +8,7 @@
     <entry name="number" type="String">
       <label>Number</label>
       <whatsthis></whatsthis>
+      <default>*99#</default>
     </entry>
     <entry name="username" type="String">
       <label>Username</label>
