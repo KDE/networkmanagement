@@ -23,8 +23,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QVBoxLayout>
 #include <QFile>
 
+#include <KDebug>
 #include <KPluginFactory>
 #include <KTabWidget>
+#include <solid/control/networkmanager.h>
+#include <solid/control/networkinterface.h>
+
 
 #include "configxml.h"
 #include "secretstoragehelper.h"
@@ -42,6 +46,21 @@ CellularPreferences::CellularPreferences(QWidget *parent, const QVariantList &ar
     QString connectionId = args[0].toString();
     m_connectionType = "Cellular";
     // check if connection is gsm or cdma and set the appropriate widget
+    bool cdma = false, gsm = false;
+    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+        switch (iface->type()) {
+            case Solid::Control::NetworkInterface::Gsm:
+                gsm = true;
+                break;
+            case Solid::Control::NetworkInterface::Cdma:
+                cdma = true;
+                break;
+        }
+    }
+    if (cdma && gsm) {
+        kDebug() << "TODO: ask user what type of cellular connection to add, since we have both hardware";
+        Q_ASSERT(0);
+    }
     QVBoxLayout * layout = new QVBoxLayout(this);
     m_contents = new ConnectionWidget(connectionId, this);
     layout->addWidget(m_contents);
@@ -50,7 +69,13 @@ CellularPreferences::CellularPreferences(QWidget *parent, const QVariantList &ar
     // Must setup initial widget before adding its contents, or all child widgets are added in this
     // run
     addConfig(m_contents->configXml(), m_contents);
-
+    if (gsm && !cdma) {
+        m_connectionTypeWidget = new GsmWidget(connectionId, this);
+    }
+    if (!gsm && cdma) {
+        m_connectionTypeWidget = new CdmaWidget(connectionId, this);
+    }
+    addToTabWidget(m_connectionTypeWidget);
     //addToTabWidget(cellularWidget);
     addToTabWidget(pppWidget);
 }
