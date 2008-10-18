@@ -1,9 +1,13 @@
 set(networkmanager_SRCS
+    connectionitem.cpp
     networkmanager.cpp
     networkmanagerpopup.cpp
-    networkmanagersettings.cpp
+    interfaceitem.cpp
+    nm-active-connectioninterface.cpp
     nm-settingsinterface.cpp
     nm-exported-connectioninterface.cpp
+    remoteconnection.cpp
+    networkmanagersettings.cpp
     )
 
 kde4_add_plugin(plasma_applet_networkmanager_alpha ${networkmanager_SRCS})

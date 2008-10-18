@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 
+#include "interfaceitem.h"
 #include "networkmanagerpopup.h"
 
 K_EXPORT_PLASMA_APPLET(networkmanager_alpha, NetworkManagerApplet)
@@ -103,9 +104,20 @@ void NetworkManagerApplet::paintInterfaceStatus(Solid::Control::NetworkInterface
     m_svg.paint(p, contentsRect, elementNameToPaint);
 }
 
+#include <NetworkManager.h>
+#include "networkmanagersettings.h"
+#include "connectionitem.h"
 QGraphicsWidget * NetworkManagerApplet::graphicsWidget()
 {
+#if 0
+    NetworkManagerSettings * foo = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
+    RemoteConnection * bar = foo->findConnection(foo->connections().first());
+    
+    return new ConnectionItem(bar, this);
+    //return new InterfaceItem( Solid::Control::NetworkManager::networkInterfaces().first(), InterfaceItem::InterfaceName, this);
+#else
     return m_popup;
+#endif
 }
 
 void NetworkManagerApplet::popupEvent(bool show)

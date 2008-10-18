@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networking.h>
 #include <solid/control/networkinterface.h>
 
+#include "../libs/types.h"
+
 class QGraphicsLinearLayout;
 class QSignalMapper;
 
@@ -48,14 +50,28 @@ Q_OBJECT
 public:
     NetworkManagerPopup(QGraphicsItem *parent);
     virtual ~NetworkManagerPopup();
-private Q_SLOTS:
+public Q_SLOTS:
     /** slots called when a connection in the popup is clicked */
     void activateConnection(const QString&);
     void deactivateConnection(const QString&);
 
+    /**
+     * Update the popup and notify on device changes
+     */
     void networkInterfaceAdded(const QString&);
-
     void networkInterfaceRemoved(const QString&);
+
+    /**
+     * Update the popup and notify on wireless changes
+     */
+    void accessPointAppeared(const QString &);
+    //void accessPointDisappeared(const QString &);
+
+    /**
+     * Update the popup and notify on configuration changes
+     */
+    //void connectionAdded();
+    //void connectionRemoved();
 
     void overallStatusChanged(Solid::Networking::Status);
     /**
@@ -80,6 +96,7 @@ private Q_SLOTS:
     void manageConnections();
 private:
     void populateConnectionList(NetworkManagerSettings*);
+    bool connectionIsAppropriate(const QVariantMapMap& connection) const;
     QStringList interfacesForConnection(OrgFreedesktopNetworkManagerSettingsConnectionInterface*) const;
     Solid::Control::NetworkInterface::Type typeForConnection(const QString &connectionString) const;
 

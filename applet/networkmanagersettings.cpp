@@ -24,14 +24,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
+#include "remoteconnection.h"
+
 NetworkManagerSettings::NetworkManagerSettings(const QString & service, QObject * parent)
-    : OrgFreedesktopNetworkManagerSettingsInterface(service, QLatin1String(NM_DBUS_PATH_SETTINGS), QDBusConnection::systemBus(), parent), m_service(service)
+    : OrgFreedesktopNetworkManagerSettingsInterface(service, QLatin1String(NM_DBUS_PATH_SETTINGS), QDBusConnection::systemBus(), parent)
 {
     if (isValid())
     {
     QList<QDBusObjectPath> userConnections = ListConnections();
     foreach (QDBusObjectPath op, userConnections) {
-        OrgFreedesktopNetworkManagerSettingsConnectionInterface * connectionIface = new OrgFreedesktopNetworkManagerSettingsConnectionInterface(m_service, op.path(), QDBusConnection::systemBus(), this);
+        RemoteConnection * connectionIface = new RemoteConnection(service, op.path(), this);
         m_connections.insert(op.path(), connectionIface);
         connect( connectionIface, SIGNAL(Removed()), this, SLOT(onConnectionRemoved()));
         connect( connectionIface, SIGNAL(Updated(const QVariantMapMap&)), this, SLOT(onConnectionUpdated(const QVariantMapMap&)));
@@ -51,7 +53,7 @@ QStringList NetworkManagerSettings::connections() const
     return m_connections.keys();
 }
 
-OrgFreedesktopNetworkManagerSettingsConnectionInterface * NetworkManagerSettings::findConnection(const QString& op) const
+RemoteConnection * NetworkManagerSettings::findConnection(const QString& op) const
 {
     return m_connections.value(op);
 }
@@ -59,7 +61,7 @@ OrgFreedesktopNetworkManagerSettingsConnectionInterface * NetworkManagerSettings
 void NetworkManagerSettings::onConnectionAdded(const QDBusObjectPath& op)
 {
     kDebug() << op.path();
-    OrgFreedesktopNetworkManagerSettingsConnectionInterface * connectionIface = new OrgFreedesktopNetworkManagerSettingsConnectionInterface(m_service, op.path(), QDBusConnection::systemBus());
+    RemoteConnection * connectionIface = new RemoteConnection(service(), op.path(), this);
     m_connections.insert(op.path(), connectionIface);
     connect( connectionIface, SIGNAL(Removed()), this, SLOT(onConnectionRemoved()));
     connect( connectionIface, SIGNAL(Updated(const QVariantMapMap&)), this, SLOT(onConnectionUpdated(const QVariantMapMap&)));
@@ -68,14 +70,14 @@ void NetworkManagerSettings::onConnectionAdded(const QDBusObjectPath& op)
 
 void NetworkManagerSettings::onConnectionRemoved()
 {
-    OrgFreedesktopNetworkManagerSettingsConnectionInterface * connection = static_cast<OrgFreedesktopNetworkManagerSettingsConnectionInterface*>(sender());
+    RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
     kDebug() << connection->path();
     emit connectionRemoved(connection->path());
 }
 
 void NetworkManagerSettings::onConnectionUpdated(const QVariantMapMap&)
 {
-    OrgFreedesktopNetworkManagerSettingsConnectionInterface * connection = static_cast<OrgFreedesktopNetworkManagerSettingsConnectionInterface*>(sender());
+    RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
     kDebug() << connection->path();
     emit connectionUpdated(connection->path());
 }

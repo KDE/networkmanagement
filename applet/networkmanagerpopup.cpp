@@ -44,10 +44,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/PushButton>
 
 #include <solid/control/networkmanager.h>
+#include <solid/control/wirednetworkinterface.h>
+#include <solid/control/wirelessnetworkinterface.h>
+#include <solid/control/wirelessaccesspoint.h>
 
 #include "../libs/marshalarguments.h"
-#include "nm-exported-connectioninterface.h"
-#include "nm-settingsinterface.h"
+#include "remoteconnection.h"
 #include "networkmanagersettings.h"
 
 NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
@@ -58,21 +60,21 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     qDBusRegisterMetaType<QMap<QString, QVariant> >();
     qDBusRegisterMetaType<QMap<QString, QMap<QString, QVariant> > >();
 
+    // containing vertical linear layout
     m_layout = new QGraphicsLinearLayout(Qt::Vertical);
-    // a vertical list of appropriate connections
-    // header label
+    //   a vertical list of appropriate connections
+    //     header label
     m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical, m_layout);
     Plasma::Label * header = new Plasma::Label(this);
     header->setText(i18nc("Label for connection list popup","<b>Network Connections</b>"));
     m_connectionLayout->addItem(header);
-    //build a list of connections
     m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
     m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
     populateConnectionList(m_userSettings);
     populateConnectionList(m_systemSettings);
     m_layout->addItem(m_connectionLayout);
 
-    // then a block of status labels and buttons
+    //   then a grid of status labels and buttons
     // +----------------------------+
     // |              | [Manage...] |
     // | Wireless hw switch status  |
@@ -82,12 +84,12 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_btnManageConnections = new Plasma::PushButton(this);
     m_btnManageConnections->setText(i18nc("Button text for showing the Manage Connections KCModule", "Manage..."));
     gridLayout->addItem(m_btnManageConnections, 0, 1, 1, 1);
-    m_lblRfkill = new Plasma::Label(this);
-    m_lblRfkill->nativeWidget()->setWordWrap(false);
+    //m_lblRfkill = new Plasma::Label(this);
+    //m_lblRfkill->nativeWidget()->setWordWrap(false);
     //sets the label text
-    managerWirelessHardwareEnabledChanged(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+    //managerWirelessHardwareEnabledChanged(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
 
-    gridLayout->addItem(m_lblRfkill, 1, 0, 1, 2);
+    //gridLayout->addItem(m_lblRfkill, 1, 0, 1, 2);
     m_btnEnableNetworking = new Plasma::PushButton(this);
     m_btnEnableWireless = new Plasma::PushButton(this);
     m_btnEnableNetworking->nativeWidget()->setCheckable(true);
@@ -123,21 +125,173 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
 NetworkManagerPopup::~NetworkManagerPopup()
 {
     delete m_layout;
-
 }
 
 void NetworkManagerPopup::populateConnectionList(NetworkManagerSettings * service)
 {
     foreach (QString connectionPath, service->connections() ) {
-        OrgFreedesktopNetworkManagerSettingsConnectionInterface * connection = service->findConnection(connectionPath);
+        RemoteConnection * connection = service->findConnection(connectionPath);
         QVariantMapMap settings = connection->GetSettings();
         QVariantMap connectionSetting = settings.value("connection");
-        Plasma::PushButton * connectionButton = new Plasma::PushButton(this);
-        m_connectionActivationSignalMapper->setMapping(connectionButton, service->service() + QChar('%') + connectionPath);
-        QObject::connect(connectionButton, SIGNAL(clicked()), m_connectionActivationSignalMapper, SLOT(map()));
-        connectionButton->setText(connectionSetting.value("id").toString());
-        m_connectionLayout->addItem(connectionButton);
+        if (connectionIsAppropriate(settings)) {
+            Plasma::PushButton * connectionButton = new Plasma::PushButton(this);
+            m_connectionActivationSignalMapper->setMapping(connectionButton, service->service() + QChar('%') + connectionPath);
+            QObject::connect(connectionButton, SIGNAL(clicked()), m_connectionActivationSignalMapper, SLOT(map()));
+            connectionButton->setText(connectionSetting.value("id").toString());
+            m_connectionLayout->addItem(connectionButton);
+        }
     }
+}
+
+class ConnectionInspector
+{
+public:
+    virtual ~ConnectionInspector() {
+    }
+
+    virtual bool accept(const QVariantMapMap& connection) = 0;
+    QString connectionType(const QVariantMapMap& connection)
+    {
+        QString type;
+        if ( connection.contains(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME))) {
+            QVariantMap connectionSetting = connection.value(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
+            if (connectionSetting.contains(QLatin1String(NM_SETTING_CONNECTION_TYPE))) {
+                type = connectionSetting.value(QLatin1String(NM_SETTING_CONNECTION_TYPE)).toString();
+            }
+        }
+        return type;
+    }
+};
+
+class WiredConnectionInspector : public ConnectionInspector
+{
+public:
+    WiredConnectionInspector(Solid::Control::WiredNetworkInterface* iface) : m_iface(iface) { }
+    bool accept(const QVariantMapMap& connection)
+    {
+        return (connectionType(connection) == QLatin1String(NM_SETTING_WIRED_SETTING_NAME) && m_iface->carrier());
+    }
+private:
+    Solid::Control::WiredNetworkInterface *m_iface;
+};
+
+class WirelessConnectionInspector : public ConnectionInspector
+{
+public:
+    WirelessConnectionInspector(Solid::Control::WirelessNetworkInterface* iface) : m_iface(iface) { }
+    bool accept(const QVariantMapMap& connection)
+    {
+        bool acceptable = false;
+        if (connectionType(connection) == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
+            // check if the essid in the connection matches one of the access points returned by NM
+            // on this device.
+            // If an AP is hiding the essid, but one of the Settings services provides a connection
+            // with this essid, NM will add the essid to the AP object, so we can use this technique
+            // even for hidden networks
+
+            QString ssid;
+            if ( connection.contains(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME))) {
+                QVariantMap connectionSetting = connection.value(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME));
+                if (connectionSetting.contains(QLatin1String(NM_SETTING_WIRELESS_SSID))) {
+                    ssid = connectionSetting.value(QLatin1String(NM_SETTING_WIRELESS_SSID)).toString();
+                    foreach (QString accessPointUni, m_iface->accessPoints()) {
+                        Solid::Control::AccessPoint * ap = m_iface->findAccessPoint(accessPointUni);
+                        if (ap->ssid() == ssid) {
+                            acceptable = true;
+                        }
+                    }
+                }
+            }
+        }
+        return acceptable;
+    }
+private:
+    Solid::Control::WirelessNetworkInterface *m_iface;
+};
+
+class GsmConnectionInspector : public ConnectionInspector
+{
+public:
+    bool accept(const QVariantMapMap& connection)
+    {
+        return connectionType(connection) == QLatin1String(NM_SETTING_GSM_SETTING_NAME);
+    }
+};
+
+class CdmaConnectionInspector : public ConnectionInspector
+{
+public:
+    bool accept(const QVariantMapMap& connection)
+    {
+        return connectionType(connection) == QLatin1String(NM_SETTING_CDMA_SETTING_NAME);
+    }
+};
+
+class PppoeConnectionInspector : public ConnectionInspector
+{
+public:
+    bool accept(const QVariantMapMap& connection)
+    {
+        return connectionType(connection) == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME);
+    }
+};
+
+class ConnectionInspectorFactory
+{
+public:
+    ConnectionInspector *connectionInspector(Solid::Control::NetworkInterface* iface)
+    {
+        ConnectionInspector * inspector = 0;
+        if (!m_inspectors.contains(iface)) {
+            switch (iface->type()) {
+            case Solid::Control::NetworkInterface::Ieee8023:
+                inspector = new WiredConnectionInspector(static_cast<Solid::Control::WiredNetworkInterface*>(iface));
+                break;
+            case Solid::Control::NetworkInterface::Ieee80211:
+                inspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface));
+                break;
+            case Solid::Control::NetworkInterface::Serial:
+                inspector = new PppoeConnectionInspector;
+                break;
+            case Solid::Control::NetworkInterface::Gsm:
+                inspector = new GsmConnectionInspector;
+                break;
+            case Solid::Control::NetworkInterface::Cdma:
+                inspector = new CdmaConnectionInspector;
+                break;
+            default:
+                kDebug() << "Unhandled network interface type : " << iface->type();
+            }
+            m_inspectors.insert(iface, inspector);
+        } else {
+            inspector = m_inspectors.value(iface);
+        }
+        Q_ASSERT(inspector);
+        return inspector;
+    }
+private:
+    QMap<Solid::Control::NetworkInterface*, ConnectionInspector*> m_inspectors;
+};
+
+bool NetworkManagerPopup::connectionIsAppropriate(const QVariantMapMap& connection) const
+{
+    kDebug() << connection;
+    bool acceptable = false;
+    ConnectionInspectorFactory cif;
+    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+        ConnectionInspector * inspector = cif.connectionInspector(iface);
+        kDebug() << "Testing " << connection.value(NM_SETTING_CONNECTION_SETTING_NAME).value(NM_SETTING_CONNECTION_ID).toString() << " with iface " << iface->uni();
+
+        if (inspector->accept(connection)) {
+            kDebug() << "  accepted";
+            acceptable = true;
+            break;
+        }
+    }
+    if (!acceptable) {
+        kDebug() << "No network interface accepted " << connection.value(NM_SETTING_CONNECTION_SETTING_NAME).value(NM_SETTING_CONNECTION_ID).toString();
+    }
+    return acceptable;
 }
 
 void NetworkManagerPopup::networkInterfaceAdded(const QString&)
@@ -146,6 +300,11 @@ void NetworkManagerPopup::networkInterfaceAdded(const QString&)
 }
 
 void NetworkManagerPopup::networkInterfaceRemoved(const QString&)
+{
+
+}
+
+void NetworkManagerPopup::accessPointAppeared(const QString &)
 {
 
 }
@@ -199,7 +358,7 @@ void NetworkManagerPopup::activateConnection(const QString& connection)
         service = m_userSettings;
     }
     // get the actual connection interface
-    OrgFreedesktopNetworkManagerSettingsConnectionInterface * connectionIface =
+    RemoteConnection * connectionIface =
         service->findConnection(connection.section('%', 1) );
     if (connectionIface) {
         QVariantMapMap settings = connectionIface->GetSettings();
@@ -253,6 +412,7 @@ Solid::Control::NetworkInterface::Type NetworkManagerPopup::typeForConnection(co
     } else {
         kWarning() << "Connection has unrecognised type string " << connectionString;
     }
+    return Solid::Control::NetworkInterface::UnknownType;
 }
 
 #include "networkmanagerpopup.moc"

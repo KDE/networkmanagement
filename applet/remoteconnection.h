@@ -18,40 +18,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM_SETTINGS_CLIENT_H
-#define NM_SETTINGS_CLIENT_H
-
-#include "nm-settingsinterface.h"
-
-#include <QDBusObjectPath>
-#include <QHash>
+#ifndef REMOTE_CONNECTION_H
+#define REMOTE_CONNECTION_H
 
 #include "nm-exported-connectioninterface.h"
 
-class RemoteConnection;
+#include <solid/control/networkinterface.h>
 
-/**
- * Class to cache and access a remote NetworkManagerSettings service
- */
-class NetworkManagerSettings : public OrgFreedesktopNetworkManagerSettingsInterface
+class RemoteConnection : public OrgFreedesktopNetworkManagerSettingsConnectionInterface
 {
 Q_OBJECT
 public:
-    NetworkManagerSettings(const QString & service, QObject * parent);
-    virtual ~NetworkManagerSettings();
-    QStringList connections() const;
-    RemoteConnection * findConnection(const QString&) const;
-Q_SIGNALS:
-    void connectionAdded(const QString&);
-    void connectionRemoved(const QString&);
-    void connectionUpdated(const QString&);
-private Q_SLOTS:
-    void onConnectionAdded(const QDBusObjectPath&);
-    void onConnectionRemoved();
-    void onConnectionUpdated(const QVariantMapMap&);
+    RemoteConnection(const QString &service, const QString &path, QObject * parent = 0);
+    ~RemoteConnection();
+    QString id() const;
+    Solid::Control::NetworkInterface::Type type() const;
+//public Q_SLOTS:
+//  settingsUpdated(const QVariantMapMap&);
 private:
-    QHash<QString, RemoteConnection*> m_connections;
-    QString m_service;
+    QString m_id;
+    Solid::Control::NetworkInterface::Type m_type;
 };
 
-#endif
+#endif // REMOTE_CONNECTION_H
