@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Network Manager (Alpha of an Alpha edition)
+Name[el]=Διαχειριστής δικτύου (πρώιμη έκδοση άλφα)
 Name[gl]=Xestor da rede (Alfa dunha versión alfa)
 Name[km]=កម្មវិធី​គ្រប់គ្រង​បណ្ដាញ (អាល់ហ្វា​​នៃ​កា​រកែសម្រួល​អាល់ហ្វា)
 Name[pt]=Gestor de Rede (Alpha de uma versão Alpha)
@@ -9,6 +10,7 @@ Name[sv]=Nätverkshanterare (alfa av en alfautgåva)
 Name[uk]=Керування мережею (Альфа альфа версії)
 Name[x-test]=xxNetwork Manager (Alpha of an Alpha edition)xx
 Comment=Configure network interfaces
+Comment[el]=Ρύθμιση διασυνδέσεων δικτύου
 Comment[gl]=Configura as interfaces de rede
 Comment[km]=កំណត់​រចនាសម្ព័ន្ធ​ចំណុច​ប្រទាក់​បណ្ដាញ
 Comment[pt]=Configurar as interfaces de rede
