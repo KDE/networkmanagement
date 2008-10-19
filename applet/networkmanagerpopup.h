@@ -95,10 +95,6 @@ public Q_SLOTS:
      */
     void manageConnections();
 private:
-    void populateConnectionList(NetworkManagerSettings*);
-    bool connectionIsAppropriate(const QVariantMapMap& connection) const;
-    QStringList interfacesForConnection(OrgFreedesktopNetworkManagerSettingsConnectionInterface*) const;
-    Solid::Control::NetworkInterface::Type typeForConnection(const QString &connectionString) const;
 
     QGraphicsLinearLayout * m_layout;
     QGraphicsLinearLayout * m_connectionLayout;
@@ -106,8 +102,6 @@ private:
     Plasma::PushButton * m_btnEnableNetworking;
     Plasma::PushButton * m_btnEnableWireless;
     Plasma::PushButton * m_btnManageConnections;
-    NetworkManagerSettings * m_userSettings;
-    NetworkManagerSettings * m_systemSettings;
     QSignalMapper * m_connectionActivationSignalMapper;
     QSignalMapper * m_connectionDeactivationSignalMapper;
 };

@@ -25,6 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 
+#include "interfacegroup.h"
+
+// to go:
 #include "interfaceitem.h"
 #include "networkmanagerpopup.h"
 
@@ -110,11 +113,13 @@ void NetworkManagerApplet::paintInterfaceStatus(Solid::Control::NetworkInterface
 QGraphicsWidget * NetworkManagerApplet::graphicsWidget()
 {
 #if 0
-    NetworkManagerSettings * foo = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
-    RemoteConnection * bar = foo->findConnection(foo->connections().first());
+    //NetworkManagerSettings * foo = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
+    //RemoteConnection * bar = foo->findConnection(foo->connections().first());
     
-    return new ConnectionItem(bar, this);
+    //return new ConnectionItem(bar, this);
     //return new InterfaceItem( Solid::Control::NetworkManager::networkInterfaces().first(), InterfaceItem::InterfaceName, this);
+    if (Solid::Control::NetworkManager::networkInterfaces().count())
+        return new InterfaceGroup(Solid::Control::NetworkManager::networkInterfaces().first()->type(), this);
 #else
     return m_popup;
 #endif

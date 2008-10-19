@@ -87,7 +87,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
             m_icon->setIcon("network-wired");
             break;
         case Solid::Control::NetworkInterface::Ieee80211:
-            m_icon->setIcon("network-wired");
+            m_icon->setIcon("network-wireless");
             break;
         case Solid::Control::NetworkInterface::Serial:
             m_icon->setIcon("modem");

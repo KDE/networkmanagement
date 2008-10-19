@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "remoteconnection.h"
 
+#include <NetworkManager.h>
 #include <nm-setting-cdma.h>
 #include <nm-setting-connection.h>
 #include <nm-setting-gsm.h>
@@ -32,17 +33,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
+#include <solid/control/networkmanager.h>
+
+#include "nm-active-connectioninterface.h"
+
 RemoteConnection::RemoteConnection(const QString& service, const QString & path, QObject * parent)
 : OrgFreedesktopNetworkManagerSettingsConnectionInterface(service, path, QDBusConnection::systemBus(), parent)
 {
     qDBusRegisterMetaType<QMap<QString, QVariant> >();
     qDBusRegisterMetaType<QMap<QString, QMap<QString, QVariant> > >();
 
-    QVariantMapMap connection = GetSettings();
-    kDebug() << connection;
+    m_connection = GetSettings();
+    kDebug() << m_connection;
 
-    if ( connection.contains(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME))) {
-        QVariantMap connectionSetting = connection.value(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
+    if ( m_connection.contains(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME))) {
+        QVariantMap connectionSetting = m_connection.value(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
         if (connectionSetting.contains(QLatin1String(NM_SETTING_CONNECTION_ID))) {
             m_id = connectionSetting.value(QLatin1String(NM_SETTING_CONNECTION_ID)).toString();
         }
@@ -78,4 +83,21 @@ Solid::Control::NetworkInterface::Type RemoteConnection::type() const
     return m_type;
 }
 
+QVariantMapMap RemoteConnection::settings() const
+{
+    return m_connection;
+}
+
+bool RemoteConnection::active() const
+{
+    QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
+    foreach (QString conn, activeConnections) {
+        OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
+                conn, QDBusConnection::systemBus(), 0);
+        if (candidate.serviceName() == service() && candidate.connection().path() == path()) {
+            return true;
+        }
+    }
+    return false;
+}
 // vim: sw=4 sts=4 et tw=100

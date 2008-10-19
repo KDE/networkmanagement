@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nm-exported-connectioninterface.h"
 
+#include "../libs/types.h"
+
 #include <solid/control/networkinterface.h>
 
 class RemoteConnection : public OrgFreedesktopNetworkManagerSettingsConnectionInterface
@@ -33,11 +35,14 @@ public:
     ~RemoteConnection();
     QString id() const;
     Solid::Control::NetworkInterface::Type type() const;
+    QVariantMapMap settings() const;
+    bool active() const;
 //public Q_SLOTS:
 //  settingsUpdated(const QVariantMapMap&);
 private:
     QString m_id;
     Solid::Control::NetworkInterface::Type m_type;
+    QVariantMapMap m_connection;
 };
 
 #endif // REMOTE_CONNECTION_H
