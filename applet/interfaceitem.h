@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef APPLET_INTERFACEITEM_H
 #define APPLET_INTERFACEITEM_H
 
+#include <QDBusObjectPath>
 #include <QGraphicsWidget>
 
 #include <Plasma/Icon>
@@ -42,6 +43,11 @@ namespace Plasma
     class Label;
 } // namespace Plasma
 
+/**
+ * Represents a single network interface
+ * Displays status, updates itself
+ * Allows deactivating any active connection
+ */
 class InterfaceItem : public QGraphicsWidget
 {
 Q_OBJECT
@@ -55,6 +61,7 @@ public:
 public slots:
     void activeConnectionsChanged();
     void connectionStateChanged(int);
+    void connectButtonClicked();
 protected:
     /**
      * The interface is unavailable for connections, update the UI
@@ -82,5 +89,7 @@ protected:
     Plasma::Icon * m_connectionInfoSecurityIcon;
     Plasma::Icon * m_connectButton;
     NameDisplayMode m_nameMode;
+
+    QDBusObjectPath m_activeConnection;
 };
 #endif // APPLET_INTERFACEWIDGET_H

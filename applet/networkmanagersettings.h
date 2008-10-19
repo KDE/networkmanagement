@@ -42,9 +42,9 @@ public:
     QStringList connections() const;
     RemoteConnection * findConnection(const QString&) const;
 Q_SIGNALS:
-    void connectionAdded(const QString&);
-    void connectionRemoved(const QString&);
-    void connectionUpdated(const QString&);
+    void connectionAdded(NetworkManagerSettings *, const QString&);
+    void connectionRemoved(NetworkManagerSettings *, const QString&);
+    void connectionUpdated(NetworkManagerSettings *, const QString&);
 private Q_SLOTS:
     void onConnectionAdded(const QDBusObjectPath&);
     void onConnectionRemoved();

@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KPushButton>
 #include <KToolInvocation>
 
+#include <Plasma/CheckBox>
 #include <Plasma/Label>
 #include <Plasma/PushButton>
 
@@ -83,26 +84,26 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     // | Wireless hw switch status  |
     // | [Networking] | [Wireless]  |
     // +----------------------------|
-    QGraphicsGridLayout * gridLayout = new QGraphicsGridLayout(m_layout);
+    //QGraphicsGridLayout * gridLayout = new QGraphicsGridLayout(m_layout);
     m_btnManageConnections = new Plasma::PushButton(this);
     m_btnManageConnections->setText(i18nc("Button text for showing the Manage Connections KCModule", "Manage..."));
-    gridLayout->addItem(m_btnManageConnections, 0, 1, 1, 1);
+    //gridLayout->addItem(m_btnManageConnections, 0, 0, 1, 2);
+    m_layout->addItem(m_btnManageConnections);
     //m_lblRfkill = new Plasma::Label(this);
     //m_lblRfkill->nativeWidget()->setWordWrap(false);
     //sets the label text
     //managerWirelessHardwareEnabledChanged(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
 
     //gridLayout->addItem(m_lblRfkill, 1, 0, 1, 2);
-    m_btnEnableNetworking = new Plasma::PushButton(this);
-    m_btnEnableWireless = new Plasma::PushButton(this);
-    m_btnEnableNetworking->nativeWidget()->setCheckable(true);
-    m_btnEnableWireless->nativeWidget()->setCheckable(true);
+    //m_btnEnableNetworking = new Plasma::CheckBox(this);
+    m_btnEnableWireless = new Plasma::CheckBox(this);
     managerWirelessEnabledChanged(Solid::Control::NetworkManager::isWirelessEnabled());
-    m_btnEnableNetworking->setText(i18nc("Label for pushbutton enabling networking", "Networking"));
+    //m_btnEnableNetworking->setText(i18nc("Label for pushbutton enabling networking", "All Networking"));
     m_btnEnableWireless->setText(i18nc("Label for pushbutton enabling wireless", "Wireless"));
-    gridLayout->addItem(m_btnEnableNetworking, 2, 0, 1, 2);
-    gridLayout->addItem(m_btnEnableWireless, 3, 0, 1, 2);
-    m_layout->addItem(gridLayout);
+    //gridLayout->addItem(m_btnEnableNetworking, 1, 0, 1, 1);
+    //gridLayout->addItem(m_btnEnableWireless, 1, 0, 1, 2);
+    //m_layout->addItem(gridLayout);
+    m_layout->addItem(m_btnEnableWireless);
     setLayout(m_layout);
     // connect up the buttons and the manager's signals
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
@@ -115,9 +116,9 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
             this, SLOT(networkInterfaceRemoved(const QString&)));
     QObject::connect(m_btnManageConnections, SIGNAL(clicked()),
             this, SLOT(manageConnections()));
-    QObject::connect(m_btnEnableNetworking->nativeWidget(), SIGNAL(toggled(bool)),
-            this, SLOT(userNetworkingEnabledChanged(bool)));
-    QObject::connect(m_btnEnableWireless->nativeWidget(), SIGNAL(toggled(bool)),
+    //QObject::connect(m_btnEnableNetworking, SIGNAL(toggled(bool)),
+    //        this, SLOT(userNetworkingEnabledChanged(bool)));
+    QObject::connect(m_btnEnableWireless, SIGNAL(toggled(bool)),
             this, SLOT(userWirelessEnabledChanged(bool)));
     QObject::connect(m_connectionActivationSignalMapper, SIGNAL(mapped(const QString&)),
             this, SLOT(activateConnection(const QString&)));
@@ -130,29 +131,9 @@ NetworkManagerPopup::~NetworkManagerPopup()
     delete m_layout;
 }
 
-void NetworkManagerPopup::networkInterfaceAdded(const QString&)
-{
-
-}
-
-void NetworkManagerPopup::networkInterfaceRemoved(const QString&)
-{
-
-}
-
-void NetworkManagerPopup::accessPointAppeared(const QString &)
-{
-
-}
-
-void NetworkManagerPopup::overallStatusChanged(Solid::Networking::Status)
-{
-
-}
-
 void NetworkManagerPopup::managerWirelessEnabledChanged(bool enabled)
 {
-    m_btnEnableWireless->nativeWidget()->setChecked(enabled);
+    m_btnEnableWireless->setChecked(enabled);
 }
 
 void NetworkManagerPopup::managerWirelessHardwareEnabledChanged(bool enabled)

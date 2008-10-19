@@ -65,21 +65,22 @@ void NetworkManagerSettings::onConnectionAdded(const QDBusObjectPath& op)
     m_connections.insert(op.path(), connectionIface);
     connect( connectionIface, SIGNAL(Removed()), this, SLOT(onConnectionRemoved()));
     connect( connectionIface, SIGNAL(Updated(const QVariantMapMap&)), this, SLOT(onConnectionUpdated(const QVariantMapMap&)));
-    emit connectionAdded(op.path());
+    emit connectionAdded(this, op.path());
 }
 
 void NetworkManagerSettings::onConnectionRemoved()
 {
     RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
     kDebug() << connection->path();
-    emit connectionRemoved(connection->path());
+    emit connectionRemoved(this, connection->path());
+    //TODO delete sender();
 }
 
 void NetworkManagerSettings::onConnectionUpdated(const QVariantMapMap&)
 {
     RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
     kDebug() << connection->path();
-    emit connectionUpdated(connection->path());
+    emit connectionUpdated(this, connection->path());
 }
 
 #include "networkmanagersettings.moc"

@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define INTERFACEGROUP_H
 
 #include <QGraphicsWidget>
+#include <QHash>
+#include <QPair>
 
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
@@ -31,6 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class NetworkManagerSettings;
 class QGraphicsLinearLayout;
+class ConnectionItem;
+class InterfaceItem;
 class RemoteConnection;
 
 /** Represents a group of network interfaces of the same type
@@ -45,16 +49,19 @@ public:
     virtual ~InterfaceGroup();
     Solid::Control::NetworkInterface::Type interfaceType() const;
 protected slots:
+    virtual void activateConnection(ConnectionItem*);
     virtual void interfaceAdded(const QString&);
     virtual void interfaceRemoved(const QString&);
-    //void connectionAdded(const QString&);
-    //void connectionRemoved(const QString&);
+    void connectionAddedToService(NetworkManagerSettings *, const QString&);
+    void connectionRemovedFromService(NetworkManagerSettings *, const QString&);
 private:
-    void populateConnectionList(NetworkManagerSettings*);
+    void addInterfaceInternal(Solid::Control::NetworkInterface *);
+    void addConnectionInternal(NetworkManagerSettings*, const QString &connectionPath);
+    void addSettingsService(NetworkManagerSettings*);
     // list of connection objects for this interface type
-    QList<RemoteConnection *> m_connections;
+    QHash<QPair<QString,QString>, ConnectionItem *> m_connections;
     // list of interfaces
-    Solid::Control::NetworkInterfaceList m_interfaces;
+    QHash<QString, InterfaceItem *> m_interfaces;
     QGraphicsLinearLayout * m_layout;
     Solid::Control::NetworkInterface::Type m_type;
     NetworkManagerSettings * m_userSettings;

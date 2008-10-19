@@ -42,8 +42,15 @@ Q_OBJECT
 public:
     ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent = 0);
     virtual ~ConnectionItem();
+    RemoteConnection * connection() const;
 signals:
-    void clicked();
+    /**
+     * Indicate that the 'connect' button was clicked.  Used by the containing InterfaceGroup to
+     * tell the manager to activate the connection on one of its devices
+     */
+    void clicked(ConnectionItem*);
+protected Q_SLOTS:
+    void emitClicked();
 protected:
     RemoteConnection * m_connection;
     QGraphicsGridLayout * m_layout;

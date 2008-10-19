@@ -34,6 +34,7 @@ class QSignalMapper;
 
 namespace Plasma
 {
+class CheckBox;
 class Label;
 class PushButton;
 } // namespace Plasma
@@ -58,13 +59,13 @@ public Q_SLOTS:
     /**
      * Update the popup and notify on device changes
      */
-    void networkInterfaceAdded(const QString&);
-    void networkInterfaceRemoved(const QString&);
+    //void networkInterfaceAdded(const QString&);
+    //void networkInterfaceRemoved(const QString&);
 
     /**
      * Update the popup and notify on wireless changes
      */
-    void accessPointAppeared(const QString &);
+    //void accessPointAppeared(const QString &);
     //void accessPointDisappeared(const QString &);
 
     /**
@@ -73,7 +74,7 @@ public Q_SLOTS:
     //void connectionAdded();
     //void connectionRemoved();
 
-    void overallStatusChanged(Solid::Networking::Status);
+    //void overallStatusChanged(Solid::Networking::Status);
     /**
      * Handle signals from NM if wireless was disabled in software
      */
@@ -99,8 +100,8 @@ private:
     QGraphicsLinearLayout * m_layout;
     QGraphicsLinearLayout * m_connectionLayout;
     Plasma::Label * m_lblRfkill;
-    Plasma::PushButton * m_btnEnableNetworking;
-    Plasma::PushButton * m_btnEnableWireless;
+    Plasma::CheckBox * m_btnEnableNetworking;
+    Plasma::CheckBox * m_btnEnableWireless;
     Plasma::PushButton * m_btnManageConnections;
     QSignalMapper * m_connectionActivationSignalMapper;
     QSignalMapper * m_connectionDeactivationSignalMapper;

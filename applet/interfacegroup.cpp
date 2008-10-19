@@ -29,51 +29,76 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionitem.h"
 #include "connectioninspector.h"
 #include "networkmanagersettings.h"
+#include "remoteconnection.h"
+
 
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, QGraphicsWidget * parent)
 : QGraphicsWidget(parent), m_type(type)
-
 {
-    //m_connections;
-    //m_interfaces;
     m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
 
     // create an interfaceItem for each interface of our type
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-        if (iface->type() == type) {
-            InterfaceItem * ii = new InterfaceItem(iface, InterfaceItem::InterfaceName, this);
-            m_layout->addItem(ii);
+        if (iface->type() == interfaceType()) {
+            addInterfaceInternal(iface);
         }
     }
     // create a connectionItem for each appropriate connection
     m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
     m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
-    populateConnectionList(m_userSettings);
-    populateConnectionList(m_systemSettings);
+    addSettingsService(m_userSettings);
+    addSettingsService(m_systemSettings);
 
     setLayout(m_layout);
     // hook up signals to allow us to change the connection list depending on APs present, etc
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+            SLOT(interfaceAdded(const QString&)));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+            SLOT(interfaceRemoved(const QString&)));
 }
 
-void InterfaceGroup::populateConnectionList(NetworkManagerSettings * service) {
-    ConnectionInspectorFactory cif;
-    foreach (QString connectionPath, service->connections() ) {
-        RemoteConnection * connection = service->findConnection(connectionPath);
-        foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-            if (iface->type() == m_type) {
-                ConnectionInspector * inspector = cif.connectionInspector(iface);
-                if (inspector->accept(connection)) {
-                    ConnectionItem * ci = new ConnectionItem(connection, this);
-                    m_layout->addItem(ci);
-                }
-            }
-        }
-    }
-}
 
 InterfaceGroup::~InterfaceGroup()
 {
 
+}
+
+void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
+{
+    Q_ASSERT(iface);
+    if (!m_interfaces.contains(iface->uni())) {
+        InterfaceItem * ii = new InterfaceItem(iface, InterfaceItem::InterfaceName, this);
+        m_layout->addItem(ii);
+        m_interfaces.insert(iface->uni(), ii);
+        m_layout->invalidate();
+    }
+}
+
+void InterfaceGroup::addSettingsService(NetworkManagerSettings * service)
+{
+    connect(service, SIGNAL(connectionAdded(NetworkManagerSettings *, const QString&)), SLOT(connectionAddedToService(NetworkManagerSettings *, const QString&)));
+    connect(service, SIGNAL(connectionRemoved(NetworkManagerSettings *, const QString&)), SLOT(connectionRemovedFromService(NetworkManagerSettings *, const QString&)));
+    //connect(service, SIGNAL(connectionUpdated(NetworkManagerSettings *, const QString&);
+    foreach (QString connectionPath, service->connections() ) {
+        addConnectionInternal(service, connectionPath);
+    }
+}
+
+void InterfaceGroup::addConnectionInternal(NetworkManagerSettings * service, const QString& connectionPath)
+{
+    ConnectionInspectorFactory cif;
+    RemoteConnection * connection = service->findConnection(connectionPath);
+    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+        if (iface->type() == m_type) {
+            ConnectionInspector * inspector = cif.connectionInspector(iface);
+            if (inspector->accept(connection)) {
+                ConnectionItem * ci = new ConnectionItem(connection, this);
+                connect(ci, SIGNAL(clicked(ConnectionItem*)), SLOT(activateConnection(ConnectionItem*)));
+                m_connections.insert(QPair<QString,QString>(service->service(), connectionPath), ci);
+                m_layout->addItem(ci);
+            }
+        }
+    }
 }
 
 Solid::Control::NetworkInterface::Type InterfaceGroup::interfaceType() const
@@ -81,13 +106,52 @@ Solid::Control::NetworkInterface::Type InterfaceGroup::interfaceType() const
     return m_type;
 }
 
-void InterfaceGroup::interfaceAdded(const QString&)
+void InterfaceGroup::interfaceAdded(const QString& uni)
 {
+    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+    addInterfaceInternal(iface);
+    // KNotification
 }
 
-void InterfaceGroup::interfaceRemoved(const QString&)
+void InterfaceGroup::interfaceRemoved(const QString& uni)
 {
+    if (m_interfaces.contains(uni)) {
+        InterfaceItem * item = m_interfaces.take(uni);
+        m_layout->removeItem(item);
+        delete item;
+    }
+}
 
+void InterfaceGroup::activateConnection(ConnectionItem* item)
+{
+    // tell the manager to activate the connection
+    // which device??
+    QHash<QString, InterfaceItem *>::const_iterator i = m_interfaces.constBegin();
+    if ( i != m_interfaces.constEnd()) {
+        QString firstDeviceUni = i.key();
+        Solid::Control::NetworkManager::activateConnection(firstDeviceUni, item->connection()->service() + " " + item->connection()->path(), QVariantMap());
+    }
+    // if the manager updates the interface's state, we should then refresh the list of
+    // connections(remove any active connections from the list
+    // What about a connection that could be activated on 2 devices?
+    // Ideally we should keep them around
+}
+
+void InterfaceGroup::connectionAddedToService(NetworkManagerSettings * service, const QString& connectionPath)
+{
+    addConnectionInternal(service, connectionPath);
+}
+
+void InterfaceGroup::connectionRemovedFromService(NetworkManagerSettings * service, const QString& connectionPath)
+{
+    // look up the ConnectionItem and remove it
+    QPair<QString,QString> key(service->service(), connectionPath);
+    if (m_connections.contains(key)) {
+        ConnectionItem * item = m_connections.value(key);
+        m_layout->removeItem(item);
+        m_connections.remove(key);
+        delete item;
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

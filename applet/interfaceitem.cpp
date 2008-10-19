@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <NetworkManager.h>
 
-#include <QDBusObjectPath>
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
 
@@ -129,6 +128,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
             SLOT(activeConnectionsChanged()));
     connect(m_iface, SIGNAL(connectionStateChanged(int)),
             SLOT(connectionStateChanged(int)));
+    connect(m_connectButton, SIGNAL(clicked()),
+            SLOT(connectButtonClicked()));
 
     setNameDisplayMode(mode);
     connectionStateChanged(m_iface->connectionState());
@@ -190,12 +191,38 @@ void InterfaceItem::connectionStateChanged(int state)
     }
 }
 
+void InterfaceItem::connectButtonClicked()
+{
+    kDebug();
+    switch ( m_iface->connectionState()) {
+        case Solid::Control::NetworkInterface::Unavailable:
+            // impossible, but nothing to do
+            break;
+        case Solid::Control::NetworkInterface::Disconnected:
+        case Solid::Control::NetworkInterface::Failed:
+            kDebug() << "TODO: implement activating the default connection";
+            break;
+        case Solid::Control::NetworkInterface::Preparing:
+        case Solid::Control::NetworkInterface::Configuring:
+        case Solid::Control::NetworkInterface::NeedAuth:
+        case Solid::Control::NetworkInterface::IPConfig:
+        case Solid::Control::NetworkInterface::Activated: // lookup the active connection, get its state
+            // deactivate active connection
+            Solid::Control::NetworkManager::deactivateConnection(m_activeConnection.path());
+            break;
+        case Solid::Control::NetworkInterface::Unmanaged:
+        case Solid::Control::NetworkInterface::UnknownState:
+            break;
+    }
+}
+
 void InterfaceItem::setUnavailable()
 {
     m_icon->setEnabled(false);
     m_connectionNameLabel->setText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"));
     m_connectionInfoIpAddrLabel->setText("");
     m_connectButton->setEnabled(false);
+    m_activeConnection = QDBusObjectPath();
 }
 
 void InterfaceItem::setInactive()
@@ -204,14 +231,17 @@ void InterfaceItem::setInactive()
     m_connectionNameLabel->setText("");
     m_connectionInfoIpAddrLabel->setText("");
     m_connectButton->setIcon("media-playback-stop");
+    m_activeConnection = QDBusObjectPath();
 }
 
 
 void InterfaceItem::setActiveConnection(int state)
 {
+    //FIXME this only works when one connection is active on a device at once
+    // this would be easier if activeConnections was a property on device
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
     QString ourService;
-    QDBusObjectPath ourConnectionPath;
+    QDBusObjectPath ourConnectionObjectPath;
     bool defaultRoute;
     // find the active connection on this device
     bool found = false;
@@ -223,8 +253,9 @@ void InterfaceItem::setActiveConnection(int state)
                 conn, QDBusConnection::systemBus(), 0);
         foreach (QDBusObjectPath path, candidate.devices()) {
             if (path.path() == m_iface->uni()) {
+                m_activeConnection = QDBusObjectPath(conn);
                 ourService = candidate.serviceName();
-                ourConnectionPath = candidate.connection();
+                ourConnectionObjectPath = candidate.connection();
                 defaultRoute = candidate.getDefault();
                 found = true;
                 break;
@@ -238,7 +269,7 @@ void InterfaceItem::setActiveConnection(int state)
     // sanity check
     if (!ourService.isEmpty()) {
         NetworkManagerSettings service(ourService, 0 );
-        RemoteConnection * ourConnection = service.findConnection(ourConnectionPath.path());
+        RemoteConnection * ourConnection = service.findConnection(ourConnectionObjectPath.path());
         //connection name
         m_connectionNameLabel->setText(ourConnection->id());
         // ip address (Hello, Jos!)

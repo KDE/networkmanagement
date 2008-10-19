@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Icon>
 #include <Plasma/Label>
 
+#include <solid/control/networkmanager.h>
 
 #include "remoteconnection.h"
 ConnectionItem::ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
@@ -33,7 +34,7 @@ ConnectionItem::ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
     // icon on left
     m_layout = new QGraphicsGridLayout(this);
     m_icon = new Plasma::Icon(this);
-    m_icon->setIcon("emblem-favorite");
+    m_icon->setIcon("network-server");
     m_icon->setMaximumHeight(32);
     m_connectionNameLabel = new Plasma::Label(this);
     m_connectionNameLabel->setText(conn->id());
@@ -44,11 +45,21 @@ ConnectionItem::ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
     m_layout->addItem(m_icon, 0, 0, 1, 1 );
     m_layout->addItem(m_connectionNameLabel, 0, 1, 1, 1);
     m_layout->addItem(m_connectButton, 0, 2, 1, 1);
-    connect( m_connectButton, SIGNAL(clicked()), SIGNAL(clicked()));
+    connect( m_connectButton, SIGNAL(clicked()), SLOT(emitClicked()));
 }
 
 ConnectionItem::~ConnectionItem()
 {
 
+}
+
+RemoteConnection * ConnectionItem::connection() const
+{
+    return m_connection;
+}
+
+void ConnectionItem::emitClicked()
+{
+    emit clicked(this);
 }
 // vim: sw=4 sts=4 et tw=100
