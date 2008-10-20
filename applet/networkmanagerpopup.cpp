@@ -69,13 +69,25 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical, m_layout);
     Plasma::Label * header = new Plasma::Label(this);
     header->setText(i18nc("Label for connection list popup","<b>Networks</b>"));
+    m_notRunning = new Plasma::Label(this);
+    m_notRunning->setText(i18nc("Label for when NetworkManager is not running","The NetworkManager service is not running."));
     m_connectionLayout->addItem(header);
-    //m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
-    //m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
-    InterfaceGroup *ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, this);
-    InterfaceGroup *wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, this);
-    m_connectionLayout->addItem(ethernetGroup);
-    m_connectionLayout->addItem(wifiGroup);
+    m_connectionLayout->addItem(m_notRunning);
+    if (Solid::Control::NetworkManager::status() != Solid::Networking::Unknown) {
+        m_notRunning->hide();
+    }
+    m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
+    m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
+    m_ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, this);
+    m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, this);
+    //m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
+    //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
+    //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
+    m_connectionLayout->addItem(m_ethernetGroup);
+    m_connectionLayout->addItem(m_wifiGroup);
+    //m_connectionLayout->addItem(m_gsmGroup);
+    //m_connectionLayout->addItem(cdmaGroup);
+    //m_connectionLayout->addItem(pppoeGroup);
     m_layout->addItem(m_connectionLayout);
 
     //   then a grid of status labels and buttons
@@ -110,10 +122,12 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
             this, SLOT(managerWirelessEnabledChanged(bool)));
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
             this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
-    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
-    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
-            this, SLOT(networkInterfaceRemoved(const QString&)));
+    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
+            this, SLOT(managerStatusChanged(Solid::Networking::Status)));
+    //QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+    //        this, SLOT(networkInterfaceAdded(const QString&)));
+    //QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+    //        this, SLOT(networkInterfaceRemoved(const QString&)));
     QObject::connect(m_btnManageConnections, SIGNAL(clicked()),
             this, SLOT(manageConnections()));
     //QObject::connect(m_btnEnableNetworking, SIGNAL(toggled(bool)),
@@ -198,6 +212,22 @@ void NetworkManagerPopup::deactivateConnection(const QString& connection)
 {
     kDebug() << connection;
 }
+
+void NetworkManagerPopup::managerStatusChanged(Solid::Networking::Status status)
+{
+    if (Solid::Networking::Unknown == status ) {
+        m_ethernetGroup->hide();
+        m_wifiGroup->hide();
+        //m_gsmGroup->hide();
+        m_notRunning->show();
+    } else {
+        m_ethernetGroup->show();
+        m_wifiGroup->show();
+        //m_gsmGroup->show();
+        m_notRunning->hide();
+    }
+}
+
 #include "networkmanagerpopup.moc"
 
 // vim: sw=4 sts=4 et tw=100

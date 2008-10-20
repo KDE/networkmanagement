@@ -37,6 +37,9 @@ class ConnectionItem;
 class InterfaceItem;
 class RemoteConnection;
 
+typedef QPair<QString,QString> QStringPair;
+typedef QHash<QStringPair, ConnectionItem*> ServiceConnectionHash;
+
 /** Represents a group of network interfaces of the same type
  * displays either a generic name of interface type (when representing a single interface)
  * or a specific interface name or model
@@ -45,7 +48,7 @@ class InterfaceGroup : public QGraphicsWidget
 {
 Q_OBJECT
 public:
-    InterfaceGroup(Solid::Control::NetworkInterface::Type type, QGraphicsWidget * parent = 0);
+    InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent = 0);
     virtual ~InterfaceGroup();
     Solid::Control::NetworkInterface::Type interfaceType() const;
 protected slots:
@@ -54,12 +57,14 @@ protected slots:
     virtual void interfaceRemoved(const QString&);
     void connectionAddedToService(NetworkManagerSettings *, const QString&);
     void connectionRemovedFromService(NetworkManagerSettings *, const QString&);
+    void serviceAppeared(NetworkManagerSettings*);
+    void serviceDisappeared(NetworkManagerSettings*);
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
     void addConnectionInternal(NetworkManagerSettings*, const QString &connectionPath);
     void addSettingsService(NetworkManagerSettings*);
     // list of connection objects for this interface type
-    QHash<QPair<QString,QString>, ConnectionItem *> m_connections;
+    ServiceConnectionHash m_connections;
     // list of interfaces
     QHash<QString, InterfaceItem *> m_interfaces;
     QGraphicsLinearLayout * m_layout;

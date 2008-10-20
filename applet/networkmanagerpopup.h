@@ -39,6 +39,7 @@ class Label;
 class PushButton;
 } // namespace Plasma
 
+class InterfaceGroup;
 class NetworkManagerSettings;
 class OrgFreedesktopNetworkManagerSettingsConnectionInterface;
 
@@ -95,10 +96,19 @@ public Q_SLOTS:
      * Show our KCModule
      */
     void manageConnections();
+    /**
+     * React to manager status changes
+     */
+    void managerStatusChanged(Solid::Networking::Status);
 private:
-
+    NetworkManagerSettings * m_userSettings;
+    NetworkManagerSettings * m_systemSettings;
     QGraphicsLinearLayout * m_layout;
     QGraphicsLinearLayout * m_connectionLayout;
+    InterfaceGroup * m_ethernetGroup;
+    InterfaceGroup * m_wifiGroup;
+    InterfaceGroup * m_gsmGroup;
+    Plasma::Label * m_notRunning;
     Plasma::Label * m_lblRfkill;
     Plasma::CheckBox * m_btnEnableNetworking;
     Plasma::CheckBox * m_btnEnableWireless;

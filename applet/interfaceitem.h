@@ -43,6 +43,8 @@ namespace Plasma
     class Label;
 } // namespace Plasma
 
+class NetworkManagerSettings;
+
 /**
  * Represents a single network interface
  * Displays status, updates itself
@@ -53,7 +55,7 @@ class InterfaceItem : public QGraphicsWidget
 Q_OBJECT
 public:
     enum NameDisplayMode {InterfaceName, HardwareName};
-    InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode = InterfaceName, QGraphicsItem* parent = 0);
+    InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode = InterfaceName, QGraphicsItem* parent = 0);
     virtual ~InterfaceItem();
     void setNameDisplayMode(NameDisplayMode);
     NameDisplayMode nameDisplayMode() const;
@@ -77,6 +79,8 @@ protected:
     virtual void setActiveConnection(int);
 
     Solid::Control::NetworkInterface * m_iface;
+    NetworkManagerSettings * m_userSettings;
+    NetworkManagerSettings * m_systemSettings;
     //QGraphicsLinearLayout * m_layout; // use with nested linear based layouts, when they work
     QGraphicsGridLayout * m_layout;
     QGraphicsLinearLayout * m_infoLayout;

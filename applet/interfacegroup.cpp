@@ -32,8 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 
 
-InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, QGraphicsWidget * parent)
-: QGraphicsWidget(parent), m_type(type)
+InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
+: QGraphicsWidget(parent), m_type(type), m_userSettings(userSettings), m_systemSettings(systemSettings)
 {
     m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
 
@@ -44,8 +44,6 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, QGra
         }
     }
     // create a connectionItem for each appropriate connection
-    m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
-    m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
     addSettingsService(m_userSettings);
     addSettingsService(m_systemSettings);
 
@@ -55,6 +53,10 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, QGra
             SLOT(interfaceAdded(const QString&)));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             SLOT(interfaceRemoved(const QString&)));
+
+    if (m_interfaces.count() == 0) {
+        hide();
+    }
 }
 
 
@@ -67,11 +69,12 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
 {
     Q_ASSERT(iface);
     if (!m_interfaces.contains(iface->uni())) {
-        InterfaceItem * ii = new InterfaceItem(iface, InterfaceItem::InterfaceName, this);
+        InterfaceItem * ii = new InterfaceItem(iface, m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
         m_layout->addItem(ii);
         m_interfaces.insert(iface->uni(), ii);
         m_layout->invalidate();
     }
+    show();
 }
 
 void InterfaceGroup::addSettingsService(NetworkManagerSettings * service)
@@ -79,8 +82,17 @@ void InterfaceGroup::addSettingsService(NetworkManagerSettings * service)
     connect(service, SIGNAL(connectionAdded(NetworkManagerSettings *, const QString&)), SLOT(connectionAddedToService(NetworkManagerSettings *, const QString&)));
     connect(service, SIGNAL(connectionRemoved(NetworkManagerSettings *, const QString&)), SLOT(connectionRemovedFromService(NetworkManagerSettings *, const QString&)));
     //connect(service, SIGNAL(connectionUpdated(NetworkManagerSettings *, const QString&);
-    foreach (QString connectionPath, service->connections() ) {
-        addConnectionInternal(service, connectionPath);
+    connect(service, SIGNAL(appeared(NetworkManagerSettings*)), SLOT(serviceAppeared(NetworkManagerSettings*)));
+    connect(service, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(serviceDisappeared(NetworkManagerSettings*)));
+    serviceAppeared(service);
+}
+
+void InterfaceGroup::serviceAppeared(NetworkManagerSettings * service)
+{
+    if (service->isValid()) {
+        foreach (QString connectionPath, service->connections() ) {
+            addConnectionInternal(service, connectionPath);
+        }
     }
 }
 
@@ -97,6 +109,22 @@ void InterfaceGroup::addConnectionInternal(NetworkManagerSettings * service, con
                 m_connections.insert(QPair<QString,QString>(service->service(), connectionPath), ci);
                 m_layout->addItem(ci);
             }
+        }
+    }
+}
+
+void InterfaceGroup::serviceDisappeared(NetworkManagerSettings* settings)
+{
+    //remove all connections from this service
+    ServiceConnectionHash::iterator i = m_connections.begin();
+    while (i != m_connections.end()) {
+        if (i.key().first == settings->service()) {
+            ConnectionItem * item = i.value();
+            m_layout->removeItem(item);
+            i = m_connections.erase(i);
+            delete item;
+        } else {
+            ++i;
         }
     }
 }
@@ -126,6 +154,7 @@ void InterfaceGroup::activateConnection(ConnectionItem* item)
 {
     // tell the manager to activate the connection
     // which device??
+    // HACK - take the first one
     QHash<QString, InterfaceItem *>::const_iterator i = m_interfaces.constBegin();
     if ( i != m_interfaces.constEnd()) {
         QString firstDeviceUni = i.key();

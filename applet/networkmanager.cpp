@@ -73,13 +73,16 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     // so only have 1 rather than hack something ugly that will be thrown out later
     Solid::Control::NetworkInterfaceList interfaces
         = Solid::Control::NetworkManager::networkInterfaces();
-    qSort(interfaces.begin(), interfaces.end(), networkInterfaceLessThan);
-    Solid::Control::NetworkInterface *iface = interfaces.first();
-    kDebug() << "most interesting interface to paint: " << iface->uni();
-    paintInterfaceStatus(iface, p, option, contentsRect);
+    if (!interfaces.isEmpty()) {
+        qSort(interfaces.begin(), interfaces.end(), networkInterfaceLessThan);
+        Solid::Control::NetworkInterface *iface = interfaces.first();
+        kDebug() << "most interesting interface to paint: " << iface->uni();
+        paintInterfaceStatus(iface, p, option, contentsRect);
+    }
 }
 void NetworkManagerApplet::paintInterfaceStatus(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
 {
+    Q_UNUSED(option);
     QString elementNameToPaint;
     switch (interface->type() ) {
         case Solid::Control::NetworkInterface::Ieee8023:
@@ -133,6 +136,7 @@ void NetworkManagerApplet::popupEvent(bool show)
 /* Slots to react to changes from the daemon */
 void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
 {
+    Q_UNUSED(uni);
     // update the tray icon
     update();
     // update popup contents
@@ -141,6 +145,7 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
 
 void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
 {
+    Q_UNUSED(uni);
     // update the tray icon
     update();
     // update popup contents
@@ -151,7 +156,7 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
 void NetworkManagerApplet::interfaceConnectionStateChanged(int)
 {
     kDebug();
-    Solid::Control::NetworkInterface * interface = static_cast<Solid::Control::NetworkInterface *>(sender());
+    //Solid::Control::NetworkInterface * interface = static_cast<Solid::Control::NetworkInterface *>(sender());
     // notifications
     // update appearance
     update();

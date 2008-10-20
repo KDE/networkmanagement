@@ -45,10 +45,19 @@ Q_SIGNALS:
     void connectionAdded(NetworkManagerSettings *, const QString&);
     void connectionRemoved(NetworkManagerSettings *, const QString&);
     void connectionUpdated(NetworkManagerSettings *, const QString&);
+    /**
+     * Emitted when the service this object represents leaves the system bus
+     */
+    void disappeared(NetworkManagerSettings*);
+    /**
+     * Emitted when the service this object represents joins the system bus
+     */
+    void appeared(NetworkManagerSettings*);
 private Q_SLOTS:
     void onConnectionAdded(const QDBusObjectPath&);
     void onConnectionRemoved();
     void onConnectionUpdated(const QVariantMapMap&);
+    void serviceOwnerChanged(const QString&, const QString&, const QString&);
 private:
     QHash<QString, RemoteConnection*> m_connections;
     QString m_service;

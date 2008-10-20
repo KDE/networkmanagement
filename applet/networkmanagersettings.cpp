@@ -38,9 +38,13 @@ NetworkManagerSettings::NetworkManagerSettings(const QString & service, QObject 
         connect( connectionIface, SIGNAL(Removed()), this, SLOT(onConnectionRemoved()));
         connect( connectionIface, SIGNAL(Updated(const QVariantMapMap&)), this, SLOT(onConnectionUpdated(const QVariantMapMap&)));
     }
+    // signal is from parent class
     connect(this, SIGNAL(NewConnection(const QDBusObjectPath&)),
             this, SLOT(onConnectionAdded(const QDBusObjectPath&)));
     }
+    connect(QDBusConnection::systemBus().interface(),
+            SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)),
+            SLOT(serviceOwnerChanged(const QString&,const QString&,const QString&)));
 }
 
 NetworkManagerSettings::~NetworkManagerSettings()
@@ -83,6 +87,19 @@ void NetworkManagerSettings::onConnectionUpdated(const QVariantMapMap&)
     emit connectionUpdated(this, connection->path());
 }
 
+void NetworkManagerSettings::serviceOwnerChanged(const QString & changedService, const QString & oldOwner, const QString & newOwner)
+{
+    if (changedService == service()) {
+        if (!oldOwner.isEmpty() && newOwner.isEmpty()) {
+            emit disappeared(this);
+        } else if (oldOwner.isEmpty() && !newOwner.isEmpty()) {
+            emit appeared(this);
+        } else if (!oldOwner.isEmpty() && !newOwner.isEmpty()) {
+            emit disappeared(this);
+            emit appeared(this);
+        }
+    }
+}
 #include "networkmanagersettings.moc"
 
 // vim: sw=4 sts=4 et tw=100

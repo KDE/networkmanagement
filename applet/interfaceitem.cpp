@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkmanagersettings.h"
 #include "remoteconnection.h"
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_nameMode(mode)
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_nameMode(mode)
 {
 #if 0 // this layouts pretty badly, esp where labels and icons share a horizontal layout
     // main layout
@@ -80,6 +80,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
 #else
     m_layout = new QGraphicsGridLayout(this);
     m_icon = new Plasma::Icon(this);
+    m_icon->setMaximumHeight(32);
 
     switch (m_iface->type() ) {
         case Solid::Control::NetworkInterface::Ieee8023:
@@ -114,6 +115,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_connectionInfoSecurityIcon = new Plasma::Icon(this);
     m_connectionInfoSecurityIcon->setIcon("system-lock-screen"); m_connectionInfoSecurityIcon->setMaximumHeight(32); // connect button at right
     m_connectButton = new Plasma::Icon(this);
+    m_connectButton->setMaximumHeight(32);
     //m_connectButton->setIcon("media-playback-start");
     m_layout->addItem(m_icon, 0, 0, 3, 1);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 3);
@@ -186,7 +188,6 @@ void InterfaceItem::connectionStateChanged(int state)
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
         case Solid::Control::NetworkInterface::UnknownState:
-            kDebug() << "This can't be happening to me! Unmanaged interfaces are not show in the widget.";
             break;
     }
 }
@@ -267,21 +268,33 @@ void InterfaceItem::setActiveConnection(int state)
     }
     // now we know what the first active connection on this device is, update our UI
     // sanity check
-    if (!ourService.isEmpty()) {
-        NetworkManagerSettings service(ourService, 0 );
-        RemoteConnection * ourConnection = service.findConnection(ourConnectionObjectPath.path());
-        //connection name
-        m_connectionNameLabel->setText(ourConnection->id());
-        // ip address (Hello, Jos!)
-        if (state == Solid::Control::NetworkInterface::Activated) {
-            Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();
-            QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
-            if (addresses.isEmpty()) {
-                m_connectionInfoIpAddrLabel->setText("ip display error");
-            } else {
-                QHostAddress addr(addresses.first().address());
-                m_connectionInfoIpAddrLabel->setText(addr.toString());
+    if (found && !ourService.isEmpty()) {
+        // query the service for details of the connection
+        NetworkManagerSettings * service = 0;
+        if (ourService == NM_DBUS_SERVICE_USER_SETTINGS) {
+            service = m_userSettings;
+        }
+        if (ourService == NM_DBUS_SERVICE_SYSTEM_SETTINGS) {
+            service = m_systemSettings;
+        }
+        if (service && service->isValid()) { // it's possible that the service provided a connection but is no longer running
+            RemoteConnection * ourConnection = service->findConnection(ourConnectionObjectPath.path());
+            //connection name
+            m_connectionNameLabel->setText(ourConnection->id());
+            // ip address (Hello, Jos!)
+            if (state == Solid::Control::NetworkInterface::Activated) {
+                Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();
+                QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
+                if (addresses.isEmpty()) {
+                    m_connectionInfoIpAddrLabel->setText("ip display error");
+                } else {
+                    QHostAddress addr(addresses.first().address());
+                    m_connectionInfoIpAddrLabel->setText(addr.toString());
+                }
             }
+        } else {
+            // fallback label
+            m_connectionNameLabel->setText(i18nc("Text for connections not owned by a service", "Orphaned connection"));
         }
     }
 }
