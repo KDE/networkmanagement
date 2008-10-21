@@ -21,7 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkmanager.h"
 
 #include <QIcon>
-
+#ifdef KDE_4_1
+#include <QVBoxLayout>
+#include <Plasma/Corona>
+#include <Plasma/Dialog>
+#include <QtGui/QGraphicsSceneMouseEvent>
+#include <KGlobalSettings>
+#include <QGraphicsGridLayout>
+#endif
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 
@@ -31,19 +38,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceitem.h"
 #include "networkmanagerpopup.h"
 
-K_EXPORT_PLASMA_APPLET(networkmanager_alpha, NetworkManagerApplet)
+K_EXPORT_PLASMA_APPLET(networkmanager, NetworkManagerApplet)
 
 /* for qSort()ing */
 bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
+#ifdef KDE_4_1
+: Plasma::Applet(parent, args), m_iconPerDevice(false), m_svg(this), m_dialog(0)
+#else
 : Plasma::PopupApplet(parent, args), m_iconPerDevice(false), m_svg(this)
+#endif
 {
     setHasConfigurationInterface(true);
+#ifndef KDE_4_1
     setPopupIcon(QIcon());
+#endif
     setAspectRatioMode(Plasma::ConstrainedSquare);// copied from Battery - the comment for this value is meaningless
-    m_svg.setImagePath("networkmanager/networkmanager_alpha");
+    m_svg.setImagePath("networkmanager/networkmanager");
     m_popup = new NetworkManagerPopup(this);
 }
 
@@ -110,22 +123,9 @@ void NetworkManagerApplet::paintInterfaceStatus(Solid::Control::NetworkInterface
     m_svg.paint(p, contentsRect, elementNameToPaint);
 }
 
-#include <NetworkManager.h>
-#include "networkmanagersettings.h"
-#include "connectionitem.h"
 QGraphicsWidget * NetworkManagerApplet::graphicsWidget()
 {
-#if 0
-    //NetworkManagerSettings * foo = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
-    //RemoteConnection * bar = foo->findConnection(foo->connections().first());
-    
-    //return new ConnectionItem(bar, this);
-    //return new InterfaceItem( Solid::Control::NetworkManager::networkInterfaces().first(), InterfaceItem::InterfaceName, this);
-    if (Solid::Control::NetworkManager::networkInterfaces().count())
-        return new InterfaceGroup(Solid::Control::NetworkManager::networkInterfaces().first()->type(), this);
-#else
     return m_popup;
-#endif
 }
 
 void NetworkManagerApplet::popupEvent(bool show)
@@ -312,4 +312,101 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
     return lessThan;
 }
 
+#ifdef KDE_4_1
+void NetworkManagerApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    if (event->buttons() == Qt::LeftButton) {
+        m_clicked = scenePos().toPoint();
+        event->setAccepted(true);
+        return;
+    }
+    Applet::mousePressEvent(event);
+}
+
+void NetworkManagerApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+{
+    if ((m_clicked - scenePos().toPoint()).manhattanLength() <
+            KGlobalSettings::dndEventDelay()) {
+        showPopup(event);
+    }
+}
+
+void NetworkManagerApplet::showPopup(QGraphicsSceneMouseEvent *event)
+{
+#if 0
+    Q_UNUSED(event);
+
+    if (m_dialog == 0) {
+        QGraphicsWidget * gWidget = graphicsWidget();
+
+        m_dialog = new Plasma::Dialog();
+        //m_dialog->setWindowFlags(Qt::Popup);
+        if (gWidget) {
+            Plasma::Corona *corona = qobject_cast<Plasma::Corona *>(gWidget->scene());
+
+            //could that cast ever fail??
+            if (corona) {
+                //duplicated from  Corona::addOffscreenWidget()
+                QGraphicsWidget *offscreenWidget = new QGraphicsWidget(0);
+                corona->addItem(offscreenWidget);
+                QGraphicsGridLayout * offscreenLayout = new QGraphicsGridLayout(offscreenWidget);
+                offscreenWidget->setPos(-10000, -10000);
+                offscreenWidget->setLayout(offscreenLayout);
+                offscreenLayout->addItem(gWidget, 0, 0);
+                gWidget->update();
+                // end dupe
+                gWidget->resize(gWidget->preferredSize());
+                gWidget->setMinimumSize(gWidget->preferredSize());
+                // duplicated from Dialog::setGraphicsWidget()
+                QVBoxLayout *lay = new QVBoxLayout(m_dialog);
+                lay->setMargin(0);
+                lay->setSpacing(0);
+                QGraphicsView * view = new QGraphicsView(m_dialog);
+                view->setFrameShape(QFrame::NoFrame);
+                view->viewport()->setAutoFillBackground(false);
+                m_dialog->layout()->addWidget(view);
+                view->setScene(gWidget->scene());
+                //m_dialog->adjustView();
+                // duped from DialogPrivate::adjustView()
+                QSize prevSize = m_dialog->size();
+
+                kDebug() << "Widget size:" << gWidget->size()
+                    << "| Widget size hint:" << gWidget->effectiveSizeHint(Qt::PreferredSize)
+                    << "| Widget bounding rect:" << gWidget->boundingRect();
+
+                QRectF boundingRect = gWidget->boundingRect();
+                boundingRect.setSize(gWidget->effectiveSizeHint(Qt::PreferredSize));
+
+                //reposition and resize the view.
+                view->setSceneRect(gWidget->mapToScene(boundingRect).boundingRect());
+                view->resize(view->mapFromScene(view->sceneRect()).boundingRect().size());
+                view->centerOn(gWidget);
+
+                //set the sizehints correctly:
+                int left, top, right, bottom;
+                m_dialog->getContentsMargins(&left, &top, &right, &bottom);
+
+                m_dialog->setMinimumSize(qMin(int(gWidget->minimumSize().width()) + left + right, QWIDGETSIZE_MAX),
+                        qMin(int(gWidget->minimumSize().height()) + top + bottom, QWIDGETSIZE_MAX));
+                m_dialog->resize(qMin(int(gWidget->minimumSize().width()) + left + right, QWIDGETSIZE_MAX),
+                        qMin(int(gWidget->minimumSize().height()) + top + bottom, QWIDGETSIZE_MAX));
+                m_dialog->setMaximumSize(qMin(int(gWidget->maximumSize().width()) + left + right, QWIDGETSIZE_MAX),
+                        qMin(int(gWidget->maximumSize().height()) + top + bottom, QWIDGETSIZE_MAX));
+                m_dialog->updateGeometry();
+
+                //end of dupe from adjustView();
+                m_dialog->adjustSize();
+            }
+        }
+    }
+    if (m_dialog->isVisible()) {
+        m_dialog->hide();
+    } else {
+        kDebug();
+        m_dialog->show();
+    }
+#endif
+}
+
+#endif
 #include "networkmanager.moc"

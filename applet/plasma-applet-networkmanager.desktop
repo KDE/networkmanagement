@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Network Manager (Alpha of an Alpha edition)
+Name=Networks
 Name[el]=Διαχειριστής δικτύου (πρώιμη έκδοση άλφα)
 Name[gl]=Xestor da rede (Alfa dunha versión alfa)
 Name[km]=កម្មវិធី​គ្រប់គ្រង​បណ្ដាញ (អាល់ហ្វា​​នៃ​កា​រកែសម្រួល​អាល់ហ្វា)
@@ -9,7 +9,7 @@ Name[ru]=Менеджер сети (тестовая версия)
 Name[sv]=Nätverkshanterare (alfa av en alfautgåva)
 Name[uk]=Керування мережею (Альфа альфа версії)
 Name[x-test]=xxNetwork Manager (Alpha of an Alpha edition)xx
-Comment=Configure network interfaces
+Comment=Manage network connections
 Comment[el]=Ρύθμιση διασυνδέσεων δικτύου
 Comment[gl]=Configura as interfaces de rede
 Comment[km]=កំណត់​រចនាសម្ព័ន្ធ​ចំណុច​ប្រទាក់​បណ្ដាញ
@@ -21,10 +21,10 @@ Comment[x-test]=xxConfigure network interfacesxx
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 
-X-KDE-Library=plasma_applet_networkmanager_alpha
+X-KDE-Library=plasma_applet_networkmanager
 X-KDE-PluginInfo-Author=Will Stephenson
 X-KDE-PluginInfo-Email=wstephenson@kde.org
-X-KDE-PluginInfo-Name=networkmanager_alpha
+X-KDE-PluginInfo-Name=networkmanager
 X-KDE-PluginInfo-Version=0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=System Management

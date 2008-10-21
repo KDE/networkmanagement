@@ -70,6 +70,7 @@ bool WirelessConnectionInspector::accept(RemoteConnection * connection)
                 ssid = connectionSetting.value(QLatin1String(NM_SETTING_WIRELESS_SSID)).toString();
                 foreach (QString accessPointUni, m_iface->accessPoints()) {
                     Solid::Control::AccessPoint * ap = m_iface->findAccessPoint(accessPointUni);
+                    kDebug() << "Checking AP essid: " << ap->ssid() << " vs connection essid: " << ssid;
                     if (ap->ssid() == ssid) {
                         acceptable = true;
                     }

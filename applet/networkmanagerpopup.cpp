@@ -80,12 +80,13 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
     m_ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, this);
     m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, this);
-    //m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
+    m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
     //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
     m_connectionLayout->addItem(m_ethernetGroup);
     m_connectionLayout->addItem(m_wifiGroup);
-    //m_connectionLayout->addItem(m_gsmGroup);
+    m_connectionLayout->addItem(m_gsmGroup);
+    m_gsmGroup->show();
     //m_connectionLayout->addItem(cdmaGroup);
     //m_connectionLayout->addItem(pppoeGroup);
     m_layout->addItem(m_connectionLayout);
@@ -218,12 +219,12 @@ void NetworkManagerPopup::managerStatusChanged(Solid::Networking::Status status)
     if (Solid::Networking::Unknown == status ) {
         m_ethernetGroup->hide();
         m_wifiGroup->hide();
-        //m_gsmGroup->hide();
+        m_gsmGroup->hide();
         m_notRunning->show();
     } else {
         m_ethernetGroup->show();
         m_wifiGroup->show();
-        //m_gsmGroup->show();
+        m_gsmGroup->show();
         m_notRunning->hide();
     }
 }

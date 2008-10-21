@@ -35,11 +35,13 @@ ConnectionItem::ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
     m_layout = new QGraphicsGridLayout(this);
     m_icon = new Plasma::Icon(this);
     m_icon->setIcon("network-server");
+    m_icon->setMinimumHeight(32);
     m_icon->setMaximumHeight(32);
     m_connectionNameLabel = new Plasma::Label(this);
     m_connectionNameLabel->setText(conn->id());
     m_connectButton = new Plasma::Icon(this);
     m_connectButton->setIcon("media-playback-start");
+    m_connectButton->setMinimumHeight(32);
     m_connectButton->setMaximumHeight(32);
 
     m_layout->addItem(m_icon, 0, 0, 1, 1 );

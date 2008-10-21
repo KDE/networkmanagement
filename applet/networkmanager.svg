@@ -32,17 +32,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="11.197802"
-     inkscape:cx="16"
+     inkscape:zoom="2.7994505"
+     inkscape:cx="4.9263982"
      inkscape:cy="16"
-     inkscape:current-layer="layer7"
+     inkscape:current-layer="wired_disconnected"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
-     inkscape:window-width="836"
-     inkscape:window-height="723"
-     inkscape:window-x="594"
-     inkscape:window-y="0" />
+     inkscape:window-width="1024"
+     inkscape:window-height="746"
+     inkscape:window-x="-5"
+     inkscape:window-y="-3" />
   <metadata
      id="metadata2417">
     <rdf:RDF>
@@ -59,6 +59,13 @@
      inkscape:label="wired_disconnected"
      inkscape:groupmode="layer"
      style="display:inline">
+    <rect
+       style="fill:#f5f5f5;fill-opacity:0.96078431;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
+       id="rect3244"
+       width="29.648674"
+       height="28.93425"
+       x="1.428854"
+       y="1.6369066" />
     <rect
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect2422"
@@ -110,6 +117,13 @@
      inkscape:label="wired_connected"
      style="display:inline">
     <rect
+       style="fill:#f5f5f5;fill-opacity:0.96078431;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
+       id="rect3242"
+       width="29.648674"
+       height="28.93425"
+       x="1.428854"
+       y="1.6369066" />
+    <rect
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        id="rect3237"
        width="7.858685"
@@ -145,6 +159,13 @@
      id="wireless_connected"
      inkscape:label="wireless_connected"
      style="display:inline">
+    <rect
+       style="fill:#f5f5f5;fill-opacity:0.96078431;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
+       id="rect3240"
+       width="29.648674"
+       height="28.93425"
+       x="1.428854"
+       y="1.6369066" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 13.21688,27.356232 L 16.163886,9.5848867 L 19.736016,27.356232 L 13.21688,27.356232 z"
@@ -185,6 +206,13 @@
      id="wireless_disconnected"
      inkscape:label="wireless_disconnected"
      style="display:inline">
+    <rect
+       style="fill:#f5f5f5;fill-opacity:0.96078431;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
+       id="rect3238"
+       width="29.648674"
+       height="28.93425"
+       x="1.428854"
+       y="1.6369066" />
     <path
        style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
        d="M 13.172228,27.445535 L 16.119234,9.6741895 L 19.691364,27.445535 L 13.172228,27.445535 z"
@@ -206,6 +234,13 @@
      id="cellular_connected"
      inkscape:label="cellular_connected"
      style="display:inline">
+    <rect
+       style="fill:#f5f5f5;fill-opacity:0.96078431;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
+       id="rect3236"
+       width="29.648674"
+       height="28.93425"
+       x="1.428854"
+       y="1.6369066" />
     <rect
        style="opacity:1;fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect3273"
@@ -346,6 +381,13 @@
      inkscape:label="cellular_disconnected"
      style="display:inline">
     <rect
+       style="fill:#f5f5f5;fill-opacity:0.96078431;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
+       id="rect3234"
+       width="29.648674"
+       height="28.93425"
+       x="1.2502465"
+       y="1.8155047" />
+    <rect
        style="opacity:1;fill:none;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
        id="rect3315"
        width="10.18057"
@@ -457,6 +499,14 @@
      inkscape:label="ppp_disconnected"
      style="display:inline">
     <rect
+       style="fill:#f5f5f5;fill-opacity:0.96078431;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
+       id="rect3232"
+       width="29.648674"
+       height="28.93425"
+       x="1.2502462"
+       y="1.4582918"
+       inkscape:transform-center-x="-24.290481" />
+    <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect3369"
        width="25.63003"
@@ -497,6 +547,13 @@
      id="ppp_connected"
      inkscape:label="ppp_connected"
      style="display:inline">
+    <rect
+       style="fill:#f5f5f5;fill-opacity:0.96078431;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect2458"
+       width="29.648674"
+       height="28.93425"
+       x="1.428854"
+       y="1.6369066" />
     <rect
        style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
        id="rect3355"

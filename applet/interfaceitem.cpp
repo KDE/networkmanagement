@@ -80,6 +80,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 #else
     m_layout = new QGraphicsGridLayout(this);
     m_icon = new Plasma::Icon(this);
+    m_icon->setMinimumHeight(32);
     m_icon->setMaximumHeight(32);
 
     switch (m_iface->type() ) {
@@ -113,8 +114,11 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     //m_connectionInfoStrengthLabel->setText("101%");
     //       security
     m_connectionInfoSecurityIcon = new Plasma::Icon(this);
-    m_connectionInfoSecurityIcon->setIcon("system-lock-screen"); m_connectionInfoSecurityIcon->setMaximumHeight(32); // connect button at right
+    m_connectionInfoSecurityIcon->setIcon("system-lock-screen"); 
+    m_connectionInfoSecurityIcon->setMinimumHeight(32);
+    m_connectionInfoSecurityIcon->setMaximumHeight(32); // connect button at right
     m_connectButton = new Plasma::Icon(this);
+    m_connectButton->setMinimumHeight(32);
     m_connectButton->setMaximumHeight(32);
     //m_connectButton->setIcon("media-playback-start");
     m_layout->addItem(m_icon, 0, 0, 3, 1);
