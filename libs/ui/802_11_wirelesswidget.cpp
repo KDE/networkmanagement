@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "configxml.h"
 
+#include "scanwidget.h"
 #include "ui_802-11-wireless.h"
 
 const QString Wireless80211Widget::INFRA_MODE = QLatin1String("infrastructure");
@@ -39,6 +40,7 @@ class Wireless80211Widget::Private
 Wireless80211Widget::Wireless80211Widget(const QString& connectionId, QWidget * parent) : SettingWidget(connectionId, parent), d(new Wireless80211Widget::Private)
 {
     d->ui.setupUi(this);
+    connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
     init();
 }
 
@@ -79,6 +81,18 @@ void Wireless80211Widget::writeConfig()
         case 1:
             group.writeEntry(NM_SETTING_WIRELESS_MODE, ADHOC_MODE);
             break;
+    }
+}
+
+void Wireless80211Widget::scanClicked()
+{
+    KDialog scanDialog;
+    scanDialog.setCaption(i18n("Available Access Points"));
+    scanDialog.setButtons( KDialog::Ok | KDialog::Cancel);
+    ScanWidget scanWid;
+    scanDialog.setMainWidget(&scanWid);
+    if (scanDialog.exec() == QDialog::Accepted) {
+        d->ui.kcfg_ssid->setText(scanWid.currentAccessPoint());
     }
 }
 

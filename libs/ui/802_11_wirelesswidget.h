@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class KNM_EXPORT Wireless80211Widget : public SettingWidget
 {
+Q_OBJECT
 public:
     Wireless80211Widget(const QString & connectionId, QWidget * parent = 0 );
     virtual ~Wireless80211Widget();
@@ -35,6 +36,8 @@ public:
     static const QString ADHOC_MODE;
     void readConfig();
     void writeConfig();
+public Q_SLOTS:
+    void scanClicked();
 private:
     class Private;
     Private * d;
