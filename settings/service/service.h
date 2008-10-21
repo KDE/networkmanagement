@@ -38,6 +38,7 @@ protected slots:
 private:
     void registerService();
     NetworkSettings * mNetworkSettings;
+    bool m_active;
 };
 
 #endif

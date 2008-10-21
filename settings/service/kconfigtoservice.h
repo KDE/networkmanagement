@@ -48,7 +48,7 @@ class KConfigToService : public QObject
 {
 Q_OBJECT
 public:
-    KConfigToService(NetworkSettings * service);
+    KConfigToService(NetworkSettings * service, bool active);
     ~KConfigToService();
     void init();
     void addOrUpdate(const QString & id);

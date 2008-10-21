@@ -41,8 +41,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "secretstoragehelper.h"
 #include "knetworkmanagerserviceadaptor.h"
 
-KConfigToService::KConfigToService(NetworkSettings * service)
-    : m_service(service), m_error(false)
+KConfigToService::KConfigToService(NetworkSettings * service, bool active)
+    : m_service(service), m_error(!active)
 {
     (void) new KNetworkManagerServiceAdaptor( this );
     QDBusConnection::sessionBus().registerService( "org.kde.knetworkmanagerd" ) ;
@@ -59,14 +59,16 @@ KConfigToService::~KConfigToService()
 
 void KConfigToService::init()
 {
-    // 1) get the names of all the connections from the main config file
-    // (this could also be just the connections in one profile, after removing all connections)
-    QStringList connectionIds;
-    connectionIds = KNetworkManagerServicePrefs::self()->connections();
-    // 2) open each connection's file and create 1 or more ConfigXml for it
-    foreach (QString connectionId, connectionIds) {
-        QVariantMapMap connectionMap = restoreConnection(connectionId);
-        m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connectionMap));
+    if (!m_error) {
+        // 1) get the names of all the connections from the main config file
+        // (this could also be just the connections in one profile, after removing all connections)
+        QStringList connectionIds;
+        connectionIds = KNetworkManagerServicePrefs::self()->connections();
+        // 2) open each connection's file and create 1 or more ConfigXml for it
+        foreach (QString connectionId, connectionIds) {
+            QVariantMapMap connectionMap = restoreConnection(connectionId);
+            m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connectionMap));
+        }
     }
 }
 
@@ -196,6 +198,10 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
 void KConfigToService::configure(const QStringList& changedConnections)
 {
     kDebug();
+    if (!m_error) { // don't update if we don't own the service, we will do this later when we regain the service
+        return;
+    }
+
     KNetworkManagerServicePrefs::self()->readConfig();
     QStringList addedConnections, deletedConnections;
     // figure out which connections were added
