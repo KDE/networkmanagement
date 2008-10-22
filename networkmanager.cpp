@@ -214,7 +214,7 @@ void NetworkManager::manageProfiles()
     if (m_profileDlg == 0) {
         kDebug() << "Creating a new profile.";
         m_profileDlg = new KDialog();
-        m_profileDlg->setCaption("Manage Profiles");
+        m_profileDlg->setCaption(i18n("Manage Profiles"));
         m_profileDlg->setButtons( KDialog::Ok | KDialog::Cancel);
         m_manageProfile = new ManageProfileWidget(m_profileDlg);
         m_manageProfile->setConfig(m_profileConfig);

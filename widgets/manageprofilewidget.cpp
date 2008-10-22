@@ -89,7 +89,7 @@ void ManageProfileWidget::onAddProfileClicked()
     m_generalAddWidget->setWirelessSettings(m_wirelessAddWidget);
 
     m_addProfiledlg = new KAssistantDialog(this);
-    m_addProfiledlg->setCaption("Add Profile");
+    m_addProfiledlg->setCaption(i18n("Add Profile"));
     m_page1 = m_addProfiledlg->addPage(m_generalAddWidget, i18n("General Settings"));
     m_page2 = m_addProfiledlg->addPage(m_wirelessAddWidget, i18n("Wireless Settings"));
 

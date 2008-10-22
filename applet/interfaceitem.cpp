@@ -52,7 +52,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_ifaceNameLabel->setText(QString::fromLatin1("<b>%1</b>").arg(m_iface->interfaceName()));
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText("Active connection name");
+    m_connectionNameLabel->setText(i18n("Active connection name"));
     //     connection info
     m_connectionInfoLayout = new QGraphicsLinearLayout(Qt::Horizontal, 0);
     //       IP address
