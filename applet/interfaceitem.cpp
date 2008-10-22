@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsLinearLayout>
 
 #include <KDebug>
+#include <KNotification>
 
 #include <Plasma/Icon>
 #include <Plasma/Label>
@@ -33,9 +34,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkipv4config.h>
 #include <solid/control/networkmanager.h>
+#include "events.h"
 #include "nm-active-connectioninterface.h"
 #include "networkmanagersettings.h"
 #include "remoteconnection.h"
+#include "wirelessnetwork.h"
 
 InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_nameMode(mode)
 {
@@ -56,19 +59,19 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     //     connection info
     m_connectionInfoLayout = new QGraphicsLinearLayout(Qt::Horizontal, 0);
     //       IP address
-    m_connectionInfoIpAddrLabel = new Plasma::Label(this);
-    m_connectionInfoIpAddrLabel->setText("192.168.0.8");
+    m_connectionInfoLabel = new Plasma::Label(this);
+    m_connectionInfoLabel->setText("192.168.0.8");
     //       signal strength
     m_connectionInfoStrengthLabel = new Plasma::Label(this);
     m_connectionInfoStrengthLabel->setText("101%");
     //       security
-    m_connectionInfoSecurityIcon = new Plasma::Icon(this);
-    m_connectionInfoSecurityIcon->setIcon("system-lock-screen");
+    m_connectionInfoIcon = new Plasma::Icon(this);
+    m_connectionInfoIcon->setIcon("system-lock-screen");
     m_connectionInfoLayout->addItem(m_connectionInfoStrengthLabel);
-    m_connectionInfoLayout->addItem(m_connectionInfoSecurityIcon);
+    m_connectionInfoLayout->addItem(m_connectionInfoIcon);
     m_infoLayout->addItem(m_ifaceNameLabel);
     m_infoLayout->addItem(m_connectionNameLabel);
-    m_infoLayout->addItem(m_connectionInfoIpAddrLabel);
+    m_infoLayout->addItem(m_connectionInfoLabel);
     m_infoLayout->addItem(m_connectionInfoLayout);
     // connect button at right
     m_connectButton = new Plasma::Icon(this);
@@ -107,16 +110,19 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
     //       IP address
-    m_connectionInfoIpAddrLabel = new Plasma::Label(this);
-    m_connectionInfoIpAddrLabel->setText("dum.my.ip.addr");
+    m_connectionInfoLabel = new Plasma::Label(this);
+    //m_connectionInfoLabel->setText("dum.my.ip.addr");
     //       signal strength
     //m_connectionInfoStrengthLabel = new Plasma::Label(this);
     //m_connectionInfoStrengthLabel->setText("101%");
     //       security
-    m_connectionInfoSecurityIcon = new Plasma::Icon(this);
-    m_connectionInfoSecurityIcon->setIcon("system-lock-screen"); 
-    m_connectionInfoSecurityIcon->setMinimumHeight(32);
-    m_connectionInfoSecurityIcon->setMaximumHeight(32); // connect button at right
+    m_connectionInfoIcon = new Plasma::Icon(this);
+    //m_connectionInfoIcon->setIcon("system-lock-screen");
+    m_connectionInfoIcon->setMinimumHeight(32);
+    m_connectionInfoIcon->setMaximumHeight(32);
+    m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1);
+    //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
+    m_layout->addItem(m_connectionInfoIcon, 2, 3, 1, 1);
     m_connectButton = new Plasma::Icon(this);
     m_connectButton->setMinimumHeight(32);
     m_connectButton->setMaximumHeight(32);
@@ -124,9 +130,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_layout->addItem(m_icon, 0, 0, 3, 1);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 3);
     m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 3);
-    m_layout->addItem(m_connectionInfoIpAddrLabel, 2, 1, 1, 1);
-    //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
-    m_layout->addItem(m_connectionInfoSecurityIcon, 2, 3, 1, 1);
     m_layout->addItem(m_connectButton, 0, 4, 3, 1);
 #endif
     connect(Solid::Control::NetworkManager::notifier(),
@@ -161,6 +164,20 @@ InterfaceItem::NameDisplayMode InterfaceItem::nameDisplayMode() const
     return m_nameMode;
 }
 
+void InterfaceItem::setConnectionInfo()
+{
+    if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+        Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();
+        QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
+        if (addresses.isEmpty()) {
+            m_connectionInfoLabel->setText("ip display error");
+        } else {
+            QHostAddress addr(addresses.first().address());
+            m_connectionInfoLabel->setText(addr.toString());
+        }
+    }
+}
+
 void InterfaceItem::activeConnectionsChanged()
 {
     kDebug();
@@ -179,15 +196,22 @@ void InterfaceItem::connectionStateChanged(int state)
             setUnavailable();
             break;
         case Solid::Control::NetworkInterface::Disconnected:
+            KNotification::event(Event::Disconnected, i18nc("Notification text when a network interface was disconnected","Network interface %1 disconnected", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+            setInactive();
+            break;
         case Solid::Control::NetworkInterface::Failed:
             // set the disconnected icon
+            KNotification::event(Event::ConnectFailed, i18nc("Notification text when a network interface connection attempt failed","Connection on Network interface %1 failed", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
             setInactive();
             break;
         case Solid::Control::NetworkInterface::Preparing:
         case Solid::Control::NetworkInterface::Configuring:
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
+            setActiveConnection(state);
+            break;
         case Solid::Control::NetworkInterface::Activated: // lookup the active connection, get its state
+            KNotification::event(Event::Connected, i18nc("Notification text when a network interface connection succeeded","Network interface %1 connected", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
             setActiveConnection(state);
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
@@ -225,7 +249,7 @@ void InterfaceItem::setUnavailable()
 {
     m_icon->setEnabled(false);
     m_connectionNameLabel->setText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"));
-    m_connectionInfoIpAddrLabel->setText("");
+    m_connectionInfoLabel->setText("");
     m_connectButton->setEnabled(false);
     m_activeConnection = QDBusObjectPath();
 }
@@ -234,7 +258,7 @@ void InterfaceItem::setInactive()
 {
     m_icon->setEnabled(false);
     m_connectionNameLabel->setText("");
-    m_connectionInfoIpAddrLabel->setText("");
+    m_connectionInfoLabel->setText("");
     m_connectButton->setIcon("media-playback-stop");
     m_activeConnection = QDBusObjectPath();
 }
@@ -286,16 +310,7 @@ void InterfaceItem::setActiveConnection(int state)
             //connection name
             m_connectionNameLabel->setText(ourConnection->id());
             // ip address (Hello, Jos!)
-            if (state == Solid::Control::NetworkInterface::Activated) {
-                Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();
-                QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
-                if (addresses.isEmpty()) {
-                    m_connectionInfoIpAddrLabel->setText("ip display error");
-                } else {
-                    QHostAddress addr(addresses.first().address());
-                    m_connectionInfoIpAddrLabel->setText(addr.toString());
-                }
-            }
+            setConnectionInfo();
         } else {
             // fallback label
             m_connectionNameLabel->setText(i18nc("Text for connections not owned by a service", "Orphaned connection"));

@@ -55,7 +55,7 @@ class InterfaceItem : public QGraphicsWidget
 Q_OBJECT
 public:
     enum NameDisplayMode {InterfaceName, HardwareName};
-    InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode = InterfaceName, QGraphicsItem* parent = 0);
+    InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode = InterfaceName, QGraphicsItem* parent = 0);
     virtual ~InterfaceItem();
     void setNameDisplayMode(NameDisplayMode);
     NameDisplayMode nameDisplayMode() const;
@@ -65,6 +65,10 @@ public slots:
     void connectionStateChanged(int);
     void connectButtonClicked();
 protected:
+    /** 
+     * Fill in interface type connection info
+     */
+    virtual void setConnectionInfo();
     /**
      * The interface is unavailable for connections, update the UI
      */
@@ -88,9 +92,9 @@ protected:
     Plasma::Label * m_ifaceNameLabel;
     Plasma::Label * m_connectionNameLabel;
     QGraphicsLinearLayout * m_connectionInfoLayout;
-    Plasma::Label * m_connectionInfoIpAddrLabel;
+    Plasma::Label * m_connectionInfoLabel;
     Plasma::Label * m_connectionInfoStrengthLabel;
-    Plasma::Icon * m_connectionInfoSecurityIcon;
+    Plasma::Icon * m_connectionInfoIcon;
     Plasma::Icon * m_connectButton;
     NameDisplayMode m_nameMode;
 

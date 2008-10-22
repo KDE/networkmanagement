@@ -35,8 +35,8 @@ class QSignalMapper;
 namespace Plasma
 {
 class CheckBox;
+class Icon;
 class Label;
-class PushButton;
 } // namespace Plasma
 
 class InterfaceGroup;
@@ -112,7 +112,7 @@ private:
     Plasma::Label * m_lblRfkill;
     Plasma::CheckBox * m_btnEnableNetworking;
     Plasma::CheckBox * m_btnEnableWireless;
-    Plasma::PushButton * m_btnManageConnections;
+    Plasma::Icon * m_btnManageConnections;
     QSignalMapper * m_connectionActivationSignalMapper;
     QSignalMapper * m_connectionDeactivationSignalMapper;
 };

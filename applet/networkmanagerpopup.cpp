@@ -37,18 +37,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 #include <KLocale>
+#include <KNotification>
 #include <KPushButton>
 #include <KToolInvocation>
 
 #include <Plasma/CheckBox>
 #include <Plasma/Label>
-#include <Plasma/PushButton>
+#include <Plasma/Icon>
 
 #include <solid/control/networkmanager.h>
 #include <solid/control/wirednetworkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/wirelessaccesspoint.h>
 
+#include "events.h"
 #include "../libs/marshalarguments.h"
 #include "interfacegroup.h"
 #include "remoteconnection.h"
@@ -59,6 +61,7 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_connectionActivationSignalMapper(new QSignalMapper(this)),
     m_connectionDeactivationSignalMapper(new QSignalMapper(this))
 {
+    setMinimumWidth(250);
     qDBusRegisterMetaType<QMap<QString, QVariant> >();
     qDBusRegisterMetaType<QMap<QString, QMap<QString, QVariant> > >();
 
@@ -69,24 +72,24 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical, m_layout);
     Plasma::Label * header = new Plasma::Label(this);
     header->setText(i18nc("Label for connection list popup","<b>Networks</b>"));
-    m_notRunning = new Plasma::Label(this);
-    m_notRunning->setText(i18nc("Label for when NetworkManager is not running","The NetworkManager service is not running."));
+    //m_notRunning = new Plasma::Label(this);
+    //m_notRunning->setText(i18nc("Label for when NetworkManager is not running","The NetworkManager service is not running."));
     m_connectionLayout->addItem(header);
-    m_connectionLayout->addItem(m_notRunning);
+    //m_connectionLayout->addItem(m_notRunning);
     if (Solid::Control::NetworkManager::status() != Solid::Networking::Unknown) {
-        m_notRunning->hide();
+        ;//m_notRunning->hide();
     }
     m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
     m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
     m_ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, this);
     m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, this);
-    m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
+    //m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
     //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
     m_connectionLayout->addItem(m_ethernetGroup);
     m_connectionLayout->addItem(m_wifiGroup);
-    m_connectionLayout->addItem(m_gsmGroup);
-    m_gsmGroup->show();
+    //m_connectionLayout->addItem(m_gsmGroup);
+    //m_gsmGroup->show();
     //m_connectionLayout->addItem(cdmaGroup);
     //m_connectionLayout->addItem(pppoeGroup);
     m_layout->addItem(m_connectionLayout);
@@ -98,8 +101,10 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     // | [Networking] | [Wireless]  |
     // +----------------------------|
     //QGraphicsGridLayout * gridLayout = new QGraphicsGridLayout(m_layout);
-    m_btnManageConnections = new Plasma::PushButton(this);
+    m_btnManageConnections = new Plasma::Icon(this);
+    m_btnManageConnections->setDrawBackground(true);
     m_btnManageConnections->setText(i18nc("Button text for showing the Manage Connections KCModule", "Manage..."));
+    
     //gridLayout->addItem(m_btnManageConnections, 0, 0, 1, 2);
     m_layout->addItem(m_btnManageConnections);
     //m_lblRfkill = new Plasma::Label(this);
@@ -154,9 +159,11 @@ void NetworkManagerPopup::managerWirelessEnabledChanged(bool enabled)
 void NetworkManagerPopup::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     if (enabled) {
+        KNotification::event(Event::RfOn, i18nc("Notification for radio kill switch turned on", "Wireless hardware enabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
         m_lblRfkill->setText(i18nc("Label text when hardware wireless is enabled", "Wireless hardware is enabled"));
     } else {
         m_lblRfkill->setText(i18nc("Label text when hardware wireless is not enabled", "Wireless hardware is disabled"));
+        KNotification::event(Event::RfOff, i18nc("Notification for radio kill switch turned on", "Wireless hardware disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
     }
 }
 
@@ -219,13 +226,13 @@ void NetworkManagerPopup::managerStatusChanged(Solid::Networking::Status status)
     if (Solid::Networking::Unknown == status ) {
         m_ethernetGroup->hide();
         m_wifiGroup->hide();
-        m_gsmGroup->hide();
-        m_notRunning->show();
+        //m_gsmGroup->hide();
+        //m_notRunning->show();
     } else {
         m_ethernetGroup->show();
         m_wifiGroup->show();
-        m_gsmGroup->show();
-        m_notRunning->hide();
+        //m_gsmGroup->show();
+        //m_notRunning->hide();
     }
 }
 

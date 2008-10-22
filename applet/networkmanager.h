@@ -21,25 +21,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PLASMA_NETWORKMANAGER_APPLET_H
 #define PLASMA_NETWORKMANAGER_APPLET_H
 
+#include <kdeversion.h>
+
 #include <plasma/svg.h>
 //#define KDE_4_1
-#ifdef KDE_4_1
-#include <plasma/applet.h>
-#else
+#if KDE_IS_VERSION(4,1,70)
 #include <plasma/popupapplet.h>
+#else
+#include <plasma/applet.h>
 #endif
+
 #include <solid/control/networkinterface.h>
 class NetworkManagerPopup;
 
-#ifdef KDE_4_1
+#if KDE_IS_VERSION(4,1,70)
+class NetworkManagerApplet : public Plasma::PopupApplet
+#else
 namespace Plasma
 {
 class Dialog;
 } // namespace Plasma
 
 class NetworkManagerApplet : public Plasma::Applet
-#else
-class NetworkManagerApplet : public Plasma::PopupApplet
 #endif
 {
 Q_OBJECT
@@ -59,12 +62,12 @@ public:
     /* reimp Plasma::Applet */
     void popupEvent(bool show);
     QGraphicsWidget * graphicsWidget();
-#ifdef KDE_4_1
+#if KDE_IS_VERSION(4,1,70)
+#else
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-protected Q_SLOTS:
-    void showPopup(QGraphicsSceneMouseEvent *event);
+    void showLegacyPopup(QGraphicsSceneMouseEvent *event);
 private:
     Plasma::Dialog * m_dialog;
 #endif

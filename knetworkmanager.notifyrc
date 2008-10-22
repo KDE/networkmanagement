@@ -1,0 +1,74 @@
+[Global]
+Name=Networking
+IconName=networkmanager
+Comment=Network Management Events
+Version=1
+
+[Context/wired]
+Name=Wired Network Interface
+[Context/wireless]
+Name=Wireless Network Interface
+[Context/cellular]
+Name=Cellular broadband
+[Context/pppoe]
+Name=DSL network interfaces
+[Context/vpn]
+Name=VPN connection
+Comment=Virtual Private Network Connection
+
+[Event/hwadded]
+Name=Network Interface Attached
+Comment=A network interface was attached
+Action=Popup
+
+[Event/hwremoved]
+Name=Network Interface Removed
+Comment=A network interface was removed
+Action=Popup
+
+[Event/networkappeared]
+Name=Found Wireless Network
+Comment=A wireless network appeared
+Action=Popup
+
+[Event/networkdisappeared]
+Name=Lost Wireless Network
+Comment=A wireless network disappeared
+Action=Popup
+
+[Event/connecting]
+Name=Establishing Network Connection
+Comment=A network connection attempt was begun
+Action=Popup
+
+[Event/disconnected]
+Name=Network Connection Disconnected
+Comment=A network connection was disconnected
+Action=Popup
+
+[Event/connected]
+Name=Network Connection Succeeded
+Comment=A network connection was established
+Action=Popup
+
+[Event/connfailed]
+Name=Network Connection Failed
+Comment=A network connection attempt failed
+Action=Popup
+
+[Event/rfoff]
+Name=Radio Hardware Switched Off
+Comment=Wireless transceivers disabled by hardware switch
+Action=Popup
+
+[Event/rfon]
+Name=Radio Hardware Switched On
+Comment=Wireless transceivers enabled
+Action=Popup
+
+[Event/lowsignal]
+Name=Low Wireless Signal Strength
+Comment=The wireless signal strength is low
+Action=Popup
+
+

@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkmanager.h"
 
 #include <QIcon>
-#ifdef KDE_4_1
+
+#if KDE_IS_VERSION(4,1,70)
+#else
 #include <QVBoxLayout>
 #include <Plasma/Corona>
 #include <Plasma/Dialog>
@@ -29,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KGlobalSettings>
 #include <QGraphicsGridLayout>
 #endif
+
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 
@@ -45,14 +48,14 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Con
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
-#ifdef KDE_4_1
-: Plasma::Applet(parent, args), m_iconPerDevice(false), m_svg(this), m_dialog(0)
-#else
+#if KDE_IS_VERSION(4,1,70)
 : Plasma::PopupApplet(parent, args), m_iconPerDevice(false), m_svg(this)
+#else
+: Plasma::Applet(parent, args), m_iconPerDevice(false), m_svg(this), m_dialog(0)
 #endif
 {
     setHasConfigurationInterface(false);
-#ifndef KDE_4_1
+#if KDE_IS_VERSION(4,1,70)
     setPopupIcon(QIcon());
 #endif
     setAspectRatioMode(Plasma::ConstrainedSquare);// copied from Battery - the comment for this value is meaningless
@@ -312,7 +315,8 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
     return lessThan;
 }
 
-#ifdef KDE_4_1
+#if KDE_IS_VERSION(4,1,70)
+#else
 void NetworkManagerApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton) {
@@ -327,11 +331,11 @@ void NetworkManagerApplet::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
 {
     if ((m_clicked - scenePos().toPoint()).manhattanLength() <
             KGlobalSettings::dndEventDelay()) {
-        showPopup(event);
+        showLegacyPopup(event);
     }
 }
 
-void NetworkManagerApplet::showPopup(QGraphicsSceneMouseEvent *event)
+void NetworkManagerApplet::showLegacyPopup(QGraphicsSceneMouseEvent *event)
 {
 #if 0
     Q_UNUSED(event);

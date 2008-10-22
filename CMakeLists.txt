@@ -28,6 +28,8 @@ add_subdirectory(libs)
 add_subdirectory(tests)
 add_subdirectory(settings)
 
+install( FILES knetworkmanager.notifyrc DESTINATION ${DATA_INSTALL_DIR}/knetworkmanager )
+
 ## next target: networkmanager applet
 ## not built, the real applet is in applet/
 set(networkmanager_SRCS

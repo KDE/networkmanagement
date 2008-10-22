@@ -24,19 +24,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QGraphicsLinearLayout>
 #include <KDebug>
+#include <KNotification>
+#include <solid/control/wirelessnetworkinterface.h>
 
+#include "events.h"
 #include "interfaceitem.h"
 #include "connectionitem.h"
 #include "connectioninspector.h"
 #include "networkmanagersettings.h"
 #include "remoteconnection.h"
-
+#include "wirelessinterfaceitem.h"
 
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
 : QGraphicsWidget(parent), m_type(type), m_userSettings(userSettings), m_systemSettings(systemSettings)
 {
     m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
-
     // create an interfaceItem for each interface of our type
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == interfaceType()) {
@@ -69,7 +71,12 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
 {
     Q_ASSERT(iface);
     if (!m_interfaces.contains(iface->uni())) {
-        InterfaceItem * ii = new InterfaceItem(iface, m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+        InterfaceItem * ii;
+        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+            ii = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+        } else {
+            ii = new InterfaceItem(iface, m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+        }
         m_layout->addItem(ii);
         m_interfaces.insert(iface->uni(), ii);
         m_layout->invalidate();
@@ -138,7 +145,7 @@ void InterfaceGroup::interfaceAdded(const QString& uni)
 {
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
-    // KNotification
+    KNotification::event(Event::HwAdded, i18nc("Notification for hardware added", "Network interface %1 attached", iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
 }
 
 void InterfaceGroup::interfaceRemoved(const QString& uni)
@@ -146,6 +153,7 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
     if (m_interfaces.contains(uni)) {
         InterfaceItem * item = m_interfaces.take(uni);
         m_layout->removeItem(item);
+        KNotification::event(Event::HwRemoved, i18nc("Notification for hardware removed", "Network interface removed"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
         delete item;
     }
 }
@@ -159,6 +167,7 @@ void InterfaceGroup::activateConnection(ConnectionItem* item)
     if ( i != m_interfaces.constEnd()) {
         QString firstDeviceUni = i.key();
         Solid::Control::NetworkManager::activateConnection(firstDeviceUni, item->connection()->service() + " " + item->connection()->path(), QVariantMap());
+        KNotification::event(Event::Connecting, i18nc("Notification text when activating a connection","Connecting %1", item->connection()->id()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
     }
     // if the manager updates the interface's state, we should then refresh the list of
     // connections(remove any active connections from the list
