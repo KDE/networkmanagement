@@ -51,7 +51,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 : Plasma::PopupApplet(parent, args), m_iconPerDevice(false), m_svg(this)
 #endif
 {
-    setHasConfigurationInterface(true);
+    setHasConfigurationInterface(false);
 #ifndef KDE_4_1
     setPopupIcon(QIcon());
 #endif
