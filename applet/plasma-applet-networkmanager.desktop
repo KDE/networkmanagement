@@ -20,6 +20,7 @@ Comment[uk]=Налаштуйте параметри мережі
 Comment[x-test]=xxConfigure network interfacesxx
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
+Icon=networkmanager
 
 X-KDE-Library=plasma_applet_networkmanager
 X-KDE-PluginInfo-Author=Will Stephenson
