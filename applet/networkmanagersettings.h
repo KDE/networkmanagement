@@ -59,6 +59,7 @@ private Q_SLOTS:
     void onConnectionUpdated(const QVariantMapMap&);
     void serviceOwnerChanged(const QString&, const QString&, const QString&);
 private:
+    void makeConnections(RemoteConnection*);
     QHash<QString, RemoteConnection*> m_connections;
     QString m_service;
 };

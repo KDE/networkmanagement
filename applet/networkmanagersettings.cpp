@@ -34,9 +34,8 @@ NetworkManagerSettings::NetworkManagerSettings(const QString & service, QObject 
     QList<QDBusObjectPath> userConnections = ListConnections();
     foreach (QDBusObjectPath op, userConnections) {
         RemoteConnection * connectionIface = new RemoteConnection(service, op.path(), this);
+        makeConnections(connectionIface);
         m_connections.insert(op.path(), connectionIface);
-        connect( connectionIface, SIGNAL(Removed()), this, SLOT(onConnectionRemoved()));
-        connect( connectionIface, SIGNAL(Updated(const QVariantMapMap&)), this, SLOT(onConnectionUpdated(const QVariantMapMap&)));
     }
     // signal is from parent class
     connect(this, SIGNAL(NewConnection(const QDBusObjectPath&)),
@@ -50,6 +49,13 @@ NetworkManagerSettings::NetworkManagerSettings(const QString & service, QObject 
 NetworkManagerSettings::~NetworkManagerSettings()
 {
 
+}
+
+void NetworkManagerSettings::makeConnections(RemoteConnection * connectionIface)
+{
+    connect( connectionIface, SIGNAL(Removed()), this, SLOT(onConnectionRemoved()));
+    connect( connectionIface, SIGNAL(Updated(const QVariantMapMap&)),
+            this, SLOT(onConnectionUpdated(const QVariantMapMap&)));
 }
 
 QStringList NetworkManagerSettings::connections() const
@@ -66,9 +72,8 @@ void NetworkManagerSettings::onConnectionAdded(const QDBusObjectPath& op)
 {
     kDebug() << op.path();
     RemoteConnection * connectionIface = new RemoteConnection(service(), op.path(), this);
+    makeConnections(connectionIface);
     m_connections.insert(op.path(), connectionIface);
-    connect( connectionIface, SIGNAL(Removed()), this, SLOT(onConnectionRemoved()));
-    connect( connectionIface, SIGNAL(Updated(const QVariantMapMap&)), this, SLOT(onConnectionUpdated(const QVariantMapMap&)));
     emit connectionAdded(this, op.path());
 }
 
