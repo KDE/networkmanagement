@@ -11,6 +11,7 @@ set(networkmanager_SRCS
     nm-exported-connectioninterface.cpp
     remoteconnection.cpp
     networkmanagersettings.cpp
+    wirelessenvironment.cpp
     wirelessinterfaceitem.cpp
     wirelessnetwork.cpp
     )

@@ -33,6 +33,7 @@ namespace Control
 }
 }
 
+class WirelessEnvironment;
 class WirelessNetwork;
 
 /** Represents a wireless network interface in the popup
@@ -51,14 +52,10 @@ signals:
 public slots:
     void activeAccessPointChanged(const QString&);
     void activeSignalStrengthChanged(int);
-    void accessPointAppeared(const QString&);
-    void networkDisappeared(const QString&);
-    //void strengthChanged(int);
 private:
     void setConnectionInfo();
-    void accessPointAppearedInternal(const QString&);
     Solid::Control::WirelessNetworkInterface * m_wirelessIface;
     Solid::Control::AccessPoint * m_activeAccessPoint;
-    QHash<QString, WirelessNetwork*> m_networks;
+    WirelessEnvironment * m_environment;
 };
 #endif // WIRELESSINTERFACEITEM_H

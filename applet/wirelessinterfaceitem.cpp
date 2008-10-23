@@ -29,20 +29,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../libs/types.h"
 #include "events.h"
 #include "remoteconnection.h"
+#include "wirelessenvironment.h"
 #include "wirelessnetwork.h"
 
 WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent)
-: InterfaceItem(iface, userSettings, systemSettings, mode, parent), m_wirelessIface(iface)
+: InterfaceItem(iface, userSettings, systemSettings, mode, parent), m_wirelessIface(iface), m_environment(new WirelessEnvironment(iface, this))
 {
-    foreach (QString apUni, iface->accessPoints()) {
-        accessPointAppearedInternal(apUni);
-    }
-    // for managing our list of wireless networks
-    connect(iface, SIGNAL(accessPointAppeared(const QString&)),
-            SLOT(accessPointAppeared(const QString&)));
     // for updating our UI
     connect(iface, SIGNAL(activeAccessPointChanged(const QString&)),
             SLOT(activeAccessPointChanged(const QString&)));
+
+    connect(m_environment, SIGNAL(wirelessNetworksChanged()),
+                SIGNAL(wirelessNetworksChanged()));
 
     activeAccessPointChanged(m_wirelessIface->activeAccessPoint());
 }
@@ -51,36 +49,6 @@ WirelessInterfaceItem::~WirelessInterfaceItem()
 {
 
 }
-
-void WirelessInterfaceItem::accessPointAppeared(const QString &uni)
-{
-    accessPointAppearedInternal(uni);
-    emit wirelessNetworksChanged();
-}
-
-void WirelessInterfaceItem::accessPointAppearedInternal(const QString &uni)
-{
-    Solid::Control::AccessPoint * ap = m_wirelessIface->findAccessPoint(uni);
-    QString ssid = ap->ssid();
-    if (!m_networks.contains(ssid)) {
-        WirelessNetwork * net = new WirelessNetwork(ssid, m_wirelessIface, 0);
-        m_networks.insert(ssid, net);
-        //connect(net, SIGNAL(strengthChanged(const
-        connect(net, SIGNAL(disappeared(const QString&)), SLOT(networkDisappeared(const QString&)));
-        net->accessPointAppeared(uni);
-        emit wirelessNetworksChanged();
-        KNotification::event(Event::NetworkAppeared, i18nc("Notification text when a wireless network interface was found","Wireless network %1 found", ssid), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
-    }
-}
-
-void WirelessInterfaceItem::networkDisappeared(const QString &ssid)
-{
-    WirelessNetwork * net = m_networks.take(ssid);
-    KNotification::event(Event::NetworkDisappeared, i18nc("Notification text when a wireless network interface disappeared","Wireless network %1 disappeared", ssid), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
-    delete net;
-    emit wirelessNetworksChanged();
-}
-
 
 void WirelessInterfaceItem::activeAccessPointChanged(const QString &uni)
 {
@@ -123,10 +91,13 @@ void WirelessInterfaceItem::setConnectionInfo()
             if (security.isEmpty()) {
                 m_connectionInfoIcon->setIcon("object-unlocked");
             } else if (security == QLatin1String("wep")) {
+                // security-weak
                 m_connectionInfoIcon->setIcon("object-locked");
             } else if (security == QLatin1String("wpa-psk")) {
+                // security-medium
                 m_connectionInfoIcon->setIcon("object-locked");
             } else if (security == QLatin1String("wpa-eap")) {
+                // security-strong
                 m_connectionInfoIcon->setIcon("object-locked");
             }
         }
