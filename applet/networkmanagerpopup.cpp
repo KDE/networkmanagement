@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -66,7 +66,7 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     qDBusRegisterMetaType<QMap<QString, QMap<QString, QVariant> > >();
 
     // containing vertical linear layout
-    m_layout = new QGraphicsLinearLayout(Qt::Vertical);
+    m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
     //   a vertical list of appropriate connections
     //     header label
     m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical, m_layout);
@@ -104,7 +104,7 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_btnManageConnections = new Plasma::Icon(this);
     m_btnManageConnections->setDrawBackground(true);
     m_btnManageConnections->setText(i18nc("Button text for showing the Manage Connections KCModule", "Manage..."));
-    
+
     //gridLayout->addItem(m_btnManageConnections, 0, 0, 1, 2);
     m_layout->addItem(m_btnManageConnections);
     //m_lblRfkill = new Plasma::Label(this);
@@ -148,7 +148,6 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
 
 NetworkManagerPopup::~NetworkManagerPopup()
 {
-    delete m_layout;
 }
 
 void NetworkManagerPopup::managerWirelessEnabledChanged(bool enabled)
