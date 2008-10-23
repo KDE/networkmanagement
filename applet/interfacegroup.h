@@ -59,6 +59,7 @@ protected slots:
     void connectionRemovedFromService(NetworkManagerSettings *, const QString&);
     void serviceAppeared(NetworkManagerSettings*);
     void serviceDisappeared(NetworkManagerSettings*);
+    void reassessConnectionList();
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
     void addConnectionInternal(NetworkManagerSettings*, const QString &connectionPath);

@@ -47,6 +47,7 @@ Q_OBJECT
 public:
     WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent = 0);
     virtual ~WirelessInterfaceItem();
+    WirelessEnvironment * wirelessEnvironment() const;
 signals:
     void wirelessNetworksChanged();
 public slots:

@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessnetworkinterface.h>
 
 #include "remoteconnection.h"
+#include "wirelessenvironment.h"
 
 ConnectionInspector::~ConnectionInspector()
 {
@@ -47,8 +48,8 @@ bool WiredConnectionInspector::accept(RemoteConnection * connection)
     return (connection->type() == Solid::Control::NetworkInterface::Ieee8023 && m_iface->carrier()) && ConnectionInspector::accept(connection);
 }
 
-WirelessConnectionInspector::WirelessConnectionInspector(Solid::Control::WirelessNetworkInterface* iface)
-    : m_iface(iface)
+WirelessConnectionInspector::WirelessConnectionInspector(Solid::Control::WirelessNetworkInterface* iface, WirelessEnvironment * envt)
+    : m_iface(iface), m_envt(envt)
 {
 }
 
@@ -68,12 +69,8 @@ bool WirelessConnectionInspector::accept(RemoteConnection * connection)
             QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME));
             if (connectionSetting.contains(QLatin1String(NM_SETTING_WIRELESS_SSID))) {
                 ssid = connectionSetting.value(QLatin1String(NM_SETTING_WIRELESS_SSID)).toString();
-                foreach (QString accessPointUni, m_iface->accessPoints()) {
-                    Solid::Control::AccessPoint * ap = m_iface->findAccessPoint(accessPointUni);
-                    kDebug() << "Checking AP essid: " << ap->ssid() << " vs connection essid: " << ssid;
-                    if (ap->ssid() == ssid) {
-                        acceptable = true;
-                    }
+                if ( m_envt->findWirelessNetwork(ssid) != 0 ) {
+                    acceptable = true;
                 }
             }
         }
@@ -96,34 +93,4 @@ bool PppoeConnectionInspector::accept(RemoteConnection * connection)
     return connection->type() == Solid::Control::NetworkInterface::Serial && ConnectionInspector::accept(connection);
 }
 
-ConnectionInspector *ConnectionInspectorFactory::connectionInspector(Solid::Control::NetworkInterface* iface)
-{
-    ConnectionInspector * inspector = 0;
-    if (!m_inspectors.contains(iface)) {
-        switch (iface->type()) {
-            case Solid::Control::NetworkInterface::Ieee8023:
-                inspector = new WiredConnectionInspector(static_cast<Solid::Control::WiredNetworkInterface*>(iface));
-                break;
-            case Solid::Control::NetworkInterface::Ieee80211:
-                inspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface));
-                break;
-            case Solid::Control::NetworkInterface::Serial:
-                inspector = new PppoeConnectionInspector;
-                break;
-            case Solid::Control::NetworkInterface::Gsm:
-                inspector = new GsmConnectionInspector;
-                break;
-            case Solid::Control::NetworkInterface::Cdma:
-                inspector = new CdmaConnectionInspector;
-                break;
-            default:
-                kDebug() << "Unhandled network interface type : " << iface->type();
-        }
-        m_inspectors.insert(iface, inspector);
-    } else {
-        inspector = m_inspectors.value(iface);
-    }
-    Q_ASSERT(inspector);
-    return inspector;
-}
-
+#endif

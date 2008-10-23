@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsLinearLayout>
 #include <KDebug>
 #include <KNotification>
+#include <solid/control/wirednetworkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
 
 #include "events.h"
@@ -71,12 +72,36 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
 {
     Q_ASSERT(iface);
     if (!m_interfaces.contains(iface->uni())) {
-        InterfaceItem * ii;
-        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-            ii = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
-        } else {
-            ii = new InterfaceItem(iface, m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+        InterfaceItem * ii = 0;
+        WirelessInterfaceItem * wi = 0;
+        ConnectionInspector * inspector = 0;
+        switch (iface->type()) {
+            case Solid::Control::NetworkInterface::Ieee80211:
+                wi = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                ii = wi;
+                inspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface), wi->wirelessEnvironment());
+                connect(wi, SIGNAL(wirelessNetworksChanged()), SLOT(reassessConnectionList()));
+                break;
+            case Solid::Control::NetworkInterface::Serial:
+                ii = new InterfaceItem(iface, m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                inspector = new PppoeConnectionInspector;
+                break;
+            case Solid::Control::NetworkInterface::Gsm:
+                ii = new InterfaceItem(iface, m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                inspector = new GsmConnectionInspector;
+                break;
+            case Solid::Control::NetworkInterface::Cdma:
+                ii = new InterfaceItem(iface, m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                inspector = new CdmaConnectionInspector;
+                break;
+            default:
+            case Solid::Control::NetworkInterface::Ieee8023:
+                ii = new InterfaceItem(iface, m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                inspector = new WiredConnectionInspector(static_cast<Solid::Control::WiredNetworkInterface*>(iface));
+                break;
         }
+        ii->setConnectionInspector(inspector);
+
         m_layout->addItem(ii);
         m_interfaces.insert(iface->uni(), ii);
         m_layout->invalidate();
@@ -105,15 +130,15 @@ void InterfaceGroup::serviceAppeared(NetworkManagerSettings * service)
 
 void InterfaceGroup::addConnectionInternal(NetworkManagerSettings * service, const QString& connectionPath)
 {
-    ConnectionInspectorFactory cif;
-    RemoteConnection * connection = service->findConnection(connectionPath);
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-        if (iface->type() == m_type) {
-            ConnectionInspector * inspector = cif.connectionInspector(iface);
+    QPair<QString,QString> key(service->service(), connectionPath);
+    if (!m_connections.contains(key)) {
+        RemoteConnection * connection = service->findConnection(connectionPath);
+        foreach (InterfaceItem * item, m_interfaces) {
+            ConnectionInspector * inspector = item->connectionInspector();
             if (inspector->accept(connection)) {
                 ConnectionItem * ci = new ConnectionItem(connection, this);
                 connect(ci, SIGNAL(clicked(ConnectionItem*)), SLOT(activateConnection(ConnectionItem*)));
-                m_connections.insert(QPair<QString,QString>(service->service(), connectionPath), ci);
+                m_connections.insert(key, ci);
                 m_layout->addItem(ci);
             }
         }
@@ -190,6 +215,14 @@ void InterfaceGroup::connectionRemovedFromService(NetworkManagerSettings * servi
         m_connections.remove(key);
         delete item;
     }
+}
+
+void InterfaceGroup::reassessConnectionList()
+{
+    // this will try and add all connections on both services
+    // duplicates are rejected
+    serviceAppeared(m_userSettings);
+    serviceAppeared(m_systemSettings);
 }
 
 // vim: sw=4 sts=4 et tw=100

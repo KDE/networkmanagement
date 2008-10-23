@@ -35,6 +35,7 @@ namespace Control
 } // namespace Control
 } // namespace Solid
 class RemoteConnection;
+class WirelessEnvironment;
 
 class ConnectionInspector
 {
@@ -56,10 +57,11 @@ private:
 class WirelessConnectionInspector : public ConnectionInspector
 {
 public:
-    WirelessConnectionInspector(Solid::Control::WirelessNetworkInterface* iface);
+    WirelessConnectionInspector(Solid::Control::WirelessNetworkInterface* iface, WirelessEnvironment * envt);
     bool accept(RemoteConnection * connection);
 private:
     Solid::Control::WirelessNetworkInterface *m_iface;
+    WirelessEnvironment * m_envt;
 };
 
 class GsmConnectionInspector : public ConnectionInspector
@@ -84,7 +86,5 @@ class ConnectionInspectorFactory
 {
 public:
     ConnectionInspector *connectionInspector(Solid::Control::NetworkInterface* iface);
-private:
-    QMap<Solid::Control::NetworkInterface*, ConnectionInspector*> m_inspectors;
 };
 #endif // CONNECTIONINSPECTOR_H

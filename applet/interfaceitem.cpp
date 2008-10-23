@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 #include "wirelessnetwork.h"
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_nameMode(mode)
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_nameMode(mode), m_connectionInspector(0)
 {
 #if 0 // this layouts pretty badly, esp where labels and icons share a horizontal layout
     // main layout
@@ -340,6 +340,17 @@ void InterfaceItem::setActiveConnection(int state)
     }
     m_connectionNameLabel->setText(stateString.arg(connectionIds.join(QChar(','))));
     setConnectionInfo();
+}
+
+void InterfaceItem::setConnectionInspector(ConnectionInspector * insp)
+{
+    delete m_connectionInspector;
+    m_connectionInspector = insp;
+}
+
+ConnectionInspector * InterfaceItem::connectionInspector() const
+{
+    return m_connectionInspector;
 }
 
 // vim: sw=4 sts=4 et tw=100

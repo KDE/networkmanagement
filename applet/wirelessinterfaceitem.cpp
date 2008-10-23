@@ -50,6 +50,11 @@ WirelessInterfaceItem::~WirelessInterfaceItem()
 
 }
 
+WirelessEnvironment * WirelessInterfaceItem::wirelessEnvironment() const
+{
+    return m_environment;
+}
+
 void WirelessInterfaceItem::activeAccessPointChanged(const QString &uni)
 {
     // this is not called when the device is deactivated..

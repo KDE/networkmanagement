@@ -43,6 +43,7 @@ namespace Plasma
     class Label;
 } // namespace Plasma
 
+class ConnectionInspector;
 class NetworkManagerSettings;
 class RemoteConnection;
 typedef QPair<QDBusObjectPath, RemoteConnection*> ActiveConnectionPair;
@@ -60,7 +61,11 @@ public:
     virtual ~InterfaceItem();
     void setNameDisplayMode(NameDisplayMode);
     NameDisplayMode nameDisplayMode() const;
-
+    /**
+     * Each interface item maintains a connection inspector to approve connections
+     */
+    void setConnectionInspector(ConnectionInspector *);
+    ConnectionInspector * connectionInspector() const;
 public slots:
     void activeConnectionsChanged();
     void connectionStateChanged(int);
@@ -100,5 +105,6 @@ protected:
     NameDisplayMode m_nameMode;
 
     QList<ActiveConnectionPair> m_activeConnections;
+    ConnectionInspector * m_connectionInspector;
 };
 #endif // APPLET_INTERFACEWIDGET_H
