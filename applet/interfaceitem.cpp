@@ -24,8 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QGraphicsGridLayout>
 #include <QGraphicsLinearLayout>
+#include <QLabel>
 
 #include <KDebug>
+#include <KGlobalSettings>
 #include <KNotification>
 
 #include <Plasma/Icon>
@@ -109,8 +111,10 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_ifaceNameLabel = new Plasma::Label(this);
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
+    m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::toolBarFont());
     //       IP address
     m_connectionInfoLabel = new Plasma::Label(this);
+    m_connectionInfoLabel->nativeWidget()->setFont(KGlobalSettings::toolBarFont());
     //m_connectionInfoLabel->setText("dum.my.ip.addr");
     //       signal strength
     //m_connectionInfoStrengthLabel = new Plasma::Label(this);
@@ -118,8 +122,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     //       security
     m_connectionInfoIcon = new Plasma::Icon(this);
     //m_connectionInfoIcon->setIcon("system-lock-screen");
-    m_connectionInfoIcon->setMinimumHeight(32);
-    m_connectionInfoIcon->setMaximumHeight(32);
+    m_connectionInfoIcon->setMinimumHeight(22);
+    m_connectionInfoIcon->setMaximumHeight(22);
     m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1);
     //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
     m_layout->addItem(m_connectionInfoIcon, 2, 3, 1, 1);
@@ -141,6 +145,11 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
             SLOT(connectButtonClicked()));
 
     setNameDisplayMode(mode);
+    // the applet may be starting when NetworkManager is already connections,
+    // so initialise the list of active connections
+    if (m_activeConnections.isEmpty())
+        activeConnectionsChanged();
+    // set the state of our UI correctly
     connectionStateChanged(m_iface->connectionState());
 }
 
@@ -181,6 +190,38 @@ void InterfaceItem::setConnectionInfo()
 void InterfaceItem::activeConnectionsChanged()
 {
     kDebug();
+    QList<QPair<QDBusObjectPath, RemoteConnection*> > newConnectionList;
+    QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
+    QString serviceName;
+    QDBusObjectPath connectionObjectPath;
+    // find the active connection on this device
+    foreach (QString conn, activeConnections) {
+        OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
+                conn, QDBusConnection::systemBus(), 0);
+        foreach (QDBusObjectPath path, candidate.devices()) {
+            if (path.path() == m_iface->uni()) {
+                // this device is using the connection
+                serviceName = candidate.serviceName();
+                connectionObjectPath = candidate.connection();
+
+                NetworkManagerSettings * service = 0;
+                if (serviceName == NM_DBUS_SERVICE_USER_SETTINGS) {
+                    service = m_userSettings;
+                }
+                if (serviceName == NM_DBUS_SERVICE_SYSTEM_SETTINGS) {
+                    service = m_systemSettings;
+                }
+                if (service && service->isValid()) { // it's possible that the service is no longer running
+                                                     // but provided a connection in the past
+                    RemoteConnection * connection = service->findConnection(connectionObjectPath.path());
+                    newConnectionList.append(QPair<QDBusObjectPath, RemoteConnection*>(connectionObjectPath, connection));
+                }
+            }
+        }
+    }
+    m_activeConnections = newConnectionList;
+    // update our UI
+    setConnectionInfo();
 }
 
 void InterfaceItem::connectionStateChanged(int state)
@@ -235,9 +276,10 @@ void InterfaceItem::connectButtonClicked()
         case Solid::Control::NetworkInterface::Configuring:
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
-        case Solid::Control::NetworkInterface::Activated: // lookup the active connection, get its state
-            // deactivate active connection
-            Solid::Control::NetworkManager::deactivateConnection(m_activeConnection.path());
+        case Solid::Control::NetworkInterface::Activated: // deactivate active connections
+            foreach ( ActiveConnectionPair connection, m_activeConnections) {
+                Solid::Control::NetworkManager::deactivateConnection(connection.first.path());
+            }
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
         case Solid::Control::NetworkInterface::UnknownState:
@@ -251,7 +293,6 @@ void InterfaceItem::setUnavailable()
     m_connectionNameLabel->setText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"));
     m_connectionInfoLabel->setText("");
     m_connectButton->setEnabled(false);
-    m_activeConnection = QDBusObjectPath();
 }
 
 void InterfaceItem::setInactive()
@@ -260,62 +301,45 @@ void InterfaceItem::setInactive()
     m_connectionNameLabel->setText("");
     m_connectionInfoLabel->setText("");
     m_connectButton->setIcon("media-playback-stop");
-    m_activeConnection = QDBusObjectPath();
 }
 
 
 void InterfaceItem::setActiveConnection(int state)
 {
-    //FIXME this only works when one connection is active on a device at once
-    // this would be easier if activeConnections was a property on device
-    QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
-    QString ourService;
-    QDBusObjectPath ourConnectionObjectPath;
-    bool defaultRoute;
-    // find the active connection on this device
-    bool found = false;
     m_icon->setEnabled(true);
     m_connectButton->setEnabled(true);
     m_connectButton->setIcon("media-playback-stop");
-    foreach (QString conn, activeConnections) {
-        OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
-                conn, QDBusConnection::systemBus(), 0);
-        foreach (QDBusObjectPath path, candidate.devices()) {
-            if (path.path() == m_iface->uni()) {
-                m_activeConnection = QDBusObjectPath(conn);
-                ourService = candidate.serviceName();
-                ourConnectionObjectPath = candidate.connection();
-                defaultRoute = candidate.getDefault();
-                found = true;
-                break;
-            }
-        }
-        if (found) {
-            break;
-        }
-    }
-    // now we know what the first active connection on this device is, update our UI
-    // sanity check
-    if (found && !ourService.isEmpty()) {
-        // query the service for details of the connection
-        NetworkManagerSettings * service = 0;
-        if (ourService == NM_DBUS_SERVICE_USER_SETTINGS) {
-            service = m_userSettings;
-        }
-        if (ourService == NM_DBUS_SERVICE_SYSTEM_SETTINGS) {
-            service = m_systemSettings;
-        }
-        if (service && service->isValid()) { // it's possible that the service provided a connection but is no longer running
-            RemoteConnection * ourConnection = service->findConnection(ourConnectionObjectPath.path());
+    QStringList connectionIds;
+    foreach (ActiveConnectionPair connection, m_activeConnections) {
+        if (connection.second->isValid()) {
             //connection name
-            m_connectionNameLabel->setText(ourConnection->id());
-            // ip address (Hello, Jos!)
-            setConnectionInfo();
+            connectionIds.append(connection.second->id());
         } else {
             // fallback label
-            m_connectionNameLabel->setText(i18nc("Text for connections not owned by a service", "Orphaned connection"));
+            connectionIds.append(i18nc("Text for connections not owned by a service", "Orphaned connection"));
         }
     }
+    QString stateString;
+    switch (state) {
+        case Solid::Control::NetworkInterface::Preparing:
+            stateString = i18nc("description of preparing to connect state followed by list of active connections in ()", "Preparing to connect (%1)");
+            break;
+        case Solid::Control::NetworkInterface::Configuring:
+            stateString = i18nc("description of configuring hardware state followed by list of active connections in ()", "Configuring interface (%1)");
+            break;
+        case Solid::Control::NetworkInterface::NeedAuth:
+            stateString = i18nc("description of waiting for authentication state followed by list of active connections in ()", "Waiting for authorization (%1)");
+            break;
+        case Solid::Control::NetworkInterface::IPConfig:
+            stateString = i18nc("description of settig IP address state followed by list of active connections in ()", "Setting network address (%1)");
+            break;
+        case Solid::Control::NetworkInterface::Activated:
+        default:
+            stateString = "%1";
+            break;
+    }
+    m_connectionNameLabel->setText(stateString.arg(connectionIds.join(QChar(','))));
+    setConnectionInfo();
 }
 
 // vim: sw=4 sts=4 et tw=100
