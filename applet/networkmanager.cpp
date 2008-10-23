@@ -142,8 +142,6 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
     Q_UNUSED(uni);
     // update the tray icon
     update();
-    // update popup contents
-    // do notifications
 }
 
 void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
@@ -151,8 +149,6 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
     Q_UNUSED(uni);
     // update the tray icon
     update();
-    // update popup contents
-    // do notifications
     // kill any animations involving this interface
 }
 
