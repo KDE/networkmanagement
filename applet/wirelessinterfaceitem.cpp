@@ -20,11 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessinterfaceitem.h"
 
+#include <nm-setting-wireless.h>
+
 #include <KNotification>
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
 
+#include "../libs/types.h"
 #include "events.h"
+#include "remoteconnection.h"
 #include "wirelessnetwork.h"
 
 WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent)
@@ -80,6 +84,7 @@ void WirelessInterfaceItem::networkDisappeared(const QString &ssid)
 
 void WirelessInterfaceItem::activeAccessPointChanged(const QString &uni)
 {
+    // this is not called when the device is deactivated..
     m_activeAccessPoint = m_wirelessIface->findAccessPoint(uni);
     if (m_activeAccessPoint) {
         connect(m_activeAccessPoint, SIGNAL(signalStrengthChanged(int)), SLOT(activeSignalStrengthChanged(int)));
@@ -97,7 +102,34 @@ void WirelessInterfaceItem::setConnectionInfo()
     if (m_activeAccessPoint) {
         m_connectionInfoLabel->setText(QString::fromLatin1("%1 %").arg(m_activeAccessPoint->signalStrength()));
         // TODO update icon contents
-        m_connectionInfoIcon->setIcon("system-lock-screen");
+        if (!m_activeConnections.isEmpty()) {
+            QString security;
+            foreach (ActiveConnectionPair conn, m_activeConnections) {
+
+                QVariantMapMap settings = conn.second->settings();
+                if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME))) {
+                    QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME));
+                    if (connectionSetting.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT))) {
+                        security = connectionSetting.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT)).toString();
+                    } else {
+                        security = "wep";
+                    }
+
+                }
+                if (!security.isEmpty()) {
+                    break;
+                }
+            }
+            if (security.isEmpty()) {
+                m_connectionInfoIcon->setIcon("object-unlocked");
+            } else if (security == QLatin1String("wep")) {
+                m_connectionInfoIcon->setIcon("object-locked");
+            } else if (security == QLatin1String("wpa-psk")) {
+                m_connectionInfoIcon->setIcon("object-locked");
+            } else if (security == QLatin1String("wpa-eap")) {
+                m_connectionInfoIcon->setIcon("object-locked");
+            }
+        }
         m_connectionInfoIcon->show();
     } else {
         m_connectionInfoLabel->setText(QString());

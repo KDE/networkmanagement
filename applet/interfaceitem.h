@@ -44,7 +44,8 @@ namespace Plasma
 } // namespace Plasma
 
 class NetworkManagerSettings;
-
+class RemoteConnection;
+typedef QPair<QDBusObjectPath, RemoteConnection*> ActiveConnectionPair;
 /**
  * Represents a single network interface
  * Displays status, updates itself
@@ -98,6 +99,6 @@ protected:
     Plasma::Icon * m_connectButton;
     NameDisplayMode m_nameMode;
 
-    QDBusObjectPath m_activeConnection;
+    QList<ActiveConnectionPair> m_activeConnections;
 };
 #endif // APPLET_INTERFACEWIDGET_H
