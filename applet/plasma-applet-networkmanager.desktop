@@ -1,6 +1,16 @@
 [Desktop Entry]
 Name=Networks
+Name[gl]=Redes
+Name[pt]=Redes
+Name[pt_BR]=Redes
+Name[sv]=Nätverk
+Name[uk]=Мережі
 Comment=Manage network connections
+Comment[gl]=Configura as conexóns de rede
+Comment[pt]=Gerir as ligações de rede
+Comment[pt_BR]=Gerir as ligações de rede
+Comment[sv]=Hantera nätverksanslutningar
+Comment[uk]=Керуйте мережевими з’єднаннями
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 Icon=networkmanager
