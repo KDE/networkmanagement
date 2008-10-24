@@ -1,74 +1,194 @@
 [Global]
 Name=Networking
+Name[el]=Δίκτυα
+Name[pt]=Rede
+Name[pt_BR]=Rede
+Name[uk]=Робота у мережі
 IconName=networkmanager
 Comment=Network Management Events
+Comment[el]=Γεγονότα διαχείρισης δικτύου
+Comment[pt]=Eventos de Gestão da Rede
+Comment[pt_BR]=Eventos de Gestão da Rede
+Comment[uk]=Події керування мережею
 Version=1
 
 [Context/wired]
 Name=Wired Network Interface
+Name[el]=Ενσύρματη διασύνδεση δικτύου
+Name[pt]=Interface de Rede Com-Fios
+Name[pt_BR]=Interface de Rede Com-Fios
+Name[uk]=Інтерфейс дротової мережі
 [Context/wireless]
 Name=Wireless Network Interface
+Name[el]=Ασύρματη διασύνδεση δικτύου
+Name[pt]=Interface de Rede Sem-Fios
+Name[pt_BR]=Interface de Rede Sem-Fios
+Name[uk]=Інтерфейс бездротової мережі
 [Context/cellular]
 Name=Cellular broadband
+Name[el]=Κινητή ευρυζωνική
+Name[pt]=Banda-larga móvel
+Name[pt_BR]=Banda-larga móvel
+Name[uk]=Стільникова широкосмугова мережа
 [Context/pppoe]
 Name=DSL network interfaces
+Name[el]=Διασυνδέσεις δικτύου DSL
+Name[pt]=interfaces de rede DSL
+Name[pt_BR]=interfaces de rede DSL
+Name[uk]=Мережеві інтерфейси DSL
 [Context/vpn]
 Name=VPN connection
+Name[el]=Σύνδεση VPN
+Name[pt]=ligação VPN
+Name[pt_BR]=ligação VPN
+Name[uk]=З’єднання VPN
 Comment=Virtual Private Network Connection
+Comment[el]=Σύνδεση εικονικού ιδιωτικού δικτύου (VPN)
+Comment[pt]=Ligação de Rede Privada Virtual (VPN)
+Comment[pt_BR]=Ligação de Rede Privada Virtual (VPN)
+Comment[uk]=З’єднання VPN
 
 [Event/hwadded]
 Name=Network Interface Attached
+Name[el]=Σύναψη διασύνδεσης δικτύου
+Name[pt]=Interface de Rede Ligada
+Name[pt_BR]=Interface de Rede Ligada
+Name[uk]=Доданий інтерфейс мережі
 Comment=A network interface was attached
+Comment[el]=Έγινε σύναψη μιας διασύνδεσης δικτύου
+Comment[pt]=Foi ligada uma interface de rede
+Comment[pt_BR]=Foi ligada uma interface de rede
+Comment[uk]=Було додано інтерфейс мережі
 Action=Popup
 
 [Event/hwremoved]
 Name=Network Interface Removed
+Name[el]=Αφαίρεση διασύνδεσης δικτύου
+Name[pt]=Interface de Rede Removida
+Name[pt_BR]=Interface de Rede Removida
+Name[uk]=Вилучено інтерфейс мережі
 Comment=A network interface was removed
+Comment[el]=Έγινε αφαίρεση μιας διασύνδεσης δικτύου
+Comment[pt]=Foi removida uma interface de rede
+Comment[pt_BR]=Foi removida uma interface de rede
+Comment[uk]=Було вилучено інтерфейс мережі
 Action=Popup
 
 [Event/networkappeared]
 Name=Found Wireless Network
+Name[el]=Βρέθηκε ασύρματο δίκτυο
+Name[pt]=Rede Sem-Fios Descoberta
+Name[pt_BR]=Rede Sem-Fios Descoberta
+Name[uk]=Знайдено бездротову мережу
 Comment=A wireless network appeared
+Comment[el]=Βρέθηκε ένα ασύρματο δίκτυο
+Comment[pt]=Apareceu uma rede sem-fios
+Comment[pt_BR]=Apareceu uma rede sem-fios
+Comment[uk]=Встановлено зв’язок з бездротовою мережею
 Action=Popup
 
 [Event/networkdisappeared]
 Name=Lost Wireless Network
+Name[el]=Απώλεια ασύρματου δικτύου
+Name[pt]=Rede Sem-Fios Perdida
+Name[pt_BR]=Rede Sem-Fios Perdida
+Name[uk]=Втрачено зв’язок з радіомережею
 Comment=A wireless network disappeared
+Comment[el]=΄Ενα ασύρματο δίκτυο εξαφανίστηκε
+Comment[pt]=Desapareceu uma rede sem-fios
+Comment[pt_BR]=Desapareceu uma rede sem-fios
+Comment[uk]=Зв’язок з бездротовою мережею увірвався
 Action=Popup
 
 [Event/connecting]
 Name=Establishing Network Connection
+Name[el]=Εδραίωση σύνδεσης δικτύου
+Name[pt]=A Estabelecer a Ligação à Rede
+Name[pt_BR]=A Estabelecer a Ligação à Rede
+Name[uk]=Встановлення мережевого з'єднання
 Comment=A network connection attempt was begun
+Comment[el]=Αρχή προσπάθειας σύνδεσης δικτύου
+Comment[pt]=Iniciou-se uma tentativa de ligação à rede
+Comment[pt_BR]=Iniciou-se uma tentativa de ligação à rede
+Comment[uk]=Було розпочато спробу встановлення мережевого з’єднання
 Action=Popup
 
 [Event/disconnected]
 Name=Network Connection Disconnected
+Name[el]=Αποσύνδεση σύνδεσης δικτύου
+Name[pt]=Ligação de Rede Desligada
+Name[pt_BR]=Ligação de Rede Desligada
+Name[uk]=Мережеве з’єднання розірвано
 Comment=A network connection was disconnected
+Comment[el]=Αποσύνδεση μιας σύνδεσης δικτύου
+Comment[pt]=A ligação de rede terminou
+Comment[pt_BR]=A ligação de rede terminou
+Comment[uk]=Мережеве з’єднання було розірвано
 Action=Popup
 
 [Event/connected]
 Name=Network Connection Succeeded
+Name[el]=Επιτυχής σύνδεση δικτύου
+Name[pt]=Ligação à Rede com Sucesso
+Name[pt_BR]=Ligação à Rede com Sucesso
+Name[uk]=Успішне з’єднання з мережею
 Comment=A network connection was established
+Comment[el]=Έγινε εδραίωση μιας σύνδεσης δικτύου
+Comment[pt]=Foi estabelecida uma ligação à rede
+Comment[pt_BR]=Foi estabelecida uma ligação à rede
+Comment[uk]=Було встановлено з’єднання з мережею
 Action=Popup
 
 [Event/connfailed]
 Name=Network Connection Failed
+Name[el]=Αποτυχία σύνδεσης δικτύου
+Name[pt]=Ligação à Rede sem Sucesso
+Name[pt_BR]=Ligação à Rede sem Sucesso
+Name[uk]=Спроба встановлення з'єднання зазнала невдачі
 Comment=A network connection attempt failed
+Comment[el]=Αποτυχία προσπάθειας σύνδεσης με ένα δίκτυο
+Comment[pt]=A tentativa de ligação à rede foi mal-sucedida
+Comment[pt_BR]=A tentativa de ligação à rede foi mal-sucedida
+Comment[uk]=Спроба встановлення з’єднання зазнала невдачі
 Action=Popup
 
 [Event/rfoff]
 Name=Radio Hardware Switched Off
+Name[el]=Ασύρματο υλικό επικοινωνίας κλειστό
+Name[pt]='Hardware' de Rádio Desligado
+Name[pt_BR]='Hardware' de Rádio Desligado
+Name[uk]=Радіозв’язок апаратно вимкнено
 Comment=Wireless transceivers disabled by hardware switch
+Comment[el]=Απενεργοποίηση ασύρματων συσκευών μέσω ενός διακόπτη υλικού
+Comment[pt]=Os receptores/transmissores sem-fios foram desligados pelo interruptor
+Comment[pt_BR]=Os receptores/transmissores sem-fios foram desligados pelo interruptor
+Comment[uk]=Бездротовий приймач-передавач було вимкнено апаратним тумблером
 Action=Popup
 
 [Event/rfon]
 Name=Radio Hardware Switched On
+Name[el]=Ασύρματο υλικό επικοινωνίας ενεργό
+Name[pt]='Hardware' de Rádio Ligado
+Name[pt_BR]='Hardware' de Rádio Ligado
+Name[uk]=Радіозв’язок апаратно увімкнено
 Comment=Wireless transceivers enabled
+Comment[el]=Ενεργοποίηση ασύρματων συσκευών
+Comment[pt]=Os receptores/transmissores sem-fios foram ligados
+Comment[pt_BR]=Os receptores/transmissores sem-fios foram ligados
+Comment[uk]=Увімкнено бездротовий приймач-передавач
 Action=Popup
 
 [Event/lowsignal]
 Name=Low Wireless Signal Strength
+Name[el]=Χαμηλή ισχύ σήματος ασύρματου
+Name[pt]=Potência do Sinal Sem-Fios Fraca
+Name[pt_BR]=Potência do Sinal Sem-Fios Fraca
+Name[uk]=Низька потужність радіосигналу
 Comment=The wireless signal strength is low
+Comment[el]=Η ασύρματη ισχύ του σήματος είναι χαμηλή
+Comment[pt]=A potência do sinal sem-fios é fraca
+Comment[pt_BR]=A potência do sinal sem-fios é fraca
+Comment[uk]=Занизька потужність радіосигналу
 Action=Popup
 
 

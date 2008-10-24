@@ -1,11 +1,13 @@
 [Desktop Entry]
 Name=Networks
+Name[el]=Δίκτυα
 Name[gl]=Redes
 Name[pt]=Redes
 Name[pt_BR]=Redes
 Name[sv]=Nätverk
 Name[uk]=Мережі
 Comment=Manage network connections
+Comment[el]=Διαχείριση συνδέσεων δικτύου
 Comment[gl]=Configura as conexóns de rede
 Comment[pt]=Gerir as ligações de rede
 Comment[pt_BR]=Gerir as ligações de rede
