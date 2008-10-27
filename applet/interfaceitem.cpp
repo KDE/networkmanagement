@@ -320,25 +320,27 @@ void InterfaceItem::setActiveConnection(int state)
         }
     }
     QString stateString;
-    switch (state) {
-        case Solid::Control::NetworkInterface::Preparing:
-            stateString = i18nc("description of preparing to connect state followed by list of active connections in ()", "Preparing to connect (%1)");
-            break;
-        case Solid::Control::NetworkInterface::Configuring:
-            stateString = i18nc("description of configuring hardware state followed by list of active connections in ()", "Configuring interface (%1)");
-            break;
-        case Solid::Control::NetworkInterface::NeedAuth:
-            stateString = i18nc("description of waiting for authentication state followed by list of active connections in ()", "Waiting for authorization (%1)");
-            break;
-        case Solid::Control::NetworkInterface::IPConfig:
-            stateString = i18nc("description of settig IP address state followed by list of active connections in ()", "Setting network address (%1)");
-            break;
-        case Solid::Control::NetworkInterface::Activated:
-        default:
-            stateString = "%1";
-            break;
+    if (!connectionIds.isEmpty()) {
+        switch (state) {
+            case Solid::Control::NetworkInterface::Preparing:
+                stateString = i18nc("description of preparing to connect state followed by list of active connections in ()", "Preparing to connect (%1)"), connectionIds.join(QChar(','));
+                break;
+            case Solid::Control::NetworkInterface::Configuring:
+                stateString = i18nc("description of configuring hardware state followed by list of active connections in ()", "Configuring interface (%1)"), connectionIds.join(QChar(','));
+                break;
+            case Solid::Control::NetworkInterface::NeedAuth:
+                stateString = i18nc("description of waiting for authentication state followed by list of active connections in ()", "Waiting for authorization (%1)"), connectionIds.join(QChar(','));
+                break;
+            case Solid::Control::NetworkInterface::IPConfig:
+                stateString = i18nc("description of setting IP address state followed by list of active connections in ()", "Setting network address (%1)"), connectionIds.join(QChar(','));
+                break;
+            case Solid::Control::NetworkInterface::Activated:
+            default:
+                stateString = QString::fromLatin1("%1").arg(connectionIds.join(QChar(',')));
+                break;
+        }
     }
-    m_connectionNameLabel->setText(stateString.arg(connectionIds.join(QChar(','))));
+    m_connectionNameLabel->setText(stateString);
     setConnectionInfo();
 }
 

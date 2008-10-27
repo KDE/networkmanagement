@@ -131,7 +131,21 @@ void InterfaceGroup::serviceAppeared(NetworkManagerSettings * service)
 void InterfaceGroup::addConnectionInternal(NetworkManagerSettings * service, const QString& connectionPath)
 {
     QPair<QString,QString> key(service->service(), connectionPath);
-    if (!m_connections.contains(key)) {
+    if (m_connections.contains(key)) {
+        ConnectionItem * connection = m_connections.value(key);
+        bool accepted = false;
+        foreach (InterfaceItem * iface, m_interfaces) {
+            if (iface->connectionInspector()->accept(connection->connection())) {
+                accepted = true;
+                break;
+            }
+        }
+        if (!accepted) {
+            m_layout->removeItem(connection);
+            m_connections.remove(key);
+            delete connection;
+        }
+    } else {
         RemoteConnection * connection = service->findConnection(connectionPath);
         foreach (InterfaceItem * item, m_interfaces) {
             ConnectionInspector * inspector = item->connectionInspector();

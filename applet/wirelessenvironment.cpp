@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessenvironment.h"
 
+#include <KDebug>
 #include <KNotification>
 #include <KLocale>
 
@@ -69,19 +70,22 @@ WirelessNetwork * WirelessEnvironment::findWirelessNetwork(const QString & ssid)
 
 void WirelessEnvironment::accessPointAppeared(const QString &uni)
 {
+    kDebug() << uni;
     accessPointAppearedInternal(uni);
-    emit wirelessNetworksChanged();
 }
 
 void WirelessEnvironment::accessPointAppearedInternal(const QString &uni, bool quietly)
 {
     Solid::Control::AccessPoint * ap = d->iface->findAccessPoint(uni);
     QString ssid = ap->ssid();
-    if (!d->networks.contains(ssid)) {
+    if (ssid.isEmpty()) {
+        kDebug() << "ignoring hidden AP with BSSID:" << ap->hardwareAddress();
+    } else if (!d->networks.contains(ssid)) {
         WirelessNetwork * net = new WirelessNetwork(ssid, d->iface, 0);
         d->networks.insert(ssid, net);
         //connect(net, SIGNAL(strengthChanged(const
         connect(net, SIGNAL(disappeared(const QString&)), SLOT(networkDisappeared(const QString&)));
+        // notify the new WirelessNetwork of its first AP
         net->accessPointAppeared(uni);
         emit wirelessNetworksChanged();
         if (!quietly) {
@@ -92,6 +96,7 @@ void WirelessEnvironment::accessPointAppearedInternal(const QString &uni, bool q
 
 void WirelessEnvironment::networkDisappeared(const QString &ssid)
 {
+    kDebug() << ssid;
     WirelessNetwork * net = d->networks.take(ssid);
     KNotification::event(Event::NetworkDisappeared, i18nc("Notification text when a wireless network interface disappeared","Wireless network %1 disappeared", ssid), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
     delete net;
