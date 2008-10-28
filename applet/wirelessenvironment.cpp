@@ -70,7 +70,7 @@ WirelessNetwork * WirelessEnvironment::findWirelessNetwork(const QString & ssid)
 
 void WirelessEnvironment::accessPointAppeared(const QString &uni)
 {
-    kDebug() << uni;
+    kDebug() << d->iface->interfaceName() << " found " << uni;
     accessPointAppearedInternal(uni);
 }
 

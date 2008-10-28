@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsLinearLayout>
 #include <KDebug>
 #include <KNotification>
+#include <solid/control/networkserialinterface.h>
 #include <solid/control/wirednetworkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
 
@@ -35,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectioninspector.h"
 #include "networkmanagersettings.h"
 #include "remoteconnection.h"
+#include "serialinterfaceitem.h"
 #include "wirelessinterfaceitem.h"
 
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
@@ -76,6 +78,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
     if (!m_interfaces.contains(iface->uni())) {
         InterfaceItem * ii = 0;
         WirelessInterfaceItem * wi = 0;
+        SerialInterfaceItem * si = 0;
         ConnectionInspector * inspector = 0;
         switch (iface->type()) {
             case Solid::Control::NetworkInterface::Ieee80211:
@@ -85,16 +88,23 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 connect(wi, SIGNAL(wirelessNetworksChanged()), SLOT(reassessConnectionList()));
                 break;
             case Solid::Control::NetworkInterface::Serial:
-                ii = new InterfaceItem(iface, m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                ii = si = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
+                        m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 inspector = new PppoeConnectionInspector;
                 break;
             case Solid::Control::NetworkInterface::Gsm:
-                ii = new InterfaceItem(iface, m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                ii = si = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
+                        m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                // TODO: When ModemManager support is added, connect signals from the SII to
+                // reassesConnectionList
                 inspector = new GsmConnectionInspector;
                 break;
             case Solid::Control::NetworkInterface::Cdma:
-                ii = new InterfaceItem(iface, m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                ii = si = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
+                        m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 inspector = new CdmaConnectionInspector;
+                // TODO: When ModemManager support is added, connect signals from the SII to
+                // reassesConnectionList
                 break;
             default:
             case Solid::Control::NetworkInterface::Ieee8023:

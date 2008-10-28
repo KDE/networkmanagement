@@ -1,5 +1,4 @@
 set(networkmanager_SRCS
-    events.cpp
     connectionitem.cpp
     connectioninspector.cpp
     networkmanager.cpp
@@ -10,6 +9,8 @@ set(networkmanager_SRCS
     nm-settingsinterface.cpp
     nm-exported-connectioninterface.cpp
     remoteconnection.cpp
+    serialinterfaceitem.cpp
+    events.cpp
     networkmanagersettings.cpp
     wirelessconnectionitem.cpp
     wirelessenvironment.cpp
