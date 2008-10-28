@@ -37,7 +37,7 @@ ConnectionItem::ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
     m_layout = new QGraphicsGridLayout(this);
     // First and third colunm are fixed width for the icons
     m_layout->setColumnFixedWidth(0, rowHeight);
-    m_layout->setColumnPreferredWidth(1, 200);
+    m_layout->setColumnPreferredWidth(1, 140);
     m_layout->setColumnFixedWidth(2, rowHeight);
     // tighten
     m_layout->setColumnSpacing(0, 0);

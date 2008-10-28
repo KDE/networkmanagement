@@ -61,7 +61,7 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_connectionActivationSignalMapper(new QSignalMapper(this)),
     m_connectionDeactivationSignalMapper(new QSignalMapper(this))
 {
-    setMinimumWidth(250);
+    setMinimumWidth(200);
     qDBusRegisterMetaType<QMap<QString, QVariant> >();
     qDBusRegisterMetaType<QMap<QString, QMap<QString, QVariant> > >();
 

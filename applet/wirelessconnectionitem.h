@@ -31,6 +31,7 @@ namespace Plasma
 {
     class Icon;
     class Label;
+    class Meter;
 }
 
 /**
@@ -48,6 +49,7 @@ protected:
     QGraphicsGridLayout * m_layout;
     Plasma::Icon * m_icon;
     Plasma::Label * m_connectionNameLabel;
+    Plasma::Meter * m_strengthMeter;
     Plasma::Icon * m_connectButton;
 };
 

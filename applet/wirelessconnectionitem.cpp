@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Plasma/Icon>
 #include <Plasma/Label>
+#include <Plasma/Meter>
 
 #include <solid/control/networkmanager.h>
 
@@ -37,7 +38,7 @@ WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QGraphic
     m_layout = new QGraphicsGridLayout(this);
     // First and third colunm are fixed width for the icons
     m_layout->setColumnFixedWidth(0, rowHeight);
-    m_layout->setColumnPreferredWidth(1, 200);
+    m_layout->setColumnPreferredWidth(1, 140);
     m_layout->setColumnFixedWidth(2, rowHeight);
     // tighten
     m_layout->setColumnSpacing(0, 0);
@@ -55,6 +56,13 @@ WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QGraphic
     m_connectionNameLabel = new Plasma::Label(this);
     m_connectionNameLabel->setText("Network:" + conn->id());
     m_layout->addItem(m_connectionNameLabel, 0, 1, 1, 1);
+
+//     m_strengthMeter = new Plasma::Meter(this);
+//     m_strengthMeter->setMinimum(0);
+//     m_strengthMeter->setMaximum(100);
+//     m_strengthMeter->setValue(87);
+//     m_strengthMeter->setLabel(0, "Network:" + conn->id());
+//     m_layout->addItem(m_strengthMeter, 0, 1, 1, 1);
 
     m_connectButton = new Plasma::Icon(this);
     m_connectButton->setIcon("media-playback-start");
