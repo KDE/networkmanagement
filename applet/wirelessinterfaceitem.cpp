@@ -74,7 +74,6 @@ void WirelessInterfaceItem::setConnectionInfo()
 {
     if (m_activeAccessPoint) {
         m_connectionInfoLabel->setText(QString::fromLatin1("<b>Signal Strength:</b> %1 %").arg(m_activeAccessPoint->signalStrength())); //TODO: i18n
-closer:applets/networkmanager/applet/wirelessinterfaceitem.cpp
         // TODO update icon contents
         if (!m_activeConnections.isEmpty()) {
             QString security;
