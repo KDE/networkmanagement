@@ -67,14 +67,16 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
 
     // containing vertical linear layout
     m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    m_layout->setContentsMargins(0,0,0,0);
     //   a vertical list of appropriate connections
     //     header label
     m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical, m_layout);
-    Plasma::Label * header = new Plasma::Label(this);
-    header->setText(i18nc("Label for connection list popup","<b>Networks</b>"));
+    m_connectionLayout->setContentsMargins(0,0,0,0);
+    Plasma::Label * wiredHeader = new Plasma::Label(this);
+    wiredHeader->setText(i18nc("Label for connection list popup","Wired Networks"));
     //m_notRunning = new Plasma::Label(this);
     //m_notRunning->setText(i18nc("Label for when NetworkManager is not running","The NetworkManager service is not running."));
-    m_connectionLayout->addItem(header);
+    m_connectionLayout->addItem(wiredHeader);
     //m_connectionLayout->addItem(m_notRunning);
     if (Solid::Control::NetworkManager::status() != Solid::Networking::Unknown) {
         ;//m_notRunning->hide();
@@ -83,11 +85,16 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
 
     m_ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, this);
+    m_connectionLayout->addItem(m_ethernetGroup);
+
+    Plasma::Label * wirelessHeader = new Plasma::Label(this);
+    wirelessHeader->setText(i18nc("Label for wifi networks in popup","Wireless Networks"));
     m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, this);
     //m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
     //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
-    m_connectionLayout->addItem(m_ethernetGroup);
+    m_connectionLayout->addItem(wirelessHeader);
+    m_connectionLayout->setItemSpacing(1, 20);
     m_connectionLayout->addItem(m_wifiGroup);
     //m_connectionLayout->addItem(m_gsmGroup);
     //m_gsmGroup->show();
@@ -118,7 +125,7 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_btnEnableWireless = new Plasma::CheckBox(this);
     managerWirelessEnabledChanged(Solid::Control::NetworkManager::isWirelessEnabled());
     //m_btnEnableNetworking->setText(i18nc("Label for pushbutton enabling networking", "All Networking"));
-    m_btnEnableWireless->setText(i18nc("Label for pushbutton enabling wireless", "Wireless"));
+    m_btnEnableWireless->setText(i18nc("Label for checkbox enabling wireless", "Wireless"));
     //gridLayout->addItem(m_btnEnableNetworking, 1, 0, 1, 1);
     //gridLayout->addItem(m_btnEnableWireless, 1, 0, 1, 2);
     //m_layout->addItem(gridLayout);
