@@ -20,34 +20,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessconnectionitem.h"
 
+#include <QLabel>
 #include <QGraphicsGridLayout>
+
+#include <KGlobalSettings>
 
 #include <Plasma/Icon>
 #include <Plasma/Label>
 #include <Plasma/Meter>
+#include <plasma/theme.h>
 
 #include <solid/control/networkmanager.h>
 
 #include "remoteconnection.h"
 WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
-: ConnectionItem(conn, parent)
+: ConnectionItem(conn, parent), m_connection(conn)
 {
 }
 
 void WirelessConnectionItem::setupItem()
 {
+    kDebug() << "M_CONNECTION" << m_connection->settings();
     // painting of a non-active wifi network
+    /*
+    +----+-------------+-----+----+
+    |icon| essid       |meter|icon|
+    +----+-------------+-----+----+
+    */
     // icon on the left
     int rowHeight = 24;
     m_layout = new QGraphicsGridLayout(this);
-    // First and third colunm are fixed width for the icons
+    // First, third and fourthcolunm are fixed width for the icons
     m_layout->setColumnFixedWidth(0, rowHeight);
-    m_layout->setColumnPreferredWidth(1, 140);
-    m_layout->setColumnFixedWidth(2, rowHeight);
+    m_layout->setColumnPreferredWidth(1, 100);
+    m_layout->setColumnFixedWidth(2, 60);
+    m_layout->setColumnFixedWidth(3, rowHeight);
     // tighten
     m_layout->setColumnSpacing(0, 0);
-    m_layout->setColumnSpacing(1, 0);
-    m_layout->setColumnSpacing(2, 0);
+    m_layout->setColumnSpacing(1, 4);
+    m_layout->setColumnSpacing(2, 4);
+    m_layout->setColumnSpacing(3, 4);
 
     // TODO: security symbol
 
@@ -58,21 +70,26 @@ void WirelessConnectionItem::setupItem()
     m_layout->addItem(m_icon, 0, 0, 1, 1 );
 
     m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText("Network:" + m_connection->id());
+    m_connectionNameLabel->setText(m_connection->id());
+    m_connectionNameLabel->nativeWidget()->setWordWrap(false);
     m_layout->addItem(m_connectionNameLabel, 0, 1, 1, 1);
 
-//     m_strengthMeter = new Plasma::Meter(this);
-//     m_strengthMeter->setMinimum(0);
-//     m_strengthMeter->setMaximum(100);
-//     m_strengthMeter->setValue(87);
-//     m_strengthMeter->setLabel(0, "Network:" + conn->id());
-//     m_layout->addItem(m_strengthMeter, 0, 1, 1, 1);
+    m_strengthMeter = new Plasma::Meter(this);
+    m_strengthMeter->setMinimum(0);
+    m_strengthMeter->setMaximum(100);
+    m_strengthMeter->setValue(87);
+
+    m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
+    m_strengthMeter->setPreferredSize(QSizeF(60, rowHeight/2));
+    m_strengthMeter->setMaximumHeight(rowHeight/2);
+    m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_layout->addItem(m_strengthMeter, 0, 2, 1, 1, Qt::AlignCenter);
 
     m_connectButton = new Plasma::Icon(this);
     m_connectButton->setIcon("media-playback-start");
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
-    m_layout->addItem(m_connectButton, 0, 2, 1, 1);
+    m_layout->addItem(m_connectButton, 0, 3, 1, 1, Qt::AlignLeft);
 
     connect( m_connectButton, SIGNAL(clicked()), SLOT(emitClicked()));
 }

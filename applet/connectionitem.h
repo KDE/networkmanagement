@@ -43,6 +43,7 @@ public:
     ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent = 0);
     virtual ~ConnectionItem();
     RemoteConnection * connection() const;
+    void setupItem();
 signals:
     /**
      * Indicate that the 'connect' button was clicked.  Used by the containing InterfaceGroup to
@@ -52,7 +53,6 @@ signals:
 protected Q_SLOTS:
     void emitClicked();
 protected:
-    void setupItem();
     RemoteConnection * m_connection;
     QGraphicsGridLayout * m_layout;
     Plasma::Icon * m_icon;

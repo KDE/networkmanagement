@@ -31,7 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ConnectionItem::ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
 : QGraphicsWidget(parent), m_connection(conn)
 {
-    setupItem();
 }
 
 void ConnectionItem::setupItem()
