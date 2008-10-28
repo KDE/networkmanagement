@@ -49,6 +49,7 @@ class WiredConnectionInspector : public ConnectionInspector
 {
 public:
     WiredConnectionInspector(Solid::Control::WiredNetworkInterface* iface);
+    ~WiredConnectionInspector();
     bool accept(RemoteConnection * connection);
 private:
     Solid::Control::WiredNetworkInterface *m_iface;
@@ -58,6 +59,7 @@ class WirelessConnectionInspector : public ConnectionInspector
 {
 public:
     WirelessConnectionInspector(Solid::Control::WirelessNetworkInterface* iface, WirelessEnvironment * envt);
+    ~WirelessConnectionInspector();
     bool accept(RemoteConnection * connection);
 private:
     Solid::Control::WirelessNetworkInterface *m_iface;
@@ -67,18 +69,24 @@ private:
 class GsmConnectionInspector : public ConnectionInspector
 {
 public:
+    GsmConnectionInspector();
+    ~GsmConnectionInspector();
     bool accept(RemoteConnection * connection);
 };
 
 class CdmaConnectionInspector : public ConnectionInspector
 {
 public:
+    CdmaConnectionInspector();
+    ~CdmaConnectionInspector();
     bool accept(RemoteConnection * connection);
 };
 
 class PppoeConnectionInspector : public ConnectionInspector
 {
 public:
+    PppoeConnectionInspector();
+    ~PppoeConnectionInspector();
     bool accept(RemoteConnection * connection);
 };
 

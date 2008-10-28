@@ -43,6 +43,9 @@ WiredConnectionInspector::WiredConnectionInspector(Solid::Control::WiredNetworkI
 : m_iface(iface)
 { }
 
+WiredConnectionInspector::~WiredConnectionInspector()
+{}
+
 bool WiredConnectionInspector::accept(RemoteConnection * connection)
 {
     return (connection->type() == Solid::Control::NetworkInterface::Ieee8023 && m_iface->carrier()) && ConnectionInspector::accept(connection);
@@ -50,6 +53,10 @@ bool WiredConnectionInspector::accept(RemoteConnection * connection)
 
 WirelessConnectionInspector::WirelessConnectionInspector(Solid::Control::WirelessNetworkInterface* iface, WirelessEnvironment * envt)
     : m_iface(iface), m_envt(envt)
+{
+}
+
+WirelessConnectionInspector::~WirelessConnectionInspector()
 {
 }
 
@@ -78,14 +85,38 @@ bool WirelessConnectionInspector::accept(RemoteConnection * connection)
     return acceptable && ConnectionInspector::accept(connection);
 }
 
+GsmConnectionInspector::GsmConnectionInspector()
+{
+}
+
+GsmConnectionInspector::~GsmConnectionInspector()
+{
+}
+
 bool GsmConnectionInspector::accept(RemoteConnection * connection)
 {
     return connection->type() == Solid::Control::NetworkInterface::Gsm && ConnectionInspector::accept(connection);
 }
 
+CdmaConnectionInspector::CdmaConnectionInspector()
+{
+}
+
+CdmaConnectionInspector::~CdmaConnectionInspector()
+{
+}
+
 bool CdmaConnectionInspector::accept(RemoteConnection * connection)
 {
     return connection->type() == Solid::Control::NetworkInterface::Cdma && ConnectionInspector::accept(connection);
+}
+
+PppoeConnectionInspector::PppoeConnectionInspector()
+{
+}
+
+PppoeConnectionInspector::~PppoeConnectionInspector()
+{
 }
 
 bool PppoeConnectionInspector::accept(RemoteConnection * connection)
