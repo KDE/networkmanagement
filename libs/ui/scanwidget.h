@@ -20,18 +20,20 @@
 #ifndef SCANWIDGET_H
 #define SCANWIDGET_H
 
+#include <QWidget>
 #include "ui_scanwidget.h"
+
+#include <QItemSelectionModel>
+
+#include <KLocale>
+#include <solid/control/wirelessaccesspoint.h>
 
 #include "apitemview.h"
 #include "apitemmodel.h"
 #include "apitemdelegate.h"
 #include "ifaceitemmodel.h"
 
-#include <QWidget>
-#include <QItemSelectionModel>
-
-#include <KLocale>
-#include <solid/control/wirelessaccesspoint.h>
+class QTableView;
 
 class ScanWidget : public QWidget, public Ui::ScanWidget
 {
@@ -43,13 +45,14 @@ class ScanWidget : public QWidget, public Ui::ScanWidget
 
         void setWirelessInterface(const QString &interface);
         QString currentAccessPoint() const;
-        
+
     private Q_SLOTS:
         void onInterfaceChanged(int index);
-        void onViewChanged(int index);
-        
+
     private:
+        ApItemView * m_scanView;
         ApItemModel *m_scanModel;
+        QTableView * m_detailsView;
         ApItemDelegate *m_scanDelegate;
         QItemSelectionModel *m_scanSelectionModel;
         IfaceItemModel *m_ifaceModel;

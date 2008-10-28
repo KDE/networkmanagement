@@ -20,14 +20,14 @@
 #include "scanwidget.h"
 #include "ifaceitemmodel.h"
 
+#include <QTableView>
+
 #include <KDebug>
 
 ScanWidget::ScanWidget(QWidget *parent)
     : QWidget(parent)
 {
-    QWidget *main = new QWidget(this);
-
-    setupUi(main);
+    setupUi(this);
 
     //populate the interfaces combobox
     m_ifaceModel = new IfaceItemModel(m_interface);
@@ -36,30 +36,27 @@ ScanWidget::ScanWidget(QWidget *parent)
     m_interface->setModelColumn(2);//Interface name
 
     //setup scanview if it doesn't already exist
-    QRect scanRect = m_scanView->geometry();
-    m_scanView = new ApItemView(main);
-    m_scanView->setGeometry(scanRect);
+    m_scanView = new ApItemView(this);
     m_scanModel = new ApItemModel(m_ifaceModel->data(m_ifaceModel->index(m_interface->currentIndex(),0),IfaceItemModel::UniRole).toString());
     m_scanDelegate = new ApItemDelegate(m_scanView);
     m_scanSelectionModel = new QItemSelectionModel(m_scanModel);
 
-    ApItemView *scanView = (ApItemView*)m_scanView;
-    scanView->setModel(m_scanModel);
-    scanView->setItemDelegate(m_scanDelegate);
-    scanView->setSelectionModel(m_scanSelectionModel);
-    scanView->setVisible(true);
+    m_scanView->setModel(m_scanModel);
+    m_scanView->setItemDelegate(m_scanDelegate);
+    m_scanView->setSelectionModel(m_scanSelectionModel);
+    m_stack->insertWidget(0, m_scanView);
 
+    m_detailsView = new QTableView(this);
     m_detailsView->setModel(m_scanModel);
     m_detailsView->setSelectionModel(m_scanSelectionModel);
-    m_detailsView->setVisible(false);
+    m_stack->insertWidget(1, m_detailsView);
 
-    connect(m_view, SIGNAL(currentIndexChanged(int)), this, SLOT(onViewChanged(int)));
-
+    m_stack->setCurrentWidget(m_scanView);
+    connect(m_view, SIGNAL(currentIndexChanged(int)), m_stack, SLOT(setCurrentIndex(int)));
 }
 
 ScanWidget::~ScanWidget()
 {
-    disconnect(m_view, SIGNAL(currentIndexChanged(int)), this, SLOT(onViewChanged(int)));
 }
 
 void ScanWidget::setWirelessInterface(const QString &interface)
@@ -88,23 +85,6 @@ void ScanWidget::onInterfaceChanged(int index)
 
     kDebug() << "Loading: " << m_ifaceModel->data(modelIndex, IfaceItemModel::UniRole);
     m_scanModel->setNetworkInterface(m_ifaceModel->data(modelIndex, IfaceItemModel::UniRole).toString());
-}
-
-void ScanWidget::onViewChanged(int index)
-{
-    kDebug() << "View has changed.";
-    switch (index) {
-        case 0: //scanview chosen
-            m_detailsView->hide();
-            m_scanView->show();
-            break;
-        case 1:
-            m_scanView->hide();
-            m_detailsView->show();
-            break;
-        default:
-            kDebug() << "Could not find the correct view.";
-    }
 }
 
 #include "scanwidget.moc"
