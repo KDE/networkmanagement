@@ -43,8 +43,8 @@ Q_OBJECT
 public:
     WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent = 0);
     virtual ~WirelessConnectionItem();
-
 protected:
+    void setupItem();
     RemoteConnection * m_connection;
     QGraphicsGridLayout * m_layout;
     Plasma::Icon * m_icon;

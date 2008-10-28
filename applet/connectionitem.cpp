@@ -31,9 +31,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ConnectionItem::ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
 : QGraphicsWidget(parent), m_connection(conn)
 {
+    setupItem();
+}
+
+void ConnectionItem::setupItem()
+{
     // painting of a non-active connection (or wifi network)
     // icon on left
     int rowHeight = 24;
+
+
     m_layout = new QGraphicsGridLayout(this);
     // First and third colunm are fixed width for the icons
     m_layout->setColumnFixedWidth(0, rowHeight);
@@ -49,7 +56,7 @@ ConnectionItem::ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
     m_icon->setMinimumHeight(rowHeight);
     m_icon->setMaximumHeight(rowHeight);
     m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText("Connection:" + conn->id());
+    m_connectionNameLabel->setText("Connection:" + m_connection->id());
     m_connectButton = new Plasma::Icon(this);
     m_connectButton->setIcon("media-playback-start");
     m_connectButton->setMinimumHeight(rowHeight);

@@ -170,7 +170,7 @@ void InterfaceGroup::addConnectionInternal(NetworkManagerSettings * service, con
             if (inspector->accept(connection)) {
                 if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
                     WirelessConnectionItem * ci = new WirelessConnectionItem(connection, this);
-                    connect(ci, SIGNAL(clicked(WirelessConnectionItem*)), SLOT(activateConnection(ConnectionItem*)));
+                    connect(ci, SIGNAL(clicked(ConnectionItem*)), SLOT(activateConnection(ConnectionItem*)));
                     m_connections.insert(key, dynamic_cast<ConnectionItem *>(ci));
                     m_layout->addItem(ci);
                 } else {

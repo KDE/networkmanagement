@@ -32,6 +32,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
 : ConnectionItem(conn, parent)
 {
+}
+
+void WirelessConnectionItem::setupItem()
+{
     // painting of a non-active wifi network
     // icon on the left
     int rowHeight = 24;
@@ -54,7 +58,7 @@ WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QGraphic
     m_layout->addItem(m_icon, 0, 0, 1, 1 );
 
     m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText("Network:" + conn->id());
+    m_connectionNameLabel->setText("Network:" + m_connection->id());
     m_layout->addItem(m_connectionNameLabel, 0, 1, 1, 1);
 
 //     m_strengthMeter = new Plasma::Meter(this);
