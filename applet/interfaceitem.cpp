@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -85,8 +85,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 #else
     m_layout = new QGraphicsGridLayout(this);
     m_icon = new Plasma::Icon(this);
-    m_icon->setMinimumHeight(32);
-    m_icon->setMaximumHeight(32);
+    m_icon->setMinimumHeight(48);
+    m_icon->setMaximumHeight(48);
 
     switch (m_iface->type() ) {
         case Solid::Control::NetworkInterface::Ieee8023:
@@ -111,10 +111,12 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_ifaceNameLabel = new Plasma::Label(this);
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::toolBarFont());
+    m_connectionNameLabel->setText("Empty name label");
+    m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     //       IP address
     m_connectionInfoLabel = new Plasma::Label(this);
-    m_connectionInfoLabel->nativeWidget()->setFont(KGlobalSettings::toolBarFont());
+    m_connectionInfoLabel->setText("Empty info label");
+    m_connectionInfoLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     //m_connectionInfoLabel->setText("dum.my.ip.addr");
     //       signal strength
     //m_connectionInfoStrengthLabel = new Plasma::Label(this);
@@ -128,8 +130,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
     m_layout->addItem(m_connectionInfoIcon, 2, 3, 1, 1);
     m_connectButton = new Plasma::Icon(this);
-    m_connectButton->setMinimumHeight(32);
-    m_connectButton->setMaximumHeight(32);
+    m_connectButton->setMinimumHeight(24);
+    m_connectButton->setMaximumHeight(24);
     //m_connectButton->setIcon("media-playback-start");
     m_layout->addItem(m_icon, 0, 0, 3, 1);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 3);
@@ -145,7 +147,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
             SLOT(connectButtonClicked()));
 
     setNameDisplayMode(mode);
-    // the applet may be starting when NetworkManager is already connections,
+    // the applet may be starting when NetworkManager is already connected,
     // so initialise the list of active connections
     if (m_activeConnections.isEmpty())
         activeConnectionsChanged();
@@ -162,7 +164,7 @@ void InterfaceItem::setNameDisplayMode(NameDisplayMode mode)
 {
     m_nameMode = mode;
     if ( m_nameMode == InterfaceName ) {
-        m_ifaceNameLabel->setText(QString::fromLatin1("<b>%1</b>").arg(m_iface->interfaceName()));
+        m_ifaceNameLabel->setText(QString::fromLatin1("<b>Device: %1</b>").arg(m_iface->interfaceName()));
     } else {
         m_ifaceNameLabel->setText(QString::fromLatin1("<b>Hardware name goes here</b>"));
     }
@@ -181,8 +183,10 @@ void InterfaceItem::setConnectionInfo()
         if (addresses.isEmpty()) {
             m_connectionInfoLabel->setText("ip display error");
         } else {
+            // FIXME: doesn't seem to work?
             QHostAddress addr(addresses.first().address());
-            m_connectionInfoLabel->setText(addr.toString());
+            m_connectionInfoLabel->setText("IP:" + addr.toString());
+            kDebug() << "IP:" << addr.toString();
         }
     }
 }
@@ -291,16 +295,17 @@ void InterfaceItem::setUnavailable()
 {
     m_icon->setEnabled(false);
     m_connectionNameLabel->setText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"));
-    m_connectionInfoLabel->setText("");
+    m_connectionInfoLabel->setText("unavailable");
     m_connectButton->setEnabled(false);
 }
 
 void InterfaceItem::setInactive()
 {
     m_icon->setEnabled(false);
-    m_connectionNameLabel->setText("");
-    m_connectionInfoLabel->setText("");
+    m_connectionNameLabel->setText("empty name");
+    m_connectionInfoLabel->setText("empty info");
     m_connectButton->setIcon("media-playback-stop");
+
 }
 
 
@@ -336,7 +341,7 @@ void InterfaceItem::setActiveConnection(int state)
                 break;
             case Solid::Control::NetworkInterface::Activated:
             default:
-                stateString = QString::fromLatin1("%1").arg(connectionIds.join(QChar(',')));
+                stateString = QString::fromLatin1("Network: %1").arg(connectionIds.join(QChar(',')));
                 break;
         }
     }
