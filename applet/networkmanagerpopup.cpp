@@ -90,14 +90,14 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     Plasma::Label * wirelessHeader = new Plasma::Label(this);
     wirelessHeader->setText(i18nc("Label for wifi networks in popup","Wireless Networks"));
     m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, this);
-    //m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
+    m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
     //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
     m_connectionLayout->addItem(wirelessHeader);
     m_connectionLayout->setItemSpacing(1, 20);
     m_connectionLayout->addItem(m_wifiGroup);
-    //m_connectionLayout->addItem(m_gsmGroup);
-    //m_gsmGroup->show();
+    m_connectionLayout->addItem(m_gsmGroup);
+    m_gsmGroup->show();
     //m_connectionLayout->addItem(cdmaGroup);
     //m_connectionLayout->addItem(pppoeGroup);
     m_layout->addItem(m_connectionLayout);
@@ -233,12 +233,12 @@ void NetworkManagerPopup::managerStatusChanged(Solid::Networking::Status status)
     if (Solid::Networking::Unknown == status ) {
         m_ethernetGroup->hide();
         m_wifiGroup->hide();
-        //m_gsmGroup->hide();
+        m_gsmGroup->hide();
         //m_notRunning->show();
     } else {
         m_ethernetGroup->show();
         m_wifiGroup->show();
-        //m_gsmGroup->show();
+        m_gsmGroup->show();
         //m_notRunning->hide();
     }
 }
