@@ -219,6 +219,7 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
         m_layout->removeItem(item);
         KNotification::event(Event::HwRemoved, i18nc("Notification for hardware removed", "Network interface removed"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
         delete item;
+        reassessConnectionList();
     }
 }
 
