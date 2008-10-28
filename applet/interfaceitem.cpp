@@ -84,9 +84,16 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     setLayout(m_layout);
 #else
     m_layout = new QGraphicsGridLayout(this);
+    m_layout->setVerticalSpacing(0);
+    m_layout->setHorizontalSpacing(8);
+    m_layout->setColumnFixedWidth(0, 48);
+    m_layout->setColumnPreferredWidth(1, 100);
+
     m_icon = new Plasma::Icon(this);
     m_icon->setMinimumHeight(48);
     m_icon->setMaximumHeight(48);
+    m_layout->addItem(m_icon, 0, 0, 3, 1);
+
 
     switch (m_iface->type() ) {
         case Solid::Control::NetworkInterface::Ieee8023:
@@ -109,18 +116,22 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
+    m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 3);
+
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText("Empty name label");
+    m_connectionNameLabel->setText("<b>Connection:</b>");
     m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
+    m_connectionNameLabel->nativeWidget()->setWordWrap(false);
+    m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 3);
+
+
     //       IP address
     m_connectionInfoLabel = new Plasma::Label(this);
-    m_connectionInfoLabel->setText("Empty info label");
     m_connectionInfoLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
-    //m_connectionInfoLabel->setText("dum.my.ip.addr");
-    //       signal strength
-    //m_connectionInfoStrengthLabel = new Plasma::Label(this);
-    //m_connectionInfoStrengthLabel->setText("101%");
+    m_connectionInfoLabel->nativeWidget()->setWordWrap(false);
+    m_connectionInfoLabel->setText("<b>IP Address:</b> dum.my.ip.addr");
+
     //       security
     m_connectionInfoIcon = new Plasma::Icon(this);
     //m_connectionInfoIcon->setIcon("system-lock-screen");
@@ -128,14 +139,11 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoIcon->setMaximumHeight(22);
     m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1);
     //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
-    m_layout->addItem(m_connectionInfoIcon, 2, 3, 1, 1);
+    m_layout->addItem(m_connectionInfoIcon, 1, 3, 1, 1);
     m_connectButton = new Plasma::Icon(this);
     m_connectButton->setMinimumHeight(24);
     m_connectButton->setMaximumHeight(24);
     //m_connectButton->setIcon("media-playback-start");
-    m_layout->addItem(m_icon, 0, 0, 3, 1);
-    m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 3);
-    m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 3);
     m_layout->addItem(m_connectButton, 0, 4, 3, 1);
 #endif
     connect(Solid::Control::NetworkManager::notifier(),
@@ -149,8 +157,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     setNameDisplayMode(mode);
     // the applet may be starting when NetworkManager is already connected,
     // so initialise the list of active connections
-    if (m_activeConnections.isEmpty())
+    if (m_activeConnections.isEmpty()) {
         activeConnectionsChanged();
+    }
     // set the state of our UI correctly
     connectionStateChanged(m_iface->connectionState());
 }
@@ -341,7 +350,7 @@ void InterfaceItem::setActiveConnection(int state)
                 break;
             case Solid::Control::NetworkInterface::Activated:
             default:
-                stateString = QString::fromLatin1("Network: %1").arg(connectionIds.join(QChar(',')));
+                stateString = QString::fromLatin1("<b>Network:</b> %1").arg(connectionIds.join(QChar(',')));
                 break;
         }
     }
