@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "events.h"
 #include "interfaceitem.h"
 #include "connectionitem.h"
+#include "wirelessconnectionitem.h"
 #include "connectioninspector.h"
 #include "networkmanagersettings.h"
 #include "remoteconnection.h"
@@ -133,28 +134,51 @@ void InterfaceGroup::addConnectionInternal(NetworkManagerSettings * service, con
 {
     QPair<QString,QString> key(service->service(), connectionPath);
     if (m_connections.contains(key)) {
-        ConnectionItem * connection = m_connections.value(key);
-        bool accepted = false;
-        foreach (InterfaceItem * iface, m_interfaces) {
-            if (iface->connectionInspector()->accept(connection->connection())) {
-                accepted = true;
-                break;
+        if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
+            WirelessConnectionItem * connection = dynamic_cast<WirelessConnectionItem *>(m_connections.value(key));
+            bool accepted = false;
+            foreach (InterfaceItem * iface, m_interfaces) {
+                if (iface->connectionInspector()->accept(connection->connection())) {
+                    accepted = true;
+                    break;
+                }
             }
-        }
-        if (!accepted) {
-            m_layout->removeItem(connection);
-            m_connections.remove(key);
-            delete connection;
+            if (!accepted) {
+                m_layout->removeItem(connection);
+                m_connections.remove(key);
+                delete connection;
+            }
+        } else {
+            ConnectionItem * connection = m_connections.value(key);
+            bool accepted = false;
+            foreach (InterfaceItem * iface, m_interfaces) {
+                if (iface->connectionInspector()->accept(connection->connection())) {
+                    accepted = true;
+                    break;
+                }
+            }
+            if (!accepted) {
+                m_layout->removeItem(connection);
+                m_connections.remove(key);
+                delete connection;
+            }
         }
     } else {
         RemoteConnection * connection = service->findConnection(connectionPath);
         foreach (InterfaceItem * item, m_interfaces) {
             ConnectionInspector * inspector = item->connectionInspector();
             if (inspector->accept(connection)) {
-                ConnectionItem * ci = new ConnectionItem(connection, this);
-                connect(ci, SIGNAL(clicked(ConnectionItem*)), SLOT(activateConnection(ConnectionItem*)));
-                m_connections.insert(key, ci);
-                m_layout->addItem(ci);
+                if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
+                    WirelessConnectionItem * ci = new WirelessConnectionItem(connection, this);
+                    connect(ci, SIGNAL(clicked(WirelessConnectionItem*)), SLOT(activateConnection(ConnectionItem*)));
+                    m_connections.insert(key, dynamic_cast<ConnectionItem *>(ci));
+                    m_layout->addItem(ci);
+                } else {
+                    ConnectionItem * ci = new ConnectionItem(connection, this);
+                    connect(ci, SIGNAL(clicked(ConnectionItem*)), SLOT(activateConnection(ConnectionItem*)));
+                    m_connections.insert(key, ci);
+                    m_layout->addItem(ci);
+                }
             }
         }
     }
