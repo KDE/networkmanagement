@@ -38,9 +38,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 #include "serialinterfaceitem.h"
 #include "wirelessinterfaceitem.h"
+#include "wirelessenvironment.h"
 
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
-: QGraphicsWidget(parent), m_type(type), m_userSettings(userSettings), m_systemSettings(systemSettings)
+: QGraphicsWidget(parent), m_type(type), m_userSettings(userSettings), m_systemSettings(systemSettings), m_wirelessEnvironment(0)
 {
     m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
     // create an interfaceItem for each interface of our type
@@ -83,6 +84,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         switch (iface->type()) {
             case Solid::Control::NetworkInterface::Ieee80211:
                 wi = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                m_wirelessEnvironment = wi->wirelessEnvironment();
                 ii = wi;
                 inspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface), wi->wirelessEnvironment());
                 connect(wi, SIGNAL(wirelessNetworksChanged()), SLOT(reassessConnectionList()));
@@ -180,6 +182,9 @@ void InterfaceGroup::addConnectionInternal(NetworkManagerSettings * service, con
             if (inspector->accept(connection)) {
                 if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
                     WirelessConnectionItem * ci = new WirelessConnectionItem(connection, this);
+                    if (m_wirelessEnvironment) {
+                        ci->setNetwork(m_wirelessEnvironment->findWirelessNetwork(ci->essid()));
+                    }
                     ci->setupItem();
                     connect(ci, SIGNAL(clicked(ConnectionItem*)), SLOT(activateConnection(ConnectionItem*)));
                     m_connections.insert(key, dynamic_cast<ConnectionItem *>(ci));

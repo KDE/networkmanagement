@@ -22,10 +22,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define APPLET_WIRELESSCONNECTIONITEM_H
 
 #include <QGraphicsWidget>
+
 #include "connectionitem.h"
+
 class QGraphicsGridLayout;
 
 class RemoteConnection;
+class WirelessNetwork;
 
 namespace Plasma
 {
@@ -44,8 +47,12 @@ public:
     WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent = 0);
     virtual ~WirelessConnectionItem();
     void setupItem();
+    void setNetwork(WirelessNetwork * network);
+    QString essid();
 protected:
     RemoteConnection * m_connection;
+private slots:
+    void setStrength(QString &essid, int strength);
 private:
     void readSettings();
     QGraphicsGridLayout * m_layout;
@@ -53,9 +60,12 @@ private:
     Plasma::Label * m_connectionNameLabel;
     Plasma::Meter * m_strengthMeter;
     Plasma::Icon * m_connectButton;
-    Plasma::Icon * m_securityIcon;
     QString m_security;
+    Plasma::Icon * m_securityIcon;
     QString m_securityIconName;
+    WirelessNetwork * m_wirelessNetwork;
+    QString m_essid;
+    int m_strength;
 };
 
 #endif //#define APPLET_WIRELESSCONNECTIONITEM_H

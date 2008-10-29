@@ -36,23 +36,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessnetworkinterface.h>
 
 #include "remoteconnection.h"
+#include "wirelessnetwork.h"
 
 WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
-: ConnectionItem(conn, parent), m_connection(conn), m_security(0), m_securityIcon(0), m_securityIconName(0)
+: ConnectionItem(conn, parent), m_connection(conn), m_security(0), m_securityIcon(0), m_securityIconName(0), m_essid(0)
 {
-    m_security = QString();
+    m_essid = m_connection->id();
+    m_strengthMeter = 0;
 }
 
 void WirelessConnectionItem::setupItem()
 {
     readSettings();
-    kDebug() << "M_CONNECTION" << m_connection->settings();
-    kDebug() << "SECURITY:" << m_connection->type() << m_security;
+    kDebug() << "Connection Settings:" << m_connection->settings();
+    kDebug() << "Security:" << m_connection->type() << m_security;
     // painting of a non-active wifi network
     /*
-    +----+-------------+-----+----+
-    |icon| essid       |meter|icon|
-    +----+-------------+-----+----+
+    +----+---------+---+-----+--+
+    |icon| essid   |sec|meter|on|
+    +----+---------+---+-----+--+
     */
     // icon on the left
     int rowHeight = 24;
@@ -79,12 +81,12 @@ void WirelessConnectionItem::setupItem()
     m_layout->addItem(m_icon, 0, 0, 1, 1 );
 
     m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText(m_connection->id());
+    m_connectionNameLabel->setText(m_essid);
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
     m_connectionNameLabel->setMaximumWidth(200);
     m_layout->addItem(m_connectionNameLabel, 0, 1, 1, 1);
 
-    kDebug() << "ICON:" << m_securityIconName;
+    kDebug() << "security icon:" << m_securityIconName;
     m_securityIcon = new Plasma::Icon(this);
     m_securityIcon->setIcon(m_securityIconName);
     m_securityIcon->setMinimumHeight(22);
@@ -94,7 +96,7 @@ void WirelessConnectionItem::setupItem()
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);
-    m_strengthMeter->setValue(32); // FIXME
+    m_strengthMeter->setValue(32); // TODO: set to 0 when signal strength updating works
 
     m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
     m_strengthMeter->setPreferredSize(QSizeF(60, rowHeight/2));
@@ -115,8 +117,33 @@ WirelessConnectionItem::~WirelessConnectionItem()
 {
 }
 
+void WirelessConnectionItem::setNetwork(WirelessNetwork * network)
+{
+    m_wirelessNetwork = network;
+    connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString&, int)));
+}
+
+void WirelessConnectionItem::setStrength(QString &essid, int strength)
+{
+    kDebug() << essid << "signal strength changed to " << strength;
+    if (strength == m_strength) {
+        return;
+    }
+    m_strength = strength;
+    if (m_strengthMeter) {
+        m_strengthMeter->setValue(m_strength);
+    }
+}
+
+
+QString WirelessConnectionItem::essid()
+{
+    return m_essid;
+}
+
 void WirelessConnectionItem::readSettings() {
-    // from wirelessinterfaceitem, TODO: share this code?
+    // from wirelessinterfaceitem, TODO: share this code in WirelessNetwork?
+    m_essid = m_connection->id();
     QVariantMapMap settings = m_connection->settings();
     if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME))) {
         QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME));

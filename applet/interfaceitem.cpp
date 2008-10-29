@@ -241,7 +241,6 @@ void InterfaceItem::activeConnectionsChanged()
 
 void InterfaceItem::connectionStateChanged(int state)
 {
-    kDebug() << state;
     // get the active connections
     // check if any of them affect our interface
     // setActiveConnection on ourself
@@ -316,7 +315,6 @@ void InterfaceItem::setInactive()
     m_connectionNameLabel->setText("empty name");
     m_connectionInfoLabel->setText("empty info");
     m_connectButton->setIcon("media-playback-stop");
-
 }
 
 
