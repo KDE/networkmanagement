@@ -26,6 +26,7 @@ set(knmui_SRCS
    security/802_11_wireless_security_widget.cpp
    security/wepwidget.cpp
    security/wpapskwidget.cpp
+   vpnuiplugin.cpp
    )
 
 kde4_add_ui_files(knmui_SRCS cdma.ui gsm.ui ppp.ui pppoe.ui 
