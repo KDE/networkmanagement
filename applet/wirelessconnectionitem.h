@@ -46,11 +46,16 @@ public:
     void setupItem();
 protected:
     RemoteConnection * m_connection;
+private:
+    void readSettings();
     QGraphicsGridLayout * m_layout;
     Plasma::Icon * m_icon;
     Plasma::Label * m_connectionNameLabel;
     Plasma::Meter * m_strengthMeter;
     Plasma::Icon * m_connectButton;
+    Plasma::Icon * m_securityIcon;
+    QString m_security;
+    QString m_securityIconName;
 };
 
 #endif //#define APPLET_WIRELESSCONNECTIONITEM_H

@@ -19,28 +19,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "wirelessconnectionitem.h"
+#include <nm-setting-wireless.h>
 
 #include <QLabel>
 #include <QGraphicsGridLayout>
 
 #include <KGlobalSettings>
+//#include "../libs/types.h"
 
 #include <Plasma/Icon>
 #include <Plasma/Label>
 #include <Plasma/Meter>
 #include <plasma/theme.h>
 
-#include <solid/control/networkmanager.h>
+#include <solid/control/wirelessaccesspoint.h>
+#include <solid/control/wirelessnetworkinterface.h>
 
 #include "remoteconnection.h"
+
 WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
-: ConnectionItem(conn, parent), m_connection(conn)
+: ConnectionItem(conn, parent), m_connection(conn), m_security(0), m_securityIcon(0), m_securityIconName(0)
 {
+    m_security = QString();
 }
 
 void WirelessConnectionItem::setupItem()
 {
+    readSettings();
     kDebug() << "M_CONNECTION" << m_connection->settings();
+    kDebug() << "SECURITY:" << m_connection->type() << m_security;
     // painting of a non-active wifi network
     /*
     +----+-------------+-----+----+
@@ -49,17 +56,19 @@ void WirelessConnectionItem::setupItem()
     */
     // icon on the left
     int rowHeight = 24;
+    int spacing = 4;
     m_layout = new QGraphicsGridLayout(this);
     // First, third and fourthcolunm are fixed width for the icons
     m_layout->setColumnFixedWidth(0, rowHeight);
     m_layout->setColumnPreferredWidth(1, 100);
-    m_layout->setColumnFixedWidth(2, 60);
-    m_layout->setColumnFixedWidth(3, rowHeight);
+    m_layout->setColumnFixedWidth(2, rowHeight);
+    m_layout->setColumnFixedWidth(3, 60);
+    m_layout->setColumnFixedWidth(4, rowHeight);
     // tighten
-    m_layout->setColumnSpacing(0, 0);
-    m_layout->setColumnSpacing(1, 4);
-    m_layout->setColumnSpacing(2, 4);
-    m_layout->setColumnSpacing(3, 4);
+    m_layout->setColumnSpacing(0, spacing);
+    m_layout->setColumnSpacing(1, spacing);
+    m_layout->setColumnSpacing(2, spacing);
+    m_layout->setColumnSpacing(3, spacing);
 
     // TODO: security symbol
 
@@ -72,30 +81,65 @@ void WirelessConnectionItem::setupItem()
     m_connectionNameLabel = new Plasma::Label(this);
     m_connectionNameLabel->setText(m_connection->id());
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
+    m_connectionNameLabel->setMaximumWidth(200);
     m_layout->addItem(m_connectionNameLabel, 0, 1, 1, 1);
+
+    kDebug() << "ICON:" << m_securityIconName;
+    m_securityIcon = new Plasma::Icon(this);
+    m_securityIcon->setIcon(m_securityIconName);
+    m_securityIcon->setMinimumHeight(22);
+    m_securityIcon->setMaximumHeight(22);
+    m_layout->addItem(m_securityIcon, 0, 2, 1, 1 );
 
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);
-    m_strengthMeter->setValue(87);
+    m_strengthMeter->setValue(32); // FIXME
 
     m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
     m_strengthMeter->setPreferredSize(QSizeF(60, rowHeight/2));
     m_strengthMeter->setMaximumHeight(rowHeight/2);
     m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    m_layout->addItem(m_strengthMeter, 0, 2, 1, 1, Qt::AlignCenter);
+    m_layout->addItem(m_strengthMeter, 0, 3, 1, 1, Qt::AlignCenter);
 
     m_connectButton = new Plasma::Icon(this);
     m_connectButton->setIcon("media-playback-start");
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
-    m_layout->addItem(m_connectButton, 0, 3, 1, 1, Qt::AlignLeft);
+    m_layout->addItem(m_connectButton, 0, 4, 1, 1, Qt::AlignLeft);
 
     connect( m_connectButton, SIGNAL(clicked()), SLOT(emitClicked()));
 }
 
 WirelessConnectionItem::~WirelessConnectionItem()
 {
+}
+
+void WirelessConnectionItem::readSettings() {
+    // from wirelessinterfaceitem, TODO: share this code?
+    QVariantMapMap settings = m_connection->settings();
+    if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME))) {
+        QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME));
+        if (connectionSetting.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT))) {
+            m_security = connectionSetting.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT)).toString();
+        } else {
+            m_security = "wep";
+        }
+    }
+    if (m_security.isEmpty()) {
+        m_securityIconName = "object-unlocked";
+    } else if (m_security == QLatin1String("wep")) {
+        // security-weak
+        m_securityIconName = "object-locked";
+    } else if (m_security == QLatin1String("wpa-psk")) {
+        // security-medium
+        m_securityIconName = "object-locked";
+    } else if (m_security == QLatin1String("wpa-eap")) {
+        // security-strong
+        m_securityIconName = "object-locked";
+    } else {
+        m_securityIconName = "object-locked-finished"; // FIXME: Shouldn't we always have a security setting?
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

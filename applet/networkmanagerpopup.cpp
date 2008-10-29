@@ -94,7 +94,7 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
     //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
     m_connectionLayout->addItem(wirelessHeader);
-    m_connectionLayout->setItemSpacing(1, 20);
+    m_connectionLayout->setItemSpacing(1, 30);
     m_connectionLayout->addItem(m_wifiGroup);
     m_connectionLayout->addItem(m_gsmGroup);
     m_gsmGroup->show();
@@ -111,6 +111,10 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     //QGraphicsGridLayout * gridLayout = new QGraphicsGridLayout(m_layout);
     m_btnManageConnections = new Plasma::Icon(this);
     m_btnManageConnections->setDrawBackground(true);
+    m_btnManageConnections->setMaximumWidth(140);
+    m_btnManageConnections->setMaximumHeight(24);
+    m_btnManageConnections->setOrientation(Qt::Horizontal);
+    m_btnManageConnections->setIcon("networkmanager");
     m_btnManageConnections->setText(i18nc("Button text for showing the Manage Connections KCModule", "Manage..."));
 
     //gridLayout->addItem(m_btnManageConnections, 0, 0, 1, 2);

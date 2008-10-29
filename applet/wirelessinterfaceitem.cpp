@@ -78,7 +78,9 @@ void WirelessInterfaceItem::setConnectionInfo()
         if (!m_activeConnections.isEmpty()) {
             QString security;
             foreach (ActiveConnectionPair conn, m_activeConnections) {
-
+                if (!conn.second) {
+                    continue;
+                }
                 QVariantMapMap settings = conn.second->settings();
                 if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME))) {
                     QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME));
