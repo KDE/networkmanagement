@@ -50,7 +50,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     // main layout
     m_layout = new QGraphicsLinearLayout(Qt::Horizontal, this);
     //   icon on left
-    m_icon = new Plasma::Icon(this);
+    m_icon = new Plasma::IconWidget(this);
     m_icon->setIcon("network-wireless");
     //   vertical stack of info in middle
     m_infoLayout = new QGraphicsLinearLayout(Qt::Vertical, 0);
@@ -69,7 +69,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoStrengthLabel = new Plasma::Label(this);
     m_connectionInfoStrengthLabel->setText("101%");
     //       security
-    m_connectionInfoIcon = new Plasma::Icon(this);
+    m_connectionInfoIcon = new Plasma::IconWidget(this);
     m_connectionInfoIcon->setIcon("system-lock-screen");
     m_connectionInfoLayout->addItem(m_connectionInfoStrengthLabel);
     m_connectionInfoLayout->addItem(m_connectionInfoIcon);
@@ -78,7 +78,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_infoLayout->addItem(m_connectionInfoLabel);
     m_infoLayout->addItem(m_connectionInfoLayout);
     // connect button at right
-    m_connectButton = new Plasma::Icon(this);
+    m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setIcon("media-playback-start");
     m_layout->addItem(m_icon);
     m_layout->addItem(m_infoLayout);
@@ -91,7 +91,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_layout->setColumnFixedWidth(0, 48);
     m_layout->setColumnPreferredWidth(1, 100);
 
-    m_icon = new Plasma::Icon(this);
+    m_icon = new Plasma::IconWidget(this);
     m_icon->setMinimumHeight(48);
     m_icon->setMaximumHeight(48);
     m_layout->addItem(m_icon, 0, 0, 3, 1);
@@ -135,14 +135,14 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoLabel->setText("<b>IP Address:</b> dum.my.ip.addr");
 
     //       security
-    m_connectionInfoIcon = new Plasma::Icon(this);
+    m_connectionInfoIcon = new Plasma::IconWidget(this);
     //m_connectionInfoIcon->setIcon("system-lock-screen");
     m_connectionInfoIcon->setMinimumHeight(22);
     m_connectionInfoIcon->setMaximumHeight(22);
     m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1);
     //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
     m_layout->addItem(m_connectionInfoIcon, 1, 3, 1, 1);
-    m_connectButton = new Plasma::Icon(this);
+    m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setMinimumHeight(24);
     m_connectButton->setMaximumHeight(24);
     //m_connectButton->setIcon("media-playback-start");

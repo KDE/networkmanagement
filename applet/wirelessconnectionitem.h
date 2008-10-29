@@ -32,7 +32,7 @@ class WirelessNetwork;
 
 namespace Plasma
 {
-    class Icon;
+    class IconWidget;
     class Label;
     class Meter;
 }
@@ -56,12 +56,12 @@ private slots:
 private:
     void readSettings();
     QGraphicsGridLayout * m_layout;
-    Plasma::Icon * m_icon;
+    Plasma::IconWidget * m_icon;
     Plasma::Label * m_connectionNameLabel;
     Plasma::Meter * m_strengthMeter;
-    Plasma::Icon * m_connectButton;
+    Plasma::IconWidget * m_connectButton;
     QString m_security;
-    Plasma::Icon * m_securityIcon;
+    Plasma::IconWidget * m_securityIcon;
     QString m_securityIconName;
     WirelessNetwork * m_wirelessNetwork;
     QString m_essid;

@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KGlobalSettings>
 //#include "../libs/types.h"
 
-#include <Plasma/Icon>
+#include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Meter>
 #include <plasma/theme.h>
@@ -75,7 +75,7 @@ void WirelessConnectionItem::setupItem()
 
     // TODO: security symbol
 
-    m_icon = new Plasma::Icon(this);
+    m_icon = new Plasma::IconWidget(this);
     m_icon->setIcon("network-wireless");
     m_icon->setMinimumHeight(rowHeight);
     m_icon->setMaximumHeight(rowHeight);
@@ -88,7 +88,7 @@ void WirelessConnectionItem::setupItem()
     m_layout->addItem(m_connectionNameLabel, 0, 1, 1, 1);
 
     //kDebug() << "security icon:" << m_securityIconName;
-    m_securityIcon = new Plasma::Icon(this);
+    m_securityIcon = new Plasma::IconWidget(this);
     m_securityIcon->setIcon(m_securityIconName);
     m_securityIcon->setMinimumHeight(22);
     m_securityIcon->setMaximumHeight(22);
@@ -105,7 +105,7 @@ void WirelessConnectionItem::setupItem()
     m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_layout->addItem(m_strengthMeter, 0, 3, 1, 1, Qt::AlignCenter);
 
-    m_connectButton = new Plasma::Icon(this);
+    m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setIcon("media-playback-start");
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);

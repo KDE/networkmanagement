@@ -29,7 +29,7 @@ class RemoteConnection;
 
 namespace Plasma
 {
-    class Icon;
+    class IconWidget;
     class Label;
 }
 
@@ -55,9 +55,9 @@ protected Q_SLOTS:
 protected:
     RemoteConnection * m_connection;
     QGraphicsGridLayout * m_layout;
-    Plasma::Icon * m_icon;
+    Plasma::IconWidget * m_icon;
     Plasma::Label * m_connectionNameLabel;
-    Plasma::Icon * m_connectButton;
+    Plasma::IconWidget * m_connectButton;
 };
 
 #endif //#define APPLET_CONNECTIONITEM_H

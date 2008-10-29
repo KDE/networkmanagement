@@ -43,7 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Plasma/CheckBox>
 #include <Plasma/Label>
-#include <Plasma/Icon>
+#include <Plasma/IconWidget>
 
 #include <solid/control/networkmanager.h>
 #include <solid/control/wirednetworkinterface.h>
@@ -109,7 +109,7 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     // | [Networking] | [Wireless]  |
     // +----------------------------|
     //QGraphicsGridLayout * gridLayout = new QGraphicsGridLayout(m_layout);
-    m_btnManageConnections = new Plasma::Icon(this);
+    m_btnManageConnections = new Plasma::IconWidget(this);
     m_btnManageConnections->setDrawBackground(true);
     m_btnManageConnections->setMaximumWidth(140);
     m_btnManageConnections->setMaximumHeight(24);

@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDBusObjectPath>
 #include <QGraphicsWidget>
 
-#include <Plasma/Icon>
+#include <Plasma/IconWidget>
 #include <Plasma/Label>
 
 class QGraphicsGridLayout;
@@ -39,7 +39,7 @@ namespace Solid
 
 namespace Plasma
 {
-    class Icon;
+    class IconWidget;
     class Label;
 } // namespace Plasma
 
@@ -94,14 +94,14 @@ protected:
     //QGraphicsLinearLayout * m_layout; // use with nested linear based layouts, when they work
     QGraphicsGridLayout * m_layout;
     QGraphicsLinearLayout * m_infoLayout;
-    Plasma::Icon * m_icon;
+    Plasma::IconWidget * m_icon;
     Plasma::Label * m_ifaceNameLabel;
     Plasma::Label * m_connectionNameLabel;
     QGraphicsLinearLayout * m_connectionInfoLayout;
     Plasma::Label * m_connectionInfoLabel;
     Plasma::Label * m_connectionInfoStrengthLabel;
-    Plasma::Icon * m_connectionInfoIcon;
-    Plasma::Icon * m_connectButton;
+    Plasma::IconWidget * m_connectionInfoIcon;
+    Plasma::IconWidget * m_connectButton;
     NameDisplayMode m_nameMode;
 
     QList<ActiveConnectionPair> m_activeConnections;

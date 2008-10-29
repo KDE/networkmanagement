@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QGraphicsGridLayout>
 
-#include <Plasma/Icon>
+#include <Plasma/IconWidget>
 #include <Plasma/Label>
 
 #include <solid/control/networkmanager.h>
@@ -50,13 +50,13 @@ void ConnectionItem::setupItem()
     m_layout->setColumnSpacing(1, 0);
     m_layout->setColumnSpacing(2, 0);
 
-    m_icon = new Plasma::Icon(this);
+    m_icon = new Plasma::IconWidget(this);
     m_icon->setIcon("network-server");
     m_icon->setMinimumHeight(rowHeight);
     m_icon->setMaximumHeight(rowHeight);
     m_connectionNameLabel = new Plasma::Label(this);
     m_connectionNameLabel->setText("Connection:" + m_connection->id());
-    m_connectButton = new Plasma::Icon(this);
+    m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setIcon("media-playback-start");
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
