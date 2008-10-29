@@ -11,6 +11,7 @@ set(kcm_knetworkmanager_SRCS
    connectionprefs.cpp
    cellularpreferences.cpp
    pppoepreferences.cpp
+   vpnpreferences.cpp
    wiredpreferences.cpp
    wirelesspreferences.cpp
 )

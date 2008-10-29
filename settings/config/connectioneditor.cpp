@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KMessageBox>
 #include <KPluginFactory>
+#include <KPluginInfo>
 #include <KRandom>
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
@@ -46,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelesspreferences.h"
 #include "cellularpreferences.h"
 #include "pppoepreferences.h"
+#include "vpnpreferences.h"
 
 #define ConnectionIdRole 1812
 
@@ -217,11 +219,16 @@ void ConnectionEditor::updateTabStates()
                 break;
         }
     }
-    bool hasVpnPlugins = true;
+    bool hasVpnPlugins = !KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VPNUIPlugin")).isEmpty();
     mConnEditUi.tabWidget->setTabEnabled(0, (hasWired || mConnEditUi.listWired->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(1, (hasWireless || mConnEditUi.listWireless->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(2, (hasCellular || mConnEditUi.listCellular->topLevelItemCount()));
-    mConnEditUi.tabWidget->setTabEnabled(3, hasVpnPlugins);
+    if (KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VPNUIPlugin")).isEmpty()) {
+        mConnEditUi.tabWidget->setTabEnabled(3, false);
+        mConnEditUi.tabWidget->setTabToolTip(3, i18nc("Tooltip for disabled tab when no VPN plugins are installed", "No VPN plugins were found"));
+    } else {
+        mConnEditUi.tabWidget->setTabEnabled(3, true);
+    }
     mConnEditUi.tabWidget->setTabEnabled(4, (hasDsl || mConnEditUi.listPppoe->topLevelItemCount()));
 }
 
@@ -350,7 +357,7 @@ ConnectionPreferences * ConnectionEditor::editorForCurrentIndex(QWidget * parent
             wid = new CellularPreferences(parent, args);
             break;
         case 3:
-            kDebug() << "VPN connections are not yet supported";
+            wid = new VpnPreferences(parent, args);
             break;
         case 4:
             wid = new PppoePreferences(parent, args);
@@ -417,24 +424,28 @@ void ConnectionEditor::tabChanged(int index)
             mCellularMenu->addAction(gsmAction);
             mCellularMenu->addAction(cdmaAction);
             connect(mCellularMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
-            mConnEditUi.addConnection->setMenu(mCellularMenu);
         }
+        mConnEditUi.addConnection->setMenu(mCellularMenu);
     } else if (index == 3) {
         if ( !mVpnMenu ) {
             mVpnMenu = new QMenu(this);
             // foreach vpn service, add one of these
-            KService::List vpnServices =  KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VPNUIPlugin"));
-            foreach (KService::Ptr service, vpnServices) {
-                QAction * vpnAction = new QAction(service->name(), this);
-                vpnAction->setData(QVariant("SOME VPN SERVICE"));
-
-            mVpnMenu->addAction(vpnAction);
-
+            KPluginInfo::List vpnServices = KPluginInfo::fromServices(KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VPNUIPlugin")));
+            foreach (KPluginInfo pi, vpnServices) {
+                QAction * vpnAction = new QAction(pi.name(), this);
+                vpnAction->setData(QVariant(pi.pluginName()));
+                mVpnMenu->addAction(vpnAction);
             }
+        }
+        if (mVpnMenu->isEmpty()) {
+            mConnEditUi.addConnection->setEnabled(false);
+        } else {
+            mConnEditUi.addConnection->setEnabled(true);
             connect(mVpnMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
             mConnEditUi.addConnection->setMenu(mVpnMenu);
         }
     } else {
+        mConnEditUi.addConnection->setEnabled(true);
         mConnEditUi.addConnection->setMenu(0);
     }
 }
