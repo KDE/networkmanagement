@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_connectioneditor.h"
 
+class QMenu;
 class ConnectionPreferences;
 
 class ConnectionEditor : public KCModule
@@ -55,6 +56,16 @@ private slots:
      * Delete selected connection
      */
     void deleteClicked();
+    /**
+     * When switching to the vpn or cellular tabs, add a menu to the Add button for selecting
+     * connection subtypes
+     */
+    void tabChanged(int);
+    /**
+     * temporarily stores the selected connection type in m_nextConnectionType until addClicked
+     * reads it
+     */
+    void connectionTypeMenuTriggered(QAction* action);
 private:
     /**
      * Tell the UserSettings service to reload its configuration (via DBUS)
@@ -75,8 +86,12 @@ private:
      * Reparse knetworkmanagerrc (the main connection file) and rebuild the list of connections
      */
     void restoreConnections();
+
     Ui_ConnectionEditor mConnEditUi;
     QTreeWidget * mWiredList;
+    QMenu * mCellularMenu;
+    QMenu * mVpnMenu;
+    QVariant m_nextConnectionType;
 };
 
 #endif

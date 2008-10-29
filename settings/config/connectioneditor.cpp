@@ -20,9 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectioneditor.h"
 
+#include <nm-setting-cdma.h>
+#include <nm-setting-gsm.h>
+#include <nm-setting-wireless.h>
+
 #include <QDateTime>
 #include <QDBusInterface>
 #include <QFile>
+#include <QMenu>
 #include <QUuid>
 
 #include <KCModuleProxy>
@@ -30,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KMessageBox>
 #include <KPluginFactory>
 #include <KRandom>
+#include <KServiceTypeTrader>
 #include <KStandardDirs>
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
@@ -47,20 +53,74 @@ K_PLUGIN_FACTORY( ConnectionEditorFactory, registerPlugin<ConnectionEditor>();)
 K_EXPORT_PLUGIN( ConnectionEditorFactory( "kcm_knetworkmanager" ) )
 
 ConnectionEditor::ConnectionEditor(QWidget *parent, const QVariantList &args)
-: KCModule( ConnectionEditorFactory::componentData(), parent, args )
+: KCModule( ConnectionEditorFactory::componentData(), parent, args ), mCellularMenu(0), mVpnMenu(0)
 {
-    mConnEditUi.setupUi(this);
-    mConnEditUi.tabWidget->setTabEnabled(3, false);
-    KNetworkManagerServicePrefs::instance(KStandardDirs::locateLocal("config",
-                QLatin1String("knetworkmanagerrc")));
-    connect(mConnEditUi.addConnection, SIGNAL(clicked()), SLOT(addClicked()));
-    connect(mConnEditUi.editConnection, SIGNAL(clicked()), SLOT(editClicked()));
-    connect(mConnEditUi.deleteConnection, SIGNAL(clicked()), SLOT(deleteClicked()));
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            SLOT(updateTabStates()));
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
-            SLOT(updateTabStates()));
-    restoreConnections();
+    // depending on the contents of args, either show the general purpose connection editor dialog
+    // or a dialog for creating and starting a single connection. When the user clicks an
+    // unconfigured wireless network in the applet, this mode is used to get them connected as
+    // easily as possible.
+    // Likewise if a connection does not have the right secrets NM will ask for more secrets, so the
+    // service will show the dialog
+    
+    //QVariantList args;
+    //args << "newconnection" << "type=NM_SETTING_WIRELESS_SETTING_NAME" << "interface=" << "accesspoint=";
+
+    if ( !args.isEmpty()) {
+#if 0 // WIP
+        // editconnection connectionId=id
+        // newconnection type=... (NM types)
+        // for type == 802-11-wireless: essid, interface object path, AP object path
+        kDebug() << args;
+        if (args[0].toString() == "newconnection") {
+            if (args.count() > 1) {
+                QString rawArg = args[1].toString();
+                if (rawArg.startsWith("type=")) {
+                    QString type = rawArg.section('=', 1, 1);
+                    // this could all be pushed down into each ConnectionEditor subclass
+                    if (type == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME) && args.count() > 2) {
+                        QString interfaceUni;
+                        QString accessPointUni;
+                        for (int i = 2; i < args.count(); ++i) {
+                            rawArg = args[i].toString();
+                            QString arg = rawArg.section('=', 0, 0);
+                            QString value = rawArg.section('=', 1, 1);
+                            if (arg == QLatin1String("interface")) {
+                                interfaceUni = value;
+                            }
+                            if (arg == QLatin1String("accesspoint")) {
+                                accessPointUni = value;
+                            }
+                        }
+                        KDialog configDialog(this);
+                        QString connectionId = QUuid::createUuid().toString();
+                        QVariantList args;
+                        args << connectionId;
+                        WirelessPreferences * wid = new WirelessPreferences(&configDialog, args);
+                        configDialog.setMainWidget(wid);
+                        QVBoxLayout * lay = new QVBoxLayout(this);
+                        lay->addWidget(&configDialog);
+                        setLayout(lay);
+                        configDialog.show();
+                        configDialog.exec();
+                    }
+                }
+            }
+        }
+#endif
+    } else {
+        mConnEditUi.setupUi(this);
+        KNetworkManagerServicePrefs::instance(KStandardDirs::locateLocal("config",
+                    QLatin1String("knetworkmanagerrc")));
+        connect(mConnEditUi.addConnection, SIGNAL(clicked()), SLOT(addClicked()));
+        connect(mConnEditUi.editConnection, SIGNAL(clicked()), SLOT(editClicked()));
+        connect(mConnEditUi.deleteConnection, SIGNAL(clicked()), SLOT(deleteClicked()));
+        connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+                SLOT(updateTabStates()));
+        connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+                SLOT(updateTabStates()));
+        connect(mConnEditUi.tabWidget, SIGNAL(currentChanged(int)), SLOT(tabChanged(int)));
+        restoreConnections();
+    }
 }
 
 ConnectionEditor::~ConnectionEditor()
@@ -153,11 +213,15 @@ void ConnectionEditor::updateTabStates()
             case Solid::Control::NetworkInterface::Cdma:
                 hasCellular = true;
                 break;
+            default:
+                break;
         }
     }
+    bool hasVpnPlugins = true;
     mConnEditUi.tabWidget->setTabEnabled(0, (hasWired || mConnEditUi.listWired->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(1, (hasWireless || mConnEditUi.listWireless->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(2, (hasCellular || mConnEditUi.listCellular->topLevelItemCount()));
+    mConnEditUi.tabWidget->setTabEnabled(3, hasVpnPlugins);
     mConnEditUi.tabWidget->setTabEnabled(4, (hasDsl || mConnEditUi.listPppoe->topLevelItemCount()));
 }
 
@@ -168,6 +232,10 @@ void ConnectionEditor::addClicked()
     QString connectionId = QUuid::createUuid().toString();
     QVariantList args;
     args << connectionId;
+    if ( m_nextConnectionType.isValid()) {
+        args << m_nextConnectionType;
+        m_nextConnectionType = QVariant();
+    }
     ConnectionPreferences * cprefs = editorForCurrentIndex(&configDialog, args);
 
     if (!cprefs) {
@@ -336,4 +404,45 @@ void ConnectionEditor::updateService(const QStringList & changedConnections) con
     iface.call(QLatin1String("configure"), changedConnections);
 }
 
+void ConnectionEditor::tabChanged(int index)
+{
+    if (index == 2) {
+        if ( !mCellularMenu ) {
+            mCellularMenu = new QMenu(this);
+            QAction * gsmAction = new QAction(i18nc("Menu item for GSM connections", "GSM Connection"), this);
+            gsmAction->setData(QVariant(NM_SETTING_GSM_SETTING_NAME));
+            QAction * cdmaAction = new QAction(i18nc("Menu item for CDMA connections", "CDMA Connection"), this);
+            cdmaAction->setData(QVariant(NM_SETTING_CDMA_SETTING_NAME));
+
+            mCellularMenu->addAction(gsmAction);
+            mCellularMenu->addAction(cdmaAction);
+            connect(mCellularMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
+            mConnEditUi.addConnection->setMenu(mCellularMenu);
+        }
+    } else if (index == 3) {
+        if ( !mVpnMenu ) {
+            mVpnMenu = new QMenu(this);
+            // foreach vpn service, add one of these
+            KService::List vpnServices =  KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VPNUIPlugin"));
+            foreach (KService::Ptr service, vpnServices) {
+                QAction * vpnAction = new QAction(service->name(), this);
+                vpnAction->setData(QVariant("SOME VPN SERVICE"));
+
+            mVpnMenu->addAction(vpnAction);
+
+            }
+            connect(mVpnMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
+            mConnEditUi.addConnection->setMenu(mVpnMenu);
+        }
+    } else {
+        mConnEditUi.addConnection->setMenu(0);
+    }
+}
+
+void ConnectionEditor::connectionTypeMenuTriggered(QAction* action)
+{
+    m_nextConnectionType = action->data();
+    kDebug() << m_nextConnectionType.toString();
+    addClicked();
+}
 #include "connectioneditor.moc"
