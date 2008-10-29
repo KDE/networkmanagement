@@ -47,12 +47,12 @@ public:
     WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent = 0);
     virtual ~WirelessConnectionItem();
     void setupItem();
-    void setNetwork(WirelessNetwork * network);
+    void setNetwork(const WirelessNetwork * network);
     QString essid();
 protected:
     RemoteConnection * m_connection;
 private slots:
-    void setStrength(QString &essid, int strength);
+    void setStrength(QString essid, int strength);
 private:
     void readSettings();
     QGraphicsGridLayout * m_layout;

@@ -43,13 +43,14 @@ WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QGraphic
 {
     m_essid = m_connection->id();
     m_strengthMeter = 0;
+    m_strength = 0;
 }
 
 void WirelessConnectionItem::setupItem()
 {
     readSettings();
-    kDebug() << "Connection Settings:" << m_connection->settings();
-    kDebug() << "Security:" << m_connection->type() << m_security;
+    //kDebug() << "Connection Settings:" << m_connection->settings();
+    //kDebug() << "Security:" << m_connection->type() << m_security;
     // painting of a non-active wifi network
     /*
     +----+---------+---+-----+--+
@@ -86,7 +87,7 @@ void WirelessConnectionItem::setupItem()
     m_connectionNameLabel->setMaximumWidth(200);
     m_layout->addItem(m_connectionNameLabel, 0, 1, 1, 1);
 
-    kDebug() << "security icon:" << m_securityIconName;
+    //kDebug() << "security icon:" << m_securityIconName;
     m_securityIcon = new Plasma::Icon(this);
     m_securityIcon->setIcon(m_securityIconName);
     m_securityIcon->setMinimumHeight(22);
@@ -96,7 +97,7 @@ void WirelessConnectionItem::setupItem()
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);
-    m_strengthMeter->setValue(32); // TODO: set to 0 when signal strength updating works
+    m_strengthMeter->setValue(m_strength);
 
     m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
     m_strengthMeter->setPreferredSize(QSizeF(60, rowHeight/2));
@@ -117,13 +118,18 @@ WirelessConnectionItem::~WirelessConnectionItem()
 {
 }
 
-void WirelessConnectionItem::setNetwork(WirelessNetwork * network)
+void WirelessConnectionItem::setNetwork(const WirelessNetwork * network)
 {
+    kDebug() << "set network";
+    if (!network) {
+        return;
+    }
     m_wirelessNetwork = network;
-    connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString&, int)));
+    setStrength(network->ssid(), network->strength());
+    connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString, int)));
 }
 
-void WirelessConnectionItem::setStrength(QString &essid, int strength)
+void WirelessConnectionItem::setStrength(QString essid, int strength)
 {
     kDebug() << essid << "signal strength changed to " << strength;
     if (strength == m_strength) {
