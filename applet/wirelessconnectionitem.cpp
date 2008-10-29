@@ -118,7 +118,7 @@ WirelessConnectionItem::~WirelessConnectionItem()
 {
 }
 
-void WirelessConnectionItem::setNetwork(const WirelessNetwork * network)
+void WirelessConnectionItem::setNetwork(WirelessNetwork * network)
 {
     kDebug() << "set network";
     if (!network) {

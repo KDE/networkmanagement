@@ -47,7 +47,7 @@ public:
     WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent = 0);
     virtual ~WirelessConnectionItem();
     void setupItem();
-    void setNetwork(const WirelessNetwork * network);
+    void setNetwork(WirelessNetwork * network);
     QString essid();
 protected:
     RemoteConnection * m_connection;
