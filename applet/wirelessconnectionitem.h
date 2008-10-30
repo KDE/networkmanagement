@@ -48,11 +48,11 @@ public:
     virtual ~WirelessConnectionItem();
     void setupItem();
     void setNetwork(WirelessNetwork * network);
-    QString essid();
+    QString ssid();
 protected:
     RemoteConnection * m_connection;
 private slots:
-    void setStrength(QString essid, int strength);
+    void setStrength(QString ssid, int strength);
 private:
     void readSettings();
     QGraphicsGridLayout * m_layout;
@@ -64,7 +64,7 @@ private:
     Plasma::IconWidget * m_securityIcon;
     QString m_securityIconName;
     WirelessNetwork * m_wirelessNetwork;
-    QString m_essid;
+    QString m_ssid;
     int m_strength;
 };
 

@@ -39,9 +39,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetwork.h"
 
 WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
-: ConnectionItem(conn, parent), m_connection(conn), m_security(0), m_securityIcon(0), m_securityIconName(0), m_essid(0)
+: ConnectionItem(conn, parent), m_connection(conn), m_security(0), m_securityIcon(0), m_securityIconName(0), m_ssid(0)
 {
-    m_essid = m_connection->id();
+    m_ssid = m_connection->id();
     m_strengthMeter = 0;
     m_strength = 0;
 }
@@ -82,7 +82,7 @@ void WirelessConnectionItem::setupItem()
     m_layout->addItem(m_icon, 0, 0, 1, 1 );
 
     m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText(m_essid);
+    m_connectionNameLabel->setText(m_ssid);
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
     m_connectionNameLabel->setMaximumWidth(200);
     m_layout->addItem(m_connectionNameLabel, 0, 1, 1, 1);
@@ -120,7 +120,6 @@ WirelessConnectionItem::~WirelessConnectionItem()
 
 void WirelessConnectionItem::setNetwork(WirelessNetwork * network)
 {
-    kDebug() << "set network";
     if (!network) {
         return;
     }
@@ -129,9 +128,10 @@ void WirelessConnectionItem::setNetwork(WirelessNetwork * network)
     connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString, int)));
 }
 
-void WirelessConnectionItem::setStrength(QString essid, int strength)
+void WirelessConnectionItem::setStrength(QString ssid, int strength)
 {
-    kDebug() << essid << "signal strength changed to " << strength;
+    Q_UNUSED(ssid);
+    //kDebug() << ssid << "signal strength changed to " << strength;
     if (strength == m_strength) {
         return;
     }
@@ -142,14 +142,14 @@ void WirelessConnectionItem::setStrength(QString essid, int strength)
 }
 
 
-QString WirelessConnectionItem::essid()
+QString WirelessConnectionItem::ssid()
 {
-    return m_essid;
+    return m_ssid;
 }
 
 void WirelessConnectionItem::readSettings() {
     // from wirelessinterfaceitem, TODO: share this code in WirelessNetwork?
-    m_essid = m_connection->id();
+    m_ssid = m_connection->id();
     QVariantMapMap settings = m_connection->settings();
     if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME))) {
         QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME));

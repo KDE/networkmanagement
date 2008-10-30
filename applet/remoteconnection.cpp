@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -44,7 +44,7 @@ RemoteConnection::RemoteConnection(const QString& service, const QString & path,
     qDBusRegisterMetaType<QMap<QString, QMap<QString, QVariant> > >();
 
     m_connection = GetSettings();
-    kDebug() << m_connection;
+    //kDebug() << m_connection;
 
     if ( m_connection.contains(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME))) {
         QVariantMap connectionSetting = m_connection.value(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));

@@ -183,7 +183,7 @@ void InterfaceGroup::addConnectionInternal(NetworkManagerSettings * service, con
                 if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
                     WirelessConnectionItem * ci = new WirelessConnectionItem(connection, this);
                     if (m_wirelessEnvironment) {
-                        ci->setNetwork(m_wirelessEnvironment->findWirelessNetwork(ci->essid()));
+                        ci->setNetwork(m_wirelessEnvironment->findWirelessNetwork(ci->ssid()));
                     }
                     ci->setupItem();
                     connect(ci, SIGNAL(clicked(ConnectionItem*)), SLOT(activateConnection(ConnectionItem*)));

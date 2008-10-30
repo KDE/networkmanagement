@@ -95,7 +95,7 @@ void WirelessNetwork::updateStrength()
         d->strength = maximumStrength;
         emit strengthChanged(d->ssid, d->strength);
     }
-    kDebug() << "update strength" << d->ssid << d->strength;
+    //kDebug() << "update strength" << d->ssid << d->strength;
 }
 
 // vim: sw=4 sts=4 et tw=100

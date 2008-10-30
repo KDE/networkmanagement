@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Plasma/Icon>
 #include <Plasma/Label>
+#include <Plasma/Meter>
 
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkipv4config.h>
@@ -44,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 #include "wirelessnetwork.h"
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_nameMode(mode), m_connectionInspector(0)
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_connectionInspector(0)
 {
 #if 0 // this layouts pretty badly, esp where labels and icons share a horizontal layout
     // main layout
@@ -96,13 +97,17 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_icon->setMaximumHeight(48);
     m_layout->addItem(m_icon, 0, 0, 3, 1);
 
-
+    bool useMeter = false;
+    /* For KDE 4.1, there's no Plasma::Meter. Just never set this variable to true
+       and you get a Label instead (same label as other connections, with signal
+       strength. */
     switch (m_iface->type() ) {
         case Solid::Control::NetworkInterface::Ieee8023:
             m_icon->setIcon("network-wired");
             break;
         case Solid::Control::NetworkInterface::Ieee80211:
             m_icon->setIcon("network-wireless");
+            useMeter = true;
             break;
         case Solid::Control::NetworkInterface::Serial:
             m_icon->setIcon("modem");
@@ -134,12 +139,28 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoLabel->nativeWidget()->setWordWrap(false);
     m_connectionInfoLabel->setText("<b>IP Address:</b> dum.my.ip.addr");
 
+    if (useMeter) {
+        // Signal strength meter
+        int meterHeight = 12;
+        m_strengthMeter = new Plasma::Meter(this);
+        m_strengthMeter->setMinimum(0);
+        m_strengthMeter->setMaximum(100);
+        m_strengthMeter->setValue(0);
+        m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
+        m_strengthMeter->setPreferredSize(QSizeF(120, meterHeight));
+        m_strengthMeter->setMaximumHeight(meterHeight);
+        m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        //m_layout->addItem(m_strengthMeter, 0, 3, 1, 1, Qt::AlignCenter);
+        m_layout->addItem(m_strengthMeter, 2, 1, 1, 1);
+        m_connectionInfoLabel->hide();
+    } else {
+        m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1);
+    }
     //       security
     m_connectionInfoIcon = new Plasma::IconWidget(this);
     //m_connectionInfoIcon->setIcon("system-lock-screen");
     m_connectionInfoIcon->setMinimumHeight(22);
     m_connectionInfoIcon->setMaximumHeight(22);
-    m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1);
     //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
     m_layout->addItem(m_connectionInfoIcon, 1, 3, 1, 1);
     m_connectButton = new Plasma::IconWidget(this);
