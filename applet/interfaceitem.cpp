@@ -335,22 +335,23 @@ void InterfaceItem::setActiveConnection(int state)
     }
     QString stateString;
     if (!connectionIds.isEmpty()) {
+        QString connId = connectionIds.join(QChar(','));
         switch (state) {
             case Solid::Control::NetworkInterface::Preparing:
-                stateString = i18nc("description of preparing to connect state followed by list of active connections in ()", "Preparing to connect (%1)"), connectionIds.join(QChar(','));
+                stateString = i18nc("description of preparing to connect state followed by list of active connections in ()", "Preparing to connect (%1)", connId);
                 break;
             case Solid::Control::NetworkInterface::Configuring:
-                stateString = i18nc("description of configuring hardware state followed by list of active connections in ()", "Configuring interface (%1)"), connectionIds.join(QChar(','));
+                stateString = i18nc("description of configuring hardware state followed by list of active connections in ()", "Configuring interface (%1)", connId);
                 break;
             case Solid::Control::NetworkInterface::NeedAuth:
-                stateString = i18nc("description of waiting for authentication state followed by list of active connections in ()", "Waiting for authorization (%1)"), connectionIds.join(QChar(','));
+                stateString = i18nc("description of waiting for authentication state followed by list of active connections in ()", "Waiting for authorization (%1)", connId);
                 break;
             case Solid::Control::NetworkInterface::IPConfig:
-                stateString = i18nc("description of setting IP address state followed by list of active connections in ()", "Setting network address (%1)"), connectionIds.join(QChar(','));
+                stateString = i18nc("description of setting IP address state followed by list of active connections in ()", "Setting network address (%1)", connId);
                 break;
             case Solid::Control::NetworkInterface::Activated:
             default:
-                stateString = QString::fromLatin1("<b>Network:</b> %1").arg(connectionIds.join(QChar(',')));
+                stateString = i18nc("label showing the currently connected wireless network name", "Connected to %1", connId);
                 break;
         }
     }
