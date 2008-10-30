@@ -6,7 +6,7 @@ public:
     SettingWidget * widget;
 };
 
-VpnUiPlugin::VpnUiPlugin() : d(new Private)
+VpnUiPlugin::VpnUiPlugin(QObject * parent) : QObject(parent), d(new Private)
 {
 
 }

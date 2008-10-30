@@ -25,7 +25,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 #include <KPluginFactory>
+#include <KServiceTypeTrader>
 #include <KTabWidget>
+
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 
@@ -36,6 +38,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "gsmwidget.h"
 #include "pppwidget.h"
 #include "connectionwidget.h"
+#include "vpnuiplugin.h"
 
 VpnPreferences::VpnPreferences(QWidget *parent, const QVariantList &args)
 : ConnectionPreferences( KGlobal::mainComponent(), parent, args )
@@ -54,8 +57,13 @@ VpnPreferences::VpnPreferences(QWidget *parent, const QVariantList &args)
     // run
     addConfig(m_contents->configXml(), m_contents);
     // load the plugin in vpnType, get its SettingWidget and add it
-
+    QString error;
+    m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "KNetworkManager/VpnUiPlugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( vpnType ), this, QVariantList(), &error );
+    if (error.isEmpty()) {
 //    addToTabWidget(m_connectionTypeWidget);
+    } else {
+        kDebug() << error;
+    }
     addToTabWidget(pppWidget);
 }
 

@@ -21,17 +21,22 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef VPNUIPLUGIN_H
 #define VPNUIPLUGIN_H
 
+#include <QObject>
+
 #include "settingwidget.h"
+
+#include "knm_export.h"
 
 class SettingWidget;
 
 /**
  * Plugin for UI elements for VPN configuration
  */
-class VpnUiPlugin
+class KNM_EXPORT VpnUiPlugin : public QObject
 {
+Q_OBJECT
 public:
-    VpnUiPlugin();
+    VpnUiPlugin(QObject * parent = 0);
     virtual ~VpnUiPlugin();
 
     virtual SettingWidget * widget(const QString &connectionId, QWidget * parent = 0) = 0;

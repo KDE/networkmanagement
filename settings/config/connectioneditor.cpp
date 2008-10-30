@@ -219,11 +219,11 @@ void ConnectionEditor::updateTabStates()
                 break;
         }
     }
-    bool hasVpnPlugins = !KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VPNUIPlugin")).isEmpty();
+    bool hasVpnPlugins = !KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VpnUiPlugin")).isEmpty();
     mConnEditUi.tabWidget->setTabEnabled(0, (hasWired || mConnEditUi.listWired->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(1, (hasWireless || mConnEditUi.listWireless->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(2, (hasCellular || mConnEditUi.listCellular->topLevelItemCount()));
-    if (KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VPNUIPlugin")).isEmpty()) {
+    if (KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VpnUiPlugin")).isEmpty()) {
         mConnEditUi.tabWidget->setTabEnabled(3, false);
         mConnEditUi.tabWidget->setTabToolTip(3, i18nc("Tooltip for disabled tab when no VPN plugins are installed", "No VPN plugins were found"));
     } else {
@@ -430,7 +430,7 @@ void ConnectionEditor::tabChanged(int index)
         if ( !mVpnMenu ) {
             mVpnMenu = new QMenu(this);
             // foreach vpn service, add one of these
-            KPluginInfo::List vpnServices = KPluginInfo::fromServices(KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VPNUIPlugin")));
+            KPluginInfo::List vpnServices = KPluginInfo::fromServices(KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VpnUiPlugin")));
             foreach (KPluginInfo pi, vpnServices) {
                 QAction * vpnAction = new QAction(pi.name(), this);
                 vpnAction->setData(QVariant(pi.pluginName()));

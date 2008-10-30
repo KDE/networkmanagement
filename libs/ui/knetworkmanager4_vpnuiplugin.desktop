@@ -1,5 +1,5 @@
 [Desktop Entry]
 Type=ServiceType
-X-KDE-ServiceType=KNetworkManager/VPNUIPlugin
+X-KDE-ServiceType=KNetworkManager/VpnUiPlugin
 Name=KNetworkManager VPN UI Plugin
 Comment=Defines KNetworkManager UI Plugins

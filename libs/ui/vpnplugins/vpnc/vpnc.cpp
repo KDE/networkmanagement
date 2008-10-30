@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -18,26 +18,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM07_VPN_CONNECTION_PREFERENCES_H
-#define NM07_VPN_CONNECTION_PREFERENCES_H
+#include "../../libs/ui/vpnplugins/vpnc/vpnc.h"
 
-#include "connectionprefs.h"
+#include <KPluginFactory>
 
-class VpnUiPlugin;
+K_PLUGIN_FACTORY( VpncUiPluginFactory, registerPlugin<VpncUiPlugin>(); )
+K_EXPORT_PLUGIN( VpncUiPluginFactory( "knetworkmanager4_vpncui" ) )
 
-/**
- * Configuration module for cellular connections
- */
-class VpnPreferences : public ConnectionPreferences
+VpncUiPlugin::VpncUiPlugin(QObject * parent, const QVariantList &) : VpnUiPlugin(parent)
 {
-Q_OBJECT
-public:
-    VpnPreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
-    virtual ~VpnPreferences();
-    virtual void save();
-    virtual void load();
-private:
-    VpnUiPlugin * m_uiPlugin;
-};
 
-#endif
+}
+
+VpncUiPlugin::~VpncUiPlugin()
+{
+
+}
+
+SettingWidget * VpncUiPlugin::widget(const QString &connectionId, QWidget * parent)
+{
+    return 0;
+}
+
+// vim: sw=4 sts=4 et tw=100
