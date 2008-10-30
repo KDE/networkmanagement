@@ -127,10 +127,10 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText("<b>Connection:</b>");
+    m_connectionNameLabel->setText("Disconnected"); // TODO: check connection status
     m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
-    m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 3);
+    m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 1);
 
 
     //       IP address
@@ -151,7 +151,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
         m_strengthMeter->setMaximumHeight(meterHeight);
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         //m_layout->addItem(m_strengthMeter, 0, 3, 1, 1, Qt::AlignCenter);
-        m_layout->addItem(m_strengthMeter, 2, 1, 1, 1);
+        m_layout->addItem(m_strengthMeter, 2, 1, 1, 1, Qt::AlignCenter);
         m_connectionInfoLabel->hide();
     } else {
         m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1);
@@ -162,12 +162,13 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoIcon->setMinimumHeight(22);
     m_connectionInfoIcon->setMaximumHeight(22);
     //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
-    m_layout->addItem(m_connectionInfoIcon, 1, 3, 1, 1);
+    m_layout->addItem(m_connectionInfoIcon, 2, 2, 1, 1, Qt::AlignCenter);
+
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setMinimumHeight(24);
     m_connectButton->setMaximumHeight(24);
     //m_connectButton->setIcon("media-playback-start");
-    m_layout->addItem(m_connectButton, 0, 4, 3, 1);
+    m_layout->addItem(m_connectButton, 0, 2, 1, 1);
 #endif
     connect(Solid::Control::NetworkManager::notifier(),
             SIGNAL(activeConnectionsChanged()),
@@ -196,9 +197,9 @@ void InterfaceItem::setNameDisplayMode(NameDisplayMode mode)
 {
     m_nameMode = mode;
     if ( m_nameMode == InterfaceName ) {
-        m_ifaceNameLabel->setText(QString::fromLatin1("<b>Device: %1</b>").arg(m_iface->interfaceName()));
+        m_ifaceNameLabel->setText(i18n("<b>Interface %1</b>", m_iface->interfaceName()));
     } else {
-        m_ifaceNameLabel->setText(QString::fromLatin1("<b>Hardware name goes here</b>"));
+        m_ifaceNameLabel->setText(i18nc("network interface name unknown", "<b>Unknown Network Interface</b>"));
     }
 }
 
@@ -325,16 +326,17 @@ void InterfaceItem::connectButtonClicked()
 void InterfaceItem::setUnavailable()
 {
     m_icon->setEnabled(false);
+    m_ifaceNameLabel->setText(i18n("<b>Interface %1</b>", m_iface->interfaceName()));
     m_connectionNameLabel->setText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"));
-    m_connectionInfoLabel->setText("unavailable");
+    m_connectionInfoLabel->setText("");
     m_connectButton->setEnabled(false);
 }
 
 void InterfaceItem::setInactive()
 {
     m_icon->setEnabled(false);
-    m_connectionNameLabel->setText("empty name");
-    m_connectionInfoLabel->setText("empty info");
+    m_connectionNameLabel->setText(i18nc("networking device is not connected", "Disconnected"));
+    m_connectionInfoLabel->setText("");
     m_connectButton->setIcon("media-playback-stop");
 }
 
@@ -359,22 +361,23 @@ void InterfaceItem::setActiveConnection(int state)
         QString connId = connectionIds.join(QChar(','));
         switch (state) {
             case Solid::Control::NetworkInterface::Preparing:
-                stateString = i18nc("description of preparing to connect state followed by list of active connections in ()", "Preparing to connect (%1)", connId);
+                stateString = i18nc("description of preparing to connect state", "Preparing to connect");
                 break;
             case Solid::Control::NetworkInterface::Configuring:
-                stateString = i18nc("description of configuring hardware state followed by list of active connections in ()", "Configuring interface (%1)", connId);
+                stateString = i18nc("description of configuring hardware state", "Configuring interface");
                 break;
             case Solid::Control::NetworkInterface::NeedAuth:
-                stateString = i18nc("description of waiting for authentication state followed by list of active connections in ()", "Waiting for authorization (%1)", connId);
+                stateString = i18nc("description of waiting for authentication state", "Waiting for authorization");
                 break;
             case Solid::Control::NetworkInterface::IPConfig:
-                stateString = i18nc("description of setting IP address state followed by list of active connections in ()", "Setting network address (%1)", connId);
+                stateString = i18nc("dhcp request in most cases", "Setting network address");
                 break;
             case Solid::Control::NetworkInterface::Activated:
             default:
-                stateString = i18nc("label showing the currently connected wireless network name", "Connected to %1", connId);
+                stateString = i18nc("label showing the currently connected wireless network name", "Connected");
                 break;
         }
+        m_ifaceNameLabel->setText("<b>" + connId + "</b>");
     }
     m_connectionNameLabel->setText(stateString);
     setConnectionInfo();
