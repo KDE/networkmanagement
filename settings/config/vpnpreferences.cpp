@@ -60,7 +60,8 @@ VpnPreferences::VpnPreferences(QWidget *parent, const QVariantList &args)
     QString error;
     m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "KNetworkManager/VpnUiPlugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( vpnType ), this, QVariantList(), &error );
     if (error.isEmpty()) {
-//    addToTabWidget(m_connectionTypeWidget);
+        m_connectionTypeWidget = m_uiPlugin->widget(connectionId, this);
+        addToTabWidget(m_connectionTypeWidget);
     } else {
         kDebug() << error;
     }
