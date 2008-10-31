@@ -15,3 +15,5 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=VPNC
 Comment=VPNC Plugin
+Comment[el]=Πρόσθετο VPNC
+Comment[uk]=Додаток VPNC

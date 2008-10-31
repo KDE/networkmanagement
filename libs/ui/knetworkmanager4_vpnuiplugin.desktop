@@ -2,4 +2,8 @@
 Type=ServiceType
 X-KDE-ServiceType=KNetworkManager/VpnUiPlugin
 Name=KNetworkManager VPN UI Plugin
+Name[el]=Πρόσθετο VPN UI του KNetworkManager
+Name[uk]=Додаток інтерфейсу користувача VPN KNetworkManager
 Comment=Defines KNetworkManager UI Plugins
+Comment[el]=Καθορίζει πρόσθετα UI του KNetworkManager
+Comment[uk]=Визначає додатки інтерфейсу користувача KNetworkManager

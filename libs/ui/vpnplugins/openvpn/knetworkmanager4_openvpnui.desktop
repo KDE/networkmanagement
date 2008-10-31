@@ -15,4 +15,6 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=OpenVPN
 Comment=OpenVPN plugin
+Comment[el]=πρόσθετο OpenVPN
+Comment[uk]=Додаток OpenVPN
 
