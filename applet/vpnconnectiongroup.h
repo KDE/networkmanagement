@@ -18,35 +18,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "openvpnwidget.h"
+#ifndef VPNCONNECTIONGROUP_H
+#define VPNCONNECTIONGROUP_H
 
-#include <nm-setting-vpn.h>
+#include "connectionlist.h"
 
-OpenVpnSettingWidget::OpenVpnSettingWidget(const QString & connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent)
+// Shows a group of VPN connections
+class VpnConnectionGroup : public ConnectionList
 {
-    m_ui.setupUi(this);
-    init();
-}
+Q_OBJECT
+public:
+    VpnConnectionGroup(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent = 0);
+    virtual ~VpnConnectionGroup();
+    void setupHeader();
+    bool accept(RemoteConnection*) const;
+public Q_SLOTS:
+    void activateConnection(ConnectionItem*);
+};
 
-OpenVpnSettingWidget::~OpenVpnSettingWidget()
-{
+#endif // VPNCONNECTIONGROUP_H
 
-}
-
-void OpenVpnSettingWidget::readConfig()
-{
-
-}
-
-void OpenVpnSettingWidget::writeConfig()
-{
-
-}
-
-QString OpenVpnSettingWidget::settingName() const
-{
-    return QLatin1String(NM_SETTING_VPN_SETTING_NAME);
-}
-
-// vim: sw=4 sts=4 et tw=100

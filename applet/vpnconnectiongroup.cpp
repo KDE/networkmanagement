@@ -18,35 +18,36 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "openvpnwidget.h"
 
-#include <nm-setting-vpn.h>
+#include "vpnconnectiongroup.h"
 
-OpenVpnSettingWidget::OpenVpnSettingWidget(const QString & connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent)
-{
-    m_ui.setupUi(this);
-    init();
-}
+#include "../libs/types.h"
+#include "nm-setting-vpn.h"
+#include "remoteconnection.h"
 
-OpenVpnSettingWidget::~OpenVpnSettingWidget()
+VpnConnectionGroup::VpnConnectionGroup(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
+    : ConnectionList(userSettings, systemSettings, parent)
 {
 
 }
 
-void OpenVpnSettingWidget::readConfig()
+VpnConnectionGroup::~VpnConnectionGroup()
 {
 
 }
 
-void OpenVpnSettingWidget::writeConfig()
+void VpnConnectionGroup::setupHeader()
+{
+}
+
+bool VpnConnectionGroup::accept(RemoteConnection* connection) const
+{
+    QVariantMapMap settings = connection->settings();
+    return settings.contains(QLatin1String(NM_SETTING_VPN_SETTING_NAME));
+}
+
+void VpnConnectionGroup::activateConnection(ConnectionItem*)
 {
 
 }
-
-QString OpenVpnSettingWidget::settingName() const
-{
-    return QLatin1String(NM_SETTING_VPN_SETTING_NAME);
-}
-
 // vim: sw=4 sts=4 et tw=100

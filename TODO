@@ -1,6 +1,6 @@
 KEY (by Lubos)
 ==============
-* = not done, will be either done by me, or should be at least discussed first with me
+* = not done, will be either done by WS, or should be at least discussed first with WS
 + = not done, I don't plan on doing it that soon
     - in other words, these should be the best ones for you if you want to help
 ! = like +, but they should be relatively simple
@@ -8,6 +8,7 @@ KEY (by Lubos)
 / = work in progress
 ? = should it be done?
 % = should be probably done later, during cleanups and preparations for being stable
+. = done, remove when DESIGN is updated
 
 
 TODO CB:
@@ -27,23 +28,23 @@ TODO WS:
     * LEAP
     * WPA-EAP
   + also for 802.1x
-  / Create Connection.Secrets objects and do lazy secret loading. Change configxml classes to not read wallet on start
+  . Create Connection.Secrets objects and do lazy secret loading. Change configxml classes to not read wallet on start
     * Show connection UI to get secrets on demand if the wallet does not contain them or if the
       daemon requested new secrets
+  ! write LastUsed to knetworkmanagerrc on successful connection activation
+
 
 - CONFIG: Implement control module
   + Write a nice class to turn a QDateTime into "3 minutes ago", "5 hours ago" instead of using KLocale::formatDate(), or extend KLocale with formatDateRelative(QDateTime in, QDateTime relativeTo)
-  ! Add UI for selecting cellular connection type,
+  . Add UI for selecting cellular connection type,
     * detect and disable for existing connections
   ! Replace Ok button with Close in main connectioneditor, or implement storage of changed/added connection settings in temp files until the Ok button is clicked, and enable deleting temp files if Cancel is clicked
   ! Edit on double click existing entry
   / Complete most settings widgets' complex (non-KConfigSkeleton-managed) UI plumbing and reimplemented save routines
-  + Option to display system-provided connections and import them so they can be edited
-  * Show the ScanWidget from widgets developed by CB
+  + Option to display system-provided connections and import them so they can be edited (probably depends on PolicyKit)
+  . Show the ScanWidget from widgets developed by CB
 
- 
 - APPLET: Make sure system tray+engine does what we need
-  ! write LastUsed to knetworkmanagerrc on successful connection activation
   * Popup menu
     / Connection List
        / Two possible connection list display styles
@@ -51,18 +52,32 @@ TODO WS:
            / Update based on hardware and AP changes
            + Extend to profiles
          + a list of all currently seen APs (like trad applet)
-       * Group connections by device (or by device type if connection could be activated on >1 device)
-         * Item contents
-           * Name
-           * Type
-           * Signal strength for wifi
-           * Extended information (System/user connection; IP config; libnl bytes up/down stats (FEATURE) etc)
-        * Disconnect button
-    / Connection editor
+       / Group connections by device (or by device type if connection could be activated on >1 device)
+         / Item contents
+           . Name
+           . Type
+           / Extended information (System/user connection; IP config; pppStats bytes up/down stats (FEATURE) etc)
+           . Activate button
+         / Wireless connection item
+           . Signal strength
+         * Cellular connection item
+           * Signal strength
+           * UMTS/GPRS
+           * Network name
+         / VPN connections - group without interface.  Can be activated on single active connection
+           or on the connection owning the default route.  Drag and drop to activate on another
+           connection
+         * Remove connections that are active from the connection list, they are shown on the
+           InterfaceItem
+         * Wireless interface groups should maintain a merged WirelessEnvironment for all interfaces' environments,
+           for maintaining its appropriate connection list.
+        / Disconnect button
+    . Connection editor
     / Flight mode toggle
-    / Disconnected toggle
-    / Hardware wifi switch indicator
+    * Disconnected toggle
+    * Hardware wifi switch indicator
     + Adhoc network button
+  * Tooltips
   / Show network status in tray icon
     % Option to have one icon per device, (like in Windows, hschaa's request)
     / Show network interface's status that is most important to the
