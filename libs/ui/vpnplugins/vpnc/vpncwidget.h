@@ -18,28 +18,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../../libs/ui/vpnplugins/openvpn/openvpn.h"
+#ifndef VPNCWIDGET_H
+#define VPNCWIDGET_H
 
-#include <KPluginFactory>
+#include "settingwidget.h"
 
-#include "openvpnwidget.h"
+#include "ui_vpncprop.h"
 
-K_PLUGIN_FACTORY( OpenVpnUiPluginFactory, registerPlugin<OpenVpnUiPlugin>(); )
-K_EXPORT_PLUGIN( OpenVpnUiPluginFactory( "knetworkmanager4_openvpnui" ) )
-
-OpenVpnUiPlugin::OpenVpnUiPlugin(QObject * parent, const QVariantList &) : VpnUiPlugin(0)
+class VpncSettingWidget : public SettingWidget
 {
+Q_OBJECT
+public:
+    VpncSettingWidget(const QString & connectionId, QWidget * parent = 0);
+    ~VpncSettingWidget();
+    void readConfig();
+    void writeConfig();
+    QString settingName() const;
+private:
+    Ui_VpncProp m_ui;
+};
 
-}
-
-OpenVpnUiPlugin::~OpenVpnUiPlugin()
-{
-
-}
-
-SettingWidget * OpenVpnUiPlugin::widget(const QString &connectionId, QWidget * parent)
-{
-    return new OpenVpnSettingWidget(connectionId, parent);
-}
-
-// vim: sw=4 sts=4 et tw=100
+#endif // VPNCWIDGET_H

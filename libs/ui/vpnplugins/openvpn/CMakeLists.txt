@@ -2,7 +2,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
 set(openvpn_SRCS
    openvpn.cpp
+   openvpnwidget.cpp
    )
+
+kde4_add_ui_files(openvpn_SRCS openvpnprop.ui)
 
 kde4_add_plugin(knetworkmanager4_openvpnui ${openvpn_SRCS})
 

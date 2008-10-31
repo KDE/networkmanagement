@@ -1,0 +1,229 @@
+<ui version="4.0" >
+ <class>VpncProp</class>
+ <widget class="QWidget" name="VpncProp" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>667</width>
+    <height>402</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Cisco VPN</string>
+  </property>
+  <layout class="QGridLayout" name="_2" >
+   <item row="0" column="0" >
+    <widget class="QTabWidget" name="kTabWidget1" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="TabPage" >
+      <attribute name="title" >
+       <string>Required Information</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="QLabel" name="textLabel3" >
+         <property name="text" >
+          <string>Gateway</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+         <property name="buddy" >
+          <cstring>IPSec_gateway</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="KLineEdit" name="IPSec_gateway" />
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="labelGroup" >
+         <property name="text" >
+          <string>Group Name</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+         <property name="buddy" >
+          <cstring>IPSec_ID</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="KLineEdit" name="IPSec_ID" />
+       </item>
+       <item row="2" column="1" >
+        <spacer name="spacer9" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="TabPage" >
+      <attribute name="title" >
+       <string>Optional Information</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="8" column="0" colspan="2" >
+        <widget class="QCheckBox" name="chkIPAdresses" >
+         <property name="text" >
+          <string>Only use VPN Connection for these addresses (for example: 172.16.0.0/16 10.11.12.0/24):</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1" >
+        <spacer name="spacer10" >
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" stdset="0" >
+          <size>
+           <width>20</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="6" column="0" colspan="2" >
+        <widget class="QCheckBox" name="chkDisableNatTraversal" >
+         <property name="text" >
+          <string>Disable NAT traversal</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2" >
+        <widget class="QCheckBox" name="chkSingleDES" >
+         <property name="text" >
+          <string>Enable weak single DES encryption</string>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0" colspan="2" >
+        <widget class="KLineEdit" name="routes" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" colspan="2" >
+        <widget class="QCheckBox" name="chkUseKeepAlive" >
+         <property name="text" >
+          <string>Use NAT keep alive packets</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" colspan="2" >
+        <widget class="QCheckBox" name="chkUseDomain" >
+         <property name="text" >
+          <string>Use domain for authentication</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" colspan="2" >
+        <widget class="QCheckBox" name="chkOverrideUsername" >
+         <property name="text" >
+          <string>Override user name</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="KLineEdit" name="Xauth_username" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="lblUsername" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Username</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="KLineEdit" name="Domain" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="lblDomain" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Domain</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" >
+        <widget class="QLabel" name="lblKeepAliveInterval" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Interval</string>
+         </property>
+         <property name="wordWrap" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1" >
+        <widget class="QLineEdit" name="nat_keep_alive_interval" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>

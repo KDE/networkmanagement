@@ -2,7 +2,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../..)
 
 set(vpnc_SRCS
    vpnc.cpp
+   vpncwidget.cpp
    )
+
+kde4_add_ui_files(vpnc_SRCS vpncprop.ui)
 
 kde4_add_plugin(knetworkmanager4_vpncui ${vpnc_SRCS})
 

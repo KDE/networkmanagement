@@ -18,28 +18,39 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../../libs/ui/vpnplugins/openvpn/openvpn.h"
-
-#include <KPluginFactory>
+#ifndef OPENVPNWIDGET.CPP
+#define OPENVPNWIDGET.CPP
 
 #include "openvpnwidget.h"
 
-K_PLUGIN_FACTORY( OpenVpnUiPluginFactory, registerPlugin<OpenVpnUiPlugin>(); )
-K_EXPORT_PLUGIN( OpenVpnUiPluginFactory( "knetworkmanager4_openvpnui" ) )
+#include <nm-setting-vpn.h>
 
-OpenVpnUiPlugin::OpenVpnUiPlugin(QObject * parent, const QVariantList &) : VpnUiPlugin(0)
+OpenVpnSettingWidget::OpenVpnSettingWidget(const QString & connectionId, QWidget * parent)
+: SettingWidget(connectionId, parent)
+{
+    m_ui.setupUi(this);
+    init();
+}
+
+OpenVpnSettingWidget::~OpenVpnSettingWidget()
 {
 
 }
 
-OpenVpnUiPlugin::~OpenVpnUiPlugin()
+void OpenVpnSettingWidget::readConfig()
 {
 
 }
 
-SettingWidget * OpenVpnUiPlugin::widget(const QString &connectionId, QWidget * parent)
+void OpenVpnSettingWidget::writeConfig()
 {
-    return new OpenVpnSettingWidget(connectionId, parent);
+
+}
+
+QString OpenVpnSettingWidget::settingName() const
+{
+    return QLatin1String(NM_SETTING_VPN_SETTING_NAME);
 }
 
 // vim: sw=4 sts=4 et tw=100
+#endif // OPENVPNWIDGET.CPP

@@ -18,14 +18,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "../../libs/ui/vpnplugins/vpnc/vpnc.h"
+#include "vpnc.h"
+
+#include "vpncwidget.h"
 
 #include <KPluginFactory>
 
 K_PLUGIN_FACTORY( VpncUiPluginFactory, registerPlugin<VpncUiPlugin>(); )
 K_EXPORT_PLUGIN( VpncUiPluginFactory( "knetworkmanager4_vpncui" ) )
 
-VpncUiPlugin::VpncUiPlugin(QObject * parent, const QVariantList &) : VpnUiPlugin(parent)
+VpncUiPlugin::VpncUiPlugin(QObject * parent, const QVariantList &) : VpnUiPlugin(0)
 {
 
 }
@@ -37,7 +39,7 @@ VpncUiPlugin::~VpncUiPlugin()
 
 SettingWidget * VpncUiPlugin::widget(const QString &connectionId, QWidget * parent)
 {
-    return 0;
+    return new VpncSettingWidget(connectionId, parent);
 }
 
 // vim: sw=4 sts=4 et tw=100
