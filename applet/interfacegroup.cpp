@@ -64,6 +64,7 @@ void InterfaceGroup::setupHeader()
     if (m_interfaces.count() == 0) {
         hide();
     }
+    setLayout(m_layout);
 }
 
 

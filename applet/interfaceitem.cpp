@@ -186,6 +186,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     }
     // set the state of our UI correctly
     connectionStateChanged(m_iface->connectionState());
+    setLayout(m_layout);
 }
 
 InterfaceItem::~InterfaceItem()
@@ -258,6 +259,7 @@ void InterfaceItem::activeConnectionsChanged()
     }
     m_activeConnections = newConnectionList;
     // update our UI
+    m_layout->invalidate();
     setConnectionInfo();
 }
 
