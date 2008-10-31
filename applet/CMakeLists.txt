@@ -1,6 +1,7 @@
 set(networkmanager_SRCS
     connectionitem.cpp
     connectioninspector.cpp
+    connectionlist.cpp
     networkmanager.cpp
     networkmanagerpopup.cpp
     interfacegroup.cpp

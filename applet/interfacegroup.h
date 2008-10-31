@@ -21,9 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef INTERFACEGROUP_H
 #define INTERFACEGROUP_H
 
-#include <QGraphicsWidget>
-#include <QHash>
-#include <QPair>
+#include "connectionlist.h"
 
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
@@ -31,48 +29,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "nm-exported-connectioninterface.h"
 
 
-class NetworkManagerSettings;
-class QGraphicsLinearLayout;
-class ConnectionItem;
-class InterfaceItem;
-class RemoteConnection;
-class WirelessEnvironment;
-
-typedef QPair<QString,QString> QStringPair;
-typedef QHash<QStringPair, ConnectionItem*> ServiceConnectionHash;
-
 /** Represents a group of network interfaces of the same type
  * displays either a generic name of interface type (when representing a single interface)
  * or a specific interface name or model
  */
-class InterfaceGroup : public QGraphicsWidget
+class InterfaceGroup : public ConnectionList
 {
 Q_OBJECT
 public:
     InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent = 0);
     virtual ~InterfaceGroup();
     Solid::Control::NetworkInterface::Type interfaceType() const;
-protected slots:
-    virtual void activateConnection(ConnectionItem*);
+    bool accept(RemoteConnection *) const;
+    void setupHeader();
+protected Q_SLOTS:
+    void activateConnection(ConnectionItem*);
     virtual void interfaceAdded(const QString&);
     virtual void interfaceRemoved(const QString&);
-    void connectionAddedToService(NetworkManagerSettings *, const QString&);
-    void connectionRemovedFromService(NetworkManagerSettings *, const QString&);
-    void serviceAppeared(NetworkManagerSettings*);
-    void serviceDisappeared(NetworkManagerSettings*);
-    void reassessConnectionList();
+    //void connectionAddedToService(NetworkManagerSettings *, const QString&);
+    //void connectionRemovedFromService(NetworkManagerSettings *, const QString&);
+    //void serviceAppeared(NetworkManagerSettings*);
+    //void serviceDisappeared(NetworkManagerSettings*);
+    //void reassessConnectionList();
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
-    void addConnectionInternal(NetworkManagerSettings*, const QString &connectionPath);
-    void addSettingsService(NetworkManagerSettings*);
-    // list of connection objects for this interface type
-    ServiceConnectionHash m_connections;
+    ConnectionItem * createItem(RemoteConnection* conn);
     // list of interfaces
     QHash<QString, InterfaceItem *> m_interfaces;
-    QGraphicsLinearLayout * m_layout;
     Solid::Control::NetworkInterface::Type m_type;
-    NetworkManagerSettings * m_userSettings;
-    NetworkManagerSettings * m_systemSettings;
     WirelessEnvironment * m_wirelessEnvironment;
+    QGraphicsLinearLayout * m_interfaceLayout;
 };
 #endif // INTERFACEGROUP_H

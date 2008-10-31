@@ -85,15 +85,20 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
 
     m_ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, this);
+    m_ethernetGroup->init();
     m_connectionLayout->addItem(m_ethernetGroup);
 
     Plasma::Label * wirelessHeader = new Plasma::Label(this);
     wirelessHeader->setText(i18nc("Label for wifi networks in popup","Wireless Networks"));
     m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, this);
+    m_wifiGroup->init();
     m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
+    m_gsmGroup->init();
+
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
     //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
     m_connectionLayout->addItem(wirelessHeader);
+
     m_connectionLayout->setItemSpacing(1, 30);
     m_connectionLayout->addItem(m_wifiGroup);
     m_connectionLayout->addItem(m_gsmGroup);

@@ -41,9 +41,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessenvironment.h"
 
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
-: QGraphicsWidget(parent), m_type(type), m_userSettings(userSettings), m_systemSettings(systemSettings), m_wirelessEnvironment(0)
+: ConnectionList(userSettings, systemSettings, parent), m_type(type), m_wirelessEnvironment(0), m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical))
 {
-    m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
+}
+
+void InterfaceGroup::setupHeader()
+{
+    m_layout->addItem(m_interfaceLayout);
     // create an interfaceItem for each interface of our type
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == interfaceType()) {
@@ -51,11 +55,6 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, Netw
             kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
         }
     }
-    // create a connectionItem for each appropriate connection
-    addSettingsService(m_userSettings);
-    addSettingsService(m_systemSettings);
-
-    setLayout(m_layout);
     // hook up signals to allow us to change the connection list depending on APs present, etc
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             SLOT(interfaceAdded(const QString&)));
@@ -87,7 +86,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 m_wirelessEnvironment = wi->wirelessEnvironment();
                 ii = wi;
                 inspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface), wi->wirelessEnvironment());
-                connect(wi, SIGNAL(wirelessNetworksChanged()), SLOT(reassessConnectionList()));
+                connect(wi, SIGNAL(wirelessNetworksChanged()), SLOT(reassess()));
                 break;
             case Solid::Control::NetworkInterface::Serial:
                 ii = si = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
@@ -116,105 +115,41 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         }
         ii->setConnectionInspector(inspector);
 
-        m_layout->addItem(ii);
+        m_interfaceLayout->addItem(ii);
         m_interfaces.insert(iface->uni(), ii);
-        m_layout->invalidate();
+        m_interfaceLayout->invalidate();
     }
     show();
 }
 
-void InterfaceGroup::addSettingsService(NetworkManagerSettings * service)
+bool InterfaceGroup::accept(RemoteConnection * conn) const
 {
-    connect(service, SIGNAL(connectionAdded(NetworkManagerSettings *, const QString&)), SLOT(connectionAddedToService(NetworkManagerSettings *, const QString&)));
-    connect(service, SIGNAL(connectionRemoved(NetworkManagerSettings *, const QString&)), SLOT(connectionRemovedFromService(NetworkManagerSettings *, const QString&)));
-    //connect(service, SIGNAL(connectionUpdated(NetworkManagerSettings *, const QString&);
-    connect(service, SIGNAL(appeared(NetworkManagerSettings*)), SLOT(serviceAppeared(NetworkManagerSettings*)));
-    connect(service, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(serviceDisappeared(NetworkManagerSettings*)));
-    serviceAppeared(service);
-}
-
-void InterfaceGroup::serviceAppeared(NetworkManagerSettings * service)
-{
-    if (service->isValid()) {
-        foreach (QString connectionPath, service->connections() ) {
-            addConnectionInternal(service, connectionPath);
+    // there was some code I don't remember the purpose of in addConnectionInternal before it was refactored here
+    // that cast to WirelessConnectionItem, then did the same interface accept() loop.  ...?
+    bool accepted = false;
+    foreach (InterfaceItem * iface, m_interfaces) {
+        if (iface->connectionInspector()->accept(conn)) {
+            accepted = true;
+            break;
         }
     }
+    return accepted;
 }
 
-void InterfaceGroup::addConnectionInternal(NetworkManagerSettings * service, const QString& connectionPath)
+ConnectionItem * InterfaceGroup::createItem(RemoteConnection* connection)
 {
-    QPair<QString,QString> key(service->service(), connectionPath);
-    if (m_connections.contains(key)) {
-        if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
-            WirelessConnectionItem * connection = dynamic_cast<WirelessConnectionItem *>(m_connections.value(key));
-            bool accepted = false;
-            foreach (InterfaceItem * iface, m_interfaces) {
-                if (iface->connectionInspector()->accept(connection->connection())) {
-                    accepted = true;
-                    break;
-                }
-            }
-            if (!accepted) {
-                m_layout->removeItem(connection);
-                m_connections.remove(key);
-                delete connection;
-            }
-        } else {
-            ConnectionItem * connection = m_connections.value(key);
-            bool accepted = false;
-            foreach (InterfaceItem * iface, m_interfaces) {
-                if (iface->connectionInspector()->accept(connection->connection())) {
-                    accepted = true;
-                    break;
-                }
-            }
-            if (!accepted) {
-                m_layout->removeItem(connection);
-                m_connections.remove(key);
-                delete connection;
-            }
+    ConnectionItem * ci;
+    if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
+        WirelessConnectionItem * wi = new WirelessConnectionItem(connection, this);
+        ci = wi;
+        if (m_wirelessEnvironment) {
+            wi->setNetwork(m_wirelessEnvironment->findWirelessNetwork(wi->ssid()));
         }
     } else {
-        RemoteConnection * connection = service->findConnection(connectionPath);
-        foreach (InterfaceItem * item, m_interfaces) {
-            ConnectionInspector * inspector = item->connectionInspector();
-            if (inspector->accept(connection)) {
-                if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
-                    WirelessConnectionItem * ci = new WirelessConnectionItem(connection, this);
-                    if (m_wirelessEnvironment) {
-                        ci->setNetwork(m_wirelessEnvironment->findWirelessNetwork(ci->ssid()));
-                    }
-                    ci->setupItem();
-                    connect(ci, SIGNAL(clicked(ConnectionItem*)), SLOT(activateConnection(ConnectionItem*)));
-                    m_connections.insert(key, dynamic_cast<ConnectionItem *>(ci));
-                    m_layout->addItem(ci);
-                } else {
-                    ConnectionItem * ci = new ConnectionItem(connection, this);
-                    ci->setupItem();
-                    connect(ci, SIGNAL(clicked(ConnectionItem*)), SLOT(activateConnection(ConnectionItem*)));
-                    m_connections.insert(key, ci);
-                    m_layout->addItem(ci);
-                }
-            }
-        }
+        ci = new ConnectionItem(connection, this);
     }
-}
-
-void InterfaceGroup::serviceDisappeared(NetworkManagerSettings* settings)
-{
-    //remove all connections from this service
-    ServiceConnectionHash::iterator i = m_connections.begin();
-    while (i != m_connections.end()) {
-        if (i.key().first == settings->service()) {
-            ConnectionItem * item = i.value();
-            m_layout->removeItem(item);
-            i = m_connections.erase(i);
-            delete item;
-        } else {
-            ++i;
-        }
-    }
+    ci->setupItem();
+    return ci;
 }
 
 Solid::Control::NetworkInterface::Type InterfaceGroup::interfaceType() const
@@ -233,10 +168,10 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
 {
     if (m_interfaces.contains(uni)) {
         InterfaceItem * item = m_interfaces.take(uni);
-        m_layout->removeItem(item);
+        m_interfaceLayout->removeItem(item);
         KNotification::event(Event::HwRemoved, i18nc("Notification for hardware removed", "Network interface removed"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
         delete item;
-        reassessConnectionList();
+        reassess();
     }
 }
 
@@ -257,29 +192,5 @@ void InterfaceGroup::activateConnection(ConnectionItem* item)
     // Ideally we should keep them around
 }
 
-void InterfaceGroup::connectionAddedToService(NetworkManagerSettings * service, const QString& connectionPath)
-{
-    addConnectionInternal(service, connectionPath);
-}
-
-void InterfaceGroup::connectionRemovedFromService(NetworkManagerSettings * service, const QString& connectionPath)
-{
-    // look up the ConnectionItem and remove it
-    QPair<QString,QString> key(service->service(), connectionPath);
-    if (m_connections.contains(key)) {
-        ConnectionItem * item = m_connections.value(key);
-        m_layout->removeItem(item);
-        m_connections.remove(key);
-        delete item;
-    }
-}
-
-void InterfaceGroup::reassessConnectionList()
-{
-    // this will try and add all connections on both services
-    // duplicates are rejected
-    serviceAppeared(m_userSettings);
-    serviceAppeared(m_systemSettings);
-}
 
 // vim: sw=4 sts=4 et tw=100
