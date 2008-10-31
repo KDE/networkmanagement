@@ -55,7 +55,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfacegroup.h"
 #include "remoteconnection.h"
 #include "networkmanagersettings.h"
-#include "vpnconnectiongroup.h"
 
 NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     : QGraphicsWidget(parent),
@@ -98,17 +97,11 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
 
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
     //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
-    Plasma::Label * vpnHeader = new Plasma::Label(this);
-    vpnHeader->setText(i18nc("Label for vpn connections in popup","VPN Connections"));
-    VpnConnectionGroup * vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
-    vpnGroup->init();
     m_connectionLayout->addItem(wirelessHeader);
 
     m_connectionLayout->setItemSpacing(1, 30);
     m_connectionLayout->addItem(m_wifiGroup);
     m_connectionLayout->addItem(m_gsmGroup);
-    m_connectionLayout->addItem(vpnHeader);
-    m_connectionLayout->addItem(vpnGroup);
     m_gsmGroup->show();
     //m_connectionLayout->addItem(cdmaGroup);
     //m_connectionLayout->addItem(pppoeGroup);

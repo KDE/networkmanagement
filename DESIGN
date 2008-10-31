@@ -15,7 +15,7 @@ iii) Plasmoid gives user feedback i
 
 
 Directory structure of project
-.                           OBSOLETE Plasmoid sources
+.                           Plasmoid sources
 ./libs                      Headers shared by all code
 ./libs/storage              Storage layer shared library (libknmstorage) for loading and saving NM settings
 ./libs/ui                   UI shared library (libknmui) for settings config widgets
@@ -24,9 +24,7 @@ Directory structure of project
 ./settings/config           KCM for configuring settings using libknmstorage and libknmui
 ./settings/test             (Unused test code, scheduled for merging/moving)
 ./tests                     Proof-of-concept code, not proper unit tests yet
-./applet                    Plasmoid sources
-./widgets                   OBSOLETE Components for the plasmoid
-
+./widgets                   Components for the plasmoid
 
 PLASMOID
 Functions
@@ -38,29 +36,10 @@ Functions
 * Allow disconnect of active connections
 * Allow user to select flight mode
 * Allow user to select offline mode
-* Allow user to launch configuration interface
+* Allow user to launch KCM
 * Show extended connection information
 * Perform notifications
-
-Implementation
-* Plasmoid shows overall system status when in panel, by deciding which interface is most interesting and showing
-  its status
-* On click, popup graphicswidget (instead of context menu) for control
-* Popup contains InterfaceGroups of like interfaces, and auxiliary controls
-** Manage.. button shows KCM
-** Toggle wireless
-** Toggle overall networking
-* InterfaceGroups consist of InterfaceItems and ConnectionItems.  1 InterfaceItem per physical interface.  1 ConnectionItem shown per /appropriate/ connection.
-* "Appropriate" means that the ConnectionItem could be activated at the present time - the network interface is active, and any connection-specific requirements are filled; for example, wireless connections' access points are detected
-* InterfaceGroups hide inappropriate ConnectionItems
-* Subclasses for wireless and serial interfaces exist, and for wireless connections.  These show interface-specific connection information
-* WirelessInterfaceItems maintain a WirelessEnvironment object.  This models the wireless environment visible to that
-  network interface.   Solid::Control::AccessPoints in the same ESSID are grouped into WirelessNetwork objects, since
-  NetworkManager does not do this for us.  WirelessNetwork objects' are managed by the WirelessEnvironment, and users
-  should connect to their deleted() or disappeared() signals to avoid dangling pointers (same behaviour as Solid objects)
-* NetworkManagerSettings objects represent the UserSettings and SystemSettings services, and give access to their connection objects.  Signals indicate when connections are added or removed or if the service itself terminates, and the connection lists in the popup are updated.
-* VPN connections are displayed in an InterfaceGroup without any InterfaceItems.  If only one networkinterface is active, the VPN connection is activated on that interface.  If multiple interfaces are active, the one with the default route is used for the VPN connection.
-
+ 
 KCM
 Functions
 * Show currently configured connections
@@ -90,7 +69,7 @@ wireless: connection wireless wirelesssecurity ipv4
 mobilebb:
   cdma: cdma ppp
   gsm: gsm ppp
-vpn: connection ipv4 vpn
+vpn: connection ipv4
 dsl: connection dsl wired ppp
 
 Characteristics
