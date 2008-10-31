@@ -20,6 +20,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "cellularpreferences.h"
 
+#include <nm-setting-cdma.h>
+#include <nm-setting-gsm.h>
+
 #include <QVBoxLayout>
 #include <QFile>
 
@@ -45,38 +48,22 @@ CellularPreferences::CellularPreferences(QWidget *parent, const QVariantList &ar
 {
     QString connectionId = args[0].toString();
     m_connectionType = "Cellular";
-    // check if connection is gsm or cdma and set the appropriate widget
-    bool cdma = false, gsm = false;
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-        switch (iface->type()) {
-            case Solid::Control::NetworkInterface::Gsm:
-                gsm = true;
-                break;
-            case Solid::Control::NetworkInterface::Cdma:
-                cdma = true;
-                break;
-        }
-    }
-    if (cdma && gsm) {
-        kDebug() << "TODO: ask user what type of cellular connection to add, since we have both hardware";
-        Q_ASSERT(0);
-    }
     QVBoxLayout * layout = new QVBoxLayout(this);
     m_contents = new ConnectionWidget(connectionId, this);
     layout->addWidget(m_contents);
-    //CellularWidget * cellularWidget = new CellularWidget(connectionId, this);
     PppWidget * pppWidget = new PppWidget(connectionId, this);
     // Must setup initial widget before adding its contents, or all child widgets are added in this
     // run
     addConfig(m_contents->configXml(), m_contents);
-    if (gsm && !cdma) {
+    QVariant cellularType = args[1];
+    if (cellularType == QVariant(NM_SETTING_GSM_SETTING_NAME)) {
         m_connectionTypeWidget = new GsmWidget(connectionId, this);
-    }
-    if (!gsm && cdma) {
+    } else if (cellularType == QVariant(NM_SETTING_CDMA_SETTING_NAME)) {
         m_connectionTypeWidget = new CdmaWidget(connectionId, this);
+    } else {
+        kDebug() << "passed unrecognised cellular type in ctor args!";
     }
     addToTabWidget(m_connectionTypeWidget);
-    //addToTabWidget(cellularWidget);
     addToTabWidget(pppWidget);
 }
 
