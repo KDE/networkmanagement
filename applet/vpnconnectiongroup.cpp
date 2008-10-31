@@ -21,7 +21,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "vpnconnectiongroup.h"
 
+#include <NetworkManager.h>
+
+#include <KDebug>
+
+#include <solid/control/networkmanager.h>
+
 #include "../libs/types.h"
+#include "connectionitem.h"
+#include "nm-active-connectioninterface.h"
 #include "nm-setting-vpn.h"
 #include "remoteconnection.h"
 
@@ -46,8 +54,45 @@ bool VpnConnectionGroup::accept(RemoteConnection* connection) const
     return settings.contains(QLatin1String(NM_SETTING_VPN_SETTING_NAME));
 }
 
-void VpnConnectionGroup::activateConnection(ConnectionItem*)
+void VpnConnectionGroup::activateConnection(ConnectionItem* item)
 {
-
+    // tell the manager to activate the connection
+    // which device??
+    // HACK - take the first one
+    Solid::Control::NetworkInterfaceList activeInterfaces;
+    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+        if (iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+            activeInterfaces.append(iface);
+        }
+    }
+    if (activeInterfaces.count() == 1) {
+        kDebug() << "Activating VPN connection " << item->connection()->path() << " from " << item->connection()->service() << " on " << activeInterfaces[0]->uni();
+        Solid::Control::NetworkManager::activateConnection(activeInterfaces[0]->uni(), item->connection()->service() + " " + item->connection()->path(), QVariantMap());
+    } else if (activeInterfaces.count() > 1) {
+        // determine which interface holds the default route
+        kDebug() << "More than one interface is active...";
+        Solid::Control::NetworkInterface * interfaceToActivate = 0;
+        QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
+        foreach (QString conn, activeConnections) {
+            OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
+                    conn, QDBusConnection::systemBus(), 0);
+            if (candidate.getDefault()) {
+                foreach (QDBusObjectPath activeDevicePath, candidate.devices()) {
+                    foreach (Solid::Control::NetworkInterface * iface, activeInterfaces) {
+                        if (iface->uni() == activeDevicePath.path()) {
+                            interfaceToActivate = iface;
+                            break;
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        if (interfaceToActivate) {
+            Solid::Control::NetworkManager::activateConnection(interfaceToActivate->uni(), item->connection()->service() + " " + item->connection()->path(), QVariantMap());
+        } else {
+            kDebug() << "couldn't identify the interface with the default route, not activating the connection";
+        }
+    }
 }
 // vim: sw=4 sts=4 et tw=100
