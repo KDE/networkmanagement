@@ -198,7 +198,8 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
 void KConfigToService::configure(const QStringList& changedConnections)
 {
     kDebug();
-    if (!m_error) { // don't update if we don't own the service, we will do this later when we regain the service
+    if (m_error) { // don't update if we don't own the service, we will do this later when we regain the service
+        kDebug() << "kded4 does not own the NetworkManagerUserSettings service, so it ignored a request to reload configuration";
         return;
     }
 

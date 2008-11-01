@@ -54,6 +54,7 @@ void ConnectionSecretsJob::doWork()
     } else {
         // do wallet lookup
         if (KWallet::Wallet::isEnabled()) {
+            kDebug() << "opening wallet...";
             KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), 0/*WId*/, KWallet::Wallet::Asynchronous);
             if (wallet) {
                 connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
@@ -76,28 +77,47 @@ void ConnectionSecretsJob::doAskUser()
 
 void ConnectionSecretsJob::walletOpenedForRead(bool success)
 {
-    kDebug();
     if (success) {
         // get the requested secrets, set our secrets, and emit result
         KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
-        bool missingSecret = false;
-        if (wallet->isOpen() && wallet->hasFolder("NetworkManager") && wallet->setFolder("NetworkManager")) { // can't hurt
-            QStringList keys = mSecrets.keys();
-
-            foreach (QString key, keys) {
-                QString secret;
-                if (wallet->readPassword(keyForEntry(key), secret) == 0 ) {
-                    mSecrets.insert(key, secret);
+        if (wallet->isOpen() && wallet->hasFolder("NetworkManager") && wallet->setFolder("NetworkManager")) {
+            if (mSecrets.isEmpty()) {
+                kDebug() << "Reading all entries for connection";
+                QMap<QString,QString> entries;
+                QString key = mConnectionId + ';' + mSettingName + ";*";
+                if (wallet->readPasswordList(key, entries) == 0) {
+                    kDebug() << "Got password list: " << entries;
+                    QMapIterator<QString,QString> i(entries);
+                    while (i.hasNext()) {
+                        i.next();
+                        // the part that NM has asked for is the final part of the key used in
+                        // kwallet
+                        mSecrets.insert(i.key().section(';', 2, 2), QString(i.value()));
+                    }
+                    emitResult();
                 } else {
-                    missingSecret = true;
+                    kDebug() << "Wallet::readEntryList for :" << key << " failed";
                 }
-            }
-            if (missingSecret) {
-                kDebug() << "FIXME: missing secrets - implement doAskUser()";
-                //doAskUser();
-                emitResult();
             } else {
-                emitResult();
+                kDebug() << "Reading requested entries from wallet: "<< mSecrets.keys();
+                bool missingSecret = false;
+                foreach (QString key, mSecrets.keys()) {
+                    kDebug() << "Requesting password from wallet: " << key;
+                    QString secret;
+                    if (wallet->readPassword(keyForEntry(key), secret) == 0 ) {
+                        kDebug() << "Got: " << key << " : " << secret;
+                        mSecrets.insert(key, secret);
+                    } else {
+                        missingSecret = true;
+                    }
+                }
+                if (missingSecret) {
+                    kDebug() << "FIXME: missing secrets - implement doAskUser()";
+                    //doAskUser();
+                    emitResult();
+                } else {
+                    emitResult();
+                }
             }
         }
     } else {

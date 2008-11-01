@@ -85,7 +85,7 @@ QString NetworkSettings::addConnection(const QVariantMapMap& settings)
     QVariantMapMap::const_iterator it = settings.find(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
     if (it != settings.end()) {
         QVariantMap connectionSettings = it.value();
-        QVariantMap::const_iterator connectionSettingsIt = connectionSettings.find(QLatin1String(NM_SETTING_CONNECTION_ID));
+        QVariantMap::const_iterator connectionSettingsIt = connectionSettings.find(QLatin1String(NM_SETTING_CONNECTION_UUID));
         if (connectionSettingsIt != connectionSettings.end()) {
             Connection * connection = new Connection(connectionSettingsIt.value().toString(), settings, this);
             new ConnectionAdaptor(connection);
