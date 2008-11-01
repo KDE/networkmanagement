@@ -43,7 +43,7 @@ WpaPskWidget::WpaPskWidget(KConfig * config, const QString & connectionId, QWidg
     d->config = config;
     d->ui.setupUi(this);
     connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
-    d->ui.kcfg_psk->setEchoMode(QLineEdit::PasswordEchoOnEdit);
+    d->ui.psk->setEchoMode(QLineEdit::PasswordEchoOnEdit);
 }
 
 WpaPskWidget::~WpaPskWidget()
@@ -53,7 +53,7 @@ WpaPskWidget::~WpaPskWidget()
 
 void WpaPskWidget::chkShowPassToggled(bool on)
 {
-    d->ui.kcfg_psk->setEchoMode(on ? QLineEdit::Normal : QLineEdit::PasswordEchoOnEdit);
+    d->ui.psk->setEchoMode(on ? QLineEdit::Normal : QLineEdit::PasswordEchoOnEdit);
 }
 
 bool WpaPskWidget::validate() const
@@ -68,7 +68,8 @@ void WpaPskWidget::readConfig()
     QString fieldName = QLatin1String("psk");
     QString secret;
     secrets.readSecret(fieldName, secret);
-    d->ui.kcfg_psk->setText(secret);
+    d->ui.psk->setText(secret);
+    //d->ui.psk->setEnabled(true);
     d->ui.chkShowPass->setChecked(false);
 }
 
@@ -78,8 +79,8 @@ void WpaPskWidget::writeConfig()
     cg.writeEntry("keymgmt", Wireless80211SecurityWidget::KEY_MGMT_WPA_PSK);
 
     SecretStorageHelper secrets(m_connectionId, QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME));
-    kDebug() << "PSK is " << d->ui.kcfg_psk->text();
-    secrets.writeSecret("psk", d->ui.kcfg_psk->text());
+    kDebug() << "PSK is " << d->ui.psk->text();
+    secrets.writeSecret("psk", d->ui.psk->text());
 }
 
 #include "wpapskwidget.moc"
