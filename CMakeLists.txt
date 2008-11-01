@@ -27,6 +27,7 @@ add_subdirectory(applet)
 add_subdirectory(libs)
 add_subdirectory(tests)
 add_subdirectory(settings)
+add_subdirectory(vpnplugins)
 
 install( FILES knetworkmanager.notifyrc DESTINATION ${DATA_INSTALL_DIR}/knetworkmanager )
 

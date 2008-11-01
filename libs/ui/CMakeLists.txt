@@ -4,8 +4,6 @@ include_directories(
    )
 ## next target: ui library
 
-add_subdirectory(vpnplugins)
-
 set(knmui_SRCS
    cdmawidget.cpp
    gsmwidget.cpp
