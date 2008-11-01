@@ -227,7 +227,7 @@ void InterfaceItem::setConnectionInfo()
 
 void InterfaceItem::activeConnectionsChanged()
 {
-    kDebug();
+    kDebug() << "updating active connection list for " << m_iface->uni();
     QList<QPair<QDBusObjectPath, RemoteConnection*> > newConnectionList;
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
     QString serviceName;
