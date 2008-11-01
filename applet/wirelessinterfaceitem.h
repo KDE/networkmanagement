@@ -53,6 +53,7 @@ signals:
 public slots:
     void activeAccessPointChanged(const QString&);
     void activeSignalStrengthChanged(int);
+    void accessPointDestroyed(QObject *);
 private:
     void setConnectionInfo();
     Solid::Control::WirelessNetworkInterface * m_wirelessIface;

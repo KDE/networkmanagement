@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetwork.h"
 
 WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent)
-: InterfaceItem(iface, userSettings, systemSettings, mode, parent), m_wirelessIface(iface), m_environment(new WirelessEnvironment(iface, this))
+: InterfaceItem(iface, userSettings, systemSettings, mode, parent), m_wirelessIface(iface), m_activeAccessPoint(0), m_environment(new WirelessEnvironment(iface, this))
 {
     // for updating our UI
     connect(iface, SIGNAL(activeAccessPointChanged(const QString&)),
@@ -58,9 +58,12 @@ WirelessEnvironment * WirelessInterfaceItem::wirelessEnvironment() const
 void WirelessInterfaceItem::activeAccessPointChanged(const QString &uni)
 {
     // this is not called when the device is deactivated..
+    m_activeAccessPoint->disconnect(this);
     m_activeAccessPoint = m_wirelessIface->findAccessPoint(uni);
     if (m_activeAccessPoint) {
         connect(m_activeAccessPoint, SIGNAL(signalStrengthChanged(int)), SLOT(activeSignalStrengthChanged(int)));
+        connect(m_activeAccessPoint, SIGNAL(destroyed(QObject*)),
+                SLOT(accessPointDestroyed(QObject*)));
     }
     setConnectionInfo();
 }
@@ -68,6 +71,14 @@ void WirelessInterfaceItem::activeAccessPointChanged(const QString &uni)
 void WirelessInterfaceItem::activeSignalStrengthChanged(int)
 {
     setConnectionInfo();
+}
+
+
+void WirelessInterfaceItem::accessPointDestroyed(QObject* ap)
+{
+    if (ap == m_activeAccessPoint) {
+        m_activeAccessPoint = 0;
+    }
 }
 
 void WirelessInterfaceItem::setConnectionInfo()
