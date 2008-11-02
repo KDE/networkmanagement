@@ -43,6 +43,7 @@ TODO WS:
   / Complete most settings widgets' complex (non-KConfigSkeleton-managed) UI plumbing and reimplemented save routines
   + Option to display system-provided connections and import them so they can be edited (probably depends on PolicyKit)
   . Show the ScanWidget from widgets developed by CB
+  * Clean out wireless security settings when editing a connection and changing the wireless security type.
 
 - APPLET: Make sure system tray+engine does what we need
   * Popup menu
