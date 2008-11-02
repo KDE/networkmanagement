@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class QGraphicsGridLayout;
 
 class RemoteConnection;
-class WirelessNetwork;
+class AbstractWirelessNetwork;
 
 namespace Plasma
 {
@@ -47,7 +47,7 @@ public:
     WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent = 0);
     virtual ~WirelessConnectionItem();
     void setupItem();
-    void setNetwork(WirelessNetwork * network);
+    void setNetwork(AbstractWirelessNetwork * network);
     QString ssid();
 protected:
     RemoteConnection * m_connection;
@@ -63,7 +63,7 @@ private:
     QString m_security;
     Plasma::IconWidget * m_securityIcon;
     QString m_securityIconName;
-    WirelessNetwork * m_wirelessNetwork;
+    AbstractWirelessNetwork * m_wirelessNetwork;
     QString m_ssid;
     int m_strength;
 };

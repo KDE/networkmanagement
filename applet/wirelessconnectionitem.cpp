@@ -118,7 +118,7 @@ WirelessConnectionItem::~WirelessConnectionItem()
 {
 }
 
-void WirelessConnectionItem::setNetwork(WirelessNetwork * network)
+void WirelessConnectionItem::setNetwork(AbstractWirelessNetwork * network)
 {
     if (!network) {
         return;

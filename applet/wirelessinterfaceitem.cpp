@@ -39,9 +39,6 @@ WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInte
     connect(iface, SIGNAL(activeAccessPointChanged(const QString&)),
             SLOT(activeAccessPointChanged(const QString&)));
 
-    connect(m_environment, SIGNAL(wirelessNetworksChanged()),
-                SIGNAL(wirelessNetworksChanged()));
-
     activeAccessPointChanged(m_wirelessIface->activeAccessPoint());
 }
 
@@ -87,6 +84,7 @@ void WirelessInterfaceItem::setConnectionInfo()
         m_connectionInfoLabel->setText(QString::fromLatin1("<b>Signal Strength:</b> %1 %").arg(m_activeAccessPoint->signalStrength())); //TODO:
         if (m_strengthMeter) {
             m_strengthMeter->setValue(m_activeAccessPoint->signalStrength());
+            m_strengthMeter->show();
         }
         // TODO update icon contents
         if (!m_activeConnections.isEmpty()) {
@@ -126,6 +124,7 @@ void WirelessInterfaceItem::setConnectionInfo()
     } else {
         m_connectionInfoLabel->setText(QString());
         m_connectionInfoIcon->hide();
+        m_strengthMeter->hide();
     }
 }
 // vim: sw=4 sts=4 et tw=100

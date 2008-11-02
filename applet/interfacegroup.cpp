@@ -41,8 +41,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessenvironment.h"
 
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
-: ConnectionList(userSettings, systemSettings, parent), m_type(type), m_wirelessEnvironment(0), m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical))
+: ConnectionList(userSettings, systemSettings, parent), m_type(type), m_wirelessEnvironment(new WirelessEnvironmentMerged(this)), m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical))
 {
+    connect(m_wirelessEnvironment, SIGNAL(wirelessNetworkAppeared(const QString&)), SLOT(reassess()));
+    connect(m_wirelessEnvironment, SIGNAL(wirelessNetworkDisappeared(const QString&)), SLOT(reassess()));
 }
 
 void InterfaceGroup::setupHeader()
@@ -84,10 +86,9 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         switch (iface->type()) {
             case Solid::Control::NetworkInterface::Ieee80211:
                 wi = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
-                m_wirelessEnvironment = wi->wirelessEnvironment();
+                m_wirelessEnvironment->addWirelessEnvironment(wi->wirelessEnvironment());
                 ii = wi;
                 inspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface), wi->wirelessEnvironment());
-                connect(wi, SIGNAL(wirelessNetworksChanged()), SLOT(reassess()));
                 break;
             case Solid::Control::NetworkInterface::Serial:
                 ii = si = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),

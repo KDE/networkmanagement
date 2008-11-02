@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectioninspector.h"
 #include "events.h"
 #include "nm-active-connectioninterface.h"
+#include "networkmanager.h"
 #include "networkmanagersettings.h"
 #include "remoteconnection.h"
 #include "wirelessnetwork.h"
@@ -361,24 +362,7 @@ void InterfaceItem::setActiveConnection(int state)
     QString stateString;
     if (!connectionIds.isEmpty()) {
         QString connId = connectionIds.join(QChar(','));
-        switch (state) {
-            case Solid::Control::NetworkInterface::Preparing:
-                stateString = i18nc("description of preparing to connect state", "Preparing to connect");
-                break;
-            case Solid::Control::NetworkInterface::Configuring:
-                stateString = i18nc("description of configuring hardware state", "Configuring interface");
-                break;
-            case Solid::Control::NetworkInterface::NeedAuth:
-                stateString = i18nc("description of waiting for authentication state", "Waiting for authorization");
-                break;
-            case Solid::Control::NetworkInterface::IPConfig:
-                stateString = i18nc("dhcp request in most cases", "Setting network address");
-                break;
-            case Solid::Control::NetworkInterface::Activated:
-            default:
-                stateString = i18nc("label showing the currently connected wireless network name", "Connected");
-                break;
-        }
+        stateString = NetworkManagerApplet::connectionStateToString((Solid::Control::NetworkInterface::ConnectionState)state);
         m_ifaceNameLabel->setText("<b>" + connId + "</b>");
     }
     m_connectionNameLabel->setText(stateString);

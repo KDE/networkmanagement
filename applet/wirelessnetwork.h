@@ -27,29 +27,78 @@ namespace Solid
 {
 namespace Control
 {
+    class AccessPoint;
     class WirelessNetworkInterface;
 } // namespace Control
 } // namespace Solid
 
-/**
- * Models a wireless network, composed of one or more access points
- */
-class WirelessNetwork : public QObject
+class AbstractWirelessNetwork : public QObject
 {
 Q_OBJECT
 public:
-    WirelessNetwork(const QString & ssid, Solid::Control::WirelessNetworkInterface * iface, QObject * parent = 0);
+    AbstractWirelessNetwork(QObject * parent);
+    virtual ~AbstractWirelessNetwork();
+    virtual QString ssid() const = 0;
+    virtual int strength() const = 0;
+    virtual Solid::Control::AccessPoint * referenceAccessPoint() const = 0;
+
+protected:
+    virtual void strengthChanged(const QString&, int) = 0;
+    virtual void disappeared(const QString&) = 0;
+};
+
+/**
+ * Models a wireless network, composed of one or more access points
+ */
+class WirelessNetwork : public AbstractWirelessNetwork
+{
+Q_OBJECT
+public:
+    WirelessNetwork(Solid::Control::AccessPoint * ap,
+            Solid::Control::WirelessNetworkInterface * iface,
+            QObject * parent = 0);
     ~WirelessNetwork();
     QString ssid() const;
     int strength() const;
-public slots:
-    void accessPointAppeared(const QString&);
-    void accessPointDisappeared(const QString&);
-    void updateStrength();
+    Solid::Control::AccessPoint * referenceAccessPoint() const;
 signals:
     void strengthChanged(const QString&, int);
     void disappeared(const QString&);
+protected Q_SLOTS:
+    void accessPointAppeared(const QString&);
+    void accessPointDisappeared(const QString&);
+    void updateStrength();
 private:
+    void addAccessPointInternal(Solid::Control::AccessPoint * ap);
+    class Private;
+    Private * d;
+};
+
+class WirelessEnvironmentMerged;
+class WirelessNetworkMergedPrivate;
+
+/**
+ * A 'virtual' wireless network object which merges several network interfaces' views of real wireless networks
+ */
+class WirelessNetworkMerged : public AbstractWirelessNetwork
+{
+Q_OBJECT
+friend class WirelessEnvironmentMerged;
+public:
+    WirelessNetworkMerged(WirelessNetwork * network, QObject * parent = 0);
+    ~WirelessNetworkMerged();
+    QString ssid() const;
+    int strength() const;
+    // return the Access Point which is currently being used as a reference point
+    Solid::Control::AccessPoint * referenceAccessPoint() const;
+signals:
+    void strengthChanged(const QString&, int);
+    void disappeared(const QString&);
+protected Q_SLOTS:
+    void onStrengthChanged(const QString &, int strength);
+    void onDisappeared(const QString&);
+private:
+    void addWirelessNetworkInternal(WirelessNetwork*);
     class Private;
     Private * d;
 };

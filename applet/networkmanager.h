@@ -31,6 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <plasma/applet.h>
 #endif
 
+#include <Plasma/ToolTipManager>
+
 #include <solid/control/networkinterface.h>
 class NetworkManagerPopup;
 
@@ -53,6 +55,7 @@ public:
     /* reimp Plasma::Applet */
     void popupEvent(bool show);
     QGraphicsWidget * graphicsWidget();
+    static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
 #if KDE_IS_VERSION(4,1,70)
 #else
 protected:
@@ -67,12 +70,14 @@ private Q_SLOTS:
     void networkInterfaceRemoved(const QString&);
     void interfaceConnectionStateChanged(int newState);
 private:
+    void updateToolTip();
     void paintInterfaceStatus(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;
     Plasma::Svg m_svg;
     NetworkManagerPopup * m_popup;
     QPoint m_clicked;
+    Plasma::ToolTipContent m_toolTip;
 };
 
 #endif

@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nm-exported-connectioninterface.h"
 
+class WirelessEnvironmentMerged;
 
 /** Represents a group of network interfaces of the same type
  * displays either a generic name of interface type (when representing a single interface)
@@ -57,7 +58,7 @@ private:
     // list of interfaces
     QHash<QString, InterfaceItem *> m_interfaces;
     Solid::Control::NetworkInterface::Type m_type;
-    WirelessEnvironment * m_wirelessEnvironment;
+    WirelessEnvironmentMerged * m_wirelessEnvironment;
     QGraphicsLinearLayout * m_interfaceLayout;
 };
 #endif // INTERFACEGROUP_H
