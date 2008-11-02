@@ -5,9 +5,16 @@
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
   <kcfgfile arg="true"/>
   <group name="ipv4">
-    <entry name="method" type="String">
+    <entry name="method" key="method" type="Enum">
       <label>Method</label>
       <whatsthis>Choose the way to set the IP address of this connection</whatsthis>
+      <choices>
+        <choice name="auto"/>
+        <choice name="link-local"/>
+        <choice name="manual"/>
+        <choice name="shared"/>
+      </choices>
+      <default>42</default><!-- invalid default so that the choice is always sent; NM requires this -->
     </entry>
     <entry name="dns" type="StringList">
       <label>DNS Servers</label>

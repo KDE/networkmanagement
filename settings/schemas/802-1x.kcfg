@@ -29,13 +29,21 @@
       <label>Client Cert</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="phase1peapver" type="String">
+    <entry name="phase1peapver" key="phase1peapver" type="Enum">
       <label>Phase 1 PEAP version</label>
       <whatsthis></whatsthis>
+      <choices>
+        <choice name="0"/>
+        <choice name="1"/>
+      </choices>
     </entry>
-    <entry name="phase1peaplabel" type="String">
+    <entry name="phase1peaplabel" key="phase1peaplabel" type="String">
       <label>Phase 1 PEAP label</label>
       <whatsthis></whatsthis>
+      <choices>
+        <choice name="0"/>
+        <choice name="1"/>
+      </choices>
     </entry>
     <entry name="phase1fastprovisioning" type="String">
       <label>Phase 1 fast provisioning</label>

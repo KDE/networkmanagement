@@ -9,11 +9,21 @@
       <label>SSID</label>
       <whatsthis>Service Set IDentifier (network name) </whatsthis>
     </entry>
-    <entry name="mode" type="String">
+    <entry name="mode" key="mode" type="Enum">
+      <choices>
+        <choice name="infrastructure"/>
+        <choice name="adhoc"/>
+      </choices>
+      <default>0</default>
       <label>Mode</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="band" type="String">
+    <entry name="band" key="band" type="Enum">
+      <choices>
+        <choice name="a"/>
+        <choice name="bg"/>
+      </choices>
+      <default>1</default>
       <label>Band</label>
       <whatsthis></whatsthis>
     </entry>

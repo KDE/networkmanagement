@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <kwallet.h>
 
+#include "datamappings.h"
+
 ConnectionSecretsJob::ConnectionSecretsJob(const QString & connectionId, const QString &settingName, const QStringList& secrets, bool requestNew,  QDBusMessage& reply)
     : mConnectionId(connectionId), mSettingName(settingName), mRequestNew(requestNew), mReply(reply)
 {
@@ -87,12 +89,14 @@ void ConnectionSecretsJob::walletOpenedForRead(bool success)
                 QString key = mConnectionId + ';' + mSettingName + ";*";
                 if (wallet->readPasswordList(key, entries) == 0) {
                     kDebug() << "Got password list: " << entries;
+                    DataMappings dm;
                     QMapIterator<QString,QString> i(entries);
                     while (i.hasNext()) {
                         i.next();
                         // the part that NM has asked for is the final part of the key used in
                         // kwallet
-                        mSecrets.insert(i.key().section(';', 2, 2), QString(i.value()));
+                        QString key = i.key().section(';', 2, 2);
+                        mSecrets.insert(dm.convertKey(key), dm.convertValue(key, QString(i.value())));
                     }
                     emitResult();
                 } else {

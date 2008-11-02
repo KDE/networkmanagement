@@ -437,13 +437,14 @@ void ConfigXmlHandler::addItem()
         item = m_config->addItemDateTime(m_name, *d->newDateTime(),
                                          QDateTime::fromString(m_default), m_key);
     } else if (m_type == "enum") {
+        QString keyToUse = (m_key.isEmpty() ? m_name : m_key );
         KConfigSkeleton::ItemEnum* enumItem =
                 new KConfigSkeleton::ItemEnum(m_config->currentGroup(),
                                               m_key, *d->newInt(),
                                               m_enumChoices,
                                               m_default.toUInt());
         enumItem->setName(m_name);
-        m_config->addItem(enumItem, m_name);
+        m_config->addItem(enumItem, keyToUse);
         item = enumItem;
     } else if (m_type == "font") {
         item = m_config->addItemFont(m_name, *d->newFont(), QFont(m_default), m_key);

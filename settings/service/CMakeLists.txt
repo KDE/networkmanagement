@@ -5,6 +5,7 @@ include_directories(
    ## next target: test service
 
 set(kded_knetworkmanager_SRCS
+   datamappings.cpp
    service.cpp
    connection.cpp
    connectionsecretsjob.cpp

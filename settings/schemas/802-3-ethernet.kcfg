@@ -5,17 +5,27 @@
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
   <kcfgfile arg="true"/>
   <group name="802-3-ethernet">
-    <entry name="port" type="String">
+    <entry name="port" key="port" type="Enum">
       <label>Port</label>
       <whatsthis></whatsthis>
+      <choices>
+        <choice name="tp"/>
+        <choice name="aui"/>
+        <choice name="bnc"/>
+        <choice name="mii"/>
+      </choices>
     </entry>
     <entry name="speed" type="UInt">
       <label>Speed</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="duplex" type="String">
+    <entry name="duplex" key="duplex" type="String">
       <label>Duplex</label>
       <whatsthis>Whether the Ethernet interface should use duplex communications</whatsthis>
+      <choices>
+        <choice name="half"/>
+        <choice name="full"/>
+      </choices>
     </entry>
     <!-- nb "auto-negotiate" in NM -->
     <entry name="autonegotiate" type="Bool">

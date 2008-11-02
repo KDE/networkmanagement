@@ -5,17 +5,30 @@
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
   <kcfgfile arg="true"/>
   <group name="802-11-wireless-security">
-    <entry name="keymgmt" type="String">
+    <entry name="keymgmt" key="keymgmt" type="Enum">
       <label>Key management</label>
       <whatsthis></whatsthis>
+      <choices>
+        <choice name="none"/>
+        <choice name="wpa-none"/>
+        <choice name="wpa-psk"/>
+        <choice name="wpa-eap"/>
+        <default>42</default><!-- invalid default so that the choice is always sent; NM requires this -->
+      </choices>
+
     </entry>
     <entry name="weptxkeyindex" type="UInt">
       <label>WEP TX key index</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="authalg" type="String">
+    <entry name="authalg" key="keymgmt" type="Enum">
       <label>Auth alg</label>
       <whatsthis></whatsthis>
+      <choices>
+        <choice name="open"/>
+        <choice name="shared"/>
+        <choice name "leap"/>
+      </choices>
     </entry>
     <entry name="proto" type="StringList">
       <label>Protocols</label>
@@ -53,7 +66,7 @@
       <label>PSK</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="leappassword" type="String">
+    <entry name="leappassword" type="String" secret="true">
         <label>LEAP Password</label>
       <whatsthis></whatsthis>
     </entry>
