@@ -45,6 +45,7 @@ WepWidget::WepWidget(KeyFormat format, KConfig * config, const QString & connect
     d->keyIndex = 0;
     d->config = config;
     d->ui.setupUi(this);
+    d->ui.key->setEchoMode(QLineEdit::Password);
     connect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
     connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
 }
@@ -65,7 +66,7 @@ void WepWidget::keyIndexChanged(int index)
 
 void WepWidget::chkShowPassToggled(bool on)
 {
-    d->ui.key->setEchoMode(on ? QLineEdit::Normal : QLineEdit::PasswordEchoOnEdit);
+    d->ui.key->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
 }
 
 bool WepWidget::validate() const
