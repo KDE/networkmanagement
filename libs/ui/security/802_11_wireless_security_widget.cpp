@@ -88,6 +88,14 @@ QString Wireless80211SecurityWidget::settingName() const
 void Wireless80211SecurityWidget::securityTypeChanged(int index)
 {
     d->ui.stackedWidget->setCurrentWidget(d->securityWidgetHash.value(index));
+
+    // hide the security widgets
+    if (index == 0) {
+        d->ui.stackedWidget->currentWidget()->hide();
+    } else {
+        //show them
+        d->ui.stackedWidget->currentWidget()->show();
+    }
 }
 
 void Wireless80211SecurityWidget::writeConfig()
