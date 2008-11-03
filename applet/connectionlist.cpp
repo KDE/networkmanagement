@@ -41,13 +41,15 @@ ConnectionList::~ConnectionList()
 
 void ConnectionList::init()
 {
-    // adds subclass' stuff above our layout
+    // adds items from subclasses above our layout
     setupHeader();
     m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical);
     m_layout->addItem(m_connectionLayout);
     // create a connectionItem for each appropriate connection
     addSettingsService(m_userSettings);
     addSettingsService(m_systemSettings);
+    // adds items from subclasses below our layout
+    setupFooter();
 }
 
 void ConnectionList::addSettingsService(NetworkManagerSettings * service)
@@ -101,7 +103,7 @@ void ConnectionList::processConnection(NetworkManagerSettings * service, const Q
         RemoteConnection * remoteConnection = service->findConnection(connectionPath);
         if (accept(remoteConnection)) {
             ConnectionItem * ci = createItem(remoteConnection);
-            connect(ci, SIGNAL(clicked(ConnectionItem*)), SLOT(activateConnection(ConnectionItem*)));
+            connect(ci, SIGNAL(clicked(AbstractConnectableItem*)), SLOT(activateConnection(AbstractConnectableItem*)));
             m_connections.insert(key, ci);
             m_connectionLayout->addItem(ci);
         }

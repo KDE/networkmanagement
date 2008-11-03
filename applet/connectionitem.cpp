@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "remoteconnection.h"
 ConnectionItem::ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
-: QGraphicsWidget(parent), m_connection(conn)
+: AbstractConnectableItem(parent), m_connection(conn)
 {
 }
 
@@ -77,9 +77,4 @@ RemoteConnection * ConnectionItem::connection() const
     return m_connection;
 }
 
-void ConnectionItem::emitClicked()
-{
-    kDebug() << "clicked";
-    emit clicked(this);
-}
 // vim: sw=4 sts=4 et tw=100

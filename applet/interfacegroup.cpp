@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KNotification>
 #include <solid/control/networkserialinterface.h>
 #include <solid/control/wirednetworkinterface.h>
+#include <solid/control/wirelessaccesspoint.h>
+#include <solid/control/wirednetworkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
 
 #include "events.h"
@@ -39,12 +41,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "serialinterfaceitem.h"
 #include "wirelessinterfaceitem.h"
 #include "wirelessenvironment.h"
+#include "wirelessnetworkitem.h"
+
+#define MAX_WLANS 3
+
+bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWirelessNetwork * n2);
 
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
-: ConnectionList(userSettings, systemSettings, parent), m_type(type), m_wirelessEnvironment(new WirelessEnvironmentMerged(this)), m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical))
+: ConnectionList(userSettings, systemSettings, parent), m_type(type), m_wirelessEnvironment(new WirelessEnvironmentMerged(this)), m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical)), m_networkLayout(new QGraphicsLinearLayout(Qt::Vertical))
 {
-    connect(m_wirelessEnvironment, SIGNAL(wirelessNetworkAppeared(const QString&)), SLOT(reassess()));
-    connect(m_wirelessEnvironment, SIGNAL(wirelessNetworkDisappeared(const QString&)), SLOT(reassess()));
+    connect(m_wirelessEnvironment, SIGNAL(wirelessNetworkAppeared(const QString&)), SLOT(wirelessNetworkAppeared(const QString&)));
+    connect(m_wirelessEnvironment, SIGNAL(wirelessNetworkDisappeared(const QString&)), SLOT(wirelessNetworkDisappeared(const QString&)));
+}
+
+InterfaceGroup::~InterfaceGroup()
+{
+
 }
 
 void InterfaceGroup::setupHeader()
@@ -69,10 +81,39 @@ void InterfaceGroup::setupHeader()
     setLayout(m_layout);
 }
 
-
-InterfaceGroup::~InterfaceGroup()
+void InterfaceGroup::setupFooter()
 {
+    foreach (QString ssid, m_wirelessEnvironment->wirelessNetworks()) {
+        addNetworkInternal(ssid);
+    }
+    updateWirelessNetworkLayout();
+    m_layout->addItem(m_interfaceLayout);
+}
 
+void InterfaceGroup::updateWirelessNetworkLayout()
+{
+    // empty the layout
+    for (int i = 0; i < m_networkLayout->count(); ++i) {
+        m_networkLayout->removeAt(i);
+    }
+    // hide all items and build list of networks for next step
+    QList<AbstractWirelessNetwork*> allNetworks;
+    foreach (WirelessNetworkItem * wi, m_networks) {
+        wi->hide();
+        allNetworks.append(wi->net());
+    }
+    // sort networks in descending order of strength
+    qSort(allNetworks.begin(), allNetworks.end(), wirelessNetworkGreaterThanStrength);
+
+    for (int i = 0; i < allNetworks.count() && i < MAX_WLANS; i++)
+    {
+        WirelessNetworkItem * wi = m_networks.value(allNetworks[i]->ssid());
+        wi->show();
+        m_networkLayout->insertItem(m_networkLayout->count(), wi);
+    }
+    m_networkLayout->invalidate();
+    m_interfaceLayout->invalidate();
+    m_layout->invalidate();
 }
 
 void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
@@ -122,6 +163,18 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         m_interfaceLayout->invalidate();
     }
     show();
+}
+
+void InterfaceGroup::addNetworkInternal(const QString & ssid)
+{
+    if (!m_networks.contains(ssid)) {
+        AbstractWirelessNetwork * net = m_wirelessEnvironment->findWirelessNetwork(ssid);
+        WirelessNetworkItem * netItem = new WirelessNetworkItem(net, this);
+        netItem->setupItem();
+        m_networks.insert(ssid, netItem);
+        connect(netItem, SIGNAL(clicked(AbstractConnectableItem*)),
+                SLOT(connectToWirelessNetwork(AbstractConnectableItem*)));
+    }
 }
 
 bool InterfaceGroup::accept(RemoteConnection * conn) const
@@ -177,16 +230,33 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
     }
 }
 
-void InterfaceGroup::activateConnection(ConnectionItem* item)
+void InterfaceGroup::wirelessNetworkAppeared(const QString& ssid)
+{
+    kDebug() << ssid;
+    addNetworkInternal(ssid);
+    updateWirelessNetworkLayout();
+    reassess();
+}
+
+void InterfaceGroup::wirelessNetworkDisappeared(const QString& ssid)
+{
+    kDebug() << ssid;
+    delete(m_networks.take(ssid));
+    updateWirelessNetworkLayout();
+    reassess();
+}
+
+void InterfaceGroup::activateConnection(AbstractConnectableItem* item)
 {
     // tell the manager to activate the connection
     // which device??
     // HACK - take the first one
+    ConnectionItem * ci = qobject_cast<ConnectionItem*>(item);
     QHash<QString, InterfaceItem *>::const_iterator i = m_interfaces.constBegin();
     if ( i != m_interfaces.constEnd()) {
         QString firstDeviceUni = i.key();
-        Solid::Control::NetworkManager::activateConnection(firstDeviceUni, item->connection()->service() + " " + item->connection()->path(), QVariantMap());
-        KNotification::event(Event::Connecting, i18nc("Notification text when activating a connection","Connecting %1", item->connection()->id()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+        Solid::Control::NetworkManager::activateConnection(firstDeviceUni, ci->connection()->service() + " " + ci->connection()->path(), QVariantMap());
+        KNotification::event(Event::Connecting, i18nc("Notification text when activating a connection","Connecting %1", ci->connection()->id()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
     }
     // if the manager updates the interface's state, we should then refresh the list of
     // connections(remove any active connections from the list
@@ -194,5 +264,17 @@ void InterfaceGroup::activateConnection(ConnectionItem* item)
     // Ideally we should keep them around
 }
 
+void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
+{
+    WirelessNetworkItem * wni = qobject_cast<WirelessNetworkItem*>(item);
+    if (item) {
+        kDebug() << wni->net()->referenceAccessPoint()->hardwareAddress();
+    }
+}
+
+bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWirelessNetwork * n2)
+{
+    return n1->strength() > n2->strength();
+}
 
 // vim: sw=4 sts=4 et tw=100

@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 #include <QPair>
 
+class AbstractConnectableItem;
 class NetworkManagerSettings;
 class QGraphicsLinearLayout;
 class ConnectionItem;
@@ -43,14 +44,23 @@ public:
     virtual ~ConnectionList();
 
     void init(); // fill connection list, after ctor has run so subclasses are initialised
+    /**
+     * called before the main connection list layout is added.
+     * Add any items that should appear below it here
+     */
     virtual void setupHeader() = 0; // puts the interfaceitems at the top if needed
+    /**
+     * called after the main connection list layout is added.
+     * Add any items that should appear below it here
+     */
+    virtual void setupFooter() = 0; // puts the interfaceitems at the top if needed
     virtual bool accept(RemoteConnection *) const = 0; // do type specific checks
     virtual ConnectionItem * createItem(RemoteConnection * conn); // instantiate type-specific connectionitem
 public Q_SLOTS:
 
 // from IG
     void reassess();
-    virtual void activateConnection(ConnectionItem*) = 0;
+    virtual void activateConnection(AbstractConnectableItem*) = 0;
     void connectionAddedToService(NetworkManagerSettings *, const QString&);
     void connectionRemovedFromService(NetworkManagerSettings *, const QString&);
     void serviceAppeared(NetworkManagerSettings*);

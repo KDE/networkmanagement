@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "nm-exported-connectioninterface.h"
 
 class WirelessEnvironmentMerged;
+class WirelessNetworkItem;
 
 /** Represents a group of network interfaces of the same type
  * displays either a generic name of interface type (when representing a single interface)
@@ -43,22 +44,28 @@ public:
     Solid::Control::NetworkInterface::Type interfaceType() const;
     bool accept(RemoteConnection *) const;
     void setupHeader();
+    void setupFooter();
 protected Q_SLOTS:
-    void activateConnection(ConnectionItem*);
+    // reimplemented from ConnecitonList
+    void activateConnection(AbstractConnectableItem*);
+    void connectToWirelessNetwork(AbstractConnectableItem*);
     virtual void interfaceAdded(const QString&);
     virtual void interfaceRemoved(const QString&);
-    //void connectionAddedToService(NetworkManagerSettings *, const QString&);
-    //void connectionRemovedFromService(NetworkManagerSettings *, const QString&);
-    //void serviceAppeared(NetworkManagerSettings*);
-    //void serviceDisappeared(NetworkManagerSettings*);
-    //void reassessConnectionList();
+    void wirelessNetworkAppeared(const QString&);
+    void wirelessNetworkDisappeared(const QString&);
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
+    void addNetworkInternal(const QString &ssid);
+    // we only show the top N strongest networks, this controls which are visible
+    void updateWirelessNetworkLayout();
+    // reimplemented from ConnecitonList
     ConnectionItem * createItem(RemoteConnection* conn);
     // list of interfaces
     QHash<QString, InterfaceItem *> m_interfaces;
+    QHash<QString, WirelessNetworkItem *> m_networks;
     Solid::Control::NetworkInterface::Type m_type;
     WirelessEnvironmentMerged * m_wirelessEnvironment;
     QGraphicsLinearLayout * m_interfaceLayout;
+    QGraphicsLinearLayout * m_networkLayout;
 };
 #endif // INTERFACEGROUP_H

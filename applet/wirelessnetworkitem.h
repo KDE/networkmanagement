@@ -1,4 +1,5 @@
 /*
+Copyright 2008 Sebastian Kügler <sebas@kde.org>
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
@@ -18,39 +19,48 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef APPLET_CONNECTIONITEM_H
-#define APPLET_CONNECTIONITEM_H
+#ifndef APPLET_WIRELESSNETWORKITEM_H
+#define APPLET_WIRELESSNETWORKITEM_H
 
 #include "abstractconnectableitem.h"
 
 class QGraphicsGridLayout;
 
-class RemoteConnection;
+class AbstractWirelessNetwork;
 
 namespace Plasma
 {
     class IconWidget;
     class Label;
+    class Meter;
 }
 
 /**
  * Represents an inactive connection
  */
-class ConnectionItem : public AbstractConnectableItem
+class WirelessNetworkItem : public AbstractConnectableItem
 {
 Q_OBJECT
 public:
-    ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent = 0);
-    virtual ~ConnectionItem();
-    RemoteConnection * connection() const;
+    WirelessNetworkItem(AbstractWirelessNetwork * net, QGraphicsItem * parent = 0);
+    virtual ~WirelessNetworkItem();
     void setupItem();
-protected:
-    RemoteConnection * m_connection;
+    AbstractWirelessNetwork * net() const;
+private slots:
+    void setStrength(QString ssid, int strength);
+private:
+    void readSettings();
     QGraphicsGridLayout * m_layout;
     Plasma::IconWidget * m_icon;
-    Plasma::Label * m_connectionNameLabel;
+    Plasma::Label * m_ssidLabel;
+    Plasma::Meter * m_strengthMeter;
     Plasma::IconWidget * m_connectButton;
+    AbstractWirelessNetwork * m_wirelessNetwork;
+    QString m_security;
+    Plasma::IconWidget * m_securityIcon;
+    QString m_securityIconName;
+    int m_strength;
 };
 
-#endif //#define APPLET_CONNECTIONITEM_H
+#endif //#define APPLET_WIRELESSCONNECTIONITEM_H
 

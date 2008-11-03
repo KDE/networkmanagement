@@ -1,4 +1,5 @@
 set(networkmanager_SRCS
+    abstractconnectableitem.cpp
     connectionitem.cpp
     connectioninspector.cpp
     connectionlist.cpp
@@ -18,6 +19,7 @@ set(networkmanager_SRCS
     wirelessenvironment.cpp
     wirelessinterfaceitem.cpp
     wirelessnetwork.cpp
+    wirelessnetworkitem.cpp
     )
 
 kde4_add_plugin(plasma_applet_networkmanager ${networkmanager_SRCS})

@@ -18,24 +18,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef VPNCONNECTIONGROUP_H
-#define VPNCONNECTIONGROUP_H
+#ifndef ABSTRACTCONNECTABLEITEM_H
+#define ABSTRACTCONNECTABLEITEM_H
 
-#include "connectionlist.h"
+#include <QGraphicsWidget>
 
-// Shows a group of VPN connections
-class VpnConnectionGroup : public ConnectionList
+class AbstractConnectableItem : public QGraphicsWidget
 {
 Q_OBJECT
 public:
-    VpnConnectionGroup(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent = 0);
-    virtual ~VpnConnectionGroup();
-    void setupHeader();
-    void setupFooter();
-    bool accept(RemoteConnection*) const;
-public Q_SLOTS:
-    void activateConnection(AbstractConnectableItem*);
+    AbstractConnectableItem(QGraphicsItem * parent = 0);
+    virtual ~AbstractConnectableItem();
+    virtual void setupItem() = 0;
+signals:
+    /**
+     * Indicate that the 'connect' button was clicked.  Used by the containing InterfaceGroup to
+     * tell the manager to activate the connection on one of its devices
+     */
+    void clicked(AbstractConnectableItem *);
+protected Q_SLOTS:
+    void emitClicked();
 };
 
-#endif // VPNCONNECTIONGROUP_H
-
+#endif // ABSTRACTCONNECTABLEITEM_H
