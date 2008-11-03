@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QWidget>
 
+#include <KDebug>
+
 #include "wepwidget.h"
 
 #include <nm-setting-wireless-security.h>
@@ -45,7 +47,12 @@ WepWidget::WepWidget(KeyFormat format, KConfig * config, const QString & connect
     d->keyIndex = 0;
     d->config = config;
     d->ui.setupUi(this);
+    d->ui.passphrase->setEchoMode(QLineEdit::Password);
     d->ui.key->setEchoMode(QLineEdit::Password);
+    keyTypeChanged(0);//initialize for passphrase
+
+    connect(d->ui.keyType, SIGNAL(currentIndexChanged(int)), this, SLOT(keyTypeChanged(int)));
+    connect(d->ui.passphrase, SIGNAL(editingFinished()), this, SLOT(passphraseChanged()));
     connect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
     connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
 }
@@ -53,6 +60,24 @@ WepWidget::WepWidget(KeyFormat format, KConfig * config, const QString & connect
 WepWidget::~WepWidget()
 {
     delete d;
+}
+
+void WepWidget::keyTypeChanged(int type)
+{
+    switch (type) {
+        case 0: //passphrase
+            d->ui.passphraseLabel->show();
+            d->ui.passphrase->show();
+            d->ui.keyLabel->hide();
+            d->ui.key->hide();
+            break;
+        case 1: //hex key
+            d->ui.passphraseLabel->hide();
+            d->ui.passphrase->hide();
+            d->ui.keyLabel->show();
+            d->ui.key->show();
+            break;
+    }
 }
 
 void WepWidget::keyIndexChanged(int index)
@@ -66,7 +91,13 @@ void WepWidget::keyIndexChanged(int index)
 
 void WepWidget::chkShowPassToggled(bool on)
 {
+    d->ui.passphrase->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
     d->ui.key->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
+}
+
+void WepWidget::passphraseChanged()
+{
+    kDebug() << "Passphrase changed to: " << d->ui.passphrase->text();
 }
 
 bool WepWidget::validate() const
