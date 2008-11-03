@@ -129,18 +129,6 @@ void Wireless80211SecurityWidget::readConfig()
             }
         }
     }
-#if 0
-    // First, figure out what type of security is stored.
-    //
-    KConfigSkeletonItem * item = configXml()->findItem(settingName(), QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT));
-    Q_ASSERT(item);
-    QString keyMgmt = item->property().toString();
-    kDebug() << keyMgmt;
-    SecurityWidget * sw = d->securityWidgetHash->value(d->ui.cmbType->currentIndex());
-    if (sw) {
-        sw->writeConfig();
-    }
-#endif
 }
 
 #include "802_11_wireless_security_widget.moc"
