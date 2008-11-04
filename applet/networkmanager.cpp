@@ -65,6 +65,8 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     setAspectRatioMode(Plasma::ConstrainedSquare);// copied from Battery - the comment for this value is meaningless
     m_svg.setImagePath("networkmanager/networkmanager");
+    m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
+    interfaceConnectionStateChanged();
     m_popup = new NetworkManagerPopup(this);
 }
 
@@ -84,7 +86,7 @@ void NetworkManagerApplet::init()
             this, SLOT(networkInterfaceRemoved(const QString&)));
     foreach (Solid::Control::NetworkInterface * interface,
             Solid::Control::NetworkManager::networkInterfaces()) {
-        QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged(int)));
+        QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
     }
 }
 
@@ -92,12 +94,9 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 {
     // i can't figure out how to do layouting of multiple items in constraintsEvent properly,
     // so only have 1 rather than hack something ugly that will be thrown out later
-    Solid::Control::NetworkInterfaceList interfaces
-        = Solid::Control::NetworkManager::networkInterfaces();
-    if (!interfaces.isEmpty()) {
-        qSort(interfaces.begin(), interfaces.end(), networkInterfaceLessThan);
-        Solid::Control::NetworkInterface *iface = interfaces.first();
-        kDebug() << "most interesting interface to paint: " << iface->uni();
+    if (!m_interfaces.isEmpty()) {
+        Solid::Control::NetworkInterface *iface = m_interfaces.first();
+        kDebug() << "most interesting interface to paint: " << iface->uni() << " with icon " << m_elementName;
         paintInterfaceStatus(iface, p, option, contentsRect);
     }
 }
@@ -105,31 +104,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 void NetworkManagerApplet::paintInterfaceStatus(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
 {
     Q_UNUSED(option);
-    QString elementNameToPaint;
-    switch (interface->type() ) {
-        case Solid::Control::NetworkInterface::Ieee8023:
-            elementNameToPaint = "wired";
-            break;
-        case Solid::Control::NetworkInterface::Ieee80211:
-            elementNameToPaint = "wireless";
-            break;
-        case Solid::Control::NetworkInterface::Serial:
-            elementNameToPaint = "ppp";
-            break;
-        case Solid::Control::NetworkInterface::Gsm:
-        case Solid::Control::NetworkInterface::Cdma:
-            elementNameToPaint = "cellular";
-            break;
-        default:
-            elementNameToPaint = "wired";
-            break;
-    }
-    if (interface->connectionState() == Solid::Control::NetworkInterface::Activated) {
-        elementNameToPaint += "_connected";
-    } else {
-        elementNameToPaint += "_disconnected";
-    }
-    m_svg.paint(p, contentsRect, elementNameToPaint);
+    m_svg.paint(p, contentsRect, m_elementName);
 }
 
 QGraphicsWidget * NetworkManagerApplet::graphicsWidget()
@@ -147,6 +122,8 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
 {
     Q_UNUSED(uni);
     // update the tray icon
+    m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
+    interfaceConnectionStateChanged();
     update();
 }
 
@@ -154,17 +131,53 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
 {
     Q_UNUSED(uni);
     // update the tray icon
+    m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
+    interfaceConnectionStateChanged();
     update();
     // kill any animations involving this interface
 }
 
-void NetworkManagerApplet::interfaceConnectionStateChanged(int)
+void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
     kDebug();
     //Solid::Control::NetworkInterface * interface = static_cast<Solid::Control::NetworkInterface *>(sender());
-    // notifications
     // update appearance
-    update();
+    QString elementNameToPaint;
+    if (!m_interfaces.isEmpty())
+    {
+        qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
+        Solid::Control::NetworkInterface * interface = m_interfaces.first();
+        switch (interface->type() ) {
+            case Solid::Control::NetworkInterface::Ieee8023:
+                elementNameToPaint = "wired";
+                break;
+            case Solid::Control::NetworkInterface::Ieee80211:
+                elementNameToPaint = "wireless";
+                break;
+            case Solid::Control::NetworkInterface::Serial:
+                elementNameToPaint = "ppp";
+                break;
+            case Solid::Control::NetworkInterface::Gsm:
+            case Solid::Control::NetworkInterface::Cdma:
+                elementNameToPaint = "cellular";
+                break;
+            default:
+                elementNameToPaint = "wired";
+                break;
+        }
+        if (interface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+            elementNameToPaint += "_connected";
+        } else {
+            elementNameToPaint += "_disconnected";
+        }
+    } else {
+        elementNameToPaint = "nointerfaces";
+    }
+
+    if (elementNameToPaint != m_elementName) {
+        m_elementName = elementNameToPaint;
+        update();
+    }
     updateToolTip();
 }
 
