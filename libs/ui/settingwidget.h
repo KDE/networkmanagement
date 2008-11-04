@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define SETTINGWIDGET_H
 
 #include <QWidget>
+#include <QVariant>
 
 class ConfigXml;
 class KConfig;
@@ -42,6 +43,10 @@ public:
      * write any configuration that ConfigXml can't handle
      */
     virtual void writeConfig();
+    /**
+     * read the secrets out of the UI
+     */
+    virtual QVariantMap secrets();
     /**
      * get the name of the settings group configured by the widget
      */

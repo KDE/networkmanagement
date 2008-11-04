@@ -26,6 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KJob>
 
+class KConfigDialog;
+class SettingWidget;
+
 class ConnectionSecretsJob : public KJob
 {
 Q_OBJECT
@@ -41,8 +44,7 @@ public:
 
 public Q_SLOTS:
     void doWork();
-    void dialogAccepted();
-    void dialogCancelled();
+    void dialogDone(int result);
     void walletOpenedForRead(bool success);
     void walletOpenedForWrite(bool success);
 private:
@@ -53,6 +55,8 @@ private:
     QVariantMap mSecrets;
     bool mRequestNew;
     QDBusMessage mReply;
+    KConfigDialog * m_askUserDialog;
+    SettingWidget * m_settingWidget;
 };
 
 #endif // CONNECTIONSECRETSJOB_H

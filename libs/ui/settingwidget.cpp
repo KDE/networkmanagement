@@ -76,6 +76,12 @@ void SettingWidget::writeConfig()
     //default impl does nothing
 }
 
+QVariantMap SettingWidget::secrets()
+{
+    // default impl does nothing
+    return QVariantMap();
+}
+
 ConfigXml * SettingWidget::configXml() const
 {
     return d->configXml;

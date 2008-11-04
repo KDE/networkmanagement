@@ -20,16 +20,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionsecretsjob.h"
 
+#include <nm-setting-cdma.h>
+#include <nm-setting-connection.h>
+#include <nm-setting-wired.h>
+#include <nm-setting-ip4-config.h>
+#include <nm-setting-ip6-config.h>
+#include <nm-setting-8021x.h>
+#include <nm-setting-gsm.h>
+#include <nm-setting-ppp.h>
+#include <nm-setting-pppoe.h>
+#include <nm-setting-serial.h>
+#include <nm-setting-vpn.h>
+#include <nm-setting-wireless.h>
+#include <nm-setting-wireless-security.h>
+
 #include <QTimer>
 
+#include <KConfigDialog>
 #include <KDebug>
 
 #include <kwallet.h>
 
+#include "configxml.h"
 #include "datamappings.h"
 
+#include "802_11_wirelesswidget.h"
+#include "cdmawidget.h"
+#include "gsmwidget.h"
+#include "ipv4widget.h"
+#include "pppoewidget.h"
+#include "pppwidget.h"
+#include "settingwidget.h"
+#include "wiredwidget.h"
+#include "security/802_11_wireless_security_widget.h"
+#include "security/802_1x_security_widget.h"
+#include "security/securitywidget.h"
+
 ConnectionSecretsJob::ConnectionSecretsJob(const QString & connectionId, const QString &settingName, const QStringList& secrets, bool requestNew,  QDBusMessage& reply)
-    : mConnectionId(connectionId), mSettingName(settingName), mRequestNew(requestNew), mReply(reply)
+    : mConnectionId(connectionId), mSettingName(settingName), mRequestNew(requestNew), mReply(reply), m_askUserDialog(0), m_settingWidget(0)
 {
     // record the secrets that we are looking for
     foreach (QString secretKey, secrets) {
@@ -49,9 +77,7 @@ void ConnectionSecretsJob::start()
 void ConnectionSecretsJob::doWork()
 {
     if (mRequestNew) {
-        kDebug() << "FIXME: implement doAskUser()";
-    }
-    if (false/*mRequestNew*/) {
+        kDebug() << "doAskUser() is under construction";
         doAskUser();
     } else {
         // do wallet lookup
@@ -74,7 +100,49 @@ void ConnectionSecretsJob::doWork()
 void ConnectionSecretsJob::doAskUser()
 {
     // popup a dialog showing the appropriate UI for the type of connection
+    //
+    // all the things the kdialog does for us
+    // KDialog
+    // Add widget for connection setting type
+    // configxml for that
+    // kconfigdialogmanager
+    // load the settings
+    // show
     kDebug();
+    SettingWidget * wid = 0;
+    if ( mSettingName == QLatin1String(NM_SETTING_802_1X_SETTING_NAME)) {
+        //wid = new 
+        
+    } else if ( mSettingName == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
+        wid = new CdmaWidget(mConnectionId, 0);
+    } else if ( mSettingName == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
+        wid = new GsmWidget(mConnectionId, 0);
+    } else if ( mSettingName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
+        wid = new IpV4Widget(mConnectionId, 0);
+    } else if ( mSettingName == QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME)) {
+        // not supported yet
+    } else if ( mSettingName == QLatin1String(NM_SETTING_PPP_SETTING_NAME)) {
+        wid = new PppWidget(mConnectionId, 0);
+    } else if ( mSettingName == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
+        wid = new PppoeWidget(mConnectionId, 0);
+    } else if ( mSettingName == QLatin1String(NM_SETTING_SERIAL_SETTING_NAME)) {
+        wid = new PppWidget(mConnectionId, 0);
+    } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
+        // not supported yet, figure out the type of the vpn plugin, load it and its widget
+    } else if ( mSettingName == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
+        wid = new WiredWidget(mConnectionId, 0);
+    } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME)) {
+        wid = new Wireless80211SecurityWidget(mConnectionId, 0);
+    } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
+        wid = new Wireless80211Widget(mConnectionId, 0);
+    }
+
+    m_askUserDialog = new KConfigDialog(0, QLatin1String("knetworkmanager_askuser"), wid->configXml());
+    m_askUserDialog->addPage(wid, wid->windowTitle());
+    m_askUserDialog->setFaceType(KPageDialog::Plain);
+    connect(m_askUserDialog, SIGNAL(done(int)), SLOT(dialogDone(int)));
+
+    m_askUserDialog->show();
 }
 
 void ConnectionSecretsJob::walletOpenedForRead(bool success)
@@ -116,8 +184,7 @@ void ConnectionSecretsJob::walletOpenedForRead(bool success)
                     }
                 }
                 if (missingSecret) {
-                    kDebug() << "FIXME: missing secrets - implement doAskUser()";
-                    //doAskUser();
+                    doAskUser();
                     emitResult();
                 } else {
                     emitResult();
@@ -135,15 +202,24 @@ void ConnectionSecretsJob::walletOpenedForWrite(bool success)
 
 }
 
-void ConnectionSecretsJob::dialogAccepted()
+void ConnectionSecretsJob::dialogDone(int result)
 {
-
+    kDebug() << result;
+    if (result == QDialog::Accepted) {
+        // get results from dialog, put them in mSecrets
+        kDebug() << "got secrets:" << m_settingWidget->secrets();
+        QMapIterator <QString,QVariant> i(m_settingWidget->secrets());
+        while (i.hasNext()) {
+            i.next();
+            mSecrets.insert(i.key(), i.value());
+        }
+    } else {
+        setError(UserInputCancelled);
+    }
+    delete m_settingWidget;
+    delete m_askUserDialog;
 }
 
-void ConnectionSecretsJob::dialogCancelled()
-{
-
-}
 QString ConnectionSecretsJob::settingName() const
 {
     return mSettingName;
