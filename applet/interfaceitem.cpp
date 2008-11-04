@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KGlobalSettings>
 #include <KNotification>
 
-#include <Plasma/Icon>
+#include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Meter>
 
