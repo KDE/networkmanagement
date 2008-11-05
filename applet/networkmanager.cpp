@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDialog>
 #include <KIcon>
 #include <KIconLoader>
+#include <Plasma/Dialog>
 
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
@@ -412,8 +413,14 @@ void NetworkManagerApplet::showLegacyPopup(QGraphicsSceneMouseEvent *event)
     Q_UNUSED(event);
 
     if (m_dialog == 0) {
-        m_dialog = graphicsWidget();
+        m_dialog = new Plasma::Dialog();
+        QVBoxLayout *layout = new QVBoxLayout(m_dialog);
+        layout->setSpacing(0);
+        layout->setMargin(0);
+        layout->addWidget(graphicsWidget());
+        m_dialog->setLayout(layout);
         m_dialog->setContentsMargins(10,10,10,10);
+        m_dialog->adjustSize();
     }
     if (m_dialog->isVisible()) {
         m_dialog->hide();

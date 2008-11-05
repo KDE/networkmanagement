@@ -33,6 +33,7 @@ class QVBoxLayout;
 class QCheckBox;
 class QLabel;
 class QSignalMapper;
+class QPushButton;
 
 class InterfaceGroup;
 class NetworkManagerSettings;
@@ -107,7 +108,7 @@ private:
     QLabel * m_lblRfkill;
     QCheckBox * m_btnEnableNetworking;
     QCheckBox * m_btnEnableWireless;
-    QLabel * m_btnManageConnections;
+    QPushButton * m_btnManageConnections;
     QSignalMapper * m_connectionActivationSignalMapper;
     QSignalMapper * m_connectionDeactivationSignalMapper;
 };

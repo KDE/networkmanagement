@@ -50,11 +50,7 @@ private slots:
     void setStrength(QString ssid, int strength);
 private:
     void readSettings();
-    QGridLayout * m_layout;
-    QLabel * m_icon;
-    QLabel * m_connectionNameLabel;
     QProgressBar * m_strengthMeter;
-    QToolButton * m_connectButton;
     QString m_security;
     QLabel * m_securityIcon;
     QString m_securityIconName;

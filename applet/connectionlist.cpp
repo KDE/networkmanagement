@@ -43,8 +43,8 @@ void ConnectionList::init()
 {
     // adds items from subclasses above our layout
     setupHeader();
-    m_connectionLayout = new QVBoxLayout(this);
-    m_layout->addItem(m_connectionLayout);
+    m_connectionLayout = new QVBoxLayout(0);
+    m_layout->addLayout(m_connectionLayout);
     // create a connectionItem for each appropriate connection
     addSettingsService(m_userSettings);
     addSettingsService(m_systemSettings);

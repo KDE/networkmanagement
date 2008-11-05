@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QCheckBox>
 #include <QLabel>
 #include <QSignalMapper>
+#include <QPushButton>
 
 #include <KDebug>
 #include <KIconLoader>
@@ -68,7 +69,7 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     m_layout->setContentsMargins(0,0,0,0);
     //   a vertical list of appropriate connections
     //     header label
-    m_connectionLayout = new QVBoxLayout(this);
+    m_connectionLayout = new QVBoxLayout(0);
     m_connectionLayout->setContentsMargins(0,0,0,0);
     QLabel * wiredHeader = new QLabel(this);
     wiredHeader->setText(i18nc("Label for connection list popup","Wired Networks"));
@@ -118,12 +119,12 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     // | [Networking] | [Wireless]  |
     // +----------------------------|
     //QGraphicsGridLayout * gridLayout = new QGraphicsGridLayout(m_layout);
-    m_btnManageConnections = new QLabel(this);
+    m_btnManageConnections = new QPushButton(this);
     //m_btnManageConnections->setDrawBackground(true);
     m_btnManageConnections->setMaximumWidth(140);
     m_btnManageConnections->setMaximumHeight(24);
     //m_btnManageConnections->setOrientation(Qt::Horizontal);
-    m_btnManageConnections->setPixmap(MainBarIcon("networkmanager"));
+    m_btnManageConnections->setIcon(SmallIcon("networkmanager"));
     m_btnManageConnections->setText(i18nc("Button text for showing the Manage Connections KCModule", "Manage..."));
 
     //gridLayout->addItem(m_btnManageConnections, 0, 0, 1, 2);
