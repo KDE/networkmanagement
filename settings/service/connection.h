@@ -56,7 +56,7 @@ class Connection : public QObject
         Q_SCRIPTABLE QVariantMapMap GetSettings() const;
         Q_SCRIPTABLE QVariantMapMap GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new, const QDBusMessage&);
         bool hasSecrets() const;
-
+        QString uuid() const;
     Q_SIGNALS:
         Q_SCRIPTABLE void Updated(QMap<QString, QMap<QString, QVariant> >);
         Q_SCRIPTABLE void Removed();

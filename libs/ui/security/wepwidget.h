@@ -37,6 +37,7 @@ public:
     bool validate() const;
     void readConfig();
     void writeConfig();
+    QVariantMap secrets() const;
 private slots:
     void keyTypeChanged(int);
     void chkShowPassToggled(bool);

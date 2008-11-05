@@ -46,7 +46,7 @@ public:
     /**
      * read the secrets out of the UI
      */
-    virtual QVariantMap secrets();
+    virtual QVariantMap secrets() const;
     /**
      * get the name of the settings group configured by the widget
      */

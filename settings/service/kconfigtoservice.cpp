@@ -44,6 +44,8 @@ KConfigToService::KConfigToService(NetworkSettings * service, bool active)
     KNetworkManagerServicePrefs::instance(KStandardDirs::locate("config",
                 QLatin1String("knetworkmanagerrc")));
     m_dataMappings = new DataMappings;
+
+    connect(m_service, SIGNAL(connectionActivated(const QString&)), SLOT(connectionActivated(const QString&)));
 }
 
 KConfigToService::~KConfigToService()
@@ -243,6 +245,34 @@ void KConfigToService::configure(const QStringList& changedConnections)
         QVariantMapMap changedConnection = restoreConnection(connectionId);
         kDebug() << "adding connection with id: " << connectionId;
         m_service->addConnection(restoreConnection(connectionId));
+    }
+}
+
+void KConfigToService::connectionActivated(const QString & uuid)
+{
+    kDebug() << uuid;
+    // write the connection file
+    QString configFile = KStandardDirs::locate("data",
+                QLatin1String("knetworkmanager/connections/") + uuid);
+    QVariantMapMap connectionMap;
+    KSharedConfig::Ptr config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
+    kDebug() << config->name() << " is at " << configFile;
+    KConfigGroup connectionGroup(config, NM_SETTING_CONNECTION_SETTING_NAME);
+
+    uint newtimestamp = QDateTime::currentDateTime().toTime_t();
+
+    if (connectionGroup.exists()) {
+        uint timestamp = connectionGroup.readEntry<uint>(NM_SETTING_CONNECTION_TIMESTAMP, 0);
+        kDebug() << "uuid: " << uuid << "old timestamp: " << timestamp << " new timestamp: " << newtimestamp;
+        connectionGroup.writeEntry(NM_SETTING_CONNECTION_TIMESTAMP, newtimestamp);
+    }
+
+    // write knetworkmanagerrc
+    // TODO: don't save the timestamp to the connection file, just read it from knetworkmanagerrc
+    // and initialise the connection using that
+    KConfigGroup mainConnectionDetails(KNetworkManagerServicePrefs::self()->config(), QLatin1String("Connection_") + uuid);
+    if (mainConnectionDetails.exists()) {
+        mainConnectionDetails.writeEntry("LastUsed",  QDateTime::fromTime_t(newtimestamp));
     }
 }
 

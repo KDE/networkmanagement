@@ -1,3 +1,6 @@
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../libs/dbus
+   )
+
 set(networkmanager_SRCS
     abstractconnectableitem.cpp
     connectionitem.cpp
@@ -7,13 +10,8 @@ set(networkmanager_SRCS
     networkmanagerpopup.cpp
     interfacegroup.cpp
     interfaceitem.cpp
-    nm-active-connectioninterface.cpp
-    nm-settingsinterface.cpp
-    nm-exported-connectioninterface.cpp
-    remoteconnection.cpp
     serialinterfaceitem.cpp
     events.cpp
-    networkmanagersettings.cpp
     vpnconnectiongroup.cpp
     wirelessconnectionitem.cpp
     wirelessenvironment.cpp
@@ -23,7 +21,7 @@ set(networkmanager_SRCS
     )
 
 kde4_add_plugin(plasma_applet_networkmanager ${networkmanager_SRCS})
-target_link_libraries(plasma_applet_networkmanager plasma ${KDE4_KIO_LIBS} solidcontrol)
+target_link_libraries(plasma_applet_networkmanager plasma knmdbus ${KDE4_KIO_LIBS} solidcontrol)
 
 install(TARGETS plasma_applet_networkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-networkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR})

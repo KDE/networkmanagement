@@ -184,6 +184,18 @@ void Wireless80211SecurityWidget::readConfig()
     }
 }
 
+QVariantMap Wireless80211SecurityWidget::secrets() const
+{
+    QVariantMap s;
+    SecurityWidget * sw = qobject_cast<SecurityWidget*>(d->ui.stackedWidget->currentWidget());
+    if (sw) {
+        s = sw->secrets();
+    } else {
+        kDebug() << "currentWidget was not a SecurityWidget";
+    }
+    return s;
+}
+
 #include "802_11_wireless_security_widget.moc"
 
 // vim: sw=4 sts=4 et tw=100

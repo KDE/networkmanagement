@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2008 Christopher Blauvelt <cblauvelt@gmail.com>
+    Copyright (C) 2008 Will Stephenson <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -28,12 +29,13 @@
 #include <KDebug>
 #include <KDebug>
 
+#include <solid/control/networkmanager.h>
+
+// knmdbus
+#include "nm-active-connectioninterface.h"
+
 #include "connection.h"
 #include "exportedconnection.h"
-
-//#include "networksettingsadaptor.h"
-//#include "marshallarguments.h"
-
 
 NetworkSettings::NetworkSettings(QObject * parent)
 : QObject(parent), mNextConnectionId(0)
@@ -41,43 +43,27 @@ NetworkSettings::NetworkSettings(QObject * parent)
     //declare types
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
 
-    //new NetworkSettingsAdaptor(this);
-
     QDBusConnection dbus = QDBusConnection::systemBus();
     if (!dbus.registerObject(QLatin1String(NM_DBUS_PATH_SETTINGS), this, QDBusConnection::ExportScriptableContents)) {
         kDebug() << "Unable to register settings object " << NM_DBUS_PATH_SETTINGS;
     } else {
         kDebug() << "Registered settings object " << NM_DBUS_PATH_SETTINGS;
+    }
 
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(activeConnectionsChanged()),
+            SLOT(activeConnectionsChanged()));
+    // build the list of active connections
+    foreach (QString activePath, Solid::Control::NetworkManager::activeConnections()) {
+        OrgFreedesktopNetworkManagerConnectionActiveInterface activeIface(QLatin1String(NM_DBUS_SERVICE), activePath, QDBusConnection::systemBus(), 0);
+        if (activeIface.serviceName() == QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS)) {
+            m_ourActiveConnections.append(activeIface.connection().path());
+        }
     }
 }
 
 NetworkSettings::~NetworkSettings()
 {
 }
-
-/*
-bool NetworkSettings::loadSettings(const KConfigGroup &settings)
-{
-    kDebug() << "Loading " << profile;
-    clearConnections();
-    if (!m_settings.groupList().contains(profile)) { //profile does not exist so return
-        kDebug() << "Profile " << profile << " does not exist.";
-        return false;
-    }
-
-    KConfigGroup profileConfig(&m_settings, profile);
-    QStringList interfaceNames = profileConfig.readEntry("InterfaceNameList", QStringList());
-    foreach (const QString &interfaceName, interfaceNames) {
-        QString connName = profile + QString('/') + interfaceName;
-        QString connPath = QString(NM_DBUS_PATH_SETTINGS) + QString('/') + connName;
-        kDebug() << "Adding: " << connPath;
-        m_connectionMap[connName] = new Connection(m_conn,connPath, connName, profileConfig, this);
-        connect(m_connectionMap[connName], SIGNAL(Removed()), this, SLOT(onConnectionRemoved()));
-    }
-    return true;
-}
-*/
 
 QString NetworkSettings::addConnection(const QVariantMapMap& settings)
 {
@@ -115,7 +101,7 @@ void NetworkSettings::updateConnection(const QString & objectPath, const QVarian
     }
 }
 
-void NetworkSettings::removeConnection(const QString & objectPath)
+void NetworkSettings::removeConnection(const QString &)
 {
     kDebug();
     //connectionMap.take(id);
@@ -153,6 +139,32 @@ void NetworkSettings::clearConnections()
 {
     foreach (const QString &conn, m_connectionMap.keys()) {
         m_connectionMap[conn]->Delete();
+    }
+}
+
+void NetworkSettings::activeConnectionsChanged()
+{
+    QStringList existingConnections = m_ourActiveConnections;
+    QStringList newlyActiveConnections;
+
+    m_ourActiveConnections.clear();
+
+    foreach (QString activePath, Solid::Control::NetworkManager::activeConnections()) {
+        OrgFreedesktopNetworkManagerConnectionActiveInterface activeIface(QLatin1String(NM_DBUS_SERVICE), activePath, QDBusConnection::systemBus(), 0);
+        if (activeIface.serviceName() == QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS)) {
+            QString localConnectionPath = activeIface.connection().path();
+            if (!existingConnections.contains(localConnectionPath)) {
+                newlyActiveConnections.append(localConnectionPath);
+            }
+            m_ourActiveConnections.append(activeIface.connection().path());
+        }
+    }
+
+    foreach (QString newlyActive, newlyActiveConnections) {
+        Connection * conn = m_connectionMap.value(newlyActive);
+        if (conn) {
+            emit connectionActivated(conn->uuid());
+        }
     }
 }
 

@@ -70,12 +70,24 @@ class NetworkSettings : public QObject
 
     public Q_SLOTS:
         void onConnectionRemoved();
+        /**
+         * Monitor the list of active connections on the daemon
+         * If a connection belonging to this service becomes active,
+         * update its LastUsed timestamp and any secrets that it has 
+         * previously obtained from the user
+         */
+        void activeConnectionsChanged();
 
     Q_SIGNALS:
         /**
          * Signal from org.freedesktop.NetworkManagerSettings, exported via DBus
          */
         Q_SCRIPTABLE void NewConnection(QDBusObjectPath);
+
+        /**
+         * Indicates that a connection was activated
+         */
+        void connectionActivated(const QString & uuid);
 
     private:
         /**
@@ -91,6 +103,8 @@ class NetworkSettings : public QObject
         // Map of connection path to Connection
         QMap<QString, Connection*> m_connectionMap;
         uint mNextConnectionId;
+        // List of our connection dbus object paths that are active on the daemon
+        QStringList m_ourActiveConnections;
 };
 
 #endif

@@ -160,5 +160,20 @@ void WepWidget::writeConfig()
     cg.writeEntry("authalg", authAlg);
 }
 
+QVariantMap WepWidget::secrets() const
+{
+    QVariantMap ourSecrets;
+    d->keys.insert(d->ui.weptxkeyindex->currentIndex(), d->ui.key->text());
+
+    for (int i = 0; i < d->keys.count(); i++) {
+        QString fieldName = QString::fromLatin1("wep-key%1").arg(i);
+        if (!d->keys[i].isEmpty()) {
+            ourSecrets.insert(fieldName, QVariant(d->keys[i]));
+        }
+    }
+    kDebug() << ourSecrets;
+    return ourSecrets;
+}
+
 #include "wepwidget.moc"
 // vim: sw=4 sts=4 et tw=100
