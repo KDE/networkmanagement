@@ -1,5 +1,6 @@
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/dbus
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/ui
    )
@@ -20,7 +21,7 @@ kde4_add_kcfg_files(kded_knetworkmanager_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../
 qt4_add_dbus_adaptor(kded_knetworkmanager_SRCS org.kde.knetworkmanagerd.xml kconfigtoservice.h KConfigToService knetworkmanagerserviceadaptor KNetworkManagerServiceAdaptor )
 
 kde4_add_plugin(kded_knetworkmanager ${kded_knetworkmanager_SRCS})
-target_link_libraries(kded_knetworkmanager knmstorage knmui ${KDE4_KUTILS_LIBS} solidcontrol)
+target_link_libraries(kded_knetworkmanager knmdbus knmstorage knmui ${KDE4_KUTILS_LIBS} solidcontrol)
 
 install(TARGETS kded_knetworkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
 

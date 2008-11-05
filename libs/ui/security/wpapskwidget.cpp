@@ -83,5 +83,12 @@ void WpaPskWidget::writeConfig()
     secrets.writeSecret("psk", d->ui.psk->text());
 }
 
+
+QVariantMap WpaPskWidget::secrets() const
+{
+    kDebug() << "TODO: IMPLEMENT";
+    return QVariantMap();
+}
+
 #include "wpapskwidget.moc"
 // vim: sw=4 sts=4 et tw=100

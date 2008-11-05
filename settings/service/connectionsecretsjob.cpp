@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KConfigDialog>
 #include <KDebug>
+#include <KLocale>
 
 #include <kwallet.h>
 
@@ -56,8 +57,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "security/802_1x_security_widget.h"
 #include "security/securitywidget.h"
 
-ConnectionSecretsJob::ConnectionSecretsJob(const QString & connectionId, const QString &settingName, const QStringList& secrets, bool requestNew,  QDBusMessage& reply)
-    : mConnectionId(connectionId), mSettingName(settingName), mRequestNew(requestNew), mReply(reply), m_askUserDialog(0), m_settingWidget(0)
+ConnectionSecretsJob::ConnectionSecretsJob(const QString & connectionId, const QString &settingName, const QStringList& secrets, bool requestNew, const QDBusMessage& request)
+    : mConnectionId(connectionId), mSettingName(settingName), mRequestNew(requestNew), mRequest(request), m_askUserDialog(0), m_settingWidget(0)
 {
     // record the secrets that we are looking for
     foreach (QString secretKey, secrets) {
@@ -109,38 +110,38 @@ void ConnectionSecretsJob::doAskUser()
     // load the settings
     // show
     kDebug();
-    SettingWidget * wid = 0;
     if ( mSettingName == QLatin1String(NM_SETTING_802_1X_SETTING_NAME)) {
-        //wid = new 
-        
+        //m_settingWidget = Wired8021xSecurityWidget(mConnectionId, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
-        wid = new CdmaWidget(mConnectionId, 0);
+        m_settingWidget = new CdmaWidget(mConnectionId, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
-        wid = new GsmWidget(mConnectionId, 0);
+        m_settingWidget = new GsmWidget(mConnectionId, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
-        wid = new IpV4Widget(mConnectionId, 0);
+        m_settingWidget = new IpV4Widget(mConnectionId, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME)) {
         // not supported yet
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPP_SETTING_NAME)) {
-        wid = new PppWidget(mConnectionId, 0);
+        m_settingWidget = new PppWidget(mConnectionId, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
-        wid = new PppoeWidget(mConnectionId, 0);
+        m_settingWidget = new PppoeWidget(mConnectionId, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_SERIAL_SETTING_NAME)) {
-        wid = new PppWidget(mConnectionId, 0);
+        m_settingWidget = new PppWidget(mConnectionId, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
-        // not supported yet, figure out the type of the vpn plugin, load it and its widget
+        // not supported yet, figure out the type of the vpn plugin, load it and its m_settingWidgetget
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
-        wid = new WiredWidget(mConnectionId, 0);
+        m_settingWidget = new WiredWidget(mConnectionId, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME)) {
-        wid = new Wireless80211SecurityWidget(mConnectionId, 0);
+        m_settingWidget = new Wireless80211SecurityWidget(mConnectionId, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
-        wid = new Wireless80211Widget(mConnectionId, 0);
+        m_settingWidget = new Wireless80211Widget(mConnectionId, 0);
     }
 
-    m_askUserDialog = new KConfigDialog(0, QLatin1String("knetworkmanager_askuser"), wid->configXml());
-    m_askUserDialog->addPage(wid, wid->windowTitle());
+    m_askUserDialog = new KConfigDialog(0, QLatin1String("knetworkmanager_askuser"), m_settingWidget->configXml());
+    m_askUserDialog->setWindowTitle(i18nc("dialog caption for network secrets request", "Enter network connection secrets"));
+    m_askUserDialog->addPage(m_settingWidget, m_settingWidget->windowTitle());
     m_askUserDialog->setFaceType(KPageDialog::Plain);
-    connect(m_askUserDialog, SIGNAL(done(int)), SLOT(dialogDone(int)));
+    connect(m_askUserDialog, SIGNAL(accepted()), SLOT(dialogAccepted()));
+    connect(m_askUserDialog, SIGNAL(rejected()), SLOT(dialogRejected()));
 
     m_askUserDialog->show();
 }
@@ -185,7 +186,6 @@ void ConnectionSecretsJob::walletOpenedForRead(bool success)
                 }
                 if (missingSecret) {
                     doAskUser();
-                    emitResult();
                 } else {
                     emitResult();
                 }
@@ -197,27 +197,37 @@ void ConnectionSecretsJob::walletOpenedForRead(bool success)
     }
 }
 
-void ConnectionSecretsJob::walletOpenedForWrite(bool success)
+void ConnectionSecretsJob::walletOpenedForWrite(bool)
 {
 
 }
 
-void ConnectionSecretsJob::dialogDone(int result)
+void ConnectionSecretsJob::dialogAccepted()
 {
-    kDebug() << result;
-    if (result == QDialog::Accepted) {
-        // get results from dialog, put them in mSecrets
-        kDebug() << "got secrets:" << m_settingWidget->secrets();
-        QMapIterator <QString,QVariant> i(m_settingWidget->secrets());
-        while (i.hasNext()) {
-            i.next();
-            mSecrets.insert(i.key(), i.value());
-        }
-    } else {
+    // get results from dialog, put them in mSecrets
+    kDebug() << "got secrets from widget:" << m_settingWidget->secrets();
+    QMapIterator <QString,QVariant> i(m_settingWidget->secrets());
+    while (i.hasNext()) {
+        i.next();
+        mSecrets.insert(i.key(), i.value());
+    }
+    kDebug() << "returning merged secrets:" << mSecrets;
+    if (!mSecrets.isEmpty()) {
+        kDebug() << "SECRETS ARE EMPTY";
         setError(UserInputCancelled);
     }
-    delete m_settingWidget;
-    delete m_askUserDialog;
+
+    m_settingWidget->deleteLater();
+    m_askUserDialog->deleteLater();
+    emitResult();
+}
+
+void ConnectionSecretsJob::dialogRejected()
+{
+    setError(UserInputCancelled);
+    m_settingWidget->deleteLater();
+    m_askUserDialog->deleteLater();
+    emitResult();
 }
 
 QString ConnectionSecretsJob::settingName() const
@@ -230,9 +240,9 @@ QVariantMap ConnectionSecretsJob::secrets() const
     return mSecrets;
 }
 
-QDBusMessage ConnectionSecretsJob::message() const
+QDBusMessage ConnectionSecretsJob::requestMessage() const
 {
-    return mReply;
+    return mRequest;
 }
 
 QString ConnectionSecretsJob::keyForEntry(const QString & entry) const

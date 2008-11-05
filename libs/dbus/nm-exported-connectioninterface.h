@@ -20,11 +20,13 @@
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
 
-#include "../libs/types.h"
+#include "../types.h"
+#include "../knm_export.h"
+
 /*
  * Proxy class for interface org.freedesktop.NetworkManagerSettings.Connection
  */
-class OrgFreedesktopNetworkManagerSettingsConnectionInterface: public QDBusAbstractInterface
+class KNM_EXPORT OrgFreedesktopNetworkManagerSettingsConnectionInterface: public QDBusAbstractInterface
 {
     Q_OBJECT
 public:

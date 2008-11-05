@@ -182,9 +182,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     setNameDisplayMode(mode);
     // the applet may be starting when NetworkManager is already connected,
     // so initialise the list of active connections
-    if (m_activeConnections.isEmpty()) {
-        activeConnectionsChanged();
-    }
+    activeConnectionsChanged();
     // set the state of our UI correctly
     connectionStateChanged(m_iface->connectionState());
     setLayout(m_layout);

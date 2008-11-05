@@ -28,12 +28,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nm-exported-connectioninterface.h"
 
+#include "../knm_export.h"
+
 class RemoteConnection;
 
 /**
  * Class to cache and access a remote NetworkManagerSettings service
  */
-class NetworkManagerSettings : public OrgFreedesktopNetworkManagerSettingsInterface
+class KNM_EXPORT NetworkManagerSettings : public OrgFreedesktopNetworkManagerSettingsInterface
 {
 Q_OBJECT
 public:

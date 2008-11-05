@@ -23,11 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nm-exported-connectioninterface.h"
 
-#include "../libs/types.h"
+#include "../types.h"
+#include "../knm_export.h"
 
 #include <solid/control/networkinterface.h>
 
-class RemoteConnection : public OrgFreedesktopNetworkManagerSettingsConnectionInterface
+class KNM_EXPORT RemoteConnection : public OrgFreedesktopNetworkManagerSettingsConnectionInterface
 {
 Q_OBJECT
 public:

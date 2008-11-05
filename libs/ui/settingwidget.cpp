@@ -76,9 +76,9 @@ void SettingWidget::writeConfig()
     //default impl does nothing
 }
 
-QVariantMap SettingWidget::secrets()
+QVariantMap SettingWidget::secrets() const
 {
-    // default impl does nothing
+    kDebug() << "DEFAULT IMPL";
     return QVariantMap();
 }
 

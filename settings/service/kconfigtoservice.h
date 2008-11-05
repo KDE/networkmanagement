@@ -55,6 +55,8 @@ public:
     void addOrUpdate(const QString & id);
     QList<QPair<const QString&, const QString&> > keyMappings() const;
     void configure(const QStringList & changedConnections);
+public Q_SLOTS:
+    void connectionActivated(const QString &uuid);
 private:
     // map from a) keys that have been munged to be legal variable names 
     // to b) actual networkmanager parameter keys

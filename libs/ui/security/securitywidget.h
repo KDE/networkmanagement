@@ -35,6 +35,7 @@ public:
     static const QString AUTH_ALG_SHARED;
     virtual void readConfig() = 0;
     virtual void writeConfig() = 0;
+    virtual QVariantMap secrets() const = 0;
 protected:
     QString m_connectionId;
 };

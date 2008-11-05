@@ -34,17 +34,18 @@ class ConnectionSecretsJob : public KJob
 Q_OBJECT
 public:
     enum ErrorCode { NoError = 0, WalletDisabled, WalletNotFound, WalletOpenRefused, UserInputCancelled };
-    ConnectionSecretsJob(const QString &connectionId, const QString &settingName, const QStringList &secrets, bool requestNew, QDBusMessage& reply);
+    ConnectionSecretsJob(const QString &connectionId, const QString &settingName, const QStringList &secrets, bool requestNew, const QDBusMessage& request);
     ~ConnectionSecretsJob();
     void start();
     QString settingName() const;
     QVariantMap secrets() const;
-    QDBusMessage message() const;
+    QDBusMessage requestMessage() const;
 
 
 public Q_SLOTS:
     void doWork();
-    void dialogDone(int result);
+    void dialogAccepted();
+    void dialogRejected();
     void walletOpenedForRead(bool success);
     void walletOpenedForWrite(bool success);
 private:
@@ -54,7 +55,7 @@ private:
     QString mSettingName;
     QVariantMap mSecrets;
     bool mRequestNew;
-    QDBusMessage mReply;
+    QDBusMessage mRequest;
     KConfigDialog * m_askUserDialog;
     SettingWidget * m_settingWidget;
 };

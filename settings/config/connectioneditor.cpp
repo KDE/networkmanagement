@@ -144,7 +144,7 @@ void ConnectionEditor::restoreConnections()
         // look in the corresponding group
         // read name, type, last used
         KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("Connection_") + connectionId);
-        if (!config.isValid()) {
+        if (!config.exists()) {
             continue;
         }
         QString name = config.readEntry("Name", QString());

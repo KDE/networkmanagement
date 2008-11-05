@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "settingwidget.h"
 
+#include <QVariant>
+
 #include "knm_export.h"
 
 class KNM_EXPORT Wireless80211SecurityWidget : public SettingWidget
@@ -36,6 +38,7 @@ public:
     QString settingName() const;
     void readConfig();
     void writeConfig();
+    QVariantMap secrets() const;
     static const QString KEY_MGMT_NONE;
     static const QString KEY_MGMT_802_1X;
     static const QString KEY_MGMT_WPA_NONE;
