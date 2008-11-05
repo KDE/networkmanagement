@@ -23,15 +23,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <NetworkManager.h>
 #include <KDebug>
 
-#include <QGraphicsLinearLayout>
+#include <QVBoxLayout>
 #include "connectionitem.h"
 #include "networkmanagersettings.h"
 #include "remoteconnection.h"
 
-ConnectionList::ConnectionList(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
-: QGraphicsWidget(parent), m_userSettings(userSettings), m_systemSettings(systemSettings)
+ConnectionList::ConnectionList(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QWidget * parent)
+: QWidget(parent), m_userSettings(userSettings), m_systemSettings(systemSettings)
 {
-    m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    m_layout = new QVBoxLayout(this);
     setLayout(m_layout);
 }
 
@@ -43,7 +43,7 @@ void ConnectionList::init()
 {
     // adds items from subclasses above our layout
     setupHeader();
-    m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    m_connectionLayout = new QVBoxLayout(this);
     m_layout->addItem(m_connectionLayout);
     // create a connectionItem for each appropriate connection
     addSettingsService(m_userSettings);
@@ -79,7 +79,7 @@ void ConnectionList::serviceDisappeared(NetworkManagerSettings* settings)
     while (i != m_connections.end()) {
         if (i.key().first == settings->service()) {
             ConnectionItem * item = i.value();
-            m_connectionLayout->removeItem(item);
+            m_connectionLayout->removeWidget(item);
             i = m_connections.erase(i);
             delete item;
         } else {
@@ -95,7 +95,7 @@ void ConnectionList::processConnection(NetworkManagerSettings * service, const Q
         ConnectionItem * connection = m_connections.value(key);
 
         if (!accept(connection->connection())) {
-            m_connectionLayout->removeItem(connection);
+            m_connectionLayout->removeWidget(connection);
             m_connections.remove(key);
             delete connection;
         }
@@ -105,7 +105,7 @@ void ConnectionList::processConnection(NetworkManagerSettings * service, const Q
             ConnectionItem * ci = createItem(remoteConnection);
             connect(ci, SIGNAL(clicked(AbstractConnectableItem*)), SLOT(activateConnection(AbstractConnectableItem*)));
             m_connections.insert(key, ci);
-            m_connectionLayout->addItem(ci);
+            m_connectionLayout->addWidget(ci);
         }
     }
 }
@@ -121,7 +121,7 @@ void ConnectionList::connectionRemovedFromService(NetworkManagerSettings * servi
     QPair<QString,QString> key(service->service(), connectionPath);
     if (m_connections.contains(key)) {
         ConnectionItem * item = m_connections.value(key);
-        m_connectionLayout->removeItem(item);
+        m_connectionLayout->removeWidget(item);
         m_connections.remove(key);
         delete item;
     }

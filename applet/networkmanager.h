@@ -24,19 +24,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdeversion.h>
 
 #include <plasma/svg.h>
-//#define KDE_4_1
-#if KDE_IS_VERSION(4,1,70)
-#include <plasma/popupapplet.h>
-#else
 #include <plasma/applet.h>
-#endif
-
-#include <Plasma/ToolTipManager>
 
 #include <solid/control/networkinterface.h>
+
+class QCheckBox;
+class KDialog;
 class NetworkManagerPopup;
 
-class NetworkManagerApplet : public Plasma::PopupApplet
+class NetworkManagerApplet : public Plasma::Applet
 {
 Q_OBJECT
 public:
@@ -54,23 +50,18 @@ public:
     //void constraintsEvent(Plasma::Constraints constraints);
     /* reimp Plasma::Applet */
     void popupEvent(bool show);
-    QGraphicsWidget * graphicsWidget();
+    QWidget * graphicsWidget();
     static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
-#if KDE_IS_VERSION(4,1,70)
-#else
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void showLegacyPopup(QGraphicsSceneMouseEvent *event);
-private:
-    Plasma::Dialog * m_dialog;
-#endif
 private Q_SLOTS:
     void networkInterfaceAdded(const QString&);
     void networkInterfaceRemoved(const QString&);
     void interfaceConnectionStateChanged();
 private:
-    void updateToolTip();
+    //void updateToolTip();
     void paintInterfaceStatus(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;
@@ -79,7 +70,8 @@ private:
     QString m_elementName;
     NetworkManagerPopup * m_popup;
     QPoint m_clicked;
-    Plasma::ToolTipContent m_toolTip;
+    //Plasma::ToolTipContent m_toolTip;
+    QWidget * m_dialog;
 };
 
 #endif

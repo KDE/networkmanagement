@@ -156,8 +156,8 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
                 // get the list of choices from the ItemEnum, look up the name corresponding to the 
                 // int returned by property() and put that in the map instead.
                 // KDE5: choices2 is going to go away..
-                QList<KCoreConfigSkeleton::ItemEnum::Choice2> choices = itemEnum->choices2();
-                KCoreConfigSkeleton::ItemEnum::Choice2 choice = choices[item->property().toUInt()];
+                QList<KCoreConfigSkeleton::ItemEnum::Choice> choices = itemEnum->choices();
+                KCoreConfigSkeleton::ItemEnum::Choice choice = choices[item->property().toUInt()];
                 map.insert(m_dataMappings->convertKey(item->key()),
                         m_dataMappings->convertValue(item->key(), choice.name));
             } else {

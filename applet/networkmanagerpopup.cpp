@@ -30,20 +30,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-wireless.h>
 
 #include <QtDBus>
-#include <QGraphicsGridLayout>
-#include <QGraphicsLinearLayout>
+#include <QVBoxLayout>
+#include <QCheckBox>
 #include <QLabel>
 #include <QSignalMapper>
 
 #include <KDebug>
+#include <KIconLoader>
 #include <KLocale>
 #include <KNotification>
 #include <KPushButton>
 #include <KToolInvocation>
-
-#include <Plasma/CheckBox>
-#include <Plasma/Label>
-#include <Plasma/IconWidget>
 
 #include <solid/control/networkmanager.h>
 #include <solid/control/wirednetworkinterface.h>
@@ -57,8 +54,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkmanagersettings.h"
 #include "vpnconnectiongroup.h"
 
-NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
-    : QGraphicsWidget(parent),
+NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
+    : QWidget(parent),
     m_connectionActivationSignalMapper(new QSignalMapper(this)),
     m_connectionDeactivationSignalMapper(new QSignalMapper(this))
 {
@@ -67,17 +64,17 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     qDBusRegisterMetaType<QMap<QString, QMap<QString, QVariant> > >();
 
     // containing vertical linear layout
-    m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    m_layout = new QVBoxLayout(this);
     m_layout->setContentsMargins(0,0,0,0);
     //   a vertical list of appropriate connections
     //     header label
-    m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical, m_layout);
+    m_connectionLayout = new QVBoxLayout(this);
     m_connectionLayout->setContentsMargins(0,0,0,0);
-    Plasma::Label * wiredHeader = new Plasma::Label(this);
+    QLabel * wiredHeader = new QLabel(this);
     wiredHeader->setText(i18nc("Label for connection list popup","Wired Networks"));
-    //m_notRunning = new Plasma::Label(this);
+    //m_notRunning = new QLabel(this);
     //m_notRunning->setText(i18nc("Label for when NetworkManager is not running","The NetworkManager service is not running."));
-    m_connectionLayout->addItem(wiredHeader);
+    m_connectionLayout->addWidget(wiredHeader);
     //m_connectionLayout->addItem(m_notRunning);
     if (Solid::Control::NetworkManager::status() != Solid::Networking::Unknown) {
         ;//m_notRunning->hide();
@@ -87,9 +84,9 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
 
     m_ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, this);
     m_ethernetGroup->init();
-    m_connectionLayout->addItem(m_ethernetGroup);
+    m_connectionLayout->addWidget(m_ethernetGroup);
 
-    Plasma::Label * wirelessHeader = new Plasma::Label(this);
+    QLabel * wirelessHeader = new QLabel(this);
     wirelessHeader->setText(i18nc("Label for wifi networks in popup","Wireless Networks"));
     m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, this);
     m_wifiGroup->init();
@@ -98,21 +95,21 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
 
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
     //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
-    Plasma::Label * vpnHeader = new Plasma::Label(this);
+    QLabel * vpnHeader = new QLabel(this);
     vpnHeader->setText(i18nc("Label for vpn connections in popup","VPN Connections"));
     VpnConnectionGroup * vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
     vpnGroup->init();
-    m_connectionLayout->addItem(wirelessHeader);
+    m_connectionLayout->addWidget(wirelessHeader);
 
-    m_connectionLayout->setItemSpacing(1, 30);
-    m_connectionLayout->addItem(m_wifiGroup);
-    m_connectionLayout->addItem(m_gsmGroup);
-    m_connectionLayout->addItem(vpnHeader);
-    m_connectionLayout->addItem(vpnGroup);
+    //m_connectionLayout->setItemSpacing(1, 30);
+    m_connectionLayout->addWidget(m_wifiGroup);
+    m_connectionLayout->addWidget(m_gsmGroup);
+    m_connectionLayout->addWidget(vpnHeader);
+    m_connectionLayout->addWidget(vpnGroup);
     m_gsmGroup->show();
     //m_connectionLayout->addItem(cdmaGroup);
     //m_connectionLayout->addItem(pppoeGroup);
-    m_layout->addItem(m_connectionLayout);
+    m_layout->addLayout(m_connectionLayout);
 
     //   then a grid of status labels and buttons
     // +----------------------------+
@@ -121,31 +118,31 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     // | [Networking] | [Wireless]  |
     // +----------------------------|
     //QGraphicsGridLayout * gridLayout = new QGraphicsGridLayout(m_layout);
-    m_btnManageConnections = new Plasma::IconWidget(this);
-    m_btnManageConnections->setDrawBackground(true);
+    m_btnManageConnections = new QLabel(this);
+    //m_btnManageConnections->setDrawBackground(true);
     m_btnManageConnections->setMaximumWidth(140);
     m_btnManageConnections->setMaximumHeight(24);
-    m_btnManageConnections->setOrientation(Qt::Horizontal);
-    m_btnManageConnections->setIcon("networkmanager");
+    //m_btnManageConnections->setOrientation(Qt::Horizontal);
+    m_btnManageConnections->setPixmap(MainBarIcon("networkmanager"));
     m_btnManageConnections->setText(i18nc("Button text for showing the Manage Connections KCModule", "Manage..."));
 
     //gridLayout->addItem(m_btnManageConnections, 0, 0, 1, 2);
-    m_layout->addItem(m_btnManageConnections);
-    //m_lblRfkill = new Plasma::Label(this);
+    m_layout->addWidget(m_btnManageConnections);
+    //m_lblRfkill = new QLabel(this);
     //m_lblRfkill->nativeWidget()->setWordWrap(false);
     //sets the label text
     //managerWirelessHardwareEnabledChanged(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
 
     //gridLayout->addItem(m_lblRfkill, 1, 0, 1, 2);
-    //m_btnEnableNetworking = new Plasma::CheckBox(this);
-    m_btnEnableWireless = new Plasma::CheckBox(this);
+    //m_btnEnableNetworking = new QCheckBox(this);
+    m_btnEnableWireless = new QCheckBox(this);
     managerWirelessEnabledChanged(Solid::Control::NetworkManager::isWirelessEnabled());
     //m_btnEnableNetworking->setText(i18nc("Label for pushbutton enabling networking", "All Networking"));
     m_btnEnableWireless->setText(i18nc("Label for checkbox enabling wireless", "Wireless"));
     //gridLayout->addItem(m_btnEnableNetworking, 1, 0, 1, 1);
     //gridLayout->addItem(m_btnEnableWireless, 1, 0, 1, 2);
     //m_layout->addItem(gridLayout);
-    m_layout->addItem(m_btnEnableWireless);
+    m_layout->addWidget(m_btnEnableWireless);
     setLayout(m_layout);
     // connect up the buttons and the manager's signals
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),

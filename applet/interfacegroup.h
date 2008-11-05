@@ -39,7 +39,7 @@ class InterfaceGroup : public ConnectionList
 {
 Q_OBJECT
 public:
-    InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent = 0);
+    InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QWidget * parent = 0);
     virtual ~InterfaceGroup();
     Solid::Control::NetworkInterface::Type interfaceType() const;
     bool accept(RemoteConnection *) const;
@@ -65,7 +65,7 @@ private:
     QHash<QString, WirelessNetworkItem *> m_networks;
     Solid::Control::NetworkInterface::Type m_type;
     WirelessEnvironmentMerged * m_wirelessEnvironment;
-    QGraphicsLinearLayout * m_interfaceLayout;
-    QGraphicsLinearLayout * m_networkLayout;
+    QVBoxLayout * m_interfaceLayout;
+    QVBoxLayout * m_networkLayout;
 };
 #endif // INTERFACEGROUP_H

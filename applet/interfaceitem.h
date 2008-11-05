@@ -22,14 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define APPLET_INTERFACEITEM_H
 
 #include <QDBusObjectPath>
-#include <QGraphicsWidget>
+#include <QWidget>
+#include <QLabel>
+#include <QProgressBar>
 
-#include <Plasma/IconWidget>
-#include <Plasma/Label>
-#include <Plasma/Meter>
 
-class QGraphicsGridLayout;
-class QGraphicsLinearLayout;
+class QGridLayout;
+class QVBoxLayout;
+class QToolButton;
+
 namespace Solid
 {
     namespace Control
@@ -38,27 +39,22 @@ namespace Solid
     } // namespace Control
 } // namespace Solid
 
-namespace Plasma
-{
-    class IconWidget;
-    class Label;
-} // namespace Plasma
-
 class ConnectionInspector;
 class NetworkManagerSettings;
 class RemoteConnection;
 typedef QPair<QDBusObjectPath, RemoteConnection*> ActiveConnectionPair;
+
 /**
  * Represents a single network interface
  * Displays status, updates itself
  * Allows deactivating any active connection
  */
-class InterfaceItem : public QGraphicsWidget
+class InterfaceItem : public QWidget
 {
 Q_OBJECT
 public:
     enum NameDisplayMode {InterfaceName, HardwareName};
-    InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode = InterfaceName, QGraphicsItem* parent = 0);
+    InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode = InterfaceName, QWidget* parent = 0);
     virtual ~InterfaceItem();
     void setNameDisplayMode(NameDisplayMode);
     NameDisplayMode nameDisplayMode() const;
@@ -93,17 +89,17 @@ protected:
     NetworkManagerSettings * m_userSettings;
     NetworkManagerSettings * m_systemSettings;
     //QGraphicsLinearLayout * m_layout; // use with nested linear based layouts, when they work
-    QGraphicsGridLayout * m_layout;
-    QGraphicsLinearLayout * m_infoLayout;
-    Plasma::IconWidget * m_icon;
-    Plasma::Label * m_ifaceNameLabel;
-    Plasma::Label * m_connectionNameLabel;
-    QGraphicsLinearLayout * m_connectionInfoLayout;
-    Plasma::Label * m_connectionInfoLabel;
-    Plasma::Meter * m_strengthMeter;
-    Plasma::Label * m_connectionInfoStrengthLabel;
-    Plasma::IconWidget * m_connectionInfoIcon;
-    Plasma::IconWidget * m_connectButton;
+    QGridLayout * m_layout;
+    QVBoxLayout * m_infoLayout;
+    QLabel* m_icon;
+    QLabel * m_ifaceNameLabel;
+    QLabel * m_connectionNameLabel;
+    QVBoxLayout * m_connectionInfoLayout;
+    QLabel * m_connectionInfoLabel;
+    QProgressBar * m_strengthMeter;
+    QLabel * m_connectionInfoStrengthLabel;
+    QLabel * m_connectionInfoIcon;
+    QToolButton * m_connectButton;
     NameDisplayMode m_nameMode;
 
     QList<ActiveConnectionPair> m_activeConnections;

@@ -21,13 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef CONNECTIONLIST_H
 #define CONNECTIONLIST_H
 
-#include <QGraphicsWidget>
+#include <QWidget>
 #include <QHash>
 #include <QPair>
 
 class AbstractConnectableItem;
 class NetworkManagerSettings;
-class QGraphicsLinearLayout;
+class QVBoxLayout;
 class ConnectionItem;
 class InterfaceItem;
 class RemoteConnection;
@@ -36,11 +36,11 @@ class WirelessEnvironment;
 typedef QPair<QString,QString> QStringPair;
 typedef QHash<QStringPair, ConnectionItem*> ServiceConnectionHash;
 
-class ConnectionList : public QGraphicsWidget
+class ConnectionList : public QWidget
 {
 Q_OBJECT
 public:
-    ConnectionList(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent = 0);
+    ConnectionList(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QWidget * parent = 0);
     virtual ~ConnectionList();
 
     void init(); // fill connection list, after ctor has run so subclasses are initialised
@@ -70,11 +70,11 @@ protected:
     void processConnection(NetworkManagerSettings * service, const QString& connectionPath); // check if already exists, accept() checks
     NetworkManagerSettings * m_userSettings;
     NetworkManagerSettings * m_systemSettings;
-    QGraphicsLinearLayout * m_layout;
+    QVBoxLayout * m_layout;
 private:
     void addSettingsService(NetworkManagerSettings*);
     // list of connection objects for this interface type
     ServiceConnectionHash m_connections;
-    QGraphicsLinearLayout * m_connectionLayout;
+    QVBoxLayout * m_connectionLayout;
 };
 #endif // CONNECTIONLIST_H

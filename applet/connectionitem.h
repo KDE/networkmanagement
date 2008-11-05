@@ -23,15 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "abstractconnectableitem.h"
 
-class QGraphicsGridLayout;
+class QGridLayout;
+class QLabel;
+class QToolButton;
 
 class RemoteConnection;
-
-namespace Plasma
-{
-    class IconWidget;
-    class Label;
-}
 
 /**
  * Represents an inactive connection
@@ -40,16 +36,16 @@ class ConnectionItem : public AbstractConnectableItem
 {
 Q_OBJECT
 public:
-    ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent = 0);
+    ConnectionItem(RemoteConnection * conn, QWidget * parent = 0);
     virtual ~ConnectionItem();
     RemoteConnection * connection() const;
     void setupItem();
 protected:
     RemoteConnection * m_connection;
-    QGraphicsGridLayout * m_layout;
-    Plasma::IconWidget * m_icon;
-    Plasma::Label * m_connectionNameLabel;
-    Plasma::IconWidget * m_connectButton;
+    QGridLayout * m_layout;
+    QLabel* m_icon;
+    QLabel * m_connectionNameLabel;
+    QToolButton * m_connectButton;
 };
 
 #endif //#define APPLET_CONNECTIONITEM_H

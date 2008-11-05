@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NETWORKMANAGERPOPUP_H
 #define NETWORKMANAGERPOPUP_H
 
-#include <QGraphicsWidget>
+#include <QWidget>
 
 #include <solid/networking.h>
 #include <solid/control/networking.h>
@@ -29,15 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "../libs/types.h"
 
-class QGraphicsLinearLayout;
+class QVBoxLayout;
+class QCheckBox;
+class QLabel;
 class QSignalMapper;
-
-namespace Plasma
-{
-class CheckBox;
-class IconWidget;
-class Label;
-} // namespace Plasma
 
 class InterfaceGroup;
 class NetworkManagerSettings;
@@ -46,11 +41,11 @@ class OrgFreedesktopNetworkManagerSettingsConnectionInterface;
 /**
  * Widget that pops up when the menu is clicked
  */
-class NetworkManagerPopup : public QGraphicsWidget
+class NetworkManagerPopup : public QWidget
 {
 Q_OBJECT
 public:
-    NetworkManagerPopup(QGraphicsItem *parent);
+    NetworkManagerPopup(QWidget *parent);
     virtual ~NetworkManagerPopup();
 public Q_SLOTS:
     /** slots called when a connection in the popup is clicked */
@@ -103,17 +98,18 @@ public Q_SLOTS:
 private:
     NetworkManagerSettings * m_userSettings;
     NetworkManagerSettings * m_systemSettings;
-    QGraphicsLinearLayout * m_layout;
-    QGraphicsLinearLayout * m_connectionLayout;
+    QVBoxLayout * m_layout;
+    QVBoxLayout * m_connectionLayout;
     InterfaceGroup * m_ethernetGroup;
     InterfaceGroup * m_wifiGroup;
     InterfaceGroup * m_gsmGroup;
-    Plasma::Label * m_notRunning;
-    Plasma::Label * m_lblRfkill;
-    Plasma::CheckBox * m_btnEnableNetworking;
-    Plasma::CheckBox * m_btnEnableWireless;
-    Plasma::IconWidget * m_btnManageConnections;
+    QLabel * m_notRunning;
+    QLabel * m_lblRfkill;
+    QCheckBox * m_btnEnableNetworking;
+    QCheckBox * m_btnEnableWireless;
+    QLabel * m_btnManageConnections;
     QSignalMapper * m_connectionActivationSignalMapper;
     QSignalMapper * m_connectionDeactivationSignalMapper;
 };
+
 #endif // NETWORKMANAGERPOPUP_H

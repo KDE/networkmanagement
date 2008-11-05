@@ -24,11 +24,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkserialinterface.h>
 
+#include <KLocale>
+
 #include "../libs/types.h"
 #include "events.h"
 #include "remoteconnection.h"
 
-SerialInterfaceItem::SerialInterfaceItem(Solid::Control::SerialNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent)
+SerialInterfaceItem::SerialInterfaceItem(Solid::Control::SerialNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QWidget* parent)
 : InterfaceItem(iface, userSettings, systemSettings, mode, parent), m_serialIface(iface), m_bytesIn(0), m_bytesOut(0)
 
 {

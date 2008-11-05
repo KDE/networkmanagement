@@ -21,13 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef ABSTRACTCONNECTABLEITEM_H
 #define ABSTRACTCONNECTABLEITEM_H
 
-#include <QGraphicsWidget>
+#include <QWidget>
 
-class AbstractConnectableItem : public QGraphicsWidget
+class AbstractConnectableItem : public QWidget
 {
 Q_OBJECT
 public:
-    AbstractConnectableItem(QGraphicsItem * parent = 0);
+    AbstractConnectableItem(QWidget * parent = 0);
     virtual ~AbstractConnectableItem();
     virtual void setupItem() = 0;
 signals:

@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "abstractconnectableitem.h"
 
-AbstractConnectableItem::AbstractConnectableItem(QGraphicsItem * parent) : QGraphicsWidget(parent)
+AbstractConnectableItem::AbstractConnectableItem(QWidget * parent) : QWidget(parent)
 {
 }
 

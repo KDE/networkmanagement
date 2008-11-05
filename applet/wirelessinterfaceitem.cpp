@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-wireless.h>
 
 #include <KNotification>
+#include <KIconLoader>
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
 
@@ -32,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessenvironment.h"
 #include "wirelessnetwork.h"
 
-WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent)
+WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QWidget* parent)
 : InterfaceItem(iface, userSettings, systemSettings, mode, parent), m_wirelessIface(iface), m_activeAccessPoint(0), m_environment(new WirelessEnvironment(iface, this))
 {
     // for updating our UI
@@ -108,16 +109,16 @@ void WirelessInterfaceItem::setConnectionInfo()
                 }
             }
             if (security.isEmpty()) {
-                m_connectionInfoIcon->setIcon("object-unlocked");
+                m_connectionInfoIcon->setPixmap(SmallIcon("object-unlocked"));
             } else if (security == QLatin1String("wep")) {
                 // security-weak
-                m_connectionInfoIcon->setIcon("object-locked");
+                m_connectionInfoIcon->setPixmap(SmallIcon("object-locked"));
             } else if (security == QLatin1String("wpa-psk")) {
                 // security-medium
-                m_connectionInfoIcon->setIcon("object-locked");
+                m_connectionInfoIcon->setPixmap(SmallIcon("object-locked"));
             } else if (security == QLatin1String("wpa-eap")) {
                 // security-strong
-                m_connectionInfoIcon->setIcon("object-locked");
+                m_connectionInfoIcon->setPixmap(SmallIcon("object-locked"));
             }
         }
         m_connectionInfoIcon->show();

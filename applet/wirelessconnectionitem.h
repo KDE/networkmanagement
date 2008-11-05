@@ -25,17 +25,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionitem.h"
 
-class QGraphicsGridLayout;
+class QGridLayout;
+class QProgressBar;
+class QToolButton;
 
 class RemoteConnection;
 class AbstractWirelessNetwork;
-
-namespace Plasma
-{
-    class IconWidget;
-    class Label;
-    class Meter;
-}
 
 /**
  * Represents an inactive connection
@@ -44,7 +39,7 @@ class WirelessConnectionItem : public ConnectionItem
 {
 Q_OBJECT
 public:
-    WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent = 0);
+    WirelessConnectionItem(RemoteConnection * conn, QWidget * parent = 0);
     virtual ~WirelessConnectionItem();
     void setupItem();
     void setNetwork(AbstractWirelessNetwork * network);
@@ -55,13 +50,13 @@ private slots:
     void setStrength(QString ssid, int strength);
 private:
     void readSettings();
-    QGraphicsGridLayout * m_layout;
-    Plasma::IconWidget * m_icon;
-    Plasma::Label * m_connectionNameLabel;
-    Plasma::Meter * m_strengthMeter;
-    Plasma::IconWidget * m_connectButton;
+    QGridLayout * m_layout;
+    QLabel * m_icon;
+    QLabel * m_connectionNameLabel;
+    QProgressBar * m_strengthMeter;
+    QToolButton * m_connectButton;
     QString m_security;
-    Plasma::IconWidget * m_securityIcon;
+    QLabel * m_securityIcon;
     QString m_securityIconName;
     AbstractWirelessNetwork * m_wirelessNetwork;
     QString m_ssid;

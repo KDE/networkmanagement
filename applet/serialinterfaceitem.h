@@ -39,7 +39,7 @@ class SerialInterfaceItem : public InterfaceItem
 {
 Q_OBJECT
 public:
-    SerialInterfaceItem(Solid::Control::SerialNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent = 0);
+    SerialInterfaceItem(Solid::Control::SerialNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QWidget* parent = 0);
     virtual ~SerialInterfaceItem();
 public slots:
     void pppStats(uint,uint);

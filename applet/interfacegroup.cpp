@@ -22,8 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <NetworkManager.h>
 
-#include <QGraphicsLinearLayout>
+#include <QVBoxLayout>
 #include <KDebug>
+#include <KLocale>
 #include <KNotification>
 #include <solid/control/networkserialinterface.h>
 #include <solid/control/wirednetworkinterface.h>
@@ -47,8 +48,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWirelessNetwork * n2);
 
-InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
-: ConnectionList(userSettings, systemSettings, parent), m_type(type), m_wirelessEnvironment(new WirelessEnvironmentMerged(this)), m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical)), m_networkLayout(new QGraphicsLinearLayout(Qt::Vertical))
+InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QWidget * parent)
+: ConnectionList(userSettings, systemSettings, parent), m_type(type), m_wirelessEnvironment(new WirelessEnvironmentMerged(this)), m_interfaceLayout(new QVBoxLayout(this)), m_networkLayout(new QVBoxLayout(this))
 {
     connect(m_wirelessEnvironment, SIGNAL(wirelessNetworkAppeared(const QString&)), SLOT(wirelessNetworkAppeared(const QString&)));
     connect(m_wirelessEnvironment, SIGNAL(wirelessNetworkDisappeared(const QString&)), SLOT(wirelessNetworkDisappeared(const QString&)));
@@ -61,7 +62,7 @@ InterfaceGroup::~InterfaceGroup()
 
 void InterfaceGroup::setupHeader()
 {
-    m_layout->addItem(m_interfaceLayout);
+    m_layout->addLayout(m_interfaceLayout);
     // create an interfaceItem for each interface of our type
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == interfaceType()) {
@@ -87,14 +88,14 @@ void InterfaceGroup::setupFooter()
         addNetworkInternal(ssid);
     }
     updateWirelessNetworkLayout();
-    m_layout->addItem(m_interfaceLayout);
+    m_layout->addLayout(m_interfaceLayout);
 }
 
 void InterfaceGroup::updateWirelessNetworkLayout()
 {
     // empty the layout
     for (int i = 0; i < m_networkLayout->count(); ++i) {
-        m_networkLayout->removeAt(i);
+        m_networkLayout->takeAt(i);
     }
     // hide all items and build list of networks for next step
     QList<AbstractWirelessNetwork*> allNetworks;
@@ -109,7 +110,7 @@ void InterfaceGroup::updateWirelessNetworkLayout()
     {
         WirelessNetworkItem * wi = m_networks.value(allNetworks[i]->ssid());
         wi->show();
-        m_networkLayout->insertItem(m_networkLayout->count(), wi);
+        m_networkLayout->insertWidget(m_networkLayout->count(), wi);
     }
     m_networkLayout->invalidate();
     m_interfaceLayout->invalidate();
@@ -158,7 +159,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         }
         ii->setConnectionInspector(inspector);
 
-        m_interfaceLayout->addItem(ii);
+        m_interfaceLayout->addWidget(ii);
         m_interfaces.insert(iface->uni(), ii);
         m_interfaceLayout->invalidate();
     }
@@ -223,7 +224,7 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
 {
     if (m_interfaces.contains(uni)) {
         InterfaceItem * item = m_interfaces.take(uni);
-        m_interfaceLayout->removeItem(item);
+        m_interfaceLayout->removeWidget(item);
         KNotification::event(Event::HwRemoved, i18nc("Notification for hardware removed", "Network interface removed"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
         delete item;
         reassess();

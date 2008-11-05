@@ -20,15 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionitem.h"
 
-#include <QGraphicsGridLayout>
-
-#include <Plasma/IconWidget>
-#include <Plasma/Label>
+#include <QLabel>
+#include <QGridLayout>
+#include <QToolButton>
+#include <KIconLoader>
 
 #include <solid/control/networkmanager.h>
 
 #include "remoteconnection.h"
-ConnectionItem::ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
+ConnectionItem::ConnectionItem(RemoteConnection * conn, QWidget * parent)
 : AbstractConnectableItem(parent), m_connection(conn)
 {
 }
@@ -40,30 +40,30 @@ void ConnectionItem::setupItem()
     int rowHeight = 24;
 
 
-    m_layout = new QGraphicsGridLayout(this);
+    m_layout = new QGridLayout(this);
     // First and third colunm are fixed width for the icons
-    m_layout->setColumnFixedWidth(0, rowHeight);
-    m_layout->setColumnPreferredWidth(1, 140);
-    m_layout->setColumnFixedWidth(2, rowHeight);
+    m_layout->setColumnMinimumWidth(0, rowHeight);
+    //m_layout->setColumnPreferredWidth(1, 140);
+    m_layout->setColumnMinimumWidth(2, rowHeight);
     // tighten
-    m_layout->setColumnSpacing(0, 0);
-    m_layout->setColumnSpacing(1, 0);
-    m_layout->setColumnSpacing(2, 0);
+    //m_layout->setColumnSpacing(0, 0);
+    //m_layout->setColumnSpacing(1, 0);
+    //m_layout->setColumnSpacing(2, 0);
 
-    m_icon = new Plasma::IconWidget(this);
-    m_icon->setIcon("network-server");
+    m_icon = new QLabel(this);
+    m_icon->setPixmap(MainBarIcon("network-server"));
     m_icon->setMinimumHeight(rowHeight);
     m_icon->setMaximumHeight(rowHeight);
-    m_connectionNameLabel = new Plasma::Label(this);
+    m_connectionNameLabel = new QLabel(this);
     m_connectionNameLabel->setText("Connection:" + m_connection->id());
-    m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setIcon("media-playback-start");
+    m_connectButton = new QToolButton(this);
+    m_connectButton->setIcon(MainBarIcon("media-playback-start"));
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
 
-    m_layout->addItem(m_icon, 0, 0, 1, 1 );
-    m_layout->addItem(m_connectionNameLabel, 0, 1, 1, 1);
-    m_layout->addItem(m_connectButton, 0, 2, 1, 1);
+    m_layout->addWidget(m_icon, 0, 0, 1, 1 );
+    m_layout->addWidget(m_connectionNameLabel, 0, 1, 1, 1);
+    m_layout->addWidget(m_connectButton, 0, 2, 1, 1);
     connect( m_connectButton, SIGNAL(clicked()), SLOT(emitClicked()));
 }
 
