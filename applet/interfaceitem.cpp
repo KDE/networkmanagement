@@ -124,6 +124,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
+    m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 3);
 
     //     active connection name
