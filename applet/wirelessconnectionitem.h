@@ -55,9 +55,6 @@ private slots:
     void setStrength(QString ssid, int strength);
 private:
     void readSettings();
-    QGraphicsGridLayout * m_layout;
-    Plasma::IconWidget * m_icon;
-    Plasma::Label * m_connectionNameLabel;
     Plasma::Meter * m_strengthMeter;
     Plasma::IconWidget * m_connectButton;
     QString m_security;

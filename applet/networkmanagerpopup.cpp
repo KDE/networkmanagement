@@ -71,7 +71,7 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_layout->setContentsMargins(0,0,0,0);
     //   a vertical list of appropriate connections
     //     header label
-    m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical, m_layout);
+    m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical, 0);
     m_connectionLayout->setContentsMargins(0,0,0,0);
     Plasma::Label * wiredHeader = new Plasma::Label(this);
     wiredHeader->setText(i18nc("Label for connection list popup","Wired Networks"));

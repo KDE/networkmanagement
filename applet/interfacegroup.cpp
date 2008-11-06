@@ -87,7 +87,7 @@ void InterfaceGroup::setupFooter()
         addNetworkInternal(ssid);
     }
     updateWirelessNetworkLayout();
-    m_layout->addItem(m_interfaceLayout);
+    m_layout->addItem(m_networkLayout);
 }
 
 void InterfaceGroup::updateWirelessNetworkLayout()
