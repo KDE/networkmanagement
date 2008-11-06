@@ -61,7 +61,7 @@ InterfaceGroup::~InterfaceGroup()
 
 void InterfaceGroup::setupHeader()
 {
-    m_layout->addItem(m_interfaceLayout);
+    m_layout->insertItem(0, m_interfaceLayout);
     // create an interfaceItem for each interface of our type
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == interfaceType()) {

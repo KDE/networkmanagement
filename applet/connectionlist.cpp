@@ -29,9 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 
 ConnectionList::ConnectionList(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
-: QGraphicsWidget(parent), m_userSettings(userSettings), m_systemSettings(systemSettings)
+: QGraphicsWidget(parent), m_userSettings(userSettings), m_systemSettings(systemSettings), m_layout(new QGraphicsLinearLayout(Qt::Vertical, this)), m_connectionLayout(new QGraphicsLinearLayout(Qt::Vertical))
+
 {
-    m_layout = new QGraphicsLinearLayout(Qt::Vertical, this);
+    m_layout->addItem(m_connectionLayout);
     setLayout(m_layout);
 }
 
@@ -43,8 +44,6 @@ void ConnectionList::init()
 {
     // adds items from subclasses above our layout
     setupHeader();
-    m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical);
-    m_layout->addItem(m_connectionLayout);
     // create a connectionItem for each appropriate connection
     addSettingsService(m_userSettings);
     addSettingsService(m_systemSettings);
