@@ -17,6 +17,7 @@ Name=OpenVPN
 Comment=OpenVPN plugin
 Comment[el]=πρόσθετο OpenVPN
 Comment[fr]=Module OpenVPN
+Comment[gl]=Extensión de OpenVPN
 Comment[pt]='Plugin' do OpenVPN
 Comment[pt_BR]='Plugin' do OpenVPN
 Comment[sv]=Insticksprogram för OpenVPN
