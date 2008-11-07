@@ -125,6 +125,9 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         WirelessInterfaceItem * wi = 0;
         SerialInterfaceItem * si = 0;
         ConnectionInspector * inspector = 0;
+        if (iface->type() != m_type) {
+            return;
+        }
         switch (iface->type()) {
             case Solid::Control::NetworkInterface::Ieee80211:
                 wi = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
@@ -216,6 +219,9 @@ Solid::Control::NetworkInterface::Type InterfaceGroup::interfaceType() const
 
 void InterfaceGroup::interfaceAdded(const QString& uni)
 {
+    if (m_interfaces.keys().contains(uni)) {
+        return;
+    }
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
     KNotification::event(Event::HwAdded, i18nc("Notification for hardware added", "Network interface %1 attached", iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
