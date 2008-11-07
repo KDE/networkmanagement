@@ -92,7 +92,9 @@ void WirelessNetworkMerged::onStrengthChanged(const QString &, int strength)
         d->reference = network;
         emit strengthChanged(d->reference->ssid(), strength);
     } else {
-        if (strength > d->reference->strength()) {
+        if (network == d->reference) {
+            emit strengthChanged(d->reference->ssid(), strength);
+        } else if (strength > d->reference->strength()) {
             d->reference = network;
             emit strengthChanged(d->reference->ssid(), strength);
         }

@@ -55,12 +55,11 @@ private slots:
     void setStrength(QString ssid, int strength);
 private:
     void readSettings();
-    Plasma::Meter * m_strengthMeter;
-    Plasma::IconWidget * m_connectButton;
-    QString m_security;
-    Plasma::IconWidget * m_securityIcon;
-    QString m_securityIconName;
     AbstractWirelessNetwork * m_wirelessNetwork;
+    Plasma::Meter * m_strengthMeter;
+    Plasma::IconWidget * m_securityIcon;
+    QString m_security;
+    QString m_securityIconName;
     QString m_ssid;
     int m_strength;
 };

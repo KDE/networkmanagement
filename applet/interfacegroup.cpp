@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfacegroup.h"
 
 #include <NetworkManager.h>
+#include <nm-setting-wireless.h>
 
 #include <QGraphicsLinearLayout>
 #include <KDebug>
@@ -198,17 +199,26 @@ bool InterfaceGroup::accept(RemoteConnection * conn) const
 
 ConnectionItem * InterfaceGroup::createItem(RemoteConnection* connection)
 {
-    ConnectionItem * ci;
+    ConnectionItem * ci = 0;
     if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
-        WirelessConnectionItem * wi = new WirelessConnectionItem(connection, this);
-        ci = wi;
-        if (m_wirelessEnvironment) {
-            wi->setNetwork(m_wirelessEnvironment->findNetwork(wi->ssid()));
+        // get connection ssid.  In theory we know that the connection _has_ an ssid because the 
+        // WirelessConnectionInspector accepted it.
+        QVariantMapMap settings = connection->settings();
+        if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME))) {
+            QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME));
+            if (connectionSetting.contains(QLatin1String(NM_SETTING_WIRELESS_SSID))) {
+                QString ssid = connectionSetting.value(QLatin1String(NM_SETTING_WIRELESS_SSID)).toString();
+                WirelessConnectionItem * wi = new WirelessConnectionItem(connection, this);
+                ci = wi;
+                wi->setNetwork(m_wirelessEnvironment->findNetwork(ssid));
+            }
         }
     } else {
         ci = new ConnectionItem(connection, this);
     }
+    Q_ASSERT(ci);
     ci->setupItem();
+
     return ci;
 }
 
