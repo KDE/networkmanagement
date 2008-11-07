@@ -57,6 +57,9 @@ public Q_SLOTS:
     void activateConnection(const QString&);
     void deactivateConnection(const QString&);
 
+    /** Hack to update the layouts */
+    void updateLayout();
+
     /**
      * Update the popup and notify on device changes
      */
@@ -101,7 +104,6 @@ public Q_SLOTS:
      */
     void managerStatusChanged(Solid::Networking::Status);
 private:
-    void updateLayout();
     NetworkManagerSettings * m_userSettings;
     NetworkManagerSettings * m_systemSettings;
     QGraphicsLinearLayout * m_layout;

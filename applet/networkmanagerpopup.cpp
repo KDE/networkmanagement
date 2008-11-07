@@ -168,6 +168,10 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
             this, SLOT(activateConnection(const QString&)));
     QObject::connect(m_connectionDeactivationSignalMapper, SIGNAL(mapped(const QString&)),
             this, SLOT(deactivateConnection(const QString&)));
+
+
+    QObject::connect(m_ethernetGroup, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
+    QObject::connect(m_wifiGroup, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
     updateLayout();
 }
 
@@ -183,6 +187,8 @@ void NetworkManagerPopup::updateLayout()
     updateGeometry();
     resize(sizeHint(Qt::PreferredSize));
     setMinimumSize(sizeHint(Qt::MinimumSize));
+
+    kDebug() << "============================== LAYOUT UPDATED.";
 }
 
 void NetworkManagerPopup::managerWirelessEnabledChanged(bool enabled)
