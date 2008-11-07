@@ -1,6 +1,8 @@
 include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../libs/dbus
    )
 
+add_subdirectory(pics)
+
 set(networkmanager_SRCS
     abstractconnectableitem.cpp
     connectionitem.cpp

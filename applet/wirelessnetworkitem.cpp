@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsGridLayout>
 
 #include <KGlobalSettings>
+#include <KIconLoader>
 
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
@@ -76,7 +77,7 @@ void WirelessNetworkItem::setupItem()
     // TODO: security symbol
 
     m_icon = new Plasma::IconWidget(this);
-    m_icon->setIcon("network-wireless");
+    m_icon->setIcon(SmallIcon("accesspoint"));
     m_icon->setMinimumHeight(rowHeight);
     m_icon->setMaximumHeight(rowHeight);
     m_layout->addItem(m_icon, 0, 0, 1, 1 );
