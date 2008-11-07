@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessenvironment.h"
 
+#include <QMutableHashIterator>
+
 #include <KDebug>
 #include <KNotification>
 #include <KLocale>
@@ -70,13 +72,13 @@ WirelessEnvironment::~WirelessEnvironment()
     delete d_ptr;
 }
 
-QStringList WirelessEnvironment::wirelessNetworks() const
+QStringList WirelessEnvironment::networks() const
 {
     Q_D(const WirelessEnvironment);
     return d->networks.keys();
 }
 
-AbstractWirelessNetwork * WirelessEnvironment::findWirelessNetwork(const QString & ssid) const
+AbstractWirelessNetwork * WirelessEnvironment::findNetwork(const QString & ssid) const
 {
     Q_D(const WirelessEnvironment);
     WirelessNetwork * net = 0;
@@ -103,124 +105,35 @@ void WirelessEnvironment::accessPointAppearedInternal(const QString &uni)
     } else if (!d->networks.contains(ssid)) {
         WirelessNetwork * net = new WirelessNetwork(ap, d->iface, 0);
         d->networks.insert(ssid, net);
-        //connect(net, SIGNAL(strengthChanged(const
-        connect(net, SIGNAL(disappeared(const QString&)), SLOT(networkDisappeared(const QString&)));
-        emit wirelessNetworkAppeared(ssid);
+        connect(net, SIGNAL(noAccessPoints(const QString&)), SLOT(removeNetwork(const QString&)));
+        emit networkAppeared(ssid);
     }
 }
 
-void WirelessEnvironment::networkDisappeared(const QString &ssid)
+void WirelessEnvironment::removeNetwork(const QString &ssid)
 {
     Q_D(WirelessEnvironment);
     kDebug() << ssid;
-    WirelessNetwork * net = d->networks.take(ssid);
-    delete net;
-    emit wirelessNetworkDisappeared(ssid);
+    WirelessNetwork * net = d->networks.value(ssid);
+    if ( net ) {
+        emit networkDisappeared(ssid);
+        delete net;
+    }
 }
 
 void WirelessEnvironment::wirelessEnabledChanged(bool enabled)
 {
     Q_D(WirelessEnvironment);
     if (!enabled) {
-        foreach (WirelessNetwork * network, d->networks) {
-            emit wirelessNetworkDisappeared(network->ssid());
-            delete network;
+        QMutableHashIterator<QString, WirelessNetwork*> i (d->networks);
+        while (i.hasNext()) {
+            i.next();
+            QString deletedSsid = i.key();
+            delete i.value();
+            i.remove();
+            emit networkDisappeared(deletedSsid);
         }
     }
-}
-
-class WirelessEnvironmentMergedPrivate
-{
-public:
-    QList<WirelessEnvironment*> environments;
-    QHash<QString, WirelessNetworkMerged*> networks;
-};
-
-WirelessEnvironmentMerged::WirelessEnvironmentMerged(QObject * parent)
-    : AbstractWirelessEnvironment(parent), d_ptr(new WirelessEnvironmentMergedPrivate)
-{
-
-}
-
-WirelessEnvironmentMerged::~WirelessEnvironmentMerged()
-{
-    delete d_ptr;
-}
-
-QStringList WirelessEnvironmentMerged::wirelessNetworks() const
-{
-    Q_D(const WirelessEnvironmentMerged);
-    return d->networks.keys();
-}
-
-AbstractWirelessNetwork * WirelessEnvironmentMerged::findWirelessNetwork(const QString &ssid) const
-{
-    Q_D(const WirelessEnvironmentMerged);
-    return d->networks.value(ssid);
-}
-
-void WirelessEnvironmentMerged::addWirelessEnvironment(WirelessEnvironment * wEnv)
-{
-    Q_D(WirelessEnvironmentMerged);
-    d->environments.append(wEnv);
-
-    foreach (QString ssid, wEnv->wirelessNetworks()) {
-        addWirelessNetworkInternal(qobject_cast<WirelessNetwork*>(wEnv->findWirelessNetwork(ssid)));
-    }
-
-    // connect signals
-    connect(wEnv, SIGNAL(wirelessNetworkAppeared(const QString&)),
-            SLOT(onWirelessNetworkAppeared(const QString&)));
-    connect(wEnv, SIGNAL(destroyed(QObject*)),
-            SLOT(onWirelessEnvironmentDestroyed(QObject*)));
-}
-
-// TODO make slots on our Private object
-void WirelessEnvironmentMerged::onWirelessEnvironmentDestroyed(QObject * obj)
-{
-    Q_D(WirelessEnvironmentMerged);
-    d->environments.removeAll(qobject_cast<WirelessEnvironment*>(obj));
-}
-
-void WirelessEnvironmentMerged::onWirelessNetworkAppeared(const QString &ssid)
-{
-    Q_D(WirelessEnvironmentMerged);
-    WirelessEnvironment * sourceEnvt = qobject_cast<WirelessEnvironment*>(sender());
-    if (sourceEnvt) {
-        WirelessNetwork * newNetwork = qobject_cast<WirelessNetwork*>(sourceEnvt->findWirelessNetwork(ssid));
-        WirelessNetworkMerged * ourNetwork = d->networks.value(ssid);
-        if (ourNetwork) {
-            ourNetwork->addWirelessNetworkInternal(newNetwork);
-        } else {
-            addWirelessNetworkInternal(newNetwork, false);
-        }
-    }
-}
-
-void WirelessEnvironmentMerged::addWirelessNetworkInternal(WirelessNetwork * newNetwork, bool quietly)
-{
-    Q_D(WirelessEnvironmentMerged);
-    WirelessNetworkMerged * ourNetwork = new WirelessNetworkMerged(newNetwork, this);
-    QString ssid = ourNetwork->ssid();
-    d->networks.insert(ssid, ourNetwork);
-
-    connect(ourNetwork, SIGNAL(disappeared(const QString&)),
-            SLOT(onWirelessNetworkDisappeared(const QString&)));
-
-
-    if (!quietly) {
-        KNotification::event(Event::NetworkAppeared, i18nc("Notification text when a wireless network interface was found","Wireless network %1 found", ssid), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
-    }
-
-    emit wirelessNetworkAppeared(ssid);
-}
-
-void WirelessEnvironmentMerged::onWirelessNetworkDisappeared(const QString &ssid)
-{
-    Q_D(WirelessEnvironmentMerged);
-    delete d->networks.take(ssid);
-    KNotification::event(Event::NetworkDisappeared, i18nc("Notification text when a wireless network interface disappeared","Wireless network %1 disappeared", ssid), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
-    emit wirelessNetworkDisappeared(ssid);
 }
 
 // vim: sw=4 sts=4 et tw=100

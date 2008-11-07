@@ -42,6 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessinterfaceitem.h"
 #include "wirelessenvironment.h"
 #include "wirelessnetworkitem.h"
+#include "mergedwireless.h"
 
 #define MAX_WLANS 3
 
@@ -50,8 +51,8 @@ bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWir
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
 : ConnectionList(userSettings, systemSettings, parent), m_type(type), m_wirelessEnvironment(new WirelessEnvironmentMerged(this)), m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical)), m_networkLayout(new QGraphicsLinearLayout(Qt::Vertical))
 {
-    connect(m_wirelessEnvironment, SIGNAL(wirelessNetworkAppeared(const QString&)), SLOT(wirelessNetworkAppeared(const QString&)));
-    connect(m_wirelessEnvironment, SIGNAL(wirelessNetworkDisappeared(const QString&)), SLOT(wirelessNetworkDisappeared(const QString&)));
+    connect(m_wirelessEnvironment, SIGNAL(networkAppeared(const QString&)), SLOT(wirelessNetworkAppeared(const QString&)));
+    connect(m_wirelessEnvironment, SIGNAL(networkDisappeared(const QString&)), SLOT(wirelessNetworkDisappeared(const QString&)));
 }
 
 InterfaceGroup::~InterfaceGroup()
@@ -83,7 +84,7 @@ void InterfaceGroup::setupHeader()
 
 void InterfaceGroup::setupFooter()
 {
-    foreach (QString ssid, m_wirelessEnvironment->wirelessNetworks()) {
+    foreach (QString ssid, m_wirelessEnvironment->networks()) {
         addNetworkInternal(ssid);
     }
     updateWirelessNetworkLayout();
@@ -168,7 +169,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
 void InterfaceGroup::addNetworkInternal(const QString & ssid)
 {
     if (!m_networks.contains(ssid)) {
-        AbstractWirelessNetwork * net = m_wirelessEnvironment->findWirelessNetwork(ssid);
+        AbstractWirelessNetwork * net = m_wirelessEnvironment->findNetwork(ssid);
         WirelessNetworkItem * netItem = new WirelessNetworkItem(net, this);
         netItem->setupItem();
         m_networks.insert(ssid, netItem);
@@ -198,7 +199,7 @@ ConnectionItem * InterfaceGroup::createItem(RemoteConnection* connection)
         WirelessConnectionItem * wi = new WirelessConnectionItem(connection, this);
         ci = wi;
         if (m_wirelessEnvironment) {
-            wi->setNetwork(m_wirelessEnvironment->findWirelessNetwork(wi->ssid()));
+            wi->setNetwork(m_wirelessEnvironment->findNetwork(wi->ssid()));
         }
     } else {
         ci = new ConnectionItem(connection, this);

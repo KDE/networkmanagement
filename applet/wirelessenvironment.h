@@ -33,11 +33,11 @@ Q_OBJECT
 public:
     AbstractWirelessEnvironment(QObject *parent);
     virtual ~AbstractWirelessEnvironment();
-    virtual QStringList wirelessNetworks() const = 0;
-    virtual AbstractWirelessNetwork * findWirelessNetwork(const QString&) const = 0;
+    virtual QStringList networks() const = 0;
+    virtual AbstractWirelessNetwork * findNetwork(const QString&) const = 0;
 Q_SIGNALS:
-    virtual void wirelessNetworkAppeared(const QString&);
-    virtual void wirelessNetworkDisappeared(const QString&);
+    virtual void networkAppeared(const QString&);
+    virtual void networkDisappeared(const QString&);
 };
 
 /**
@@ -52,42 +52,16 @@ public:
     WirelessEnvironment(Solid::Control::WirelessNetworkInterface * iface, QObject * parent = 0);
     virtual ~WirelessEnvironment();
     //virtual QList<Solid::Control::WirelessNetworkInterface*> interfaces() const;
-    virtual QStringList wirelessNetworks() const;
-    virtual AbstractWirelessNetwork * findWirelessNetwork(const QString&) const;
+    virtual QStringList networks() const;
+    virtual AbstractWirelessNetwork * findNetwork(const QString&) const;
 protected Q_SLOTS:
     void accessPointAppeared(const QString&);
-    void networkDisappeared(const QString&);
+    void removeNetwork(const QString&);
     void wirelessEnabledChanged(bool);
 private:
     void accessPointAppearedInternal(const QString&);
 protected:
     WirelessEnvironmentPrivate * const d_ptr;
 };
-
-class WirelessEnvironmentMergedPrivate;
-/**
- * Models the net wireless environment visible to the entire system as the sum of the all the
- * wireless environments of all the wireless interfaces
- */
-class WirelessEnvironmentMerged : public AbstractWirelessEnvironment
-{
-Q_OBJECT
-Q_DECLARE_PRIVATE(WirelessEnvironmentMerged)
-public:
-    WirelessEnvironmentMerged(QObject * parent = 0);
-    virtual ~WirelessEnvironmentMerged();
-    QStringList wirelessNetworks() const;
-    virtual AbstractWirelessNetwork * findWirelessNetwork(const QString&) const;
-    void addWirelessEnvironment(WirelessEnvironment * wEnv);
-protected Q_SLOTS:
-    void onWirelessEnvironmentDestroyed(QObject*);
-    void onWirelessNetworkAppeared(const QString&);
-    void onWirelessNetworkDisappeared(const QString&);
-private:
-    void addWirelessNetworkInternal(WirelessNetwork* network, bool quietly = false);
-protected:
-    WirelessEnvironmentMergedPrivate * const d_ptr;
-};
-
 
 #endif // WIRELESSENVIRONMENT_H
