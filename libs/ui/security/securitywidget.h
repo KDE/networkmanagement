@@ -36,6 +36,7 @@ public:
     virtual void readConfig() = 0;
     virtual void writeConfig() = 0;
     virtual QVariantMap secrets() const = 0;
+    virtual bool validate() const = 0;
 protected:
     QString m_connectionId;
 };

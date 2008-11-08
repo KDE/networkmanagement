@@ -55,6 +55,10 @@ public:
      * The configuration management object belonging to this widget
      */
     ConfigXml * configXml() const;
+    /** 
+     * Check that the settings in this widget are valid
+     */
+    virtual bool validate() const = 0;
 protected:
     /**
      * Setup ConfigXml for this widget
