@@ -37,9 +37,10 @@ class Wireless80211Widget::Private
     Ui_Wireless80211Config ui;
 };
 
-Wireless80211Widget::Wireless80211Widget(const QString& connectionId, QWidget * parent) : SettingWidget(connectionId, parent), d(new Wireless80211Widget::Private)
+Wireless80211Widget::Wireless80211Widget(const QString& connectionId, const QString &ssid, uint caps, uint wpa, uint rsn, QWidget * parent) : SettingWidget(connectionId, parent), d(new Wireless80211Widget::Private)
 {
     d->ui.setupUi(this);
+    d->ui.kcfg_ssid->setText(ssid);
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
     init();
 }

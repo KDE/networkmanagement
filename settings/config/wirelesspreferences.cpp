@@ -24,6 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFile>
 
 #include <KPluginFactory>
+#include <KDebug>
 #include <KTabWidget>
 
 #include "configxml.h"
@@ -39,13 +40,26 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 WirelessPreferences::WirelessPreferences(QWidget *parent, const QVariantList &args)
 : ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
-    Q_ASSERT(args.count() == 1);
+    // at least 1
+    Q_ASSERT(args.count());
+
     QString connectionId = args[0].toString();
     m_connectionType = "Wireless";
+
+    QString ssid;
+    uint caps = 0, wpa = 0, rsn = 0;
+    if (args.count() == 6) {
+        ssid = args[2].toString();
+        caps = args[3].toUInt();
+        wpa = args[4].toUInt();
+        rsn = args[5].toUInt();
+        kDebug() << "SSID:" << ssid << "CAPS:" << caps << "WPA:" << wpa << "RSN:" << rsn;
+    }
+
     QVBoxLayout * layout = new QVBoxLayout(this);
     m_contents = new ConnectionWidget(connectionId, this);
     layout->addWidget(m_contents);
-    m_connectionTypeWidget = new Wireless80211Widget(connectionId, this);
+    m_connectionTypeWidget = new Wireless80211Widget(connectionId, ssid, caps, wpa, rsn, this);
     Wireless80211SecurityWidget * wirelessSecurityWidget = new Wireless80211SecurityWidget(connectionId, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(connectionId, this);
     // Must setup initial widget first
