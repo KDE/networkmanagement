@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KIcon>
 #include <KIconLoader>
+#include <KToolInvocation>
 
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
@@ -68,6 +69,8 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
     m_popup = new NetworkManagerPopup(this);
+    QObject::connect(m_popup, SIGNAL(manageConnections()),
+            this, SLOT(manageConnections()));
 }
 
 NetworkManagerApplet::~NetworkManagerApplet()
@@ -392,6 +395,16 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
         }
     return lessThan;
 }
+
+void NetworkManagerApplet::manageConnections()
+{
+    kDebug() << "opening connection management dialog";
+    QStringList args;
+    args << "kcm_knetworkmanager";
+    KToolInvocation::kdeinitExec("kcmshell4", args);
+    hidePopup();
+}
+
 
 #if KDE_IS_VERSION(4,1,70)
 #else

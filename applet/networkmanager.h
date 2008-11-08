@@ -68,6 +68,7 @@ private Q_SLOTS:
     void networkInterfaceAdded(const QString&);
     void networkInterfaceRemoved(const QString&);
     void interfaceConnectionStateChanged();
+    void manageConnections();
 private:
     void updateToolTip();
     void paintInterfaceStatus(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);

@@ -39,7 +39,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KNotification>
 #include <KPushButton>
-#include <KToolInvocation>
 
 #include <Plasma/CheckBox>
 #include <Plasma/Label>
@@ -83,17 +82,22 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
         ;//m_notRunning->hide();
     }
     m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
+    m_userSettings->setObjectName("user-settings-service");
     m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
+    m_systemSettings->setObjectName("system-settings-service");
 
     m_ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, this);
+    m_ethernetGroup->setObjectName("ethernet-interface-group");
     m_ethernetGroup->init();
     m_connectionLayout->addItem(m_ethernetGroup);
 
     Plasma::Label * wirelessHeader = new Plasma::Label(this);
     wirelessHeader->setText(i18nc("Label for wifi networks in popup","Wireless Networks"));
     m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, this);
+    m_wifiGroup->setObjectName("wifi-interface-group");
     m_wifiGroup->init();
     m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
+    m_gsmGroup->setObjectName("gsm-interface-group");
     m_gsmGroup->init();
 
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
@@ -101,10 +105,11 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     Plasma::Label * vpnHeader = new Plasma::Label(this);
     vpnHeader->setText(i18nc("Label for vpn connections in popup","VPN Connections"));
     VpnConnectionGroup * vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
+    vpnGroup->setObjectName("vpn-interface-group");
     vpnGroup->init();
     m_connectionLayout->addItem(wirelessHeader);
 
-    m_connectionLayout->setItemSpacing(1, 30);
+    //m_connectionLayout->setItemSpacing(1, 30);
     m_connectionLayout->addItem(m_wifiGroup);
     m_connectionLayout->addItem(m_gsmGroup);
     m_connectionLayout->addItem(vpnHeader);
@@ -159,7 +164,7 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     //QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
     //        this, SLOT(networkInterfaceRemoved(const QString&)));
     QObject::connect(m_btnManageConnections, SIGNAL(clicked()),
-            this, SLOT(manageConnections()));
+            this, SIGNAL(manageConnections()));
     //QObject::connect(m_btnEnableNetworking, SIGNAL(toggled(bool)),
     //        this, SLOT(userNetworkingEnabledChanged(bool)));
     QObject::connect(m_btnEnableWireless, SIGNAL(toggled(bool)),
@@ -218,14 +223,6 @@ void NetworkManagerPopup::userWirelessEnabledChanged(bool enabled)
 {
     kDebug() << enabled;
     Solid::Control::NetworkManager::setWirelessEnabled(enabled);
-}
-
-void NetworkManagerPopup::manageConnections()
-{
-    kDebug() << "opening connection management dialog";
-    QStringList args;
-    args << "kcm_knetworkmanager";
-    KToolInvocation::kdeinitExec("kcmshell4", args);
 }
 
 void NetworkManagerPopup::activateConnection(const QString& connection)

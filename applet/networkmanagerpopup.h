@@ -96,13 +96,14 @@ public Q_SLOTS:
      */
     void userWirelessEnabledChanged(bool);
     /**
-     * Show our KCModule
-     */
-    void manageConnections();
-    /**
      * React to manager status changes
      */
     void managerStatusChanged(Solid::Networking::Status);
+signals:
+    /**
+     * Tell the applet to show our KCModule
+     */
+    void manageConnections();
 private:
     NetworkManagerSettings * m_userSettings;
     NetworkManagerSettings * m_systemSettings;
