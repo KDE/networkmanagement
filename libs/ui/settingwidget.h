@@ -58,7 +58,7 @@ public:
     /** 
      * Check that the settings in this widget are valid
      */
-    virtual bool validate() const = 0;
+    virtual bool validate() const;
 protected:
     /**
      * Setup ConfigXml for this widget
