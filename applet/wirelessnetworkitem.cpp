@@ -126,7 +126,7 @@ AbstractWirelessNetwork * WirelessNetworkItem::net() const
 void WirelessNetworkItem::setStrength(QString ssid, int strength)
 {
     Q_UNUSED(ssid);
-    kDebug() << ssid << "signal strength changed to " << strength;
+    //kDebug() << ssid << "signal strength changed to " << strength;
     if (strength == m_strength) {
         return;
     }

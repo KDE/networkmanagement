@@ -241,7 +241,6 @@ void InterfaceItem::activeConnectionsChanged()
                 // this device is using the connection
                 serviceName = candidate.serviceName();
                 connectionObjectPath = candidate.connection();
-
                 NetworkManagerSettings * service = 0;
                 if (serviceName == NM_DBUS_SERVICE_USER_SETTINGS) {
                     service = m_userSettings;
@@ -251,8 +250,15 @@ void InterfaceItem::activeConnectionsChanged()
                 }
                 if (service && service->isValid()) { // it's possible that the service is no longer running
                                                      // but provided a connection in the past
+                    kDebug() << "looking up connection" << connectionObjectPath.path() << "on" << service->objectName();
                     RemoteConnection * connection = service->findConnection(connectionObjectPath.path());
-                    newConnectionList.append(QPair<QDBusObjectPath, RemoteConnection*>(connectionObjectPath, connection));
+                    if (connection) {
+                        kDebug() << "found it";
+                        newConnectionList.append(QPair<QDBusObjectPath, RemoteConnection*>(
+                                    connectionObjectPath, connection));
+                    } else {
+                        kDebug() << "not found";
+                    }
                 }
             }
         }
@@ -269,7 +275,6 @@ void InterfaceItem::connectionStateChanged(int state)
     // check if any of them affect our interface
     // setActiveConnection on ourself
 
-    // if this connection is not there is an active connection on this interface
     switch (state) {
         case Solid::Control::NetworkInterface::Unavailable:
             setUnavailable();

@@ -49,6 +49,7 @@ void ConnectionList::init()
     addSettingsService(m_systemSettings);
     // adds items from subclasses below our layout
     setupFooter();
+    m_layout->addStretch(5);
 }
 
 void ConnectionList::addSettingsService(NetworkManagerSettings * service)
@@ -56,15 +57,17 @@ void ConnectionList::addSettingsService(NetworkManagerSettings * service)
     connect(service, SIGNAL(connectionAdded(NetworkManagerSettings *, const QString&)), SLOT(connectionAddedToService(NetworkManagerSettings *, const QString&)));
     connect(service, SIGNAL(connectionRemoved(NetworkManagerSettings *, const QString&)), SLOT(connectionRemovedFromService(NetworkManagerSettings *, const QString&)));
     //connect(service, SIGNAL(connectionUpdated(NetworkManagerSettings *, const QString&);
-    connect(service, SIGNAL(appeared(NetworkManagerSettings*)), SLOT(serviceAppeared(NetworkManagerSettings*)));
+    connect(service, SIGNAL(appeared(NetworkManagerSettings*)), SLOT(assessConnections(NetworkManagerSettings*)));
     connect(service, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(serviceDisappeared(NetworkManagerSettings*)));
-    serviceAppeared(service);
+
+    assessConnections(service);
 }
 
 
-void ConnectionList::serviceAppeared(NetworkManagerSettings * service)
+void ConnectionList::assessConnections(NetworkManagerSettings * service)
 {
     if (service->isValid()) {
+        kDebug() << service->objectName() << "has connections" << service->connections();
         foreach (QString connectionPath, service->connections() ) {
             processConnection(service, connectionPath);
         }
@@ -97,14 +100,19 @@ void ConnectionList::processConnection(NetworkManagerSettings * service, const Q
             m_connectionLayout->removeItem(connection);
             m_connections.remove(key);
             delete connection;
+            m_connectionLayout->invalidate();
+            m_layout->invalidate();
         }
     } else {
         RemoteConnection * remoteConnection = service->findConnection(connectionPath);
         if (accept(remoteConnection)) {
+            kDebug() << "adding connection" << connectionPath << "from" << service->objectName();
             ConnectionItem * ci = createItem(remoteConnection);
             connect(ci, SIGNAL(clicked(AbstractConnectableItem*)), SLOT(activateConnection(AbstractConnectableItem*)));
             m_connections.insert(key, ci);
             m_connectionLayout->addItem(ci);
+            m_connectionLayout->invalidate();
+            m_layout->invalidate();
         }
     }
 }
@@ -138,8 +146,8 @@ void ConnectionList::reassess()
 {
     // this will try and add all connections on both services
     // duplicates are rejected
-    serviceAppeared(m_userSettings);
-    serviceAppeared(m_systemSettings);
+    assessConnections(m_userSettings);
+    assessConnections(m_systemSettings);
 }
 
 // vim: sw=4 sts=4 et tw=100

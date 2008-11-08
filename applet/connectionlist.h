@@ -63,7 +63,7 @@ public Q_SLOTS:
     virtual void activateConnection(AbstractConnectableItem*) = 0;
     void connectionAddedToService(NetworkManagerSettings *, const QString&);
     void connectionRemovedFromService(NetworkManagerSettings *, const QString&);
-    void serviceAppeared(NetworkManagerSettings*);
+    void assessConnections(NetworkManagerSettings*);
     void serviceDisappeared(NetworkManagerSettings*);
 
 protected:
