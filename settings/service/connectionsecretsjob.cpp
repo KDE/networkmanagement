@@ -212,7 +212,7 @@ void ConnectionSecretsJob::dialogAccepted()
         mSecrets.insert(i.key(), i.value());
     }
     kDebug() << "returning merged secrets:" << mSecrets;
-    if (!mSecrets.isEmpty()) {
+    if (mSecrets.isEmpty()) {
         kDebug() << "SECRETS ARE EMPTY";
         setError(UserInputCancelled);
     }
