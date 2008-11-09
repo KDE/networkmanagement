@@ -48,45 +48,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_connectionInspector(0)
 {
-#if 0 // this layouts pretty badly, esp where labels and icons share a horizontal layout
-    // main layout
-    m_layout = new QGraphicsLinearLayout(Qt::Horizontal, this);
-    //   icon on left
-    m_icon = new Plasma::IconWidget(this);
-    m_icon->setIcon("network-wireless");
-    //   vertical stack of info in middle
-    m_infoLayout = new QGraphicsLinearLayout(Qt::Vertical, 0);
-    //     interface layout
-    m_ifaceNameLabel = new Plasma::Label(this);
-    m_ifaceNameLabel->setText(QString::fromLatin1("<b>%1</b>").arg(m_iface->interfaceName()));
-    //     active connection name
-    m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText(i18n("Active connection name"));
-    //     connection info
-    m_connectionInfoLayout = new QGraphicsLinearLayout(Qt::Horizontal, 0);
-    //       IP address
-    m_connectionInfoLabel = new Plasma::Label(this);
-    m_connectionInfoLabel->setText("192.168.0.8");
-    //       signal strength
-    m_connectionInfoStrengthLabel = new Plasma::Label(this);
-    m_connectionInfoStrengthLabel->setText("101%");
-    //       security
-    m_connectionInfoIcon = new Plasma::IconWidget(this);
-    m_connectionInfoIcon->setIcon("system-lock-screen");
-    m_connectionInfoLayout->addItem(m_connectionInfoStrengthLabel);
-    m_connectionInfoLayout->addItem(m_connectionInfoIcon);
-    m_infoLayout->addItem(m_ifaceNameLabel);
-    m_infoLayout->addItem(m_connectionNameLabel);
-    m_infoLayout->addItem(m_connectionInfoLabel);
-    m_infoLayout->addItem(m_connectionInfoLayout);
-    // connect button at right
-    m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setIcon("media-playback-start");
-    m_layout->addItem(m_icon);
-    m_layout->addItem(m_infoLayout);
-    m_layout->addItem(m_connectButton);
-    setLayout(m_layout);
-#else
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
     m_layout->setHorizontalSpacing(8);
@@ -171,7 +132,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectButton->setMaximumHeight(24);
     //m_connectButton->setIcon("media-playback-start");
     m_layout->addItem(m_connectButton, 0, 2, 1, 1);
-#endif
+
     connect(Solid::Control::NetworkManager::notifier(),
             SIGNAL(activeConnectionsChanged()),
             SLOT(activeConnectionsChanged()));
