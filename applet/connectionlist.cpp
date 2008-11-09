@@ -64,14 +64,16 @@ void ConnectionList::addSettingsService(NetworkManagerSettings * service)
 }
 
 
-void ConnectionList::assessConnections(NetworkManagerSettings * service)
+bool ConnectionList::assessConnections(NetworkManagerSettings * service)
 {
+    bool added = false;
     if (service->isValid()) {
         kDebug() << service->objectName() << "has connections" << service->connections();
         foreach (QString connectionPath, service->connections() ) {
-            processConnection(service, connectionPath);
+            added |= processConnection(service, connectionPath);
         }
     }
+    return added;
 }
 
 void ConnectionList::serviceDisappeared(NetworkManagerSettings* settings)
@@ -90,8 +92,9 @@ void ConnectionList::serviceDisappeared(NetworkManagerSettings* settings)
     }
 }
 
-void ConnectionList::processConnection(NetworkManagerSettings * service, const QString& connectionPath)
+bool ConnectionList::processConnection(NetworkManagerSettings * service, const QString& connectionPath)
 {
+    bool changed = false;
     QPair<QString,QString> key(service->service(), connectionPath);
     if (m_connections.contains(key)) {
         ConnectionItem * connection = m_connections.value(key);
@@ -102,6 +105,7 @@ void ConnectionList::processConnection(NetworkManagerSettings * service, const Q
             delete connection;
             m_connectionLayout->invalidate();
             m_layout->invalidate();
+            changed = true;
         }
     } else {
         RemoteConnection * remoteConnection = service->findConnection(connectionPath);
@@ -113,13 +117,17 @@ void ConnectionList::processConnection(NetworkManagerSettings * service, const Q
             m_connectionLayout->addItem(ci);
             m_connectionLayout->invalidate();
             m_layout->invalidate();
+            changed = true;
         }
     }
+    return changed;
 }
 
 void ConnectionList::connectionAddedToService(NetworkManagerSettings * service, const QString& connectionPath)
 {
-    processConnection(service, connectionPath);
+    if ( processConnection(service, connectionPath) ) {
+        emit connectionListUpdated();
+    }
 }
 
 void ConnectionList::connectionRemovedFromService(NetworkManagerSettings * service, const QString& connectionPath)
@@ -131,6 +139,7 @@ void ConnectionList::connectionRemovedFromService(NetworkManagerSettings * servi
         m_connectionLayout->removeItem(item);
         m_connections.remove(key);
         delete item;
+        emit connectionListUpdated();
     }
 }
 
@@ -146,8 +155,12 @@ void ConnectionList::reassess()
 {
     // this will try and add all connections on both services
     // duplicates are rejected
-    assessConnections(m_userSettings);
-    assessConnections(m_systemSettings);
+    bool changed = false;
+    changed |= assessConnections(m_userSettings);
+    changed |= assessConnections(m_systemSettings);
+    if (changed) {
+        emit connectionListUpdated();
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

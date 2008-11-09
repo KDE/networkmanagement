@@ -54,6 +54,7 @@ protected Q_SLOTS:
     virtual void interfaceRemoved(const QString&);
     // used to re-populate the list of wireless networks, if necessary
     void refreshConnectionsAndNetworks();
+    void updateNetworks();
 Q_SIGNALS:
     void updateLayout();
 
@@ -61,7 +62,6 @@ private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
     void addNetworkInternal(const QString &ssid);
     // we only show the top N strongest networks, this controls which are visible
-    void updateNetworks();
     QList<AbstractWirelessNetwork*> networksToShow();
     // reimplemented from ConnecitonList
     ConnectionItem * createItem(RemoteConnection* conn);

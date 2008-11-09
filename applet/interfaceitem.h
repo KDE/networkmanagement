@@ -67,6 +67,7 @@ public:
      */
     void setConnectionInspector(ConnectionInspector *);
     ConnectionInspector * connectionInspector() const;
+    uint activeConnectionCount() const;
 public slots:
     void activeConnectionsChanged();
     void connectionStateChanged(int);

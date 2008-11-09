@@ -58,16 +58,24 @@ public:
     virtual ConnectionItem * createItem(RemoteConnection * conn); // instantiate type-specific connectionitem
 public Q_SLOTS:
 
-// from IG
     void reassess();
     virtual void activateConnection(AbstractConnectableItem*) = 0;
     void connectionAddedToService(NetworkManagerSettings *, const QString&);
     void connectionRemovedFromService(NetworkManagerSettings *, const QString&);
-    void assessConnections(NetworkManagerSettings*);
+    /**
+     * examine all connections from this service 
+     * @return true if a connection was added
+     */
+    bool assessConnections(NetworkManagerSettings*);
     void serviceDisappeared(NetworkManagerSettings*);
-
+Q_SIGNALS:
+    void connectionListUpdated();
 protected:
-    void processConnection(NetworkManagerSettings * service, const QString& connectionPath); // check if already exists, accept() checks
+    /**
+     * examine a connection
+     * @return true if the connection was added to the list
+     */
+    bool processConnection(NetworkManagerSettings * service, const QString& connectionPath); // check if already exists, accept() checks
     NetworkManagerSettings * m_userSettings;
     NetworkManagerSettings * m_systemSettings;
     QGraphicsLinearLayout * m_layout;

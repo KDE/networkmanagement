@@ -346,6 +346,11 @@ void InterfaceItem::setActiveConnection(int state)
     setConnectionInfo();
 }
 
+uint InterfaceItem::activeConnectionCount() const
+{
+    return m_activeConnections.count();
+}
+
 void InterfaceItem::setConnectionInspector(ConnectionInspector * insp)
 {
     delete m_connectionInspector;
