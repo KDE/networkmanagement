@@ -51,18 +51,6 @@ bool Connection::hasSecrets() const
 void Connection::Update(QVariantMapMap updates)
 {
     kDebug();
-#if 0
-    foreach (const QString &key1, changedParameters.keys()) {
-        foreach (const QString &key2, changedParameters[key1].keys()) {
-            connectionMap[key1][key2] = changedParameters[key1][key2];
-        }
-        if (wired) {
-            wired->update(updates[NM_SETTING_WIRED_SETTING_NAME]);
-        }
-    }
-    /*if (updates.exists(NM_SETTING_WIRELESS_SETTING_NAME)) {
-    }*/
-#endif
 }
 
 void Connection::Delete()
@@ -73,7 +61,6 @@ void Connection::Delete()
 
 QVariantMapMap Connection::GetSettings() const
 {
-    kDebug();
     return mSettingsMap;
 }
 
