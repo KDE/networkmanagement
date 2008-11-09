@@ -187,6 +187,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     // set the state of our UI correctly
     connectionStateChanged(m_iface->connectionState());
     setLayout(m_layout);
+    m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    connect(m_userSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(serviceDisappeared(NetworkManagerSettings*)));
+    connect(m_systemSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(serviceDisappeared(NetworkManagerSettings*)));
 }
 
 InterfaceItem::~InterfaceItem()
@@ -228,7 +231,7 @@ void InterfaceItem::setConnectionInfo()
 void InterfaceItem::activeConnectionsChanged()
 {
     kDebug() << "updating active connection list for " << m_iface->uni();
-    QList<QPair<QDBusObjectPath, RemoteConnection*> > newConnectionList;
+    QList<ActiveConnectionPair > newConnectionList;
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
     QString serviceName;
     QDBusObjectPath connectionObjectPath;
@@ -254,8 +257,7 @@ void InterfaceItem::activeConnectionsChanged()
                     RemoteConnection * connection = service->findConnection(connectionObjectPath.path());
                     if (connection) {
                         kDebug() << "found it";
-                        newConnectionList.append(QPair<QDBusObjectPath, RemoteConnection*>(
-                                    connectionObjectPath, connection));
+                        newConnectionList.append(ActiveConnectionPair(service, connection));
                     } else {
                         kDebug() << "not found";
                     }
@@ -321,7 +323,7 @@ void InterfaceItem::connectButtonClicked()
         case Solid::Control::NetworkInterface::IPConfig:
         case Solid::Control::NetworkInterface::Activated: // deactivate active connections
             foreach ( ActiveConnectionPair connection, m_activeConnections) {
-                Solid::Control::NetworkManager::deactivateConnection(connection.first.path());
+                Solid::Control::NetworkManager::deactivateConnection(connection.second->path());
             }
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
@@ -354,6 +356,7 @@ void InterfaceItem::setActiveConnection(int state)
     m_connectButton->setEnabled(true);
     m_connectButton->setIcon("media-playback-stop");
     QStringList connectionIds;
+    kDebug();
     foreach (ActiveConnectionPair connection, m_activeConnections) {
         if (connection.second->isValid()) {
             //connection name
@@ -382,6 +385,18 @@ void InterfaceItem::setConnectionInspector(ConnectionInspector * insp)
 ConnectionInspector * InterfaceItem::connectionInspector() const
 {
     return m_connectionInspector;
+}
+
+void InterfaceItem::serviceDisappeared(NetworkManagerSettings* service)
+{
+    QMutableListIterator<ActiveConnectionPair> i(m_activeConnections);
+    while (i.hasNext()) {
+        i.next();
+        if (i.value().first == service) {
+            i.remove();
+        }
+    }
+    setConnectionInfo();
 }
 
 // vim: sw=4 sts=4 et tw=100

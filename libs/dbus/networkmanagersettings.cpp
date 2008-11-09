@@ -105,15 +105,24 @@ void NetworkManagerSettings::serviceOwnerChanged(const QString & changedService,
 {
     if (changedService == service()) {
         if (!oldOwner.isEmpty() && newOwner.isEmpty()) {
+            clearConnections();
             emit disappeared(this);
         } else if (oldOwner.isEmpty() && !newOwner.isEmpty()) {
             emit appeared(this);
         } else if (!oldOwner.isEmpty() && !newOwner.isEmpty()) {
+            clearConnections();
             emit disappeared(this);
             emit appeared(this);
         }
     }
 }
+
+void NetworkManagerSettings::clearConnections()
+{
+    qDeleteAll(m_connections.begin(), m_connections.end());
+    m_connections.clear();
+}
+
 #include "networkmanagersettings.moc"
 
 // vim: sw=4 sts=4 et tw=100
