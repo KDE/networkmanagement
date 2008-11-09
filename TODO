@@ -22,6 +22,10 @@ TODO CB:
 TODO WS:
 - SERVICE: Complete settings service
   * per-setting group helper class for complex settings, where needed for ipv4 config write
+    * take out hacks in Connection to hash WPA keys there
+    * take out hacks in KConfigToService to add groups needed by NM
+  * Signal updated connections on the bus when ours are edited
+  * Implement RemoveConnection
   * wireless security
     / WEP
     / WPA-PSK
@@ -34,7 +38,7 @@ TODO WS:
   . write LastUsed to knetworkmanagerrc on successful connection activation
     * Don't also write a Unix timestamp to the individual connection's file - read this from the main config file
     * Watch the active connections in the connection editor and update its UI contents
-
+  
 
 - CONFIG: Implement control module
   + Write a nice class to turn a QDateTime into "3 minutes ago", "5 hours ago" instead of using KLocale::formatDate(), or extend KLocale with formatDateRelative(QDateTime in, QDateTime relativeTo)
@@ -47,6 +51,8 @@ TODO WS:
   + Option to display system-provided connections and import them so they can be edited (probably depends on PolicyKit)
   . Show the ScanWidget from widgets developed by CB
   * Clean out wireless security settings when editing a connection and changing the wireless security type.
+  * Implement autoconnect
+  * Write helper binary that shows a WirelessPreferences and saves it
 
 - APPLET: Make sure system tray+engine does what we need
   * Popup menu
@@ -71,9 +77,9 @@ TODO WS:
          / VPN connections - group without interface.  Can be activated on single active connection
            or on the connection owning the default route.  Drag and drop to activate on another
            connection
-         * Remove connections that are active from the connection list, they are shown on the
+         / Remove connections that are active from the connection list, they are shown on the
            InterfaceItem
-         * Wireless interface groups should maintain a merged WirelessEnvironment for all interfaces' environments,
+         . Wireless interface groups should maintain a merged WirelessEnvironment for all interfaces' environments,
            for maintaining its appropriate connection list.
         / Disconnect button
     . Connection editor
@@ -81,7 +87,7 @@ TODO WS:
     * Disconnected toggle
     * Hardware wifi switch indicator
     + Adhoc network button
-  * Tooltips
+  . Tooltips
   / Show network status in tray icon
     % Option to have one icon per device, (like in Windows, hschaa's request)
     / Show network interface's status that is most important to the
