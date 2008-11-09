@@ -28,13 +28,16 @@ TODO WS:
   * Implement RemoveConnection
   * wireless security
     / WEP
-    / WPA-PSK
+    / WPA-PSK (needs extending with specific crypto alg options, and anything WPA2 requires)
     * LEAP
     * WPA-EAP
   + also for 802.1x
   . Create Connection.Secrets objects and do lazy secret loading. Change configxml classes to not read wallet on start
     . Show connection UI to get secrets on demand if the wallet does not contain them or if the
       daemon requested new secrets
+    * Add helper binary (like a mini-kcmshell) that InterfaceGroup can start if the kcm is not already running.
+      This should accept the same args as InterfaceGroup currently sends to kcmshell via dbus on the comand line,
+      show the appropriate connectionpreferences subclass and write the result out like connectioneditor does.
   . write LastUsed to knetworkmanagerrc on successful connection activation
     * Don't also write a Unix timestamp to the individual connection's file - read this from the main config file
     * Watch the active connections in the connection editor and update its UI contents
@@ -51,7 +54,7 @@ TODO WS:
   + Option to display system-provided connections and import them so they can be edited (probably depends on PolicyKit)
   . Show the ScanWidget from widgets developed by CB
   * Clean out wireless security settings when editing a connection and changing the wireless security type.
-  * Implement autoconnect
+  * Figure out why autoconnect is not working - it should be
   * Write helper binary that shows a WirelessPreferences and saves it
 
 - APPLET: Make sure system tray+engine does what we need
@@ -81,6 +84,8 @@ TODO WS:
            InterfaceItem
          . Wireless interface groups should maintain a merged WirelessEnvironment for all interfaces' environments,
            for maintaining its appropriate connection list.
+         / Wireless network items for unconfigured networks that launch the connection editor
+           * Show correct wireless security for the AP
         / Disconnect button
     . Connection editor
     / Flight mode toggle
@@ -96,4 +101,5 @@ TODO WS:
 
    
 - Update Solid
+  * Pass the reason arg in org.freedesktop.NetworkManager.Device.StateChanged through, so the applet can use it for error reporting
   % Implement ModemManager (after NM 0.7.0 is released) and new VPNManager, if appropriate, in Solid, else in applet
