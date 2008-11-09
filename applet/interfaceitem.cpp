@@ -136,6 +136,15 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     connect(Solid::Control::NetworkManager::notifier(),
             SIGNAL(activeConnectionsChanged()),
             SLOT(activeConnectionsChanged()));
+    // Since we don't keep the connection identifiers around, and the RemoteConnections
+    // we hold are invalid when this signal is emitted, we rebuild the active connection
+    // list from scratch
+    connect(m_userSettings,
+            SIGNAL(connectionRemoved(NetworkManagerSettings *, const QString&)),
+            SLOT(activeConnectionsChanged()));
+    connect(m_systemSettings,
+            SIGNAL(connectionRemoved(NetworkManagerSettings *, const QString&)),
+            SLOT(activeConnectionsChanged()));
     connect(m_iface, SIGNAL(connectionStateChanged(int)),
             SLOT(connectionStateChanged(int)));
     connect(m_connectButton, SIGNAL(clicked()),
