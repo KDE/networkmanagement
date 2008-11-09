@@ -83,45 +83,48 @@ void KConfigToService::init()
 QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
 {
     kDebug() << connectionId;
-    m_configFile = KStandardDirs::locate("data",
+    QString configFile = KStandardDirs::locate("data",
                 QLatin1String("knetworkmanager/connections/") + connectionId);
     QVariantMapMap connectionMap;
-    KSharedConfig::Ptr config = KSharedConfig::openConfig(m_configFile, KConfig::NoGlobals);
-    kDebug() << config->name() << " is at " << m_configFile;
-    foreach (QString group, config->groupList()) {
-        QVariantMap groupSettings = handleGroup(group);
-        if (groupSettings.isEmpty()) {
-            kDebug() << "Settings group '" << group << "' contains no settings!";
-            connectionMap.insert(group, QVariantMap());
-        } else {
-            connectionMap.insert(group, groupSettings );
+    if (!configFile.isEmpty())
+    {
+        m_config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
+        m_config->reparseConfiguration();
+        foreach (QString group, m_config->groupList()) {
+            QVariantMap groupSettings = handleGroup(group);
+            if (groupSettings.isEmpty()) {
+                kDebug() << "Settings group '" << group << "' contains no settings!";
+                connectionMap.insert(group, QVariantMap());
+            } else {
+                connectionMap.insert(group, groupSettings );
+            }
         }
-    }
-    kDebug() << connectionMap;
-    // NM requires that a map exists for the connection's type.  If the settings are all defaults,
-    // our config won't contain that group.  So create that map (empty) if it hasn't been created by
-    // reading the config.
-    if (!connectionMap.isEmpty() && !connectionMap.contains(m_currentConnectionType)) {
-        connectionMap.insert(m_currentConnectionType, QVariantMap());
-        //m_currentConnectionType = QString();
-    }
-    // Special case #2, NM requires that a setting group for "gsm" is accompannied by a "serial"
-    // group
-    QString serialSetting = QLatin1String("serial");
-    if (!connectionMap.isEmpty() && !connectionMap.contains(serialSetting)) {
-        connectionMap.insert(serialSetting, QVariantMap());
-    }
-    // Special case #3, NM requires that a setting group for "serial" is accompanied by a "ppp"
-    // group
-    QString pppSetting = QLatin1String("ppp");
-    if (connectionMap.contains(serialSetting) && !connectionMap.contains(pppSetting)) {
-        connectionMap.insert(pppSetting, QVariantMap());
-    }
-    // Special case #4, NM requires that a setting group for "pppoe" is accompanied by a "ppp"
-    // group
-    QString pppoeSetting = QLatin1String("pppoe");
-    if (connectionMap.contains(pppoeSetting) && !connectionMap.contains(pppSetting)) {
-        connectionMap.insert(pppSetting, QVariantMap());
+        // NM requires that a map exists for the connection's type.  If the settings are all defaults,
+        // our config won't contain that group.  So create that map (empty) if it hasn't been created by
+        // reading the config.
+        if (!connectionMap.isEmpty() && !connectionMap.contains(m_currentConnectionType)) {
+            connectionMap.insert(m_currentConnectionType, QVariantMap());
+            //m_currentConnectionType = QString();
+        }
+        // Special case #2, NM requires that a setting group for "gsm" is accompannied by a "serial"
+        // group
+        QString serialSetting = QLatin1String("serial");
+        if (!connectionMap.isEmpty() && !connectionMap.contains(serialSetting)) {
+            connectionMap.insert(serialSetting, QVariantMap());
+        }
+        // Special case #3, NM requires that a setting group for "serial" is accompanied by a "ppp"
+        // group
+        QString pppSetting = QLatin1String("ppp");
+        if (connectionMap.contains(serialSetting) && !connectionMap.contains(pppSetting)) {
+            connectionMap.insert(pppSetting, QVariantMap());
+        }
+        // Special case #4, NM requires that a setting group for "pppoe" is accompanied by a "ppp"
+        // group
+        QString pppoeSetting = QLatin1String("pppoe");
+        if (connectionMap.contains(pppoeSetting) && !connectionMap.contains(pppSetting)) {
+            connectionMap.insert(pppSetting, QVariantMap());
+        }
+        kDebug() << connectionMap;
     }
     return connectionMap;
 }
@@ -137,12 +140,7 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
         kDebug() << groupName << " config file at " << schemaFile.fileName() << " not found!";
         return QVariantMap();
     }
-    QFile configFile(m_configFile);
-    if (!configFile.exists()) {
-        kDebug() << "configuration file: " << m_configFile << " not found!";
-        return QVariantMap();
-    }
-    ConfigXml * config = new ConfigXml(m_configFile, &schemaFile, false,
+    ConfigXml * config = new ConfigXml(m_config, &schemaFile, false,
             new SecretStorageHelper(/*connection id*/QLatin1String("testconfigxml"), groupName));
 
     foreach (KConfigSkeletonItem * item, config->items()) {
@@ -169,8 +167,7 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
     // special case for ipv4 "addresses" field, which isn't KConfigSkeletonItem-friendly
     // TODO put this somewhere else - not every special case can live in this function.
     if ( groupName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
-        KSharedConfig::Ptr ipv4Config = KSharedConfig::openConfig(m_configFile, KConfig::NoGlobals);
-        KConfigGroup ipv4Group(ipv4Config, groupName);
+        KConfigGroup ipv4Group(m_config, groupName);
         uint addressCount = ipv4Group.readEntry("addressCount", 0 );
         kDebug() << "#addresses:" << addressCount;
         UintListList addresses;
@@ -232,12 +229,14 @@ void KConfigToService::configure(const QStringList& changedConnections)
         kDebug() << "removing connection with id: " << connectionId;
         m_service->removeConnection(objectPath);
     }
-    foreach (QString connectionId, changedConnections) {
+    foreach (const QString connectionId, changedConnections) {
         if (m_connectionIdToObjectPath.contains(connectionId)) {
             QVariantMapMap changedConnection = restoreConnection(connectionId);
             if (!changedConnection.isEmpty()) {
-                kDebug() << "updating connection with id: " << connectionId;
-                m_service->updateConnection(m_connectionIdToObjectPath[connectionId], changedConnection);
+                kDebug() << "updating connection with id:" << connectionId;
+                QString objPath = m_connectionIdToObjectPath.value(connectionId);
+                kDebug() << "at objectpath:" << objPath;
+                m_service->updateConnection(objPath, changedConnection);
             }
         }
     }

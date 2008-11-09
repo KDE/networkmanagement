@@ -98,6 +98,7 @@ void ConnectionPreferences::save()
     }
     // finally write the connection settings
     m_contents->writeConfig();
+    m_contents->configXml()->config()->sync();
 }
 
 // vim: sw=4 sts=4 et tw=100
