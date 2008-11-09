@@ -101,10 +101,11 @@ void NetworkSettings::updateConnection(const QString & objectPath, const QVarian
     }
 }
 
-void NetworkSettings::removeConnection(const QString &)
+void NetworkSettings::removeConnection(const QString & objectPath)
 {
     kDebug();
-    //connectionMap.take(id);
+    Connection * conn = m_connectionMap.take(objectPath);
+    conn->Delete();
 }
 
 QList<QDBusObjectPath> NetworkSettings::ListConnections() const
