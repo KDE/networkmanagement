@@ -113,6 +113,8 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     if (!m_interfaces.isEmpty()) {
         Solid::Control::NetworkInterface *interface = m_interfaces.first();
         //kDebug() << "most interesting interface to paint: " << iface->uni() << " with icon " << m_elementName;
+
+        // Call the correct method to paint the applet, depending on the kind of connection
         switch (interface->type() ) {
             case Solid::Control::NetworkInterface::Ieee80211:
                 paintWirelessInterface(interface, p, option, contentsRect);
@@ -125,6 +127,20 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
                 paintDefaultInterface(interface, p, option, contentsRect);
                 break;
         }
+
+        // Enable busy animation, depending on connection state
+        switch (interface->connectionState()) {
+            case Solid::Control::NetworkInterface::Preparing:
+            case Solid::Control::NetworkInterface::Configuring:
+            case Solid::Control::NetworkInterface::NeedAuth:
+            case Solid::Control::NetworkInterface::IPConfig:
+                setBusy(true);
+                break;
+            default:
+                setBusy(false);
+                break;
+        }
+
     }
 }
 
@@ -482,6 +498,15 @@ void NetworkManagerApplet::manageConnections()
 
 #if KDE_IS_VERSION(4,1,70)
 #else
+
+void NetworkManagerApplet::setBusy(bool busy)
+{
+    Q_UNUSED(busy);
+    // We can reimplement that with some animation later on,
+    // for now, leave it like this so the applet still compiles
+    // with KDE 4.1.
+}
+
 void NetworkManagerApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
 {
     if (event->buttons() == Qt::LeftButton) {

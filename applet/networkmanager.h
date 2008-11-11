@@ -63,6 +63,7 @@ protected:
     void showLegacyPopup(QGraphicsSceneMouseEvent *event);
 private:
     Plasma::Dialog * m_dialog;
+    void setBusy(bool busy);
 #endif
 private Q_SLOTS:
     void networkInterfaceAdded(const QString&);
