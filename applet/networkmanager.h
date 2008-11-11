@@ -51,7 +51,7 @@ public:
     /* reimp Plasma::Applet */
     //Qt::Orientations expandingDirections() const;
     /* reimp Plasma::Applet */
-    //void constraintsEvent(Plasma::Constraints constraints);
+    void constraintsEvent(Plasma::Constraints constraints);
     /* reimp Plasma::Applet */
     QGraphicsWidget * graphicsWidget();
     static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
