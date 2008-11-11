@@ -74,7 +74,8 @@ private:
     void paintInterfaceStatus(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;
-    Plasma::Svg m_svg;
+    Plasma::Svg *m_svg;
+    Plasma::Svg *m_wirelessSvg;
     Solid::Control::NetworkInterfaceList m_interfaces;
     QString m_elementName;
     NetworkManagerPopup * m_popup;

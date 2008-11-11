@@ -222,7 +222,7 @@ ConnectionItem * InterfaceGroup::createItem(RemoteConnection* connection)
 {
     ConnectionItem * ci = 0;
     if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
-        // get connection ssid.  In theory we know that the connection _has_ an ssid because the 
+        // get connection ssid.  In theory we know that the connection _has_ an ssid because the
         // WirelessConnectionInspector accepted it.
         QVariantMapMap settings = connection->settings();
         if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME))) {

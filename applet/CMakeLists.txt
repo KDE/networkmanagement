@@ -28,5 +28,5 @@ target_link_libraries(plasma_applet_networkmanager plasma knmdbus ${KDE4_KIO_LIB
 
 install(TARGETS plasma_applet_networkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-networkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES networkmanager.svg DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/networkmanager/)
+install(FILES networkmanager.svg networkmanager-wireless.svgz DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/networkmanager/)
 
