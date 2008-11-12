@@ -24,7 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-connection.h>
 #include <nm-setting-wired.h>
 #include <nm-setting-ip4-config.h>
-#include <nm-setting-ip6-config.h>
+// Removed in NM0.7rc1
+// #include <nm-setting-ip6-config.h>
 #include <nm-setting-8021x.h>
 #include <nm-setting-gsm.h>
 #include <nm-setting-ppp.h>
@@ -118,7 +119,7 @@ void ConnectionSecretsJob::doAskUser()
         m_settingWidget = new GsmWidget(mConnectionId, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
         m_settingWidget = new IpV4Widget(mConnectionId, 0);
-    } else if ( mSettingName == QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME)) {
+    //} else if ( mSettingName == QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME)) {
         // not supported yet
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPP_SETTING_NAME)) {
         m_settingWidget = new PppWidget(mConnectionId, 0);
