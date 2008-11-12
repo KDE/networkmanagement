@@ -86,8 +86,9 @@ void WpaPskWidget::writeConfig()
 
 QVariantMap WpaPskWidget::secrets() const
 {
-    kDebug() << "TODO: IMPLEMENT";
-    return QVariantMap();
+    QVariantMap secrets;
+    secrets.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK), QVariant(d->ui.psk->text()));
+    return secrets;
 }
 
 #include "wpapskwidget.moc"
