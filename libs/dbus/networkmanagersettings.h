@@ -42,7 +42,14 @@ public:
     NetworkManagerSettings(const QString & service, QObject * parent);
     virtual ~NetworkManagerSettings();
     QStringList connections() const;
+    /**
+     * Obtain an object representing a connection provided by this service
+     * If the service exits, all RemoteConnections will be deleted
+     * Users of this function must connect to the serviceDisappeared() to be notified
+     * when any pointers obtained using this method become invalid
+     */
     RemoteConnection * findConnection(const QString&) const;
+
 Q_SIGNALS:
     void connectionAdded(NetworkManagerSettings *, const QString&);
     void connectionRemoved(NetworkManagerSettings *, const QString&);
@@ -62,8 +69,8 @@ private Q_SLOTS:
     void serviceOwnerChanged(const QString&, const QString&, const QString&);
 private:
     void makeConnections(RemoteConnection*);
+    void clearConnections();
     QHash<QString, RemoteConnection*> m_connections;
-    QString m_service;
 };
 
 #endif

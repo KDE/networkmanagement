@@ -42,7 +42,7 @@ namespace Solid
 class ConnectionInspector;
 class NetworkManagerSettings;
 class RemoteConnection;
-typedef QPair<QDBusObjectPath, RemoteConnection*> ActiveConnectionPair;
+typedef QPair<NetworkManagerSettings*, RemoteConnection*> ActiveConnectionPair;
 
 /**
  * Represents a single network interface
@@ -67,6 +67,12 @@ public slots:
     void activeConnectionsChanged();
     void connectionStateChanged(int);
     void connectButtonClicked();
+protected Q_SLOTS:
+    /**
+     * Remove any connections that were provided by this service
+     * from our active connection list
+     */
+    void serviceDisappeared(NetworkManagerSettings *service);
 protected:
     /**
      * Fill in interface type connection info
