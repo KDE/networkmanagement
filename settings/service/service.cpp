@@ -43,7 +43,6 @@ K_EXPORT_PLUGIN(KNetworkManagerServiceFactory("knetworkmanager"))
 
 KNetworkManagerService::KNetworkManagerService(QObject * parent, const QVariantList&) : KDEDModule(parent), m_active(true)
 {
-
     if ( !QDBusConnection::systemBus().registerService( "org.freedesktop.NetworkManagerUserSettings" ) ) {
         // trouble;
         kDebug() << "Unable to register service";
