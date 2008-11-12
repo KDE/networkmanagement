@@ -92,7 +92,7 @@ QString NetworkSettings::addConnection(const QVariantMapMap& settings)
 
 void NetworkSettings::updateConnection(const QString & objectPath, const QVariantMapMap & settings )
 {
-    kDebug();
+    kDebug() << objectPath << settings;
     if (m_connectionMap.contains(objectPath)) {
         Connection * conn = m_connectionMap[objectPath];
         if (conn) {
