@@ -31,15 +31,19 @@ NetworkManagerSettings::NetworkManagerSettings(const QString & service, QObject 
 {
     if (isValid())
     {
-    QList<QDBusObjectPath> userConnections = ListConnections();
-    foreach (QDBusObjectPath op, userConnections) {
-        RemoteConnection * connectionIface = new RemoteConnection(service, op.path(), this);
-        makeConnections(connectionIface);
-        m_connections.insert(op.path(), connectionIface);
-    }
-    // signal is from parent class
-    connect(this, SIGNAL(NewConnection(const QDBusObjectPath&)),
-            this, SLOT(onConnectionAdded(const QDBusObjectPath&)));
+        QList<QDBusObjectPath> userConnections = ListConnections();
+        foreach (QDBusObjectPath op, userConnections) {
+            if (m_connections.contains(op.path())) {
+                kDebug() << "Service" << service << "is reporting the same connection more than once in ListConnections!";
+            } else {
+                RemoteConnection * connectionIface = new RemoteConnection(service, op.path(), this);
+                makeConnections(connectionIface);
+                m_connections.insert(op.path(), connectionIface);
+            }
+        }
+        // signal is from parent class
+        connect(this, SIGNAL(NewConnection(const QDBusObjectPath&)),
+                this, SLOT(onConnectionAdded(const QDBusObjectPath&)));
     }
     connect(QDBusConnection::systemBus().interface(),
             SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)),
@@ -71,18 +75,23 @@ RemoteConnection * NetworkManagerSettings::findConnection(const QString& op) con
 void NetworkManagerSettings::onConnectionAdded(const QDBusObjectPath& op)
 {
     kDebug() << op.path();
-    RemoteConnection * connectionIface = new RemoteConnection(service(), op.path(), this);
-    makeConnections(connectionIface);
-    m_connections.insert(op.path(), connectionIface);
-    emit connectionAdded(this, op.path());
+    if (m_connections.contains(op.path())) {
+        kDebug() << "Service" << service() << "is reporting the same connection more than once in ListConnections!";
+    } else {
+        RemoteConnection * connectionIface = new RemoteConnection(service(), op.path(), this);
+        makeConnections(connectionIface);
+        m_connections.insert(op.path(), connectionIface);
+        emit connectionAdded(this, op.path());
+    }
 }
 
 void NetworkManagerSettings::onConnectionRemoved()
 {
     RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
-    kDebug() << connection->path();
-    emit connectionRemoved(this, connection->path());
-    //TODO delete sender();
+    QString removedPath = connection->path();
+    kDebug() << removedPath;
+    delete m_connections.take(removedPath);
+    emit connectionRemoved(this, removedPath);
 }
 
 void NetworkManagerSettings::onConnectionUpdated(const QVariantMapMap&)
