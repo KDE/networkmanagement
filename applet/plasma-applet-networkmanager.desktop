@@ -17,7 +17,7 @@ Comment[sv]=Hantera nätverksanslutningar
 Comment[uk]=Керуйте мережевими з’єднаннями
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
-Icon=networkmanager
+Icon=preferences-system-network
 
 X-KDE-Library=plasma_applet_networkmanager
 X-KDE-PluginInfo-Author=Will Stephenson
