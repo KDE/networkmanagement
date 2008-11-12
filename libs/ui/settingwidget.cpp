@@ -87,4 +87,9 @@ ConfigXml * SettingWidget::configXml() const
     return d->configXml;
 }
 
+bool SettingWidget::validate() const
+{
+    return true;
+}
+
 // vim: sw=4 sts=4 et tw=100
