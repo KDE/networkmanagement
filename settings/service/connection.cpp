@@ -50,7 +50,9 @@ bool Connection::hasSecrets() const
 
 void Connection::Update(QVariantMapMap updates)
 {
-    kDebug();
+    kDebug() << "TODO: validate incoming settings";
+    mSettingsMap = updates;
+    emit Updated(mSettingsMap);
 }
 
 void Connection::Delete()
