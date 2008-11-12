@@ -22,8 +22,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <nm-setting-cdma.h>
 #include <nm-setting-gsm.h>
+#include <nm-setting-pppoe.h>
+#include <nm-setting-vpn.h>
+#include <nm-setting-wired.h>
 #include <nm-setting-wireless.h>
 
+#include <QDBusConnection>
 #include <QDateTime>
 #include <QDBusInterface>
 #include <QFile>
@@ -68,44 +72,22 @@ ConnectionEditor::ConnectionEditor(QWidget *parent, const QVariantList &args)
     //args << "newconnection" << "type=NM_SETTING_WIRELESS_SETTING_NAME" << "interface=" << "accesspoint=";
 
     if ( !args.isEmpty()) {
-#if 0 // WIP
+        kDebug() << "Module started with args: " << args;
+        // call the slot that is exported over dbus 
+#if 1 // WIP
         // editconnection connectionId=id
-        // newconnection type=... (NM types)
-        // for type == 802-11-wireless: essid, interface object path, AP object path
+        // newconnection connectionType connectionSubType other-arg ...
         kDebug() << args;
-        if (args[0].toString() == "newconnection") {
-            if (args.count() > 1) {
-                QString rawArg = args[1].toString();
-                if (rawArg.startsWith("type=")) {
-                    QString type = rawArg.section('=', 1, 1);
-                    // this could all be pushed down into each ConnectionEditor subclass
-                    if (type == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME) && args.count() > 2) {
-                        QString interfaceUni;
-                        QString accessPointUni;
-                        for (int i = 2; i < args.count(); ++i) {
-                            rawArg = args[i].toString();
-                            QString arg = rawArg.section('=', 0, 0);
-                            QString value = rawArg.section('=', 1, 1);
-                            if (arg == QLatin1String("interface")) {
-                                interfaceUni = value;
-                            }
-                            if (arg == QLatin1String("accesspoint")) {
-                                accessPointUni = value;
-                            }
-                        }
-                        KDialog configDialog(this);
-                        QString connectionId = QUuid::createUuid().toString();
-                        QVariantList args;
-                        args << connectionId;
-                        WirelessPreferences * wid = new WirelessPreferences(&configDialog, args);
-                        configDialog.setMainWidget(wid);
-                        QVBoxLayout * lay = new QVBoxLayout(this);
-                        lay->addWidget(&configDialog);
-                        setLayout(lay);
-                        configDialog.show();
-                        configDialog.exec();
-                    }
+        if (args[0].toString() == "createConnection") {
+            if (args.count() > 2) {
+                QString type = args[1].toString();
+                QString subType = args[2].toString();
+                QVariantList otherArgs;
+                if (args.count() > 3)
+                for (int i = 3; i < args.count(); ++i) {
+                    otherArgs << args[i];
                 }
+                addConnectionInternal(connectionTypeForString(type), subType, otherArgs);
             }
         }
 #endif
@@ -122,6 +104,9 @@ ConnectionEditor::ConnectionEditor(QWidget *parent, const QVariantList &args)
                 SLOT(updateTabStates()));
         connect(mConnEditUi.tabWidget, SIGNAL(currentChanged(int)), SLOT(tabChanged(int)));
         restoreConnections();
+        if (QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.NetworkManager.KCModule"))) {
+            QDBusConnection::sessionBus().registerObject(QLatin1String("/default"), this, QDBusConnection::ExportScriptableSlots);
+        }
     }
 }
 
@@ -219,7 +204,6 @@ void ConnectionEditor::updateTabStates()
                 break;
         }
     }
-    bool hasVpnPlugins = !KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VpnUiPlugin")).isEmpty();
     mConnEditUi.tabWidget->setTabEnabled(0, (hasWired || mConnEditUi.listWired->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(1, (hasWireless || mConnEditUi.listWireless->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(2, (hasCellular || mConnEditUi.listCellular->topLevelItemCount()));
@@ -235,15 +219,23 @@ void ConnectionEditor::updateTabStates()
 void ConnectionEditor::addClicked()
 {
     // show connection settings widget for the active tab
+    addConnectionInternal(connectionTypeForCurrentIndex());
+}
+
+void ConnectionEditor::createConnection(const QString &connectionType, const QString &connectionSubType, const QVariantList &args)
+{
+    addConnectionInternal(connectionTypeForString(connectionType), connectionSubType, args);
+}
+
+void ConnectionEditor::addConnectionInternal(ConnectionEditor::ConnectionType connectionType, const QString &connectionSubType, const QVariantList &otherArgs)
+{
     KDialog configDialog(this);
-    QString connectionId = QUuid::createUuid().toString();
     QVariantList args;
+    QString connectionId = QUuid::createUuid().toString();
     args << connectionId;
-    if ( m_nextConnectionType.isValid()) {
-        args << m_nextConnectionType;
-        m_nextConnectionType = QVariant();
-    }
-    ConnectionPreferences * cprefs = editorForCurrentIndex(&configDialog, args);
+    args << connectionSubType;
+    args += otherArgs;
+    ConnectionPreferences * cprefs = editorForConnectionType(&configDialog, connectionType, args);
 
     if (!cprefs) {
         return;
@@ -290,7 +282,7 @@ void ConnectionEditor::editClicked()
     QVariantList args;
     args << connectionId;
 
-    KCModule * kcm = editorForCurrentIndex(&configDialog, args);
+    KCModule * kcm = editorForConnectionType(&configDialog, connectionTypeForCurrentIndex(), args);
 
     if (kcm) {
         configDialog.setMainWidget(kcm);
@@ -341,31 +333,74 @@ void ConnectionEditor::deleteClicked()
     }
 }
 
-ConnectionPreferences * ConnectionEditor::editorForCurrentIndex(QWidget * parent, const QVariantList & args) const
+ConnectionPreferences * ConnectionEditor::editorForConnectionType(QWidget * parent, ConnectionEditor::ConnectionType type, const QVariantList & args) const
 {
     kDebug() << args;
-    int i = mConnEditUi.tabWidget->currentIndex();
     ConnectionPreferences * wid = 0;
-    switch (i) {
-        case 0:
+    switch (type) {
+        case ConnectionEditor::Wired:
             wid = new WiredPreferences(parent, args);
             break;
-        case 1:
+        case ConnectionEditor::Wireless:
             wid = new WirelessPreferences(parent, args);
             break;
-        case 2:
+        case ConnectionEditor::Cellular:
             wid = new CellularPreferences(parent, args);
             break;
-        case 3:
+        case ConnectionEditor::Vpn:
             wid = new VpnPreferences(parent, args);
             break;
-        case 4:
+        case ConnectionEditor::Pppoe:
             wid = new PppoePreferences(parent, args);
             break;
         default:
             break;
     }
     return wid;
+}
+
+ConnectionEditor::ConnectionType ConnectionEditor::connectionTypeForString(const QString &type) const
+{
+    ConnectionEditor::ConnectionType t = ConnectionEditor::Wireless;
+    if (type == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
+        t = ConnectionEditor::Wired;
+    } else if (type == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
+        t = ConnectionEditor::Wireless;
+    } else if (type == QLatin1String(NM_SETTING_GSM_SETTING_NAME)
+            || type == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
+        t = ConnectionEditor::Cellular;
+    } else if (type == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
+        t = ConnectionEditor::Vpn;
+    } else if (type == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
+        t = ConnectionEditor::Pppoe;
+    }
+    return t;
+}
+
+ConnectionEditor::ConnectionType ConnectionEditor::connectionTypeForCurrentIndex() const
+{
+    ConnectionEditor::ConnectionType t = ConnectionEditor::Wireless;
+    int i = mConnEditUi.tabWidget->currentIndex();
+    switch (i) {
+        case 0:
+            t = ConnectionEditor::Wired;
+            break;
+        case 1:
+            t = ConnectionEditor::Wireless;
+            break;
+        case 2:
+            t = ConnectionEditor::Cellular;
+            break;
+        case 3:
+            t = ConnectionEditor::Vpn;
+            break;
+        case 4:
+            t = ConnectionEditor::Pppoe;
+            break;
+        default:
+            break;
+    }
+    return t;
 }
 
 QTreeWidgetItem * ConnectionEditor::selectedItem() const
@@ -452,8 +487,8 @@ void ConnectionEditor::tabChanged(int index)
 
 void ConnectionEditor::connectionTypeMenuTriggered(QAction* action)
 {
-    m_nextConnectionType = action->data();
-    kDebug() << m_nextConnectionType.toString();
-    addClicked();
+    QString nextConnectionSubType = action->data().toString();
+    addConnectionInternal(connectionTypeForCurrentIndex(), nextConnectionSubType);
 }
+
 #include "connectioneditor.moc"

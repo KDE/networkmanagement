@@ -34,6 +34,7 @@ class ConnectionEditor : public KCModule
 {
 Q_OBJECT
 public:
+    enum ConnectionType { Wired, Wireless, Cellular, Vpn, Pppoe };
     ConnectionEditor(QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~ConnectionEditor();
     virtual void save();
@@ -43,6 +44,8 @@ public slots:
      * Check if a newly added or removed device should enable or disable tabs
      */
     void updateTabStates();
+
+    Q_SCRIPTABLE void createConnection(const QString & connectionType, const QString &subConnectionType, const QVariantList &args);
 private slots:
     /** 
      * Add a new connection 
@@ -62,21 +65,33 @@ private slots:
      */
     void tabChanged(int);
     /**
-     * temporarily stores the selected connection type in m_nextConnectionType until addClicked
-     * reads it
+     * adds a connection of the selected subtype
      */
     void connectionTypeMenuTriggered(QAction* action);
 private:
+    void addConnectionInternal(ConnectionEditor::ConnectionType connectionType,
+            const QString &connectionSubType = QString(),
+            const QVariantList &otherArgs = QVariantList());
     /**
      * Tell the UserSettings service to reload its configuration (via DBUS)
      * Provide a list of changed connection IDs so the service can notify NetworkManager
      */
     void updateService(const QStringList& changedConnections = QStringList()) const;
     /**
+     * Get the connection type of the currently selected index
+     * @return connection type enum, Wireless if not found
+     */
+    ConnectionType connectionTypeForCurrentIndex() const;
+    /**
+     * Get the connection type for a given string (matches nm-setting.h SETTING_NAME strings)
+     * @return connection type enum, Wireless if not found
+     */
+    ConnectionType connectionTypeForString(const QString&) const;
+    /**
      * Construct an editor widget for the selected connection tab.
      * Returns 0 if no tab is selected.
      */
-    ConnectionPreferences * editorForCurrentIndex(QWidget * parent, const QVariantList & args) const;
+    ConnectionPreferences * editorForConnectionType(QWidget * parent, ConnectionEditor::ConnectionType type, const QVariantList & args) const;
     /**
      * Get the selected item on the current tab.
      * Returns 0 if no selection.
@@ -91,7 +106,6 @@ private:
     QTreeWidget * mWiredList;
     QMenu * mCellularMenu;
     QMenu * mVpnMenu;
-    QVariant m_nextConnectionType;
 };
 
 #endif

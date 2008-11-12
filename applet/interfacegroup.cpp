@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KLocale>
 #include <KNotification>
+#include <KToolInvocation>
+
 #include <solid/control/networkserialinterface.h>
 #include <solid/control/wirednetworkinterface.h>
 #include <solid/control/wirelessaccesspoint.h>
@@ -270,6 +272,27 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
     WirelessNetworkItem * wni = qobject_cast<WirelessNetworkItem*>(item);
     if (item) {
         kDebug() << wni->net()->referenceAccessPoint()->hardwareAddress();
+        QDBusInterface kcm(QLatin1String("org.kde.NetworkManager.KCModule"), QLatin1String("/default"), QLatin1String("org.kde.kcmshell.ConnectionEditor"));
+        if (kcm.isValid()) {
+            QVariantList args;
+            args << wni->net()->ssid()
+                << (quint32)wni->net()->referenceAccessPoint()->capabilities()
+                << (quint32)wni->net()->referenceAccessPoint()->wpaFlags()
+                << (quint32)wni->net()->referenceAccessPoint()->rsnFlags();
+            kcm.call(QDBus::NoBlock, "createConnection", "802-11-wireless", "any", QVariant::fromValue(args));
+        } else {
+            kDebug() << "opening connection management dialog";
+            QStringList args;
+            QString moduleArgs =
+                QString::fromLatin1("createConnection 802-11-wireless any %1 %2 %3 %4")
+                .arg(wni->net()->ssid())
+                .arg(wni->net()->referenceAccessPoint()->capabilities())
+                .arg(wni->net()->referenceAccessPoint()->wpaFlags())
+                .arg(wni->net()->referenceAccessPoint()->rsnFlags());
+
+            args << QLatin1String("kcm_knetworkmanager") << QLatin1String("-moduleargs1") << moduleArgs; // other args go here
+            KToolInvocation::kdeinitExec("kcmshell4", args);
+        }
     }
 }
 

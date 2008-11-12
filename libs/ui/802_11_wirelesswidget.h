@@ -29,7 +29,7 @@ class KNM_EXPORT Wireless80211Widget : public SettingWidget
 {
 Q_OBJECT
 public:
-    Wireless80211Widget(const QString & connectionId, QWidget * parent = 0 );
+    Wireless80211Widget(const QString & connectionId, const QString &ssid = QString(), uint caps = 0, uint wpa = 0, uint rsn = 0, QWidget * parent = 0 );
     virtual ~Wireless80211Widget();
     QString settingName() const;
     static const QString INFRA_MODE;
