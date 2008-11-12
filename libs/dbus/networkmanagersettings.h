@@ -52,7 +52,13 @@ public:
 
 Q_SIGNALS:
     void connectionAdded(NetworkManagerSettings *, const QString&);
+    /**
+     * Indicates that a connection was removed and any pointers held to it are no longer valid
+     */
     void connectionRemoved(NetworkManagerSettings *, const QString&);
+    /**
+     * Indicates that a connection was updated
+     */
     void connectionUpdated(NetworkManagerSettings *, const QString&);
     /**
      * Emitted when the service this object represents leaves the system bus
