@@ -21,7 +21,7 @@
         <string>&amp;Method:</string>
        </property>
        <property name="buddy" >
-        <cstring>kcfg_method</cstring>
+        <cstring>method</cstring>
        </property>
       </widget>
      </item>
