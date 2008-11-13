@@ -34,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Meter>
-#include <Plasma/PushButton>
 
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkipv4config.h>
@@ -92,11 +91,11 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 
 
     m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setMinimumHeight(32);
-    m_connectButton->setMaximumHeight(32);
-    m_connectButton->setMinimumWidth(32);
+    m_connectButton->setMinimumHeight(22);
+    m_connectButton->setMaximumHeight(22);
+    m_connectButton->setMinimumWidth(22);
     m_connectButton->setIcon("media-playback-start"); // FIXME
-    m_layout->addItem(m_connectButton, 0, 2, 1, 2);
+    m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignCenter);
 
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
@@ -325,6 +324,7 @@ void InterfaceItem::setInactive()
     m_connectionNameLabel->setText(i18nc("networking device is not connected", "Disconnected"));
     m_connectionInfoLabel->setText("");
     m_connectButton->setIcon("media-playback-start");
+    m_connectButton->setEnabled(true);
 }
 
 

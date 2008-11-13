@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Meter>
-#include <Plasma/PushButton>
 
 class QGraphicsGridLayout;
 class QGraphicsLinearLayout;
