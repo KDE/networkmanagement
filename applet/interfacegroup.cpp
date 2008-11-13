@@ -55,8 +55,14 @@ bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWir
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QWidget * parent)
 : ConnectionList(userSettings, systemSettings, parent), m_type(type), m_wirelessEnvironment(new WirelessEnvironmentMerged(this)), m_interfaceLayout(new QVBoxLayout(0)), m_networkLayout(new QVBoxLayout(0))
 {
-    connect(m_wirelessEnvironment, SIGNAL(networkAppeared(const QString&)), SLOT(wirelessNetworkAppeared(const QString&)));
-    connect(m_wirelessEnvironment, SIGNAL(networkDisappeared(const QString&)), SLOT(wirelessNetworkDisappeared(const QString&)));
+    connect(m_wirelessEnvironment, SIGNAL(networkAppeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
+    connect(m_wirelessEnvironment, SIGNAL(networkDisappeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
+    connect(userSettings, SIGNAL(appeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
+    connect(userSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
+
+//    m_interfaceLayout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+//    m_networkLayout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    m_networkLayout->setSpacing(4);
 }
 
 InterfaceGroup::~InterfaceGroup()
@@ -88,37 +94,44 @@ void InterfaceGroup::setupHeader()
 
 void InterfaceGroup::setupFooter()
 {
-    foreach (QString ssid, m_wirelessEnvironment->networks()) {
-        addNetworkInternal(ssid);
-    }
-    updateWirelessNetworkLayout();
     m_layout->addLayout(m_networkLayout);
+    updateNetworks();
 }
 
-void InterfaceGroup::updateWirelessNetworkLayout()
+void InterfaceGroup::updateNetworks()
 {
     // empty the layout
-    for (int i = 0; i < m_networkLayout->count(); ++i) {
-        m_networkLayout->takeAt(i);
+    foreach (WirelessNetworkItem * i, m_networks) {
+        m_networkLayout->removeWidget(i);
+        delete i;
     }
-    // hide all items and build list of networks for next step
-    QList<AbstractWirelessNetwork*> allNetworks;
-    foreach (WirelessNetworkItem * wi, m_networks) {
-        wi->hide();
-        allNetworks.append(wi->net());
-    }
-    // sort networks in descending order of strength
-    qSort(allNetworks.begin(), allNetworks.end(), wirelessNetworkGreaterThanStrength);
+    m_networks.clear();
 
-    for (int i = 0; i < allNetworks.count() && i < MAX_WLANS; i++)
-    {
-        WirelessNetworkItem * wi = m_networks.value(allNetworks[i]->ssid());
-        wi->show();
-        m_networkLayout->insertWidget(m_networkLayout->count(), wi);
+    foreach (AbstractWirelessNetwork * i, networksToShow()) {
+        addNetworkInternal(i->ssid());
     }
     m_networkLayout->invalidate();
     m_interfaceLayout->invalidate();
     m_layout->invalidate();
+}
+
+QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
+{
+    QList<AbstractWirelessNetwork*> allNetworks;
+    QList<AbstractWirelessNetwork*> topNetworks;
+    // we only show networks if we have no connections and if the user settings service is present
+    // in future we could show the networks when the service is not running but without their connectButton
+    if (m_connections.isEmpty() && m_userSettings->isValid()) {
+        foreach (QString ssid, m_wirelessEnvironment->networks()) {
+            allNetworks.append(m_wirelessEnvironment->findNetwork(ssid));
+        }
+        qSort(allNetworks.begin(), allNetworks.end(), wirelessNetworkGreaterThanStrength);
+        for (int i = 0; i < allNetworks.count() && i < MAX_WLANS; i++)
+        {
+            topNetworks.append(allNetworks[i]);
+        }
+    }
+    return topNetworks;
 }
 
 void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
@@ -180,6 +193,7 @@ void InterfaceGroup::addNetworkInternal(const QString & ssid)
         AbstractWirelessNetwork * net = m_wirelessEnvironment->findNetwork(ssid);
         WirelessNetworkItem * netItem = new WirelessNetworkItem(net, this);
         netItem->setupItem();
+        m_networkLayout->addWidget(netItem);
         m_networks.insert(ssid, netItem);
         connect(netItem, SIGNAL(clicked(AbstractConnectableItem*)),
                 SLOT(connectToWirelessNetwork(AbstractConnectableItem*)));
@@ -253,19 +267,9 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
     emit updateLayout();
 }
 
-void InterfaceGroup::wirelessNetworkAppeared(const QString& ssid)
+void InterfaceGroup::refreshConnectionsAndNetworks()
 {
-    kDebug() << ssid;
-    addNetworkInternal(ssid);
-    updateWirelessNetworkLayout();
-    reassess();
-}
-
-void InterfaceGroup::wirelessNetworkDisappeared(const QString& ssid)
-{
-    kDebug() << ssid;
-    delete(m_networks.take(ssid));
-    updateWirelessNetworkLayout();
+    updateNetworks();
     reassess();
 }
 

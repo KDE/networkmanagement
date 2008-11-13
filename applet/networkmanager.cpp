@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDialog>
 #include <KIcon>
 #include <KIconLoader>
+#include <KToolInvocation>
 #include <Plasma/Dialog>
 #include <plasma/tooltipmanager.h>
 
@@ -60,6 +61,8 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
     m_popup = new NetworkManagerPopup(0);
+    QObject::connect(m_popup, SIGNAL(manageConnections()),
+            this, SLOT(manageConnections()));
 }
 
 NetworkManagerApplet::~NetworkManagerApplet()
@@ -381,6 +384,17 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
             lessThan = false;
         }
     return lessThan;
+}
+
+void NetworkManagerApplet::manageConnections()
+{
+    kDebug() << "opening connection management dialog";
+    QStringList args;
+    args << "kcm_knetworkmanager";
+    KToolInvocation::kdeinitExec("kcmshell4", args);
+    if (m_dialog) {
+        m_dialog->hide();
+    }
 }
 
 void NetworkManagerApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)

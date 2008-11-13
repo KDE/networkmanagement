@@ -71,10 +71,10 @@ protected:
     NetworkManagerSettings * m_userSettings;
     NetworkManagerSettings * m_systemSettings;
     QVBoxLayout * m_layout;
-private:
-    void addSettingsService(NetworkManagerSettings*);
     // list of connection objects for this interface type
     ServiceConnectionHash m_connections;
+private:
+    void addSettingsService(NetworkManagerSettings*);
     QVBoxLayout * m_connectionLayout;
 };
 #endif // CONNECTIONLIST_H

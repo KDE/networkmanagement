@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nm-exported-connectioninterface.h"
 
+class AbstractWirelessNetwork;
 class WirelessEnvironmentMerged;
 class WirelessNetworkItem;
 
@@ -51,18 +52,17 @@ protected Q_SLOTS:
     void connectToWirelessNetwork(AbstractConnectableItem*);
     virtual void interfaceAdded(const QString&);
     virtual void interfaceRemoved(const QString&);
-    void wirelessNetworkAppeared(const QString&);
-    void wirelessNetworkDisappeared(const QString&);
-
+    // used to re-populate the list of wireless networks, if necessary
+    void refreshConnectionsAndNetworks();
 Q_SIGNALS:
-        void updateLayout();
-
+    void updateLayout();
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
     void addNetworkInternal(const QString &ssid);
     // we only show the top N strongest networks, this controls which are visible
-    void updateWirelessNetworkLayout();
+    void updateNetworks();
+    QList<AbstractWirelessNetwork*> networksToShow();
     // reimplemented from ConnecitonList
     ConnectionItem * createItem(RemoteConnection* conn);
     // list of interfaces
