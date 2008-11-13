@@ -171,6 +171,10 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
             this, SLOT(activateConnection(const QString&)));
     QObject::connect(m_connectionDeactivationSignalMapper, SIGNAL(mapped(const QString&)),
             this, SLOT(deactivateConnection(const QString&)));
+
+
+    QObject::connect(m_ethernetGroup, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
+    QObject::connect(m_wifiGroup, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
     updateLayout();
 }
 
