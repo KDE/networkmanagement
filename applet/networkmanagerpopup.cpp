@@ -166,10 +166,21 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
             this, SLOT(activateConnection(const QString&)));
     QObject::connect(m_connectionDeactivationSignalMapper, SIGNAL(mapped(const QString&)),
             this, SLOT(deactivateConnection(const QString&)));
+    updateLayout();
 }
 
 NetworkManagerPopup::~NetworkManagerPopup()
 {
+}
+
+void NetworkManagerPopup::updateLayout()
+{
+    /* This is a big hack, from an email by Riccardo, let's see if this
+     helps a bit updating the sizes
+    */
+    updateGeometry();
+//    resize(sizeHint(Qt::PreferredSize));
+//    setMinimumSize(sizeHint(Qt::MinimumSize));
 }
 
 void NetworkManagerPopup::managerWirelessEnabledChanged(bool enabled)
@@ -186,6 +197,7 @@ void NetworkManagerPopup::managerWirelessHardwareEnabledChanged(bool enabled)
         m_lblRfkill->setText(i18nc("Label text when hardware wireless is not enabled", "Wireless hardware is disabled"));
         KNotification::event(Event::RfOff, i18nc("Notification for radio kill switch turned on", "Wireless hardware disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
     }
+    updateLayout();
 }
 
 void NetworkManagerPopup::userNetworkingEnabledChanged(bool enabled)
@@ -211,6 +223,7 @@ void NetworkManagerPopup::manageConnections()
 void NetworkManagerPopup::activateConnection(const QString& connection)
 {
     kDebug() << connection;
+    updateLayout();
 #if 0
     NetworkManagerSettings* service;
     if (connection.startsWith(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS))) {
@@ -240,6 +253,7 @@ void NetworkManagerPopup::activateConnection(const QString& connection)
 void NetworkManagerPopup::deactivateConnection(const QString& connection)
 {
     kDebug() << connection;
+    updateLayout();
 }
 
 void NetworkManagerPopup::managerStatusChanged(Solid::Networking::Status status)
