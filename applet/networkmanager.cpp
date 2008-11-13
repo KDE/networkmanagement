@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIcon>
 #include <KIconLoader>
 #include <Plasma/Dialog>
+#include <plasma/tooltipmanager.h>
 
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
@@ -52,7 +53,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 : Plasma::Applet(parent, args), m_iconPerDevice(false), m_svg(this), m_dialog(0)
 {
     setHasConfigurationInterface(false);
-    //updateToolTip();
+    updateToolTip();
 
     setAspectRatioMode(Plasma::ConstrainedSquare);// copied from Battery - the comment for this value is meaningless
     m_svg.setImagePath("networkmanager/networkmanager");
@@ -169,19 +170,18 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
         m_elementName = elementNameToPaint;
         update();
     }
-    //updateToolTip();
+    updateToolTip();
 }
 
-#if 0
 void NetworkManagerApplet::updateToolTip()
 {
     Solid::Control::NetworkInterfaceList interfaces
         = Solid::Control::NetworkManager::networkInterfaces();
+    Plasma::ToolTipManager::ToolTipContent data;
     if (interfaces.isEmpty()) {
-        m_toolTip = Plasma::ToolTipContent(i18nc("Tooltip main title text", "Networks"),
-                i18nc("Tooltip sub text", "No network interfaces"),
-                KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop))
-                );
+        data.mainText = i18nc("Tooltip main title text", "Networks");
+        data.subText= i18nc("Tooltip sub text", "No network interfaces");
+        data.image = KIcon("preferences-system-network").pixmap(IconSize(KIconLoader::Desktop));
     } else {
         QString subText;
         qSort(interfaces.begin(), interfaces.end(), networkInterfaceLessThan);
@@ -190,15 +190,13 @@ void NetworkManagerApplet::updateToolTip()
                 subText += QLatin1String("<br>");
             }
             subText += QString::fromLatin1("<b>%1</b>: %2").arg(iface->interfaceName()).arg(connectionStateToString(iface->connectionState()));
-            m_toolTip = Plasma::ToolTipContent(i18nc("Tooltip main title text", "Networks"),
-                subText,
-                KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop))
-                );
-            Plasma::ToolTipManager::self()->setContent(this, m_toolTip);
+            data.subText = subText;
+            data.mainText = i18nc("Tooltip main title text", "Networks");
+            data.image = KIcon("preferences-system-network").pixmap(IconSize(KIconLoader::Desktop));
+            Plasma::ToolTipManager::self()->setToolTipContent(this, data);
         }
     }
 }
-#endif
 
 QString NetworkManagerApplet::connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state)
 {

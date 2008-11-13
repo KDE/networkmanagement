@@ -61,7 +61,7 @@ private Q_SLOTS:
     void networkInterfaceRemoved(const QString&);
     void interfaceConnectionStateChanged();
 private:
-    //void updateToolTip();
+    void updateToolTip();
     void paintInterfaceStatus(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;
@@ -70,12 +70,7 @@ private:
     QString m_elementName;
     NetworkManagerPopup * m_popup;
     QPoint m_clicked;
-    //Plasma::ToolTipContent m_toolTip;
     QWidget * m_dialog;
 };
 
 #endif
-
-
-
-
