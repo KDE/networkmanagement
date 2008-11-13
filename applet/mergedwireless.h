@@ -74,12 +74,15 @@ protected Q_SLOTS:
     void onNetworkAppeared(const QString&);
     void disappeared(const QString&);
     void notifyNewNetwork();
+    void notifyDisappearedNetwork();
 Q_SIGNALS:
     void networkAppeared(const QString &ssid);
 private:
     void addNetworkInternal(WirelessEnvironment *, WirelessNetwork* network, bool quietly = false);
-    QTimer *m_lastNotification;
+    QTimer *m_newNetworkTimer;
     QStringList m_newNetworks;
+    QTimer *m_disappearedNetworkTimer;
+    QStringList m_disappearedNetworks;
 protected:
     WirelessEnvironmentMergedPrivate * const d_ptr;
 };

@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 #include <QStringList>
 #include <KDebug>
+#include <KIcon>
 #include <KLocale>
 #include <KNotification>
 
@@ -130,10 +131,13 @@ public:
 WirelessEnvironmentMerged::WirelessEnvironmentMerged(QObject * parent)
     : AbstractWirelessEnvironment(parent), d_ptr(new WirelessEnvironmentMergedPrivate)
 {
-    m_lastNotification = new QTimer(this);
-    connect(m_lastNotification, SIGNAL(timeout()), this, SLOT(notifyNewNetwork()));
-
+    m_newNetworkTimer = new QTimer(this);
+    connect(m_newNetworkTimer, SIGNAL(timeout()), this, SLOT(notifyNewNetwork()));
     m_newNetworks = QStringList();
+
+    m_disappearedNetworkTimer = new QTimer(this);
+    connect(m_disappearedNetworkTimer, SIGNAL(timeout()), this, SLOT(notifyDisappearedNetwork()));
+    m_disappearedNetworks = QStringList();
 }
 
 WirelessEnvironmentMerged::~WirelessEnvironmentMerged()
@@ -192,6 +196,16 @@ void WirelessEnvironmentMerged::onNetworkAppeared(const QString &ssid)
     }
 }
 
+void WirelessEnvironmentMerged::disappeared(const QString &ssid)
+{
+    Q_D(WirelessEnvironmentMerged);
+    delete d->networks.take(ssid);
+
+    m_disappearedNetworks.append(ssid);
+    m_disappearedNetworkTimer->start(500);
+    emit networkDisappeared(ssid);
+}
+
 void WirelessEnvironmentMerged::addNetworkInternal(WirelessEnvironment * source, WirelessNetwork * newNetwork, bool quietly)
 {
     Q_D(WirelessEnvironmentMerged);
@@ -203,7 +217,7 @@ void WirelessEnvironmentMerged::addNetworkInternal(WirelessEnvironment * source,
             SLOT(disappeared(const QString&)));
     m_newNetworks.append(ssid);
     if (!quietly) {
-        m_lastNotification->start(500);
+        m_newNetworkTimer->start(500);
     }
 
     emit networkAppeared(ssid);
@@ -211,18 +225,25 @@ void WirelessEnvironmentMerged::addNetworkInternal(WirelessEnvironment * source,
 
 void WirelessEnvironmentMerged::notifyNewNetwork()
 {
-    kDebug() << "Timer ran out. Notificiation is GO!";
-    KNotification::event(Event::NetworkAppeared, i18nc("Notification text when multiple wireless networks are found","<b>New wireless networks:</b><br /> %1", m_newNetworks.join(", ")), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
-    m_lastNotification->stop();
+    if (m_newNetworks.count() == 1) {
+        KNotification::event(Event::NetworkAppeared, i18nc("Notification text when a wireless network interface was found","Wireless network %1 found", m_newNetworks[0]), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+    } else {
+        KNotification::event(Event::NetworkAppeared, i18nc("Notification text when multiple wireless networks are found","<b>New wireless networks:</b><br /> %1", m_newNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(48,48)), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+    }
+    m_newNetworkTimer->stop();
     m_newNetworks.clear();
 }
 
-void WirelessEnvironmentMerged::disappeared(const QString &ssid)
+void WirelessEnvironmentMerged::notifyDisappearedNetwork()
 {
-    Q_D(WirelessEnvironmentMerged);
-    delete d->networks.take(ssid);
-    KNotification::event(Event::NetworkDisappeared, i18nc("Notification text when a wireless network interface disappeared","Wireless network %1 disappeared", ssid), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
-    emit networkDisappeared(ssid);
+    if (m_disappearedNetworks.count() == 1) {
+        KNotification::event(Event::NetworkDisappeared, i18nc("Notification text when a wireless network interface disappeared","Wireless network %1 disappeared", m_disappearedNetworks[0]), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+
+    } else {
+        KNotification::event(Event::NetworkDisappeared, i18nc("Notification text when multiple wireless networks have disappeared","<b>Wireless networks have disappeared:</b><br /> %1", m_disappearedNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(48,48)), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+    }
+    m_disappearedNetworkTimer->stop();
+    m_disappearedNetworks.clear();
 }
 
 // vim: sw=4 sts=4 et tw=100

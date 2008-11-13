@@ -58,6 +58,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_icon = new Plasma::IconWidget(this);
     m_icon->setMinimumHeight(48);
     m_icon->setMaximumHeight(48);
+    m_icon->setAcceptHoverEvents(false);
     m_layout->addItem(m_icon, 0, 0, 3, 1);
 
     bool useMeter = false;
