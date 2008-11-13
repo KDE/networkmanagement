@@ -42,9 +42,10 @@ public:
     virtual int strength() const = 0;
     virtual Solid::Control::AccessPoint * referenceAccessPoint() const = 0;
 
-protected:
-    virtual void strengthChanged(const QString&, int) = 0;
-    virtual void disappeared(const QString&) = 0;
+Q_SIGNALS:
+    void strengthChanged(const QString &ssid, int strength);
+    // private signal, do not use.  Connect to WirelessEnvironment::networkDisapppeared() instead
+    void noAccessPoints(const QString &ssid);
 };
 
 /**
@@ -53,6 +54,7 @@ protected:
 class WirelessNetwork : public AbstractWirelessNetwork
 {
 Q_OBJECT
+friend class WirelessEnvironment;
 public:
     WirelessNetwork(Solid::Control::AccessPoint * ap,
             Solid::Control::WirelessNetworkInterface * iface,
@@ -61,44 +63,14 @@ public:
     QString ssid() const;
     int strength() const;
     Solid::Control::AccessPoint * referenceAccessPoint() const;
-signals:
-    void strengthChanged(const QString&, int);
-    void disappeared(const QString&);
 protected Q_SLOTS:
+    void updateStrength();
     void accessPointAppeared(const QString&);
     void accessPointDisappeared(const QString&);
-    void updateStrength();
+
 private:
     void addAccessPointInternal(Solid::Control::AccessPoint * ap);
-    class Private;
-    Private * d;
-};
-
-class WirelessEnvironmentMerged;
-class WirelessNetworkMergedPrivate;
-
-/**
- * A 'virtual' wireless network object which merges several network interfaces' views of real wireless networks
- */
-class WirelessNetworkMerged : public AbstractWirelessNetwork
-{
-Q_OBJECT
-friend class WirelessEnvironmentMerged;
-public:
-    WirelessNetworkMerged(WirelessNetwork * network, QObject * parent = 0);
-    ~WirelessNetworkMerged();
-    QString ssid() const;
-    int strength() const;
-    // return the Access Point which is currently being used as a reference point
-    Solid::Control::AccessPoint * referenceAccessPoint() const;
-signals:
-    void strengthChanged(const QString&, int);
-    void disappeared(const QString&);
-protected Q_SLOTS:
-    void onStrengthChanged(const QString &, int strength);
-    void onDisappeared(const QString&);
-private:
-    void addWirelessNetworkInternal(WirelessNetwork*);
+    void removeAccessPoint(Solid::Control::AccessPoint * ap);
     class Private;
     Private * d;
 };

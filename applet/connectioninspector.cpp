@@ -76,7 +76,7 @@ bool WirelessConnectionInspector::accept(RemoteConnection * connection)
             QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME));
             if (connectionSetting.contains(QLatin1String(NM_SETTING_WIRELESS_SSID))) {
                 ssid = connectionSetting.value(QLatin1String(NM_SETTING_WIRELESS_SSID)).toString();
-                if ( m_envt->findWirelessNetwork(ssid) != 0 ) {
+                if ( m_envt->findNetwork(ssid) != 0 ) {
                     acceptable = true;
                 }
             }

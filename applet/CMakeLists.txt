@@ -8,6 +8,7 @@ set(networkmanager_SRCS
     connectionitem.cpp
     connectioninspector.cpp
     connectionlist.cpp
+    mergedwireless.cpp
     networkmanager.cpp
     networkmanagerpopup.cpp
     interfacegroup.cpp

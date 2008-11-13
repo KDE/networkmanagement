@@ -51,7 +51,7 @@ WirelessNetwork::WirelessNetwork(Solid::Control::AccessPoint * ap, Solid::Contro
     d->ssid = ap->ssid();
     d->iface = iface;
     d->strength = 0;
-    connect(iface, SIGNAL(accessPointAppeared(const QString &)),
+    connect(iface, SIGNAL(accessPointAppeared(const QString&)),
             SLOT(accessPointAppeared(const QString &)));
     connect(iface, SIGNAL(accessPointDisappeared(const QString&)),
             SLOT(accessPointDisappeared(const QString&)));
@@ -97,7 +97,7 @@ void WirelessNetwork::accessPointDisappeared(const QString &uni)
     d->aps.remove(uni);
     if (d->aps.isEmpty()) {
         kDebug() << uni;
-        emit disappeared(d->ssid);
+        emit noAccessPoints(d->ssid);
     } else {
         updateStrength();
     }
@@ -128,99 +128,6 @@ Solid::Control::AccessPoint * WirelessNetwork::referenceAccessPoint() const
         }
     }
     return strongest;
-}
-
-
-
-class WirelessNetworkMerged::Private
-{
-public:
-    QList<WirelessNetwork*> networks;
-    WirelessNetwork * reference;
-};
-
-WirelessNetworkMerged::WirelessNetworkMerged(WirelessNetwork * network, QObject * parent)
-    : AbstractWirelessNetwork(parent), d(new WirelessNetworkMerged::Private)
-{
-    d->reference = 0;
-    addWirelessNetworkInternal(network);
-}
-
-WirelessNetworkMerged::~WirelessNetworkMerged()
-{
-    delete d;
-}
-
-QString WirelessNetworkMerged::ssid() const
-{
-    QString ssid;
-    if (d->reference) {
-        ssid = d->reference->ssid();
-    }
-    return ssid;
-}
-
-
-int WirelessNetworkMerged::strength() const
-{
-    int strength = -1;
-    if (d->reference) {
-        strength = d->reference->strength();
-    }
-    return strength;
-}
-
-Solid::Control::AccessPoint * WirelessNetworkMerged::referenceAccessPoint() const
-{
-    if (d->reference) {
-        return d->reference->referenceAccessPoint();
-    }
-    return 0;
-}
-
-void WirelessNetworkMerged::addWirelessNetworkInternal(WirelessNetwork * network)
-{
-    if (d->reference == 0) {
-        d->reference = network;
-    }
-    if ( network->ssid() == d->reference->ssid() ) {
-        d->networks.append(network);
-        connect(network, SIGNAL(strengthChanged(const QString&,int)), SLOT(onStrengthChanged(const QString&,int)));
-        connect(network, SIGNAL(disappeared(const QString&)), SLOT(onDisappeared(const QString&)));
-        onStrengthChanged(network->ssid(), network->strength());
-    }
-}
-
-void WirelessNetworkMerged::onStrengthChanged(const QString &, int strength)
-{
-    WirelessNetwork * network = qobject_cast<WirelessNetwork*>(sender());
-    if (d->reference == 0) {
-        d->reference = network;
-        emit strengthChanged(d->reference->ssid(), strength);
-    } else {
-        if (strength > d->reference->strength()) {
-            d->reference = network;
-            emit strengthChanged(d->reference->ssid(), strength);
-        }
-    }
-}
-
-void WirelessNetworkMerged::onDisappeared(const QString& ssid)
-{
-    kDebug() << ssid;
-    WirelessNetwork * disappearedNetwork = qobject_cast<WirelessNetwork*>(sender());
-    d->networks.removeAll(disappearedNetwork);
-    if (d->networks.isEmpty()) {
-        emit disappeared(ssid); // this relies on this slot ONLY being called from a wireless network with our ssid...
-    } else if (d->reference && d->reference == disappearedNetwork) {
-        d->reference = d->networks.first();
-        foreach (WirelessNetwork * candidate, d->networks) {
-            if (candidate->strength() > d->reference->strength()) {
-                d->reference = candidate;
-            }
-        }
-        emit strengthChanged(d->reference->ssid(), d->reference->strength());
-    }
 }
 
 // vim: sw=4 sts=4 et tw=100
