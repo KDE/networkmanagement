@@ -149,7 +149,7 @@ void NetworkManagerApplet::paintDefaultInterface(Solid::Control::NetworkInterfac
 {
     Q_UNUSED(option);
     Q_UNUSED(interface);
-    kDebug() << " ============== Default Interface";
+    //kDebug() << " ============== Default Interface";
     m_svg->paint(p, contentsRect, m_elementName);
 }
 
@@ -162,7 +162,7 @@ void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterfa
                     Configuring, NeedAuth, IPConfig, Activated, Failed };
         make use of this information...
     */
-    kDebug() << " ============== Wireless Interface";
+    //kDebug() << " ============== Wireless Interface";
     switch (interface->connectionState()) {
         case Solid::Control::NetworkInterface::UnknownState:
             kDebug() << " ... UnknownState";

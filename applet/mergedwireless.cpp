@@ -176,6 +176,7 @@ void WirelessEnvironmentMerged::onWirelessEnvironmentDestroyed(QObject * obj)
 void WirelessEnvironmentMerged::onNetworkAppeared(const QString &ssid)
 {
     Q_D(WirelessEnvironmentMerged);
+    kDebug() << "New Network:" << ssid;
     WirelessEnvironment * sourceEnvt = qobject_cast<WirelessEnvironment*>(sender());
     if (sourceEnvt) {
         WirelessNetwork * newNetwork = qobject_cast<WirelessNetwork*>(sourceEnvt->findNetwork(ssid));
@@ -199,11 +200,11 @@ void WirelessEnvironmentMerged::addNetworkInternal(WirelessEnvironment * source,
     connect(ourNetwork, SIGNAL(noAccessPoints(const QString&)),
             SLOT(disappeared(const QString&)));
 
-
+    quietly = true;
     if (!quietly) {
         KNotification::event(Event::NetworkAppeared, i18nc("Notification text when a wireless network interface was found","Wireless network %1 found", ssid), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
     }
-
+    kDebug() << "========= EMITTED:" << ssid;
     emit networkAppeared(ssid);
 }
 
