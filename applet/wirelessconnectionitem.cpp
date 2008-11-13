@@ -89,7 +89,7 @@ void WirelessConnectionItem::setupItem()
     m_securityIcon->setIcon(m_securityIconName);
     m_securityIcon->setMinimumHeight(22);
     m_securityIcon->setMaximumHeight(22);
-    m_layout->addItem(m_securityIcon, 0, 2, 1, 1 );
+    m_layout->addItem(m_securityIcon, 0, 2, 1, 1);
 
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);

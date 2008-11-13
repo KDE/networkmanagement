@@ -44,7 +44,6 @@ WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInte
 
 WirelessInterfaceItem::~WirelessInterfaceItem()
 {
-
 }
 
 WirelessEnvironment * WirelessInterfaceItem::wirelessEnvironment() const
@@ -69,7 +68,6 @@ void WirelessInterfaceItem::activeSignalStrengthChanged(int)
 {
     setConnectionInfo();
 }
-
 
 void WirelessInterfaceItem::accessPointDestroyed(QObject* ap)
 {
@@ -101,7 +99,6 @@ void WirelessInterfaceItem::setConnectionInfo()
                     } else {
                         security = "wep";
                     }
-
                 }
                 if (!security.isEmpty()) {
                     break;
@@ -123,7 +120,7 @@ void WirelessInterfaceItem::setConnectionInfo()
         m_connectionInfoIcon->show();
     } else {
         m_connectionInfoLabel->setText(QString());
-        m_connectionInfoIcon->hide();
+        //m_connectionInfoIcon->hide();
         m_strengthMeter->hide();
     }
 }

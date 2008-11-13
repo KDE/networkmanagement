@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as

@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkitem.h"
 #include "mergedwireless.h"
 
-#define MAX_WLANS 3
+#define MAX_WLANS 6
 
 bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWirelessNetwork * n2);
 
@@ -128,6 +128,12 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
     if ((activeConnectionTotal == 0) && m_connections.isEmpty() && m_userSettings->isValid()) {
         foreach (QString ssid, m_wirelessEnvironment->networks()) {
             allNetworks.append(m_wirelessEnvironment->findNetwork(ssid));
+        }
+        kDebug() << "::::::::No of Networks:" << allNetworks.count();
+        for (int i = 0; i < allNetworks.count(); i++)
+        {
+            AbstractWirelessNetwork *nw = allNetworks[i];
+            kDebug() << ":::::::::::::::::::::::" << nw->ssid() << " strength" << nw->strength();
         }
         qSort(allNetworks.begin(), allNetworks.end(), wirelessNetworkGreaterThanStrength);
         for (int i = 0; i < allNetworks.count() && i < MAX_WLANS; i++)
@@ -273,6 +279,7 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
 
 void InterfaceGroup::refreshConnectionsAndNetworks()
 {
+    kDebug();
     updateNetworks();
     reassess();
 }
