@@ -61,6 +61,8 @@ K_EXPORT_PLUGIN( ConnectionEditorFactory( "kcm_knetworkmanager" ) )
 ConnectionEditor::ConnectionEditor(QWidget *parent, const QVariantList &args)
 : KCModule( ConnectionEditorFactory::componentData(), parent, args ), mCellularMenu(0), mVpnMenu(0)
 {
+    KGlobal::locale()->insertCatalog( "kcm_knetworkmanager" );
+
     // depending on the contents of args, either show the general purpose connection editor dialog
     // or a dialog for creating and starting a single connection. When the user clicks an
     // unconfigured wireless network in the applet, this mode is used to get them connected as

@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionprefs.h"
 
 #include <KTabWidget>
+#include <KLocale>
+#include <KGlobal>
 
 #include <kcoreconfigskeleton.h>
 
@@ -30,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ConnectionPreferences::ConnectionPreferences(const KComponentData& cdata, QWidget * parent, const QVariantList & args) : KCModule( cdata, parent, args ),
     m_contents(0), m_connectionTypeWidget(0)
 {
-
+    KGlobal::locale()->insertCatalog( "kcm_knetworkmanager" );
 }
 
 ConnectionPreferences::~ConnectionPreferences()

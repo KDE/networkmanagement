@@ -53,6 +53,8 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
 : Plasma::Applet(parent, args), m_iconPerDevice(false), m_svg(0), m_dialog(0)
 {
+    KGlobal::locale()->insertCatalog("plasma_applet_networkmanager");
+
     setHasConfigurationInterface(false);
     updateToolTip();
     setAspectRatioMode(Plasma::ConstrainedSquare);
