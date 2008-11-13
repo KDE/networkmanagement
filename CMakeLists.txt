@@ -31,37 +31,6 @@ add_subdirectory(vpnplugins)
 
 install( FILES knetworkmanager.notifyrc DESTINATION ${DATA_INSTALL_DIR}/knetworkmanager )
 
-## next target: networkmanager applet
-## not built, the real applet is in applet/
-set(networkmanager_SRCS
-    networkmanager.cpp
-    nmmenu.cpp
-    widgets/ifaceitemmodel.cpp
-    widgets/apitemview.cpp
-    widgets/apitemmodel.cpp
-    widgets/accesspoint.cpp
-    widgets/apitemdelegate.cpp
-    widgets/profileitemmodel.cpp
-    widgets/networkprofile.cpp
-    widgets/manageprofilewidget.cpp
-    widgets/encryptionsettingswidget.cpp
-    widgets/wirelesssettingswidget.cpp
-    widgets/generalsettingswidget.cpp
-    widgets/editprofilewidget.cpp
-    widgets/scanwidget.cpp
-)
-
-#kde4_add_ui_files(networkmanager_SRCS widgets/scanwidget.ui)
-#kde4_add_ui_files(networkmanager_SRCS widgets/generalsettingswidget.ui)
-#kde4_add_ui_files(networkmanager_SRCS widgets/manageprofilewidget.ui)
-#kde4_add_ui_files(networkmanager_SRCS widgets/manageprofilewidget.ui)
-#kde4_add_ui_files(networkmanager_SRCS widgets/wirelesssettingswidget.ui)
-#kde4_add_plugin(plasma_applet_networkmanager ${networkmanager_SRCS})
-#target_link_libraries(plasma_applet_networkmanager plasma ${KDE4_KIO_LIBS} solidcontrol)
-
-#install(TARGETS plasma_applet_networkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
-#install(FILES plasma-applet-networkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-#install(FILES networkmanager.svg DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/networkmanager/)
 else(NM_0_7)
       macro_log_feature(NM_0_7 "NetworkManager ${NETWORKMANAGER_VERSION}" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
 endif(NM_0_7)
