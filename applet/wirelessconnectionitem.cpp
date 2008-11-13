@@ -104,6 +104,8 @@ void WirelessConnectionItem::setupItem()
 
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setIcon("network-connect");
+    m_connectButton->setDrawBackground(true);
+    m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to this network"));
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addItem(m_connectButton, 0, 4, 1, 1, Qt::AlignLeft);
