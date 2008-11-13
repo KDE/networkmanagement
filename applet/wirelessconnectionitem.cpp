@@ -103,7 +103,7 @@ void WirelessConnectionItem::setupItem()
     m_layout->addItem(m_strengthMeter, 0, 3, 1, 1, Qt::AlignCenter);
 
     m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setIcon("media-playback-start");
+    m_connectButton->setIcon("network-connect");
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addItem(m_connectButton, 0, 4, 1, 1, Qt::AlignLeft);

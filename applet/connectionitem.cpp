@@ -51,13 +51,13 @@ void ConnectionItem::setupItem()
     m_layout->setColumnSpacing(2, 0);
 
     m_icon = new Plasma::IconWidget(this);
-    m_icon->setIcon("network-server");
+    m_icon->setIcon("network-wired");
     m_icon->setMinimumHeight(rowHeight);
     m_icon->setMaximumHeight(rowHeight);
     m_connectionNameLabel = new Plasma::Label(this);
     m_connectionNameLabel->setText("Connection:" + m_connection->id());
     m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setIcon("media-playback-start");
+    m_connectButton->setIcon("network-connect");
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
 

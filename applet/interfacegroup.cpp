@@ -58,7 +58,6 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, Netw
     connect(m_wirelessEnvironment, SIGNAL(networkDisappeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
     connect(userSettings, SIGNAL(appeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
     connect(userSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
-    kDebug() << "CONNECTED ...";
 
     m_interfaceLayout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     m_networkLayout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -102,7 +101,6 @@ void InterfaceGroup::setupFooter()
 
 void InterfaceGroup::updateNetworks()
 {
-    kDebug() << "Updating networks ... ";
     // empty the layout
     foreach (WirelessNetworkItem * i, m_networks) {
         m_networkLayout->removeItem(i);
@@ -110,13 +108,12 @@ void InterfaceGroup::updateNetworks()
     }
     m_networks.clear();
 
-    kDebug() << networksToShow().count();
     foreach (AbstractWirelessNetwork * i, networksToShow()) {
         addNetworkInternal(i->ssid());
     }
-    //m_networkLayout->invalidate();
-    //m_interfaceLayout->invalidate();
-    //m_layout->invalidate();
+    m_networkLayout->invalidate();
+    m_interfaceLayout->invalidate();
+    m_layout->invalidate();
 }
 
 QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
@@ -129,16 +126,15 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
     foreach (InterfaceItem * i, m_interfaces) {
         activeConnectionTotal += i->activeConnectionCount();
     }
-    kDebug() << "Active Connections:" << activeConnectionTotal << "Networks:" << m_wirelessEnvironment->networks();
-    kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
+    //kDebug() << "Active Connections:" << activeConnectionTotal << "Networks:" << m_wirelessEnvironment->networks();
+    //kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
 
+    // FIXME: m_userSettings can be invalid here, but we might still want to connect.
     //if ((activeConnectionTotal == 0) && m_connections.isEmpty() && m_userSettings->isValid()) {
     if ((activeConnectionTotal == 0) && m_connections.isEmpty()) {
         foreach (QString ssid, m_wirelessEnvironment->networks()) {
             allNetworks.append(m_wirelessEnvironment->findNetwork(ssid));
-            kDebug() << ":::::::::::::::::::::::" << ssid;
         }
-        kDebug() << "::::::::No of Networks:" << allNetworks.count();
 
         qSort(allNetworks.begin(), allNetworks.end(), wirelessNetworkGreaterThanStrength);
         for (int i = 0; i < allNetworks.count() && i < MAX_WLANS; i++)
@@ -146,8 +142,8 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
             topNetworks.append(allNetworks[i]);
         }
     }
-    return allNetworks; // FIXME: shortcut ...
-    //return topNetworks;
+    //return allNetworks; // FIXME: shortcut ...
+    return topNetworks;
 }
 
 void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
@@ -285,7 +281,6 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
 
 void InterfaceGroup::refreshConnectionsAndNetworks()
 {
-    kDebug() << "CAUGHT";;
     updateNetworks();
     reassess();
 }

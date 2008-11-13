@@ -91,11 +91,11 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 
 
     m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setMinimumHeight(22);
-    m_connectButton->setMaximumHeight(22);
-    m_connectButton->setMinimumWidth(22);
-    m_connectButton->setIcon("media-playback-start"); // FIXME
-    m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignCenter);
+    m_connectButton->setMinimumHeight(32);
+    m_connectButton->setMaximumHeight(32);
+    m_connectButton->setMinimumWidth(32);
+    m_connectButton->setIcon("network-connect"); // FIXME
+    m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
 
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
@@ -138,7 +138,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoIcon->setAcceptHoverEvents(false);
     //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
     m_layout->addItem(m_connectionInfoIcon, 2, 2, 1, 1, Qt::AlignCenter);
-    //m_connectionInfoItem->hide(); // hide by default, we'll enable it later
+    m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
 
     connect(Solid::Control::NetworkManager::notifier(),
             SIGNAL(activeConnectionsChanged()),
@@ -323,7 +323,7 @@ void InterfaceItem::setInactive()
     m_icon->setEnabled(false);
     m_connectionNameLabel->setText(i18nc("networking device is not connected", "Disconnected"));
     m_connectionInfoLabel->setText("");
-    m_connectButton->setIcon("media-playback-start");
+    m_connectButton->setIcon("network-connect");
     m_connectButton->setEnabled(true);
 }
 
@@ -332,7 +332,7 @@ void InterfaceItem::setActiveConnection(int state)
 {
     m_icon->setEnabled(true);
     m_connectButton->setEnabled(true);
-    m_connectButton->setIcon("media-playback-stop");
+    m_connectButton->setIcon("network-disconnect");
     QStringList connectionIds;
     kDebug();
     foreach (ActiveConnectionPair connection, m_activeConnections) {

@@ -24,6 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetwork.h"
 #include "wirelessenvironment.h"
 
+#include <QTimer>
+#include <QStringList>
+
 class WirelessEnvironment;
 
 class WirelessNetworkMergedPrivate;
@@ -70,10 +73,13 @@ protected Q_SLOTS:
     void onWirelessEnvironmentDestroyed(QObject*);
     void onNetworkAppeared(const QString&);
     void disappeared(const QString&);
+    void notifyNewNetwork();
 Q_SIGNALS:
     void networkAppeared(const QString &ssid);
 private:
     void addNetworkInternal(WirelessEnvironment *, WirelessNetwork* network, bool quietly = false);
+    QTimer *m_lastNotification;
+    QStringList m_newNetworks;
 protected:
     WirelessEnvironmentMergedPrivate * const d_ptr;
 };
