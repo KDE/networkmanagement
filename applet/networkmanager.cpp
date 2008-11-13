@@ -88,7 +88,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     // so only have 1 rather than hack something ugly that will be thrown out later
     if (!m_interfaces.isEmpty()) {
         Solid::Control::NetworkInterface *iface = m_interfaces.first();
-        kDebug() << "most interesting interface to paint: " << iface->uni() << " with icon " << m_elementName;
+        //kDebug() << "most interesting interface to paint: " << iface->uni() << " with icon " << m_elementName;
         paintInterfaceStatus(iface, p, option, contentsRect);
     }
 }
@@ -102,11 +102,6 @@ void NetworkManagerApplet::paintInterfaceStatus(Solid::Control::NetworkInterface
 QWidget * NetworkManagerApplet::graphicsWidget()
 {
     return m_popup;
-}
-
-void NetworkManagerApplet::popupEvent(bool show)
-{
-    kDebug() << show;
 }
 
 /* Slots to react to changes from the daemon */

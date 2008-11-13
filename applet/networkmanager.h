@@ -49,7 +49,6 @@ public:
     /* reimp Plasma::Applet */
     //void constraintsEvent(Plasma::Constraints constraints);
     /* reimp Plasma::Applet */
-    void popupEvent(bool show);
     QWidget * graphicsWidget();
     static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
 protected:
