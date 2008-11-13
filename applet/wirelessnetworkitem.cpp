@@ -77,7 +77,7 @@ void WirelessNetworkItem::setupItem()
     // TODO: security symbol
 
     m_icon = new QLabel(this);
-    m_icon->setPixmap(MainBarIcon("network-wireless"));
+    m_icon->setPixmap(SmallIcon("accesspoint"));
     m_icon->setMinimumHeight(rowHeight);
     m_icon->setMaximumHeight(rowHeight);
     m_layout->addWidget(m_icon, 0, 0, 1, 1 );
