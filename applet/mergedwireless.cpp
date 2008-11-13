@@ -38,7 +38,6 @@ public:
 WirelessNetworkMerged::WirelessNetworkMerged(WirelessEnvironment *envt, WirelessNetwork *network, QObject *parent)
     : AbstractWirelessNetwork(parent), d(new WirelessNetworkMerged::Private)
 {
-    kDebug() << network->ssid();
     d->reference = 0;
     addWirelessNetworkInternal(envt, network);
 }
