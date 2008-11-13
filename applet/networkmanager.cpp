@@ -98,6 +98,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 
 void NetworkManagerApplet::paintInterfaceStatus(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
 {
+    Q_UNUSED(interface);
     Q_UNUSED(option);
     m_svg.paint(p, contentsRect, m_elementName);
 }

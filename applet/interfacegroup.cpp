@@ -96,6 +96,7 @@ void InterfaceGroup::setupFooter()
 {
     m_layout->addLayout(m_networkLayout);
     updateNetworks();
+    connect(this, SIGNAL(connectionListUpdated()), SLOT(updateNetworks()));
 }
 
 void InterfaceGroup::updateNetworks()
@@ -119,9 +120,13 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
 {
     QList<AbstractWirelessNetwork*> allNetworks;
     QList<AbstractWirelessNetwork*> topNetworks;
-    // we only show networks if we have no connections and if the user settings service is present
+    // we only show networks if we are not connected, have no connections and if the user settings service is present
     // in future we could show the networks when the service is not running but without their connectButton
-    if (m_connections.isEmpty() && m_userSettings->isValid()) {
+    uint activeConnectionTotal = 0;
+    foreach (InterfaceItem * i, m_interfaces) {
+        activeConnectionTotal += i->activeConnectionCount();
+    }
+    if ((activeConnectionTotal == 0) && m_connections.isEmpty() && m_userSettings->isValid()) {
         foreach (QString ssid, m_wirelessEnvironment->networks()) {
             allNetworks.append(m_wirelessEnvironment->findNetwork(ssid));
         }
