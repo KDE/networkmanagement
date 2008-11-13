@@ -103,13 +103,32 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     // i can't figure out how to do layouting of multiple items in constraintsEvent properly,
     // so only have 1 rather than hack something ugly that will be thrown out later
     if (!m_interfaces.isEmpty()) {
-        Solid::Control::NetworkInterface *iface = m_interfaces.first();
+        Solid::Control::NetworkInterface *interface = m_interfaces.first();
         //kDebug() << "most interesting interface to paint: " << iface->uni() << " with icon " << m_elementName;
-        paintInterfaceStatus(iface, p, option, contentsRect);
+        switch (interface->type() ) {
+            case Solid::Control::NetworkInterface::Ieee80211:
+                paintWirelessInterface(interface, p, option, contentsRect);
+                break;
+            case Solid::Control::NetworkInterface::Ieee8023:
+            case Solid::Control::NetworkInterface::Serial:
+            case Solid::Control::NetworkInterface::Gsm:
+            case Solid::Control::NetworkInterface::Cdma:
+            default:
+                paintDefaultInterface(interface, p, option, contentsRect);
+                break;
+        }
     }
 }
 
-void NetworkManagerApplet::paintInterfaceStatus(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
+void NetworkManagerApplet::paintDefaultInterface(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
+{
+    Q_UNUSED(option);
+    Q_UNUSED(interface);
+    kDebug() << " ============== Default Interface";
+    m_svg->paint(p, contentsRect, m_elementName);
+}
+
+void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
 {
     Q_UNUSED(option);
     kDebug() << interface->type();
@@ -118,18 +137,44 @@ void NetworkManagerApplet::paintInterfaceStatus(Solid::Control::NetworkInterface
                     Configuring, NeedAuth, IPConfig, Activated, Failed };
         make use of this information...
     */
-
-    if (interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-        //kDebug() << " Wireless Interfaces ...";
-        if (interface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+    kDebug() << " ============== Wireless Interface";
+    switch (interface->connectionState()) {
+        case Solid::Control::NetworkInterface::UnknownState:
+            kDebug() << " ... UnknownState";
+            break;
+        case Solid::Control::NetworkInterface::Unmanaged:
+            kDebug() << " ... Unmanaged";
+            break;
+        case Solid::Control::NetworkInterface::Unavailable:
+            kDebug() << " ... Unavailable";
+            break;
+        case Solid::Control::NetworkInterface::Disconnected:
+            kDebug() << " ... Disconnected";
+            break;
+        case Solid::Control::NetworkInterface::Preparing:
+            kDebug() << " ... Preparing";
+            break;
+        case Solid::Control::NetworkInterface::Configuring:
+            kDebug() << " ... Configuring";
+            break;
+        case Solid::Control::NetworkInterface::NeedAuth:
+            kDebug() << " ... NeedAuth";
+            break;
+        case Solid::Control::NetworkInterface::IPConfig:
+            kDebug() << " ... IPConfig";
+            break;
+        case Solid::Control::NetworkInterface::Activated:
+            kDebug() << " ... Activated";
             m_wirelessSvg->paint(p, contentsRect, "connected");
-            //kDebug() << " ... Connected";
-        }
-        m_wirelessSvg->paint(p, contentsRect, "antenna");
-    } else {
-        m_svg->paint(p, contentsRect, m_elementName);
+            break;
+        case Solid::Control::NetworkInterface::Failed:
+            kDebug() << " ... Failed";
+            break;
+        default:
+            kDebug() << "dunno ...";
+            break;
     }
-    kDebug() << "EL:" << m_elementName;
+    m_wirelessSvg->paint(p, contentsRect, "antenna");
 }
 
 QWidget * NetworkManagerApplet::graphicsWidget()
@@ -159,7 +204,7 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
 
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
-    kDebug();
+    kDebug() << "Updating connection state ...";
     //Solid::Control::NetworkInterface * interface = static_cast<Solid::Control::NetworkInterface *>(sender());
     // update appearance
     QString elementNameToPaint;
