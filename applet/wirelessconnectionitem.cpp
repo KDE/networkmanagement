@@ -118,7 +118,9 @@ WirelessConnectionItem::~WirelessConnectionItem()
 
 void WirelessConnectionItem::setNetwork(AbstractWirelessNetwork * network)
 {
-    Q_ASSERT(network);
+    if (!network) {
+        return;
+    }
     m_wirelessNetwork = network;
     setStrength(network->ssid(), network->strength());
     connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString&, int)));

@@ -51,13 +51,18 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Con
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
-: Plasma::Applet(parent, args), m_iconPerDevice(false), m_svg(this), m_dialog(0)
+: Plasma::Applet(parent, args), m_iconPerDevice(false), m_svg(0), m_dialog(0)
 {
     setHasConfigurationInterface(false);
     updateToolTip();
+    setAspectRatioMode(Plasma::ConstrainedSquare);
 
-    setAspectRatioMode(Plasma::ConstrainedSquare);// copied from Battery - the comment for this value is meaningless
-    m_svg.setImagePath("networkmanager/networkmanager");
+    m_svg = new Plasma::Svg(this);
+    m_svg->setImagePath("networkmanager/networkmanager");
+
+    m_wirelessSvg = new Plasma::Svg(this);
+    m_wirelessSvg->setImagePath("networkmanager/networkmanager-wireless");
+
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
     m_popup = new NetworkManagerPopup(0);
@@ -74,7 +79,7 @@ void NetworkManagerApplet::init()
 {
     KConfigGroup cg = config();
     m_iconPerDevice = cg.readEntry("IconPerDevice", false);
-    m_svg.resize(contentsRect().size());
+    m_svg->resize(contentsRect().size());
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
@@ -88,7 +93,8 @@ void NetworkManagerApplet::init()
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
 {
    if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint)) {
-        m_svg.resize(contentsRect().size().toSize());
+        m_svg->resize(contentsRect().size().toSize());
+        m_wirelessSvg->resize(contentsRect().size().toSize());
     }
 }
 
@@ -105,10 +111,25 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 
 void NetworkManagerApplet::paintInterfaceStatus(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
 {
-    Q_UNUSED(interface);
     Q_UNUSED(option);
-    m_svg.paint(p, contentsRect, m_elementName);
-    kDebug() << m_elementName << "m_elementName";
+    kDebug() << interface->type();
+    /* TODO:
+        enum ConnectionState{ UnknownState, Unmanaged, Unavailable, Disconnected, Preparing,
+                    Configuring, NeedAuth, IPConfig, Activated, Failed };
+        make use of this information...
+    */
+
+    if (interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+        //kDebug() << " Wireless Interfaces ...";
+        if (interface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+            m_wirelessSvg->paint(p, contentsRect, "connected");
+            //kDebug() << " ... Connected";
+        }
+        m_wirelessSvg->paint(p, contentsRect, "antenna");
+    } else {
+        m_svg->paint(p, contentsRect, m_elementName);
+    }
+    kDebug() << "EL:" << m_elementName;
 }
 
 QWidget * NetworkManagerApplet::graphicsWidget()
@@ -142,8 +163,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
     //Solid::Control::NetworkInterface * interface = static_cast<Solid::Control::NetworkInterface *>(sender());
     // update appearance
     QString elementNameToPaint;
-    if (!m_interfaces.isEmpty())
-    {
+    if (!m_interfaces.isEmpty()) {
         qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
         Solid::Control::NetworkInterface * interface = m_interfaces.first();
         switch (interface->type() ) {

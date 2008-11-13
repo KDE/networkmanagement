@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -129,7 +129,7 @@ void WirelessEnvironment::wirelessEnabledChanged(bool enabled)
         while (i.hasNext()) {
             i.next();
             QString deletedSsid = i.key();
-            delete i.value();
+            //delete i.value();
             i.remove();
             emit networkDisappeared(deletedSsid);
         }
