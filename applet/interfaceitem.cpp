@@ -83,6 +83,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 
     //     interface layout
     m_ifaceNameLabel = new QLabel(this);
+    m_ifaceNameLabel->setWordWrap(false);
     m_layout->addWidget(m_ifaceNameLabel, 0, 1, 1, 3);
 
     //     active connection name
