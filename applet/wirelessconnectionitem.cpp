@@ -40,11 +40,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetwork.h"
 
 WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QWidget * parent)
-: ConnectionItem(conn, parent), m_connection(conn), m_security(0), m_securityIcon(0), m_securityIconName(0), m_ssid(0)
+: ConnectionItem(conn, parent), m_connection(conn), m_wirelessNetwork(0), m_strengthMeter(0), m_securityIcon(0), m_strength(0)
 {
-    m_ssid = m_connection->id();
-    m_strengthMeter = 0;
-    m_strength = 0;
 }
 
 void WirelessConnectionItem::setupItem()
@@ -83,7 +80,7 @@ void WirelessConnectionItem::setupItem()
     m_layout->addWidget(m_icon, 0, 0, 1, 1 );
 
     m_connectionNameLabel = new QLabel(this);
-    m_connectionNameLabel->setText(m_ssid);
+    m_connectionNameLabel->setText(m_connection->id());
     m_connectionNameLabel->setWordWrap(false);
     m_connectionNameLabel->setMaximumWidth(200);
     m_layout->addWidget(m_connectionNameLabel, 0, 1, 1, 1);
@@ -121,18 +118,16 @@ WirelessConnectionItem::~WirelessConnectionItem()
 
 void WirelessConnectionItem::setNetwork(AbstractWirelessNetwork * network)
 {
-    if (!network) {
-        return;
-    }
+    Q_ASSERT(network);
     m_wirelessNetwork = network;
     setStrength(network->ssid(), network->strength());
-    connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString, int)));
+    connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString&, int)));
 }
 
 void WirelessConnectionItem::setStrength(QString ssid, int strength)
 {
     Q_UNUSED(ssid);
-    //kDebug() << ssid << "signal strength changed to " << strength;
+    kDebug() << ssid << "signal strength changed to " << strength;
     if (strength == m_strength) {
         return;
     }
@@ -150,7 +145,6 @@ QString WirelessConnectionItem::ssid()
 
 void WirelessConnectionItem::readSettings() {
     // from wirelessinterfaceitem, TODO: share this code in WirelessNetwork?
-    m_ssid = m_connection->id();
     QVariantMapMap settings = m_connection->settings();
     if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME))) {
         QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME));

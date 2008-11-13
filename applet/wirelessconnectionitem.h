@@ -50,11 +50,11 @@ private slots:
     void setStrength(QString ssid, int strength);
 private:
     void readSettings();
-    QProgressBar * m_strengthMeter;
-    QString m_security;
-    QLabel * m_securityIcon;
-    QString m_securityIconName;
     AbstractWirelessNetwork * m_wirelessNetwork;
+    QProgressBar * m_strengthMeter;
+    QLabel * m_securityIcon;
+    QString m_security;
+    QString m_securityIconName;
     QString m_ssid;
     int m_strength;
 };
