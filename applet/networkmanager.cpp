@@ -255,7 +255,7 @@ void NetworkManagerApplet::updateToolTip()
     if (interfaces.isEmpty()) {
         data.mainText = i18nc("Tooltip main title text", "Networks");
         data.subText= i18nc("Tooltip sub text", "No network interfaces");
-        data.image = KIcon("preferences-system-network").pixmap(IconSize(KIconLoader::Desktop));
+        data.image = KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop));
     } else {
         QString subText;
         qSort(interfaces.begin(), interfaces.end(), networkInterfaceLessThan);
@@ -266,7 +266,7 @@ void NetworkManagerApplet::updateToolTip()
             subText += QString::fromLatin1("<b>%1</b>: %2").arg(iface->interfaceName()).arg(connectionStateToString(iface->connectionState()));
             data.subText = subText;
             data.mainText = i18nc("Tooltip main title text", "Networks");
-            data.image = KIcon("preferences-system-network").pixmap(IconSize(KIconLoader::Desktop));
+            data.image = KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop));
             Plasma::ToolTipManager::self()->setToolTipContent(this, data);
         }
     }
