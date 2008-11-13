@@ -79,10 +79,10 @@ protected:
     NetworkManagerSettings * m_userSettings;
     NetworkManagerSettings * m_systemSettings;
     QGraphicsLinearLayout * m_layout;
+    // list of connection objects for this interface type
     ServiceConnectionHash m_connections;
 private:
     void addSettingsService(NetworkManagerSettings*);
-    // list of connection objects for this interface type
     QGraphicsLinearLayout * m_connectionLayout;
 };
 #endif // CONNECTIONLIST_H
