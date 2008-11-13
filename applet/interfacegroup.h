@@ -53,6 +53,11 @@ protected Q_SLOTS:
     virtual void interfaceRemoved(const QString&);
     void wirelessNetworkAppeared(const QString&);
     void wirelessNetworkDisappeared(const QString&);
+
+Q_SIGNALS:
+        void updateLayout();
+
+
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
     void addNetworkInternal(const QString &ssid);

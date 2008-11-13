@@ -181,6 +181,8 @@ void NetworkManagerPopup::updateLayout()
     updateGeometry();
 //    resize(sizeHint(Qt::PreferredSize));
 //    setMinimumSize(sizeHint(Qt::MinimumSize));
+
+    kDebug() << "============================== LAYOUT UPDATED.";
 }
 
 void NetworkManagerPopup::managerWirelessEnabledChanged(bool enabled)

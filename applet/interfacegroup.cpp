@@ -167,6 +167,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         m_interfaceLayout->invalidate();
     }
     show();
+    emit updateLayout();
 }
 
 void InterfaceGroup::addNetworkInternal(const QString & ssid)
@@ -221,6 +222,7 @@ void InterfaceGroup::interfaceAdded(const QString& uni)
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
     KNotification::event(Event::HwAdded, i18nc("Notification for hardware added", "Network interface %1 attached", iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+    emit updateLayout();
 }
 
 void InterfaceGroup::interfaceRemoved(const QString& uni)
@@ -232,6 +234,7 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
         delete item;
         reassess();
     }
+    emit updateLayout();
 }
 
 void InterfaceGroup::wirelessNetworkAppeared(const QString& ssid)
