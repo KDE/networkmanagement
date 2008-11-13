@@ -509,6 +509,7 @@ void NetworkManagerApplet::showLegacyPopup(QGraphicsSceneMouseEvent *event)
         m_dialog->hide();
     } else {
         kDebug();
+        m_dialog->move(popupPosition(m_dialog->sizeHint()));
         m_dialog->show();
     }
 }
