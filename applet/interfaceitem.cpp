@@ -87,6 +87,15 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_ifaceNameLabel->setWordWrap(false);
     m_layout->addWidget(m_ifaceNameLabel, 0, 1, 1, 2);
 
+
+    m_connectButton = new QToolButton(this);
+    m_connectButton->setMinimumHeight(32);
+    m_connectButton->setMaximumHeight(32);
+    m_connectButton->setMinimumWidth(32);
+    m_connectButton->setIcon(MainBarIcon("network-connect"));
+    m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
+    m_layout->addWidget(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
+
     //     active connection name
     m_connectionNameLabel = new QLabel(this);
     m_connectionNameLabel->setText("[not updated yet]"); // TODO: check connection status
@@ -113,7 +122,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
         //m_strengthMeter->setPreferredSize(QSizeF(120, meterHeight));
         m_strengthMeter->setMaximumHeight(meterHeight);
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        //m_layout->addItem(m_strengthMeter, 0, 3, 1, 1, Qt::AlignCenter);
         m_layout->addWidget(m_strengthMeter, 2, 1, 1, 1, Qt::AlignCenter);
         m_connectionInfoLabel->hide();
     } else {
@@ -125,18 +133,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoIcon->setMinimumHeight(22);
     m_connectionInfoIcon->setMinimumWidth(22);
     m_connectionInfoIcon->setMaximumHeight(22);
-    //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
     m_layout->addWidget(m_connectionInfoIcon, 2, 2, 1, 1, Qt::AlignCenter);
     m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
 
-    m_connectButton = new QToolButton(this);
-    m_connectButton->setMinimumHeight(32);
-    m_connectButton->setMaximumHeight(32);
-    m_connectButton->setMinimumWidth(32);
-    m_connectButton->setIcon(MainBarIcon("network-connect"));
-    m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
-    m_connectButton->setEnabled(false);
-    m_layout->addWidget(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
     connect(Solid::Control::NetworkManager::notifier(),
             SIGNAL(activeConnectionsChanged()),
             SLOT(activeConnectionsChanged()));
