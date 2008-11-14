@@ -61,15 +61,19 @@ private Q_SLOTS:
     void interfaceConnectionStateChanged();
     void manageConnections();
 private:
+    void setBusy(bool busy);
     void updateToolTip();
-
+    void updateIcons();
     void paintDefaultInterface(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
+    void paintWiredInterface(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
     void paintWirelessInterface(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
 
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;
     Plasma::Svg *m_svg;
     Plasma::Svg *m_wirelessSvg;
+    QPixmap m_pixmapWiredConnected;
+    QPixmap m_pixmapWiredDisconnected;
     Solid::Control::NetworkInterfaceList m_interfaces;
     QString m_elementName;
     NetworkManagerPopup * m_popup;

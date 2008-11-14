@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkmanager.h"
 
 #include <QIcon>
+#include <QPainter>
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -99,7 +100,14 @@ void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
    if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint)) {
         m_svg->resize(contentsRect().size().toSize());
         m_wirelessSvg->resize(contentsRect().size().toSize());
+        updateIcons();
     }
+}
+
+void NetworkManagerApplet::updateIcons()
+{
+    m_pixmapWiredConnected = KIcon("network-connect").pixmap(contentsRect().size().toSize());
+    m_pixmapWiredDisconnected = KIcon("network-disconnect").pixmap(contentsRect().size().toSize());
 }
 
 void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
@@ -109,11 +117,15 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     if (!m_interfaces.isEmpty()) {
         Solid::Control::NetworkInterface *interface = m_interfaces.first();
         //kDebug() << "most interesting interface to paint: " << iface->uni() << " with icon " << m_elementName;
+
+        // Call the correct method to paint the applet, depending on the kind of connection
         switch (interface->type() ) {
             case Solid::Control::NetworkInterface::Ieee80211:
                 paintWirelessInterface(interface, p, option, contentsRect);
                 break;
             case Solid::Control::NetworkInterface::Ieee8023:
+                paintWiredInterface(interface, p, option, contentsRect);
+                break;
             case Solid::Control::NetworkInterface::Serial:
             case Solid::Control::NetworkInterface::Gsm:
             case Solid::Control::NetworkInterface::Cdma:
@@ -132,6 +144,15 @@ void NetworkManagerApplet::paintDefaultInterface(Solid::Control::NetworkInterfac
     m_svg->paint(p, contentsRect, m_elementName);
 }
 
+void NetworkManagerApplet::paintWiredInterface(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
+{
+    if (interface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+        p->drawPixmap(contentsRect.topLeft(), m_pixmapWiredConnected);
+    } else {
+        p->drawPixmap(contentsRect.topLeft(), m_pixmapWiredDisconnected);
+    }
+}
+
 void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
 {
     Q_UNUSED(option);
@@ -145,15 +166,19 @@ void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterfa
     switch (interface->connectionState()) {
         case Solid::Control::NetworkInterface::UnknownState:
             kDebug() << " ... UnknownState";
+            m_wirelessSvg->paint(p, contentsRect, "antenna");
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
             kDebug() << " ... Unmanaged";
+            m_wirelessSvg->paint(p, contentsRect, "antenna");
             break;
         case Solid::Control::NetworkInterface::Unavailable:
             kDebug() << " ... Unavailable";
+            m_wirelessSvg->paint(p, contentsRect, "antenna");
             break;
         case Solid::Control::NetworkInterface::Disconnected:
             kDebug() << " ... Disconnected";
+            m_wirelessSvg->paint(p, contentsRect, "antenna");
             break;
         case Solid::Control::NetworkInterface::Preparing:
             kDebug() << " ... Preparing";
@@ -170,15 +195,16 @@ void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterfa
         case Solid::Control::NetworkInterface::Activated:
             kDebug() << " ... Activated";
             m_wirelessSvg->paint(p, contentsRect, "connected");
+            m_wirelessSvg->paint(p, contentsRect, "antenna");
             break;
         case Solid::Control::NetworkInterface::Failed:
             kDebug() << " ... Failed";
+            m_wirelessSvg->paint(p, contentsRect, "antenna");
             break;
         default:
             kDebug() << "dunno ...";
             break;
     }
-    m_wirelessSvg->paint(p, contentsRect, "antenna");
 }
 
 QWidget * NetworkManagerApplet::graphicsWidget()
@@ -238,6 +264,18 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
         } else {
             elementNameToPaint += "_disconnected";
         }
+        kDebug() << "busy ... ?";
+        switch (interface->connectionState()) {
+            case Solid::Control::NetworkInterface::Preparing:
+            case Solid::Control::NetworkInterface::Configuring:
+            case Solid::Control::NetworkInterface::NeedAuth:
+            case Solid::Control::NetworkInterface::IPConfig:
+                setBusy(true);
+                break;
+            default:
+                setBusy(false);
+                break;
+        }
     } else {
         elementNameToPaint = "nointerfaces";
     }
@@ -246,6 +284,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
         m_elementName = elementNameToPaint;
         update();
     }
+
     updateToolTip();
 }
 
@@ -473,6 +512,14 @@ void NetworkManagerApplet::manageConnections()
     if (m_dialog) {
         m_dialog->hide();
     }
+}
+
+void NetworkManagerApplet::setBusy(bool busy)
+{
+    Q_UNUSED(busy);
+    // We can reimplement that with some animation later on,
+    // for now, leave it like this so the applet still compiles
+    // with KDE 4.1.
 }
 
 void NetworkManagerApplet::mousePressEvent(QGraphicsSceneMouseEvent *event)
