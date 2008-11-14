@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -36,8 +36,8 @@ public:
     virtual QStringList networks() const = 0;
     virtual AbstractWirelessNetwork * findNetwork(const QString&) const = 0;
 Q_SIGNALS:
-    virtual void networkAppeared(const QString&);
-    virtual void networkDisappeared(const QString&);
+    virtual void networkAppeared(const QString &ssid);
+    virtual void networkDisappeared(const QString &ssid);
 };
 
 /**
