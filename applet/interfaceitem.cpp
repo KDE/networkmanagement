@@ -129,11 +129,12 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_layout->addWidget(m_connectionInfoIcon, 2, 2, 1, 1, Qt::AlignCenter);
 
     m_connectButton = new QToolButton(this);
-    m_connectButton->setMinimumHeight(24);
-    m_connectButton->setMaximumHeight(24);
+    m_connectButton->setMinimumHeight(22);
+    m_connectButton->setMaximumHeight(22);
+    m_connectButton->setMinimumWidth(22);
     m_connectButton->setIcon(MainBarIcon("media-playback-start"));
     m_connectButton->setEnabled(false);
-    m_layout->addWidget(m_connectButton, 0, 2, 1, 1);
+    m_layout->addWidget(m_connectButton, 0, 2, 1, 1, Qt::AlignCenter);
     connect(Solid::Control::NetworkManager::notifier(),
             SIGNAL(activeConnectionsChanged()),
             SLOT(activeConnectionsChanged()));
@@ -318,7 +319,7 @@ void InterfaceItem::setInactive()
     m_connectionNameLabel->setText(i18nc("networking device is not connected", "Disconnected"));
     m_connectionInfoLabel->setText("");
     //m_connectButton->setIcon(MainBarIcon("media-playback-start"));
-    m_connectButton->setEnabled(false);
+    m_connectButton->setEnabled(true);
 }
 
 
