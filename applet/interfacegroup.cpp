@@ -61,7 +61,7 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, Netw
     connect(userSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
 
 //    m_interfaceLayout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-//    m_networkLayout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+//    m_networkLayout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     m_networkLayout->setSpacing(4);
     updateNetworks();
 }

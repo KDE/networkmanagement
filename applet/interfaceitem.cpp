@@ -134,6 +134,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectButton->setMaximumHeight(32);
     m_connectButton->setMinimumWidth(32);
     m_connectButton->setIcon(MainBarIcon("network-connect"));
+    m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
     m_connectButton->setEnabled(false);
     m_layout->addWidget(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
     connect(Solid::Control::NetworkManager::notifier(),
@@ -312,6 +313,7 @@ void InterfaceItem::setUnavailable()
     m_connectionNameLabel->setText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"));
     m_connectionInfoLabel->setText("");
     m_connectButton->setEnabled(false);
+    m_connectButton->setToolTip(i18n("Network interface unavailable"));
 }
 
 void InterfaceItem::setInactive()
@@ -320,6 +322,7 @@ void InterfaceItem::setInactive()
     m_connectionNameLabel->setText(i18nc("networking device is not connected", "Disconnected"));
     m_connectionInfoLabel->setText("");
     m_connectButton->setIcon(MainBarIcon("network-connect"));
+    m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
     m_connectButton->setEnabled(true);
 }
 
@@ -329,6 +332,7 @@ void InterfaceItem::setActiveConnection(int state)
     m_icon->setEnabled(true);
     m_connectButton->setEnabled(true);
     m_connectButton->setIcon(MainBarIcon("network-disconnect"));
+    m_connectButton->setToolTip(i18nc("icon to disconnect network interface", "Disconnect"));
     QStringList connectionIds;
     kDebug();
     foreach (ActiveConnectionPair connection, m_activeConnections) {
