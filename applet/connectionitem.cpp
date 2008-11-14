@@ -51,13 +51,13 @@ void ConnectionItem::setupItem()
     //m_layout->setColumnSpacing(2, 0);
 
     m_icon = new QLabel(this);
-    m_icon->setPixmap(MainBarIcon("network-server"));
+    m_icon->setPixmap(MainBarIcon("network-wired"));
     m_icon->setMinimumHeight(rowHeight);
     m_icon->setMaximumHeight(rowHeight);
     m_connectionNameLabel = new QLabel(this);
     m_connectionNameLabel->setText("Connection:" + m_connection->id());
     m_connectButton = new QToolButton(this);
-    m_connectButton->setIcon(MainBarIcon("media-playback-start"));
+    m_connectButton->setIcon(MainBarIcon("network-connect"));
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
 

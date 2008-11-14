@@ -104,7 +104,7 @@ void WirelessConnectionItem::setupItem()
     m_layout->addWidget(m_strengthMeter, 0, 3, 1, 1, Qt::AlignCenter);
 
     m_connectButton = new QToolButton(this);
-    m_connectButton->setIcon(MainBarIcon("media-playback-start"));
+    m_connectButton->setIcon(MainBarIcon("network-connect"));
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addWidget(m_connectButton, 0, 4, 1, 1, Qt::AlignLeft);
