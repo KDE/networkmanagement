@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -34,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIconLoader>
 #include <KToolInvocation>
 #include <Plasma/Dialog>
+#include <KLocale>
 #include <plasma/tooltipmanager.h>
 
 #include <solid/control/networkmanager.h>

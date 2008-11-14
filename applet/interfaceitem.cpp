@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -84,11 +85,11 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     //     interface layout
     m_ifaceNameLabel = new QLabel(this);
     m_ifaceNameLabel->setWordWrap(false);
-    m_layout->addWidget(m_ifaceNameLabel, 0, 1, 1, 3);
+    m_layout->addWidget(m_ifaceNameLabel, 0, 1, 1, 2);
 
     //     active connection name
     m_connectionNameLabel = new QLabel(this);
-    m_connectionNameLabel->setText("Disconnected"); // TODO: check connection status
+    m_connectionNameLabel->setText("[not updated yet]"); // TODO: check connection status
     m_connectionNameLabel->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->setWordWrap(false);
     m_layout->addWidget(m_connectionNameLabel, 1, 1, 1, 1);
@@ -98,6 +99,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoLabel = new QLabel(this);
     m_connectionInfoLabel->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionInfoLabel->setWordWrap(false);
+    m_connectionInfoLabel->setMinimumWidth(120);
     m_connectionInfoLabel->setText("<b>IP Address:</b> dum.my.ip.addr");
 
     if (useMeter) {
@@ -119,8 +121,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     }
     //       security
     m_connectionInfoIcon = new QLabel(this);
-    //m_connectionInfoIcon->setPixmap(MainBarIcon("system-lock-screen");
+    m_connectionInfoIcon->setPixmap(MainBarIcon("object-locked"));
     m_connectionInfoIcon->setMinimumHeight(22);
+    m_connectionInfoIcon->setMinimumWidth(22);
     m_connectionInfoIcon->setMaximumHeight(22);
     //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
     m_layout->addWidget(m_connectionInfoIcon, 2, 2, 1, 1, Qt::AlignCenter);
@@ -128,7 +131,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectButton = new QToolButton(this);
     m_connectButton->setMinimumHeight(24);
     m_connectButton->setMaximumHeight(24);
-    m_connectButton->setIcon(MainBarIcon("media-playback-stop"));
+    m_connectButton->setIcon(MainBarIcon("media-playback-start"));
     m_connectButton->setEnabled(false);
     m_layout->addWidget(m_connectButton, 0, 2, 1, 1);
     connect(Solid::Control::NetworkManager::notifier(),
@@ -198,7 +201,7 @@ void InterfaceItem::setConnectionInfo()
 
 void InterfaceItem::activeConnectionsChanged()
 {
-    kDebug() << "updating active connection list for " << m_iface->uni();
+    kDebug() << "-------------------- updating active connection list for " << m_iface->uni();
     QList<ActiveConnectionPair > newConnectionList;
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
     QString serviceName;
