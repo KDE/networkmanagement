@@ -26,12 +26,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <nm-setting-wireless-security.h>
 
+#include "802_11_wireless_security_widget.h"
 #include "secretstoragehelper.h"
 #include "ui_wep.h"
 
 class WepWidget::Private
 {
 public:
+
     WepWidget::KeyFormat format;
     Ui_Wep ui;
     QStringList keys;
@@ -52,7 +54,6 @@ WepWidget::WepWidget(KeyFormat format, KConfig * config, const QString & connect
     keyTypeChanged(0);//initialize for passphrase
 
     connect(d->ui.keyType, SIGNAL(currentIndexChanged(int)), this, SLOT(keyTypeChanged(int)));
-    connect(d->ui.passphrase, SIGNAL(editingFinished()), this, SLOT(passphraseChanged()));
     connect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
     connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
 }
@@ -95,11 +96,6 @@ void WepWidget::chkShowPassToggled(bool on)
     d->ui.key->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
 }
 
-void WepWidget::passphraseChanged()
-{
-    kDebug() << "Passphrase changed to: " << d->ui.passphrase->text();
-}
-
 bool WepWidget::validate() const
 {
     return true;
@@ -126,6 +122,14 @@ void WepWidget::readConfig()
     }
     d->ui.key->setText(d->keys.value(txKeyIndex));
     d->ui.chkShowPass->setChecked(false);
+
+    //passphrase
+    QString passphrase;
+    secrets.readSecret("passphrase", passphrase);
+    if (!passphrase.isEmpty()) {
+        d->ui.passphrase->setText(passphrase);
+    }
+
     // auth alg
     QString authAlg = cg.readEntry("authalg", "open");
     if (authAlg == QLatin1String("shared")) {
@@ -140,7 +144,7 @@ void WepWidget::writeConfig()
     d->keys.insert(d->ui.weptxkeyindex->currentIndex(), d->ui.key->text());
 
     KConfigGroup cg(d->config, NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
-    cg.writeEntry("keymgmt", "none");
+    cg.writeEntry("keymgmt", Wireless80211SecurityWidget::KEY_MGMT_NONE);
     cg.writeEntry("weptxkeyidx", d->ui.weptxkeyindex->currentIndex());
     // keys
     SecretStorageHelper secrets(m_connectionId, cg.name());
@@ -151,6 +155,8 @@ void WepWidget::writeConfig()
             secrets.writeSecret(fieldName, d->keys[i]);
         }
     }
+    QString passphrase = d->ui.passphrase->text();
+    secrets.writeSecret("passphrase", passphrase);
     QString authAlg;
     if (d->ui.authalg->currentIndex() == 0 ) {
         authAlg = AUTH_ALG_OPEN;

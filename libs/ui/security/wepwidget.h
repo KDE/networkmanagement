@@ -42,7 +42,6 @@ private slots:
     void keyTypeChanged(int);
     void chkShowPassToggled(bool);
     void keyIndexChanged(int);
-    void passphraseChanged();
 private:
     class Private;
     Private * d;

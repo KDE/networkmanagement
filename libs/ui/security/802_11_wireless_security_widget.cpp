@@ -22,9 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <nm-setting-wireless-security.h>
 
-#include <QByteArray>
-#include <QCryptographicHash>
-
 #include <KDebug>
 
 #include "configxml.h"
@@ -41,62 +38,12 @@ const QString Wireless80211SecurityWidget::KEY_MGMT_WPA_EAP = QLatin1String("wpa
 class Wireless80211SecurityWidget::Private
 {
 public:
-    QByteArray wep128PassphraseHash(QByteArray input);
-    QByteArray bin2hex(QByteArray bytes);
-
     Ui_Wireless80211Security ui;
     QHash<int, SecurityWidget *> securityWidgetHash;
     int noSecurityIndex;
     int staticWepHexIndex;
     int wpaPskIndex;
 };
-
-QByteArray Wireless80211SecurityWidget::Private::wep128PassphraseHash(QByteArray input)
-{
-    QByteArray md5_data, digest;
-
-    if (input.isEmpty()) {
-        return QByteArray();
-    }
-
-    md5_data.reserve(65);
-    digest.reserve(16);
-
-    /* Get at least 64 bytes */
-    for (int i = 0; i < 64; i++)
-        md5_data[i] = input[i % input.length()];
-
-    /* Null terminate md5 seed data and hash it */
-    md5_data[64] = 0;
-    digest = QCryptographicHash::hash(md5_data, QCryptographicHash::Md5);
-    return bin2hex(digest);
-}
-
-QByteArray Wireless80211SecurityWidget::Private::bin2hex(QByteArray bytes)
-{
-    static char hex_digits[] = "0123456789abcdef";
-    QByteArray result;
-    int final_len = 26; //for 128-bit encryption
-
-    if (bytes.length() < 1) {
-        return result;
-    }
-    if (bytes.length() > 255) { // Arbitrary limit
-        return result;
-    }
-
-    result.reserve(bytes.length()*2+1);
-    for (int i = 0; i < bytes.length(); i++)
-    {
-        result[2*i] = hex_digits[(bytes[i] >> 4) & 0xf];
-        result[2*i+1] = hex_digits[bytes[i] & 0xf];
-    }
-    /* Cut converted key off at the correct length for this cipher type */
-    if (final_len > -1)
-        result[final_len] = '\0';
-
-    return result;
-}
 
 Wireless80211SecurityWidget::Wireless80211SecurityWidget(const QString& connectionId, QWidget * parent)
 : SettingWidget(connectionId, parent), d(new Wireless80211SecurityWidget::Private)
@@ -167,12 +114,15 @@ void Wireless80211SecurityWidget::readConfig()
     } else {
         KConfigSkeletonItem * item = configXml()->findItem(settingName(), QLatin1String("keymgmt"));
         if ( item) {
-            if (item->property().toString() == Wireless80211SecurityWidget::KEY_MGMT_NONE) {
+            KCoreConfigSkeleton::ItemEnum *enumItem = (KCoreConfigSkeleton::ItemEnum*)item;
+            QString itemString = enumItem->choices()[item->property().toInt()].name;
+            kDebug() << "keymgt = " << itemString;
+            if (itemString == Wireless80211SecurityWidget::KEY_MGMT_NONE) {
                 kDebug() << "WEP";
                 d->ui.cmbType->setCurrentIndex(d->staticWepHexIndex);
                 SecurityWidget * sw = d->securityWidgetHash.value(d->staticWepHexIndex);
                 sw->readConfig();
-            } else if (item->property().toString() == Wireless80211SecurityWidget::KEY_MGMT_WPA_PSK) {
+            } else if (itemString == Wireless80211SecurityWidget::KEY_MGMT_WPA_PSK) {
                 kDebug() << "WPA-PSK";
                 d->ui.cmbType->setCurrentIndex(d->wpaPskIndex);
                 SecurityWidget * sw = d->securityWidgetHash.value(d->wpaPskIndex);
