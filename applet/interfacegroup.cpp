@@ -108,6 +108,7 @@ void InterfaceGroup::updateNetworks()
     }
     m_networks.clear();
 
+    m_networkLayout->setSpacing(0);
     foreach (AbstractWirelessNetwork * i, networksToShow()) {
         addNetworkInternal(i->ssid());
     }

@@ -92,12 +92,12 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 
 
     m_connectButton = new Plasma::IconWidget(this);
+    m_connectButton->setDrawBackground(true);
     m_connectButton->setMinimumHeight(32);
     m_connectButton->setMaximumHeight(32);
     m_connectButton->setMinimumWidth(32);
     m_connectButton->setIcon("network-connect");
     m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
-    m_connectButton->setDrawBackground(true);
     m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
 
     //     active connection name
