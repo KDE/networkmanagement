@@ -53,10 +53,15 @@ Q_OBJECT
 public:
     NetworkManagerPopup(QGraphicsItem *parent);
     virtual ~NetworkManagerPopup();
-    void showWiredGroup(bool show);
-    void showWirelessGroup(bool show);
-    void showVpnGroup(bool show);
-    void showGsmGroup(bool show);
+    void showWired(bool show);
+    void showWireless(bool show);
+    void showVpn(bool show);
+    void showGsm(bool show);
+
+    bool wiredShown();
+    bool wirelessShown();
+    bool vpnShown();
+    bool gsmShown();
 
 public Q_SLOTS:
     /** slots called when a connection in the popup is clicked */
@@ -128,6 +133,11 @@ private:
     Plasma::CheckBox * m_btnEnableNetworking;
     Plasma::CheckBox * m_btnEnableWireless;
     Plasma::IconWidget * m_btnManageConnections;
+    bool m_showWired;
+    bool m_showWireless;
+    bool m_showVpn;
+    bool m_showGsm;
+    int m_numberOfWlans;
     QSignalMapper * m_connectionActivationSignalMapper;
     QSignalMapper * m_connectionDeactivationSignalMapper;
 };

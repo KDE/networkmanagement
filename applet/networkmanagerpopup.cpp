@@ -206,6 +206,80 @@ void NetworkManagerPopup::updateLayout()
     //kDebug() << "============================== LAYOUT UPDATED.";
 }
 
+// Accessors
+
+bool NetworkManagerPopup::wiredShown()
+{
+    return m_showWired;
+}
+
+bool NetworkManagerPopup::wirelessShown()
+{
+    return m_showWireless;
+}
+
+bool NetworkManagerPopup::vpnShown()
+{
+    return m_showVpn;
+}
+
+bool NetworkManagerPopup::gsmShown()
+{
+    return m_showGsm;
+}
+
+void NetworkManagerPopup::showWired(bool show)
+{
+    m_showWired = show;
+    if (show) {
+        m_wiredHeader->show();
+        m_ethernetGroup->show();
+
+    } else {
+        m_wiredHeader->hide();
+        m_ethernetGroup->hide();
+    }
+}
+
+void NetworkManagerPopup::showWireless(bool show)
+{
+    m_showWireless = show;
+    if (show) {
+        m_wirelessHeader->show();
+        m_wifiGroup->show();
+
+    } else {
+        m_wirelessHeader->hide();
+        m_wifiGroup->hide();
+    }
+}
+
+void NetworkManagerPopup::showVpn(bool show)
+{
+    m_showVpn = show;
+    if (show) {
+        m_vpnHeader->show();
+        m_vpnGroup->show();
+
+    } else {
+        m_vpnHeader->hide();
+        m_vpnGroup->hide();
+    }
+}
+
+void NetworkManagerPopup::showGsm(bool show)
+{
+    m_showWired = show;
+    if (show) {
+        m_gsmHeader->show();
+        m_gsmGroup->show();
+
+    } else {
+        m_gsmHeader->hide();
+        m_gsmGroup->hide();
+    }
+}
+
 void NetworkManagerPopup::managerWirelessEnabledChanged(bool enabled)
 {
     m_btnEnableWireless->setChecked(enabled);
