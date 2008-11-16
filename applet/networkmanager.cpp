@@ -76,7 +76,15 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
+
     m_popup = new NetworkManagerPopup(this);
+
+    KConfigGroup cg = config();
+    m_popup->showWired(cg.readEntry("showWired", true));
+    m_popup->showWireless(cg.readEntry("showWireless", true));
+    m_popup->showVpn(cg.readEntry("showVpn", true));
+    m_popup->showGsm(cg.readEntry("showGsm", true));
+
     QObject::connect(m_popup, SIGNAL(manageConnections()),
             this, SLOT(manageConnections()));
 }
@@ -126,22 +134,20 @@ void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-    /*
-    ui.showBatteryStringCheckBox->setChecked(m_showBatteryString ? Qt::Checked : Qt::Unchecked);
-    ui.showMultipleBatteriesCheckBox->setChecked(m_showMultipleBatteries ? Qt::Checked : Qt::Unchecked);
-    */
+    ui.showWired->setChecked(m_popup->wiredShown());
+    ui.showWireless->setChecked(m_popup->wirelessShown());
+    ui.showVpn->setChecked(m_popup->vpnShown());
+    ui.showGsm->setChecked(m_popup->gsmShown());
 }
 
 void NetworkManagerApplet::configAccepted()
 {
     KConfigGroup cg = config();
-/*
-    if (m_showVpn != ui.showVpnGroup->isChecked()) {
-        m_showBatteryString = !m_showBatteryString;
-        cg.writeEntry("showBatteryString", m_showBatteryString);
-        showLabel(m_showBatteryString);
+
+    if (m_popup->wiredShown() != ui.showVpn->isChecked()) {
+        m_popup->showWired(!m_popup->wiredShown());
+        cg.writeEntry("showWired", m_popup->wiredShown());
     }
-*/
 }
 
 void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
@@ -180,6 +186,7 @@ void NetworkManagerApplet::paintDefaultInterface(Solid::Control::NetworkInterfac
 
 void NetworkManagerApplet::paintWiredInterface(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
 {
+    Q_UNUSED( option );
     if (interface->connectionState() == Solid::Control::NetworkInterface::Activated) {
         p->drawPixmap(contentsRect.topLeft(), m_pixmapWiredConnected);
     } else {
