@@ -24,6 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdeversion.h>
 
 #include <plasma/svg.h>
+
+#include "ui_nmConfig.h"
+
 //#define KDE_4_1
 #if KDE_IS_VERSION(4,1,70)
 #include <plasma/popupapplet.h>
@@ -55,12 +58,17 @@ public:
     /* reimp Plasma::Applet */
     QGraphicsWidget * graphicsWidget();
     static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
+protected Q_SLOTS:
+    void configAccepted();
+protected:
+    void createConfigurationInterface(KConfigDialog *parent);
 #if KDE_IS_VERSION(4,1,70)
 #else
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void showLegacyPopup(QGraphicsSceneMouseEvent *event);
+    void createConfigurationInterface(KConfigDialog *parent);
 private:
     Plasma::Dialog * m_dialog;
     void setBusy(bool busy);
@@ -88,6 +96,10 @@ private:
     NetworkManagerPopup * m_popup;
     QPoint m_clicked;
     Plasma::ToolTipContent m_toolTip;
+    // Configuration dialog
+    Ui::nmConfig ui;
+
+
 };
 
 #endif

@@ -56,6 +56,8 @@ public:
     virtual void setupFooter() = 0; // puts the interfaceitems at the top if needed
     virtual bool accept(RemoteConnection *) const = 0; // do type specific checks
     virtual ConnectionItem * createItem(RemoteConnection * conn); // instantiate type-specific connectionitem
+    bool isEmpty();
+
 public Q_SLOTS:
 
     void reassess();
@@ -63,7 +65,7 @@ public Q_SLOTS:
     void connectionAddedToService(NetworkManagerSettings *, const QString&);
     void connectionRemovedFromService(NetworkManagerSettings *, const QString&);
     /**
-     * examine all connections from this service 
+     * examine all connections from this service
      * @return true if a connection was added
      */
     bool assessConnections(NetworkManagerSettings*);

@@ -73,11 +73,11 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     //     header label
     m_connectionLayout = new QGraphicsLinearLayout(Qt::Vertical, 0);
     m_connectionLayout->setContentsMargins(0,0,0,0);
-    Plasma::Label * wiredHeader = new Plasma::Label(this);
-    wiredHeader->setText(i18nc("Label for connection list popup","Wired Networks"));
+    m_wiredHeader = new Plasma::Label(this);
+    m_wiredHeader->setText(i18nc("Label for connection list popup","Wired Networks"));
     //m_notRunning = new Plasma::Label(this);
     //m_notRunning->setText(i18nc("Label for when NetworkManager is not running","The NetworkManager service is not running."));
-    m_connectionLayout->addItem(wiredHeader);
+    m_connectionLayout->addItem(m_wiredHeader);
     //m_connectionLayout->addItem(m_notRunning);
     if (Solid::Control::NetworkManager::status() != Solid::Networking::Unknown) {
         ;//m_notRunning->hide();
@@ -92,29 +92,38 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_ethernetGroup->init();
     m_connectionLayout->addItem(m_ethernetGroup);
 
-    Plasma::Label * wirelessHeader = new Plasma::Label(this);
-    wirelessHeader->setText(i18nc("Label for wifi networks in popup","Wireless Networks"));
+    m_wirelessHeader = new Plasma::Label(this);
+    m_wirelessHeader->setText(i18nc("Label for wifi networks in popup","Wireless Networks"));
     m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, this);
     m_wifiGroup->setObjectName("wifi-interface-group");
     m_wifiGroup->init();
+
     m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
     m_gsmGroup->setObjectName("gsm-interface-group");
     m_gsmGroup->init();
 
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
     //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
-    Plasma::Label * vpnHeader = new Plasma::Label(this);
-    vpnHeader->setText(i18nc("Label for vpn connections in popup","VPN Connections"));
-    VpnConnectionGroup * vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
-    vpnGroup->setObjectName("vpn-interface-group");
-    vpnGroup->init();
-    m_connectionLayout->addItem(wirelessHeader);
+    Plasma::Label * m_vpnHeader = new Plasma::Label(this);
+    m_vpnHeader->setText(i18nc("Label for vpn connections in popup","VPN Connections"));
+    m_vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
+    m_vpnGroup->setObjectName("vpn-interface-group");
+    m_vpnGroup->init();
+    m_connectionLayout->addItem(m_wirelessHeader);
 
     //m_connectionLayout->setItemSpacing(1, 30);
     m_connectionLayout->addItem(m_wifiGroup);
     m_connectionLayout->addItem(m_gsmGroup);
-    m_connectionLayout->addItem(vpnHeader);
-    m_connectionLayout->addItem(vpnGroup);
+
+    if (m_vpnGroup->isEmpty()) {
+        kDebug() << "EMPTY!!!!!!!!!!!!!!!!!";
+        m_vpnHeader->hide();
+        m_vpnGroup->hide();
+    } else {
+        kDebug() << "NON-EMPTY!!!!!!!!!!!!!!!!!";
+    }
+    m_connectionLayout->addItem(m_vpnHeader);
+    m_connectionLayout->addItem(m_vpnGroup);
     m_gsmGroup->show();
     //m_connectionLayout->addItem(cdmaGroup);
     //m_connectionLayout->addItem(pppoeGroup);

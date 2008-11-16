@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 
 #include "../libs/types.h"
+#include "vpnconnectiongroup.h"
 
 class QGraphicsLinearLayout;
 class QSignalMapper;
@@ -52,6 +53,11 @@ Q_OBJECT
 public:
     NetworkManagerPopup(QGraphicsItem *parent);
     virtual ~NetworkManagerPopup();
+    void showWiredGroup(bool show);
+    void showWirelessGroup(bool show);
+    void showVpnGroup(bool show);
+    void showGsmGroup(bool show);
+
 public Q_SLOTS:
     /** slots called when a connection in the popup is clicked */
     void activateConnection(const QString&);
@@ -111,7 +117,12 @@ private:
     QGraphicsLinearLayout * m_connectionLayout;
     InterfaceGroup * m_ethernetGroup;
     InterfaceGroup * m_wifiGroup;
+    VpnConnectionGroup * m_vpnGroup;
     InterfaceGroup * m_gsmGroup;
+    Plasma::Label * m_vpnHeader;
+    Plasma::Label * m_wirelessHeader;
+    Plasma::Label * m_wiredHeader;
+    Plasma::Label * m_gsmHeader;
     Plasma::Label * m_notRunning;
     Plasma::Label * m_lblRfkill;
     Plasma::CheckBox * m_btnEnableNetworking;

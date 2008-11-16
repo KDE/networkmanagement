@@ -163,5 +163,10 @@ void ConnectionList::reassess()
     }
 }
 
+bool ConnectionList::isEmpty()
+{
+    return m_connections.count() == 0;
+}
+
 // vim: sw=4 sts=4 et tw=100
 
