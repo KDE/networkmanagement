@@ -8,6 +8,7 @@ Name[pt]=Rede
 Name[pt_BR]=Rede
 Name[sv]=Nätverk
 Name[uk]=Робота у мережі
+Name[x-test]=xxNetworkingxx
 IconName=networkmanager
 Comment=Network Management Events
 Comment[el]=Γεγονότα διαχείρισης δικτύου
@@ -18,6 +19,7 @@ Comment[pt]=Eventos de Gestão da Rede
 Comment[pt_BR]=Eventos de Gestão da Rede
 Comment[sv]=Nätverkshanteringshändelser
 Comment[uk]=Події керування мережею
+Comment[x-test]=xxNetwork Management Eventsxx
 Version=1
 
 [Context/wired]
@@ -30,6 +32,7 @@ Name[pt]=Interface de Rede Com-Fios
 Name[pt_BR]=Interface de Rede Com-Fios
 Name[sv]=Trådbundet nätverksgränssnitt
 Name[uk]=Інтерфейс дротової мережі
+Name[x-test]=xxWired Network Interfacexx
 [Context/wireless]
 Name=Wireless Network Interface
 Name[el]=Ασύρματη διασύνδεση δικτύου
@@ -40,6 +43,7 @@ Name[pt]=Interface de Rede Sem-Fios
 Name[pt_BR]=Interface de Rede Sem-Fios
 Name[sv]=Trådlöst nätverksgränssnitt
 Name[uk]=Інтерфейс бездротової мережі
+Name[x-test]=xxWireless Network Interfacexx
 [Context/cellular]
 Name=Cellular broadband
 Name[el]=Κινητή ευρυζωνική
@@ -50,6 +54,7 @@ Name[pt]=Banda-larga móvel
 Name[pt_BR]=Banda-larga móvel
 Name[sv]=Mobilt bredband
 Name[uk]=Стільникова широкосмугова мережа
+Name[x-test]=xxCellular broadbandxx
 [Context/pppoe]
 Name=DSL network interfaces
 Name[el]=Διασυνδέσεις δικτύου DSL
@@ -60,6 +65,7 @@ Name[pt]=interfaces de rede DSL
 Name[pt_BR]=interfaces de rede DSL
 Name[sv]=DSL-nätverksgränssnitt
 Name[uk]=Мережеві інтерфейси DSL
+Name[x-test]=xxDSL network interfacesxx
 [Context/vpn]
 Name=VPN connection
 Name[el]=Σύνδεση VPN
@@ -70,6 +76,7 @@ Name[pt]=ligação VPN
 Name[pt_BR]=ligação VPN
 Name[sv]=VPN-anslutning
 Name[uk]=З’єднання VPN
+Name[x-test]=xxVPN connectionxx
 Comment=Virtual Private Network Connection
 Comment[el]=Σύνδεση εικονικού ιδιωτικού δικτύου (VPN)
 Comment[fr]=Connexion à un réseau privé virtuel (VPN)
@@ -79,6 +86,7 @@ Comment[pt]=Ligação de Rede Privada Virtual (VPN)
 Comment[pt_BR]=Ligação de Rede Privada Virtual (VPN)
 Comment[sv]=Virtuell privat nätverksanslutning
 Comment[uk]=З’єднання VPN
+Comment[x-test]=xxVirtual Private Network Connectionxx
 
 [Event/hwadded]
 Name=Network Interface Attached
@@ -90,6 +98,7 @@ Name[pt]=Interface de Rede Ligada
 Name[pt_BR]=Interface de Rede Ligada
 Name[sv]=Nätverksgränssnitt anslutet
 Name[uk]=Доданий інтерфейс мережі
+Name[x-test]=xxNetwork Interface Attachedxx
 Comment=A network interface was attached
 Comment[el]=Έγινε σύναψη μιας διασύνδεσης δικτύου
 Comment[fr]=Une interface réseau a été attachée
@@ -99,6 +108,7 @@ Comment[pt]=Foi ligada uma interface de rede
 Comment[pt_BR]=Foi ligada uma interface de rede
 Comment[sv]=Ett nätverksgränssnitt har anslutits
 Comment[uk]=Було додано інтерфейс мережі
+Comment[x-test]=xxA network interface was attachedxx
 Action=Popup
 
 [Event/hwremoved]
@@ -111,6 +121,7 @@ Name[pt]=Interface de Rede Removida
 Name[pt_BR]=Interface de Rede Removida
 Name[sv]=Nätverksgränssnitt borttaget
 Name[uk]=Вилучено інтерфейс мережі
+Name[x-test]=xxNetwork Interface Removedxx
 Comment=A network interface was removed
 Comment[el]=Έγινε αφαίρεση μιας διασύνδεσης δικτύου
 Comment[fr]=Une interface réseau a été retirée
@@ -120,6 +131,7 @@ Comment[pt]=Foi removida uma interface de rede
 Comment[pt_BR]=Foi removida uma interface de rede
 Comment[sv]=Ett nätverksgränssnitt har tagits bort
 Comment[uk]=Було вилучено інтерфейс мережі
+Comment[x-test]=xxA network interface was removedxx
 Action=Popup
 
 [Event/networkappeared]
@@ -132,6 +144,7 @@ Name[pt]=Rede Sem-Fios Descoberta
 Name[pt_BR]=Rede Sem-Fios Descoberta
 Name[sv]=Hittade trådlöst nätverk
 Name[uk]=Знайдено бездротову мережу
+Name[x-test]=xxFound Wireless Networkxx
 Comment=A wireless network appeared
 Comment[el]=Βρέθηκε ένα ασύρματο δίκτυο
 Comment[fr]=Un réseau sans fil est apparu
@@ -141,6 +154,7 @@ Comment[pt]=Apareceu uma rede sem-fios
 Comment[pt_BR]=Apareceu uma rede sem-fios
 Comment[sv]=Ett trådlöst nätverk dök upp
 Comment[uk]=Встановлено зв’язок з бездротовою мережею
+Comment[x-test]=xxA wireless network appearedxx
 Action=Popup
 
 [Event/networkdisappeared]
@@ -153,6 +167,7 @@ Name[pt]=Rede Sem-Fios Perdida
 Name[pt_BR]=Rede Sem-Fios Perdida
 Name[sv]=Förlorade trådlöst nätverk
 Name[uk]=Втрачено зв’язок з радіомережею
+Name[x-test]=xxLost Wireless Networkxx
 Comment=A wireless network disappeared
 Comment[el]=΄Ενα ασύρματο δίκτυο εξαφανίστηκε
 Comment[fr]=Un réseau sans fil a disparu
@@ -162,6 +177,7 @@ Comment[pt]=Desapareceu uma rede sem-fios
 Comment[pt_BR]=Desapareceu uma rede sem-fios
 Comment[sv]=Ett trådlöst nätverk försvann
 Comment[uk]=Зв’язок з бездротовою мережею увірвався
+Comment[x-test]=xxA wireless network disappearedxx
 Action=Popup
 
 [Event/connecting]
@@ -174,6 +190,7 @@ Name[pt]=A Estabelecer a Ligação à Rede
 Name[pt_BR]=A Estabelecer a Ligação à Rede
 Name[sv]=Upprättar nätverksanslutning
 Name[uk]=Встановлення мережевого з'єднання
+Name[x-test]=xxEstablishing Network Connectionxx
 Comment=A network connection attempt was begun
 Comment[el]=Αρχή προσπάθειας σύνδεσης δικτύου
 Comment[fr]=Une tentative d'établissement de la connexion réseau a débuté
@@ -183,6 +200,7 @@ Comment[pt]=Iniciou-se uma tentativa de ligação à rede
 Comment[pt_BR]=Iniciou-se uma tentativa de ligação à rede
 Comment[sv]=Ett försök att ansluta till nätverket har påbörjats
 Comment[uk]=Було розпочато спробу встановлення мережевого з’єднання
+Comment[x-test]=xxA network connection attempt was begunxx
 Action=Popup
 
 [Event/disconnected]
@@ -195,6 +213,7 @@ Name[pt]=Ligação de Rede Desligada
 Name[pt_BR]=Ligação de Rede Desligada
 Name[sv]=Nätverksanslutning nerkopplad
 Name[uk]=Мережеве з’єднання розірвано
+Name[x-test]=xxNetwork Connection Disconnectedxx
 Comment=A network connection was disconnected
 Comment[el]=Αποσύνδεση μιας σύνδεσης δικτύου
 Comment[fr]=Une connexion réseau est tombée
@@ -204,6 +223,7 @@ Comment[pt]=A ligação de rede terminou
 Comment[pt_BR]=A ligação de rede terminou
 Comment[sv]=En nätverksanslutning har kopplats ner
 Comment[uk]=Мережеве з’єднання було розірвано
+Comment[x-test]=xxA network connection was disconnectedxx
 Action=Popup
 
 [Event/connected]
@@ -216,6 +236,7 @@ Name[pt]=Ligação à Rede com Sucesso
 Name[pt_BR]=Ligação à Rede com Sucesso
 Name[sv]=Nätverksanslutning lyckades
 Name[uk]=Успішне з’єднання з мережею
+Name[x-test]=xxNetwork Connection Succeededxx
 Comment=A network connection was established
 Comment[el]=Έγινε εδραίωση μιας σύνδεσης δικτύου
 Comment[fr]=Une connexion réseau a été établie
@@ -225,6 +246,7 @@ Comment[pt]=Foi estabelecida uma ligação à rede
 Comment[pt_BR]=Foi estabelecida uma ligação à rede
 Comment[sv]=En nätverksanslutning har upprättats
 Comment[uk]=Було встановлено з’єднання з мережею
+Comment[x-test]=xxA network connection was establishedxx
 Action=Popup
 
 [Event/connfailed]
@@ -237,6 +259,7 @@ Name[pt]=Ligação à Rede sem Sucesso
 Name[pt_BR]=Ligação à Rede sem Sucesso
 Name[sv]=Nätverksanslutning misslyckades
 Name[uk]=Спроба встановлення з'єднання зазнала невдачі
+Name[x-test]=xxNetwork Connection Failedxx
 Comment=A network connection attempt failed
 Comment[el]=Αποτυχία προσπάθειας σύνδεσης με ένα δίκτυο
 Comment[fr]=Une tentative de connexion réseau a échoué
@@ -246,6 +269,7 @@ Comment[pt]=A tentativa de ligação à rede foi mal-sucedida
 Comment[pt_BR]=A tentativa de ligação à rede foi mal-sucedida
 Comment[sv]=Försök att ansluta till ett nätverk misslyckades
 Comment[uk]=Спроба встановлення з’єднання зазнала невдачі
+Comment[x-test]=xxA network connection attempt failedxx
 Action=Popup
 
 [Event/rfoff]
@@ -257,6 +281,7 @@ Name[pt]='Hardware' de Rádio Desligado
 Name[pt_BR]='Hardware' de Rádio Desligado
 Name[sv]=Radiohårdvara avstängd
 Name[uk]=Радіозв’язок апаратно вимкнено
+Name[x-test]=xxRadio Hardware Switched Offxx
 Comment=Wireless transceivers disabled by hardware switch
 Comment[el]=Απενεργοποίηση ασύρματων συσκευών μέσω ενός διακόπτη υλικού
 Comment[fr]=Désactivation matérielle des émetteurs / récepteurs sans fil
@@ -265,6 +290,7 @@ Comment[pt]=Os receptores/transmissores sem-fios foram desligados pelo interrupt
 Comment[pt_BR]=Os receptores/transmissores sem-fios foram desligados pelo interruptor
 Comment[sv]=Trådlös sändning och mottagning inaktiverad av hårdvarubrytare
 Comment[uk]=Бездротовий приймач-передавач було вимкнено апаратним тумблером
+Comment[x-test]=xxWireless transceivers disabled by hardware switchxx
 Action=Popup
 
 [Event/rfon]
@@ -276,6 +302,7 @@ Name[pt]='Hardware' de Rádio Ligado
 Name[pt_BR]='Hardware' de Rádio Ligado
 Name[sv]=Radiohårdvara aktiverad
 Name[uk]=Радіозв’язок апаратно увімкнено
+Name[x-test]=xxRadio Hardware Switched Onxx
 Comment=Wireless transceivers enabled
 Comment[el]=Ενεργοποίηση ασύρματων συσκευών
 Comment[fr]=Activation matérielle des émetteurs / récepteurs sans fil
@@ -284,6 +311,7 @@ Comment[pt]=Os receptores/transmissores sem-fios foram ligados
 Comment[pt_BR]=Os receptores/transmissores sem-fios foram ligados
 Comment[sv]=Trådlös sändning och mottagning aktiverad
 Comment[uk]=Увімкнено бездротовий приймач-передавач
+Comment[x-test]=xxWireless transceivers enabledxx
 Action=Popup
 
 [Event/lowsignal]
@@ -295,6 +323,7 @@ Name[pt]=Potência do Sinal Sem-Fios Fraca
 Name[pt_BR]=Potência do Sinal Sem-Fios Fraca
 Name[sv]=Låg trådlös signalstyrka
 Name[uk]=Низька потужність радіосигналу
+Name[x-test]=xxLow Wireless Signal Strengthxx
 Comment=The wireless signal strength is low
 Comment[el]=Η ασύρματη ισχύ του σήματος είναι χαμηλή
 Comment[fr]=Le signal sans fil est faible
@@ -303,6 +332,7 @@ Comment[pt]=A potência do sinal sem-fios é fraca
 Comment[pt_BR]=A potência do sinal sem-fios é fraca
 Comment[sv]=Den trådlösa signalstyrkan är låg
 Comment[uk]=Занизька потужність радіосигналу
+Comment[x-test]=xxThe wireless signal strength is lowxx
 Action=Popup
 
 
