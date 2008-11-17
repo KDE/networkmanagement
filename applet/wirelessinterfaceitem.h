@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define WIRELESSINTERFACEITEM_H
 
 #include <QHash>
+#include <QString>
 #include "interfaceitem.h"
 
 namespace Solid
@@ -52,8 +53,15 @@ public slots:
     void activeAccessPointChanged(const QString&);
     void activeSignalStrengthChanged(int);
     void accessPointDestroyed(QObject *);
+    void connectButtonClicked();
 private:
     void setConnectionInfo();
+
+    /// Returns a list of connections that can be applied to available access points.
+    QList<RemoteConnection*> appropriateConnections(const QList<RemoteConnection*> &connections, const QList<Solid::Control::AccessPoint*> accesspoints) const;
+    /// returns a list of available accesspoint objects
+    QList<Solid::Control::AccessPoint*> availableAccessPoints() const;
+
     Solid::Control::WirelessNetworkInterface * m_wirelessIface;
     Solid::Control::AccessPoint * m_activeAccessPoint;
     WirelessEnvironment * m_environment;

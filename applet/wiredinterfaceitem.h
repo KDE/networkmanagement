@@ -18,34 +18,32 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REMOTE_CONNECTION_H
-#define REMOTE_CONNECTION_H
+#ifndef WIREDINTERFACEITEM_H
+#define WIREDINTERFACEITEM_H
 
-#include "nm-exported-connectioninterface.h"
+#include <QHash>
+#include "interfaceitem.h"
 
-#include "../types.h"
-#include "../knm_export.h"
+namespace Solid
+{
+namespace Control
+{
+    class WiredNetworkInterface;
+}
+}
 
-#include <solid/control/networkinterface.h>
-
-class KNM_EXPORT RemoteConnection : public OrgFreedesktopNetworkManagerSettingsConnectionInterface
+/**
+ * Represents any network interface that uses IEEE 802.3
+ */
+class WiredInterfaceItem : public InterfaceItem
 {
 Q_OBJECT
 public:
-    RemoteConnection(const QString &service, const QString &path, QObject * parent = 0);
-    ~RemoteConnection();
-    QString id() const;
-    Solid::Control::NetworkInterface::Type type() const;
-    QString path() const;
-    QVariantMapMap settings() const;
-    bool active() const;
-//public Q_SLOTS:
-//  settingsUpdated(const QVariantMapMap&);
+    WiredInterfaceItem(Solid::Control::WiredNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent = 0);
+    virtual ~WiredInterfaceItem();
+public slots:
+    void connectButtonClicked();
 private:
-    QString m_id;
-    Solid::Control::NetworkInterface::Type m_type;
-    QVariantMapMap m_connection;
-    QString m_path;
+    Solid::Control::WiredNetworkInterface * m_wiredIface;
 };
-
-#endif // REMOTE_CONNECTION_H
+#endif // SERIALINTERFACEITEM_H

@@ -18,11 +18,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "serialinterfaceitem.h"
+#include "wiredinterfaceitem.h"
 
-#include <nm-setting-serial.h>
+#include <nm-setting-wired.h>
 
-#include <solid/control/networkserialinterface.h>
+#include <solid/control/wirednetworkinterface.h>
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkipv4config.h>
 #include <solid/control/networkmanager.h>
@@ -35,32 +35,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkmanagersettings.h"
 #include "remoteconnection.h"
 
-SerialInterfaceItem::SerialInterfaceItem(Solid::Control::SerialNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent)
-: InterfaceItem(iface, userSettings, systemSettings, mode, parent), m_serialIface(iface), m_bytesIn(0), m_bytesOut(0)
+WiredInterfaceItem::WiredInterfaceItem(Solid::Control::WiredNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent)
+: InterfaceItem(iface, userSettings, systemSettings, mode, parent), m_wiredIface(iface)
 
 {
-    // for updating our UI
-    connect(iface, SIGNAL(pppStats(uint,uint)), SLOT(pppStats(uint,uint)));
 }
 
-SerialInterfaceItem::~SerialInterfaceItem()
+WiredInterfaceItem::~WiredInterfaceItem()
 {
 
 }
 
-void SerialInterfaceItem::pppStats(uint in, uint out)
-{
-    m_bytesIn = in;
-    m_bytesOut = out;
-    setConnectionInfo();
-}
-
-void SerialInterfaceItem::activeSignalStrengthChanged(int)
-{
-    setConnectionInfo();
-}
-
-void SerialInterfaceItem::connectButtonClicked()
+void WiredInterfaceItem::connectButtonClicked()
 {
     kDebug();
     QList<RemoteConnection*> connections;
@@ -87,16 +73,4 @@ void SerialInterfaceItem::connectButtonClicked()
     }
 }
 
-void SerialInterfaceItem::setConnectionInfo()
-{
-    // Todo: GSM/UMTS/CDMA/HDSPA... status
-    // network provider name
-    // all available once ModemManager is merged into NM
-
-    if (m_activeConnections.isEmpty()) {
-        m_connectionInfoLabel->setText(QString());
-    } else {
-        m_connectionInfoLabel->setText(i18nc("Label for PPP/cellular network connection traffic data, bytes in and out","In: %1 Out %2", m_bytesIn, m_bytesOut));
-    }
-}
 // vim: sw=4 sts=4 et tw=100

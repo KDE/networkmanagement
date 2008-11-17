@@ -42,6 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkmanagersettings.h"
 #include "remoteconnection.h"
 #include "serialinterfaceitem.h"
+#include "wiredinterfaceitem.h"
 #include "wirelessinterfaceitem.h"
 #include "wirelessenvironment.h"
 #include "wirelessnetworkitem.h"
@@ -77,7 +78,7 @@ void InterfaceGroup::setupHeader()
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == interfaceType()) {
             addInterfaceInternal(iface);
-            kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
+            //kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
         }
     }
     // hook up signals to allow us to change the connection list depending on APs present, etc
@@ -151,34 +152,35 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
 {
     Q_ASSERT(iface);
     if (!m_interfaces.contains(iface->uni())) {
-        InterfaceItem * ii = 0;
-        WirelessInterfaceItem * wi = 0;
-        SerialInterfaceItem * si = 0;
+        InterfaceItem * interface = 0;
+        WiredInterfaceItem * wiredinterface = 0;
+        WirelessInterfaceItem * wirelessinterface = 0;
+        SerialInterfaceItem * serialinterface = 0;
         ConnectionInspector * inspector = 0;
         if (iface->type() != m_type) {
             return;
         }
         switch (iface->type()) {
             case Solid::Control::NetworkInterface::Ieee80211:
-                wi = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
-                m_wirelessEnvironment->addWirelessEnvironment(wi->wirelessEnvironment());
-                ii = wi;
-                inspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface), wi->wirelessEnvironment());
+                wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                m_wirelessEnvironment->addWirelessEnvironment(wirelessinterface->wirelessEnvironment());
+                interface = wirelessinterface;
+                inspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface), wirelessinterface->wirelessEnvironment());
                 break;
             case Solid::Control::NetworkInterface::Serial:
-                ii = si = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
+                interface = serialinterface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
                         m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 inspector = new PppoeConnectionInspector;
                 break;
             case Solid::Control::NetworkInterface::Gsm:
-                ii = si = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
+                interface = serialinterface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
                         m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 // TODO: When ModemManager support is added, connect signals from the SII to
                 // reassesConnectionList
                 inspector = new GsmConnectionInspector;
                 break;
             case Solid::Control::NetworkInterface::Cdma:
-                ii = si = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
+                interface = serialinterface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
                         m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 inspector = new CdmaConnectionInspector;
                 // TODO: When ModemManager support is added, connect signals from the SII to
@@ -186,14 +188,15 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 break;
             default:
             case Solid::Control::NetworkInterface::Ieee8023:
-                ii = new InterfaceItem(iface, m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                interface = wiredinterface = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface),
+                        m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 inspector = new WiredConnectionInspector(static_cast<Solid::Control::WiredNetworkInterface*>(iface));
                 break;
         }
-        ii->setConnectionInspector(inspector);
+        interface->setConnectionInspector(inspector);
 
-        m_interfaceLayout->addItem(ii);
-        m_interfaces.insert(iface->uni(), ii);
+        m_interfaceLayout->addItem(interface);
+        m_interfaces.insert(iface->uni(), interface);
         m_interfaceLayout->invalidate();
     }
     show();
@@ -308,7 +311,7 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
 {
     WirelessNetworkItem * wni = qobject_cast<WirelessNetworkItem*>(item);
     if (item) {
-        kDebug() << wni->net()->referenceAccessPoint()->hardwareAddress();
+        //kDebug() << wni->net()->referenceAccessPoint()->hardwareAddress();
         QDBusInterface kcm(QLatin1String("org.kde.NetworkManager.KCModule"), QLatin1String("/default"), QLatin1String("org.kde.kcmshell.ConnectionEditor"));
         if (kcm.isValid()) {
             QVariantList args;
@@ -318,7 +321,7 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
                 << (quint32)wni->net()->referenceAccessPoint()->rsnFlags();
             kcm.call(QDBus::NoBlock, "createConnection", "802-11-wireless", "any", QVariant::fromValue(args));
         } else {
-            kDebug() << "opening connection management dialog";
+            //kDebug() << "opening connection management dialog";
             QStringList args;
             QString moduleArgs =
                 QString::fromLatin1("createConnection 802-11-wireless any %1 %2 %3 %4")

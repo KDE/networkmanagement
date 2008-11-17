@@ -113,7 +113,7 @@ void WepWidget::readConfig()
     // keys
     SecretStorageHelper secrets(m_connectionId, cg.name());
     for (int i = 0; i < 4; i++) {
-        QString fieldName = QString::fromLatin1("wepkey%1").arg(i);
+        QString fieldName = QString::fromLatin1("wep-key%1").arg(i);
         QString secret;
         secrets.readSecret(fieldName, secret);
         if (!secret.isEmpty()) {
@@ -125,7 +125,7 @@ void WepWidget::readConfig()
 
     //passphrase
     QString passphrase;
-    secrets.readSecret("passphrase", passphrase);
+    secrets.readSecret("wep-passphrase", passphrase);
     if (!passphrase.isEmpty()) {
         d->ui.passphrase->setText(passphrase);
     }
@@ -150,13 +150,13 @@ void WepWidget::writeConfig()
     SecretStorageHelper secrets(m_connectionId, cg.name());
 
     for (int i = 0; i < d->keys.count(); i++) {
-        QString fieldName = QString::fromLatin1("wepkey%1").arg(i);
+        QString fieldName = QString::fromLatin1("wep-key%1").arg(i);
         if (!d->keys[i].isEmpty()) {
             secrets.writeSecret(fieldName, d->keys[i]);
         }
     }
     QString passphrase = d->ui.passphrase->text();
-    secrets.writeSecret("passphrase", passphrase);
+    secrets.writeSecret("wep-passphrase", passphrase);
     QString authAlg;
     if (d->ui.authalg->currentIndex() == 0 ) {
         authAlg = AUTH_ALG_OPEN;

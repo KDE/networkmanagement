@@ -68,7 +68,7 @@ bool ConnectionList::assessConnections(NetworkManagerSettings * service)
 {
     bool added = false;
     if (service->isValid()) {
-        kDebug() << service->objectName() << "has connections" << service->connections();
+        //kDebug() << service->objectName() << "has connections" << service->connections();
         foreach (QString connectionPath, service->connections() ) {
             added |= processConnection(service, connectionPath);
         }
@@ -110,7 +110,7 @@ bool ConnectionList::processConnection(NetworkManagerSettings * service, const Q
     } else {
         RemoteConnection * remoteConnection = service->findConnection(connectionPath);
         if (accept(remoteConnection)) {
-            kDebug() << "adding connection" << connectionPath << "from" << service->objectName();
+            //kDebug() << "adding connection" << connectionPath << "from" << service->objectName();
             ConnectionItem * ci = createItem(remoteConnection);
             connect(ci, SIGNAL(clicked(AbstractConnectableItem*)), SLOT(activateConnection(AbstractConnectableItem*)));
             m_connections.insert(key, ci);

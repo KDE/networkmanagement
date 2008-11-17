@@ -25,6 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KNotification>
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
+#include <solid/control/networkinterface.h>
+#include <solid/control/networkipv4config.h>
+#include <solid/control/networkmanager.h>
 
 #include "../libs/types.h"
 #include "events.h"
@@ -76,6 +79,42 @@ void WirelessInterfaceItem::accessPointDestroyed(QObject* ap)
     }
 }
 
+void WirelessInterfaceItem::connectButtonClicked()
+{
+    kDebug();
+    QList<RemoteConnection*> connections;
+    QList<Solid::Control::AccessPoint*> accesspoints;
+    switch ( m_iface->connectionState()) {
+        case Solid::Control::NetworkInterface::Unavailable:
+            // impossible, but nothing to do
+            break;
+        case Solid::Control::NetworkInterface::Disconnected:
+        case Solid::Control::NetworkInterface::Failed:
+            kDebug() << "Activating default connection.";
+             connections = availableConnections();
+             accesspoints = availableAccessPoints();
+             connections = appropriateConnections(connections, accesspoints);
+             if (!connections.isEmpty()) {
+                 //pick the first one.  TODO:Decide what to do if more than on connection is applicable.
+                 Solid::Control::NetworkManager::activateConnection(m_wirelessIface->uni(), connections[0]->service() + " " + connections[0]->path(), QVariantMap());
+                 KNotification::event(Event::Connecting, i18nc("Notification text when activating a connection","Connecting %1", connections[0]->id()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+             }
+            break;
+        case Solid::Control::NetworkInterface::Preparing:
+        case Solid::Control::NetworkInterface::Configuring:
+        case Solid::Control::NetworkInterface::NeedAuth:
+        case Solid::Control::NetworkInterface::IPConfig:
+        case Solid::Control::NetworkInterface::Activated: // deactivate active connections
+            foreach ( ActiveConnectionPair connection, m_activeConnections) {
+                Solid::Control::NetworkManager::deactivateConnection(connection.second->path());
+            }
+            break;
+        case Solid::Control::NetworkInterface::Unmanaged:
+        case Solid::Control::NetworkInterface::UnknownState:
+            break;
+    }
+}
+
 void WirelessInterfaceItem::setConnectionInfo()
 {
     if (m_activeAccessPoint) {
@@ -124,4 +163,45 @@ void WirelessInterfaceItem::setConnectionInfo()
         m_strengthMeter->hide();
     }
 }
+
+QList<RemoteConnection*> WirelessInterfaceItem::appropriateConnections(const QList<RemoteConnection*> &connections, const QList<Solid::Control::AccessPoint*> accesspoints) const
+{
+    QList<RemoteConnection*> retVal;
+    foreach (RemoteConnection *conn, connections) {
+        QVariantMapMap settings = conn->settings();
+        //deterine if the accesspoint can apply to the connection
+        foreach (Solid::Control::AccessPoint *ap, accesspoints) {
+            if (settings[QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)][QLatin1String(NM_SETTING_WIRELESS_SSID)] != ap->ssid()) {
+                //kDebug() << settings[QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)][QLatin1String(NM_SETTING_WIRELESS_SSID)] << " != " << ap->ssid();
+                //kDebug() << "Skipping . . . ";
+                continue;
+            } else if (!settings[QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)][QLatin1String(NM_SETTING_WIRELESS_BSSID)].toString().isEmpty() &&
+                        settings[QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)][QLatin1String(NM_SETTING_WIRELESS_BSSID)] != ap->hardwareAddress()) {
+                //kDebug() << settings[QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)][QLatin1String(NM_SETTING_WIRELESS_BSSID)] << " != " << ap->hardwareAddress();
+                //kDebug() << "Skipping . . . ";
+                continue;
+            } else {
+                //kDebug() << "Connection " << conn->path() << " is applicable.";
+                if (!retVal.contains(conn)) { //prevent multiple includes
+                    retVal << conn;
+                }
+            }
+        }
+    }
+    return retVal;
+}
+
+QList<Solid::Control::AccessPoint*> WirelessInterfaceItem::availableAccessPoints() const
+{
+    QList<Solid::Control::AccessPoint*> retVal;
+    AccessPointList aps = m_wirelessIface->accessPoints(); //NOTE: AccessPointList is a QStringList
+    foreach (const QString &ap, aps) {
+        Solid::Control::AccessPoint *accesspoint = m_wirelessIface->findAccessPoint(ap);
+        if(accesspoint) {
+            retVal << accesspoint;
+        }
+    }
+    return retVal;
+}
+
 // vim: sw=4 sts=4 et tw=100

@@ -203,14 +203,14 @@ void InterfaceItem::setConnectionInfo()
             // FIXME: doesn't seem to work?
             QHostAddress addr(addresses.first().address());
             m_connectionInfoLabel->setText("IP:" + addr.toString());
-            kDebug() << "IP:" << addr.toString();
+            //kDebug() << "IP:" << addr.toString();
         }
     }
 }
 
 void InterfaceItem::activeConnectionsChanged()
 {
-    kDebug() << "-------------------- updating active connection list for " << m_iface->uni();
+    //kDebug() << "-------------------- updating active connection list for " << m_iface->uni();
     QList<ActiveConnectionPair > newConnectionList;
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
     QString serviceName;
@@ -233,13 +233,13 @@ void InterfaceItem::activeConnectionsChanged()
                 }
                 if (service && service->isValid()) { // it's possible that the service is no longer running
                                                      // but provided a connection in the past
-                    kDebug() << "looking up connection" << connectionObjectPath.path() << "on" << service->objectName();
+                    //kDebug() << "looking up connection" << connectionObjectPath.path() << "on" << service->objectName();
                     RemoteConnection * connection = service->findConnection(connectionObjectPath.path());
                     if (connection) {
-                        kDebug() << "found it";
+                        //kDebug() << "found it";
                         newConnectionList.append(ActiveConnectionPair(service, connection));
                     } else {
-                        kDebug() << "not found";
+                        //kDebug() << "not found";
                     }
                 }
             }
@@ -286,32 +286,6 @@ void InterfaceItem::connectionStateChanged(int state)
     }
 }
 
-void InterfaceItem::connectButtonClicked()
-{
-    kDebug();
-    switch ( m_iface->connectionState()) {
-        case Solid::Control::NetworkInterface::Unavailable:
-            // impossible, but nothing to do
-            break;
-        case Solid::Control::NetworkInterface::Disconnected:
-        case Solid::Control::NetworkInterface::Failed:
-            kDebug() << "TODO: implement activating the default connection";
-            break;
-        case Solid::Control::NetworkInterface::Preparing:
-        case Solid::Control::NetworkInterface::Configuring:
-        case Solid::Control::NetworkInterface::NeedAuth:
-        case Solid::Control::NetworkInterface::IPConfig:
-        case Solid::Control::NetworkInterface::Activated: // deactivate active connections
-            foreach ( ActiveConnectionPair connection, m_activeConnections) {
-                Solid::Control::NetworkManager::deactivateConnection(connection.second->path());
-            }
-            break;
-        case Solid::Control::NetworkInterface::Unmanaged:
-        case Solid::Control::NetworkInterface::UnknownState:
-            break;
-    }
-}
-
 void InterfaceItem::setUnavailable()
 {
     m_icon->setEnabled(false);
@@ -340,7 +314,7 @@ void InterfaceItem::setActiveConnection(int state)
     m_connectButton->setIcon("network-disconnect");
     m_connectButton->setToolTip(i18nc("icon to disconnect network interface", "Disconnect"));
     QStringList connectionIds;
-    kDebug();
+    //kDebug();
     foreach (ActiveConnectionPair connection, m_activeConnections) {
         if (connection.second->isValid()) {
             //connection name
@@ -386,6 +360,18 @@ void InterfaceItem::serviceDisappeared(NetworkManagerSettings* service)
         }
     }
     setConnectionInfo();
+}
+
+QList<RemoteConnection*> InterfaceItem::availableConnections() const
+{
+    QList<RemoteConnection*> rconnections;
+    foreach (QString conn, m_userSettings->connections()) {
+       RemoteConnection *rconnection = m_userSettings->findConnection(conn);
+       if (rconnection && rconnection->type() == m_iface->type()) {
+           rconnections << rconnection;
+       }
+    }
+    return rconnections;
 }
 
 // vim: sw=4 sts=4 et tw=100

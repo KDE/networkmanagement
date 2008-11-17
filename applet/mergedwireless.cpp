@@ -45,7 +45,7 @@ WirelessNetworkMerged::WirelessNetworkMerged(WirelessEnvironment *envt, Wireless
 
 WirelessNetworkMerged::~WirelessNetworkMerged()
 {
-    kDebug() << ssid();
+    //kDebug() << ssid();
     delete d;
 }
 
@@ -104,7 +104,7 @@ void WirelessNetworkMerged::onStrengthChanged(const QString &, int strength)
 void WirelessNetworkMerged::disappeared(const QString& ssid)
 {
     if (ssid == d->ssid) {
-        kDebug() << ssid;
+        //kDebug() << ssid;
         WirelessEnvironment * envt = qobject_cast<WirelessEnvironment*>(sender());
         WirelessNetwork * disappearedNetwork = d->networks.take(envt);
         if (d->networks.isEmpty()) {
@@ -186,7 +186,7 @@ void WirelessEnvironmentMerged::onNetworkAppeared(const QString &ssid)
     WirelessEnvironment * sourceEnvt = qobject_cast<WirelessEnvironment*>(sender());
     if (sourceEnvt) {
         WirelessNetwork * newNetwork = qobject_cast<WirelessNetwork*>(sourceEnvt->findNetwork(ssid));
-        kDebug() << ssid << d->networks.keys();
+        //kDebug() << ssid << d->networks.keys();
         WirelessNetworkMerged * ourNetwork = d->networks.value(ssid);
         if (ourNetwork) {
             ourNetwork->addWirelessNetworkInternal(sourceEnvt, newNetwork);

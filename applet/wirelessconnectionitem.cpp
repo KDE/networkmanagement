@@ -93,7 +93,7 @@ void WirelessConnectionItem::setupItem()
 */
     //kDebug() << "security icon:" << m_securityIconName;
     //m_layout->addItem(m_securityIcon, 0, 2, 1, 1);
-    kDebug() << "HOAAAAAAAARRRRRRRRRRRRRRRRRR--------------------------------=======";
+    //kDebug() << "HOAAAAAAAARRRRRRRRRRRRRRRRRR--------------------------------=======";
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);
@@ -130,7 +130,7 @@ void WirelessConnectionItem::setNetwork(AbstractWirelessNetwork * network)
 void WirelessConnectionItem::setStrength(QString ssid, int strength)
 {
     Q_UNUSED(ssid);
-    kDebug() << ssid << "signal strength changed to " << strength;
+    //kDebug() << ssid << "signal strength changed to " << strength;
     if (strength == m_strength) {
         return;
     }

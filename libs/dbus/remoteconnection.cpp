@@ -44,6 +44,7 @@ RemoteConnection::RemoteConnection(const QString& service, const QString & path,
     qDBusRegisterMetaType<QMap<QString, QMap<QString, QVariant> > >();
 
     m_connection = GetSettings();
+    m_path = path;
     //kDebug() << m_connection;
 
     if ( m_connection.contains(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME))) {
@@ -99,5 +100,10 @@ bool RemoteConnection::active() const
         }
     }
     return false;
+}
+
+QString RemoteConnection::path() const
+{
+    return m_path;
 }
 // vim: sw=4 sts=4 et tw=100

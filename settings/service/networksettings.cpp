@@ -27,7 +27,6 @@
 #include <QDBusObjectPath>
 #include <QDBusMetaType>
 #include <KDebug>
-#include <KDebug>
 
 #include <solid/control/networkmanager.h>
 
@@ -47,7 +46,7 @@ NetworkSettings::NetworkSettings(QObject * parent)
     if (!dbus.registerObject(QLatin1String(NM_DBUS_PATH_SETTINGS), this, QDBusConnection::ExportScriptableContents)) {
         kDebug() << "Unable to register settings object " << NM_DBUS_PATH_SETTINGS;
     } else {
-        kDebug() << "Registered settings object " << NM_DBUS_PATH_SETTINGS;
+        //kDebug() << "Registered settings object " << NM_DBUS_PATH_SETTINGS;
     }
 
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(activeConnectionsChanged()),
@@ -82,17 +81,17 @@ QString NetworkSettings::addConnection(const QVariantMapMap& settings)
             emit NewConnection(QDBusObjectPath(objectPath));
             return objectPath;
         } else {
-        kDebug() << "Received connection settings map without a connection ID! " << NM_SETTING_CONNECTION_ID;
+        //kDebug() << "Received connection settings map without a connection ID! " << NM_SETTING_CONNECTION_ID;
         }
     } else {
-        kDebug() << "Received connection settings map without a name! " << NM_SETTING_CONNECTION_SETTING_NAME;
+        //kDebug() << "Received connection settings map without a name! " << NM_SETTING_CONNECTION_SETTING_NAME;
     }
     return QString();
 }
 
 void NetworkSettings::updateConnection(const QString & objectPath, const QVariantMapMap & settings )
 {
-    kDebug() << objectPath << settings;
+    //kDebug() << objectPath << settings;
     if (m_connectionMap.contains(objectPath)) {
         Connection * conn = m_connectionMap[objectPath];
         if (conn) {
@@ -103,7 +102,7 @@ void NetworkSettings::updateConnection(const QString & objectPath, const QVarian
 
 void NetworkSettings::removeConnection(const QString & objectPath)
 {
-    kDebug();
+    //kDebug();
     Connection * conn = m_connectionMap.take(objectPath);
     conn->Delete();
 }
@@ -111,7 +110,7 @@ void NetworkSettings::removeConnection(const QString & objectPath)
 QList<QDBusObjectPath> NetworkSettings::ListConnections() const
 {
     QList<QDBusObjectPath> pathList;
-    kDebug() << "There are " << m_connectionMap.keys().count() << " known connections";
+    //kDebug() << "There are " << m_connectionMap.keys().count() << " known connections";
     foreach(const QString &connPath, m_connectionMap.keys()) {
         pathList << QDBusObjectPath(connPath);
     }
