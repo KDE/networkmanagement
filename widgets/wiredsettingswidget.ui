@@ -9,9 +9,6 @@
     <height>470</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Form</string>
-  </property>
   <widget class="QTabWidget" name="m_wiredSettings" >
    <property name="geometry" >
     <rect>
