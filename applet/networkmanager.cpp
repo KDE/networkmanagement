@@ -553,6 +553,7 @@ void NetworkManagerApplet::showLegacyPopup(QGraphicsSceneMouseEvent *event)
         m_dialog->setLayout(layout);
         m_dialog->setContentsMargins(10,10,10,10);
         m_dialog->adjustSize();
+        m_dialog->setWindowFlags(Qt::Popup);
     }
     if (m_dialog->isVisible()) {
         m_dialog->hide();
