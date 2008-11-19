@@ -127,11 +127,11 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     //QGraphicsGridLayout * gridLayout = new QGraphicsGridLayout(m_layout);
     m_btnManageConnections = new QPushButton(this);
     //m_btnManageConnections->setDrawBackground(true);
-    m_btnManageConnections->setMaximumWidth(140);
+    m_btnManageConnections->setMinimumWidth(160);
     m_btnManageConnections->setMaximumHeight(24);
     //m_btnManageConnections->setOrientation(Qt::Horizontal);
     m_btnManageConnections->setIcon(SmallIcon("networkmanager"));
-    m_btnManageConnections->setText(i18nc("Button text for showing the Manage Connections KCModule", "Manage..."));
+    m_btnManageConnections->setText(i18nc("Button text for showing the Manage Connections KCModule", "Manage Connections..."));
 
     //gridLayout->addItem(m_btnManageConnections, 0, 0, 1, 2);
     m_layout->addWidget(m_btnManageConnections);

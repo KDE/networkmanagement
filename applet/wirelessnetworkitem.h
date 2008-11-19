@@ -57,6 +57,7 @@ private:
     QLabel * m_securityIcon;
     QString m_securityIconName;
     int m_strength;
+    QString m_ssid;
 };
 
 #endif //#define APPLET_WIRELESSCONNECTIONITEM_H
