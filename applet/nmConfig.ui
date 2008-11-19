@@ -42,21 +42,21 @@
     </widget>
    </item>
    <item row="4" column="0" >
-    <widget class="QCheckBox" name="showWirelessGroup" >
+    <widget class="QCheckBox" name="showWireless" >
      <property name="text" >
       <string>Show Wireless Group</string>
      </property>
     </widget>
    </item>
    <item row="8" column="0" >
-    <widget class="QCheckBox" name="showVpnGroup" >
+    <widget class="QCheckBox" name="showVpn" >
      <property name="text" >
       <string>Show VPN Group</string>
      </property>
     </widget>
    </item>
    <item row="9" column="0" >
-    <widget class="QCheckBox" name="showGsmGroup" >
+    <widget class="QCheckBox" name="showGsm" >
      <property name="text" >
       <string>Show GSM Group</string>
      </property>
@@ -70,7 +70,7 @@
     </widget>
    </item>
    <item row="3" column="0" >
-    <widget class="QCheckBox" name="showWiredGroup" >
+    <widget class="QCheckBox" name="showWired" >
      <property name="text" >
       <string>Show Wired Group</string>
      </property>

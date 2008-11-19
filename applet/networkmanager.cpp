@@ -72,7 +72,15 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
+
     m_popup = new NetworkManagerPopup(0);
+
+    KConfigGroup cg = config();
+    m_popup->showWired(cg.readEntry("showWired", true));
+    m_popup->showWireless(cg.readEntry("showWireless", true));
+    m_popup->showVpn(cg.readEntry("showVpn", true));
+    m_popup->showGsm(cg.readEntry("showGsm", true));
+
     QObject::connect(m_popup, SIGNAL(manageConnections()),
             this, SLOT(manageConnections()));
 }

@@ -60,6 +60,15 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     m_connectionActivationSignalMapper(new QSignalMapper(this)),
     m_connectionDeactivationSignalMapper(new QSignalMapper(this))
 {
+    m_wiredHeader = 0;
+    m_ethernetGroup = 0;
+    m_wirelessHeader = 0;
+    m_ethernetGroup = 0;
+    m_vpnHeader = 0;
+    m_vpnGroup = 0;
+    m_gsmHeader = 0;
+    m_gsmGroup = 0;
+
     setMinimumWidth(300);
     qDBusRegisterMetaType<QMap<QString, QVariant> >();
     qDBusRegisterMetaType<QMap<QString, QMap<QString, QVariant> > >();
@@ -228,6 +237,9 @@ bool NetworkManagerPopup::gsmShown()
 void NetworkManagerPopup::showWired(bool show)
 {
     m_showWired = show;
+    if (!m_wiredHeader || !m_ethernetGroup) {
+        return;
+    }
     if (show) {
         m_wiredHeader->show();
         m_ethernetGroup->show();
@@ -241,6 +253,9 @@ void NetworkManagerPopup::showWired(bool show)
 void NetworkManagerPopup::showWireless(bool show)
 {
     m_showWireless = show;
+    if (!m_wirelessHeader || !m_wifiGroup) {
+        return;
+    }
     if (show) {
         m_wirelessHeader->show();
         m_wifiGroup->show();
@@ -254,6 +269,9 @@ void NetworkManagerPopup::showWireless(bool show)
 void NetworkManagerPopup::showVpn(bool show)
 {
     m_showVpn = show;
+    if (!m_vpnHeader || !m_vpnGroup) {
+        return;
+    }
     if (show) {
         m_vpnHeader->show();
         m_vpnGroup->show();
@@ -267,6 +285,9 @@ void NetworkManagerPopup::showVpn(bool show)
 void NetworkManagerPopup::showGsm(bool show)
 {
     m_showWired = show;
+    if (!m_gsmHeader || !m_gsmGroup) {
+        return;
+    }
     if (show) {
         m_gsmHeader->show();
         m_gsmGroup->show();
