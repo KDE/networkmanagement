@@ -2,6 +2,7 @@
 Name=Network Settings
 Name[be]=Настаўленні сеткі
 Name[bg]=Мрежови настройки
+Name[de]=Netzwerkeinstellungen
 Name[el]=Ρυθμίσεις δικτύου
 Name[es]=Preferencias de red
 Name[et]=Võrguseadistused
@@ -22,6 +23,7 @@ Name[tr]=Ağ Ayarları
 Name[uk]=Параметри мережі
 Name[x-test]=xxNetwork Settingsxx
 Comment=Configure network settings
+Comment[de]=Netzwerkeinstellungen einrichten
 Comment[el]=Διαμόρφωση ρυθμίσεων δικτύου
 Comment[fr]=Configurer le réseau
 Comment[gl]=Configura a rede

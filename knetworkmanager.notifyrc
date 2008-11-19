@@ -57,6 +57,7 @@ Name[uk]=Стільникова широкосмугова мережа
 Name[x-test]=xxCellular broadbandxx
 [Context/pppoe]
 Name=DSL network interfaces
+Name[de]=DSL-Netzwerk-Schnittstellen
 Name[el]=Διασυνδέσεις δικτύου DSL
 Name[fr]=Interfaces réseau DSL
 Name[gl]=Interfaces de rede DSL
@@ -68,6 +69,7 @@ Name[uk]=Мережеві інтерфейси DSL
 Name[x-test]=xxDSL network interfacesxx
 [Context/vpn]
 Name=VPN connection
+Name[de]=VPN-Verbindung
 Name[el]=Σύνδεση VPN
 Name[fr]=Connexion VPN
 Name[gl]=Conexón VPN
