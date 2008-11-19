@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SERIALINTERFACEITEM_H
-#define SERIALINTERFACEITEM_H
+#ifndef WIREDINTERFACEITEM_H
+#define WIREDINTERFACEITEM_H
 
 #include <QHash>
 #include "interfaceitem.h"
@@ -28,27 +28,22 @@ namespace Solid
 {
 namespace Control
 {
-    class SerialNetworkInterface;
+    class WiredNetworkInterface;
 }
 }
 
-/** Represents any network interface that uses PPP
- * Provides custom UI for PPP stats (bytes up and down)
+/**
+ * Represents any network interface that uses IEEE 802.3
  */
-class SerialInterfaceItem : public InterfaceItem
+class WiredInterfaceItem : public InterfaceItem
 {
 Q_OBJECT
 public:
-    SerialInterfaceItem(Solid::Control::SerialNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QWidget* parent = 0);
-    virtual ~SerialInterfaceItem();
+    WiredInterfaceItem(Solid::Control::WiredNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QWidget* parent = 0);
+    virtual ~WiredInterfaceItem();
 public slots:
-    void pppStats(uint,uint);
-    void activeSignalStrengthChanged(int);
     void connectButtonClicked();
 private:
-    void setConnectionInfo();
-    Solid::Control::SerialNetworkInterface * m_serialIface;
-    uint m_bytesIn;
-    uint m_bytesOut;
+    Solid::Control::WiredNetworkInterface * m_wiredIface;
 };
 #endif // SERIALINTERFACEITEM_H

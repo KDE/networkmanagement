@@ -94,7 +94,7 @@ void WirelessConnectionItem::setupItem()
 */
     //kDebug() << "security icon:" << m_securityIconName;
     //m_layout->addItem(m_securityIcon, 0, 2, 1, 1);
-    kDebug() << "HOAAAAAAAARRRRRRRRRRRRRRRRRR--------------------------------=======";
+    //kDebug() << "HOAAAAAAAARRRRRRRRRRRRRRRRRR--------------------------------=======";
     m_strengthMeter = new QProgressBar(this);	
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);

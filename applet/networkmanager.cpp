@@ -194,7 +194,7 @@ void NetworkManagerApplet::paintWiredInterface(Solid::Control::NetworkInterface*
 void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
 {
     Q_UNUSED(option);
-    kDebug() << interface->type();
+    //kDebug() << interface->type();
     /* TODO:
         enum ConnectionState{ UnknownState, Unmanaged, Unavailable, Disconnected, Preparing,
                     Configuring, NeedAuth, IPConfig, Activated, Failed };
@@ -203,44 +203,44 @@ void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterfa
     //kDebug() << " ============== Wireless Interface";
     switch (interface->connectionState()) {
         case Solid::Control::NetworkInterface::UnknownState:
-            kDebug() << " ... UnknownState";
+            //kDebug() << " ... UnknownState";
             m_wirelessSvg->paint(p, contentsRect, "antenna");
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
-            kDebug() << " ... Unmanaged";
+            //kDebug() << " ... Unmanaged";
             m_wirelessSvg->paint(p, contentsRect, "antenna");
             break;
         case Solid::Control::NetworkInterface::Unavailable:
-            kDebug() << " ... Unavailable";
+            //kDebug() << " ... Unavailable";
             m_wirelessSvg->paint(p, contentsRect, "antenna");
             break;
         case Solid::Control::NetworkInterface::Disconnected:
-            kDebug() << " ... Disconnected";
+            //kDebug() << " ... Disconnected";
             m_wirelessSvg->paint(p, contentsRect, "antenna");
             break;
         case Solid::Control::NetworkInterface::Preparing:
-            kDebug() << " ... Preparing";
+            //kDebug() << " ... Preparing";
             break;
         case Solid::Control::NetworkInterface::Configuring:
-            kDebug() << " ... Configuring";
+            //kDebug() << " ... Configuring";
             break;
         case Solid::Control::NetworkInterface::NeedAuth:
-            kDebug() << " ... NeedAuth";
+            //kDebug() << " ... NeedAuth";
             break;
         case Solid::Control::NetworkInterface::IPConfig:
-            kDebug() << " ... IPConfig";
+            //kDebug() << " ... IPConfig";
             break;
         case Solid::Control::NetworkInterface::Activated:
-            kDebug() << " ... Activated";
+            //kDebug() << " ... Activated";
             m_wirelessSvg->paint(p, contentsRect, "connected");
             m_wirelessSvg->paint(p, contentsRect, "antenna");
             break;
         case Solid::Control::NetworkInterface::Failed:
-            kDebug() << " ... Failed";
+            //kDebug() << " ... Failed";
             m_wirelessSvg->paint(p, contentsRect, "antenna");
             break;
         default:
-            kDebug() << "dunno ...";
+            //kDebug() << "dunno ...";
             break;
     }
 }
@@ -272,7 +272,7 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
 
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
-    kDebug() << "Updating connection state ...";
+    //kDebug() << "Updating connection state ...";
     //Solid::Control::NetworkInterface * interface = static_cast<Solid::Control::NetworkInterface *>(sender());
     // update appearance
     QString elementNameToPaint;
@@ -302,7 +302,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
         } else {
             elementNameToPaint += "_disconnected";
         }
-        kDebug() << "busy ... ?";
+        //kDebug() << "busy ... ?";
         switch (interface->connectionState()) {
             case Solid::Control::NetworkInterface::Preparing:
             case Solid::Control::NetworkInterface::Configuring:
@@ -543,7 +543,7 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
 
 void NetworkManagerApplet::manageConnections()
 {
-    kDebug() << "opening connection management dialog";
+    //kDebug() << "opening connection management dialog";
     QStringList args;
     args << "kcm_knetworkmanager";
     KToolInvocation::kdeinitExec("kcmshell4", args);

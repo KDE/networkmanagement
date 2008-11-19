@@ -42,6 +42,7 @@ namespace Solid
 class ConnectionInspector;
 class NetworkManagerSettings;
 class RemoteConnection;
+class WirelessNetwork;
 typedef QPair<NetworkManagerSettings*, RemoteConnection*> ActiveConnectionPair;
 
 /**
@@ -67,7 +68,8 @@ public:
 public slots:
     void activeConnectionsChanged();
     void connectionStateChanged(int);
-    void connectButtonClicked();
+    virtual void connectButtonClicked() = 0;
+
 protected Q_SLOTS:
     /**
      * Remove any connections that were provided by this service
@@ -91,6 +93,11 @@ protected:
      * The interface is currently active, update the UI
      */
     virtual void setActiveConnection(int);
+
+    /**
+     * Returns all available connections for the device type.
+     */
+    QList<RemoteConnection*> availableConnections() const;
 
     Solid::Control::NetworkInterface * m_iface;
     NetworkManagerSettings * m_userSettings;

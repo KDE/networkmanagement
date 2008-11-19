@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -36,6 +36,7 @@ public:
     ~RemoteConnection();
     QString id() const;
     Solid::Control::NetworkInterface::Type type() const;
+    QString path() const;
     QVariantMapMap settings() const;
     bool active() const;
 //public Q_SLOTS:
@@ -44,6 +45,7 @@ private:
     QString m_id;
     Solid::Control::NetworkInterface::Type m_type;
     QVariantMapMap m_connection;
+    QString m_path;
 };
 
 #endif // REMOTE_CONNECTION_H

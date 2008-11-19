@@ -16,6 +16,7 @@ set(networkmanager_SRCS
     serialinterfaceitem.cpp
     events.cpp
     vpnconnectiongroup.cpp
+    wiredinterfaceitem.cpp
     wirelessconnectionitem.cpp
     wirelessenvironment.cpp
     wirelessinterfaceitem.cpp
