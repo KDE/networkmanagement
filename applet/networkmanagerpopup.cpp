@@ -71,11 +71,11 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     //     header label
     m_connectionLayout = new QVBoxLayout(0);
     m_connectionLayout->setContentsMargins(0,0,0,0);
-    QLabel * wiredHeader = new QLabel(this);
-    wiredHeader->setText(i18nc("Label for connection list popup","Wired Networks"));
+    m_wiredHeader = new QLabel(this);
+    m_wiredHeader->setText(i18nc("Label for connection list popup","Wired Networks"));
     //m_notRunning = new QLabel(this);
     //m_notRunning->setText(i18nc("Label for when NetworkManager is not running","The NetworkManager service is not running."));
-    m_connectionLayout->addWidget(wiredHeader);
+    m_connectionLayout->addWidget(m_wiredHeader);
     //m_connectionLayout->addItem(m_notRunning);
     if (Solid::Control::NetworkManager::status() != Solid::Networking::Unknown) {
         ;//m_notRunning->hide();
@@ -90,29 +90,37 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     m_ethernetGroup->init();
     m_connectionLayout->addWidget(m_ethernetGroup);
 
-    QLabel * wirelessHeader = new QLabel(this);
-    wirelessHeader->setText(i18nc("Label for wifi networks in popup","Wireless Networks"));
+    m_wirelessHeader = new QLabel(this);
+    m_wirelessHeader->setText(i18nc("Label for wifi networks in popup","Wireless Networks"));
     m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, this);
     m_wifiGroup->setObjectName("wifi-interface-group");
     m_wifiGroup->init();
+
     m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
     m_gsmGroup->setObjectName("gsm-interface-group");
     m_gsmGroup->init();
 
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
     //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
-    QLabel * vpnHeader = new QLabel(this);
-    vpnHeader->setText(i18nc("Label for vpn connections in popup","VPN Connections"));
-    VpnConnectionGroup * vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
-    vpnGroup->setObjectName("vpn-interface-group");
-    vpnGroup->init();
-    m_connectionLayout->addWidget(wirelessHeader);
+    QLabel * m_vpnHeader = new QLabel(this);
+    m_vpnHeader->setText(i18nc("Label for vpn connections in popup","VPN Connections"));
+    m_vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
+    m_vpnGroup->setObjectName("vpn-interface-group");
+    m_vpnGroup->init();
+    m_connectionLayout->addWidget(m_wirelessHeader);
 
     //m_connectionLayout->setItemSpacing(1, 30);
     m_connectionLayout->addWidget(m_wifiGroup);
     m_connectionLayout->addWidget(m_gsmGroup);
-    m_connectionLayout->addWidget(vpnHeader);
-    m_connectionLayout->addWidget(vpnGroup);
+    if (m_vpnGroup->isEmpty()) {
+        kDebug() << "EMPTY!!!!!!!!!!!!!!!!!";
+        m_vpnHeader->hide();
+        m_vpnGroup->hide();
+    } else {
+        kDebug() << "NON-EMPTY!!!!!!!!!!!!!!!!!";
+    }
+    m_connectionLayout->addWidget(m_vpnHeader);
+    m_connectionLayout->addWidget(m_vpnGroup);
     m_gsmGroup->show();
     //m_connectionLayout->addItem(cdmaGroup);
     //m_connectionLayout->addItem(pppoeGroup);

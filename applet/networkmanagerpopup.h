@@ -1,4 +1,4 @@
-/*
+    /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 
 #include "../libs/types.h"
+#include "vpnconnectiongroup.h"
 
 class QVBoxLayout;
 class QCheckBox;
@@ -48,6 +49,11 @@ Q_OBJECT
 public:
     NetworkManagerPopup(QWidget *parent);
     virtual ~NetworkManagerPopup();
+    void showWiredGroup(bool show);
+    void showWirelessGroup(bool show);
+    void showVpnGroup(bool show);
+    void showGsmGroup(bool show);
+
 public Q_SLOTS:
     /** slots called when a connection in the popup is clicked */
     void activateConnection(const QString&);
@@ -107,7 +113,12 @@ private:
     QVBoxLayout * m_connectionLayout;
     InterfaceGroup * m_ethernetGroup;
     InterfaceGroup * m_wifiGroup;
+    VpnConnectionGroup * m_vpnGroup;
     InterfaceGroup * m_gsmGroup;
+    QLabel * m_vpnHeader;
+    QLabel * m_wirelessHeader;
+    QLabel * m_wiredHeader;
+    QLabel * m_gsmHeader;
     QLabel * m_notRunning;
     QLabel * m_lblRfkill;
     QCheckBox * m_btnEnableNetworking;

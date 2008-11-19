@@ -35,6 +35,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIcon>
 #include <KIconLoader>
 #include <KToolInvocation>
+#include <KConfigDialog>
+
 #include <Plasma/Dialog>
 #include <KLocale>
 #include <plasma/tooltipmanager.h>
@@ -61,7 +63,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     setHasConfigurationInterface(false);
     updateToolTip();
     setAspectRatioMode(Plasma::ConstrainedSquare);
-
+    setHasConfigurationInterface(true);
     m_svg = new Plasma::Svg(this);
     m_svg->setImagePath("networkmanager/networkmanager");
 
@@ -108,6 +110,34 @@ void NetworkManagerApplet::updateIcons()
 {
     m_pixmapWiredConnected = KIcon("network-connect").pixmap(contentsRect().size().toSize());
     m_pixmapWiredDisconnected = KIcon("network-disconnect").pixmap(contentsRect().size().toSize());
+}
+
+void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
+{
+
+    QWidget *widget = new QWidget(parent);
+    ui.setupUi(widget);
+    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+    parent->addPage(widget, parent->windowTitle(), Applet::icon());
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
+
+    /*
+    ui.showBatteryStringCheckBox->setChecked(m_showBatteryString ? Qt::Checked : Qt::Unchecked);
+    ui.showMultipleBatteriesCheckBox->setChecked(m_showMultipleBatteries ? Qt::Checked : Qt::Unchecked);
+    */
+}
+
+void NetworkManagerApplet::configAccepted()
+{
+    KConfigGroup cg = config();
+/*
+    if (m_showVpn != ui.showVpnGroup->isChecked()) {
+        m_showBatteryString = !m_showBatteryString;
+        cg.writeEntry("showBatteryString", m_showBatteryString);
+        showLabel(m_showBatteryString);
+    }
+*/
 }
 
 void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)

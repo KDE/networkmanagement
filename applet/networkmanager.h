@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <plasma/svg.h>
 #include <plasma/applet.h>
 
+#include "ui_nmConfig.h"
+
 #include <solid/control/networkinterface.h>
 
 class QCheckBox;
@@ -51,11 +53,14 @@ public:
     /* reimp Plasma::Applet */
     QWidget * graphicsWidget();
     static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
+protected Q_SLOTS:
+    void configAccepted();
 protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
     void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
     void showLegacyPopup(QGraphicsSceneMouseEvent *event);
-private Q_SLOTS:
+    void createConfigurationInterface(KConfigDialog *parent);
+ private Q_SLOTS:
     void networkInterfaceAdded(const QString&);
     void networkInterfaceRemoved(const QString&);
     void interfaceConnectionStateChanged();
@@ -79,6 +84,10 @@ private:
     NetworkManagerPopup * m_popup;
     QPoint m_clicked;
     QWidget * m_dialog;
+    // Configuration dialog
+    Ui::nmConfig ui;
+
+
 };
 
 #endif
