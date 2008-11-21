@@ -44,56 +44,42 @@ WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QGraphic
 }
 
 void WirelessConnectionItem::setupItem()
-{
-    readSettings();
+{    readSettings();
     //kDebug() << "Connection Settings:" << m_connection->settings();
     //kDebug() << "Security:" << m_connection->type() << m_security;
     // painting of a non-active wifi network
     /*
-    +----+---------+---+-----+--+
-    |icon| essid   |sec|meter|on|
-    +----+---------+---+-----+--+
+    +----+-------------+-----+---+
+    |icon essid        |meter|sec|
+    +----+-------------+-----+---+
     */
-    // icon on the left
     int rowHeight = 24;
     int spacing = 4;
+
     m_layout = new QGraphicsGridLayout(this);
-    // First, third and fourthcolunm are fixed width for the icons
-    m_layout->setColumnFixedWidth(0, rowHeight);
-    m_layout->setColumnPreferredWidth(1, 100);
+    // First, third and fourth colunm are fixed width for the icons
+    m_layout->setColumnPreferredWidth(0, 160);
+    m_layout->setColumnFixedWidth(1, 60);
     m_layout->setColumnFixedWidth(2, rowHeight);
-    m_layout->setColumnFixedWidth(3, 60);
-    m_layout->setColumnFixedWidth(4, rowHeight);
     // tighten
     m_layout->setColumnSpacing(0, spacing);
     m_layout->setColumnSpacing(1, spacing);
     m_layout->setColumnSpacing(2, spacing);
     m_layout->setColumnSpacing(3, spacing);
 
-    /*
-    m_icon = new Plasma::IconWidget(this);
-    m_icon->setIcon("network-wireless");
-    m_icon->setMinimumHeight(rowHeight);
-    m_icon->setMaximumHeight(rowHeight);
-    */
+    // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setDrawBackground(true);
     m_connectButton->setIcon("network-wireless");
-    m_connectButton->setText(m_connection->id());
-    m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to this network"));
+    m_connectButton->setText(m_ssid);
+    m_connectButton->setMinimumWidth(160);
+    m_connectButton->setMaximumHeight(rowHeight);
+    m_connectButton->setOrientation(Qt::Horizontal);
+    m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", m_ssid));
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
-    m_layout->addItem(m_connectButton, 0, 0, 3, 1 );
-/*
-    m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText(m_connection->id());
-    m_connectionNameLabel->nativeWidget()->setWordWrap(false);
-    m_connectionNameLabel->setMaximumWidth(200);
-    m_layout->addItem(m_connectionNameLabel, 0, 1, 1, 1);
-*/
-    //kDebug() << "security icon:" << m_securityIconName;
-    //m_layout->addItem(m_securityIcon, 0, 2, 1, 1);
-    //kDebug() << "HOAAAAAAAARRRRRRRRRRRRRRRRRR--------------------------------=======";
+    m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
+
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);
@@ -102,15 +88,16 @@ void WirelessConnectionItem::setupItem()
     m_strengthMeter->setPreferredSize(QSizeF(60, rowHeight/2));
     m_strengthMeter->setMaximumHeight(rowHeight/2);
     m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    m_layout->addItem(m_strengthMeter, 0, 3, 1, 1, Qt::AlignCenter);
+    m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
 
     m_securityIcon = new Plasma::IconWidget(this);
     m_securityIcon->setIcon(m_securityIconName);
     m_securityIcon->setMinimumHeight(22);
     m_securityIcon->setMaximumHeight(22);
-    m_layout->addItem(m_securityIcon, 0, 4, 1, 1, Qt::AlignLeft);
+    m_layout->addItem(m_securityIcon, 0, 2, 1, 1, Qt::AlignLeft);
 
-    connect( m_connectButton, SIGNAL(clicked()), SLOT(emitClicked()));
+    connect( m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
+
 }
 
 WirelessConnectionItem::~WirelessConnectionItem()

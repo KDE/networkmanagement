@@ -59,11 +59,11 @@ void WirelessNetworkItem::setupItem()
     |icon essid        |meter|sec|
     +----+-------------+-----+---+
     */
-    // icon on the left
     int rowHeight = 24;
     int spacing = 4;
+
     m_layout = new QGraphicsGridLayout(this);
-    // First, third and fourthcolunm are fixed width for the icons
+    // First, third and fourth colunm are fixed width for the icons
     m_layout->setColumnPreferredWidth(0, 160);
     m_layout->setColumnFixedWidth(1, 60);
     m_layout->setColumnFixedWidth(2, rowHeight);
@@ -73,6 +73,7 @@ void WirelessNetworkItem::setupItem()
     m_layout->setColumnSpacing(2, spacing);
     m_layout->setColumnSpacing(3, spacing);
 
+    // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setDrawBackground(true);
     m_connectButton->setIcon("network-wireless");
