@@ -192,6 +192,11 @@ InterfaceItem::NameDisplayMode InterfaceItem::nameDisplayMode() const
     return m_nameMode;
 }
 
+QString InterfaceItem::ssid()
+{
+    return QString("Blaat");
+}
+
 void InterfaceItem::setConnectionInfo()
 {
     if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
@@ -284,6 +289,8 @@ void InterfaceItem::connectionStateChanged(int state)
         case Solid::Control::NetworkInterface::UnknownState:
             break;
     }
+    kDebug() << "EMIT";
+    emit stateChanged();
 }
 
 void InterfaceItem::setUnavailable()

@@ -64,7 +64,7 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, Netw
     m_networkLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_networkLayout->setSpacing(4);
     kDebug();
-    updateNetworks();
+    //updateNetworks();
 }
 
 InterfaceGroup::~InterfaceGroup()
@@ -99,7 +99,7 @@ void InterfaceGroup::setupFooter()
 
     m_layout->addItem(m_networkLayout);
     //kDebug() << m_interfaces.keys() << "Footer update";
-    //updateNetworks();
+    ////updateNetworks();
     kDebug() << m_interfaces.keys() << m_networks.keys() << "Footer .. CONNECT";
     connect(this, SIGNAL(connectionListUpdated()), SLOT(updateNetworks()));
 }
@@ -132,17 +132,22 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
     // we only show networks if we are not connected, have no connections and if the user settings service is present
     // in future we could show the networks when the service is not running but without their connectButton
     uint activeConnectionTotal = 0;
+    QString active_ssid = QString();
     foreach (InterfaceItem * i, m_interfaces) {
         activeConnectionTotal += i->activeConnectionCount();
+        active_ssid = i->ssid();
     }
-    //kDebug() << "Active Connections:" << activeConnectionTotal << "Networks:" << m_wirelessEnvironment->networks();
+    kDebug() << "Active Connections:" << activeConnectionTotal << "Networks:" << m_wirelessEnvironment->networks();
     //kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
 
     // FIXME: m_userSettings can be invalid here, but we might still want to connect.
     //if ((activeConnectionTotal == 0) && m_connections.isEmpty() && m_userSettings->isValid()) {
-    if ((activeConnectionTotal == 0) && m_connections.isEmpty()) {
+    //if ((activeConnectionTotal == 0) && m_connections.isEmpty()) {
+    kDebug() << "ACTIVE:" << active_ssid;
         foreach (QString ssid, m_wirelessEnvironment->networks()) {
-            allNetworks.append(m_wirelessEnvironment->findNetwork(ssid));
+            if (ssid != active_ssid) {
+                allNetworks.append(m_wirelessEnvironment->findNetwork(ssid));
+            }
         }
 
         qSort(allNetworks.begin(), allNetworks.end(), wirelessNetworkGreaterThanStrength);
@@ -150,7 +155,7 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
         {
             topNetworks.append(allNetworks[i]);
         }
-    }
+    //}
     //return allNetworks; // FIXME: shortcut ...
     return topNetworks;
 }
@@ -170,9 +175,11 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         switch (iface->type()) {
             case Solid::Control::NetworkInterface::Ieee80211:
                 wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
                 m_wirelessEnvironment->addWirelessEnvironment(wirelessinterface->wirelessEnvironment());
                 interface = wirelessinterface;
                 inspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface), wirelessinterface->wirelessEnvironment());
+                kDebug() << "WiFi added";
                 break;
             case Solid::Control::NetworkInterface::Serial:
                 interface = serialinterface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
@@ -205,6 +212,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         m_interfaceLayout->addItem(interface);
         m_interfaces.insert(iface->uni(), interface);
         m_interfaceLayout->invalidate();
+        updateNetworks();
     }
     show();
     emit updateLayout();
@@ -273,9 +281,11 @@ void InterfaceGroup::interfaceAdded(const QString& uni)
     if (m_interfaces.keys().contains(uni)) {
         return;
     }
+    kDebug() << "Interface Added.";
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
     KNotification::event(Event::HwAdded, i18nc("Notification for hardware added", "Network interface %1 attached", iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+    updateNetworks();
     emit updateLayout();
 }
 
@@ -293,7 +303,7 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
 
 void InterfaceGroup::refreshConnectionsAndNetworks()
 {
-    kDebug();
+    kDebug() << "Refreshing";
     updateNetworks();
     reassess();
 }
@@ -314,6 +324,7 @@ void InterfaceGroup::activateConnection(AbstractConnectableItem* item)
     // connections(remove any active connections from the list
     // What about a connection that could be activated on 2 devices?
     // Ideally we should keep them around
+    updateNetworks();
 }
 
 void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)

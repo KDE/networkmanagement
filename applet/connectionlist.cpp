@@ -127,6 +127,7 @@ bool ConnectionList::processConnection(NetworkManagerSettings * service, const Q
 void ConnectionList::connectionAddedToService(NetworkManagerSettings * service, const QString& connectionPath)
 {
     if ( processConnection(service, connectionPath) ) {
+        kDebug() << "PING";
         emit connectionListUpdated();
     }
 }
@@ -140,6 +141,7 @@ void ConnectionList::connectionRemovedFromService(NetworkManagerSettings * servi
         m_connectionLayout->removeItem(item);
         m_connections.remove(key);
         delete item;
+        kDebug() << "PING";
         emit connectionListUpdated();
     }
 }
@@ -160,6 +162,7 @@ void ConnectionList::reassess()
     changed |= assessConnections(m_userSettings);
     changed |= assessConnections(m_systemSettings);
     if (changed) {
+        kDebug() << "PING";
         emit connectionListUpdated();
     }
 }
