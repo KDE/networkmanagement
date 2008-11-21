@@ -65,6 +65,8 @@ public:
     void setConnectionInspector(ConnectionInspector *);
     ConnectionInspector * connectionInspector() const;
     uint activeConnectionCount() const;
+    virtual QString ssid();
+
 public slots:
     void activeConnectionsChanged();
     void connectionStateChanged(int);
@@ -76,6 +78,8 @@ protected Q_SLOTS:
      * from our active connection list
      */
     void serviceDisappeared(NetworkManagerSettings *service);
+Q_SIGNALS:
+    void stateChanged();
 protected:
     /**
      * Fill in interface type connection info
@@ -93,6 +97,9 @@ protected:
      * The interface is currently active, update the UI
      */
     virtual void setActiveConnection(int);
+    /**
+     * The active connection's ssid or empty
+     */
 
     /**
      * Returns all available connections for the device type.
