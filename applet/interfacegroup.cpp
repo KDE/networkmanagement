@@ -330,24 +330,25 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
         //kDebug() << wni->net()->referenceAccessPoint()->hardwareAddress();
         QDBusInterface kcm(QLatin1String("org.kde.NetworkManager.KCModule"), QLatin1String("/default"), QLatin1String("org.kde.kcmshell.ConnectionEditor"));
         if (kcm.isValid()) {
+            kDebug() << "opening connection management dialog from running KCM";
             QVariantList args;
             args << wni->net()->ssid()
                 << (quint32)wni->net()->referenceAccessPoint()->capabilities()
                 << (quint32)wni->net()->referenceAccessPoint()->wpaFlags()
                 << (quint32)wni->net()->referenceAccessPoint()->rsnFlags();
-            kcm.call(QDBus::NoBlock, "createConnection", "802-11-wireless", "any", QVariant::fromValue(args));
+            kcm.call(QDBus::NoBlock, "createConnection", "802-11-wireless", QVariant::fromValue(args));
         } else {
-            //kDebug() << "opening connection management dialog";
+            kDebug() << "opening connection management dialog using knetworkmanager_configshell";
             QStringList args;
             QString moduleArgs =
-                QString::fromLatin1("createConnection 802-11-wireless any %1 %2 %3 %4")
+                QString::fromLatin1("%1 %2 %3 %4")
                 .arg(wni->net()->ssid())
                 .arg(wni->net()->referenceAccessPoint()->capabilities())
                 .arg(wni->net()->referenceAccessPoint()->wpaFlags())
                 .arg(wni->net()->referenceAccessPoint()->rsnFlags());
 
-            args << QLatin1String("kcm_knetworkmanager") << QLatin1String("-moduleargs1") << moduleArgs; // other args go here
-            KToolInvocation::kdeinitExec("kcmshell4", args);
+            args << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("create");
+            KToolInvocation::kdeinitExec("knetworkmanager_configshell", args);
         }
     }
 }
