@@ -18,21 +18,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "connectioneditor.h"
+#include "manageconnectionwidget.h"
 
 #include <nm-setting-cdma.h>
 #include <nm-setting-gsm.h>
-#include <nm-setting-pppoe.h>
-#include <nm-setting-vpn.h>
-#include <nm-setting-wired.h>
-#include <nm-setting-wireless.h>
 
 #include <QDBusConnection>
 #include <QDateTime>
-#include <QDBusInterface>
 #include <QFile>
 #include <QMenu>
-#include <QUuid>
 
 #include <KCModuleProxy>
 #include <KLocale>
@@ -47,76 +41,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knmserviceprefs.h"
 #include "connectionprefs.h"
-#include "wiredpreferences.h"
-#include "wirelesspreferences.h"
-#include "cellularpreferences.h"
-#include "pppoepreferences.h"
-#include "vpnpreferences.h"
 
 #define ConnectionIdRole 1812
 
-K_PLUGIN_FACTORY( ConnectionEditorFactory, registerPlugin<ConnectionEditor>();)
-K_EXPORT_PLUGIN( ConnectionEditorFactory( "kcm_knetworkmanager" ) )
+K_PLUGIN_FACTORY( ManageConnectionWidgetFactory, registerPlugin<ManageConnectionWidget>();)
+K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_knetworkmanager" ) )
 
-ConnectionEditor::ConnectionEditor(QWidget *parent, const QVariantList &args)
-: KCModule( ConnectionEditorFactory::componentData(), parent, args ), mCellularMenu(0), mVpnMenu(0)
+ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantList &args)
+: KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this))
 {
-    KGlobal::locale()->insertCatalog( "kcm_knetworkmanager" );
+    connect(mEditor, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
-    // depending on the contents of args, either show the general purpose connection editor dialog
-    // or a dialog for creating and starting a single connection. When the user clicks an
-    // unconfigured wireless network in the applet, this mode is used to get them connected as
-    // easily as possible.
-    // Likewise if a connection does not have the right secrets NM will ask for more secrets, so the
-    // service will show the dialog
-    
-    //QVariantList args;
-    //args << "newconnection" << "type=NM_SETTING_WIRELESS_SETTING_NAME" << "interface=" << "accesspoint=";
-
-    if ( !args.isEmpty()) {
-        kDebug() << "Module started with args: " << args;
-        // call the slot that is exported over dbus 
-#if 1 // WIP
-        // editconnection connectionId=id
-        // newconnection connectionType connectionSubType other-arg ...
-        kDebug() << args;
-        if (args[0].toString() == "createConnection") {
-            if (args.count() > 2) {
-                QString type = args[1].toString();
-                QString subType = args[2].toString();
-                QVariantList otherArgs;
-                if (args.count() > 3)
-                for (int i = 3; i < args.count(); ++i) {
-                    otherArgs << args[i];
-                }
-                addConnectionInternal(connectionTypeForString(type), subType, otherArgs);
-            }
-        }
-#endif
-    } else {
-        mConnEditUi.setupUi(this);
-        KNetworkManagerServicePrefs::instance(KStandardDirs::locateLocal("config",
-                    QLatin1String("knetworkmanagerrc")));
-        connect(mConnEditUi.addConnection, SIGNAL(clicked()), SLOT(addClicked()));
-        connect(mConnEditUi.editConnection, SIGNAL(clicked()), SLOT(editClicked()));
-        connect(mConnEditUi.deleteConnection, SIGNAL(clicked()), SLOT(deleteClicked()));
-        connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-                SLOT(updateTabStates()));
-        connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
-                SLOT(updateTabStates()));
-        connect(mConnEditUi.tabWidget, SIGNAL(currentChanged(int)), SLOT(tabChanged(int)));
-        restoreConnections();
-        if (QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.NetworkManager.KCModule"))) {
-            QDBusConnection::sessionBus().registerObject(QLatin1String("/default"), this, QDBusConnection::ExportScriptableSlots);
-        }
+    mConnEditUi.setupUi(this);
+    KNetworkManagerServicePrefs::instance(KStandardDirs::locateLocal("config",
+                QLatin1String("knetworkmanagerrc")));
+    connect(mConnEditUi.addConnection, SIGNAL(clicked()), SLOT(addClicked()));
+    connect(mConnEditUi.editConnection, SIGNAL(clicked()), SLOT(editClicked()));
+    connect(mConnEditUi.deleteConnection, SIGNAL(clicked()), SLOT(deleteClicked()));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+            SLOT(updateTabStates()));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+            SLOT(updateTabStates()));
+    connect(mConnEditUi.tabWidget, SIGNAL(currentChanged(int)), SLOT(tabChanged(int)));
+    restoreConnections();
+    if (QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.NetworkManager.KCModule"))) {
+        QDBusConnection::sessionBus().registerObject(QLatin1String("/default"), this, QDBusConnection::ExportScriptableSlots);
     }
 }
 
-ConnectionEditor::~ConnectionEditor()
+ManageConnectionWidget::~ManageConnectionWidget()
 {
 }
 
-void ConnectionEditor::restoreConnections()
+void ManageConnectionWidget::createConnection(const QString &connectionType, const QVariantList &args)
+{
+    mEditor->addConnection(mEditor->connectionTypeForString(connectionType), args);
+}
+
+void ManageConnectionWidget::restoreConnections()
 {
     //clean up the lists
     mConnEditUi.listWired->clear();
@@ -184,7 +146,7 @@ void ConnectionEditor::restoreConnections()
     updateTabStates();
 }
 
-void ConnectionEditor::updateTabStates()
+void ManageConnectionWidget::updateTabStates()
 {
     bool hasWired = false, hasWireless = false, hasCellular = false, hasDsl = false;
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
@@ -218,55 +180,13 @@ void ConnectionEditor::updateTabStates()
     mConnEditUi.tabWidget->setTabEnabled(4, (hasDsl || mConnEditUi.listPppoe->topLevelItemCount()));
 }
 
-void ConnectionEditor::addClicked()
+void ManageConnectionWidget::addClicked()
 {
     // show connection settings widget for the active tab
-    addConnectionInternal(connectionTypeForCurrentIndex());
+    mEditor->addConnection(connectionTypeForCurrentIndex());
 }
 
-void ConnectionEditor::createConnection(const QString &connectionType, const QString &connectionSubType, const QVariantList &args)
-{
-    addConnectionInternal(connectionTypeForString(connectionType), connectionSubType, args);
-}
-
-void ConnectionEditor::addConnectionInternal(ConnectionEditor::ConnectionType connectionType, const QString &connectionSubType, const QVariantList &otherArgs)
-{
-    KDialog configDialog(this);
-    QVariantList args;
-    QString connectionId = QUuid::createUuid().toString();
-    args << connectionId;
-    args << connectionSubType;
-    args += otherArgs;
-    ConnectionPreferences * cprefs = editorForConnectionType(&configDialog, connectionType, args);
-
-    if (!cprefs) {
-        return;
-    }
-
-    configDialog.setMainWidget(cprefs);
-    if ( configDialog.exec() == QDialog::Accepted ) {
-        cprefs->save();
-        // add to the service prefs
-        QString name = cprefs->connectionName();
-        QString type = cprefs->connectionType();
-        if (name.isEmpty() || type.isEmpty()) {
-            kDebug() << "new connection has missing name ('" << name << "') or type ('" << type << "')";
-        } else {
-            KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
-            KConfigGroup config(prefs->config(), QLatin1String("Connection_") + connectionId);
-            QStringList connectionIds = prefs->connections();
-            connectionIds << connectionId;
-            prefs->setConnections(connectionIds);
-            config.writeEntry("Name", cprefs->connectionName());
-            config.writeEntry("Type", cprefs->connectionType());
-            prefs->writeConfig();
-            updateService();
-            restoreConnections();
-        }
-    }
-}
-
-void ConnectionEditor::editClicked()
+void ManageConnectionWidget::editClicked()
 {
     //edit might be clicked on a system connection, in which case we need a connectionid for it
     KDialog configDialog(this);
@@ -284,7 +204,7 @@ void ConnectionEditor::editClicked()
     QVariantList args;
     args << connectionId;
 
-    KCModule * kcm = editorForConnectionType(&configDialog, connectionTypeForCurrentIndex(), args);
+    KCModule * kcm = mEditor->editorForConnectionType(&configDialog, connectionTypeForCurrentIndex(), args);
 
     if (kcm) {
         configDialog.setMainWidget(kcm);
@@ -292,13 +212,13 @@ void ConnectionEditor::editClicked()
             kcm->save();
             QStringList changed;
             changed << connectionId;
-            updateService(changed);
+            mEditor->updateService(changed);
             restoreConnections();
         }
     }
 }
 
-void ConnectionEditor::deleteClicked()
+void ManageConnectionWidget::deleteClicked()
 {
     QTreeWidgetItem * item = selectedItem();
     if ( !item ) {
@@ -330,56 +250,12 @@ void ConnectionEditor::deleteClicked()
         connectionIds.removeAll(connectionId);
         prefs->setConnections(connectionIds);
         prefs->writeConfig();
-        updateService();
+        mEditor->updateService();
         restoreConnections();
     }
 }
 
-ConnectionPreferences * ConnectionEditor::editorForConnectionType(QWidget * parent, ConnectionEditor::ConnectionType type, const QVariantList & args) const
-{
-    kDebug() << args;
-    ConnectionPreferences * wid = 0;
-    switch (type) {
-        case ConnectionEditor::Wired:
-            wid = new WiredPreferences(parent, args);
-            break;
-        case ConnectionEditor::Wireless:
-            wid = new WirelessPreferences(parent, args);
-            break;
-        case ConnectionEditor::Cellular:
-            wid = new CellularPreferences(parent, args);
-            break;
-        case ConnectionEditor::Vpn:
-            wid = new VpnPreferences(parent, args);
-            break;
-        case ConnectionEditor::Pppoe:
-            wid = new PppoePreferences(parent, args);
-            break;
-        default:
-            break;
-    }
-    return wid;
-}
-
-ConnectionEditor::ConnectionType ConnectionEditor::connectionTypeForString(const QString &type) const
-{
-    ConnectionEditor::ConnectionType t = ConnectionEditor::Wireless;
-    if (type == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
-        t = ConnectionEditor::Wired;
-    } else if (type == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
-        t = ConnectionEditor::Wireless;
-    } else if (type == QLatin1String(NM_SETTING_GSM_SETTING_NAME)
-            || type == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
-        t = ConnectionEditor::Cellular;
-    } else if (type == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
-        t = ConnectionEditor::Vpn;
-    } else if (type == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
-        t = ConnectionEditor::Pppoe;
-    }
-    return t;
-}
-
-ConnectionEditor::ConnectionType ConnectionEditor::connectionTypeForCurrentIndex() const
+ConnectionEditor::ConnectionType ManageConnectionWidget::connectionTypeForCurrentIndex() const
 {
     ConnectionEditor::ConnectionType t = ConnectionEditor::Wireless;
     int i = mConnEditUi.tabWidget->currentIndex();
@@ -405,7 +281,7 @@ ConnectionEditor::ConnectionType ConnectionEditor::connectionTypeForCurrentIndex
     return t;
 }
 
-QTreeWidgetItem * ConnectionEditor::selectedItem() const
+QTreeWidgetItem * ManageConnectionWidget::selectedItem() const
 {
     kDebug();
     QTreeWidgetItem * item = 0;
@@ -430,25 +306,17 @@ QTreeWidgetItem * ConnectionEditor::selectedItem() const
     return item;
 }
 
-void ConnectionEditor::load()
+void ManageConnectionWidget::load()
 {
     KCModule::load();
 }
 
-void ConnectionEditor::save()
+void ManageConnectionWidget::save()
 {
     KCModule::save();
 }
 
-void ConnectionEditor::updateService(const QStringList & changedConnections) const
-{
-    QDBusInterface iface(QLatin1String("org.kde.knetworkmanagerd"),
-            QLatin1String("/Configuration"), 
-            QLatin1String("org.kde.knetworkmanagerd"));
-    iface.call(QLatin1String("configure"), changedConnections);
-}
-
-void ConnectionEditor::tabChanged(int index)
+void ManageConnectionWidget::tabChanged(int index)
 {
     if (index == 2) {
         if ( !mCellularMenu ) {
@@ -487,10 +355,12 @@ void ConnectionEditor::tabChanged(int index)
     }
 }
 
-void ConnectionEditor::connectionTypeMenuTriggered(QAction* action)
+void ManageConnectionWidget::connectionTypeMenuTriggered(QAction* action)
 {
     QString nextConnectionSubType = action->data().toString();
-    addConnectionInternal(connectionTypeForCurrentIndex(), nextConnectionSubType);
+    QVariantList vl;
+    vl << nextConnectionSubType;
+    mEditor->addConnection(connectionTypeForCurrentIndex(), vl);
 }
 
-#include "connectioneditor.moc"
+#include "manageconnectionwidget.moc"

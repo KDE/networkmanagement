@@ -48,12 +48,14 @@ WirelessPreferences::WirelessPreferences(QWidget *parent, const QVariantList &ar
 
     QString ssid;
     uint caps = 0, wpa = 0, rsn = 0;
-    if (args.count() == 6) {
-        ssid = args[2].toString();
-        caps = args[3].toUInt();
-        wpa = args[4].toUInt();
-        rsn = args[5].toUInt();
+    if (args.count() == 5) {
+        ssid = args[1].toString();
+        caps = args[2].toUInt();
+        wpa = args[3].toUInt();
+        rsn = args[4].toUInt();
         kDebug() << "SSID:" << ssid << "CAPS:" << caps << "WPA:" << wpa << "RSN:" << rsn;
+    } else {
+        kDebug() << args;
     }
 
     QVBoxLayout * layout = new QVBoxLayout(this);
@@ -68,6 +70,8 @@ WirelessPreferences::WirelessPreferences(QWidget *parent, const QVariantList &ar
     addToTabWidget(m_connectionTypeWidget);
     addToTabWidget(wirelessSecurityWidget);
     addToTabWidget(ipv4Widget);
+    kDebug() << "Setting connection name to " << ssid;
+    m_contents->setConnectionName(ssid);
 }
 
 WirelessPreferences::~WirelessPreferences()

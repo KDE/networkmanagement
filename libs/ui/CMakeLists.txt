@@ -1,6 +1,7 @@
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/..
    ${CMAKE_CURRENT_SOURCE_DIR}/../storage
+   ${CMAKE_CURRENT_BINARY_DIR}/../storage
    )
 ## next target: ui library
 
@@ -27,6 +28,13 @@ set(knmui_SRCS
    security/wepwidget.cpp
    security/wpapskwidget.cpp
    vpnuiplugin.cpp
+   connectionprefs.cpp
+   cellularpreferences.cpp
+   pppoepreferences.cpp
+   vpnpreferences.cpp
+   wiredpreferences.cpp
+   wirelesspreferences.cpp
+   connectioneditor.cpp
    )
 
 kde4_add_ui_files(knmui_SRCS cdma.ui gsm.ui ppp.ui pppoe.ui 
