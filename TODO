@@ -48,7 +48,7 @@ TODO WS:
     * detect and disable for existing connections
   ! Replace Ok button with Close in main connectioneditor, or implement storage of changed/added connection settings in temp files until the Ok button is clicked, and enable deleting temp files if Cancel is clicked
   ! Edit on double click existing entry
-  * Show header in connection list, people don't understand "Auto eth0 never"
+  . Show header in connection list, people don't understand "Auto eth0 never"
   / Complete most settings widgets' complex (non-KConfigSkeleton-managed) UI plumbing and reimplemented save routines
   + Option to display system-provided connections and import them so they can be edited (probably depends on PolicyKit)
   . Show the ScanWidget from widgets developed by CB
