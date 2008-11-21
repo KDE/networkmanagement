@@ -51,14 +51,15 @@ WirelessNetworkItem::WirelessNetworkItem(AbstractWirelessNetwork * network, QGra
 void WirelessNetworkItem::setupItem()
 {
     readSettings();
-    //kDebug() << "Connection Settings:" << m_connection->settings();
-    //kDebug() << "Security:" << m_connection->type() << m_security;
+    kDebug();// << "Connection Settings:" << m_connection->settings();
+    //kDebug();// << "Security:" << m_connection->type() << m_security;
     // painting of a non-active wifi network
     /*
     +----+-------------+-----+---+
     |icon essid        |meter|sec|
     +----+-------------+-----+---+
     */
+    QString ssid = m_ssid;
     int rowHeight = 24;
     int spacing = 4;
 
@@ -67,21 +68,17 @@ void WirelessNetworkItem::setupItem()
     m_layout->setColumnPreferredWidth(0, 160);
     m_layout->setColumnFixedWidth(1, 60);
     m_layout->setColumnFixedWidth(2, rowHeight);
-    // tighten
-    m_layout->setColumnSpacing(0, spacing);
     m_layout->setColumnSpacing(1, spacing);
-    m_layout->setColumnSpacing(2, spacing);
-    m_layout->setColumnSpacing(3, spacing);
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setDrawBackground(true);
     m_connectButton->setIcon("network-wireless");
-    m_connectButton->setText(m_ssid);
+    m_connectButton->setText(ssid);
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setMaximumHeight(rowHeight);
     m_connectButton->setOrientation(Qt::Horizontal);
-    m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", m_ssid));
+    m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", ssid));
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addItem(m_connectButton, 0, 0, 1, 1 );

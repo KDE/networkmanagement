@@ -63,6 +63,7 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, Netw
     m_interfaceLayout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     m_networkLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_networkLayout->setSpacing(4);
+    kDebug();
     updateNetworks();
 }
 
@@ -95,14 +96,19 @@ void InterfaceGroup::setupHeader()
 
 void InterfaceGroup::setupFooter()
 {
+
     m_layout->addItem(m_networkLayout);
-    updateNetworks();
+    //kDebug() << m_interfaces.keys() << "Footer update";
+    //updateNetworks();
+    kDebug() << m_interfaces.keys() << m_networks.keys() << "Footer .. CONNECT";
     connect(this, SIGNAL(connectionListUpdated()), SLOT(updateNetworks()));
 }
 
 void InterfaceGroup::updateNetworks()
 {
+    kDebug();
     // empty the layout
+    kDebug() << "Clearing ... " << m_networks.keys();
     foreach (WirelessNetworkItem * i, m_networks) {
         m_networkLayout->removeItem(i);
         delete i;
@@ -113,6 +119,7 @@ void InterfaceGroup::updateNetworks()
     foreach (AbstractWirelessNetwork * i, networksToShow()) {
         addNetworkInternal(i->ssid());
     }
+    kDebug() << "Now ... " << m_networks.keys();
     m_networkLayout->invalidate();
     m_interfaceLayout->invalidate();
     m_layout->invalidate();
@@ -205,6 +212,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
 
 void InterfaceGroup::addNetworkInternal(const QString & ssid)
 {
+    kDebug() << "Adding network:" << ssid << m_networks.keys();
     if (!m_networks.contains(ssid)) {
         AbstractWirelessNetwork * net = m_wirelessEnvironment->findNetwork(ssid);
         WirelessNetworkItem * netItem = new WirelessNetworkItem(net, this);
@@ -285,6 +293,7 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
 
 void InterfaceGroup::refreshConnectionsAndNetworks()
 {
+    kDebug();
     updateNetworks();
     reassess();
 }

@@ -53,7 +53,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_layout->setVerticalSpacing(0);
     m_layout->setHorizontalSpacing(8);
     m_layout->setColumnFixedWidth(0, 48);
-    m_layout->setColumnPreferredWidth(1, 100);
+    m_layout->setColumnPreferredWidth(1, 176);
 
     m_icon = new Plasma::IconWidget(this);
     m_icon->setMinimumHeight(48);
@@ -93,9 +93,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setDrawBackground(true);
-    m_connectButton->setMinimumHeight(32);
-    m_connectButton->setMaximumHeight(32);
-    m_connectButton->setMinimumWidth(32);
+    m_connectButton->setMinimumHeight(22);
+    m_connectButton->setMaximumHeight(22);
+    m_connectButton->setMinimumWidth(22);
     m_connectButton->setIcon("network-connect");
     m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
     m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
@@ -112,7 +112,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoLabel = new Plasma::Label(this);
     m_connectionInfoLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionInfoLabel->nativeWidget()->setWordWrap(false);
-    m_connectionInfoLabel->setMinimumWidth(120);
+    m_connectionInfoLabel->setMinimumWidth(176);
     m_connectionInfoLabel->setText("<b>IP Address:</b> dum.my.ip.addr");
 
     if (useMeter) {
@@ -123,7 +123,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
         m_strengthMeter->setMaximum(100);
         m_strengthMeter->setValue(0);
         m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
-        m_strengthMeter->setPreferredSize(QSizeF(120, meterHeight));
+        m_strengthMeter->setPreferredSize(QSizeF(180, meterHeight));
         m_strengthMeter->setMaximumHeight(meterHeight);
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_layout->addItem(m_strengthMeter, 2, 1, 1, 1, Qt::AlignCenter);
@@ -145,20 +145,20 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 
     connect(Solid::Control::NetworkManager::notifier(),
             SIGNAL(activeConnectionsChanged()),
-            SLOT(activeConnectionsChanged()));
+            this, SLOT(activeConnectionsChanged()));
     // Since we don't keep the connection identifiers around, and the RemoteConnections
     // we hold are invalid when this signal is emitted, we rebuild the active connection
     // list from scratch
     connect(m_userSettings,
             SIGNAL(connectionRemoved(NetworkManagerSettings *, const QString&)),
-            SLOT(activeConnectionsChanged()));
+            this, SLOT(activeConnectionsChanged()));
     connect(m_systemSettings,
             SIGNAL(connectionRemoved(NetworkManagerSettings *, const QString&)),
-            SLOT(activeConnectionsChanged()));
+            this, SLOT(activeConnectionsChanged()));
     connect(m_iface, SIGNAL(connectionStateChanged(int)),
-            SLOT(connectionStateChanged(int)));
+            this, SLOT(connectionStateChanged(int)));
     connect(m_connectButton, SIGNAL(clicked()),
-            SLOT(connectButtonClicked()));
+            this, SLOT(connectButtonClicked()));
 
     setNameDisplayMode(mode);
     // the applet may be starting when NetworkManager is already connected,
@@ -210,7 +210,7 @@ void InterfaceItem::setConnectionInfo()
 
 void InterfaceItem::activeConnectionsChanged()
 {
-    //kDebug() << "-------------------- updating active connection list for " << m_iface->uni();
+    kDebug() << "-------------------- updating active connection list for " << m_iface->uni();
     QList<ActiveConnectionPair > newConnectionList;
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
     QString serviceName;
