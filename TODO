@@ -24,8 +24,8 @@ TODO WS:
   * per-setting group helper class for complex settings, where needed for ipv4 config write
     * take out hacks in Connection to hash WPA keys there
     * take out hacks in KConfigToService to add groups needed by NM
-  * Signal updated connections on the bus when ours are edited
-  * Implement RemoveConnection
+  . Signal updated connections on the bus when ours are edited
+  . Implement RemoveConnection
   * wireless security
     / WEP
     / WPA-PSK (needs extending with specific crypto alg options, and anything WPA2 requires)
@@ -35,13 +35,12 @@ TODO WS:
   . Create Connection.Secrets objects and do lazy secret loading. Change configxml classes to not read wallet on start
     . Show connection UI to get secrets on demand if the wallet does not contain them or if the
       daemon requested new secrets
-    * Add helper binary (like a mini-kcmshell) that InterfaceGroup can start if the kcm is not already running.
+    . Add helper binary (like a mini-kcmshell) that InterfaceGroup can start if the kcm is not already running.
       This should accept the same args as InterfaceGroup currently sends to kcmshell via dbus on the comand line,
       show the appropriate connectionpreferences subclass and write the result out like connectioneditor does.
   . write LastUsed to knetworkmanagerrc on successful connection activation
     * Don't also write a Unix timestamp to the individual connection's file - read this from the main config file
     * Watch the active connections in the connection editor and update its UI contents
-  
 
 - CONFIG: Implement control module
   + Write a nice class to turn a QDateTime into "3 minutes ago", "5 hours ago" instead of using KLocale::formatDate(), or extend KLocale with formatDateRelative(QDateTime in, QDateTime relativeTo)
@@ -55,7 +54,6 @@ TODO WS:
   . Show the ScanWidget from widgets developed by CB
   * Clean out wireless security settings when editing a connection and changing the wireless security type.
   * Figure out why autoconnect is not working - it should be
-  * Write helper binary that shows a WirelessPreferences and saves it
 
 - APPLET: Make sure system tray+engine does what we need
   * Popup menu
@@ -98,7 +96,7 @@ TODO WS:
     / Show network interface's status that is most important to the
       user when showing single icon
     + Animation during connection state
-
+  * Remember wireless/networking state between sessions
    
 - Update Solid
   * Pass the reason arg in org.freedesktop.NetworkManager.Device.StateChanged through, so the applet can use it for error reporting
