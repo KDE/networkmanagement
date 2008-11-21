@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "service.h"
 
+#include <NetworkManager.h>
+
 #include <QtGui>
 #include <QtDBus>
 
@@ -41,15 +43,23 @@ K_PLUGIN_FACTORY(KNetworkManagerServiceFactory,
     )
 K_EXPORT_PLUGIN(KNetworkManagerServiceFactory("knetworkmanager"))
 
+const QString KNetworkManagerService::SERVICE_USER_SETTINGS = QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS);
+
 KNetworkManagerService::KNetworkManagerService(QObject * parent, const QVariantList&) : KDEDModule(parent), m_active(true)
 {
-    if ( !QDBusConnection::systemBus().registerService( "org.freedesktop.NetworkManagerUserSettings" ) ) {
+    if ( !QDBusConnection::systemBus().interface()->registerService( SERVICE_USER_SETTINGS, QDBusConnectionInterface::QueueService, QDBusConnectionInterface::AllowReplacement ) ) {
         // trouble;
         kDebug() << "Unable to register service";
         m_active = false;
     }
 
-    connect( QDBusConnection::sessionBus().interface(), SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString & ) ), SLOT(serviceOwnerChanged(const QString&, const QString&, const QString & ) ) );
+    connect(QDBusConnection::systemBus().interface(), SIGNAL(serviceRegistered(const QString&)),
+            SLOT(serviceRegistered(const QString&)));
+    connect(QDBusConnection::systemBus().interface(), SIGNAL(serviceUnregistered(const QString&)),
+            SLOT(serviceUnregistered(const QString&)));
+    connect( QDBusConnection::systemBus().interface(),
+            SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString & ) ),
+            SLOT(serviceOwnerChanged(const QString&, const QString&, const QString & ) ) );
 
     mNetworkSettings = new NetworkSettings(this);
     KConfigToService * kConfigConverter = new KConfigToService(mNetworkSettings, m_active);
@@ -70,6 +80,29 @@ void KNetworkManagerService::serviceOwnerChanged( const QString& service,const Q
     Q_UNUSED( oldOwner );
     if ( !newOwner.isEmpty() && service == "org.freedesktop.NetworkManager" ) {
         kDebug() << "NetworkManager restarted!";
+    }
+    if (newOwner.isEmpty() && service == SERVICE_USER_SETTINGS && !m_active) {
+        kDebug() << "User settings service was released, trying to register it ourselves";
+        if (QDBusConnection::systemBus().interface()->registerService(SERVICE_USER_SETTINGS, QDBusConnectionInterface::QueueService, QDBusConnectionInterface::AllowReplacement)) {
+            m_active = true;
+        }
+    }
+}
+
+void KNetworkManagerService::serviceRegistered(const QString & name)
+{
+    if (name == SERVICE_USER_SETTINGS) {
+        kDebug() << "service registered";
+        m_active = true;
+    }
+}
+
+void KNetworkManagerService::serviceUnregistered(const QString & name)
+{
+    if (name == SERVICE_USER_SETTINGS) {
+        kDebug() << "service lost, queueing reregistration";
+        QDBusConnection::systemBus().interface()->registerService( SERVICE_USER_SETTINGS, QDBusConnectionInterface::QueueService, QDBusConnectionInterface::AllowReplacement );
+        m_active = false;
     }
 }
 

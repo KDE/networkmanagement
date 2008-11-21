@@ -33,8 +33,11 @@ public:
     KNetworkManagerService(QObject * parent, const QVariantList&);
     virtual ~KNetworkManagerService();
     int status( const QString & network );
-protected slots:
+    static const QString SERVICE_USER_SETTINGS;
+private Q_SLOTS:
     void serviceOwnerChanged( const QString& service,const QString& oldOwner, const QString& newOwner );
+    void serviceRegistered(const QString&);
+    void serviceUnregistered(const QString&);
 private:
     void registerService();
     NetworkSettings * mNetworkSettings;
