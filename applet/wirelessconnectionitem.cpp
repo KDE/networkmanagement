@@ -51,15 +51,14 @@ void WirelessConnectionItem::setupItem()
     //kDebug() << "Security:" << m_connection->type() << m_security;
     // painting of a non-active wifi network
     /*
-    +----+---------+---+-----+--+
-    |icon| essid   |sec|meter|on|
-    +----+---------+---+-----+--+
+    +----+------------+-----+---+
+    |iconl essid      |meter|sec|
+    +----+------------+-----+--+
     */
-    // icon on the left
     int rowHeight = 24;
     int spacing = 4;
     m_layout = new QGridLayout(this);
-    // First, third and fourthcolunm are fixed width for the icons
+    // First, third and fourth colunm are fixed width for the icons
 //X     m_layout->setColumnFixedWidth(0, rowHeight);
 //X     m_layout->setColumnPreferredWidth(1, 100);
 //X     m_layout->setColumnFixedWidth(2, rowHeight);
@@ -71,32 +70,17 @@ void WirelessConnectionItem::setupItem()
 //X     m_layout->setColumnSpacing(2, spacing);
 //X     m_layout->setColumnSpacing(3, spacing);
 
-    /*
-    m_icon = new QLabel(this);
-    m_icon->setPixmap(MainBarIcon("network-wireless"));
-    m_icon->setMinimumHeight(rowHeight);
-    m_icon->setMaximumHeight(rowHeight);
-    m_layout->addWidget(m_icon, 0, 0, 1, 1 );
-    */
+    // icon on the left
     m_connectButton = new QToolButton(this);
     m_connectButton->setIcon(MainBarIcon("network-connect"));
     m_connectButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
-    m_connectButton->setText(m_connection->id());
-    m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to this network"));
+    m_connectButton->setText(m_ssid);
+    m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", m_ssid));
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
-    m_layout->addWidget(m_connectButton, 0, 0, 3, 1, Qt::AlignLeft);
-/*
-    m_connectionNameLabel = new QLabel(this);
-    m_connectionNameLabel->setText(m_connection->id());
-    m_connectionNameLabel->setWordWrap(false);
-    m_connectionNameLabel->setMaximumWidth(200);
-    m_layout->addWidget(m_connectionNameLabel, 0, 1, 1, 1);
-*/
-    //kDebug() << "security icon:" << m_securityIconName;
-    //m_layout->addItem(m_securityIcon, 0, 2, 1, 1);
-    //kDebug() << "HOAAAAAAAARRRRRRRRRRRRRRRRRR--------------------------------=======";
-    m_strengthMeter = new QProgressBar(this);	
+    m_layout->addWidget(m_connectButton, 0, 0, 1, 1, Qt::AlignLeft);
+
+    m_strengthMeter = new QProgressBar(this);
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);
     m_strengthMeter->setValue(m_strength);
@@ -104,15 +88,16 @@ void WirelessConnectionItem::setupItem()
     //m_strengthMeter->setPreferredSize(QSizeF(60, rowHeight/2));
     m_strengthMeter->setMaximumHeight(rowHeight/2);
     m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    m_layout->addWidget(m_strengthMeter, 0, 3, 1, 1, Qt::AlignCenter);
+    m_layout->addWidget(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
 
     m_securityIcon = new QLabel(this);
     m_securityIcon->setPixmap(MainBarIcon(m_securityIconName));
     m_securityIcon->setMinimumHeight(22);
     m_securityIcon->setMaximumHeight(22);
-    m_layout->addWidget(m_securityIcon, 0, 4, 1, 1, Qt::AlignLeft );
+    m_layout->addWidget(m_securityIcon, 0, 2, 1, 1, Qt::AlignLeft );
 
-    connect( m_connectButton, SIGNAL(clicked()), SLOT(emitClicked()));
+    connect( m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
+
 }
 
 WirelessConnectionItem::~WirelessConnectionItem()

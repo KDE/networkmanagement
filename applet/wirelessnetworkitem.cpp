@@ -59,11 +59,10 @@ void WirelessNetworkItem::setupItem()
     |icon essid        |meter|sec|
     +----+-------------+-----+---+
     */
-    // icon on the left
     int rowHeight = 24;
     int spacing = 4;
     m_layout = new QGridLayout(this);
-    // First, third and fourthcolunm are fixed width for the icons
+    // First, third and fourth colunm are fixed width for the icons
 //X    m_layout->setColumnPreferredWidth(0, 160);
 //X    m_layout->setColumnFixedWidth(1, 60);
 //X    m_layout->setColumnFixedWidth(2, rowHeight);
@@ -73,6 +72,7 @@ void WirelessNetworkItem::setupItem()
 //X    m_layout->setColumnSpacing(2, spacing);
 //X    m_layout->setColumnSpacing(3, spacing);
 
+    // icon on the left
     m_connectButton = new QToolButton(this);
     m_connectButton->setIcon(MainBarIcon("network-connect"));
     m_connectButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
