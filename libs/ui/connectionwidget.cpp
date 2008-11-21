@@ -63,5 +63,10 @@ void ConnectionWidget::writeConfig()
     group.writeEntry(NM_SETTING_CONNECTION_UUID, connectionId());
 }
 
+void ConnectionWidget::setConnectionName(const QString& name)
+{
+    KConfigSkeletonItem * configItem = configXml()->findItem(settingName(), "id");
+    configItem->setProperty(name);
+}
 
 // vim: sw=4 sts=4 et tw=100

@@ -9,7 +9,10 @@ set(knmstorage_SRCS
    configxml.cpp
 )
 
+kde4_add_kcfg_files(knmstorage_SRCS knmserviceprefs.kcfgc)
+
 kde4_add_library(knmstorage SHARED ${knmstorage_SRCS})
+
 target_link_libraries(knmstorage ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY})
 
 set_target_properties(knmstorage PROPERTIES

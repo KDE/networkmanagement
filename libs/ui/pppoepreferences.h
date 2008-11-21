@@ -18,26 +18,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM07_VPN_CONNECTION_PREFERENCES_H
-#define NM07_VPN_CONNECTION_PREFERENCES_H
+#ifndef NM07_PPPOE_CONNECTION_PREFERENCES_H
+#define NM07_PPPOE_CONNECTION_PREFERENCES_H
 
 #include "connectionprefs.h"
 
-class VpnUiPlugin;
-
 /**
- * Configuration module for cellular connections
+ * Configuration module for wired connections
  */
-class VpnPreferences : public ConnectionPreferences
+class KNM_EXPORT PppoePreferences : public ConnectionPreferences
 {
 Q_OBJECT
 public:
-    VpnPreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
-    virtual ~VpnPreferences();
+    PppoePreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
+    virtual ~PppoePreferences();
     virtual void save();
     virtual void load();
-private:
-    VpnUiPlugin * m_uiPlugin;
 };
 
 #endif

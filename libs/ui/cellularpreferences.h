@@ -18,20 +18,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM07_PPPOE_CONNECTION_PREFERENCES_H
-#define NM07_PPPOE_CONNECTION_PREFERENCES_H
+#ifndef NM07_CELLULAR_CONNECTION_PREFERENCES_H
+#define NM07_CELLULAR_CONNECTION_PREFERENCES_H
 
 #include "connectionprefs.h"
 
 /**
- * Configuration module for wired connections
+ * Configuration module for cellular connections
  */
-class PppoePreferences : public ConnectionPreferences
+class KNM_EXPORT CellularPreferences : public ConnectionPreferences
 {
 Q_OBJECT
 public:
-    PppoePreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
-    virtual ~PppoePreferences();
+    CellularPreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
+    virtual ~CellularPreferences();
     virtual void save();
     virtual void load();
 };

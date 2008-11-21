@@ -18,25 +18,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM07_CONNECTION_EDITOR_H
-#define NM07_CONNECTION_EDITOR_H
+#ifndef NM07_MANAGE_CONNECTION_WIDGET_H
+#define NM07_MANAGE_CONNECTION_WIDGET_H
 
 #include <KCModule>
 
 #include "connectioneditor.h"
 
-#include "ui_connectioneditor.h"
+#include "ui_manageconnectionwidget.h"
 
 class QMenu;
-class ConnectionPreferences;
 
-class ConnectionEditor : public KCModule
+class ManageConnectionWidget : public KCModule
 {
 Q_OBJECT
 public:
-    enum ConnectionType { Wired, Wireless, Cellular, Vpn, Pppoe };
-    ConnectionEditor(QWidget * parent = 0, const QVariantList & args = QVariantList());
-    virtual ~ConnectionEditor();
+    ManageConnectionWidget(QWidget * parent = 0, const QVariantList & args = QVariantList());
+    virtual ~ManageConnectionWidget();
     virtual void save();
     virtual void load();
 public slots:
@@ -45,7 +43,7 @@ public slots:
      */
     void updateTabStates();
 
-    Q_SCRIPTABLE void createConnection(const QString & connectionType, const QString &subConnectionType, const QVariantList &args);
+    Q_SCRIPTABLE void createConnection(const QString & connectionType, const QVariantList &args);
 private slots:
     /** 
      * Add a new connection 
@@ -68,44 +66,27 @@ private slots:
      * adds a connection of the selected subtype
      */
     void connectionTypeMenuTriggered(QAction* action);
-private:
-    void addConnectionInternal(ConnectionEditor::ConnectionType connectionType,
-            const QString &connectionSubType = QString(),
-            const QVariantList &otherArgs = QVariantList());
     /**
-     * Tell the UserSettings service to reload its configuration (via DBUS)
-     * Provide a list of changed connection IDs so the service can notify NetworkManager
+     * Reparse knetworkmanagerrc (the main connection file) and rebuild the list of connections
      */
-    void updateService(const QStringList& changedConnections = QStringList()) const;
+    void restoreConnections();
+private:
     /**
      * Get the connection type of the currently selected index
      * @return connection type enum, Wireless if not found
      */
-    ConnectionType connectionTypeForCurrentIndex() const;
-    /**
-     * Get the connection type for a given string (matches nm-setting.h SETTING_NAME strings)
-     * @return connection type enum, Wireless if not found
-     */
-    ConnectionType connectionTypeForString(const QString&) const;
-    /**
-     * Construct an editor widget for the selected connection tab.
-     * Returns 0 if no tab is selected.
-     */
-    ConnectionPreferences * editorForConnectionType(QWidget * parent, ConnectionEditor::ConnectionType type, const QVariantList & args) const;
+    ConnectionEditor::ConnectionType connectionTypeForCurrentIndex() const;
     /**
      * Get the selected item on the current tab.
      * Returns 0 if no selection.
      */
     QTreeWidgetItem * selectedItem() const;
-    /**
-     * Reparse knetworkmanagerrc (the main connection file) and rebuild the list of connections
-     */
-    void restoreConnections();
 
-    Ui_ConnectionEditor mConnEditUi;
+    Ui_ManageConnectionWidget mConnEditUi;
     QTreeWidget * mWiredList;
     QMenu * mCellularMenu;
     QMenu * mVpnMenu;
+    ConnectionEditor * mEditor;
 };
 
-#endif
+#endif // NM07_MANAGE_CONNECTION_WIDGET_H

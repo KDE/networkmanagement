@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>ConnectionEditor</class>
- <widget class="QWidget" name="ConnectionEditor" >
+ <class>ManageConnectionWidget</class>
+ <widget class="QWidget" name="ManageConnectionWidget" >
   <property name="geometry" >
    <rect>
     <x>0</x>

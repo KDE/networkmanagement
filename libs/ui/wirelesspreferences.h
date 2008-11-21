@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * Configuration module for wired connections
  */
-class WirelessPreferences : public ConnectionPreferences
+class KNM_EXPORT WirelessPreferences : public ConnectionPreferences
 {
 Q_OBJECT
 public:

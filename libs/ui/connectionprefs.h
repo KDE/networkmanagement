@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KCModule>
 
+#include "knm_export.h"
+
 class ConnectionWidget;
 class SettingWidget;
 
@@ -31,7 +33,7 @@ class SettingWidget;
  * name() and type() so these values can be cached in the main
  * knetworkmanagerrc file
  */
-class ConnectionPreferences : public KCModule
+class KNM_EXPORT ConnectionPreferences : public KCModule
 {
 Q_OBJECT
 public:
