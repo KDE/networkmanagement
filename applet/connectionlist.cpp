@@ -49,6 +49,7 @@ void ConnectionList::init()
     addSettingsService(m_userSettings);
     addSettingsService(m_systemSettings);
     // adds items from subclasses below our layout
+    kDebug() << "clist";
     setupFooter();
     m_layout->addStretch(5);
 }

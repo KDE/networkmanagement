@@ -51,14 +51,15 @@ WirelessNetworkItem::WirelessNetworkItem(AbstractWirelessNetwork * network, QWid
 void WirelessNetworkItem::setupItem()
 {
     readSettings();
-    //kDebug() << "Connection Settings:" << m_connection->settings();
-    //kDebug() << "Security:" << m_connection->type() << m_security;
+    kDebug();// << "Connection Settings:" << m_connection->settings();
+    //kDebug();// << "Security:" << m_connection->type() << m_security;
     // painting of a non-active wifi network
     /*
     +----+-------------+-----+---+
     |icon essid        |meter|sec|
     +----+-------------+-----+---+
     */
+    QString ssid = m_ssid;
     int rowHeight = 24;
     int spacing = 4;
     m_layout = new QGridLayout(this);
@@ -66,11 +67,7 @@ void WirelessNetworkItem::setupItem()
 //X    m_layout->setColumnPreferredWidth(0, 160);
 //X    m_layout->setColumnFixedWidth(1, 60);
 //X    m_layout->setColumnFixedWidth(2, rowHeight);
-//X    // tighten
-//X    m_layout->setColumnSpacing(0, spacing);
 //X    m_layout->setColumnSpacing(1, spacing);
-//X    m_layout->setColumnSpacing(2, spacing);
-//X    m_layout->setColumnSpacing(3, spacing);
 
     // icon on the left
     m_connectButton = new QToolButton(this);
