@@ -42,6 +42,7 @@ Name[sv]=Mobilt bredband
 Name[uk]=Стільникова широкосмугова мережа
 [Context/pppoe]
 Name=DSL network interfaces
+Name[de]=DSL-Netzwerk-Schnittstellen
 Name[el]=Διασυνδέσεις δικτύου DSL
 Name[fr]=Interfaces réseau DSL
 Name[pt]=interfaces de rede DSL
@@ -50,6 +51,7 @@ Name[sv]=DSL-nätverksgränssnitt
 Name[uk]=Мережеві інтерфейси DSL
 [Context/vpn]
 Name=VPN connection
+Name[de]=VPN-Verbindung
 Name[el]=Σύνδεση VPN
 Name[fr]=Connexion VPN
 Name[pt]=ligação VPN
