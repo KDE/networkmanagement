@@ -114,6 +114,7 @@ void WirelessInterfaceItem::connectButtonClicked()
         case Solid::Control::NetworkInterface::IPConfig:
         case Solid::Control::NetworkInterface::Activated: // deactivate active connections
             foreach ( ActiveConnectionPair connection, m_activeConnections) {
+                kDebug() << "Deactivating connection" << connection.second->path() << connection;
                 Solid::Control::NetworkManager::deactivateConnection(connection.second->path());
             }
             break;
@@ -125,6 +126,8 @@ void WirelessInterfaceItem::connectButtonClicked()
 
 void WirelessInterfaceItem::setConnectionInfo()
 {
+    kDebug() << m_activeAccessPoint;
+    kDebug() << m_activeConnections;
     if (m_activeAccessPoint) {
         m_connectionInfoLabel->setText(QString::fromLatin1("<b>Signal Strength:</b> %1 %").arg(m_activeAccessPoint->signalStrength())); //TODO:
         if (m_strengthMeter) {
@@ -163,6 +166,8 @@ void WirelessInterfaceItem::setConnectionInfo()
                 // security-strong
                 m_connectionInfoIcon->setIcon("object-locked");
             }
+        } else {
+            m_connectionInfoLabel->setText("No active connection");
         }
         m_connectionInfoIcon->show();
     } else {

@@ -165,7 +165,7 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_btnEnableWireless = new Plasma::CheckBox(this);
     managerWirelessEnabledChanged(Solid::Control::NetworkManager::isWirelessEnabled());
     //m_btnEnableNetworking->setText(i18nc("Label for pushbutton enabling networking", "All Networking"));
-    m_btnEnableWireless->setText(i18nc("Label for checkbox enabling wireless", "Wireless"));
+    m_btnEnableWireless->setText(i18nc("Label for checkbox enabling wireless", "Enable Wireless"));
     //gridLayout->addItem(m_btnEnableNetworking, 1, 0, 1, 1);
     //gridLayout->addItem(m_btnEnableWireless, 1, 0, 1, 2);
     //m_layout->addItem(gridLayout);

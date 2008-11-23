@@ -252,6 +252,7 @@ void InterfaceItem::activeConnectionsChanged()
     }
     m_activeConnections = newConnectionList;
     // update our UI
+    kDebug() << "Active connections" << newConnectionList;
     m_layout->invalidate();
     setConnectionInfo();
 }
