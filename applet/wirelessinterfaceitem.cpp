@@ -126,8 +126,8 @@ void WirelessInterfaceItem::connectButtonClicked()
 
 void WirelessInterfaceItem::setConnectionInfo()
 {
-    kDebug() << m_activeAccessPoint;
-    kDebug() << m_activeConnections;
+    //kDebug() << m_activeAccessPoint;
+    //kDebug() << m_activeConnections;
     if (m_activeAccessPoint) {
         m_connectionInfoLabel->setText(QString::fromLatin1("<b>Signal Strength:</b> %1 %").arg(m_activeAccessPoint->signalStrength())); //TODO:
         if (m_strengthMeter) {

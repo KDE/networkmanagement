@@ -69,7 +69,19 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, Netw
 
 InterfaceGroup::~InterfaceGroup()
 {
+}
 
+void InterfaceGroup::enableInterface(bool enable)
+{
+    kDebug() << "ENABLE" << enable;
+    m_enabled = enable;
+
+    foreach (InterfaceItem * item, m_interfaces) {
+        item->enableInterface(enable);
+    }
+    // QHash<QString, InterfaceItem *> m_interfaces;
+
+    updateNetworks();
 }
 
 void InterfaceGroup::setupHeader()
@@ -115,11 +127,16 @@ void InterfaceGroup::updateNetworks()
     }
     m_networks.clear();
 
-    m_networkLayout->setSpacing(0);
-    foreach (AbstractWirelessNetwork * i, networksToShow()) {
-        addNetworkInternal(i->ssid());
+    if (m_enabled) {
+        kDebug() << "INTERFACE IS ON ............................";
+        m_networkLayout->setSpacing(0);
+        foreach (AbstractWirelessNetwork * i, networksToShow()) {
+            addNetworkInternal(i->ssid());
+        }
+        kDebug() << "Now ... " << m_networks.keys();
+    } else {
+        kDebug() << "Interface disabled ................ :-(";
     }
-    kDebug() << "Now ... " << m_networks.keys();
     m_networkLayout->invalidate();
     m_interfaceLayout->invalidate();
     m_layout->invalidate();

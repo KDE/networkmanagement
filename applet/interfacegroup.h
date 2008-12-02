@@ -43,6 +43,7 @@ public:
     InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent = 0);
     virtual ~InterfaceGroup();
     Solid::Control::NetworkInterface::Type interfaceType() const;
+    void enableInterface(bool enabled);
     bool accept(RemoteConnection *) const;
     void setupHeader();
     void setupFooter();
@@ -72,5 +73,6 @@ private:
     WirelessEnvironmentMerged * m_wirelessEnvironment;
     QGraphicsLinearLayout * m_interfaceLayout;
     QGraphicsLinearLayout * m_networkLayout;
+    bool m_enabled;
 };
 #endif // INTERFACEGROUP_H

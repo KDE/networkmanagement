@@ -304,6 +304,7 @@ void NetworkManagerPopup::showGsm(bool show)
 void NetworkManagerPopup::managerWirelessEnabledChanged(bool enabled)
 {
     m_btnEnableWireless->setChecked(enabled);
+    m_wifiGroup->enableInterface(enabled);
 }
 
 void NetworkManagerPopup::managerWirelessHardwareEnabledChanged(bool enabled)

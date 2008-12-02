@@ -69,6 +69,7 @@ public:
     void setConnectionInspector(ConnectionInspector *);
     ConnectionInspector * connectionInspector() const;
     uint activeConnectionCount() const;
+    void enableInterface(bool enable);
     virtual QString ssid();
 
 public slots:

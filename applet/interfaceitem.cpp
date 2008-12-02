@@ -172,6 +172,19 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     connect(m_systemSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(serviceDisappeared(NetworkManagerSettings*)));
 }
 
+void InterfaceItem::enableInterface(bool enable)
+{
+    kDebug() << "DISABLE?" << enable;
+    m_connectionInfoLabel->setEnabled(enable);
+    m_connectionNameLabel->setEnabled(enable);
+    m_connectButton->setEnabled(enable);
+    m_ifaceNameLabel->setEnabled(enable);
+    m_connectionInfoIcon->setEnabled(enable);
+    if (m_strengthMeter) {
+        m_strengthMeter->setEnabled(enable);
+    }
+}
+
 InterfaceItem::~InterfaceItem()
 {
 }
