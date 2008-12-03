@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>375</height>
+    <width>405</width>
+    <height>342</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -15,91 +15,61 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <widget class="QWidget" native="1" name="m_scanView" >
-   <property name="geometry" >
-    <rect>
-     <x>30</x>
-     <y>110</y>
-     <width>571</width>
-     <height>241</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QTableView" name="m_detailsView" >
-   <property name="enabled" >
-    <bool>true</bool>
-   </property>
-   <property name="geometry" >
-    <rect>
-     <x>30</x>
-     <y>110</y>
-     <width>571</width>
-     <height>251</height>
-    </rect>
-   </property>
-   <property name="sizePolicy" >
-    <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
-     <horstretch>0</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-  </widget>
-  <widget class="QLabel" name="m_interfaceLabel" >
-   <property name="geometry" >
-    <rect>
-     <x>40</x>
-     <y>30</y>
-     <width>151</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>Interface</string>
-   </property>
-  </widget>
-  <widget class="QLabel" name="m_viewLabel_2" >
-   <property name="geometry" >
-    <rect>
-     <x>440</x>
-     <y>30</y>
-     <width>151</width>
-     <height>20</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>View</string>
-   </property>
-  </widget>
-  <widget class="KComboBox" name="m_interface" >
-   <property name="geometry" >
-    <rect>
-     <x>30</x>
-     <y>60</y>
-     <width>161</width>
-     <height>30</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="KComboBox" name="m_view" >
-   <property name="geometry" >
-    <rect>
-     <x>430</x>
-     <y>60</y>
-     <width>161</width>
-     <height>30</height>
-    </rect>
-   </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3" >
    <item>
-    <property name="text" >
-     <string>Map</string>
-    </property>
+    <layout class="QGridLayout" name="gridLayout" >
+     <item row="0" column="0" >
+      <layout class="QVBoxLayout" name="verticalLayout" >
+       <item>
+        <widget class="QLabel" name="m_interfaceLabel" >
+         <property name="text" >
+          <string>Interface</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="KComboBox" name="m_interface" />
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="1" >
+      <layout class="QVBoxLayout" name="verticalLayout_2" >
+       <item>
+        <widget class="QLabel" name="m_viewLabel_2" >
+         <property name="text" >
+          <string>View</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="KComboBox" name="m_view" >
+         <item>
+          <property name="text" >
+           <string>Map</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Details</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0" colspan="2" >
+      <widget class="QTableView" name="m_detailsView" >
+       <property name="enabled" >
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
-    <property name="text" >
-     <string>Details</string>
-    </property>
+    <widget class="QWidget" native="1" name="m_scanView" />
    </item>
-  </widget>
+  </layout>
  </widget>
  <customwidgets>
   <customwidget>
