@@ -64,6 +64,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     setHasConfigurationInterface(false);
 #if KDE_IS_VERSION(4,1,70)
     setPopupIcon(QIcon());
+    setPassivePopup(true);
 #endif
     updateToolTip();
     setAspectRatioMode(Plasma::ConstrainedSquare);
