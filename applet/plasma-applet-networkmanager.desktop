@@ -14,6 +14,7 @@ Name[sv]=Nätverk
 Name[uk]=Мережі
 Name[x-test]=xxNetworksxx
 Comment=Manage network connections
+Comment[de]=Netzwerkverbindungen verwalten
 Comment[el]=Διαχείριση συνδέσεων δικτύου
 Comment[fr]=Gérer les connexions réseau
 Comment[gl]=Configura as conexóns de rede
