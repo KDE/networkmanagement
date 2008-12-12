@@ -62,17 +62,6 @@ protected Q_SLOTS:
     void configAccepted();
 protected:
     void createConfigurationInterface(KConfigDialog *parent);
-#if KDE_IS_VERSION(4,1,70)
-#else
-protected:
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
-    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
-    void showLegacyPopup(QGraphicsSceneMouseEvent *event);
-    void createConfigurationInterface(KConfigDialog *parent);
-private:
-    Plasma::Dialog * m_dialog;
-    void setBusy(bool busy);
-#endif
 private Q_SLOTS:
     void networkInterfaceAdded(const QString&);
     void networkInterfaceRemoved(const QString&);
