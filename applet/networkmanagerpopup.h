@@ -35,7 +35,9 @@ class QSignalMapper;
 
 namespace Plasma
 {
+class Applet;
 class CheckBox;
+class Extender;
 class IconWidget;
 class Label;
 } // namespace Plasma
@@ -53,6 +55,8 @@ Q_OBJECT
 public:
     NetworkManagerPopup(QGraphicsItem *parent);
     virtual ~NetworkManagerPopup();
+    void setExtender(Plasma::Extender *extender);
+
     void showWired(bool show);
     void showWireless(bool show);
     void showVpn(bool show);
@@ -116,6 +120,7 @@ signals:
      */
     void manageConnections();
 private:
+    Plasma::Extender *m_extender;
     NetworkManagerSettings * m_userSettings;
     NetworkManagerSettings * m_systemSettings;
     QGraphicsLinearLayout * m_layout;

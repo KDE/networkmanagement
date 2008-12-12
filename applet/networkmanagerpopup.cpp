@@ -41,9 +41,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KNotification>
 #include <KPushButton>
 
+#include <Plasma/Applet>
 #include <Plasma/CheckBox>
-#include <Plasma/Label>
+#include <Plasma/Extender>
+#include <Plasma/ExtenderItem>
 #include <Plasma/IconWidget>
+#include <Plasma/Label>
 
 #include <solid/control/networkmanager.h>
 #include <solid/control/wirednetworkinterface.h>
@@ -62,6 +65,8 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_connectionActivationSignalMapper(new QSignalMapper(this)),
     m_connectionDeactivationSignalMapper(new QSignalMapper(this))
 {
+    m_extender = 0;
+    m_wifiGroup = 0;
     m_wiredHeader = 0;
     m_ethernetGroup = 0;
     m_wirelessHeader = 0;
@@ -101,12 +106,21 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_ethernetGroup->init();
     m_connectionLayout->addItem(m_ethernetGroup);
 
-    m_wirelessHeader = new Plasma::Label(this);
-    m_wirelessHeader->setText(i18nc("Label for wifi networks in popup","Wireless Networks"));
-    m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, this);
-    m_wifiGroup->setObjectName("wifi-interface-group");
-    m_wifiGroup->init();
 
+    //m_wirelessHeader = new Plasma::Label(this);
+    //m_wirelessHeader->setText(i18nc("Label for wifi networks in popup","Wireless Networks"));
+/*
+    if (m_extender) {
+        m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, this);
+        m_wifiGroup->setObjectName("wifi-interface-group");
+        m_wifiGroup->init();
+        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(m_extender);
+        eItem->setName("powermanagement");
+        eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless Networks"));
+        eItem->setWidget(m_wifiGroup);
+        m_extender->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    }
+*/
     m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
     m_gsmGroup->setObjectName("gsm-interface-group");
     m_gsmGroup->init();
@@ -118,10 +132,10 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
     m_vpnGroup->setObjectName("vpn-interface-group");
     m_vpnGroup->init();
-    m_connectionLayout->addItem(m_wirelessHeader);
+    //m_connectionLayout->addItem(m_wirelessHeader);
 
     //m_connectionLayout->setItemSpacing(1, 30);
-    m_connectionLayout->addItem(m_wifiGroup);
+    //m_connectionLayout->addItem(m_wifiGroup);
     m_connectionLayout->addItem(m_gsmGroup);
 
     if (m_vpnGroup->isEmpty()) {
@@ -195,8 +209,29 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
 
 
     QObject::connect(m_ethernetGroup, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
-    QObject::connect(m_wifiGroup, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
+    //QObject::connect(m_wifiGroup, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
     updateLayout();
+}
+
+void NetworkManagerPopup::setExtender(Plasma::Extender *extender)
+{
+    m_extender = extender;
+    return;
+    if (m_extender) {
+        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(m_extender);
+        //eItem->setParent(this);
+        eItem->setName("powermanagement");
+        eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless Networks"));
+
+        m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, eItem);
+        m_wifiGroup->setObjectName("wifi-interface-group");
+        m_wifiGroup->init();
+
+        eItem->setWidget(m_wifiGroup);
+        m_extender->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+        m_connectionLayout->addItem(eItem);
+    }
+
 }
 
 NetworkManagerPopup::~NetworkManagerPopup()
@@ -260,12 +295,12 @@ void NetworkManagerPopup::showWireless(bool show)
         return;
     }
     if (show) {
-        m_wirelessHeader->show();
-        m_wifiGroup->show();
+        //m_wirelessHeader->show();
+        //m_wifiGroup->show();
 
     } else {
-        m_wirelessHeader->hide();
-        m_wifiGroup->hide();
+        //m_wirelessHeader->hide();
+        //m_wifiGroup->hide();
     }
 }
 
@@ -304,7 +339,9 @@ void NetworkManagerPopup::showGsm(bool show)
 void NetworkManagerPopup::managerWirelessEnabledChanged(bool enabled)
 {
     m_btnEnableWireless->setChecked(enabled);
-    m_wifiGroup->enableInterface(enabled);
+    if (m_wifiGroup) {
+        m_wifiGroup->enableInterface(enabled);
+    }
 }
 
 void NetworkManagerPopup::managerWirelessHardwareEnabledChanged(bool enabled)
@@ -371,12 +408,12 @@ void NetworkManagerPopup::managerStatusChanged(Solid::Networking::Status status)
 {
     if (Solid::Networking::Unknown == status ) {
         m_ethernetGroup->hide();
-        m_wifiGroup->hide();
+        //m_wifiGroup->hide();
         m_gsmGroup->hide();
         //m_notRunning->show();
     } else {
         m_ethernetGroup->show();
-        m_wifiGroup->show();
+        //m_wifiGroup->show();
         m_gsmGroup->show();
         //m_notRunning->hide();
     }

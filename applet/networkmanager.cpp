@@ -64,7 +64,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     setHasConfigurationInterface(false);
 #if KDE_IS_VERSION(4,1,70)
     setPopupIcon(QIcon());
-    setPassivePopup(true);
+    //setPassivePopup(true); // only for testing ...
 #endif
     updateToolTip();
     setAspectRatioMode(Plasma::ConstrainedSquare);
@@ -79,6 +79,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     interfaceConnectionStateChanged();
 
     m_popup = new NetworkManagerPopup(this);
+    m_popup->setExtender(extender());
 
     KConfigGroup cg = config();
     m_popup->showWired(cg.readEntry("showWired", true));
