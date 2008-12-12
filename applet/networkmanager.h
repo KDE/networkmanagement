@@ -24,20 +24,33 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdeversion.h>
 
 #include <plasma/svg.h>
+#include <solid/networking.h>
+#include <solid/control/networking.h>
+#include <solid/control/networkinterface.h>
+
+#include "../libs/types.h"
+#include "vpnconnectiongroup.h"
 
 #include "ui_nmConfig.h"
 
-//#define KDE_4_1
-#if KDE_IS_VERSION(4,1,70)
 #include <plasma/popupapplet.h>
-#else
-#include <plasma/applet.h>
-#endif
 
 #include <Plasma/ToolTipManager>
 
 #include <solid/control/networkinterface.h>
-class NetworkManagerPopup;
+
+namespace Plasma
+{
+    class Applet;
+    class CheckBox;
+    class Extender;
+    class IconWidget;
+    class Label;
+} // namespace Plasma
+
+class InterfaceGroup;
+class NetworkManagerSettings;
+class OrgFreedesktopNetworkManagerSettingsConnectionInterface;
 
 class NetworkManagerApplet : public Plasma::PopupApplet
 {
@@ -55,9 +68,69 @@ public:
     //Qt::Orientations expandingDirections() const;
     /* reimp Plasma::Applet */
     void constraintsEvent(Plasma::Constraints constraints);
-    /* reimp Plasma::Applet */
-    QGraphicsWidget * graphicsWidget();
+
     static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
+
+    void showWired(bool show);
+    void showWireless(bool show);
+    void showVpn(bool show);
+    void showGsm(bool show);
+
+    bool wiredShown();
+    bool wirelessShown();
+    bool vpnShown();
+    bool gsmShown();
+
+public Q_SLOTS:
+    /** slots called when a connection in the popup is clicked */
+    void activateConnection(const QString&);
+    void deactivateConnection(const QString&);
+
+    /**
+     * Update the popup and notify on device changes
+     */
+    //void networkInterfaceAdded(const QString&);
+    //void networkInterfaceRemoved(const QString&);
+
+    /**
+     * Update the popup and notify on wireless changes
+     */
+    //void accessPointAppeared(const QString &);
+    //void accessPointDisappeared(const QString &);
+
+    /**
+     * Update the popup and notify on configuration changes
+     */
+    //void connectionAdded();
+    //void connectionRemoved();
+
+    //void overallStatusChanged(Solid::Networking::Status);
+    /**
+     * Handle signals from NM if wireless was disabled in software
+     */
+    void managerWirelessEnabledChanged(bool);
+    /**
+     * Handle signals from NM if wireless was disabled in hardware
+     */
+    void managerWirelessHardwareEnabledChanged(bool);
+    /**
+     * Handle clicks to enable/disable enabled
+     */
+    void userNetworkingEnabledChanged(bool);
+    /**
+     * Handle clicks to enable/disable wireless
+     */
+    void userWirelessEnabledChanged(bool);
+    /**
+     * React to manager status changes
+     */
+    void managerStatusChanged(Solid::Networking::Status);
+signals:
+    /**
+     * Tell the applet to show our KCModule
+     */
+    //void manageConnections();
+
 protected Q_SLOTS:
     void configAccepted();
 protected:
@@ -82,12 +155,37 @@ private:
     QPixmap m_pixmapWiredDisconnected;
     Solid::Control::NetworkInterfaceList m_interfaces;
     QString m_elementName;
-    NetworkManagerPopup * m_popup;
+    //NetworkManagerPopup * m_popup;
     QPoint m_clicked;
     Plasma::ToolTipContent m_toolTip;
     // Configuration dialog
     Ui::nmConfig ui;
 
+    Plasma::Extender *m_extender;
+    NetworkManagerSettings * m_userSettings;
+    NetworkManagerSettings * m_systemSettings;
+    QGraphicsLinearLayout * m_layout;
+    QGraphicsLinearLayout * m_connectionLayout;
+    InterfaceGroup * m_ethernetGroup;
+    InterfaceGroup * m_wifiGroup;
+    VpnConnectionGroup * m_vpnGroup;
+    InterfaceGroup * m_gsmGroup;
+    Plasma::Label * m_vpnHeader;
+    Plasma::Label * m_wirelessHeader;
+    Plasma::Label * m_wiredHeader;
+    Plasma::Label * m_gsmHeader;
+    Plasma::Label * m_notRunning;
+    Plasma::Label * m_lblRfkill;
+    Plasma::CheckBox * m_btnEnableNetworking;
+    Plasma::CheckBox * m_btnEnableWireless;
+    Plasma::IconWidget * m_btnManageConnections;
+    bool m_showWired;
+    bool m_showWireless;
+    bool m_showVpn;
+    bool m_showGsm;
+    int m_numberOfWlans;
+    QSignalMapper * m_connectionActivationSignalMapper;
+    QSignalMapper * m_connectionDeactivationSignalMapper;
 
 };
 

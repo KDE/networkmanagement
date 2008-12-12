@@ -24,29 +24,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QIcon>
 #include <QPainter>
 
-#if KDE_IS_VERSION(4,1,70)
-#else
-#include <QVBoxLayout>
-#include <Plasma/Corona>
-#include <Plasma/Dialog>
-#include <QtGui/QGraphicsSceneMouseEvent>
-#include <KGlobalSettings>
-#include <QGraphicsGridLayout>
-#endif
 
 #include <KIcon>
 #include <KIconLoader>
 #include <KToolInvocation>
 #include <KConfigDialog>
+#include <KDebug>
+#include <KLocale>
+#include <KNotification>
+#include <KPushButton>
 
-#include <solid/control/networkmanager.h>
+#include <solid/networking.h>
+#include <solid/control/networking.h>
 #include <solid/control/networkinterface.h>
+#include <solid/control/networkmanager.h>
+
+/*
+#include <NetworkManager.h>
+#include <nm-setting-cdma.h>
+#include <nm-setting-connection.h>
+#include <nm-setting-gsm.h>
+#include <nm-setting-pppoe.h>
+#include <nm-setting-vpn.h>
+#include <nm-setting-wired.h>
+#include <nm-setting-wireless.h>
+*/
+
+#include <Plasma/CheckBox>
 
 #include "interfacegroup.h"
-
+#include "../libs/types.h"
+#include "vpnconnectiongroup.h"
 // to go:
 #include "interfaceitem.h"
-#include "networkmanagerpopup.h"
+#include "events.h"
 
 K_EXPORT_PLASMA_APPLET(networkmanager, NetworkManagerApplet)
 
@@ -73,17 +84,17 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
 
-    m_popup = new NetworkManagerPopup(this);
-    m_popup->setExtender(extender());
+    //m_popup = new NetworkManagerPopup(this);
+    //m_popup->setExtender(extender());
 
     KConfigGroup cg = config();
-    m_popup->showWired(cg.readEntry("showWired", true));
-    m_popup->showWireless(cg.readEntry("showWireless", true));
-    m_popup->showVpn(cg.readEntry("showVpn", true));
-    m_popup->showGsm(cg.readEntry("showGsm", true));
+    showWired(cg.readEntry("showWired", true));
+    showWireless(cg.readEntry("showWireless", true));
+    showVpn(cg.readEntry("showVpn", true));
+    showGsm(cg.readEntry("showGsm", true));
 
-    QObject::connect(m_popup, SIGNAL(manageConnections()),
-            this, SLOT(manageConnections()));
+    //QObject::connect(this, SIGNAL(manageConnections()),
+    //        this, SLOT(manageConnections()));
 }
 
 NetworkManagerApplet::~NetworkManagerApplet()
@@ -131,19 +142,19 @@ void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-    ui.showWired->setChecked(m_popup->wiredShown());
-    ui.showWireless->setChecked(m_popup->wirelessShown());
-    ui.showVpn->setChecked(m_popup->vpnShown());
-    ui.showGsm->setChecked(m_popup->gsmShown());
+    ui.showWired->setChecked(wiredShown());
+    ui.showWireless->setChecked(wirelessShown());
+    ui.showVpn->setChecked(vpnShown());
+    ui.showGsm->setChecked(gsmShown());
 }
 
 void NetworkManagerApplet::configAccepted()
 {
     KConfigGroup cg = config();
 
-    if (m_popup->wiredShown() != ui.showVpn->isChecked()) {
-        m_popup->showWired(!m_popup->wiredShown());
-        cg.writeEntry("showWired", m_popup->wiredShown());
+    if (wiredShown() != ui.showVpn->isChecked()) {
+        showWired(!wiredShown());
+        cg.writeEntry("showWired", wiredShown());
     }
 }
 
@@ -245,10 +256,12 @@ void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterfa
     }
 }
 
+/*
 QGraphicsWidget * NetworkManagerApplet::graphicsWidget()
 {
     return m_popup;
 }
+*/
 
 /* Slots to react to changes from the daemon */
 void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
@@ -550,6 +563,148 @@ void NetworkManagerApplet::manageConnections()
     args << "kcm_knetworkmanager";
     KToolInvocation::kdeinitExec("kcmshell4", args);
     hidePopup();
+}
+
+// Accessors
+
+bool NetworkManagerApplet::wiredShown()
+{
+    return m_showWired;
+}
+
+bool NetworkManagerApplet::wirelessShown()
+{
+    return m_showWireless;
+}
+
+bool NetworkManagerApplet::vpnShown()
+{
+    return m_showVpn;
+}
+
+bool NetworkManagerApplet::gsmShown()
+{
+    return m_showGsm;
+}
+
+void NetworkManagerApplet::showWired(bool show)
+{
+    m_showWired = show;
+    if (!m_wiredHeader || !m_ethernetGroup) {
+        return;
+    }
+    if (show) {
+        m_wiredHeader->show();
+        m_ethernetGroup->show();
+
+    } else {
+        m_wiredHeader->hide();
+        m_ethernetGroup->hide();
+    }
+}
+
+void NetworkManagerApplet::showWireless(bool show)
+{
+    m_showWireless = show;
+    if (!m_wirelessHeader || !m_wifiGroup) {
+        return;
+    }
+    if (show) {
+        //m_wirelessHeader->show();
+        //m_wifiGroup->show();
+
+    } else {
+        //m_wirelessHeader->hide();
+        //m_wifiGroup->hide();
+    }
+}
+
+void NetworkManagerApplet::showVpn(bool show)
+{
+    m_showVpn = show;
+    if (!m_vpnHeader || !m_vpnGroup) {
+        return;
+    }
+    if (show) {
+        m_vpnHeader->show();
+        m_vpnGroup->show();
+
+    } else {
+        m_vpnHeader->hide();
+        m_vpnGroup->hide();
+    }
+}
+
+void NetworkManagerApplet::showGsm(bool show)
+{
+    m_showWired = show;
+    if (!m_gsmHeader || !m_gsmGroup) {
+        return;
+    }
+    if (show) {
+        m_gsmHeader->show();
+        m_gsmGroup->show();
+
+    } else {
+        m_gsmHeader->hide();
+        m_gsmGroup->hide();
+    }
+}
+
+void NetworkManagerApplet::managerWirelessEnabledChanged(bool enabled)
+{
+    m_btnEnableWireless->setChecked(enabled);
+    if (m_wifiGroup) {
+        m_wifiGroup->enableInterface(enabled);
+    }
+}
+
+void NetworkManagerApplet::managerWirelessHardwareEnabledChanged(bool enabled)
+{
+    if (enabled) {
+        KNotification::event(Event::RfOn, i18nc("Notification for radio kill switch turned on", "Wireless hardware enabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+        m_lblRfkill->setText(i18nc("Label text when hardware wireless is enabled", "Wireless hardware is enabled"));
+    } else {
+        m_lblRfkill->setText(i18nc("Label text when hardware wireless is not enabled", "Wireless hardware is disabled"));
+        KNotification::event(Event::RfOff, i18nc("Notification for radio kill switch turned on", "Wireless hardware disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+    }
+}
+
+void NetworkManagerApplet::userNetworkingEnabledChanged(bool enabled)
+{
+    kDebug() << enabled;
+    Solid::Control::NetworkManager::setNetworkingEnabled(enabled);
+}
+
+void NetworkManagerApplet::userWirelessEnabledChanged(bool enabled)
+{
+    kDebug() << enabled;
+    Solid::Control::NetworkManager::setWirelessEnabled(enabled);
+}
+
+void NetworkManagerApplet::activateConnection(const QString& connection)
+{
+    kDebug() << connection;
+}
+
+void NetworkManagerApplet::deactivateConnection(const QString& connection)
+{
+    kDebug() << connection;
+}
+
+void NetworkManagerApplet::managerStatusChanged(Solid::Networking::Status status)
+{
+    if (Solid::Networking::Unknown == status ) {
+        m_ethernetGroup->hide();
+        //m_wifiGroup->hide();
+        m_gsmGroup->hide();
+        //m_notRunning->show();
+    } else {
+        m_ethernetGroup->show();
+        //m_wifiGroup->show();
+        m_gsmGroup->show();
+        //m_notRunning->hide();
+    }
 }
 
 
