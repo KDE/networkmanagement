@@ -130,28 +130,52 @@ void NetworkManagerApplet::init()
 
     // Set up the extender with its various groups
     extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
+    m_userSettings->setObjectName("user-settings-service");
+    m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
+    m_systemSettings->setObjectName("system-settings-service");
+
+    { // Wired
+        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+        eItem->setName("wired");
+        eItem->setTitle(i18nc("Label for ethernet group in popup","Ethernet"));
+        m_ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, eItem);
+        m_ethernetGroup->setObjectName("ethernet-interface-group");
+        m_ethernetGroup->init();
+        eItem->setWidget(m_ethernetGroup);
+    }
 
     { // Wireless
-        m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
-        m_userSettings->setObjectName("user-settings-service");
-        m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
-        m_systemSettings->setObjectName("system-settings-service");
 
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-        //eItem->setParent(this);
-        eItem->setName("powermanagement");
-        eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless Networks"));
+        eItem->setName("wireless");
+        eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless"));
 
         m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, eItem);
         m_wifiGroup->setObjectName("wifi-interface-group");
         m_wifiGroup->init();
 
         eItem->setWidget(m_wifiGroup);
-        //m_extender->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    }
 
-        //Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-        //eItem->setName("wireless");
-        //initBatteryExtender(eItem);
+    { // GSM
+        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+        eItem->setName("gsm");
+        eItem->setTitle(i18nc("Label for mobile wireless","Mobile Wireless"));
+        m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
+        m_gsmGroup->setObjectName("gsm-interface-group");
+        m_gsmGroup->init();
+        eItem->setWidget(m_gsmGroup);
+    }
+
+    { // VPN
+        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+        eItem->setName("wireless");
+        eItem->setTitle(i18nc("Label for vpn connections in popup","VPN Connections"));
+        m_vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
+        m_vpnGroup->setObjectName("vpn-interface-group");
+        m_vpnGroup->init();
+        eItem->setWidget(m_vpnGroup);
     }
 }
 
