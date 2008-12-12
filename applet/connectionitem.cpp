@@ -35,36 +35,40 @@ ConnectionItem::ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
 
 void ConnectionItem::setupItem()
 {
-    // painting of a non-active connection (or wifi network)
-    // icon on left
+    /*
+    // painting of a non-active connection wired connection
+
+    +----+------------------+------+
+    |icon| connection name  |status|
+    +----+------------------+------+
+    */
     int rowHeight = 24;
 
-
     m_layout = new QGraphicsGridLayout(this);
-    // First and third colunm are fixed width for the icons
-    m_layout->setColumnFixedWidth(0, rowHeight);
-    m_layout->setColumnPreferredWidth(1, 140);
+    // last colunm has fixed width for the icon
     m_layout->setColumnFixedWidth(2, rowHeight);
-    // tighten
-    m_layout->setColumnSpacing(0, 0);
-    m_layout->setColumnSpacing(1, 0);
-    m_layout->setColumnSpacing(2, 0);
 
-    m_icon = new Plasma::IconWidget(this);
-    m_icon->setIcon("network-wired");
-    m_icon->setMinimumHeight(rowHeight);
-    m_icon->setMaximumHeight(rowHeight);
-    m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText("Connection:" + m_connection->id());
+    // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setIcon("network-connect");
+    m_connectButton->setDrawBackground(true);
+    m_connectButton->setIcon("network-wired");
+    m_connectButton->setText(m_connection->id());
+    m_connectButton->setMinimumWidth(160);
+    m_connectButton->setMaximumHeight(rowHeight);
+    m_connectButton->setOrientation(Qt::Horizontal);
+    m_connectButton->setToolTip(i18nc("button to connect to wired network",
+                                      "Connect to wired network %1", m_connection->id()));
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
+    m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
 
-    m_layout->addItem(m_icon, 0, 0, 1, 1 );
-    m_layout->addItem(m_connectionNameLabel, 0, 1, 1, 1);
-    m_layout->addItem(m_connectButton, 0, 2, 1, 1);
-    connect( m_connectButton, SIGNAL(clicked()), SLOT(emitClicked()));
+    m_icon = new Plasma::IconWidget(this);
+    m_icon->setIcon("network-connect");
+    m_icon->setMinimumHeight(22);
+    m_icon->setMaximumHeight(22);
+    m_layout->addItem(m_icon, 0, 2, 1, 1, Qt::AlignLeft);
+
+    connect( m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 }
 
 ConnectionItem::~ConnectionItem()

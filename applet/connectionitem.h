@@ -48,7 +48,6 @@ protected:
     RemoteConnection * m_connection;
     QGraphicsGridLayout * m_layout;
     Plasma::IconWidget * m_icon;
-    Plasma::Label * m_connectionNameLabel;
     Plasma::IconWidget * m_connectButton;
 };
 
