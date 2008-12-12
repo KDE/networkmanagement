@@ -39,7 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
 
-/*
+
 #include <NetworkManager.h>
 #include <nm-setting-cdma.h>
 #include <nm-setting-connection.h>
@@ -48,14 +48,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-vpn.h>
 #include <nm-setting-wired.h>
 #include <nm-setting-wireless.h>
-*/
 
 #include <Plasma/CheckBox>
+#include <Plasma/Extender>
+#include <Plasma/ExtenderItem>
 
 #include "interfacegroup.h"
 #include "../libs/types.h"
 #include "vpnconnectiongroup.h"
-// to go:
+#include "networkmanagersettings.h"
 #include "interfaceitem.h"
 #include "events.h"
 
@@ -68,6 +69,17 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
 : Plasma::PopupApplet(parent, args), m_iconPerDevice(false), m_svg(0)
 {
+    m_extender = 0;
+    m_wifiGroup = 0;
+    m_wiredHeader = 0;
+    m_ethernetGroup = 0;
+    m_wirelessHeader = 0;
+    m_ethernetGroup = 0;
+    m_vpnHeader = 0;
+    m_vpnGroup = 0;
+    m_gsmHeader = 0;
+    m_gsmGroup = 0;
+
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
     //setPassivePopup(true); // only for testing ...
@@ -114,6 +126,32 @@ void NetworkManagerApplet::init()
     foreach (Solid::Control::NetworkInterface * interface,
             Solid::Control::NetworkManager::networkInterfaces()) {
         QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+    }
+
+    // Set up the extender with its various groups
+    extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
+    { // Wireless
+        m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
+        m_userSettings->setObjectName("user-settings-service");
+        m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
+        m_systemSettings->setObjectName("system-settings-service");
+
+        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+        //eItem->setParent(this);
+        eItem->setName("powermanagement");
+        eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless Networks"));
+
+        m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, eItem);
+        m_wifiGroup->setObjectName("wifi-interface-group");
+        m_wifiGroup->init();
+
+        eItem->setWidget(m_wifiGroup);
+        //m_extender->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+
+        //Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+        //eItem->setName("wireless");
+        //initBatteryExtender(eItem);
     }
 }
 
