@@ -63,8 +63,12 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, Netw
     m_interfaceLayout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     m_networkLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_networkLayout->setSpacing(4);
-    kDebug();
+    kDebug() << "TYPE" << m_type;
     //updateNetworks();
+
+    if (m_type == Solid::Control::NetworkInterface::Gsm) {
+        setMinimumSize(QSize(285, 60));
+    }
 }
 
 InterfaceGroup::~InterfaceGroup()

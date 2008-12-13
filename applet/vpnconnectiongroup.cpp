@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 VpnConnectionGroup::VpnConnectionGroup(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
     : ConnectionList(userSettings, systemSettings, parent)
 {
-
+    setPreferredSize(QSize(285, 60));
 }
 
 VpnConnectionGroup::~VpnConnectionGroup()
