@@ -75,12 +75,6 @@ public:
     void showWireless(bool show);
     void showVpn(bool show);
     void showGsm(bool show);
-
-    bool wiredShown();
-    bool wirelessShown();
-    bool vpnShown();
-    bool gsmShown();
-
 public Q_SLOTS:
     /** slots called when a connection in the popup is clicked */
     void activateConnection(const QString&);

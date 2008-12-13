@@ -99,11 +99,6 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     //m_popup = new NetworkManagerPopup(this);
     //m_popup->setExtender(extender());
 
-    KConfigGroup cg = config();
-    showWired(cg.readEntry("showWired", true));
-    showWireless(cg.readEntry("showWireless", true));
-    showVpn(cg.readEntry("showVpn", true));
-    showGsm(cg.readEntry("showGsm", true));
 
     //QObject::connect(this, SIGNAL(manageConnections()),
     //        this, SLOT(manageConnections()));
@@ -138,6 +133,7 @@ void NetworkManagerApplet::init()
     { // Wired
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
         eItem->setName("wired");
+        eItem->setIcon("network-wired");
         eItem->setTitle(i18nc("Label for ethernet group in popup","Ethernet"));
         m_ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, eItem);
         m_ethernetGroup->setObjectName("ethernet-interface-group");
@@ -149,6 +145,7 @@ void NetworkManagerApplet::init()
 
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
         eItem->setName("wireless");
+        eItem->setIcon("network-wireless");
         eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless"));
 
         m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, eItem);
@@ -161,6 +158,7 @@ void NetworkManagerApplet::init()
     { // GSM
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
         eItem->setName("gsm");
+        eItem->setIcon("phone");
         eItem->setTitle(i18nc("Label for mobile wireless","Mobile Wireless"));
         m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
         m_gsmGroup->setObjectName("gsm-interface-group");
@@ -170,13 +168,23 @@ void NetworkManagerApplet::init()
 
     { // VPN
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-        eItem->setName("wireless");
+        eItem->setName("vpn");
+        eItem->setIcon("network-server");
         eItem->setTitle(i18nc("Label for vpn connections in popup","VPN Connections"));
         m_vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
         m_vpnGroup->setObjectName("vpn-interface-group");
         m_vpnGroup->init();
         eItem->setWidget(m_vpnGroup);
     }
+
+    showWired(cg.readEntry("showWired", true));
+    //showWired(true);
+    showWireless(cg.readEntry("showWireless", true));
+    showVpn(cg.readEntry("showVpn", false));
+    showGsm(cg.readEntry("showGsm", false));
+    m_numberOfWlans = cg.readEntry("numberOfWlans", 4);
+    kDebug() << "WIRED???" << m_showWired << cg.readEntry("showWired", true);
+
 }
 
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
@@ -196,7 +204,6 @@ void NetworkManagerApplet::updateIcons()
 
 void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
 {
-
     QWidget *widget = new QWidget(parent);
     ui.setupUi(widget);
     parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
@@ -204,19 +211,42 @@ void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
     connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
     connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
 
-    ui.showWired->setChecked(wiredShown());
-    ui.showWireless->setChecked(wirelessShown());
-    ui.showVpn->setChecked(vpnShown());
-    ui.showGsm->setChecked(gsmShown());
+    ui.showWired->setChecked(m_showWired);
+    ui.showWireless->setChecked(m_showWireless);
+    ui.showVpn->setChecked(m_showVpn);
+    ui.showGsm->setChecked(m_showGsm);
+    ui.numberOfWlans->setValue(m_numberOfWlans);
 }
 
 void NetworkManagerApplet::configAccepted()
 {
     KConfigGroup cg = config();
 
-    if (wiredShown() != ui.showVpn->isChecked()) {
-        showWired(!wiredShown());
-        cg.writeEntry("showWired", wiredShown());
+    if (m_showWired != ui.showWired->isChecked()) {
+        showWired(!m_showWired);
+        cg.writeEntry("showWired", m_showWired);
+        kDebug() << "Wired Changed" << m_showWired;
+    }
+    if (m_showWireless != ui.showWireless->isChecked()) {
+        showWireless(!m_showWireless);
+        cg.writeEntry("showWireless", m_showWireless);
+        kDebug() << "Wireless Changed" << m_showWireless;
+    }
+    if (m_showGsm != ui.showGsm->isChecked()) {
+        showGsm(!m_showGsm);
+        cg.writeEntry("showGsm", m_showGsm);
+        kDebug() << "Gsm Changed" << m_showGsm;
+    }
+    if (m_showVpn != ui.showVpn->isChecked()) {
+        showVpn(!m_showVpn);
+        cg.writeEntry("showVpn", m_showVpn);
+        kDebug() << "VPN Changed" << m_showVpn;
+    }
+    int wlans = ui.numberOfWlans->value();
+    if (wlans != m_numberOfWlans) {
+        m_numberOfWlans = wlans;
+        kDebug() << "No of WLANS Changed:" << wlans;
+        // FIXME: Update something in the wifigroup / extender
     }
 }
 
@@ -627,89 +657,42 @@ void NetworkManagerApplet::manageConnections()
     hidePopup();
 }
 
-// Accessors
-
-bool NetworkManagerApplet::wiredShown()
-{
-    return m_showWired;
-}
-
-bool NetworkManagerApplet::wirelessShown()
-{
-    return m_showWireless;
-}
-
-bool NetworkManagerApplet::vpnShown()
-{
-    return m_showVpn;
-}
-
-bool NetworkManagerApplet::gsmShown()
-{
-    return m_showGsm;
-}
-
 void NetworkManagerApplet::showWired(bool show)
 {
     m_showWired = show;
-    if (!m_wiredHeader || !m_ethernetGroup) {
-        return;
-    }
-    if (show) {
-        m_wiredHeader->show();
-        m_ethernetGroup->show();
-
-    } else {
-        m_wiredHeader->hide();
-        m_ethernetGroup->hide();
+    kDebug() << show << m_showWired;
+    Plasma::ExtenderItem *item = extender()->item("wired");
+    if (item) {
+        item->setVisible(show);
     }
 }
 
 void NetworkManagerApplet::showWireless(bool show)
 {
     m_showWireless = show;
-    if (!m_wirelessHeader || !m_wifiGroup) {
-        return;
-    }
-    if (show) {
-        //m_wirelessHeader->show();
-        //m_wifiGroup->show();
-
-    } else {
-        //m_wirelessHeader->hide();
-        //m_wifiGroup->hide();
+    kDebug() << show << m_showWireless;
+    Plasma::ExtenderItem *item = extender()->item("wireless");
+    if (item) {
+        item->setVisible(show);
     }
 }
 
 void NetworkManagerApplet::showVpn(bool show)
 {
     m_showVpn = show;
-    if (!m_vpnHeader || !m_vpnGroup) {
-        return;
-    }
-    if (show) {
-        m_vpnHeader->show();
-        m_vpnGroup->show();
-
-    } else {
-        m_vpnHeader->hide();
-        m_vpnGroup->hide();
+    kDebug() << show << m_showVpn;
+    Plasma::ExtenderItem *item = extender()->item("vpn");
+    if (item) {
+        item->setVisible(show);
     }
 }
 
 void NetworkManagerApplet::showGsm(bool show)
 {
-    m_showWired = show;
-    if (!m_gsmHeader || !m_gsmGroup) {
-        return;
-    }
-    if (show) {
-        m_gsmHeader->show();
-        m_gsmGroup->show();
-
-    } else {
-        m_gsmHeader->hide();
-        m_gsmGroup->hide();
+    kDebug() << show << m_showGsm;
+    Plasma::ExtenderItem *item = extender()->item("gsm");
+    if (item) {
+        item->setVisible(show);
     }
 }
 
