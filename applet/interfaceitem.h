@@ -127,7 +127,7 @@ protected:
     Plasma::IconWidget * m_connectionInfoIcon;
     Plasma::IconWidget * m_connectButton;
     NameDisplayMode m_nameMode;
-
+    bool m_isWireless;
     QList<ActiveConnectionPair> m_activeConnections;
     ConnectionInspector * m_connectionInspector;
 };

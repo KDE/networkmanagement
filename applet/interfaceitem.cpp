@@ -61,17 +61,15 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_icon->setAcceptHoverEvents(false);
     m_layout->addItem(m_icon, 0, 0, 3, 1);
 
-    bool useMeter = false;
-    /* For KDE 4.1, there's no Plasma::Meter. Just never set this variable to true
-       and you get a Label instead (same label as other connections, with signal
-       strength. */
+    m_isWireless = false;
+
     switch (m_iface->type() ) {
         case Solid::Control::NetworkInterface::Ieee8023:
             m_icon->setIcon("network-wired");
             break;
         case Solid::Control::NetworkInterface::Ieee80211:
             m_icon->setIcon("network-wireless");
-            useMeter = true;
+            m_isWireless = true;
             break;
         case Solid::Control::NetworkInterface::Serial:
             m_icon->setIcon("modem");
@@ -79,6 +77,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
         case Solid::Control::NetworkInterface::Gsm:
         case Solid::Control::NetworkInterface::Cdma:
             m_icon->setIcon("phone");
+            m_isWireless = true;
             break;
         default:
             m_icon->setIcon("network-wired");
@@ -99,14 +98,12 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectButton->setIcon("network-connect");
     m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
     m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
-
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
     m_connectionNameLabel->setText("[not updated yet]"); // TODO: check connection status
     m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
     m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 1);
-
 
     //       IP address
     m_connectionInfoLabel = new Plasma::Label(this);
@@ -115,7 +112,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoLabel->setMinimumWidth(176);
     m_connectionInfoLabel->setText("<b>IP Address:</b> dum.my.ip.addr");
 
-    if (useMeter) {
+    if (m_isWireless) {
+
         // Signal strength meter
         int meterHeight = 12;
         m_strengthMeter = new Plasma::Meter(this);
@@ -129,9 +127,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
         m_layout->addItem(m_strengthMeter, 2, 1, 1, 1, Qt::AlignCenter);
         m_connectionInfoLabel->hide();
     } else {
-        m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1);
+        m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1, Qt::AlignCenter);
     }
-
     //       security
     m_connectionInfoIcon = new Plasma::IconWidget(this);
     m_connectionInfoIcon->setIcon("object-unlocked"); // FIXME: set correct icon on start
@@ -216,12 +213,18 @@ void InterfaceItem::setConnectionInfo()
         Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();
         QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
         if (addresses.isEmpty()) {
-            m_connectionInfoLabel->setText("ip display error");
+            m_connectionInfoLabel->setText(i18n("ip display error"));
         } else {
             // FIXME: doesn't seem to work?
-            QHostAddress addr(addresses.first().address());
-            m_connectionInfoLabel->setText("IP:" + addr.toString());
             //kDebug() << "IP:" << addr.toString();
+            QHostAddress addr(addresses.first().address());
+            QString ip = addr.toString();
+            // infolabel is only shown for wired connections, so display the IP in the connection name
+            if (m_isWireless) {
+                m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected (%1)", ip));
+            } else {
+                m_connectionInfoLabel->setText(i18nc("wireless interface is connected", "Connected (%1)", ip));
+            }
         }
     }
 }
