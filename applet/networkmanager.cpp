@@ -178,13 +178,10 @@ void NetworkManagerApplet::init()
     }
 
     showWired(cg.readEntry("showWired", true));
-    //showWired(true);
     showWireless(cg.readEntry("showWireless", true));
     showVpn(cg.readEntry("showVpn", false));
     showGsm(cg.readEntry("showGsm", false));
     m_numberOfWlans = cg.readEntry("numberOfWlans", 4);
-    kDebug() << "WIRED???" << m_showWired << cg.readEntry("showWired", true);
-
 }
 
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
@@ -689,6 +686,7 @@ void NetworkManagerApplet::showVpn(bool show)
 
 void NetworkManagerApplet::showGsm(bool show)
 {
+    m_showGsm = show;
     kDebug() << show << m_showGsm;
     Plasma::ExtenderItem *item = extender()->item("gsm");
     if (item) {
