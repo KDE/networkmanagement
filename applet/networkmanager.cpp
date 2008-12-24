@@ -82,7 +82,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
-    //setPassivePopup(true); // only for testing ...
+    setPassivePopup(true); // only for testing ...
 
     updateToolTip();
     setAspectRatioMode(Plasma::ConstrainedSquare);
@@ -95,10 +95,6 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
-
-    //m_popup = new NetworkManagerPopup(this);
-    //m_popup->setExtender(extender());
-
 
     //QObject::connect(this, SIGNAL(manageConnections()),
     //        this, SLOT(manageConnections()));
@@ -182,6 +178,10 @@ void NetworkManagerApplet::init()
     showVpn(cg.readEntry("showVpn", false));
     showGsm(cg.readEntry("showGsm", false));
     m_numberOfWlans = cg.readEntry("numberOfWlans", 4);
+
+    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
+                     this, SLOT(managerStatusChanged(Solid::Networking::Status)));
+
 }
 
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
@@ -696,10 +696,6 @@ void NetworkManagerApplet::showGsm(bool show)
 
 void NetworkManagerApplet::managerWirelessEnabledChanged(bool enabled)
 {
-    m_btnEnableWireless->setChecked(enabled);
-    if (m_wifiGroup) {
-        m_wifiGroup->enableInterface(enabled);
-    }
 }
 
 void NetworkManagerApplet::managerWirelessHardwareEnabledChanged(bool enabled)
@@ -738,15 +734,9 @@ void NetworkManagerApplet::deactivateConnection(const QString& connection)
 void NetworkManagerApplet::managerStatusChanged(Solid::Networking::Status status)
 {
     if (Solid::Networking::Unknown == status ) {
-        m_ethernetGroup->hide();
-        //m_wifiGroup->hide();
-        m_gsmGroup->hide();
-        //m_notRunning->show();
+        // FIXME: Do something smart
     } else {
-        m_ethernetGroup->show();
-        //m_wifiGroup->show();
-        m_gsmGroup->show();
-        //m_notRunning->hide();
+        // ...
     }
 }
 

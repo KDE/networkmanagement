@@ -43,10 +43,11 @@ public:
     InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent = 0);
     virtual ~InterfaceGroup();
     Solid::Control::NetworkInterface::Type interfaceType() const;
-    void enableInterface(bool enabled);
     bool accept(RemoteConnection *) const;
     void setupHeader();
     void setupFooter();
+public Q_SLOTS:
+    void enableInterface(bool enabled);
 protected Q_SLOTS:
     // reimplemented from ConnecitonList
     void activateConnection(AbstractConnectableItem*);
@@ -56,6 +57,7 @@ protected Q_SLOTS:
     // used to re-populate the list of wireless networks, if necessary
     void refreshConnectionsAndNetworks();
     void updateNetworks();
+
 Q_SIGNALS:
     void updateLayout();
 

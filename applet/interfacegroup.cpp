@@ -77,14 +77,10 @@ InterfaceGroup::~InterfaceGroup()
 
 void InterfaceGroup::enableInterface(bool enable)
 {
-    kDebug() << "ENABLE" << enable;
     m_enabled = enable;
-
     foreach (InterfaceItem * item, m_interfaces) {
         item->enableInterface(enable);
     }
-    // QHash<QString, InterfaceItem *> m_interfaces;
-
     updateNetworks();
 }
 
@@ -197,6 +193,14 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
             case Solid::Control::NetworkInterface::Ieee80211:
                 wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
+                connect(wiredinterface, SIGNAL(wirelessToggled(bool)), this, SLOT(wirelessToggled(bool)));
+                enableInterface(Solid::Control::NetworkManager::isWirelessEnabled());
+                // keep track of rf kill changes
+                QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
+                        this, SLOT(enableInterface(bool)));
+                QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
+                        this, SLOT(enableInterface(bool)));
+
                 m_wirelessEnvironment->addWirelessEnvironment(wirelessinterface->wirelessEnvironment());
                 interface = wirelessinterface;
                 inspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface), wirelessinterface->wirelessEnvironment());
@@ -237,6 +241,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
     }
     show();
     emit updateLayout();
+
 }
 
 void InterfaceGroup::addNetworkInternal(const QString & ssid)
