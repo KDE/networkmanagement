@@ -82,7 +82,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
-    setPassivePopup(true); // only for testing ...
+    //setPassivePopup(true); // only for testing ...
 
     updateToolTip();
     setAspectRatioMode(Plasma::ConstrainedSquare);
@@ -96,13 +96,13 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
 
+    // FIXME:: Add manage connection button
     //QObject::connect(this, SIGNAL(manageConnections()),
     //        this, SLOT(manageConnections()));
 }
 
 NetworkManagerApplet::~NetworkManagerApplet()
 {
-
 }
 
 void NetworkManagerApplet::init()

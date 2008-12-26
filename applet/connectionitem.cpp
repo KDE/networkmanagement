@@ -56,8 +56,8 @@ void ConnectionItem::setupItem()
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setMaximumHeight(rowHeight);
     m_connectButton->setOrientation(Qt::Horizontal);
-    m_connectButton->setToolTip(i18nc("button to connect to wired network",
-                                      "Connect to wired network %1", m_connection->id()));
+    //m_connectButton->setToolTip(i18nc("button to connect to wired network",
+    //                                  "Connect to wired network %1", m_connection->id()));
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addItem(m_connectButton, 0, 0, 1, 1 );

@@ -171,7 +171,6 @@ private:
     Plasma::Label * m_notRunning;
     Plasma::Label * m_lblRfkill;
     Plasma::CheckBox * m_btnEnableNetworking;
-    Plasma::CheckBox * m_btnEnableWireless;
     Plasma::IconWidget * m_btnManageConnections;
     bool m_showWired;
     bool m_showWireless;
