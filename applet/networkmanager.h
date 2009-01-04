@@ -68,6 +68,7 @@ public:
     //Qt::Orientations expandingDirections() const;
     /* reimp Plasma::Applet */
     void constraintsEvent(Plasma::Constraints constraints);
+    virtual QList<QAction*> contextualActions();
 
     static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
 
@@ -75,6 +76,7 @@ public:
     void showWireless(bool show);
     void showVpn(bool show);
     void showGsm(bool show);
+
 public Q_SLOTS:
     /** slots called when a connection in the popup is clicked */
     void activateConnection(const QString&);
@@ -129,6 +131,7 @@ protected Q_SLOTS:
     void configAccepted();
 protected:
     void createConfigurationInterface(KConfigDialog *parent);
+
 private Q_SLOTS:
     void networkInterfaceAdded(const QString&);
     void networkInterfaceRemoved(const QString&);
@@ -179,7 +182,6 @@ private:
     int m_numberOfWlans;
     QSignalMapper * m_connectionActivationSignalMapper;
     QSignalMapper * m_connectionDeactivationSignalMapper;
-
 };
 
 #endif

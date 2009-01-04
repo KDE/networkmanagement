@@ -255,6 +255,15 @@ void NetworkManagerApplet::configAccepted()
     }
 }
 
+QList<QAction*> NetworkManagerApplet::contextualActions()
+{
+    QAction* configAction = new QAction(KIcon("networkmanager"), i18n("Manage Connections..."), this);
+    connect(configAction, SIGNAL(triggered(bool)), this, SLOT(manageConnections()));
+    QList<QAction*> tempActions;
+    tempActions << configAction;
+    return tempActions;
+}
+
 void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     // i can't figure out how to do layouting of multiple items in constraintsEvent properly,
