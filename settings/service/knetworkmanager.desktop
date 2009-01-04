@@ -10,6 +10,7 @@ Name[pa]=ਨੈੱਟਵਰਕ-ਮੈਨੇਜਰ ਯੂਜ਼ਰ ਸੈਟਿ�
 Name[pt]=Serviço de Configuração do Utilizador do NetworkManager
 Name[pt_BR]=Serviço de Configuração do Utilizador do NetworkManager
 Name[sv]=Nätverkshanterarens användarinställningstjänst
+Name[tr]=NetworkManager Kullanıcı Ayarları Servisi
 Name[uk]=Служба параметрів користувача NetworkManager
 Name[x-test]=xxNetworkManager User Settings Servicexx
 Comment=Provides network configuration to the NetworkManager daemon
