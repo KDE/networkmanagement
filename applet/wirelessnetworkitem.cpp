@@ -46,6 +46,20 @@ WirelessNetworkItem::WirelessNetworkItem(AbstractWirelessNetwork * network, QGra
     m_ssid = network->ssid();
     setStrength(m_ssid, network->strength());
     connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString, int)));
+    Solid::Control::AccessPoint *ap = network->referenceAccessPoint();
+
+    // TODO: this was done by a clueless (coolo)
+    if ( ap->wpaFlags().testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
+         ap->wpaFlags().testFlag( Solid::Control::AccessPoint::PairWep104 ) )
+        m_security = QLatin1String("wep");
+
+    if ( ap->wpaFlags().testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+         ap->wpaFlags().testFlag( Solid::Control::AccessPoint::PairTkip ) )
+        m_security = QLatin1String("wpa-psk");
+
+    if ( ap->wpaFlags().testFlag( Solid::Control::AccessPoint::KeyMgmt8021x ) ||
+         ap->wpaFlags().testFlag( Solid::Control::AccessPoint::GroupCcmp ) )
+        m_security = QLatin1String("wpa-eap");
 }
 
 void WirelessNetworkItem::setupItem()

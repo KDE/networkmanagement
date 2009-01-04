@@ -193,8 +193,10 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
             case Solid::Control::NetworkInterface::Ieee80211:
                 wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
-                connect(wiredinterface, SIGNAL(wirelessToggled(bool)), this, SLOT(wirelessToggled(bool)));
+                connect(wirelessinterface, SIGNAL(wirelessToggled(bool)), this, SLOT(enableInterface(bool)));
                 enableInterface(Solid::Control::NetworkManager::isWirelessEnabled());
+                wirelessinterface->enableInterface(Solid::Control::NetworkManager::isWirelessEnabled());
+   
                 // keep track of rf kill changes
                 QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
                         this, SLOT(enableInterface(bool)));

@@ -126,6 +126,14 @@ void NetworkManagerApplet::init()
     m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
     m_systemSettings->setObjectName("system-settings-service");
 
+    // get kded module kicked in
+    QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager", 
+                        "org.kde.knetworkmanager", QDBusConnection::sessionBus() );
+    // ## used to have NoEventLoop and 3s timeout with dcop
+    QDBusReply<QString> reply = ref.call( "status" );
+    // not really interesting, for now we only care to kick the load-on-demand
+    kDebug() << "reply valid" << reply.isValid();
+
     { // Wired
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
         eItem->setName("wired");
@@ -694,7 +702,7 @@ void NetworkManagerApplet::showGsm(bool show)
     }
 }
 
-void NetworkManagerApplet::managerWirelessEnabledChanged(bool enabled)
+void NetworkManagerApplet::managerWirelessEnabledChanged(bool )
 {
 }
 
