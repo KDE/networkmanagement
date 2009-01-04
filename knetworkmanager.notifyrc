@@ -239,7 +239,6 @@ Comment[sv]=Ett trådlöst nätverk dök upp
 Comment[tr]=Bir kablosuz ağ görüldü
 Comment[uk]=Встановлено зв’язок з бездротовою мережею
 Comment[x-test]=xxA wireless network appearedxx
-Action=Popup
 
 [Event/networkdisappeared]
 Name=Lost Wireless Network
@@ -273,7 +272,6 @@ Comment[sv]=Ett trådlöst nätverk försvann
 Comment[tr]=Bir kablosuz ağ kayboldu
 Comment[uk]=Зв’язок з бездротовою мережею увірвався
 Comment[x-test]=xxA wireless network disappearedxx
-Action=Popup
 
 [Event/connecting]
 Name=Establishing Network Connection

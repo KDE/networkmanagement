@@ -33,7 +33,7 @@
          </property>
          <column>
           <property name="text" >
-           <string>Name</string>
+           <string>Connection</string>
           </property>
          </column>
          <column>
@@ -55,11 +55,14 @@
          <property name="rootIsDecorated" >
           <bool>false</bool>
          </property>
+         <property name="uniformRowHeights" >
+          <bool>false</bool>
+         </property>
          <property name="allColumnsShowFocus" >
           <bool>true</bool>
          </property>
          <property name="headerHidden" >
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <column>
           <property name="text" >
@@ -89,7 +92,7 @@
           <bool>true</bool>
          </property>
          <property name="headerHidden" >
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <column>
           <property name="text" >
@@ -119,7 +122,7 @@
           <bool>true</bool>
          </property>
          <property name="headerHidden" >
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <column>
           <property name="text" >
@@ -149,7 +152,7 @@
           <bool>true</bool>
          </property>
          <property name="headerHidden" >
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <column>
           <property name="text" >

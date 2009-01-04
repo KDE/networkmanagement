@@ -52,6 +52,7 @@ KNetworkManagerService::KNetworkManagerService(QObject * parent, const QVariantL
         kDebug() << "Unable to register service";
         m_active = false;
     }
+    kDebug() << "registered" << SERVICE_USER_SETTINGS;
 
     connect(QDBusConnection::systemBus().interface(), SIGNAL(serviceRegistered(const QString&)),
             SLOT(serviceRegistered(const QString&)));

@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -92,6 +92,7 @@ void ManageConnectionWidget::restoreConnections()
     foreach (QString connectionId, connectionIds) {
         // look in the corresponding group
         // read name, type, last used
+        kDebug() << connectionId;
         KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("Connection_") + connectionId);
         if (!config.exists()) {
             continue;
@@ -112,6 +113,7 @@ void ManageConnectionWidget::restoreConnections()
             itemContents << i18nc("Label for last used time for a"
                     "network connection that has never been used", "Never");
         }
+        kDebug() << type << name << lastUsed;
         QTreeWidgetItem * item;
         if (type == QLatin1String("Wired")) {
             item = new QTreeWidgetItem(mConnEditUi.listWired, itemContents);
@@ -122,7 +124,7 @@ void ManageConnectionWidget::restoreConnections()
         } else if (type == QLatin1String("Cellular")) {
             item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
             cellularItems.append(item);
-        } else if (type == QLatin1String("VPN")) {
+        } else if (type.toLower() == QLatin1String("vpn")) {
             item = new QTreeWidgetItem(mConnEditUi.listVpn, itemContents);
             vpnItems.append(item);
         } else if (type == QLatin1String("PPPoE")) {
@@ -204,15 +206,23 @@ void ManageConnectionWidget::editClicked()
     QVariantList args;
     args << connectionId;
 
-    KCModule * kcm = mEditor->editorForConnectionType(&configDialog, connectionTypeForCurrentIndex(), args);
+    ConnectionPreferences * kcm = mEditor->editorForConnectionType(&configDialog, connectionTypeForCurrentIndex(), args);
 
     if (kcm) {
         configDialog.setMainWidget(kcm);
         if (configDialog.exec() == QDialog::Accepted) {
             kcm->save();
+
+            KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
+            KConfigGroup config(prefs->config(), QLatin1String("Connection_") + connectionId);
+            config.writeEntry("Name", kcm->connectionName());
+            config.writeEntry("Type", kcm->connectionType());
+            prefs->writeConfig();
+
             QStringList changed;
             changed << connectionId;
             mEditor->updateService(changed);
+
             restoreConnections();
         }
     }
