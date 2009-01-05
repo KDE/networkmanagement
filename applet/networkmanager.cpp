@@ -127,10 +127,10 @@ void NetworkManagerApplet::init()
     m_systemSettings->setObjectName("system-settings-service");
 
     // get kded module kicked in
-    QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager", 
-                        "org.kde.knetworkmanager", QDBusConnection::sessionBus() );
+    QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
+                        "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
     // ## used to have NoEventLoop and 3s timeout with dcop
-    QDBusReply<QString> reply = ref.call( "status" );
+    QDBusReply<QString> reply = ref.call( "configure" );
     // not really interesting, for now we only care to kick the load-on-demand
     kDebug() << "reply valid" << reply.isValid();
 
@@ -186,6 +186,7 @@ void NetworkManagerApplet::init()
     showVpn(cg.readEntry("showVpn", false));
     showGsm(cg.readEntry("showGsm", false));
     m_numberOfWlans = cg.readEntry("numberOfWlans", 4);
+    m_wifiGroup->setNetworksLimit( m_numberOfWlans );
 
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
@@ -251,7 +252,7 @@ void NetworkManagerApplet::configAccepted()
     if (wlans != m_numberOfWlans) {
         m_numberOfWlans = wlans;
         kDebug() << "No of WLANS Changed:" << wlans;
-        // FIXME: Update something in the wifigroup / extender
+        m_wifiGroup->setNetworksLimit( m_numberOfWlans );
     }
 }
 

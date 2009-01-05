@@ -46,6 +46,8 @@ public:
     bool accept(RemoteConnection *) const;
     void setupHeader();
     void setupFooter();
+    void setNetworksLimit( int wlans );
+
 public Q_SLOTS:
     void enableInterface(bool enabled);
 protected Q_SLOTS:
@@ -76,5 +78,6 @@ private:
     QGraphicsLinearLayout * m_interfaceLayout;
     QGraphicsLinearLayout * m_networkLayout;
     bool m_enabled;
+    int m_numberOfWlans;
 };
 #endif // INTERFACEGROUP_H

@@ -108,6 +108,8 @@ protected:
      */
     QList<RemoteConnection*> availableConnections() const;
 
+    void connectionStateChanged(int, bool silently);
+
     Solid::Control::NetworkInterface * m_iface;
     NetworkManagerSettings * m_userSettings;
     NetworkManagerSettings * m_systemSettings;

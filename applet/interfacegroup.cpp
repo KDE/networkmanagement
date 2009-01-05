@@ -48,12 +48,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkitem.h"
 #include "mergedwireless.h"
 
-#define MAX_WLANS 6
-
 bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWirelessNetwork * n2);
 
-InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
-: ConnectionList(userSettings, systemSettings, parent), m_type(type), m_wirelessEnvironment(new WirelessEnvironmentMerged(this)), m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical)), m_networkLayout(new QGraphicsLinearLayout(Qt::Vertical))
+InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
+                               NetworkManagerSettings * userSettings,
+                               NetworkManagerSettings * systemSettings,
+                               QGraphicsWidget * parent)
+    : ConnectionList(userSettings, systemSettings, parent), m_type(type),
+      m_wirelessEnvironment(new WirelessEnvironmentMerged(this)),
+      m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical)),
+      m_networkLayout(new QGraphicsLinearLayout(Qt::Vertical)),
+      m_numberOfWlans( 1 )
 {
     connect(m_wirelessEnvironment, SIGNAL(networkAppeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
     connect(m_wirelessEnvironment, SIGNAL(networkDisappeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
@@ -112,7 +117,7 @@ void InterfaceGroup::setupFooter()
     m_layout->addItem(m_networkLayout);
     //kDebug() << m_interfaces.keys() << "Footer update";
     ////updateNetworks();
-    kDebug() << m_interfaces.keys() << m_networks.keys() << "Footer .. CONNECT";
+    //kDebug() << m_interfaces.keys() << m_networks.keys() << "Footer .. CONNECT";
     connect(this, SIGNAL(connectionListUpdated()), SLOT(updateNetworks()));
 }
 
@@ -120,7 +125,7 @@ void InterfaceGroup::updateNetworks()
 {
     kDebug();
     // empty the layout
-    kDebug() << "Clearing ... " << m_networks.keys();
+    //kDebug() << "Clearing ... " << m_networks.keys();
     foreach (WirelessNetworkItem * i, m_networks) {
         m_networkLayout->removeItem(i);
         delete i;
@@ -128,12 +133,12 @@ void InterfaceGroup::updateNetworks()
     m_networks.clear();
 
     if (m_enabled) {
-        kDebug() << "INTERFACE IS ON ............................";
+        //kDebug() << "INTERFACE IS ON ............................";
         m_networkLayout->setSpacing(0);
         foreach (AbstractWirelessNetwork * i, networksToShow()) {
             addNetworkInternal(i->ssid());
         }
-        kDebug() << "Now ... " << m_networks.keys();
+        //kDebug() << "Now ... " << m_networks.keys();
     } else {
         kDebug() << "Interface disabled ................ :-(";
     }
@@ -141,6 +146,15 @@ void InterfaceGroup::updateNetworks()
     m_interfaceLayout->invalidate();
     m_layout->invalidate();
 }
+
+void InterfaceGroup::setNetworksLimit( int wlans )
+{
+    int old = m_numberOfWlans;
+    m_numberOfWlans = wlans;
+    if ( old != m_numberOfWlans )
+        updateNetworks();
+}
+
 
 QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
 {
@@ -168,7 +182,7 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
         }
 
         qSort(allNetworks.begin(), allNetworks.end(), wirelessNetworkGreaterThanStrength);
-        for (int i = 0; i < allNetworks.count() && i < MAX_WLANS; i++)
+        for (int i = 0; i < allNetworks.count() && i < m_numberOfWlans; i++)
         {
             topNetworks.append(allNetworks[i]);
         }
@@ -196,7 +210,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 connect(wirelessinterface, SIGNAL(wirelessToggled(bool)), this, SLOT(enableInterface(bool)));
                 enableInterface(Solid::Control::NetworkManager::isWirelessEnabled());
                 wirelessinterface->enableInterface(Solid::Control::NetworkManager::isWirelessEnabled());
-   
+
                 // keep track of rf kill changes
                 QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
                         this, SLOT(enableInterface(bool)));
@@ -248,7 +262,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
 
 void InterfaceGroup::addNetworkInternal(const QString & ssid)
 {
-    kDebug() << "Adding network:" << ssid << m_networks.keys();
+    //kDebug() << "Adding network:" << ssid << m_networks.keys();
     if (!m_networks.contains(ssid)) {
         AbstractWirelessNetwork * net = m_wirelessEnvironment->findNetwork(ssid);
         WirelessNetworkItem * netItem = new WirelessNetworkItem(net, this);

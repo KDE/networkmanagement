@@ -48,6 +48,9 @@ WirelessNetworkItem::WirelessNetworkItem(AbstractWirelessNetwork * network, QGra
     connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString, int)));
     Solid::Control::AccessPoint *ap = network->referenceAccessPoint();
 
+    if ( ap->capabilities().testFlag( Solid::Control::AccessPoint::Privacy ) )
+        m_security = QLatin1String("wep"); // the minimum
+
     // TODO: this was done by a clueless (coolo)
     if ( ap->wpaFlags().testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
          ap->wpaFlags().testFlag( Solid::Control::AccessPoint::PairWep104 ) )
@@ -65,7 +68,7 @@ WirelessNetworkItem::WirelessNetworkItem(AbstractWirelessNetwork * network, QGra
 void WirelessNetworkItem::setupItem()
 {
     readSettings();
-    kDebug();// << "Connection Settings:" << m_connection->settings();
+    //kDebug();// << "Connection Settings:" << m_connection->settings();
     //kDebug();// << "Security:" << m_connection->type() << m_security;
     // painting of a non-active wifi network
     /*
