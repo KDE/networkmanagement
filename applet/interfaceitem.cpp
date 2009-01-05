@@ -223,7 +223,6 @@ QString InterfaceItem::ssid()
 
 void InterfaceItem::setConnectionInfo()
 {
-    kDebug() << (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated);
     if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
         Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();
         QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();

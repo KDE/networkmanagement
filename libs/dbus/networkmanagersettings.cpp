@@ -111,18 +111,15 @@ void NetworkManagerSettings::onConnectionUpdated(const QVariantMapMap&)
 
 void NetworkManagerSettings::serviceOwnerChanged(const QString & changedService, const QString & oldOwner, const QString & newOwner)
 {
-    kDebug() << changedService << service() << oldOwner << newOwner;
+    //kDebug() << changedService << service() << oldOwner << newOwner;
     if (changedService == service()) {
         if (!oldOwner.isEmpty() && newOwner.isEmpty()) {
-            kDebug() << "disappear";
             clearConnections();
             emit disappeared(this);
         } else if (oldOwner.isEmpty() && !newOwner.isEmpty()) {
-            kDebug() << "appear";
             initConnections();
             emit appeared(this);
         } else if (!oldOwner.isEmpty() && !newOwner.isEmpty()) {
-            kDebug() << "reappear";
             clearConnections();
             emit disappeared(this);
             initConnections();
