@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -35,11 +35,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knetworkmanagerserviceadaptor.h"
 
 KConfigToService::KConfigToService(NetworkSettings * service, bool active)
-    : m_service(service), m_error(!active)
+    : QObject( service ), m_service(service), m_error(!active)
 {
     (void) new KNetworkManagerServiceAdaptor( this );
     QDBusConnection::sessionBus().registerService( "org.kde.knetworkmanagerd" ) ;
-    QDBusConnection::sessionBus().registerObject( "/Configuration", this );
+    QDBusConnection::sessionBus().registerObject( "/knetworkmanagerd", this );
 
     KNetworkManagerServicePrefs::instance(KStandardDirs::locate("config",
                 QLatin1String("knetworkmanagerrc")));
@@ -50,6 +50,10 @@ KConfigToService::KConfigToService(NetworkSettings * service, bool active)
 
 KConfigToService::~KConfigToService()
 {
+    kDebug();
+    QDBusConnection::sessionBus().unregisterService( "org.kde.knetworkmanagerd" ) ;
+    QDBusConnection::sessionBus().unregisterObject( "/knetworkmanagerd" );
+
     delete m_dataMappings;
 }
 
@@ -66,6 +70,20 @@ void KConfigToService::init()
             m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connectionMap));
         }
     }
+}
+
+void KConfigToService::start()
+{
+    // for now we do nothing but trigger kded load-on-demand
+    // TODO: it might be good to autostop if this function wasn't called
+    // in say 2 minutes (plasma crash / communication failure)
+    kDebug();
+}
+
+void KConfigToService::stop()
+{
+   QDBusInterface kded("org.kde.kded", "/kded", "org.kde.kded");
+   kded.call( "unloadModule", "knetworkmanager" );
 }
 
  /*
@@ -151,7 +169,7 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
         if (defaultV != item->property()) { // only deserialise non-default values
             KCoreConfigSkeleton::ItemEnum * itemEnum = 0;
             if ((itemEnum = dynamic_cast<KCoreConfigSkeleton::ItemEnum *>(item))) {
-                // get the list of choices from the ItemEnum, look up the name corresponding to the 
+                // get the list of choices from the ItemEnum, look up the name corresponding to the
                 // int returned by property() and put that in the map instead.
                 // KDE5: choices2 is going to go away..
                 QList<KCoreConfigSkeleton::ItemEnum::Choice2> choices = itemEnum->choices2();
@@ -190,11 +208,11 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
         Q_ASSERT(item);
         m_currentConnectionType = item->property().toString();
     }
-    
+
     return map;
 }
 
-/* 
+/*
  * Update the NetworkService's connections
  * - determine which connectionids are new and call restoreConnection on them
  * - take the list of changed and update those, or do it automatically

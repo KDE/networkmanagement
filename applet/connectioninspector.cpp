@@ -48,6 +48,10 @@ WiredConnectionInspector::~WiredConnectionInspector()
 
 bool WiredConnectionInspector::accept(RemoteConnection * connection)
 {
+    kDebug() << connection;
+    kDebug() << connection->type();
+    kDebug() << m_iface;
+    kDebug() << m_iface->carrier();
     return (connection->type() == Solid::Control::NetworkInterface::Ieee8023 && m_iface->carrier()) && ConnectionInspector::accept(connection);
 }
 

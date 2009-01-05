@@ -5,5 +5,9 @@
     <method name="configure">
       <arg name="changedConnections" type="as" direction="in"/>
     </method>
+    <method name="start">
+    </method>
+    <method name="stop">
+    </method>
   </interface>
 </node>

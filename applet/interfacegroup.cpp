@@ -58,6 +58,7 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
       m_wirelessEnvironment(new WirelessEnvironmentMerged(this)),
       m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical)),
       m_networkLayout(new QGraphicsLinearLayout(Qt::Vertical)),
+      m_enabled( false ),
       m_numberOfWlans( 1 )
 {
     connect(m_wirelessEnvironment, SIGNAL(networkAppeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
@@ -78,6 +79,7 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
 
 InterfaceGroup::~InterfaceGroup()
 {
+    qDeleteAll( m_interfaces );
 }
 
 void InterfaceGroup::enableInterface(bool enable)

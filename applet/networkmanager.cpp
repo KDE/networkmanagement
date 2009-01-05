@@ -67,7 +67,7 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Con
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
-: Plasma::PopupApplet(parent, args), m_iconPerDevice(false), m_svg(0)
+    : Plasma::PopupApplet(parent, args), m_iconPerDevice(false), m_svg(0)
 {
     m_extender = 0;
     m_wifiGroup = 0;
@@ -103,6 +103,11 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
 NetworkManagerApplet::~NetworkManagerApplet()
 {
+    QDBusInterface ref( "org.kde.kded", "/knetworkmanagerd",
+                        "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
+    // ## used to have NoEventLoop and 3s timeout with dcop
+    ref.call( "stop" );
+    kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
 }
 
 void NetworkManagerApplet::init()
@@ -130,9 +135,9 @@ void NetworkManagerApplet::init()
     QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
                         "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
     // ## used to have NoEventLoop and 3s timeout with dcop
-    QDBusReply<QString> reply = ref.call( "configure" );
+    ref.call( "start" );
     // not really interesting, for now we only care to kick the load-on-demand
-    kDebug() << "reply valid" << reply.isValid();
+    kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
 
     { // Wired
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());

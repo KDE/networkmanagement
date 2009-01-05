@@ -57,6 +57,8 @@ public:
     void addOrUpdate(const QString & id);
     QList<QPair<const QString&, const QString&> > keyMappings() const;
     void configure(const QStringList & changedConnections);
+    void start();
+    void stop();
 public Q_SLOTS:
     void connectionActivated(const QString &uuid);
 private:

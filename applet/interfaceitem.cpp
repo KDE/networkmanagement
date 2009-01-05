@@ -198,6 +198,7 @@ void InterfaceItem::enableInterface(bool enable)
 
 InterfaceItem::~InterfaceItem()
 {
+    delete m_connectionInspector;
 }
 
 
