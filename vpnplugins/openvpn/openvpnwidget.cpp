@@ -76,6 +76,8 @@ void OpenVpnSettingWidget::writeConfig()
     kDebug();
     KConfigGroup group(configXml()->config(), settingName());
     group.writeEntry( NM_OPENVPN_KEY_COMP_LZO, m_ui.chkUseLZO->isChecked() );
+    group.writeEntry( "servicetype", "org.freedesktop.NetworkManager.openvpn" );
+
     const char *contype = NM_OPENVPN_CONTYPE_TLS;
 
     switch ( m_ui.cmbConnectionType->currentIndex() )
