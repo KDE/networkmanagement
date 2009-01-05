@@ -126,6 +126,7 @@ void WirelessInterfaceItem::connectButtonClicked()
 
 void WirelessInterfaceItem::setConnectionInfo()
 {
+    InterfaceItem::setConnectionInfo();
     //kDebug() << m_activeAccessPoint;
     //kDebug() << m_activeConnections;
     if (m_activeAccessPoint) {
