@@ -120,7 +120,7 @@ QList<QDBusObjectPath> NetworkSettings::ListConnections() const
 
 QString NetworkSettings::nextObjectPath()
 {
-    return QString::fromLatin1("%1/%2").arg(QLatin1String(NM_DBUS_PATH_SETTINGS_CONNECTION)).arg(mNextConnectionId++);
+    return QString::fromLatin1("%1/%2").arg(QLatin1String(NM_DBUS_PATH_SETTINGS)).arg(mNextConnectionId++);
 }
 
 void NetworkSettings::onConnectionRemoved()

@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wpapskwidget.h"
 
 #include <nm-setting-wireless-security.h>
+#include <nm-setting-connection.h>
+#include <nm-setting-wireless.h>
 
 #include "802_11_wireless_security_widget.h"
 #include "secretstoragehelper.h"
@@ -42,7 +44,7 @@ WpaPskWidget::WpaPskWidget(KConfig * config, const QString & connectionId, QWidg
 {
     d->config = config;
     d->ui.setupUi(this);
-    connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
+    connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
     d->ui.psk->setEchoMode(QLineEdit::PasswordEchoOnEdit);
 }
 
@@ -51,8 +53,9 @@ WpaPskWidget::~WpaPskWidget()
     delete d;
 }
 
-void WpaPskWidget::chkShowPassToggled(bool on)
+void WpaPskWidget::chkShowPassToggled()
 {
+    bool on = d->ui.chkShowPass->isChecked();
     d->ui.psk->setEchoMode(on ? QLineEdit::Normal : QLineEdit::PasswordEchoOnEdit);
 }
 
@@ -71,6 +74,7 @@ void WpaPskWidget::readConfig()
     d->ui.psk->setText(secret);
     //d->ui.psk->setEnabled(true);
     d->ui.chkShowPass->setChecked(false);
+    chkShowPassToggled();
 }
 
 void WpaPskWidget::writeConfig()
@@ -81,6 +85,9 @@ void WpaPskWidget::writeConfig()
     SecretStorageHelper secrets(m_connectionId, QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME));
     kDebug() << "PSK is " << d->ui.psk->text();
     secrets.writeSecret("psk", d->ui.psk->text());
+
+    KConfigGroup cg2( d->config, NM_SETTING_WIRELESS_SETTING_NAME );
+    cg2.writeEntry( "security", NM_SETTING_WIRELESS_SECURITY_SETTING_NAME );
 }
 
 

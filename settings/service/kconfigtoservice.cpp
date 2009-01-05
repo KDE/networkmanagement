@@ -127,7 +127,7 @@ QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
         // Special case #2, NM requires that a setting group for "gsm" is accompannied by a "serial"
         // group
         QString serialSetting = QLatin1String("serial");
-        if (!connectionMap.isEmpty() && !connectionMap.contains(serialSetting)) {
+        if (connectionMap.contains(QLatin1String("gsm") ) && !connectionMap.contains(serialSetting)) {
             connectionMap.insert(serialSetting, QVariantMap());
         }
         // Special case #3, NM requires that a setting group for "serial" is accompanied by a "ppp"
