@@ -56,45 +56,36 @@ bool VpnConnectionGroup::accept(RemoteConnection* connection) const
 
 void VpnConnectionGroup::activateConnection(AbstractConnectableItem* item)
 {
-    // tell the manager to activate the connection
-    // which device??
-    // HACK - take the first one
+    QStringList actives = Solid::Control::NetworkManager::activeConnections();
+    QString active, device;
+    foreach ( QString acon, actives )
+    {
+        QDBusInterface con("org.freedesktop.NetworkManager", acon, "org.freedesktop.NetworkManager.Connection.Active", QDBusConnection::systemBus());
+        int state = con.property( "State" ).toInt();
+
+        bool isDefault = con.property( "Default" ).toBool();
+        if ( isDefault && state == NM_ACTIVE_CONNECTION_STATE_ACTIVATED )
+        {
+            active = acon;
+            QList<QDBusObjectPath> devs = con.property( "Devices" ).value<QList<QDBusObjectPath> >();
+            device = devs[0].path(); // pick the first one
+            break;
+        }
+    }
+
+    kDebug() << "active" << active << "device" << device;
+    if ( active.isEmpty() || device.isEmpty() )
+        return;
+
     ConnectionItem * ci = qobject_cast<ConnectionItem*>(item);
-    Solid::Control::NetworkInterfaceList activeInterfaces;
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-        if (iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
-            activeInterfaces.append(iface);
-        }
-    }
-    if (activeInterfaces.count() == 1) {
-        kDebug() << "Activating VPN connection " << ci->connection()->path() << " from " << ci->connection()->service() << " on " << activeInterfaces[0]->uni();
-        Solid::Control::NetworkManager::activateConnection(activeInterfaces[0]->uni(), ci->connection()->service() + " " + ci->connection()->path(), QVariantMap());
-    } else if (activeInterfaces.count() > 1) {
-        // determine which interface holds the default route
-        kDebug() << "More than one interface is active...";
-        Solid::Control::NetworkInterface * interfaceToActivate = 0;
-        QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
-        foreach (QString conn, activeConnections) {
-            OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
-                    conn, QDBusConnection::systemBus(), 0);
-            if (candidate.getDefault()) {
-                foreach (QDBusObjectPath activeDevicePath, candidate.devices()) {
-                    foreach (Solid::Control::NetworkInterface * iface, activeInterfaces) {
-                        if (iface->uni() == activeDevicePath.path()) {
-                            interfaceToActivate = iface;
-                            break;
-                        }
-                    }
-                }
-                break;
-            }
-        }
-        if (interfaceToActivate) {
-            Solid::Control::NetworkManager::activateConnection(interfaceToActivate->uni(), ci->connection()->service() + " " + ci->connection()->path(), QVariantMap());
-        } else {
-            kDebug() << "couldn't identify the interface with the default route, not activating the connection";
-        }
-    }
+
+    kDebug() << "Activating VPN connection" << ci->connection()->path() << "from" << ci->connection()->service() << "on" << device << "connection" << active;
+    QVariantMap map;
+    map.insert( "extra_connection_parameter", active );
+    Solid::Control::NetworkManager::activateConnection(device,
+                                                       ci->connection()->service() + " " + ci->connection()->path(),
+                                                       map );
+
 }
 
 void VpnConnectionGroup::setupFooter()

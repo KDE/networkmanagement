@@ -36,6 +36,7 @@ Connection::Connection(const QString & id, const QVariantMapMap & settingsMap, Q
     : QObject(parent), mId(id), mSettingsMap(settingsMap), mHasSecrets(false)
 {
     qDBusRegisterMetaType<QVariantMapMap>();
+    qDBusRegisterMetaType<QStringMap>();
 }
 
 Connection::~Connection()

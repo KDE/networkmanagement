@@ -48,7 +48,7 @@ void OpenVpnSettingWidget::readConfig()
     for ( int i = 0; i < data.count(); i += 2 )
         dataMap.insert( data[i], data[i+1] );
 
-    m_ui.chkUseLZO->setChecked( dataMap[NM_OPENVPN_KEY_COMP_LZO] == "true" );
+    m_ui.chkUseLZO->setChecked( dataMap[NM_OPENVPN_KEY_COMP_LZO] == "yes" );
 
     QString cType = dataMap[NM_OPENVPN_KEY_CONNECTION_TYPE];
 
@@ -92,7 +92,7 @@ void OpenVpnSettingWidget::writeConfig()
     data.push_back( m_ui.gateway->text() );
 
     data.push_back( NM_OPENVPN_KEY_COMP_LZO );
-    data.push_back( m_ui.chkUseLZO->isChecked() ? "true" : "false" );
+    data.push_back( m_ui.chkUseLZO->isChecked() ? "yes" : "no" );
 
     const char *contype = NM_OPENVPN_CONTYPE_TLS;
 
@@ -136,7 +136,7 @@ void OpenVpnSettingWidget::writeConfig()
     //group.writeEntry( NM_OPENVPN_KEY_KEY,
     //group.writeEntry( NM_OPENVPN_KEY_LOCAL_IP,
     data.push_back( NM_OPENVPN_KEY_PROTO_TCP );
-    data.push_back( m_ui.chkUseTCP->isChecked() ? "true" : "false" );
+    data.push_back( m_ui.chkUseTCP->isChecked() ? "yes" : "no" );
     if ( !m_ui.chkDefaultPort->isChecked() )
     {
         data.push_back( NM_OPENVPN_KEY_PORT );

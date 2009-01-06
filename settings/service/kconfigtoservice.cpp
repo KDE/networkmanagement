@@ -21,12 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "kconfigtoservice.h"
 
 #include <nm-setting-connection.h>
+#include <nm-setting-vpn.h>
 #include <nm-setting-ip4-config.h>
 
 #include <KDebug>
 #include <KSharedConfig>
 #include <KStandardDirs>
 
+#include "types.h"
 #include "configxml.h"
 #include "datamappings.h"
 #include "networksettings.h"
@@ -89,7 +91,7 @@ void KConfigToService::stop()
  /*
  * how to know which ConfigXml are needed?
  * a) peek connection/type and use a static list of settings per connection type
- * ** b) use the config's groups list to instantiate multiple configxmls as needed
+ * b) use the config's groups list to instantiate multiple configxmls as needed
  * c) use the config's groups list to generate a synthetic configxml containing the needed sections
  *
  * for each group, create a QVariantMap containing its settings and store them in the master
@@ -201,10 +203,27 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
             map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES), QVariant::fromValue(addresses));
         }
     }
+    // special case for vpn data - which is not a simple type
+    // TODO put this somewhere else - not every special case can live in this function.
+    if ( groupName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
+        KConfigGroup vpnGroup(m_config, groupName);
+        QStringList data = vpnGroup.readEntry( "data", QStringList() );
+        QStringMap dataMap;
+
+        for ( int i = 0; i < data.count(); i += 2 )
+            dataMap.insert( data[i], data[i+1] );
+
+        map.insert(QLatin1String(NM_SETTING_VPN_DATA), QVariant::fromValue(dataMap));
+
+        if ( !map.contains( NM_SETTING_VPN_SECRETS ) )
+            map.insert( QLatin1String(NM_SETTING_VPN_SECRETS ), QVariant::fromValue( QStringMap() ) );
+    }
+
     // special case for connection's "type" field, for which a corresponding QVariantMap must exist
     // for NM to accept the connection
     if (groupName == QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME)) {
-        KConfigSkeletonItem * item = config->findItem(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME), QLatin1String(NM_SETTING_CONNECTION_TYPE));
+        KConfigSkeletonItem * item = config->findItem(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME),
+                                                      QLatin1String(NM_SETTING_CONNECTION_TYPE));
         Q_ASSERT(item);
         m_currentConnectionType = item->property().toString();
     }
