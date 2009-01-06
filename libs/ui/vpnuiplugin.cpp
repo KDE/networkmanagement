@@ -13,7 +13,6 @@ VpnUiPlugin::VpnUiPlugin(QObject * parent) : QObject(parent), d(new Private)
 
 VpnUiPlugin::~VpnUiPlugin()
 {
-    delete d->widget;
     delete d;
 }
 

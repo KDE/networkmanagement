@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "openvpnwidget.h"
 #include "nm-openvpn-service.h"
 #include "storage/configxml.h"
+#include "storage/secretstoragehelper.h"
 
 #include <KDebug>
 #include <nm-setting-vpn.h>
@@ -49,6 +50,7 @@ void OpenVpnSettingWidget::readConfig()
         dataMap.insert( data[i], data[i+1] );
 
     m_ui.chkUseLZO->setChecked( dataMap[NM_OPENVPN_KEY_COMP_LZO] == "yes" );
+    SecretStorageHelper secrets(connectionId(), group.name());
 
     QString cType = dataMap[NM_OPENVPN_KEY_CONNECTION_TYPE];
 
@@ -59,11 +61,17 @@ void OpenVpnSettingWidget::readConfig()
         m_ui.x509PassCaFile->setPath( dataMap[NM_OPENVPN_KEY_CA] );
         m_ui.x509PassCert->setPath( dataMap[NM_OPENVPN_KEY_CERT] );
         m_ui.x509PassKey->setPath( dataMap[NM_OPENVPN_KEY_KEY] );
+        QString password;
+        secrets.readSecret(NM_OPENVPN_KEY_PASSWORD, password);
+        m_ui.x509PassPassword->setText( password );
     } else if ( cType == QLatin1String( NM_OPENVPN_CONTYPE_STATIC_KEY ) )
         m_ui.cmbConnectionType->setCurrentIndex( 1 );
     else if ( cType == QLatin1String( NM_OPENVPN_CONTYPE_PASSWORD ) )
     {
         m_ui.passUserName->setText( dataMap[NM_OPENVPN_KEY_USERNAME] );
+        QString password;
+        secrets.readSecret(NM_OPENVPN_KEY_PASSWORD, password);
+        m_ui.passPassword->setText( password );
         m_ui.cmbConnectionType->setCurrentIndex( 2 );
     } else { // default
         m_ui.cmbConnectionType->setCurrentIndex( 0 );
@@ -96,6 +104,8 @@ void OpenVpnSettingWidget::writeConfig()
 
     const char *contype = NM_OPENVPN_CONTYPE_TLS;
 
+    SecretStorageHelper secrets(connectionId(), group.name());
+
     switch ( m_ui.cmbConnectionType->currentIndex() )
     {
     case 0:
@@ -115,6 +125,7 @@ void OpenVpnSettingWidget::writeConfig()
         data.push_back( NM_OPENVPN_KEY_USERNAME );
         data.push_back( m_ui.passUserName->text() );
         group.writeEntry( NM_SETTING_VPN_USER_NAME, m_ui.passUserName->text() );
+        secrets.writeSecret( QLatin1String( NM_OPENVPN_KEY_PASSWORD ), m_ui.passPassword->text() );
         break;
     case 3:
         contype = NM_OPENVPN_CONTYPE_PASSWORD_TLS;
@@ -127,6 +138,7 @@ void OpenVpnSettingWidget::writeConfig()
         data.push_back( m_ui.x509PassCert->url().path() );
         data.push_back( NM_OPENVPN_KEY_KEY );
         data.push_back( m_ui.x509PassKey->url().path() );
+        secrets.writeSecret( NM_OPENVPN_KEY_PASSWORD, m_ui.x509PassPassword->text() );
         break;
     }
     data.push_back( NM_OPENVPN_KEY_CONNECTION_TYPE );
@@ -149,12 +161,7 @@ void OpenVpnSettingWidget::writeConfig()
     //group.writeEntry( NM_OPENVPN_KEY_TA,
     //group.writeEntry( NM_OPENVPN_KEY_TA_DIR,
 
-    // secrets
-    //group.writeEntry( NM_OPENVPN_KEY_PASSWORD,
-    //group.writeEntry( NM_OPENVPN_KEY_CERTPASS,
-
     group.writeEntry( NM_SETTING_VPN_DATA, data );
-
 }
 
 QString OpenVpnSettingWidget::settingName() const
