@@ -90,7 +90,8 @@ AbstractWirelessNetwork * WirelessEnvironment::findNetwork(const QString & ssid)
 
 void WirelessEnvironment::accessPointAppeared(const QString &uni)
 {
-    Q_D(WirelessEnvironment);
+    //Q_D(WirelessEnvironment);
+    Q_UNUSED(uni);
     //kDebug() << d->iface->interfaceName() << " found " << uni;
     accessPointAppearedInternal(uni);
 }

@@ -308,6 +308,7 @@ void NetworkManagerApplet::paintDefaultInterface(Solid::Control::NetworkInterfac
 void NetworkManagerApplet::paintWiredInterface(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
 {
     Q_UNUSED( option );
+    kDebug() << interface->connectionState() << Solid::Control::NetworkInterface::Activated;
     if (interface->connectionState() == Solid::Control::NetworkInterface::Activated) {
         p->drawPixmap(contentsRect.topLeft(), m_pixmapWiredConnected);
     } else {
@@ -398,8 +399,8 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
 
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
-    //kDebug() << "Updating connection state ...";
     //Solid::Control::NetworkInterface * interface = static_cast<Solid::Control::NetworkInterface *>(sender());
+    //kDebug() << "Updating connection state ..." << (long)interface;
     // update appearance
     QString elementNameToPaint;
     if (!m_interfaces.isEmpty()) {
@@ -534,43 +535,45 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Cont
      * - Disconnected devices
      *   - order as above
      */
-    bool lessThan = false;
     Solid::Control::NetworkInterface::ConnectionState if2State = if2->connectionState();
+    enum { Connecting, Connected, Disconnected } if2status = Disconnected, if1status = Disconnected;
     switch (if1->connectionState()) {
         case Solid::Control::NetworkInterface::Preparing:
         case Solid::Control::NetworkInterface::Configuring:
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
-            if ( if2State == Solid::Control::NetworkInterface::Preparing
-                    || if2State == Solid::Control::NetworkInterface::Configuring
-                    || if2State == Solid::Control::NetworkInterface::NeedAuth
-                    || if2State == Solid::Control::NetworkInterface::IPConfig
-               ) {
-                lessThan = networkInterfaceSameConnectionStateLessThan(if1, if2);
-            } else {
-                lessThan = true;
-            }
+            if1status = Connecting;
             break;
         case Solid::Control::NetworkInterface::Activated:
-            switch (if2->connectionState()) {
-                case Solid::Control::NetworkInterface::Preparing:
-                case Solid::Control::NetworkInterface::Configuring:
-                case Solid::Control::NetworkInterface::NeedAuth:
-                case Solid::Control::NetworkInterface::IPConfig:
-                    lessThan = false;
-                    break;
-                case Solid::Control::NetworkInterface::Activated:
-                    lessThan = networkInterfaceSameConnectionStateLessThan(if1, if2);
-                    break;
-                default:
-                    lessThan = true;
-            }
-            break;
-        default:
-            lessThan = networkInterfaceSameConnectionStateLessThan(if1, if2);
-
+            if1status = Connected; 
     }
-    return lessThan;
+    switch (if2->connectionState()) {
+        case Solid::Control::NetworkInterface::Preparing:
+        case Solid::Control::NetworkInterface::Configuring:
+        case Solid::Control::NetworkInterface::NeedAuth:
+        case Solid::Control::NetworkInterface::IPConfig:
+            if2status = Connecting;
+            break;
+        case Solid::Control::NetworkInterface::Activated:
+            if2status = Connected;
+    }
+    switch (if1status) {
+        case Connecting:
+            return if2status != Connecting || networkInterfaceSameConnectionStateLessThan(if1, if2);
+            break;
+        case Connected:
+            if ( if2status == Connecting)
+               return false;
+            return if2status != Connected || networkInterfaceSameConnectionStateLessThan(if1, if2);
+            break;
+        case Disconnected:
+            if ( if2status == Disconnected)
+                return networkInterfaceSameConnectionStateLessThan(if1, if2);
+            return false;
+            break;
+    }
+    // satisfy compiler
+    return false;
 }
 
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2)

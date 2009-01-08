@@ -125,7 +125,6 @@ void InterfaceGroup::setupFooter()
 
 void InterfaceGroup::updateNetworks()
 {
-    kDebug();
     // empty the layout
     //kDebug() << "Clearing ... " << m_networks.keys();
     foreach (WirelessNetworkItem * i, m_networks) {
@@ -170,13 +169,13 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
         activeConnectionTotal += i->activeConnectionCount();
         active_ssid = i->ssid();
     }
-    kDebug() << "Active Connections:" << activeConnectionTotal << "Networks:" << m_wirelessEnvironment->networks();
+    //kDebug() << "Active Connections:" << activeConnectionTotal << "Networks:" << m_wirelessEnvironment->networks();
     //kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
 
     // FIXME: m_userSettings can be invalid here, but we might still want to connect.
     //if ((activeConnectionTotal == 0) && m_connections.isEmpty() && m_userSettings->isValid()) {
     //if ((activeConnectionTotal == 0) && m_connections.isEmpty()) {
-    kDebug() << "ACTIVE:" << active_ssid;
+    //kDebug() << "ACTIVE:" << active_ssid;
         foreach (QString ssid, m_wirelessEnvironment->networks()) {
             if (ssid != active_ssid) {
                 allNetworks.append(m_wirelessEnvironment->findNetwork(ssid));
@@ -347,7 +346,7 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
 
 void InterfaceGroup::refreshConnectionsAndNetworks()
 {
-    kDebug() << "Refreshing";
+    //kDebug() << "Refreshing";
     updateNetworks();
     reassess();
 }

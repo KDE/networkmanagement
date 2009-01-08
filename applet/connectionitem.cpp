@@ -63,7 +63,7 @@ void ConnectionItem::setupItem()
     m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
 
     m_icon = new Plasma::IconWidget(this);
-    m_icon->setIcon("network-connect");
+    m_icon->setIcon("network-disconnect");
     m_icon->setMinimumHeight(22);
     m_icon->setMaximumHeight(22);
     m_layout->addItem(m_icon, 0, 2, 1, 1, Qt::AlignLeft);
