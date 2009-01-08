@@ -119,6 +119,7 @@ void WirelessEnvironment::removeNetwork(const QString &ssid)
         emit networkDisappeared(ssid);
         delete net;
     }
+    d->networks.remove(ssid);
 }
 
 void WirelessEnvironment::wirelessEnabledChanged(bool enabled)
