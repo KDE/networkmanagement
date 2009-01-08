@@ -41,7 +41,7 @@ KConfigToService::KConfigToService(NetworkSettings * service, bool active)
 {
     (void) new KNetworkManagerServiceAdaptor( this );
     QDBusConnection::sessionBus().registerService( "org.kde.knetworkmanagerd" ) ;
-    QDBusConnection::sessionBus().registerObject( "/knetworkmanagerd", this );
+    QDBusConnection::sessionBus().registerObject( "/modules/knetworkmanager", this );
 
     KNetworkManagerServicePrefs::instance(KStandardDirs::locate("config",
                 QLatin1String("knetworkmanagerrc")));
@@ -54,7 +54,7 @@ KConfigToService::~KConfigToService()
 {
     kDebug();
     QDBusConnection::sessionBus().unregisterService( "org.kde.knetworkmanagerd" ) ;
-    QDBusConnection::sessionBus().unregisterObject( "/knetworkmanagerd" );
+    QDBusConnection::sessionBus().unregisterObject( "/modules/knetworkmanager" );
 
     delete m_dataMappings;
 }
