@@ -132,7 +132,7 @@ void ConnectionSecretsJob::doAskUser()
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
         m_settingWidget = new WiredWidget(mConnectionId, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME)) {
-        m_settingWidget = new Wireless80211SecurityWidget(mConnectionId, 0);
+        m_settingWidget = new Wireless80211SecurityWidget(false, mConnectionId, 0, 0, 0); // TODO: find out
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
         m_settingWidget = new Wireless80211Widget(mConnectionId, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {

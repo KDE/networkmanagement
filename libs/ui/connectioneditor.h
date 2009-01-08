@@ -49,7 +49,9 @@ public:
     /**
      * Construct an editor widget for the given connection type.
      */
-    ConnectionPreferences * editorForConnectionType(QWidget * parent, ConnectionEditor::ConnectionType type, const QVariantList & args) const;
+    ConnectionPreferences * editorForConnectionType(bool setDefaults, QWidget * parent,
+                                                    ConnectionEditor::ConnectionType type,
+                                                    const QVariantList & args) const;
     /**
      * Tell the UserSettings service to reload its configuration (via DBUS)
      * Provide a list of changed connection IDs so the service can notify NetworkManager
