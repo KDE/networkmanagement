@@ -63,6 +63,7 @@ public:
     QString ssid() const;
     int strength() const;
     Solid::Control::AccessPoint * referenceAccessPoint() const;
+    void dump();
 protected Q_SLOTS:
     void updateStrength();
     void accessPointAppeared(const QString&);

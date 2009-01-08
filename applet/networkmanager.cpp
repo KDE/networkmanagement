@@ -308,7 +308,6 @@ void NetworkManagerApplet::paintDefaultInterface(Solid::Control::NetworkInterfac
 void NetworkManagerApplet::paintWiredInterface(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
 {
     Q_UNUSED( option );
-    kDebug() << interface->connectionState() << Solid::Control::NetworkInterface::Activated;
     if (interface->connectionState() == Solid::Control::NetworkInterface::Activated) {
         p->drawPixmap(contentsRect.topLeft(), m_pixmapWiredConnected);
     } else {
@@ -535,7 +534,6 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Cont
      * - Disconnected devices
      *   - order as above
      */
-    Solid::Control::NetworkInterface::ConnectionState if2State = if2->connectionState();
     enum { Connecting, Connected, Disconnected } if2status = Disconnected, if1status = Disconnected;
     switch (if1->connectionState()) {
         case Solid::Control::NetworkInterface::Preparing:
@@ -546,6 +544,9 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Cont
             break;
         case Solid::Control::NetworkInterface::Activated:
             if1status = Connected; 
+            break;
+        default: // all kind of disconnected
+            break;
     }
     switch (if2->connectionState()) {
         case Solid::Control::NetworkInterface::Preparing:
@@ -556,6 +557,9 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Cont
             break;
         case Solid::Control::NetworkInterface::Activated:
             if2status = Connected;
+            break;
+        default: // all kind of disconnected
+            break;
     }
     switch (if1status) {
         case Connecting:

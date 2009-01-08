@@ -74,6 +74,11 @@ int WirelessNetwork::strength() const
     return d->strength;
 }
 
+void WirelessNetwork::dump()
+{
+   kDebug() << ssid() << d->aps.keys();
+}
+
 void WirelessNetwork::accessPointAppeared(const QString &uni)
 {
     if (!d->aps.contains(uni)) {
