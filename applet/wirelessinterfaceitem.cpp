@@ -57,7 +57,8 @@ WirelessEnvironment * WirelessInterfaceItem::wirelessEnvironment() const
 void WirelessInterfaceItem::activeAccessPointChanged(const QString &uni)
 {
     // this is not called when the device is deactivated..
-    m_activeAccessPoint->disconnect(this);
+    if (m_activeAccessPoint)
+        m_activeAccessPoint->disconnect(this);
     m_activeAccessPoint = m_wirelessIface->findAccessPoint(uni);
     if (m_activeAccessPoint) {
         connect(m_activeAccessPoint, SIGNAL(signalStrengthChanged(int)), SLOT(activeSignalStrengthChanged(int)));

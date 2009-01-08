@@ -59,7 +59,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_icon->setMinimumHeight(48);
     m_icon->setMaximumHeight(48);
     m_icon->setAcceptHoverEvents(false);
-    m_layout->addItem(m_icon, 0, 0, 3, 1);
+    m_layout->addItem(m_icon, 0, 0, 1, 1);
 
     m_isWireless = false;
 
@@ -87,7 +87,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
-    m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 2);
+    m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
 
 
     m_connectButton = new Plasma::IconWidget(this);
@@ -131,7 +131,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
         m_rfCheckBox = new Plasma::CheckBox(this);
         m_rfCheckBox->setChecked(m_enabled);
         m_rfCheckBox->setToolTip(i18nc("icon to connect network interface", "Connect"));
-        m_layout->addItem(m_rfCheckBox, 0, 2, 1, 1, Qt::AlignRight);
+        m_layout->addItem(m_rfCheckBox, 0, 3, 1, 1, Qt::AlignRight);
 
         m_connectButton->hide();
     } else {
@@ -164,8 +164,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
             this, SLOT(connectionStateChanged(int)));
     connect(m_connectButton, SIGNAL(clicked()),
             this, SLOT(connectButtonClicked()));
-    connect(m_rfCheckBox, SIGNAL(toggled(bool)),
-            this, SLOT(wirelessEnabledChanged(bool)));
+    if (m_rfCheckBox)
+        connect(m_rfCheckBox, SIGNAL(toggled(bool)),
+                SLOT(wirelessEnabledChanged(bool)));
 
     setNameDisplayMode(mode);
     // the applet may be starting when NetworkManager is already connected,
