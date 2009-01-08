@@ -101,7 +101,7 @@ void WirelessNetwork::accessPointDisappeared(const QString &uni)
 {
     d->aps.remove(uni);
     if (d->aps.isEmpty()) {
-        kDebug() << uni;
+        //kDebug() << uni;
         emit noAccessPoints(d->ssid);
     } else {
         updateStrength();

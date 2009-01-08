@@ -90,9 +90,9 @@ AbstractWirelessNetwork * WirelessEnvironment::findNetwork(const QString & ssid)
 
 void WirelessEnvironment::accessPointAppeared(const QString &uni)
 {
-    Q_D(WirelessEnvironment);
+    //Q_D(WirelessEnvironment);
     Q_UNUSED(uni);
-    kDebug() << d->iface->interfaceName() << " found " << uni;
+    //kDebug() << d->iface->interfaceName() << " found " << uni;
     accessPointAppearedInternal(uni);
 }
 
@@ -101,7 +101,7 @@ void WirelessEnvironment::accessPointAppearedInternal(const QString &uni)
     Q_D(WirelessEnvironment);
     Solid::Control::AccessPoint * ap = d->iface->findAccessPoint(uni);
     QString ssid = ap->ssid();
-    kDebug() << ssid << d->networks.contains(ssid);
+    //kDebug() << ssid << d->networks.contains(ssid);
     if (ssid.isEmpty()) {
         //kDebug() << "ignoring hidden AP with BSSID:" << ap->hardwareAddress();
     } else if (!d->networks.contains(ssid)) {
@@ -111,7 +111,7 @@ void WirelessEnvironment::accessPointAppearedInternal(const QString &uni)
         emit networkAppeared(ssid);
     }
 
-    dump();
+    //dump();
 }
 
 void WirelessEnvironment::dump()
@@ -128,7 +128,7 @@ void WirelessEnvironment::dump()
 void WirelessEnvironment::removeNetwork(const QString &ssid)
 {
     Q_D(WirelessEnvironment);
-    kDebug() << ssid;
+    //kDebug() << ssid;
     QHash<QString, WirelessNetwork*>::iterator it = d->networks.find(ssid);
     if ( it == d->networks.end() )
         return;
@@ -138,8 +138,7 @@ void WirelessEnvironment::removeNetwork(const QString &ssid)
         delete net;
     }
     d->networks.erase(it);
-    kDebug() << "removed";
-    dump();
+    //dump();
 }
 
 void WirelessEnvironment::wirelessEnabledChanged(bool enabled)
