@@ -21,13 +21,13 @@
       <label>WEP TX key index</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="authalg" key="keymgmt" type="Enum">
-      <label>Auth alg</label>
+    <entry name="authalg" key="authalg" type="Enum">
+      <label>Authentication algorithm</label>
       <whatsthis></whatsthis>
       <choices>
         <choice name="open"/>
         <choice name="shared"/>
-        <choice name "leap"/>
+        <choice name="leap"/>
       </choices>
     </entry>
     <entry name="proto" type="StringList">
