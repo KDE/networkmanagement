@@ -388,13 +388,14 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
             kDebug() << "opening connection management dialog using knetworkmanager_configshell";
             QStringList args;
             QString moduleArgs =
-                QString::fromLatin1("%1 %2 %3 %4")
-                .arg(wni->net()->ssid())
+                QString::fromLatin1("'%1' %2 %3 %4")
+                .arg(wni->net()->ssid().replace('\'', "\\'"))
                 .arg(wni->net()->referenceAccessPoint()->capabilities())
                 .arg(wni->net()->referenceAccessPoint()->wpaFlags())
                 .arg(wni->net()->referenceAccessPoint()->rsnFlags());
 
             args << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("create");
+            kDebug() << args;
             KToolInvocation::kdeinitExec("knetworkmanager_configshell", args);
         }
     }
