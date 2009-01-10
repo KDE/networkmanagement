@@ -61,7 +61,7 @@ void WirelessConnectionItem::setupItem()
     m_layout = new QGraphicsGridLayout(this);
     // First, third and fourth colunm are fixed width for the icons
     m_layout->setColumnPreferredWidth(0, 160);
-    m_layout->setColumnFixedWidth(1, 70);
+    m_layout->setColumnFixedWidth(1, 60);
     m_layout->setColumnFixedWidth(2, rowHeight);
     m_layout->setColumnSpacing(1, spacing);
 
@@ -83,7 +83,7 @@ void WirelessConnectionItem::setupItem()
     m_strengthMeter->setMaximum(100);
     m_strengthMeter->setValue(m_strength);
     m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
-    m_strengthMeter->setPreferredSize(QSizeF(70, rowHeight/2));
+    m_strengthMeter->setPreferredSize(QSizeF(60, rowHeight/2));
     m_strengthMeter->setMaximumHeight(rowHeight/2);
     m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
