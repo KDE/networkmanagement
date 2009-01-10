@@ -51,9 +51,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 {
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
-    m_layout->setHorizontalSpacing(8);
+    m_layout->setHorizontalSpacing(4);
     m_layout->setColumnFixedWidth(0, 48);
-    m_layout->setColumnPreferredWidth(1, 176);
+    m_layout->setColumnPreferredWidth(1, 200);
 
     m_icon = new Plasma::IconWidget(this);
     m_icon->setMinimumHeight(48);
@@ -87,6 +87,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
+    m_ifaceNameLabel->setMinimumWidth(200);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
 
 
@@ -97,7 +98,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectButton->setMinimumWidth(22);
     m_connectButton->setIcon("network-connect");
     m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
-    m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
 
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
@@ -110,7 +110,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoLabel = new Plasma::Label(this);
     m_connectionInfoLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionInfoLabel->nativeWidget()->setWordWrap(false);
-    m_connectionInfoLabel->setMinimumWidth(176);
     m_connectionInfoLabel->setText("<b>IP Address:</b> dum.my.ip.addr");
 
     if (m_isWireless) {
@@ -122,20 +121,23 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
         m_strengthMeter->setMaximum(100);
         m_strengthMeter->setValue(0);
         m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
-        m_strengthMeter->setPreferredSize(QSizeF(180, meterHeight));
+        m_strengthMeter->setPreferredSize(QSizeF(60, meterHeight));
+        m_strengthMeter->setMaximumWidth(60);
         m_strengthMeter->setMaximumHeight(meterHeight);
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        m_layout->addItem(m_strengthMeter, 2, 1, 1, 1, Qt::AlignCenter);
+        m_layout->addItem(m_strengthMeter, 2, 1, 1, 1, Qt::AlignRight);
         m_connectionInfoLabel->hide();
+        m_connectButton->hide();
 
         m_rfCheckBox = new Plasma::CheckBox(this);
         m_rfCheckBox->setChecked(m_enabled);
-        m_rfCheckBox->setToolTip(i18nc("icon to connect network interface", "Connect"));
+        m_rfCheckBox->setToolTip(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable Wireless"));
         m_layout->addItem(m_rfCheckBox, 0, 2, 1, 1, Qt::AlignRight);
 
-        m_connectButton->hide();
     } else {
         m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1, Qt::AlignCenter);
+        m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
+
     }
     //       security
     m_connectionInfoIcon = new Plasma::IconWidget(this);
@@ -143,7 +145,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoIcon->setMinimumHeight(22);
     m_connectionInfoIcon->setMinimumWidth(22);
     m_connectionInfoIcon->setMaximumHeight(22);
-    m_connectionInfoIcon->setAcceptHoverEvents(false);
+    //m_connectionInfoIcon->setAcceptHoverEvents(false);
     //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
     m_layout->addItem(m_connectionInfoIcon, 2, 2, 1, 1, Qt::AlignRight);
     m_connectionInfoIcon->hide(); // hide by default, we'll enable it later

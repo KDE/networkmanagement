@@ -66,14 +66,16 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
     connect(userSettings, SIGNAL(appeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
     connect(userSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
 
+    m_layout->setSpacing(0);
     m_interfaceLayout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    m_networkLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_interfaceLayout->setSpacing(4);
+    m_networkLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     m_networkLayout->setSpacing(4);
     kDebug() << "TYPE" << m_type;
     //updateNetworks();
 
     if (m_type == Solid::Control::NetworkInterface::Gsm) {
-        setMinimumSize(QSize(285, 60));
+        setMinimumSize(QSize(285, 60)); // WTF?
     }
 }
 
