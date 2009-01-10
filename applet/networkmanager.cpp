@@ -82,7 +82,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
-    //setPassivePopup(true); // only for testing ...
+    setPassivePopup(true); // only for testing ...
 
     updateToolTip();
     setAspectRatioMode(Plasma::ConstrainedSquare);
@@ -543,7 +543,7 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Cont
             if1status = Connecting;
             break;
         case Solid::Control::NetworkInterface::Activated:
-            if1status = Connected; 
+            if1status = Connected;
             break;
         default: // all kind of disconnected
             break;

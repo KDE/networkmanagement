@@ -51,15 +51,19 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 {
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
-    m_layout->setHorizontalSpacing(4);
+    m_layout->setColumnSpacing(0, 8);
+    m_layout->setColumnSpacing(1, 5);
+    m_layout->setColumnSpacing(2, 4);
+    m_layout->setPreferredWidth(250);
     m_layout->setColumnFixedWidth(0, 48);
-    m_layout->setColumnPreferredWidth(1, 200);
+    m_layout->setColumnMinimumWidth(1, 120);
+    m_layout->setColumnPreferredWidth(2, 60); // FIXME: spacing?
 
     m_icon = new Plasma::IconWidget(this);
     m_icon->setMinimumHeight(48);
     m_icon->setMaximumHeight(48);
     m_icon->setAcceptHoverEvents(false);
-    m_layout->addItem(m_icon, 0, 0, 3, 1);
+    m_layout->addItem(m_icon, 0, 0, 2, 1);
 
     m_isWireless = false;
 
@@ -87,7 +91,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
-    m_ifaceNameLabel->setMinimumWidth(200);
+    //m_ifaceNameLabel->setMinimumWidth(176);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
 
 
@@ -104,13 +108,14 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionNameLabel->setText("[not updated yet]"); // TODO: check connection status
     m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
-    m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 1);
+    m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 2);
 
     //       IP address
     m_connectionInfoLabel = new Plasma::Label(this);
     m_connectionInfoLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionInfoLabel->nativeWidget()->setWordWrap(false);
     m_connectionInfoLabel->setText("<b>IP Address:</b> dum.my.ip.addr");
+    m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1, Qt::AlignCenter);
 
     if (m_isWireless) {
 
@@ -125,18 +130,23 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
         m_strengthMeter->setMaximumWidth(60);
         m_strengthMeter->setMaximumHeight(meterHeight);
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        m_layout->addItem(m_strengthMeter, 2, 1, 1, 1, Qt::AlignRight);
-        m_connectionInfoLabel->hide();
+        m_layout->addItem(m_strengthMeter, 2, 2, 1, 1, Qt::AlignCenter);
+        //m_connectionInfoLabel->hide();
         m_connectButton->hide();
+
+
+   // m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    //m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
+
 
         m_rfCheckBox = new Plasma::CheckBox(this);
         m_rfCheckBox->setChecked(m_enabled);
+        m_rfCheckBox->setText(i18n("Enable"));
         m_rfCheckBox->setToolTip(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable Wireless"));
-        m_layout->addItem(m_rfCheckBox, 0, 2, 1, 1, Qt::AlignRight);
+        m_layout->addItem(m_rfCheckBox, 0, 2, 1, 2, Qt::AlignRight);
 
     } else {
-        m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1, Qt::AlignCenter);
-        m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
+        m_layout->addItem(m_connectButton, 0, 3, 1, 1, Qt::AlignRight);
 
     }
     //       security
@@ -147,7 +157,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoIcon->setMaximumHeight(22);
     //m_connectionInfoIcon->setAcceptHoverEvents(false);
     //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
-    m_layout->addItem(m_connectionInfoIcon, 2, 2, 1, 1, Qt::AlignRight);
+    m_layout->addItem(m_connectionInfoIcon, 2, 3, 1, 1, Qt::AlignRight);
     m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
 
     connect(Solid::Control::NetworkManager::notifier(),
@@ -235,12 +245,8 @@ void InterfaceItem::setConnectionInfo()
         } else {
             QHostAddress addr(addresses.first().address());
             QString ip = addr.toString();
-            // infolabel is only shown for wired connections, so display the IP in the connection name
-            if (m_isWireless) {
-                m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected (%1)", ip));
-            } else {
-                m_connectionInfoLabel->setText(i18nc("wireless interface is connected", "Connected (%1)", ip));
-            }
+            m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
+            m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "IP: %1", ip));
         }
     }
 }
