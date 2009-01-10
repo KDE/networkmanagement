@@ -139,12 +139,11 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     m_connectionLayout->addItem(m_gsmGroup);
 
     if (m_vpnGroup->isEmpty()) {
-        kDebug() << "EMPTY!!!!!!!!!!!!!!!!!";
+        kDebug() << "VPN is empty, hiding it";
         m_vpnHeader->hide();
         m_vpnGroup->hide();
-    } else {
-        kDebug() << "NON-EMPTY!!!!!!!!!!!!!!!!!";
     }
+
     m_connectionLayout->addItem(m_vpnHeader);
     m_connectionLayout->addItem(m_vpnGroup);
     m_gsmGroup->show();
@@ -152,12 +151,6 @@ NetworkManagerPopup::NetworkManagerPopup(QGraphicsItem *parent)
     //m_connectionLayout->addItem(pppoeGroup);
     m_layout->addItem(m_connectionLayout);
 
-    //   then a grid of status labels and buttons
-    // +----------------------------+
-    // |              | [Manage...] |
-    // | Wireless hw switch status  |
-    // | [Networking] | [Wireless]  |
-    // +----------------------------|
     //QGraphicsGridLayout * gridLayout = new QGraphicsGridLayout(m_layout);
     m_btnManageConnections = new Plasma::IconWidget(this);
     m_btnManageConnections->setDrawBackground(true);

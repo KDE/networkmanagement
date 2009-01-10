@@ -154,8 +154,9 @@ void InterfaceGroup::setNetworksLimit( int wlans )
 {
     int old = m_numberOfWlans;
     m_numberOfWlans = wlans;
-    if ( old != m_numberOfWlans )
+    if (old != m_numberOfWlans) {
         updateNetworks();
+    }
 }
 
 

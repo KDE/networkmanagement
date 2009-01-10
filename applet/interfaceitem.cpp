@@ -52,12 +52,13 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
     m_layout->setColumnSpacing(0, 8);
-    m_layout->setColumnSpacing(1, 5);
+    m_layout->setColumnSpacing(1, 4);
     m_layout->setColumnSpacing(2, 4);
-    m_layout->setPreferredWidth(250);
+    m_layout->setPreferredWidth(300);
     m_layout->setColumnFixedWidth(0, 48);
-    m_layout->setColumnMinimumWidth(1, 120);
-    m_layout->setColumnPreferredWidth(2, 60); // FIXME: spacing?
+    m_layout->setColumnMinimumWidth(1, 144);
+    m_layout->setColumnFixedWidth(2, 60); // FIXME: spacing?
+    m_layout->setColumnFixedWidth(3, 22); // FIXME: spacing?
 
     m_icon = new Plasma::IconWidget(this);
     m_icon->setMinimumHeight(48);
