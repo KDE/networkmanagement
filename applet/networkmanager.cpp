@@ -106,7 +106,8 @@ NetworkManagerApplet::~NetworkManagerApplet()
     QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
                         "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
     // ## used to have NoEventLoop and 3s timeout with dcop
-    ref.call( "stop" );
+    ref.call( QLatin1String("stop") );
+    //ref.call("stop");
     kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
 }
 
