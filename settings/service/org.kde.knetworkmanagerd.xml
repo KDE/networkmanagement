@@ -6,6 +6,7 @@
       <arg name="changedConnections" type="as" direction="in"/>
     </method>
     <method name="start">
+      <arg name="wid" type="x" direction="in"/>
     </method>
     <method name="stop">
     </method>

@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knetworkmanagerserviceadaptor.h"
 
 KConfigToService::KConfigToService(NetworkSettings * service, bool active)
-    : QObject( service ), m_service(service), m_error(!active)
+    : QObject( service ), m_service(service), m_error(!active), m_init( false )
 {
     (void) new KNetworkManagerServiceAdaptor( this );
     QDBusConnection::sessionBus().registerService( "org.kde.knetworkmanagerd" ) ;
@@ -61,7 +61,7 @@ KConfigToService::~KConfigToService()
 
 void KConfigToService::init()
 {
-    if (!m_error) {
+    if (!m_error && !m_init) {
         // 1) get the names of all the connections from the main config file
         // (this could also be just the connections in one profile, after removing all connections)
         QStringList connectionIds;
@@ -71,21 +71,25 @@ void KConfigToService::init()
             QVariantMapMap connectionMap = restoreConnection(connectionId);
             m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connectionMap));
         }
+        m_init = true;
     }
 }
 
-void KConfigToService::start()
+void KConfigToService::start( WId wid )
 {
     // for now we do nothing but trigger kded load-on-demand
     // TODO: it might be good to autostop if this function wasn't called
     // in say 2 minutes (plasma crash / communication failure)
     kDebug();
+    SecretStorageHelper::setWalletWid( wid );
+    init();
 }
 
 void KConfigToService::stop()
 {
    QDBusInterface kded("org.kde.kded", "/kded", "org.kde.kded");
    kded.call( "unloadModule", "knetworkmanager" );
+    SecretStorageHelper::setWalletWid( 0 );
 }
 
  /*

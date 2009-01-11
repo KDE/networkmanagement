@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QIcon>
 #include <QPainter>
-
+#include <QDesktopWidget>
 
 #include <KIcon>
 #include <KIconLoader>
@@ -135,8 +135,10 @@ void NetworkManagerApplet::init()
     // get kded module kicked in
     QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
                         "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
-    // ## used to have NoEventLoop and 3s timeout with dcop
-    ref.call( "start" );
+
+    WId wid = QApplication::desktop()->effectiveWinId();
+    kDebug() << wid;
+    ref.call( "start", qlonglong( wid ) );
     // not really interesting, for now we only care to kick the load-on-demand
     kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
 

@@ -45,6 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "configxml.h"
 #include "datamappings.h"
+#include "secretstoragehelper.h"
 
 #include "802_11_wirelesswidget.h"
 #include "cdmawidget.h"
@@ -58,8 +59,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "security/802_1x_security_widget.h"
 #include "security/securitywidget.h"
 
-ConnectionSecretsJob::ConnectionSecretsJob(const QString & connectionId, const QString &settingName, const QStringList& secrets, bool requestNew, const QDBusMessage& request)
-    : mConnectionId(connectionId), mSettingName(settingName), mRequestNew(requestNew), mRequest(request), m_askUserDialog(0), m_settingWidget(0)
+ConnectionSecretsJob::ConnectionSecretsJob(const QString & connectionId, const QString &settingName,
+                                           const QStringList& secrets, bool requestNew, const QDBusMessage& request)
+    : mConnectionId(connectionId), mSettingName(settingName), mRequestNew(requestNew),
+      mRequest(request), m_askUserDialog(0), m_settingWidget(0)
 {
     // record the secrets that we are looking for
     foreach (QString secretKey, secrets) {
@@ -85,7 +88,8 @@ void ConnectionSecretsJob::doWork()
         // do wallet lookup
         if (KWallet::Wallet::isEnabled()) {
             kDebug() << "opening wallet...";
-            KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), 0/*WId*/, KWallet::Wallet::Asynchronous);
+            KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
+                                                                   SecretStorageHelper::walletWid(), KWallet::Wallet::Asynchronous);
             if (wallet) {
                 connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
             } else {

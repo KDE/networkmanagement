@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kwallet.h>
 
 QString SecretStorageHelper::s_walletFolderName = QLatin1String("NetworkManager");
+WId SecretStorageHelper::s_walletWId = 0;
 
 SecretStorageHelper::SecretStorageHelper( const QString &connectionName, const QString &settingGroup) : m_connectionName(connectionName), m_settingGroup(settingGroup)
 {
@@ -36,7 +37,7 @@ QString SecretStorageHelper::keyForEntry(const QString & entry) const
 
 void SecretStorageHelper::readSecret(const QString &key, QString &secret )
 {
-    KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), 0, KWallet::Wallet::Synchronous );
+    KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Synchronous );
     if( wallet && wallet->isOpen() ) {
         if( !wallet->hasFolder( s_walletFolderName ) )
             wallet->createFolder( s_walletFolderName );
@@ -54,7 +55,7 @@ void SecretStorageHelper::readSecret(const QString &key, QString &secret )
 
 void SecretStorageHelper::writeSecret(const QString &key, const QString &secret )
 {
-    KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), 0, KWallet::Wallet::Synchronous );
+    KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Synchronous );
     if( wallet && wallet->isOpen() ) {
         if( !wallet->hasFolder( s_walletFolderName ) )
             wallet->createFolder( s_walletFolderName );
