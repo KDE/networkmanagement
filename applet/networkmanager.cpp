@@ -76,18 +76,28 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_popup = new NetworkManagerPopup(0);
 
     KConfigGroup cg = config();
-    m_popup->showWired(cg.readEntry("showWired", true));
-    m_popup->showWireless(cg.readEntry("showWireless", true));
-    m_popup->showVpn(cg.readEntry("showVpn", true));
-    m_popup->showGsm(cg.readEntry("showGsm", true));
+    m_popup->setShowWired(cg.readEntry("showWired", true));
+    m_popup->setShowWireless(cg.readEntry("showWireless", true));
+    m_popup->setShowVpn(cg.readEntry("showVpn", true));
+    m_popup->setShowGsm(cg.readEntry("showGsm", true));
+    m_popup->setWirelessNetworkDisplayLimit( cg.readEntry("numberOfWlans", 4));
+
+    QObject::connect(Solid::Control::NetworkManager::notifier(),
+            SIGNAL(statusChanged(Solid::Networking::Status)),
+            this, SLOT(managerStatusChanged(Solid::Networking::Status)));
 
     QObject::connect(m_popup, SIGNAL(manageConnections()),
             this, SLOT(manageConnections()));
+    cg.sync();
 }
 
 NetworkManagerApplet::~NetworkManagerApplet()
 {
-
+    QDBusInterface ref( "org.kde.kded", "/knetworkmanagerd",
+                        "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
+    // ## used to have NoEventLoop and 3s timeout with dcop
+    ref.call( QLatin1String("stop") );
+    kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
 }
 
 void NetworkManagerApplet::init()
@@ -103,6 +113,14 @@ void NetworkManagerApplet::init()
             Solid::Control::NetworkManager::networkInterfaces()) {
         QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
     }
+
+    // get kded module kicked in
+    QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager", 
+                        "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
+    // ## used to have NoEventLoop and 3s timeout with dcop
+    ref.call( QLatin1String("start") );
+    // not really interesting, for now we only care to kick the load-on-demand
+    kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
 }
 
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
@@ -146,6 +164,40 @@ void NetworkManagerApplet::configAccepted()
         showLabel(m_showBatteryString);
     }
 */
+   if (m_popup->showWired() != ui.showWired->isChecked()) {
+       m_popup->setShowWired(ui.showWired->isChecked());
+       cg.writeEntry("showWired", ui.showWired->isChecked());
+       kDebug() << "Wired Changed" << ui.showWired->isChecked();
+   }
+   if (m_popup->showWireless() != ui.showWireless->isChecked()) {
+       m_popup->setShowWireless(ui.showWireless->isChecked());
+       cg.writeEntry("showWireless", ui.showWireless->isChecked());
+       kDebug() << "Wireless Changed" << m_popup->showWireless();
+   }
+   if (m_popup->showGsm() != ui.showGsm->isChecked()) {
+       m_popup->setShowGsm(ui.showGsm->isChecked());
+       cg.writeEntry("showGsm", ui.showGsm->isChecked());
+       kDebug() << "Gsm Changed" << ui.showGsm->isChecked();
+   }
+   if (m_popup->showVpn() != ui.showVpn->isChecked()) {
+       m_popup->setShowVpn(ui.showVpn->isChecked());
+       cg.writeEntry("showVpn", ui.showVpn->isChecked());
+       kDebug() << "VPN Changed" << ui.showVpn->isChecked();
+   }
+   uint wlans = ui.numberOfWlans->value();
+   if (wlans != m_popup->wirelessNetworkDisplayLimit()) {
+       m_popup->setWirelessNetworkDisplayLimit(wlans);
+       kDebug() << "No of WLANS Changed:" << wlans;
+   }
+}
+
+QList<QAction*> NetworkManagerApplet::contextualActions()
+{
+    QAction* configAction = new QAction(KIcon("networkmanager"), i18n("Manage Connections..."), this);
+    connect(configAction, SIGNAL(triggered(bool)), this, SLOT(manageConnections()));
+    QList<QAction*> tempActions;
+    tempActions << configAction;
+    return tempActions;
 }
 
 void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)

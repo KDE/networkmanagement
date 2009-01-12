@@ -112,6 +112,7 @@ void DataMappings::initKeyMappings()
     // nm-setting-vpn.h
     m_keyMappings.insert(QLatin1String("servicetype"), QLatin1String(NM_SETTING_VPN_SERVICE_TYPE));
     m_keyMappings.insert(QLatin1String("username"), QLatin1String(NM_SETTING_VPN_USER_NAME));
+    m_keyMappings.insert(QLatin1String("data" ), QLatin1String(NM_SETTING_VPN_DATA));
     // nm-setting-vpn-properties.h is good
     // nm-setting-wireless.h
     m_keyMappings.insert(QLatin1String("macaddress"), QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS));

@@ -111,7 +111,7 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
 
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
     //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
-    QLabel * m_vpnHeader = new QLabel(this);
+    m_vpnHeader = new QLabel(this);
     m_vpnHeader->setText(i18nc("Label for vpn connections in popup","VPN Connections"));
     m_vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
     m_vpnGroup->setObjectName("vpn-interface-group");
@@ -159,14 +159,14 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
 
     //gridLayout->addItem(m_lblRfkill, 1, 0, 1, 2);
     //m_btnEnableNetworking = new QCheckBox(this);
-    m_btnEnableWireless = new QCheckBox(this);
+    //m_btnEnableWireless = new QCheckBox(this);
     managerWirelessEnabledChanged(Solid::Control::NetworkManager::isWirelessEnabled());
     //m_btnEnableNetworking->setText(i18nc("Label for pushbutton enabling networking", "All Networking"));
-    m_btnEnableWireless->setText(i18nc("Label for checkbox enabling wireless", "Wireless"));
+    //m_btnEnableWireless->setText(i18nc("Label for checkbox enabling wireless", "Wireless"));
     //gridLayout->addItem(m_btnEnableNetworking, 1, 0, 1, 1);
     //gridLayout->addItem(m_btnEnableWireless, 1, 0, 1, 2);
     //m_layout->addItem(gridLayout);
-    m_layout->addWidget(m_btnEnableWireless);
+    //m_layout->addWidget(m_btnEnableWireless);
     setLayout(m_layout);
     // connect up the buttons and the manager's signals
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
@@ -183,8 +183,8 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
             this, SIGNAL(manageConnections()));
     //QObject::connect(m_btnEnableNetworking, SIGNAL(toggled(bool)),
     //        this, SLOT(userNetworkingEnabledChanged(bool)));
-    QObject::connect(m_btnEnableWireless, SIGNAL(toggled(bool)),
-            this, SLOT(userWirelessEnabledChanged(bool)));
+    //QObject::connect(m_btnEnableWireless, SIGNAL(toggled(bool)),
+    //        this, SLOT(userWirelessEnabledChanged(bool)));
     QObject::connect(m_connectionActivationSignalMapper, SIGNAL(mapped(const QString&)),
             this, SLOT(activateConnection(const QString&)));
     QObject::connect(m_connectionDeactivationSignalMapper, SIGNAL(mapped(const QString&)),
@@ -212,34 +212,9 @@ void NetworkManagerPopup::updateLayout()
     //kDebug() << "============================== LAYOUT UPDATED.";
 }
 
-// Accessors
-
-bool NetworkManagerPopup::wiredShown()
-{
-    return m_showWired;
-}
-
-bool NetworkManagerPopup::wirelessShown()
-{
-    return m_showWireless;
-}
-
-bool NetworkManagerPopup::vpnShown()
-{
-    return m_showVpn;
-}
-
-bool NetworkManagerPopup::gsmShown()
-{
-    return m_showGsm;
-}
-
-void NetworkManagerPopup::showWired(bool show)
+void NetworkManagerPopup::setShowWired(bool show)
 {
     m_showWired = show;
-    if (!m_wiredHeader || !m_ethernetGroup) {
-        return;
-    }
     if (show) {
         m_wiredHeader->show();
         m_ethernetGroup->show();
@@ -250,12 +225,9 @@ void NetworkManagerPopup::showWired(bool show)
     }
 }
 
-void NetworkManagerPopup::showWireless(bool show)
+void NetworkManagerPopup::setShowWireless(bool show)
 {
     m_showWireless = show;
-    if (!m_wirelessHeader || !m_wifiGroup) {
-        return;
-    }
     if (show) {
         m_wirelessHeader->show();
         m_wifiGroup->show();
@@ -266,12 +238,9 @@ void NetworkManagerPopup::showWireless(bool show)
     }
 }
 
-void NetworkManagerPopup::showVpn(bool show)
+void NetworkManagerPopup::setShowVpn(bool show)
 {
     m_showVpn = show;
-    if (!m_vpnHeader || !m_vpnGroup) {
-        return;
-    }
     if (show) {
         m_vpnHeader->show();
         m_vpnGroup->show();
@@ -282,25 +251,23 @@ void NetworkManagerPopup::showVpn(bool show)
     }
 }
 
-void NetworkManagerPopup::showGsm(bool show)
+void NetworkManagerPopup::setShowGsm(bool show)
 {
-    m_showWired = show;
-    if (!m_gsmHeader || !m_gsmGroup) {
-        return;
-    }
+    m_showGsm = show;
     if (show) {
-        m_gsmHeader->show();
+        //m_gsmHeader->show();
         m_gsmGroup->show();
 
     } else {
-        m_gsmHeader->hide();
+        //m_gsmHeader->hide();
         m_gsmGroup->hide();
     }
 }
 
 void NetworkManagerPopup::managerWirelessEnabledChanged(bool enabled)
 {
-    m_btnEnableWireless->setChecked(enabled);
+    //m_btnEnableWireless->setChecked(enabled);
+    m_wifiGroup->enableInterface(enabled);
 }
 
 void NetworkManagerPopup::managerWirelessHardwareEnabledChanged(bool enabled)
@@ -378,6 +345,11 @@ void NetworkManagerPopup::managerStatusChanged(Solid::Networking::Status status)
     }
 }
 
+void NetworkManagerPopup::setWirelessNetworkDisplayLimit(uint limit)
+{
+    m_numberOfWlans = limit;
+    m_wifiGroup->setNetworksLimit(m_numberOfWlans);
+}
 #include "networkmanagerpopup.moc"
 
 // vim: sw=4 sts=4 et tw=100

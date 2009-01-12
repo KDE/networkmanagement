@@ -49,15 +49,16 @@ Q_OBJECT
 public:
     NetworkManagerPopup(QWidget *parent);
     virtual ~NetworkManagerPopup();
-    void showWired(bool show);
-    void showWireless(bool show);
-    void showVpn(bool show);
-    void showGsm(bool show);
-
-    bool wiredShown();
-    bool wirelessShown();
-    bool vpnShown();
-    bool gsmShown();
+    void setShowWired(bool show);
+    void setShowWireless(bool show);
+    void setShowVpn(bool show);
+    void setShowGsm(bool show);
+    bool showWired() const { return m_showWired; }
+    bool showWireless() const { return m_showWireless; }
+    bool showVpn() const { return m_showVpn; }
+    bool showGsm() const { return m_showGsm; }
+    uint wirelessNetworkDisplayLimit() const { return m_numberOfWlans; }
+    void setWirelessNetworkDisplayLimit(uint limit);
 
 public Q_SLOTS:
     /** slots called when a connection in the popup is clicked */
@@ -127,7 +128,6 @@ private:
     QLabel * m_notRunning;
     QLabel * m_lblRfkill;
     QCheckBox * m_btnEnableNetworking;
-    QCheckBox * m_btnEnableWireless;
     QPushButton * m_btnManageConnections;
     bool m_showWired;
     bool m_showWireless;

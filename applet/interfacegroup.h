@@ -46,6 +46,10 @@ public:
     bool accept(RemoteConnection *) const;
     void setupHeader();
     void setupFooter();
+    void setNetworksLimit( int wlans );
+
+public Q_SLOTS:
+    void enableInterface(bool enabled);
 protected Q_SLOTS:
     // reimplemented from ConnecitonList
     void activateConnection(AbstractConnectableItem*);
@@ -55,6 +59,7 @@ protected Q_SLOTS:
     // used to re-populate the list of wireless networks, if necessary
     void refreshConnectionsAndNetworks();
     void updateNetworks();
+
 Q_SIGNALS:
     void updateLayout();
 
@@ -72,5 +77,7 @@ private:
     WirelessEnvironmentMerged * m_wirelessEnvironment;
     QVBoxLayout * m_interfaceLayout;
     QVBoxLayout * m_networkLayout;
+    bool m_enabled;
+    int m_numberOfWlans;
 };
 #endif // INTERFACEGROUP_H

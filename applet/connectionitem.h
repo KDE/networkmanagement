@@ -44,7 +44,6 @@ protected:
     RemoteConnection * m_connection;
     QGridLayout * m_layout;
     QLabel* m_icon;
-    QLabel * m_connectionNameLabel;
     QToolButton * m_connectButton;
 };
 

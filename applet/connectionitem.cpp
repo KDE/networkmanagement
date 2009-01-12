@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGridLayout>
 #include <QToolButton>
 #include <KIconLoader>
+#include <KLocale>
 
 #include <solid/control/networkmanager.h>
 
@@ -35,35 +36,40 @@ ConnectionItem::ConnectionItem(RemoteConnection * conn, QWidget * parent)
 
 void ConnectionItem::setupItem()
 {
-    // painting of a non-active connection (or wifi network)
-    // icon on left
+    /*
+    // painting of a non-active connection wired connection
+
+    +----+------------------+------+
+    |icon| connection name  |status|
+    +----+------------------+------+
+    */
     int rowHeight = 24;
 
 
     m_layout = new QGridLayout(this);
-    // First and third colunm are fixed width for the icons
-    m_layout->setColumnMinimumWidth(0, rowHeight);
-    //m_layout->setColumnPreferredWidth(1, 140);
-    m_layout->setColumnMinimumWidth(2, rowHeight);
+    // last colunm has fixed width for the icon
+    // WILLTODO - see what the appropriate equivalent is to set column fixed width on qgridlayout
+    //m_layout->setColumnFixedWidth(2, rowHeight);
     // tighten
     //m_layout->setColumnSpacing(0, 0);
     //m_layout->setColumnSpacing(1, 0);
     //m_layout->setColumnSpacing(2, 0);
 
-    m_icon = new QLabel(this);
-    m_icon->setPixmap(MainBarIcon("network-wired"));
-    m_icon->setMinimumHeight(rowHeight);
-    m_icon->setMaximumHeight(rowHeight);
-    m_connectionNameLabel = new QLabel(this);
-    m_connectionNameLabel->setText("Connection:" + m_connection->id());
+    // icon on the left
     m_connectButton = new QToolButton(this);
-    m_connectButton->setIcon(MainBarIcon("network-connect"));
-    m_connectButton->setMinimumHeight(rowHeight);
+    m_connectButton->setIcon(MainBarIcon("network-wired"));
+    m_connectButton->setText(m_connection->id());
+    m_connectButton->setMinimumWidth(160);
     m_connectButton->setMaximumHeight(rowHeight);
 
-    m_layout->addWidget(m_icon, 0, 0, 1, 1 );
-    m_layout->addWidget(m_connectionNameLabel, 0, 1, 1, 1);
-    m_layout->addWidget(m_connectButton, 0, 2, 1, 1);
+    m_layout->addWidget(m_connectButton, 0, 0, 1, 1);
+
+    m_icon = new QLabel(this);
+    m_icon->setPixmap(MainBarIcon("network-connect"));
+    m_icon->setMinimumHeight(22);
+    m_icon->setMaximumHeight(22);
+    m_layout->addWidget(m_icon, 0, 2, 1, 1, Qt::AlignLeft);
+
     connect( m_connectButton, SIGNAL(clicked()), SLOT(emitClicked()));
 }
 

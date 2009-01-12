@@ -140,7 +140,7 @@ ConnectionPreferences * ConnectionEditor::editorForConnectionType(QWidget * pare
 void ConnectionEditor::updateService(const QStringList & changedConnections) const
 {
     QDBusInterface iface(QLatin1String("org.kde.knetworkmanagerd"),
-            QLatin1String("/Configuration"), 
+            QLatin1String("/Configuration"),
             QLatin1String("org.kde.knetworkmanagerd"));
     iface.call(QLatin1String("configure"), changedConnections);
 }

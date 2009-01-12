@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>275</width>
+    <width>247</width>
     <height>168</height>
    </rect>
   </property>
@@ -48,17 +48,10 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="0" >
+   <item row="9" column="0" >
     <widget class="QCheckBox" name="showVpn" >
      <property name="text" >
       <string>Show VPN Group</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0" >
-    <widget class="QCheckBox" name="showGsm" >
-     <property name="text" >
-      <string>Show GSM Group</string>
      </property>
     </widget>
    </item>
@@ -73,6 +66,13 @@
     <widget class="QCheckBox" name="showWired" >
      <property name="text" >
       <string>Show Wired Group</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0" >
+    <widget class="QCheckBox" name="showGsm" >
+     <property name="text" >
+      <string>Show GSM Group</string>
      </property>
     </widget>
    </item>

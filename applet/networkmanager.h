@@ -51,6 +51,7 @@ public:
     /* reimp Plasma::Applet */
     void constraintsEvent(Plasma::Constraints constraints);
     /* reimp Plasma::Applet */
+    virtual QList<QAction*> contextualActions();
     QWidget * graphicsWidget();
     static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
 protected Q_SLOTS:
@@ -86,8 +87,6 @@ private:
     QWidget * m_dialog;
     // Configuration dialog
     Ui::nmConfig ui;
-
-
 };
 
 #endif

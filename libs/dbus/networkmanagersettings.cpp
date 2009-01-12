@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -27,20 +27,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 
 NetworkManagerSettings::NetworkManagerSettings(const QString & service, QObject * parent)
-    : OrgFreedesktopNetworkManagerSettingsInterface(service, QLatin1String(NM_DBUS_PATH_SETTINGS), QDBusConnection::systemBus(), parent)
+    : OrgFreedesktopNetworkManagerSettingsInterface(service,
+                                                    QLatin1String(NM_DBUS_PATH_SETTINGS),
+                                                    QDBusConnection::systemBus(), parent)
 {
+    kDebug() << service << isValid();
     if (isValid())
     {
-        QList<QDBusObjectPath> userConnections = ListConnections();
-        foreach (QDBusObjectPath op, userConnections) {
-            if (m_connections.contains(op.path())) {
-                kDebug() << "Service" << service << "is reporting the same connection more than once in ListConnections!";
-            } else {
-                RemoteConnection * connectionIface = new RemoteConnection(service, op.path(), this);
-                makeConnections(connectionIface);
-                m_connections.insert(op.path(), connectionIface);
-            }
-        }
+        initConnections();
         // signal is from parent class
         connect(this, SIGNAL(NewConnection(const QDBusObjectPath&)),
                 this, SLOT(onConnectionAdded(const QDBusObjectPath&)));
@@ -48,6 +42,20 @@ NetworkManagerSettings::NetworkManagerSettings(const QString & service, QObject 
     connect(QDBusConnection::systemBus().interface(),
             SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)),
             SLOT(serviceOwnerChanged(const QString&,const QString&,const QString&)));
+}
+
+void NetworkManagerSettings::initConnections()
+{
+    QList<QDBusObjectPath> userConnections = ListConnections();
+    foreach (QDBusObjectPath op, userConnections) {
+        if (m_connections.contains(op.path())) {
+            kDebug() << "Service" << service() << "is reporting the same connection more than once in ListConnections!";
+        } else {
+            RemoteConnection * connectionIface = new RemoteConnection(service(), op.path(), this);
+            makeConnections(connectionIface);
+            m_connections.insert(op.path(), connectionIface);
+        }
+    }
 }
 
 NetworkManagerSettings::~NetworkManagerSettings()
@@ -103,15 +111,18 @@ void NetworkManagerSettings::onConnectionUpdated(const QVariantMapMap&)
 
 void NetworkManagerSettings::serviceOwnerChanged(const QString & changedService, const QString & oldOwner, const QString & newOwner)
 {
+    //kDebug() << changedService << service() << oldOwner << newOwner;
     if (changedService == service()) {
         if (!oldOwner.isEmpty() && newOwner.isEmpty()) {
             clearConnections();
             emit disappeared(this);
         } else if (oldOwner.isEmpty() && !newOwner.isEmpty()) {
+            initConnections();
             emit appeared(this);
         } else if (!oldOwner.isEmpty() && !newOwner.isEmpty()) {
             clearConnections();
             emit disappeared(this);
+            initConnections();
             emit appeared(this);
         }
     }

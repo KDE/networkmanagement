@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>291</height>
+    <width>319</width>
+    <height>306</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -18,7 +18,7 @@
      <item>
       <widget class="QLabel" name="label" >
        <property name="text" >
-        <string>&amp;Method:</string>
+        <string>Method:</string>
        </property>
        <property name="buddy" >
         <cstring>method</cstring>
@@ -81,22 +81,22 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_4" >
-     <item>
+    <layout class="QGridLayout" name="gridLayout" >
+     <item row="0" column="0" >
       <widget class="KPushButton" name="btnAddAddress" >
        <property name="text" >
         <string>&amp;Add</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="1" >
       <widget class="KPushButton" name="btnRemoveAddress" >
        <property name="text" >
         <string>&amp;Remove</string>
        </property>
       </widget>
      </item>
-     <item>
+     <item row="0" column="2" >
       <spacer name="horizontalSpacer" >
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
@@ -109,11 +109,7 @@
        </property>
       </spacer>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QGridLayout" name="gridLayout" >
-     <item row="0" column="0" >
+     <item row="1" column="0" colspan="2" >
       <widget class="QLabel" name="label_3" >
        <property name="text" >
         <string>&amp;DNS servers:</string>
@@ -123,10 +119,10 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
+     <item row="1" column="2" >
       <widget class="KLineEdit" name="kcfg_dns" />
      </item>
-     <item row="1" column="0" >
+     <item row="2" column="0" colspan="2" >
       <widget class="QLabel" name="label_4" >
        <property name="text" >
         <string>&amp;Search domains:</string>
@@ -136,7 +132,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1" >
+     <item row="2" column="2" >
       <widget class="KLineEdit" name="kcfg_dnssearch" />
      </item>
     </layout>

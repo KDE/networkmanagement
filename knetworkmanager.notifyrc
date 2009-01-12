@@ -115,7 +115,6 @@ Comment[pt]=Apareceu uma rede sem-fios
 Comment[pt_BR]=Apareceu uma rede sem-fios
 Comment[sv]=Ett trådlöst nätverk dök upp
 Comment[uk]=Встановлено зв’язок з бездротовою мережею
-Action=Popup
 
 [Event/networkdisappeared]
 Name=Lost Wireless Network
@@ -132,7 +131,6 @@ Comment[pt]=Desapareceu uma rede sem-fios
 Comment[pt_BR]=Desapareceu uma rede sem-fios
 Comment[sv]=Ett trådlöst nätverk försvann
 Comment[uk]=Зв’язок з бездротовою мережею увірвався
-Action=Popup
 
 [Event/connecting]
 Name=Establishing Network Connection

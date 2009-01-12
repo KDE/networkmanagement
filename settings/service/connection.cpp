@@ -36,6 +36,7 @@ Connection::Connection(const QString & id, const QVariantMapMap & settingsMap, Q
     : QObject(parent), mId(id), mSettingsMap(settingsMap), mHasSecrets(false)
 {
     qDBusRegisterMetaType<QVariantMapMap>();
+    qDBusRegisterMetaType<QStringMap>();
 }
 
 Connection::~Connection()
@@ -69,7 +70,7 @@ QVariantMapMap Connection::GetSettings() const
 
 QVariantMapMap Connection::GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new, const QDBusMessage& message)
 {
-    kDebug() << setting_name << hints << request_new;
+    kDebug() << mId << setting_name << hints << request_new;
     if (!request_new && hasSecrets()) {
         QVariantMapMap replyOuterMap;
         QVariantMap replyInnerMap;

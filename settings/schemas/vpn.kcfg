@@ -9,8 +9,12 @@
       <label>Service Type</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="username" type="String">
+    <entry name="data" type="String">
       <label>Data bits</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="user-name" type="String">
+      <label>Username</label>
       <whatsthis></whatsthis>
     </entry>
     <!-- this is some kind of list, dunno what exactly -->

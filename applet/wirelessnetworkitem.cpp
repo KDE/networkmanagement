@@ -46,12 +46,29 @@ WirelessNetworkItem::WirelessNetworkItem(AbstractWirelessNetwork * network, QWid
     m_ssid = network->ssid();
     setStrength(m_ssid, network->strength());
     connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString, int)));
+    Solid::Control::AccessPoint *ap = network->referenceAccessPoint();
+
+    if ( ap->capabilities().testFlag( Solid::Control::AccessPoint::Privacy ) )
+        m_security = QLatin1String("wep"); // the minimum
+
+    // TODO: this was done by a clueless (coolo)
+    if ( ap->wpaFlags().testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
+         ap->wpaFlags().testFlag( Solid::Control::AccessPoint::PairWep104 ) )
+        m_security = QLatin1String("wep");
+
+    if ( ap->wpaFlags().testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+         ap->wpaFlags().testFlag( Solid::Control::AccessPoint::PairTkip ) )
+        m_security = QLatin1String("wpa-psk");
+
+    if ( ap->wpaFlags().testFlag( Solid::Control::AccessPoint::KeyMgmt8021x ) ||
+         ap->wpaFlags().testFlag( Solid::Control::AccessPoint::GroupCcmp ) )
+        m_security = QLatin1String("wpa-eap");
 }
 
 void WirelessNetworkItem::setupItem()
 {
     readSettings();
-    kDebug();// << "Connection Settings:" << m_connection->settings();
+    //kDebug();// << "Connection Settings:" << m_connection->settings();
     //kDebug();// << "Security:" << m_connection->type() << m_security;
     // painting of a non-active wifi network
     /*
@@ -76,7 +93,6 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setText(m_ssid);
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setMaximumHeight(rowHeight);
-    m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", m_ssid));
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addWidget(m_connectButton, 0, 0, 1, 1);
