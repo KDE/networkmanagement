@@ -82,6 +82,8 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, const
 
     if ( setDefaults )
     {
+        d->security = 0;
+
         if ( caps )
             d->security = d->staticWepHexIndex;
 
@@ -104,6 +106,12 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, const
 Wireless80211SecurityWidget::~Wireless80211SecurityWidget()
 {
     delete d;
+}
+
+bool Wireless80211SecurityWidget::hasSecrets() const
+{
+    kDebug() << d->ui.cmbType->currentIndex() << d->noSecurityIndex;
+    return d->ui.cmbType->currentIndex() != d->noSecurityIndex;
 }
 
 QString Wireless80211SecurityWidget::settingName() const

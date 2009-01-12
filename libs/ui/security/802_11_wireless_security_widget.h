@@ -39,6 +39,7 @@ public:
     void readConfig();
     void writeConfig();
     QVariantMap secrets() const;
+    bool hasSecrets() const;
     static const QString KEY_MGMT_NONE;
     static const QString KEY_MGMT_802_1X;
     static const QString KEY_MGMT_WPA_NONE;

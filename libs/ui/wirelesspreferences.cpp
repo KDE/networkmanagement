@@ -34,6 +34,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "ipv4widget.h"
 #include "connectionwidget.h"
 
+#include <nm-setting-connection.h>
+#include <nm-setting-wireless.h>
+
 //K_PLUGIN_FACTORY( WirelessPreferencesFactory, registerPlugin<WirelessPreferences>();)
 //K_EXPORT_PLUGIN( WirelessPreferencesFactory( "kcm_knetworkmanager_wireless" ) )
 
@@ -71,12 +74,16 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
     addToTabWidget(wirelessSecurityWidget);
     addToTabWidget(ipv4Widget);
 
+    m_hasSecrets = true;
+
     if ( setDefaults )
     {
         kDebug() << "Setting connection name to " << ssid;
         // for defaults the security is most interesting
         m_contents->connectionSettingsWidget()->setCurrentIndex( 1 );
         m_contents->setConnectionName(ssid);
+
+        m_hasSecrets = wirelessSecurityWidget->hasSecrets();
     }
 }
 
@@ -92,6 +99,9 @@ void WirelessPreferences::load()
 void WirelessPreferences::save()
 {
     ConnectionPreferences::save();
+    KConfigGroup group(m_contents->configXml()->config(), QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME) );
+    group.writeEntry(NM_SETTING_CONNECTION_TYPE, NM_SETTING_WIRELESS_SETTING_NAME );
+
     // this is where tab specific stuff should happen?
     // that should be in the shared config widget code not connection code, as groups are shared.
     // editing existing connections

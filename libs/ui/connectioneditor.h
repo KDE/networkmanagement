@@ -41,9 +41,9 @@ public:
     virtual ~ConnectionEditor();
     /**
      * Get the connection type for a given string (matches nm-setting.h SETTING_NAME strings)
-     * @return connection type enum, Wireless if not found
+     * @return connection name
      */
-    void addConnection(ConnectionEditor::ConnectionType connectionType,
+    QString addConnection(ConnectionEditor::ConnectionType connectionType,
             const QVariantList &otherArgs = QVariantList());
     ConnectionEditor::ConnectionType connectionTypeForString(const QString&) const;
     /**

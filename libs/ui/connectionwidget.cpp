@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -32,9 +32,11 @@ class ConnectionWidget::Private
 {
 public:
     Ui_ConnectionSettings ui;
+    QString setName;
 };
 
-ConnectionWidget::ConnectionWidget(const QString& connectionId, QWidget * parent) : SettingWidget(connectionId, parent), d(new ConnectionWidget::Private())
+ConnectionWidget::ConnectionWidget(const QString& connectionId, QWidget * parent)
+    : SettingWidget(connectionId, parent), d(new ConnectionWidget::Private())
 {
     d->ui.setupUi(this);
     init();
@@ -58,15 +60,24 @@ QString ConnectionWidget::settingName() const
 
 void ConnectionWidget::writeConfig()
 {
+    SettingWidget::writeConfig();
     kDebug();
     KConfigGroup group(configXml()->config(), settingName());
     group.writeEntry(NM_SETTING_CONNECTION_UUID, connectionId());
+    if ( !d->setName.isNull() )
+        group.writeEntry(NM_SETTING_CONNECTION_ID, d->setName );
 }
 
 void ConnectionWidget::setConnectionName(const QString& name)
 {
     KConfigSkeletonItem * configItem = configXml()->findItem(settingName(), "id");
     configItem->setProperty(name);
+    d->setName = name;
+}
+
+QString ConnectionWidget::connectionName() const
+{
+    return d->setName;
 }
 
 // vim: sw=4 sts=4 et tw=100

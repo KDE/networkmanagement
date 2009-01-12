@@ -263,12 +263,13 @@ void InterfaceItem::activeConnectionsChanged()
     kDebug() << "-------------------- updating active connection list for " << m_iface->uni();
     QList<ActiveConnectionPair > newConnectionList;
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
+    kDebug() << activeConnections;
     QString serviceName;
     QDBusObjectPath connectionObjectPath;
     // find the active connection on this device
     foreach (QString conn, activeConnections) {
         OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
-                conn, QDBusConnection::systemBus(), 0);
+                                                                        conn, QDBusConnection::systemBus(), 0);
         foreach (QDBusObjectPath path, candidate.devices()) {
             if (path.path() == m_iface->uni()) {
                 // this device is using the connection

@@ -48,6 +48,7 @@ void NetworkManagerSettings::initConnections()
 {
     QList<QDBusObjectPath> userConnections = ListConnections();
     foreach (QDBusObjectPath op, userConnections) {
+        kDebug() << op.path();
         if (m_connections.contains(op.path())) {
             kDebug() << "Service" << service() << "is reporting the same connection more than once in ListConnections!";
         } else {

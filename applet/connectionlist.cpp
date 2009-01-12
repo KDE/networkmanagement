@@ -48,7 +48,6 @@ void ConnectionList::init()
     addSettingsService(m_userSettings);
     addSettingsService(m_systemSettings);
     // adds items from subclasses below our layout
-    kDebug() << "clist";
     setupFooter();
     m_layout->addStretch(5);
 }
@@ -111,7 +110,7 @@ bool ConnectionList::processConnection(NetworkManagerSettings * service, const Q
     } else {
         RemoteConnection * remoteConnection = service->findConnection(connectionPath);
         if (accept(remoteConnection)) {
-            //kDebug() << "adding connection" << connectionPath << "from" << service->objectName();
+            kDebug() << "adding connection" << connectionPath << "from" << service->objectName();
             ConnectionItem * ci = createItem(remoteConnection);
             connect(ci, SIGNAL(clicked(AbstractConnectableItem*)), SLOT(activateConnection(AbstractConnectableItem*)));
             m_connections.insert(key, ci);
@@ -119,7 +118,8 @@ bool ConnectionList::processConnection(NetworkManagerSettings * service, const Q
             m_connectionLayout->invalidate();
             m_layout->invalidate();
             changed = true;
-        }
+        } else
+            kDebug() << "!accept";
     }
     return changed;
 }

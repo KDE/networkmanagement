@@ -67,6 +67,7 @@ WirelessConnectionInspector::~WirelessConnectionInspector()
 bool WirelessConnectionInspector::accept(RemoteConnection * connection)
 {
     bool acceptable = false;
+    kDebug() << connection->type();
     if (connection->type() == Solid::Control::NetworkInterface::Ieee80211) {
         // check if the essid in the connection matches one of the access points returned by NM
         // on this device.
@@ -76,6 +77,7 @@ bool WirelessConnectionInspector::accept(RemoteConnection * connection)
 
         QString ssid;
         QVariantMapMap settings = connection->settings();
+        kDebug() << settings << settings.contains(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME) ) ;
         if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME))) {
             QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME));
             if (connectionSetting.contains(QLatin1String(NM_SETTING_WIRELESS_SSID))) {

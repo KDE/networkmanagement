@@ -34,6 +34,11 @@ public:
     virtual ~WirelessPreferences();
     virtual void save();
     virtual void load();
+    // overload from ConnectionPreferences
+    virtual bool needsEdits() const { return m_hasSecrets; }
+
+private:
+    bool m_hasSecrets;
 };
 
 #endif

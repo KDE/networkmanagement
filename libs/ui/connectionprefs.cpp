@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionprefs.h"
 
 #include <KTabWidget>
+#include <KDebug>
 
 #include <kcoreconfigskeleton.h>
 #include <nm-setting-connection.h>
@@ -54,6 +55,9 @@ QString ConnectionPreferences::connectionType() const
 
 QString ConnectionPreferences::connectionName() const
 {
+    if ( !m_contents->connectionName().isEmpty() )
+        return m_contents->connectionName();
+
     KConfigSkeletonItem * configItem = m_contents->configXml()->findItem(m_contents->settingName(), "id");
     if (configItem) {
         return configItem->property().toString();

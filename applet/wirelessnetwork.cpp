@@ -118,6 +118,7 @@ void WirelessNetwork::updateStrength()
         d->strength = maximumStrength;
         emit strengthChanged(d->ssid, d->strength);
     }
+    //TODO: update the networks delayed
     //kDebug() << "update strength" << d->ssid << d->strength;
 }
 

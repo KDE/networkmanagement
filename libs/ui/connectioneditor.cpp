@@ -54,7 +54,7 @@ ConnectionEditor::~ConnectionEditor()
 {
 }
 
-void ConnectionEditor::addConnection(ConnectionEditor::ConnectionType connectionType, const QVariantList &otherArgs)
+QString ConnectionEditor::addConnection(ConnectionEditor::ConnectionType connectionType, const QVariantList &otherArgs)
 {
     KDialog configDialog(0);
     configDialog.setCaption(i18nc("Add connection dialog caption", "Add network connection"));
@@ -67,17 +67,20 @@ void ConnectionEditor::addConnection(ConnectionEditor::ConnectionType connection
     ConnectionPreferences * cprefs = editorForConnectionType(true, &configDialog, connectionType, args);
 
     if (!cprefs) {
-        return;
+        return QString::null;
     }
 
     configDialog.setMainWidget(cprefs);
-    if ( configDialog.exec() == QDialog::Accepted ) {
+
+    kDebug() << cprefs->needsEdits();
+    if ( !cprefs->needsEdits() || configDialog.exec() == QDialog::Accepted ) {
         cprefs->save();
         // add to the service prefs
         QString name = cprefs->connectionName();
         QString type = cprefs->connectionType();
         if (name.isEmpty() || type.isEmpty()) {
-            kDebug() << "new connection has missing name ('" << name << "') or type ('" << type << "')";
+            kDebug() << "new connection has missing name (" << name << ") or type (" << type << ")";
+            return QString::null;
         } else {
             KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
             KConfigGroup config(prefs->config(), QLatin1String("Connection_") + connectionId);
@@ -90,7 +93,9 @@ void ConnectionEditor::addConnection(ConnectionEditor::ConnectionType connection
             updateService();
             emit connectionsChanged();
         }
+        return connectionId;
     }
+    return QString::null;
 }
 
 ConnectionEditor::ConnectionType ConnectionEditor::connectionTypeForString(const QString &type) const

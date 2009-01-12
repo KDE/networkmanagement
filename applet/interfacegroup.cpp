@@ -48,6 +48,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkitem.h"
 #include "mergedwireless.h"
 
+QDebug operator<<(QDebug s, const AbstractWirelessNetwork*wl )
+{
+    s.nospace() << "Wireless(" << qPrintable(wl->ssid() ) << "," << wl->strength() << ")";
+    return s.space();
+}
+
 bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWirelessNetwork * n2);
 
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
@@ -143,7 +149,7 @@ void InterfaceGroup::updateNetworks()
         }
         //kDebug() << "Now ... " << m_networks.keys();
     } else {
-        kDebug() << "Interface disabled ................ :-(";
+        //kDebug() << "Interface disabled ................ :-(";
     }
     m_networkLayout->invalidate();
     m_interfaceLayout->invalidate();
@@ -190,6 +196,7 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
         {
             topNetworks.append(allNetworks[i]);
         }
+        //kDebug() << topNetworks << allNetworks;
     //}
     //return allNetworks; // FIXME: shortcut ...
     return topNetworks;
@@ -284,6 +291,7 @@ bool InterfaceGroup::accept(RemoteConnection * conn) const
     // that cast to WirelessConnectionItem, then did the same interface accept() loop.  ...?
     bool accepted = false;
     foreach (InterfaceItem * iface, m_interfaces) {
+        kDebug() << conn << iface->connectionInspector()->accept(conn);
         if (iface->connectionInspector()->accept(conn)) {
             accepted = true;
             break;
