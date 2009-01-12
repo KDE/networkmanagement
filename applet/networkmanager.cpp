@@ -280,7 +280,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     // so only have 1 rather than hack something ugly that will be thrown out later
     if (!m_interfaces.isEmpty()) {
         Solid::Control::NetworkInterface *interface = m_interfaces.first();
-        //kDebug() << "most interesting interface to paint: " << iface->uni() << " with icon " << m_elementName;
+        //kDebug() << "most interesting interface to paint: " << interface->uni() << " with icon " << m_elementName;
 
         // Call the correct method to paint the applet, depending on the kind of connection
         switch (interface->type() ) {
@@ -385,6 +385,11 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
     Q_UNUSED(uni);
     // update the tray icon
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
+    foreach (Solid::Control::NetworkInterface * interface,
+            Solid::Control::NetworkManager::networkInterfaces()) {
+        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+    }
     interfaceConnectionStateChanged();
     update();
 }
@@ -394,6 +399,12 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
     Q_UNUSED(uni);
     // update the tray icon
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
+    foreach (Solid::Control::NetworkInterface * interface,
+            Solid::Control::NetworkManager::networkInterfaces()) {
+        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+    }
+
     interfaceConnectionStateChanged();
     update();
     // kill any animations involving this interface
@@ -401,8 +412,9 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
 
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
-    //Solid::Control::NetworkInterface * interface = static_cast<Solid::Control::NetworkInterface *>(sender());
-    //kDebug() << "Updating connection state ..." << (long)interface;
+    /* Solid::Control::NetworkInterface * interface = dynamic_cast<Solid::Control::NetworkInterface *>(sender());
+    if (interface)
+       kDebug() << "Updating connection state ..." << interface->uni() << interface->type(); */
     // update appearance
     QString elementNameToPaint;
     if (!m_interfaces.isEmpty()) {
