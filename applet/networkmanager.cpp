@@ -262,7 +262,7 @@ void NetworkManagerApplet::configAccepted()
         kDebug() << "No of WLANS Changed:" << wlans;
         m_wifiGroup->setNetworksLimit( m_numberOfWlans );
     }
-    cg.sync();
+    Plasma::Applet::configNeedsSaving();
 }
 
 QList<QAction*> NetworkManagerApplet::contextualActions()
