@@ -74,6 +74,11 @@ int WirelessNetwork::strength() const
     return d->strength;
 }
 
+void WirelessNetwork::dump()
+{
+   kDebug() << ssid() << d->aps.keys();
+}
+
 void WirelessNetwork::accessPointAppeared(const QString &uni)
 {
     if (!d->aps.contains(uni)) {
@@ -96,7 +101,7 @@ void WirelessNetwork::accessPointDisappeared(const QString &uni)
 {
     d->aps.remove(uni);
     if (d->aps.isEmpty()) {
-        kDebug() << uni;
+        //kDebug() << uni;
         emit noAccessPoints(d->ssid);
     } else {
         updateStrength();

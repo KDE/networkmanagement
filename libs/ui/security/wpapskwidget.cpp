@@ -45,7 +45,7 @@ WpaPskWidget::WpaPskWidget(KConfig * config, const QString & connectionId, QWidg
     d->config = config;
     d->ui.setupUi(this);
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
-    d->ui.psk->setEchoMode(QLineEdit::PasswordEchoOnEdit);
+    d->ui.psk->setEchoMode(QLineEdit::Password);
 }
 
 WpaPskWidget::~WpaPskWidget()
@@ -56,7 +56,7 @@ WpaPskWidget::~WpaPskWidget()
 void WpaPskWidget::chkShowPassToggled()
 {
     bool on = d->ui.chkShowPass->isChecked();
-    d->ui.psk->setEchoMode(on ? QLineEdit::Normal : QLineEdit::PasswordEchoOnEdit);
+    d->ui.psk->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
 }
 
 bool WpaPskWidget::validate() const

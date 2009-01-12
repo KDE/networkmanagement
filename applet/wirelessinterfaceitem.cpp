@@ -60,7 +60,8 @@ WirelessEnvironment * WirelessInterfaceItem::wirelessEnvironment() const
 void WirelessInterfaceItem::activeAccessPointChanged(const QString &uni)
 {
     // this is not called when the device is deactivated..
-    m_activeAccessPoint->disconnect(this);
+    if (m_activeAccessPoint)
+        m_activeAccessPoint->disconnect(this);
     m_activeAccessPoint = m_wirelessIface->findAccessPoint(uni);
     if (m_activeAccessPoint) {
         connect(m_activeAccessPoint, SIGNAL(signalStrengthChanged(int)), SLOT(activeSignalStrengthChanged(int)));
@@ -157,14 +158,18 @@ void WirelessInterfaceItem::setConnectionInfo()
             }
             if (security.isEmpty()) {
                 m_connectionInfoIcon->setPixmap(SmallIcon("object-unlocked"));
+                m_connectionInfoIcon->setToolTip(i18n("Not secured"));
             } else if (security == QLatin1String("wep")) {
                 // security-weak
                 m_connectionInfoIcon->setPixmap(SmallIcon("object-locked"));
-            } else if (security == QLatin1String("wpa-psk")) {
+                m_connectionInfoIcon->setToolTip(i18n("WEP Encryption"));
+             } else if (security == QLatin1String("wpa-psk")) {
                 // security-medium
+                m_connectionInfoIcon->setToolTip(i18n("WPA-PSK Encryption"));
                 m_connectionInfoIcon->setPixmap(SmallIcon("object-locked"));
             } else if (security == QLatin1String("wpa-eap")) {
                 // security-strong
+                m_connectionInfoIcon->setToolTip(i18n("WPA-EAP Encryption"));
                 m_connectionInfoIcon->setPixmap(SmallIcon("object-locked"));
             }
         }

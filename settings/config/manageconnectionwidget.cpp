@@ -206,7 +206,7 @@ void ManageConnectionWidget::editClicked()
     QVariantList args;
     args << connectionId;
 
-    ConnectionPreferences * kcm = mEditor->editorForConnectionType(&configDialog, connectionTypeForCurrentIndex(), args);
+    ConnectionPreferences * kcm = mEditor->editorForConnectionType(false, &configDialog, connectionTypeForCurrentIndex(), args);
 
     if (kcm) {
         configDialog.setMainWidget(kcm);

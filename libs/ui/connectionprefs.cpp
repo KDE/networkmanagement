@@ -28,8 +28,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "configxml.h"
 #include "connectionwidget.h"
 
-ConnectionPreferences::ConnectionPreferences(const KComponentData& cdata, QWidget * parent, const QVariantList & args) : KCModule( cdata, parent, args ),
-    m_contents(0), m_connectionTypeWidget(0)
+ConnectionPreferences::ConnectionPreferences(const KComponentData& cdata, QWidget * parent, const QVariantList & args)
+    : KCModule( cdata, parent, args ),
+      m_contents(0), m_connectionTypeWidget(0)
 {
 
 }

@@ -54,6 +54,7 @@ public:
     //virtual QList<Solid::Control::WirelessNetworkInterface*> interfaces() const;
     virtual QStringList networks() const;
     virtual AbstractWirelessNetwork * findNetwork(const QString&) const;
+    void dump();
 protected Q_SLOTS:
     void accessPointAppeared(const QString&);
     void removeNetwork(const QString&);

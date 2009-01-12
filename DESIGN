@@ -22,6 +22,8 @@ Directory structure of project
 ./settings                  (Any source code in this directory is unused)
 ./settings/service          Settings service using libknmstorage
 ./settings/config           KCM for configuring settings using libknmstorage and libknmui
+./settings/configshell      New connection helper app that shows only a new connection dialog when the user clicks an 
+                            unconfigured network
 ./settings/test             (Unused test code, scheduled for merging/moving)
 ./tests                     Proof-of-concept code, not proper unit tests yet
 ./applet                    Plasmoid sources
@@ -33,6 +35,7 @@ Functions
 * Show current merged connection status
 * Show any in-progress operations
 * List currently appropriate connections
+  * For wireless, when there are no appropriate connections, list networks that are seen
 * Allow activation of appropriate connections
 * Show status of current connections
 * Allow disconnect of active connections

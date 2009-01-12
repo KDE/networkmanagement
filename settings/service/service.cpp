@@ -63,8 +63,8 @@ KNetworkManagerService::KNetworkManagerService(QObject * parent, const QVariantL
             SLOT(serviceOwnerChanged(const QString&, const QString&, const QString & ) ) );
 
     mNetworkSettings = new NetworkSettings(this);
-    KConfigToService * kConfigConverter = new KConfigToService(mNetworkSettings, m_active);
-    kConfigConverter->init();
+    ( void ) new KConfigToService(mNetworkSettings, m_active);
+    // don't init, wait for start
 }
 
 KNetworkManagerService::~KNetworkManagerService()

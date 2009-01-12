@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -29,7 +29,7 @@ class KNM_EXPORT Wireless80211Widget : public SettingWidget
 {
 Q_OBJECT
 public:
-    Wireless80211Widget(const QString & connectionId, const QString &ssid = QString(), uint caps = 0, uint wpa = 0, uint rsn = 0, QWidget * parent = 0 );
+    Wireless80211Widget(const QString & connectionId, const QString &ssid = QString(), QWidget * parent = 0 );
     virtual ~Wireless80211Widget();
     QString settingName() const;
     static const QString INFRA_MODE;

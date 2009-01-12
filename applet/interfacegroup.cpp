@@ -67,14 +67,16 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
     connect(userSettings, SIGNAL(appeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
     connect(userSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
 
-//    m_interfaceLayout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-//    m_networkLayout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    m_layout->setSpacing(0);
+    //m_interfaceLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_interfaceLayout->setSpacing(4);
+    //m_networkLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_networkLayout->setSpacing(4);
     kDebug() << "TYPE" << m_type;
     //updateNetworks();
 
     if (m_type == Solid::Control::NetworkInterface::Gsm) {
-        setMinimumSize(QSize(285, 60));
+        setMinimumSize(QSize(285, 60)); // WTF?
     }
 }
 
@@ -149,8 +151,9 @@ void InterfaceGroup::setNetworksLimit( int wlans )
 {
     int old = m_numberOfWlans;
     m_numberOfWlans = wlans;
-    if ( old != m_numberOfWlans )
+    if (old != m_numberOfWlans) {
         updateNetworks();
+    }
 }
 
 
@@ -166,13 +169,13 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
         activeConnectionTotal += i->activeConnectionCount();
         active_ssid = i->ssid();
     }
-    kDebug() << "Active Connections:" << activeConnectionTotal << "Networks:" << m_wirelessEnvironment->networks();
+    //kDebug() << "Active Connections:" << activeConnectionTotal << "Networks:" << m_wirelessEnvironment->networks();
     //kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
 
     // FIXME: m_userSettings can be invalid here, but we might still want to connect.
     //if ((activeConnectionTotal == 0) && m_connections.isEmpty() && m_userSettings->isValid()) {
     //if ((activeConnectionTotal == 0) && m_connections.isEmpty()) {
-    kDebug() << "ACTIVE:" << active_ssid;
+    //kDebug() << "ACTIVE:" << active_ssid;
         foreach (QString ssid, m_wirelessEnvironment->networks()) {
             if (ssid != active_ssid) {
                 allNetworks.append(m_wirelessEnvironment->findNetwork(ssid));
@@ -343,7 +346,7 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
 
 void InterfaceGroup::refreshConnectionsAndNetworks()
 {
-    kDebug() << "Refreshing";
+    //kDebug() << "Refreshing";
     updateNetworks();
     reassess();
 }
@@ -385,13 +388,14 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
             kDebug() << "opening connection management dialog using knetworkmanager_configshell";
             QStringList args;
             QString moduleArgs =
-                QString::fromLatin1("%1 %2 %3 %4")
-                .arg(wni->net()->ssid())
+                QString::fromLatin1("'%1' %2 %3 %4")
+                .arg(wni->net()->ssid().replace('\'', "\\'"))
                 .arg(wni->net()->referenceAccessPoint()->capabilities())
                 .arg(wni->net()->referenceAccessPoint()->wpaFlags())
                 .arg(wni->net()->referenceAccessPoint()->rsnFlags());
 
             args << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("create");
+            kDebug() << args;
             KToolInvocation::kdeinitExec("knetworkmanager_configshell", args);
         }
     }

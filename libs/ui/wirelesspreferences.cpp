@@ -37,7 +37,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 //K_PLUGIN_FACTORY( WirelessPreferencesFactory, registerPlugin<WirelessPreferences>();)
 //K_EXPORT_PLUGIN( WirelessPreferencesFactory( "kcm_knetworkmanager_wireless" ) )
 
-WirelessPreferences::WirelessPreferences(QWidget *parent, const QVariantList &args)
+WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, const QVariantList &args)
 : ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
     // at least 1
@@ -61,8 +61,8 @@ WirelessPreferences::WirelessPreferences(QWidget *parent, const QVariantList &ar
     QVBoxLayout * layout = new QVBoxLayout(this);
     m_contents = new ConnectionWidget(connectionId, this);
     layout->addWidget(m_contents);
-    m_connectionTypeWidget = new Wireless80211Widget(connectionId, ssid, caps, wpa, rsn, this);
-    Wireless80211SecurityWidget * wirelessSecurityWidget = new Wireless80211SecurityWidget(connectionId, this);
+    m_connectionTypeWidget = new Wireless80211Widget(connectionId, ssid, this);
+    Wireless80211SecurityWidget * wirelessSecurityWidget = new Wireless80211SecurityWidget(setDefaults, connectionId, caps, wpa, rsn, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(connectionId, this);
     // Must setup initial widget first
     addConfig(m_contents->configXml(), m_contents);
@@ -71,9 +71,11 @@ WirelessPreferences::WirelessPreferences(QWidget *parent, const QVariantList &ar
     addToTabWidget(wirelessSecurityWidget);
     addToTabWidget(ipv4Widget);
 
-    if ( !ssid.isNull() )
+    if ( setDefaults )
     {
         kDebug() << "Setting connection name to " << ssid;
+        // for defaults the security is most interesting
+        m_contents->connectionSettingsWidget()->setCurrentIndex( 1 );
         m_contents->setConnectionName(ssid);
     }
 }

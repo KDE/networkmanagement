@@ -64,7 +64,7 @@ void ConnectionEditor::addConnection(ConnectionEditor::ConnectionType connection
     QString connectionId = QUuid::createUuid().toString();
     args << connectionId;
     args += otherArgs;
-    ConnectionPreferences * cprefs = editorForConnectionType(&configDialog, connectionType, args);
+    ConnectionPreferences * cprefs = editorForConnectionType(true, &configDialog, connectionType, args);
 
     if (!cprefs) {
         return;
@@ -111,7 +111,9 @@ ConnectionEditor::ConnectionType ConnectionEditor::connectionTypeForString(const
     return t;
 }
 
-ConnectionPreferences * ConnectionEditor::editorForConnectionType(QWidget * parent, ConnectionEditor::ConnectionType type, const QVariantList & args) const
+ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaults, QWidget * parent,
+                                                                  ConnectionEditor::ConnectionType type,
+                                                                  const QVariantList & args) const
 {
     kDebug() << args;
     ConnectionPreferences * wid = 0;
@@ -120,7 +122,7 @@ ConnectionPreferences * ConnectionEditor::editorForConnectionType(QWidget * pare
             wid = new WiredPreferences(parent, args);
             break;
         case ConnectionEditor::Wireless:
-            wid = new WirelessPreferences(parent, args);
+            wid = new WirelessPreferences(setDefaults, parent, args);
             break;
         case ConnectionEditor::Cellular:
             wid = new CellularPreferences(parent, args);

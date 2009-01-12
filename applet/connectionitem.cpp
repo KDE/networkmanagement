@@ -65,7 +65,7 @@ void ConnectionItem::setupItem()
     m_layout->addWidget(m_connectButton, 0, 0, 1, 1);
 
     m_icon = new QLabel(this);
-    m_icon->setPixmap(MainBarIcon("network-connect"));
+    m_icon->setPixmap(MainBarIcon("network-disconnect"));
     m_icon->setMinimumHeight(22);
     m_icon->setMaximumHeight(22);
     m_layout->addWidget(m_icon, 0, 2, 1, 1, Qt::AlignLeft);

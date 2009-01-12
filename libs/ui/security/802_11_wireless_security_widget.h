@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -31,9 +31,9 @@ class KNM_EXPORT Wireless80211SecurityWidget : public SettingWidget
 {
 Q_OBJECT
 public:
-    Wireless80211SecurityWidget(const QString& connectionId, 
-            /*Add flags here for AP and device caps so security options offered can be filtered*/
-            QWidget * parent = 0 );
+    Wireless80211SecurityWidget(bool setDefaults, const QString& connectionId,
+                                uint caps, uint wpa, uint rsn,
+                                QWidget * parent = 0 );
     virtual ~Wireless80211SecurityWidget();
     QString settingName() const;
     void readConfig();

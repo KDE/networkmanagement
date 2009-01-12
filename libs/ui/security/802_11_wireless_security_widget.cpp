@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "802_11_wireless_security_widget.h"
 
 #include <nm-setting-wireless-security.h>
+#include <solid/control/wirelessaccesspoint.h>
 
 #include <KDebug>
 
@@ -43,11 +44,14 @@ public:
     int noSecurityIndex;
     int staticWepHexIndex;
     int wpaPskIndex;
+    int security;
 };
 
-Wireless80211SecurityWidget::Wireless80211SecurityWidget(const QString& connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent), d(new Wireless80211SecurityWidget::Private)
+Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, const QString& connectionId,
+                                                         uint caps, uint wpa, uint rsn, QWidget * parent)
+    : SettingWidget(connectionId, parent), d(new Wireless80211SecurityWidget::Private)
 {
+    Q_UNUSED( rsn );
     d->noSecurityIndex = -1;
     d->staticWepHexIndex = -1;
     d->wpaPskIndex = -1;
@@ -71,6 +75,28 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(const QString& connecti
     d->securityWidgetHash.insert(index, sw);
     d->ui.stackedWidget->insertWidget(index, sw);
     d->wpaPskIndex = index++;
+
+    Solid::Control::AccessPoint::WpaFlags wpaFlags( wpa );
+
+    d->security = -1;
+
+    if ( setDefaults )
+    {
+        if ( caps )
+            d->security = d->staticWepHexIndex;
+
+        // TODO: this was done by a clueless (coolo)
+        if ( wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
+             wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep104 ) )
+            d->security = d->staticWepHexIndex;
+
+        if ( wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+             wpaFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) )
+            d->security = d->wpaPskIndex;
+
+        d->ui.cmbType->setCurrentIndex( d->security );
+        securityTypeChanged( d->security );
+    }
 
     connect(d->ui.cmbType, SIGNAL(currentIndexChanged(int)), this, SLOT(securityTypeChanged(int)));
 }
@@ -108,6 +134,9 @@ void Wireless80211SecurityWidget::writeConfig()
 
 void Wireless80211SecurityWidget::readConfig()
 {
+    if ( d->security != -1 )
+        return;
+
     if (!configXml()->config()->hasGroup(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME)) {
         kDebug() << "Unsecured wireless network";
         d->ui.cmbType->setCurrentIndex(d->noSecurityIndex);

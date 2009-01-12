@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -37,7 +37,8 @@ class Wireless80211Widget::Private
     Ui_Wireless80211Config ui;
 };
 
-Wireless80211Widget::Wireless80211Widget(const QString& connectionId, const QString &ssid, uint caps, uint wpa, uint rsn, QWidget * parent) : SettingWidget(connectionId, parent), d(new Wireless80211Widget::Private)
+Wireless80211Widget::Wireless80211Widget(const QString& connectionId, const QString &ssid, QWidget * parent)
+    : SettingWidget(connectionId, parent), d(new Wireless80211Widget::Private)
 {
     d->ui.setupUi(this);
     d->ui.kcfg_ssid->setText(ssid);

@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QIcon>
 #include <QPainter>
+#include <QDesktopWidget>
 
 #include <QLabel>
 #include <QVBoxLayout>
@@ -88,12 +89,11 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     QObject::connect(m_popup, SIGNAL(manageConnections()),
             this, SLOT(manageConnections()));
-    cg.sync();
 }
 
 NetworkManagerApplet::~NetworkManagerApplet()
 {
-    QDBusInterface ref( "org.kde.kded", "/knetworkmanagerd",
+    QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
                         "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
     // ## used to have NoEventLoop and 3s timeout with dcop
     ref.call( QLatin1String("stop") );
@@ -118,7 +118,8 @@ void NetworkManagerApplet::init()
     QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager", 
                         "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
     // ## used to have NoEventLoop and 3s timeout with dcop
-    ref.call( QLatin1String("start") );
+    WId wid = QApplication::desktop()->effectiveWinId();
+    ref.call( QLatin1String("start"), qlonglong( wid) );
     // not really interesting, for now we only care to kick the load-on-demand
     kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
 }
@@ -189,6 +190,7 @@ void NetworkManagerApplet::configAccepted()
        m_popup->setWirelessNetworkDisplayLimit(wlans);
        kDebug() << "No of WLANS Changed:" << wlans;
    }
+   Plasma::Applet::configNeedsSaving();
 }
 
 QList<QAction*> NetworkManagerApplet::contextualActions()
@@ -206,7 +208,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     // so only have 1 rather than hack something ugly that will be thrown out later
     if (!m_interfaces.isEmpty()) {
         Solid::Control::NetworkInterface *interface = m_interfaces.first();
-        //kDebug() << "most interesting interface to paint: " << iface->uni() << " with icon " << m_elementName;
+        //kDebug() << "most interesting interface to paint: " << interface->uni() << " with icon " << m_elementName;
 
         // Call the correct method to paint the applet, depending on the kind of connection
         switch (interface->type() ) {
@@ -308,6 +310,11 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
     Q_UNUSED(uni);
     // update the tray icon
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
+    foreach (Solid::Control::NetworkInterface * interface,
+            Solid::Control::NetworkManager::networkInterfaces()) {
+        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+    }
     interfaceConnectionStateChanged();
     update();
 }
@@ -317,6 +324,12 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
     Q_UNUSED(uni);
     // update the tray icon
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
+    foreach (Solid::Control::NetworkInterface * interface,
+            Solid::Control::NetworkManager::networkInterfaces()) {
+        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+    }
+
     interfaceConnectionStateChanged();
     update();
     // kill any animations involving this interface
@@ -324,8 +337,9 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
 
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
-    //kDebug() << "Updating connection state ...";
-    //Solid::Control::NetworkInterface * interface = static_cast<Solid::Control::NetworkInterface *>(sender());
+    /* Solid::Control::NetworkInterface * interface = dynamic_cast<Solid::Control::NetworkInterface *>(sender());
+    if (interface)
+       kDebug() << "Updating connection state ..." << interface->uni() << interface->type(); */
     // update appearance
     QString elementNameToPaint;
     if (!m_interfaces.isEmpty()) {
@@ -458,43 +472,50 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Cont
      * - Disconnected devices
      *   - order as above
      */
-    bool lessThan = false;
-    Solid::Control::NetworkInterface::ConnectionState if2State = if2->connectionState();
+    enum { Connecting, Connected, Disconnected } if2status = Disconnected, if1status = Disconnected;
     switch (if1->connectionState()) {
         case Solid::Control::NetworkInterface::Preparing:
         case Solid::Control::NetworkInterface::Configuring:
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
-            if ( if2State == Solid::Control::NetworkInterface::Preparing
-                    || if2State == Solid::Control::NetworkInterface::Configuring
-                    || if2State == Solid::Control::NetworkInterface::NeedAuth
-                    || if2State == Solid::Control::NetworkInterface::IPConfig
-               ) {
-                lessThan = networkInterfaceSameConnectionStateLessThan(if1, if2);
-            } else {
-                lessThan = true;
-            }
+            if1status = Connecting;
             break;
         case Solid::Control::NetworkInterface::Activated:
-            switch (if2->connectionState()) {
-                case Solid::Control::NetworkInterface::Preparing:
-                case Solid::Control::NetworkInterface::Configuring:
-                case Solid::Control::NetworkInterface::NeedAuth:
-                case Solid::Control::NetworkInterface::IPConfig:
-                    lessThan = false;
-                    break;
-                case Solid::Control::NetworkInterface::Activated:
-                    lessThan = networkInterfaceSameConnectionStateLessThan(if1, if2);
-                    break;
-                default:
-                    lessThan = true;
-            }
+            if1status = Connected;
             break;
-        default:
-            lessThan = networkInterfaceSameConnectionStateLessThan(if1, if2);
-
+        default: // all kind of disconnected
+            break;
     }
-    return lessThan;
+    switch (if2->connectionState()) {
+        case Solid::Control::NetworkInterface::Preparing:
+        case Solid::Control::NetworkInterface::Configuring:
+        case Solid::Control::NetworkInterface::NeedAuth:
+        case Solid::Control::NetworkInterface::IPConfig:
+            if2status = Connecting;
+            break;
+        case Solid::Control::NetworkInterface::Activated:
+            if2status = Connected;
+            break;
+        default: // all kind of disconnected
+            break;
+    }
+    switch (if1status) {
+        case Connecting:
+            return if2status != Connecting || networkInterfaceSameConnectionStateLessThan(if1, if2);
+            break;
+        case Connected:
+            if ( if2status == Connecting)
+               return false;
+            return if2status != Connected || networkInterfaceSameConnectionStateLessThan(if1, if2);
+            break;
+        case Disconnected:
+            if ( if2status == Disconnected)
+                return networkInterfaceSameConnectionStateLessThan(if1, if2);
+            return false;
+            break;
+    }
+    // satisfy compiler
+    return false;
 }
 
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2)

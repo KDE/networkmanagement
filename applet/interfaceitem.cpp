@@ -49,14 +49,14 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 {
     m_layout = new QGridLayout(this);
     m_layout->setVerticalSpacing(0);
-    m_layout->setHorizontalSpacing(8);
+    //m_layout->setHorizontalSpacing(4);
     //m_layout->setColumnFixedWidth(0, 48);
-    //m_layout->setColumnPreferredWidth(1, 100);
+    //m_layout->setColumnPreferredWidth(1, 200);
 
     m_icon = new QLabel(this);
     m_icon->setMinimumHeight(48);
     m_icon->setMaximumHeight(48);
-    m_layout->addWidget(m_icon, 0, 0, 3, 1);
+    m_layout->addWidget(m_icon, 0, 0, 2, 1);
 
     m_isWireless = false;
     switch (m_iface->type() ) {
@@ -83,7 +83,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     //     interface layout
     m_ifaceNameLabel = new QLabel(this);
     m_ifaceNameLabel->setWordWrap(false);
-    m_layout->addWidget(m_ifaceNameLabel, 0, 1, 1, 2);
+    //m_ifaceNameLabel->setMinimumWidth(176);
+    m_layout->addWidget(m_ifaceNameLabel, 0, 1, 1, 1);
 
 
     m_connectButton = new QToolButton(this);
@@ -92,21 +93,20 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectButton->setMinimumWidth(22);
     m_connectButton->setIcon(MainBarIcon("network-connect"));
     m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
-    m_layout->addWidget(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
 
     //     active connection name
     m_connectionNameLabel = new QLabel(this);
     m_connectionNameLabel->setText("[not updated yet]"); // TODO: check connection status
     m_connectionNameLabel->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->setWordWrap(false);
-    m_layout->addWidget(m_connectionNameLabel, 1, 1, 1, 1);
+    m_layout->addWidget(m_connectionNameLabel, 1, 1, 1, 2);
 
     //       IP address
     m_connectionInfoLabel = new QLabel(this);
     m_connectionInfoLabel->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionInfoLabel->setWordWrap(false);
-    m_connectionInfoLabel->setMinimumWidth(120);
     m_connectionInfoLabel->setText("<b>IP Address:</b> dum.my.ip.addr");
+        m_layout->addWidget(m_connectionInfoLabel, 2, 1, 1, 1, Qt::AlignCenter);
 
     if (m_isWireless) {
 
@@ -117,20 +117,28 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
         m_strengthMeter->setMaximum(100);
         m_strengthMeter->setValue(0);
         // m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
-        //m_strengthMeter->setPreferredSize(QSizeF(120, meterHeight));
+        //m_strengthMeter->setPreferredSize(QSizeF(60, meterHeight));
+        m_strengthMeter->setMaximumWidth(60);
         m_strengthMeter->setMaximumHeight(meterHeight);
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        m_layout->addWidget(m_strengthMeter, 2, 1, 1, 1, Qt::AlignCenter);
-        m_connectionInfoLabel->hide();
+        m_layout->addWidget(m_strengthMeter, 2, 2, 1, 1, Qt::AlignCenter);
+        //m_connectionInfoLabel->hide();
+        m_connectButton->hide();
+
+
+   // m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    //m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
+
 
         m_rfCheckBox = new QCheckBox(this);
         m_rfCheckBox->setChecked(m_enabled);
-        m_rfCheckBox->setToolTip(i18nc("icon to connect network interface", "Connect"));
-        m_layout->addWidget(m_rfCheckBox, 0, 2, 1, 1, Qt::AlignRight);
+        m_rfCheckBox->setText(i18n("Enable"));
+        m_rfCheckBox->setToolTip(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable Wireless"));
+        m_layout->addWidget(m_rfCheckBox, 0, 2, 1, 2, Qt::AlignRight);
 
         m_connectButton->hide();
     } else {
-        m_layout->addWidget(m_connectionInfoLabel, 2, 1, 1, 1, Qt::AlignCenter);
+        m_layout->addWidget(m_connectButton, 0, 3, 1, 1, Qt::AlignRight);
     }
     //       security
     m_connectionInfoIcon = new QLabel(this);
@@ -138,7 +146,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoIcon->setMinimumHeight(22);
     m_connectionInfoIcon->setMinimumWidth(22);
     m_connectionInfoIcon->setMaximumHeight(22);
-    m_layout->addWidget(m_connectionInfoIcon, 2, 2, 1, 1, Qt::AlignCenter);
+    m_layout->addWidget(m_connectionInfoIcon, 2, 3, 1, 1, Qt::AlignRight);
     m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
 
     connect(Solid::Control::NetworkManager::notifier(),
@@ -157,8 +165,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
             this, SLOT(connectionStateChanged(int)));
     connect(m_connectButton, SIGNAL(clicked()),
             this, SLOT(connectButtonClicked()));
-    connect(m_rfCheckBox, SIGNAL(toggled(bool)),
-            this, SLOT(wirelessEnabledChanged(bool)));
+    if (m_rfCheckBox)
+        connect(m_rfCheckBox, SIGNAL(toggled(bool)),
+                SLOT(wirelessEnabledChanged(bool)));
 
     setNameDisplayMode(mode);
     // the applet may be starting when NetworkManager is already connected,
@@ -225,12 +234,8 @@ void InterfaceItem::setConnectionInfo()
         } else {
             QHostAddress addr(addresses.first().address());
             QString ip = addr.toString();
-            // infolabel is only shown for wired connections, so display the IP in the connection name
-            if (m_isWireless) {
-                m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected (%1)", ip));
-            } else {
-                m_connectionInfoLabel->setText(i18nc("wireless interface is connected", "Connected (%1)", ip));
-            }
+            m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
+            m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "IP: %1", ip));
         }
     }
 }
