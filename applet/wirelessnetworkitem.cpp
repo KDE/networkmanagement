@@ -92,7 +92,6 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     m_connectButton->setText(m_ssid);
     m_connectButton->setMinimumWidth(160);
-    m_connectButton->setMaximumHeight(rowHeight);
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addWidget(m_connectButton, 0, 0, 1, 1);
