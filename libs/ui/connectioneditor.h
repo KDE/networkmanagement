@@ -43,7 +43,7 @@ public:
      * Get the connection type for a given string (matches nm-setting.h SETTING_NAME strings)
      * @return connection name
      */
-    QString addConnection(ConnectionEditor::ConnectionType connectionType,
+    QString addConnection(bool useDefaults, ConnectionEditor::ConnectionType connectionType,
             const QVariantList &otherArgs = QVariantList());
     ConnectionEditor::ConnectionType connectionTypeForString(const QString&) const;
     /**

@@ -100,7 +100,7 @@ int main(int argc, char **argv)
     if (args->arg(0) == QLatin1String("create")) {
         if (args->isSet("type")) {
             QString type = args->getOption("type");
-            QString cid = editor.addConnection(editor.connectionTypeForString(args->getOption("type")), specificArgs);
+            QString cid = editor.addConnection(true, editor.connectionTypeForString(args->getOption("type")), specificArgs);
             QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
                                 "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
             QStringList ids;

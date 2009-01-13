@@ -165,7 +165,7 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
         return QVariantMap();
     }
     ConfigXml * config = new ConfigXml(m_config, &schemaFile, false,
-            new SecretStorageHelper(/*connection id*/QLatin1String("testconfigxml"), groupName));
+            new SecretStorageHelper(QString(), groupName));
 
     foreach (KConfigSkeletonItem * item, config->items()) {
         item->swapDefault();

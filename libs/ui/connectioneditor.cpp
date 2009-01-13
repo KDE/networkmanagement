@@ -54,7 +54,7 @@ ConnectionEditor::~ConnectionEditor()
 {
 }
 
-QString ConnectionEditor::addConnection(ConnectionEditor::ConnectionType connectionType, const QVariantList &otherArgs)
+QString ConnectionEditor::addConnection(bool useDefaults, ConnectionEditor::ConnectionType connectionType, const QVariantList &otherArgs)
 {
     KDialog configDialog(0);
     configDialog.setCaption(i18nc("Add connection dialog caption", "Add network connection"));
@@ -64,7 +64,7 @@ QString ConnectionEditor::addConnection(ConnectionEditor::ConnectionType connect
     QString connectionId = QUuid::createUuid().toString();
     args << connectionId;
     args += otherArgs;
-    ConnectionPreferences * cprefs = editorForConnectionType(true, &configDialog, connectionType, args);
+    ConnectionPreferences * cprefs = editorForConnectionType(useDefaults, &configDialog, connectionType, args);
 
     if (!cprefs) {
         return QString::null;
@@ -72,7 +72,6 @@ QString ConnectionEditor::addConnection(ConnectionEditor::ConnectionType connect
 
     configDialog.setMainWidget(cprefs);
 
-    kDebug() << cprefs->needsEdits();
     if ( !cprefs->needsEdits() || configDialog.exec() == QDialog::Accepted ) {
         cprefs->save();
         // add to the service prefs

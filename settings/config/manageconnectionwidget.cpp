@@ -75,7 +75,7 @@ ManageConnectionWidget::~ManageConnectionWidget()
 
 void ManageConnectionWidget::createConnection(const QString &connectionType, const QVariantList &args)
 {
-    mEditor->addConnection(mEditor->connectionTypeForString(connectionType), args);
+    mEditor->addConnection(false, mEditor->connectionTypeForString(connectionType), args);
 }
 
 void ManageConnectionWidget::restoreConnections()
@@ -185,7 +185,7 @@ void ManageConnectionWidget::updateTabStates()
 void ManageConnectionWidget::addClicked()
 {
     // show connection settings widget for the active tab
-    mEditor->addConnection(connectionTypeForCurrentIndex());
+    mEditor->addConnection(false, connectionTypeForCurrentIndex());
 }
 
 void ManageConnectionWidget::editClicked()
@@ -370,7 +370,7 @@ void ManageConnectionWidget::connectionTypeMenuTriggered(QAction* action)
     QString nextConnectionSubType = action->data().toString();
     QVariantList vl;
     vl << nextConnectionSubType;
-    mEditor->addConnection(connectionTypeForCurrentIndex(), vl);
+    mEditor->addConnection(false, connectionTypeForCurrentIndex(), vl);
 }
 
 #include "manageconnectionwidget.moc"
