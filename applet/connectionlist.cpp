@@ -118,8 +118,7 @@ bool ConnectionList::processConnection(NetworkManagerSettings * service, const Q
             m_connectionLayout->invalidate();
             m_layout->invalidate();
             changed = true;
-        } else
-            kDebug() << "!accept";
+        }
     }
     return changed;
 }

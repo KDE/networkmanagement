@@ -311,7 +311,7 @@ bool InterfaceGroup::accept(RemoteConnection * conn) const
     // that cast to WirelessConnectionItem, then did the same interface accept() loop.  ...?
     bool accepted = false;
     foreach (InterfaceItem * iface, m_interfaces) {
-        kDebug() << conn << iface->connectionInspector()->accept(conn);
+        //kDebug() << conn << iface->connectionInspector()->accept(conn);
         if (iface->connectionInspector()->accept(conn)) {
             accepted = true;
             break;
