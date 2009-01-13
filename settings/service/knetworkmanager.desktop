@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=NetworkManager User Settings Service
 Name[el]=Υπηρεσία ρυθμίσεων διαχείρισης δικτύου χρήστη
+Name[et]=Võrguhalduri kasutaja seadistuste teenus
 Name[fr]=Service de paramétrage de l'utilisateur pour NetworkManager
 Name[gl]=Servizo de configuración de usuario de NetworkManager
 Name[ja]=NetworkManager のユーザ設定サービス
@@ -15,6 +16,7 @@ Name[uk]=Служба параметрів користувача NetworkManager
 Name[x-test]=xxNetworkManager User Settings Servicexx
 Comment=Provides network configuration to the NetworkManager daemon
 Comment[el]=Προσφέρει ρυθμίσεις δικτύου με το δαίμονα διαχείρισης δικτύου
+Comment[et]=Võrguseadistuse edastamine võrguhalduri deemonile
 Comment[fr]=Fournit la configuration réseau au démon du NetworkManager
 Comment[gl]=Fornece configuración de rede ao daemon NetworkManager
 Comment[ja]=NetworkManager デーモンにネットワークの設定を提供します

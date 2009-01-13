@@ -27,6 +27,7 @@ Name[x-test]=xxNetwork Settingsxx
 Comment=Configure network settings
 Comment[de]=Netzwerkeinstellungen einrichten
 Comment[el]=Διαμόρφωση ρυθμίσεων δικτύου
+Comment[et]=Võrgu seadistamine
 Comment[fr]=Configurer le réseau
 Comment[gl]=Configura a rede
 Comment[ja]=ネットワークの設定

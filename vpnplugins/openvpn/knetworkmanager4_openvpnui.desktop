@@ -19,6 +19,7 @@ Name[x-test]=xxOpenVPNxx
 Comment=OpenVPN plugin
 Comment[de]=Modul für OpenVPN
 Comment[el]=πρόσθετο OpenVPN
+Comment[et]=OpenVPN-i plugin
 Comment[fr]=Module OpenVPN
 Comment[gl]=Extensión de OpenVPN
 Comment[ja]=OpenVPN プラグイン

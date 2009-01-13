@@ -2,6 +2,7 @@
 Name=Networks
 Name[de]=Netzwerke
 Name[el]=Δίκτυα
+Name[et]=Võrgud
 Name[fr]=Réseaux
 Name[gl]=Redes
 Name[ja]=ネットワーク
@@ -20,6 +21,7 @@ Name[x-test]=xxNetworksxx
 Comment=Manage network connections
 Comment[de]=Netzwerkverbindungen verwalten
 Comment[el]=Διαχείριση συνδέσεων δικτύου
+Comment[et]=Võrguühenduste haldus
 Comment[fr]=Gérer les connexions réseau
 Comment[gl]=Configura as conexóns de rede
 Comment[ja]=ネットワーク接続の管理
