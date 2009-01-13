@@ -59,6 +59,7 @@ protected Q_SLOTS:
     // used to re-populate the list of wireless networks, if necessary
     void refreshConnectionsAndNetworks();
     void updateNetworks();
+    void updateConnections();
 
 Q_SIGNALS:
     void updateLayout();
@@ -79,5 +80,6 @@ private:
     QGraphicsLinearLayout * m_networkLayout;
     bool m_enabled;
     int m_numberOfWlans;
+    QString m_networkToConnect;
 };
 #endif // INTERFACEGROUP_H

@@ -127,10 +127,6 @@ void NetworkManagerApplet::init()
 
     // Set up the extender with its various groups
     extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
-    m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
-    m_userSettings->setObjectName("user-settings-service");
-    m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
-    m_systemSettings->setObjectName("system-settings-service");
 
     // get kded module kicked in
     QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
@@ -141,6 +137,12 @@ void NetworkManagerApplet::init()
     ref.call( "start", qlonglong( wid ) );
     // not really interesting, for now we only care to kick the load-on-demand
     kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
+
+
+    m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
+    m_userSettings->setObjectName("user-settings-service");
+    m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
+    m_systemSettings->setObjectName("system-settings-service");
 
     { // Wired
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());

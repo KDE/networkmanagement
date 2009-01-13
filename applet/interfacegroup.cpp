@@ -128,7 +128,27 @@ void InterfaceGroup::setupFooter()
     //kDebug() << m_interfaces.keys() << "Footer update";
     ////updateNetworks();
     //kDebug() << m_interfaces.keys() << m_networks.keys() << "Footer .. CONNECT";
-    connect(this, SIGNAL(connectionListUpdated()), SLOT(updateNetworks()));
+    connect(this, SIGNAL(connectionListUpdated()), SLOT(updateConnections()));
+}
+
+void InterfaceGroup::updateConnections()
+{
+    updateNetworks();
+    if ( m_networkToConnect.isNull() )
+        return;
+
+    ServiceConnectionHash::iterator i = m_connections.begin();
+    while (i != m_connections.end()) {
+        ConnectionItem * item = i.value();
+        QVariantMapMap settings = item->connection()->settings();
+        QString ssid = settings[ NM_SETTING_WIRELESS_SETTING_NAME ] [ NM_SETTING_WIRELESS_SSID ].toString();
+        if ( ssid == m_networkToConnect )
+        {
+            activateConnection( item );
+            break;
+        }
+        ++i;
+    }
 }
 
 void InterfaceGroup::updateNetworks()
@@ -364,6 +384,7 @@ void InterfaceGroup::refreshConnectionsAndNetworks()
 
 void InterfaceGroup::activateConnection(AbstractConnectableItem* item)
 {
+    m_networkToConnect.truncate( 0 );
     // tell the manager to activate the connection
     // which device??
     // HACK - take the first one
@@ -394,6 +415,7 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
                 << (quint32)wni->net()->referenceAccessPoint()->capabilities()
                 << (quint32)wni->net()->referenceAccessPoint()->wpaFlags()
                 << (quint32)wni->net()->referenceAccessPoint()->rsnFlags();
+            m_networkToConnect = wni->net()->ssid();
             kcm.call(QDBus::NoBlock, "createConnection", "802-11-wireless", QVariant::fromValue(args));
         } else {
             kDebug() << "opening connection management dialog using knetworkmanager_configshell";
@@ -407,6 +429,7 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
 
             args << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("create");
             kDebug() << args;
+            m_networkToConnect = wni->net()->ssid();
             KToolInvocation::kdeinitExec("knetworkmanager_configshell", args);
         }
     }
