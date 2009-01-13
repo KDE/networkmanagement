@@ -89,7 +89,7 @@ Implementation:
 
 Connection types (as used in nm-applet)
 wired: connection wired 8021x ipv4
-wireless: connection wireless wirelesssecurity ipv4
+wireless: connection wireless wirelesssecurity ipv4 8021x
 mobilebb:
   cdma: cdma ppp
   gsm: gsm ppp
