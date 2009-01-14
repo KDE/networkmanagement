@@ -428,9 +428,9 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
                 .arg(wni->net()->referenceAccessPoint()->rsnFlags());
 
             args << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("create");
-            kDebug() << args;
             m_networkToConnect = wni->net()->ssid();
-            KToolInvocation::kdeinitExec("knetworkmanager_configshell", args);
+            int ret = KToolInvocation::kdeinitExec("knetworkmanager_configshell", args);
+            kDebug() << ret << args;
         }
     }
 }
