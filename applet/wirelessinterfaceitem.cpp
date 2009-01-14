@@ -173,7 +173,7 @@ void WirelessInterfaceItem::setConnectionInfo()
                 m_connectionInfoIcon->setIcon("object-locked");
             }
         } else {
-            m_connectionInfoLabel->setText("No active connection");
+            m_connectionInfoLabel->setText(i18n("No active connection"));
         }
         m_connectionInfoIcon->show();
     } else {
