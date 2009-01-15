@@ -1,12 +1,12 @@
 <ui version="4.0" >
- <class>Ttls</class>
- <widget class="QWidget" name="Ttls" >
+ <class>Tls</class>
+ <widget class="QWidget" name="Tls" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>301</width>
+    <height>214</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -18,91 +18,55 @@
      <item row="0" column="0" >
       <widget class="QLabel" name="label" >
        <property name="text" >
-        <string>&amp;Anonymous Identity</string>
-       </property>
-       <property name="buddy" >
-        <cstring>identity</cstring>
+        <string>Identity</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1" >
-      <widget class="KLineEdit" name="anonidentity" />
+      <widget class="KLineEdit" name="identity" />
      </item>
      <item row="1" column="0" >
-      <widget class="QLabel" name="label_3" >
+      <widget class="QLabel" name="label_2" >
        <property name="text" >
-        <string>&amp;CA Certificate</string>
-       </property>
-       <property name="buddy" >
-        <cstring>cacert</cstring>
+        <string>User Certificate</string>
        </property>
       </widget>
      </item>
      <item row="1" column="1" >
-      <widget class="KUrlRequester" name="cacert" />
+      <widget class="KUrlRequester" name="kcfg_clientcert" />
      </item>
      <item row="2" column="0" >
-      <widget class="QLabel" name="label_2" >
+      <widget class="QLabel" name="label_3" >
        <property name="text" >
-        <string>Inner &amp;authentication</string>
-       </property>
-       <property name="buddy" >
-        <cstring>phase2autheap</cstring>
+        <string>CA Certificate</string>
        </property>
       </widget>
      </item>
      <item row="2" column="1" >
-      <widget class="KComboBox" name="phase2autheap" >
-       <item>
-        <property name="text" >
-         <string>PAP</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>MSCHAP</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>MSCHAPv2</string>
-        </property>
-       </item>
-       <item>
-        <property name="text" >
-         <string>CHAP</string>
-        </property>
-       </item>
-      </widget>
+      <widget class="KUrlRequester" name="kcfg_cacert" />
      </item>
      <item row="3" column="0" >
       <widget class="QLabel" name="label_4" >
        <property name="text" >
-        <string>&amp;Username</string>
-       </property>
-       <property name="buddy" >
-        <cstring>identity</cstring>
+        <string>Private Key</string>
        </property>
       </widget>
      </item>
      <item row="3" column="1" >
-      <widget class="KLineEdit" name="identity" />
+      <widget class="KUrlRequester" name="kcfg_privatekey" />
      </item>
      <item row="4" column="0" >
       <widget class="QLabel" name="label_5" >
        <property name="text" >
-        <string>&amp;Password</string>
-       </property>
-       <property name="buddy" >
-        <cstring>password</cstring>
+        <string>Private Key Password</string>
        </property>
       </widget>
      </item>
      <item row="4" column="1" >
-      <widget class="KLineEdit" name="password" />
+      <widget class="KLineEdit" name="kcfg_privkeypw" />
      </item>
      <item row="5" column="1" >
-      <widget class="QCheckBox" name="chkShowPassword" >
+      <widget class="QCheckBox" name="checkBox" >
        <property name="text" >
         <string>Show password</string>
        </property>
@@ -118,7 +82,7 @@
      <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
-       <height>82</height>
+       <height>1</height>
       </size>
      </property>
     </spacer>
@@ -126,11 +90,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
-  </customwidget>
   <customwidget>
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>

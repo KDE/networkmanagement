@@ -53,8 +53,14 @@
       <label>Phase 2 auth</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="phase2autheap" type="String">
+    <entry name="phase2autheap" key="phase2autheap" type="Enum">
       <label>Phase 2 auth eap</label>
+      <choices>
+        <choice name="pap"/>
+        <choice name="mschap"/>
+        <choice name="mschapv2"/>
+        <choice name="chap"/>
+      </choices>
       <whatsthis></whatsthis>
     </entry>
     <entry name="phase2cacert" type="ByteArray">

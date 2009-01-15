@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class ConnectionWidget;
 class SettingWidget;
+class SettingInterface;
 
 /**
  * Base class for connection configuration widgets.  Exists to provide
@@ -55,12 +56,18 @@ protected:
      * Add widgets to the tabs in the connection widget
      */
     void addToTabWidget(SettingWidget *);
+
+    /**
+     * Add widgets to the KConfig magic but _not_ to the tab widget
+     */
+    void addSettingWidget(SettingInterface *);
+
     /** Main widget for connection UI, common to all connections **/
     ConnectionWidget * m_contents;
     /** Type specific widget, used to set the connection type field */
     SettingWidget * m_connectionTypeWidget;
     /** All setting widgets except m_contents, including connectionTypeWidget*/
-    QList<SettingWidget*> m_settingWidgets;
+    QList<SettingInterface*> m_settingWidgets;
     QString m_connectionName;
     QString m_connectionType;
 };

@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ui_802_11_wireless_security.h"
 #include "wepwidget.h"
 #include "wpapskwidget.h"
+#include "wpaeapwidget.h"
 
 const QString Wireless80211SecurityWidget::KEY_MGMT_NONE = QLatin1String("none");
 const QString Wireless80211SecurityWidget::KEY_MGMT_802_1X = QLatin1String("ieee8021x");
@@ -44,7 +45,9 @@ public:
     int noSecurityIndex;
     int staticWepHexIndex;
     int wpaPskIndex;
+    int wpaEapIndex;
     int security;
+    WpaEapWidget * wpaeapwid;
 };
 
 Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, const QString& connectionId,
@@ -76,6 +79,12 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, const
     d->ui.stackedWidget->insertWidget(index, sw);
     d->wpaPskIndex = index++;
 
+    d->ui.cmbType->insertItem(index, i18nc("Label for WPA-EAP wireless security", "WPA-EAP"));
+    sw = d->wpaeapwid = new WpaEapWidget(configXml()->config(), connectionId, this);
+    d->securityWidgetHash.insert(index, sw);
+    d->ui.stackedWidget->insertWidget(index, sw);
+    d->wpaEapIndex = index++;
+
     Solid::Control::AccessPoint::WpaFlags wpaFlags( wpa );
 
     d->security = -1;
@@ -104,6 +113,11 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, const
 Wireless80211SecurityWidget::~Wireless80211SecurityWidget()
 {
     delete d;
+}
+
+SettingInterface* Wireless80211SecurityWidget::wpaEapWidget()
+{
+    return d->wpaeapwid;
 }
 
 QString Wireless80211SecurityWidget::settingName() const
@@ -155,6 +169,11 @@ void Wireless80211SecurityWidget::readConfig()
                 kDebug() << "WPA-PSK";
                 d->ui.cmbType->setCurrentIndex(d->wpaPskIndex);
                 SecurityWidget * sw = d->securityWidgetHash.value(d->wpaPskIndex);
+                sw->readConfig();
+             } else if (itemString == Wireless80211SecurityWidget::KEY_MGMT_WPA_EAP) {
+                kDebug() << "WPA-EAP";
+                d->ui.cmbType->setCurrentIndex(d->wpaEapIndex);
+                SecurityWidget * sw = d->securityWidgetHash.value(d->wpaEapIndex);
                 sw->readConfig();
             } else {
                 kDebug() << "Key management setting not found!";

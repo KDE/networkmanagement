@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008 Helmut Schaa <helmut.schaa@googlemail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,37 +18,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "settingwidget.h"
+#ifndef EAPWIDGET_H
+#define EAPWIDGET_H
 
-#include <QFile>
-#include <KDebug>
-#include <KStandardDirs>
-#include "configxml.h"
-#include "secretstoragehelper.h"
+#include <QWidget>
+#include <QVariant>
 
-class SettingWidget::Private
+class EapWidget : public QWidget
 {
+Q_OBJECT
 public:
+    EapWidget(const QString & connectionId, QWidget * parent = 0 );
+    virtual ~EapWidget();
 
+    virtual void readConfig() = 0;
+    virtual void writeConfig() = 0;
+    virtual QVariantMap secrets() const = 0;
+    virtual bool validate() const = 0;
+
+protected:
+    QString m_connectionId;
 };
 
-
-SettingWidget::SettingWidget(const QString& connectionId, QWidget* parent)
-: QWidget(parent)
-, SettingInterface(connectionId)
-, d(new Private)
-{
-
-}
-
-SettingWidget::~SettingWidget()
-{
-    delete d;
-}
-
-QWidget* SettingWidget::widget()
-{
-    return this;
-}
-
-// vim: sw=4 sts=4 et tw=100
+#endif

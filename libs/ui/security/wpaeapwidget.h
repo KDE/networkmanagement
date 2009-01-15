@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008 Helmut Schaa <helmut.schaa@googlemail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,38 +18,30 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIRELESS_802_11_SECURITY_WIDGET_H
-#define WIRELESS_802_11_SECURITY_WIDGET_H
+#ifndef WPAEAPWIDGET_H
+#define WPAEAPWIDGET_H
 
-#include "settingwidget.h"
+#include "securitywidget.h"
 
-#include <QVariant>
+#include <KSharedConfig>
 
-#include "knm_export.h"
-
-class KNM_EXPORT Wireless80211SecurityWidget : public SettingWidget
+class WpaEapWidget : public SecurityWidget, public SettingInterface
 {
 Q_OBJECT
 public:
-    Wireless80211SecurityWidget(bool setDefaults, const QString& connectionId,
-                                uint caps, uint wpa, uint rsn,
-                                QWidget * parent = 0 );
-    virtual ~Wireless80211SecurityWidget();
-    SettingInterface* wpaEapWidget();
-    QString settingName() const;
+    WpaEapWidget(KConfig * config, const QString & connectionId, QWidget * parent = 0);
+    virtual ~WpaEapWidget();
+    bool validate() const;
     void readConfig();
     void writeConfig();
     QVariantMap secrets() const;
-    static const QString KEY_MGMT_NONE;
-    static const QString KEY_MGMT_802_1X;
-    static const QString KEY_MGMT_WPA_NONE;
-    static const QString KEY_MGMT_WPA_PSK;
-    static const QString KEY_MGMT_WPA_EAP;
-protected Q_SLOTS:
-    void securityTypeChanged(int index);
+    QString settingName() const;
+    QWidget* widget();
+private slots:
+    void methodChanged(int);
 private:
     class Private;
     Private * d;
 };
 
-#endif // 802_11_WIRELESS_SECURITY_WIDGET_H
+#endif // WPAEAPWIDGET_H
