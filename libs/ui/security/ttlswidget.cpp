@@ -116,6 +116,7 @@ void TtlsWidget::writeConfig()
 QVariantMap TtlsWidget::secrets() const
 {
     QVariantMap ourSecrets;
+    ourSecrets.insert("password", d->ui.password->text());
     return ourSecrets;
 }
 // vim: sw=4 sts=4 et tw=100
