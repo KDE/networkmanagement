@@ -367,9 +367,10 @@ void ManageConnectionWidget::tabChanged(int index)
 
 void ManageConnectionWidget::connectionTypeMenuTriggered(QAction* action)
 {
-    QString nextConnectionSubType = action->data().toString();
     QVariantList vl;
-    vl << nextConnectionSubType;
+    vl << action->data();
+    Q_ASSERT(!vl.isEmpty());
+    kDebug() << vl;
     mEditor->addConnection(false, connectionTypeForCurrentIndex(), vl);
 }
 
