@@ -243,7 +243,6 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
  */
 void KConfigToService::configure(const QStringList& changedConnections)
 {
-    kDebug();
     if (m_error) { // don't update if we don't own the service, we will do this later when we regain the service
         kDebug() << "kded4 does not own the NetworkManagerUserSettings service, so it ignored a request to reload configuration";
         return;
@@ -253,17 +252,27 @@ void KConfigToService::configure(const QStringList& changedConnections)
     QStringList addedConnections, deletedConnections;
     // figure out which connections were added
     QStringList existingConnections = m_connectionIdToObjectPath.keys();
-    foreach (QString connectionId, KNetworkManagerServicePrefs::self()->connections()) {
+    QStringList onDiskConnections = KNetworkManagerServicePrefs::self()->connections();
+    qSort(existingConnections);
+    qSort(onDiskConnections);
+    kDebug() << "existing connections are:" << existingConnections;
+    kDebug() << "on-disk connections are:" << onDiskConnections;
+
+    foreach (QString connectionId, onDiskConnections) {
         if (!existingConnections.contains(connectionId)) {
             addedConnections.append(connectionId);
         }
     }
     // figure out which connections were deleted
     foreach (QString connectionId, existingConnections) {
-        if (!KNetworkManagerServicePrefs::self()->connections().contains(connectionId)) {
+        if (!onDiskConnections.contains(connectionId)) {
             deletedConnections.append(connectionId);
         }
     }
+    kDebug() << "added connections:" << addedConnections;
+    kDebug() << "changed connections:" << changedConnections;
+    kDebug() << "deleted connections:" << deletedConnections;
+
     // update the service
     foreach (QString connectionId, deletedConnections) {
         QString objectPath = m_connectionIdToObjectPath.take(connectionId);
@@ -282,7 +291,6 @@ void KConfigToService::configure(const QStringList& changedConnections)
         }
     }
     foreach (QString connectionId, addedConnections) {
-        QVariantMapMap changedConnection = restoreConnection(connectionId);
         kDebug() << "adding connection with id: " << connectionId;
         m_service->addConnection(restoreConnection(connectionId));
     }
