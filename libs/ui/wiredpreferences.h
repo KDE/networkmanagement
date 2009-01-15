@@ -38,6 +38,7 @@ public:
     virtual ~WiredPreferences();
     virtual void save();
     virtual void load();
+    virtual bool needsEdits() const { return true; /*TODO until auto connection name generation code is in place*/ }
 };
 
 #endif

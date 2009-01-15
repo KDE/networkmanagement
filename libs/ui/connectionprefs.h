@@ -49,7 +49,7 @@ public:
 
     // if this returns true in derived classes
     // it signals that the defaults are good enough to connect
-    virtual bool needsEdits() const { return true; }
+    virtual bool needsEdits() const { return (m_connectionType.isEmpty() || m_connectionName.isEmpty()); }
 
 public slots:
     // reimplemented from KCModule, to call embedded settingswidgets' load/save methods
