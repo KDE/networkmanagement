@@ -77,6 +77,7 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, const
     d->wpaPskIndex = index++;
 
     Solid::Control::AccessPoint::WpaFlags wpaFlags( wpa );
+    Solid::Control::AccessPoint::WpaFlags rsnFlags( rsn );
 
     d->security = -1;
 
@@ -94,6 +95,11 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, const
 
         if ( wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
              wpaFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) )
+            d->security = d->wpaPskIndex;
+
+        if ( rsnFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+             rsnFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) || 
+             rsnFlags.testFlag( Solid::Control::AccessPoint::PairCcmp ) )
             d->security = d->wpaPskIndex;
 
         d->ui.cmbType->setCurrentIndex( d->security );
