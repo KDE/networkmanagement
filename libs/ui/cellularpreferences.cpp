@@ -59,7 +59,7 @@ CellularPreferences::CellularPreferences(QWidget *parent, const QVariantList &ar
     addConfig(m_contents->configXml(), m_contents);
     QVariant cellularType;
     if (args.count() > 1 ) {
-        QVariant cellularType = args[1];
+        cellularType = args[1];
     }
     else {
         KConfigSkeletonItem * typeItem = m_contents->configXml()->findItem(m_contents->settingName(), QLatin1String(NM_SETTING_CONNECTION_TYPE));
