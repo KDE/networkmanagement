@@ -43,7 +43,8 @@ class ConnectionInspector;
 class NetworkManagerSettings;
 class RemoteConnection;
 class WirelessNetwork;
-typedef QPair<NetworkManagerSettings*, RemoteConnection*> ActiveConnectionPair;
+// path of Connection.Active path on the daemon, remote connection object
+typedef QPair<QString, RemoteConnection*> ActiveConnectionPair;
 /**
  * Represents a single network interface
  * Displays status, updates itself
@@ -64,7 +65,7 @@ public:
     void setConnectionInspector(ConnectionInspector *);
     ConnectionInspector * connectionInspector() const;
     uint activeConnectionCount() const;
-    void enableInterface(bool enable);
+    virtual void setEnabled(bool enable);
     virtual QString ssid();
 
 public slots:
@@ -125,11 +126,10 @@ protected:
     Plasma::CheckBox * m_rfCheckBox;
     Plasma::Label * m_connectionInfoStrengthLabel;
     Plasma::IconWidget * m_connectionInfoIcon;
-    Plasma::IconWidget * m_connectButton;
     NameDisplayMode m_nameMode;
-    bool m_isWireless;
     bool m_enabled;
     QList<ActiveConnectionPair> m_activeConnections;
     ConnectionInspector * m_connectionInspector;
+    QString m_unavailableText;
 };
 #endif // APPLET_INTERFACEWIDGET_H

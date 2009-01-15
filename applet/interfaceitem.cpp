@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 #include "wirelessnetwork.h"
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_rfCheckBox(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0)
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_rfCheckBox(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
 {
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
@@ -66,7 +66,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_icon->setAcceptHoverEvents(false);
     m_layout->addItem(m_icon, 0, 0, 2, 1);
 
-    m_isWireless = false;
 
     switch (m_iface->type() ) {
         case Solid::Control::NetworkInterface::Ieee8023:
@@ -74,7 +73,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
             break;
         case Solid::Control::NetworkInterface::Ieee80211:
             m_icon->setIcon("network-wireless");
-            m_isWireless = true;
             break;
         case Solid::Control::NetworkInterface::Serial:
             m_icon->setIcon("modem");
@@ -82,7 +80,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
         case Solid::Control::NetworkInterface::Gsm:
         case Solid::Control::NetworkInterface::Cdma:
             m_icon->setIcon("phone");
-            m_isWireless = true;
             break;
         default:
             m_icon->setIcon("network-wired");
@@ -94,15 +91,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
     //m_ifaceNameLabel->setMinimumWidth(176);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
-
-
-    m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setDrawBackground(true);
-    m_connectButton->setMinimumHeight(22);
-    m_connectButton->setMaximumHeight(22);
-    m_connectButton->setMinimumWidth(22);
-    m_connectButton->setIcon("network-connect");
-    m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
 
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
@@ -118,8 +106,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoLabel->setText("<b>IP Address:</b> dum.my.ip.addr");
     m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1, Qt::AlignCenter);
 
-    if (m_isWireless) {
-
+    if (m_iface->type() == Solid::Control::NetworkInterface::Ieee80211 ||
+            m_iface->type() == Solid::Control::NetworkInterface::Cdma ||
+            m_iface->type() == Solid::Control::NetworkInterface::Gsm ) {
         // Signal strength meter
         int meterHeight = 12;
         m_strengthMeter = new Plasma::Meter(this);
@@ -133,23 +122,12 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_layout->addItem(m_strengthMeter, 2, 2, 1, 1, Qt::AlignCenter);
         //m_connectionInfoLabel->hide();
-        m_connectButton->hide();
-
 
    // m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     //m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
 
-
-        m_rfCheckBox = new Plasma::CheckBox(this);
-        m_rfCheckBox->setChecked(m_enabled);
-        m_rfCheckBox->setText(i18n("Enable"));
-        m_rfCheckBox->setToolTip(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable Wireless"));
-        m_layout->addItem(m_rfCheckBox, 0, 2, 1, 2, Qt::AlignRight);
-
-    } else {
-        m_layout->addItem(m_connectButton, 0, 3, 1, 1, Qt::AlignRight);
-
     }
+
     //       security
     m_connectionInfoIcon = new Plasma::IconWidget(this);
     m_connectionInfoIcon->setIcon("object-unlocked"); // FIXME: set correct icon on start
@@ -175,8 +153,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
             this, SLOT(activeConnectionsChanged()));
     connect(m_iface, SIGNAL(connectionStateChanged(int)),
             this, SLOT(connectionStateChanged(int)));
-    connect(m_connectButton, SIGNAL(clicked()),
-            this, SLOT(connectButtonClicked()));
     if (m_rfCheckBox)
         connect(m_rfCheckBox, SIGNAL(toggled(bool)),
                 SLOT(wirelessEnabledChanged(bool)));
@@ -193,21 +169,14 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     connect(m_systemSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(serviceDisappeared(NetworkManagerSettings*)));
 }
 
-void InterfaceItem::enableInterface(bool enable)
+void InterfaceItem::setEnabled(bool enable)
 {
-    kDebug() << "ENABLE?" << enable;
+    kDebug() << enable;
     m_enabled = enable;
     m_connectionInfoLabel->setEnabled(enable);
     m_connectionNameLabel->setEnabled(enable);
-    m_connectButton->setEnabled(enable);
     m_ifaceNameLabel->setEnabled(enable);
     m_connectionInfoIcon->setEnabled(enable);
-    if (m_isWireless) {
-        //m_rfCheckBox->setEnabled(enable);
-        kDebug() << "ENABLE Wireless" << enable;
-        m_rfCheckBox->setChecked(m_enabled);
-        m_strengthMeter->setEnabled(enable);
-    }
 }
 
 InterfaceItem::~InterfaceItem()
@@ -288,7 +257,7 @@ void InterfaceItem::activeConnectionsChanged()
                     RemoteConnection * connection = service->findConnection(connectionObjectPath.path());
                     if (connection) {
                         //kDebug() << "found it";
-                        newConnectionList.append(ActiveConnectionPair(service, connection));
+                        newConnectionList.append(ActiveConnectionPair(conn, connection));
                     } else {
                         //kDebug() << "not found";
                     }
@@ -297,8 +266,15 @@ void InterfaceItem::activeConnectionsChanged()
         }
     }
     m_activeConnections = newConnectionList;
+    if (!m_activeConnections.isEmpty()) {
+        kDebug() << "Active connections:";
+        foreach ( ActiveConnectionPair connection, m_activeConnections) {
+            kDebug() << connection.first << connection.second->path();
+        }
+    } else {
+        kDebug() << "Interface has no active connections";
+    }
     // update our UI
-    kDebug() << "Active connections" << newConnectionList;
     m_layout->invalidate();
     setConnectionInfo();
 }
@@ -353,14 +329,8 @@ void InterfaceItem::setUnavailable()
 {
     m_icon->setEnabled(false);
     m_ifaceNameLabel->setText(i18n("<b>Interface %1</b>", m_iface->interfaceName()));
-    if (!m_isWireless) {
-        m_connectionNameLabel->setText(i18nc("Network cable of interface is not plugged in", "Not plugged in"));
-    } else {
-        m_connectionNameLabel->setText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"));
-    }
+    m_connectionNameLabel->setText(m_unavailableText);
     m_connectionInfoLabel->setText("");
-    m_connectButton->setEnabled(false);
-    m_connectButton->setToolTip(i18n("Network interface unavailable"));
 }
 
 void InterfaceItem::setInactive()
@@ -368,18 +338,11 @@ void InterfaceItem::setInactive()
     m_icon->setEnabled(false);
     m_connectionNameLabel->setText(i18nc("networking device is not connected", "Disconnected"));
     m_connectionInfoLabel->setText("");
-    m_connectButton->setIcon("network-connect");
-    m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
-    m_connectButton->setEnabled(true);
 }
-
 
 void InterfaceItem::setActiveConnection(int state)
 {
     m_icon->setEnabled(true);
-    m_connectButton->setEnabled(true);
-    m_connectButton->setIcon("network-disconnect");
-    m_connectButton->setToolTip(i18nc("icon to disconnect network interface", "Disconnect"));
     QStringList connectionIds;
     //kDebug();
     foreach (ActiveConnectionPair connection, m_activeConnections) {
@@ -419,6 +382,8 @@ ConnectionInspector * InterfaceItem::connectionInspector() const
 
 void InterfaceItem::serviceDisappeared(NetworkManagerSettings* service)
 {
+    // Hopefully NM emits activeConnectionChanged at this point
+    /*
     QMutableListIterator<ActiveConnectionPair> i(m_activeConnections);
     while (i.hasNext()) {
         i.next();
@@ -427,6 +392,7 @@ void InterfaceItem::serviceDisappeared(NetworkManagerSettings* service)
         }
     }
     setConnectionInfo();
+    */
 }
 
 QList<RemoteConnection*> InterfaceItem::availableConnections() const

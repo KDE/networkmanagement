@@ -94,7 +94,7 @@ void InterfaceGroup::enableInterface(bool enable)
 {
     m_enabled = enable;
     foreach (InterfaceItem * item, m_interfaces) {
-        item->enableInterface(enable);
+        item->setEnabled(enable);
     }
     updateNetworks();
 }
@@ -196,21 +196,16 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
     QString active_ssid = QString();
     foreach (InterfaceItem * i, m_interfaces) {
         activeConnectionTotal += i->activeConnectionCount();
-        active_ssid = i->ssid();
     }
     //kDebug() << "Active Connections:" << activeConnectionTotal << "Networks:" << m_wirelessEnvironment->networks();
-    //kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
+    kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
 
     // FIXME: m_userSettings can be invalid here, but we might still want to connect.
     //if ((activeConnectionTotal == 0) && m_connections.isEmpty() && m_userSettings->isValid()) {
-    //if ((activeConnectionTotal == 0) && m_connections.isEmpty()) {
     //kDebug() << "ACTIVE:" << active_ssid;
-        foreach (QString ssid, m_wirelessEnvironment->networks()) {
-            if (ssid != active_ssid) {
-                allNetworks.append(m_wirelessEnvironment->findNetwork(ssid));
-            }
-        }
-
+    foreach (QString ssid, m_wirelessEnvironment->networks()) {
+        allNetworks.append(m_wirelessEnvironment->findNetwork(ssid));
+    }
         qSort(allNetworks.begin(), allNetworks.end(), wirelessNetworkGreaterThanStrength);
         for (int i = 0; i < allNetworks.count() && i < m_numberOfWlans; i++)
         {
@@ -240,9 +235,11 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
                 connect(wirelessinterface, SIGNAL(wirelessToggled(bool)), this, SLOT(enableInterface(bool)));
                 enableInterface(Solid::Control::NetworkManager::isWirelessEnabled());
-                wirelessinterface->enableInterface(Solid::Control::NetworkManager::isWirelessEnabled());
+                wirelessinterface->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
 
                 // keep track of rf kill changes
+                QObject::disconnect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)), this, 0 );
+                QObject::disconnect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)), this, 0 );
                 QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
                         this, SLOT(enableInterface(bool)));
                 QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),

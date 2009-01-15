@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <nm-setting-serial.h>
 
+#include <QGraphicsGridLayout>
+
 #include <solid/control/networkserialinterface.h>
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkipv4config.h>
@@ -41,6 +43,19 @@ SerialInterfaceItem::SerialInterfaceItem(Solid::Control::SerialNetworkInterface 
 {
     // for updating our UI
     connect(iface, SIGNAL(pppStats(uint,uint)), SLOT(pppStats(uint,uint)));
+
+    m_connectButton = new Plasma::IconWidget(this);
+    m_connectButton->setDrawBackground(true);
+    m_connectButton->setMinimumHeight(22);
+    m_connectButton->setMaximumHeight(22);
+    m_connectButton->setMinimumWidth(22);
+    m_connectButton->setIcon("network-connect");
+    m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
+    m_layout->addItem(m_connectButton, 0, 3, 1, 1, Qt::AlignRight);
+    m_connectButton->hide();
+
+    connect(m_connectButton, SIGNAL(clicked()),
+            this, SLOT(connectButtonClicked()));
 }
 
 SerialInterfaceItem::~SerialInterfaceItem()
@@ -77,8 +92,10 @@ void SerialInterfaceItem::connectButtonClicked()
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
         case Solid::Control::NetworkInterface::Activated: // deactivate active connections
+            kDebug() << m_activeConnections;
             foreach ( ActiveConnectionPair connection, m_activeConnections) {
-                Solid::Control::NetworkManager::deactivateConnection(connection.second->path());
+                kDebug() << "deactivating connection" << connection.second->path();
+                Solid::Control::NetworkManager::deactivateConnection(connection.first);
             }
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
@@ -99,4 +116,36 @@ void SerialInterfaceItem::setConnectionInfo()
         m_connectionInfoLabel->setText(i18nc("Label for PPP/cellular network connection traffic data, bytes in and out","In: %1 Out %2", m_bytesIn, m_bytesOut));
     }
 }
+
+void SerialInterfaceItem::setEnabled(bool enable)
+{
+    kDebug() << enable;
+    m_connectButton->setEnabled(enable);
+    InterfaceItem::setEnabled(enable);
+}
+
+void SerialInterfaceItem::setUnavailable()
+{
+    m_connectButton->setEnabled(false);
+    m_connectButton->setToolTip(i18n("Network interface unavailable"));
+    InterfaceItem::setUnavailable();
+}
+
+void SerialInterfaceItem::setInactive()
+{
+    m_connectButton->setIcon("network-connect");
+    m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
+    m_connectButton->setEnabled(true);
+    InterfaceItem::setInactive();
+}
+
+void SerialInterfaceItem::setActiveConnection(int state)
+{
+    m_connectButton->show();
+    m_connectButton->setEnabled(true);
+    m_connectButton->setIcon("network-disconnect");
+    m_connectButton->setToolTip(i18nc("icon to disconnect network interface", "Disconnect"));
+    InterfaceItem::setActiveConnection(state);
+}
+
 // vim: sw=4 sts=4 et tw=100

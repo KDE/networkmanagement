@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <nm-setting-wireless.h>
 
+#include <QGraphicsGridLayout>
+
 #include <KNotification>
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
@@ -43,6 +45,12 @@ WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInte
             SLOT(activeAccessPointChanged(const QString&)));
 
     activeAccessPointChanged(m_wirelessIface->activeAccessPoint());
+
+    m_rfCheckBox = new Plasma::CheckBox(this);
+    m_rfCheckBox->setChecked(m_enabled);
+    m_rfCheckBox->setText(i18n("Enable"));
+    m_rfCheckBox->setToolTip(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable Wireless"));
+    m_layout->addItem(m_rfCheckBox, 0, 2, 1, 2, Qt::AlignRight);
 }
 
 WirelessInterfaceItem::~WirelessInterfaceItem()
@@ -116,7 +124,7 @@ void WirelessInterfaceItem::connectButtonClicked()
         case Solid::Control::NetworkInterface::Activated: // deactivate active connections
             foreach ( ActiveConnectionPair connection, m_activeConnections) {
                 kDebug() << "Deactivating connection" << connection.second->path() << connection;
-                Solid::Control::NetworkManager::deactivateConnection(connection.second->path());
+                Solid::Control::NetworkManager::deactivateConnection(connection.first);
             }
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
@@ -221,6 +229,14 @@ QList<Solid::Control::AccessPoint*> WirelessInterfaceItem::availableAccessPoints
         }
     }
     return retVal;
+}
+
+void WirelessInterfaceItem::setEnabled(bool enable)
+{
+    kDebug() << enable;
+    m_rfCheckBox->setEnabled(enable);
+    m_strengthMeter->setEnabled(enable);
+    InterfaceItem::setEnabled(enable);
 }
 
 // vim: sw=4 sts=4 et tw=100

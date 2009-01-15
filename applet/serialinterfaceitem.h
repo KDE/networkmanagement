@@ -41,6 +41,14 @@ Q_OBJECT
 public:
     SerialInterfaceItem(Solid::Control::SerialNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent = 0);
     virtual ~SerialInterfaceItem();
+    /* @reimp InterfaceItem */
+    virtual void setEnabled(bool enable);
+    /* @reimp InterfaceItem */
+    virtual void setUnavailable();
+    /* @reimp InterfaceItem */
+    virtual void setInactive();
+    /* @reimp InterfaceItem */
+    virtual void setActiveConnection(int);
 public slots:
     void pppStats(uint,uint);
     void activeSignalStrengthChanged(int);
@@ -48,6 +56,7 @@ public slots:
 private:
     void setConnectionInfo();
     Solid::Control::SerialNetworkInterface * m_serialIface;
+    Plasma::IconWidget * m_connectButton;
     uint m_bytesIn;
     uint m_bytesOut;
 };

@@ -50,6 +50,8 @@ public:
     virtual ~WirelessInterfaceItem();
     WirelessEnvironment * wirelessEnvironment() const;
     QString ssid();
+    /** @reimp InterfaceItem */
+    virtual void setEnabled(bool enable);
 public slots:
     void activeAccessPointChanged(const QString&);
     void activeSignalStrengthChanged(int);
