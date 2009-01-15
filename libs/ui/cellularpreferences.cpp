@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "cellularpreferences.h"
 
 #include <nm-setting-cdma.h>
+#include <nm-setting-connection.h>
 #include <nm-setting-gsm.h>
 
 #include <QVBoxLayout>
@@ -46,6 +47,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 CellularPreferences::CellularPreferences(QWidget *parent, const QVariantList &args)
 : ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
+    kDebug() << args;
     QString connectionId = args[0].toString();
     m_connectionType = "Cellular";
     QVBoxLayout * layout = new QVBoxLayout(this);
@@ -55,7 +57,18 @@ CellularPreferences::CellularPreferences(QWidget *parent, const QVariantList &ar
     // Must setup initial widget before adding its contents, or all child widgets are added in this
     // run
     addConfig(m_contents->configXml(), m_contents);
-    QVariant cellularType = args[1];
+    QVariant cellularType;
+    if (args.count() > 1 ) {
+        QVariant cellularType = args[1];
+    }
+    else {
+        KConfigSkeletonItem * typeItem = m_contents->configXml()->findItem(m_contents->settingName(), QLatin1String(NM_SETTING_CONNECTION_TYPE));
+        if (typeItem) {
+            cellularType = typeItem->property().toString();
+        }
+    }
+    Q_ASSERT(cellularType.isValid());
+
     if (cellularType == QVariant(NM_SETTING_GSM_SETTING_NAME)) {
         m_connectionTypeWidget = new GsmWidget(connectionId, this);
     } else if (cellularType == QVariant(NM_SETTING_CDMA_SETTING_NAME)) {
