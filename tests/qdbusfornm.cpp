@@ -46,7 +46,28 @@
 #include <QtXml/QDomDocument>
 #include <QtXml/QDomElement>
 #include <QtDBus/QtDBus>
-#include <private/qdbusutil_p.h>
+
+namespace QDBusUtil
+{
+    QDBUS_EXPORT bool isValidInterfaceName(const QString &ifaceName);
+
+    QDBUS_EXPORT bool isValidUniqueConnectionName(const QString &busName);
+
+    QDBUS_EXPORT bool isValidBusName(const QString &busName);
+
+    QDBUS_EXPORT bool isValidMemberName(const QString &memberName);
+
+    QDBUS_EXPORT bool isValidErrorName(const QString &errorName);
+
+    QDBUS_EXPORT bool isValidPartOfObjectPath(const QString &path);
+
+    QDBUS_EXPORT bool isValidObjectPath(const QString &path);
+
+    QDBUS_EXPORT bool isValidSignature(const QString &signature);
+
+    QDBUS_EXPORT bool isValidSingleSignature(const QString &signature);
+}
+
 #include "../libs/types.h"
 
 static QDBusConnection connection(QLatin1String(""));
