@@ -67,7 +67,7 @@
       <whatsthis></whatsthis>
     </entry>
     <entry name="leappassword" type="String" secret="true">
-        <label>LEAP Password</label>
+         secret="true"<label>LEAP Password</label>
       <whatsthis></whatsthis>
     </entry>
     <entry name="clientcert" type="String">
@@ -90,7 +90,7 @@
       <label>Phase 2 client cert</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="password" type="String">
+    <entry name="password" type="String" secret="true">
       <label>Password</label>
       <whatsthis></whatsthis>
     </entry>

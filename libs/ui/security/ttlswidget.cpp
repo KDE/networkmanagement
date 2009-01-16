@@ -72,7 +72,7 @@ void TtlsWidget::readConfig()
     if (!capath.isEmpty())
         d->ui.cacert->setUrl(capath);
 
-    QString phase2autheap = cg.readEntry("phase2autheap", "pap");
+    QString phase2autheap = cg.readEntry("phase2autheap", "mschapv2");
     if (phase2autheap == "pap")
         d->ui.phase2autheap->setCurrentIndex(0);
     else if (phase2autheap == "mschap")
@@ -81,6 +81,14 @@ void TtlsWidget::readConfig()
         d->ui.phase2autheap->setCurrentIndex(2);
     else if (phase2autheap == "chap")
         d->ui.phase2autheap->setCurrentIndex(3);
+ 
+    // secrets
+    SecretStorageHelper secrets(m_connectionId, cg.name());
+
+    QString password;
+    secrets.readSecret("password", password);
+    if (!password.isEmpty())
+        d->ui.password->setText(password);
 }
 
 void TtlsWidget::writeConfig()
@@ -89,7 +97,7 @@ void TtlsWidget::writeConfig()
 
     cg.writeEntry("identity", d->ui.identity->text());
     cg.writeEntry("anonymousidentity", d->ui.anonidentity->text());
-    cg.writeEntry("capath", d->ui.cacert->url().directory() + "/" + d->ui.cacert->url().fileName());
+    cg.writeEntry("capath", d->ui.cacert->url().path());
 
     switch(d->ui.phase2autheap->currentIndex())
     {
@@ -108,9 +116,7 @@ void TtlsWidget::writeConfig()
     }
 
     SecretStorageHelper secrets(m_connectionId, cg.name());
-
-    cg.writeEntry("password", d->ui.password->text());
-
+    secrets.writeSecret("password", d->ui.password->text());
 }
 
 QVariantMap TtlsWidget::secrets() const

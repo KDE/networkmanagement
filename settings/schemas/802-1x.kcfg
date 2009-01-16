@@ -75,7 +75,7 @@
       <label>Phase 2 client cert</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="password" type="String">
+    <entry name="password" type="String" secret="true">
       <label>Password</label>
       <whatsthis></whatsthis>
     </entry>
