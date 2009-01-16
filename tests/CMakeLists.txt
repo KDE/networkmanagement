@@ -12,4 +12,6 @@ set(testconfigxml_SRCS
 kde4_add_executable(testconfigxml ${testconfigxml_SRCS})
 target_link_libraries(testconfigxml knmstorage ${KDE4_KDEUI_LIBS})
 
+kde4_add_executable(qdbusfornm qdbusfornm.cpp )
+target_link_libraries(qdbusfornm knmstorage )
 
