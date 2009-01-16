@@ -164,6 +164,7 @@ void NetworkManagerApplet::init()
 
         m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, eItem);
         m_wifiGroup->setObjectName("wifi-interface-group");
+        m_wifiGroup->enableInterfaces(Solid::Control::NetworkManager::isWirelessEnabled());
         m_wifiGroup->init();
 
         eItem->setWidget(m_wifiGroup);
