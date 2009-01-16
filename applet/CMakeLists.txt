@@ -10,7 +10,6 @@ set(networkmanager_SRCS
     connectionlist.cpp
     mergedwireless.cpp
     networkmanager.cpp
-    networkmanagerpopup.cpp
     interfacegroup.cpp
     interfaceitem.cpp
     serialinterfaceitem.cpp
