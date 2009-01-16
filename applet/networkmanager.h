@@ -152,7 +152,6 @@ private:
     QPixmap m_pixmapWiredDisconnected;
     Solid::Control::NetworkInterfaceList m_interfaces;
     QString m_elementName;
-    //NetworkManagerPopup * m_popup;
     QPoint m_clicked;
     Plasma::ToolTipContent m_toolTip;
     // Configuration dialog
