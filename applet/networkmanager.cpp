@@ -261,8 +261,9 @@ void NetworkManagerApplet::configAccepted()
     int wlans = ui.numberOfWlans->value();
     if (wlans != m_numberOfWlans) {
         m_numberOfWlans = wlans;
-        kDebug() << "No of WLANS Changed:" << wlans;
         m_wifiGroup->setNetworksLimit( m_numberOfWlans );
+        cg.writeEntry("numberOfWlans", m_numberOfWlans);
+        kDebug() << "No of WLANS Changed:" << wlans;
     }
     Plasma::Applet::configNeedsSaving();
 }
