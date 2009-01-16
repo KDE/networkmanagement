@@ -12,6 +12,7 @@ set(knmui_SRCS
    pppoewidget.cpp
    security/802_1x_security_widget.cpp
    security/securitywidget.cpp
+   settinginterface.cpp
    settingwidget.cpp
    connectionwidgetfactory.cpp
    connectionwidget.cpp
@@ -27,6 +28,11 @@ set(knmui_SRCS
    security/802_11_wireless_security_widget.cpp
    security/wepwidget.cpp
    security/wpapskwidget.cpp
+   security/wpaeapwidget.cpp
+   security/eapwidget.cpp
+   security/peapwidget.cpp
+   security/ttlswidget.cpp
+   security/tlswidget.cpp
    vpnuiplugin.cpp
    connectionprefs.cpp
    cellularpreferences.cpp
@@ -44,7 +50,11 @@ kde4_add_ui_files(knmui_SRCS cdma.ui gsm.ui ppp.ui pppoe.ui
    security/802_11_wireless_security.ui
    security/wep.ui
    security/wpapsk.ui
+   security/wpaeap.ui
    security/802_1x.ui
+   security/security_peap.ui
+   security/security_ttls.ui
+   security/security_tls.ui
    )
 
 kde4_add_library(knmui SHARED ${knmui_SRCS})

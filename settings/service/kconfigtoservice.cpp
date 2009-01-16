@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-connection.h>
 #include <nm-setting-vpn.h>
 #include <nm-setting-ip4-config.h>
+#include <nm-setting-8021x.h>
 
 #include <KDebug>
 #include <KSharedConfig>
@@ -230,6 +231,22 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
                                                       QLatin1String(NM_SETTING_CONNECTION_TYPE));
         Q_ASSERT(item);
         m_currentConnectionType = item->property().toString();
+    }
+
+    // special case for 8021x settings ca_cert -> have to pass it as blob
+    if (groupName == QLatin1String(NM_SETTING_802_1X_SETTING_NAME)) {
+        KConfigGroup group8021x(m_config, groupName);
+        QString ca_path = group8021x.readEntry("capath");
+        QFile ca_cert(ca_path);
+
+        if (ca_cert.open(QIODevice::ReadOnly)) {
+           QByteArray bytes = ca_cert.readAll();
+
+           // FIXME: verify that the ca_cert is a X509 cert
+           // (see libnm-util/nm-setting-8021x.c function nm_setting_802_1x_set_ca_cert_from_file)
+
+           map.insert( QLatin1String(NM_SETTING_802_1X_CA_CERT), QVariant::fromValue(bytes));
+        }
     }
 
     return map;

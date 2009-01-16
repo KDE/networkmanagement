@@ -18,12 +18,12 @@
         <string>Anonymous &amp;identity</string>
        </property>
        <property name="buddy" >
-        <cstring>kcfg_identity</cstring>
+        <cstring>anonymousidentity</cstring>
        </property>
       </widget>
      </item>
      <item row="0" column="1" >
-      <widget class="KLineEdit" name="kcfg_identity" />
+      <widget class="KLineEdit" name="anonymousidentity" />
      </item>
      <item row="1" column="0" >
       <widget class="QLabel" name="label_3" >
@@ -31,12 +31,12 @@
         <string>&amp;CA Certificate</string>
        </property>
        <property name="buddy" >
-        <cstring>kcfg_cacert</cstring>
+        <cstring>cacert</cstring>
        </property>
       </widget>
      </item>
      <item row="1" column="1" >
-      <widget class="KUrlRequester" name="kcfg_cacert" />
+      <widget class="KUrlRequester" name="cacert" />
      </item>
      <item row="2" column="0" >
       <widget class="QLabel" name="label_6" >
@@ -51,12 +51,12 @@
         <string>Inner &amp;authentication</string>
        </property>
        <property name="buddy" >
-        <cstring>kcombobox</cstring>
+        <cstring>phase2autheap</cstring>
        </property>
       </widget>
      </item>
      <item row="3" column="1" >
-      <widget class="KComboBox" name="kcombobox" >
+      <widget class="KComboBox" name="phase2autheap" >
        <item>
         <property name="text" >
          <string>PAP</string>
@@ -85,12 +85,12 @@
         <string>&amp;Username</string>
        </property>
        <property name="buddy" >
-        <cstring>klineedit</cstring>
+        <cstring>identity</cstring>
        </property>
       </widget>
      </item>
      <item row="4" column="1" >
-      <widget class="KLineEdit" name="klineedit" />
+      <widget class="KLineEdit" name="identity" />
      </item>
      <item row="5" column="0" >
       <widget class="QLabel" name="label_5" >
@@ -98,15 +98,15 @@
         <string>&amp;Password</string>
        </property>
        <property name="buddy" >
-        <cstring>klineedit_2</cstring>
+        <cstring>password</cstring>
        </property>
       </widget>
      </item>
      <item row="5" column="1" >
-      <widget class="KLineEdit" name="klineedit_2" />
+      <widget class="KLineEdit" name="password" />
      </item>
      <item row="6" column="1" >
-      <widget class="QCheckBox" name="checkBox" >
+      <widget class="QCheckBox" name="chkShowPassword" >
        <property name="text" >
         <string>Show password</string>
        </property>

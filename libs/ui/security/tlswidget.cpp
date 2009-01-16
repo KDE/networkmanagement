@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008 Helmut Schaa <helmut.schaa@googlemail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,37 +18,45 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "settingwidget.h"
+#include "tlswidget.h"
+#include "ui_security_tls.h"
 
-#include <QFile>
-#include <KDebug>
-#include <KStandardDirs>
-#include "configxml.h"
-#include "secretstoragehelper.h"
-
-class SettingWidget::Private
+class TlsWidget::Private
 {
 public:
-
+    Ui_Tls ui;
+    KConfig * config;
 };
 
+TlsWidget::TlsWidget(KConfig* config, const QString & connectionId, QWidget * parent)
+: EapWidget(connectionId, parent), d(new TlsWidget::Private)
+{
+    d->ui.setupUi(this);
+    d->config = config;
+}
 
-SettingWidget::SettingWidget(const QString& connectionId, QWidget* parent)
-: QWidget(parent)
-, SettingInterface(connectionId)
-, d(new Private)
+TlsWidget::~TlsWidget()
+{
+}
+
+bool TlsWidget::validate() const
+{
+    return true;
+}
+
+void TlsWidget::readConfig()
 {
 
 }
 
-SettingWidget::~SettingWidget()
+void TlsWidget::writeConfig()
 {
-    delete d;
+
 }
 
-QWidget* SettingWidget::widget()
+QVariantMap TlsWidget::secrets() const
 {
-    return this;
+    QVariantMap ourSecrets;
+    return ourSecrets;
 }
-
 // vim: sw=4 sts=4 et tw=100

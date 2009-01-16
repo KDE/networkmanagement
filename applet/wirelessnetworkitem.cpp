@@ -98,7 +98,6 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setIcon("network-wireless");
     m_connectButton->setText(ssid);
     m_connectButton->setMinimumWidth(160);
-    m_connectButton->setMaximumHeight(rowHeight);
     m_connectButton->setOrientation(Qt::Horizontal);
     //m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", ssid));
     m_connectButton->setMinimumHeight(rowHeight);

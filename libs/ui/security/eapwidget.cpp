@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008 Helmut Schaa <helmut.schaa@googlemail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,37 +18,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "settingwidget.h"
+#include "eapwidget.h"
 
-#include <QFile>
-#include <KDebug>
-#include <KStandardDirs>
-#include "configxml.h"
-#include "secretstoragehelper.h"
-
-class SettingWidget::Private
+EapWidget::EapWidget(const QString & theConnectionId, QWidget * parent)
+: QWidget(parent), m_connectionId(theConnectionId)
 {
-public:
-
-};
-
-
-SettingWidget::SettingWidget(const QString& connectionId, QWidget* parent)
-: QWidget(parent)
-, SettingInterface(connectionId)
-, d(new Private)
-{
-
 }
 
-SettingWidget::~SettingWidget()
+EapWidget::~EapWidget()
 {
-    delete d;
-}
-
-QWidget* SettingWidget::widget()
-{
-    return this;
 }
 
 // vim: sw=4 sts=4 et tw=100

@@ -70,6 +70,10 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
     // Must setup initial widget first
     addConfig(m_contents->configXml(), m_contents);
 
+    // the wireless security widget also creates the wpa-eap widget which
+    // manages 802.1x parameters. 
+    addSettingWidget(wirelessSecurityWidget->wpaEapWidget());
+
     addToTabWidget(m_connectionTypeWidget);
     addToTabWidget(wirelessSecurityWidget);
     addToTabWidget(ipv4Widget);

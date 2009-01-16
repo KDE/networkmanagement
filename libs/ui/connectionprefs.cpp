@@ -66,6 +66,13 @@ QString ConnectionPreferences::connectionName() const
     }
 }
 
+void ConnectionPreferences::addSettingWidget(SettingInterface* iface)
+{
+    kDebug() << iface;
+    addConfig(iface->configXml(), iface->widget());
+    m_settingWidgets.append(iface);
+}
+
 void ConnectionPreferences::addToTabWidget(SettingWidget * wid)
 {
     m_contents->connectionSettingsWidget()->addTab(wid,wid->windowTitle());
@@ -77,7 +84,7 @@ void ConnectionPreferences::load()
 {
     // first, do the KCModule's load, to give the widgets' load routine a free hand
     KCModule::load();
-    foreach (SettingWidget * wid, m_settingWidgets) {
+    foreach (SettingInterface * wid, m_settingWidgets) {
         wid->readConfig();
     }
     // then read the connection settings
@@ -99,7 +106,7 @@ void ConnectionPreferences::save()
     KCModule::save();
 
     // thirdly, call each widget's custom save method
-    foreach (SettingWidget * wid, m_settingWidgets) {
+    foreach (SettingInterface * wid, m_settingWidgets) {
         wid->writeConfig();
     }
     // finally write the connection settings

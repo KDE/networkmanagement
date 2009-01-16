@@ -29,43 +29,15 @@ class ConfigXml;
 class KConfig;
 
 #include "knm_export.h"
+#include "settinginterface.h"
 
-class KNM_EXPORT SettingWidget : public QWidget
+class KNM_EXPORT SettingWidget : public QWidget, public SettingInterface
 {
 public:
     SettingWidget(const QString & connectionId, QWidget * parent = 0);
     virtual ~SettingWidget();
-    /**
-     * read in any configuration that ConfigXml can't handle
-     */
-    virtual void readConfig();
-    /**
-     * write any configuration that ConfigXml can't handle
-     */
-    virtual void writeConfig();
-    /**
-     * read the secrets out of the UI
-     */
-    virtual QVariantMap secrets() const;
-    /**
-     * get the name of the settings group configured by the widget
-     */
-    virtual QString settingName() const = 0;
-    /**
-     * The configuration management object belonging to this widget
-     */
-    ConfigXml * configXml() const;
-    /** 
-     * Check that the settings in this widget are valid
-     */
-    virtual bool validate() const;
-protected:
-    /**
-     * Setup ConfigXml for this widget
-     * Separate from ctor since it depends upon settingsName from concrete subclasses
-     */
-    void init();
-    QString connectionId() const;
+
+    QWidget* widget();
 private:
     class Private;
     Private * d;
