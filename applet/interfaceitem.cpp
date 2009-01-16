@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 #include "wirelessnetwork.h"
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_rfCheckBox(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
 {
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
@@ -153,10 +153,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
             this, SLOT(activeConnectionsChanged()));
     connect(m_iface, SIGNAL(connectionStateChanged(int)),
             this, SLOT(connectionStateChanged(int)));
-    if (m_rfCheckBox)
-        connect(m_rfCheckBox, SIGNAL(toggled(bool)),
-                SLOT(wirelessEnabledChanged(bool)));
-
     setNameDisplayMode(mode);
     // the applet may be starting when NetworkManager is already connected,
     // so initialise the list of active connections
@@ -220,13 +216,6 @@ void InterfaceItem::setConnectionInfo()
         }
     }
 }
-void InterfaceItem::wirelessEnabledChanged(bool checked)
-{
-    kDebug() << "RF KILLL toggled" << checked;
-    emit wirelessToggled(checked);
-    Solid::Control::NetworkManager::setWirelessEnabled(checked);
-}
-
 void InterfaceItem::activeConnectionsChanged()
 {
     kDebug() << "-------------------- updating active connection list for " << m_iface->uni();

@@ -333,7 +333,7 @@ void NetworkManagerPopup::managerWirelessEnabledChanged(bool enabled)
 {
     m_btnEnableWireless->setChecked(enabled);
     if (m_wifiGroup) {
-        m_wifiGroup->enableInterface(enabled);
+        m_wifiGroup->enableInterfaces(enabled);
     }
 }
 

@@ -71,7 +71,6 @@ public:
 public slots:
     void activeConnectionsChanged();
     void connectionStateChanged(int);
-    void wirelessEnabledChanged(bool checked);
     virtual void connectButtonClicked() = 0;
 
 protected Q_SLOTS:
@@ -82,7 +81,6 @@ protected Q_SLOTS:
     void serviceDisappeared(NetworkManagerSettings *service);
 Q_SIGNALS:
     void stateChanged();
-    void wirelessToggled(bool enabled);
 protected:
     /**
      * Fill in interface type connection info
@@ -123,7 +121,6 @@ protected:
     QGraphicsLinearLayout * m_connectionInfoLayout;
     Plasma::Label * m_connectionInfoLabel;
     Plasma::Meter * m_strengthMeter;
-    Plasma::CheckBox * m_rfCheckBox;
     Plasma::Label * m_connectionInfoStrengthLabel;
     Plasma::IconWidget * m_connectionInfoIcon;
     NameDisplayMode m_nameMode;

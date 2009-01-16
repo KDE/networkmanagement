@@ -90,7 +90,7 @@ InterfaceGroup::~InterfaceGroup()
     qDeleteAll( m_interfaces );
 }
 
-void InterfaceGroup::enableInterface(bool enable)
+void InterfaceGroup::enableInterfaces(bool enable)
 {
     m_enabled = enable;
     foreach (InterfaceItem * item, m_interfaces) {
@@ -233,17 +233,15 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
             case Solid::Control::NetworkInterface::Ieee80211:
                 wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
-                connect(wirelessinterface, SIGNAL(wirelessToggled(bool)), this, SLOT(enableInterface(bool)));
-                enableInterface(Solid::Control::NetworkManager::isWirelessEnabled());
                 wirelessinterface->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
 
                 // keep track of rf kill changes
                 QObject::disconnect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)), this, 0 );
                 QObject::disconnect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)), this, 0 );
                 QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
-                        this, SLOT(enableInterface(bool)));
+                        this, SLOT(enableInterfaces(bool)));
                 QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
-                        this, SLOT(enableInterface(bool)));
+                        this, SLOT(enableInterfaces(bool)));
 
                 m_wirelessEnvironment->addWirelessEnvironment(wirelessinterface->wirelessEnvironment());
                 interface = wirelessinterface;

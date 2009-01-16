@@ -57,6 +57,9 @@ public slots:
     void activeSignalStrengthChanged(int);
     void accessPointDestroyed(QObject *);
     void connectButtonClicked();
+    void wirelessEnabledToggled(bool checked);
+    void managerWirelessEnabledChanged(bool);
+    void managerWirelessHardwareEnabledChanged(bool);
 private:
     void setConnectionInfo();
 
@@ -68,5 +71,6 @@ private:
     Solid::Control::WirelessNetworkInterface * m_wirelessIface;
     Solid::Control::AccessPoint * m_activeAccessPoint;
     WirelessEnvironment * m_environment;
+    Plasma::CheckBox * m_rfCheckBox;
 };
 #endif // WIRELESSINTERFACEITEM_H
