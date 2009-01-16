@@ -64,9 +64,13 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
       m_wirelessEnvironment(new WirelessEnvironmentMerged(this)),
       m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical)),
       m_networkLayout(new QGraphicsLinearLayout(Qt::Vertical)),
-      m_enabled( false ),
       m_numberOfWlans( 1 )
 {
+    if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
+        m_enabled = Solid::Control::NetworkManager::isWirelessEnabled();
+    } else {
+        m_enabled = Solid::Control::NetworkManager::isNetworkingEnabled();
+    }
     connect(m_wirelessEnvironment, SIGNAL(networkAppeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
     connect(m_wirelessEnvironment, SIGNAL(networkDisappeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
     connect(userSettings, SIGNAL(appeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
@@ -78,7 +82,6 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
     m_networkLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_networkLayout->setSpacing(4);
     kDebug() << "TYPE" << m_type;
-    //updateNetworks();
 
     if (m_type == Solid::Control::NetworkInterface::Gsm) {
         setMinimumSize(QSize(285, 60)); // WTF?
@@ -90,7 +93,7 @@ InterfaceGroup::~InterfaceGroup()
     qDeleteAll( m_interfaces );
 }
 
-void InterfaceGroup::enableInterfaces(bool enable)
+void InterfaceGroup::setEnabled(bool enable)
 {
     m_enabled = enable;
     foreach (InterfaceItem * item, m_interfaces) {
@@ -126,7 +129,6 @@ void InterfaceGroup::setupFooter()
 
     m_layout->addItem(m_networkLayout);
     //kDebug() << m_interfaces.keys() << "Footer update";
-    ////updateNetworks();
     //kDebug() << m_interfaces.keys() << m_networks.keys() << "Footer .. CONNECT";
     connect(this, SIGNAL(connectionListUpdated()), SLOT(updateConnections()));
 }
@@ -153,8 +155,8 @@ void InterfaceGroup::updateConnections()
 
 void InterfaceGroup::updateNetworks()
 {
+    kDebug();
     // empty the layout
-    //kDebug() << "Clearing ... " << m_networks.keys();
     foreach (WirelessNetworkItem * i, m_networks) {
         m_networkLayout->removeItem(i);
         delete i;
@@ -239,9 +241,9 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 QObject::disconnect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)), this, 0 );
                 QObject::disconnect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)), this, 0 );
                 QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
-                        this, SLOT(enableInterfaces(bool)));
+                        this, SLOT(setEnabled(bool)));
                 QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
-                        this, SLOT(enableInterfaces(bool)));
+                        this, SLOT(setEnabled(bool)));
 
                 m_wirelessEnvironment->addWirelessEnvironment(wirelessinterface->wirelessEnvironment());
                 interface = wirelessinterface;
@@ -275,7 +277,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 break;
         }
         interface->setConnectionInspector(inspector);
-
+        interface->setEnabled(m_enabled);
         m_interfaceLayout->addItem(interface);
         m_interfaces.insert(iface->uni(), interface);
         m_interfaceLayout->invalidate();

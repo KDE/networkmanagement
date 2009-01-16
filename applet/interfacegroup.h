@@ -49,7 +49,7 @@ public:
     void setNetworksLimit( int wlans );
 
 public Q_SLOTS:
-    void enableInterfaces(bool enabled);
+    void setEnabled(bool enabled);
 protected Q_SLOTS:
     // reimplemented from ConnecitonList
     void activateConnection(AbstractConnectableItem*);
