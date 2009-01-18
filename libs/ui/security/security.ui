@@ -9,9 +9,6 @@
     <height>321</height>
    </rect>
   </property>
-  <property name="windowTitle" >
-   <string>Security</string>
-  </property>
   <layout class="QVBoxLayout" name="verticalLayout_5" >
    <item>
     <layout class="QGridLayout" name="gridLayout_2" >
