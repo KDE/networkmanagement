@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-wireless-security.h>
 #include <nm-setting-connection.h>
 #include <nm-setting-wireless.h>
+#include <nm-setting-8021x.h>
 
 #include "802_11_wireless_security_widget.h"
 #include "secretstoragehelper.h"
@@ -88,6 +89,9 @@ void WpaPskWidget::writeConfig()
 
     KConfigGroup cg2( d->config, NM_SETTING_WIRELESS_SETTING_NAME );
     cg2.writeEntry( "security", NM_SETTING_WIRELESS_SECURITY_SETTING_NAME );
+
+    // delete any 802.1x group found, just created by the KConfigDialog managed save
+    d->config->deleteGroup(NM_SETTING_802_1X_SETTING_NAME);
 }
 
 
