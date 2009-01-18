@@ -82,7 +82,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
-    setPassivePopup(true); // only for testing ...
+    //setPassivePopup(true); // only for testing ...
 
     updateToolTip();
     setAspectRatioMode(Plasma::ConstrainedSquare);
