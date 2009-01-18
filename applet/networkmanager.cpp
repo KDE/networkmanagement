@@ -173,7 +173,7 @@ void NetworkManagerApplet::init()
         Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
         eItem->setName("gsm");
         eItem->setIcon("phone");
-        eItem->setTitle(i18nc("Label for mobile wireless","Mobile Wireless"));
+        eItem->setTitle(i18nc("Label for mobile broadband (GSM/CDMA/UMTS/HDSPA etc)","Mobile Broadband"));
         m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
         m_gsmGroup->setObjectName("gsm-interface-group");
         m_gsmGroup->init();
