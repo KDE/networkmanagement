@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfacegroup.h"
 
 #include <NetworkManager.h>
+#include <nm-setting-connection.h>
 #include <nm-setting-wireless.h>
 
 #include <QGraphicsLinearLayout>
@@ -195,17 +196,24 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
 
     kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
 
-    // check whether every ssid seen is in use by any of our wireless interfaces
+    // check whether we have a connection for every ssid seen, if so, don't show it.
     foreach (QString ssid, m_wirelessEnvironment->networks()) {
         AbstractWirelessNetwork * net = m_wirelessEnvironment->findNetwork(ssid);
-        bool netInUse = false;
-        foreach (InterfaceItem * i, m_interfaces) {
-            WirelessInterfaceItem * wii = dynamic_cast<WirelessInterfaceItem *>(i);
-            if (wii) {
-                netInUse |= wii->isUsing(net);
+        // trying out excluding networks based on any existing connection
+        bool connectionForNetworkExists = false;
+        foreach (ConnectionItem * connectionItem, m_connections) {
+            RemoteConnection * conn = connectionItem->connection();
+            QVariantMapMap settings = conn->settings();
+            // is it wireless?
+            QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
+            if (connectionSetting.value(QLatin1String(NM_SETTING_CONNECTION_TYPE)).toString() == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
+                QVariantMap wirelessSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME));
+                // does this connection match the ssid?
+                QString connectionSsid = wirelessSetting.value(QLatin1String(NM_SETTING_WIRELESS_SSID)).toString();
+                connectionForNetworkExists |= (connectionSsid == ssid);
             }
         }
-        if (!netInUse) {
+        if (!connectionForNetworkExists) {
             allNetworks.append(net);
         }
     }
