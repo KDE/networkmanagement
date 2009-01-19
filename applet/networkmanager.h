@@ -60,6 +60,8 @@ public:
     ~NetworkManagerApplet();
     /* reimp Plasma::Applet */
     void init();
+    /* reimp Plasma::PopupApplet */
+    void initExtenderItem(Plasma::ExtenderItem *);
     /* reimp Plasma::Applet */
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
     /* reimp Plasma::Applet */

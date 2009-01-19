@@ -99,6 +99,24 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     // FIXME:: Add manage connection button
     //QObject::connect(this, SIGNAL(manageConnections()),
     //        this, SLOT(manageConnections()));
+
+    // This MUST happen before any InterfaceGroups are instantiated
+    // kickstart the kded module
+    QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
+                        "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
+
+    WId wid = QApplication::desktop()->effectiveWinId();
+    kDebug() << wid;
+    ref.call( "start", qlonglong( wid ) );
+    // not really interesting, for now we only care to kick the load-on-demand
+    kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
+
+    m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
+    m_userSettings->setObjectName("user-settings-service");
+    m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
+    m_systemSettings->setObjectName("system-settings-service");
+    // Now it is safe to create ExtenderItems and therefore InterfaceGroups
+
 }
 
 NetworkManagerApplet::~NetworkManagerApplet()
@@ -113,6 +131,7 @@ NetworkManagerApplet::~NetworkManagerApplet()
 
 void NetworkManagerApplet::init()
 {
+    kDebug();
     KConfigGroup cg = config();
     m_iconPerDevice = cg.readEntry("IconPerDevice", false);
     m_svg->resize(contentsRect().size());
@@ -124,71 +143,45 @@ void NetworkManagerApplet::init()
             Solid::Control::NetworkManager::networkInterfaces()) {
         QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
     }
-
-    // Set up the extender with its various groups
+    // Set up the extender with its various groups.  The first call to extender() triggers calls to
+    // initExtenderItem() if there are any detached items.
     extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
 
-    // get kded module kicked in
-    QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
-                        "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
-
-    WId wid = QApplication::desktop()->effectiveWinId();
-    kDebug() << wid;
-    ref.call( "start", qlonglong( wid ) );
-    // not really interesting, for now we only care to kick the load-on-demand
-    kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
-
-
-    m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
-    m_userSettings->setObjectName("user-settings-service");
-    m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
-    m_systemSettings->setObjectName("system-settings-service");
-
     { // Wired
-        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-        eItem->setName("wired");
-        eItem->setIcon("network-wired");
-        eItem->setTitle(i18nc("Label for ethernet group in popup","Ethernet"));
-        m_ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, eItem);
-        m_ethernetGroup->setObjectName("ethernet-interface-group");
-        m_ethernetGroup->init();
-        eItem->setWidget(m_ethernetGroup);
+        if (!extender()->item("wired")) {
+            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+            eItem->setName("wired");
+            eItem->setIcon("network-wired");
+            eItem->setTitle(i18nc("Label for ethernet group in popup","Ethernet"));
+            initExtenderItem(eItem);
+        }
     }
-
     { // Wireless
-
-        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-        eItem->setName("wireless");
-        eItem->setIcon("network-wireless");
-        eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless"));
-
-        m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, eItem);
-        m_wifiGroup->setObjectName("wifi-interface-group");
-        m_wifiGroup->init();
-
-        eItem->setWidget(m_wifiGroup);
+        if (!extender()->item("wireless")) {
+            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+            eItem->setName("wireless");
+            eItem->setIcon("network-wireless");
+            eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless"));
+            initExtenderItem(eItem);
+        }
     }
-
     { // GSM
-        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-        eItem->setName("gsm");
-        eItem->setIcon("phone");
-        eItem->setTitle(i18nc("Label for mobile broadband (GSM/CDMA/UMTS/HDSPA etc)","Mobile Broadband"));
-        m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
-        m_gsmGroup->setObjectName("gsm-interface-group");
-        m_gsmGroup->init();
-        eItem->setWidget(m_gsmGroup);
+        if (!extender()->item("gsm")) {
+            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+            eItem->setName("gsm");
+            eItem->setIcon("phone");
+            eItem->setTitle(i18nc("Label for mobile broadband (GSM/CDMA/UMTS/HDSPA etc)","Mobile Broadband"));
+            initExtenderItem(eItem);
+        }
     }
-
     { // VPN
-        Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-        eItem->setName("vpn");
-        eItem->setIcon("network-server");
-        eItem->setTitle(i18nc("Label for vpn connections in popup","VPN Connections"));
-        m_vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
-        m_vpnGroup->setObjectName("vpn-interface-group");
-        m_vpnGroup->init();
-        eItem->setWidget(m_vpnGroup);
+        if (!extender()->item("vpn")) {
+            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+            eItem->setName("vpn");
+            eItem->setIcon("network-server");
+            eItem->setTitle(i18nc("Label for vpn connections in popup","VPN Connections"));
+            initExtenderItem(eItem);
+        }
     }
 
     showWired(cg.readEntry("showWired", true));
@@ -201,6 +194,46 @@ void NetworkManagerApplet::init()
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
 
+}
+
+void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
+{
+    const QString WIRED_EXTENDER_ITEM_NAME = QLatin1String("wired");
+    const QString WIRELESS_EXTENDER_ITEM_NAME = QLatin1String("wireless");
+    const QString GSM_EXTENDER_ITEM_NAME = QLatin1String("gsm");
+    const QString VPN_EXTENDER_ITEM_NAME = QLatin1String("vpn");
+
+    if (eItem->name() == WIRED_EXTENDER_ITEM_NAME) {
+        if (!m_ethernetGroup) {
+            m_ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, eItem);
+            m_ethernetGroup->setObjectName("ethernet-interface-group");
+            m_ethernetGroup->init();
+        }
+        eItem->setWidget(m_ethernetGroup);
+    } else if (eItem->name() == WIRELESS_EXTENDER_ITEM_NAME) {
+        if (!m_wifiGroup) {
+            m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, eItem);
+            m_wifiGroup->setObjectName("wifi-interface-group");
+            m_wifiGroup->init();
+        }
+        eItem->setWidget(m_wifiGroup);
+    } else if (eItem->name() == GSM_EXTENDER_ITEM_NAME) {
+        if (!m_gsmGroup) {
+            m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
+            m_gsmGroup->setObjectName("gsm-interface-group");
+            m_gsmGroup->init();
+        }
+        eItem->setWidget(m_gsmGroup);
+    } else if (eItem->name() == VPN_EXTENDER_ITEM_NAME) {
+        if (!m_vpnGroup) {
+            m_vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
+            m_vpnGroup->setObjectName("vpn-interface-group");
+            m_vpnGroup->init();
+        }
+        eItem->setWidget(m_vpnGroup);
+    } else {
+        kDebug() << "Unrecognised extender name!  Is the config from the future?";
+    }
 }
 
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
@@ -788,6 +821,5 @@ void NetworkManagerApplet::managerStatusChanged(Solid::Networking::Status status
         // ...
     }
 }
-
 
 #include "networkmanager.moc"
