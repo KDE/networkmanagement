@@ -69,17 +69,6 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
     : Plasma::PopupApplet(parent, args), m_iconPerDevice(false), m_svg(0)
 {
-    m_extender = 0;
-    m_wifiGroup = 0;
-    m_wiredHeader = 0;
-    m_ethernetGroup = 0;
-    m_wirelessHeader = 0;
-    m_ethernetGroup = 0;
-    m_vpnHeader = 0;
-    m_vpnGroup = 0;
-    m_gsmHeader = 0;
-    m_gsmGroup = 0;
-
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
     //setPassivePopup(true); // only for testing ...
@@ -147,49 +136,10 @@ void NetworkManagerApplet::init()
     // initExtenderItem() if there are any detached items.
     extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    { // Wired
-        if (!extender()->item("wired")) {
-            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-            eItem->setName("wired");
-            eItem->setIcon("network-wired");
-            eItem->setTitle(i18nc("Label for ethernet group in popup","Ethernet"));
-            initExtenderItem(eItem);
-        }
-    }
-    { // Wireless
-        if (!extender()->item("wireless")) {
-            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-            eItem->setName("wireless");
-            eItem->setIcon("network-wireless");
-            eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless"));
-            initExtenderItem(eItem);
-        }
-    }
-    { // GSM
-        if (!extender()->item("gsm")) {
-            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-            eItem->setName("gsm");
-            eItem->setIcon("phone");
-            eItem->setTitle(i18nc("Label for mobile broadband (GSM/CDMA/UMTS/HDSPA etc)","Mobile Broadband"));
-            initExtenderItem(eItem);
-        }
-    }
-    { // VPN
-        if (!extender()->item("vpn")) {
-            Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
-            eItem->setName("vpn");
-            eItem->setIcon("network-server");
-            eItem->setTitle(i18nc("Label for vpn connections in popup","VPN Connections"));
-            initExtenderItem(eItem);
-        }
-    }
-
     showWired(cg.readEntry("showWired", true));
     showWireless(cg.readEntry("showWireless", true));
-    showVpn(cg.readEntry("showVpn", false));
-    showGsm(cg.readEntry("showGsm", false));
-    m_numberOfWlans = cg.readEntry("numberOfWlans", 4);
-    m_wifiGroup->setNetworksLimit( m_numberOfWlans );
+    showVpn(cg.readEntry("showVpn", true));
+    showGsm(cg.readEntry("showGsm", true));
 
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
@@ -204,33 +154,31 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
     const QString VPN_EXTENDER_ITEM_NAME = QLatin1String("vpn");
 
     if (eItem->name() == WIRED_EXTENDER_ITEM_NAME) {
-        if (!m_ethernetGroup) {
-            m_ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, eItem);
-            m_ethernetGroup->setObjectName("ethernet-interface-group");
-            m_ethernetGroup->init();
-        }
-        eItem->setWidget(m_ethernetGroup);
+        InterfaceGroup * ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, eItem);
+        ethernetGroup->setObjectName("ethernet-interface-group");
+        ethernetGroup->init();
+        eItem->setWidget(ethernetGroup);
     } else if (eItem->name() == WIRELESS_EXTENDER_ITEM_NAME) {
-        if (!m_wifiGroup) {
-            m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, eItem);
-            m_wifiGroup->setObjectName("wifi-interface-group");
-            m_wifiGroup->init();
-        }
+        m_wifiGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, eItem);
+        m_wifiGroup->setObjectName("wifi-interface-group");
+        m_wifiGroup->init();
+        KConfigGroup cg = config();
+        m_numberOfWlans = cg.readEntry("numberOfWlans", 4);
+        m_wifiGroup->setNetworksLimit( m_numberOfWlans );
+
         eItem->setWidget(m_wifiGroup);
     } else if (eItem->name() == GSM_EXTENDER_ITEM_NAME) {
-        if (!m_gsmGroup) {
-            m_gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, this);
-            m_gsmGroup->setObjectName("gsm-interface-group");
-            m_gsmGroup->init();
-        }
-        eItem->setWidget(m_gsmGroup);
+        InterfaceGroup * gsmGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, eItem);
+        gsmGroup->setObjectName("gsm-interface-group");
+        gsmGroup->init();
+
+        eItem->setWidget(gsmGroup);
     } else if (eItem->name() == VPN_EXTENDER_ITEM_NAME) {
-        if (!m_vpnGroup) {
-            m_vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
-            m_vpnGroup->setObjectName("vpn-interface-group");
-            m_vpnGroup->init();
-        }
-        eItem->setWidget(m_vpnGroup);
+        VpnConnectionGroup * vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, eItem);
+        vpnGroup->setObjectName("vpn-interface-group");
+        vpnGroup->init();
+
+        eItem->setWidget(vpnGroup);
     } else {
         kDebug() << "Unrecognised extender name!  Is the config from the future?";
     }
@@ -294,7 +242,9 @@ void NetworkManagerApplet::configAccepted()
     int wlans = ui.numberOfWlans->value();
     if (wlans != m_numberOfWlans) {
         m_numberOfWlans = wlans;
-        m_wifiGroup->setNetworksLimit( m_numberOfWlans );
+        if (m_wifiGroup) {
+            m_wifiGroup->setNetworksLimit( m_numberOfWlans );
+        }
         cg.writeEntry("numberOfWlans", m_numberOfWlans);
         kDebug() << "No of WLANS Changed:" << wlans;
     }
@@ -740,9 +690,20 @@ void NetworkManagerApplet::showWired(bool show)
 {
     m_showWired = show;
     kDebug() << show << m_showWired;
-    Plasma::ExtenderItem *item = extender()->item("wired");
-    if (item) {
-        item->setVisible(show);
+    Plasma::ExtenderItem *eItem = extender()->item("wired");
+    if (show) {
+        if (!eItem) {
+            eItem = new Plasma::ExtenderItem(extender());
+            eItem->setName("wired");
+            eItem->setIcon("network-wired");
+            eItem->setTitle(i18nc("Label for ethernet group in popup","Ethernet"));
+            initExtenderItem(eItem);
+        }
+    } else {
+        if (eItem) {
+            eItem->destroy();
+            
+        }
     }
 }
 
@@ -750,29 +711,59 @@ void NetworkManagerApplet::showWireless(bool show)
 {
     m_showWireless = show;
     kDebug() << show << m_showWireless;
-    Plasma::ExtenderItem *item = extender()->item("wireless");
-    if (item) {
-        item->setVisible(show);
+    Plasma::ExtenderItem *eItem = extender()->item("wireless");
+    if (show) {
+        if (!eItem) {
+            eItem = new Plasma::ExtenderItem(extender());
+            eItem->setName("wireless");
+            eItem->setIcon("network-wireless");
+            eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless"));
+            initExtenderItem(eItem);
+        }
+    } else {
+        if (eItem) {
+            eItem->destroy();
+        }
     }
 }
 
 void NetworkManagerApplet::showVpn(bool show)
 {
     m_showVpn = show;
-    kDebug() << show << m_showVpn;
-    Plasma::ExtenderItem *item = extender()->item("vpn");
-    if (item) {
-        item->setVisible(show);
+    kDebug() << show;
+    Plasma::ExtenderItem *eItem = extender()->item("vpn");
+    if (show) {
+        if (!eItem) {
+            eItem = new Plasma::ExtenderItem(extender());
+            eItem->setName("vpn");
+            eItem->setIcon("network-server");
+            eItem->setTitle(i18nc("Label for vpn connections in popup","VPN Connections"));
+            initExtenderItem(eItem);
+        }
+    } else {
+        if (eItem) {
+            eItem->destroy();
+        }
     }
 }
 
 void NetworkManagerApplet::showGsm(bool show)
 {
     m_showGsm = show;
-    kDebug() << show << m_showGsm;
-    Plasma::ExtenderItem *item = extender()->item("gsm");
-    if (item) {
-        item->setVisible(show);
+    kDebug() << show;
+    Plasma::ExtenderItem *eItem = extender()->item("gsm");
+    if (show) {
+        if (!eItem) {
+            eItem = new Plasma::ExtenderItem(extender());
+            eItem->setName("gsm");
+            eItem->setIcon("phone");
+            eItem->setTitle(i18nc("Label for mobile broadband (GSM/CDMA/UMTS/HDSPA etc)","Mobile Broadband"));
+            initExtenderItem(eItem);
+        }
+    } else {
+        if (eItem) {
+            eItem->destroy();
+        }
     }
 }
 
@@ -784,9 +775,9 @@ void NetworkManagerApplet::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     if (enabled) {
         KNotification::event(Event::RfOn, i18nc("Notification for radio kill switch turned on", "Wireless hardware enabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
-        m_lblRfkill->setText(i18nc("Label text when hardware wireless is enabled", "Wireless hardware is enabled"));
+        //m_lblRfkill->setText(i18nc("Label text when hardware wireless is enabled", "Wireless hardware is enabled"));
     } else {
-        m_lblRfkill->setText(i18nc("Label text when hardware wireless is not enabled", "Wireless hardware is disabled"));
+        //m_lblRfkill->setText(i18nc("Label text when hardware wireless is not enabled", "Wireless hardware is disabled"));
         KNotification::event(Event::RfOff, i18nc("Notification for radio kill switch turned on", "Wireless hardware disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
     }
 }

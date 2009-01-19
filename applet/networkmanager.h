@@ -154,35 +154,18 @@ private:
     QPixmap m_pixmapWiredDisconnected;
     Solid::Control::NetworkInterfaceList m_interfaces;
     QString m_elementName;
-    QPoint m_clicked;
     Plasma::ToolTipContent m_toolTip;
     // Configuration dialog
     Ui::nmConfig ui;
 
-    Plasma::Extender *m_extender;
     NetworkManagerSettings * m_userSettings;
     NetworkManagerSettings * m_systemSettings;
-    QGraphicsLinearLayout * m_layout;
-    QGraphicsLinearLayout * m_connectionLayout;
-    InterfaceGroup * m_ethernetGroup;
     InterfaceGroup * m_wifiGroup;
-    VpnConnectionGroup * m_vpnGroup;
-    InterfaceGroup * m_gsmGroup;
-    Plasma::Label * m_vpnHeader;
-    Plasma::Label * m_wirelessHeader;
-    Plasma::Label * m_wiredHeader;
-    Plasma::Label * m_gsmHeader;
-    Plasma::Label * m_notRunning;
-    Plasma::Label * m_lblRfkill;
-    Plasma::CheckBox * m_btnEnableNetworking;
-    Plasma::IconWidget * m_btnManageConnections;
     bool m_showWired;
     bool m_showWireless;
     bool m_showVpn;
     bool m_showGsm;
     int m_numberOfWlans;
-    QSignalMapper * m_connectionActivationSignalMapper;
-    QSignalMapper * m_connectionDeactivationSignalMapper;
 };
 
 #endif
