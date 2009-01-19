@@ -36,7 +36,7 @@ namespace Plasma
 }
 
 /**
- * Represents an inactive connection
+ * Represents an wireless network for which no connection exists
  */
 class WirelessNetworkItem : public AbstractConnectableItem
 {

@@ -267,4 +267,12 @@ void WirelessInterfaceItem::managerWirelessHardwareEnabledChanged(bool enabled)
     m_rfCheckBox->setEnabled(!enabled);
 }
 
+bool WirelessInterfaceItem::isUsing(const AbstractWirelessNetwork * net) const
+{
+    if (m_activeAccessPoint) {
+        return m_activeAccessPoint->ssid() == net->ssid();
+    }
+    return false;
+}
+
 // vim: sw=4 sts=4 et tw=100

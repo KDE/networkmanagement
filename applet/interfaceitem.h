@@ -64,7 +64,6 @@ public:
      */
     void setConnectionInspector(ConnectionInspector *);
     ConnectionInspector * connectionInspector() const;
-    uint activeConnectionCount() const;
     virtual void setEnabled(bool enable);
     virtual QString ssid();
 

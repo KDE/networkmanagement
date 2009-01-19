@@ -192,30 +192,29 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
 {
     QList<AbstractWirelessNetwork*> allNetworks;
     QList<AbstractWirelessNetwork*> topNetworks;
-    // we only show networks if we are not connected, have no connections and if the user settings service is present
-    // in future we could show the networks when the service is not running but without their connectButton
-    uint activeConnectionTotal = 0;
-    QString active_ssid = QString();
-    foreach (InterfaceItem * i, m_interfaces) {
-        activeConnectionTotal += i->activeConnectionCount();
-    }
-    //kDebug() << "Active Connections:" << activeConnectionTotal << "Networks:" << m_wirelessEnvironment->networks();
+
     kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
 
-    // FIXME: m_userSettings can be invalid here, but we might still want to connect.
-    //if ((activeConnectionTotal == 0) && m_connections.isEmpty() && m_userSettings->isValid()) {
-    //kDebug() << "ACTIVE:" << active_ssid;
+    // check whether every ssid seen is in use by any of our wireless interfaces
     foreach (QString ssid, m_wirelessEnvironment->networks()) {
-        allNetworks.append(m_wirelessEnvironment->findNetwork(ssid));
-    }
-        qSort(allNetworks.begin(), allNetworks.end(), wirelessNetworkGreaterThanStrength);
-        for (int i = 0; i < allNetworks.count() && i < m_numberOfWlans; i++)
-        {
-            topNetworks.append(allNetworks[i]);
+        AbstractWirelessNetwork * net = m_wirelessEnvironment->findNetwork(ssid);
+        bool netInUse = false;
+        foreach (InterfaceItem * i, m_interfaces) {
+            WirelessInterfaceItem * wii = dynamic_cast<WirelessInterfaceItem *>(i);
+            if (wii) {
+                netInUse |= wii->isUsing(net);
+            }
         }
-        //kDebug() << topNetworks << allNetworks;
-    //}
-    //return allNetworks; // FIXME: shortcut ...
+        if (!netInUse) {
+            allNetworks.append(net);
+        }
+    }
+
+    // sort by strength
+    qSort(allNetworks.begin(), allNetworks.end(), wirelessNetworkGreaterThanStrength);
+
+    //return the configured number of networks to show
+    topNetworks = allNetworks.mid(0, m_numberOfWlans);
     return topNetworks;
 }
 

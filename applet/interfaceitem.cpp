@@ -130,7 +130,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 
     //       security
     m_connectionInfoIcon = new Plasma::IconWidget(this);
-    m_connectionInfoIcon->setIcon("object-unlocked"); // FIXME: set correct icon on start
+    //m_connectionInfoIcon->setIcon("object-unlocked"); // FIXME: set correct icon on start
     m_connectionInfoIcon->setMinimumHeight(22);
     m_connectionInfoIcon->setMinimumWidth(22);
     m_connectionInfoIcon->setMaximumHeight(22);
@@ -173,6 +173,9 @@ void InterfaceItem::setEnabled(bool enable)
     m_connectionNameLabel->setEnabled(enable);
     m_ifaceNameLabel->setEnabled(enable);
     m_connectionInfoIcon->setEnabled(enable);
+    if (m_strengthMeter) {
+        m_strengthMeter->setEnabled(enable);
+    }
 }
 
 InterfaceItem::~InterfaceItem()
@@ -320,6 +323,10 @@ void InterfaceItem::setUnavailable()
     m_ifaceNameLabel->setText(i18n("<b>Interface %1</b>", m_iface->interfaceName()));
     m_connectionNameLabel->setText(m_unavailableText);
     m_connectionInfoLabel->setText("");
+    m_connectionInfoIcon->hide();
+    if (m_strengthMeter) {
+        m_strengthMeter->hide();
+    }
 }
 
 void InterfaceItem::setInactive()
@@ -327,6 +334,10 @@ void InterfaceItem::setInactive()
     m_icon->setEnabled(false);
     m_connectionNameLabel->setText(i18nc("networking device is not connected", "Disconnected"));
     m_connectionInfoLabel->setText("");
+    m_connectionInfoIcon->hide();
+    if (m_strengthMeter) {
+        m_strengthMeter->hide();
+    }
 }
 
 void InterfaceItem::setActiveConnection(int state)
@@ -351,11 +362,10 @@ void InterfaceItem::setActiveConnection(int state)
     }
     m_connectionNameLabel->setText(stateString);
     setConnectionInfo();
-}
-
-uint InterfaceItem::activeConnectionCount() const
-{
-    return m_activeConnections.count();
+    m_connectionInfoIcon->show();
+    if (m_strengthMeter) {
+        m_strengthMeter->show();
+    }
 }
 
 void InterfaceItem::setConnectionInspector(ConnectionInspector * insp)
