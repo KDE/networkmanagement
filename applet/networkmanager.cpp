@@ -145,7 +145,7 @@ void NetworkManagerApplet::init()
     }
     // Set up the extender with its various groups.  The first call to extender() triggers calls to
     // initExtenderItem() if there are any detached items.
-    extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
     { // Wired
         if (!extender()->item("wired")) {
