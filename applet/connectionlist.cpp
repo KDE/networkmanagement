@@ -73,22 +73,30 @@ bool ConnectionList::assessConnections(NetworkManagerSettings * service)
             added |= processConnection(service, connectionPath);
         }
     }
+    if (added) {
+        emit connectionListUpdated();
+    }
     return added;
 }
 
 void ConnectionList::serviceDisappeared(NetworkManagerSettings* settings)
 {
     //remove all connections from this service
+    bool connectionsDeleted = false;
     ServiceConnectionHash::iterator i = m_connections.begin();
     while (i != m_connections.end()) {
         if (i.key().first == settings->service()) {
             ConnectionItem * item = i.value();
             m_connectionLayout->removeItem(item);
             i = m_connections.erase(i);
+            connectionsDeleted = true;
             delete item;
         } else {
             ++i;
         }
+    }
+    if (connectionsDeleted) {
+        emit connectionListUpdated();
     }
 }
 

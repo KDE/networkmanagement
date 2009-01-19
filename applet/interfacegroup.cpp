@@ -74,8 +74,7 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
     }
     connect(m_wirelessEnvironment, SIGNAL(networkAppeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
     connect(m_wirelessEnvironment, SIGNAL(networkDisappeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
-    connect(userSettings, SIGNAL(appeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
-    connect(userSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
+    connect(this, SIGNAL(connectionListUpdated()), SLOT(refreshConnectionsAndNetworks()));
 
     m_layout->setSpacing(0);
     m_interfaceLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
