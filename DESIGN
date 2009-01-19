@@ -15,7 +15,6 @@ iii) Plasmoid gives user feedback i
 
 
 Directory structure of project
-.                           OBSOLETE Plasmoid sources
 ./libs                      Headers shared by all code
 ./libs/storage              Storage layer shared library (libknmstorage) for loading and saving NM settings
 ./libs/ui                   UI shared library (libknmui) for settings config widgets
@@ -141,7 +140,7 @@ Uses a .kcfg file to define settings.  Since .kcfg allows multiple groups should
 
 Use nested groups in rcfile.
 
-Load kcfg, create in memory representation?  Or just work from XML tree?
+Load kcfg, create in memory representation - ConfigXml
 
 Flag passed to ConfigXml controls whether it should load secrets or skip this (for the dbus service, which should not open the wallet until queried by the NM daemon)
 
@@ -169,15 +168,20 @@ handler values:
   map handler: insert qvariant into setting's map with name
   ui handler: locate child widget named "$name_item_widget" and set value, min, max using methods appropriate to widget type 
 
-The UI case is nearly the same as what KConfigXT already does, the difference is that it operates on a top level group only instead of the whole file. Could we use KConfigDialogManager with a custom KConfigSkeleton?
+The UI case is nearly the same as what KConfigXT already does, the difference is that it operates on a top level group only instead of the whole file. We use KConfigDialogManager with a custom KConfigSkeleton (ConfigXml)
 
-Assessed KConfigSkeleton.  Can we point it at an arbitrary KConfigGroup?  Can we set it up with custom Items read from the kcfg.  Will it read/write those correctly?  
-
-** Yes, all of this is already done, using ConfigXml from Plasma.  Our copy adds support for KWallet and storing byte arrays
+All of this is already done, using ConfigXml from Plasma.  Our copy adds support for KWallet and storing byte arrays.
 
 I thought that KConfigDialog only allows a single managed widget but KConfigDialog can handle an arbitrary number of widgets and their children.  Still might have to use the Manager directly to work on a widget in a KCM.
 
 WRITE
 From ui:
-KCModule::writeConfig();
-// todo, document how custom settings are saved
+Each Connection type has its own ConnectionPreferences subclass.  ConnectionPreferences in turn subclasses KCModule, so all write operations are carried out in ConnectionPreferences::save() (a reimpl). {
+
+First KCModule::save() is called, which triggers the KConfigDialogManager automatic persistence of changed widgets' contents using ConfigXml
+
+Secondly, each SettingWidget's SettingsInterface::writeConfig() reimplementation is called, which performs any custom save work necessary.
+
+Many settings are too complex (either the UI does not map to the simple widgets supported by KConfigSkeleton, or there is no 1:1 mapping between the contents of the UI and what NetworkManager expects to receive.
+
+To read and write these settings, reimplement SettingsInterface::writeConfig(), access the config group for the widget with KConfigGroup group(configXml()->config(), settingName());  Then use normal KConfigGroup api to save your settings.  The call to KConfig::sync() is done at the end of ConnectionPreferences::save().
