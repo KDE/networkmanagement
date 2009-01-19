@@ -185,3 +185,9 @@ Secondly, each SettingWidget's SettingsInterface::writeConfig() reimplementation
 Many settings are too complex (either the UI does not map to the simple widgets supported by KConfigSkeleton, or there is no 1:1 mapping between the contents of the UI and what NetworkManager expects to receive.
 
 To read and write these settings, reimplement SettingsInterface::writeConfig(), access the config group for the widget with KConfigGroup group(configXml()->config(), settingName());  Then use normal KConfigGroup api to save your settings.  The call to KConfig::sync() is done at the end of ConnectionPreferences::save().
+
+ASSESSMENT OF CURRENT STORAGE LAYER
+PROBLEMS
+Interface of connections is too simple and under-elaborated - doing settings map lookups to find out things about a connection is tiresome.  
+Since there is no Connection class, code to interface with the outside world has to be in other classes. 
+Currently we have no place to do custom DBus marshalling of internal connection maps to QVariantMaps which are valid Connections to put on the bus.

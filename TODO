@@ -10,16 +10,6 @@ KEY (by Lubos)
 % = should be probably done later, during cleanups and preparations for being stable
 . = done, remove when DESIGN is updated
 
-
-TODO CB:
-- Create a network scanning view - In Progress
-    - Create Scrolling View
-    - Scan Actual APs
-- Create a profile class which describes network settings
-- Create a profile creation view/wizard
-- Create a profile editing view
-
-TODO WS:
 - SERVICE: Complete settings service
   * per-setting group helper class for complex settings, where needed for ipv4 config write
     * take out hacks in Connection to hash WPA keys there
@@ -31,7 +21,9 @@ TODO WS:
     / WPA-PSK (needs extending with specific crypto alg options, and anything WPA2 requires)
     * LEAP
     / WPA-EAP
+      * TTLS requires that the certs are decrypted in the service and sent to NM, see libnm-util
   + also for 802.1x
+    * Add system cert path property to UI and schema for 802.1x
   . Create Connection.Secrets objects and do lazy secret loading. Change configxml classes to not read wallet on start
     . Show connection UI to get secrets on demand if the wallet does not contain them or if the
       daemon requested new secrets
@@ -41,19 +33,25 @@ TODO WS:
   . write LastUsed to knetworkmanagerrc on successful connection activation
     * Don't also write a Unix timestamp to the individual connection's file - read this from the main config file
     * Watch the active connections in the connection editor and update its UI contents
+  * Store SeenBSSIDs in wireless connections
+  * Shutdown the service on timeout when the applet is removed, not immediately, to allow for plasma reconfigures.
 
 - CONFIG: Implement control module
   + Write a nice class to turn a QDateTime into "3 minutes ago", "5 hours ago" instead of using KLocale::formatDate(), or extend KLocale with formatDateRelative(QDateTime in, QDateTime relativeTo)
   . Add UI for selecting cellular connection type,
-    * detect and disable for existing connections
+    . detect and disable for existing connections
   ! Replace Ok button with Close in main connectioneditor, or implement storage of changed/added connection settings in temp files until the Ok button is clicked, and enable deleting temp files if Cancel is clicked
   ! Edit on double click existing entry
-  . Show header in connection list, people don't understand "Auto eth0 never"
-  / Complete most settings widgets' complex (non-KConfigSkeleton-managed) UI plumbing and reimplemented save routines
+  . Show header in connection list, people don't understand "Auto eth0 never" / Complete most settings widgets' complex (non-KConfigSkeleton-managed) UI plumbing and reimplemented save routines
+    ! Static IP addresses
   + Option to display system-provided connections and import them so they can be edited (probably depends on PolicyKit)
   . Show the ScanWidget from widgets developed by CB
   / Clean out wireless security settings when editing a connection and changing the wireless security type.
-  / Figure out why autoconnect is not working - it should be
+  / Ensure that autoconnect is not broken by automatically serialising unused wireless security widgets to the connection    config file and thereby creating an invalid conneciton
+  * VPN
+    - VPNC - write config file for vpnc binary when creating a connection
+  * Merge APs into networks in the ScanWidget
+  * Autonumber new connections
 
 - APPLET: Make sure system tray+engine does what we need
   * Popup menu
@@ -83,7 +81,8 @@ TODO WS:
          . Wireless interface groups should maintain a merged WirelessEnvironment for all interfaces' environments,
            for maintaining its appropriate connection list.
          / Wireless network items for unconfigured networks that launch the connection editor
-           * Show correct wireless security for the AP
+           / Show correct wireless security for the AP
+         * Show/hide of InterfaceGroups' extenderitems currently leaves big whitespace in the popup, they should be removed from the popup when not shown.
         / Disconnect button
     . Connection editor
     . Flight mode toggle
