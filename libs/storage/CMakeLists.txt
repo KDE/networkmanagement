@@ -9,6 +9,7 @@ set(knmstorage_SRCS
    configxml.cpp
    connection.cpp
    setting.cpp
+   settingdbus.cpp
    settingpersistence.cpp
 )
 

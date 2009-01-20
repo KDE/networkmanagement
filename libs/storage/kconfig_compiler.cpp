@@ -2249,7 +2249,7 @@ int main( int argc, char **argv )
   dH << "class " << visibility << className << "Dbus : public " << inherits << endl;
   dH << "{" << endl;
   dH << "  public:" << endl;
-  dH << "    " << className << "Dbus( " << className << "Setting * setting, KConfigGroup * group);" << endl;
+  dH << "    " << className << "Dbus( " << className << "Setting * setting);" << endl;
   dH << "    ~" << className << "Dbus();" << endl;
   dH << "    void fromMap(const QVariantMap&);" << endl;
   dH << "    QVariantMap toMap();" << endl;
@@ -2277,12 +2277,12 @@ int main( int argc, char **argv )
   dC << "#include \"" << headerFileName << "\"" << endl << endl;
 
   // Constructor
-  dC << className << "Dbus::" << className << "Persistence(" << className << "Setting * setting, KConfigGroup * config) : SettingPersistence(setting, config)" << endl;
+  dC << className << "Dbus::" << className << "Dbus(" << className << "Setting * setting) : SettingDbus(setting)" << endl;
   dC << "{" << endl;
   dC << "}" << endl << endl;
 
   // Destructor
-  dC << className << "Dbus::~" << className << "Persistence()" << endl;
+  dC << className << "Dbus::~" << className << "Dbus()" << endl;
   dC << "{" << endl;
   dC << "}" << endl << endl;
 
