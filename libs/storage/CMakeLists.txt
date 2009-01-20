@@ -7,6 +7,8 @@ include_directories(
 set(knmstorage_SRCS
    secretstoragehelper.cpp
    configxml.cpp
+   connection.cpp
+   setting.cpp
 )
 
 kde4_add_kcfg_files(knmstorage_SRCS knmserviceprefs.kcfgc)
@@ -21,4 +23,10 @@ set_target_properties(knmstorage PROPERTIES
    )
 install(TARGETS knmstorage ${INSTALL_TARGETS_DEFAULT_ARGS})
 
+set(kconfig_compiler_SRCS kconfig_compiler.cpp)
 
+kde4_add_executable(kconfig_compiler NOGUI RUN_UNINSTALLED ${kconfig_compiler_SRCS})
+
+target_link_libraries(kconfig_compiler  ${QT_QTCORE_LIBRARY} ${QT_QTXML_LIBRARY} )
+
+set(kconfig_compiler_SRCS kconfig_compiler.cpp)
