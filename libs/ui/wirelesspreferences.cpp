@@ -27,6 +27,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KTabWidget>
 
+#include <nm-setting-wireless-security.h>
+#include <nm-setting-8021x.h>
+
 #include "configxml.h"
 #include "secretstoragehelper.h"
 #include "802_11_wirelesswidget.h"
@@ -110,6 +113,21 @@ void WirelessPreferences::save()
     // interaction between tray and service
     // location of service (in-tray, in plasma)
     //
+
+    // as all wireless-security settings are created even if not used we
+    // should discard the 802.1x here if the wireless security type is
+    // not WPA-EAP
+    if (m_contents->configXml()->config()->hasGroup(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME)
+        &&  m_contents->configXml()->config()->hasGroup(NM_SETTING_802_1X_SETTING_NAME))
+    {
+        KConfigGroup cgSec(m_contents->configXml()->config(), NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
+        if (cgSec.readEntry("keymgmt") != Wireless80211SecurityWidget::KEY_MGMT_WPA_EAP)
+        {
+            KConfigGroup cg8021x(m_contents->configXml()->config(), NM_SETTING_802_1X_SETTING_NAME);
+            cg8021x.deleteGroup();
+        }
+    }
+
 }
 
 // vim: sw=4 sts=4 et tw=100
