@@ -8,6 +8,8 @@ set(knmstorage_SRCS
    secretstoragehelper.cpp
    configxml.cpp
    connection.cpp
+   #   connectiondbus.cpp
+   connectionpersistence.cpp
    setting.cpp
    settingdbus.cpp
    settingpersistence.cpp

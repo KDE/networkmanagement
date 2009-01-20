@@ -20,8 +20,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "settingpersistence.h"
 
-SettingPersistence::SettingPersistence(Setting * setting, KConfigGroup * config)
-   : m_setting(setting), m_config(config)
+#include <KConfigGroup>
+
+SettingPersistence::SettingPersistence(Setting * setting, KSharedConfig::Ptr config)
+   : m_setting(setting), m_config(new KConfigGroup(config, setting->name()))
 {
 
 }

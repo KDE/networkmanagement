@@ -154,13 +154,18 @@ class CfgEntry
               const QString &name, const QString &context, const QString &label,
               const QString &toolTip, const QString &whatsThis, const QString &code,
               const QString &defaultValue, const Choices &choices, const QList<Signal> signalList,
-              bool hidden, bool secret )
+              bool hidden, bool secret, const QString & dbusKey )
       : mGroup( group ), mType( type ), mKey( key ), mName( name ),
         mContext( context ), mLabel( label ), mToolTip( toolTip ), mWhatsThis( whatsThis ),
         mCode( code ), mDefaultValue( defaultValue ), mChoices( choices ),
-        mSignalList(signalList), mHidden( hidden ), mSecret(secret)
+        mSignalList(signalList), mHidden( hidden ), mSecret(secret), mDbusKey(dbusKey)
     {
+        if (mDbusKey.isEmpty()) {
+            mDbusKey = mName;
+        }
     }
+
+    QString dbusKey() const { return mDbusKey; }
 
     bool secret() const { return mSecret; }
 
@@ -275,6 +280,7 @@ class CfgEntry
     QString mMin;
     QString mMax;
     bool mSecret;
+    QString mDbusKey;
 };
 
 class Param {
@@ -512,6 +518,7 @@ CfgEntry *parseEntry( const QString &group, const QDomElement &element )
   QString hidden = element.attribute( "hidden" );
   QString context = element.attribute( "context" );
   bool secret = (element.attribute("secret", "false") == "true");
+  QString dbusKey = element.attribute( "dbusKey" );
   QString label;
   QString toolTip;
   QString whatsThis;
@@ -761,7 +768,7 @@ CfgEntry *parseEntry( const QString &group, const QDomElement &element )
 
   CfgEntry *result = new CfgEntry( group, type, key, name, context, label, toolTip, whatsThis,
                                    code, defaultValue, choices, signalList,
-                                   hidden == "true", secret );
+                                   hidden == "true", secret, dbusKey );
   if (!param.isEmpty())
   {
     result->setParam(param);
@@ -1384,6 +1391,7 @@ int main( int argc, char **argv )
   h << "#include <kdebug.h>" << endl;
   h << "#include <kcoreconfigskeleton.h>" << endl;
   h << "#include \"setting.h\"" << endl;
+  h << "#include \"knm_export.h\"" << endl;
 
   // Includes
   for( it = includes.constBegin(); it != includes.constEnd(); ++it ) {
@@ -2129,13 +2137,14 @@ int main( int argc, char **argv )
   pH << "#include <kdebug.h>" << endl;
   pH << "#include <kcoreconfigskeleton.h>" << endl;
   pH << "#include \"settingpersistence.h\"" << endl;
+  pH << "#include \"knm_export.h\"" << endl;
 
   pH << "class " << className << "Setting;" << endl << endl;
   // Class declaration header
   pH << "class " << visibility << className << "Persistence : public " << inherits << endl;
   pH << "{" << endl;
   pH << "  public:" << endl;
-  pH << "    " << className << "Persistence( " << className << "Setting * setting, KConfigGroup * group);" << endl;
+  pH << "    " << className << "Persistence( " << className << "Setting * setting, KSharedConfig::Ptr config);" << endl;
   pH << "    ~" << className << "Persistence();" << endl;
   pH << "    void load();" << endl;
   pH << "    void save();" << endl;
@@ -2163,7 +2172,7 @@ int main( int argc, char **argv )
   pC << "#include \"" << headerFileName << "\"" << endl << endl;
 
   // Constructor
-  pC << className << "Persistence::" << className << "Persistence(" << className << "Setting * setting, KConfigGroup * config) : SettingPersistence(setting, config)" << endl;
+  pC << className << "Persistence::" << className << "Persistence(" << className << "Setting * setting, KSharedConfig::Ptr config) : SettingPersistence(setting, config)" << endl;
   pC << "{" << endl;
   pC << "}" << endl << endl;
 
@@ -2243,6 +2252,7 @@ int main( int argc, char **argv )
   dH << "#include <kdebug.h>" << endl;
   dH << "#include <kcoreconfigskeleton.h>" << endl;
   dH << "#include \"settingdbus.h\"" << endl;
+  dH << "#include \"knm_export.h\"" << endl;
 
   dH << "class " << className << "Setting;" << endl << endl;
   // Class declaration header
@@ -2303,6 +2313,9 @@ int main( int argc, char **argv )
     if ((*itEntry)->secret()) {
         dC << "  // SECRET" << endl;
     }
+    dC << "  if (map.contains(\"" << (*itEntry)->dbusKey() << "\")) {" << endl;
+    dC << "    setting->" << setFunction(n) << "(map.value(\"" << (*itEntry)->dbusKey() << "\").value<" << cppType(t) << ">());" << endl;
+    dC << "  }" << endl;
     //dC << "  setting->" << setFunction(n) << "(m_config->readEntry(\"" << (*itEntry)->key() << "\", " << defaultStr << "));" << endl;
   }
   dC << "}" << endl << endl;
@@ -2310,6 +2323,7 @@ int main( int argc, char **argv )
   // save method
   dC << "QVariantMap " << className << "Dbus::toMap()" << endl;
   dC << "{" << endl;
+  dC << "  QVariantMap map;" << endl;
   dC << "  " << className << "Setting * setting = static_cast<" << className << "Setting *>(m_setting);" << endl;
   for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
     QString n = (*itEntry)->name();
@@ -2324,8 +2338,9 @@ int main( int argc, char **argv )
     if ((*itEntry)->secret()) {
         dC << "  // SECRET" << endl;
     }
-    //dC << "  m_config->writeEntry(\"" << (*itEntry)->key() << "\", setting->" << getFunction(n) << "());" << endl;
+    dC << "  map.insert(\"" << (*itEntry)->dbusKey() << "\", setting->" << getFunction(n) << "());" << endl;
   }
+  dC << "  return map;" << endl;
 
   dC << "}" << endl << endl;
 

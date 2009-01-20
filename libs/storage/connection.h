@@ -34,14 +34,17 @@ class KNM_EXPORT Connection
 {
 public:
     enum Type { Wired, Wireless, Gsm, Cdma, Vpn, Pppoe };
+    static QString typeAsString(Connection::Type);
+    static Connection::Type typeFromString(const QString & type);
+
     /**
      * Create a connection with a new Uuid
      */
     Connection(const QString & name, Connection::Type type);
     /**
-     * Create a connection with a give Uuid
+     * Create a connection with a given Uuid
      */
-    Connection(const QString & name, const QUuid& uuid, Connection::Type type);
+    Connection(const QUuid& uuid, Connection::Type type);
     virtual ~Connection();
 
     QString name() const;

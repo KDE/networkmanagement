@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -18,20 +18,31 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM_SETTING_H
-#define KNM_SETTING_H
+#ifndef CONNECTIONPERSISTENCE_H
+#define CONNECTIONPERSISTENCE_H
+
+#include <QHash>
+#include <KSharedConfig>
 
 #include "knm_export.h"
 
-class KNM_EXPORT Setting
+class Connection;
+class Setting;
+class SettingPersistence;
+
+class KNM_EXPORT ConnectionPersistence
 {
 public:
-    enum Type { Cdma, Gsm, Ipv4, Ipv6, Ppp, Pppoe, Security8021x, Serial, Vpn, Wired, Wireless, WirelessSecurity };
-    Setting(Setting::Type type);
-    virtual ~Setting();
-    Setting::Type type() const;
-    virtual QString name() = 0;
+    ConnectionPersistence(Connection *, KSharedConfig::Ptr config);
+    ~ConnectionPersistence();
+
+    void save();
+    void load();
 private:
-    Setting::Type m_type;
+    SettingPersistence * persistenceFor(Setting *);
+    QHash<Setting*, SettingPersistence*> m_persistences;
+    Connection * m_connection;
+    KSharedConfig::Ptr m_config;
 };
-#endif // SETTING_H
+
+#endif // CONNECTIONPERSISTENCE_H

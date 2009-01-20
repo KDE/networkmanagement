@@ -20,14 +20,65 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connection.h"
 
+    enum Type { Wired, Wireless, Gsm, Cdma, Vpn, Pppoe };
+
+QString Connection::typeAsString(Connection::Type type)
+{
+    QString typeString;
+    switch (type) {
+        case Wired:
+            typeString = QLatin1String("802-3-ethernet");
+            break;
+        case Wireless:
+            typeString = QLatin1String("802-11-wireless");
+            break;
+        case Gsm:
+            typeString = QLatin1String("gsm");
+            break;
+        case Cdma:
+            typeString = QLatin1String("cdma");
+            break;
+        case Vpn:
+            typeString = QLatin1String("vpn");
+            break;
+        case Pppoe:
+            typeString = QLatin1String("pppoe");
+            break;
+        default:
+            break;
+    }
+    return typeString;
+}
+
+Connection::Type Connection::typeFromString(const QString & typeString)
+{
+    Connection::Type type = Wired;
+    if (typeString == QLatin1String("802-3-ethernet")) {
+        type = Wired;
+    } else if (typeString == QLatin1String("802-11-wireless")) {
+        type = Wireless;
+    } else if (typeString == QLatin1String("gsm")) {
+        type = Gsm;
+    } else if (typeString == QLatin1String("cdma")) {
+        type = Cdma;
+    } else if (typeString == QLatin1String("vpn")) {
+        type = Vpn;
+    } else if (typeString == QLatin1String("pppoe")) {
+        type = Pppoe;
+    }
+    return type;
+}
+
+Connection::Type typeFromString(const QString & type);
+
 Connection::Connection(const QString & name, const Connection::Type type)
     : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false)
 {
 
 }
 
-Connection::Connection(const QString & name, const QUuid & uuid, const Connection::Type type)
-    : m_name(name), m_uuid(uuid), m_type(type), m_autoConnect(false)
+Connection::Connection(const QUuid & uuid, const Connection::Type type)
+    : m_uuid(uuid), m_type(type), m_autoConnect(false)
 {
 
 }

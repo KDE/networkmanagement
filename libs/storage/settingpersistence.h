@@ -20,13 +20,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SETTINGPERSISTENCE_H
 #define SETTINGPERSISTENCE_H
 
-#include <KConfigGroup>
+#include <KSharedConfig>
 #include "setting.h"
 
 class SettingPersistence
 {
 public:
-    SettingPersistence(Setting *, KConfigGroup *);
+    SettingPersistence(Setting *, KSharedConfig::Ptr);
     virtual ~SettingPersistence();
 
     virtual void load() = 0;
