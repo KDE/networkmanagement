@@ -99,7 +99,8 @@ void PeapWidget::writeConfig()
 
     cg.writeEntry("identity", d->ui.identity->text());
     cg.writeEntry("anonymousidentity", d->ui.anonymousidentity->text());
-    cg.writeEntry("capath", d->ui.cacert->url().directory() + "/" + d->ui.cacert->url().fileName());
+    if (!d->ui.cacert->url().directory().isEmpty() && !d->ui.cacert->url().fileName().isEmpty())
+        cg.writeEntry("capath", d->ui.cacert->url().directory() + "/" + d->ui.cacert->url().fileName());
 
     switch(d->ui.phase2autheap->currentIndex())
     {
