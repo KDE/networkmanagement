@@ -12,6 +12,17 @@ set(testconfigxml_SRCS
 kde4_add_executable(testconfigxml ${testconfigxml_SRCS})
 target_link_libraries(testconfigxml knmstorage ${KDE4_KDEUI_LIBS})
 
+## next target: test for new storage layer to make sure it can handle our connections
+
+set(testnewstorage_SRCS
+   testnewstorage.cpp
+)
+
+kde4_add_executable(testnewstorage ${testnewstorage_SRCS})
+target_link_libraries(testnewstorage knmstorage ${KDE4_KDEUI_LIBS})
+
+## next target: hacked up qdbus that can display NM data types
+
 kde4_add_executable(qdbusfornm qdbusfornm.cpp )
 target_link_libraries(qdbusfornm knmstorage )
 
