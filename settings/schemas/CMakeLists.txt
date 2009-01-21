@@ -17,10 +17,10 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage
    )
 set(foo_SRCS
-   802-11-wirelesspersistence.cpp
-   802-11-wirelessdbus.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/settings/802-11-wirelesspersistence.cpp
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/settings/802-11-wirelessdbus.cpp
 )
-kde4_add_kcfg_files(foo_SRCS 802-11-wireless.kcfgc)
+kde4_add_kcfg_files(foo_SRCS 802-11-wireless.kcfg)
 kde4_add_library(foo ${foo_SRCS})
 
 message(STATUS ${foo_SRCS})
