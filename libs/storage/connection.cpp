@@ -196,4 +196,28 @@ bool Connection::addSetting(Setting * newSetting)
     return false;
 }
 
+bool Connection::hasSecrets() const
+{
+    bool connectionHasSecrets = false;
+    foreach (Setting * setting, m_settings) {
+        if (setting->hasSecrets()) {
+            connectionHasSecrets = true;
+            break;
+        }
+    }
+    return connectionHasSecrets;
+}
+
+bool Connection::secretsAvailable() const
+{
+    bool allSecretsAvailable = true;
+    foreach (Setting * setting, m_settings) {
+        if (!setting->secretsAvailable()) {
+            allSecretsAvailable = false;
+            break;
+        }
+    }
+    return allSecretsAvailable;
+}
+
 // vim: sw=4 sts=4 et tw=100

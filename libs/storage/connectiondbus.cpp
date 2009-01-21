@@ -97,7 +97,8 @@ QVariantMapMap ConnectionDbus::toDbusMap()
     // all other settings
     foreach (Setting * setting, m_connection->settings()) {
         SettingDbus * sd = dbusFor(setting);
-        mapMap.insert(setting->name(), sd->toMap());
+        if (sd)
+            mapMap.insert(setting->name(), sd->toMap());
     }
 
     return mapMap;

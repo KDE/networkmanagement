@@ -54,6 +54,19 @@ public:
     // This assumes the connection has already been constructed with the uuid, type ctor
     // and populated with all the Settings
     void load();
+    /**
+     * Trigger asynchronously loading this connection's secrets.
+     * You should connect to the @ref gotSecrets() signal before calling this method
+     * If the SecretStorageMode is PlainText, the signal will be emitted immediately!
+     */
+    void loadSecrets();
+Q_SIGNALS:
+    /**
+     * Emitted when secrets have become available
+     */
+    void loadSecretsResult();
+protected Q_SLOTS:
+    void walletOpenedForRead(bool);
 private:
     SettingPersistence * persistenceFor(Setting *);
     QString walletKeyFor(const Setting *) const;

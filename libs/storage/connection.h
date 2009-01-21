@@ -78,6 +78,19 @@ public:
      * Setting of this type.
      */
     bool addSetting(Setting*);
+
+    /**
+     * Check if any of the settings in this connection have secrets
+     */
+    bool hasSecrets() const;
+
+    /**
+     * Check if this connection's secrets are currently loaded (secrets may be lazy loaded)
+     * If not, use @ref ConnectionPersistence::loadSecrets()
+     * Connections which have no secrets always return true
+     */
+    bool secretsAvailable() const;
+
 private:
     QString m_name;
     QUuid m_uuid;

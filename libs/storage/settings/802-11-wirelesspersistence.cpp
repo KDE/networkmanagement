@@ -57,3 +57,11 @@ QMap<QString,QString> WirelessPersistence::secrets() const
   return map;
 }
 
+void WirelessPersistence::restoreSecrets(QMap<QString,QString> secrets) const
+{
+  if (m_storageMode == ConnectionPersistence::Secure) {
+  WirelessSetting * setting = static_cast<WirelessSetting *>(m_setting);
+    setting->setSecurity(secrets.value("security"));
+    setting->setSecretsAvailable(true);
+  }
+}

@@ -52,7 +52,7 @@ SettingPersistence * ConnectionPersistence::persistenceFor(Setting * setting)
             sp = new WirelessPersistence(static_cast<WirelessSetting*>(setting), m_config/*, m_storageMode*/);
             break;
         default:
-#warning REMOVE lazy default: from switch!
+//#warning REMOVE lazy default: from switch!
             break;
     }
     if (sp) {
@@ -121,6 +121,67 @@ void ConnectionPersistence::load()
 QString ConnectionPersistence::walletKeyFor(const Setting * setting) const
 {
     return m_connection->uuid() + ';' + setting->name();
+}
+
+void ConnectionPersistence::loadSecrets()
+{
+    if (m_storageMode != ConnectionPersistence::Secure ||
+            !m_connection->hasSecrets() ||
+            m_connection->secretsAvailable())
+    {
+        emit loadSecretsResult();
+        return;
+    }
+
+    if (KWallet::Wallet::isEnabled()) {
+        kDebug() << "opening wallet...";
+        KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
+                walletWid(), KWallet::Wallet::Asynchronous);
+        if (wallet) {
+            disconnect(wallet, SIGNAL(walletOpened(bool)), this, 0);
+            connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
+        } else {
+            //setError(WalletNotFound);
+            emit loadSecretsResult();
+        }
+    } else {
+        //setError(WalletDisabled);
+        emit loadSecretsResult();
+    }
+}
+
+void ConnectionPersistence::walletOpenedForRead(bool success)
+{
+    if (success) {
+        KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
+        if (wallet->isOpen() && wallet->hasFolder("NetworkManager") && wallet->setFolder("NetworkManager")) {
+            kDebug() << "Reading all entries for connection";
+            QMap<QString,QMap<QString,QString> > entries;
+            QString key = m_connection->uuid() + QLatin1String("*");
+
+            if (wallet->readMapList(key, entries) == 0) {
+                foreach (Setting * setting, m_connection->settings()) {
+                    QString settingKey = walletKeyFor(setting);
+
+                    if (entries.contains(settingKey)) {
+                        QMap<QString,QString> settingSecrets = entries.value(settingKey);
+                        kDebug() << settingSecrets;
+                        persistenceFor(setting)->restoreSecrets(settingSecrets);
+                    }
+                }
+                kDebug() << "Check connection:";
+                kDebug() << "secretsAvailable:" << m_connection->secretsAvailable();
+
+                emit loadSecretsResult();
+            } else {
+                kDebug() << "Wallet::readEntryList for :" << key << " failed";
+                emit loadSecretsResult();
+            }
+        }
+    } else {
+        //setError(WalletOpenRefused);
+        emit loadSecretsResult();
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

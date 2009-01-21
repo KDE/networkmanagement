@@ -20,7 +20,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SETTINGPERSISTENCE_H
 #define SETTINGPERSISTENCE_H
 
+#include <QMap>
 #include <KSharedConfig>
+
 #include "connectionpersistence.h"
 #include "setting.h"
 
@@ -33,6 +35,7 @@ public:
     virtual void load() = 0;
     virtual void save() = 0;
     virtual QMap<QString,QString> secrets() const = 0;
+    virtual void restoreSecrets(QMap<QString,QString>) const = 0;
 protected:
     Setting *m_setting;
     KConfigGroup * m_config;

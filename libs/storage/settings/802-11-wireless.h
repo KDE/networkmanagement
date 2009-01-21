@@ -27,6 +27,8 @@ class KNM_EXPORT WirelessSetting : public Setting
 
     QString name() const;
 
+    bool hasSecrets() const;
+
     /**
       Set SSID
     */

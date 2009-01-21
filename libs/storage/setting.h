@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+
 class KNM_EXPORT Setting
 {
 public:
@@ -31,7 +32,11 @@ public:
     virtual ~Setting();
     Setting::Type type() const;
     virtual QString name() const = 0;
+    virtual bool hasSecrets() const = 0;
+    bool secretsAvailable() const;
+    void setSecretsAvailable(bool secretsAvailable);
 private:
     Setting::Type m_type;
+    bool m_secretsAvailable;
 };
 #endif // SETTING_H

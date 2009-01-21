@@ -66,6 +66,7 @@ QVariantMap WirelessDbus::toMap()
   map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
   map.insert("mtu", setting->mtu());
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS), setting->seenbssids());
+  return map;
 }
 
 QVariantMap WirelessDbus::toSecretsMap()

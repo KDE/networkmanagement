@@ -21,7 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "setting.h"
 
 Setting::Setting(Setting::Type type)
-    :m_type(type)
+    : m_type(type), m_secretsAvailable(false)
 {
 
 }
@@ -34,6 +34,16 @@ Setting::~Setting()
 Setting::Type Setting::type() const
 {
     return m_type;
+}
+
+bool Setting::secretsAvailable() const
+{
+    return m_secretsAvailable;
+}
+
+void Setting::setSecretsAvailable(bool available)
+{
+    m_secretsAvailable = available;
 }
 
 // vim: sw=4 sts=4 et tw=100

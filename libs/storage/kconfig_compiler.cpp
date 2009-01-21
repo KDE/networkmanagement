@@ -1526,6 +1526,7 @@ int main( int argc, char **argv )
 
   // name accessor
   h << "    QString name() const;" << endl << endl;
+  h << "    bool hasSecrets() const;" << endl << endl;
 
   // global variables
   if (staticAccessors)
@@ -2120,6 +2121,20 @@ int main( int argc, char **argv )
   cpp << "  return QLatin1String(\"" << settingName << "\");" << endl;
   cpp << "}" << endl;
 
+  cpp << "bool " <<  className << "Setting::hasSecrets() const" << endl;
+  cpp << "{" << endl;
+  bool settingHasSecrets = false;
+  for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
+      QString n = (*itEntry)->name();
+      QString t = (*itEntry)->type();
+      if ((*itEntry)->secret()) {
+          settingHasSecrets = true;
+          break;
+      }
+  }
+  cpp << "  return " <<(settingHasSecrets ? "true;" : "false;" ) << endl;
+  cpp << "}" << endl;
+
   // Add includemoc if they are signals defined.
   if( hasSignals ) {
     cpp << endl;
@@ -2166,7 +2181,9 @@ int main( int argc, char **argv )
   pH << "    void load();" << endl;
   pH << "    void save();" << endl;
   pH << "    QMap<QString,QString> secrets() const;" << endl;
+  pH << "    void restoreSecrets(QMap<QString,QString>) const;" << endl;
   pH << "};" << endl;
+
   if ( !nameSpace.isEmpty() ) pH << "}" << endl << endl;
 
   pH << "#endif" << endl << endl;
@@ -2263,6 +2280,22 @@ int main( int argc, char **argv )
 
   pC << "}" << endl << endl;
 
+  // restoreSecrets()
+  pC << "void " << className << "Persistence::restoreSecrets(QMap<QString,QString> secrets) const" << endl;
+  pC << "{" << endl;
+  pC << "  if (m_storageMode == ConnectionPersistence::Secure) {" << endl;
+  pC << "  " << className << "Setting * setting = static_cast<" << className << "Setting *>(m_setting);" << endl;
+  for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
+    QString n = (*itEntry)->name();
+    QString t = (*itEntry)->type();
+
+    if ((*itEntry)->secret()) {
+        pC << "    setting->" << setFunction(n) << "(secrets.value(\"" << n << "\"));" << endl;
+    }
+  }
+  pC << "    setting->setSecretsAvailable(true);" << endl;
+  pC << "  }" << endl;
+  pC << "}" << endl;
   persImplementation.close();
 
   // DBUS HELPER
@@ -2376,7 +2409,7 @@ int main( int argc, char **argv )
     }
     dC << "  map.insert(" << (*itEntry)->dbusKey() << ", setting->" << getFunction(n) << "());" << endl;
   }
-
+  dC << "  return map;" << endl;
   dC << "}" << endl << endl;
 
   // toSecretsMap method

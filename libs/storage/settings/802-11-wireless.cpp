@@ -15,3 +15,7 @@ QString WirelessSetting::name() const
 {
   return QLatin1String("802-11-wireless");
 }
+bool WirelessSetting::hasSecrets() const
+{
+  return true;
+}

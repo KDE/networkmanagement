@@ -17,6 +17,7 @@ class KNM_EXPORT WirelessPersistence : public SettingPersistence
     void load();
     void save();
     QMap<QString,QString> secrets() const;
+    void restoreSecrets(QMap<QString,QString>) const;
 };
 #endif
 
