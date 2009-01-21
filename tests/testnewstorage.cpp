@@ -47,15 +47,39 @@ int main( int argc, char** argv )
     KCmdLineArgs::addCmdLineOptions(options);
     KApplication app;
 
-    Connection foo(QUuid::createUuid(), Connection::Wireless);
-    WirelessSetting * ws = new WirelessSetting();
-    ws->setSsid("stevello");
-    ws->setMode(WirelessSetting::EnumMode::infrastructure);
-    foo.addSetting(ws);
+    QUuid uuid;
+    {
+        // set up initial connection
+        kDebug() << "setting up..";
+        Connection foo(QUuid::createUuid(), Connection::Wireless);
+        uuid = foo.uuid();
+        WirelessSetting * ws = new WirelessSetting();
+        ws->setSsid("stevello");
+        ws->setMode(WirelessSetting::EnumMode::infrastructure);
+        ws->setSecurity("bargle");
+        foo.addSetting(ws);
 
+        // save it
+        kDebug() << "saving connection..";
+        ConnectionPersistence bar(&foo, KSharedConfig::openConfig("./testnewstoragerc"));
+        bar.save();
+        // kill it
+    }
+    kDebug() << "deleted connection..";
+
+    // restore it
+    kDebug() << "restoring connection..";
+    Connection foo(uuid, Connection::Wireless);
+    WirelessSetting * ws = new WirelessSetting();
+    foo.addSetting(ws);
+    kDebug() << "before restore; ssid:" << ws->ssid() << "security:" << ws->security();
     ConnectionPersistence bar(&foo, KSharedConfig::openConfig("./testnewstoragerc"));
     bar.load();
+    kDebug() << "after load; ssid:" << ws->ssid() << "security:" << ws->security();
+    kDebug() << "            hasSecrets:" << foo.hasSecrets() << "secretsAvailable:" << foo.secretsAvailable();
+    bar.loadSecrets();
 
+    kDebug() << "serialising restored connection to dbus..";
     ConnectionDbus baz(&foo);
     kDebug() << baz.toDbusMap();
     return app.exec();
