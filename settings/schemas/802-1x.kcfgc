@@ -1,0 +1,4 @@
+File=802-1x.kcfg
+ClassName=Security8021x
+Mutators=true
+Visibility=KNM_EXPORT
