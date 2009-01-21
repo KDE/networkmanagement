@@ -11,17 +11,25 @@
     </entry>
     <entry name="bits" type="UInt">
       <label>Data bits</label>
+      <default>8</default>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="parity" type="Char">
+    <entry name="parity" type="String">
       <label>Parity</label>
+      <choices>
+        <choice name="None"/>
+        <choice name="Even"/>
+        <choice name="Odd"/>
+      </choices>
+      <default>None</default>
       <whatsthis></whatsthis>
     </entry>
     <entry name="stopbits" type="UInt">
       <label>Stop bits</label>
+      <default>1</default>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="senddelay" type="ULong" dbuskey="NM_SETTING_SERIAL_SEND_DELAY">
+    <entry name="senddelay" type="ULongLong" dbuskey="NM_SETTING_SERIAL_SEND_DELAY">
       <label>Send delay</label>
       <whatsthis></whatsthis>
     </entry>
