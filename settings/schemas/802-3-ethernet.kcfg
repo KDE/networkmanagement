@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
-  <kcfgfile arg="true"/>
+  <kcfgfile arg="false"/>
   <group name="802-3-ethernet">
     <entry name="port" key="port" type="Enum">
       <label>Port</label>
@@ -28,12 +28,12 @@
       </choices>
     </entry>
     <!-- nb "auto-negotiate" in NM -->
-    <entry name="autonegotiate" type="Bool">
+    <entry name="autonegotiate" type="Bool" dbuskey="NM_SETTING_WIRED_AUTO_NEGOTIATE">
       <label>Auto negotiate</label>
       <whatsthis></whatsthis>
     </entry>
     <!-- nb "mac-address" in NM -->
-    <entry name="macaddress" type="ByteArray">
+    <entry name="macaddress" type="ByteArray" dbuskey="NM_SETTING_WIRED_MAC_ADDRESS">
       <label>MAC Address</label>
       <whatsthis></whatsthis>
     </entry>

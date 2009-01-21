@@ -3,9 +3,9 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
-  <kcfgfile arg="true"/>
+  <kcfgfile arg="false"/>
   <group name="802-11-wireless-security">
-    <entry name="keymgmt" key="keymgmt" type="Enum">
+    <entry name="keymgmt" key="keymgmt" type="Enum" dbuskey="NM_SETTING_WIRELESS_SECURITY_KEY_MGMT">
       <label>Key management</label>
       <whatsthis></whatsthis>
       <choices>
@@ -17,11 +17,11 @@
       </choices>
 
     </entry>
-    <entry name="weptxkeyindex" type="UInt">
+    <entry name="weptxkeyindex" type="UInt" dbuskey="NM_SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX">
       <label>WEP TX key index</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="authalg" key="authalg" type="Enum">
+    <entry name="authalg" key="authalg" type="Enum" dbuskey="NM_SETTING_WIRELESS_SECURITY_AUTH_ALG">
       <label>Authentication algorithm</label>
       <whatsthis></whatsthis>
       <choices>
@@ -42,23 +42,23 @@
       <label>Group</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="leapusername" type="String">
+    <entry name="leapusername" type="String" dbuskey="NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME">
       <label>LEAP Username</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="wepkey0" type="String" secret="true">
+    <entry name="wepkey0" type="String" secret="true" dbuskey="NM_SETTING_WIRELESS_SECURITY_WEP_KEY0">
       <label>WEP key 0</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="wepkey1" type="String" secret="true">
+    <entry name="wepkey1" type="String" secret="true" dbuskey="NM_SETTING_WIRELESS_SECURITY_WEP_KEY1">
       <label>WEP key 1</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="wepkey2" type="String" secret="true">
+    <entry name="wepkey2" type="String" secret="true" dbuskey="NM_SETTING_WIRELESS_SECURITY_WEP_KEY2">
       <label>WEP key 2</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="wepkey3" type="String" secret="true">
+    <entry name="wepkey3" type="String" secret="true" dbuskey="NM_SETTING_WIRELESS_SECURITY_WEP_KEY3">
       <label>WEP key 3</label>
       <whatsthis></whatsthis>
     </entry>
@@ -66,10 +66,11 @@
       <label>PSK</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="leappassword" type="String" secret="true">
+    <entry name="leappassword" type="String" secret="true" dbuskey="NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD">
          secret="true"<label>LEAP Password</label>
       <whatsthis></whatsthis>
     </entry>
+<!--
     <entry name="clientcert" type="String">
         <label>Client Certificate</label>
         <whatsthis></whatsthis>
@@ -118,6 +119,7 @@
         <choice name="1"/>
       </choices>
     </entry>
+    -->
   </group>
 </kcfg>
 

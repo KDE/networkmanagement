@@ -82,19 +82,24 @@ KEY (by Lubos)
            for maintaining its appropriate connection list.
          / Wireless network items for unconfigured networks that launch the connection editor
            / Show correct wireless security for the AP
-         * Show/hide of InterfaceGroups' extenderitems currently leaves big whitespace in the popup, they should be removed from the popup when not shown.
+         . Show/hide of InterfaceGroups' extenderitems currently leaves big whitespace in the popup, they should be removed from the popup when not shown.
+         * CDMA Group
         / Disconnect button
     . Connection editor
     . Flight mode toggle
-    . Disconnected toggle
+    * Disconnected toggle
     . Hardware wifi switch indicator
     + Adhoc network button
   . Tooltips
+    * Detailed tooltips on Interface groups in the popup
+    * Specific tooltips on encryption icons
   / Show network status in tray icon
     % Option to have one icon per device, (like in Windows, hschaa's request)
     / Show network interface's status that is most important to the
       user when showing single icon
-    + Animation during connection state
+      * Show wireless signal strength
+    . Animation during connection state
+    * Icon is too small when the plasmoid is in the panel
   * Remember wireless/networking state between sessions
    
 - Update Solid

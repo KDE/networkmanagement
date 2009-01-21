@@ -20,7 +20,7 @@
       <label>DNS Servers</label>
       <whatsthis>List of Domain Name System servers to use</whatsthis>
     </entry>
-    <entry name="dnssearch" type="StringList">
+    <entry name="dnssearch" type="StringList" dbuskey="NM_SETTING_IP4_CONFIG_DNS_SEARCH">
       <label>Search Domains</label>
       <whatsthis>List of domains to search for a hostname</whatsthis>
     </entry>
@@ -29,7 +29,7 @@
       <label>IP Addresses</label>
       <whatsthis>List of IP addresses to configure on this connection</whatsthis>
     </entry>
-    <entry name="ignoredhcpdns" type="Bool">
+    <entry name="ignoredhcpdns" type="Bool" dbuskey="NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS">
       <label>Ignore DHCP DNS</label>
       <whatsthis>Ignore DNS servers returned by DHCP and use the configured servers instead</whatsthis>
     </entry>

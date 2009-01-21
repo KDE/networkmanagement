@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
-  <kcfgfile arg="true"/>
+  <kcfgfile arg="false"/>
   <group name="serial">
     <entry name="baud" type="UInt">
       <label>Baud</label>
@@ -21,7 +21,7 @@
       <label>Stop bits</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="senddelay" type="ULong">
+    <entry name="senddelay" type="ULong" dbuskey="NM_SETTING_SERIAL_SEND_DELAY">
       <label>Send delay</label>
       <whatsthis></whatsthis>
     </entry>

@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
-  <kcfgfile arg="true"/>
+  <kcfgfile arg="false"/>
   <group name="gsm">
     <entry name="number" type="String">
       <label>Number</label>
@@ -22,11 +22,11 @@
       <label>APN</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="networkid" type="String">
+    <entry name="networkid" type="String" dbuskey="NM_SETTING_GSM_NETWORK_ID">
       <label>Network ID</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="networktype" type="Int">
+    <entry name="networktype" type="Int" dbuskey="NM_SETTING_GSM_NETWORK_TYPE">
       <label>Network Type</label>
       <whatsthis></whatsthis>
     </entry>

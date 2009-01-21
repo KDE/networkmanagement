@@ -3,17 +3,17 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
-  <kcfgfile arg="true"/>
+  <kcfgfile arg="false"/>
   <group name="vpn">
-    <entry name="servicetype" type="String">
+    <entry name="servicetype" type="String" dbuskey="NM_SETTING_VPN_SERVICE_TYPE">
       <label>Service Type</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="data" type="String">
+    <entry name="data" type="String" dbuskey="NM_SETTING_VPN_DATA">
       <label>Data bits</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="user-name" type="String">
+    <entry name="username" type="String" dbuskey="NM_SETTING_VPN_USER_NAME">
       <label>Username</label>
       <whatsthis></whatsthis>
     </entry>
