@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -30,7 +30,7 @@ public:
     Setting(Setting::Type type);
     virtual ~Setting();
     Setting::Type type() const;
-    virtual QString name() = 0;
+    virtual QString name() const = 0;
 private:
     Setting::Type m_type;
 };

@@ -1208,6 +1208,8 @@ int main( int argc, char **argv )
   QString className = codegenConfig.value("ClassName").toString();
   QString inherits = codegenConfig.value("Inherits").toString();
   QString visibility = codegenConfig.value("Visibility").toString();
+  QFileInfo fi(codegenFilename);
+  QString settingName = fi.baseName();
   if (!visibility.isEmpty()) visibility+=' ';
   bool forceStringFilename = codegenConfig.value("ForceStringFilename", false).toBool();
   bool singleton = codegenConfig.value("Singleton", false).toBool();
@@ -1248,6 +1250,10 @@ int main( int argc, char **argv )
     return 1;
   }
 
+  if ( settingName.isEmpty()) {
+      std::cerr << "Codegen options file does not contain SettingName field" << std::endl;
+      return 1;
+  }
   QString cfgFileName;
   bool cfgFileNameArg = false;
   QList<Param> parameters;
@@ -1514,6 +1520,9 @@ int main( int argc, char **argv )
 
   // Destructor
   h << "    ~" << className << "Setting();" << endl << endl;
+
+  // name accessor
+  h << "    QString name() const;" << endl << endl;
 
   // global variables
   if (staticAccessors)
@@ -2102,6 +2111,11 @@ int main( int argc, char **argv )
     cpp << "  " << varPath("settingsChanged") << " = 0;" << endl;
     cpp << "}" << endl;
   }
+
+  cpp << "QString " <<  className << "Setting::name() const" << endl;
+  cpp << "{" << endl;
+  cpp << "  return QLatin1String(\"" << settingName << "\");" << endl;
+  cpp << "}" << endl;
 
   // Add includemoc if they are signals defined.
   if( hasSignals ) {

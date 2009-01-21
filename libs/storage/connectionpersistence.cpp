@@ -26,6 +26,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "setting.h"
 #include "settingpersistence.h"
 
+#include "settings/802-11-wireless.h"
+#include "settings/802-11-wirelesspersistence.h"
+
 ConnectionPersistence::ConnectionPersistence(Connection * conn, KSharedConfig::Ptr config)
     : m_connection(conn), m_config(config)
 {
@@ -42,7 +45,7 @@ SettingPersistence * ConnectionPersistence::persistenceFor(Setting * setting)
     if (!sp)
     switch (setting->type()) {
         case Setting::Wireless:
-//            sp = new WirelessPersistence(static_cast<WirelessSetting*>(setting), m_config);
+            sp = new WirelessPersistence(static_cast<WirelessSetting*>(setting), m_config);
             break;
         default:
             break;

@@ -37,6 +37,8 @@ public:
     ~ConnectionPersistence();
 
     void save();
+    // This assumes the connection has already been constructed with the uuid, type ctor
+    // and populated with all the Settings
     void load();
 private:
     SettingPersistence * persistenceFor(Setting *);

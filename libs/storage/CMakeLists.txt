@@ -13,6 +13,9 @@ set(knmstorage_SRCS
    setting.cpp
    settingdbus.cpp
    settingpersistence.cpp
+
+   settings/802-11-wireless.cpp
+   settings/802-11-wirelesspersistence.cpp
 )
 
 kde4_add_kcfg_files(knmstorage_SRCS knmserviceprefs.kcfgc)
