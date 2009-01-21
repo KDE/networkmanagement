@@ -33,6 +33,7 @@ public:
 
     virtual void fromMap(const QVariantMap &) = 0;
     virtual QVariantMap toMap() = 0;
+    virtual QVariantMap toSecretsMap() = 0;
 protected:
     Setting *m_setting;
 };

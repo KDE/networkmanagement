@@ -3,6 +3,8 @@
 #ifndef WIRELESSDBUS_H
 #define WIRELESSDBUS_H
 
+#include <nm-setting-wireless.h>
+
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
@@ -16,6 +18,7 @@ class KNM_EXPORT WirelessDbus : public SettingDbus
     ~WirelessDbus();
     void fromMap(const QVariantMap&);
     QVariantMap toMap();
+    QVariantMap toSecretsMap();
 };
 #endif
 

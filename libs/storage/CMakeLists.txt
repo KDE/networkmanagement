@@ -8,13 +8,14 @@ set(knmstorage_SRCS
    secretstoragehelper.cpp
    configxml.cpp
    connection.cpp
-   #   connectiondbus.cpp
+   connectiondbus.cpp
    connectionpersistence.cpp
    setting.cpp
    settingdbus.cpp
    settingpersistence.cpp
 
    settings/802-11-wireless.cpp
+   settings/802-11-wirelessdbus.cpp
    settings/802-11-wirelesspersistence.cpp
 )
 

@@ -73,7 +73,7 @@ public:
     void updateTimestamp();
 
     /**
-     * Add a setting to this connection
+     * Add a setting to this connection.  The connection will delete the Setting
      * @return false if the setting can not use the given Setting type or if it already contains a
      * Setting of this type.
      */

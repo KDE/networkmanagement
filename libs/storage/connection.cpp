@@ -85,7 +85,7 @@ Connection::Connection(const QUuid & uuid, const Connection::Type type)
 
 Connection::~Connection()
 {
-
+    qDeleteAll(m_settings);
 }
 
 QString Connection::name() const

@@ -11,7 +11,7 @@ WirelessSetting::~WirelessSetting()
 {
 }
 
-  QString WirelessSetting::name() const
+QString WirelessSetting::name() const
 {
   return QLatin1String("802-11-wireless");
 }

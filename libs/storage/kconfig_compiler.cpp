@@ -161,7 +161,7 @@ class CfgEntry
         mSignalList(signalList), mHidden( hidden ), mSecret(secret), mDbusKey(dbusKey)
     {
         if (mDbusKey.isEmpty()) {
-            mDbusKey = mName;
+            mDbusKey = QString::fromLatin1("\"%1\"").arg(mName);
         }
     }
 
@@ -518,7 +518,10 @@ CfgEntry *parseEntry( const QString &group, const QDomElement &element )
   QString hidden = element.attribute( "hidden" );
   QString context = element.attribute( "context" );
   bool secret = (element.attribute("secret", "false") == "true");
-  QString dbusKey = element.attribute( "dbusKey" );
+  QString dbusKey = element.attribute( "dbuskey" );
+  if (!dbusKey.isEmpty()) {
+      dbusKey = QString::fromLatin1("QLatin1String(%1)").arg(dbusKey);
+  }
   QString label;
   QString toolTip;
   QString whatsThis;
@@ -2263,6 +2266,8 @@ int main( int argc, char **argv )
   dH << "#define " << ( !nameSpace.isEmpty() ? nameSpace.toUpper() + '_' : "" )
     << className.toUpper() << "DBUS_H" << endl << endl;
 
+  dH << "#include <nm-setting-" << settingName << ".h>" << endl << endl;
+
   dH << "#include <kdebug.h>" << endl;
   dH << "#include <kcoreconfigskeleton.h>" << endl;
   dH << "#include \"settingdbus.h\"" << endl;
@@ -2277,6 +2282,7 @@ int main( int argc, char **argv )
   dH << "    ~" << className << "Dbus();" << endl;
   dH << "    void fromMap(const QVariantMap&);" << endl;
   dH << "    QVariantMap toMap();" << endl;
+  dH << "    QVariantMap toSecretsMap();" << endl;
   dH << "};" << endl;
   if ( !nameSpace.isEmpty() ) dH << "}" << endl << endl;
 
@@ -2327,14 +2333,14 @@ int main( int argc, char **argv )
     if ((*itEntry)->secret()) {
         dC << "  // SECRET" << endl;
     }
-    dC << "  if (map.contains(\"" << (*itEntry)->dbusKey() << "\")) {" << endl;
-    dC << "    setting->" << setFunction(n) << "(map.value(\"" << (*itEntry)->dbusKey() << "\").value<" << cppType(t) << ">());" << endl;
+    dC << "  if (map.contains(" << (*itEntry)->dbusKey() << ")) {" << endl;
+    dC << "    setting->" << setFunction(n) << "(map.value(" << (*itEntry)->dbusKey() << ").value<" << cppType(t) << ">());" << endl;
     dC << "  }" << endl;
     //dC << "  setting->" << setFunction(n) << "(m_config->readEntry(\"" << (*itEntry)->key() << "\", " << defaultStr << "));" << endl;
   }
   dC << "}" << endl << endl;
 
-  // save method
+  // toMap method
   dC << "QVariantMap " << className << "Dbus::toMap()" << endl;
   dC << "{" << endl;
   dC << "  QVariantMap map;" << endl;
@@ -2343,16 +2349,28 @@ int main( int argc, char **argv )
     QString n = (*itEntry)->name();
     QString t = (*itEntry)->type();
 
-    QString defaultStr;
-    if ( !(*itEntry)->defaultValue().isEmpty() )
-        defaultStr = (*itEntry)->defaultValue();
-    else
-        defaultStr = defaultValue( (*itEntry)->type() );
-
     if ((*itEntry)->secret()) {
-        dC << "  // SECRET" << endl;
+        continue;
     }
-    dC << "  map.insert(\"" << (*itEntry)->dbusKey() << "\", setting->" << getFunction(n) << "());" << endl;
+    dC << "  map.insert(" << (*itEntry)->dbusKey() << ", setting->" << getFunction(n) << "());" << endl;
+  }
+  dC << "  return map;" << endl;
+
+  dC << "}" << endl << endl;
+
+  // toSecretsMap method
+  dC << "QVariantMap " << className << "Dbus::toSecretsMap()" << endl;
+  dC << "{" << endl;
+  dC << "  QVariantMap map;" << endl;
+  dC << "  " << className << "Setting * setting = static_cast<" << className << "Setting *>(m_setting);" << endl;
+  for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
+    QString n = (*itEntry)->name();
+    QString t = (*itEntry)->type();
+
+    if (!(*itEntry)->secret()) {
+        continue;
+    }
+    dC << "  map.insert(" << (*itEntry)->dbusKey() << ", setting->" << getFunction(n) << "());" << endl;
   }
   dC << "  return map;" << endl;
 

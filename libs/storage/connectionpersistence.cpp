@@ -47,8 +47,6 @@ SettingPersistence * ConnectionPersistence::persistenceFor(Setting * setting)
         case Setting::Wireless:
             sp = new WirelessPersistence(static_cast<WirelessSetting*>(setting), m_config);
             break;
-        default:
-            break;
     }
     if (sp) {
         m_persistences.insert(setting, sp);
