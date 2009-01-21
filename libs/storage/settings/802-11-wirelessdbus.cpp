@@ -19,7 +19,6 @@ void WirelessDbus::fromMap(const QVariantMap & map)
   if (map.contains("ssid")) {
     setting->setSsid(map.value("ssid").value<QByteArray>());
   }
-  // SECRET
   if (map.contains("mode")) {
     setting->setMode(map.value("mode").value<int>());
   }
@@ -47,6 +46,7 @@ void WirelessDbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS))) {
     setting->setSeenbssids(map.value(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS)).value<QStringList>());
   }
+  // SECRET
   if (map.contains("security")) {
     setting->setSecurity(map.value("security").value<QString>());
   }
@@ -57,6 +57,7 @@ QVariantMap WirelessDbus::toMap()
   QVariantMap map;
   WirelessSetting * setting = static_cast<WirelessSetting *>(m_setting);
   map.insert("ssid", setting->ssid());
+  map.insert("mode", setting->mode());
   map.insert("band", setting->band());
   map.insert("channel", setting->channel());
   map.insert("bssid", setting->bssid());
@@ -65,15 +66,13 @@ QVariantMap WirelessDbus::toMap()
   map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
   map.insert("mtu", setting->mtu());
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS), setting->seenbssids());
-  map.insert("security", setting->security());
-  return map;
 }
 
 QVariantMap WirelessDbus::toSecretsMap()
 {
   QVariantMap map;
   WirelessSetting * setting = static_cast<WirelessSetting *>(m_setting);
-  map.insert("mode", setting->mode());
+  map.insert("security", setting->security());
   return map;
 }
 

@@ -21,19 +21,22 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define SETTINGPERSISTENCE_H
 
 #include <KSharedConfig>
+#include "connectionpersistence.h"
 #include "setting.h"
 
 class SettingPersistence
 {
 public:
-    SettingPersistence(Setting *, KSharedConfig::Ptr);
+    SettingPersistence(Setting *, KSharedConfig::Ptr, ConnectionPersistence::SecretStorageMode mode = ConnectionPersistence::Secure);
     virtual ~SettingPersistence();
 
     virtual void load() = 0;
     virtual void save() = 0;
+    virtual QMap<QString,QString> secrets() const = 0;
 protected:
     Setting *m_setting;
     KConfigGroup * m_config;
+    ConnectionPersistence::SecretStorageMode m_storageMode;
 };
 
 #endif // SETTINGPERSISTENCE_H

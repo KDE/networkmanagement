@@ -2161,10 +2161,11 @@ int main( int argc, char **argv )
   pH << "class " << visibility << className << "Persistence : public " << inherits << endl;
   pH << "{" << endl;
   pH << "  public:" << endl;
-  pH << "    " << className << "Persistence( " << className << "Setting * setting, KSharedConfig::Ptr config);" << endl;
+  pH << "    " << className << "Persistence( " << className << "Setting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode = ConnectionPersistence::Secure);" << endl;
   pH << "    ~" << className << "Persistence();" << endl;
   pH << "    void load();" << endl;
   pH << "    void save();" << endl;
+  pH << "    QMap<QString,QString> secrets() const;" << endl;
   pH << "};" << endl;
   if ( !nameSpace.isEmpty() ) pH << "}" << endl << endl;
 
@@ -2189,7 +2190,7 @@ int main( int argc, char **argv )
   pC << "#include \"" << headerFileName << "\"" << endl << endl;
 
   // Constructor
-  pC << className << "Persistence::" << className << "Persistence(" << className << "Setting * setting, KSharedConfig::Ptr config) : SettingPersistence(setting, config)" << endl;
+  pC << className << "Persistence::" << className << "Persistence(" << className << "Setting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)" << endl;
   pC << "{" << endl;
   pC << "}" << endl << endl;
 
@@ -2235,9 +2236,30 @@ int main( int argc, char **argv )
 
     if ((*itEntry)->secret()) {
         pC << "  // SECRET" << endl;
+        pC << "  if (m_storageMode != ConnectionPersistence::Secure) {" << endl << "  ";
     }
     pC << "  m_config->writeEntry(\"" << (*itEntry)->key() << "\", setting->" << getFunction(n) << "());" << endl;
+    if ((*itEntry)->secret()) {
+        pC << "  }" << endl;
+    }
   }
+  pC << "}" << endl << endl;
+
+  // secrets() method
+  pC << "QMap<QString,QString> " << className << "Persistence::secrets() const" << endl;
+  pC << "{" << endl;
+  pC << "  " << className << "Setting * setting = static_cast<" << className << "Setting *>(m_setting);" << endl;
+  pC << "  QMap<QString,QString> map;" << endl;
+
+  for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
+    QString n = (*itEntry)->name();
+    QString t = (*itEntry)->type();
+
+    if ((*itEntry)->secret()) {
+        pC << "  map.insert(QLatin1String(\"" << (*itEntry)->key() << "\"), setting->" << getFunction(n) << "());" << endl;
+    }
+  }
+  pC << "  return map;" << endl;
 
   pC << "}" << endl << endl;
 
@@ -2354,7 +2376,6 @@ int main( int argc, char **argv )
     }
     dC << "  map.insert(" << (*itEntry)->dbusKey() << ", setting->" << getFunction(n) << "());" << endl;
   }
-  dC << "  return map;" << endl;
 
   dC << "}" << endl << endl;
 

@@ -12,10 +12,11 @@ class WirelessSetting;
 class KNM_EXPORT WirelessPersistence : public SettingPersistence
 {
   public:
-    WirelessPersistence( WirelessSetting * setting, KSharedConfig::Ptr config);
+    WirelessPersistence( WirelessSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode = ConnectionPersistence::Secure);
     ~WirelessPersistence();
     void load();
     void save();
+    QMap<QString,QString> secrets() const;
 };
 #endif
 

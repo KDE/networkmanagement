@@ -21,7 +21,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef CONNECTIONPERSISTENCE_H
 #define CONNECTIONPERSISTENCE_H
 
+#include <QObject>
 #include <QHash>
+#include <QtGui/qwindowdefs.h> // krazy:exclude=includes (for WId)
+
 #include <KSharedConfig>
 
 #include "knm_export.h"
@@ -30,11 +33,22 @@ class Connection;
 class Setting;
 class SettingPersistence;
 
-class KNM_EXPORT ConnectionPersistence
+class KNM_EXPORT ConnectionPersistence : public QObject
 {
+Q_OBJECT
 public:
-    ConnectionPersistence(Connection *, KSharedConfig::Ptr config);
+    enum SecretStorageMode { Secure, PlainText };
+    ConnectionPersistence(Connection *, KSharedConfig::Ptr config, SecretStorageMode mode = Secure);
     ~ConnectionPersistence();
+
+    // get/set the window ID used for focus stealing prevention
+    static void setWalletWid( WId wid ) {
+        s_walletWId = wid;
+    }
+
+    static WId walletWid() {
+        return s_walletWId;
+    }
 
     void save();
     // This assumes the connection has already been constructed with the uuid, type ctor
@@ -42,9 +56,15 @@ public:
     void load();
 private:
     SettingPersistence * persistenceFor(Setting *);
+    QString walletKeyFor(const Setting *) const;
+
+    static QString s_walletFolderName;
+    static WId s_walletWId;
+
     QHash<Setting*, SettingPersistence*> m_persistences;
     Connection * m_connection;
     KSharedConfig::Ptr m_config;
+    SecretStorageMode m_storageMode;
 };
 
 #endif // CONNECTIONPERSISTENCE_H

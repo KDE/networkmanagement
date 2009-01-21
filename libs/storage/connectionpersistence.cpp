@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionpersistence.h"
 
 #include <KConfigGroup>
+#include <kwallet.h>
 
 #include "connection.h"
 #include "setting.h"
@@ -29,8 +30,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/802-11-wireless.h"
 #include "settings/802-11-wirelesspersistence.h"
 
-ConnectionPersistence::ConnectionPersistence(Connection * conn, KSharedConfig::Ptr config)
-    : m_connection(conn), m_config(config)
+QString ConnectionPersistence::s_walletFolderName = QLatin1String("NetworkManager");
+WId ConnectionPersistence::s_walletWId = 0;
+
+ConnectionPersistence::ConnectionPersistence(Connection * conn, KSharedConfig::Ptr config, SecretStorageMode mode)
+    : m_connection(conn), m_config(config), m_storageMode(mode)
 {
 }
 
@@ -45,7 +49,10 @@ SettingPersistence * ConnectionPersistence::persistenceFor(Setting * setting)
     if (!sp)
     switch (setting->type()) {
         case Setting::Wireless:
-            sp = new WirelessPersistence(static_cast<WirelessSetting*>(setting), m_config);
+            sp = new WirelessPersistence(static_cast<WirelessSetting*>(setting), m_config/*, m_storageMode*/);
+            break;
+        default:
+#warning REMOVE lazy default: from switch!
             break;
     }
     if (sp) {
@@ -68,8 +75,32 @@ void ConnectionPersistence::save()
     foreach (Setting * setting, m_connection->settings()) {
         SettingPersistence * sp = persistenceFor(setting);
         sp->save();
+
     }
     m_config->sync();
+
+    // factor out to make a pure Qt version
+    bool readyForWalletWrite = false;
+    if (m_storageMode == ConnectionPersistence::Secure) {
+        KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Synchronous );
+        if( wallet && wallet->isOpen() ) {
+            if( !wallet->hasFolder( s_walletFolderName ) )
+                wallet->createFolder( s_walletFolderName );
+            if ( wallet->setFolder( s_walletFolderName ) ) {
+                readyForWalletWrite = true;
+            }
+        }
+
+        // could be merged with above loop for speed but this keeps the
+        // kde wallet dependencies in one place
+        if (readyForWalletWrite) {
+            foreach (Setting * setting, m_connection->settings()) {
+                SettingPersistence * sp = persistenceFor(setting);
+                QMap<QString,QString> secrets = sp->secrets();
+                wallet->writeMap(walletKeyFor(setting), secrets);
+            }
+        }
+    }
 }
 
 void ConnectionPersistence::load()
@@ -85,6 +116,11 @@ void ConnectionPersistence::load()
         SettingPersistence * sp = persistenceFor(setting);
         sp->load();
     }
+}
+
+QString ConnectionPersistence::walletKeyFor(const Setting * setting) const
+{
+    return m_connection->uuid() + ';' + setting->name();
 }
 
 // vim: sw=4 sts=4 et tw=100
