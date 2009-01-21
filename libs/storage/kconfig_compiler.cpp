@@ -1335,7 +1335,7 @@ int main( int argc, char **argv )
   if ( inherits.isEmpty() ) inherits = "Setting";
 
   if ( className.isEmpty() ) {
-    std::cerr << "Class name missing" << std::endl;
+    std::cerr << "Class name missing from " << qPrintable(codegenFilename) << std::endl;
     return 1;
   }
 
