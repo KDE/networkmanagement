@@ -9,7 +9,7 @@
       <label>SSID</label>
       <whatsthis>Service Set IDentifier (network name) </whatsthis>
     </entry>
-    <entry name="mode" key="mode" type="Enum" secret="true">
+    <entry name="mode" key="mode" type="Enum">
       <choices>
         <choice name="infrastructure"/>
         <choice name="adhoc"/>
@@ -57,7 +57,7 @@
       <label>Seen BSSIDs</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="security" type="String">
+    <entry name="security" type="String" secret="true">
       <label></label>
       <whatsthis></whatsthis>
     </entry>
