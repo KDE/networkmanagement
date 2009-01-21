@@ -17,6 +17,42 @@ set(knmstorage_SRCS
    settings/802-11-wireless.cpp
    settings/802-11-wirelessdbus.cpp
    settings/802-11-wirelesspersistence.cpp
+
+   settings/802-3-ethernet.cpp
+   settings/802-3-ethernetdbus.cpp
+   settings/802-3-ethernetpersistence.cpp
+
+   settings/802-1x.cpp
+   settings/802-1xdbus.cpp
+   settings/802-1xpersistence.cpp
+
+   settings/gsm.cpp
+   settings/gsmdbus.cpp
+   settings/gsmpersistence.cpp
+
+   settings/cdma.cpp
+   settings/cdmadbus.cpp
+   settings/cdmapersistence.cpp
+
+   settings/ipv4.cpp
+   settings/ipv4dbus.cpp
+   settings/ipv4persistence.cpp
+
+   settings/ppp.cpp
+   settings/pppdbus.cpp
+   settings/ppppersistence.cpp
+
+   settings/pppoe.cpp
+   settings/pppoedbus.cpp
+   settings/pppoepersistence.cpp
+
+   settings/serial.cpp
+   settings/serialdbus.cpp
+   settings/serialpersistence.cpp
+
+   settings/vpn.cpp
+   settings/vpndbus.cpp
+   settings/vpnpersistence.cpp
 )
 
 kde4_add_kcfg_files(knmstorage_SRCS knmserviceprefs.kcfgc)
