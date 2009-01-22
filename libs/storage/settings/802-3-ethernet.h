@@ -66,7 +66,7 @@ class KNM_EXPORT WiredSetting : public Setting
     /**
       Set Duplex
     */
-    void setDuplex( const QString & v )
+    void setDuplex( int v )
     {
         mDuplex = v;
     }
@@ -74,7 +74,7 @@ class KNM_EXPORT WiredSetting : public Setting
     /**
       Get Duplex
     */
-    QString duplex() const
+    int duplex() const
     {
       return mDuplex;
     }
@@ -132,7 +132,7 @@ class KNM_EXPORT WiredSetting : public Setting
     // 802-3-ethernet
     int mPort;
     uint mSpeed;
-    QString mDuplex;
+    int mDuplex;
     bool mAutonegotiate;
     QByteArray mMacaddress;
     uint mMtu;

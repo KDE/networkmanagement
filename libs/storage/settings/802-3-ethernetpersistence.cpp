@@ -20,7 +20,7 @@ void WiredPersistence::load()
   WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
   setting->setPort(m_config->readEntry("port", 0));
   setting->setSpeed(m_config->readEntry("speed", 0));
-  setting->setDuplex(m_config->readEntry("duplex", ""));
+  setting->setDuplex(m_config->readEntry("duplex", 0));
   setting->setAutonegotiate(m_config->readEntry("autonegotiate", false));
   setting->setMacaddress(m_config->readEntry("macaddress", QByteArray()));
   setting->setMtu(m_config->readEntry("mtu", 1500));

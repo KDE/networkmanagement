@@ -5,7 +5,12 @@
 
 using namespace Knm;
 
-WiredSetting::WiredSetting() : Setting(Setting::Wired)
+WiredSetting::WiredSetting() : Setting(Setting::Wired),
+    mPort(WiredSetting::EnumPort::mii),
+    mDuplex(WiredSetting::EnumDuplex::full),
+    mSpeed(0),
+    mAutonegotiate(true),
+    mMtu(1500)
 {
 }
 

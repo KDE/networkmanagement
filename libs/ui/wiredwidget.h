@@ -35,6 +35,8 @@ class KNM_EXPORT WiredWidget : public SettingWidget
 public:
     WiredWidget(Knm::Connection * connection, QWidget * parent = 0 );
     virtual ~WiredWidget();
+    void readConfig();
+    void writeConfig();
 private:
     class Private;
     Private * d;

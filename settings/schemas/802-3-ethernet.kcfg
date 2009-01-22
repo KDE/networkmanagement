@@ -19,7 +19,7 @@
       <label>Speed</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="duplex" key="duplex" type="String">
+    <entry name="duplex" key="duplex" type="Enum">
       <label>Duplex</label>
       <whatsthis>Whether the Ethernet interface should use duplex communications</whatsthis>
       <choices>

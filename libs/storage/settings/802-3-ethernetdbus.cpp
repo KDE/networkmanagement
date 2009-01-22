@@ -25,7 +25,7 @@ void WiredDbus::fromMap(const QVariantMap & map)
     setting->setSpeed(map.value("speed").value<uint>());
   }
   if (map.contains("duplex")) {
-    setting->setDuplex(map.value("duplex").value<QString>());
+    setting->setDuplex(map.value("duplex").value<int>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE))) {
     setting->setAutonegotiate(map.value(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE)).value<bool>());

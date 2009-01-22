@@ -23,21 +23,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 #include "ui_wired.h"
 
+#include "settings/802-3-ethernet.h"
+
 class WiredWidget::Private
 {
 public:
     Ui_Settings8023Ethernet ui;
+    Knm::WiredSetting * setting;
 };
 
 WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
 : SettingWidget(connection, parent), d(new WiredWidget::Private)
 {
     d->ui.setupUi(this);
+    d->setting = static_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
 }
 
 WiredWidget::~WiredWidget()
 {
     delete d;
+}
+
+void WiredWidget::readConfig()
+{
+    d->ui.macAddress->setText(d->setting->macaddress());
+    d->ui.mtu->setValue(d->setting->mtu());
+}
+
+void WiredWidget::writeConfig()
+{
+    d->setting->setMtu(d->ui.mtu->value());
+    if (d->ui.macAddress->text() != QLatin1String(":::::")) {
+        d->setting->setMacaddress(d->ui.macAddress->text().toAscii());
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100
