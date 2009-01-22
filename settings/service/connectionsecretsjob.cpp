@@ -105,6 +105,7 @@ void ConnectionSecretsJob::doWork()
 
 void ConnectionSecretsJob::doAskUser()
 {
+#if 0
     // popup a dialog showing the appropriate UI for the type of connection
     //
     // all the things the kdialog does for us
@@ -151,6 +152,7 @@ void ConnectionSecretsJob::doAskUser()
     connect(m_askUserDialog, SIGNAL(rejected()), SLOT(dialogRejected()));
 
     m_askUserDialog->show();
+#endif
 }
 
 void ConnectionSecretsJob::walletOpenedForRead(bool success)
@@ -211,6 +213,7 @@ void ConnectionSecretsJob::walletOpenedForWrite(bool)
 
 void ConnectionSecretsJob::dialogAccepted()
 {
+#if 0
     // get results from dialog, put them in mSecrets
     kDebug() << "got secrets from widget:" << m_settingWidget->secrets();
     QMapIterator <QString,QVariant> i(m_settingWidget->secrets());
@@ -227,6 +230,7 @@ void ConnectionSecretsJob::dialogAccepted()
     m_settingWidget->deleteLater();
     m_askUserDialog->deleteLater();
     emitResult();
+#endif
 }
 
 void ConnectionSecretsJob::dialogRejected()

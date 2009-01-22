@@ -20,13 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ipv4widget.h"
 
-#include <nm-setting-ip4-config.h>
-
 #include <KDebug>
-#include <KConfigSkeletonItem>
 #include <KLocale>
 
-#include "configxml.h"
 #include "ui_ipv4.h"
 
 class IpV4Widget::Private
@@ -35,11 +31,10 @@ public:
     Ui_SettingsIp4Config ui;
 };
 
-IpV4Widget::IpV4Widget(const QString& connectionId, QWidget * parent)
-    : SettingWidget(connectionId, parent), d(new IpV4Widget::Private)
+IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
+    : SettingWidget(connection, parent), d(new IpV4Widget::Private)
 {
     d->ui.setupUi(this);
-    init();
 }
 
 IpV4Widget::~IpV4Widget()
@@ -47,14 +42,10 @@ IpV4Widget::~IpV4Widget()
     delete d;
 }
 
-QString IpV4Widget::settingName() const
-{
-    return QLatin1String("ipv4");
-}
-
 void IpV4Widget::readConfig()
 {
     kDebug();
+#if 0
     KConfigSkeletonItem * methodItem = configXml()->findItem(settingName(), QLatin1String(NM_SETTING_IP4_CONFIG_METHOD));
     Q_ASSERT(methodItem);
     QString method = methodItem->property().toString();
@@ -72,10 +63,12 @@ void IpV4Widget::readConfig()
     // TODO a lot, for ip addresses, routes etc
     //KConfigGroup group(configXml()->config(), settingName());
     //group.readEntry
+#endif
 }
 
 void IpV4Widget::writeConfig()
 {
+#if 0
     // save method
     KConfigGroup group(configXml()->config(), settingName());
     switch ( d->ui.method->currentIndex()) {
@@ -95,6 +88,7 @@ void IpV4Widget::writeConfig()
             kDebug() << "Unrecognised combo box index for method:" << d->ui.method->currentIndex();
             break;
     }
+#endif
 }
 
 // vim: sw=4 sts=4 et tw=100

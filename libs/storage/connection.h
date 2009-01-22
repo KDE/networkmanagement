@@ -47,7 +47,7 @@ public:
     /**
      * Create a connection with a given Uuid
      */
-    Connection(const QUuid& uuid, Connection::Type type);
+    explicit Connection(const QUuid& uuid, Connection::Type type);
     virtual ~Connection();
 
     QString name() const;

@@ -28,7 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-wireless.h>
 
 #include <QDBusInterface>
-#include <QUuid>
 
 #include <KDebug>
 #include <KIcon>
@@ -37,12 +36,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionprefs.h"
 #include "wiredpreferences.h"
-#include "wirelesspreferences.h"
-#include "cellularpreferences.h"
-#include "pppoepreferences.h"
-#include "vpnpreferences.h"
+//#include "wirelesspreferences.h"
+//#include "cellularpreferences.h"
+//#include "pppoepreferences.h"
+//#include "vpnpreferences.h"
 
 //storage
+#include "connection.h"
 #include "knmserviceprefs.h"
 
 ConnectionEditor::ConnectionEditor(QObject * parent) : QObject(parent)
@@ -54,7 +54,24 @@ ConnectionEditor::~ConnectionEditor()
 {
 }
 
-QString ConnectionEditor::addConnection(bool useDefaults, ConnectionEditor::ConnectionType connectionType, const QVariantList &otherArgs)
+void ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariantList &args)
+{
+    KDialog configDialog(0);
+    configDialog.setCaption(i18nc("Edit connection dialog caption", "Edit network connection"));
+    configDialog.setWindowIcon(KIcon("networkmanager"));
+
+    ConnectionPreferences * cprefs = editorForConnectionType(false, &configDialog, type, args);
+    configDialog.setMainWidget(cprefs);
+
+    if ( configDialog.exec() == QDialog::Accepted ) {
+        cprefs->save();
+        addToRcFile(cprefs->connection());
+        //updateService();
+        emit connectionsChanged();
+    }
+}
+
+QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type type, const QVariantList &otherArgs)
 {
     KDialog configDialog(0);
     configDialog.setCaption(i18nc("Add connection dialog caption", "Add network connection"));
@@ -64,7 +81,7 @@ QString ConnectionEditor::addConnection(bool useDefaults, ConnectionEditor::Conn
     QString connectionId = QUuid::createUuid().toString();
     args << connectionId;
     args += otherArgs;
-    ConnectionPreferences * cprefs = editorForConnectionType(useDefaults, &configDialog, connectionType, args);
+    ConnectionPreferences * cprefs = editorForConnectionType(useDefaults, &configDialog, type, args);
 
     if (!cprefs) {
         return QString::null;
@@ -72,70 +89,53 @@ QString ConnectionEditor::addConnection(bool useDefaults, ConnectionEditor::Conn
 
     configDialog.setMainWidget(cprefs);
 
-    if ( !cprefs->needsEdits() || configDialog.exec() == QDialog::Accepted ) {
+    if ( configDialog.exec() == QDialog::Accepted ) {
         cprefs->save();
-        // add to the service prefs
-        QString name = cprefs->connectionName();
-        QString type = cprefs->connectionType();
-        if (name.isEmpty() || type.isEmpty()) {
-            kDebug() << "new connection has missing name (" << name << ") or type (" << type << ")";
-            return QString::null;
-        } else {
-            KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
-            KConfigGroup config(prefs->config(), QLatin1String("Connection_") + connectionId);
-            QStringList connectionIds = prefs->connections();
-            connectionIds << connectionId;
-            prefs->setConnections(connectionIds);
-            config.writeEntry("Name", cprefs->connectionName());
-            config.writeEntry("Type", cprefs->connectionType());
-            prefs->writeConfig();
-            updateService();
-            emit connectionsChanged();
-        }
-        return connectionId;
+        addToRcFile(cprefs->connection());
+        //updateService();
+        emit connectionsChanged();
     }
-    return QString::null;
+    return connectionId;
 }
 
-ConnectionEditor::ConnectionType ConnectionEditor::connectionTypeForString(const QString &type) const
+void ConnectionEditor::addToRcFile(Knm::Connection* connection)
 {
-    ConnectionEditor::ConnectionType t = ConnectionEditor::Wireless;
-    if (type == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
-        t = ConnectionEditor::Wired;
-    } else if (type == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
-        t = ConnectionEditor::Wireless;
-    } else if (type == QLatin1String(NM_SETTING_GSM_SETTING_NAME)
-            || type == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
-        t = ConnectionEditor::Cellular;
-    } else if (type == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
-        t = ConnectionEditor::Vpn;
-    } else if (type == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
-        t = ConnectionEditor::Pppoe;
-    }
-    return t;
+    // add to the service prefs
+    QString name = connection->name();
+    QString type = Knm::Connection::typeAsString(connection->type());
+    KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
+    KConfigGroup config(prefs->config(), QLatin1String("Connection_") + connection->uuid());
+    QStringList connectionIds = prefs->connections();
+    connectionIds << connection->uuid();
+    prefs->setConnections(connectionIds);
+    config.writeEntry("Name", name);
+    prefs->writeConfig();
 }
 
 ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaults, QWidget * parent,
-                                                                  ConnectionEditor::ConnectionType type,
+                                                                  Knm::Connection::Type type,
                                                                   const QVariantList & args) const
 {
     kDebug() << args;
     ConnectionPreferences * wid = 0;
     switch (type) {
-        case ConnectionEditor::Wired:
+        case Knm::Connection::Wired:
             wid = new WiredPreferences(parent, args);
             break;
-        case ConnectionEditor::Wireless:
-            wid = new WirelessPreferences(setDefaults, parent, args);
+        case Knm::Connection::Wireless:
+            //wid = new WirelessPreferences(setDefaults, parent, args);
             break;
-        case ConnectionEditor::Cellular:
-            wid = new CellularPreferences(parent, args);
+        case Knm::Connection::Cdma:
+            //wid = new CellularPreferences(parent, args);
             break;
-        case ConnectionEditor::Vpn:
-            wid = new VpnPreferences(parent, args);
+        case Knm::Connection::Gsm:
+            //wid = new CellularPreferences(parent, args);
             break;
-        case ConnectionEditor::Pppoe:
-            wid = new PppoePreferences(parent, args);
+        case Knm::Connection::Vpn:
+            //wid = new VpnPreferences(parent, args);
+            break;
+        case Knm::Connection::Pppoe:
+            //wid = new PppoePreferences(parent, args);
             break;
         default:
             break;

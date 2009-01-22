@@ -75,7 +75,7 @@ private:
      * Get the connection type of the currently selected index
      * @return connection type enum, Wireless if not found
      */
-    ConnectionEditor::ConnectionType connectionTypeForCurrentIndex() const;
+    Knm::Connection::Type connectionTypeForCurrentIndex() const;
     /**
      * Get the selected item on the current tab.
      * Returns 0 if no selection.

@@ -19,7 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "wiredwidget.h"
-#include <nm-setting-wired.h>
+
+#include "connection.h"
 #include "ui_wired.h"
 
 class WiredWidget::Private
@@ -28,21 +29,15 @@ public:
     Ui_Settings8023Ethernet ui;
 };
 
-WiredWidget::WiredWidget(const QString& connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent), d(new WiredWidget::Private)
+WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
+: SettingWidget(connection, parent), d(new WiredWidget::Private)
 {
     d->ui.setupUi(this);
-    init();
 }
 
 WiredWidget::~WiredWidget()
 {
     delete d;
-}
-
-QString WiredWidget::settingName() const
-{
-    return QLatin1String(NM_SETTING_WIRED_SETTING_NAME);
 }
 
 // vim: sw=4 sts=4 et tw=100

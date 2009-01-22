@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -20,12 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "settingwidget.h"
 
-#include <QFile>
-#include <KDebug>
-#include <KStandardDirs>
-#include "configxml.h"
-#include "secretstoragehelper.h"
-
 class SettingWidget::Private
 {
 public:
@@ -33,9 +27,9 @@ public:
 };
 
 
-SettingWidget::SettingWidget(const QString& connectionId, QWidget* parent)
+SettingWidget::SettingWidget(Knm::Connection * connection, QWidget* parent)
 : QWidget(parent)
-, SettingInterface(connectionId)
+, SettingInterface(connection)
 , d(new Private)
 {
 

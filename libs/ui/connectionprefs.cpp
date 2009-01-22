@@ -23,15 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KTabWidget>
 #include <KDebug>
 
-#include <kcoreconfigskeleton.h>
-#include <nm-setting-connection.h>
-#include <nm-setting-vpn.h>
-#include "configxml.h"
 #include "connectionwidget.h"
+
+#include "connection.h"
 
 ConnectionPreferences::ConnectionPreferences(const KComponentData& cdata, QWidget * parent, const QVariantList & args)
     : KCModule( cdata, parent, args ),
-      m_contents(0), m_connectionTypeWidget(0)
+      m_contents(0)
 {
 
 }
@@ -40,78 +38,36 @@ ConnectionPreferences::~ConnectionPreferences()
 {
 }
 
-QString ConnectionPreferences::connectionType() const
+Knm::Connection * ConnectionPreferences::connection() const
 {
-    return m_connectionType;
-#if 0
-    KConfigSkeletonItem * configItem = m_contents->configXml()->findItem(m_contents->settingName(), "type");
-    if (configItem) {
-        return configItem->property().toString();
-    } else {
-        return QString();
-    }
-#endif
-}
-
-QString ConnectionPreferences::connectionName() const
-{
-    if ( !m_contents->connectionName().isEmpty() )
-        return m_contents->connectionName();
-
-    KConfigSkeletonItem * configItem = m_contents->configXml()->findItem(m_contents->settingName(), "id");
-    if (configItem) {
-        return configItem->property().toString();
-    } else {
-        return QString();
-    }
+    return m_connection;
 }
 
 void ConnectionPreferences::addSettingWidget(SettingInterface* iface)
 {
-    kDebug() << iface;
-    addConfig(iface->configXml(), iface->widget());
     m_settingWidgets.append(iface);
 }
 
-void ConnectionPreferences::addToTabWidget(SettingWidget * wid)
+void ConnectionPreferences::addToTabWidget(SettingWidget * widget)
 {
-    m_contents->connectionSettingsWidget()->addTab(wid,wid->windowTitle());
-    addConfig(wid->configXml(), wid);
-    m_settingWidgets.append(wid);
+    m_contents->connectionSettingsWidget()->addTab(widget, widget->windowTitle());
+    m_settingWidgets.append(widget);
 }
 
 void ConnectionPreferences::load()
 {
-    // first, do the KCModule's load, to give the widgets' load routine a free hand
-    KCModule::load();
+    m_contents->readConfig();
     foreach (SettingInterface * wid, m_settingWidgets) {
         wid->readConfig();
     }
-    // then read the connection settings
-    m_contents->readConfig();
 }
 
 void ConnectionPreferences::save()
 {
-    // first, set the type on the connection settings
-    // using the type specific widget set in derived classes
-    Q_ASSERT( m_connectionTypeWidget);
-
-    KConfigSkeletonItem * typeItem = m_contents->configXml()->findItem(QLatin1String("connection"), QLatin1String("type"));
-    if (typeItem) {
-        typeItem->setProperty(m_connectionTypeWidget->settingName());
-    }
-
-    // secondly, do the KCModule's save, to give the widgets' save routine a free hand
-    KCModule::save();
-
-    // thirdly, call each widget's custom save method
+    m_contents->writeConfig();
     foreach (SettingInterface * wid, m_settingWidgets) {
         wid->writeConfig();
     }
-    // finally write the connection settings
-    m_contents->writeConfig();
-    m_contents->configXml()->config()->sync();
 }
 
 // vim: sw=4 sts=4 et tw=100

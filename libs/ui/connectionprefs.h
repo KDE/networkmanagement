@@ -29,6 +29,11 @@ class ConnectionWidget;
 class SettingWidget;
 class SettingInterface;
 
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
+
 /**
  * Base class for connection configuration widgets.  Exists to provide
  * name() and type() so these values can be cached in the main
@@ -45,12 +50,12 @@ public:
      */
     ConnectionPreferences(const KComponentData&, QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~ConnectionPreferences();
-    QString connectionName() const;
-    QString connectionType() const;
+
+    Knm::Connection * connection() const;
 
     // if this returns true in derived classes
     // it signals that the defaults are good enough to connect
-    virtual bool needsEdits() const { return (m_connectionType.isEmpty() || m_connectionName.isEmpty()); }
+    //virtual bool needsEdits() const { return (m_connectionType.isEmpty() || m_connectionName.isEmpty()); }
 
 public slots:
     // reimplemented from KCModule, to call embedded settingswidgets' load/save methods
@@ -67,14 +72,11 @@ protected:
      */
     void addSettingWidget(SettingInterface *);
 
-    /** Main widget for connection UI, common to all connections **/
+    /** Main widget for connection info UI, common to all connections **/
     ConnectionWidget * m_contents;
-    /** Type specific widget, used to set the connection type field */
-    SettingWidget * m_connectionTypeWidget;
     /** All setting widgets except m_contents, including connectionTypeWidget*/
     QList<SettingInterface*> m_settingWidgets;
-    QString m_connectionName;
-    QString m_connectionType;
+    Knm::Connection * m_connection;
 };
 
 #endif // CONNECTIONPREFS_H
