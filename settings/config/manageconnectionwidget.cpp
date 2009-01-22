@@ -114,7 +114,7 @@ void ManageConnectionWidget::restoreConnections()
                     "network connection that has never been used", "Never");
         }
         kDebug() << type << name << lastUsed;
-        QTreeWidgetItem * item;
+        QTreeWidgetItem * item = 0;
         if (type == QLatin1String("Wired")) {
             item = new QTreeWidgetItem(mConnEditUi.listWired, itemContents);
             wiredItems.append(item);
@@ -131,7 +131,9 @@ void ManageConnectionWidget::restoreConnections()
             item = new QTreeWidgetItem(mConnEditUi.listPppoe, itemContents);
             pppoeItems.append(item);
         }
-        item->setData(0, ConnectionIdRole, connectionId);
+        if (item) {
+            item->setData(0, ConnectionIdRole, connectionId);
+        }
     }
     mConnEditUi.listWired->insertTopLevelItems(0, wiredItems);
     mConnEditUi.listWired->resizeColumnToContents(0);

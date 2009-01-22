@@ -39,6 +39,8 @@ class KNM_EXPORT SettingInterface
 public:
     SettingInterface(Knm::Connection *);
     virtual ~SettingInterface();
+
+    Knm::Connection * connection() const;
     /**
      * populate the UI from the Connection
      */

@@ -27,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 #include <KGlobal>
+#include <KLocale>
 #include <KPluginFactory>
 
 #include "wiredwidget.h"
@@ -60,6 +61,9 @@ WiredPreferences::~WiredPreferences()
 
 void WiredPreferences::load()
 {
+    if (m_connection->name().isEmpty()) {
+        m_connection->setName(i18n("New Wired Connection"));
+    }
     ConnectionPreferences::load();
 }
 

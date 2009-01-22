@@ -49,16 +49,16 @@ QTabWidget * ConnectionWidget::connectionSettingsWidget()
     return d->ui.tabwidget;
 }
 
+void ConnectionWidget::readConfig()
+{
+    d->ui.id->setText(connection()->name());
+    d->ui.autoconnect->setChecked(connection()->autoConnect());
+}
+
 void ConnectionWidget::writeConfig()
 {
-#if 0
-    SettingWidget::writeConfig();
-    kDebug();
-    KConfigGroup group(configXml()->config(), settingName());
-    group.writeEntry(NM_SETTING_CONNECTION_UUID, connectionId());
-    if ( !d->setName.isNull() )
-        group.writeEntry(NM_SETTING_CONNECTION_ID, d->setName );
-#endif
+    connection()->setName(d->ui.id->text());
+    connection()->setAutoConnect(d->ui.autoconnect->isChecked());
 }
 
 // vim: sw=4 sts=4 et tw=100

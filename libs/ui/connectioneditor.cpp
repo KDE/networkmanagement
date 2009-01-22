@@ -28,10 +28,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-wireless.h>
 
 #include <QDBusInterface>
+// debug only
+#include <QFile>
 
 #include <KDebug>
 #include <KIcon>
 #include <KDialog>
+#include <KSharedConfig>
+#include <KStandardDirs>
+#include <KSharedConfig>
 #include <KLocale>
 
 #include "connectionprefs.h"
@@ -43,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //storage
 #include "connection.h"
+#include "connectionpersistence.h"
 #include "knmserviceprefs.h"
 
 ConnectionEditor::ConnectionEditor(QObject * parent) : QObject(parent)
@@ -65,9 +71,9 @@ void ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariant
 
     if ( configDialog.exec() == QDialog::Accepted ) {
         cprefs->save();
-        addToRcFile(cprefs->connection());
+        persist(cprefs->connection());
         //updateService();
-        emit connectionsChanged();
+        //emit connectionsChanged();
     }
 }
 
@@ -91,14 +97,14 @@ QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type 
 
     if ( configDialog.exec() == QDialog::Accepted ) {
         cprefs->save();
-        addToRcFile(cprefs->connection());
+        persist(cprefs->connection());
         //updateService();
-        emit connectionsChanged();
+        //emit connectionsChanged();
     }
     return connectionId;
 }
 
-void ConnectionEditor::addToRcFile(Knm::Connection* connection)
+void ConnectionEditor::persist(Knm::Connection* connection)
 {
     // add to the service prefs
     QString name = connection->name();
@@ -109,7 +115,20 @@ void ConnectionEditor::addToRcFile(Knm::Connection* connection)
     connectionIds << connection->uuid();
     prefs->setConnections(connectionIds);
     config.writeEntry("Name", name);
+    config.writeEntry("Type", type);
     prefs->writeConfig();
+    // save the connection
+    QString configFile = KStandardDirs::locateLocal("data",
+        QLatin1String("knetworkmanager/connections/") + connection->uuid());
+
+    Knm::ConnectionPersistence * cp = new Knm::ConnectionPersistence(
+            connection,
+            KSharedConfig::openConfig(configFile),
+            prefs->storeInWallet() ? Knm::ConnectionPersistence::Secure : Knm::ConnectionPersistence::PlainText
+            );
+    cp->save();
+    QFile cf(configFile);
+    kDebug() << "Saved to " << configFile << ", which " << (cf.exists() ? "does" : "does not") << " exist";
 }
 
 ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaults, QWidget * parent,

@@ -61,6 +61,6 @@ public:
 Q_SIGNALS:
     void connectionsChanged();
 private:
-    void addToRcFile(Knm::Connection*);
+    void persist(Knm::Connection*);
 };
 #endif // CONNECTIONEDITOR_H

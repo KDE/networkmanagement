@@ -41,6 +41,7 @@ public:
     QTabWidget * connectionSettingsWidget();
     QString settingName() const;
 
+    void readConfig();
     void writeConfig();
     /**
      * set the user-visible, non-unique connection name

@@ -9,5 +9,10 @@
       <label>Connections</label>
       <whatsthis/>
     </entry>
+    <entry name="StoreInWallet" type="Bool">
+      <label>Store secrets in wallet</label>
+      <default>true</default>
+      <whatsthis/>
+    </entry>
   </group>
 </kcfg>

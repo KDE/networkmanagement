@@ -42,6 +42,11 @@ SettingInterface::~SettingInterface()
     delete d;
 }
 
+Knm::Connection * SettingInterface::connection() const
+{
+    return d->connection;
+}
+
 void SettingInterface::readConfig()
 {
     //default impl does nothing
