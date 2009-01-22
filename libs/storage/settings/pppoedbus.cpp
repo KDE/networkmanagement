@@ -43,6 +43,7 @@ QVariantMap PppoeDbus::toSecretsMap()
 {
   QVariantMap map;
   PppoeSetting * setting = static_cast<PppoeSetting *>(m_setting);
+  map.insert("name", setting->name());
   map.insert("password", setting->password());
   return map;
 }

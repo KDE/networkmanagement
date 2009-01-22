@@ -83,6 +83,7 @@ QVariantMap WirelessSecurityDbus::toSecretsMap()
 {
   QVariantMap map;
   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
+  map.insert("name", setting->name());
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());

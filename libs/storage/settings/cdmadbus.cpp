@@ -43,6 +43,7 @@ QVariantMap CdmaDbus::toSecretsMap()
 {
   QVariantMap map;
   CdmaSetting * setting = static_cast<CdmaSetting *>(m_setting);
+  map.insert("name", setting->name());
   map.insert("password", setting->password());
   return map;
 }

@@ -26,17 +26,29 @@ void WirelessSecurityPersistence::load()
   setting->setGroup(m_config->readEntry("group", QStringList()));
   setting->setLeapusername(m_config->readEntry("leapusername", ""));
   // SECRET
-  setting->setWepkey0(m_config->readEntry("wepkey0", ""));
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setWepkey0(m_config->readEntry("wepkey0", ""));
+  }
   // SECRET
-  setting->setWepkey1(m_config->readEntry("wepkey1", ""));
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setWepkey1(m_config->readEntry("wepkey1", ""));
+  }
   // SECRET
-  setting->setWepkey2(m_config->readEntry("wepkey2", ""));
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setWepkey2(m_config->readEntry("wepkey2", ""));
+  }
   // SECRET
-  setting->setWepkey3(m_config->readEntry("wepkey3", ""));
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setWepkey3(m_config->readEntry("wepkey3", ""));
+  }
   // SECRET
-  setting->setPsk(m_config->readEntry("psk", ""));
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setPsk(m_config->readEntry("psk", ""));
+  }
   // SECRET
-  setting->setLeappassword(m_config->readEntry("leappassword", ""));
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setLeappassword(m_config->readEntry("leappassword", ""));
+  }
 }
 
 void WirelessSecurityPersistence::save()

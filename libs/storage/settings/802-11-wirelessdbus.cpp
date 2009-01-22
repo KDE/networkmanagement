@@ -75,6 +75,7 @@ QVariantMap WirelessDbus::toSecretsMap()
 {
   QVariantMap map;
   WirelessSetting * setting = static_cast<WirelessSetting *>(m_setting);
+  map.insert("name", setting->name());
   map.insert("security", setting->security());
   return map;
 }

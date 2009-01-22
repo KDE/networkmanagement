@@ -33,7 +33,9 @@ void Security8021xPersistence::load()
   setting->setPhase2capath(m_config->readEntry("phase2capath", ""));
   setting->setPhase2clientcert(m_config->readEntry("phase2clientcert", QByteArray()));
   // SECRET
-  setting->setPassword(m_config->readEntry("password", ""));
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setPassword(m_config->readEntry("password", ""));
+  }
   setting->setPrivatekey(m_config->readEntry("privatekey", QByteArray()));
   setting->setPhase2privatekey(m_config->readEntry("phase2privatekey", QByteArray()));
   setting->setPin(m_config->readEntry("pin", ""));

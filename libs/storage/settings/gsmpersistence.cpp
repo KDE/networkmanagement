@@ -21,7 +21,9 @@ void GsmPersistence::load()
   setting->setNumber(m_config->readEntry("number", "*99#"));
   setting->setUsername(m_config->readEntry("username", ""));
   // SECRET
-  setting->setPassword(m_config->readEntry("password", ""));
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setPassword(m_config->readEntry("password", ""));
+  }
   setting->setApn(m_config->readEntry("apn", ""));
   setting->setNetworkid(m_config->readEntry("networkid", ""));
   setting->setNetworktype(m_config->readEntry("networktype", 0));

@@ -29,7 +29,9 @@ void WirelessPersistence::load()
   setting->setMtu(m_config->readEntry("mtu", 1500));
   setting->setSeenbssids(m_config->readEntry("seenbssids", QStringList()));
   // SECRET
-  setting->setSecurity(m_config->readEntry("security", ""));
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setSecurity(m_config->readEntry("security", ""));
+  }
 }
 
 void WirelessPersistence::save()
