@@ -29,6 +29,26 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "settings/802-11-wireless.h"
 #include "settings/802-11-wirelesspersistence.h"
+#include "settings/802-11-wireless-security.h"
+#include "settings/802-11-wireless-securitypersistence.h"
+#include "settings/802-1x.h"
+#include "settings/802-1xpersistence.h"
+#include "settings/802-3-ethernet.h"
+#include "settings/802-3-ethernetpersistence.h"
+#include "settings/cdma.h"
+#include "settings/cdmapersistence.h"
+#include "settings/gsm.h"
+#include "settings/gsmpersistence.h"
+#include "settings/ipv4.h"
+#include "settings/ipv4persistence.h"
+#include "settings/ppp.h"
+#include "settings/ppppersistence.h"
+#include "settings/pppoe.h"
+#include "settings/pppoepersistence.h"
+#include "settings/serial.h"
+#include "settings/serialpersistence.h"
+#include "settings/vpn.h"
+#include "settings/vpnpersistence.h"
 
 using namespace Knm;
 
@@ -49,14 +69,43 @@ SettingPersistence * ConnectionPersistence::persistenceFor(Setting * setting)
 {
     SettingPersistence * sp = m_persistences.value(setting);
     if (!sp)
-    switch (setting->type()) {
-        case Setting::Wireless:
-            sp = new Knm::WirelessPersistence(static_cast<Knm::WirelessSetting*>(setting), m_config, m_storageMode);
-            break;
-        default:
-//#warning REMOVE lazy default: from switch!
-            break;
-    }
+        switch (setting->type()) {
+            case Setting::Cdma:
+                sp = new CdmaPersistence(static_cast<CdmaSetting*>(setting), m_config, m_storageMode);
+                break;
+            case Setting::Gsm:
+                sp = new GsmPersistence(static_cast<GsmSetting*>(setting), m_config, m_storageMode);
+                break;
+            case Setting::Ipv4:
+                sp = new Ipv4Persistence(static_cast<Ipv4Setting*>(setting), m_config, m_storageMode);
+                break;
+            case Setting::Ppp:
+                sp = new PppPersistence(static_cast<PppSetting*>(setting), m_config, m_storageMode);
+                break;
+            case Setting::Pppoe:
+                sp = new PppoePersistence(static_cast<PppoeSetting*>(setting), m_config, m_storageMode);
+                break;
+            case Setting::Security8021x:
+                sp = new Security8021xPersistence(static_cast<Security8021xSetting*>(setting), m_config, m_storageMode);
+                break;
+            case Setting::Serial:
+                sp = new SerialPersistence(static_cast<SerialSetting*>(setting), m_config, m_storageMode);
+                break;
+            case Setting::Vpn:
+                sp = new VpnPersistence(static_cast<VpnSetting*>(setting), m_config, m_storageMode);
+                break;
+            case Setting::Wired:
+                sp = new WiredPersistence(static_cast<WiredSetting*>(setting), m_config, m_storageMode);
+                break;
+            case Setting::Wireless:
+                sp = new WirelessPersistence(static_cast<WirelessSetting*>(setting), m_config, m_storageMode);
+                break;
+            case Setting::WirelessSecurity:
+                sp = new WirelessSecurityPersistence(
+                        static_cast<WirelessSecuritySetting*>(setting), m_config, m_storageMode
+                        );
+                break;
+        }
     if (sp) {
         m_persistences.insert(setting, sp);
     }

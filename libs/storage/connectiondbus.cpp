@@ -104,8 +104,6 @@ SettingDbus * ConnectionDbus::dbusFor(Setting * setting)
             case Setting::WirelessSecurity:
                 sd = new WirelessSecurityDbus(static_cast<WirelessSecuritySetting*>(setting));
                 break;
-            default:
-                break;
         }
     }
     if (sd) {
