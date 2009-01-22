@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 
 #include "knmserviceprefs.h"
+#include "connection.h"
 #include "connectionprefs.h"
 
 #define ConnectionIdRole 1812
@@ -115,19 +116,22 @@ void ManageConnectionWidget::restoreConnections()
         }
         kDebug() << type << name << lastUsed;
         QTreeWidgetItem * item = 0;
-        if (type == QLatin1String("Wired")) {
+        if (type == Knm::Connection::typeAsString(Knm::Connection::Wired)) {
             item = new QTreeWidgetItem(mConnEditUi.listWired, itemContents);
             wiredItems.append(item);
-        } else if (type == QLatin1String("Wireless")) {
+        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Wireless)) {
             item = new QTreeWidgetItem(mConnEditUi.listWireless, itemContents);
             wirelessItems.append(item);
-        } else if (type == QLatin1String("Cellular")) {
+        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Gsm)) {
             item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
             cellularItems.append(item);
-        } else if (type.toLower() == QLatin1String("vpn")) {
+        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Cdma)) {
+            item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
+            cellularItems.append(item);
+        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Vpn)) {
             item = new QTreeWidgetItem(mConnEditUi.listVpn, itemContents);
             vpnItems.append(item);
-        } else if (type == QLatin1String("PPPoE")) {
+        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Pppoe)) {
             item = new QTreeWidgetItem(mConnEditUi.listPppoe, itemContents);
             pppoeItems.append(item);
         }

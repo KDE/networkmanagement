@@ -73,7 +73,7 @@ void ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariant
         cprefs->save();
         persist(cprefs->connection());
         //updateService();
-        //emit connectionsChanged();
+        emit connectionsChanged();
     }
 }
 
@@ -96,10 +96,13 @@ QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type 
     configDialog.setMainWidget(cprefs);
 
     if ( configDialog.exec() == QDialog::Accepted ) {
-        cprefs->save();
+        // our rcfile
         persist(cprefs->connection());
+        // the connection file
+        cprefs->save();
+#warning service not updated!
         //updateService();
-        //emit connectionsChanged();
+        emit connectionsChanged();
     }
     return connectionId;
 }
@@ -112,23 +115,15 @@ void ConnectionEditor::persist(Knm::Connection* connection)
     KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
     KConfigGroup config(prefs->config(), QLatin1String("Connection_") + connection->uuid());
     QStringList connectionIds = prefs->connections();
-    connectionIds << connection->uuid();
-    prefs->setConnections(connectionIds);
+    // check if already present, we may be editing an existing Connection
+    if (!connectionIds.contains(connection->uuid()))
+    {
+        connectionIds << connection->uuid();
+        prefs->setConnections(connectionIds);
+    }
     config.writeEntry("Name", name);
     config.writeEntry("Type", type);
     prefs->writeConfig();
-    // save the connection
-    QString configFile = KStandardDirs::locateLocal("data",
-        QLatin1String("knetworkmanager/connections/") + connection->uuid());
-
-    Knm::ConnectionPersistence * cp = new Knm::ConnectionPersistence(
-            connection,
-            KSharedConfig::openConfig(configFile),
-            prefs->storeInWallet() ? Knm::ConnectionPersistence::Secure : Knm::ConnectionPersistence::PlainText
-            );
-    cp->save();
-    QFile cf(configFile);
-    kDebug() << "Saved to " << configFile << ", which " << (cf.exists() ? "does" : "does not") << " exist";
 }
 
 ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaults, QWidget * parent,

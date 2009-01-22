@@ -20,12 +20,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionprefs.h"
 
+#include <QFile>
 #include <KTabWidget>
 #include <KDebug>
+#include <KStandardDirs>
 
 #include "connectionwidget.h"
 
 #include "connection.h"
+#include "connectionpersistence.h"
+#include "knmserviceprefs.h"
 
 ConnectionPreferences::ConnectionPreferences(const KComponentData& cdata, QWidget * parent, const QVariantList & args)
     : KCModule( cdata, parent, args ),
@@ -56,6 +60,16 @@ void ConnectionPreferences::addToTabWidget(SettingWidget * widget)
 
 void ConnectionPreferences::load()
 {
+    // restore the Connection if possible
+    QString connectionFile(KStandardDirs::locateLocal("data",
+                QLatin1String("knetworkmanager/connections/") + m_connection->uuid()));
+    Knm::ConnectionPersistence cp(m_connection, KSharedConfig::openConfig(connectionFile),
+            (KNetworkManagerServicePrefs::self()->storeInWallet()
+             ? Knm::ConnectionPersistence::Secure
+             : Knm::ConnectionPersistence::PlainText)
+            );
+    cp.load();
+    // and initialise the UI from the Connection
     m_contents->readConfig();
     foreach (SettingInterface * wid, m_settingWidgets) {
         wid->readConfig();
@@ -64,10 +78,23 @@ void ConnectionPreferences::load()
 
 void ConnectionPreferences::save()
 {
+    // save the UI to the Cconnection
     m_contents->writeConfig();
     foreach (SettingInterface * wid, m_settingWidgets) {
         wid->writeConfig();
     }
+    // persist the Connection
+    QString connectionFile = KStandardDirs::locateLocal("data",
+        QLatin1String("knetworkmanager/connections/") + m_connection->uuid());
+
+    Knm::ConnectionPersistence cp(
+            m_connection,
+            KSharedConfig::openConfig(connectionFile),
+            (KNetworkManagerServicePrefs::self()->storeInWallet()
+             ? Knm::ConnectionPersistence::Secure
+             : Knm::ConnectionPersistence::PlainText)
+            );
+    cp.save();
 }
 
 // vim: sw=4 sts=4 et tw=100
