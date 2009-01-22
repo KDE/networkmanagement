@@ -20,6 +20,18 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connection.h"
 
+#include "settings/802-11-wireless-security.h"
+#include "settings/802-11-wireless.h"
+#include "settings/802-1x.h"
+#include "settings/802-3-ethernet.h"
+#include "settings/cdma.h"
+#include "settings/gsm.h"
+#include "settings/ipv4.h"
+#include "settings/ppp.h"
+#include "settings/pppoe.h"
+#include "settings/serial.h"
+#include "settings/vpn.h"
+
 using namespace Knm;
 
 QString Connection::typeAsString(Connection::Type type)
@@ -74,18 +86,56 @@ Connection::Type typeFromString(const QString & type);
 Connection::Connection(const QString & name, const Connection::Type type)
     : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false)
 {
-
+    init();
 }
 
 Connection::Connection(const QUuid & uuid, const Connection::Type type)
     : m_uuid(uuid), m_type(type), m_autoConnect(false)
 {
-
+    init();
 }
 
 Connection::~Connection()
 {
     qDeleteAll(m_settings);
+}
+
+void Connection::init()
+{
+    switch (m_type) {
+        case Cdma:
+            addSetting(new CdmaSetting());
+            addSetting(new Ipv4Setting());
+            addSetting(new PppSetting());
+            addSetting(new SerialSetting());
+            break;
+        case Gsm:
+            addSetting(new GsmSetting());
+            addSetting(new Ipv4Setting());
+            addSetting(new PppSetting());
+            addSetting(new SerialSetting());
+            break;
+        case Pppoe:
+            addSetting(new Ipv4Setting());
+            addSetting(new PppSetting());
+            addSetting(new PppoeSetting());
+            addSetting(new WiredSetting());
+            break;
+        case Vpn:
+            addSetting(new VpnSetting());
+            break;
+        case Wired:
+            addSetting(new Ipv4Setting());
+            addSetting(new Security8021xSetting());
+            addSetting(new WiredSetting());
+            break;
+        case Wireless:
+            addSetting(new Ipv4Setting());
+            addSetting(new Security8021xSetting());
+            addSetting(new WirelessSetting());
+            addSetting(new WirelessSecuritySetting());
+            break;
+    }
 }
 
 QString Connection::name() const
@@ -150,50 +200,9 @@ void Connection::updateTimestamp()
     m_timestamp = QDateTime::currentDateTime();
 }
 
-bool Connection::addSetting(Setting * newSetting)
+void Connection::addSetting(Setting * newSetting)
 {
-    bool acceptable = false;
-    if (m_type == Connection::Wired) {
-        if (newSetting->type() == Setting::Ipv4 ||
-                newSetting->type() == Setting::Security8021x ||
-                newSetting->type() == Setting::Wired) {
-            acceptable = true;
-        }
-    } else if (m_type == Connection::Wireless) {
-        if (newSetting->type() == Setting::Ipv4 ||
-                newSetting->type() == Setting::Wireless ||
-                newSetting->type() == Setting::WirelessSecurity) {
-            acceptable = true;
-        }
-    } else if (m_type == Connection::Gsm) {
-        if (newSetting->type() == Setting::Gsm ||
-                newSetting->type() == Setting::Ppp) {
-            acceptable = true;
-        }
-    } else if (m_type == Connection::Cdma) {
-        if (newSetting->type() == Setting::Cdma ||
-                newSetting->type() == Setting::Ppp) {
-            acceptable = true;
-        }
-    } else if (m_type == Connection::Pppoe) {
-        if (newSetting->type() == Setting::Pppoe ||
-                newSetting->type() == Setting::Ppp ||
-                newSetting->type() == Setting::Wired ||
-                newSetting->type() == Setting::Ipv4) {
-            acceptable = true;
-        }
-    } else if (m_type == Connection::Vpn) {
-        if (newSetting->type() == Setting::Vpn ||
-                newSetting->type() == Setting::Ppp) {
-            acceptable = true;
-        }
-    }
-
-    if (acceptable && !setting(newSetting->type())) {
-        m_settings.append(newSetting);
-        return true;
-    }
-    return false;
+    m_settings.append(newSetting);
 }
 
 bool Connection::hasSecrets() const

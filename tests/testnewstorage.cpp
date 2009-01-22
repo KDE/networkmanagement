@@ -53,11 +53,12 @@ int main( int argc, char** argv )
         kDebug() << "setting up..";
         Knm::Connection foo(QUuid::createUuid(), Knm::Connection::Wireless);
         uuid = foo.uuid();
-        Knm::WirelessSetting * ws = new Knm::WirelessSetting();
-        ws->setSsid("stevello");
-        ws->setMode(Knm::WirelessSetting::EnumMode::infrastructure);
-        ws->setSecurity("bargle");
-        foo.addSetting(ws);
+        Knm::WirelessSetting * ws = static_cast<Knm::WirelessSetting*>(foo.setting(Knm::Setting::Wireless));
+        if (ws) {
+            ws->setSsid("stevello");
+            ws->setMode(Knm::WirelessSetting::EnumMode::infrastructure);
+            ws->setSecurity("bargle");
+        }
 
         // save it
         kDebug() << "saving connection..";
@@ -70,8 +71,7 @@ int main( int argc, char** argv )
     // restore it
     kDebug() << "restoring connection..";
     Knm::Connection foo(uuid, Knm::Connection::Wireless);
-    Knm::WirelessSetting * ws = new Knm::WirelessSetting();
-    foo.addSetting(ws);
+    Knm::WirelessSetting * ws = static_cast<Knm::WirelessSetting*>(foo.setting(Knm::Setting::Wireless));
     kDebug() << "before restore; ssid:" << ws->ssid() << "security:" << ws->security();
     Knm::ConnectionPersistence bar(&foo, KSharedConfig::openConfig("./testnewstoragerc"), Knm::ConnectionPersistence::PlainText);
     bar.load();

@@ -76,13 +76,6 @@ public:
     void updateTimestamp();
 
     /**
-     * Add a setting to this connection.  The connection will delete the Setting
-     * @return false if the setting can not use the given Setting type or if it already contains a
-     * Setting of this type.
-     */
-    bool addSetting(Setting*);
-
-    /**
      * Check if any of the settings in this connection have secrets
      */
     bool hasSecrets() const;
@@ -95,6 +88,18 @@ public:
     bool secretsAvailable() const;
 
 private:
+    /**
+     * Set up internal structure, including all settings specific to this connection type
+     */
+    void init();
+
+    /**
+     * Add a setting to this connection.  The connection will delete the Setting
+     * @return false if the setting can not use the given Setting type or if it already contains a
+     * Setting of this type.
+     */
+    void addSetting(Setting*);
+
     QString m_name;
     QUuid m_uuid;
     Connection::Type m_type;
