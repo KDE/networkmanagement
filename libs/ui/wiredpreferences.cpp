@@ -41,7 +41,7 @@ WiredPreferences::WiredPreferences(QWidget *parent, const QVariantList &args)
 : ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
     QString connectionId = args[0].toString();
-     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Wired);
+    m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Wired);
     QVBoxLayout * layout = new QVBoxLayout(this);
     m_contents = new ConnectionWidget(m_connection, this);
     layout->addWidget(m_contents);
