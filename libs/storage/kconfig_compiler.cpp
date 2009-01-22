@@ -2241,8 +2241,12 @@ int main( int argc, char **argv )
 
     if ((*itEntry)->secret()) {
         pC << "  // SECRET" << endl;
+        pC << "  if (m_storageMode != ConnectionPersistence::Secure) {" << endl << "  ";
     }
     pC << "  setting->" << setFunction(n) << "(m_config->readEntry(\"" << (*itEntry)->key() << "\", " << defaultStr << "));" << endl;
+    if ((*itEntry)->secret()) {
+        pC << "  }" << endl;
+    }
   }
   pC << "}" << endl << endl;
 
@@ -2441,6 +2445,7 @@ int main( int argc, char **argv )
   dC << "  QVariantMap map;" << endl;
   if (hasSecrets) {
     dC << "  " << className << "Setting * setting = static_cast<" << className << "Setting *>(m_setting);" << endl;
+    dC << "  map.insert(\"name\", setting->name());" << endl;
   }
   for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
     QString n = (*itEntry)->name();
