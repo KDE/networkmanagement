@@ -10,9 +10,9 @@
       <whatsthis></whatsthis>
       <choices>
         <choice name="none"/>
-        <choice name="wpa-none"/>
-        <choice name="wpa-psk"/>
-        <choice name="wpa-eap"/>
+        <choice name="wpanone"/>
+        <choice name="wpapsk"/>
+        <choice name="wpaeap"/>
         <default>42</default><!-- invalid default so that the choice is always sent; NM requires this -->
       </choices>
 

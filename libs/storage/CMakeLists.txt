@@ -14,6 +14,10 @@ set(knmstorage_SRCS
    settingdbus.cpp
    settingpersistence.cpp
 
+   settings/802-11-wireless-security.cpp
+   settings/802-11-wireless-securitydbus.cpp
+   settings/802-11-wireless-securitypersistence.cpp
+
    settings/802-11-wireless.cpp
    settings/802-11-wirelessdbus.cpp
    settings/802-11-wirelesspersistence.cpp

@@ -3,7 +3,7 @@
 #ifndef KNM_WIRELESSSECURITYDBUS_H
 #define KNM_WIRELESSSECURITYDBUS_H
 
-#include <nm-setting-802-11-wireless-security.h>
+#include <nm-setting-wireless-security.h>
 
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>

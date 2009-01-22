@@ -16,7 +16,7 @@ class KNM_EXPORT WirelessSecuritySetting : public Setting
     class EnumKeymgmt
     {
       public:
-      enum type { none, wpa-none, wpa-psk, wpa-eap, COUNT };
+      enum type { none, wpanone, wpapsk, wpaeap, COUNT };
     };
     class EnumAuthalg
     {

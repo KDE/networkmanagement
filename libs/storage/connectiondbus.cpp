@@ -33,6 +33,26 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "settings/802-11-wireless.h"
 #include "settings/802-11-wirelessdbus.h"
+#include "settings/802-11-wireless-security.h"
+#include "settings/802-11-wireless-securitydbus.h"
+#include "settings/802-1x.h"
+#include "settings/802-1xdbus.h"
+#include "settings/802-3-ethernet.h"
+#include "settings/802-3-ethernetdbus.h"
+#include "settings/cdma.h"
+#include "settings/cdmadbus.h"
+#include "settings/gsm.h"
+#include "settings/gsmdbus.h"
+#include "settings/ipv4.h"
+#include "settings/ipv4dbus.h"
+#include "settings/ppp.h"
+#include "settings/pppdbus.h"
+#include "settings/pppoe.h"
+#include "settings/pppoedbus.h"
+#include "settings/serial.h"
+#include "settings/serialdbus.h"
+#include "settings/vpn.h"
+#include "settings/vpndbus.h"
 
 using namespace Knm;
 
@@ -51,8 +71,38 @@ SettingDbus * ConnectionDbus::dbusFor(Setting * setting)
     SettingDbus * sd = m_dbus.value(setting);
     if (!sd) {
         switch (setting->type()) {
+            case Setting::Cdma:
+                sd = new CdmaDbus(static_cast<CdmaSetting*>(setting));
+                break;
+            case Setting::Gsm:
+                sd = new GsmDbus(static_cast<GsmSetting*>(setting));
+                break;
+            case Setting::Ipv4:
+                sd = new Ipv4Dbus(static_cast<Ipv4Setting*>(setting));
+                break;
+            case Setting::Ppp:
+                sd = new PppDbus(static_cast<PppSetting*>(setting));
+                break;
+            case Setting::Pppoe:
+                sd = new PppoeDbus(static_cast<PppoeSetting*>(setting));
+                break;
+            case Setting::Security8021x:
+                sd = new Security8021xDbus(static_cast<Security8021xSetting*>(setting));
+                break;
+            case Setting::Serial:
+                sd = new SerialDbus(static_cast<SerialSetting*>(setting));
+                break;
+            case Setting::Vpn:
+                sd = new VpnDbus(static_cast<VpnSetting*>(setting));
+                break;
+            case Setting::Wired:
+                sd = new WiredDbus(static_cast<WiredSetting*>(setting));
+                break;
             case Setting::Wireless:
                 sd = new WirelessDbus(static_cast<WirelessSetting*>(setting));
+                break;
+            case Setting::WirelessSecurity:
+                sd = new WirelessSecurityDbus(static_cast<WirelessSecuritySetting*>(setting));
                 break;
             default:
                 break;
