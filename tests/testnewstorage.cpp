@@ -51,17 +51,17 @@ int main( int argc, char** argv )
     {
         // set up initial connection
         kDebug() << "setting up..";
-        Connection foo(QUuid::createUuid(), Connection::Wireless);
+        Knm::Connection foo(QUuid::createUuid(), Knm::Connection::Wireless);
         uuid = foo.uuid();
-        WirelessSetting * ws = new WirelessSetting();
+        Knm::WirelessSetting * ws = new Knm::WirelessSetting();
         ws->setSsid("stevello");
-        ws->setMode(WirelessSetting::EnumMode::infrastructure);
+        ws->setMode(Knm::WirelessSetting::EnumMode::infrastructure);
         ws->setSecurity("bargle");
         foo.addSetting(ws);
 
         // save it
         kDebug() << "saving connection..";
-        ConnectionPersistence bar(&foo, KSharedConfig::openConfig("./testnewstoragerc"));
+        Knm::ConnectionPersistence bar(&foo, KSharedConfig::openConfig("./testnewstoragerc"), Knm::ConnectionPersistence::PlainText);
         bar.save();
         // kill it
     }
@@ -69,19 +69,23 @@ int main( int argc, char** argv )
 
     // restore it
     kDebug() << "restoring connection..";
-    Connection foo(uuid, Connection::Wireless);
-    WirelessSetting * ws = new WirelessSetting();
+    Knm::Connection foo(uuid, Knm::Connection::Wireless);
+    Knm::WirelessSetting * ws = new Knm::WirelessSetting();
     foo.addSetting(ws);
     kDebug() << "before restore; ssid:" << ws->ssid() << "security:" << ws->security();
-    ConnectionPersistence bar(&foo, KSharedConfig::openConfig("./testnewstoragerc"));
+    Knm::ConnectionPersistence bar(&foo, KSharedConfig::openConfig("./testnewstoragerc"), Knm::ConnectionPersistence::PlainText);
     bar.load();
     kDebug() << "after load; ssid:" << ws->ssid() << "security:" << ws->security();
     kDebug() << "            hasSecrets:" << foo.hasSecrets() << "secretsAvailable:" << foo.secretsAvailable();
     bar.loadSecrets();
 
+    kDebug() << "after loadSecrets; ssid:" << ws->ssid() << "security:" << ws->security();
+    kDebug() << "            hasSecrets:" << foo.hasSecrets() << "secretsAvailable:" << foo.secretsAvailable();
+
     kDebug() << "serialising restored connection to dbus..";
-    ConnectionDbus baz(&foo);
+    Knm::ConnectionDbus baz(&foo);
     kDebug() << baz.toDbusMap();
+    kDebug() << baz.toDbusSecretsMap();
     return app.exec();
 }
 
