@@ -21,20 +21,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ipv4widget.h"
 
 #include <KDebug>
-#include <KLocale>
 
 #include "ui_ipv4.h"
+
+#include "connection.h"
+#include "settings/ipv4.h"
 
 class IpV4Widget::Private
 {
 public:
     Ui_SettingsIp4Config ui;
+    Knm::Ipv4Setting * setting;
 };
 
 IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     : SettingWidget(connection, parent), d(new IpV4Widget::Private)
 {
     d->ui.setupUi(this);
+    d->setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
 }
 
 IpV4Widget::~IpV4Widget()
@@ -45,50 +49,46 @@ IpV4Widget::~IpV4Widget()
 void IpV4Widget::readConfig()
 {
     kDebug();
-#if 0
-    KConfigSkeletonItem * methodItem = configXml()->findItem(settingName(), QLatin1String(NM_SETTING_IP4_CONFIG_METHOD));
-    Q_ASSERT(methodItem);
-    QString method = methodItem->property().toString();
-    if ( method == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_AUTO)) {
-        d->ui.method->setCurrentIndex(0);
-    } else if ( method == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_LINK_LOCAL)) {
-        d->ui.method->setCurrentIndex(1);
-    } else if ( method == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_MANUAL)) {
-        d->ui.method->setCurrentIndex(2);
-    } else if ( method == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_SHARED)) {
-        d->ui.method->setCurrentIndex(3);
-    } else {
-        kDebug() << "Unrecognised value for method:" << method;
+    switch (d->setting->method()) {
+        case Knm::Ipv4Setting::EnumMethod::Automatic:
+            d->ui.method->setCurrentIndex(0);
+            break;
+        case Knm::Ipv4Setting::EnumMethod::LinkLocal:
+            d->ui.method->setCurrentIndex(1);
+            break;
+        case Knm::Ipv4Setting::EnumMethod::Manual:
+            d->ui.method->setCurrentIndex(2);
+            break;
+        case Knm::Ipv4Setting::EnumMethod::Shared:
+            d->ui.method->setCurrentIndex(3);
+            break;
+        default:
+            kDebug() << "Unrecognised value for method:" << d->setting->method();
+            break;
     }
     // TODO a lot, for ip addresses, routes etc
-    //KConfigGroup group(configXml()->config(), settingName());
-    //group.readEntry
-#endif
 }
 
 void IpV4Widget::writeConfig()
 {
-#if 0
     // save method
-    KConfigGroup group(configXml()->config(), settingName());
     switch ( d->ui.method->currentIndex()) {
         case 0:
-            group.writeEntry(NM_SETTING_IP4_CONFIG_METHOD, NM_SETTING_IP4_CONFIG_METHOD_AUTO);
+            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Automatic);
             break;
         case 1:
-            group.writeEntry(NM_SETTING_IP4_CONFIG_METHOD, NM_SETTING_IP4_CONFIG_METHOD_LINK_LOCAL);
+            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::LinkLocal);
             break;
         case 2:
-            group.writeEntry(NM_SETTING_IP4_CONFIG_METHOD, NM_SETTING_IP4_CONFIG_METHOD_MANUAL);
+            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Manual);
             break;
         case 3:
-            group.writeEntry(NM_SETTING_IP4_CONFIG_METHOD, NM_SETTING_IP4_CONFIG_METHOD_SHARED);
+            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Shared);
             break;
         default:
             kDebug() << "Unrecognised combo box index for method:" << d->ui.method->currentIndex();
             break;
     }
-#endif
 }
 
 // vim: sw=4 sts=4 et tw=100
