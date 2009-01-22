@@ -108,6 +108,19 @@ QVariantMapMap ConnectionDbus::toDbusMap()
     return mapMap;
 }
 
+QVariantMapMap ConnectionDbus::toDbusSecretsMap()
+{
+    QVariantMapMap mapMap;
+    // all other settings
+    foreach (Setting * setting, m_connection->settings()) {
+        SettingDbus * sd = dbusFor(setting);
+        if (sd)
+            mapMap.insert(setting->name(), sd->toSecretsMap());
+    }
+
+    return mapMap;
+}
+
 void ConnectionDbus::fromDbusMap(const QVariantMapMap &)
 {
     // connection settings

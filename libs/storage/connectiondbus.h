@@ -40,6 +40,7 @@ public:
     ~ConnectionDbus();
 
     QVariantMapMap toDbusMap();
+    QVariantMapMap toDbusSecretsMap();
     void fromDbusMap(const QVariantMapMap&);
 private:
     SettingDbus * dbusFor(Setting *);
