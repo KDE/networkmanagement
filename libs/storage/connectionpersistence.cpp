@@ -51,7 +51,7 @@ SettingPersistence * ConnectionPersistence::persistenceFor(Setting * setting)
     if (!sp)
     switch (setting->type()) {
         case Setting::Wireless:
-            sp = new Knm::WirelessPersistence(static_cast<Knm::WirelessSetting*>(setting), m_config/*, m_storageMode*/);
+            sp = new Knm::WirelessPersistence(static_cast<Knm::WirelessSetting*>(setting), m_config, m_storageMode);
             break;
         default:
 //#warning REMOVE lazy default: from switch!
@@ -127,15 +127,15 @@ QString ConnectionPersistence::walletKeyFor(const Setting * setting) const
 
 void ConnectionPersistence::loadSecrets()
 {
-    if (m_storageMode != ConnectionPersistence::Secure ||
-            !m_connection->hasSecrets() ||
-            m_connection->secretsAvailable())
-    {
+    if (m_storageMode != ConnectionPersistence::Secure) {
+        foreach (Setting * setting, m_connection->settings()) {
+            setting->setSecretsAvailable(true);
+            emit loadSecretsResult();
+        }
+    } else if (!m_connection->hasSecrets() ||
+            m_connection->secretsAvailable()) {
         emit loadSecretsResult();
-        return;
-    }
-
-    if (KWallet::Wallet::isEnabled()) {
+    } else if (KWallet::Wallet::isEnabled()) {
         kDebug() << "opening wallet...";
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
                 walletWid(), KWallet::Wallet::Asynchronous);
@@ -150,6 +150,7 @@ void ConnectionPersistence::loadSecrets()
         //setError(WalletDisabled);
         emit loadSecretsResult();
     }
+    return;
 }
 
 void ConnectionPersistence::walletOpenedForRead(bool success)
