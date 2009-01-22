@@ -27,6 +27,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "knm_export.h"
 #include "types.h"
 
+namespace Knm
+{
 class Connection;
 class Setting;
 class SettingDbus;
@@ -44,5 +46,7 @@ private:
     QHash<Setting*, SettingDbus*> m_dbus;
     Connection * m_connection;
 };
+
+} // namespace Knm
 
 #endif // CONNECTIONDBUS_H

@@ -5,6 +5,8 @@
 
 #include "serial.h"
 
+using namespace Knm;
+
 SerialDbus::SerialDbus(SerialSetting * setting) : SettingDbus(setting)
 {
 }
@@ -48,7 +50,6 @@ QVariantMap SerialDbus::toMap()
 QVariantMap SerialDbus::toSecretsMap()
 {
   QVariantMap map;
-  SerialSetting * setting = static_cast<SerialSetting *>(m_setting);
   return map;
 }
 

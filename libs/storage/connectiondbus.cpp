@@ -34,6 +34,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/802-11-wireless.h"
 #include "settings/802-11-wirelessdbus.h"
 
+using namespace Knm;
+
 ConnectionDbus::ConnectionDbus(Connection * conn)
     : m_connection(conn)
 {
@@ -51,6 +53,8 @@ SettingDbus * ConnectionDbus::dbusFor(Setting * setting)
         switch (setting->type()) {
             case Setting::Wireless:
                 sd = new WirelessDbus(static_cast<WirelessSetting*>(setting));
+                break;
+            default:
                 break;
         }
     }

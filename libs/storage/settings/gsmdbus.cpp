@@ -5,6 +5,8 @@
 
 #include "gsm.h"
 
+using namespace Knm;
+
 GsmDbus::GsmDbus(GsmSetting * setting) : SettingDbus(setting)
 {
 }

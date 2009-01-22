@@ -26,6 +26,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionpersistence.h"
 #include "setting.h"
 
+namespace Knm
+{
+
 class SettingPersistence
 {
 public:
@@ -41,5 +44,7 @@ protected:
     KConfigGroup * m_config;
     ConnectionPersistence::SecretStorageMode m_storageMode;
 };
+
+} // namespace Knm
 
 #endif // SETTINGPERSISTENCE_H

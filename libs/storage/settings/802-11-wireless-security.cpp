@@ -3,6 +3,8 @@
 
 #include "802-11-wireless-security.h"
 
+using namespace Knm;
+
 WirelessSecuritySetting::WirelessSecuritySetting() : Setting(Setting::WirelessSecurity)
 {
 }

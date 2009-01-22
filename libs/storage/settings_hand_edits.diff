@@ -1,0 +1,81 @@
+Only in settings: 802-11-wireless.cpp~
+diff -ur origsettings//802-11-wirelessdbus.h settings/802-11-wirelessdbus.h
+--- origsettings//802-11-wirelessdbus.h	2009-01-22 09:10:43.000000000 +0100
++++ settings/802-11-wirelessdbus.h	2009-01-21 22:47:21.000000000 +0100
+@@ -3,7 +3,7 @@
+ #ifndef WIRELESSDBUS_H
+ #define WIRELESSDBUS_H
+ 
+-#include <nm-setting-802-11-wireless.h>
++#include <nm-setting-wireless.h>
+ 
+ #include <kdebug.h>
+ #include <kcoreconfigskeleton.h>
+Only in settings: 802-11-wirelessdbus.h~
+Only in settings: 802-11-wirelesspersistence.cpp~
+diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
+--- origsettings//802-1xdbus.h	2009-01-22 09:10:43.000000000 +0100
++++ settings/802-1xdbus.h	2009-01-21 23:01:46.000000000 +0100
+@@ -3,7 +3,7 @@
+ #ifndef SECURITY8021XDBUS_H
+ #define SECURITY8021XDBUS_H
+ 
+-#include <nm-setting-802-1x.h>
++#include <nm-setting-8021x.h>
+ 
+ #include <kdebug.h>
+ #include <kcoreconfigskeleton.h>
+Only in settings: 802-1xdbus.h~
+diff -ur origsettings//802-3-ethernetdbus.h settings/802-3-ethernetdbus.h
+--- origsettings//802-3-ethernetdbus.h	2009-01-22 09:10:43.000000000 +0100
++++ settings/802-3-ethernetdbus.h	2009-01-21 22:47:54.000000000 +0100
+@@ -3,7 +3,7 @@
+ #ifndef WIREDDBUS_H
+ #define WIREDDBUS_H
+ 
+-#include <nm-setting-802-3-ethernet.h>
++#include <nm-setting-wired.h>
+ 
+ #include <kdebug.h>
+ #include <kcoreconfigskeleton.h>
+Only in settings: 802-3-ethernetdbus.h~
+diff -ur origsettings//gsmpersistence.cpp settings/gsmpersistence.cpp
+--- origsettings//gsmpersistence.cpp	2009-01-22 09:10:43.000000000 +0100
++++ settings/gsmpersistence.cpp	2009-01-21 23:04:13.000000000 +0100
+@@ -16,7 +16,7 @@
+ void GsmPersistence::load()
+ {
+   GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
+-  setting->setNumber(m_config->readEntry("number", QLatin1String( "*99#" )));
++  setting->setNumber(m_config->readEntry("number", "*99#"));
+   setting->setUsername(m_config->readEntry("username", ""));
+   // SECRET
+   setting->setPassword(m_config->readEntry("password", ""));
+Only in settings: gsmpersistence.cpp~
+diff -ur origsettings//ipv4dbus.h settings/ipv4dbus.h
+--- origsettings//ipv4dbus.h	2009-01-22 09:10:44.000000000 +0100
++++ settings/ipv4dbus.h	2009-01-21 23:07:52.000000000 +0100
+@@ -3,7 +3,7 @@
+ #ifndef IPV4DBUS_H
+ #define IPV4DBUS_H
+ 
+-#include <nm-setting-ipv4.h>
++#include <nm-setting-ip4-config.h>
+ 
+ #include <kdebug.h>
+ #include <kcoreconfigskeleton.h>
+Only in settings: ipv4dbus.h~
+diff -ur origsettings//serialpersistence.cpp settings/serialpersistence.cpp
+--- origsettings//serialpersistence.cpp	2009-01-22 09:10:44.000000000 +0100
++++ settings/serialpersistence.cpp	2009-01-21 23:14:21.000000000 +0100
+@@ -18,7 +18,7 @@
+   SerialSetting * setting = static_cast<SerialSetting *>(m_setting);
+   setting->setBaud(m_config->readEntry("baud", 0));
+   setting->setBits(m_config->readEntry("bits", 8));
+-  setting->setParity(m_config->readEntry("parity", QLatin1String( "None" )));
++  setting->setParity(m_config->readEntry("parity", "None"));
+   setting->setStopbits(m_config->readEntry("stopbits", 1));
+   setting->setSenddelay(m_config->readEntry("senddelay", 0));
+ }
+Only in settings: serialpersistence.cpp~
+Only in settings: .svn

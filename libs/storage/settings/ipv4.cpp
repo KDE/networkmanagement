@@ -3,6 +3,8 @@
 
 #include "ipv4.h"
 
+using namespace Knm;
+
 Ipv4Setting::Ipv4Setting() : Setting(Setting::Ipv4)
 {
 }

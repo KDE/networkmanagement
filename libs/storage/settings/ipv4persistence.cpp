@@ -5,6 +5,8 @@
 
 #include "ipv4.h"
 
+using namespace Knm;
+
 Ipv4Persistence::Ipv4Persistence(Ipv4Setting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {
 }
@@ -35,7 +37,6 @@ void Ipv4Persistence::save()
 
 QMap<QString,QString> Ipv4Persistence::secrets() const
 {
-  Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
   QMap<QString,QString> map;
   return map;
 }
@@ -43,7 +44,6 @@ QMap<QString,QString> Ipv4Persistence::secrets() const
 void Ipv4Persistence::restoreSecrets(QMap<QString,QString> secrets) const
 {
   if (m_storageMode == ConnectionPersistence::Secure) {
-  Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
-    setting->setSecretsAvailable(true);
+  Q_UNUSED(secrets);
   }
 }

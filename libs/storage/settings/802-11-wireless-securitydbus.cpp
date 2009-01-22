@@ -5,6 +5,8 @@
 
 #include "802-11-wireless-security.h"
 
+using namespace Knm;
+
 WirelessSecurityDbus::WirelessSecurityDbus(WirelessSecuritySetting * setting) : SettingDbus(setting)
 {
 }

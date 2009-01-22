@@ -20,6 +20,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "setting.h"
 
+using namespace Knm;
+
 Setting::Setting(Setting::Type type)
     : m_type(type), m_secretsAvailable(false)
 {

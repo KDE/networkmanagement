@@ -25,6 +25,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "setting.h"
 
+namespace Knm
+{
 class SettingDbus
 {
 public:
@@ -37,5 +39,7 @@ public:
 protected:
     Setting *m_setting;
 };
+
+} // namespace Knm
 
 #endif // SETTINGDBUS_H

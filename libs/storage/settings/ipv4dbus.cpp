@@ -5,6 +5,8 @@
 
 #include "ipv4.h"
 
+using namespace Knm;
+
 Ipv4Dbus::Ipv4Dbus(Ipv4Setting * setting) : SettingDbus(setting)
 {
 }
@@ -48,7 +50,6 @@ QVariantMap Ipv4Dbus::toMap()
 QVariantMap Ipv4Dbus::toSecretsMap()
 {
   QVariantMap map;
-  Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
   return map;
 }
 

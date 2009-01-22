@@ -5,6 +5,8 @@
 
 #include "802-3-ethernet.h"
 
+using namespace Knm;
+
 WiredPersistence::WiredPersistence(WiredSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {
 }
@@ -37,7 +39,6 @@ void WiredPersistence::save()
 
 QMap<QString,QString> WiredPersistence::secrets() const
 {
-  WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
   QMap<QString,QString> map;
   return map;
 }
@@ -45,7 +46,6 @@ QMap<QString,QString> WiredPersistence::secrets() const
 void WiredPersistence::restoreSecrets(QMap<QString,QString> secrets) const
 {
   if (m_storageMode == ConnectionPersistence::Secure) {
-  WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
-    setting->setSecretsAvailable(true);
+  Q_UNUSED(secrets);
   }
 }

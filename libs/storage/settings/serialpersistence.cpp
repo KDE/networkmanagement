@@ -5,6 +5,8 @@
 
 #include "serial.h"
 
+using namespace Knm;
+
 SerialPersistence::SerialPersistence(SerialSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {
 }
@@ -35,7 +37,6 @@ void SerialPersistence::save()
 
 QMap<QString,QString> SerialPersistence::secrets() const
 {
-  SerialSetting * setting = static_cast<SerialSetting *>(m_setting);
   QMap<QString,QString> map;
   return map;
 }
@@ -43,7 +44,6 @@ QMap<QString,QString> SerialPersistence::secrets() const
 void SerialPersistence::restoreSecrets(QMap<QString,QString> secrets) const
 {
   if (m_storageMode == ConnectionPersistence::Secure) {
-  SerialSetting * setting = static_cast<SerialSetting *>(m_setting);
-    setting->setSecretsAvailable(true);
+  Q_UNUSED(secrets);
   }
 }

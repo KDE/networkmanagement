@@ -5,6 +5,8 @@
 
 #include "802-3-ethernet.h"
 
+using namespace Knm;
+
 WiredDbus::WiredDbus(WiredSetting * setting) : SettingDbus(setting)
 {
 }
@@ -52,7 +54,6 @@ QVariantMap WiredDbus::toMap()
 QVariantMap WiredDbus::toSecretsMap()
 {
   QVariantMap map;
-  WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
   return map;
 }
 

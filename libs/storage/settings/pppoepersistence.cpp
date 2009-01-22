@@ -5,6 +5,8 @@
 
 #include "pppoe.h"
 
+using namespace Knm;
+
 PppoePersistence::PppoePersistence(PppoeSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {
 }

@@ -29,6 +29,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+namespace Knm
+{
 class Connection;
 class Setting;
 class SettingPersistence;
@@ -79,5 +81,7 @@ private:
     KSharedConfig::Ptr m_config;
     SecretStorageMode m_storageMode;
 };
+
+} // namespace Knm
 
 #endif // CONNECTIONPERSISTENCE_H

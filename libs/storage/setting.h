@@ -24,6 +24,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "knm_export.h"
 
 
+namespace Knm
+{
+
 class KNM_EXPORT Setting
 {
 public:
@@ -39,4 +42,7 @@ private:
     Setting::Type m_type;
     bool m_secretsAvailable;
 };
+
+} // namespace Knm
+
 #endif // SETTING_H

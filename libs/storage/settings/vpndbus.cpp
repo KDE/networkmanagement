@@ -5,6 +5,8 @@
 
 #include "vpn.h"
 
+using namespace Knm;
+
 VpnDbus::VpnDbus(VpnSetting * setting) : SettingDbus(setting)
 {
 }
@@ -44,7 +46,6 @@ QVariantMap VpnDbus::toMap()
 QVariantMap VpnDbus::toSecretsMap()
 {
   QVariantMap map;
-  VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
   return map;
 }
 

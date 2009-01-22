@@ -3,6 +3,8 @@
 
 #include "serial.h"
 
+using namespace Knm;
+
 SerialSetting::SerialSetting() : Setting(Setting::Serial)
 {
 }

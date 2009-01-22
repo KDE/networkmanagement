@@ -3,6 +3,8 @@
 
 #include "cdma.h"
 
+using namespace Knm;
+
 CdmaSetting::CdmaSetting() : Setting(Setting::Cdma)
 {
 }

@@ -3,6 +3,8 @@
 
 #include "ppp.h"
 
+using namespace Knm;
+
 PppSetting::PppSetting() : Setting(Setting::Ppp)
 {
 }

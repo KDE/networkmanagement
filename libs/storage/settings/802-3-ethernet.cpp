@@ -3,6 +3,8 @@
 
 #include "802-3-ethernet.h"
 
+using namespace Knm;
+
 WiredSetting::WiredSetting() : Setting(Setting::Wired)
 {
 }

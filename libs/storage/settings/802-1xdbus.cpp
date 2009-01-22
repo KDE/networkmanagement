@@ -5,6 +5,8 @@
 
 #include "802-1x.h"
 
+using namespace Knm;
+
 Security8021xDbus::Security8021xDbus(Security8021xSetting * setting) : SettingDbus(setting)
 {
 }

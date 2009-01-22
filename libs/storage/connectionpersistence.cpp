@@ -30,6 +30,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/802-11-wireless.h"
 #include "settings/802-11-wirelesspersistence.h"
 
+using namespace Knm;
+
 QString ConnectionPersistence::s_walletFolderName = QLatin1String("NetworkManager");
 WId ConnectionPersistence::s_walletWId = 0;
 
@@ -49,7 +51,7 @@ SettingPersistence * ConnectionPersistence::persistenceFor(Setting * setting)
     if (!sp)
     switch (setting->type()) {
         case Setting::Wireless:
-            sp = new WirelessPersistence(static_cast<WirelessSetting*>(setting), m_config/*, m_storageMode*/);
+            sp = new Knm::WirelessPersistence(static_cast<Knm::WirelessSetting*>(setting), m_config/*, m_storageMode*/);
             break;
         default:
 //#warning REMOVE lazy default: from switch!

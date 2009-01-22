@@ -5,6 +5,8 @@
 
 #include "pppoe.h"
 
+using namespace Knm;
+
 PppoeDbus::PppoeDbus(PppoeSetting * setting) : SettingDbus(setting)
 {
 }

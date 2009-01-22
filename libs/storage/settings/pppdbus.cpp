@@ -5,6 +5,8 @@
 
 #include "ppp.h"
 
+using namespace Knm;
+
 PppDbus::PppDbus(PppSetting * setting) : SettingDbus(setting)
 {
 }
@@ -100,7 +102,6 @@ QVariantMap PppDbus::toMap()
 QVariantMap PppDbus::toSecretsMap()
 {
   QVariantMap map;
-  PppSetting * setting = static_cast<PppSetting *>(m_setting);
   return map;
 }
 

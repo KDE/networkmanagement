@@ -5,6 +5,8 @@
 
 #include "vpn.h"
 
+using namespace Knm;
+
 VpnPersistence::VpnPersistence(VpnSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {
 }
@@ -33,7 +35,6 @@ void VpnPersistence::save()
 
 QMap<QString,QString> VpnPersistence::secrets() const
 {
-  VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
   QMap<QString,QString> map;
   return map;
 }
@@ -41,7 +42,6 @@ QMap<QString,QString> VpnPersistence::secrets() const
 void VpnPersistence::restoreSecrets(QMap<QString,QString> secrets) const
 {
   if (m_storageMode == ConnectionPersistence::Secure) {
-  VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
-    setting->setSecretsAvailable(true);
+  Q_UNUSED(secrets);
   }
 }

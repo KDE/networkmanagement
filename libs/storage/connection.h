@@ -30,6 +30,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+namespace Knm
+{
+
 class KNM_EXPORT Connection
 {
 public:
@@ -100,5 +103,6 @@ private:
 
     QList<Setting*> m_settings;
 };
+} // namespace Knm
 
 #endif // CONNECTION_H

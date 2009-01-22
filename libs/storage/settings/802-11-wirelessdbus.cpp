@@ -5,6 +5,8 @@
 
 #include "802-11-wireless.h"
 
+using namespace Knm;
+
 WirelessDbus::WirelessDbus(WirelessSetting * setting) : SettingDbus(setting)
 {
 }

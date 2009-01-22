@@ -3,6 +3,8 @@
 
 #include "802-1x.h"
 
+using namespace Knm;
+
 Security8021xSetting::Security8021xSetting() : Setting(Setting::Security8021x)
 {
 }

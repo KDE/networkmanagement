@@ -5,6 +5,8 @@
 
 #include "ppp.h"
 
+using namespace Knm;
+
 PppPersistence::PppPersistence(PppSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {
 }
@@ -61,7 +63,6 @@ void PppPersistence::save()
 
 QMap<QString,QString> PppPersistence::secrets() const
 {
-  PppSetting * setting = static_cast<PppSetting *>(m_setting);
   QMap<QString,QString> map;
   return map;
 }
@@ -69,7 +70,6 @@ QMap<QString,QString> PppPersistence::secrets() const
 void PppPersistence::restoreSecrets(QMap<QString,QString> secrets) const
 {
   if (m_storageMode == ConnectionPersistence::Secure) {
-  PppSetting * setting = static_cast<PppSetting *>(m_setting);
-    setting->setSecretsAvailable(true);
+  Q_UNUSED(secrets);
   }
 }

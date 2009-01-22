@@ -22,6 +22,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KConfigGroup>
 
+using namespace Knm;
+
 SettingPersistence::SettingPersistence(Setting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode)
    : m_setting(setting), m_config(new KConfigGroup(config, setting->name())), m_storageMode(mode)
 {
