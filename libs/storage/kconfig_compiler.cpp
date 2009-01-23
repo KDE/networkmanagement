@@ -128,6 +128,7 @@ class CfgEntry
       QString label;
       QString toolTip;
       QString whatsThis;
+      QString dbusValue;
     };
     class Choices
     {

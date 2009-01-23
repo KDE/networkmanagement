@@ -143,14 +143,21 @@ QVariantMapMap ConnectionDbus::toDbusMap()
     }
     connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_TYPE), dbusConnectionType);
     connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_AUTOCONNECT), m_connection->autoConnect());
-    connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_TIMESTAMP), m_connection->timestamp());
+    // as unix time
+    if (m_connection->timestamp().isValid()) {
+        connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_TIMESTAMP), m_connection->timestamp().toTime_t());
+    }
     mapMap.insert(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME), connectionMap);
 
     // all other settings
     foreach (Setting * setting, m_connection->settings()) {
         SettingDbus * sd = dbusFor(setting);
-        if (sd)
-            mapMap.insert(setting->name(), sd->toMap());
+        if (sd) {
+            QVariantMap map = sd->toMap();
+            if (!map.isEmpty()) {  // GENERAL RULE, type specific special cases will follow.
+                mapMap.insert(setting->name(), map);
+            }
+        }
     }
 
     return mapMap;
@@ -171,6 +178,7 @@ QVariantMapMap ConnectionDbus::toDbusSecretsMap()
 
 void ConnectionDbus::fromDbusMap(const QVariantMapMap &)
 {
+    kDebug() << "Unimplemented!";
     // connection settings
     // all other settings
 }

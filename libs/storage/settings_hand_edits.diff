@@ -1,6 +1,6 @@
 Only in settings: 802-11-wireless.cpp~
 diff -ur origsettings//802-11-wirelessdbus.h settings/802-11-wirelessdbus.h
---- origsettings//802-11-wirelessdbus.h	2009-01-22 17:50:04.000000000 +0100
+--- origsettings//802-11-wirelessdbus.h	2009-01-23 17:47:49.000000000 +0100
 +++ settings/802-11-wirelessdbus.h	2009-01-22 17:45:41.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_WIRELESSDBUS_H
@@ -14,7 +14,7 @@ diff -ur origsettings//802-11-wirelessdbus.h settings/802-11-wirelessdbus.h
 Only in settings: 802-11-wirelessdbus.h~
 Only in settings: 802-11-wirelesspersistence.cpp~
 diff -ur origsettings//802-11-wireless-securitydbus.h settings/802-11-wireless-securitydbus.h
---- origsettings//802-11-wireless-securitydbus.h	2009-01-22 17:50:04.000000000 +0100
+--- origsettings//802-11-wireless-securitydbus.h	2009-01-23 17:47:49.000000000 +0100
 +++ settings/802-11-wireless-securitydbus.h	2009-01-22 17:45:41.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_WIRELESSSECURITYDBUS_H
@@ -26,8 +26,95 @@ diff -ur origsettings//802-11-wireless-securitydbus.h settings/802-11-wireless-s
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 Only in settings: 802-11-wireless-securitydbus.h~
+diff -ur origsettings//802-1x.cpp settings/802-1x.cpp
+--- origsettings//802-1x.cpp	2009-01-23 17:47:49.000000000 +0100
++++ settings/802-1x.cpp	2009-01-23 17:01:54.000000000 +0100
+@@ -5,7 +5,8 @@
+ 
+ using namespace Knm;
+ 
+-Security8021xSetting::Security8021xSetting() : Setting(Setting::Security8021x)
++Security8021xSetting::Security8021xSetting() : Setting(Setting::Security8021x),
++    mPhase1peapver(0), mPhase2autheap(0)
+ {
+ }
+ 
+Only in settings: 802-1x.cpp~
+diff -ur origsettings//802-1xdbus.cpp settings/802-1xdbus.cpp
+--- origsettings//802-1xdbus.cpp	2009-01-23 17:47:49.000000000 +0100
++++ settings/802-1xdbus.cpp	2009-01-23 17:32:52.000000000 +0100
+@@ -82,24 +82,50 @@
+ {
+   QVariantMap map;
+   Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
+-  map.insert("eap", setting->eap());
+-  map.insert("identity", setting->identity());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY), setting->anonymousidentity());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_CA_CERT), setting->cacert());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_CA_PATH), setting->capath());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT), setting->clientcert());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), setting->phase1peapver());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL), setting->phase1peaplabel());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING), setting->phase1fastprovisioning());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), setting->phase2auth());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), setting->phase2autheap());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT), setting->phase2cacert());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH), setting->phase2capath());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT), setting->phase2clientcert());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY), setting->privatekey());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY), setting->phase2privatekey());
+-  map.insert("pin", setting->pin());
+-  map.insert("psk", setting->psk());
++  if (!setting->eap().isEmpty()) {
++      map.insert("eap", setting->eap());
++  }
++  if (!setting->identity().isEmpty()) {
++      map.insert("identity", setting->identity());
++  }
++  if (!setting->anonymousidentity().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY), setting->anonymousidentity());
++  }
++  if (!setting->cacert().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_802_1X_CA_CERT), setting->cacert());
++  }
++  if (!setting->capath().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_802_1X_CA_PATH), setting->capath());
++  }
++  if (!setting->clientcert().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT), setting->clientcert());
++  }
++  if (setting->eap().contains(QLatin1String("peap"))) {  // just a guess
++      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), setting->phase1peapver());
++      if (!setting->phase1peaplabel().isEmpty()) {
++          map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL), setting->phase1peaplabel());
++      }
++  }
++  if (!setting->phase1fastprovisioning().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING), setting->phase1fastprovisioning());
++  }
++  if (!setting->phase2auth().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), setting->phase2auth());
++      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), setting->phase2autheap());
++      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT), setting->phase2cacert());
++      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH), setting->phase2capath());
++      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT), setting->phase2clientcert());
++      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY), setting->phase2privatekey());
++  }
++  if (!setting->privatekey().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY), setting->privatekey());
++  }
++  if (!setting->pin().isEmpty()) {
++      map.insert("pin", setting->pin());
++  }
++  if (!setting->psk().isEmpty()) {
++      map.insert("psk", setting->psk());
++  }
+   return map;
+ }
+ 
+Only in settings: 802-1xdbus.cpp~
 diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
---- origsettings//802-1xdbus.h	2009-01-22 17:50:04.000000000 +0100
+--- origsettings//802-1xdbus.h	2009-01-23 17:47:49.000000000 +0100
 +++ settings/802-1xdbus.h	2009-01-22 17:45:41.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_SECURITY8021XDBUS_H
@@ -40,7 +127,7 @@ diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
  #include <kcoreconfigskeleton.h>
 Only in settings: 802-1xdbus.h~
 diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
---- origsettings//802-3-ethernet.cpp	2009-01-22 17:50:04.000000000 +0100
+--- origsettings//802-3-ethernet.cpp	2009-01-23 17:47:49.000000000 +0100
 +++ settings/802-3-ethernet.cpp	2009-01-22 17:48:41.000000000 +0100
 @@ -5,7 +5,12 @@
  
@@ -58,7 +145,7 @@ diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
  
 Only in settings: 802-3-ethernet.cpp~
 diff -ur origsettings//802-3-ethernetdbus.h settings/802-3-ethernetdbus.h
---- origsettings//802-3-ethernetdbus.h	2009-01-22 17:50:04.000000000 +0100
+--- origsettings//802-3-ethernetdbus.h	2009-01-23 17:47:49.000000000 +0100
 +++ settings/802-3-ethernetdbus.h	2009-01-22 17:45:41.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_WIREDDBUS_H
@@ -71,7 +158,7 @@ diff -ur origsettings//802-3-ethernetdbus.h settings/802-3-ethernetdbus.h
  #include <kcoreconfigskeleton.h>
 Only in settings: 802-3-ethernetdbus.h~
 diff -ur origsettings//gsmpersistence.cpp settings/gsmpersistence.cpp
---- origsettings//gsmpersistence.cpp	2009-01-22 17:50:04.000000000 +0100
+--- origsettings//gsmpersistence.cpp	2009-01-23 17:47:49.000000000 +0100
 +++ settings/gsmpersistence.cpp	2009-01-22 17:45:41.000000000 +0100
 @@ -18,7 +18,7 @@
  void GsmPersistence::load()
@@ -84,7 +171,7 @@ diff -ur origsettings//gsmpersistence.cpp settings/gsmpersistence.cpp
    if (m_storageMode != ConnectionPersistence::Secure) {
 Only in settings: gsmpersistence.cpp~
 diff -ur origsettings//ipv4.cpp settings/ipv4.cpp
---- origsettings//ipv4.cpp	2009-01-22 17:50:04.000000000 +0100
+--- origsettings//ipv4.cpp	2009-01-23 17:47:49.000000000 +0100
 +++ settings/ipv4.cpp	2009-01-22 17:56:18.000000000 +0100
 @@ -5,7 +5,9 @@
  
@@ -98,9 +185,70 @@ diff -ur origsettings//ipv4.cpp settings/ipv4.cpp
  }
  
 Only in settings: ipv4.cpp~
-Only in settings: .ipv4.cpp.swp
+diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
+--- origsettings//ipv4dbus.cpp	2009-01-23 17:47:49.000000000 +0100
++++ settings/ipv4dbus.cpp	2009-01-23 17:23:23.000000000 +0100
+@@ -15,35 +15,35 @@
+ {
+ }
+ 
+-void Ipv4Dbus::fromMap(const QVariantMap & map)
+-{
+-  Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
+-  if (map.contains("method")) {
+-    setting->setMethod(map.value("method").value<int>());
+-  }
+-  if (map.contains("dns")) {
+-    setting->setDns(map.value("dns").value<QStringList>());
+-  }
+-  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH))) {
+-    setting->setDnssearch(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)).value<QStringList>());
+-  }
+-  if (map.contains("addresses")) {
+-    setting->setAddresses(map.value("addresses").value<QStringList>());
++void Ipv4Dbus::fromMap(const QVariantMap & map) { Ipv4Setting * setting = static_cast<Ipv4Setting
++    *>(m_setting); if (map.contains("method")) {
++        setting->setMethod(map.value("method").value<int>()); }
++  //if (map.contains("dns")) { setting->setDns(map.value("dns").value<QStringList>()); }
++  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)) &&
++          !map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)).value<QStringList>().isEmpty()
++          ) {
++      setting->setDnssearch(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)).value<QStringList>());
+   }
++  //if (map.contains("addresses")) {
++  //setting->setAddresses(map.value("addresses").value<QStringList>()); }
+   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS))) {
+-    setting->setIgnoredhcpdns(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS)).value<bool>());
+-  }
+-}
++      setting->setIgnoredhcpdns(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS)).value<bool>());
++  } }
+ 
+ QVariantMap Ipv4Dbus::toMap()
+ {
++  kDebug() << "Does not yet support manual IP addresses";
+   QVariantMap map;
+   Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
+   map.insert("method", setting->method());
+-  map.insert("dns", setting->dns());
+-  map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH), setting->dnssearch());
+-  map.insert("addresses", setting->addresses());
+-  map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS), setting->ignoredhcpdns());
++  //map.insert("dns", setting->dns());
++  if (!setting->dnssearch().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH), setting->dnssearch());
++  }
++  if (!setting->addresses().isEmpty()) {
++      map.insert("addresses", setting->addresses());
++  }
++  //map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS), setting->ignoredhcpdns());
+   return map;
+ }
+ 
+Only in settings: ipv4dbus.cpp~
+Only in settings: .ipv4dbus.cpp.swp
 diff -ur origsettings//ipv4dbus.h settings/ipv4dbus.h
---- origsettings//ipv4dbus.h	2009-01-22 17:50:04.000000000 +0100
+--- origsettings//ipv4dbus.h	2009-01-23 17:47:49.000000000 +0100
 +++ settings/ipv4dbus.h	2009-01-22 17:45:41.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_IPV4DBUS_H
@@ -114,7 +262,7 @@ diff -ur origsettings//ipv4dbus.h settings/ipv4dbus.h
 Only in settings: ipv4dbus.h~
 Only in settings: .ipv4.h.swp
 diff -ur origsettings//serialpersistence.cpp settings/serialpersistence.cpp
---- origsettings//serialpersistence.cpp	2009-01-22 17:50:04.000000000 +0100
+--- origsettings//serialpersistence.cpp	2009-01-23 17:47:49.000000000 +0100
 +++ settings/serialpersistence.cpp	2009-01-22 17:45:41.000000000 +0100
 @@ -20,7 +20,7 @@
    SerialSetting * setting = static_cast<SerialSetting *>(m_setting);

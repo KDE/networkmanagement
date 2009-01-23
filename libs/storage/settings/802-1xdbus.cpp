@@ -82,24 +82,50 @@ QVariantMap Security8021xDbus::toMap()
 {
   QVariantMap map;
   Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
-  map.insert("eap", setting->eap());
-  map.insert("identity", setting->identity());
-  map.insert(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY), setting->anonymousidentity());
-  map.insert(QLatin1String(NM_SETTING_802_1X_CA_CERT), setting->cacert());
-  map.insert(QLatin1String(NM_SETTING_802_1X_CA_PATH), setting->capath());
-  map.insert(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT), setting->clientcert());
-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), setting->phase1peapver());
-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL), setting->phase1peaplabel());
-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING), setting->phase1fastprovisioning());
-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), setting->phase2auth());
-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), setting->phase2autheap());
-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT), setting->phase2cacert());
-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH), setting->phase2capath());
-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT), setting->phase2clientcert());
-  map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY), setting->privatekey());
-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY), setting->phase2privatekey());
-  map.insert("pin", setting->pin());
-  map.insert("psk", setting->psk());
+  if (!setting->eap().isEmpty()) {
+      map.insert("eap", setting->eap());
+  }
+  if (!setting->identity().isEmpty()) {
+      map.insert("identity", setting->identity());
+  }
+  if (!setting->anonymousidentity().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY), setting->anonymousidentity());
+  }
+  if (!setting->cacert().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_802_1X_CA_CERT), setting->cacert());
+  }
+  if (!setting->capath().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_802_1X_CA_PATH), setting->capath());
+  }
+  if (!setting->clientcert().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT), setting->clientcert());
+  }
+  if (setting->eap().contains(QLatin1String("peap"))) {  // just a guess
+      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), setting->phase1peapver());
+      if (!setting->phase1peaplabel().isEmpty()) {
+          map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL), setting->phase1peaplabel());
+      }
+  }
+  if (!setting->phase1fastprovisioning().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING), setting->phase1fastprovisioning());
+  }
+  if (!setting->phase2auth().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), setting->phase2auth());
+      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), setting->phase2autheap());
+      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT), setting->phase2cacert());
+      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH), setting->phase2capath());
+      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT), setting->phase2clientcert());
+      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY), setting->phase2privatekey());
+  }
+  if (!setting->privatekey().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY), setting->privatekey());
+  }
+  if (!setting->pin().isEmpty()) {
+      map.insert("pin", setting->pin());
+  }
+  if (!setting->psk().isEmpty()) {
+      map.insert("psk", setting->psk());
+  }
   return map;
 }
 

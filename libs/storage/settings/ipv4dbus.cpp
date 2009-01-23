@@ -15,35 +15,35 @@ Ipv4Dbus::~Ipv4Dbus()
 {
 }
 
-void Ipv4Dbus::fromMap(const QVariantMap & map)
-{
-  Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
-  if (map.contains("method")) {
-    setting->setMethod(map.value("method").value<int>());
+void Ipv4Dbus::fromMap(const QVariantMap & map) { Ipv4Setting * setting = static_cast<Ipv4Setting
+    *>(m_setting); if (map.contains("method")) {
+        setting->setMethod(map.value("method").value<int>()); }
+  //if (map.contains("dns")) { setting->setDns(map.value("dns").value<QStringList>()); }
+  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)) &&
+          !map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)).value<QStringList>().isEmpty()
+          ) {
+      setting->setDnssearch(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)).value<QStringList>());
   }
-  if (map.contains("dns")) {
-    setting->setDns(map.value("dns").value<QStringList>());
-  }
-  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH))) {
-    setting->setDnssearch(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)).value<QStringList>());
-  }
-  if (map.contains("addresses")) {
-    setting->setAddresses(map.value("addresses").value<QStringList>());
-  }
+  //if (map.contains("addresses")) {
+  //setting->setAddresses(map.value("addresses").value<QStringList>()); }
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS))) {
-    setting->setIgnoredhcpdns(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS)).value<bool>());
-  }
-}
+      setting->setIgnoredhcpdns(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS)).value<bool>());
+  } }
 
 QVariantMap Ipv4Dbus::toMap()
 {
+  kDebug() << "Does not yet support manual IP addresses";
   QVariantMap map;
   Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
   map.insert("method", setting->method());
-  map.insert("dns", setting->dns());
-  map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH), setting->dnssearch());
-  map.insert("addresses", setting->addresses());
-  map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS), setting->ignoredhcpdns());
+  //map.insert("dns", setting->dns());
+  if (!setting->dnssearch().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH), setting->dnssearch());
+  }
+  if (!setting->addresses().isEmpty()) {
+      map.insert("addresses", setting->addresses());
+  }
+  //map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS), setting->ignoredhcpdns());
   return map;
 }
 
