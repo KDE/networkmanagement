@@ -20,30 +20,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "802_11_wirelesswidget.h"
 
-#include <nm-setting-wireless.h>
 #include <KDebug>
 
-#include "configxml.h"
-
 #include "scanwidget.h"
+#include "connection.h"
 #include "ui_802-11-wireless.h"
+#include "settings/802-11-wireless.h"
 
 const QString Wireless80211Widget::INFRA_MODE = QLatin1String("infrastructure");
 const QString Wireless80211Widget::ADHOC_MODE = QLatin1String("adhoc");
 
 class Wireless80211Widget::Private
 {
-    public:
+public:
     Ui_Wireless80211Config ui;
+    Knm::WirelessSetting * setting;
 };
 
-Wireless80211Widget::Wireless80211Widget(const QString& connectionId, const QString &ssid, QWidget * parent)
-    : SettingWidget(connectionId, parent), d(new Wireless80211Widget::Private)
+Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QString &ssid, QWidget * parent)
+    : SettingWidget(connection, parent), d(new Wireless80211Widget::Private)
 {
     d->ui.setupUi(this);
-    d->ui.kcfg_ssid->setText(ssid);
+    d->setting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
+    d->setting->setSsid(ssid.toAscii());
+    
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
-    init();
 }
 
 Wireless80211Widget::~Wireless80211Widget()
@@ -51,37 +52,33 @@ Wireless80211Widget::~Wireless80211Widget()
     delete d;
 }
 
-QString Wireless80211Widget::settingName() const
-{
-    return QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME);
-}
-
 void Wireless80211Widget::readConfig()
 {
     kDebug();
-    KConfigSkeletonItem * item = configXml()->findItem(settingName(), QLatin1String(NM_SETTING_WIRELESS_MODE));
-    Q_ASSERT(item);
-    QString mode = item->property().toString();
-    if ( mode == QLatin1String("infrastructure")) {
-        d->ui.cmbMode->setCurrentIndex(0);
-    } else if ( mode == QLatin1String("adhoc")) {
-        d->ui.cmbMode->setCurrentIndex(1);
-    } else if ( !mode.isEmpty()) {
-        kDebug() << "Found unrecognised mode value: " << mode;
-    }
+
+    switch(d->setting->mode())
+    {
+        case Knm::WirelessSetting::EnumMode::adhoc:
+            d->ui.cmbMode->setCurrentIndex(1);
+            break;
+        case Knm::WirelessSetting::EnumMode::infrastructure:
+        default:
+            d->ui.cmbMode->setCurrentIndex(0);
+      }
+    d->ui.kcfg_ssid->setText(QString(d->setting->ssid()));
 }
 
 void Wireless80211Widget::writeConfig()
 {
     kDebug();
-    // save method
-    KConfigGroup group(configXml()->config(), settingName());
+
+    d->setting->setSsid(d->ui.kcfg_ssid->text().toAscii());
     switch ( d->ui.cmbMode->currentIndex()) {
         case 0:
-            group.writeEntry(NM_SETTING_WIRELESS_MODE, INFRA_MODE);
+            d->setting->setMode(Knm::WirelessSetting::EnumMode::infrastructure);
             break;
         case 1:
-            group.writeEntry(NM_SETTING_WIRELESS_MODE, ADHOC_MODE);
+            d->setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
             break;
     }
 }

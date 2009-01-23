@@ -18,7 +18,7 @@ set(knmui_SRCS
    connectionwidget.cpp
    ipv4widget.cpp
    wiredwidget.cpp
-   #802_11_wirelesswidget.cpp
+   802_11_wirelesswidget.cpp
    accesspoint.cpp
    apitemdelegate.cpp
    apitemmodel.cpp
