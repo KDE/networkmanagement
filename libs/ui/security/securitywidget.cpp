@@ -20,11 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "securitywidget.h"
 
-const QString SecurityWidget::AUTH_ALG_OPEN = QLatin1String("open");
-const QString SecurityWidget::AUTH_ALG_SHARED = QLatin1String("shared");
-
-SecurityWidget::SecurityWidget(const QString & theConnectionId, QWidget * parent)
-: QWidget(parent), m_connectionId(theConnectionId)
+SecurityWidget::SecurityWidget(Knm::Connection* connection,  QWidget * parent)
+: QWidget(parent), m_connection(connection)
 {
 }
 

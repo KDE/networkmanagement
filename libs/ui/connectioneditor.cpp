@@ -41,7 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionprefs.h"
 #include "wiredpreferences.h"
-//#include "wirelesspreferences.h"
+#include "wirelesspreferences.h"
 //#include "cellularpreferences.h"
 //#include "pppoepreferences.h"
 //#include "vpnpreferences.h"
@@ -137,7 +137,7 @@ ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaul
             wid = new WiredPreferences(parent, args);
             break;
         case Knm::Connection::Wireless:
-            //wid = new WirelessPreferences(setDefaults, parent, args);
+            wid = new WirelessPreferences(setDefaults, parent, args);
             break;
         case Knm::Connection::Cdma:
             //wid = new CellularPreferences(parent, args);

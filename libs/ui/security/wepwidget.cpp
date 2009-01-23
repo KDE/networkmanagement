@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "802_11_wireless_security_widget.h"
 #include "secretstoragehelper.h"
 #include "ui_wep.h"
+#include "settings/802-11-wireless-security.h"
 
 class WepWidget::Private
 {
@@ -38,16 +39,15 @@ public:
     Ui_Wep ui;
     QStringList keys;
     int keyIndex;
-    KConfig * config;
+    Knm::WirelessSecuritySetting * setting;
 };
 
-WepWidget::WepWidget(KeyFormat format, KConfig * config, const QString & connectionId, QWidget * parent)
-: SecurityWidget(connectionId, parent), d(new WepWidget::Private)
+WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * parent)
+: SecurityWidget(connection, parent), d(new WepWidget::Private)
 {
     d->format = format;
     d->keys << "" << "" << "" << "";
     d->keyIndex = 0;
-    d->config = config;
     d->ui.setupUi(this);
     d->ui.passphrase->setEchoMode(QLineEdit::Password);
     d->ui.key->setEchoMode(QLineEdit::Password);
@@ -103,36 +103,34 @@ bool WepWidget::validate() const
 
 void WepWidget::readConfig()
 {
-    KConfigGroup cg(d->config, NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
+    
     // tx index
-    uint txKeyIndex = cg.readEntry("weptxkeyidx", 0);
+    uint txKeyIndex = d->setting->weptxkeyindex();
     d->keyIndex = txKeyIndex;
     disconnect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
     d->ui.weptxkeyindex->setCurrentIndex(txKeyIndex < 3 ? txKeyIndex : 0 );
     connect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
+
     // keys
-    SecretStorageHelper secrets(m_connectionId, cg.name());
-    for (int i = 0; i < 4; i++) {
-        QString fieldName = QString::fromLatin1("wep-key%1").arg(i);
-        QString secret;
-        secrets.readSecret(fieldName, secret);
-        if (!secret.isEmpty()) {
-            d->keys.replace(i, secret);
-        }
-    }
+    d->keys.replace(0, d->setting->wepkey0());
+    d->keys.replace(1, d->setting->wepkey1());
+    d->keys.replace(2, d->setting->wepkey2());
+    d->keys.replace(3, d->setting->wepkey3());
+
     d->ui.key->setText(d->keys.value(txKeyIndex));
     d->ui.chkShowPass->setChecked(false);
 
+/*
+FIXME
     //passphrase
     QString passphrase;
     secrets.readSecret("wep-passphrase", passphrase);
     if (!passphrase.isEmpty()) {
         d->ui.passphrase->setText(passphrase);
     }
-
+*/
     // auth alg
-    QString authAlg = cg.readEntry("authalg", "open");
-    if (authAlg == QLatin1String("shared")) {
+    if (d->setting->authalg()  == Knm::WirelessSecuritySetting::EnumAuthalg::shared) {
         d->ui.authalg->setCurrentIndex( 1 );
     } else {
         d->ui.authalg->setCurrentIndex( 0 );
@@ -143,42 +141,24 @@ void WepWidget::writeConfig()
 {
     d->keys.insert(d->ui.weptxkeyindex->currentIndex(), d->ui.key->text());
 
-    KConfigGroup cg(d->config, NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
-    cg.writeEntry("keymgmt", Wireless80211SecurityWidget::KEY_MGMT_NONE);
-    cg.writeEntry("weptxkeyidx", d->ui.weptxkeyindex->currentIndex());
-    // keys
-    SecretStorageHelper secrets(m_connectionId, cg.name());
+    d->setting->setWeptxkeyindex(d->ui.weptxkeyindex->currentIndex());
 
-    for (int i = 0; i < d->keys.count(); i++) {
-        QString fieldName = QString::fromLatin1("wep-key%1").arg(i);
-        if (!d->keys[i].isEmpty()) {
-            secrets.writeSecret(fieldName, d->keys[i]);
-        }
-    }
+    // keys
+    d->setting->setWepkey0(d->keys[0]);
+    d->setting->setWepkey1(d->keys[1]);
+    d->setting->setWepkey2(d->keys[2]);
+    d->setting->setWepkey3(d->keys[3]);
+
+/* FIXME
     QString passphrase = d->ui.passphrase->text();
     secrets.writeSecret("wep-passphrase", passphrase);
+*/
     QString authAlg;
     if (d->ui.authalg->currentIndex() == 0 ) {
-        authAlg = AUTH_ALG_OPEN;
+        d->setting->setAuthalg(Knm::WirelessSecuritySetting::EnumAuthalg::open);
     } else {
-        authAlg = AUTH_ALG_SHARED;
+        d->setting->setAuthalg(Knm::WirelessSecuritySetting::EnumAuthalg::shared);
     }
-    cg.writeEntry("authalg", authAlg);
-}
-
-QVariantMap WepWidget::secrets() const
-{
-    QVariantMap ourSecrets;
-    d->keys.insert(d->ui.weptxkeyindex->currentIndex(), d->ui.key->text());
-
-    for (int i = 0; i < d->keys.count(); i++) {
-        QString fieldName = QString::fromLatin1("wep-key%1").arg(i);
-        if (!d->keys[i].isEmpty()) {
-            ourSecrets.insert(fieldName, QVariant(d->keys[i]));
-        }
-    }
-    kDebug() << ourSecrets;
-    return ourSecrets;
 }
 
 #include "wepwidget.moc"

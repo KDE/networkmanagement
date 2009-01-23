@@ -11,7 +11,7 @@ set(knmui_SRCS
    #pppwidget.cpp
    #pppoewidget.cpp
    security/802_1x_security_widget.cpp
-   #security/securitywidget.cpp
+   security/securitywidget.cpp
    settinginterface.cpp
    settingwidget.cpp
    #connectionwidgetfactory.cpp
@@ -25,8 +25,8 @@ set(knmui_SRCS
    apitemview.cpp
    ifaceitemmodel.cpp
    scanwidget.cpp
-   #security/802_11_wireless_security_widget.cpp
-   #security/wepwidget.cpp
+   security/802_11_wireless_security_widget.cpp
+   security/wepwidget.cpp
    #security/wpapskwidget.cpp
    #security/wpaeapwidget.cpp
    #security/eapwidget.cpp
@@ -39,7 +39,7 @@ set(knmui_SRCS
    #pppoepreferences.cpp
    #vpnpreferences.cpp
    wiredpreferences.cpp
-   #wirelesspreferences.cpp
+   wirelesspreferences.cpp
    connectioneditor.cpp
    )
 
