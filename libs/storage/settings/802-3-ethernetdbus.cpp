@@ -42,6 +42,8 @@ QVariantMap WiredDbus::toMap()
 {
   QVariantMap map;
   WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
+// not in UI yet
+#if 0
   switch (setting->port()) {
     case WiredSetting::EnumPort::tp:
       map.insert("port", "tp");
@@ -66,7 +68,10 @@ QVariantMap WiredDbus::toMap()
       break;
   }
   map.insert(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE), setting->autonegotiate());
-  map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), setting->macaddress());
+#endif
+  // broken
+  //QString mac = setting->macaddress();
+  //map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), mac.remove(':').toAscii());
   map.insert("mtu", setting->mtu());
   return map;
 }

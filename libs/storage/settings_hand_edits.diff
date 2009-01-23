@@ -134,8 +134,6 @@ diff -ur origsettings//802-1xdbus.cpp settings/802-1xdbus.cpp
 Only in settings: 802-1xdbus.cpp~
 Only in settings: 802-1xdbus.cpp.orig
 Only in settings: 802-1xdbus.cpp.rej
-Only in settings: .802-1xdbus.cpp.rej.swp
-Only in settings: .802-1xdbus.cpp.swp
 diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
 --- origsettings//802-1xdbus.h	2009-01-23 18:55:01.000000000 +0100
 +++ settings/802-1xdbus.h	2009-01-23 18:43:42.000000000 +0100
@@ -167,6 +165,31 @@ diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
  }
  
 Only in settings: 802-3-ethernet.cpp~
+diff -ur origsettings//802-3-ethernetdbus.cpp settings/802-3-ethernetdbus.cpp
+--- origsettings//802-3-ethernetdbus.cpp	2009-01-23 18:55:02.000000000 +0100
++++ settings/802-3-ethernetdbus.cpp	2009-01-23 19:11:21.000000000 +0100
+@@ -42,6 +42,8 @@
+ {
+   QVariantMap map;
+   WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
++// not in UI yet
++#if 0
+   switch (setting->port()) {
+     case WiredSetting::EnumPort::tp:
+       map.insert("port", "tp");
+@@ -66,7 +68,10 @@
+       break;
+   }
+   map.insert(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE), setting->autonegotiate());
+-  map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), setting->macaddress());
++#endif
++  // broken
++  //QString mac = setting->macaddress();
++  //map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), mac.remove(':').toAscii());
+   map.insert("mtu", setting->mtu());
+   return map;
+ }
+Only in settings: 802-3-ethernetdbus.cpp~
 diff -ur origsettings//802-3-ethernetdbus.h settings/802-3-ethernetdbus.h
 --- origsettings//802-3-ethernetdbus.h	2009-01-23 18:55:02.000000000 +0100
 +++ settings/802-3-ethernetdbus.h	2009-01-23 18:43:42.000000000 +0100
