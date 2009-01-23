@@ -4,10 +4,13 @@
 #include "802-11-wireless-securitydbus.h"
 
 #include "802-11-wireless-security.h"
+#include "pbkdf2.h"
+#include "wephash.h"
 
 using namespace Knm;
 
-WirelessSecurityDbus::WirelessSecurityDbus(WirelessSecuritySetting * setting) : SettingDbus(setting)
+WirelessSecurityDbus::WirelessSecurityDbus(WirelessSecuritySetting * setting, const QString & essid) : SettingDbus(setting),
+    m_essid(essid)
 {
 }
 
@@ -56,6 +59,7 @@ void WirelessSecurityDbus::fromMap(const QVariantMap & map)
     setting->setWepkey3(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3)).value<QString>());
   }
   // SECRET
+  kDebug() << "Storing hashed PSK as plaintext!";
   if (map.contains("psk")) {
     setting->setPsk(map.value("psk").value<QString>());
   }
@@ -107,12 +111,50 @@ QVariantMap WirelessSecurityDbus::toSecretsMap()
   QVariantMap map;
   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
   map.insert("name", setting->name());
+  if (!setting->weppassphrase().isEmpty()) {
+      QString key = hashWepPassphrase(setting->weppassphrase());
+      switch (setting->weptxkeyindex()) {
+          case 0:
+              setting->setWepkey0(key);
+              break;
+          case 1:
+              setting->setWepkey1(key);
+              break;
+          case 2:
+              setting->setWepkey2(key);
+              break;
+          case 3:
+              setting->setWepkey3(key);
+              break;
+      }
+  }
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
-  map.insert("psk", setting->psk());
+  map.insert("psk", hashWpaPsk(setting->psk()));
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
   return map;
+}
+
+QString WirelessSecurityDbus::hashWpaPsk(const QString & plainText)
+{
+#define WPA_PMK_LEN 32
+    kDebug() << "Hashing PSK. essid:" << m_essid << "psk:" << plainText;
+    QByteArray buffer(WPA_PMK_LEN * 2, 0);
+    pbkdf2_sha1(plainText.toLatin1(), m_essid.toLatin1(), m_essid.size(), 4096, (quint8*)buffer.data(), WPA_PMK_LEN);
+    QString hexHash = buffer.toHex().left(WPA_PMK_LEN*2);
+    kDebug() << "  hexadecimal key out:" << hexHash;
+    return hexHash;
+}
+
+QString WirelessSecurityDbus::hashWepPassphrase(const QString & plainText)
+{
+    //kDebug() << "Hashing wep passphrase, essid: " << essid << " passphrase: " << passphrase;
+    QString hexHash = wep128PassphraseHash(plainText.toAscii());
+    //kDebug() << "Hexadecimal key out:" << hexHash;
+    //kDebug() << "for wep key: " << wepkey;
+
+    return hexHash;
 }
 

@@ -46,14 +46,17 @@ WiredWidget::~WiredWidget()
 
 void WiredWidget::readConfig()
 {
-    d->ui.macAddress->setText(d->setting->macaddress());
+    if (!d->setting->macaddress().isEmpty())
+        d->ui.macAddress->setText(d->setting->macaddress());
     d->ui.mtu->setValue(d->setting->mtu());
 }
 
 void WiredWidget::writeConfig()
 {
     d->setting->setMtu(d->ui.mtu->value());
-    if (d->ui.macAddress->text() != QLatin1String(":::::")) {
+    if (d->ui.macAddress->text() == QLatin1String(":::::")) {
+        d->setting->setMacaddress(QByteArray());
+    } else {
         d->setting->setMacaddress(d->ui.macAddress->text().toAscii());
     }
 }

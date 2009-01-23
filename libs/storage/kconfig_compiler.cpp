@@ -155,11 +155,11 @@ class CfgEntry
               const QString &name, const QString &context, const QString &label,
               const QString &toolTip, const QString &whatsThis, const QString &code,
               const QString &defaultValue, const Choices &choices, const QList<Signal> signalList,
-              bool hidden, bool secret, const QString & dbusKey )
+              bool hidden, bool secret, const QString & dbusKey, bool noDbus )
       : mGroup( group ), mType( type ), mKey( key ), mName( name ),
         mContext( context ), mLabel( label ), mToolTip( toolTip ), mWhatsThis( whatsThis ),
         mCode( code ), mDefaultValue( defaultValue ), mChoices( choices ),
-        mSignalList(signalList), mHidden( hidden ), mSecret(secret), mDbusKey(dbusKey)
+        mSignalList(signalList), mHidden( hidden ), mSecret(secret), mDbusKey(dbusKey), mNoDbus(noDbus)
     {
         if (mDbusKey.isEmpty()) {
             mDbusKey = QString::fromLatin1("\"%1\"").arg(mName);
@@ -169,6 +169,8 @@ class CfgEntry
     QString dbusKey() const { return mDbusKey; }
 
     bool secret() const { return mSecret; }
+
+    bool noDbus() const { return mNoDbus; }
 
     void setGroup( const QString &group ) { mGroup = group; }
     QString group() const { return mGroup; }
@@ -282,6 +284,7 @@ class CfgEntry
     QString mMax;
     bool mSecret;
     QString mDbusKey;
+    bool mNoDbus;
 };
 
 class Param {
@@ -523,6 +526,7 @@ CfgEntry *parseEntry( const QString &group, const QDomElement &element )
   if (!dbusKey.isEmpty()) {
       dbusKey = QString::fromLatin1("QLatin1String(%1)").arg(dbusKey);
   }
+  bool noDbus = (element.attribute("nodbus", "false") == "true");
   QString label;
   QString toolTip;
   QString whatsThis;
@@ -773,7 +777,7 @@ CfgEntry *parseEntry( const QString &group, const QDomElement &element )
 
   CfgEntry *result = new CfgEntry( group, type, key, name, context, label, toolTip, whatsThis,
                                    code, defaultValue, choices, signalList,
-                                   hidden == "true", secret, dbusKey );
+                                   hidden == "true", secret, dbusKey, noDbus );
   if (!param.isEmpty())
   {
     result->setParam(param);
@@ -2400,11 +2404,15 @@ int main( int argc, char **argv )
   dC << "{" << endl;
   dC << "}" << endl << endl;
 
-  // load method
+  // fromMap method
   dC << "void " << className << "Dbus::fromMap(const QVariantMap & map)" << endl;
   dC << "{" << endl;
   dC << "  " << className << "Setting * setting = static_cast<" << className << "Setting *>(m_setting);" << endl;
   for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
+    if ((*itEntry)->noDbus()) {
+        continue;
+    }
+
     QString n = (*itEntry)->name();
     QString t = (*itEntry)->type();
 
@@ -2430,6 +2438,10 @@ int main( int argc, char **argv )
   dC << "  QVariantMap map;" << endl;
   dC << "  " << className << "Setting * setting = static_cast<" << className << "Setting *>(m_setting);" << endl;
   for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
+    if ((*itEntry)->noDbus()) {
+        continue;
+    }
+
     QString n = (*itEntry)->name();
     QString t = (*itEntry)->type();
 
@@ -2467,6 +2479,9 @@ int main( int argc, char **argv )
     dC << "  map.insert(\"name\", setting->name());" << endl;
   }
   for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
+    if ((*itEntry)->noDbus()) {
+      continue;
+    }
     QString n = (*itEntry)->name();
     QString t = (*itEntry)->type();
 

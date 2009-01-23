@@ -67,59 +67,12 @@
       <whatsthis></whatsthis>
     </entry>
     <entry name="leappassword" type="String" secret="true" dbuskey="NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD">
-         secret="true"<label>LEAP Password</label>
+      <label>LEAP Password</label>
       <whatsthis></whatsthis>
     </entry>
-<!--
-    <entry name="clientcert" type="String">
-        <label>Client Certificate</label>
-        <whatsthis></whatsthis>
+    <entry name="weppassphrase" type="String" secret="true" nodbus="true">
+      <label>WEP Passphrase</label>
     </entry>
-    <entry name="cacert" type="String">
-        <label>CA Certificate</label>
-        <whatsthis></whatsthis>
-    </entry>
-    <entry name="phase2cacert" type="ByteArray">
-      <label>Phase 2 CA Cert</label>
-      <whatsthis></whatsthis>
-    </entry>
-    <entry name="phase2capath" type="Path">
-      <label>Phase 2 CA Path</label>
-      <whatsthis></whatsthis>
-    </entry>
-    <entry name="phase2clientcert" type="ByteArray">
-      <label>Phase 2 client cert</label>
-      <whatsthis></whatsthis>
-    </entry>
-    <entry name="password" type="String" secret="true">
-      <label>Password</label>
-      <whatsthis></whatsthis>
-    </entry>
-    <entry name="privatekey" type="ByteArray">
-      <label>Private key</label>
-      <whatsthis></whatsthis>
-    </entry>
-    <entry name="phase2privatekey" type="ByteArray">
-      <label>Phase 2 private key</label>
-      <whatsthis></whatsthis>
-    </entry>
-    <entry name="phase1peapver" key="phase1peapver" type="Enum">
-      <label>Phase 1 PEAP version</label>
-      <whatsthis></whatsthis>
-      <choices>
-        <choice name="0"/>
-        <choice name="1"/>
-      </choices>
-    </entry>
-    <entry name="phase1peaplabel" key="phase1peaplabel" type="String">
-      <label>Phase 1 PEAP label</label>
-      <whatsthis></whatsthis>
-      <choices>
-        <choice name="0"/>
-        <choice name="1"/>
-      </choices>
-    </entry>
-    -->
   </group>
 </kcfg>
 

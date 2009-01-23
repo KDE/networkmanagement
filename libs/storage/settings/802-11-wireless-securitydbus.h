@@ -16,11 +16,15 @@ class WirelessSecuritySetting;
 class KNM_EXPORT WirelessSecurityDbus : public SettingDbus
 {
   public:
-    WirelessSecurityDbus( WirelessSecuritySetting * setting);
+    WirelessSecurityDbus(WirelessSecuritySetting * setting, const QString & essid);
     ~WirelessSecurityDbus();
     void fromMap(const QVariantMap&);
     QVariantMap toMap();
     QVariantMap toSecretsMap();
+  private:
+    QString hashWpaPsk(const QString & plainText);
+    QString hashWepPassphrase(const QString & plainText);
+    QString m_essid;
 };
 }
 

@@ -24,8 +24,6 @@
 #include <KDebug>
 
 #include "connectionsecretsjob.h"
-#include "pbkdf2.h"
-#include "wephash.h"
 
 #include "connection.h"
 #include "connectiondbus.h"
@@ -114,32 +112,6 @@ void BusConnection::gotSecrets(KJob *job)
         QDBusConnection::systemBus().send(reply);
     }
 #if 0
-        QVariantMap retrievedSecrets = csj->secrets();
-        kDebug() << "Got secrets: " << retrievedSecrets;
-        //handle WPA-PSDK
-        if (retrievedSecrets.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK))) {
-#define WPA_PMK_LEN 32
-            QString psk = retrievedSecrets.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK)).toString();
-            QString essid = mSettingsMap.value(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)).value(QLatin1String(NM_SETTING_WIRELESS_SSID)).toString();
-            kDebug() << "Hashing PSK. essid:" << essid << "psk:" << psk;
-            QByteArray buffer(WPA_PMK_LEN * 2, 0);
-            pbkdf2_sha1(psk.toLatin1(), essid.toLatin1(), essid.size(), 4096, (uint8_t*)buffer.data(), WPA_PMK_LEN);
-            QString hexHash = buffer.toHex().left(WPA_PMK_LEN*2);
-            kDebug() << "  hexadecimal key out:" << hexHash;
-            retrievedSecrets.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK), hexHash);
-        } else if (retrievedSecrets.contains(QLatin1String("wep-passphrase"))) {
-            QString passphrase = retrievedSecrets.value(QLatin1String("wep-passphrase")).toString();
-            QString essid = mSettingsMap.value(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)).value(QLatin1String(NM_SETTING_WIRELESS_SSID)).toString();
-            //kDebug() << "Hashing wep passphrase, essid: " << essid << " passphrase: " << passphrase;
-            QString hexHash = wep128PassphraseHash(passphrase.toAscii());
-            int wepkeyidx = mSettingsMap.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME)).value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX)).toInt();
-            QString wepkey = QString::fromLatin1("wep-key%1").arg(wepkeyidx);
-            //kDebug() << "Hexadecimal key out:" << hexHash;
-            //kDebug() << "for wep key: " << wepkey;
-
-            retrievedSecrets.insert(wepkey, hexHash);
-        }
-
         // update myself
         QVariantMap existingSetting = mSettingsMap.value(csj->settingName());
         QMapIterator<QString,QVariant> i(retrievedSecrets);

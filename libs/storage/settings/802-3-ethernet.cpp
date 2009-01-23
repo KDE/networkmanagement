@@ -7,8 +7,8 @@ using namespace Knm;
 
 WiredSetting::WiredSetting() : Setting(Setting::Wired),
     mPort(WiredSetting::EnumPort::mii),
-    mDuplex(WiredSetting::EnumDuplex::full),
     mSpeed(0),
+    mDuplex(WiredSetting::EnumDuplex::full),
     mAutonegotiate(true),
     mMtu(1500)
 {

@@ -1,7 +1,7 @@
 Only in settings: 802-11-wireless.cpp~
 diff -ur origsettings//802-11-wirelessdbus.h settings/802-11-wirelessdbus.h
---- origsettings//802-11-wirelessdbus.h	2009-01-23 18:55:01.000000000 +0100
-+++ settings/802-11-wirelessdbus.h	2009-01-23 18:43:42.000000000 +0100
+--- origsettings//802-11-wirelessdbus.h	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-11-wirelessdbus.h	2009-01-23 20:08:27.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_WIRELESSDBUS_H
  #define KNM_WIRELESSDBUS_H
@@ -13,9 +13,90 @@ diff -ur origsettings//802-11-wirelessdbus.h settings/802-11-wirelessdbus.h
  #include <kcoreconfigskeleton.h>
 Only in settings: 802-11-wirelessdbus.h~
 Only in settings: 802-11-wirelesspersistence.cpp~
+diff -ur origsettings//802-11-wireless-securitydbus.cpp settings/802-11-wireless-securitydbus.cpp
+--- origsettings//802-11-wireless-securitydbus.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-11-wireless-securitydbus.cpp	2009-01-23 20:24:26.000000000 +0100
+@@ -4,10 +4,13 @@
+ #include "802-11-wireless-securitydbus.h"
+ 
+ #include "802-11-wireless-security.h"
++#include "pbkdf2.h"
++#include "wephash.h"
+ 
+ using namespace Knm;
+ 
+-WirelessSecurityDbus::WirelessSecurityDbus(WirelessSecuritySetting * setting) : SettingDbus(setting)
++WirelessSecurityDbus::WirelessSecurityDbus(WirelessSecuritySetting * setting, const QString & essid) : SettingDbus(setting),
++    m_essid(essid)
+ {
+ }
+ 
+@@ -56,6 +59,7 @@
+     setting->setWepkey3(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3)).value<QString>());
+   }
+   // SECRET
++  kDebug() << "Storing hashed PSK as plaintext!";
+   if (map.contains("psk")) {
+     setting->setPsk(map.value("psk").value<QString>());
+   }
+@@ -107,12 +111,50 @@
+   QVariantMap map;
+   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
+   map.insert("name", setting->name());
++  if (!setting->weppassphrase().isEmpty()) {
++      QString key = hashWepPassphrase(setting->weppassphrase());
++      switch (setting->weptxkeyindex()) {
++          case 0:
++              setting->setWepkey0(key);
++              break;
++          case 1:
++              setting->setWepkey1(key);
++              break;
++          case 2:
++              setting->setWepkey2(key);
++              break;
++          case 3:
++              setting->setWepkey3(key);
++              break;
++      }
++  }
+   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
+   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
+   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());
+   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
+-  map.insert("psk", setting->psk());
++  map.insert("psk", hashWpaPsk(setting->psk()));
+   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
+   return map;
+ }
+ 
++QString WirelessSecurityDbus::hashWpaPsk(const QString & plainText)
++{
++#define WPA_PMK_LEN 32
++    kDebug() << "Hashing PSK. essid:" << m_essid << "psk:" << plainText;
++    QByteArray buffer(WPA_PMK_LEN * 2, 0);
++    pbkdf2_sha1(plainText.toLatin1(), m_essid.toLatin1(), m_essid.size(), 4096, (quint8*)buffer.data(), WPA_PMK_LEN);
++    QString hexHash = buffer.toHex().left(WPA_PMK_LEN*2);
++    kDebug() << "  hexadecimal key out:" << hexHash;
++    return hexHash;
++}
++
++QString WirelessSecurityDbus::hashWepPassphrase(const QString & plainText)
++{
++    //kDebug() << "Hashing wep passphrase, essid: " << essid << " passphrase: " << passphrase;
++    QString hexHash = wep128PassphraseHash(plainText.toAscii());
++    //kDebug() << "Hexadecimal key out:" << hexHash;
++    //kDebug() << "for wep key: " << wepkey;
++
++    return hexHash;
++}
++
+Only in settings: 802-11-wireless-securitydbus.cpp~
+Only in settings: 802-11-wireless-securitydbus.cpp.orig
+Only in settings: 802-11-wireless-securitydbus.cpp.rej
 diff -ur origsettings//802-11-wireless-securitydbus.h settings/802-11-wireless-securitydbus.h
---- origsettings//802-11-wireless-securitydbus.h	2009-01-23 18:55:01.000000000 +0100
-+++ settings/802-11-wireless-securitydbus.h	2009-01-23 18:43:42.000000000 +0100
+--- origsettings//802-11-wireless-securitydbus.h	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-11-wireless-securitydbus.h	2009-01-23 20:14:11.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_WIRELESSSECURITYDBUS_H
  #define KNM_WIRELESSSECURITYDBUS_H
@@ -25,10 +106,27 @@ diff -ur origsettings//802-11-wireless-securitydbus.h settings/802-11-wireless-s
  
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
+@@ -16,11 +16,15 @@
+ class KNM_EXPORT WirelessSecurityDbus : public SettingDbus
+ {
+   public:
+-    WirelessSecurityDbus( WirelessSecuritySetting * setting);
++    WirelessSecurityDbus(WirelessSecuritySetting * setting, const QString & essid);
+     ~WirelessSecurityDbus();
+     void fromMap(const QVariantMap&);
+     QVariantMap toMap();
+     QVariantMap toSecretsMap();
++  private:
++    QString hashWpaPsk(const QString & plainText);
++    QString hashWepPassphrase(const QString & plainText);
++    QString m_essid;
+ };
+ }
+ 
 Only in settings: 802-11-wireless-securitydbus.h~
 diff -ur origsettings//802-1x.cpp settings/802-1x.cpp
---- origsettings//802-1x.cpp	2009-01-23 18:55:01.000000000 +0100
-+++ settings/802-1x.cpp	2009-01-23 18:43:42.000000000 +0100
+--- origsettings//802-1x.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-1x.cpp	2009-01-23 20:08:27.000000000 +0100
 @@ -5,7 +5,8 @@
  
  using namespace Knm;
@@ -41,8 +139,8 @@ diff -ur origsettings//802-1x.cpp settings/802-1x.cpp
  
 Only in settings: 802-1x.cpp~
 diff -ur origsettings//802-1xdbus.cpp settings/802-1xdbus.cpp
---- origsettings//802-1xdbus.cpp	2009-01-23 18:55:01.000000000 +0100
-+++ settings/802-1xdbus.cpp	2009-01-23 18:49:10.000000000 +0100
+--- origsettings//802-1xdbus.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-1xdbus.cpp	2009-01-23 20:08:27.000000000 +0100
 @@ -82,24 +82,41 @@
  {
    QVariantMap map;
@@ -135,8 +233,8 @@ Only in settings: 802-1xdbus.cpp~
 Only in settings: 802-1xdbus.cpp.orig
 Only in settings: 802-1xdbus.cpp.rej
 diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
---- origsettings//802-1xdbus.h	2009-01-23 18:55:01.000000000 +0100
-+++ settings/802-1xdbus.h	2009-01-23 18:43:42.000000000 +0100
+--- origsettings//802-1xdbus.h	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-1xdbus.h	2009-01-23 20:08:27.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_SECURITY8021XDBUS_H
  #define KNM_SECURITY8021XDBUS_H
@@ -148,8 +246,8 @@ diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
  #include <kcoreconfigskeleton.h>
 Only in settings: 802-1xdbus.h~
 diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
---- origsettings//802-3-ethernet.cpp	2009-01-23 18:55:02.000000000 +0100
-+++ settings/802-3-ethernet.cpp	2009-01-23 18:43:42.000000000 +0100
+--- origsettings//802-3-ethernet.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-3-ethernet.cpp	2009-01-23 20:25:44.000000000 +0100
 @@ -5,7 +5,12 @@
  
  using namespace Knm;
@@ -157,8 +255,8 @@ diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
 -WiredSetting::WiredSetting() : Setting(Setting::Wired)
 +WiredSetting::WiredSetting() : Setting(Setting::Wired),
 +    mPort(WiredSetting::EnumPort::mii),
-+    mDuplex(WiredSetting::EnumDuplex::full),
 +    mSpeed(0),
++    mDuplex(WiredSetting::EnumDuplex::full),
 +    mAutonegotiate(true),
 +    mMtu(1500)
  {
@@ -166,8 +264,8 @@ diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
  
 Only in settings: 802-3-ethernet.cpp~
 diff -ur origsettings//802-3-ethernetdbus.cpp settings/802-3-ethernetdbus.cpp
---- origsettings//802-3-ethernetdbus.cpp	2009-01-23 18:55:02.000000000 +0100
-+++ settings/802-3-ethernetdbus.cpp	2009-01-23 19:11:21.000000000 +0100
+--- origsettings//802-3-ethernetdbus.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-3-ethernetdbus.cpp	2009-01-23 20:08:27.000000000 +0100
 @@ -42,6 +42,8 @@
  {
    QVariantMap map;
@@ -190,9 +288,11 @@ diff -ur origsettings//802-3-ethernetdbus.cpp settings/802-3-ethernetdbus.cpp
    return map;
  }
 Only in settings: 802-3-ethernetdbus.cpp~
+Only in settings: 802-3-ethernetdbus.cpp.orig
+Only in settings: 802-3-ethernetdbus.cpp.rej
 diff -ur origsettings//802-3-ethernetdbus.h settings/802-3-ethernetdbus.h
---- origsettings//802-3-ethernetdbus.h	2009-01-23 18:55:02.000000000 +0100
-+++ settings/802-3-ethernetdbus.h	2009-01-23 18:43:42.000000000 +0100
+--- origsettings//802-3-ethernetdbus.h	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-3-ethernetdbus.h	2009-01-23 20:08:27.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_WIREDDBUS_H
  #define KNM_WIREDDBUS_H
@@ -204,8 +304,8 @@ diff -ur origsettings//802-3-ethernetdbus.h settings/802-3-ethernetdbus.h
  #include <kcoreconfigskeleton.h>
 Only in settings: 802-3-ethernetdbus.h~
 diff -ur origsettings//gsmpersistence.cpp settings/gsmpersistence.cpp
---- origsettings//gsmpersistence.cpp	2009-01-23 18:55:02.000000000 +0100
-+++ settings/gsmpersistence.cpp	2009-01-23 18:43:42.000000000 +0100
+--- origsettings//gsmpersistence.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/gsmpersistence.cpp	2009-01-23 20:08:27.000000000 +0100
 @@ -18,7 +18,7 @@
  void GsmPersistence::load()
  {
@@ -217,8 +317,8 @@ diff -ur origsettings//gsmpersistence.cpp settings/gsmpersistence.cpp
    if (m_storageMode != ConnectionPersistence::Secure) {
 Only in settings: gsmpersistence.cpp~
 diff -ur origsettings//ipv4.cpp settings/ipv4.cpp
---- origsettings//ipv4.cpp	2009-01-23 18:55:02.000000000 +0100
-+++ settings/ipv4.cpp	2009-01-23 18:43:42.000000000 +0100
+--- origsettings//ipv4.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/ipv4.cpp	2009-01-23 20:08:27.000000000 +0100
 @@ -5,7 +5,9 @@
  
  using namespace Knm;
@@ -232,8 +332,8 @@ diff -ur origsettings//ipv4.cpp settings/ipv4.cpp
  
 Only in settings: ipv4.cpp~
 diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
---- origsettings//ipv4dbus.cpp	2009-01-23 18:55:02.000000000 +0100
-+++ settings/ipv4dbus.cpp	2009-01-23 18:43:42.000000000 +0100
+--- origsettings//ipv4dbus.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/ipv4dbus.cpp	2009-01-23 20:08:27.000000000 +0100
 @@ -17,19 +17,18 @@
  
  void Ipv4Dbus::fromMap(const QVariantMap & map)
@@ -295,8 +395,8 @@ Only in settings: ipv4dbus.cpp~
 Only in settings: ipv4dbus.cpp.orig
 Only in settings: ipv4dbus.cpp.rej
 diff -ur origsettings//ipv4dbus.h settings/ipv4dbus.h
---- origsettings//ipv4dbus.h	2009-01-23 18:55:02.000000000 +0100
-+++ settings/ipv4dbus.h	2009-01-23 18:43:42.000000000 +0100
+--- origsettings//ipv4dbus.h	2009-01-23 20:26:28.000000000 +0100
++++ settings/ipv4dbus.h	2009-01-23 20:08:27.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_IPV4DBUS_H
  #define KNM_IPV4DBUS_H
@@ -307,9 +407,11 @@ diff -ur origsettings//ipv4dbus.h settings/ipv4dbus.h
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 Only in settings: ipv4dbus.h~
+Only in settings: pbkdf2.cpp
+Only in settings: pbkdf2.h
 diff -ur origsettings//serialpersistence.cpp settings/serialpersistence.cpp
---- origsettings//serialpersistence.cpp	2009-01-23 18:55:02.000000000 +0100
-+++ settings/serialpersistence.cpp	2009-01-23 18:43:42.000000000 +0100
+--- origsettings//serialpersistence.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/serialpersistence.cpp	2009-01-23 20:08:27.000000000 +0100
 @@ -20,7 +20,7 @@
    SerialSetting * setting = static_cast<SerialSetting *>(m_setting);
    setting->setBaud(m_config->readEntry("baud", 0));
@@ -321,3 +423,5 @@ diff -ur origsettings//serialpersistence.cpp settings/serialpersistence.cpp
  }
 Only in settings: serialpersistence.cpp~
 Only in settings: .svn
+Only in settings: wephash.cpp
+Only in settings: wephash.h

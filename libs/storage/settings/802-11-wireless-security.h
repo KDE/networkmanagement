@@ -239,6 +239,22 @@ class KNM_EXPORT WirelessSecuritySetting : public Setting
       return mLeappassword;
     }
 
+    /**
+      Set WEP Passphrase
+    */
+    void setWeppassphrase( const QString & v )
+    {
+        mWeppassphrase = v;
+    }
+
+    /**
+      Get WEP Passphrase
+    */
+    QString weppassphrase() const
+    {
+      return mWeppassphrase;
+    }
+
   protected:
 
     // 802-11-wireless-security
@@ -255,6 +271,7 @@ class KNM_EXPORT WirelessSecuritySetting : public Setting
     QString mWepkey3;
     QString mPsk;
     QString mLeappassword;
+    QString mWeppassphrase;
 
   private:
 };

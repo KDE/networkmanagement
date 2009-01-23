@@ -49,6 +49,10 @@ void WirelessSecurityPersistence::load()
   if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setLeappassword(m_config->readEntry("leappassword", ""));
   }
+  // SECRET
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setWeppassphrase(m_config->readEntry("weppassphrase", ""));
+  }
 }
 
 void WirelessSecurityPersistence::save()
@@ -85,6 +89,10 @@ void WirelessSecurityPersistence::save()
   if (m_storageMode != ConnectionPersistence::Secure) {
     m_config->writeEntry("leappassword", setting->leappassword());
   }
+  // SECRET
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    m_config->writeEntry("weppassphrase", setting->weppassphrase());
+  }
 }
 
 QMap<QString,QString> WirelessSecurityPersistence::secrets() const
@@ -97,6 +105,7 @@ QMap<QString,QString> WirelessSecurityPersistence::secrets() const
   map.insert(QLatin1String("wepkey3"), setting->wepkey3());
   map.insert(QLatin1String("psk"), setting->psk());
   map.insert(QLatin1String("leappassword"), setting->leappassword());
+  map.insert(QLatin1String("weppassphrase"), setting->weppassphrase());
   return map;
 }
 
@@ -110,6 +119,7 @@ void WirelessSecurityPersistence::restoreSecrets(QMap<QString,QString> secrets) 
     setting->setWepkey3(secrets.value("wepkey3"));
     setting->setPsk(secrets.value("psk"));
     setting->setLeappassword(secrets.value("leappassword"));
+    setting->setWeppassphrase(secrets.value("weppassphrase"));
     setting->setSecretsAvailable(true);
   }
 }

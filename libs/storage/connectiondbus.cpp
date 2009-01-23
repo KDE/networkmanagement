@@ -102,7 +102,8 @@ SettingDbus * ConnectionDbus::dbusFor(Setting * setting)
                 sd = new WirelessDbus(static_cast<WirelessSetting*>(setting));
                 break;
             case Setting::WirelessSecurity:
-                sd = new WirelessSecurityDbus(static_cast<WirelessSecuritySetting*>(setting));
+                sd = new WirelessSecurityDbus(static_cast<WirelessSecuritySetting*>(setting),
+                        static_cast<WirelessSetting*>(m_connection->setting(Setting::Wireless))->ssid());
                 break;
         }
     }
