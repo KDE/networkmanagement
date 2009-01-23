@@ -59,8 +59,22 @@ QVariantMap WirelessDbus::toMap()
   QVariantMap map;
   WirelessSetting * setting = static_cast<WirelessSetting *>(m_setting);
   map.insert("ssid", setting->ssid());
-  map.insert("mode", setting->mode());
-  map.insert("band", setting->band());
+  switch (setting->mode()) {
+    case WirelessSetting::EnumMode::infrastructure:
+      map.insert("mode", "infrastructure");
+      break;
+    case WirelessSetting::EnumMode::adhoc:
+      map.insert("mode", "adhoc");
+      break;
+  }
+  switch (setting->band()) {
+    case WirelessSetting::EnumBand::a:
+      map.insert("band", "a");
+      break;
+    case WirelessSetting::EnumBand::bg:
+      map.insert("band", "bg");
+      break;
+  }
   map.insert("channel", setting->channel());
   map.insert("bssid", setting->bssid());
   map.insert("rate", setting->rate());

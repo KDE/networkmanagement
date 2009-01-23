@@ -42,9 +42,29 @@ QVariantMap WiredDbus::toMap()
 {
   QVariantMap map;
   WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
-  map.insert("port", setting->port());
+  switch (setting->port()) {
+    case WiredSetting::EnumPort::tp:
+      map.insert("port", "tp");
+      break;
+    case WiredSetting::EnumPort::aui:
+      map.insert("port", "aui");
+      break;
+    case WiredSetting::EnumPort::bnc:
+      map.insert("port", "bnc");
+      break;
+    case WiredSetting::EnumPort::mii:
+      map.insert("port", "mii");
+      break;
+  }
   map.insert("speed", setting->speed());
-  map.insert("duplex", setting->duplex());
+  switch (setting->duplex()) {
+    case WiredSetting::EnumDuplex::half:
+      map.insert("duplex", "half");
+      break;
+    case WiredSetting::EnumDuplex::full:
+      map.insert("duplex", "full");
+      break;
+  }
   map.insert(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE), setting->autonegotiate());
   map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), setting->macaddress());
   map.insert("mtu", setting->mtu());

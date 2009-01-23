@@ -69,9 +69,32 @@ QVariantMap WirelessSecurityDbus::toMap()
 {
   QVariantMap map;
   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), setting->keymgmt());
+  switch (setting->keymgmt()) {
+    case WirelessSecuritySetting::EnumKeymgmt::none:
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "none");
+      break;
+    case WirelessSecuritySetting::EnumKeymgmt::wpanone:
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "wpanone");
+      break;
+    case WirelessSecuritySetting::EnumKeymgmt::wpapsk:
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "wpapsk");
+      break;
+    case WirelessSecuritySetting::EnumKeymgmt::wpaeap:
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "wpaeap");
+      break;
+  }
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX), setting->weptxkeyindex());
-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), setting->authalg());
+  switch (setting->authalg()) {
+    case WirelessSecuritySetting::EnumAuthalg::open:
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "open");
+      break;
+    case WirelessSecuritySetting::EnumAuthalg::shared:
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "shared");
+      break;
+    case WirelessSecuritySetting::EnumAuthalg::leap:
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "leap");
+      break;
+  }
   map.insert("proto", setting->proto());
   map.insert("pairwise", setting->pairwise());
   map.insert("group", setting->group());

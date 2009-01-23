@@ -9,10 +9,10 @@
       <label>Method</label>
       <whatsthis>Choose the way to set the IP address of this connection</whatsthis>
       <choices>
-        <choice name="Automatic"/>
-        <choice name="LinkLocal"/>
-        <choice name="Manual"/>
-        <choice name="Shared"/>
+        <choice name="Automatic" dbusvalue="auto"/>
+        <choice name="LinkLocal" dbusvalue="link-local"/>
+        <choice name="Manual" dbusvalue="manual"/>
+        <choice name="Shared" dbusvalue="shared"/>
       </choices>
       <default>42</default><!-- invalid default so that the choice is always sent; NM requires this -->
     </entry>

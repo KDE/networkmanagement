@@ -624,6 +624,7 @@ CfgEntry *parseEntry( const QString &group, const QDomElement &element )
       for( QDomElement e2 = e.firstChildElement(); !e2.isNull(); e2 = e2.nextSiblingElement() ) {
         if ( e2.tagName() == "choice" ) {
           CfgEntry::Choice choice;
+          choice.dbusValue = e2.attribute( "dbusvalue" );
           choice.name = e2.attribute( "name" );
           if ( choice.name.isEmpty() ) {
             std::cerr << "Tag <choice> requires attribute 'name'." << std::endl;
@@ -2435,7 +2436,24 @@ int main( int argc, char **argv )
     if ((*itEntry)->secret()) {
         continue;
     }
-    dC << "  map.insert(" << (*itEntry)->dbusKey() << ", setting->" << getFunction(n) << "());" << endl;
+    if (t == "Enum") {
+        const CfgEntry::Choices &choices = (*itEntry)->choices();
+        QList<CfgEntry::Choice> chlist = choices.choices;
+        if ( chlist.isEmpty() ) {
+            // as non-enum
+            dC << "  map.insert(" << (*itEntry)->dbusKey() << ", setting->" << getFunction(n) << "());" << endl;
+        } else {
+            dC << "  switch (setting->" << getFunction(n) << "()) {" << endl;
+            foreach (CfgEntry::Choice ch, chlist) {
+                dC << "    case " << className << "Setting::" << enumName(n, choices) << "::" << choices.prefix << ch.name << ":" << endl;
+                dC << "      map.insert(" << (*itEntry)->dbusKey() << ", \"" << (ch.dbusValue.isEmpty() ? ch.name : ch.dbusValue) << "\");" << endl;
+                dC << "      break;" << endl;
+            }
+            dC << "  }" << endl;
+        }
+    } else {
+        dC << "  map.insert(" << (*itEntry)->dbusKey() << ", setting->" << getFunction(n) << "());" << endl;
+    }
   }
   dC << "  return map;" << endl;
   dC << "}" << endl << endl;
