@@ -94,7 +94,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText("[not updated yet]"); // TODO: check connection status
+    m_connectionNameLabel->setText(i18n("[not updated yet]")); // TODO: check connection status
     m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
     m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 2);
@@ -103,7 +103,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectionInfoLabel = new Plasma::Label(this);
     m_connectionInfoLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionInfoLabel->nativeWidget()->setWordWrap(false);
-    m_connectionInfoLabel->setText("<b>IP Address:</b> dum.my.ip.addr");
+    m_connectionInfoLabel->setText(i18n("<b>IP Address:</b> dum.my.ip.addr"));
     m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1, Qt::AlignCenter);
 
     if (m_iface->type() == Solid::Control::NetworkInterface::Ieee80211 ||
