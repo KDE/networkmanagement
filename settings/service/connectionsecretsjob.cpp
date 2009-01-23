@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KConfigDialog>
 #include <KDebug>
 #include <KLocale>
+#include <KStandardDirs>
 
 #include <kwallet.h>
 
@@ -59,9 +60,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "security/802_1x_security_widget.h"
 #include "security/securitywidget.h"
 
-ConnectionSecretsJob::ConnectionSecretsJob(const QString & connectionId, const QString &settingName,
+#include "knmserviceprefs.h"
+#include "connection.h"
+
+ConnectionSecretsJob::ConnectionSecretsJob(Knm::Connection* connection, const QString &settingName,
                                            const QStringList& secrets, bool requestNew, const QDBusMessage& request)
-    : mConnectionId(connectionId), mSettingName(settingName), mRequestNew(requestNew),
+    : m_connection(connection), mSettingName(settingName), mRequestNew(requestNew),
       mRequest(request), m_askUserDialog(0), m_settingWidget(0)
 {
     // record the secrets that we are looking for
@@ -85,21 +89,26 @@ void ConnectionSecretsJob::doWork()
         kDebug() << "doAskUser() is under construction";
         doAskUser();
     } else {
-        // do wallet lookup
-        if (KWallet::Wallet::isEnabled()) {
-            kDebug() << "opening wallet...";
-            KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
-                                                                   SecretStorageHelper::walletWid(), KWallet::Wallet::Asynchronous);
-            if (wallet) {
-                connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
-            } else {
-                setError(WalletNotFound);
-                emitResult();
-            }
-        } else {
-            setError(WalletDisabled);
-            emitResult();
-        }
+        QString configFile = KStandardDirs::locate("data",
+                QLatin1String("knetworkmanager/connections/") + m_connection->uuid());
+        m_connectionPersistence = new Knm::ConnectionPersistence(m_connection,
+                KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
+                (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
+                 Knm::ConnectionPersistence::PlainText)
+                );
+        connect(m_connectionPersistence, SIGNAL(loadSecretsResult(uint)), this, SLOT(gotPersistedSecrets(uint)));
+        m_connectionPersistence->loadSecrets();
+    }
+}
+
+void ConnectionSecretsJob::gotPersistedSecrets(uint result)
+{
+    delete m_connectionPersistence;
+    setError(result);
+    if (result == Knm::ConnectionPersistence::EnumError::NoError) {
+        emitResult();
+    } else {
+        doAskUser();
     }
 }
 
@@ -155,62 +164,6 @@ void ConnectionSecretsJob::doAskUser()
 #endif
 }
 
-void ConnectionSecretsJob::walletOpenedForRead(bool success)
-{
-    if (success) {
-        // get the requested secrets, set our secrets, and emit result
-        KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
-        if (wallet->isOpen() && wallet->hasFolder("NetworkManager") && wallet->setFolder("NetworkManager")) {
-            if (mSecrets.isEmpty()) {
-                kDebug() << "Reading all entries for connection";
-                QMap<QString,QString> entries;
-                QString key = mConnectionId + ';' + mSettingName + ";*";
-                if (wallet->readPasswordList(key, entries) == 0) {
-                    kDebug() << "Got password list: " << entries;
-                    DataMappings dm;
-                    QMapIterator<QString,QString> i(entries);
-                    while (i.hasNext()) {
-                        i.next();
-                        // the part that NM has asked for is the final part of the key used in
-                        // kwallet
-                        QString key = i.key().section(';', 2, 2);
-                        mSecrets.insert(dm.convertKey(key), dm.convertValue(key, QString(i.value())));
-                    }
-                    emitResult();
-                } else {
-                    kDebug() << "Wallet::readEntryList for :" << key << " failed";
-                }
-            } else {
-                kDebug() << "Reading requested entries from wallet: "<< mSecrets.keys();
-                bool missingSecret = false;
-                foreach (QString key, mSecrets.keys()) {
-                    kDebug() << "Requesting password from wallet: " << key;
-                    QString secret;
-                    if (wallet->readPassword(keyForEntry(key), secret) == 0 ) {
-                        kDebug() << "Got: " << key << " : " << secret;
-                        mSecrets.insert(key, secret);
-                    } else {
-                        missingSecret = true;
-                    }
-                }
-                if (missingSecret) {
-                    doAskUser();
-                } else {
-                    emitResult();
-                }
-            }
-        }
-    } else {
-        setError(WalletOpenRefused);
-        emitResult();
-    }
-}
-
-void ConnectionSecretsJob::walletOpenedForWrite(bool)
-{
-
-}
-
 void ConnectionSecretsJob::dialogAccepted()
 {
 #if 0
@@ -235,7 +188,7 @@ void ConnectionSecretsJob::dialogAccepted()
 
 void ConnectionSecretsJob::dialogRejected()
 {
-    setError(UserInputCancelled);
+    setError(EnumError::UserInputCancelled);
     m_settingWidget->deleteLater();
     m_askUserDialog->deleteLater();
     emitResult();
@@ -256,11 +209,10 @@ QDBusMessage ConnectionSecretsJob::requestMessage() const
     return mRequest;
 }
 
-QString ConnectionSecretsJob::keyForEntry(const QString & entry) const
+Knm::Connection * ConnectionSecretsJob::connection() const
 {
-    return mConnectionId + ';' + mSettingName + ';' + entry;
+    return m_connection;
 }
-
 
 #include "connectionsecretsjob.moc"
 // vim: sw=4 sts=4 et tw=100

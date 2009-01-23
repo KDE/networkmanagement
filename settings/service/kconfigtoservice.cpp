@@ -31,11 +31,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "types.h"
 #include "configxml.h"
-#include "datamappings.h"
 #include "networksettings.h"
 #include "knmserviceprefs.h"
 #include "secretstoragehelper.h"
 #include "knetworkmanagerserviceadaptor.h"
+
+#include "connectionpersistence.h"
 
 KConfigToService::KConfigToService(NetworkSettings * service, bool active)
     : QObject( service ), m_service(service), m_error(!active), m_init( false )
@@ -46,7 +47,6 @@ KConfigToService::KConfigToService(NetworkSettings * service, bool active)
 
     KNetworkManagerServicePrefs::instance(KStandardDirs::locate("config",
                 QLatin1String("knetworkmanagerrc")));
-    m_dataMappings = new DataMappings;
 
     connect(m_service, SIGNAL(connectionActivated(const QString&)), SLOT(connectionActivated(const QString&)));
 }
@@ -56,8 +56,6 @@ KConfigToService::~KConfigToService()
     kDebug();
     QDBusConnection::sessionBus().unregisterService( "org.kde.knetworkmanagerd" ) ;
     QDBusConnection::sessionBus().unregisterObject( "/modules/knetworkmanager" );
-
-    delete m_dataMappings;
 }
 
 void KConfigToService::init()
@@ -69,8 +67,8 @@ void KConfigToService::init()
         connectionIds = KNetworkManagerServicePrefs::self()->connections();
         // 2) open each connection's file and create 1 or more ConfigXml for it
         foreach (QString connectionId, connectionIds) {
-            QVariantMapMap connectionMap = restoreConnection(connectionId);
-            m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connectionMap));
+            Knm::Connection * connection = restoreConnection(connectionId);
+            m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connection));
         }
         m_init = true;
     }
@@ -82,7 +80,7 @@ void KConfigToService::start( WId wid )
     // TODO: it might be good to autostop if this function wasn't called
     // in say 2 minutes (plasma crash / communication failure)
     kDebug();
-    SecretStorageHelper::setWalletWid( wid );
+    Knm::ConnectionPersistence::setWalletWid( wid );
     init();
 }
 
@@ -105,25 +103,24 @@ void KConfigToService::stop()
  *   check value for any value conversions needed
  */
 
-QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
+Knm::Connection * KConfigToService::restoreConnection(const QString & connectionId)
 {
     kDebug() << connectionId;
     QString configFile = KStandardDirs::locate("data",
-                QLatin1String("knetworkmanager/connections/") + connectionId);
-    QVariantMapMap connectionMap;
+            QLatin1String("knetworkmanager/connections/") + connectionId);
+    Knm::Connection * connection;
     if (!configFile.isEmpty())
     {
         m_config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
         m_config->reparseConfiguration();
-        foreach (QString group, m_config->groupList()) {
-            QVariantMap groupSettings = handleGroup(group);
-            if (groupSettings.isEmpty()) {
-                kDebug() << "Settings group '" << group << "' contains no settings!";
-                connectionMap.insert(group, QVariantMap());
-            } else {
-                connectionMap.insert(group, groupSettings );
-            }
-        }
+        // restore from disk
+        Knm::ConnectionPersistence cp(m_config,
+                (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
+                 Knm::ConnectionPersistence::PlainText));
+        cp.load();
+        connection = cp.connection();
+
+#if 0 // probably redundant anyway now - otherwise fix in connectiondbus
         // NM requires that a map exists for the connection's type.  If the settings are all defaults,
         // our config won't contain that group.  So create that map (empty) if it hasn't been created by
         // reading the config.
@@ -131,18 +128,24 @@ QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
             connectionMap.insert(m_currentConnectionType, QVariantMap());
             //m_currentConnectionType = QString();
         }
+#endif
+#if 0
         // Special case #2, NM requires that a setting group for "gsm" is accompannied by a "serial"
         // group
         QString serialSetting = QLatin1String("serial");
         if (connectionMap.contains(QLatin1String("gsm") ) && !connectionMap.contains(serialSetting)) {
             connectionMap.insert(serialSetting, QVariantMap());
         }
+#endif
+#if 0
         // Special case #3, NM requires that a setting group for "serial" is accompanied by a "ppp"
         // group
         QString pppSetting = QLatin1String("ppp");
         if (connectionMap.contains(serialSetting) && !connectionMap.contains(pppSetting)) {
             connectionMap.insert(pppSetting, QVariantMap());
         }
+#endif
+#if 0
         // Special case #4, NM requires that a setting group for "pppoe" is accompanied by a "ppp"
         // group
         QString pppoeSetting = QLatin1String("pppoe");
@@ -150,15 +153,18 @@ QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
             connectionMap.insert(pppSetting, QVariantMap());
         }
         kDebug() << connectionMap;
+#endif
     }
-    return connectionMap;
+    return connection;
 }
 
+// not called any more, but special cases must be moved out to connectionDbus
 QVariantMap KConfigToService::handleGroup(const QString & groupName)
 {
     kDebug() << groupName;
 
     QVariantMap map;
+#if 0
     QFile schemaFile(KStandardDirs::locate("data",
             QString::fromLatin1("knetworkmanager/schemas/%1.kcfg").arg( groupName)));
     if (!schemaFile.exists()) {
@@ -248,7 +254,7 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
            map.insert( QLatin1String(NM_SETTING_802_1X_CA_CERT), QVariant::fromValue(bytes));
         }
     }
-
+#endif
     return map;
 }
 
@@ -298,8 +304,8 @@ void KConfigToService::configure(const QStringList& changedConnections)
     }
     foreach (const QString connectionId, changedConnections) {
         if (m_connectionIdToObjectPath.contains(connectionId)) {
-            QVariantMapMap changedConnection = restoreConnection(connectionId);
-            if (!changedConnection.isEmpty()) {
+            Knm::Connection * changedConnection = restoreConnection(connectionId);
+            if (changedConnection) {
                 kDebug() << "updating connection with id:" << connectionId;
                 QString objPath = m_connectionIdToObjectPath.value(connectionId);
                 kDebug() << "at objectpath:" << objPath;

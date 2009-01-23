@@ -64,7 +64,7 @@ KNetworkManagerService::KNetworkManagerService(QObject * parent, const QVariantL
 
     mNetworkSettings = new NetworkSettings(this);
     ( void ) new KConfigToService(mNetworkSettings, m_active);
-    // don't init, wait for start
+    // don't call init on the KConfigToService init, wait for start call over dbus.
 }
 
 KNetworkManagerService::~KNetworkManagerService()

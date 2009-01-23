@@ -70,9 +70,11 @@ void ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariant
     configDialog.setMainWidget(cprefs);
 
     if ( configDialog.exec() == QDialog::Accepted ) {
+        QStringList changedConnections;
+        changedConnections << cprefs->connection()->uuid();
         cprefs->save();
         persist(cprefs->connection());
-        //updateService();
+        updateService(changedConnections);
         emit connectionsChanged();
     }
 }
@@ -100,8 +102,7 @@ QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type 
         persist(cprefs->connection());
         // the connection file
         cprefs->save();
-#warning service not updated!
-        //updateService();
+        updateService();
         emit connectionsChanged();
     }
     return connectionId;

@@ -9,7 +9,7 @@ include_directories(
 set(kded_knetworkmanager_SRCS
    datamappings.cpp
    service.cpp
-   connection.cpp
+   busconnection.cpp
    connectionsecretsjob.cpp
    exportedconnection.cpp
    kconfigtoservice.cpp

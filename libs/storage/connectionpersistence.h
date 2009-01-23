@@ -40,8 +40,23 @@ class KNM_EXPORT ConnectionPersistence : public QObject
 Q_OBJECT
 public:
     enum SecretStorageMode { Secure, PlainText };
+    class EnumError
+    {
+    public:
+        enum type {NoError = 0, MissingContents, WalletDisabled, WalletNotFound, WalletOpenRefused };
+    };
+    /**
+     * Work with an existing Connection
+     */
     ConnectionPersistence(Connection *, KSharedConfig::Ptr config, SecretStorageMode mode = Secure);
+    /**
+     * Deserialise a connection from the specified config file
+     */
+    ConnectionPersistence(KSharedConfig::Ptr config, SecretStorageMode mode = Secure);
+
     ~ConnectionPersistence();
+
+    Connection * connection() const;
 
     // get/set the window ID used for focus stealing prevention
     static void setWalletWid( WId wid ) {
@@ -66,7 +81,7 @@ Q_SIGNALS:
     /**
      * Emitted when secrets have become available
      */
-    void loadSecretsResult();
+    void loadSecretsResult(uint);
 protected Q_SLOTS:
     void walletOpenedForRead(bool);
 private:

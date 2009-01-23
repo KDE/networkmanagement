@@ -60,9 +60,28 @@ ConnectionPersistence::ConnectionPersistence(Connection * conn, KSharedConfig::P
 {
 }
 
+ConnectionPersistence::ConnectionPersistence(KSharedConfig::Ptr config, SecretStorageMode mode)
+    : m_config(config), m_storageMode(mode)
+{
+    KConfigGroup connection(config, "connection");
+    QString uuid = connection.readEntry("uuid");
+    QString type = connection.readEntry("type");
+    if (uuid.isEmpty() || type.isEmpty()) {
+        m_connection = 0;
+    } else {
+        m_connection = new Connection(QUuid(uuid), Connection::typeFromString(type));
+    }
+}
+
+
 ConnectionPersistence::~ConnectionPersistence()
 {
     qDeleteAll(m_persistences.values());
+}
+
+Connection * ConnectionPersistence::connection() const
+{
+    return m_connection;
 }
 
 SettingPersistence * ConnectionPersistence::persistenceFor(Setting * setting)
@@ -179,11 +198,11 @@ void ConnectionPersistence::loadSecrets()
     if (m_storageMode != ConnectionPersistence::Secure) {
         foreach (Setting * setting, m_connection->settings()) {
             setting->setSecretsAvailable(true);
-            emit loadSecretsResult();
+            emit loadSecretsResult(EnumError::NoError);
         }
     } else if (!m_connection->hasSecrets() ||
             m_connection->secretsAvailable()) {
-        emit loadSecretsResult();
+        emit loadSecretsResult(EnumError::NoError);
     } else if (KWallet::Wallet::isEnabled()) {
         kDebug() << "opening wallet...";
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
@@ -192,12 +211,10 @@ void ConnectionPersistence::loadSecrets()
             disconnect(wallet, SIGNAL(walletOpened(bool)), this, 0);
             connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
         } else {
-            //setError(WalletNotFound);
-            emit loadSecretsResult();
+            emit loadSecretsResult(EnumError::WalletNotFound);
         }
     } else {
-        //setError(WalletDisabled);
-        emit loadSecretsResult();
+        emit loadSecretsResult(EnumError::WalletDisabled);
     }
     return;
 }
@@ -224,15 +241,14 @@ void ConnectionPersistence::walletOpenedForRead(bool success)
                 kDebug() << "Check connection:";
                 kDebug() << "secretsAvailable:" << m_connection->secretsAvailable();
 
-                emit loadSecretsResult();
+                emit loadSecretsResult(EnumError::NoError);
             } else {
                 kDebug() << "Wallet::readEntryList for :" << key << " failed";
-                emit loadSecretsResult();
+                emit loadSecretsResult(EnumError::MissingContents);
             }
         }
     } else {
-        //setError(WalletOpenRefused);
-        emit loadSecretsResult();
+        emit loadSecretsResult(EnumError::WalletOpenRefused);
     }
 }
 

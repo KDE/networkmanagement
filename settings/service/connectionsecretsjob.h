@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KJob>
 
+#include "connectionpersistence.h"
+
 class KConfigDialog;
 class SettingWidget;
 
@@ -33,25 +35,39 @@ class ConnectionSecretsJob : public KJob
 {
 Q_OBJECT
 public:
-    enum ErrorCode { NoError = 0, WalletDisabled, WalletNotFound, WalletOpenRefused, UserInputCancelled };
-    ConnectionSecretsJob(const QString &connectionId, const QString &settingName, const QStringList &secrets, bool requestNew, const QDBusMessage& request);
+    class EnumError : public Knm::ConnectionPersistence::EnumError
+    {
+    public:
+        enum type { UserInputCancelled = Knm::ConnectionPersistence::EnumError::WalletOpenRefused + 1};
+
+    };
+    ConnectionSecretsJob(Knm::Connection * connection,
+            const QString &settingName,
+            const QStringList &secrets,
+            bool requestNew,
+            const QDBusMessage& request);
     ~ConnectionSecretsJob();
     void start();
+    Knm::Connection * connection() const;
     QString settingName() const;
     QVariantMap secrets() const;
     QDBusMessage requestMessage() const;
-
 
 public Q_SLOTS:
     void doWork();
     void dialogAccepted();
     void dialogRejected();
-    void walletOpenedForRead(bool success);
-    void walletOpenedForWrite(bool success);
+
+protected Q_SLOTS:
+    void gotPersistedSecrets(uint);
+
 private:
     void doAskUser();
     QString keyForEntry(const QString & entry) const;
-    QString mConnectionId;
+
+    Knm::Connection * m_connection;
+    Knm::ConnectionPersistence * m_connectionPersistence;
+
     QString mSettingName;
     QVariantMap mSecrets;
     bool mRequestNew;

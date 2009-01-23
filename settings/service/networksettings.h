@@ -34,7 +34,7 @@ class Connection;
 
 #include <NetworkManager.h>
 
-#include "connection.h"
+#include "busconnection.h"
 #include "marshalarguments.h"
 
 typedef QMap<QString,QVariantMap> QVariantMapMap;
@@ -58,11 +58,11 @@ class NetworkSettings : public QObject
          * add a connection
          * @return object path of the new connection
          */
-        QString addConnection(const QVariantMapMap & settings);
+        QString addConnection(Knm::Connection *);
         /**
          * update a connection
          */
-        void updateConnection(const QString & objectPath, const QVariantMapMap & settings);
+        void updateConnection(const QString & objectPath, Knm::Connection *);
         /**
          * remove a connection
          */
@@ -100,8 +100,7 @@ class NetworkSettings : public QObject
          */
         QString nextObjectPath();
 
-        // Map of connection path to Connection
-        QMap<QString, Connection*> m_connectionMap;
+        QMap<QString, BusConnection*> m_connectionMap;
         uint mNextConnectionId;
         // List of our connection dbus object paths that are active on the daemon
         QStringList m_ourActiveConnections;

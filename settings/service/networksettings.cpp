@@ -34,6 +34,8 @@
 #include "nm-active-connectioninterface.h"
 
 #include "connection.h"
+#include "connectiondbus.h"
+#include "busconnection.h"
 #include "exportedconnection.h"
 
 NetworkSettings::NetworkSettings(QObject * parent)
@@ -64,39 +66,28 @@ NetworkSettings::~NetworkSettings()
 {
 }
 
-QString NetworkSettings::addConnection(const QVariantMapMap& settings)
+QString NetworkSettings::addConnection(Knm::Connection * connection)
 {
     kDebug();
-    QVariantMapMap::const_iterator it = settings.find(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
-    if (it != settings.end()) {
-        QVariantMap connectionSettings = it.value();
-        QVariantMap::const_iterator connectionSettingsIt = connectionSettings.find(QLatin1String(NM_SETTING_CONNECTION_UUID));
-        if (connectionSettingsIt != connectionSettings.end()) {
-            Connection * connection = new Connection(connectionSettingsIt.value().toString(), settings, this);
-            new ConnectionAdaptor(connection);
-            new SecretsAdaptor(connection);
-            QString objectPath = nextObjectPath();
-            m_connectionMap.insert(objectPath, connection);
-            QDBusConnection::systemBus().registerObject(objectPath, connection, QDBusConnection::ExportAdaptors);
-            emit NewConnection(QDBusObjectPath(objectPath));
-            kDebug() << "NewConnection" << objectPath;
-            return objectPath;
-        } else {
-        kDebug() << "Received connection settings map without a connection ID! " << NM_SETTING_CONNECTION_ID;
-        }
-    } else {
-        kDebug() << "Received connection settings map without a name! " << NM_SETTING_CONNECTION_SETTING_NAME;
-    }
-    return QString();
+    BusConnection * busConn = new BusConnection(connection, this);
+    new ConnectionAdaptor(busConn);
+    new SecretsAdaptor(busConn);
+    QString objectPath = nextObjectPath();
+    m_connectionMap.insert(objectPath, busConn);
+    QDBusConnection::systemBus().registerObject(objectPath, busConn, QDBusConnection::ExportAdaptors);
+    emit NewConnection(QDBusObjectPath(objectPath));
+    kDebug() << "NewConnection" << objectPath;
+    return objectPath;
 }
 
-void NetworkSettings::updateConnection(const QString & objectPath, const QVariantMapMap & settings )
+void NetworkSettings::updateConnection(const QString & objectPath, Knm::Connection * connection)
 {
-    kDebug() << objectPath << settings;
+    kDebug() << objectPath << connection->uuid();
     if (m_connectionMap.contains(objectPath)) {
-        Connection * conn = m_connectionMap[objectPath];
-        if (conn) {
-            conn->Update(settings);
+        BusConnection * busConn = m_connectionMap[objectPath];
+        if (busConn) {
+            Knm::ConnectionDbus cd(connection);
+            busConn->Update(cd.toDbusMap());
         }
     }
 }
@@ -104,7 +95,7 @@ void NetworkSettings::updateConnection(const QString & objectPath, const QVarian
 void NetworkSettings::removeConnection(const QString & objectPath)
 {
     kDebug() << objectPath;
-    Connection * conn = m_connectionMap.take(objectPath);
+    BusConnection * conn = m_connectionMap.take(objectPath);
     conn->Delete();
 }
 
@@ -163,7 +154,7 @@ void NetworkSettings::activeConnectionsChanged()
     }
 
     foreach (QString newlyActive, newlyActiveConnections) {
-        Connection * conn = m_connectionMap.value(newlyActive);
+        BusConnection * conn = m_connectionMap.value(newlyActive);
         if (conn) {
             emit connectionActivated(conn->uuid());
         }
