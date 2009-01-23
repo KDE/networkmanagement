@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "securitywidget.h"
 
 #include "wepwidget.h"
-//#include "wpapskwidget.h"
+#include "wpapskwidget.h"
 //#include "wpaeapwidget.h"
 
 const QString Wireless80211SecurityWidget::KEY_MGMT_NONE = QLatin1String("none");
@@ -77,12 +77,13 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, Knm::
     d->securityWidgetHash.insert(index, sw);
     d->ui.stackedWidget->insertWidget(index, sw);
     d->staticWepHexIndex = index++;
-/*
+
     d->ui.cmbType->insertItem(index, i18nc("Label for WPA-PSK wireless security", "WPA-PSK"));
-    sw = new WpaPskWidget(configXml()->config(), connectionId, this);
+    sw = new WpaPskWidget(connection, this);
     d->securityWidgetHash.insert(index, sw);
     d->ui.stackedWidget->insertWidget(index, sw);
     d->wpaPskIndex = index++;
+/*
 
     d->ui.cmbType->insertItem(index, i18nc("Label for WPA-EAP wireless security", "WPA-EAP"));
     sw = d->wpaeapwid = new WpaEapWidget(configXml()->config(), connectionId, this);

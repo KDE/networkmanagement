@@ -27,7 +27,7 @@ set(knmui_SRCS
    scanwidget.cpp
    security/802_11_wireless_security_widget.cpp
    security/wepwidget.cpp
-   #security/wpapskwidget.cpp
+   security/wpapskwidget.cpp
    #security/wpaeapwidget.cpp
    #security/eapwidget.cpp
    #security/peapwidget.cpp

@@ -32,19 +32,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "802_11_wireless_security_widget.h"
 #include "secretstoragehelper.h"
 #include "ui_wpapsk.h"
+#include "settings/802-11-wireless.h"
+#include "settings/802-11-wireless-security.h"
+#include "connection.h"
 
 class WpaPskWidget::Private
 {
 public:
     Ui_WpaPsk ui;
-    KConfig * config;
+    Knm::WirelessSetting* wsetting;
+    Knm::WirelessSecuritySetting* setting;
 };
 
-WpaPskWidget::WpaPskWidget(KConfig * config, const QString & connectionId, QWidget * parent)
-: SecurityWidget(connectionId, parent), d(new WpaPskWidget::Private)
+WpaPskWidget::WpaPskWidget(Knm::Connection* connection, QWidget * parent)
+: SecurityWidget(connection, parent), d(new WpaPskWidget::Private)
 {
-    d->config = config;
     d->ui.setupUi(this);
+    d->setting = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
+    d->wsetting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
+
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
     d->ui.psk->setEchoMode(QLineEdit::Password);
 }
@@ -67,39 +73,15 @@ bool WpaPskWidget::validate() const
 
 void WpaPskWidget::readConfig()
 {
-    KConfigGroup cg(d->config, NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
-    SecretStorageHelper secrets(m_connectionId, cg.name());
-    QString fieldName = QLatin1String("psk");
-    QString secret;
-    secrets.readSecret(fieldName, secret);
-    d->ui.psk->setText(secret);
-    //d->ui.psk->setEnabled(true);
+    d->ui.psk->setText(d->setting->psk());
     d->ui.chkShowPass->setChecked(false);
     chkShowPassToggled();
 }
 
 void WpaPskWidget::writeConfig()
 {
-    KConfigGroup cg(d->config, NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
-    cg.writeEntry("keymgmt", Wireless80211SecurityWidget::KEY_MGMT_WPA_PSK);
-
-    SecretStorageHelper secrets(m_connectionId, QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME));
-    kDebug() << "PSK is " << d->ui.psk->text();
-    secrets.writeSecret("psk", d->ui.psk->text());
-
-    KConfigGroup cg2( d->config, NM_SETTING_WIRELESS_SETTING_NAME );
-    cg2.writeEntry( "security", NM_SETTING_WIRELESS_SECURITY_SETTING_NAME );
-
-    // delete any 802.1x group found, just created by the KConfigDialog managed save
-    d->config->deleteGroup(NM_SETTING_802_1X_SETTING_NAME);
-}
-
-
-QVariantMap WpaPskWidget::secrets() const
-{
-    QVariantMap secrets;
-    secrets.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK), QVariant(d->ui.psk->text()));
-    return secrets;
+    d->setting->setPsk(d->ui.psk->text());
+    d->wsetting->setSecurity(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
 }
 
 #include "wpapskwidget.moc"
