@@ -151,7 +151,7 @@ void ConnectionPersistence::save()
 
     // factor out to make a pure Qt version
     bool readyForWalletWrite = false;
-    if (m_storageMode == ConnectionPersistence::Secure) {
+    if (m_connection->hasSecrets() && m_storageMode == ConnectionPersistence::Secure) {
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Synchronous );
         if( wallet && wallet->isOpen() ) {
             if( !wallet->hasFolder( s_walletFolderName ) )
@@ -167,7 +167,9 @@ void ConnectionPersistence::save()
             foreach (Setting * setting, m_connection->settings()) {
                 SettingPersistence * sp = persistenceFor(setting);
                 QMap<QString,QString> secrets = sp->secrets();
-                wallet->writeMap(walletKeyFor(setting), secrets);
+                if (!secrets.isEmpty()) {
+                    wallet->writeMap(walletKeyFor(setting), secrets);
+                }
             }
         }
     }
