@@ -213,8 +213,6 @@ Add bool secretsLoaded() accessor.  Make $class a QObject, getSecrets/gotSecrets
 
 MINI TODO
 Move special cases from KConfigToService to ConnectionDbus.
-Put WEP hashing in WirelessSecurityDbus
-Put WPA hashing in WirelessSecurityDbus
-Add return codes to ConnectionPersistence::gotSecrets
-Move ConnectionSecretsJob to ConnectionPersistence.  Only does secrets lookup.  Wrap in
-BusConnectionSecretsJob that stores dbus message.
+Update ConnectionDbus to write wireless security type into 802-11-wireless
+Update ConnectionPersistence to not write 8021x unless active.
+Fix WirelessSecurityDbus/Persistence to write legal WEP connections

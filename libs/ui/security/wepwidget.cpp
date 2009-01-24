@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "secretstoragehelper.h"
 #include "ui_wep.h"
 #include "settings/802-11-wireless-security.h"
+#include "connection.h"
 
 class WepWidget::Private
 {
@@ -48,6 +49,7 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
     d->format = format;
     d->keys << "" << "" << "" << "";
     d->keyIndex = 0;
+    d->setting = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
     d->ui.setupUi(this);
     d->ui.passphrase->setEchoMode(QLineEdit::Password);
     d->ui.key->setEchoMode(QLineEdit::Password);

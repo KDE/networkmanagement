@@ -149,13 +149,21 @@ void Wireless80211SecurityWidget::securityTypeChanged(int index)
 
 void Wireless80211SecurityWidget::writeConfig()
 {
-    if (d->ui.cmbType->currentIndex() == d->staticWepHexIndex ||
-        d->ui.cmbType->currentIndex() == d->noSecurityIndex)
+    if (d->ui.cmbType->currentIndex() == d->noSecurityIndex) {
+        d->setting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::None);
+    }
+    if (d->ui.cmbType->currentIndex() == d->staticWepHexIndex) {
+        d->setting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WEP40); // FIXME
         d->setting->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::none);
-    else if (d->ui.cmbType->currentIndex() == d->wpaEapIndex) 
+    }
+    else if (d->ui.cmbType->currentIndex() == d->wpaEapIndex) {
+        d->setting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WPAEAP); // FIXME
         d->setting->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::wpaeap);
-    else if (d->ui.cmbType->currentIndex() == d->wpaPskIndex) 
+    }
+    else if (d->ui.cmbType->currentIndex() == d->wpaPskIndex) {
+        d->setting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WPAPSK); // FIXME
         d->setting->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::wpapsk);
+    }
 
     SecurityWidget * sw = d->securityWidgetHash.value(d->ui.cmbType->currentIndex());
     if (sw) {
