@@ -26,7 +26,7 @@ void WirelessPersistence::load()
   setting->setRate(m_config->readEntry("rate", 0));
   setting->setTxpower(m_config->readEntry("txpower", 0));
   setting->setMacaddress(m_config->readEntry("macaddress", QByteArray()));
-  setting->setMtu(m_config->readEntry("mtu", 1500));
+  setting->setMtu(m_config->readEntry("mtu", 0));
   setting->setSeenbssids(m_config->readEntry("seenbssids", QStringList()));
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {

@@ -32,9 +32,6 @@ Q_OBJECT
 public:
     WirelessPreferences(bool setDefaults, QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~WirelessPreferences();
-    virtual void save();
-    virtual void load();
-    // overload from ConnectionPreferences
 
 private:
     bool m_hasSecrets;

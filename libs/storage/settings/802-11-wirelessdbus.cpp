@@ -67,21 +67,29 @@ QVariantMap WirelessDbus::toMap()
       map.insert("mode", "adhoc");
       break;
   }
+  // leave out band, NM seems to work automatically without it
   switch (setting->band()) {
     case WirelessSetting::EnumBand::a:
-      map.insert("band", "a");
+      //map.insert("band", "a");
       break;
     case WirelessSetting::EnumBand::bg:
-      map.insert("band", "bg");
+      //map.insert("band", "bg");
       break;
   }
-  map.insert("channel", setting->channel());
-  map.insert("bssid", setting->bssid());
-  map.insert("rate", setting->rate());
-  map.insert(QLatin1String(NM_SETTING_WIRELESS_TX_POWER), setting->txpower());
-  map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
-  map.insert("mtu", setting->mtu());
-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS), setting->seenbssids());
+  //map.insert("channel", setting->channel());
+  if (!setting->bssid().isEmpty()) {
+      map.insert("bssid", setting->bssid());
+  }
+  //map.insert("rate", setting->rate());
+  //map.insert(QLatin1String(NM_SETTING_WIRELESS_TX_POWER), setting->txpower());
+  if (!setting->macaddress().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
+  }
+  if (setting->mtu() > 0 )
+      map.insert("mtu", setting->mtu());
+  if (!setting->seenbssids().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS), setting->seenbssids());
+  }
   return map;
 }
 

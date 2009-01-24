@@ -25,6 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KPluginFactory>
 #include <KDebug>
+#include <KLocale>
 #include <KTabWidget>
 
 #include "configxml.h"
@@ -63,7 +64,7 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
     }
 
     QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(m_connection, this);
+    m_contents = new ConnectionWidget(m_connection, i18n("New Wireless Connection"), this);
     layout->addWidget(m_contents);
     Wireless80211Widget* connectionTypeWidget = new Wireless80211Widget(m_connection, ssid, this);
     Wireless80211SecurityWidget * wirelessSecurityWidget = new Wireless80211SecurityWidget(setDefaults, m_connection, caps, wpa, rsn, this);
@@ -76,28 +77,10 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
     addToTabWidget(connectionTypeWidget);
     addToTabWidget(wirelessSecurityWidget);
     addToTabWidget(ipv4Widget);
-
-    if ( setDefaults )
-    {
-        kDebug() << "Setting connection name to " << ssid;
-        // for defaults the security is most interesting
-        //m_contents->connectionSettingsWidget()->setCurrentIndex( 1 );
-        m_connection->setName(ssid);
-    }
 }
 
 WirelessPreferences::~WirelessPreferences()
 {
-}
-
-void WirelessPreferences::load()
-{
-    ConnectionPreferences::load();
-}
-
-void WirelessPreferences::save()
-{
-    ConnectionPreferences::save();
 }
 
 // vim: sw=4 sts=4 et tw=100

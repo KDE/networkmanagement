@@ -1,4 +1,60 @@
+diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
+--- origsettings//802-11-wireless.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-11-wireless.cpp	2009-01-24 09:41:00.000000000 +0100
+@@ -5,7 +5,8 @@
+ 
+ using namespace Knm;
+ 
+-WirelessSetting::WirelessSetting() : Setting(Setting::Wireless)
++WirelessSetting::WirelessSetting() : Setting(Setting::Wireless),
++    mMode(0), mBand(WirelessSetting::EnumBand::bg), mChannel(0), mRate(0), mTxpower(0), mMtu(0)
+ {
+ }
+ 
 Only in settings: 802-11-wireless.cpp~
+diff -ur origsettings//802-11-wirelessdbus.cpp settings/802-11-wirelessdbus.cpp
+--- origsettings//802-11-wirelessdbus.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-11-wirelessdbus.cpp	2009-01-24 10:23:40.000000000 +0100
+@@ -67,21 +67,29 @@
+       map.insert("mode", "adhoc");
+       break;
+   }
++  // leave out band, NM seems to work automatically without it
+   switch (setting->band()) {
+     case WirelessSetting::EnumBand::a:
+-      map.insert("band", "a");
++      //map.insert("band", "a");
+       break;
+     case WirelessSetting::EnumBand::bg:
+-      map.insert("band", "bg");
++      //map.insert("band", "bg");
+       break;
+   }
+-  map.insert("channel", setting->channel());
+-  map.insert("bssid", setting->bssid());
+-  map.insert("rate", setting->rate());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_TX_POWER), setting->txpower());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
+-  map.insert("mtu", setting->mtu());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS), setting->seenbssids());
++  //map.insert("channel", setting->channel());
++  if (!setting->bssid().isEmpty()) {
++      map.insert("bssid", setting->bssid());
++  }
++  //map.insert("rate", setting->rate());
++  //map.insert(QLatin1String(NM_SETTING_WIRELESS_TX_POWER), setting->txpower());
++  if (!setting->macaddress().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
++  }
++  if (setting->mtu() > 0 )
++      map.insert("mtu", setting->mtu());
++  if (!setting->seenbssids().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS), setting->seenbssids());
++  }
+   return map;
+ }
+ 
+Only in settings: 802-11-wirelessdbus.cpp~
 diff -ur origsettings//802-11-wirelessdbus.h settings/802-11-wirelessdbus.h
 --- origsettings//802-11-wirelessdbus.h	2009-01-23 20:26:28.000000000 +0100
 +++ settings/802-11-wirelessdbus.h	2009-01-23 20:08:27.000000000 +0100
@@ -12,6 +68,18 @@ diff -ur origsettings//802-11-wirelessdbus.h settings/802-11-wirelessdbus.h
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 Only in settings: 802-11-wirelessdbus.h~
+diff -ur origsettings//802-11-wirelesspersistence.cpp settings/802-11-wirelesspersistence.cpp
+--- origsettings//802-11-wirelesspersistence.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-11-wirelesspersistence.cpp	2009-01-24 09:50:04.000000000 +0100
+@@ -26,7 +26,7 @@
+   setting->setRate(m_config->readEntry("rate", 0));
+   setting->setTxpower(m_config->readEntry("txpower", 0));
+   setting->setMacaddress(m_config->readEntry("macaddress", QByteArray()));
+-  setting->setMtu(m_config->readEntry("mtu", 1500));
++  setting->setMtu(m_config->readEntry("mtu", 0));
+   setting->setSeenbssids(m_config->readEntry("seenbssids", QStringList()));
+   // SECRET
+   if (m_storageMode != ConnectionPersistence::Secure) {
 Only in settings: 802-11-wirelesspersistence.cpp~
 diff -ur origsettings//802-11-wireless-securitydbus.cpp settings/802-11-wireless-securitydbus.cpp
 --- origsettings//802-11-wireless-securitydbus.cpp	2009-01-23 20:26:28.000000000 +0100

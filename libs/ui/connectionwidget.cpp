@@ -29,13 +29,14 @@ class ConnectionWidget::Private
 {
 public:
     Ui_ConnectionSettings ui;
-    QString setName;
+    QString defaultName;
 };
 
-ConnectionWidget::ConnectionWidget(Knm::Connection * connection, QWidget * parent)
+ConnectionWidget::ConnectionWidget(Knm::Connection * connection, const QString & defaultName, QWidget * parent)
     : SettingWidget(connection, parent), d(new ConnectionWidget::Private())
 {
     d->ui.setupUi(this);
+    d->defaultName = defaultName;
     kDebug() << "Connection id is " << connection->uuid();
 }
 
@@ -51,6 +52,9 @@ QTabWidget * ConnectionWidget::connectionSettingsWidget()
 
 void ConnectionWidget::readConfig()
 {
+    if (connection()->name().isEmpty()) {
+        connection()->setName(d->defaultName);
+    }
     d->ui.id->setText(connection()->name());
     d->ui.autoconnect->setChecked(connection()->autoConnect());
 }

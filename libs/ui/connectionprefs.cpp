@@ -78,7 +78,7 @@ void ConnectionPreferences::load()
 
 void ConnectionPreferences::save()
 {
-    // save the UI to the Cconnection
+    // save the UI to the Connection
     m_contents->writeConfig();
     foreach (SettingInterface * wid, m_settingWidgets) {
         wid->writeConfig();

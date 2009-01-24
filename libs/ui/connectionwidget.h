@@ -36,7 +36,11 @@ namespace Knm
 class KNM_EXPORT ConnectionWidget : public SettingWidget
 {
 public:
-    ConnectionWidget(Knm::Connection * connection, QWidget * parent = 0);
+    /**
+     * @param defaultName a default name to set on the connection, if the supplied connection does
+     * not have a name.
+     */
+    ConnectionWidget(Knm::Connection * connection, const QString & defaultName, QWidget * parent = 0);
     ~ConnectionWidget();
     QTabWidget * connectionSettingsWidget();
     QString settingName() const;

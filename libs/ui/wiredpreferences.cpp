@@ -43,7 +43,7 @@ WiredPreferences::WiredPreferences(QWidget *parent, const QVariantList &args)
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Wired);
     QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(m_connection, this);
+    m_contents = new ConnectionWidget(m_connection, i18n("New Wired Connection"), this);
     layout->addWidget(m_contents);
     WiredWidget * wiredWidget = new WiredWidget(m_connection, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
@@ -56,19 +56,6 @@ WiredPreferences::WiredPreferences(QWidget *parent, const QVariantList &args)
 
 WiredPreferences::~WiredPreferences()
 {
-}
-
-void WiredPreferences::load()
-{
-    ConnectionPreferences::load();
-    if (m_connection->name().isEmpty()) {
-        m_connection->setName(i18n("New Wired Connection"));
-    }
-}
-
-void WiredPreferences::save()
-{
-    ConnectionPreferences::save();
 }
 
 // vim: sw=4 sts=4 et tw=100

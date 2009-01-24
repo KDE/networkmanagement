@@ -35,15 +35,15 @@ class Wireless80211Widget::Private
 public:
     Ui_Wireless80211Config ui;
     Knm::WirelessSetting * setting;
+    QString proposedSsid;
 };
 
 Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QString &ssid, QWidget * parent)
     : SettingWidget(connection, parent), d(new Wireless80211Widget::Private)
 {
     d->ui.setupUi(this);
+    d->proposedSsid = ssid;
     d->setting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
-    d->setting->setSsid(ssid.toAscii());
-    
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
 }
 
@@ -65,14 +65,24 @@ void Wireless80211Widget::readConfig()
         default:
             d->ui.cmbMode->setCurrentIndex(0);
       }
-    d->ui.kcfg_ssid->setText(QString(d->setting->ssid()));
+    // need to check that ssids containing international characters are restored correctly
+    if (d->setting->ssid().isEmpty()) {
+        if (!d->proposedSsid.isEmpty()) {
+            d->ui.ssid->setText(d->proposedSsid);
+        }
+    } else {
+        d->ui.ssid->setText(QString::fromAscii(d->setting->ssid()));
+    }
+    d->ui.bssid->setText(QString::fromAscii(d->setting->bssid()));
+    d->ui.macaddress->setText(QString::fromAscii(d->setting->macaddress()));
+    d->ui.mtu->setValue(d->setting->mtu());
 }
 
 void Wireless80211Widget::writeConfig()
 {
     kDebug();
 
-    d->setting->setSsid(d->ui.kcfg_ssid->text().toAscii());
+    d->setting->setSsid(d->ui.ssid->text().toAscii());
     switch ( d->ui.cmbMode->currentIndex()) {
         case 0:
             d->setting->setMode(Knm::WirelessSetting::EnumMode::infrastructure);
@@ -81,6 +91,13 @@ void Wireless80211Widget::writeConfig()
             d->setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
             break;
     }
+    if (d->ui.macaddress->text() != QString::fromLatin1(":::::")) {
+        d->setting->setMacaddress(d->ui.macaddress->text().toAscii());
+    }
+    if (d->ui.bssid->text() != QString::fromLatin1(":::::")) {
+        d->setting->setBssid(d->ui.bssid->text().toAscii());
+    }
+    d->setting->setMtu(d->ui.mtu->value());
 }
 
 void Wireless80211Widget::scanClicked()
@@ -91,7 +108,7 @@ void Wireless80211Widget::scanClicked()
     ScanWidget scanWid;
     scanDialog.setMainWidget(&scanWid);
     if (scanDialog.exec() == QDialog::Accepted) {
-        d->ui.kcfg_ssid->setText(scanWid.currentAccessPoint());
+        d->ui.ssid->setText(scanWid.currentAccessPoint());
     }
 }
 

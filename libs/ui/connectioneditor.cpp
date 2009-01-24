@@ -98,10 +98,10 @@ QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type 
     configDialog.setMainWidget(cprefs);
 
     if ( configDialog.exec() == QDialog::Accepted ) {
-        // our rcfile
-        persist(cprefs->connection());
-        // the connection file
+        // update the connection from the UI and save it to a file in appdata/connections
         cprefs->save();
+        // update our rcfile (Must happen after cprefs->save())
+        persist(cprefs->connection());
         updateService();
         emit connectionsChanged();
     }

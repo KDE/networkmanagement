@@ -5,7 +5,8 @@
 
 using namespace Knm;
 
-WirelessSetting::WirelessSetting() : Setting(Setting::Wireless)
+WirelessSetting::WirelessSetting() : Setting(Setting::Wireless),
+    mMode(0), mBand(WirelessSetting::EnumBand::bg), mChannel(0), mRate(0), mTxpower(0), mMtu(0)
 {
 }
 
