@@ -19,8 +19,22 @@ void WirelessPersistence::load()
 {
   WirelessSetting * setting = static_cast<WirelessSetting *>(m_setting);
   setting->setSsid(m_config->readEntry("ssid", QByteArray()));
-  setting->setMode(m_config->readEntry("mode", 0));
-  setting->setBand(m_config->readEntry("band", 1));
+  {
+    QString contents = m_config->readEntry("mode", "infrastructure");
+    if (contents == "infrastructure")
+      setting->setMode(WirelessSetting::EnumMode::infrastructure);
+    else     if (contents == "adhoc")
+      setting->setMode(WirelessSetting::EnumMode::adhoc);
+
+  }
+  {
+    QString contents = m_config->readEntry("band", "bg");
+    if (contents == "a")
+      setting->setBand(WirelessSetting::EnumBand::a);
+    else     if (contents == "bg")
+      setting->setBand(WirelessSetting::EnumBand::bg);
+
+  }
   setting->setChannel(m_config->readEntry("channel", 0));
   setting->setBssid(m_config->readEntry("bssid", QByteArray()));
   setting->setRate(m_config->readEntry("rate", 0));
@@ -38,8 +52,22 @@ void WirelessPersistence::save()
 {
   WirelessSetting * setting = static_cast<WirelessSetting *>(m_setting);
   m_config->writeEntry("ssid", setting->ssid());
-  m_config->writeEntry("mode", setting->mode());
-  m_config->writeEntry("band", setting->band());
+  switch (setting->mode()) {
+    case WirelessSetting::EnumMode::infrastructure:
+      m_config->writeEntry("mode", "infrastructure");
+      break;
+    case WirelessSetting::EnumMode::adhoc:
+      m_config->writeEntry("mode", "adhoc");
+      break;
+  }
+  switch (setting->band()) {
+    case WirelessSetting::EnumBand::a:
+      m_config->writeEntry("band", "a");
+      break;
+    case WirelessSetting::EnumBand::bg:
+      m_config->writeEntry("band", "bg");
+      break;
+  }
   m_config->writeEntry("channel", setting->channel());
   m_config->writeEntry("bssid", setting->bssid());
   m_config->writeEntry("rate", setting->rate());

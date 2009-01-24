@@ -18,7 +18,18 @@ Ipv4Persistence::~Ipv4Persistence()
 void Ipv4Persistence::load()
 {
   Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
-  setting->setMethod(m_config->readEntry("method", 42));
+  {
+    QString contents = m_config->readEntry("method", "Automatic");
+    if (contents == "Automatic")
+      setting->setMethod(Ipv4Setting::EnumMethod::Automatic);
+    else     if (contents == "LinkLocal")
+      setting->setMethod(Ipv4Setting::EnumMethod::LinkLocal);
+    else     if (contents == "Manual")
+      setting->setMethod(Ipv4Setting::EnumMethod::Manual);
+    else     if (contents == "Shared")
+      setting->setMethod(Ipv4Setting::EnumMethod::Shared);
+
+  }
   setting->setDns(m_config->readEntry("dns", QStringList()));
   setting->setDnssearch(m_config->readEntry("dnssearch", QStringList()));
   setting->setAddresses(m_config->readEntry("addresses", QStringList()));
@@ -28,7 +39,20 @@ void Ipv4Persistence::load()
 void Ipv4Persistence::save()
 {
   Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
-  m_config->writeEntry("method", setting->method());
+  switch (setting->method()) {
+    case Ipv4Setting::EnumMethod::Automatic:
+      m_config->writeEntry("method", "Automatic");
+      break;
+    case Ipv4Setting::EnumMethod::LinkLocal:
+      m_config->writeEntry("method", "LinkLocal");
+      break;
+    case Ipv4Setting::EnumMethod::Manual:
+      m_config->writeEntry("method", "Manual");
+      break;
+    case Ipv4Setting::EnumMethod::Shared:
+      m_config->writeEntry("method", "Shared");
+      break;
+  }
   m_config->writeEntry("dns", setting->dns());
   m_config->writeEntry("dnssearch", setting->dnssearch());
   m_config->writeEntry("addresses", setting->addresses());

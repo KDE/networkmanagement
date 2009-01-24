@@ -18,9 +18,27 @@ WiredPersistence::~WiredPersistence()
 void WiredPersistence::load()
 {
   WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
-  setting->setPort(m_config->readEntry("port", 0));
+  {
+    QString contents = m_config->readEntry("port", "tp");
+    if (contents == "tp")
+      setting->setPort(WiredSetting::EnumPort::tp);
+    else     if (contents == "aui")
+      setting->setPort(WiredSetting::EnumPort::aui);
+    else     if (contents == "bnc")
+      setting->setPort(WiredSetting::EnumPort::bnc);
+    else     if (contents == "mii")
+      setting->setPort(WiredSetting::EnumPort::mii);
+
+  }
   setting->setSpeed(m_config->readEntry("speed", 0));
-  setting->setDuplex(m_config->readEntry("duplex", 0));
+  {
+    QString contents = m_config->readEntry("duplex", "full");
+    if (contents == "half")
+      setting->setDuplex(WiredSetting::EnumDuplex::half);
+    else     if (contents == "full")
+      setting->setDuplex(WiredSetting::EnumDuplex::full);
+
+  }
   setting->setAutonegotiate(m_config->readEntry("autonegotiate", true));
   setting->setMacaddress(m_config->readEntry("macaddress", QByteArray()));
   setting->setMtu(m_config->readEntry("mtu", 0));
@@ -29,9 +47,29 @@ void WiredPersistence::load()
 void WiredPersistence::save()
 {
   WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
-  m_config->writeEntry("port", setting->port());
+  switch (setting->port()) {
+    case WiredSetting::EnumPort::tp:
+      m_config->writeEntry("port", "tp");
+      break;
+    case WiredSetting::EnumPort::aui:
+      m_config->writeEntry("port", "aui");
+      break;
+    case WiredSetting::EnumPort::bnc:
+      m_config->writeEntry("port", "bnc");
+      break;
+    case WiredSetting::EnumPort::mii:
+      m_config->writeEntry("port", "mii");
+      break;
+  }
   m_config->writeEntry("speed", setting->speed());
-  m_config->writeEntry("duplex", setting->duplex());
+  switch (setting->duplex()) {
+    case WiredSetting::EnumDuplex::half:
+      m_config->writeEntry("duplex", "half");
+      break;
+    case WiredSetting::EnumDuplex::full:
+      m_config->writeEntry("duplex", "full");
+      break;
+  }
   m_config->writeEntry("autonegotiate", setting->autonegotiate());
   m_config->writeEntry("macaddress", setting->macaddress());
   m_config->writeEntry("mtu", setting->mtu());

@@ -2249,7 +2249,30 @@ int main( int argc, char **argv )
         pC << "  // SECRET" << endl;
         pC << "  if (m_storageMode != ConnectionPersistence::Secure) {" << endl << "  ";
     }
-    pC << "  setting->" << setFunction(n) << "(m_config->readEntry(\"" << (*itEntry)->key() << "\", " << defaultStr << "));" << endl;
+    if (t == "Enum") {
+        const CfgEntry::Choices &choices = (*itEntry)->choices();
+        QList<CfgEntry::Choice> chlist = choices.choices;
+        if ( chlist.isEmpty() ) {
+            // as non-enum
+            pC << "  setting->" << setFunction(n) << "(m_config->readEntry(\"" << (*itEntry)->key() << "\", " << defaultStr << "));" << endl;
+        } else { // switch the value and write the choice name as string instead of the enum's int value
+            pC << "  {" << endl; // keep contents in this scope
+            pC << "    QString contents = m_config->readEntry(\"" << (*itEntry)->key() << "\", " << defaultStr << ");" << endl;
+            for (int i = 0; i < chlist.count(); i++) {
+                CfgEntry::Choice ch = chlist[i];
+                pC << "    if (contents == \"" << ch.name << "\")" << endl;
+                pC << "      setting->" << setFunction(n) << "(" << className << "Setting::" << enumName(n, choices) << "::" << choices.prefix << ch.name << ");" << endl;
+                if (i != (chlist.count() - 1)) {
+                    pC << "    else ";
+                } else {
+                    pC << endl;
+                }
+            }
+            pC << "  }" << endl; // keep contents in this scope
+        }
+    } else {
+        pC << "  setting->" << setFunction(n) << "(m_config->readEntry(\"" << (*itEntry)->key() << "\", " << defaultStr << "));" << endl;
+    }
     if ((*itEntry)->secret()) {
         pC << "  }" << endl;
     }
@@ -2274,7 +2297,24 @@ int main( int argc, char **argv )
         pC << "  // SECRET" << endl;
         pC << "  if (m_storageMode != ConnectionPersistence::Secure) {" << endl << "  ";
     }
-    pC << "  m_config->writeEntry(\"" << (*itEntry)->key() << "\", setting->" << getFunction(n) << "());" << endl;
+    if (t == "Enum") {
+        const CfgEntry::Choices &choices = (*itEntry)->choices();
+        QList<CfgEntry::Choice> chlist = choices.choices;
+        if ( chlist.isEmpty() ) {
+            // as non-enum
+            pC << "  m_config->writeEntry(\"" << (*itEntry)->key() << "\", setting->" << getFunction(n) << "());" << endl;
+        } else { // switch the value and write the choice name as string instead of the enum's int value
+            pC << "  switch (setting->" << getFunction(n) << "()) {" << endl;
+            foreach (CfgEntry::Choice ch, chlist) {
+                pC << "    case " << className << "Setting::" << enumName(n, choices) << "::" << choices.prefix << ch.name << ":" << endl;
+                pC << "      m_config->writeEntry(\"" << (*itEntry)->key() << "\", \"" << ch.name << "\");" << endl;
+                pC << "      break;" << endl;
+            }
+            pC << "  }" << endl;
+        }
+    } else {
+        pC << "  m_config->writeEntry(\"" << (*itEntry)->key() << "\", setting->" << getFunction(n) << "());" << endl;
+    }
     if ((*itEntry)->secret()) {
         pC << "  }" << endl;
     }

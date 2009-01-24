@@ -13,6 +13,11 @@ namespace Knm {
 class KNM_EXPORT WirelessSecuritySetting : public Setting
 {
   public:
+    class EnumSecurityType
+    {
+      public:
+      enum type { None, WEP40, WEP128, DynamicWEP, WPAPSK, WPAEAP, COUNT };
+    };
     class EnumKeymgmt
     {
       public:
@@ -32,19 +37,19 @@ class KNM_EXPORT WirelessSecuritySetting : public Setting
     bool hasSecrets() const;
 
     /**
-      Set No security
+      Set Security type
     */
-    void setClear( bool v )
+    void setSecurityType( int v )
     {
-        mClear = v;
+        mSecurityType = v;
     }
 
     /**
-      Get No security
+      Get Security type
     */
-    bool clear() const
+    int securityType() const
     {
-      return mClear;
+      return mSecurityType;
     }
 
     /**
@@ -274,7 +279,7 @@ class KNM_EXPORT WirelessSecuritySetting : public Setting
   protected:
 
     // 802-11-wireless-security
-    bool mClear;
+    int mSecurityType;
     int mKeymgmt;
     uint mWeptxkeyindex;
     int mAuthalg;
