@@ -35,6 +35,7 @@ KEY (by Lubos)
     * Watch the active connections in the connection editor and update its UI contents
   * Store SeenBSSIDs in wireless connections
   * Shutdown the service on timeout when the applet is removed, not immediately, to allow for plasma reconfigures.
+  * Enhance error reporting.  When a connection attempt fails on a wifi connection that has been used in the past, prompt "This failure may have occurred due to temporary wireless interference, or the connection settings may have changed.".  When a failure occurs on a new wifi connection, change to "the connection settings may be incorrect".
 
 - CONFIG: Implement control module
   + Write a nice class to turn a QDateTime into "3 minutes ago", "5 hours ago" instead of using KLocale::formatDate(), or extend KLocale with formatDateRelative(QDateTime in, QDateTime relativeTo)
@@ -104,4 +105,7 @@ KEY (by Lubos)
    
 - Update Solid
   * Pass the reason arg in org.freedesktop.NetworkManager.Device.StateChanged through, so the applet can use it for error reporting
-  % Implement ModemManager (after NM 0.7.0 is released) and new VPNManager, if appropriate, in Solid, else in applet
+  % Implement ModemManager and any new VPNManager, if appropriate, in Solid, else in applet
+
+
+
