@@ -83,7 +83,7 @@ diff -ur origsettings//802-11-wirelesspersistence.cpp settings/802-11-wirelesspe
 Only in settings: 802-11-wirelesspersistence.cpp~
 diff -ur origsettings//802-11-wireless-securitydbus.cpp settings/802-11-wireless-securitydbus.cpp
 --- origsettings//802-11-wireless-securitydbus.cpp	2009-01-23 20:26:28.000000000 +0100
-+++ settings/802-11-wireless-securitydbus.cpp	2009-01-23 20:24:26.000000000 +0100
++++ settings/802-11-wireless-securitydbus.cpp	2009-01-24 11:20:07.000000000 +0100
 @@ -4,10 +4,13 @@
  #include "802-11-wireless-securitydbus.h"
  
@@ -107,10 +107,39 @@ diff -ur origsettings//802-11-wireless-securitydbus.cpp settings/802-11-wireless
    if (map.contains("psk")) {
      setting->setPsk(map.value("psk").value<QString>());
    }
-@@ -107,12 +111,50 @@
+@@ -95,10 +99,18 @@
+       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "leap");
+       break;
+   }
+-  map.insert("proto", setting->proto());
+-  map.insert("pairwise", setting->pairwise());
+-  map.insert("group", setting->group());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME), setting->leapusername());
++  if (!setting->proto().isEmpty()) {
++      map.insert("proto", setting->proto());
++  }
++  if (!setting->pairwise().isEmpty()) {
++      map.insert("pairwise", setting->pairwise());
++  }
++  if (!setting->group().isEmpty()) {
++      map.insert("group", setting->group());
++  }
++  if (!setting->leapusername().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME), setting->leapusername());
++  }
+   return map;
+ }
+ 
+@@ -107,12 +119,62 @@
    QVariantMap map;
    WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
    map.insert("name", setting->name());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
+-  map.insert("psk", setting->psk());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
 +  if (!setting->weppassphrase().isEmpty()) {
 +      QString key = hashWepPassphrase(setting->weppassphrase());
 +      switch (setting->weptxkeyindex()) {
@@ -128,13 +157,24 @@ diff -ur origsettings//802-11-wireless-securitydbus.cpp settings/802-11-wireless
 +              break;
 +      }
 +  }
-   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
-   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
-   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());
-   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
--  map.insert("psk", setting->psk());
-+  map.insert("psk", hashWpaPsk(setting->psk()));
-   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
++  if (!setting->wepkey0().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
++  }
++  if (!setting->wepkey1().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
++  }
++  if (!setting->wepkey2().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());
++  }
++  if (!setting->wepkey3().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
++  }
++  if (!setting->psk().isEmpty()) {
++      map.insert("psk", hashWpaPsk(setting->psk()));
++  }
++  if (!setting->leappassword().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
++  }
    return map;
  }
  
@@ -315,7 +355,7 @@ diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
 Only in settings: 802-1xdbus.h~
 diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
 --- origsettings//802-3-ethernet.cpp	2009-01-23 20:26:28.000000000 +0100
-+++ settings/802-3-ethernet.cpp	2009-01-23 20:25:44.000000000 +0100
++++ settings/802-3-ethernet.cpp	2009-01-24 10:47:45.000000000 +0100
 @@ -5,7 +5,12 @@
  
  using namespace Knm;
@@ -326,14 +366,14 @@ diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
 +    mSpeed(0),
 +    mDuplex(WiredSetting::EnumDuplex::full),
 +    mAutonegotiate(true),
-+    mMtu(1500)
++    mMtu(0)
  {
  }
  
 Only in settings: 802-3-ethernet.cpp~
 diff -ur origsettings//802-3-ethernetdbus.cpp settings/802-3-ethernetdbus.cpp
 --- origsettings//802-3-ethernetdbus.cpp	2009-01-23 20:26:28.000000000 +0100
-+++ settings/802-3-ethernetdbus.cpp	2009-01-23 20:08:27.000000000 +0100
++++ settings/802-3-ethernetdbus.cpp	2009-01-24 10:49:29.000000000 +0100
 @@ -42,6 +42,8 @@
  {
    QVariantMap map;
@@ -343,18 +383,22 @@ diff -ur origsettings//802-3-ethernetdbus.cpp settings/802-3-ethernetdbus.cpp
    switch (setting->port()) {
      case WiredSetting::EnumPort::tp:
        map.insert("port", "tp");
-@@ -66,7 +68,10 @@
+@@ -66,8 +68,13 @@
        break;
    }
    map.insert(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE), setting->autonegotiate());
 -  map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), setting->macaddress());
+-  map.insert("mtu", setting->mtu());
 +#endif
 +  // broken
 +  //QString mac = setting->macaddress();
 +  //map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), mac.remove(':').toAscii());
-   map.insert("mtu", setting->mtu());
++  if (setting->mtu() > 0 ) {
++    map.insert("mtu", setting->mtu());
++  }
    return map;
  }
+ 
 Only in settings: 802-3-ethernetdbus.cpp~
 Only in settings: 802-3-ethernetdbus.cpp.orig
 Only in settings: 802-3-ethernetdbus.cpp.rej
@@ -371,6 +415,22 @@ diff -ur origsettings//802-3-ethernetdbus.h settings/802-3-ethernetdbus.h
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 Only in settings: 802-3-ethernetdbus.h~
+diff -ur origsettings//802-3-ethernetpersistence.cpp settings/802-3-ethernetpersistence.cpp
+--- origsettings//802-3-ethernetpersistence.cpp	2009-01-23 20:26:28.000000000 +0100
++++ settings/802-3-ethernetpersistence.cpp	2009-01-24 10:48:28.000000000 +0100
+@@ -21,9 +21,9 @@
+   setting->setPort(m_config->readEntry("port", 0));
+   setting->setSpeed(m_config->readEntry("speed", 0));
+   setting->setDuplex(m_config->readEntry("duplex", 0));
+-  setting->setAutonegotiate(m_config->readEntry("autonegotiate", false));
++  setting->setAutonegotiate(m_config->readEntry("autonegotiate", true));
+   setting->setMacaddress(m_config->readEntry("macaddress", QByteArray()));
+-  setting->setMtu(m_config->readEntry("mtu", 1500));
++  setting->setMtu(m_config->readEntry("mtu", 0));
+ }
+ 
+ void WiredPersistence::save()
+Only in settings: 802-3-ethernetpersistence.cpp~
 diff -ur origsettings//gsmpersistence.cpp settings/gsmpersistence.cpp
 --- origsettings//gsmpersistence.cpp	2009-01-23 20:26:28.000000000 +0100
 +++ settings/gsmpersistence.cpp	2009-01-23 20:08:27.000000000 +0100

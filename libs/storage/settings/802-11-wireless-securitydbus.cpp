@@ -99,10 +99,18 @@ QVariantMap WirelessSecurityDbus::toMap()
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "leap");
       break;
   }
-  map.insert("proto", setting->proto());
-  map.insert("pairwise", setting->pairwise());
-  map.insert("group", setting->group());
-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME), setting->leapusername());
+  if (!setting->proto().isEmpty()) {
+      map.insert("proto", setting->proto());
+  }
+  if (!setting->pairwise().isEmpty()) {
+      map.insert("pairwise", setting->pairwise());
+  }
+  if (!setting->group().isEmpty()) {
+      map.insert("group", setting->group());
+  }
+  if (!setting->leapusername().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME), setting->leapusername());
+  }
   return map;
 }
 
@@ -128,12 +136,24 @@ QVariantMap WirelessSecurityDbus::toSecretsMap()
               break;
       }
   }
-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());
-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
-  map.insert("psk", hashWpaPsk(setting->psk()));
-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
+  if (!setting->wepkey0().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
+  }
+  if (!setting->wepkey1().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
+  }
+  if (!setting->wepkey2().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());
+  }
+  if (!setting->wepkey3().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
+  }
+  if (!setting->psk().isEmpty()) {
+      map.insert("psk", hashWpaPsk(setting->psk()));
+  }
+  if (!setting->leappassword().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
+  }
   return map;
 }
 
