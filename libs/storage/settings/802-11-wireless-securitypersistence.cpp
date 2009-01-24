@@ -18,6 +18,9 @@ WirelessSecurityPersistence::~WirelessSecurityPersistence()
 void WirelessSecurityPersistence::load()
 {
   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
+  if (m_config->exists()) { // this persistence saves nothing if there is no security, so the 
+      // group won't exist.  not indenting the code inside this test to keep the diff clean ;)
+  setting->setClear(false);
   setting->setKeymgmt(m_config->readEntry("keymgmt", 0));
   setting->setWeptxkeyindex(m_config->readEntry("weptxkeyindex", 0));
   setting->setAuthalg(m_config->readEntry("authalg", 0));
@@ -53,11 +56,13 @@ void WirelessSecurityPersistence::load()
   if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setWeppassphrase(m_config->readEntry("weppassphrase", ""));
   }
+  }
 }
 
 void WirelessSecurityPersistence::save()
 {
   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
+  if (!setting->clear()) { // don't save anything if security is disabled
   m_config->writeEntry("keymgmt", setting->keymgmt());
   m_config->writeEntry("weptxkeyindex", setting->weptxkeyindex());
   m_config->writeEntry("authalg", setting->authalg());
@@ -93,12 +98,14 @@ void WirelessSecurityPersistence::save()
   if (m_storageMode != ConnectionPersistence::Secure) {
     m_config->writeEntry("weppassphrase", setting->weppassphrase());
   }
+  } // setting->clear()
 }
 
 QMap<QString,QString> WirelessSecurityPersistence::secrets() const
 {
   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
   QMap<QString,QString> map;
+  if (!setting->clear()) { // don't save anything if security is disabled
   map.insert(QLatin1String("wepkey0"), setting->wepkey0());
   map.insert(QLatin1String("wepkey1"), setting->wepkey1());
   map.insert(QLatin1String("wepkey2"), setting->wepkey2());
@@ -106,6 +113,7 @@ QMap<QString,QString> WirelessSecurityPersistence::secrets() const
   map.insert(QLatin1String("psk"), setting->psk());
   map.insert(QLatin1String("leappassword"), setting->leappassword());
   map.insert(QLatin1String("weppassphrase"), setting->weppassphrase());
+  }
   return map;
 }
 

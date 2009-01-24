@@ -32,6 +32,22 @@ class KNM_EXPORT WirelessSecuritySetting : public Setting
     bool hasSecrets() const;
 
     /**
+      Set No security
+    */
+    void setClear( bool v )
+    {
+        mClear = v;
+    }
+
+    /**
+      Get No security
+    */
+    bool clear() const
+    {
+      return mClear;
+    }
+
+    /**
       Set Key management
     */
     void setKeymgmt( int v )
@@ -258,6 +274,7 @@ class KNM_EXPORT WirelessSecuritySetting : public Setting
   protected:
 
     // 802-11-wireless-security
+    bool mClear;
     int mKeymgmt;
     uint mWeptxkeyindex;
     int mAuthalg;

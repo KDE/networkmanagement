@@ -73,6 +73,7 @@ QVariantMap WirelessSecurityDbus::toMap()
 {
   QVariantMap map;
   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
+  if (!setting->clear()) { // don't return anything if there is no security
   switch (setting->keymgmt()) {
     case WirelessSecuritySetting::EnumKeymgmt::none:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "none");
@@ -111,6 +112,7 @@ QVariantMap WirelessSecurityDbus::toMap()
   if (!setting->leapusername().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME), setting->leapusername());
   }
+  } // end of if not setting->clear()
   return map;
 }
 
@@ -118,6 +120,7 @@ QVariantMap WirelessSecurityDbus::toSecretsMap()
 {
   QVariantMap map;
   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
+  if (!setting->clear()) { // don't return anything if there is no security
   map.insert("name", setting->name());
   if (!setting->weppassphrase().isEmpty()) {
       QString key = hashWepPassphrase(setting->weppassphrase());
@@ -154,6 +157,7 @@ QVariantMap WirelessSecurityDbus::toSecretsMap()
   if (!setting->leappassword().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
   }
+  } // end of if not clear
   return map;
 }
 

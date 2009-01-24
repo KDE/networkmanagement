@@ -6,6 +6,7 @@
 using namespace Knm;
 
 WirelessSecuritySetting::WirelessSecuritySetting() : Setting(Setting::WirelessSecurity)
+                                                     , mClear(true), mKeymgmt(0), mWeptxkeyindex(0), mAuthalg(0)
 {
 }
 
