@@ -10,7 +10,7 @@ WiredSetting::WiredSetting() : Setting(Setting::Wired),
     mSpeed(0),
     mDuplex(WiredSetting::EnumDuplex::full),
     mAutonegotiate(true),
-    mMtu(1500)
+    mMtu(0)
 {
 }
 

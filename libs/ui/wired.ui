@@ -71,6 +71,9 @@
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
+       <property name="specialValueText" >
+        <string>Automatic</string>
+       </property>
        <property name="suffix" >
         <string> bytes</string>
        </property>
@@ -81,7 +84,7 @@
         <number>10</number>
        </property>
        <property name="value" >
-        <number>1500</number>
+        <number>0</number>
        </property>
       </widget>
      </item>

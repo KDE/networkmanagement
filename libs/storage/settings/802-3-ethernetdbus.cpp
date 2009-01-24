@@ -72,7 +72,9 @@ QVariantMap WiredDbus::toMap()
   // broken
   //QString mac = setting->macaddress();
   //map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), mac.remove(':').toAscii());
-  map.insert("mtu", setting->mtu());
+  if (setting->mtu() > 0 ) {
+    map.insert("mtu", setting->mtu());
+  }
   return map;
 }
 
