@@ -5,9 +5,17 @@
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
   <kcfgfile arg="false"/>
   <group name="802-11-wireless-security">
-    <entry name="clear" key="clear" type="Bool" nodbus="true">
-      <label>No security</label>
-      <default>true</default>
+    <entry name="securityType" key="securityType" type="Enum" nodbus="true">
+      <choices>
+        <choice name="None"/>
+        <choice name="WEP40"/>
+        <choice name="WEP128"/>
+        <choice name="DynamicWEP"/>
+        <choice name="WPAPSK"/>
+        <choice name="WPAEAP"/>
+      </choices>
+      <label>Security type</label>
+      <default>None</default>
     </entry>
     <entry name="keymgmt" key="keymgmt" type="Enum" dbuskey="NM_SETTING_WIRELESS_SECURITY_KEY_MGMT">
       <label>Key management</label>

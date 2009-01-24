@@ -30,6 +30,7 @@
     <!-- nb "auto-negotiate" in NM -->
     <entry name="autonegotiate" type="Bool" dbuskey="NM_SETTING_WIRED_AUTO_NEGOTIATE">
       <label>Auto negotiate</label>
+      <default>true</default>
       <whatsthis></whatsthis>
     </entry>
     <!-- nb "mac-address" in NM -->
@@ -39,7 +40,7 @@
     </entry>
     <entry name="mtu" type="UInt">
       <label>MTU</label>
-      <default>1500</default>
+      <default>0</default>
       <whatsthis>Maximum Transfer Unit to use</whatsthis>
     </entry>
   </group>
