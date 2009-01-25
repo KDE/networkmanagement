@@ -42,11 +42,6 @@ public:
     void readConfig();
     void writeConfig();
 
-    static const QString KEY_MGMT_NONE;
-    static const QString KEY_MGMT_802_1X;
-    static const QString KEY_MGMT_WPA_NONE;
-    static const QString KEY_MGMT_WPA_PSK;
-    static const QString KEY_MGMT_WPA_EAP;
 protected Q_SLOTS:
     void securityTypeChanged(int index);
 private:
