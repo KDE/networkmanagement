@@ -42,10 +42,7 @@ void WirelessPersistence::load()
   setting->setMacaddress(m_config->readEntry("macaddress", QByteArray()));
   setting->setMtu(m_config->readEntry("mtu", 0));
   setting->setSeenbssids(m_config->readEntry("seenbssids", QStringList()));
-  // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
-    setting->setSecurity(m_config->readEntry("security", ""));
-  }
+  setting->setSecurity(m_config->readEntry("security", ""));
 }
 
 void WirelessPersistence::save()
@@ -75,25 +72,18 @@ void WirelessPersistence::save()
   m_config->writeEntry("macaddress", setting->macaddress());
   m_config->writeEntry("mtu", setting->mtu());
   m_config->writeEntry("seenbssids", setting->seenbssids());
-  // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
-    m_config->writeEntry("security", setting->security());
-  }
+  m_config->writeEntry("security", setting->security());
 }
 
 QMap<QString,QString> WirelessPersistence::secrets() const
 {
-  WirelessSetting * setting = static_cast<WirelessSetting *>(m_setting);
   QMap<QString,QString> map;
-  map.insert(QLatin1String("security"), setting->security());
   return map;
 }
 
 void WirelessPersistence::restoreSecrets(QMap<QString,QString> secrets) const
 {
   if (m_storageMode == ConnectionPersistence::Secure) {
-  WirelessSetting * setting = static_cast<WirelessSetting *>(m_setting);
-    setting->setSecurity(secrets.value("security"));
-    setting->setSecretsAvailable(true);
+  Q_UNUSED(secrets);
   }
 }

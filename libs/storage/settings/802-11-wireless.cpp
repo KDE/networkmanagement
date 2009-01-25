@@ -20,5 +20,5 @@ QString WirelessSetting::name() const
 }
 bool WirelessSetting::hasSecrets() const
 {
-  return true;
+  return false;
 }
