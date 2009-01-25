@@ -30,9 +30,49 @@ void Ipv4Persistence::load()
       setting->setMethod(Ipv4Setting::EnumMethod::Shared);
 
   }
-  setting->setDns(m_config->readEntry("dns", QStringList()));
+
+  // dns
+  QList<QHostAddress> dnsServers;
+  QStringList rawDnsServers = m_config->readEntry("dns", QStringList());
+  foreach (QString server, rawDnsServers) {
+      dnsServers.append(QHostAddress(server));
+  }
+  setting->setDns(dnsServers);
+
   setting->setDnssearch(m_config->readEntry("dnssearch", QStringList()));
-  setting->setAddresses(m_config->readEntry("addresses", QStringList()));
+
+  // addresses
+  QList<Solid::Control::IPv4Address> addresses;
+  QStringList rawAddresses = m_config->readEntry("addresses", QStringList());
+  foreach (QString rawAddress, rawAddresses) {
+      QStringList parts = rawAddress.split(';');
+      if (parts.count() != 3) { // sanity check
+          continue;
+      }
+      QHostAddress ip(parts[0]);
+      QHostAddress broadcast(parts[1]);
+      QHostAddress gateway(parts[2]);
+      Solid::Control::IPv4Address addr(ip.toIPv4Address(), broadcast.toIPv4Address(), gateway.toIPv4Address());
+      addresses.append(addr);
+  }
+  setting->setAddresses(addresses);
+
+  // routes
+  QList<Solid::Control::IPv4Route> routes;
+  QStringList rawRoutes = m_config->readEntry("routes", QStringList());
+  foreach (QString rawRoute, rawRoutes) {
+      QStringList parts = rawRoute.split(';');
+      if (parts.count() != 4) { // sanity check
+          continue;
+      }
+      QHostAddress address(parts[0]);
+      quint32 prefix = parts[1].toUInt();
+      QHostAddress nextHop(parts[2]);
+      quint32 metric = parts[3].toUInt();
+      Solid::Control::IPv4Route route(address.toIPv4Address(), prefix, nextHop.toIPv4Address(), metric);
+      routes.append(route);
+  }
+  setting->setRoutes(routes);
   setting->setIgnoredhcpdns(m_config->readEntry("ignoredhcpdns", false));
 }
 
@@ -53,9 +93,38 @@ void Ipv4Persistence::save()
       m_config->writeEntry("method", "Shared");
       break;
   }
-  m_config->writeEntry("dns", setting->dns());
-  m_config->writeEntry("dnssearch", setting->dnssearch());
-  m_config->writeEntry("addresses", setting->addresses());
+
+  QStringList rawDns;
+  foreach (QHostAddress dns, setting->dns()) {
+    rawDns.append(dns.toString());
+  }
+  if (!rawDns.isEmpty())
+      m_config->writeEntry("dns", rawDns);
+
+  if (!setting->dnssearch().isEmpty())
+      m_config->writeEntry("dnssearch", setting->dnssearch());
+
+  QStringList rawAddresses;
+  foreach (Solid::Control::IPv4Address addr, setting->addresses()) {
+      QStringList rawAddress;
+      rawAddress << QHostAddress(addr.address()).toString()
+          << QHostAddress(addr.netMask()).toString()
+          << QHostAddress(addr.gateway()).toString();
+      rawAddresses << rawAddress;
+  }
+  m_config->writeEntry("addresses", rawAddresses);
+
+  QStringList rawRoutes;
+  foreach (Solid::Control::IPv4Route route, setting->routes()) {
+      QStringList rawRoute;
+      rawRoute << QHostAddress(route.route()).toString()
+          << QString::number(route.prefix())
+          << QHostAddress(route.nextHop()).toString()
+          << QString::number(route.metric());
+      rawRoutes << rawRoute;
+  }
+  m_config->writeEntry("routes", rawRoutes);
+
   m_config->writeEntry("ignoredhcpdns", setting->ignoredhcpdns());
 }
 

@@ -3,11 +3,17 @@
 #ifndef KNM_IPV4SETTING_H
 #define KNM_IPV4SETTING_H
 
+#include <QHostAddress>
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
+#include <solid/control/networkipv4config.h>
 #include "setting.h"
 #include "knm_export.h"
+
+Q_DECLARE_METATYPE(Solid::Control::IPv4Address)
+Q_DECLARE_METATYPE(Solid::Control::IPv4Route)
+
 namespace Knm {
 
 class KNM_EXPORT Ipv4Setting : public Setting
@@ -45,7 +51,7 @@ class KNM_EXPORT Ipv4Setting : public Setting
     /**
       Set DNS Servers
     */
-    void setDns( const QStringList & v )
+    void setDns( const QList<QHostAddress> & v )
     {
         mDns = v;
     }
@@ -53,7 +59,7 @@ class KNM_EXPORT Ipv4Setting : public Setting
     /**
       Get DNS Servers
     */
-    QStringList dns() const
+    QList<QHostAddress> dns() const
     {
       return mDns;
     }
@@ -77,7 +83,7 @@ class KNM_EXPORT Ipv4Setting : public Setting
     /**
       Set IP Addresses
     */
-    void setAddresses( const QStringList & v )
+    void setAddresses( const QList<Solid::Control::IPv4Address> & v )
     {
         mAddresses = v;
     }
@@ -85,7 +91,7 @@ class KNM_EXPORT Ipv4Setting : public Setting
     /**
       Get IP Addresses
     */
-    QStringList addresses() const
+    QList<Solid::Control::IPv4Address> addresses() const
     {
       return mAddresses;
     }
@@ -106,15 +112,25 @@ class KNM_EXPORT Ipv4Setting : public Setting
       return mIgnoredhcpdns;
     }
 
+    QList<Solid::Control::IPv4Route> routes() const
+    {
+        return mRoutes;
+    }
+
+    void setRoutes(QList<Solid::Control::IPv4Route> routes)
+    {
+        mRoutes = routes;
+    }
+    
   protected:
 
     // ipv4
     int mMethod;
-    QStringList mDns;
+    QList<QHostAddress> mDns;
     QStringList mDnssearch;
-    QStringList mAddresses;
+    QList<Solid::Control::IPv4Address> mAddresses;
+    QList<Solid::Control::IPv4Route> mRoutes;
     bool mIgnoredhcpdns;
-
   private:
 };
 

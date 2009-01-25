@@ -3,6 +3,7 @@
 
 #include "ipv4dbus.h"
 
+#include "../../types.h"
 #include "ipv4.h"
 
 using namespace Knm;
@@ -53,13 +54,43 @@ QVariantMap Ipv4Dbus::toMap()
       map.insert("method", "shared");
       break;
   }
-  //map.insert("dns", setting->dns());
+
+  if (!setting->dns().isEmpty()) {
+      QList<uint> dbusDns;
+      foreach (QHostAddress dns, setting->dns()) {
+          dbusDns << dns.toIPv4Address();
+      }
+      map.insert("dns", QVariant::fromValue(dbusDns));
+  }
+
   if (!setting->dnssearch().isEmpty()) {
     map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH), setting->dnssearch());
   }
   if (!setting->addresses().isEmpty()) {
-    map.insert("addresses", setting->addresses());
+      QList<QList<uint> > dbusAddresses;
+      foreach (Solid::Control::IPv4Address addr, setting->addresses()) {
+          QList<uint> dbusAddress;
+          dbusAddress << addr.address()
+              << addr.netMask()
+              << addr.gateway();
+          dbusAddresses << dbusAddress;
+      }
+      map.insert("addresses", QVariant::fromValue(dbusAddresses));
   }
+  if (!setting->routes().isEmpty()) {
+      QList<QList<uint> > dbusRoutes;
+      foreach (Solid::Control::IPv4Route route, setting->routes()) {
+          QList<uint> dbusRoute;
+          dbusRoute << route.route()
+              << route.prefix()
+              << route.nextHop()
+              << route.metric();
+          dbusRoutes << dbusRoute;
+      }
+      map.insert("routes", QVariant::fromValue(dbusRoutes));
+  }
+
+
   //map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS), setting->ignoredhcpdns());
   return map;
 }
