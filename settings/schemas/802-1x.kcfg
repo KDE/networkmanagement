@@ -95,6 +95,10 @@
       <label>PSK</label>
       <whatsthis></whatsthis>
     </entry>
+    <entry name="enabled" type="Bool" nodbus="true">
+      <label>Connection uses 802.1x</label>
+      <default>false</default>
+    </entry>
   </group>
 </kcfg>
 

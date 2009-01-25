@@ -18,6 +18,7 @@ Security8021xDbus::~Security8021xDbus()
 void Security8021xDbus::fromMap(const QVariantMap & map)
 {
   Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
+  if (setting->enabled()) {
   if (map.contains("eap")) {
     setting->setEap(map.value("eap").value<QStringList>());
   }
@@ -76,12 +77,14 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
   if (map.contains("psk")) {
     setting->setPsk(map.value("psk").value<QString>());
   }
+  }
 }
 
 QVariantMap Security8021xDbus::toMap()
 {
   QVariantMap map;
   Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
+  if (setting->enabled()) {
   if (!setting->eap().isEmpty()) {
     map.insert("eap", setting->eap());
   }
@@ -144,6 +147,7 @@ QVariantMap Security8021xDbus::toMap()
   if (!setting->psk().isEmpty()) {
       map.insert("psk", setting->psk());
   }
+  }
   return map;
 }
 
@@ -151,8 +155,10 @@ QVariantMap Security8021xDbus::toSecretsMap()
 {
   QVariantMap map;
   Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
+  if (setting->enabled()) {
   map.insert("name", setting->name());
   map.insert("password", setting->password());
+  }
   return map;
 }
 

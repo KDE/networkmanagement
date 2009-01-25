@@ -340,6 +340,22 @@ class KNM_EXPORT Security8021xSetting : public Setting
       return mPsk;
     }
 
+    /**
+      Set Connection uses 802.1x
+    */
+    void setEnabled( bool v )
+    {
+        mEnabled = v;
+    }
+
+    /**
+      Get Connection uses 802.1x
+    */
+    bool enabled() const
+    {
+      return mEnabled;
+    }
+
   protected:
 
     // 802-1x
@@ -362,6 +378,7 @@ class KNM_EXPORT Security8021xSetting : public Setting
     QByteArray mPhase2privatekey;
     QString mPin;
     QString mPsk;
+    bool mEnabled;
 
   private:
 };
