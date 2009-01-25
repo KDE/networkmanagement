@@ -35,7 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class WepWidget::Private
 {
 public:
-
     WepWidget::KeyFormat format;
     Ui_Wep ui;
     QStringList keys;
@@ -73,12 +72,14 @@ void WepWidget::keyTypeChanged(int type)
             d->ui.passphrase->show();
             d->ui.keyLabel->hide();
             d->ui.key->hide();
+            d->format = WepWidget::Passphrase;
             break;
         case 1: //hex key
             d->ui.passphraseLabel->hide();
             d->ui.passphrase->hide();
             d->ui.keyLabel->show();
             d->ui.key->show();
+            d->format = WepWidget::Hex;
             break;
     }
 }
@@ -105,7 +106,6 @@ bool WepWidget::validate() const
 
 void WepWidget::readConfig()
 {
-    
     // tx index
     uint txKeyIndex = d->setting->weptxkeyindex();
     d->keyIndex = txKeyIndex;
@@ -122,6 +122,11 @@ void WepWidget::readConfig()
     d->ui.key->setText(d->keys.value(txKeyIndex));
     d->ui.chkShowPass->setChecked(false);
 
+    if (d->setting->weppassphrase().isEmpty()) {
+        d->format = WepWidget::Hex;
+    } else {
+        d->format = WepWidget::Passphrase;
+    }
 /*
 FIXME
     //passphrase
@@ -146,15 +151,22 @@ void WepWidget::writeConfig()
     d->setting->setWeptxkeyindex(d->ui.weptxkeyindex->currentIndex());
 
     // keys
-    d->setting->setWepkey0(d->keys[0]);
-    d->setting->setWepkey1(d->keys[1]);
-    d->setting->setWepkey2(d->keys[2]);
-    d->setting->setWepkey3(d->keys[3]);
+    if (d->format == WepWidget::Passphrase)
+    {
+        QString passphrase = d->ui.passphrase->text();
+        d->setting->setWeppassphrase(passphrase);
+        d->setting->setWepkey0(QString());
+        d->setting->setWepkey1(QString());
+        d->setting->setWepkey2(QString());
+        d->setting->setWepkey3(QString());
+    } else {
+        d->setting->setWeppassphrase(QString());
+        d->setting->setWepkey0(d->keys[0]);
+        d->setting->setWepkey1(d->keys[1]);
+        d->setting->setWepkey2(d->keys[2]);
+        d->setting->setWepkey3(d->keys[3]);
+    }
 
-/* FIXME
-    QString passphrase = d->ui.passphrase->text();
-    secrets.writeSecret("wep-passphrase", passphrase);
-*/
     QString authAlg;
     if (d->ui.authalg->currentIndex() == 0 ) {
         d->setting->setAuthalg(Knm::WirelessSecuritySetting::EnumAuthalg::open);

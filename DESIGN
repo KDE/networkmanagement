@@ -213,6 +213,11 @@ Add bool secretsLoaded() accessor.  Make $class a QObject, getSecrets/gotSecrets
 
 MINI TODO
 Move special cases from KConfigToService to ConnectionDbus.
-Update ConnectionDbus to write wireless security type into 802-11-wireless
-Update ConnectionPersistence to not write 8021x unless active.
-Fix WirelessSecurityDbus/Persistence to write legal WEP connections
+WEP-Passphrase
+WPA-PSK
+WPA-EAP
+Static IP
+Deleting connections
+Updating connections
+Update LastUsed
+

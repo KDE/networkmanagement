@@ -91,7 +91,9 @@ QVariantMap WirelessDbus::toMap()
   if (!setting->seenbssids().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS), setting->seenbssids());
   }
-  map.insert("security", setting->security());
+  if (!setting->security().isEmpty()) {
+      map.insert("security", setting->security());
+  }
   return map;
 }
 

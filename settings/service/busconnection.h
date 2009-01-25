@@ -76,7 +76,6 @@ class BusConnection : public QObject
     private:
         Knm::Connection * m_connection;
         // a connection persistence while it is doing a wallet look up for us
-        Knm::ConnectionPersistence * m_connectionPersistence;
 };
 
 #endif

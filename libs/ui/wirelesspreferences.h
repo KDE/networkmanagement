@@ -33,6 +33,8 @@ public:
     WirelessPreferences(bool setDefaults, QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~WirelessPreferences();
 
+    void save();
+
 private:
     bool m_hasSecrets;
 };

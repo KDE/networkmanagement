@@ -67,10 +67,7 @@ QVariantMapMap BusConnection::GetSettings() const
 QVariantMapMap BusConnection::GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new, const QDBusMessage& message)
 {
     kDebug() << m_connection->uuid() << setting_name << hints << request_new;
-    if (m_connectionPersistence) { // job in progress..
-        return QVariantMapMap();
-    }
-    if (!request_new && m_connection->hasSecrets()) {
+    if (!request_new && !m_connection->hasSecrets()) {
         Knm::ConnectionDbus cd(m_connection);
         return cd.toDbusSecretsMap();
     }
