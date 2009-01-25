@@ -70,12 +70,13 @@ QVariantMap WirelessDbus::toMap()
   switch (setting->band()) {
     case WirelessSetting::EnumBand::a:
       //map.insert("band", "a");
+      map.insert("band", "a");
       break;
     case WirelessSetting::EnumBand::bg:
       //map.insert("band", "bg");
+      map.insert("band", "bg");
       break;
   }
-  //map.insert("channel", setting->channel());
   //map.insert("channel", setting->channel());
   if (!setting->bssid().isEmpty()) {
       map.insert("bssid", setting->bssid());
@@ -85,7 +86,7 @@ QVariantMap WirelessDbus::toMap()
   if (!setting->macaddress().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
   }
-   if (setting->mtu() > 0 )
+  if (setting->mtu() > 0 )
        map.insert("mtu", setting->mtu());
   if (!setting->seenbssids().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS), setting->seenbssids());

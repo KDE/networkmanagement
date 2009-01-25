@@ -49,7 +49,7 @@
     </entry>
     <entry name="mtu" type="UInt">
       <label>MTU</label>
-      <default>1500</default>
+      <default>0</default>
       <whatsthis>Maximum Transmit Unit</whatsthis>
     </entry>
     <!-- another unspecified list probably bytearrays -->
