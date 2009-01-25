@@ -21,7 +21,7 @@ class KNM_EXPORT WirelessSecuritySetting : public Setting
     class EnumKeymgmt
     {
       public:
-      enum type { none, wpanone, wpapsk, wpaeap, COUNT };
+      enum type { None, Ieee8021x, WPANone, WPAPSK, WPAEAP, COUNT };
     };
     class EnumAuthalg
     {

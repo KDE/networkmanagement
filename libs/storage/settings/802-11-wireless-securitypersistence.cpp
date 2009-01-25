@@ -37,15 +37,17 @@ void WirelessSecurityPersistence::load()
 
   }
   {
-    QString contents = m_config->readEntry("keymgmt", "none");
-    if (contents == "none")
-      setting->setKeymgmt(WirelessSecuritySetting::EnumKeymgmt::none);
-    else     if (contents == "wpanone")
-      setting->setKeymgmt(WirelessSecuritySetting::EnumKeymgmt::wpanone);
-    else     if (contents == "wpapsk")
-      setting->setKeymgmt(WirelessSecuritySetting::EnumKeymgmt::wpapsk);
-    else     if (contents == "wpaeap")
-      setting->setKeymgmt(WirelessSecuritySetting::EnumKeymgmt::wpaeap);
+    QString contents = m_config->readEntry("keymgmt", "None");
+    if (contents == "None")
+      setting->setKeymgmt(WirelessSecuritySetting::EnumKeymgmt::None);
+    else     if (contents == "Ieee8021x")
+      setting->setKeymgmt(WirelessSecuritySetting::EnumKeymgmt::Ieee8021x);
+    else     if (contents == "WPANone")
+      setting->setKeymgmt(WirelessSecuritySetting::EnumKeymgmt::WPANone);
+    else     if (contents == "WPAPSK")
+      setting->setKeymgmt(WirelessSecuritySetting::EnumKeymgmt::WPAPSK);
+    else     if (contents == "WPAEAP")
+      setting->setKeymgmt(WirelessSecuritySetting::EnumKeymgmt::WPAEAP);
 
   }
   setting->setWeptxkeyindex(m_config->readEntry("weptxkeyindex", 0));
@@ -118,17 +120,20 @@ void WirelessSecurityPersistence::save()
       break;
   }
   switch (setting->keymgmt()) {
-    case WirelessSecuritySetting::EnumKeymgmt::none:
-      m_config->writeEntry("keymgmt", "none");
+    case WirelessSecuritySetting::EnumKeymgmt::None:
+      m_config->writeEntry("keymgmt", "None");
       break;
-    case WirelessSecuritySetting::EnumKeymgmt::wpanone:
-      m_config->writeEntry("keymgmt", "wpanone");
+    case WirelessSecuritySetting::EnumKeymgmt::Ieee8021x:
+      m_config->writeEntry("keymgmt", "Ieee8021x");
       break;
-    case WirelessSecuritySetting::EnumKeymgmt::wpapsk:
-      m_config->writeEntry("keymgmt", "wpapsk");
+    case WirelessSecuritySetting::EnumKeymgmt::WPANone:
+      m_config->writeEntry("keymgmt", "WPANone");
       break;
-    case WirelessSecuritySetting::EnumKeymgmt::wpaeap:
-      m_config->writeEntry("keymgmt", "wpaeap");
+    case WirelessSecuritySetting::EnumKeymgmt::WPAPSK:
+      m_config->writeEntry("keymgmt", "WPAPSK");
+      break;
+    case WirelessSecuritySetting::EnumKeymgmt::WPAEAP:
+      m_config->writeEntry("keymgmt", "WPAEAP");
       break;
   }
   m_config->writeEntry("weptxkeyindex", setting->weptxkeyindex());

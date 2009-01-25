@@ -21,10 +21,11 @@
       <label>Key management</label>
       <whatsthis></whatsthis>
       <choices>
-        <choice name="none"/>
-        <choice name="wpanone"/>
-        <choice name="wpapsk"/>
-        <choice name="wpaeap"/>
+        <choice name="None" dbusvalue="none"/>
+        <choice name="Ieee8021x" dbusvalue="ieee8021x"/>
+        <choice name="WPANone" dbusvalue="wpa-none"/>
+        <choice name="WPAPSK" dbusvalue="wpa-psk"/>
+        <choice name="WPAEAP" dbusvalue="wpa-eap"/>
         <default>42</default><!-- invalid default so that the choice is always sent; NM requires this -->
       </choices>
 
