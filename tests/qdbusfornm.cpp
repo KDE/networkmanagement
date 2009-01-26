@@ -96,10 +96,10 @@ static void printArg(const QVariant &v)
         if (arg.currentSignature() == QLatin1String("av"))
             printArg(qdbus_cast<QVariantList>(arg));
         else if (arg.currentSignature() == QLatin1String("au")) {
-            const QList<int> t = qdbus_cast<QList<int> > (arg);
-            QList<int>::ConstIterator it = t.constBegin();
+            const QList<uint> t = qdbus_cast<QList<uint> > (arg);
+            QList<uint>::ConstIterator it = t.constBegin();
             for ( ; it != t.constEnd(); ++it) {
-                printf("%d,", *it);
+                printf("%u,", *it);
             }
         } else if (arg.currentSignature() == QLatin1String("a{sv}"))
             printArg(qdbus_cast<QVariantMap>(arg));
@@ -120,16 +120,23 @@ static void printArg(const QVariant &v)
             }
         }
         else if (arg.currentSignature() == QLatin1String("aau")) {
-            QList<QList<int> > t = qdbus_cast<QList<QList<int> > >(arg);
-            QList<QList<int> >::ConstIterator it = t.constBegin();
+            QList<QList<uint> > t = qdbus_cast<QList<QList<uint> > >(arg);
+            QList<QList<uint> >::ConstIterator it = t.constBegin();
             for ( ; it != t.constEnd(); ++it) {
                 printf("[");
-                QList<int>::ConstIterator it2 = (*it).constBegin();
+                QList<uint>::ConstIterator it2 = (*it).constBegin();
                 for (; it2 != (*it).constEnd(); ++it2)
-                    printf("%d,", *it2);
+                    printf("%u,", *it2);
                 printf("]");
             }
-        } else 
+        }
+        else if (arg.currentSignature() == QLatin1String("ao")) {
+            QList<QDBusObjectPath> t = qdbus_cast<QList<QDBusObjectPath> >(arg);
+            QList<QDBusObjectPath>::ConstIterator it = t.constBegin();
+            for ( ; it != t.constEnd(); ++it) {
+                printf("%s,", qPrintable((*it).path()));
+            }
+        } else
             printf("qdbus: I don't know how to display an argument of type '%s'\n",
                   qPrintable(arg.currentSignature()));
         printf(")\n");
