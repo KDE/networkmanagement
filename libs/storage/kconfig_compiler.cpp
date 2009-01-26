@@ -2516,7 +2516,6 @@ int main( int argc, char **argv )
   dC << "  QVariantMap map;" << endl;
   if (hasSecrets) {
     dC << "  " << className << "Setting * setting = static_cast<" << className << "Setting *>(m_setting);" << endl;
-    dC << "  map.insert(\"name\", setting->name());" << endl;
   }
   for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
     if ((*itEntry)->noDbus()) {

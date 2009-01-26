@@ -63,6 +63,7 @@ class BusConnection : public QObject
 
         //export to dbus
         Q_SCRIPTABLE void Update(QVariantMapMap updates);
+        void updateInternal(Knm::Connection * connection);
         Q_SCRIPTABLE void Delete();
         Q_SCRIPTABLE QVariantMapMap GetSettings() const;
         Q_SCRIPTABLE QVariantMapMap GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new, const QDBusMessage&);
@@ -75,6 +76,7 @@ class BusConnection : public QObject
         void gotSecrets(KJob*);
     private:
         Knm::Connection * m_connection;
+        KJob * m_job;
         // a connection persistence while it is doing a wallet look up for us
 };
 

@@ -108,17 +108,23 @@ Knm::Connection * KConfigToService::restoreConnection(const QString & connection
     kDebug() << connectionId;
     QString configFile = KStandardDirs::locate("data",
             QLatin1String("knetworkmanager/connections/") + connectionId);
-    Knm::Connection * connection;
+    Knm::Connection * connection = 0;
     if (!configFile.isEmpty())
     {
-        m_config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
-        m_config->reparseConfiguration();
-        // restore from disk
-        Knm::ConnectionPersistence cp(m_config,
-                (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
-                 Knm::ConnectionPersistence::PlainText));
-        cp.load();
-        connection = cp.connection();
+        QFile file(configFile);
+        if (file.exists())
+        {
+            m_config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
+            m_config->reparseConfiguration();
+            // restore from disk
+            Knm::ConnectionPersistence cp(m_config,
+                    (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
+                     Knm::ConnectionPersistence::PlainText));
+            cp.load();
+            connection = cp.connection();
+        } else {
+            kError() << "Config file for connection" << connectionId << "not found!";
+        }
 
 #if 0 // probably redundant anyway now - otherwise fix in connectiondbus
         // NM requires that a map exists for the connection's type.  If the settings are all defaults,
@@ -195,25 +201,6 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
             }
         }
     }
-    // special case for ipv4 "addresses" field, which isn't KConfigSkeletonItem-friendly
-    // TODO put this somewhere else - not every special case can live in this function.
-    if ( groupName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
-        KConfigGroup ipv4Group(m_config, groupName);
-        uint addressCount = ipv4Group.readEntry("addressCount", 0 );
-        kDebug() << "#addresses:" << addressCount;
-        UintListList addresses;
-        for (uint i = 0; i < addressCount; i++) {
-            QList<uint> addressList = ipv4Group.readEntry(QString::fromLatin1("address%1").arg(i), QList<uint>());
-            kDebug() << "address " << i << " " << addressList;
-            // a valid address must have 3 values: ip, netmask, broadcast
-            if ( addressList.count() == 3 ) {
-                addresses.append(addressList);
-            }
-        }
-        if (!addresses.isEmpty()) {
-            map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES), QVariant::fromValue(addresses));
-        }
-    }
     // special case for vpn data - which is not a simple type
     // TODO put this somewhere else - not every special case can live in this function.
     if ( groupName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
@@ -228,15 +215,6 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
 
         if ( !map.contains( NM_SETTING_VPN_SECRETS ) )
             map.insert( QLatin1String(NM_SETTING_VPN_SECRETS ), QVariant::fromValue( QStringMap() ) );
-    }
-
-    // special case for connection's "type" field, for which a corresponding QVariantMap must exist
-    // for NM to accept the connection
-    if (groupName == QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME)) {
-        KConfigSkeletonItem * item = config->findItem(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME),
-                                                      QLatin1String(NM_SETTING_CONNECTION_TYPE));
-        Q_ASSERT(item);
-        m_currentConnectionType = item->property().toString();
     }
 
     // special case for 8021x settings ca_cert -> have to pass it as blob

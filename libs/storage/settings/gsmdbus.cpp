@@ -67,7 +67,6 @@ QVariantMap GsmDbus::toSecretsMap()
 {
   QVariantMap map;
   GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
-  map.insert("name", setting->name());
   map.insert("password", setting->password());
   return map;
 }

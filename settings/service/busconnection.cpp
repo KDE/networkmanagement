@@ -31,7 +31,7 @@
 typedef QMap<QString,QVariantMap> QVariantMapMap;
 
 BusConnection::BusConnection(Knm::Connection * connection, QObject *parent)
-    : QObject(parent), m_connection(connection)
+    : QObject(parent), m_connection(connection), m_job(0)
 {
     qDBusRegisterMetaType<QVariantMapMap>();
     qDBusRegisterMetaType<QList<uint> >();
@@ -40,21 +40,37 @@ BusConnection::BusConnection(Knm::Connection * connection, QObject *parent)
 
 BusConnection::~BusConnection()
 {
+    delete m_connection;
     emit Removed();
 }
 
 void BusConnection::Update(QVariantMapMap updates)
 {
     kDebug() << "TODO: validate incoming settings";
+    kDebug() << "TODO: implement fromDbusMap for all settings!";
+    kDebug() << "TODO: replace existing connection with one specified in updates";
     Knm::ConnectionDbus cd(m_connection);
     cd.fromDbusMap(updates);
+    emit Updated(cd.toDbusMap());
+}
+
+
+void BusConnection::updateInternal(Knm::Connection * connection)
+{
+    if (m_job) {
+        m_job->kill(KJob::Quietly);
+    }
+    delete m_connection;
+    m_connection = connection;
+    Knm::ConnectionDbus cd(m_connection);
+    QVariantMapMap map = cd.toDbusMap();
+    kDebug() << "emitting Updated" << map;
     emit Updated(cd.toDbusMap());
 }
 
 void BusConnection::Delete()
 {
     kDebug();
-    delete m_connection;
     deleteLater();
 }
 

@@ -124,7 +124,6 @@ QVariantMap WirelessSecurityDbus::toSecretsMap()
   QVariantMap map;
   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
   if (setting->securityType() != WirelessSecuritySetting::EnumSecurityType::None) { // don't return anything if there is no security
-  map.insert("name", setting->name());
   if (!setting->weppassphrase().isEmpty()) {
       QString key = hashWepPassphrase(setting->weppassphrase());
       switch (setting->weptxkeyindex()) {

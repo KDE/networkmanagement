@@ -69,14 +69,17 @@ NetworkSettings::~NetworkSettings()
 QString NetworkSettings::addConnection(Knm::Connection * connection)
 {
     kDebug();
-    BusConnection * busConn = new BusConnection(connection, this);
-    new ConnectionAdaptor(busConn);
-    new SecretsAdaptor(busConn);
-    QString objectPath = nextObjectPath();
-    m_connectionMap.insert(objectPath, busConn);
-    QDBusConnection::systemBus().registerObject(objectPath, busConn, QDBusConnection::ExportAdaptors);
-    emit NewConnection(QDBusObjectPath(objectPath));
-    kDebug() << "NewConnection" << objectPath;
+    QString objectPath;
+    if (connection) {
+        BusConnection * busConn = new BusConnection(connection, this);
+        new ConnectionAdaptor(busConn);
+        new SecretsAdaptor(busConn);
+        objectPath = nextObjectPath();
+        m_connectionMap.insert(objectPath, busConn);
+        QDBusConnection::systemBus().registerObject(objectPath, busConn, QDBusConnection::ExportAdaptors);
+        emit NewConnection(QDBusObjectPath(objectPath));
+        kDebug() << "NewConnection" << objectPath;
+    }
     return objectPath;
 }
 
@@ -86,8 +89,7 @@ void NetworkSettings::updateConnection(const QString & objectPath, Knm::Connecti
     if (m_connectionMap.contains(objectPath)) {
         BusConnection * busConn = m_connectionMap[objectPath];
         if (busConn) {
-            Knm::ConnectionDbus cd(connection);
-            busConn->Update(cd.toDbusMap());
+            busConn->updateInternal(connection);
         }
     }
 }

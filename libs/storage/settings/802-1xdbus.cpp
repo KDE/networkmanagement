@@ -161,7 +161,6 @@ QVariantMap Security8021xDbus::toSecretsMap()
   QVariantMap map;
   Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
   if (setting->enabled()) {
-  map.insert("name", setting->name());
   map.insert("password", setting->password());
   }
   return map;
