@@ -668,16 +668,17 @@ diff -ur origsettings//ipv4.cpp settings/ipv4.cpp
 Only in settings: ipv4.cpp~
 diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
 --- origsettings//ipv4dbus.cpp	2009-01-25 12:23:32.000000000 +0100
-+++ settings/ipv4dbus.cpp	2009-01-25 22:32:57.000000000 +0100
-@@ -3,6 +3,7 @@
++++ settings/ipv4dbus.cpp	2009-01-26 09:18:47.000000000 +0100
+@@ -3,6 +3,8 @@
  
  #include "ipv4dbus.h"
  
++#include <arpa/inet.h>
 +#include "../../types.h"
  #include "ipv4.h"
  
  using namespace Knm;
-@@ -17,19 +18,18 @@
+@@ -17,19 +19,18 @@
  
  void Ipv4Dbus::fromMap(const QVariantMap & map)
  {
@@ -707,14 +708,6 @@ diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
    if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS))) {
      setting->setIgnoredhcpdns(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS)).value<bool>());
    }
-@@ -37,6 +37,7 @@
- 
- QVariantMap Ipv4Dbus::toMap()
- {
-+  kDebug() << "Does not yet support manual IP addresses";
-   QVariantMap map;
-   Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
-   switch (setting->method()) {
 @@ -53,10 +54,44 @@
        map.insert("method", "shared");
        break;
@@ -727,7 +720,7 @@ diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
 +  if (!setting->dns().isEmpty()) {
 +      QList<uint> dbusDns;
 +      foreach (QHostAddress dns, setting->dns()) {
-+          dbusDns << dns.toIPv4Address();
++          dbusDns << htonl(dns.toIPv4Address());
 +      }
 +      map.insert("dns", QVariant::fromValue(dbusDns));
 +  }
@@ -739,9 +732,9 @@ diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
 +      QList<QList<uint> > dbusAddresses;
 +      foreach (Solid::Control::IPv4Address addr, setting->addresses()) {
 +          QList<uint> dbusAddress;
-+          dbusAddress << addr.address()
++          dbusAddress << htonl(addr.address())
 +              << addr.netMask()
-+              << addr.gateway();
++              << htonl(addr.gateway());
 +          dbusAddresses << dbusAddress;
 +      }
 +      map.insert("addresses", QVariant::fromValue(dbusAddresses));
@@ -750,9 +743,9 @@ diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
 +      QList<QList<uint> > dbusRoutes;
 +      foreach (Solid::Control::IPv4Route route, setting->routes()) {
 +          QList<uint> dbusRoute;
-+          dbusRoute << route.route()
++          dbusRoute << htonl(route.route())
 +              << route.prefix()
-+              << route.nextHop()
++              << htonl(route.nextHop())
 +              << route.metric();
 +          dbusRoutes << dbusRoute;
 +      }
@@ -869,7 +862,7 @@ diff -ur origsettings//ipv4.h settings/ipv4.h
 Only in settings: ipv4.h~
 diff -ur origsettings//ipv4persistence.cpp settings/ipv4persistence.cpp
 --- origsettings//ipv4persistence.cpp	2009-01-25 12:23:32.000000000 +0100
-+++ settings/ipv4persistence.cpp	2009-01-25 22:13:17.000000000 +0100
++++ settings/ipv4persistence.cpp	2009-01-26 09:07:13.000000000 +0100
 @@ -19,7 +19,7 @@
  {
    Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
@@ -879,7 +872,7 @@ diff -ur origsettings//ipv4persistence.cpp settings/ipv4persistence.cpp
      if (contents == "Automatic")
        setting->setMethod(Ipv4Setting::EnumMethod::Automatic);
      else     if (contents == "LinkLocal")
-@@ -30,9 +30,49 @@
+@@ -30,9 +30,48 @@
        setting->setMethod(Ipv4Setting::EnumMethod::Shared);
  
    }
@@ -905,9 +898,8 @@ diff -ur origsettings//ipv4persistence.cpp settings/ipv4persistence.cpp
 +          continue;
 +      }
 +      QHostAddress ip(parts[0]);
-+      QHostAddress broadcast(parts[1]);
 +      QHostAddress gateway(parts[2]);
-+      Solid::Control::IPv4Address addr(ip.toIPv4Address(), broadcast.toIPv4Address(), gateway.toIPv4Address());
++      Solid::Control::IPv4Address addr(ip.toIPv4Address(), parts[1].toUInt(), gateway.toIPv4Address());
 +      addresses.append(addr);
 +  }
 +  setting->setAddresses(addresses);
@@ -931,7 +923,7 @@ diff -ur origsettings//ipv4persistence.cpp settings/ipv4persistence.cpp
    setting->setIgnoredhcpdns(m_config->readEntry("ignoredhcpdns", false));
  }
  
-@@ -53,9 +93,38 @@
+@@ -53,9 +92,38 @@
        m_config->writeEntry("method", "Shared");
        break;
    }
@@ -953,9 +945,9 @@ diff -ur origsettings//ipv4persistence.cpp settings/ipv4persistence.cpp
 +  foreach (Solid::Control::IPv4Address addr, setting->addresses()) {
 +      QStringList rawAddress;
 +      rawAddress << QHostAddress(addr.address()).toString()
-+          << QHostAddress(addr.netMask()).toString()
++          << QString::number(addr.netMask())
 +          << QHostAddress(addr.gateway()).toString();
-+      rawAddresses << rawAddress;
++      rawAddresses << rawAddress.join(";");
 +  }
 +  m_config->writeEntry("addresses", rawAddresses);
 +
@@ -975,7 +967,6 @@ diff -ur origsettings//ipv4persistence.cpp settings/ipv4persistence.cpp
  
 Only in settings: ipv4persistence.cpp~
 Only in settings: ipv4persistence.cpp.rej
-Only in settings: .ipv4persistence.cpp.swp
 Only in settings: pbkdf2.cpp
 Only in settings: pbkdf2.h
 diff -ur origsettings//serialpersistence.cpp settings/serialpersistence.cpp
