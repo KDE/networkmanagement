@@ -28,9 +28,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionpersistence.h"
 
-class KConfigDialog;
+class KDialog;
 class SettingWidget;
 
+/**
+ * A job that encapsulates looking up a specified set of Secrets from (secure) storage, ask the user
+ * if not found or if requestNew is set, set the new secrets back on the Connection object, and 
+ * write the connection to disk
+ */
 class ConnectionSecretsJob : public KJob
 {
 Q_OBJECT
@@ -72,7 +77,7 @@ private:
     QVariantMap mSecrets;
     bool mRequestNew;
     QDBusMessage mRequest;
-    KConfigDialog * m_askUserDialog;
+    KDialog * m_askUserDialog;
     SettingWidget * m_settingWidget;
 };
 

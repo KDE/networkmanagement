@@ -37,16 +37,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QTimer>
 
-#include <KConfigDialog>
-#include <KDebug>
+#include <KDialog>
 #include <KLocale>
 #include <KStandardDirs>
-
-#include <kwallet.h>
-
-#include "configxml.h"
-#include "datamappings.h"
-#include "secretstoragehelper.h"
 
 #include "802_11_wirelesswidget.h"
 #include "cdmawidget.h"
@@ -65,7 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ConnectionSecretsJob::ConnectionSecretsJob(Knm::Connection* connection, const QString &settingName,
                                            const QStringList& secrets, bool requestNew, const QDBusMessage& request)
-    : m_connection(connection), mSettingName(settingName), mRequestNew(requestNew),
+    : m_connection(connection), m_connectionPersistence(0), mSettingName(settingName), mRequestNew(requestNew),
       mRequest(request), m_askUserDialog(0), m_settingWidget(0)
 {
     // record the secrets that we are looking for
@@ -85,8 +78,8 @@ void ConnectionSecretsJob::start()
 
 void ConnectionSecretsJob::doWork()
 {
+    kDebug();
     if (mRequestNew) {
-        kDebug() << "doAskUser() is under construction";
         doAskUser();
     } else {
         QString configFile = KStandardDirs::locate("data",
@@ -103,7 +96,9 @@ void ConnectionSecretsJob::doWork()
 
 void ConnectionSecretsJob::gotPersistedSecrets(uint result)
 {
+    kDebug();
     delete m_connectionPersistence;
+    m_connectionPersistence = 0;
     setError(result);
     if (result == Knm::ConnectionPersistence::EnumError::NoError) {
         emitResult();
@@ -114,76 +109,71 @@ void ConnectionSecretsJob::gotPersistedSecrets(uint result)
 
 void ConnectionSecretsJob::doAskUser()
 {
-#if 0
     // popup a dialog showing the appropriate UI for the type of connection
-    //
-    // all the things the kdialog does for us
-    // KDialog
-    // Add widget for connection setting type
-    // configxml for that
-    // kconfigdialogmanager
-    // load the settings
-    // show
     kDebug();
     if ( mSettingName == QLatin1String(NM_SETTING_802_1X_SETTING_NAME)) {
-        //m_settingWidget = Wired8021xSecurityWidget(mConnectionId, 0);
+        //m_settingWidget = Wired8021xSecurityWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
-        m_settingWidget = new CdmaWidget(mConnectionId, 0);
+#warning CdmaWidget not ported1
+        //m_settingWidget = new CdmaWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
-        m_settingWidget = new GsmWidget(mConnectionId, 0);
+#warning GsmWidget not ported1
+        //m_settingWidget = new GsmWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
-        m_settingWidget = new IpV4Widget(mConnectionId, 0);
+        m_settingWidget = new IpV4Widget(m_connection, 0);
     //} else if ( mSettingName == QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME)) {
         // not supported yet
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPP_SETTING_NAME)) {
-        m_settingWidget = new PppWidget(mConnectionId, 0);
+#warning PppWidget not ported1
+        //m_settingWidget = new PppWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
-        m_settingWidget = new PppoeWidget(mConnectionId, 0);
+#warning PppWidget not ported1
+        //m_settingWidget = new PppoeWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_SERIAL_SETTING_NAME)) {
-        m_settingWidget = new PppWidget(mConnectionId, 0);
+#warning PppWidget not ported1
+        //m_settingWidget = new PppWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
         // not supported yet, figure out the type of the vpn plugin, load it and its m_settingWidgetget
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
-        m_settingWidget = new WiredWidget(mConnectionId, 0);
+        m_settingWidget = new WiredWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME)) {
-        m_settingWidget = new Wireless80211SecurityWidget(false, mConnectionId, 0, 0, 0); // TODO: find out
+        m_settingWidget = new Wireless80211SecurityWidget(false, m_connection, 0, 0, 0); // TODO: find out
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
-        m_settingWidget = new Wireless80211Widget(mConnectionId, 0);
+        m_settingWidget = new Wireless80211Widget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
-
+        // todo: vpn secrets!
     }
 
-    m_askUserDialog = new KConfigDialog(0, QLatin1String("knetworkmanager_askuser"), m_settingWidget->configXml());
-    m_askUserDialog->setWindowTitle(i18nc("dialog caption for network secrets request", "Enter network connection secrets"));
-    m_askUserDialog->addPage(m_settingWidget, m_settingWidget->windowTitle());
-    m_askUserDialog->setFaceType(KPageDialog::Plain);
-    connect(m_askUserDialog, SIGNAL(accepted()), SLOT(dialogAccepted()));
-    connect(m_askUserDialog, SIGNAL(rejected()), SLOT(dialogRejected()));
+    m_settingWidget->readConfig();
+    m_askUserDialog = new KDialog(0);
+    m_askUserDialog->setCaption(i18nc("dialog caption for network secrets request", "Enter network connection secrets"));
+    m_askUserDialog->setMainWidget(m_settingWidget);
+    m_askUserDialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+
+    connect(m_askUserDialog, SIGNAL(okClicked()), SLOT(dialogAccepted()));
+    connect(m_askUserDialog, SIGNAL(cancelClicked()), SLOT(dialogRejected()));
 
     m_askUserDialog->show();
-#endif
 }
 
 void ConnectionSecretsJob::dialogAccepted()
 {
-#if 0
     // get results from dialog, put them in mSecrets
-    kDebug() << "got secrets from widget:" << m_settingWidget->secrets();
-    QMapIterator <QString,QVariant> i(m_settingWidget->secrets());
-    while (i.hasNext()) {
-        i.next();
-        mSecrets.insert(i.key(), i.value());
-    }
-    kDebug() << "returning merged secrets:" << mSecrets;
-    if (mSecrets.isEmpty()) {
-        kDebug() << "SECRETS ARE EMPTY";
-        setError(UserInputCancelled);
-    }
-
+    kDebug();
+    // m_connection is up to date again
+    m_settingWidget->writeConfig();
+    // persist the changes
+    QString configFile = KStandardDirs::locate("data",
+            QLatin1String("knetworkmanager/connections/") + m_connection->uuid());
+    Knm::ConnectionPersistence cp(m_connection,
+            KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
+            (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
+             Knm::ConnectionPersistence::PlainText)
+            );
+    cp.save();
     m_settingWidget->deleteLater();
     m_askUserDialog->deleteLater();
     emitResult();
-#endif
 }
 
 void ConnectionSecretsJob::dialogRejected()

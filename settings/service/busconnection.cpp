@@ -109,47 +109,6 @@ void BusConnection::gotSecrets(KJob *job)
         QDBusMessage reply = csj->requestMessage().createErrorReply(QLatin1String("org.freedesktop.NetworkManager.SecretsRefused"), "User refused to supply secrets");
         QDBusConnection::systemBus().send(reply);
     }
-#if 0
-        // update myself
-        QVariantMap existingSetting = mSettingsMap.value(csj->settingName());
-        QMapIterator<QString,QVariant> i(retrievedSecrets);
-        while (i.hasNext()) {
-            i.next();
-            if (i.value().toString().isEmpty()) {
-                kDebug() << "Warning: empty secret retrieved for key " << i.key();
-            }
-            existingSetting.insert(i.key(), i.value());
-        }
-        kDebug() << "Updating existing settings for " << csj->settingName() << existingSetting;
-        mSettingsMap.insert(csj->settingName(), existingSetting);
-
-        // setup reply
-        QVariantMapMap replyOuterMap;
-        replyOuterMap.insert(csj->settingName(), retrievedSecrets);
-        kDebug() << "Final secrets map to send:" << replyOuterMap;
-        QDBusMessage reply = csj->requestMessage().createReply();
-
-        QVariant arg = QVariant::fromValue(replyOuterMap);
-        reply << arg;
-        QDBusConnection::systemBus().send(reply);
-    } else if (csj->error() == ConnectionSecretsJob::WalletDisabled ) {
-        kDebug() << "ERROR: The KDE wallet is disabled";
-        QDBusMessage reply = csj->requestMessage().createErrorReply(QLatin1String("org.freedesktop.NetworkManager.SettingError"), "The wallet was disabled");
-        QDBusConnection::systemBus().send(reply);
-    } else if (csj->error() == ConnectionSecretsJob::WalletNotFound ) {
-        kDebug() << "ERROR: The wallet used by KNetworkManager was not found";
-        QDBusMessage reply = csj->requestMessage().createErrorReply(QLatin1String("org.freedesktop.NetworkManager.SettingError"), "The wallet was not found");
-        QDBusConnection::systemBus().send(reply);
-    } else if (csj->error() == ConnectionSecretsJob::WalletOpenRefused ) {
-        kDebug() << "ERROR: The user refused KNetworkManager permission to open the wallet";
-        QDBusMessage reply = csj->requestMessage().createErrorReply(QLatin1String("org.freedesktop.NetworkManager.SecretsRefused"), "User refused to supply secrets");
-        QDBusConnection::systemBus().send(reply);
-    } else if (csj->error() == ConnectionSecretsJob::UserInputCancelled ) {
-        kDebug() << "ERROR: The user cancelled the get secrets dialog";
-        QDBusMessage reply = csj->requestMessage().createErrorReply(QLatin1String("org.freedesktop.NetworkManager.SecretsRefused"), "User refused to supply secrets");
-        QDBusConnection::systemBus().send(reply);
-    }
-#endif
 }
 
 QString BusConnection::uuid() const
