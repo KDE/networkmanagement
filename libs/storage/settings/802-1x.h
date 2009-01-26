@@ -371,9 +371,9 @@ class KNM_EXPORT Security8021xSetting : public Setting
 
     enum EapMethod
     {
-        ttls = 0,
-        peap = 1,
-        tls  = 2
+        ttls = 1,
+        peap = 2,
+        tls  = 4
     };
     Q_DECLARE_FLAGS(EapMethods, EapMethod)
 
@@ -386,6 +386,7 @@ class KNM_EXPORT Security8021xSetting : public Setting
             eap.append("tls");
         if (methods.testFlag(peap))
             eap.append("peap");
+kDebug() << eap;
         setEap(eap);
     }
 

@@ -72,6 +72,7 @@ void WirelessPersistence::save()
   m_config->writeEntry("macaddress", setting->macaddress());
   m_config->writeEntry("mtu", setting->mtu());
   m_config->writeEntry("seenbssids", setting->seenbssids());
+kDebug() << setting->security();
   m_config->writeEntry("security", setting->security());
 }
 

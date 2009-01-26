@@ -19,6 +19,7 @@ void Security8021xPersistence::load()
 {
   if (m_config->exists()) {
   Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
+  setting->setEnabled(true);
   setting->setEap(m_config->readEntry("eap", QStringList()));
   setting->setIdentity(m_config->readEntry("identity", ""));
   setting->setAnonymousidentity(m_config->readEntry("anonymousidentity", ""));
@@ -108,7 +109,8 @@ void Security8021xPersistence::save()
   m_config->writeEntry("phase2privatekey", setting->phase2privatekey());
   m_config->writeEntry("pin", setting->pin());
   m_config->writeEntry("psk", setting->psk());
-  }
+  } else
+    m_config->deleteGroup();
 }
 
 QMap<QString,QString> Security8021xPersistence::secrets() const
