@@ -31,6 +31,9 @@ class KNM_EXPORT Setting
 {
 public:
     enum Type { Cdma, Gsm, Ipv4, Ipv6, Ppp, Pppoe, Security8021x, Serial, Vpn, Wired, Wireless, WirelessSecurity };
+    static QString typeAsString(Setting::Type);
+    static Setting::Type typeFromString(const QString & type);
+
     Setting(Setting::Type type);
     virtual ~Setting();
     Setting::Type type() const;
