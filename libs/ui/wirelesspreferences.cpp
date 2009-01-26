@@ -88,16 +88,5 @@ WirelessPreferences::~WirelessPreferences()
 void WirelessPreferences::save()
 {
     ConnectionPreferences::save();
-    // if wireless security is enabled, set it also in the wirelesssetting
-    Knm::WirelessSecuritySetting * security =
-        static_cast<Knm::WirelessSecuritySetting*>(m_connection->setting(Knm::Setting::WirelessSecurity));
-    Knm::WirelessSetting * wireless =
-        static_cast<Knm::WirelessSetting*>(m_connection->setting(Knm::Setting::Wireless));
-
-    if (security->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::None) {
-        wireless->setSecurity(QString());
-    } else {
-        wireless->setSecurity(security->name());
-    }
 }
 // vim: sw=4 sts=4 et tw=100

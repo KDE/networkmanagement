@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 
 #include "connection.h"
+#include "settings/802-11-wireless.h"
 #include "settings/802-11-wireless-security.h"
 #include "ui_802_11_wireless_security.h"
 #include "securitywidget.h"
@@ -44,6 +45,7 @@ public:
     int wpaEapIndex;
     int security;
     WpaEapWidget * wpaeapwid;
+    Knm::WirelessSetting * wsetting;
     Knm::WirelessSecuritySetting * setting;
 };
 
@@ -57,6 +59,7 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, Knm::
     d->wpaPskIndex = -1;
     d->ui.setupUi(this);
 
+    d->wsetting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
     d->setting = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
 
     // cache ap and device capabilities here
@@ -142,8 +145,10 @@ void Wireless80211SecurityWidget::securityTypeChanged(int index)
 
 void Wireless80211SecurityWidget::writeConfig()
 {
+    d->wsetting->setSecurity(d->setting->name());
     if (d->ui.cmbType->currentIndex() == d->noSecurityIndex) {
         d->setting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::None);
+        d->wsetting->setSecurity("");
     }
     if (d->ui.cmbType->currentIndex() == d->staticWepHexIndex) {
         d->setting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WEP40); // FIXME
