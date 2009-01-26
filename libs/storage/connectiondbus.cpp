@@ -59,6 +59,8 @@ using namespace Knm;
 ConnectionDbus::ConnectionDbus(Connection * conn)
     : m_connection(conn)
 {
+    qDBusRegisterMetaType<QList<uint> >();
+    qDBusRegisterMetaType<QList<QList<uint> > >();
 }
 
 ConnectionDbus::~ConnectionDbus()

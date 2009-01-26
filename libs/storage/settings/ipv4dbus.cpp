@@ -3,6 +3,7 @@
 
 #include "ipv4dbus.h"
 
+#include <arpa/inet.h>
 #include "../../types.h"
 #include "ipv4.h"
 
@@ -37,7 +38,6 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
 
 QVariantMap Ipv4Dbus::toMap()
 {
-  kDebug() << "Does not yet support manual IP addresses";
   QVariantMap map;
   Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
   switch (setting->method()) {
@@ -58,7 +58,7 @@ QVariantMap Ipv4Dbus::toMap()
   if (!setting->dns().isEmpty()) {
       QList<uint> dbusDns;
       foreach (QHostAddress dns, setting->dns()) {
-          dbusDns << dns.toIPv4Address();
+          dbusDns << htonl(dns.toIPv4Address());
       }
       map.insert("dns", QVariant::fromValue(dbusDns));
   }
@@ -70,9 +70,9 @@ QVariantMap Ipv4Dbus::toMap()
       QList<QList<uint> > dbusAddresses;
       foreach (Solid::Control::IPv4Address addr, setting->addresses()) {
           QList<uint> dbusAddress;
-          dbusAddress << addr.address()
+          dbusAddress << htonl(addr.address())
               << addr.netMask()
-              << addr.gateway();
+              << htonl(addr.gateway());
           dbusAddresses << dbusAddress;
       }
       map.insert("addresses", QVariant::fromValue(dbusAddresses));
@@ -81,9 +81,9 @@ QVariantMap Ipv4Dbus::toMap()
       QList<QList<uint> > dbusRoutes;
       foreach (Solid::Control::IPv4Route route, setting->routes()) {
           QList<uint> dbusRoute;
-          dbusRoute << route.route()
+          dbusRoute << htonl(route.route())
               << route.prefix()
-              << route.nextHop()
+              << htonl(route.nextHop())
               << route.metric();
           dbusRoutes << dbusRoute;
       }

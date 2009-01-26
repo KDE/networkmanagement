@@ -39,6 +39,8 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
 {
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
+    connect(d->ui.btnAddAddress, SIGNAL(clicked()), this, SLOT(addIpClicked()));
+    connect(d->ui.btnRemoveAddress, SIGNAL(clicked()), this, SLOT(removeIpClicked()));
 }
 
 IpV4Widget::~IpV4Widget()
@@ -66,7 +68,26 @@ void IpV4Widget::readConfig()
             kDebug() << "Unrecognised value for method:" << d->setting->method();
             break;
     }
-    // TODO a lot, for ip addresses, routes etc
+
+    // ip addresses
+    QList<QTreeWidgetItem*> items;
+    QList<Solid::Control::IPv4Address> addrList = d->setting->addresses();
+    foreach (Solid::Control::IPv4Address addr, d->setting->addresses()) {
+        QStringList fields;
+        fields << QHostAddress(addr.address()).toString() << QString::number(addr.netMask()) << QHostAddress(addr.gateway()).toString();
+        QTreeWidgetItem * item = new QTreeWidgetItem(d->ui.addresses, fields);
+        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
+        items.append(item);
+    }
+
+    // dns
+    QStringList dnsList;
+    foreach (QHostAddress dns, d->setting->dns()) {
+       dnsList << dns.toString();
+    }
+    d->ui.dns->setText(dnsList.join(","));
+    // dns search list
+    d->ui.dnsSearch->setText(d->setting->dnssearch().join(","));
 }
 
 void IpV4Widget::writeConfig()
@@ -88,6 +109,49 @@ void IpV4Widget::writeConfig()
         default:
             kDebug() << "Unrecognised combo box index for method:" << d->ui.method->currentIndex();
             break;
+    }
+
+    // addresses
+    QList<Solid::Control::IPv4Address> addresses;
+    while (QTreeWidgetItem* item = d->ui.addresses->takeTopLevelItem(0)) {
+        QHostAddress ip(item->text(0));
+        QHostAddress gateway(item->text(2));
+        if (ip == QHostAddress::Null
+                || gateway == QHostAddress::Null) {
+            continue;
+        }
+        Solid::Control::IPv4Address addr(ip.toIPv4Address(), item->text(1).toUInt(), gateway.toIPv4Address());
+        addresses.append(addr);
+    }
+    d->setting->setAddresses(addresses);
+
+    // dns
+    QList<QHostAddress> dnsList;
+    QStringList dnsInput = d->ui.dns->text().split(',');
+    foreach (QString dns, dnsInput) {
+        QHostAddress dnsAddr(dns);
+        if (dnsAddr != QHostAddress::Null) {
+            kDebug() << "Address parses to: " << dnsAddr.toString();
+            dnsList << dnsAddr;
+        }
+    }
+    d->setting->setDns(dnsList);
+    // dns search list
+    d->setting->setDnssearch(d->ui.dnsSearch->text().split(','));
+}
+
+void IpV4Widget::addIpClicked()
+{
+    QTreeWidgetItem * item = new QTreeWidgetItem(d->ui.addresses);
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
+    item->setSelected(true);
+}
+
+void IpV4Widget::removeIpClicked()
+{
+    QList<QTreeWidgetItem*> items = d->ui.addresses->selectedItems();
+    if (items.count()) {
+        delete items.first();
     }
 }
 

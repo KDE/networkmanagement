@@ -214,9 +214,7 @@ Add bool secretsLoaded() accessor.  Make $class a QObject, getSecrets/gotSecrets
 MINI TODO
 Move special cases from KConfigToService to ConnectionDbus.
 WPA-EAP
-Static IP
 GSM
 Updating connections
-Selecting correct security type in the widget on edit connection
 ConnectionSecretsJob::doAskUser()
 

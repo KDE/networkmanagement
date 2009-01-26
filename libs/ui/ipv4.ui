@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>319</width>
-    <height>306</height>
+    <width>316</width>
+    <height>305</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -57,12 +57,18 @@
       <string>Addr&amp;esses</string>
      </property>
      <property name="buddy" >
-      <cstring>addressesTable</cstring>
+      <cstring>addresses</cstring>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QTableWidget" name="addressesTable" >
+    <widget class="QTreeWidget" name="addresses" >
+     <property name="rootIsDecorated" >
+      <bool>false</bool>
+     </property>
+     <property name="itemsExpandable" >
+      <bool>false</bool>
+     </property>
      <column>
       <property name="text" >
        <string>Address</string>
@@ -70,7 +76,7 @@
      </column>
      <column>
       <property name="text" >
-       <string>Netmask</string>
+       <string>Netmask prefix</string>
       </property>
      </column>
      <column>
@@ -115,12 +121,12 @@
         <string>&amp;DNS servers:</string>
        </property>
        <property name="buddy" >
-        <cstring>kcfg_dns</cstring>
+        <cstring>dns</cstring>
        </property>
       </widget>
      </item>
      <item row="1" column="2" >
-      <widget class="KLineEdit" name="kcfg_dns" />
+      <widget class="KLineEdit" name="dns" />
      </item>
      <item row="2" column="0" colspan="2" >
       <widget class="QLabel" name="label_4" >
@@ -128,12 +134,12 @@
         <string>&amp;Search domains:</string>
        </property>
        <property name="buddy" >
-        <cstring>kcfg_dnssearch</cstring>
+        <cstring>dnsSearch</cstring>
        </property>
       </widget>
      </item>
      <item row="2" column="2" >
-      <widget class="KLineEdit" name="kcfg_dnssearch" />
+      <widget class="KLineEdit" name="dnsSearch" />
      </item>
     </layout>
    </item>

@@ -50,9 +50,8 @@ void Ipv4Persistence::load()
           continue;
       }
       QHostAddress ip(parts[0]);
-      QHostAddress broadcast(parts[1]);
       QHostAddress gateway(parts[2]);
-      Solid::Control::IPv4Address addr(ip.toIPv4Address(), broadcast.toIPv4Address(), gateway.toIPv4Address());
+      Solid::Control::IPv4Address addr(ip.toIPv4Address(), parts[1].toUInt(), gateway.toIPv4Address());
       addresses.append(addr);
   }
   setting->setAddresses(addresses);
@@ -108,9 +107,9 @@ void Ipv4Persistence::save()
   foreach (Solid::Control::IPv4Address addr, setting->addresses()) {
       QStringList rawAddress;
       rawAddress << QHostAddress(addr.address()).toString()
-          << QHostAddress(addr.netMask()).toString()
+          << QString::number(addr.netMask())
           << QHostAddress(addr.gateway()).toString();
-      rawAddresses << rawAddress;
+      rawAddresses << rawAddress.join(";");
   }
   m_config->writeEntry("addresses", rawAddresses);
 

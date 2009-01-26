@@ -34,6 +34,7 @@ BusConnection::BusConnection(Knm::Connection * connection, QObject *parent)
     : QObject(parent), m_connection(connection)
 {
     qDBusRegisterMetaType<QVariantMapMap>();
+    qDBusRegisterMetaType<QList<uint> >();
     qDBusRegisterMetaType<QStringMap>();
 }
 

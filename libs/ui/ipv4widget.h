@@ -32,11 +32,15 @@ namespace Knm
 
 class KNM_EXPORT IpV4Widget : public SettingWidget
 {
+Q_OBJECT
 public:
     IpV4Widget(Knm::Connection * connection, QWidget * parent = 0 );
     virtual ~IpV4Widget();
     void readConfig();
     void writeConfig();
+protected Q_SLOTS:
+    void addIpClicked();
+    void removeIpClicked();
 private:
     class Private;
     Private * d;
