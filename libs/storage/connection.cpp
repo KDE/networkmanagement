@@ -221,7 +221,7 @@ bool Connection::secretsAvailable() const
 {
     bool allSecretsAvailable = true;
     foreach (Setting * setting, m_settings) {
-        if (!setting->secretsAvailable()) {
+        if (setting->hasSecrets() && !setting->secretsAvailable()) {
             allSecretsAvailable = false;
             break;
         }

@@ -20,5 +20,7 @@ QString WirelessSecuritySetting::name() const
 }
 bool WirelessSecuritySetting::hasSecrets() const
 {
+  if (mSecurityType == EnumSecurityType::None || mSecurityType == EnumSecurityType::WPAEAP)
+    return false;
   return true;
 }
