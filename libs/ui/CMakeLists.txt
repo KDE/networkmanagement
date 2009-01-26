@@ -28,11 +28,11 @@ set(knmui_SRCS
    security/802_11_wireless_security_widget.cpp
    security/wepwidget.cpp
    security/wpapskwidget.cpp
-   #security/wpaeapwidget.cpp
-   #security/eapwidget.cpp
-   #security/peapwidget.cpp
-   #security/ttlswidget.cpp
-   #security/tlswidget.cpp
+   security/wpaeapwidget.cpp
+   security/eapwidget.cpp
+   security/peapwidget.cpp
+   security/ttlswidget.cpp
+   security/tlswidget.cpp
    #vpnuiplugin.cpp
    connectionprefs.cpp
    #cellularpreferences.cpp

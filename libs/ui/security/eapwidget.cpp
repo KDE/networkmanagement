@@ -19,9 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "eapwidget.h"
+#include "connection.h"
 
-EapWidget::EapWidget(const QString & theConnectionId, QWidget * parent)
-: QWidget(parent), m_connectionId(theConnectionId)
+EapWidget::EapWidget(Knm::Connection* connection, QWidget * parent)
+: QWidget(parent), m_connection(connection)
 {
 }
 

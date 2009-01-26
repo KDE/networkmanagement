@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wepwidget.h"
 #include "wpapskwidget.h"
-//#include "wpaeapwidget.h"
+#include "wpaeapwidget.h"
 
 class Wireless80211SecurityWidget::Private
 {
@@ -43,7 +43,7 @@ public:
     int wpaPskIndex;
     int wpaEapIndex;
     int security;
-//    WpaEapWidget * wpaeapwid;
+    WpaEapWidget * wpaeapwid;
     Knm::WirelessSecuritySetting * setting;
 };
 
@@ -77,14 +77,13 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, Knm::
     d->securityWidgetHash.insert(index, sw);
     d->ui.stackedWidget->insertWidget(index, sw);
     d->wpaPskIndex = index++;
-/*
 
     d->ui.cmbType->insertItem(index, i18nc("Label for WPA-EAP wireless security", "WPA-EAP"));
-    sw = d->wpaeapwid = new WpaEapWidget(configXml()->config(), connectionId, this);
+    sw = d->wpaeapwid = new WpaEapWidget(connection, this);
     d->securityWidgetHash.insert(index, sw);
     d->ui.stackedWidget->insertWidget(index, sw);
     d->wpaEapIndex = index++;
-*/
+    
     Solid::Control::AccessPoint::WpaFlags wpaFlags( wpa );
     Solid::Control::AccessPoint::WpaFlags rsnFlags( rsn );
 
@@ -192,6 +191,9 @@ void Wireless80211SecurityWidget::readConfig()
             //sw->readConfig();
             break;
         case Knm::WirelessSecuritySetting::EnumSecurityType::WPAEAP:
+            d->security = d->wpaEapIndex;
+            SecurityWidget * sw = d->securityWidgetHash.value(d->wpaEapIndex);
+            sw->readConfig();            
             break;
     }
     d->ui.cmbType->setCurrentIndex( d->security );

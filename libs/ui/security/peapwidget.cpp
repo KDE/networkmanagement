@@ -23,20 +23,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "peapwidget.h"
 #include "ui_security_peap.h"
 #include "secretstoragehelper.h"
+#include "settings/802-1x.h"
 
 class PeapWidget::Private
 {
 public:
     Ui_Peap ui;
-    KConfig* config;
+    Knm::Security8021xSetting* setting;
 };
 
-PeapWidget::PeapWidget(KConfig* config, const QString & connectionId, QWidget * parent)
-: EapWidget(connectionId, parent), d(new PeapWidget::Private)
+PeapWidget::PeapWidget(Knm::Connection* connection, QWidget * parent)
+: EapWidget(connection, parent), d(new PeapWidget::Private)
 {
     d->ui.setupUi(this);
-    d->config = config;
-
+    d->setting = static_cast<Knm::Security8021xSetting *>(connection->setting(Knm::Setting::Security8021x));
+  
     d->ui.cacert->setMode(KFile::LocalOnly);
 
     chkShowPassToggled(false);
@@ -59,74 +60,67 @@ bool PeapWidget::validate() const
 
 void PeapWidget::readConfig()
 {
-    KConfigGroup cg(d->config, NM_SETTING_802_1X_SETTING_NAME);
-
     QString identity;
-    identity = cg.readEntry("identity");
+    identity = d->setting->identity();
     if (!identity.isEmpty())
         d->ui.identity->setText(identity);
 
-    QString anonymousidentity = cg.readEntry("anonymousidentity");
+    QString anonymousidentity = d->setting->anonymousidentity();
     if (!anonymousidentity.isEmpty())
         d->ui.anonymousidentity->setText(anonymousidentity);
 
-    QString capath = cg.readEntry("capath");
+    QString capath = d->setting->capath();
     if (!capath.isEmpty())
         d->ui.cacert->setUrl(capath);
 
-    QString phase2autheap = cg.readEntry("phase2autheap", "pap");
-    if (phase2autheap == "pap")
+    int phase2autheap = d->setting->phase2autheap();
+    if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::pap)
         d->ui.phase2autheap->setCurrentIndex(0);
-    else if (phase2autheap == "mschap")
+    else if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::mschap)
         d->ui.phase2autheap->setCurrentIndex(1);
-    else if (phase2autheap == "mschapv2")
+    else if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::mschapv2)
         d->ui.phase2autheap->setCurrentIndex(2);
-    else if (phase2autheap == "chap")
+    else if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::chap)
         d->ui.phase2autheap->setCurrentIndex(3);
 
-    // secrets
-    SecretStorageHelper secrets(m_connectionId, cg.name());
+    kDebug() << d->setting->phase1peapver();
+    if (d->setting->phase1peapver() == Knm::Security8021xSetting::EnumPhase1peapver::zero)
+        d->ui.kcfg_phase1peapver->setCurrentIndex(0);
+    else
+        d->ui.kcfg_phase1peapver->setCurrentIndex(1);
 
-    QString password;
-    secrets.readSecret("password", password);
+    QString password = d->setting->password();
     if (!password.isEmpty())
         d->ui.password->setText(password);
 }
 
 void PeapWidget::writeConfig()
 {
-    KConfigGroup cg(d->config, NM_SETTING_802_1X_SETTING_NAME);
-
-    cg.writeEntry("identity", d->ui.identity->text());
-    cg.writeEntry("anonymousidentity", d->ui.anonymousidentity->text());
-    cg.writeEntry("capath", d->ui.cacert->url().directory() + "/" + d->ui.cacert->url().fileName());
+    d->setting->setIdentity(d->ui.identity->text());
+    d->setting->setAnonymousidentity(d->ui.anonymousidentity->text());
+    if (!d->ui.cacert->url().directory().isEmpty() && !d->ui.cacert->url().fileName().isEmpty())
+        d->setting->setCapath(d->ui.cacert->url().directory() + "/" + d->ui.cacert->url().fileName());
+    else
+        d->setting->setCapath("");
 
     switch(d->ui.phase2autheap->currentIndex())
     {
         case 0:
-            cg.writeEntry("phase2autheap", "pap");
+            d->setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::pap);
             break;
         case 1:
-            cg.writeEntry("phase2autheap", "mschap");
+            d->setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::mschap);
             break;
         case 2:
-            cg.writeEntry("phase2autheap", "mschapv2");
+            d->setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::mschapv2);
             break;
         case 3:
-            cg.writeEntry("phase2autheap", "chap");
+            d->setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::chap);
             break;
     }
 
-    // secrets
-    SecretStorageHelper secrets(m_connectionId, cg.name());
-
-    secrets.writeSecret("password", d->ui.password->text());
+    d->setting->setPhase1peapver(d->ui.kcfg_phase1peapver->currentIndex());
+    d->setting->setPassword(d->ui.password->text());
 }
 
-QVariantMap PeapWidget::secrets() const
-{
-    QVariantMap ourSecrets;
-    ourSecrets.insert("password", d->ui.password->text());
-    return ourSecrets;
-}
 // vim: sw=4 sts=4 et tw=100
