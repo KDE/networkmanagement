@@ -173,9 +173,15 @@ void InterfaceGroup::updateNetworks()
     } else {
         //kDebug() << "Interface disabled ................ :-(";
     }
+    /*
     m_networkLayout->invalidate();
     m_interfaceLayout->invalidate();
     m_layout->invalidate();
+    */
+    m_networkLayout->updateGeometry();
+    m_interfaceLayout->updateGeometry();
+    m_layout->updateGeometry();
+
 }
 
 void InterfaceGroup::setNetworksLimit( int wlans )
@@ -286,7 +292,8 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         interface->setEnabled(m_enabled);
         m_interfaceLayout->addItem(interface);
         m_interfaces.insert(iface->uni(), interface);
-        m_interfaceLayout->invalidate();
+        //m_interfaceLayout->invalidate();
+        m_interfaceLayout->updateGeometry();
         updateNetworks();
     }
     show();
