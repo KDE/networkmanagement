@@ -157,12 +157,17 @@ QVariantMapMap ConnectionDbus::toDbusMap()
         SettingDbus * sd = dbusFor(setting);
         if (sd) {
             QVariantMap map = sd->toMap();
-            if (!map.isEmpty()) {  // GENERAL RULE, type specific special cases will follow.
+            // IN GENERAL, we don't serialise empty maps.
+            // Except if they are the setting for the connection's specific type, NM requires this
+             if (!map.isEmpty()
+                     || (setting->name() == dbusConnectionType)) {
                 mapMap.insert(setting->name(), map);
             }
         }
     }
-
+    if (!mapMap.contains(dbusConnectionType)) {
+        kDebug() << "The setting group for the specified connection type" << dbusConnectionType << "is missing, expect a bumpy ride!";
+    }
     return mapMap;
 }
 
