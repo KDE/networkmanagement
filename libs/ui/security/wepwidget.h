@@ -37,6 +37,7 @@ public:
     bool validate() const;
     void readConfig();
     void writeConfig();
+    void readSecrets();
 private slots:
     void keyTypeChanged(int);
     void chkShowPassToggled(bool);

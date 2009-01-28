@@ -34,6 +34,7 @@ public:
     bool validate() const;
     void readConfig();
     void writeConfig();
+    void readSecrets();
     QWidget* widget();
 private slots:
     void methodChanged(int);

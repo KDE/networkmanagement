@@ -41,9 +41,11 @@ public:
     SettingInterface* wpaEapWidget();
     void readConfig();
     void writeConfig();
+    void readSecrets();
 
 protected Q_SLOTS:
     void securityTypeChanged(int index);
+    //void secretsLoaded(uint result);
 private:
     class Private;
     Private * d;

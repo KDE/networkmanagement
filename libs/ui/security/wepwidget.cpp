@@ -107,19 +107,11 @@ bool WepWidget::validate() const
 void WepWidget::readConfig()
 {
     // tx index
-    uint txKeyIndex = d->setting->weptxkeyindex();
-    d->keyIndex = txKeyIndex;
+    d->keyIndex = d->setting->weptxkeyindex();
     disconnect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
-    d->ui.weptxkeyindex->setCurrentIndex(txKeyIndex < 3 ? txKeyIndex : 0 );
+    d->ui.weptxkeyindex->setCurrentIndex(d->keyIndex < 3 ? d->keyIndex : 0 );
     connect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
 
-    // keys
-    d->keys.replace(0, d->setting->wepkey0());
-    d->keys.replace(1, d->setting->wepkey1());
-    d->keys.replace(2, d->setting->wepkey2());
-    d->keys.replace(3, d->setting->wepkey3());
-
-    d->ui.key->setText(d->keys.value(txKeyIndex));
     d->ui.chkShowPass->setChecked(false);
 
     if (d->setting->weppassphrase().isEmpty()) {
@@ -127,15 +119,7 @@ void WepWidget::readConfig()
     } else {
         d->format = WepWidget::Passphrase;
     }
-/*
-FIXME
-    //passphrase
-    QString passphrase;
-    secrets.readSecret("wep-passphrase", passphrase);
-    if (!passphrase.isEmpty()) {
-        d->ui.passphrase->setText(passphrase);
-    }
-*/
+
     // auth alg
     if (d->setting->authalg()  == Knm::WirelessSecuritySetting::EnumAuthalg::shared) {
         d->ui.authalg->setCurrentIndex( 1 );
@@ -173,6 +157,21 @@ void WepWidget::writeConfig()
     } else {
         d->setting->setAuthalg(Knm::WirelessSecuritySetting::EnumAuthalg::shared);
     }
+}
+
+
+void WepWidget::readSecrets()
+{
+    // keys
+    d->keys.replace(0, d->setting->wepkey0());
+    d->keys.replace(1, d->setting->wepkey1());
+    d->keys.replace(2, d->setting->wepkey2());
+    d->keys.replace(3, d->setting->wepkey3());
+
+    // passphrase
+    d->ui.key->setText(d->keys.value(d->keyIndex));
+    d->ui.passphrase->setText(d->setting->weppassphrase());
+    keyTypeChanged(d->setting->weppassphrase().isEmpty() ? 1 : 0 );
 }
 
 #include "wepwidget.moc"

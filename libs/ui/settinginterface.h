@@ -44,11 +44,17 @@ public:
     /**
      * populate the UI from the Connection
      */
-    virtual void readConfig();
+    virtual void readConfig() = 0;
     /**
      * set the Connection from the UI
      */
-    virtual void writeConfig();
+    virtual void writeConfig() = 0;
+    /**
+     * Populate the UI with any secrets from the Setting.
+     * Separate from readConfig because secrets are fetched
+     * asynchronously.
+     */
+    virtual void readSecrets();
     /** 
      * Check that the settings in this widget are valid
      */

@@ -73,7 +73,6 @@ bool WpaPskWidget::validate() const
 
 void WpaPskWidget::readConfig()
 {
-    d->ui.psk->setText(d->setting->psk());
     d->ui.chkShowPass->setChecked(false);
     chkShowPassToggled();
 }
@@ -82,6 +81,11 @@ void WpaPskWidget::writeConfig()
 {
     d->setting->setPsk(d->ui.psk->text());
     d->wsetting->setSecurity(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
+}
+
+void WpaPskWidget::readSecrets()
+{
+    d->ui.psk->setText(d->setting->psk());
 }
 
 #include "wpapskwidget.moc"

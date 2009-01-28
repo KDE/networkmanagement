@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 
 #include "connection.h"
+#include "connectionpersistence.h"
 #include "settings/802-11-wireless.h"
 #include "settings/802-11-wireless-security.h"
 #include "ui_802_11_wireless_security.h"
@@ -47,6 +48,7 @@ public:
     WpaEapWidget * wpaeapwid;
     Knm::WirelessSetting * wsetting;
     Knm::WirelessSecuritySetting * setting;
+    Knm::ConnectionPersistence * persistence;
 };
 
 Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, Knm::Connection * connection,
@@ -54,6 +56,7 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, Knm::
     : SettingWidget(connection, parent), d(new Wireless80211SecurityWidget::Private)
 {
     Q_UNUSED( rsn );
+    d->persistence = 0;
     d->noSecurityIndex = -1;
     d->staticWepHexIndex = -1;
     d->wpaPskIndex = -1;
@@ -174,35 +177,61 @@ void Wireless80211SecurityWidget::readConfig()
     if ( d->security != -1 )
         return;
 
+    SecurityWidget * sw = 0;
     switch (d->setting->securityType()) {
         case Knm::WirelessSecuritySetting::EnumSecurityType::None:
             d->security = d->noSecurityIndex;
             break;
         case Knm::WirelessSecuritySetting::EnumSecurityType::WEP40:
             d->security = d->staticWepHexIndex;
-            //SecurityWidget * sw = d->securityWidgetHash.value(d->staticWepHexIndex);
-            //sw->readConfig();            
+            sw = d->securityWidgetHash.value(d->staticWepHexIndex);
             break;
         case Knm::WirelessSecuritySetting::EnumSecurityType::WEP128:
             d->security = d->staticWepHexIndex;
-            //SecurityWidget * sw = d->securityWidgetHash.value(d->staticWepHexIndex);
-            //sw->readConfig();            
+            sw = d->securityWidgetHash.value(d->staticWepHexIndex);
             break;
         case Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWEP:
             break;
         case Knm::WirelessSecuritySetting::EnumSecurityType::WPAPSK:
             d->security = d->wpaPskIndex;
-            //SecurityWidget * sw = d->securityWidgetHash.value(d->wpaPskIndex);
-            //sw->readConfig();
+            sw = d->securityWidgetHash.value(d->wpaPskIndex);
             break;
         case Knm::WirelessSecuritySetting::EnumSecurityType::WPAEAP:
             d->security = d->wpaEapIndex;
-            SecurityWidget * sw = d->securityWidgetHash.value(d->wpaEapIndex);
-            sw->readConfig();            
+            sw = d->securityWidgetHash.value(d->wpaEapIndex);
             break;
+    }
+    if (sw) {
+        sw->readConfig();
     }
     d->ui.cmbType->setCurrentIndex( d->security );
     securityTypeChanged( d->security );
+}
+
+void Wireless80211SecurityWidget::readSecrets()
+{
+    SecurityWidget * sw = 0;
+    switch (d->setting->securityType()) {
+        case Knm::WirelessSecuritySetting::EnumSecurityType::None:
+            break;
+        case Knm::WirelessSecuritySetting::EnumSecurityType::WEP40:
+            sw = d->securityWidgetHash.value(d->staticWepHexIndex);
+            break;
+        case Knm::WirelessSecuritySetting::EnumSecurityType::WEP128:
+            sw = d->securityWidgetHash.value(d->staticWepHexIndex);
+            break;
+        case Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWEP:
+            break;
+        case Knm::WirelessSecuritySetting::EnumSecurityType::WPAPSK:
+            sw = d->securityWidgetHash.value(d->wpaPskIndex);
+            break;
+        case Knm::WirelessSecuritySetting::EnumSecurityType::WPAEAP:
+            sw = d->securityWidgetHash.value(d->wpaEapIndex);
+            break;
+    }
+    if (sw) {
+        sw->readSecrets();
+    }
 }
 
 #include "802_11_wireless_security_widget.moc"

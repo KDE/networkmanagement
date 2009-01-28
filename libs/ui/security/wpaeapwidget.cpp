@@ -59,7 +59,6 @@ WpaEapWidget::WpaEapWidget(Knm::Connection* connection, QWidget * parent)
 
     d->settingSec = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
     d->setting8021x = static_cast<Knm::Security8021xSetting *>(connection->setting(Knm::Setting::Security8021x));
-    
 
     // we have to be careful here as we deal with two settings objects.
     // the eap widgets need the 802.1x setting as KConfig attribute
@@ -167,6 +166,12 @@ void WpaEapWidget::writeConfig()
             break;
     }
     d->setting8021x->setEnabled(true);
+}
+
+
+void WpaEapWidget::readSecrets()
+{
+    kDebug() << "TODO: Implement";
 }
 
 #include "wpaeapwidget.moc"

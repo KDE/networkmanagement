@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -32,6 +32,7 @@ class SettingInterface;
 namespace Knm
 {
     class Connection;
+    class ConnectionPersistence;
 } // namespace Knm
 
 /**
@@ -57,10 +58,12 @@ public:
     // it signals that the defaults are good enough to connect
     //virtual bool needsEdits() const { return (m_connectionType.isEmpty() || m_connectionName.isEmpty()); }
 
-public slots:
+public Q_SLOTS:
     // reimplemented from KCModule, to call embedded settingswidgets' load/save methods
     virtual void load();
     virtual void save();
+protected Q_SLOTS:
+    void gotSecrets(uint result);
 protected:
     /**
      * Add widgets to the tabs in the connection widget
@@ -76,6 +79,7 @@ protected:
     /** All setting widgets except m_contents, including connectionTypeWidget*/
     QList<SettingInterface*> m_settingWidgets;
     Knm::Connection * m_connection;
+    Knm::ConnectionPersistence * m_connectionPersistence;
 };
 
 #endif // CONNECTIONPREFS_H

@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ConnectionPreferences::ConnectionPreferences(const KComponentData& cdata, QWidget * parent, const QVariantList & args)
     : KCModule( cdata, parent, args ),
-      m_contents(0)
+      m_contents(0), m_connection(0), m_connectionPersistence(0)
 {
 
 }
@@ -63,16 +63,23 @@ void ConnectionPreferences::load()
     // restore the Connection if possible
     QString connectionFile(KStandardDirs::locateLocal("data",
                 QLatin1String("knetworkmanager/connections/") + m_connection->uuid()));
-    Knm::ConnectionPersistence cp(m_connection, KSharedConfig::openConfig(connectionFile),
+    m_connectionPersistence = new Knm::ConnectionPersistence(m_connection, KSharedConfig::openConfig(connectionFile),
             (KNetworkManagerServicePrefs::self()->storeInWallet()
              ? Knm::ConnectionPersistence::Secure
              : Knm::ConnectionPersistence::PlainText)
             );
-    cp.load();
+    m_connectionPersistence->load();
     // and initialise the UI from the Connection
     m_contents->readConfig();
     foreach (SettingInterface * wid, m_settingWidgets) {
         wid->readConfig();
+    }
+    // asynchronously fetch secrets
+    if (m_connection->hasSecrets()) {
+        connect(m_connectionPersistence, SIGNAL(loadSecretsResult(uint)), SLOT(gotSecrets(uint)));
+        m_connectionPersistence->loadSecrets();
+    } else {
+        delete m_connectionPersistence;
     }
 }
 
@@ -95,6 +102,17 @@ void ConnectionPreferences::save()
              : Knm::ConnectionPersistence::PlainText)
             );
     cp.save();
+}
+
+void ConnectionPreferences::gotSecrets(uint result)
+{
+    if (result == Knm::ConnectionPersistence::EnumError::NoError) {
+        foreach (SettingInterface * wid, m_settingWidgets) {
+            wid->readSecrets();
+        }
+    }
+    delete m_connectionPersistence;
+    m_connectionPersistence = 0;
 }
 
 // vim: sw=4 sts=4 et tw=100
