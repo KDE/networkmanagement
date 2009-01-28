@@ -89,9 +89,6 @@ void PeapWidget::readConfig()
     else
         d->ui.kcfg_phase1peapver->setCurrentIndex(1);
 
-    QString password = d->setting->password();
-    if (!password.isEmpty())
-        d->ui.password->setText(password);
 }
 
 void PeapWidget::writeConfig()
@@ -123,4 +120,10 @@ void PeapWidget::writeConfig()
     d->setting->setPassword(d->ui.password->text());
 }
 
+void PeapWidget::readSecrets()
+{
+    QString password = d->setting->password();
+    if (!password.isEmpty())
+        d->ui.password->setText(password);
+}
 // vim: sw=4 sts=4 et tw=100

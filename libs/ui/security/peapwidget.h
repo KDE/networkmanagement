@@ -36,6 +36,7 @@ public:
     bool validate() const;
     void readConfig();
     void writeConfig();
+    void readSecrets();
 
 private slots:
     void chkShowPassToggled(bool);

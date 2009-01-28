@@ -81,10 +81,6 @@ void TtlsWidget::readConfig()
         d->ui.phase2autheap->setCurrentIndex(2);
     else if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::chap)
         d->ui.phase2autheap->setCurrentIndex(3);
-
-    QString password = d->setting->password();
-    if (!password.isEmpty())
-        d->ui.password->setText(password);
 }
 
 void TtlsWidget::writeConfig()
@@ -112,5 +108,13 @@ void TtlsWidget::writeConfig()
 
     d->setting->setPassword(d->ui.password->text());
 }
+
+void TtlsWidget::readSecrets()
+{
+    QString password = d->setting->password();
+    if (!password.isEmpty())
+        d->ui.password->setText(password);
+}
+
 
 // vim: sw=4 sts=4 et tw=100

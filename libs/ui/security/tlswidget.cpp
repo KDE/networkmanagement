@@ -48,11 +48,18 @@ bool TlsWidget::validate() const
 
 void TlsWidget::readConfig()
 {
-
+    kDebug() << "TODO:: Implement";
 }
 
 void TlsWidget::writeConfig()
 {
+    kDebug() << "TODO:: Implement";
 
 }
+
+void TlsWidget::readSecrets()
+{
+    kDebug() << "TODO:: Implement";
+}
+
 // vim: sw=4 sts=4 et tw=100

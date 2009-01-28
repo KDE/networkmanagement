@@ -29,6 +29,9 @@ namespace Knm
     class Connection;
 }
 
+/**
+ * Abstract base class for EAP configuration widgets
+ */
 class EapWidget : public QWidget
 {
 Q_OBJECT
@@ -38,6 +41,7 @@ public:
 
     virtual void readConfig() = 0;
     virtual void writeConfig() = 0;
+    virtual void readSecrets() = 0;
     virtual bool validate() const = 0;
 
 protected:

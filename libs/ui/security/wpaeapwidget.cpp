@@ -171,7 +171,25 @@ void WpaEapWidget::writeConfig()
 
 void WpaEapWidget::readSecrets()
 {
-    kDebug() << "TODO: Implement";
+    Knm::Security8021xSetting::EapMethods eap = d->setting8021x->eapFlags();
+
+    // default is peap
+    EapWidget * ew = d->eapWidgetHash.value(d->peapIndex);
+
+    if (eap.testFlag(Knm::Security8021xSetting::ttls))
+    {
+        d->ui.cboEAPMethod->setCurrentIndex(d->ttlsIndex);
+        ew = d->eapWidgetHash.value(d->ttlsIndex);
+    } else if (eap.testFlag(Knm::Security8021xSetting::tls))
+    {
+        d->ui.cboEAPMethod->setCurrentIndex(d->tlsIndex);
+        ew = d->eapWidgetHash.value(d->tlsIndex);
+    } else if (eap.testFlag(Knm::Security8021xSetting::peap))
+    {
+        d->ui.cboEAPMethod->setCurrentIndex(d->peapIndex);
+        ew = d->eapWidgetHash.value(d->peapIndex);
+    }
+    ew->readSecrets();
 }
 
 #include "wpaeapwidget.moc"
