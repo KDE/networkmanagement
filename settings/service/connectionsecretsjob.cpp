@@ -114,23 +114,23 @@ void ConnectionSecretsJob::doAskUser()
     if ( mSettingName == QLatin1String(NM_SETTING_802_1X_SETTING_NAME)) {
         //m_settingWidget = Wired8021xSecurityWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
-#warning CdmaWidget not ported1
+#warning CdmaWidget not ported!
         //m_settingWidget = new CdmaWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
-#warning GsmWidget not ported1
+#warning GsmWidget not ported!
         //m_settingWidget = new GsmWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
         m_settingWidget = new IpV4Widget(m_connection, 0);
     //} else if ( mSettingName == QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME)) {
         // not supported yet
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPP_SETTING_NAME)) {
-#warning PppWidget not ported1
+#warning PppWidget not ported!
         //m_settingWidget = new PppWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
-#warning PppWidget not ported1
+#warning PppWidget not ported!
         //m_settingWidget = new PppoeWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_SERIAL_SETTING_NAME)) {
-#warning PppWidget not ported1
+#warning PppoeWidget not ported!
         //m_settingWidget = new PppWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
         // not supported yet, figure out the type of the vpn plugin, load it and its m_settingWidgetget
@@ -144,16 +144,21 @@ void ConnectionSecretsJob::doAskUser()
         // todo: vpn secrets!
     }
 
-    m_settingWidget->readConfig();
-    m_askUserDialog = new KDialog(0);
-    m_askUserDialog->setCaption(i18nc("dialog caption for network secrets request", "Enter network connection secrets"));
-    m_askUserDialog->setMainWidget(m_settingWidget);
-    m_askUserDialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+    if (m_settingWidget) {
+        m_settingWidget->readConfig();
+        m_askUserDialog = new KDialog(0);
+        m_askUserDialog->setCaption(i18nc("dialog caption for network secrets request", "Enter network connection secrets"));
+        m_askUserDialog->setMainWidget(m_settingWidget);
+        m_askUserDialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
 
-    connect(m_askUserDialog, SIGNAL(okClicked()), SLOT(dialogAccepted()));
-    connect(m_askUserDialog, SIGNAL(cancelClicked()), SLOT(dialogRejected()));
+        connect(m_askUserDialog, SIGNAL(okClicked()), SLOT(dialogAccepted()));
+        connect(m_askUserDialog, SIGNAL(cancelClicked()), SLOT(dialogRejected()));
 
-    m_askUserDialog->show();
+        m_askUserDialog->show();
+    } else {
+        kDebug() << "Setting widget for" << mSettingName << "not yet ported, rejecting secrets request.";
+        dialogRejected();
+    }
 }
 
 void ConnectionSecretsJob::dialogAccepted()
