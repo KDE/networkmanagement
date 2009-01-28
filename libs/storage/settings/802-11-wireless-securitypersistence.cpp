@@ -186,8 +186,7 @@ QMap<QString,QString> WirelessSecurityPersistence::secrets() const
 {
   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
   QMap<QString,QString> map;
-  if (setting->securityType() != WirelessSecuritySetting::EnumSecurityType::None
-      && setting->securityType() != WirelessSecuritySetting::EnumSecurityType::WPAEAP) { // don't save anything if security is disabled
+  if (setting->securityType() != WirelessSecuritySetting::EnumSecurityType::None) { // don't save anything if security is disabled
   map.insert(QLatin1String("wepkey0"), setting->wepkey0());
   map.insert(QLatin1String("wepkey1"), setting->wepkey1());
   map.insert(QLatin1String("wepkey2"), setting->wepkey2());
