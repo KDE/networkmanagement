@@ -32,12 +32,15 @@ namespace Knm
 
 class KNM_EXPORT CdmaWidget : public SettingWidget
 {
+Q_OBJECT
 public:
     CdmaWidget(Knm::Connection * connection, QWidget * parent = 0 );
     virtual ~CdmaWidget();
     void readConfig();
     void writeConfig();
     void readSecrets();
+protected Q_SLOTS:
+    void chkShowPassToggled();
 private:
     class Private;
     Private * d;

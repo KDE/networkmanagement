@@ -36,6 +36,9 @@ GsmWidget::GsmWidget(Knm::Connection * connection, QWidget * parent)
 {
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::GsmSetting *>(connection->setting(Knm::Setting::Gsm));
+    connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
+    d->ui.pin->setEchoMode(QLineEdit::Password);
+    d->ui.puk->setEchoMode(QLineEdit::Password);
 }
 
 GsmWidget::~GsmWidget()
@@ -50,11 +53,7 @@ void GsmWidget::readConfig()
     d->ui.apn->setText(d->setting->apn());
     d->ui.network->setText(d->setting->networkid());
     d->ui.band->setValue(d->setting->band());
-
-    connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
     d->ui.password->setEchoMode(QLineEdit::Password);
-    d->ui.pin->setEchoMode(QLineEdit::Password);
-    d->ui.puk->setEchoMode(QLineEdit::Password);
 }
 
 void GsmWidget::chkShowPassToggled()

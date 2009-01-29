@@ -36,6 +36,8 @@ CdmaWidget::CdmaWidget(Knm::Connection * connection, QWidget * parent)
 {
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::CdmaSetting *>(connection->setting(Knm::Setting::Cdma));
+    connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
+    d->ui.password->setEchoMode(QLineEdit::Password);
 }
 
 CdmaWidget::~CdmaWidget()
@@ -43,19 +45,29 @@ CdmaWidget::~CdmaWidget()
     delete d;
 }
 
+void CdmaWidget::chkShowPassToggled()
+{
+    bool on = d->ui.chkShowPass->isChecked();
+    d->ui.password->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
+}
+
 void CdmaWidget::readConfig()
 {
+    d->ui.number->setText(d->setting->number());
+    d->ui.username->setText(d->setting->username());
 
 }
 
 void CdmaWidget::writeConfig()
 {
-
+    d->setting->setNumber(d->ui.number->text());
+    d->setting->setUsername(d->ui.username->text());
+    d->setting->setPassword(d->ui.password->text());
 }
 
 void CdmaWidget::readSecrets()
 {
-
+    d->ui.password->setText(d->setting->password());
 }
 
 
