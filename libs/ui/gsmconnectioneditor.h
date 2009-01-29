@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,22 +18,20 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM07_CELLULAR_CONNECTION_PREFERENCES_H
-#define NM07_CELLULAR_CONNECTION_PREFERENCES_H
+#ifndef NM07_GSM_CONNECTION_EDITOR_H
+#define NM07_GSM_CONNECTION_EDITOR_H
 
 #include "connectionprefs.h"
 
 /**
  * Configuration module for cellular connections
  */
-class KNM_EXPORT CellularPreferences : public ConnectionPreferences
+class KNM_EXPORT GsmConnectionEditor : public ConnectionPreferences
 {
 Q_OBJECT
 public:
-    CellularPreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
-    virtual ~CellularPreferences();
-    virtual void save();
-    virtual void load();
+    GsmConnectionEditor(QWidget * parent = 0, const QVariantList & args = QVariantList());
+    virtual ~GsmConnectionEditor();
     virtual bool needsEdits() const { return true; }
 };
 

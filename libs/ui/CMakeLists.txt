@@ -35,7 +35,7 @@ set(knmui_SRCS
    security/tlswidget.cpp
    #vpnuiplugin.cpp
    connectionprefs.cpp
-   cellularpreferences.cpp
+   gsmconnectioneditor.cpp
    #pppoepreferences.cpp
    #vpnpreferences.cpp
    wiredpreferences.cpp

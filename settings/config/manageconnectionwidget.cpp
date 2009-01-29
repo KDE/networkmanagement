@@ -44,6 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionprefs.h"
 
 #define ConnectionIdRole 1812
+#define ConnectionTypeRole 1066
 
 K_PLUGIN_FACTORY( ManageConnectionWidgetFactory, registerPlugin<ManageConnectionWidget>();)
 K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_knetworkmanager" ) )
@@ -137,6 +138,7 @@ void ManageConnectionWidget::restoreConnections()
         }
         if (item) {
             item->setData(0, ConnectionIdRole, connectionId);
+            item->setData(0, ConnectionTypeRole, Knm::Connection::typeFromString(type));
         }
     }
     mConnEditUi.listWired->insertTopLevelItems(0, wiredItems);
@@ -203,6 +205,8 @@ void ManageConnectionWidget::editClicked()
         return;
     }
     QString connectionId = item->data(0, ConnectionIdRole).toString();
+    Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, ConnectionTypeRole).toUInt();
+    kDebug() << connectionId << type;
     if (connectionId.isEmpty()) {
         kDebug() << "selected item had no connectionId!";
         return;
@@ -211,7 +215,7 @@ void ManageConnectionWidget::editClicked()
     QVariantList args;
     args << connectionId;
 
-    mEditor->editConnection(connectionTypeForCurrentIndex(), args);
+    mEditor->editConnection(type, args);
 }
 
 void ManageConnectionWidget::deleteClicked()
@@ -263,7 +267,6 @@ Knm::Connection::Type ManageConnectionWidget::connectionTypeForCurrentIndex() co
             t = Knm::Connection::Wireless;
             break;
         case 2:
-#warning CDMA not handled in ManageConnectionWidget::connectionTypeForCurrentIndex()
             t = Knm::Connection::Gsm;
             break;
         case 3:
@@ -319,9 +322,9 @@ void ManageConnectionWidget::tabChanged(int index)
         if ( !mCellularMenu ) {
             mCellularMenu = new QMenu(this);
             QAction * gsmAction = new QAction(i18nc("Menu item for GSM connections", "GSM Connection"), this);
-            gsmAction->setData(QVariant(NM_SETTING_GSM_SETTING_NAME));
+            gsmAction->setData(Knm::Connection::Gsm);
             QAction * cdmaAction = new QAction(i18nc("Menu item for CDMA connections", "CDMA Connection"), this);
-            cdmaAction->setData(QVariant(NM_SETTING_CDMA_SETTING_NAME));
+            cdmaAction->setData(Knm::Connection::Cdma);
 
             mCellularMenu->addAction(gsmAction);
             mCellularMenu->addAction(cdmaAction);
@@ -354,11 +357,7 @@ void ManageConnectionWidget::tabChanged(int index)
 
 void ManageConnectionWidget::connectionTypeMenuTriggered(QAction* action)
 {
-    QVariantList vl;
-    vl << action->data();
-    Q_ASSERT(!vl.isEmpty());
-    kDebug() << vl;
-    mEditor->addConnection(false, connectionTypeForCurrentIndex(), vl);
+    mEditor->addConnection(false, (Knm::Connection::Type)action->data().toUInt());
 }
 
 #include "manageconnectionwidget.moc"
