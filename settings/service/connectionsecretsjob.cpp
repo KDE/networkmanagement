@@ -114,11 +114,9 @@ void ConnectionSecretsJob::doAskUser()
     if ( mSettingName == QLatin1String(NM_SETTING_802_1X_SETTING_NAME)) {
         //m_settingWidget = Wired8021xSecurityWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
-#warning CdmaWidget not ported!
-        //m_settingWidget = new CdmaWidget(m_connection, 0);
+        m_settingWidget = new CdmaWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
-#warning GsmWidget not ported!
-        //m_settingWidget = new GsmWidget(m_connection, 0);
+        m_settingWidget = new GsmWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
         m_settingWidget = new IpV4Widget(m_connection, 0);
     //} else if ( mSettingName == QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME)) {

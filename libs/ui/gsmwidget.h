@@ -32,6 +32,7 @@ namespace Knm
 
 class KNM_EXPORT GsmWidget : public SettingWidget
 {
+Q_OBJECT
 public:
     GsmWidget(Knm::Connection *, QWidget * parent = 0 );
     virtual ~GsmWidget();
@@ -39,6 +40,8 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
+protected Q_SLOTS:
+    void chkShowPassToggled();
 private:
     class Private;
     Private * d;

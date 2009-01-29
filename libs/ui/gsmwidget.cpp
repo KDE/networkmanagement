@@ -45,16 +45,44 @@ GsmWidget::~GsmWidget()
 
 void GsmWidget::readConfig()
 {
+    d->ui.number->setText(d->setting->number());
+    d->ui.username->setText(d->setting->username());
+    d->ui.apn->setText(d->setting->apn());
+    d->ui.network->setText(d->setting->networkid());
+    d->ui.band->setValue(d->setting->band());
 
+    connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
+    d->ui.password->setEchoMode(QLineEdit::Password);
+    d->ui.pin->setEchoMode(QLineEdit::Password);
+    d->ui.puk->setEchoMode(QLineEdit::Password);
 }
+
+void GsmWidget::chkShowPassToggled()
+{
+    bool on = d->ui.chkShowPass->isChecked();
+    d->ui.password->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
+    d->ui.pin->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
+    d->ui.puk->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
+}
+
 
 void GsmWidget::writeConfig()
 {
-
+    d->setting->setNumber(d->ui.number->text());
+    d->setting->setUsername(d->ui.username->text());
+    d->setting->setPassword(d->ui.password->text());
+    d->setting->setApn(d->ui.apn->text());
+    d->setting->setNetworkid(d->ui.network->text());
+    d->setting->setBand(d->ui.band->value());
+    d->setting->setPin(d->ui.pin->text());
+    d->setting->setPuk(d->ui.puk->text());
 }
 
 void GsmWidget::readSecrets()
 {
+    d->ui.password->setText(d->setting->password());
+    d->ui.pin->setText(d->setting->pin());
+    d->ui.puk->setText(d->setting->puk());
 
 }
 
