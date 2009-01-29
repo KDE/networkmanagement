@@ -25,12 +25,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+namespace Knm
+{
+    class Connection;
+}
+
 class KNM_EXPORT GsmWidget : public SettingWidget
 {
 public:
-    GsmWidget(const QString& connectionId, QWidget * parent = 0 );
+    GsmWidget(Knm::Connection *, QWidget * parent = 0 );
     virtual ~GsmWidget();
     QString settingName() const;
+    void readConfig();
+    void writeConfig();
+    void readSecrets();
 private:
     class Private;
     Private * d;

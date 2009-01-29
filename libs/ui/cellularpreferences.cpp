@@ -20,26 +20,29 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "cellularpreferences.h"
 
-#include <nm-setting-cdma.h>
-#include <nm-setting-connection.h>
-#include <nm-setting-gsm.h>
-
+//X #include <nm-setting-cdma.h>
+//X #include <nm-setting-connection.h>
+//X #include <nm-setting-gsm.h>
+//X 
 #include <QVBoxLayout>
 #include <QFile>
 
 #include <KDebug>
+#include <KLocale>
+
 #include <KPluginFactory>
 #include <KTabWidget>
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 
 
-#include "configxml.h"
-#include "secretstoragehelper.h"
+#include "settingwidget.h"
 #include "cdmawidget.h"
 #include "gsmwidget.h"
 #include "pppwidget.h"
 #include "connectionwidget.h"
+
+#include "connection.h"
 
 //K_PLUGIN_FACTORY( CellularPreferencesFactory, registerPlugin<CellularPreferences>();)
 //K_EXPORT_PLUGIN( CellularPreferencesFactory( "kcm_knetworkmanager_cellular" ) )
@@ -48,35 +51,39 @@ CellularPreferences::CellularPreferences(QWidget *parent, const QVariantList &ar
 : ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
     kDebug() << args;
-    QString connectionId = args[0].toString();
-    m_connectionType = "Cellular";
     QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(connectionId, this);
-    layout->addWidget(m_contents);
-    PppWidget * pppWidget = new PppWidget(connectionId, this);
-    // Must setup initial widget before adding its contents, or all child widgets are added in this
-    // run
-    addConfig(m_contents->configXml(), m_contents);
+
+    QString connectionId = args[0].toString();
     QVariant cellularType;
     if (args.count() > 1 ) {
         cellularType = args[1];
     }
     else {
-        KConfigSkeletonItem * typeItem = m_contents->configXml()->findItem(m_contents->settingName(), QLatin1String(NM_SETTING_CONNECTION_TYPE));
-        if (typeItem) {
-            cellularType = typeItem->property().toString();
-        }
+        // disabled until I figure out if it is necessary to figure out the connection type from
+        // kconfig
+        //KConfigSkeletonItem * typeItem = m_contents->configXml()->findItem(m_contents->settingName(), QLatin1String(NM_SETTING_CONNECTION_TYPE));
+        //if (typeItem) {
+        //    cellularType = typeItem->property().toString();
+        //}
     }
     Q_ASSERT(cellularType.isValid());
 
-    if (cellularType == QVariant(NM_SETTING_GSM_SETTING_NAME)) {
-        m_connectionTypeWidget = new GsmWidget(connectionId, this);
-    } else if (cellularType == QVariant(NM_SETTING_CDMA_SETTING_NAME)) {
-        m_connectionTypeWidget = new CdmaWidget(connectionId, this);
+    SettingWidget * typeWidget = 0;
+    if (cellularType.toString() == Knm::Connection::typeAsString(Knm::Connection::Gsm)) {
+        m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Gsm);
+        typeWidget = new GsmWidget(m_connection, this);
+    } else if (cellularType.toString() == Knm::Connection::typeAsString(Knm::Connection::Cdma)) {
+        //m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Cdma);
+        //typeWidget = new CdmaWidget(m_connection, this);
     } else {
         kDebug() << "passed unrecognised cellular type in ctor args!";
     }
-    addToTabWidget(m_connectionTypeWidget);
+    Q_ASSERT(m_connection);
+
+    m_contents = new ConnectionWidget(m_connection, i18n("New Cellular Connection"), this);
+    PppWidget * pppWidget = new PppWidget(m_connection, this);
+    layout->addWidget(m_contents);
+    addToTabWidget(typeWidget);
     addToTabWidget(pppWidget);
 }
 

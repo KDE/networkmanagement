@@ -40,9 +40,11 @@ void GsmDbus::fromMap(const QVariantMap & map)
   if (map.contains("band")) {
     setting->setBand(map.value("band").value<int>());
   }
+  // SECRET
   if (map.contains("pin")) {
     setting->setPin(map.value("pin").value<QString>());
   }
+  // SECRET
   if (map.contains("puk")) {
     setting->setPuk(map.value("puk").value<QString>());
   }
@@ -52,14 +54,16 @@ QVariantMap GsmDbus::toMap()
 {
   QVariantMap map;
   GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
-  map.insert("number", setting->number());
-  map.insert("username", setting->username());
-  map.insert("apn", setting->apn());
-  map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_ID), setting->networkid());
+  if (!setting->number().isEmpty())
+      map.insert("number", setting->number());
+  if (!setting->username().isEmpty())
+      map.insert("username", setting->username());
+  if (!setting->apn().isEmpty())
+      map.insert("apn", setting->apn());
+  if (!setting->networkid().isEmpty())
+      map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_ID), setting->networkid());
   map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_TYPE), setting->networktype());
   map.insert("band", setting->band());
-  map.insert("pin", setting->pin());
-  map.insert("puk", setting->puk());
   return map;
 }
 
@@ -67,7 +71,12 @@ QVariantMap GsmDbus::toSecretsMap()
 {
   QVariantMap map;
   GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
-  map.insert("password", setting->password());
+  if (!setting->password().isEmpty())
+      map.insert("password", setting->password());
+  if (!setting->pin().isEmpty())
+      map.insert("pin", setting->pin());
+  if (!setting->puk().isEmpty())
+      map.insert("puk", setting->puk());
   return map;
 }
 

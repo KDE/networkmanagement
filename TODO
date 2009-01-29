@@ -17,7 +17,7 @@ KEY (by Lubos)
   . Signal updated connections on the bus when ours are edited
   . Implement RemoveConnection
   / wireless security
-    / WEP
+    . WEP
     / WPA-PSK (needs extending with specific crypto alg options, and anything WPA2 requires)
     * LEAP
     / WPA-EAP
@@ -31,7 +31,6 @@ KEY (by Lubos)
       This should accept the same args as InterfaceGroup currently sends to kcmshell via dbus on the comand line,
       show the appropriate connectionpreferences subclass and write the result out like connectioneditor does.
   . write LastUsed to knetworkmanagerrc on successful connection activation
-    * Don't also write a Unix timestamp to the individual connection's file - read this from the main config file
     * Watch the active connections in the connection editor and update its UI contents
   * Store SeenBSSIDs in wireless connections
   * Shutdown the service on timeout when the applet is removed, not immediately, to allow for plasma reconfigures.

@@ -28,8 +28,14 @@ void GsmPersistence::load()
   setting->setNetworkid(m_config->readEntry("networkid", ""));
   setting->setNetworktype(m_config->readEntry("networktype", 0));
   setting->setBand(m_config->readEntry("band", 0));
-  setting->setPin(m_config->readEntry("pin", ""));
-  setting->setPuk(m_config->readEntry("puk", ""));
+  // SECRET
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setPin(m_config->readEntry("pin", ""));
+  }
+  // SECRET
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setPuk(m_config->readEntry("puk", ""));
+  }
 }
 
 void GsmPersistence::save()
@@ -45,8 +51,14 @@ void GsmPersistence::save()
   m_config->writeEntry("networkid", setting->networkid());
   m_config->writeEntry("networktype", setting->networktype());
   m_config->writeEntry("band", setting->band());
-  m_config->writeEntry("pin", setting->pin());
-  m_config->writeEntry("puk", setting->puk());
+  // SECRET
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    m_config->writeEntry("pin", setting->pin());
+  }
+  // SECRET
+  if (m_storageMode != ConnectionPersistence::Secure) {
+    m_config->writeEntry("puk", setting->puk());
+  }
 }
 
 QMap<QString,QString> GsmPersistence::secrets() const
@@ -54,6 +66,8 @@ QMap<QString,QString> GsmPersistence::secrets() const
   GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
   QMap<QString,QString> map;
   map.insert(QLatin1String("password"), setting->password());
+  map.insert(QLatin1String("pin"), setting->pin());
+  map.insert(QLatin1String("puk"), setting->puk());
   return map;
 }
 
@@ -62,6 +76,8 @@ void GsmPersistence::restoreSecrets(QMap<QString,QString> secrets) const
   if (m_storageMode == ConnectionPersistence::Secure) {
   GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
     setting->setPassword(secrets.value("password"));
+    setting->setPin(secrets.value("pin"));
+    setting->setPuk(secrets.value("puk"));
     setting->setSecretsAvailable(true);
   }
 }

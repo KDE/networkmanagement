@@ -21,18 +21,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pppwidget.h"
 
 #include "ui_ppp.h"
+#include "connection.h"
+#include "settings/ppp.h"
 
 class PppWidget::Private
 {
 public:
     Ui_Ppp ui;
+    Knm::PppSetting * setting;
 };
 
-PppWidget::PppWidget(const QString& connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent), d(new PppWidget::Private)
+PppWidget::PppWidget(Knm::Connection * connection, QWidget * parent)
+: SettingWidget(connection, parent), d(new PppWidget::Private)
 {
     d->ui.setupUi(this);
-    init();
+    d->setting = static_cast<Knm::PppSetting *>(connection->setting(Knm::Setting::Ppp));
 }
 
 PppWidget::~PppWidget()
@@ -40,9 +43,14 @@ PppWidget::~PppWidget()
     delete d;
 }
 
-QString PppWidget::settingName() const
+void PppWidget::readConfig()
 {
-    return QLatin1String("ppp");
+
+}
+
+void PppWidget::writeConfig()
+{
+
 }
 
 // vim: sw=4 sts=4 et tw=100

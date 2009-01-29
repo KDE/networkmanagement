@@ -20,21 +20,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "gsmwidget.h"
 
-#include <nm-setting-gsm.h>
-
 #include "ui_gsm.h"
+#include "connection.h"
+#include "settings/gsm.h"
 
 class GsmWidget::Private
 {
 public:
     Ui_Gsm ui;
+    Knm::GsmSetting * setting;
 };
 
-GsmWidget::GsmWidget(const QString& connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent), d(new GsmWidget::Private)
+GsmWidget::GsmWidget(Knm::Connection * connection, QWidget * parent)
+: SettingWidget(connection, parent), d(new GsmWidget::Private)
 {
     d->ui.setupUi(this);
-    init();
+    d->setting = static_cast<Knm::GsmSetting *>(connection->setting(Knm::Setting::Gsm));
 }
 
 GsmWidget::~GsmWidget()
@@ -42,9 +43,19 @@ GsmWidget::~GsmWidget()
     delete d;
 }
 
-QString GsmWidget::settingName() const
+void GsmWidget::readConfig()
 {
-    return QLatin1String(NM_SETTING_GSM_SETTING_NAME);
+
+}
+
+void GsmWidget::writeConfig()
+{
+
+}
+
+void GsmWidget::readSecrets()
+{
+
 }
 
 // vim: sw=4 sts=4 et tw=100

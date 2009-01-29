@@ -7,8 +7,8 @@ include_directories(
 
 set(knmui_SRCS
    #cdmawidget.cpp
-   #gsmwidget.cpp
-   #pppwidget.cpp
+   gsmwidget.cpp
+   pppwidget.cpp
    #pppoewidget.cpp
    security/802_1x_security_widget.cpp
    security/securitywidget.cpp
@@ -35,7 +35,7 @@ set(knmui_SRCS
    security/tlswidget.cpp
    #vpnuiplugin.cpp
    connectionprefs.cpp
-   #cellularpreferences.cpp
+   cellularpreferences.cpp
    #pppoepreferences.cpp
    #vpnpreferences.cpp
    wiredpreferences.cpp

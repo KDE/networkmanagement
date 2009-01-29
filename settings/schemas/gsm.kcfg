@@ -34,11 +34,11 @@
       <label>Band</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="pin" type="String">
+    <entry name="pin" type="String" secret="true">
       <label>PIN</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="puk" type="String">
+    <entry name="puk" type="String" secret="true">
       <label>PUK</label>
       <whatsthis></whatsthis>
     </entry>

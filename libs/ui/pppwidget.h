@@ -25,12 +25,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
+
 class KNM_EXPORT PppWidget : public SettingWidget
 {
 public:
-    PppWidget(const QString& connectionId, QWidget * parent = 0 );
+    PppWidget(Knm::Connection *, QWidget * parent = 0 );
     virtual ~PppWidget();
-    QString settingName() const;
+    void readConfig();
+    void writeConfig();
 private:
     class Private;
     Private * d;
