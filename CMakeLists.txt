@@ -3,6 +3,13 @@ project(plasma-networkmanager)
 find_package(KDE4 REQUIRED)
 include (KDE4Defaults)
 include(MacroOptionalAddSubdirectory)
+include(TestBigEndian)
+
+TEST_BIG_ENDIAN(BIGENDIAN)
+if (BIGENDIAN)
+#can't just place WORDS_BIGENDIAN in TEST_BIGENDIAN as our code uses #ifndef
+   set(WORDS_BIGENDIAN 1)
+endif (BIGENDIAN)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories (${KDE4_INCLUDES})
