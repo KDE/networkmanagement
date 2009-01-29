@@ -30,10 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KStandardDirs>
 
 #include "types.h"
-#include "configxml.h"
 #include "networksettings.h"
 #include "knmserviceprefs.h"
-#include "secretstoragehelper.h"
 #include "knetworkmanagerserviceadaptor.h"
 
 #include "connectionpersistence.h"
@@ -88,7 +86,7 @@ void KConfigToService::stop()
 {
    QDBusInterface kded("org.kde.kded", "/kded", "org.kde.kded");
    kded.call( "unloadModule", "knetworkmanager" );
-    SecretStorageHelper::setWalletWid( 0 );
+   Knm::ConnectionPersistence::setWalletWid( 0 );
 }
 
  /*
