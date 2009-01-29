@@ -21,18 +21,15 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "pppoepreferences.h"
 
 #include <QVBoxLayout>
-#include <QFile>
+#include <KGlobal>
+#include <KLocale>
 
-#include <KPluginFactory>
-#include <KTabWidget>
-
-#include "configxml.h"
-#include "secretstoragehelper.h"
 #include "pppoewidget.h"
 #include "pppwidget.h"
 #include "wiredwidget.h"
 #include "ipv4widget.h"
 #include "connectionwidget.h"
+#include "connection.h"
 
 //K_PLUGIN_FACTORY( PppoePreferencesFactory, registerPlugin<PppoePreferences>();)
 //K_EXPORT_PLUGIN( PppoePreferencesFactory( "kcm_knetworkmanager_pppoe" ) )
@@ -41,18 +38,16 @@ PppoePreferences::PppoePreferences(QWidget *parent, const QVariantList &args)
 : ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
     QString connectionId = args[0].toString();
-    m_connectionType = "PPPoeE";
+    m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Pppoe);
     QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(connectionId, this);
+    m_contents = new ConnectionWidget(m_connection, i18n("New Wired Connection"), this);
     layout->addWidget(m_contents);
-    m_connectionTypeWidget = new PppoeWidget(connectionId, this);
-    WiredWidget * wiredWidget = new WiredWidget(connectionId, this);
-    PppWidget * pppWidget = new PppWidget(connectionId, this);
-    IpV4Widget * ipv4Widget = new IpV4Widget(connectionId, this);
-    // Must setup initial widget before adding its contents, or all child widgets are added in this parse run
-    addConfig(m_contents->configXml(), m_contents);
+    PppoeWidget * pppoeWidget = new PppoeWidget(m_connection, this);
+    WiredWidget * wiredWidget = new WiredWidget(m_connection, this);
+    PppWidget * pppWidget = new PppWidget(m_connection, this);
+    IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
 
-    addToTabWidget(m_connectionTypeWidget);
+    addToTabWidget(pppoeWidget);
     addToTabWidget(wiredWidget);
     addToTabWidget(ipv4Widget);
     addToTabWidget(pppWidget);
@@ -60,30 +55,6 @@ PppoePreferences::PppoePreferences(QWidget *parent, const QVariantList &args)
 
 PppoePreferences::~PppoePreferences()
 {
-}
-
-void PppoePreferences::load()
-{
-    ConnectionPreferences::load();
-}
-
-void PppoePreferences::save()
-{
-    ConnectionPreferences::save();
-    // this is where tab specific stuff should happen?
-    // that should be in the shared config widget code not connection code, as groups are shared.
-    // editing existing connections
-    // creating new connection
-    // popup to prompt for single missing secret
-    // interaction between tray and kcm
-    //   tray: new connection: launch kcm
-    //   tray: Edit connections?
-    //   Enable connection - does this need to go through UserSettingsService
-    //   Enable wireless
-    // interaction between kcm and service
-    // interaction between tray and service
-    // location of service (in-tray, in plasma)
-    //
 }
 
 // vim: sw=4 sts=4 et tw=100

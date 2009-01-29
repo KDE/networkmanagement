@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -25,12 +25,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+namespace Knm
+{
+    class Connection;
+}
+
 class KNM_EXPORT PppoeWidget : public SettingWidget
 {
+Q_OBJECT
 public:
-    PppoeWidget(const QString& connectionId, QWidget * parent = 0 );
+    PppoeWidget(Knm::Connection *, QWidget * parent = 0 );
     virtual ~PppoeWidget();
     QString settingName() const;
+    void readConfig();
+    void writeConfig();
+    void readSecrets();
+protected Q_SLOTS:
+    void chkShowPassToggled();
 private:
     class Private;
     Private * d;

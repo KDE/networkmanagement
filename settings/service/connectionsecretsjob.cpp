@@ -122,14 +122,11 @@ void ConnectionSecretsJob::doAskUser()
     //} else if ( mSettingName == QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME)) {
         // not supported yet
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPP_SETTING_NAME)) {
-#warning PppWidget not ported!
-        //m_settingWidget = new PppWidget(m_connection, 0);
+        m_settingWidget = new PppWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
-#warning PppWidget not ported!
-        //m_settingWidget = new PppoeWidget(m_connection, 0);
+        m_settingWidget = new PppoeWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_SERIAL_SETTING_NAME)) {
-#warning PppoeWidget not ported!
-        //m_settingWidget = new PppWidget(m_connection, 0);
+        m_settingWidget = new PppWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
         // not supported yet, figure out the type of the vpn plugin, load it and its m_settingWidgetget
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {

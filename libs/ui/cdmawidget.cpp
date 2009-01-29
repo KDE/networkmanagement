@@ -55,7 +55,6 @@ void CdmaWidget::readConfig()
 {
     d->ui.number->setText(d->setting->number());
     d->ui.username->setText(d->setting->username());
-
 }
 
 void CdmaWidget::writeConfig()

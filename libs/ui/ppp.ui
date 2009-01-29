@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>298</width>
-    <height>428</height>
+    <height>431</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -27,12 +27,18 @@
         <property name="text" >
          <string>PAP</string>
         </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="chap" >
         <property name="text" >
          <string>CHAP</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -41,6 +47,9 @@
         <property name="text" >
          <string>MSCHAPv2</string>
         </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
@@ -48,12 +57,18 @@
         <property name="text" >
          <string>MSCHAP</string>
         </property>
+        <property name="checked" >
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QCheckBox" name="eap" >
         <property name="text" >
          <string>EAP</string>
+        </property>
+        <property name="checked" >
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -67,7 +82,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3" >
       <item>
-       <widget class="QGroupBox" name="kcfg_requiremppe" >
+       <widget class="QGroupBox" name="requiremppe" >
         <property name="title" >
          <string>Point-to-Point Encryption (MPPE)</string>
         </property>
@@ -79,14 +94,14 @@
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_2" >
          <item>
-          <widget class="QCheckBox" name="kcfg_requiremppe128" >
+          <widget class="QCheckBox" name="requiremppe128" >
            <property name="text" >
             <string>Require 128-bit encryption</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="kcfg_mppestateful" >
+          <widget class="QCheckBox" name="mppestateful" >
            <property name="text" >
             <string>Stateful MPPE</string>
            </property>
@@ -110,7 +125,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="checkBox_10" >
+       <widget class="QCheckBox" name="vjcomp" >
         <property name="text" >
          <string>Use TCP Header compression</string>
         </property>
@@ -120,7 +135,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="checkBox_11" >
+    <widget class="QCheckBox" name="pppecho" >
      <property name="text" >
       <string>Send PPP Echo packets</string>
      </property>

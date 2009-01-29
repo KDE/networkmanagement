@@ -32,8 +32,6 @@ Q_OBJECT
 public:
     PppoePreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~PppoePreferences();
-    virtual void save();
-    virtual void load();
 };
 
 #endif
