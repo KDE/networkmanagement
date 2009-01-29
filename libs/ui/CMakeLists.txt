@@ -6,7 +6,7 @@ include_directories(
 ## next target: ui library
 
 set(knmui_SRCS
-   #cdmawidget.cpp
+   cdmawidget.cpp
    gsmwidget.cpp
    pppwidget.cpp
    #pppoewidget.cpp
@@ -36,6 +36,7 @@ set(knmui_SRCS
    #vpnuiplugin.cpp
    connectionprefs.cpp
    gsmconnectioneditor.cpp
+   cdmaconnectioneditor.cpp
    #pppoepreferences.cpp
    #vpnpreferences.cpp
    wiredpreferences.cpp

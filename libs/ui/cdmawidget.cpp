@@ -20,21 +20,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "cdmawidget.h"
 
-#include <nm-setting-cdma.h>
-
+#include "connection.h"
+#include "settings/cdma.h"
 #include "ui_cdma.h"
 
 class CdmaWidget::Private
 {
 public:
     Ui_Cdma ui;
+    Knm::CdmaSetting * setting;
 };
 
-CdmaWidget::CdmaWidget(const QString& connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent), d(new CdmaWidget::Private)
+CdmaWidget::CdmaWidget(Knm::Connection * connection, QWidget * parent)
+: SettingWidget(connection, parent), d(new CdmaWidget::Private)
 {
     d->ui.setupUi(this);
-    init();
+    d->setting = static_cast<Knm::CdmaSetting *>(connection->setting(Knm::Setting::Cdma));
 }
 
 CdmaWidget::~CdmaWidget()
@@ -42,9 +43,20 @@ CdmaWidget::~CdmaWidget()
     delete d;
 }
 
-QString CdmaWidget::settingName() const
+void CdmaWidget::readConfig()
 {
-    return QLatin1String(NM_SETTING_CDMA_SETTING_NAME);
+
 }
+
+void CdmaWidget::writeConfig()
+{
+
+}
+
+void CdmaWidget::readSecrets()
+{
+
+}
+
 
 // vim: sw=4 sts=4 et tw=100

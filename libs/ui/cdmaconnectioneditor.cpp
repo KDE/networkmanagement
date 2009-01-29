@@ -29,6 +29,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "cdmawidget.h"
 #include "pppwidget.h"
 #include "connectionwidget.h"
+#include "settings/cdma.h"
 
 #include "connection.h"
 
