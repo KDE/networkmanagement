@@ -22,11 +22,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <nm-setting-vpn.h>
 
-VpncSettingWidget::VpncSettingWidget(const QString & connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent)
+#include "connection.h"
+
+VpncSettingWidget::VpncSettingWidget(Knm::Connection * connection, QWidget * parent)
+: SettingWidget(connection, parent)
 {
     m_ui.setupUi(this);
-    init();
 }
 
 VpncSettingWidget::~VpncSettingWidget()
@@ -44,9 +45,8 @@ void VpncSettingWidget::writeConfig()
 
 }
 
-QString VpncSettingWidget::settingName() const
+void VpncSettingWidget::readSecrets()
 {
-    return QLatin1String(NM_SETTING_VPN_SETTING_NAME);
-}
 
+}
 // vim: sw=4 sts=4 et tw=100

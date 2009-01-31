@@ -1,5 +1,6 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/ui)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage)
 
 set(openvpn_SRCS
    openvpn.cpp

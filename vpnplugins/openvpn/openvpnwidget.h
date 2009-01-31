@@ -25,15 +25,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_openvpnprop.h"
 
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
+
 class OpenVpnSettingWidget : public SettingWidget
 {
 Q_OBJECT
 public:
-    OpenVpnSettingWidget(const QString & connectionId, QWidget * parent = 0);
+    OpenVpnSettingWidget(Knm::Connection *,  QWidget * parent = 0);
     ~OpenVpnSettingWidget();
     void readConfig();
     void writeConfig();
-    QString settingName() const;
+    void readSecrets();
 private:
     Ui_OpenVPNProp m_ui;
 };

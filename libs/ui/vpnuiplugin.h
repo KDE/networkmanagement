@@ -27,6 +27,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
+
 class SettingWidget;
 
 /**
@@ -39,7 +44,7 @@ public:
     VpnUiPlugin(QObject * parent = 0);
     virtual ~VpnUiPlugin();
 
-    virtual SettingWidget * widget(const QString &connectionId, QWidget * parent = 0) = 0;
+    virtual SettingWidget * widget(Knm::Connection * connection, QWidget * parent = 0) = 0;
 private:
     class Private;
     Private * d;

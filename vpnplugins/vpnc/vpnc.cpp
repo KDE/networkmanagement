@@ -20,9 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "vpnc.h"
 
-#include "vpncwidget.h"
-
 #include <KPluginFactory>
+
+#include "vpncwidget.h"
+#include "connection.h"
 
 K_PLUGIN_FACTORY( VpncUiPluginFactory, registerPlugin<VpncUiPlugin>(); )
 K_EXPORT_PLUGIN( VpncUiPluginFactory( "knetworkmanager4_vpncui" ) )
@@ -37,9 +38,9 @@ VpncUiPlugin::~VpncUiPlugin()
 
 }
 
-SettingWidget * VpncUiPlugin::widget(const QString &connectionId, QWidget * parent)
+SettingWidget * VpncUiPlugin::widget(Knm::Connection * connection, QWidget * parent)
 {
-    return new VpncSettingWidget(connectionId, parent);
+    return new VpncSettingWidget(connection, parent);
 }
 
 // vim: sw=4 sts=4 et tw=100

@@ -20,17 +20,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "openvpnwidget.h"
 #include "nm-openvpn-service.h"
-#include "storage/configxml.h"
-#include "storage/secretstoragehelper.h"
 
 #include <KDebug>
 #include <nm-setting-vpn.h>
 
-OpenVpnSettingWidget::OpenVpnSettingWidget(const QString & connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent)
+OpenVpnSettingWidget::OpenVpnSettingWidget(Knm::Connection * connection, QWidget * parent)
+: SettingWidget(connection, parent)
 {
     m_ui.setupUi(this);
-    init();
 }
 
 OpenVpnSettingWidget::~OpenVpnSettingWidget()
@@ -40,6 +37,8 @@ OpenVpnSettingWidget::~OpenVpnSettingWidget()
 
 void OpenVpnSettingWidget::readConfig()
 {
+#if 0
+    // PORTME
     kDebug();
     KConfigGroup group(configXml()->config(), settingName());
 
@@ -86,10 +85,13 @@ void OpenVpnSettingWidget::readConfig()
     m_ui.chkDefaultPort->setChecked(port.isEmpty());
     m_ui.port->setText( port );
     m_ui.gateway->setText( dataMap[NM_OPENVPN_KEY_REMOTE] );
+#endif
 }
 
 void OpenVpnSettingWidget::writeConfig()
 {
+// PORT ME
+#if 0
     kDebug();
     KConfigGroup group(configXml()->config(), settingName());
 
@@ -162,11 +164,10 @@ void OpenVpnSettingWidget::writeConfig()
     //group.writeEntry( NM_OPENVPN_KEY_TA_DIR,
 
     group.writeEntry( NM_SETTING_VPN_DATA, data );
+#endif
 }
 
-QString OpenVpnSettingWidget::settingName() const
+void OpenVpnSettingWidget::readSecrets()
 {
-    return QLatin1String( NM_SETTING_VPN_SETTING_NAME );
 }
-
 // vim: sw=4 sts=4 et tw=100
