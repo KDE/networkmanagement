@@ -26,6 +26,7 @@ void VpnPersistence::load()
       // the map is flattened to a list of key,value,key,value
       setting->setVpnSecrets(fromStringList(m_config->readEntry("VpnSecrets", QStringList())));
   }
+  setting->setPluginName(m_config->readEntry("PluginName", ""));
 }
 
 void VpnPersistence::save()
@@ -38,6 +39,7 @@ void VpnPersistence::save()
   if (m_storageMode != ConnectionPersistence::Secure) {
     m_config->writeEntry("VpnSecrets", toStringList(setting->vpnSecrets()));
   }
+  m_config->writeEntry("PluginName", setting->pluginName());
 }
 
 QStringMap VpnPersistence::fromStringList(const QStringList & list)

@@ -86,6 +86,22 @@ class KNM_EXPORT VpnSetting : public Setting
       return mVpnSecrets;
     }
 
+    /**
+      Set VPN Plugin Name
+    */
+    void setPluginName( const QString & v )
+    {
+        mPluginName = v;
+    }
+
+    /**
+      Get VPN Plugin Name
+    */
+    QString pluginName() const
+    {
+      return mPluginName;
+    }
+
   protected:
 
     // vpn
@@ -93,6 +109,7 @@ class KNM_EXPORT VpnSetting : public Setting
     QStringMap mData;
     QString mUserName;
     QStringMap mVpnSecrets;
+    QString mPluginName;
 
   private:
 };

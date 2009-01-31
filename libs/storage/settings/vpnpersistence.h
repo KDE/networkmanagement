@@ -8,6 +8,7 @@
 #include "settingpersistence.h"
 #include "knm_export.h"
 #include "../types.h"
+
 namespace Knm {
 
 class VpnSetting;
@@ -21,10 +22,8 @@ class KNM_EXPORT VpnPersistence : public SettingPersistence
     void save();
     QMap<QString,QString> secrets() const;
     void restoreSecrets(QMap<QString,QString>) const;
-  private:
-    //operator overloading maybe?
-    static QStringMap fromStringList(const QStringList&);
-    static QStringList toStringList(const QStringMap&);
+    static QStringList toStringList(const QStringMap &);
+    static QStringMap fromStringList(const QStringList &);
 };
 }
 

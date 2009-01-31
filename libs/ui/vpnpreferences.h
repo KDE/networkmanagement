@@ -34,11 +34,10 @@ Q_OBJECT
 public:
     VpnPreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~VpnPreferences();
-    virtual void save();
     virtual void load();
 private:
     VpnUiPlugin * m_uiPlugin;
-    QString m_vpnType;
+    QString m_vpnPluginName;
 };
 
 #endif

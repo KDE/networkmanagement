@@ -21,5 +21,8 @@
       <label>Vpnsecrets</label>
       <whatsthis></whatsthis>
     </entry>
+    <entry name="PluginName" type="String" nodbus="true">
+        <label>VPN Plugin Name</label>
+    </entry>
   </group>
 </kcfg>

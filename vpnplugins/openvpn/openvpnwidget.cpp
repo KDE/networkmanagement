@@ -35,7 +35,7 @@ public:
 
 
 OpenVpnSettingWidget::OpenVpnSettingWidget(Knm::Connection * connection, QWidget * parent)
-: SettingWidget(connection, parent)
+: SettingWidget(connection, parent), d(new Private)
 {
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::VpnSetting *>(connection->setting(Knm::Setting::Vpn));
