@@ -140,6 +140,7 @@ private Q_SLOTS:
     void interfaceConnectionStateChanged();
     void manageConnections();
 private:
+    bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
     void updateToolTip();
     void updateIcons();
     void paintDefaultInterface(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
