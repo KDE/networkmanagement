@@ -8,6 +8,7 @@
 #include <kcoreconfigskeleton.h>
 #include "setting.h"
 #include "knm_export.h"
+#include "../types.h"
 namespace Knm {
 
 class KNM_EXPORT VpnSetting : public Setting
@@ -24,23 +25,23 @@ class KNM_EXPORT VpnSetting : public Setting
     /**
       Set Service Type
     */
-    void setServicetype( const QString & v )
+    void setServiceType( const QString & v )
     {
-        mServicetype = v;
+        mServiceType = v;
     }
 
     /**
       Get Service Type
     */
-    QString servicetype() const
+    QString serviceType() const
     {
-      return mServicetype;
+      return mServiceType;
     }
 
     /**
       Set Data bits
     */
-    void setData( const QString & v )
+    void setData( const QStringMap & v )
     {
         mData = v;
     }
@@ -48,7 +49,7 @@ class KNM_EXPORT VpnSetting : public Setting
     /**
       Get Data bits
     */
-    QString data() const
+    QStringMap data() const
     {
       return mData;
     }
@@ -56,42 +57,42 @@ class KNM_EXPORT VpnSetting : public Setting
     /**
       Set Username
     */
-    void setUsername( const QString & v )
+    void setUserName( const QString & v )
     {
-        mUsername = v;
+        mUserName = v;
     }
 
     /**
       Get Username
     */
-    QString username() const
+    QString userName() const
     {
-      return mUsername;
+      return mUserName;
     }
 
     /**
-      Set Routes
+      Set Vpnsecrets
     */
-    void setRoutes( const QStringList & v )
+    void setVpnSecrets( const QStringMap & v )
     {
-        mRoutes = v;
+        mVpnSecrets = v;
     }
 
     /**
-      Get Routes
+      Get Vpnsecrets
     */
-    QStringList routes() const
+    QStringMap vpnSecrets() const
     {
-      return mRoutes;
+      return mVpnSecrets;
     }
 
   protected:
 
     // vpn
-    QString mServicetype;
-    QString mData;
-    QString mUsername;
-    QStringList mRoutes;
+    QString mServiceType;
+    QStringMap mData;
+    QString mUserName;
+    QStringMap mVpnSecrets;
 
   private:
 };

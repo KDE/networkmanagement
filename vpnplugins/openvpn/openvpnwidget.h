@@ -40,7 +40,8 @@ public:
     void writeConfig();
     void readSecrets();
 private:
-    Ui_OpenVPNProp m_ui;
+    class Private;
+    Private * d;
 };
 
 #endif // OPENVPNWIDGET_H

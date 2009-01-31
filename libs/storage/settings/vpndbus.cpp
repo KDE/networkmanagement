@@ -19,16 +19,17 @@ void VpnDbus::fromMap(const QVariantMap & map)
 {
   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
   if (map.contains(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE))) {
-    setting->setServicetype(map.value(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE)).value<QString>());
+    setting->setServiceType(map.value(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE)).value<QString>());
   }
   if (map.contains(QLatin1String(NM_SETTING_VPN_DATA))) {
-    setting->setData(map.value(QLatin1String(NM_SETTING_VPN_DATA)).value<QString>());
+    setting->setData(map.value(QLatin1String(NM_SETTING_VPN_DATA)).value<QStringMap>());
   }
   if (map.contains(QLatin1String(NM_SETTING_VPN_USER_NAME))) {
-    setting->setUsername(map.value(QLatin1String(NM_SETTING_VPN_USER_NAME)).value<QString>());
+    setting->setUserName(map.value(QLatin1String(NM_SETTING_VPN_USER_NAME)).value<QString>());
   }
-  if (map.contains("routes")) {
-    setting->setRoutes(map.value("routes").value<QStringList>());
+  // SECRET
+  if (map.contains(QLatin1String(NM_SETTING_VPN_SECRETS))) {
+    setting->setVpnSecrets(map.value(QLatin1String(NM_SETTING_VPN_SECRETS)).value<QStringMap>());
   }
 }
 
@@ -36,16 +37,17 @@ QVariantMap VpnDbus::toMap()
 {
   QVariantMap map;
   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
-  map.insert(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE), setting->servicetype());
-  map.insert(QLatin1String(NM_SETTING_VPN_DATA), setting->data());
-  map.insert(QLatin1String(NM_SETTING_VPN_USER_NAME), setting->username());
-  map.insert("routes", setting->routes());
+  map.insert(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE), setting->serviceType());
+  map.insert(QLatin1String(NM_SETTING_VPN_DATA), QVariant::fromValue(setting->data()));
+  map.insert(QLatin1String(NM_SETTING_VPN_USER_NAME), setting->userName());
   return map;
 }
 
 QVariantMap VpnDbus::toSecretsMap()
 {
   QVariantMap map;
+  VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
+  map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(setting->vpnSecrets()));
   return map;
 }
 

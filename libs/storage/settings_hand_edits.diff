@@ -1,6 +1,6 @@
 diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
---- origsettings//802-11-wireless.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wireless.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wireless.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-11-wireless.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -5,7 +5,8 @@
  
  using namespace Knm;
@@ -12,8 +12,8 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
  }
  
 diff -ur origsettings//802-11-wirelessdbus.cpp settings/802-11-wirelessdbus.cpp
---- origsettings//802-11-wirelessdbus.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wirelessdbus.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wirelessdbus.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-11-wirelessdbus.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -66,22 +66,34 @@
        map.insert("mode", "adhoc");
        break;
@@ -58,8 +58,8 @@ diff -ur origsettings//802-11-wirelessdbus.cpp settings/802-11-wirelessdbus.cpp
  }
  
 diff -ur origsettings//802-11-wirelessdbus.h settings/802-11-wirelessdbus.h
---- origsettings//802-11-wirelessdbus.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wirelessdbus.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wirelessdbus.h	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-11-wirelessdbus.h	2009-01-31 16:01:47.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_WIRELESSDBUS_H
  #define KNM_WIRELESSDBUS_H
@@ -70,8 +70,8 @@ diff -ur origsettings//802-11-wirelessdbus.h settings/802-11-wirelessdbus.h
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 diff -ur origsettings//802-11-wirelesspersistence.cpp settings/802-11-wirelesspersistence.cpp
---- origsettings//802-11-wirelesspersistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wirelesspersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wirelesspersistence.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-11-wirelesspersistence.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -20,7 +20,7 @@
    WirelessSetting * setting = static_cast<WirelessSetting *>(m_setting);
    setting->setSsid(m_config->readEntry("ssid", QByteArray()));
@@ -99,8 +99,8 @@ diff -ur origsettings//802-11-wirelesspersistence.cpp settings/802-11-wirelesspe
  }
  
 diff -ur origsettings//802-11-wireless-security.cpp settings/802-11-wireless-security.cpp
---- origsettings//802-11-wireless-security.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wireless-security.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wireless-security.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-11-wireless-security.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -6,6 +6,7 @@
  using namespace Knm;
  
@@ -110,8 +110,8 @@ diff -ur origsettings//802-11-wireless-security.cpp settings/802-11-wireless-sec
  }
  
 diff -ur origsettings//802-11-wireless-securitydbus.cpp settings/802-11-wireless-securitydbus.cpp
---- origsettings//802-11-wireless-securitydbus.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wireless-securitydbus.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wireless-securitydbus.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-11-wireless-securitydbus.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -4,10 +4,13 @@
  #include "802-11-wireless-securitydbus.h"
  
@@ -241,8 +241,8 @@ diff -ur origsettings//802-11-wireless-securitydbus.cpp settings/802-11-wireless
 Only in settings: 802-11-wireless-securitydbus.cpp.rej
 Only in settings: 802-11-wireless-securitydbus.cpp.rej~
 diff -ur origsettings//802-11-wireless-securitydbus.h settings/802-11-wireless-securitydbus.h
---- origsettings//802-11-wireless-securitydbus.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wireless-securitydbus.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wireless-securitydbus.h	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-11-wireless-securitydbus.h	2009-01-31 16:01:47.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_WIRELESSSECURITYDBUS_H
  #define KNM_WIRELESSSECURITYDBUS_H
@@ -270,8 +270,8 @@ diff -ur origsettings//802-11-wireless-securitydbus.h settings/802-11-wireless-s
  }
  
 diff -ur origsettings//802-11-wireless-securitypersistence.cpp settings/802-11-wireless-securitypersistence.cpp
---- origsettings//802-11-wireless-securitypersistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wireless-securitypersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wireless-securitypersistence.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-11-wireless-securitypersistence.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -19,7 +19,9 @@
  {
    WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
@@ -335,8 +335,8 @@ diff -ur origsettings//802-11-wireless-securitypersistence.cpp settings/802-11-w
  }
  
 diff -ur origsettings//802-1x.cpp settings/802-1x.cpp
---- origsettings//802-1x.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-1x.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-1x.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-1x.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -5,7 +5,8 @@
  
  using namespace Knm;
@@ -348,8 +348,8 @@ diff -ur origsettings//802-1x.cpp settings/802-1x.cpp
  }
  
 diff -ur origsettings//802-1xdbus.cpp settings/802-1xdbus.cpp
---- origsettings//802-1xdbus.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-1xdbus.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-1xdbus.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-1xdbus.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -18,6 +18,7 @@
  void Security8021xDbus::fromMap(const QVariantMap & map)
  {
@@ -490,8 +490,8 @@ diff -ur origsettings//802-1xdbus.cpp settings/802-1xdbus.cpp
  
 Only in settings: 802-1xdbus.cpp.rej
 diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
---- origsettings//802-1xdbus.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-1xdbus.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-1xdbus.h	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-1xdbus.h	2009-01-31 16:01:47.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_SECURITY8021XDBUS_H
  #define KNM_SECURITY8021XDBUS_H
@@ -502,8 +502,8 @@ diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 diff -ur origsettings//802-1x.h settings/802-1x.h
---- origsettings//802-1x.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-1x.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-1x.h	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-1x.h	2009-01-31 16:01:47.000000000 +0100
 @@ -3,6 +3,7 @@
  #ifndef KNM_SECURITY8021XSETTING_H
  #define KNM_SECURITY8021XSETTING_H
@@ -584,8 +584,8 @@ diff -ur origsettings//802-1x.h settings/802-1x.h
  
  #endif
 diff -ur origsettings//802-1xpersistence.cpp settings/802-1xpersistence.cpp
---- origsettings//802-1xpersistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-1xpersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-1xpersistence.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-1xpersistence.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -17,7 +17,9 @@
  
  void Security8021xPersistence::load()
@@ -645,8 +645,8 @@ diff -ur origsettings//802-1xpersistence.cpp settings/802-1xpersistence.cpp
  
  QMap<QString,QString> Security8021xPersistence::secrets() const
 diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
---- origsettings//802-3-ethernet.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-3-ethernet.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-3-ethernet.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-3-ethernet.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -5,7 +5,12 @@
  
  using namespace Knm;
@@ -662,8 +662,8 @@ diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
  }
  
 diff -ur origsettings//802-3-ethernetdbus.cpp settings/802-3-ethernetdbus.cpp
---- origsettings//802-3-ethernetdbus.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-3-ethernetdbus.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-3-ethernetdbus.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-3-ethernetdbus.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -42,6 +42,8 @@
  {
    QVariantMap map;
@@ -690,8 +690,8 @@ diff -ur origsettings//802-3-ethernetdbus.cpp settings/802-3-ethernetdbus.cpp
  }
  
 diff -ur origsettings//802-3-ethernetdbus.h settings/802-3-ethernetdbus.h
---- origsettings//802-3-ethernetdbus.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-3-ethernetdbus.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-3-ethernetdbus.h	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-3-ethernetdbus.h	2009-01-31 16:01:47.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_WIREDDBUS_H
  #define KNM_WIREDDBUS_H
@@ -702,8 +702,8 @@ diff -ur origsettings//802-3-ethernetdbus.h settings/802-3-ethernetdbus.h
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 diff -ur origsettings//802-3-ethernetpersistence.cpp settings/802-3-ethernetpersistence.cpp
---- origsettings//802-3-ethernetpersistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-3-ethernetpersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-3-ethernetpersistence.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/802-3-ethernetpersistence.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -19,7 +19,7 @@
  {
    WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
@@ -723,8 +723,8 @@ diff -ur origsettings//802-3-ethernetpersistence.cpp settings/802-3-ethernetpers
        setting->setDuplex(WiredSetting::EnumDuplex::half);
      else     if (contents == "full")
 diff -ur origsettings//gsmdbus.cpp settings/gsmdbus.cpp
---- origsettings//gsmdbus.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/gsmdbus.cpp	2009-01-28 21:59:31.000000000 +0100
+--- origsettings//gsmdbus.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/gsmdbus.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -54,10 +54,14 @@
  {
    QVariantMap map;
@@ -762,8 +762,8 @@ diff -ur origsettings//gsmdbus.cpp settings/gsmdbus.cpp
  
 Only in settings: gsmdbus.cpp~
 diff -ur origsettings//gsmpersistence.cpp settings/gsmpersistence.cpp
---- origsettings//gsmpersistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/gsmpersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//gsmpersistence.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/gsmpersistence.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -18,7 +18,7 @@
  void GsmPersistence::load()
  {
@@ -774,8 +774,8 @@ diff -ur origsettings//gsmpersistence.cpp settings/gsmpersistence.cpp
    // SECRET
    if (m_storageMode != ConnectionPersistence::Secure) {
 diff -ur origsettings//ipv4.cpp settings/ipv4.cpp
---- origsettings//ipv4.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/ipv4.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//ipv4.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/ipv4.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -5,7 +5,9 @@
  
  using namespace Knm;
@@ -788,8 +788,8 @@ diff -ur origsettings//ipv4.cpp settings/ipv4.cpp
  }
  
 diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
---- origsettings//ipv4dbus.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/ipv4dbus.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//ipv4dbus.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/ipv4dbus.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -3,6 +3,8 @@
  
  #include "ipv4dbus.h"
@@ -879,8 +879,8 @@ diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
  }
  
 diff -ur origsettings//ipv4dbus.h settings/ipv4dbus.h
---- origsettings//ipv4dbus.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/ipv4dbus.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//ipv4dbus.h	2009-01-31 16:14:39.000000000 +0100
++++ settings/ipv4dbus.h	2009-01-31 16:01:47.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_IPV4DBUS_H
  #define KNM_IPV4DBUS_H
@@ -891,8 +891,8 @@ diff -ur origsettings//ipv4dbus.h settings/ipv4dbus.h
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 diff -ur origsettings//ipv4.h settings/ipv4.h
---- origsettings//ipv4.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/ipv4.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//ipv4.h	2009-01-31 16:14:39.000000000 +0100
++++ settings/ipv4.h	2009-01-31 16:01:47.000000000 +0100
 @@ -3,11 +3,17 @@
  #ifndef KNM_IPV4SETTING_H
  #define KNM_IPV4SETTING_H
@@ -977,8 +977,8 @@ diff -ur origsettings//ipv4.h settings/ipv4.h
  };
  
 diff -ur origsettings//ipv4persistence.cpp settings/ipv4persistence.cpp
---- origsettings//ipv4persistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/ipv4persistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//ipv4persistence.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/ipv4persistence.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -19,7 +19,7 @@
  {
    Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
@@ -1082,10 +1082,11 @@ diff -ur origsettings//ipv4persistence.cpp settings/ipv4persistence.cpp
  }
  
 Only in settings: pbkdf2.cpp
+Only in settings: pbkdf2.cpp~
 Only in settings: pbkdf2.h
 diff -ur origsettings//serialpersistence.cpp settings/serialpersistence.cpp
---- origsettings//serialpersistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/serialpersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//serialpersistence.cpp	2009-01-31 16:14:39.000000000 +0100
++++ settings/serialpersistence.cpp	2009-01-31 16:01:47.000000000 +0100
 @@ -20,7 +20,7 @@
    SerialSetting * setting = static_cast<SerialSetting *>(m_setting);
    setting->setBaud(m_config->readEntry("baud", 0));
@@ -1096,5 +1097,65 @@ diff -ur origsettings//serialpersistence.cpp settings/serialpersistence.cpp
    setting->setSenddelay(m_config->readEntry("senddelay", 0));
  }
 Only in settings: .svn
+diff -ur origsettings//vpn.h settings/vpn.h
+--- origsettings//vpn.h	2009-01-31 16:14:40.000000000 +0100
++++ settings/vpn.h	2009-01-31 16:06:56.000000000 +0100
+@@ -8,6 +8,7 @@
+ #include <kcoreconfigskeleton.h>
+ #include "setting.h"
+ #include "knm_export.h"
++#include "../types.h"
+ namespace Knm {
+ 
+ class KNM_EXPORT VpnSetting : public Setting
+@@ -40,7 +41,7 @@
+     /**
+       Set Data bits
+     */
+-    void setData( const QStringList & v )
++    void setData( const QStringMap & v )
+     {
+         mData = v;
+     }
+@@ -48,7 +49,7 @@
+     /**
+       Get Data bits
+     */
+-    QStringList data() const
++    QStringMap data() const
+     {
+       return mData;
+     }
+@@ -72,7 +73,7 @@
+     /**
+       Set Vpnsecrets
+     */
+-    void setVpnSecrets( const QStringList & v )
++    void setVpnSecrets( const QStringMap & v )
+     {
+         mVpnSecrets = v;
+     }
+@@ -80,7 +81,7 @@
+     /**
+       Get Vpnsecrets
+     */
+-    QStringList vpnSecrets() const
++    QStringMap vpnSecrets() const
+     {
+       return mVpnSecrets;
+     }
+@@ -89,9 +90,9 @@
+ 
+     // vpn
+     QString mServiceType;
+-    QStringList mData;
++    QStringMap mData;
+     QString mUserName;
+-    QStringList mVpnSecrets;
++    QStringMap mVpnSecrets;
+ 
+   private:
+ };
+Only in settings: vpn.h~
 Only in settings: wephash.cpp
 Only in settings: wephash.h

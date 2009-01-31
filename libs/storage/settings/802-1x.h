@@ -432,7 +432,7 @@ kDebug() << eap;
   private:
 };
 
-Q_DECLARE_OPERATORS_FOR_FLAGS(Security8021xSetting::EapMethods)
+Q_DECLARE_OPERATORS_FOR_FLAGS(Security8021xSetting::EapMethods);
 
 }
 
