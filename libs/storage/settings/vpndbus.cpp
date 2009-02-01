@@ -29,7 +29,7 @@ void VpnDbus::fromMap(const QVariantMap & map)
   }
   // SECRET
   if (map.contains(QLatin1String(NM_SETTING_VPN_SECRETS))) {
-    setting->setVpnSecrets(map.value(QLatin1String(NM_SETTING_VPN_SECRETS)).value<QStringMap>());
+    setting->setVpnSecrets(map.value(QLatin1String(NM_SETTING_VPN_SECRETS)).value<QVariantMap>());
   }
 }
 
@@ -41,20 +41,13 @@ QVariantMap VpnDbus::toMap()
   map.insert(QLatin1String(NM_SETTING_VPN_DATA), QVariant::fromValue(setting->data()));
   map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(QStringMap()));
   map.insert(QLatin1String(NM_SETTING_VPN_USER_NAME), setting->userName());
-  kDebug() << map;
   return map;
 }
 
 QVariantMap VpnDbus::toSecretsMap()
 {
-  QVariantMap map;
+  //assume that the settings's vpnSecrets are ready to go
   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
-  QStringMap secrets = setting->vpnSecrets();
-  kDebug() << secrets;
-  map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(secrets));
-  QStringMap test = map.value(QLatin1String(NM_SETTING_VPN_SECRETS)).value<QStringMap>();
-  kDebug() << test.count() << test;
-  kDebug() << map.count() << map;
-  return map;
+  return setting->vpnSecrets();
 }
 

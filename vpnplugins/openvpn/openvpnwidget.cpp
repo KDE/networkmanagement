@@ -59,7 +59,7 @@ void OpenVpnSettingWidget::readConfig()
     if ( cType == QLatin1String( NM_OPENVPN_CONTYPE_PASSWORD_TLS ) )
     {
         d->ui.cmbConnectionType->setCurrentIndex( 3 );
-        d->ui.x509PassUsername->setText( dataMap[NM_OPENVPN_KEY_USERNAME] );
+        d->ui.x509PassUsername->setText( d->setting->userName() );
         d->ui.x509PassCaFile->setPath( dataMap[NM_OPENVPN_KEY_CA] );
         d->ui.x509PassCert->setPath( dataMap[NM_OPENVPN_KEY_CERT] );
         d->ui.x509PassKey->setPath( dataMap[NM_OPENVPN_KEY_KEY] );
@@ -90,7 +90,7 @@ void OpenVpnSettingWidget::writeConfig()
     d->setting->setServiceType(QLatin1String("org.freedesktop.NetworkManager.openvpn"));
 
     QStringMap data;
-    QStringMap secretData;
+    QVariantMap secretData;
     data.insert(NM_OPENVPN_KEY_REMOTE, d->ui.gateway->text());
 
     data.insert( NM_OPENVPN_KEY_COMP_LZO, d->ui.chkUseLZO->isChecked() ? "yes" : "no" );
@@ -147,9 +147,9 @@ void OpenVpnSettingWidget::writeConfig()
 
 void OpenVpnSettingWidget::readSecrets()
 {
-    QStringMap secrets = d->setting->vpnSecrets();
-    d->ui.x509PassPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)));
-    d->ui.passPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)));
+    QVariantMap secrets = d->setting->vpnSecrets();
+    d->ui.x509PassPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)).toString());
+    d->ui.passPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)).toString());
 }
 
 // vim: sw=4 sts=4 et tw=100

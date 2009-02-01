@@ -22,8 +22,10 @@ class KNM_EXPORT VpnPersistence : public SettingPersistence
     void save();
     QMap<QString,QString> secrets() const;
     void restoreSecrets(QMap<QString,QString>) const;
-    static QStringList toStringList(const QStringMap &);
-    static QStringMap fromStringList(const QStringList &);
+    static QStringList variantMapToStringList(const QVariantMap &);
+    static QVariantMap variantMapFromStringList(const QStringList &);
+    static QStringList stringMapToStringList(const QStringMap &);
+    static QStringMap stringMapFromStringList(const QStringList &);
 };
 }
 

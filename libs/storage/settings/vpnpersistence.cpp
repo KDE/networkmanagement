@@ -19,12 +19,12 @@ void VpnPersistence::load()
 {
   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
   setting->setServiceType(m_config->readEntry("ServiceType", ""));
-  setting->setData(fromStringList(m_config->readEntry("Data", QStringList())));
+  setting->setData(stringMapFromStringList(m_config->readEntry("Data", QStringList())));
   setting->setUserName(m_config->readEntry("UserName", ""));
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {
       // the map is flattened to a list of key,value,key,value
-      setting->setVpnSecrets(fromStringList(m_config->readEntry("VpnSecrets", QStringList())));
+      setting->setVpnSecrets(variantMapFromStringList(m_config->readEntry("VpnSecrets", QStringList())));
   }
   setting->setPluginName(m_config->readEntry("PluginName", ""));
 }
@@ -33,18 +33,18 @@ void VpnPersistence::save()
 {
   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
   m_config->writeEntry("ServiceType", setting->serviceType());
-  m_config->writeEntry("Data", toStringList(setting->data()));
+  m_config->writeEntry("Data", stringMapToStringList(setting->data()));
   m_config->writeEntry("UserName", setting->userName());
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {
-    m_config->writeEntry("VpnSecrets", toStringList(setting->vpnSecrets()));
+    m_config->writeEntry("VpnSecrets", variantMapToStringList(setting->vpnSecrets()));
   }
   m_config->writeEntry("PluginName", setting->pluginName());
 }
 
-QStringMap VpnPersistence::fromStringList(const QStringList & list)
+QVariantMap VpnPersistence::variantMapFromStringList(const QStringList & list)
 {
-    QStringMap secretsMap;
+    QVariantMap secretsMap;
     if (list.count() % 2 == 0) {
         for ( int i = 0; i < list.count(); i += 2 ) {
             secretsMap.insert( list[i], list[i+1] );
@@ -53,7 +53,29 @@ QStringMap VpnPersistence::fromStringList(const QStringList & list)
     return secretsMap;
 }
 
-QStringList VpnPersistence::toStringList(const QStringMap & map)
+QStringList VpnPersistence::variantMapToStringList(const QVariantMap & map)
+{
+    QStringList rawSecrets;
+    QMapIterator<QString,QVariant> i(map);
+    while (i.hasNext()) {
+        i.next();
+        rawSecrets << i.key() << i.value().toString();
+    }
+    return rawSecrets;
+}
+
+QStringMap VpnPersistence::stringMapFromStringList(const QStringList & list)
+{
+    QStringMap map;
+    if (list.count() % 2 == 0) {
+        for ( int i = 0; i < list.count(); i += 2 ) {
+            map.insert( list[i], list[i+1] );
+        }
+    }
+    return map;
+}
+
+QStringList VpnPersistence::stringMapToStringList(const QStringMap & map)
 {
     QStringList rawSecrets;
     QStringMapIterator i(map);
@@ -68,15 +90,15 @@ QMap<QString,QString> VpnPersistence::secrets() const
 {
   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
   QMap<QString,QString> map;
-  map.insert(QLatin1String("VpnSecrets"), toStringList(setting->vpnSecrets()).join(QLatin1String("%SEP%")));
+  map.insert(QLatin1String("VpnSecrets"), variantMapToStringList(setting->vpnSecrets()).join(QLatin1String("%SEP%")));
   return map;
 }
 
 void VpnPersistence::restoreSecrets(QMap<QString,QString> secrets) const
 {
   if (m_storageMode == ConnectionPersistence::Secure) {
-  VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
-    setting->setVpnSecrets(fromStringList(secrets.value("VpnSecrets").split("%SEP%")));
+    VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
+    setting->setVpnSecrets(variantMapFromStringList(secrets.value("VpnSecrets").split("%SEP%")));
     setting->setSecretsAvailable(true);
   }
 }
