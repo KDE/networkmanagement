@@ -39,7 +39,9 @@ QVariantMap VpnDbus::toMap()
   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
   map.insert(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE), setting->serviceType());
   map.insert(QLatin1String(NM_SETTING_VPN_DATA), QVariant::fromValue(setting->data()));
+  map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(QStringMap()));
   map.insert(QLatin1String(NM_SETTING_VPN_USER_NAME), setting->userName());
+  kDebug() << map;
   return map;
 }
 
@@ -47,7 +49,12 @@ QVariantMap VpnDbus::toSecretsMap()
 {
   QVariantMap map;
   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
-  map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(setting->vpnSecrets()));
+  QStringMap secrets = setting->vpnSecrets();
+  kDebug() << secrets;
+  map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(secrets));
+  QStringMap test = map.value(QLatin1String(NM_SETTING_VPN_SECRETS)).value<QStringMap>();
+  kDebug() << test.count() << test;
+  kDebug() << map.count() << map;
   return map;
 }
 
