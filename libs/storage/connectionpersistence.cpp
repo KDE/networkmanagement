@@ -179,14 +179,16 @@ void ConnectionPersistence::load()
 {
     // load connection settings
     KConfigGroup cg(m_config, "connection");
-    m_connection->setName(cg.readEntry("id"));
-    m_connection->setAutoConnect(cg.readEntry<bool>("autoconnect", false));
-    m_connection->setTimestamp(cg.readEntry<QDateTime>("timestamp", QDateTime()));
+    if (cg.exists()) { // don't bother to try if the KConfigGroup doesn't exist, save opening the wallet too
+        m_connection->setName(cg.readEntry("id"));
+        m_connection->setAutoConnect(cg.readEntry<bool>("autoconnect", false));
+        m_connection->setTimestamp(cg.readEntry<QDateTime>("timestamp", QDateTime()));
 
-    // load each setting
-    foreach (Setting * setting, m_connection->settings()) {
-        SettingPersistence * sp = persistenceFor(setting);
-        sp->load();
+        // load each setting
+        foreach (Setting * setting, m_connection->settings()) {
+            SettingPersistence * sp = persistenceFor(setting);
+            sp->load();
+        }
     }
 }
 
@@ -197,26 +199,29 @@ QString ConnectionPersistence::walletKeyFor(const Setting * setting) const
 
 void ConnectionPersistence::loadSecrets()
 {
-    if (m_storageMode != ConnectionPersistence::Secure) {
-        foreach (Setting * setting, m_connection->settings()) {
-            setting->setSecretsAvailable(true);
+    KConfigGroup cg(m_config, "connection");
+    if (cg.exists()) {
+        if (m_storageMode != ConnectionPersistence::Secure) {
+            foreach (Setting * setting, m_connection->settings()) {
+                setting->setSecretsAvailable(true);
+                emit loadSecretsResult(EnumError::NoError);
+            }
+        } else if (!m_connection->hasSecrets() ||
+                m_connection->secretsAvailable()) {
             emit loadSecretsResult(EnumError::NoError);
-        }
-    } else if (!m_connection->hasSecrets() ||
-            m_connection->secretsAvailable()) {
-        emit loadSecretsResult(EnumError::NoError);
-    } else if (KWallet::Wallet::isEnabled()) {
-        kDebug() << "opening wallet...";
-        KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
-                walletWid(), KWallet::Wallet::Asynchronous);
-        if (wallet) {
-            disconnect(wallet, SIGNAL(walletOpened(bool)), this, 0);
-            connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
+        } else if (KWallet::Wallet::isEnabled()) {
+            kDebug() << "opening wallet...";
+            KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
+                    walletWid(), KWallet::Wallet::Asynchronous);
+            if (wallet) {
+                disconnect(wallet, SIGNAL(walletOpened(bool)), this, 0);
+                connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
+            } else {
+                emit loadSecretsResult(EnumError::WalletNotFound);
+            }
         } else {
-            emit loadSecretsResult(EnumError::WalletNotFound);
+            emit loadSecretsResult(EnumError::WalletDisabled);
         }
-    } else {
-        emit loadSecretsResult(EnumError::WalletDisabled);
     }
     return;
 }
