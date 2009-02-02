@@ -381,13 +381,19 @@ ConnectionInspector * InterfaceItem::connectionInspector() const
 
 void InterfaceItem::serviceDisappeared(NetworkManagerSettings* service)
 {
+// just throw away our active connection list.  NM should signal activeConnectionsChanged anyway
+#if 0
     QMutableListIterator<ActiveConnectionPair> i(m_activeConnections);
     while (i.hasNext()) {
         i.next();
+        kDebug() << i.value().first << i.value().second;
         if (i.value().first == service->service()) {
+            kDebug() << "  Removed.";
             i.remove();
         }
     }
+#endif
+    m_activeConnections = QList<ActiveConnectionPair>();
     setConnectionInfo();
 }
 
