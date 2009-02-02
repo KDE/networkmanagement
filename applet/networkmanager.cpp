@@ -135,6 +135,8 @@ void NetworkManagerApplet::init()
 
     // calling this initialises the extenderitems
     networkInterfaceAdded(QString());
+    // add VPN last
+    showVpn(cg.readEntry("showVpn", true));
 
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
@@ -374,13 +376,13 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
         QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
     }
 
+    // update extender visibility
     KConfigGroup cg = config();
     showWired(cg.readEntry("showWired", true));
     showWireless(cg.readEntry("showWireless", true));
-    //showPppoe(hasPppoeInterface && cg.readEntry("showPppoe", true));
+    //showPppoe(cg.readEntry("showPppoe", true));
     showGsm(cg.readEntry("showGsm", true));
-    //showCdma(hasCdmaInterface && cg.readEntry("showCdma", true));
-    showVpn(cg.readEntry("showVpn", true));
+    //showCdma(cg.readEntry("showCdma", true));
 
     interfaceConnectionStateChanged();
     update();
@@ -396,6 +398,14 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
         QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
         QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
     }
+
+    // update extender visibility
+    KConfigGroup cg = config();
+    showWired(cg.readEntry("showWired", true));
+    showWireless(cg.readEntry("showWireless", true));
+    //showPppoe(cg.readEntry("showPppoe", true));
+    showGsm(cg.readEntry("showGsm", true));
+    //showCdma(cg.readEntry("showCdma", true));
 
     interfaceConnectionStateChanged();
     update();
