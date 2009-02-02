@@ -233,7 +233,6 @@ Comment[sv]=Ett nätverksgränssnitt har tagits bort
 Comment[tr]=Bir ağ arayüzü çıkarıldı
 Comment[uk]=Було вилучено інтерфейс мережі
 Comment[x-test]=xxA network interface was removedxx
-Action=Popup
 
 [Event/networkappeared]
 Name=Found Wireless Network
@@ -385,7 +384,6 @@ Comment[sv]=En nätverksanslutning har kopplats ner
 Comment[tr]=Bir ağ bağlantısı kapatıldı
 Comment[uk]=Мережеве з’єднання було розірвано
 Comment[x-test]=xxA network connection was disconnectedxx
-Action=Popup
 
 [Event/connected]
 Name=Network Connection Succeeded
