@@ -139,6 +139,8 @@ private Q_SLOTS:
     void networkInterfaceRemoved(const QString&);
     void interfaceConnectionStateChanged();
     void manageConnections();
+    // used to let the user easily hide VPN
+    void hideVpnGroup();
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
     void updateToolTip();

@@ -174,8 +174,8 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
         VpnConnectionGroup * vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, eItem);
         vpnGroup->setObjectName("vpn-interface-group");
         vpnGroup->init();
-
         eItem->setWidget(vpnGroup);
+        connect(vpnGroup, SIGNAL(hideClicked()), SLOT(hideVpnGroup()));
     } else {
         kDebug() << "Unrecognised extender name!  Is the config from the future?";
     }
@@ -844,4 +844,12 @@ bool NetworkManagerApplet::hasInterfaceOfType(Solid::Control::NetworkInterface::
     return false;
 }
 
+void NetworkManagerApplet::hideVpnGroup()
+{
+    m_showVpn = false;
+    KConfigGroup cg = config();
+    cg.writeEntry("showVpn", m_showVpn);
+    showVpn(false);
+    Plasma::Applet::configNeedsSaving();
+}
 #include "networkmanager.moc"
