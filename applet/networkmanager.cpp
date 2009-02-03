@@ -482,7 +482,7 @@ void NetworkManagerApplet::updateToolTip()
     Solid::Control::NetworkInterfaceList interfaces
         = Solid::Control::NetworkManager::networkInterfaces();
     if (interfaces.isEmpty()) {
-        m_toolTip = Plasma::ToolTipContent(i18nc("Tooltip main title text", "Networks"),
+        m_toolTip = Plasma::ToolTipContent(name(),
                 i18nc("Tooltip sub text", "No network interfaces"),
                 KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop))
                 );
@@ -494,7 +494,7 @@ void NetworkManagerApplet::updateToolTip()
                 subText += QLatin1String("<br>");
             }
             subText += QString::fromLatin1("<b>%1</b>: %2").arg(iface->interfaceName()).arg(connectionStateToString(iface->connectionState()));
-            m_toolTip = Plasma::ToolTipContent(i18nc("Tooltip main title text", "Networks"),
+            m_toolTip = Plasma::ToolTipContent(name(),
                 subText,
                 KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop))
                 );
