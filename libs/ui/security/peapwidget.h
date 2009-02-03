@@ -23,19 +23,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KSharedConfig>
 #include "eapwidget.h"
+#include "connection.h"
 
 class PeapWidget : public EapWidget
 {
 Q_OBJECT
 public:
-    PeapWidget(KConfig* config, const QString & connectionId, QWidget * parent = 0 );
+    PeapWidget(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~PeapWidget();
 
     // implemenation of EapWidget methods
     bool validate() const;
     void readConfig();
     void writeConfig();
-    QVariantMap secrets() const;
+    void readSecrets();
 
 private slots:
     void chkShowPassToggled(bool);

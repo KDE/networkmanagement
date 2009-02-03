@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -20,25 +20,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionwidget.h"
 
-#include <nm-setting-connection.h>
-
 #include <KDebug>
-#include <KStandardDirs>
 
-#include "configxml.h"
 #include "ui_connection.h"
+#include "connection.h"
 
 class ConnectionWidget::Private
 {
 public:
     Ui_ConnectionSettings ui;
+    QString defaultName;
 };
 
-ConnectionWidget::ConnectionWidget(const QString& connectionId, QWidget * parent) : SettingWidget(connectionId, parent), d(new ConnectionWidget::Private())
+ConnectionWidget::ConnectionWidget(Knm::Connection * connection, const QString & defaultName, QWidget * parent)
+    : SettingWidget(connection, parent), d(new ConnectionWidget::Private())
 {
     d->ui.setupUi(this);
-    init();
-    kDebug() << "Connection id is " << connectionId;
+    d->defaultName = defaultName;
+    kDebug() << "Connection id is " << connection->uuid();
 }
 
 ConnectionWidget::~ConnectionWidget()
@@ -51,22 +50,19 @@ QTabWidget * ConnectionWidget::connectionSettingsWidget()
     return d->ui.tabwidget;
 }
 
-QString ConnectionWidget::settingName() const
+void ConnectionWidget::readConfig()
 {
-    return QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME);
+    if (connection()->name().isEmpty()) {
+        connection()->setName(d->defaultName);
+    }
+    d->ui.id->setText(connection()->name());
+    d->ui.autoconnect->setChecked(connection()->autoConnect());
 }
 
 void ConnectionWidget::writeConfig()
 {
-    kDebug();
-    KConfigGroup group(configXml()->config(), settingName());
-    group.writeEntry(NM_SETTING_CONNECTION_UUID, connectionId());
-}
-
-void ConnectionWidget::setConnectionName(const QString& name)
-{
-    KConfigSkeletonItem * configItem = configXml()->findItem(settingName(), "id");
-    configItem->setProperty(name);
+    connection()->setName(d->ui.id->text());
+    connection()->setAutoConnect(d->ui.autoconnect->isChecked());
 }
 
 // vim: sw=4 sts=4 et tw=100

@@ -1,0 +1,1100 @@
+diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
+--- origsettings//802-11-wireless.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-11-wireless.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -5,7 +5,8 @@
+ 
+ using namespace Knm;
+ 
+-WirelessSetting::WirelessSetting() : Setting(Setting::Wireless)
++WirelessSetting::WirelessSetting() : Setting(Setting::Wireless),
++    mMode(0), mBand(WirelessSetting::EnumBand::bg), mChannel(0), mRate(0), mTxpower(0), mMtu(0)
+ {
+ }
+ 
+diff -ur origsettings//802-11-wirelessdbus.cpp settings/802-11-wirelessdbus.cpp
+--- origsettings//802-11-wirelessdbus.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-11-wirelessdbus.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -66,22 +66,34 @@
+       map.insert("mode", "adhoc");
+       break;
+   }
++  // leave out band, NM seems to work automatically without it
+   switch (setting->band()) {
+     case WirelessSetting::EnumBand::a:
++      //map.insert("band", "a");
+       map.insert("band", "a");
+       break;
+     case WirelessSetting::EnumBand::bg:
++      //map.insert("band", "bg");
+       map.insert("band", "bg");
+       break;
+   }
+-  map.insert("channel", setting->channel());
+-  map.insert("bssid", setting->bssid());
+-  map.insert("rate", setting->rate());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_TX_POWER), setting->txpower());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
+-  map.insert("mtu", setting->mtu());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS), setting->seenbssids());
+-  map.insert("security", setting->security());
++  //map.insert("channel", setting->channel());
++  if (!setting->bssid().isEmpty()) {
++      map.insert("bssid", setting->bssid());
++  }
++  //map.insert("rate", setting->rate());
++  //map.insert(QLatin1String(NM_SETTING_WIRELESS_TX_POWER), setting->txpower());
++  if (!setting->macaddress().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
++  }
++  if (setting->mtu() > 0 )
++       map.insert("mtu", setting->mtu());
++  if (!setting->seenbssids().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS), setting->seenbssids());
++  }
++  if (!setting->security().isEmpty()) {
++      map.insert("security", setting->security());
++  }
+   return map;
+ }
+ 
+diff -ur origsettings//802-11-wirelessdbus.h settings/802-11-wirelessdbus.h
+--- origsettings//802-11-wirelessdbus.h	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-11-wirelessdbus.h	2009-01-28 21:10:06.000000000 +0100
+@@ -3,7 +3,7 @@
+ #ifndef KNM_WIRELESSDBUS_H
+ #define KNM_WIRELESSDBUS_H
+ 
+-#include <nm-setting-802-11-wireless.h>
++#include <nm-setting-wireless.h>
+ 
+ #include <kdebug.h>
+ #include <kcoreconfigskeleton.h>
+diff -ur origsettings//802-11-wirelesspersistence.cpp settings/802-11-wirelesspersistence.cpp
+--- origsettings//802-11-wirelesspersistence.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-11-wirelesspersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -20,7 +20,7 @@
+   WirelessSetting * setting = static_cast<WirelessSetting *>(m_setting);
+   setting->setSsid(m_config->readEntry("ssid", QByteArray()));
+   {
+-    QString contents = m_config->readEntry("mode", 0);
++    QString contents = m_config->readEntry("mode", "infrastructure");
+     if (contents == "infrastructure")
+       setting->setMode(WirelessSetting::EnumMode::infrastructure);
+     else     if (contents == "adhoc")
+@@ -28,7 +28,7 @@
+ 
+   }
+   {
+-    QString contents = m_config->readEntry("band", 1);
++    QString contents = m_config->readEntry("band", "bg");
+     if (contents == "a")
+       setting->setBand(WirelessSetting::EnumBand::a);
+     else     if (contents == "bg")
+@@ -72,6 +72,7 @@
+   m_config->writeEntry("macaddress", setting->macaddress());
+   m_config->writeEntry("mtu", setting->mtu());
+   m_config->writeEntry("seenbssids", setting->seenbssids());
++kDebug() << setting->security();
+   m_config->writeEntry("security", setting->security());
+ }
+ 
+diff -ur origsettings//802-11-wireless-security.cpp settings/802-11-wireless-security.cpp
+--- origsettings//802-11-wireless-security.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-11-wireless-security.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -6,6 +6,7 @@
+ using namespace Knm;
+ 
+ WirelessSecuritySetting::WirelessSecuritySetting() : Setting(Setting::WirelessSecurity)
++                                                     , mSecurityType(WirelessSecuritySetting::EnumSecurityType::None), mKeymgmt(0), mWeptxkeyindex(0), mAuthalg(0)
+ {
+ }
+ 
+diff -ur origsettings//802-11-wireless-securitydbus.cpp settings/802-11-wireless-securitydbus.cpp
+--- origsettings//802-11-wireless-securitydbus.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-11-wireless-securitydbus.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -4,10 +4,13 @@
+ #include "802-11-wireless-securitydbus.h"
+ 
+ #include "802-11-wireless-security.h"
++#include "pbkdf2.h"
++#include "wephash.h"
+ 
+ using namespace Knm;
+ 
+-WirelessSecurityDbus::WirelessSecurityDbus(WirelessSecuritySetting * setting) : SettingDbus(setting)
++WirelessSecurityDbus::WirelessSecurityDbus(WirelessSecuritySetting * setting, const QString & essid) : SettingDbus(setting),
++    m_essid(essid)
+ {
+ }
+ 
+@@ -56,6 +59,7 @@
+     setting->setWepkey3(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3)).value<QString>());
+   }
+   // SECRET
++  kDebug() << "Storing hashed PSK as plaintext!";
+   if (map.contains("psk")) {
+     setting->setPsk(map.value("psk").value<QString>());
+   }
+@@ -69,6 +73,7 @@
+ {
+   QVariantMap map;
+   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
++  if (setting->securityType() != WirelessSecuritySetting::EnumSecurityType::None) { // don't return anything if there is no security
+   switch (setting->keymgmt()) {
+     case WirelessSecuritySetting::EnumKeymgmt::None:
+       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "none");
+@@ -98,10 +103,19 @@
+       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "leap");
+       break;
+   }
+-  map.insert("proto", setting->proto());
+-  map.insert("pairwise", setting->pairwise());
+-  map.insert("group", setting->group());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME), setting->leapusername());
++  if (!setting->proto().isEmpty()) {
++      map.insert("proto", setting->proto());
++  }
++  if (!setting->pairwise().isEmpty()) {
++      map.insert("pairwise", setting->pairwise());
++  }
++  if (!setting->group().isEmpty()) {
++      map.insert("group", setting->group());
++  }
++  if (!setting->leapusername().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME), setting->leapusername());
++  }
++  } // end of if not setting->clear()
+   return map;
+ }
+ 
+@@ -109,12 +123,64 @@
+ {
+   QVariantMap map;
+   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
+-  map.insert("psk", setting->psk());
+-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
++  if (setting->securityType() != WirelessSecuritySetting::EnumSecurityType::None) { // don't return anything if there is no security
++  if (!setting->weppassphrase().isEmpty()) {
++      QString key = hashWepPassphrase(setting->weppassphrase());
++      switch (setting->weptxkeyindex()) {
++          case 0:
++              setting->setWepkey0(key);
++              break;
++          case 1:
++              setting->setWepkey1(key);
++              break;
++          case 2:
++              setting->setWepkey2(key);
++              break;
++          case 3:
++              setting->setWepkey3(key);
++              break;
++      }
++  }
++  if (!setting->wepkey0().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
++  }
++  if (!setting->wepkey1().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
++  }
++  if (!setting->wepkey2().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());
++  }
++  if (!setting->wepkey3().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
++  }
++  if (!setting->psk().isEmpty()) {
++      map.insert("psk", hashWpaPsk(setting->psk()));
++  }
++  if (!setting->leappassword().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
++  }
++  } // end of if not clear
+   return map;
+ }
+ 
++QString WirelessSecurityDbus::hashWpaPsk(const QString & plainText)
++{
++#define WPA_PMK_LEN 32
++    kDebug() << "Hashing PSK. essid:" << m_essid << "psk:" << plainText;
++    QByteArray buffer(WPA_PMK_LEN * 2, 0);
++    pbkdf2_sha1(plainText.toLatin1(), m_essid.toLatin1(), m_essid.size(), 4096, (quint8*)buffer.data(), WPA_PMK_LEN);
++    QString hexHash = buffer.toHex().left(WPA_PMK_LEN*2);
++    kDebug() << "  hexadecimal key out:" << hexHash;
++    return hexHash;
++}
++
++QString WirelessSecurityDbus::hashWepPassphrase(const QString & plainText)
++{
++    //kDebug() << "Hashing wep passphrase, essid: " << essid << " passphrase: " << passphrase;
++    QString hexHash = wep128PassphraseHash(plainText.toAscii());
++    //kDebug() << "Hexadecimal key out:" << hexHash;
++    //kDebug() << "for wep key: " << wepkey;
++
++    return hexHash;
++}
++
+Only in settings: 802-11-wireless-securitydbus.cpp.rej
+Only in settings: 802-11-wireless-securitydbus.cpp.rej~
+diff -ur origsettings//802-11-wireless-securitydbus.h settings/802-11-wireless-securitydbus.h
+--- origsettings//802-11-wireless-securitydbus.h	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-11-wireless-securitydbus.h	2009-01-28 21:10:06.000000000 +0100
+@@ -3,7 +3,7 @@
+ #ifndef KNM_WIRELESSSECURITYDBUS_H
+ #define KNM_WIRELESSSECURITYDBUS_H
+ 
+-#include <nm-setting-802-11-wireless-security.h>
++#include <nm-setting-wireless-security.h>
+ 
+ #include <kdebug.h>
+ #include <kcoreconfigskeleton.h>
+@@ -16,11 +16,15 @@
+ class KNM_EXPORT WirelessSecurityDbus : public SettingDbus
+ {
+   public:
+-    WirelessSecurityDbus( WirelessSecuritySetting * setting);
++    WirelessSecurityDbus(WirelessSecuritySetting * setting, const QString & essid);
+     ~WirelessSecurityDbus();
+     void fromMap(const QVariantMap&);
+     QVariantMap toMap();
+     QVariantMap toSecretsMap();
++  private:
++    QString hashWpaPsk(const QString & plainText);
++    QString hashWepPassphrase(const QString & plainText);
++    QString m_essid;
+ };
+ }
+ 
+diff -ur origsettings//802-11-wireless-securitypersistence.cpp settings/802-11-wireless-securitypersistence.cpp
+--- origsettings//802-11-wireless-securitypersistence.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-11-wireless-securitypersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -19,7 +19,9 @@
+ {
+   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
+   {
+-    QString contents = m_config->readEntry("securityType", EnumSecurityType::None);
++    if (m_config->exists()) { // this persistence saves nothing if there is no security, so the 
++      // group won't exist.  not indenting the code inside this test to keep the diff clean ;)
++    QString contents = m_config->readEntry("securityType", "None");
+     if (contents == "None")
+       setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::None);
+     else     if (contents == "WEP40")
+@@ -35,7 +37,7 @@
+ 
+   }
+   {
+-    QString contents = m_config->readEntry("keymgmt", 0);
++    QString contents = m_config->readEntry("keymgmt", "None");
+     if (contents == "None")
+       setting->setKeymgmt(WirelessSecuritySetting::EnumKeymgmt::None);
+     else     if (contents == "Ieee8021x")
+@@ -50,7 +52,7 @@
+   }
+   setting->setWeptxkeyindex(m_config->readEntry("weptxkeyindex", 0));
+   {
+-    QString contents = m_config->readEntry("authalg", 0);
++    QString contents = m_config->readEntry("authalg", "open");
+     if (contents == "open")
+       setting->setAuthalg(WirelessSecuritySetting::EnumAuthalg::open);
+     else     if (contents == "shared")
+@@ -91,6 +93,7 @@
+   if (m_storageMode != ConnectionPersistence::Secure) {
+     setting->setWeppassphrase(m_config->readEntry("weppassphrase", ""));
+   }
++  }
+ }
+ 
+ void WirelessSecurityPersistence::save()
+@@ -98,7 +101,7 @@
+   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
+   switch (setting->securityType()) {
+     case WirelessSecuritySetting::EnumSecurityType::None:
+-      m_config->writeEntry("securityType", "None");
++        return; // don't save anything if no encryption
+       break;
+     case WirelessSecuritySetting::EnumSecurityType::WEP40:
+       m_config->writeEntry("securityType", "WEP40");
+@@ -183,6 +186,7 @@
+ {
+   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
+   QMap<QString,QString> map;
++  if (setting->securityType() != WirelessSecuritySetting::EnumSecurityType::None) { // don't save anything if security is disabled
+   map.insert(QLatin1String("wepkey0"), setting->wepkey0());
+   map.insert(QLatin1String("wepkey1"), setting->wepkey1());
+   map.insert(QLatin1String("wepkey2"), setting->wepkey2());
+@@ -190,6 +194,7 @@
+   map.insert(QLatin1String("psk"), setting->psk());
+   map.insert(QLatin1String("leappassword"), setting->leappassword());
+   map.insert(QLatin1String("weppassphrase"), setting->weppassphrase());
++  }
+   return map;
+ }
+ 
+diff -ur origsettings//802-1x.cpp settings/802-1x.cpp
+--- origsettings//802-1x.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-1x.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -5,7 +5,8 @@
+ 
+ using namespace Knm;
+ 
+-Security8021xSetting::Security8021xSetting() : Setting(Setting::Security8021x)
++Security8021xSetting::Security8021xSetting() : Setting(Setting::Security8021x),
++    mPhase1peapver(0), mPhase2autheap(0), mEnabled(false)
+ {
+ }
+ 
+diff -ur origsettings//802-1xdbus.cpp settings/802-1xdbus.cpp
+--- origsettings//802-1xdbus.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-1xdbus.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -18,6 +18,7 @@
+ void Security8021xDbus::fromMap(const QVariantMap & map)
+ {
+   Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
++  if (setting->enabled()) {
+   if (map.contains("eap")) {
+     setting->setEap(map.value("eap").value<QStringList>());
+   }
+@@ -76,50 +77,82 @@
+   if (map.contains("psk")) {
+     setting->setPsk(map.value("psk").value<QString>());
+   }
++  }
+ }
+ 
+ QVariantMap Security8021xDbus::toMap()
+ {
+   QVariantMap map;
+   Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
+-  map.insert("eap", setting->eap());
+-  map.insert("identity", setting->identity());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY), setting->anonymousidentity());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_CA_CERT), setting->cacert());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_CA_PATH), setting->capath());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT), setting->clientcert());
+-  switch (setting->phase1peapver()) {
+-    case Security8021xSetting::EnumPhase1peapver::zero:
+-      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), "zero");
+-      break;
+-    case Security8021xSetting::EnumPhase1peapver::one:
+-      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), "one");
+-      break;
+-  }
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL), setting->phase1peaplabel());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING), setting->phase1fastprovisioning());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), setting->phase2auth());
++  if (setting->enabled()) {
++  if (!setting->eap().isEmpty()) {
++    map.insert("eap", setting->eap());
++  }
++  if (!setting->identity().isEmpty()) {
++    map.insert("identity", setting->identity());
++  }
++  if (!setting->anonymousidentity().isEmpty()) {
++    map.insert(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY), setting->anonymousidentity());
++  }
++  if (!setting->cacert().isEmpty()) {
++    map.insert(QLatin1String(NM_SETTING_802_1X_CA_CERT), setting->cacert());
++  }
++  if (!setting->capath().isEmpty()) {
++    map.insert(QLatin1String(NM_SETTING_802_1X_CA_PATH), setting->capath());
++    }
++  if (!setting->clientcert().isEmpty()) {
++    map.insert(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT), setting->clientcert());
++  }
++  if (setting->eap().contains(QLatin1String("peap"))) {  // just a guess
++    switch (setting->phase1peapver()) {
++      case Security8021xSetting::EnumPhase1peapver::zero:
++        map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), 0);
++        break;
++      case Security8021xSetting::EnumPhase1peapver::one:
++        map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), 1);
++        break;
++    }
++    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL), setting->phase1peaplabel());
++  }
++  if (!setting->phase1fastprovisioning().isEmpty()) {
++    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING), setting->phase1fastprovisioning());
++  }
++
++  if (!setting->phase2auth().isEmpty())
++    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), setting->phase2auth());
+   switch (setting->phase2autheap()) {
+-    case Security8021xSetting::EnumPhase2autheap::pap:
+-      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "pap");
+-      break;
+-    case Security8021xSetting::EnumPhase2autheap::mschap:
+-      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "mschap");
+-      break;
+-    case Security8021xSetting::EnumPhase2autheap::mschapv2:
+-      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "mschapv2");
+-      break;
+-    case Security8021xSetting::EnumPhase2autheap::chap:
+-      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "chap");
+-      break;
+-  }
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT), setting->phase2cacert());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH), setting->phase2capath());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT), setting->phase2clientcert());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY), setting->privatekey());
+-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY), setting->phase2privatekey());
+-  map.insert("pin", setting->pin());
+-  map.insert("psk", setting->psk());
++  case Security8021xSetting::EnumPhase2autheap::pap:
++    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "pap");
++    break;
++  case Security8021xSetting::EnumPhase2autheap::mschap:
++    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "mschap");
++    break;
++  case Security8021xSetting::EnumPhase2autheap::mschapv2:
++    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "mschapv2");
++    break;
++  case Security8021xSetting::EnumPhase2autheap::chap:
++    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "chap");
++    break;
++  }
++
++  if (!setting->phase2cacert().isEmpty())
++    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT), setting->phase2cacert());
++  if (!setting->phase2capath().isEmpty())
++    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH), setting->phase2capath());
++  if (!setting->phase2clientcert().isEmpty())
++    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT), setting->phase2clientcert());
++  if (!setting->phase2privatekey().isEmpty())
++    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY), setting->phase2privatekey());
++  if (!setting->privatekey().isEmpty()) {
++      map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY), setting->privatekey());
++  }
++  if (!setting->pin().isEmpty()) {
++      map.insert("pin", setting->pin());
++  }
++  if (!setting->psk().isEmpty()) {
++      map.insert("psk", setting->psk());
++  }
++  }
+   return map;
+ }
+ 
+@@ -127,7 +160,9 @@
+ {
+   QVariantMap map;
+   Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
++  if (setting->enabled()) {
+   map.insert("password", setting->password());
++  }
+   return map;
+ }
+ 
+Only in settings: 802-1xdbus.cpp.rej
+diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
+--- origsettings//802-1xdbus.h	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-1xdbus.h	2009-01-28 21:10:06.000000000 +0100
+@@ -3,7 +3,7 @@
+ #ifndef KNM_SECURITY8021XDBUS_H
+ #define KNM_SECURITY8021XDBUS_H
+ 
+-#include <nm-setting-802-1x.h>
++#include <nm-setting-8021x.h>
+ 
+ #include <kdebug.h>
+ #include <kcoreconfigskeleton.h>
+diff -ur origsettings//802-1x.h settings/802-1x.h
+--- origsettings//802-1x.h	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-1x.h	2009-01-28 21:10:06.000000000 +0100
+@@ -3,6 +3,7 @@
+ #ifndef KNM_SECURITY8021XSETTING_H
+ #define KNM_SECURITY8021XSETTING_H
+ 
++#include <QFile>
+ #include <kglobal.h>
+ #include <kdebug.h>
+ #include <kcoreconfigskeleton.h>
+@@ -106,6 +107,18 @@
+     void setCapath( const QString & v )
+     {
+         mCapath = v;
++
++        // also update the ca cert blob
++        QFile ca_cert(v);
++
++        if (ca_cert.open(QIODevice::ReadOnly)) {
++           QByteArray bytes = ca_cert.readAll();
++
++           // FIXME: verify that the ca_cert is a X509 cert
++           // (see libnm-util/nm-setting-8021x.c function nm_setting_802_1x_set_ca_cert_from_file)
++
++           setCacert( bytes );
++        }
+     }
+ 
+     /**
+@@ -356,6 +369,42 @@
+       return mEnabled;
+     }
+ 
++    enum EapMethod
++    {
++        ttls = 1,
++        peap = 2,
++        tls  = 4
++    };
++    Q_DECLARE_FLAGS(EapMethods, EapMethod)
++
++    void setEapFlags( const EapMethods& methods )
++    {
++        QStringList eap;
++        if (methods.testFlag(ttls))
++            eap.append("ttls");
++        if (methods.testFlag(tls))
++            eap.append("tls");
++        if (methods.testFlag(peap))
++            eap.append("peap");
++kDebug() << eap;
++        setEap(eap);
++    }
++
++    EapMethods eapFlags() const
++    {
++        QStringList eaps = eap();
++        EapMethods eapFlags;
++        if (eaps.contains("ttls"))
++            eapFlags = eapFlags | ttls;
++        if (eaps.contains("tls"))
++            eapFlags = eapFlags | tls;
++        if (eaps.contains("peap"))
++            eapFlags = eapFlags | peap;
++        return eapFlags;
++    }
++
++
++
+   protected:
+ 
+     // 802-1x
+@@ -383,6 +432,8 @@
+   private:
+ };
+ 
++Q_DECLARE_OPERATORS_FOR_FLAGS(Security8021xSetting::EapMethods);
++
+ }
+ 
+ #endif
+diff -ur origsettings//802-1xpersistence.cpp settings/802-1xpersistence.cpp
+--- origsettings//802-1xpersistence.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-1xpersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -17,7 +17,9 @@
+ 
+ void Security8021xPersistence::load()
+ {
++  if (m_config->exists()) {
+   Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
++  setting->setEnabled(true);
+   setting->setEap(m_config->readEntry("eap", QStringList()));
+   setting->setIdentity(m_config->readEntry("identity", ""));
+   setting->setAnonymousidentity(m_config->readEntry("anonymousidentity", ""));
+@@ -25,10 +27,10 @@
+   setting->setCapath(m_config->readEntry("capath", ""));
+   setting->setClientcert(m_config->readEntry("clientcert", QByteArray()));
+   {
+-    QString contents = m_config->readEntry("phase1peapver", 0);
+-    if (contents == "zero")
++    uint contents = m_config->readEntry("phase1peapver", 0);
++    if (contents == 0)
+       setting->setPhase1peapver(Security8021xSetting::EnumPhase1peapver::zero);
+-    else     if (contents == "one")
++    else     if (contents == 1)
+       setting->setPhase1peapver(Security8021xSetting::EnumPhase1peapver::one);
+ 
+   }
+@@ -36,7 +38,7 @@
+   setting->setPhase1fastprovisioning(m_config->readEntry("phase1fastprovisioning", ""));
+   setting->setPhase2auth(m_config->readEntry("phase2auth", ""));
+   {
+-    QString contents = m_config->readEntry("phase2autheap", 0);
++    QString contents = m_config->readEntry("phase2autheap", "pap");
+     if (contents == "pap")
+       setting->setPhase2autheap(Security8021xSetting::EnumPhase2autheap::pap);
+     else     if (contents == "mschap")
+@@ -58,12 +60,13 @@
+   setting->setPhase2privatekey(m_config->readEntry("phase2privatekey", QByteArray()));
+   setting->setPin(m_config->readEntry("pin", ""));
+   setting->setPsk(m_config->readEntry("psk", ""));
+-  setting->setEnabled(m_config->readEntry("enabled", false));
++  }
+ }
+ 
+ void Security8021xPersistence::save()
+ {
+   Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
++  if (setting->enabled() ) {
+   m_config->writeEntry("eap", setting->eap());
+   m_config->writeEntry("identity", setting->identity());
+   m_config->writeEntry("anonymousidentity", setting->anonymousidentity());
+@@ -106,7 +109,8 @@
+   m_config->writeEntry("phase2privatekey", setting->phase2privatekey());
+   m_config->writeEntry("pin", setting->pin());
+   m_config->writeEntry("psk", setting->psk());
+-  m_config->writeEntry("enabled", setting->enabled());
++  } else
++    m_config->deleteGroup();
+ }
+ 
+ QMap<QString,QString> Security8021xPersistence::secrets() const
+diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
+--- origsettings//802-3-ethernet.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-3-ethernet.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -5,7 +5,12 @@
+ 
+ using namespace Knm;
+ 
+-WiredSetting::WiredSetting() : Setting(Setting::Wired)
++WiredSetting::WiredSetting() : Setting(Setting::Wired),
++    mPort(WiredSetting::EnumPort::mii),
++    mSpeed(0),
++    mDuplex(WiredSetting::EnumDuplex::full),
++    mAutonegotiate(true),
++    mMtu(0)
+ {
+ }
+ 
+diff -ur origsettings//802-3-ethernetdbus.cpp settings/802-3-ethernetdbus.cpp
+--- origsettings//802-3-ethernetdbus.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-3-ethernetdbus.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -42,6 +42,8 @@
+ {
+   QVariantMap map;
+   WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
++// not in UI yet
++#if 0
+   switch (setting->port()) {
+     case WiredSetting::EnumPort::tp:
+       map.insert("port", "tp");
+@@ -66,8 +68,13 @@
+       break;
+   }
+   map.insert(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE), setting->autonegotiate());
+-  map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), setting->macaddress());
+-  map.insert("mtu", setting->mtu());
++#endif
++  // broken
++  //QString mac = setting->macaddress();
++  //map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), mac.remove(':').toAscii());
++  if (setting->mtu() > 0 ) {
++    map.insert("mtu", setting->mtu());
++  }
+   return map;
+ }
+ 
+diff -ur origsettings//802-3-ethernetdbus.h settings/802-3-ethernetdbus.h
+--- origsettings//802-3-ethernetdbus.h	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-3-ethernetdbus.h	2009-01-28 21:10:06.000000000 +0100
+@@ -3,7 +3,7 @@
+ #ifndef KNM_WIREDDBUS_H
+ #define KNM_WIREDDBUS_H
+ 
+-#include <nm-setting-802-3-ethernet.h>
++#include <nm-setting-wired.h>
+ 
+ #include <kdebug.h>
+ #include <kcoreconfigskeleton.h>
+diff -ur origsettings//802-3-ethernetpersistence.cpp settings/802-3-ethernetpersistence.cpp
+--- origsettings//802-3-ethernetpersistence.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/802-3-ethernetpersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -19,7 +19,7 @@
+ {
+   WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
+   {
+-    QString contents = m_config->readEntry("port", 0);
++    QString contents = m_config->readEntry("port", "tp");
+     if (contents == "tp")
+       setting->setPort(WiredSetting::EnumPort::tp);
+     else     if (contents == "aui")
+@@ -32,7 +32,7 @@
+   }
+   setting->setSpeed(m_config->readEntry("speed", 0));
+   {
+-    QString contents = m_config->readEntry("duplex", 0);
++    QString contents = m_config->readEntry("duplex", "full");
+     if (contents == "half")
+       setting->setDuplex(WiredSetting::EnumDuplex::half);
+     else     if (contents == "full")
+diff -ur origsettings//gsmdbus.cpp settings/gsmdbus.cpp
+--- origsettings//gsmdbus.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/gsmdbus.cpp	2009-01-28 21:59:31.000000000 +0100
+@@ -54,10 +54,14 @@
+ {
+   QVariantMap map;
+   GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
+-  map.insert("number", setting->number());
+-  map.insert("username", setting->username());
+-  map.insert("apn", setting->apn());
+-  map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_ID), setting->networkid());
++  if (!setting->number().isEmpty())
++      map.insert("number", setting->number());
++  if (!setting->username().isEmpty())
++      map.insert("username", setting->username());
++  if (!setting->apn().isEmpty())
++      map.insert("apn", setting->apn());
++  if (!setting->networkid().isEmpty())
++      map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_ID), setting->networkid());
+   map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_TYPE), setting->networktype());
+   map.insert("band", setting->band());
+   return map;
+@@ -67,9 +71,12 @@
+ {
+   QVariantMap map;
+   GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
+-  map.insert("password", setting->password());
+-  map.insert("pin", setting->pin());
+-  map.insert("puk", setting->puk());
++  if (!setting->password().isEmpty())
++      map.insert("password", setting->password());
++  if (!setting->pin().isEmpty())
++      map.insert("pin", setting->pin());
++  if (!setting->puk().isEmpty())
++      map.insert("puk", setting->puk());
+   return map;
+ }
+ 
+Only in settings: gsmdbus.cpp~
+diff -ur origsettings//gsmpersistence.cpp settings/gsmpersistence.cpp
+--- origsettings//gsmpersistence.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/gsmpersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -18,7 +18,7 @@
+ void GsmPersistence::load()
+ {
+   GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
+-  setting->setNumber(m_config->readEntry("number", QLatin1String( "*99#" )));
++  setting->setNumber(m_config->readEntry("number", "*99#"));
+   setting->setUsername(m_config->readEntry("username", ""));
+   // SECRET
+   if (m_storageMode != ConnectionPersistence::Secure) {
+diff -ur origsettings//ipv4.cpp settings/ipv4.cpp
+--- origsettings//ipv4.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/ipv4.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -5,7 +5,9 @@
+ 
+ using namespace Knm;
+ 
+-Ipv4Setting::Ipv4Setting() : Setting(Setting::Ipv4)
++Ipv4Setting::Ipv4Setting() : Setting(Setting::Ipv4),
++    mMethod(Ipv4Setting::EnumMethod::Automatic),
++    mIgnoredhcpdns(false)
+ {
+ }
+ 
+diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
+--- origsettings//ipv4dbus.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/ipv4dbus.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -3,6 +3,8 @@
+ 
+ #include "ipv4dbus.h"
+ 
++#include <arpa/inet.h>
++#include "../../types.h"
+ #include "ipv4.h"
+ 
+ using namespace Knm;
+@@ -17,19 +19,18 @@
+ 
+ void Ipv4Dbus::fromMap(const QVariantMap & map)
+ {
+-  Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
+-  if (map.contains("method")) {
+-    setting->setMethod(map.value("method").value<int>());
+-  }
+-  if (map.contains("dns")) {
+-    setting->setDns(map.value("dns").value<QStringList>());
+-  }
+-  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH))) {
++  Ipv4Setting * setting = static_cast<Ipv4Setting
++    *>(m_setting); if (map.contains("method")) {
++      setting->setMethod(map.value("method").value<int>()); }
++  //if (map.contains("dns")) { setting->setDns(map.value("dns").value<QStringList>()); }
++  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)) &&
++      !map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)).value<QStringList>().isEmpty()
++     ) {
+     setting->setDnssearch(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)).value<QStringList>());
+   }
+-  if (map.contains("addresses")) {
+-    setting->setAddresses(map.value("addresses").value<QStringList>());
+-  }
++  //if (map.contains("addresses")) {
++  //  setting->setAddresses(map.value("addresses").value<QStringList>());
++  //}
+   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS))) {
+     setting->setIgnoredhcpdns(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS)).value<bool>());
+   }
+@@ -53,10 +54,44 @@
+       map.insert("method", "shared");
+       break;
+   }
+-  map.insert("dns", setting->dns());
+-  map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH), setting->dnssearch());
+-  map.insert("addresses", setting->addresses());
+-  map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS), setting->ignoredhcpdns());
++
++  if (!setting->dns().isEmpty()) {
++      QList<uint> dbusDns;
++      foreach (QHostAddress dns, setting->dns()) {
++          dbusDns << htonl(dns.toIPv4Address());
++      }
++      map.insert("dns", QVariant::fromValue(dbusDns));
++  }
++
++  if (!setting->dnssearch().isEmpty()) {
++    map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH), setting->dnssearch());
++  }
++  if (!setting->addresses().isEmpty()) {
++      QList<QList<uint> > dbusAddresses;
++      foreach (Solid::Control::IPv4Address addr, setting->addresses()) {
++          QList<uint> dbusAddress;
++          dbusAddress << htonl(addr.address())
++              << addr.netMask()
++              << htonl(addr.gateway());
++          dbusAddresses << dbusAddress;
++      }
++      map.insert("addresses", QVariant::fromValue(dbusAddresses));
++  }
++  if (!setting->routes().isEmpty()) {
++      QList<QList<uint> > dbusRoutes;
++      foreach (Solid::Control::IPv4Route route, setting->routes()) {
++          QList<uint> dbusRoute;
++          dbusRoute << htonl(route.route())
++              << route.prefix()
++              << htonl(route.nextHop())
++              << route.metric();
++          dbusRoutes << dbusRoute;
++      }
++      map.insert("routes", QVariant::fromValue(dbusRoutes));
++  }
++
++
++  //map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS), setting->ignoredhcpdns());
+   return map;
+ }
+ 
+diff -ur origsettings//ipv4dbus.h settings/ipv4dbus.h
+--- origsettings//ipv4dbus.h	2009-01-28 22:28:30.000000000 +0100
++++ settings/ipv4dbus.h	2009-01-28 21:10:06.000000000 +0100
+@@ -3,7 +3,7 @@
+ #ifndef KNM_IPV4DBUS_H
+ #define KNM_IPV4DBUS_H
+ 
+-#include <nm-setting-ipv4.h>
++#include <nm-setting-ip4-config.h>
+ 
+ #include <kdebug.h>
+ #include <kcoreconfigskeleton.h>
+diff -ur origsettings//ipv4.h settings/ipv4.h
+--- origsettings//ipv4.h	2009-01-28 22:28:30.000000000 +0100
++++ settings/ipv4.h	2009-01-28 21:10:06.000000000 +0100
+@@ -3,11 +3,17 @@
+ #ifndef KNM_IPV4SETTING_H
+ #define KNM_IPV4SETTING_H
+ 
++#include <QHostAddress>
+ #include <kglobal.h>
+ #include <kdebug.h>
+ #include <kcoreconfigskeleton.h>
++#include <solid/control/networkipv4config.h>
+ #include "setting.h"
+ #include "knm_export.h"
++
++Q_DECLARE_METATYPE(Solid::Control::IPv4Address)
++Q_DECLARE_METATYPE(Solid::Control::IPv4Route)
++
+ namespace Knm {
+ 
+ class KNM_EXPORT Ipv4Setting : public Setting
+@@ -45,7 +51,7 @@
+     /**
+       Set DNS Servers
+     */
+-    void setDns( const QStringList & v )
++    void setDns( const QList<QHostAddress> & v )
+     {
+         mDns = v;
+     }
+@@ -53,7 +59,7 @@
+     /**
+       Get DNS Servers
+     */
+-    QStringList dns() const
++    QList<QHostAddress> dns() const
+     {
+       return mDns;
+     }
+@@ -77,7 +83,7 @@
+     /**
+       Set IP Addresses
+     */
+-    void setAddresses( const QStringList & v )
++    void setAddresses( const QList<Solid::Control::IPv4Address> & v )
+     {
+         mAddresses = v;
+     }
+@@ -85,7 +91,7 @@
+     /**
+       Get IP Addresses
+     */
+-    QStringList addresses() const
++    QList<Solid::Control::IPv4Address> addresses() const
+     {
+       return mAddresses;
+     }
+@@ -106,15 +112,25 @@
+       return mIgnoredhcpdns;
+     }
+ 
++    QList<Solid::Control::IPv4Route> routes() const
++    {
++        return mRoutes;
++    }
++
++    void setRoutes(QList<Solid::Control::IPv4Route> routes)
++    {
++        mRoutes = routes;
++    }
++    
+   protected:
+ 
+     // ipv4
+     int mMethod;
+-    QStringList mDns;
++    QList<QHostAddress> mDns;
+     QStringList mDnssearch;
+-    QStringList mAddresses;
++    QList<Solid::Control::IPv4Address> mAddresses;
++    QList<Solid::Control::IPv4Route> mRoutes;
+     bool mIgnoredhcpdns;
+-
+   private:
+ };
+ 
+diff -ur origsettings//ipv4persistence.cpp settings/ipv4persistence.cpp
+--- origsettings//ipv4persistence.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/ipv4persistence.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -19,7 +19,7 @@
+ {
+   Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
+   {
+-    QString contents = m_config->readEntry("method", 42);
++    QString contents = m_config->readEntry("method", "Automatic");
+     if (contents == "Automatic")
+       setting->setMethod(Ipv4Setting::EnumMethod::Automatic);
+     else     if (contents == "LinkLocal")
+@@ -30,9 +30,48 @@
+       setting->setMethod(Ipv4Setting::EnumMethod::Shared);
+ 
+   }
+-  setting->setDns(m_config->readEntry("dns", QStringList()));
++
++  // dns
++  QList<QHostAddress> dnsServers;
++  QStringList rawDnsServers = m_config->readEntry("dns", QStringList());
++  foreach (QString server, rawDnsServers) {
++      dnsServers.append(QHostAddress(server));
++  }
++  setting->setDns(dnsServers);
++
+   setting->setDnssearch(m_config->readEntry("dnssearch", QStringList()));
+-  setting->setAddresses(m_config->readEntry("addresses", QStringList()));
++
++  // addresses
++  QList<Solid::Control::IPv4Address> addresses;
++  QStringList rawAddresses = m_config->readEntry("addresses", QStringList());
++  foreach (QString rawAddress, rawAddresses) {
++      QStringList parts = rawAddress.split(';');
++      if (parts.count() != 3) { // sanity check
++          continue;
++      }
++      QHostAddress ip(parts[0]);
++      QHostAddress gateway(parts[2]);
++      Solid::Control::IPv4Address addr(ip.toIPv4Address(), parts[1].toUInt(), gateway.toIPv4Address());
++      addresses.append(addr);
++  }
++  setting->setAddresses(addresses);
++
++  // routes
++  QList<Solid::Control::IPv4Route> routes;
++  QStringList rawRoutes = m_config->readEntry("routes", QStringList());
++  foreach (QString rawRoute, rawRoutes) {
++      QStringList parts = rawRoute.split(';');
++      if (parts.count() != 4) { // sanity check
++          continue;
++      }
++      QHostAddress address(parts[0]);
++      quint32 prefix = parts[1].toUInt();
++      QHostAddress nextHop(parts[2]);
++      quint32 metric = parts[3].toUInt();
++      Solid::Control::IPv4Route route(address.toIPv4Address(), prefix, nextHop.toIPv4Address(), metric);
++      routes.append(route);
++  }
++  setting->setRoutes(routes);
+   setting->setIgnoredhcpdns(m_config->readEntry("ignoredhcpdns", false));
+ }
+ 
+@@ -53,9 +92,38 @@
+       m_config->writeEntry("method", "Shared");
+       break;
+   }
+-  m_config->writeEntry("dns", setting->dns());
+-  m_config->writeEntry("dnssearch", setting->dnssearch());
+-  m_config->writeEntry("addresses", setting->addresses());
++
++  QStringList rawDns;
++  foreach (QHostAddress dns, setting->dns()) {
++    rawDns.append(dns.toString());
++  }
++  if (!rawDns.isEmpty())
++      m_config->writeEntry("dns", rawDns);
++
++  if (!setting->dnssearch().isEmpty())
++      m_config->writeEntry("dnssearch", setting->dnssearch());
++
++  QStringList rawAddresses;
++  foreach (Solid::Control::IPv4Address addr, setting->addresses()) {
++      QStringList rawAddress;
++      rawAddress << QHostAddress(addr.address()).toString()
++          << QString::number(addr.netMask())
++          << QHostAddress(addr.gateway()).toString();
++      rawAddresses << rawAddress.join(";");
++  }
++  m_config->writeEntry("addresses", rawAddresses);
++
++  QStringList rawRoutes;
++  foreach (Solid::Control::IPv4Route route, setting->routes()) {
++      QStringList rawRoute;
++      rawRoute << QHostAddress(route.route()).toString()
++          << QString::number(route.prefix())
++          << QHostAddress(route.nextHop()).toString()
++          << QString::number(route.metric());
++      rawRoutes << rawRoute;
++  }
++  m_config->writeEntry("routes", rawRoutes);
++
+   m_config->writeEntry("ignoredhcpdns", setting->ignoredhcpdns());
+ }
+ 
+Only in settings: pbkdf2.cpp
+Only in settings: pbkdf2.h
+diff -ur origsettings//serialpersistence.cpp settings/serialpersistence.cpp
+--- origsettings//serialpersistence.cpp	2009-01-28 22:28:30.000000000 +0100
++++ settings/serialpersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+@@ -20,7 +20,7 @@
+   SerialSetting * setting = static_cast<SerialSetting *>(m_setting);
+   setting->setBaud(m_config->readEntry("baud", 0));
+   setting->setBits(m_config->readEntry("bits", 8));
+-  setting->setParity(m_config->readEntry("parity", QLatin1String( "None" )));
++  setting->setParity(m_config->readEntry("parity", "None"));
+   setting->setStopbits(m_config->readEntry("stopbits", 1));
+   setting->setSenddelay(m_config->readEntry("senddelay", 0));
+ }
+Only in settings: .svn
+Only in settings: wephash.cpp
+Only in settings: wephash.h

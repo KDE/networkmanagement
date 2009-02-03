@@ -76,13 +76,6 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     m_popup = new NetworkManagerPopup(0);
 
-    KConfigGroup cg = config();
-    m_popup->setShowWired(cg.readEntry("showWired", true));
-    m_popup->setShowWireless(cg.readEntry("showWireless", true));
-    m_popup->setShowVpn(cg.readEntry("showVpn", true));
-    m_popup->setShowGsm(cg.readEntry("showGsm", true));
-    m_popup->setWirelessNetworkDisplayLimit( cg.readEntry("numberOfWlans", 4));
-
     QObject::connect(Solid::Control::NetworkManager::notifier(),
             SIGNAL(statusChanged(Solid::Networking::Status)),
             this, SLOT(managerStatusChanged(Solid::Networking::Status)));
@@ -109,10 +102,6 @@ void NetworkManagerApplet::init()
             this, SLOT(networkInterfaceAdded(const QString&)));
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             this, SLOT(networkInterfaceRemoved(const QString&)));
-    foreach (Solid::Control::NetworkInterface * interface,
-            Solid::Control::NetworkManager::networkInterfaces()) {
-        QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
-    }
 
     // get kded module kicked in
     QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager", 
@@ -122,6 +111,7 @@ void NetworkManagerApplet::init()
     ref.call( QLatin1String("start"), qlonglong( wid) );
     // not really interesting, for now we only care to kick the load-on-demand
     kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
+    networkInterfaceAdded(QString());
 }
 
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
@@ -158,39 +148,34 @@ void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
 void NetworkManagerApplet::configAccepted()
 {
     KConfigGroup cg = config();
-/*
-    if (m_showVpn != ui.showVpnGroup->isChecked()) {
-        m_showBatteryString = !m_showBatteryString;
-        cg.writeEntry("showBatteryString", m_showBatteryString);
-        showLabel(m_showBatteryString);
+
+    if (m_popup->showWired() != ui.showWired->isChecked()) {
+        m_popup->setShowWired(ui.showWired->isChecked());
+        cg.writeEntry("showWired", ui.showWired->isChecked());
+        kDebug() << "Wired Changed" << ui.showWired->isChecked();
     }
-*/
-   if (m_popup->showWired() != ui.showWired->isChecked()) {
-       m_popup->setShowWired(ui.showWired->isChecked());
-       cg.writeEntry("showWired", ui.showWired->isChecked());
-       kDebug() << "Wired Changed" << ui.showWired->isChecked();
-   }
-   if (m_popup->showWireless() != ui.showWireless->isChecked()) {
-       m_popup->setShowWireless(ui.showWireless->isChecked());
-       cg.writeEntry("showWireless", ui.showWireless->isChecked());
-       kDebug() << "Wireless Changed" << m_popup->showWireless();
-   }
-   if (m_popup->showGsm() != ui.showGsm->isChecked()) {
-       m_popup->setShowGsm(ui.showGsm->isChecked());
-       cg.writeEntry("showGsm", ui.showGsm->isChecked());
-       kDebug() << "Gsm Changed" << ui.showGsm->isChecked();
-   }
-   if (m_popup->showVpn() != ui.showVpn->isChecked()) {
-       m_popup->setShowVpn(ui.showVpn->isChecked());
-       cg.writeEntry("showVpn", ui.showVpn->isChecked());
-       kDebug() << "VPN Changed" << ui.showVpn->isChecked();
-   }
-   uint wlans = ui.numberOfWlans->value();
-   if (wlans != m_popup->wirelessNetworkDisplayLimit()) {
-       m_popup->setWirelessNetworkDisplayLimit(wlans);
-       kDebug() << "No of WLANS Changed:" << wlans;
-   }
-   Plasma::Applet::configNeedsSaving();
+    if (m_popup->showWireless() != ui.showWireless->isChecked()) {
+        m_popup->setShowWireless(ui.showWireless->isChecked());
+        cg.writeEntry("showWireless", ui.showWireless->isChecked());
+        kDebug() << "Wireless Changed" << m_popup->showWireless();
+    }
+    if (m_popup->showGsm() != ui.showGsm->isChecked()) {
+        m_popup->setShowGsm(ui.showGsm->isChecked());
+        cg.writeEntry("showGsm", ui.showGsm->isChecked());
+        kDebug() << "Gsm Changed" << ui.showGsm->isChecked();
+    }
+    if (m_popup->showVpn() != ui.showVpn->isChecked()) {
+        m_popup->setShowVpn(ui.showVpn->isChecked());
+        cg.writeEntry("showVpn", ui.showVpn->isChecked());
+        kDebug() << "VPN Changed" << ui.showVpn->isChecked();
+    }
+    uint wlans = ui.numberOfWlans->value();
+    if (wlans != m_popup->wirelessNetworkDisplayLimit()) {
+        m_popup->setWirelessNetworkDisplayLimit(wlans);
+        cg.writeEntry("numberOfWlans", wlans);
+        kDebug() << "No of WLANS Changed:" << wlans;
+    }
+    Plasma::Applet::configNeedsSaving();
 }
 
 QList<QAction*> NetworkManagerApplet::contextualActions()
@@ -311,10 +296,22 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
     // update the tray icon
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     foreach (Solid::Control::NetworkInterface * interface,
-            Solid::Control::NetworkManager::networkInterfaces()) {
+            m_interfaces) {
+
+        // be aware of state changes
         QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
         QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
     }
+
+    KConfigGroup cg = config();
+    m_popup->setShowWired(cg.readEntry("showWired", true));
+    m_popup->setShowWireless(cg.readEntry("showWireless", true));
+    //m_popup->setShowPppoe(cg.readEntry("showPppoe", true));
+    m_popup->setShowGsm(cg.readEntry("showGsm", true));
+    //m_popup->setShowCdma(cg.readEntry("showCdma", true));
+    m_popup->setWirelessNetworkDisplayLimit( cg.readEntry("numberOfWlans", 4));
+    m_popup->setShowVpn(cg.readEntry("showVpn", true));
+
     interfaceConnectionStateChanged();
     update();
 }

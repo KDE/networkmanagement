@@ -25,52 +25,37 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QVBoxLayout>
 #include <QFile>
 
+#include <KDebug>
 #include <KGlobal>
+#include <KLocale>
 #include <KPluginFactory>
 
-#include "configxml.h"
-#include "secretstoragehelper.h"
 #include "wiredwidget.h"
 #include "ipv4widget.h"
 #include "connectionwidget.h"
 #include "security/802_1x_security_widget.h"
 
-//K_PLUGIN_FACTORY( WiredPreferencesFactory, registerPlugin<WiredPreferences>();)
-//K_EXPORT_PLUGIN( WiredPreferencesFactory( "kcm_knetworkmanager_wired" ) )
+#include "connection.h"
 
 WiredPreferences::WiredPreferences(QWidget *parent, const QVariantList &args)
 : ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
     QString connectionId = args[0].toString();
+    m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Wired);
     QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(connectionId, this);
-    m_connectionType = "Wired";
+    m_contents = new ConnectionWidget(m_connection, i18n("New Wired Connection"), this);
     layout->addWidget(m_contents);
-    m_connectionTypeWidget = new WiredWidget(connectionId, this);
-    IpV4Widget * ipv4Widget = new IpV4Widget(connectionId, this);
-    Wired8021xSecurityWidget * securityWidget = new Wired8021xSecurityWidget(connectionId, this);
+    WiredWidget * wiredWidget = new WiredWidget(m_connection, this);
+    IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+//    Wired8021xSecurityWidget * securityWidget = new Wired8021xSecurityWidget(m_connection, this);
 
-    // Must setup initial widget before adding its contents, or all child widgets are added in this
-    // run
-    addConfig(m_contents->configXml(), m_contents);
-
-    addToTabWidget(m_connectionTypeWidget);
+    addToTabWidget(wiredWidget);
     addToTabWidget(ipv4Widget);
-    addToTabWidget(securityWidget);
+//   addToTabWidget(securityWidget);
 }
 
 WiredPreferences::~WiredPreferences()
 {
-}
-
-void WiredPreferences::load()
-{
-    ConnectionPreferences::load();
-}
-
-void WiredPreferences::save()
-{
-    ConnectionPreferences::save();
 }
 
 // vim: sw=4 sts=4 et tw=100

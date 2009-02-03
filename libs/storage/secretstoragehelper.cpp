@@ -37,6 +37,7 @@ QString SecretStorageHelper::keyForEntry(const QString & entry) const
 
 void SecretStorageHelper::readSecret(const QString &key, QString &secret )
 {
+    kDebug() << key << secret;
     KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Synchronous );
     if( wallet && wallet->isOpen() ) {
         if( !wallet->hasFolder( s_walletFolderName ) )
@@ -55,6 +56,7 @@ void SecretStorageHelper::readSecret(const QString &key, QString &secret )
 
 void SecretStorageHelper::writeSecret(const QString &key, const QString &secret )
 {
+    kDebug() << key << secret;
     KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Synchronous );
     if( wallet && wallet->isOpen() ) {
         if( !wallet->hasFolder( s_walletFolderName ) )

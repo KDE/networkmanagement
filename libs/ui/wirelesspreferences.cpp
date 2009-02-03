@@ -25,17 +25,20 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KPluginFactory>
 #include <KDebug>
+#include <KLocale>
 #include <KTabWidget>
 
-#include <nm-setting-wireless-security.h>
-#include <nm-setting-8021x.h>
-
-#include "configxml.h"
-#include "secretstoragehelper.h"
 #include "802_11_wirelesswidget.h"
 #include "security/802_11_wireless_security_widget.h"
 #include "ipv4widget.h"
 #include "connectionwidget.h"
+
+#include "connection.h"
+#include "settings/802-11-wireless-security.h"
+#include "settings/802-11-wireless.h"
+
+#include <nm-setting-connection.h>
+#include <nm-setting-wireless.h>
 
 //K_PLUGIN_FACTORY( WirelessPreferencesFactory, registerPlugin<WirelessPreferences>();)
 //K_EXPORT_PLUGIN( WirelessPreferencesFactory( "kcm_knetworkmanager_wireless" ) )
@@ -47,7 +50,7 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
     Q_ASSERT(args.count());
 
     QString connectionId = args[0].toString();
-    m_connectionType = "Wireless";
+    m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Wireless);
 
     QString ssid;
     uint caps = 0, wpa = 0, rsn = 0;
@@ -62,72 +65,28 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
     }
 
     QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(connectionId, this);
+    m_contents = new ConnectionWidget(m_connection, i18n("New Wireless Connection"), this);
     layout->addWidget(m_contents);
-    m_connectionTypeWidget = new Wireless80211Widget(connectionId, ssid, this);
-    Wireless80211SecurityWidget * wirelessSecurityWidget = new Wireless80211SecurityWidget(setDefaults, connectionId, caps, wpa, rsn, this);
-    IpV4Widget * ipv4Widget = new IpV4Widget(connectionId, this);
-    // Must setup initial widget first
-    addConfig(m_contents->configXml(), m_contents);
+    Wireless80211Widget* connectionTypeWidget = new Wireless80211Widget(m_connection, ssid, this);
+    Wireless80211SecurityWidget * wirelessSecurityWidget = new Wireless80211SecurityWidget(setDefaults, m_connection, caps, wpa, rsn, this);
+    IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
 
     // the wireless security widget also creates the wpa-eap widget which
     // manages 802.1x parameters. 
-    addSettingWidget(wirelessSecurityWidget->wpaEapWidget());
+//    addSettingWidget(wirelessSecurityWidget->wpaEapWidget());
 
-    addToTabWidget(m_connectionTypeWidget);
+    addToTabWidget(connectionTypeWidget);
     addToTabWidget(wirelessSecurityWidget);
     addToTabWidget(ipv4Widget);
-
-    if ( setDefaults )
-    {
-        kDebug() << "Setting connection name to " << ssid;
-        // for defaults the security is most interesting
-        m_contents->connectionSettingsWidget()->setCurrentIndex( 1 );
-        m_contents->setConnectionName(ssid);
-    }
 }
 
 WirelessPreferences::~WirelessPreferences()
 {
 }
 
-void WirelessPreferences::load()
-{
-    ConnectionPreferences::load();
-}
 
 void WirelessPreferences::save()
 {
     ConnectionPreferences::save();
-    // this is where tab specific stuff should happen?
-    // that should be in the shared config widget code not connection code, as groups are shared.
-    // editing existing connections
-    // creating new connection
-    // popup to prompt for single missing secret
-    // interaction between tray and kcm
-    //   tray: new connection: launch kcm
-    //   tray: Edit connections?
-    //   Enable connection - does this need to go through UserSettingsService
-    //   Enable wireless
-    // interaction between kcm and service
-    // interaction between tray and service
-    // location of service (in-tray, in plasma)
-    //
-
-    // as all wireless-security settings are created even if not used we
-    // should discard the 802.1x here if the wireless security type is
-    // not WPA-EAP
-    if (m_contents->configXml()->config()->hasGroup(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME)
-        &&  m_contents->configXml()->config()->hasGroup(NM_SETTING_802_1X_SETTING_NAME))
-    {
-        KConfigGroup cgSec(m_contents->configXml()->config(), NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
-        if (cgSec.readEntry("keymgmt") != Wireless80211SecurityWidget::KEY_MGMT_WPA_EAP)
-        {
-            KConfigGroup cg8021x(m_contents->configXml()->config(), NM_SETTING_802_1X_SETTING_NAME);
-            cg8021x.deleteGroup();
-        }
-    }
-
 }
-
 // vim: sw=4 sts=4 et tw=100

@@ -20,26 +20,27 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ipv4widget.h"
 
-#include <nm-setting-ip4-config.h>
-
 #include <KDebug>
-#include <KConfigSkeletonItem>
-#include <KLocale>
 
-#include "configxml.h"
 #include "ui_ipv4.h"
+
+#include "connection.h"
+#include "settings/ipv4.h"
 
 class IpV4Widget::Private
 {
 public:
     Ui_SettingsIp4Config ui;
+    Knm::Ipv4Setting * setting;
 };
 
-IpV4Widget::IpV4Widget(const QString& connectionId, QWidget * parent)
-    : SettingWidget(connectionId, parent), d(new IpV4Widget::Private)
+IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
+    : SettingWidget(connection, parent), d(new IpV4Widget::Private)
 {
     d->ui.setupUi(this);
-    init();
+    d->setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
+    connect(d->ui.btnAddAddress, SIGNAL(clicked()), this, SLOT(addIpClicked()));
+    connect(d->ui.btnRemoveAddress, SIGNAL(clicked()), this, SLOT(removeIpClicked()));
 }
 
 IpV4Widget::~IpV4Widget()
@@ -47,53 +48,110 @@ IpV4Widget::~IpV4Widget()
     delete d;
 }
 
-QString IpV4Widget::settingName() const
-{
-    return QLatin1String("ipv4");
-}
-
 void IpV4Widget::readConfig()
 {
     kDebug();
-    KConfigSkeletonItem * methodItem = configXml()->findItem(settingName(), QLatin1String(NM_SETTING_IP4_CONFIG_METHOD));
-    Q_ASSERT(methodItem);
-    QString method = methodItem->property().toString();
-    if ( method == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_AUTO)) {
-        d->ui.method->setCurrentIndex(0);
-    } else if ( method == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_LINK_LOCAL)) {
-        d->ui.method->setCurrentIndex(1);
-    } else if ( method == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_MANUAL)) {
-        d->ui.method->setCurrentIndex(2);
-    } else if ( method == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_SHARED)) {
-        d->ui.method->setCurrentIndex(3);
-    } else {
-        kDebug() << "Unrecognised value for method:" << method;
+    switch (d->setting->method()) {
+        case Knm::Ipv4Setting::EnumMethod::Automatic:
+            d->ui.method->setCurrentIndex(0);
+            break;
+        case Knm::Ipv4Setting::EnumMethod::LinkLocal:
+            d->ui.method->setCurrentIndex(1);
+            break;
+        case Knm::Ipv4Setting::EnumMethod::Manual:
+            d->ui.method->setCurrentIndex(2);
+            break;
+        case Knm::Ipv4Setting::EnumMethod::Shared:
+            d->ui.method->setCurrentIndex(3);
+            break;
+        default:
+            kDebug() << "Unrecognised value for method:" << d->setting->method();
+            break;
     }
-    // TODO a lot, for ip addresses, routes etc
-    //KConfigGroup group(configXml()->config(), settingName());
-    //group.readEntry
+
+    // ip addresses
+    QList<QTreeWidgetItem*> items;
+    QList<Solid::Control::IPv4Address> addrList = d->setting->addresses();
+    foreach (Solid::Control::IPv4Address addr, d->setting->addresses()) {
+        QStringList fields;
+        fields << QHostAddress(addr.address()).toString() << QString::number(addr.netMask()) << QHostAddress(addr.gateway()).toString();
+        QTreeWidgetItem * item = new QTreeWidgetItem(d->ui.addresses, fields);
+        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
+        items.append(item);
+    }
+
+    // dns
+    QStringList dnsList;
+    foreach (QHostAddress dns, d->setting->dns()) {
+       dnsList << dns.toString();
+    }
+    d->ui.dns->setText(dnsList.join(","));
+    // dns search list
+    d->ui.dnsSearch->setText(d->setting->dnssearch().join(","));
 }
 
 void IpV4Widget::writeConfig()
 {
     // save method
-    KConfigGroup group(configXml()->config(), settingName());
     switch ( d->ui.method->currentIndex()) {
         case 0:
-            group.writeEntry(NM_SETTING_IP4_CONFIG_METHOD, NM_SETTING_IP4_CONFIG_METHOD_AUTO);
+            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Automatic);
             break;
         case 1:
-            group.writeEntry(NM_SETTING_IP4_CONFIG_METHOD, NM_SETTING_IP4_CONFIG_METHOD_LINK_LOCAL);
+            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::LinkLocal);
             break;
         case 2:
-            group.writeEntry(NM_SETTING_IP4_CONFIG_METHOD, NM_SETTING_IP4_CONFIG_METHOD_MANUAL);
+            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Manual);
             break;
         case 3:
-            group.writeEntry(NM_SETTING_IP4_CONFIG_METHOD, NM_SETTING_IP4_CONFIG_METHOD_SHARED);
+            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Shared);
             break;
         default:
             kDebug() << "Unrecognised combo box index for method:" << d->ui.method->currentIndex();
             break;
+    }
+
+    // addresses
+    QList<Solid::Control::IPv4Address> addresses;
+    while (QTreeWidgetItem* item = d->ui.addresses->takeTopLevelItem(0)) {
+        QHostAddress ip(item->text(0));
+        QHostAddress gateway(item->text(2));
+        if (ip == QHostAddress::Null
+                || gateway == QHostAddress::Null) {
+            continue;
+        }
+        Solid::Control::IPv4Address addr(ip.toIPv4Address(), item->text(1).toUInt(), gateway.toIPv4Address());
+        addresses.append(addr);
+    }
+    d->setting->setAddresses(addresses);
+
+    // dns
+    QList<QHostAddress> dnsList;
+    QStringList dnsInput = d->ui.dns->text().split(',');
+    foreach (QString dns, dnsInput) {
+        QHostAddress dnsAddr(dns);
+        if (dnsAddr != QHostAddress::Null) {
+            kDebug() << "Address parses to: " << dnsAddr.toString();
+            dnsList << dnsAddr;
+        }
+    }
+    d->setting->setDns(dnsList);
+    // dns search list
+    d->setting->setDnssearch(d->ui.dnsSearch->text().split(','));
+}
+
+void IpV4Widget::addIpClicked()
+{
+    QTreeWidgetItem * item = new QTreeWidgetItem(d->ui.addresses);
+    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
+    item->setSelected(true);
+}
+
+void IpV4Widget::removeIpClicked()
+{
+    QList<QTreeWidgetItem*> items = d->ui.addresses->selectedItems();
+    if (items.count()) {
+        delete items.first();
     }
 }
 

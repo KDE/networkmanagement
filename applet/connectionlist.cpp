@@ -49,7 +49,6 @@ void ConnectionList::init()
     addSettingsService(m_userSettings);
     addSettingsService(m_systemSettings);
     // adds items from subclasses below our layout
-    kDebug() << "clist";
     setupFooter();
     m_layout->addStretch(5);
 }
@@ -75,22 +74,30 @@ bool ConnectionList::assessConnections(NetworkManagerSettings * service)
             added |= processConnection(service, connectionPath);
         }
     }
+    if (added) {
+        emit connectionListUpdated();
+    }
     return added;
 }
 
 void ConnectionList::serviceDisappeared(NetworkManagerSettings* settings)
 {
     //remove all connections from this service
+    bool connectionsDeleted = false;
     ServiceConnectionHash::iterator i = m_connections.begin();
     while (i != m_connections.end()) {
         if (i.key().first == settings->service()) {
             ConnectionItem * item = i.value();
             m_connectionLayout->removeWidget(item);
             i = m_connections.erase(i);
+            connectionsDeleted = true;
             delete item;
         } else {
             ++i;
         }
+    }
+    if (connectionsDeleted) {
+        emit connectionListUpdated();
     }
 }
 
@@ -112,7 +119,7 @@ bool ConnectionList::processConnection(NetworkManagerSettings * service, const Q
     } else {
         RemoteConnection * remoteConnection = service->findConnection(connectionPath);
         if (accept(remoteConnection)) {
-            //kDebug() << "adding connection" << connectionPath << "from" << service->objectName();
+            kDebug() << "adding connection" << connectionPath << "from" << service->objectName();
             ConnectionItem * ci = createItem(remoteConnection);
             connect(ci, SIGNAL(clicked(AbstractConnectableItem*)), SLOT(activateConnection(AbstractConnectableItem*)));
             m_connections.insert(key, ci);

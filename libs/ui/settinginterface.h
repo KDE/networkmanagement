@@ -24,36 +24,37 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QVariant>
 
+#include "knm_export.h"
+
 class ConfigXml;
 class KConfig;
 
-#include "knm_export.h"
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
 
 class KNM_EXPORT SettingInterface
 {
 public:
-    SettingInterface(const QString & connectionId);
+    SettingInterface(Knm::Connection *);
     virtual ~SettingInterface();
+
+    Knm::Connection * connection() const;
     /**
-     * read in any configuration that ConfigXml can't handle
+     * populate the UI from the Connection
      */
-    virtual void readConfig();
+    virtual void readConfig() = 0;
     /**
-     * write any configuration that ConfigXml can't handle
+     * set the Connection from the UI
      */
-    virtual void writeConfig();
+    virtual void writeConfig() = 0;
     /**
-     * read the secrets out of the UI
+     * Populate the UI with any secrets from the Setting.
+     * Separate from readConfig because secrets are fetched
+     * asynchronously.
      */
-    virtual QVariantMap secrets() const;
-    /**
-     * get the name of the settings group configured by the widget
-     */
-    virtual QString settingName() const = 0;
-    /**
-     * The configuration management object belonging to this widget
-     */
-    ConfigXml * configXml() const;
+    virtual void readSecrets();
     /** 
      * Check that the settings in this widget are valid
      */
@@ -63,13 +64,6 @@ public:
      */
     virtual QWidget* widget() = 0;
 
-protected:
-    /**
-     * Setup ConfigXml for this widget
-     * Separate from ctor since it depends upon settingsName from concrete subclasses
-     */
-    void init();
-    QString connectionId() const;
 private:
     class Private;
     Private * d;

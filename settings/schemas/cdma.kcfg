@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
-  <kcfgfile arg="true"/>
+  <kcfgfile arg="false"/>
   <group name="cdma">
     <entry name="number" type="String">
       <label>Number</label>
@@ -13,7 +13,7 @@
       <label>Username</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="password" type="String">
+    <entry name="password" type="String" secret="true">
       <label>Password</label>
       <whatsthis></whatsthis>
     </entry>

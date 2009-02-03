@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Helmut Schaa <helmut.schaa@googlemail.com>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -20,71 +21,35 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "settinginterface.h"
 
-#include <QFile>
 #include <KDebug>
-#include <KStandardDirs>
-#include "configxml.h"
-#include "secretstoragehelper.h"
+
+#include "connection.h"
 
 class SettingInterface::Private
 {
 public:
-    QString connectionId;
-    ConfigXml * configXml;
-    SecretStorageHelper * secretStorage;
+    Knm::Connection * connection;
 };
 
 
-SettingInterface::SettingInterface(const QString& connectionId) : d(new Private)
+SettingInterface::SettingInterface(Knm::Connection * conn) : d(new Private)
 {
-    d->connectionId = connectionId;
-    d->secretStorage = 0;
-    d->configXml = 0;
+    d->connection = conn;
 }
 
 SettingInterface::~SettingInterface()
 {
-    delete d->configXml;
     delete d;
 }
 
-void SettingInterface::init()
+Knm::Connection * SettingInterface::connection() const
 {
-    QFile schemaFile(KStandardDirs::locate("data",
-            QString::fromLatin1("knetworkmanager/schemas/%1.kcfg").arg( settingName())));
-    if (schemaFile.exists()) {
-        d->secretStorage = new SecretStorageHelper(d->connectionId, settingName());
-        QString configFile = KStandardDirs::locateLocal("data",
-                QLatin1String("knetworkmanager/connections/") + d->connectionId);
-        kDebug() << "Opening config file: " << configFile;
-        d->configXml = new ConfigXml(KSharedConfig::openConfig(configFile), &schemaFile, true, d->secretStorage);
-    }
+    return d->connection;
 }
 
-QString SettingInterface::connectionId() const
-{
-    return d->connectionId;
-}
-
-void SettingInterface::readConfig()
+void SettingInterface::readSecrets()
 {
     //default impl does nothing
-}
-
-void SettingInterface::writeConfig()
-{
-    //default impl does nothing
-}
-
-QVariantMap SettingInterface::secrets() const
-{
-    kDebug() << "DEFAULT IMPL";
-    return QVariantMap();
-}
-
-ConfigXml * SettingInterface::configXml() const
-{
-    return d->configXml;
 }
 
 bool SettingInterface::validate() const

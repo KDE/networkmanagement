@@ -66,7 +66,6 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     m_ethernetGroup = 0;
     m_vpnHeader = 0;
     m_vpnGroup = 0;
-    m_gsmHeader = 0;
     m_gsmGroup = 0;
 
     setMinimumWidth(300);
@@ -82,13 +81,7 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     m_connectionLayout->setContentsMargins(0,0,0,0);
     m_wiredHeader = new QLabel(this);
     m_wiredHeader->setText(i18nc("Label for connection list popup","Wired Networks"));
-    //m_notRunning = new QLabel(this);
-    //m_notRunning->setText(i18nc("Label for when NetworkManager is not running","The NetworkManager service is not running."));
     m_connectionLayout->addWidget(m_wiredHeader);
-    //m_connectionLayout->addItem(m_notRunning);
-    if (Solid::Control::NetworkManager::status() != Solid::Networking::Unknown) {
-        ;//m_notRunning->hide();
-    }
     m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
     m_userSettings->setObjectName("user-settings-service");
     m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
@@ -151,15 +144,8 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     //managerWirelessHardwareEnabledChanged(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
 
     //gridLayout->addItem(m_lblRfkill, 1, 0, 1, 2);
-    //m_btnEnableNetworking = new QCheckBox(this);
-    //m_btnEnableWireless = new QCheckBox(this);
     managerWirelessEnabledChanged(Solid::Control::NetworkManager::isWirelessEnabled());
-    //m_btnEnableNetworking->setText(i18nc("Label for pushbutton enabling networking", "All Networking"));
-    //m_btnEnableWireless->setText(i18nc("Label for checkbox enabling wireless", "Wireless"));
-    //gridLayout->addItem(m_btnEnableNetworking, 1, 0, 1, 1);
-    //gridLayout->addItem(m_btnEnableWireless, 1, 0, 1, 2);
     //m_layout->addItem(gridLayout);
-    //m_layout->addWidget(m_btnEnableWireless);
     setLayout(m_layout);
     // connect up the buttons and the manager's signals
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
@@ -174,10 +160,6 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     //        this, SLOT(networkInterfaceRemoved(const QString&)));
     QObject::connect(m_btnManageConnections, SIGNAL(clicked()),
             this, SIGNAL(manageConnections()));
-    //QObject::connect(m_btnEnableNetworking, SIGNAL(toggled(bool)),
-    //        this, SLOT(userNetworkingEnabledChanged(bool)));
-    //QObject::connect(m_btnEnableWireless, SIGNAL(toggled(bool)),
-    //        this, SLOT(userWirelessEnabledChanged(bool)));
     QObject::connect(m_connectionActivationSignalMapper, SIGNAL(mapped(const QString&)),
             this, SLOT(activateConnection(const QString&)));
     QObject::connect(m_connectionDeactivationSignalMapper, SIGNAL(mapped(const QString&)),
@@ -187,6 +169,7 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     QObject::connect(m_ethernetGroup, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
     QObject::connect(m_wifiGroup, SIGNAL(updateLayout()), this, SLOT(updateLayout()));
     updateLayout();
+    m_wifiGroup->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
 }
 
 NetworkManagerPopup::~NetworkManagerPopup()
@@ -208,7 +191,7 @@ void NetworkManagerPopup::updateLayout()
 void NetworkManagerPopup::setShowWired(bool show)
 {
     m_showWired = show;
-    if (show) {
+    if (show && hasInterfaceOfType(Solid::Control::NetworkInterface::Ieee8023)) {
         m_wiredHeader->show();
         m_ethernetGroup->show();
 
@@ -221,7 +204,7 @@ void NetworkManagerPopup::setShowWired(bool show)
 void NetworkManagerPopup::setShowWireless(bool show)
 {
     m_showWireless = show;
-    if (show) {
+    if (show && hasInterfaceOfType(Solid::Control::NetworkInterface::Ieee80211)) {
         m_wirelessHeader->show();
         m_wifiGroup->show();
 
@@ -247,29 +230,28 @@ void NetworkManagerPopup::setShowVpn(bool show)
 void NetworkManagerPopup::setShowGsm(bool show)
 {
     m_showGsm = show;
-    if (show) {
-        //m_gsmHeader->show();
+    if (show && hasInterfaceOfType(Solid::Control::NetworkInterface::Gsm)) {
         m_gsmGroup->show();
 
     } else {
-        //m_gsmHeader->hide();
         m_gsmGroup->hide();
     }
 }
 
 void NetworkManagerPopup::managerWirelessEnabledChanged(bool enabled)
 {
-    //m_btnEnableWireless->setChecked(enabled);
-    m_wifiGroup->enableInterface(enabled);
+    if (m_wifiGroup) {
+        m_wifiGroup->setEnabled(enabled);
+    }
 }
 
 void NetworkManagerPopup::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     if (enabled) {
         KNotification::event(Event::RfOn, i18nc("Notification for radio kill switch turned on", "Wireless hardware enabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
-        m_lblRfkill->setText(i18nc("Label text when hardware wireless is enabled", "Wireless hardware is enabled"));
+        //m_lblRfkill->setText(i18nc("Label text when hardware wireless is enabled", "Wireless hardware is enabled"));
     } else {
-        m_lblRfkill->setText(i18nc("Label text when hardware wireless is not enabled", "Wireless hardware is disabled"));
+        //m_lblRfkill->setText(i18nc("Label text when hardware wireless is not enabled", "Wireless hardware is disabled"));
         KNotification::event(Event::RfOff, i18nc("Notification for radio kill switch turned on", "Wireless hardware disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
     }
     updateLayout();
@@ -329,12 +311,10 @@ void NetworkManagerPopup::managerStatusChanged(Solid::Networking::Status status)
         m_ethernetGroup->hide();
         m_wifiGroup->hide();
         m_gsmGroup->hide();
-        //m_notRunning->show();
     } else {
         m_ethernetGroup->show();
         m_wifiGroup->show();
         m_gsmGroup->show();
-        //m_notRunning->hide();
     }
 }
 
@@ -343,6 +323,19 @@ void NetworkManagerPopup::setWirelessNetworkDisplayLimit(uint limit)
     m_numberOfWlans = limit;
     m_wifiGroup->setNetworksLimit(m_numberOfWlans);
 }
+
+bool NetworkManagerPopup::hasInterfaceOfType(Solid::Control::NetworkInterface::Type type)
+{
+    foreach (Solid::Control::NetworkInterface * interface,
+            Solid::Control::NetworkManager::networkInterfaces()) {
+
+        if (interface->type() == type) {
+            return true;
+        }
+    }
+    return false;
+}
+
 #include "networkmanagerpopup.moc"
 
 // vim: sw=4 sts=4 et tw=100

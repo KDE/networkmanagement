@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfacegroup.h"
 
 #include <NetworkManager.h>
+#include <nm-setting-connection.h>
 #include <nm-setting-wireless.h>
 
 #include <QVBoxLayout>
@@ -49,23 +50,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkitem.h"
 #include "mergedwireless.h"
 
+QDebug operator<<(QDebug s, const AbstractWirelessNetwork*wl )
+{
+    s.nospace() << "Wireless(" << qPrintable(wl->ssid() ) << "," << wl->strength() << ")";
+    return s.space();
+}
+
 bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWirelessNetwork * n2);
 
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
-        NetworkManagerSettings * userSettings,
-        NetworkManagerSettings * systemSettings,
-        QWidget * parent)
-: ConnectionList(userSettings, systemSettings, parent), m_type(type),
-    m_wirelessEnvironment(new WirelessEnvironmentMerged(this)),
-    m_interfaceLayout(new QVBoxLayout(0)),
-    m_networkLayout(new QVBoxLayout(0)),
-    m_enabled( false ),
-    m_numberOfWlans(1)
+                               NetworkManagerSettings * userSettings,
+                               NetworkManagerSettings * systemSettings,
+                               QWidget * parent)
+    : ConnectionList(userSettings, systemSettings, parent), m_type(type),
+      m_wirelessEnvironment(new WirelessEnvironmentMerged(this)),
+      m_interfaceLayout(new QVBoxLayout(0)),
+      m_networkLayout(new QVBoxLayout(0)),
+      m_numberOfWlans( 1 )
 {
+    if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
+        m_enabled = Solid::Control::NetworkManager::isWirelessEnabled();
+    } else {
+        m_enabled = Solid::Control::NetworkManager::isNetworkingEnabled();
+    }
     connect(m_wirelessEnvironment, SIGNAL(networkAppeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
     connect(m_wirelessEnvironment, SIGNAL(networkDisappeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
-    connect(userSettings, SIGNAL(appeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
-    connect(userSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(refreshConnectionsAndNetworks()));
+    connect(this, SIGNAL(connectionListUpdated()), SLOT(refreshConnectionsAndNetworks()));
 
     m_layout->setSpacing(0);
     //m_interfaceLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -73,7 +83,6 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
     //m_networkLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_networkLayout->setSpacing(4);
     kDebug() << "TYPE" << m_type;
-    //updateNetworks();
 
     if (m_type == Solid::Control::NetworkInterface::Gsm) {
         setMinimumSize(QSize(285, 60)); // WTF?
@@ -85,11 +94,11 @@ InterfaceGroup::~InterfaceGroup()
     qDeleteAll( m_interfaces );
 }
 
-void InterfaceGroup::enableInterface(bool enable)
+void InterfaceGroup::setEnabled(bool enable)
 {
     m_enabled = enable;
     foreach (InterfaceItem * item, m_interfaces) {
-        item->enableInterface(enable);
+        item->setEnabled(enable);
     }
     updateNetworks();
 }
@@ -119,12 +128,32 @@ void InterfaceGroup::setupHeader()
 void InterfaceGroup::setupFooter()
 {
     m_layout->addLayout(m_networkLayout);
-    ////updateNetworks();
-    connect(this, SIGNAL(connectionListUpdated()), SLOT(updateNetworks()));
+    connect(this, SIGNAL(connectionListUpdated()), SLOT(updateConnections()));
+}
+
+void InterfaceGroup::updateConnections()
+{
+    updateNetworks();
+    if ( m_networkToConnect.isNull() )
+        return;
+
+    ServiceConnectionHash::iterator i = m_connections.begin();
+    while (i != m_connections.end()) {
+        ConnectionItem * item = i.value();
+        QVariantMapMap settings = item->connection()->settings();
+        QString ssid = settings[ NM_SETTING_WIRELESS_SETTING_NAME ] [ NM_SETTING_WIRELESS_SSID ].toString();
+        if ( ssid == m_networkToConnect )
+        {
+            activateConnection( item );
+            break;
+        }
+        ++i;
+    }
 }
 
 void InterfaceGroup::updateNetworks()
 {
+    kDebug();
     // empty the layout
     foreach (WirelessNetworkItem * i, m_networks) {
         m_networkLayout->removeWidget(i);
@@ -140,7 +169,7 @@ void InterfaceGroup::updateNetworks()
         }
         //kDebug() << "Now ... " << m_networks.keys();
     } else {
-        kDebug() << "Interface disabled ................ :-(";
+        //kDebug() << "Interface disabled ................ :-(";
     }
     m_networkLayout->invalidate();
     m_interfaceLayout->invalidate();
@@ -161,34 +190,36 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
 {
     QList<AbstractWirelessNetwork*> allNetworks;
     QList<AbstractWirelessNetwork*> topNetworks;
-    // we only show networks if we are not connected, have no connections and if the user settings service is present
-    // in future we could show the networks when the service is not running but without their connectButton
-    uint activeConnectionTotal = 0;
-    QString active_ssid = QString();
-    foreach (InterfaceItem * i, m_interfaces) {
-        activeConnectionTotal += i->activeConnectionCount();
-        active_ssid = i->ssid();
-    }
-    //kDebug() << "Active Connections:" << activeConnectionTotal << "Networks:" << m_wirelessEnvironment->networks();
-    //kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
 
-    // FIXME: m_userSettings can be invalid here, but we might still want to connect.
-    //if ((activeConnectionTotal == 0) && m_connections.isEmpty() && m_userSettings->isValid()) {
-    //if ((activeConnectionTotal == 0) && m_connections.isEmpty()) {
-    //kDebug() << "ACTIVE:" << active_ssid;
-        foreach (QString ssid, m_wirelessEnvironment->networks()) {
-            if (ssid != active_ssid) {
-                allNetworks.append(m_wirelessEnvironment->findNetwork(ssid));
+    kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
+
+    // check whether we have a connection for every ssid seen, if so, don't show it.
+    foreach (QString ssid, m_wirelessEnvironment->networks()) {
+        AbstractWirelessNetwork * net = m_wirelessEnvironment->findNetwork(ssid);
+        // trying out excluding networks based on any existing connection
+        bool connectionForNetworkExists = false;
+        foreach (ConnectionItem * connectionItem, m_connections) {
+            RemoteConnection * conn = connectionItem->connection();
+            QVariantMapMap settings = conn->settings();
+            // is it wireless?
+            QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
+            if (connectionSetting.value(QLatin1String(NM_SETTING_CONNECTION_TYPE)).toString() == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
+                QVariantMap wirelessSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME));
+                // does this connection match the ssid?
+                QString connectionSsid = wirelessSetting.value(QLatin1String(NM_SETTING_WIRELESS_SSID)).toString();
+                connectionForNetworkExists |= (connectionSsid == ssid);
             }
         }
-
-        qSort(allNetworks.begin(), allNetworks.end(), wirelessNetworkGreaterThanStrength);
-        for (int i = 0; i < allNetworks.count() && i < m_numberOfWlans; i++)
-        {
-            topNetworks.append(allNetworks[i]);
+        if (!connectionForNetworkExists) {
+            allNetworks.append(net);
         }
-    //}
-    //return allNetworks; // FIXME: shortcut ...
+    }
+
+    // sort by strength
+    qSort(allNetworks.begin(), allNetworks.end(), wirelessNetworkGreaterThanStrength);
+
+    //return the configured number of networks to show
+    topNetworks = allNetworks.mid(0, m_numberOfWlans);
     return topNetworks;
 }
 
@@ -208,15 +239,15 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
             case Solid::Control::NetworkInterface::Ieee80211:
                 wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
-                connect(wirelessinterface, SIGNAL(wirelessToggled(bool)), this, SLOT(enableInterface(bool)));
-                enableInterface(Solid::Control::NetworkManager::isWirelessEnabled());
-                wirelessinterface->enableInterface(Solid::Control::NetworkManager::isWirelessEnabled());
+                wirelessinterface->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
 
                 // keep track of rf kill changes
+                QObject::disconnect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)), this, 0 );
+                QObject::disconnect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)), this, 0 );
                 QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
-                        this, SLOT(enableInterface(bool)));
+                        this, SLOT(setEnabled(bool)));
                 QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
-                        this, SLOT(enableInterface(bool)));
+                        this, SLOT(setEnabled(bool)));
 
                 m_wirelessEnvironment->addWirelessEnvironment(wirelessinterface->wirelessEnvironment());
                 interface = wirelessinterface;
@@ -250,7 +281,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 break;
         }
         interface->setConnectionInspector(inspector);
-
+        interface->setEnabled(m_enabled);
         m_interfaceLayout->addWidget(interface);
         m_interfaces.insert(iface->uni(), interface);
         m_interfaceLayout->invalidate();
@@ -281,6 +312,7 @@ bool InterfaceGroup::accept(RemoteConnection * conn) const
     // that cast to WirelessConnectionItem, then did the same interface accept() loop.  ...?
     bool accepted = false;
     foreach (InterfaceItem * iface, m_interfaces) {
+        //kDebug() << conn << iface->connectionInspector()->accept(conn);
         if (iface->connectionInspector()->accept(conn)) {
             accepted = true;
             break;
@@ -353,6 +385,7 @@ void InterfaceGroup::refreshConnectionsAndNetworks()
 
 void InterfaceGroup::activateConnection(AbstractConnectableItem* item)
 {
+    m_networkToConnect.truncate( 0 );
     // tell the manager to activate the connection
     // which device??
     // HACK - take the first one
@@ -383,6 +416,7 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
                 << (quint32)wni->net()->referenceAccessPoint()->capabilities()
                 << (quint32)wni->net()->referenceAccessPoint()->wpaFlags()
                 << (quint32)wni->net()->referenceAccessPoint()->rsnFlags();
+            m_networkToConnect = wni->net()->ssid();
             kcm.call(QDBus::NoBlock, "createConnection", "802-11-wireless", QVariant::fromValue(args));
         } else {
             kDebug() << "opening connection management dialog using knetworkmanager_configshell";
@@ -395,8 +429,9 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
                 .arg(wni->net()->referenceAccessPoint()->rsnFlags());
 
             args << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("create");
-            kDebug() << args;
-            KToolInvocation::kdeinitExec("knetworkmanager_configshell", args);
+            m_networkToConnect = wni->net()->ssid();
+            int ret = KToolInvocation::kdeinitExec("knetworkmanager_configshell", args);
+            kDebug() << ret << args;
         }
     }
 }

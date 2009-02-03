@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>317</width>
-    <height>394</height>
+    <height>454</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -25,12 +25,12 @@
          <string>&amp;Number</string>
         </property>
         <property name="buddy" >
-         <cstring>kcfg_number</cstring>
+         <cstring>number</cstring>
         </property>
        </widget>
       </item>
       <item row="0" column="1" >
-       <widget class="KLineEdit" name="kcfg_number" >
+       <widget class="KLineEdit" name="number" >
         <property name="text" >
          <string>*99#</string>
         </property>
@@ -42,12 +42,12 @@
          <string>&amp;Username</string>
         </property>
         <property name="buddy" >
-         <cstring>kcfg_username</cstring>
+         <cstring>username</cstring>
         </property>
        </widget>
       </item>
       <item row="1" column="1" >
-       <widget class="KLineEdit" name="kcfg_username" />
+       <widget class="KLineEdit" name="username" />
       </item>
       <item row="2" column="0" >
        <widget class="QLabel" name="label_9" >
@@ -55,12 +55,12 @@
          <string>&amp;Password</string>
         </property>
         <property name="buddy" >
-         <cstring>kcfg_password</cstring>
+         <cstring>password</cstring>
         </property>
        </widget>
       </item>
       <item row="2" column="1" >
-       <widget class="KLineEdit" name="kcfg_password" />
+       <widget class="KLineEdit" name="password" />
       </item>
      </layout>
     </widget>
@@ -77,12 +77,12 @@
          <string>&amp;APN</string>
         </property>
         <property name="buddy" >
-         <cstring>kcfg_apn</cstring>
+         <cstring>apn</cstring>
         </property>
        </widget>
       </item>
       <item row="0" column="1" >
-       <widget class="KLineEdit" name="kcfg_apn" />
+       <widget class="KLineEdit" name="apn" />
       </item>
       <item row="1" column="0" >
        <widget class="QLabel" name="label_2" >
@@ -142,12 +142,12 @@
          <string>&amp;Band</string>
         </property>
         <property name="buddy" >
-         <cstring>kcfg_band</cstring>
+         <cstring>band</cstring>
         </property>
        </widget>
       </item>
       <item row="3" column="1" >
-       <widget class="KIntSpinBox" name="kcfg_band" >
+       <widget class="KIntSpinBox" name="band" >
         <property name="minimum" >
          <number>-1</number>
         </property>
@@ -162,12 +162,12 @@
          <string>&amp;PIN</string>
         </property>
         <property name="buddy" >
-         <cstring>kcfg_pin</cstring>
+         <cstring>pin</cstring>
         </property>
        </widget>
       </item>
       <item row="4" column="1" >
-       <widget class="KLineEdit" name="kcfg_pin" />
+       <widget class="KLineEdit" name="pin" />
       </item>
       <item row="5" column="0" >
        <widget class="QLabel" name="label_6" >
@@ -175,14 +175,21 @@
          <string>PU&amp;K</string>
         </property>
         <property name="buddy" >
-         <cstring>kcfg_puk</cstring>
+         <cstring>puk</cstring>
         </property>
        </widget>
       </item>
       <item row="5" column="1" >
-       <widget class="KLineEdit" name="kcfg_puk" />
+       <widget class="KLineEdit" name="puk" />
       </item>
      </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="chkShowPass" >
+     <property name="text" >
+      <string>&amp;Show secrets</string>
+     </property>
     </widget>
    </item>
    <item>

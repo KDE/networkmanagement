@@ -19,20 +19,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "wiredwidget.h"
-#include <nm-setting-wired.h>
+
+#include "connection.h"
 #include "ui_wired.h"
+
+#include "settings/802-3-ethernet.h"
 
 class WiredWidget::Private
 {
 public:
     Ui_Settings8023Ethernet ui;
+    Knm::WiredSetting * setting;
 };
 
-WiredWidget::WiredWidget(const QString& connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent), d(new WiredWidget::Private)
+WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
+: SettingWidget(connection, parent), d(new WiredWidget::Private)
 {
     d->ui.setupUi(this);
-    init();
+    d->setting = static_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
 }
 
 WiredWidget::~WiredWidget()
@@ -40,9 +44,21 @@ WiredWidget::~WiredWidget()
     delete d;
 }
 
-QString WiredWidget::settingName() const
+void WiredWidget::readConfig()
 {
-    return QLatin1String(NM_SETTING_WIRED_SETTING_NAME);
+    if (!d->setting->macaddress().isEmpty())
+        d->ui.macAddress->setText(d->setting->macaddress());
+    d->ui.mtu->setValue(d->setting->mtu());
+}
+
+void WiredWidget::writeConfig()
+{
+    d->setting->setMtu(d->ui.mtu->value());
+    if (d->ui.macAddress->text() == QLatin1String(":::::")) {
+        d->setting->setMacaddress(QByteArray());
+    } else {
+        d->setting->setMacaddress(d->ui.macAddress->text().toAscii());
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

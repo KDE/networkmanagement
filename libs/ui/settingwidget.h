@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -25,16 +25,18 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #include <QVariant>
 
-class ConfigXml;
-class KConfig;
-
 #include "knm_export.h"
 #include "settinginterface.h"
+
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
 
 class KNM_EXPORT SettingWidget : public QWidget, public SettingInterface
 {
 public:
-    SettingWidget(const QString & connectionId, QWidget * parent = 0);
+    SettingWidget(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~SettingWidget();
 
     QWidget* widget();

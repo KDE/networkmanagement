@@ -30,12 +30,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KStandardDirs>
 
 #include "types.h"
-#include "configxml.h"
-#include "datamappings.h"
 #include "networksettings.h"
 #include "knmserviceprefs.h"
-#include "secretstoragehelper.h"
 #include "knetworkmanagerserviceadaptor.h"
+
+#include "connectionpersistence.h"
 
 KConfigToService::KConfigToService(NetworkSettings * service, bool active)
     : QObject( service ), m_service(service), m_error(!active), m_init( false )
@@ -46,7 +45,6 @@ KConfigToService::KConfigToService(NetworkSettings * service, bool active)
 
     KNetworkManagerServicePrefs::instance(KStandardDirs::locate("config",
                 QLatin1String("knetworkmanagerrc")));
-    m_dataMappings = new DataMappings;
 
     connect(m_service, SIGNAL(connectionActivated(const QString&)), SLOT(connectionActivated(const QString&)));
 }
@@ -56,8 +54,6 @@ KConfigToService::~KConfigToService()
     kDebug();
     QDBusConnection::sessionBus().unregisterService( "org.kde.knetworkmanagerd" ) ;
     QDBusConnection::sessionBus().unregisterObject( "/modules/knetworkmanager" );
-
-    delete m_dataMappings;
 }
 
 void KConfigToService::init()
@@ -69,8 +65,8 @@ void KConfigToService::init()
         connectionIds = KNetworkManagerServicePrefs::self()->connections();
         // 2) open each connection's file and create 1 or more ConfigXml for it
         foreach (QString connectionId, connectionIds) {
-            QVariantMapMap connectionMap = restoreConnection(connectionId);
-            m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connectionMap));
+            Knm::Connection * connection = restoreConnection(connectionId);
+            m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connection));
         }
         m_init = true;
     }
@@ -82,7 +78,7 @@ void KConfigToService::start( WId wid )
     // TODO: it might be good to autostop if this function wasn't called
     // in say 2 minutes (plasma crash / communication failure)
     kDebug();
-    SecretStorageHelper::setWalletWid( wid );
+    Knm::ConnectionPersistence::setWalletWid( wid );
     init();
 }
 
@@ -90,7 +86,7 @@ void KConfigToService::stop()
 {
    QDBusInterface kded("org.kde.kded", "/kded", "org.kde.kded");
    kded.call( "unloadModule", "knetworkmanager" );
-    SecretStorageHelper::setWalletWid( 0 );
+   Knm::ConnectionPersistence::setWalletWid( 0 );
 }
 
  /*
@@ -105,25 +101,30 @@ void KConfigToService::stop()
  *   check value for any value conversions needed
  */
 
-QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
+Knm::Connection * KConfigToService::restoreConnection(const QString & connectionId)
 {
     kDebug() << connectionId;
     QString configFile = KStandardDirs::locate("data",
-                QLatin1String("knetworkmanager/connections/") + connectionId);
-    QVariantMapMap connectionMap;
+            QLatin1String("knetworkmanager/connections/") + connectionId);
+    Knm::Connection * connection = 0;
     if (!configFile.isEmpty())
     {
-        m_config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
-        m_config->reparseConfiguration();
-        foreach (QString group, m_config->groupList()) {
-            QVariantMap groupSettings = handleGroup(group);
-            if (groupSettings.isEmpty()) {
-                kDebug() << "Settings group '" << group << "' contains no settings!";
-                connectionMap.insert(group, QVariantMap());
-            } else {
-                connectionMap.insert(group, groupSettings );
-            }
+        QFile file(configFile);
+        if (file.exists())
+        {
+            m_config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
+            m_config->reparseConfiguration();
+            // restore from disk
+            Knm::ConnectionPersistence cp(m_config,
+                    (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
+                     Knm::ConnectionPersistence::PlainText));
+            cp.load();
+            connection = cp.connection();
+        } else {
+            kError() << "Config file for connection" << connectionId << "not found!";
         }
+
+#if 0 // probably redundant anyway now - otherwise fix in connectiondbus
         // NM requires that a map exists for the connection's type.  If the settings are all defaults,
         // our config won't contain that group.  So create that map (empty) if it hasn't been created by
         // reading the config.
@@ -131,18 +132,24 @@ QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
             connectionMap.insert(m_currentConnectionType, QVariantMap());
             //m_currentConnectionType = QString();
         }
+#endif
+#if 0
         // Special case #2, NM requires that a setting group for "gsm" is accompannied by a "serial"
         // group
         QString serialSetting = QLatin1String("serial");
         if (connectionMap.contains(QLatin1String("gsm") ) && !connectionMap.contains(serialSetting)) {
             connectionMap.insert(serialSetting, QVariantMap());
         }
+#endif
+#if 0
         // Special case #3, NM requires that a setting group for "serial" is accompanied by a "ppp"
         // group
         QString pppSetting = QLatin1String("ppp");
         if (connectionMap.contains(serialSetting) && !connectionMap.contains(pppSetting)) {
             connectionMap.insert(pppSetting, QVariantMap());
         }
+#endif
+#if 0
         // Special case #4, NM requires that a setting group for "pppoe" is accompanied by a "ppp"
         // group
         QString pppoeSetting = QLatin1String("pppoe");
@@ -150,15 +157,18 @@ QVariantMapMap KConfigToService::restoreConnection(const QString & connectionId)
             connectionMap.insert(pppSetting, QVariantMap());
         }
         kDebug() << connectionMap;
+#endif
     }
-    return connectionMap;
+    return connection;
 }
 
+// not called any more, but special cases must be moved out to connectionDbus
 QVariantMap KConfigToService::handleGroup(const QString & groupName)
 {
     kDebug() << groupName;
 
     QVariantMap map;
+#if 0
     QFile schemaFile(KStandardDirs::locate("data",
             QString::fromLatin1("knetworkmanager/schemas/%1.kcfg").arg( groupName)));
     if (!schemaFile.exists()) {
@@ -166,7 +176,7 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
         return QVariantMap();
     }
     ConfigXml * config = new ConfigXml(m_config, &schemaFile, false,
-            new SecretStorageHelper(/*connection id*/QLatin1String("testconfigxml"), groupName));
+            new SecretStorageHelper(QString(), groupName));
 
     foreach (KConfigSkeletonItem * item, config->items()) {
         item->swapDefault();
@@ -189,25 +199,6 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
             }
         }
     }
-    // special case for ipv4 "addresses" field, which isn't KConfigSkeletonItem-friendly
-    // TODO put this somewhere else - not every special case can live in this function.
-    if ( groupName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
-        KConfigGroup ipv4Group(m_config, groupName);
-        uint addressCount = ipv4Group.readEntry("addressCount", 0 );
-        kDebug() << "#addresses:" << addressCount;
-        UintListList addresses;
-        for (uint i = 0; i < addressCount; i++) {
-            QList<uint> addressList = ipv4Group.readEntry(QString::fromLatin1("address%1").arg(i), QList<uint>());
-            kDebug() << "address " << i << " " << addressList;
-            // a valid address must have 3 values: ip, netmask, broadcast
-            if ( addressList.count() == 3 ) {
-                addresses.append(addressList);
-            }
-        }
-        if (!addresses.isEmpty()) {
-            map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES), QVariant::fromValue(addresses));
-        }
-    }
     // special case for vpn data - which is not a simple type
     // TODO put this somewhere else - not every special case can live in this function.
     if ( groupName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
@@ -222,15 +213,6 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
 
         if ( !map.contains( NM_SETTING_VPN_SECRETS ) )
             map.insert( QLatin1String(NM_SETTING_VPN_SECRETS ), QVariant::fromValue( QStringMap() ) );
-    }
-
-    // special case for connection's "type" field, for which a corresponding QVariantMap must exist
-    // for NM to accept the connection
-    if (groupName == QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME)) {
-        KConfigSkeletonItem * item = config->findItem(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME),
-                                                      QLatin1String(NM_SETTING_CONNECTION_TYPE));
-        Q_ASSERT(item);
-        m_currentConnectionType = item->property().toString();
     }
 
     // special case for 8021x settings ca_cert -> have to pass it as blob
@@ -248,7 +230,7 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
            map.insert( QLatin1String(NM_SETTING_802_1X_CA_CERT), QVariant::fromValue(bytes));
         }
     }
-
+#endif
     return map;
 }
 
@@ -260,7 +242,6 @@ QVariantMap KConfigToService::handleGroup(const QString & groupName)
  */
 void KConfigToService::configure(const QStringList& changedConnections)
 {
-    kDebug();
     if (m_error) { // don't update if we don't own the service, we will do this later when we regain the service
         kDebug() << "kded4 does not own the NetworkManagerUserSettings service, so it ignored a request to reload configuration";
         return;
@@ -270,17 +251,27 @@ void KConfigToService::configure(const QStringList& changedConnections)
     QStringList addedConnections, deletedConnections;
     // figure out which connections were added
     QStringList existingConnections = m_connectionIdToObjectPath.keys();
-    foreach (QString connectionId, KNetworkManagerServicePrefs::self()->connections()) {
+    QStringList onDiskConnections = KNetworkManagerServicePrefs::self()->connections();
+    qSort(existingConnections);
+    qSort(onDiskConnections);
+    kDebug() << "existing connections are:" << existingConnections;
+    kDebug() << "on-disk connections are:" << onDiskConnections;
+
+    foreach (QString connectionId, onDiskConnections) {
         if (!existingConnections.contains(connectionId)) {
             addedConnections.append(connectionId);
         }
     }
     // figure out which connections were deleted
     foreach (QString connectionId, existingConnections) {
-        if (!KNetworkManagerServicePrefs::self()->connections().contains(connectionId)) {
+        if (!onDiskConnections.contains(connectionId)) {
             deletedConnections.append(connectionId);
         }
     }
+    kDebug() << "added connections:" << addedConnections;
+    kDebug() << "changed connections:" << changedConnections;
+    kDebug() << "deleted connections:" << deletedConnections;
+
     // update the service
     foreach (QString connectionId, deletedConnections) {
         QString objectPath = m_connectionIdToObjectPath.take(connectionId);
@@ -289,8 +280,8 @@ void KConfigToService::configure(const QStringList& changedConnections)
     }
     foreach (const QString connectionId, changedConnections) {
         if (m_connectionIdToObjectPath.contains(connectionId)) {
-            QVariantMapMap changedConnection = restoreConnection(connectionId);
-            if (!changedConnection.isEmpty()) {
+            Knm::Connection * changedConnection = restoreConnection(connectionId);
+            if (changedConnection) {
                 kDebug() << "updating connection with id:" << connectionId;
                 QString objPath = m_connectionIdToObjectPath.value(connectionId);
                 kDebug() << "at objectpath:" << objPath;
@@ -299,7 +290,6 @@ void KConfigToService::configure(const QStringList& changedConnections)
         }
     }
     foreach (QString connectionId, addedConnections) {
-        QVariantMapMap changedConnection = restoreConnection(connectionId);
         kDebug() << "adding connection with id: " << connectionId;
         m_service->addConnection(restoreConnection(connectionId));
     }

@@ -36,8 +36,7 @@ Q_OBJECT
 public:
     WiredPreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~WiredPreferences();
-    virtual void save();
-    virtual void load();
+    virtual bool needsEdits() const { return true; /*TODO until auto connection name generation code is in place*/ }
 };
 
 #endif

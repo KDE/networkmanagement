@@ -25,13 +25,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
+
 class KNM_EXPORT Wired8021xSecurityWidget : public SettingWidget
 {
 Q_OBJECT
 public:
-    Wired8021xSecurityWidget(const QString& connectionId, QWidget * parent = 0 );
+    Wired8021xSecurityWidget(Knm::Connection * connection, QWidget * parent = 0 );
     virtual ~Wired8021xSecurityWidget();
-    QString settingName() const;
 protected Q_SLOTS:
     void securityTypeChanged(int index);
 private:

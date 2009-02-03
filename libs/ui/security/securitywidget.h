@@ -29,16 +29,14 @@ class KNM_EXPORT SecurityWidget : public QWidget
 {
 Q_OBJECT
 public:
-    SecurityWidget(const QString & connectionId, QWidget * parent = 0 );
+    SecurityWidget(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~SecurityWidget();
-    static const QString AUTH_ALG_OPEN;
-    static const QString AUTH_ALG_SHARED;
     virtual void readConfig() = 0;
     virtual void writeConfig() = 0;
-    virtual QVariantMap secrets() const = 0;
+    virtual void readSecrets() = 0;
     virtual bool validate() const = 0;
 protected:
-    QString m_connectionId;
+    Knm::Connection* m_connection;
 };
 
 #endif

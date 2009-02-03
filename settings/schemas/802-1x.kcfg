@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
-  <kcfgfile arg="true"/>
+  <kcfgfile arg="false"/>
   <group name="802-1x">
     <entry name="eap" type="StringList">
       <label>EAP</label>
@@ -13,47 +13,47 @@
       <label>Identity</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="anonymousidentity" type="String">
+    <entry name="anonymousidentity" type="String" dbuskey="NM_SETTING_802_1X_ANONYMOUS_IDENTITY">
       <label>Anonymous identity</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="cacert" type="ByteArray">
+    <entry name="cacert" type="ByteArray" dbuskey="NM_SETTING_802_1X_CA_CERT">
       <label>CA Cert</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="capath" type="Path">
+    <entry name="capath" type="Path" dbuskey="NM_SETTING_802_1X_CA_PATH">
       <label>CA Path</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="clientcert" type="ByteArray">
+    <entry name="clientcert" type="ByteArray" dbuskey="NM_SETTING_802_1X_CLIENT_CERT">
       <label>Client Cert</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="phase1peapver" key="phase1peapver" type="Enum">
+    <entry name="phase1peapver" key="phase1peapver" type="Enum" dbuskey="NM_SETTING_802_1X_PHASE1_PEAPVER">
       <label>Phase 1 PEAP version</label>
       <whatsthis></whatsthis>
       <choices>
-        <choice name="0"/>
-        <choice name="1"/>
+        <choice name="zero"/>
+        <choice name="one"/>
       </choices>
     </entry>
-    <entry name="phase1peaplabel" key="phase1peaplabel" type="String">
+    <entry name="phase1peaplabel" key="phase1peaplabel" type="String" dbuskey="NM_SETTING_802_1X_PHASE1_PEAPLABEL">
       <label>Phase 1 PEAP label</label>
       <whatsthis></whatsthis>
       <choices>
-        <choice name="0"/>
-        <choice name="1"/>
+        <choice name="zero"/>
+        <choice name="one"/>
       </choices>
     </entry>
-    <entry name="phase1fastprovisioning" type="String">
+    <entry name="phase1fastprovisioning" type="String" dbuskey="NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING">
       <label>Phase 1 fast provisioning</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="phase2auth" type="String">
+    <entry name="phase2auth" type="String" dbuskey="NM_SETTING_802_1X_PHASE2_AUTH">
       <label>Phase 2 auth</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="phase2autheap" key="phase2autheap" type="Enum">
+    <entry name="phase2autheap" key="phase2autheap" type="Enum" dbuskey="NM_SETTING_802_1X_PHASE2_AUTHEAP">
       <label>Phase 2 auth eap</label>
       <choices>
         <choice name="pap"/>
@@ -63,27 +63,27 @@
       </choices>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="phase2cacert" type="ByteArray">
+    <entry name="phase2cacert" type="ByteArray" dbuskey="NM_SETTING_802_1X_PHASE2_CA_CERT">
       <label>Phase 2 CA Cert</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="phase2capath" type="Path">
+    <entry name="phase2capath" type="Path" dbuskey="NM_SETTING_802_1X_PHASE2_CA_PATH">
       <label>Phase 2 CA Path</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="phase2clientcert" type="ByteArray">
+    <entry name="phase2clientcert" type="ByteArray" dbuskey="NM_SETTING_802_1X_PHASE2_CLIENT_CERT">
       <label>Phase 2 client cert</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="password" type="String">
+    <entry name="password" type="String" secret="true">
       <label>Password</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="privatekey" type="ByteArray">
+    <entry name="privatekey" type="ByteArray" dbuskey="NM_SETTING_802_1X_PRIVATE_KEY">
       <label>Private key</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="phase2privatekey" type="ByteArray">
+    <entry name="phase2privatekey" type="ByteArray" dbuskey="NM_SETTING_802_1X_PHASE2_PRIVATE_KEY">
       <label>Phase 2 private key</label>
       <whatsthis></whatsthis>
     </entry>
@@ -94,6 +94,10 @@
     <entry name="psk" type="String">
       <label>PSK</label>
       <whatsthis></whatsthis>
+    </entry>
+    <entry name="enabled" type="Bool" nodbus="true">
+      <label>Connection uses 802.1x</label>
+      <default>false</default>
     </entry>
   </group>
 </kcfg>

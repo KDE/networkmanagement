@@ -37,15 +37,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QTimer>
 
-#include <KConfigDialog>
-#include <KDebug>
+#include <KDialog>
 #include <KLocale>
-
-#include <kwallet.h>
-
-#include "configxml.h"
-#include "datamappings.h"
-#include "secretstoragehelper.h"
+#include <KStandardDirs>
 
 #include "802_11_wirelesswidget.h"
 #include "cdmawidget.h"
@@ -59,9 +53,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "security/802_1x_security_widget.h"
 #include "security/securitywidget.h"
 
-ConnectionSecretsJob::ConnectionSecretsJob(const QString & connectionId, const QString &settingName,
+#include "knmserviceprefs.h"
+#include "connection.h"
+
+ConnectionSecretsJob::ConnectionSecretsJob(Knm::Connection* connection, const QString &settingName,
                                            const QStringList& secrets, bool requestNew, const QDBusMessage& request)
-    : mConnectionId(connectionId), mSettingName(settingName), mRequestNew(requestNew),
+    : m_connection(connection), m_connectionPersistence(0), mSettingName(settingName), mRequestNew(requestNew),
       mRequest(request), m_askUserDialog(0), m_settingWidget(0)
 {
     // record the secrets that we are looking for
@@ -81,149 +78,99 @@ void ConnectionSecretsJob::start()
 
 void ConnectionSecretsJob::doWork()
 {
+    kDebug();
     if (mRequestNew) {
-        kDebug() << "doAskUser() is under construction";
         doAskUser();
     } else {
-        // do wallet lookup
-        if (KWallet::Wallet::isEnabled()) {
-            kDebug() << "opening wallet...";
-            KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
-                                                                   SecretStorageHelper::walletWid(), KWallet::Wallet::Asynchronous);
-            if (wallet) {
-                connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
-            } else {
-                setError(WalletNotFound);
-                emitResult();
-            }
-        } else {
-            setError(WalletDisabled);
-            emitResult();
-        }
+        QString configFile = KStandardDirs::locate("data",
+                QLatin1String("knetworkmanager/connections/") + m_connection->uuid());
+        m_connectionPersistence = new Knm::ConnectionPersistence(m_connection,
+                KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
+                (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
+                 Knm::ConnectionPersistence::PlainText)
+                );
+        connect(m_connectionPersistence, SIGNAL(loadSecretsResult(uint)), this, SLOT(gotPersistedSecrets(uint)));
+        m_connectionPersistence->loadSecrets();
+    }
+}
+
+void ConnectionSecretsJob::gotPersistedSecrets(uint result)
+{
+    kDebug();
+    delete m_connectionPersistence;
+    m_connectionPersistence = 0;
+    setError(result);
+    if (result == Knm::ConnectionPersistence::EnumError::NoError) {
+        emitResult();
+    } else {
+        doAskUser();
     }
 }
 
 void ConnectionSecretsJob::doAskUser()
 {
     // popup a dialog showing the appropriate UI for the type of connection
-    //
-    // all the things the kdialog does for us
-    // KDialog
-    // Add widget for connection setting type
-    // configxml for that
-    // kconfigdialogmanager
-    // load the settings
-    // show
     kDebug();
     if ( mSettingName == QLatin1String(NM_SETTING_802_1X_SETTING_NAME)) {
-        //m_settingWidget = Wired8021xSecurityWidget(mConnectionId, 0);
+        //m_settingWidget = Wired8021xSecurityWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
-        m_settingWidget = new CdmaWidget(mConnectionId, 0);
+        m_settingWidget = new CdmaWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
-        m_settingWidget = new GsmWidget(mConnectionId, 0);
+        m_settingWidget = new GsmWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
-        m_settingWidget = new IpV4Widget(mConnectionId, 0);
+        m_settingWidget = new IpV4Widget(m_connection, 0);
     //} else if ( mSettingName == QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME)) {
         // not supported yet
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPP_SETTING_NAME)) {
-        m_settingWidget = new PppWidget(mConnectionId, 0);
+        m_settingWidget = new PppWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
-        m_settingWidget = new PppoeWidget(mConnectionId, 0);
+        m_settingWidget = new PppoeWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_SERIAL_SETTING_NAME)) {
-        m_settingWidget = new PppWidget(mConnectionId, 0);
+        m_settingWidget = new PppWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
         // not supported yet, figure out the type of the vpn plugin, load it and its m_settingWidgetget
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
-        m_settingWidget = new WiredWidget(mConnectionId, 0);
+        m_settingWidget = new WiredWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME)) {
-        m_settingWidget = new Wireless80211SecurityWidget(false, mConnectionId, 0, 0, 0); // TODO: find out
+        m_settingWidget = new Wireless80211SecurityWidget(false, m_connection, 0, 0, 0); // TODO: find out
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
-        m_settingWidget = new Wireless80211Widget(mConnectionId, 0);
+        m_settingWidget = new Wireless80211Widget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
-
+        // todo: vpn secrets!
     }
 
-    m_askUserDialog = new KConfigDialog(0, QLatin1String("knetworkmanager_askuser"), m_settingWidget->configXml());
-    m_askUserDialog->setWindowTitle(i18nc("dialog caption for network secrets request", "Enter network connection secrets"));
-    m_askUserDialog->addPage(m_settingWidget, m_settingWidget->windowTitle());
-    m_askUserDialog->setFaceType(KPageDialog::Plain);
-    connect(m_askUserDialog, SIGNAL(accepted()), SLOT(dialogAccepted()));
-    connect(m_askUserDialog, SIGNAL(rejected()), SLOT(dialogRejected()));
+    if (m_settingWidget) {
+        m_settingWidget->readConfig();
+        m_askUserDialog = new KDialog(0);
+        m_askUserDialog->setCaption(i18nc("dialog caption for network secrets request", "Enter network connection secrets"));
+        m_askUserDialog->setMainWidget(m_settingWidget);
+        m_askUserDialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
 
-    m_askUserDialog->show();
-}
+        connect(m_askUserDialog, SIGNAL(okClicked()), SLOT(dialogAccepted()));
+        connect(m_askUserDialog, SIGNAL(cancelClicked()), SLOT(dialogRejected()));
 
-void ConnectionSecretsJob::walletOpenedForRead(bool success)
-{
-    if (success) {
-        // get the requested secrets, set our secrets, and emit result
-        KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
-        if (wallet->isOpen() && wallet->hasFolder("NetworkManager") && wallet->setFolder("NetworkManager")) {
-            if (mSecrets.isEmpty()) {
-                kDebug() << "Reading all entries for connection";
-                QMap<QString,QString> entries;
-                QString key = mConnectionId + ';' + mSettingName + ";*";
-                if (wallet->readPasswordList(key, entries) == 0) {
-                    kDebug() << "Got password list: " << entries;
-                    DataMappings dm;
-                    QMapIterator<QString,QString> i(entries);
-                    while (i.hasNext()) {
-                        i.next();
-                        // the part that NM has asked for is the final part of the key used in
-                        // kwallet
-                        QString key = i.key().section(';', 2, 2);
-                        mSecrets.insert(dm.convertKey(key), dm.convertValue(key, QString(i.value())));
-                    }
-                    emitResult();
-                } else {
-                    kDebug() << "Wallet::readEntryList for :" << key << " failed";
-                }
-            } else {
-                kDebug() << "Reading requested entries from wallet: "<< mSecrets.keys();
-                bool missingSecret = false;
-                foreach (QString key, mSecrets.keys()) {
-                    kDebug() << "Requesting password from wallet: " << key;
-                    QString secret;
-                    if (wallet->readPassword(keyForEntry(key), secret) == 0 ) {
-                        kDebug() << "Got: " << key << " : " << secret;
-                        mSecrets.insert(key, secret);
-                    } else {
-                        missingSecret = true;
-                    }
-                }
-                if (missingSecret) {
-                    doAskUser();
-                } else {
-                    emitResult();
-                }
-            }
-        }
+        m_askUserDialog->show();
     } else {
-        setError(WalletOpenRefused);
-        emitResult();
+        kDebug() << "Setting widget for" << mSettingName << "not yet ported, rejecting secrets request.";
+        dialogRejected();
     }
-}
-
-void ConnectionSecretsJob::walletOpenedForWrite(bool)
-{
-
 }
 
 void ConnectionSecretsJob::dialogAccepted()
 {
     // get results from dialog, put them in mSecrets
-    kDebug() << "got secrets from widget:" << m_settingWidget->secrets();
-    QMapIterator <QString,QVariant> i(m_settingWidget->secrets());
-    while (i.hasNext()) {
-        i.next();
-        mSecrets.insert(i.key(), i.value());
-    }
-    kDebug() << "returning merged secrets:" << mSecrets;
-    if (mSecrets.isEmpty()) {
-        kDebug() << "SECRETS ARE EMPTY";
-        setError(UserInputCancelled);
-    }
-
+    kDebug();
+    // m_connection is up to date again
+    m_settingWidget->writeConfig();
+    // persist the changes
+    QString configFile = KStandardDirs::locate("data",
+            QLatin1String("knetworkmanager/connections/") + m_connection->uuid());
+    Knm::ConnectionPersistence cp(m_connection,
+            KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
+            (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
+             Knm::ConnectionPersistence::PlainText)
+            );
+    cp.save();
     m_settingWidget->deleteLater();
     m_askUserDialog->deleteLater();
     emitResult();
@@ -231,7 +178,7 @@ void ConnectionSecretsJob::dialogAccepted()
 
 void ConnectionSecretsJob::dialogRejected()
 {
-    setError(UserInputCancelled);
+    setError(EnumError::UserInputCancelled);
     m_settingWidget->deleteLater();
     m_askUserDialog->deleteLater();
     emitResult();
@@ -252,11 +199,10 @@ QDBusMessage ConnectionSecretsJob::requestMessage() const
     return mRequest;
 }
 
-QString ConnectionSecretsJob::keyForEntry(const QString & entry) const
+Knm::Connection * ConnectionSecretsJob::connection() const
 {
-    return mConnectionId + ';' + mSettingName + ';' + entry;
+    return m_connection;
 }
-
 
 #include "connectionsecretsjob.moc"
 // vim: sw=4 sts=4 et tw=100

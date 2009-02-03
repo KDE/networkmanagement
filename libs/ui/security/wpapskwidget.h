@@ -29,12 +29,12 @@ class WpaPskWidget : public SecurityWidget
 {
 Q_OBJECT
 public:
-    WpaPskWidget(KConfig * config, const QString & connectionId, QWidget * parent = 0);
+    WpaPskWidget(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~WpaPskWidget();
     bool validate() const;
     void readConfig();
     void writeConfig();
-    QVariantMap secrets() const;
+    void readSecrets();
 private slots:
     void chkShowPassToggled();
 private:

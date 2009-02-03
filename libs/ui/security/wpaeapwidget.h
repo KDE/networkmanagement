@@ -25,17 +25,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KSharedConfig>
 
-class WpaEapWidget : public SecurityWidget, public SettingInterface
+class WpaEapWidget : public SecurityWidget
 {
 Q_OBJECT
 public:
-    WpaEapWidget(KConfig * config, const QString & connectionId, QWidget * parent = 0);
+    WpaEapWidget(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~WpaEapWidget();
     bool validate() const;
     void readConfig();
     void writeConfig();
-    QVariantMap secrets() const;
-    QString settingName() const;
+    void readSecrets();
     QWidget* widget();
 private slots:
     void methodChanged(int);

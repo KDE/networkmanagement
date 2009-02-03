@@ -25,7 +25,7 @@ class QStringList;
 class QVariant;
 
 //HAND-EDIT
-class Connection;
+class BusConnection;
 /*
  * Adaptor class for interface org.freedesktop.NetworkManagerSettings.Connection
  */
@@ -147,7 +147,7 @@ class SecretsAdaptor: public QDBusAbstractAdaptor
         "")
 public:
     //HAND-EDIT
-    SecretsAdaptor(Connection *parent);
+    SecretsAdaptor(BusConnection *parent);
     virtual ~SecretsAdaptor();
 
 public: // PROPERTIES
@@ -157,7 +157,7 @@ public Q_SLOTS: // METHODS
 Q_SIGNALS: // SIGNALS
 //HAND-EDIT
 private:
-    Connection * m_connection;
+    BusConnection * m_connection;
 };
 
 #endif

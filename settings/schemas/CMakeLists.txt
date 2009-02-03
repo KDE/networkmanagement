@@ -10,6 +10,5 @@ install(FILES 802-11-wireless.kcfg
    802-1x.kcfg
    connection.kcfg
    serial.kcfg
-   DESTINATION ${DATA_INSTALL_DIR}/knetworkmanager/schemas/)
-
-
+   DESTINATION ${DATA_INSTALL_DIR}/knetworkmanager/schemas/
+   )

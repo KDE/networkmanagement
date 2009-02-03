@@ -9,13 +9,11 @@ include_directories(
 set(kded_knetworkmanager_SRCS
    datamappings.cpp
    service.cpp
-   connection.cpp
+   busconnection.cpp
    connectionsecretsjob.cpp
    exportedconnection.cpp
    kconfigtoservice.cpp
    networksettings.cpp
-   pbkdf2.cpp
-   wephash.cpp
    )
 
 kde4_add_kcfg_files(kded_knetworkmanager_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/knmserviceprefs.kcfgc)

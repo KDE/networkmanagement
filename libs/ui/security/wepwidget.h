@@ -32,12 +32,12 @@ class WepWidget : public SecurityWidget
 Q_OBJECT
 public:
     enum KeyFormat { Hex, Passphrase };
-    WepWidget(KeyFormat keyFormat, KConfig * config, const QString & connectionId, QWidget * parent = 0);
+    WepWidget(KeyFormat keyFormat, Knm::Connection* connectionId, QWidget * parent = 0);
     virtual ~WepWidget();
     bool validate() const;
     void readConfig();
     void writeConfig();
-    QVariantMap secrets() const;
+    void readSecrets();
 private slots:
     void keyTypeChanged(int);
     void chkShowPassToggled(bool);

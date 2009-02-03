@@ -20,19 +20,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "tlswidget.h"
 #include "ui_security_tls.h"
+#include "connection.h"
+#include "settings/802-1x.h"
 
 class TlsWidget::Private
 {
 public:
     Ui_Tls ui;
-    KConfig * config;
+    Knm::Security8021xSetting* setting;
 };
 
-TlsWidget::TlsWidget(KConfig* config, const QString & connectionId, QWidget * parent)
-: EapWidget(connectionId, parent), d(new TlsWidget::Private)
+TlsWidget::TlsWidget(Knm::Connection* connection, QWidget * parent)
+: EapWidget(connection, parent), d(new TlsWidget::Private)
 {
     d->ui.setupUi(this);
-    d->config = config;
+    d->setting = static_cast<Knm::Security8021xSetting *>(connection->setting(Knm::Setting::Security8021x));
 }
 
 TlsWidget::~TlsWidget()
@@ -46,17 +48,18 @@ bool TlsWidget::validate() const
 
 void TlsWidget::readConfig()
 {
-
+    kDebug() << "TODO:: Implement";
 }
 
 void TlsWidget::writeConfig()
 {
+    kDebug() << "TODO:: Implement";
 
 }
 
-QVariantMap TlsWidget::secrets() const
+void TlsWidget::readSecrets()
 {
-    QVariantMap ourSecrets;
-    return ourSecrets;
+    kDebug() << "TODO:: Implement";
 }
+
 // vim: sw=4 sts=4 et tw=100

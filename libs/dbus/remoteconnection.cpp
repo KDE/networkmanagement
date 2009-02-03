@@ -45,6 +45,8 @@ RemoteConnection::RemoteConnection(const QString& service, const QString & path,
 
     m_connection = GetSettings();
     m_path = path;
+    m_type = Solid::Control::NetworkInterface::UnknownType;
+
     //kDebug() << m_connection;
 
     if ( m_connection.contains(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME))) {
@@ -56,6 +58,7 @@ RemoteConnection::RemoteConnection(const QString& service, const QString & path,
         if (connectionSetting.contains(QLatin1String(NM_SETTING_CONNECTION_TYPE))) {
             nmType = connectionSetting.value(QLatin1String(NM_SETTING_CONNECTION_TYPE)).toString();
         }
+        kDebug() << nmType;
         if (nmType == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
             m_type = Solid::Control::NetworkInterface::Cdma;
         } else if (nmType == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {

@@ -45,8 +45,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * NetworkSettings
  * Remove connection?  This can be done in NetworkSettings
  */
-class DataMappings;
 class NetworkSettings;
+
+#include "connection.h"
 
 class KConfigToService : public QObject
 {
@@ -69,7 +70,7 @@ private:
     // utility method to do last minute value conversions, if required
     QVariant convertValue(const QString& key, const QVariant& value) const;
     // restore the given connection from storage to a map
-    QVariantMapMap restoreConnection(const QString & connectionId);
+    Knm::Connection * restoreConnection(const QString & connectionId);
     // deserialize a single settings group
     QVariantMap handleGroup(const QString & name);
 private:
@@ -78,7 +79,6 @@ private:
     KSharedConfigPtr m_config;
     QString m_currentConnectionType;
     bool m_error;
-    DataMappings * m_dataMappings;
     bool m_init;
 };
 

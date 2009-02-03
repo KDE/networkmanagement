@@ -3,16 +3,16 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
-  <kcfgfile arg="true"/>
+  <kcfgfile arg="false"/>
   <group name="ipv4">
     <entry name="method" key="method" type="Enum">
       <label>Method</label>
       <whatsthis>Choose the way to set the IP address of this connection</whatsthis>
       <choices>
-        <choice name="auto"/>
-        <choice name="link-local"/>
-        <choice name="manual"/>
-        <choice name="shared"/>
+        <choice name="Automatic" dbusvalue="auto"/>
+        <choice name="LinkLocal" dbusvalue="link-local"/>
+        <choice name="Manual" dbusvalue="manual"/>
+        <choice name="Shared" dbusvalue="shared"/>
       </choices>
       <default>42</default><!-- invalid default so that the choice is always sent; NM requires this -->
     </entry>
@@ -20,7 +20,7 @@
       <label>DNS Servers</label>
       <whatsthis>List of Domain Name System servers to use</whatsthis>
     </entry>
-    <entry name="dnssearch" type="StringList">
+    <entry name="dnssearch" type="StringList" dbuskey="NM_SETTING_IP4_CONFIG_DNS_SEARCH">
       <label>Search Domains</label>
       <whatsthis>List of domains to search for a hostname</whatsthis>
     </entry>
@@ -29,7 +29,7 @@
       <label>IP Addresses</label>
       <whatsthis>List of IP addresses to configure on this connection</whatsthis>
     </entry>
-    <entry name="ignoredhcpdns" type="Bool">
+    <entry name="ignoredhcpdns" type="Bool" dbuskey="NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS">
       <label>Ignore DHCP DNS</label>
       <whatsthis>Ignore DNS servers returned by DHCP and use the configured servers instead</whatsthis>
     </entry>

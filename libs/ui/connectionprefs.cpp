@@ -20,18 +20,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionprefs.h"
 
+#include <QFile>
 #include <KTabWidget>
-#include <kdebug.h>
+#include <KDebug>
+#include <KStandardDirs>
 
-#include <kcoreconfigskeleton.h>
-#include <nm-setting-connection.h>
-#include <nm-setting-vpn.h>
-#include "configxml.h"
 #include "connectionwidget.h"
+
+#include "connection.h"
+#include "connectionpersistence.h"
+#include "knmserviceprefs.h"
 
 ConnectionPreferences::ConnectionPreferences(const KComponentData& cdata, QWidget * parent, const QVariantList & args)
     : KCModule( cdata, parent, args ),
-      m_contents(0), m_connectionTypeWidget(0)
+      m_contents(0), m_connection(0), m_connectionPersistence(0)
 {
 
 }
@@ -40,75 +42,77 @@ ConnectionPreferences::~ConnectionPreferences()
 {
 }
 
-QString ConnectionPreferences::connectionType() const
+Knm::Connection * ConnectionPreferences::connection() const
 {
-    return m_connectionType;
-#if 0
-    KConfigSkeletonItem * configItem = m_contents->configXml()->findItem(m_contents->settingName(), "type");
-    if (configItem) {
-        return configItem->property().toString();
-    } else {
-        return QString();
-    }
-#endif
-}
-
-QString ConnectionPreferences::connectionName() const
-{
-    KConfigSkeletonItem * configItem = m_contents->configXml()->findItem(m_contents->settingName(), "id");
-    if (configItem) {
-        return configItem->property().toString();
-    } else {
-        return QString();
-    }
+    return m_connection;
 }
 
 void ConnectionPreferences::addSettingWidget(SettingInterface* iface)
 {
-    kDebug() << iface;
-    addConfig(iface->configXml(), iface->widget());
     m_settingWidgets.append(iface);
 }
 
-void ConnectionPreferences::addToTabWidget(SettingWidget * wid)
+void ConnectionPreferences::addToTabWidget(SettingWidget * widget)
 {
-    m_contents->connectionSettingsWidget()->addTab(wid,wid->windowTitle());
-    addConfig(wid->configXml(), wid);
-    m_settingWidgets.append(wid);
+    m_contents->connectionSettingsWidget()->addTab(widget, widget->windowTitle());
+    m_settingWidgets.append(widget);
 }
 
 void ConnectionPreferences::load()
 {
-    // first, do the KCModule's load, to give the widgets' load routine a free hand
-    KCModule::load();
+    // restore the Connection if possible
+    QString connectionFile(KStandardDirs::locateLocal("data",
+                QLatin1String("knetworkmanager/connections/") + m_connection->uuid()));
+    m_connectionPersistence = new Knm::ConnectionPersistence(m_connection, KSharedConfig::openConfig(connectionFile),
+            (KNetworkManagerServicePrefs::self()->storeInWallet()
+             ? Knm::ConnectionPersistence::Secure
+             : Knm::ConnectionPersistence::PlainText)
+            );
+    m_connectionPersistence->load();
+    // and initialise the UI from the Connection
+    m_contents->readConfig();
     foreach (SettingInterface * wid, m_settingWidgets) {
         wid->readConfig();
     }
-    // then read the connection settings
-    m_contents->readConfig();
+    // asynchronously fetch secrets
+    if (m_connection->hasSecrets()) {
+        connect(m_connectionPersistence, SIGNAL(loadSecretsResult(uint)), SLOT(gotSecrets(uint)));
+        m_connectionPersistence->loadSecrets();
+    } else {
+        delete m_connectionPersistence;
+    }
 }
 
 void ConnectionPreferences::save()
 {
-    // first, set the type on the connection settings
-    // using the type specific widget set in derived classes
-    Q_ASSERT( m_connectionTypeWidget);
-
-    KConfigSkeletonItem * typeItem = m_contents->configXml()->findItem(QLatin1String("connection"), QLatin1String("type"));
-    if (typeItem) {
-        typeItem->setProperty(m_connectionTypeWidget->settingName());
-    }
-
-    // secondly, do the KCModule's save, to give the widgets' save routine a free hand
-    KCModule::save();
-
-    // thirdly, call each widget's custom save method
+    // save the UI to the Connection
+    m_contents->writeConfig();
     foreach (SettingInterface * wid, m_settingWidgets) {
         wid->writeConfig();
     }
-    // finally write the connection settings
-    m_contents->writeConfig();
-    m_contents->configXml()->config()->sync();
+    // persist the Connection
+    QString connectionFile = KStandardDirs::locateLocal("data",
+        QLatin1String("knetworkmanager/connections/") + m_connection->uuid());
+
+    Knm::ConnectionPersistence cp(
+            m_connection,
+            KSharedConfig::openConfig(connectionFile),
+            (KNetworkManagerServicePrefs::self()->storeInWallet()
+             ? Knm::ConnectionPersistence::Secure
+             : Knm::ConnectionPersistence::PlainText)
+            );
+    cp.save();
+}
+
+void ConnectionPreferences::gotSecrets(uint result)
+{
+    if (result == Knm::ConnectionPersistence::EnumError::NoError) {
+        foreach (SettingInterface * wid, m_settingWidgets) {
+            wid->readSecrets();
+        }
+    }
+    delete m_connectionPersistence;
+    m_connectionPersistence = 0;
 }
 
 // vim: sw=4 sts=4 et tw=100

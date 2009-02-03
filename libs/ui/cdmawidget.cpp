@@ -20,21 +20,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "cdmawidget.h"
 
-#include <nm-setting-cdma.h>
-
+#include "connection.h"
+#include "settings/cdma.h"
 #include "ui_cdma.h"
 
 class CdmaWidget::Private
 {
 public:
     Ui_Cdma ui;
+    Knm::CdmaSetting * setting;
 };
 
-CdmaWidget::CdmaWidget(const QString& connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent), d(new CdmaWidget::Private)
+CdmaWidget::CdmaWidget(Knm::Connection * connection, QWidget * parent)
+: SettingWidget(connection, parent), d(new CdmaWidget::Private)
 {
     d->ui.setupUi(this);
-    init();
+    d->setting = static_cast<Knm::CdmaSetting *>(connection->setting(Knm::Setting::Cdma));
+    connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
+    d->ui.password->setEchoMode(QLineEdit::Password);
 }
 
 CdmaWidget::~CdmaWidget()
@@ -42,9 +45,29 @@ CdmaWidget::~CdmaWidget()
     delete d;
 }
 
-QString CdmaWidget::settingName() const
+void CdmaWidget::chkShowPassToggled()
 {
-    return QLatin1String(NM_SETTING_CDMA_SETTING_NAME);
+    bool on = d->ui.chkShowPass->isChecked();
+    d->ui.password->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
 }
+
+void CdmaWidget::readConfig()
+{
+    d->ui.number->setText(d->setting->number());
+    d->ui.username->setText(d->setting->username());
+}
+
+void CdmaWidget::writeConfig()
+{
+    d->setting->setNumber(d->ui.number->text());
+    d->setting->setUsername(d->ui.username->text());
+    d->setting->setPassword(d->ui.password->text());
+}
+
+void CdmaWidget::readSecrets()
+{
+    d->ui.password->setText(d->setting->password());
+}
+
 
 // vim: sw=4 sts=4 et tw=100

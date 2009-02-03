@@ -18,6 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QDBusInterface>
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kcmdlineargs.h>
@@ -99,7 +100,13 @@ int main(int argc, char **argv)
     if (args->arg(0) == QLatin1String("create")) {
         if (args->isSet("type")) {
             QString type = args->getOption("type");
-            editor.addConnection(editor.connectionTypeForString(args->getOption("type")), specificArgs);
+            QString cid = editor.addConnection(true, Knm::Connection::typeFromString(args->getOption("type")), specificArgs);
+            QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
+                                "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
+            QStringList ids;
+            ids << cid;
+            ref.call( QLatin1String( "configure" ), ids );
+            kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
         } else {
             args->usage();
             return -1;

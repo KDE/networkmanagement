@@ -44,7 +44,8 @@ class ConnectionInspector;
 class NetworkManagerSettings;
 class RemoteConnection;
 class WirelessNetwork;
-typedef QPair<NetworkManagerSettings*, RemoteConnection*> ActiveConnectionPair;
+// path of Connection.Active path on the daemon, remote connection object
+typedef QPair<QString, RemoteConnection*> ActiveConnectionPair;
 
 /**
  * Represents a single network interface
@@ -65,14 +66,12 @@ public:
      */
     void setConnectionInspector(ConnectionInspector *);
     ConnectionInspector * connectionInspector() const;
-    uint activeConnectionCount() const;
-    void enableInterface(bool enable);
+    virtual void setEnabled(bool enable);
     virtual QString ssid();
 
 public slots:
     void activeConnectionsChanged();
     void connectionStateChanged(int);
-    void wirelessEnabledChanged(bool checked);
     virtual void connectButtonClicked() = 0;
 
 protected Q_SLOTS:
@@ -83,7 +82,6 @@ protected Q_SLOTS:
     void serviceDisappeared(NetworkManagerSettings *service);
 Q_SIGNALS:
     void stateChanged();
-    void wirelessToggled(bool enabled);
 protected:
     /**
      * Fill in interface type connection info
@@ -124,14 +122,12 @@ protected:
     QVBoxLayout * m_connectionInfoLayout;
     QLabel * m_connectionInfoLabel;
     QProgressBar * m_strengthMeter;
-    QCheckBox * m_rfCheckBox;
     QLabel * m_connectionInfoStrengthLabel;
     QLabel * m_connectionInfoIcon;
-    QToolButton * m_connectButton;
     NameDisplayMode m_nameMode;
-    bool m_isWireless;
     bool m_enabled;
     QList<ActiveConnectionPair> m_activeConnections;
     ConnectionInspector * m_connectionInspector;
+    QString m_unavailableText;
 };
 #endif // APPLET_INTERFACEWIDGET_H

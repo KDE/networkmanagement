@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
-  <kcfgfile arg="true"/>
+  <kcfgfile arg="false"/>
   <group name="802-11-wireless">
     <entry name="ssid" type="ByteArray">
       <label>SSID</label>
@@ -39,21 +39,21 @@
       <label>Data rate</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="txpower" type="UInt">
+    <entry name="txpower" type="UInt" dbuskey="NM_SETTING_WIRELESS_TX_POWER">
       <label>Transmit power</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="macaddress" type="ByteArray">
+    <entry name="macaddress" type="ByteArray" dbuskey="NM_SETTING_WIRELESS_MAC_ADDRESS">
       <label>MAC Address</label>
       <whatsthis>Hardware address to set on the wireless network interface</whatsthis>
     </entry>
     <entry name="mtu" type="UInt">
       <label>MTU</label>
-      <default>1500</default>
+      <default>0</default>
       <whatsthis>Maximum Transmit Unit</whatsthis>
     </entry>
     <!-- another unspecified list probably bytearrays -->
-    <entry name="seenbssids" type="StringList">
+    <entry name="seenbssids" type="StringList" dbuskey="NM_SETTING_WIRELESS_SEEN_BSSIDS">
       <label>Seen BSSIDs</label>
       <whatsthis></whatsthis>
     </entry>

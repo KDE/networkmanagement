@@ -25,14 +25,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
+
 class KNM_EXPORT IpV4Widget : public SettingWidget
 {
+Q_OBJECT
 public:
-    IpV4Widget(const QString& connectionId, QWidget * parent = 0 );
+    IpV4Widget(Knm::Connection * connection, QWidget * parent = 0 );
     virtual ~IpV4Widget();
-    QString settingName() const;
     void readConfig();
     void writeConfig();
+protected Q_SLOTS:
+    void addIpClicked();
+    void removeIpClicked();
 private:
     class Private;
     Private * d;

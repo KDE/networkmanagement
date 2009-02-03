@@ -18,17 +18,17 @@
         <string>&amp;Connection name</string>
        </property>
        <property name="buddy" >
-        <cstring>kcfg_id</cstring>
+        <cstring>id</cstring>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KLineEdit" name="kcfg_id" />
+      <widget class="KLineEdit" name="id" />
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="kcfg_autoconnect" >
+    <widget class="QCheckBox" name="autoconnect" >
      <property name="text" >
       <string>Connect &amp;automatically</string>
      </property>

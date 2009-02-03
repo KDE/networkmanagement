@@ -113,6 +113,7 @@ signals:
      */
     void manageConnections();
 private:
+    bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
     NetworkManagerSettings * m_userSettings;
     NetworkManagerSettings * m_systemSettings;
     QVBoxLayout * m_layout;

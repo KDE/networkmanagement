@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+#include "connection.h"
+
 class ConnectionPreferences;
 typedef  QList<QVariant> QVariantList;
 
@@ -36,21 +38,20 @@ class KNM_EXPORT ConnectionEditor : public QObject
 {
 Q_OBJECT
 public:
-    enum ConnectionType { Wired, Wireless, Cellular, Vpn, Pppoe };
     ConnectionEditor(QObject * parent);
     virtual ~ConnectionEditor();
-    /**
-     * Get the connection type for a given string (matches nm-setting.h SETTING_NAME strings)
-     * @return connection type enum, Wireless if not found
-     */
-    void addConnection(ConnectionEditor::ConnectionType connectionType,
+
+    QString addConnection(bool useDefaults, Knm::Connection::Type type,
             const QVariantList &otherArgs = QVariantList());
-    ConnectionEditor::ConnectionType connectionTypeForString(const QString&) const;
+
+    void editConnection(Knm::Connection::Type type,
+            const QVariantList &otherArgs = QVariantList());
+
     /**
      * Construct an editor widget for the given connection type.
      */
     ConnectionPreferences * editorForConnectionType(bool setDefaults, QWidget * parent,
-                                                    ConnectionEditor::ConnectionType type,
+                                                    Knm::Connection::Type type,
                                                     const QVariantList & args) const;
     /**
      * Tell the UserSettings service to reload its configuration (via DBUS)
@@ -60,5 +61,6 @@ public:
 Q_SIGNALS:
     void connectionsChanged();
 private:
+    void persist(Knm::Connection*);
 };
 #endif // CONNECTIONEDITOR_H

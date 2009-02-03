@@ -28,14 +28,14 @@ class TtlsWidget : public EapWidget
 {
 Q_OBJECT
 public:
-    TtlsWidget(KConfig* config, const QString & connectionId, QWidget * parent = 0 );
+    TtlsWidget(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~TtlsWidget();
 
     // implemenation of EapWidget methods
     bool validate() const;
     void readConfig();
     void writeConfig();
-    QVariantMap secrets() const;
+    void readSecrets();
 
 private slots:
     void chkShowPassToggled(bool);

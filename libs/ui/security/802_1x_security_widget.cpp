@@ -28,22 +28,16 @@ public:
     Ui_Wired8021xSecurity ui;
 };
 
-Wired8021xSecurityWidget::Wired8021xSecurityWidget(const QString& connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent), d(new Wired8021xSecurityWidget::Private)
+Wired8021xSecurityWidget::Wired8021xSecurityWidget(Knm::Connection * connection, QWidget * parent)
+: SettingWidget(connection, parent), d(new Wired8021xSecurityWidget::Private)
 {
     d->ui.setupUi(this);
     //connect(d->ui.type, SIGNAL(currentIndexChanged(int)), this, SLOT(securityTypeChanged(int)));
-    init();
 }
 
 Wired8021xSecurityWidget::~Wired8021xSecurityWidget()
 {
     delete d;
-}
-
-QString Wired8021xSecurityWidget::settingName() const
-{
-    return QLatin1String("802-11-wireless-security");
 }
 
 void Wired8021xSecurityWidget::securityTypeChanged(int index)

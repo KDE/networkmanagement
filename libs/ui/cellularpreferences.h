@@ -34,6 +34,7 @@ public:
     virtual ~CellularPreferences();
     virtual void save();
     virtual void load();
+    virtual bool needsEdits() const { return true; }
 };
 
 #endif

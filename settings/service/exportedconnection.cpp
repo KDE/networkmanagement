@@ -17,7 +17,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 #include <KDebug>
-#include "connection.h"
+#include "busconnection.h"
 
 /*
  * Implementation of adaptor class ConnectionAdaptor
@@ -59,7 +59,7 @@ void ConnectionAdaptor::Update(const QVariantMapMap &properties)
  * Implementation of adaptor class SecretsAdaptor
  */
 
-SecretsAdaptor::SecretsAdaptor(Connection *parent)
+SecretsAdaptor::SecretsAdaptor(BusConnection *parent)
     : QDBusAbstractAdaptor(parent), m_connection(parent)
 {
     // constructor

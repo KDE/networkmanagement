@@ -26,37 +26,58 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KJob>
 
-class KConfigDialog;
+#include "connectionpersistence.h"
+
+class KDialog;
 class SettingWidget;
 
+/**
+ * A job that encapsulates looking up a specified set of Secrets from (secure) storage, ask the user
+ * if not found or if requestNew is set, set the new secrets back on the Connection object, and 
+ * write the connection to disk
+ */
 class ConnectionSecretsJob : public KJob
 {
 Q_OBJECT
 public:
-    enum ErrorCode { NoError = 0, WalletDisabled, WalletNotFound, WalletOpenRefused, UserInputCancelled };
-    ConnectionSecretsJob(const QString &connectionId, const QString &settingName, const QStringList &secrets, bool requestNew, const QDBusMessage& request);
+    class EnumError : public Knm::ConnectionPersistence::EnumError
+    {
+    public:
+        enum type { UserInputCancelled = Knm::ConnectionPersistence::EnumError::WalletOpenRefused + 1};
+
+    };
+    ConnectionSecretsJob(Knm::Connection * connection,
+            const QString &settingName,
+            const QStringList &secrets,
+            bool requestNew,
+            const QDBusMessage& request);
     ~ConnectionSecretsJob();
     void start();
+    Knm::Connection * connection() const;
     QString settingName() const;
     QVariantMap secrets() const;
     QDBusMessage requestMessage() const;
-
 
 public Q_SLOTS:
     void doWork();
     void dialogAccepted();
     void dialogRejected();
-    void walletOpenedForRead(bool success);
-    void walletOpenedForWrite(bool success);
+
+protected Q_SLOTS:
+    void gotPersistedSecrets(uint);
+
 private:
     void doAskUser();
     QString keyForEntry(const QString & entry) const;
-    QString mConnectionId;
+
+    Knm::Connection * m_connection;
+    Knm::ConnectionPersistence * m_connectionPersistence;
+
     QString mSettingName;
     QVariantMap mSecrets;
     bool mRequestNew;
     QDBusMessage mRequest;
-    KConfigDialog * m_askUserDialog;
+    KDialog * m_askUserDialog;
     SettingWidget * m_settingWidget;
 };
 

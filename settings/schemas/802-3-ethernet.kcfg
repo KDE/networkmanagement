@@ -3,7 +3,7 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
-  <kcfgfile arg="true"/>
+  <kcfgfile arg="false"/>
   <group name="802-3-ethernet">
     <entry name="port" key="port" type="Enum">
       <label>Port</label>
@@ -19,7 +19,7 @@
       <label>Speed</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="duplex" key="duplex" type="String">
+    <entry name="duplex" key="duplex" type="Enum">
       <label>Duplex</label>
       <whatsthis>Whether the Ethernet interface should use duplex communications</whatsthis>
       <choices>
@@ -28,18 +28,19 @@
       </choices>
     </entry>
     <!-- nb "auto-negotiate" in NM -->
-    <entry name="autonegotiate" type="Bool">
+    <entry name="autonegotiate" type="Bool" dbuskey="NM_SETTING_WIRED_AUTO_NEGOTIATE">
       <label>Auto negotiate</label>
+      <default>true</default>
       <whatsthis></whatsthis>
     </entry>
     <!-- nb "mac-address" in NM -->
-    <entry name="macaddress" type="ByteArray">
+    <entry name="macaddress" type="ByteArray" dbuskey="NM_SETTING_WIRED_MAC_ADDRESS">
       <label>MAC Address</label>
       <whatsthis></whatsthis>
     </entry>
     <entry name="mtu" type="UInt">
       <label>MTU</label>
-      <default>1500</default>
+      <default>0</default>
       <whatsthis>Maximum Transfer Unit to use</whatsthis>
     </entry>
   </group>

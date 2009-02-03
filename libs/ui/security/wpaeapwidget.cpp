@@ -28,52 +28,54 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-8021x.h>
 
 #include "802_11_wireless_security_widget.h"
-#include "secretstoragehelper.h"
 #include "ui_wpaeap.h"
 #include "peapwidget.h"
 #include "ttlswidget.h"
 #include "tlswidget.h"
-#include "configxml.h"
+#include "connection.h"
+#include "settings/802-11-wireless-security.h"
+#include "settings/802-1x.h"
 
 class WpaEapWidget::Private
 {
 public:
     Ui_WpaEap ui;
-    KConfig * wirelessSecurityConfig;
 
     QHash<int, EapWidget*> eapWidgetHash;
 
     int peapIndex;
     int ttlsIndex;
     int tlsIndex;
+
+    Knm::WirelessSecuritySetting* settingSec;
+    Knm::Security8021xSetting* setting8021x;
 };
 
-WpaEapWidget::WpaEapWidget(KConfig * config, const QString & connectionId, QWidget * parent)
-: SecurityWidget(connectionId, parent)
-, SettingInterface(connectionId)
+WpaEapWidget::WpaEapWidget(Knm::Connection* connection, QWidget * parent)
+: SecurityWidget(connection, parent)
 , d(new WpaEapWidget::Private)
 {
-    d->wirelessSecurityConfig = config;
     d->ui.setupUi((SecurityWidget*)this);
 
-    init();
+    d->settingSec = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
+    d->setting8021x = static_cast<Knm::Security8021xSetting *>(connection->setting(Knm::Setting::Security8021x));
 
     // we have to be careful here as we deal with two settings objects.
     // the eap widgets need the 802.1x setting as KConfig attribute
 
     int index = 0;
 
-    EapWidget* ew = new PeapWidget(configXml()->config(), connectionId, d->ui.stackedWidget);
+    EapWidget* ew = new PeapWidget(connection, d->ui.stackedWidget);
     d->eapWidgetHash.insert(index, ew);
     d->ui.stackedWidget->insertWidget(index, ew);
     d->peapIndex = index++;
 
-    ew = new TtlsWidget(configXml()->config(), connectionId, d->ui.stackedWidget);
+    ew = new TtlsWidget(connection, d->ui.stackedWidget);
     d->eapWidgetHash.insert(index, ew);
     d->ui.stackedWidget->insertWidget(index, ew);
     d->ttlsIndex = index++;
 
-    ew = new TlsWidget(configXml()->config(), connectionId, d->ui.stackedWidget);
+    ew = new TlsWidget(connection, d->ui.stackedWidget);
     d->eapWidgetHash.insert(index, ew);
     d->ui.stackedWidget->insertWidget(index, ew);
     d->tlsIndex = index++;
@@ -101,11 +103,6 @@ void WpaEapWidget::methodChanged(int index)
     d->ui.stackedWidget->setCurrentWidget(d->eapWidgetHash.value(index));
 }
 
-QString WpaEapWidget::settingName() const
-{
-    return QLatin1String(NM_SETTING_802_1X_SETTING_NAME);
-}
-
 bool WpaEapWidget::validate() const
 {
     return true;
@@ -118,11 +115,7 @@ void WpaEapWidget::readConfig()
     // 2. the 802.1x setting called directly by the KCModule
     // As we cannot distinquish the callers just handle both settings
 
-    // 802.1x setting
-    KConfigGroup cg8021x(configXml()->config(), settingName());
-
-    QStringList eap;
-    eap = cg8021x.readEntry("eap", eap);
+    Knm::Security8021xSetting::EapMethods eap = d->setting8021x->eapFlags();
 
     // default is peap
     EapWidget * ew = d->eapWidgetHash.value(d->peapIndex);
@@ -130,24 +123,21 @@ void WpaEapWidget::readConfig()
 
     kDebug() << "test " << eap;
 
-    if (eap.contains("ttls"))
+    if (eap.testFlag(Knm::Security8021xSetting::ttls))
     {
         d->ui.cboEAPMethod->setCurrentIndex(d->ttlsIndex);
         ew = d->eapWidgetHash.value(d->ttlsIndex);
-    } else if (eap.contains("tls"))
+    } else if (eap.testFlag(Knm::Security8021xSetting::tls))
     {
         d->ui.cboEAPMethod->setCurrentIndex(d->tlsIndex);
         ew = d->eapWidgetHash.value(d->tlsIndex);
-    } else if (eap.contains("peap"))
+    } else if (eap.testFlag(Knm::Security8021xSetting::peap))
     {
         d->ui.cboEAPMethod->setCurrentIndex(d->peapIndex);
         ew = d->eapWidgetHash.value(d->peapIndex);
     }
     ew->readConfig();
     d->ui.stackedWidget->setCurrentWidget(ew);
-
-    // wireless security setting
-    KConfigGroup cgWirelessSecurity(d->wirelessSecurityConfig, NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
 
 }
 
@@ -156,10 +146,7 @@ void WpaEapWidget::writeConfig()
     // This is WPA EAP, we have to handle
     // 1. the wireless security setting
     // 2. the 802.1x setting
-    // As we cannot distinquish the callers just handle both settings
-
-    // 802.1x setting
-    KConfigGroup cg8021x(configXml()->config(), settingName());
+    kDebug() << "write eap settings" ;
 
     EapWidget * ew = d->eapWidgetHash.value(d->ui.cboEAPMethod->currentIndex());
     if (ew) {
@@ -169,28 +156,40 @@ void WpaEapWidget::writeConfig()
     switch(d->ui.cboEAPMethod->currentIndex())
     {
         case 0:
-            cg8021x.writeEntry("eap", QStringList("peap"));
+            d->setting8021x->setEapFlags(Knm::Security8021xSetting::peap);
             break;
         case 1:
-            cg8021x.writeEntry("eap", QStringList("ttls"));
+            d->setting8021x->setEapFlags(Knm::Security8021xSetting::ttls);
             break;
         case 2:
-            cg8021x.writeEntry("eap", QStringList("tls"));
+            d->setting8021x->setEapFlags(Knm::Security8021xSetting::tls);
             break;
     }
-
-    // wireless security setting
-    KConfigGroup cgWirelessSecurity(d->wirelessSecurityConfig, NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
-
-    cgWirelessSecurity.writeEntry("keymgmt", Wireless80211SecurityWidget::KEY_MGMT_WPA_EAP);
+    d->setting8021x->setEnabled(true);
 }
 
 
-QVariantMap WpaEapWidget::secrets() const
+void WpaEapWidget::readSecrets()
 {
-    QVariantMap secrets;
-//  secrets.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK), QVariant(d->ui.psk->text()));
-    return secrets;
+    Knm::Security8021xSetting::EapMethods eap = d->setting8021x->eapFlags();
+
+    // default is peap
+    EapWidget * ew = d->eapWidgetHash.value(d->peapIndex);
+
+    if (eap.testFlag(Knm::Security8021xSetting::ttls))
+    {
+        d->ui.cboEAPMethod->setCurrentIndex(d->ttlsIndex);
+        ew = d->eapWidgetHash.value(d->ttlsIndex);
+    } else if (eap.testFlag(Knm::Security8021xSetting::tls))
+    {
+        d->ui.cboEAPMethod->setCurrentIndex(d->tlsIndex);
+        ew = d->eapWidgetHash.value(d->tlsIndex);
+    } else if (eap.testFlag(Knm::Security8021xSetting::peap))
+    {
+        d->ui.cboEAPMethod->setCurrentIndex(d->peapIndex);
+        ew = d->eapWidgetHash.value(d->peapIndex);
+    }
+    ew->readSecrets();
 }
 
 #include "wpaeapwidget.moc"

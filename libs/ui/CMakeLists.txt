@@ -14,7 +14,7 @@ set(knmui_SRCS
    security/securitywidget.cpp
    settinginterface.cpp
    settingwidget.cpp
-   connectionwidgetfactory.cpp
+   #connectionwidgetfactory.cpp
    connectionwidget.cpp
    ipv4widget.cpp
    wiredwidget.cpp
@@ -33,11 +33,12 @@ set(knmui_SRCS
    security/peapwidget.cpp
    security/ttlswidget.cpp
    security/tlswidget.cpp
-   vpnuiplugin.cpp
+   #vpnuiplugin.cpp
    connectionprefs.cpp
-   cellularpreferences.cpp
+   gsmconnectioneditor.cpp
+   cdmaconnectioneditor.cpp
    pppoepreferences.cpp
-   vpnpreferences.cpp
+   #vpnpreferences.cpp
    wiredpreferences.cpp
    wirelesspreferences.cpp
    connectioneditor.cpp

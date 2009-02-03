@@ -37,8 +37,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 WiredInterfaceItem::WiredInterfaceItem(Solid::Control::WiredNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QWidget* parent)
 : InterfaceItem(iface, userSettings, systemSettings, mode, parent), m_wiredIface(iface)
-
 {
+    m_unavailableText = i18nc("Network cable of interface is not plugged in", "Not plugged in");
 }
 
 WiredInterfaceItem::~WiredInterfaceItem()

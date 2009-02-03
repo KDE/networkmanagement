@@ -23,19 +23,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ttlswidget.h"
 #include "ui_security_ttls.h"
 #include "secretstoragehelper.h"
+#include "settings/802-1x.h"
+#include "connection.h"
 
 class TtlsWidget::Private
 {
 public:
     Ui_Ttls ui;
-    KConfig* config;
+    Knm::Security8021xSetting* setting;
 };
 
-TtlsWidget::TtlsWidget(KConfig* config, const QString & connectionId, QWidget * parent)
-: EapWidget(connectionId, parent), d(new TtlsWidget::Private)
+TtlsWidget::TtlsWidget(Knm::Connection* connection, QWidget * parent)
+: EapWidget(connection, parent), d(new TtlsWidget::Private)
 {
     d->ui.setupUi(this);
-    d->config = config;
+    d->setting = static_cast<Knm::Security8021xSetting *>(connection->setting(Knm::Setting::Security8021x));
 
     chkShowPassToggled(false);
     connect(d->ui.chkShowPassword, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
@@ -57,66 +59,62 @@ bool TtlsWidget::validate() const
 
 void TtlsWidget::readConfig()
 {
-    KConfigGroup cg(d->config, NM_SETTING_802_1X_SETTING_NAME);
-
     QString identity;
-    identity = cg.readEntry("identity");
+    identity = d->setting->identity();
     if (!identity.isEmpty())
         d->ui.identity->setText(identity);
 
-    QString anonIdentity = cg.readEntry("anonymousidentity");
-    if (!anonIdentity.isEmpty())
-        d->ui.anonidentity->setText(anonIdentity);
+    QString anonymousidentity = d->setting->anonymousidentity();
+    if (!anonymousidentity.isEmpty())
+        d->ui.anonidentity->setText(anonymousidentity);
 
-    QString capath = cg.readEntry("capath");
+    QString capath = d->setting->capath();
     if (!capath.isEmpty())
         d->ui.cacert->setUrl(capath);
 
-    QString phase2autheap = cg.readEntry("phase2autheap", "pap");
-    if (phase2autheap == "pap")
+    int phase2autheap = d->setting->phase2autheap();
+    if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::pap)
         d->ui.phase2autheap->setCurrentIndex(0);
-    else if (phase2autheap == "mschap")
+    else if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::mschap)
         d->ui.phase2autheap->setCurrentIndex(1);
-    else if (phase2autheap == "mschapv2")
+    else if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::mschapv2)
         d->ui.phase2autheap->setCurrentIndex(2);
-    else if (phase2autheap == "chap")
+    else if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::chap)
         d->ui.phase2autheap->setCurrentIndex(3);
 }
 
 void TtlsWidget::writeConfig()
 {
-    KConfigGroup cg(d->config, NM_SETTING_802_1X_SETTING_NAME);
-
-    cg.writeEntry("identity", d->ui.identity->text());
-    cg.writeEntry("anonymousidentity", d->ui.anonidentity->text());
-    cg.writeEntry("capath", d->ui.cacert->url().directory() + "/" + d->ui.cacert->url().fileName());
+    d->setting->setIdentity(d->ui.identity->text());
+    d->setting->setAnonymousidentity(d->ui.anonidentity->text());
+    if (!d->ui.cacert->url().directory().isEmpty() && !d->ui.cacert->url().fileName().isEmpty())
+        d->setting->setCapath(d->ui.cacert->url().directory() + "/" + d->ui.cacert->url().fileName());
 
     switch(d->ui.phase2autheap->currentIndex())
     {
         case 0:
-            cg.writeEntry("phase2autheap", "pap");
+            d->setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::pap);
             break;
         case 1:
-            cg.writeEntry("phase2autheap", "mschap");
+            d->setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::mschap);
             break;
         case 2:
-            cg.writeEntry("phase2autheap", "mschapv2");
+            d->setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::mschapv2);
             break;
         case 3:
-            cg.writeEntry("phase2autheap", "chap");
+            d->setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::chap);
             break;
     }
 
-    SecretStorageHelper secrets(m_connectionId, cg.name());
-
-    cg.writeEntry("password", d->ui.password->text());
-
+    d->setting->setPassword(d->ui.password->text());
 }
 
-QVariantMap TtlsWidget::secrets() const
+void TtlsWidget::readSecrets()
 {
-    QVariantMap ourSecrets;
-    ourSecrets.insert("password", d->ui.password->text());
-    return ourSecrets;
+    QString password = d->setting->password();
+    if (!password.isEmpty())
+        d->ui.password->setText(password);
 }
+
+
 // vim: sw=4 sts=4 et tw=100

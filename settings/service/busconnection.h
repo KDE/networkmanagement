@@ -17,8 +17,8 @@
 
 */
 
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#ifndef BUSCONNECTION_H
+#define BUSCONNECTION_H
 
 #include "marshalarguments.h"
 
@@ -35,9 +35,19 @@
 
 #include <NetworkManager.h>
 
+
 class KJob;
 
-class Connection : public QObject
+namespace Knm
+{
+    class Connection;
+    class ConnectionPersistence;
+} // namespace Knm
+
+/**
+ * A representation of a connection on the bus
+ */
+class BusConnection : public QObject
 {
     Q_OBJECT
     Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection")
@@ -45,17 +55,18 @@ class Connection : public QObject
     Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection.Secrets")
 
     public:
-        enum ConnectionType {Unknown=0, Wired, Wireless};
-
-        Connection(const QString & id, const QVariantMapMap & settingsMap, QObject *parent=0);
-        ~Connection();
+        /**
+         * Takes ownership of the Knm::Connection passed to it.
+         */
+        BusConnection(Knm::Connection * connection, QObject *parent = 0);
+        ~BusConnection();
 
         //export to dbus
         Q_SCRIPTABLE void Update(QVariantMapMap updates);
+        void updateInternal(Knm::Connection * connection);
         Q_SCRIPTABLE void Delete();
         Q_SCRIPTABLE QVariantMapMap GetSettings() const;
         Q_SCRIPTABLE QVariantMapMap GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new, const QDBusMessage&);
-        bool hasSecrets() const;
         QString uuid() const;
     Q_SIGNALS:
         Q_SCRIPTABLE void Updated(QMap<QString, QMap<QString, QVariant> >);
@@ -64,12 +75,9 @@ class Connection : public QObject
     public Q_SLOTS:
         void gotSecrets(KJob*);
     private:
-        QString mId;
-        QMap<QString, QMap<QString, QVariant> > mSettingsMap;
-        bool mHasSecrets;
-
-        //ConnectionType connType;
-        //WiredConnectionSetting *wired;
+        Knm::Connection * m_connection;
+        KJob * m_job;
+        // a connection persistence while it is doing a wallet look up for us
 };
 
 #endif

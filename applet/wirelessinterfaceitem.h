@@ -35,7 +35,7 @@ namespace Control
 }
 
 class WirelessEnvironment;
-class WirelessNetwork;
+class AbstractWirelessNetwork;
 
 /** Represents a wireless network interface in the popup
  * Provides custom UI for wireless connection status
@@ -49,12 +49,26 @@ public:
     WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QWidget* parent = 0);
     virtual ~WirelessInterfaceItem();
     WirelessEnvironment * wirelessEnvironment() const;
+    /**
+     * SSID of any active network, or an invalid QString if none
+     */
     QString ssid();
+    /** @reimp InterfaceItem */
+    virtual void setEnabled(bool enable);
+    /**
+     * Checks whether this interface is using the supplied wireless network
+     * At the moment it only checks on SSID, but this should be extended to check on BSSIDs in the
+     * network, as SSID is an insufficient uniqueness guarantee
+     */
+    bool isUsing(const AbstractWirelessNetwork *) const;
 public slots:
     void activeAccessPointChanged(const QString&);
     void activeSignalStrengthChanged(int);
     void accessPointDestroyed(QObject *);
     void connectButtonClicked();
+    void wirelessEnabledToggled(bool checked);
+    void managerWirelessEnabledChanged(bool);
+    void managerWirelessHardwareEnabledChanged(bool);
 private:
     void setConnectionInfo();
 
@@ -66,5 +80,6 @@ private:
     Solid::Control::WirelessNetworkInterface * m_wirelessIface;
     Solid::Control::AccessPoint * m_activeAccessPoint;
     WirelessEnvironment * m_environment;
+    QCheckBox * m_rfCheckBox;
 };
 #endif // WIRELESSINTERFACEITEM_H

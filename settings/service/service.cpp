@@ -49,7 +49,7 @@ KNetworkManagerService::KNetworkManagerService(QObject * parent, const QVariantL
 {
     if ( !QDBusConnection::systemBus().interface()->registerService( SERVICE_USER_SETTINGS, QDBusConnectionInterface::QueueService, QDBusConnectionInterface::AllowReplacement ) ) {
         // trouble;
-        kDebug() << "Unable to register service";
+        kDebug() << "Unable to register service" << QDBusConnection::systemBus().lastError();
         m_active = false;
     }
     kDebug() << "registered" << SERVICE_USER_SETTINGS;
@@ -64,7 +64,7 @@ KNetworkManagerService::KNetworkManagerService(QObject * parent, const QVariantL
 
     mNetworkSettings = new NetworkSettings(this);
     ( void ) new KConfigToService(mNetworkSettings, m_active);
-    // don't init, wait for start
+    // don't call init on the KConfigToService init, wait for start call over dbus.
 }
 
 KNetworkManagerService::~KNetworkManagerService()

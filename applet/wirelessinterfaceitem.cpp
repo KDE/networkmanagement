@@ -22,6 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <nm-setting-wireless.h>
 
+#include <QGridLayout>
+#include <QCheckBox>
+
 #include <KNotification>
 #include <KIconLoader>
 #include <KDebug>
@@ -46,6 +49,19 @@ WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInte
             SLOT(activeAccessPointChanged(const QString&)));
 
     activeAccessPointChanged(m_wirelessIface->activeAccessPoint());
+
+    m_rfCheckBox = new QCheckBox(this);
+    m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
+    m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+    m_rfCheckBox->setText(i18n("Enable"));
+    m_rfCheckBox->setToolTip(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable Wireless"));
+    m_layout->addWidget(m_rfCheckBox, 0, 2, 1, 2, Qt::AlignRight);
+    connect(m_rfCheckBox, SIGNAL(toggled(bool)),
+            SLOT(wirelessEnabledToggled(bool)));
+    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
+            this, SLOT(managerWirelessEnabledChanged(bool)));
+    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
+            this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
 }
 
 WirelessInterfaceItem::~WirelessInterfaceItem()
@@ -118,7 +134,7 @@ void WirelessInterfaceItem::connectButtonClicked()
         case Solid::Control::NetworkInterface::IPConfig:
         case Solid::Control::NetworkInterface::Activated: // deactivate active connections
             foreach ( ActiveConnectionPair connection, m_activeConnections) {
-                Solid::Control::NetworkManager::deactivateConnection(connection.second->path());
+                Solid::Control::NetworkManager::deactivateConnection(connection.first);
             }
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
@@ -172,6 +188,8 @@ void WirelessInterfaceItem::setConnectionInfo()
                 m_connectionInfoIcon->setToolTip(i18n("WPA-EAP Encryption"));
                 m_connectionInfoIcon->setPixmap(SmallIcon("object-locked"));
             }
+        } else {
+            m_connectionInfoLabel->setText(i18n("No active connection"));
         }
         m_connectionInfoIcon->show();
     } else {
@@ -219,6 +237,43 @@ QList<Solid::Control::AccessPoint*> WirelessInterfaceItem::availableAccessPoints
         }
     }
     return retVal;
+}
+
+void WirelessInterfaceItem::setEnabled(bool enable)
+{
+    kDebug() << enable;
+    m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+    m_strengthMeter->setEnabled(enable);
+    InterfaceItem::setEnabled(enable);
+}
+
+void WirelessInterfaceItem::wirelessEnabledToggled(bool checked)
+{
+    kDebug() << "Applet wireless enable switch toggled" << checked;
+    Solid::Control::NetworkManager::setWirelessEnabled(checked);
+}
+
+void WirelessInterfaceItem::managerWirelessEnabledChanged(bool enabled)
+{
+    kDebug() << "NM daemon changed wireless enable state" << enabled;
+    // it might have changed because we toggled the switch,
+    // but it might have been changed externally, so set it anyway
+    m_rfCheckBox->setChecked(enabled);
+}
+
+void WirelessInterfaceItem::managerWirelessHardwareEnabledChanged(bool enabled)
+{
+    kDebug() << "Hardware wireless enable switch state changed" << enabled;
+    m_rfCheckBox->setChecked(enabled && Solid::Control::NetworkManager::isWirelessEnabled());
+    m_rfCheckBox->setEnabled(!enabled);
+}
+
+bool WirelessInterfaceItem::isUsing(const AbstractWirelessNetwork * net) const
+{
+    if (m_activeAccessPoint) {
+        return m_activeAccessPoint->ssid() == net->ssid();
+    }
+    return false;
 }
 
 // vim: sw=4 sts=4 et tw=100

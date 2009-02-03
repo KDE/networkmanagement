@@ -23,30 +23,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "settingwidget.h"
 
-#include <QVariant>
-
 #include "knm_export.h"
+
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
 
 class KNM_EXPORT Wireless80211SecurityWidget : public SettingWidget
 {
 Q_OBJECT
 public:
-    Wireless80211SecurityWidget(bool setDefaults, const QString& connectionId,
+    Wireless80211SecurityWidget(bool setDefaults, Knm::Connection * connection,
                                 uint caps, uint wpa, uint rsn,
                                 QWidget * parent = 0 );
     virtual ~Wireless80211SecurityWidget();
     SettingInterface* wpaEapWidget();
-    QString settingName() const;
     void readConfig();
     void writeConfig();
-    QVariantMap secrets() const;
-    static const QString KEY_MGMT_NONE;
-    static const QString KEY_MGMT_802_1X;
-    static const QString KEY_MGMT_WPA_NONE;
-    static const QString KEY_MGMT_WPA_PSK;
-    static const QString KEY_MGMT_WPA_EAP;
+    void readSecrets();
+
 protected Q_SLOTS:
     void securityTypeChanged(int index);
+    //void secretsLoaded(uint result);
 private:
     class Private;
     Private * d;

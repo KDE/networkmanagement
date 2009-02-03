@@ -60,6 +60,11 @@ WirelessNetworkItem::WirelessNetworkItem(AbstractWirelessNetwork * network, QWid
          ap->wpaFlags().testFlag( Solid::Control::AccessPoint::PairTkip ) )
         m_security = QLatin1String("wpa-psk");
 
+    if ( ap->rsnFlags().testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+         ap->rsnFlags().testFlag( Solid::Control::AccessPoint::PairTkip ) ||
+         ap->rsnFlags().testFlag( Solid::Control::AccessPoint::PairCcmp ) )
+        m_security = QLatin1String("wpa-psk");
+
     if ( ap->wpaFlags().testFlag( Solid::Control::AccessPoint::KeyMgmt8021x ) ||
          ap->wpaFlags().testFlag( Solid::Control::AccessPoint::GroupCcmp ) )
         m_security = QLatin1String("wpa-eap");

@@ -21,18 +21,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pppwidget.h"
 
 #include "ui_ppp.h"
+#include "connection.h"
+#include "settings/ppp.h"
+
+#define LCP_ECHO_FAILURE 5
+#define LCP_ECHO_INTERVAL 30
 
 class PppWidget::Private
 {
 public:
     Ui_Ppp ui;
+    Knm::PppSetting * setting;
 };
 
-PppWidget::PppWidget(const QString& connectionId, QWidget * parent)
-: SettingWidget(connectionId, parent), d(new PppWidget::Private)
+PppWidget::PppWidget(Knm::Connection * connection, QWidget * parent)
+: SettingWidget(connection, parent), d(new PppWidget::Private)
 {
     d->ui.setupUi(this);
-    init();
+    d->setting = static_cast<Knm::PppSetting *>(connection->setting(Knm::Setting::Ppp));
 }
 
 PppWidget::~PppWidget()
@@ -40,9 +46,43 @@ PppWidget::~PppWidget()
     delete d;
 }
 
-QString PppWidget::settingName() const
+void PppWidget::readConfig()
 {
-    return QLatin1String("ppp");
+    d->ui.auth->setChecked(!d->setting->noauth());
+    d->ui.pap->setChecked(!d->setting->refusepap());
+    d->ui.chap->setChecked(!d->setting->refusechap());
+    d->ui.mschap->setChecked(!d->setting->refusemschap());
+    d->ui.mschapv2->setChecked(d->setting->refusemschapv2());
+    d->ui.requiremppe->setChecked(d->setting->requiremppe());
+    d->ui.requiremppe128->setChecked(d->setting->requiremppe128());
+    d->ui.mppestateful->setChecked(d->setting->mppestateful());
+    d->ui.bsdcomp->setChecked(d->setting->nobsdcomp());
+    d->ui.deflate->setChecked(d->setting->nodeflate());
+    d->ui.vjcomp->setChecked(d->setting->novjcomp());
+
+    d->ui.pppecho->setChecked(d->setting->lcpechointerval() != 0);
+}
+
+void PppWidget::writeConfig()
+{
+    d->setting->setNoauth(!d->ui.auth->isChecked());
+    d->setting->setRefusepap(!d->ui.pap->isChecked());
+    d->setting->setRefusechap(!d->ui.chap->isChecked());
+    d->setting->setRefusemschap(!d->ui.mschap->isChecked());
+    d->setting->setRefusemschapv2(!d->ui.mschapv2->isChecked());
+    d->setting->setRequiremppe(d->ui.requiremppe->isChecked());
+    d->setting->setRequiremppe128(d->ui.requiremppe128->isChecked());
+    d->setting->setMppestateful(d->ui.mppestateful->isChecked());
+    d->setting->setNobsdcomp(!d->ui.bsdcomp->isChecked());
+    d->setting->setNodeflate(d->ui.deflate->isChecked());
+    d->setting->setNovjcomp(d->ui.vjcomp->isChecked());
+    if (d->ui.pppecho->isChecked()) {
+        d->setting->setLcpechofailure(LCP_ECHO_FAILURE);
+        d->setting->setLcpechointerval(LCP_ECHO_INTERVAL);
+    } else {
+        d->setting->setLcpechofailure(0);
+        d->setting->setLcpechointerval(0);
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

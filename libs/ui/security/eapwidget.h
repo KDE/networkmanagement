@@ -24,20 +24,28 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #include <QVariant>
 
+namespace Knm
+{
+    class Connection;
+}
+
+/**
+ * Abstract base class for EAP configuration widgets
+ */
 class EapWidget : public QWidget
 {
 Q_OBJECT
 public:
-    EapWidget(const QString & connectionId, QWidget * parent = 0 );
+    EapWidget(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~EapWidget();
 
     virtual void readConfig() = 0;
     virtual void writeConfig() = 0;
-    virtual QVariantMap secrets() const = 0;
+    virtual void readSecrets() = 0;
     virtual bool validate() const = 0;
 
 protected:
-    QString m_connectionId;
+    Knm::Connection* m_connection;
 };
 
 #endif
