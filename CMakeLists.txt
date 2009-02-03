@@ -43,7 +43,7 @@ install( FILES networkmanagement.notifyrc DESTINATION ${DATA_INSTALL_DIR}/networ
 if (DBUS_SYSTEM_POLICY_DIR)
 install( FILES NetworkManager-kde4.conf DESTINATION ${DBUS_SYSTEM_POLICY_DIR})
 else (DBUS_SYSTEM_POLICY_DIR)
-message(SEND_ERROR "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
+message(STATUS "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
 endif (DBUS_SYSTEM_POLICY_DIR)
 
 else(NM_0_7)
