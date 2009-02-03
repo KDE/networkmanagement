@@ -1,4 +1,4 @@
-KEY (by Lubos)
+kEY (by Lubos)
 ==============
 * = not done, will be either done by WS, or should be at least discussed first with WS
 + = not done, I don't plan on doing it that soon
@@ -9,11 +9,12 @@ KEY (by Lubos)
 ? = should it be done?
 % = should be probably done later, during cleanups and preparations for being stable
 . = done, remove when DESIGN is updated
+X = rejected
 
 - SERVICE: Complete settings service
-  * per-setting group helper class for complex settings, where needed for ipv4 config write
-    * take out hacks in Connection to hash WPA keys there
-    * take out hacks in KConfigToService to add groups needed by NM
+  . per-setting group helper class for complex settings, where needed for ipv4 config write
+    . take out hacks in Connection to hash WPA keys there
+    . take out hacks in KConfigToService to add groups needed by NM
   . Signal updated connections on the bus when ours are edited
   . Implement RemoveConnection
   / wireless security
@@ -47,11 +48,11 @@ KEY (by Lubos)
   + Option to display system-provided connections and import them so they can be edited (probably depends on PolicyKit)
   . Show the ScanWidget from widgets developed by CB
   / Clean out wireless security settings when editing a connection and changing the wireless security type.
-  / Ensure that autoconnect is not broken by automatically serialising unused wireless security widgets to the connection    config file and thereby creating an invalid conneciton
-  * VPN
+  . Ensure that autoconnect is not broken by automatically serialising unused wireless security widgets to the connection    config file and thereby creating an invalid conneciton
+  / VPN
     - VPNC - write config file for vpnc binary when creating a connection
   * Merge APs into networks in the ScanWidget
-  * Autonumber new connections
+  X Autonumber new connections
 
 - APPLET: Make sure system tray+engine does what we need
   * Popup menu
@@ -90,6 +91,7 @@ KEY (by Lubos)
     * Disconnected toggle
     . Hardware wifi switch indicator
     + Adhoc network button
+    * On-the-fly connections for GSM
   . Tooltips
     * Detailed tooltips on Interface groups in the popup
     * Specific tooltips on encryption icons
@@ -99,7 +101,7 @@ KEY (by Lubos)
       user when showing single icon
       * Show wireless signal strength
     . Animation during connection state
-    * Icon is too small when the plasmoid is in the panel
+    * Icon is too small when the plasmoid is in a larger panel
   * Remember wireless/networking state between sessions
    
 - Update Solid
