@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Service
 Icon=
-ServiceTypes=NetworkManageMent/VpnUiPlugin
+ServiceTypes=NetworkManagement/VpnUiPlugin
 X-KDE-Library=networkmanagement_openvpnui
 X-NetworkManager-Services=openvpn
 X-KDE-PluginInfo-Author=Will Stephenson
