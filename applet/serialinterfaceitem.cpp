@@ -51,7 +51,7 @@ SerialInterfaceItem::SerialInterfaceItem(Solid::Control::SerialNetworkInterface 
     m_connectButton->setMinimumWidth(22);
     m_connectButton->setIcon("network-connect");
     m_connectButton->setToolTip(i18nc("icon to connect network interface", "Connect"));
-    m_layout->addItem(m_connectButton, 0, 3, 1, 1, Qt::AlignRight);
+    m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
     m_connectButton->hide();
 
     connect(m_connectButton, SIGNAL(clicked()),
