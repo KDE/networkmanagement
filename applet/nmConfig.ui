@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>247</width>
-    <height>168</height>
+    <width>397</width>
+    <height>211</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -24,57 +24,84 @@
   <property name="windowTitle" >
    <string>Configure the System Bar</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" >
-   <item row="7" column="1" >
-    <widget class="QSpinBox" name="numberOfWlans" />
-   </item>
-   <item row="7" column="0" >
-    <widget class="QLabel" name="label_2" >
-     <property name="sizePolicy" >
-      <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="text" >
-      <string>Number of networks shown</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0" >
-    <widget class="QCheckBox" name="showWireless" >
-     <property name="text" >
-      <string>Show Wireless Group</string>
-     </property>
-    </widget>
-   </item>
-   <item row="9" column="0" >
-    <widget class="QCheckBox" name="showVpn" >
-     <property name="text" >
-      <string>Show VPN Group</string>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0" >
+  <layout class="QVBoxLayout" name="verticalLayout" >
+   <item>
     <widget class="QLabel" name="label" >
      <property name="text" >
       <string>&lt;b>Appearance&lt;/b></string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" >
+   <item>
     <widget class="QCheckBox" name="showWired" >
      <property name="text" >
-      <string>Show Wired Group</string>
+      <string>Show &amp;wired connections</string>
      </property>
     </widget>
    </item>
-   <item row="8" column="0" >
-    <widget class="QCheckBox" name="showGsm" >
+   <item>
+    <widget class="QCheckBox" name="showWireless" >
      <property name="text" >
-      <string>Show GSM Group</string>
+      <string>Show w&amp;ireless connections</string>
      </property>
     </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="showCellular" >
+     <property name="text" >
+      <string>Show &amp;mobile broadband</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="showVpn" >
+     <property name="text" >
+      <string>Show &amp;VPN connections</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line" >
+     <property name="orientation" >
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <widget class="QSpinBox" name="numberOfWlans" />
+     </item>
+     <item>
+      <widget class="QLabel" name="label_2" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text" >
+        <string>&amp;Show this many wireless networks</string>
+       </property>
+       <property name="buddy" >
+        <cstring>numberOfWlans</cstring>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer" >
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0" >
+      <size>
+       <width>20</width>
+       <height>21</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>

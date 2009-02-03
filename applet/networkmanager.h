@@ -77,7 +77,7 @@ public:
     void showWired(bool show);
     void showWireless(bool show);
     void showVpn(bool show);
-    void showGsm(bool show);
+    void showCellular(bool show);
 
 public Q_SLOTS:
     /** slots called when a connection in the popup is clicked */
@@ -167,7 +167,7 @@ private:
     bool m_showWired;
     bool m_showWireless;
     bool m_showVpn;
-    bool m_showGsm;
+    bool m_showCellular;
     int m_numberOfWlans;
 };
 

@@ -148,6 +148,7 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
     const QString WIRED_EXTENDER_ITEM_NAME = QLatin1String("wired");
     const QString WIRELESS_EXTENDER_ITEM_NAME = QLatin1String("wireless");
     const QString GSM_EXTENDER_ITEM_NAME = QLatin1String("gsm");
+    const QString CDMA_EXTENDER_ITEM_NAME = QLatin1String("cdma");
     const QString VPN_EXTENDER_ITEM_NAME = QLatin1String("vpn");
 
     if (eItem->name() == WIRED_EXTENDER_ITEM_NAME) {
@@ -170,6 +171,12 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
         gsmGroup->init();
 
         eItem->setWidget(gsmGroup);
+    } else if (eItem->name() == CDMA_EXTENDER_ITEM_NAME) {
+        InterfaceGroup * cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, m_userSettings, m_systemSettings, eItem);
+        cdmaGroup->setObjectName("cdma-interface-group");
+        cdmaGroup->init();
+
+        eItem->setWidget(cdmaGroup);
     } else if (eItem->name() == VPN_EXTENDER_ITEM_NAME) {
         VpnConnectionGroup * vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, eItem);
         vpnGroup->setObjectName("vpn-interface-group");
@@ -208,7 +215,7 @@ void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
     ui.showWired->setChecked(m_showWired);
     ui.showWireless->setChecked(m_showWireless);
     ui.showVpn->setChecked(m_showVpn);
-    ui.showGsm->setChecked(m_showGsm);
+    ui.showCellular->setChecked(m_showCellular);
     ui.numberOfWlans->setValue(m_numberOfWlans);
 }
 
@@ -226,10 +233,10 @@ void NetworkManagerApplet::configAccepted()
         cg.writeEntry("showWireless", m_showWireless);
         kDebug() << "Wireless Changed" << m_showWireless;
     }
-    if (m_showGsm != ui.showGsm->isChecked()) {
-        showGsm(!m_showGsm);
-        cg.writeEntry("showGsm", m_showGsm);
-        kDebug() << "Gsm Changed" << m_showGsm;
+    if (m_showCellular != ui.showCellular->isChecked()) {
+        showCellular(!m_showCellular);
+        cg.writeEntry("showCellular", m_showCellular);
+        kDebug() << "Gsm Changed" << m_showCellular;
     }
     if (m_showVpn != ui.showVpn->isChecked()) {
         showVpn(!m_showVpn);
@@ -381,7 +388,7 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
     showWired(cg.readEntry("showWired", true));
     showWireless(cg.readEntry("showWireless", true));
     //showPppoe(cg.readEntry("showPppoe", true));
-    showGsm(cg.readEntry("showGsm", true));
+    showCellular(cg.readEntry("showCellular", true));
     //showCdma(cg.readEntry("showCdma", true));
 
     interfaceConnectionStateChanged();
@@ -404,7 +411,7 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
     showWired(cg.readEntry("showWired", true));
     showWireless(cg.readEntry("showWireless", true));
     //showPppoe(cg.readEntry("showPppoe", true));
-    showGsm(cg.readEntry("showGsm", true));
+    showCellular(cg.readEntry("showCellular", true));
     //showCdma(cg.readEntry("showCdma", true));
 
     interfaceConnectionStateChanged();
@@ -765,23 +772,35 @@ void NetworkManagerApplet::showVpn(bool show)
     }
 }
 
-void NetworkManagerApplet::showGsm(bool show)
+void NetworkManagerApplet::showCellular(bool show)
 {
-    m_showGsm = show;
-    Plasma::ExtenderItem *eItem = extender()->item("gsm");
+    m_showCellular = show;
+    Plasma::ExtenderItem *gsmItem = extender()->item("gsm");
     if (show && hasInterfaceOfType(Solid::Control::NetworkInterface::Gsm)) {
-        kDebug() << "SHOWING";
-        if (!eItem) {
-            eItem = new Plasma::ExtenderItem(extender());
-            eItem->setName("gsm");
-            eItem->setIcon("phone");
-            eItem->setTitle(i18nc("Label for mobile broadband (GSM/CDMA/UMTS/HDSPA etc)","Mobile Broadband"));
-            initExtenderItem(eItem);
+        if (!gsmItem) {
+            gsmItem = new Plasma::ExtenderItem(extender());
+            gsmItem->setName("gsm");
+            gsmItem->setIcon("phone");
+            gsmItem->setTitle(i18nc("Label for mobile broadband (GSM/CDMA/UMTS/HDSPA etc)","Mobile Broadband"));
+            initExtenderItem(gsmItem);
         }
     } else {
-        if (eItem) {
-            kDebug() << "HIDING";
-            eItem->destroy();
+        if (gsmItem) {
+            gsmItem->destroy();
+        }
+    }
+    Plasma::ExtenderItem *cdmaItem = extender()->item("cdma");
+    if (show && hasInterfaceOfType(Solid::Control::NetworkInterface::Cdma)) {
+        if (!cdmaItem) {
+            cdmaItem = new Plasma::ExtenderItem(extender());
+            cdmaItem->setName("cdma");
+            cdmaItem->setIcon("phone");
+            cdmaItem->setTitle(i18nc("Label for mobile broadband (GSM/CDMA/UMTS/HDSPA etc)","Mobile Broadband"));
+            initExtenderItem(cdmaItem);
+        }
+    } else {
+        if (cdmaItem) {
+            cdmaItem->destroy();
         }
     }
 }
