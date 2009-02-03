@@ -60,7 +60,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceitem.h"
 #include "events.h"
 
-K_EXPORT_PLASMA_APPLET(networkmanager, NetworkManagerApplet)
+K_EXPORT_PLASMA_APPLET(networkmanagement, NetworkManagerApplet)
 
 /* for qSort()ing */
 bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
@@ -704,7 +704,7 @@ void NetworkManagerApplet::manageConnections()
 {
     //kDebug() << "opening connection management dialog";
     QStringList args;
-    args << "kcm_knetworkmanager";
+    args << "kcm_networkmanagement";
     KToolInvocation::kdeinitExec("kcmshell4", args);
     hidePopup();
 }
@@ -812,11 +812,11 @@ void NetworkManagerApplet::managerWirelessEnabledChanged(bool )
 void NetworkManagerApplet::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     if (enabled) {
-        KNotification::event(Event::RfOn, i18nc("Notification for radio kill switch turned on", "Wireless hardware enabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::RfOn, i18nc("Notification for radio kill switch turned on", "Wireless hardware enabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
         //m_lblRfkill->setText(i18nc("Label text when hardware wireless is enabled", "Wireless hardware is enabled"));
     } else {
         //m_lblRfkill->setText(i18nc("Label text when hardware wireless is not enabled", "Wireless hardware is disabled"));
-        KNotification::event(Event::RfOff, i18nc("Notification for radio kill switch turned on", "Wireless hardware disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::RfOff, i18nc("Notification for radio kill switch turned on", "Wireless hardware disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagerment", "networkmanagement", KComponentData::SkipMainComponentRegistration));
     }
 }
 

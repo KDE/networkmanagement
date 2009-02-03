@@ -56,7 +56,7 @@ VpnPreferences::VpnPreferences(QWidget *parent, const QVariantList &args)
     QString error;
     if (args.count() > 1) {  // if we have a vpn type in the args, we are creating a new connection
         m_vpnPluginName = args[1].toString();
-        m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "KNetworkManager/VpnUiPlugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( m_vpnPluginName ), this, QVariantList(), &error );
+        m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( m_vpnPluginName ), this, QVariantList(), &error );
         if (error.isEmpty()) {
             SettingWidget * vpnWidget = m_uiPlugin->widget(m_connection, this);
             Knm::VpnSetting * vpnSetting = static_cast<Knm::VpnSetting*>(m_connection->setting(Knm::Setting::Vpn));
@@ -80,7 +80,7 @@ void VpnPreferences::load()
         if (vpnSetting) {
             m_vpnPluginName = vpnSetting->pluginName();
             QString error;
-            m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "KNetworkManager/VpnUiPlugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( m_vpnPluginName ), this, QVariantList(), &error );
+            m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( m_vpnPluginName ), this, QVariantList(), &error );
             if (m_uiPlugin && error.isEmpty()) {
                 SettingWidget * vpnWidget = m_uiPlugin->widget(m_connection, this);
                 addToTabWidget(vpnWidget);

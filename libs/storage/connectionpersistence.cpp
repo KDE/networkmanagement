@@ -52,7 +52,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Knm;
 
-QString ConnectionPersistence::s_walletFolderName = QLatin1String("NetworkManager");
+const QString ConnectionPersistence::CONNECTION_PERSISTENCE_PATH = QLatin1String("networkmanagement/connections/");
+
+QString ConnectionPersistence::s_walletFolderName = QLatin1String("Network Management");
+
 WId ConnectionPersistence::s_walletWId = 0;
 
 ConnectionPersistence::ConnectionPersistence(Connection * conn, KSharedConfig::Ptr config, SecretStorageMode mode)
@@ -230,7 +233,7 @@ void ConnectionPersistence::walletOpenedForRead(bool success)
 {
     if (success) {
         KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
-        if (wallet->isOpen() && wallet->hasFolder("NetworkManager") && wallet->setFolder("NetworkManager")) {
+        if (wallet->isOpen() && wallet->hasFolder(s_walletFolderName) && wallet->setFolder(s_walletFolderName)) {
             kDebug() << "Reading all entries for connection";
             QMap<QString,QMap<QString,QString> > entries;
             QString key = m_connection->uuid() + QLatin1String("*");

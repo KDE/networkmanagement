@@ -1,5 +1,5 @@
 [Global]
-Name=Networking
+Name=Network Management
 Name[de]=Netzwerk
 Name[el]=Δίκτυα
 Name[et]=Võrguühendused
@@ -20,7 +20,7 @@ Name[tr]=Ağ
 Name[uk]=Робота у мережі
 Name[x-test]=xxNetworkingxx
 IconName=networkmanager
-Comment=Network Management Events
+Comment=Network Management
 Comment[el]=Γεγονότα διαχείρισης δικτύου
 Comment[et]=Võrguhalduse sündmused
 Comment[fr]=Évènements de gestion du réseau

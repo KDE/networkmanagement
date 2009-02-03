@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=ServiceType
-X-KDE-ServiceType=KNetworkManager/VpnUiPlugin
-Name=KNetworkManager VPN UI Plugin
+X-KDE-ServiceType=NetworkManagement/VpnUiPlugin
+Name=Network Management VPN UI Plugin
 Name[el]=Πρόσθετο VPN UI του KNetworkManager
 Name[et]=KNetworkManageri VPN-i UI plugin
 Name[fr]=Module VPN UI KNetworkManager
@@ -17,7 +17,7 @@ Name[sv]=Nätverkshantering VPN-insticksprogram
 Name[tr]=KNetworkManager VPN UI Eklentisi
 Name[uk]=Додаток інтерфейсу користувача VPN KNetworkManager
 Name[x-test]=xxKNetworkManager VPN UI Pluginxx
-Comment=Defines KNetworkManager UI Plugins
+Comment=Defines KDE Network Management UI Plugins
 Comment[el]=Καθορίζει πρόσθετα UI του KNetworkManager
 Comment[et]=KNetworkManageri UI pluginate määratlus
 Comment[fr]=Définis les modules d'interface graphique pour KNetworkManager

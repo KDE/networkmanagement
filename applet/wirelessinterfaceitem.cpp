@@ -121,7 +121,7 @@ void WirelessInterfaceItem::connectButtonClicked()
              if (!connections.isEmpty()) {
                  //pick the first one.  TODO:Decide what to do if more than on connection is applicable.
                  Solid::Control::NetworkManager::activateConnection(m_wirelessIface->uni(), connections[0]->service() + " " + connections[0]->path(), QVariantMap());
-                 KNotification::event(Event::Connecting, i18nc("Notification text when activating a connection","Connecting %1", connections[0]->id()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+                 KNotification::event(Event::Connecting, i18nc("Notification text when activating a connection","Connecting %1", connections[0]->id()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
              }
             break;
         case Solid::Control::NetworkInterface::Preparing:

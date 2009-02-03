@@ -9,11 +9,11 @@ set(vpnc_SRCS
 
 kde4_add_ui_files(vpnc_SRCS vpncprop.ui)
 
-kde4_add_plugin(knetworkmanager4_vpncui ${vpnc_SRCS})
+kde4_add_plugin(networkmanagement_vpncui ${vpnc_SRCS})
 
-target_link_libraries(knetworkmanager4_vpncui ${KDE4_KIO_LIBS} knmui)
+target_link_libraries(networkmanagement_vpncui ${KDE4_KIO_LIBS} knmui)
 
-install(TARGETS knetworkmanager4_vpncui  DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS networkmanagement_vpncui  DESTINATION ${PLUGIN_INSTALL_DIR})
 
-install( FILES knetworkmanager4_vpncui.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
+install( FILES networkmanagement_vpncui.desktop  DESTINATION ${SERVICES_INSTALL_DIR})
 

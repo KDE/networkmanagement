@@ -24,10 +24,10 @@ set(networkmanager_SRCS
     )
 
 kde4_add_ui_files(networkmanager_SRCS nmConfig.ui )
-kde4_add_plugin(plasma_applet_networkmanager ${networkmanager_SRCS})
-target_link_libraries(plasma_applet_networkmanager ${KDE4_PLASMA_LIBS} knmdbus ${KDE4_KIO_LIBS} solidcontrol)
+kde4_add_plugin(plasma_applet_networkmanagement ${networkmanager_SRCS})
+target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmdbus ${KDE4_KIO_LIBS} solidcontrol)
 
-install(TARGETS plasma_applet_networkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
-install(FILES plasma-applet-networkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR})
-install(FILES networkmanager.svg networkmanager-wireless.svgz DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/networkmanager/)
+install(TARGETS plasma_applet_networkmanagement DESTINATION ${PLUGIN_INSTALL_DIR})
+install(FILES plasma-applet-networkmanagement.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES networkmanagement.svg networkmanagement-wireless.svgz DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/networkmanagement/)
 

@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Networks
+Name=Network Management
 Name[de]=Netzwerke
 Name[el]=Δίκτυα
 Name[et]=Võrgud
@@ -20,7 +20,7 @@ Name[sv]=Nätverk
 Name[tr]=Ağlar
 Name[uk]=Мережі
 Name[x-test]=xxNetworksxx
-Comment=Manage network connections
+Comment=Network status and control utility
 Comment[de]=Netzwerkverbindungen verwalten
 Comment[el]=Διαχείριση συνδέσεων δικτύου
 Comment[et]=Võrguühenduste haldus
@@ -45,10 +45,10 @@ Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 Icon=networkmanager
 
-X-KDE-Library=plasma_applet_networkmanager
+X-KDE-Library=plasma_applet_networkmanagement
 X-KDE-PluginInfo-Author=Will Stephenson
 X-KDE-PluginInfo-Email=wstephenson@kde.org
-X-KDE-PluginInfo-Name=networkmanager
+X-KDE-PluginInfo-Name=networkmanagement
 X-KDE-PluginInfo-Version=0.1
 X-KDE-PluginInfo-Website=http://plasma.kde.org/
 X-KDE-PluginInfo-Category=System Management

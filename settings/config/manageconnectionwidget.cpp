@@ -41,13 +41,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knmserviceprefs.h"
 #include "connection.h"
+#include "connectionpersistence.h"
 #include "connectionprefs.h"
 
 #define ConnectionIdRole 1812
 #define ConnectionTypeRole 1066
 
 K_PLUGIN_FACTORY( ManageConnectionWidgetFactory, registerPlugin<ManageConnectionWidget>();)
-K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_knetworkmanager" ) )
+K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_networkmanagement" ) )
 
 ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantList &args)
 : KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this))
@@ -56,7 +57,7 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
 
     mConnEditUi.setupUi(this);
     KNetworkManagerServicePrefs::instance(KStandardDirs::locateLocal("config",
-                QLatin1String("knetworkmanagerrc")));
+                QLatin1String("networkmanagementrc")));
     connect(mConnEditUi.addConnection, SIGNAL(clicked()), SLOT(addClicked()));
     connect(mConnEditUi.editConnection, SIGNAL(clicked()), SLOT(editClicked()));
     connect(mConnEditUi.deleteConnection, SIGNAL(clicked()), SLOT(deleteClicked()));
@@ -181,7 +182,7 @@ void ManageConnectionWidget::updateTabStates()
     mConnEditUi.tabWidget->setTabEnabled(0, (hasWired || mConnEditUi.listWired->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(1, (hasWireless || mConnEditUi.listWireless->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(2, (hasCellular || mConnEditUi.listCellular->topLevelItemCount()));
-    if (KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VpnUiPlugin")).isEmpty()) {
+    if (KServiceTypeTrader::self()->query(QLatin1String("NetworkManagement/VpnUiPlugin")).isEmpty()) {
         //mConnEditUi.tabWidget->setTabEnabled(3, false);
         mConnEditUi.tabWidget->setTabToolTip(3, i18nc("Tooltip for disabled tab when no VPN plugins are installed", "No VPN plugins were found"));
     } else {
@@ -236,13 +237,13 @@ void ManageConnectionWidget::deleteClicked()
         // delete it
         // remove connection file
         QFile connFile(KStandardDirs::locateLocal("data",
-                    QLatin1String("knetworkmanager/connections/") + connectionId));
+                    Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId));
         if (!connFile.exists()) {
             kDebug() << "Connection file not found: " << connFile.fileName();
         }
         connFile.remove();
 
-        // remove from knetworkmanagerrc
+        // remove from networkmanagerrc
         KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
         prefs->config()->deleteGroup(QLatin1String("Connection_") + connectionId);
 
@@ -336,7 +337,7 @@ void ManageConnectionWidget::tabChanged(int index)
         if ( !mVpnMenu ) {
             mVpnMenu = new QMenu(this);
             // foreach vpn service, add one of these
-            KPluginInfo::List vpnServices = KPluginInfo::fromServices(KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VpnUiPlugin")));
+            KPluginInfo::List vpnServices = KPluginInfo::fromServices(KServiceTypeTrader::self()->query(QLatin1String("NetworkManagement/VpnUiPlugin")));
             foreach (KPluginInfo pi, vpnServices) {
                 QAction * vpnAction = new QAction(pi.name(), this);
                 vpnAction->setData(QVariant(pi.pluginName()));

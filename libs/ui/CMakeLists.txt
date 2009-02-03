@@ -66,5 +66,5 @@ set_target_properties(knmui PROPERTIES
    )
 install(TARGETS knmui ${INSTALL_TARGETS_DEFAULT_ARGS})
 
-install(FILES knetworkmanager4_vpnuiplugin.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR})
+install(FILES networkmanagement_vpnuiplugin.desktop DESTINATION ${SERVICETYPES_INSTALL_DIR})
 

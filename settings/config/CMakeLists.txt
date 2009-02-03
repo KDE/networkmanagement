@@ -6,18 +6,18 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/../../libs/storage)
 
 ## next target: connection editor KCM
 
-set(kcm_knetworkmanager_SRCS
+set(kcm_networkmanagement_SRCS
    # UI logic
    manageconnectionwidget.cpp
 )
 #kde4_add_kcfg_files(kcm_knetworkmanager_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/knmserviceprefs.kcfgc)
 
-kde4_add_ui_files(kcm_knetworkmanager_SRCS manageconnectionwidget.ui)
-kde4_add_plugin(kcm_knetworkmanager ${kcm_knetworkmanager_SRCS})
+kde4_add_ui_files(kcm_networkmanagement_SRCS manageconnectionwidget.ui)
+kde4_add_plugin(kcm_networkmanagement ${kcm_networkmanagement_SRCS})
 
-target_link_libraries(kcm_knetworkmanager knmui knmstorage solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KUTILS_LIBS})
+target_link_libraries(kcm_networkmanagement knmui knmstorage solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KUTILS_LIBS})
 
-install(TARGETS kcm_knetworkmanager DESTINATION ${PLUGIN_INSTALL_DIR})
+install(TARGETS kcm_networkmanagement DESTINATION ${PLUGIN_INSTALL_DIR})
 
-install(FILES kcm_knetworkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(FILES kcm_networkmanagement.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 

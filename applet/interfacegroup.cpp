@@ -368,7 +368,7 @@ void InterfaceGroup::interfaceAdded(const QString& uni)
     kDebug() << "Interface Added.";
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
-    KNotification::event(Event::HwAdded, i18nc("Notification for hardware added", "Network interface %1 attached", iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+    KNotification::event(Event::HwAdded, i18nc("Notification for hardware added", "Network interface %1 attached", iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
     updateNetworks();
     emit updateLayout();
 }
@@ -378,7 +378,7 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
     if (m_interfaces.contains(uni)) {
         InterfaceItem * item = m_interfaces.take(uni);
         m_interfaceLayout->removeItem(item);
-        KNotification::event(Event::HwRemoved, i18nc("Notification for hardware removed", "Network interface removed"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::HwRemoved, i18nc("Notification for hardware removed", "Network interface removed"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
         delete item;
         reassess();
     }
@@ -403,7 +403,7 @@ void InterfaceGroup::activateConnection(AbstractConnectableItem* item)
     if ( i != m_interfaces.constEnd()) {
         QString firstDeviceUni = i.key();
         Solid::Control::NetworkManager::activateConnection(firstDeviceUni, ci->connection()->service() + " " + ci->connection()->path(), QVariantMap());
-        KNotification::event(Event::Connecting, i18nc("Notification text when activating a connection","Connecting %1", ci->connection()->id()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::Connecting, i18nc("Notification text when activating a connection","Connecting %1", ci->connection()->id()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
     }
     // if the manager updates the interface's state, we should then refresh the list of
     // connections(remove any active connections from the list
@@ -428,7 +428,7 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
             m_networkToConnect = wni->net()->ssid();
             kcm.call(QDBus::NoBlock, "createConnection", "802-11-wireless", QVariant::fromValue(args));
         } else {
-            kDebug() << "opening connection management dialog using knetworkmanager_configshell";
+            kDebug() << "opening connection management dialog using networkmanagement_configshell";
             QStringList args;
             QString moduleArgs =
                 QString::fromLatin1("'%1' %2 %3 %4")
@@ -439,7 +439,7 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
 
             args << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("create");
             m_networkToConnect = wni->net()->ssid();
-            int ret = KToolInvocation::kdeinitExec("knetworkmanager_configshell", args);
+            int ret = KToolInvocation::kdeinitExec("networkmanagement_configshell", args);
             kDebug() << ret << args;
         }
     }

@@ -83,7 +83,7 @@ void ConnectionSecretsJob::doWork()
         doAskUser();
     } else {
         QString configFile = KStandardDirs::locate("data",
-                QLatin1String("knetworkmanager/connections/") + m_connection->uuid());
+                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
         m_connectionPersistence = new Knm::ConnectionPersistence(m_connection,
                 KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
                 (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
@@ -164,7 +164,7 @@ void ConnectionSecretsJob::dialogAccepted()
     m_settingWidget->writeConfig();
     // persist the changes
     QString configFile = KStandardDirs::locate("data",
-            QLatin1String("knetworkmanager/connections/") + m_connection->uuid());
+            Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
     Knm::ConnectionPersistence cp(m_connection,
             KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
             (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :

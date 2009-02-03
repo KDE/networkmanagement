@@ -1,12 +1,12 @@
 [Desktop Entry]
 Type=Service
 Icon=
-ServiceTypes=KNetworkManager/VpnUiPlugin
-X-KDE-Library=knetworkmanager4_vpncui
+ServiceTypes=NetworkManagement/VpnUiPlugin
+X-KDE-Library=networkmanagement_vpncui
 X-NetworkManager-Services=vpnc
 X-KDE-PluginInfo-Author=Will Stephenson
 X-KDE-PluginInfo-Email=wstephenson@kde.org
-X-KDE-PluginInfo-Name=knetworkmanager4_vpncui
+X-KDE-PluginInfo-Name=networkmanagerment_vpncui
 X-KDE-PluginInfo-Version=0.1
 X-KDE-PluginInfo-Website=
 X-KDE-PluginInfo-Category=VPNService

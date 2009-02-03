@@ -44,7 +44,7 @@ KConfigToService::KConfigToService(NetworkSettings * service, bool active)
     QDBusConnection::sessionBus().registerObject( "/modules/knetworkmanager", this );
 
     KNetworkManagerServicePrefs::instance(KStandardDirs::locate("config",
-                QLatin1String("knetworkmanagerrc")));
+                QLatin1String("networkmanagementrc")));
 
     connect(m_service, SIGNAL(connectionActivated(const QString&)), SLOT(connectionActivated(const QString&)));
 }
@@ -93,7 +93,7 @@ Knm::Connection * KConfigToService::restoreConnection(const QString & connection
 {
     kDebug() << connectionId;
     QString configFile = KStandardDirs::locate("data",
-            QLatin1String("knetworkmanager/connections/") + connectionId);
+            Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId);
     Knm::Connection * connection = 0;
     if (!configFile.isEmpty())
     {
@@ -218,7 +218,7 @@ void KConfigToService::connectionActivated(const QString & uuid)
     kDebug() << uuid;
     // write the connection file
     QString configFile = KStandardDirs::locate("data",
-                QLatin1String("knetworkmanager/connections/") + uuid);
+                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + uuid);
     QVariantMapMap connectionMap;
     KSharedConfig::Ptr config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
     kDebug() << config->name() << " is at " << configFile;
