@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "gsmconnectioneditor.h"
 #include "cdmaconnectioneditor.h"
 //#include "pppoepreferences.h"
-//#include "vpnpreferences.h"
+#include "vpnpreferences.h"
 
 //storage
 #include "connection.h"
@@ -148,7 +148,7 @@ ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaul
             wid = new GsmConnectionEditor(parent, args);
             break;
         case Knm::Connection::Vpn:
-            //wid = new VpnPreferences(parent, args);
+            wid = new VpnPreferences(parent, args);
             break;
         case Knm::Connection::Pppoe:
             //wid = new PppoePreferences(parent, args);

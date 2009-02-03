@@ -7,6 +7,8 @@
 #include <kcoreconfigskeleton.h>
 #include "settingpersistence.h"
 #include "knm_export.h"
+#include "../types.h"
+
 namespace Knm {
 
 class VpnSetting;
@@ -20,6 +22,10 @@ class KNM_EXPORT VpnPersistence : public SettingPersistence
     void save();
     QMap<QString,QString> secrets() const;
     void restoreSecrets(QMap<QString,QString>) const;
+    static QStringList variantMapToStringList(const QVariantMap &);
+    static QVariantMap variantMapFromStringList(const QStringList &);
+    static QStringList stringMapToStringList(const QStringMap &);
+    static QStringMap stringMapFromStringList(const QStringList &);
 };
 }
 

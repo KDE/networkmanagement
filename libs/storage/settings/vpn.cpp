@@ -19,5 +19,5 @@ QString VpnSetting::name() const
 }
 bool VpnSetting::hasSecrets() const
 {
-  return false;
+  return true;
 }

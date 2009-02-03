@@ -35,15 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 /**
  * This class extracts stored connections and puts them on the settings service
  * 1) get the names of all the connections from the main config file
- * 2) open each connection's file and create 1 or more ConfigXml for it
- * for each group, create a QVariantMap containing its settings and store them in the master
- * connection map (maybe exclude any secrets)
- * check key for key name conversion
- *   check value for any value conversions needed
- * Secrets?
- * Update connection?  Get a signal on new or updated connections, read file and update
- * NetworkSettings
- * Remove connection?  This can be done in NetworkSettings
+ * 2) open each connection's file and create 1 or more BusConnection
  */
 class NetworkSettings;
 

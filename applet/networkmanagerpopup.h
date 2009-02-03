@@ -52,11 +52,11 @@ public:
     void setShowWired(bool show);
     void setShowWireless(bool show);
     void setShowVpn(bool show);
-    void setShowGsm(bool show);
+    void setShowCellular(bool show);
     bool showWired() const { return m_showWired; }
     bool showWireless() const { return m_showWireless; }
     bool showVpn() const { return m_showVpn; }
-    bool showGsm() const { return m_showGsm; }
+    bool showCellular() const { return m_showCellular; }
     uint wirelessNetworkDisplayLimit() const { return m_numberOfWlans; }
     void setWirelessNetworkDisplayLimit(uint limit);
 
@@ -112,6 +112,7 @@ signals:
      * Tell the applet to show our KCModule
      */
     void manageConnections();
+    void hideVpnGroup();
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
     NetworkManagerSettings * m_userSettings;
@@ -122,6 +123,7 @@ private:
     InterfaceGroup * m_wifiGroup;
     VpnConnectionGroup * m_vpnGroup;
     InterfaceGroup * m_gsmGroup;
+    InterfaceGroup * m_cdmaGroup;
     QLabel * m_vpnHeader;
     QLabel * m_wirelessHeader;
     QLabel * m_wiredHeader;
@@ -133,7 +135,7 @@ private:
     bool m_showWired;
     bool m_showWireless;
     bool m_showVpn;
-    bool m_showGsm;
+    bool m_showCellular;
     int m_numberOfWlans;
     QSignalMapper * m_connectionActivationSignalMapper;
     QSignalMapper * m_connectionDeactivationSignalMapper;

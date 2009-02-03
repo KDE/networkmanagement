@@ -27,9 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ui_802-11-wireless.h"
 #include "settings/802-11-wireless.h"
 
-const QString Wireless80211Widget::INFRA_MODE = QLatin1String("infrastructure");
-const QString Wireless80211Widget::ADHOC_MODE = QLatin1String("adhoc");
-
 class Wireless80211Widget::Private
 {
 public:

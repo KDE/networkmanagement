@@ -65,7 +65,7 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
     }
 
     QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(m_connection, i18n("New Wireless Connection"), this);
+    m_contents = new ConnectionWidget(m_connection, (ssid.isEmpty() ? i18n("New Wireless Connection") : ssid), this);
     layout->addWidget(m_contents);
     Wireless80211Widget* connectionTypeWidget = new Wireless80211Widget(m_connection, ssid, this);
     Wireless80211SecurityWidget * wirelessSecurityWidget = new Wireless80211SecurityWidget(setDefaults, m_connection, caps, wpa, rsn, this);
@@ -84,9 +84,4 @@ WirelessPreferences::~WirelessPreferences()
 {
 }
 
-
-void WirelessPreferences::save()
-{
-    ConnectionPreferences::save();
-}
 // vim: sw=4 sts=4 et tw=100

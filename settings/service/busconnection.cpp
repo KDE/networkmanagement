@@ -113,11 +113,11 @@ void BusConnection::gotSecrets(KJob *job)
         QDBusMessage reply = csj->requestMessage().createErrorReply(QLatin1String("org.freedesktop.NetworkManager.SettingError"), "The wallet was disabled");
         QDBusConnection::systemBus().send(reply);
     } else if (csj->error() == ConnectionSecretsJob::EnumError::WalletNotFound ) {
-        kDebug() << "ERROR: The wallet used by KNetworkManager was not found";
+        kDebug() << "ERROR: The wallet used by KDE Network Management was not found";
         QDBusMessage reply = csj->requestMessage().createErrorReply(QLatin1String("org.freedesktop.NetworkManager.SettingError"), "The wallet was not found");
         QDBusConnection::systemBus().send(reply);
     } else if (csj->error() == ConnectionSecretsJob::EnumError::WalletOpenRefused ) {
-        kDebug() << "ERROR: The user refused KNetworkManager permission to open the wallet";
+        kDebug() << "ERROR: The user refused KDE Network Management (plasma) permission to open the wallet";
         QDBusMessage reply = csj->requestMessage().createErrorReply(QLatin1String("org.freedesktop.NetworkManager.SecretsRefused"), "User refused to supply secrets");
         QDBusConnection::systemBus().send(reply);
     } else if (csj->error() == ConnectionSecretsJob::EnumError::UserInputCancelled ) {

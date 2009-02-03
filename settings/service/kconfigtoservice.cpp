@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -44,7 +44,7 @@ KConfigToService::KConfigToService(NetworkSettings * service, bool active)
     QDBusConnection::sessionBus().registerObject( "/modules/knetworkmanager", this );
 
     KNetworkManagerServicePrefs::instance(KStandardDirs::locate("config",
-                QLatin1String("knetworkmanagerrc")));
+                QLatin1String("networkmanagementrc")));
 
     connect(m_service, SIGNAL(connectionActivated(const QString&)), SLOT(connectionActivated(const QString&)));
 }
@@ -63,7 +63,7 @@ void KConfigToService::init()
         // (this could also be just the connections in one profile, after removing all connections)
         QStringList connectionIds;
         connectionIds = KNetworkManagerServicePrefs::self()->connections();
-        // 2) open each connection's file and create 1 or more ConfigXml for it
+        // 2) restore each connection
         foreach (QString connectionId, connectionIds) {
             Knm::Connection * connection = restoreConnection(connectionId);
             m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connection));
@@ -89,23 +89,11 @@ void KConfigToService::stop()
    Knm::ConnectionPersistence::setWalletWid( 0 );
 }
 
- /*
- * how to know which ConfigXml are needed?
- * a) peek connection/type and use a static list of settings per connection type
- * b) use the config's groups list to instantiate multiple configxmls as needed
- * c) use the config's groups list to generate a synthetic configxml containing the needed sections
- *
- * for each group, create a QVariantMap containing its settings and store them in the master
- * connection map (maybe exclude any secrets)
- * check key for key name conversion
- *   check value for any value conversions needed
- */
-
 Knm::Connection * KConfigToService::restoreConnection(const QString & connectionId)
 {
     kDebug() << connectionId;
     QString configFile = KStandardDirs::locate("data",
-            QLatin1String("knetworkmanager/connections/") + connectionId);
+            Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId);
     Knm::Connection * connection = 0;
     if (!configFile.isEmpty())
     {
@@ -133,31 +121,6 @@ Knm::Connection * KConfigToService::restoreConnection(const QString & connection
             //m_currentConnectionType = QString();
         }
 #endif
-#if 0
-        // Special case #2, NM requires that a setting group for "gsm" is accompannied by a "serial"
-        // group
-        QString serialSetting = QLatin1String("serial");
-        if (connectionMap.contains(QLatin1String("gsm") ) && !connectionMap.contains(serialSetting)) {
-            connectionMap.insert(serialSetting, QVariantMap());
-        }
-#endif
-#if 0
-        // Special case #3, NM requires that a setting group for "serial" is accompanied by a "ppp"
-        // group
-        QString pppSetting = QLatin1String("ppp");
-        if (connectionMap.contains(serialSetting) && !connectionMap.contains(pppSetting)) {
-            connectionMap.insert(pppSetting, QVariantMap());
-        }
-#endif
-#if 0
-        // Special case #4, NM requires that a setting group for "pppoe" is accompanied by a "ppp"
-        // group
-        QString pppoeSetting = QLatin1String("pppoe");
-        if (connectionMap.contains(pppoeSetting) && !connectionMap.contains(pppSetting)) {
-            connectionMap.insert(pppSetting, QVariantMap());
-        }
-        kDebug() << connectionMap;
-#endif
     }
     return connection;
 }
@@ -166,55 +129,11 @@ Knm::Connection * KConfigToService::restoreConnection(const QString & connection
 QVariantMap KConfigToService::handleGroup(const QString & groupName)
 {
     kDebug() << groupName;
-
     QVariantMap map;
+    // stuff left to port from configxml
 #if 0
-    QFile schemaFile(KStandardDirs::locate("data",
-            QString::fromLatin1("knetworkmanager/schemas/%1.kcfg").arg( groupName)));
-    if (!schemaFile.exists()) {
-        kDebug() << groupName << " config file at " << schemaFile.fileName() << " not found!";
-        return QVariantMap();
-    }
-    ConfigXml * config = new ConfigXml(m_config, &schemaFile, false,
-            new SecretStorageHelper(QString(), groupName));
-
-    foreach (KConfigSkeletonItem * item, config->items()) {
-        item->swapDefault();
-        QVariant defaultV = item->property();
-        item->swapDefault();
-        kDebug() << item->key() << " : '" << item->property() << "' is a " << item->property().type() << ", and " << (defaultV == item->property() ? "IS" : "IS NOT") << " default";
-        if (defaultV != item->property()) { // only deserialise non-default values
-            KCoreConfigSkeleton::ItemEnum * itemEnum = 0;
-            if ((itemEnum = dynamic_cast<KCoreConfigSkeleton::ItemEnum *>(item))) {
-                // get the list of choices from the ItemEnum, look up the name corresponding to the
-                // int returned by property() and put that in the map instead.
-                // KDE5: choices2 is going to go away..
-                QList<KCoreConfigSkeleton::ItemEnum::Choice> choices = itemEnum->choices();
-                KCoreConfigSkeleton::ItemEnum::Choice choice = choices[item->property().toUInt()];
-                map.insert(m_dataMappings->convertKey(item->key()),
-                        m_dataMappings->convertValue(item->key(), choice.name));
-            } else {
-                map.insert(m_dataMappings->convertKey(item->key()),
-                        m_dataMappings->convertValue(item->key(), item->property()));
-            }
-        }
-    }
-    // special case for vpn data - which is not a simple type
-    // TODO put this somewhere else - not every special case can live in this function.
-    if ( groupName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
-        KConfigGroup vpnGroup(m_config, groupName);
-        QStringList data = vpnGroup.readEntry( "data", QStringList() );
-        QStringMap dataMap;
-
-        for ( int i = 0; i < data.count(); i += 2 )
-            dataMap.insert( data[i], data[i+1] );
-
-        map.insert(QLatin1String(NM_SETTING_VPN_DATA), QVariant::fromValue(dataMap));
-
-        if ( !map.contains( NM_SETTING_VPN_SECRETS ) )
-            map.insert( QLatin1String(NM_SETTING_VPN_SECRETS ), QVariant::fromValue( QStringMap() ) );
-    }
-
+    QVariantMap map;
+    // stuff left to port from configxml
     // special case for 8021x settings ca_cert -> have to pass it as blob
     if (groupName == QLatin1String(NM_SETTING_802_1X_SETTING_NAME)) {
         KConfigGroup group8021x(m_config, groupName);
@@ -300,7 +219,7 @@ void KConfigToService::connectionActivated(const QString & uuid)
     kDebug() << uuid;
     // write the connection file
     QString configFile = KStandardDirs::locate("data",
-                QLatin1String("knetworkmanager/connections/") + uuid);
+                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + uuid);
     QVariantMapMap connectionMap;
     KSharedConfig::Ptr config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
     kDebug() << config->name() << " is at " << configFile;

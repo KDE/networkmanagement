@@ -62,7 +62,7 @@ void ConnectionPreferences::load()
 {
     // restore the Connection if possible
     QString connectionFile(KStandardDirs::locateLocal("data",
-                QLatin1String("knetworkmanager/connections/") + m_connection->uuid()));
+                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid()));
     m_connectionPersistence = new Knm::ConnectionPersistence(m_connection, KSharedConfig::openConfig(connectionFile),
             (KNetworkManagerServicePrefs::self()->storeInWallet()
              ? Knm::ConnectionPersistence::Secure
@@ -92,7 +92,7 @@ void ConnectionPreferences::save()
     }
     // persist the Connection
     QString connectionFile = KStandardDirs::locateLocal("data",
-        QLatin1String("knetworkmanager/connections/") + m_connection->uuid());
+        Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
 
     Knm::ConnectionPersistence cp(
             m_connection,

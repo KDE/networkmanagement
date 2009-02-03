@@ -25,15 +25,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_vpncprop.h"
 
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
+
 class VpncSettingWidget : public SettingWidget
 {
 Q_OBJECT
 public:
-    VpncSettingWidget(const QString & connectionId, QWidget * parent = 0);
+    VpncSettingWidget(Knm::Connection *, QWidget * parent = 0);
     ~VpncSettingWidget();
     void readConfig();
     void writeConfig();
-    QString settingName() const;
+    void readSecrets();
 private:
     Ui_VpncProp m_ui;
 };

@@ -1,6 +1,6 @@
 diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
---- origsettings//802-11-wireless.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wireless.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wireless.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-11-wireless.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -5,7 +5,8 @@
  
  using namespace Knm;
@@ -12,8 +12,8 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
  }
  
 diff -ur origsettings//802-11-wirelessdbus.cpp settings/802-11-wirelessdbus.cpp
---- origsettings//802-11-wirelessdbus.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wirelessdbus.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wirelessdbus.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-11-wirelessdbus.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -66,22 +66,34 @@
        map.insert("mode", "adhoc");
        break;
@@ -58,8 +58,8 @@ diff -ur origsettings//802-11-wirelessdbus.cpp settings/802-11-wirelessdbus.cpp
  }
  
 diff -ur origsettings//802-11-wirelessdbus.h settings/802-11-wirelessdbus.h
---- origsettings//802-11-wirelessdbus.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wirelessdbus.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wirelessdbus.h	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-11-wirelessdbus.h	2009-01-31 22:36:13.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_WIRELESSDBUS_H
  #define KNM_WIRELESSDBUS_H
@@ -70,8 +70,8 @@ diff -ur origsettings//802-11-wirelessdbus.h settings/802-11-wirelessdbus.h
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 diff -ur origsettings//802-11-wirelesspersistence.cpp settings/802-11-wirelesspersistence.cpp
---- origsettings//802-11-wirelesspersistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wirelesspersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wirelesspersistence.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-11-wirelesspersistence.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -20,7 +20,7 @@
    WirelessSetting * setting = static_cast<WirelessSetting *>(m_setting);
    setting->setSsid(m_config->readEntry("ssid", QByteArray()));
@@ -99,8 +99,8 @@ diff -ur origsettings//802-11-wirelesspersistence.cpp settings/802-11-wirelesspe
  }
  
 diff -ur origsettings//802-11-wireless-security.cpp settings/802-11-wireless-security.cpp
---- origsettings//802-11-wireless-security.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wireless-security.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wireless-security.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-11-wireless-security.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -6,6 +6,7 @@
  using namespace Knm;
  
@@ -110,8 +110,8 @@ diff -ur origsettings//802-11-wireless-security.cpp settings/802-11-wireless-sec
  }
  
 diff -ur origsettings//802-11-wireless-securitydbus.cpp settings/802-11-wireless-securitydbus.cpp
---- origsettings//802-11-wireless-securitydbus.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wireless-securitydbus.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wireless-securitydbus.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-11-wireless-securitydbus.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -4,10 +4,13 @@
  #include "802-11-wireless-securitydbus.h"
  
@@ -241,8 +241,8 @@ diff -ur origsettings//802-11-wireless-securitydbus.cpp settings/802-11-wireless
 Only in settings: 802-11-wireless-securitydbus.cpp.rej
 Only in settings: 802-11-wireless-securitydbus.cpp.rej~
 diff -ur origsettings//802-11-wireless-securitydbus.h settings/802-11-wireless-securitydbus.h
---- origsettings//802-11-wireless-securitydbus.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wireless-securitydbus.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wireless-securitydbus.h	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-11-wireless-securitydbus.h	2009-01-31 22:36:13.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_WIRELESSSECURITYDBUS_H
  #define KNM_WIRELESSSECURITYDBUS_H
@@ -270,8 +270,8 @@ diff -ur origsettings//802-11-wireless-securitydbus.h settings/802-11-wireless-s
  }
  
 diff -ur origsettings//802-11-wireless-securitypersistence.cpp settings/802-11-wireless-securitypersistence.cpp
---- origsettings//802-11-wireless-securitypersistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-11-wireless-securitypersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-11-wireless-securitypersistence.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-11-wireless-securitypersistence.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -19,7 +19,9 @@
  {
    WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
@@ -335,8 +335,8 @@ diff -ur origsettings//802-11-wireless-securitypersistence.cpp settings/802-11-w
  }
  
 diff -ur origsettings//802-1x.cpp settings/802-1x.cpp
---- origsettings//802-1x.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-1x.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-1x.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-1x.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -5,7 +5,8 @@
  
  using namespace Knm;
@@ -348,8 +348,8 @@ diff -ur origsettings//802-1x.cpp settings/802-1x.cpp
  }
  
 diff -ur origsettings//802-1xdbus.cpp settings/802-1xdbus.cpp
---- origsettings//802-1xdbus.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-1xdbus.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-1xdbus.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-1xdbus.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -18,6 +18,7 @@
  void Security8021xDbus::fromMap(const QVariantMap & map)
  {
@@ -490,8 +490,8 @@ diff -ur origsettings//802-1xdbus.cpp settings/802-1xdbus.cpp
  
 Only in settings: 802-1xdbus.cpp.rej
 diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
---- origsettings//802-1xdbus.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-1xdbus.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-1xdbus.h	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-1xdbus.h	2009-01-31 22:36:13.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_SECURITY8021XDBUS_H
  #define KNM_SECURITY8021XDBUS_H
@@ -502,8 +502,8 @@ diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 diff -ur origsettings//802-1x.h settings/802-1x.h
---- origsettings//802-1x.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-1x.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-1x.h	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-1x.h	2009-01-31 22:36:13.000000000 +0100
 @@ -3,6 +3,7 @@
  #ifndef KNM_SECURITY8021XSETTING_H
  #define KNM_SECURITY8021XSETTING_H
@@ -584,8 +584,8 @@ diff -ur origsettings//802-1x.h settings/802-1x.h
  
  #endif
 diff -ur origsettings//802-1xpersistence.cpp settings/802-1xpersistence.cpp
---- origsettings//802-1xpersistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-1xpersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-1xpersistence.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-1xpersistence.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -17,7 +17,9 @@
  
  void Security8021xPersistence::load()
@@ -645,8 +645,8 @@ diff -ur origsettings//802-1xpersistence.cpp settings/802-1xpersistence.cpp
  
  QMap<QString,QString> Security8021xPersistence::secrets() const
 diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
---- origsettings//802-3-ethernet.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-3-ethernet.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-3-ethernet.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-3-ethernet.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -5,7 +5,12 @@
  
  using namespace Knm;
@@ -662,8 +662,8 @@ diff -ur origsettings//802-3-ethernet.cpp settings/802-3-ethernet.cpp
  }
  
 diff -ur origsettings//802-3-ethernetdbus.cpp settings/802-3-ethernetdbus.cpp
---- origsettings//802-3-ethernetdbus.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-3-ethernetdbus.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-3-ethernetdbus.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-3-ethernetdbus.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -42,6 +42,8 @@
  {
    QVariantMap map;
@@ -690,8 +690,8 @@ diff -ur origsettings//802-3-ethernetdbus.cpp settings/802-3-ethernetdbus.cpp
  }
  
 diff -ur origsettings//802-3-ethernetdbus.h settings/802-3-ethernetdbus.h
---- origsettings//802-3-ethernetdbus.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-3-ethernetdbus.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-3-ethernetdbus.h	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-3-ethernetdbus.h	2009-01-31 22:36:13.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_WIREDDBUS_H
  #define KNM_WIREDDBUS_H
@@ -702,8 +702,8 @@ diff -ur origsettings//802-3-ethernetdbus.h settings/802-3-ethernetdbus.h
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 diff -ur origsettings//802-3-ethernetpersistence.cpp settings/802-3-ethernetpersistence.cpp
---- origsettings//802-3-ethernetpersistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/802-3-ethernetpersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//802-3-ethernetpersistence.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/802-3-ethernetpersistence.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -19,7 +19,7 @@
  {
    WiredSetting * setting = static_cast<WiredSetting *>(m_setting);
@@ -723,8 +723,8 @@ diff -ur origsettings//802-3-ethernetpersistence.cpp settings/802-3-ethernetpers
        setting->setDuplex(WiredSetting::EnumDuplex::half);
      else     if (contents == "full")
 diff -ur origsettings//gsmdbus.cpp settings/gsmdbus.cpp
---- origsettings//gsmdbus.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/gsmdbus.cpp	2009-01-28 21:59:31.000000000 +0100
+--- origsettings//gsmdbus.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/gsmdbus.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -54,10 +54,14 @@
  {
    QVariantMap map;
@@ -762,8 +762,8 @@ diff -ur origsettings//gsmdbus.cpp settings/gsmdbus.cpp
  
 Only in settings: gsmdbus.cpp~
 diff -ur origsettings//gsmpersistence.cpp settings/gsmpersistence.cpp
---- origsettings//gsmpersistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/gsmpersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//gsmpersistence.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/gsmpersistence.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -18,7 +18,7 @@
  void GsmPersistence::load()
  {
@@ -774,8 +774,8 @@ diff -ur origsettings//gsmpersistence.cpp settings/gsmpersistence.cpp
    // SECRET
    if (m_storageMode != ConnectionPersistence::Secure) {
 diff -ur origsettings//ipv4.cpp settings/ipv4.cpp
---- origsettings//ipv4.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/ipv4.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//ipv4.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/ipv4.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -5,7 +5,9 @@
  
  using namespace Knm;
@@ -788,8 +788,8 @@ diff -ur origsettings//ipv4.cpp settings/ipv4.cpp
  }
  
 diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
---- origsettings//ipv4dbus.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/ipv4dbus.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//ipv4dbus.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/ipv4dbus.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -3,6 +3,8 @@
  
  #include "ipv4dbus.h"
@@ -879,8 +879,8 @@ diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
  }
  
 diff -ur origsettings//ipv4dbus.h settings/ipv4dbus.h
---- origsettings//ipv4dbus.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/ipv4dbus.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//ipv4dbus.h	2009-02-01 22:46:44.000000000 +0100
++++ settings/ipv4dbus.h	2009-01-31 22:36:13.000000000 +0100
 @@ -3,7 +3,7 @@
  #ifndef KNM_IPV4DBUS_H
  #define KNM_IPV4DBUS_H
@@ -891,8 +891,8 @@ diff -ur origsettings//ipv4dbus.h settings/ipv4dbus.h
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 diff -ur origsettings//ipv4.h settings/ipv4.h
---- origsettings//ipv4.h	2009-01-28 22:28:30.000000000 +0100
-+++ settings/ipv4.h	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//ipv4.h	2009-02-01 22:46:44.000000000 +0100
++++ settings/ipv4.h	2009-01-31 22:36:13.000000000 +0100
 @@ -3,11 +3,17 @@
  #ifndef KNM_IPV4SETTING_H
  #define KNM_IPV4SETTING_H
@@ -977,8 +977,8 @@ diff -ur origsettings//ipv4.h settings/ipv4.h
  };
  
 diff -ur origsettings//ipv4persistence.cpp settings/ipv4persistence.cpp
---- origsettings//ipv4persistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/ipv4persistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//ipv4persistence.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/ipv4persistence.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -19,7 +19,7 @@
  {
    Ipv4Setting * setting = static_cast<Ipv4Setting *>(m_setting);
@@ -1082,10 +1082,11 @@ diff -ur origsettings//ipv4persistence.cpp settings/ipv4persistence.cpp
  }
  
 Only in settings: pbkdf2.cpp
+Only in settings: pbkdf2.cpp~
 Only in settings: pbkdf2.h
 diff -ur origsettings//serialpersistence.cpp settings/serialpersistence.cpp
---- origsettings//serialpersistence.cpp	2009-01-28 22:28:30.000000000 +0100
-+++ settings/serialpersistence.cpp	2009-01-28 21:10:06.000000000 +0100
+--- origsettings//serialpersistence.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/serialpersistence.cpp	2009-01-31 22:36:13.000000000 +0100
 @@ -20,7 +20,7 @@
    SerialSetting * setting = static_cast<SerialSetting *>(m_setting);
    setting->setBaud(m_config->readEntry("baud", 0));
@@ -1096,5 +1097,230 @@ diff -ur origsettings//serialpersistence.cpp settings/serialpersistence.cpp
    setting->setSenddelay(m_config->readEntry("senddelay", 0));
  }
 Only in settings: .svn
+diff -ur origsettings//vpndbus.cpp settings/vpndbus.cpp
+--- origsettings//vpndbus.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/vpndbus.cpp	2009-02-01 22:45:53.000000000 +0100
+@@ -22,14 +22,14 @@
+     setting->setServiceType(map.value(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE)).value<QString>());
+   }
+   if (map.contains(QLatin1String(NM_SETTING_VPN_DATA))) {
+-    setting->setData(map.value(QLatin1String(NM_SETTING_VPN_DATA)).value<QStringList>());
++    setting->setData(map.value(QLatin1String(NM_SETTING_VPN_DATA)).value<QStringMap>());
+   }
+   if (map.contains(QLatin1String(NM_SETTING_VPN_USER_NAME))) {
+     setting->setUserName(map.value(QLatin1String(NM_SETTING_VPN_USER_NAME)).value<QString>());
+   }
+   // SECRET
+   if (map.contains(QLatin1String(NM_SETTING_VPN_SECRETS))) {
+-    setting->setVpnSecrets(map.value(QLatin1String(NM_SETTING_VPN_SECRETS)).value<QStringList>());
++    setting->setVpnSecrets(map.value(QLatin1String(NM_SETTING_VPN_SECRETS)).value<QVariantMap>());
+   }
+ }
+ 
+@@ -38,16 +38,16 @@
+   QVariantMap map;
+   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
+   map.insert(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE), setting->serviceType());
+-  map.insert(QLatin1String(NM_SETTING_VPN_DATA), setting->data());
++  map.insert(QLatin1String(NM_SETTING_VPN_DATA), QVariant::fromValue(setting->data()));
++  map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(QStringMap()));
+   map.insert(QLatin1String(NM_SETTING_VPN_USER_NAME), setting->userName());
+   return map;
+ }
+ 
+ QVariantMap VpnDbus::toSecretsMap()
+ {
+-  QVariantMap map;
++  //assume that the settings's vpnSecrets are ready to go
+   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
+-  map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), setting->vpnSecrets());
+-  return map;
++  return setting->vpnSecrets();
+ }
+ 
+Only in settings: vpndbus.cpp~
+diff -ur origsettings//vpn.h settings/vpn.h
+--- origsettings//vpn.h	2009-02-01 22:46:44.000000000 +0100
++++ settings/vpn.h	2009-02-01 22:26:37.000000000 +0100
+@@ -8,6 +8,7 @@
+ #include <kcoreconfigskeleton.h>
+ #include "setting.h"
+ #include "knm_export.h"
++#include "../types.h"
+ namespace Knm {
+ 
+ class KNM_EXPORT VpnSetting : public Setting
+@@ -40,7 +41,7 @@
+     /**
+       Set Data bits
+     */
+-    void setData( const QStringList & v )
++    void setData( const QStringMap & v )
+     {
+         mData = v;
+     }
+@@ -48,7 +49,7 @@
+     /**
+       Get Data bits
+     */
+-    QStringList data() const
++    QStringMap data() const
+     {
+       return mData;
+     }
+@@ -72,7 +73,7 @@
+     /**
+       Set Vpnsecrets
+     */
+-    void setVpnSecrets( const QStringList & v )
++    void setVpnSecrets( const QVariantMap & v )
+     {
+         mVpnSecrets = v;
+     }
+@@ -80,7 +81,7 @@
+     /**
+       Get Vpnsecrets
+     */
+-    QStringList vpnSecrets() const
++    QVariantMap vpnSecrets() const
+     {
+       return mVpnSecrets;
+     }
+@@ -105,9 +106,9 @@
+ 
+     // vpn
+     QString mServiceType;
+-    QStringList mData;
++    QStringMap mData;
+     QString mUserName;
+-    QStringList mVpnSecrets;
++    QVariantMap mVpnSecrets;
+     QString mPluginName;
+ 
+   private:
+Only in settings: vpn.h~
+Only in settings: vpn.h.orig
+Only in settings: vpn.h.rej
+diff -ur origsettings//vpnpersistence.cpp settings/vpnpersistence.cpp
+--- origsettings//vpnpersistence.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/vpnpersistence.cpp	2009-02-01 22:38:25.000000000 +0100
+@@ -19,11 +19,12 @@
+ {
+   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
+   setting->setServiceType(m_config->readEntry("ServiceType", ""));
+-  setting->setData(m_config->readEntry("Data", QStringList()));
++  setting->setData(stringMapFromStringList(m_config->readEntry("Data", QStringList())));
+   setting->setUserName(m_config->readEntry("UserName", ""));
+   // SECRET
+   if (m_storageMode != ConnectionPersistence::Secure) {
+-    setting->setVpnSecrets(m_config->readEntry("VpnSecrets", QStringList()));
++      // the map is flattened to a list of key,value,key,value
++      setting->setVpnSecrets(variantMapFromStringList(m_config->readEntry("VpnSecrets", QStringList())));
+   }
+   setting->setPluginName(m_config->readEntry("PluginName", ""));
+ }
+@@ -32,28 +33,72 @@
+ {
+   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
+   m_config->writeEntry("ServiceType", setting->serviceType());
+-  m_config->writeEntry("Data", setting->data());
++  m_config->writeEntry("Data", stringMapToStringList(setting->data()));
+   m_config->writeEntry("UserName", setting->userName());
+   // SECRET
+   if (m_storageMode != ConnectionPersistence::Secure) {
+-    m_config->writeEntry("VpnSecrets", setting->vpnSecrets());
++    m_config->writeEntry("VpnSecrets", variantMapToStringList(setting->vpnSecrets()));
+   }
+   m_config->writeEntry("PluginName", setting->pluginName());
+ }
+ 
++QVariantMap VpnPersistence::variantMapFromStringList(const QStringList & list)
++{
++    QVariantMap secretsMap;
++    if (list.count() % 2 == 0) {
++        for ( int i = 0; i < list.count(); i += 2 ) {
++            secretsMap.insert( list[i], list[i+1] );
++        }
++    }
++    return secretsMap;
++}
++
++QStringList VpnPersistence::variantMapToStringList(const QVariantMap & map)
++{
++    QStringList rawSecrets;
++    QMapIterator<QString,QVariant> i(map);
++    while (i.hasNext()) {
++        i.next();
++        rawSecrets << i.key() << i.value().toString();
++    }
++    return rawSecrets;
++}
++
++QStringMap VpnPersistence::stringMapFromStringList(const QStringList & list)
++{
++    QStringMap map;
++    if (list.count() % 2 == 0) {
++        for ( int i = 0; i < list.count(); i += 2 ) {
++            map.insert( list[i], list[i+1] );
++        }
++    }
++    return map;
++}
++
++QStringList VpnPersistence::stringMapToStringList(const QStringMap & map)
++{
++    QStringList rawSecrets;
++    QStringMapIterator i(map);
++    while (i.hasNext()) {
++        i.next();
++        rawSecrets << i.key() << i.value();
++    }
++    return rawSecrets;
++}
++
+ QMap<QString,QString> VpnPersistence::secrets() const
+ {
+   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
+   QMap<QString,QString> map;
+-  map.insert(QLatin1String("VpnSecrets"), setting->vpnSecrets());
++  map.insert(QLatin1String("VpnSecrets"), variantMapToStringList(setting->vpnSecrets()).join(QLatin1String("%SEP%")));
+   return map;
+ }
+ 
+ void VpnPersistence::restoreSecrets(QMap<QString,QString> secrets) const
+ {
+   if (m_storageMode == ConnectionPersistence::Secure) {
+-  VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
+-    setting->setVpnSecrets(secrets.value("VpnSecrets"));
++    VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
++    setting->setVpnSecrets(variantMapFromStringList(secrets.value("VpnSecrets").split("%SEP%")));
+     setting->setSecretsAvailable(true);
+   }
+ }
+Only in settings: vpnpersistence.cpp~
+diff -ur origsettings//vpnpersistence.h settings/vpnpersistence.h
+--- origsettings//vpnpersistence.h	2009-02-01 22:46:44.000000000 +0100
++++ settings/vpnpersistence.h	2009-02-01 22:34:41.000000000 +0100
+@@ -7,6 +7,8 @@
+ #include <kcoreconfigskeleton.h>
+ #include "settingpersistence.h"
+ #include "knm_export.h"
++#include "../types.h"
++
+ namespace Knm {
+ 
+ class VpnSetting;
+@@ -20,6 +22,10 @@
+     void save();
+     QMap<QString,QString> secrets() const;
+     void restoreSecrets(QMap<QString,QString>) const;
++    static QStringList variantMapToStringList(const QVariantMap &);
++    static QVariantMap variantMapFromStringList(const QStringList &);
++    static QStringList stringMapToStringList(const QStringMap &);
++    static QStringMap stringMapFromStringList(const QStringList &);
+ };
+ }
+ 
+Only in settings: vpnpersistence.h~
 Only in settings: wephash.cpp
 Only in settings: wephash.h

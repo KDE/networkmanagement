@@ -66,6 +66,7 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     m_ethernetGroup = 0;
     m_vpnHeader = 0;
     m_vpnGroup = 0;
+    m_cdmaGroup = 0;
     m_gsmGroup = 0;
 
     setMinimumWidth(300);
@@ -102,6 +103,10 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     m_gsmGroup->setObjectName("gsm-interface-group");
     m_gsmGroup->init();
 
+    m_cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, m_userSettings, m_systemSettings, this);
+    m_cdmaGroup->setObjectName("gsm-interface-group");
+    m_cdmaGroup->init();
+
     //InterfaceGroup *cdmaGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, this);
     //InterfaceGroup *pppoeGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Serial, this);
     m_vpnHeader = new QLabel(this);
@@ -109,11 +114,13 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     m_vpnGroup = new VpnConnectionGroup(m_userSettings, m_systemSettings, this);
     m_vpnGroup->setObjectName("vpn-interface-group");
     m_vpnGroup->init();
+    connect(m_vpnGroup, SIGNAL(hideClicked()), SIGNAL(hideVpnGroup()));
     m_connectionLayout->addWidget(m_wirelessHeader);
 
     //m_connectionLayout->setItemSpacing(1, 30);
     m_connectionLayout->addWidget(m_wifiGroup);
     m_connectionLayout->addWidget(m_gsmGroup);
+    m_connectionLayout->addWidget(m_cdmaGroup);
     if (m_vpnGroup->isEmpty()) {
         kDebug() << "VPN is empty, hiding it";
         m_vpnHeader->hide();
@@ -123,6 +130,7 @@ NetworkManagerPopup::NetworkManagerPopup(QWidget *parent)
     m_connectionLayout->addWidget(m_vpnHeader);
     m_connectionLayout->addWidget(m_vpnGroup);
     m_gsmGroup->show();
+    m_cdmaGroup->show();
     //m_connectionLayout->addItem(cdmaGroup);
     //m_connectionLayout->addItem(pppoeGroup);
     m_layout->addLayout(m_connectionLayout);
@@ -227,9 +235,15 @@ void NetworkManagerPopup::setShowVpn(bool show)
     }
 }
 
-void NetworkManagerPopup::setShowGsm(bool show)
+void NetworkManagerPopup::setShowCellular(bool show)
 {
-    m_showGsm = show;
+    m_showCellular = show;
+    if (show && hasInterfaceOfType(Solid::Control::NetworkInterface::Cdma)) {
+        m_cdmaGroup->show();
+
+    } else {
+        m_cdmaGroup->hide();
+    }
     if (show && hasInterfaceOfType(Solid::Control::NetworkInterface::Gsm)) {
         m_gsmGroup->show();
 
@@ -310,10 +324,12 @@ void NetworkManagerPopup::managerStatusChanged(Solid::Networking::Status status)
     if (Solid::Networking::Unknown == status ) {
         m_ethernetGroup->hide();
         m_wifiGroup->hide();
+        m_cdmaGroup->hide();
         m_gsmGroup->hide();
     } else {
         m_ethernetGroup->show();
         m_wifiGroup->show();
+        m_cdmaGroup->hide();
         m_gsmGroup->show();
     }
 }

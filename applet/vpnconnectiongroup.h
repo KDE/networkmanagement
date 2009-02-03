@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionlist.h"
 
+class QLabel;
+
 // Shows a group of VPN connections
 class VpnConnectionGroup : public ConnectionList
 {
@@ -35,6 +37,11 @@ public:
     bool accept(RemoteConnection*) const;
 public Q_SLOTS:
     void activateConnection(AbstractConnectableItem*);
+    void connectionListChanged();
+signals:
+    void hideClicked();
+private:
+    QLabel * m_hideButton;
 };
 
 #endif // VPNCONNECTIONGROUP_H

@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceitem.h"
 #include "networkmanagerpopup.h"
 
-K_EXPORT_PLASMA_APPLET(networkmanager, NetworkManagerApplet)
+K_EXPORT_PLASMA_APPLET(networkmanagement, NetworkManagerApplet)
 
 /* for qSort()ing */
 bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
@@ -82,6 +82,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     QObject::connect(m_popup, SIGNAL(manageConnections()),
             this, SLOT(manageConnections()));
+    QObject::connect(m_popup, SIGNAL(hideVpnGroup()), SLOT(hideVpnGroup()));
 }
 
 NetworkManagerApplet::~NetworkManagerApplet()
@@ -159,10 +160,10 @@ void NetworkManagerApplet::configAccepted()
         cg.writeEntry("showWireless", ui.showWireless->isChecked());
         kDebug() << "Wireless Changed" << m_popup->showWireless();
     }
-    if (m_popup->showGsm() != ui.showGsm->isChecked()) {
-        m_popup->setShowGsm(ui.showGsm->isChecked());
-        cg.writeEntry("showGsm", ui.showGsm->isChecked());
-        kDebug() << "Gsm Changed" << ui.showGsm->isChecked();
+    if (m_popup->showCellular() != ui.showCellular->isChecked()) {
+        m_popup->setShowCellular(ui.showCellular->isChecked());
+        cg.writeEntry("showCellular", ui.showCellular->isChecked());
+        kDebug() << "Cellular Changed" << ui.showCellular->isChecked();
     }
     if (m_popup->showVpn() != ui.showVpn->isChecked()) {
         m_popup->setShowVpn(ui.showVpn->isChecked());
@@ -303,12 +304,12 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
         QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
     }
 
+    // update extender visibility
     KConfigGroup cg = config();
     m_popup->setShowWired(cg.readEntry("showWired", true));
     m_popup->setShowWireless(cg.readEntry("showWireless", true));
     //m_popup->setShowPppoe(cg.readEntry("showPppoe", true));
-    m_popup->setShowGsm(cg.readEntry("showGsm", true));
-    //m_popup->setShowCdma(cg.readEntry("showCdma", true));
+    m_popup->setShowCellular(cg.readEntry("showCellular", true));
     m_popup->setWirelessNetworkDisplayLimit( cg.readEntry("numberOfWlans", 4));
     m_popup->setShowVpn(cg.readEntry("showVpn", true));
 
@@ -326,6 +327,13 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
         QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
         QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
     }
+
+    // update extender visibility
+    KConfigGroup cg = config();
+    m_popup->setShowWired(cg.readEntry("showWired", true));
+    m_popup->setShowWireless(cg.readEntry("showWireless", true));
+    //showPppoe(cg.readEntry("showPppoe", true));
+    m_popup->setShowCellular(cg.readEntry("showCellular", true));
 
     interfaceConnectionStateChanged();
     update();
@@ -395,7 +403,7 @@ void NetworkManagerApplet::updateToolTip()
         = Solid::Control::NetworkManager::networkInterfaces();
     Plasma::ToolTipManager::ToolTipContent data;
     if (interfaces.isEmpty()) {
-        data.mainText = i18nc("Tooltip main title text", "Networks");
+        data.mainText = name();
         data.subText= i18nc("Tooltip sub text", "No network interfaces");
         data.image = KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop));
     } else {
@@ -407,7 +415,7 @@ void NetworkManagerApplet::updateToolTip()
             }
             subText += QString::fromLatin1("<b>%1</b>: %2").arg(iface->interfaceName()).arg(connectionStateToString(iface->connectionState()));
             data.subText = subText;
-            data.mainText = i18nc("Tooltip main title text", "Networks");
+            data.mainText = name();
             data.image = KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop));
             Plasma::ToolTipManager::self()->setToolTipContent(this, data);
         }
@@ -615,7 +623,7 @@ void NetworkManagerApplet::manageConnections()
 {
     //kDebug() << "opening connection management dialog";
     QStringList args;
-    args << "kcm_knetworkmanager";
+    args << "kcm_networkmanagement";
     KToolInvocation::kdeinitExec("kcmshell4", args);
     if (m_dialog) {
         m_dialog->hide();
@@ -670,6 +678,14 @@ void NetworkManagerApplet::showLegacyPopup(QGraphicsSceneMouseEvent *event)
         m_dialog->move(popupPosition(m_dialog->sizeHint()));
         m_dialog->show();
     }
+}
+
+void NetworkManagerApplet::hideVpnGroup()
+{
+    KConfigGroup cg = config();
+    cg.writeEntry("showVpn", false);
+    m_popup->setShowVpn(false);
+    Plasma::Applet::configNeedsSaving();
 }
 
 #include "networkmanager.moc"

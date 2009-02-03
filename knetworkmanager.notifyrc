@@ -98,7 +98,6 @@ Comment[pt]=Foi removida uma interface de rede
 Comment[pt_BR]=Foi removida uma interface de rede
 Comment[sv]=Ett nätverksgränssnitt har tagits bort
 Comment[uk]=Було вилучено інтерфейс мережі
-Action=Popup
 
 [Event/networkappeared]
 Name=Found Wireless Network
@@ -164,7 +163,6 @@ Comment[pt]=A ligação de rede terminou
 Comment[pt_BR]=A ligação de rede terminou
 Comment[sv]=En nätverksanslutning har kopplats ner
 Comment[uk]=Мережеве з’єднання було розірвано
-Action=Popup
 
 [Event/connected]
 Name=Network Connection Succeeded

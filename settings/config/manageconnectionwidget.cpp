@@ -41,13 +41,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knmserviceprefs.h"
 #include "connection.h"
+#include "connectionpersistence.h"
 #include "connectionprefs.h"
 
 #define ConnectionIdRole 1812
 #define ConnectionTypeRole 1066
 
 K_PLUGIN_FACTORY( ManageConnectionWidgetFactory, registerPlugin<ManageConnectionWidget>();)
-K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_knetworkmanager" ) )
+K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_networkmanagement" ) )
 
 ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantList &args)
 : KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this))
@@ -56,7 +57,7 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
 
     mConnEditUi.setupUi(this);
     KNetworkManagerServicePrefs::instance(KStandardDirs::locateLocal("config",
-                QLatin1String("knetworkmanagerrc")));
+                QLatin1String("networkmanagementrc")));
     connect(mConnEditUi.addConnection, SIGNAL(clicked()), SLOT(addClicked()));
     connect(mConnEditUi.editConnection, SIGNAL(clicked()), SLOT(editClicked()));
     connect(mConnEditUi.deleteConnection, SIGNAL(clicked()), SLOT(deleteClicked()));
@@ -181,8 +182,8 @@ void ManageConnectionWidget::updateTabStates()
     mConnEditUi.tabWidget->setTabEnabled(0, (hasWired || mConnEditUi.listWired->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(1, (hasWireless || mConnEditUi.listWireless->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(2, (hasCellular || mConnEditUi.listCellular->topLevelItemCount()));
-    if (KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VpnUiPlugin")).isEmpty()) {
-        mConnEditUi.tabWidget->setTabEnabled(3, false);
+    if (KServiceTypeTrader::self()->query(QLatin1String("NetworkManagement/VpnUiPlugin")).isEmpty()) {
+        //mConnEditUi.tabWidget->setTabEnabled(3, false);
         mConnEditUi.tabWidget->setTabToolTip(3, i18nc("Tooltip for disabled tab when no VPN plugins are installed", "No VPN plugins were found"));
     } else {
         mConnEditUi.tabWidget->setTabEnabled(3, true);
@@ -236,13 +237,13 @@ void ManageConnectionWidget::deleteClicked()
         // delete it
         // remove connection file
         QFile connFile(KStandardDirs::locateLocal("data",
-                    QLatin1String("knetworkmanager/connections/") + connectionId));
+                    Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId));
         if (!connFile.exists()) {
             kDebug() << "Connection file not found: " << connFile.fileName();
         }
         connFile.remove();
 
-        // remove from knetworkmanagerrc
+        // remove from networkmanagerrc
         KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
         prefs->config()->deleteGroup(QLatin1String("Connection_") + connectionId);
 
@@ -267,6 +268,7 @@ Knm::Connection::Type ManageConnectionWidget::connectionTypeForCurrentIndex() co
             t = Knm::Connection::Wireless;
             break;
         case 2:
+            // HACK - tab 2 always reports Gsm despite containing both Gsm and Cdma
             t = Knm::Connection::Gsm;
             break;
         case 3:
@@ -335,7 +337,7 @@ void ManageConnectionWidget::tabChanged(int index)
         if ( !mVpnMenu ) {
             mVpnMenu = new QMenu(this);
             // foreach vpn service, add one of these
-            KPluginInfo::List vpnServices = KPluginInfo::fromServices(KServiceTypeTrader::self()->query(QLatin1String("KNetworkManager/VpnUiPlugin")));
+            KPluginInfo::List vpnServices = KPluginInfo::fromServices(KServiceTypeTrader::self()->query(QLatin1String("NetworkManagement/VpnUiPlugin")));
             foreach (KPluginInfo pi, vpnServices) {
                 QAction * vpnAction = new QAction(pi.name(), this);
                 vpnAction->setData(QVariant(pi.pluginName()));
@@ -357,7 +359,22 @@ void ManageConnectionWidget::tabChanged(int index)
 
 void ManageConnectionWidget::connectionTypeMenuTriggered(QAction* action)
 {
-    mEditor->addConnection(false, (Knm::Connection::Type)action->data().toUInt());
+    // HACK - tab 2 always reports GSM, tab 3 always reports VPN.
+    // NM uses plugins to handle different VPN types but has hardcoded different mobile broadband
+    // types.  However we don't want to blow up the UI so we merge GSM and VPN into one tab.
+    // Because of the inconsistent handling of sub-types, we need a hack here to figure out what to
+    // pass to the editor widget.
+
+    // If it is a cellular type, check the data() on the action for the real type
+    // If it is a VPN type, keep Vpn, but use the data() on the action for the plugin
+    Knm::Connection::Type tabType = connectionTypeForCurrentIndex();
+    if (tabType == Knm::Connection::Gsm) {
+        mEditor->addConnection(false, (Knm::Connection::Type)action->data().toUInt());
+    } else if (tabType == Knm::Connection::Vpn) {
+        QVariantList vl;
+        vl << action->data();
+        mEditor->addConnection(false, tabType, vl);
+    }
 }
 
 #include "manageconnectionwidget.moc"

@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 int main(int argc, char **argv)
 {
-    KAboutData aboutData( "knetworkmanager_configshell", 0, ki18n("KNetworkManager Config Shell"),
+    KAboutData aboutData( "networkmanagement_configshell", 0, ki18n("Network Management"),
                           0,
                           ki18n("Create network connections standalone"),
                           KAboutData::License_GPL,
@@ -95,7 +95,7 @@ int main(int argc, char **argv)
     }
     kDebug() << specificArgs;
 
-    KNetworkManagerServicePrefs::instance("knetworkmanagerrc");
+    KNetworkManagerServicePrefs::instance("networkmanagementrc");
 
     if (args->arg(0) == QLatin1String("create")) {
         if (args->isSet("type")) {

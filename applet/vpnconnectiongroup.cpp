@@ -23,7 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <NetworkManager.h>
 
+#include <QGraphicsLinearLayout>
+#include <QLabel>
+#include <QVBoxLayout>
 #include <KDebug>
+#include <KLocale>
 
 #include <solid/control/networkmanager.h>
 
@@ -34,8 +38,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 
 VpnConnectionGroup::VpnConnectionGroup(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QWidget * parent)
-    : ConnectionList(userSettings, systemSettings, parent)
+    : ConnectionList(userSettings, systemSettings, parent), m_hideButton(0)
 {
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    connect(this, SIGNAL(connectionListUpdated()), SLOT(connectionListChanged()));
 }
 
 VpnConnectionGroup::~VpnConnectionGroup()
@@ -84,11 +90,28 @@ void VpnConnectionGroup::activateConnection(AbstractConnectableItem* item)
     Solid::Control::NetworkManager::activateConnection(device,
                                                        ci->connection()->service() + " " + ci->connection()->path(),
                                                        map );
-
 }
 
 void VpnConnectionGroup::setupFooter()
 {
+    connectionListChanged();
+}
+
+void VpnConnectionGroup::connectionListChanged()
+{
+    if (isEmpty() && (m_hideButton == 0)) {
+        m_hideButton = new QLabel(this);
+        m_hideButton->setText(i18nc("Label on button to hide the VPN connection list", "<a href=\"foo\">Hide</a>"));
+        m_hideButton->setAlignment(Qt::AlignRight);
+        m_hideButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        connect(m_hideButton, SIGNAL(linkActivated(const QString &)), SIGNAL(hideClicked()));
+        m_hideButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        m_layout->addWidget(m_hideButton);
+    } else {
+        m_layout->removeWidget(m_hideButton);
+        delete m_hideButton;
+        m_hideButton = 0;
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

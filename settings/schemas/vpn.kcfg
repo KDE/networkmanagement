@@ -5,22 +5,24 @@
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
   <kcfgfile arg="false"/>
   <group name="vpn">
-    <entry name="servicetype" type="String" dbuskey="NM_SETTING_VPN_SERVICE_TYPE">
+    <entry name="ServiceType" type="String" dbuskey="NM_SETTING_VPN_SERVICE_TYPE">
       <label>Service Type</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="data" type="String" dbuskey="NM_SETTING_VPN_DATA">
+    <entry name="Data" type="StringList" dbuskey="NM_SETTING_VPN_DATA">
       <label>Data bits</label>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="username" type="String" dbuskey="NM_SETTING_VPN_USER_NAME">
+    <entry name="UserName" type="String" dbuskey="NM_SETTING_VPN_USER_NAME">
       <label>Username</label>
       <whatsthis></whatsthis>
     </entry>
-    <!-- this is some kind of list, dunno what exactly -->
-    <entry name="routes" type="StringList">
-      <label>Routes</label>
+    <entry name="VpnSecrets" type="StringList" dbuskey="NM_SETTING_VPN_SECRETS" secret="true">
+      <label>Vpnsecrets</label>
       <whatsthis></whatsthis>
+    </entry>
+    <entry name="PluginName" type="String" nodbus="true">
+        <label>VPN Plugin Name</label>
     </entry>
   </group>
 </kcfg>

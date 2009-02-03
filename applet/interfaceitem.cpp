@@ -278,13 +278,13 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
             break;
         case Solid::Control::NetworkInterface::Disconnected:
             if ( !silently )
-                KNotification::event(Event::Disconnected, i18nc("Notification text when a network interface was disconnected","Network interface %1 disconnected", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+                KNotification::event(Event::Disconnected, i18nc("Notification text when a network interface was disconnected","Network interface %1 disconnected", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
             setInactive();
             break;
         case Solid::Control::NetworkInterface::Failed:
             // set the disconnected icon
             if ( !silently )
-                KNotification::event(Event::ConnectFailed, i18nc("Notification text when a network interface connection attempt failed","Connection on Network interface %1 failed", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+                KNotification::event(Event::ConnectFailed, i18nc("Notification text when a network interface connection attempt failed","Connection on Network interface %1 failed", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
             setInactive();
             break;
         case Solid::Control::NetworkInterface::Preparing:
@@ -295,7 +295,7 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
             break;
         case Solid::Control::NetworkInterface::Activated: // lookup the active connection, get its state
             if ( !silently )
-                KNotification::event(Event::Connected, i18nc("Notification text when a network interface connection succeeded","Network interface %1 connected", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+                KNotification::event(Event::Connected, i18nc("Notification text when a network interface connection succeeded","Network interface %1 connected", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
             setActiveConnection(state);
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
@@ -370,13 +370,19 @@ ConnectionInspector * InterfaceItem::connectionInspector() const
 
 void InterfaceItem::serviceDisappeared(NetworkManagerSettings* service)
 {
+// just throw away our active connection list.  NM should signal activeConnectionsChanged anyway
+#if 0
     QMutableListIterator<ActiveConnectionPair> i(m_activeConnections);
     while (i.hasNext()) {
         i.next();
+        kDebug() << i.value().first << i.value().second;
         if (i.value().first == service->service()) {
+            kDebug() << "  Removed.";
             i.remove();
         }
     }
+#endif
+    m_activeConnections = QList<ActiveConnectionPair>();
     setConnectionInfo();
 }
 

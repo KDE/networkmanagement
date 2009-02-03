@@ -33,6 +33,7 @@ Q_DECLARE_METATYPE(QVariantMap)
 typedef QMap<QString, QMap<QString, QVariant> > QVariantMapMap;
 Q_DECLARE_METATYPE(QVariantMapMap)
 typedef QMap<QString, QString> QStringMap;
+typedef QMapIterator<QString, QString> QStringMapIterator;
 Q_DECLARE_METATYPE(QStringMap)
 
 #endif

@@ -39,6 +39,7 @@ class KNM_EXPORT ConnectionPersistence : public QObject
 {
 Q_OBJECT
 public:
+    static const QString CONNECTION_PERSISTENCE_PATH;
     enum SecretStorageMode { Secure, PlainText };
     class EnumError
     {

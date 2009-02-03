@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -34,11 +34,10 @@ Q_OBJECT
 public:
     VpnPreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~VpnPreferences();
-    virtual void save();
     virtual void load();
 private:
     VpnUiPlugin * m_uiPlugin;
-    QString m_vpnType;
+    QString m_vpnPluginName;
 };
 
 #endif

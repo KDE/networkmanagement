@@ -66,6 +66,8 @@ protected:
     void networkInterfaceRemoved(const QString&);
     void interfaceConnectionStateChanged();
     void manageConnections();
+    // used to let the user easily hide VPN
+    void hideVpnGroup();
 private:
     void setBusy(bool busy);
     void updateToolTip();

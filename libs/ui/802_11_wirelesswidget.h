@@ -37,8 +37,6 @@ public:
     Wireless80211Widget(Knm::Connection * connection, const QString &ssid = QString(), QWidget * parent = 0 );
     virtual ~Wireless80211Widget();
     QString settingName() const;
-    static const QString INFRA_MODE;
-    static const QString ADHOC_MODE;
     void readConfig();
     void writeConfig();
 public Q_SLOTS:

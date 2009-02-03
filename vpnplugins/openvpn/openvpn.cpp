@@ -24,8 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "openvpnwidget.h"
 
+#include "connection.h"
+
 K_PLUGIN_FACTORY( OpenVpnUiPluginFactory, registerPlugin<OpenVpnUiPlugin>(); )
-K_EXPORT_PLUGIN( OpenVpnUiPluginFactory( "knetworkmanager4_openvpnui" ) )
+K_EXPORT_PLUGIN( OpenVpnUiPluginFactory( "networkmanagerment_openvpnui" ) )
 
 OpenVpnUiPlugin::OpenVpnUiPlugin(QObject * parent, const QVariantList &) : VpnUiPlugin(parent)
 {
@@ -37,9 +39,9 @@ OpenVpnUiPlugin::~OpenVpnUiPlugin()
 
 }
 
-SettingWidget * OpenVpnUiPlugin::widget(const QString &connectionId, QWidget * parent)
+SettingWidget * OpenVpnUiPlugin::widget(Knm::Connection * connection, QWidget * parent)
 {
-    return new OpenVpnSettingWidget(connectionId, parent);
+    return new OpenVpnSettingWidget(connection, parent);
 }
 
 // vim: sw=4 sts=4 et tw=100

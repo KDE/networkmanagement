@@ -25,13 +25,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QVariant>
 
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
+
 class VpncUiPlugin : public VpnUiPlugin
 {
 Q_OBJECT
 public:
     VpncUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
     virtual ~VpncUiPlugin();
-    SettingWidget * widget(const QString &connectionId, QWidget * parent = 0);
+    SettingWidget * widget(Knm::Connection *, QWidget * parent = 0);
 };
 
 #endif //  KNM4_VPNC_H

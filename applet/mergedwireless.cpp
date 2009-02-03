@@ -226,9 +226,9 @@ void WirelessEnvironmentMerged::addNetworkInternal(WirelessEnvironment * source,
 void WirelessEnvironmentMerged::notifyNewNetwork()
 {
     if (m_newNetworks.count() == 1) {
-        KNotification::event(Event::NetworkAppeared, i18nc("Notification text when a wireless network interface was found","Wireless network %1 found", m_newNetworks[0]), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::NetworkAppeared, i18nc("Notification text when a wireless network interface was found","Wireless network %1 found", m_newNetworks[0]), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
     } else {
-        KNotification::event(Event::NetworkAppeared, i18nc("Notification text when multiple wireless networks are found","<b>New wireless networks:</b><br /> %1", m_newNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(48,48)), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::NetworkAppeared, i18nc("Notification text when multiple wireless networks are found","<b>New wireless networks:</b><br /> %1", m_newNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(48,48)), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
     }
     m_newNetworkTimer->stop();
     m_newNetworks.clear();
@@ -237,10 +237,10 @@ void WirelessEnvironmentMerged::notifyNewNetwork()
 void WirelessEnvironmentMerged::notifyDisappearedNetwork()
 {
     if (m_disappearedNetworks.count() == 1) {
-        KNotification::event(Event::NetworkDisappeared, i18nc("Notification text when a wireless network interface disappeared","Wireless network %1 disappeared", m_disappearedNetworks[0]), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::NetworkDisappeared, i18nc("Notification text when a wireless network interface disappeared","Wireless network %1 disappeared", m_disappearedNetworks[0]), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
 
     } else {
-        KNotification::event(Event::NetworkDisappeared, i18nc("Notification text when multiple wireless networks have disappeared","<b>Wireless networks have disappeared:</b><br /> %1", m_disappearedNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(48,48)), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::NetworkDisappeared, i18nc("Notification text when multiple wireless networks have disappeared","<b>Wireless networks have disappeared:</b><br /> %1", m_disappearedNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(48,48)), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
     }
     m_disappearedNetworkTimer->stop();
     m_disappearedNetworks.clear();
