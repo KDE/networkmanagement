@@ -1,42 +1,7 @@
 [Global]
 Name=Network Management
-Name[de]=Netzwerk
-Name[el]=Δίκτυα
-Name[et]=Võrguühendused
-Name[fr]=Réseau
-Name[ga]=Líonrú
-Name[gl]=Redes
-Name[ja]=ネットワーキング
-Name[km]=ការ​តបណ្ដាញ
-Name[lt]=Tinklas
-Name[nds]=Nettwarkeln
-Name[nl]=Netwerkbeheren
-Name[pa]=ਨੈੱਟਵਰਕਿੰਗ
-Name[pt]=Rede
-Name[pt_BR]=Rede
-Name[ro]=Rețea
-Name[sv]=Nätverk
-Name[tr]=Ağ
-Name[uk]=Робота у мережі
-Name[x-test]=xxNetworkingxx
 IconName=networkmanager
 Comment=Network Management
-Comment[el]=Γεγονότα διαχείρισης δικτύου
-Comment[et]=Võrguhalduse sündmused
-Comment[fr]=Évènements de gestion du réseau
-Comment[gl]=Eventos de xestión da rede
-Comment[ja]=ネットワーク管理のイベント
-Comment[km]=ព្រឹត្តិការណ៍​គ្រប់គ្រង​​បណ្ដាញ
-Comment[nds]=Nettwarkpleeg-Begeefnissen
-Comment[nl]=Netwerkbeheergebeurtenissen
-Comment[pa]=ਨੈੱਟਵਰਕ ਪਰਬੰਧ ਈਵੈਂਟ
-Comment[pt]=Eventos de Gestão da Rede
-Comment[pt_BR]=Eventos de Gestão da Rede
-Comment[ro]=Evenimente în gestiunea rețelei
-Comment[sv]=Nätverkshanteringshändelser
-Comment[tr]=Ağ Yönetim Olayları
-Comment[uk]=Події керування мережею
-Comment[x-test]=xxNetwork Management Eventsxx
 Version=1
 
 [Context/wired]
