@@ -134,7 +134,7 @@ bool ConnectionList::processConnection(NetworkManagerSettings * service, const Q
 void ConnectionList::connectionAddedToService(NetworkManagerSettings * service, const QString& connectionPath)
 {
     if ( processConnection(service, connectionPath) ) {
-        kDebug() << "PING";
+        kDebug() << service->service() << connectionPath;
         emit connectionListUpdated();
     }
 }
@@ -144,11 +144,11 @@ void ConnectionList::connectionRemovedFromService(NetworkManagerSettings * servi
     // look up the ConnectionItem and remove it
     QPair<QString,QString> key(service->service(), connectionPath);
     if (m_connections.contains(key)) {
+    kDebug() << service->service() << connectionPath;
         ConnectionItem * item = m_connections.value(key);
         m_connectionLayout->removeItem(item);
         m_connections.remove(key);
         delete item;
-        kDebug() << "PING";
         emit connectionListUpdated();
     }
 }
