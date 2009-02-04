@@ -43,8 +43,16 @@ KConfigToService::KConfigToService(NetworkSettings * service, bool active)
     QDBusConnection::sessionBus().registerService( "org.kde.knetworkmanagerd" ) ;
     QDBusConnection::sessionBus().registerObject( "/modules/knetworkmanager", this );
 
-    KNetworkManagerServicePrefs::instance(KStandardDirs::locate("config",
-                QLatin1String("networkmanagementrc")));
+    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    // we have to force a reparse because
+    // 1) knetworkmanager module was loaded
+    // 2) config was parsed
+    // 3) module was unloaded
+    // 4) config was changed
+    // 5) kded now holds a static ksharedconfig containing the stale configuration
+    // 6) module reloaded
+    // 7) instance only calls KConfig::reparseConfiguration() the first time it is called (static)
+    KNetworkManagerServicePrefs::self()->config()->reparseConfiguration();
 
     connect(m_service, SIGNAL(connectionActivated(const QString&)), SLOT(connectionActivated(const QString&)));
 }

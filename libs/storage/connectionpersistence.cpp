@@ -52,6 +52,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Knm;
 
+const QString ConnectionPersistence::NETWORKMANAGEMENT_RCFILE = QLatin1String("networkmanagementrc");
 const QString ConnectionPersistence::CONNECTION_PERSISTENCE_PATH = QLatin1String("networkmanagement/connections/");
 
 QString ConnectionPersistence::s_walletFolderName = QLatin1String("Network Management");

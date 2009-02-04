@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kicon.h>
 
 #include "connectioneditor.h"
+#include "connectionpersistence.h"
 #include "knmserviceprefs.h"
 
 int main(int argc, char **argv)
@@ -95,7 +96,7 @@ int main(int argc, char **argv)
     }
     kDebug() << specificArgs;
 
-    KNetworkManagerServicePrefs::instance("networkmanagementrc");
+    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
 
     if (args->arg(0) == QLatin1String("create")) {
         if (args->isSet("type")) {

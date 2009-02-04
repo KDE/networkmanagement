@@ -56,8 +56,7 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connect(mEditor, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
     mConnEditUi.setupUi(this);
-    KNetworkManagerServicePrefs::instance(KStandardDirs::locateLocal("config",
-                QLatin1String("networkmanagementrc")));
+    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
     connect(mConnEditUi.addConnection, SIGNAL(clicked()), SLOT(addClicked()));
     connect(mConnEditUi.editConnection, SIGNAL(clicked()), SLOT(editClicked()));
     connect(mConnEditUi.deleteConnection, SIGNAL(clicked()), SLOT(deleteClicked()));
