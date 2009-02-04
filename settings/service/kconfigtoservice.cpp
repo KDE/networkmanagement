@@ -74,7 +74,9 @@ void KConfigToService::init()
         // 2) restore each connection
         foreach (QString connectionId, connectionIds) {
             Knm::Connection * connection = restoreConnection(connectionId);
-            m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connection));
+            if (connection) {
+                m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connection));
+            }
         }
         m_init = true;
     }
@@ -218,7 +220,10 @@ void KConfigToService::configure(const QStringList& changedConnections)
     }
     foreach (QString connectionId, addedConnections) {
         kDebug() << "adding connection with id: " << connectionId;
-        m_service->addConnection(restoreConnection(connectionId));
+        Knm::Connection * connection = restoreConnection(connectionId);
+        if (connection) {
+            m_connectionIdToObjectPath.insert(connectionId, m_service->addConnection(connection));
+        }
     }
 }
 
