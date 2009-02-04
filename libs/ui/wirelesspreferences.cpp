@@ -78,6 +78,12 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
     addToTabWidget(connectionTypeWidget);
     addToTabWidget(wirelessSecurityWidget);
     addToTabWidget(ipv4Widget);
+
+    if ( setDefaults )
+    {
+        // for defaults the security is most interesting
+        m_contents->connectionSettingsWidget()->setCurrentIndex( 1 );
+    }
 }
 
 WirelessPreferences::~WirelessPreferences()
