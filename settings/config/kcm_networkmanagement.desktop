@@ -1,5 +1,10 @@
 [Desktop Entry]
 Name=Network Management
+Name[ga]=Bainisteoireacht an Líonra
+Name[pt]=Gestão de Rede
+Name[pt_BR]=Gestão de Rede
+Name[uk]=Керування мережею
+Name[x-test]=xxNetwork Managementxx
 Comment=Manage network connections
 Comment[de]=Netzwerkverbindungen verwalten
 Comment[el]=Διαχείριση συνδέσεων δικτύου

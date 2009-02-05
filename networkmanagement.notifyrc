@@ -1,7 +1,17 @@
 [Global]
 Name=Network Management
+Name[ga]=Bainisteoireacht an Líonra
+Name[pt]=Gestão de Rede
+Name[pt_BR]=Gestão de Rede
+Name[uk]=Керування мережею
+Name[x-test]=xxNetwork Managementxx
 IconName=networkmanager
 Comment=Network Management
+Comment[ga]=Bainisteoireacht an Líonra
+Comment[pt]=Gestão de Rede
+Comment[pt_BR]=Gestão de Rede
+Comment[uk]=Керування мережею
+Comment[x-test]=xxNetwork Managementxx
 Version=1
 
 [Context/wired]
