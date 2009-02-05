@@ -35,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 int main(int argc, char **argv)
 {
+    KLocale::setMainCatalog("kcm_networkmanagement");
     KAboutData aboutData( "networkmanagement_configshell", 0, ki18n("Network Management"),
                           0,
                           ki18n("Create network connections standalone"),
