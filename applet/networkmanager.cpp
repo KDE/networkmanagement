@@ -77,10 +77,10 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     setAspectRatioMode(Plasma::ConstrainedSquare);
     setHasConfigurationInterface(true);
     m_svg = new Plasma::Svg(this);
-    m_svg->setImagePath("networkmanager/networkmanager");
+    m_svg->setImagePath("networkmanagement/networkmanagement");
 
     m_wirelessSvg = new Plasma::Svg(this);
-    m_wirelessSvg->setImagePath("networkmanager/networkmanager-wireless");
+    m_wirelessSvg->setImagePath("networkmanagement/networkmanagement-wireless");
 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
