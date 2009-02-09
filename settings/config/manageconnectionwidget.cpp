@@ -53,6 +53,7 @@ K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_networkmanagement" ) )
 ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantList &args)
 : KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this))
 {
+    KGlobal::locale()->insertCatalog("libknmui");
     connect(mEditor, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
     mConnEditUi.setupUi(this);

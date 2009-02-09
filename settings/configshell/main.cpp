@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 int main(int argc, char **argv)
 {
-    KAboutData aboutData( "networkmanagement_configshell", 0, ki18n("Network Management"),
+    KAboutData aboutData( "networkmanagement_configshell", "kcm_networkmanagement", ki18n("Network Management"),
                           0,
                           ki18n("Create network connections standalone"),
                           KAboutData::License_GPL,
@@ -61,6 +61,7 @@ int main(int argc, char **argv)
         return -1;
     }
 
+    KGlobal::locale()->insertCatalog("libknmui");
     ConnectionEditor editor(0);
     QString specifics = args->getOption("specific-args");
     QString ssid;
