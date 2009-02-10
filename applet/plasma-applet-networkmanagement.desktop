@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Network Management
+Name[et]=Võrguhaldur
 Name[ga]=Bainisteoireacht an Líonra
 Name[pt]=Gestão de Rede
 Name[pt_BR]=Gestão de Rede
@@ -7,6 +8,7 @@ Name[sv]=Nätverkshantering
 Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managementxx
 Comment=Network status and control utility
+Comment[et]=Võrgu oleku ja juhtimise tööriist
 Comment[pt]=Utilitário de estado e controlo da rede
 Comment[pt_BR]=Utilitário de estado e controlo da rede
 Comment[sv]=Verktyg för nätverksstatus och kontroll

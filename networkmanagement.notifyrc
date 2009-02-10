@@ -1,5 +1,6 @@
 [Global]
 Name=Network Management
+Name[et]=Võrguhaldur
 Name[ga]=Bainisteoireacht an Líonra
 Name[pt]=Gestão de Rede
 Name[pt_BR]=Gestão de Rede
@@ -8,6 +9,7 @@ Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managementxx
 IconName=networkmanager
 Comment=Network Management
+Comment[et]=Võrguhaldur
 Comment[ga]=Bainisteoireacht an Líonra
 Comment[pt]=Gestão de Rede
 Comment[pt_BR]=Gerenciamento de rede
