@@ -127,5 +127,6 @@ protected:
     QList<ActiveConnectionPair> m_activeConnections;
     ConnectionInspector * m_connectionInspector;
     QString m_unavailableText;
+    QString m_currentIp;
 };
 #endif // APPLET_INTERFACEWIDGET_H

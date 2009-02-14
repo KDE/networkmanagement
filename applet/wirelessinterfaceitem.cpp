@@ -188,7 +188,8 @@ void WirelessInterfaceItem::setConnectionInfo()
                 m_connectionInfoIcon->setIcon("object-locked");
             }
         } else {
-            m_connectionInfoLabel->setText(i18n("No active connection"));
+            m_connectionNameLabel->setText(i18n("Connected to \"%1\"", m_activeAccessPoint->ssid()));
+            m_connectionInfoLabel->setText(i18n("Address: %1", m_currentIp));
         }
         m_connectionInfoIcon->show();
     } else {

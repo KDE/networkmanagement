@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 #include "wirelessnetwork.h"
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable")), m_currentIp(0)
 {
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
@@ -213,9 +213,10 @@ void InterfaceItem::setConnectionInfo()
             m_connectionInfoLabel->setText(i18n("ip display error"));
         } else {
             QHostAddress addr(addresses.first().address());
-            QString ip = addr.toString();
+            m_currentIp = addr.toString();
             m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
-            m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "IP: %1", ip));
+            m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "IP: %1", m_currentIp));
+            //kDebug() << "addresses non-empty" << m_currentIp;
         }
     }
 }
@@ -381,6 +382,7 @@ ConnectionInspector * InterfaceItem::connectionInspector() const
 
 void InterfaceItem::serviceDisappeared(NetworkManagerSettings* service)
 {
+    Q_UNUSED( service );
 // just throw away our active connection list.  NM should signal activeConnectionsChanged anyway
 #if 0
     QMutableListIterator<ActiveConnectionPair> i(m_activeConnections);
