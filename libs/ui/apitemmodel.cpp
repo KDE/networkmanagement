@@ -86,15 +86,15 @@ QVariant ApItemModel::data(const QModelIndex &index, int role) const
                     return KIcon("network-wireless");
                 case SignalStrength:
                     return accessPoint->signalStrength();
-                case MacAddress:
-                    return accessPoint->hardwareAddress();
                 case EncryptionRole:
                     return (accessPoint->wpaFlags() != 0) ? QString("object-locked") : QString("object-unlocked");
+                case MacAddress:
+                    return accessPoint->hardwareAddress();
                 default:
                     return QVariant();
             }
         case 1:
-            return accessPoint->ssid();
+            return accessPoint->signalStrength();
         case 2:
             return (accessPoint->wpaFlags() != 0) ? QString("Yes") : QString("No");
         case 3:

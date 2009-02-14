@@ -21,6 +21,7 @@
 #include "ifaceitemmodel.h"
 
 #include <QTableView>
+#include <QHeaderView>
 
 #include <KDebug>
 
@@ -49,6 +50,8 @@ ScanWidget::ScanWidget(QWidget *parent)
     m_detailsView = new QTableView(this);
     m_detailsView->setModel(m_scanModel);
     m_detailsView->setSelectionModel(m_scanSelectionModel);
+    QHeaderView* tableHeader = m_detailsView->horizontalHeader();
+    tableHeader->setResizeMode(QHeaderView::Stretch);
     m_stack->insertWidget(1, m_detailsView);
 
     m_stack->setCurrentWidget(m_scanView);

@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="sizePolicy" >
-   <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+   <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
@@ -18,6 +18,19 @@
   <layout class="QVBoxLayout" name="verticalLayout_2" >
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item>
+      <spacer name="horizontalSpacer" >
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
      <item>
       <widget class="QLabel" name="m_interfaceLabel" >
        <property name="text" >
@@ -64,10 +77,13 @@
      <property name="orientation" >
       <enum>Qt::Vertical</enum>
      </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Preferred</enum>
+     </property>
      <property name="sizeHint" stdset="0" >
       <size>
        <width>20</width>
-       <height>97</height>
+       <height>50</height>
       </size>
      </property>
     </spacer>

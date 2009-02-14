@@ -66,7 +66,6 @@ void ApItemView::setModel(ApItemModel *model)
         return;
     }
     m_model = model;
-    layoutItems();
 }
 
 ApItemModel* ApItemView::model()
@@ -129,6 +128,9 @@ void ApItemView::paintEvent(QPaintEvent *event)
     KIcon computer = KIcon("computer");
     QPoint point = QPoint(0, geometry().height()/2-computer.actualSize(QSize(computerHeight,computerHeight)).height()/2);
     computer.paint(&painter, QRect(point,computer.actualSize(QSize(computerHeight,computerHeight))));
+
+    // Re-sort items
+    layoutItems();
 
     //draw AP Items
     int numRows = m_model->rowCount();
@@ -206,7 +208,7 @@ void ApItemView::layoutGroup(QList<QModelIndex> group)
 void ApItemView::paintBackground()
 {
     if (m_background != 0) {
-        return;
+        delete m_background;
     }
     m_background = new QPixmap(geometry().size());
     m_background->fill(Qt::white);
