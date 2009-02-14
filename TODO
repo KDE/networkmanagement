@@ -36,6 +36,8 @@ X = rejected
   * Store SeenBSSIDs in wireless connections
   * Shutdown the service on timeout when the applet is removed, not immediately, to allow for plasma reconfigures.
   * Enhance error reporting.  When a connection attempt fails on a wifi connection that has been used in the past, prompt "This failure may have occurred due to temporary wireless interference, or the connection settings may have changed.".  When a failure occurs on a new wifi connection, change to "the connection settings may be incorrect".
+  * Loggable notifications (#144819)
+  * Internet connection sharing (#169298)
 
 - CONFIG: Implement control module
   + Write a nice class to turn a QDateTime into "3 minutes ago", "5 hours ago" instead of using KLocale::formatDate(), or extend KLocale with formatDateRelative(QDateTime in, QDateTime relativeTo)
@@ -47,12 +49,24 @@ X = rejected
     ! Static IP addresses
   + Option to display system-provided connections and import them so they can be edited (probably depends on PolicyKit)
   . Show the ScanWidget from widgets developed by CB
+    * Fix the ScanWidget's appearance
   / Clean out wireless security settings when editing a connection and changing the wireless security type.
   . Ensure that autoconnect is not broken by automatically serialising unused wireless security widgets to the connection    config file and thereby creating an invalid conneciton
   / VPN
+    * Complete VPNC
     - VPNC - write config file for vpnc binary when creating a connection
+    * VPN connection import/export (#146159)
+      * Import cisco .pcf files (#182984)
+    * Support pw protected keys (#150680)
+    * Support PPTP (#174439)
+    * Option to bind VPN connection to real connection 
   * Merge APs into networks in the ScanWidget
   X Autonumber new connections
+  * Option to not store secrets in wallet (#140332)
+  * Option to not store secrets at all (#163551)
+  * Option to not store some secrets (eg one use pin) (#149759)
+  * Remove passwords from config file/wallet on storage type switch (#149030)
+  ! Make IP and DNS entry consistent (same widgets or at least same input filter)
 
 - APPLET: Make sure system tray+engine does what we need
   * Popup menu
@@ -88,11 +102,12 @@ X = rejected
         / Disconnect button
     . Connection editor
     . Flight mode toggle
-    * Disconnected toggle
+    * Disconnected toggle (#178641)
     . Hardware wifi switch indicator
-    + Adhoc network button
+    + Adhoc network connections
     * On-the-fly connections for GSM
   . Tooltips
+    * Configurable like Kopete (#132151)
     * Detailed tooltips on Interface groups in the popup
     * Specific tooltips on encryption icons
   / Show network status in tray icon
@@ -102,8 +117,12 @@ X = rejected
       * Show wireless signal strength
     . Animation during connection state
     * Icon is too small when the plasmoid is in a larger panel
-  * Remember wireless/networking state between sessions
-   
+    * Network activity LEDs (#148095)
+    * Show lock in tray icon (#160365)
+  * Remember wireless/networking state between sessions (#181488)
+  *  Reuse same notification when a connection is being brought up (#132000)
+  * Detect when NM 0.7 Solid backend not loaded
+
 - Update Solid
   * Pass the reason arg in org.freedesktop.NetworkManager.Device.StateChanged through, so the applet can use it for error reporting
   % Implement ModemManager and any new VPNManager, if appropriate, in Solid, else in applet
