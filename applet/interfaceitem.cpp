@@ -53,7 +53,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_layout->setVerticalSpacing(0);
     m_layout->setColumnSpacing(0, 8);
     m_layout->setColumnSpacing(1, 4);
-    m_layout->setColumnSpacing(2, 4);
+    m_layout->setColumnSpacing(2, 6);
     m_layout->setPreferredWidth(300);
     m_layout->setColumnFixedWidth(0, 48);
     m_layout->setColumnMinimumWidth(1, 144);

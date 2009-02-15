@@ -114,7 +114,7 @@ void WirelessInterfaceItem::connectButtonClicked()
             break;
         case Solid::Control::NetworkInterface::Disconnected:
         case Solid::Control::NetworkInterface::Failed:
-            kDebug() << "Activating default connection.";
+             kDebug() << "Activating default connection.";
              connections = availableConnections();
              accesspoints = availableAccessPoints();
              connections = appropriateConnections(connections, accesspoints);
@@ -146,7 +146,9 @@ void WirelessInterfaceItem::setConnectionInfo()
     //kDebug() << m_activeAccessPoint;
     //kDebug() << m_activeConnections;
     if (m_activeAccessPoint) {
-        m_connectionInfoLabel->setText(i18n("<b>Signal Strength:</b> %1 %", m_activeAccessPoint->signalStrength())); //TODO:
+        m_connectionNameLabel->setText(i18n("Connected to \"%1\"", m_activeAccessPoint->ssid()));
+        m_connectionInfoLabel->setText(i18n("Address: %1", m_currentIp));
+        //TODO:
         if (m_strengthMeter) {
             m_strengthMeter->setValue(m_activeAccessPoint->signalStrength());
             m_strengthMeter->show();
@@ -188,8 +190,7 @@ void WirelessInterfaceItem::setConnectionInfo()
                 m_connectionInfoIcon->setIcon("object-locked");
             }
         } else {
-            m_connectionNameLabel->setText(i18n("Connected to \"%1\"", m_activeAccessPoint->ssid()));
-            m_connectionInfoLabel->setText(i18n("Address: %1", m_currentIp));
+            // kDebug() << "FIXME: tjkActive connections is empty while connected?";
         }
         m_connectionInfoIcon->show();
     } else {
