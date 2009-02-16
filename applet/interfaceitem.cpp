@@ -35,6 +35,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Label>
 #include <Plasma/Meter>
 
+#include <Solid/Device>
+
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkipv4config.h>
 #include <solid/control/networkmanager.h>
@@ -188,7 +190,9 @@ void InterfaceItem::setNameDisplayMode(NameDisplayMode mode)
 {
     m_nameMode = mode;
     if ( m_nameMode == InterfaceName ) {
-        m_ifaceNameLabel->setText(i18n("<b>Interface %1</b>", m_iface->interfaceName()));
+        Solid::Device* dev = new Solid::Device(m_iface->uni());
+        kDebug() << "Product:" << dev->product();
+        m_ifaceNameLabel->setText(i18n("<b>%1</b>", dev->product()));
     } else {
         m_ifaceNameLabel->setText(i18nc("network interface name unknown", "<b>Unknown Network Interface</b>"));
     }
@@ -215,19 +219,19 @@ void InterfaceItem::setConnectionInfo()
             QHostAddress addr(addresses.first().address());
             m_currentIp = addr.toString();
             m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
-            m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "IP: %1", m_currentIp));
+            m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", m_currentIp));
             //kDebug() << "addresses non-empty" << m_currentIp;
         }
     }
 }
 void InterfaceItem::activeConnectionsChanged()
 {
-    kDebug() << "-------------------- updating active connection list for " << m_iface->uni();
     QList<ActiveConnectionPair > newConnectionList;
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
     kDebug() << activeConnections;
     QString serviceName;
     QDBusObjectPath connectionObjectPath;
+    kDebug() << "... updating active connection list for " << m_iface->uni() << m_iface->interfaceName();
     // find the active connection on this device
     foreach (QString conn, activeConnections) {
         OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
@@ -244,15 +248,17 @@ void InterfaceItem::activeConnectionsChanged()
                 if (serviceName == NM_DBUS_SERVICE_SYSTEM_SETTINGS) {
                     service = m_systemSettings;
                 }
+                //kDebug() << "SystemSettings:" << m_systemSettings->connections();
+                //kDebug() << "UserSettings:" << m_userSettings->connections();
                 if (service && service->isValid()) { // it's possible that the service is no longer running
                                                      // but provided a connection in the past
-                    //kDebug() << "looking up connection" << connectionObjectPath.path() << "on" << service->objectName();
+                    kDebug() << conn << "looking up connection" << connectionObjectPath.path() << "on" << service->objectName();
                     RemoteConnection * connection = service->findConnection(connectionObjectPath.path());
                     if (connection) {
-                        //kDebug() << "found it";
+                        //kDebug() << conn << "found it";
                         newConnectionList.append(ActiveConnectionPair(conn, connection));
                     } else {
-                        //kDebug() << "not found";
+                        //kDebug() << conn << "not found";
                     }
                 }
             }
@@ -260,15 +266,16 @@ void InterfaceItem::activeConnectionsChanged()
     }
     m_activeConnections = newConnectionList;
     if (!m_activeConnections.isEmpty()) {
-        kDebug() << "Active connections:";
+        kDebug() << m_iface->interfaceName() << "Active connections:";
         foreach ( ActiveConnectionPair connection, m_activeConnections) {
             kDebug() << connection.first << connection.second->path();
         }
     } else {
-        kDebug() << "Interface has no active connections";
+        kDebug() << m_iface->interfaceName() << "Interface has no active connections";
     }
     // update our UI
     m_layout->invalidate();
+    //kDebug() << "Active connections changed ... setting connection info";
     setConnectionInfo();
 }
 
@@ -321,7 +328,7 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
 void InterfaceItem::setUnavailable()
 {
     m_icon->setEnabled(false);
-    m_ifaceNameLabel->setText(i18n("<b>Interface %1</b>", m_iface->interfaceName()));
+    //m_ifaceNameLabel->setText(i18n("<b>Interface %1</b>", m_iface->interfaceName()));
     m_connectionNameLabel->setText(m_unavailableText);
     m_connectionInfoLabel->setText("");
     m_connectionInfoIcon->hide();
@@ -355,14 +362,14 @@ void InterfaceItem::setActiveConnection(int state)
             connectionIds.append(i18nc("Text for connections not owned by a service", "Orphaned connection"));
         }
     }
-    QString stateString;
+    QString stateString = "connections empty";
     if (!connectionIds.isEmpty()) {
         QString connId = connectionIds.join(QChar(','));
         stateString = NetworkManagerApplet::connectionStateToString((Solid::Control::NetworkInterface::ConnectionState)state);
-        m_ifaceNameLabel->setText("<b>" + connId + "</b>");
+        m_connectionNameLabel->setText(i18n( "%1:\"%2\"", stateString, connId));
     }
     m_connectionNameLabel->setText(stateString);
-    setConnectionInfo();
+    activeConnectionsChanged();
     m_connectionInfoIcon->show();
     if (m_strengthMeter) {
         m_strengthMeter->show();
@@ -395,8 +402,8 @@ void InterfaceItem::serviceDisappeared(NetworkManagerSettings* service)
         }
     }
 #endif
-    m_activeConnections = QList<ActiveConnectionPair>();
-    setConnectionInfo();
+    //m_activeConnections = QList<ActiveConnectionPair>();
+    activeConnectionsChanged();
 }
 
 QList<RemoteConnection*> InterfaceItem::availableConnections() const

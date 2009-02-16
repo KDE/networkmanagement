@@ -80,7 +80,7 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
     m_interfaceLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_interfaceLayout->setSpacing(4);
     m_networkLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_networkLayout->setSpacing(4);
+    m_networkLayout->setSpacing(0);
     kDebug() << "TYPE" << m_type;
 
     if (m_type == Solid::Control::NetworkInterface::Gsm) {
@@ -155,7 +155,7 @@ void InterfaceGroup::updateConnections()
 
 void InterfaceGroup::updateNetworks()
 {
-    kDebug();
+    //kDebug();
     // empty the layout
     foreach (WirelessNetworkItem * i, m_networks) {
         m_networkLayout->removeItem(i);
@@ -163,9 +163,14 @@ void InterfaceGroup::updateNetworks()
     }
     m_networks.clear();
 
+/*
+    //FIXME: Qt 4.4 hack
+    delete m_networkLayout;
+    m_networkLayout = new QGraphicsLinearLayout(Qt::Vertical);
+    m_layout->addItem(m_networkLayout);
+    m_networkLayout->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+*/
     if (m_enabled) {
-        //kDebug() << "INTERFACE IS ON ............................";
-        m_networkLayout->setSpacing(0);
         foreach (AbstractWirelessNetwork * i, networksToShow()) {
             addNetworkInternal(i->ssid());
         }
@@ -199,7 +204,7 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
     QList<AbstractWirelessNetwork*> allNetworks;
     QList<AbstractWirelessNetwork*> topNetworks;
 
-    kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
+    //kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
 
     // check whether we have a connection for every ssid seen, if so, don't show it.
     foreach (QString ssid, m_wirelessEnvironment->networks()) {

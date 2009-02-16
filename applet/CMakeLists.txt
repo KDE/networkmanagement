@@ -25,7 +25,7 @@ set(networkmanager_SRCS
 
 kde4_add_ui_files(networkmanager_SRCS nmConfig.ui )
 kde4_add_plugin(plasma_applet_networkmanagement ${networkmanager_SRCS})
-target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmdbus ${KDE4_KIO_LIBS} solidcontrol)
+target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmdbus ${KDE4_KIO_LIBS} solid solidcontrol)
 
 install(TARGETS plasma_applet_networkmanagement DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-networkmanagement.desktop DESTINATION ${SERVICES_INSTALL_DIR})
