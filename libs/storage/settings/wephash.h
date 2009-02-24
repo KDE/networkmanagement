@@ -23,7 +23,6 @@
 #define WEP_HASH_H
 
 class QByteArray;
-class QCryptographicHash;
 
 QByteArray wep128PassphraseHash(QByteArray input);
 

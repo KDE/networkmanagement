@@ -42,15 +42,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace Plasma
 {
     class Applet;
-    class CheckBox;
-    class Extender;
-    class IconWidget;
-    class Label;
-} // namespace Plasma
+        class Extender;
+        } // namespace Plasma
 
 class InterfaceGroup;
 class NetworkManagerSettings;
-class OrgFreedesktopNetworkManagerSettingsConnectionInterface;
 
 class NetworkManagerApplet : public Plasma::PopupApplet
 {

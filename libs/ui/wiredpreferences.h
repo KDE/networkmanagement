@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-class WiredWidget;
 
 /**
  * Configuration module for wired connections

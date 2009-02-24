@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionitem.h"
 
-class QGraphicsGridLayout;
 
 class RemoteConnection;
 class AbstractWirelessNetwork;
@@ -33,8 +32,7 @@ class AbstractWirelessNetwork;
 namespace Plasma
 {
     class IconWidget;
-    class Label;
-    class Meter;
+        class Meter;
 }
 
 /**

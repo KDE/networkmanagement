@@ -35,7 +35,6 @@ class QSignalMapper;
 
 namespace Plasma
 {
-class Applet;
 class CheckBox;
 class Extender;
 class IconWidget;
@@ -44,7 +43,6 @@ class Label;
 
 class InterfaceGroup;
 class NetworkManagerSettings;
-class OrgFreedesktopNetworkManagerSettingsConnectionInterface;
 
 /**
  * Widget that pops up when the menu is clicked

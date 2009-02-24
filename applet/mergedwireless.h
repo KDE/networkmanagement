@@ -29,7 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class WirelessEnvironment;
 
-class WirelessNetworkMergedPrivate;
 
 /**
  * A 'virtual' wireless network object which merges several network interfaces' views of real wireless networks

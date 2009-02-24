@@ -30,8 +30,7 @@ class RemoteConnection;
 namespace Plasma
 {
     class IconWidget;
-    class Label;
-}
+    }
 
 /**
  * Represents an inactive connection

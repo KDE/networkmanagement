@@ -29,9 +29,7 @@ class AbstractConnectableItem;
 class NetworkManagerSettings;
 class QGraphicsLinearLayout;
 class ConnectionItem;
-class InterfaceItem;
 class RemoteConnection;
-class WirelessEnvironment;
 
 typedef QPair<QString,QString> QStringPair;
 typedef QHash<QStringPair, ConnectionItem*> ServiceConnectionHash;

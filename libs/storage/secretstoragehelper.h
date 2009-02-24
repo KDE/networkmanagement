@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knm_export.h"
 #include <QtGui/qwindowdefs.h> // krazy:exclude=includes (for WId)
 
-class KConfigSkeletonItem;
 
 class KNM_EXPORT SecretStorageHelper
 {

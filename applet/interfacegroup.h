@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class AbstractWirelessNetwork;
 class WirelessEnvironmentMerged;
 class WirelessNetworkItem;
-
+class InterfaceItem;
 /** Represents a group of network interfaces of the same type
  * displays either a generic name of interface type (when representing a single interface)
  * or a specific interface name or model

@@ -42,7 +42,6 @@ namespace Solid
 class ConnectionInspector;
 class NetworkManagerSettings;
 class RemoteConnection;
-class WirelessNetwork;
 // path of Connection.Active path on the daemon, remote connection object
 typedef QPair<QString, RemoteConnection*> ActiveConnectionPair;
 /**
