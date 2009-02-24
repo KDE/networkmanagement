@@ -41,7 +41,7 @@ class KJob;
 namespace Knm
 {
     class Connection;
-    } // namespace Knm
+} // namespace Knm
 
 /**
  * A representation of a connection on the bus

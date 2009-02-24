@@ -32,7 +32,7 @@ class AbstractWirelessNetwork;
 namespace Plasma
 {
     class IconWidget;
-        class Meter;
+    class Meter;
 }
 
 /**

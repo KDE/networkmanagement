@@ -42,8 +42,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace Plasma
 {
     class Applet;
-        class Extender;
-        } // namespace Plasma
+    class Extender;
+} // namespace Plasma
 
 class InterfaceGroup;
 class NetworkManagerSettings;
