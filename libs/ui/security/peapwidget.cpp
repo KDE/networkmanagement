@@ -46,6 +46,7 @@ PeapWidget::PeapWidget(Knm::Connection* connection, QWidget * parent)
 
 PeapWidget::~PeapWidget()
 {
+    delete d;
 }
 
 void PeapWidget::chkShowPassToggled(bool on)

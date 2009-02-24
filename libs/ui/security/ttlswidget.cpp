@@ -45,6 +45,7 @@ TtlsWidget::TtlsWidget(Knm::Connection* connection, QWidget * parent)
 
 TtlsWidget::~TtlsWidget()
 {
+    delete d;
 }
 
 void TtlsWidget::chkShowPassToggled(bool on)

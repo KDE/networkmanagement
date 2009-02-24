@@ -39,6 +39,7 @@ TlsWidget::TlsWidget(Knm::Connection* connection, QWidget * parent)
 
 TlsWidget::~TlsWidget()
 {
+    delete d;
 }
 
 bool TlsWidget::validate() const
