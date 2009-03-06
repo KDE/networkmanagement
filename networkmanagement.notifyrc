@@ -1,5 +1,6 @@
 [Global]
 Name=Network Management
+Name[de]=Netzwerkverwaltung
 Name[et]=Võrguhaldur
 Name[fr]=Gestion du réseau
 Name[ga]=Bainisteoireacht an Líonra
@@ -10,6 +11,7 @@ Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managementxx
 IconName=networkmanager
 Comment=Network Management
+Comment[de]=Netzwerkverwaltung
 Comment[et]=Võrguhaldur
 Comment[fr]=Gestion réseau
 Comment[ga]=Bainisteoireacht an Líonra
@@ -22,6 +24,7 @@ Version=1
 
 [Context/wired]
 Name=Wired Network Interface
+Name[de]=Kabelgebundene Netzwerkschnittstelle
 Name[el]=Ενσύρματη διασύνδεση δικτύου
 Name[et]=Juhtmega võrgu liides
 Name[fr]=Interface réseau filaire
@@ -42,6 +45,7 @@ Name[uk]=Інтерфейс дротової мережі
 Name[x-test]=xxWired Network Interfacexx
 [Context/wireless]
 Name=Wireless Network Interface
+Name[de]=Drahtlose Netzwerkschnittstelle
 Name[el]=Ασύρματη διασύνδεση δικτύου
 Name[et]=Juhtmeta võrgu liides
 Name[fr]=Interface réseau sans fil
@@ -62,6 +66,7 @@ Name[uk]=Інтерфейс бездротової мережі
 Name[x-test]=xxWireless Network Interfacexx
 [Context/cellular]
 Name=Cellular broadband
+Name[de]=Mobil-Breitband
 Name[el]=Κινητή ευρυζωνική
 Name[et]=Mobiiliühendus
 Name[fr]=Mobile haut débit
@@ -79,7 +84,7 @@ Name[uk]=Стільникова широкосмугова мережа
 Name[x-test]=xxCellular broadbandxx
 [Context/pppoe]
 Name=DSL network interfaces
-Name[de]=DSL-Netzwerk-Schnittstellen
+Name[de]=DSL-Netzwerkschnittstellen
 Name[el]=Διασυνδέσεις δικτύου DSL
 Name[et]=DSL võrguliides
 Name[fr]=Interfaces réseau DSL
@@ -120,6 +125,7 @@ Name[tr]=VPN bağlantıları
 Name[uk]=З’єднання VPN
 Name[x-test]=xxVPN connectionxx
 Comment=Virtual Private Network Connection
+Comment[de]=„Virtual Private Network“-Verbindung
 Comment[el]=Σύνδεση εικονικού ιδιωτικού δικτύου (VPN)
 Comment[et]=Virtuaalse eravõrgu ühendus
 Comment[fr]=Connexion à un réseau privé virtuel (VPN)
@@ -139,6 +145,7 @@ Comment[x-test]=xxVirtual Private Network Connectionxx
 
 [Event/hwadded]
 Name=Network Interface Attached
+Name[de]=Netzwerkschnittstelle angeschlossen
 Name[el]=Σύναψη διασύνδεσης δικτύου
 Name[et]=Võrguliides on ühendatud
 Name[fr]=Interface réseau attachée
@@ -156,6 +163,7 @@ Name[tr]=Ağ Arayüzü Takıldı
 Name[uk]=Доданий інтерфейс мережі
 Name[x-test]=xxNetwork Interface Attachedxx
 Comment=A network interface was attached
+Comment[de]=Eine Netzwerkschnittstelle wurde angeschlossen
 Comment[el]=Έγινε σύναψη μιας διασύνδεσης δικτύου
 Comment[et]=Võrguliides on ühendatud
 Comment[fr]=Une interface réseau a été attachée
@@ -178,6 +186,7 @@ Action=Popup
 
 [Event/hwremoved]
 Name=Network Interface Removed
+Name[de]=Netzwerkschnittstelle entfernt
 Name[el]=Αφαίρεση διασύνδεσης δικτύου
 Name[et]=Võrguliides on eemaldatud
 Name[fr]=Interface réseau retirée
@@ -196,6 +205,7 @@ Name[tr]=Ağ Arayüzü Çıkarıldı
 Name[uk]=Вилучено інтерфейс мережі
 Name[x-test]=xxNetwork Interface Removedxx
 Comment=A network interface was removed
+Comment[de]=Eine Netzwerkschnittstelle wurde entfernt
 Comment[el]=Έγινε αφαίρεση μιας διασύνδεσης δικτύου
 Comment[et]=Võrguliides on eemaldatud
 Comment[fr]=Une interface réseau a été retirée
@@ -217,6 +227,7 @@ Comment[x-test]=xxA network interface was removedxx
 
 [Event/networkappeared]
 Name=Found Wireless Network
+Name[de]=Drahtloses Netzwerk gefunden
 Name[el]=Βρέθηκε ασύρματο δίκτυο
 Name[et]=Leiti juhtmeta võrk
 Name[fr]=Réseau sans fil découvert
@@ -235,6 +246,7 @@ Name[tr]=Kablosuz Ağ Bulundu
 Name[uk]=Знайдено бездротову мережу
 Name[x-test]=xxFound Wireless Networkxx
 Comment=A wireless network appeared
+Comment[de]=Ein drahtloses Netzwerk wurde entdeckt
 Comment[el]=Βρέθηκε ένα ασύρματο δίκτυο
 Comment[et]=Saadavale ilmus juhtmeta võrk
 Comment[fr]=Un réseau sans fil est apparu
@@ -254,6 +266,7 @@ Comment[x-test]=xxA wireless network appearedxx
 
 [Event/networkdisappeared]
 Name=Lost Wireless Network
+Name[de]=Drahtloses Netzwerk verloren
 Name[el]=Απώλεια ασύρματου δικτύου
 Name[et]=Juhtmeta võrk kadus
 Name[fr]=Réseau sans fil perdu
@@ -271,6 +284,7 @@ Name[tr]=Kablosuz Ağ Kaybedildi
 Name[uk]=Втрачено зв’язок з радіомережею
 Name[x-test]=xxLost Wireless Networkxx
 Comment=A wireless network disappeared
+Comment[de]=Ein drahtloses Netzwerk ist nicht mehr vorhanden
 Comment[el]=΄Ενα ασύρματο δίκτυο εξαφανίστηκε
 Comment[et]=Juhtmeta võrk kadus
 Comment[fr]=Un réseau sans fil a disparu
@@ -290,6 +304,7 @@ Comment[x-test]=xxA wireless network disappearedxx
 
 [Event/connecting]
 Name=Establishing Network Connection
+Name[de]=Netzwerkverbindung wird hergestellt
 Name[el]=Εδραίωση σύνδεσης δικτύου
 Name[et]=Võrguühenduse loomine
 Name[fr]=Établissement de la connexion réseau
@@ -309,6 +324,7 @@ Name[tr]=Ağ Bağlantısı Yapılıyor
 Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=A network connection attempt was begun
+Comment[de]=Ein Verbindungsversuch wurde begonnen
 Comment[el]=Αρχή προσπάθειας σύνδεσης δικτύου
 Comment[et]=Alustati võrguühenduse loomist
 Comment[fr]=Une tentative d'établissement de la connexion réseau a débuté
@@ -330,6 +346,7 @@ Action=Popup
 
 [Event/disconnected]
 Name=Network Connection Disconnected
+Name[de]=Netzwerkverbindung getrennt
 Name[el]=Αποσύνδεση σύνδεσης δικτύου
 Name[et]=Võrguühendus on katkestatud
 Name[fr]=Déconnecté du réseau
@@ -348,6 +365,7 @@ Name[tr]=Ağ Bağlantısı Kapatıldı
 Name[uk]=Мережеве з’єднання розірвано
 Name[x-test]=xxNetwork Connection Disconnectedxx
 Comment=A network connection was disconnected
+Comment[de]=Eine Netzwerkverbindung wurde getrennt
 Comment[el]=Αποσύνδεση μιας σύνδεσης δικτύου
 Comment[et]=Võrguühendus on katkestatud
 Comment[fr]=Une connexion réseau est tombée
@@ -368,6 +386,7 @@ Comment[x-test]=xxA network connection was disconnectedxx
 
 [Event/connected]
 Name=Network Connection Succeeded
+Name[de]=Netzwerkverbindung erfolgreich hergestellt
 Name[el]=Επιτυχής σύνδεση δικτύου
 Name[et]=Võrguühenduse loomine õnnestus
 Name[fr]=Connexion réseau réussie
@@ -386,6 +405,7 @@ Name[tr]=Ağ Bağlantısı Başarılı
 Name[uk]=Успішне з’єднання з мережею
 Name[x-test]=xxNetwork Connection Succeededxx
 Comment=A network connection was established
+Comment[de]=Eine Netzwerkverbindung wurde erfolgreich hergestellt
 Comment[el]=Έγινε εδραίωση μιας σύνδεσης δικτύου
 Comment[et]=Loodi võrguühendus
 Comment[fr]=Une connexion réseau a été établie
@@ -408,6 +428,7 @@ Action=Popup
 
 [Event/connfailed]
 Name=Network Connection Failed
+Name[de]=Netzwerkverbindung fehlgeschlagen
 Name[el]=Αποτυχία σύνδεσης δικτύου
 Name[et]=Võrguühenduse loomine nurjus
 Name[fr]=Échec de connexion réseau
@@ -427,6 +448,7 @@ Name[tr]=Ağ Bağlantısı Başarısız
 Name[uk]=Спроба встановлення з'єднання зазнала невдачі
 Name[x-test]=xxNetwork Connection Failedxx
 Comment=A network connection attempt failed
+Comment[de]=Ein Verbindungsversuch ist fehlgeschlagen
 Comment[el]=Αποτυχία προσπάθειας σύνδεσης με ένα δίκτυο
 Comment[et]=Katse luua võrguühendust nurjus
 Comment[fr]=Une tentative de connexion réseau a échoué
@@ -447,6 +469,7 @@ Action=Popup
 
 [Event/rfoff]
 Name=Radio Hardware Switched Off
+Name[de]=Hardware für drahtlose Verbindungen ausgeschaltet
 Name[el]=Ασύρματο υλικό επικοινωνίας κλειστό
 Name[et]=Raadioriistvara lülitati välja
 Name[fr]=Extinction du matériel radio
@@ -462,6 +485,7 @@ Name[tr]=Radyo Donanımı Kapatıldı
 Name[uk]=Радіозв’язок апаратно вимкнено
 Name[x-test]=xxRadio Hardware Switched Offxx
 Comment=Wireless transceivers disabled by hardware switch
+Comment[de]=Die Hardware für drahtlose Verbindungen wurde am Gerät ausgeschaltet
 Comment[el]=Απενεργοποίηση ασύρματων συσκευών μέσω ενός διακόπτη υλικού
 Comment[et]=Riistvaralüliti keelas juhtmeta ühenduse vastuvõtjad
 Comment[fr]=Désactivation matérielle des émetteurs / récepteurs sans fil
@@ -480,6 +504,7 @@ Action=Popup
 
 [Event/rfon]
 Name=Radio Hardware Switched On
+Name[de]=Hardware für drahtlose Verbindungen eingeschaltet
 Name[el]=Ασύρματο υλικό επικοινωνίας ενεργό
 Name[et]=Raadioriistvara lülitati sisse
 Name[fr]=Activation du matériel radio
@@ -495,6 +520,7 @@ Name[tr]=Radyo Donanımı Açıldı
 Name[uk]=Радіозв’язок апаратно увімкнено
 Name[x-test]=xxRadio Hardware Switched Onxx
 Comment=Wireless transceivers enabled
+Comment[de]=Hardware für drahtlose Verbindungen aktiviert
 Comment[el]=Ενεργοποίηση ασύρματων συσκευών
 Comment[et]=Juhtmeta ühenduse vastuvõtjad on lubatud
 Comment[fr]=Activation matérielle des émetteurs / récepteurs sans fil
@@ -513,6 +539,7 @@ Action=Popup
 
 [Event/lowsignal]
 Name=Low Wireless Signal Strength
+Name[de]=Niedrige Signalstärke
 Name[el]=Χαμηλή ισχύ σήματος ασύρματου
 Name[et]=Juhtmeta ühenduse nõrk signaal
 Name[fr]=Faible puissance du signal sans fil
@@ -528,6 +555,7 @@ Name[tr]=Düşük kablosuz sinyali
 Name[uk]=Низька потужність радіосигналу
 Name[x-test]=xxLow Wireless Signal Strengthxx
 Comment=The wireless signal strength is low
+Comment[de]=Die Signalstärke der drahtlosen Verbindung ist niedrig
 Comment[el]=Η ασύρματη ισχύ του σήματος είναι χαμηλή
 Comment[et]=Juhtmeta ühenduse signaal on nõrk
 Comment[fr]=Le signal sans fil est faible
