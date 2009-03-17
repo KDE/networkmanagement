@@ -127,5 +127,5 @@ X = rejected
   * Pass the reason arg in org.freedesktop.NetworkManager.Device.StateChanged through, so the applet can use it for error reporting
   % Implement ModemManager and any new VPNManager, if appropriate, in Solid, else in applet
 
-
+- Rename libraries ...private
 
