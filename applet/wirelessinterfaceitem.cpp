@@ -143,8 +143,8 @@ void WirelessInterfaceItem::connectButtonClicked()
 void WirelessInterfaceItem::setConnectionInfo()
 {
     InterfaceItem::setConnectionInfo();
-    //kDebug() << m_activeAccessPoint;
-    //kDebug() << m_activeConnections;
+    kDebug() << m_activeAccessPoint;
+    kDebug() << m_activeConnections;
     if (m_activeAccessPoint) {
 
         //TODO:
@@ -188,13 +188,15 @@ void WirelessInterfaceItem::setConnectionInfo()
                 m_connectionInfoIcon->setToolTip(i18n("WPA-EAP Encryption"));
                 m_connectionInfoIcon->setIcon("object-locked");
             }
-            m_connectionNameLabel->setText(i18n("xxxConnected to \"%1\"", m_activeAccessPoint->ssid()));
+            m_connectionNameLabel->setText(i18n("Connected to \"%1\"", m_activeAccessPoint->ssid()));
             m_connectionInfoLabel->setText(i18n("Address: %1", m_currentIp));
+            kDebug() << "Active AP:" << m_activeAccessPoint->ssid();
         } else {
-            kDebug() << "FIXME: tjkActive connections is empty while connected?";
+            kDebug() << "FIXME: Active connections is empty while connected?";
         }
         m_connectionInfoIcon->show();
     } else {
+        kDebug() << "No active accesspoint";
         m_connectionInfoLabel->setText(QString());
         //m_connectionInfoIcon->hide();
         m_strengthMeter->hide();
