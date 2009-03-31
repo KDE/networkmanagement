@@ -53,7 +53,6 @@ class NetworkSettings : public QObject
         /**
          * Method from org.freedesktop.NetworkManagerSettings, exported via DBus
          */
-        Q_SCRIPTABLE QList<QDBusObjectPath> ListConnections() const;
         /**
          * add a connection
          * @return object path of the new connection
@@ -69,6 +68,7 @@ class NetworkSettings : public QObject
         void removeConnection(const QString & id);
 
     public Q_SLOTS:
+        Q_SCRIPTABLE QList<QDBusObjectPath> ListConnections() const;
         void onConnectionRemoved();
         /**
          * Monitor the list of active connections on the daemon
