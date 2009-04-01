@@ -110,6 +110,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
 NetworkManagerApplet::~NetworkManagerApplet()
 {
+    // FIXME: we should not disconnect just because the plasmoid goes away ...
     QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
                         "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
     // ## used to have NoEventLoop and 3s timeout with dcop

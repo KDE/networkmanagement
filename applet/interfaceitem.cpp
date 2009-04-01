@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KGlobalSettings>
 #include <KNotification>
+#include <KIconLoader>
 
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
@@ -51,6 +52,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable")), m_currentIp(0)
 {
+    Solid::Device* dev = new Solid::Device(m_iface->uni());
+    m_interfaceName = dev->product();
+
+
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
     m_layout->setColumnSpacing(0, 8);
@@ -296,13 +301,13 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
             break;
         case Solid::Control::NetworkInterface::Disconnected:
             if ( !silently )
-                KNotification::event(Event::Disconnected, i18nc("Notification text when a network interface was disconnected","Network interface %1 disconnected", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+                KNotification::event(Event::Disconnected, i18nc("Notification text when a network interface was disconnected","%1 disconnected", m_interfaceName), statePixmap("network-disconnect"), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
             setInactive();
             break;
         case Solid::Control::NetworkInterface::Failed:
             // set the disconnected icon
             if ( !silently )
-                KNotification::event(Event::ConnectFailed, i18nc("Notification text when a network interface connection attempt failed","Connection on Network interface %1 failed", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+                KNotification::event(Event::ConnectFailed, i18nc("Notification text when a network interface connection attempt failed","Connection on %1 failed", m_interfaceName), statePixmap("network-disconnect"), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
             setInactive();
             break;
         case Solid::Control::NetworkInterface::Preparing:
@@ -313,7 +318,7 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
             break;
         case Solid::Control::NetworkInterface::Activated: // lookup the active connection, get its state
             if ( !silently )
-                KNotification::event(Event::Connected, i18nc("Notification text when a network interface connection succeeded","Network interface %1 connected", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+                KNotification::event(Event::Connected, i18nc("Notification text when a network interface connection succeeded","%1 connected", m_interfaceName), statePixmap("network-connect"), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
                 // ... set Pixmap
             setActiveConnection(state);
             break;
@@ -323,6 +328,11 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
     }
     kDebug() << "EMIT";
     emit stateChanged();
+}
+
+QPixmap InterfaceItem::statePixmap(const QString &icon) {
+    // Which pixmap should we display with the notification?
+    return KIcon(icon).pixmap(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
 }
 
 void InterfaceItem::setUnavailable()
