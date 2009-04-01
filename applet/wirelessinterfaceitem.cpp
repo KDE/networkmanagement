@@ -142,7 +142,8 @@ void WirelessInterfaceItem::connectButtonClicked()
 
 void WirelessInterfaceItem::setConnectionInfo()
 {
-    InterfaceItem::setConnectionInfo();
+    InterfaceItem::setConnectionInfo(); // Needed for m_currentIp
+
     kDebug() << m_activeAccessPoint;
     kDebug() << m_activeConnections;
     if (m_activeAccessPoint) {
@@ -153,13 +154,14 @@ void WirelessInterfaceItem::setConnectionInfo()
             m_strengthMeter->show();
         }
         // TODO update icon contents
+        QVariantMapMap settings;
         if (!m_activeConnections.isEmpty()) {
             QString security;
             foreach (ActiveConnectionPair conn, m_activeConnections) {
                 if (!conn.second) {
                     continue;
                 }
-                QVariantMapMap settings = conn.second->settings();
+                settings = conn.second->settings();
                 if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME))) {
                     QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME));
                     if (connectionSetting.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT))) {
@@ -169,6 +171,7 @@ void WirelessInterfaceItem::setConnectionInfo()
                     }
                 }
                 if (!security.isEmpty()) {
+                    kDebug() << "Settings:" << settings;
                     break;
                 }
             }
@@ -188,7 +191,18 @@ void WirelessInterfaceItem::setConnectionInfo()
                 m_connectionInfoIcon->setToolTip(i18n("WPA-EAP Encryption"));
                 m_connectionInfoIcon->setIcon("object-locked");
             }
-            m_connectionNameLabel->setText(i18n("Connected to \"%1\"", m_activeAccessPoint->ssid()));
+
+
+
+            QString _name;
+            if (!settings.value("connection").isEmpty()) {
+                _name = settings.value("connection").value("id").toString();
+            } else {
+                _name = m_activeAccessPoint->ssid();
+            }
+            kDebug() << "==== Connection Name:" << settings.value(QLatin1String("connection")).keys() << _name;
+
+            m_connectionNameLabel->setText(i18n("Connected to \"%1\"", _name));
             m_connectionInfoLabel->setText(i18n("Address: %1", m_currentIp));
             kDebug() << "Active AP:" << m_activeAccessPoint->ssid();
         } else {

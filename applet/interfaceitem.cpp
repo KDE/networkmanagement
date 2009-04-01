@@ -228,7 +228,7 @@ void InterfaceItem::activeConnectionsChanged()
 {
     QList<ActiveConnectionPair > newConnectionList;
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
-    kDebug() << "==== AC:" << activeConnections;
+    kDebug() << "========================================== AC:" << activeConnections;
     QString serviceName;
     QDBusObjectPath connectionObjectPath;
     kDebug() << "... updating active connection list for " << m_iface->uni() << m_iface->interfaceName();
@@ -237,19 +237,26 @@ void InterfaceItem::activeConnectionsChanged()
         OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
                                                                         conn, QDBusConnection::systemBus(), 0);
         foreach (QDBusObjectPath path, candidate.devices()) {
-            kDebug() << "is device using this connection?" << path.path() << m_iface->uni();
+            kDebug() << "is device using this connection?" << path.path() << m_iface->uni() << candidate.serviceName();
             if (path.path() == m_iface->uni()) {
                 // this device is using the connection
                 serviceName = candidate.serviceName();
                 connectionObjectPath = candidate.connection();
                 NetworkManagerSettings * service = 0;
+                kDebug() << serviceName << NM_DBUS_SERVICE_SYSTEM_SETTINGS << NM_DBUS_SERVICE_USER_SETTINGS;
                 if (serviceName == NM_DBUS_SERVICE_USER_SETTINGS) {
                     service = m_userSettings;
-                    kDebug() << "UserSettings:" << m_userSettings->connections();
+                    kDebug() << "UserSettings:" << m_userSettings->connections() << m_systemSettings->connections();
                 }
                 if (serviceName == NM_DBUS_SERVICE_SYSTEM_SETTINGS) {
                     service = m_systemSettings;
                     kDebug() << "SystemSettings:" << m_systemSettings->connections();
+                }
+                // FIXME: Hack for sebas' (m_activeConnections empty while connected
+                if (service->connections().isEmpty()
+                        && m_userSettings->connections().isEmpty()
+                        &&  !m_systemSettings->connections().isEmpty()) {
+                    service = m_systemSettings;
                 }
                 if (service && service->isValid()) { // it's possible that the service is no longer running
                                                      // but provided a connection in the past
@@ -275,7 +282,7 @@ void InterfaceItem::activeConnectionsChanged()
         kDebug() << m_iface->interfaceName() << "Interface has no active connections";
     }
     // update our UI
-    m_layout->invalidate();
+    m_layout->updateGeometry();
     //kDebug() << "Active connections changed ... setting connection info";
     setConnectionInfo();
 }
