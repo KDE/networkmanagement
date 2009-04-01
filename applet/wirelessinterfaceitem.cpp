@@ -189,14 +189,15 @@ void WirelessInterfaceItem::setConnectionInfo()
             }
 
             m_connectionNameLabel->setText(i18n("Connected to \"%1\"", _name));
-            m_connectionInfoLabel->setText(i18n("Address: %1", m_currentIp));
+            //m_connectionInfoLabel->setText(i18n("Address: %1", m_currentIp));
         } else {
             //kDebug() << "Active connections is empty while connected?";
         }
         m_connectionInfoIcon->show();
     } else {
         // No active accesspoint
-        m_connectionInfoLabel->setText(QString());
+        //m_connectionInfoLabel->setText(QString());
+        m_connectionInfoIcon->hide();
         m_strengthMeter->hide();
     }
 }

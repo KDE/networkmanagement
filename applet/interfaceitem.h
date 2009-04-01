@@ -66,10 +66,15 @@ public:
     virtual void setEnabled(bool enable);
     virtual QString ssid();
 
-public slots:
+public Q_SLOTS:
     void activeConnectionsChanged();
     void connectionStateChanged(int);
     virtual void connectButtonClicked() = 0;
+
+    /**
+     * The  button to connect the interface has been clicked
+     */
+    virtual void connectClicked();
 
 protected Q_SLOTS:
     /**
@@ -116,6 +121,7 @@ protected:
     QGraphicsGridLayout * m_layout;
     QGraphicsLinearLayout * m_infoLayout;
     Plasma::IconWidget * m_icon;
+    Plasma::IconWidget* m_connectButton;
     Plasma::Label * m_ifaceNameLabel;
     Plasma::Label * m_connectionNameLabel;
     QGraphicsLinearLayout * m_connectionInfoLayout;
@@ -130,5 +136,6 @@ protected:
     QString m_unavailableText;
     QString m_interfaceName;
     QString m_currentIp;
+    bool m_disconnect;
 };
 #endif // APPLET_INTERFACEWIDGET_H

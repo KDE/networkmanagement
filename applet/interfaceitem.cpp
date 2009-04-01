@@ -99,6 +99,15 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     //m_ifaceNameLabel->setMinimumWidth(176);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
 
+    m_connectButton = new Plasma::IconWidget(this);
+    m_connectButton->setMaximumHeight(16);
+    m_connectButton->setMaximumWidth(16);
+    m_connectButton->setIcon("dialog-ok");
+    m_connectButton->setToolTip(i18n("Connect wireless"));
+    connect(m_connectButton, SIGNAL(clicked()), this, SLOT(connectClicked()));
+
+    m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
+
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
     m_connectionNameLabel->setText(i18n("[not updated yet]")); // TODO: check connection status
@@ -172,6 +181,12 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     connect(m_systemSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(serviceDisappeared(NetworkManagerSettings*)));
 }
 
+void InterfaceItem::connectClicked()
+{
+    kDebug() << "C O N N E C T B U T T O N C L I C K E D";
+    connectButtonClicked();
+}
+
 void InterfaceItem::setEnabled(bool enable)
 {
     kDebug() << enable;
@@ -225,7 +240,7 @@ void InterfaceItem::setConnectionInfo()
             m_currentIp = addr.toString();
             m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
             m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", m_currentIp));
-            //kDebug() << "addresses non-empty" << m_currentIp;
+            kDebug() << "addresses non-empty" << m_currentIp;
         }
     }
 }
@@ -290,9 +305,17 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
     // check if any of them affect our interface
     // setActiveConnection on ourself
 
+    // button to connect, disconnect
+
+    m_disconnect = false;
+    // Name and info labels
+    QString lname = QString();
+    QString linfo = QString();
+
     switch (state) {
         case Solid::Control::NetworkInterface::Unavailable:
             setUnavailable();
+            m_connectButton->setEnabled(false);
             break;
         case Solid::Control::NetworkInterface::Disconnected:
             if ( !silently )
@@ -304,24 +327,56 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
             if ( !silently )
                 KNotification::event(Event::ConnectFailed, i18nc("Notification text when a network interface connection attempt failed","Connection on %1 failed", m_interfaceName), statePixmap("network-disconnect"), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
             setInactive();
+            linfo = i18n("Connection failed");
             break;
         case Solid::Control::NetworkInterface::Preparing:
+            lname = i18n("Connecting .");
+            linfo = i18n("Preparing network connection");
+            m_disconnect = true;
+            break;
         case Solid::Control::NetworkInterface::Configuring:
+            lname = i18n("Connecting ..");
+            linfo = i18n("Configuring network connection");
+            m_disconnect = true;
+            break;
         case Solid::Control::NetworkInterface::NeedAuth:
+            lname = i18n("Connecting ...");
+            linfo = i18n("Requesting authentication");
+            m_disconnect = true;
+            break;
         case Solid::Control::NetworkInterface::IPConfig:
-            setActiveConnection(state);
+            lname = i18n("Connecting ....");
+            linfo = i18n("Setting network address");
+            m_disconnect = true;
             break;
         case Solid::Control::NetworkInterface::Activated: // lookup the active connection, get its state
             if ( !silently )
                 KNotification::event(Event::Connected, i18nc("Notification text when a network interface connection succeeded","%1 connected", m_interfaceName), statePixmap("network-connect"), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
                 // ... set Pixmap
             setActiveConnection(state);
+            m_disconnect = true;
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
         case Solid::Control::NetworkInterface::UnknownState:
             break;
     }
-    //kDebug() << "EMIT";
+
+    // Update connect button
+    if (!m_disconnect) {
+        m_connectButton->setIcon("dialog-ok");
+        m_connectButton->setToolTip(i18n("Connect"));
+    } else {
+        m_connectButton->setIcon("dialog-cancel");
+        m_connectButton->setToolTip(i18n("Disconnect"));
+    }
+    // Update the labels with the new connection information
+    if (!lname.isEmpty()) {
+        m_connectionNameLabel->setText(lname);
+    }
+    if (!linfo.isEmpty()) {
+        m_connectionInfoLabel->setText(linfo);
+    }
+
     emit stateChanged();
 }
 
@@ -347,6 +402,11 @@ void InterfaceItem::setInactive()
     m_icon->setEnabled(false);
     m_connectionNameLabel->setText(i18nc("networking device is not connected", "Disconnected"));
     m_connectionInfoLabel->setText("");
+
+    m_connectButton->setToolTip(i18n("Connect"));
+    m_connectButton->setEnabled(true);
+    m_connectButton->setIcon("dialog-ok");
+
     m_connectionInfoIcon->hide();
     if (m_strengthMeter) {
         m_strengthMeter->hide();
@@ -371,14 +431,17 @@ void InterfaceItem::setActiveConnection(int state)
     if (!connectionIds.isEmpty()) {
         QString connId = connectionIds.join(QChar(','));
         stateString = NetworkManagerApplet::connectionStateToString((Solid::Control::NetworkInterface::ConnectionState)state);
-        m_connectionNameLabel->setText(i18n( "%1:\"%2\"", stateString, connId));
+        m_connectionInfoLabel->setText(i18n( "%1:\"%2\"", stateString, connId));
     }
-    m_connectionNameLabel->setText(stateString);
+    //m_connectionNameLabel->setText(stateString);
     activeConnectionsChanged();
     m_connectionInfoIcon->show();
     if (m_strengthMeter) {
         m_strengthMeter->show();
     }
+    m_connectButton->setToolTip(i18n("Disconnect"));
+    m_connectButton->setEnabled(true);
+    m_connectButton->setIcon("dialog-cancel");
 }
 
 void InterfaceItem::setConnectionInspector(ConnectionInspector * insp)
