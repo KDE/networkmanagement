@@ -59,7 +59,7 @@ X = rejected
       * Import cisco .pcf files (#182984)
     * Support pw protected keys (#150680)
     * Support PPTP (#174439)
-    * Option to bind VPN connection to real connection 
+    * Option to bind VPN connection to real connection
   * Merge APs into networks in the ScanWidget
   X Autonumber new connections
   * Option to not store secrets in wallet (#140332)
@@ -75,7 +75,7 @@ X = rejected
          / List connections appropriate to currently active hardware
            / Update based on hardware and AP changes
            + Extend to profiles
-         + a list of all currently seen APs (like trad applet)
+         + a list of all currently seen APs (like trad applet). Use ScrollWidget? (4.3+ only)
        / Group connections by device (or by device type if connection could be activated on >1 device)
          / Item contents
            . Name
@@ -84,6 +84,7 @@ X = rejected
            . Activate button
          / Wireless connection item
            . Signal strength
+           * Hide strength meter and security icon on disconnect
          / Cellular connection item
            / Signal strength
            * UMTS/GPRS
