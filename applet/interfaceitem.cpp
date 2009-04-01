@@ -235,7 +235,7 @@ void InterfaceItem::activeConnectionsChanged()
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
     QString serviceName;
     QDBusObjectPath connectionObjectPath;
-    kDebug() << "... updating active connection list for " << m_iface->uni() << m_iface->interfaceName();
+    //kDebug() << "... updating active connection list for " << m_iface->uni() << m_iface->interfaceName();
     // find the active connection on this device
     foreach (QString conn, activeConnections) {
         OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
@@ -246,7 +246,6 @@ void InterfaceItem::activeConnectionsChanged()
                 serviceName = candidate.serviceName();
                 connectionObjectPath = candidate.connection();
                 NetworkManagerSettings * service = 0;
-                kDebug() << serviceName << NM_DBUS_SERVICE_SYSTEM_SETTINGS << NM_DBUS_SERVICE_USER_SETTINGS;
                 if (serviceName == NM_DBUS_SERVICE_USER_SETTINGS) {
                     service = m_userSettings;
                 }
@@ -256,13 +255,9 @@ void InterfaceItem::activeConnectionsChanged()
 
                 if (service && service->isValid()) { // it's possible that the service is no longer running
                                                      // but provided a connection in the past
-                    kDebug() << conn << "looking up connection" << connectionObjectPath.path() << "on" << service->objectName();
                     RemoteConnection * connection = service->findConnection(connectionObjectPath.path());
                     if (connection) {
-                        kDebug() << conn << "found it";
                         newConnectionList.append(ActiveConnectionPair(conn, connection));
-                    } else {
-                        kDebug() << conn << "not found";
                     }
                 }
             }
@@ -326,7 +321,7 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
         case Solid::Control::NetworkInterface::UnknownState:
             break;
     }
-    kDebug() << "EMIT";
+    //kDebug() << "EMIT";
     emit stateChanged();
 }
 

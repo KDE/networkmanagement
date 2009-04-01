@@ -58,6 +58,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vpnconnectiongroup.h"
 #include "networkmanagersettings.h"
 #include "interfaceitem.h"
+#include "generalextender.h"
 #include "events.h"
 
 K_EXPORT_PLASMA_APPLET(networkmanagement, NetworkManagerApplet)
@@ -136,9 +137,9 @@ void NetworkManagerApplet::init()
 
     // calling this initialises the extenderitems
     networkInterfaceAdded(QString());
-    // add VPN last
+    // add VPN and General Settings last
     showVpn(cg.readEntry("showVpn", true));
-
+    showGeneral(true);
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
 
@@ -151,6 +152,7 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
     const QString GSM_EXTENDER_ITEM_NAME = QLatin1String("gsm");
     const QString CDMA_EXTENDER_ITEM_NAME = QLatin1String("cdma");
     const QString VPN_EXTENDER_ITEM_NAME = QLatin1String("vpn");
+    const QString GENERAL_EXTENDER_ITEM_NAME = QLatin1String("general");
 
     if (eItem->name() == WIRED_EXTENDER_ITEM_NAME) {
         InterfaceGroup * ethernetGroup = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, eItem);
@@ -184,6 +186,11 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
         vpnGroup->init();
         eItem->setWidget(vpnGroup);
         connect(vpnGroup, SIGNAL(hideClicked()), SLOT(hideVpnGroup()));
+    } else if (eItem->name() == GENERAL_EXTENDER_ITEM_NAME) {
+        GeneralExtender* item = dynamic_cast<GeneralExtender* >(eItem);
+        if (item) {
+            item->graphicsWidget();
+        }
     } else {
         kDebug() << "Unrecognised extender name!  Is the config from the future?";
     }
@@ -726,6 +733,26 @@ void NetworkManagerApplet::showWired(bool show)
     } else {
         if (eItem) {
             kDebug() << "HIDING";
+            eItem->destroy();
+        }
+    }
+}
+
+void NetworkManagerApplet::showGeneral(bool show)
+{
+    m_showGeneral = show;
+    Plasma::ExtenderItem *eItem = extender()->item("general");
+    if (show) {
+        if (!eItem) {
+            kDebug() << "Displaying general extender";
+            //if (!extender()->hasItem("general")) {
+                eItem = new GeneralExtender(extender());
+                initExtenderItem(eItem);
+            //}
+        }
+    } else {
+        if (eItem) {
+            kDebug() << "Hiding General Settings extender";
             eItem->destroy();
         }
     }

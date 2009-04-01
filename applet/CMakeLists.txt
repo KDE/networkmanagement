@@ -5,6 +5,7 @@ add_subdirectory(pics)
 
 set(networkmanager_SRCS
     abstractconnectableitem.cpp
+    generalextender.cpp
     connectionitem.cpp
     connectioninspector.cpp
     connectionlist.cpp

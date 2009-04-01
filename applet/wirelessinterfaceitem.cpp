@@ -47,18 +47,6 @@ WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInte
 
     activeAccessPointChanged(m_wirelessIface->activeAccessPoint());
 
-    m_rfCheckBox = new Plasma::CheckBox(this);
-    m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
-    m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
-    m_rfCheckBox->setText(i18n("Enable"));
-    m_rfCheckBox->setToolTip(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable Wireless"));
-    m_layout->addItem(m_rfCheckBox, 0, 2, 1, 2, Qt::AlignRight);
-    connect(m_rfCheckBox, SIGNAL(toggled(bool)),
-            SLOT(wirelessEnabledToggled(bool)));
-    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
-            this, SLOT(managerWirelessEnabledChanged(bool)));
-    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
-            this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
 }
 
 WirelessInterfaceItem::~WirelessInterfaceItem()
@@ -256,30 +244,8 @@ QList<Solid::Control::AccessPoint*> WirelessInterfaceItem::availableAccessPoints
 void WirelessInterfaceItem::setEnabled(bool enable)
 {
     kDebug() << enable;
-    m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
     m_strengthMeter->setEnabled(enable);
     InterfaceItem::setEnabled(enable);
-}
-
-void WirelessInterfaceItem::wirelessEnabledToggled(bool checked)
-{
-    kDebug() << "Applet wireless enable switch toggled" << checked;
-    Solid::Control::NetworkManager::setWirelessEnabled(checked);
-}
-
-void WirelessInterfaceItem::managerWirelessEnabledChanged(bool enabled)
-{
-    kDebug() << "NM daemon changed wireless enable state" << enabled;
-    // it might have changed because we toggled the switch,
-    // but it might have been changed externally, so set it anyway
-    m_rfCheckBox->setChecked(enabled);
-}
-
-void WirelessInterfaceItem::managerWirelessHardwareEnabledChanged(bool enabled)
-{
-    kDebug() << "Hardware wireless enable switch state changed" << enabled;
-    m_rfCheckBox->setChecked(enabled && Solid::Control::NetworkManager::isWirelessEnabled());
-    m_rfCheckBox->setEnabled(!enabled);
 }
 
 bool WirelessInterfaceItem::isUsing(const AbstractWirelessNetwork * net) const
