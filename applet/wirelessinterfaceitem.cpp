@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessinterfaceitem.h"
 
 #include <nm-setting-wireless.h>
+#include <nm-setting-connection.h>
 
 #include <QGraphicsGridLayout>
 
@@ -144,8 +145,8 @@ void WirelessInterfaceItem::setConnectionInfo()
 {
     InterfaceItem::setConnectionInfo(); // Needed for m_currentIp
 
-    kDebug() << m_activeAccessPoint;
-    kDebug() << m_activeConnections;
+    //kDebug() << m_activeAccessPoint;
+    //kDebug() << m_activeConnections;
     if (m_activeAccessPoint) {
 
         //TODO:
@@ -171,7 +172,6 @@ void WirelessInterfaceItem::setConnectionInfo()
                     }
                 }
                 if (!security.isEmpty()) {
-                    kDebug() << "Settings:" << settings;
                     break;
                 }
             }
@@ -192,27 +192,23 @@ void WirelessInterfaceItem::setConnectionInfo()
                 m_connectionInfoIcon->setIcon("object-locked");
             }
 
-
-
+            // retrieve the name of the connection, or put the ssid into the label
             QString _name;
-            if (!settings.value("connection").isEmpty()) {
-                _name = settings.value("connection").value("id").toString();
+            if (!settings.value(NM_SETTING_CONNECTION_SETTING_NAME).isEmpty()) {
+                _name = settings.value(NM_SETTING_CONNECTION_SETTING_NAME).value(NM_SETTING_CONNECTION_ID).toString();
             } else {
                 _name = m_activeAccessPoint->ssid();
             }
-            kDebug() << "==== Connection Name:" << settings.value(QLatin1String("connection")).keys() << _name;
 
             m_connectionNameLabel->setText(i18n("Connected to \"%1\"", _name));
             m_connectionInfoLabel->setText(i18n("Address: %1", m_currentIp));
-            kDebug() << "Active AP:" << m_activeAccessPoint->ssid();
         } else {
-            kDebug() << "FIXME: Active connections is empty while connected?";
+            //kDebug() << "Active connections is empty while connected?";
         }
         m_connectionInfoIcon->show();
     } else {
-        kDebug() << "No active accesspoint";
+        // No active accesspoint
         m_connectionInfoLabel->setText(QString());
-        //m_connectionInfoIcon->hide();
         m_strengthMeter->hide();
     }
 }

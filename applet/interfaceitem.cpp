@@ -228,7 +228,6 @@ void InterfaceItem::activeConnectionsChanged()
 {
     QList<ActiveConnectionPair > newConnectionList;
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
-    kDebug() << "========================================== AC:" << activeConnections;
     QString serviceName;
     QDBusObjectPath connectionObjectPath;
     kDebug() << "... updating active connection list for " << m_iface->uni() << m_iface->interfaceName();
@@ -237,7 +236,6 @@ void InterfaceItem::activeConnectionsChanged()
         OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
                                                                         conn, QDBusConnection::systemBus(), 0);
         foreach (QDBusObjectPath path, candidate.devices()) {
-            kDebug() << "is device using this connection?" << path.path() << m_iface->uni() << candidate.serviceName();
             if (path.path() == m_iface->uni()) {
                 // this device is using the connection
                 serviceName = candidate.serviceName();
@@ -246,18 +244,11 @@ void InterfaceItem::activeConnectionsChanged()
                 kDebug() << serviceName << NM_DBUS_SERVICE_SYSTEM_SETTINGS << NM_DBUS_SERVICE_USER_SETTINGS;
                 if (serviceName == NM_DBUS_SERVICE_USER_SETTINGS) {
                     service = m_userSettings;
-                    kDebug() << "UserSettings:" << m_userSettings->connections() << m_systemSettings->connections();
                 }
                 if (serviceName == NM_DBUS_SERVICE_SYSTEM_SETTINGS) {
                     service = m_systemSettings;
-                    kDebug() << "SystemSettings:" << m_systemSettings->connections();
                 }
-                // FIXME: Hack for sebas' (m_activeConnections empty while connected
-                if (service->connections().isEmpty()
-                        && m_userSettings->connections().isEmpty()
-                        &&  !m_systemSettings->connections().isEmpty()) {
-                    service = m_systemSettings;
-                }
+
                 if (service && service->isValid()) { // it's possible that the service is no longer running
                                                      // but provided a connection in the past
                     kDebug() << conn << "looking up connection" << connectionObjectPath.path() << "on" << service->objectName();
@@ -323,6 +314,7 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
         case Solid::Control::NetworkInterface::Activated: // lookup the active connection, get its state
             if ( !silently )
                 KNotification::event(Event::Connected, i18nc("Notification text when a network interface connection succeeded","Network interface %1 connected", m_iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+                // ... set Pixmap
             setActiveConnection(state);
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
