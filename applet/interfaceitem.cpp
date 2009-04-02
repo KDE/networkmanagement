@@ -52,6 +52,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable")), m_currentIp(0)
 {
+    setAcceptHoverEvents(true);
+
     Solid::Device* dev = new Solid::Device(m_iface->uni());
     m_interfaceName = dev->product();
 
@@ -100,13 +102,15 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
 
     m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setMaximumHeight(16);
-    m_connectButton->setMaximumWidth(16);
+    m_connectButton->setMaximumHeight(22);
+    m_connectButton->setMaximumWidth(22);
     m_connectButton->setIcon("dialog-ok");
     m_connectButton->setToolTip(i18n("Connect wireless"));
+    m_connectButton->hide(); // Shown when hovered
+
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(connectClicked()));
 
-    m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
+    m_layout->addItem(m_connectButton, 0, 3, 1, 1, Qt::AlignRight);
 
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
@@ -186,6 +190,17 @@ void InterfaceItem::connectClicked()
     kDebug() << "C O N N E C T B U T T O N C L I C K E D";
     connectButtonClicked();
 }
+
+void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    m_connectButton->show();
+}
+
+void InterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    m_connectButton->hide();
+}
+
 
 void InterfaceItem::setEnabled(bool enable)
 {

@@ -82,6 +82,9 @@ protected Q_SLOTS:
      * from our active connection list
      */
     void serviceDisappeared(NetworkManagerSettings *service);
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+
 Q_SIGNALS:
     void stateChanged();
 protected:
