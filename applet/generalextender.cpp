@@ -84,7 +84,7 @@ QGraphicsWidget* GeneralExtender::graphicsWidget()
     m_connectionsButton = new Plasma::IconWidget(m_widget);
     m_connectionsButton->setIcon("networkmanager");
     m_connectionsButton->setOrientation(Qt::Horizontal);
-    m_connectionsButton->setText(i18nc("button in general settings extender", "Manage Connections ..."));
+    m_connectionsButton->setText(i18nc("button in general settings extender", "Manage Connections..."));
     m_connectionsButton->setPreferredHeight(KIconLoader::SizeMedium);
     m_connectionsButton->setDrawBackground(true);
     connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));

@@ -345,22 +345,22 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
             linfo = i18n("Connection failed");
             break;
         case Solid::Control::NetworkInterface::Preparing:
-            lname = i18n("Connecting .");
+            lname = i18n("Connecting...");
             linfo = i18n("Preparing network connection");
             m_disconnect = true;
             break;
         case Solid::Control::NetworkInterface::Configuring:
-            lname = i18n("Connecting ..");
+            lname = i18n("Connecting...");
             linfo = i18n("Configuring network connection");
             m_disconnect = true;
             break;
         case Solid::Control::NetworkInterface::NeedAuth:
-            lname = i18n("Connecting ...");
+            lname = i18n("Connecting...");
             linfo = i18n("Requesting authentication");
             m_disconnect = true;
             break;
         case Solid::Control::NetworkInterface::IPConfig:
-            lname = i18n("Connecting ....");
+            lname = i18n("Connecting...");
             linfo = i18n("Setting network address");
             m_disconnect = true;
             break;
