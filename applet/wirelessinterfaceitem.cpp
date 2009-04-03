@@ -60,14 +60,18 @@ WirelessEnvironment * WirelessInterfaceItem::wirelessEnvironment() const
 
 void WirelessInterfaceItem::activeAccessPointChanged(const QString &uni)
 {
+    kDebug() << "AP changed:" << uni;
     // this is not called when the device is deactivated..
-    if (m_activeAccessPoint)
-        m_activeAccessPoint->disconnect(this);
-    m_activeAccessPoint = m_wirelessIface->findAccessPoint(uni);
     if (m_activeAccessPoint) {
-        connect(m_activeAccessPoint, SIGNAL(signalStrengthChanged(int)), SLOT(activeSignalStrengthChanged(int)));
-        connect(m_activeAccessPoint, SIGNAL(destroyed(QObject*)),
-                SLOT(accessPointDestroyed(QObject*)));
+        m_activeAccessPoint->disconnect(this);
+    }
+    if (uni != "/") {
+        m_activeAccessPoint = m_wirelessIface->findAccessPoint(uni);
+        if (m_activeAccessPoint) {
+            connect(m_activeAccessPoint, SIGNAL(signalStrengthChanged(int)), SLOT(activeSignalStrengthChanged(int)));
+            connect(m_activeAccessPoint, SIGNAL(destroyed(QObject*)),
+                    SLOT(accessPointDestroyed(QObject*)));
+        }
     }
     setConnectionInfo();
 }
@@ -136,8 +140,7 @@ void WirelessInterfaceItem::setConnectionInfo()
     //kDebug() << m_activeAccessPoint;
     //kDebug() << m_activeConnections;
     if (m_activeAccessPoint) {
-
-        //TODO:
+        //TODO: this needs more streamlining, hiding and showing when APs come and go
         if (m_strengthMeter) {
             m_strengthMeter->setValue(m_activeAccessPoint->signalStrength());
             m_strengthMeter->show();

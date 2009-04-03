@@ -108,7 +108,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_connectButton->setToolTip(i18n("Connect wireless"));
     m_connectButton->hide(); // Shown when hovered
 
-    connect(m_connectButton, SIGNAL(clicked()), this, SLOT(connectClicked()));
+    connect(m_connectButton, SIGNAL(clicked()), this, SLOT(connectButtonClicked()));
 
     m_layout->addItem(m_connectButton, 0, 3, 1, 1, Qt::AlignRight);
 
@@ -140,6 +140,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
         m_strengthMeter->setMaximumWidth(60);
         m_strengthMeter->setMaximumHeight(meterHeight);
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        m_strengthMeter->hide();
         m_layout->addItem(m_strengthMeter, 2, 2, 1, 1, Qt::AlignCenter);
         //m_connectionInfoLabel->hide();
 
@@ -183,12 +184,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     connect(m_userSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(serviceDisappeared(NetworkManagerSettings*)));
     connect(m_systemSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(serviceDisappeared(NetworkManagerSettings*)));
-}
-
-void InterfaceItem::connectClicked()
-{
-    kDebug() << "C O N N E C T B U T T O N C L I C K E D";
-    connectButtonClicked();
 }
 
 void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -256,6 +251,11 @@ void InterfaceItem::setConnectionInfo()
             m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
             m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", m_currentIp));
             kDebug() << "addresses non-empty" << m_currentIp;
+        }
+        m_strengthMeter->show();
+    } else {
+        if (m_strengthMeter) {
+            m_strengthMeter->hide();
         }
     }
 }
@@ -424,6 +424,7 @@ void InterfaceItem::setInactive()
 
     m_connectionInfoIcon->hide();
     if (m_strengthMeter) {
+        kDebug() << "BOOOOOOOOOOOOOOOOO";
         m_strengthMeter->hide();
     }
 }
@@ -451,9 +452,7 @@ void InterfaceItem::setActiveConnection(int state)
     //m_connectionNameLabel->setText(stateString);
     activeConnectionsChanged();
     m_connectionInfoIcon->show();
-    if (m_strengthMeter) {
-        m_strengthMeter->show();
-    }
+
     m_connectButton->setToolTip(i18n("Disconnect"));
     m_connectButton->setEnabled(true);
     m_connectButton->setIcon("dialog-cancel");

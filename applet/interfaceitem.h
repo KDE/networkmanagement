@@ -69,12 +69,11 @@ public:
 public Q_SLOTS:
     void activeConnectionsChanged();
     void connectionStateChanged(int);
-    virtual void connectButtonClicked() = 0;
-
     /**
      * The  button to connect the interface has been clicked
      */
-    virtual void connectClicked();
+    virtual void connectButtonClicked() = 0;
+
 
 protected Q_SLOTS:
     /**
