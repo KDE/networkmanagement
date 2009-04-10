@@ -252,7 +252,9 @@ void InterfaceItem::setConnectionInfo()
             m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", m_currentIp));
             kDebug() << "addresses non-empty" << m_currentIp;
         }
-        m_strengthMeter->show();
+        if (m_strengthMeter) {
+            m_strengthMeter->show();
+        }
     } else {
         if (m_strengthMeter) {
             m_strengthMeter->hide();
