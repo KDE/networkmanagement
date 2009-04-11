@@ -99,7 +99,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_ifaceNameLabel = new Plasma::Label(this);
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
     //m_ifaceNameLabel->setMinimumWidth(176);
-    m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
+    m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 2);
 
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setMaximumHeight(22);
@@ -188,11 +188,13 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
 
 void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED( event )
     m_connectButton->show();
 }
 
 void InterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
+    Q_UNUSED( event )
     m_connectButton->hide();
 }
 
@@ -235,7 +237,7 @@ InterfaceItem::NameDisplayMode InterfaceItem::nameDisplayMode() const
 
 QString InterfaceItem::ssid()
 {
-    return QString("Blaat");
+    return "";
 }
 
 void InterfaceItem::setConnectionInfo()
@@ -250,7 +252,7 @@ void InterfaceItem::setConnectionInfo()
             m_currentIp = addr.toString();
             m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
             m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", m_currentIp));
-            kDebug() << "addresses non-empty" << m_currentIp;
+            //kDebug() << "addresses non-empty" << m_currentIp;
         }
         if (m_strengthMeter) {
             m_strengthMeter->show();
