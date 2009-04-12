@@ -40,8 +40,7 @@ class GeneralExtender : public Plasma::ExtenderItem
     public:
         GeneralExtender(Plasma::Extender *ext = 0);
         virtual ~GeneralExtender();
-
-        QGraphicsWidget* graphicsWidget();
+        virtual QGraphicsWidget* graphicsWidget();
 
     public Q_SLOTS:
         void managerWirelessEnabledChanged(bool);

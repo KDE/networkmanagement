@@ -743,13 +743,11 @@ void NetworkManagerApplet::showGeneral(bool show)
     m_showGeneral = show;
     Plasma::ExtenderItem *eItem = extender()->item("general");
     if (show) {
-        if (!eItem) {
-            kDebug() << "Displaying general extender";
-            //if (!extender()->hasItem("general")) {
-                eItem = new GeneralExtender(extender());
-                initExtenderItem(eItem);
-            //}
+        if (eItem) {
+            eItem->destroy(); // Apparently, we need to "refresh the extenderitem
         }
+        eItem = new GeneralExtender(extender());
+        initExtenderItem(eItem);
     } else {
         if (eItem) {
             kDebug() << "Hiding General Settings extender";
