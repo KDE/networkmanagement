@@ -1324,3 +1324,20 @@ diff -ur origsettings//vpnpersistence.h settings/vpnpersistence.h
 Only in settings: vpnpersistence.h~
 Only in settings: wephash.cpp
 Only in settings: wephash.h
+diff -ur origsettings/802-1xpersistence.cpp settings/802-1xpersistence.cpp
+--- origsettings/802-1xpersistence.cpp	2009-02-24 11:54:16.000000000 +0100
++++ settings/802-1xpersistence.cpp	2009-04-06 23:36:45.294477869 +0200
+@@ -27,10 +27,10 @@
+   setting->setCapath(m_config->readEntry("capath", ""));
+   setting->setClientcert(m_config->readEntry("clientcert", QByteArray()));
+   {
+-    uint contents = m_config->readEntry("phase1peapver", 0);
+-    if (contents == 0)
++    QString contents = m_config->readEntry("phase1peapver", "zero");
++    if (contents == "zero")
+       setting->setPhase1peapver(Security8021xSetting::EnumPhase1peapver::zero);
+-    else     if (contents == 1)
++    else     if (contents == "one")
+       setting->setPhase1peapver(Security8021xSetting::EnumPhase1peapver::one);
+ 
+   }
