@@ -87,7 +87,9 @@ QGraphicsWidget* GeneralExtender::graphicsWidget()
     m_connectionsButton->setText(i18nc("button in general settings extender", "Manage Connections..."));
     m_connectionsButton->setPreferredHeight(KIconLoader::SizeMedium);
     m_connectionsButton->setDrawBackground(true);
+#if KDE_IS_VERSION(4,2,60)
     m_connectionsButton->setTextBackgroundColor(QColor());
+#endif
     connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
     m_layout->addItem(m_connectionsButton);
 

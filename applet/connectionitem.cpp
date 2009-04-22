@@ -56,7 +56,9 @@ void ConnectionItem::setupItem()
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setMaximumHeight(rowHeight);
     m_connectButton->setOrientation(Qt::Horizontal);
+#if KDE_IS_VERSION(4,2,60)
     m_connectButton->setTextBackgroundColor(QColor());
+#endif
     //m_connectButton->setToolTip(i18nc("button to connect to wired network",
     //                                  "Connect to wired network %1", m_connection->id()));
     m_connectButton->setMinimumHeight(rowHeight);
