@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2008 Christopher Blauvelt <cblauvelt@gmail.com>
-    Copyright (C) 2008 Will Stephenson <wstephenson@kde.org>
+    Copyright (C) 2008,2009 Will Stephenson <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@
 #include <KDebug>
 
 #include <solid/control/networkmanager.h>
+#include <solid/control/networkinterface.h>
 
 // knmdbus
 #include "nm-active-connectioninterface.h"
@@ -50,15 +51,13 @@ NetworkSettings::NetworkSettings(QObject * parent)
     } else {
         kDebug() << "Registered settings object " << NM_DBUS_PATH_SETTINGS;
     }
+    // watch status on all devices
+    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+            this, SLOT(networkInterfaceAdded(const QString&)));
 
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(activeConnectionsChanged()),
-            SLOT(activeConnectionsChanged()));
-    // build the list of active connections
-    foreach (QString activePath, Solid::Control::NetworkManager::activeConnections()) {
-        OrgFreedesktopNetworkManagerConnectionActiveInterface activeIface(QLatin1String(NM_DBUS_SERVICE), activePath, QDBusConnection::systemBus(), 0);
-        if (activeIface.serviceName() == QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS)) {
-            m_ourActiveConnections.append(activeIface.connection().path());
-        }
+    Solid::Control::NetworkInterfaceList allInterfaces = Solid::Control::NetworkManager::networkInterfaces();
+    foreach (Solid::Control::NetworkInterface * interface, allInterfaces) {
+        connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(networkInterfaceConnectionStateChanged(int)));
     }
 }
 
@@ -116,19 +115,6 @@ QString NetworkSettings::nextObjectPath()
     return QString::fromLatin1("%1/%2").arg(QLatin1String(NM_DBUS_PATH_SETTINGS)).arg(mNextConnectionId++);
 }
 
-void NetworkSettings::onConnectionRemoved()
-{
-#if 0
-    foreach (const QString connName, m_connectionMap.keys()) {
-        if (sender() == m_connectionMap[connName]) {
-            disconnect(m_connectionMap[connName], SIGNAL(Removed()));
-            delete m_connectionMap[connName];
-            m_connectionMap.remove(connName);
-        }
-    }
-#endif
-}
-
 void NetworkSettings::clearConnections()
 {
     foreach (const QString &conn, m_connectionMap.keys()) {
@@ -136,29 +122,30 @@ void NetworkSettings::clearConnections()
     }
 }
 
-void NetworkSettings::activeConnectionsChanged()
+void NetworkSettings::networkInterfaceAdded(const QString& uni)
 {
-    kDebug();
-    QStringList existingConnections = m_ourActiveConnections;
-    QStringList newlyActiveConnections;
+    Solid::Control::NetworkInterface * interface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+    disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(networkInterfaceConnectionStateChanged(int)));
+    connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(networkInterfaceConnectionStateChanged(int)));
+}
 
-    m_ourActiveConnections.clear();
-
-    foreach (QString activePath, Solid::Control::NetworkManager::activeConnections()) {
-        OrgFreedesktopNetworkManagerConnectionActiveInterface activeIface(QLatin1String(NM_DBUS_SERVICE), activePath, QDBusConnection::systemBus(), 0);
-        if (activeIface.serviceName() == QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS)) {
-            QString localConnectionPath = activeIface.connection().path();
-            if (!existingConnections.contains(localConnectionPath)) {
-                newlyActiveConnections.append(localConnectionPath);
+void NetworkSettings::networkInterfaceConnectionStateChanged(int state)
+{
+    Solid::Control::NetworkInterface * device = qobject_cast<Solid::Control::NetworkInterface *>(sender());
+    if (device && device->connectionState() == Solid::Control::NetworkInterface::Activated) {
+        QStringList active(Solid::Control::NetworkManager::activeConnections());
+        foreach (QString activePath, active) {
+            OrgFreedesktopNetworkManagerConnectionActiveInterface activeIface(QLatin1String(NM_DBUS_SERVICE), activePath, QDBusConnection::systemBus(), 0);
+            if (activeIface.serviceName() == QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS)) {
+                QList<QDBusObjectPath> activeDevices = activeIface.devices();
+                if (activeDevices.contains(QDBusObjectPath(device->uni()))) {
+                    kDebug() << "Found connection for device";
+                    BusConnection * bc = m_connectionMap.value(activeIface.connection().path());
+                    if (bc) {
+                        emit connectionActivated(bc->uuid());
+                    }
+                }
             }
-            m_ourActiveConnections.append(activeIface.connection().path());
-        }
-    }
-
-    foreach (QString newlyActive, newlyActiveConnections) {
-        BusConnection * conn = m_connectionMap.value(newlyActive);
-        if (conn) {
-            emit connectionActivated(conn->uuid());
         }
     }
 }

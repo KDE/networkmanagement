@@ -1,5 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2008 Christopher Blauvelt <cblauvelt@gmail.com>
+    Copyright (C) 2008,2009 Will Stephenson <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -69,14 +70,12 @@ class NetworkSettings : public QObject
 
     public Q_SLOTS:
         Q_SCRIPTABLE QList<QDBusObjectPath> ListConnections() const;
-        void onConnectionRemoved();
         /**
-         * Monitor the list of active connections on the daemon
-         * If a connection belonging to this service becomes active,
-         * update its LastUsed timestamp and any secrets that it has 
-         * previously obtained from the user
+         * Monitor the devices in the system to update connections' timestamps when they become
+         * active
          */
-        void activeConnectionsChanged();
+        void networkInterfaceAdded(const QString&);
+        void networkInterfaceConnectionStateChanged(int);
 
     Q_SIGNALS:
         /**
@@ -102,8 +101,6 @@ class NetworkSettings : public QObject
 
         QMap<QString, BusConnection*> m_connectionMap;
         uint mNextConnectionId;
-        // List of our connection dbus object paths that are active on the daemon
-        QStringList m_ourActiveConnections;
 };
 
 #endif
