@@ -31,9 +31,9 @@ X = rejected
     . Add helper binary (like a mini-kcmshell) that InterfaceGroup can start if the kcm is not already running.
       This should accept the same args as InterfaceGroup currently sends to kcmshell via dbus on the comand line,
       show the appropriate connectionpreferences subclass and write the result out like connectioneditor does.
-  . write LastUsed to knetworkmanagerrc on successful connection activation
-    * Watch the active connections in the connection editor and update its UI contents
-  * Store SeenBSSIDs in wireless connections
+    . write LastUsed to knetworkmanagerrc on successful connection activation
+    / Watch the active connections in the connection editor and update its UI contents
+  . Store SeenBSSIDs in wireless connections
   * Shutdown the service on timeout when the applet is removed, not immediately, to allow for plasma reconfigures.
   * Enhance error reporting.  When a connection attempt fails on a wifi connection that has been used in the past, prompt "This failure may have occurred due to temporary wireless interference, or the connection settings may have changed.".  When a failure occurs on a new wifi connection, change to "the connection settings may be incorrect".
   * Loggable notifications (#144819)
@@ -43,7 +43,7 @@ X = rejected
   + Write a nice class to turn a QDateTime into "3 minutes ago", "5 hours ago" instead of using KLocale::formatDate(), or extend KLocale with formatDateRelative(QDateTime in, QDateTime relativeTo)
   . Add UI for selecting cellular connection type,
     . detect and disable for existing connections
-  ! Replace Ok button with Close in main connectioneditor, or implement storage of changed/added connection settings in temp files until the Ok button is clicked, and enable deleting temp files if Cancel is clicked
+  X Replace Ok button with Close in main connectioneditor, or implement storage of changed/added connection settings in temp files until the Ok button is clicked, and enable deleting temp files if Cancel is clicked
   ! Edit on double click existing entry
   . Show header in connection list, people don't understand "Auto eth0 never" / Complete most settings widgets' complex (non-KConfigSkeleton-managed) UI plumbing and reimplemented save routines
     ! Static IP addresses

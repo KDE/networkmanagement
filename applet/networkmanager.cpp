@@ -409,7 +409,7 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
     // update the tray icon
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     foreach (Solid::Control::NetworkInterface * interface,
-            Solid::Control::NetworkManager::networkInterfaces()) {
+            m_interfaces) {
         QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
         QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
     }
