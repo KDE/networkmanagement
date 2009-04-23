@@ -251,6 +251,7 @@ void KConfigToService::connectionActivated(const QString & uuid)
     KConfigGroup mainConnectionDetails(KNetworkManagerServicePrefs::self()->config(), QLatin1String("Connection_") + uuid);
     if (mainConnectionDetails.exists()) {
         mainConnectionDetails.writeEntry("LastUsed",  QDateTime::fromTime_t(newtimestamp));
+        KNetworkManagerServicePrefs::self()->config()->sync();
     }
 }
 
