@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NM07_MANAGE_CONNECTION_WIDGET_H
 #define NM07_MANAGE_CONNECTION_WIDGET_H
 
+#include <QHash>
+
 #include <KCModule>
 
 #include "connectioneditor.h"
@@ -28,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ui_manageconnectionwidget.h"
 
 class QMenu;
+class QTreeWidgetItem;
 
 class ManageConnectionWidget : public KCModule
 {
@@ -44,6 +47,10 @@ public slots:
     void updateTabStates();
 
     Q_SCRIPTABLE void createConnection(const QString & connectionType, const QVariantList &args);
+    /**
+     * Update connection items last used timestamp if they become active
+     */
+    void activeConnectionsChanged();
 private slots:
     /** 
      * Add a new connection 
@@ -87,6 +94,7 @@ private:
     QMenu * mCellularMenu;
     QMenu * mVpnMenu;
     ConnectionEditor * mEditor;
+    QHash<QString,QTreeWidgetItem*> mUuidItemHash;
 };
 
 #endif // NM07_MANAGE_CONNECTION_WIDGET_H

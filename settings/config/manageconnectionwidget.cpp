@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "manageconnectionwidget.h"
 
 #include <nm-setting-cdma.h>
+#include <nm-setting-connection.h>
 #include <nm-setting-gsm.h>
+#include <NetworkManager.h>
 
 #include <QDBusConnection>
 #include <QDateTime>
@@ -44,6 +46,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionpersistence.h"
 #include "connectionprefs.h"
 
+#include "dbus/nm-active-connectioninterface.h"
+#include "dbus/nm-exported-connectioninterface.h"
+
 #define ConnectionIdRole 1812
 #define ConnectionTypeRole 1066
 
@@ -65,6 +70,8 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
             SLOT(updateTabStates()));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             SLOT(updateTabStates()));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(activeConnectionsChanged()),
+            SLOT(activeConnectionsChanged()));
     connect(mConnEditUi.tabWidget, SIGNAL(currentChanged(int)), SLOT(tabChanged(int)));
     restoreConnections();
     if (QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.NetworkManager.KCModule"))) {
@@ -138,6 +145,7 @@ void ManageConnectionWidget::restoreConnections()
             pppoeItems.append(item);
         }
         if (item) {
+            mUuidItemHash.insert(connectionId, item);
             item->setData(0, ConnectionIdRole, connectionId);
             item->setData(0, ConnectionTypeRole, Knm::Connection::typeFromString(type));
         }
@@ -235,6 +243,8 @@ void ManageConnectionWidget::deleteClicked()
     options |= KMessageBox::Dangerous;
     if ( KMessageBox::warningYesNo(this, i18nc("Warning message on attempting to delete a connection", "Do you really want to delete the connection '%1'?",item->data(0, Qt::DisplayRole).toString()), i18n("Confirm delete") /*, QLatin1String("ConfirmDeleteConnection")*/) == KMessageBox::Yes) {
         // delete it
+        // remove it from our hash
+        mUuidItemHash.remove(connectionId);
         // remove connection file
         QFile connFile(KStandardDirs::locateLocal("data",
                     Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId));
@@ -374,6 +384,55 @@ void ManageConnectionWidget::connectionTypeMenuTriggered(QAction* action)
         QVariantList vl;
         vl << action->data();
         mEditor->addConnection(false, tabType, vl);
+    }
+}
+
+
+void ManageConnectionWidget::activeConnectionsChanged()
+{
+    // indicate which connections are in use right now
+    QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
+    foreach (QString conn, activeConnections) {
+        OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
+                                                                        conn, QDBusConnection::systemBus(), 0);
+        // do we own the connection?
+        if (candidate.serviceName() == NM_DBUS_SERVICE_USER_SETTINGS) {
+            // get its UUID from our service
+            QDBusObjectPath connectionPath = candidate.connection();
+            OrgFreedesktopNetworkManagerSettingsConnectionInterface connection(NM_DBUS_SERVICE_USER_SETTINGS, connectionPath.path(), QDBusConnection::systemBus());
+            if (connection.isValid()) {
+                QVariantMapMap settings = connection.GetSettings();
+                QDBusError lastError = connection.lastError();
+                if (lastError.isValid()) {
+                    kDebug() << "Could not get settings for " << connectionPath.path();
+                }
+                QString connKey = QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME);
+                if (settings.contains(connKey))
+                {
+                    QVariantMap connectionSetting = settings.value(connKey);
+                    QString uuidKey = QLatin1String(NM_SETTING_CONNECTION_UUID);
+                    QString typeKey = QLatin1String(NM_SETTING_CONNECTION_TYPE);
+                    if (!connectionSetting.contains(uuidKey)) {
+                        kDebug() << "Settings does not contain UUID!";
+                    }
+                    if (!connectionSetting.contains(typeKey)) {
+                        kDebug() << "Settings does not contain UUID!";
+                    }
+                    QString uuid = connectionSetting.value(uuidKey).toString();
+                    QString type = connectionSetting.value(typeKey).toString();
+                    kDebug() << "Connection at " << connectionPath.path() << " has uuid '" << uuid << "' and type '" << type;
+                    QTreeWidgetItem * item = mUuidItemHash.value(uuid);
+                    if (item) {
+                        kDebug() << "Setting last used text to Now";
+                        item->setText(1, i18nc("Text for connection list entry that is currently in used", "Now"));
+                    }
+                } else {
+                    kDebug() << "No" << QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME) << "in settings from" << connectionPath.path() << ", keys: " << settings.keys();
+                }
+            } else {
+                kDebug() << "Connection '" << connectionPath.path() << "' is not valid!";
+            }
+        }
     }
 }
 
