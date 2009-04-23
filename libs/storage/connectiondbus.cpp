@@ -107,6 +107,8 @@ SettingDbus * ConnectionDbus::dbusFor(Setting * setting)
                 sd = new WirelessSecurityDbus(static_cast<WirelessSecuritySetting*>(setting),
                         static_cast<WirelessSetting*>(m_connection->setting(Setting::Wireless))->ssid());
                 break;
+            case Setting::Ipv6:
+                break;
         }
     }
     if (sd) {
@@ -184,10 +186,39 @@ QVariantMapMap ConnectionDbus::toDbusSecretsMap()
     return mapMap;
 }
 
-void ConnectionDbus::fromDbusMap(const QVariantMapMap &)
+void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
 {
-    kDebug() << "Unimplemented!";
     // connection settings
+    QVariantMap connectionSettings = settings.value(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
+    QString connName = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_ID)).toString();
+    QUuid uuid(connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_UUID)).toString());
+    QString dbusConnectionType = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_TYPE)).toString();
+#if 0
+    Connection::Type type = Connection::Wired;
+    if (dbusConnectionType == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
+        type = Connection::Wired;
+    } else if (dbusConnectionType == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
+        type = Connection::Wireless;
+    } else if (dbusConnectionType == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
+        type = Connection::Gsm;
+    } else if (dbusConnectionType == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
+        type = Connection::Cdma;
+    } else if (dbusConnectionType == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
+        type = Connection::Vpn;
+    } else if (dbusConnectionType == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
+        type = Connection::Pppoe;
+    }
+#endif
+    m_connection->setName(connName);
+    //m_connection->setUuid(uuid);
+    //m_connection->setType(type);
+
     // all other settings
+    foreach (Setting * setting, m_connection->settings()) {
+        if (settings.contains(setting->name())) {
+            SettingDbus * sd = dbusFor(setting);
+            sd->fromMap(settings.value(setting->name()));
+        }
+    }
 }
 // vim: sw=4 sts=4 et tw=100

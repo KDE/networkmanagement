@@ -185,6 +185,11 @@ void Connection::setName(const QString & name)
     m_name = name;
 }
 
+void Connection::setUuid(const QUuid & uuid)
+{
+    m_uuid = uuid;
+}
+
 void Connection::setTimestamp(const QDateTime & timestamp)
 {
     m_timestamp = timestamp;

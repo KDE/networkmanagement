@@ -26,7 +26,6 @@ Directory structure of project
 ./settings/test             (Unused test code, scheduled for merging/moving)
 ./tests                     Proof-of-concept code, not proper unit tests yet
 ./applet                    Plasmoid sources
-./widgets                   OBSOLETE Components for the plasmoid
 
 
 PLASMOID

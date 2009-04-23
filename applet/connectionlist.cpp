@@ -125,6 +125,8 @@ bool ConnectionList::processConnection(NetworkManagerSettings * service, const Q
             m_connectionLayout->addItem(ci);
             m_connectionLayout->invalidate();
             m_layout->invalidate();
+            m_connectionLayout->activate();
+            m_layout->activate();
             changed = true;
         }
     }

@@ -68,6 +68,7 @@ public:
     Setting * setting(Setting::Type type) const;
 
     void setName(const QString &);
+    void setUuid(const QUuid &);
     void setAutoConnect(bool);
     void setTimestamp(const QDateTime&);
     /**
