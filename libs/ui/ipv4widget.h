@@ -39,6 +39,10 @@ public:
     void readConfig();
     void writeConfig();
 protected Q_SLOTS:
+    /**
+     * Update state of widgets dependent on IP setting method
+     */
+    void methodChanged(int);
     void addIpClicked();
     void removeIpClicked();
 private:

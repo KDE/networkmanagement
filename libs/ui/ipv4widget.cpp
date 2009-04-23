@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class IpV4Widget::Private
 {
 public:
+    enum MethodIndex { AutomaticMethodIndex = 0, LinkLocalMethodIndex, ManualMethodIndex, SharedMethodIndex };
     Ui_SettingsIp4Config ui;
     Knm::Ipv4Setting * setting;
 };
@@ -41,6 +42,8 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     d->setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
     connect(d->ui.btnAddAddress, SIGNAL(clicked()), this, SLOT(addIpClicked()));
     connect(d->ui.btnRemoveAddress, SIGNAL(clicked()), this, SLOT(removeIpClicked()));
+    connect(d->ui.method, SIGNAL(currentIndexChanged(int)), this, SLOT(methodChanged(int)));
+    methodChanged(d->AutomaticMethodIndex);
 }
 
 IpV4Widget::~IpV4Widget()
@@ -53,16 +56,16 @@ void IpV4Widget::readConfig()
     kDebug();
     switch (d->setting->method()) {
         case Knm::Ipv4Setting::EnumMethod::Automatic:
-            d->ui.method->setCurrentIndex(0);
+            d->ui.method->setCurrentIndex(d->AutomaticMethodIndex);
             break;
         case Knm::Ipv4Setting::EnumMethod::LinkLocal:
-            d->ui.method->setCurrentIndex(1);
+            d->ui.method->setCurrentIndex(d->LinkLocalMethodIndex);
             break;
         case Knm::Ipv4Setting::EnumMethod::Manual:
-            d->ui.method->setCurrentIndex(2);
+            d->ui.method->setCurrentIndex(d->ManualMethodIndex);
             break;
         case Knm::Ipv4Setting::EnumMethod::Shared:
-            d->ui.method->setCurrentIndex(3);
+            d->ui.method->setCurrentIndex(d->SharedMethodIndex);
             break;
         default:
             kDebug() << "Unrecognised value for method:" << d->setting->method();
@@ -138,6 +141,39 @@ void IpV4Widget::writeConfig()
     d->setting->setDns(dnsList);
     // dns search list
     d->setting->setDnssearch(d->ui.dnsSearch->text().split(','));
+}
+
+void IpV4Widget::methodChanged(int currentIndex)
+{
+    kDebug() << currentIndex;
+    if (currentIndex == d->AutomaticMethodIndex) {
+        d->ui.addresses->setEnabled(false);
+        d->ui.dns->setEnabled(false);
+        d->ui.dnsSearch->setEnabled(false);
+        d->ui.btnAddAddress->setEnabled(false);
+        d->ui.btnRemoveAddress->setEnabled(false);
+    }
+    else if (currentIndex == d->LinkLocalMethodIndex) {
+        d->ui.addresses->setEnabled(false);
+        d->ui.dns->setEnabled(false);
+        d->ui.dnsSearch->setEnabled(false);
+        d->ui.btnAddAddress->setEnabled(false);
+        d->ui.btnRemoveAddress->setEnabled(false);
+    }
+    else if (currentIndex == d->ManualMethodIndex) {
+        d->ui.addresses->setEnabled(true);
+        d->ui.dns->setEnabled(true);
+        d->ui.dnsSearch->setEnabled(true);
+        d->ui.btnAddAddress->setEnabled(true);
+        d->ui.btnRemoveAddress->setEnabled(true);
+    }
+    else if (currentIndex == d->SharedMethodIndex) {
+        d->ui.addresses->setEnabled(false);
+        d->ui.dns->setEnabled(true);
+        d->ui.dnsSearch->setEnabled(true);
+        d->ui.btnAddAddress->setEnabled(false);
+        d->ui.btnRemoveAddress->setEnabled(false);
+    }
 }
 
 void IpV4Widget::addIpClicked()
