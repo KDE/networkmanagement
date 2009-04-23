@@ -40,6 +40,14 @@ class Connection;
 
 typedef QMap<QString,QVariantMap> QVariantMapMap;
 
+namespace Solid
+{
+    namespace Control
+    {
+        class NetworkInterface;
+    } // namespace Control
+} // namespace Solid
+
 class NetworkSettings : public QObject
 {
     Q_OBJECT
@@ -76,6 +84,7 @@ class NetworkSettings : public QObject
          */
         void networkInterfaceAdded(const QString&);
         void networkInterfaceConnectionStateChanged(int);
+        void networkInterfaceAccessPointChanged(const QString&);
 
     Q_SIGNALS:
         /**
@@ -97,6 +106,7 @@ class NetworkSettings : public QObject
          * TODO: reuse deleted connections' object paths?
          */
         QString nextObjectPath();
+        QList<BusConnection*> busConnectionForInterface(Solid::Control::NetworkInterface* interface);
 
         QMap<QString, BusConnection*> m_connectionMap;
         uint mNextConnectionId;

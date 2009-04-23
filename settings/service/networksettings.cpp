@@ -130,43 +130,83 @@ void NetworkSettings::networkInterfaceAdded(const QString& uni)
     Solid::Control::NetworkInterface * interface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(networkInterfaceConnectionStateChanged(int)));
     connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(networkInterfaceConnectionStateChanged(int)));
+
+    if (interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+        Solid::Control::WirelessNetworkInterface * wifiDevice =
+            qobject_cast<Solid::Control::WirelessNetworkInterface *>(interface);
+        if (wifiDevice)
+            connect(wifiDevice, SIGNAL(activeAccessPointChanged(const QString &)),
+                    this, SLOT(networkInterfaceAccessPointChanged(const QString &)));
+    }
+}
+
+QList<BusConnection*> NetworkSettings::busConnectionForInterface(Solid::Control::NetworkInterface* interface) {
+    QList<BusConnection*> bcs;
+    QStringList active(Solid::Control::NetworkManager::activeConnections());
+    foreach (QString activePath, active) {
+        OrgFreedesktopNetworkManagerConnectionActiveInterface activeIface(QLatin1String(NM_DBUS_SERVICE), activePath, QDBusConnection::systemBus(), 0);
+        if (activeIface.serviceName() == QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS)) {
+
+            if (activeIface.devices().contains(QDBusObjectPath(interface->uni()))) {
+                kDebug() << "Found connection for device";
+                BusConnection * bc = m_connectionMap.value(activeIface.connection().path());
+                if (bc) {
+                    bcs.append(bc);
+                }
+            }
+        }
+    }
+    return bcs;
 }
 
 void NetworkSettings::networkInterfaceConnectionStateChanged(int state)
 {
     Solid::Control::NetworkInterface * device = qobject_cast<Solid::Control::NetworkInterface *>(sender());
     if (device && device->connectionState() == Solid::Control::NetworkInterface::Activated) {
-        QStringList active(Solid::Control::NetworkManager::activeConnections());
-        foreach (QString activePath, active) {
-            OrgFreedesktopNetworkManagerConnectionActiveInterface activeIface(QLatin1String(NM_DBUS_SERVICE), activePath, QDBusConnection::systemBus(), 0);
-            if (activeIface.serviceName() == QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS)) {
+        foreach (BusConnection * bc, busConnectionForInterface(device)) {
+            // update timestamp
+            Knm::Connection * conn = bc->connection();
+            conn->setTimestamp(QDateTime::currentDateTime());
+            // update with the BSSID of the device's AP
+            if (device->type() == Solid::Control::NetworkInterface::Ieee80211) {
+                Solid::Control::WirelessNetworkInterface * wifiDevice =
+                    qobject_cast<Solid::Control::WirelessNetworkInterface *>(device);
+                Solid::Control::AccessPoint * ap = wifiDevice->findAccessPoint(wifiDevice->activeAccessPoint());
+                Knm::WirelessSetting * ws = static_cast<Knm::WirelessSetting * >(conn->setting(Knm::Setting::Wireless));
+                if (ws) {
+                    QStringList seenBssids = ws->seenbssids();
+                    if (!seenBssids.contains(ap->hardwareAddress())) {
+                        seenBssids.append(ap->hardwareAddress());
+                        ws->setSeenbssids(seenBssids);
+                    }
+                }
+            }
+            emit connectionUpdated(conn);
+        }
+    }
+}
 
-                if (activeIface.devices().contains(QDBusObjectPath(device->uni()))) {
-                    kDebug() << "Found connection for device";
-                    BusConnection * bc = m_connectionMap.value(activeIface.connection().path());
-                    if (bc) {
-                        // update timestamp
-                        Knm::Connection * conn = bc->connection();
-                        conn->setTimestamp(QDateTime::currentDateTime());
-                        // update with the BSSID of the device's AP
-                        if (device->type() == Solid::Control::NetworkInterface::Ieee80211) {
-                            Solid::Control::WirelessNetworkInterface * wifiDevice =
-                                qobject_cast<Solid::Control::WirelessNetworkInterface *>(device);
-                            Solid::Control::AccessPoint * ap = wifiDevice->findAccessPoint(wifiDevice->activeAccessPoint());
-                            Knm::WirelessSetting * ws = static_cast<Knm::WirelessSetting * >(conn->setting(Knm::Setting::Wireless));
-                            if (ws) {
-                                QStringList seenBssids = ws->seenbssids();
-                                if (!seenBssids.contains(ap->hardwareAddress())) {
-                                    seenBssids.append(ap->hardwareAddress());
-                                    ws->setSeenbssids(seenBssids);
-                                }
-                            }
+void NetworkSettings::networkInterfaceAccessPointChanged(const QString & apiUni)
+{
+    Solid::Control::WirelessNetworkInterface * wifiDevice = qobject_cast<Solid::Control::WirelessNetworkInterface *>(sender());
+    if (wifiDevice && wifiDevice->connectionState() == Solid::Control::NetworkInterface::Activated) {
+        Solid::Control::AccessPoint * ap = wifiDevice->findAccessPoint(apiUni);
+        foreach (BusConnection * bc, busConnectionForInterface(wifiDevice)) {
+            Knm::Connection * conn = bc->connection();
+            if (conn->type() == Knm::Connection::Wireless) {
+                Knm::WirelessSetting * ws = static_cast<Knm::WirelessSetting * >(conn->setting(Knm::Setting::Wireless));
+                if (ws) {
+                    if (ws->ssid() == ap->ssid()) {
+
+                        QStringList seenBssids = ws->seenbssids();
+                        if (!seenBssids.contains(ap->hardwareAddress())) {
+                            seenBssids.append(ap->hardwareAddress());
+                            ws->setSeenbssids(seenBssids);
+                            emit connectionUpdated(conn);
                         }
-                        emit connectionUpdated(conn);
                     }
                 }
             }
         }
     }
 }
-
