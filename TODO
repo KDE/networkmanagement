@@ -32,7 +32,7 @@ X = rejected
       This should accept the same args as InterfaceGroup currently sends to kcmshell via dbus on the comand line,
       show the appropriate connectionpreferences subclass and write the result out like connectioneditor does.
   . write LastUsed to knetworkmanagerrc on successful connection activation
-    / Watch the active connections in the connection editor and update its UI contents
+    * Watch the active connections in the connection editor and update its UI contents
   * Store SeenBSSIDs in wireless connections
   * Shutdown the service on timeout when the applet is removed, not immediately, to allow for plasma reconfigures.
   * Enhance error reporting.  When a connection attempt fails on a wifi connection that has been used in the past, prompt "This failure may have occurred due to temporary wireless interference, or the connection settings may have changed.".  When a failure occurs on a new wifi connection, change to "the connection settings may be incorrect".
@@ -77,7 +77,6 @@ X = rejected
            + Extend to profiles
          + a list of all currently seen APs (like trad applet). Use ScrollWidget? (4.3+ only)
        / Group connections by device (or by device type if connection could be activated on >1 device)
-         Show hal device name, not just interface name
          / Item contents
            . Name
            . Type

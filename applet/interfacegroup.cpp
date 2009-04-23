@@ -296,8 +296,6 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         interface->setConnectionInspector(inspector);
         interface->setEnabled(m_enabled);
         m_interfaceLayout->addItem(interface);
-        m_interfaceLayout->invalidate();
-        m_interfaceLayout->activate();
         m_interfaces.insert(iface->uni(), interface);
         //m_interfaceLayout->invalidate();
         m_interfaceLayout->updateGeometry();
@@ -316,8 +314,6 @@ void InterfaceGroup::addNetworkInternal(const QString & ssid)
         WirelessNetworkItem * netItem = new WirelessNetworkItem(net, this);
         netItem->setupItem();
         m_networkLayout->addItem(netItem);
-        m_networkLayout->activate();
-        m_networkLayout->invalidate();
         m_networks.insert(ssid, netItem);
         connect(netItem, SIGNAL(clicked(AbstractConnectableItem*)),
                 SLOT(connectToWirelessNetwork(AbstractConnectableItem*)));
