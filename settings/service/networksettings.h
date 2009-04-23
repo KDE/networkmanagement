@@ -84,10 +84,9 @@ class NetworkSettings : public QObject
         Q_SCRIPTABLE void NewConnection(QDBusObjectPath);
 
         /**
-         * Indicates that a connection was activated
+         * Indicates that a connection was changed and should be saved to disk
          */
-        void connectionActivated(const QString & uuid);
-
+        void connectionUpdated(Knm::Connection *);
     private:
         /**
          * Delete all listed connection objects

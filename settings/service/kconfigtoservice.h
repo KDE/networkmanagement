@@ -54,13 +54,18 @@ public:
     void start(WId wid);
     void stop();
 public Q_SLOTS:
-    void connectionActivated(const QString &uuid);
+    /**
+     * Update the stored connection
+     */
+    void connectionUpdated(Knm::Connection *);
 private:
     // map from a) keys that have been munged to be legal variable names
     // to b) actual networkmanager parameter keys
     QString convertKey(const QString &) const;
     // utility method to do last minute value conversions, if required
     QVariant convertValue(const QString& key, const QVariant& value) const;
+    // locate the specified connection's config file
+    KSharedConfig::Ptr connectionFileForUuid(const QString & uuid);
     // restore the given connection from storage to a map
     Knm::Connection * restoreConnection(const QString & connectionId);
     // deserialize a single settings group

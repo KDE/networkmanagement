@@ -1,6 +1,6 @@
 /*  This file is part of the KDE project
     Copyright (C) 2008 Christopher Blauvelt <cblauvelt@gmail.com>
-    Copyright (C) 2008 Will Stephenson <wstephenson@kde.org>
+    Copyright (C) 2008,2009 Will Stephenson <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
@@ -42,6 +42,11 @@ BusConnection::~BusConnection()
 {
     delete m_connection;
     emit Removed();
+}
+
+Knm::Connection * BusConnection::connection() const
+{
+    return m_connection;
 }
 
 void BusConnection::Update(QVariantMapMap updates)

@@ -28,8 +28,10 @@
 #include <QDBusMetaType>
 #include <KDebug>
 
+#include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
+#include <solid/control/wirelessnetworkinterface.h>
 
 // knmdbus
 #include "nm-active-connectioninterface.h"
@@ -38,6 +40,7 @@
 #include "connectiondbus.h"
 #include "busconnection.h"
 #include "exportedconnection.h"
+#include "settings/802-11-wireless.h"
 
 NetworkSettings::NetworkSettings(QObject * parent)
 : QObject(parent), mNextConnectionId(0)
@@ -137,12 +140,29 @@ void NetworkSettings::networkInterfaceConnectionStateChanged(int state)
         foreach (QString activePath, active) {
             OrgFreedesktopNetworkManagerConnectionActiveInterface activeIface(QLatin1String(NM_DBUS_SERVICE), activePath, QDBusConnection::systemBus(), 0);
             if (activeIface.serviceName() == QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS)) {
-                QList<QDBusObjectPath> activeDevices = activeIface.devices();
-                if (activeDevices.contains(QDBusObjectPath(device->uni()))) {
+
+                if (activeIface.devices().contains(QDBusObjectPath(device->uni()))) {
                     kDebug() << "Found connection for device";
                     BusConnection * bc = m_connectionMap.value(activeIface.connection().path());
                     if (bc) {
-                        emit connectionActivated(bc->uuid());
+                        // update timestamp
+                        Knm::Connection * conn = bc->connection();
+                        conn->setTimestamp(QDateTime::currentDateTime());
+                        // update with the BSSID of the device's AP
+                        if (device->type() == Solid::Control::NetworkInterface::Ieee80211) {
+                            Solid::Control::WirelessNetworkInterface * wifiDevice =
+                                qobject_cast<Solid::Control::WirelessNetworkInterface *>(device);
+                            Solid::Control::AccessPoint * ap = wifiDevice->findAccessPoint(wifiDevice->activeAccessPoint());
+                            Knm::WirelessSetting * ws = static_cast<Knm::WirelessSetting * >(conn->setting(Knm::Setting::Wireless));
+                            if (ws) {
+                                QStringList seenBssids = ws->seenbssids();
+                                if (!seenBssids.contains(ap->hardwareAddress())) {
+                                    seenBssids.append(ap->hardwareAddress());
+                                    ws->setSeenbssids(seenBssids);
+                                }
+                            }
+                        }
+                        emit connectionUpdated(conn);
                     }
                 }
             }
@@ -150,4 +170,3 @@ void NetworkSettings::networkInterfaceConnectionStateChanged(int state)
     }
 }
 
-#include "networksettings.moc"

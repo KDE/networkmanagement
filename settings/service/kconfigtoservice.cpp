@@ -54,7 +54,7 @@ KConfigToService::KConfigToService(NetworkSettings * service, bool active)
     // 7) instance only calls KConfig::reparseConfiguration() the first time it is called (static)
     KNetworkManagerServicePrefs::self()->config()->reparseConfiguration();
 
-    connect(m_service, SIGNAL(connectionActivated(const QString&)), SLOT(connectionActivated(const QString&)));
+    connect(m_service, SIGNAL(connectionUpdated(Knm::Connection*)), SLOT(connectionUpdated(Knm::Connection*)));
 }
 
 KConfigToService::~KConfigToService()
@@ -102,36 +102,19 @@ void KConfigToService::stop()
 Knm::Connection * KConfigToService::restoreConnection(const QString & connectionId)
 {
     kDebug() << connectionId;
-    QString configFile = KStandardDirs::locate("data",
-            Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId);
+    m_config = connectionFileForUuid(connectionId);
     Knm::Connection * connection = 0;
-    if (!configFile.isEmpty())
-    {
-        QFile file(configFile);
-        if (file.exists())
-        {
-            m_config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
-            m_config->reparseConfiguration();
-            // restore from disk
-            Knm::ConnectionPersistence cp(m_config,
-                    (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
-                     Knm::ConnectionPersistence::PlainText));
-            cp.load();
-            connection = cp.connection();
-        } else {
-            kError() << "Config file for connection" << connectionId << "not found!";
-        }
-
-#if 0 // probably redundant anyway now - otherwise fix in connectiondbus
-        // NM requires that a map exists for the connection's type.  If the settings are all defaults,
-        // our config won't contain that group.  So create that map (empty) if it hasn't been created by
-        // reading the config.
-        if (!connectionMap.isEmpty() && !connectionMap.contains(m_currentConnectionType)) {
-            connectionMap.insert(m_currentConnectionType, QVariantMap());
-            //m_currentConnectionType = QString();
-        }
-#endif
+    if (!m_config.isNull()) {
+        // restore from disk
+        Knm::ConnectionPersistence cp(m_config,
+                (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
+                 Knm::ConnectionPersistence::PlainText));
+        cp.load();
+        connection = cp.connection();
+    } else {
+        kError() << "Config file for connection" << connectionId << "not found!";
     }
+
     return connection;
 }
 
@@ -226,31 +209,35 @@ void KConfigToService::configure(const QStringList& changedConnections)
     }
 }
 
-void KConfigToService::connectionActivated(const QString & uuid)
+KSharedConfig::Ptr KConfigToService::connectionFileForUuid(const QString & uuid)
 {
-    kDebug() << uuid;
-    // write the connection file
-    QString configFile = KStandardDirs::locate("data",
+    KSharedConfig::Ptr config;
+    if (!uuid.isEmpty()) {
+        QString configFile = KStandardDirs::locate("data",
                 Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + uuid);
-    QVariantMapMap connectionMap;
-    KSharedConfig::Ptr config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
-    kDebug() << config->name() << " is at " << configFile;
-    KConfigGroup connectionGroup(config, NM_SETTING_CONNECTION_SETTING_NAME);
-
-    uint newtimestamp = QDateTime::currentDateTime().toTime_t();
-
-    if (connectionGroup.exists()) {
-        uint timestamp = connectionGroup.readEntry<uint>(NM_SETTING_CONNECTION_TIMESTAMP, 0);
-        kDebug() << "uuid: " << uuid << "old timestamp: " << timestamp << " new timestamp: " << newtimestamp;
-        connectionGroup.writeEntry(NM_SETTING_CONNECTION_TIMESTAMP, newtimestamp);
+        if (!configFile.isEmpty()) {
+            config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
+            kDebug() << config->name() << " is at " << configFile;
+        }
     }
+    return config;
+}
+
+void KConfigToService::connectionUpdated(Knm::Connection * connection)
+{
+    QString uuid = connection->uuid();
+    Knm::ConnectionPersistence cp(connection, connectionFileForUuid(uuid),
+            (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
+             Knm::ConnectionPersistence::PlainText));
+    cp.save();
 
     // write knetworkmanagerrc
     // TODO: don't save the timestamp to the connection file, just read it from knetworkmanagerrc
     // and initialise the connection using that
     KConfigGroup mainConnectionDetails(KNetworkManagerServicePrefs::self()->config(), QLatin1String("Connection_") + uuid);
     if (mainConnectionDetails.exists()) {
-        mainConnectionDetails.writeEntry("LastUsed",  QDateTime::fromTime_t(newtimestamp));
+        mainConnectionDetails.writeEntry("LastUsed",  QDateTime::currentDateTime());
+        // start timer instead
         KNetworkManagerServicePrefs::self()->config()->sync();
     }
 }
