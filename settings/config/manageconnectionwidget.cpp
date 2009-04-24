@@ -51,6 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #define ConnectionIdRole 1812
 #define ConnectionTypeRole 1066
+#define ConnectionLastUsedRole 1848
 
 K_PLUGIN_FACTORY( ManageConnectionWidgetFactory, registerPlugin<ManageConnectionWidget>();)
 K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_networkmanagement" ) )
@@ -77,6 +78,9 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     if (QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.NetworkManager.KCModule"))) {
         QDBusConnection::sessionBus().registerObject(QLatin1String("/default"), this, QDBusConnection::ExportScriptableSlots);
     }
+    mLastUsedTimer = new QTimer(this);
+    connect(mLastUsedTimer, SIGNAL(timeout()), SLOT(updateLastUsed()));
+    mLastUsedTimer->start(1000 * 60);
 }
 
 ManageConnectionWidget::~ManageConnectionWidget()
@@ -86,6 +90,40 @@ ManageConnectionWidget::~ManageConnectionWidget()
 void ManageConnectionWidget::createConnection(const QString &connectionType, const QVariantList &args)
 {
     mEditor->addConnection(false, Knm::Connection::typeFromString(connectionType), args);
+}
+
+QString ManageConnectionWidget::formatDateRelative(const QDateTime & lastUsed)
+{
+    QString lastUsedText;
+    if (lastUsed.isValid()) {
+        QDateTime now = QDateTime::currentDateTime();
+        if (lastUsed.daysTo(now) == 0 ) {
+            int secondsAgo = lastUsed.secsTo(now);
+            if (secondsAgo < (60 * 60 )) { // less than an hour ago
+                int minutesAgo = secondsAgo / 60;
+                lastUsedText = i18ncp(
+                        "Label for last used time for a network connection used in the last hour, as the number of minutes since usage",
+                        "One minute ago",
+                        "%1 minutes ago",
+                        minutesAgo);
+            } else {
+                int hoursAgo = secondsAgo / (60 * 60);
+                lastUsedText = i18ncp(
+                        "Label for last used time for a network connection used in the last day, as the number of hours since usage",
+                        "One hour ago",
+                        "%1 hours ago",
+                        hoursAgo);
+            }
+        } else if (lastUsed.daysTo(now) == 1) {
+            lastUsedText = i18nc("Label for last used time for a network connection used the previous day", "Yesterday");
+        } else {
+            lastUsedText = KGlobal::locale()->formatDate(lastUsed.date(), KLocale::ShortDate);
+        }
+    } else {
+        lastUsedText =  i18nc("Label for last used time for a"
+                "network connection that has never been used", "Never");
+    }
+    return lastUsedText;
 }
 
 void ManageConnectionWidget::restoreConnections()
@@ -115,14 +153,9 @@ void ManageConnectionWidget::restoreConnections()
         QDateTime lastUsed = config.readEntry("LastUsed", QDateTime());
         // add an item to the editor widget for that type
         QStringList itemContents;
-        // TODO: replace date formatting with something relative to 'now'
         itemContents << name;
-        if (lastUsed.isValid()) {
-            itemContents << KGlobal::locale()->formatDateTime(lastUsed, KLocale::FancyLongDate);
-        } else {
-            itemContents << i18nc("Label for last used time for a"
-                    "network connection that has never been used", "Never");
-        }
+        itemContents << formatDateRelative(lastUsed);
+
         kDebug() << type << name << lastUsed;
         QTreeWidgetItem * item = 0;
         if (type == Knm::Connection::typeAsString(Knm::Connection::Wired)) {
@@ -148,6 +181,7 @@ void ManageConnectionWidget::restoreConnections()
             mUuidItemHash.insert(connectionId, item);
             item->setData(0, ConnectionIdRole, connectionId);
             item->setData(0, ConnectionTypeRole, Knm::Connection::typeFromString(type));
+            item->setData(0, ConnectionLastUsedRole, lastUsed);
         }
     }
     mConnEditUi.listWired->insertTopLevelItems(0, wiredItems);
@@ -433,6 +467,25 @@ void ManageConnectionWidget::activeConnectionsChanged()
                 kDebug() << "Connection '" << connectionPath.path() << "' is not valid!";
             }
         }
+    }
+}
+
+void ManageConnectionWidget::updateLastUsed()
+{
+    updateLastUsed(mConnEditUi.listWired);
+    updateLastUsed(mConnEditUi.listWireless);
+    updateLastUsed(mConnEditUi.listCellular);
+    updateLastUsed(mConnEditUi.listVpn);
+    updateLastUsed(mConnEditUi.listPppoe);
+}
+
+void ManageConnectionWidget::updateLastUsed(QTreeWidget * list)
+{
+    QTreeWidgetItemIterator it(list);
+    while (*it) {
+        QDateTime lastUsed = (*it)->data(0, ConnectionLastUsedRole).toDateTime();
+        (*it)->setText(1, formatDateRelative(lastUsed));
+        ++it;
     }
 }
 
