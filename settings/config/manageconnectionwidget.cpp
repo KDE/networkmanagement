@@ -74,6 +74,19 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(activeConnectionsChanged()),
             SLOT(activeConnectionsChanged()));
     connect(mConnEditUi.tabWidget, SIGNAL(currentChanged(int)), SLOT(tabChanged(int)));
+
+    // handle doubleclicks
+    connect(mConnEditUi.listWired, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+            SLOT(editItem(QTreeWidgetItem*)));
+    connect(mConnEditUi.listWireless, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+            SLOT(editItem(QTreeWidgetItem*)));
+    connect(mConnEditUi.listCellular, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+            SLOT(editItem(QTreeWidgetItem*)));
+    connect(mConnEditUi.listVpn, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+            SLOT(editItem(QTreeWidgetItem*)));
+    connect(mConnEditUi.listPppoe, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
+            SLOT(editItem(QTreeWidgetItem*)));
+
     restoreConnections();
     if (QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.NetworkManager.KCModule"))) {
         QDBusConnection::sessionBus().registerObject(QLatin1String("/default"), this, QDBusConnection::ExportScriptableSlots);
@@ -243,22 +256,24 @@ void ManageConnectionWidget::editClicked()
 {
     //edit might be clicked on a system connection, in which case we need a connectionid for it
     QTreeWidgetItem * item = selectedItem();
-    if ( !item ) {
-        kDebug() << "edit clicked, but no selection!";
-        return;
-    }
-    QString connectionId = item->data(0, ConnectionIdRole).toString();
-    Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, ConnectionTypeRole).toUInt();
-    kDebug() << connectionId << type;
-    if (connectionId.isEmpty()) {
-        kDebug() << "selected item had no connectionId!";
-        return;
-    }
+    editItem(item);
+}
 
-    QVariantList args;
-    args << connectionId;
+void ManageConnectionWidget::editItem(QTreeWidgetItem * item)
+{
+    if (item) {
+        QString connectionId = item->data(0, ConnectionIdRole).toString();
+        Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, ConnectionTypeRole).toUInt();
+        if (connectionId.isEmpty()) {
+            kDebug() << "selected item had no connectionId!";
+            return;
+        }
 
-    mEditor->editConnection(type, args);
+        QVariantList args;
+        args << connectionId;
+
+        mEditor->editConnection(type, args);
+    }
 }
 
 void ManageConnectionWidget::deleteClicked()

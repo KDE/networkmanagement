@@ -58,9 +58,13 @@ private slots:
      */
     void addClicked();
     /**
-     * Edit selected connection
+     * Edit the selected connection
      */
     void editClicked();
+    /**
+     * Edit given item
+     */
+    void editItem(QTreeWidgetItem*);
     /**
      * Delete selected connection
      */
