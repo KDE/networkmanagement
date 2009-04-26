@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>Form</class>
- <widget class="QWidget" name="Form" >
-  <property name="geometry" >
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,52 +10,58 @@
     <height>300</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
-   <property name="margin" >
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
     <number>0</number>
    </property>
    <item>
-    <layout class="QGridLayout" name="gridLayout" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="label_6" >
-       <property name="text" >
-        <string>&amp;User Name:</string>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>&amp;Username:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>kcfg_leapusername</cstring>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="KLineEdit" name="kcfg_leapusername" >
-       <property name="toolTip" >
+     <item row="0" column="1">
+      <widget class="KLineEdit" name="kcfg_leapusername">
+       <property name="toolTip">
         <string>User name on this network</string>
        </property>
       </widget>
      </item>
-     <item row="1" column="0" >
-      <widget class="QLabel" name="label_7" >
-       <property name="text" >
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
         <string>&amp;Password:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>kcfg_leappassword</cstring>
        </property>
       </widget>
      </item>
-     <item row="1" column="1" >
-      <widget class="KLineEdit" name="kcfg_leappassword" >
-       <property name="toolTip" >
+     <item row="1" column="1">
+      <widget class="KLineEdit" name="kcfg_leappassword">
+       <property name="toolTip">
         <string>Password on this network</string>
        </property>
-       <property name="echoMode" >
+       <property name="echoMode">
         <enum>QLineEdit::Password</enum>
        </property>
       </widget>
      </item>
-     <item row="2" column="1" >
-      <widget class="QCheckBox" name="btnLeapShowPass" >
-       <property name="text" >
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="btnLeapShowPass">
+       <property name="text">
         <string>&amp;Show password</string>
        </property>
       </widget>
@@ -62,11 +69,11 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>192</height>

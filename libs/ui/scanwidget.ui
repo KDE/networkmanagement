@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ScanWidget</class>
- <widget class="QWidget" name="ScanWidget" >
-  <property name="geometry" >
+ <widget class="QWidget" name="ScanWidget">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,21 +10,21 @@
     <height>353</height>
    </rect>
   </property>
-  <property name="sizePolicy" >
-   <sizepolicy vsizetype="MinimumExpanding" hsizetype="MinimumExpanding" >
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_2" >
+  <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" >
+    <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -32,31 +33,37 @@
       </spacer>
      </item>
      <item>
-      <widget class="QLabel" name="m_interfaceLabel" >
-       <property name="text" >
-        <string>Interface</string>
+      <widget class="QLabel" name="m_interfaceLabel">
+       <property name="text">
+        <string>Interface:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KComboBox" name="m_interface" />
+      <widget class="KComboBox" name="m_interface"/>
      </item>
      <item>
-      <widget class="QLabel" name="m_viewLabel_2" >
-       <property name="text" >
-        <string>View</string>
+      <widget class="QLabel" name="m_viewLabel_2">
+       <property name="text">
+        <string>View:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KComboBox" name="m_view" >
+      <widget class="KComboBox" name="m_view">
        <item>
-        <property name="text" >
+        <property name="text">
          <string>Map</string>
         </property>
        </item>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>Details</string>
         </property>
        </item>
@@ -65,22 +72,22 @@
     </layout>
    </item>
    <item>
-    <widget class="QStackedWidget" name="m_stack" >
-     <property name="currentIndex" >
+    <widget class="QStackedWidget" name="m_stack">
+     <property name="currentIndex">
       <number>0</number>
      </property>
-     <widget class="QWidget" name="page" />
+     <widget class="QWidget" name="page"/>
     </widget>
    </item>
    <item>
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeType" >
+     <property name="sizeType">
       <enum>QSizePolicy::Preferred</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>50</height>

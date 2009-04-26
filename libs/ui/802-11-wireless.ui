@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>Wireless80211Config</class>
- <widget class="QWidget" name="Wireless80211Config" >
-  <property name="geometry" >
+ <widget class="QWidget" name="Wireless80211Config">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,147 +10,162 @@
     <height>191</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Wireless</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="label" >
-       <property name="text" >
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
         <string>&amp;SSID:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>ssid</cstring>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <layout class="QHBoxLayout" name="horizontalLayout" >
+     <item row="0" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="KLineEdit" name="ssid" >
-         <property name="toolTip" >
+        <widget class="KLineEdit" name="ssid">
+         <property name="toolTip">
           <string>The name of the wireless network</string>
          </property>
-         <property name="whatsThis" >
+         <property name="whatsThis">
           <string>The Service Set IDentifier is the name of a wireless network.</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="KPushButton" name="btnScan" >
-         <property name="text" >
+        <widget class="KPushButton" name="btnScan">
+         <property name="text">
           <string>S&amp;can</string>
          </property>
         </widget>
        </item>
       </layout>
      </item>
-     <item row="1" column="0" >
-      <widget class="QLabel" name="label_2" >
-       <property name="text" >
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
         <string>M&amp;ode:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>cmbMode</cstring>
        </property>
       </widget>
      </item>
-     <item row="1" column="1" >
-      <widget class="KComboBox" name="cmbMode" >
-       <property name="toolTip" >
+     <item row="1" column="1">
+      <widget class="KComboBox" name="cmbMode">
+       <property name="toolTip">
         <string>Operating mode of the wireless network</string>
        </property>
-       <property name="whatsThis" >
+       <property name="whatsThis">
         <string>Infrastructure mode is the most common setting.  To form a peer-to-peer wireless network with another computer when there is no infrastructure, choose Ad-hoc.</string>
        </property>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>Infrastructure</string>
         </property>
        </item>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>Ad-hoc</string>
         </property>
        </item>
       </widget>
      </item>
-     <item row="2" column="0" >
-      <widget class="QLabel" name="label_3" >
-       <property name="text" >
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
         <string>&amp;BSSID:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>bssid</cstring>
        </property>
       </widget>
      </item>
-     <item row="2" column="1" >
-      <widget class="KLineEdit" name="bssid" >
-       <property name="toolTip" >
+     <item row="2" column="1">
+      <widget class="KLineEdit" name="bssid">
+       <property name="toolTip">
         <string>Only connect to the station with this hardware address</string>
        </property>
-       <property name="whatsThis" >
+       <property name="whatsThis">
         <string>Setting a BSSID (hardware address) forces this connection to only connect to the station with this address, even if other stations are part of the same network.</string>
        </property>
-       <property name="inputMask" >
+       <property name="inputMask">
         <string>HH:HH:HH:HH:HH:HH;_</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="0" >
-      <widget class="QLabel" name="label_4" >
-       <property name="text" >
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
         <string>&amp;MAC address:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>macaddress</cstring>
        </property>
       </widget>
      </item>
-     <item row="3" column="1" >
-      <widget class="KLineEdit" name="macaddress" >
-       <property name="toolTip" >
+     <item row="3" column="1">
+      <widget class="KLineEdit" name="macaddress">
+       <property name="toolTip">
         <string>Override hardware address</string>
        </property>
-       <property name="whatsThis" >
+       <property name="whatsThis">
         <string>Some network interfaces allow their hardware address to be changed using this setting.</string>
        </property>
-       <property name="inputMask" >
+       <property name="inputMask">
         <string>HH:HH:HH:HH:HH:HH;_</string>
        </property>
       </widget>
      </item>
-     <item row="4" column="0" >
-      <widget class="QLabel" name="label_5" >
-       <property name="text" >
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
         <string>MT&amp;U:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>mtu</cstring>
        </property>
       </widget>
      </item>
-     <item row="4" column="1" >
-      <widget class="QSpinBox" name="mtu" >
-       <property name="toolTip" >
+     <item row="4" column="1">
+      <widget class="QSpinBox" name="mtu">
+       <property name="toolTip">
         <string>Maximum Transmission Unit</string>
        </property>
-       <property name="whatsThis" >
+       <property name="whatsThis">
         <string>Sets the size of the largest packet that can be transmitted on this network. '0' sets the MTU automatically.</string>
        </property>
-       <property name="specialValueText" >
+       <property name="specialValueText">
         <string>Automatic</string>
        </property>
-       <property name="suffix" >
+       <property name="suffix">
         <string> bytes</string>
        </property>
-       <property name="maximum" >
+       <property name="maximum">
         <number>10000</number>
        </property>
-       <property name="singleStep" >
+       <property name="singleStep">
         <number>10</number>
        </property>
       </widget>
@@ -157,11 +173,11 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>13</height>
@@ -173,9 +189,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
@@ -183,9 +199,9 @@
    <header>klineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

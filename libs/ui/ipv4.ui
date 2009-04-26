@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>SettingsIp4Config</class>
- <widget class="QWidget" name="SettingsIp4Config" >
-  <property name="geometry" >
+ <widget class="QWidget" name="SettingsIp4Config">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,41 +10,44 @@
     <height>305</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>IP Address</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_2" >
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QLabel" name="label" >
-       <property name="text" >
+      <widget class="QLabel" name="label">
+       <property name="text">
         <string>Method:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>kcfg_method</cstring>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="KComboBox" name="method" >
+      <widget class="KComboBox" name="method">
        <item>
-        <property name="text" >
+        <property name="text">
          <string>DHCP</string>
         </property>
        </item>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>Auto IP</string>
         </property>
        </item>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>Manual</string>
         </property>
        </item>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>DHCP with manual DNS</string>
         </property>
        </item>
@@ -52,62 +56,62 @@
     </layout>
    </item>
    <item>
-    <widget class="QLabel" name="label_2" >
-     <property name="text" >
+    <widget class="QLabel" name="label_2">
+     <property name="text">
       <string>Addr&amp;esses</string>
      </property>
-     <property name="buddy" >
+     <property name="buddy">
       <cstring>addresses</cstring>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QTreeWidget" name="addresses" >
-     <property name="rootIsDecorated" >
+    <widget class="QTreeWidget" name="addresses">
+     <property name="rootIsDecorated">
       <bool>false</bool>
      </property>
-     <property name="itemsExpandable" >
+     <property name="itemsExpandable">
       <bool>false</bool>
      </property>
      <column>
-      <property name="text" >
+      <property name="text">
        <string>Address</string>
       </property>
      </column>
      <column>
-      <property name="text" >
+      <property name="text">
        <string>Netmask prefix</string>
       </property>
      </column>
      <column>
-      <property name="text" >
+      <property name="text">
        <string>Gateway</string>
       </property>
      </column>
     </widget>
    </item>
    <item>
-    <layout class="QGridLayout" name="gridLayout" >
-     <item row="0" column="0" >
-      <widget class="KPushButton" name="btnAddAddress" >
-       <property name="text" >
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="KPushButton" name="btnAddAddress">
+       <property name="text">
         <string>&amp;Add</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="KPushButton" name="btnRemoveAddress" >
-       <property name="text" >
+     <item row="0" column="1">
+      <widget class="KPushButton" name="btnRemoveAddress">
+       <property name="text">
         <string>&amp;Remove</string>
        </property>
       </widget>
      </item>
-     <item row="0" column="2" >
-      <spacer name="horizontalSpacer" >
-       <property name="orientation" >
+     <item row="0" column="2">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>40</width>
          <height>20</height>
@@ -115,40 +119,46 @@
        </property>
       </spacer>
      </item>
-     <item row="1" column="0" colspan="2" >
-      <widget class="QLabel" name="label_3" >
-       <property name="text" >
+     <item row="1" column="0" colspan="2">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
         <string>&amp;DNS servers:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>dns</cstring>
        </property>
       </widget>
      </item>
-     <item row="1" column="2" >
-      <widget class="KLineEdit" name="dns" />
+     <item row="1" column="2">
+      <widget class="KLineEdit" name="dns"/>
      </item>
-     <item row="2" column="0" colspan="2" >
-      <widget class="QLabel" name="label_4" >
-       <property name="text" >
+     <item row="2" column="0" colspan="2">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
         <string>&amp;Search domains:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>dnsSearch</cstring>
        </property>
       </widget>
      </item>
-     <item row="2" column="2" >
-      <widget class="KLineEdit" name="dnsSearch" />
+     <item row="2" column="2">
+      <widget class="KLineEdit" name="dnsSearch"/>
      </item>
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>69</height>
@@ -160,9 +170,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
@@ -170,9 +180,9 @@
    <header>klineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

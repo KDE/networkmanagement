@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>Peap</class>
- <widget class="QWidget" name="Peap" >
-  <property name="geometry" >
+ <widget class="QWidget" name="Peap">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,118 +10,136 @@
     <height>300</height>
    </rect>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout" >
-     <item row="0" column="0" >
-      <widget class="QLabel" name="label" >
-       <property name="text" >
-        <string>Anonymous &amp;identity</string>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Anonymous &amp;identity:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>anonymousidentity</cstring>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="KLineEdit" name="anonymousidentity" />
+     <item row="0" column="1">
+      <widget class="KLineEdit" name="anonymousidentity"/>
      </item>
-     <item row="1" column="0" >
-      <widget class="QLabel" name="label_3" >
-       <property name="text" >
-        <string>&amp;CA Certificate</string>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>&amp;CA certificate:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>cacert</cstring>
        </property>
       </widget>
      </item>
-     <item row="1" column="1" >
-      <widget class="KUrlRequester" name="cacert" />
+     <item row="1" column="1">
+      <widget class="KUrlRequester" name="cacert"/>
      </item>
-     <item row="2" column="0" >
-      <widget class="QLabel" name="label_6" >
-       <property name="text" >
-        <string>PEAP &amp;version</string>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>PEAP &amp;version:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
       </widget>
      </item>
-     <item row="3" column="0" >
-      <widget class="QLabel" name="label_2" >
-       <property name="text" >
-        <string>Inner &amp;authentication</string>
+     <item row="3" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Inner &amp;authentication:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>phase2autheap</cstring>
        </property>
       </widget>
      </item>
-     <item row="3" column="1" >
-      <widget class="KComboBox" name="phase2autheap" >
+     <item row="3" column="1">
+      <widget class="KComboBox" name="phase2autheap">
        <item>
-        <property name="text" >
+        <property name="text">
          <string>PAP</string>
         </property>
        </item>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>MSCHAP</string>
         </property>
        </item>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>MSCHAPv2</string>
         </property>
        </item>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>CHAP</string>
         </property>
        </item>
       </widget>
      </item>
-     <item row="4" column="0" >
-      <widget class="QLabel" name="label_4" >
-       <property name="text" >
-        <string>&amp;Username</string>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>&amp;Username:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>identity</cstring>
        </property>
       </widget>
      </item>
-     <item row="4" column="1" >
-      <widget class="KLineEdit" name="identity" />
+     <item row="4" column="1">
+      <widget class="KLineEdit" name="identity"/>
      </item>
-     <item row="5" column="0" >
-      <widget class="QLabel" name="label_5" >
-       <property name="text" >
-        <string>&amp;Password</string>
+     <item row="5" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>&amp;Password:</string>
        </property>
-       <property name="buddy" >
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
         <cstring>password</cstring>
        </property>
       </widget>
      </item>
-     <item row="5" column="1" >
-      <widget class="KLineEdit" name="password" />
+     <item row="5" column="1">
+      <widget class="KLineEdit" name="password"/>
      </item>
-     <item row="6" column="1" >
-      <widget class="QCheckBox" name="chkShowPassword" >
-       <property name="text" >
+     <item row="6" column="1">
+      <widget class="QCheckBox" name="chkShowPassword">
+       <property name="text">
         <string>Show password</string>
        </property>
       </widget>
      </item>
-     <item row="2" column="1" >
-      <widget class="KComboBox" name="kcfg_phase1peapver" >
+     <item row="2" column="1">
+      <widget class="KComboBox" name="kcfg_phase1peapver">
        <item>
-        <property name="text" >
+        <property name="text">
          <string>Version 0</string>
         </property>
        </item>
        <item>
-        <property name="text" >
+        <property name="text">
          <string>Version 1</string>
         </property>
        </item>
@@ -129,11 +148,11 @@
     </layout>
    </item>
    <item>
-    <spacer name="verticalSpacer" >
-     <property name="orientation" >
+    <spacer name="verticalSpacer">
+     <property name="orientation">
       <enum>Qt::Vertical</enum>
      </property>
-     <property name="sizeHint" stdset="0" >
+     <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
        <height>50</height>
@@ -145,9 +164,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
+   <class>KUrlRequester</class>
+   <extends>QFrame</extends>
+   <header>kurlrequester.h</header>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
@@ -155,9 +174,9 @@
    <header>klineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>KUrlRequester</class>
-   <extends>QFrame</extends>
-   <header>kurlrequester.h</header>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
