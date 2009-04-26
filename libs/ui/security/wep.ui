@@ -6,42 +6,59 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>251</width>
-    <height>185</height>
+    <width>248</width>
+    <height>212</height>
    </rect>
   </property>
-  <layout class="QGridLayout" name="gridLayout_2">
-   <property name="margin">
-    <number>0</number>
-   </property>
-   <item row="2" column="0">
-    <widget class="QLabel" name="keyLabel">
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="keyTypeLabel">
      <property name="text">
-      <string>&amp;Key:</string>
+      <string>Key type:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="buddy">
-      <cstring>key</cstring>
+      <cstring>keyType</cstring>
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="0" column="2">
+    <widget class="QComboBox" name="keyType">
+     <item>
+      <property name="text">
+       <string>Passphrase</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>Hex Key</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QLabel" name="passphraseLabel">
+     <property name="text">
+      <string>Passphrase:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="passphrase"/>
+   </item>
+   <item row="2" column="2">
     <widget class="KLineEdit" name="key">
      <property name="echoMode">
       <enum>QLineEdit::Password</enum>
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
-    <widget class="QCheckBox" name="chkShowPass">
-     <property name="text">
-      <string>&amp;Show password</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="0">
+   <item row="4" column="0" colspan="2">
     <widget class="QLabel" name="weptxkeyindexLabel">
      <property name="text">
       <string>&amp;WEP Index:</string>
@@ -54,7 +71,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="4" column="2">
     <widget class="KComboBox" name="weptxkeyindex">
      <item>
       <property name="text">
@@ -78,7 +95,7 @@
      </item>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="5" column="0" colspan="2">
     <widget class="QLabel" name="authalgLabel">
      <property name="text">
       <string>&amp;Authentication:</string>
@@ -91,7 +108,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="5" column="2">
     <widget class="KComboBox" name="authalg">
      <item>
       <property name="text">
@@ -105,45 +122,38 @@
      </item>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QComboBox" name="keyType">
-     <item>
-      <property name="text">
-       <string>Passphrase</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>Hex Key</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="keyTypeLabel">
+   <item row="2" column="1">
+    <widget class="QLabel" name="keyLabel">
      <property name="text">
-      <string>Key type:</string>
+      <string>&amp;Key:</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
      <property name="buddy">
-      <cstring>keyType</cstring>
+      <cstring>key</cstring>
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="passphraseLabel">
+   <item row="7" column="2">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>51</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="6" column="2">
+    <widget class="QCheckBox" name="chkShowPass">
      <property name="text">
-      <string>Passphrase:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      <string>&amp;Show password</string>
      </property>
     </widget>
-   </item>
-   <item row="1" column="1">
-    <widget class="QLineEdit" name="passphrase"/>
    </item>
   </layout>
  </widget>
