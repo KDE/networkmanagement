@@ -110,9 +110,12 @@ QVariantMap Security8021xDbus::toMap()
         break;
       case Security8021xSetting::EnumPhase1peapver::one:
         map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), 1);
+	// phaselabel only valid with peapver=1
+	if (!setting->phase1peaplabel().isEmpty()) {
+	  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL), setting->phase1peaplabel());
+	}
         break;
     }
-    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL), setting->phase1peaplabel());
   }
   if (!setting->phase1fastprovisioning().isEmpty()) {
     map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING), setting->phase1fastprovisioning());
