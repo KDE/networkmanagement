@@ -19,13 +19,13 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Method:</string>
+        <string>&amp;Method:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="buddy">
-        <cstring>kcfg_method</cstring>
+        <cstring>method</cstring>
        </property>
       </widget>
      </item>
@@ -66,28 +66,13 @@
     </widget>
    </item>
    <item>
-    <widget class="QTreeWidget" name="addresses">
+    <widget class="QTreeView" name="addresses">
      <property name="rootIsDecorated">
       <bool>false</bool>
      </property>
-     <property name="itemsExpandable">
-      <bool>false</bool>
+     <property name="allColumnsShowFocus">
+      <bool>true</bool>
      </property>
-     <column>
-      <property name="text">
-       <string>Address</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Netmask prefix</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>Gateway</string>
-      </property>
-     </column>
     </widget>
    </item>
    <item>
@@ -101,6 +86,9 @@
      </item>
      <item row="0" column="1">
       <widget class="KPushButton" name="btnRemoveAddress">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="text">
         <string>&amp;Remove</string>
        </property>
@@ -170,9 +158,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
@@ -180,11 +168,19 @@
    <header>klineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>method</tabstop>
+  <tabstop>addresses</tabstop>
+  <tabstop>btnAddAddress</tabstop>
+  <tabstop>btnRemoveAddress</tabstop>
+  <tabstop>dns</tabstop>
+  <tabstop>dnsSearch</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

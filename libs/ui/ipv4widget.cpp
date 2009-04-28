@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -20,6 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ipv4widget.h"
 
+#include <QLineEdit>
+#include <QStandardItem>
+#include <QStandardItemModel>
+
 #include <KDebug>
 
 #include "ui_ipv4.h"
@@ -30,16 +34,66 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class IpV4Widget::Private
 {
 public:
+    Private() : setting(0), model(0,3)
+    {
+        QStandardItem * headerItem = new QStandardItem(i18nc("Header text for IPv4 address", "Address"));
+        model.setHorizontalHeaderItem(0, headerItem);
+        headerItem = new QStandardItem(i18nc("Header text for IPv4 netmask", "Prefix"));
+        model.setHorizontalHeaderItem(1, headerItem);
+        headerItem = new QStandardItem(i18nc("Header text for IPv4 gateway", "Gateway"));
+        model.setHorizontalHeaderItem(2, headerItem);
+    }
     enum MethodIndex { AutomaticMethodIndex = 0, LinkLocalMethodIndex, ManualMethodIndex, SharedMethodIndex };
     Ui_SettingsIp4Config ui;
     Knm::Ipv4Setting * setting;
+    QStandardItemModel model;
 };
+
+Ipv4Delegate::Ipv4Delegate(QObject * parent) : QItemDelegate(parent) {}
+Ipv4Delegate::~Ipv4Delegate() {}
+
+QWidget * Ipv4Delegate::createEditor(QWidget *parent, const QStyleOptionViewItem &,
+        const QModelIndex &) const
+{
+    QLineEdit *editor = new QLineEdit(parent);
+    editor->setInputMask(QLatin1String("000.000.000.000;_"));
+
+    return editor;
+}
+
+void Ipv4Delegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+    QString value = index.model()->data(index, Qt::EditRole).toString();
+
+    QLineEdit *le = static_cast<QLineEdit*>(editor);
+    le->setText(value);
+}
+
+void Ipv4Delegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+        const QModelIndex &index) const
+{
+    QLineEdit *le = static_cast<QLineEdit*>(editor);
+
+    model->setData(index, le->text(), Qt::EditRole);
+}
+
+void Ipv4Delegate::updateEditorGeometry(QWidget *editor,
+        const QStyleOptionViewItem &option, const QModelIndex &) const
+{
+    editor->setGeometry(option.rect);
+
+}
 
 IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     : SettingWidget(connection, parent), d(new IpV4Widget::Private)
 {
     d->ui.setupUi(this);
+    d->ui.addresses->setModel(&d->model);
+    d->ui.addresses->setItemDelegateForColumn(0, new Ipv4Delegate(this));
+    d->ui.addresses->setItemDelegateForColumn(2, new Ipv4Delegate(this));
     d->setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
+    connect(d->ui.addresses->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
+            SLOT(selectionChanged(const QItemSelection&)));
     connect(d->ui.btnAddAddress, SIGNAL(clicked()), this, SLOT(addIpClicked()));
     connect(d->ui.btnRemoveAddress, SIGNAL(clicked()), this, SLOT(removeIpClicked()));
     connect(d->ui.method, SIGNAL(currentIndexChanged(int)), this, SLOT(methodChanged(int)));
@@ -73,14 +127,11 @@ void IpV4Widget::readConfig()
     }
 
     // ip addresses
-    QList<QTreeWidgetItem*> items;
     QList<Solid::Control::IPv4Address> addrList = d->setting->addresses();
-    foreach (Solid::Control::IPv4Address addr, d->setting->addresses()) {
-        QStringList fields;
-        fields << QHostAddress(addr.address()).toString() << QString::number(addr.netMask()) << QHostAddress(addr.gateway()).toString();
-        QTreeWidgetItem * item = new QTreeWidgetItem(d->ui.addresses, fields);
-        item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
-        items.append(item);
+    foreach (Solid::Control::IPv4Address addr, addrList) {
+        QList<QStandardItem*> fields;
+        fields << new QStandardItem(QHostAddress(addr.address()).toString()) << new QStandardItem(QString::number(addr.netMask())) << new QStandardItem(QHostAddress(addr.gateway()).toString());
+        d->model.appendRow(fields);
     }
 
     // dns
@@ -116,14 +167,15 @@ void IpV4Widget::writeConfig()
 
     // addresses
     QList<Solid::Control::IPv4Address> addresses;
-    while (QTreeWidgetItem* item = d->ui.addresses->takeTopLevelItem(0)) {
-        QHostAddress ip(item->text(0));
-        QHostAddress gateway(item->text(2));
+    while (d->model.rowCount()) {
+        QList<QStandardItem*> row = d->model.takeRow(0);
+        QHostAddress ip(row[0]->text());
+        QHostAddress gateway(row[2]->text());
         if (ip == QHostAddress::Null
                 || gateway == QHostAddress::Null) {
             continue;
         }
-        Solid::Control::IPv4Address addr(ip.toIPv4Address(), item->text(1).toUInt(), gateway.toIPv4Address());
+        Solid::Control::IPv4Address addr(ip.toIPv4Address(), row[1]->text().toUInt(), gateway.toIPv4Address());
         addresses.append(addr);
     }
     d->setting->setAddresses(addresses);
@@ -165,7 +217,7 @@ void IpV4Widget::methodChanged(int currentIndex)
         d->ui.dns->setEnabled(true);
         d->ui.dnsSearch->setEnabled(true);
         d->ui.btnAddAddress->setEnabled(true);
-        d->ui.btnRemoveAddress->setEnabled(true);
+        d->ui.btnRemoveAddress->setEnabled(d->ui.addresses->selectionModel()->hasSelection());
     }
     else if (currentIndex == d->SharedMethodIndex) {
         d->ui.addresses->setEnabled(false);
@@ -178,17 +230,30 @@ void IpV4Widget::methodChanged(int currentIndex)
 
 void IpV4Widget::addIpClicked()
 {
-    QTreeWidgetItem * item = new QTreeWidgetItem(d->ui.addresses);
-    item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled | Qt::ItemIsEditable);
-    item->setSelected(true);
+    QList<QStandardItem *> item;
+    item << new QStandardItem << new QStandardItem << new QStandardItem;
+    d->model.appendRow(item);
+    // TODO select new row and enable editor on IP address
 }
 
 void IpV4Widget::removeIpClicked()
 {
-    QList<QTreeWidgetItem*> items = d->ui.addresses->selectedItems();
-    if (items.count()) {
-        delete items.first();
+#if 1
+    QItemSelectionModel * selectionModel = d->ui.addresses->selectionModel();
+    if (selectionModel->hasSelection()) {
+        QModelIndexList indexes = selectionModel->selectedIndexes();
+        d->model.takeRow(indexes[0].row());
     }
+    d->ui.btnRemoveAddress->setEnabled(false);
+//QList<QTreeWidgetItem*> items = d->ui.addresses->selectedItems();
+    //if (items.count()) {
+    //    delete items.first();
+    //}
+#endif
 }
 
+void IpV4Widget::selectionChanged(const QItemSelection & selected)
+{
+    d->ui.btnRemoveAddress->setEnabled(!selected.isEmpty());
+}
 // vim: sw=4 sts=4 et tw=100
