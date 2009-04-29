@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ipv4widget.h"
 
 #include <QLineEdit>
+#include <QSpinBox>
 #include <QStandardItem>
 #include <QStandardItemModel>
 
@@ -84,13 +85,52 @@ void Ipv4Delegate::updateEditorGeometry(QWidget *editor,
 
 }
 
+NetmaskPrefixDelegate::NetmaskPrefixDelegate(QObject * parent) : QItemDelegate(parent) {}
+NetmaskPrefixDelegate::~NetmaskPrefixDelegate() {}
+
+QWidget * NetmaskPrefixDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &,
+        const QModelIndex &) const
+{
+    QSpinBox *editor = new QSpinBox(parent);
+    editor->setMinimum(1);
+    editor->setMaximum(31);
+
+    return editor;
+}
+
+void NetmaskPrefixDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
+{
+    int value = index.model()->data(index, Qt::EditRole).toInt();
+
+    QSpinBox *le = static_cast<QSpinBox*>(editor);
+    le->setValue(value);
+}
+
+void NetmaskPrefixDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+        const QModelIndex &index) const
+{
+    QSpinBox *spinBox = static_cast<QSpinBox*>(editor);
+    spinBox->interpretText();
+    int value = spinBox->value();
+    model->setData(index, value, Qt::EditRole);
+}
+
+void NetmaskPrefixDelegate::updateEditorGeometry(QWidget *editor,
+        const QStyleOptionViewItem &option, const QModelIndex &) const
+{
+    editor->setGeometry(option.rect);
+}
+
 IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     : SettingWidget(connection, parent), d(new IpV4Widget::Private)
 {
     d->ui.setupUi(this);
     d->ui.addresses->setModel(&d->model);
-    d->ui.addresses->setItemDelegateForColumn(0, new Ipv4Delegate(this));
-    d->ui.addresses->setItemDelegateForColumn(2, new Ipv4Delegate(this));
+    Ipv4Delegate * ipDelegate = new Ipv4Delegate(this);
+    NetmaskPrefixDelegate * netmaskPrefixDelegate = new NetmaskPrefixDelegate(this);
+    d->ui.addresses->setItemDelegateForColumn(0, ipDelegate);
+    d->ui.addresses->setItemDelegateForColumn(1, netmaskPrefixDelegate);
+    d->ui.addresses->setItemDelegateForColumn(2, ipDelegate);
     d->setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
     connect(d->ui.addresses->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(selectionChanged(const QItemSelection&)));
@@ -107,7 +147,6 @@ IpV4Widget::~IpV4Widget()
 
 void IpV4Widget::readConfig()
 {
-    kDebug();
     switch (d->setting->method()) {
         case Knm::Ipv4Setting::EnumMethod::Automatic:
             d->ui.method->setCurrentIndex(d->AutomaticMethodIndex);
@@ -186,7 +225,7 @@ void IpV4Widget::writeConfig()
     foreach (QString dns, dnsInput) {
         QHostAddress dnsAddr(dns);
         if (dnsAddr != QHostAddress::Null) {
-            kDebug() << "Address parses to: " << dnsAddr.toString();
+            //kDebug() << "Address parses to: " << dnsAddr.toString();
             dnsList << dnsAddr;
         }
     }
@@ -197,7 +236,6 @@ void IpV4Widget::writeConfig()
 
 void IpV4Widget::methodChanged(int currentIndex)
 {
-    kDebug() << currentIndex;
     if (currentIndex == d->AutomaticMethodIndex) {
         d->ui.addresses->setEnabled(false);
         d->ui.dns->setEnabled(false);
@@ -238,18 +276,12 @@ void IpV4Widget::addIpClicked()
 
 void IpV4Widget::removeIpClicked()
 {
-#if 1
     QItemSelectionModel * selectionModel = d->ui.addresses->selectionModel();
     if (selectionModel->hasSelection()) {
         QModelIndexList indexes = selectionModel->selectedIndexes();
         d->model.takeRow(indexes[0].row());
     }
     d->ui.btnRemoveAddress->setEnabled(false);
-//QList<QTreeWidgetItem*> items = d->ui.addresses->selectedItems();
-    //if (items.count()) {
-    //    delete items.first();
-    //}
-#endif
 }
 
 void IpV4Widget::selectionChanged(const QItemSelection & selected)

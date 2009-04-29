@@ -51,6 +51,24 @@ public:
             const QStyleOptionViewItem &option, const QModelIndex &index) const;
 };
 
+class NetmaskPrefixDelegate : public QItemDelegate
+{
+Q_OBJECT
+public:
+    NetmaskPrefixDelegate(QObject * parent = 0);
+    virtual ~NetmaskPrefixDelegate();
+
+    QWidget * createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+            const QModelIndex &index) const;
+    void setEditorData(QWidget *editor, const QModelIndex &index) const;
+
+    void setModelData(QWidget *editor, QAbstractItemModel *model,
+            const QModelIndex &index) const;
+
+    void updateEditorGeometry(QWidget *editor,
+            const QStyleOptionViewItem &option, const QModelIndex &index) const;
+};
+
 class KNM_EXPORT IpV4Widget : public SettingWidget
 {
 Q_OBJECT
