@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>248</width>
+    <width>359</width>
     <height>212</height>
    </rect>
   </property>
@@ -28,12 +28,12 @@
     <widget class="QComboBox" name="keyType">
      <item>
       <property name="text">
-       <string>Passphrase</string>
+       <string>Passphrase (for 128 bit)</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string>Hex Key</string>
+       <string>Hex Key (for 64 or 128 bits)</string>
       </property>
      </item>
     </widget>
@@ -53,8 +53,11 @@
    </item>
    <item row="2" column="2">
     <widget class="KLineEdit" name="key">
+     <property name="inputMask">
+      <string notr="true">HHHHHHHHHHhhhhhhhhhhhhhhhh;_</string>
+     </property>
      <property name="echoMode">
-      <enum>QLineEdit::Password</enum>
+      <enum>QLineEdit::PasswordEchoOnEdit</enum>
      </property>
     </widget>
    </item>
@@ -159,14 +162,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>KComboBox</class>
    <extends>QComboBox</extends>
    <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

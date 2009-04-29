@@ -24,8 +24,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "securitywidget.h"
 
 #include <QString>
+#include <QValidator>
 
 #include <KSharedConfig>
+
+class WepHexValidator : public QValidator
+{
+Q_OBJECT
+public:
+    WepHexValidator(QObject * parent);
+    virtual State validate(QString & input, int & pos);
+};
 
 class WepWidget : public SecurityWidget
 {

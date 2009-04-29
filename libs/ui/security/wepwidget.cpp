@@ -32,6 +32,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/802-11-wireless-security.h"
 #include "connection.h"
 
+WepHexValidator::WepHexValidator(QObject * parent) : QValidator(parent)
+{
+}
+
+QValidator::State WepHexValidator::validate(QString & input, int & pos)
+{
+    if (input.length() == 10 || input.length() == 26)
+        return QValidator::Acceptable;
+    else if (input.length() > 10 && input.length() < 26)
+        return QValidator::Intermediate;
+    else return QValidator::Invalid;
+}
+
 class WepWidget::Private
 {
 public:
@@ -40,6 +53,7 @@ public:
     QStringList keys;
     int keyIndex;
     Knm::WirelessSecuritySetting * setting;
+    WepHexValidator * validator;
 };
 
 WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * parent)
@@ -49,9 +63,12 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
     d->keys << "" << "" << "" << "";
     d->keyIndex = 0;
     d->setting = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
+    d->validator = new WepHexValidator(this);
+
     d->ui.setupUi(this);
     d->ui.passphrase->setEchoMode(QLineEdit::Password);
     d->ui.key->setEchoMode(QLineEdit::Password);
+    d->ui.key->setValidator(d->validator);
     keyTypeChanged(0);//initialize for passphrase
 
     connect(d->ui.keyType, SIGNAL(currentIndexChanged(int)), this, SLOT(keyTypeChanged(int)));
@@ -101,7 +118,12 @@ void WepWidget::chkShowPassToggled(bool on)
 
 bool WepWidget::validate() const
 {
-    return true;
+    if (d->ui.keyType->currentIndex() == 1) {
+        return d->ui.key->hasAcceptableInput();
+    }
+    else {
+        return true;
+    }
 }
 
 void WepWidget::readConfig()
