@@ -36,7 +36,7 @@ WepHexValidator::WepHexValidator(QObject * parent) : QValidator(parent)
 {
 }
 
-QValidator::State WepHexValidator::validate(QString & input, int & pos)
+QValidator::State WepHexValidator::validate(QString & input, int & pos) const
 {
     if (input.length() == 10 || input.length() == 26)
         return QValidator::Acceptable;

@@ -33,7 +33,7 @@ class WepHexValidator : public QValidator
 Q_OBJECT
 public:
     WepHexValidator(QObject * parent);
-    virtual State validate(QString & input, int & pos);
+    virtual State validate(QString & input, int & pos) const;
 };
 
 class WepWidget : public SecurityWidget
