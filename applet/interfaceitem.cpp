@@ -274,24 +274,26 @@ void InterfaceItem::activeConnectionsChanged()
     foreach (QString conn, activeConnections) {
         OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
                                                                         conn, QDBusConnection::systemBus(), 0);
-        foreach (QDBusObjectPath path, candidate.devices()) {
-            if (path.path() == m_iface->uni()) {
-                // this device is using the connection
-                serviceName = candidate.serviceName();
-                connectionObjectPath = candidate.connection();
-                NetworkManagerSettings * service = 0;
-                if (serviceName == NM_DBUS_SERVICE_USER_SETTINGS) {
-                    service = m_userSettings;
-                }
-                if (serviceName == NM_DBUS_SERVICE_SYSTEM_SETTINGS) {
-                    service = m_systemSettings;
-                }
+        if (candidate.isValid()) { // in case the Solid backend is broken and returns bad paths.
+            foreach (QDBusObjectPath path, candidate.devices()) {
+                if (path.path() == m_iface->uni()) {
+                    // this device is using the connection
+                    serviceName = candidate.serviceName();
+                    connectionObjectPath = candidate.connection();
+                    NetworkManagerSettings * service = 0;
+                    if (serviceName == NM_DBUS_SERVICE_USER_SETTINGS) {
+                        service = m_userSettings;
+                    }
+                    if (serviceName == NM_DBUS_SERVICE_SYSTEM_SETTINGS) {
+                        service = m_systemSettings;
+                    }
 
-                if (service && service->isValid()) { // it's possible that the service is no longer running
-                                                     // but provided a connection in the past
-                    RemoteConnection * connection = service->findConnection(connectionObjectPath.path());
-                    if (connection) {
-                        newConnectionList.append(ActiveConnectionPair(conn, connection));
+                    if (service && service->isValid()) { // it's possible that the service is no longer running
+                        // but provided a connection in the past
+                        RemoteConnection * connection = service->findConnection(connectionObjectPath.path());
+                        if (connection) {
+                            newConnectionList.append(ActiveConnectionPair(conn, connection));
+                        }
                     }
                 }
             }
