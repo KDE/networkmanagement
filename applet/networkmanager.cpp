@@ -68,7 +68,7 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Con
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
-    : Plasma::PopupApplet(parent, args), m_iconPerDevice(false), m_svg(0)
+    : Plasma::PopupApplet(parent, args), m_iconPerDevice(false), m_svg(0), m_wifiGroup(0)
 {
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
