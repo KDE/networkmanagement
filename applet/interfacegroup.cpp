@@ -172,7 +172,7 @@ void InterfaceGroup::updateNetworks()
 */
     if (m_enabled) {
         foreach (AbstractWirelessNetwork * i, networksToShow()) {
-            addNetworkInternal(i->ssid());
+            addWirelessNetworkInternal(i->ssid());
         }
         //kDebug() << "Now ... " << m_networks.keys();
     } else {
@@ -315,7 +315,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
     emit updateLayout();
 }
 
-void InterfaceGroup::addNetworkInternal(const QString & ssid)
+void InterfaceGroup::addWirelessNetworkInternal(const QString & ssid)
 {
     //kDebug() << "Adding network:" << ssid << m_networks.keys();
     if (!m_networks.contains(ssid)) {
