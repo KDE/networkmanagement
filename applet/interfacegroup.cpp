@@ -240,16 +240,16 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
 {
     Q_ASSERT(iface);
     if (!m_interfaces.contains(iface->uni())) {
-        InterfaceItem * interface = 0;
-        WiredInterfaceItem * wiredinterface = 0;
-        WirelessInterfaceItem * wirelessinterface = 0;
-        SerialInterfaceItem * serialinterface = 0;
-        ConnectionInspector * inspector = 0;
         if (iface->type() != m_type) {
             return;
         }
+        InterfaceItem * interface = 0;
+        ConnectionInspector * inspector = 0;
+
         switch (iface->type()) {
             case Solid::Control::NetworkInterface::Ieee80211:
+            {
+                WirelessInterfaceItem * wirelessinterface = 0;
                 wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
                 wirelessinterface->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
@@ -267,31 +267,41 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 inspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface), wirelessinterface->wirelessEnvironment());
                 kDebug() << "WiFi added";
                 break;
+            }
             case Solid::Control::NetworkInterface::Serial:
-                interface = serialinterface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
+            {
+                interface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
                         m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 inspector = new PppoeConnectionInspector;
                 break;
+            }
             case Solid::Control::NetworkInterface::Gsm:
-                interface = serialinterface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
+            {
+                interface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
                         m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 // TODO: When ModemManager support is added, connect signals from the SII to
                 // reassesConnectionList
                 inspector = new GsmConnectionInspector;
                 break;
+            }
             case Solid::Control::NetworkInterface::Cdma:
-                interface = serialinterface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
+            {
+                interface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
                         m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 inspector = new CdmaConnectionInspector;
                 // TODO: When ModemManager support is added, connect signals from the SII to
                 // reassesConnectionList
                 break;
+            }
             default:
             case Solid::Control::NetworkInterface::Ieee8023:
+            {
+                WiredInterfaceItem * wiredinterface = 0;
                 interface = wiredinterface = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface),
                         m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 inspector = new WiredConnectionInspector(static_cast<Solid::Control::WiredNetworkInterface*>(iface));
                 break;
+            }
         }
         interface->setConnectionInspector(inspector);
         interface->setEnabled(m_enabled);
@@ -303,7 +313,6 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
     }
     show();
     emit updateLayout();
-
 }
 
 void InterfaceGroup::addNetworkInternal(const QString & ssid)
