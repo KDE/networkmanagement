@@ -879,9 +879,7 @@ void NetworkManagerApplet::managerStatusChanged(Solid::Networking::Status status
 
 bool NetworkManagerApplet::hasInterfaceOfType(Solid::Control::NetworkInterface::Type type)
 {
-    foreach (Solid::Control::NetworkInterface * interface,
-            m_interfaces) {
-
+    foreach (Solid::Control::NetworkInterface * interface, m_interfaces) {
         if (interface->type() == type) {
             return true;
         }

@@ -59,6 +59,7 @@ private:
     QString m_security;
     Plasma::IconWidget * m_securityIcon;
     QString m_securityIconName;
+    QString m_securityIconToolTip;
     int m_strength;
     QString m_ssid;
 };

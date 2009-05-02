@@ -93,6 +93,7 @@ void WirelessConnectionItem::setupItem()
 
     m_securityIcon = new Plasma::IconWidget(this);
     m_securityIcon->setIcon(m_securityIconName);
+    m_securityIcon->setToolTip(m_securityIconToolTip);
     m_securityIcon->setMinimumHeight(22);
     m_securityIcon->setMaximumHeight(22);
     m_layout->addItem(m_securityIcon, 0, 2, 1, 1, Qt::AlignLeft);
@@ -145,18 +146,23 @@ void WirelessConnectionItem::readSettings() {
         }
     }
     if (m_security.isEmpty()) {
-        m_securityIconName = "object-unlocked";
+        m_securityIconName = "security-low";
+        m_securityIconToolTip = i18nc("no encryption in current network", "Unencrypted network");
     } else if (m_security == QLatin1String("wep")) {
         // security-weak
-        m_securityIconName = "object-locked";
+        m_securityIconName = "security-medium";
+        m_securityIconToolTip = i18nc("tooltip of the security icon in the connection list", "Weakly encrypted network (WEP)");
     } else if (m_security == QLatin1String("wpa-psk")) {
         // security-medium
-        m_securityIconName = "object-locked";
+        m_securityIconName = "security-high";
+        m_securityIconToolTip = i18nc("tooltip of the security icon in the connection list", "Encrypted network (WPA-PSK)");
     } else if (m_security == QLatin1String("wpa-eap")) {
         // security-strong
-        m_securityIconName = "object-locked";
+        m_securityIconName = "security-high";
+        m_securityIconToolTip = i18nc("tooltip of the security icon in the connection list", "Encrypted network (WPA-EAP)");
     } else {
-        m_securityIconName = "object-locked-finished"; // FIXME: Shouldn't we always have a security setting?
+        m_securityIconName = QString(); // FIXME: Shouldn't we always have a security setting?
+        m_securityIconToolTip = QString();
     }
 }
 

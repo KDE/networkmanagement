@@ -166,21 +166,22 @@ void WirelessInterfaceItem::setConnectionInfo()
                     break;
                 }
             }
+
             if (security.isEmpty()) {
-                m_connectionInfoIcon->setIcon("object-unlocked");
+                m_connectionInfoIcon->setIcon("security-low");
                 m_connectionInfoIcon->setToolTip(i18n("Not secured"));
             } else if (security == QLatin1String("wep")) {
                 // security-weak
-                m_connectionInfoIcon->setIcon("object-locked");
-                m_connectionInfoIcon->setToolTip(i18n("WEP Encryption"));
+                m_connectionInfoIcon->setIcon("security-medium");
+                m_connectionInfoIcon->setToolTip(i18nc("tooltip of the security icon in the connection list", "Weakly encrypted network (WEP)"));
             } else if (security == QLatin1String("wpa-psk")) {
                 // security-medium
-                m_connectionInfoIcon->setToolTip(i18n("WPA-PSK Encryption"));
-                m_connectionInfoIcon->setIcon("object-locked");
+                m_connectionInfoIcon->setToolTip(i18nc("tooltip of the security icon in the connection list", "Encrypted network (WPA-PSK)"));
+                m_connectionInfoIcon->setIcon("security-high");
             } else if (security == QLatin1String("wpa-eap")) {
                 // security-strong
-                m_connectionInfoIcon->setToolTip(i18n("WPA-EAP Encryption"));
-                m_connectionInfoIcon->setIcon("object-locked");
+                m_connectionInfoIcon->setToolTip(i18nc("tooltip of the security icon in the connection list", "Encrypted network (WPA-EAP)"));
+                m_connectionInfoIcon->setIcon("security-high");
             }
 
             // retrieve the name of the connection, or put the ssid into the label
