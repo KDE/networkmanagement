@@ -24,5 +24,6 @@ target_link_libraries(testnewstorage knmstorage ${KDE4_KDEUI_LIBS})
 ## next target: hacked up qdbus that can display NM data types
 
 kde4_add_executable(qdbusfornm qdbusfornm.cpp )
-target_link_libraries(qdbusfornm knmstorage ${QT_QTDBUS_LIBRARY} ${QT_QTXML_LIBRARY} )
+target_link_libraries(qdbusfornm knmstorage ${QT_QTDBUS_LIBRARY} ${QT_QTXML_LIBRARY} 
+                      ${KDE4_KDECORE_LIBS})
 
