@@ -85,7 +85,8 @@ QGraphicsWidget* GeneralExtender::graphicsWidget()
     m_connectionsButton->setIcon("networkmanager");
     m_connectionsButton->setOrientation(Qt::Horizontal);
     m_connectionsButton->setText(i18nc("button in general settings extender", "Manage Connections..."));
-    m_connectionsButton->setPreferredHeight(KIconLoader::SizeMedium);
+    m_connectionsButton->setMaximumHeight(KIconLoader::SizeMedium);
+    m_connectionsButton->setMinimumHeight(KIconLoader::SizeMedium);
     m_connectionsButton->setDrawBackground(true);
 #if KDE_IS_VERSION(4,2,60)
     m_connectionsButton->setTextBackgroundColor(QColor());
