@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <QWidget>
+#include <QValidator>
 
 #include <KDebug>
 
@@ -32,19 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/802-11-wireless-security.h"
 #include "connection.h"
 
-WepHexValidator::WepHexValidator(QObject * parent) : QValidator(parent)
-{
-}
-
-QValidator::State WepHexValidator::validate(QString & input, int & pos) const
-{
-    if (input.length() == 10 || input.length() == 26)
-        return QValidator::Acceptable;
-    else if (input.length() > 10 && input.length() < 26)
-        return QValidator::Intermediate;
-    else return QValidator::Invalid;
-}
-
 class WepWidget::Private
 {
 public:
@@ -53,7 +41,7 @@ public:
     QStringList keys;
     int keyIndex;
     Knm::WirelessSecuritySetting * setting;
-    WepHexValidator * validator;
+    QRegExpValidator * hexKeyValidator;
 };
 
 WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * parent)
@@ -63,12 +51,12 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
     d->keys << "" << "" << "" << "";
     d->keyIndex = 0;
     d->setting = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
-    d->validator = new WepHexValidator(this);
+    d->hexKeyValidator = new QRegExpValidator(QRegExp("^([0-9]|[a-f]|[A-F]){10,26}$"), this);
 
     d->ui.setupUi(this);
     d->ui.passphrase->setEchoMode(QLineEdit::Password);
     d->ui.key->setEchoMode(QLineEdit::Password);
-    d->ui.key->setValidator(d->validator);
+    d->ui.key->setValidator(d->hexKeyValidator);
     keyTypeChanged(0);//initialize for passphrase
 
     connect(d->ui.keyType, SIGNAL(currentIndexChanged(int)), this, SLOT(keyTypeChanged(int)));
@@ -89,6 +77,7 @@ void WepWidget::keyTypeChanged(int type)
             d->ui.passphrase->show();
             d->ui.keyLabel->hide();
             d->ui.key->hide();
+            d->ui.passphrase->setText(d->ui.key->text());
             d->format = WepWidget::Passphrase;
             break;
         case 1: //hex key
@@ -96,6 +85,16 @@ void WepWidget::keyTypeChanged(int type)
             d->ui.passphrase->hide();
             d->ui.keyLabel->show();
             d->ui.key->show();
+
+            // if the passphrase entered up until now is valid as hex key, copy it
+            QString pass = d->ui.passphrase->text();
+            int position;
+            if (d->hexKeyValidator->validate(pass, position) == QValidator::Invalid) {
+                d->ui.key->clear();
+            } else {
+                d->ui.key->setText(pass);
+            }
+
             d->format = WepWidget::Hex;
             break;
     }

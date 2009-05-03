@@ -38,23 +38,10 @@
      </item>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="QLabel" name="passphraseLabel">
-     <property name="text">
-      <string>Passphrase:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QLineEdit" name="passphrase"/>
-   </item>
    <item row="2" column="2">
     <widget class="KLineEdit" name="key">
      <property name="inputMask">
-      <string notr="true">HHHHHHHHHHhhhhhhhhhhhhhhhh;_</string>
+      <string notr="true"/>
      </property>
      <property name="echoMode">
       <enum>QLineEdit::PasswordEchoOnEdit</enum>
@@ -158,18 +145,34 @@
      </property>
     </widget>
    </item>
+   <item row="1" column="0" colspan="2">
+    <widget class="QLabel" name="passphraseLabel">
+     <property name="text">
+      <string>&amp;Passphrase:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>passphrase</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="passphrase"/>
+   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
