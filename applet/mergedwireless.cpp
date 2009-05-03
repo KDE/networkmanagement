@@ -164,7 +164,7 @@ void WirelessEnvironmentMerged::addWirelessEnvironment(WirelessEnvironment * wEn
     Q_D(WirelessEnvironmentMerged);
     d->environments.append(wEnv);
 
-    foreach (QString ssid, wEnv->networks()) {
+    foreach (const QString &ssid, wEnv->networks()) {
         addNetworkInternal(wEnv, qobject_cast<WirelessNetwork*>(wEnv->findNetwork(ssid)));
     }
 

@@ -271,11 +271,11 @@ void InterfaceItem::activeConnectionsChanged()
     QDBusObjectPath connectionObjectPath;
     //kDebug() << "... updating active connection list for " << m_iface->uni() << m_iface->interfaceName();
     // find the active connection on this device
-    foreach (QString conn, activeConnections) {
+    foreach (const QString &conn, activeConnections) {
         OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
                                                                         conn, QDBusConnection::systemBus(), 0);
         if (candidate.isValid()) { // in case the Solid backend is broken and returns bad paths.
-            foreach (QDBusObjectPath path, candidate.devices()) {
+            foreach (const QDBusObjectPath &path, candidate.devices()) {
                 if (path.path() == m_iface->uni()) {
                     // this device is using the connection
                     serviceName = candidate.serviceName();
@@ -302,7 +302,7 @@ void InterfaceItem::activeConnectionsChanged()
     m_activeConnections = newConnectionList;
     if (!m_activeConnections.isEmpty()) {
         kDebug() << m_iface->interfaceName() << "Active connections:";
-        foreach ( ActiveConnectionPair connection, m_activeConnections) {
+        foreach (const ActiveConnectionPair &connection, m_activeConnections) {
             kDebug() << connection.first << connection.second->path();
         }
     } else {
@@ -440,7 +440,7 @@ void InterfaceItem::setActiveConnection(int state)
     m_icon->setEnabled(true);
     QStringList connectionIds;
     //kDebug();
-    foreach (ActiveConnectionPair connection, m_activeConnections) {
+    foreach (const ActiveConnectionPair &connection, m_activeConnections) {
         if (connection.second->isValid()) {
             //connection name
             connectionIds.append(connection.second->id());
@@ -497,7 +497,7 @@ void InterfaceItem::serviceDisappeared(NetworkManagerSettings* service)
 QList<RemoteConnection*> InterfaceItem::availableConnections() const
 {
     QList<RemoteConnection*> rconnections;
-    foreach (QString conn, m_userSettings->connections()) {
+    foreach (const QString &conn, m_userSettings->connections()) {
        RemoteConnection *rconnection = m_userSettings->findConnection(conn);
        if (rconnection && rconnection->type() == m_iface->type()) {
            rconnections << rconnection;

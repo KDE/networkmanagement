@@ -207,7 +207,7 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
     //kDebug() << "m_conn empty?" << m_connections.isEmpty() << "m_userSettings" << m_userSettings->isValid();
 
     // check whether we have a connection for every ssid seen, if so, don't show it.
-    foreach (QString ssid, m_wirelessEnvironment->networks()) {
+    foreach (const QString &ssid, m_wirelessEnvironment->networks()) {
         AbstractWirelessNetwork * net = m_wirelessEnvironment->findNetwork(ssid);
         // trying out excluding networks based on any existing connection
         bool connectionForNetworkExists = false;

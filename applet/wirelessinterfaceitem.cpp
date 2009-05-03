@@ -122,7 +122,7 @@ void WirelessInterfaceItem::connectButtonClicked()
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
         case Solid::Control::NetworkInterface::Activated: // deactivate active connections
-            foreach ( ActiveConnectionPair connection, m_activeConnections) {
+            foreach (const ActiveConnectionPair &connection, m_activeConnections) {
                 kDebug() << "Deactivating connection" << connection.second->path() << connection;
                 Solid::Control::NetworkManager::deactivateConnection(connection.first);
             }
@@ -149,7 +149,7 @@ void WirelessInterfaceItem::setConnectionInfo()
         QVariantMapMap settings;
         if (!m_activeConnections.isEmpty()) {
             QString security;
-            foreach (ActiveConnectionPair conn, m_activeConnections) {
+            foreach (const ActiveConnectionPair &conn, m_activeConnections) {
                 if (!conn.second) {
                     continue;
                 }

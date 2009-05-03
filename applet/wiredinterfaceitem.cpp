@@ -63,7 +63,7 @@ void WiredInterfaceItem::connectButtonClicked()
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
         case Solid::Control::NetworkInterface::Activated: // deactivate active connections
-            foreach ( ActiveConnectionPair connection, m_activeConnections) {
+            foreach (const ActiveConnectionPair &connection, m_activeConnections) {
                 Solid::Control::NetworkManager::deactivateConnection(connection.second->path());
             }
             break;

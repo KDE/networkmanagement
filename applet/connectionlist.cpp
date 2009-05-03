@@ -69,7 +69,7 @@ bool ConnectionList::assessConnections(NetworkManagerSettings * service)
     bool added = false;
     if (service->isValid()) {
         //kDebug() << service->objectName() << "has connections" << service->connections();
-        foreach (QString connectionPath, service->connections() ) {
+        foreach (const QString &connectionPath, service->connections() ) {
             added |= processConnection(service, connectionPath);
         }
     }
