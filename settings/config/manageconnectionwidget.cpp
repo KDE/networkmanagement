@@ -94,6 +94,8 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     mLastUsedTimer = new QTimer(this);
     connect(mLastUsedTimer, SIGNAL(timeout()), SLOT(updateLastUsed()));
     mLastUsedTimer->start(1000 * 60);
+
+    setButtons(KCModule::Help | KCModule::Apply);
 }
 
 ManageConnectionWidget::~ManageConnectionWidget()
