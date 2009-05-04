@@ -58,13 +58,14 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
     d->ui.key->setEchoMode(QLineEdit::Password);
     d->ui.key->setValidator(d->hexKeyValidator);
 
+    connect(d->ui.keyType, SIGNAL(currentIndexChanged(int)), this, SLOT(keyTypeChanged(int)));
+
     if (d->format == WepWidget::Passphrase) {
-        keyTypeChanged(0);
+        d->ui.keyType->setCurrentIndex(0);
     } else {
-        keyTypeChanged(1);
+        d->ui.keyType->setCurrentIndex(1);
     }
 
-    connect(d->ui.keyType, SIGNAL(currentIndexChanged(int)), this, SLOT(keyTypeChanged(int)));
     connect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
     connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
 }
@@ -195,9 +196,14 @@ void WepWidget::readSecrets()
     d->keys.replace(3, d->setting->wepkey3());
 
     // passphrase
+    if(d->keys.value(d->keyIndex).isEmpty()) {
+        d->ui.keyType->setCurrentIndex(0);
+    } else {
+        d->ui.keyType->setCurrentIndex(1);
+    }
+
     d->ui.key->setText(d->keys.value(d->keyIndex));
     d->ui.passphrase->setText(d->setting->weppassphrase());
-    keyTypeChanged(d->setting->weppassphrase().isEmpty() ? 1 : 0 );
 }
 
 #include "wepwidget.moc"
