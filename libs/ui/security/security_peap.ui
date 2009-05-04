@@ -53,6 +53,9 @@
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
+       <property name="buddy">
+        <cstring>kcfg_phase1peapver</cstring>
+       </property>
       </widget>
      </item>
      <item row="3" column="0">
@@ -179,6 +182,15 @@
    <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>anonymousidentity</tabstop>
+  <tabstop>cacert</tabstop>
+  <tabstop>kcfg_phase1peapver</tabstop>
+  <tabstop>phase2autheap</tabstop>
+  <tabstop>identity</tabstop>
+  <tabstop>password</tabstop>
+  <tabstop>chkShowPassword</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
