@@ -175,6 +175,14 @@
    <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>keyType</tabstop>
+  <tabstop>passphrase</tabstop>
+  <tabstop>key</tabstop>
+  <tabstop>chkShowPass</tabstop>
+  <tabstop>weptxkeyindex</tabstop>
+  <tabstop>authalg</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
