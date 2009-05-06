@@ -72,7 +72,7 @@ QGraphicsWidget* GeneralExtender::graphicsWidget()
     m_rfCheckBox = new Plasma::CheckBox(this);
     m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
     m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
-    m_rfCheckBox->setText(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable Wireless"));
+    m_rfCheckBox->setText(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable wireless"));
     m_layout->addItem(m_rfCheckBox);
     connect(m_rfCheckBox, SIGNAL(toggled(bool)),
             SLOT(wirelessEnabledToggled(bool)));

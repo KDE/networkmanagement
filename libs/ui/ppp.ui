@@ -113,7 +113,7 @@
       <item>
        <widget class="QCheckBox" name="bsdcomp" >
         <property name="text" >
-         <string>Allow BSD Compression</string>
+         <string>Allow BSD compression</string>
         </property>
        </widget>
       </item>
@@ -127,7 +127,7 @@
       <item>
        <widget class="QCheckBox" name="vjcomp" >
         <property name="text" >
-         <string>Use TCP Header compression</string>
+         <string>Use TCP header compression</string>
         </property>
        </widget>
       </item>
@@ -137,7 +137,7 @@
    <item>
     <widget class="QCheckBox" name="pppecho" >
      <property name="text" >
-      <string>Send PPP Echo packets</string>
+      <string>Send PPP echo packets</string>
      </property>
     </widget>
    </item>

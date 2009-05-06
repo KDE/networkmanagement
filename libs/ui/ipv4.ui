@@ -48,7 +48,7 @@
        </item>
        <item>
         <property name="text">
-         <string>DHCP with manual DNS</string>
+         <string>DHCP With Manual DNS</string>
         </property>
        </item>
       </widget>

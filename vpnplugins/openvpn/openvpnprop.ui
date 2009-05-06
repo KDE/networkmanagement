@@ -48,7 +48,7 @@
          <item row="1" column="0">
           <widget class="QLabel" name="labelConnectionType">
            <property name="text">
-            <string>Connection &amp;Type:</string>
+            <string>Connection &amp;type:</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -422,7 +422,7 @@
          <item>
           <widget class="QLabel" name="label_3">
            <property name="text">
-            <string>Port</string>
+            <string>Port:</string>
            </property>
           </widget>
          </item>
@@ -448,7 +448,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Use &amp;Default</string>
+            <string>Use &amp;default</string>
            </property>
            <property name="checked">
             <bool>true</bool>
@@ -489,7 +489,7 @@
             </sizepolicy>
            </property>
            <property name="text">
-            <string>Use cipher</string>
+            <string>Use cipher:</string>
            </property>
           </widget>
          </item>
@@ -513,7 +513,7 @@
          <item>
           <widget class="QCheckBox" name="chkUseTLS">
            <property name="text">
-            <string>Use TLS auth</string>
+            <string>Use TLS auth:</string>
            </property>
           </widget>
          </item>
@@ -553,7 +553,7 @@
        <item>
         <widget class="QCheckBox" name="chkIPAdresses">
          <property name="text">
-          <string>Only use VPN connection for these addresses (eg: 172.16.0.0/16 10.11.12.0/24)</string>
+          <string>Only use VPN connection for these addresses (eg: 172.16.0.0/16 10.11.12.0/24):</string>
          </property>
         </widget>
        </item>

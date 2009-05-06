@@ -28,7 +28,7 @@
         <string>Example: 11:22:33:44:55:66</string>
        </property>
        <property name="text">
-        <string>&amp;MAC Address:</string>
+        <string>&amp;MAC address:</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

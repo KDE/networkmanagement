@@ -142,7 +142,7 @@ void ConnectionSecretsJob::doAskUser()
     if (m_settingWidget) {
         m_settingWidget->readConfig();
         m_askUserDialog = new KDialog(0);
-        m_askUserDialog->setCaption(i18nc("dialog caption for network secrets request", "Enter network connection secrets"));
+        m_askUserDialog->setCaption(i18nc("dialog caption for network secrets request", "Enter Network Connection Secrets"));
         m_askUserDialog->setMainWidget(m_settingWidget);
         m_askUserDialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
 

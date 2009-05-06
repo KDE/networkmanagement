@@ -38,7 +38,7 @@
          </column>
          <column>
           <property name="text" >
-           <string>Last used</string>
+           <string>Last Used</string>
           </property>
          </column>
         </widget>
@@ -71,7 +71,7 @@
          </column>
          <column>
           <property name="text" >
-           <string>Last used</string>
+           <string>Last Used</string>
           </property>
          </column>
         </widget>
@@ -101,7 +101,7 @@
          </column>
          <column>
           <property name="text" >
-           <string>Last used</string>
+           <string>Last Used</string>
           </property>
          </column>
         </widget>
@@ -131,7 +131,7 @@
          </column>
          <column>
           <property name="text" >
-           <string>Last used</string>
+           <string>Last Used</string>
           </property>
          </column>
         </widget>
@@ -161,7 +161,7 @@
          </column>
          <column>
           <property name="text" >
-           <string>Last used</string>
+           <string>Last Used</string>
           </property>
          </column>
         </widget>
@@ -188,14 +188,14 @@
      <item>
       <widget class="QPushButton" name="addConnection" >
        <property name="text" >
-        <string>&amp;Add</string>
+        <string>&amp;Add...</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="editConnection" >
        <property name="text" >
-        <string>&amp;Edit</string>
+        <string>&amp;Edit...</string>
        </property>
       </widget>
      </item>

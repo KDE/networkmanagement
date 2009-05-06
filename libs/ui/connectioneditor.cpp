@@ -64,7 +64,7 @@ ConnectionEditor::~ConnectionEditor()
 void ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariantList &args)
 {
     KDialog configDialog(0);
-    configDialog.setCaption(i18nc("Edit connection dialog caption", "Edit network connection"));
+    configDialog.setCaption(i18nc("Edit connection dialog caption", "Edit Network Connection"));
     configDialog.setWindowIcon(KIcon("networkmanager"));
 
     ConnectionPreferences * cprefs = editorForConnectionType(false, &configDialog, type, args);
@@ -83,7 +83,7 @@ void ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariant
 QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type type, const QVariantList &otherArgs)
 {
     KDialog configDialog(0);
-    configDialog.setCaption(i18nc("Add connection dialog caption", "Add network connection"));
+    configDialog.setCaption(i18nc("Add connection dialog caption", "Add Network Connection"));
     configDialog.setWindowIcon(KIcon("networkmanager"));
 
     QVariantList args;

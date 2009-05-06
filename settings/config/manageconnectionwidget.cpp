@@ -292,7 +292,7 @@ void ManageConnectionWidget::deleteClicked()
     }
     KMessageBox::Options options;
     options |= KMessageBox::Dangerous;
-    if ( KMessageBox::warningYesNo(this, i18nc("Warning message on attempting to delete a connection", "Do you really want to delete the connection '%1'?",item->data(0, Qt::DisplayRole).toString()), i18n("Confirm delete") /*, QLatin1String("ConfirmDeleteConnection")*/) == KMessageBox::Yes) {
+    if ( KMessageBox::warningYesNo(this, i18nc("Warning message on attempting to delete a connection", "Do you really want to delete the connection '%1'?",item->data(0, Qt::DisplayRole).toString()), i18n("Confirm Delete") /*, QLatin1String("ConfirmDeleteConnection")*/) == KMessageBox::Yes) {
         // delete it
         // remove it from our hash
         mUuidItemHash.remove(connectionId);

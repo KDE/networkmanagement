@@ -28,7 +28,7 @@
      <item>
       <widget class="QCheckBox" name="checkBox" >
        <property name="text" >
-        <string>Use Authentication</string>
+        <string>Use authentication:</string>
        </property>
       </widget>
      </item>
