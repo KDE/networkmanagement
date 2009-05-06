@@ -140,6 +140,17 @@ void NetworkSettings::networkInterfaceAdded(const QString& uni)
     }
 }
 
+#if QT_VERSION < 0x040500
+inline bool operator==(const QDBusObjectPath &lhs, const QDBusObjectPath &rhs)
+{ return lhs.path() == rhs.path(); }
+
+inline bool operator!=(const QDBusObjectPath &lhs, const QDBusObjectPath &rhs)
+{ return lhs.path() != rhs.path(); }
+
+inline bool operator<(const QDBusObjectPath &lhs, const QDBusObjectPath &rhs)
+{ return lhs.path() < rhs.path(); }
+#endif
+
 QList<BusConnection*> NetworkSettings::busConnectionForInterface(Solid::Control::NetworkInterface* interface) {
     QList<BusConnection*> bcs;
     QStringList active(Solid::Control::NetworkManager::activeConnections());
