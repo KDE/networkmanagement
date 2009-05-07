@@ -169,7 +169,7 @@ void WirelessInterfaceItem::setConnectionInfo()
 
             if (security.isEmpty()) {
                 m_connectionInfoIcon->setIcon("security-low");
-                m_connectionInfoIcon->setToolTip(i18n("Not secured"));
+                m_connectionInfoIcon->setToolTip(i18nc("wireless network is not encrypted", "Unencrypted network"));
             } else if (security == QLatin1String("wep")) {
                 // security-weak
                 m_connectionInfoIcon->setIcon("security-medium");
