@@ -9,6 +9,7 @@ set(networkmanager_SRCS
     connectionitem.cpp
     connectioninspector.cpp
     connectionlist.cpp
+    hiddenwirelessnetworkitem.cpp
     mergedwireless.cpp
     networkmanager.cpp
     interfacegroup.cpp

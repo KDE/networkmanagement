@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 Copyright 2008 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
@@ -894,4 +894,16 @@ void NetworkManagerApplet::hideVpnGroup()
     showVpn(false);
     Plasma::Applet::configNeedsSaving();
 }
+
+void NetworkManagerApplet::popupEvent(bool show)
+{
+    // Notify the wireless extender of popup events so it can revert its hidden wireless network
+    // item to button mode
+    Plasma::ExtenderItem *eItem = extender()->item("wireless");
+    if (eItem) {
+        InterfaceGroup * wireless = static_cast<InterfaceGroup*>(eItem->widget());
+        wireless->popupEvent(show);
+    }
+}
+
 #include "networkmanager.moc"

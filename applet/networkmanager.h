@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -130,7 +130,10 @@ protected Q_SLOTS:
     void configAccepted();
 protected:
     void createConfigurationInterface(KConfigDialog *parent);
-
+    /**
+     * Reimplemented from Plasma::PopupApplet
+     */
+    void popupEvent(bool);
 private Q_SLOTS:
     void networkInterfaceAdded(const QString&);
     void networkInterfaceRemoved(const QString&);

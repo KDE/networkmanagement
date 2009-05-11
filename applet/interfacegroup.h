@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -29,6 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "nm-exported-connectioninterface.h"
 
 class AbstractWirelessNetwork;
+class HiddenWirelessNetworkItem;
+class WirelessConnectionInspector;
 class WirelessEnvironmentMerged;
 class WirelessNetworkItem;
 class InterfaceItem;
@@ -48,6 +50,11 @@ public:
     void setupFooter();
     void setNetworksLimit( int wlans );
 
+    /**
+     * Inform the widget of a popupEvent in the containing applet popup.
+     */
+    virtual void popupEvent(bool show);
+
 public Q_SLOTS:
     void setEnabled(bool enabled);
 protected Q_SLOTS:
@@ -60,7 +67,6 @@ protected Q_SLOTS:
     void refreshConnectionsAndNetworks();
     void updateNetworks();
     void updateConnections();
-
 Q_SIGNALS:
     void updateLayout();
 
@@ -74,12 +80,13 @@ private:
     // list of interfaces
     QHash<QString, InterfaceItem *> m_interfaces;
     QHash<QString, WirelessNetworkItem *> m_networks;
+    HiddenWirelessNetworkItem * m_hiddenItem;
     Solid::Control::NetworkInterface::Type m_type;
     WirelessEnvironmentMerged * m_wirelessEnvironment;
     QGraphicsLinearLayout * m_interfaceLayout;
     QGraphicsLinearLayout * m_networkLayout;
     bool m_enabled;
     int m_numberOfWlans;
-    QString m_networkToConnect;
+    WirelessConnectionInspector * m_wirelessInspector;
 };
 #endif // INTERFACEGROUP_H

@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -61,7 +61,11 @@ public:
     WirelessConnectionInspector(Solid::Control::WirelessNetworkInterface* iface, WirelessEnvironment * envt);
     ~WirelessConnectionInspector();
     bool accept(RemoteConnection * connection);
+    void watchForNetworkConnection(const QString& ssid);
+    QStringList watchedNetworks() const;
+    void removeWatchForNetwork(const QString & ssid);
 private:
+    QStringList m_networksToConnect;
     Solid::Control::WirelessNetworkInterface *m_iface;
     WirelessEnvironment * m_envt;
 };

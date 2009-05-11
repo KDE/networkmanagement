@@ -1,6 +1,6 @@
 /*
 Copyright 2008 Sebastian Kügler <sebas@kde.org>
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -35,17 +35,27 @@ namespace Plasma
     class Meter;
 }
 
+class AbstractWirelessNetworkItem : public AbstractConnectableItem
+{
+Q_OBJECT
+public:
+    AbstractWirelessNetworkItem(QGraphicsItem * parent = 0);
+    virtual ~AbstractWirelessNetworkItem();
+    AbstractWirelessNetwork * net() const;
+protected:
+    AbstractWirelessNetwork * m_wirelessNetwork;
+};
+
 /**
  * Represents an wireless network for which no connection exists
  */
-class WirelessNetworkItem : public AbstractConnectableItem
+class WirelessNetworkItem : public AbstractWirelessNetworkItem
 {
 Q_OBJECT
 public:
     WirelessNetworkItem(AbstractWirelessNetwork * net, QGraphicsItem * parent = 0);
     virtual ~WirelessNetworkItem();
     void setupItem();
-    AbstractWirelessNetwork * net() const;
 private slots:
     void setStrength(QString ssid, int strength);
 private:
@@ -55,7 +65,6 @@ private:
     Plasma::Label * m_ssidLabel;
     Plasma::Meter * m_strengthMeter;
     Plasma::IconWidget * m_connectButton;
-    AbstractWirelessNetwork * m_wirelessNetwork;
     QString m_security;
     Plasma::IconWidget * m_securityIcon;
     QString m_securityIconName;

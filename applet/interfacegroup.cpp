@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -47,6 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessinterfaceitem.h"
 #include "wirelessenvironment.h"
 #include "wirelessnetworkitem.h"
+#include "hiddenwirelessnetworkitem.h"
 #include "mergedwireless.h"
 
 QDebug operator<<(QDebug s, const AbstractWirelessNetwork*wl )
@@ -126,8 +127,15 @@ void InterfaceGroup::setupHeader()
 
 void InterfaceGroup::setupFooter()
 {
-
     m_layout->addItem(m_networkLayout);
+    if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
+        m_hiddenItem = new HiddenWirelessNetworkItem(this);
+        m_hiddenItem->setupItem();
+        m_layout->addItem(m_hiddenItem);
+
+        connect(m_hiddenItem, SIGNAL(clicked(AbstractConnectableItem*)),
+                SLOT(connectToWirelessNetwork(AbstractConnectableItem*)));
+    }
     //kDebug() << m_interfaces.keys() << "Footer update";
     //kDebug() << m_interfaces.keys() << m_networks.keys() << "Footer .. CONNECT";
     connect(this, SIGNAL(connectionListUpdated()), SLOT(updateConnections()));
@@ -136,7 +144,8 @@ void InterfaceGroup::setupFooter()
 void InterfaceGroup::updateConnections()
 {
     updateNetworks();
-    if ( m_networkToConnect.isNull() )
+    QStringList watched = m_wirelessInspector->watchedNetworks();
+    if (watched.isEmpty())
         return;
 
     ServiceConnectionHash::iterator i = m_connections.begin();
@@ -144,9 +153,10 @@ void InterfaceGroup::updateConnections()
         ConnectionItem * item = i.value();
         QVariantMapMap settings = item->connection()->settings();
         QString ssid = settings[ NM_SETTING_WIRELESS_SETTING_NAME ] [ NM_SETTING_WIRELESS_SSID ].toString();
-        if ( ssid == m_networkToConnect )
+        if (watched.contains(ssid))
         {
             activateConnection( item );
+            m_wirelessInspector->removeWatchForNetwork(ssid);
             break;
         }
         ++i;
@@ -264,7 +274,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
 
                 m_wirelessEnvironment->addWirelessEnvironment(wirelessinterface->wirelessEnvironment());
                 interface = wirelessinterface;
-                inspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface), wirelessinterface->wirelessEnvironment());
+                inspector = m_wirelessInspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface), wirelessinterface->wirelessEnvironment());
                 kDebug() << "WiFi added";
                 break;
             }
@@ -408,7 +418,6 @@ void InterfaceGroup::refreshConnectionsAndNetworks()
 
 void InterfaceGroup::activateConnection(AbstractConnectableItem* item)
 {
-    m_networkToConnect.truncate( 0 );
     // tell the manager to activate the connection
     // which device??
     // HACK - take the first one
@@ -428,18 +437,23 @@ void InterfaceGroup::activateConnection(AbstractConnectableItem* item)
 
 void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
 {
-    WirelessNetworkItem * wni = qobject_cast<WirelessNetworkItem*>(item);
-    if (item) {
+    AbstractWirelessNetworkItem * wni = qobject_cast<AbstractWirelessNetworkItem*>(item);
+
+    if (wni && wni->net() ) {
+        int caps = 0, wpaFlags = 0, rsnFlags = 0;
+        if ( wni->net()->referenceAccessPoint()) {
+            caps = wni->net()->referenceAccessPoint()->capabilities();
+            wpaFlags = wni->net()->referenceAccessPoint()->wpaFlags();
+            rsnFlags = wni->net()->referenceAccessPoint()->rsnFlags();
+        }
         //kDebug() << wni->net()->referenceAccessPoint()->hardwareAddress();
         QDBusInterface kcm(QLatin1String("org.kde.NetworkManager.KCModule"), QLatin1String("/default"), QLatin1String("org.kde.kcmshell.ConnectionEditor"));
         if (kcm.isValid()) {
             kDebug() << "opening connection management dialog from running KCM";
             QVariantList args;
-            args << wni->net()->ssid()
-                << (quint32)wni->net()->referenceAccessPoint()->capabilities()
-                << (quint32)wni->net()->referenceAccessPoint()->wpaFlags()
-                << (quint32)wni->net()->referenceAccessPoint()->rsnFlags();
-            m_networkToConnect = wni->net()->ssid();
+
+            args << wni->net()->ssid() << caps << wpaFlags << rsnFlags;
+            m_wirelessInspector->watchForNetworkConnection(wni->net()->ssid());
             kcm.call(QDBus::NoBlock, "createConnection", "802-11-wireless", QVariant::fromValue(args));
         } else {
             kDebug() << "opening connection management dialog using networkmanagement_configshell";
@@ -447,15 +461,17 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
             QString moduleArgs =
                 QString::fromLatin1("'%1' %2 %3 %4")
                 .arg(wni->net()->ssid().replace('\'', "\\'"))
-                .arg(wni->net()->referenceAccessPoint()->capabilities())
-                .arg(wni->net()->referenceAccessPoint()->wpaFlags())
-                .arg(wni->net()->referenceAccessPoint()->rsnFlags());
+                .arg(caps)
+                .arg(wpaFlags)
+                .arg(rsnFlags);
 
             args << QLatin1String("create") << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("wifi_pass");
-            m_networkToConnect = wni->net()->ssid();
+            m_wirelessInspector->watchForNetworkConnection(wni->net()->ssid());
             int ret = KToolInvocation::kdeinitExec("networkmanagement_configshell", args);
             kDebug() << ret << args;
         }
+    } else {
+        kDebug() << "item was not an AbstractWirelessNetworkItem!";
     }
 }
 
@@ -464,4 +480,9 @@ bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWir
     return n1->strength() > n2->strength();
 }
 
+void InterfaceGroup::popupEvent(bool show)
+{
+    kDebug() << show;
+    m_hiddenItem->resetSsidEntry();
+}
 // vim: sw=4 sts=4 et tw=100

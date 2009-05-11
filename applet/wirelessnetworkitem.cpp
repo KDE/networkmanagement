@@ -1,6 +1,6 @@
 /*
 Copyright 2008 Sebastian Kügler <sebas@kde.org>
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -38,9 +38,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessnetwork.h"
 
-WirelessNetworkItem::WirelessNetworkItem(AbstractWirelessNetwork * network, QGraphicsItem * parent)
-: AbstractConnectableItem(parent), m_wirelessNetwork(network), m_security(0), m_securityIcon(0), m_securityIconName(0)
+AbstractWirelessNetworkItem::AbstractWirelessNetworkItem(QGraphicsItem * parent) : AbstractConnectableItem(parent), m_wirelessNetwork(0)
 {
+
+}
+
+AbstractWirelessNetworkItem::~AbstractWirelessNetworkItem()
+{
+
+}
+
+AbstractWirelessNetwork * AbstractWirelessNetworkItem::net() const
+{
+    return m_wirelessNetwork;
+}
+
+WirelessNetworkItem::WirelessNetworkItem(AbstractWirelessNetwork * network, QGraphicsItem * parent)
+: AbstractWirelessNetworkItem(parent), m_security(0), m_securityIcon(0), m_securityIconName(0)
+{
+    m_wirelessNetwork = network;
     m_strengthMeter = new Plasma::Meter(this);
     m_strength = 0;
     m_ssid = network->ssid();
@@ -129,11 +145,6 @@ void WirelessNetworkItem::setupItem()
 
 WirelessNetworkItem::~WirelessNetworkItem()
 {
-}
-
-AbstractWirelessNetwork * WirelessNetworkItem::net() const
-{
-    return m_wirelessNetwork;
 }
 
 void WirelessNetworkItem::setStrength(QString ssid, int strength)
