@@ -76,7 +76,7 @@ void HiddenWirelessNetworkItem::setupItem()
         m_connect = new Plasma::IconWidget(this);
         m_connect->setText(i18nc("label for creating a connection to a hidden wireless network", "Connect to hidden network"));
         m_layout->addItem(m_connect);
-        connect(m_connect, SIGNAL(clicked()), SLOT(connectClicked()));
+        connect(m_connect, SIGNAL(activated()), SLOT(connectClicked()));
     }
 }
 
