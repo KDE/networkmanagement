@@ -58,7 +58,9 @@ Solid::Control::AccessPoint * HiddenWirelessNetwork::referenceAccessPoint() cons
     return 0;
 }
 
-HiddenWirelessNetworkItem::HiddenWirelessNetworkItem(QGraphicsItem * parent): m_connect(0), m_ssidEdit(0), m_layout(0)
+QString HiddenWirelessNetworkItem::s_defaultText = i18nc("default KLineEdit::clickMessage() for hidden wireless network SSID entry", "Enter hidden SSID and press <enter>");
+
+HiddenWirelessNetworkItem::HiddenWirelessNetworkItem(QGraphicsItem * parent): AbstractWirelessNetworkItem(parent), m_layout(0), m_connect(0), m_ssidEdit(0)
 {
     m_wirelessNetwork = new HiddenWirelessNetwork(this);
 }
@@ -71,25 +73,25 @@ void HiddenWirelessNetworkItem::setupItem()
 {
     if (!m_layout) {
         m_layout = new QGraphicsLinearLayout(this);
-    }
-    if (!m_connect) {
         m_connect = new Plasma::IconWidget(this);
         m_connect->setText(i18nc("label for creating a connection to a hidden wireless network", "Connect to hidden network"));
         m_layout->addItem(m_connect);
         connect(m_connect, SIGNAL(activated()), SLOT(connectClicked()));
+
+        m_ssidEdit = new Plasma::LineEdit(this);
+        m_ssidEdit->nativeWidget()->setClickMessage(s_defaultText);
+        m_ssidEdit->hide();
+        connect(m_ssidEdit->nativeWidget(), SIGNAL(returnPressed()), SLOT(ssidEntered()));
     }
 }
 
 void HiddenWirelessNetworkItem::connectClicked()
 {
-    delete m_connect;
-    m_connect = 0;
-    if (!m_ssidEdit) {
-        m_ssidEdit = new Plasma::LineEdit(this);
-        m_ssidEdit->nativeWidget()->setClickMessage(i18nc("default KLineEdit::clickMessage() for hidden wireless network SSID entry", "Enter hidden SSID and press <enter>"));
-        m_layout->addItem(m_ssidEdit);
-        connect(m_ssidEdit->nativeWidget(), SIGNAL(returnPressed()), SLOT(ssidEntered()));
-    }
+    m_connect->hide();
+    m_ssidEdit->show();
+    //workarounds for QGraphicsLayout not being able to layout hidden widgets with a 0 size
+    m_layout->removeAt(0);
+    m_layout->addItem(m_ssidEdit);
 }
 
 void HiddenWirelessNetworkItem::ssidEntered()
@@ -100,9 +102,13 @@ void HiddenWirelessNetworkItem::ssidEntered()
 
 void HiddenWirelessNetworkItem::resetSsidEntry()
 {
-    delete m_ssidEdit;
-    m_ssidEdit = 0;
-    setupItem();
+    m_ssidEdit->nativeWidget()->clearFocus();
+    m_ssidEdit->nativeWidget()->clear();
+    m_ssidEdit->hide();
+    m_connect->show();
+    //workarounds for QGraphicsLayout not being able to layout hidden widgets with a 0 size
+    m_layout->removeAt(0);
+    m_layout->addItem(m_connect);
 }
 
 // vim: sw=4 sts=4 et tw=100

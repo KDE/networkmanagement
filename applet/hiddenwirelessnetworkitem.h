@@ -69,6 +69,7 @@ private Q_SLOTS:
     // called if the user hits Enter
     void ssidEntered();
 private:
+    static QString s_defaultText;
     QGraphicsLinearLayout * m_layout;
     Plasma::IconWidget * m_connect;
     Plasma::LineEdit * m_ssidEdit;
