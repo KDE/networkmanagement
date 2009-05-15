@@ -349,7 +349,7 @@ diff -ur origsettings//802-1x.cpp settings/802-1x.cpp
  
 diff -ur origsettings//802-1xdbus.cpp settings/802-1xdbus.cpp
 --- origsettings//802-1xdbus.cpp	2009-02-01 22:46:44.000000000 +0100
-+++ settings/802-1xdbus.cpp	2009-01-31 22:36:13.000000000 +0100
++++ settings/802-1xdbus.cpp	2009-04-28 16:36:30.000000000 +0200
 @@ -18,6 +18,7 @@
  void Security8021xDbus::fromMap(const QVariantMap & map)
  {
@@ -358,7 +358,7 @@ diff -ur origsettings//802-1xdbus.cpp settings/802-1xdbus.cpp
    if (map.contains("eap")) {
      setting->setEap(map.value("eap").value<QStringList>());
    }
-@@ -76,50 +77,82 @@
+@@ -76,50 +77,85 @@
    if (map.contains("psk")) {
      setting->setPsk(map.value("psk").value<QString>());
    }
@@ -412,9 +412,12 @@ diff -ur origsettings//802-1xdbus.cpp settings/802-1xdbus.cpp
 +        break;
 +      case Security8021xSetting::EnumPhase1peapver::one:
 +        map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), 1);
++	// phaselabel only valid with peapver=1
++	if (!setting->phase1peaplabel().isEmpty()) {
++	  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL), setting->phase1peaplabel());
++	}
 +        break;
 +    }
-+    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL), setting->phase1peaplabel());
 +  }
 +  if (!setting->phase1fastprovisioning().isEmpty()) {
 +    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING), setting->phase1fastprovisioning());
@@ -478,7 +481,7 @@ diff -ur origsettings//802-1xdbus.cpp settings/802-1xdbus.cpp
    return map;
  }
  
-@@ -127,7 +160,9 @@
+@@ -127,7 +163,9 @@
  {
    QVariantMap map;
    Security8021xSetting * setting = static_cast<Security8021xSetting *>(m_setting);
@@ -503,7 +506,7 @@ diff -ur origsettings//802-1xdbus.h settings/802-1xdbus.h
  #include <kcoreconfigskeleton.h>
 diff -ur origsettings//802-1x.h settings/802-1x.h
 --- origsettings//802-1x.h	2009-02-01 22:46:44.000000000 +0100
-+++ settings/802-1x.h	2009-01-31 22:36:13.000000000 +0100
++++ settings/802-1x.h	2009-02-24 16:34:47.000000000 +0100
 @@ -3,6 +3,7 @@
  #ifndef KNM_SECURITY8021XSETTING_H
  #define KNM_SECURITY8021XSETTING_H
@@ -578,14 +581,14 @@ diff -ur origsettings//802-1x.h settings/802-1x.h
    private:
  };
  
-+Q_DECLARE_OPERATORS_FOR_FLAGS(Security8021xSetting::EapMethods);
++Q_DECLARE_OPERATORS_FOR_FLAGS(Security8021xSetting::EapMethods)
 +
  }
  
  #endif
 diff -ur origsettings//802-1xpersistence.cpp settings/802-1xpersistence.cpp
 --- origsettings//802-1xpersistence.cpp	2009-02-01 22:46:44.000000000 +0100
-+++ settings/802-1xpersistence.cpp	2009-01-31 22:36:13.000000000 +0100
++++ settings/802-1xpersistence.cpp	2009-04-22 22:53:52.000000000 +0200
 @@ -17,7 +17,9 @@
  
  void Security8021xPersistence::load()
@@ -596,20 +599,15 @@ diff -ur origsettings//802-1xpersistence.cpp settings/802-1xpersistence.cpp
    setting->setEap(m_config->readEntry("eap", QStringList()));
    setting->setIdentity(m_config->readEntry("identity", ""));
    setting->setAnonymousidentity(m_config->readEntry("anonymousidentity", ""));
-@@ -25,10 +27,10 @@
+@@ -25,7 +27,7 @@
    setting->setCapath(m_config->readEntry("capath", ""));
    setting->setClientcert(m_config->readEntry("clientcert", QByteArray()));
    {
 -    QString contents = m_config->readEntry("phase1peapver", 0);
--    if (contents == "zero")
-+    uint contents = m_config->readEntry("phase1peapver", 0);
-+    if (contents == 0)
++    QString contents = m_config->readEntry("phase1peapver", "zero");
+     if (contents == "zero")
        setting->setPhase1peapver(Security8021xSetting::EnumPhase1peapver::zero);
--    else     if (contents == "one")
-+    else     if (contents == 1)
-       setting->setPhase1peapver(Security8021xSetting::EnumPhase1peapver::one);
- 
-   }
+     else     if (contents == "one")
 @@ -36,7 +38,7 @@
    setting->setPhase1fastprovisioning(m_config->readEntry("phase1fastprovisioning", ""));
    setting->setPhase2auth(m_config->readEntry("phase2auth", ""));
@@ -722,6 +720,7 @@ diff -ur origsettings//802-3-ethernetpersistence.cpp settings/802-3-ethernetpers
      if (contents == "half")
        setting->setDuplex(WiredSetting::EnumDuplex::half);
      else     if (contents == "full")
+Only in settings: config-knmstorage.cmake~
 diff -ur origsettings//gsmdbus.cpp settings/gsmdbus.cpp
 --- origsettings//gsmdbus.cpp	2009-02-01 22:46:44.000000000 +0100
 +++ settings/gsmdbus.cpp	2009-01-31 22:36:13.000000000 +0100
@@ -1084,6 +1083,34 @@ diff -ur origsettings//ipv4persistence.cpp settings/ipv4persistence.cpp
 Only in settings: pbkdf2.cpp
 Only in settings: pbkdf2.cpp~
 Only in settings: pbkdf2.h
+diff -ur origsettings//ppp.cpp settings/ppp.cpp
+--- origsettings//ppp.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/ppp.cpp	2009-05-05 11:43:25.000000000 +0200
+@@ -5,7 +5,7 @@
+ 
+ using namespace Knm;
+ 
+-PppSetting::PppSetting() : Setting(Setting::Ppp)
++PppSetting::PppSetting() : Setting(Setting::Ppp), mNoauth(false), mRefuseeap(false), mRefusepap(false), mRefusechap(false), mRefusemschap(false), mRefusemschapv2(false), mNobsdcomp(false), mNodeflate(false), mNovjcomp(false), mRequiremppe(false), mRequiremppe128(false), mMppestateful(false), mCrtscts(false), mBaud(0), mMru(0), mMtu(0), mLcpechofailure(0), mLcpechointerval(0)
+ {
+ }
+ 
+Only in settings: ppp.cpp~
+Only in settings: .ppp.cpp.swp
+Only in settings: pppdbus.cpp~
+diff -ur origsettings//serial.cpp settings/serial.cpp
+--- origsettings//serial.cpp	2009-02-01 22:46:44.000000000 +0100
++++ settings/serial.cpp	2009-05-05 11:37:24.000000000 +0200
+@@ -5,7 +5,7 @@
+ 
+ using namespace Knm;
+ 
+-SerialSetting::SerialSetting() : Setting(Setting::Serial)
++SerialSetting::SerialSetting() : Setting(Setting::Serial), mBaud(0), mBits(0), mStopbits(0), mSenddelay(0)
+ {
+ }
+ 
+Only in settings: serial.cpp~
 diff -ur origsettings//serialpersistence.cpp settings/serialpersistence.cpp
 --- origsettings//serialpersistence.cpp	2009-02-01 22:46:44.000000000 +0100
 +++ settings/serialpersistence.cpp	2009-01-31 22:36:13.000000000 +0100
@@ -1097,6 +1124,7 @@ diff -ur origsettings//serialpersistence.cpp settings/serialpersistence.cpp
    setting->setSenddelay(m_config->readEntry("senddelay", 0));
  }
 Only in settings: .svn
+Only in settings: svn-commit.tmp~
 diff -ur origsettings//vpndbus.cpp settings/vpndbus.cpp
 --- origsettings//vpndbus.cpp	2009-02-01 22:46:44.000000000 +0100
 +++ settings/vpndbus.cpp	2009-02-01 22:45:53.000000000 +0100
@@ -1199,7 +1227,6 @@ diff -ur origsettings//vpn.h settings/vpn.h
  
    private:
 Only in settings: vpn.h~
-Only in settings: vpn.h.orig
 Only in settings: vpn.h.rej
 diff -ur origsettings//vpnpersistence.cpp settings/vpnpersistence.cpp
 --- origsettings//vpnpersistence.cpp	2009-02-01 22:46:44.000000000 +0100
@@ -1324,20 +1351,3 @@ diff -ur origsettings//vpnpersistence.h settings/vpnpersistence.h
 Only in settings: vpnpersistence.h~
 Only in settings: wephash.cpp
 Only in settings: wephash.h
-diff -ur origsettings/802-1xpersistence.cpp settings/802-1xpersistence.cpp
---- origsettings/802-1xpersistence.cpp	2009-02-24 11:54:16.000000000 +0100
-+++ settings/802-1xpersistence.cpp	2009-04-06 23:36:45.294477869 +0200
-@@ -27,10 +27,10 @@
-   setting->setCapath(m_config->readEntry("capath", ""));
-   setting->setClientcert(m_config->readEntry("clientcert", QByteArray()));
-   {
--    uint contents = m_config->readEntry("phase1peapver", 0);
--    if (contents == 0)
-+    QString contents = m_config->readEntry("phase1peapver", "zero");
-+    if (contents == "zero")
-       setting->setPhase1peapver(Security8021xSetting::EnumPhase1peapver::zero);
--    else     if (contents == 1)
-+    else     if (contents == "one")
-       setting->setPhase1peapver(Security8021xSetting::EnumPhase1peapver::one);
- 
-   }
