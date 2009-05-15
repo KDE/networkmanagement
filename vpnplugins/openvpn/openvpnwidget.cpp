@@ -80,6 +80,7 @@ void OpenVpnSettingWidget::readConfig()
     QString port = dataMap[NM_OPENVPN_KEY_PORT];
     d->ui.chkDefaultPort->setChecked(port.isEmpty());
     d->ui.port->setText( port );
+    connect(d->ui.chkDefaultPort, SIGNAL(toggled(bool)), d->ui.port, SLOT(setDisabled(bool)));
     d->ui.gateway->setText( dataMap[NM_OPENVPN_KEY_REMOTE] );
 }
 
