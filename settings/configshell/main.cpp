@@ -105,8 +105,8 @@ int main(int argc, char **argv)
             QString cid = editor.addConnection(true, Knm::Connection::typeFromString(args->getOption("type")), specificArgs);
             QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
                                 "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
-            QStringList ids;
-            ids << cid;
+
+            QStringList ids(cid);
             ref.call( QLatin1String( "configure" ), ids );
             kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
         } else {
