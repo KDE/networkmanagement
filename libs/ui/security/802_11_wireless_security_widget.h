@@ -34,6 +34,10 @@ class KNM_EXPORT Wireless80211SecurityWidget : public SettingWidget
 {
 Q_OBJECT
 public:
+    /**
+     * @param setDefaults if set, the widget sets its individual members according to caps, wpa and
+     * rsn
+     */
     Wireless80211SecurityWidget(bool setDefaults, Knm::Connection * connection,
                                 uint caps, uint wpa, uint rsn,
                                 QWidget * parent = 0 );

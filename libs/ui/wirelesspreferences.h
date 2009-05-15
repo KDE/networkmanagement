@@ -30,11 +30,20 @@ class KNM_EXPORT WirelessPreferences : public ConnectionPreferences
 {
 Q_OBJECT
 public:
+    /**
+     * @param setDefaults if set, the widget and its children should preset any defaults using the
+     * information encoded in args
+     */
     WirelessPreferences(bool setDefaults, QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~WirelessPreferences();
+    virtual bool needsEdits() const;
 
 private:
     bool m_hasSecrets;
+    QString m_ssid;
+    uint m_caps;
+    uint m_wpa;
+    uint m_rsn;
 };
 
 #endif

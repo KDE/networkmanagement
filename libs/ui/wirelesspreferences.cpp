@@ -44,7 +44,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 //K_EXPORT_PLUGIN( WirelessPreferencesFactory( "kcm_knetworkmanager_wireless" ) )
 
 WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, const QVariantList &args)
-: ConnectionPreferences( KGlobal::mainComponent(), parent, args )
+: ConnectionPreferences( KGlobal::mainComponent(), parent, args ), m_caps(0), m_wpa(0), m_rsn(0)
 {
     // at least 1
     Q_ASSERT(args.count());
@@ -52,23 +52,21 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Wireless);
 
-    QString ssid;
-    uint caps = 0, wpa = 0, rsn = 0;
     if (args.count() == 5) {
-        ssid = args[1].toString();
-        caps = args[2].toUInt();
-        wpa = args[3].toUInt();
-        rsn = args[4].toUInt();
-        kDebug() << "SSID:" << ssid << "CAPS:" << caps << "WPA:" << wpa << "RSN:" << rsn;
+        m_ssid = args[1].toString();
+        m_caps = args[2].toUInt();
+        m_wpa = args[3].toUInt();
+        m_rsn = args[4].toUInt();
+        kDebug() << "SSID:" << m_ssid << "CAPS:" << m_caps << "WPA:" << m_wpa << "RSN:" << m_rsn;
     } else {
         kDebug() << args;
     }
 
     QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(m_connection, (ssid.isEmpty() ? i18n("New Wireless Connection") : ssid), this);
+    m_contents = new ConnectionWidget(m_connection, (m_ssid.isEmpty() ? i18n("New Wireless Connection") : m_ssid), this);
     layout->addWidget(m_contents);
-    Wireless80211Widget* connectionTypeWidget = new Wireless80211Widget(m_connection, ssid, this);
-    Wireless80211SecurityWidget * wirelessSecurityWidget = new Wireless80211SecurityWidget(setDefaults, m_connection, caps, wpa, rsn, this);
+    Wireless80211Widget* connectionTypeWidget = new Wireless80211Widget(m_connection, m_ssid, this);
+    Wireless80211SecurityWidget * wirelessSecurityWidget = new Wireless80211SecurityWidget(setDefaults, m_connection, m_caps, m_wpa, m_rsn, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
 
     // the wireless security widget also creates the wpa-eap widget which
@@ -90,4 +88,9 @@ WirelessPreferences::~WirelessPreferences()
 {
 }
 
+
+bool WirelessPreferences::needsEdits() const
+{
+    return !( !m_ssid.isEmpty() && m_caps == 0 && m_wpa == 0 && m_rsn == 0 );
+}
 // vim: sw=4 sts=4 et tw=100

@@ -35,6 +35,7 @@ public:
     VpnPreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~VpnPreferences();
     virtual void load();
+    bool needsEdits() const;
 private:
     VpnUiPlugin * m_uiPlugin;
     QString m_vpnPluginName;

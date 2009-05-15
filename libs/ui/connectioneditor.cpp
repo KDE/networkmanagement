@@ -98,7 +98,7 @@ QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type 
 
     configDialog.setMainWidget(cprefs);
 
-    if ( configDialog.exec() == QDialog::Accepted ) {
+    if ( !cprefs->needsEdits() || configDialog.exec() == QDialog::Accepted ) {
         // update the connection from the UI and save it to a file in appdata/connections
         cprefs->save();
         // update our rcfile (Must happen after cprefs->save())

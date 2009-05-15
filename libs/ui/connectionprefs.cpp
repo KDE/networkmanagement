@@ -60,6 +60,7 @@ void ConnectionPreferences::addToTabWidget(SettingWidget * widget)
 
 void ConnectionPreferences::load()
 {
+    kDebug() << kBacktrace();
     // restore the Connection if possible
     QString connectionFile(KStandardDirs::locateLocal("data",
                 Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid()));

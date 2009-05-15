@@ -41,6 +41,7 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
     d->ui.setupUi(this);
     d->proposedSsid = ssid;
     d->setting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
+    d->ui.ssid->setText(d->proposedSsid);
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
 }
 
@@ -51,8 +52,7 @@ Wireless80211Widget::~Wireless80211Widget()
 
 void Wireless80211Widget::readConfig()
 {
-    kDebug();
-
+    kDebug() << kBacktrace();
     switch(d->setting->mode())
     {
         case Knm::WirelessSetting::EnumMode::adhoc:
@@ -63,11 +63,7 @@ void Wireless80211Widget::readConfig()
             d->ui.cmbMode->setCurrentIndex(0);
       }
     // need to check that ssids containing international characters are restored correctly
-    if (d->setting->ssid().isEmpty()) {
-        if (!d->proposedSsid.isEmpty()) {
-            d->ui.ssid->setText(d->proposedSsid);
-        }
-    } else {
+    if (!d->setting->ssid().isEmpty()) {
         d->ui.ssid->setText(QString::fromAscii(d->setting->ssid()));
     }
     d->ui.bssid->setText(QString::fromAscii(d->setting->bssid()));
@@ -80,6 +76,7 @@ void Wireless80211Widget::writeConfig()
     kDebug();
 
     d->setting->setSsid(d->ui.ssid->text().toAscii());
+    kDebug() << d->setting->ssid();
     switch ( d->ui.cmbMode->currentIndex()) {
         case 0:
             d->setting->setMode(Knm::WirelessSetting::EnumMode::infrastructure);

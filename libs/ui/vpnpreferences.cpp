@@ -93,4 +93,9 @@ void VpnPreferences::load()
     }
 }
 
+bool VpnPreferences::needsEdits() const
+{
+    return true;
+}
+
 // vim: sw=4 sts=4 et tw=100
