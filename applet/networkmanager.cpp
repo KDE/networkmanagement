@@ -485,7 +485,6 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
 
 void NetworkManagerApplet::toolTipAboutToShow()
 {
-    kDebug() << "Hello friend, tooltip about to show.";
     Solid::Control::NetworkInterfaceList interfaces
         = Solid::Control::NetworkManager::networkInterfaces();
     if (interfaces.isEmpty()) {
@@ -501,6 +500,15 @@ void NetworkManagerApplet::toolTipAboutToShow()
                 subText += QLatin1String("<br>");
             }
             subText += QString::fromLatin1("<b>%1</b>: %2").arg(iface->interfaceName()).arg(connectionStateToString(iface->connectionState()));
+            if (iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+                Solid::Control::IPv4Config ip4Config = iface->ipV4Config();
+                QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
+                if (!addresses.isEmpty()) {
+                    QHostAddress addr(addresses.first().address());
+                    QString currentIp = addr.toString();
+                    subText += QString::fromLatin1("<br>") + i18nc("Display of the IP (network) address", "IP Address: %1", currentIp);
+                }
+            }
             m_toolTip = Plasma::ToolTipContent(name(),
                                             subText,
                                             KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop))
