@@ -108,6 +108,10 @@ protected:
      */
     virtual QPixmap statePixmap(const QString &icon);
 
+    /**
+    * The current IP address when the connection is active.
+    */
+    virtual QString currentIpAddress();
 
     /**
      * Returns all available connections for the device type.
@@ -137,7 +141,6 @@ protected:
     ConnectionInspector * m_connectionInspector;
     QString m_unavailableText;
     QString m_interfaceName;
-    QString m_currentIp;
     bool m_disconnect;
 };
 #endif // APPLET_INTERFACEWIDGET_H

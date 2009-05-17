@@ -50,13 +50,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 #include "wirelessnetwork.h"
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable")), m_currentIp(0)
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
 {
     setAcceptHoverEvents(true);
 
     Solid::Device* dev = new Solid::Device(m_iface->uni());
     m_interfaceName = dev->product();
-
 
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
@@ -243,17 +242,10 @@ QString InterfaceItem::ssid()
 void InterfaceItem::setConnectionInfo()
 {
     if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
-        Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();
-        QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
-        if (addresses.isEmpty()) {
-            m_connectionInfoLabel->setText(i18n("ip display error"));
-        } else {
-            QHostAddress addr(addresses.first().address());
-            m_currentIp = addr.toString();
-            m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
-            m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", m_currentIp));
-            //kDebug() << "addresses non-empty" << m_currentIp;
-        }
+        m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
+        m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", currentIpAddress()));
+        //kDebug() << "addresses non-empty" << m_currentIp;
+
         if (m_strengthMeter) {
             m_strengthMeter->show();
         }
@@ -263,6 +255,21 @@ void InterfaceItem::setConnectionInfo()
         }
     }
 }
+
+QString InterfaceItem::currentIpAddress()
+{
+    if (m_iface->connectionState() != Solid::Control::NetworkInterface::Activated) {
+        return i18n("No IP address.");
+    }
+    Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();
+    QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
+    if (addresses.isEmpty()) {
+        return i18n("IP display error.");
+    }
+    QHostAddress addr(addresses.first().address());
+    return addr.toString();
+}
+
 void InterfaceItem::activeConnectionsChanged()
 {
     QList<ActiveConnectionPair > newConnectionList;
