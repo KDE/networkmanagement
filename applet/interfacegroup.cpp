@@ -63,6 +63,7 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
                                NetworkManagerSettings * systemSettings,
                                QGraphicsWidget * parent)
     : ConnectionList(userSettings, systemSettings, parent), m_type(type),
+      m_wirelessInspector(0),
       m_wirelessEnvironment(new WirelessEnvironmentMerged(this)),
       m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical)),
       m_networkLayout(new QGraphicsLinearLayout(Qt::Vertical)),
@@ -144,9 +145,14 @@ void InterfaceGroup::setupFooter()
 void InterfaceGroup::updateConnections()
 {
     updateNetworks();
-    QStringList watched = m_wirelessInspector->watchedNetworks();
-    if (watched.isEmpty())
+    if (!m_wirelessInspector) {
         return;
+    }
+
+    QStringList watched = m_wirelessInspector->watchedNetworks();
+    if (watched.isEmpty()) {
+        return;
+    }
 
     ServiceConnectionHash::iterator i = m_connections.begin();
     while (i != m_connections.end()) {
