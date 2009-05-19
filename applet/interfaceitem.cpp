@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 #include "wirelessnetwork.h"
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionNameLabel(0), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
 {
     setAcceptHoverEvents(true);
 
@@ -241,17 +241,18 @@ QString InterfaceItem::ssid()
 
 void InterfaceItem::setConnectionInfo()
 {
-    if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
-        m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
-        m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", currentIpAddress()));
-        //kDebug() << "addresses non-empty" << m_currentIp;
-
-        if (m_strengthMeter) {
-            m_strengthMeter->show();
-        }
-    } else {
-        if (m_strengthMeter) {
-            m_strengthMeter->hide();
+    if (m_connectionInfoLabel && m_connectionNameLabel) {
+        if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+            m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
+            m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", currentIpAddress()));
+            //kDebug() << "addresses non-empty" << m_currentIp;
+            if (m_strengthMeter) {
+                m_strengthMeter->show();
+            }
+        } else {
+            if (m_strengthMeter) {
+                m_strengthMeter->hide();
+            }
         }
     }
 }
