@@ -61,9 +61,9 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
     connect(d->ui.keyType, SIGNAL(currentIndexChanged(int)), this, SLOT(keyTypeChanged(int)));
 
     if (d->format == WepWidget::Passphrase) {
-        d->ui.keyType->setCurrentIndex(0);
+        keyTypeChanged(0);
     } else {
-        d->ui.keyType->setCurrentIndex(1);
+        keyTypeChanged(1);
     }
 
     connect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));

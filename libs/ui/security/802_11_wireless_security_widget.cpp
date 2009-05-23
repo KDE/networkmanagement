@@ -73,7 +73,7 @@ Wireless80211SecurityWidget::Wireless80211SecurityWidget(bool setDefaults, Knm::
 
     // Fixme: add distinct types of WEP
     d->ui.cmbType->insertItem(index, i18nc("Label for WEP wireless security", "WEP"));
-    SecurityWidget * sw = new WepWidget(WepWidget::Hex, connection, this);
+    SecurityWidget * sw = new WepWidget(WepWidget::Passphrase, connection, this);
     d->securityWidgetHash.insert(index, sw);
     d->ui.stackedWidget->insertWidget(index, sw);
     d->staticWepHexIndex = index++;
