@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QGraphicsWidget>
 
+#include <Plasma/IconWidget>
+
 #include "connectionitem.h"
 
 
@@ -31,7 +33,6 @@ class AbstractWirelessNetwork;
 
 namespace Plasma
 {
-    class IconWidget;
     class Meter;
 }
 
@@ -59,6 +60,7 @@ private:
     QString m_security;
     QString m_securityIconName;
     QString m_securityIconToolTip;
+    Plasma::IconWidget * m_connectButton;
     QString m_ssid;
     int m_strength;
 };

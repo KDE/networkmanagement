@@ -97,7 +97,6 @@ void WirelessNetworkItem::setupItem()
     |icon essid        |meter|sec|
     +----+-------------+-----+---+
     */
-    QString ssid = m_ssid;
     int rowHeight = 24;
     int spacing = 4;
 
@@ -112,7 +111,7 @@ void WirelessNetworkItem::setupItem()
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setDrawBackground(true);
     m_connectButton->setIcon("network-wireless");
-    m_connectButton->setText(ssid);
+    m_connectButton->setText(m_ssid);
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setOrientation(Qt::Horizontal);
 #if KDE_IS_VERSION(4,2,60)

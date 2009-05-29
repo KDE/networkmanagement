@@ -39,14 +39,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetwork.h"
 
 WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
-: ConnectionItem(conn, parent), m_connection(conn), m_wirelessNetwork(0), m_strengthMeter(0), m_securityIcon(0), m_strength(0)
+: ConnectionItem(conn, parent), m_connectButton(0),m_connection(conn),
+    m_wirelessNetwork(0), m_strengthMeter(0), m_securityIcon(0), m_strength(0)
 {
 }
 
 void WirelessConnectionItem::setupItem()
 {
     readSettings();
-    QString ssid = m_connection->id();
+    m_ssid = m_connection->id();
     kDebug() << "Connection Settings:" << m_connection->settings();
     kDebug() << "Security:" << m_connection->type() << m_security;
     // painting of a non-active wifi network
@@ -69,7 +70,12 @@ void WirelessConnectionItem::setupItem()
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setDrawBackground(true);
     m_connectButton->setIcon("network-wireless");
-    m_connectButton->setText(ssid);
+    if (!m_ssid.isEmpty()) {
+        m_connectButton->setText(m_ssid);
+    } else {
+        m_connectButton->setText(i18n("Unknown Network"));
+    }
+
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
@@ -111,7 +117,10 @@ void WirelessConnectionItem::setNetwork(AbstractWirelessNetwork * network)
         return;
     }
     m_wirelessNetwork = network;
-    setStrength(network->ssid(), network->strength());
+    QString ssid = network->ssid();
+    if (m_connectButton && !ssid.isEmpty() && ssid != m_ssid) {
+        m_connectButton->setText(ssid);
+    }
     connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString&, int)));
 }
 
