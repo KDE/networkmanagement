@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionlist.h"
 
+#include <Plasma/Extender>
+
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
 
@@ -42,7 +44,7 @@ class InterfaceGroup : public ConnectionList
 {
 Q_OBJECT
 public:
-    InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent = 0);
+    InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, Plasma::Extender * ext = 0);
     virtual ~InterfaceGroup();
     Solid::Control::NetworkInterface::Type interfaceType() const;
     bool accept(RemoteConnection *) const;
@@ -82,11 +84,11 @@ private:
     QHash<QString, WirelessNetworkItem *> m_networks;
     HiddenWirelessNetworkItem * m_hiddenItem;
     Solid::Control::NetworkInterface::Type m_type;
-    WirelessEnvironmentMerged * m_wirelessEnvironment;
     QGraphicsLinearLayout * m_interfaceLayout;
     QGraphicsLinearLayout * m_networkLayout;
     bool m_enabled;
     int m_numberOfWlans;
     WirelessConnectionInspector * m_wirelessInspector;
+    WirelessEnvironmentMerged * m_wirelessEnvironment;
 };
 #endif // INTERFACEGROUP_H

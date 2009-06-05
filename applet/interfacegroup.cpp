@@ -61,13 +61,13 @@ bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWir
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
                                NetworkManagerSettings * userSettings,
                                NetworkManagerSettings * systemSettings,
-                               QGraphicsWidget * parent)
-    : ConnectionList(userSettings, systemSettings, parent), m_type(type),
-      m_wirelessInspector(0),
-      m_wirelessEnvironment(new WirelessEnvironmentMerged(this)),
+                               Plasma::Extender * ext)
+    : ConnectionList(userSettings, systemSettings, ext), m_type(type),
       m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical)),
       m_networkLayout(new QGraphicsLinearLayout(Qt::Vertical)),
-      m_numberOfWlans( 1 )
+      m_numberOfWlans( 1 ),
+      m_wirelessInspector(0),
+      m_wirelessEnvironment(new WirelessEnvironmentMerged(this))
 {
     if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
         m_enabled = Solid::Control::NetworkManager::isWirelessEnabled();
@@ -88,6 +88,7 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
     if (m_type == Solid::Control::NetworkInterface::Gsm) {
         setMinimumSize(QSize(285, 60)); // WTF?
     }
+    init();
 }
 
 InterfaceGroup::~InterfaceGroup()
@@ -106,6 +107,7 @@ void InterfaceGroup::setEnabled(bool enable)
 
 void InterfaceGroup::setupHeader()
 {
+    kDebug() << "setupHeader ===========================================";
     m_layout->insertItem(0, m_interfaceLayout);
     // create an interfaceItem for each interface of our type
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
@@ -123,7 +125,6 @@ void InterfaceGroup::setupHeader()
     if (m_interfaces.count() == 0) {
         hide();
     }
-    setLayout(m_layout);
 }
 
 void InterfaceGroup::setupFooter()
@@ -202,7 +203,8 @@ void InterfaceGroup::updateNetworks()
     m_networkLayout->updateGeometry();
     m_interfaceLayout->updateGeometry();
     m_layout->updateGeometry();
-
+    updateGeometry();
+    emit updateLayout();
 }
 
 void InterfaceGroup::setNetworksLimit( int wlans )

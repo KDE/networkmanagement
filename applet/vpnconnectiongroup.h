@@ -33,7 +33,7 @@ class VpnConnectionGroup : public ConnectionList
 {
 Q_OBJECT
 public:
-    VpnConnectionGroup(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent = 0);
+    VpnConnectionGroup(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, Plasma::Extender * ext = 0);
     virtual ~VpnConnectionGroup();
     void setupHeader();
     void setupFooter();

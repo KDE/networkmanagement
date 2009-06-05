@@ -36,8 +36,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "nm-setting-vpn.h"
 #include "remoteconnection.h"
 
-VpnConnectionGroup::VpnConnectionGroup(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
-    : ConnectionList(userSettings, systemSettings, parent), m_hideButton(0)
+VpnConnectionGroup::VpnConnectionGroup(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, Plasma::Extender * ext)
+    : ConnectionList(userSettings, systemSettings, ext), m_hideButton(0)
 {
     setPreferredSize(QSize(285, 60));
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);

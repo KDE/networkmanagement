@@ -21,19 +21,29 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionlist.h"
 
 #include <NetworkManager.h>
-#include <KDebug>
+
+
 
 #include <QGraphicsLinearLayout>
+
+#include <Plasma/Extender>
+#include <KDebug>
+
 #include "connectionitem.h"
 #include "networkmanagersettings.h"
 #include "remoteconnection.h"
 
-ConnectionList::ConnectionList(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, QGraphicsWidget * parent)
-: QGraphicsWidget(parent), m_userSettings(userSettings), m_systemSettings(systemSettings), m_layout(new QGraphicsLinearLayout(Qt::Vertical, this)), m_connectionLayout(new QGraphicsLinearLayout(Qt::Vertical))
+ConnectionList::ConnectionList(NetworkManagerSettings * userSettings,
+                NetworkManagerSettings * systemSettings, Plasma::Extender * ext)
+                : Plasma::ExtenderItem(ext), m_userSettings(userSettings), m_systemSettings(systemSettings),
+        m_connectionLayout(new QGraphicsLinearLayout(Qt::Vertical))
 
 {
+    m_widget = new QGraphicsWidget(this);
+    m_layout = new QGraphicsLinearLayout(Qt::Vertical, m_widget);
     m_layout->addItem(m_connectionLayout);
-    setLayout(m_layout);
+    m_widget->setLayout(m_layout);
+    setWidget(m_widget);
 }
 
 ConnectionList::~ConnectionList()
@@ -50,6 +60,11 @@ void ConnectionList::init()
     // adds items from subclasses below our layout
     setupFooter();
     m_layout->addStretch(5);
+}
+
+QGraphicsItem * ConnectionList::widget()
+{
+    return m_widget;
 }
 
 void ConnectionList::addSettingsService(NetworkManagerSettings * service)
