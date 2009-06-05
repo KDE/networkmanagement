@@ -65,7 +65,7 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
     : ConnectionList(userSettings, systemSettings, ext), m_type(type),
       m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical)),
       m_networkLayout(new QGraphicsLinearLayout(Qt::Vertical)),
-      m_numberOfWlans( 1 ),
+      m_numberOfWlans( 4 ),
       m_wirelessInspector(0),
       m_wirelessEnvironment(new WirelessEnvironmentMerged(this))
 {

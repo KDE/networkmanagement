@@ -128,7 +128,7 @@ signals:
     //void manageConnections();
 
 public Q_SLOTS:
-    
+
 protected Q_SLOTS:
     // called by Plasma::ToolTipManager
     void toolTipAboutToShow();
@@ -140,7 +140,7 @@ protected:
      */
     void popupEvent(bool);
 private Q_SLOTS:
-    void networkInterfaceAdded(const QString&);
+    void networkInterfaceAdded(const QString& = QString());
     void networkInterfaceRemoved(const QString&);
     void interfaceConnectionStateChanged();
     void manageConnections();

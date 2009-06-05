@@ -133,12 +133,12 @@ void NetworkManagerApplet::init()
 
     // Set up the extender with its various groups.  The first call to extender() triggers calls to
     // initExtenderItem() if there are any detached items.
-    extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+    //extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 
-    // calling this initialises the extenderitems
-    networkInterfaceAdded(QString());
+    // Give Plasma some time to start up before we add the network interfaces, we don't want to block
+    // the startup with all the setting up of Extenders and connection items
+    QTimer::singleShot(2000, this, SLOT(networkInterfaceAdded()));
     // add VPN and General Settings last
-    showVpn(cg.readEntry("showVpn", true));
     showGeneral(true);
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
@@ -374,9 +374,11 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
     KConfigGroup cg = config();
     showWired(cg.readEntry("showWired", true));
     showWireless(cg.readEntry("showWireless", true));
+    showVpn(cg.readEntry("showVpn", true));
     //showPppoe(cg.readEntry("showPppoe", true));
     showCellular(cg.readEntry("showCellular", true));
     //showCdma(cg.readEntry("showCdma", true));
+    //showGeneral(true);
 
     interfaceConnectionStateChanged();
     update();
@@ -710,8 +712,9 @@ void NetworkManagerApplet::showGeneral(bool show)
         if (eItem) {
             eItem->destroy(); // Apparently, we need to "refresh the extenderitem
         }
-        eItem = new GeneralExtender(extender());
-        initExtenderItem(eItem);
+        GeneralExtender * eItem = new GeneralExtender(extender());
+        eItem->graphicsWidget();
+        //initExtenderItem(eItem);
     } else {
         if (eItem) {
             kDebug() << "Hiding General Settings extender";
