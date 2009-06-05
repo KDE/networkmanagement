@@ -156,23 +156,13 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
     const QString GENERAL_EXTENDER_ITEM_NAME = QLatin1String("general");
 
     if (eItem->name() == WIRED_EXTENDER_ITEM_NAME) {
-        InterfaceGroup * eItem = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, extender());
-        eItem->setName("wired");
-        eItem->setIcon("network-wired");
-        eItem->setTitle(i18nc("Label for ethernet group in popup","Wired Networking"));
+        showWired(true);
     } else if (eItem->name() == WIRELESS_EXTENDER_ITEM_NAME) {
-        eItem = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, extender());
-        eItem->setName("wireless");
-        eItem->setIcon("network-wireless");
-        eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless Networking"));
+        showWireless(true);
     } else if (eItem->name() == CDMA_EXTENDER_ITEM_NAME || eItem->name() == GSM_EXTENDER_ITEM_NAME) {
         showCellular(true);
     } else if (eItem->name() == VPN_EXTENDER_ITEM_NAME) {
-        VpnConnectionGroup * eItem = new VpnConnectionGroup(m_userSettings, m_systemSettings, extender());
-        eItem->setName("vpn");
-        eItem->setIcon("network-server");
-        eItem->setTitle(i18nc("Label for vpn connections in popup","VPN Connections"));
-        connect(eItem, SIGNAL(hideClicked()), SLOT(hideVpnGroup()));
+        showVpn(true);
     } else if (eItem->name() == GENERAL_EXTENDER_ITEM_NAME) {
         GeneralExtender* item = dynamic_cast<GeneralExtender* >(eItem);
         if (item) {
@@ -786,7 +776,6 @@ void NetworkManagerApplet::showVpn(bool show)
         eItem->setIcon("network-server");
         eItem->setTitle(i18nc("Label for vpn connections in popup","VPN Connections"));
         connect(eItem, SIGNAL(hideClicked()), SLOT(hideVpnGroup()));
-        initExtenderItem(eItem);
     } else {
         if (eItem) {
             kDebug() << "HIDING";

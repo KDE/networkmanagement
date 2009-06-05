@@ -42,6 +42,7 @@ VpnConnectionGroup::VpnConnectionGroup(NetworkManagerSettings * userSettings, Ne
     setPreferredSize(QSize(285, 60));
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
     connect(this, SIGNAL(connectionListUpdated()), SLOT(connectionListChanged()));
+    init();
 }
 
 VpnConnectionGroup::~VpnConnectionGroup()
