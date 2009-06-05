@@ -31,7 +31,7 @@ NetworkManagerSettings::NetworkManagerSettings(const QString & service, QObject 
                                                     QLatin1String(NM_DBUS_PATH_SETTINGS),
                                                     QDBusConnection::systemBus(), parent)
 {
-    kDebug() << service << isValid();
+    //kDebug() << service << isValid();
     if (isValid())
     {
         initConnections();
@@ -48,9 +48,9 @@ void NetworkManagerSettings::initConnections()
 {
     QList<QDBusObjectPath> userConnections = ListConnections();
     foreach (QDBusObjectPath op, userConnections) {
-        kDebug() << op.path();
+        //kDebug() << op.path();
         if (m_connections.contains(op.path())) {
-            kDebug() << "Service" << service() << "is reporting the same connection more than once in ListConnections!";
+            //kDebug() << "Service" << service() << "is reporting the same connection more than once in ListConnections!";
         } else {
             RemoteConnection * connectionIface = new RemoteConnection(service(), op.path(), this);
             makeConnections(connectionIface);
