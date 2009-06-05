@@ -133,14 +133,41 @@ X = rejected
 
 
 Icons & Artwork:
-- small connect (action)
-- small disconnect (action)
-- wireless network connected
-- wireless network disconnected
-- mobile broadband (3g) connected
-- mobile broadband (3g) disconnected
+
+- wireless network connected, actions/network-wireless-connect
+- wireless network disconnected, actions/network-wireless-disconnect
+- network-wired-connected
+- strength-showing wireless SVG for Plasma:
+    - 3 - 4 elements showing signal strength
+    - 3 connection stages
+
+- wired network connected
+- wired network disconnected
+    - 3 connection stages
+
+- mobile broadband (3g / umts) connected
+- mobile broadband (3g / umts) disconnected
+    - 3 - 4 elements showing signal strength
+    - 3 connection stages
+
+- network-connect (action) (independant from device)
+- network-disconnect (action) (independant from device)
+
 - VPN
-- strength-showing wireless
-- connecting wireless
-- connecting wired
-- conecting gsm
+
+
+snippet for http://techbase.kde.org/Projects/Oxygen/Missing_Icons :
+
+||plasma||networkmanager|| network-wireless.svg || panel "icon" for plasma, shows a wireless connection, and 3 - 4 steps of signal strength, 3 steps for connection stages, ad-hoc connection mode ||<span style="color: red">No</span>||
+|-----
+||plasma||networkmanager|| network-wired.svg || panel "icon" for plasma, shows a connected or disconnected wired network device, 3 steps for connection stages||<span style="color: red">No</span>||
+|-----
+||plasma||networkmanager|| network-mobile.svg || panel "icon" for plasma, shows a connected or disconnected mobile broadband device and 3 - 4 steps of signal strength, 3 steps for connection stages ||<span style="color: red">No</span>||
+|-----
+||plasma||networkmanager|| network-VPN.svg || panel "icon" for plasma, shows a connected or disconnected VPN connection, 3 steps for connection stages ||<span style="color: red">No</span>||
+|-----
+||plasma||networkmanager|| actions/network-connect || icon to be used on "connect to this network" buttons ||<span style="color: red">No</span>||
+|-----
+||plasma||networkmanager|| actions/network-disconnect || icon to be used on "disconnect from this network" buttons ||<span style="color: red">No</span>||
+|-----
+
