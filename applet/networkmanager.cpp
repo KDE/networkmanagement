@@ -734,7 +734,7 @@ void NetworkManagerApplet::showWired(bool show)
             eItem = new Plasma::ExtenderItem(extender());
             eItem->setName("wired");
             eItem->setIcon("network-wired");
-            eItem->setTitle(i18nc("Label for ethernet group in popup","Ethernet"));
+            eItem->setTitle(i18nc("Label for ethernet group in popup","Wired Networking"));
             initExtenderItem(eItem);
         }
     } else {
@@ -773,7 +773,7 @@ void NetworkManagerApplet::showWireless(bool show)
             eItem = new Plasma::ExtenderItem(extender());
             eItem->setName("wireless");
             eItem->setIcon("network-wireless");
-            eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless"));
+            eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless Networking"));
             initExtenderItem(eItem);
         }
     } else {
