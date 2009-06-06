@@ -36,6 +36,7 @@ namespace Control
     {
         Q_OBJECT
         Q_DECLARE_PRIVATE(WirelessNetwork)
+    friend class WirelessNetworkInterfaceEnvironment;
     public:
         ~WirelessNetwork();
         /**

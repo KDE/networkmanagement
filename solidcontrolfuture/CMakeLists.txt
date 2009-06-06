@@ -1,4 +1,5 @@
 set(solidcontrolfuture_LIB_SRCS
+   wirelessnetworkinterfaceenvironment.cpp
    wirelessnetwork.cpp
    )
 
