@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-
-<node>
-  <interface name="org.kde.networkmanagement.networkitem">
-    <method name="networkPath">
-      <arg name="path" type="s" direction="out" />
-    </method>
-  </interface>
-</node>

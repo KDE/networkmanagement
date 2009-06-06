@@ -18,32 +18,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NETWORKITEM_H
-#define NETWORKITEM_H
+#include "wirelessnetworkitem.h"
 
-#include "connectable.h"
-
-#include <QtCore/QString>
-#include <QObject>
+#include "wirelessnetworkitemadaptor.h"
 
 namespace Knm {
 
-class NetworkItem :public Connectable
+WirelessNetworkItem::WirelessNetworkItem() {
+    new WirelessnetworkitemAdaptor(this);
+}
+    
+void WirelessNetworkItem::setEssid(const QString& essid)
 {
-    Q_OBJECT
+    m_essid = essid;
+}
 
-public:
-    NetworkItem();
-    
-    virtual ~NetworkItem() {}
+QString WirelessNetworkItem::essid()
+{
+    return m_essid;
+}
 
-    void networkPath(const QString& path);
-    QString networkPath();
-    
-private:
-    QString m_path;
-
-};
 } // namespace
-
-#endif

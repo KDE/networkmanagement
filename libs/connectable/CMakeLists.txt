@@ -7,7 +7,7 @@ set(knmconnection_SRCS
     connectable.cpp
     connection.cpp
     wirelessconnection.cpp
-    networkitem.cpp
+    wirelessnetworkitem.cpp
     )
 
 qt4_add_dbus_adaptor(
@@ -33,9 +33,9 @@ qt4_add_dbus_adaptor(
 
 qt4_add_dbus_adaptor(
     knmconnection_SRCS
-    interfaces/org.kde.networkmanagement.networkitem.xml
-    networkitem.h
-    Knm::NetworkItem
+    interfaces/org.kde.networkmanagement.wirelessnetworkitem.xml
+    wirelessnetworkitem.h
+    Knm::WirelessNetworkItem
 )
 
 kde4_add_library(
