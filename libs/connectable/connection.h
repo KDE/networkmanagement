@@ -18,8 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#ifndef KNM_EXTERNALS_CONNECTION_H
+#define KNM_EXTERNALS_CONNECTION_H
+
+#include "knm_export.h"
 
 #include "connectable.h"
 
@@ -27,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QString>
 
 namespace Knm {
+namespace Externals {
 
 class Connection :public Connectable
 {
@@ -62,5 +65,6 @@ private:
     Solid::Control::NetworkInterface::ConnectionState m_state;
 };
 } // namespace
+}
 
 #endif

@@ -18,8 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NETWORKITEM_H
-#define NETWORKITEM_H
+#ifndef KNM_EXTERNALS_NETWORKITEM_H
+#define KNM_EXTERNALS_NETWORKITEM_H
+
+#include "knm_export.h"
 
 #include "connectable.h"
 
@@ -27,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 
 namespace Knm {
+namespace Externals {
 
 class WirelessNetworkItem :public Connectable
 {
@@ -45,5 +48,6 @@ private:
 
 };
 } // namespace
+}
 
 #endif

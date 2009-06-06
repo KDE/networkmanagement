@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessconnectionadaptor.h"
 
 namespace Knm {
+namespace Externals {
 
 WirelessConnection::WirelessConnection()
     :Connection(Connectable::WirelessConnection)
@@ -40,3 +41,4 @@ QString WirelessConnection::network()
 }
 
 } // namespace
+}

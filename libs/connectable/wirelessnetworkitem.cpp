@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkitemadaptor.h"
 
 namespace Knm {
+namespace Externals {
 
 WirelessNetworkItem::WirelessNetworkItem()
     :Connectable(Connectable::WirelessNetworkItem)
@@ -41,3 +42,4 @@ QString WirelessNetworkItem::essid()
 }
 
 } // namespace
+}

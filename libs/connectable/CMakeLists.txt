@@ -1,5 +1,6 @@
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}
+   ${CMAKE_CURRENT_SOURCE_DIR}/..
    )
 
 # next target: dbus interfaces library
@@ -14,28 +15,28 @@ qt4_add_dbus_adaptor(
     knmconnection_SRCS
     interfaces/org.kde.networkmanagement.connectable.xml
     connectable.h
-    Knm::Connectable
+    Knm::Externals::Connectable
 )
 
 qt4_add_dbus_adaptor(
     knmconnection_SRCS
     interfaces/org.kde.networkmanagement.connection.xml
     connection.h
-    Knm::Connection
+    Knm::Externals::Connection
 )
 
 qt4_add_dbus_adaptor(
     knmconnection_SRCS
     interfaces/org.kde.networkmanagement.wirelessconnection.xml
     wirelessconnection.h
-    Knm::WirelessConnection
+    Knm::Externals::WirelessConnection
 )
 
 qt4_add_dbus_adaptor(
     knmconnection_SRCS
     interfaces/org.kde.networkmanagement.wirelessnetworkitem.xml
     wirelessnetworkitem.h
-    Knm::WirelessNetworkItem
+    Knm::Externals::WirelessNetworkItem
 )
 
 kde4_add_library(

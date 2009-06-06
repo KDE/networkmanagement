@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionadaptor.h"
 
 namespace Knm {
+namespace Externals {
 
 Connection::Connection()
     :Connectable(Connectable::Connection)
@@ -77,3 +78,4 @@ Solid::Control::NetworkInterface::ConnectionState Connection::connectionState()
 }
 
 } // namespace
+}

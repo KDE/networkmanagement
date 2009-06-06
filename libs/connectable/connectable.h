@@ -18,13 +18,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONNECTABLE_H
-#define CONNECTABLE_H
+#ifndef KNM_EXTERNALS_CONNECTABLE_H
+#define KNM_EXTERNALS_CONNECTABLE_H
+
+#include "knm_export.h"
 
 #include <QtCore/QObject>
 #include <QMetaType>
 
 namespace Knm {
+namespace Externals {
 
 class Connectable :public QObject
 {
@@ -50,7 +53,8 @@ private:
     QString m_deviceUni;
 
 };
-} // namespace
 
+} // namespace
+}
 
 #endif
