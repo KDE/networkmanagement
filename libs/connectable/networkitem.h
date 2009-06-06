@@ -21,10 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NETWORKITEM_H
 #define NETWORKITEM_H
 
+#include "connectable.h"
+
 #include <QtCore/QString>
 #include <QObject>
 
-class NetworkItem :public QObject
+class NetworkItem :public Connectable
 {
     Q_OBJECT
 

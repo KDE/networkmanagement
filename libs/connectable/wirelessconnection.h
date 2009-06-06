@@ -21,10 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef WIRELESSCONNECTION_H
 #define WIRELESSCONNECTION_H
 
+#include "connection.h"
+
 #include <QtCore/QString>
 #include <QObject>
 
-class WirelessConnection :public QObject
+class WirelessConnection :public Connection
 {
     Q_OBJECT
 

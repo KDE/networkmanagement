@@ -21,11 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef CONNECTION_H
 #define CONNECTION_H
 
-#include <solid/control/networkinterface.h>
+#include "connectable.h"
 
+#include <solid/control/networkinterface.h>
 #include <QtCore/QString>
 
-class Connection :public QObject
+class Connection :public Connectable
 {
     Q_OBJECT
 
