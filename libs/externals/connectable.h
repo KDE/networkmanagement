@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace Knm {
 namespace Externals {
 
-class Connectable :public QObject
+class KNM_EXPORT Connectable :public QObject
 {
     Q_OBJECT
 public:

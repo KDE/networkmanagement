@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace Knm {
 namespace Externals {
 
-class WirelessConnection :public Connection
+class KNM_EXPORT WirelessConnection :public Connection
 {
     Q_OBJECT
 

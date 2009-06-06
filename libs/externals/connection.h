@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace Knm {
 namespace Externals {
 
-class Connection :public Connectable
+class KNM_EXPORT Connection :public Connectable
 {
     Q_OBJECT
 
