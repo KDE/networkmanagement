@@ -3,7 +3,7 @@
 
 #include "ipv4.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 Ipv4Setting::Ipv4Setting() : Setting(Setting::Ipv4),
     mMethod(Ipv4Setting::EnumMethod::Automatic),

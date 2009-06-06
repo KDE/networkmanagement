@@ -5,7 +5,7 @@
 
 #include "802-3-ethernet.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 WiredPersistence::WiredPersistence(WiredSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {

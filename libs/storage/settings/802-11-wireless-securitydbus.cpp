@@ -7,7 +7,7 @@
 #include "pbkdf2.h"
 #include "wephash.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 WirelessSecurityDbus::WirelessSecurityDbus(WirelessSecuritySetting * setting, const QString & essid) : SettingDbus(setting),
     m_essid(essid)

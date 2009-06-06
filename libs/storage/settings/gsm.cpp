@@ -3,7 +3,7 @@
 
 #include "gsm.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 GsmSetting::GsmSetting() : Setting(Setting::Gsm)
 {

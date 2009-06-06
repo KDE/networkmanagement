@@ -5,7 +5,7 @@
 
 #include "cdma.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 CdmaDbus::CdmaDbus(CdmaSetting * setting) : SettingDbus(setting)
 {

@@ -25,7 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "setting.h"
 
-namespace Knm
+namespace KnmInternals
 {
 class SettingDbus
 {

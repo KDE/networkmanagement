@@ -3,9 +3,9 @@
 
 #include "serial.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
-SerialSetting::SerialSetting() : Setting(Setting::Serial)
+SerialSetting::SerialSetting() : Setting(Setting::Serial), mBaud(0), mBits(0), mStopbits(0), mSenddelay(0)
 {
 }
 

@@ -5,7 +5,7 @@
 
 #include "serial.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 SerialPersistence::SerialPersistence(SerialSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {

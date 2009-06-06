@@ -54,7 +54,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/vpn.h"
 #include "settings/vpndbus.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 ConnectionDbus::ConnectionDbus(Connection * conn)
     : m_connection(conn)

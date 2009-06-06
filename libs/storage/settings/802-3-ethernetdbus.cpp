@@ -5,7 +5,7 @@
 
 #include "802-3-ethernet.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 WiredDbus::WiredDbus(WiredSetting * setting) : SettingDbus(setting)
 {

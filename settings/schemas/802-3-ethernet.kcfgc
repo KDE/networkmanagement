@@ -2,4 +2,4 @@ File=802-3-ethernet.kcfg
 ClassName=Wired
 Mutators=true
 Visibility=KNM_EXPORT
-NameSpace=Knm
+NameSpace=KnmInternals

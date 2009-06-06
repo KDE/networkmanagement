@@ -3,9 +3,9 @@
 
 #include "ppp.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
-PppSetting::PppSetting() : Setting(Setting::Ppp)
+PppSetting::PppSetting() : Setting(Setting::Ppp), mNoauth(false), mRefuseeap(false), mRefusepap(false), mRefusechap(false), mRefusemschap(false), mRefusemschapv2(false), mNobsdcomp(false), mNodeflate(false), mNovjcomp(false), mRequiremppe(false), mRequiremppe128(false), mMppestateful(false), mCrtscts(false), mBaud(0), mMru(0), mMtu(0), mLcpechofailure(0), mLcpechointerval(0)
 {
 }
 

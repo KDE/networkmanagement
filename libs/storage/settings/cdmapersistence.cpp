@@ -5,7 +5,7 @@
 
 #include "cdma.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 CdmaPersistence::CdmaPersistence(CdmaSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {

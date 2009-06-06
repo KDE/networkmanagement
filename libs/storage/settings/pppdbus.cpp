@@ -5,7 +5,7 @@
 
 #include "ppp.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 PppDbus::PppDbus(PppSetting * setting) : SettingDbus(setting)
 {

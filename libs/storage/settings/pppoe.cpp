@@ -3,7 +3,7 @@
 
 #include "pppoe.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 PppoeSetting::PppoeSetting() : Setting(Setting::Pppoe)
 {

@@ -3,7 +3,7 @@
 
 #include "802-3-ethernet.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 WiredSetting::WiredSetting() : Setting(Setting::Wired),
     mPort(WiredSetting::EnumPort::mii),

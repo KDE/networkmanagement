@@ -5,7 +5,7 @@
 
 #include "serial.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 SerialDbus::SerialDbus(SerialSetting * setting) : SettingDbus(setting)
 {

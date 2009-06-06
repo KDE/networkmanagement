@@ -3,7 +3,7 @@
 
 #include "802-11-wireless.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 WirelessSetting::WirelessSetting() : Setting(Setting::Wireless),
     mMode(0), mBand(WirelessSetting::EnumBand::bg), mChannel(0), mRate(0), mTxpower(0), mMtu(0)

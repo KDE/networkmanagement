@@ -5,7 +5,7 @@
 
 #include "802-1x.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 Security8021xPersistence::Security8021xPersistence(Security8021xSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {

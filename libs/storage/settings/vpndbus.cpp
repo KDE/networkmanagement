@@ -5,7 +5,7 @@
 
 #include "vpn.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 VpnDbus::VpnDbus(VpnSetting * setting) : SettingDbus(setting)
 {

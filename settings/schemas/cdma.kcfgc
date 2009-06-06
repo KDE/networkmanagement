@@ -2,4 +2,4 @@ File=cdma.kcfg
 ClassName=Cdma
 Mutators=true
 Visibility=KNM_EXPORT
-NameSpace=Knm
+NameSpace=KnmInternals

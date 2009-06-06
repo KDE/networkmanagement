@@ -7,7 +7,7 @@
 #include "../../types.h"
 #include "ipv4.h"
 
-using namespace Knm;
+using namespace KnmInternals;
 
 Ipv4Dbus::Ipv4Dbus(Ipv4Setting * setting) : SettingDbus(setting)
 {

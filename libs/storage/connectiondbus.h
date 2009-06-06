@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "knm_export.h"
 #include "types.h"
 
-namespace Knm
+namespace KnmInternals
 {
 class Connection;
 class Setting;
