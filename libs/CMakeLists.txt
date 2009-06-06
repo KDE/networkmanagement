@@ -12,3 +12,7 @@ add_subdirectory(ui)
 
 # library knmdbus containing interface classes to dbus objects specified by NetworkManager
 add_subdirectory(dbus)
+
+# library externals containing network connections provided by the kded
+add_subdirectory(externals)
+
