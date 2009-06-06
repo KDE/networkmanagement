@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node>
+  <interface name="org.kde.networkmanagement.connectable">
+    <method name="connectionType">
+      <arg name="type" type="s" direction="out" />
+    </method>
+    <method name="deviceUni">
+      <arg name="uni" type="s" direction="out" />
+    </method>
+  </interface>
+</node>

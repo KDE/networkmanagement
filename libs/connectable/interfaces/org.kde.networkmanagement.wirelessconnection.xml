@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node>
+  <interface name="org.kde.networkmanagement.wirelessconnection">
+    <method name="network">
+      <arg name="uid" type="s" direction="out" />
+    </method>
+  </interface>
+</node>
