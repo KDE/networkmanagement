@@ -5,7 +5,6 @@
 
 # library knmstorage providing Connection load and save functionality, used by the Config (save/load) and the Service (load)
 add_subdirectory(storage)
-add_subdirectory(connectable)
 
 # library knmui containing widgets for editing connection settings groups, used by the Config
 add_subdirectory(ui)
