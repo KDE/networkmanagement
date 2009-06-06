@@ -24,7 +24,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Knm {
 
-Connection::Connection() {
+Connection::Connection()
+    :Connectable(Connectable::Connection)
+{
+    new ConnectionAdaptor(this);
+}
+
+Connection::Connection(ConnectableType type)
+    :Connectable(type)
+{
     new ConnectionAdaptor(this);
 }
 

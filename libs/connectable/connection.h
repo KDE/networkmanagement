@@ -51,7 +51,10 @@ public:
     
 Q_SIGNALS:
     void connectionStateChanged();
-    
+
+protected:
+    Connection(ConnectableType type);
+
 private:
     QString m_type;
     QString m_name;

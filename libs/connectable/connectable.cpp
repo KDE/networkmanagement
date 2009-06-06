@@ -26,16 +26,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Knm {
 
-Connectable::Connectable() {
-        new ConnectableAdaptor(this);
-}
-
-void Connectable::setConnectionType(const QString& type)
+Connectable::Connectable(ConnectableType type)
 {
     m_type = type;
+    (void) new ConnectableAdaptor(this);
 }
 
-QString Connectable::connectionType()
+Connectable::ConnectableType Connectable::connectableType()
 {
     return m_type;
 }

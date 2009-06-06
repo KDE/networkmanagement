@@ -30,17 +30,23 @@ class Connectable :public QObject
 {
     Q_OBJECT
 public:
-    Connectable();
-    
+    enum ConnectableType {
+        Connection,
+        WirelessConnection,
+        WirelessNetworkItem
+    };
+
     virtual ~Connectable() {}
 
-    void setConnectionType(const QString& type);
-    QString connectionType();
+    ConnectableType connectableType();
     void setDeviceUni(const QString& deviceUni);
     QString deviceUni();
 
+protected:
+    Connectable(ConnectableType type);
+
 private:
-    QString m_type;
+    ConnectableType m_type;
     QString m_deviceUni;
 
 };

@@ -24,7 +24,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Knm {
 
-WirelessNetworkItem::WirelessNetworkItem() {
+WirelessNetworkItem::WirelessNetworkItem()
+    :Connectable(Connectable::WirelessNetworkItem)
+{
     new WirelessnetworkitemAdaptor(this);
 }
     
