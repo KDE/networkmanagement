@@ -3,9 +3,9 @@ include_directories(
    ${CMAKE_CURRENT_BINARY_DIR}
    )
 
-## next target: storage layer library
+## next target: internals layer library
 
-set(knmstorage_SRCS
+set(knminternals_SRCS
    connection.cpp
    #connectiondbus.cpp
    connectionpersistence.cpp
@@ -62,17 +62,17 @@ set(knmstorage_SRCS
    settings/vpnpersistence.cpp
 )
 
-kde4_add_kcfg_files(knmstorage_SRCS knmserviceprefs.kcfgc)
+kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)
 
-kde4_add_library(knmstorage SHARED ${knmstorage_SRCS})
+kde4_add_library(knminternals SHARED ${knminternals_SRCS})
 
-target_link_libraries(knmstorage ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} solidcontrol ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(knminternals ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} solidcontrol ${QT_QTNETWORK_LIBRARY})
 
-set_target_properties(knmstorage PROPERTIES
+set_target_properties(knminternals PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}
    SOVERSION ${GENERIC_LIB_SOVERSION}
    )
-install(TARGETS knmstorage ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS knminternals ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 set(kconfig_compiler_SRCS kconfig_compiler.cpp)
 

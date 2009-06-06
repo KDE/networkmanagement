@@ -16,7 +16,7 @@ set(kded_networkmanagement_SRCS
    networksettings.cpp
    )
 
-kde4_add_kcfg_files(kded_networkmanagement_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/knmserviceprefs.kcfgc)
+kde4_add_kcfg_files(kded_networkmanagement_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals/knmserviceprefs.kcfgc)
 
 qt4_add_dbus_adaptor(kded_networkmanagement_SRCS org.kde.knetworkmanagerd.xml kconfigtoservice.h KConfigToService knetworkmanagerserviceadaptor KNetworkManagerServiceAdaptor )
 
