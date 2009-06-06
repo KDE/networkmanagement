@@ -22,19 +22,50 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionadaptor.h"
 
-    Connection::Connection() {
-        new ConnectionAdaptor(this);
-    }
+namespace Knm {
 
-    void Connection::setConnectionType(const QString& type) {m_type = type;}
-    QString Connection::connectionType() {return m_type;}
-    
-    void Connection::setConnectionUni(const QString& uni) {m_uni = uni;}
-    QString Connection::connectionUni() {return m_uni;}
+Connection::Connection() {
+    new ConnectionAdaptor(this);
+}
 
-    void Connection::setConnectionName(const QString& name) {m_name = name;}
-    QString Connection::connectionName() {return m_name;}
-    
-    void Connection::setConnectionState(Solid::Control::NetworkInterface::ConnectionState state) {m_state=state;}
-    Solid::Control::NetworkInterface::ConnectionState Connection::connectionState() { return m_state; }
-    
+void Connection::setConnectionType(const QString& type)
+{
+    m_type = type;
+}
+
+QString Connection::connectionType()
+{
+    return m_type;
+}
+
+void Connection::setConnectionUni(const QString& uni)
+{
+    m_uni = uni;
+}
+
+QString Connection::connectionUni()
+{
+    return m_uni;
+}
+
+void Connection::setConnectionName(const QString& name)
+{
+    m_name = name;
+}
+
+QString Connection::connectionName()
+{
+    return m_name;
+}
+
+void Connection::setConnectionState(Solid::Control::NetworkInterface::ConnectionState state)
+{
+    m_state=state;
+}
+
+Solid::Control::NetworkInterface::ConnectionState Connection::connectionState()
+{
+    return m_state;
+}
+
+} // namespace

@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 #include <QtCore/QString>
 
+namespace Knm {
+
 class Connection :public Connectable
 {
     Q_OBJECT
@@ -56,5 +58,6 @@ private:
     QString m_uni;
     Solid::Control::NetworkInterface::ConnectionState m_state;
 };
+} // namespace
 
 #endif

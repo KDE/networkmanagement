@@ -24,13 +24,30 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectableadaptor.h"
 
-Connectable::Connectable() :QObject(0) {
+namespace Knm {
+
+Connectable::Connectable() {
         new ConnectableAdaptor(this);
 }
 
+void Connectable::setConnectionType(const QString& type)
+{
+    m_type = type;
+}
 
-void Connectable::setConnectionType(const QString& type) {m_type = type;}
-QString Connectable::connectionType() {return m_type;}
-void Connectable::setDeviceUni(const QString& deviceUni) {m_deviceUni = deviceUni;}
-QString Connectable::deviceUni() {return m_deviceUni;}
+QString Connectable::connectionType()
+{
+    return m_type;
+}
 
+void Connectable::setDeviceUni(const QString& deviceUni)
+{
+    m_deviceUni = deviceUni;
+}
+
+QString Connectable::deviceUni()
+{
+    return m_deviceUni;
+}
+
+} // namespace

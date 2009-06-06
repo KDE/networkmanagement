@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QString>
 #include <QObject>
 
+namespace Knm {
+
 class NetworkItem :public Connectable
 {
     Q_OBJECT
@@ -42,5 +44,6 @@ private:
     QString m_path;
 
 };
+} // namespace
 
 #endif

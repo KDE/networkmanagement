@@ -26,6 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QString>
 #include <QObject>
 
+namespace Knm {
+
 class WirelessConnection :public Connection
 {
     Q_OBJECT
@@ -40,7 +42,7 @@ public:
     
 private:
     QString m_network;
-
 };
+} // namespace
 
 #endif

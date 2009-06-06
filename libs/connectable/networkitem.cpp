@@ -22,9 +22,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkitemadaptor.h"
 
-    NetworkItem::NetworkItem() {
-        new NetworkitemAdaptor(this);
-    }
+namespace Knm {
+
+NetworkItem::NetworkItem() {
+    new NetworkitemAdaptor(this);
+}
     
-    void NetworkItem::networkPath(const QString& path) {m_path = path;}
-    QString NetworkItem::networkPath() {return m_path;}
+void NetworkItem::networkPath(const QString& path)
+{
+    m_path = path;
+}
+
+QString NetworkItem::networkPath()
+{
+    return m_path;
+}
+
+} // namespace

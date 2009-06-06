@@ -21,9 +21,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessconnection.h"
 #include "wirelessconnectionadaptor.h"
 
-    WirelessConnection::WirelessConnection() {
-        new WirelessconnectionAdaptor(this);
-    }
-    
-    void WirelessConnection::setNetwork(const QString& network) {m_network = network;}
-    QString WirelessConnection::network() {return m_network;}
+namespace Knm {
+
+WirelessConnection::WirelessConnection() {
+    new WirelessconnectionAdaptor(this);
+}
+
+void WirelessConnection::setNetwork(const QString& network)
+{
+    m_network = network;
+}
+
+QString WirelessConnection::network()
+{
+    return m_network;
+}
+
+} // namespace

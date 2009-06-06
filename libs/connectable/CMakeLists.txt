@@ -14,28 +14,28 @@ qt4_add_dbus_adaptor(
     knmconnection_SRCS
     interfaces/org.kde.networkmanagement.connectable.xml
     connectable.h
-    Connectable
+    Knm::Connectable
 )
 
 qt4_add_dbus_adaptor(
     knmconnection_SRCS
     interfaces/org.kde.networkmanagement.connection.xml
     connection.h
-    Connection
+    Knm::Connection
 )
 
 qt4_add_dbus_adaptor(
     knmconnection_SRCS
     interfaces/org.kde.networkmanagement.wirelessconnection.xml
     wirelessconnection.h
-    WirelessConnection
+    Knm::WirelessConnection
 )
 
 qt4_add_dbus_adaptor(
     knmconnection_SRCS
     interfaces/org.kde.networkmanagement.networkitem.xml
     networkitem.h
-    NetworkItem
+    Knm::NetworkItem
 )
 
 kde4_add_library(

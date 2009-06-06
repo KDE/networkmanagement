@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QObject>
 #include <QMetaType>
 
-
+namespace Knm {
 
 class Connectable :public QObject
 {
@@ -44,6 +44,7 @@ private:
     QString m_deviceUni;
 
 };
+} // namespace
 
 
 #endif
