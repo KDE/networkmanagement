@@ -1,3 +1,10 @@
+find_package(KDE4 REQUIRED)
+include (KDE4Defaults)
+include(MacroOptionalAddSubdirectory)
+
+add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
+
 set(solidcontrolfuture_LIB_SRCS
    wirelessnetworkinterfaceenvironment.cpp
    wirelessnetwork.cpp
@@ -10,6 +17,7 @@ target_link_libraries(solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS}
 install(TARGETS solidcontrolfuture EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
 install( FILES wirelessnetwork.h
+               wirelessnetworkinterfaceenvironment.h
    DESTINATION
    ${INCLUDE_INSTALL_DIR}/solid/control COMPONENT Devel)
  
