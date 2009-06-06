@@ -7,58 +7,58 @@ include_directories(
 
 set(knmstorage_SRCS
    connection.cpp
-   connectiondbus.cpp
+   #connectiondbus.cpp
    connectionpersistence.cpp
 
    setting.cpp
-   settingdbus.cpp
+   #settingdbus.cpp
    settingpersistence.cpp
 
    settings/pbkdf2.cpp
    settings/wephash.cpp
 
    settings/802-11-wireless-security.cpp
-   settings/802-11-wireless-securitydbus.cpp
+   #settings/802-11-wireless-securitydbus.cpp
    settings/802-11-wireless-securitypersistence.cpp
 
    settings/802-11-wireless.cpp
-   settings/802-11-wirelessdbus.cpp
+   #settings/802-11-wirelessdbus.cpp
    settings/802-11-wirelesspersistence.cpp
 
    settings/802-3-ethernet.cpp
-   settings/802-3-ethernetdbus.cpp
+   #settings/802-3-ethernetdbus.cpp
    settings/802-3-ethernetpersistence.cpp
 
    settings/802-1x.cpp
-   settings/802-1xdbus.cpp
+   #settings/802-1xdbus.cpp
    settings/802-1xpersistence.cpp
 
    settings/gsm.cpp
-   settings/gsmdbus.cpp
+   #settings/gsmdbus.cpp
    settings/gsmpersistence.cpp
 
    settings/cdma.cpp
-   settings/cdmadbus.cpp
+   #settings/cdmadbus.cpp
    settings/cdmapersistence.cpp
 
    settings/ipv4.cpp
-   settings/ipv4dbus.cpp
+   #settings/ipv4dbus.cpp
    settings/ipv4persistence.cpp
 
    settings/ppp.cpp
-   settings/pppdbus.cpp
+   #settings/pppdbus.cpp
    settings/ppppersistence.cpp
 
    settings/pppoe.cpp
-   settings/pppoedbus.cpp
+   #settings/pppoedbus.cpp
    settings/pppoepersistence.cpp
 
    settings/serial.cpp
-   settings/serialdbus.cpp
+   #settings/serialdbus.cpp
    settings/serialpersistence.cpp
 
    settings/vpn.cpp
-   settings/vpndbus.cpp
+   #settings/vpndbus.cpp
    settings/vpnpersistence.cpp
 )
 

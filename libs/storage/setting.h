@@ -18,13 +18,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM_SETTING_H
-#define KNM_SETTING_H
+#ifndef KNM_INTERNALS_SETTING_H
+#define KNM_INTERNALS_SETTING_H
 
 #include "knm_export.h"
 
 
-namespace Knm
+namespace KnmInternals
 {
 
 class KNM_EXPORT Setting

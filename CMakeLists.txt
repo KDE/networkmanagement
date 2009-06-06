@@ -37,6 +37,7 @@ add_subdirectory(tests)
 add_subdirectory(settings)
 #disabled pending porting
 add_subdirectory(vpnplugins)
+add_subdirectory(kded)
 
 install( FILES networkmanagement.notifyrc DESTINATION ${DATA_INSTALL_DIR}/networkmanagement )
 

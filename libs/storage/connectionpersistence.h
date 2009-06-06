@@ -18,8 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONNECTIONPERSISTENCE_H
-#define CONNECTIONPERSISTENCE_H
+#ifndef KNM_INTERNALS_CONNECTIONPERSISTENCE_H
+#define KNM_INTERNALS_CONNECTIONPERSISTENCE_H
 
 #include <QObject>
 #include <QHash>
@@ -29,7 +29,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-namespace Knm
+namespace KnmInternals
 {
 class Connection;
 class Setting;

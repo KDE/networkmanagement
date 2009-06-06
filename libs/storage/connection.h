@@ -18,8 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONNECTION_H
-#define CONNECTION_H
+#ifndef KNM_INTERNALS_CONNECTION_H
+#define KNM_INTERNALS_CONNECTION_H
 
 #include <QDateTime>
 #include <QList>
@@ -30,7 +30,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-namespace Knm
+namespace KnmInternals
 {
 
 class KNM_EXPORT Connection

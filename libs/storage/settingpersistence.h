@@ -17,8 +17,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
-#ifndef SETTINGPERSISTENCE_H
-#define SETTINGPERSISTENCE_H
+#ifndef KNM_INTERNALS_SETTINGPERSISTENCE_H
+#define KNM_INTERNALS_SETTINGPERSISTENCE_H
 
 #include <QMap>
 #include <KSharedConfig>
@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionpersistence.h"
 #include "setting.h"
 
-namespace Knm
+namespace KnmInternals
 {
 
 class SettingPersistence
