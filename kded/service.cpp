@@ -23,14 +23,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KCModuleInfo>
 #include <KCModuleProxy>
 #include <KServiceTypeTrader>
+#include <KStandardDirs>
 
 #include "networkmanagementadaptor.h"
+#include "knmserviceprefs.h"
 
-#include "externals/wirelessnetwork.h"
-#include "externals/wirelessnetworkinterfaceenvironment.h"
+#include "wirelessnetwork.h"
+#include "wirelessnetworkinterfaceenvironment.h"
 #include "externals/connectable.h"
 #include "internals/connection.h"
-#include "externals/wirelessconnection.h "
+#include "internals/connectionpersistence.h"
+#include "internals/settings/802-11-wireless.h"
+#include "externals/wirelessconnection.h"
+#include "externals/wirelessnetworkitem.h"
 
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
@@ -67,8 +72,8 @@ NetworkManagementService::~NetworkManagementService()
 
 void NetworkManagementService::reparseConfiguration()
 {
-    foreach (Knm::Internals::Connection *conn, m_connections) {
-        conn->deleteLater();
+    foreach (KnmInternals::Connection *conn, m_connections) {
+        delete conn;
     }
 
     m_connections.clear();
@@ -77,7 +82,7 @@ void NetworkManagementService::reparseConfiguration()
     connectionIds = KNetworkManagerServicePrefs::self()->connections();
     // 2) restore each connection
     foreach (QString connectionId, connectionIds) {
-        Knm::Internals::Connection * connection = restoreConnection(connectionId);
+        KnmInternals::Connection * connection = restoreConnection(connectionId);
         if (connection) {
             m_connections.append(connection);
         }
@@ -104,9 +109,9 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
 
     if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
         m_environments[iface->uni()] = new Solid::Control::WirelessNetworkInterfaceEnvironment(
-                    qobject_cast<Solid::Control::WirelessNetworkInterface>(iface));
+                    qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface));
 
-        connect(qobject_cast<Solid::Control::WirelessNetworkInterface>(iface),
+        connect(qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface),
                 SIGNAL(activeAccessPointChanged(const QString&)),
                 this, SLOT(activeAccessPointChanged(const QString&)));
         connect(m_environments[iface->uni()], SIGNAL(wirelessNetworkAppeared(const QString&)),
@@ -117,15 +122,16 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
                 this, SLOT(wirelessNetworkChanged(const QString&)));
 
         // Let's just get all the Wireless Networks from the interface environment
-        QList<Solid::Control::WirelessNetwork*> networks = m_environments[iface->uni()]->wirelessNetworks();
+        QStringList networks = m_environments[iface->uni()]->networks();
 
         // Now, we basically need to check if any of those networks are actually configured
         // and we need to associate them to a connection
 
         QList<Knm::Externals::WirelessConnection*> wcons;
 
-        foreach (Solid::Control::WirelessNetwork *network, networks) {
-            Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(network);
+        foreach (const QString &network, networks) {
+            Solid::Control::WirelessNetwork *wn = m_environments[iface->uni()]->findNetwork(network);
+            Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(wn);
 
             if (wc != 0) {
                 // Bingo. Let's remove the network from the list and create
@@ -137,8 +143,9 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
                 ++m_counter;
                 QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
                 QDBusConnection::sessionBus().registerObject(path, wc);
-                m_connectables[wc] = path;
-                emit ConnectableAdded(path);
+                QDBusObjectPath dbuspath = QDBusObjectPath(path);
+                m_connectables[wc] = dbuspath;
+                emit ConnectableAdded(dbuspath);
             }
         }
 
@@ -147,13 +154,16 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
         // just for the connection items as we were creating them. Now it's time for network
         // items
 
-        foreach (Solid::Control::WirelessNetwork *network, networks) {
+        foreach (const QString &network, networks) {
             // Add the network to our hash
             ++m_counter;
+            Knm::Externals::WirelessNetworkItem *item = new Knm::Externals::WirelessNetworkItem();
+            item->setEssid(network);
             QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
-            QDBusConnection::sessionBus().registerObject(path, network);
-            m_connectables[network] = path;
-            emit ConnectableAdded(path);
+            QDBusConnection::sessionBus().registerObject(path, item);
+            QDBusObjectPath dbuspath = QDBusObjectPath(path);
+            m_connectables[item] = dbuspath;
+            emit ConnectableAdded(dbuspath);
         }
     }
 }
@@ -162,18 +172,18 @@ void NetworkManagementService::networkInterfaceRemoved(const QString &uni)
 {
     // Roll out and delete all the existing Connectables belonging to it
 
-    if (m_environment.contains(uni)) {
-        Solid::Control::WirelessNetworkEnvironment *env = m_environments[uni];
+    if (m_environments.contains(uni)) {
+        Solid::Control::WirelessNetworkInterfaceEnvironment *env = m_environments[uni];
 
-        m_environments.removeOne(uni);
+        m_environments.remove(uni);
         env->deleteLater();
     }
 
-    foreach (Connectable *conn, m_connectables.keys()) {
+    foreach (Knm::Externals::Connectable *conn, m_connectables.keys()) {
         if (conn->deviceUni() == uni) {
             // Remove it
             emit ConnectableRemoved(m_connectables[conn]);
-            m_connectables.removeOne(conn);
+            m_connectables.remove(conn);
             conn->deleteLater();
         }
     }
@@ -181,46 +191,51 @@ void NetworkManagementService::networkInterfaceRemoved(const QString &uni)
 
 void NetworkManagementService::wirelessNetworkAppeared(const QString &uni)
 {
-    Solid::Control::WirelessNetworkEnvironment *env = qobject_cast<Solid::Control::WirelessNetworkEnvironment>(sender());
+    Solid::Control::WirelessNetworkInterfaceEnvironment *env = qobject_cast<Solid::Control::WirelessNetworkInterfaceEnvironment*>(sender());
 
     if (!env) {
         return;
     }
 
-    Solid::Control::WirelessNetwork *network = env->findWirelessNetwork(uni);
+    Solid::Control::WirelessNetwork *network = env->findNetwork(uni);
 
     if (!network) {
         return;
     }
 
-    Connectable *conn = network;
+    Knm::Externals::Connectable *conn;
 
     Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(network);
 
     if (wc != 0) {
         conn = wc;
+    } else {
+        Knm::Externals::WirelessNetworkItem *item = new Knm::Externals::WirelessNetworkItem();
+        item->setEssid(network->ssid());
+        conn = item;
     }
 
     // Add the network to our hash
     ++m_counter;
     QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
     QDBusConnection::sessionBus().registerObject(path, conn);
-    m_connectables[conn] = path;
-    emit ConnectableAdded(path);
+    QDBusObjectPath dbuspath = QDBusObjectPath(path);
+    m_connectables[conn] = dbuspath;
+    emit ConnectableAdded(dbuspath);
 }
 
 void NetworkManagementService::wirelessNetworkDisappeared(const QString &uni)
 {
-    foreach (Connectable *conn, m_connectables.keys()) {
-        if (conn->connectionType() = "Wireless") {
-            Knm::Externals::WirelessConnection *wc = qobject_cast<Knm::Externals::WirelessConnection>(conn);
+    foreach (Knm::Externals::Connectable *conn, m_connectables.keys()) {
+        if (conn->connectableType() == Knm::Externals::Connectable::WirelessConnection) {
+            Knm::Externals::WirelessConnection *wc = qobject_cast<Knm::Externals::WirelessConnection*>(conn);
 
             if (wc->network() == uni) {
                 emit ConnectableRemoved(m_connectables[conn]);
                 conn->deleteLater();
             }
-        } else if (conn->connectionType() = "WirelessNetworkItem") {
-            WirelessNetworkItem *wni = qobject_cast<WirelessNetworkItem>(conn);
+        } else if (conn->connectableType() == Knm::Externals::Connectable::WirelessNetworkItem) {
+            Knm::Externals::WirelessNetworkItem *wni = qobject_cast<Knm::Externals::WirelessNetworkItem*>(conn);
 
             if (wni->essid() == uni) {
                 emit ConnectableRemoved(m_connectables[conn]);
@@ -232,17 +247,17 @@ void NetworkManagementService::wirelessNetworkDisappeared(const QString &uni)
 
 Knm::Externals::WirelessConnection *NetworkManagementService::processNewWirelessNetwork(Solid::Control::WirelessNetwork *network)
 {
-    foreach (Knm::Internals::Connection *connection, m_connections) {
-        Knm::Internals::Setting *set = connection->setting(Knm::Internals::Setting::Wireless);
+    foreach (KnmInternals::Connection *connection, m_connections) {
+        KnmInternals::Setting *set = connection->setting(KnmInternals::Setting::Wireless);
         if (set != 0) {
             // Ok, let's retrieve the SSID and set up the connection
-            Knm::Internals::WirelessSetting *wset = qobject_cast<Knm::Internals::WirelessSetting*>(set);
+            KnmInternals::WirelessSetting *wset = dynamic_cast<KnmInternals::WirelessSetting*>(set);
 
             if (network->ssid() == wset->ssid()) {
                 // Bingo. Let's create the connection
 
                 Knm::Externals::WirelessConnection *conn = new Knm::Externals::WirelessConnection();
-                conn->setNetwork(network->uuid());
+                conn->setNetwork(network->ssid());
 
                 return conn;
             }
@@ -251,17 +266,17 @@ Knm::Externals::WirelessConnection *NetworkManagementService::processNewWireless
     return 0;
 }
 
-Knm::Internals::Connection * NetworkManagementService::restoreConnection(const QString & connectionId)
+KnmInternals::Connection * NetworkManagementService::restoreConnection(const QString & connectionId)
 {
     kDebug() << connectionId;
     m_config = connectionFileForUuid(connectionId);
-    Knm::Internals::Connection * connection = 0;
+    KnmInternals::Connection * connection = 0;
     if (!m_config.isNull()) {
         // restore from disk
-        Knm::Internals::ConnectionPersistence cp(m_config,
+        KnmInternals::ConnectionPersistence cp(m_config,
                 (KNetworkManagerServicePrefs::self()->storeInWallet() ?
-                 Knm::Internals::ConnectionPersistence::Secure :
-                 Knm::Internals::ConnectionPersistence::PlainText));
+                 KnmInternals::ConnectionPersistence::Secure :
+                 KnmInternals::ConnectionPersistence::PlainText));
         cp.load();
         connection = cp.connection();
     } else {
@@ -269,6 +284,20 @@ Knm::Internals::Connection * NetworkManagementService::restoreConnection(const Q
     }
 
     return connection;
+}
+
+KSharedConfig::Ptr NetworkManagementService::connectionFileForUuid(const QString & uuid)
+{
+    KSharedConfig::Ptr config;
+    if (!uuid.isEmpty()) {
+        QString configFile = KStandardDirs::locate("data",
+                KnmInternals::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + uuid);
+        if (!configFile.isEmpty()) {
+            config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
+            kDebug() << config->name() << " is at " << configFile;
+        }
+    }
+    return config;
 }
 
 #include "service.moc"

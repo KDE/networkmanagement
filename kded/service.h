@@ -27,11 +27,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtDBus/QDBusObjectPath>
 
-namespace Knm {
-namespace Internals {
+#include <KSharedConfig>
+
+
+namespace KnmInternals {
     class Connection;
 }
 
+namespace Knm {
 namespace Externals {
     class Connectable;
     class WirelessConnection;
@@ -77,13 +80,15 @@ private:
     void networkInterfaceAdded(Solid::Control::NetworkInterface *iface);
     void networkInterfaceRemoved(Solid::Control::NetworkInterface *iface);
     Knm::Externals::WirelessConnection *processNewWirelessNetwork(Solid::Control::WirelessNetwork *network);
-    void restoreConnection(const QString & connectionId);
+    KnmInternals::Connection *restoreConnection(const QString & connectionId);
+    KSharedConfig::Ptr connectionFileForUuid(const QString & uuid);
 
 private:
     QHash<Knm::Externals::Connectable*, QDBusObjectPath> m_connectables;
-    QList<Knm::Internals::Connection*> m_connections;
+    QList<KnmInternals::Connection*> m_connections;
     QHash<QString, Solid::Control::WirelessNetworkInterfaceEnvironment*> m_environments;
     int m_counter;
+    KSharedConfigPtr m_config;
 };
 
 #endif

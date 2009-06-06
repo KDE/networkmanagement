@@ -1,5 +1,6 @@
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/../libs/
+   ${CMAKE_CURRENT_SOURCE_DIR}/../libs/internals
    ${CMAKE_CURRENT_SOURCE_DIR}/../solidcontrolfuture
    )
    ## next target: test service

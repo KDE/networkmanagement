@@ -40,16 +40,16 @@ qt4_add_dbus_adaptor(
 )
 
 kde4_add_library(
-    knmconnectable SHARED ${knmconnection_SRCS}
+    knmexternals SHARED ${knmconnection_SRCS}
 )
 
-target_link_libraries(knmconnectable ${KDE4_KDECORE_LIBS} solidcontrol)
+target_link_libraries(knmexternals ${KDE4_KDECORE_LIBS} solidcontrol)
 
-set_target_properties(knmconnectable PROPERTIES
+set_target_properties(knmexternals PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}
    SOVERSION ${GENERIC_LIB_SOVERSION}
    )
 
-install(TARGETS knmconnectable ${INSTALL_TARGETS_DEFAULT_ARGS})
+install(TARGETS knmexternals ${INSTALL_TARGETS_DEFAULT_ARGS})
 
 
