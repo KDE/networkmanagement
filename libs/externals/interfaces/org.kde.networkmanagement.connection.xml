@@ -15,5 +15,12 @@
       <arg name="uni" type="i" direction="out" />
     </method>
     <signal name="connectionStateChanged" />
+    
+    <method name="connectableType">
+      <arg name="type" type="i" direction="out" />
+    </method>
+    <method name="deviceUni">
+      <arg name="uni" type="s" direction="out" />
+    </method>
   </interface>
 </node>
