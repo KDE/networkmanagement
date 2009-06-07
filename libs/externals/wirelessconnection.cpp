@@ -19,7 +19,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "wirelessconnection.h"
+
 #include "wirelessconnectionadaptor.h"
+#include "connectionadaptor.h"
+#include "connectableadaptor.h"
 
 namespace Knm {
 namespace Externals {
@@ -28,6 +31,8 @@ WirelessConnection::WirelessConnection()
     :Connection(Connectable::WirelessConnection)
 {
     new WirelessconnectionAdaptor(this);
+    new ConnectableAdaptor(this);
+    new ConnectionAdaptor(this);
 }
 
 void WirelessConnection::setNetwork(const QString& network)

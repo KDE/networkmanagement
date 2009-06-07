@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 
 #include "connectionadaptor.h"
+#include "connectableadaptor.h"
 
 namespace Knm {
 namespace Externals {
@@ -29,6 +30,7 @@ Connection::Connection()
     :Connectable(Connectable::Connection)
 {
     new ConnectionAdaptor(this);
+    new ConnectableAdaptor(this);
 }
 
 Connection::Connection(ConnectableType type)

@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkitem.h"
 
 #include "wirelessnetworkitemadaptor.h"
+#include "connectableadaptor.h"
 
 namespace Knm {
 namespace Externals {
@@ -29,8 +30,9 @@ WirelessNetworkItem::WirelessNetworkItem()
     :Connectable(Connectable::WirelessNetworkItem)
 {
     new WirelessnetworkitemAdaptor(this);
+    new ConnectableAdaptor(this);
 }
-    
+
 void WirelessNetworkItem::setEssid(const QString& essid)
 {
     m_essid = essid;

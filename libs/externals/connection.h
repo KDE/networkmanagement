@@ -38,7 +38,7 @@ class KNM_EXPORT Connection :public Connectable
 public:
     enum Type { Wired = 1, Wireless = 2, Gsm = 4, Cdma = 8, Vpn = 16, Pppoe = 32 };
     Connection();
-    
+
     virtual ~Connection(){}
 
     void setConnectionType(Type type);
@@ -52,7 +52,7 @@ public:
 
     void setConnectionState(Solid::Control::NetworkInterface::ConnectionState state);
     Solid::Control::NetworkInterface::ConnectionState connectionState();
-    
+
 Q_SIGNALS:
     void connectionStateChanged();
 
