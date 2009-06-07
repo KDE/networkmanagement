@@ -107,7 +107,7 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
 
     // update the service
     foreach (QString connectionId, deletedConnections) {
-        Knm::Externals::Connectable *conn;
+        Knm::Externals::Connectable *conn = 0;
 
         foreach (Knm::Externals::Connectable *item, m_connectables.keys()) {
             if (item->connectableType() == Knm::Externals::Connectable::WirelessConnection ||
@@ -128,23 +128,14 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
             // In this case, we should "downgrade" it to a WirelessNetworkItem
             Knm::Externals::WirelessConnection *wc = qobject_cast<Knm::Externals::WirelessConnection*>(conn);
             QString network = wc->network();
-            emit ConnectableRemoved(m_connectables[wc]);
-            m_connectables.remove(wc);
-            wc->deleteLater();
+            deleteConnectableAndNotify(wc);
 
-            ++m_counter;
             Knm::Externals::WirelessNetworkItem *item = new Knm::Externals::WirelessNetworkItem();
             item->setEssid(network);
-            QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
-            QDBusConnection::sessionBus().registerObject(path, item);
-            QDBusObjectPath dbuspath = QDBusObjectPath(path);
-            m_connectables[item] = dbuspath;
-            emit ConnectableAdded(dbuspath);
+            registerConnectableAndNotify(item);
         } else {
             // Otherwise, let's just erase it
-            emit ConnectableRemoved(m_connectables[conn]);
-            m_connectables.remove(conn);
-            conn->deleteLater();
+            deleteConnectableAndNotify(conn);
         }
 
         m_connections.remove(connectionId);
@@ -157,9 +148,7 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
                     item->connectableType() == Knm::Externals::Connectable::Connection) {
                 Knm::Externals::Connection *c = qobject_cast<Knm::Externals::Connection*>(item);
                 if (c->connectionUni() == connectionId) {
-                    emit ConnectableRemoved(m_connectables[c]);
-                    m_connectables.remove(c);
-                    c->deleteLater();
+                    deleteConnectableAndNotify(c);
                     break;
                 }
             }
@@ -185,12 +174,8 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
                     if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
                         Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(settings->ssid());
                         wc->setDeviceUni(iface->uni());
-                        ++m_counter;
-                        QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
-                        QDBusConnection::sessionBus().registerObject(path, wc);
-                        QDBusObjectPath dbuspath = QDBusObjectPath(path);
-                        m_connectables[wc] = dbuspath;
-                        emit ConnectableAdded(dbuspath);
+
+                        registerConnectableAndNotify(wc);
                     }
                 }
             } else {
@@ -202,12 +187,8 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
                         conn->setConnectionUni(connection->uuid().toString());
                         conn->setConnectionName(connection->name());
                         conn->setConnectionType(connection->type());
-                        ++m_counter;
-                        QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
-                        QDBusConnection::sessionBus().registerObject(path, conn);
-                        QDBusObjectPath dbuspath = QDBusObjectPath(path);
-                        m_connectables[conn] = dbuspath;
-                        emit ConnectableAdded(dbuspath);
+
+                        registerConnectableAndNotify(conn);
                     }
                 }
             }
@@ -239,9 +220,7 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
                             // Bingo. Let's remove the network from the list and create
                             // the connection
 
-                            emit ConnectableRemoved(m_connectables[wni]);
-                            m_connectables.remove(wni);
-                            wni->deleteLater();
+                            deleteConnectableAndNotify(wni);
                             wc->deleteLater();
 
                             // Add the network to our hash, for each interface
@@ -249,12 +228,8 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
                                 if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
                                     Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(settings->ssid());
                                     wc->setDeviceUni(iface->uni());
-                                    ++m_counter;
-                                    QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
-                                    QDBusConnection::sessionBus().registerObject(path, wc);
-                                    QDBusObjectPath dbuspath = QDBusObjectPath(path);
-                                    m_connectables[wc] = dbuspath;
-                                    emit ConnectableAdded(dbuspath);
+
+                                    registerConnectableAndNotify(wc);
                                 }
                             }
                         }
@@ -268,12 +243,8 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
                             conn->setConnectionUni(connection->uuid().toString());
                             conn->setConnectionName(connection->name());
                             conn->setConnectionType(connection->type());
-                            ++m_counter;
-                            QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
-                            QDBusConnection::sessionBus().registerObject(path, conn);
-                            QDBusObjectPath dbuspath = QDBusObjectPath(path);
-                            m_connectables[conn] = dbuspath;
-                            emit ConnectableAdded(dbuspath);
+
+                            registerConnectableAndNotify(conn);
                         }
                     }
                 }
@@ -330,12 +301,8 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
 
                 // Add the network to our hash
                 wc->setDeviceUni(iface->uni());
-                ++m_counter;
-                QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
-                QDBusConnection::sessionBus().registerObject(path, wc);
-                QDBusObjectPath dbuspath = QDBusObjectPath(path);
-                m_connectables[wc] = dbuspath;
-                emit ConnectableAdded(dbuspath);
+
+                registerConnectableAndNotify(wc);
             }
         }
 
@@ -346,15 +313,11 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
 
         foreach (const QString &network, networks) {
             // Add the network to our hash
-            ++m_counter;
             Knm::Externals::WirelessNetworkItem *item = new Knm::Externals::WirelessNetworkItem();
             item->setEssid(network);
             item->setDeviceUni(iface->uni());
-            QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
-            QDBusConnection::sessionBus().registerObject(path, item);
-            QDBusObjectPath dbuspath = QDBusObjectPath(path);
-            m_connectables[item] = dbuspath;
-            emit ConnectableAdded(dbuspath);
+
+            registerConnectableAndNotify(item);
         }
     } else {
         // If the interface is actually not wireless, we just have to expose the
@@ -369,12 +332,8 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
                 conn->setConnectionUni(connection->uuid().toString());
                 conn->setConnectionName(connection->name());
                 conn->setConnectionType(connection->type());
-                ++m_counter;
-                QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
-                QDBusConnection::sessionBus().registerObject(path, conn);
-                QDBusObjectPath dbuspath = QDBusObjectPath(path);
-                m_connectables[conn] = dbuspath;
-                emit ConnectableAdded(dbuspath);
+
+                registerConnectableAndNotify(conn);
             }
         }
     }
@@ -394,9 +353,7 @@ void NetworkManagementService::networkInterfaceRemoved(const QString &uni)
     foreach (Knm::Externals::Connectable *conn, m_connectables.keys()) {
         if (conn->deviceUni() == uni) {
             // Remove it
-            emit ConnectableRemoved(m_connectables[conn]);
-            m_connectables.remove(conn);
-            conn->deleteLater();
+            deleteConnectableAndNotify(conn);
         }
     }
 }
@@ -430,12 +387,7 @@ void NetworkManagementService::wirelessNetworkAppeared(const QString &uni)
     conn->setDeviceUni(env->interface()->uni());
 
     // Add the network to our hash
-    ++m_counter;
-    QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
-    QDBusConnection::sessionBus().registerObject(path, conn);
-    QDBusObjectPath dbuspath = QDBusObjectPath(path);
-    m_connectables[conn] = dbuspath;
-    emit ConnectableAdded(dbuspath);
+    registerConnectableAndNotify(conn);
 }
 
 void NetworkManagementService::wirelessNetworkDisappeared(const QString &uni)
@@ -445,15 +397,13 @@ void NetworkManagementService::wirelessNetworkDisappeared(const QString &uni)
             Knm::Externals::WirelessConnection *wc = qobject_cast<Knm::Externals::WirelessConnection*>(conn);
 
             if (wc->network() == uni) {
-                emit ConnectableRemoved(m_connectables[conn]);
-                conn->deleteLater();
+                deleteConnectableAndNotify(conn);
             }
         } else if (conn->connectableType() == Knm::Externals::Connectable::WirelessNetworkItem) {
             Knm::Externals::WirelessNetworkItem *wni = qobject_cast<Knm::Externals::WirelessNetworkItem*>(conn);
 
             if (wni->essid() == uni) {
-                emit ConnectableRemoved(m_connectables[conn]);
-                conn->deleteLater();
+                deleteConnectableAndNotify(conn);
             }
         }
     }
@@ -539,6 +489,23 @@ Knm::Externals::Connection::Type NetworkManagementService::solidDeviceToConnecti
         default:
             return Knm::Externals::Connection::Wired;
     }
+}
+
+void NetworkManagementService::registerConnectableAndNotify(Knm::Externals::Connectable *item)
+{
+    ++m_counter;
+    QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
+    QDBusConnection::sessionBus().registerObject(path, item);
+    QDBusObjectPath dbuspath = QDBusObjectPath(path);
+    m_connectables[item] = dbuspath;
+    emit ConnectableAdded(dbuspath);
+}
+
+void NetworkManagementService::deleteConnectableAndNotify(Knm::Externals::Connectable *item)
+{
+    emit ConnectableRemoved(m_connectables[item]);
+    m_connectables.remove(item);
+    item->deleteLater();
 }
 
 #include "service.moc"

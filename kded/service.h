@@ -83,6 +83,8 @@ private:
     KnmInternals::Connection *restoreConnection(const QString & connectionId);
     KSharedConfig::Ptr connectionFileForUuid(const QString & uuid);
     Knm::Externals::Connection::Type solidDeviceToConnectionType(const QString &deviceUni);
+    void registerConnectableAndNotify(Knm::Externals::Connectable *item);
+    void deleteConnectableAndNotify(Knm::Externals::Connectable *item);
 
 private:
     QHash<Knm::Externals::Connectable*, QDBusObjectPath> m_connectables;
