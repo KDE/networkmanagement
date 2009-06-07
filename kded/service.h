@@ -59,14 +59,12 @@ public:
 
     QList<QDBusObjectPath> ListConnectables();
 
-    void reparseConfiguration();
+    void reparseConfiguration(const QStringList& changedConnections);
 
 private Q_SLOTS:
     void networkInterfaceAdded(const QString  & uni);
 
     void networkInterfaceRemoved(const QString  & uni);
-
-    void activeAccessPointChanged(const QString &ap);
 
     void wirelessNetworkAppeared(const QString &);
 
@@ -79,13 +77,13 @@ Q_SIGNALS:
 private:
     void networkInterfaceAdded(Solid::Control::NetworkInterface *iface);
     void networkInterfaceRemoved(Solid::Control::NetworkInterface *iface);
-    Knm::Externals::WirelessConnection *processNewWirelessNetwork(Solid::Control::WirelessNetwork *network);
+    Knm::Externals::WirelessConnection *processNewWirelessNetwork(const QString &ssid);
     KnmInternals::Connection *restoreConnection(const QString & connectionId);
     KSharedConfig::Ptr connectionFileForUuid(const QString & uuid);
 
 private:
     QHash<Knm::Externals::Connectable*, QDBusObjectPath> m_connectables;
-    QList<KnmInternals::Connection*> m_connections;
+    QHash<QString, KnmInternals::Connection*> m_connections;
     QHash<QString, Solid::Control::WirelessNetworkInterfaceEnvironment*> m_environments;
     int m_counter;
     KSharedConfigPtr m_config;
