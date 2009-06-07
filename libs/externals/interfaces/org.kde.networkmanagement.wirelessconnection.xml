@@ -5,29 +5,5 @@
     <method name="network">
       <arg name="uid" type="s" direction="out" />
     </method>
-    
-    <!-- Connection -->
-    <method name="connectionUni">
-      <arg name="uni" type="s" direction="out" />
-    </method>
-    <method name="connectionType">
-      <arg name="type" type="i" direction="out" />
-    </method>
-    <method name="connectionName">
-      <arg name="name" type="s" direction="out" />
-    </method>
-    <method name="connectionState">
-      <arg name="uni" type="i" direction="out" />
-    </method>
-    <signal name="connectionStateChanged" />
-    
-    <!-- Connectable -->
-    <method name="connectableType">
-      <arg name="type" type="i" direction="out" />
-    </method>
-    <method name="deviceUni">
-      <arg name="uni" type="s" direction="out" />
-    </method>
-    
   </interface>
 </node>

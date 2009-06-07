@@ -5,12 +5,5 @@
     <method name="essid">
       <arg name="_essid" type="s" direction="out" />
     </method>
-    
-    <method name="connectableType">
-      <arg name="type" type="i" direction="out" />
-    </method>
-    <method name="deviceUni">
-      <arg name="uni" type="s" direction="out" />
-    </method>
   </interface>
 </node>
