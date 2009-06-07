@@ -107,8 +107,19 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
 
     // update the service
     foreach (QString connectionId, deletedConnections) {
-        // TODO: Retrieve the connectable
-        Knm::Externals::Connectable *conn; // = m_connectables[m_connections[connectionId]];
+        Knm::Externals::Connectable *conn;
+
+        foreach (Knm::Externals::Connectable *item, m_connectables.keys()) {
+            if (item->connectableType() == Knm::Externals::Connectable::WirelessConnection ||
+                item->connectableType() == Knm::Externals::Connectable::Connection) {
+                Knm::Externals::Connection *c = qobject_cast<Knm::Externals::Connection*>(conn);
+                if (c->connectionUni() == connectionId) {
+                    conn = c;
+                    break;
+                }
+            }
+        }
+
         if (!conn) {
             continue;
         }
@@ -118,7 +129,9 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
             Knm::Externals::WirelessConnection *wc = qobject_cast<Knm::Externals::WirelessConnection*>(conn);
             QString network = wc->network();
             emit ConnectableRemoved(m_connectables[wc]);
+            m_connectables.remove(wc);
             wc->deleteLater();
+
             ++m_counter;
             Knm::Externals::WirelessNetworkItem *item = new Knm::Externals::WirelessNetworkItem();
             item->setEssid(network);
@@ -130,8 +143,11 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
         } else {
             // Otherwise, let's just erase it
             emit ConnectableRemoved(m_connectables[conn]);
+            m_connectables.remove(conn);
             conn->deleteLater();
         }
+
+        m_connections.remove(connectionId);
     }
 
     foreach (const QString connectionId, changedConnections) {
@@ -149,7 +165,7 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
         kDebug() << "adding connection with id: " << connectionId;
         KnmInternals::Connection * connection = restoreConnection(connectionId);
 
-        if (connection->type() == KnmInternals::Connection::Wireless) {
+        if (connection->type() == Knm::Externals::Connection::Wireless) {
             // Let's look for a connectable that is actually sharing the same ssid
             KnmInternals::Setting *set = connection->setting(KnmInternals::Setting::Wireless);
             if (!set) {
@@ -173,13 +189,37 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
                             emit ConnectableRemoved(m_connectables[wni]);
                             m_connectables.remove(wni);
                             wni->deleteLater();
+                            wc->deleteLater();
 
-                            // Add the network to our hash
+                            // Add the network to our hash, for each interface
+                            foreach (Solid::Control::NetworkInterface *iface, Solid::Control::NetworkManager::networkInterfaces()) {
+                                if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
+                                    Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(settings->ssid());
+                                    wc->setDeviceUni(iface->uni());
+                                    ++m_counter;
+                                    QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
+                                    QDBusConnection::sessionBus().registerObject(path, wc);
+                                    QDBusObjectPath dbuspath = QDBusObjectPath(path);
+                                    m_connectables[wc] = dbuspath;
+                                    emit ConnectableAdded(dbuspath);
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // Add the network to our hash, for each interface
+                    foreach (Solid::Control::NetworkInterface *iface, Solid::Control::NetworkManager::networkInterfaces()) {
+                        if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
+                            Knm::Externals::Connection *conn = new Knm::Externals::Connection();
+                            conn->setDeviceUni(iface->uni());
+                            conn->setConnectionUni(connection->uuid().toString());
+                            conn->setConnectionName(connection->name());
+                            conn->setConnectionType(connection->type());
                             ++m_counter;
                             QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
-                            QDBusConnection::sessionBus().registerObject(path, wc);
+                            QDBusConnection::sessionBus().registerObject(path, conn);
                             QDBusObjectPath dbuspath = QDBusObjectPath(path);
-                            m_connectables[wc] = dbuspath;
+                            m_connectables[conn] = dbuspath;
                             emit ConnectableAdded(dbuspath);
                         }
                     }
@@ -236,6 +276,7 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
                 networks.removeOne(network);
 
                 // Add the network to our hash
+                wc->setDeviceUni(iface->uni());
                 ++m_counter;
                 QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
                 QDBusConnection::sessionBus().registerObject(path, wc);
@@ -260,6 +301,27 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
             QDBusObjectPath dbuspath = QDBusObjectPath(path);
             m_connectables[item] = dbuspath;
             emit ConnectableAdded(dbuspath);
+        }
+    } else {
+        // If the interface is actually not wireless, we just have to expose the
+        // existing connections
+
+        foreach (KnmInternals::Connection *connection, m_connections.values()) {
+            if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
+                // It actually looks like our interface is capable of using this connection:
+                // let's actually create and expose it
+                Knm::Externals::Connection *conn = new Knm::Externals::Connection();
+                conn->setDeviceUni(iface->uni());
+                conn->setConnectionUni(connection->uuid().toString());
+                conn->setConnectionName(connection->name());
+                conn->setConnectionType(connection->type());
+                ++m_counter;
+                QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
+                QDBusConnection::sessionBus().registerObject(path, conn);
+                QDBusObjectPath dbuspath = QDBusObjectPath(path);
+                m_connectables[conn] = dbuspath;
+                emit ConnectableAdded(dbuspath);
+            }
         }
     }
 }
@@ -354,6 +416,9 @@ Knm::Externals::WirelessConnection *NetworkManagementService::processNewWireless
 
                 Knm::Externals::WirelessConnection *conn = new Knm::Externals::WirelessConnection();
                 conn->setNetwork(ssid);
+                conn->setConnectionUni(connection->uuid().toString());
+                conn->setConnectionName(connection->name());
+                conn->setConnectionType(connection->type());
 
                 return conn;
             }
@@ -394,6 +459,30 @@ KSharedConfig::Ptr NetworkManagementService::connectionFileForUuid(const QString
         }
     }
     return config;
+}
+
+Knm::Externals::Connection::Type NetworkManagementService::solidDeviceToConnectionType(const QString &uni)
+{
+    Solid::Control::NetworkInterface *iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+
+    if (!iface) {
+        return Knm::Externals::Connection::Wired;
+    }
+
+    switch (iface->type()) {
+        case Solid::Control::NetworkInterface::Ieee8023:
+            return Knm::Externals::Connection::Wired;
+        case Solid::Control::NetworkInterface::Ieee80211:
+            return Knm::Externals::Connection::Wireless;
+        case Solid::Control::NetworkInterface::Gsm:
+            return Knm::Externals::Connection::Gsm;
+        case Solid::Control::NetworkInterface::Cdma:
+            return Knm::Externals::Connection::Cdma;
+        case Solid::Control::NetworkInterface::Serial:
+            return Knm::Externals::Connection::Pppoe;
+        default:
+            return Knm::Externals::Connection::Wired;
+    }
 }
 
 #include "service.moc"

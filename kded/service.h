@@ -29,6 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KSharedConfig>
 
+#include "externals/connection.h"
+
 
 namespace KnmInternals {
     class Connection;
@@ -80,6 +82,7 @@ private:
     Knm::Externals::WirelessConnection *processNewWirelessNetwork(const QString &ssid);
     KnmInternals::Connection *restoreConnection(const QString & connectionId);
     KSharedConfig::Ptr connectionFileForUuid(const QString & uuid);
+    Knm::Externals::Connection::Type solidDeviceToConnectionType(const QString &deviceUni);
 
 private:
     QHash<Knm::Externals::Connectable*, QDBusObjectPath> m_connectables;
