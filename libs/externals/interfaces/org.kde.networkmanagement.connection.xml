@@ -6,7 +6,7 @@
       <arg name="uni" type="s" direction="out" />
     </method>
     <method name="connectionType">
-      <arg name="type" type="s" direction="out" />
+      <arg name="type" type="i" direction="out" />
     </method>
     <method name="connectionName">
       <arg name="name" type="s" direction="out" />

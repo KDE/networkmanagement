@@ -37,12 +37,12 @@ Connection::Connection(ConnectableType type)
     new ConnectionAdaptor(this);
 }
 
-void Connection::setConnectionType(const QString& type)
+void Connection::setConnectionType(Connection::Type type)
 {
     m_type = type;
 }
 
-QString Connection::connectionType()
+Connection::Type Connection::connectionType()
 {
     return m_type;
 }

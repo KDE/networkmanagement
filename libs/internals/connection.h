@@ -27,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QUuid>
 
 #include "setting.h"
+#include "externals/connection.h"
 
 #include "knm_export.h"
 
@@ -36,23 +37,22 @@ namespace KnmInternals
 class KNM_EXPORT Connection
 {
 public:
-    enum Type { Wired, Wireless, Gsm, Cdma, Vpn, Pppoe };
-    static QString typeAsString(Connection::Type);
-    static Connection::Type typeFromString(const QString & type);
+    static QString typeAsString(Knm::Externals::Connection::Type);
+    static Knm::Externals::Connection::Type typeFromString(const QString & type);
 
     /**
      * Create a connection with a new Uuid
      */
-    Connection(const QString & name, Connection::Type type);
+    Connection(const QString & name, Knm::Externals::Connection::Type type);
     /**
      * Create a connection with a given Uuid
      */
-    explicit Connection(const QUuid& uuid, Connection::Type type);
+    explicit Connection(const QUuid& uuid, Knm::Externals::Connection::Type type);
     virtual ~Connection();
 
     QString name() const;
     QUuid uuid() const;
-    Connection::Type type() const;
+    Knm::Externals::Connection::Type type() const;
     bool autoConnect() const;
     QDateTime timestamp() const;
 
@@ -103,7 +103,7 @@ private:
 
     QString m_name;
     QUuid m_uuid;
-    Connection::Type m_type;
+    Knm::Externals::Connection::Type m_type;
     bool m_autoConnect;
     QDateTime m_timestamp;
 

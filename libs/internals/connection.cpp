@@ -34,26 +34,26 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace KnmInternals;
 
-QString Connection::typeAsString(Connection::Type type)
+QString Connection::typeAsString(Knm::Externals::Connection::Type type)
 {
     QString typeString;
     switch (type) {
-        case Wired:
+        case Knm::Externals::Connection::Wired:
             typeString = QLatin1String("802-3-ethernet");
             break;
-        case Wireless:
+        case Knm::Externals::Connection::Wireless:
             typeString = QLatin1String("802-11-wireless");
             break;
-        case Gsm:
+        case Knm::Externals::Connection::Gsm:
             typeString = QLatin1String("gsm");
             break;
-        case Cdma:
+        case Knm::Externals::Connection::Cdma:
             typeString = QLatin1String("cdma");
             break;
-        case Vpn:
+        case Knm::Externals::Connection::Vpn:
             typeString = QLatin1String("vpn");
             break;
-        case Pppoe:
+        case Knm::Externals::Connection::Pppoe:
             typeString = QLatin1String("pppoe");
             break;
         default:
@@ -62,34 +62,34 @@ QString Connection::typeAsString(Connection::Type type)
     return typeString;
 }
 
-Connection::Type Connection::typeFromString(const QString & typeString)
+Knm::Externals::Connection::Type Connection::typeFromString(const QString & typeString)
 {
-    Connection::Type type = Wired;
+    Knm::Externals::Connection::Type type = Knm::Externals::Connection::Wired;
     if (typeString == QLatin1String("802-3-ethernet")) {
-        type = Wired;
+        type = Knm::Externals::Connection::Wired;
     } else if (typeString == QLatin1String("802-11-wireless")) {
-        type = Wireless;
+        type = Knm::Externals::Connection::Wireless;
     } else if (typeString == QLatin1String("gsm")) {
-        type = Gsm;
+        type = Knm::Externals::Connection::Gsm;
     } else if (typeString == QLatin1String("cdma")) {
-        type = Cdma;
+        type = Knm::Externals::Connection::Cdma;
     } else if (typeString == QLatin1String("vpn")) {
-        type = Vpn;
+        type = Knm::Externals::Connection::Vpn;
     } else if (typeString == QLatin1String("pppoe")) {
-        type = Pppoe;
+        type = Knm::Externals::Connection::Pppoe;
     }
     return type;
 }
 
-Connection::Type typeFromString(const QString & type);
+Knm::Externals::Connection::Type typeFromString(const QString & type);
 
-Connection::Connection(const QString & name, const Connection::Type type)
+Connection::Connection(const QString & name, const Knm::Externals::Connection::Type type)
     : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false)
 {
     init();
 }
 
-Connection::Connection(const QUuid & uuid, const Connection::Type type)
+Connection::Connection(const QUuid & uuid, const Knm::Externals::Connection::Type type)
     : m_uuid(uuid), m_type(type), m_autoConnect(false)
 {
     init();
@@ -103,33 +103,33 @@ Connection::~Connection()
 void Connection::init()
 {
     switch (m_type) {
-        case Cdma:
+        case Knm::Externals::Connection::Cdma:
             addSetting(new CdmaSetting());
             addSetting(new Ipv4Setting());
             addSetting(new PppSetting());
             addSetting(new SerialSetting());
             break;
-        case Gsm:
+        case Knm::Externals::Connection::Gsm:
             addSetting(new GsmSetting());
             addSetting(new Ipv4Setting());
             addSetting(new PppSetting());
             addSetting(new SerialSetting());
             break;
-        case Pppoe:
+        case Knm::Externals::Connection::Pppoe:
             addSetting(new Ipv4Setting());
             addSetting(new PppSetting());
             addSetting(new PppoeSetting());
             addSetting(new WiredSetting());
             break;
-        case Vpn:
+        case Knm::Externals::Connection::Vpn:
             addSetting(new VpnSetting());
             break;
-        case Wired:
+        case Knm::Externals::Connection::Wired:
             addSetting(new Ipv4Setting());
             addSetting(new Security8021xSetting());
             addSetting(new WiredSetting());
             break;
-        case Wireless:
+        case Knm::Externals::Connection::Wireless:
             addSetting(new Ipv4Setting());
             addSetting(new Security8021xSetting());
             addSetting(new WirelessSetting());
@@ -148,7 +148,7 @@ QUuid Connection::uuid() const
     return m_uuid;
 }
 
-Connection::Type Connection::type() const
+Knm::Externals::Connection::Type Connection::type() const
 {
     return m_type;
 }

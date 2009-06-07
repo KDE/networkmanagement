@@ -36,12 +36,13 @@ class KNM_EXPORT Connection :public Connectable
     Q_OBJECT
 
 public:
+    enum Type { Wired = 1, Wireless = 2, Gsm = 4, Cdma = 8, Vpn = 16, Pppoe = 32 };
     Connection();
     
     virtual ~Connection(){}
 
-    void setConnectionType(const QString& type);
-    QString connectionType();
+    void setConnectionType(Type type);
+    Type connectionType();
 
     void setConnectionUni(const QString& uni);
     QString connectionUni();
@@ -59,7 +60,7 @@ protected:
     Connection(ConnectableType type);
 
 private:
-    QString m_type;
+    Type m_type;
     QString m_name;
     QString m_uni;
     Solid::Control::NetworkInterface::ConnectionState m_state;
