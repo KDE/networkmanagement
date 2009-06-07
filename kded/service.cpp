@@ -296,6 +296,7 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
             ++m_counter;
             Knm::Externals::WirelessNetworkItem *item = new Knm::Externals::WirelessNetworkItem();
             item->setEssid(network);
+            item->setDeviceUni(iface->uni());
             QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
             QDBusConnection::sessionBus().registerObject(path, item);
             QDBusObjectPath dbuspath = QDBusObjectPath(path);
@@ -372,6 +373,8 @@ void NetworkManagementService::wirelessNetworkAppeared(const QString &uni)
         item->setEssid(network->ssid());
         conn = item;
     }
+
+    conn->setDeviceUni(env->interface()->uni());
 
     // Add the network to our hash
     ++m_counter;

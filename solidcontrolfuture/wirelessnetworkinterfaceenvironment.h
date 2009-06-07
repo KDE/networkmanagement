@@ -51,10 +51,14 @@ public:
     virtual ~WirelessNetworkInterfaceEnvironment();
     virtual QStringList networks() const;
     virtual Solid::Control::WirelessNetwork * findNetwork(const QString&) const;
-    void dump(); private Q_SLOTS:
+    void dump();
+    Solid::Control::WirelessNetworkInterface * interface() const;
+
+private Q_SLOTS:
     void accessPointAppeared(const QString&);
     void removeNetwork(const QString&);
     void wirelessEnabledChanged(bool);
+
 Q_SIGNALS:
     virtual void networkAppeared(const QString &ssid);
     virtual void networkDisappeared(const QString &ssid);

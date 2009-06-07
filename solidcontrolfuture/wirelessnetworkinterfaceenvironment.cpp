@@ -68,6 +68,12 @@ Solid::Control::WirelessNetworkInterfaceEnvironment::~WirelessNetworkInterfaceEn
     delete d_ptr;
 }
 
+Solid::Control::WirelessNetworkInterface * Solid::Control::WirelessNetworkInterfaceEnvironment::interface() const
+{
+    Q_D(const WirelessNetworkInterfaceEnvironment);
+    return d->iface;
+}
+
 QStringList Solid::Control::WirelessNetworkInterfaceEnvironment::networks() const
 {
     Q_D(const WirelessNetworkInterfaceEnvironment);
