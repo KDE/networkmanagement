@@ -151,16 +151,69 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
     }
 
     foreach (const QString connectionId, changedConnections) {
-/*        if (m_connectionIdToObjectPath.contains(connectionId)) {
-            Knm::Connection * changedConnection = restoreConnection(connectionId);
-            if (changedConnection) {
-                kDebug() << "updating connection with id:" << connectionId;
-                QString objPath = m_connectionIdToObjectPath.value(connectionId);
-                kDebug() << "at objectpath:" << objPath;
-                m_service->updateConnection(objPath, changedConnection);
+        // First things first, let's remove the old connection
+        foreach (Knm::Externals::Connectable *item, m_connectables.keys()) {
+            if (item->connectableType() == Knm::Externals::Connectable::WirelessConnection ||
+                    item->connectableType() == Knm::Externals::Connectable::Connection) {
+                Knm::Externals::Connection *c = qobject_cast<Knm::Externals::Connection*>(item);
+                if (c->connectionUni() == connectionId) {
+                    emit ConnectableRemoved(m_connectables[c]);
+                    m_connectables.remove(c);
+                    c->deleteLater();
+                    break;
+                }
             }
-        }*/
+        }
+
+        // Now let's just readd it
+        KnmInternals::Connection * connection = restoreConnection(connectionId);
+
+        if (connection->type() == Knm::Externals::Connection::Wireless) {
+            // Let's look for the ssid
+            KnmInternals::Setting *set = connection->setting(KnmInternals::Setting::Wireless);
+            if (!set) {
+                // Something weird is going on: let's pass by
+                continue;
+            }
+            KnmInternals::WirelessSetting *settings = dynamic_cast<KnmInternals::WirelessSetting*>(set);
+
+            Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(settings->ssid());
+
+            if (wc != 0) {
+                // Add the network to our hash, for each interface
+                foreach (Solid::Control::NetworkInterface *iface, Solid::Control::NetworkManager::networkInterfaces()) {
+                    if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
+                        Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(settings->ssid());
+                        wc->setDeviceUni(iface->uni());
+                        ++m_counter;
+                        QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
+                        QDBusConnection::sessionBus().registerObject(path, wc);
+                        QDBusObjectPath dbuspath = QDBusObjectPath(path);
+                        m_connectables[wc] = dbuspath;
+                        emit ConnectableAdded(dbuspath);
+                    }
+                }
+            } else {
+                // Add the network to our hash, for each interface
+                foreach (Solid::Control::NetworkInterface *iface, Solid::Control::NetworkManager::networkInterfaces()) {
+                    if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
+                        Knm::Externals::Connection *conn = new Knm::Externals::Connection();
+                        conn->setDeviceUni(iface->uni());
+                        conn->setConnectionUni(connection->uuid().toString());
+                        conn->setConnectionName(connection->name());
+                        conn->setConnectionType(connection->type());
+                        ++m_counter;
+                        QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
+                        QDBusConnection::sessionBus().registerObject(path, conn);
+                        QDBusObjectPath dbuspath = QDBusObjectPath(path);
+                        m_connectables[conn] = dbuspath;
+                        emit ConnectableAdded(dbuspath);
+                    }
+                }
+            }
+        }
     }
+
     foreach (QString connectionId, addedConnections) {
         kDebug() << "adding connection with id: " << connectionId;
         KnmInternals::Connection * connection = restoreConnection(connectionId);
