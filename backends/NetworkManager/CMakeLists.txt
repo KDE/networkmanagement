@@ -1,0 +1,51 @@
+include_directories(
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../libs
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals/settings
+   ${CMAKE_CURRENT_BINARY_DIR}
+   )
+
+## next target: internals layer library
+
+set(knm_nm_LIB_SRCS
+   connectiondbus.cpp
+
+   settingdbus.cpp
+
+   pbkdf2.cpp
+   wephash.cpp
+
+   802-11-wireless-securitydbus.cpp
+
+   802-11-wirelessdbus.cpp
+
+   802-3-ethernetdbus.cpp
+
+   802-1xdbus.cpp
+
+   gsmdbus.cpp
+
+   cdmadbus.cpp
+
+   ipv4dbus.cpp
+
+   pppdbus.cpp
+
+   pppoedbus.cpp
+
+   serialdbus.cpp
+
+   vpndbus.cpp
+)
+
+kde4_add_library(knm_nm SHARED ${knm_nm_LIB_SRCS})
+
+target_link_libraries(knm_nm ${KDE4_KDEUI_LIBS} solidcontrol knminternals ${QT_QTNETWORK_LIBRARY})
+
+
+#set_target_properties(nmbackend PROPERTIES
+#   VERSION ${GENERIC_LIB_VERSION}
+#   SOVERSION ${GENERIC_LIB_SOVERSION}
+#   )
+install(TARGETS knm_nm ${INSTALL_TARGETS_DEFAULT_ARGS})
+

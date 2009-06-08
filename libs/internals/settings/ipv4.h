@@ -121,7 +121,7 @@ class KNM_EXPORT Ipv4Setting : public Setting
     {
         mRoutes = routes;
     }
-
+    
   protected:
 
     // ipv4

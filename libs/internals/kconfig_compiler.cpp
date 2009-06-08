@@ -2367,9 +2367,13 @@ int main( int argc, char **argv )
 
   // DBUS HELPER
 
+  // NM DBUS classes are not part of the namespace
+  QString savedNameSpace = nameSpace;
+  nameSpace = QString();
+
   QString dbusHeaderFilename = baseName + "dbus.h";
   QString dbusFileName = baseName + "dbus.cpp";
-  QFile dbusHeader( baseDir + dbusHeaderFilename );
+  QFile dbusHeader( baseDir +  dbusHeaderFilename );
   if ( !dbusHeader.open( QIODevice::WriteOnly ) ) {
     std::cerr << "Can not open '" << qPrintable(dbusHeaderFilename) << "for writing."
               << std::endl;
@@ -2398,12 +2402,15 @@ int main( int argc, char **argv )
   if ( !nameSpace.isEmpty() )
     dH << "namespace " << nameSpace << " {" << endl << endl;
 
-  dH << "class " << className << "Setting;" << endl << endl;
+  dH << "namespace KnmInternals {" << endl;
+  dH << "    class " << className << "Setting;" << endl;
+  dH << "}" << endl << endl;
+
   // Class declaration header
   dH << "class " << visibility << className << "Dbus : public " << inherits << endl;
   dH << "{" << endl;
   dH << "  public:" << endl;
-  dH << "    " << className << "Dbus( " << className << "Setting * setting);" << endl;
+  dH << "    " << className << "Dbus(KnmInternals::" << className << "Setting * setting);" << endl;
   dH << "    ~" << className << "Dbus();" << endl;
   dH << "    void fromMap(const QVariantMap&);" << endl;
   dH << "    QVariantMap toMap();" << endl;
@@ -2432,10 +2439,11 @@ int main( int argc, char **argv )
   dC << "#include \"" << headerFileName << "\"" << endl << endl;
 
   if ( !nameSpace.isEmpty() )
-    dC << "using namespace " << nameSpace << ";" << endl << endl;
+      // using the saved namespace for library classes
+    dC << "using namespace " << savedNameSpace << ";" << endl << endl;
 
   // Constructor
-  dC << className << "Dbus::" << className << "Dbus(" << className << "Setting * setting) : SettingDbus(setting)" << endl;
+  dC << className << "Dbus::" << className << "Dbus(KnmInternals::" << className << "Setting * setting) : SettingDbus(setting)" << endl;
   dC << "{" << endl;
   dC << "}" << endl << endl;
 
@@ -2447,7 +2455,7 @@ int main( int argc, char **argv )
   // fromMap method
   dC << "void " << className << "Dbus::fromMap(const QVariantMap & map)" << endl;
   dC << "{" << endl;
-  dC << "  " << className << "Setting * setting = static_cast<" << className << "Setting *>(m_setting);" << endl;
+  dC << "  KnmInternals::" << className << "Setting * setting = static_cast<KnmInternals::" << className << "Setting *>(m_setting);" << endl;
   for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
     if ((*itEntry)->noDbus()) {
         continue;
@@ -2476,7 +2484,7 @@ int main( int argc, char **argv )
   dC << "QVariantMap " << className << "Dbus::toMap()" << endl;
   dC << "{" << endl;
   dC << "  QVariantMap map;" << endl;
-  dC << "  " << className << "Setting * setting = static_cast<" << className << "Setting *>(m_setting);" << endl;
+  dC << "  KnmInternals::" << className << "Setting * setting = static_cast<KnmInternals::" << className << "Setting *>(m_setting);" << endl;
   for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
     if ((*itEntry)->noDbus()) {
         continue;
@@ -2497,7 +2505,7 @@ int main( int argc, char **argv )
         } else {
             dC << "  switch (setting->" << getFunction(n) << "()) {" << endl;
             foreach (CfgEntry::Choice ch, chlist) {
-                dC << "    case " << className << "Setting::" << enumName(n, choices) << "::" << choices.prefix << ch.name << ":" << endl;
+                dC << "    case KnmInternals::" << className << "Setting::" << enumName(n, choices) << "::" << choices.prefix << ch.name << ":" << endl;
                 dC << "      map.insert(" << (*itEntry)->dbusKey() << ", \"" << (ch.dbusValue.isEmpty() ? ch.name : ch.dbusValue) << "\");" << endl;
                 dC << "      break;" << endl;
             }
@@ -2515,7 +2523,7 @@ int main( int argc, char **argv )
   dC << "{" << endl;
   dC << "  QVariantMap map;" << endl;
   if (hasSecrets) {
-    dC << "  " << className << "Setting * setting = static_cast<" << className << "Setting *>(m_setting);" << endl;
+    dC << "  KnmInternals::" << className << "Setting * setting = static_cast<KnmInternals::" << className << "Setting *>(m_setting);" << endl;
   }
   for( itEntry = entries.constBegin(); itEntry != entries.constEnd(); ++itEntry ) {
     if ((*itEntry)->noDbus()) {
@@ -2534,6 +2542,8 @@ int main( int argc, char **argv )
   dC << "}" << endl << endl;
 
   dbusImplementation.close();
+
+  nameSpace = savedNameSpace;
 
   // clear entries list
   qDeleteAll( entries );
