@@ -22,6 +22,7 @@ Comment[pt_BR]=Gerir as Ligações de Rede
 Comment[sv]=Hantera nätverksanslutningar
 Comment[tr]=Ağ Bağlantılarını Yönet
 Comment[uk]=Керуйте мережевими з’єднаннями
+Comment[x-test]=xxManage Network Connectionsxx
 Type=Service
 Exec=kcmshell4 kcm_networkmanagement
 Icon=networkmanager
