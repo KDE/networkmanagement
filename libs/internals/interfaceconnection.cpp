@@ -23,8 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceconnectionadaptor.h"
 #include "connectableadaptor.h"
 
-namespace Knm {
-namespace Externals {
+using namespace Knm;
 
 InterfaceConnection::InterfaceConnection()
     :Connectable(Connectable::Connection)
@@ -39,12 +38,12 @@ InterfaceConnection::InterfaceConnection(ConnectableType type)
     new InterfaceConnectionAdaptor(this);
 }
 
-void InterfaceConnection::setConnectionType(InterfaceConnection::Type type)
+void InterfaceConnection::setConnectionType(KnmInternals::Connection::Type type)
 {
     m_type = type;
 }
 
-InterfaceConnection::Type InterfaceConnection::connectionType()
+KnmInternals::Connection::Type InterfaceConnection::connectionType() const
 {
     return m_type;
 }
@@ -54,7 +53,7 @@ void InterfaceConnection::setConnectionUni(const QString& uni)
     m_uni = uni;
 }
 
-QString InterfaceConnection::connectionUni()
+QString InterfaceConnection::connectionUni() const
 {
     return m_uni;
 }
@@ -64,7 +63,7 @@ void InterfaceConnection::setConnectionName(const QString& name)
     m_name = name;
 }
 
-QString InterfaceConnection::connectionName()
+QString InterfaceConnection::connectionName() const
 {
     return m_name;
 }
@@ -74,10 +73,8 @@ void InterfaceConnection::setConnectionState(Solid::Control::NetworkInterface::C
     m_state=state;
 }
 
-Solid::Control::NetworkInterface::ConnectionState InterfaceConnection::connectionState()
+Solid::Control::NetworkInterface::ConnectionState InterfaceConnection::connectionState() const
 {
     return m_state;
 }
 
-} // namespace
-}

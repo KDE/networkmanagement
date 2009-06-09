@@ -18,30 +18,33 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wirelessnetworkitem.h"
+#include "wirelessinterfaceconnection.h"
 
-#include "wirelessnetworkitemadaptor.h"
+#include "wirelessinterfaceconnectionadaptor.h"
+#include "interfaceconnectionadaptor.h"
 #include "connectableadaptor.h"
 
-namespace Knm {
-namespace Externals {
+using namespace Knm;
 
-WirelessNetworkItem::WirelessNetworkItem()
-    :Connectable(Connectable::WirelessNetworkItem)
+WirelessInterfaceConnection::WirelessInterfaceConnection()
+    :InterfaceConnection(Connectable::WirelessConnection)
 {
-    new WirelessnetworkitemAdaptor(this);
+    new WirelessInterfaceConnectionAdaptor(this);
     new ConnectableAdaptor(this);
+    new InterfaceConnectionAdaptor(this);
 }
 
-void WirelessNetworkItem::setEssid(const QString& essid)
+WirelessInterfaceConnection::~WirelessInterfaceConnection()
 {
-    m_essid = essid;
 }
 
-QString WirelessNetworkItem::essid()
+void WirelessInterfaceConnection::setNetwork(const QString& network)
 {
-    return m_essid;
+    m_network = network;
 }
 
-} // namespace
+QString WirelessInterfaceConnection::network() const
+{
+    return m_network;
 }
+

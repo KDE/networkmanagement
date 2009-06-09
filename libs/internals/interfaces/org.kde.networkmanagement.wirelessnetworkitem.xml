@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <node>
-  <interface name="org.kde.networkmanagement.wirelessnetworkitem">
+  <interface name="org.kde.networkmanagement.WirelessNetworkItem">
     <method name="essid">
       <arg name="_essid" type="s" direction="out" />
     </method>

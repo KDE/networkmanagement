@@ -18,20 +18,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM_EXTERNALS_WIRELESSCONNECTION_H
-#define KNM_EXTERNALS_WIRELESSCONNECTION_H
-
-#include "knm_export.h"
+#ifndef KNM_EXTERNALS_WIRELESSINTERFACECONNECTION_H
+#define KNM_EXTERNALS_WIRELESSINTERFACECONNECTION_H
 
 #include "interfaceconnection.h"
+
+#include "knm_export.h"
 
 #include <QtCore/QString>
 #include <QObject>
 
 namespace Knm {
-namespace Externals {
 
-class KNM_EXPORT WirelessInterfaceConnection :public InterfaceConnection
+class KNM_EXPORT WirelessInterfaceConnection : public InterfaceConnection
 {
     Q_OBJECT
 
@@ -47,6 +46,5 @@ private:
     QString m_network;
 };
 } // namespace
-}
 
 #endif

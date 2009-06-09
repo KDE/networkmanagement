@@ -1,4 +1,5 @@
 include_directories(
+   ${CMAKE_CURRENT_SOURCE_DIR}
    ${CMAKE_CURRENT_SOURCE_DIR}/..
    ${CMAKE_CURRENT_BINARY_DIR}
    )
@@ -60,9 +61,42 @@ set(knminternals_SRCS
    settings/vpn.cpp
    #settings/vpndbus.cpp
    settings/vpnpersistence.cpp
-)
+
+   connectable.cpp
+   interfaceconnection.cpp
+   wirelessinterfaceconnection.cpp
+   wirelessnetworkitem.cpp
+   )
 
 kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)
+
+qt4_add_dbus_adaptor(
+    knminternals_SRCS
+    interfaces/org.kde.networkmanagement.connectable.xml
+    connectable.h
+    Knm::Connectable
+)
+
+qt4_add_dbus_adaptor(
+    knminternals_SRCS
+    interfaces/org.kde.networkmanagement.interfaceconnection.xml
+    interfaceconnection.h
+    Knm::InterfaceConnection
+)
+
+qt4_add_dbus_adaptor(
+    knminternals_SRCS
+    interfaces/org.kde.networkmanagement.wirelessinterfaceconnection.xml
+    wirelessinterfaceconnection.h
+    Knm::WirelessInterfaceConnection
+)
+
+qt4_add_dbus_adaptor(
+    knminternals_SRCS
+    interfaces/org.kde.networkmanagement.wirelessnetworkitem.xml
+    wirelessnetworkitem.h
+    Knm::WirelessNetworkItem
+)
 
 kde4_add_library(knminternals SHARED ${knminternals_SRCS})
 

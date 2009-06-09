@@ -27,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QMetaType>
 
 namespace Knm {
-namespace Externals {
 
 class KNM_EXPORT Connectable :public QObject
 {
@@ -39,11 +38,11 @@ public:
         WirelessNetworkItem
     };
 
-    virtual ~Connectable() {}
+    virtual ~Connectable();
 
-    ConnectableType connectableType();
+    ConnectableType connectableType() const;
     void setDeviceUni(const QString& deviceUni);
-    QString deviceUni();
+    QString deviceUni() const;
 
 protected:
     Connectable(ConnectableType type);
@@ -55,6 +54,5 @@ private:
 };
 
 } // namespace
-}
 
 #endif

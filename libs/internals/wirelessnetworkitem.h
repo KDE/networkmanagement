@@ -18,35 +18,34 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef KNM_EXTERNALS_NETWORKITEM_H
+#define KNM_EXTERNALS_NETWORKITEM_H
+
+#include "knm_export.h"
+
 #include "connectable.h"
 
-#include <QString>
-
-#include "connectableadaptor.h"
+#include <QtCore/QString>
+#include <QObject>
 
 namespace Knm {
-namespace Externals {
 
-Connectable::Connectable(ConnectableType type)
+class KNM_EXPORT WirelessNetworkItem :public Connectable
 {
-    m_type = type;
-    (void) new ConnectableAdaptor(this);
-}
+    Q_OBJECT
 
-Connectable::ConnectableType Connectable::connectableType()
-{
-    return m_type;
-}
+public:
+    WirelessNetworkItem();
+    
+    virtual ~WirelessNetworkItem() {}
 
-void Connectable::setDeviceUni(const QString& deviceUni)
-{
-    m_deviceUni = deviceUni;
-}
+    void setEssid(const QString& path);
+    QString essid();
+    
+private:
+    QString m_essid;
 
-QString Connectable::deviceUni()
-{
-    return m_deviceUni;
-}
-
+};
 } // namespace
-}
+
+#endif

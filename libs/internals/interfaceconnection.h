@@ -21,37 +21,37 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KNM_EXTERNALS_INTERFACECONNECTION_H
 #define KNM_EXTERNALS_INTERFACECONNECTION_H
 
+#include "connectable.h"
+
 #include "knm_export.h"
 
-#include "connectable.h"
+#include "connection.h"
 
 #include <solid/control/networkinterface.h>
 #include <QtCore/QString>
 
 namespace Knm {
-namespace Externals {
 
 class KNM_EXPORT InterfaceConnection : public Connectable
 {
     Q_OBJECT
 
 public:
-    enum Type { Wired = 1, Wireless = 2, Gsm = 4, Cdma = 8, Vpn = 16, Pppoe = 32 };
     InterfaceConnection();
 
     virtual ~InterfaceConnection(){}
 
-    void setConnectionType(Type type);
-    Type connectionType();
+    void setConnectionType(KnmInternals::Connection::Type type);
+    KnmInternals::Connection::Type connectionType() const;
 
     void setConnectionUni(const QString& uni);
-    QString connectionUni();
+    QString connectionUni() const;
 
     void setConnectionName(const QString& name);
-    QString connectionName();
+    QString connectionName() const;
 
     void setConnectionState(Solid::Control::NetworkInterface::ConnectionState state);
-    Solid::Control::NetworkInterface::ConnectionState connectionState();
+    Solid::Control::NetworkInterface::ConnectionState connectionState() const;
 
 Q_SIGNALS:
     void connectionStateChanged();
@@ -60,12 +60,11 @@ protected:
     InterfaceConnection(ConnectableType type);
 
 private:
-    Type m_type;
+    KnmInternals::Connection::Type m_type;
     QString m_name;
     QString m_uni;
     Solid::Control::NetworkInterface::ConnectionState m_state;
 };
 } // namespace
-}
 
 #endif
