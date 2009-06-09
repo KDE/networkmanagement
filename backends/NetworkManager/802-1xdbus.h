@@ -9,14 +9,14 @@
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
 #include "knm_export.h"
-namespace KnmInternals {
+namespace Knm{
     class Security8021xSetting;
 }
 
 class KNM_EXPORT Security8021xDbus : public SettingDbus
 {
   public:
-    Security8021xDbus(KnmInternals::Security8021xSetting * setting);
+    Security8021xDbus(Knm::Security8021xSetting * setting);
     ~Security8021xDbus();
     void fromMap(const QVariantMap&);
     QVariantMap toMap();

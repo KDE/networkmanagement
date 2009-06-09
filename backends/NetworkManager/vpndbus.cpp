@@ -5,7 +5,7 @@
 
 #include "vpn.h"
 
-VpnDbus::VpnDbus(KnmInternals::VpnSetting * setting) : SettingDbus(setting)
+VpnDbus::VpnDbus(Knm::VpnSetting * setting) : SettingDbus(setting)
 {
 }
 
@@ -15,7 +15,7 @@ VpnDbus::~VpnDbus()
 
 void VpnDbus::fromMap(const QVariantMap & map)
 {
-  KnmInternals::VpnSetting * setting = static_cast<KnmInternals::VpnSetting *>(m_setting);
+  Knm::VpnSetting * setting = static_cast<Knm::VpnSetting *>(m_setting);
   if (map.contains(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE))) {
     setting->setServiceType(map.value(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE)).value<QString>());
   }
@@ -34,7 +34,7 @@ void VpnDbus::fromMap(const QVariantMap & map)
 QVariantMap VpnDbus::toMap()
 {
   QVariantMap map;
-  KnmInternals::VpnSetting * setting = static_cast<KnmInternals::VpnSetting *>(m_setting);
+  Knm::VpnSetting * setting = static_cast<Knm::VpnSetting *>(m_setting);
   map.insert(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE), setting->serviceType());
   map.insert(QLatin1String(NM_SETTING_VPN_DATA), QVariant::fromValue(setting->data()));
   map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(QStringMap()));
@@ -45,7 +45,7 @@ QVariantMap VpnDbus::toMap()
 QVariantMap VpnDbus::toSecretsMap()
 {
   //assume that the settings's vpnSecrets are ready to go
-  KnmInternals::VpnSetting * setting = static_cast<KnmInternals::VpnSetting *>(m_setting);
+  Knm::VpnSetting * setting = static_cast<Knm::VpnSetting *>(m_setting);
   return setting->vpnSecrets();
 }
 

@@ -3,7 +3,7 @@
 
 #include "802-11-wireless-security.h"
 
-using namespace KnmInternals;
+using namespace Knm;
 
 WirelessSecuritySetting::WirelessSecuritySetting() : Setting(Setting::WirelessSecurity)
                                                      , mSecurityType(WirelessSecuritySetting::EnumSecurityType::None), mKeymgmt(0), mWeptxkeyindex(0), mAuthalg(0)

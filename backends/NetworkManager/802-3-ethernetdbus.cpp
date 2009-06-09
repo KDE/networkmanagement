@@ -5,7 +5,7 @@
 
 #include "802-3-ethernet.h"
 
-WiredDbus::WiredDbus(KnmInternals::WiredSetting * setting) : SettingDbus(setting)
+WiredDbus::WiredDbus(Knm::WiredSetting * setting) : SettingDbus(setting)
 {
 }
 
@@ -15,7 +15,7 @@ WiredDbus::~WiredDbus()
 
 void WiredDbus::fromMap(const QVariantMap & map)
 {
-  KnmInternals::WiredSetting * setting = static_cast<KnmInternals::WiredSetting *>(m_setting);
+  Knm::WiredSetting * setting = static_cast<Knm::WiredSetting *>(m_setting);
   if (map.contains("port")) {
     setting->setPort(map.value("port").value<int>());
   }
@@ -39,29 +39,29 @@ void WiredDbus::fromMap(const QVariantMap & map)
 QVariantMap WiredDbus::toMap()
 {
   QVariantMap map;
-  KnmInternals::WiredSetting * setting = static_cast<KnmInternals::WiredSetting *>(m_setting);
+  Knm::WiredSetting * setting = static_cast<Knm::WiredSetting *>(m_setting);
 // not in UI yet
 #if 0
   switch (setting->port()) {
-    case KnmInternals::WiredSetting::EnumPort::tp:
+    case Knm::WiredSetting::EnumPort::tp:
       map.insert("port", "tp");
       break;
-    case KnmInternals::WiredSetting::EnumPort::aui:
+    case Knm::WiredSetting::EnumPort::aui:
       map.insert("port", "aui");
       break;
-    case KnmInternals::WiredSetting::EnumPort::bnc:
+    case Knm::WiredSetting::EnumPort::bnc:
       map.insert("port", "bnc");
       break;
-    case KnmInternals::WiredSetting::EnumPort::mii:
+    case Knm::WiredSetting::EnumPort::mii:
       map.insert("port", "mii");
       break;
   }
   map.insert("speed", setting->speed());
   switch (setting->duplex()) {
-    case KnmInternals::WiredSetting::EnumDuplex::half:
+    case Knm::WiredSetting::EnumDuplex::half:
       map.insert("duplex", "half");
       break;
-    case KnmInternals::WiredSetting::EnumDuplex::full:
+    case Knm::WiredSetting::EnumDuplex::full:
       map.insert("duplex", "full");
       break;
   }

@@ -9,14 +9,14 @@
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
 #include "knm_export.h"
-namespace KnmInternals {
+namespace Knm{
     class GsmSetting;
 }
 
 class KNM_EXPORT GsmDbus : public SettingDbus
 {
   public:
-    GsmDbus(KnmInternals::GsmSetting * setting);
+    GsmDbus(Knm::GsmSetting * setting);
     ~GsmDbus();
     void fromMap(const QVariantMap&);
     QVariantMap toMap();

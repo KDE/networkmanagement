@@ -5,7 +5,7 @@
 
 #include "gsm.h"
 
-using namespace KnmInternals;
+using namespace Knm;
 
 GsmPersistence::GsmPersistence(GsmSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {

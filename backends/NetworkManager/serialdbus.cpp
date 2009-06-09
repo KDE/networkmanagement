@@ -5,7 +5,7 @@
 
 #include "serial.h"
 
-SerialDbus::SerialDbus(KnmInternals::SerialSetting * setting) : SettingDbus(setting)
+SerialDbus::SerialDbus(Knm::SerialSetting * setting) : SettingDbus(setting)
 {
 }
 
@@ -15,7 +15,7 @@ SerialDbus::~SerialDbus()
 
 void SerialDbus::fromMap(const QVariantMap & map)
 {
-  KnmInternals::SerialSetting * setting = static_cast<KnmInternals::SerialSetting *>(m_setting);
+  Knm::SerialSetting * setting = static_cast<Knm::SerialSetting *>(m_setting);
   if (map.contains("baud")) {
     setting->setBaud(map.value("baud").value<uint>());
   }
@@ -36,7 +36,7 @@ void SerialDbus::fromMap(const QVariantMap & map)
 QVariantMap SerialDbus::toMap()
 {
   QVariantMap map;
-  KnmInternals::SerialSetting * setting = static_cast<KnmInternals::SerialSetting *>(m_setting);
+  Knm::SerialSetting * setting = static_cast<Knm::SerialSetting *>(m_setting);
   map.insert("baud", setting->baud());
   map.insert("bits", setting->bits());
   map.insert("parity", setting->parity());

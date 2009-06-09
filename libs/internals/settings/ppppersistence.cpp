@@ -5,7 +5,7 @@
 
 #include "ppp.h"
 
-using namespace KnmInternals;
+using namespace Knm;
 
 PppPersistence::PppPersistence(PppSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {

@@ -7,7 +7,7 @@
 #include "../../types.h"
 #include "ipv4.h"
 
-Ipv4Dbus::Ipv4Dbus(KnmInternals::Ipv4Setting * setting) : SettingDbus(setting)
+Ipv4Dbus::Ipv4Dbus(Knm::Ipv4Setting * setting) : SettingDbus(setting)
 {
 }
 
@@ -17,7 +17,7 @@ Ipv4Dbus::~Ipv4Dbus()
 
 void Ipv4Dbus::fromMap(const QVariantMap & map)
 {
-  KnmInternals::Ipv4Setting * setting = static_cast<KnmInternals::Ipv4Setting
+  Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting
     *>(m_setting); if (map.contains("method")) {
       setting->setMethod(map.value("method").value<int>()); }
   //if (map.contains("dns")) { setting->setDns(map.value("dns").value<QStringList>()); }
@@ -37,18 +37,18 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
 QVariantMap Ipv4Dbus::toMap()
 {
   QVariantMap map;
-  KnmInternals::Ipv4Setting * setting = static_cast<KnmInternals::Ipv4Setting *>(m_setting);
+  Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting *>(m_setting);
   switch (setting->method()) {
-    case KnmInternals::Ipv4Setting::EnumMethod::Automatic:
+    case Knm::Ipv4Setting::EnumMethod::Automatic:
       map.insert("method", "auto");
       break;
-    case KnmInternals::Ipv4Setting::EnumMethod::LinkLocal:
+    case Knm::Ipv4Setting::EnumMethod::LinkLocal:
       map.insert("method", "link-local");
       break;
-    case KnmInternals::Ipv4Setting::EnumMethod::Manual:
+    case Knm::Ipv4Setting::EnumMethod::Manual:
       map.insert("method", "manual");
       break;
-    case KnmInternals::Ipv4Setting::EnumMethod::Shared:
+    case Knm::Ipv4Setting::EnumMethod::Shared:
       map.insert("method", "shared");
       break;
   }

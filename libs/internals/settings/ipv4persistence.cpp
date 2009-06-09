@@ -5,7 +5,7 @@
 
 #include "ipv4.h"
 
-using namespace KnmInternals;
+using namespace Knm;
 
 Ipv4Persistence::Ipv4Persistence(Ipv4Setting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {

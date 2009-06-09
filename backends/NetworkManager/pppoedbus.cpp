@@ -5,7 +5,7 @@
 
 #include "pppoe.h"
 
-PppoeDbus::PppoeDbus(KnmInternals::PppoeSetting * setting) : SettingDbus(setting)
+PppoeDbus::PppoeDbus(Knm::PppoeSetting * setting) : SettingDbus(setting)
 {
 }
 
@@ -15,7 +15,7 @@ PppoeDbus::~PppoeDbus()
 
 void PppoeDbus::fromMap(const QVariantMap & map)
 {
-  KnmInternals::PppoeSetting * setting = static_cast<KnmInternals::PppoeSetting *>(m_setting);
+  Knm::PppoeSetting * setting = static_cast<Knm::PppoeSetting *>(m_setting);
   if (map.contains("service")) {
     setting->setService(map.value("service").value<QString>());
   }
@@ -31,7 +31,7 @@ void PppoeDbus::fromMap(const QVariantMap & map)
 QVariantMap PppoeDbus::toMap()
 {
   QVariantMap map;
-  KnmInternals::PppoeSetting * setting = static_cast<KnmInternals::PppoeSetting *>(m_setting);
+  Knm::PppoeSetting * setting = static_cast<Knm::PppoeSetting *>(m_setting);
   map.insert("service", setting->service());
   map.insert("username", setting->username());
   return map;
@@ -40,7 +40,7 @@ QVariantMap PppoeDbus::toMap()
 QVariantMap PppoeDbus::toSecretsMap()
 {
   QVariantMap map;
-  KnmInternals::PppoeSetting * setting = static_cast<KnmInternals::PppoeSetting *>(m_setting);
+  Knm::PppoeSetting * setting = static_cast<Knm::PppoeSetting *>(m_setting);
   map.insert("password", setting->password());
   return map;
 }

@@ -29,7 +29,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-vpn.h>
 
 #include "internals/connection.h"
-#include "externals/connection.h"
 #include "internals/setting.h"
 
 #include "settings/802-11-wireless.h"
@@ -55,10 +54,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/vpn.h"
 #include "vpndbus.h"
 
-using namespace KnmInternals;
-using namespace Knm::Externals;
+using namespace Knm;
 
-ConnectionDbus::ConnectionDbus(KnmInternals::Connection * conn)
+ConnectionDbus::ConnectionDbus(Knm::Connection * conn)
     : m_connection(conn)
 {
     qDBusRegisterMetaType<QList<uint> >();
@@ -129,22 +127,22 @@ QVariantMapMap ConnectionDbus::toDbusMap()
     connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_UUID), m_connection->uuid().toString());
     QString dbusConnectionType;
     switch (m_connection->type()) {
-        case Knm::Externals::Connection::Wired:
+        case Knm::Connection::Wired:
             dbusConnectionType = QLatin1String(NM_SETTING_WIRED_SETTING_NAME);
             break;
-        case Knm::Externals::Connection::Wireless:
+        case Knm::Connection::Wireless:
             dbusConnectionType = QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME);
             break;
-        case Knm::Externals::Connection::Gsm:
+        case Knm::Connection::Gsm:
             dbusConnectionType = QLatin1String(NM_SETTING_GSM_SETTING_NAME);
             break;
-        case Knm::Externals::Connection::Cdma:
+        case Knm::Connection::Cdma:
             dbusConnectionType = QLatin1String(NM_SETTING_CDMA_SETTING_NAME);
             break;
-        case Knm::Externals::Connection::Vpn:
+        case Knm::Connection::Vpn:
             dbusConnectionType = QLatin1String(NM_SETTING_VPN_SETTING_NAME);
             break;
-        case Knm::Externals::Connection::Pppoe:
+        case Knm::Connection::Pppoe:
             dbusConnectionType = QLatin1String(NM_SETTING_PPPOE_SETTING_NAME);
             break;
     }

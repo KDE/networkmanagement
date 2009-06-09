@@ -5,7 +5,7 @@
 
 #include "gsm.h"
 
-GsmDbus::GsmDbus(KnmInternals::GsmSetting * setting) : SettingDbus(setting)
+GsmDbus::GsmDbus(Knm::GsmSetting * setting) : SettingDbus(setting)
 {
 }
 
@@ -15,7 +15,7 @@ GsmDbus::~GsmDbus()
 
 void GsmDbus::fromMap(const QVariantMap & map)
 {
-  KnmInternals::GsmSetting * setting = static_cast<KnmInternals::GsmSetting *>(m_setting);
+  Knm::GsmSetting * setting = static_cast<Knm::GsmSetting *>(m_setting);
   if (map.contains("number")) {
     setting->setNumber(map.value("number").value<QString>());
   }
@@ -51,7 +51,7 @@ void GsmDbus::fromMap(const QVariantMap & map)
 QVariantMap GsmDbus::toMap()
 {
   QVariantMap map;
-  KnmInternals::GsmSetting * setting = static_cast<KnmInternals::GsmSetting *>(m_setting);
+  Knm::GsmSetting * setting = static_cast<Knm::GsmSetting *>(m_setting);
   if (!setting->number().isEmpty())
       map.insert("number", setting->number());
   if (!setting->username().isEmpty())
@@ -68,7 +68,7 @@ QVariantMap GsmDbus::toMap()
 QVariantMap GsmDbus::toSecretsMap()
 {
   QVariantMap map;
-  KnmInternals::GsmSetting * setting = static_cast<KnmInternals::GsmSetting *>(m_setting);
+  Knm::GsmSetting * setting = static_cast<Knm::GsmSetting *>(m_setting);
   if (!setting->password().isEmpty())
       map.insert("password", setting->password());
   if (!setting->pin().isEmpty())

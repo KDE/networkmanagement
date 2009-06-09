@@ -5,7 +5,7 @@
 
 #include "802-11-wireless.h"
 
-WirelessDbus::WirelessDbus(KnmInternals::WirelessSetting * setting) : SettingDbus(setting)
+WirelessDbus::WirelessDbus(Knm::WirelessSetting * setting) : SettingDbus(setting)
 {
 }
 
@@ -15,7 +15,7 @@ WirelessDbus::~WirelessDbus()
 
 void WirelessDbus::fromMap(const QVariantMap & map)
 {
-  KnmInternals::WirelessSetting * setting = static_cast<KnmInternals::WirelessSetting *>(m_setting);
+  Knm::WirelessSetting * setting = static_cast<Knm::WirelessSetting *>(m_setting);
   if (map.contains("ssid")) {
     setting->setSsid(map.value("ssid").value<QByteArray>());
   }
@@ -54,23 +54,23 @@ void WirelessDbus::fromMap(const QVariantMap & map)
 QVariantMap WirelessDbus::toMap()
 {
   QVariantMap map;
-  KnmInternals::WirelessSetting * setting = static_cast<KnmInternals::WirelessSetting *>(m_setting);
+  Knm::WirelessSetting * setting = static_cast<Knm::WirelessSetting *>(m_setting);
   map.insert("ssid", setting->ssid());
   switch (setting->mode()) {
-    case KnmInternals::WirelessSetting::EnumMode::infrastructure:
+    case Knm::WirelessSetting::EnumMode::infrastructure:
       map.insert("mode", "infrastructure");
       break;
-    case KnmInternals::WirelessSetting::EnumMode::adhoc:
+    case Knm::WirelessSetting::EnumMode::adhoc:
       map.insert("mode", "adhoc");
       break;
   }
   // leave out band, NM seems to work automatically without it
   switch (setting->band()) {
-    case KnmInternals::WirelessSetting::EnumBand::a:
+    case Knm::WirelessSetting::EnumBand::a:
       //map.insert("band", "a");
       map.insert("band", "a");
       break;
-    case KnmInternals::WirelessSetting::EnumBand::bg:
+    case Knm::WirelessSetting::EnumBand::bg:
       //map.insert("band", "bg");
       map.insert("band", "bg");
       break;

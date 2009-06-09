@@ -7,7 +7,7 @@
 #include "pbkdf2.h"
 #include "wephash.h"
 
-WirelessSecurityDbus::WirelessSecurityDbus(KnmInternals::WirelessSecuritySetting * setting, const QString & essid) : SettingDbus(setting),
+WirelessSecurityDbus::WirelessSecurityDbus(Knm::WirelessSecuritySetting * setting, const QString & essid) : SettingDbus(setting),
     m_essid(essid)
 {
 }
@@ -18,7 +18,7 @@ WirelessSecurityDbus::~WirelessSecurityDbus()
 
 void WirelessSecurityDbus::fromMap(const QVariantMap & map)
 {
-  KnmInternals::WirelessSecuritySetting * setting = static_cast<KnmInternals::WirelessSecuritySetting *>(m_setting);
+  Knm::WirelessSecuritySetting * setting = static_cast<Knm::WirelessSecuritySetting *>(m_setting);
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT))) {
     setting->setKeymgmt(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT)).value<int>());
   }
@@ -70,34 +70,34 @@ void WirelessSecurityDbus::fromMap(const QVariantMap & map)
 QVariantMap WirelessSecurityDbus::toMap()
 {
   QVariantMap map;
-  KnmInternals::WirelessSecuritySetting * setting = static_cast<KnmInternals::WirelessSecuritySetting *>(m_setting);
-  if (setting->securityType() != KnmInternals::WirelessSecuritySetting::EnumSecurityType::None) { // don't return anything if there is no security
+  Knm::WirelessSecuritySetting * setting = static_cast<Knm::WirelessSecuritySetting *>(m_setting);
+  if (setting->securityType() != Knm::WirelessSecuritySetting::EnumSecurityType::None) { // don't return anything if there is no security
   switch (setting->keymgmt()) {
-    case KnmInternals::WirelessSecuritySetting::EnumKeymgmt::None:
+    case Knm::WirelessSecuritySetting::EnumKeymgmt::None:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "none");
       break;
-    case KnmInternals::WirelessSecuritySetting::EnumKeymgmt::Ieee8021x:
+    case Knm::WirelessSecuritySetting::EnumKeymgmt::Ieee8021x:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "ieee8021x");
       break;
-    case KnmInternals::WirelessSecuritySetting::EnumKeymgmt::WPANone:
+    case Knm::WirelessSecuritySetting::EnumKeymgmt::WPANone:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "wpa-none");
       break;
-    case KnmInternals::WirelessSecuritySetting::EnumKeymgmt::WPAPSK:
+    case Knm::WirelessSecuritySetting::EnumKeymgmt::WPAPSK:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "wpa-psk");
       break;
-    case KnmInternals::WirelessSecuritySetting::EnumKeymgmt::WPAEAP:
+    case Knm::WirelessSecuritySetting::EnumKeymgmt::WPAEAP:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "wpa-eap");
       break;
   }
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX), setting->weptxkeyindex());
   switch (setting->authalg()) {
-    case KnmInternals::WirelessSecuritySetting::EnumAuthalg::open:
+    case Knm::WirelessSecuritySetting::EnumAuthalg::open:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "open");
       break;
-    case KnmInternals::WirelessSecuritySetting::EnumAuthalg::shared:
+    case Knm::WirelessSecuritySetting::EnumAuthalg::shared:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "shared");
       break;
-    case KnmInternals::WirelessSecuritySetting::EnumAuthalg::leap:
+    case Knm::WirelessSecuritySetting::EnumAuthalg::leap:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "leap");
       break;
   }
@@ -120,8 +120,8 @@ QVariantMap WirelessSecurityDbus::toMap()
 QVariantMap WirelessSecurityDbus::toSecretsMap()
 {
   QVariantMap map;
-  KnmInternals::WirelessSecuritySetting * setting = static_cast<KnmInternals::WirelessSecuritySetting *>(m_setting);
-  if (setting->securityType() != KnmInternals::WirelessSecuritySetting::EnumSecurityType::None) { // don't return anything if there is no security
+  Knm::WirelessSecuritySetting * setting = static_cast<Knm::WirelessSecuritySetting *>(m_setting);
+  if (setting->securityType() != Knm::WirelessSecuritySetting::EnumSecurityType::None) { // don't return anything if there is no security
   if (!setting->weppassphrase().isEmpty()) {
       QString key = hashWepPassphrase(setting->weppassphrase());
       switch (setting->weptxkeyindex()) {

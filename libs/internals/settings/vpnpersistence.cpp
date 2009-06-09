@@ -5,7 +5,7 @@
 
 #include "vpn.h"
 
-using namespace KnmInternals;
+using namespace Knm;
 
 VpnPersistence::VpnPersistence(VpnSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {

@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionpersistence.h"
 #include "setting.h"
 
-namespace KnmInternals
+namespace Knm
 {
 
 class SettingPersistence

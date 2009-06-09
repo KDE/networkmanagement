@@ -9,14 +9,14 @@
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
 #include "knm_export.h"
-namespace KnmInternals {
+namespace Knm{
     class WirelessSecuritySetting;
 }
 
 class KNM_EXPORT WirelessSecurityDbus : public SettingDbus
 {
   public:
-    WirelessSecurityDbus(KnmInternals::WirelessSecuritySetting * setting, const QString & essid);
+    WirelessSecurityDbus(Knm::WirelessSecuritySetting * setting, const QString & essid);
     ~WirelessSecurityDbus();
     void fromMap(const QVariantMap&);
     QVariantMap toMap();

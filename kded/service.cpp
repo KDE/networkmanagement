@@ -30,12 +30,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessnetwork.h"
 #include "wirelessnetworkinterfaceenvironment.h"
-#include "externals/connectable.h"
-#include "internals/connection.h"
-#include "internals/connectionpersistence.h"
-#include "internals/settings/802-11-wireless.h"
-#include "externals/wirelessconnection.h"
-#include "externals/wirelessnetworkitem.h"
+#include "connectable.h"
+#include "connection.h"
+#include "connectionpersistence.h"
+#include "settings/802-11-wireless.h"
+#include "interfaceconnection.h"
+#include "wirelessinterfaceconnection.h"
+#include "wirelessnetworkitem.h"
 
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
@@ -60,7 +61,7 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     connectionIds = KNetworkManagerServicePrefs::self()->connections();
     // 2) restore each connection
     foreach (QString connectionId, connectionIds) {
-        KnmInternals::Connection * connection = restoreConnection(connectionId);
+        Knm::Connection * connection = restoreConnection(connectionId);
         if (connection) {
             m_connections[connectionId] = connection;
         }
@@ -107,12 +108,12 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
 
     // update the service
     foreach (QString connectionId, deletedConnections) {
-        Knm::Externals::Connectable *conn = 0;
+        Knm::Connectable *conn = 0;
 
-        foreach (Knm::Externals::Connectable *item, m_connectables.keys()) {
-            if (item->connectableType() == Knm::Externals::Connectable::WirelessConnection ||
-                item->connectableType() == Knm::Externals::Connectable::Connection) {
-                Knm::Externals::Connection *c = qobject_cast<Knm::Externals::Connection*>(conn);
+        foreach (Knm::Connectable *item, m_connectables.keys()) {
+            if (item->connectableType() == Knm::Connectable::WirelessConnection ||
+                item->connectableType() == Knm::Connectable::Connection) {
+                Knm::InterfaceConnection *c = qobject_cast<Knm::InterfaceConnection*>(conn);
                 if (c->connectionUni() == connectionId) {
                     conn = c;
                     break;
@@ -124,13 +125,13 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
             continue;
         }
 
-        if (conn->connectableType() == Knm::Externals::Connectable::WirelessConnection) {
+        if (conn->connectableType() == Knm::Connectable::WirelessConnection) {
             // In this case, we should "downgrade" it to a WirelessNetworkItem
-            Knm::Externals::WirelessConnection *wc = qobject_cast<Knm::Externals::WirelessConnection*>(conn);
+            Knm::WirelessInterfaceConnection *wc = qobject_cast<Knm::WirelessInterfaceConnection*>(conn);
             QString network = wc->network();
             deleteConnectableAndNotify(wc);
 
-            Knm::Externals::WirelessNetworkItem *item = new Knm::Externals::WirelessNetworkItem();
+            Knm::WirelessNetworkItem *item = new Knm::WirelessNetworkItem();
             item->setEssid(network);
             registerConnectableAndNotify(item);
         } else {
@@ -143,10 +144,10 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
 
     foreach (const QString connectionId, changedConnections) {
         // First things first, let's remove the old connection
-        foreach (Knm::Externals::Connectable *item, m_connectables.keys()) {
-            if (item->connectableType() == Knm::Externals::Connectable::WirelessConnection ||
-                    item->connectableType() == Knm::Externals::Connectable::Connection) {
-                Knm::Externals::Connection *c = qobject_cast<Knm::Externals::Connection*>(item);
+        foreach (Knm::Connectable *item, m_connectables.keys()) {
+            if (item->connectableType() == Knm::Connectable::WirelessConnection ||
+                    item->connectableType() == Knm::Connectable::Connection) {
+                Knm::InterfaceConnection *c = qobject_cast<Knm::InterfaceConnection*>(item);
                 if (c->connectionUni() == connectionId) {
                     deleteConnectableAndNotify(c);
                     break;
@@ -155,24 +156,24 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
         }
 
         // Now let's just readd it
-        KnmInternals::Connection * connection = restoreConnection(connectionId);
+        Knm::Connection * connection = restoreConnection(connectionId);
 
-        if (connection->type() == Knm::Externals::Connection::Wireless) {
+        if (connection->type() == Knm::Connection::Wireless) {
             // Let's look for the ssid
-            KnmInternals::Setting *set = connection->setting(KnmInternals::Setting::Wireless);
+            Knm::Setting *set = connection->setting(Knm::Setting::Wireless);
             if (!set) {
                 // Something weird is going on: let's pass by
                 continue;
             }
-            KnmInternals::WirelessSetting *settings = dynamic_cast<KnmInternals::WirelessSetting*>(set);
+            Knm::WirelessSetting *settings = dynamic_cast<Knm::WirelessSetting*>(set);
 
-            Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(settings->ssid());
+            Knm::WirelessInterfaceConnection *wc = processNewWirelessNetwork(settings->ssid());
 
             if (wc != 0) {
                 // Add the network to our hash, for each interface
                 foreach (Solid::Control::NetworkInterface *iface, Solid::Control::NetworkManager::networkInterfaces()) {
                     if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
-                        Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(settings->ssid());
+                        Knm::WirelessInterfaceConnection *wc = processNewWirelessNetwork(settings->ssid());
                         wc->setDeviceUni(iface->uni());
 
                         registerConnectableAndNotify(wc);
@@ -182,7 +183,7 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
                 // Add the network to our hash, for each interface
                 foreach (Solid::Control::NetworkInterface *iface, Solid::Control::NetworkManager::networkInterfaces()) {
                     if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
-                        Knm::Externals::Connection *conn = new Knm::Externals::Connection();
+                        Knm::InterfaceConnection *conn = new Knm::InterfaceConnection();
                         conn->setDeviceUni(iface->uni());
                         conn->setConnectionUni(connection->uuid().toString());
                         conn->setConnectionName(connection->name());
@@ -197,24 +198,24 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
 
     foreach (QString connectionId, addedConnections) {
         kDebug() << "adding connection with id: " << connectionId;
-        KnmInternals::Connection * connection = restoreConnection(connectionId);
+        Knm::Connection * connection = restoreConnection(connectionId);
 
-        if (connection->type() == Knm::Externals::Connection::Wireless) {
+        if (connection->type() == Knm::Connection::Wireless) {
             // Let's look for a connectable that is actually sharing the same ssid
-            KnmInternals::Setting *set = connection->setting(KnmInternals::Setting::Wireless);
+            Knm::Setting *set = connection->setting(Knm::Setting::Wireless);
             if (!set) {
                 // Something weird is going on: let's pass by
                 continue;
             }
-            KnmInternals::WirelessSetting *settings = dynamic_cast<KnmInternals::WirelessSetting*>(set);
+            Knm::WirelessSetting *settings = dynamic_cast<Knm::WirelessSetting*>(set);
 
-            foreach (Knm::Externals::Connectable *conn, m_connectables.keys()) {
-                if (conn->connectableType() == Knm::Externals::Connectable::WirelessNetworkItem) {
+            foreach (Knm::Connectable *conn, m_connectables.keys()) {
+                if (conn->connectableType() == Knm::Connectable::WirelessNetworkItem) {
                     // Let's have a check
-                    Knm::Externals::WirelessNetworkItem *wni = qobject_cast<Knm::Externals::WirelessNetworkItem*>(conn);
+                    Knm::WirelessNetworkItem *wni = qobject_cast<Knm::WirelessNetworkItem*>(conn);
                     if (wni->essid() == settings->ssid()) {
                         // We have our match, so let's do it
-                        Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(settings->ssid());
+                        Knm::WirelessInterfaceConnection *wc = processNewWirelessNetwork(settings->ssid());
 
                         if (wc != 0) {
                             // Bingo. Let's remove the network from the list and create
@@ -226,7 +227,7 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
                             // Add the network to our hash, for each interface
                             foreach (Solid::Control::NetworkInterface *iface, Solid::Control::NetworkManager::networkInterfaces()) {
                                 if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
-                                    Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(settings->ssid());
+                                    Knm::WirelessInterfaceConnection *wc = processNewWirelessNetwork(settings->ssid());
                                     wc->setDeviceUni(iface->uni());
 
                                     registerConnectableAndNotify(wc);
@@ -238,7 +239,7 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
                     // Add the network to our hash, for each interface
                     foreach (Solid::Control::NetworkInterface *iface, Solid::Control::NetworkManager::networkInterfaces()) {
                         if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
-                            Knm::Externals::Connection *conn = new Knm::Externals::Connection();
+                            Knm::InterfaceConnection *conn = new Knm::InterfaceConnection();
                             conn->setDeviceUni(iface->uni());
                             conn->setConnectionUni(connection->uuid().toString());
                             conn->setConnectionName(connection->name());
@@ -288,10 +289,10 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
         // Now, we basically need to check if any of those networks are actually configured
         // and we need to associate them to a connection
 
-        QList<Knm::Externals::WirelessConnection*> wcons;
+        QList<Knm::WirelessInterfaceConnection*> wcons;
 
         foreach (const QString &network, networks) {
-            Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(network);
+            Knm::WirelessInterfaceConnection *wc = processNewWirelessNetwork(network);
 
             if (wc != 0) {
                 // Bingo. Let's remove the network from the list and create
@@ -313,7 +314,7 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
 
         foreach (const QString &network, networks) {
             // Add the network to our hash
-            Knm::Externals::WirelessNetworkItem *item = new Knm::Externals::WirelessNetworkItem();
+            Knm::WirelessNetworkItem *item = new Knm::WirelessNetworkItem();
             item->setEssid(network);
             item->setDeviceUni(iface->uni());
 
@@ -323,11 +324,11 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
         // If the interface is actually not wireless, we just have to expose the
         // existing connections
 
-        foreach (KnmInternals::Connection *connection, m_connections.values()) {
+        foreach (Knm::Connection *connection, m_connections.values()) {
             if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
                 // It actually looks like our interface is capable of using this connection:
                 // let's actually create and expose it
-                Knm::Externals::Connection *conn = new Knm::Externals::Connection();
+                Knm::InterfaceConnection *conn = new Knm::InterfaceConnection();
                 conn->setDeviceUni(iface->uni());
                 conn->setConnectionUni(connection->uuid().toString());
                 conn->setConnectionName(connection->name());
@@ -350,7 +351,7 @@ void NetworkManagementService::networkInterfaceRemoved(const QString &uni)
         env->deleteLater();
     }
 
-    foreach (Knm::Externals::Connectable *conn, m_connectables.keys()) {
+    foreach (Knm::Connectable *conn, m_connectables.keys()) {
         if (conn->deviceUni() == uni) {
             // Remove it
             deleteConnectableAndNotify(conn);
@@ -372,14 +373,14 @@ void NetworkManagementService::wirelessNetworkAppeared(const QString &uni)
         return;
     }
 
-    Knm::Externals::Connectable *conn;
+    Knm::Connectable *conn;
 
-    Knm::Externals::WirelessConnection *wc = processNewWirelessNetwork(network->ssid());
+    Knm::WirelessInterfaceConnection *wc = processNewWirelessNetwork(network->ssid());
 
     if (wc != 0) {
         conn = wc;
     } else {
-        Knm::Externals::WirelessNetworkItem *item = new Knm::Externals::WirelessNetworkItem();
+        Knm::WirelessNetworkItem *item = new Knm::WirelessNetworkItem();
         item->setEssid(network->ssid());
         conn = item;
     }
@@ -392,15 +393,15 @@ void NetworkManagementService::wirelessNetworkAppeared(const QString &uni)
 
 void NetworkManagementService::wirelessNetworkDisappeared(const QString &uni)
 {
-    foreach (Knm::Externals::Connectable *conn, m_connectables.keys()) {
-        if (conn->connectableType() == Knm::Externals::Connectable::WirelessConnection) {
-            Knm::Externals::WirelessConnection *wc = qobject_cast<Knm::Externals::WirelessConnection*>(conn);
+    foreach (Knm::Connectable *conn, m_connectables.keys()) {
+        if (conn->connectableType() == Knm::Connectable::WirelessConnection) {
+            Knm::WirelessInterfaceConnection *wc = qobject_cast<Knm::WirelessInterfaceConnection*>(conn);
 
             if (wc->network() == uni) {
                 deleteConnectableAndNotify(conn);
             }
-        } else if (conn->connectableType() == Knm::Externals::Connectable::WirelessNetworkItem) {
-            Knm::Externals::WirelessNetworkItem *wni = qobject_cast<Knm::Externals::WirelessNetworkItem*>(conn);
+        } else if (conn->connectableType() == Knm::Connectable::WirelessNetworkItem) {
+            Knm::WirelessNetworkItem *wni = qobject_cast<Knm::WirelessNetworkItem*>(conn);
 
             if (wni->essid() == uni) {
                 deleteConnectableAndNotify(conn);
@@ -409,18 +410,18 @@ void NetworkManagementService::wirelessNetworkDisappeared(const QString &uni)
     }
 }
 
-Knm::Externals::WirelessConnection *NetworkManagementService::processNewWirelessNetwork(const QString &ssid)
+Knm::WirelessInterfaceConnection *NetworkManagementService::processNewWirelessNetwork(const QString &ssid)
 {
-    foreach (KnmInternals::Connection *connection, m_connections.values()) {
-        KnmInternals::Setting *set = connection->setting(KnmInternals::Setting::Wireless);
+    foreach (Knm::Connection *connection, m_connections.values()) {
+        Knm::Setting *set = connection->setting(Knm::Setting::Wireless);
         if (set != 0) {
             // Ok, let's retrieve the SSID and set up the connection
-            KnmInternals::WirelessSetting *wset = dynamic_cast<KnmInternals::WirelessSetting*>(set);
+            Knm::WirelessSetting *wset = dynamic_cast<Knm::WirelessSetting*>(set);
 
             if (ssid == wset->ssid()) {
                 // Bingo. Let's create the connection
 
-                Knm::Externals::WirelessConnection *conn = new Knm::Externals::WirelessConnection();
+                Knm::WirelessInterfaceConnection *conn = new Knm::WirelessInterfaceConnection();
                 conn->setNetwork(ssid);
                 conn->setConnectionUni(connection->uuid().toString());
                 conn->setConnectionName(connection->name());
@@ -433,17 +434,17 @@ Knm::Externals::WirelessConnection *NetworkManagementService::processNewWireless
     return 0;
 }
 
-KnmInternals::Connection * NetworkManagementService::restoreConnection(const QString & connectionId)
+Knm::Connection * NetworkManagementService::restoreConnection(const QString & connectionId)
 {
     kDebug() << connectionId;
     m_config = connectionFileForUuid(connectionId);
-    KnmInternals::Connection * connection = 0;
+    Knm::Connection * connection = 0;
     if (!m_config.isNull()) {
         // restore from disk
-        KnmInternals::ConnectionPersistence cp(m_config,
+        Knm::ConnectionPersistence cp(m_config,
                 (KNetworkManagerServicePrefs::self()->storeInWallet() ?
-                 KnmInternals::ConnectionPersistence::Secure :
-                 KnmInternals::ConnectionPersistence::PlainText));
+                 Knm::ConnectionPersistence::Secure :
+                 Knm::ConnectionPersistence::PlainText));
         cp.load();
         connection = cp.connection();
     } else {
@@ -458,7 +459,7 @@ KSharedConfig::Ptr NetworkManagementService::connectionFileForUuid(const QString
     KSharedConfig::Ptr config;
     if (!uuid.isEmpty()) {
         QString configFile = KStandardDirs::locate("data",
-                KnmInternals::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + uuid);
+                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + uuid);
         if (!configFile.isEmpty()) {
             config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
             kDebug() << config->name() << " is at " << configFile;
@@ -467,31 +468,31 @@ KSharedConfig::Ptr NetworkManagementService::connectionFileForUuid(const QString
     return config;
 }
 
-Knm::Externals::Connection::Type NetworkManagementService::solidDeviceToConnectionType(const QString &uni)
+Knm::Connection::Type NetworkManagementService::solidDeviceToConnectionType(const QString &uni)
 {
     Solid::Control::NetworkInterface *iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
 
     if (!iface) {
-        return Knm::Externals::Connection::Wired;
+        return Knm::Connection::Wired;
     }
 
     switch (iface->type()) {
         case Solid::Control::NetworkInterface::Ieee8023:
-            return Knm::Externals::Connection::Wired;
+            return Knm::Connection::Wired;
         case Solid::Control::NetworkInterface::Ieee80211:
-            return Knm::Externals::Connection::Wireless;
+            return Knm::Connection::Wireless;
         case Solid::Control::NetworkInterface::Gsm:
-            return Knm::Externals::Connection::Gsm;
+            return Knm::Connection::Gsm;
         case Solid::Control::NetworkInterface::Cdma:
-            return Knm::Externals::Connection::Cdma;
+            return Knm::Connection::Cdma;
         case Solid::Control::NetworkInterface::Serial:
-            return Knm::Externals::Connection::Pppoe;
+            return Knm::Connection::Pppoe;
         default:
-            return Knm::Externals::Connection::Wired;
+            return Knm::Connection::Wired;
     }
 }
 
-void NetworkManagementService::registerConnectableAndNotify(Knm::Externals::Connectable *item)
+void NetworkManagementService::registerConnectableAndNotify(Knm::Connectable *item)
 {
     ++m_counter;
     QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
@@ -501,7 +502,7 @@ void NetworkManagementService::registerConnectableAndNotify(Knm::Externals::Conn
     emit ConnectableAdded(dbuspath);
 }
 
-void NetworkManagementService::deleteConnectableAndNotify(Knm::Externals::Connectable *item)
+void NetworkManagementService::deleteConnectableAndNotify(Knm::Connectable *item)
 {
     emit ConnectableRemoved(m_connectables[item]);
     m_connectables.remove(item);

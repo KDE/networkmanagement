@@ -3,7 +3,7 @@
 
 #include "vpn.h"
 
-using namespace KnmInternals;
+using namespace Knm;
 
 VpnSetting::VpnSetting() : Setting(Setting::Vpn)
 {

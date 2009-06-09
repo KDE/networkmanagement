@@ -28,7 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 
 #include "connection.h"
-#include "connectiondbus.h"
+#include "../backends/NetworkManager/connectiondbus.h"
 #include "connectionpersistence.h"
 #include "settings/802-11-wireless.h"
 
@@ -85,7 +85,7 @@ int main( int argc, char** argv )
     kDebug() << "            hasSecrets:" << foo->hasSecrets() << "secretsAvailable:" << foo->secretsAvailable();
 
     kDebug() << "serialising restored connection to dbus..";
-    Knm::ConnectionDbus baz(foo);
+    ConnectionDbus baz(foo);
     kDebug() << baz.toDbusMap();
     kDebug() << baz.toDbusSecretsMap();
     return app.exec();

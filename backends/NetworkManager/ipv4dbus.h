@@ -9,14 +9,14 @@
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
 #include "knm_export.h"
-namespace KnmInternals {
+namespace Knm{
     class Ipv4Setting;
 }
 
 class KNM_EXPORT Ipv4Dbus : public SettingDbus
 {
   public:
-    Ipv4Dbus(KnmInternals::Ipv4Setting * setting);
+    Ipv4Dbus(Knm::Ipv4Setting * setting);
     ~Ipv4Dbus();
     void fromMap(const QVariantMap&);
     QVariantMap toMap();

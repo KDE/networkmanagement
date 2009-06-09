@@ -50,7 +50,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/vpn.h"
 #include "settings/vpnpersistence.h"
 
-using namespace KnmInternals;
+using namespace Knm;
 
 const QString ConnectionPersistence::NETWORKMANAGEMENT_RCFILE = QLatin1String("networkmanagementrc");
 const QString ConnectionPersistence::CONNECTION_PERSISTENCE_PATH = QLatin1String("networkmanagement/connections/");

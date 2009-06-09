@@ -25,22 +25,22 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "setting.h"
 
-namespace KnmInternals
+namespace Knm
 {
     class Setting;
-} // namespace KnmInternals
+} // namespace Knm
 
 class SettingDbus
 {
 public:
-    SettingDbus(KnmInternals::Setting *);
+    SettingDbus(Knm::Setting *);
     virtual ~SettingDbus();
 
     virtual void fromMap(const QVariantMap &) = 0;
     virtual QVariantMap toMap() = 0;
     virtual QVariantMap toSecretsMap() = 0;
 protected:
-    KnmInternals::Setting *m_setting;
+    Knm::Setting *m_setting;
 };
 
 #endif // SETTINGDBUS_H

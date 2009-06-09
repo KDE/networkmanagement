@@ -5,7 +5,7 @@
 
 #include "802-1x.h"
 
-Security8021xDbus::Security8021xDbus(KnmInternals::Security8021xSetting * setting) : SettingDbus(setting)
+Security8021xDbus::Security8021xDbus(Knm::Security8021xSetting * setting) : SettingDbus(setting)
 {
 }
 
@@ -15,7 +15,7 @@ Security8021xDbus::~Security8021xDbus()
 
 void Security8021xDbus::fromMap(const QVariantMap & map)
 {
-  KnmInternals::Security8021xSetting * setting = static_cast<KnmInternals::Security8021xSetting *>(m_setting);
+  Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
   if (setting->enabled()) {
   if (map.contains("eap")) {
     setting->setEap(map.value("eap").value<QStringList>());
@@ -81,7 +81,7 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
 QVariantMap Security8021xDbus::toMap()
 {
   QVariantMap map;
-  KnmInternals::Security8021xSetting * setting = static_cast<KnmInternals::Security8021xSetting *>(m_setting);
+  Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
   if (setting->enabled()) {
   if (!setting->eap().isEmpty()) {
     map.insert("eap", setting->eap());
@@ -103,10 +103,10 @@ QVariantMap Security8021xDbus::toMap()
   }
   if (setting->eap().contains(QLatin1String("peap"))) {  // just a guess
     switch (setting->phase1peapver()) {
-      case KnmInternals::Security8021xSetting::EnumPhase1peapver::zero:
+      case Knm::Security8021xSetting::EnumPhase1peapver::zero:
         map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), 0);
         break;
-      case KnmInternals::Security8021xSetting::EnumPhase1peapver::one:
+      case Knm::Security8021xSetting::EnumPhase1peapver::one:
         map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), 1);
 	// phaselabel only valid with peapver=1
 	if (!setting->phase1peaplabel().isEmpty()) {
@@ -122,16 +122,16 @@ QVariantMap Security8021xDbus::toMap()
   if (!setting->phase2auth().isEmpty())
     map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), setting->phase2auth());
   switch (setting->phase2autheap()) {
-  case KnmInternals::Security8021xSetting::EnumPhase2autheap::pap:
+  case Knm::Security8021xSetting::EnumPhase2autheap::pap:
     map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "pap");
     break;
-  case KnmInternals::Security8021xSetting::EnumPhase2autheap::mschap:
+  case Knm::Security8021xSetting::EnumPhase2autheap::mschap:
     map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "mschap");
     break;
-  case KnmInternals::Security8021xSetting::EnumPhase2autheap::mschapv2:
+  case Knm::Security8021xSetting::EnumPhase2autheap::mschapv2:
     map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "mschapv2");
     break;
-  case KnmInternals::Security8021xSetting::EnumPhase2autheap::chap:
+  case Knm::Security8021xSetting::EnumPhase2autheap::chap:
     map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "chap");
     break;
   }
@@ -160,7 +160,7 @@ QVariantMap Security8021xDbus::toMap()
 QVariantMap Security8021xDbus::toSecretsMap()
 {
   QVariantMap map;
-  KnmInternals::Security8021xSetting * setting = static_cast<KnmInternals::Security8021xSetting *>(m_setting);
+  Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
   if (setting->enabled()) {
   map.insert("password", setting->password());
   }

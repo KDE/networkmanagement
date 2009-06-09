@@ -29,7 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KSharedConfig>
 
-#include "externals/connection.h"
+#include "interfaceconnection.h"
+#include "wirelessinterfaceconnection.h"
 
 
 namespace KnmInternals {
@@ -79,16 +80,16 @@ Q_SIGNALS:
 private:
     void networkInterfaceAdded(Solid::Control::NetworkInterface *iface);
     void networkInterfaceRemoved(Solid::Control::NetworkInterface *iface);
-    Knm::Externals::WirelessConnection *processNewWirelessNetwork(const QString &ssid);
-    KnmInternals::Connection *restoreConnection(const QString & connectionId);
+    Knm::WirelessInterfaceConnection *processNewWirelessNetwork(const QString &ssid);
+    Knm::Connection *restoreConnection(const QString & connectionId);
     KSharedConfig::Ptr connectionFileForUuid(const QString & uuid);
-    Knm::Externals::Connection::Type solidDeviceToConnectionType(const QString &deviceUni);
-    void registerConnectableAndNotify(Knm::Externals::Connectable *item);
-    void deleteConnectableAndNotify(Knm::Externals::Connectable *item);
+    Knm::Connection::Type solidDeviceToConnectionType(const QString &deviceUni);
+    void registerConnectableAndNotify(Knm::Connectable *item);
+    void deleteConnectableAndNotify(Knm::Connectable *item);
 
 private:
-    QHash<Knm::Externals::Connectable*, QDBusObjectPath> m_connectables;
-    QHash<QString, KnmInternals::Connection*> m_connections;
+    QHash<Knm::Connectable*, QDBusObjectPath> m_connectables;
+    QHash<QString, Knm::Connection*> m_connections;
     QHash<QString, Solid::Control::WirelessNetworkInterfaceEnvironment*> m_environments;
     int m_counter;
     KSharedConfigPtr m_config;

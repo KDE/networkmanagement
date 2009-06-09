@@ -38,12 +38,12 @@ InterfaceConnection::InterfaceConnection(ConnectableType type)
     new InterfaceConnectionAdaptor(this);
 }
 
-void InterfaceConnection::setConnectionType(KnmInternals::Connection::Type type)
+void InterfaceConnection::setConnectionType(Knm::Connection::Type type)
 {
     m_type = type;
 }
 
-KnmInternals::Connection::Type InterfaceConnection::connectionType() const
+Knm::Connection::Type InterfaceConnection::connectionType() const
 {
     return m_type;
 }

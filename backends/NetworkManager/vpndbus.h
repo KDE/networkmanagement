@@ -9,14 +9,14 @@
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
 #include "knm_export.h"
-namespace KnmInternals {
+namespace Knm{
     class VpnSetting;
 }
 
 class KNM_EXPORT VpnDbus : public SettingDbus
 {
   public:
-    VpnDbus(KnmInternals::VpnSetting * setting);
+    VpnDbus(Knm::VpnSetting * setting);
     ~VpnDbus();
     void fromMap(const QVariantMap&);
     QVariantMap toMap();

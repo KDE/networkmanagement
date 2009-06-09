@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-#include "connection.h"
+#include "internals/connection.h"
 
 class ConnectionPreferences;
 typedef  QList<QVariant> QVariantList;

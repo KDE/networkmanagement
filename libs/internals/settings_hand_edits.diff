@@ -19,11 +19,11 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
    }
 +  // leave out band, NM seems to work automatically without it
    switch (setting->band()) {
-     case KnmInternals::WirelessSetting::EnumBand::a:
+     case Knm::WirelessSetting::EnumBand::a:
 +      //map.insert("band", "a");
        map.insert("band", "a");
        break;
-     case KnmInternals::WirelessSetting::EnumBand::bg:
+     case Knm::WirelessSetting::EnumBand::bg:
 +      //map.insert("band", "bg");
        map.insert("band", "bg");
        break;
@@ -114,8 +114,8 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 +#include "pbkdf2.h"
 +#include "wephash.h"
  
--WirelessSecurityDbus::WirelessSecurityDbus(KnmInternals::WirelessSecuritySetting * setting) : SettingDbus(setting)
-+WirelessSecurityDbus::WirelessSecurityDbus(KnmInternals::WirelessSecuritySetting * setting, const QString & essid) : SettingDbus(setting),
+-WirelessSecurityDbus::WirelessSecurityDbus(Knm::WirelessSecuritySetting * setting) : SettingDbus(setting)
++WirelessSecurityDbus::WirelessSecurityDbus(Knm::WirelessSecuritySetting * setting, const QString & essid) : SettingDbus(setting),
 +    m_essid(essid)
  {
  }
@@ -131,8 +131,8 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 @@ -69,6 +73,7 @@
  {
    QVariantMap map;
-   KnmInternals::WirelessSecuritySetting * setting = static_cast<KnmInternals::WirelessSecuritySetting *>(m_setting);
-+  if (setting->securityType() != KnmInternals::WirelessSecuritySetting::EnumSecurityType::None) { // don't return anything if there is no security
+   Knm::WirelessSecuritySetting * setting = static_cast<Knm::WirelessSecuritySetting *>(m_setting);
++  if (setting->securityType() != Knm::WirelessSecuritySetting::EnumSecurityType::None) { // don't return anything if there is no security
    switch (setting->keymgmt()) {
      case WirelessSecuritySetting::EnumKeymgmt::None:
        map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "none");
@@ -163,14 +163,14 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 @@ -109,12 +123,64 @@
  {
    QVariantMap map;
-   KnmInternals::WirelessSecuritySetting * setting = static_cast<KnmInternals::WirelessSecuritySetting *>(m_setting);
+   Knm::WirelessSecuritySetting * setting = static_cast<Knm::WirelessSecuritySetting *>(m_setting);
 -  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
 -  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
 -  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());
 -  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
 -  map.insert("psk", setting->psk());
 -  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
-+  if (setting->securityType() != KnmInternals::WirelessSecuritySetting::EnumSecurityType::None) { // don't return anything if there is no security
++  if (setting->securityType() != Knm::WirelessSecuritySetting::EnumSecurityType::None) { // don't return anything if there is no security
 +  if (!setting->weppassphrase().isEmpty()) {
 +      QString key = hashWepPassphrase(setting->weppassphrase());
 +      switch (setting->weptxkeyindex()) {
@@ -246,8 +246,8 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
  class KNM_EXPORT WirelessSecurityDbus : public SettingDbus
  {
    public:
--    WirelessSecurityDbus(KnmInternals::WirelessSecuritySetting * setting);
-+    WirelessSecurityDbus(KnmInternals::WirelessSecuritySetting * setting, const QString & essid);
+-    WirelessSecurityDbus(Knm::WirelessSecuritySetting * setting);
++    WirelessSecurityDbus(Knm::WirelessSecuritySetting * setting, const QString & essid);
      ~WirelessSecurityDbus();
      void fromMap(const QVariantMap&);
      QVariantMap toMap();
@@ -340,7 +340,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 @@ -18,6 +18,7 @@
  void Security8021xDbus::fromMap(const QVariantMap & map)
  {
-   KnmInternals::Security8021xSetting * setting = static_cast<KnmInternals::Security8021xSetting *>(m_setting);
+   Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
 +  if (setting->enabled()) {
    if (map.contains("eap")) {
      setting->setEap(map.value("eap").value<QStringList>());
@@ -355,7 +355,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
  QVariantMap Security8021xDbus::toMap()
  {
    QVariantMap map;
-   KnmInternals::Security8021xSetting * setting = static_cast<KnmInternals::Security8021xSetting *>(m_setting);
+   Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
 -  map.insert("eap", setting->eap());
 -  map.insert("identity", setting->identity());
 -  map.insert(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY), setting->anonymousidentity());
@@ -363,10 +363,10 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 -  map.insert(QLatin1String(NM_SETTING_802_1X_CA_PATH), setting->capath());
 -  map.insert(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT), setting->clientcert());
 -  switch (setting->phase1peapver()) {
--    case KnmInternals::Security8021xSetting::EnumPhase1peapver::zero:
+-    case Knm::Security8021xSetting::EnumPhase1peapver::zero:
 -      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), "zero");
 -      break;
--    case KnmInternals::Security8021xSetting::EnumPhase1peapver::one:
+-    case Knm::Security8021xSetting::EnumPhase1peapver::one:
 -      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), "one");
 -      break;
 -  }
@@ -394,10 +394,10 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 +  }
 +  if (setting->eap().contains(QLatin1String("peap"))) {  // just a guess
 +    switch (setting->phase1peapver()) {
-+      case KnmInternals::Security8021xSetting::EnumPhase1peapver::zero:
++      case Knm::Security8021xSetting::EnumPhase1peapver::zero:
 +        map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), 0);
 +        break;
-+      case KnmInternals::Security8021xSetting::EnumPhase1peapver::one:
++      case Knm::Security8021xSetting::EnumPhase1peapver::one:
 +        map.insert(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER), 1);
 +	// phaselabel only valid with peapver=1
 +	if (!setting->phase1peaplabel().isEmpty()) {
@@ -413,16 +413,16 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 +  if (!setting->phase2auth().isEmpty())
 +    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), setting->phase2auth());
    switch (setting->phase2autheap()) {
--    case KnmInternals::Security8021xSetting::EnumPhase2autheap::pap:
+-    case Knm::Security8021xSetting::EnumPhase2autheap::pap:
 -      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "pap");
 -      break;
--    case KnmInternals::Security8021xSetting::EnumPhase2autheap::mschap:
+-    case Knm::Security8021xSetting::EnumPhase2autheap::mschap:
 -      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "mschap");
 -      break;
--    case KnmInternals::Security8021xSetting::EnumPhase2autheap::mschapv2:
+-    case Knm::Security8021xSetting::EnumPhase2autheap::mschapv2:
 -      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "mschapv2");
 -      break;
--    case KnmInternals::Security8021xSetting::EnumPhase2autheap::chap:
+-    case Knm::Security8021xSetting::EnumPhase2autheap::chap:
 -      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "chap");
 -      break;
 -  }
@@ -433,16 +433,16 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 -  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY), setting->phase2privatekey());
 -  map.insert("pin", setting->pin());
 -  map.insert("psk", setting->psk());
-+  case KnmInternals::Security8021xSetting::EnumPhase2autheap::pap:
++  case Knm::Security8021xSetting::EnumPhase2autheap::pap:
 +    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "pap");
 +    break;
-+  case KnmInternals::Security8021xSetting::EnumPhase2autheap::mschap:
++  case Knm::Security8021xSetting::EnumPhase2autheap::mschap:
 +    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "mschap");
 +    break;
-+  case KnmInternals::Security8021xSetting::EnumPhase2autheap::mschapv2:
++  case Knm::Security8021xSetting::EnumPhase2autheap::mschapv2:
 +    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "mschapv2");
 +    break;
-+  case KnmInternals::Security8021xSetting::EnumPhase2autheap::chap:
++  case Knm::Security8021xSetting::EnumPhase2autheap::chap:
 +    map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "chap");
 +    break;
 +  }
@@ -471,7 +471,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 @@ -127,7 +163,9 @@
  {
    QVariantMap map;
-   KnmInternals::Security8021xSetting * setting = static_cast<KnmInternals::Security8021xSetting *>(m_setting);
+   Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
 +  if (setting->enabled()) {
    map.insert("password", setting->password());
 +  }
@@ -646,7 +646,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 @@ -42,6 +42,8 @@
  {
    QVariantMap map;
-   KnmInternals::WiredSetting * setting = static_cast<KnmInternals::WiredSetting *>(m_setting);
+   Knm::WiredSetting * setting = static_cast<Knm::WiredSetting *>(m_setting);
 +// not in UI yet
 +#if 0
    switch (setting->port()) {
@@ -704,7 +704,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 @@ -54,10 +54,14 @@
  {
    QVariantMap map;
-   KnmInternals::GsmSetting * setting = static_cast<KnmInternals::GsmSetting *>(m_setting);
+   Knm::GsmSetting * setting = static_cast<Knm::GsmSetting *>(m_setting);
 -  map.insert("number", setting->number());
 -  map.insert("username", setting->username());
 -  map.insert("apn", setting->apn());
@@ -723,7 +723,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 @@ -67,9 +71,12 @@
  {
    QVariantMap map;
-   KnmInternals::GsmSetting * setting = static_cast<KnmInternals::GsmSetting *>(m_setting);
+   Knm::GsmSetting * setting = static_cast<Knm::GsmSetting *>(m_setting);
 -  map.insert("password", setting->password());
 -  map.insert("pin", setting->pin());
 -  map.insert("puk", setting->puk());
@@ -775,7 +775,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
  
  void Ipv4Dbus::fromMap(const QVariantMap & map)
  {
--  KnmInternals::Ipv4Setting * setting = static_cast<KnmInternals::Ipv4Setting *>(m_setting);
+-  Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting *>(m_setting);
 -  if (map.contains("method")) {
 -    setting->setMethod(map.value("method").value<int>());
 -  }
@@ -783,7 +783,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 -    setting->setDns(map.value("dns").value<QStringList>());
 -  }
 -  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH))) {
-+  KnmInternals::Ipv4Setting * setting = static_cast<KnmInternals::Ipv4Setting
++  Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting
 +    *>(m_setting); if (map.contains("method")) {
 +      setting->setMethod(map.value("method").value<int>()); }
 +  //if (map.contains("dns")) { setting->setDns(map.value("dns").value<QStringList>()); }
@@ -878,7 +878,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
 +Q_DECLARE_METATYPE(Solid::Control::IPv4Address)
 +Q_DECLARE_METATYPE(Solid::Control::IPv4Route)
 +
- namespace KnmInternals {
+ namespace Knm {
  
  class KNM_EXPORT Ipv4Setting : public Setting
 @@ -45,7 +51,7 @@
@@ -1104,7 +1104,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
  
 @@ -38,16 +38,16 @@
    QVariantMap map;
-   KnmInternals::VpnSetting * setting = static_cast<KnmInternals::VpnSetting *>(m_setting);
+   Knm::VpnSetting * setting = static_cast<Knm::VpnSetting *>(m_setting);
    map.insert(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE), setting->serviceType());
 -  map.insert(QLatin1String(NM_SETTING_VPN_DATA), setting->data());
 +  map.insert(QLatin1String(NM_SETTING_VPN_DATA), QVariant::fromValue(setting->data()));
@@ -1117,7 +1117,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
  {
 -  QVariantMap map;
 +  //assume that the settings's vpnSecrets are ready to go
-   KnmInternals::VpnSetting * setting = static_cast<KnmInternals::VpnSetting *>(m_setting);
+   Knm::VpnSetting * setting = static_cast<Knm::VpnSetting *>(m_setting);
 -  map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), setting->vpnSecrets());
 -  return map;
 +  return setting->vpnSecrets();
@@ -1130,7 +1130,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
  #include "setting.h"
  #include "knm_export.h"
 +#include "../types.h"
- namespace KnmInternals {
+ namespace Knm {
  
  class KNM_EXPORT VpnSetting : public Setting
 @@ -40,7 +41,7 @@
@@ -1284,7 +1284,7 @@ diff -ur origsettings//802-11-wireless.cpp settings/802-11-wireless.cpp
  #include "knm_export.h"
 +#include "../types.h"
 +
- namespace KnmInternals {
+ namespace Knm {
  
  class VpnSetting;
 @@ -20,6 +22,10 @@

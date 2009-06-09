@@ -5,7 +5,7 @@
 
 #include "cdma.h"
 
-CdmaDbus::CdmaDbus(KnmInternals::CdmaSetting * setting) : SettingDbus(setting)
+CdmaDbus::CdmaDbus(Knm::CdmaSetting * setting) : SettingDbus(setting)
 {
 }
 
@@ -15,7 +15,7 @@ CdmaDbus::~CdmaDbus()
 
 void CdmaDbus::fromMap(const QVariantMap & map)
 {
-  KnmInternals::CdmaSetting * setting = static_cast<KnmInternals::CdmaSetting *>(m_setting);
+  Knm::CdmaSetting * setting = static_cast<Knm::CdmaSetting *>(m_setting);
   if (map.contains("number")) {
     setting->setNumber(map.value("number").value<QString>());
   }
@@ -31,7 +31,7 @@ void CdmaDbus::fromMap(const QVariantMap & map)
 QVariantMap CdmaDbus::toMap()
 {
   QVariantMap map;
-  KnmInternals::CdmaSetting * setting = static_cast<KnmInternals::CdmaSetting *>(m_setting);
+  Knm::CdmaSetting * setting = static_cast<Knm::CdmaSetting *>(m_setting);
   map.insert("number", setting->number());
   map.insert("username", setting->username());
   return map;
@@ -40,7 +40,7 @@ QVariantMap CdmaDbus::toMap()
 QVariantMap CdmaDbus::toSecretsMap()
 {
   QVariantMap map;
-  KnmInternals::CdmaSetting * setting = static_cast<KnmInternals::CdmaSetting *>(m_setting);
+  Knm::CdmaSetting * setting = static_cast<Knm::CdmaSetting *>(m_setting);
   map.insert("password", setting->password());
   return map;
 }

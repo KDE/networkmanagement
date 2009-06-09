@@ -29,7 +29,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 class SettingDbus;
 
-namespace KnmInternals
+namespace Knm
 {
 class Connection;
 class Setting;
@@ -38,15 +38,15 @@ class Setting;
 class KNM_EXPORT ConnectionDbus
 {
 public:
-    ConnectionDbus(KnmInternals::Connection *);
+    ConnectionDbus(Knm::Connection *);
     ~ConnectionDbus();
 
     QVariantMapMap toDbusMap();
     QVariantMapMap toDbusSecretsMap();
     void fromDbusMap(const QVariantMapMap&);
 private:
-    SettingDbus * dbusFor(KnmInternals::Setting *);
-    QHash<KnmInternals::Setting*, SettingDbus*> m_dbus;
-    KnmInternals::Connection * m_connection;
+    SettingDbus * dbusFor(Knm::Setting *);
+    QHash<Knm::Setting*, SettingDbus*> m_dbus;
+    Knm::Connection * m_connection;
 };
 #endif // CONNECTIONDBUS_H

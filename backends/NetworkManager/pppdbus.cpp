@@ -5,7 +5,7 @@
 
 #include "ppp.h"
 
-PppDbus::PppDbus(KnmInternals::PppSetting * setting) : SettingDbus(setting)
+PppDbus::PppDbus(Knm::PppSetting * setting) : SettingDbus(setting)
 {
 }
 
@@ -15,7 +15,7 @@ PppDbus::~PppDbus()
 
 void PppDbus::fromMap(const QVariantMap & map)
 {
-  KnmInternals::PppSetting * setting = static_cast<KnmInternals::PppSetting *>(m_setting);
+  Knm::PppSetting * setting = static_cast<Knm::PppSetting *>(m_setting);
   if (map.contains("noauth")) {
     setting->setNoauth(map.value("noauth").value<bool>());
   }
@@ -75,7 +75,7 @@ void PppDbus::fromMap(const QVariantMap & map)
 QVariantMap PppDbus::toMap()
 {
   QVariantMap map;
-  KnmInternals::PppSetting * setting = static_cast<KnmInternals::PppSetting *>(m_setting);
+  Knm::PppSetting * setting = static_cast<Knm::PppSetting *>(m_setting);
   map.insert("noauth", setting->noauth());
   map.insert(QLatin1String(NM_SETTING_PPP_REFUSE_EAP), setting->refuseeap());
   map.insert(QLatin1String(NM_SETTING_PPP_REFUSE_PAP), setting->refusepap());

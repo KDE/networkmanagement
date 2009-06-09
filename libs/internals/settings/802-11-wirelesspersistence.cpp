@@ -5,7 +5,7 @@
 
 #include "802-11-wireless.h"
 
-using namespace KnmInternals;
+using namespace Knm;
 
 WirelessPersistence::WirelessPersistence(WirelessSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode) : SettingPersistence(setting, config, mode)
 {

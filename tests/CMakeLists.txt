@@ -1,5 +1,5 @@
 include_directories(
-   ${CMAKE_CURRENT_SOURCE_DIR}/../libs/storage
+   ${CMAKE_CURRENT_SOURCE_DIR}/../libs/internals
    ${CMAKE_CURRENT_SOURCE_DIR}/../libs
    )
 
@@ -19,7 +19,7 @@ set(testnewstorage_SRCS
 )
 
 kde4_add_executable(testnewstorage ${testnewstorage_SRCS})
-target_link_libraries(testnewstorage knmstorage ${KDE4_KDEUI_LIBS})
+target_link_libraries(testnewstorage knmstorage ${KDE4_KDEUI_LIBS} knm_nm)
 
 ## next target: hacked up qdbus that can display NM data types
 

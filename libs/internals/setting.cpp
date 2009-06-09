@@ -37,7 +37,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QString>
 
-using namespace KnmInternals;
+using namespace Knm;
 
 QString Setting::typeAsString(Setting::Type type)
 {

@@ -9,14 +9,14 @@
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
 #include "knm_export.h"
-namespace KnmInternals {
+namespace Knm{
     class PppoeSetting;
 }
 
 class KNM_EXPORT PppoeDbus : public SettingDbus
 {
   public:
-    PppoeDbus(KnmInternals::PppoeSetting * setting);
+    PppoeDbus(Knm::PppoeSetting * setting);
     ~PppoeDbus();
     void fromMap(const QVariantMap&);
     QVariantMap toMap();

@@ -41,8 +41,8 @@ public:
 
     virtual ~InterfaceConnection(){}
 
-    void setConnectionType(KnmInternals::Connection::Type type);
-    KnmInternals::Connection::Type connectionType() const;
+    void setConnectionType(Knm::Connection::Type type);
+    Knm::Connection::Type connectionType() const;
 
     void setConnectionUni(const QString& uni);
     QString connectionUni() const;
@@ -60,7 +60,7 @@ protected:
     InterfaceConnection(ConnectableType type);
 
 private:
-    KnmInternals::Connection::Type m_type;
+    Knm::Connection::Type m_type;
     QString m_name;
     QString m_uni;
     Solid::Control::NetworkInterface::ConnectionState m_state;

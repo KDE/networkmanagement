@@ -3,7 +3,7 @@
 
 #include "802-1x.h"
 
-using namespace KnmInternals;
+using namespace Knm;
 
 Security8021xSetting::Security8021xSetting() : Setting(Setting::Security8021x),
     mPhase1peapver(0), mPhase2autheap(0), mEnabled(false)

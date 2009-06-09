@@ -1,8 +1,8 @@
 include_directories(../../libs)
-include_directories(../../libs/storage)
+include_directories(../../libs/internals)
 include_directories(../../libs/ui)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_CURRENT_BINARY_DIR}/../../libs/storage)
+include_directories(${CMAKE_CURRENT_BINARY_DIR}/../../libs/internals)
 
 ## next target: connection editor KCM
 

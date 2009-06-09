@@ -9,14 +9,14 @@
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
 #include "knm_export.h"
-namespace KnmInternals {
+namespace Knm{
     class CdmaSetting;
 }
 
 class KNM_EXPORT CdmaDbus : public SettingDbus
 {
   public:
-    CdmaDbus(KnmInternals::CdmaSetting * setting);
+    CdmaDbus(Knm::CdmaSetting * setting);
     ~CdmaDbus();
     void fromMap(const QVariantMap&);
     QVariantMap toMap();

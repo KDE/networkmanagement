@@ -32,7 +32,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/serial.h"
 #include "settings/vpn.h"
 
-using namespace KnmInternals;
+using namespace Knm;
 
 QString Connection::typeAsString(Connection::Type type)
 {

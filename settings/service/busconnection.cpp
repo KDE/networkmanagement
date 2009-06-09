@@ -54,7 +54,7 @@ void BusConnection::Update(QVariantMapMap updates)
     kDebug() << "TODO: validate incoming settings";
     kDebug() << "TODO: implement fromDbusMap for all settings!";
     kDebug() << "TODO: replace existing connection with one specified in updates";
-    Knm::ConnectionDbus cd(m_connection);
+    ConnectionDbus cd(m_connection);
     cd.fromDbusMap(updates);
     emit Updated(cd.toDbusMap());
 }
@@ -67,7 +67,7 @@ void BusConnection::updateInternal(Knm::Connection * connection)
     }
     delete m_connection;
     m_connection = connection;
-    Knm::ConnectionDbus cd(m_connection);
+    ConnectionDbus cd(m_connection);
     QVariantMapMap map = cd.toDbusMap();
     kDebug() << "emitting Updated" << map;
     emit Updated(cd.toDbusMap());
@@ -81,7 +81,7 @@ void BusConnection::Delete()
 
 QVariantMapMap BusConnection::GetSettings() const
 {
-    Knm::ConnectionDbus cd(m_connection);
+    ConnectionDbus cd(m_connection);
     QVariantMapMap map = cd.toDbusMap();
     return map;
 }
@@ -90,7 +90,7 @@ QVariantMapMap BusConnection::GetSecrets(const QString &setting_name, const QStr
 {
     kDebug() << m_connection->uuid() << setting_name << hints << request_new;
     if (!request_new && !m_connection->hasSecrets()) {
-        Knm::ConnectionDbus cd(m_connection);
+        ConnectionDbus cd(m_connection);
         return cd.toDbusSecretsMap();
     }
     message.setDelayedReply(true);
@@ -105,7 +105,7 @@ void BusConnection::gotSecrets(KJob *job)
 {
     ConnectionSecretsJob * csj = static_cast<ConnectionSecretsJob*>(job);
     if (csj->error() == ConnectionSecretsJob::NoError) {
-        Knm::ConnectionDbus db(m_connection);
+        ConnectionDbus db(m_connection);
         QVariantMapMap secrets = db.toDbusSecretsMap();
 
         QDBusMessage reply = csj->requestMessage().createReply();
