@@ -6,8 +6,8 @@ include_directories(
 # next target: dbus interfaces library
 set(knmconnection_SRCS
     connectable.cpp
-    connection.cpp
-    wirelessconnection.cpp
+    interfaceconnection.cpp
+    wirelessinterfaceconnection.cpp
     wirelessnetworkitem.cpp
     )
 
@@ -20,16 +20,16 @@ qt4_add_dbus_adaptor(
 
 qt4_add_dbus_adaptor(
     knmconnection_SRCS
-    interfaces/org.kde.networkmanagement.connection.xml
-    connection.h
-    Knm::Externals::Connection
+    interfaces/org.kde.networkmanagement.interfaceconnection.xml
+    interfaceconnection.h
+    Knm::Externals::InterfaceConnection
 )
 
 qt4_add_dbus_adaptor(
     knmconnection_SRCS
-    interfaces/org.kde.networkmanagement.wirelessconnection.xml
-    wirelessconnection.h
-    Knm::Externals::WirelessConnection
+    interfaces/org.kde.networkmanagement.wirelessinterfaceconnection.xml
+    wirelessinterfaceconnection.h
+    Knm::Externals::WirelessInterfaceConnection
 )
 
 qt4_add_dbus_adaptor(

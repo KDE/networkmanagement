@@ -18,33 +18,52 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM_EXTERNALS_WIRELESSCONNECTION_H
-#define KNM_EXTERNALS_WIRELESSCONNECTION_H
+#ifndef KNM_EXTERNALS_INTERFACECONNECTION_H
+#define KNM_EXTERNALS_INTERFACECONNECTION_H
 
 #include "knm_export.h"
 
-#include "connection.h"
+#include "connectable.h"
 
+#include <solid/control/networkinterface.h>
 #include <QtCore/QString>
-#include <QObject>
 
 namespace Knm {
 namespace Externals {
 
-class KNM_EXPORT WirelessConnection :public Connection
+class KNM_EXPORT InterfaceConnection : public Connectable
 {
     Q_OBJECT
 
 public:
-    WirelessConnection();
-    
-    virtual ~WirelessConnection() {}
+    enum Type { Wired = 1, Wireless = 2, Gsm = 4, Cdma = 8, Vpn = 16, Pppoe = 32 };
+    InterfaceConnection();
 
-    void setNetwork(const QString& network);
-    QString network();
-    
+    virtual ~InterfaceConnection(){}
+
+    void setConnectionType(Type type);
+    Type connectionType();
+
+    void setConnectionUni(const QString& uni);
+    QString connectionUni();
+
+    void setConnectionName(const QString& name);
+    QString connectionName();
+
+    void setConnectionState(Solid::Control::NetworkInterface::ConnectionState state);
+    Solid::Control::NetworkInterface::ConnectionState connectionState();
+
+Q_SIGNALS:
+    void connectionStateChanged();
+
+protected:
+    InterfaceConnection(ConnectableType type);
+
 private:
-    QString m_network;
+    Type m_type;
+    QString m_name;
+    QString m_uni;
+    Solid::Control::NetworkInterface::ConnectionState m_state;
 };
 } // namespace
 }

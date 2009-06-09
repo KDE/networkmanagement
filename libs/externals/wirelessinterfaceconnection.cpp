@@ -18,65 +18,35 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "connection.h"
+#include "wirelessinterfaceconnection.h"
 
-#include "connectionadaptor.h"
+#include "wirelessinterfaceconnectionadaptor.h"
+#include "interfaceconnectionadaptor.h"
 #include "connectableadaptor.h"
 
 namespace Knm {
 namespace Externals {
 
-Connection::Connection()
-    :Connectable(Connectable::Connection)
+WirelessInterfaceConnection::WirelessInterfaceConnection()
+    :InterfaceConnection(Connectable::WirelessConnection)
 {
-    new ConnectionAdaptor(this);
+    new WirelessInterfaceConnectionAdaptor(this);
     new ConnectableAdaptor(this);
+    new InterfaceConnectionAdaptor(this);
 }
 
-Connection::Connection(ConnectableType type)
-    :Connectable(type)
+WirelessInterfaceConnection::~WirelessInterfaceConnection()
 {
-    new ConnectionAdaptor(this);
 }
 
-void Connection::setConnectionType(Connection::Type type)
+void WirelessInterfaceConnection::setNetwork(const QString& network)
 {
-    m_type = type;
+    m_network = network;
 }
 
-Connection::Type Connection::connectionType()
+QString WirelessInterfaceConnection::network() const
 {
-    return m_type;
-}
-
-void Connection::setConnectionUni(const QString& uni)
-{
-    m_uni = uni;
-}
-
-QString Connection::connectionUni()
-{
-    return m_uni;
-}
-
-void Connection::setConnectionName(const QString& name)
-{
-    m_name = name;
-}
-
-QString Connection::connectionName()
-{
-    return m_name;
-}
-
-void Connection::setConnectionState(Solid::Control::NetworkInterface::ConnectionState state)
-{
-    m_state=state;
-}
-
-Solid::Control::NetworkInterface::ConnectionState Connection::connectionState()
-{
-    return m_state;
+    return m_network;
 }
 
 } // namespace

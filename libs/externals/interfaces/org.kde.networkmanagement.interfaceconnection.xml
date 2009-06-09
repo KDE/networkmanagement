@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <node>
-  <interface name="org.kde.networkmanagement.connection">
+  <interface name="org.kde.networkmanagement.InterfaceConnection">
     <method name="connectionUni">
       <arg name="uni" type="s" direction="out" />
     </method>
