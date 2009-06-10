@@ -580,3 +580,4 @@ Comment[x-test]=xxThe wireless signal strength is lowxx
 Action=Popup
 
 
+X-Ubuntu-Gettext-Domain=desktop_plasma-widget-network-manager

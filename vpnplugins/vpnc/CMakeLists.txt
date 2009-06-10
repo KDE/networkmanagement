@@ -1,6 +1,6 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/ui)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals)
 
 set(vpnc_SRCS
    vpnc.cpp

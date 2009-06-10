@@ -1,6 +1,6 @@
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/ui)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage)
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals)
 
 set(openvpn_SRCS
    openvpn.cpp
@@ -11,7 +11,7 @@ kde4_add_ui_files(openvpn_SRCS openvpnprop.ui)
 
 kde4_add_plugin(networkmanagement_openvpnui ${openvpn_SRCS})
 
-target_link_libraries(networkmanagement_openvpnui ${KDE4_KIO_LIBS} knmui knmstorage )
+target_link_libraries(networkmanagement_openvpnui ${KDE4_KIO_LIBS} knmui knminternals )
 
 install(TARGETS networkmanagement_openvpnui  DESTINATION ${PLUGIN_INSTALL_DIR})
 
