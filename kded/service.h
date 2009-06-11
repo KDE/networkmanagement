@@ -55,6 +55,7 @@ namespace Control {
 class NetworkManagementService : public KDEDModule {
 
 Q_OBJECT
+Q_CLASSINFO("D-Bus Interface", "org.kde.networkmanagement")
 
 public:
     NetworkManagementService(QObject * parent, const QVariantList&);
@@ -93,6 +94,7 @@ private:
     QHash<QString, Solid::Control::WirelessNetworkInterfaceEnvironment*> m_environments;
     int m_counter;
     KSharedConfigPtr m_config;
+    const static QString BASE_DBUS_PATH;
 };
 
 #endif

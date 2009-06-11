@@ -21,17 +21,16 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetwork.h"
 #include "wirelessnetwork_p.h"
 
-Solid::Control::WirelessNetwork::WirelessNetwork(WirelessNetworkPrivate &dd, AccessPoint *ap, WirelessNetworkInterface *wni)
-    : d_ptr(&dd)
+Solid::Control::WirelessNetwork::WirelessNetwork(AccessPoint *ap, WirelessNetworkInterface *wni, QObject * parent)
+    : QObject(parent), d_ptr(new WirelessNetworkPrivate)
 {
     Q_D(WirelessNetwork);
-    d->ssid = ap->uni();
-    d->strength = 0;
+    d->ssid = ap->ssid();
+    d->strength = -1;
     d->wirelessNetworkInterface = wni;
     connect(d->wirelessNetworkInterface, SIGNAL(accessPointAppeared(const QString&)), this, SLOT(accessPointAppeared(const QString&)));
     connect(d->wirelessNetworkInterface, SIGNAL(accessPointDisappeared(const QString&)), this, SLOT(accessPointDisappeared(const QString&)));
     addAccessPointInternal(ap);
-
 }
 
 Solid::Control::WirelessNetwork::~WirelessNetwork()
@@ -75,7 +74,11 @@ void Solid::Control::WirelessNetwork::accessPointDisappeared(const QString &uni)
 {
     Q_D(WirelessNetwork);
     d->aps.remove(uni);
-    updateStrength();
+    if (d->aps.isEmpty()) {
+        emit disappeared(d->ssid);
+    } else {
+        updateStrength();
+    }
 }
 
 void Solid::Control::WirelessNetwork::updateStrength()

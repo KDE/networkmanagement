@@ -73,15 +73,21 @@ namespace Control
         void signalStrengthChanged(int strength);
         /**
          * Indicate that the reference access point changed
-         * @param new access point or 0 if none
+         * @param apUni new access point or 0 if none
          */
         void referenceAccessPointChanged(const QString &apUni);
+        /**
+         * Indicate that this network has no more access points
+         * (meaning the network has disappeared from view of the network interface)
+         * @param ssid the SSID of this network
+         */
+         void disappeared(const QString &);
     private Q_SLOTS:
         void accessPointAppeared(const QString &);
         void accessPointDisappeared(const QString &);
-    private:
         void updateStrength();
-        WirelessNetwork(WirelessNetworkPrivate &dd, AccessPoint *, WirelessNetworkInterface *network);
+    private:
+        WirelessNetwork(AccessPoint *, WirelessNetworkInterface *network, QObject * parent);
         void addAccessPointInternal(Solid::Control::AccessPoint *ap);
         WirelessNetworkPrivate * d_ptr;
     };

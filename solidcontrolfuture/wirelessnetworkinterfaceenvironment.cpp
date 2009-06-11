@@ -65,6 +65,7 @@ Solid::Control::WirelessNetworkInterfaceEnvironment::WirelessNetworkInterfaceEnv
 
 Solid::Control::WirelessNetworkInterfaceEnvironment::~WirelessNetworkInterfaceEnvironment()
 {
+    kDebug();
     delete d_ptr;
 }
 
@@ -106,11 +107,9 @@ void Solid::Control::WirelessNetworkInterfaceEnvironment::accessPointAppearedInt
     if (ssid.isEmpty()) {
         //kDebug() << "ignoring hidden AP with BSSID:" << ap->hardwareAddress();
     } else if (!d->networks.contains(ssid)) {
-        Solid::Control::WirelessNetworkPrivate wnp;
-        wnp.ssid = ssid;
-        Solid::Control::WirelessNetwork * net = new Solid::Control::WirelessNetwork(wnp, ap, d->iface);
+        Solid::Control::WirelessNetwork * net = new Solid::Control::WirelessNetwork(ap, d->iface, this);
         d->networks.insert(ssid, net);
-        connect(net, SIGNAL(noAccessPoints(const QString&)), SLOT(removeNetwork(const QString&)));
+        connect(net, SIGNAL(disappeared(const QString&)), SLOT(removeNetwork(const QString&)));
         emit networkAppeared(ssid);
     }
 
@@ -131,7 +130,7 @@ void Solid::Control::WirelessNetworkInterfaceEnvironment::dump()
 void Solid::Control::WirelessNetworkInterfaceEnvironment::removeNetwork(const QString &ssid)
 {
     Q_D(WirelessNetworkInterfaceEnvironment);
-    //kDebug() << ssid;
+    kDebug() << ssid;
     QHash<QString, WirelessNetwork*>::iterator it = d->networks.find(ssid);
     if ( it == d->networks.end() )
         return;

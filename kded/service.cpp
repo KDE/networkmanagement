@@ -46,7 +46,7 @@ K_PLUGIN_FACTORY(NetworkManagementServiceFactory,
     )
 K_EXPORT_PLUGIN(NetworkManagementServiceFactory("networkmanagement"))
 
-const static QString BASE_DBUS_PATH = "/modules/networkmanagement/Connectables/Connectable";
+const QString NetworkManagementService::BASE_DBUS_PATH = QString::fromLatin1("/modules/networkmanagement/Connectables/");
 
 NetworkManagementService::NetworkManagementService(QObject * parent, const QVariantList&)
         : KDEDModule(parent)
@@ -54,9 +54,9 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 {
     (void) new NetworkmanagementAdaptor( this );
     QDBusConnection::sessionBus().registerService( "org.kde.networkmanagement" ) ;
-    QDBusConnection::sessionBus().registerObject( "/modules/networkmanagement", this );
 
     // Load configuration first
+    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
     QStringList connectionIds;
     connectionIds = KNetworkManagerServicePrefs::self()->connections();
     // 2) restore each connection
@@ -68,7 +68,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     }
 
     // Let's start tracking the devices
-
     foreach (Solid::Control::NetworkInterface *iface, Solid::Control::NetworkManager::networkInterfaces()) {
         networkInterfaceAdded(iface);
     }
@@ -76,7 +75,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 
 NetworkManagementService::~NetworkManagementService()
 {
-
 }
 
 void NetworkManagementService::reparseConfiguration(const QStringList& changedConnections)
@@ -215,22 +213,22 @@ void NetworkManagementService::reparseConfiguration(const QStringList& changedCo
                     Knm::WirelessNetworkItem *wni = qobject_cast<Knm::WirelessNetworkItem*>(conn);
                     if (wni->essid() == settings->ssid()) {
                         // We have our match, so let's do it
-                        Knm::WirelessInterfaceConnection *wc = processNewWirelessNetwork(settings->ssid());
+                        Knm::WirelessInterfaceConnection *wic = processNewWirelessNetwork(settings->ssid());
 
-                        if (wc != 0) {
+                        if (wic != 0) {
                             // Bingo. Let's remove the network from the list and create
                             // the connection
 
                             deleteConnectableAndNotify(wni);
-                            wc->deleteLater();
+                            delete wic;
 
                             // Add the network to our hash, for each interface
                             foreach (Solid::Control::NetworkInterface *iface, Solid::Control::NetworkManager::networkInterfaces()) {
                                 if (connection->type() == solidDeviceToConnectionType(iface->uni())) {
-                                    Knm::WirelessInterfaceConnection *wc = processNewWirelessNetwork(settings->ssid());
-                                    wc->setDeviceUni(iface->uni());
+                                    Knm::WirelessInterfaceConnection *wic = processNewWirelessNetwork(settings->ssid());
+                                    wic->setDeviceUni(iface->uni());
 
-                                    registerConnectableAndNotify(wc);
+                                    registerConnectableAndNotify(wic);
                                 }
                             }
                         }
@@ -270,18 +268,20 @@ void NetworkManagementService::networkInterfaceAdded(Solid::Control::NetworkInte
         return;
     }
 
-    connect(iface, SIGNAL(connectionStateChanged(int)), this, SLOT(connectionStateChanged(int)));
+    // do we care if an interface's state changes?  Possibly for detecting connectable state changes
+    // uncomment the connect below when we have a need for it
+    //connect(iface, SIGNAL(connectionStateChanged(int)), this, SLOT(connectionStateChanged(int)));
 
     if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
         m_environments[iface->uni()] = new Solid::Control::WirelessNetworkInterfaceEnvironment(
                     qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface));
 
-        connect(m_environments[iface->uni()], SIGNAL(wirelessNetworkAppeared(const QString&)),
+        connect(m_environments[iface->uni()], SIGNAL(networkAppeared(const QString&)),
                 this, SLOT(wirelessNetworkAppeared(const QString&)));
-        connect(m_environments[iface->uni()], SIGNAL(wirelessNetworkDisappeared(const QString&)),
+        connect(m_environments[iface->uni()], SIGNAL(networkDisappeared(const QString&)),
                 this, SLOT(wirelessNetworkDisappeared(const QString&)));
-        connect(m_environments[iface->uni()], SIGNAL(wirelessNetworkChanged(const QString&)),
-                this, SLOT(wirelessNetworkChanged(const QString&)));
+        //connect(m_environments[iface->uni()], SIGNAL(wirelessNetworkChanged(const QString&)),
+        //        this, SLOT(wirelessNetworkChanged(const QString&)));
 
         // Let's just get all the Wireless Networks from the interface environment
         QStringList networks = m_environments[iface->uni()]->networks();
@@ -346,9 +346,9 @@ void NetworkManagementService::networkInterfaceRemoved(const QString &uni)
 
     if (m_environments.contains(uni)) {
         Solid::Control::WirelessNetworkInterfaceEnvironment *env = m_environments[uni];
+        Q_UNUSED(env);
 
         m_environments.remove(uni);
-        env->deleteLater();
     }
 
     foreach (Knm::Connectable *conn, m_connectables.keys()) {
@@ -496,7 +496,7 @@ void NetworkManagementService::registerConnectableAndNotify(Knm::Connectable *it
 {
     ++m_counter;
     QString path = QString("%1%2").arg(BASE_DBUS_PATH).arg(m_counter);
-    QDBusConnection::sessionBus().registerObject(path, item);
+    kDebug() << path <<  QDBusConnection::sessionBus().registerObject(path, item);
     QDBusObjectPath dbuspath = QDBusObjectPath(path);
     m_connectables[item] = dbuspath;
     emit ConnectableAdded(dbuspath);
@@ -506,7 +506,7 @@ void NetworkManagementService::deleteConnectableAndNotify(Knm::Connectable *item
 {
     emit ConnectableRemoved(m_connectables[item]);
     m_connectables.remove(item);
-    item->deleteLater();
+    delete item;
 }
 
 #include "service.moc"
