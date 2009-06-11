@@ -18,5 +18,5 @@ target_link_libraries(kded_networkmanagement knminternals ${KDE4_KUTILS_LIBS} so
 
 install(TARGETS kded_networkmanagement DESTINATION ${PLUGIN_INSTALL_DIR})
 
-#install( FILES knetworkmanager.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded)
+install( FILES networkmanagement.desktop DESTINATION ${SERVICES_INSTALL_DIR}/kded)
 
