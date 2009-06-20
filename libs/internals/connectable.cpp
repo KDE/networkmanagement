@@ -25,10 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Knm;
 
-Connectable::Connectable(ConnectableType type, QObject * parent)
-: QObject(parent)
+Connectable::Connectable(ConnectableType type, const QString & deviceUni, QObject * parent)
+: QObject(parent), m_type(type), m_deviceUni(deviceUni)
 {
-    m_type = type;
 }
 
 Connectable::~Connectable()

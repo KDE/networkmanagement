@@ -24,12 +24,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectable.h"
 
+#include <QtCore/QString>
+#include <QUuid>
+
+#include <solid/control/networkinterface.h>
+
 #include "knm_export.h"
 
 #include "connection.h"
-
-#include <solid/control/networkinterface.h>
-#include <QtCore/QString>
 
 namespace Knm {
 
@@ -38,15 +40,13 @@ class KNM_EXPORT InterfaceConnection : public Connectable
     Q_OBJECT
 
 public:
-    InterfaceConnection(QObject * parent);
-
+    InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent);
     virtual ~InterfaceConnection();
 
     void setConnectionType(Knm::Connection::Type type);
     Knm::Connection::Type connectionType() const;
 
-    void setConnectionUni(const QString& uni);
-    QString connectionUni() const;
+    QUuid connectionUuid() const;
 
     void setConnectionName(const QString& name);
     QString connectionName() const;
@@ -61,12 +61,12 @@ Q_SIGNALS:
     void connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState);
 
 protected:
-    InterfaceConnection(ConnectableType type, QObject * parent);
+    InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, ConnectableType type, const QString & deviceUni, QObject * parent);
 
 private:
     Knm::Connection::Type m_type;
+    QUuid m_uuid;
     QString m_name;
-    QString m_uni;
     Solid::Control::NetworkInterface::ConnectionState m_state;
 };
 } // namespace

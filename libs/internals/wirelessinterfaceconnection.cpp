@@ -23,8 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Knm;
 
-WirelessInterfaceConnection::WirelessInterfaceConnection(QObject * parent)
-: InterfaceConnection(Connectable::WirelessConnection, parent)
+WirelessInterfaceConnection::WirelessInterfaceConnection(const QString & network, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent)
+: InterfaceConnection(connectionUuid, connectionName, Connectable::WirelessConnection, deviceUni, parent), m_network(network)
 {
 }
 

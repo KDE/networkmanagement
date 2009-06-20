@@ -24,10 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "interfaceconnection.h"
 
-#include "knm_export.h"
-
 #include <QtCore/QString>
-#include <QObject>
+#include <QUuid>
+
+#include "knm_export.h"
 
 namespace Knm {
 
@@ -36,7 +36,7 @@ class KNM_EXPORT WirelessInterfaceConnection : public InterfaceConnection
     Q_OBJECT
 
 public:
-    WirelessInterfaceConnection(QObject * parent);
+    WirelessInterfaceConnection(const QString & network, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent);
     virtual ~WirelessInterfaceConnection();
 
     void setNetwork(const QString& network);

@@ -34,7 +34,7 @@ class KNM_EXPORT WirelessNetworkItem :public Connectable
 {
 Q_OBJECT
 public:
-    WirelessNetworkItem(QObject * parent);
+    WirelessNetworkItem(const QString & deviceUni, QObject * parent);
     virtual ~WirelessNetworkItem();
 
     void setEssid(const QString& path);

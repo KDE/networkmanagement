@@ -70,6 +70,7 @@ set(knminternals_SRCS
 
 kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)
 
+if(FALSE)
 qt4_add_dbus_adaptor(
     knminternals_SRCS
     interfaces/org.kde.networkmanagement.connectable.xml
@@ -97,6 +98,7 @@ qt4_add_dbus_adaptor(
     wirelessnetworkitem.h
     Knm::WirelessNetworkItem
 )
+endif(FALSE)
 
 kde4_add_library(knminternals SHARED ${knminternals_SRCS})
 

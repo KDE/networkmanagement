@@ -49,7 +49,7 @@ public Q_SLOTS:
 Q_SIGNALS:
     void activated();
 protected:
-    Connectable(ConnectableType type, QObject * parent);
+    Connectable(ConnectableType type, const QString &deviceUni, QObject * parent);
 
 private:
     ConnectableType m_type;

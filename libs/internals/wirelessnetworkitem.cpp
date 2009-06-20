@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Knm;
 
-WirelessNetworkItem::WirelessNetworkItem(QObject * parent)
-: Connectable(Connectable::WirelessNetworkItem, parent)
+WirelessNetworkItem::WirelessNetworkItem(const QString & deviceUni, QObject * parent)
+: Connectable(Connectable::WirelessNetworkItem, deviceUni, parent)
 {
 }
 
