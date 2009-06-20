@@ -20,16 +20,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessnetworkitem.h"
 
-#include "wirelessnetworkitemadaptor.h"
-#include "connectableadaptor.h"
-
 using namespace Knm;
 
-WirelessNetworkItem::WirelessNetworkItem()
-    :Connectable(Connectable::WirelessNetworkItem)
+WirelessNetworkItem::WirelessNetworkItem(QObject * parent)
+: Connectable(Connectable::WirelessNetworkItem, parent)
 {
-    new WirelessNetworkItemAdaptor(this);
-    new ConnectableAdaptor(this);
+}
+
+WirelessNetworkItem::~WirelessNetworkItem()
+{
+
+}
+
+void WirelessNetworkItem::activate()
+{
+    emit activated();
 }
 
 void WirelessNetworkItem::setEssid(const QString& essid)
@@ -37,7 +42,7 @@ void WirelessNetworkItem::setEssid(const QString& essid)
     m_essid = essid;
 }
 
-QString WirelessNetworkItem::essid()
+QString WirelessNetworkItem::essid() const
 {
     return m_essid;
 }

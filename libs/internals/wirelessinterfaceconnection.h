@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -35,13 +36,12 @@ class KNM_EXPORT WirelessInterfaceConnection : public InterfaceConnection
     Q_OBJECT
 
 public:
-    WirelessInterfaceConnection();
-    
+    WirelessInterfaceConnection(QObject * parent);
     virtual ~WirelessInterfaceConnection();
 
     void setNetwork(const QString& network);
     QString network() const;
-    
+
 private:
     QString m_network;
 };

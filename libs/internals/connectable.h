@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -28,9 +29,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Knm {
 
-class KNM_EXPORT Connectable :public QObject
+class KNM_EXPORT Connectable : public QObject
 {
-    Q_OBJECT
+Q_OBJECT
 public:
     enum ConnectableType {
         Connection,
@@ -43,14 +44,16 @@ public:
     ConnectableType connectableType() const;
     void setDeviceUni(const QString& deviceUni);
     QString deviceUni() const;
-
+public Q_SLOTS:
+    virtual void activate() = 0;
+Q_SIGNALS:
+    void activated();
 protected:
-    Connectable(ConnectableType type);
+    Connectable(ConnectableType type, QObject * parent);
 
 private:
     ConnectableType m_type;
     QString m_deviceUni;
-
 };
 
 } // namespace

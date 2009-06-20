@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -20,22 +21,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "interfaceconnection.h"
 
-#include "interfaceconnectionadaptor.h"
-#include "connectableadaptor.h"
-
 using namespace Knm;
 
-InterfaceConnection::InterfaceConnection()
-    :Connectable(Connectable::Connection)
+InterfaceConnection::InterfaceConnection(QObject * parent)
+: Connectable(Connectable::Connection, parent)
 {
-    new InterfaceConnectionAdaptor(this);
-    new ConnectableAdaptor(this);
 }
 
-InterfaceConnection::InterfaceConnection(ConnectableType type)
-    :Connectable(type)
+InterfaceConnection::InterfaceConnection(ConnectableType type, QObject * parent)
+: Connectable(type, parent)
 {
-    new InterfaceConnectionAdaptor(this);
+}
+
+InterfaceConnection::~InterfaceConnection()
+{
+
+}
+
+void InterfaceConnection::activate()
+{
+    emit activated();
 }
 
 void InterfaceConnection::setConnectionType(Knm::Connection::Type type)
@@ -70,7 +75,8 @@ QString InterfaceConnection::connectionName() const
 
 void InterfaceConnection::setConnectionState(Solid::Control::NetworkInterface::ConnectionState state)
 {
-    m_state=state;
+    m_state = state;
+    emit connectionStateChanged(m_state);
 }
 
 Solid::Control::NetworkInterface::ConnectionState InterfaceConnection::connectionState() const

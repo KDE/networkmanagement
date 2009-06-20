@@ -32,16 +32,16 @@ namespace Knm {
 
 class KNM_EXPORT WirelessNetworkItem :public Connectable
 {
-    Q_OBJECT
-
+Q_OBJECT
 public:
-    WirelessNetworkItem();
-    
-    virtual ~WirelessNetworkItem() {}
+    WirelessNetworkItem(QObject * parent);
+    virtual ~WirelessNetworkItem();
 
     void setEssid(const QString& path);
-    QString essid();
-    
+    QString essid() const;
+
+public Q_SLOTS:
+    void activate();
 private:
     QString m_essid;
 

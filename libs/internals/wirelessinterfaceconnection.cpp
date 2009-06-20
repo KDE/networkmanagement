@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -20,18 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessinterfaceconnection.h"
 
-#include "wirelessinterfaceconnectionadaptor.h"
-#include "interfaceconnectionadaptor.h"
-#include "connectableadaptor.h"
-
 using namespace Knm;
 
-WirelessInterfaceConnection::WirelessInterfaceConnection()
-    :InterfaceConnection(Connectable::WirelessConnection)
+WirelessInterfaceConnection::WirelessInterfaceConnection(QObject * parent)
+: InterfaceConnection(Connectable::WirelessConnection, parent)
 {
-    new WirelessInterfaceConnectionAdaptor(this);
-    new ConnectableAdaptor(this);
-    new InterfaceConnectionAdaptor(this);
 }
 
 WirelessInterfaceConnection::~WirelessInterfaceConnection()

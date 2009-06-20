@@ -74,6 +74,7 @@ ConnectionPersistence::ConnectionPersistence(KSharedConfig::Ptr config, SecretSt
         m_connection = 0;
     } else {
         m_connection = new Connection(QUuid(uuid), Connection::typeFromString(type));
+        kDebug() << m_connection->uuid();
     }
 }
 

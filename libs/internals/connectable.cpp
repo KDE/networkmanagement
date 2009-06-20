@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -22,14 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QString>
 
-#include "connectableadaptor.h"
-
 using namespace Knm;
 
-Connectable::Connectable(ConnectableType type)
+Connectable::Connectable(ConnectableType type, QObject * parent)
+: QObject(parent)
 {
     m_type = type;
-    (void) new ConnectableAdaptor(this);
 }
 
 Connectable::~Connectable()

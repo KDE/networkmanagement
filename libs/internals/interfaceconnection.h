@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -37,9 +38,9 @@ class KNM_EXPORT InterfaceConnection : public Connectable
     Q_OBJECT
 
 public:
-    InterfaceConnection();
+    InterfaceConnection(QObject * parent);
 
-    virtual ~InterfaceConnection(){}
+    virtual ~InterfaceConnection();
 
     void setConnectionType(Knm::Connection::Type type);
     Knm::Connection::Type connectionType() const;
@@ -53,11 +54,14 @@ public:
     void setConnectionState(Solid::Control::NetworkInterface::ConnectionState state);
     Solid::Control::NetworkInterface::ConnectionState connectionState() const;
 
+public Q_SLOTS:
+    void activate();
+
 Q_SIGNALS:
-    void connectionStateChanged();
+    void connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState);
 
 protected:
-    InterfaceConnection(ConnectableType type);
+    InterfaceConnection(ConnectableType type, QObject * parent);
 
 private:
     Knm::Connection::Type m_type;
