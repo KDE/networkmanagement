@@ -1,0 +1,11 @@
+[Connection_{9999b154-a9b2-484f-b09a-6249f1f64460}]
+Name=stevello
+Type=802-11-wireless
+
+[Connection_{99990901-9cc1-4420-872f-8e303f37f97b}]
+LastUsed=2009,5,14,18,40,44
+Name=Netgear auto
+Type=802-3-ethernet
+
+[General]
+Connections={9999b154-a9b2-484f-b09a-6249f1f64460},{99990901-9cc1-4420-872f-8e303f37f97b}

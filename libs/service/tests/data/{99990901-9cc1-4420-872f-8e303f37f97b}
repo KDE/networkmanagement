@@ -1,0 +1,21 @@
+[802-3-ethernet]
+autonegotiate=true
+duplex=full
+macaddress=
+mtu=0
+port=mii
+speed=0
+
+[connection]
+autoconnect=false
+id=Netgear auto
+timestamp=2009,5,14,18,40,44
+type=802-3-ethernet
+uuid={99990901-9cc1-4420-872f-8e303f37f97b}
+
+[ipv4]
+addresses=
+dnssearch=\\0
+ignoredhcpdns=false
+method=Automatic
+routes=

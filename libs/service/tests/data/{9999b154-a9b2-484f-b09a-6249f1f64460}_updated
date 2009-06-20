@@ -1,0 +1,26 @@
+[802-11-wireless]
+band=bg
+bssid=
+channel=0
+macaddress=
+mode=infrastructure
+mtu=0
+rate=0
+security=
+seenbssids=
+ssid=stevello
+txpower=0
+
+[connection]
+autoconnect=false
+id=changed name!
+timestamp=-4713,1,1,0,0,0
+type=802-11-wireless
+uuid={9999b154-a9b2-484f-b09a-6249f1f64460}
+
+[ipv4]
+addresses=
+dnssearch=\\0
+ignoredhcpdns=false
+method=Automatic
+routes=

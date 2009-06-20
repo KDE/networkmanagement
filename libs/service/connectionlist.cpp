@@ -18,36 +18,33 @@
 
 */
 
-#include "networksettings.h"
+#include "connectionlist.h"
 
-#include <NetworkManager.h>
-#include <nm-setting-connection.h>
+#include <QHash>
+#include <QList>
 
-#include <QDBusConnection>
-#include <QDBusObjectPath>
-#include <QDBusMetaType>
 #include <KDebug>
 
-#include <solid/control/wirelessaccesspoint.h>
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirelessnetworkinterface.h>
-
-// knmdbus
-#include "nm-active-connectioninterface.h"
-
+// internals includes
 #include "connection.h"
-#include "connectiondbus.h"
-#include "busconnection.h"
-#include "exportedconnection.h"
-#include "settings/802-11-wireless.h"
 
-NetworkSettings::NetworkSettings(QObject * parent)
-: QObject(parent), mNextConnectionId(0)
+#include "connectionhandler.h"
+
+class ConnectionListPrivate
 {
+    public:
+        QList<ConnectionHandler *> connectionHandlers;
+        QHash<QString, Knm::Connection *> connections;
+};
+
+ConnectionList::ConnectionList(QObject * parent)
+: QObject(parent), d_ptr(new ConnectionListPrivate)
+{
+#if 0
     //declare types
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
 
+k
     QDBusConnection dbus = QDBusConnection::systemBus();
     if (!dbus.registerObject(QLatin1String(NM_DBUS_PATH_SETTINGS), this, QDBusConnection::ExportScriptableContents)) {
         kDebug() << "Unable to register settings object " << NM_DBUS_PATH_SETTINGS;
@@ -62,17 +59,61 @@ NetworkSettings::NetworkSettings(QObject * parent)
     foreach (Solid::Control::NetworkInterface * interface, allInterfaces) {
         connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(networkInterfaceConnectionStateChanged(int)));
     }
+#endif
 }
 
-NetworkSettings::~NetworkSettings()
+ConnectionList::~ConnectionList()
 {
+    Q_D(ConnectionList);
+    foreach (Knm::Connection * connection, d->connections) {
+        delete connection;
+    }
+    delete d;
 }
 
-QString NetworkSettings::addConnection(Knm::Connection * connection)
+void ConnectionList::registerConnectionHandler(ConnectionHandler * handler, ConnectionHandler * insertAfter)
 {
-    kDebug();
+    Q_D(ConnectionList);
+    if (handler) {
+        // each handler may only be registered once
+        if (d->connectionHandlers.contains(handler)) {
+            return;
+        }
+
+        // inserts at end if insertAfter not found (therefore if it is 0)
+        QMutableListIterator<ConnectionHandler*> i(d->connectionHandlers);
+        i.findNext(insertAfter);
+        i.insert(handler);
+    }
+}
+
+void ConnectionList::unregisterConnectionHandler(ConnectionHandler * handler)
+{
+    Q_D(ConnectionList);
+    if (handler && !d->connectionHandlers.isEmpty()) {
+        d->connectionHandlers.removeOne(handler);
+    }
+}
+
+QStringList ConnectionList::connections() const
+{
+    Q_D(const ConnectionList);
+    return d->connections.keys();
+}
+
+void ConnectionList::addConnection(Knm::Connection * connection)
+{
+    Q_D(ConnectionList);
+    if (connection && !d->connections.contains(connection->uuid())) {
+        kDebug() << connection->uuid();
+        d->connections.insert(connection->uuid(), connection);
+        foreach (ConnectionHandler * connHandler, d->connectionHandlers) {
+            connHandler->handleAdd(connection);
+        }
+    }
+        // move to NMDBusConnectionHandler
+#if 0
     QString objectPath;
-    if (connection) {
         BusConnection * busConn = new BusConnection(connection, this);
         new ConnectionAdaptor(busConn);
         new SecretsAdaptor(busConn);
@@ -83,27 +124,77 @@ QString NetworkSettings::addConnection(Knm::Connection * connection)
         kDebug() << "NewConnection" << objectPath;
     }
     return objectPath;
+#endif
 }
 
-void NetworkSettings::updateConnection(const QString & objectPath, Knm::Connection * connection)
+void ConnectionList::updateConnection(Knm::Connection * connection)
 {
-    kDebug() << objectPath << connection->uuid();
-    if (m_connectionMap.contains(objectPath)) {
+    Q_D(ConnectionList);
+    Knm::Connection * existing = 0;
+    if (connection) {
+        kDebug() << connection->uuid();
+        if (existing = findConnection(connection->uuid())) {
+            delete existing;
+            d->connections.insert(connection->uuid(), connection);
+            foreach (ConnectionHandler * connHandler, d->connectionHandlers) {
+                connHandler->handleUpdate(connection);
+            }
+        }
+    }
+    // move to NMDBusConnectionHandler
+#if 0
+    if (.contains(objectPath)) {
         BusConnection * busConn = m_connectionMap[objectPath];
         if (busConn) {
             busConn->updateInternal(connection);
         }
     }
+#endif
 }
 
-void NetworkSettings::removeConnection(const QString & objectPath)
+void ConnectionList::removeConnection(const QString & uuid)
 {
+    removeConnection(findConnection(uuid));
+}
+
+
+void ConnectionList::removeConnection(Knm::Connection * connection)
+{
+    Q_D(ConnectionList);
+    kDebug() << connection->uuid();
+    if (connection && d->connections.contains(connection->uuid())) {
+        // reverse iterate the handlers
+        QListIterator<ConnectionHandler*> it(d->connectionHandlers);
+        it.toBack();
+        while (it.hasPrevious()) {
+            ConnectionHandler * connHandler = it.previous();
+            connHandler->handleRemove(connection);
+        }
+    }
+    d->connections.remove(connection->uuid());
+    delete connection;
+    // move to NMDBusConnectionHandler
+#if 0
+
     kDebug() << objectPath;
     BusConnection * conn = m_connectionMap.take(objectPath);
     conn->Delete();
+#endif
 }
 
-QList<QDBusObjectPath> NetworkSettings::ListConnections() const
+Knm::Connection * ConnectionList::findConnection(const QString & uuid) const
+{
+    Q_D(const ConnectionList);
+    if (d->connections.contains(uuid)) {
+        return d->connections[uuid];
+    } else {
+        return 0;
+    }
+}
+
+    // move to NMDBusConnectionHandler
+#if 0
+QList<QDBusObjectPath> ConnectionList::ListConnections() const
 {
     QList<QDBusObjectPath> pathList;
     kDebug() << "There are " << m_connectionMap.keys().count() << " known connections";
@@ -113,30 +204,16 @@ QList<QDBusObjectPath> NetworkSettings::ListConnections() const
     return pathList;
 }
 
-QString NetworkSettings::nextObjectPath()
+QString ConnectionList::nextObjectPath()
 {
     return QString::fromLatin1("%1/%2").arg(QLatin1String(NM_DBUS_PATH_SETTINGS)).arg(mNextConnectionId++);
 }
 
-void NetworkSettings::clearConnections()
+// not sure whether we need this - for shutdown?
+void ConnectionList::clearConnections()
 {
     foreach (const QString &conn, m_connectionMap.keys()) {
         m_connectionMap[conn]->Delete();
-    }
-}
-
-void NetworkSettings::networkInterfaceAdded(const QString& uni)
-{
-    Solid::Control::NetworkInterface * interface = Solid::Control::NetworkManager::findNetworkInterface(uni);
-    disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(networkInterfaceConnectionStateChanged(int)));
-    connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(networkInterfaceConnectionStateChanged(int)));
-
-    if (interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-        Solid::Control::WirelessNetworkInterface * wifiDevice =
-            qobject_cast<Solid::Control::WirelessNetworkInterface *>(interface);
-        if (wifiDevice)
-            connect(wifiDevice, SIGNAL(activeAccessPointChanged(const QString &)),
-                    this, SLOT(networkInterfaceAccessPointChanged(const QString &)));
     }
 }
 
@@ -149,9 +226,8 @@ inline bool operator!=(const QDBusObjectPath &lhs, const QDBusObjectPath &rhs)
 
 inline bool operator<(const QDBusObjectPath &lhs, const QDBusObjectPath &rhs)
 { return lhs.path() < rhs.path(); }
-#endif
 
-QList<BusConnection*> NetworkSettings::busConnectionForInterface(Solid::Control::NetworkInterface* interface) {
+QList<BusConnection*> ConnectionList::busConnectionForInterface(Solid::Control::NetworkInterface* interface) {
     QList<BusConnection*> bcs;
     QStringList active(Solid::Control::NetworkManager::activeConnections());
     foreach (QString activePath, active) {
@@ -170,7 +246,28 @@ QList<BusConnection*> NetworkSettings::busConnectionForInterface(Solid::Control:
     return bcs;
 }
 
-void NetworkSettings::networkInterfaceConnectionStateChanged(int state)
+#endif
+
+
+// move to ConnectableList
+#if 0
+void ConnectionList::networkInterfaceAdded(const QString& uni)
+{
+    Solid::Control::NetworkInterface * interface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+    disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(networkInterfaceConnectionStateChanged(int)));
+    connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(networkInterfaceConnectionStateChanged(int)));
+
+    if (interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+        Solid::Control::WirelessNetworkInterface * wifiDevice =
+            qobject_cast<Solid::Control::WirelessNetworkInterface *>(interface);
+        if (wifiDevice)
+            connect(wifiDevice, SIGNAL(activeAccessPointChanged(const QString &)),
+                    this, SLOT(networkInterfaceAccessPointChanged(const QString &)));
+    }
+}
+#endif
+
+void ConnectionList::networkInterfaceConnectionStateChanged(int state)
 {
     Solid::Control::NetworkInterface * device = qobject_cast<Solid::Control::NetworkInterface *>(sender());
     if (device && device->connectionState() == Solid::Control::NetworkInterface::Activated) {
@@ -197,7 +294,7 @@ void NetworkSettings::networkInterfaceConnectionStateChanged(int state)
     }
 }
 
-void NetworkSettings::networkInterfaceAccessPointChanged(const QString & apiUni)
+void ConnectionList::networkInterfaceAccessPointChanged(const QString & apiUni)
 {
     Solid::Control::WirelessNetworkInterface * wifiDevice = qobject_cast<Solid::Control::WirelessNetworkInterface *>(sender());
     if (wifiDevice && wifiDevice->connectionState() == Solid::Control::NetworkInterface::Activated) {
@@ -221,3 +318,4 @@ void NetworkSettings::networkInterfaceAccessPointChanged(const QString & apiUni)
         }
     }
 }
+#endif

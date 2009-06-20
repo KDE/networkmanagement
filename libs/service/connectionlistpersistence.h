@@ -18,10 +18,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SETTINGS_KCONFIGTOSERVICE_H
-#define SETTINGS_KCONFIGTOSERVICE_H
+#ifndef CONNECTIONLISTPERSISTENCE_H
+#define CONNECTIONLISTPERSISTENCE_H
 
 #include <QObject>
+#include "connectionhandler.h"
+
 #include <QMap>
 #include <QPair>
 #include <QString>
@@ -29,35 +31,65 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KSharedConfig>
 
+#include "knm_export.h"
 #include "marshalarguments.h"
 #include <QtGui/qwindowdefs.h> // krazy:exclude=includes (for WId)
 
-/**
- * This class extracts stored connections and puts them on the settings service
- * 1) get the names of all the connections from the main config file
- * 2) open each connection's file and create 1 or more BusConnection
- */
-class NetworkSettings;
-
+class ConnectionList;
+class ConnectionListPersistencePrivate;
 #include "connection.h"
 
-class KConfigToService : public QObject
+/**
+ * This class extracts stored connections and adds them to the connectionlist
+ * 1) get the names of all the connections from the main config file
+ * 2) open each connection's file and create a Knm::Connection object
+ *
+ * 3) Write changed connections back to disk (this is why this class implements ConnectionHandler
+ */
+class KNM_EXPORT ConnectionListPersistence : public QObject, public ConnectionHandler
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(ConnectionListPersistence)
 public:
-    KConfigToService(NetworkSettings * service, bool active);
-    ~KConfigToService();
-    void init();
-    void addOrUpdate(const QString & id);
-    QList<QPair<const QString&, const QString&> > keyMappings() const;
-    void configure(const QStringList & changedConnections);
-    void start(WId wid);
-    void stop();
-public Q_SLOTS:
+    static const QString NETWORKMANAGEMENT_RCFILE;
+    static const QString CONNECTION_PERSISTENCE_PATH;
+
     /**
-     * Update the stored connection
+     * Constructor
+     * @param filename to load connection ids from - needed for testing.  By default
+     * NETWORKMANAGEMENT_RCFILE is used.
+     * @param persistencePath absolute path ending in '/' to search for connection detail files in - needed for
+     * testing. By default CONNECTION_PERSISTENCE_PATH is used.
      */
-    void connectionUpdated(Knm::Connection *);
+    ConnectionListPersistence(ConnectionList * service, const QString & rcfile = QString(), const QString & persistencePath = QString());
+
+    ~ConnectionListPersistence();
+
+    /**
+     * Call to read the connection list from disk
+     */
+    void init();
+
+    // noop implementations
+    void handleAdd(Knm::Connection *);
+    void handleRemove(Knm::Connection *);
+
+    /**
+     * Takes care of writing changes back to disk
+     */
+    void handleUpdate(Knm::Connection *);
+
+    /**
+     * Reread connections from disk
+     * @param changedConnections indicates which connections have been changed
+     */
+    void configure(const QStringList & changedConnections);
+
+    // UNUSED move
+    void start(WId wid);
+
+    // UNUSED move
+    void stop();
 private:
     // map from a) keys that have been munged to be legal variable names
     // to b) actual networkmanager parameter keys
@@ -68,15 +100,8 @@ private:
     KSharedConfig::Ptr connectionFileForUuid(const QString & uuid);
     // restore the given connection from storage to a map
     Knm::Connection * restoreConnection(const QString & connectionId);
-    // deserialize a single settings group
-    QVariantMap handleGroup(const QString & name);
 private:
-    NetworkSettings * m_service;
-    QMap<QString, QString> m_connectionIdToObjectPath;
-    KSharedConfigPtr m_config;
-    QString m_currentConnectionType;
-    bool m_error;
-    bool m_init;
+    ConnectionListPersistencePrivate * d_ptr;
 };
 
 #endif // SETTINGS_KCONFIGTOSERVICE_H
