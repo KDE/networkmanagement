@@ -60,7 +60,6 @@ class NetworkInterfaceActivatableProviderPrivate;
 class KNM_EXPORT NetworkInterfaceActivatableProvider : public QObject, virtual public ConnectionHandler
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(NetworkInterfaceActivatableProvider)
 public:
     static bool hardwareAddressMatches(Knm::Connection * connection, Solid::Control::NetworkInterface * iface);
     static bool matches(Knm::Connection::Type connType, Solid::Control::NetworkInterface::Type ifaceType);
@@ -80,7 +79,10 @@ public:
      */
     virtual void handleRemove(Knm::Connection *);
 protected:
+    NetworkInterfaceActivatableProvider(NetworkInterfaceActivatableProviderPrivate& dd, ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent);
     NetworkInterfaceActivatableProviderPrivate * d_ptr;
+private:
+    Q_DECLARE_PRIVATE(NetworkInterfaceActivatableProvider)
 };
 
 #endif // NETWORKINTERFACEACTIVATABLEPROVIDER_H

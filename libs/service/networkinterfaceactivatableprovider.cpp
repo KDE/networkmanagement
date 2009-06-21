@@ -28,14 +28,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatablelist.h"
 
-class NetworkInterfaceActivatableProviderPrivate
+#include "networkinterfaceactivatableprovider_p.h"
+
+NetworkInterfaceActivatableProviderPrivate::~NetworkInterfaceActivatableProviderPrivate()
 {
-public:
-    Solid::Control::NetworkInterface * interface;
-    ActivatableList * activatableList;
-    // map connection UUID to activatable
-    QHash<QString, Knm::Activatable*> activatables;
-};
+
+}
 
 NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent)
     : QObject(parent), d_ptr(new NetworkInterfaceActivatableProviderPrivate)
@@ -43,6 +41,21 @@ NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(Connect
     Q_D(NetworkInterfaceActivatableProvider);
     d->interface = interface;
     d->activatableList = activatableList;
+    d->connectionList = connectionList;
+    // assess all connections
+    foreach (QString uuid, connectionList->connections()) {
+        Knm::Connection * connection = connectionList->findConnection(uuid);
+        handleAdd(connection);
+    }
+}
+
+NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(NetworkInterfaceActivatableProviderPrivate &dd, ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent)
+    : QObject(parent), d_ptr(&dd)
+{
+    Q_D(NetworkInterfaceActivatableProvider);
+    d->interface = interface;
+    d->activatableList = activatableList;
+    d->connectionList = connectionList;
     // assess all connections
     foreach (QString uuid, connectionList->connections()) {
         Knm::Connection * connection = connectionList->findConnection(uuid);
@@ -103,9 +116,9 @@ void NetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedConne
 {
     Q_D(NetworkInterfaceActivatableProvider);
     // check type
-    if (matches(addedConnection->type(), d->interface->type())) {
+    if (!d->activatables.contains(addedConnection->uuid())) {
         if (hardwareAddressMatches(addedConnection, d->interface)) {
-            if (!d->activatables.contains(addedConnection->uuid())) {
+            if (matches(addedConnection->type(), d->interface->type())) {
                 Knm::InterfaceConnection * ifaceConnection = new Knm::InterfaceConnection(addedConnection->uuid(), addedConnection->name(), d->interface->uni(), this);
                 d->activatables.insert(addedConnection->uuid(), ifaceConnection);
                 d->activatableList->addActivatable(ifaceConnection);
@@ -130,6 +143,7 @@ void NetworkInterfaceActivatableProvider::handleRemove(Knm::Connection * removed
     if (d->activatables.contains(removedConnection->uuid())) {
         Knm::Activatable * activatable = d->activatables[removedConnection->uuid()];
         d->activatableList->removeActivatable(activatable);
+        delete activatable;
     }
 }
 
