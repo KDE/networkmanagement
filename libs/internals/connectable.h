@@ -48,6 +48,7 @@ public Q_SLOTS:
     virtual void activate() = 0;
 Q_SIGNALS:
     void activated();
+    void changed();
 protected:
     Connectable(ConnectableType type, const QString &deviceUni, QObject * parent);
 

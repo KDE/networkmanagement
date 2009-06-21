@@ -62,6 +62,7 @@ QUuid InterfaceConnection::connectionUuid() const
 void InterfaceConnection::setConnectionName(const QString& name)
 {
     m_name = name;
+    emit changed();
 }
 
 QString InterfaceConnection::connectionName() const
@@ -72,6 +73,7 @@ QString InterfaceConnection::connectionName() const
 void InterfaceConnection::setConnectionState(Solid::Control::NetworkInterface::ConnectionState state)
 {
     m_state = state;
+    emit changed();
     emit connectionStateChanged(m_state);
 }
 
