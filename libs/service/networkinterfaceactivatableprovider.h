@@ -66,6 +66,12 @@ public:
 
     NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent);
     virtual ~NetworkInterfaceActivatableProvider();
+
+    /**
+     * Sets up initial activatable list
+     */
+    virtual void init();
+
     /**
      * @reimp ConnectionHandler
      */

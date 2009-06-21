@@ -73,6 +73,7 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
         }
         d->connectionList->registerConnectionHandler(provider);
         d->providers.insert(uni, provider);
+        provider->init();
     }
 }
 

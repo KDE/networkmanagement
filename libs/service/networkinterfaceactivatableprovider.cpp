@@ -42,11 +42,6 @@ NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(Connect
     d->interface = interface;
     d->activatableList = activatableList;
     d->connectionList = connectionList;
-    // assess all connections
-    foreach (QString uuid, connectionList->connections()) {
-        Knm::Connection * connection = connectionList->findConnection(uuid);
-        handleAdd(connection);
-    }
 }
 
 NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(NetworkInterfaceActivatableProviderPrivate &dd, ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent)
@@ -56,9 +51,14 @@ NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(Network
     d->interface = interface;
     d->activatableList = activatableList;
     d->connectionList = connectionList;
+}
+
+void NetworkInterfaceActivatableProvider::init()
+{
+    Q_D(NetworkInterfaceActivatableProvider);
     // assess all connections
-    foreach (QString uuid, connectionList->connections()) {
-        Knm::Connection * connection = connectionList->findConnection(uuid);
+    foreach (QString uuid, d->connectionList->connections()) {
+        Knm::Connection * connection = d->connectionList->findConnection(uuid);
         handleAdd(connection);
     }
 }
