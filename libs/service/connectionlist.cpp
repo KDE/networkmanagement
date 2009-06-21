@@ -162,6 +162,7 @@ void ConnectionList::removeConnection(Knm::Connection * connection)
     Q_D(ConnectionList);
     kDebug() << connection->uuid();
     if (connection && d->connections.contains(connection->uuid())) {
+        d->connections.take(connection->uuid());
         // reverse iterate the handlers
         QListIterator<ConnectionHandler*> it(d->connectionHandlers);
         it.toBack();
@@ -170,7 +171,6 @@ void ConnectionList::removeConnection(Knm::Connection * connection)
             connHandler->handleRemove(connection);
         }
     }
-    d->connections.remove(connection->uuid());
     delete connection;
     // move to NMDBusConnectionHandler
 #if 0
