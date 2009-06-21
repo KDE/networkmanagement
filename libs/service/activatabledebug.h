@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-class KNM_EXPORT ActivatableDebug : public QObject, virtual public ActivatableObserver
+class KNM_EXPORT ActivatableDebug : public ActivatableObserver
 {
 Q_OBJECT
 public:
@@ -34,7 +34,7 @@ public:
     virtual ~ActivatableDebug();
 public slots:
     void handleAdd(Knm::Activatable *);
-    void handleChange();
+    void handleChange(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
 };
 
