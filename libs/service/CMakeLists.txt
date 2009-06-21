@@ -2,6 +2,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}
    ${CMAKE_CURRENT_SOURCE_DIR}/..
    ${CMAKE_CURRENT_SOURCE_DIR}/../internals
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../solidcontrolfuture
    ${CMAKE_CURRENT_BINARY_DIR}/../internals
    )
 
@@ -29,6 +30,9 @@ set(knmservice_SRCS
    # relates connections to network interfaces
    networkinterfaceactivatableprovider.cpp
 
+   # complex class for managing connections and unconfigured networks for wireless interfaces
+   wirelessnetworkinterfaceactivatableprovider.cpp
+
    # interface for tracking activatable events
    activatableobserver.cpp
 
@@ -38,7 +42,7 @@ set(knmservice_SRCS
 
 kde4_add_library(knmservice SHARED ${knmservice_SRCS})
 
-target_link_libraries(knmservice knminternals solidcontrol ${KDE4_KDECORE_LIBS})
+target_link_libraries(knmservice knminternals solidcontrol solidcontrolfuture ${KDE4_KDECORE_LIBS})
 
 set_target_properties(knmservice PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}

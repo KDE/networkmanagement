@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelist.h"
 #include "connectionlist.h"
 #include "networkinterfaceactivatableprovider.h"
+#include "wirelessnetworkinterfaceactivatableprovider.h"
 
 class NetworkInterfaceMonitorPrivate
 {
@@ -64,7 +65,12 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
     Q_D(NetworkInterfaceMonitor);
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     if (iface && !d->providers.contains(uni)) {
-        NetworkInterfaceActivatableProvider * provider = new NetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, iface, this);
+        NetworkInterfaceActivatableProvider * provider;
+        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+            provider = new WirelessNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface), this);
+        } else {
+            provider = new NetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, iface, this);
+        }
         d->connectionList->registerConnectionHandler(provider);
         d->providers.insert(uni, provider);
     }
