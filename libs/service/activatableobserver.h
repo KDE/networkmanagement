@@ -18,37 +18,30 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef CONNECTABLELIST_H
-#define CONNECTABLELIST_H
+#ifndef ACTIVATABLEOBSERVER_H
+#define ACTIVATABLEOBSERVER_H
 
 #include <QObject>
-#include "knm_export.h"
 
+/**
+ * Interface for classes which handle Activatables.  Implement as a QObject and connect to
+ * ActivatableList's signals
+ */
 namespace Knm
 {
-    class Connectable;
+    class Activatable;
 } // namespace Knm
 
-class ConnectableListPrivate;
-
-class KNM_EXPORT ConnectableList : public QObject
+class ActivatableObserver
 {
-Q_OBJECT
-Q_DECLARE_PRIVATE(ConnectableList);
-
 public:
-    ConnectableList(QObject * parent);
-    ~ConnectableList();
-    QList<Knm::Connectable *> connectables() const;
-    void addConnectable(Knm::Connectable *);
-    void removeConnectable(Knm::Connectable *);
-
-signals:
-    void connectableAdded(Knm::Connectable *);
-    void connectableRemoved(Knm::Connectable *);
-
-private:
-    ConnectableListPrivate * d_ptr;
+    virtual ~ActivatableObserver();
+    /**
+     * implement as slots
+     */
+    virtual void handleAdd(Knm::Activatable *) = 0;
+    virtual void handleChange() = 0;
+    virtual void handleRemove(Knm::Activatable *) = 0;
 };
 
-#endif // CONNECTABLELIST_H
+#endif // ACTIVATABLEOBSERVER_H

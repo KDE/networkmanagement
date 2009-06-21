@@ -18,32 +18,29 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NETWORKINTERFACEMONITOR_H
-#define NETWORKINTERFACEMONITOR_H
+#ifndef CONNECTIONLISTPERSISTENCEDBUS_H
+#define CONNECTIONLISTPERSISTENCEDBUS_H
 
 #include <QObject>
 
 #include "knm_export.h"
 
-class ConnectionList;
-class ActivatableList;
-class NetworkInterfaceMonitorPrivate;
+class ConnectionListPersistence;
+class ConnectionListPersistenceDBusPrivate;
 
 /**
- * Monitors network hardware and maintains NetworkInterfaceActivatableProviders for them
+ * Exposes the configure() method to the session bus so that the configuration UI processes can tell
+ * service implementations to reload
  */
-class KNM_EXPORT NetworkInterfaceMonitor : public QObject
+class KNM_EXPORT ConnectionListPersistenceDBus : public QObject
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(NetworkInterfaceMonitor)
+Q_DECLARE_PRIVATE(ConnectionListPersistenceDBus)
 public:
-    NetworkInterfaceMonitor(ConnectionList * connectionList, ActivatableList * activatableList, QObject * parent);
-    ~NetworkInterfaceMonitor();
-public Q_SLOTS:
-    void networkInterfaceAdded(const QString &);
-    void networkInterfaceRemoved(const QString &);
+    ConnectionListPersistenceDBus(ConnectionListPersistence * connectionListPersistence, QObject * parent);
+    ~ConnectionListPersistenceDBus();
 private:
-    NetworkInterfaceMonitorPrivate * d_ptr;
+    ConnectionListPersistenceDBusPrivate * d_ptr;
 };
-
-#endif // NETWORKINTERFACEMONITOR_H
+// vim: sw=4 sts=4 et tw=100
+#endif // CONNECTIONLISTPERSISTENCEDBUS_H

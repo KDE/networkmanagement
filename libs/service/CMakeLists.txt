@@ -8,12 +8,32 @@ include_directories(
 add_subdirectory(tests)
 
 set(knmservice_SRCS
+   # defines interface for objects observing connections
    connectionhandler.cpp
+
+   # list of all connections, maintains connectionhandlers
    connectionlist.cpp
+
+   # loads/saves connections
    connectionlistpersistence.cpp
-   connectablelist.cpp
+
+   # provides dbus configure() for config UI
+   connectionlistpersistencedbus.cpp
+
+   # list of things that may be connected: connections and unconfigured networks
+   activatablelist.cpp
+
+   # maintains NIC activatable providers
    networkinterfacemonitor.cpp
-   networkinterfaceconnectableprovider.cpp
+
+   # relates connections to network interfaces
+   networkinterfaceactivatableprovider.cpp
+
+   # interface for tracking activatable events
+   activatableobserver.cpp
+
+   # simple debug output observer
+   activatabledebug.cpp
    )
 
 kde4_add_library(knmservice SHARED ${knmservice_SRCS})

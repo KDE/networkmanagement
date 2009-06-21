@@ -29,19 +29,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Knm {
 
-class KNM_EXPORT Connectable : public QObject
+class KNM_EXPORT Activatable : public QObject
 {
 Q_OBJECT
 public:
-    enum ConnectableType {
+    enum ActivatableType {
         Connection,
         WirelessConnection,
         WirelessNetworkItem
     };
 
-    virtual ~Connectable();
+    virtual ~Activatable();
 
-    ConnectableType connectableType() const;
+    ActivatableType activatableType() const;
     void setDeviceUni(const QString& deviceUni);
     QString deviceUni() const;
 public Q_SLOTS:
@@ -50,10 +50,10 @@ Q_SIGNALS:
     void activated();
     void changed();
 protected:
-    Connectable(ConnectableType type, const QString &deviceUni, QObject * parent);
+    Activatable(ActivatableType type, const QString &deviceUni, QObject * parent);
 
 private:
-    ConnectableType m_type;
+    ActivatableType m_type;
     QString m_deviceUni;
 };
 

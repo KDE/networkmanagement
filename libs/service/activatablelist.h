@@ -18,32 +18,38 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NETWORKINTERFACEMONITOR_H
-#define NETWORKINTERFACEMONITOR_H
+#ifndef ACTIVATABLELIST_H
+#define ACTIVATABLELIST_H
 
 #include <QObject>
-
 #include "knm_export.h"
 
-class ConnectionList;
-class ActivatableList;
-class NetworkInterfaceMonitorPrivate;
+namespace Knm
+{
+    class Activatable;
+} // namespace Knm
 
-/**
- * Monitors network hardware and maintains NetworkInterfaceActivatableProviders for them
- */
-class KNM_EXPORT NetworkInterfaceMonitor : public QObject
+class ActivatableListPrivate;
+
+class KNM_EXPORT ActivatableList : public QObject
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(NetworkInterfaceMonitor)
+Q_DECLARE_PRIVATE(ActivatableList);
+
 public:
-    NetworkInterfaceMonitor(ConnectionList * connectionList, ActivatableList * activatableList, QObject * parent);
-    ~NetworkInterfaceMonitor();
-public Q_SLOTS:
-    void networkInterfaceAdded(const QString &);
-    void networkInterfaceRemoved(const QString &);
+    ActivatableList(QObject * parent);
+    ~ActivatableList();
+    QList<Knm::Activatable *> activatables() const;
+    void addActivatable(Knm::Activatable *);
+    void removeActivatable(Knm::Activatable *);
+
+signals:
+    void activatableAdded(Knm::Activatable *);
+    void activatableChanged(Knm::Activatable *);
+    void activatableRemoved(Knm::Activatable *);
+
 private:
-    NetworkInterfaceMonitorPrivate * d_ptr;
+    ActivatableListPrivate * d_ptr;
 };
 
-#endif // NETWORKINTERFACEMONITOR_H
+#endif // ACTIVATABLELIST_H

@@ -50,6 +50,7 @@ class KNM_EXPORT ConnectionListPersistence : public QObject, public ConnectionHa
 {
 Q_OBJECT
 Q_DECLARE_PRIVATE(ConnectionListPersistence)
+Q_CLASSINFO("D-Bus Interface", "org.kde.networkmanagement")
 public:
     static const QString NETWORKMANAGEMENT_RCFILE;
     static const QString CONNECTION_PERSISTENCE_PATH;
@@ -79,17 +80,21 @@ public:
      */
     void handleUpdate(Knm::Connection *);
 
+
+public Q_SLOTS:
     /**
      * Reread connections from disk
      * @param changedConnections indicates which connections have been changed
      */
-    void configure(const QStringList & changedConnections);
+    Q_SCRIPTABLE void configure(const QStringList & changedConnections);
 
+#if 0
     // UNUSED move
     void start(WId wid);
 
     // UNUSED move
     void stop();
+#endif
 private:
     // map from a) keys that have been munged to be legal variable names
     // to b) actual networkmanager parameter keys

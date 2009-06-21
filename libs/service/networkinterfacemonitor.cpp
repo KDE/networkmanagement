@@ -23,25 +23,25 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
 
-#include "connectablelist.h"
+#include "activatablelist.h"
 #include "connectionlist.h"
-#include "networkinterfaceconnectableprovider.h"
+#include "networkinterfaceactivatableprovider.h"
 
 class NetworkInterfaceMonitorPrivate
 {
 public:
-    // relates Solid::Control::NetworkInterface identifiers to NetworkInterfaceConnectableProviders
-    QHash<QString, NetworkInterfaceConnectableProvider *> providers;
+    // relates Solid::Control::NetworkInterface identifiers to NetworkInterfaceActivatableProviders
+    QHash<QString, NetworkInterfaceActivatableProvider *> providers;
     ConnectionList * connectionList;
-    ConnectableList * connectableList;
+    ActivatableList * activatableList;
 };
 
-NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList, ConnectableList * connectableList, QObject * parent)
+NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList, ActivatableList * activatableList, QObject * parent)
     :QObject(parent), d_ptr(new NetworkInterfaceMonitorPrivate)
 {
     Q_D(NetworkInterfaceMonitor);
     d->connectionList = connectionList;
-    d->connectableList = connectableList;
+    d->activatableList = activatableList;
 
     QObject::connect(Solid::Control::NetworkManager::notifier(),
             SIGNAL(networkInterfaceAdded(const QString&)),
@@ -64,14 +64,16 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
     Q_D(NetworkInterfaceMonitor);
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     if (iface && !d->providers.contains(uni)) {
-        d->providers.insert(uni, new NetworkInterfaceConnectableProvider(d->connectionList, d->connectableList, iface, this));
+        NetworkInterfaceActivatableProvider * provider = new NetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, iface, this);
+        d->connectionList->registerConnectionHandler(provider);
+        d->providers.insert(uni, provider);
     }
 }
 
 void NetworkInterfaceMonitor::networkInterfaceRemoved(const QString & uni)
 {
     Q_D(NetworkInterfaceMonitor);
-    NetworkInterfaceConnectableProvider * provider = d->providers.take(uni);
+    NetworkInterfaceActivatableProvider * provider = d->providers.take(uni);
     delete provider;
 }
 

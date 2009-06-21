@@ -65,12 +65,7 @@ ConnectionListPersistence::ConnectionListPersistence(ConnectionList * list, cons
     d->ignoreChangedConnections = false;
     d->init = false;
     d->persistencePath = persistencePath;
-    // move this to a separate object
-#if 0
-    (void) new KNetworkManagerServiceAdaptor( this );
-    QDBusConnection::sessionBus().registerService( "org.kde.knetworkmanagerd" ) ;
-    QDBusConnection::sessionBus().registerObject( "/modules/knetworkmanager", this );
-#endif
+
     KNetworkManagerServicePrefs::instance(rcfile.isEmpty() ? Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE : rcfile);
     // we have to force a reparse because this library may be used in a plugin (eg a KDEDModule), and:
     // 1) plugin was loaded
@@ -85,11 +80,6 @@ ConnectionListPersistence::ConnectionListPersistence(ConnectionList * list, cons
 
 ConnectionListPersistence::~ConnectionListPersistence()
 {
-    kDebug();
-#if 0
-    QDBusConnection::sessionBus().unregisterService( "org.kde.knetworkmanagerd" ) ;
-    QDBusConnection::sessionBus().unregisterObject( "/modules/knetworkmanager" );
-#endif
 }
 
 void ConnectionListPersistence::init()

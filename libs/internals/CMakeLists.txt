@@ -62,7 +62,7 @@ set(knminternals_SRCS
    #settings/vpndbus.cpp
    settings/vpnpersistence.cpp
 
-   connectable.cpp
+   activatable.cpp
    interfaceconnection.cpp
    wirelessinterfaceconnection.cpp
    wirelessnetworkitem.cpp

@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KNM_EXTERNALS_INTERFACECONNECTION_H
 #define KNM_EXTERNALS_INTERFACECONNECTION_H
 
-#include "connectable.h"
+#include "activatable.h"
 
 #include <QtCore/QString>
 #include <QUuid>
@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Knm {
 
-class KNM_EXPORT InterfaceConnection : public Connectable
+class KNM_EXPORT InterfaceConnection : public Activatable
 {
     Q_OBJECT
 
@@ -61,7 +61,7 @@ Q_SIGNALS:
     void connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState);
 
 protected:
-    InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, ConnectableType type, const QString & deviceUni, QObject * parent);
+    InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, ActivatableType type, const QString & deviceUni, QObject * parent);
 
 private:
     Knm::Connection::Type m_type;

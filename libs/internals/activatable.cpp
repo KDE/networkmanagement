@@ -19,32 +19,32 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "connectable.h"
+#include "activatable.h"
 
 #include <QString>
 
 using namespace Knm;
 
-Connectable::Connectable(ConnectableType type, const QString & deviceUni, QObject * parent)
+Activatable::Activatable(ActivatableType type, const QString & deviceUni, QObject * parent)
 : QObject(parent), m_type(type), m_deviceUni(deviceUni)
 {
 }
 
-Connectable::~Connectable()
+Activatable::~Activatable()
 {
 }
 
-Connectable::ConnectableType Connectable::connectableType() const
+Activatable::ActivatableType Activatable::activatableType() const
 {
     return m_type;
 }
 
-void Connectable::setDeviceUni(const QString& deviceUni)
+void Activatable::setDeviceUni(const QString& deviceUni)
 {
     m_deviceUni = deviceUni;
 }
 
-QString Connectable::deviceUni() const
+QString Activatable::deviceUni() const
 {
     return m_deviceUni;
 }

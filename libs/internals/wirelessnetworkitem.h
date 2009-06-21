@@ -23,14 +23,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-#include "connectable.h"
+#include "activatable.h"
 
 #include <QtCore/QString>
 #include <QObject>
 
 namespace Knm {
 
-class KNM_EXPORT WirelessNetworkItem :public Connectable
+class KNM_EXPORT WirelessNetworkItem :public Activatable
 {
 Q_OBJECT
 public:

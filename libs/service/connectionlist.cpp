@@ -132,8 +132,7 @@ void ConnectionList::updateConnection(Knm::Connection * connection)
     Q_D(ConnectionList);
     Knm::Connection * existing = 0;
     if (connection) {
-        kDebug() << connection->uuid();
-        if (existing = findConnection(connection->uuid())) {
+        if ((existing = findConnection(connection->uuid()))) {
             delete existing;
             d->connections.insert(connection->uuid(), connection);
             foreach (ConnectionHandler * connHandler, d->connectionHandlers) {

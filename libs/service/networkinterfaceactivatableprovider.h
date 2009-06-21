@@ -18,8 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NETWORKINTERFACECONNECTABLEPROVIDER_H
-#define NETWORKINTERFACECONNECTABLEPROVIDER_H
+#ifndef NETWORKINTERFACEACTIVATABLEPROVIDER_H
+#define NETWORKINTERFACEACTIVATABLEPROVIDER_H
 
 #include <QObject>
 #include "connectionhandler.h"
@@ -38,7 +38,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Knm
 {
-    class Connectable;
+    class Activatable;
 } // namespace Knm
 
 namespace Solid
@@ -50,23 +50,23 @@ namespace Solid
 } // namespace Solid
 
 class ConnectionList;
-class ConnectableList;
+class ActivatableList;
 
-class NetworkInterfaceConnectableProviderPrivate;
+class NetworkInterfaceActivatableProviderPrivate;
 /**
  * Monitors a network interface and the connection list and provides and maintains InterfaceConnections for it to the
- * ConnectableList
+ * ActivatableList
  */
-class KNM_EXPORT NetworkInterfaceConnectableProvider : public QObject, public ConnectionHandler
+class KNM_EXPORT NetworkInterfaceActivatableProvider : public QObject, virtual public ConnectionHandler
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(NetworkInterfaceConnectableProvider)
+Q_DECLARE_PRIVATE(NetworkInterfaceActivatableProvider)
 public:
-    static bool matches(Knm::Connection::Type connType, Solid::Control::NetworkInterface::Type ifaceType);
     static bool hardwareAddressMatches(Knm::Connection * connection, Solid::Control::NetworkInterface * iface);
+    static bool matches(Knm::Connection::Type connType, Solid::Control::NetworkInterface::Type ifaceType);
 
-    NetworkInterfaceConnectableProvider(ConnectionList * connectionList, ConnectableList * connectableList, Solid::Control::NetworkInterface * interface, QObject * parent);
-    virtual ~NetworkInterfaceConnectableProvider();
+    NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent);
+    virtual ~NetworkInterfaceActivatableProvider();
     /**
      * @reimp ConnectionHandler
      */
@@ -80,7 +80,7 @@ public:
      */
     virtual void handleRemove(Knm::Connection *);
 protected:
-    NetworkInterfaceConnectableProviderPrivate * d_ptr;
+    NetworkInterfaceActivatableProviderPrivate * d_ptr;
 };
 
-#endif // NETWORKINTERFACECONNECTABLEPROVIDER_H
+#endif // NETWORKINTERFACEACTIVATABLEPROVIDER_H

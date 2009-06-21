@@ -18,51 +18,37 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "connectablelist.h"
+#include "activatabledebug.h"
 
-#include <QList>
+#include <KDebug>
 
-#include "connectable.h"
+#include "activatable.h"
 
-class ConnectableListPrivate
+ActivatableDebug::ActivatableDebug(QObject * parent)
+: QObject(parent)
 {
-public:
-    QList<Knm::Connectable*> connectables;
-};
-
-ConnectableList::ConnectableList(QObject * parent)
-    : QObject(parent), d_ptr(new ConnectableListPrivate)
-{
-
 }
 
-ConnectableList::~ConnectableList()
+ActivatableDebug::~ActivatableDebug()
 {
-    delete d_ptr;
 }
 
-QList<Knm::Connectable*> ConnectableList::connectables() const
-{
-    Q_D(const ConnectableList);
-    return d->connectables;
+void ActivatableDebug::handleAdd(Knm::Activatable * activatable) {
+    kDebug() << "Activatable" << activatable << "on" << activatable->deviceUni() << "was added.";
+    connect(activatable, SIGNAL(changed()), SLOT(handleChange()));
 }
 
-void ConnectableList::addConnectable(Knm::Connectable * connection)
+void ActivatableDebug::handleChange()
 {
-    Q_D(ConnectableList);
-    if (!d->connectables.contains(connection)) {
-        d->connectables.append(connection);
-        emit connectableAdded(connection);
+    Knm::Activatable * activatable = qobject_cast<Knm::Activatable*>(sender());
+    if (activatable) {
+        kDebug() << "Activatable" << activatable << "on" << activatable->deviceUni() << "changed.";
     }
 }
 
-void ConnectableList::removeConnectable(Knm::Connectable * connection)
+void ActivatableDebug::handleRemove(Knm::Activatable * activatable)
 {
-    Q_D(ConnectableList);
-    if (d->connectables.contains(connection)) {
-        d->connectables.removeOne(connection);
-        emit connectableRemoved(connection);
-    }
+    kDebug() << "Activatable" << activatable << "on" << activatable->deviceUni() << "was removed.";
 }
 
 // vim: sw=4 sts=4 et tw=100

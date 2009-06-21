@@ -24,13 +24,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 InterfaceConnection::InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent)
-: Connectable(Connectable::Connection, deviceUni, parent), m_uuid(connectionUuid), m_name(connectionName)
+: Activatable(Activatable::Connection, deviceUni, parent), m_uuid(connectionUuid), m_name(connectionName)
 
 {
 }
 
-InterfaceConnection::InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, ConnectableType type, const QString & deviceUni, QObject * parent)
-: Connectable(type, deviceUni, parent), m_uuid(connectionUuid), m_name(connectionName)
+InterfaceConnection::InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, ActivatableType type, const QString & deviceUni, QObject * parent)
+: Activatable(type, deviceUni, parent), m_uuid(connectionUuid), m_name(connectionName)
 {
 }
 
