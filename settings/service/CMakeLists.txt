@@ -13,8 +13,8 @@ set(kded_networkmanagement_SRCS
    busconnection.cpp
    connectionsecretsjob.cpp
    exportedconnection.cpp
-   kconfigtoservice.cpp
-   networksettings.cpp
+   #kconfigtoservice.cpp
+   #networksettings.cpp
    )
 
 kde4_add_kcfg_files(kded_networkmanagement_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals/knmserviceprefs.kcfgc)
