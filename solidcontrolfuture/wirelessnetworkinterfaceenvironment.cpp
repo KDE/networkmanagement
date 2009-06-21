@@ -130,7 +130,7 @@ void Solid::Control::WirelessNetworkInterfaceEnvironment::dump()
 void Solid::Control::WirelessNetworkInterfaceEnvironment::removeNetwork(const QString &ssid)
 {
     Q_D(WirelessNetworkInterfaceEnvironment);
-    kDebug() << ssid;
+    //kDebug() << ssid;
     QHash<QString, WirelessNetwork*>::iterator it = d->networks.find(ssid);
     if ( it == d->networks.end() )
         return;
