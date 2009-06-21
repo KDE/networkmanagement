@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QList>
 
 #include "activatable.h"
+#include "activatableobserver.h"
 
 class ActivatableListPrivate
 {
@@ -39,6 +40,18 @@ ActivatableList::ActivatableList(QObject * parent)
 ActivatableList::~ActivatableList()
 {
     delete d_ptr;
+}
+
+void ActivatableList::connectObserver(ActivatableObserver * observer)
+{
+    QObject::connect(this, SIGNAL(activatableAdded(Knm::Activatable*)), observer, SLOT(handleAdd(Knm::Activatable*)));
+    QObject::connect(this, SIGNAL(activatableChanged(Knm::Activatable*)), observer, SLOT(handleChange(Knm::Activatable*)));
+    QObject::connect(this, SIGNAL(activatableRemoved(Knm::Activatable*)), observer, SLOT(handleRemove(Knm::Activatable*)));
+}
+
+void ActivatableList::disconnectObserver(ActivatableObserver * observer)
+{
+    disconnect(observer);
 }
 
 QList<Knm::Activatable*> ActivatableList::activatables() const

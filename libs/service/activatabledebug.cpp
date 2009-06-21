@@ -23,9 +23,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 
 #include "activatable.h"
+#include "interfaceconnection.h"
+#include "wirelessinterfaceconnection.h"
+#include "wirelessnetworkitem.h"
 
 ActivatableDebug::ActivatableDebug(QObject * parent)
-: QObject(parent)
+: ActivatableObserver(parent)
 {
 }
 
@@ -34,16 +37,29 @@ ActivatableDebug::~ActivatableDebug()
 }
 
 void ActivatableDebug::handleAdd(Knm::Activatable * activatable) {
-    kDebug() << "Activatable" << activatable << "on" << activatable->deviceUni() << "was added.";
-    connect(activatable, SIGNAL(changed()), SLOT(handleChange()));
+    Knm::InterfaceConnection * ic;
+    Knm::WirelessInterfaceConnection * wic;
+    Knm::WirelessNetworkItem * wni;
+
+    switch (activatable->activatableType()) {
+        case Knm::Activatable::Connection:
+            ic = qobject_cast<Knm::InterfaceConnection*>(activatable);
+            kDebug() << "InterfaceConnection" << ic->connectionUuid() << "on" << activatable->deviceUni() << "was added.";
+            break;
+        case Knm::Activatable::WirelessConnection:
+            wic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
+            kDebug() << "WirelessConnection" << wic->connectionUuid() << "for network" << wic->ssid() << "on" << activatable->deviceUni() << "was added.";
+            break;
+        case Knm::Activatable::WirelessNetworkItem:
+            wni = qobject_cast<Knm::WirelessNetworkItem*>(activatable);
+            kDebug() << "WirelessNetworkItem" << "for network" << wni->ssid() << "on" << activatable->deviceUni() << "was added.";
+            break;
+    }
 }
 
-void ActivatableDebug::handleChange()
+void ActivatableDebug::handleChange(Knm::Activatable * activatable)
 {
-    Knm::Activatable * activatable = qobject_cast<Knm::Activatable*>(sender());
-    if (activatable) {
-        kDebug() << "Activatable" << activatable << "on" << activatable->deviceUni() << "changed.";
-    }
+    kDebug() << "Activatable" << activatable << "on" << activatable->deviceUni() << "changed.";
 }
 
 void ActivatableDebug::handleRemove(Knm::Activatable * activatable)

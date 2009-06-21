@@ -30,6 +30,7 @@ namespace Knm
 } // namespace Knm
 
 class ActivatableListPrivate;
+class ActivatableObserver;
 
 class KNM_EXPORT ActivatableList : public QObject
 {
@@ -42,7 +43,11 @@ public:
     QList<Knm::Activatable *> activatables() const;
     void addActivatable(Knm::Activatable *);
     void removeActivatable(Knm::Activatable *);
-
+    /**
+     * Syntactic sugar to connect activatable*() signals to standard slots
+     */
+    void connectObserver(ActivatableObserver *);
+    void disconnectObserver(ActivatableObserver *);
 signals:
     void activatableAdded(Knm::Activatable *);
     void activatableChanged(Knm::Activatable *);

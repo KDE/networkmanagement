@@ -1,5 +1,11 @@
 #include "activatableobserver.h"
 
+ActivatableObserver::ActivatableObserver(QObject * parent)
+: QObject(parent)
+{
+
+}
+
 ActivatableObserver::~ActivatableObserver()
 {
 

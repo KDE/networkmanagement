@@ -32,15 +32,17 @@ namespace Knm
     class Activatable;
 } // namespace Knm
 
-class ActivatableObserver
+class ActivatableObserver : public QObject
 {
+Q_OBJECT
 public:
+    ActivatableObserver(QObject * parent = 0);
     virtual ~ActivatableObserver();
     /**
      * implement as slots
      */
     virtual void handleAdd(Knm::Activatable *) = 0;
-    virtual void handleChange() = 0;
+    virtual void handleChange(Knm::Activatable *) = 0;
     virtual void handleRemove(Knm::Activatable *) = 0;
 };
 
