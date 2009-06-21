@@ -32,6 +32,7 @@ Q_OBJECT
 public:
     ActivatableDebug(QObject * parent);
     virtual ~ActivatableDebug();
+    static QString activatableToString(Knm::Activatable*);
 public slots:
     void handleAdd(Knm::Activatable *);
     void handleChange(Knm::Activatable *);

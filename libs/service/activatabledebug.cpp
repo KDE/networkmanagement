@@ -36,35 +36,50 @@ ActivatableDebug::~ActivatableDebug()
 {
 }
 
-void ActivatableDebug::handleAdd(Knm::Activatable * activatable) {
+QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
+{
     Knm::InterfaceConnection * ic;
     Knm::WirelessInterfaceConnection * wic;
     Knm::WirelessNetworkItem * wni;
 
+    QString string;
     switch (activatable->activatableType()) {
         case Knm::Activatable::Connection:
             ic = qobject_cast<Knm::InterfaceConnection*>(activatable);
-            kDebug() << "InterfaceConnection" << ic->connectionUuid() << "on" << activatable->deviceUni() << "was added.";
+            string = QString::fromLatin1("InterfaceConnection %1 (%2) on %3 ").arg(ic->connectionName(), ic->connectionUuid(),  activatable->deviceUni());
             break;
         case Knm::Activatable::WirelessConnection:
             wic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
-            kDebug() << "WirelessConnection" << wic->connectionUuid() << "for network" << wic->ssid() << "on" << activatable->deviceUni() << "was added.";
+            string = QString::fromLatin1("WirelessConnection %1 (%2) for network %3 on %4").arg(wic->connectionName(), wic->connectionUuid(), wic->ssid(), activatable->deviceUni());
             break;
         case Knm::Activatable::WirelessNetworkItem:
             wni = qobject_cast<Knm::WirelessNetworkItem*>(activatable);
-            kDebug() << "WirelessNetworkItem" << "for network" << wni->ssid() << "on" << activatable->deviceUni() << "was added.";
+            string = QString::fromLatin1("WirelessNetworkItem for network %1 on %2").arg(wni->ssid(), activatable->deviceUni());
             break;
     }
+    return string;
+}
+
+void ActivatableDebug::handleAdd(Knm::Activatable * activatable) {
+    QString debugString = activatableToString(activatable);
+    debugString += " was added";
+    kDebug() << debugString;
 }
 
 void ActivatableDebug::handleChange(Knm::Activatable * activatable)
 {
-    kDebug() << "Activatable" << activatable << "on" << activatable->deviceUni() << "changed.";
+//    kDebug() << "Activatable" << activatable << "on" << activatable->deviceUni() << "changed.";
+    QString debugString = activatableToString(activatable);
+    debugString += " changed";
+    kDebug() << debugString;
 }
 
 void ActivatableDebug::handleRemove(Knm::Activatable * activatable)
 {
-    kDebug() << "Activatable" << activatable << "on" << activatable->deviceUni() << "was removed.";
+//    kDebug() << "Activatable" << activatable << "on" << activatable->deviceUni() << "was removed.";
+    QString debugString = activatableToString(activatable);
+    debugString += " was removed";
+    kDebug() << debugString;
 }
 
 // vim: sw=4 sts=4 et tw=100
