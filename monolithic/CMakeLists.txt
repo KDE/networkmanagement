@@ -6,6 +6,7 @@ include_directories(
 
 set(monolithic_SRCS
    monolithic.cpp
+   simpleui.cpp
    )
 
 kde4_add_executable(knetworkmanager ${monolithic_SRCS})
@@ -15,5 +16,6 @@ target_link_libraries(knetworkmanager
    ${KDE4_KDEUI_LIBS}
    knminternals
    knmservice
+   knotificationitem-1
    )
 

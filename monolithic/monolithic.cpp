@@ -35,6 +35,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelist.h"
 #include "networkinterfacemonitor.h"
 
+#include "simpleui.h"
+
 static const char description[] =
     I18N_NOOP("KNetworkManager, the KDE 4 NetworkManager client");
 
@@ -61,6 +63,9 @@ int main( int argc, char** argv )
 
     ActivatableDebug * debug = new ActivatableDebug(&app);
     ableList->connectObserver(debug);
+
+    SimpleUi * simpleUi = new SimpleUi(ableList, &app);
+    ableList->connectObserver(simpleUi);
 
     listPersistence->init();
     new NetworkInterfaceMonitor(ionList, ableList, ionList);
