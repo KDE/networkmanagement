@@ -38,6 +38,9 @@ set(knmservice_SRCS
 
    # simple debug output observer
    activatabledebug.cpp
+
+   # configures new wireless networks on demand and connects them 
+   wirelessnetworkconfigurer.cpp
    )
 
 kde4_add_library(knmservice SHARED ${knmservice_SRCS})

@@ -31,6 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionlistpersistence.h"
 #include "connectionlistpersistencedbus.h"
 #include "activatabledebug.h"
+#include "wirelessnetworkconfigurer.h"
 
 #include "activatablelist.h"
 #include "networkinterfacemonitor.h"
@@ -66,6 +67,9 @@ int main( int argc, char** argv )
 
     SimpleUi * simpleUi = new SimpleUi(ableList, &app);
     ableList->connectObserver(simpleUi);
+
+    WirelessNetworkConfigurer * wirelessConfigurer = new WirelessNetworkConfigurer(&app);
+    ableList->connectObserver(wirelessConfigurer);
 
     listPersistence->init();
     new NetworkInterfaceMonitor(ionList, ableList, ionList);
