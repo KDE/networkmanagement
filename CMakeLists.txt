@@ -38,8 +38,7 @@ add_subdirectory(settings)
 #disabled pending porting
 add_subdirectory(vpnplugins)
 add_subdirectory(solidcontrolfuture)
-add_subdirectory(kded)
-add_subdirectory(backends)
+add_subdirectory(monolithic)
 
 install( FILES networkmanagement.notifyrc DESTINATION ${DATA_INSTALL_DIR}/networkmanagement )
 
