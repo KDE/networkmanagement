@@ -19,8 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM_EXTERNALS_CONNECTABLE_H
-#define KNM_EXTERNALS_CONNECTABLE_H
+#ifndef KNM_INTERNALS_ACTIVATABLE_H
+#define KNM_INTERNALS_ACTIVATABLE_H
 
 #include "knm_export.h"
 
