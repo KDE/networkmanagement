@@ -23,8 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Knm;
 
-WirelessInterfaceConnection::WirelessInterfaceConnection(const QString & network, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent)
-: InterfaceConnection(connectionUuid, connectionName, Activatable::WirelessConnection, deviceUni, parent), m_network(network)
+WirelessInterfaceConnection::WirelessInterfaceConnection(const QString & ssid, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent)
+: InterfaceConnection(connectionUuid, connectionName, Activatable::WirelessConnection, deviceUni, parent), m_ssid(ssid)
 {
 }
 
@@ -32,13 +32,8 @@ WirelessInterfaceConnection::~WirelessInterfaceConnection()
 {
 }
 
-void WirelessInterfaceConnection::setNetwork(const QString& network)
+QString WirelessInterfaceConnection::ssid() const
 {
-    m_network = network;
-}
-
-QString WirelessInterfaceConnection::network() const
-{
-    return m_network;
+    return m_ssid;
 }
 

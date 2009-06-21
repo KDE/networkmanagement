@@ -21,12 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KNM_EXTERNALS_NETWORKITEM_H
 #define KNM_EXTERNALS_NETWORKITEM_H
 
-#include "knm_export.h"
-
 #include "activatable.h"
+
 
 #include <QtCore/QString>
 #include <QObject>
+
+#include "knm_export.h"
 
 namespace Knm {
 
@@ -34,16 +35,15 @@ class KNM_EXPORT WirelessNetworkItem :public Activatable
 {
 Q_OBJECT
 public:
-    WirelessNetworkItem(const QString & deviceUni, QObject * parent);
+    WirelessNetworkItem(const QString & ssid, const QString & deviceUni, QObject * parent);
     virtual ~WirelessNetworkItem();
 
-    void setEssid(const QString& path);
-    QString essid() const;
+    QString ssid() const;
 
 public Q_SLOTS:
     void activate();
 private:
-    QString m_essid;
+    QString m_ssid;
 
 };
 } // namespace

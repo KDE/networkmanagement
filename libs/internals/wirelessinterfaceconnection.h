@@ -36,14 +36,13 @@ class KNM_EXPORT WirelessInterfaceConnection : public InterfaceConnection
     Q_OBJECT
 
 public:
-    WirelessInterfaceConnection(const QString & network, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent);
+    WirelessInterfaceConnection(const QString & ssid, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent);
     virtual ~WirelessInterfaceConnection();
 
-    void setNetwork(const QString& network);
-    QString network() const;
+    QString ssid() const;
 
 private:
-    QString m_network;
+    QString m_ssid;
 };
 } // namespace
 

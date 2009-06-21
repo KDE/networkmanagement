@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Knm;
 
-WirelessNetworkItem::WirelessNetworkItem(const QString & deviceUni, QObject * parent)
-: Activatable(Activatable::WirelessNetworkItem, deviceUni, parent)
+WirelessNetworkItem::WirelessNetworkItem(const QString & ssid, const QString & deviceUni, QObject * parent)
+: Activatable(Activatable::WirelessNetworkItem, deviceUni, parent), m_ssid(ssid)
 {
 }
 
@@ -37,12 +37,7 @@ void WirelessNetworkItem::activate()
     emit activated();
 }
 
-void WirelessNetworkItem::setEssid(const QString& essid)
+QString WirelessNetworkItem::ssid() const
 {
-    m_essid = essid;
-}
-
-QString WirelessNetworkItem::essid() const
-{
-    return m_essid;
+    return m_ssid;
 }
