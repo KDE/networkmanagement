@@ -51,7 +51,6 @@ WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatable
     // networkAppeared prevents duplicate WirelessInterfaceConnections, so this
     // iteration creates any WirelessNetworkItems needed for unconfigured networks.
     foreach (QString network, d->environment->networks()) {
-        kDebug() << network;
         networkAppeared(network);
     }
 }
@@ -123,7 +122,6 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
             Knm::WirelessInterfaceConnection * wirelessInterfaceConnection
                 = qobject_cast<Knm::WirelessInterfaceConnection*>(d->wirelessActivatables[ssid]);
             if (wirelessInterfaceConnection) {
-                kDebug() << "found existing connection for" << ssid;
                 hasConnection = true;
             }
         }
@@ -133,8 +131,6 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
             d->wirelessActivatables.insert(ssid, wirelessNetworkItem);
             d->activatableList->addActivatable(wirelessNetworkItem);
         }
-    } else {
-        kDebug() << "we already have an activatable for" << ssid;
     }
 }
 
