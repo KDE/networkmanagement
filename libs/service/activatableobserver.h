@@ -23,16 +23,18 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 
-/**
- * Interface for classes which handle Activatables.  Implement as a QObject and connect to
- * ActivatableList's signals
- */
+#include "knm_export.h"
+
 namespace Knm
 {
     class Activatable;
 } // namespace Knm
 
-class ActivatableObserver : public QObject
+/**
+ * Interface for classes which handle Activatables.  Implement as a QObject and connect to
+ * ActivatableList's signals
+ */
+class KNM_EXPORT ActivatableObserver : public QObject
 {
 Q_OBJECT
 public:
