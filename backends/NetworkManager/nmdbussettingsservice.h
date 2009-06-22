@@ -25,10 +25,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionhandler.h"
 
 #include <QList>
+#include <QUuid>
+
 #include <QDBusObjectPath>
 
 #include "knm_export.h"
 
+class ConnectionList;
 class NMDBusSettingsServicePrivate;
 
 /**
@@ -49,6 +52,11 @@ public:
     void handleAdd(Knm::Connection *);
     void handleUpdate(Knm::Connection *);
     void handleRemove(Knm::Connection *);
+
+    // experimental
+    //QDBusObjectPath pathForConnection(const QUuid &uuid);
+    QUuid uuidForPath(const QDBusObjectPath&) const;
+
 public Q_SLOTS:
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);
@@ -58,7 +66,7 @@ Q_SIGNALS:
     Q_SCRIPTABLE void NewConnection(const QDBusObjectPath&);
 private Q_SLOTS:
     // DBus service management
-    void serviceOwnerChanged(const QString& service,const QString& oldOwner, const QString& newOwner);
+    void serviceOwnerChanged(const QString& service, const QString& oldOwner, const QString& newOwner);
     void serviceRegistered(const QString&);
     void serviceUnregistered(const QString&);
     // activate connections

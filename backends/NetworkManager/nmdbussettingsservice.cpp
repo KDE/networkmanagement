@@ -47,6 +47,7 @@ public:
     uint nextConnectionId;
     QHash<QDBusObjectPath, BusConnection *> pathToConnections;
     QHash<QUuid, BusConnection *> uuidToConnections;
+    QHash<QUuid, QDBusObjectPath> uuidToPath;
 };
 
 const QString NMDBusSettingsService::SERVICE_USER_SETTINGS = QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS);
@@ -92,6 +93,17 @@ NMDBusSettingsService::~NMDBusSettingsService()
     }
 }
 
+QUuid NMDBusSettingsService::uuidForPath(const QDBusObjectPath& path) const
+{
+    Q_D(const NMDBusSettingsService);
+    BusConnection * busConn = 0;
+    if (d->pathToConnections.contains(path)) {
+        busConn = d->pathToConnections[path];
+        return busConn->connection()->uuid();
+    }
+    return QUuid();
+}
+
 void NMDBusSettingsService::serviceOwnerChanged( const QString& service,const QString& oldOwner, const QString& newOwner )
 {
     Q_D(NMDBusSettingsService);
@@ -131,16 +143,22 @@ void NMDBusSettingsService::serviceUnregistered(const QString & name)
 void NMDBusSettingsService::handleAdd(Knm::Connection * added)
 {
     Q_D(NMDBusSettingsService);
-    QString objectPath;
+    // if it does not come from the NM system setting monitor, it must be local
+    // put it on our bus 
+    QDBusObjectPath objectPath;
     BusConnection * busConn = new BusConnection(added, this);
     new ConnectionAdaptor(busConn);
     new SecretsAdaptor(busConn);
-    objectPath = nextObjectPath();
-    d->pathToConnections.insert(QDBusObjectPath(objectPath), busConn);
+
+    objectPath = QDBusObjectPath(nextObjectPath());
+    // important - make sure all 3 hashes are up to date!
+    d->pathToConnections.insert(objectPath, busConn);
     d->uuidToConnections.insert(added->uuid(), busConn);
-    QDBusConnection::systemBus().registerObject(objectPath, busConn, QDBusConnection::ExportAdaptors);
-    emit NewConnection(QDBusObjectPath(objectPath));
-    kDebug() << "NewConnection" << objectPath;
+    d->uuidToPath.insert(added->uuid(), objectPath);
+
+    QDBusConnection::systemBus().registerObject(objectPath.path(), busConn, QDBusConnection::ExportAdaptors);
+    emit NewConnection(objectPath);
+    kDebug() << "NewConnection" << objectPath.path();
 }
 
 void NMDBusSettingsService::handleUpdate(Knm::Connection * updated)
@@ -161,6 +179,7 @@ void NMDBusSettingsService::handleRemove(Knm::Connection * removed)
     BusConnection * busConn = d->uuidToConnections.take(removed->uuid());
     if (busConn) {
         QDBusObjectPath key = d->pathToConnections.key(busConn);
+        d->uuidToPath.remove(removed->uuid());
         d->pathToConnections.remove(key);
     }
     busConn->Delete();

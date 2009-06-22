@@ -44,6 +44,10 @@ set(knm_nm_LIB_SRCS
    busconnection.cpp
 
    exportedconnection.cpp
+
+   nmdbusactiveconnectionmonitor.cpp
+
+   nm-active-connectioninterface.cpp
 )
 
 kde4_add_library(knm_nm SHARED ${knm_nm_LIB_SRCS})
