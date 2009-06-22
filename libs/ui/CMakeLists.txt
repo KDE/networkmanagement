@@ -41,6 +41,7 @@ set(knmui_SRCS
    wiredpreferences.cpp
    wirelesspreferences.cpp
    connectioneditor.cpp
+   connectionsecretsjob.cpp
    )
 
 kde4_add_ui_files(knmui_SRCS cdma.ui gsm.ui ppp.ui pppoe.ui 

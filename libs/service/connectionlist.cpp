@@ -40,21 +40,8 @@ class ConnectionListPrivate
 ConnectionList::ConnectionList(QObject * parent)
 : QObject(parent), d_ptr(new ConnectionListPrivate)
 {
+    // updates SeenBssids
 #if 0
-    //declare types
-    qDBusRegisterMetaType<QList<QDBusObjectPath> >();
-
-k
-    QDBusConnection dbus = QDBusConnection::systemBus();
-    if (!dbus.registerObject(QLatin1String(NM_DBUS_PATH_SETTINGS), this, QDBusConnection::ExportScriptableContents)) {
-        kDebug() << "Unable to register settings object " << NM_DBUS_PATH_SETTINGS;
-    } else {
-        kDebug() << "Registered settings object " << NM_DBUS_PATH_SETTINGS;
-    }
-    // watch status on all devices
-    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
-
     Solid::Control::NetworkInterfaceList allInterfaces = Solid::Control::NetworkManager::networkInterfaces();
     foreach (Solid::Control::NetworkInterface * interface, allInterfaces) {
         connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(networkInterfaceConnectionStateChanged(int)));
@@ -111,20 +98,6 @@ void ConnectionList::addConnection(Knm::Connection * connection)
             connHandler->handleAdd(connection);
         }
     }
-        // move to NMDBusConnectionHandler
-#if 0
-    QString objectPath;
-        BusConnection * busConn = new BusConnection(connection, this);
-        new ConnectionAdaptor(busConn);
-        new SecretsAdaptor(busConn);
-        objectPath = nextObjectPath();
-        m_connectionMap.insert(objectPath, busConn);
-        QDBusConnection::systemBus().registerObject(objectPath, busConn, QDBusConnection::ExportAdaptors);
-        emit NewConnection(QDBusObjectPath(objectPath));
-        kDebug() << "NewConnection" << objectPath;
-    }
-    return objectPath;
-#endif
 }
 
 void ConnectionList::updateConnection(Knm::Connection * connection)
@@ -140,15 +113,6 @@ void ConnectionList::updateConnection(Knm::Connection * connection)
             }
         }
     }
-    // move to NMDBusConnectionHandler
-#if 0
-    if (.contains(objectPath)) {
-        BusConnection * busConn = m_connectionMap[objectPath];
-        if (busConn) {
-            busConn->updateInternal(connection);
-        }
-    }
-#endif
 }
 
 void ConnectionList::removeConnection(const QString & uuid)
@@ -172,13 +136,6 @@ void ConnectionList::removeConnection(Knm::Connection * connection)
         }
     }
     delete connection;
-    // move to NMDBusConnectionHandler
-#if 0
-
-    kDebug() << objectPath;
-    BusConnection * conn = m_connectionMap.take(objectPath);
-    conn->Delete();
-#endif
 }
 
 Knm::Connection * ConnectionList::findConnection(const QString & uuid) const
@@ -191,40 +148,14 @@ Knm::Connection * ConnectionList::findConnection(const QString & uuid) const
     }
 }
 
-    // move to NMDBusConnectionHandler
-#if 0
-QList<QDBusObjectPath> ConnectionList::ListConnections() const
-{
-    QList<QDBusObjectPath> pathList;
-    kDebug() << "There are " << m_connectionMap.keys().count() << " known connections";
-    foreach(const QString &connPath, m_connectionMap.keys()) {
-        pathList << QDBusObjectPath(connPath);
-    }
-    return pathList;
-}
-
-QString ConnectionList::nextObjectPath()
-{
-    return QString::fromLatin1("%1/%2").arg(QLatin1String(NM_DBUS_PATH_SETTINGS)).arg(mNextConnectionId++);
-}
-
 // not sure whether we need this - for shutdown?
+#if 0
 void ConnectionList::clearConnections()
 {
     foreach (const QString &conn, m_connectionMap.keys()) {
         m_connectionMap[conn]->Delete();
     }
 }
-
-#if QT_VERSION < 0x040500
-inline bool operator==(const QDBusObjectPath &lhs, const QDBusObjectPath &rhs)
-{ return lhs.path() == rhs.path(); }
-
-inline bool operator!=(const QDBusObjectPath &lhs, const QDBusObjectPath &rhs)
-{ return lhs.path() != rhs.path(); }
-
-inline bool operator<(const QDBusObjectPath &lhs, const QDBusObjectPath &rhs)
-{ return lhs.path() < rhs.path(); }
 
 QList<BusConnection*> ConnectionList::busConnectionForInterface(Solid::Control::NetworkInterface* interface) {
     QList<BusConnection*> bcs;
@@ -248,7 +179,7 @@ QList<BusConnection*> ConnectionList::busConnectionForInterface(Solid::Control::
 #endif
 
 
-// move to ConnectableList
+// also SeenBssids related
 #if 0
 void ConnectionList::networkInterfaceAdded(const QString& uni)
 {
@@ -264,7 +195,6 @@ void ConnectionList::networkInterfaceAdded(const QString& uni)
                     this, SLOT(networkInterfaceAccessPointChanged(const QString &)));
     }
 }
-#endif
 
 void ConnectionList::networkInterfaceConnectionStateChanged(int state)
 {

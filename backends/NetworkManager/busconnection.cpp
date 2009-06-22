@@ -65,7 +65,6 @@ void BusConnection::updateInternal(Knm::Connection * connection)
     if (m_job) {
         m_job->kill(KJob::Quietly);
     }
-    delete m_connection;
     m_connection = connection;
     ConnectionDbus cd(m_connection);
     QVariantMapMap map = cd.toDbusMap();

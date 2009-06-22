@@ -2,6 +2,8 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals/settings
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/service
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/ui
    ${CMAKE_CURRENT_BINARY_DIR}
    )
 
@@ -36,11 +38,17 @@ set(knm_nm_LIB_SRCS
    serialdbus.cpp
 
    vpndbus.cpp
+
+   nmdbussettingsservice.cpp
+
+   busconnection.cpp
+
+   exportedconnection.cpp
 )
 
 kde4_add_library(knm_nm SHARED ${knm_nm_LIB_SRCS})
 
-target_link_libraries(knm_nm ${KDE4_KDEUI_LIBS} solidcontrol knminternals ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(knm_nm ${KDE4_KDEUI_LIBS} solidcontrol knminternals knmservice knmui ${QT_QTNETWORK_LIBRARY})
 
 
 #set_target_properties(nmbackend PROPERTIES

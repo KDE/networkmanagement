@@ -117,7 +117,6 @@ class KNM_EXPORT ConnectionList : public QObject
          * @return 0 if not found
          */
         Knm::Connection * findConnection(const QString & uuid) const;
-    Q_SIGNALS:
     private:
         ConnectionListPrivate * d_ptr;
 };

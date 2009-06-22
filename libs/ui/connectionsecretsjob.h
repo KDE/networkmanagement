@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionpersistence.h"
 
+#include "knm_export.h"
+
 class KDialog;
 class SettingWidget;
 
@@ -36,7 +38,7 @@ class SettingWidget;
  * if not found or if requestNew is set, set the new secrets back on the Connection object, and 
  * write the connection to disk
  */
-class ConnectionSecretsJob : public KJob
+class KNM_EXPORT ConnectionSecretsJob : public KJob
 {
 Q_OBJECT
 public:
