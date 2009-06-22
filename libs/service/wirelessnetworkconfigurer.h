@@ -48,7 +48,7 @@ public Q_SLOTS:
      * noop impl
      * @reimp ActivatableObserver
      */
-    void handleChange(Knm::Activatable *);
+    void handleUpdate(Knm::Activatable *);
     /**
      * noop impl
      * @reimp ActivatableObserver

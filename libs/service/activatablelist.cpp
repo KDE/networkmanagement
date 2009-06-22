@@ -45,7 +45,7 @@ ActivatableList::~ActivatableList()
 void ActivatableList::connectObserver(ActivatableObserver * observer)
 {
     QObject::connect(this, SIGNAL(activatableAdded(Knm::Activatable*)), observer, SLOT(handleAdd(Knm::Activatable*)));
-    QObject::connect(this, SIGNAL(activatableChanged(Knm::Activatable*)), observer, SLOT(handleChange(Knm::Activatable*)));
+    QObject::connect(this, SIGNAL(activatableUpdated(Knm::Activatable*)), observer, SLOT(handleUpdate(Knm::Activatable*)));
     QObject::connect(this, SIGNAL(activatableRemoved(Knm::Activatable*)), observer, SLOT(handleRemove(Knm::Activatable*)));
 }
 

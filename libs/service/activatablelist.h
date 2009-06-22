@@ -50,7 +50,7 @@ public:
     void disconnectObserver(ActivatableObserver *);
 signals:
     void activatableAdded(Knm::Activatable *);
-    void activatableChanged(Knm::Activatable *);
+    void activatableUpdated(Knm::Activatable *);
     void activatableRemoved(Knm::Activatable *);
 
 private:

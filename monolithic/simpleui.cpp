@@ -84,8 +84,9 @@ void SimpleUi::handleAdd(Knm::Activatable * activatable)
     connect(newAct, SIGNAL(triggered(bool)), this, SLOT(activatableActionTriggered()));
 }
 
-void SimpleUi::handleChange(Knm::Activatable * changed)
+void SimpleUi::handleUpdate(Knm::Activatable * changed)
 {
+    // TODO implement
 }
 
 void SimpleUi::handleRemove(Knm::Activatable * removed)

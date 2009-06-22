@@ -77,7 +77,7 @@ void WirelessNetworkConfigurer::wirelessNetworkItemActivated()
     }
 }
 
-void WirelessNetworkConfigurer::handleChange(Knm::Activatable *)
+void WirelessNetworkConfigurer::handleUpdate(Knm::Activatable *)
 {
     // dummy impl
 }

@@ -197,7 +197,7 @@ void NMDBusSettingsService::interfaceConnectionActivated()
     }
 }
 
-void NMDBusSettingsService::handleChange(Knm::Activatable *)
+void NMDBusSettingsService::handleUpdate(Knm::Activatable *)
 {
 
 }

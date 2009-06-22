@@ -51,7 +51,7 @@ public:
     void handleRemove(Knm::Connection *);
 public Q_SLOTS:
     void handleAdd(Knm::Activatable *);
-    void handleChange(Knm::Activatable *);
+    void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
     Q_SCRIPTABLE QList<QDBusObjectPath> ListConnections() const;
 Q_SIGNALS:

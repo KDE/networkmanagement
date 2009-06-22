@@ -43,7 +43,7 @@ public:
 protected slots:
     // respond to activatable changes
     void handleAdd(Knm::Activatable *);
-    void handleChange(Knm::Activatable *);
+    void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
     void activatableActionTriggered();
 private:

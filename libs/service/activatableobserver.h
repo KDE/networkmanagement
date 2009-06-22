@@ -44,7 +44,7 @@ public:
      * implement as slots
      */
     virtual void handleAdd(Knm::Activatable *) = 0;
-    virtual void handleChange(Knm::Activatable *) = 0;
+    virtual void handleUpdate(Knm::Activatable *) = 0;
     virtual void handleRemove(Knm::Activatable *) = 0;
 };
 

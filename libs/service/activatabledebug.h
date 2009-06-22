@@ -35,7 +35,7 @@ public:
     static QString activatableToString(Knm::Activatable*);
 public slots:
     void handleAdd(Knm::Activatable *);
-    void handleChange(Knm::Activatable *);
+    void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
 };
 
