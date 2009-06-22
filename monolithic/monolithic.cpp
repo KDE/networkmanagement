@@ -36,6 +36,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelist.h"
 #include "networkinterfacemonitor.h"
 
+#include "nmdbussettingsservice.h"
+
 #include "simpleui.h"
 
 static const char description[] =
@@ -53,26 +55,42 @@ int main( int argc, char** argv )
     KCmdLineArgs::addCmdLineOptions(options);
     KApplication app;
 
-    ConnectionList * ionList;
+    // the most basic object
+    ConnectionList * connectionList;
+    // its loader/saver
     ConnectionListPersistence * listPersistence;
+    // its dbus presence
     ConnectionListPersistenceDBus * dbus;
-    ActivatableList * ableList;
-    ionList = new ConnectionList(&app);
-    listPersistence = new ConnectionListPersistence(ionList);
-    dbus = new ConnectionListPersistenceDBus( listPersistence, listPersistence);
-    ableList = new ActivatableList(ionList);
+    // list of things to show in the UI
+    ActivatableList * activatableList;
+    // NetworkManager settings service
+    NMDBusSettingsService * settingsService;
 
+    connectionList = new ConnectionList(&app);
+    listPersistence = new ConnectionListPersistence(connectionList);
+    settingsService = new NMDBusSettingsService(connectionList);
+
+    connectionList->registerConnectionHandler(listPersistence);
+    connectionList->registerConnectionHandler(settingsService);
+
+    dbus = new ConnectionListPersistenceDBus(listPersistence, listPersistence);
+
+    activatableList = new ActivatableList(connectionList);
+
+    // debug activatable changes
     ActivatableDebug * debug = new ActivatableDebug(&app);
-    ableList->connectObserver(debug);
+    activatableList->connectObserver(debug);
 
-    SimpleUi * simpleUi = new SimpleUi(ableList, &app);
-    ableList->connectObserver(simpleUi);
+    // really simple UI
+    SimpleUi * simpleUi = new SimpleUi(activatableList, &app);
+    activatableList->connectObserver(simpleUi);
 
+    // sets up wireless networks on click
     WirelessNetworkConfigurer * wirelessConfigurer = new WirelessNetworkConfigurer(&app);
-    ableList->connectObserver(wirelessConfigurer);
+    activatableList->connectObserver(wirelessConfigurer);
 
     listPersistence->init();
-    new NetworkInterfaceMonitor(ionList, ableList, ionList);
+    new NetworkInterfaceMonitor(connectionList, activatableList, connectionList);
     return app.exec();
 }
 
