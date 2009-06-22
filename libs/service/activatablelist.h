@@ -27,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 namespace Knm
 {
     class Activatable;
+    class InterfaceConnection;
 } // namespace Knm
 
 class ActivatableListPrivate;
@@ -40,6 +41,9 @@ Q_DECLARE_PRIVATE(ActivatableList);
 public:
     ActivatableList(QObject * parent);
     ~ActivatableList();
+
+    QList<Knm::InterfaceConnection *> interfaceConnectionsForUuid(const QString & uuid) const;
+
     QList<Knm::Activatable *> activatables() const;
     void addActivatable(Knm::Activatable *);
     void removeActivatable(Knm::Activatable *);
