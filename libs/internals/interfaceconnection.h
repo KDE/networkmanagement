@@ -27,8 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QString>
 #include <QUuid>
 
-#include <solid/control/networkinterface.h>
-
 #include "knm_export.h"
 
 #include "connection.h"
@@ -40,6 +38,7 @@ class KNM_EXPORT InterfaceConnection : public Activatable
     Q_OBJECT
 
 public:
+    enum ActivationState { Unknown, Activating, Activated };
     InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent);
     virtual ~InterfaceConnection();
 
@@ -51,14 +50,14 @@ public:
     void setConnectionName(const QString& name);
     QString connectionName() const;
 
-    void setConnectionState(Solid::Control::NetworkInterface::ConnectionState state);
-    Solid::Control::NetworkInterface::ConnectionState connectionState() const;
+    void setActivationState(ActivationState state);
+    ActivationState activationState() const;
 
 public Q_SLOTS:
     void activate();
 
 Q_SIGNALS:
-    void connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState);
+    void activationStateChanged(ActivationState);
 
 protected:
     InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, ActivatableType type, const QString & deviceUni, QObject * parent);
@@ -67,7 +66,7 @@ private:
     Knm::Connection::Type m_type;
     QUuid m_uuid;
     QString m_name;
-    Solid::Control::NetworkInterface::ConnectionState m_state;
+    ActivationState m_state;
 };
 } // namespace
 

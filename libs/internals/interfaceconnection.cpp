@@ -30,7 +30,7 @@ InterfaceConnection::InterfaceConnection(const QUuid & connectionUuid, const QSt
 }
 
 InterfaceConnection::InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, ActivatableType type, const QString & deviceUni, QObject * parent)
-: Activatable(type, deviceUni, parent), m_uuid(connectionUuid), m_name(connectionName)
+: Activatable(type, deviceUni, parent), m_uuid(connectionUuid), m_name(connectionName), m_state(InterfaceConnection::Unknown)
 {
 }
 
@@ -70,14 +70,14 @@ QString InterfaceConnection::connectionName() const
     return m_name;
 }
 
-void InterfaceConnection::setConnectionState(Solid::Control::NetworkInterface::ConnectionState state)
+void InterfaceConnection::setActivationState(InterfaceConnection::ActivationState state)
 {
     m_state = state;
     emit changed();
-    emit connectionStateChanged(m_state);
+    emit activationStateChanged(m_state);
 }
 
-Solid::Control::NetworkInterface::ConnectionState InterfaceConnection::connectionState() const
+InterfaceConnection::ActivationState InterfaceConnection::activationState() const
 {
     return m_state;
 }
