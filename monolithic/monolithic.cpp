@@ -37,6 +37,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkinterfacemonitor.h"
 
 #include "nmdbussettingsservice.h"
+#include "nmdbusactiveconnectionmonitor.h"
 
 #include "simpleui.h"
 
@@ -65,6 +66,7 @@ int main( int argc, char** argv )
     ActivatableList * activatableList;
     // NetworkManager settings service
     NMDBusSettingsService * settingsService;
+    NMDBusActiveConnectionMonitor * connectionMonitor;
 
     connectionList = new ConnectionList(&app);
     listPersistence = new ConnectionListPersistence(connectionList);
@@ -76,6 +78,8 @@ int main( int argc, char** argv )
     dbus = new ConnectionListPersistenceDBus(listPersistence, listPersistence);
 
     activatableList = new ActivatableList(connectionList);
+
+    connectionMonitor = new NMDBusActiveConnectionMonitor(settingsService, activatableList, settingsService);
 
     // debug activatable changes
     ActivatableDebug * debug = new ActivatableDebug(&app);

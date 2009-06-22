@@ -44,10 +44,6 @@ SimpleUi::SimpleUi(ActivatableList * list, QObject * parent)
     m_notificationItem->setIconByName("networkmanager");
     m_popup = new KMenu("Title", 0);
     m_notificationItem->setAssociatedWidget(m_popup);
-//    foreach (Knm::Activatable * activatable, list->activatables()) {
- //       handleAdd(activatable);
-  //  }
-        
 }
 
 SimpleUi::~SimpleUi()
@@ -56,7 +52,6 @@ SimpleUi::~SimpleUi()
 
 void SimpleUi::handleAdd(Knm::Activatable * activatable)
 {
-    kDebug();
     QString actionText;
     Knm::InterfaceConnection * ic;
     Knm::WirelessInterfaceConnection * wic;
