@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NMDBUSSETTINGSSERVICE_H
 #define NMDBUSSETTINGSSERVICE_H
 
-#include <QObject>
+#include "activatableobserver.h"
 #include "connectionhandler.h"
 
 #include <QList>
@@ -37,7 +37,7 @@ class NMDBusSettingsServicePrivate;
  * Should be registered as a ConnectionHandler before the connection list is initialised so it sees
  * the Connections with handleAdd()
  */
-class KNM_EXPORT NMDBusSettingsService : public QObject, virtual public ConnectionHandler
+class KNM_EXPORT NMDBusSettingsService : public ActivatableObserver, public ConnectionHandler
 {
 Q_OBJECT
 Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings")
@@ -50,13 +50,20 @@ public:
     void handleUpdate(Knm::Connection *);
     void handleRemove(Knm::Connection *);
 public Q_SLOTS:
+    void handleAdd(Knm::Activatable *);
+    void handleChange(Knm::Activatable *);
+    void handleRemove(Knm::Activatable *);
     Q_SCRIPTABLE QList<QDBusObjectPath> ListConnections() const;
 Q_SIGNALS:
     Q_SCRIPTABLE void NewConnection(const QDBusObjectPath&);
 private Q_SLOTS:
+    // DBus service management
     void serviceOwnerChanged(const QString& service,const QString& oldOwner, const QString& newOwner);
     void serviceRegistered(const QString&);
     void serviceUnregistered(const QString&);
+    // activate connections
+    void interfaceConnectionActivated();
+
 private:
     Q_DECLARE_PRIVATE(NMDBusSettingsService)
     void registerService();

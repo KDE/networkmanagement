@@ -32,7 +32,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KLocale>
 
+#include <solid/control/networkmanager.h>
+
 #include "connection.h"
+#include "interfaceconnection.h"
 
 #include "busconnection.h"
 #include "exportedconnection.h"
@@ -48,7 +51,7 @@ public:
 
 const QString NMDBusSettingsService::SERVICE_USER_SETTINGS = QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS);
 
-NMDBusSettingsService::NMDBusSettingsService(QObject * parent) : QObject(parent), d_ptr(new NMDBusSettingsServicePrivate)
+NMDBusSettingsService::NMDBusSettingsService(QObject * parent) : ActivatableObserver(parent), d_ptr(new NMDBusSettingsServicePrivate)
 {
     Q_D(NMDBusSettingsService);
     d->active = false;
@@ -161,6 +164,46 @@ void NMDBusSettingsService::handleRemove(Knm::Connection * removed)
         d->pathToConnections.remove(key);
     }
     busConn->Delete();
+}
+
+void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
+{
+    Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(added);
+    // listen to the IC
+    if (ic) {
+        kDebug() << ic->connectionUuid();
+        connect(ic, SIGNAL(activated()), this, SLOT(interfaceConnectionActivated()));
+    }
+}
+
+void NMDBusSettingsService::interfaceConnectionActivated()
+{
+    Q_D(NMDBusSettingsService);
+    Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
+    // look up the object path for the activatable's uuid for a connection we provide
+    // this is a slow way to do it
+    if (ic) {
+        if (d->uuidToConnections.contains(ic->connectionUuid())) {
+            BusConnection * busConn = d->uuidToConnections[ic->connectionUuid()];
+            if (busConn) {
+                QDBusObjectPath path = d->pathToConnections.key(busConn);
+                kDebug() << "activating connection" << ic->connectionName();
+                Solid::Control::NetworkManager::activateConnection(ic->deviceUni(),
+                        QString::fromLatin1("%1 %2").arg(SERVICE_USER_SETTINGS, path.path()),
+                        QVariantMap());
+            }
+        }
+        // TODO, look for the uuid in the system settings connections
+    }
+}
+
+void NMDBusSettingsService::handleChange(Knm::Activatable *)
+{
+
+}
+void NMDBusSettingsService::handleRemove(Knm::Activatable *)
+{
+
 }
 
 QString NMDBusSettingsService::nextObjectPath()

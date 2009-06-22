@@ -89,6 +89,9 @@ int main( int argc, char** argv )
     WirelessNetworkConfigurer * wirelessConfigurer = new WirelessNetworkConfigurer(&app);
     activatableList->connectObserver(wirelessConfigurer);
 
+    // call NetworkManager when connections clicked
+    activatableList->connectObserver(settingsService);
+
     listPersistence->init();
     new NetworkInterfaceMonitor(connectionList, activatableList, connectionList);
     return app.exec();
