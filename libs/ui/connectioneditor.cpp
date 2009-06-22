@@ -162,9 +162,9 @@ ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaul
 void ConnectionEditor::updateService(const QStringList & changedConnections) const
 {
     kDebug() << changedConnections;
-    QDBusInterface iface(QLatin1String("org.kde.kded"),
-            QLatin1String("/modules/knetworkmanager"),
-            QLatin1String("org.kde.knetworkmanagerd"), QDBusConnection::sessionBus());
+    QDBusInterface iface(QLatin1String("org.kde.networkmanagement"),
+            QLatin1String("/connections"),
+            QLatin1String("org.kde.networkmanagement"), QDBusConnection::sessionBus());
     if (!iface.isValid()) {
         kError() << "KDED Module is not running!";
     }
