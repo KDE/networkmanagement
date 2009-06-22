@@ -128,12 +128,16 @@ void NMDBusActiveConnectionMonitor::activeConnectionChangedInternal(OrgFreedeskt
         QList<Knm::InterfaceConnection*> interfaceConnections = d->activatableList->interfaceConnectionsForUuid(d->service->uuidForPath(QDBusObjectPath(iface->connection().path())));
         kDebug() << "There are " << interfaceConnections.count() << "InterfaceConnections to update";
 
+        QList<Knm::InterfaceConnection*> modified;
         foreach (Knm::InterfaceConnection* ic, interfaceConnections) {
-            // TODO proper conversion between NM activation state and
-            // InterfaceConnection::Activationstate
-            ic->setActivationState((Knm::InterfaceConnection::ActivationState)state);
+            if (iface->devices().contains(QDBusObjectPath(ic->deviceUni()))) {
+                // TODO proper conversion between NM activation state and
+                // InterfaceConnection::Activationstate
+                ic->setActivationState((Knm::InterfaceConnection::ActivationState)state);
+                modified.append(ic);
+            }
         }
-        d->modifiedConnections.insert(iface->path(), interfaceConnections);
+        d->modifiedConnections.insert(iface->path(), modified);
     } else {
         kDebug() << "TODO: handle InterfaceConnection updates for system settings. serviceName=" << iface->serviceName();
     }
