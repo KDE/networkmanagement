@@ -32,6 +32,7 @@ include_directories(
 )
 
 add_subdirectory(applet)
+add_subdirectory(backends)
 add_subdirectory(libs)
 add_subdirectory(tests)
 add_subdirectory(settings)
