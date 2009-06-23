@@ -58,7 +58,9 @@ void SimpleUi::handleAdd(Knm::Activatable * activatable)
     newAct->setData(QVariant::fromValue(activatable));
     newAct->setIcon(KIcon(iconForActivatable(activatable)));
     updateActionState(activatable, newAct);
-
+    if (activatable->activatableType() != Knm::Activatable::WirelessNetworkItem) {
+        newAct->setCheckable(true);
+    }
     m_actions.insert(activatable, newAct);
     m_popup->addAction(newAct);
     connect(newAct, SIGNAL(triggered(bool)), this, SLOT(activatableActionTriggered()));
