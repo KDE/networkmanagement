@@ -72,9 +72,13 @@ QString InterfaceConnection::connectionName() const
 
 void InterfaceConnection::setActivationState(InterfaceConnection::ActivationState state)
 {
-    m_state = state;
-    emit changed();
-    emit activationStateChanged(m_state);
+    InterfaceConnection::ActivationState oldState = m_state;
+    if (oldState != state)
+    {
+        m_state = state;
+        emit changed();
+        emit activationStateChanged(m_state);
+    }
 }
 
 InterfaceConnection::ActivationState InterfaceConnection::activationState() const
