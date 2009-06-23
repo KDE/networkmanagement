@@ -9,9 +9,6 @@ add_subdirectory(internals)
 # library knmui containing widgets for editing connection settings groups, used by the Config
 add_subdirectory(ui)
 
-# library knmdbus containing interface classes to dbus objects specified by NetworkManager
-add_subdirectory(dbus)
-
 # library knmservice containing components for providing a connection service
 add_subdirectory(service)
 
