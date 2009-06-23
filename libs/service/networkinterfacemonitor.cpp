@@ -81,6 +81,7 @@ void NetworkInterfaceMonitor::networkInterfaceRemoved(const QString & uni)
 {
     Q_D(NetworkInterfaceMonitor);
     NetworkInterfaceActivatableProvider * provider = d->providers.take(uni);
+    d->connectionList->unregisterConnectionHandler(provider);
     delete provider;
 }
 
