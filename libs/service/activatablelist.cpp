@@ -20,8 +20,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatablelist.h"
 
-#include <QMultiHash>
 #include <QList>
+#include <QMultiHash>
 
 #include "activatable.h"
 #include "activatableobserver.h"
@@ -37,7 +37,6 @@ public:
 ActivatableList::ActivatableList(QObject * parent)
     : QObject(parent), d_ptr(new ActivatableListPrivate)
 {
-
 }
 
 ActivatableList::~ActivatableList()
@@ -73,11 +72,14 @@ void ActivatableList::addActivatable(Knm::Activatable * activatable)
 {
     Q_D(ActivatableList);
     if (!d->activatables.contains(activatable)) {
+
         Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(activatable);
         if (ic) {
             d->interfaceConnections.insert(ic->connectionUuid(), ic);
         }
         d->activatables.append(activatable);
+
+        connect(activatable, SIGNAL(changed()), this, SLOT(activatableChanged()));
         emit activatableAdded(activatable);
     }
 }
@@ -92,6 +94,15 @@ void ActivatableList::removeActivatable(Knm::Activatable * activatable)
         }
         d->activatables.removeOne(activatable);
         emit activatableRemoved(activatable);
+    }
+}
+
+void ActivatableList::activatableChanged()
+{
+    Knm::Activatable * activatable = qobject_cast<Knm::Activatable*>(sender());
+
+    if (activatable) {
+        emit activatableUpdated(activatable);
     }
 }
 

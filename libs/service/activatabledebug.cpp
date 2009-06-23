@@ -68,7 +68,6 @@ void ActivatableDebug::handleAdd(Knm::Activatable * activatable) {
 
 void ActivatableDebug::handleUpdate(Knm::Activatable * activatable)
 {
-//    kDebug() << "Activatable" << activatable << "on" << activatable->deviceUni() << "changed.";
     QString debugString = activatableToString(activatable);
     debugString += " changed";
     kDebug() << debugString;
@@ -76,7 +75,6 @@ void ActivatableDebug::handleUpdate(Knm::Activatable * activatable)
 
 void ActivatableDebug::handleRemove(Knm::Activatable * activatable)
 {
-//    kDebug() << "Activatable" << activatable << "on" << activatable->deviceUni() << "was removed.";
     QString debugString = activatableToString(activatable);
     debugString += " was removed";
     kDebug() << debugString;

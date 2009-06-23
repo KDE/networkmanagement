@@ -56,7 +56,8 @@ signals:
     void activatableAdded(Knm::Activatable *);
     void activatableUpdated(Knm::Activatable *);
     void activatableRemoved(Knm::Activatable *);
-
+protected Q_SLOTS:
+    void activatableChanged();
 private:
     ActivatableListPrivate * d_ptr;
 };
