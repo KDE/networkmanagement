@@ -51,6 +51,7 @@ NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(Network
     d->interface = interface;
     d->activatableList = activatableList;
     d->connectionList = connectionList;
+    connect(d->activatableList, SIGNAL(destroyed()), this, SLOT(activatableListDestroyed()));
 }
 
 void NetworkInterfaceActivatableProvider::init()
@@ -66,8 +67,10 @@ void NetworkInterfaceActivatableProvider::init()
 NetworkInterfaceActivatableProvider::~NetworkInterfaceActivatableProvider()
 {
     Q_D(NetworkInterfaceActivatableProvider);
-    foreach (Knm::Activatable* activatable, d->activatables) {
-        d->activatableList->removeActivatable(activatable);
+    if (d->activatableList) {
+        foreach (Knm::Activatable* activatable, d->activatables) {
+            d->activatableList->removeActivatable(activatable);
+        }
     }
     // all activatables we own are deleted since they are child QObjects
 }
@@ -147,4 +150,9 @@ void NetworkInterfaceActivatableProvider::handleRemove(Knm::Connection * removed
     }
 }
 
+void NetworkInterfaceActivatableProvider::activatableListDestroyed()
+{
+    Q_D(NetworkInterfaceActivatableProvider);
+    d->activatableList = 0;
+}
 // vim: sw=4 sts=4 et tw=100

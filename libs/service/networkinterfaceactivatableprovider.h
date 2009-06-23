@@ -84,6 +84,8 @@ public:
      * @reimp ConnectionHandler
      */
     virtual void handleRemove(Knm::Connection *);
+protected Q_SLOTS:
+    void activatableListDestroyed();
 protected:
     NetworkInterfaceActivatableProvider(NetworkInterfaceActivatableProviderPrivate& dd, ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent);
     NetworkInterfaceActivatableProviderPrivate * d_ptr;
