@@ -21,16 +21,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelist.h"
 
 #include <QList>
-#include <QMultiHash>
 
 #include "activatable.h"
 #include "activatableobserver.h"
-#include "interfaceconnection.h"
 
 class ActivatableListPrivate
 {
 public:
-    QMultiHash<QString, Knm::InterfaceConnection*> interfaceConnections;
     QList<Knm::Activatable*> activatables;
 };
 
@@ -42,12 +39,6 @@ ActivatableList::ActivatableList(QObject * parent)
 ActivatableList::~ActivatableList()
 {
     delete d_ptr;
-}
-
-QList<Knm::InterfaceConnection*> ActivatableList::interfaceConnectionsForUuid(const QString & uuid) const
-{
-    Q_D(const ActivatableList);
-    return d->interfaceConnections.values(uuid);
 }
 
 void ActivatableList::connectObserver(ActivatableObserver * observer)
@@ -72,11 +63,6 @@ void ActivatableList::addActivatable(Knm::Activatable * activatable)
 {
     Q_D(ActivatableList);
     if (!d->activatables.contains(activatable)) {
-
-        Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(activatable);
-        if (ic) {
-            d->interfaceConnections.insert(ic->connectionUuid(), ic);
-        }
         d->activatables.append(activatable);
 
         connect(activatable, SIGNAL(changed()), this, SLOT(activatableChanged()));
@@ -88,10 +74,6 @@ void ActivatableList::removeActivatable(Knm::Activatable * activatable)
 {
     Q_D(ActivatableList);
     if (d->activatables.contains(activatable)) {
-        Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(activatable);
-        if (ic) {
-            d->interfaceConnections.remove(ic->connectionUuid(), ic);
-        }
         d->activatables.removeOne(activatable);
         emit activatableRemoved(activatable);
     }
