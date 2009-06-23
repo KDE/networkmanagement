@@ -40,7 +40,6 @@ BusConnection::BusConnection(Knm::Connection * connection, QObject *parent)
 
 BusConnection::~BusConnection()
 {
-    delete m_connection;
     emit Removed();
 }
 
