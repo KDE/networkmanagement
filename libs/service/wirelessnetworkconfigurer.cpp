@@ -20,10 +20,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessnetworkconfigurer.h"
 
+#include <QDBusInterface>
 #include <QList>
 #include <QPair>
+#include <QTimer>
 
 #include <KDebug>
+#include <KToolInvocation>
 
 #include "wirelessnetworkitem.h"
 #include "wirelessinterfaceconnection.h"
@@ -59,7 +62,11 @@ void WirelessNetworkConfigurer::handleAdd(Knm::Activatable *added)
             foreach (PendingNetwork pending, d->pendingNetworks) {
                 if (pending.first == wic->ssid() && pending.second == wic->deviceUni()) {
                     kDebug() << "activating WIC for" << wic->ssid() << "on" << wic->deviceUni();
-                    wic->activate();
+                    // HACK - for activate to do anything, it has to be connected to something.  
+                    // However, since this method itself is a slot, the connection to
+                    // activated() is made in another slot which may be called after this slot, so
+                    // emitting it now is just wrong. 
+                    QTimer::singleShot(0, wic, SIGNAL(activated()));
                     d->pendingNetworks.removeOne(pending);
                 }
             }
@@ -74,6 +81,33 @@ void WirelessNetworkConfigurer::wirelessNetworkItemActivated()
     if (wni) {
         d->pendingNetworks.append(QPair<QString,QString>(wni->ssid(), wni->deviceUni()));
         kDebug() << "watching for connection for" << wni->ssid() << "on" << wni->deviceUni();
+
+        // Call the config UI
+        int caps = 1;
+        int wpaFlags = wni->wpaFlags();
+        int rsnFlags = wni->rsnFlags();
+        //kDebug() << wni->net()->referenceAccessPoint()->hardwareAddress();
+        QDBusInterface kcm(QLatin1String("org.kde.NetworkManager.KCModule"), QLatin1String("/default"), QLatin1String("org.kde.kcmshell.ConnectionEditor"));
+        if (kcm.isValid()) {
+            kDebug() << "opening connection management dialog from running KCM";
+            QVariantList args;
+
+            args << wni->ssid() << caps << wpaFlags << rsnFlags;
+            kcm.call(QDBus::NoBlock, "createConnection", "802-11-wireless", QVariant::fromValue(args));
+        } else {
+            kDebug() << "opening connection management dialog using networkmanagement_configshell";
+            QStringList args;
+            QString moduleArgs =
+                QString::fromLatin1("'%1' %2 %3 %4")
+                .arg(wni->ssid().replace('\'', "\\'"))
+                .arg(caps)
+                .arg(wpaFlags)
+                .arg(rsnFlags);
+
+            args << QLatin1String("create") << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("wifi_pass");
+            int ret = KToolInvocation::kdeinitExec("networkmanagement_configshell", args);
+            kDebug() << ret << args;
+        }
     }
 }
 
