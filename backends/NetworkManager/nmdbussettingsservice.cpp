@@ -143,7 +143,6 @@ void NMDBusSettingsService::serviceUnregistered(const QString & name)
 void NMDBusSettingsService::handleAdd(Knm::Connection * added)
 {
     Q_D(NMDBusSettingsService);
-    // if it does not come from the NM system setting monitor, it must be local
     // put it on our bus 
     QDBusObjectPath objectPath;
     BusConnection * busConn = new BusConnection(added, this);
@@ -187,11 +186,20 @@ void NMDBusSettingsService::handleRemove(Knm::Connection * removed)
 
 void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
 {
+    Q_D(NMDBusSettingsService);
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(added);
-    // listen to the IC
     if (ic) {
+        // listen to the IC
         kDebug() << ic->connectionUuid();
         connect(ic, SIGNAL(activated()), this, SLOT(interfaceConnectionActivated()));
+
+        // if derived from one of our connections, tag it with the service and object path of the
+        // connection
+        if (d->uuidToPath.contains(ic->connectionUuid())) {
+            kDebug() << "tagging new InterfaceConnection";
+            ic->setProperty("NMDBusService", SERVICE_USER_SETTINGS);
+            ic->setProperty("NMDBusObjectPath", d->uuidToPath[ic->connectionUuid()].path());
+        }
     }
 }
 

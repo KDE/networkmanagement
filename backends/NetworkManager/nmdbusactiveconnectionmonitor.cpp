@@ -39,20 +39,13 @@ class NMDBusActiveConnectionMonitorPrivate
 public:
     ActivatableList * activatableList;
     QHash<QString, OrgFreedesktopNetworkManagerConnectionActiveInterface *> activeConnections;
-    // HACK necessary because after changing a Connection.Active's state to Unknown(0), NM deletes the
-    // object so we can no longer get the connection path to reset the state of the InterfaceConnections
-    // so we keep a list of those we've changed, and when removing a stale OFDNMCActiveInterface,
-    // reset the state of all of those and then remove the entry in this hash
-    QHash<QString, QList<Knm::InterfaceConnection *> > modifiedConnections;
-    NMDBusSettingsService * service;
 };
 
-NMDBusActiveConnectionMonitor::NMDBusActiveConnectionMonitor(NMDBusSettingsService * service, ActivatableList * activatables, QObject * parent)
+NMDBusActiveConnectionMonitor::NMDBusActiveConnectionMonitor(ActivatableList * activatables, QObject * parent)
 : ActivatableObserver(parent), d_ptr(new NMDBusActiveConnectionMonitorPrivate)
 {
     Q_D(NMDBusActiveConnectionMonitor);
     d->activatableList = activatables;
-    d->service = service;
 
     connect(Solid::Control::NetworkManager::notifier(),
             SIGNAL(activeConnectionsChanged()),
@@ -72,10 +65,8 @@ NMDBusActiveConnectionMonitor::~NMDBusActiveConnectionMonitor()
 
 void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
 {
-    // what if this is called before our activatableList is up to date?
-    // Then we update the activatables as they come in
+    // update all InterfaceConnections we know about
     Q_D(NMDBusActiveConnectionMonitor);
-    kDebug() << d->activeConnections.count() << "active connections known";
 
     QStringList currentActiveConnections = Solid::Control::NetworkManager::activeConnections();
 
@@ -84,17 +75,12 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
         if (!currentActiveConnections.contains(active->path())) {
             kDebug() << "removing stale active connection" << active->path();
             d->activeConnections.remove(active->path());
-
-            kDebug() << "resetting state of changed InterfaceConnections";
-            QList<Knm::InterfaceConnection*> modifiedConnections = d->modifiedConnections.take(active->path());
-            foreach (Knm::InterfaceConnection * ic, modifiedConnections) {
-                ic->setActivationState(Knm::InterfaceConnection::Unknown);
-            }
-
             delete active;
         }
     }
+
     // create an interface to any active connections we're not already tracking
+    // and update their interfaceconnections
     foreach (QString activeConnectionPath, currentActiveConnections) {
         if (!d->activeConnections.contains(activeConnectionPath)) {
             kDebug() << "Adding active connection interface for " << activeConnectionPath;
@@ -102,13 +88,62 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
             d->activeConnections.insert(activeConnectionPath, active);
             connect(active, SIGNAL(PropertiesChanged(const QVariantMap&)), this, SLOT(activeConnectionChanged(const QVariantMap&)));
 
-            // update activatables' state
+            // put the service and the object path into a list of active connections
+            kDebug() << "Connection active at" << active->serviceName() << active->connection().path();
+
+            // update active interfaceConnections' state
             activeConnectionChangedInternal(active, active->state());
+        }
+    }
+
+    // Finally, reset state on all interfaceconnections that do not have an active Connection.Active in the list
+    // This is necessary because when NM sets Unknown state on its Connection.Active objects, they
+    // return invalid service and connection values, so we can't look up the interfaceconnection to
+    // change back
+    QList<Knm::Activatable *> activatables = d->activatableList->activatables();
+    // check whether each activatable is for one of the active connections
+    foreach (Knm::Activatable * activatable, activatables) {
+        Knm::InterfaceConnection * interfaceConnection = qobject_cast<Knm::InterfaceConnection*>(activatable);
+        if (interfaceConnection) {
+            // short cut: only try to update the active InterfaceConnections
+            if (interfaceConnection->activationState() == Knm::InterfaceConnection::Unknown) {
+                continue;
+            }
+            // comparison criteria: service, object path, and device
+            bool icActive = false;
+            QString icService = interfaceConnection->property("NMDBusService").toString()
+;
+            QString icDBusObjectPath = interfaceConnection->property("NMDBusObjectPath").toString();
+            QDBusObjectPath icDevice = QDBusObjectPath(interfaceConnection->deviceUni());
+            foreach (OrgFreedesktopNetworkManagerConnectionActiveInterface * active, d->activeConnections) {
+
+                kDebug() << "NMDBusService" << interfaceConnection->property("NMDBusService").toString()
+                    << "==" << active->serviceName() << ":" << (interfaceConnection->property("NMDBusService") == active->serviceName()
+                            )<< ",\n"
+                    << "NMDBusObjectPath" <<  interfaceConnection->property("NMDBusObjectPath").toString()
+                    << "==" << active->connection().path() << ":" << (interfaceConnection->property("NMDBusObjectPath") == active->connection().path()) << ",\n"
+                    << interfaceConnection->deviceUni() << "in";
+                foreach (QDBusObjectPath path, active->devices()) {
+                    kDebug() << "  " << path.path();
+                }
+                kDebug() << active->devices().contains(QDBusObjectPath(interfaceConnection->deviceUni()));
+
+                if (active->serviceName() == icService
+                        && active->connection().path() == icDBusObjectPath
+                        && active->devices().contains(icDevice)) {
+                    icActive = true;
+                    break;
+                }
+            }
+            if (!icActive) {
+                kDebug() << "Making interfaceconnection Unknown:" << Knm::InterfaceConnection::Unknown;
+                interfaceConnection->setActivationState(Knm::InterfaceConnection::Unknown);
+            }
         }
     }
 }
 
-void NMDBusActiveConnectionMonitor::activeConnectionChanged(const QVariantMap& props)
+void NMDBusActiveConnectionMonitor::activeConnectionChanged(const QVariantMap&)
 {
     OrgFreedesktopNetworkManagerConnectionActiveInterface * active = qobject_cast<OrgFreedesktopNetworkManagerConnectionActiveInterface*>(sender());
     if (active) {
@@ -120,26 +155,33 @@ void NMDBusActiveConnectionMonitor::activeConnectionChangedInternal(OrgFreedeskt
 {
     Q_D(NMDBusActiveConnectionMonitor);
     kDebug() << iface << state;
-    if (iface->serviceName() == QLatin1String("org.freedesktop.NetworkManagerUserSettings")) {
-        // get the uuid for the connection from the service, then get the interfaceconnections
-        // derived from it
-        kDebug() << "iface says connection is at path:" << iface->connection().path();
-        kDebug() << "which has UUID:" << d->service->uuidForPath(QDBusObjectPath(iface->connection().path()));
-        QList<Knm::InterfaceConnection*> interfaceConnections = d->activatableList->interfaceConnectionsForUuid(d->service->uuidForPath(QDBusObjectPath(iface->connection().path())));
-        kDebug() << "There are " << interfaceConnections.count() << "InterfaceConnections to update";
 
-        QList<Knm::InterfaceConnection*> modified;
-        foreach (Knm::InterfaceConnection* ic, interfaceConnections) {
-            if (iface->devices().contains(QDBusObjectPath(ic->deviceUni()))) {
-                // TODO proper conversion between NM activation state and
-                // InterfaceConnection::Activationstate
-                ic->setActivationState((Knm::InterfaceConnection::ActivationState)state);
-                modified.append(ic);
+    QList<Knm::Activatable *> activatables = d->activatableList->activatables();
+    // check whether each interfaceconnection is for the changed active connection
+    foreach (Knm::Activatable * activatable, activatables) {
+        Knm::InterfaceConnection * interfaceConnection = qobject_cast<Knm::InterfaceConnection*>(activatable);
+        if (interfaceConnection) {
+            if (interfaceConnection->property("NMDBusService") == iface->serviceName()
+                    && interfaceConnection->property("NMDBusObjectPath") == iface->connection().path()
+                    && iface->devices().contains(QDBusObjectPath(interfaceConnection->deviceUni()))
+                    ) {
+                kDebug() << "Updating interfaceconnection to" << state;
+                interfaceConnection->setActivationState((Knm::InterfaceConnection::ActivationState)state);
+            // DEBUG:
+            /*} else {
+                kDebug() << "NMDBusService" << interfaceConnection->property("NMDBusService").toString()
+                    << "==" << iface->serviceName() << ":" << (interfaceConnection->property("NMDBusService") == iface->serviceName()
+                            )<< ",\n"
+                    << "NMDBusObjectPath" <<  interfaceConnection->property("NMDBusObjectPath").toString()
+                    << "==" << iface->connection().path() << ":" << (interfaceConnection->property("NMDBusObjectPath") == iface->connection().path()) << ",\n"
+                    << interfaceConnection->deviceUni() << "in";
+                foreach (QDBusObjectPath path, iface->devices()) {
+                    kDebug() << "  " << path.path();
+                }
+                kDebug() << iface->devices().contains(QDBusObjectPath(interfaceConnection->deviceUni()));
+                */
             }
         }
-        d->modifiedConnections.insert(iface->path(), modified);
-    } else {
-        kDebug() << "TODO: handle InterfaceConnection updates for system settings. serviceName=" << iface->serviceName();
     }
 }
 
@@ -151,41 +193,29 @@ void NMDBusActiveConnectionMonitor::handleAdd(Knm::Activatable * added)
     if (interfaceConnection) {
         foreach (OrgFreedesktopNetworkManagerConnectionActiveInterface * active, d->activeConnections) {
             // on the user service?
-            QUuid uuid = d->service->uuidForPath(active->connection());
-            if (uuid == interfaceConnection->connectionUuid() 
+            if (interfaceConnection->property("NMDBusService") == active->serviceName()
+                    && interfaceConnection->property("NMDBusObjectPath") == active->connection().path()
                     && active->devices().contains(QDBusObjectPath(interfaceConnection->deviceUni()))) {
-                // this interfaceconnection is already active
+                kDebug() << "Updating interfaceconnection to" << active->state();
                 interfaceConnection->setActivationState((Knm::InterfaceConnection::ActivationState)active->state());
-                QList<Knm::InterfaceConnection*> modified = d->modifiedConnections[active->path()];
-                modified.append(interfaceConnection);
-                d->modifiedConnections.insert(active->path(), modified);
+            } else {
+                kDebug() << "NMDBusService" << interfaceConnection->property("NMDBusService")
+                    << "NMDBusObjectPath" <<  interfaceConnection->property("NMDBusObjectPath")
+                    << interfaceConnection->deviceUni() << "in";
+                foreach (QDBusObjectPath path, active->devices()) {
+                    kDebug() << "  " << path.path();
+                }
             }
         }
     }
 }
 
-void NMDBusActiveConnectionMonitor::handleUpdate(Knm::Activatable * )
+void NMDBusActiveConnectionMonitor::handleUpdate(Knm::Activatable *)
 {
-
 }
 
-void NMDBusActiveConnectionMonitor::handleRemove(Knm::Activatable * removed)
+void NMDBusActiveConnectionMonitor::handleRemove(Knm::Activatable *)
 {
-    // slow but hash is mostly empty
-    // iterate each list of modified ICs
-    // if found, remove it and reinsert
-    Q_D(NMDBusActiveConnectionMonitor);
-    Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(removed);
-    if (ic) {
-        QMutableHashIterator<QString, QList<Knm::InterfaceConnection *> > it(d->modifiedConnections);
-        while (it.hasNext()) {
-            it.next();
-            QList<Knm::InterfaceConnection *> modifiedList = it.value();
-            if (modifiedList.removeOne(ic)) {
-                it.setValue(modifiedList);
-            }
-        }
-    }
 }
 
 void NMDBusActiveConnectionMonitor::networkingStatusChanged(Solid::Networking::Status status)
@@ -196,7 +226,6 @@ void NMDBusActiveConnectionMonitor::networkingStatusChanged(Solid::Networking::S
             // the manager probably exited, clean our state
             qDeleteAll(d->activeConnections);
             d->activeConnections.clear();
-            d->modifiedConnections.clear();
         }
     }
 }

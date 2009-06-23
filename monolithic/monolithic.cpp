@@ -79,7 +79,7 @@ int main( int argc, char** argv )
 
     activatableList = new ActivatableList(connectionList);
 
-    connectionMonitor = new NMDBusActiveConnectionMonitor(settingsService, activatableList, settingsService);
+    connectionMonitor = new NMDBusActiveConnectionMonitor(activatableList, settingsService);
 
     // debug activatable changes
     ActivatableDebug * debug = new ActivatableDebug(&app);

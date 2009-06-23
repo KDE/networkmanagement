@@ -30,7 +30,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "knm_export.h"
 
 class ActivatableList;
-class NMDBusSettingsService;
 class NMDBusSystemSettingsMonitor;
 
 class NMDBusActiveConnectionMonitorPrivate;
@@ -43,7 +42,7 @@ class KNM_EXPORT NMDBusActiveConnectionMonitor : public ActivatableObserver
 {
 Q_OBJECT
 public:
-    NMDBusActiveConnectionMonitor(NMDBusSettingsService * service, ActivatableList * activatables, QObject * parent = 0);
+    NMDBusActiveConnectionMonitor(ActivatableList * activatables, QObject * parent = 0);
     ~NMDBusActiveConnectionMonitor();
 public Q_SLOTS:
     /**
