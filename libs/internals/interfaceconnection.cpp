@@ -39,11 +39,6 @@ InterfaceConnection::~InterfaceConnection()
 
 }
 
-void InterfaceConnection::activate()
-{
-    emit activated();
-}
-
 void InterfaceConnection::setConnectionType(Knm::Connection::Type type)
 {
     m_type = type;

@@ -49,3 +49,8 @@ QString Activatable::deviceUni() const
     return m_deviceUni;
 }
 
+void Activatable::activate()
+{
+    emit activated();
+}
+

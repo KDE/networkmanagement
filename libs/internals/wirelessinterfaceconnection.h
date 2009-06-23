@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define KNM_EXTERNALS_WIRELESSINTERFACECONNECTION_H
 
 #include "interfaceconnection.h"
+#include "wirelessitem.h"
 
 #include <QtCore/QString>
 #include <QUuid>
@@ -31,18 +32,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Knm {
 
-class KNM_EXPORT WirelessInterfaceConnection : public InterfaceConnection
+class KNM_EXPORT WirelessInterfaceConnection : public InterfaceConnection, public WirelessItem
 {
     Q_OBJECT
 
 public:
-    WirelessInterfaceConnection(const QString & ssid, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent);
+    WirelessInterfaceConnection(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent);
     virtual ~WirelessInterfaceConnection();
-
-    QString ssid() const;
-
-private:
-    QString m_ssid;
+public Q_SLOTS:
+    void setStrength(int);
 };
 } // namespace
 

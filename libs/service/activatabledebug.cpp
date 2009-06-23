@@ -50,11 +50,11 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
             break;
         case Knm::Activatable::WirelessConnection:
             wic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
-            string = QString::fromLatin1("WirelessConnection %1 (%2) for network %3 on %4").arg(wic->connectionName(), wic->connectionUuid(), wic->ssid(), activatable->deviceUni());
+            string = QString::fromLatin1("WirelessConnection %1 (%2) for network %3 on %4 with strength %5").arg(wic->connectionName(), wic->connectionUuid(), wic->ssid(), activatable->deviceUni(), QString::number(wic->strength()));
             break;
         case Knm::Activatable::WirelessNetworkItem:
             wni = qobject_cast<Knm::WirelessNetworkItem*>(activatable);
-            string = QString::fromLatin1("WirelessNetworkItem for network %1 on %2").arg(wni->ssid(), activatable->deviceUni());
+            string = QString::fromLatin1("WirelessNetworkItem for network %1 on %2 with strength %3").arg(wni->ssid(), activatable->deviceUni(), QString::number(wni->strength()));
             break;
     }
     return string;

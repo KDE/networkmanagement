@@ -36,6 +36,10 @@ public:
     Solid::Control::WirelessNetworkInterfaceEnvironment * environment;
     // essid to activatable
     QHash<QString, Knm::Activatable *> wirelessActivatables;
+    Solid::Control::WirelessNetworkInterface * wirelessInterface()
+    {
+        return qobject_cast<Solid::Control::WirelessNetworkInterface*>(interface);
+    }
 };
 
 WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::WirelessNetworkInterface * interface, QObject * parent)
@@ -74,18 +78,35 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                 if (d->environment->networks().contains(wirelessSetting->ssid())) {
                     kDebug() << d->environment->networks();
                     kDebug() << wirelessSetting->ssid() <<  addedConnection->uuid() << addedConnection->name() << d->interface->uni();
-                    Knm::WirelessInterfaceConnection * ifaceConnection = new Knm::WirelessInterfaceConnection(wirelessSetting->ssid(), addedConnection->uuid(), addedConnection->name(), d->interface->uni(), this);
-                    // remove any WirelessNetworkItem created previously
-                    Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(d->wirelessActivatables.take(wirelessSetting->ssid()));
-                    if (wni) {
-                        d->activatableList->removeActivatable(wni);
-                    }
-                    delete wni;
 
-                    // register the InterfaceConnection
-                    d->activatables.insert(addedConnection->uuid(), ifaceConnection);
-                    d->wirelessActivatables.insert(wirelessSetting->ssid(), ifaceConnection);
-                    d->activatableList->addActivatable(ifaceConnection);
+                    // get the info on the network
+                    Solid::Control::WirelessNetwork * network = d->environment->findNetwork(wirelessSetting->ssid());
+                    int strength = 0;
+                    Solid::Control::AccessPoint::WpaFlags wpaFlags = 0;
+                    Solid::Control::AccessPoint::WpaFlags rsnFlags = 0;
+                    if (network) {
+                        strength = network->signalStrength();
+                        Solid::Control::AccessPoint * ap = d->wirelessInterface()->findAccessPoint(network->referenceAccessPoint());
+                        if (ap) {
+                            wpaFlags = ap->wpaFlags();
+                            rsnFlags = ap->rsnFlags();
+                            Knm::WirelessInterfaceConnection * ifaceConnection = new Knm::WirelessInterfaceConnection(
+                                    wirelessSetting->ssid(), strength, wpaFlags, rsnFlags, addedConnection->uuid(), addedConnection->name(),
+                                    d->interface->uni(), this);
+                            connect(network, SIGNAL(signalStrengthChanged(int)), ifaceConnection, SLOT(setStrength(int)));
+                            // remove any WirelessNetworkItem created previously
+                            Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(d->wirelessActivatables.take(wirelessSetting->ssid()));
+                            if (wni) {
+                                d->activatableList->removeActivatable(wni);
+                            }
+                            delete wni;
+
+                            // register the InterfaceConnection
+                            d->activatables.insert(addedConnection->uuid(), ifaceConnection);
+                            d->wirelessActivatables.insert(wirelessSetting->ssid(), ifaceConnection);
+                            d->activatableList->addActivatable(ifaceConnection);
+                        }
+                    }
                 }
             }
         }
@@ -135,9 +156,24 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
         }
         if (!hasConnection) {
             // create a wirelessnetworkitem, register it, tell the list
-            Knm::WirelessNetworkItem * wirelessNetworkItem = new Knm::WirelessNetworkItem(ssid, d->interface->uni(), this);
-            d->wirelessActivatables.insert(ssid, wirelessNetworkItem);
-            d->activatableList->addActivatable(wirelessNetworkItem);
+            // get the info on the network
+            Solid::Control::WirelessNetwork * network = d->environment->findNetwork(ssid);
+            int strength = 0;
+            Solid::Control::AccessPoint::WpaFlags wpaFlags = 0;
+            Solid::Control::AccessPoint::WpaFlags rsnFlags = 0;
+            if (network) {
+                strength = network->signalStrength();
+                Solid::Control::AccessPoint * ap = d->wirelessInterface()->findAccessPoint(network->referenceAccessPoint());
+                if (ap) {
+                    wpaFlags = ap->wpaFlags();
+                    rsnFlags = ap->rsnFlags();
+                    Knm::WirelessNetworkItem * wirelessNetworkItem = new Knm::WirelessNetworkItem(ssid, strength, wpaFlags, rsnFlags, d->interface->uni(), this);
+                    connect(network, SIGNAL(signalStrengthChanged(int)), wirelessNetworkItem, SLOT(setStrength(int)));
+                    d->wirelessActivatables.insert(ssid, wirelessNetworkItem);
+                    d->activatableList->addActivatable(wirelessNetworkItem);
+                }
+            }
+
         }
     }
 }

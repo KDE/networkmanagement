@@ -35,7 +35,7 @@ namespace Knm {
 
 class KNM_EXPORT InterfaceConnection : public Activatable
 {
-    Q_OBJECT
+Q_OBJECT
 
 public:
     enum ActivationState { Unknown, Activating, Activated };
@@ -52,9 +52,6 @@ public:
 
     void setActivationState(ActivationState state);
     ActivationState activationState() const;
-
-public Q_SLOTS:
-    void activate();
 
 Q_SIGNALS:
     void activationStateChanged(ActivationState);

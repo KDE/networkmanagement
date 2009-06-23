@@ -65,6 +65,7 @@ set(knminternals_SRCS
    activatable.cpp
    interfaceconnection.cpp
    wirelessinterfaceconnection.cpp
+   wirelessitem.cpp
    wirelessnetworkitem.cpp
    )
 

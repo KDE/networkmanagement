@@ -45,7 +45,7 @@ public:
     void setDeviceUni(const QString& deviceUni);
     QString deviceUni() const;
 public Q_SLOTS:
-    virtual void activate() = 0;
+    void activate();
 Q_SIGNALS:
     void activated();
     void changed();
