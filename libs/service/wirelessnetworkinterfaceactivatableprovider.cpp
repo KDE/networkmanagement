@@ -72,9 +72,17 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                 // known network in a different location
                 Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(addedConnection->setting(Knm::Setting::Wireless));
                 if (d->environment->networks().contains(wirelessSetting->ssid())) {
+                    kDebug() << d->environment->networks();
+                    kDebug() << wirelessSetting->ssid() <<  addedConnection->uuid() << addedConnection->name() << d->interface->uni();
                     Knm::WirelessInterfaceConnection * ifaceConnection = new Knm::WirelessInterfaceConnection(wirelessSetting->ssid(), addedConnection->uuid(), addedConnection->name(), d->interface->uni(), this);
                     // remove any WirelessNetworkItem created previously
+                    Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(d->wirelessActivatables.take(wirelessSetting->ssid()));
+                    if (wni) {
+                        d->activatableList->removeActivatable(wni);
+                    }
+                    delete wni;
 
+                    // register the InterfaceConnection
                     d->activatables.insert(addedConnection->uuid(), ifaceConnection);
                     d->wirelessActivatables.insert(wirelessSetting->ssid(), ifaceConnection);
                     d->activatableList->addActivatable(ifaceConnection);
