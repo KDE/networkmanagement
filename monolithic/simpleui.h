@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 
 class QAction;
+class QSignalMapper;
 class KMenu;
 class ActivatableList;
 
@@ -46,6 +47,7 @@ protected slots:
     void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
     void activatableActionTriggered();
+    void updateActionState(Knm::Activatable * changed, QAction * action);
 private:
     static QString iconForActivatable(Knm::Activatable *);
     Experimental::KNotificationItem * m_notificationItem;

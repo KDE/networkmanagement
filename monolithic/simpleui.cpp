@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <knotificationitem-1/knotificationitem.h>
 
+#include <QSignalMapper>
+
 #include <KAction>
 #include <KDebug>
 #include <KLocale>
@@ -52,28 +54,11 @@ SimpleUi::~SimpleUi()
 
 void SimpleUi::handleAdd(Knm::Activatable * activatable)
 {
-    QString actionText;
-    Knm::InterfaceConnection * ic;
-    Knm::WirelessInterfaceConnection * wic;
-    Knm::WirelessNetworkItem * wni;
-
-    switch (activatable->activatableType()) {
-        case Knm::Activatable::Connection:
-            ic = qobject_cast<Knm::InterfaceConnection*>(activatable);
-            actionText = ic->connectionName();
-            break;
-        case Knm::Activatable::WirelessConnection:
-            wic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
-            actionText = wic->connectionName();
-            break;
-        case Knm::Activatable::WirelessNetworkItem:
-            wni = qobject_cast<Knm::WirelessNetworkItem*>(activatable);
-            actionText = wni->ssid();
-            break;
-    }
-    KAction * newAct = new KAction(actionText, this);
+    KAction * newAct = new KAction(this);
     newAct->setData(QVariant::fromValue(activatable));
     newAct->setIcon(KIcon(iconForActivatable(activatable)));
+    updateActionState(activatable, newAct);
+
     m_actions.insert(activatable, newAct);
     m_popup->addAction(newAct);
     connect(newAct, SIGNAL(triggered(bool)), this, SLOT(activatableActionTriggered()));
@@ -81,7 +66,35 @@ void SimpleUi::handleAdd(Knm::Activatable * activatable)
 
 void SimpleUi::handleUpdate(Knm::Activatable * changed)
 {
-    // TODO implement
+    QAction * action = m_actions[changed];
+    updateActionState(changed, action);
+}
+
+void SimpleUi::updateActionState(Knm::Activatable * activatable, QAction * action)
+{
+    QString actionText;
+    Knm::InterfaceConnection * ic;
+    Knm::WirelessInterfaceConnection * wic;
+    Knm::WirelessNetworkItem * wni;
+
+    if (activatable && action) {
+        switch (activatable->activatableType()) {
+            case Knm::Activatable::Connection:
+                ic = qobject_cast<Knm::InterfaceConnection*>(activatable);
+                action->setChecked((ic->activationState() != Knm::InterfaceConnection::Unknown));
+                break;
+            case Knm::Activatable::WirelessConnection:
+                wic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
+                action->setChecked((wic->activationState() != Knm::InterfaceConnection::Unknown));
+                actionText = QString::fromLatin1("%1 (%2)").arg(wic->connectionName(), QString::number(wic->strength()));
+                break;
+            case Knm::Activatable::WirelessNetworkItem:
+                wni = qobject_cast<Knm::WirelessNetworkItem*>(activatable);
+                actionText = QString::fromLatin1("%1 (%2)").arg(wni->ssid(), QString::number(wni->strength()));
+                break;
+        }
+        action->setText(actionText);
+    }
 }
 
 void SimpleUi::handleRemove(Knm::Activatable * removed)

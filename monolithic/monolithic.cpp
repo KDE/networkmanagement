@@ -97,7 +97,12 @@ int main( int argc, char** argv )
     activatableList->connectObserver(settingsService);
 
     listPersistence->init();
-    new NetworkInterfaceMonitor(connectionList, activatableList, connectionList);
+
+    // problem setting this as a child of connectionList or of activatableList since it has
+    // references to both and NetworkInterfaceActivatableProvider touches the activatableList
+    // in its dtor (needed so it cleans up when removed by the monitor)
+    // ideally this will always be deleted before the other list
+    new NetworkInterfaceMonitor(connectionList, activatableList, activatableList);
     return app.exec();
 }
 
