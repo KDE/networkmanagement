@@ -29,7 +29,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // libs/internals includes
 #include "settings/802-11-wireless.h"
 // libs/service includes
-#include "interfaceconnection.h"
+#include "wirelessinterfaceconnection.h"
 #include "activatablelist.h"
 #include "connectionlist.h"
 
@@ -48,6 +48,14 @@ ConnectionUsageMonitor::ConnectionUsageMonitor(ConnectionList * connectionList, 
     d->activatableList = activatableList;
     foreach (Knm::Activatable * activatable, d->activatableList->activatables()) {
         handleAdd(activatable);
+    }
+
+    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+            this, SLOT(networkInterfaceAdded(const QString&)));
+
+    Solid::Control::NetworkInterfaceList allInterfaces = Solid::Control::NetworkManager::networkInterfaces();
+    foreach (Solid::Control::NetworkInterface * interface, allInterfaces) {
+        networkInterfaceAdded(interface->uni());
     }
 }
 
@@ -105,6 +113,61 @@ void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnectio
                     }
                 }
                 d->connectionList->updateConnection(connection);
+            }
+        }
+    }
+}
+
+void ConnectionUsageMonitor::networkInterfaceAdded(const QString& uni)
+{
+    Solid::Control::NetworkInterface * interface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+
+    if (interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+        Solid::Control::WirelessNetworkInterface * wifiDevice =
+            qobject_cast<Solid::Control::WirelessNetworkInterface *>(interface);
+        if (wifiDevice)
+            connect(wifiDevice, SIGNAL(activeAccessPointChanged(const QString &)),
+                    this, SLOT(networkInterfaceAccessPointChanged(const QString &)));
+    }
+}
+
+void ConnectionUsageMonitor::networkInterfaceAccessPointChanged(const QString & apiUni)
+{
+    Q_D(ConnectionUsageMonitor);
+    Solid::Control::WirelessNetworkInterface * wifiDevice = qobject_cast<Solid::Control::WirelessNetworkInterface *>(sender());
+    if (wifiDevice && wifiDevice->connectionState() == Solid::Control::NetworkInterface::Activated) {
+        Solid::Control::AccessPoint * ap = wifiDevice->findAccessPoint(apiUni);
+        // find the activatable
+        foreach (Knm::Activatable * activatable, d->activatableList->activatables()) {
+            Knm::WirelessInterfaceConnection * ic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
+            if (ic) {
+                if (ic->activationState() == Knm::InterfaceConnection::Activated && ic->deviceUni() == wifiDevice->uni()) {
+                    // find the connection
+                    Knm::Connection * connection = d->connectionList->findConnection(ic->connectionUuid());
+                    if (connection) {
+                        if (connection->type() == Knm::Connection::Wireless) {
+                            Knm::WirelessSetting * ws = static_cast<Knm::WirelessSetting * >(connection->setting(Knm::Setting::Wireless));
+
+                            if (ws) {
+                                if (ws->ssid() == ap->ssid()) {
+                                    QStringList seenBssids = ws->seenbssids();
+                                    if (!seenBssids.contains(ap->hardwareAddress())) {
+                                        seenBssids.append(ap->hardwareAddress());
+                                        ws->setSeenbssids(seenBssids);
+                                        //kDebug() << "Updating connection" << connection->uuid() << "with" << seenBssids;
+                                        d->connectionList->updateConnection(connection);
+                                    }
+                                } else {
+                                    kDebug() << "SSIDs do not match!" << ws->ssid() << ap->ssid();
+                                }
+                            }
+                        } else {
+                            kDebug() << "connection not wireless!";
+                        }
+                    } else {
+                        kDebug() << "connection not found";
+                    }
+                }
             }
         }
     }
