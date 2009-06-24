@@ -100,7 +100,7 @@ void ConnectionList::addConnection(Knm::Connection * connection)
     }
 }
 
-void ConnectionList::updateConnection(Knm::Connection * connection)
+void ConnectionList::replaceConnection(Knm::Connection * connection)
 {
     Q_D(ConnectionList);
     Knm::Connection * existing = 0;
@@ -112,6 +112,14 @@ void ConnectionList::updateConnection(Knm::Connection * connection)
                 connHandler->handleUpdate(connection);
             }
         }
+    }
+}
+
+void ConnectionList::updateConnection(Knm::Connection * connection)
+{
+    Q_D(ConnectionList);
+    foreach (ConnectionHandler * connHandler, d->connectionHandlers) {
+        connHandler->handleUpdate(connection);
     }
 }
 

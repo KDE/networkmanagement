@@ -30,10 +30,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionlist.h"
 #include "connectionlistpersistence.h"
 #include "connectionlistpersistencedbus.h"
+#include "activatablelist.h"
 #include "activatabledebug.h"
+#include "connectionusagemonitor.h"
 #include "wirelessnetworkconfigurer.h"
 
-#include "activatablelist.h"
 #include "networkinterfacemonitor.h"
 
 #include "nmdbussettingsservice.h"
@@ -102,6 +103,7 @@ int main( int argc, char** argv )
 
     listPersistence->init();
 
+    // get connections from NM's service
     dbusConnectionProvider = new NMDBusSettingsConnectionProvider(connectionList, activatableList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, connectionList);
 
     // problem setting this as a child of connectionList or of activatableList since it has
@@ -109,6 +111,11 @@ int main( int argc, char** argv )
     // in its dtor (needed so it cleans up when removed by the monitor)
     // ideally this will always be deleted before the other list
     new NetworkInterfaceMonitor(connectionList, activatableList, activatableList);
+
+    // update connections as they are used
+    ConnectionUsageMonitor * connectionUsageMonitor = new ConnectionUsageMonitor(connectionList, activatableList, activatableList);
+    activatableList->connectObserver(connectionUsageMonitor);
+
     return app.exec();
 }
 

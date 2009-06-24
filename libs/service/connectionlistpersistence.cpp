@@ -202,7 +202,7 @@ void ConnectionListPersistence::configure(const QStringList& changedConnections)
     // changed - we are going to get our own change signals back now, but since
     // d->ignoreChangedConnections is set, nothing happens
     foreach (const QString connectionId, changedConnections) {
-        d->list->updateConnection(restoreConnection(connectionId));
+        d->list->replaceConnection(restoreConnection(connectionId));
     }
     // if this is accidentally removed, updated timestamps and seenBSSID lists will not be saved
     d->ignoreChangedConnections = false;

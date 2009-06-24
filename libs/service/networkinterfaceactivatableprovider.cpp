@@ -89,6 +89,8 @@ bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType
 bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection * connection, Solid::Control::NetworkInterface * iface)
 {
     bool matches = true;
+    Q_UNUSED(connection);
+    Q_UNUSED(iface);
     // todo figure out how to convert from the struct ether_addr.ether_addr_octet contained in the
     // hardware address from system-provided connections.  This probably also means the encoding
     // used in the connections we put on the bus is wrong.

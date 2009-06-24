@@ -41,6 +41,9 @@ set(knmservice_SRCS
 
    # configures new wireless networks on demand and connects them 
    wirelessnetworkconfigurer.cpp
+
+   # updates connection state as they are used
+   connectionusagemonitor.cpp
    )
 
 kde4_add_library(knmservice SHARED ${knmservice_SRCS})

@@ -94,10 +94,15 @@ class KNM_EXPORT ConnectionList : public QObject
         void addConnection(Knm::Connection *);
 
         /**
-         * Update a connection.  The existing connection is deleted.
-         * Registered ConnectionHandlers are called to handle the update in order
+         * Replace a connection.  The existing connection object with the same UUID is deleted.
+         * This method should not be necessary longer term
+         * Registered ConnectionHandlers are called to handle the replace in order
          */
+        void replaceConnection(Knm::Connection * update);
 
+        /**
+         * Update a connection in place
+         */
         void updateConnection(Knm::Connection * update);
 
         /**
