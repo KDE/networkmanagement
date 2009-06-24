@@ -89,6 +89,10 @@ bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType
 bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection * connection, Solid::Control::NetworkInterface * iface)
 {
     bool matches = true;
+    // todo figure out how to convert from the struct ether_addr.ether_addr_octet contained in the
+    // hardware address from system-provided connections.  This probably also means the encoding
+    // used in the connections we put on the bus is wrong.
+#if 0
     if (connection->type() == Knm::Connection::Wired) {
         Knm::WiredSetting * wiredSetting = dynamic_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
         Solid::Control::WiredNetworkInterface * wiredIface = dynamic_cast<Solid::Control::WiredNetworkInterface *>(iface);
@@ -112,6 +116,7 @@ bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection
             }
         }
     }
+#endif
     return matches;
 }
 
@@ -119,13 +124,18 @@ void NetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedConne
 {
     Q_D(NetworkInterfaceActivatableProvider);
     // check type
+    kDebug() << addedConnection->uuid();
     if (!d->activatables.contains(addedConnection->uuid())) {
         if (hardwareAddressMatches(addedConnection, d->interface)) {
             if (matches(addedConnection->type(), d->interface->type())) {
                 Knm::InterfaceConnection * ifaceConnection = new Knm::InterfaceConnection(addedConnection->uuid(), addedConnection->name(), d->interface->uni(), this);
                 d->activatables.insert(addedConnection->uuid(), ifaceConnection);
                 d->activatableList->addActivatable(ifaceConnection);
+            } else {
+                kDebug() << "connection type mismatch: " << addedConnection->type() << d->interface->type();
             }
+        } else {
+            kDebug() << "hardware address mismatch!";
         }
     }
 }
