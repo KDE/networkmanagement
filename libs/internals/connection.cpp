@@ -234,4 +234,19 @@ bool Connection::secretsAvailable() const
     return allSecretsAvailable;
 }
 
+void Connection::setOrigin(const QString & origin)
+{
+    m_origin = origin;
+}
+
+QString Connection::origin() const
+{
+    return m_origin;
+}
+
+void Connection::setType(Connection::Type type)
+{
+    m_type = type;
+}
+
 // vim: sw=4 sts=4 et tw=100

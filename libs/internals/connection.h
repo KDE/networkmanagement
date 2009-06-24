@@ -53,8 +53,12 @@ public:
     QString name() const;
     QUuid uuid() const;
     Connection::Type type() const;
+    void setType(Connection::Type);
     bool autoConnect() const;
     QDateTime timestamp() const;
+
+    QString origin() const;
+    void setOrigin(const QString &);
 
     /**
      * Access all settings
@@ -106,7 +110,7 @@ private:
     Connection::Type m_type;
     bool m_autoConnect;
     QDateTime m_timestamp;
-
+    QString m_origin;
     QList<Setting*> m_settings;
 };
 } // namespace Knm
