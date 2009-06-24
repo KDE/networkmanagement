@@ -164,7 +164,6 @@ void NMDBusSettingsService::handleAdd(Knm::Connection * added)
 
         QDBusConnection::systemBus().registerObject(objectPath.path(), busConn, QDBusConnection::ExportAdaptors);
         emit NewConnection(objectPath);
-        kDebug() << "NewConnection" << objectPath.path();
     }
 }
 
@@ -205,7 +204,7 @@ void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
         // connection.  The system settings monitor NMDBusSettingsConnectionProvider does this for
         // its connections.
         if (d->uuidToPath.contains(ic->connectionUuid())) {
-            kDebug() << "tagging local InterfaceConnection";
+            kDebug() << "tagging local InterfaceConnection " << ic->connectionName() << SERVICE_USER_SETTINGS << d->uuidToPath[ic->connectionUuid()].path();
             ic->setProperty("NMDBusService", SERVICE_USER_SETTINGS);
             ic->setProperty("NMDBusObjectPath", d->uuidToPath[ic->connectionUuid()].path());
         }
@@ -214,7 +213,6 @@ void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
 
 void NMDBusSettingsService::interfaceConnectionActivated()
 {
-    Q_D(NMDBusSettingsService);
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
 
     if (ic) {

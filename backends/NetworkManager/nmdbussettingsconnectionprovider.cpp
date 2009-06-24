@@ -203,7 +203,7 @@ void NMDBusSettingsConnectionProvider::handleAdd(Knm::Activatable * added)
         // if derived from one of our connections, tag it with the service and object path of the
         // connection
         if (d->uuidToPath.contains(ic->connectionUuid())) {
-            kDebug() << "tagging InterfaceConnection from" << d->serviceName;
+            kDebug() << "tagging InterfaceConnection " << ic->connectionName() << "from" << d->serviceName << d->uuidToPath[ic->connectionUuid()].path();
             ic->setProperty("NMDBusService", d->serviceName );
             ic->setProperty("NMDBusObjectPath", d->uuidToPath[ic->connectionUuid()].path());
         }
