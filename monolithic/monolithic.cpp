@@ -38,6 +38,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nmdbussettingsservice.h"
 #include "nmdbusactiveconnectionmonitor.h"
+#include "nmdbussettingsconnectionprovider.h"
 
 #include "simpleui.h"
 
@@ -66,7 +67,9 @@ int main( int argc, char** argv )
     ActivatableList * activatableList;
     // NetworkManager settings service
     NMDBusSettingsService * settingsService;
+    // update interfaceconnections with status info from NetworkManager
     NMDBusActiveConnectionMonitor * connectionMonitor;
+    NMDBusSettingsConnectionProvider * dbusConnectionProvider;
 
     connectionList = new ConnectionList(&app);
     listPersistence = new ConnectionListPersistence(connectionList);
@@ -80,6 +83,7 @@ int main( int argc, char** argv )
     activatableList = new ActivatableList(connectionList);
 
     connectionMonitor = new NMDBusActiveConnectionMonitor(activatableList, settingsService);
+
 
     // debug activatable changes
     ActivatableDebug * debug = new ActivatableDebug(&app);
@@ -97,6 +101,8 @@ int main( int argc, char** argv )
     activatableList->connectObserver(settingsService);
 
     listPersistence->init();
+
+    dbusConnectionProvider = new NMDBusSettingsConnectionProvider(connectionList, activatableList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, connectionList);
 
     // problem setting this as a child of connectionList or of activatableList since it has
     // references to both and NetworkInterfaceActivatableProvider touches the activatableList

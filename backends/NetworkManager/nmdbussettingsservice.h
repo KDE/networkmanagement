@@ -49,6 +49,7 @@ public:
     NMDBusSettingsService(QObject * parent = 0);
     virtual ~NMDBusSettingsService();
     static const QString SERVICE_USER_SETTINGS;
+    static const QString SERVICE_SYSTEM_SETTINGS;
     void handleAdd(Knm::Connection *);
     void handleUpdate(Knm::Connection *);
     void handleRemove(Knm::Connection *);

@@ -1,3 +1,5 @@
+#ifndef NMDBUSSETTINGSSERVICE_CPP
+#define NMDBUSSETTINGSSERVICE_CPP
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
 
@@ -51,6 +53,7 @@ public:
 };
 
 const QString NMDBusSettingsService::SERVICE_USER_SETTINGS = QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS);
+const QString NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS = QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS);
 
 NMDBusSettingsService::NMDBusSettingsService(QObject * parent) : ActivatableObserver(parent), d_ptr(new NMDBusSettingsServicePrivate)
 {
@@ -143,21 +146,26 @@ void NMDBusSettingsService::serviceUnregistered(const QString & name)
 void NMDBusSettingsService::handleAdd(Knm::Connection * added)
 {
     Q_D(NMDBusSettingsService);
-    // put it on our bus 
-    QDBusObjectPath objectPath;
-    BusConnection * busConn = new BusConnection(added, this);
-    new ConnectionAdaptor(busConn);
-    new SecretsAdaptor(busConn);
 
-    objectPath = QDBusObjectPath(nextObjectPath());
-    // important - make sure all 3 hashes are up to date!
-    d->pathToConnections.insert(objectPath, busConn);
-    d->uuidToConnections.insert(added->uuid(), busConn);
-    d->uuidToPath.insert(added->uuid(), objectPath);
+    // only handle connections that come from local storage, not those from the system settings
+    // service
+    if (added->origin() == QLatin1String("ConnectionListPersistence")) {
+        // put it on our bus 
+        QDBusObjectPath objectPath;
+        BusConnection * busConn = new BusConnection(added, this);
+        new ConnectionAdaptor(busConn);
+        new SecretsAdaptor(busConn);
 
-    QDBusConnection::systemBus().registerObject(objectPath.path(), busConn, QDBusConnection::ExportAdaptors);
-    emit NewConnection(objectPath);
-    kDebug() << "NewConnection" << objectPath.path();
+        objectPath = QDBusObjectPath(nextObjectPath());
+        // important - make sure all 3 hashes are up to date!
+        d->pathToConnections.insert(objectPath, busConn);
+        d->uuidToConnections.insert(added->uuid(), busConn);
+        d->uuidToPath.insert(added->uuid(), objectPath);
+
+        QDBusConnection::systemBus().registerObject(objectPath.path(), busConn, QDBusConnection::ExportAdaptors);
+        emit NewConnection(objectPath);
+        kDebug() << "NewConnection" << objectPath.path();
+    }
 }
 
 void NMDBusSettingsService::handleUpdate(Knm::Connection * updated)
@@ -194,9 +202,10 @@ void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
         connect(ic, SIGNAL(activated()), this, SLOT(interfaceConnectionActivated()));
 
         // if derived from one of our connections, tag it with the service and object path of the
-        // connection
+        // connection.  The system settings monitor NMDBusSettingsConnectionProvider does this for
+        // its connections.
         if (d->uuidToPath.contains(ic->connectionUuid())) {
-            kDebug() << "tagging new InterfaceConnection";
+            kDebug() << "tagging local InterfaceConnection";
             ic->setProperty("NMDBusService", SERVICE_USER_SETTINGS);
             ic->setProperty("NMDBusObjectPath", d->uuidToPath[ic->connectionUuid()].path());
         }
@@ -207,20 +216,12 @@ void NMDBusSettingsService::interfaceConnectionActivated()
 {
     Q_D(NMDBusSettingsService);
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
-    // look up the object path for the activatable's uuid for a connection we provide
-    // this is a slow way to do it
+
     if (ic) {
-        if (d->uuidToConnections.contains(ic->connectionUuid())) {
-            BusConnection * busConn = d->uuidToConnections[ic->connectionUuid()];
-            if (busConn) {
-                QDBusObjectPath path = d->pathToConnections.key(busConn);
-                kDebug() << "activating connection" << ic->connectionName();
-                Solid::Control::NetworkManager::activateConnection(ic->deviceUni(),
-                        QString::fromLatin1("%1 %2").arg(SERVICE_USER_SETTINGS, path.path()),
-                        QVariantMap());
-            }
-        }
-        // TODO, look for the uuid in the system settings connections
+        Solid::Control::NetworkManager::activateConnection(ic->deviceUni(),
+                QString::fromLatin1("%1 %2")
+                .arg(ic->property("NMDBusService").toString(), ic->property("NMDBusObjectPath").toString()),
+                QVariantMap());
     }
 }
 
@@ -258,3 +259,4 @@ inline bool operator<(const QDBusObjectPath &lhs, const QDBusObjectPath &rhs)
 { return lhs.path() < rhs.path(); }
 #endif
 
+#endif // NMDBUSSETTINGSSERVICE_CPP

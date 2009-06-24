@@ -193,7 +193,7 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
     QString connName = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_ID)).toString();
     QUuid uuid(connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_UUID)).toString());
     QString dbusConnectionType = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_TYPE)).toString();
-#if 0
+
     Connection::Type type = Connection::Wired;
     if (dbusConnectionType == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
         type = Connection::Wired;
@@ -208,10 +208,10 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
     } else if (dbusConnectionType == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
         type = Connection::Pppoe;
     }
-#endif
+
     m_connection->setName(connName);
-    //m_connection->setUuid(uuid);
-    //m_connection->setType(type);
+    m_connection->setUuid(uuid);
+    m_connection->setType(type);
 
     // all other settings
     foreach (Setting * setting, m_connection->settings()) {
