@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KLocale>
 #include <KMenu>
+#include <KStandardAction>
+#include <KToolInvocation>
 
 #include "activatable.h"
 #include "activatabledebug.h"
@@ -42,10 +44,14 @@ SimpleUi::SimpleUi(ActivatableList * list, QObject * parent)
 {
     m_notificationItem = new Experimental::KNotificationItem(this);
     m_notificationItem->setCategory(Experimental::KNotificationItem::Hardware);
-    m_notificationItem->setTitle("Network Management");
+    m_notificationItem->setTitle(i18nc("Popup title", "Network Management"));
     m_notificationItem->setIconByName("networkmanager");
     m_popup = new KMenu("Title", 0);
     m_notificationItem->setAssociatedWidget(m_popup);
+    KMenu * menu = m_notificationItem->contextMenu();
+    KAction * prefsAction = KStandardAction::preferences(this, SLOT(slotPreferences()), this);
+    prefsAction->setText(i18nc("Preferences action title", "Manage Connections..."));
+    menu->addAction(prefsAction);
 }
 
 SimpleUi::~SimpleUi()
@@ -139,4 +145,12 @@ QString SimpleUi::iconForActivatable(Knm::Activatable * activatable)
     return iconName;
 
 }
-    // vim: sw=4 sts=4 et tw=100
+
+void SimpleUi::slotPreferences()
+{
+    QStringList args;
+    args << "kcm_networkmanagement";
+    KToolInvocation::kdeinitExec("kcmshell4", args);
+}
+
+// vim: sw=4 sts=4 et tw=100

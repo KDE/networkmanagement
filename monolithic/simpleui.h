@@ -48,6 +48,7 @@ protected slots:
     void handleRemove(Knm::Activatable *);
     void activatableActionTriggered();
     void updateActionState(Knm::Activatable * changed, QAction * action);
+    void slotPreferences();
 private:
     static QString iconForActivatable(Knm::Activatable *);
     Experimental::KNotificationItem * m_notificationItem;
