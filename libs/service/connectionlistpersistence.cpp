@@ -118,6 +118,8 @@ Knm::Connection * ConnectionListPersistence::restoreConnection(const QString & c
         cp.load();
         connection = cp.connection();
         Q_ASSERT(connection->uuid() == connectionId);
+        // set the origin of this connection
+        connection->setOrigin(QLatin1String("ConnectionListPersistence"));
     }
 
     return connection;
@@ -161,20 +163,28 @@ void ConnectionListPersistence::configure(const QStringList& changedConnections)
     KNetworkManagerServicePrefs::self()->readConfig();
     QStringList addedConnections, deletedConnections;
     // figure out which connections were added
-    QStringList existingConnections = d->list->connections();
+    QStringList allConnections = d->list->connections();
+    QStringList localConnections;
+    foreach (QString connectionId, allConnections) {
+        Knm::Connection * connection = d->list->findConnection(connectionId);
+        if (connection->origin() == QLatin1String("ConnectionListPersistence")) {
+            localConnections.append(connectionId);
+        }
+    }
+
     QStringList onDiskConnections = KNetworkManagerServicePrefs::self()->connections();
-    qSort(existingConnections);
+    qSort(localConnections);
     qSort(onDiskConnections);
-    kDebug() << "existing connections are:" << existingConnections;
+    kDebug() << "known local connections are:" << localConnections;
     kDebug() << "on-disk connections are:" << onDiskConnections;
 
     foreach (QString connectionId, onDiskConnections) {
-        if (!existingConnections.contains(connectionId)) {
+        if (!localConnections.contains(connectionId)) {
             addedConnections.append(connectionId);
         }
     }
     // figure out which connections were deleted
-    foreach (QString connectionId, existingConnections) {
+    foreach (QString connectionId, localConnections) {
         if (!onDiskConnections.contains(connectionId)) {
             deletedConnections.append(connectionId);
         }
@@ -207,7 +217,7 @@ void ConnectionListPersistence::handleUpdate(Knm::Connection * connection)
 {
     Q_D(ConnectionListPersistence);
 
-    if (connection && !d->ignoreChangedConnections) {
+    if (connection && !d->ignoreChangedConnections && connection->origin() == QLatin1String("ConnectionListPersistence")) {
         QString uuid = connection->uuid();
         Knm::ConnectionPersistence cp(connection, connectionFileForUuid(uuid),
                 (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
