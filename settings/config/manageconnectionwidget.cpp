@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDateTime>
 #include <QFile>
 #include <QMenu>
+#include <QTimer>
 
 #include <KCModuleProxy>
 #include <KLocale>
