@@ -24,8 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 InterfaceConnection::InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent)
-: Activatable(Activatable::Connection, deviceUni, parent), m_uuid(connectionUuid), m_name(connectionName)
-
+: Activatable(Activatable::Connection, deviceUni, parent), m_uuid(connectionUuid), m_name(connectionName), m_state(InterfaceConnection::Unknown)
 {
 }
 
