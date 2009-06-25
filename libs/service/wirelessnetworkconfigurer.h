@@ -23,6 +23,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatableobserver.h"
 
+#include <solid/control/wirelessaccesspoint.h>
+
 #include "knm_export.h"
 
 class WirelessNetworkConfigurerPrivate;
@@ -38,12 +40,16 @@ public:
     ~WirelessNetworkConfigurer();
 public Q_SLOTS:
     /**
-     * Listen to newly added WirelessNetworkItems' activated signals and configure networks for them
-     * examine newly added WirelessInterfaceConnections and activate them if they match the
+     * 1) Listen to newly added WirelessNetworkItems' activated signals and configure networks for them
+     * 2) examine newly added WirelessInterfaceConnections and activate them if they match the
      * previously activated WirelessNetworkItem
      * @reimp ActivatableObserver
      */
     void handleAdd(Knm::Activatable *);
+    /**
+     * Create a connection to a hidden wireless network
+     */
+    void configureHiddenWirelessNetwork(const QString & ssid, const QString & deviceUni);
     /**
      * noop impl
      * @reimp ActivatableObserver
@@ -58,6 +64,7 @@ public Q_SLOTS:
 protected Q_SLOTS:
     void wirelessNetworkItemActivated();
 private:
+    void configureWirelessNetworkInternal(const QString & ssid, const QString & deviceUni, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags);
     Q_DECLARE_PRIVATE(WirelessNetworkConfigurer);
     WirelessNetworkConfigurerPrivate * d_ptr;
 };

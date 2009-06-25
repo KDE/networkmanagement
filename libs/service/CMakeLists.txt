@@ -44,6 +44,8 @@ set(knmservice_SRCS
 
    # updates connection state as they are used
    connectionusagemonitor.cpp
+
+   hiddenwirelessnetworkitem.cpp
    )
 
 kde4_add_library(knmservice SHARED ${knmservice_SRCS})
