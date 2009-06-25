@@ -38,7 +38,7 @@ public:
     virtual void setStrength(int strength);
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
-private:
+protected:
     QString m_ssid;
     int m_strength;
     Solid::Control::AccessPoint::WpaFlags m_wpaFlags;
