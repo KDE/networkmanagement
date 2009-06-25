@@ -47,8 +47,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionpersistence.h"
 #include "connectionprefs.h"
 
-#include "dbus/nm-active-connectioninterface.h"
-#include "dbus/nm-exported-connectioninterface.h"
+//#include "dbus/nm-active-connectioninterface.h"
+//#include "dbus/nm-exported-connectioninterface.h"
 
 #define ConnectionIdRole 1812
 #define ConnectionTypeRole 1066
@@ -442,6 +442,7 @@ void ManageConnectionWidget::connectionTypeMenuTriggered(QAction* action)
 
 void ManageConnectionWidget::activeConnectionsChanged()
 {
+#if 0
     // indicate which connections are in use right now
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
     foreach (QString conn, activeConnections) {
@@ -486,6 +487,7 @@ void ManageConnectionWidget::activeConnectionsChanged()
             }
         }
     }
+#endif
 }
 
 void ManageConnectionWidget::updateLastUsed()
