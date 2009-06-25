@@ -44,11 +44,11 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
 
     QString string;
     switch (activatable->activatableType()) {
-        case Knm::Activatable::Connection:
+        case Knm::Activatable::InterfaceConnection:
             ic = qobject_cast<Knm::InterfaceConnection*>(activatable);
             string = QString::fromLatin1("InterfaceConnection %1 (%2) on %3 with state %4").arg(ic->connectionName(), ic->connectionUuid(),  ic->deviceUni(), QString::number((uint)ic->activationState()));
             break;
-        case Knm::Activatable::WirelessConnection:
+        case Knm::Activatable::WirelessInterfaceConnection:
             wic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
             string = QString::fromLatin1("WirelessConnection %1 (%2) on %3 with state %4 for network %5 with strength %6").arg(wic->connectionName(), wic->connectionUuid(), activatable->deviceUni(), QString::number(wic->activationState()), wic->ssid(), QString::number(wic->strength()));
             break;

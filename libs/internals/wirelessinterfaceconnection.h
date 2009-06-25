@@ -34,7 +34,11 @@ namespace Knm {
 
 class KNM_EXPORT WirelessInterfaceConnection : public InterfaceConnection, public WirelessItem
 {
-    Q_OBJECT
+Q_OBJECT
+Q_PROPERTY(QString ssid READ ssid)
+Q_PROPERTY(int strength READ strength)
+Q_PROPERTY(uint wpaFlags READ wpaFlags)
+Q_PROPERTY(uint rsnFlags READ rsnFlags)
 
 public:
     WirelessInterfaceConnection(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent);

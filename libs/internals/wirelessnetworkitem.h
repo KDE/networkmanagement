@@ -34,6 +34,10 @@ namespace Knm {
 class KNM_EXPORT WirelessNetworkItem : public Activatable, public WirelessItem
 {
 Q_OBJECT
+Q_PROPERTY(QString ssid READ ssid)
+Q_PROPERTY(int strength READ strength)
+Q_PROPERTY(uint wpaFlags READ wpaFlags)
+Q_PROPERTY(uint rsnFlags READ rsnFlags)
 public:
     WirelessNetworkItem(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QString & deviceUni, QObject * parent);
     virtual ~WirelessNetworkItem();

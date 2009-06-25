@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node>
+  <interface name="org.kde.networkmanagement.WirelessItem">
+    <method name="ssid">
+      <arg type="s" direction="out" />
+    </method>
+    <method name="strength">
+      <arg type="i" direction="out" />
+    </method>
+    <method name="wpaFlags">
+      <arg type="u" direction="out" />
+    </method>
+    <method name="rsnFlags">
+      <arg type="u" direction="out" />
+    </method>
+  </interface>
+</node>

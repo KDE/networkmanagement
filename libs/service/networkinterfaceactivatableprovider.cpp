@@ -131,6 +131,7 @@ void NetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedConne
         if (hardwareAddressMatches(addedConnection, d->interface)) {
             if (matches(addedConnection->type(), d->interface->type())) {
                 Knm::InterfaceConnection * ifaceConnection = new Knm::InterfaceConnection(addedConnection->uuid(), addedConnection->name(), d->interface->uni(), this);
+                ifaceConnection->setConnectionType(addedConnection->type());
                 d->activatables.insert(addedConnection->uuid(), ifaceConnection);
                 d->activatableList->addActivatable(ifaceConnection);
             } else {

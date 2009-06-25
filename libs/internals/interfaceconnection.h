@@ -36,6 +36,10 @@ namespace Knm {
 class KNM_EXPORT InterfaceConnection : public Activatable
 {
 Q_OBJECT
+Q_PROPERTY(uint type READ connectionType)
+Q_PROPERTY(QString uuid READ connectionUuid)
+Q_PROPERTY(QString name READ connectionName)
+Q_PROPERTY(uint activationState READ activationState)
 
 public:
     enum ActivationState { Unknown, Activating, Activated };

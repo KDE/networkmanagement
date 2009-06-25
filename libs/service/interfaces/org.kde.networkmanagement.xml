@@ -1,0 +1,16 @@
+<!DOCTYPE node PUBLIC "-//freedesktop//DTD D-BUS Object Introspection 1.0//EN" "http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd">
+<node>
+  <interface name="org.kde.networkmanagement">
+    <!-- Re-read configuration -->
+    <method name="ListActivatables">
+      <arg type="as" direction="out"/>
+    </method>
+ 
+    <signal name="ActivatableAdded">
+	  <arg name="added" type="s" direction="out" />
+    </signal>
+    <signal name="ActivatableRemoved">
+	  <arg name="removed" type="s" direction="out" />
+    </signal>
+  </interface>
+</node>

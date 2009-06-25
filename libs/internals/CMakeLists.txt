@@ -71,36 +71,6 @@ set(knminternals_SRCS
 
 kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)
 
-if(FALSE)
-qt4_add_dbus_adaptor(
-    knminternals_SRCS
-    interfaces/org.kde.networkmanagement.connectable.xml
-    connectable.h
-    Knm::Connectable
-)
-
-qt4_add_dbus_adaptor(
-    knminternals_SRCS
-    interfaces/org.kde.networkmanagement.interfaceconnection.xml
-    interfaceconnection.h
-    Knm::InterfaceConnection
-)
-
-qt4_add_dbus_adaptor(
-    knminternals_SRCS
-    interfaces/org.kde.networkmanagement.wirelessinterfaceconnection.xml
-    wirelessinterfaceconnection.h
-    Knm::WirelessInterfaceConnection
-)
-
-qt4_add_dbus_adaptor(
-    knminternals_SRCS
-    interfaces/org.kde.networkmanagement.wirelessnetworkitem.xml
-    wirelessnetworkitem.h
-    Knm::WirelessNetworkItem
-)
-endif(FALSE)
-
 kde4_add_library(knminternals SHARED ${knminternals_SRCS})
 
 target_link_libraries(knminternals ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} solidcontrol ${QT_QTNETWORK_LIBRARY})

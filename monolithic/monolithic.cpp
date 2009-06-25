@@ -41,6 +41,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "nmdbusactiveconnectionmonitor.h"
 #include "nmdbussettingsconnectionprovider.h"
 
+#include "sessionabstractedservice.h"
+
 #include "simpleui.h"
 
 static const char description[] =
@@ -123,6 +125,10 @@ int main( int argc, char** argv )
     // register after everything except debug
     SimpleUi * simpleUi = new SimpleUi(activatableList, &app);
     activatableList->registerObserver(simpleUi);
+
+    // put the activatables on the session bus for external applets
+    SessionAbstractedService * sessionAbstractedService = new SessionAbstractedService(activatableList, &app);
+    activatableList->registerObserver(sessionAbstractedService);
 
     // load our local connections
     listPersistence->init();

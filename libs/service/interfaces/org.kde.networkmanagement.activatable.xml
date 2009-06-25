@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<node>
+  <interface name="org.kde.networkmanagement.Activatable">
+    <method name="activatableType">
+      <arg name="type" type="u" direction="out" />
+    </method>
+    <method name="deviceUni">
+      <arg name="uni" type="s" direction="out" />
+    </method>
+    <method name="activate"/>
+    <signal name="activated"/>
+    <signal name="changed"/>
+    <property name="deviceUni" type="s" access="read"/>
+    <property name="type" type="u" access="read"/>
+  </interface>
+</node>

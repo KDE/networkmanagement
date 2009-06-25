@@ -2,7 +2,7 @@
 
 <node>
   <interface name="org.kde.networkmanagement.InterfaceConnection">
-    <method name="connectionUni">
+    <method name="connectionUuid">
       <arg name="uni" type="s" direction="out" />
     </method>
     <method name="connectionType">
@@ -11,9 +11,13 @@
     <method name="connectionName">
       <arg name="name" type="s" direction="out" />
     </method>
-    <method name="connectionState">
+    <method name="activationState">
       <arg name="uni" type="i" direction="out" />
     </method>
-    <signal name="connectionStateChanged" />
+    <signal name="activatableStateChanged" />
+    <property name="type" type="u" access="read"/>
+    <property name="uuid" type="s" access="read"/>
+    <property name="name" type="s" access="read"/>
+    <property name="activationState" type="u" access="read"/>
   </interface>
 </node>

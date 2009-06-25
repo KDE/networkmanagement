@@ -91,12 +91,12 @@ void SimpleUi::updateActionState(Knm::Activatable * activatable, QAction * actio
 
     if (activatable && action) {
         switch (activatable->activatableType()) {
-            case Knm::Activatable::Connection:
+            case Knm::Activatable::InterfaceConnection:
                 ic = qobject_cast<Knm::InterfaceConnection*>(activatable);
                 action->setChecked((ic->activationState() != Knm::InterfaceConnection::Unknown));
                 actionText = QString::fromLatin1("%1").arg(ic->connectionName());
                 break;
-            case Knm::Activatable::WirelessConnection:
+            case Knm::Activatable::WirelessInterfaceConnection:
                 wic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
                 action->setChecked((wic->activationState() != Knm::InterfaceConnection::Unknown));
                 actionText = QString::fromLatin1("%1 (%2)").arg(wic->connectionName(), QString::number(wic->strength()));
@@ -134,10 +134,10 @@ QString SimpleUi::iconForActivatable(Knm::Activatable * activatable)
 //X     Knm::WirelessNetworkItem * wni;
 
     switch (activatable->activatableType()) {
-        case Knm::Activatable::Connection:
+        case Knm::Activatable::InterfaceConnection:
             iconName = QLatin1String("network-wired");
             break;
-        case Knm::Activatable::WirelessConnection:
+        case Knm::Activatable::WirelessInterfaceConnection:
 //X             wic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
             iconName = QLatin1String("preferences-other");
             break;

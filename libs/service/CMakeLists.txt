@@ -45,7 +45,56 @@ set(knmservice_SRCS
    # updates connection state as they are used
    connectionusagemonitor.cpp
 
+   # experimental
    hiddenwirelessnetworkitem.cpp
+
+   # exports activatables on the session bus to Plasmoids etc
+   sessionabstractedservice.cpp
+   )
+
+
+qt4_add_dbus_adaptor(
+    knmservice_SRCS
+    interfaces/org.kde.networkmanagement.activatable.xml
+    activatable.h
+    Knm::Activatable
+    activatableadaptor
+    ActivatableAdaptor
+)
+
+qt4_add_dbus_adaptor(
+    knmservice_SRCS
+    interfaces/org.kde.networkmanagement.interfaceconnection.xml
+    interfaceconnection.h
+    Knm::InterfaceConnection
+    interfaceconnectionadaptor
+    InterfaceConnectionAdaptor
+)
+
+qt4_add_dbus_adaptor(
+    knmservice_SRCS
+    interfaces/org.kde.networkmanagement.wirelessinterfaceconnection.xml
+    wirelessinterfaceconnection.h
+    Knm::WirelessInterfaceConnection
+    wirelessinterfaceconnectionadaptor
+    WirelessInterfaceConnectionAdaptor
+)
+
+qt4_add_dbus_adaptor(
+    knmservice_SRCS
+    interfaces/org.kde.networkmanagement.wirelessnetworkitem.xml
+    wirelessnetworkitem.h
+    Knm::WirelessNetworkItem
+    wirelessnetworkitemadaptor
+    WirelessNetworkItemAdaptor
+)
+
+qt4_add_dbus_adaptor(knmservice_SRCS
+   interfaces/org.kde.networkmanagement.xml
+   sessionabstractedservice.h
+   SessionAbstractedService
+   sessionabstractedserviceadaptor
+   SessionAbstractedServiceAdaptor
    )
 
 kde4_add_library(knmservice SHARED ${knmservice_SRCS})

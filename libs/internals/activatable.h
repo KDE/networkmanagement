@@ -32,10 +32,12 @@ namespace Knm {
 class KNM_EXPORT Activatable : public QObject
 {
 Q_OBJECT
+Q_PROPERTY(QString deviceUni READ deviceUni)
+Q_PROPERTY(QString type READ activatableType)
 public:
     enum ActivatableType {
-        Connection,
-        WirelessConnection,
+        InterfaceConnection,
+        WirelessInterfaceConnection,
         WirelessNetworkItem
     };
 
