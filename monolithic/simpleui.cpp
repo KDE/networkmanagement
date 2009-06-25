@@ -52,6 +52,10 @@ SimpleUi::SimpleUi(ActivatableList * list, QObject * parent)
     KAction * prefsAction = KStandardAction::preferences(this, SLOT(slotPreferences()), this);
     prefsAction->setText(i18nc("Preferences action title", "Manage Connections..."));
     menu->addAction(prefsAction);
+
+    foreach (Knm::Activatable * activatable, list->activatables()) {
+        handleAdd(activatable);
+    }
 }
 
 SimpleUi::~SimpleUi()
@@ -63,10 +67,10 @@ void SimpleUi::handleAdd(Knm::Activatable * activatable)
     KAction * newAct = new KAction(this);
     newAct->setData(QVariant::fromValue(activatable));
     newAct->setIcon(KIcon(iconForActivatable(activatable)));
-    updateActionState(activatable, newAct);
     if (activatable->activatableType() != Knm::Activatable::WirelessNetworkItem) {
         newAct->setCheckable(true);
     }
+    updateActionState(activatable, newAct);
     m_actions.insert(activatable, newAct);
     m_popup->addAction(newAct);
     connect(newAct, SIGNAL(triggered(bool)), this, SLOT(activatableActionTriggered()));

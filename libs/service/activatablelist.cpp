@@ -29,6 +29,7 @@ class ActivatableListPrivate
 {
 public:
     QList<Knm::Activatable*> activatables;
+    QList<ActivatableObserver *> observers;
 };
 
 ActivatableList::ActivatableList(QObject * parent)
@@ -41,16 +42,28 @@ ActivatableList::~ActivatableList()
     delete d_ptr;
 }
 
-void ActivatableList::connectObserver(ActivatableObserver * observer)
+void ActivatableList::registerObserver(ActivatableObserver * observer, ActivatableObserver * insertAfter)
 {
-    QObject::connect(this, SIGNAL(activatableAdded(Knm::Activatable*)), observer, SLOT(handleAdd(Knm::Activatable*)));
-    QObject::connect(this, SIGNAL(activatableUpdated(Knm::Activatable*)), observer, SLOT(handleUpdate(Knm::Activatable*)));
-    QObject::connect(this, SIGNAL(activatableRemoved(Knm::Activatable*)), observer, SLOT(handleRemove(Knm::Activatable*)));
+    Q_D(ActivatableList);
+    if (observer) {
+        // each observer may only be registered once
+        if (d->observers.contains(observer)) {
+            return;
+        }
+
+        // inserts at end if insertAfter not found (therefore if it is 0)
+        QMutableListIterator<ActivatableObserver*> i(d->observers);
+        i.findNext(insertAfter);
+        i.insert(observer);
+    }
 }
 
-void ActivatableList::disconnectObserver(ActivatableObserver * observer)
+void ActivatableList::unregisterObserver(ActivatableObserver * observer)
 {
-    disconnect(observer);
+    Q_D(ActivatableList);
+    if (observer &&! !d->observers.isEmpty()) {
+        d->observers.removeOne(observer);
+    }
 }
 
 QList<Knm::Activatable*> ActivatableList::activatables() const
@@ -66,7 +79,9 @@ void ActivatableList::addActivatable(Knm::Activatable * activatable)
         d->activatables.append(activatable);
 
         connect(activatable, SIGNAL(changed()), this, SLOT(activatableChanged()));
-        emit activatableAdded(activatable);
+        foreach (ActivatableObserver * observer, d->observers) {
+            observer->handleAdd(activatable);
+        }
     }
 }
 
@@ -75,16 +90,24 @@ void ActivatableList::removeActivatable(Knm::Activatable * activatable)
     Q_D(ActivatableList);
     if (d->activatables.contains(activatable)) {
         d->activatables.removeOne(activatable);
-        emit activatableRemoved(activatable);
+        QListIterator<ActivatableObserver*> it(d->observers);
+        it.toBack();
+        while (it.hasPrevious()) {
+            ActivatableObserver * observer = it.previous();
+            observer->handleRemove(activatable);
+        }
     }
 }
 
 void ActivatableList::activatableChanged()
 {
+    Q_D(ActivatableList);
     Knm::Activatable * activatable = qobject_cast<Knm::Activatable*>(sender());
 
     if (activatable) {
-        emit activatableUpdated(activatable);
+        foreach (ActivatableObserver * observer, d->observers) {
+            observer->handleUpdate(activatable);
+        }
     }
 }
 

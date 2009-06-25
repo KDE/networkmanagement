@@ -42,7 +42,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class NMDBusSettingsConnectionProviderPrivate
 {
 public:
-    ActivatableList * activatableList;
     ConnectionList * connectionList;
     // hash of object path to object
     QHash<QString, QPair<Knm::Connection*, RemoteConnection*> > connections;
@@ -51,8 +50,8 @@ public:
     QString serviceName;
 };
 
-NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionList * connectionList, ActivatableList * activatableList, const QString & service, QObject * parent)
-    : QObject(parent), d_ptr(new NMDBusSettingsConnectionProviderPrivate)
+NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionList * connectionList, const QString & service, QObject * parent)
+    : ActivatableObserver(parent), d_ptr(new NMDBusSettingsConnectionProviderPrivate)
 {
     Q_D(NMDBusSettingsConnectionProvider);
     d->connectionList = connectionList;
@@ -69,14 +68,10 @@ NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionLis
     connect(QDBusConnection::systemBus().interface(),
             SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)),
             SLOT(serviceOwnerChanged(const QString&,const QString&,const QString&)));
-    // watch for our activatables so we can tag them 
-    connect(activatableList, SIGNAL(activatableAdded(Knm::Activatable*)), 
-            this, SLOT(handleAdd(Knm::Activatable*)));
 }
 
 NMDBusSettingsConnectionProvider::~NMDBusSettingsConnectionProvider()
 {
-
 }
 
 void NMDBusSettingsConnectionProvider::initConnections()
@@ -198,16 +193,25 @@ void NMDBusSettingsConnectionProvider::clearConnections()
 void NMDBusSettingsConnectionProvider::handleAdd(Knm::Activatable * added)
 {
     Q_D(NMDBusSettingsConnectionProvider);
-    Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(added);
-    if (ic) {
+    Knm::InterfaceConnection * interfaceConnection = qobject_cast<Knm::InterfaceConnection*>(added);
+    if (interfaceConnection) {
         // if derived from one of our connections, tag it with the service and object path of the
         // connection
-        if (d->uuidToPath.contains(ic->connectionUuid())) {
-            kDebug() << "tagging InterfaceConnection " << ic->connectionName() << "from" << d->serviceName << d->uuidToPath[ic->connectionUuid()].path();
-            ic->setProperty("NMDBusService", d->serviceName );
-            ic->setProperty("NMDBusObjectPath", d->uuidToPath[ic->connectionUuid()].path());
+        if (d->uuidToPath.contains(interfaceConnection->connectionUuid())) {
+            kDebug() << "tagging InterfaceConnection " << interfaceConnection->connectionName() << "from" << d->serviceName << d->uuidToPath[interfaceConnection->connectionUuid()].path();
+            interfaceConnection->setProperty("NMDBusService", d->serviceName );
+            interfaceConnection->setProperty("NMDBusObjectPath", d->uuidToPath[interfaceConnection->connectionUuid()].path());
         }
     }
+}
+
+void NMDBusSettingsConnectionProvider::handleUpdate(Knm::Activatable *)
+{
+
+}
+void NMDBusSettingsConnectionProvider::handleRemove(Knm::Activatable *)
+{
+
 }
 
 // vim: sw=4 sts=4 et tw=100

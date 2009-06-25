@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NMSYSTEMSETTINGSACTIVATABLEPROVIDER_H
 #define NMSYSTEMSETTINGSACTIVATABLEPROVIDER_H
 
-#include <QObject>
+#include "activatableobserver.h"
 
 #include <QDBusObjectPath>
 
@@ -34,7 +34,6 @@ namespace Knm
 
 typedef QMap<QString,QVariantMap> QVariantMapMap;
 
-class ActivatableList;
 class ConnectionList;
 class RemoteConnection;
 
@@ -43,13 +42,13 @@ class NMDBusSettingsConnectionProviderPrivate;
 /**
  * Class to cache and access a remote NetworkManagerSettings service
  */
-class KNM_EXPORT NMDBusSettingsConnectionProvider : public QObject
+class KNM_EXPORT NMDBusSettingsConnectionProvider : public ActivatableObserver
 // encapsulate
 //: public OrgFreedesktopNetworkManagerSettingsInterface
 {
 Q_OBJECT
 public:
-    NMDBusSettingsConnectionProvider(ConnectionList * connectionList, ActivatableList * activatableList, const QString & service, QObject * parent = 0);
+    NMDBusSettingsConnectionProvider(ConnectionList * connectionList, const QString & service, QObject * parent = 0);
     virtual ~NMDBusSettingsConnectionProvider();
     //QStringList connections() const;
     /**
@@ -89,6 +88,8 @@ private Q_SLOTS:
      * tag activatables coming from our connections with dbus object path etc
      */
     void handleAdd(Knm::Activatable * activatable);
+    void handleUpdate(Knm::Activatable * activatable);
+    void handleRemove(Knm::Activatable * activatable);
 private:
     void initialiseAndRegisterRemoteConnection(const QString & path);
     void makeConnections(RemoteConnection*);

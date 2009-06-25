@@ -63,58 +63,69 @@ int main( int argc, char** argv )
     // its loader/saver
     ConnectionListPersistence * listPersistence;
     // its dbus presence
-    ConnectionListPersistenceDBus * dbus;
+    ConnectionListPersistenceDBus * sessionDbusConfigureInterface;
     // list of things to show in the UI
     ActivatableList * activatableList;
+    // creates Activatables based on the state of network interfaces
+    NetworkInterfaceMonitor * networkInterfaceMonitor;
     // NetworkManager settings service
-    NMDBusSettingsService * settingsService;
+    // also calls NetworkManager via Solid when connections clicked
+    NMDBusSettingsService * nmSettingsService;
     // update interfaceconnections with status info from NetworkManager
-    NMDBusActiveConnectionMonitor * connectionMonitor;
-    NMDBusSettingsConnectionProvider * dbusConnectionProvider;
+    NMDBusActiveConnectionMonitor * nmActiveConnectionMonitor;
+    // get connections from NM's service
+    NMDBusSettingsConnectionProvider * nmDBusConnectionProvider;
+    // sets up wireless networks on click
+    WirelessNetworkConfigurer * wirelessConfigurer;
+    // update connections as they are used
+    ConnectionUsageMonitor * connectionUsageMonitor;
 
     connectionList = new ConnectionList(&app);
     listPersistence = new ConnectionListPersistence(connectionList);
-    settingsService = new NMDBusSettingsService(connectionList);
+
+    nmSettingsService = new NMDBusSettingsService(connectionList);
 
     connectionList->registerConnectionHandler(listPersistence);
-    connectionList->registerConnectionHandler(settingsService);
-
-    dbus = new ConnectionListPersistenceDBus(listPersistence, listPersistence);
+    connectionList->registerConnectionHandler(nmSettingsService);
 
     activatableList = new ActivatableList(connectionList);
 
-    connectionMonitor = new NMDBusActiveConnectionMonitor(activatableList, settingsService);
+    sessionDbusConfigureInterface = new ConnectionListPersistenceDBus(listPersistence, listPersistence);
 
+    wirelessConfigurer = new WirelessNetworkConfigurer(&app);
+    connectionUsageMonitor = new ConnectionUsageMonitor(connectionList, activatableList, activatableList);
 
-    // debug activatable changes
-    ActivatableDebug * debug = new ActivatableDebug(&app);
-    activatableList->connectObserver(debug);
+    nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, connectionList);
+    nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(activatableList, nmSettingsService);
 
-    // really simple UI
-    SimpleUi * simpleUi = new SimpleUi(activatableList, &app);
-    activatableList->connectObserver(simpleUi);
-
-    // sets up wireless networks on click
-    WirelessNetworkConfigurer * wirelessConfigurer = new WirelessNetworkConfigurer(&app);
-    activatableList->connectObserver(wirelessConfigurer);
-
-    // call NetworkManager when connections clicked
-    activatableList->connectObserver(settingsService);
-
-    listPersistence->init();
-
-    // get connections from NM's service
-    dbusConnectionProvider = new NMDBusSettingsConnectionProvider(connectionList, activatableList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, connectionList);
-
-    // problem setting this as a child of connectionList or of activatableList since it has
+    // there is a problem setting this as a child of connectionList or of activatableList since it has
     // references to both and NetworkInterfaceActivatableProvider touches the activatableList
     // in its dtor (needed so it cleans up when removed by the monitor)
     // ideally this will always be deleted before the other list
-    new NetworkInterfaceMonitor(connectionList, activatableList, activatableList);
+    networkInterfaceMonitor = new NetworkInterfaceMonitor(connectionList, activatableList, activatableList);
 
-    // update connections as they are used
-    ConnectionUsageMonitor * connectionUsageMonitor = new ConnectionUsageMonitor(connectionList, activatableList, activatableList);
-    activatableList->connectObserver(connectionUsageMonitor);
+    // generic observers
+    activatableList->registerObserver(wirelessConfigurer);
+    activatableList->registerObserver(connectionUsageMonitor);
+
+    activatableList->registerObserver(nmSettingsService);
+    activatableList->registerObserver(nmDBusConnectionProvider);
+
+    // register after nmSettingsService and nmDBusConnectionProvider because it relies on changes they
+    // make to interfaceconnections
+    activatableList->registerObserver(nmActiveConnectionMonitor);
+
+    // debug activatable changes
+    ActivatableDebug * debug = new ActivatableDebug(&app);
+    activatableList->registerObserver(debug);
+
+    // really simple UI
+    // register after everything except debug
+    SimpleUi * simpleUi = new SimpleUi(activatableList, &app);
+    activatableList->registerObserver(simpleUi);
+
+    // load our local connections
+    listPersistence->init();
 
     return app.exec();
 }

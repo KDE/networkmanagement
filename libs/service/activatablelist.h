@@ -44,14 +44,16 @@ public:
     void addActivatable(Knm::Activatable *);
     void removeActivatable(Knm::Activatable *);
     /**
-     * Syntactic sugar to connect activatable*() signals to standard slots
+     * Register an activatable observer.  ActivatableObservers encapsulate peripheral functionality.
+     * ActivatableObservers are called in a defined order.
+     * @param observer the observer to register.
+     * @param insertAfter the point in the activatable observer chain to insert at.  Inserts at end if 0
+     * is passed or if insertAfter is not found
+     *
+     * TODO: do we need separate observer lists for different operations?
      */
-    void connectObserver(ActivatableObserver *);
-    void disconnectObserver(ActivatableObserver *);
-signals:
-    void activatableAdded(Knm::Activatable *);
-    void activatableUpdated(Knm::Activatable *);
-    void activatableRemoved(Knm::Activatable *);
+    void registerObserver(ActivatableObserver * observer, ActivatableObserver * insertAfter = 0);
+    void unregisterObserver(ActivatableObserver *);
 protected Q_SLOTS:
     void activatableChanged();
 private:
