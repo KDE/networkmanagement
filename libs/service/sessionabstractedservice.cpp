@@ -81,7 +81,7 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
         d->adaptors.insert(added, path);
         QDBusConnection::sessionBus().registerObject(path, added);
         //kDebug() << "registering object at " << path;
-        emit ActivatableAdded(path);
+        emit ActivatableAdded(path, added->activatableType());
     }
 }
 

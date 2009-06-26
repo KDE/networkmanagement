@@ -12,3 +12,5 @@ add_subdirectory(ui)
 # library knmservice containing components for providing a connection service
 add_subdirectory(service)
 
+# library knmclient providing remote interfaces to Activatables provided by the service
+add_subdirectory(client)

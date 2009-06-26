@@ -54,7 +54,7 @@ public:
 public slots:
     Q_SCRIPTABLE QStringList ListActivatables() const;
 signals:
-    Q_SCRIPTABLE void ActivatableAdded(const QString &);
+    Q_SCRIPTABLE void ActivatableAdded(const QString & path, uint type);
     Q_SCRIPTABLE void ActivatableRemoved(const QString &);
 private:
     Q_DECLARE_PRIVATE(SessionAbstractedService)

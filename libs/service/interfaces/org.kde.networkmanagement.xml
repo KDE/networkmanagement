@@ -8,6 +8,7 @@
  
     <signal name="ActivatableAdded">
 	  <arg name="added" type="s" direction="out" />
+	  <arg name="type" type="u" direction="out" />
     </signal>
     <signal name="ActivatableRemoved">
 	  <arg name="removed" type="s" direction="out" />
