@@ -6,12 +6,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingpersistence.h"
-#include "knm_export.h"
+#include "knminternals_export.h"
 namespace Knm {
 
 class PppoeSetting;
 
-class KNM_EXPORT PppoePersistence : public SettingPersistence
+class KNMINTERNALS_EXPORT PppoePersistence : public SettingPersistence
 {
   public:
     PppoePersistence( PppoeSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode = ConnectionPersistence::Secure);

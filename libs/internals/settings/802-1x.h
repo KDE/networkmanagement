@@ -8,10 +8,10 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "setting.h"
-#include "knm_export.h"
+#include "knminternals_export.h"
 namespace Knm {
 
-class KNM_EXPORT Security8021xSetting : public Setting
+class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
 {
   public:
     class EnumPhase1peapver

@@ -6,12 +6,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingpersistence.h"
-#include "knm_export.h"
+#include "knminternals_export.h"
 namespace Knm {
 
 class SerialSetting;
 
-class KNM_EXPORT SerialPersistence : public SettingPersistence
+class KNMINTERNALS_EXPORT SerialPersistence : public SettingPersistence
 {
   public:
     SerialPersistence( SerialSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode = ConnectionPersistence::Secure);

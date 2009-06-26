@@ -21,13 +21,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KNM_INTERNALS_SETTING_H
 #define KNM_INTERNALS_SETTING_H
 
-#include "knm_export.h"
+#include "knminternals_export.h"
 
 
 namespace Knm
 {
 
-class KNM_EXPORT Setting
+class KNMINTERNALS_EXPORT Setting
 {
 public:
     enum Type { Cdma, Gsm, Ipv4, Ipv6, Ppp, Pppoe, Security8021x, Serial, Vpn, Wired, Wireless, WirelessSecurity };

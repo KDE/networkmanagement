@@ -7,11 +7,11 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "setting.h"
-#include "knm_export.h"
+#include "knminternals_export.h"
 #include "../types.h"
 namespace Knm {
 
-class KNM_EXPORT VpnSetting : public Setting
+class KNMINTERNALS_EXPORT VpnSetting : public Setting
 {
   public:
 

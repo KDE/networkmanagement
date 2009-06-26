@@ -28,12 +28,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "setting.h"
 
-#include "knm_export.h"
+#include "knminternals_export.h"
 
 namespace Knm
 {
 
-class KNM_EXPORT Connection
+class KNMINTERNALS_EXPORT Connection
 {
 public:
     enum Type { Wired = 1, Wireless, Gsm, Cdma, Vpn, Pppoe };

@@ -20,11 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QString>
 
-#include "knm_export.h"
+#include "knminternals_export.h"
 #include <QtGui/qwindowdefs.h> // krazy:exclude=includes (for WId)
 
 
-class KNM_EXPORT SecretStorageHelper
+class KNMINTERNALS_EXPORT SecretStorageHelper
 {
 public:
     SecretStorageHelper( const QString &connectionName, const QString &settingGroup);

@@ -6,12 +6,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingpersistence.h"
-#include "knm_export.h"
+#include "knminternals_export.h"
 namespace Knm {
 
 class GsmSetting;
 
-class KNM_EXPORT GsmPersistence : public SettingPersistence
+class KNMINTERNALS_EXPORT GsmPersistence : public SettingPersistence
 {
   public:
     GsmPersistence( GsmSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode = ConnectionPersistence::Secure);

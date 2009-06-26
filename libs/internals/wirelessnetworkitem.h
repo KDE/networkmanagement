@@ -27,11 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QString>
 #include <QObject>
 
-#include "knm_export.h"
+#include "knminternals_export.h"
 
 namespace Knm {
 
-class KNM_EXPORT WirelessNetworkItem : public Activatable, public WirelessItem
+class KNMINTERNALS_EXPORT WirelessNetworkItem : public Activatable, public WirelessItem
 {
 Q_OBJECT
 Q_PROPERTY(QString ssid READ ssid)

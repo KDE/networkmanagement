@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KSharedConfig>
 
-#include "knm_export.h"
+#include "knminternals_export.h"
 
 namespace Knm
 {
@@ -35,7 +35,7 @@ class Connection;
 class Setting;
 class SettingPersistence;
 
-class KNM_EXPORT ConnectionPersistence : public QObject
+class KNMINTERNALS_EXPORT ConnectionPersistence : public QObject
 {
 Q_OBJECT
 public:

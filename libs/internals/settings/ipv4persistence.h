@@ -6,12 +6,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingpersistence.h"
-#include "knm_export.h"
+#include "knminternals_export.h"
 namespace Knm {
 
 class Ipv4Setting;
 
-class KNM_EXPORT Ipv4Persistence : public SettingPersistence
+class KNMINTERNALS_EXPORT Ipv4Persistence : public SettingPersistence
 {
   public:
     Ipv4Persistence( Ipv4Setting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode = ConnectionPersistence::Secure);

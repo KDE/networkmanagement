@@ -6,12 +6,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingpersistence.h"
-#include "knm_export.h"
+#include "knminternals_export.h"
 namespace Knm {
 
 class CdmaSetting;
 
-class KNM_EXPORT CdmaPersistence : public SettingPersistence
+class KNMINTERNALS_EXPORT CdmaPersistence : public SettingPersistence
 {
   public:
     CdmaPersistence( CdmaSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode = ConnectionPersistence::Secure);

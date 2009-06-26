@@ -6,12 +6,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingpersistence.h"
-#include "knm_export.h"
+#include "knminternals_export.h"
 namespace Knm {
 
 class Security8021xSetting;
 
-class KNM_EXPORT Security8021xPersistence : public SettingPersistence
+class KNMINTERNALS_EXPORT Security8021xPersistence : public SettingPersistence
 {
   public:
     Security8021xPersistence( Security8021xSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode = ConnectionPersistence::Secure);

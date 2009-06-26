@@ -22,14 +22,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KNM_INTERNALS_ACTIVATABLE_H
 #define KNM_INTERNALS_ACTIVATABLE_H
 
-#include "knm_export.h"
+#include "knminternals_export.h"
 
 #include <QtCore/QObject>
 #include <QMetaType>
 
 namespace Knm {
 
-class KNM_EXPORT Activatable : public QObject
+class KNMINTERNALS_EXPORT Activatable : public QObject
 {
 Q_OBJECT
 Q_PROPERTY(QString deviceUni READ deviceUni)

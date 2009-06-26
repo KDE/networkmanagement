@@ -9,14 +9,14 @@
 #include <kcoreconfigskeleton.h>
 #include <solid/control/networkipv4config.h>
 #include "setting.h"
-#include "knm_export.h"
+#include "knminternals_export.h"
 
 Q_DECLARE_METATYPE(Solid::Control::IPv4Address)
 Q_DECLARE_METATYPE(Solid::Control::IPv4Route)
 
 namespace Knm {
 
-class KNM_EXPORT Ipv4Setting : public Setting
+class KNMINTERNALS_EXPORT Ipv4Setting : public Setting
 {
   public:
     class EnumMethod

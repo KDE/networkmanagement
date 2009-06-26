@@ -27,13 +27,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore/QString>
 #include <QUuid>
 
-#include "knm_export.h"
+#include "knminternals_export.h"
 
 #include "connection.h"
 
 namespace Knm {
 
-class KNM_EXPORT InterfaceConnection : public Activatable
+class KNMINTERNALS_EXPORT InterfaceConnection : public Activatable
 {
 Q_OBJECT
 Q_PROPERTY(uint type READ connectionType)

@@ -6,14 +6,14 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingpersistence.h"
-#include "knm_export.h"
+#include "knminternals_export.h"
 #include "../types.h"
 
 namespace Knm {
 
 class VpnSetting;
 
-class KNM_EXPORT VpnPersistence : public SettingPersistence
+class KNMINTERNALS_EXPORT VpnPersistence : public SettingPersistence
 {
   public:
     VpnPersistence( VpnSetting * setting, KSharedConfig::Ptr config, ConnectionPersistence::SecretStorageMode mode = ConnectionPersistence::Secure);

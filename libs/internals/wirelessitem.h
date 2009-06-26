@@ -24,11 +24,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QString>
 #include <solid/control/wirelessaccesspoint.h>
 
-#include "knm_export.h"
+#include "knminternals_export.h"
 
 namespace Knm
 {
-class KNM_EXPORT WirelessItem
+class KNMINTERNALS_EXPORT WirelessItem
 {
 public:
     WirelessItem(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags);
