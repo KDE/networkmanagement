@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Sebastian Kügler <sebas@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,7 +19,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wirelessconnectionitem.h"
+#include "wirelessinterfaceconnectionitem.h"
 #include <nm-setting-wireless.h>
 
 #include <QLabel>
@@ -35,21 +36,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
 
-#include "remoteconnection.h"
-#include "wirelessnetwork.h"
+#include "remotewirelessinterfaceconnection.h"
 
-WirelessConnectionItem::WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
-: ConnectionItem(conn, parent), m_connectButton(0),m_connection(conn),
-    m_wirelessNetwork(0), m_strengthMeter(0), m_securityIcon(0), m_strength(0)
+WirelessInterfaceConnectionItem::WirelessInterfaceConnectionItem(RemoteWirelessInterfaceConnection * remote, QGraphicsItem * parent)
+: InterfaceConnectionItem(remote, parent), m_connectButton(0), m_strengthMeter(0), m_securityIcon(0), m_strength(0)
 {
+    // TODO
+    #if 0
+    if ( ap->capabilities().testFlag( Solid::Control::AccessPoint::Privacy ) )
+        m_security = QLatin1String("wep"); // the minimum
+    #endif
+
+    Solid::Control::AccessPoint::WpaFlags wpaFlags = remote->wpaFlags();
+    Solid::Control::AccessPoint::WpaFlags rsnFlags = remote->rsnFlags();
+
+    // TODO: this was done by a clueless (coolo)
+    if ( wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
+         wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep104 ) )
+        m_security = QLatin1String("wep");
+
+    if ( wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+         wpaFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) )
+        m_security = QLatin1String("wpa-psk");
+
+    if ( rsnFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+         rsnFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) ||
+         rsnFlags.testFlag( Solid::Control::AccessPoint::PairCcmp ) )
+        m_security = QLatin1String("wpa-psk");
+
+    if ( wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmt8021x ) ||
+         wpaFlags.testFlag( Solid::Control::AccessPoint::GroupCcmp ) )
+        m_security = QLatin1String("wpa-eap");
 }
 
-void WirelessConnectionItem::setupItem()
+void WirelessInterfaceConnectionItem::setupItem()
 {
     readSettings();
-    m_ssid = m_connection->id();
-    kDebug() << "Connection Settings:" << m_connection->settings();
-    kDebug() << "Security:" << m_connection->type() << m_security;
+    m_ssid = wirelessInterfaceConnection()->ssid();
+    kDebug() << "Security:" << m_security;
     // painting of a non-active wifi network
     /*
     +----+-------------+-----+---+
@@ -104,29 +128,16 @@ void WirelessConnectionItem::setupItem()
     m_securityIcon->setMaximumHeight(22);
     m_layout->addItem(m_securityIcon, 0, 2, 1, 1, Qt::AlignLeft);
 
+    connect(wirelessInterfaceConnection(), SIGNAL(changed()), SLOT(update()));
     connect( m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 }
 
-WirelessConnectionItem::~WirelessConnectionItem()
+WirelessInterfaceConnectionItem::~WirelessInterfaceConnectionItem()
 {
 }
 
-void WirelessConnectionItem::setNetwork(AbstractWirelessNetwork * network)
+void WirelessInterfaceConnectionItem::setStrength(int strength)
 {
-    if (!network) {
-        return;
-    }
-    m_wirelessNetwork = network;
-    QString ssid = network->ssid();
-    if (m_connectButton && !ssid.isEmpty() && ssid != m_ssid) {
-        m_connectButton->setText(ssid);
-    }
-    connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString&, int)));
-}
-
-void WirelessConnectionItem::setStrength(QString ssid, int strength)
-{
-    Q_UNUSED(ssid);
     //kDebug() << ssid << "signal strength changed to " << strength;
     if (strength == m_strength) {
         return;
@@ -138,22 +149,8 @@ void WirelessConnectionItem::setStrength(QString ssid, int strength)
 }
 
 
-QString WirelessConnectionItem::ssid()
-{
-    return m_ssid;
-}
-
-void WirelessConnectionItem::readSettings() {
+void WirelessInterfaceConnectionItem::readSettings() {
     // from wirelessinterfaceitem, TODO: share this code in WirelessNetwork?
-    QVariantMapMap settings = m_connection->settings();
-    if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME))) {
-        QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME));
-        if (connectionSetting.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT))) {
-            m_security = connectionSetting.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT)).toString();
-        } else {
-            m_security = "wep";
-        }
-    }
     if (m_security.isEmpty()) {
         m_securityIconName = "security-low";
         m_securityIconToolTip = i18nc("no encryption in current network", "Unencrypted network");
@@ -173,6 +170,16 @@ void WirelessConnectionItem::readSettings() {
         m_securityIconName = QString(); // FIXME: Shouldn't we always have a security setting?
         m_securityIconToolTip = QString();
     }
+}
+
+RemoteWirelessInterfaceConnection * WirelessInterfaceConnectionItem::wirelessInterfaceConnection() const
+{
+    return static_cast<RemoteWirelessInterfaceConnection*>(m_activatable);
+}
+
+void WirelessInterfaceConnectionItem::update()
+{
+    setStrength(wirelessInterfaceConnection()->strength());
 }
 
 // vim: sw=4 sts=4 et tw=100

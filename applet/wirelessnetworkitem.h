@@ -22,11 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef APPLET_WIRELESSNETWORKITEM_H
 #define APPLET_WIRELESSNETWORKITEM_H
 
-#include "abstractconnectableitem.h"
+#include "activatableitem.h"
 
 class QGraphicsGridLayout;
-
-class AbstractWirelessNetwork;
 
 namespace Plasma
 {
@@ -35,30 +33,21 @@ namespace Plasma
     class Meter;
 }
 
-class AbstractWirelessNetworkItem : public AbstractConnectableItem
-{
-Q_OBJECT
-public:
-    AbstractWirelessNetworkItem(QGraphicsItem * parent = 0);
-    virtual ~AbstractWirelessNetworkItem();
-    AbstractWirelessNetwork * net() const;
-protected:
-    AbstractWirelessNetwork * m_wirelessNetwork;
-};
-
-/**
- * Represents an wireless network for which no connection exists
+class RemoteWirelessNetworkItem;
+/** * Represents an wireless network for which no connection exists
  */
-class WirelessNetworkItem : public AbstractWirelessNetworkItem
+class WirelessNetworkItem : public ActivatableItem
 {
 Q_OBJECT
 public:
-    WirelessNetworkItem(AbstractWirelessNetwork * net, QGraphicsItem * parent = 0);
+    WirelessNetworkItem(RemoteWirelessNetworkItem * remote, QGraphicsItem * parent = 0);
     virtual ~WirelessNetworkItem();
     void setupItem();
 private slots:
-    void setStrength(QString ssid, int strength);
+    void setStrength(int strength);
+    void update();
 private:
+    RemoteWirelessNetworkItem * wirelessNetworkItem() const;
     void readSettings();
     QGraphicsGridLayout * m_layout;
     Plasma::IconWidget * m_icon;
@@ -71,6 +60,7 @@ private:
     QString m_securityIconToolTip;
     int m_strength;
     QString m_ssid;
+    RemoteWirelessNetworkItem * m_remote;
 };
 
 #endif //#define APPLET_WIRELESSCONNECTIONITEM_H

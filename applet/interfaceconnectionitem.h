@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,26 +18,36 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef ABSTRACTCONNECTABLEITEM_H
-#define ABSTRACTCONNECTABLEITEM_H
+#ifndef APPLET_CONNECTIONITEM_H
+#define APPLET_CONNECTIONITEM_H
 
-#include <QGraphicsWidget>
+#include "activatableitem.h"
 
-class AbstractConnectableItem : public QGraphicsWidget
+class QGraphicsGridLayout;
+
+class RemoteInterfaceConnection;
+
+namespace Plasma
+{
+    class IconWidget;
+}
+
+/**
+ * Represents an inactive connection
+ */
+class InterfaceConnectionItem : public ActivatableItem
 {
 Q_OBJECT
 public:
-    AbstractConnectableItem(QGraphicsItem * parent = 0);
-    virtual ~AbstractConnectableItem();
-    virtual void setupItem() = 0;
-signals:
-    /**
-     * Indicate that the 'connect' button was clicked.  Used by the containing InterfaceGroup to
-     * tell the manager to activate the connection on one of its devices
-     */
-    void clicked(AbstractConnectableItem *);
-protected Q_SLOTS:
-    void emitClicked();
+    InterfaceConnectionItem(RemoteInterfaceConnection *, QGraphicsItem * parent = 0);
+    virtual ~InterfaceConnectionItem();
+    RemoteInterfaceConnection * interfaceConnection() const;
+    void setupItem();
+protected:
+    QGraphicsGridLayout * m_layout;
+    Plasma::IconWidget * m_icon;
+    Plasma::IconWidget * m_connectButton;
 };
 
-#endif // ABSTRACTCONNECTABLEITEM_H
+#endif //#define APPLET_CONNECTIONITEM_H
+

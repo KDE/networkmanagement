@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -31,17 +31,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class AbstractConnectableItem;
 class NetworkManagerSettings;
 class QGraphicsLinearLayout;
-class ConnectionItem;
-class RemoteConnection;
+class ActivatableItem;
 
-typedef QPair<QString,QString> QStringPair;
-typedef QHash<QStringPair, ConnectionItem*> ServiceConnectionHash;
+class RemoteActivatable;
+class RemoteActivatableList;
 
-class ConnectionList : public Plasma::ExtenderItem
+class ConnectionList: public Plasma::ExtenderItem
 {
 Q_OBJECT
 public:
-    ConnectionList(NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, Plasma::Extender * ext = 0);
+    ConnectionList(RemoteActivatableList *, Plasma::Extender * ext = 0);
     virtual ~ConnectionList();
 
     void init(); // fill connection list, after ctor has run so subclasses are initialised
@@ -55,23 +54,24 @@ public:
      * Add any items that should appear below it here
      */
     virtual void setupFooter() = 0; // puts the interfaceitems at the top if needed
-    virtual bool accept(RemoteConnection *) const = 0; // do type specific checks
-    virtual ConnectionItem * createItem(RemoteConnection * conn); // instantiate type-specific connectionitem
+    virtual bool accept(RemoteActivatable *) const = 0; // do type specific checks
+    virtual ActivatableItem * createItem(RemoteActivatable *); // instantiate type-specific connectionitem
     virtual QGraphicsItem * widget();
     bool isEmpty();
+    void reassess();
 
 public Q_SLOTS:
 
-    void reassess();
-    virtual void activateConnection(AbstractConnectableItem*) = 0;
-    void connectionAddedToService(NetworkManagerSettings *, const QString&);
-    void connectionRemovedFromService(NetworkManagerSettings *, const QString&);
+    //void reassess();
+    virtual void activate(ActivatableItem*) = 0;
+    void activatableAdded(RemoteActivatable *);
+    void activatableRemoved(RemoteActivatable *);
     /**
      * examine all connections from this service
      * @return true if a connection was added
      */
-    bool assessConnections(NetworkManagerSettings*);
-    void serviceDisappeared(NetworkManagerSettings*);
+    bool getList();
+    void listDisappeared();
 Q_SIGNALS:
     void connectionListUpdated();
 protected:
@@ -79,13 +79,11 @@ protected:
      * examine a connection
      * @return true if the connection was added to the list
      */
-    bool processConnection(NetworkManagerSettings * service, const QString& connectionPath); // check if already exists, accept() checks
-    NetworkManagerSettings * m_userSettings;
-    NetworkManagerSettings * m_systemSettings;
+    bool registerActivatable(RemoteActivatable*);
+    RemoteActivatableList * m_activatables;
     QGraphicsLinearLayout * m_layout;
     QGraphicsWidget * m_widget;
-    // list of connection objects for this interface type
-    ServiceConnectionHash m_connections;
+    QHash<RemoteActivatable*, ActivatableItem *> m_connections;
 private:
     void addSettingsService(NetworkManagerSettings*);
     QGraphicsLinearLayout * m_connectionLayout;

@@ -28,14 +28,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
 
-#include "nm-exported-connectioninterface.h"
 
-class AbstractWirelessNetwork;
 class HiddenWirelessNetworkItem;
-class WirelessConnectionInspector;
-class WirelessEnvironmentMerged;
-class WirelessNetworkItem;
 class InterfaceItem;
+class RemoteActivatable;
+class RemoteActivatableList;
+
 /** Represents a group of network interfaces of the same type
  * displays either a generic name of interface type (when representing a single interface)
  * or a specific interface name or model
@@ -44,10 +42,10 @@ class InterfaceGroup : public ConnectionList
 {
 Q_OBJECT
 public:
-    InterfaceGroup(Solid::Control::NetworkInterface::Type type, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, Plasma::Extender * ext = 0);
+    InterfaceGroup(Solid::Control::NetworkInterface::Type type, RemoteActivatableList * list, Plasma::Extender * ext = 0);
     virtual ~InterfaceGroup();
     Solid::Control::NetworkInterface::Type interfaceType() const;
-    bool accept(RemoteConnection *) const;
+    bool accept(RemoteActivatable*) const;
     void setupHeader();
     void setupFooter();
     void setNetworksLimit( int wlans );
@@ -60,9 +58,9 @@ public:
 public Q_SLOTS:
     void setEnabled(bool enabled);
 protected Q_SLOTS:
-    // reimplemented from ConnecitonList
-    void activateConnection(AbstractConnectableItem*);
-    void connectToWirelessNetwork(AbstractConnectableItem*);
+    // reimplemented from ConnectionList
+    void activate(ActivatableItem*);
+    //void connectToWirelessNetwork(AbstractConnectableItem*);
     virtual void interfaceAdded(const QString&);
     virtual void interfaceRemoved(const QString&);
     // used to re-populate the list of wireless networks, if necessary
@@ -76,19 +74,17 @@ private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
     void addWirelessNetworkInternal(const QString &ssid);
     // we only show the top N strongest networks, this controls which are visible
-    QList<AbstractWirelessNetwork*> networksToShow();
-    // reimplemented from ConnecitonList
-    ConnectionItem * createItem(RemoteConnection* conn);
+    //QList<AbstractWirelessNetwork*> networksToShow();
+    // reimplemented from ConnectionList
+    ActivatableItem * createItem(RemoteActivatable* conn);
     // list of interfaces
     QHash<QString, InterfaceItem *> m_interfaces;
-    QHash<QString, WirelessNetworkItem *> m_networks;
+    //QHash<QString, WirelessNetworkItem *> m_networks;
     HiddenWirelessNetworkItem * m_hiddenItem;
     Solid::Control::NetworkInterface::Type m_type;
     QGraphicsLinearLayout * m_interfaceLayout;
     QGraphicsLinearLayout * m_networkLayout;
     bool m_enabled;
     int m_numberOfWlans;
-    WirelessConnectionInspector * m_wirelessInspector;
-    WirelessEnvironmentMerged * m_wirelessEnvironment;
 };
 #endif // INTERFACEGROUP_H

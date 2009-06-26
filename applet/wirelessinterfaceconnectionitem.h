@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Sebastian Kügler <sebas@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -25,36 +26,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Plasma/IconWidget>
 
-#include "connectionitem.h"
-
-
-class RemoteConnection;
-class AbstractWirelessNetwork;
+#include "interfaceconnectionitem.h"
 
 namespace Plasma
 {
     class Meter;
 }
 
+class RemoteWirelessInterfaceConnection;
+
 /**
  * Represents an inactive connection
  */
-class WirelessConnectionItem : public ConnectionItem
+class WirelessInterfaceConnectionItem : public InterfaceConnectionItem
 {
 Q_OBJECT
 public:
-    WirelessConnectionItem(RemoteConnection * conn, QGraphicsItem * parent = 0);
-    virtual ~WirelessConnectionItem();
+    WirelessInterfaceConnectionItem(RemoteWirelessInterfaceConnection * conn, QGraphicsItem * parent = 0);
+    virtual ~WirelessInterfaceConnectionItem();
     void setupItem();
-    void setNetwork(AbstractWirelessNetwork * network);
-    QString ssid();
-protected:
-    RemoteConnection * m_connection;
+    //QString ssid();
 private slots:
-    void setStrength(QString ssid, int strength);
+    void setStrength(int strength);
+    void update();
 private:
     void readSettings();
-    AbstractWirelessNetwork * m_wirelessNetwork;
+    RemoteWirelessInterfaceConnection * wirelessInterfaceConnection() const;
     Plasma::Meter * m_strengthMeter;
     Plasma::IconWidget * m_securityIcon;
     QString m_security;

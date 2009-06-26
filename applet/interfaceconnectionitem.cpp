@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "connectionitem.h"
+#include "interfaceconnectionitem.h"
 
 #include <QGraphicsGridLayout>
 
@@ -27,13 +27,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkmanager.h>
 
-#include "remoteconnection.h"
-ConnectionItem::ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent)
-: AbstractConnectableItem(parent), m_connection(conn)
+#include "remoteinterfaceconnection.h"
+
+InterfaceConnectionItem::InterfaceConnectionItem(RemoteInterfaceConnection * conn, QGraphicsItem * parent)
+: ActivatableItem(conn, parent)
 {
 }
 
-void ConnectionItem::setupItem()
+void InterfaceConnectionItem::setupItem()
 {
     /*
     // painting of a non-active connection wired connection
@@ -52,13 +53,11 @@ void ConnectionItem::setupItem()
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setDrawBackground(true);
     m_connectButton->setIcon("network-wired");
-    m_connectButton->setText(m_connection->id());
+    m_connectButton->setText(interfaceConnection()->connectionName());
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setMaximumHeight(rowHeight);
     m_connectButton->setOrientation(Qt::Horizontal);
-#if KDE_IS_VERSION(4,2,60)
-    m_connectButton->setTextBackgroundColor(QColor());
-#endif
+
     //m_connectButton->setToolTip(i18nc("button to connect to wired network",
     //                                  "Connect to wired network %1", m_connection->id()));
     m_connectButton->setMinimumHeight(rowHeight);
@@ -74,14 +73,14 @@ void ConnectionItem::setupItem()
     connect( m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 }
 
-ConnectionItem::~ConnectionItem()
+InterfaceConnectionItem::~InterfaceConnectionItem()
 {
 
 }
 
-RemoteConnection * ConnectionItem::connection() const
+RemoteInterfaceConnection * InterfaceConnectionItem::interfaceConnection() const
 {
-    return m_connection;
+    return qobject_cast<RemoteInterfaceConnection*>(m_activatable);
 }
 
 // vim: sw=4 sts=4 et tw=100

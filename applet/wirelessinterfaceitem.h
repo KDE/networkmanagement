@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -34,9 +34,6 @@ namespace Control
 }
 }
 
-class WirelessEnvironment;
-class AbstractWirelessNetwork;
-
 /** Represents a wireless network interface in the popup
  * Provides custom UI for wireless connection status
  * Maintains a list of wireless networks visible to this network interface,
@@ -46,9 +43,9 @@ class WirelessInterfaceItem : public InterfaceItem
 {
 Q_OBJECT
 public:
-    WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent = 0);
+    WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent = 0);
     virtual ~WirelessInterfaceItem();
-    WirelessEnvironment * wirelessEnvironment() const;
+    //Solid::Control::FtuereWirelessEnvironment * wirelessEnvironment() const;
     /**
      * SSID of any active network, or an invalid QString if none
      */
@@ -60,7 +57,7 @@ public:
      * At the moment it only checks on SSID, but this should be extended to check on BSSIDs in the
      * network, as SSID is an insufficient uniqueness guarantee
      */
-    bool isUsing(const AbstractWirelessNetwork *) const;
+   // bool isUsing(const AbstractWirelessNetwork *) const;
 public Q_SLOTS:
     void activeAccessPointChanged(const QString&);
     void activeSignalStrengthChanged(int);
@@ -70,13 +67,10 @@ public Q_SLOTS:
 private:
     void setConnectionInfo();
 
-    /// Returns a list of connections that can be applied to available access points.
-    QList<RemoteConnection*> appropriateConnections(const QList<RemoteConnection*> &connections, const QList<Solid::Control::AccessPoint*> accesspoints) const;
-    /// returns a list of available accesspoint objects
+    // returns a list of available accesspoint objects
     QList<Solid::Control::AccessPoint*> availableAccessPoints() const;
 
     Solid::Control::WirelessNetworkInterface * m_wirelessIface;
     Solid::Control::AccessPoint * m_activeAccessPoint;
-    WirelessEnvironment * m_environment;
 };
 #endif // WIRELESSINTERFACEITEM_H

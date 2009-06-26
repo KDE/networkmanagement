@@ -18,37 +18,29 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef APPLET_CONNECTIONITEM_H
-#define APPLET_CONNECTIONITEM_H
+#ifndef ABSTRACTCONNECTABLEITEM_H
+#define ABSTRACTCONNECTABLEITEM_H
 
-#include "abstractconnectableitem.h"
+#include <QGraphicsWidget>
 
-class QGraphicsGridLayout;
+class RemoteActivatable;
 
-class RemoteConnection;
-
-namespace Plasma
-{
-    class IconWidget;
-    }
-
-/**
- * Represents an inactive connection
- */
-class ConnectionItem : public AbstractConnectableItem
+class ActivatableItem : public QGraphicsWidget
 {
 Q_OBJECT
 public:
-    ConnectionItem(RemoteConnection * conn, QGraphicsItem * parent = 0);
-    virtual ~ConnectionItem();
-    RemoteConnection * connection() const;
-    void setupItem();
+    ActivatableItem(RemoteActivatable *, QGraphicsItem * parent = 0);
+    virtual ~ActivatableItem();
+    virtual void setupItem() = 0;
+signals:
+    /** * Indicate that the 'connect' button was clicked.  Used by the containing InterfaceGroup to
+     * tell the manager to activate the connection on one of its devices
+     */
+    void clicked(ActivatableItem *);
+protected Q_SLOTS:
+    void emitClicked();
 protected:
-    RemoteConnection * m_connection;
-    QGraphicsGridLayout * m_layout;
-    Plasma::IconWidget * m_icon;
-    Plasma::IconWidget * m_connectButton;
+    RemoteActivatable * m_activatable;
 };
 
-#endif //#define APPLET_CONNECTIONITEM_H
-
+#endif // ABSTRACTCONNECTABLEITEM_H

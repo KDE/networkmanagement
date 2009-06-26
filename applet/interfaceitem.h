@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -39,11 +39,8 @@ namespace Solid
     } // namespace Control
 } // namespace Solid
 
-class ConnectionInspector;
-class NetworkManagerSettings;
-class RemoteConnection;
-// path of Connection.Active path on the daemon, remote connection object
-typedef QPair<QString, RemoteConnection*> ActiveConnectionPair;
+class RemoteInterfaceConnection;
+
 /**
  * Represents a single network interface
  * Displays status, updates itself
@@ -54,15 +51,12 @@ class InterfaceItem : public QGraphicsWidget
 Q_OBJECT
 public:
     enum NameDisplayMode {InterfaceName, HardwareName};
-    InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode = InterfaceName, QGraphicsItem* parent = 0);
+    InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode = InterfaceName, QGraphicsItem* parent = 0);
     virtual ~InterfaceItem();
+
     void setNameDisplayMode(NameDisplayMode);
     NameDisplayMode nameDisplayMode() const;
-    /**
-     * Each interface item maintains a connection inspector to approve connections
-     */
-    void setConnectionInspector(ConnectionInspector *);
-    ConnectionInspector * connectionInspector() const;
+
     virtual void setEnabled(bool enable);
     virtual QString ssid();
 
@@ -74,13 +68,11 @@ public Q_SLOTS:
      */
     virtual void connectButtonClicked() = 0;
 
-
 protected Q_SLOTS:
     /**
      * Remove any connections that were provided by this service
      * from our active connection list
      */
-    void serviceDisappeared(NetworkManagerSettings *service);
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
@@ -102,7 +94,7 @@ protected:
     /**
      * The interface is currently active, update the UI
      */
-    virtual void setActiveConnection(int);
+    //virtual void setActiveConnection(int);
     /**
      * Give us a pixmap for an icon
      */
@@ -116,13 +108,12 @@ protected:
     /**
      * Returns all available connections for the device type.
      */
-    QList<RemoteConnection*> availableConnections() const;
+    //QList<RemoteConnection*> availableConnections() const;
 
     void connectionStateChanged(int, bool silently);
 
     Solid::Control::NetworkInterface * m_iface;
-    NetworkManagerSettings * m_userSettings;
-    NetworkManagerSettings * m_systemSettings;
+
     //QGraphicsLinearLayout * m_layout; // use with nested linear based layouts, when they work
     QGraphicsGridLayout * m_layout;
     QGraphicsLinearLayout * m_infoLayout;
@@ -137,8 +128,7 @@ protected:
     Plasma::IconWidget * m_connectionInfoIcon;
     NameDisplayMode m_nameMode;
     bool m_enabled;
-    QList<ActiveConnectionPair> m_activeConnections;
-    ConnectionInspector * m_connectionInspector;
+
     QString m_unavailableText;
     QString m_interfaceName;
     bool m_disconnect;

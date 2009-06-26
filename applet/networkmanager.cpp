@@ -53,13 +53,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Extender>
 #include <Plasma/ExtenderItem>
 
+#include "remoteactivatablelist.h"
+
 #include "interfacegroup.h"
 #include "../libs/types.h"
-#include "vpnconnectiongroup.h"
-#include "networkmanagersettings.h"
+//#include "vpnconnectiongroup.h"
+//#include "networkmanagersettings.h"
 #include "interfaceitem.h"
 #include "generalextender.h"
 #include "events.h"
+
+
 
 K_EXPORT_PLASMA_APPLET(networkmanagement, NetworkManagerApplet)
 
@@ -101,10 +105,8 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     // not really interesting, for now we only care to kick the load-on-demand
     kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
 
-    m_userSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS), this);
-    m_userSettings->setObjectName("user-settings-service");
-    m_systemSettings = new NetworkManagerSettings(QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS), this);
-    m_systemSettings->setObjectName("system-settings-service");
+    m_activatableList = new RemoteActivatableList(this);
+
     // Now it is safe to create ExtenderItems and therefore InterfaceGroups
 
 }
@@ -143,6 +145,7 @@ void NetworkManagerApplet::init()
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
 
+    m_activatableList->init();
 }
 
 void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
@@ -170,7 +173,6 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
         }
     } else {
         kDebug() << "Unrecognised extender name!  Is the config from the future?";
-        //eItem->init();
     }
 }
 
@@ -732,7 +734,7 @@ void NetworkManagerApplet::showWired(bool show)
             eItem->destroy();
         }
         kDebug() << "SHOWING";
-        InterfaceGroup * eItem = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_userSettings, m_systemSettings, extender());
+        InterfaceGroup * eItem = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee8023, m_activatableList, extender());
         eItem->setName("wired");
         eItem->setIcon("network-wired");
         eItem->setTitle(i18nc("Label for ethernet group in popup","Wired Networking"));
@@ -753,7 +755,7 @@ void NetworkManagerApplet::showWireless(bool show)
             eItem->destroy();
         }
         kDebug() << "Showing wireless";
-        InterfaceGroup *eItem = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_userSettings, m_systemSettings, extender());
+        InterfaceGroup *eItem = new InterfaceGroup(Solid::Control::NetworkInterface::Ieee80211, m_activatableList, extender());
         eItem->setName("wireless");
         eItem->setIcon("network-wireless");
         eItem->setTitle(i18nc("Label for wifi networks in popup","Wireless Networking"));
@@ -767,6 +769,7 @@ void NetworkManagerApplet::showWireless(bool show)
 
 void NetworkManagerApplet::showVpn(bool show)
 {
+#if 0
     m_showVpn = show;
     Plasma::ExtenderItem *eItem = extender()->item("vpn");
     if (show) {
@@ -785,6 +788,7 @@ void NetworkManagerApplet::showVpn(bool show)
             eItem->destroy();
         }
     }
+#endif
 }
 
 void NetworkManagerApplet::showCellular(bool show)
@@ -793,7 +797,7 @@ void NetworkManagerApplet::showCellular(bool show)
     Plasma::ExtenderItem *gsmItem = extender()->item("gsm");
     if (show && hasInterfaceOfType(Solid::Control::NetworkInterface::Gsm)) {
         if (!gsmItem) {
-            InterfaceGroup * gsmItem = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_userSettings, m_systemSettings, extender());
+            InterfaceGroup * gsmItem = new InterfaceGroup(Solid::Control::NetworkInterface::Gsm, m_activatableList, extender());
             gsmItem->setName("gsm");
             gsmItem->setIcon("phone");
             gsmItem->setTitle(i18nc("Label for mobile broadband (GSM/CDMA/UMTS/HDSPA etc)","Mobile Broadband"));
@@ -807,7 +811,7 @@ void NetworkManagerApplet::showCellular(bool show)
     Plasma::ExtenderItem *cdmaItem = extender()->item("cdma");
     if (show && hasInterfaceOfType(Solid::Control::NetworkInterface::Cdma)) {
         if (!cdmaItem) {
-            InterfaceGroup * cdmaItem = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, m_userSettings, m_systemSettings, extender());
+            InterfaceGroup * cdmaItem = new InterfaceGroup(Solid::Control::NetworkInterface::Cdma, m_activatableList, extender());
             cdmaItem->setName("cdma");
             cdmaItem->setIcon("phone");
             cdmaItem->setTitle(i18nc("Label for mobile broadband (GSM/CDMA/UMTS/HDSPA etc)","Mobile Broadband"));

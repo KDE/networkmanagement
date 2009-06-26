@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 
 #include "../libs/types.h"
-#include "vpnconnectiongroup.h"
+//#include "vpnconnectiongroup.h"
 
 #include "ui_nmConfig.h"
 
@@ -46,7 +46,7 @@ namespace Plasma
 } // namespace Plasma
 
 class InterfaceGroup;
-class NetworkManagerSettings;
+class RemoteActivatableList;
 
 class NetworkManagerApplet : public Plasma::PopupApplet
 {
@@ -165,8 +165,6 @@ private:
     // Configuration dialog
     Ui::nmConfig ui;
 
-    NetworkManagerSettings * m_userSettings;
-    NetworkManagerSettings * m_systemSettings;
     InterfaceGroup * m_wifiGroup;
     bool m_showWired;
     bool m_showWireless;
@@ -174,6 +172,7 @@ private:
     bool m_showCellular;
     bool m_showGeneral;
     int m_numberWirelessShown;
+    RemoteActivatableList * m_activatableList;
 };
 
 #endif

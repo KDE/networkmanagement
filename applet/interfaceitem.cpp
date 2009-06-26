@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 Copyright 2008 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
@@ -42,15 +42,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkipv4config.h>
 #include <solid/control/networkmanager.h>
 
-#include "connectioninspector.h"
+//#include "connectioninspector.h"
 #include "events.h"
-#include "nm-active-connectioninterface.h"
+//#include "nm-active-connectioninterface.h"
 #include "networkmanager.h"
-#include "networkmanagersettings.h"
-#include "remoteconnection.h"
-#include "wirelessnetwork.h"
+//#include "remoteact.h"
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_userSettings(userSettings), m_systemSettings(systemSettings), m_connectionNameLabel(0), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_enabled(false), m_connectionInspector(0), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_connectionNameLabel(0), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_enabled(false), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
 {
     setAcceptHoverEvents(true);
 
@@ -159,30 +157,21 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NetworkMa
     m_layout->addItem(m_connectionInfoIcon, 2, 3, 1, 1, Qt::AlignRight);
     m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
 
-    connect(Solid::Control::NetworkManager::notifier(),
-            SIGNAL(activeConnectionsChanged()),
-            this, SLOT(activeConnectionsChanged()));
-    // Since we don't keep the connection identifiers around, and the RemoteConnections
-    // we hold are invalid when this signal is emitted, we rebuild the active connection
-    // list from scratch
-    connect(m_userSettings,
-            SIGNAL(connectionRemoved(NetworkManagerSettings *, const QString&)),
-            this, SLOT(activeConnectionsChanged()));
-    connect(m_systemSettings,
-            SIGNAL(connectionRemoved(NetworkManagerSettings *, const QString&)),
-            this, SLOT(activeConnectionsChanged()));
+//X     connect(Solid::Control::NetworkManager::notifier(),
+//X             SIGNAL(activeConnectionsChanged()),
+//X             this, SLOT(activeConnectionsChanged()));
+//
     connect(m_iface, SIGNAL(connectionStateChanged(int)),
             this, SLOT(connectionStateChanged(int)));
     setNameDisplayMode(mode);
     // the applet may be starting when NetworkManager is already connected,
     // so initialise the list of active connections
-    activeConnectionsChanged();
+//    activeConnectionsChanged();
     // set the state of our UI correctly
+    //
     connectionStateChanged(m_iface->connectionState(), true);
     setLayout(m_layout);
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    connect(m_userSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(serviceDisappeared(NetworkManagerSettings*)));
-    connect(m_systemSettings, SIGNAL(disappeared(NetworkManagerSettings*)), SLOT(serviceDisappeared(NetworkManagerSettings*)));
 }
 
 void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -213,7 +202,6 @@ void InterfaceItem::setEnabled(bool enable)
 
 InterfaceItem::~InterfaceItem()
 {
-    delete m_connectionInspector;
 }
 
 
@@ -273,6 +261,7 @@ QString InterfaceItem::currentIpAddress()
 
 void InterfaceItem::activeConnectionsChanged()
 {
+#if 0
     QList<ActiveConnectionPair > newConnectionList;
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
     QString serviceName;
@@ -320,6 +309,7 @@ void InterfaceItem::activeConnectionsChanged()
     m_layout->updateGeometry();
     //kDebug() << "Active connections changed ... setting connection info";
     setConnectionInfo();
+#endif
 }
 
 // slot
@@ -382,7 +372,7 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
             if ( !silently )
                 KNotification::event(Event::Connected, i18nc("Notification text when a network interface connection succeeded","%1 connected", m_interfaceName), statePixmap("network-connect"), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
                 // ... set Pixmap
-            setActiveConnection(state);
+            //setActiveConnection(state);
             m_disconnect = true;
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
@@ -443,6 +433,7 @@ void InterfaceItem::setInactive()
     }
 }
 
+#if 0
 void InterfaceItem::setActiveConnection(int state)
 {
     m_icon->setEnabled(true);
@@ -464,44 +455,15 @@ void InterfaceItem::setActiveConnection(int state)
         m_connectionInfoLabel->setText(i18n( "%1:\"%2\"", stateString, connId));
     }
     //m_connectionNameLabel->setText(stateString);
-    activeConnectionsChanged();
+    //activeConnectionsChanged();
     m_connectionInfoIcon->show();
 
     m_connectButton->setToolTip(i18n("Disconnect"));
     m_connectButton->setEnabled(true);
     m_connectButton->setIcon("dialog-cancel");
 }
-
-void InterfaceItem::setConnectionInspector(ConnectionInspector * insp)
-{
-    delete m_connectionInspector;
-    m_connectionInspector = insp;
-}
-
-ConnectionInspector * InterfaceItem::connectionInspector() const
-{
-    return m_connectionInspector;
-}
-
-void InterfaceItem::serviceDisappeared(NetworkManagerSettings* service)
-{
-    Q_UNUSED( service );
-// just throw away our active connection list.  NM should signal activeConnectionsChanged anyway
-#if 0
-    QMutableListIterator<ActiveConnectionPair> i(m_activeConnections);
-    while (i.hasNext()) {
-        i.next();
-        kDebug() << i.value().first << i.value().second;
-        if (i.value().first == service->service()) {
-            kDebug() << "  Removed.";
-            i.remove();
-        }
-    }
 #endif
-    //m_activeConnections = QList<ActiveConnectionPair>();
-    activeConnectionsChanged();
-}
-
+#if 0
 QList<RemoteConnection*> InterfaceItem::availableConnections() const
 {
     QList<RemoteConnection*> rconnections;
@@ -513,5 +475,6 @@ QList<RemoteConnection*> InterfaceItem::availableConnections() const
     }
     return rconnections;
 }
+#endif
 
 // vim: sw=4 sts=4 et tw=100

@@ -36,53 +36,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
 
-#include "wirelessnetwork.h"
+#include "remotewirelessnetworkitem.h"
 
-AbstractWirelessNetworkItem::AbstractWirelessNetworkItem(QGraphicsItem * parent) : AbstractConnectableItem(parent), m_wirelessNetwork(0)
+WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetworkItem * remote, QGraphicsItem * parent)
+: ActivatableItem(remote, parent), m_security(0), m_securityIcon(0), m_securityIconName(0)
 {
-
-}
-
-AbstractWirelessNetworkItem::~AbstractWirelessNetworkItem()
-{
-
-}
-
-AbstractWirelessNetwork * AbstractWirelessNetworkItem::net() const
-{
-    return m_wirelessNetwork;
-}
-
-WirelessNetworkItem::WirelessNetworkItem(AbstractWirelessNetwork * network, QGraphicsItem * parent)
-: AbstractWirelessNetworkItem(parent), m_security(0), m_securityIcon(0), m_securityIconName(0)
-{
-    m_wirelessNetwork = network;
     m_strengthMeter = new Plasma::Meter(this);
     m_strength = 0;
-    m_ssid = network->ssid();
-    setStrength(m_ssid, network->strength());
-    connect(m_wirelessNetwork, SIGNAL(strengthChanged(const QString&, int)), SLOT(setStrength(const QString, int)));
-    Solid::Control::AccessPoint *ap = network->referenceAccessPoint();
+    m_ssid = remote->ssid();
+    setStrength(remote->strength());
+    connect(remote, SIGNAL(changed()), SLOT(update()));
 
+    // TODO
+    #if 0
     if ( ap->capabilities().testFlag( Solid::Control::AccessPoint::Privacy ) )
         m_security = QLatin1String("wep"); // the minimum
+    #endif
+
+    Solid::Control::AccessPoint::WpaFlags wpaFlags = remote->wpaFlags();
+    Solid::Control::AccessPoint::WpaFlags rsnFlags = remote->rsnFlags();
 
     // TODO: this was done by a clueless (coolo)
-    if ( ap->wpaFlags().testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
-         ap->wpaFlags().testFlag( Solid::Control::AccessPoint::PairWep104 ) )
+    if ( wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
+         wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep104 ) )
         m_security = QLatin1String("wep");
 
-    if ( ap->wpaFlags().testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
-         ap->wpaFlags().testFlag( Solid::Control::AccessPoint::PairTkip ) )
+    if ( wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+         wpaFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) )
         m_security = QLatin1String("wpa-psk");
 
-    if ( ap->rsnFlags().testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
-         ap->rsnFlags().testFlag( Solid::Control::AccessPoint::PairTkip ) ||
-         ap->rsnFlags().testFlag( Solid::Control::AccessPoint::PairCcmp ) )
+    if ( rsnFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+         rsnFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) ||
+         rsnFlags.testFlag( Solid::Control::AccessPoint::PairCcmp ) )
         m_security = QLatin1String("wpa-psk");
 
-    if ( ap->wpaFlags().testFlag( Solid::Control::AccessPoint::KeyMgmt8021x ) ||
-         ap->wpaFlags().testFlag( Solid::Control::AccessPoint::GroupCcmp ) )
+    if ( wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmt8021x ) ||
+         wpaFlags.testFlag( Solid::Control::AccessPoint::GroupCcmp ) )
         m_security = QLatin1String("wpa-eap");
 }
 
@@ -146,9 +135,8 @@ WirelessNetworkItem::~WirelessNetworkItem()
 {
 }
 
-void WirelessNetworkItem::setStrength(QString ssid, int strength)
+void WirelessNetworkItem::setStrength(int strength)
 {
-    Q_UNUSED(ssid);
     //kDebug() << ssid << "signal strength changed to " << strength;
     if (strength == m_strength) {
         return;
@@ -179,6 +167,16 @@ void WirelessNetworkItem::readSettings()
         m_securityIconName = "security-low"; // FIXME: Shouldn't we always have a security setting?
         m_securityIconToolTip = i18nc("tooltip of the security icon in the connection list", "Encrypted network (WPA-EAP)");
     }
+}
+
+RemoteWirelessNetworkItem * WirelessNetworkItem::wirelessNetworkItem() const
+{
+    return static_cast<RemoteWirelessNetworkItem*>(m_activatable);
+}
+
+void WirelessNetworkItem::update()
+{
+    setStrength(wirelessNetworkItem()->strength());
 }
 
 // vim: sw=4 sts=4 et tw=100

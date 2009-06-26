@@ -18,18 +18,22 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "abstractconnectableitem.h"
+#include "activatableitem.h"
 
-AbstractConnectableItem::AbstractConnectableItem(QGraphicsItem * parent) : QGraphicsWidget(parent)
+#include "remoteactivatable.h"
+
+ActivatableItem::ActivatableItem(RemoteActivatable * remote, QGraphicsItem * parent) : QGraphicsWidget(parent), m_activatable(remote)
 {
 }
 
-AbstractConnectableItem::~AbstractConnectableItem()
+ActivatableItem::~ActivatableItem()
 {
 }
 
-void AbstractConnectableItem::emitClicked()
+void ActivatableItem::emitClicked()
 {
+    //HACK this slot needs renaming
+    m_activatable->activate();
     emit clicked(this);
 }
 // vim: sw=4 sts=4 et tw=100

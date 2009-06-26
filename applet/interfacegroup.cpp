@@ -35,21 +35,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirednetworkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
 
+#include "activatable.h"
+
+#include "remoteactivatable.h"
+#include "remoteinterfaceconnection.h"
+
 #include "events.h"
 #include "interfaceitem.h"
-#include "connectionitem.h"
-#include "wirelessconnectionitem.h"
-#include "connectioninspector.h"
-#include "networkmanagersettings.h"
-#include "remoteconnection.h"
-#include "serialinterfaceitem.h"
+#include "activatableitem.h"
+#include "interfaceconnectionitem.h"
+#include "wirelessinterfaceconnectionitem.h"
+//#include "remoteconnection.h"
+//#include "serialinterfaceitem.h"
 #include "wiredinterfaceitem.h"
 #include "wirelessinterfaceitem.h"
-#include "wirelessenvironment.h"
 #include "wirelessnetworkitem.h"
-#include "hiddenwirelessnetworkitem.h"
-#include "mergedwireless.h"
+#include "remotewirelessinterfaceconnection.h"
+#include "remotewirelessnetworkitem.h"
+//#include "hiddenwirelessnetworkitem.h"
 
+#if 0
 QDebug operator<<(QDebug s, const AbstractWirelessNetwork*wl )
 {
     s.nospace() << "Wireless(" << qPrintable(wl->ssid() ) << "," << wl->strength() << ")";
@@ -57,25 +62,21 @@ QDebug operator<<(QDebug s, const AbstractWirelessNetwork*wl )
 }
 
 bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWirelessNetwork * n2);
+#endif
 
 InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
-                               NetworkManagerSettings * userSettings,
-                               NetworkManagerSettings * systemSettings,
-                               Plasma::Extender * ext)
-    : ConnectionList(userSettings, systemSettings, ext), m_type(type),
+        RemoteActivatableList * list,
+        Plasma::Extender * ext)
+    : ConnectionList(list, ext), m_type(type),
       m_interfaceLayout(new QGraphicsLinearLayout(Qt::Vertical)),
       m_networkLayout(new QGraphicsLinearLayout(Qt::Vertical)),
-      m_numberOfWlans( 4 ),
-      m_wirelessInspector(0),
-      m_wirelessEnvironment(new WirelessEnvironmentMerged(this))
+      m_numberOfWlans( 4 )
 {
     if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
         m_enabled = Solid::Control::NetworkManager::isWirelessEnabled();
     } else {
         m_enabled = Solid::Control::NetworkManager::isNetworkingEnabled();
     }
-    connect(m_wirelessEnvironment, SIGNAL(networkAppeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
-    connect(m_wirelessEnvironment, SIGNAL(networkDisappeared(const QString&)), SLOT(refreshConnectionsAndNetworks()));
     connect(this, SIGNAL(connectionListUpdated()), SLOT(refreshConnectionsAndNetworks()));
 
     m_layout->setSpacing(0);
@@ -130,6 +131,7 @@ void InterfaceGroup::setupHeader()
 void InterfaceGroup::setupFooter()
 {
     m_layout->addItem(m_networkLayout);
+#if 0
     if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
         m_hiddenItem = new HiddenWirelessNetworkItem(this);
         m_hiddenItem->setupItem();
@@ -140,11 +142,13 @@ void InterfaceGroup::setupFooter()
     }
     //kDebug() << m_interfaces.keys() << "Footer update";
     //kDebug() << m_interfaces.keys() << m_networks.keys() << "Footer .. CONNECT";
+#endif
     connect(this, SIGNAL(connectionListUpdated()), SLOT(updateConnections()));
 }
 
 void InterfaceGroup::updateConnections()
 {
+#if 0
     updateNetworks();
     if (!m_wirelessInspector) {
         return;
@@ -168,10 +172,12 @@ void InterfaceGroup::updateConnections()
         }
         ++i;
     }
+#endif
 }
 
 void InterfaceGroup::updateNetworks()
 {
+#if 0
     //kDebug();
     // empty the layout
     foreach (WirelessNetworkItem * i, m_networks) {
@@ -205,6 +211,7 @@ void InterfaceGroup::updateNetworks()
     m_layout->updateGeometry();
     updateGeometry();
     emit updateLayout();
+#endif
 }
 
 void InterfaceGroup::setNetworksLimit( int wlans )
@@ -215,6 +222,7 @@ void InterfaceGroup::setNetworksLimit( int wlans )
     }
 }
 
+#if 0
 QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
 {
     QList<AbstractWirelessNetwork*> allNetworks;
@@ -251,6 +259,7 @@ QList<AbstractWirelessNetwork*> InterfaceGroup::networksToShow()
     topNetworks = allNetworks.mid(0, m_numberOfWlans);
     return topNetworks;
 }
+#endif
 
 void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
 {
@@ -260,13 +269,12 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
             return;
         }
         InterfaceItem * interface = 0;
-        ConnectionInspector * inspector = 0;
 
         switch (iface->type()) {
             case Solid::Control::NetworkInterface::Ieee80211:
             {
                 WirelessInterfaceItem * wirelessinterface = 0;
-                wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
                 connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
                 wirelessinterface->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
 
@@ -278,20 +286,21 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
                         this, SLOT(setEnabled(bool)));
 
-                m_wirelessEnvironment->addWirelessEnvironment(wirelessinterface->wirelessEnvironment());
                 interface = wirelessinterface;
-                inspector = m_wirelessInspector = new WirelessConnectionInspector(static_cast<Solid::Control::WirelessNetworkInterface*>(iface), wirelessinterface->wirelessEnvironment());
                 kDebug() << "WiFi added";
                 break;
             }
             case Solid::Control::NetworkInterface::Serial:
+#if 0
             {
                 interface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
                         m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
                 inspector = new PppoeConnectionInspector;
                 break;
             }
+#endif
             case Solid::Control::NetworkInterface::Gsm:
+#if 0
             {
                 interface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
                         m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
@@ -300,7 +309,9 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 inspector = new GsmConnectionInspector;
                 break;
             }
+#endif
             case Solid::Control::NetworkInterface::Cdma:
+#if 0
             {
                 interface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
                         m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
@@ -309,17 +320,15 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 // reassesConnectionList
                 break;
             }
+#endif
             default:
             case Solid::Control::NetworkInterface::Ieee8023:
             {
                 WiredInterfaceItem * wiredinterface = 0;
-                interface = wiredinterface = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface),
-                        m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
-                inspector = new WiredConnectionInspector(static_cast<Solid::Control::WiredNetworkInterface*>(iface));
+                interface = wiredinterface = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
                 break;
             }
         }
-        interface->setConnectionInspector(inspector);
         interface->setEnabled(m_enabled);
         m_interfaceLayout->addItem(interface);
         m_interfaces.insert(iface->uni(), interface);
@@ -333,6 +342,7 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
 
 void InterfaceGroup::addWirelessNetworkInternal(const QString & ssid)
 {
+#if 0
     //kDebug() << "Adding network:" << ssid << m_networks.keys();
     if (!m_networks.contains(ssid)) {
         AbstractWirelessNetwork * net = m_wirelessEnvironment->findNetwork(ssid);
@@ -343,46 +353,58 @@ void InterfaceGroup::addWirelessNetworkInternal(const QString & ssid)
         connect(netItem, SIGNAL(clicked(AbstractConnectableItem*)),
                 SLOT(connectToWirelessNetwork(AbstractConnectableItem*)));
     }
+#endif
 }
 
-bool InterfaceGroup::accept(RemoteConnection * conn) const
+bool InterfaceGroup::accept(RemoteActivatable * activatable) const
 {
-    // there was some code I don't remember the purpose of in addConnectionInternal before it was refactored here
-    // that cast to WirelessConnectionItem, then did the same interface accept() loop.  ...?
-    bool accepted = false;
-    foreach (InterfaceItem * iface, m_interfaces) {
-        //kDebug() << conn << iface->connectionInspector()->accept(conn);
-        if (iface->connectionInspector()->accept(conn)) {
-            accepted = true;
-            break;
+    bool acceptable = false;
+
+    Knm::Activatable::ActivatableType aType = activatable->activatableType();
+    kDebug() << activatable << aType;
+    if (aType == Knm::Activatable::InterfaceConnection) {
+        RemoteInterfaceConnection * ric = static_cast<RemoteInterfaceConnection*>(activatable);
+        if (ric->connectionType() == Knm::Connection::Wired && m_type == Solid::Control::NetworkInterface::Ieee8023) {
+            acceptable = true;
+        } else if (ric->connectionType() == Knm::Connection::Gsm && m_type == Solid::Control::NetworkInterface::Gsm) {
+            acceptable = true;
+        } else if (ric->connectionType() == Knm::Connection::Cdma && m_type == Solid::Control::NetworkInterface::Cdma) {
+            acceptable = true;
+        } else if (ric->connectionType() == Knm::Connection::Pppoe && m_type == Solid::Control::NetworkInterface::Serial) {
+            acceptable = true;
         }
+    } else if (aType == Knm::Activatable::WirelessInterfaceConnection && m_type == Solid::Control::NetworkInterface::Ieee80211) {
+        kDebug() << "accepting wireless connection";
+        acceptable = true;
+    } else if (aType == Knm::Activatable::WirelessNetworkItem && m_type == Solid::Control::NetworkInterface::Ieee80211) {
+        kDebug() << "accepting wireless network item";
+        acceptable = true;
     }
-    return accepted;
+    return acceptable;
 }
 
-ConnectionItem * InterfaceGroup::createItem(RemoteConnection* connection)
+ActivatableItem * InterfaceGroup::createItem(RemoteActivatable * activatable)
 {
-    ConnectionItem * ci = 0;
+    kDebug() << activatable;
+    ActivatableItem * ai = 0;
+    Knm::Activatable::ActivatableType aType = activatable->activatableType();
+
     if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
-        // get connection ssid.  In theory we know that the connection _has_ an ssid because the
-        // WirelessConnectionInspector accepted it.
-        QVariantMapMap settings = connection->settings();
-        if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME))) {
-            QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME));
-            if (connectionSetting.contains(QLatin1String(NM_SETTING_WIRELESS_SSID))) {
-                QString ssid = connectionSetting.value(QLatin1String(NM_SETTING_WIRELESS_SSID)).toString();
-                WirelessConnectionItem * wi = new WirelessConnectionItem(connection, this);
-                ci = wi;
-                wi->setNetwork(m_wirelessEnvironment->findNetwork(ssid));
-            }
+        if (aType == Knm::Activatable::WirelessInterfaceConnection) {
+            WirelessInterfaceConnectionItem * wici = new WirelessInterfaceConnectionItem(static_cast<RemoteWirelessInterfaceConnection*>(activatable));
+            ai = wici;
+        } else if (aType == Knm::Activatable::WirelessNetworkItem) {
+            kDebug() << "adding wireless network item";
+            WirelessNetworkItem * wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetworkItem*>(activatable));
+            ai = wni;
         }
     } else {
-        ci = new ConnectionItem(connection, this);
+        ai = new InterfaceConnectionItem(static_cast<RemoteInterfaceConnection*>(activatable), this);
     }
-    Q_ASSERT(ci);
-    ci->setupItem();
+    Q_ASSERT(ai);
+    ai->setupItem();
 
-    return ci;
+    return ai;
 }
 
 Solid::Control::NetworkInterface::Type InterfaceGroup::interfaceType() const
@@ -399,7 +421,7 @@ void InterfaceGroup::interfaceAdded(const QString& uni)
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
     KNotification::event(Event::HwAdded, i18nc("Notification for hardware added", "Network interface %1 attached", iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
-    updateNetworks();
+    //updateNetworks();
     emit updateLayout();
 }
 
@@ -422,8 +444,9 @@ void InterfaceGroup::refreshConnectionsAndNetworks()
     reassess();
 }
 
-void InterfaceGroup::activateConnection(AbstractConnectableItem* item)
+void InterfaceGroup::activate(ActivatableItem* item)
 {
+#if 0
     // tell the manager to activate the connection
     // which device??
     // HACK - take the first one
@@ -439,8 +462,10 @@ void InterfaceGroup::activateConnection(AbstractConnectableItem* item)
     // What about a connection that could be activated on 2 devices?
     // Ideally we should keep them around
     updateNetworks();
+#endif
 }
 
+#if 0
 void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
 {
     AbstractWirelessNetworkItem * wni = qobject_cast<AbstractWirelessNetworkItem*>(item);
@@ -480,15 +505,18 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
         kDebug() << "item was not an AbstractWirelessNetworkItem!";
     }
 }
+#endif
 
+#if 0
 bool wirelessNetworkGreaterThanStrength(AbstractWirelessNetwork* n1, AbstractWirelessNetwork * n2)
 {
     return n1->strength() > n2->strength();
 }
+#endif
 
 void InterfaceGroup::popupEvent(bool show)
 {
     kDebug() << show;
-    m_hiddenItem->resetSsidEntry();
+    //m_hiddenItem->resetSsidEntry();
 }
 // vim: sw=4 sts=4 et tw=100

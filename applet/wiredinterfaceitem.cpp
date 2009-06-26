@@ -28,15 +28,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkmanager.h>
 
 #include "../libs/types.h"
-#include "connectioninspector.h"
-#include "events.h"
-#include "nm-active-connectioninterface.h"
-#include "networkmanager.h"
-#include "networkmanagersettings.h"
-#include "remoteconnection.h"
 
-WiredInterfaceItem::WiredInterfaceItem(Solid::Control::WiredNetworkInterface * iface, NetworkManagerSettings * userSettings, NetworkManagerSettings * systemSettings, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent)
-: InterfaceItem(iface, userSettings, systemSettings, mode, parent), m_wiredIface(iface)
+#include "events.h"
+#include "networkmanager.h"
+
+#include "remoteinterfaceconnection.h"
+
+WiredInterfaceItem::WiredInterfaceItem(Solid::Control::WiredNetworkInterface * iface, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent)
+: InterfaceItem(iface, mode, parent), m_wiredIface(iface)
 {
     m_unavailableText = i18nc("Network cable of interface is not plugged in", "Not plugged in");
 }
@@ -49,7 +48,6 @@ WiredInterfaceItem::~WiredInterfaceItem()
 void WiredInterfaceItem::connectButtonClicked()
 {
     kDebug();
-    QList<RemoteConnection*> connections;
     switch ( m_iface->connectionState()) {
         case Solid::Control::NetworkInterface::Unavailable:
             // impossible, but nothing to do
@@ -63,9 +61,9 @@ void WiredInterfaceItem::connectButtonClicked()
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
         case Solid::Control::NetworkInterface::Activated: // deactivate active connections
-            foreach (const ActiveConnectionPair &connection, m_activeConnections) {
-                Solid::Control::NetworkManager::deactivateConnection(connection.second->path());
-            }
+            //foreach (const ActiveConnectionPair &connection, m_activeConnections) {
+             //   Solid::Control::NetworkManager::deactivateConnection(connection.second->path());
+            //}
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
         case Solid::Control::NetworkInterface::UnknownState:
