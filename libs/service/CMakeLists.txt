@@ -30,6 +30,9 @@ set(knmservice_SRCS
    # relates connections to network interfaces
    networkinterfaceactivatableprovider.cpp
 
+   # subclass of the above, uses ethernet carrier status to select activatables
+   wirednetworkinterfaceactivatableprovider.cpp
+
    # complex class for managing connections and unconfigured networks for wireless interfaces
    wirelessnetworkinterfaceactivatableprovider.cpp
 
