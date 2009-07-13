@@ -76,6 +76,7 @@ void WirelessNetworkConfigurer::handleAdd(Knm::Activatable *added)
 
 void WirelessNetworkConfigurer::wirelessNetworkItemActivated()
 {
+    kDebug();
     Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(sender());
     if (wni) {
         configureWirelessNetworkInternal(wni->ssid(), wni->deviceUni(), wni->wpaFlags(), wni->rsnFlags());

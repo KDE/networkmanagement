@@ -25,10 +25,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QHash>
 
-class QAction;
 class QSignalMapper;
+class QVBoxLayout;
+class QWidgetAction;
+
 class KMenu;
+class ActivatableItem;
 class ActivatableList;
+class SortedActivatableList;
 
 namespace Experimental
 {
@@ -47,12 +51,14 @@ protected slots:
     void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
     void activatableActionTriggered();
-    void updateActionState(Knm::Activatable * changed, QAction * action);
+    //void updateActionState(Knm::Activatable * changed, QAction * action);
     void slotPreferences();
 private:
-    static QString iconForActivatable(Knm::Activatable *);
+    void fillPopup();
+    SortedActivatableList * m_sortedList;
     Experimental::KNotificationItem * m_notificationItem;
     KMenu * m_popup;
-    QHash<Knm::Activatable *, QAction *> m_actions;
+    QVBoxLayout * m_popupLayout;
+    QHash<Knm::Activatable *, QWidgetAction *> m_actions;
 };
 #endif // SIMPLEUI_H

@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <knotificationitem-1/knotificationitem.h>
 
 #include <QSignalMapper>
+#include <QVBoxLayout>
+#include <QWidgetAction>
 
 #include <KAction>
 #include <KDebug>
@@ -34,8 +36,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatable.h"
 #include "activatabledebug.h"
 #include "activatablelist.h"
+#include "interfaceconnection.h"
 #include "wirelessinterfaceconnection.h"
 #include "wirelessnetworkitem.h"
+
+#include "interfaceconnectionitem.h"
+#include "wirelessinterfaceconnectionitem.h"
+#include "sortedactivatablelist.h"
+#include "wirelessnetworkitemitem.h"
+
+// sorting activatables
+// by interface type (compare on activatable::deviceUni()
+// by activatableType() (interfaceconnections and wirelessinterfaceconnections before wirelessnetworkitems)
+// then: for interfaceconnections - by activation state
+//   then: alphabetically
+//       for wirelessinterfaceconnections - by activation state
+//         then: by strength
+//           then: alphabetically
+// InterfaceConnections)
+// by type ([w]ic > wni)
+// by signal strength (listen to strengthchanged signals)
+//   or alphabetically
+// QAction::addAction/removeAction
+// resort everything or just find correct place for changed item?
+//   (save pointer to last active connection?)
+// make lists of 
+// k
 
 Q_DECLARE_METATYPE(Knm::Activatable *);
 
@@ -47,41 +73,75 @@ SimpleUi::SimpleUi(ActivatableList * list, QObject * parent)
     m_notificationItem->setTitle(i18nc("Popup title", "Network Management"));
     m_notificationItem->setIconByName("networkmanager");
     m_popup = new KMenu("Title", 0);
+
     m_notificationItem->setAssociatedWidget(m_popup);
     KMenu * menu = m_notificationItem->contextMenu();
     KAction * prefsAction = KStandardAction::preferences(this, SLOT(slotPreferences()), this);
     prefsAction->setText(i18nc("Preferences action title", "Manage Connections..."));
     menu->addAction(prefsAction);
 
+    m_sortedList = new SortedActivatableList(list, this);
+
+    //HACK
+    list->unregisterObserver(this);
+    list->registerObserver(m_sortedList);
+    list->registerObserver(this, m_sortedList);
+
+    fillPopup();
+#if 0
     foreach (Knm::Activatable * activatable, list->activatables()) {
         handleAdd(activatable);
     }
+#endif
 }
 
 SimpleUi::~SimpleUi()
 {
+    delete m_popup;
 }
 
 void SimpleUi::handleAdd(Knm::Activatable * activatable)
 {
-    KAction * newAct = new KAction(this);
-    newAct->setData(QVariant::fromValue(activatable));
-    newAct->setIcon(KIcon(iconForActivatable(activatable)));
-    if (activatable->activatableType() != Knm::Activatable::WirelessNetworkItem) {
-        newAct->setCheckable(true);
+    // FIXME could cache QWidgetActions here...
+    fillPopup();
+}
+
+void SimpleUi::fillPopup()
+{
+    m_popup->clear();
+    foreach (Knm::Activatable * activatable, m_sortedList->activatables()) {
+        QWidgetAction * newAct = new QWidgetAction(this);
+        newAct->setData(QVariant::fromValue(activatable));
+        ActivatableItem * widget = 0;
+        if (activatable->activatableType() == Knm::Activatable::InterfaceConnection) {
+            Knm::InterfaceConnection * ic = static_cast<Knm::InterfaceConnection*>(activatable);
+            //kDebug() << ic->connectionName();
+            widget = new InterfaceConnectionItem(ic, m_popup);
+            //connect(newAct, SIGNAL(triggered(bool)), this, SLOT(activatableActionTriggered()));
+        } else if ( activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
+            Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(activatable);
+            //kDebug() << wic->connectionName();
+            widget = new WirelessInterfaceConnectionItem(wic, m_popup);
+        } else if ( activatable->activatableType() == Knm::Activatable::WirelessNetworkItem) {
+            Knm::WirelessNetworkItem * wni = static_cast<Knm::WirelessNetworkItem*>(activatable);
+            //kDebug() << wni->ssid();
+            widget = new WirelessNetworkItemItem(wni, m_popup);
+        }
+        if (widget) {
+            newAct->setDefaultWidget(widget);
+            m_actions.insert(activatable, newAct);
+            m_popup->insertAction(0, newAct);
+        }
     }
-    updateActionState(activatable, newAct);
-    m_actions.insert(activatable, newAct);
-    m_popup->addAction(newAct);
-    connect(newAct, SIGNAL(triggered(bool)), this, SLOT(activatableActionTriggered()));
 }
 
 void SimpleUi::handleUpdate(Knm::Activatable * changed)
 {
-    QAction * action = m_actions[changed];
-    updateActionState(changed, action);
+    fillPopup();
+    //QAction * action = m_actions[changed];
+    //updateActionState(changed, action);
 }
-
+#if 0
 void SimpleUi::updateActionState(Knm::Activatable * activatable, QAction * action)
 {
     QString actionText;
@@ -109,45 +169,24 @@ void SimpleUi::updateActionState(Knm::Activatable * activatable, QAction * actio
         action->setText(actionText);
     }
 }
+#endif
 
 void SimpleUi::handleRemove(Knm::Activatable * removed)
 {
-    QAction * removedAction = m_actions.take(removed);
+    QWidgetAction * removedAction = m_actions.take(removed);
     delete removedAction;
 }
 
 void SimpleUi::activatableActionTriggered()
 {
+#if 0
     QAction * triggeredAction = qobject_cast<QAction*>(sender());
     if (triggeredAction) {
         Knm::Activatable * triggeredActivatable = triggeredAction->data().value<Knm::Activatable*>();
         kDebug() << ActivatableDebug::activatableToString(triggeredActivatable) << "was activated!";
         triggeredActivatable->activate();
     }
-}
-
-QString SimpleUi::iconForActivatable(Knm::Activatable * activatable)
-{
-    QString iconName;
-//X     Knm::InterfaceConnection * ic;
-//X     Knm::WirelessInterfaceConnection * wic;
-//X     Knm::WirelessNetworkItem * wni;
-
-    switch (activatable->activatableType()) {
-        case Knm::Activatable::InterfaceConnection:
-            iconName = QLatin1String("network-wired");
-            break;
-        case Knm::Activatable::WirelessInterfaceConnection:
-//X             wic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
-            iconName = QLatin1String("preferences-other");
-            break;
-        case Knm::Activatable::WirelessNetworkItem:
-//X             wni = qobject_cast<Knm::WirelessNetworkItem*>(activatable);
-            iconName = QLatin1String("network-wireless");
-            break;
-    }
-    return iconName;
-
+#endif
 }
 
 void SimpleUi::slotPreferences()

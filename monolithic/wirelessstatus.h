@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,24 +18,33 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wirelessnetworkitem.h"
+#ifndef WIRELESSSTATUS_H
+#define WIRELESSSTATUS_H
 
-using namespace Knm;
+#include <QObject>
 
-WirelessNetworkItem::WirelessNetworkItem(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QString & deviceUni, QObject * parent)
-: Activatable(Activatable::WirelessNetworkItem, deviceUni, parent), WirelessItem(ssid, strength, wpaFlags, rsnFlags)
+class ActivatableItem;
+class WirelessStatusPrivate;
+
+/**
+ * A class to add wireless status indicators (security, signal strength)
+ * to a WirelessNetworkItem or an WirelessInterfaceConnectionItem
+ * and keep them up to date.
+ */
+class WirelessStatus : public QObject
 {
-}
+Q_OBJECT
+public:
+    /**
+     * @param item takes ownership of the WirelessStatus
+     */
+    WirelessStatus(ActivatableItem * item);
+    ~WirelessStatus();
+protected Q_SLOTS:
+    void setSecurity();
+private:
+    Q_DECLARE_PRIVATE(WirelessStatus);
+    WirelessStatusPrivate * d_ptr;
+};
 
-WirelessNetworkItem::~WirelessNetworkItem()
-{
-
-}
-
-void WirelessNetworkItem::setStrength(int strength)
-{
-    if (strength != m_strength) {
-        WirelessItem::setStrength(strength);
-        emit strengthChanged(strength);
-    }
-}
+#endif // WIRELESSSTATUS_H

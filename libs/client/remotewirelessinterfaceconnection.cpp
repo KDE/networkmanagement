@@ -26,6 +26,7 @@ RemoteWirelessInterfaceConnection::RemoteWirelessInterfaceConnection(const QStri
 {
     Q_D(RemoteWirelessInterfaceConnection);
     d->wirelessInterfaceConnectionIface = new WirelessInterfaceConnectionInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
+    connect(d->wirelessInterfaceConnectionIface, SIGNAL(strengthChanged(int)), this, SIGNAL(strengthChanged(int)));
 }
 
 RemoteWirelessInterfaceConnection::~RemoteWirelessInterfaceConnection()

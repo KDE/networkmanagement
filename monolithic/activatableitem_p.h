@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,24 +18,30 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wirelessnetworkitem.h"
+#include "activatableitem.h"
 
-using namespace Knm;
+#include "activatable.h"
 
-WirelessNetworkItem::WirelessNetworkItem(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QString & deviceUni, QObject * parent)
-: Activatable(Activatable::WirelessNetworkItem, deviceUni, parent), WirelessItem(ssid, strength, wpaFlags, rsnFlags)
+class QGridLayout;
+class QHBoxLayout;
+class QLabel;
+
+class ActivatableItemPrivate
 {
-}
+Q_DECLARE_PUBLIC(ActivatableItem)
+protected:
+    ActivatableItem *q_ptr;
+public:
+    virtual ~ActivatableItemPrivate();
+    void init(QWidget * widgetParent);
+    Knm::Activatable * activatable;
 
-WirelessNetworkItem::~WirelessNetworkItem()
-{
+    QGridLayout * outerLayout;
+    QHBoxLayout * innerLayout;
 
-}
+    QLabel * activeIcon;
+    QLabel * mainLabel;
 
-void WirelessNetworkItem::setStrength(int strength)
-{
-    if (strength != m_strength) {
-        WirelessItem::setStrength(strength);
-        emit strengthChanged(strength);
-    }
-}
+    bool hovered;
+};
+

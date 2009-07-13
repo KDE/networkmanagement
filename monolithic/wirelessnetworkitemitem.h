@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,24 +18,26 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wirelessnetworkitem.h"
+#ifndef WIRELESSNETWORKITEMITEM_H
+#define WIRELESSNETWORKITEMITEM_H
 
-using namespace Knm;
+#include "activatableitem.h"
 
-WirelessNetworkItem::WirelessNetworkItem(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QString & deviceUni, QObject * parent)
-: Activatable(Activatable::WirelessNetworkItem, deviceUni, parent), WirelessItem(ssid, strength, wpaFlags, rsnFlags)
-{
+namespace Knm {
+    class WirelessNetworkItem;
 }
 
-WirelessNetworkItem::~WirelessNetworkItem()
-{
+class WirelessNetworkItemItemPrivate;
 
-}
-
-void WirelessNetworkItem::setStrength(int strength)
+class WirelessNetworkItemItem : public ActivatableItem
 {
-    if (strength != m_strength) {
-        WirelessItem::setStrength(strength);
-        emit strengthChanged(strength);
-    }
-}
+Q_OBJECT
+Q_DECLARE_PRIVATE(WirelessNetworkItemItem)
+public:
+    WirelessNetworkItemItem(Knm::WirelessNetworkItem *, QWidget * parent = 0);
+    virtual ~WirelessNetworkItemItem();
+protected:
+    virtual QString iconName() const;
+};
+
+#endif // WIRELESSNETWORKITEMITEM_H

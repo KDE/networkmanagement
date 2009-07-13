@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,24 +18,25 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wirelessnetworkitem.h"
+#ifndef WIRELESSINTERFACECONNECTIONITEM_H
+#define WIRELESSINTERFACECONNECTIONITEM_H
 
-using namespace Knm;
+#include "interfaceconnectionitem.h"
 
-WirelessNetworkItem::WirelessNetworkItem(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QString & deviceUni, QObject * parent)
-: Activatable(Activatable::WirelessNetworkItem, deviceUni, parent), WirelessItem(ssid, strength, wpaFlags, rsnFlags)
+namespace Knm
 {
-}
+    class WirelessInterfaceConnection;
+} // namespace Knm
 
-WirelessNetworkItem::~WirelessNetworkItem()
+class WirelessInterfaceConnectionItem : public InterfaceConnectionItem
 {
+Q_OBJECT
+Q_DECLARE_PRIVATE(InterfaceConnectionItem)
+public:
+    WirelessInterfaceConnectionItem(Knm::WirelessInterfaceConnection *, QWidget * parent = 0);
+    virtual ~WirelessInterfaceConnectionItem();
+protected:
+    virtual QString iconName() const;
+};
 
-}
-
-void WirelessNetworkItem::setStrength(int strength)
-{
-    if (strength != m_strength) {
-        WirelessItem::setStrength(strength);
-        emit strengthChanged(strength);
-    }
-}
+#endif // WIRELESSINTERFACECONNECTIONITEM_H

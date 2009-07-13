@@ -18,5 +18,8 @@
     <property name="strength" type="i" access="read"/>
     <property name="wpaFlags" type="u" access="read"/>
     <property name="rsnFlags" type="u" access="read"/>
+    <signal name="strengthChanged">
+      <arg name="strength" type="i" direction="out"/>
+    </signal>
   </interface>
 </node>

@@ -7,7 +7,13 @@ include_directories(
 
 set(monolithic_SRCS
    monolithic.cpp
+   sortedactivatablelist.cpp
    simpleui.cpp
+   activatableitem.cpp
+   interfaceconnectionitem.cpp
+   wirelessstatus.cpp
+   wirelessinterfaceconnectionitem.cpp
+   wirelessnetworkitemitem.cpp
    )
 
 kde4_add_executable(knetworkmanager ${monolithic_SRCS})

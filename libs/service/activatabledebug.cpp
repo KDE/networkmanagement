@@ -43,6 +43,7 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
     Knm::WirelessNetworkItem * wni;
 
     QString string;
+
     switch (activatable->activatableType()) {
         case Knm::Activatable::InterfaceConnection:
             ic = qobject_cast<Knm::InterfaceConnection*>(activatable);
@@ -57,6 +58,7 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
             string = QString::fromLatin1("WirelessNetworkItem for network %1 on %2 with strength %3").arg(wni->ssid(), activatable->deviceUni(), QString::number(wni->strength()));
             break;
     }
+
     return string;
 }
 

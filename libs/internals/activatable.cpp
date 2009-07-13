@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QString>
 
+#include <KDebug>
+
 using namespace Knm;
 
 Activatable::Activatable(ActivatableType type, const QString & deviceUni, QObject * parent)
@@ -51,6 +53,7 @@ QString Activatable::deviceUni() const
 
 void Activatable::activate()
 {
+    kDebug();
     emit activated();
 }
 

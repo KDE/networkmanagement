@@ -1,5 +1,4 @@
 /*
-Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
@@ -19,23 +18,41 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wirelessinterfaceconnection.h"
+#include "wirelessnetworkitemitem.h"
 
-using namespace Knm;
+#include "activatableitem_p.h"
 
-WirelessInterfaceConnection::WirelessInterfaceConnection(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent)
-: InterfaceConnection(connectionUuid, connectionName, Activatable::WirelessInterfaceConnection, deviceUni, parent), WirelessItem(ssid, strength, wpaFlags, rsnFlags)
+#include <QLabel>
+
+#include <KIconLoader>
+
+#include <wirelessnetworkitem.h>
+
+#include "wirelessstatus.h"
+
+class WirelessNetworkItemItemPrivate : public ActivatableItemPrivate
 {
+    public:
+};
+
+WirelessNetworkItemItem::WirelessNetworkItemItem(Knm::WirelessNetworkItem * item, QWidget * parent)
+: ActivatableItem(*new WirelessNetworkItemItemPrivate, item, parent)
+{
+    Q_D(WirelessNetworkItemItem);
+    new WirelessStatus(this);
+    setText(item->ssid());
+    d->activeIcon->setPixmap(SmallIcon(iconName()));
+    d->activeIcon->show();
 }
 
-WirelessInterfaceConnection::~WirelessInterfaceConnection()
+WirelessNetworkItemItem::~WirelessNetworkItemItem()
 {
+
 }
 
-void WirelessInterfaceConnection::setStrength(int strength)
+QString WirelessNetworkItemItem::iconName() const
 {
-    if (strength != m_strength) {
-        WirelessItem::setStrength(strength);
-        emit strengthChanged(strength);
-    }
+    return QLatin1String("network-wireless");
 }
+
+// vim: sw=4 sts=4 et tw=100

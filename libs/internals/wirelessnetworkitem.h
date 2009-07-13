@@ -41,6 +41,8 @@ Q_PROPERTY(uint rsnFlags READ rsnFlags)
 public:
     WirelessNetworkItem(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QString & deviceUni, QObject * parent);
     virtual ~WirelessNetworkItem();
+signals:
+    void strengthChanged(int);
 public Q_SLOTS:
     void setStrength(int);
 };

@@ -55,6 +55,13 @@ void ActivatableList::registerObserver(ActivatableObserver * observer, Activatab
         QMutableListIterator<ActivatableObserver*> i(d->observers);
         i.findNext(insertAfter);
         i.insert(observer);
+
+#if 0
+        // initialise the observer
+        foreach (Knm::Activatable * activatable, d->activatables) {
+            observer->handleAdd(activatable);
+        }
+#endif
     }
 }
 

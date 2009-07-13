@@ -26,6 +26,7 @@ RemoteWirelessNetworkItem::RemoteWirelessNetworkItem(const QString & path, QObje
 {
     Q_D(RemoteWirelessNetworkItem);
     d->wirelessNetworkItemInterface = new WirelessNetworkItemInterface("org.kde.networkmanagement", path, QDBusConnection::sessionBus(), this);
+    connect(d->wirelessNetworkItemInterface, SIGNAL(strengthChanged(int)), this, SIGNAL(strengthChanged(int)));
 }
 
 RemoteWirelessNetworkItem::~RemoteWirelessNetworkItem()

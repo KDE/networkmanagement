@@ -18,34 +18,23 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIRELESSITEM_H
-#define WIRELESSITEM_H
+#ifndef INTERFACECONNECTIONITEM_P_H
+#define INTERFACECONNECTIONITEM_P_H
 
-#include <QString>
-#include <solid/control/wirelessaccesspoint.h>
+#include "interfaceconnectionitem.h"
+#include "activatableitem_p.h"
 
-#include "knminternals_export.h"
+class QToolButton;
 
-namespace Knm
+class InterfaceConnectionItemPrivate : public ActivatableItemPrivate
 {
-class KNMINTERNALS_EXPORT WirelessItem
-{
-public:
-    WirelessItem(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags);
-    virtual ~WirelessItem();
-    QString ssid() const;
-    int strength() const;
-    virtual void setStrength(int strength);
-    Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
-    Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
-    virtual void strengthChanged(int) = 0;
+Q_DECLARE_PUBLIC(InterfaceConnectionItem)
 protected:
-    QString m_ssid;
-    int m_strength;
-    Solid::Control::AccessPoint::WpaFlags m_wpaFlags;
-    Solid::Control::AccessPoint::WpaFlags m_rsnFlags;
+    InterfaceConnectionItem *q_ptr;
+public:
+    Knm::InterfaceConnection::ActivationState state;
+    InterfaceConnectionItemPrivate();
+    QLabel * connectionDetailsLabel;
 };
 
-} // namespace Knm
-
-#endif // WIRELESSITEM_H
+#endif // INTERFACECONNECTIONITEM_P_H
