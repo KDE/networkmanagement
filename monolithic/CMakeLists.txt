@@ -11,6 +11,7 @@ set(monolithic_SRCS
    simpleui.cpp
    activatableitem.cpp
    interfaceconnectionitem.cpp
+   unconfiguredinterfaceitem.cpp
    wirelessstatus.cpp
    wirelessinterfaceconnectionitem.cpp
    wirelessnetworkitemitem.cpp

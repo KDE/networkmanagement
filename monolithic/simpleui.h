@@ -24,10 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatableobserver.h"
 
 #include <QHash>
+#include <QStringList>
 
 class QSignalMapper;
-class QVBoxLayout;
-class QWidgetAction;
+class QVBoxLayout; class QWidgetAction;
 
 class KMenu;
 class ActivatableItem;
@@ -60,5 +60,6 @@ private:
     KMenu * m_popup;
     QVBoxLayout * m_popupLayout;
     QHash<Knm::Activatable *, QWidgetAction *> m_actions;
+    QStringList m_deviceUnis;
 };
 #endif // SIMPLEUI_H

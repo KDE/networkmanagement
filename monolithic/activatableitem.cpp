@@ -28,6 +28,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStyleOptionMenuItem>
 
 #include <KDebug>
+#include <KGlobalSettings>
+#include <KIconLoader>
+
+ActivatableItemPrivate::ActivatableItemPrivate()
+: hovered(false), first(false)
+{
+}
 
 void ActivatableItemPrivate::init(QWidget * widgetParent)
 {
@@ -35,8 +42,7 @@ void ActivatableItemPrivate::init(QWidget * widgetParent)
     innerLayout = new QHBoxLayout();
     activeIcon = new QLabel(widgetParent);
     mainLabel = new QLabel(widgetParent);
-
-    hovered = false;
+    mainLabel->setFont(KGlobalSettings::toolBarFont());
 
     outerLayout->addLayout(innerLayout, 0, 1);
     outerLayout->addWidget(activeIcon, 0, 0, 2, 1);
@@ -73,6 +79,26 @@ ActivatableItem::~ActivatableItem()
     delete d_ptr;
 }
 
+void ActivatableItem::setFirst(bool first)
+{
+    Q_D(ActivatableItem);
+    d->first = first;
+    setFirstInternal(first);
+}
+
+void ActivatableItem::setFirstInternal(bool first)
+{
+    Q_D(ActivatableItem);
+    if (first) {
+        d->mainLabel->setFont(KGlobalSettings::menuFont());
+        d->activeIcon->setPixmap(pixmap());
+        d->activeIcon->show();
+    } else {
+        d->mainLabel->setFont(KGlobalSettings::toolBarFont());
+
+    }
+}
+
 void ActivatableItem::setText(const QString & text)
 {
     Q_D(ActivatableItem);
@@ -95,6 +121,12 @@ Knm::Activatable * ActivatableItem::activatable() const
 {
     Q_D(const ActivatableItem);
     return d->activatable;
+}
+
+QPixmap ActivatableItem::pixmap() const
+{
+    Q_D(const ActivatableItem);
+    return KIconLoader::global()->loadIcon(iconName(), (d->first ? KIconLoader::Panel : KIconLoader::Small));
 }
 
 void ActivatableItem::enterEvent(QEvent *)

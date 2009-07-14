@@ -33,7 +33,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelist.h"
 #include "activatabledebug.h"
 #include "connectionusagemonitor.h"
-#include "wirelessnetworkconfigurer.h"
+#include "configurationlauncher.h"
 
 #include "networkinterfacemonitor.h"
 
@@ -77,8 +77,8 @@ int main( int argc, char** argv )
     NMDBusActiveConnectionMonitor * nmActiveConnectionMonitor;
     // get connections from NM's service
     NMDBusSettingsConnectionProvider * nmDBusConnectionProvider;
-    // sets up wireless networks on click
-    WirelessNetworkConfigurer * wirelessConfigurer;
+    // sets up wireless networks on click and unconfigured devices of any type
+    ConfigurationLauncher * configurationLauncher;
     // update connections as they are used
     ConnectionUsageMonitor * connectionUsageMonitor;
 
@@ -94,7 +94,7 @@ int main( int argc, char** argv )
 
     sessionDbusConfigureInterface = new ConnectionListPersistenceDBus(listPersistence, listPersistence);
 
-    wirelessConfigurer = new WirelessNetworkConfigurer(&app);
+    configurationLauncher = new ConfigurationLauncher(&app);
     connectionUsageMonitor = new ConnectionUsageMonitor(connectionList, activatableList, activatableList);
 
     nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, connectionList);
@@ -107,7 +107,7 @@ int main( int argc, char** argv )
     networkInterfaceMonitor = new NetworkInterfaceMonitor(connectionList, activatableList, activatableList);
 
     // generic observers
-    activatableList->registerObserver(wirelessConfigurer);
+    activatableList->registerObserver(configurationLauncher);
     activatableList->registerObserver(connectionUsageMonitor);
 
     activatableList->registerObserver(nmSettingsService);

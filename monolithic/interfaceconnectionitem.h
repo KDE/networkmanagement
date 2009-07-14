@@ -41,7 +41,6 @@ public Q_SLOTS:
     void setActivationState(Knm::InterfaceConnection::ActivationState state);
 protected:
     InterfaceConnectionItem(InterfaceConnectionItemPrivate &, Knm::InterfaceConnection *, QWidget * parent = 0);
-    virtual QPixmap pixmapForConnection() const;
     virtual QString iconName() const;
     virtual QString textForConnection(Knm::InterfaceConnection::ActivationState state) const;
 };

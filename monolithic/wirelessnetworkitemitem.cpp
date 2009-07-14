@@ -24,11 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QLabel>
 
-#include <KIconLoader>
-
 #include <wirelessnetworkitem.h>
-
-#include "wirelessstatus.h"
+#include "wirelessstatus.h" 
 
 class WirelessNetworkItemItemPrivate : public ActivatableItemPrivate
 {
@@ -41,13 +38,16 @@ WirelessNetworkItemItem::WirelessNetworkItemItem(Knm::WirelessNetworkItem * item
     Q_D(WirelessNetworkItemItem);
     new WirelessStatus(this);
     setText(item->ssid());
-    d->activeIcon->setPixmap(SmallIcon(iconName()));
-    d->activeIcon->show();
 }
 
 WirelessNetworkItemItem::~WirelessNetworkItemItem()
 {
 
+}
+
+Knm::WirelessNetworkItem * WirelessNetworkItemItem::wirelessNetworkItem() const
+{
+    return qobject_cast<Knm::WirelessNetworkItem*>(activatable());
 }
 
 QString WirelessNetworkItemItem::iconName() const

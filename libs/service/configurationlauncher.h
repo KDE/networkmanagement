@@ -18,8 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIRELESSNETWORKCONFIGURER_H
-#define WIRELESSNETWORKCONFIGURER_H
+#ifndef CONFIGURATIONLAUNCHER_H
+#define CONFIGURATIONLAUNCHER_H
 
 #include "activatableobserver.h"
 
@@ -27,17 +27,17 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-class WirelessNetworkConfigurerPrivate;
+class ConfigurationLauncherPrivate;
 
 /**
  * Responsible for starting configuration of unconfigured wireless networks
  */
-class KNM_EXPORT WirelessNetworkConfigurer : public ActivatableObserver
+class KNM_EXPORT ConfigurationLauncher : public ActivatableObserver
 {
 Q_OBJECT
 public:
-    WirelessNetworkConfigurer(QObject * parent);
-    ~WirelessNetworkConfigurer();
+    ConfigurationLauncher(QObject * parent);
+    ~ConfigurationLauncher();
 public Q_SLOTS:
     /**
      * 1) Listen to newly added WirelessNetworkItems' activated signals and configure networks for them
@@ -63,9 +63,10 @@ public Q_SLOTS:
 
 protected Q_SLOTS:
     void wirelessNetworkItemActivated();
+    void unconfiguredInterfaceActivated();
 private:
     void configureWirelessNetworkInternal(const QString & ssid, const QString & deviceUni, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags);
-    Q_DECLARE_PRIVATE(WirelessNetworkConfigurer);
-    WirelessNetworkConfigurerPrivate * d_ptr;
+    Q_DECLARE_PRIVATE(ConfigurationLauncher);
+    ConfigurationLauncherPrivate * d_ptr;
 };
-#endif // WIRELESSNETWORKCONFIGURER_H
+#endif // CONFIGURATIONLAUNCHER_H

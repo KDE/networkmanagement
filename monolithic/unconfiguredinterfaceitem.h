@@ -18,32 +18,30 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef UNCONFIGUREDINTERFACEITEM_H
+#define UNCONFIGUREDINTERFACEITEM_H
+
 #include "activatableitem.h"
 
-#include "activatable.h"
-
-class QGridLayout;
-class QHBoxLayout;
-class QLabel;
-
-class ActivatableItemPrivate
+namespace Knm
 {
-Q_DECLARE_PUBLIC(ActivatableItem)
-protected:
-    ActivatableItem *q_ptr;
+    class UnconfiguredInterface;
+} // namespace Knm
+
+class UnconfiguredInterfaceItemPrivate;
+
+class UnconfiguredInterfaceItem : public ActivatableItem
+{
+Q_OBJECT
+Q_DECLARE_PRIVATE(UnconfiguredInterfaceItem);
 public:
-    ActivatableItemPrivate();
-    virtual ~ActivatableItemPrivate();
-    void init(QWidget * widgetParent);
-    Knm::Activatable * activatable;
+    UnconfiguredInterfaceItem(Knm::UnconfiguredInterface *, QWidget * parent = 0);
 
-    QGridLayout * outerLayout;
-    QHBoxLayout * innerLayout;
+    virtual ~UnconfiguredInterfaceItem();
 
-    QLabel * activeIcon;
-    QLabel * mainLabel;
+    Knm::UnconfiguredInterface * unconfiguredInterface() const;
 
-    bool hovered;
-    bool first;
+    QString iconName() const;
 };
 
+#endif // UNCONFIGUREDINTERFACEITEM_H

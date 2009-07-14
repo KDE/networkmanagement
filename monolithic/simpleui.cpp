@@ -37,12 +37,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatabledebug.h"
 #include "activatablelist.h"
 #include "interfaceconnection.h"
+#include "unconfiguredinterface.h"
 #include "wirelessinterfaceconnection.h"
 #include "wirelessnetworkitem.h"
 
 #include "interfaceconnectionitem.h"
 #include "wirelessinterfaceconnectionitem.h"
 #include "sortedactivatablelist.h"
+#include "unconfiguredinterfaceitem.h"
 #include "wirelessnetworkitemitem.h"
 
 // sorting activatables
@@ -97,10 +99,9 @@ SimpleUi::SimpleUi(ActivatableList * list, QObject * parent)
 
 SimpleUi::~SimpleUi()
 {
-    delete m_popup;
 }
 
-void SimpleUi::handleAdd(Knm::Activatable * activatable)
+void SimpleUi::handleAdd(Knm::Activatable *)
 {
     // FIXME could cache QWidgetActions here...
     fillPopup();
@@ -108,6 +109,8 @@ void SimpleUi::handleAdd(Knm::Activatable * activatable)
 
 void SimpleUi::fillPopup()
 {
+    m_deviceUnis.clear();
+
     m_popup->clear();
     foreach (Knm::Activatable * activatable, m_sortedList->activatables()) {
         QWidgetAction * newAct = new QWidgetAction(this);
@@ -115,19 +118,29 @@ void SimpleUi::fillPopup()
         ActivatableItem * widget = 0;
         if (activatable->activatableType() == Knm::Activatable::InterfaceConnection) {
             Knm::InterfaceConnection * ic = static_cast<Knm::InterfaceConnection*>(activatable);
-            //kDebug() << ic->connectionName();
+            kDebug() << ic->connectionName();
             widget = new InterfaceConnectionItem(ic, m_popup);
             //connect(newAct, SIGNAL(triggered(bool)), this, SLOT(activatableActionTriggered()));
         } else if ( activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
             Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(activatable);
-            //kDebug() << wic->connectionName();
+            kDebug() << wic->connectionName();
             widget = new WirelessInterfaceConnectionItem(wic, m_popup);
         } else if ( activatable->activatableType() == Knm::Activatable::WirelessNetworkItem) {
             Knm::WirelessNetworkItem * wni = static_cast<Knm::WirelessNetworkItem*>(activatable);
-            //kDebug() << wni->ssid();
+            kDebug() << wni->ssid();
             widget = new WirelessNetworkItemItem(wni, m_popup);
+        } else if ( activatable->activatableType() == Knm::Activatable::UnconfiguredInterface) {
+            Knm::UnconfiguredInterface * unco = static_cast<Knm::UnconfiguredInterface*>(activatable);
+            kDebug() << unco->deviceUni();
+            widget = new UnconfiguredInterfaceItem(unco, m_popup);
         }
+
         if (widget) {
+            if (!m_deviceUnis.contains(activatable->deviceUni())) {
+                widget->setFirst(true);
+                m_deviceUnis.append(activatable->deviceUni());
+                m_popup->addSeparator();
+            }
             newAct->setDefaultWidget(widget);
             m_actions.insert(activatable, newAct);
             m_popup->insertAction(0, newAct);
@@ -135,7 +148,7 @@ void SimpleUi::fillPopup()
     }
 }
 
-void SimpleUi::handleUpdate(Knm::Activatable * changed)
+void SimpleUi::handleUpdate(Knm::Activatable *)
 {
     fillPopup();
     //QAction * action = m_actions[changed];

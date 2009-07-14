@@ -42,8 +42,8 @@ set(knmservice_SRCS
    # simple debug output observer
    activatabledebug.cpp
 
-   # configures new wireless networks on demand and connects them 
-   wirelessnetworkconfigurer.cpp
+   # configures unconfigured devices and new wireless networks on demand and connects them
+   configurationlauncher.cpp
 
    # updates connection state as they are used
    connectionusagemonitor.cpp

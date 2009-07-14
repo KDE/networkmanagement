@@ -26,7 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPixmap>
 
 #include <KDebug>
-#include <KIconLoader>
 #include <KLocale>
 
 #include "interfaceconnection.h"
@@ -80,7 +79,7 @@ void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::Activ
             break;
         case Knm::InterfaceConnection::Activating:
         case Knm::InterfaceConnection::Activated:
-            d->activeIcon->setPixmap(pixmapForConnection());
+            d->activeIcon->setPixmap(pixmap());
             d->activeIcon->show();
             if (!d->connectionDetailsLabel) {
                 d->connectionDetailsLabel = new QLabel(this);
@@ -113,11 +112,6 @@ QString InterfaceConnectionItem::textForConnection(Knm::InterfaceConnection::Act
             break;
     }
     return text;
-}
-
-QPixmap InterfaceConnectionItem::pixmapForConnection() const
-{
-    return KIconLoader::global()->loadIcon(iconName(), KIconLoader::Panel);
 }
 
 QString InterfaceConnectionItem::iconName() const

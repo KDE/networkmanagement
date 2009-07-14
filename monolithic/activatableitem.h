@@ -38,6 +38,11 @@ public:
     virtual ~ActivatableItem();
 
     /**
+     * Set as the first item of this type, giving extra visual emphasis
+     */
+    void setFirst(bool first);
+
+    /**
      * Set the main text, use for connection names
      */
     void setText(const QString & text);
@@ -61,6 +66,11 @@ public:
      */
     Knm::Activatable * activatable() const;
 protected:
+    /**
+     * Allows subclasses to update their appearance when first
+     */
+    virtual void setFirstInternal(bool first);
+    virtual QPixmap pixmap() const;
     virtual void enterEvent(QEvent *);
     virtual void leaveEvent(QEvent *);
     virtual void paintEvent(QPaintEvent *);
