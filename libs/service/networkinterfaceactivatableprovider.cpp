@@ -32,9 +32,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkinterfaceactivatableprovider_p.h"
 
 NetworkInterfaceActivatableProviderPrivate::NetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::NetworkInterface * theInterface)
-: interface(theInterface), connectionList(theConnectionList), activatableList(theActivatableList), unconfiguredActivatable(0)
+: interface(theInterface), connectionList(theConnectionList), unconfiguredActivatable(0)
 {
-
+    activatableList = theActivatableList;
 }
 
 NetworkInterfaceActivatableProviderPrivate::~NetworkInterfaceActivatableProviderPrivate()
@@ -45,14 +45,11 @@ NetworkInterfaceActivatableProviderPrivate::~NetworkInterfaceActivatableProvider
 NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent)
     : QObject(parent), d_ptr(new NetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface))
 {
-    //d->unconfiguredActivatable = new Knm::Activatable(Knm::Activatable::UnconfiguredDevice, d->interface->uni(), this);
 }
 
 NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(NetworkInterfaceActivatableProviderPrivate &dd, QObject * parent)
     : QObject(parent), d_ptr(&dd)
 {
-    Q_D(NetworkInterfaceActivatableProvider);
-    connect(d->activatableList, SIGNAL(destroyed()), this, SLOT(activatableListDestroyed()));
 }
 
 void NetworkInterfaceActivatableProvider::init()
@@ -76,6 +73,7 @@ NetworkInterfaceActivatableProvider::~NetworkInterfaceActivatableProvider()
         foreach (Knm::Activatable* activatable, d->activatables) {
             d->activatableList->removeActivatable(activatable);
         }
+        d->activatableList->removeActivatable(d->unconfiguredActivatable);
     }
     // all activatables we own are deleted since they are child QObjects
 }
@@ -85,13 +83,11 @@ void NetworkInterfaceActivatableProvider::maintainActivatableForUnconfigured()
     Q_D(NetworkInterfaceActivatableProvider);
     if (d->activatables.isEmpty()) {
         if (!d->unconfiguredActivatable) {
-            kDebug() << "adding";
             d->unconfiguredActivatable = new Knm::UnconfiguredInterface(d->interface->uni(), this);
             d->activatableList->addActivatable(d->unconfiguredActivatable);
         }
     } else {
         if (d->unconfiguredActivatable) {
-            kDebug() << "removing";
             d->activatableList->removeActivatable(d->unconfiguredActivatable);
             delete d->unconfiguredActivatable;
             d->unconfiguredActivatable = 0;
@@ -190,9 +186,4 @@ void NetworkInterfaceActivatableProvider::handleRemove(Knm::Connection * removed
     maintainActivatableForUnconfigured();
 }
 
-void NetworkInterfaceActivatableProvider::activatableListDestroyed()
-{
-    Q_D(NetworkInterfaceActivatableProvider);
-    d->activatableList = 0;
-}
 // vim: sw=4 sts=4 et tw=100

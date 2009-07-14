@@ -70,7 +70,8 @@ Q_DECLARE_METATYPE(Knm::Activatable *);
 SimpleUi::SimpleUi(ActivatableList * list, QObject * parent)
     : ActivatableObserver(parent)
 {
-    m_notificationItem = new Experimental::KNotificationItem(this);
+    // leak, you fucker
+    m_notificationItem = new Experimental::KNotificationItem(0);
     m_notificationItem->setCategory(Experimental::KNotificationItem::Hardware);
     m_notificationItem->setTitle(i18nc("Popup title", "Network Management"));
     m_notificationItem->setIconByName("networkmanager");

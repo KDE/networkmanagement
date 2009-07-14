@@ -71,7 +71,7 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
             provider = new WirelessNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface), this);
         } else if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
             provider = new WiredNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::WiredNetworkInterface*>(iface), this);
-        } else { 
+        } else {
             provider = new NetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, iface, this);
         }
         d->connectionList->registerConnectionHandler(provider);

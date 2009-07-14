@@ -123,7 +123,7 @@ int main( int argc, char** argv )
 
     // really simple UI
     // register after everything except debug
-    SimpleUi * simpleUi = new SimpleUi(activatableList, &app);
+    SimpleUi * simpleUi = new SimpleUi(activatableList, 0);
     activatableList->registerObserver(simpleUi);
 
     // put the activatables on the session bus for external applets
@@ -133,7 +133,10 @@ int main( int argc, char** argv )
     // load our local connections
     listPersistence->init();
 
-    return app.exec();
+    int i = app.exec();
+    // workaround KNotificationItem crashing when deleted from QCoreApp dtor
+    delete simpleUi;
+    return i;
 }
 
 
