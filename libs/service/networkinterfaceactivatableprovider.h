@@ -87,8 +87,12 @@ public:
 protected Q_SLOTS:
     void activatableListDestroyed();
 protected:
-    NetworkInterfaceActivatableProvider(NetworkInterfaceActivatableProviderPrivate& dd, ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent);
+    NetworkInterfaceActivatableProvider(NetworkInterfaceActivatableProviderPrivate& dd, QObject * parent);
     NetworkInterfaceActivatableProviderPrivate * d_ptr;
+    /**
+     * Adds or removes a dummy activatable for unconfigured devices
+     */
+    void maintainActivatableForUnconfigured();
 private:
     Q_DECLARE_PRIVATE(NetworkInterfaceActivatableProvider)
 };

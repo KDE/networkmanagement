@@ -21,6 +21,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatabledebug.h"
 
 #include <KDebug>
+#include <solid/control/networkmanager.h>
+#include <solid/control/networkinterface.h>
 
 #include "activatable.h"
 #include "interfaceconnection.h"
@@ -56,6 +58,12 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
         case Knm::Activatable::WirelessNetworkItem:
             wni = qobject_cast<Knm::WirelessNetworkItem*>(activatable);
             string = QString::fromLatin1("WirelessNetworkItem for network %1 on %2 with strength %3").arg(wni->ssid(), activatable->deviceUni(), QString::number(wni->strength()));
+            break;
+        case Knm::Activatable::UnconfiguredInterface:
+            Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable->deviceUni());
+            if (iface) {
+                string = QString::fromLatin1("UnconfiguredDevice %1").arg(iface->interfaceName());
+            }
             break;
     }
 

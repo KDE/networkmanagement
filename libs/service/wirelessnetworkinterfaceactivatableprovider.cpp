@@ -29,10 +29,15 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatablelist.h"
 #include "connectionlist.h"
+#include "unconfiguredinterface.h"
 
 class WirelessNetworkInterfaceActivatableProviderPrivate : public NetworkInterfaceActivatableProviderPrivate
 {
 public:
+    WirelessNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::WirelessNetworkInterface * theInterface)
+        : NetworkInterfaceActivatableProviderPrivate(theConnectionList, theActivatableList, theInterface)
+    { }
+
     Solid::Control::WirelessNetworkInterfaceEnvironment * environment;
     // essid to activatable
     QHash<QString, Knm::Activatable *> wirelessActivatables;
@@ -43,7 +48,7 @@ public:
 };
 
 WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::WirelessNetworkInterface * interface, QObject * parent)
-: NetworkInterfaceActivatableProvider(*new WirelessNetworkInterfaceActivatableProviderPrivate, connectionList, activatableList, interface, parent)
+: NetworkInterfaceActivatableProvider(*new WirelessNetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface), parent)
 {
     Q_D(WirelessNetworkInterfaceActivatableProvider);
     d->environment = new Solid::Control::WirelessNetworkInterfaceEnvironment(interface);
@@ -112,6 +117,7 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                 }
             }
         }
+        maintainActivatableForUnconfigured();
     }
 }
 
@@ -173,9 +179,15 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
                     connect(network, SIGNAL(signalStrengthChanged(int)), wirelessNetworkItem, SLOT(setStrength(int)));
                     d->wirelessActivatables.insert(ssid, wirelessNetworkItem);
                     d->activatableList->addActivatable(wirelessNetworkItem);
+
+                    // remove the dummy activatable
+                    if (d->unconfiguredActivatable) {
+                        d->activatableList->removeActivatable(d->unconfiguredActivatable);
+                        delete d->unconfiguredActivatable;
+                        d->unconfiguredActivatable = 0;
+                    }
                 }
             }
-
         }
     }
 }
@@ -192,6 +204,12 @@ void WirelessNetworkInterfaceActivatableProvider::networkDisappeared(const QStri
         d->wirelessActivatables.take(ssid);
         d->activatableList->removeActivatable(activatable);
         delete activatable;
+    }
+    if (d->activatables.isEmpty() && d->wirelessActivatables.isEmpty()) {
+        if (!d->unconfiguredActivatable) {
+            d->unconfiguredActivatable = new Knm::UnconfiguredInterface(d->interface->uni(), this);
+            d->activatableList->addActivatable(d->unconfiguredActivatable);
+        }
     }
 }
 

@@ -25,10 +25,17 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 #include "connectionlist.h"
 #include "interfaceconnection.h"
+#include "unconfiguredinterface.h"
 
 #include "activatablelist.h"
 
 #include "networkinterfaceactivatableprovider_p.h"
+
+NetworkInterfaceActivatableProviderPrivate::NetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::NetworkInterface * theInterface)
+: interface(theInterface), connectionList(theConnectionList), activatableList(theActivatableList), unconfiguredActivatable(0)
+{
+
+}
 
 NetworkInterfaceActivatableProviderPrivate::~NetworkInterfaceActivatableProviderPrivate()
 {
@@ -36,21 +43,15 @@ NetworkInterfaceActivatableProviderPrivate::~NetworkInterfaceActivatableProvider
 }
 
 NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent)
-    : QObject(parent), d_ptr(new NetworkInterfaceActivatableProviderPrivate)
+    : QObject(parent), d_ptr(new NetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface))
 {
-    Q_D(NetworkInterfaceActivatableProvider);
-    d->interface = interface;
-    d->activatableList = activatableList;
-    d->connectionList = connectionList;
+    //d->unconfiguredActivatable = new Knm::Activatable(Knm::Activatable::UnconfiguredDevice, d->interface->uni(), this);
 }
 
-NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(NetworkInterfaceActivatableProviderPrivate &dd, ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent)
+NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(NetworkInterfaceActivatableProviderPrivate &dd, QObject * parent)
     : QObject(parent), d_ptr(&dd)
 {
     Q_D(NetworkInterfaceActivatableProvider);
-    d->interface = interface;
-    d->activatableList = activatableList;
-    d->connectionList = connectionList;
     connect(d->activatableList, SIGNAL(destroyed()), this, SLOT(activatableListDestroyed()));
 }
 
@@ -62,6 +63,10 @@ void NetworkInterfaceActivatableProvider::init()
         Knm::Connection * connection = d->connectionList->findConnection(uuid);
         handleAdd(connection);
     }
+
+    // if we don't have any connections, create a special activatable representing the unconfigured
+    // device, which is removed when a connection appears
+    maintainActivatableForUnconfigured();
 }
 
 NetworkInterfaceActivatableProvider::~NetworkInterfaceActivatableProvider()
@@ -73,6 +78,25 @@ NetworkInterfaceActivatableProvider::~NetworkInterfaceActivatableProvider()
         }
     }
     // all activatables we own are deleted since they are child QObjects
+}
+
+void NetworkInterfaceActivatableProvider::maintainActivatableForUnconfigured()
+{
+    Q_D(NetworkInterfaceActivatableProvider);
+    if (d->activatables.isEmpty()) {
+        if (!d->unconfiguredActivatable) {
+            kDebug() << "adding";
+            d->unconfiguredActivatable = new Knm::UnconfiguredInterface(d->interface->uni(), this);
+            d->activatableList->addActivatable(d->unconfiguredActivatable);
+        }
+    } else {
+        if (d->unconfiguredActivatable) {
+            kDebug() << "removing";
+            d->activatableList->removeActivatable(d->unconfiguredActivatable);
+            delete d->unconfiguredActivatable;
+            d->unconfiguredActivatable = 0;
+        }
+    }
 }
 
 bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType, Solid::Control::NetworkInterface::Type ifaceType)
@@ -141,6 +165,7 @@ void NetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedConne
             kDebug() << "hardware address mismatch!";
         }
     }
+    maintainActivatableForUnconfigured();
 }
 
 void NetworkInterfaceActivatableProvider::handleUpdate(Knm::Connection * updatedConnection)
@@ -157,10 +182,12 @@ void NetworkInterfaceActivatableProvider::handleRemove(Knm::Connection * removed
 {
     Q_D(NetworkInterfaceActivatableProvider);
     if (d->activatables.contains(removedConnection->uuid())) {
-        Knm::Activatable * activatable = d->activatables[removedConnection->uuid()];
+        Knm::Activatable * activatable = d->activatables.take(removedConnection->uuid());
         d->activatableList->removeActivatable(activatable);
         delete activatable;
     }
+
+    maintainActivatableForUnconfigured();
 }
 
 void NetworkInterfaceActivatableProvider::activatableListDestroyed()

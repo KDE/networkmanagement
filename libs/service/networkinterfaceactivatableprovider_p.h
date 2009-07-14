@@ -22,18 +22,26 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkinterfaceactivatableprovider.h"
 
+namespace Knm
+{
+    class UnconfiguredInterface;
+} // namespace Knm
+
 class NetworkInterfaceActivatableProviderPrivate
 {
 Q_DECLARE_PUBLIC(NetworkInterfaceActivatableProvider)
 public:
+    NetworkInterfaceActivatableProviderPrivate(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface);
     virtual ~NetworkInterfaceActivatableProviderPrivate();
     Solid::Control::NetworkInterface * interface;
     ConnectionList * connectionList;
     ActivatableList * activatableList;
     // map connection UUID to activatable
     QHash<QString, Knm::Activatable*> activatables;
+    // special activatable for devices with no connections
+    Knm::UnconfiguredInterface * unconfiguredActivatable;
 protected:
-        NetworkInterfaceActivatableProvider *q_ptr;
+    NetworkInterfaceActivatableProvider *q_ptr;
 };
 
 #endif // NETWORKINTERFACEACTIVATABLEPROVIDER_P_H

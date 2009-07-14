@@ -38,7 +38,8 @@ public:
     enum ActivatableType {
         InterfaceConnection,
         WirelessInterfaceConnection,
-        WirelessNetworkItem
+        WirelessNetworkItem,
+        UnconfiguredInterface
     };
 
     virtual ~Activatable();

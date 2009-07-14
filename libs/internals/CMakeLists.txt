@@ -66,6 +66,7 @@ set(knminternals_SRCS
    wirelessinterfaceconnection.cpp
    wirelessitem.cpp
    wirelessnetworkitem.cpp
+   unconfiguredinterface.cpp
    )
 
 kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)

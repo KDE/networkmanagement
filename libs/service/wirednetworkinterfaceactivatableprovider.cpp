@@ -31,8 +31,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class WiredNetworkInterfaceActivatableProviderPrivate : public NetworkInterfaceActivatableProviderPrivate
 {
 public:
-    // essid to activatable
-    QHash<QString, Knm::Activatable *> wiredActivatables;
+    WiredNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::WiredNetworkInterface * theInterface)
+        : NetworkInterfaceActivatableProviderPrivate(theConnectionList, theActivatableList, theInterface)
+    { }
+
     Solid::Control::WiredNetworkInterface * wiredInterface()
     {
         return qobject_cast<Solid::Control::WiredNetworkInterface*>(interface);
@@ -40,7 +42,7 @@ public:
 };
 
 WiredNetworkInterfaceActivatableProvider::WiredNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::WiredNetworkInterface * interface, QObject * parent)
-: NetworkInterfaceActivatableProvider(*new WiredNetworkInterfaceActivatableProviderPrivate, connectionList, activatableList, interface, parent)
+: NetworkInterfaceActivatableProvider(*new WiredNetworkInterfaceActivatableProviderPrivate( connectionList, activatableList, interface), parent)
 {
     connect(interface, SIGNAL(carrierChanged(bool)), this, SLOT(handleCarrierChange(bool)));
 }
