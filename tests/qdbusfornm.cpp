@@ -47,6 +47,10 @@
 #include <QtXml/QDomElement>
 #include <QtDBus/QtDBus>
 
+typedef QPair<int,int> IntPair;
+
+Q_DECLARE_METATYPE(IntPair)
+
 namespace QDBusUtil
 {
     QDBUS_EXPORT bool isValidInterfaceName(const QString &ifaceName);
@@ -130,6 +134,12 @@ static void printArg(const QVariant &v)
                 printf("]");
             }
         }
+#if 0
+        else if (arg.currentSignature() == QLatin1String("(ii)")) {
+            IntPair p = qdbus_cast<IntPair>(arg);
+            printf("(%i,%i)", p.first, p.second);
+        }
+#endif
         else if (arg.currentSignature() == QLatin1String("ao")) {
             QList<QDBusObjectPath> t = qdbus_cast<QList<QDBusObjectPath> >(arg);
             QList<QDBusObjectPath>::ConstIterator it = t.constBegin();
@@ -435,6 +445,7 @@ static void printAllServices(QDBusConnectionInterface *bus)
 int main(int argc, char **argv)
 {
 qDBusRegisterMetaType<QVariantMapMap>();
+//qDBusRegisterMetaType<QPair<int,int> >();
     QCoreApplication app(argc, argv);
     QStringList args = app.arguments();
     args.takeFirst();
