@@ -98,8 +98,8 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     setIconByName(d->iconName);
     d->popup = new KMenu("Title", 0);
 
-//    d->notificationItem->setAssociatedWidget(d->popup);
     //KMenu * menu = d->notificationItem->contextMenu();
+    setAssociatedWidget(d->popup);
     setContextMenu(d->popup);
     KAction * prefsAction = KStandardAction::preferences(this, SLOT(slotPreferences()), this);
     prefsAction->setText(i18nc("Preferences action title", "Manage Connections..."));
@@ -129,7 +129,8 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     foreach (Solid::Control::NetworkInterface * iface,
             Solid::Control::NetworkManager::networkInterfaces()) {
         if (d->interfaceTypes.testFlag(iface->type())) {
-            QObject::connect(iface, SIGNAL(connectionStateChanged(int)), this, SLOT(updateTrayIcon()));
+            kDebug() << "connecting" << iface->interfaceName() << "'s signals";
+            QObject::connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
         }
     }
 
@@ -268,10 +269,17 @@ void KNetworkManagerTrayIcon::networkInterfaceAdded(const QString & uni)
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     if (iface) {
         if (!d->interfaceTypes.testFlag(iface->type())) {
-            QObject::connect(iface, SIGNAL(connectionStateChanged(int)), this, SLOT(updateTrayIcon()));
+            QObject::connect(iface, SIGNAL(connectionStateChanged(int)), this, SLOT(handleConnectionStateChange(int,int,int)));
         }
     }
     //update our state
+    updateTrayIcon();
+}
+
+void KNetworkManagerTrayIcon::handleConnectionStateChange(int new_state, int old_state, int reason)
+{
+    Solid::Control::NetworkInterface * iface = qobject_cast<Solid::Control::NetworkInterface*>(sender());
+    kDebug() << iface->interfaceName() << "has changed state from" << old_state << "to" << new_state << "because of reason" << reason;
     updateTrayIcon();
 }
 
@@ -292,7 +300,8 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
 
     kDebug() << "interfaces considered:";
     foreach (Solid::Control::NetworkInterface * iface, interfaces) {
-        kDebug() << iface << iface->type();
+        kDebug() << iface << iface->type() << iface->connectionState();
+
     }
 
     // get the icon name for the state of the most interesting interface
