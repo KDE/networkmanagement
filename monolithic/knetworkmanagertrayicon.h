@@ -51,9 +51,15 @@ public:
     void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
     void activatableActionTriggered();
-protected slots:
+protected Q_SLOTS:
     //void updateActionState(Knm::Activatable * changed, QAction * action);
     void slotPreferences();
+    /**
+     * Starts monitoring new network interfaces' state changes
+     */
+    void networkInterfaceAdded(const QString&);
+    //void networkInterfaceRemoved(const QString&);
+    void updateTrayIcon();
 private:
     void fillPopup();
     KNetworkManagerTrayIconPrivate * d_ptr;

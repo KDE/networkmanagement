@@ -31,6 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KStandardAction>
 #include <KToolInvocation>
 
+#include <solid/control/networkmanager.h>
+
 #include "activatable.h"
 #include "activatabledebug.h"
 #include "activatablelist.h"
@@ -68,28 +70,32 @@ Q_DECLARE_METATYPE(Knm::Activatable *);
 class KNetworkManagerTrayIconPrivate
 {
 public:
-    Solid::Control::NetworkInterface::Types displayedTypes;
+    Solid::Control::NetworkInterface::Types interfaceTypes;
     SortedActivatableList * sortedList;
     Experimental::KNotificationItem * notificationItem;
     KMenu * popup;
     QVBoxLayout * popupLayout;
     QHash<Knm::Activatable *, QWidgetAction *> actions;
     QStringList deviceUnis;
-
+    QString iconName;
 };
+
+/* for qSort()ing */
+bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
+bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 
 KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterface::Types types, const QString & id, ActivatableList * list, QObject * parent)
     : KNotificationItem(id, parent), d_ptr(new KNetworkManagerTrayIconPrivate)
 {
     Q_D(KNetworkManagerTrayIcon);
-    d->displayedTypes = types;
-
+    d->interfaceTypes = types;
+    d->iconName = "networkmanager";
     // don't try and make this our child or it crashes on app exit due to widgets it manages
     // not liking there being no QApplication anymore.
     setStandardActionsEnabled(false);
     setCategory(Experimental::KNotificationItem::Hardware);
     setTitle(i18nc("Popup title", "Network Management"));
-    setIconByName("networkmanager");
+    setIconByName(d->iconName);
     d->popup = new KMenu("Title", 0);
 
 //    d->notificationItem->setAssociatedWidget(d->popup);
@@ -107,6 +113,28 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     list->registerObserver(this, d->sortedList);
 
     fillPopup();
+
+    // listen for new devices
+    QObject::connect(Solid::Control::NetworkManager::notifier(),
+            SIGNAL(networkInterfaceAdded(const QString&)),
+            this,
+            SLOT(networkInterfaceAdded(const QString&)));
+
+    QObject::connect(Solid::Control::NetworkManager::notifier(),
+            SIGNAL(networkInterfaceRemoved(const QString&)),
+            this,
+            SLOT(updateTrayIcon()));
+
+    // listen to existing devices' state changes
+    foreach (Solid::Control::NetworkInterface * iface,
+            Solid::Control::NetworkManager::networkInterfaces()) {
+        if (d->interfaceTypes.testFlag(iface->type())) {
+            QObject::connect(iface, SIGNAL(connectionStateChanged(int)), this, SLOT(updateTrayIcon()));
+        }
+    }
+
+    // set initial tray icon appearance and tooltip
+    updateTrayIcon();
 }
 
 KNetworkManagerTrayIcon::~KNetworkManagerTrayIcon()
@@ -232,6 +260,258 @@ void KNetworkManagerTrayIcon::slotPreferences()
     QStringList args;
     args << "kcm_networkmanagement";
     KToolInvocation::kdeinitExec("kcmshell4", args);
+}
+
+void KNetworkManagerTrayIcon::networkInterfaceAdded(const QString & uni)
+{
+    Q_D(KNetworkManagerTrayIcon);
+    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+    if (iface) {
+        if (!d->interfaceTypes.testFlag(iface->type())) {
+            QObject::connect(iface, SIGNAL(connectionStateChanged(int)), this, SLOT(updateTrayIcon()));
+        }
+    }
+    //update our state
+    updateTrayIcon();
+}
+
+void KNetworkManagerTrayIcon::updateTrayIcon()
+{
+    Q_D(KNetworkManagerTrayIcon);
+    kDebug();
+    // update appearance
+    // get current list of interfaces we are displaying
+    Solid::Control::NetworkInterfaceList interfaces = Solid::Control::NetworkManager::networkInterfaces();
+    QMutableListIterator<Solid::Control::NetworkInterface *> it(interfaces);
+    while (it.hasNext()) {
+        Solid::Control::NetworkInterface * iface = it.next();
+        if (!d->interfaceTypes.testFlag(iface->type())) {
+            it.remove();
+        }
+    }
+
+    kDebug() << "interfaces considered:";
+    foreach (Solid::Control::NetworkInterface * iface, interfaces) {
+        kDebug() << iface << iface->type();
+    }
+
+    // get the icon name for the state of the most interesting interface
+    QString iconName, overlayIconName;
+    if (!interfaces.isEmpty()) {
+        qSort(interfaces.begin(), interfaces.end(), networkInterfaceLessThan);
+        Solid::Control::NetworkInterface * interface = interfaces.first();
+        switch (interface->type() ) {
+            case Solid::Control::NetworkInterface::Ieee8023:
+                iconName = "network-wired";
+                break;
+            case Solid::Control::NetworkInterface::Ieee80211:
+                iconName = "network-wireless";
+                break;
+            case Solid::Control::NetworkInterface::Serial:
+                iconName = "modem";
+                break;
+            case Solid::Control::NetworkInterface::Gsm:
+            case Solid::Control::NetworkInterface::Cdma:
+                iconName = "phone";
+                break;
+            default:
+                iconName = "network-wired";
+                break;
+        }
+
+        switch (interface->connectionState()) {
+            case Solid::Control::NetworkInterface::Preparing:
+                //overlayIconName = "busy-phase1";
+                overlayIconName = "emblem-mounted";
+                break;
+            case Solid::Control::NetworkInterface::Configuring:
+                overlayIconName = "busy-phase2";
+                overlayIconName = "emblem-mounted";
+                break;
+            case Solid::Control::NetworkInterface::NeedAuth:
+                overlayIconName = "busy-phase2";
+                overlayIconName = "emblem-mounted";
+                break;
+            case Solid::Control::NetworkInterface::IPConfig:
+                overlayIconName = "busy-phase3";
+                overlayIconName = "emblem-mounted";
+                break;
+            case Solid::Control::NetworkInterface::Activated:
+                overlayIconName = "checkbox";
+                break;
+            default:
+                break;
+        }
+    } else {
+        iconName = "networkmanager";
+    }
+
+    kDebug() << "suggested icon name:" << iconName;
+
+    if (iconName != d->iconName) {
+        d->iconName = iconName;
+        kDebug() << "setting icon:" << iconName;
+        setIconByName(d->iconName);
+    }
+    kDebug() << "setting overlay:" << overlayIconName;
+    setOverlayIconByName(overlayIconName);
+}
+
+bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Control::NetworkInterface * if2)
+{
+    /*
+     * status merging algorithm
+     * In descending order of importance:
+     * - Connecting devices
+     *   - Cellular devices (because of cost)
+     *   - = PPP devices
+     *   - Ethernet devices
+     *   - Wireless devices
+     * - Connected devices
+     *   - order as above
+     * - Disconnected devices
+     *   - order as above
+     */
+    enum { Connecting, Connected, Disconnected } if2status = Disconnected, if1status = Disconnected;
+    switch (if1->connectionState()) {
+        case Solid::Control::NetworkInterface::Preparing:
+        case Solid::Control::NetworkInterface::Configuring:
+        case Solid::Control::NetworkInterface::NeedAuth:
+        case Solid::Control::NetworkInterface::IPConfig:
+            if1status = Connecting;
+            break;
+        case Solid::Control::NetworkInterface::Activated:
+            if1status = Connected;
+            break;
+        default: // all kind of disconnected
+            break;
+    }
+    switch (if2->connectionState()) {
+        case Solid::Control::NetworkInterface::Preparing:
+        case Solid::Control::NetworkInterface::Configuring:
+        case Solid::Control::NetworkInterface::NeedAuth:
+        case Solid::Control::NetworkInterface::IPConfig:
+            if2status = Connecting;
+            break;
+        case Solid::Control::NetworkInterface::Activated:
+            if2status = Connected;
+            break;
+        default: // all kind of disconnected
+            break;
+    }
+    switch (if1status) {
+        case Connecting:
+            return if2status != Connecting || networkInterfaceSameConnectionStateLessThan(if1, if2);
+            break;
+        case Connected:
+            if ( if2status == Connecting)
+               return false;
+            return if2status != Connected || networkInterfaceSameConnectionStateLessThan(if1, if2);
+            break;
+        case Disconnected:
+            if ( if2status == Disconnected)
+                return networkInterfaceSameConnectionStateLessThan(if1, if2);
+            return false;
+            break;
+    }
+    // satisfy compiler
+    return false;
+}
+
+bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2)
+{
+    bool lessThan = false;
+    switch (if1->type() ) {
+        case Solid::Control::NetworkInterface::Ieee8023:
+            switch (if2->type()) {
+                case Solid::Control::NetworkInterface::Ieee8023:
+                    lessThan = if1->uni() < if2->uni();
+                    break;
+                case Solid::Control::NetworkInterface::Ieee80211:
+                    lessThan = true;
+                    break;
+                case Solid::Control::NetworkInterface::Serial:
+                case Solid::Control::NetworkInterface::Gsm:
+                case Solid::Control::NetworkInterface::Cdma:
+                default:
+                    lessThan = false;
+                    break;
+            }
+            break;
+        case Solid::Control::NetworkInterface::Ieee80211:
+            switch (if2->type()) {
+                case Solid::Control::NetworkInterface::Ieee8023:
+                    lessThan = false;
+                    break;
+                case Solid::Control::NetworkInterface::Ieee80211:
+                    lessThan = if1->uni() < if2->uni();
+                    break;
+                case Solid::Control::NetworkInterface::Serial:
+                case Solid::Control::NetworkInterface::Gsm:
+                case Solid::Control::NetworkInterface::Cdma:
+                    lessThan = false;
+                    break;
+                default:
+                    lessThan = true;
+                    break;
+            }
+            break;
+        case Solid::Control::NetworkInterface::Serial:
+            switch (if2->type()) {
+                case Solid::Control::NetworkInterface::Ieee8023:
+                case Solid::Control::NetworkInterface::Ieee80211:
+                    lessThan = true;
+                    break;
+                case Solid::Control::NetworkInterface::Serial:
+                    lessThan = if1->uni() < if2->uni();
+                    break;
+                case Solid::Control::NetworkInterface::Gsm:
+                case Solid::Control::NetworkInterface::Cdma:
+                    lessThan = false;
+                    break;
+                default:
+                    lessThan = true;
+                    break;
+            }
+            break;
+        case Solid::Control::NetworkInterface::Gsm:
+            switch (if2->type()) {
+                case Solid::Control::NetworkInterface::Ieee8023:
+                case Solid::Control::NetworkInterface::Ieee80211:
+                case Solid::Control::NetworkInterface::Serial:
+                    lessThan = true;
+                    break;
+                case Solid::Control::NetworkInterface::Gsm:
+                    lessThan = if1->uni() < if2->uni();
+                    break;
+                case Solid::Control::NetworkInterface::Cdma:
+                    lessThan = false;
+                    break;
+                default:
+                    lessThan = true;
+                    break;
+            }
+            break;
+        case Solid::Control::NetworkInterface::Cdma:
+            switch (if2->type()) {
+                case Solid::Control::NetworkInterface::Ieee8023:
+                case Solid::Control::NetworkInterface::Ieee80211:
+                case Solid::Control::NetworkInterface::Serial:
+                case Solid::Control::NetworkInterface::Gsm:
+                    lessThan = true;
+                    break;
+                case Solid::Control::NetworkInterface::Cdma:
+                    lessThan = if1->uni() < if2->uni();
+                    break;
+                default:
+                    lessThan = true;
+                    break;
+            }
+            break;
+        default:
+            lessThan = false;
+        }
+    return lessThan;
 }
 
 // vim: sw=4 sts=4 et tw=100
