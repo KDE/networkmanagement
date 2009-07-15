@@ -45,23 +45,30 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
 
     QString string;
 
+    QString identifier;
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable->deviceUni());
+    if (iface) {
+        identifier = iface->interfaceName();
+    } else {
+        identifier = activatable->deviceUni();
+    }
+
     switch (activatable->activatableType()) {
         case Knm::Activatable::InterfaceConnection:
             ic = qobject_cast<Knm::InterfaceConnection*>(activatable);
-            string = QString::fromLatin1("InterfaceConnection %1 (%2) on %3 with state %4").arg(ic->connectionName(), ic->connectionUuid(), iface->interfaceName(), QString::number((uint)ic->activationState()));
+            string = QString::fromLatin1("InterfaceConnection %1 (%2) on %3 with state %4").arg(ic->connectionName(), ic->connectionUuid(), identifier, QString::number((uint)ic->activationState()));
             break;
         case Knm::Activatable::WirelessInterfaceConnection:
             wic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
-            string = QString::fromLatin1("WirelessConnection %1 (%2) on %3 with state %4 for network %5 with strength %6").arg(wic->connectionName(), wic->connectionUuid(), iface->interfaceName(), QString::number(wic->activationState()), wic->ssid(), QString::number(wic->strength()));
+            string = QString::fromLatin1("WirelessConnection %1 (%2) on %3 with state %4 for network %5 with strength %6").arg(wic->connectionName(), wic->connectionUuid(), identifier, QString::number(wic->activationState()), wic->ssid(), QString::number(wic->strength()));
             break;
         case Knm::Activatable::WirelessNetworkItem:
             wni = qobject_cast<Knm::WirelessNetworkItem*>(activatable);
-            string = QString::fromLatin1("WirelessNetworkItem for network %1 on %2 with strength %3").arg(wni->ssid(), iface->interfaceName(), QString::number(wni->strength()));
+            string = QString::fromLatin1("WirelessNetworkItem for network %1 on %2 with strength %3").arg(wni->ssid(), identifier, QString::number(wni->strength()));
             break;
         case Knm::Activatable::UnconfiguredInterface:
             if (iface) {
-                string = QString::fromLatin1("UnconfiguredDevice %1").arg(iface->interfaceName());
+                string = QString::fromLatin1("UnconfiguredDevice %1").arg(identifier);
             }
             break;
     }
