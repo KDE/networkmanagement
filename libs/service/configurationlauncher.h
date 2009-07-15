@@ -32,13 +32,12 @@ class ConfigurationLauncherPrivate;
 /**
  * Responsible for starting configuration of unconfigured wireless networks
  */
-class KNM_EXPORT ConfigurationLauncher : public ActivatableObserver
+class KNM_EXPORT ConfigurationLauncher : public QObject, public ActivatableObserver
 {
 Q_OBJECT
 public:
     ConfigurationLauncher(QObject * parent);
     ~ConfigurationLauncher();
-public Q_SLOTS:
     /**
      * 1) Listen to newly added WirelessNetworkItems' activated signals and configure networks for them
      * 2) examine newly added WirelessInterfaceConnections and activate them if they match the
@@ -46,10 +45,6 @@ public Q_SLOTS:
      * @reimp ActivatableObserver
      */
     void handleAdd(Knm::Activatable *);
-    /**
-     * Create a connection to a hidden wireless network
-     */
-    void configureHiddenWirelessNetwork(const QString & ssid, const QString & deviceUni);
     /**
      * noop impl
      * @reimp ActivatableObserver
@@ -62,6 +57,10 @@ public Q_SLOTS:
     void handleRemove(Knm::Activatable *);
 
 protected Q_SLOTS:
+    /**
+     * Create a connection to a hidden wireless network
+     */
+    void configureHiddenWirelessNetwork(const QString & ssid, const QString & deviceUni);
     void wirelessNetworkItemActivated();
     void unconfiguredInterfaceActivated();
 private:

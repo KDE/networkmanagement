@@ -21,19 +21,16 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef ACTIVATABLEDEBUG_H
 #define ACTIVATABLEDEBUG_H
 
-#include <QObject>
 #include "activatableobserver.h"
 
 #include "knm_export.h"
 
 class KNM_EXPORT ActivatableDebug : public ActivatableObserver
 {
-Q_OBJECT
 public:
-    ActivatableDebug(QObject * parent);
+    ActivatableDebug();
     virtual ~ActivatableDebug();
     static QString activatableToString(Knm::Activatable*);
-public slots:
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);

@@ -29,8 +29,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessinterfaceconnection.h"
 #include "wirelessnetworkitem.h"
 
-ActivatableDebug::ActivatableDebug(QObject * parent)
-: ActivatableObserver(parent)
+ActivatableDebug::ActivatableDebug()
 {
 }
 

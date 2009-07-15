@@ -52,7 +52,7 @@ int compareSsid(const Knm::WirelessItem * first, const Knm::WirelessItem * secon
 SortedActivatableList::WirelessSortPolicy SortedActivatableList::s_wirelessSortPolicy = SortedActivatableList::WirelessSortByStrength;
 
 SortedActivatableList::SortedActivatableList(ActivatableList * list, QObject * parent)
-    : ActivatableObserver(parent)
+    : QObject(parent)
 {
     foreach (Knm::Activatable * activatable, list->activatables()) {
         m_activatables.append(activatable);

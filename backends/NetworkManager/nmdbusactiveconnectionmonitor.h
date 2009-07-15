@@ -38,13 +38,12 @@ class OrgFreedesktopNetworkManagerConnectionActiveInterface;
 /**
  * Watches the list of active connections and updates InterfaceConnections' state
  */
-class KNM_EXPORT NMDBusActiveConnectionMonitor : public ActivatableObserver
+class KNM_EXPORT NMDBusActiveConnectionMonitor : public QObject, public ActivatableObserver
 {
 Q_OBJECT
 public:
     NMDBusActiveConnectionMonitor(ActivatableList * activatables, QObject * parent = 0);
     ~NMDBusActiveConnectionMonitor();
-public Q_SLOTS:
     /**
      * Used to keep track of InterfaceConnections
      */

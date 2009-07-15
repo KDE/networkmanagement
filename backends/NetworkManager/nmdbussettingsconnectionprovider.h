@@ -42,7 +42,7 @@ class NMDBusSettingsConnectionProviderPrivate;
 /**
  * Class to cache and access a remote NetworkManagerSettings service
  */
-class KNM_EXPORT NMDBusSettingsConnectionProvider : public ActivatableObserver
+class KNM_EXPORT NMDBusSettingsConnectionProvider : public QObject, public ActivatableObserver
 // encapsulate
 //: public OrgFreedesktopNetworkManagerSettingsInterface
 {
@@ -51,6 +51,13 @@ public:
     NMDBusSettingsConnectionProvider(ConnectionList * connectionList, const QString & service, QObject * parent = 0);
     virtual ~NMDBusSettingsConnectionProvider();
 
+    /**
+     * tag activatables coming from our connections with dbus object path etc
+     */
+    void handleAdd(Knm::Activatable * activatable);
+    void handleUpdate(Knm::Activatable * activatable);
+    void handleRemove(Knm::Activatable * activatable);
+
 private Q_SLOTS:
     void onConnectionAdded(const QDBusObjectPath&);
     // should probably be handled in RemoteConnection
@@ -58,12 +65,6 @@ private Q_SLOTS:
     // should probably be handled in RemoteConnection
     void onRemoteConnectionUpdated(const QVariantMapMap&);
     void serviceOwnerChanged(const QString&, const QString&, const QString&);
-    /**
-     * tag activatables coming from our connections with dbus object path etc
-     */
-    void handleAdd(Knm::Activatable * activatable);
-    void handleUpdate(Knm::Activatable * activatable);
-    void handleRemove(Knm::Activatable * activatable);
 private:
     void initialiseAndRegisterRemoteConnection(const QString & path);
     void makeConnections(RemoteConnection*);

@@ -36,7 +36,7 @@ class ActivatableList;
  * Keeps a sorted version of the activatable list - needs inserting before the UI so it sees changes
  * before the UI does
  */
-class SortedActivatableList : public ActivatableObserver
+class SortedActivatableList : public QObject, public ActivatableObserver
 {
 Q_OBJECT
 public:

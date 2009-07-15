@@ -32,7 +32,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 class KNM_EXPORT SessionAbstractedServicePrivate;
 
-class KNM_EXPORT SessionAbstractedService : public ActivatableObserver
+class KNM_EXPORT SessionAbstractedService : public QObject, public ActivatableObserver
 {
 Q_OBJECT
 Q_PROPERTY(QStringList activatables READ ListActivatables)

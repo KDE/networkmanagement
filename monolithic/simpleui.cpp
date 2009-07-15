@@ -68,7 +68,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Q_DECLARE_METATYPE(Knm::Activatable *);
 
 SimpleUi::SimpleUi(ActivatableList * list, QObject * parent)
-    : ActivatableObserver(parent)
+    : QObject(parent)
 {
     // don't try and make this our child or it crashes on app exit due to widgets it manages
     // not liking there being no QApplication anymore.

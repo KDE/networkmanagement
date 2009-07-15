@@ -55,7 +55,8 @@ public:
 const QString NMDBusSettingsService::SERVICE_USER_SETTINGS = QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS);
 const QString NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS = QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS);
 
-NMDBusSettingsService::NMDBusSettingsService(QObject * parent) : ActivatableObserver(parent), d_ptr(new NMDBusSettingsServicePrivate)
+NMDBusSettingsService::NMDBusSettingsService(QObject * parent)
+: QObject(parent), d_ptr(new NMDBusSettingsServicePrivate)
 {
     Q_D(NMDBusSettingsService);
     d->active = false;

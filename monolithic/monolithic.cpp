@@ -118,13 +118,13 @@ int main( int argc, char** argv )
     activatableList->registerObserver(nmActiveConnectionMonitor);
 
     // debug activatable changes
-    ActivatableDebug * debug = new ActivatableDebug(&app);
-    activatableList->registerObserver(debug);
+    ActivatableDebug debug;
+    activatableList->registerObserver(&debug);
 
     // really simple UI
     // register after everything except debug
-    SimpleUi * simpleUi = new SimpleUi(activatableList, 0);
-    activatableList->registerObserver(simpleUi);
+    SimpleUi simpleUi(activatableList, 0);
+    activatableList->registerObserver(&simpleUi);
 
     // put the activatables on the session bus for external applets
     SessionAbstractedService * sessionAbstractedService = new SessionAbstractedService(&app);
@@ -135,7 +135,6 @@ int main( int argc, char** argv )
 
     int i = app.exec();
     // workaround KNotificationItem crashing when deleted from QCoreApp dtor
-    delete simpleUi;
     return i;
 }
 

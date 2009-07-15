@@ -38,17 +38,26 @@ class ConnectionUsageMonitorPrivate;
 /**
  * Watch activatables for state changes.  Update Connection's timestamps accordingly
  */
-class KNM_EXPORT ConnectionUsageMonitor : public ActivatableObserver
+class KNM_EXPORT ConnectionUsageMonitor : public QObject, public ActivatableObserver
 {
 Q_OBJECT
 public:
     ConnectionUsageMonitor(ConnectionList * connectionList, ActivatableList * activatableList, QObject * parent);
-    ~ConnectionUsageMonitor();
-protected Q_SLOTS:
+    virtual ~ConnectionUsageMonitor();
     /**
      * Begin listening to a connection's state changes
      */
     void handleAdd(Knm::Activatable *);
+    /**
+     * dummy impl
+     */
+    void handleUpdate(Knm::Activatable *);
+    /**
+     * dummy impl
+     */
+    void handleRemove(Knm::Activatable *);
+
+protected Q_SLOTS:
     /**
      * When an activatable goes Active, update the timestamp on the corresponding connection
      */
@@ -62,15 +71,6 @@ protected Q_SLOTS:
      * When an interface roams, update seen-bssids
      */
     void networkInterfaceAccessPointChanged(const QString & apiUni);
-
-    /**
-     * dummy impl
-     */
-    void handleUpdate(Knm::Activatable *);
-    /**
-     * dummy impl
-     */
-    void handleRemove(Knm::Activatable *);
 
 private:
     Q_DECLARE_PRIVATE(ConnectionUsageMonitor);

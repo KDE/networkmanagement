@@ -39,18 +39,18 @@ namespace Experimental
     class KNotificationItem;
 } // namespace Experimental
 
-class SimpleUi : public ActivatableObserver
+class SimpleUi : public QObject, public ActivatableObserver
 {
 Q_OBJECT
 public:
     SimpleUi(ActivatableList * list, QObject * parent);
     ~SimpleUi();
-protected slots:
     // respond to activatable changes
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
     void activatableActionTriggered();
+protected slots:
     //void updateActionState(Knm::Activatable * changed, QAction * action);
     void slotPreferences();
 private:

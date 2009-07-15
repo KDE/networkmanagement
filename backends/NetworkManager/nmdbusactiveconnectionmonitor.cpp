@@ -42,7 +42,7 @@ public:
 };
 
 NMDBusActiveConnectionMonitor::NMDBusActiveConnectionMonitor(ActivatableList * activatables, QObject * parent)
-: ActivatableObserver(parent), d_ptr(new NMDBusActiveConnectionMonitorPrivate)
+: QObject(parent), d_ptr(new NMDBusActiveConnectionMonitorPrivate)
 {
     kDebug();
     Q_D(NMDBusActiveConnectionMonitor);

@@ -47,7 +47,7 @@ public:
 };
 
 ConfigurationLauncher::ConfigurationLauncher(QObject * parent)
-: ActivatableObserver(parent), d_ptr(new ConfigurationLauncherPrivate)
+: QObject(parent), d_ptr(new ConfigurationLauncherPrivate)
 {
 }
 

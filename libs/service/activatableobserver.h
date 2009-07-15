@@ -34,15 +34,10 @@ namespace Knm
  * Interface for classes which handle Activatables.  Implement as a QObject and connect to
  * ActivatableList's signals
  */
-class KNM_EXPORT ActivatableObserver : public QObject
+class KNM_EXPORT ActivatableObserver
 {
-Q_OBJECT
 public:
-    ActivatableObserver(QObject * parent = 0);
     virtual ~ActivatableObserver();
-    /**
-     * implement as slots
-     */
     virtual void handleAdd(Knm::Activatable *) = 0;
     virtual void handleUpdate(Knm::Activatable *) = 0;
     virtual void handleRemove(Knm::Activatable *) = 0;

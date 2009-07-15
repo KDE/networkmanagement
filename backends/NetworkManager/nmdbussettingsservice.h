@@ -40,7 +40,7 @@ class NMDBusSettingsServicePrivate;
  * Should be registered as a ConnectionHandler before the connection list is initialised so it sees
  * the Connections with handleAdd()
  */
-class KNM_EXPORT NMDBusSettingsService : public ActivatableObserver, public ConnectionHandler
+class KNM_EXPORT NMDBusSettingsService : public QObject, public ActivatableObserver, public ConnectionHandler
 {
 Q_OBJECT
 Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings")
@@ -54,14 +54,10 @@ public:
     void handleUpdate(Knm::Connection *);
     void handleRemove(Knm::Connection *);
 
-    // experimental
-    //QDBusObjectPath pathForConnection(const QUuid &uuid);
-    QUuid uuidForPath(const QDBusObjectPath&) const;
-
-public Q_SLOTS:
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
+public Q_SLOTS:
     Q_SCRIPTABLE QList<QDBusObjectPath> ListConnections() const;
 Q_SIGNALS:
     Q_SCRIPTABLE void NewConnection(const QDBusObjectPath&);
@@ -75,6 +71,10 @@ private Q_SLOTS:
 
 private:
     Q_DECLARE_PRIVATE(NMDBusSettingsService)
+    // experimental
+    //QDBusObjectPath pathForConnection(const QUuid &uuid);
+    QUuid uuidForPath(const QDBusObjectPath&) const;
+
     void registerService();
     QString nextObjectPath();
     NMDBusSettingsServicePrivate * d_ptr;

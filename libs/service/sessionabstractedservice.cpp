@@ -40,7 +40,7 @@ public:
 const QString SessionAbstractedService::SESSION_SERVICE_DBUS_PATH = QLatin1String("/org/kde/networkmanagement/Activatable");
 
 SessionAbstractedService::SessionAbstractedService(QObject *parent)
-: ActivatableObserver(parent), d_ptr(new SessionAbstractedServicePrivate)
+: QObject(parent), d_ptr(new SessionAbstractedServicePrivate)
 {
     Q_D(SessionAbstractedService);
     d->nextConnectionId = 1;

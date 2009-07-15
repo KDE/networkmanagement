@@ -41,7 +41,7 @@ public:
 };
 
 ConnectionUsageMonitor::ConnectionUsageMonitor(ConnectionList * connectionList, ActivatableList * activatableList, QObject * parent)
-: ActivatableObserver(parent), d_ptr(new ConnectionUsageMonitorPrivate)
+: QObject(parent), d_ptr(new ConnectionUsageMonitorPrivate)
 {
     Q_D(ConnectionUsageMonitor);
     d->connectionList = connectionList;

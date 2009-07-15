@@ -51,7 +51,7 @@ public:
 };
 
 NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionList * connectionList, const QString & service, QObject * parent)
-    : ActivatableObserver(parent), d_ptr(new NMDBusSettingsConnectionProviderPrivate)
+    : QObject(parent), d_ptr(new NMDBusSettingsConnectionProviderPrivate)
 {
     Q_D(NMDBusSettingsConnectionProvider);
     d->connectionList = connectionList;
