@@ -46,9 +46,6 @@ ConnectionUsageMonitor::ConnectionUsageMonitor(ConnectionList * connectionList, 
     Q_D(ConnectionUsageMonitor);
     d->connectionList = connectionList;
     d->activatableList = activatableList;
-    foreach (Knm::Activatable * activatable, d->activatableList->activatables()) {
-        handleAdd(activatable);
-    }
 
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
@@ -68,9 +65,9 @@ void ConnectionUsageMonitor::handleAdd(Knm::Activatable * added)
 {
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(added);
     if (ic) {
-        // listen to the IC
-        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)), this, SLOT(handleActivationStateChange(Knm::InterfaceConnection::ActivationState)));
-        }
+        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
+                this, SLOT(handleActivationStateChange(Knm::InterfaceConnection::ActivationState)));
+    }
 }
 
 void ConnectionUsageMonitor::handleUpdate(Knm::Activatable *)

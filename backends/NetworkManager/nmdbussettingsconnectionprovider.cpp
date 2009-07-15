@@ -78,8 +78,8 @@ void NMDBusSettingsConnectionProvider::initConnections()
 {
     kDebug();
     Q_D(NMDBusSettingsConnectionProvider);
-    QList<QDBusObjectPath> userConnections = d->iface->ListConnections();
-    foreach (QDBusObjectPath op, userConnections) {
+    QList<QDBusObjectPath> connections = d->iface->ListConnections();
+    foreach (QDBusObjectPath op, connections) {
         kDebug() << op.path();
         initialiseAndRegisterRemoteConnection(op.path());
     }
@@ -100,6 +100,8 @@ void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(con
         d->connections.insert(path, QPair<Knm::Connection*, RemoteConnection*>(connection,connectionIface));
         d->uuidToPath.insert(connection->uuid(), QDBusObjectPath(path));
 
+        kDebug() << connection->uuid();
+
         connection->setOrigin(QLatin1String("NMDBusSettingsConnectionProvider"));
         d->connectionList->addConnection(connection);
     }
@@ -111,22 +113,6 @@ void NMDBusSettingsConnectionProvider::makeConnections(RemoteConnection * connec
     connect(connectionIface, SIGNAL(Updated(const QVariantMapMap&)),
             this, SLOT(onRemoteConnectionUpdated(const QVariantMapMap&)));
 }
-
-// do we need this?
-#if 0
-QStringList NMDBusSettingsConnectionProvider::connections() const
-{
-    return m_connections.keys();
-}
-#endif
-
-// this class should encapsulate these
-#if 0
-RemoteConnection * NMDBusSettingsConnectionProvider::findConnection(const QString& op) const
-{
-    return m_connections.value(op);
-}
-#endif
 
 void NMDBusSettingsConnectionProvider::onConnectionAdded(const QDBusObjectPath& op)
 {

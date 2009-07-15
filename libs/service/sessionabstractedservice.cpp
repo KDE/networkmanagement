@@ -39,7 +39,7 @@ public:
 
 const QString SessionAbstractedService::SESSION_SERVICE_DBUS_PATH = QLatin1String("/org/kde/networkmanagement/Activatable");
 
-SessionAbstractedService::SessionAbstractedService(ActivatableList * activatableList, QObject *parent)
+SessionAbstractedService::SessionAbstractedService(QObject *parent)
 : ActivatableObserver(parent), d_ptr(new SessionAbstractedServicePrivate)
 {
     Q_D(SessionAbstractedService);
@@ -47,10 +47,6 @@ SessionAbstractedService::SessionAbstractedService(ActivatableList * activatable
 
     QDBusConnection::sessionBus().registerService("org.kde.networkmanagement");
     QDBusConnection::sessionBus().registerObject("/org/kde/networkmanagement", this, QDBusConnection::ExportScriptableContents);
-
-    foreach (Knm::Activatable * activatable, activatableList->activatables()) {
-        handleAdd(activatable);
-    }
 }
 
 SessionAbstractedService::~SessionAbstractedService()

@@ -38,7 +38,7 @@ Q_OBJECT
 Q_PROPERTY(QStringList activatables READ ListActivatables)
 Q_CLASSINFO("D-Bus Interface", "org.kde.networkmanagement")
 public:
-    SessionAbstractedService(ActivatableList * activatableList, QObject *parent);
+    SessionAbstractedService(QObject *parent);
     ~SessionAbstractedService();
 
     /**

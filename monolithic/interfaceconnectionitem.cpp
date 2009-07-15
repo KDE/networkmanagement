@@ -116,7 +116,6 @@ QString InterfaceConnectionItem::textForConnection(Knm::InterfaceConnection::Act
 
 QString InterfaceConnectionItem::iconName() const
 {
-    kDebug();
     return QLatin1String("network-wired");
 }
 

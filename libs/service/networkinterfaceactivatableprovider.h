@@ -91,6 +91,11 @@ protected:
      * Adds or removes a dummy activatable for unconfigured devices
      */
     void maintainActivatableForUnconfigured();
+    /**
+     * Indicate if the requirements for activating a connection are present
+     */
+    virtual bool needsActivatableForUnconfigured() const;
+
 private:
     Q_DECLARE_PRIVATE(NetworkInterfaceActivatableProvider)
 };

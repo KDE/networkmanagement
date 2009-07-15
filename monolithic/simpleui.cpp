@@ -70,18 +70,21 @@ Q_DECLARE_METATYPE(Knm::Activatable *);
 SimpleUi::SimpleUi(ActivatableList * list, QObject * parent)
     : ActivatableObserver(parent)
 {
-    // leak, you fucker
+    // don't try and make this our child or it crashes on app exit due to widgets it manages
+    // not liking there being no QApplication anymore.
     m_notificationItem = new Experimental::KNotificationItem(0);
+    m_notificationItem->setStandardActionsEnabled(false);
     m_notificationItem->setCategory(Experimental::KNotificationItem::Hardware);
     m_notificationItem->setTitle(i18nc("Popup title", "Network Management"));
     m_notificationItem->setIconByName("networkmanager");
     m_popup = new KMenu("Title", 0);
 
-    m_notificationItem->setAssociatedWidget(m_popup);
-    KMenu * menu = m_notificationItem->contextMenu();
+//    m_notificationItem->setAssociatedWidget(m_popup);
+    //KMenu * menu = m_notificationItem->contextMenu();
+    m_notificationItem->setContextMenu(m_popup);
     KAction * prefsAction = KStandardAction::preferences(this, SLOT(slotPreferences()), this);
     prefsAction->setText(i18nc("Preferences action title", "Manage Connections..."));
-    menu->addAction(prefsAction);
+    //menu->addAction(prefsAction);
 
     m_sortedList = new SortedActivatableList(list, this);
 
@@ -91,11 +94,6 @@ SimpleUi::SimpleUi(ActivatableList * list, QObject * parent)
     list->registerObserver(this, m_sortedList);
 
     fillPopup();
-#if 0
-    foreach (Knm::Activatable * activatable, list->activatables()) {
-        handleAdd(activatable);
-    }
-#endif
 }
 
 SimpleUi::~SimpleUi()
@@ -112,40 +110,51 @@ void SimpleUi::fillPopup()
 {
     m_deviceUnis.clear();
 
-    m_popup->clear();
+    // clear the menu without deleting useful actions
+    foreach (QAction * action, m_popup->actions()) {
+        m_popup->removeAction(action);
+        // throw away separators, easier than tracking them
+        if (action->isSeparator()) {
+            delete action;
+        }
+    }
+
     foreach (Knm::Activatable * activatable, m_sortedList->activatables()) {
-        QWidgetAction * newAct = new QWidgetAction(this);
-        newAct->setData(QVariant::fromValue(activatable));
+        QWidgetAction * action = 0;
         ActivatableItem * widget = 0;
-        if (activatable->activatableType() == Knm::Activatable::InterfaceConnection) {
-            Knm::InterfaceConnection * ic = static_cast<Knm::InterfaceConnection*>(activatable);
-            kDebug() << ic->connectionName();
-            widget = new InterfaceConnectionItem(ic, m_popup);
-            //connect(newAct, SIGNAL(triggered(bool)), this, SLOT(activatableActionTriggered()));
-        } else if ( activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
-            Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(activatable);
-            kDebug() << wic->connectionName();
-            widget = new WirelessInterfaceConnectionItem(wic, m_popup);
-        } else if ( activatable->activatableType() == Knm::Activatable::WirelessNetworkItem) {
-            Knm::WirelessNetworkItem * wni = static_cast<Knm::WirelessNetworkItem*>(activatable);
-            kDebug() << wni->ssid();
-            widget = new WirelessNetworkItemItem(wni, m_popup);
-        } else if ( activatable->activatableType() == Knm::Activatable::UnconfiguredInterface) {
-            Knm::UnconfiguredInterface * unco = static_cast<Knm::UnconfiguredInterface*>(activatable);
-            kDebug() << unco->deviceUni();
-            widget = new UnconfiguredInterfaceItem(unco, m_popup);
+        if (m_actions.contains(activatable)) {
+            action = m_actions[activatable];
+            widget = qobject_cast<ActivatableItem*>(action->defaultWidget());
+        } else {
+            action = new QWidgetAction(this);
+            action->setData(QVariant::fromValue(activatable));
+            if (activatable->activatableType() == Knm::Activatable::InterfaceConnection) {
+                Knm::InterfaceConnection * ic = static_cast<Knm::InterfaceConnection*>(activatable);
+                kDebug() << ic->connectionName();
+                widget = new InterfaceConnectionItem(ic, m_popup);
+            } else if ( activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
+                Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(activatable);
+                kDebug() << wic->connectionName();
+                widget = new WirelessInterfaceConnectionItem(wic, m_popup);
+            } else if ( activatable->activatableType() == Knm::Activatable::WirelessNetworkItem) {
+                Knm::WirelessNetworkItem * wni = static_cast<Knm::WirelessNetworkItem*>(activatable);
+                kDebug() << wni->ssid();
+                widget = new WirelessNetworkItemItem(wni, m_popup);
+            } else if ( activatable->activatableType() == Knm::Activatable::UnconfiguredInterface) {
+                Knm::UnconfiguredInterface * unco = static_cast<Knm::UnconfiguredInterface*>(activatable);
+                kDebug() << unco->deviceUni();
+                widget = new UnconfiguredInterfaceItem(unco, m_popup);
+            }
+            action->setDefaultWidget(widget);
+            m_actions.insert(activatable, action);
         }
 
-        if (widget) {
-            if (!m_deviceUnis.contains(activatable->deviceUni())) {
-                widget->setFirst(true);
-                m_deviceUnis.append(activatable->deviceUni());
-                m_popup->addSeparator();
-            }
-            newAct->setDefaultWidget(widget);
-            m_actions.insert(activatable, newAct);
-            m_popup->insertAction(0, newAct);
+        if (!m_deviceUnis.contains(activatable->deviceUni())) {
+            widget->setFirst(true);
+            m_deviceUnis.append(activatable->deviceUni());
+            m_popup->addSeparator();
         }
+        m_popup->addAction(action);
     }
 }
 

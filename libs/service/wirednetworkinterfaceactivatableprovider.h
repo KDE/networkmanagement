@@ -57,6 +57,8 @@ protected Q_SLOTS:
      * InterfaceConnections
      */
     void handleCarrierChange(bool);
+protected:
+    virtual bool needsActivatableForUnconfigured() const;
 private:
     Q_DECLARE_PRIVATE(WiredNetworkInterfaceActivatableProvider)
 };

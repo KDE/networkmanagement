@@ -81,7 +81,7 @@ NetworkInterfaceActivatableProvider::~NetworkInterfaceActivatableProvider()
 void NetworkInterfaceActivatableProvider::maintainActivatableForUnconfigured()
 {
     Q_D(NetworkInterfaceActivatableProvider);
-    if (d->activatables.isEmpty()) {
+    if (needsActivatableForUnconfigured()) {
         if (!d->unconfiguredActivatable) {
             d->unconfiguredActivatable = new Knm::UnconfiguredInterface(d->interface->uni(), this);
             d->activatableList->addActivatable(d->unconfiguredActivatable);
@@ -93,6 +93,12 @@ void NetworkInterfaceActivatableProvider::maintainActivatableForUnconfigured()
             d->unconfiguredActivatable = 0;
         }
     }
+}
+
+bool NetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() const
+{
+    Q_D(const NetworkInterfaceActivatableProvider);
+    return d->activatables.isEmpty();
 }
 
 bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType, Solid::Control::NetworkInterface::Type ifaceType)

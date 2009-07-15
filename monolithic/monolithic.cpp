@@ -127,7 +127,7 @@ int main( int argc, char** argv )
     activatableList->registerObserver(simpleUi);
 
     // put the activatables on the session bus for external applets
-    SessionAbstractedService * sessionAbstractedService = new SessionAbstractedService(activatableList, &app);
+    SessionAbstractedService * sessionAbstractedService = new SessionAbstractedService(&app);
     activatableList->registerObserver(sessionAbstractedService);
 
     // load our local connections

@@ -62,8 +62,9 @@ SortedActivatableList::SortedActivatableList(ActivatableList * list, QObject * p
 
 void SortedActivatableList::handleAdd(Knm::Activatable * activatable)
 {
-    kDebug();
-    m_activatables.append(activatable);
+    kDebug() << activatable;
+    if (!m_activatables.contains(activatable))
+        m_activatables.append(activatable);
     qSort(m_activatables.begin(), m_activatables.end(), activatableLessThan);
 }
 
@@ -75,9 +76,9 @@ void SortedActivatableList::handleUpdate(Knm::Activatable *)
 
 void SortedActivatableList::handleRemove(Knm::Activatable * activatable)
 {
-    kDebug();
+    kDebug() << activatable;
     // this does not affect the total order
-    m_activatables.removeOne(activatable);
+    m_activatables.removeAll(activatable);
 }
 
 QList<Knm::Activatable*> SortedActivatableList::activatables() const

@@ -39,9 +39,11 @@ public:
     { }
 
     Solid::Control::WirelessNetworkInterfaceEnvironment * environment;
+
     // essid to activatable
     QHash<QString, Knm::Activatable *> wirelessActivatables;
-    Solid::Control::WirelessNetworkInterface * wirelessInterface()
+
+    Solid::Control::WirelessNetworkInterface * wirelessInterface() const
     {
         return qobject_cast<Solid::Control::WirelessNetworkInterface*>(interface);
     }
@@ -211,6 +213,12 @@ void WirelessNetworkInterfaceActivatableProvider::networkDisappeared(const QStri
             d->activatableList->addActivatable(d->unconfiguredActivatable);
         }
     }
+}
+
+bool WirelessNetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() const
+{
+    Q_D(const WirelessNetworkInterfaceActivatableProvider);
+    return d->activatables.isEmpty() && d->wirelessActivatables.isEmpty();
 }
 
 // vim: sw=4 sts=4 et tw=100

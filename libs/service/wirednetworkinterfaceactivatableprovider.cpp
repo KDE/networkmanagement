@@ -35,7 +35,7 @@ public:
         : NetworkInterfaceActivatableProviderPrivate(theConnectionList, theActivatableList, theInterface)
     { }
 
-    Solid::Control::WiredNetworkInterface * wiredInterface()
+    Solid::Control::WiredNetworkInterface * wiredInterface() const
     {
         return qobject_cast<Solid::Control::WiredNetworkInterface*>(interface);
     }
@@ -75,7 +75,14 @@ void WiredNetworkInterfaceActivatableProvider::handleCarrierChange(bool carrier)
         }
         d->activatables.clear();
     }
+
+    maintainActivatableForUnconfigured();
 }
 
+bool WiredNetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() const
+{
+    Q_D(const WiredNetworkInterfaceActivatableProvider);
+    return d->activatables.isEmpty() && d->wiredInterface()->carrier();
+}
 
 // vim: sw=4 sts=4 et tw=100

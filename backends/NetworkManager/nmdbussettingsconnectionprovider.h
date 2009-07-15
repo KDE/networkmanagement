@@ -50,33 +50,7 @@ Q_OBJECT
 public:
     NMDBusSettingsConnectionProvider(ConnectionList * connectionList, const QString & service, QObject * parent = 0);
     virtual ~NMDBusSettingsConnectionProvider();
-    //QStringList connections() const;
-    /**
-     * Obtain an object representing a connection provided by this service
-     * If the service exits, all RemoteConnections will be deleted
-     * Users of this function must connect to the serviceDisappeared() to be notified
-     * when any pointers obtained using this method become invalid
-     */
-    //RemoteConnection * findConnection(const QString&) const;
 
-//Q_SIGNALS:
-//    void connectionAdded(NetworkManagerSettings *, const QString&);
-    /**
-     * Indicates that a connection was removed and any pointers held to it are no longer valid
-     */
-//    void connectionRemoved(NetworkManagerSettings *, const QString&);
-    /**
-     * Indicates that a connection was updated
-     */
-//    void connectionUpdated(NetworkManagerSettings *, const QString&);
-    /**
-     * Emitted when the service this object represents leaves the system bus
-     */
-//    void disappeared(NetworkManagerSettings*);
-    /**
-     * Emitted when the service this object represents joins the system bus
-     */
-//    void appeared(NetworkManagerSettings*);
 private Q_SLOTS:
     void onConnectionAdded(const QDBusObjectPath&);
     // should probably be handled in RemoteConnection
