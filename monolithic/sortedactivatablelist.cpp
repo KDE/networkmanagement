@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 
 #include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
 
 #include <activatable.h>
 //debug
@@ -34,6 +33,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <activatablelist.h>
 
+class SortedActivatableListPrivate
+{
+public:
+    Solid::Control::NetworkInterface::Types types;
+    QList<Knm::Activatable *> activatables;
+};
 
 bool activatableLessThan(const Knm::Activatable * first, const Knm::Activatable * second);
 
@@ -51,44 +56,51 @@ int compareSsid(const Knm::WirelessItem * first, const Knm::WirelessItem * secon
 
 SortedActivatableList::WirelessSortPolicy SortedActivatableList::s_wirelessSortPolicy = SortedActivatableList::WirelessSortByStrength;
 
-SortedActivatableList::SortedActivatableList(ActivatableList * list, QObject * parent)
-    : QObject(parent)
+SortedActivatableList::SortedActivatableList(Solid::Control::NetworkInterface::Types types, QObject * parent)
+    : QObject(parent), d_ptr(new SortedActivatableListPrivate)
 {
-    foreach (Knm::Activatable * activatable, list->activatables()) {
-        m_activatables.append(activatable);
-    }
-    qSort(m_activatables.begin(), m_activatables.end(), activatableLessThan);
+    Q_D(SortedActivatableList);
+    d->types = types;
 }
 
 void SortedActivatableList::handleAdd(Knm::Activatable * activatable)
 {
+    Q_D(SortedActivatableList);
     kDebug() << activatable;
-    if (!m_activatables.contains(activatable))
-        m_activatables.append(activatable);
-    qSort(m_activatables.begin(), m_activatables.end(), activatableLessThan);
+    if (!d->activatables.contains(activatable)) {
+        Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable->deviceUni());
+        if (d->types.testFlag(iface->type())) {
+            d->activatables.append(activatable);
+        }
+    }
+    qSort(d->activatables.begin(), d->activatables.end(), activatableLessThan);
 }
 
 void SortedActivatableList::handleUpdate(Knm::Activatable *)
 {
+    Q_D(SortedActivatableList);
     kDebug();
-    qSort(m_activatables.begin(), m_activatables.end(), activatableLessThan);
+    qSort(d->activatables.begin(), d->activatables.end(), activatableLessThan);
 }
 
 void SortedActivatableList::handleRemove(Knm::Activatable * activatable)
 {
+    Q_D(SortedActivatableList);
     kDebug() << activatable;
     // this does not affect the total order
-    m_activatables.removeAll(activatable);
+    d->activatables.removeAll(activatable);
 }
 
 QList<Knm::Activatable*> SortedActivatableList::activatables() const
 {
-    return m_activatables;
+    Q_D(const SortedActivatableList);
+    return d->activatables;
 }
 
 void SortedActivatableList::dump() const
 {
-    foreach (Knm::Activatable * activatable, m_activatables) {
+    Q_D(const SortedActivatableList);
+    foreach (Knm::Activatable * activatable, d->activatables) {
         if (activatable->activatableType() == Knm::Activatable::InterfaceConnection) {
             Knm::InterfaceConnection * ic = static_cast<Knm::InterfaceConnection*>(activatable);
             kDebug() << "IC" << ic->connectionName();

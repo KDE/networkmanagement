@@ -8,7 +8,7 @@ include_directories(
 set(monolithic_SRCS
    monolithic.cpp
    sortedactivatablelist.cpp
-   simpleui.cpp
+   knetworkmanagertrayicon.cpp
    activatableitem.cpp
    interfaceconnectionitem.cpp
    unconfiguredinterfaceitem.cpp

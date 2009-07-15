@@ -21,10 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SIMPLEUI_H
 #define SIMPLEUI_H
 
-#include "activatableobserver.h"
+#include <knotificationitem-1/knotificationitem.h>
+#include <activatableobserver.h>
 
 #include <QHash>
 #include <QStringList>
+
+#include <solid/control/networkinterface.h>
 
 class QSignalMapper;
 class QVBoxLayout; class QWidgetAction;
@@ -34,17 +37,15 @@ class ActivatableItem;
 class ActivatableList;
 class SortedActivatableList;
 
-namespace Experimental
-{
-    class KNotificationItem;
-} // namespace Experimental
+class KNetworkManagerTrayIconPrivate;
 
-class SimpleUi : public QObject, public ActivatableObserver
+class KNetworkManagerTrayIcon : public Experimental::KNotificationItem, public ActivatableObserver
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(KNetworkManagerTrayIcon);
 public:
-    SimpleUi(ActivatableList * list, QObject * parent);
-    ~SimpleUi();
+    KNetworkManagerTrayIcon(Solid::Control::NetworkInterface::Types types, const QString & id, ActivatableList * list, QObject * parent);
+    virtual ~KNetworkManagerTrayIcon();
     // respond to activatable changes
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);
@@ -55,11 +56,6 @@ protected slots:
     void slotPreferences();
 private:
     void fillPopup();
-    SortedActivatableList * m_sortedList;
-    Experimental::KNotificationItem * m_notificationItem;
-    KMenu * m_popup;
-    QVBoxLayout * m_popupLayout;
-    QHash<Knm::Activatable *, QWidgetAction *> m_actions;
-    QStringList m_deviceUnis;
+    KNetworkManagerTrayIconPrivate * d_ptr;
 };
 #endif // SIMPLEUI_H

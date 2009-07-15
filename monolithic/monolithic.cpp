@@ -27,23 +27,24 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDialog>
 #include <KLocale>
 
-#include "connectionlist.h"
-#include "connectionlistpersistence.h"
-#include "connectionlistpersistencedbus.h"
-#include "activatablelist.h"
-#include "activatabledebug.h"
-#include "connectionusagemonitor.h"
-#include "configurationlauncher.h"
+#include <solid/control/networkinterface.h>
 
-#include "networkinterfacemonitor.h"
+#include <connectionlist.h>
+#include <connectionlistpersistence.h>
+#include <connectionlistpersistencedbus.h>
+#include <activatablelist.h>
+#include <activatabledebug.h>
+#include <connectionusagemonitor.h>
+#include <configurationlauncher.h>
+#include <networkinterfacemonitor.h>
 
-#include "nmdbussettingsservice.h"
-#include "nmdbusactiveconnectionmonitor.h"
-#include "nmdbussettingsconnectionprovider.h"
+#include <nmdbussettingsservice.h>
+#include <nmdbusactiveconnectionmonitor.h>
+#include <nmdbussettingsconnectionprovider.h>
 
-#include "sessionabstractedservice.h"
+#include <sessionabstractedservice.h>
 
-#include "simpleui.h"
+#include "knetworkmanagertrayicon.h"
 
 static const char description[] =
     I18N_NOOP("KNetworkManager, the KDE 4 NetworkManager client");
@@ -123,8 +124,16 @@ int main( int argc, char** argv )
 
     // really simple UI
     // register after everything except debug
-    SimpleUi simpleUi(activatableList, 0);
+    //KNetworkManagerTrayIcon simpleUi((Solid::Control::NetworkInterface::Ieee8023 | Solid::Control::NetworkInterface::Ieee80211 | Solid::Control::NetworkInterface::Serial | Solid::Control::NetworkInterface::Gsm | Solid::Control::NetworkInterface::Cdma), activatableList, 0);
+    Solid::Control::NetworkInterface::Types types = (Solid::Control::NetworkInterface::Ieee8023);
+    KNetworkManagerTrayIcon simpleUi(types, QString::number(types), activatableList, 0);
     activatableList->registerObserver(&simpleUi);
+
+    Solid::Control::NetworkInterface::Types secondTypes = (Solid::Control::NetworkInterface::Ieee80211);
+
+    KNetworkManagerTrayIcon secondTray(secondTypes, QString::number(secondTypes), activatableList, 0);
+    activatableList->registerObserver(&secondTray);
+
 
     // put the activatables on the session bus for external applets
     SessionAbstractedService * sessionAbstractedService = new SessionAbstractedService(&app);
