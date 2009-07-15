@@ -25,7 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatablelist.h"
 
-#include <QList>
+#include <QStringList>
 #include <QDBusObjectPath>
 
 #include "knm_export.h"
