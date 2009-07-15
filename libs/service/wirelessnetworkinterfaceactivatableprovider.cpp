@@ -23,9 +23,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QHash>
 
-#include "wirelessinterfaceconnection.h"
-#include "wirelessnetworkitem.h"
-#include "wirelessnetworkinterfaceenvironment.h"
+#include <solid/control/networkmanager.h>
+
+#include <wirelessinterfaceconnection.h>
+#include <wirelessnetworkitem.h>
+#include <wirelessnetworkinterfaceenvironment.h>
 
 #include "activatablelist.h"
 #include "connectionlist.h"
@@ -218,7 +220,10 @@ void WirelessNetworkInterfaceActivatableProvider::networkDisappeared(const QStri
 bool WirelessNetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() const
 {
     Q_D(const WirelessNetworkInterfaceActivatableProvider);
-    return d->activatables.isEmpty() && d->wirelessActivatables.isEmpty();
+    return Solid::Control::NetworkManager::isWirelessEnabled()
+        && Solid::Control::NetworkManager::isWirelessHardwareEnabled()
+        && d->activatables.isEmpty()
+        && d->wirelessActivatables.isEmpty();
 }
 
 // vim: sw=4 sts=4 et tw=100
