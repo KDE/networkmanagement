@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QProgressBar>
 
 #include <KDebug>
+#include <KGlobalSettings>
 #include <KIconLoader>
 #include <KLocale>
 
@@ -42,12 +43,26 @@ public:
     QProgressBar * strength;
 };
 
+class SmallProgressBar : public QProgressBar
+{
+public:
+    SmallProgressBar(QWidget * parent = 0)
+        : QProgressBar(parent)
+    {
+    }
+    QSize sizeHint() const
+    {
+        return QSize(50,20/* 20 must be about minimum for Oxygen style at least as it won't go any smaller */);
+    }
+};
+
+
 WirelessStatus::WirelessStatus(ActivatableItem * item)
 : QObject(item), d_ptr(new WirelessStatusPrivate)
 {
     Q_D(WirelessStatus);
     d->security = new QLabel(0);
-    d->strength = new QProgressBar(0);
+    d->strength = new SmallProgressBar(0);
     d->strength->setTextVisible(false);
     d->strength->setRange(0, 100);
     d->strength->setGeometry(d->strength->x(),d->strength->y(), 50, 15);
