@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class WirelessStatusPrivate
 {
 public:
+    Solid::Control::AccessPoint::Capabilities capabilities;
     Solid::Control::AccessPoint::WpaFlags wpaFlags;
     Solid::Control::AccessPoint::WpaFlags rsnFlags;
     QLabel * security;
@@ -66,12 +67,14 @@ WirelessStatus::WirelessStatus(ActivatableItem * item)
     d->strength->setTextVisible(false);
     d->strength->setRange(0, 100);
     d->strength->setGeometry(d->strength->x(),d->strength->y(), 50, 15);
+    d->capabilities = 0;
     d->wpaFlags = 0;
     d->rsnFlags = 0;
 
     // discover the type of the activatable and connect its signals
     Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(item->activatable());
     if (wni) {
+        d->capabilities = wni->capabilities();
         d->wpaFlags = wni->wpaFlags();
         d->rsnFlags = wni->rsnFlags();
         connect(wni, SIGNAL(strengthChanged(int)), d->strength, SLOT(setValue(int)));
@@ -79,6 +82,7 @@ WirelessStatus::WirelessStatus(ActivatableItem * item)
     } else {
         Knm::WirelessInterfaceConnection * wic = qobject_cast<Knm::WirelessInterfaceConnection*>(item->activatable());
         if (wic) {
+            d->capabilities = wic->capabilities();
             d->wpaFlags = wic->wpaFlags();
             d->rsnFlags = wic->rsnFlags();
             connect(wic, SIGNAL(strengthChanged(int)), d->strength, SLOT(setValue(int)));
@@ -106,7 +110,8 @@ void WirelessStatus::setSecurity()
     Q_D(WirelessStatus);
     // TODO: this was done by a clueless (coolo)
     if ( d->wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
-            d->wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep104 ) ) {
+            d->wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep104 )
+            || (d->wpaFlags == 0 && d->capabilities.testFlag(Solid::Control::AccessPoint::Privacy))) {
         d->security->setPixmap(SmallIcon("security-medium"));
         d->security->setToolTip(i18nc("tooltip for WEP security", "WEP"));
         //m_security = QLatin1String("wep");
