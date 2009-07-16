@@ -40,6 +40,24 @@ public:
     QList<Knm::Activatable *> activatables;
 };
 
+// sorting activatables
+// by interface type (compare on activatable::deviceUni()
+// by activatableType() (interfaceconnections and wirelessinterfaceconnections before wirelessnetworkitems)
+// then: for interfaceconnections - by activation state
+//   then: alphabetically
+//       for wirelessinterfaceconnections - by activation state
+//         then: by strength
+//           then: alphabetically
+// InterfaceConnections)
+// by type ([w]ic > wni)
+// by signal strength (listen to strengthchanged signals)
+//   or alphabetically
+// QAction::addAction/removeAction
+// resort everything or just find correct place for changed item?
+//   (save pointer to last active connection?)
+// make lists of 
+// k
+
 bool activatableLessThan(const Knm::Activatable * first, const Knm::Activatable * second);
 
 int compareDevices(const Knm::Activatable * first, const Knm::Activatable * second);

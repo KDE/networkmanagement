@@ -51,7 +51,6 @@ public:
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
-    void activatableActionTriggered();
 protected Q_SLOTS:
     //void updateActionState(Knm::Activatable * changed, QAction * action);
     void slotPreferences();
@@ -63,6 +62,17 @@ protected Q_SLOTS:
      * Hides the icon when network management is unavailable
      */
     void networkingStatusChanged(Solid::Networking::Status);
+
+    /**
+     * Disable wireless in response to user action
+     */
+    void disableWireless(bool);
+
+    /**
+     * Update UI in response to system network management state changes
+     */
+    void wirelessEnabledChanged();
+
     /**
      * Starts monitoring new network interfaces' state changes
      */
