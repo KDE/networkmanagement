@@ -24,12 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 InterfaceConnection::InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent)
-: Activatable(Activatable::InterfaceConnection, deviceUni, parent), m_type(Knm::Connection::Wired), m_uuid(connectionUuid), m_name(connectionName), m_state(InterfaceConnection::Unknown)
+: Activatable(Activatable::InterfaceConnection, deviceUni, parent), m_type(Knm::Connection::Wired), m_uuid(connectionUuid), m_name(connectionName), m_state(InterfaceConnection::Unknown), m_hasDefaultRoute(false)
 {
 }
 
 InterfaceConnection::InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, ActivatableType type, const QString & deviceUni, QObject * parent)
-: Activatable(type, deviceUni, parent), m_type(Knm::Connection::Wired), m_uuid(connectionUuid), m_name(connectionName), m_state(InterfaceConnection::Unknown)
+: Activatable(type, deviceUni, parent), m_type(Knm::Connection::Wired), m_uuid(connectionUuid), m_name(connectionName), m_state(InterfaceConnection::Unknown), m_hasDefaultRoute(false)
 {
 }
 
@@ -78,5 +78,15 @@ void InterfaceConnection::setActivationState(InterfaceConnection::ActivationStat
 InterfaceConnection::ActivationState InterfaceConnection::activationState() const
 {
     return m_state;
+}
+
+void InterfaceConnection::setHasDefaultRoute(bool hasDefault)
+{
+    m_hasDefaultRoute = hasDefault;
+}
+
+bool InterfaceConnection::hasDefaultRoute() const
+{
+    return m_hasDefaultRoute;
 }
 

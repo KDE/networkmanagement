@@ -40,6 +40,7 @@ Q_PROPERTY(uint type READ connectionType)
 Q_PROPERTY(QString uuid READ connectionUuid)
 Q_PROPERTY(QString name READ connectionName)
 Q_PROPERTY(uint activationState READ activationState)
+Q_PROPERTY(bool hasDefaultRoute READ hasDefaultRoute WRITE setHasDefaultRoute)
 
 public:
     enum ActivationState { Unknown, Activating, Activated };
@@ -57,6 +58,13 @@ public:
     void setActivationState(ActivationState state);
     ActivationState activationState() const;
 
+    /**
+     * Indicates if this InterfaceConnection provides the default route
+     * Only valid if Activated
+     */
+    void setHasDefaultRoute(bool hasDefault);
+    bool hasDefaultRoute() const;
+
 Q_SIGNALS:
     void activationStateChanged(Knm::InterfaceConnection::ActivationState);
 
@@ -68,6 +76,7 @@ private:
     QUuid m_uuid;
     QString m_name;
     ActivationState m_state;
+    bool m_hasDefaultRoute;
 };
 } // namespace
 
