@@ -53,14 +53,21 @@ Q_DECLARE_METATYPE(Knm::Activatable *);
 class KNetworkManagerTrayIconPrivate
 {
 public:
+    KNetworkManagerTrayIconPrivate()
+        : sortedList(0),
+        iconName(QLatin1String("networkmanager")),
+        flightModeAction(0),
+        prefsAction(0),
+        wirelessNetworkItemMenu(0)
+    { }
     Solid::Control::NetworkInterface::Types interfaceTypes;
     SortedActivatableList * sortedList;
     QHash<Knm::Activatable *, QWidgetAction *> actions;
     QStringList deviceUnis;
     QString iconName;
-    bool showNetworkItems;
     KAction * flightModeAction;
     KAction * prefsAction;
+    KMenu * wirelessNetworkItemMenu;
 };
 
 /* for qSort()ing */
@@ -72,12 +79,10 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
 {
     Q_D(KNetworkManagerTrayIcon);
     d->interfaceTypes = types;
-    d->iconName = "networkmanager";
-    d->showNetworkItems = false;
 
     setStandardActionsEnabled(false);
     setCategory(Experimental::KNotificationItem::Hardware);
-    setTitle(i18nc("Popup title", "Network Management"));
+    setTitle(i18nc("@title:window KNotificationItem tray icon title", "Network Management"));
     setIconByName(d->iconName);
 
     setAssociatedWidget(contextMenu());
@@ -95,7 +100,7 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     }
 
     d->prefsAction = KStandardAction::preferences(this, SLOT(slotPreferences()), this);
-    d->prefsAction->setText(i18nc("Preferences action title", "Manage Connections..."));
+    d->prefsAction->setText(i18nc("@action:inmenu Preferences action title", "Manage Connections..."));
 
     d->sortedList = new SortedActivatableList(types, this);
 
@@ -132,7 +137,7 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
         }
     }
 
-    // set initial tray icon appearance and tooltip
+    // set initial tray icon appearance [and tooltip]
     updateTrayIcon();
 }
 
@@ -159,6 +164,14 @@ void KNetworkManagerTrayIcon::fillPopup()
             delete action;
         }
     }
+
+    if (d->wirelessNetworkItemMenu) {
+        foreach (QAction * action, d->wirelessNetworkItemMenu->actions()) {
+            d->wirelessNetworkItemMenu->removeAction(action);
+        }
+    }
+
+    QAction * insertionPointForWirelessNetworkItemSubmenu = 0;
 
     foreach (Knm::Activatable * activatable, d->sortedList->activatables()) {
         QWidgetAction * action = 0;
@@ -190,13 +203,47 @@ void KNetworkManagerTrayIcon::fillPopup()
             d->actions.insert(activatable, action);
         }
 
-        if (!d->deviceUnis.contains(activatable->deviceUni())) {
-            widget->setFirst(true);
-            d->deviceUnis.append(activatable->deviceUni());
-            contextMenu()->addSeparator();
+        // put all wireless network items into a submenu
+        if (action && activatable->activatableType() == Knm::Activatable::WirelessNetworkItem) {
+            if (!d->wirelessNetworkItemMenu) {
+                d->wirelessNetworkItemMenu = new KMenu(contextMenu());
+            }
+            d->wirelessNetworkItemMenu->addAction(action);
+        } else {
+            // if there are wireless network items in the submenu, and we have reached a non-wireless (network or interfaceconnection)
+            // item, mark this as the place to insert the submenu,
+            // as long as we have not yet done this
+            if (activatable->activatableType() != Knm::Activatable::WirelessInterfaceConnection) {
+                if (d->wirelessNetworkItemMenu && !d->wirelessNetworkItemMenu->actions().isEmpty() && !insertionPointForWirelessNetworkItemSubmenu ) {
+                    insertionPointForWirelessNetworkItemSubmenu = action;
+                }
+            }
+            // If we have not seen any activatables for this device before, set its First flag for emphasis
+            // Precede it with a separator if it is not the first action in the menu
+            if (!d->deviceUnis.contains(activatable->deviceUni())) {
+                widget->setFirst(true);
+                if (!contextMenu()->actions().isEmpty()) {
+                    contextMenu()->addSeparator();
+                }
+
+                d->deviceUnis.append(activatable->deviceUni());
+
+            }
+            contextMenu()->addAction(action);
         }
-        contextMenu()->addAction(action);
     }
+    // insert the wireless network items submenu at the right place
+    if (d->wirelessNetworkItemMenu) {
+        if (d->wirelessNetworkItemMenu->actions().isEmpty()) {
+            d->wirelessNetworkItemMenu->setTitle(i18nc("@title:menu Wireless network item menu title when no networks found", "No additional networks"));
+            d->wirelessNetworkItemMenu->setEnabled(false);
+        } else {
+            d->wirelessNetworkItemMenu->setTitle(i18nc("@title:menu Wireless network item menu title when additional networks are present", "%1 additional networks", d->wirelessNetworkItemMenu->actions().count()));
+            d->wirelessNetworkItemMenu->setEnabled(true);
+        }
+        contextMenu()->insertAction(insertionPointForWirelessNetworkItemSubmenu, d->wirelessNetworkItemMenu->menuAction());
+    }
+
     contextMenu()->addSeparator();
     if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
         contextMenu()->addAction(d->flightModeAction);
