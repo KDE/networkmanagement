@@ -36,11 +36,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkmanager.h>
 
-#include "connection.h"
-#include "interfaceconnection.h"
+#include <connection.h>
+#include <interfaceconnection.h>
+#include <vpninterfaceconnection.h>
 
 #include "busconnection.h"
 #include "exportedconnection.h"
+
+#include "nm-active-connectioninterface.h"
 
 class NMDBusSettingsServicePrivate
 {
@@ -199,7 +202,9 @@ void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
     if (ic) {
         // listen to the IC
         kDebug() << ic->connectionUuid();
-        connect(ic, SIGNAL(activated()), this, SLOT(interfaceConnectionActivated()));
+        //if (ic->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
+            connect(ic, SIGNAL(activated()), this, SLOT(interfaceConnectionActivated()));
+        //}
 
         // if derived from one of our connections, tag it with the service and object path of the
         // connection.  The system settings monitor NMDBusSettingsConnectionProvider does this for
@@ -210,6 +215,7 @@ void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
             ic->setProperty("NMDBusObjectPath", d->uuidToPath[ic->connectionUuid()].path());
         }
     }
+    //if (ic->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
 }
 
 void NMDBusSettingsService::interfaceConnectionActivated()
@@ -217,10 +223,40 @@ void NMDBusSettingsService::interfaceConnectionActivated()
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
 
     if (ic) {
-        Solid::Control::NetworkManager::activateConnection(ic->deviceUni(),
+        QString deviceToActivateOn;
+        QVariantMap extraArguments;
+
+        Knm::VpnInterfaceConnection * vpn = qobject_cast<Knm::VpnInterfaceConnection*>(ic);
+        if (vpn) {
+            // look up the active connection (a real connection, not this vpn that is being activated)
+            // because NM needs its details to bring up the VPN
+            QString activeConnPath;
+            foreach (QString activeConnectionPath, Solid::Control::NetworkManager::activeConnections()) {
+                OrgFreedesktopNetworkManagerConnectionActiveInterface activeConnection("org.freedesktop.NetworkManager", activeConnectionPath, QDBusConnection::systemBus());
+
+                if ( activeConnection.getDefault() && activeConnection.state() == NM_ACTIVE_CONNECTION_STATE_ACTIVATED) {
+                    activeConnPath = activeConnection.path();
+                    QList<QDBusObjectPath> devs = activeConnection.devices();
+                    if (!devs.isEmpty()) {
+                        deviceToActivateOn = devs.first().path();
+                    }
+                }
+            }
+
+            kDebug() << "active" << activeConnPath << "device" << deviceToActivateOn;
+
+            if ( activeConnPath.isEmpty() || deviceToActivateOn.isEmpty() )
+                return;
+
+            extraArguments.insert( "extra_connection_parameter", activeConnPath );
+        } else {
+            deviceToActivateOn = ic->deviceUni();
+        }
+
+        Solid::Control::NetworkManager::activateConnection(deviceToActivateOn,
                 QString::fromLatin1("%1 %2")
                 .arg(ic->property("NMDBusService").toString(), ic->property("NMDBusObjectPath").toString()),
-                QVariantMap());
+                extraArguments);
     }
 }
 

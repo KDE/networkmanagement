@@ -20,13 +20,16 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nmdbusactiveconnectionmonitor.h"
 
+#include <NetworkManager.h>
+
 #include <QMultiHash>
 #include <QUuid>
 
 #include <KDebug>
 #include <solid/control/networkmanager.h>
 
-#include "interfaceconnection.h"
+#include <interfaceconnection.h>
+#include <vpninterfaceconnection.h>
 
 #include "activatablelist.h"
 
@@ -110,6 +113,7 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
             if (interfaceConnection->activationState() == Knm::InterfaceConnection::Unknown) {
                 continue;
             }
+            kDebug() <<  "Looking for a Connection.Active for" << interfaceConnection;
             // comparison criteria: service, object path, and device
             bool icActive = false;
             QString icService = interfaceConnection->property("NMDBusService").toString()
@@ -118,6 +122,7 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
             QDBusObjectPath icDevice = QDBusObjectPath(interfaceConnection->deviceUni());
             foreach (OrgFreedesktopNetworkManagerConnectionActiveInterface * active, d->activeConnections) {
 
+                // Just debug
                 kDebug() << "NMDBusService" << interfaceConnection->property("NMDBusService").toString()
                     << "==" << active->serviceName() << ":" << (interfaceConnection->property("NMDBusService") == active->serviceName()
                             )<< ",\n"
@@ -128,10 +133,14 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
                     kDebug() << "  " << path.path();
                 }
                 kDebug() << active->devices().contains(QDBusObjectPath(interfaceConnection->deviceUni()));
+                kDebug() << "IC is a VPNIC: " << (interfaceConnection->activatableType() == Knm::Activatable::VpnInterfaceConnection);
+                // debug ends
 
                 if (active->serviceName() == icService
                         && active->connection().path() == icDBusObjectPath
-                        && active->devices().contains(icDevice)) {
+                        && (interfaceConnection->activatableType() == Knm::Activatable::VpnInterfaceConnection
+                            || active->devices().contains(icDevice))) {
+                    kDebug() << "Found a Connection.Active for this InterfaceConnection, not setting it Unknown";
                     icActive = true;
                     break;
                 }
@@ -140,6 +149,7 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
                 kDebug() << "Making interfaceconnection Unknown:" << Knm::InterfaceConnection::Unknown;
                 interfaceConnection->setActivationState(Knm::InterfaceConnection::Unknown);
             }
+            kDebug();
         }
     }
 }
@@ -155,7 +165,7 @@ void NMDBusActiveConnectionMonitor::activeConnectionChanged(const QVariantMap&)
 void NMDBusActiveConnectionMonitor::activeConnectionChangedInternal(OrgFreedesktopNetworkManagerConnectionActiveInterface * iface, uint state)
 {
     Q_D(NMDBusActiveConnectionMonitor);
-    kDebug() << iface << state;
+    kDebug() << iface << "state:" << state;
 
     QList<Knm::Activatable *> activatables = d->activatableList->activatables();
     // check whether each interfaceconnection is for the changed active connection
@@ -164,7 +174,8 @@ void NMDBusActiveConnectionMonitor::activeConnectionChangedInternal(OrgFreedeskt
         if (interfaceConnection) {
             if (interfaceConnection->property("NMDBusService") == iface->serviceName()
                     && interfaceConnection->property("NMDBusObjectPath") == iface->connection().path()
-                    && iface->devices().contains(QDBusObjectPath(interfaceConnection->deviceUni()))
+                    && (interfaceConnection->activatableType() == Knm::Activatable::VpnInterfaceConnection
+                        || iface->devices().contains(QDBusObjectPath(interfaceConnection->deviceUni())))
                     ) {
                 kDebug() << "Updating interfaceconnection to" << state;
                 interfaceConnection->setActivationState((Knm::InterfaceConnection::ActivationState)state);
@@ -192,13 +203,16 @@ void NMDBusActiveConnectionMonitor::handleAdd(Knm::Activatable * added)
     Q_D(NMDBusActiveConnectionMonitor);
     Knm::InterfaceConnection * interfaceConnection = qobject_cast<Knm::InterfaceConnection*>(added);
     if (interfaceConnection) {
+        // look for a corresponding Connection.Active object on the bus
         foreach (OrgFreedesktopNetworkManagerConnectionActiveInterface * active, d->activeConnections) {
-            // on the user service?
             if (interfaceConnection->property("NMDBusService") == active->serviceName()
                     && interfaceConnection->property("NMDBusObjectPath") == active->connection().path()
-                    && active->devices().contains(QDBusObjectPath(interfaceConnection->deviceUni()))) {
+                    /* check the device matches */
+                    && active->devices().contains(QDBusObjectPath(interfaceConnection->deviceUni()))
+               ) {
                 kDebug() << "Updating interfaceconnection to" << active->state();
                 interfaceConnection->setActivationState((Knm::InterfaceConnection::ActivationState)active->state());
+
             } else {
                 kDebug() << "NMDBusService" << interfaceConnection->property("NMDBusService")
                     << "NMDBusObjectPath" <<  interfaceConnection->property("NMDBusObjectPath")

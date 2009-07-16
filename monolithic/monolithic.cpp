@@ -37,6 +37,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <connectionusagemonitor.h>
 #include <configurationlauncher.h>
 #include <networkinterfacemonitor.h>
+#include <vpninterfaceconnectionprovider.h>
 
 #include <nmdbussettingsservice.h>
 #include <nmdbusactiveconnectionmonitor.h>
@@ -82,6 +83,8 @@ int main( int argc, char** argv )
     ConfigurationLauncher * configurationLauncher;
     // update connections as they are used
     ConnectionUsageMonitor * connectionUsageMonitor;
+    // create Activatables for VPN connections
+    VpnInterfaceConnectionProvider * vpnInterfaceConnectionProvider;
 
     connectionList = new ConnectionList(&app);
     listPersistence = new ConnectionListPersistence(connectionList);
@@ -90,6 +93,8 @@ int main( int argc, char** argv )
 
     connectionList->registerConnectionHandler(listPersistence);
     connectionList->registerConnectionHandler(nmSettingsService);
+    connectionList->registerConnectionHandler(nmSettingsService);
+
 
     activatableList = new ActivatableList(connectionList);
 
@@ -97,6 +102,9 @@ int main( int argc, char** argv )
 
     configurationLauncher = new ConfigurationLauncher(&app);
     connectionUsageMonitor = new ConnectionUsageMonitor(connectionList, activatableList, activatableList);
+
+    vpnInterfaceConnectionProvider = new VpnInterfaceConnectionProvider(connectionList, activatableList, activatableList);
+    connectionList->registerConnectionHandler(vpnInterfaceConnectionProvider);
 
     nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, connectionList);
     nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(activatableList, nmSettingsService);
@@ -139,7 +147,6 @@ int main( int argc, char** argv )
 
     //KNetworkManagerTrayIcon secondTray(secondTypes, QString::number(secondTypes), activatableList, 0);
     //activatableList->registerObserver(&secondTray);
-
 
     // put the activatables on the session bus for external applets
     SessionAbstractedService * sessionAbstractedService = new SessionAbstractedService(&app);

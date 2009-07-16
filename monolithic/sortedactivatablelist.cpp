@@ -87,7 +87,9 @@ void SortedActivatableList::handleAdd(Knm::Activatable * activatable)
     kDebug() << activatable;
     if (!d->activatables.contains(activatable)) {
         Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable->deviceUni());
-        if (d->types.testFlag(iface->type())) {
+        // add all vpn connections
+        if ((iface && (d->types.testFlag(iface->type())))
+                || (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection)) {
             d->activatables.append(activatable);
         }
     }
@@ -239,14 +241,28 @@ int compareDevices(const Knm::Activatable * first, const Knm::Activatable * seco
         return 0;
     }
 
+    // VPN workaround for not having a real device
+    uint firstDevWeight = 0, secondDevWeight = 0;
+    if (first->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+        firstDevWeight = 1;
+    }
+    if (second->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+        secondDevWeight = 1;
+    }
+    if (firstDevWeight || secondDevWeight) {
+        return firstDevWeight - secondDevWeight;
+    }
+
+    // not VPN, therefore use the real logic
     Solid::Control::NetworkInterface * firstIface = Solid::Control::NetworkManager::findNetworkInterface(first->deviceUni());
     Solid::Control::NetworkInterface * secondIface = Solid::Control::NetworkManager::findNetworkInterface(second->deviceUni());
 
-    if (firstIface->type() == secondIface->type()) {
-        return firstIface->interfaceName().compare(secondIface->interfaceName());
-    } else {
-
-        return (int)firstIface->type() - (int)secondIface->type();
+    if (firstIface != 0 && secondIface != 0) {
+        if (firstIface->type() == secondIface->type()) {
+            return firstIface->interfaceName().compare(secondIface->interfaceName());
+        } else {
+            return (int)firstIface->type() - (int)secondIface->type();
+        }
     }
     return 0;
 }

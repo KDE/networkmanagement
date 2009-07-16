@@ -67,6 +67,7 @@ set(knminternals_SRCS
    wirelessitem.cpp
    wirelessnetworkitem.cpp
    unconfiguredinterface.cpp
+   vpninterfaceconnection.cpp
    )
 
 kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)

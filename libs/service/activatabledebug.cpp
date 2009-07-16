@@ -24,10 +24,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 
-#include "activatable.h"
-#include "interfaceconnection.h"
-#include "wirelessinterfaceconnection.h"
-#include "wirelessnetworkitem.h"
+#include <activatable.h>
+#include <interfaceconnection.h>
+#include <vpninterfaceconnection.h>
+#include <wirelessinterfaceconnection.h>
+#include <wirelessnetworkitem.h>
 
 ActivatableDebug::ActivatableDebug()
 {
@@ -42,6 +43,7 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
     Knm::InterfaceConnection * ic;
     Knm::WirelessInterfaceConnection * wic;
     Knm::WirelessNetworkItem * wni;
+    Knm::VpnInterfaceConnection * vpn;
 
     QString string;
 
@@ -67,9 +69,11 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
             string = QString::fromLatin1("WirelessNetworkItem for network %1 on %2 with strength %3").arg(wni->ssid(), identifier, QString::number(wni->strength()));
             break;
         case Knm::Activatable::UnconfiguredInterface:
-            if (iface) {
-                string = QString::fromLatin1("UnconfiguredDevice %1").arg(identifier);
-            }
+            string = QString::fromLatin1("UnconfiguredDevice %1").arg(identifier);
+            break;
+        case Knm::Activatable::VpnInterfaceConnection:
+            vpn = qobject_cast<Knm::VpnInterfaceConnection*>(activatable);
+            string = QString::fromLatin1("VpnInterfaceConnection %1 (%2) on %3").arg(vpn->connectionName(), vpn->connectionUuid(), identifier);
             break;
     }
 

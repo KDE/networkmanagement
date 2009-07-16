@@ -53,6 +53,9 @@ set(knmservice_SRCS
 
    # exports activatables on the session bus to Plasmoids etc
    sessionabstractedservice.cpp
+
+   # creates vpn activatables
+   vpninterfaceconnectionprovider.cpp
    )
 
 

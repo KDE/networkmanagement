@@ -182,7 +182,7 @@ void KNetworkManagerTrayIcon::fillPopup()
         } else {
             action = new QWidgetAction(this);
             action->setData(QVariant::fromValue(activatable));
-            if (activatable->activatableType() == Knm::Activatable::InterfaceConnection) {
+            if (activatable->activatableType() == Knm::Activatable::InterfaceConnection || activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
                 Knm::InterfaceConnection * ic = static_cast<Knm::InterfaceConnection*>(activatable);
                 kDebug() << ic->connectionName();
                 widget = new InterfaceConnectionItem(ic, contextMenu());
@@ -203,33 +203,36 @@ void KNetworkManagerTrayIcon::fillPopup()
             d->actions.insert(activatable, action);
         }
 
-        // put all wireless network items into a submenu
-        if (action && activatable->activatableType() == Knm::Activatable::WirelessNetworkItem) {
-            if (!d->wirelessNetworkItemMenu) {
-                d->wirelessNetworkItemMenu = new KMenu(contextMenu());
-            }
-            d->wirelessNetworkItemMenu->addAction(action);
-        } else {
-            // if there are wireless network items in the submenu, and we have reached a non-wireless (network or interfaceconnection)
-            // item, mark this as the place to insert the submenu,
-            // as long as we have not yet done this
-            if (activatable->activatableType() != Knm::Activatable::WirelessInterfaceConnection) {
-                if (d->wirelessNetworkItemMenu && !d->wirelessNetworkItemMenu->actions().isEmpty() && !insertionPointForWirelessNetworkItemSubmenu ) {
-                    insertionPointForWirelessNetworkItemSubmenu = action;
+        if (action && widget) {
+            // put all wireless network items into a submenu
+            if (activatable->activatableType() == Knm::Activatable::WirelessNetworkItem) {
+                if (!d->wirelessNetworkItemMenu) {
+                    d->wirelessNetworkItemMenu = new KMenu(contextMenu());
                 }
-            }
-            // If we have not seen any activatables for this device before, set its First flag for emphasis
-            // Precede it with a separator if it is not the first action in the menu
-            if (!d->deviceUnis.contains(activatable->deviceUni())) {
-                widget->setFirst(true);
-                if (!contextMenu()->actions().isEmpty()) {
-                    contextMenu()->addSeparator();
+                d->wirelessNetworkItemMenu->addAction(action);
+            } else {
+                // If we have not seen any activatables for this device before, set its First flag for emphasis
+                // Precede it with a separator if it is not the first action in the menu
+                //
+                // if there are wireless network items in the submenu, and we have reached a non-wireless (network or interfaceconnection)
+                // item, mark the separator as the place to insert the submenu, as long as we have not yet done this
+                if (!d->deviceUnis.contains(activatable->deviceUni())) {
+                    widget->setFirst(true);
+                    if (!contextMenu()->actions().isEmpty()) {
+                        QAction * sepAction = contextMenu()->addSeparator();
+
+                        if (activatable->activatableType() != Knm::Activatable::WirelessInterfaceConnection) {
+                            if (d->wirelessNetworkItemMenu && !d->wirelessNetworkItemMenu->actions().isEmpty() && !insertionPointForWirelessNetworkItemSubmenu ) {
+                                insertionPointForWirelessNetworkItemSubmenu = sepAction;
+                            }
+                        }
+                    }
+
+                    d->deviceUnis.append(activatable->deviceUni());
+
                 }
-
-                d->deviceUnis.append(activatable->deviceUni());
-
+                contextMenu()->addAction(action);
             }
-            contextMenu()->addAction(action);
         }
     }
     // insert the wireless network items submenu at the right place
