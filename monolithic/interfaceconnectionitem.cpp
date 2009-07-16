@@ -108,7 +108,7 @@ QString InterfaceConnectionItem::textForConnection(Knm::InterfaceConnection::Act
             text = i18nc("text for popup's activating state", "<font size=\"-1\">Activating</font>");
             break;
         case Knm::InterfaceConnection::Activated:
-            text = i18nc("text for popup's activated state", "<font size=\"-1\">Activated</font>");
+            text = i18nc("text for popup's activated state", "<font size=\"-1\">Active</font>");
             break;
     }
     return text;
