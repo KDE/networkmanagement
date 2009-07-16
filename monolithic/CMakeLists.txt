@@ -14,6 +14,7 @@ set(monolithic_SRCS
    unconfiguredinterfaceitem.cpp
    wirelessstatus.cpp
    wirelessinterfaceconnectionitem.cpp
+   vpninterfaceconnectionitem.cpp
    wirelessnetworkitemitem.cpp
    )
 

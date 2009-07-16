@@ -39,10 +39,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelist.h"
 #include "interfaceconnection.h"
 #include "unconfiguredinterface.h"
+#include "vpninterfaceconnection.h"
 #include "wirelessinterfaceconnection.h"
 #include "wirelessnetworkitem.h"
 
 #include "interfaceconnectionitem.h"
+#include "vpninterfaceconnectionitem.h"
 #include "wirelessinterfaceconnectionitem.h"
 #include "sortedactivatablelist.h"
 #include "unconfiguredinterfaceitem.h"
@@ -182,7 +184,7 @@ void KNetworkManagerTrayIcon::fillPopup()
         } else {
             action = new QWidgetAction(this);
             action->setData(QVariant::fromValue(activatable));
-            if (activatable->activatableType() == Knm::Activatable::InterfaceConnection || activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+            if (activatable->activatableType() == Knm::Activatable::InterfaceConnection) {
                 Knm::InterfaceConnection * ic = static_cast<Knm::InterfaceConnection*>(activatable);
                 kDebug() << ic->connectionName();
                 widget = new InterfaceConnectionItem(ic, contextMenu());
@@ -198,6 +200,10 @@ void KNetworkManagerTrayIcon::fillPopup()
                 Knm::UnconfiguredInterface * unco = static_cast<Knm::UnconfiguredInterface*>(activatable);
                 kDebug() << unco->deviceUni();
                 widget = new UnconfiguredInterfaceItem(unco, contextMenu());
+            } else if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+                Knm::VpnInterfaceConnection * vpn = static_cast<Knm::VpnInterfaceConnection*>(activatable);
+                kDebug() << vpn->connectionName();
+                widget = new VpnInterfaceConnectionItem(vpn, contextMenu());
             }
             action->setDefaultWidget(widget);
             d->actions.insert(activatable, action);
