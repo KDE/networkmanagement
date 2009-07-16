@@ -9,6 +9,8 @@ include_directories(
 set(knmclient_SRCS
    remoteactivatable.cpp
    remoteinterfaceconnection.cpp
+   remoteunconfiguredinterface.cpp
+   remotevpninterfaceconnection.cpp
    remotewirelessinterfaceconnection.cpp
    remotewirelessnetworkitem.cpp
    remoteactivatablelist.cpp

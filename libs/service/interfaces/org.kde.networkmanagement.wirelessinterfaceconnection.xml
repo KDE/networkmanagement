@@ -16,6 +16,7 @@
     </method>
     <property name="ssid" type="s" access="read"/>
     <property name="strength" type="i" access="read"/>
+    <property name="capabilities" type="u" access="read"/>
     <property name="wpaFlags" type="u" access="read"/>
     <property name="rsnFlags" type="u" access="read"/>
     <signal name="strengthChanged">

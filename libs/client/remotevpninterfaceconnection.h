@@ -18,40 +18,28 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REMOTEWIRELESSINTERFACECONNECTION_H
-#define REMOTEWIRELESSINTERFACECONNECTION_H
+#ifndef REMOTEVPNINTERFACECONNECTION_H
+#define REMOTEVPNINTERFACECONNECTION_H
 
 #include "remoteinterfaceconnection.h"
 
-#include <solid/control/wirelessaccesspoint.h>
-
 #include "knmclient_export.h"
 
-class RemoteWirelessInterfaceConnectionPrivate;
+class RemoteVpnInterfaceConnectionPrivate;
 
-class KNMCLIENT_EXPORT RemoteWirelessInterfaceConnection : public RemoteInterfaceConnection
+class KNMCLIENT_EXPORT RemoteVpnInterfaceConnection : public RemoteInterfaceConnection
 {
 Q_OBJECT
-Q_PROPERTY(QString ssid READ ssid)
-Q_PROPERTY(int strength READ strength)
-Q_PROPERTY(uint capabilities READ capabilities)
-Q_PROPERTY(uint wpaFlags READ wpaFlags)
-Q_PROPERTY(uint rsnFlags READ rsnFlags)
 
 friend class RemoteActivatableList;
 
 public:
-    virtual ~RemoteWirelessInterfaceConnection();
-    QString ssid() const;
-    int strength() const;
-    Solid::Control::AccessPoint::Capabilities capabilities() const;
-    Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
-    Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
+    virtual ~RemoteVpnInterfaceConnection();
 signals:
     void strengthChanged(int);
 protected:
-    RemoteWirelessInterfaceConnection(const QString & dbusPath, QObject * parent);
-    Q_DECLARE_PRIVATE(RemoteWirelessInterfaceConnection);
+    RemoteVpnInterfaceConnection(const QString & dbusPath, QObject * parent);
+    Q_DECLARE_PRIVATE(RemoteVpnInterfaceConnection);
 };
 
-#endif // REMOTEWIRELESSINTERFACECONNECTION_H
+#endif // REMOTEVPNINTERFACECONNECTION_H
