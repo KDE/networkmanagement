@@ -39,7 +39,7 @@ WirelessInterfaceConnectionItem::~WirelessInterfaceConnectionItem()
 QString WirelessInterfaceConnectionItem::iconName() const
 {
     kDebug();
-    return QLatin1String("preferences-other");
+    return QLatin1String("network-wireless");
 }
 
 // vim: sw=4 sts=4 et tw=100
