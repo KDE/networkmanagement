@@ -25,9 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceconnection.h"
 #include "wirelessitem.h"
 
-#include <QtCore/QString>
-#include <QUuid>
-
 #include "knminternals_export.h"
 
 namespace Knm {
