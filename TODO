@@ -23,6 +23,7 @@ X = rejected
     * LEAP
     / WPA-EAP
       * TTLS requires that the certs are decrypted in the service and sent to NM, see libnm-util
+    * Dynamic WEP (802.1x)
   + also for 802.1x
     * Add system cert path property to UI and schema for 802.1x
   . Create Connection.Secrets objects and do lazy secret loading. Change configxml classes to not read wallet on start
@@ -82,6 +83,7 @@ X = rejected
            . Type
            / Extended information (System/user connection; IP config; pppStats bytes up/down stats (FEATURE) etc)
            . Activate button
+            X Prompt for which interface if multiple - solved differently in monolithic 
          / Wireless connection item
            . Signal strength
            * Hide strength meter and security icon on disconnect
@@ -123,6 +125,7 @@ X = rejected
   * Remember wireless/networking state between sessions (#181488)
   *  Reuse same notification when a connection is being brought up (#132000)
   * Detect when NM 0.7 Solid backend not loaded
+  . Guarantee fit when on small res (840x480)
 
 - Update Solid
   * Pass the reason arg in org.freedesktop.NetworkManager.Device.StateChanged through, so the applet can use it for error reporting
