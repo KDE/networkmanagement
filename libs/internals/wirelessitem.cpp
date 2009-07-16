@@ -20,8 +20,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessitem.h"
 
-Knm::WirelessItem::WirelessItem(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags)
-: m_ssid(ssid), m_strength(strength), m_wpaFlags(wpaFlags), m_rsnFlags(rsnFlags)
+Knm::WirelessItem::WirelessItem(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags)
+: m_ssid(ssid), m_strength(strength), m_capabilities(capabilities),  m_wpaFlags(wpaFlags), m_rsnFlags(rsnFlags)
 {
 
 }
@@ -45,6 +45,12 @@ void Knm::WirelessItem::setStrength(int strength)
 {
     m_strength = strength;
 }
+
+Solid::Control::AccessPoint::Capabilities Knm::WirelessItem::capabilities() const
+{
+    return m_capabilities;
+}
+
 
 Solid::Control::AccessPoint::WpaFlags Knm::WirelessItem::wpaFlags() const
 {

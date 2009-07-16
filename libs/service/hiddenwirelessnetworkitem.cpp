@@ -21,7 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "hiddenwirelessnetworkitem.h"
 
 HiddenWirelessNetworkItem::HiddenWirelessNetworkItem(const QString & deviceUni, QObject * parent)
-: WirelessNetworkItem(QString(), -1, (Solid::Control::AccessPoint::WpaFlags)0, (Solid::Control::AccessPoint::WpaFlags)0, deviceUni, parent)
+: WirelessNetworkItem(QString(), -1, (Solid::Control::AccessPoint::Capabilities)0,(Solid::Control::AccessPoint::WpaFlags)0, (Solid::Control::AccessPoint::WpaFlags)0, deviceUni, parent)
 {
 }
 

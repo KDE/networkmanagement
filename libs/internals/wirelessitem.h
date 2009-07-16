@@ -31,17 +31,19 @@ namespace Knm
 class KNMINTERNALS_EXPORT WirelessItem
 {
 public:
-    WirelessItem(const QString & ssid, int strength, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags);
+    WirelessItem(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags);
     virtual ~WirelessItem();
     QString ssid() const;
     int strength() const;
     virtual void setStrength(int strength);
+    Solid::Control::AccessPoint::Capabilities capabilities() const;
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
     virtual void strengthChanged(int) = 0;
 protected:
     QString m_ssid;
     int m_strength;
+    Solid::Control::AccessPoint::Capabilities m_capabilities;
     Solid::Control::AccessPoint::WpaFlags m_wpaFlags;
     Solid::Control::AccessPoint::WpaFlags m_rsnFlags;
 };

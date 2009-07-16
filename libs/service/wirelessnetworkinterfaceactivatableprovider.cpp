@@ -92,16 +92,18 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                         // get the info on the network
                         Solid::Control::WirelessNetwork * network = d->environment->findNetwork(wirelessSetting->ssid());
                         int strength = 0;
+                        Solid::Control::AccessPoint::Capabilities caps = 0;
                         Solid::Control::AccessPoint::WpaFlags wpaFlags = 0;
                         Solid::Control::AccessPoint::WpaFlags rsnFlags = 0;
                         if (network) {
                             strength = network->signalStrength();
                             Solid::Control::AccessPoint * ap = d->wirelessInterface()->findAccessPoint(network->referenceAccessPoint());
                             if (ap) {
+                                caps = ap->capabilities();
                                 wpaFlags = ap->wpaFlags();
                                 rsnFlags = ap->rsnFlags();
                                 Knm::WirelessInterfaceConnection * ifaceConnection = new Knm::WirelessInterfaceConnection(
-                                        wirelessSetting->ssid(), strength, wpaFlags, rsnFlags, addedConnection->uuid(), addedConnection->name(),
+                                        wirelessSetting->ssid(), strength, caps, wpaFlags, rsnFlags, addedConnection->uuid(), addedConnection->name(),
                                         d->interface->uni(), this);
                                 connect(network, SIGNAL(signalStrengthChanged(int)), ifaceConnection, SLOT(setStrength(int)));
                                 // remove any WirelessNetworkItem created previously
@@ -171,15 +173,17 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
             // get the info on the network
             Solid::Control::WirelessNetwork * network = d->environment->findNetwork(ssid);
             int strength = 0;
+            Solid::Control::AccessPoint::Capabilities caps = 0;
             Solid::Control::AccessPoint::WpaFlags wpaFlags = 0;
             Solid::Control::AccessPoint::WpaFlags rsnFlags = 0;
             if (network) {
                 strength = network->signalStrength();
                 Solid::Control::AccessPoint * ap = d->wirelessInterface()->findAccessPoint(network->referenceAccessPoint());
                 if (ap) {
+                    caps = ap->capabilities();
                     wpaFlags = ap->wpaFlags();
                     rsnFlags = ap->rsnFlags();
-                    Knm::WirelessNetworkItem * wirelessNetworkItem = new Knm::WirelessNetworkItem(ssid, strength, wpaFlags, rsnFlags, d->interface->uni(), this);
+                    Knm::WirelessNetworkItem * wirelessNetworkItem = new Knm::WirelessNetworkItem(ssid, strength, caps, wpaFlags, rsnFlags, d->interface->uni(), this);
                     connect(network, SIGNAL(signalStrengthChanged(int)), wirelessNetworkItem, SLOT(setStrength(int)));
                     d->wirelessActivatables.insert(ssid, wirelessNetworkItem);
                     d->activatableList->addActivatable(wirelessNetworkItem);
