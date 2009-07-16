@@ -220,10 +220,12 @@ void WirelessNetworkInterfaceActivatableProvider::networkDisappeared(const QStri
 bool WirelessNetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() const
 {
     Q_D(const WirelessNetworkInterfaceActivatableProvider);
-    return Solid::Control::NetworkManager::isWirelessEnabled()
+    bool needed =  Solid::Control::NetworkManager::isWirelessEnabled()
         && Solid::Control::NetworkManager::isWirelessHardwareEnabled()
         && d->activatables.isEmpty()
         && d->wirelessActivatables.isEmpty();
+    kDebug() << needed;
+    return needed;
 }
 
 // vim: sw=4 sts=4 et tw=100
