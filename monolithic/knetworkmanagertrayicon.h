@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 #include <QStringList>
 
+#include <Solid/Networking>
 #include <solid/control/networkinterface.h>
 
 class QSignalMapper;
@@ -54,6 +55,14 @@ public:
 protected Q_SLOTS:
     //void updateActionState(Knm::Activatable * changed, QAction * action);
     void slotPreferences();
+    /**
+     * Switch the popup between showing networks and showing normal activatables
+     */
+    //void slotShowNetworks();
+    /**
+     * Hides the icon when network management is unavailable
+     */
+    void networkingStatusChanged(Solid::Networking::Status);
     /**
      * Starts monitoring new network interfaces' state changes
      */

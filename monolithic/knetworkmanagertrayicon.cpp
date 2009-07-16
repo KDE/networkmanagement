@@ -78,6 +78,7 @@ public:
     QHash<Knm::Activatable *, QWidgetAction *> actions;
     QStringList deviceUnis;
     QString iconName;
+    bool showNetworkItems;
 };
 
 /* for qSort()ing */
@@ -90,6 +91,7 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     Q_D(KNetworkManagerTrayIcon);
     d->interfaceTypes = types;
     d->iconName = "networkmanager";
+    d->showNetworkItems = false;
     // don't try and make this our child or it crashes on app exit due to widgets it manages
     // not liking there being no QApplication anymore.
     setStandardActionsEnabled(false);
@@ -101,6 +103,8 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     //KMenu * menu = d->notificationItem->contextMenu();
     setAssociatedWidget(d->popup);
     setContextMenu(d->popup);
+    setStatus(Experimental::KNotificationItem::Active);
+
     KAction * prefsAction = KStandardAction::preferences(this, SLOT(slotPreferences()), this);
     prefsAction->setText(i18nc("Preferences action title", "Manage Connections..."));
     //menu->addAction(prefsAction);
@@ -113,6 +117,12 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     list->registerObserver(this, d->sortedList);
 
     fillPopup();
+
+    // hide the icon when network management is unavailable
+    QObject::connect(Solid::Control::NetworkManager::notifier(),
+                        SIGNAL(statusChanged(Solid::Networking::Status)),
+                        this,
+                        SLOT(networkingStatusChanged(Solid::Networking::Status)));
 
     // listen for new devices
     QObject::connect(Solid::Control::NetworkManager::notifier(),
@@ -364,6 +374,15 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
     }
     kDebug() << "setting overlay:" << overlayIconName;
     setOverlayIconByName(overlayIconName);
+}
+
+void KNetworkManagerTrayIcon::networkingStatusChanged(Solid::Networking::Status status)
+{
+    if (status == Solid::Networking::Unknown) {
+        setStatus(Experimental::KNotificationItem::Passive);
+    } else {
+        setStatus(Experimental::KNotificationItem::Active);
+    }
 }
 
 bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Control::NetworkInterface * if2)
