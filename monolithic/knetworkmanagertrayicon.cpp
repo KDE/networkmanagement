@@ -81,7 +81,7 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     setIconByName(d->iconName);
 
     setAssociatedWidget(contextMenu());
-    setStatus(Experimental::KNotificationItem::Active);
+    setStatus( (Solid::Control::NetworkManager::status() == Solid::Networking::Unknown ? KNotificationItem::Passive : KNotificationItem::Active));
 
     if (types.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
         d->flightModeAction = new KAction(i18nc("@action:inmenu turns off wireless networking", "Disable wireless"), this);
