@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2009 Paul Marchouk <paul.marchouk@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -26,9 +27,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <interfaceconnection.h>
 
+ #include <KLocale>
+
+// probably this function should be available for other code
+// intentionally didn't include this function in a class
+QString interfaceTypeToString(Solid::Control::NetworkInterface::Type type)
+{
+    QString str;
+    switch (type) {
+        case Solid::Control::NetworkInterface::UnknownType:
+            str = i18n("Unknown type");
+            break;
+        case Solid::Control::NetworkInterface::Ieee8023:
+            str = i18nc("The network interface type","Ethernet");
+            break;
+        case Solid::Control::NetworkInterface::Ieee80211:
+            str = i18nc("The network interface type","Wi-Fi");
+            break;
+        case Solid::Control::NetworkInterface::Serial:
+            str = i18nc("The network interface type","Serial");
+            break;
+        case Solid::Control::NetworkInterface::Gsm:
+            str = i18nc("The network interface type","GSM");
+            break;
+        case Solid::Control::NetworkInterface::Cdma:
+            str = i18nc("The network interface type","CDMA");
+            break;
+        default:
+            // oops, we need update this function, or something went wrong
+            break;
+    }
+
+    return str;
+}
+
 QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection * interfaceConnection)
 {
-    QString tip = QLatin1String("<table><tr><td>Hello, world</td></tr></table>");
+    QString tip;
     if (interfaceConnection) {
         QStringList tipElements, allTipElements;
         /* All possible names for tooltip elements
@@ -55,15 +90,45 @@ QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection *
         Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
         if (iface) {
             // generate html table header
-            //
+            tip = QLatin1String("<qt><table>");
+
             // iterate each item in tipElements and generate a table row for it
-            //
-            // QString interfaceName = iface->interfaceName();
-            //
-            // etc etc
-            //
-            // end html table
-            // store table in 'tip'
+            for (int i = 0; i < tipElements.size(); i++) {
+                tip += QLatin1String("<tr><td>");
+
+                if (tipElements.at(i) == QLatin1String("interface:name")) {
+                    tip += i18nc("@info:tooltip network device name eg eth0","<b>Interface:</b>&nbsp;%1", iface->interfaceName());
+                }
+                else if (tipElements.at(i) == QLatin1String("interface:type")) {
+                    tip += i18nc("@info:tooltip interface type", "<b>Type:</b>&nbsp;%1", interfaceTypeToString(iface->type()));
+                }
+                else if (tipElements.at(i) == QLatin1String("interface:driver")) {
+                    tip += i18nc("@info:tooltip system driver name", "<b>Driver:</b>&nbsp;%1", iface->driver());
+                }
+                /* This should be a string derived from NetworkInterface::ConnectionState - the
+                 * relevant switch code is already in networkmanager/applet/networkmanager.cpp
+                 */
+                else if (tipElements.at(i) == QLatin1String("interface:status")) {
+                    tip += i18nc("@info:tooltip connection status of an interface", "<b>Status:</b>&nbsp;%1",
+                            QString::number(iface->connectionState()));
+                }
+                else if (tipElements.at(i) == QLatin1String("interface:designspeed")) {
+                    tip += i18nc("@info:tooltip The network device's maximum speed", "<b>Max speed:</b>&nbsp;%1",
+                           iface->designSpeed());
+                }
+                else if (tipElements.at(i) == QLatin1String("interface:hardwareaddress")) {
+                    tip += i18nc("@info:tooltip this is the hardware address of a network interface", "<b>Hardware address:</b>&nbsp;%1");//TODO
+                }
+                else if (tipElements.at(i) == QLatin1String("ipv4:address")) {
+                    tip += i18nc("@info:tooltip IPv4 address", "<b>IP address:</b>&nbsp;%1");//TODO
+                }
+                else if (tipElements.at(i) == QLatin1String("interface:bitrate")) {
+                    tip += i18nc("@info:tooltip network connection bit raet","<b>Bit rate:</b>&nbsp;%1");//TODO
+                }
+
+                tip += QLatin1String("</td></tr>");
+            }
+            tip += QLatin1String("</table></qt>");
         }
     }
     return tip;
