@@ -28,13 +28,16 @@ namespace Knm
     class WirelessInterfaceConnection;
 } // namespace Knm
 
+class WirelessInterfaceConnectionItemPrivate;
+
 class WirelessInterfaceConnectionItem : public InterfaceConnectionItem
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(InterfaceConnectionItem)
+Q_DECLARE_PRIVATE(WirelessInterfaceConnectionItem)
 public:
     WirelessInterfaceConnectionItem(Knm::WirelessInterfaceConnection *, QWidget * parent = 0);
     virtual ~WirelessInterfaceConnectionItem();
+    Knm::WirelessInterfaceConnection* wirelessInterfaceConnection() const;
 protected:
     virtual QString iconName() const;
 };

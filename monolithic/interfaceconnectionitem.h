@@ -36,6 +36,7 @@ Q_DECLARE_PRIVATE(InterfaceConnectionItem)
 public:
     InterfaceConnectionItem(Knm::InterfaceConnection *, QWidget * parent = 0);
     virtual ~InterfaceConnectionItem();
+    Knm::InterfaceConnection* interfaceConnection() const;
 public Q_SLOTS:
     void changed();
     void setActivationState(Knm::InterfaceConnection::ActivationState state);

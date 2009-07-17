@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 
 #include "interfaceconnection.h"
+#include "tooltipbuilder.h"
 
 InterfaceConnectionItemPrivate::InterfaceConnectionItemPrivate()
 : state(Knm::InterfaceConnection::Unknown), connectionDetailsLabel(0)
@@ -55,6 +56,8 @@ InterfaceConnectionItem::InterfaceConnectionItem(InterfaceConnectionItemPrivate 
     if (interfaceConnection->activationState() != Knm::InterfaceConnection::Unknown) {
         setActivationState(interfaceConnection->activationState());
     }
+    setText(interfaceConnection->connectionName());
+
     connect(interfaceConnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
             this, SLOT(setActivationState(Knm::InterfaceConnection::ActivationState)));
 }
@@ -62,6 +65,12 @@ InterfaceConnectionItem::InterfaceConnectionItem(InterfaceConnectionItemPrivate 
 InterfaceConnectionItem::~InterfaceConnectionItem()
 {
 
+}
+
+Knm::InterfaceConnection* InterfaceConnectionItem::interfaceConnection() const
+{
+    Q_D(const InterfaceConnectionItem);
+    return qobject_cast<Knm::InterfaceConnection*>(d->activatable);
 }
 
 void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::ActivationState state)
@@ -76,8 +85,10 @@ void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::Activ
                 delete d->connectionDetailsLabel;
                 d->connectionDetailsLabel = 0;
             }
+            // clear tooltip
             break;
         case Knm::InterfaceConnection::Activating:
+            // set activating tooltip?
         case Knm::InterfaceConnection::Activated:
             d->activeIcon->setPixmap(pixmap());
             d->activeIcon->show();
@@ -88,6 +99,8 @@ void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::Activ
             } else {
                 d->connectionDetailsLabel->setText(textForConnection(state));
             }
+            // set detailed tooltip using network interface state and ipv4
+            setToolTip(ToolTipBuilder::toolTipForInterfaceConnection(interfaceConnection()));
             break;
     }
 }

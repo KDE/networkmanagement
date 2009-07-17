@@ -6,16 +6,30 @@ include_directories(
    )
 
 set(monolithic_SRCS
+   # base client code
    monolithic.cpp
+
+   # sort logic for activatables
    sortedactivatablelist.cpp
+
+   # tray icon
    knetworkmanagertrayicon.cpp
+
+   # base widget for activatables
    activatableitem.cpp
+
+   # subclasses for Activatable subtypes
    interfaceconnectionitem.cpp
    unconfiguredinterfaceitem.cpp
-   wirelessstatus.cpp
    wirelessinterfaceconnectionitem.cpp
    vpninterfaceconnectionitem.cpp
    wirelessnetworkitemitem.cpp
+
+   # helper class for wireless UI elements
+   wirelessstatus.cpp
+
+   # helper class
+   tooltipbuilder.cpp
    )
 
 kde4_add_executable(knetworkmanager ${monolithic_SRCS})
