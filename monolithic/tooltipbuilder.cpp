@@ -20,27 +20,52 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "tooltipbuilder.h"
 
+#include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkipv4config.h>
 
 #include <interfaceconnection.h>
 
-QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection *)
+QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection * interfaceConnection)
 {
     QString tip = QLatin1String("<table><tr><td>Hello, world</td></tr></table>");
-    QStringList tipElements;
-    tipElements << "interface:type" << "interface:name" << "interface:driver" << "interface:status" << "interface:designspeed"
-        << "interface:hardwareaddress" << "interface:bitrate"
-        << "ipv4:address" << "ipv4:nameservers" << "ipv4:domains" << "ipv4:routes"
-        << "wired:carrier"
-        /* These come from Solid::Control::WirelessNetworkInterface _and_ its active
-          Solid::Control::AccessPoint, if any */
-        << "wireless:strength" << "wireless:ssid" << "wireless:bitrate" << "wireless:mode" << "wireless:accesspoint"
-        << /* High level description of security in use */ "wireless:security"
-        << /* low level flags so ciphers can be seen*/ "wireless:wpaflags" << "wireless:rsnflags"
-        << "wireless:frequency"
-        /* These are not yet available in the API!*/
-        << "cellular:strength" << "cellular:network";
+    if (interfaceConnection) {
+        QStringList tipElements, allTipElements;
+        /* All possible names for tooltip elements
+         * Eventually there will be a UI where the user can select which elements to show
+         */
+
+        allTipElements << "interface:type" << "interface:name" << "interface:driver" << "interface:status" << "interface:designspeed"
+            << "interface:hardwareaddress" << "interface:bitrate"
+            << "ipv4:address" << "ipv4:nameservers" << "ipv4:domains" << "ipv4:routes"
+            << "wired:carrier"
+            /* These come from Solid::Control::WirelessNetworkInterface _and_ its active
+               Solid::Control::AccessPoint, if any */
+            << "wireless:strength" << "wireless:ssid" << "wireless:bitrate" << "wireless:mode" << "wireless:accesspoint"
+            << /* High level description of security in use */ "wireless:security"
+            << /* low level flags so ciphers can be seen*/ "wireless:wpaflags" << "wireless:rsnflags"
+            << "wireless:frequency"
+            /* These are not yet available in the API!*/
+            << "cellular:strength" << "cellular:network";
+
+        /* default set to use for initial development */
+        tipElements << "interface:type" << "interface:name" << "interface:driver" << "interface:status" << "interface:designspeed";
+
+        QString deviceUni = interfaceConnection->deviceUni();
+        Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
+        if (iface) {
+            // generate html table header
+            //
+            // iterate each item in tipElements and generate a table row for it
+            //
+            // QString interfaceName = iface->interfaceName();
+            //
+            // etc etc
+            //
+            // end html table
+            // store table in 'tip'
+        }
+    }
     return tip;
 }
 
