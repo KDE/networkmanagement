@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Dario Freddi <drf54321@gmail.com>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,83 +19,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM07_KDED_SERVICE_H
-#define KNM07_KDED_SERVICE_H
+#ifndef KNM08_KDED_SERVICE_H
+#define KNM08_KDED_SERVICE_H
 
 #include <KDEDModule>
 
-#include <QHash>
+#include <QVariant>
 
-#include <QtDBus/QDBusObjectPath>
+class NetworkManagementServicePrivate;
 
-#include <KSharedConfig>
-
-#include "interfaceconnection.h"
-#include "wirelessinterfaceconnection.h"
-
-
-namespace KnmInternals {
-    class Connection;
-}
-
-namespace Knm {
-namespace Externals {
-    class Connectable;
-    class WirelessConnection;
-}
-}
-
-namespace Solid {
-namespace Control {
-    class WirelessNetwork;
-    class WirelessNetworkInterfaceEnvironment;
-    class NetworkInterface;
-}
-}
-
-class NetworkManagementService : public KDEDModule {
-
+class NetworkManagementService : public KDEDModule
+{
 Q_OBJECT
-Q_CLASSINFO("D-Bus Interface", "org.kde.networkmanagement")
-
+Q_DECLARE_PRIVATE(NetworkManagementService)
 public:
     NetworkManagementService(QObject * parent, const QVariantList&);
     virtual ~NetworkManagementService();
-
-    QList<QDBusObjectPath> ListConnectables();
-
-    void reparseConfiguration(const QStringList& changedConnections);
-
-private Q_SLOTS:
-    void networkInterfaceAdded(const QString  & uni);
-
-    void networkInterfaceRemoved(const QString  & uni);
-
-    void wirelessNetworkAppeared(const QString &);
-
-    void wirelessNetworkDisappeared(const QString &);
-
-Q_SIGNALS:
-    void ConnectableAdded(const QDBusObjectPath &path);
-    void ConnectableRemoved(const QDBusObjectPath &path);
-
 private:
-    void networkInterfaceAdded(Solid::Control::NetworkInterface *iface);
-    void networkInterfaceRemoved(Solid::Control::NetworkInterface *iface);
-    Knm::WirelessInterfaceConnection *processNewWirelessNetwork(const QString &ssid);
-    Knm::Connection *restoreConnection(const QString & connectionId);
-    KSharedConfig::Ptr connectionFileForUuid(const QString & uuid);
-    Knm::Connection::Type solidDeviceToConnectionType(const QString &deviceUni);
-    void registerConnectableAndNotify(Knm::Connectable *item);
-    void deleteConnectableAndNotify(Knm::Connectable *item);
-
-private:
-    QHash<Knm::Connectable*, QDBusObjectPath> m_connectables;
-    QHash<QString, Knm::Connection*> m_connections;
-    QHash<QString, Solid::Control::WirelessNetworkInterfaceEnvironment*> m_environments;
-    int m_counter;
-    KSharedConfigPtr m_config;
-    const static QString BASE_DBUS_PATH;
+    NetworkManagementServicePrivate * d_ptr;
 };
 
-#endif
+#endif // KNM08_KDED_SERVICE_H
