@@ -79,6 +79,7 @@ protected Q_SLOTS:
     void networkInterfaceAdded(const QString&);
     //void networkInterfaceRemoved(const QString&);
     void updateTrayIcon();
+    void updateToolTip();
     void handleConnectionStateChange(int new_state, int old_state, int reason);
 private:
     void fillPopup();

@@ -380,6 +380,31 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
     }
     kDebug() << "setting overlay:" << overlayIconName;
     setOverlayIconByName(overlayIconName);
+    updateToolTip();
+}
+
+void KNetworkManagerTrayIcon::updateToolTip()
+{
+    Q_D(KNetworkManagerTrayIcon);
+    QString tip = QLatin1String("Hello, world!");
+    switch (Solid::Networking::status()) {
+        case Solid::Networking::Unknown:
+            tip = i18nc("@info:tooltip status string for when we don't know if we are online or not", "No networking status information");
+            break;
+        case Solid::Networking::Unconnected:
+            tip = i18nc("@info:tooltip status string for network not connected", "Not connected");
+            break;
+        case Solid::Networking::Disconnecting:
+            tip = i18nc("@info:tooltip status string for network in the process of disconnecting ", "Disconnecting");
+            break;
+        case Solid::Networking::Connecting:
+            tip = i18nc("@info:tooltip status string for network in the process of connecting", "Connecting");
+            break;
+        case Solid::Networking::Connected:
+            tip = i18nc("@info:tooltip status string for network connected", "Connected");
+            break;
+    }
+    setToolTip(d->iconName, tip, QString());
 }
 
 void KNetworkManagerTrayIcon::networkingStatusChanged(Solid::Networking::Status status)
