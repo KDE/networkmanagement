@@ -182,6 +182,7 @@ void ConfigurationLauncher::unconfiguredInterfaceActivated()
                 case Solid::Control::NetworkInterface::Gsm:
                     typeString = QLatin1String("gsm");
                     editorArgs = QLatin1String("gsm");
+                    break;
                 case Solid::Control::NetworkInterface::Cdma:
                     typeString = QLatin1String("cdma");
                     editorArgs = QLatin1String("cdma");
