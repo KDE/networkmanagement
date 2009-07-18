@@ -150,14 +150,14 @@ void RemoteActivatableList::serviceOwnerChanged(const QString & changedService, 
     kDebug() << changedService << changedService << oldOwner << newOwner;
     if (changedService == d->iface->service()) {
         if (!oldOwner.isEmpty() && newOwner.isEmpty()) {
-            clear();
             emit disappeared();
+            clear();
         } else if (oldOwner.isEmpty() && !newOwner.isEmpty()) {
             init();
             emit appeared();
         } else if (!oldOwner.isEmpty() && !newOwner.isEmpty()) {
-            clear();
             emit disappeared();
+            clear();
             init();
             emit appeared();
         }

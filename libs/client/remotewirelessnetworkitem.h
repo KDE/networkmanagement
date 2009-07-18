@@ -48,7 +48,7 @@ public:
     int strength() const;
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
-signals:
+Q_SIGNALS:
     void strengthChanged(int);
 protected:
     RemoteWirelessNetworkItem(const QString & path, QObject * parent);
