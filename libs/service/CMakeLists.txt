@@ -56,6 +56,12 @@ set(knmservice_SRCS
 
    # creates vpn activatables
    vpninterfaceconnectionprovider.cpp
+
+   # performs KNotifications on events
+   notificationmanager.cpp
+
+   # static global definitions of event string ids
+   events.cpp
    )
 
 
@@ -105,7 +111,7 @@ qt4_add_dbus_adaptor(knmservice_SRCS
 
 kde4_add_library(knmservice SHARED ${knmservice_SRCS})
 
-target_link_libraries(knmservice knminternals solidcontrol solidcontrolfuture ${KDE4_KDECORE_LIBS})
+target_link_libraries(knmservice knminternals solidcontrol solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS})
 
 set_target_properties(knmservice PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}

@@ -37,6 +37,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <connectionusagemonitor.h>
 #include <configurationlauncher.h>
 #include <networkinterfacemonitor.h>
+#include <notificationmanager.h>
 #include <vpninterfaceconnectionprovider.h>
 
 #include <nmdbussettingsservice.h>
@@ -83,6 +84,8 @@ int main( int argc, char** argv )
     ConfigurationLauncher * configurationLauncher;
     // update connections as they are used
     ConnectionUsageMonitor * connectionUsageMonitor;
+    // watches events and creates KNotifications
+    NotificationManager * notificationManager;
     // create Activatables for VPN connections
     VpnInterfaceConnectionProvider * vpnInterfaceConnectionProvider;
 
@@ -106,6 +109,8 @@ int main( int argc, char** argv )
     vpnInterfaceConnectionProvider = new VpnInterfaceConnectionProvider(connectionList, activatableList, activatableList);
     connectionList->registerConnectionHandler(vpnInterfaceConnectionProvider);
 
+    notificationManager = new NotificationManager(&app);
+
     nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, connectionList);
     nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(activatableList, nmSettingsService);
 
@@ -118,6 +123,7 @@ int main( int argc, char** argv )
     // generic observers
     activatableList->registerObserver(configurationLauncher);
     activatableList->registerObserver(connectionUsageMonitor);
+    activatableList->registerObserver(notificationManager);
 
     activatableList->registerObserver(nmSettingsService);
     activatableList->registerObserver(nmDBusConnectionProvider);
