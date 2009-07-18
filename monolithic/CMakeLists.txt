@@ -43,3 +43,8 @@ target_link_libraries(knetworkmanager
    knm_nm
    )
 
+install(TARGETS knetworkmanager ${INSTALL_TARGETS_DEFAULT_ARGS})
+
+install(FILES knetworkmanager.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
+
+install(FILES kde4-knetworkmanager-autostart.desktop DESTINATION ${AUTOSTART_INSTALL_DIR})

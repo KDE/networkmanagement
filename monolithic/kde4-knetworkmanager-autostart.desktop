@@ -1,0 +1,16 @@
+[Desktop Entry]
+Encoding=UTF-8
+Name=KNetworkManager
+GenericName=Network Manager
+Exec=knetworkmanager
+Icon=networkmanager
+Type=Application
+Comment=A KDE frontend for NetworkManager
+X-KDE-autostart-after=panel
+X-KDE-StartupNotify=false
+X-KDE-UniqueApplet=true
+X-DCOP-ServiceType=Unique
+X-KDE-autostart-condition=knetworkmanagerrc:General:Autostart:true
+Categories=Qt;KDE;Network;Applet;
+OnlyShowIn=KDE;
+
