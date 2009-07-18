@@ -86,6 +86,7 @@ void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::Activ
                 d->connectionDetailsLabel = 0;
             }
             // clear tooltip
+            setToolTip(QString());
             break;
         case Knm::InterfaceConnection::Activating:
             // set activating tooltip?
