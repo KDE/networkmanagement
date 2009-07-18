@@ -38,6 +38,7 @@ extern const QString RfOff;
 extern const QString RfOn;
 extern const QString LowSignal;
 extern const QString NetworkingDisabled;
+extern const QString InterfaceStateChange;
 } // namespace Event
 #endif
 

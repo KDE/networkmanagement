@@ -24,6 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include "activatableobserver.h"
 #include <Solid/Networking>
+#include <solid/control/networkinterface.h>
 
 #include "knm_export.h"
 
@@ -48,11 +49,13 @@ protected Q_SLOTS:
     void notifyNewNetworks();
     void notifyDisappearedNetworks();
 
+    void interfaceConnectionStateChanged(int,int,int);
     void interfaceConnectionActivated();
 
     void wirelessHardwareEnabledChanged(bool);
     void statusChanged(Solid::Networking::Status);
 private:
+    static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
     NotificationManagerPrivate * d_ptr;
 };
 

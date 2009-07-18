@@ -31,7 +31,7 @@ Comment[uk]=Керування мережею
 Comment[x-test]=xxNetwork Managementxx
 Version=2
 
-[Context/connection type]
+[Context/connectiontype]
 Name=Network Connection Type
 
 [Event/hwadded]
@@ -195,9 +195,11 @@ Comment[x-test]=xxA wireless network disappearedxx
 
 [Event/userconnectionattempt]
 Name=Establishing Network Connection
+Comment=The user started making a connection
 
 [Event/autoconnectionattempt]
 Name=Establishing Network Connection
+Comment=A connection is being started automatically
 
 [Event/connecting]
 Name=Establishing Network Connection
@@ -473,5 +475,8 @@ Comment[uk]=Занизька потужність радіосигналу
 Comment[x-test]=xxThe wireless signal strength is lowxx
 Action=Popup
 
+[Event/ifacestatechange]
+Name=Interface changed state
+Comment=An interface changed state
 
 X-Ubuntu-Gettext-Domain=desktop_plasma-widget-network-manager
