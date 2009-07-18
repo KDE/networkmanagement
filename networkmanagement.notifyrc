@@ -29,129 +29,10 @@ Comment[sv]=Nätverkshantering
 Comment[tr]=Ağ Yönetimi
 Comment[uk]=Керування мережею
 Comment[x-test]=xxNetwork Managementxx
-Version=1
+Version=2
 
-[Context/wired]
-Name=Wired Network Interface
-Name[de]=Kabelgebundene Netzwerkschnittstelle
-Name[el]=Ενσύρματη διασύνδεση δικτύου
-Name[et]=Juhtmega võrgu liides
-Name[fr]=Interface réseau filaire
-Name[ga]=Comhéadan Líonra Sreangaithe
-Name[gl]=Interface de rede por cabo
-Name[ja]=有線ネットワークインターフェース
-Name[km]=ចំណុច​ប្រទាក់​បណ្ដាញ​មាន​ខ្សែ
-Name[lt]=Laidinė tinklo sąsaja
-Name[nds]=Kavelnettwark-Koppelsteed
-Name[nl]=Bedraad netwerkinterface
-Name[pa]=ਤਾਰ ਨੈੱਟਵਰਕ ਇੰਟਰਫੇਸ
-Name[pt]=Interface de Rede Com-Fios
-Name[pt_BR]=Interface de rede com fio
-Name[ro]=Interfață de rețea cu fir
-Name[sv]=Trådbundet nätverksgränssnitt
-Name[tr]=Kablolu Ağ Arayüzü
-Name[uk]=Інтерфейс дротової мережі
-Name[x-test]=xxWired Network Interfacexx
-[Context/wireless]
-Name=Wireless Network Interface
-Name[de]=Drahtlose Netzwerkschnittstelle
-Name[el]=Ασύρματη διασύνδεση δικτύου
-Name[et]=Juhtmeta võrgu liides
-Name[fr]=Interface réseau sans fil
-Name[ga]=Comhéadan Líonra Gan Sreang
-Name[gl]=Interface de rede sen fíos
-Name[ja]=ワイヤレスネットワークインターフェース
-Name[km]=ចំណុច​ប្រទាក់បណ្ដាញ​ឥតខ្សែ
-Name[lt]=Bevielė tinklo sąsaja
-Name[nds]=Funknettwark-Koppelsteed
-Name[nl]=Draadloos netwerkinterface
-Name[pa]=ਬੇਤਾਰ ਨੈੱਟਵਰਕ ਇੰਟਰਫੇਸ
-Name[pt]=Interface de Rede Sem-Fios
-Name[pt_BR]=Interface de rede sem fio
-Name[ro]=Interfață de rețea fără fir
-Name[sv]=Trådlöst nätverksgränssnitt
-Name[tr]=Kablosuz Ağ Arayüzü
-Name[uk]=Інтерфейс бездротової мережі
-Name[x-test]=xxWireless Network Interfacexx
-[Context/cellular]
-Name=Cellular broadband
-Name[de]=Mobil-Breitband
-Name[el]=Κινητή ευρυζωνική
-Name[et]=Mobiiliühendus
-Name[fr]=Mobile haut débit
-Name[gl]=Banda larga móbil
-Name[ja]=携帯ブロードバンド
-Name[km]=រលក​អាកាស​ធំ​របស់​ទូរស័ព្ទចល័ត
-Name[nds]=Mobil Breedband
-Name[nn]=Mobilbasert breiband
-Name[pa]=ਸੈਲੂਲਰ ਬਰਾਂਡਬੈਂਡ
-Name[pt]=Banda-larga móvel
-Name[pt_BR]=Banda larga celular
-Name[ro]=Bandă largă celulară
-Name[sv]=Mobilt bredband
-Name[tr]=Telefon geniş bant
-Name[uk]=Стільникова широкосмугова мережа
-Name[x-test]=xxCellular broadbandxx
-[Context/pppoe]
-Name=DSL network interfaces
-Name[de]=DSL-Netzwerkschnittstellen
-Name[el]=Διασυνδέσεις δικτύου DSL
-Name[et]=DSL võrguliides
-Name[fr]=Interfaces réseau DSL
-Name[ga]=Comhéadain líonra DSL
-Name[gl]=Interfaces de rede DSL
-Name[ja]=DSL ネットワークインターフェース
-Name[km]=ចំណុច​ប្រទាក់បណ្ដាញ DSL
-Name[lt]=DSL tinklo sąsajos
-Name[nds]=DSL-Nettwarkkoppelsteden
-Name[nl]=DSL netwerkinterface
-Name[pa]=DSL ਨੈੱਟਵਰਕ ਇੰਟਰਫੇਸ
-Name[pt]=interfaces de rede DSL
-Name[pt_BR]=Interfaces de rede DSL
-Name[ro]=Interfețe de rețea DSL
-Name[sv]=DSL-nätverksgränssnitt
-Name[tr]=DSL ağ arayüzleri
-Name[uk]=Мережеві інтерфейси DSL
-Name[x-test]=xxDSL network interfacesxx
-[Context/vpn]
-Name=VPN connection
-Name[de]=VPN-Verbindung
-Name[el]=Σύνδεση VPN
-Name[et]=VPN-ühendus
-Name[fr]=Connexion VPN
-Name[ga]=Ceangal VPN
-Name[gl]=Conexión VPN
-Name[ja]=VPN 接続
-Name[km]=ការ​តភ្ជាប់ VPN
-Name[lt]=VPN ryšys
-Name[nds]=VPN-Verbinnen
-Name[nl]=VPN-verbinding
-Name[pa]=VPN ਕੁਨੈਕਸ਼ਨ
-Name[pt]=ligação VPN
-Name[pt_BR]=Conexão VPN
-Name[ro]=Conexiune VPN
-Name[sv]=VPN-anslutning
-Name[tr]=VPN bağlantıları
-Name[uk]=З’єднання VPN
-Name[x-test]=xxVPN connectionxx
-Comment=Virtual Private Network Connection
-Comment[de]=„Virtual Private Network“-Verbindung
-Comment[el]=Σύνδεση εικονικού ιδιωτικού δικτύου (VPN)
-Comment[et]=Virtuaalse eravõrgu ühendus
-Comment[fr]=Connexion à un réseau privé virtuel (VPN)
-Comment[gl]=Conexión de rede privada virtual
-Comment[ja]=仮想プライベートネットワーク接続
-Comment[km]=កា​រតភ្ជាប់​បណ្ដាញ​ឯកជន​និម្មិត
-Comment[nds]=Virtuell-privaat-Nettwark-Verbinnen
-Comment[nl]=Verbinding via virtueel privaat netwerk
-Comment[pa]=ਵੁਰਚੁਅਲ ਪ੍ਰਾਈਵੇਟ ਨੈੱਟਵਰਕ ਕੁਨੈਕਸ਼ਨ
-Comment[pt]=Ligação de Rede Privada Virtual (VPN)
-Comment[pt_BR]=Conexão VPN (Virtual Private Network - Rede Virtual Privada)
-Comment[ro]=Conexiune de rețea privată virtuală
-Comment[sv]=Virtuell privat nätverksanslutning
-Comment[tr]=Sanal Özel Ağ Bağlantısı
-Comment[uk]=З’єднання VPN
-Comment[x-test]=xxVirtual Private Network Connectionxx
+[Context/connection type]
+Name=Network Connection Type
 
 [Event/hwadded]
 Name=Network Interface Attached
@@ -311,6 +192,12 @@ Comment[sv]=Ett trådlöst nätverk försvann
 Comment[tr]=Bir kablosuz ağ kayboldu
 Comment[uk]=Зв’язок з бездротовою мережею увірвався
 Comment[x-test]=xxA wireless network disappearedxx
+
+[Event/userconnectionattempt]
+Name=Establishing Network Connection
+
+[Event/autoconnectionattempt]
+Name=Establishing Network Connection
 
 [Event/connecting]
 Name=Establishing Network Connection
