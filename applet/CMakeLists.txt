@@ -9,7 +9,6 @@ set(networkmanager_SRCS
     activatableitem.cpp
 
     interfaceconnectionitem.cpp
-    wirelessinterfaceconnectionitem.cpp
 
     interfacegroup.cpp
 

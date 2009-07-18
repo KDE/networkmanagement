@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceitem.h"
 #include "activatableitem.h"
 #include "interfaceconnectionitem.h"
-#include "wirelessinterfaceconnectionitem.h"
+//#include "wirelessinterfaceconnectionitem.h"
 //#include "remoteconnection.h"
 //#include "serialinterfaceitem.h"
 #include "wiredinterfaceitem.h"
@@ -90,6 +90,7 @@ InterfaceGroup::InterfaceGroup(Solid::Control::NetworkInterface::Type type,
         setMinimumSize(QSize(285, 60)); // WTF?
     }
     init();
+
 }
 
 InterfaceGroup::~InterfaceGroup()
@@ -385,19 +386,13 @@ bool InterfaceGroup::accept(RemoteActivatable * activatable) const
 
 ActivatableItem * InterfaceGroup::createItem(RemoteActivatable * activatable)
 {
-    kDebug() << activatable;
+    kDebug() << activatable << activatable->deviceUni();
     ActivatableItem * ai = 0;
-    Knm::Activatable::ActivatableType aType = activatable->activatableType();
 
     if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
-        if (aType == Knm::Activatable::WirelessInterfaceConnection) {
-            WirelessInterfaceConnectionItem * wici = new WirelessInterfaceConnectionItem(static_cast<RemoteWirelessInterfaceConnection*>(activatable));
-            ai = wici;
-        } else if (aType == Knm::Activatable::WirelessNetworkItem) {
-            kDebug() << "adding wireless network item";
-            WirelessNetworkItem * wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetworkItem*>(activatable));
-            ai = wni;
-        }
+        kDebug() << "adding WirelessNetworkItem";
+        WirelessNetworkItem * wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetworkItem*>(activatable));
+        ai = wni;
     } else {
         ai = new InterfaceConnectionItem(static_cast<RemoteInterfaceConnection*>(activatable), this);
     }

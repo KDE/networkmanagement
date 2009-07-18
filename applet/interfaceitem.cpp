@@ -42,13 +42,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkipv4config.h>
 #include <solid/control/networkmanager.h>
 
+
 //#include "connectioninspector.h"
 #include "events.h"
 //#include "nm-active-connectioninterface.h"
 #include "networkmanager.h"
-//#include "remoteact.h"
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent), m_iface(iface), m_connectionNameLabel(0), m_connectionInfoLabel(0), m_strengthMeter(0), m_nameMode(mode), m_enabled(false), m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
+
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent),
+    m_iface(iface),
+    m_connectionNameLabel(0),
+    m_connectionInfoLabel(0),
+    m_strengthMeter(0),
+    m_nameMode(mode),
+    m_enabled(false),
+    m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
 {
     setAcceptHoverEvents(true);
 
@@ -198,12 +206,12 @@ void InterfaceItem::setEnabled(bool enable)
     if (m_strengthMeter) {
         m_strengthMeter->setEnabled(enable);
     }
+    setConnectionInfo();
 }
 
 InterfaceItem::~InterfaceItem()
 {
 }
-
 
 void InterfaceItem::setNameDisplayMode(NameDisplayMode mode)
 {

@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Sebastian Kügler <sebas@kde.org>
+Copyright 2008,2009 Sebastian Kügler <sebas@kde.org>
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
@@ -37,13 +37,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessnetworkinterface.h>
 
 #include "remotewirelessnetworkitem.h"
+#include "remotewirelessinterfaceconnection.h"
+#include "activatable.h"
 
 WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetworkItem * remote, QGraphicsItem * parent)
 : ActivatableItem(remote, parent), m_security(0), m_securityIcon(0), m_securityIconName(0)
 {
     m_strengthMeter = new Plasma::Meter(this);
     m_strength = 0;
-    m_ssid = remote->ssid();
+
+
+    Solid::Control::AccessPoint::WpaFlags wpaFlags;
+    Solid::Control::AccessPoint::WpaFlags rsnFlags;
+
+    Knm::Activatable::ActivatableType aType = remote->activatableType();
+    if (aType == Knm::Activatable::WirelessInterfaceConnection) {
+        //kDebug() << "adding WirelessInterfaceConnection";
+        RemoteWirelessInterfaceConnection* remoteconnection = static_cast<RemoteWirelessInterfaceConnection*>(m_activatable);
+        m_ssid = remoteconnection->ssid();
+        wpaFlags = remoteconnection->wpaFlags();
+        rsnFlags = remoteconnection->rsnFlags();
+    } else if (aType == Knm::Activatable::WirelessNetworkItem) {
+        m_ssid = remote->ssid();
+        wpaFlags = remote->wpaFlags();
+        rsnFlags = remote->rsnFlags();
+    }
+
     setStrength(remote->strength());
     connect(remote, SIGNAL(changed()), SLOT(update()));
 
@@ -53,8 +72,6 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetworkItem * remote, QGr
         m_security = QLatin1String("wep"); // the minimum
     #endif
 
-    Solid::Control::AccessPoint::WpaFlags wpaFlags = remote->wpaFlags();
-    Solid::Control::AccessPoint::WpaFlags rsnFlags = remote->rsnFlags();
 
     // TODO: this was done by a clueless (coolo)
     if ( wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep40 ) ||

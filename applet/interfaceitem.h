@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDBusObjectPath>
 #include <QGraphicsWidget>
 
+#include "interfaceconnection.h"
+
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Meter>
@@ -57,7 +59,7 @@ public:
     void setNameDisplayMode(NameDisplayMode);
     NameDisplayMode nameDisplayMode() const;
 
-    virtual void setEnabled(bool enable);
+    virtual void setEnabled(bool active);
     virtual QString ssid();
 
 public Q_SLOTS:
