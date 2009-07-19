@@ -21,7 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtCore>
 
 #include <KAboutData>
-#include <KApplication>
+#include <KUniqueApplication>
 #include <KCmdLineArgs>
 #include <KDebug>
 #include <KDialog>
@@ -61,7 +61,7 @@ int main( int argc, char** argv )
 
     KCmdLineOptions options;
     KCmdLineArgs::addCmdLineOptions(options);
-    KApplication app;
+    KUniqueApplication app;
 
     // the most basic object
     ConnectionList * connectionList;
