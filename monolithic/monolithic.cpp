@@ -146,8 +146,9 @@ int main( int argc, char** argv )
          | Solid::Control::NetworkInterface::Cdma);
 
     //Solid::Control::NetworkInterface::Types types = (Solid::Control::NetworkInterface::Ieee8023);
-    KNetworkManagerTrayIcon simpleUi(types, QString::number(types), activatableList, 0);
+    KNetworkManagerTrayIcon simpleUi(types, QString::number(types), activatableList, nmSettingsService->isServiceAvailable(), 0);
     activatableList->registerObserver(&simpleUi);
+    QObject::connect(nmSettingsService, SIGNAL(serviceAvailable(bool)), &simpleUi, SLOT(setActive(bool)));
 
     //Solid::Control::NetworkInterface::Types secondTypes = (Solid::Control::NetworkInterface::Ieee80211);
 

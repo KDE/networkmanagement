@@ -57,10 +57,15 @@ public:
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
+    bool isServiceAvailable() const;
 public Q_SLOTS:
     Q_SCRIPTABLE QList<QDBusObjectPath> ListConnections() const;
 Q_SIGNALS:
     Q_SCRIPTABLE void NewConnection(const QDBusObjectPath&);
+    /**
+     * Indicate that the dbus service is registered
+     */
+    void serviceAvailable(bool);
 private Q_SLOTS:
     // DBus service management
     void serviceOwnerChanged(const QString& service, const QString& oldOwner, const QString& newOwner);

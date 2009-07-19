@@ -40,12 +40,23 @@ class SortedActivatableList;
 
 class KNetworkManagerTrayIconPrivate;
 
+/**
+ * Tray icon representing one or more network interfaces
+ */
 class KNetworkManagerTrayIcon : public Experimental::KNotificationItem, public ActivatableObserver
 {
 Q_OBJECT
 Q_DECLARE_PRIVATE(KNetworkManagerTrayIcon);
 public:
-    KNetworkManagerTrayIcon(Solid::Control::NetworkInterface::Types types, const QString & id, ActivatableList * list, QObject * parent);
+    /**
+     * Constructor
+     * @param types Set of Solid::Control::NetworkInterface::Type ORed together indicating which network interface types to show and offer status for.
+     * @param id Unique identifier for KNotificationItem management
+     * @param list List of Knm::Activatables to display
+     * @param active If true, show activatables; if false, only show status in the tray and a minimal context menu
+     * @param parent QObject owning this tray icon
+     */
+    KNetworkManagerTrayIcon(Solid::Control::NetworkInterface::Types types, const QString & id, ActivatableList * list, bool active = true, QObject * parent = 0);
     virtual ~KNetworkManagerTrayIcon();
     // respond to activatable changes
     void handleAdd(Knm::Activatable *);
@@ -81,6 +92,10 @@ protected Q_SLOTS:
     void updateTrayIcon();
     void updateToolTip();
     void handleConnectionStateChange(int new_state, int old_state, int reason);
+    /**
+     * Switch the icon between active and passive modes
+     */
+    void setActive(bool);
 private:
     void fillPopup();
     KNetworkManagerTrayIconPrivate * d_ptr;

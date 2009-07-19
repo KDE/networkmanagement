@@ -65,12 +65,13 @@ NMDBusSettingsService::NMDBusSettingsService(QObject * parent)
     d->active = false;
     d->nextConnectionId = 0;
 
-    if ( !QDBusConnection::systemBus().interface()->registerService( SERVICE_USER_SETTINGS, QDBusConnectionInterface::QueueService, QDBusConnectionInterface::AllowReplacement ) ) {
+    if ( QDBusConnection::systemBus().interface()->registerService( SERVICE_USER_SETTINGS, QDBusConnectionInterface::QueueService, QDBusConnectionInterface::AllowReplacement ) ) {
+        kDebug() << "registered" << SERVICE_USER_SETTINGS;
+    } else {
         // trouble;
         kDebug() << "Unable to register service" << QDBusConnection::systemBus().lastError();
         d->active = false;
     }
-    kDebug() << "registered" << SERVICE_USER_SETTINGS;
 
     connect(QDBusConnection::systemBus().interface(), SIGNAL(serviceRegistered(const QString&)),
             SLOT(serviceRegistered(const QString&)));
@@ -124,6 +125,7 @@ void NMDBusSettingsService::serviceOwnerChanged( const QString& service,const QS
         kDebug() << "User settings service was released, trying to register it ourselves";
         if (QDBusConnection::systemBus().interface()->registerService(SERVICE_USER_SETTINGS, QDBusConnectionInterface::QueueService, QDBusConnectionInterface::AllowReplacement)) {
             d->active = true;
+            emit serviceAvailable(d->active);
         }
     }
 }
@@ -134,6 +136,7 @@ void NMDBusSettingsService::serviceRegistered(const QString & name)
     if (name == SERVICE_USER_SETTINGS) {
         kDebug() << "service registered";
         d->active = true;
+        emit serviceAvailable(d->active);
     }
 }
 
@@ -144,6 +147,7 @@ void NMDBusSettingsService::serviceUnregistered(const QString & name)
         kDebug() << "service lost, queueing reregistration";
         QDBusConnection::systemBus().interface()->registerService( SERVICE_USER_SETTINGS, QDBusConnectionInterface::QueueService, QDBusConnectionInterface::AllowReplacement );
         d->active = false;
+        emit serviceAvailable(d->active);
     }
 }
 
@@ -281,6 +285,12 @@ QList<QDBusObjectPath> NMDBusSettingsService::ListConnections() const
     QList<QDBusObjectPath> pathList = d->pathToConnections.keys();
     kDebug() << "There are " << pathList.count() << " known connections";
     return pathList;
+}
+
+bool NMDBusSettingsService::isServiceAvailable() const
+{
+    Q_D(const NMDBusSettingsService);
+    return d->active;
 }
 
 #if QT_VERSION < 0x040500

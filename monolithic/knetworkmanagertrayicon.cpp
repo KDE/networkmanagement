@@ -60,7 +60,7 @@ public:
         iconName(QLatin1String("networkmanager")),
         flightModeAction(0),
         prefsAction(0),
-        wirelessNetworkItemMenu(0)
+        wirelessNetworkItemMenu(0), active(true)
     { }
     Solid::Control::NetworkInterface::Types interfaceTypes;
     SortedActivatableList * sortedList;
@@ -70,17 +70,19 @@ public:
     KAction * flightModeAction;
     KAction * prefsAction;
     KMenu * wirelessNetworkItemMenu;
+    bool active;
 };
 
 /* for qSort()ing */
 bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 
-KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterface::Types types, const QString & id, ActivatableList * list, QObject * parent)
+KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterface::Types types, const QString & id, ActivatableList * list, bool active, QObject * parent)
     : KNotificationItem(id, parent), d_ptr(new KNetworkManagerTrayIconPrivate)
 {
     Q_D(KNetworkManagerTrayIcon);
     d->interfaceTypes = types;
+    d->active = active;
 
     setStandardActionsEnabled(false);
     setCategory(Experimental::KNotificationItem::Hardware);
@@ -88,7 +90,7 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     setIconByName(d->iconName);
 
     setAssociatedWidget(contextMenu());
-    setStatus( (Solid::Control::NetworkManager::status() == Solid::Networking::Unknown ? KNotificationItem::Passive : KNotificationItem::Active));
+    setStatus( (!active || Solid::Control::NetworkManager::status() == Solid::Networking::Unknown )? KNotificationItem::Passive : KNotificationItem::Active);
 
     if (types.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
         d->flightModeAction = new KAction(i18nc("@action:inmenu turns off wireless networking", "Disable wireless"), this);
@@ -174,6 +176,15 @@ void KNetworkManagerTrayIcon::fillPopup()
     }
 
     QAction * insertionPointForWirelessNetworkItemSubmenu = 0;
+
+    // if not active only add a warning notice
+    if (!d->active) {
+        QAction * passiveAction = new QAction(i18nc("@action:inmenu Disable action text used when it is not possible to actively control networking", "Applet in passive mode"), this);
+        passiveAction->setToolTip(i18nc("@info:tooltip when it is not possible to actively control networking", "Another applet is currently responsible for Network Management"));
+        passiveAction->setEnabled(false);
+        contextMenu()->addAction(passiveAction);
+        return;
+    }
 
     foreach (Knm::Activatable * activatable, d->sortedList->activatables()) {
         QWidgetAction * action = 0;
@@ -428,6 +439,14 @@ void KNetworkManagerTrayIcon::wirelessEnabledChanged()
     d->flightModeAction->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
 
     d->flightModeAction->setChecked(!Solid::Control::NetworkManager::isWirelessEnabled());
+}
+
+void KNetworkManagerTrayIcon::setActive(bool active)
+{
+    Q_D(KNetworkManagerTrayIcon);
+    d->active = active;
+    setStatus( active ? KNotificationItem::Active : KNotificationItem::Passive);
+    fillPopup();
 }
 
 bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Control::NetworkInterface * if2)
