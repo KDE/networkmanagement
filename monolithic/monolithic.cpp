@@ -62,6 +62,7 @@ int main( int argc, char** argv )
     KCmdLineOptions options;
     KCmdLineArgs::addCmdLineOptions(options);
     KUniqueApplication app;
+    app.setQuitOnLastWindowClosed(false);
 
     // the most basic object
     ConnectionList * connectionList;
