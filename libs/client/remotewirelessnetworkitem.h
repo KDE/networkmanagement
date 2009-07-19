@@ -52,7 +52,7 @@ Q_SIGNALS:
     void strengthChanged(int);
 protected:
     RemoteWirelessNetworkItem(const QString & path, QObject * parent);
-    Q_DECLARE_PRIVATE(RemoteWirelessNetworkItem);
+    Q_DECLARE_PRIVATE(RemoteWirelessNetworkItem)
 };
 
 #endif // REMOTEWIRELESSNETWORKITEM_H

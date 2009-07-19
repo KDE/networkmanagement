@@ -51,7 +51,7 @@ signals:
     void strengthChanged(int);
 protected:
     RemoteWirelessInterfaceConnection(const QString & dbusPath, QObject * parent);
-    Q_DECLARE_PRIVATE(RemoteWirelessInterfaceConnection);
+    Q_DECLARE_PRIVATE(RemoteWirelessInterfaceConnection)
 };
 
 #endif // REMOTEWIRELESSINTERFACECONNECTION_H

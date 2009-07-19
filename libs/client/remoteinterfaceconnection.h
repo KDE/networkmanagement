@@ -62,7 +62,7 @@ protected:
     RemoteInterfaceConnection(const QString &dbusPath, QObject * parent);
     RemoteInterfaceConnection(RemoteInterfaceConnectionPrivate &dd, const QString &dbusPath, QObject * parent);
 private:
-    Q_DECLARE_PRIVATE(RemoteInterfaceConnection);
+    Q_DECLARE_PRIVATE(RemoteInterfaceConnection)
 };
 
 #endif // REMOTEINTERFACECONNECTION_H

@@ -44,7 +44,7 @@ public:
 protected:
     RemoteUnconfiguredInterface(RemoteUnconfiguredInterfacePrivate &dd, const QString &dbusPath, QObject * parent);
 private:
-    Q_DECLARE_PRIVATE(RemoteUnconfiguredInterface);
+    Q_DECLARE_PRIVATE(RemoteUnconfiguredInterface)
 };
 
 #endif // REMOTEUNCONFIGUREDINTERFACE_H

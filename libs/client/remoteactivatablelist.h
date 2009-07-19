@@ -47,7 +47,7 @@ protected Q_SLOTS:
     void serviceOwnerChanged(const QString&, const QString&, const QString&);
 private:
     void clear();
-    Q_DECLARE_PRIVATE(RemoteActivatableList);
+    Q_DECLARE_PRIVATE(RemoteActivatableList)
     RemoteActivatableListPrivate * d_ptr;
 };
 

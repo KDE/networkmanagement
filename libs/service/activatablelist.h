@@ -35,7 +35,7 @@ class ActivatableObserver;
 class KNM_EXPORT ActivatableList : public QObject
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(ActivatableList);
+Q_DECLARE_PRIVATE(ActivatableList)
 
 public:
     ActivatableList(QObject * parent);

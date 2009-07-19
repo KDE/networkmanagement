@@ -65,7 +65,7 @@ protected Q_SLOTS:
     void unconfiguredInterfaceActivated();
 private:
     void configureWirelessNetworkInternal(const QString & ssid, const QString & deviceUni, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags);
-    Q_DECLARE_PRIVATE(ConfigurationLauncher);
+    Q_DECLARE_PRIVATE(ConfigurationLauncher)
     ConfigurationLauncherPrivate * d_ptr;
 };
 #endif // CONFIGURATIONLAUNCHER_H

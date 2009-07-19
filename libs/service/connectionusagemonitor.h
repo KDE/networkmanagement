@@ -73,7 +73,7 @@ protected Q_SLOTS:
     void networkInterfaceAccessPointChanged(const QString & apiUni);
 
 private:
-    Q_DECLARE_PRIVATE(ConnectionUsageMonitor);
+    Q_DECLARE_PRIVATE(ConnectionUsageMonitor)
     ConnectionUsageMonitorPrivate * d_ptr;
 };
 

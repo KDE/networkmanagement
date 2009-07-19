@@ -39,7 +39,7 @@ signals:
     void strengthChanged(int);
 protected:
     RemoteVpnInterfaceConnection(const QString & dbusPath, QObject * parent);
-    Q_DECLARE_PRIVATE(RemoteVpnInterfaceConnection);
+    Q_DECLARE_PRIVATE(RemoteVpnInterfaceConnection)
 };
 
 #endif // REMOTEVPNINTERFACECONNECTION_H
