@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=EXPERIMENTAL NetworkManager User Settings Service
+Name[sv]=Nätverkshanterarens användarinställningstjänst (EXPERIMENTELL)
 Comment=Provides network configuration to the NetworkManager daemon
 Comment[de]=Stellt dem NetworkManager-Dienst eine Netzwerkeinrichtung zur Verfügung
 Comment[el]=Προσφέρει ρυθμίσεις δικτύου με το δαίμονα διαχείρισης δικτύου

@@ -195,10 +195,48 @@ Comment[x-test]=xxA wireless network disappearedxx
 
 [Event/userconnectionattempt]
 Name=Establishing Network Connection
+Name[de]=Netzwerkverbindung wird hergestellt
+Name[el]=Εδραίωση σύνδεσης δικτύου
+Name[et]=Võrguühenduse loomine
+Name[fr]=Établissement de la connexion réseau
+Name[ga]=Ceangal Líonra á Bhunú
+Name[gl]=A estabelecer unha conexión de rede
+Name[ja]=ネットワーク接続を確立
+Name[km]=បង្កើត​ការ​តភ្ជាប់បណ្ដាញ
+Name[lt]=Jungiamasi prie tinklo
+Name[nds]=Tokoppeln na Nettwark
+Name[nl]=Netwerkverbinding opzetten
+Name[pa]=ਨੈੱਟਵਰਕ ਕੁਨੈਕਸ਼ਨ ਬਣਾਇਆ ਜਾ ਰਿਹਾ ਹੈ
+Name[pt]=A Estabelecer a Ligação à Rede
+Name[pt_BR]=Estabelecendo conexão de rede
+Name[ro]=Stabilire conexiune de rețea
+Name[sv]=Upprättar nätverksanslutning
+Name[tr]=Ağ Bağlantısı Yapılıyor
+Name[uk]=Встановлення мережевого з'єднання
+Name[x-test]=xxEstablishing Network Connectionxx
 Comment=The user started making a connection
 
 [Event/autoconnectionattempt]
 Name=Establishing Network Connection
+Name[de]=Netzwerkverbindung wird hergestellt
+Name[el]=Εδραίωση σύνδεσης δικτύου
+Name[et]=Võrguühenduse loomine
+Name[fr]=Établissement de la connexion réseau
+Name[ga]=Ceangal Líonra á Bhunú
+Name[gl]=A estabelecer unha conexión de rede
+Name[ja]=ネットワーク接続を確立
+Name[km]=បង្កើត​ការ​តភ្ជាប់បណ្ដាញ
+Name[lt]=Jungiamasi prie tinklo
+Name[nds]=Tokoppeln na Nettwark
+Name[nl]=Netwerkverbinding opzetten
+Name[pa]=ਨੈੱਟਵਰਕ ਕੁਨੈਕਸ਼ਨ ਬਣਾਇਆ ਜਾ ਰਿਹਾ ਹੈ
+Name[pt]=A Estabelecer a Ligação à Rede
+Name[pt_BR]=Estabelecendo conexão de rede
+Name[ro]=Stabilire conexiune de rețea
+Name[sv]=Upprättar nätverksanslutning
+Name[tr]=Ağ Bağlantısı Yapılıyor
+Name[uk]=Встановлення мережевого з'єднання
+Name[x-test]=xxEstablishing Network Connectionxx
 Comment=A connection is being started automatically
 
 [Event/connecting]
@@ -432,6 +470,7 @@ Comment[nds]=En Funkreedschap wöör anmaakt
 Comment[pa]=ਬੇਤਾਰ ਟਰਾਂਸਸੀਵਰ ਚਾਲੂ ਹੈ
 Comment[pt]=Os receptores/transmissores sem-fios foram ligados
 Comment[pt_BR]=Transceptor sem fio habilitado
+Comment[ro]=Transmițători fără fir activați
 Comment[sv]=Trådlös sändning och mottagning aktiverad
 Comment[tr]=Kablosuz alıcılar etkinleştirildi
 Comment[uk]=Увімкнено бездротовий приймач-передавач
