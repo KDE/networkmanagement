@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "unconfiguredinterfaceitem.h"
 #include "wirelessnetworkitemitem.h"
 
-Q_DECLARE_METATYPE(Knm::Activatable *);
+Q_DECLARE_METATYPE(Knm::Activatable *)
 
 class KNetworkManagerTrayIconPrivate
 {

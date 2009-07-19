@@ -73,7 +73,7 @@ private Q_SLOTS:
 
 private:
     void activeConnectionChangedInternal(OrgFreedesktopNetworkManagerConnectionActiveInterface *, uint);
-    Q_DECLARE_PRIVATE(NMDBusActiveConnectionMonitor);
+    Q_DECLARE_PRIVATE(NMDBusActiveConnectionMonitor)
     NMDBusActiveConnectionMonitorPrivate * d_ptr;
 };
 

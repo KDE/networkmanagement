@@ -71,7 +71,7 @@ private:
 
     void clearConnections();
     void initConnections();
-    Q_DECLARE_PRIVATE(NMDBusSettingsConnectionProvider);
+    Q_DECLARE_PRIVATE(NMDBusSettingsConnectionProvider)
     NMDBusSettingsConnectionProviderPrivate * d_ptr;
 };
 

@@ -46,7 +46,7 @@ class KNetworkManagerTrayIconPrivate;
 class KNetworkManagerTrayIcon : public Experimental::KNotificationItem, public ActivatableObserver
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(KNetworkManagerTrayIcon);
+Q_DECLARE_PRIVATE(KNetworkManagerTrayIcon)
 public:
     /**
      * Constructor

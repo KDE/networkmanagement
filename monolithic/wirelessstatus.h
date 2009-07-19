@@ -43,7 +43,7 @@ public:
 protected Q_SLOTS:
     void setSecurity();
 private:
-    Q_DECLARE_PRIVATE(WirelessStatus);
+    Q_DECLARE_PRIVATE(WirelessStatus)
     WirelessStatusPrivate * d_ptr;
 };
 

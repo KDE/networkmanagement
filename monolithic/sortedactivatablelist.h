@@ -44,7 +44,7 @@ class SortedActivatableListPrivate;
 class SortedActivatableList : public QObject, public ActivatableObserver
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(SortedActivatableList);
+Q_DECLARE_PRIVATE(SortedActivatableList)
 public:
     enum WirelessSortPolicy {WirelessSortAlphabetical = 1, WirelessSortByStrength };
 

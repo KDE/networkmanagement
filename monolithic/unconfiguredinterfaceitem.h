@@ -33,7 +33,7 @@ class UnconfiguredInterfaceItemPrivate;
 class UnconfiguredInterfaceItem : public ActivatableItem
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(UnconfiguredInterfaceItem);
+Q_DECLARE_PRIVATE(UnconfiguredInterfaceItem)
 public:
     UnconfiguredInterfaceItem(Knm::UnconfiguredInterface *, QWidget * parent = 0);
 

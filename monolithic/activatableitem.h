@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 namespace Knm
 {
 class Activatable;
-};
+}
 
 class ActivatableItemPrivate;
 
@@ -75,7 +75,7 @@ protected:
     virtual void leaveEvent(QEvent *);
     virtual void paintEvent(QPaintEvent *);
     ActivatableItem(ActivatableItemPrivate &, Knm::Activatable *, QWidget * parent);
-    Q_DECLARE_PRIVATE(ActivatableItem);
+    Q_DECLARE_PRIVATE(ActivatableItem)
     ActivatableItemPrivate * d_ptr;
 };
 
