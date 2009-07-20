@@ -134,7 +134,7 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     QObject::connect(Solid::Control::NetworkManager::notifier(),
             SIGNAL(networkInterfaceRemoved(const QString&)),
             this,
-            SLOT(updateTrayIcon()));
+            SLOT(updateInterfaceToDisplay()));
 
     // listen to existing devices' state changes
     foreach (Solid::Control::NetworkInterface * iface,
@@ -145,7 +145,7 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
         }
     }
 
-    updateTrayIcon();
+    updateInterfaceToDisplay();
 }
 
 KNetworkManagerTrayIcon::~KNetworkManagerTrayIcon()
@@ -298,8 +298,9 @@ void KNetworkManagerTrayIcon::networkInterfaceAdded(const QString & uni)
     Q_D(KNetworkManagerTrayIcon);
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     if (iface) {
-        if (!d->interfaceTypes.testFlag(iface->type())) {
-            QObject::connect(iface, SIGNAL(connectionStateChanged(int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+        if (d->interfaceTypes.testFlag(iface->type())) {
+            kDebug() << "connecting" << iface->interfaceName() << "'s signals";
+            QObject::connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
         }
     }
     //update our state
@@ -309,7 +310,9 @@ void KNetworkManagerTrayIcon::networkInterfaceAdded(const QString & uni)
 void KNetworkManagerTrayIcon::handleConnectionStateChange(int new_state, int old_state, int reason)
 {
     Solid::Control::NetworkInterface * iface = qobject_cast<Solid::Control::NetworkInterface*>(sender());
-    kDebug() << iface->interfaceName() << "has changed state from" << old_state << "to" << new_state << "because of reason" << reason;
+    if (iface) {
+        kDebug() << iface->interfaceName() << "has changed state from" << old_state << "to" << new_state << "because of reason" << reason;
+    }
     updateInterfaceToDisplay();
 }
 
@@ -339,19 +342,27 @@ void KNetworkManagerTrayIcon::updateInterfaceToDisplay()
         qSort(interfaces.begin(), interfaces.end(), networkInterfaceLessThan);
 
         Solid::Control::NetworkInterface * interface = interfaces.first();
+        Solid::Control::WirelessNetworkInterface * wirelessIface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(interface);
 
+        // disconnect the prior displayed interface's signal strength signals
         if (!d->displayedNetworkInterface.isNull()) {
-            QObject::disconnect(d->displayedNetworkInterface.data(), 0, this, 0);
+            Solid::Control::WirelessNetworkInterface * displayedWirelessIface
+                = qobject_cast<Solid::Control::WirelessNetworkInterface*>(d->displayedNetworkInterface.data());
+
+            QObject::disconnect(displayedWirelessIface,
+                    SIGNAL(activeAccessPointChanged(const QString &)),
+                    this,
+                    SLOT(activeAccessPointChanged(const QString &)));
         }
         if (!d->activeAccessPoint.isNull()) {
             QObject::disconnect(d->activeAccessPoint.data(), 0, this, 0);
         }
 
+        // set the new displayed interface
+        kDebug() << "interface to display:" << interface;
         d->displayedNetworkInterface = interface;
 
-        // if wireless, connect its signal strength
-        Solid::Control::WirelessNetworkInterface * wirelessIface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(interface);
-
+        // if wireless listen to its signal strength signals
         if (wirelessIface) {
             QObject::connect(wirelessIface,
                     SIGNAL(activeAccessPointChanged(const QString &)),
@@ -363,6 +374,7 @@ void KNetworkManagerTrayIcon::updateInterfaceToDisplay()
             d->activeAccessPoint = 0;
         }
     }
+    updateTrayIcon();
 }
 
 void KNetworkManagerTrayIcon::updateTrayIcon()
@@ -504,22 +516,19 @@ void KNetworkManagerTrayIcon::setActive(bool active)
 void KNetworkManagerTrayIcon::activeAccessPointChanged(const QString & uni)
 {
     kDebug();
-    // if there is an existing active access point, disconnect it from the slot
     Q_D(KNetworkManagerTrayIcon);
-    if (!d->activeAccessPoint.isNull()) {
-        disconnect(d->activeAccessPoint.data(), 0, this, 0);
-    }
-
 
     if (!d->displayedNetworkInterface.isNull()) {
         Solid::Control::WirelessNetworkInterface * wirelessIface
             = qobject_cast<Solid::Control::WirelessNetworkInterface*>(
                     d->displayedNetworkInterface.data());
-        d->activeAccessPoint = wirelessIface->findAccessPoint(uni);
+        if (wirelessIface) {
+            d->activeAccessPoint = wirelessIface->findAccessPoint(uni);
 
-        if (!d->activeAccessPoint.isNull()) {
-            QObject::connect(d->activeAccessPoint.data(), SIGNAL(signalStrengthChanged(int)),
-                    this, SLOT(updateTrayIcon()));
+            if (!d->activeAccessPoint.isNull()) {
+                QObject::connect(d->activeAccessPoint.data(), SIGNAL(signalStrengthChanged(int)),
+                        this, SLOT(updateTrayIcon()));
+            }
         }
     }
     updateTrayIcon();
