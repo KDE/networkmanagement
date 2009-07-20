@@ -60,7 +60,7 @@ NotificationManager::NotificationManager(QObject * parent)
 
     // status
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
-            this, SLOT(statusChanged(solid::Networking::Status)));
+            this, SLOT(statusChanged(Solid::Networking::Status)));
 
     // rfkill
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
