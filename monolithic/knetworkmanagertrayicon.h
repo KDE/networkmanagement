@@ -40,6 +40,14 @@ class SortedActivatableList;
 
 class KNetworkManagerTrayIconPrivate;
 
+namespace Solid
+{
+    namespace Control
+    {
+        class WirelessNetworkInterface;
+    } // namespace Control
+} // namespace Solid
+
 /**
  * Tray icon representing one or more network interfaces
  */
@@ -96,8 +104,17 @@ protected Q_SLOTS:
      * Switch the icon between active and passive modes
      */
     void setActive(bool);
+    /**
+     * Update the network interface currently used for the tray icon
+     */
+    void updateInterfaceToDisplay();
+    /**
+     * Update the access point used for the signal strength indicator on the tray icon
+     */
+    void activeAccessPointChanged(const QString &);
 private:
     void fillPopup();
+    QString iconForWirelessState();
     KNetworkManagerTrayIconPrivate * d_ptr;
 };
 

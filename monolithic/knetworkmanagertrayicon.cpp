@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knetworkmanagertrayicon.h"
 
-#include <QSignalMapper>
+#include <QPointer>
 #include <QVBoxLayout>
 #include <QWidgetAction>
 
@@ -71,6 +71,10 @@ public:
     KAction * prefsAction;
     KMenu * wirelessNetworkItemMenu;
     bool active;
+    // used for updating the tray icon, and indicates whether we are currently displaying a wireless
+    // network interface's state in the tray
+    QPointer<Solid::Control::NetworkInterface> displayedNetworkInterface;
+    QPointer<Solid::Control::AccessPoint> activeAccessPoint;
 };
 
 /* for qSort()ing */
@@ -141,7 +145,6 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
         }
     }
 
-    // set initial tray icon appearance [and tooltip]
     updateTrayIcon();
 }
 
@@ -300,17 +303,17 @@ void KNetworkManagerTrayIcon::networkInterfaceAdded(const QString & uni)
         }
     }
     //update our state
-    updateTrayIcon();
+    updateInterfaceToDisplay();
 }
 
 void KNetworkManagerTrayIcon::handleConnectionStateChange(int new_state, int old_state, int reason)
 {
     Solid::Control::NetworkInterface * iface = qobject_cast<Solid::Control::NetworkInterface*>(sender());
     kDebug() << iface->interfaceName() << "has changed state from" << old_state << "to" << new_state << "because of reason" << reason;
-    updateTrayIcon();
+    updateInterfaceToDisplay();
 }
 
-void KNetworkManagerTrayIcon::updateTrayIcon()
+void KNetworkManagerTrayIcon::updateInterfaceToDisplay()
 {
     Q_D(KNetworkManagerTrayIcon);
     kDebug();
@@ -332,22 +335,71 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
     }
 
     // get the icon name for the state of the most interesting interface
-    QString iconName, overlayIconName;
     if (!interfaces.isEmpty()) {
         qSort(interfaces.begin(), interfaces.end(), networkInterfaceLessThan);
+
         Solid::Control::NetworkInterface * interface = interfaces.first();
-        switch (interface->type() ) {
+
+        if (!d->displayedNetworkInterface.isNull()) {
+            QObject::disconnect(d->displayedNetworkInterface.data(), 0, this, 0);
+        }
+        if (!d->activeAccessPoint.isNull()) {
+            QObject::disconnect(d->activeAccessPoint.data(), 0, this, 0);
+        }
+
+        d->displayedNetworkInterface = interface;
+
+        // if wireless, connect its signal strength
+        Solid::Control::WirelessNetworkInterface * wirelessIface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(interface);
+
+        if (wirelessIface) {
+            QObject::connect(wirelessIface,
+                    SIGNAL(activeAccessPointChanged(const QString &)),
+                    this,
+                    SLOT(activeAccessPointChanged(const QString &)));
+
+            activeAccessPointChanged(wirelessIface->activeAccessPoint());
+        } else {
+            d->activeAccessPoint = 0;
+        }
+    }
+}
+
+void KNetworkManagerTrayIcon::updateTrayIcon()
+{
+    Q_D(KNetworkManagerTrayIcon);
+
+    QString iconName, overlayName;
+
+    if (!d->displayedNetworkInterface.isNull()) {
+
+        switch (d->displayedNetworkInterface->type() ) {
             case Solid::Control::NetworkInterface::Ieee8023:
-                iconName = "network-wired";
+                iconName = QLatin1String("network-wired");
                 break;
             case Solid::Control::NetworkInterface::Ieee80211:
-                iconName = "network-wireless";
+                if (!d->activeAccessPoint.isNull()) {
+                    int strength = d->activeAccessPoint->signalStrength();
+                    if ( strength > 80 )
+                        iconName = QLatin1String("network-wireless-100");
+                    else if ( strength > 55 )
+                        iconName = QLatin1String("network-wireless-75");
+                    else if ( strength > 30 )
+                        iconName = QLatin1String("network-wireless-50");
+                    else if ( strength > 5 )
+                        iconName = QLatin1String("network-wireless-25");
+                    else
+                        iconName = QLatin1String("network-wireless-0");
+                } else {
+                    iconName = QLatin1String("network-wireless");
+                }
                 break;
             case Solid::Control::NetworkInterface::Serial:
-                iconName = "modem";
+                iconName = QLatin1String("modem");
                 break;
             case Solid::Control::NetworkInterface::Gsm:
             case Solid::Control::NetworkInterface::Cdma:
+                //TODO make this work for cellular signal strength
                 iconName = "phone";
                 break;
             default:
@@ -355,25 +407,25 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
                 break;
         }
 
-        switch (interface->connectionState()) {
+        switch (d->displayedNetworkInterface->connectionState()) {
             case Solid::Control::NetworkInterface::Preparing:
-                //overlayIconName = "busy-phase1";
-                overlayIconName = "emblem-mounted";
+                overlayName = QLatin1String("busy-phase1");
+                overlayName = QLatin1String("emblem-mounted");
                 break;
             case Solid::Control::NetworkInterface::Configuring:
-                overlayIconName = "busy-phase2";
-                overlayIconName = "emblem-mounted";
+                overlayName = QLatin1String("busy-phase2");
+                overlayName = QLatin1String("emblem-mounted");
                 break;
             case Solid::Control::NetworkInterface::NeedAuth:
-                overlayIconName = "busy-phase2";
-                overlayIconName = "emblem-mounted";
+                overlayName = QLatin1String("busy-phase2");
+                overlayName = QLatin1String("emblem-mounted");
                 break;
             case Solid::Control::NetworkInterface::IPConfig:
-                overlayIconName = "busy-phase3";
-                overlayIconName = "emblem-mounted";
+                overlayName = QLatin1String("busy-phase3");
+                overlayName = QLatin1String("emblem-mounted");
                 break;
             case Solid::Control::NetworkInterface::Activated:
-                overlayIconName = "checkbox";
+                overlayName = QLatin1String("checkbox");
                 break;
             default:
                 break;
@@ -389,15 +441,15 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
         kDebug() << "setting icon:" << iconName;
         setIconByName(d->iconName);
     }
-    kDebug() << "setting overlay:" << overlayIconName;
-    setOverlayIconByName(overlayIconName);
+    kDebug() << "setting overlay:" << overlayName;
+    setOverlayIconByName(overlayName);
     updateToolTip();
 }
 
 void KNetworkManagerTrayIcon::updateToolTip()
 {
     Q_D(KNetworkManagerTrayIcon);
-    QString tip = QLatin1String("Hello, world!");
+    QString tip;
     switch (Solid::Networking::status()) {
         case Solid::Networking::Unknown:
             tip = i18nc("@info:tooltip status string for when we don't know if we are online or not", "No networking status information");
@@ -447,6 +499,30 @@ void KNetworkManagerTrayIcon::setActive(bool active)
     d->active = active;
     setStatus( active ? KNotificationItem::Active : KNotificationItem::Passive);
     fillPopup();
+}
+
+void KNetworkManagerTrayIcon::activeAccessPointChanged(const QString & uni)
+{
+    kDebug();
+    // if there is an existing active access point, disconnect it from the slot
+    Q_D(KNetworkManagerTrayIcon);
+    if (!d->activeAccessPoint.isNull()) {
+        disconnect(d->activeAccessPoint.data(), 0, this, 0);
+    }
+
+
+    if (!d->displayedNetworkInterface.isNull()) {
+        Solid::Control::WirelessNetworkInterface * wirelessIface
+            = qobject_cast<Solid::Control::WirelessNetworkInterface*>(
+                    d->displayedNetworkInterface.data());
+        d->activeAccessPoint = wirelessIface->findAccessPoint(uni);
+
+        if (!d->activeAccessPoint.isNull()) {
+            QObject::connect(d->activeAccessPoint.data(), SIGNAL(signalStrengthChanged(int)),
+                    this, SLOT(updateTrayIcon()));
+        }
+    }
+    updateTrayIcon();
 }
 
 bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Control::NetworkInterface * if2)

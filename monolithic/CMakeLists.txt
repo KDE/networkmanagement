@@ -1,9 +1,12 @@
+add_subdirectory(icons)
+
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/../libs
    ${CMAKE_CURRENT_SOURCE_DIR}/../libs/internals
    ${CMAKE_CURRENT_SOURCE_DIR}/../libs/service
    ${CMAKE_CURRENT_SOURCE_DIR}/../backends/NetworkManager
    )
+
 
 set(monolithic_SRCS
    # base client code
