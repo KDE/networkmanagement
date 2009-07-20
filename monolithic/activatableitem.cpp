@@ -95,7 +95,7 @@ void ActivatableItem::setFirstInternal(bool first)
         d->activeIcon->show();
     } else {
         d->mainLabel->setFont(KGlobalSettings::toolBarFont());
-
+        d->activeIcon->hide();
     }
 }
 

@@ -236,7 +236,9 @@ void KNetworkManagerTrayIcon::fillPopup()
                 //
                 // if there are wireless network items in the submenu, and we have reached a non-wireless (network or interfaceconnection)
                 // item, mark the separator as the place to insert the submenu, as long as we have not yet done this
-                if (!d->deviceUnis.contains(activatable->deviceUni())) {
+                if (d->deviceUnis.contains(activatable->deviceUni())) {
+                    widget->setFirst(false);
+                } else {
                     widget->setFirst(true);
                     if (!contextMenu()->actions().isEmpty()) {
                         QAction * sepAction = contextMenu()->addSeparator();
@@ -247,9 +249,7 @@ void KNetworkManagerTrayIcon::fillPopup()
                             }
                         }
                     }
-
                     d->deviceUnis.append(activatable->deviceUni());
-
                 }
                 contextMenu()->addAction(action);
             }

@@ -95,32 +95,29 @@ Knm::InterfaceConnection* InterfaceConnectionItem::interfaceConnection() const
 void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::ActivationState state)
 {
     Q_D(InterfaceConnectionItem);
-    switch (state) {
-        case Knm::InterfaceConnection::Unknown:
-            d->activeIcon->hide();
-            if (d->connectionDetailsLabel) {
-                d->outerLayout->removeWidget(d->connectionDetailsLabel);
-                delete d->connectionDetailsLabel;
-                d->connectionDetailsLabel = 0;
-            }
-            // clear tooltip
-            setToolTip(QString());
-            break;
-        case Knm::InterfaceConnection::Activating:
-            // set activating tooltip?
-        case Knm::InterfaceConnection::Activated:
-            d->activeIcon->setPixmap(pixmap());
-            d->activeIcon->show();
-            if (!d->connectionDetailsLabel) {
-                d->connectionDetailsLabel = new QLabel(this);
-                d->connectionDetailsLabel->setText(textForConnection(state));
-                d->outerLayout->addWidget(d->connectionDetailsLabel, 1, 1, 1, 1);
-            } else {
-                d->connectionDetailsLabel->setText(textForConnection(state));
-            }
-            // set detailed tooltip using network interface state and ipv4
-            setToolTip(ToolTipBuilder::toolTipForInterfaceConnection(interfaceConnection()));
-            break;
+    if (state != d->state) {
+        d->state = state;
+        switch (state) {
+            case Knm::InterfaceConnection::Unknown:
+                if (d->connectionDetailsLabel) {
+                    d->outerLayout->removeWidget(d->connectionDetailsLabel);
+                    delete d->connectionDetailsLabel;
+                    d->connectionDetailsLabel = 0;
+                }
+                // clear tooltip
+                setToolTip(QString());
+                break;
+            case Knm::InterfaceConnection::Activating:
+            case Knm::InterfaceConnection::Activated:
+                if (!d->connectionDetailsLabel) {
+                    d->connectionDetailsLabel = new QLabel(this);
+                    d->outerLayout->addWidget(d->connectionDetailsLabel, 1, 1, 1, 1);
+                }
+                d->connectionDetailsLabel->setText(textForConnection(d->state));
+                // set detailed tooltip using network interface state and ipv4
+                setToolTip(ToolTipBuilder::toolTipForInterfaceConnection(interfaceConnection()));
+                break;
+        }
     }
 }
 
