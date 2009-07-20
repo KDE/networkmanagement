@@ -261,7 +261,7 @@ void KNetworkManagerTrayIcon::fillPopup()
             d->wirelessNetworkItemMenu->setTitle(i18nc("@title:menu Wireless network item menu title when no networks found", "No additional networks"));
             d->wirelessNetworkItemMenu->setEnabled(false);
         } else {
-            d->wirelessNetworkItemMenu->setTitle(i18nc("@title:menu Wireless network item menu title when additional networks are present", "%1 additional networks", d->wirelessNetworkItemMenu->actions().count()));
+            d->wirelessNetworkItemMenu->setTitle(i18ncp("@title:menu Wireless network item menu title when additional networks are present", "%1 additional network", "%1 additional networks", d->wirelessNetworkItemMenu->actions().count()));
             d->wirelessNetworkItemMenu->setEnabled(true);
         }
         contextMenu()->insertAction(insertionPointForWirelessNetworkItemSubmenu, d->wirelessNetworkItemMenu->menuAction());
