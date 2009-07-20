@@ -2,10 +2,14 @@
 Encoding=UTF-8
 Name=KNetworkManager
 GenericName=Network Manager
+GenericName[sv]=Nätverkshantering
+GenericName[uk]=Керування мережею
 Exec=knetworkmanager
 Icon=networkmanager
 Type=Application
 Comment=A KDE frontend for NetworkManager
+Comment[sv]=Ett KDE-gränssnitt för NetworkManager
+Comment[uk]=Графічна оболонка NetworkManager для KDE
 X-KDE-autostart-after=panel
 X-KDE-StartupNotify=false
 X-KDE-UniqueApplet=true
