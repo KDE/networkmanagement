@@ -35,7 +35,6 @@ class WirelessNetworkItemItemPrivate : public ActivatableItemPrivate
 WirelessNetworkItemItem::WirelessNetworkItemItem(Knm::WirelessNetworkItem * item, QWidget * parent)
 : ActivatableItem(*new WirelessNetworkItemItemPrivate, item, parent)
 {
-    Q_D(WirelessNetworkItemItem);
     new WirelessStatus(this);
     setText(item->ssid());
 }

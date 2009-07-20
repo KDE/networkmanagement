@@ -236,7 +236,7 @@ QString NotificationManager::connectionStateToString(Solid::Control::NetworkInte
     return stateString;
 }
 
-void NotificationManager::interfaceConnectionStateChanged(int new_state, int old_state, int reason)
+void NotificationManager::interfaceConnectionStateChanged(int new_state, int, int reason)
 {
     Q_D(NotificationManager);
 
