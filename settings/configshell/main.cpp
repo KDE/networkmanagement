@@ -67,7 +67,7 @@ int main(int argc, char **argv)
     QString ssid;
     QVariantList specificArgs;
 
-    if ( specifics.length() )
+    if ( !specifics.isEmpty() )
     {
         if ( specifics[0] == '\'' )
         {
@@ -88,11 +88,11 @@ int main(int argc, char **argv)
         }
     }
 
-    QStringList argsList = specifics.split(' ');
+    const QStringList argsList = specifics.split(' ');
 
     specificArgs << ssid;
 
-    foreach (QString arg, specifics.split( ' ' )) {
+    foreach (const QString& arg, specifics.split( ' ' )) {
         specificArgs << QVariant(arg);
     }
     kDebug() << specificArgs;
@@ -101,7 +101,7 @@ int main(int argc, char **argv)
 
     if (args->arg(0) == QLatin1String("create")) {
         if (args->isSet("type")) {
-            QString type = args->getOption("type");
+            const QString type = args->getOption("type");
             QString cid = editor.addConnection(true, Knm::Connection::typeFromString(args->getOption("type")), specificArgs);
             QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
                                 "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
@@ -124,7 +124,6 @@ int main(int argc, char **argv)
             return -1;
         }
     }
-
     return 0;
 }
 // vim: sw=4 et sts=4
