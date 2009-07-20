@@ -78,7 +78,6 @@ Knm::InterfaceConnection* InterfaceConnectionItem::interfaceConnection() const
 
 void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::ActivationState state)
 {
-    kDebug();
     Q_D(InterfaceConnectionItem);
     switch (state) {
         case Knm::InterfaceConnection::Unknown:

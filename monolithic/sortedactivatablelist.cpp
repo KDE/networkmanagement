@@ -84,7 +84,6 @@ SortedActivatableList::SortedActivatableList(Solid::Control::NetworkInterface::T
 void SortedActivatableList::handleAdd(Knm::Activatable * activatable)
 {
     Q_D(SortedActivatableList);
-    kDebug() << activatable;
     if (!d->activatables.contains(activatable)) {
         Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable->deviceUni());
         // add all vpn connections
@@ -99,14 +98,12 @@ void SortedActivatableList::handleAdd(Knm::Activatable * activatable)
 void SortedActivatableList::handleUpdate(Knm::Activatable *)
 {
     Q_D(SortedActivatableList);
-    kDebug();
     qSort(d->activatables.begin(), d->activatables.end(), activatableLessThan);
 }
 
 void SortedActivatableList::handleRemove(Knm::Activatable * activatable)
 {
     Q_D(SortedActivatableList);
-    kDebug() << activatable;
     // this does not affect the total order
     d->activatables.removeAll(activatable);
 }
