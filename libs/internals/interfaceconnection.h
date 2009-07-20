@@ -67,6 +67,7 @@ public:
 
 Q_SIGNALS:
     void activationStateChanged(Knm::InterfaceConnection::ActivationState);
+    void hasDefaultRouteChanged(bool);
 
 protected:
     InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, ActivatableType type, const QString & deviceUni, QObject * parent);

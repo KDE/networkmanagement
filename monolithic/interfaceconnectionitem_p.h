@@ -35,6 +35,7 @@ public:
     Knm::InterfaceConnection::ActivationState state;
     InterfaceConnectionItemPrivate();
     QLabel * connectionDetailsLabel;
+    QLabel * defaultRouteLabel;
 };
 
 #endif // INTERFACECONNECTIONITEM_P_H

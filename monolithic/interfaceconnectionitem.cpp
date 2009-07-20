@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 #include <KLocale>
+#include <KIconLoader>
 
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
@@ -35,34 +36,49 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "tooltipbuilder.h"
 
 InterfaceConnectionItemPrivate::InterfaceConnectionItemPrivate()
-: state(Knm::InterfaceConnection::Unknown), connectionDetailsLabel(0)
+: state(Knm::InterfaceConnection::Unknown), connectionDetailsLabel(0), defaultRouteLabel(0)
 {
-
 }
 
 InterfaceConnectionItem::InterfaceConnectionItem(Knm::InterfaceConnection * interfaceConnection, QWidget * parent)
 : ActivatableItem(*new InterfaceConnectionItemPrivate, interfaceConnection, parent)
 {
+    Q_D(InterfaceConnectionItem);
     if (interfaceConnection->activationState() != Knm::InterfaceConnection::Unknown) {
         setActivationState(interfaceConnection->activationState());
     }
 
-    setText(interfaceConnection->connectionName());
+    d->defaultRouteLabel = new QLabel(this);
+    d->defaultRouteLabel->setPixmap(SmallIcon("emblem-favorite"));
+    d->defaultRouteLabel->setToolTip(i18nc("@info:tooltip Tooltip for indicator that connection supplies the network default route", "Default"));
+    d->defaultRouteLabel->setVisible(interfaceConnection->hasDefaultRoute());
+    addIcon(d->defaultRouteLabel);
 
+    setText(interfaceConnection->connectionName());
     connect(interfaceConnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
             this, SLOT(setActivationState(Knm::InterfaceConnection::ActivationState)));
+    connect(interfaceConnection, SIGNAL(hasDefaultRouteChanged(bool)),
+            this, SLOT(setHasDefaultRoute(bool)));
 }
 
 InterfaceConnectionItem::InterfaceConnectionItem(InterfaceConnectionItemPrivate &dd, Knm::InterfaceConnection * interfaceConnection, QWidget * parent)
 : ActivatableItem(dd, interfaceConnection, parent)
 {
+    Q_D(InterfaceConnectionItem);
     if (interfaceConnection->activationState() != Knm::InterfaceConnection::Unknown) {
         setActivationState(interfaceConnection->activationState());
     }
     setText(interfaceConnection->connectionName());
 
+    d->defaultRouteLabel = new QLabel(this);
+    d->defaultRouteLabel->setPixmap(SmallIcon("emblem-favorite"));
+    d->defaultRouteLabel->setVisible(interfaceConnection->hasDefaultRoute());
+    addIcon(d->defaultRouteLabel);
+
     connect(interfaceConnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
             this, SLOT(setActivationState(Knm::InterfaceConnection::ActivationState)));
+    connect(interfaceConnection, SIGNAL(hasDefaultRouteChanged(bool)),
+            this, SLOT(setHasDefaultRoute(bool)));
 }
 
 InterfaceConnectionItem::~InterfaceConnectionItem()
@@ -106,6 +122,12 @@ void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::Activ
             setToolTip(ToolTipBuilder::toolTipForInterfaceConnection(interfaceConnection()));
             break;
     }
+}
+
+void InterfaceConnectionItem::setHasDefaultRoute(bool hasDefaultRoute)
+{
+    Q_D(InterfaceConnectionItem);
+    d->defaultRouteLabel->setVisible(hasDefaultRoute);
 }
 
 void InterfaceConnectionItem::changed()

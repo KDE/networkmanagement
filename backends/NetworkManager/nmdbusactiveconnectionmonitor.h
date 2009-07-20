@@ -29,6 +29,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+namespace Knm
+{
+    class InterfaceConnection;
+} // namespace Knm
+
 class ActivatableList;
 class NMDBusSystemSettingsMonitor;
 
@@ -72,6 +77,11 @@ private Q_SLOTS:
     void networkingStatusChanged(Solid::Networking::Status);
 
 private:
+    // locate the interfaceconnection object for a remote active connection (that has signalled)
+    Knm::InterfaceConnection * interfaceConnectionForConnectionActive(OrgFreedesktopNetworkManagerConnectionActiveInterface * connectionActive);
+    // update all properties
+    void activeConnectionChangedInternal(OrgFreedesktopNetworkManagerConnectionActiveInterface *, const QVariantMap&);
+    // just update state
     void activeConnectionChangedInternal(OrgFreedesktopNetworkManagerConnectionActiveInterface *, uint);
     Q_DECLARE_PRIVATE(NMDBusActiveConnectionMonitor)
     NMDBusActiveConnectionMonitorPrivate * d_ptr;

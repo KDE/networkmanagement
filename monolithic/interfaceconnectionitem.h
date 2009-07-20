@@ -40,6 +40,8 @@ public:
 public Q_SLOTS:
     void changed();
     void setActivationState(Knm::InterfaceConnection::ActivationState state);
+protected Q_SLOTS:
+    void setHasDefaultRoute(bool);
 protected:
     InterfaceConnectionItem(InterfaceConnectionItemPrivate &, Knm::InterfaceConnection *, QWidget * parent = 0);
     virtual QString iconName() const;

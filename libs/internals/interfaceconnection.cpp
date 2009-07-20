@@ -66,8 +66,7 @@ QString InterfaceConnection::connectionName() const
 
 void InterfaceConnection::setActivationState(InterfaceConnection::ActivationState state)
 {
-    InterfaceConnection::ActivationState oldState = m_state;
-    if (oldState != state)
+    if (m_state != state)
     {
         m_state = state;
         emit changed();
@@ -82,7 +81,10 @@ InterfaceConnection::ActivationState InterfaceConnection::activationState() cons
 
 void InterfaceConnection::setHasDefaultRoute(bool hasDefault)
 {
-    m_hasDefaultRoute = hasDefault;
+    if (m_hasDefaultRoute != hasDefault) {
+        m_hasDefaultRoute = hasDefault;
+        emit hasDefaultRouteChanged(m_hasDefaultRoute);
+    }
 }
 
 bool InterfaceConnection::hasDefaultRoute() const
