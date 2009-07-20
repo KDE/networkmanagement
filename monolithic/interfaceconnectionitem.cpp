@@ -59,6 +59,8 @@ InterfaceConnectionItem::InterfaceConnectionItem(Knm::InterfaceConnection * inte
             this, SLOT(setActivationState(Knm::InterfaceConnection::ActivationState)));
     connect(interfaceConnection, SIGNAL(hasDefaultRouteChanged(bool)),
             this, SLOT(setHasDefaultRoute(bool)));
+    connect(interfaceConnection, SIGNAL(changed()),
+            this, SLOT(changed()));
 }
 
 InterfaceConnectionItem::InterfaceConnectionItem(InterfaceConnectionItemPrivate &dd, Knm::InterfaceConnection * interfaceConnection, QWidget * parent)
@@ -79,6 +81,8 @@ InterfaceConnectionItem::InterfaceConnectionItem(InterfaceConnectionItemPrivate 
             this, SLOT(setActivationState(Knm::InterfaceConnection::ActivationState)));
     connect(interfaceConnection, SIGNAL(hasDefaultRouteChanged(bool)),
             this, SLOT(setHasDefaultRoute(bool)));
+    connect(interfaceConnection, SIGNAL(changed()),
+            this, SLOT(changed()));
 }
 
 InterfaceConnectionItem::~InterfaceConnectionItem()
@@ -129,7 +133,11 @@ void InterfaceConnectionItem::setHasDefaultRoute(bool hasDefaultRoute)
 
 void InterfaceConnectionItem::changed()
 {
-
+    Q_D(InterfaceConnectionItem);
+    Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(d->activatable);
+    if (ic) {
+        setText(ic->connectionName());
+    }
 }
 
 QString InterfaceConnectionItem::textForConnection(Knm::InterfaceConnection::ActivationState state) const
