@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class WirelessStatusPrivate
 {
 public:
+    ActivatableItem * item;
     Solid::Control::AccessPoint::Capabilities capabilities;
     Solid::Control::AccessPoint::WpaFlags wpaFlags;
     Solid::Control::AccessPoint::WpaFlags rsnFlags;
@@ -62,11 +63,11 @@ WirelessStatus::WirelessStatus(ActivatableItem * item)
 : QObject(item), d_ptr(new WirelessStatusPrivate)
 {
     Q_D(WirelessStatus);
+    d->item = item;
     d->security = new QLabel(0);
     d->strength = new SmallProgressBar(0);
     d->strength->setTextVisible(false);
     d->strength->setRange(0, 100);
-    d->strength->setGeometry(d->strength->x(),d->strength->y(), 50, 15);
     d->capabilities = 0;
     d->wpaFlags = 0;
     d->rsnFlags = 0;
@@ -77,16 +78,18 @@ WirelessStatus::WirelessStatus(ActivatableItem * item)
         d->capabilities = wni->capabilities();
         d->wpaFlags = wni->wpaFlags();
         d->rsnFlags = wni->rsnFlags();
-        connect(wni, SIGNAL(strengthChanged(int)), d->strength, SLOT(setValue(int)));
+        connect(wni, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
         d->strength->setValue(wni->strength());
+        d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wni->strength())));
     } else {
         Knm::WirelessInterfaceConnection * wic = qobject_cast<Knm::WirelessInterfaceConnection*>(item->activatable());
         if (wic) {
             d->capabilities = wic->capabilities();
             d->wpaFlags = wic->wpaFlags();
             d->rsnFlags = wic->rsnFlags();
-            connect(wic, SIGNAL(strengthChanged(int)), d->strength, SLOT(setValue(int)));
+            connect(wic, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
             d->strength->setValue(wic->strength());
+            d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wic->strength())));
         }
     }
 
@@ -104,6 +107,20 @@ WirelessStatus::~WirelessStatus()
     delete d_ptr;
 }
 
+void WirelessStatus::setStrength(int strength)
+{
+    Q_D(WirelessStatus);
+    Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(d->item->activatable());
+    if (wni) {
+        d->strength->setValue(strength);
+        d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wni->strength())));
+    } else {
+        Knm::WirelessInterfaceConnection * wic = qobject_cast<Knm::WirelessInterfaceConnection*>(d->item->activatable());
+        if (wic) {
+            d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wic->strength())));
+        }
+    }
+}
 
 void WirelessStatus::setSecurity()
 {
