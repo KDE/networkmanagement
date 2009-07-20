@@ -28,6 +28,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KLocale>
 
+#include <solid/control/networkmanager.h>
+#include <solid/control/networkinterface.h>
+
 #include "interfaceconnection.h"
 #include "tooltipbuilder.h"
 
@@ -130,7 +133,30 @@ QString InterfaceConnectionItem::textForConnection(Knm::InterfaceConnection::Act
 
 QString InterfaceConnectionItem::iconName() const
 {
-    return QLatin1String("network-wired");
+    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable()->deviceUni());
+    QString icon = QLatin1String("network-wired");
+    if (iface) {
+        switch (iface->type()) {
+            case Solid::Control::NetworkInterface::Ieee8023:
+                // default ok
+                break;
+            case Solid::Control::NetworkInterface::Ieee80211:
+                icon = QLatin1String("network-wireless");
+                break;
+            case Solid::Control::NetworkInterface::Serial:
+                icon = QLatin1String("modem");
+                break;
+            case Solid::Control::NetworkInterface::Gsm:
+                icon = QLatin1String("phone");
+                break;
+            case Solid::Control::NetworkInterface::Cdma:
+                icon = QLatin1String("phone");
+                break;
+            default:
+                break;
+        }
+    }
+    return icon;
 }
 
 // vim: sw=4 sts=4 et tw=100

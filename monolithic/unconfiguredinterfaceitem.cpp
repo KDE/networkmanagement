@@ -81,6 +81,8 @@ Knm::UnconfiguredInterface * UnconfiguredInterfaceItem::unconfiguredInterface() 
 
 QString UnconfiguredInterfaceItem::iconName() const
 {
+    // TODO a more specific icon could be identified using Solid eg external phones, pcmcia cards,
+    // usb adaptors...
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable()->deviceUni());
     QString icon;
     if (iface) {
