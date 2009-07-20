@@ -102,7 +102,7 @@ void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnectio
 
                         if (ws) {
                             QStringList seenBssids = ws->seenbssids();
-                            if (!seenBssids.contains(ap->hardwareAddress())) {
+                            if (!seenBssids.contains(ap->hardwareAddress()) && !ap->hardwareAddress().isEmpty()) {
                                 seenBssids.append(ap->hardwareAddress());
                                 ws->setSeenbssids(seenBssids);
                             }
