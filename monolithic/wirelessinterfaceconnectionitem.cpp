@@ -49,7 +49,6 @@ Knm::WirelessInterfaceConnection* WirelessInterfaceConnectionItem::wirelessInter
 
 QString WirelessInterfaceConnectionItem::iconName() const
 {
-    kDebug();
     return QLatin1String("network-wireless");
 }
 
