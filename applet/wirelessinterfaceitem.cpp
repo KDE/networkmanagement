@@ -55,10 +55,11 @@ void WirelessInterfaceItem::activeAccessPointChanged(const QString &uni)
     // this is not called when the device is deactivated..
     if (m_activeAccessPoint) {
         m_activeAccessPoint->disconnect(this);
-	m_activeAccessPoint = 0;
+        m_activeAccessPoint = 0;
     }
     if (uni != "/") {
         m_activeAccessPoint = m_wirelessIface->findAccessPoint(uni);
+        kDebug() << "new:" << m_activeAccessPoint;
         if (m_activeAccessPoint) {
             connect(m_activeAccessPoint, SIGNAL(signalStrengthChanged(int)), SLOT(activeSignalStrengthChanged(int)));
             connect(m_activeAccessPoint, SIGNAL(destroyed(QObject*)),

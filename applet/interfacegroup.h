@@ -72,7 +72,6 @@ Q_SIGNALS:
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
-    void addWirelessNetworkInternal(const QString &ssid);
     // we only show the top N strongest networks, this controls which are visible
     //QList<AbstractWirelessNetwork*> networksToShow();
     // reimplemented from ConnectionList

@@ -149,7 +149,7 @@ void WirelessNetworkItem::setupItem()
     m_securityIcon->setToolTip(m_securityIconToolTip);
     m_layout->addItem(m_securityIcon, 0, 2, 1, 1, Qt::AlignLeft);
 
-    connect( m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
+    connect(m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 }
 
 WirelessNetworkItem::~WirelessNetworkItem()
@@ -158,7 +158,7 @@ WirelessNetworkItem::~WirelessNetworkItem()
 
 void WirelessNetworkItem::setStrength(int strength)
 {
-    //kDebug() << ssid << "signal strength changed to " << strength;
+    kDebug() << m_ssid << "signal strength changed to " << strength;
     if (strength == m_strength) {
         return;
     }
@@ -197,6 +197,7 @@ RemoteWirelessNetwork * WirelessNetworkItem::wirelessNetworkItem() const
 
 void WirelessNetworkItem::update()
 {
+    kDebug() << "updating" << m_ssid << wirelessNetworkItem()->strength();
     setStrength(wirelessNetworkItem()->strength());
 }
 

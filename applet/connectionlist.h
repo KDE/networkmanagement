@@ -84,6 +84,8 @@ protected:
     QGraphicsLinearLayout * m_layout;
     QGraphicsWidget * m_widget;
     QHash<RemoteActivatable*, ActivatableItem *> m_connections;
+    RemoteActivatable* m_activeConnection;
+
 private:
     void addSettingsService(NetworkManagerSettings*);
     QGraphicsLinearLayout * m_connectionLayout;

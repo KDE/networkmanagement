@@ -132,23 +132,26 @@ void InterfaceGroup::setupHeader()
 void InterfaceGroup::setupFooter()
 {
     m_layout->addItem(m_networkLayout);
-#if 0
-    if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
-        m_hiddenItem = new HiddenWirelessNetwork(this);
-        m_hiddenItem->setupItem();
-        m_layout->addItem(m_hiddenItem);
-
-        connect(m_hiddenItem, SIGNAL(clicked(AbstractConnectableItem*)),
-                SLOT(connectToWirelessNetwork(AbstractConnectableItem*)));
-    }
-    //kDebug() << m_interfaces.keys() << "Footer update";
-    //kDebug() << m_interfaces.keys() << m_networks.keys() << "Footer .. CONNECT";
-#endif
     connect(this, SIGNAL(connectionListUpdated()), SLOT(updateConnections()));
 }
 
 void InterfaceGroup::updateConnections()
 {
+    /*
+    // QHash<RemoteActivatable*, ActivatableItem *> m_connections;
+    // Update interface items with active connection
+    foreach (RemoteActivatable* remote, m_connections.keys()) {
+        if (remote->active()) {
+            kDebug() << "<<<<<<<<<<<<<<<< Active Remote" << remote.deviceUni();
+            if (m_interfaces.keys().contains(remote.deviceUni())) {
+                kDebug() << "------- Active Remote" << remote.deviceUni();
+            } else {
+                kDebug() << "no matching device found. :/";
+            }
+        }
+    };
+    */
+    // TODO: sort and update list of activatable in the UI
 #if 0
     updateNetworks();
     if (!m_wirelessInspector) {
@@ -341,22 +344,6 @@ void InterfaceGroup::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
     emit updateLayout();
 }
 
-void InterfaceGroup::addWirelessNetworkInternal(const QString & ssid)
-{
-#if 0
-    //kDebug() << "Adding network:" << ssid << m_networks.keys();
-    if (!m_networks.contains(ssid)) {
-        AbstractWirelessNetwork * net = m_wirelessEnvironment->findNetwork(ssid);
-        WirelessNetwork * netItem = new WirelessNetwork(net, this);
-        netItem->setupItem();
-        m_networkLayout->addItem(netItem);
-        m_networks.insert(ssid, netItem);
-        connect(netItem, SIGNAL(clicked(AbstractConnectableItem*)),
-                SLOT(connectToWirelessNetwork(AbstractConnectableItem*)));
-    }
-#endif
-}
-
 bool InterfaceGroup::accept(RemoteActivatable * activatable) const
 {
     bool acceptable = false;
@@ -415,9 +402,7 @@ void InterfaceGroup::interfaceAdded(const QString& uni)
     kDebug() << "Interface Added.";
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
-    KNotification::event(Event::HwAdded, i18nc("Notification for hardware added", "Network interface %1 attached", iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
-    //updateNetworks();
-    emit updateLayout();
+    emit updateLayout(); // QGL cludge
 }
 
 void InterfaceGroup::interfaceRemoved(const QString& uni)
@@ -429,7 +414,7 @@ void InterfaceGroup::interfaceRemoved(const QString& uni)
         delete item;
         reassess();
     }
-    emit updateLayout();
+    emit updateLayout(); // QGL cludge
 }
 
 void InterfaceGroup::refreshConnectionsAndNetworks()
@@ -441,6 +426,7 @@ void InterfaceGroup::refreshConnectionsAndNetworks()
 
 void InterfaceGroup::activate(ActivatableItem* item)
 {
+    // TODO: connect to the top of the list activatable
 #if 0
     // tell the manager to activate the connection
     // which device??

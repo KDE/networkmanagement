@@ -239,7 +239,11 @@ void InterfaceItem::setConnectionInfo()
 {
     if (m_connectionInfoLabel && m_connectionNameLabel) {
         if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
-            m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
+            if (ssid().isEmpty()) {
+                m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
+            } else {
+                m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected to %1", ssid()));
+            }
             m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", currentIpAddress()));
             //kDebug() << "addresses non-empty" << m_currentIp;
             if (m_strengthMeter) {
