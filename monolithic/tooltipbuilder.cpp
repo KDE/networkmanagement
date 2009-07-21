@@ -255,7 +255,7 @@ QString ipv4TooltipHtmlPart(Solid::Control::NetworkInterface * iface, const QStr
         html = QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                 .arg(i18nc("@info:tooltip network routes", "Routes"))
                 .arg(temp);
-        QList<Solid::Control::IPv4Route> routes = cfg.routes();
+        //QList<Solid::Control::IPv4Route> routes = cfg.routes();
     }
 
     return html;
