@@ -33,8 +33,11 @@ Version=2
 
 [Context/connectiontype]
 Name=Network Connection Type
+Name[pt]=Tipo da Ligação de Rede
+Name[pt_BR]=Tipo da Ligação de Rede
 Name[sv]=Typ av nätverksanslutning
 Name[uk]=Тип мережного з'єднання
+Name[x-test]=xxNetwork Connection Typexx
 
 [Event/hwadded]
 Name=Network Interface Attached
@@ -217,8 +220,11 @@ Name[tr]=Ağ Bağlantısı Yapılıyor
 Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=The user started making a connection
+Comment[pt]=O utilizador começou a estabelecer uma ligação
+Comment[pt_BR]=O utilizador começou a estabelecer uma ligação
 Comment[sv]=Användaren håller på att göra en anslutning
 Comment[uk]=Користувач почав створення з’єднання
+Comment[x-test]=xxThe user started making a connectionxx
 
 [Event/autoconnectionattempt]
 Name=Establishing Network Connection
@@ -242,8 +248,11 @@ Name[tr]=Ağ Bağlantısı Yapılıyor
 Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=A connection is being started automatically
+Comment[pt]=Uma ligação está a ser iniciada automaticamente
+Comment[pt_BR]=Uma ligação está a ser iniciada automaticamente
 Comment[sv]=En anslutning håller på att startas automatiskt
 Comment[uk]=Процедуру з’єднання було розпочато автоматично
+Comment[x-test]=xxA connection is being started automaticallyxx
 
 [Event/connecting]
 Name=Establishing Network Connection
@@ -522,10 +531,16 @@ Action=Popup
 
 [Event/ifacestatechange]
 Name=Interface changed state
+Name[pt]=A interface mudou de estado
+Name[pt_BR]=A interface mudou de estado
 Name[sv]=Gränssnitt ändrade tillstånd
 Name[uk]=Змінений стан інтерфейсу
+Name[x-test]=xxInterface changed statexx
 Comment=An interface changed state
+Comment[pt]=Uma interface de rede mudou de estado
+Comment[pt_BR]=Uma interface de rede mudou de estado
 Comment[sv]=Ett gränssnitt har ändrat sitt tillstånd
 Comment[uk]=Змінений стан інтерфейсу
+Comment[x-test]=xxAn interface changed statexx
 
 X-Ubuntu-Gettext-Domain=desktop_plasma-widget-network-manager
