@@ -47,9 +47,9 @@ public:
     virtual ~WirelessInterfaceItem();
     //Solid::Control::FtuereWirelessEnvironment * wirelessEnvironment() const;
     /**
-     * SSID of any active network, or an invalid QString if none
+     * The SSID of any active network, or an invalid QString if none
      */
-    QString ssid();
+    QString connectionName();
     /** @reimp InterfaceItem */
     virtual void setEnabled(bool enable);
     /**

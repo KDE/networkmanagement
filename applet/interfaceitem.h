@@ -60,7 +60,7 @@ public:
     NameDisplayMode nameDisplayMode() const;
 
     virtual void setEnabled(bool active);
-    virtual QString ssid();
+    virtual QString connectionName();
 
 public Q_SLOTS:
     void activeConnectionsChanged();

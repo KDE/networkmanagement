@@ -69,7 +69,7 @@ void WirelessInterfaceItem::activeAccessPointChanged(const QString &uni)
     setConnectionInfo();
 }
 
-QString WirelessInterfaceItem::ssid()
+QString WirelessInterfaceItem::connectionName()
 {
     if (m_activeAccessPoint) {
         return m_activeAccessPoint->ssid();
