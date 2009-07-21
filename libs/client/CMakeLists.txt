@@ -11,6 +11,7 @@ set(knmclient_SRCS
    remoteinterfaceconnection.cpp
    remoteunconfiguredinterface.cpp
    remotevpninterfaceconnection.cpp
+   remotewirelessobject.cpp
    remotewirelessinterfaceconnection.cpp
    remotewirelessnetwork.cpp
    remoteactivatablelist.cpp

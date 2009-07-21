@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define REMOTEWIRELESSINTERFACECONNECTION_H
 
 #include "remoteinterfaceconnection.h"
+#include "remotewirelessobject.h"
 
 #include <solid/control/wirelessaccesspoint.h>
 
@@ -29,7 +30,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 class RemoteWirelessInterfaceConnectionPrivate;
 
-class KNMCLIENT_EXPORT RemoteWirelessInterfaceConnection : public RemoteInterfaceConnection
+class KNMCLIENT_EXPORT RemoteWirelessInterfaceConnection : public RemoteInterfaceConnection, public RemoteWirelessObject
 {
 Q_OBJECT
 Q_PROPERTY(QString ssid READ ssid)

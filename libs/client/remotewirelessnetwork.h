@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define REMOTEWIRELESSNETWORKITEM_H
 
 #include "remoteactivatable.h"
+#include "remotewirelessobject.h"
 
 #include <QObject>
 #include <QString>
@@ -31,11 +32,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 class RemoteWirelessNetworkPrivate;
 
-class KNMCLIENT_EXPORT RemoteWirelessNetwork : public RemoteActivatable
+class KNMCLIENT_EXPORT RemoteWirelessNetwork : public RemoteActivatable, public RemoteWirelessObject
 {
 Q_OBJECT
 Q_PROPERTY(QString ssid READ ssid)
 Q_PROPERTY(int strength READ strength)
+Q_PROPERTY(uint capabilities READ capabilities)
 Q_PROPERTY(uint wpaFlags READ wpaFlags)
 Q_PROPERTY(uint rsnFlags READ rsnFlags)
 
@@ -45,6 +47,7 @@ public:
     virtual ~RemoteWirelessNetwork();
     QString ssid() const;
     int strength() const;
+    Solid::Control::AccessPoint::Capabilities capabilities() const;
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
 Q_SIGNALS:

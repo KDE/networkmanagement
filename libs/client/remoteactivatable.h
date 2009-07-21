@@ -41,7 +41,6 @@ Q_PROPERTY(QString type READ activatableType)
 friend class RemoteActivatableList;
 
 public:
-
     virtual ~RemoteActivatable();
     Knm::Activatable::ActivatableType activatableType() const;
     QString deviceUni() const;

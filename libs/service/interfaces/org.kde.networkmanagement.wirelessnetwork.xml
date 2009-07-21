@@ -8,6 +8,9 @@
     <method name="strength">
       <arg type="i" direction="out" />
     </method>
+    <method name="capabilities">
+      <arg type="u" direction="out" />
+    </method>
     <method name="wpaFlags">
       <arg type="u" direction="out" />
     </method>
