@@ -38,6 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <activatabledebug.h>
 #include <activatablelist.h>
 #include <interfaceconnection.h>
+#include <sortedactivatablelist.h>
 #include <unconfiguredinterface.h>
 #include <vpninterfaceconnection.h>
 #include <wirelessinterfaceconnection.h>
@@ -46,7 +47,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceconnectionitem.h"
 #include "vpninterfaceconnectionitem.h"
 #include "wirelessinterfaceconnectionitem.h"
-#include "sortedactivatablelist.h"
 #include "unconfiguredinterfaceitem.h"
 #include "wirelessnetworkitem.h"
 

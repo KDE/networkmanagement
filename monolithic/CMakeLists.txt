@@ -12,9 +12,6 @@ set(monolithic_SRCS
    # base client code
    monolithic.cpp
 
-   # sort logic for activatables
-   sortedactivatablelist.cpp
-
    # tray icon
    knetworkmanagertrayicon.cpp
 

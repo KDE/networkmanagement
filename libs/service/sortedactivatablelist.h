@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkinterface.h>
 
+#include "knm_export.h"
+
 namespace Knm
 {
     class Activatable;
@@ -39,7 +41,7 @@ class SortedActivatableListPrivate;
  * Keeps a sorted version of the activatable list - needs inserting before the UI so it sees changes
  * before the UI does
  */
-class SortedActivatableList : public ActivatableList, public ActivatableObserver
+class KNM_EXPORT SortedActivatableList : public ActivatableList, public ActivatableObserver
 {
 Q_OBJECT
 Q_DECLARE_PRIVATE(SortedActivatableList)

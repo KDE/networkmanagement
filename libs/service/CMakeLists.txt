@@ -62,6 +62,9 @@ set(knmservice_SRCS
 
    # static global definitions of event string ids
    events.cpp
+
+   # sort logic for activatables
+   sortedactivatablelist.cpp
    )
 
 
