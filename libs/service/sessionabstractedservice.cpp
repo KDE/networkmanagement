@@ -25,6 +25,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
+#include "activatablelist.h"
+
 #include "activatableadaptor.h"
 #include "interfaceconnectionadaptor.h"
 #include "wirelessinterfaceconnectionadaptor.h"
@@ -33,16 +35,18 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class SessionAbstractedServicePrivate
 {
 public:
+    ActivatableList * list;
     QHash<Knm::Activatable *, QString> adaptors;
     uint nextConnectionId;
 };
 
 const QString SessionAbstractedService::SESSION_SERVICE_DBUS_PATH = QLatin1String("/org/kde/networkmanagement/Activatable");
 
-SessionAbstractedService::SessionAbstractedService(QObject *parent)
+SessionAbstractedService::SessionAbstractedService(ActivatableList * list, QObject *parent)
 : QObject(parent), d_ptr(new SessionAbstractedServicePrivate)
 {
     Q_D(SessionAbstractedService);
+    d->list = list;
     d->nextConnectionId = 1;
 
     QDBusConnection::sessionBus().registerService("org.kde.networkmanagement");
@@ -109,7 +113,13 @@ void SessionAbstractedService::handleRemove(Knm::Activatable * removed)
 QStringList SessionAbstractedService::ListActivatables() const
 {
     Q_D(const SessionAbstractedService);
-    return d->adaptors.values();
+    QStringList sortedPaths;
+    foreach (Knm::Activatable * a, d->list->activatables()) {
+        if (d->adaptors.contains(a)) {
+            sortedPaths.append(d->adaptors[a]);
+        }
+    }
+    return sortedPaths;
 }
 
 QString SessionAbstractedService::nextObjectPath()

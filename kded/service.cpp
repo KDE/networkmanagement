@@ -136,7 +136,7 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->sortedList = new SortedActivatableList(types, this);
     d->activatableList->registerObserver(d->sortedList);
 
-    d->sessionAbstractedService = new SessionAbstractedService(this);
+    d->sessionAbstractedService = new SessionAbstractedService(d->sortedList, this);
     d->sortedList->registerObserver(d->sessionAbstractedService);
 
     // load our local connections

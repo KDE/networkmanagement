@@ -23,14 +23,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatableobserver.h"
 
-#include "activatablelist.h"
-
 #include <QStringList>
 #include <QDBusObjectPath>
 
 #include "knm_export.h"
 
-class KNM_EXPORT SessionAbstractedServicePrivate;
+class ActivatableList;
+class SessionAbstractedServicePrivate;
 
 class KNM_EXPORT SessionAbstractedService : public QObject, public ActivatableObserver
 {
@@ -38,7 +37,7 @@ Q_OBJECT
 Q_PROPERTY(QStringList activatables READ ListActivatables)
 Q_CLASSINFO("D-Bus Interface", "org.kde.networkmanagement")
 public:
-    SessionAbstractedService(QObject *parent);
+    SessionAbstractedService(ActivatableList *, QObject *parent);
     ~SessionAbstractedService();
 
     /**
