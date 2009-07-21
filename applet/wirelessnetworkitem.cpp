@@ -49,6 +49,7 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
 
     Solid::Control::AccessPoint::WpaFlags wpaFlags;
     Solid::Control::AccessPoint::WpaFlags rsnFlags;
+    Solid::Control::AccessPoint::Capabilities capabilities;
 
     Knm::Activatable::ActivatableType aType = remote->activatableType();
     if (aType == Knm::Activatable::WirelessInterfaceConnection) {
@@ -57,10 +58,12 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
         m_ssid = remoteconnection->ssid();
         wpaFlags = remoteconnection->wpaFlags();
         rsnFlags = remoteconnection->rsnFlags();
+        capabilities = remoteconnection->capabilities();
     } else if (aType == Knm::Activatable::WirelessNetwork) {
         m_ssid = remote->ssid();
         wpaFlags = remote->wpaFlags();
         rsnFlags = remote->rsnFlags();
+        capabilities = remote->capabilities();
     }
 
     setStrength(remote->strength());
@@ -75,23 +78,24 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
 
     // TODO: this was done by a clueless (coolo)
     if ( wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
-         wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep104 ) )
+         wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep104 )
+         || (wpaFlags == 0 && capabilities.testFlag(Solid::Control::AccessPoint::Privacy))) {
         m_security = QLatin1String("wep");
 
-    if ( wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
-         wpaFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) )
+    } else if ( wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+         wpaFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) ) {
         m_security = QLatin1String("wpa-psk");
 
-    if ( rsnFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+    } else if ( rsnFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
          rsnFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) ||
-         rsnFlags.testFlag( Solid::Control::AccessPoint::PairCcmp ) )
+         rsnFlags.testFlag( Solid::Control::AccessPoint::PairCcmp ) ) {
         m_security = QLatin1String("wpa-psk");
 
-    if ( wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmt8021x ) ||
-         wpaFlags.testFlag( Solid::Control::AccessPoint::GroupCcmp ) )
+    } else if ( wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmt8021x ) ||
+         wpaFlags.testFlag( Solid::Control::AccessPoint::GroupCcmp ) ) {
         m_security = QLatin1String("wpa-eap");
+    }
 }
-
 void WirelessNetworkItem::setupItem()
 {
     readSettings();
