@@ -38,7 +38,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <activatabledebug.h>
 #include <activatablelist.h>
 #include <interfaceconnection.h>
-#include <sortedactivatablelist.h>
 #include <unconfiguredinterface.h>
 #include <vpninterfaceconnection.h>
 #include <wirelessinterfaceconnection.h>
@@ -56,14 +55,14 @@ class KNetworkManagerTrayIconPrivate
 {
 public:
     KNetworkManagerTrayIconPrivate()
-        : sortedList(0),
+        : list(0),
         iconName(QLatin1String("networkmanager")),
         flightModeAction(0),
         prefsAction(0),
         wirelessNetworkItemMenu(0), active(true)
     { }
     Solid::Control::NetworkInterface::Types interfaceTypes;
-    SortedActivatableList * sortedList;
+    ActivatableList * list;
     QHash<Knm::Activatable *, QWidgetAction *> actions;
     QStringList deviceUnis;
     QString iconName;
@@ -110,12 +109,7 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     d->prefsAction = KStandardAction::preferences(this, SLOT(slotPreferences()), this);
     d->prefsAction->setText(i18nc("@action:inmenu Preferences action title", "Manage Connections..."));
 
-    d->sortedList = new SortedActivatableList(types, this);
-
-    // HACK - insert a SortedActivatableList before us, so we can use its sort
-    list->unregisterObserver(this);
-    list->registerObserver(d->sortedList);
-    list->registerObserver(this, d->sortedList);
+    d->list = list;
 
     fillPopup();
 
@@ -190,7 +184,7 @@ void KNetworkManagerTrayIcon::fillPopup()
         return;
     }
 
-    foreach (Knm::Activatable * activatable, d->sortedList->activatables()) {
+    foreach (Knm::Activatable * activatable, d->list->activatables()) {
         QWidgetAction * action = 0;
         ActivatableItem * widget = 0;
 

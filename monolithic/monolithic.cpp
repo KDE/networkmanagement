@@ -44,7 +44,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <nmdbusactiveconnectionmonitor.h>
 #include <nmdbussettingsconnectionprovider.h>
 
-#include <sessionabstractedservice.h>
+#include <sortedactivatablelist.h>
 
 #include "knetworkmanagertrayicon.h"
 
@@ -146,19 +146,20 @@ int main( int argc, char** argv )
          | Solid::Control::NetworkInterface::Gsm
          | Solid::Control::NetworkInterface::Cdma);
 
+    SortedActivatableList * sortedList = new SortedActivatableList(0);
+    activatableList->registerObserver(sortedList);
+
     //Solid::Control::NetworkInterface::Types types = (Solid::Control::NetworkInterface::Ieee8023);
-    KNetworkManagerTrayIcon simpleUi(types, QString::number(types), activatableList, nmSettingsService->isServiceAvailable(), 0);
-    activatableList->registerObserver(&simpleUi);
+    KNetworkManagerTrayIcon simpleUi(types, QString::number(types),
+            activatableList, nmSettingsService->isServiceAvailable(), 0);
+
     QObject::connect(nmSettingsService, SIGNAL(serviceAvailable(bool)), &simpleUi, SLOT(setActive(bool)));
+    sortedList->registerObserver(&simpleUi);
 
     //Solid::Control::NetworkInterface::Types secondTypes = (Solid::Control::NetworkInterface::Ieee80211);
 
     //KNetworkManagerTrayIcon secondTray(secondTypes, QString::number(secondTypes), activatableList, 0);
     //activatableList->registerObserver(&secondTray);
-
-    // put the activatables on the session bus for external applets
-    SessionAbstractedService * sessionAbstractedService = new SessionAbstractedService(&app);
-    activatableList->registerObserver(sessionAbstractedService);
 
     // load our local connections
     listPersistence->init();

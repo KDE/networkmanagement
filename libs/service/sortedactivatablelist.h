@@ -50,6 +50,11 @@ public:
 
     static WirelessSortPolicy s_wirelessSortPolicy;
 
+    /**
+     * @param types a set of interface types ORed together defining which interface types
+     * to collect
+     * @param parent the parent QObject
+     */
     SortedActivatableList(Solid::Control::NetworkInterface::Types types, QObject * parent = 0);
 
     // respond to activatable changes

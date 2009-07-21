@@ -31,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <connectionusagemonitor.h>
 #include <configurationlauncher.h>
 #include <networkinterfacemonitor.h>
+#include <sortedactivatablelist.h>
 #include <vpninterfaceconnectionprovider.h>
 
 #include <nmdbussettingsservice.h>
@@ -70,6 +71,9 @@ public:
     ConnectionUsageMonitor * connectionUsageMonitor;
     // create Activatables for VPN connections
     VpnInterfaceConnectionProvider * vpnInterfaceConnectionProvider;
+
+    // sort it
+    SortedActivatableList * sortedList;
 
     SessionAbstractedService * sessionAbstractedService;
 };
@@ -121,9 +125,19 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     // debug activatable changes
     //ActivatableDebug debug;
     //activatableList->registerObserver(&debug);
+    
+    Solid::Control::NetworkInterface::Types types =
+        (Solid::Control::NetworkInterface::Ieee8023
+         | Solid::Control::NetworkInterface::Ieee80211
+         | Solid::Control::NetworkInterface::Serial
+         | Solid::Control::NetworkInterface::Gsm
+         | Solid::Control::NetworkInterface::Cdma);
+
+    d->sortedList = new SortedActivatableList(types, this);
+    d->activatableList->registerObserver(d->sortedList);
 
     d->sessionAbstractedService = new SessionAbstractedService(this);
-    d->activatableList->registerObserver(d->sessionAbstractedService);
+    d->sortedList->registerObserver(d->sessionAbstractedService);
 
     // load our local connections
     d->listPersistence->init();
