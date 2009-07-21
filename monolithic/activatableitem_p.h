@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class QGridLayout;
 class QHBoxLayout;
 class QLabel;
+class IconSizeSpacer;
 
 class ActivatableItemPrivate
 {
@@ -42,6 +43,8 @@ public:
 
     QLabel * activeIcon;
     QLabel * mainLabel;
+
+    IconSizedSpacer * spacer;
 
     bool hovered;
     bool first;

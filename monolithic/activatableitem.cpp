@@ -36,16 +36,32 @@ ActivatableItemPrivate::ActivatableItemPrivate()
 {
 }
 
+IconSizedSpacer::IconSizedSpacer(QWidget * parent) : QWidget(parent)
+{
+}
+
+IconSizedSpacer::~IconSizedSpacer()
+{
+}
+
+QSize IconSizedSpacer::sizeHint() const
+{
+    int xSize = KIconLoader::global()->currentSize(KIconLoader::Panel);
+    return QSize(xSize, 1);
+}
+
 void ActivatableItemPrivate::init(QWidget * widgetParent)
 {
     outerLayout = new QGridLayout(widgetParent);
     innerLayout = new QHBoxLayout();
     activeIcon = new QLabel(widgetParent);
     mainLabel = new QLabel(widgetParent);
+    spacer = new IconSizedSpacer(widgetParent);
     mainLabel->setFont(KGlobalSettings::toolBarFont());
 
     outerLayout->addLayout(innerLayout, 0, 1);
     outerLayout->addWidget(activeIcon, 0, 0, 2, 1);
+    outerLayout->addWidget(spacer, 0, 0, 2, 1);
     activeIcon->hide();
     innerLayout->addWidget(mainLabel, 1, Qt::AlignLeft);
 }

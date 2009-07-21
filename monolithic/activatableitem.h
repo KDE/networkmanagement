@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ACTIVATABLEITEM_H
 
 #include <QAbstractButton>
+#include <QSize>
 
 namespace Knm
 {
@@ -29,6 +30,20 @@ class Activatable;
 }
 
 class ActivatableItemPrivate;
+
+/*
+ * This class is used in items that do not have a visible icon 
+ * to take up the same amount of space as the icon, so the 
+ * labels appear at the same place as those items with icons
+ */
+class IconSizedSpacer : public QWidget
+{
+Q_OBJECT
+public:
+    IconSizedSpacer(QWidget * parent = 0);
+    virtual ~IconSizedSpacer();
+    virtual QSize sizeHint() const;
+};
 
 class ActivatableItem : public QAbstractButton
 {
