@@ -18,15 +18,21 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "hiddenwirelessnetworkitem.h"
+#ifndef HIDDENWIRELESSNETWORKITEM
+#define HIDDENWIRELESSNETWORKITEM
 
-HiddenWirelessNetworkItem::HiddenWirelessNetworkItem(const QString & deviceUni, QObject * parent)
-: WirelessNetworkItem(QString(), -1, (Solid::Control::AccessPoint::Capabilities)0,(Solid::Control::AccessPoint::WpaFlags)0, (Solid::Control::AccessPoint::WpaFlags)0, deviceUni, parent)
-{
-}
+#include "wirelessnetwork.h"
 
-void HiddenWirelessNetworkItem::setSsid(const QString & ssid)
+#include "knm_export.h"
+/**
+ * Represents a hidden wireless network
+ */
+class KNM_EXPORT HiddenWirelessNetwork : public Knm::WirelessNetwork
 {
-    m_ssid = ssid;
-}
-// vim: sw=4 sts=4 et tw=100
+Q_OBJECT
+public:
+    HiddenWirelessNetwork(const QString & deviceUni, QObject * parent = 0);
+    void setSsid(const QString &ssid);
+};
+
+#endif // HIDDENWIRELESSNETWORKITEM

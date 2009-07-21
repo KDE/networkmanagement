@@ -18,11 +18,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM_EXTERNALS_NETWORKITEM_H
-#define KNM_EXTERNALS_NETWORKITEM_H
+#ifndef WIRELESSNETWORK_H
+#define WIRELESSNETWORK_H
 
 #include "activatable.h"
-#include "wirelessitem.h"
+#include "wirelessobject.h"
 
 #include <QtCore/QString>
 #include <QObject>
@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 namespace Knm {
 
-class KNMINTERNALS_EXPORT WirelessNetworkItem : public Activatable, public WirelessItem
+class KNMINTERNALS_EXPORT WirelessNetwork : public Activatable, public WirelessObject
 {
 Q_OBJECT
 Q_PROPERTY(QString ssid READ ssid)
@@ -39,8 +39,8 @@ Q_PROPERTY(int strength READ strength)
 Q_PROPERTY(uint wpaFlags READ wpaFlags)
 Q_PROPERTY(uint rsnFlags READ rsnFlags)
 public:
-    WirelessNetworkItem(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QString & deviceUni, QObject * parent);
-    virtual ~WirelessNetworkItem();
+    WirelessNetwork(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QString & deviceUni, QObject * parent);
+    virtual ~WirelessNetwork();
 signals:
     void strengthChanged(int);
 public Q_SLOTS:
@@ -48,4 +48,4 @@ public Q_SLOTS:
 };
 } // namespace
 
-#endif
+#endif // WIRELESSNETWORK_H

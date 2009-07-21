@@ -33,7 +33,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteunconfiguredinterface.h"
 #include "remotevpninterfaceconnection.h"
 #include "remotewirelessinterfaceconnection.h"
-#include "remotewirelessnetworkitem.h"
+#include "remotewirelessnetwork.h"
 
 class RemoteActivatableListPrivate
 {
@@ -113,9 +113,9 @@ void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uin
                 newActivatable = new RemoteWirelessInterfaceConnection(addedPath, this);
                 kDebug() << "wirelessconnection at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
-            case Knm::Activatable::WirelessNetworkItem:
-                newActivatable = new RemoteWirelessNetworkItem(addedPath, this);
-                kDebug() << "wirelessnetworkitem at" << addedPath << "with type" << newActivatable->activatableType();
+            case Knm::Activatable::WirelessNetwork:
+                newActivatable = new RemoteWirelessNetwork(addedPath, this);
+                kDebug() << "wirelessnetwork at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
             case Knm::Activatable::UnconfiguredInterface:
                 newActivatable = new RemoteUnconfiguredInterface(addedPath, this);

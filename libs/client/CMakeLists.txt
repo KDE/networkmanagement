@@ -12,7 +12,7 @@ set(knmclient_SRCS
    remoteunconfiguredinterface.cpp
    remotevpninterfaceconnection.cpp
    remotewirelessinterfaceconnection.cpp
-   remotewirelessnetworkitem.cpp
+   remotewirelessnetwork.cpp
    remoteactivatablelist.cpp
 )
 
@@ -44,11 +44,11 @@ QT4_ADD_DBUS_INTERFACE(knmclient_SRCS
    wirelessinterfaceconnectioninterface
    )
 
-set_source_files_properties( ../service/interfaces/org.kde.networkmanagement.wirelessnetworkitem.xml PROPERTIES NO_NAMESPACE TRUE CLASSNAME WirelessNetworkItemInterface)
+set_source_files_properties( ../service/interfaces/org.kde.networkmanagement.wirelessnetwork.xml PROPERTIES NO_NAMESPACE TRUE CLASSNAME WirelessNetworkInterface)
 
 QT4_ADD_DBUS_INTERFACE(knmclient_SRCS
-   ../service/interfaces/org.kde.networkmanagement.wirelessnetworkitem.xml
-   wirelessnetworkiteminterface
+   ../service/interfaces/org.kde.networkmanagement.wirelessnetwork.xml
+   wirelessnetworkinterface
    )
 
 kde4_add_library(knmclient SHARED ${knmclient_SRCS})

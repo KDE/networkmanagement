@@ -38,7 +38,7 @@ public:
     enum ActivatableType {
         InterfaceConnection,
         WirelessInterfaceConnection,
-        WirelessNetworkItem,
+        WirelessNetwork,
         UnconfiguredInterface,
         VpnInterfaceConnection
     };

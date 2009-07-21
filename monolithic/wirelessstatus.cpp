@@ -29,10 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIconLoader>
 #include <KLocale>
 
-#include "activatableitem.h"
-#include "wirelessinterfaceconnection.h"
-#include "wirelessitem.h"
-#include "wirelessnetworkitem.h"
+#include <activatableitem.h>
+#include <wirelessinterfaceconnection.h>
+#include <wirelessobject.h>
+#include <wirelessnetwork.h>
 
 class WirelessStatusPrivate
 {
@@ -73,7 +73,7 @@ WirelessStatus::WirelessStatus(ActivatableItem * item)
     d->rsnFlags = 0;
 
     // discover the type of the activatable and connect its signals
-    Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(item->activatable());
+    Knm::WirelessNetwork * wni = qobject_cast<Knm::WirelessNetwork*>(item->activatable());
     if (wni) {
         d->capabilities = wni->capabilities();
         d->wpaFlags = wni->wpaFlags();
@@ -121,7 +121,7 @@ void WirelessStatus::setStrength(int strength)
     } else {
         d->strength->show();
 
-        Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(d->item->activatable());
+        Knm::WirelessNetwork * wni = qobject_cast<Knm::WirelessNetwork*>(d->item->activatable());
         if (wni) {
             d->strength->setValue(strength);
             d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wni->strength())));

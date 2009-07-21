@@ -23,13 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define KNM_EXTERNALS_WIRELESSINTERFACECONNECTION_H
 
 #include "interfaceconnection.h"
-#include "wirelessitem.h"
+#include "wirelessobject.h"
 
 #include "knminternals_export.h"
 
 namespace Knm {
 
-class KNMINTERNALS_EXPORT WirelessInterfaceConnection : public InterfaceConnection, public WirelessItem
+class KNMINTERNALS_EXPORT WirelessInterfaceConnection : public InterfaceConnection, public WirelessObject
 {
 Q_OBJECT
 Q_PROPERTY(QString ssid READ ssid)

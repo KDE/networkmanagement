@@ -18,24 +18,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wirelessnetworkitem.h"
+#include "wirelessnetwork.h"
 
 using namespace Knm;
 
-WirelessNetworkItem::WirelessNetworkItem(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QString & deviceUni, QObject * parent)
-: Activatable(Activatable::WirelessNetworkItem, deviceUni, parent), WirelessItem(ssid, strength, capabilities, wpaFlags, rsnFlags)
+WirelessNetwork::WirelessNetwork(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QString & deviceUni, QObject * parent)
+: Activatable(Activatable::WirelessNetwork, deviceUni, parent), WirelessObject(ssid, strength, capabilities, wpaFlags, rsnFlags)
 {
 }
 
-WirelessNetworkItem::~WirelessNetworkItem()
+WirelessNetwork::~WirelessNetwork()
 {
 
 }
 
-void WirelessNetworkItem::setStrength(int strength)
+void WirelessNetwork::setStrength(int strength)
 {
     if (strength != m_strength) {
-        WirelessItem::setStrength(strength);
+        WirelessObject::setStrength(strength);
         emit strengthChanged(strength);
     }
 }

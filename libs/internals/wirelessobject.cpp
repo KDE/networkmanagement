@@ -18,46 +18,46 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wirelessitem.h"
+#include "wirelessobject.h"
 
-Knm::WirelessItem::WirelessItem(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags)
+Knm::WirelessObject::WirelessObject(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags)
 : m_ssid(ssid), m_strength(strength), m_capabilities(capabilities),  m_wpaFlags(wpaFlags), m_rsnFlags(rsnFlags)
 {
 
 }
 
-Knm::WirelessItem::~WirelessItem()
+Knm::WirelessObject::~WirelessObject()
 {
 
 }
 
-QString Knm::WirelessItem::ssid() const
+QString Knm::WirelessObject::ssid() const
 {
     return m_ssid;
 }
 
-int Knm::WirelessItem::strength() const
+int Knm::WirelessObject::strength() const
 {
     return m_strength;
 }
 
-void Knm::WirelessItem::setStrength(int strength)
+void Knm::WirelessObject::setStrength(int strength)
 {
     m_strength = strength;
 }
 
-Solid::Control::AccessPoint::Capabilities Knm::WirelessItem::capabilities() const
+Solid::Control::AccessPoint::Capabilities Knm::WirelessObject::capabilities() const
 {
     return m_capabilities;
 }
 
 
-Solid::Control::AccessPoint::WpaFlags Knm::WirelessItem::wpaFlags() const
+Solid::Control::AccessPoint::WpaFlags Knm::WirelessObject::wpaFlags() const
 {
     return m_wpaFlags;
 }
 
-Solid::Control::AccessPoint::WpaFlags Knm::WirelessItem::rsnFlags() const
+Solid::Control::AccessPoint::WpaFlags Knm::WirelessObject::rsnFlags() const
 {
     return m_rsnFlags;
 }

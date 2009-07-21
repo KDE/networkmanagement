@@ -51,8 +51,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessinterfaceitem.h"
 #include "wirelessnetworkitem.h"
 #include "remotewirelessinterfaceconnection.h"
-#include "remotewirelessnetworkitem.h"
-//#include "hiddenwirelessnetworkitem.h"
+#include "remotewirelessnetwork.h"
+//#include "hiddenwirelessnetwork.h"
 
 #if 0
 QDebug operator<<(QDebug s, const AbstractWirelessNetwork*wl )
@@ -134,7 +134,7 @@ void InterfaceGroup::setupFooter()
     m_layout->addItem(m_networkLayout);
 #if 0
     if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
-        m_hiddenItem = new HiddenWirelessNetworkItem(this);
+        m_hiddenItem = new HiddenWirelessNetwork(this);
         m_hiddenItem->setupItem();
         m_layout->addItem(m_hiddenItem);
 
@@ -181,7 +181,7 @@ void InterfaceGroup::updateNetworks()
 #if 0
     //kDebug();
     // empty the layout
-    foreach (WirelessNetworkItem * i, m_networks) {
+    foreach (WirelessNetwork * i, m_networks) {
         m_networkLayout->removeItem(i);
         delete i;
     }
@@ -347,7 +347,7 @@ void InterfaceGroup::addWirelessNetworkInternal(const QString & ssid)
     //kDebug() << "Adding network:" << ssid << m_networks.keys();
     if (!m_networks.contains(ssid)) {
         AbstractWirelessNetwork * net = m_wirelessEnvironment->findNetwork(ssid);
-        WirelessNetworkItem * netItem = new WirelessNetworkItem(net, this);
+        WirelessNetwork * netItem = new WirelessNetwork(net, this);
         netItem->setupItem();
         m_networkLayout->addItem(netItem);
         m_networks.insert(ssid, netItem);
@@ -377,7 +377,7 @@ bool InterfaceGroup::accept(RemoteActivatable * activatable) const
     } else if (aType == Knm::Activatable::WirelessInterfaceConnection && m_type == Solid::Control::NetworkInterface::Ieee80211) {
         kDebug() << "accepting wireless connection";
         acceptable = true;
-    } else if (aType == Knm::Activatable::WirelessNetworkItem && m_type == Solid::Control::NetworkInterface::Ieee80211) {
+    } else if (aType == Knm::Activatable::WirelessNetwork && m_type == Solid::Control::NetworkInterface::Ieee80211) {
         kDebug() << "accepting wireless network item";
         acceptable = true;
     }
@@ -390,8 +390,8 @@ ActivatableItem * InterfaceGroup::createItem(RemoteActivatable * activatable)
     ActivatableItem * ai = 0;
 
     if (m_type == Solid::Control::NetworkInterface::Ieee80211) {
-        kDebug() << "adding WirelessNetworkItem";
-        WirelessNetworkItem * wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetworkItem*>(activatable));
+        kDebug() << "adding WirelessNetwork";
+        WirelessNetworkItem * wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetwork*>(activatable));
         ai = wni;
     } else {
         ai = new InterfaceConnectionItem(static_cast<RemoteInterfaceConnection*>(activatable), this);
@@ -463,7 +463,7 @@ void InterfaceGroup::activate(ActivatableItem* item)
 #if 0
 void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
 {
-    AbstractWirelessNetworkItem * wni = qobject_cast<AbstractWirelessNetworkItem*>(item);
+    AbstractWirelessNetwork * wni = qobject_cast<AbstractWirelessNetwork*>(item);
 
     if (wni && wni->net() ) {
         int caps = 0, wpaFlags = 0, rsnFlags = 0;
@@ -497,7 +497,7 @@ void InterfaceGroup::connectToWirelessNetwork(AbstractConnectableItem* item)
             kDebug() << ret << args;
         }
     } else {
-        kDebug() << "item was not an AbstractWirelessNetworkItem!";
+        kDebug() << "item was not an AbstractWirelessNetwork!";
     }
 }
 #endif

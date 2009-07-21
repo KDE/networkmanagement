@@ -23,12 +23,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "remoteactivatable_p.h"
 
-#include "wirelessnetworkiteminterface.h"
+#include "wirelessnetworkinterface.h"
 
-class RemoteWirelessNetworkItemPrivate : public RemoteActivatablePrivate
+class RemoteWirelessNetworkPrivate : public RemoteActivatablePrivate
 {
 public:
-    WirelessNetworkItemInterface * wirelessNetworkItemInterface;
+    WirelessNetworkInterface * wirelessNetworkItemInterface;
 };
 
 #endif // REMOTEWIRELESSNETWORKITEM_P_H

@@ -49,7 +49,7 @@ set(knmservice_SRCS
    connectionusagemonitor.cpp
 
    # experimental
-   hiddenwirelessnetworkitem.cpp
+   hiddenwirelessnetwork.cpp
 
    # exports activatables on the session bus to Plasmoids etc
    sessionabstractedservice.cpp
@@ -94,11 +94,11 @@ qt4_add_dbus_adaptor(
 
 qt4_add_dbus_adaptor(
     knmservice_SRCS
-    interfaces/org.kde.networkmanagement.wirelessnetworkitem.xml
-    wirelessnetworkitem.h
-    Knm::WirelessNetworkItem
-    wirelessnetworkitemadaptor
-    WirelessNetworkItemAdaptor
+    interfaces/org.kde.networkmanagement.wirelessnetwork.xml
+    wirelessnetwork.h
+    Knm::WirelessNetwork
+    wirelessnetworkadaptor
+    WirelessNetworkAdaptor
 )
 
 qt4_add_dbus_adaptor(knmservice_SRCS

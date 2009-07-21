@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkmanager.h>
 
 #include <wirelessinterfaceconnection.h>
-#include <wirelessnetworkitem.h>
+#include <wirelessnetwork.h>
 #include <wirelessnetworkinterfaceenvironment.h>
 
 #include "activatablelist.h"
@@ -62,7 +62,7 @@ WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatable
     // this is slightly inefficient because the NetworkInterfaceActivatableProvider ctor
     // already ran and created WirelessInterfaceConnections as needed, but a hash lookup in
     // networkAppeared prevents duplicate WirelessInterfaceConnections, so this
-    // iteration creates any WirelessNetworkItems needed for unconfigured networks.
+    // iteration creates any WirelessNetworks needed for unconfigured networks.
     foreach (QString network, d->environment->networks()) {
         networkAppeared(network);
     }
@@ -116,8 +116,8 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                             connect(network, SIGNAL(signalStrengthChanged(int)), ifaceConnection, SLOT(setStrength(int)));
                         }
 
-                        // remove any WirelessNetworkItem created previously
-                        Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(d->wirelessActivatables.take(wirelessSetting->ssid()));
+                        // remove any WirelessNetwork created previously
+                        Knm::WirelessNetwork * wni = qobject_cast<Knm::WirelessNetwork*>(d->wirelessActivatables.take(wirelessSetting->ssid()));
                         if (wni) {
                             d->activatableList->removeActivatable(wni);
                         }
@@ -145,7 +145,7 @@ void WirelessNetworkInterfaceActivatableProvider::handleRemove(Knm::Connection *
         if (wirelessSetting) {
             // remove it any reference we hold
             d->wirelessActivatables.take(wirelessSetting->ssid());
-            // if the network is present, create a WirelessNetworkItem for it
+            // if the network is present, create a WirelessNetwork for it
             if (d->environment->networks().contains(wirelessSetting->ssid())) {
                 networkAppeared(wirelessSetting->ssid());
             }
@@ -177,7 +177,7 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
             }
         }
         if (!hasConnection) {
-            // create a wirelessnetworkitem, register it, tell the list
+            // create a wirelessnetwork, register it, tell the list
             // get the info on the network
             Solid::Control::WirelessNetwork * network = d->environment->findNetwork(ssid);
             int strength = 0;
@@ -191,7 +191,7 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
                     caps = ap->capabilities();
                     wpaFlags = ap->wpaFlags();
                     rsnFlags = ap->rsnFlags();
-                    Knm::WirelessNetworkItem * wirelessNetworkItem = new Knm::WirelessNetworkItem(ssid, strength, caps, wpaFlags, rsnFlags, d->interface->uni(), this);
+                    Knm::WirelessNetwork * wirelessNetworkItem = new Knm::WirelessNetwork(ssid, strength, caps, wpaFlags, rsnFlags, d->interface->uni(), this);
                     connect(network, SIGNAL(signalStrengthChanged(int)), wirelessNetworkItem, SLOT(setStrength(int)));
                     d->wirelessActivatables.insert(ssid, wirelessNetworkItem);
                     d->activatableList->addActivatable(wirelessNetworkItem);

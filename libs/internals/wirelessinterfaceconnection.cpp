@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 WirelessInterfaceConnection::WirelessInterfaceConnection(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent)
-: InterfaceConnection(connectionUuid, connectionName, Activatable::WirelessInterfaceConnection, deviceUni, parent), WirelessItem(ssid, strength, capabilities, wpaFlags, rsnFlags)
+: InterfaceConnection(connectionUuid, connectionName, Activatable::WirelessInterfaceConnection, deviceUni, parent), WirelessObject(ssid, strength, capabilities, wpaFlags, rsnFlags)
 {
 }
 
@@ -35,7 +35,7 @@ WirelessInterfaceConnection::~WirelessInterfaceConnection()
 void WirelessInterfaceConnection::setStrength(int strength)
 {
     if (strength != m_strength) {
-        WirelessItem::setStrength(strength);
+        WirelessObject::setStrength(strength);
         emit strengthChanged(strength);
     }
 }

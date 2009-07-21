@@ -33,21 +33,21 @@ namespace Plasma
     class Meter;
 }
 
-class RemoteWirelessNetworkItem;
+class RemoteWirelessNetwork;
 /** * Represents an wireless network for which no connection exists
  */
 class WirelessNetworkItem : public ActivatableItem
 {
 Q_OBJECT
 public:
-    WirelessNetworkItem(RemoteWirelessNetworkItem * remote, QGraphicsItem * parent = 0);
+    WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent = 0);
     virtual ~WirelessNetworkItem();
     void setupItem();
 private slots:
     void setStrength(int strength);
     void update();
 private:
-    RemoteWirelessNetworkItem * wirelessNetworkItem() const;
+    RemoteWirelessNetwork * wirelessNetworkItem() const;
     void readSettings();
     QGraphicsGridLayout * m_layout;
     Plasma::IconWidget * m_icon;
@@ -60,7 +60,7 @@ private:
     QString m_securityIconToolTip;
     int m_strength;
     QString m_ssid;
-    RemoteWirelessNetworkItem * m_remote;
+    RemoteWirelessNetwork * m_remote;
 };
 
 #endif //#define APPLET_WIRELESSCONNECTIONITEM_H

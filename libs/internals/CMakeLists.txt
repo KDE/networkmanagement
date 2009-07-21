@@ -64,8 +64,8 @@ set(knminternals_SRCS
    activatable.cpp
    interfaceconnection.cpp
    wirelessinterfaceconnection.cpp
-   wirelessitem.cpp
-   wirelessnetworkitem.cpp
+   wirelessobject.cpp
+   wirelessnetwork.cpp
    unconfiguredinterface.cpp
    vpninterfaceconnection.cpp
    )

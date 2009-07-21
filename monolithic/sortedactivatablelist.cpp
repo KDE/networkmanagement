@@ -26,9 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <activatable.h>
 //debug
-#include "interfaceconnection.h"
-#include "wirelessinterfaceconnection.h"
-#include "wirelessnetworkitem.h"
+#include <interfaceconnection.h>
+#include <wirelessinterfaceconnection.h>
+#include <wirelessnetwork.h>
 // debug
 
 #include <activatablelist.h>
@@ -42,7 +42,7 @@ public:
 
 // sorting activatables
 // by interface type (compare on activatable::deviceUni()
-// by activatableType() (interfaceconnections and wirelessinterfaceconnections before wirelessnetworkitems)
+// by activatableType() (interfaceconnections and wirelessinterfaceconnections before wirelessnetworks)
 // then: for interfaceconnections - by activation state
 //   then: alphabetically
 //       for wirelessinterfaceconnections - by activation state
@@ -68,9 +68,9 @@ int compareActivationState(const Knm::InterfaceConnection * first, const Knm::In
 
 int compareConnectionName(const Knm::InterfaceConnection * first, const Knm::InterfaceConnection * second);
 
-int compareSignalStrength(const Knm::WirelessItem * first, const Knm::WirelessItem * second);
+int compareSignalStrength(const Knm::WirelessObject * first, const Knm::WirelessObject * second);
 
-int compareSsid(const Knm::WirelessItem * first, const Knm::WirelessItem * second);
+int compareSsid(const Knm::WirelessObject * first, const Knm::WirelessObject * second);
 
 SortedActivatableList::WirelessSortPolicy SortedActivatableList::s_wirelessSortPolicy = SortedActivatableList::WirelessSortByStrength;
 
@@ -124,8 +124,8 @@ void SortedActivatableList::dump() const
         } else if ( activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
             Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(activatable);
             kDebug() << "WIC" << wic->connectionName();
-        } else if ( activatable->activatableType() == Knm::Activatable::WirelessNetworkItem) {
-            Knm::WirelessNetworkItem * wni = static_cast<Knm::WirelessNetworkItem*>(activatable);
+        } else if ( activatable->activatableType() == Knm::Activatable::WirelessNetwork) {
+            Knm::WirelessNetwork * wni = static_cast<Knm::WirelessNetwork*>(activatable);
             kDebug() << "WNI" << wni->ssid();
         }
     }
@@ -142,8 +142,8 @@ bool activatableLessThan(const Knm::Activatable * first, const Knm::Activatable 
     } else if ( first->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
         const Knm::WirelessInterfaceConnection * wic = qobject_cast<const Knm::WirelessInterfaceConnection*>(first);
         s1 = wic->connectionName();
-    } else if ( first->activatableType() == Knm::Activatable::WirelessNetworkItem) {
-        const Knm::WirelessNetworkItem * wni = qobject_cast<const Knm::WirelessNetworkItem*>(first);
+    } else if ( first->activatableType() == Knm::Activatable::WirelessNetwork) {
+        const Knm::WirelessNetwork * wni = qobject_cast<const Knm::WirelessNetwork*>(first);
         s1 = wni->ssid();
     }
 
@@ -153,8 +153,8 @@ bool activatableLessThan(const Knm::Activatable * first, const Knm::Activatable 
     } else if ( second->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
         const Knm::WirelessInterfaceConnection * wic = qobject_cast<const Knm::WirelessInterfaceConnection*>(second);
         s2 = wic->connectionName();
-    } else if ( second->activatableType() == Knm::Activatable::WirelessNetworkItem) {
-        const Knm::WirelessNetworkItem * wni = qobject_cast<const Knm::WirelessNetworkItem*>(second);
+    } else if ( second->activatableType() == Knm::Activatable::WirelessNetwork) {
+        const Knm::WirelessNetwork * wni = qobject_cast<const Knm::WirelessNetwork*>(second);
         s2 = wni->ssid();
     }
     // debug ends
@@ -194,17 +194,17 @@ bool activatableLessThan(const Knm::Activatable * first, const Knm::Activatable 
 
 //X                     kDebug() << s1 << "and" << s2 << "have the same state, comparing signal strength";
 
-                    const Knm::WirelessItem * firstWi = static_cast<const Knm::WirelessInterfaceConnection *>(first);
-                    const Knm::WirelessItem * secondWi = static_cast<const Knm::WirelessInterfaceConnection *>(second);
+                    const Knm::WirelessObject * firstWi = static_cast<const Knm::WirelessInterfaceConnection *>(first);
+                    const Knm::WirelessObject * secondWi = static_cast<const Knm::WirelessInterfaceConnection *>(second);
                     i = compareSignalStrength(firstWi, secondWi);
                 }
             }
         } else {
-            // compare wirelessnetworkitems
-            const Knm::WirelessNetworkItem * firstW
-                = qobject_cast<const Knm::WirelessNetworkItem *>(first);
-            const Knm::WirelessNetworkItem * secondW
-                = qobject_cast<const Knm::WirelessNetworkItem *>(second);
+            // compare wirelessnetworks
+            const Knm::WirelessNetwork * firstW
+                = qobject_cast<const Knm::WirelessNetwork *>(first);
+            const Knm::WirelessNetwork * secondW
+                = qobject_cast<const Knm::WirelessNetwork *>(second);
             if (firstW && secondW) {
                 if (SortedActivatableList::s_wirelessSortPolicy == SortedActivatableList::WirelessSortAlphabetical) {
      //               kDebug() << s1 << "and" << s2 << "are both wireless networks, comparing SSID";
@@ -281,14 +281,14 @@ int compareConnectionName(const Knm::InterfaceConnection * first, const Knm::Int
     return first->connectionName().compare(second->connectionName());
 }
 
-int compareSignalStrength(const Knm::WirelessItem * first, const Knm::WirelessItem * second)
+int compareSignalStrength(const Knm::WirelessObject * first, const Knm::WirelessObject * second)
 {
     // first and second are reversed here because networks with arithmetically greater
     // signal strength but should appear first
     return second->strength() - first->strength();
 }
 
-int compareSsid(const Knm::WirelessItem * first, const Knm::WirelessItem * second)
+int compareSsid(const Knm::WirelessObject * first, const Knm::WirelessObject * second)
 {
     return first->ssid().compare(second->ssid());
 }

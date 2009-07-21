@@ -28,7 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatableadaptor.h"
 #include "interfaceconnectionadaptor.h"
 #include "wirelessinterfaceconnectionadaptor.h"
-#include "wirelessnetworkitemadaptor.h"
+#include "wirelessnetworkadaptor.h"
 
 class SessionAbstractedServicePrivate
 {
@@ -67,10 +67,10 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
             new WirelessInterfaceConnectionAdaptor(realObj);
             new InterfaceConnectionAdaptor(realObj);
             new ActivatableAdaptor(realObj);
-        } else { // WirelessNetworkItem
-            Knm::WirelessNetworkItem * realObj
-                = static_cast<Knm::WirelessNetworkItem*>(added);
-            new WirelessNetworkItemAdaptor(realObj);
+        } else { // WirelessNetwork
+            Knm::WirelessNetwork * realObj
+                = static_cast<Knm::WirelessNetwork*>(added);
+            new WirelessNetworkAdaptor(realObj);
             new ActivatableAdaptor(realObj);
         }
         QString path = nextObjectPath();
@@ -96,9 +96,9 @@ void SessionAbstractedService::handleRemove(Knm::Activatable * removed)
         if (removed->activatableType() == Knm::Activatable::InterfaceConnection ) {
             Knm::InterfaceConnection * realObj = static_cast<Knm::InterfaceConnection*>(removed);
             kDebug() << path << realObj->connectionUuid();
-        } else if (removed->activatableType() == Knm::Activatable::WirelessNetworkItem ) {
-            Knm::WirelessNetworkItem * realObj
-                = static_cast<Knm::WirelessNetworkItem*>(removed);
+        } else if (removed->activatableType() == Knm::Activatable::WirelessNetwork ) {
+            Knm::WirelessNetwork * realObj
+                = static_cast<Knm::WirelessNetwork*>(removed);
             kDebug() << path << realObj->ssid();
         }
 #endif

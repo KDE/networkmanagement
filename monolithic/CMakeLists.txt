@@ -26,7 +26,7 @@ set(monolithic_SRCS
    unconfiguredinterfaceitem.cpp
    wirelessinterfaceconnectionitem.cpp
    vpninterfaceconnectionitem.cpp
-   wirelessnetworkitemitem.cpp
+   wirelessnetworkitem.cpp
 
    # helper class for wireless UI elements
    wirelessstatus.cpp

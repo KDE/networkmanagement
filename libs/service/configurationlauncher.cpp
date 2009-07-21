@@ -32,7 +32,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 
 #include "unconfiguredinterface.h"
-#include "wirelessnetworkitem.h"
+#include "wirelessnetwork.h"
 #include "wirelessinterfaceconnection.h"
 
 typedef QPair<QString,QString> PendingNetwork;
@@ -58,14 +58,14 @@ ConfigurationLauncher::~ConfigurationLauncher()
 void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
 {
     Q_D(ConfigurationLauncher);
-    Knm::WirelessNetworkItem * wni;
+    Knm::WirelessNetwork * wni;
     Knm::InterfaceConnection * ic;
     Knm::WirelessInterfaceConnection * wic;
     Knm::UnconfiguredInterface * unco;
     switch (added->activatableType()) {
-        case Knm::Activatable::WirelessNetworkItem:
-            wni = qobject_cast<Knm::WirelessNetworkItem*>(added);
-            connect(wni, SIGNAL(activated()), this, SLOT(wirelessNetworkItemActivated()));
+        case Knm::Activatable::WirelessNetwork:
+            wni = qobject_cast<Knm::WirelessNetwork*>(added);
+            connect(wni, SIGNAL(activated()), this, SLOT(wirelessNetworkActivated()));
             break;
         case Knm::Activatable::InterfaceConnection:
             ic = qobject_cast<Knm::InterfaceConnection*>(added);
@@ -97,10 +97,10 @@ void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
     }
 }
 
-void ConfigurationLauncher::wirelessNetworkItemActivated()
+void ConfigurationLauncher::wirelessNetworkActivated()
 {
     kDebug();
-    Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(sender());
+    Knm::WirelessNetwork * wni = qobject_cast<Knm::WirelessNetwork*>(sender());
     if (wni) {
         configureWirelessNetworkInternal(wni->ssid(), wni->deviceUni(), wni->wpaFlags(), wni->rsnFlags());
     }

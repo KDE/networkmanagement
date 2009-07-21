@@ -36,11 +36,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
 
-#include "remotewirelessnetworkitem.h"
+#include "remotewirelessnetwork.h"
 #include "remotewirelessinterfaceconnection.h"
 #include "activatable.h"
 
-WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetworkItem * remote, QGraphicsItem * parent)
+WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent)
 : ActivatableItem(remote, parent), m_security(0), m_securityIcon(0), m_securityIconName(0)
 {
     m_strengthMeter = new Plasma::Meter(this);
@@ -57,7 +57,7 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetworkItem * remote, QGr
         m_ssid = remoteconnection->ssid();
         wpaFlags = remoteconnection->wpaFlags();
         rsnFlags = remoteconnection->rsnFlags();
-    } else if (aType == Knm::Activatable::WirelessNetworkItem) {
+    } else if (aType == Knm::Activatable::WirelessNetwork) {
         m_ssid = remote->ssid();
         wpaFlags = remote->wpaFlags();
         rsnFlags = remote->rsnFlags();
@@ -186,9 +186,9 @@ void WirelessNetworkItem::readSettings()
     }
 }
 
-RemoteWirelessNetworkItem * WirelessNetworkItem::wirelessNetworkItem() const
+RemoteWirelessNetwork * WirelessNetworkItem::wirelessNetworkItem() const
 {
-    return static_cast<RemoteWirelessNetworkItem*>(m_activatable);
+    return static_cast<RemoteWirelessNetwork*>(m_activatable);
 }
 
 void WirelessNetworkItem::update()

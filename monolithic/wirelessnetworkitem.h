@@ -18,40 +18,27 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wirelessnetworkitemitem.h"
+#ifndef WIRELESSNETWORKITEMITEM_H
+#define WIRELESSNETWORKITEMITEM_H
 
-#include "activatableitem_p.h"
+#include "activatableitem.h"
 
-#include <QLabel>
+namespace Knm {
+    class WirelessNetwork;
+}
 
-#include <wirelessnetworkitem.h>
-#include "wirelessstatus.h" 
+class WirelessNetworkItemPrivate;
 
-class WirelessNetworkItemItemPrivate : public ActivatableItemPrivate
+class WirelessNetworkItem : public ActivatableItem
 {
-    public:
+Q_OBJECT
+Q_DECLARE_PRIVATE(WirelessNetworkItem)
+public:
+    WirelessNetworkItem(Knm::WirelessNetwork *, QWidget * parent = 0);
+    virtual ~WirelessNetworkItem();
+    Knm::WirelessNetwork * wirelessNetworkItem() const;
+protected:
+    virtual QString iconName() const;
 };
 
-WirelessNetworkItemItem::WirelessNetworkItemItem(Knm::WirelessNetworkItem * item, QWidget * parent)
-: ActivatableItem(*new WirelessNetworkItemItemPrivate, item, parent)
-{
-    new WirelessStatus(this);
-    setText(item->ssid());
-}
-
-WirelessNetworkItemItem::~WirelessNetworkItemItem()
-{
-
-}
-
-Knm::WirelessNetworkItem * WirelessNetworkItemItem::wirelessNetworkItem() const
-{
-    return qobject_cast<Knm::WirelessNetworkItem*>(activatable());
-}
-
-QString WirelessNetworkItemItem::iconName() const
-{
-    return QLatin1String("network-wireless");
-}
-
-// vim: sw=4 sts=4 et tw=100
+#endif // WIRELESSNETWORKITEMITEM_H

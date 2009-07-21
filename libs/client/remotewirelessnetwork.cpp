@@ -18,45 +18,45 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "remotewirelessnetworkitem.h"
-#include "remotewirelessnetworkitem_p.h"
+#include "remotewirelessnetwork.h"
+#include "remotewirelessnetwork_p.h"
 
-RemoteWirelessNetworkItem::RemoteWirelessNetworkItem(const QString & path, QObject * parent)
-: RemoteActivatable(*new RemoteWirelessNetworkItemPrivate, path, parent)
+RemoteWirelessNetwork::RemoteWirelessNetwork(const QString & path, QObject * parent)
+: RemoteActivatable(*new RemoteWirelessNetworkPrivate, path, parent)
 {
-    Q_D(RemoteWirelessNetworkItem);
-    d->wirelessNetworkItemInterface = new WirelessNetworkItemInterface("org.kde.networkmanagement", path, QDBusConnection::sessionBus(), this);
+    Q_D(RemoteWirelessNetwork);
+    d->wirelessNetworkItemInterface = new WirelessNetworkInterface("org.kde.networkmanagement", path, QDBusConnection::sessionBus(), this);
     connect(d->wirelessNetworkItemInterface, SIGNAL(strengthChanged(int)), this, SIGNAL(strengthChanged(int)));
 }
 
-RemoteWirelessNetworkItem::~RemoteWirelessNetworkItem()
+RemoteWirelessNetwork::~RemoteWirelessNetwork()
 {
 
 }
 
-QString RemoteWirelessNetworkItem::ssid() const
+QString RemoteWirelessNetwork::ssid() const
 {
-    Q_D(const RemoteWirelessNetworkItem);
+    Q_D(const RemoteWirelessNetwork);
     return d->wirelessNetworkItemInterface->ssid();
 }
 
-int RemoteWirelessNetworkItem::strength() const
+int RemoteWirelessNetwork::strength() const
 {
-    Q_D(const RemoteWirelessNetworkItem);
+    Q_D(const RemoteWirelessNetwork);
     return d->wirelessNetworkItemInterface->strength();
 }
 
-Solid::Control::AccessPoint::WpaFlags RemoteWirelessNetworkItem::wpaFlags() const
+Solid::Control::AccessPoint::WpaFlags RemoteWirelessNetwork::wpaFlags() const
 {
-    Q_D(const RemoteWirelessNetworkItem);
+    Q_D(const RemoteWirelessNetwork);
     uint wpaflags = d->wirelessNetworkItemInterface->wpaFlags();
     return (Solid::Control::AccessPoint::WpaFlags)wpaflags;
 
 }
 
-Solid::Control::AccessPoint::WpaFlags RemoteWirelessNetworkItem::rsnFlags() const
+Solid::Control::AccessPoint::WpaFlags RemoteWirelessNetwork::rsnFlags() const
 {
-    Q_D(const RemoteWirelessNetworkItem);
+    Q_D(const RemoteWirelessNetwork);
     uint rsnflags = d->wirelessNetworkItemInterface->rsnFlags();
     return (Solid::Control::AccessPoint::WpaFlags)rsnflags;
 }

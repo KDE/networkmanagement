@@ -18,36 +18,40 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIRELESSITEM_H
-#define WIRELESSITEM_H
+#ifndef REMOTEWIRELESSNETWORKITEM_H
+#define REMOTEWIRELESSNETWORKITEM_H
 
+#include "remoteactivatable.h"
+
+#include <QObject>
 #include <QString>
 #include <solid/control/wirelessaccesspoint.h>
 
-#include "knminternals_export.h"
+#include "knmclient_export.h"
 
-namespace Knm
+class RemoteWirelessNetworkPrivate;
+
+class KNMCLIENT_EXPORT RemoteWirelessNetwork : public RemoteActivatable
 {
-class KNMINTERNALS_EXPORT WirelessItem
-{
+Q_OBJECT
+Q_PROPERTY(QString ssid READ ssid)
+Q_PROPERTY(int strength READ strength)
+Q_PROPERTY(uint wpaFlags READ wpaFlags)
+Q_PROPERTY(uint rsnFlags READ rsnFlags)
+
+friend class RemoteActivatableList;
+
 public:
-    WirelessItem(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags);
-    virtual ~WirelessItem();
+    virtual ~RemoteWirelessNetwork();
     QString ssid() const;
     int strength() const;
-    virtual void setStrength(int strength);
-    Solid::Control::AccessPoint::Capabilities capabilities() const;
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
-    virtual void strengthChanged(int) = 0;
+Q_SIGNALS:
+    void strengthChanged(int);
 protected:
-    QString m_ssid;
-    int m_strength;
-    Solid::Control::AccessPoint::Capabilities m_capabilities;
-    Solid::Control::AccessPoint::WpaFlags m_wpaFlags;
-    Solid::Control::AccessPoint::WpaFlags m_rsnFlags;
+    RemoteWirelessNetwork(const QString & path, QObject * parent);
+    Q_DECLARE_PRIVATE(RemoteWirelessNetwork)
 };
 
-} // namespace Knm
-
-#endif // WIRELESSITEM_H
+#endif // REMOTEWIRELESSNETWORKITEM_H

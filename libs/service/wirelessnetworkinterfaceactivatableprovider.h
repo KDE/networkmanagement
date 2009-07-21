@@ -53,7 +53,7 @@ public slots:
     void handleAdd(Knm::Connection *);
 
     /**
-     * remove any references we hold dependent on this connection and create a WirelessNetworkItem
+     * remove any references we hold dependent on this connection and create a WirelessNetwork
      * if its network is visible.
      * @reimp NetworkInterfaceActivatableProvider
      */
@@ -62,7 +62,7 @@ public slots:
     /**
      * When a wireless network appears, check if the ConnectionList has a connection for it.
      * If so, create a WirelessNetworkInterfaceConnection.
-     * Otherwise, create a WirelessNetworkItem
+     * Otherwise, create a WirelessNetwork
      */
 
     void networkAppeared(const QString & ssid);

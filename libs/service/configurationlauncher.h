@@ -39,9 +39,9 @@ public:
     ConfigurationLauncher(QObject * parent);
     ~ConfigurationLauncher();
     /**
-     * 1) Listen to newly added WirelessNetworkItems' activated signals and configure networks for them
+     * 1) Listen to newly added WirelessNetworks' activated signals and configure networks for them
      * 2) examine newly added WirelessInterfaceConnections and activate them if they match the
-     * previously activated WirelessNetworkItem
+     * previously activated WirelessNetwork
      * @reimp ActivatableObserver
      */
     void handleAdd(Knm::Activatable *);
@@ -61,7 +61,7 @@ protected Q_SLOTS:
      * Create a connection to a hidden wireless network
      */
     void configureHiddenWirelessNetwork(const QString & ssid, const QString & deviceUni);
-    void wirelessNetworkItemActivated();
+    void wirelessNetworkActivated();
     void unconfiguredInterfaceActivated();
 private:
     void configureWirelessNetworkInternal(const QString & ssid, const QString & deviceUni, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags);
