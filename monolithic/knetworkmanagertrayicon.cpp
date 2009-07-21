@@ -193,7 +193,6 @@ void KNetworkManagerTrayIcon::fillPopup()
     foreach (Knm::Activatable * activatable, d->sortedList->activatables()) {
         QWidgetAction * action = 0;
         ActivatableItem * widget = 0;
-        QAction * firstUnconfiguredItemAction = 0;
 
         if (d->actions.contains(activatable)) {
             action = d->actions[activatable];
@@ -230,22 +229,12 @@ void KNetworkManagerTrayIcon::fillPopup()
             // put all wireless network items and unconfigured items  into a submenu
             if (activatable->activatableType() == Knm::Activatable::WirelessNetwork
                     || activatable->activatableType() == Knm::Activatable::UnconfiguredInterface) {
+
                 if (!d->wirelessNetworkItemMenu) {
                     d->wirelessNetworkItemMenu = new KMenu(contextMenu());
                 }
 
-                // keep a pointer to the first unconfigured item in the submenu, and add all other
-                // types of items before it.
-                if (!firstUnconfiguredItemAction && activatable->activatableType() == Knm::Activatable::UnconfiguredInterface) {
-                    firstUnconfiguredItemAction = action;
-                }
-
-                if (activatable->activatableType() == Knm::Activatable::WirelessNetwork) {
-                    d->wirelessNetworkItemMenu->insertAction(firstUnconfiguredItemAction, action);
-                    wirelessNetworkItemCount++;
-                } else {
-                    d->wirelessNetworkItemMenu->addAction(action);
-                }
+                d->wirelessNetworkItemMenu->addAction(action);
             } else {
                 // If we have not seen any activatables for this device before, set its First flag for emphasis
                 // Precede it with a separator if it is not the first action in the menu
