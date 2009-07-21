@@ -29,8 +29,9 @@ namespace Knm
     class Activatable;
 } // namespace Knm
 
-class ActivatableListPrivate;
+
 class ActivatableObserver;
+class ActivatableListPrivate;
 
 class KNM_EXPORT ActivatableList : public QObject
 {
@@ -39,8 +40,11 @@ Q_DECLARE_PRIVATE(ActivatableList)
 
 public:
     ActivatableList(QObject * parent);
+    ActivatableList(ActivatableListPrivate &dd, QObject * parent);
     ~ActivatableList();
+
     QList<Knm::Activatable *> activatables() const;
+
     void addActivatable(Knm::Activatable *);
     void removeActivatable(Knm::Activatable *);
     /**
@@ -56,7 +60,7 @@ public:
     void unregisterObserver(ActivatableObserver *);
 protected Q_SLOTS:
     void activatableChanged();
-private:
+protected:
     ActivatableListPrivate * d_ptr;
 };
 

@@ -20,20 +20,18 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatablelist.h"
 
-#include <QList>
+#include "activatablelist_p.h"
 
 #include "activatable.h"
 #include "activatableobserver.h"
 
-class ActivatableListPrivate
-{
-public:
-    QList<Knm::Activatable*> activatables;
-    QList<ActivatableObserver *> observers;
-};
-
 ActivatableList::ActivatableList(QObject * parent)
     : QObject(parent), d_ptr(new ActivatableListPrivate)
+{
+}
+
+ActivatableList::ActivatableList(ActivatableListPrivate & dd, QObject * parent)
+    : QObject(parent), d_ptr(&dd)
 {
 }
 

@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define SORTEDACTIVATABLELIST_H
 
 #include <activatableobserver.h>
+#include <activatablelist.h>
 
 #include <QList>
 
@@ -32,16 +33,13 @@ namespace Knm
     class Activatable;
 } // namespace Knm
 
-class ActivatableList;
+class SortedActivatableListPrivate;
 
 /**
  * Keeps a sorted version of the activatable list - needs inserting before the UI so it sees changes
  * before the UI does
  */
-
-class SortedActivatableListPrivate;
-
-class SortedActivatableList : public QObject, public ActivatableObserver
+class SortedActivatableList : public ActivatableList, public ActivatableObserver
 {
 Q_OBJECT
 Q_DECLARE_PRIVATE(SortedActivatableList)
@@ -51,6 +49,7 @@ public:
     static WirelessSortPolicy s_wirelessSortPolicy;
 
     SortedActivatableList(Solid::Control::NetworkInterface::Types types, QObject * parent = 0);
+
     // respond to activatable changes
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);
@@ -68,6 +67,9 @@ public:
      * debug
      */
     void dump() const;
+private:
+    void addActivatable(Knm::Activatable *);
+    void removeActivatable(Knm::Activatable *);
 signals:
     /**
      * Indicate that an activatable has changed relative position in the ordering and should be moved
@@ -77,7 +79,5 @@ signals:
      */
     void moved(Knm::Activatable * moved, Knm::Activatable * successor);
 
-private:
-    SortedActivatableListPrivate * d_ptr;
 };
 #endif // SORTEDACTIVATABLELIST_H

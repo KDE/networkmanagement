@@ -31,13 +31,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <wirelessnetwork.h>
 // debug
 
-#include <activatablelist.h>
+#include <activatablelist_p.h>
 
-class SortedActivatableListPrivate
+class SortedActivatableListPrivate : public ActivatableListPrivate
 {
 public:
     Solid::Control::NetworkInterface::Types types;
-    QList<Knm::Activatable *> activatables;
 };
 
 // sorting activatables
@@ -75,7 +74,7 @@ int compareSsid(const Knm::WirelessObject * first, const Knm::WirelessObject * s
 SortedActivatableList::WirelessSortPolicy SortedActivatableList::s_wirelessSortPolicy = SortedActivatableList::WirelessSortByStrength;
 
 SortedActivatableList::SortedActivatableList(Solid::Control::NetworkInterface::Types types, QObject * parent)
-    : QObject(parent), d_ptr(new SortedActivatableListPrivate)
+    : ActivatableList(*new SortedActivatableListPrivate, parent)
 {
     Q_D(SortedActivatableList);
     d->types = types;
@@ -294,6 +293,14 @@ int compareSsid(const Knm::WirelessObject * first, const Knm::WirelessObject * s
 }
 
 //Knm::Activatable * SimpleUi::activatableBefore(Knm::Activatable * activatable) const
+
+void SortedActivatableList::addActivatable(Knm::Activatable *)
+{
+}
+
+void SortedActivatableList::removeActivatable(Knm::Activatable *)
+{
+}
 
 
 // vim: sw=4 sts=4 et tw=100
