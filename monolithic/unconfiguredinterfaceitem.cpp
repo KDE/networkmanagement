@@ -60,7 +60,7 @@ UnconfiguredInterfaceItem::UnconfiguredInterfaceItem(Knm::UnconfiguredInterface 
 
     d->subtitleLabel = new QLabel(this);
     d->subtitleLabel->setFont(KGlobalSettings::toolBarFont());
-    d->subtitleLabel->setText(i18nc("Text for menu item for setting up devices which until now do not have any connections", "Not configured..."));
+    d->subtitleLabel->setText(i18nc("Text for menu item for setting up devices which until now do not have any connections", "Configure other network..."));
     d->outerLayout->addWidget(d->subtitleLabel, 1, 1, 1, 1);
 
     d->activeIcon->setPixmap(pixmap());

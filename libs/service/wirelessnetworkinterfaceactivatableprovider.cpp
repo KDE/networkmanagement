@@ -85,16 +85,18 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                 // known network in a different location
                 Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(addedConnection->setting(Knm::Setting::Wireless));
                 if (wirelessSetting) {
-                    if (d->environment->networks().contains(wirelessSetting->ssid())) {
+                    // show connections where the network is present OR adhoc connections
+                    if (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc || d->environment->networks().contains(wirelessSetting->ssid())) {
                         //kDebug() << d->environment->networks();
-                        //kDebug() << wirelessSetting->ssid() <<  addedConnection->uuid() << addedConnection->name() << d->interface->uni();
+                        kDebug() << wirelessSetting->ssid() <<  addedConnection->uuid() << addedConnection->name() << d->interface->uni();
 
                         // get the info on the network
                         Solid::Control::WirelessNetwork * network = d->environment->findNetwork(wirelessSetting->ssid());
-                        int strength = 0;
+                        int strength = -1;
                         Solid::Control::AccessPoint::Capabilities caps = 0;
                         Solid::Control::AccessPoint::WpaFlags wpaFlags = 0;
                         Solid::Control::AccessPoint::WpaFlags rsnFlags = 0;
+
                         if (network) {
                             strength = network->signalStrength();
                             Solid::Control::AccessPoint * ap = d->wirelessInterface()->findAccessPoint(network->referenceAccessPoint());
@@ -102,23 +104,29 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                                 caps = ap->capabilities();
                                 wpaFlags = ap->wpaFlags();
                                 rsnFlags = ap->rsnFlags();
-                                Knm::WirelessInterfaceConnection * ifaceConnection = new Knm::WirelessInterfaceConnection(
-                                        wirelessSetting->ssid(), strength, caps, wpaFlags, rsnFlags, addedConnection->uuid(), addedConnection->name(),
-                                        d->interface->uni(), this);
-                                connect(network, SIGNAL(signalStrengthChanged(int)), ifaceConnection, SLOT(setStrength(int)));
-                                // remove any WirelessNetworkItem created previously
-                                Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(d->wirelessActivatables.take(wirelessSetting->ssid()));
-                                if (wni) {
-                                    d->activatableList->removeActivatable(wni);
-                                }
-                                delete wni;
-
-                                // register the InterfaceConnection
-                                d->activatables.insert(addedConnection->uuid(), ifaceConnection);
-                                d->wirelessActivatables.insert(wirelessSetting->ssid(), ifaceConnection);
-                                d->activatableList->addActivatable(ifaceConnection);
                             }
+
                         }
+
+                        Knm::WirelessInterfaceConnection * ifaceConnection = new Knm::WirelessInterfaceConnection(
+                                wirelessSetting->ssid(), strength, caps, wpaFlags, rsnFlags, addedConnection->uuid(), addedConnection->name(),
+                                d->interface->uni(), this);
+
+                        if (network) {
+                            connect(network, SIGNAL(signalStrengthChanged(int)), ifaceConnection, SLOT(setStrength(int)));
+                        }
+
+                        // remove any WirelessNetworkItem created previously
+                        Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(d->wirelessActivatables.take(wirelessSetting->ssid()));
+                        if (wni) {
+                            d->activatableList->removeActivatable(wni);
+                        }
+                        delete wni;
+
+                        // register the InterfaceConnection
+                        d->activatables.insert(addedConnection->uuid(), ifaceConnection);
+                        d->wirelessActivatables.insert(wirelessSetting->ssid(), ifaceConnection);
+                        d->activatableList->addActivatable(ifaceConnection);
                     }
                 }
             }
@@ -188,12 +196,6 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
                     d->wirelessActivatables.insert(ssid, wirelessNetworkItem);
                     d->activatableList->addActivatable(wirelessNetworkItem);
 
-                    // remove the dummy activatable
-                    if (d->unconfiguredActivatable) {
-                        d->activatableList->removeActivatable(d->unconfiguredActivatable);
-                        delete d->unconfiguredActivatable;
-                        d->unconfiguredActivatable = 0;
-                    }
                 }
             }
         }
@@ -213,22 +215,12 @@ void WirelessNetworkInterfaceActivatableProvider::networkDisappeared(const QStri
         d->activatableList->removeActivatable(activatable);
         delete activatable;
     }
-    if (d->activatables.isEmpty() && d->wirelessActivatables.isEmpty()) {
-        if (!d->unconfiguredActivatable) {
-            d->unconfiguredActivatable = new Knm::UnconfiguredInterface(d->interface->uni(), this);
-            d->activatableList->addActivatable(d->unconfiguredActivatable);
-        }
-    }
 }
 
 bool WirelessNetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() const
 {
-    Q_D(const WirelessNetworkInterfaceActivatableProvider);
     bool needed =  Solid::Control::NetworkManager::isWirelessEnabled()
-        && Solid::Control::NetworkManager::isWirelessHardwareEnabled()
-        && d->activatables.isEmpty()
-        && d->wirelessActivatables.isEmpty();
-    kDebug() << needed;
+        && Solid::Control::NetworkManager::isWirelessHardwareEnabled();
     return needed;
 }
 

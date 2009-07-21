@@ -79,6 +79,9 @@ WirelessStatus::WirelessStatus(ActivatableItem * item)
         d->wpaFlags = wni->wpaFlags();
         d->rsnFlags = wni->rsnFlags();
         connect(wni, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
+        if (wni->strength() < 0) {
+            d->strength->hide();
+        }
         d->strength->setValue(wni->strength());
         d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wni->strength())));
     } else {
@@ -88,6 +91,9 @@ WirelessStatus::WirelessStatus(ActivatableItem * item)
             d->wpaFlags = wic->wpaFlags();
             d->rsnFlags = wic->rsnFlags();
             connect(wic, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
+            if (wic->strength() < 0) {
+                d->strength->hide();
+            }
             d->strength->setValue(wic->strength());
             d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wic->strength())));
         }
@@ -110,14 +116,20 @@ WirelessStatus::~WirelessStatus()
 void WirelessStatus::setStrength(int strength)
 {
     Q_D(WirelessStatus);
-    Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(d->item->activatable());
-    if (wni) {
-        d->strength->setValue(strength);
-        d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wni->strength())));
+    if (strength < 0) {
+        d->strength->hide();
     } else {
-        Knm::WirelessInterfaceConnection * wic = qobject_cast<Knm::WirelessInterfaceConnection*>(d->item->activatable());
-        if (wic) {
-            d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wic->strength())));
+        d->strength->show();
+
+        Knm::WirelessNetworkItem * wni = qobject_cast<Knm::WirelessNetworkItem*>(d->item->activatable());
+        if (wni) {
+            d->strength->setValue(strength);
+            d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wni->strength())));
+        } else {
+            Knm::WirelessInterfaceConnection * wic = qobject_cast<Knm::WirelessInterfaceConnection*>(d->item->activatable());
+            if (wic) {
+                d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wic->strength())));
+            }
         }
     }
 }
