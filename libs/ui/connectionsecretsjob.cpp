@@ -111,7 +111,9 @@ void ConnectionSecretsJob::doAskUser()
     // popup a dialog showing the appropriate UI for the type of connection
     kDebug();
     if ( mSettingName == QLatin1String(NM_SETTING_802_1X_SETTING_NAME)) {
-        //m_settingWidget = Wired8021xSecurityWidget(m_connection, 0);
+        // need a way to identify and only show WpaEapWidget here - perhaps a plain container
+        // SettingWidget?
+        m_settingWidget = new Wireless80211SecurityWidget(false, m_connection, 0, 0, 0, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
         m_settingWidget = new CdmaWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
@@ -141,7 +143,7 @@ void ConnectionSecretsJob::doAskUser()
     if (m_settingWidget) {
         m_settingWidget->readConfig();
         m_askUserDialog = new KDialog(0);
-        m_askUserDialog->setCaption(i18nc("dialog caption for network secrets request", "Enter Network Connection Secrets"));
+        m_askUserDialog->setCaption(i18nc("@title:window for network secrets request", "Secrets for %1", m_connection->name()));
         m_askUserDialog->setMainWidget(m_settingWidget);
         m_askUserDialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
 
