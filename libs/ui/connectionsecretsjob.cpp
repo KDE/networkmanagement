@@ -79,7 +79,7 @@ void ConnectionSecretsJob::start()
 void ConnectionSecretsJob::doWork()
 {
     kDebug();
-    if (mRequestNew) {
+    if (mRequestNew || KNetworkManagerServicePrefs::self()->secretStorageMode() == Knm::ConnectionPersistence::DontStore /*||  TODO add m_connection->secretStorageMode == Knm::ConnectionPersistence::DontStore*/ ) {
         doAskUser();
     } else {
         QString configFile = KStandardDirs::locate("data",
