@@ -269,7 +269,7 @@ QString wirelessTooltipHtmlPart(Solid::Control::WirelessNetworkInterface * wifac
     if (requestedInfo == QLatin1String("hardwareaddress")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                 .arg(i18nc("@info:tooltip this is the hardware address of a network interface",
-                           "Hardware address", wiface->hardwareAddress()));
+                           "Hardware address"), wiface->hardwareAddress());
     }
 
     return html;
