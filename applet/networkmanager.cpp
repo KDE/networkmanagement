@@ -472,6 +472,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
         QString subText;
         qSort(interfaces.begin(), interfaces.end(), networkInterfaceLessThan);
         bool hasActive = false;
+        bool iconChanged = false;
         QString icon = "networkmanager";
         foreach (Solid::Control::NetworkInterface *iface, interfaces) {
             if (!subText.isEmpty()) {
@@ -490,9 +491,8 @@ void NetworkManagerApplet::toolTipAboutToShow()
                     QString currentIp = addr.toString();
                     subText += QString::fromLatin1("<br>") + i18nc("Display of the IP (network) address in the tooltip", "<font size=\"-1\">Address: %1</font>", currentIp);
                 }
-                // This is a bit "random", since it'll display the last interface's active connection
-                // Should probably show the default route's icon
-                if (iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+                // Show the first active connection's icon, otherwise the networkmanager icon
+                if (!iconChanged && iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
                     switch (iface->type()) {
                         case Solid::Control::NetworkInterface::Ieee8023:
                             icon = "network-wired";
@@ -507,6 +507,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
                             icon = "phone";
                             break;
                     }
+                    iconChanged = true; // we only want the first one
                 }
             }
         }
