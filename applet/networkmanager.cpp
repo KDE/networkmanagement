@@ -261,6 +261,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     // so only have 1 rather than hack something ugly that will be thrown out later
     if (!m_interfaces.isEmpty()) {
         Solid::Control::NetworkInterface *interface = m_interfaces.first();
+        // TODO: figure out the default route and use that connection
         //kDebug() << "most interesting interface to paint: " << interface->uni() << " with icon " << m_elementName;
 
         // Call the correct method to paint the applet, depending on the kind of connection
@@ -352,13 +353,6 @@ void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterfa
             break;
     }
 }
-
-/*
-QGraphicsWidget * NetworkManagerApplet::graphicsWidget()
-{
-    return m_popup;
-}
-*/
 
 /* Slots to react to changes from the daemon */
 void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
@@ -470,7 +464,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
     Solid::Control::NetworkInterfaceList interfaces
         = Solid::Control::NetworkManager::networkInterfaces();
     if (interfaces.isEmpty()) {
-        m_toolTip = Plasma::ToolTipContent(name(),
+        m_toolTip = Plasma::ToolTipContent(QString(),
                                         i18nc("Tooltip sub text", "No network interfaces"),
                                         KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop))
                                         );
@@ -478,9 +472,10 @@ void NetworkManagerApplet::toolTipAboutToShow()
         QString subText;
         qSort(interfaces.begin(), interfaces.end(), networkInterfaceLessThan);
         bool hasActive = false;
+        QString icon = "networkmanager";
         foreach (Solid::Control::NetworkInterface *iface, interfaces) {
             if (!subText.isEmpty()) {
-                subText += QLatin1String("<br>");
+                subText += QLatin1String("<br><br>");
             }
             if (iface->connectionState() != Solid::Control::NetworkInterface::Unavailable) {
                 hasActive = true;
@@ -493,17 +488,35 @@ void NetworkManagerApplet::toolTipAboutToShow()
                 if (!addresses.isEmpty()) {
                     QHostAddress addr(addresses.first().address());
                     QString currentIp = addr.toString();
-                    subText += QString::fromLatin1("<br>") + i18nc("Display of the IP (network) address", "IP Address: %1", currentIp);
+                    subText += QString::fromLatin1("<br>") + i18nc("Display of the IP (network) address in the tooltip", "<font size=\"-1\">Address: %1</font>", currentIp);
+                }
+                // This is a bit "random", since it'll display the last interface's active connection
+                // Should probably show the default route's icon
+                if (iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+                    switch (iface->type()) {
+                        case Solid::Control::NetworkInterface::Ieee8023:
+                            icon = "network-wired";
+                            break;
+                        case Solid::Control::NetworkInterface::Ieee80211:
+                            icon = "network-wireless";
+                            break;
+                        case Solid::Control::NetworkInterface::Serial:
+                        case Solid::Control::NetworkInterface::Gsm:
+                        case Solid::Control::NetworkInterface::Cdma:
+                        default:
+                            icon = "phone";
+                            break;
+                    }
                 }
             }
-            m_toolTip = Plasma::ToolTipContent(name(),
-                                            subText,
-                                            KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop))
-                                            );
         }
         if (!hasActive) {
             subText += i18nc("tooltip, all interfaces are down", "Disconnected");
         }
+        m_toolTip = Plasma::ToolTipContent(QString(),
+                                           subText,
+                                           KIcon(icon).pixmap(IconSize(KIconLoader::Desktop))
+                                           );
     }
     Plasma::ToolTipManager::self()->setContent(this, m_toolTip);
 }
