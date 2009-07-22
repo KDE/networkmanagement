@@ -69,7 +69,7 @@ public:
     /**
      * Access the sorted list
      */
-    QList<Knm::Activatable *> activatables() const;
+    virtual QList<Knm::Activatable *> activatables() const;
     /**
      * debug
      */

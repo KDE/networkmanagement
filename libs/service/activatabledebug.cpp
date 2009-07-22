@@ -83,21 +83,21 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
 void ActivatableDebug::handleAdd(Knm::Activatable * activatable) {
     QString debugString = activatableToString(activatable);
     debugString += " was added";
-    kDebug() << debugString;
+    kDebug() << "(" << objectName() << ")" << debugString;
 }
 
 void ActivatableDebug::handleUpdate(Knm::Activatable * activatable)
 {
     QString debugString = activatableToString(activatable);
     debugString += " changed";
-    kDebug() << debugString;
+    kDebug() << "(" << objectName() << ")" << debugString;
 }
 
 void ActivatableDebug::handleRemove(Knm::Activatable * activatable)
 {
     QString debugString = activatableToString(activatable);
     debugString += " was removed";
-    kDebug() << debugString;
+    kDebug() << "(" << objectName() << ")" << debugString;
 }
 
 // vim: sw=4 sts=4 et tw=100

@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <activatable.h>
 //debug
 #include <interfaceconnection.h>
+#include <unconfiguredinterface.h>
+#include <vpninterfaceconnection.h>
 #include <wirelessinterfaceconnection.h>
 #include <wirelessnetwork.h>
 // debug
@@ -71,6 +73,8 @@ int compareSignalStrength(const Knm::WirelessObject * first, const Knm::Wireless
 
 int compareSsid(const Knm::WirelessObject * first, const Knm::WirelessObject * second);
 
+/* SortedActivatableList */
+
 SortedActivatableList::WirelessSortPolicy SortedActivatableList::s_wirelessSortPolicy = SortedActivatableList::WirelessSortByStrength;
 
 SortedActivatableList::SortedActivatableList(Solid::Control::NetworkInterface::Types types, QObject * parent)
@@ -88,7 +92,9 @@ void SortedActivatableList::handleAdd(Knm::Activatable * activatable)
         // add all vpn connections
         if ((iface && (d->types.testFlag(iface->type())))
                 || (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection)) {
-            d->activatables.append(activatable);
+
+            addActivatableInternal(activatable);
+
         }
     }
     qSort(d->activatables.begin(), d->activatables.end(), activatableLessThan);
@@ -102,9 +108,7 @@ void SortedActivatableList::handleUpdate(Knm::Activatable *)
 
 void SortedActivatableList::handleRemove(Knm::Activatable * activatable)
 {
-    Q_D(SortedActivatableList);
-    // this does not affect the total order
-    d->activatables.removeAll(activatable);
+    ActivatableList::removeActivatable(activatable);
 }
 
 QList<Knm::Activatable*> SortedActivatableList::activatables() const
@@ -126,6 +130,12 @@ void SortedActivatableList::dump() const
         } else if ( activatable->activatableType() == Knm::Activatable::WirelessNetwork) {
             Knm::WirelessNetwork * wni = static_cast<Knm::WirelessNetwork*>(activatable);
             kDebug() << "WNI" << wni->ssid();
+        } else if ( activatable->activatableType() == Knm::Activatable::UnconfiguredInterface) {
+            Knm::UnconfiguredInterface * unco = static_cast<Knm::UnconfiguredInterface*>(activatable);
+            kDebug() << "UCI" << unco->deviceUni();
+        } else if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+            Knm::VpnInterfaceConnection * vpn = static_cast<Knm::VpnInterfaceConnection*>(activatable);
+            kDebug() << "VPN" << vpn->connectionName();
         }
     }
 }
@@ -292,15 +302,17 @@ int compareSsid(const Knm::WirelessObject * first, const Knm::WirelessObject * s
     return first->ssid().compare(second->ssid());
 }
 
+void SortedActivatableList::addActivatable(Knm::Activatable * activatable)
+{
+    ActivatableList::addActivatable(activatable);
+}
+
+void SortedActivatableList::removeActivatable(Knm::Activatable * activatable)
+{
+    ActivatableList::removeActivatable(activatable);
+}
+void removeActivatable(Knm::Activatable *);
 //Knm::Activatable * SimpleUi::activatableBefore(Knm::Activatable * activatable) const
-
-void SortedActivatableList::addActivatable(Knm::Activatable *)
-{
-}
-
-void SortedActivatableList::removeActivatable(Knm::Activatable *)
-{
-}
 
 
 // vim: sw=4 sts=4 et tw=100

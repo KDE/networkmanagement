@@ -135,6 +135,7 @@ int main( int argc, char** argv )
 
     // debug activatable changes
     ActivatableDebug debug;
+    debug.setObjectName("unsorted");
     activatableList->registerObserver(&debug);
 
     // really simple UI
@@ -146,16 +147,22 @@ int main( int argc, char** argv )
          | Solid::Control::NetworkInterface::Gsm
          | Solid::Control::NetworkInterface::Cdma);
 
-    SortedActivatableList * sortedList = new SortedActivatableList(0);
+    SortedActivatableList * sortedList = new SortedActivatableList(types, 0);
     activatableList->registerObserver(sortedList);
 
     //Solid::Control::NetworkInterface::Types types = (Solid::Control::NetworkInterface::Ieee8023);
     KNetworkManagerTrayIcon simpleUi(types, QString::number(types),
-            activatableList, nmSettingsService->isServiceAvailable(), 0);
+            sortedList, nmSettingsService->isServiceAvailable(), 0);
 
     QObject::connect(nmSettingsService, SIGNAL(serviceAvailable(bool)), &simpleUi, SLOT(setActive(bool)));
     sortedList->registerObserver(&simpleUi);
 
+#if 0
+    // for debugging the sorted list
+    ActivatableDebug debug2;
+    debug2.setObjectName("SORTED");
+    sortedList->registerObserver(&debug2);
+#endif
     //Solid::Control::NetworkInterface::Types secondTypes = (Solid::Control::NetworkInterface::Ieee80211);
 
     //KNetworkManagerTrayIcon secondTray(secondTypes, QString::number(secondTypes), activatableList, 0);

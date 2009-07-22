@@ -79,12 +79,19 @@ void ActivatableList::addActivatable(Knm::Activatable * activatable)
 {
     Q_D(ActivatableList);
     if (!d->activatables.contains(activatable)) {
-        d->activatables.append(activatable);
+        addActivatableInternal(activatable);
+    }
+}
 
-        connect(activatable, SIGNAL(changed()), this, SLOT(activatableChanged()));
-        foreach (ActivatableObserver * observer, d->observers) {
-            observer->handleAdd(activatable);
-        }
+
+void ActivatableList::addActivatableInternal(Knm::Activatable * activatable)
+{
+    Q_D(ActivatableList);
+    d->activatables.append(activatable);
+
+    connect(activatable, SIGNAL(changed()), this, SLOT(activatableChanged()));
+    foreach (ActivatableObserver * observer, d->observers) {
+        observer->handleAdd(activatable);
     }
 }
 
