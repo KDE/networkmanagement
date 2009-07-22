@@ -86,9 +86,8 @@ void ConnectionSecretsJob::doWork()
                 Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
         m_connectionPersistence = new Knm::ConnectionPersistence(m_connection,
                 KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
-                (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
-                 Knm::ConnectionPersistence::PlainText)
-                );
+                (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
+
         connect(m_connectionPersistence, SIGNAL(loadSecretsResult(uint)), this, SLOT(gotPersistedSecrets(uint)));
         m_connectionPersistence->loadSecrets();
     }
@@ -167,9 +166,7 @@ void ConnectionSecretsJob::dialogAccepted()
             Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
     Knm::ConnectionPersistence cp(m_connection,
             KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
-            (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
-             Knm::ConnectionPersistence::PlainText)
-            );
+            (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
     cp.save();
     m_settingWidget->deleteLater();
     m_askUserDialog->deleteLater();

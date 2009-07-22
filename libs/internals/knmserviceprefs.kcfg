@@ -4,15 +4,22 @@
   xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
   http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
   <kcfgfile arg="true"/>
+  <include>kwallet.h</include>
+  <include>"connectionpersistence.h"</include>
   <group name="General">
     <entry name="Connections" type="StringList">
       <label>Connections</label>
       <whatsthis/>
     </entry>
-    <entry name="StoreInWallet" type="Bool">
+    <entry name="SecretStorageMode" type="Enum">
       <label>Store secrets in wallet</label>
-      <default>true</default>
+      <default code="true">(KWallet::Wallet::isEnabled() ? Knm::ConnectionPersistence::Secure : Knm::ConnectionPersistence::PlainText)</default>
       <whatsthis/>
+      <choices name="Knm::ConnectionPersistence::SecretStorage">
+        <choice name="DontStore"/>
+        <choice name="Secure"/>
+        <choice name="PlainText"/>
+      </choices>
     </entry>
   </group>
 </kcfg>

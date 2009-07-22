@@ -41,7 +41,7 @@ Q_OBJECT
 public:
     static const QString NETWORKMANAGEMENT_RCFILE;
     static const QString CONNECTION_PERSISTENCE_PATH;
-    enum SecretStorageMode { Secure, PlainText };
+    enum SecretStorageMode { DontStore, PlainText, Secure};
     class EnumError
     {
     public:

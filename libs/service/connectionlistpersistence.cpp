@@ -113,8 +113,8 @@ Knm::Connection * ConnectionListPersistence::restoreConnection(const QString & c
         kDebug() << config->groupList();
 
         Knm::ConnectionPersistence cp(config,
-                (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
-                 Knm::ConnectionPersistence::PlainText));
+                (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode()
+                );
         cp.load();
         connection = cp.connection();
         Q_ASSERT(connection->uuid() == connectionId);
@@ -219,9 +219,10 @@ void ConnectionListPersistence::handleUpdate(Knm::Connection * connection)
 
     if (connection && !d->ignoreChangedConnections && connection->origin() == QLatin1String("ConnectionListPersistence")) {
         QString uuid = connection->uuid();
+
         Knm::ConnectionPersistence cp(connection, connectionFileForUuid(uuid),
-                (KNetworkManagerServicePrefs::self()->storeInWallet() ? Knm::ConnectionPersistence::Secure :
-                 Knm::ConnectionPersistence::PlainText));
+                (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode()
+                );
         cp.save();
 
         // write knetworkmanagerrc
