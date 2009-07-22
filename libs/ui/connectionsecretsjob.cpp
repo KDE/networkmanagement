@@ -97,7 +97,7 @@ void ConnectionSecretsJob::doWork()
 void ConnectionSecretsJob::gotPersistedSecrets(uint result)
 {
     kDebug();
-    delete m_connectionPersistence;
+    m_connectionPersistence->deleteLater();
     m_connectionPersistence = 0;
     setError(result);
     if (result == Knm::ConnectionPersistence::EnumError::NoError) {

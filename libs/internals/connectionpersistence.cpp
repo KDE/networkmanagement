@@ -206,26 +206,36 @@ void ConnectionPersistence::loadSecrets()
 {
     KConfigGroup cg(m_config, "connection");
     if (cg.exists()) {
+        bool haveResult = true;
+        EnumError::type errorCode = EnumError::NoError;
+
         if (m_storageMode != ConnectionPersistence::Secure) {
+
             foreach (Setting * setting, m_connection->settings()) {
                 setting->setSecretsAvailable(true);
-                emit loadSecretsResult(EnumError::NoError);
             }
+
         } else if (!m_connection->hasSecrets() ||
                 m_connection->secretsAvailable()) {
-            emit loadSecretsResult(EnumError::NoError);
+
         } else if (KWallet::Wallet::isEnabled()) {
+
             kDebug() << "opening wallet...";
             KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
                     walletWid(), KWallet::Wallet::Asynchronous);
             if (wallet) {
+                haveResult = false;
                 disconnect(wallet, SIGNAL(walletOpened(bool)), this, 0);
                 connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
             } else {
-                emit loadSecretsResult(EnumError::WalletNotFound);
+                errorCode = EnumError::WalletNotFound;
             }
         } else {
-            emit loadSecretsResult(EnumError::WalletDisabled);
+            errorCode = EnumError::WalletDisabled;
+        }
+
+        if (haveResult) {
+            emit loadSecretsResult(errorCode);
         }
     }
     return;
