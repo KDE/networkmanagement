@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KNotification>
 #include <KPushButton>
 
+#include <solid/device.h>
 #include <solid/networking.h>
 #include <solid/control/networking.h>
 #include <solid/control/networkinterface.h>
@@ -476,12 +477,17 @@ void NetworkManagerApplet::toolTipAboutToShow()
     } else {
         QString subText;
         qSort(interfaces.begin(), interfaces.end(), networkInterfaceLessThan);
+        bool hasActive = false;
         foreach (Solid::Control::NetworkInterface *iface, interfaces) {
             if (!subText.isEmpty()) {
                 subText += QLatin1String("<br>");
             }
-            subText += QString::fromLatin1("<b>%1</b>: %2").arg(iface->interfaceName()).arg(connectionStateToString(iface->connectionState()));
-            if (iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+            if (iface->connectionState() != Solid::Control::NetworkInterface::Unavailable) {
+                hasActive = true;
+                Solid::Device* dev = new Solid::Device(iface->uni());
+                QString product = dev->product();
+                QString ifaceName = iface->interfaceName();
+                subText += QString::fromLatin1("<b>%1</b>: %2").arg(product).arg(connectionStateToString(iface->connectionState()));
                 Solid::Control::IPv4Config ip4Config = iface->ipV4Config();
                 QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
                 if (!addresses.isEmpty()) {
@@ -494,6 +500,9 @@ void NetworkManagerApplet::toolTipAboutToShow()
                                             subText,
                                             KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop))
                                             );
+        }
+        if (!hasActive) {
+            subText += i18nc("tooltip, all interfaces are down", "Disconnected");
         }
     }
     Plasma::ToolTipManager::self()->setContent(this, m_toolTip);
