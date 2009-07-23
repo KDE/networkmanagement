@@ -384,7 +384,7 @@ void NotificationManager::interfaceConnectionStateChanged(int new_state, int, in
         if (d->interfaceNotifications.contains(iface)) {
             notification = d->interfaceNotifications.take(iface);
         } else {
-            notification = new KNotification(Event::InterfaceStateChange, KNotification::Persistent);
+            notification = new KNotification(Event::InterfaceStateChange, 0, KNotification::Persistent);
             notification->setComponentData(KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
             //notification->addContext(QLatin1String("connectiontype"), /*need to get the connection being activated on this device...*/);
         }
