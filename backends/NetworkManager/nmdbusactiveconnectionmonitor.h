@@ -42,6 +42,11 @@ class OrgFreedesktopNetworkManagerConnectionActiveInterface;
 
 /**
  * Watches the list of active connections and updates InterfaceConnections' state
+ *
+ * This class is dependent on NMDBusSettingsService and NMDBusConnectionProvider being
+ * instantiated and registered to the activatableList first in order to tag
+ * InterfaceConnections with dbus object path and service so that this can match up
+ * activeconnections.
  */
 class KNM_EXPORT NMDBusActiveConnectionMonitor : public QObject, public ActivatableObserver
 {

@@ -113,7 +113,6 @@ int main( int argc, char** argv )
     notificationManager = new NotificationManager(&app);
 
     nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, connectionList);
-    nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(activatableList, nmSettingsService);
 
     // there is a problem setting this as a child of connectionList or of activatableList since it has
     // references to both and NetworkInterfaceActivatableProvider touches the activatableList
@@ -129,8 +128,10 @@ int main( int argc, char** argv )
     activatableList->registerObserver(nmSettingsService);
     activatableList->registerObserver(nmDBusConnectionProvider);
 
-    // register after nmSettingsService and nmDBusConnectionProvider because it relies on changes they
+
+    // instantiate and register after nmSettingsService and nmDBusConnectionProvider because it relies on changes they
     // make to interfaceconnections
+    nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(activatableList, nmSettingsService);
     activatableList->registerObserver(nmActiveConnectionMonitor);
 
     // debug activatable changes

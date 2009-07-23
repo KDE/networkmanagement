@@ -44,9 +44,10 @@ InterfaceConnectionItem::InterfaceConnectionItem(Knm::InterfaceConnection * inte
 : ActivatableItem(*new InterfaceConnectionItemPrivate, interfaceConnection, parent)
 {
     Q_D(InterfaceConnectionItem);
-    if (interfaceConnection->activationState() != Knm::InterfaceConnection::Unknown) {
-        setActivationState(interfaceConnection->activationState());
-    }
+
+    setActivationState(interfaceConnection->activationState());
+
+    setText(interfaceConnection->connectionName());
 
     d->defaultRouteLabel = new QLabel(this);
     d->defaultRouteLabel->setPixmap(SmallIcon("emblem-favorite"));
@@ -54,7 +55,6 @@ InterfaceConnectionItem::InterfaceConnectionItem(Knm::InterfaceConnection * inte
     d->defaultRouteLabel->setVisible(interfaceConnection->hasDefaultRoute());
     addIcon(d->defaultRouteLabel);
 
-    setText(interfaceConnection->connectionName());
     connect(interfaceConnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
             this, SLOT(setActivationState(Knm::InterfaceConnection::ActivationState)));
     connect(interfaceConnection, SIGNAL(hasDefaultRouteChanged(bool)),
@@ -67,13 +67,14 @@ InterfaceConnectionItem::InterfaceConnectionItem(InterfaceConnectionItemPrivate 
 : ActivatableItem(dd, interfaceConnection, parent)
 {
     Q_D(InterfaceConnectionItem);
-    if (interfaceConnection->activationState() != Knm::InterfaceConnection::Unknown) {
-        setActivationState(interfaceConnection->activationState());
-    }
+
+    setActivationState(interfaceConnection->activationState());
+
     setText(interfaceConnection->connectionName());
 
     d->defaultRouteLabel = new QLabel(this);
     d->defaultRouteLabel->setPixmap(SmallIcon("emblem-favorite"));
+    d->defaultRouteLabel->setToolTip(i18nc("@info:tooltip Tooltip for indicator that connection supplies the network default route", "Default"));
     d->defaultRouteLabel->setVisible(interfaceConnection->hasDefaultRoute());
     addIcon(d->defaultRouteLabel);
 

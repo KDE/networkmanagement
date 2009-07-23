@@ -84,6 +84,7 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
 
     // create an interface to any active connections we're not already tracking
     // and update their interfaceconnections
+
     foreach (QString activeConnectionPath, currentActiveConnections) {
         if (!d->activeConnections.contains(activeConnectionPath)) {
             //kDebug() << "Adding active connection interface for " << activeConnectionPath;
@@ -96,7 +97,6 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
 
             // update active interfaceConnections' state
             activeConnectionChangedInternal(active, active->state());
-            activeConnectionChangedInternal(active, active->getDefault());
         }
     }
 
@@ -104,6 +104,7 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
     // This is necessary because when NM sets Unknown state on its Connection.Active objects, they
     // return invalid service and connection values, so we can't look up the interfaceconnection to
     // change back
+
     QList<Knm::Activatable *> activatables = d->activatableList->activatables();
     // check whether each activatable is for one of the active connections
     foreach (Knm::Activatable * activatable, activatables) {
@@ -182,6 +183,7 @@ Knm::InterfaceConnection * NMDBusActiveConnectionMonitor::interfaceConnectionFor
             }
         }
     }
+
     return ic;
 }
 
