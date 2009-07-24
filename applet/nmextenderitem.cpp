@@ -224,7 +224,8 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
                 //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
                 wirelessinterface->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
-                m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon("network-wireless"), "", new ActivatableListWidget(this));
+                ActivatableListWidget* aList = new ActivatableListWidget(m_activatables, iface, this);
+                m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon("network-wireless"), "", aList);
                 interface = wirelessinterface;
                 kDebug() << "WiFi added";
                 break;
@@ -265,7 +266,8 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
             {
                 WiredInterfaceItem * wiredinterface = 0;
                 interface = wiredinterface = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
-                m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon("network-wired"), "", new ActivatableListWidget(this));
+                ActivatableListWidget* aList = new ActivatableListWidget(m_activatables, iface, this);
+                m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon("network-wired"), "", aList);
                 break;
             }
         }

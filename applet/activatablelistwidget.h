@@ -23,8 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QGraphicsWidget>
 
+#include <solid/control/wirednetworkinterface.h>
+
 #include <Plasma/ScrollWidget>
 
+#include "remoteactivatablelist.h"
 
 class QGraphicsLinearLayout;
 
@@ -32,7 +35,7 @@ class ActivatableListWidget: public Plasma::ScrollWidget
 {
 Q_OBJECT
 public:
-    ActivatableListWidget(QGraphicsWidget* parent = 0);
+    ActivatableListWidget(RemoteActivatableList* activatables, Solid::Control::NetworkInterface* iface, QGraphicsWidget* parent = 0);
     virtual ~ActivatableListWidget();
 
 private:

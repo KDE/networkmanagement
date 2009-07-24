@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
-ActivatableListWidget::ActivatableListWidget(QGraphicsWidget * parent) : Plasma::ScrollWidget(parent),
+ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables, Solid::Control::NetworkInterface* iface, QGraphicsWidget* parent) : Plasma::ScrollWidget(parent),
     m_layout(0)
 {
     m_widget = new QGraphicsWidget(this);
