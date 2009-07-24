@@ -60,7 +60,7 @@ Q_SIGNALS:
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
-    void createTab(InterfaceItem * item, Solid::Control::NetworkInterface* iface, const QString &icon);
+    void createTab(InterfaceItem * item, Solid::Control::NetworkInterface* iface, const QString &name, const QString &icon = 0);
 
     RemoteActivatableList* m_activatables;
     // list of interfaces [uni] = iface

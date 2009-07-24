@@ -173,7 +173,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 ifaceItem = wifiItem;
                 //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
                 wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
-                createTab(ifaceItem, iface, "network-wireless");
+                createTab(ifaceItem, iface, i18nc("title of the wireless tab", "Wireless"), "network-wireless");
                 kDebug() << "WiFi added";
                 break;
             }
@@ -192,7 +192,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 ifaceItem = wiredItem = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
 
                 // Add a wired tab
-                createTab(wiredItem, iface, icon);
+                createTab(wiredItem, iface, i18nc("title of the wired tab", "Wired"), icon);
                 break;
             }
         }
@@ -207,11 +207,11 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
     //emit updateLayout();
 }
 
-void NMExtenderItem::createTab(InterfaceItem * item, Solid::Control::NetworkInterface* iface, const QString &icon)
+void NMExtenderItem::createTab(InterfaceItem * item, Solid::Control::NetworkInterface* iface, const QString &name, const QString &icon)
 {
     // Add it to the list of connectables
     ActivatableListWidget* aList = new ActivatableListWidget(m_activatables, iface, m_connectionTabs);
-    m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon(icon), "", aList);
+    m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon(icon), name, aList);
     connect(item, SIGNAL(clicked(const QString&)), this, SLOT(switchTab(const QString&)));
 }
 // vim: sw=4 sts=4 et tw=100
