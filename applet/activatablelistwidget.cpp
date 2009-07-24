@@ -54,7 +54,7 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_layout->setSpacing(0);
     m_widget->setLayout(m_layout);
     setWidget(m_widget);
-
+    init();
     listAppeared();
 }
 
@@ -156,34 +156,12 @@ void ActivatableListWidget::listDisappeared()
     foreach (ActivatableItem* item, m_itemIndex) {
         kDebug() << "deleting";
         m_layout->removeItem(item);
+        delete item;
     }
     m_itemIndex.clear();
     kDebug() << "Cleared up";
 }
 
-/*
-bool ActivatableListWidget::registerActivatable(RemoteActivatable * activatable)
-{
-
-    bool changed = false;
-    / *
-    if (!m_connections.contains(activatable)) {
-   // let subclass decide
-   if (accept(activatable)) {
-   kDebug() << "adding activatable";
-   ActivatableItem * ci = createItem(activatable);
-
-   m_connections.insert(activatable, ci);
-   m_connectionLayout->addItem(ci);
-   m_connectionLayout->invalidate();
-   m_layout->invalidate();
-   changed = true;
-   }
-   }
-   * /
-   return changed;
-   }
-   */
 void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
 {
     kDebug();
@@ -197,6 +175,13 @@ void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
 void ActivatableListWidget::activatableRemoved(RemoteActivatable * removed)
 {
     kDebug();
+    if (m_itemIndex.keys().contains(removed->deviceUni())) {
+        kDebug() << "We have the activatable matching " << removed->deviceUni();
+    } else {
+        kDebug() << "We DO NOT have the activatable matching " << removed->deviceUni();
+    }
+    delete m_itemIndex[removed->deviceUni()];
+    m_itemIndex.remove(removed->deviceUni());
     /*
     // look up the ActivatableItem and remove it
     if (m_connections.contains(removed)) {
