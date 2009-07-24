@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/ExtenderItem>
 #include <Plasma/Extender>
 #include <Plasma/TabBar>
+
+#include <solid/control/networkinterface.h>
 //class AbstractConnectableItem;
 //class NetworkManagerSettings;
 class QGraphicsLinearLayout;
@@ -35,6 +37,8 @@ class ActivatableItem;
 
 class RemoteActivatable;
 class RemoteActivatableList;
+
+class InterfaceItem;
 
 class NMExtenderItem: public Plasma::ExtenderItem
 {
@@ -51,11 +55,19 @@ public Q_SLOTS:
     void activatableAdded(RemoteActivatable *);
     void activatableRemoved(RemoteActivatable *);
     void listDisappeared();
+    void interfaceAdded(const QString&);
+    void interfaceRemoved(const QString&);
+
 Q_SIGNALS:
     void connectionListUpdated();
 
 private:
+    void addInterfaceInternal(Solid::Control::NetworkInterface *);
+
+
     RemoteActivatableList* m_activatables;
+    // list of interfaces [uni] = iface
+    QHash<QString, InterfaceItem *> m_interfaces;
 
     QGraphicsWidget* m_widget;
     QGraphicsLinearLayout* m_mainLayout;

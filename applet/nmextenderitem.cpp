@@ -26,10 +26,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Label>
 
 #include <KDebug>
+#include <solid/control/networkmanager.h>
+#include <solid/control/wirelessnetworkinterface.h>
+#include <solid/control/wirednetworkinterface.h>
 
 #include "activatableitem.h"
 #include "remoteactivatable.h"
 #include "remoteactivatablelist.h"
+
+#include "interfaceitem.h"
+#include "wirelessinterfaceitem.h"
+#include "wiredinterfaceitem.h"
+
 
 NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::Extender * ext)
 : Plasma::ExtenderItem(ext),
@@ -39,6 +47,16 @@ NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setName("nmextenderitem");
     widget();
+
+    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+            addInterfaceInternal(iface);
+            //kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
+    }
+    // hook up signals to allow us to change the connection list depending on APs present, etc
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+            SLOT(interfaceAdded(const QString&)));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+            SLOT(interfaceRemoved(const QString&)));
 }
 
 NMExtenderItem::~NMExtenderItem()
@@ -87,21 +105,16 @@ QGraphicsItem * NMExtenderItem::widget()
 
         QGraphicsWidget* interfaceWidget = new QGraphicsWidget(m_widget);
         m_interfaceLayout = new QGraphicsLinearLayout(interfaceWidget);
+        m_interfaceLayout->setOrientation(Qt::Vertical);
         interfaceWidget->setLayout(m_interfaceLayout);
         m_mainLayout->addItem(interfaceWidget);
 
-        Plasma::Label* label = new Plasma::Label(m_widget);
-        label->setText("interfaceLayout");
-        m_interfaceLayout->addItem(label);
-        //m_mainLayout->addItem(label);
-
         Plasma::TabBar* m_connectionTabs = new Plasma::TabBar(m_widget);
+        m_connectionTabs->setMinimumSize(200, 300);
         //label2->setText("connectionsTabs");
         m_connectionTabs->addTab(KIcon("network-wireless"), i18n("Wireless Networking"));
         m_connectionTabs->addTab(KIcon("network-wired"), i18n("Wired Networking"));
         m_mainLayout->addItem(m_connectionTabs);
-
-
 
     } else {
         kDebug() << "widget non empty";
@@ -172,5 +185,114 @@ void NMExtenderItem::activatableRemoved(RemoteActivatable * removed)
     }
     */
 }
+
+
+// Interfaces
+void NMExtenderItem::interfaceAdded(const QString& uni)
+{
+    if (m_interfaces.keys().contains(uni)) {
+        return;
+    }
+    kDebug() << "Interface Added.";
+    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+    addInterfaceInternal(iface);
+    //emit updateLayout(); // QGL cludge
+}
+
+void NMExtenderItem::interfaceRemoved(const QString& uni)
+{
+    if (m_interfaces.contains(uni)) {
+        InterfaceItem * item = m_interfaces.take(uni);
+        m_interfaceLayout->removeItem(item);
+        //KNotification::event(Event::HwRemoved, i18nc("Notification for hardware removed", "Network interface removed"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+        delete item;
+        //reassess();
+    }
+    //emit updateLayout(); // QGL cludge
+}
+
+void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
+{
+    Q_ASSERT(iface);
+    if (!m_interfaces.contains(iface->uni())) {
+        /*
+        if (iface->type() != m_type) {
+            return;
+        }
+        */
+        InterfaceItem * interface = 0;
+
+        switch (iface->type()) {
+            case Solid::Control::NetworkInterface::Ieee80211:
+            {
+                WirelessInterfaceItem * wirelessinterface = 0;
+                wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
+                //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
+                wirelessinterface->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
+
+                /*
+                // keep track of rf kill changes
+                QObject::disconnect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)), this, 0 );
+                QObject::disconnect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)), this, 0 );
+                QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
+                                 this, SLOT(setEnabled(bool)));
+                QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
+                                this, SLOT(setEnabled(bool)));
+                */
+                interface = wirelessinterface;
+                kDebug() << "WiFi added";
+                break;
+            }
+            case Solid::Control::NetworkInterface::Serial:
+                #if 0
+                {
+                    interface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
+                    m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                    inspector = new PppoeConnectionInspector;
+                    break;
+                }
+                #endif
+            case Solid::Control::NetworkInterface::Gsm:
+                #if 0
+                {
+                    interface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
+                    m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                    // TODO: When ModemManager support is added, connect signals from the SII to
+                    // reassesConnectionList
+                    inspector = new GsmConnectionInspector;
+                    break;
+                }
+                #endif
+            case Solid::Control::NetworkInterface::Cdma:
+                #if 0
+                {
+                    interface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
+                    m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
+                    inspector = new CdmaConnectionInspector;
+                    // TODO: When ModemManager support is added, connect signals from the SII to
+                    // reassesConnectionList
+                    break;
+                }
+                #endif
+            default:
+            case Solid::Control::NetworkInterface::Ieee8023:
+            {
+                WiredInterfaceItem * wiredinterface = 0;
+                interface = wiredinterface = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
+                break;
+            }
+        }
+        //interface->setEnabled(m_enabled);
+        m_interfaceLayout->addItem(interface);
+        m_interfaces.insert(iface->uni(), interface);
+        //m_interfaceLayout->invalidate();
+        //m_interfaceLayout->updateGeometry();
+        //updateNetworks();
+    }
+    //show();
+    //emit updateLayout();
+}
+
+
 // vim: sw=4 sts=4 et tw=100
 
