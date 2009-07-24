@@ -1,5 +1,5 @@
 /*
-Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2009 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -68,6 +68,7 @@ private:
     RemoteActivatableList* m_activatables;
     // list of interfaces [uni] = iface
     QHash<QString, InterfaceItem *> m_interfaces;
+    QHash<QString, int> m_tabIndex;
 
     QGraphicsWidget* m_widget;
     QGraphicsLinearLayout* m_mainLayout;

@@ -194,6 +194,10 @@ void InterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
     m_connectButton->hide();
 }
 
+QString InterfaceItem::label()
+{
+    return m_ifaceNameLabel->text();
+}
 
 void InterfaceItem::setEnabled(bool enable)
 {

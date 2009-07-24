@@ -62,6 +62,8 @@ public:
     virtual void setEnabled(bool active);
     virtual QString connectionName();
 
+    QString label();
+
 public Q_SLOTS:
     void activeConnectionsChanged();
     void connectionStateChanged(int);

@@ -37,26 +37,18 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceitem.h"
 #include "wirelessinterfaceitem.h"
 #include "wiredinterfaceitem.h"
-
+#include "activatablelistwidget.h"
 
 NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::Extender * ext)
 : Plasma::ExtenderItem(ext),
     m_activatables(activatableList),
-    m_widget(0)
+    m_widget(0),
+    m_connectionTabs(0)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setName("nmextenderitem");
     widget();
-
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-            addInterfaceInternal(iface);
-            //kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
-    }
-    // hook up signals to allow us to change the connection list depending on APs present, etc
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            SLOT(interfaceAdded(const QString&)));
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
-            SLOT(interfaceRemoved(const QString&)));
+    init();
 }
 
 NMExtenderItem::~NMExtenderItem()
@@ -65,6 +57,17 @@ NMExtenderItem::~NMExtenderItem()
 
 void NMExtenderItem::init()
 {
+    kDebug() << "Adding interfaces initially";
+    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+        addInterfaceInternal(iface);
+        kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
+    }
+    // hook up signals to allow us to change the connection list depending on APs present, etc
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+            SLOT(interfaceAdded(const QString&)));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+            SLOT(interfaceRemoved(const QString&)));
+
     /*
     m_widget = new QGraphicsWidget(this);
     m_layout = new QGraphicsLinearLayout(Qt::Vertical, m_widget);
@@ -109,11 +112,12 @@ QGraphicsItem * NMExtenderItem::widget()
         interfaceWidget->setLayout(m_interfaceLayout);
         m_mainLayout->addItem(interfaceWidget);
 
-        Plasma::TabBar* m_connectionTabs = new Plasma::TabBar(m_widget);
+        m_connectionTabs = new Plasma::TabBar(m_widget);
         m_connectionTabs->setMinimumSize(200, 300);
-        //label2->setText("connectionsTabs");
-        m_connectionTabs->addTab(KIcon("network-wireless"), i18n("Wireless Networking"));
-        m_connectionTabs->addTab(KIcon("network-wired"), i18n("Wired Networking"));
+        //m_connectionTabs->addTab(KIcon("network-wireless"), i18n("Wireless Networking"));
+        //m_connectionTabs->addTab(KIcon("network-wired"), i18n("Wired Networking"));
+        //m_connectionTabs->addTab(i18n("Wireless Networking"));
+        //m_connectionTabs->addTab(i18n("Wired Networking"));
         m_mainLayout->addItem(m_connectionTabs);
 
     } else {
@@ -196,7 +200,6 @@ void NMExtenderItem::interfaceAdded(const QString& uni)
     kDebug() << "Interface Added.";
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
-    //emit updateLayout(); // QGL cludge
 }
 
 void NMExtenderItem::interfaceRemoved(const QString& uni)
@@ -204,24 +207,16 @@ void NMExtenderItem::interfaceRemoved(const QString& uni)
     if (m_interfaces.contains(uni)) {
         InterfaceItem * item = m_interfaces.take(uni);
         m_interfaceLayout->removeItem(item);
-        //KNotification::event(Event::HwRemoved, i18nc("Notification for hardware removed", "Network interface removed"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+        // TODO: remove tab
         delete item;
-        //reassess();
     }
-    //emit updateLayout(); // QGL cludge
 }
 
 void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
 {
     Q_ASSERT(iface);
     if (!m_interfaces.contains(iface->uni())) {
-        /*
-        if (iface->type() != m_type) {
-            return;
-        }
-        */
         InterfaceItem * interface = 0;
-
         switch (iface->type()) {
             case Solid::Control::NetworkInterface::Ieee80211:
             {
@@ -229,16 +224,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
                 //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
                 wirelessinterface->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
-
-                /*
-                // keep track of rf kill changes
-                QObject::disconnect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)), this, 0 );
-                QObject::disconnect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)), this, 0 );
-                QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
-                                 this, SLOT(setEnabled(bool)));
-                QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
-                                this, SLOT(setEnabled(bool)));
-                */
+                m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon("network-wireless"), "", new ActivatableListWidget(this));
                 interface = wirelessinterface;
                 kDebug() << "WiFi added";
                 break;
@@ -279,6 +265,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
             {
                 WiredInterfaceItem * wiredinterface = 0;
                 interface = wiredinterface = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
+                m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon("network-wired"), "", new ActivatableListWidget(this));
                 break;
             }
         }
