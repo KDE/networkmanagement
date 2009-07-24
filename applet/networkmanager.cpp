@@ -61,7 +61,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#include "vpnconnectiongroup.h"
 //#include "networkmanagersettings.h"
 #include "interfaceitem.h"
-#include "generalextender.h"
+#include "nmextenderitem.h"
 #include "events.h"
 
 
@@ -134,47 +134,35 @@ void NetworkManagerApplet::init()
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             this, SLOT(networkInterfaceRemoved(const QString&)));
 
-    // Set up the extender with its various groups.  The first call to extender() triggers calls to
-    // initExtenderItem() if there are any detached items.
-    //extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
-
-    // Give Plasma some time to start up before we add the network interfaces, we don't want to block
-    // the startup with all the setting up of Extenders and connection items
-    QTimer::singleShot(2000, this, SLOT(networkInterfaceAdded()));
     // add VPN and General Settings last
-    showGeneral(true);
+    //loadExtender();
+    //initExtenderItem(0);
+
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
 
     m_activatableList->init();
+
+    kDebug() << "???";
+    //if (!extender()->hasItem("nmextenderitem")) {
+        kDebug() << "!!";
+        //Plasma::ExtenderItem *eItem = new Plasma::ExtenderItem(extender());
+        NMExtenderItem* eItem = new NMExtenderItem(m_activatableList, extender());
+        //initExtenderItem(eItem);
+        //extender()->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
+    //} else {
+        //kDebug() << "no other extender found";
+    //}
 }
+
 
 void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
 {
-    return;
-    const QString WIRED_EXTENDER_ITEM_NAME = QLatin1String("wired");
-    const QString WIRELESS_EXTENDER_ITEM_NAME = QLatin1String("wireless");
-    const QString GSM_EXTENDER_ITEM_NAME = QLatin1String("gsm");
-    const QString CDMA_EXTENDER_ITEM_NAME = QLatin1String("cdma");
-    const QString VPN_EXTENDER_ITEM_NAME = QLatin1String("vpn");
-    const QString GENERAL_EXTENDER_ITEM_NAME = QLatin1String("general");
-
-    if (eItem->name() == WIRED_EXTENDER_ITEM_NAME) {
-        showWired(true);
-    } else if (eItem->name() == WIRELESS_EXTENDER_ITEM_NAME) {
-        showWireless(true);
-    } else if (eItem->name() == CDMA_EXTENDER_ITEM_NAME || eItem->name() == GSM_EXTENDER_ITEM_NAME) {
-        showCellular(true);
-    } else if (eItem->name() == VPN_EXTENDER_ITEM_NAME) {
-        showVpn(true);
-    } else if (eItem->name() == GENERAL_EXTENDER_ITEM_NAME) {
-        GeneralExtender* item = dynamic_cast<GeneralExtender* >(eItem);
-        if (item) {
-            item->graphicsWidget();
-        }
-    } else {
-        kDebug() << "Unrecognised extender name!  Is the config from the future?";
+    // Let's just load a new one, hackish but works for now
+    if (eItem->name() == "nmextenderitem") {
+        eItem->destroy();
     }
+    return;
 }
 
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
@@ -369,8 +357,8 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
 
     // update extender visibility
     KConfigGroup cg = config();
-    showWired(cg.readEntry("showWired", true));
-    showWireless(cg.readEntry("showWireless", true));
+    //showWired(cg.readEntry("showWired", true));
+    //showWireless(cg.readEntry("showWireless", true));
     showVpn(cg.readEntry("showVpn", true));
     //showPppoe(cg.readEntry("showPppoe", true));
     showCellular(cg.readEntry("showCellular", true));
@@ -393,10 +381,10 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
 
     // update extender visibility
     KConfigGroup cg = config();
-    showWired(cg.readEntry("showWired", true));
-    showWireless(cg.readEntry("showWireless", true));
+    //showWired(cg.readEntry("showWired", true));
+    //showWireless(cg.readEntry("showWireless", true));
     //showPppoe(cg.readEntry("showPppoe", true));
-    showCellular(cg.readEntry("showCellular", true));
+    //showCellular(cg.readEntry("showCellular", true));
     //showCdma(cg.readEntry("showCdma", true));
 
     interfaceConnectionStateChanged();
@@ -728,23 +716,16 @@ void NetworkManagerApplet::manageConnections()
     hidePopup();
 }
 
-void NetworkManagerApplet::showGeneral(bool show)
+void NetworkManagerApplet::loadExtender()
 {
-    m_showGeneral = show;
-    Plasma::ExtenderItem *eItem = extender()->item("general");
-    if (show) {
-        if (eItem) {
-            eItem->destroy(); // Apparently, we need to "refresh the extenderitem
-        }
-        GeneralExtender * eItem = new GeneralExtender(extender());
-        eItem->graphicsWidget();
-        //initExtenderItem(eItem);
-    } else {
-        if (eItem) {
-            kDebug() << "Hiding General Settings extender";
-            eItem->destroy();
-        }
+    Plasma::ExtenderItem *eItem = extender()->item("networkmanagement");
+    if (eItem) {
+        eItem->destroy(); // Apparently, we need to "refresh the extenderitem
     }
+    eItem = new NMExtenderItem(m_activatableList, extender());
+    eItem->setName("networkmanagement");
+    eItem->setTitle(i18nc("Label for extender","Network Management"));
+    eItem->widget();
 }
 
 void NetworkManagerApplet::showWired(bool show)
@@ -873,6 +854,7 @@ void NetworkManagerApplet::userWirelessEnabledChanged(bool enabled)
     Solid::Control::NetworkManager::setWirelessEnabled(enabled);
 }
 
+/*
 void NetworkManagerApplet::activateConnection(const QString& connection)
 {
     kDebug() << connection;
@@ -882,7 +864,7 @@ void NetworkManagerApplet::deactivateConnection(const QString& connection)
 {
     kDebug() << connection;
 }
-
+*/
 void NetworkManagerApplet::managerStatusChanged(Solid::Networking::Status status)
 {
     if (Solid::Networking::Unknown == status ) {

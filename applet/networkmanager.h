@@ -56,8 +56,6 @@ public:
     ~NetworkManagerApplet();
     /* reimp Plasma::Applet */
     void init();
-    /* reimp Plasma::PopupApplet */
-    void initExtenderItem(Plasma::ExtenderItem *);
     /* reimp Plasma::Applet */
     void paintInterface(QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
     /* reimp Plasma::Applet */
@@ -67,6 +65,7 @@ public:
     /* reimp Plasma::Applet */
     void constraintsEvent(Plasma::Constraints constraints);
     virtual QList<QAction*> contextualActions();
+    virtual void initExtenderItem(Plasma::ExtenderItem *);
 
     static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
 
@@ -74,32 +73,9 @@ public:
     void showWireless(bool show);
     void showVpn(bool show);
     void showCellular(bool show);
-    void showGeneral(bool show);
+    void loadExtender();
 
-public Q_SLOTS:
-    /** slots called when a connection in the popup is clicked */
-    void activateConnection(const QString&);
-    void deactivateConnection(const QString&);
-
-    /**
-     * Update the popup and notify on device changes
-     */
-    //void networkInterfaceAdded(const QString&);
-    //void networkInterfaceRemoved(const QString&);
-
-    /**
-     * Update the popup and notify on wireless changes
-     */
-    //void accessPointAppeared(const QString &);
-    //void accessPointDisappeared(const QString &);
-
-    /**
-     * Update the popup and notify on configuration changes
-     */
-    //void connectionAdded();
-    //void connectionRemoved();
-
-    //void overallStatusChanged(Solid::Networking::Status);
+    public Q_SLOTS:
     /**
      * Handle signals from NM if wireless was disabled in software
      */
@@ -152,7 +128,6 @@ private:
     void paintDefaultInterface(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
     void paintWiredInterface(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
     void paintWirelessInterface(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
-
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;
     Plasma::Svg *m_svg;
@@ -170,7 +145,7 @@ private:
     bool m_showWireless;
     bool m_showVpn;
     bool m_showCellular;
-    bool m_showGeneral;
+    //bool m_showGeneral;
     int m_numberWirelessShown;
     RemoteActivatableList * m_activatableList;
 };
