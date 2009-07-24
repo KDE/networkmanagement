@@ -51,10 +51,6 @@ public:
     virtual QGraphicsItem * widget();
 
 public Q_SLOTS:
-    //virtual void activate(ActivatableItem*) = 0;
-    void activatableAdded(RemoteActivatable *);
-    void activatableRemoved(RemoteActivatable *);
-    void listDisappeared();
     void interfaceAdded(const QString&);
     void interfaceRemoved(const QString&);
 

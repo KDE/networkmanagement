@@ -113,7 +113,9 @@ QGraphicsItem * NMExtenderItem::widget()
         m_mainLayout->addItem(interfaceWidget);
 
         m_connectionTabs = new Plasma::TabBar(m_widget);
-        m_connectionTabs->setMinimumSize(200, 300);
+        m_connectionTabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        m_connectionTabs->setPreferredSize(260, 200);
+        m_connectionTabs->setMinimumSize(260, 120);
         //m_connectionTabs->addTab(KIcon("network-wireless"), i18n("Wireless Networking"));
         //m_connectionTabs->addTab(KIcon("network-wired"), i18n("Wired Networking"));
         //m_connectionTabs->addTab(i18n("Wireless Networking"));
@@ -126,70 +128,6 @@ QGraphicsItem * NMExtenderItem::widget()
     kDebug() << "widget() run";
     return m_widget;
 }
-
-void NMExtenderItem::listDisappeared()
-{
-    /*
-    //remove all connections from this service
-    QHash<RemoteActivatable*, ActivatableItem*>::iterator i = m_connections.begin();
-    while (i != m_connections.end()) {
-        ActivatableItem * item = i.value();
-        m_connectionLayout->removeItem(item);
-        i = m_connections.erase(i);
-        delete item;
-    }
-    emit connectionListUpdated();
-    */
-}
-
-/*
-bool NMExtenderItem::registerActivatable(RemoteActivatable * activatable)
-{
-
-    bool changed = false;
-    / *
-    if (!m_connections.contains(activatable)) {
-        // let subclass decide
-        if (accept(activatable)) {
-            kDebug() << "adding activatable";
-            ActivatableItem * ci = createItem(activatable);
-
-            m_connections.insert(activatable, ci);
-            m_connectionLayout->addItem(ci);
-            m_connectionLayout->invalidate();
-            m_layout->invalidate();
-            changed = true;
-        }
-    }
-    * /
-    return changed;
-}
-*/
-void NMExtenderItem::activatableAdded(RemoteActivatable * added)
-{
-    /*
-    if (registerActivatable(added)) {
-        kDebug();
-        emit connectionListUpdated();
-    }
-    */
-}
-
-void NMExtenderItem::activatableRemoved(RemoteActivatable * removed)
-{
-    /*
-    // look up the ActivatableItem and remove it
-    if (m_connections.contains(removed)) {
-        ActivatableItem * item = m_connections.value(removed);
-        m_connectionLayout->removeItem(item);
-        m_connections.remove(removed);
-        delete item;
-        kDebug();
-        emit connectionListUpdated();
-    }
-    */
-}
-
 
 // Interfaces
 void NMExtenderItem::interfaceAdded(const QString& uni)
@@ -231,41 +169,16 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 break;
             }
             case Solid::Control::NetworkInterface::Serial:
-                #if 0
-                {
-                    interface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
-                    m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
-                    inspector = new PppoeConnectionInspector;
-                    break;
-                }
-                #endif
             case Solid::Control::NetworkInterface::Gsm:
-                #if 0
-                {
-                    interface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
-                    m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
-                    // TODO: When ModemManager support is added, connect signals from the SII to
-                    // reassesConnectionList
-                    inspector = new GsmConnectionInspector;
-                    break;
-                }
-                #endif
             case Solid::Control::NetworkInterface::Cdma:
-                #if 0
-                {
-                    interface = new SerialInterfaceItem(static_cast<Solid::Control::SerialNetworkInterface *>(iface),
-                    m_userSettings, m_systemSettings, InterfaceItem::InterfaceName, this);
-                    inspector = new CdmaConnectionInspector;
-                    // TODO: When ModemManager support is added, connect signals from the SII to
-                    // reassesConnectionList
-                    break;
-                }
-                #endif
             default:
             case Solid::Control::NetworkInterface::Ieee8023:
             {
+                // Create the interfaceitem
                 WiredInterfaceItem * wiredinterface = 0;
                 interface = wiredinterface = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
+
+                // Add a wired tab
                 ActivatableListWidget* aList = new ActivatableListWidget(m_activatables, iface, this);
                 m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon("network-wired"), "", aList);
                 break;

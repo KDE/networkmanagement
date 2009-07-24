@@ -53,7 +53,11 @@ void InterfaceConnectionItem::setupItem()
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setDrawBackground(true);
     m_connectButton->setIcon("network-wired");
-    m_connectButton->setText(interfaceConnection()->connectionName());
+    if (interfaceConnection()) {
+        m_connectButton->setText(interfaceConnection()->connectionName());
+    } else {
+        m_connectButton->setText("missing name");
+    }
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setMaximumHeight(rowHeight);
     m_connectButton->setOrientation(Qt::Horizontal);
