@@ -95,9 +95,11 @@ QGraphicsItem * NMExtenderItem::widget()
         m_interfaceLayout->addItem(label);
         //m_mainLayout->addItem(label);
 
-        Plasma::Label* label2 = new Plasma::Label(m_widget);
-        label2->setText("connectionsTabs");
-        m_mainLayout->addItem(label2);
+        Plasma::TabBar* m_connectionTabs = new Plasma::TabBar(m_widget);
+        //label2->setText("connectionsTabs");
+        m_connectionTabs->addTab(KIcon("network-wireless"), i18n("Wireless Networking"));
+        m_connectionTabs->addTab(KIcon("network-wired"), i18n("Wired Networking"));
+        m_mainLayout->addItem(m_connectionTabs);
 
 
 
