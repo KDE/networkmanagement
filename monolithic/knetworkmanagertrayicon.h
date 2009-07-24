@@ -83,9 +83,9 @@ protected Q_SLOTS:
     void networkingStatusChanged(Solid::Networking::Status);
 
     /**
-     * Disable wireless in response to user action
+     * Enable wireless in response to user action
      */
-    void disableWireless(bool);
+    void enableWireless(bool);
 
     /**
      * Update UI in response to system network management state changes

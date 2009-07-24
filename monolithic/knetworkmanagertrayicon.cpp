@@ -97,10 +97,11 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     setStatus( (!active || Solid::Control::NetworkManager::status() == Solid::Networking::Unknown )? KNotificationItem::Passive : KNotificationItem::Active);
 
     if (types.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
-        d->flightModeAction = new KAction(i18nc("@action:inmenu turns off wireless networking", "Disable wireless"), this);
+        d->flightModeAction = new KAction(i18nc("@action:inmenu turns off wireless networking", "Enable wireless"), this);
         d->flightModeAction->setCheckable(true);
-        d->flightModeAction->setChecked(!Solid::Control::NetworkManager::isWirelessEnabled());
-        connect(d->flightModeAction, SIGNAL(toggled(bool)), this, SLOT(disableWireless(bool)));
+        d->flightModeAction->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
+        d->flightModeAction->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+        connect(d->flightModeAction, SIGNAL(toggled(bool)), this, SLOT(enableWireless(bool)));
         connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
                 this, SLOT(wirelessEnabledChanged()));
         connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
@@ -283,9 +284,12 @@ void KNetworkManagerTrayIcon::fillPopup()
     } else {
         d->wirelessNetworkItemMenu->setTitle(i18nc("@title:menu Wireless network item menu title when no networks found", "Other networks"));
     }
-    d->wirelessNetworkItemMenu->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled() && Solid::Control::NetworkManager::isWirelessHardwareEnabled());
 
-    contextMenu()->insertAction(insertionPointForWirelessNetworkSubmenu, d->wirelessNetworkItemMenu->menuAction());
+    if (Solid::Control::NetworkManager::isWirelessEnabled() && Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
+
+        contextMenu()->insertAction(insertionPointForWirelessNetworkSubmenu, d->wirelessNetworkItemMenu->menuAction());
+
+    }
 
 
     // insert the unconfigured wireless interface items at the right place in the right menu (see
@@ -527,10 +531,10 @@ void KNetworkManagerTrayIcon::networkingStatusChanged(Solid::Networking::Status 
     }
 }
 
-void KNetworkManagerTrayIcon::disableWireless(bool disabled)
+void KNetworkManagerTrayIcon::enableWireless(bool enabled)
 {
-    kDebug() << disabled;
-    Solid::Control::NetworkManager::setWirelessEnabled(!disabled);
+    kDebug() << enabled;
+    Solid::Control::NetworkManager::setWirelessEnabled(enabled);
 }
 
 void KNetworkManagerTrayIcon::wirelessEnabledChanged()
@@ -538,7 +542,10 @@ void KNetworkManagerTrayIcon::wirelessEnabledChanged()
     Q_D(KNetworkManagerTrayIcon);
     d->flightModeAction->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
 
-    d->flightModeAction->setChecked(!Solid::Control::NetworkManager::isWirelessEnabled());
+    d->flightModeAction->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
+    if (!(Solid::Control::NetworkManager::isWirelessHardwareEnabled() && Solid::Control::NetworkManager::isWirelessEnabled())) {
+        contextMenu()->removeAction(d->wirelessNetworkItemMenu->menuAction());
+    }
 }
 
 void KNetworkManagerTrayIcon::setActive(bool active)
