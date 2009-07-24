@@ -68,7 +68,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_layout->setColumnSpacing(0, 8);
     m_layout->setColumnSpacing(1, 4);
     m_layout->setColumnSpacing(2, 6);
-    m_layout->setPreferredWidth(300);
+    m_layout->setPreferredWidth(280);
     m_layout->setColumnFixedWidth(0, 48);
     m_layout->setColumnMinimumWidth(1, 144);
     m_layout->setColumnFixedWidth(2, 60); // FIXME: spacing?
@@ -77,7 +77,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_icon = new Plasma::IconWidget(this);
     m_icon->setMinimumHeight(48);
     m_icon->setMaximumHeight(48);
-    m_icon->setAcceptHoverEvents(false);
+    m_icon->setAcceptHoverEvents(true);
+    connect(m_icon, SIGNAL(clicked()), this, SLOT(itemClicked()));
     m_layout->addItem(m_icon, 0, 0, 2, 1);
 
 
@@ -180,6 +181,11 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     connectionStateChanged(m_iface->connectionState(), true);
     setLayout(m_layout);
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+}
+
+void InterfaceItem::itemClicked()
+{
+    emit clicked(m_iface->uni());
 }
 
 void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
@@ -423,7 +429,7 @@ QPixmap InterfaceItem::statePixmap(const QString &icon) {
 
 void InterfaceItem::setUnavailable()
 {
-    m_icon->setEnabled(false);
+    //m_icon->setEnabled(false);
     //m_ifaceNameLabel->setText(i18n("<b>Interface %1</b>", m_iface->interfaceName()));
     m_connectionNameLabel->setText(m_unavailableText);
     m_connectionInfoLabel->setText("");
@@ -435,7 +441,7 @@ void InterfaceItem::setUnavailable()
 
 void InterfaceItem::setInactive()
 {
-    m_icon->setEnabled(false);
+    m_icon->setEnabled(true);
     m_connectionNameLabel->setText(i18nc("networking device is not connected", "Disconnected"));
     m_connectionInfoLabel->setText("");
 

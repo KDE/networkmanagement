@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "nmextenderitem.h"
 
 #include <QGraphicsLinearLayout>
+#include <QGraphicsGridLayout>
 
 #include <Plasma/Extender>
 #include <Plasma/Label>
@@ -102,25 +103,25 @@ QGraphicsItem * NMExtenderItem::widget()
         m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         setWidget(m_widget);
 
-        m_mainLayout = new QGraphicsLinearLayout(m_widget);
-        m_mainLayout->setOrientation(Qt::Horizontal);
+        m_mainLayout = new QGraphicsGridLayout(m_widget);
+        //m_mainLayout->setOrientation(Qt::Horizontal);
+        m_mainLayout->setColumnFixedWidth(0, 240);
+        m_mainLayout->setColumnFixedWidth(0, 240);
         m_widget->setLayout(m_mainLayout);
 
         QGraphicsWidget* interfaceWidget = new QGraphicsWidget(m_widget);
         m_interfaceLayout = new QGraphicsLinearLayout(interfaceWidget);
         m_interfaceLayout->setOrientation(Qt::Vertical);
         interfaceWidget->setLayout(m_interfaceLayout);
-        m_mainLayout->addItem(interfaceWidget);
+        m_mainLayout->addItem(interfaceWidget, 0, 0);
 
         m_connectionTabs = new Plasma::TabBar(m_widget);
+        //m_connectionTabs->setTabBarShown(false);
         m_connectionTabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         m_connectionTabs->setPreferredSize(260, 200);
         m_connectionTabs->setMinimumSize(260, 120);
-        //m_connectionTabs->addTab(KIcon("network-wireless"), i18n("Wireless Networking"));
-        //m_connectionTabs->addTab(KIcon("network-wired"), i18n("Wired Networking"));
-        //m_connectionTabs->addTab(i18n("Wireless Networking"));
-        //m_connectionTabs->addTab(i18n("Wired Networking"));
-        m_mainLayout->addItem(m_connectionTabs);
+
+        m_mainLayout->addItem(m_connectionTabs, 0, 1);
 
     } else {
         kDebug() << "widget non empty";
@@ -150,43 +151,54 @@ void NMExtenderItem::interfaceRemoved(const QString& uni)
     }
 }
 
+void NMExtenderItem::switchTab(const QString& uni)
+{
+    if (m_interfaces.contains(uni)) {
+        m_connectionTabs->setCurrentIndex(m_tabIndex[uni]);
+    }
+}
+
 void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
 {
     Q_ASSERT(iface);
     if (!m_interfaces.contains(iface->uni())) {
-        InterfaceItem * interface = 0;
+        InterfaceItem * ifaceItem = 0;
+        QString icon;
         switch (iface->type()) {
             case Solid::Control::NetworkInterface::Ieee80211:
             {
-                WirelessInterfaceItem * wirelessinterface = 0;
-                wirelessinterface = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
+                // Create the wireless interface item
+                WirelessInterfaceItem * wifiItem = 0;
+                wifiItem = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
+                ifaceItem = wifiItem;
                 //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
-                wirelessinterface->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
-                ActivatableListWidget* aList = new ActivatableListWidget(m_activatables, iface, this);
-                m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon("network-wireless"), "", aList);
-                interface = wirelessinterface;
+                wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
+                createTab(ifaceItem, iface, "network-wireless");
                 kDebug() << "WiFi added";
                 break;
             }
             case Solid::Control::NetworkInterface::Serial:
+                icon = "phone";
             case Solid::Control::NetworkInterface::Gsm:
+                icon = "phone";
             case Solid::Control::NetworkInterface::Cdma:
-            default:
+                icon = "phone";
             case Solid::Control::NetworkInterface::Ieee8023:
+                icon = "network-wired";
+            default:
             {
                 // Create the interfaceitem
-                WiredInterfaceItem * wiredinterface = 0;
-                interface = wiredinterface = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
+                WiredInterfaceItem * wiredItem = 0;
+                ifaceItem = wiredItem = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
 
                 // Add a wired tab
-                ActivatableListWidget* aList = new ActivatableListWidget(m_activatables, iface, this);
-                m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon("network-wired"), "", aList);
+                createTab(wiredItem, iface, icon);
                 break;
             }
         }
         //interface->setEnabled(m_enabled);
-        m_interfaceLayout->addItem(interface);
-        m_interfaces.insert(iface->uni(), interface);
+        m_interfaceLayout->addItem(ifaceItem);
+        m_interfaces.insert(iface->uni(), ifaceItem);
         //m_interfaceLayout->invalidate();
         //m_interfaceLayout->updateGeometry();
         //updateNetworks();
@@ -195,6 +207,12 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
     //emit updateLayout();
 }
 
-
+void NMExtenderItem::createTab(InterfaceItem * item, Solid::Control::NetworkInterface* iface, const QString &icon)
+{
+    // Add it to the list of connectables
+    ActivatableListWidget* aList = new ActivatableListWidget(m_activatables, iface, m_connectionTabs);
+    m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon(icon), "", aList);
+    connect(item, SIGNAL(clicked(const QString&)), this, SLOT(switchTab(const QString&)));
+}
 // vim: sw=4 sts=4 et tw=100
 

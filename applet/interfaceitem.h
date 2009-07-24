@@ -71,7 +71,6 @@ public Q_SLOTS:
      * The  button to connect the interface has been clicked
      */
     virtual void connectButtonClicked() = 0;
-
 protected Q_SLOTS:
     /**
      * Remove any connections that were provided by this service
@@ -80,8 +79,11 @@ protected Q_SLOTS:
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
+    virtual void itemClicked();
 Q_SIGNALS:
     void stateChanged();
+    void clicked(const QString&);
+
 protected:
     /**
      * Fill in interface type connection info

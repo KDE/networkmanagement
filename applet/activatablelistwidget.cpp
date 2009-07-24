@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Plasma
 #include <Plasma/Label>
+#include <Plasma/IconWidget>
 
 // networkmanagement lib
 #include "remoteactivatable.h"
@@ -108,7 +109,7 @@ ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activata
         case Solid::Control::NetworkInterface::Ieee80211:
         { // Wireless
             kDebug() << "Wireless thingie";
-            WirelessNetworkItem* wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetwork*>(activatable));
+            WirelessNetworkItem* wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetwork*>(activatable), m_widget);
             ai = wni;
             break;
         }
@@ -116,7 +117,7 @@ ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activata
         case Solid::Control::NetworkInterface::Ieee8023:
         {
             kDebug() << "default ....";
-            ai = new InterfaceConnectionItem(static_cast<RemoteInterfaceConnection*>(activatable), this);
+            ai = new InterfaceConnectionItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
             break;
         }
     }
@@ -125,6 +126,7 @@ ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activata
     ai->setupItem();
     m_layout->addItem(ai);
     m_itemIndex[activatable->deviceUni()] = ai;
+    m_layout->invalidate();
     return ai;
 }
 
@@ -137,7 +139,16 @@ void ActivatableListWidget::listAppeared()
             createItem(remote);
         }
     }
-
+#if 0
+    foreach (QString bla, QStringList() << "bla" << "foo" <<  "gna" << "snirk"<< "bla3" << "foo3" <<  "gna3" << "snirk3" << "bla" << "foo" <<  "gna" << "snirk"<< "bla3" << "foo3" <<  "gna3" << "snirk3") {
+        Plasma::IconWidget* l = new Plasma::IconWidget(m_widget);
+        l->setOrientation(Qt::Horizontal);
+        l->setMinimumSize(200, 32);
+        l->setIcon("network-wired");
+        l->setText(QString("dummy network connection %1").arg(bla));
+        m_layout->addItem(l);
+    }
+#endif
 }
 
 void ActivatableListWidget::listDisappeared()

@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //class AbstractConnectableItem;
 //class NetworkManagerSettings;
 class QGraphicsLinearLayout;
+class QGraphicsGridLayout;
 class ActivatableItem;
 
 class RemoteActivatable;
@@ -53,13 +54,13 @@ public:
 public Q_SLOTS:
     void interfaceAdded(const QString&);
     void interfaceRemoved(const QString&);
-
+    void switchTab(const QString&);
 Q_SIGNALS:
     void connectionListUpdated();
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
-
+    void createTab(InterfaceItem * item, Solid::Control::NetworkInterface* iface, const QString &icon);
 
     RemoteActivatableList* m_activatables;
     // list of interfaces [uni] = iface
@@ -67,7 +68,7 @@ private:
     QHash<QString, int> m_tabIndex;
 
     QGraphicsWidget* m_widget;
-    QGraphicsLinearLayout* m_mainLayout;
+    QGraphicsGridLayout* m_mainLayout;
     QGraphicsLinearLayout* m_interfaceLayout;
     Plasma::TabBar* m_connectionTabs;
 };
