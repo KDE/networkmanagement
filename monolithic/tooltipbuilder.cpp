@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
+#include <solid/control/wirelessaccesspoint.h>
+#include <solid/control/wirednetworkinterface.h>
 #include <solid/control/networkipv4config.h>
 
 #include <interfaceconnection.h>
@@ -104,10 +106,39 @@ QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionStat
     return stateString;
 }
 
+QString operationModeToString(Solid::Control::WirelessNetworkInterface::OperationMode mode)
+{
+    QString modeString;
+    switch (mode) {
+        case Solid::Control::WirelessNetworkInterface::Unassociated:
+            modeString = i18nc("wireless network operation mode", "Unassociated");
+            break;
+        case Solid::Control::WirelessNetworkInterface::Adhoc:
+            modeString = i18nc("wireless network operation mode", "Adhoc");
+            break;
+        case Solid::Control::WirelessNetworkInterface::Managed:
+            modeString = i18nc("wireless network operation mode", "Managed");
+            break;
+        case Solid::Control::WirelessNetworkInterface::Master:
+            modeString = i18nc("wireless network operation mode", "Master");
+            break;
+        case Solid::Control::WirelessNetworkInterface::Repeater:
+            modeString = i18nc("wireless network operation mode", "Repeater");
+            break;
+        default:
+            modeString = I18N_NOOP("UNKNOWN MODE FIX ME");
+    }
+    return modeString;
+}
+
 // private functions. Not included in the ToolTipBuilder class.
 QString interfaceTooltipHtmlPart(Solid::Control::NetworkInterface *, const QString &);
 QString ipv4TooltipHtmlPart(Solid::Control::NetworkInterface *, const QString &);
 QString wirelessTooltipHtmlPart(Solid::Control::WirelessNetworkInterface *, const QString &);
+QString wiredTooltipHtmlPart(Solid::Control::WiredNetworkInterface * , const QString &);
+QString securityLevel(Solid::Control::AccessPoint *);
+QString buildFlagsHtmlTable(Solid::Control::AccessPoint::WpaFlags);
+QString buildRoutesHtmlTable(const QList<Solid::Control::IPv4Route> &);
 QString buildDomainsHtmlTable(const QStringList &);
 QString buildNameserversHtmlTable(const QList<quint32> &);
 
@@ -122,9 +153,8 @@ QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection *
          */
 
         allTipElements << "interface:type" << "interface:name" << "interface:driver" << "interface:status" << "interface:designspeed"
-            << "interface:bitrate"
             << "ipv4:address" << "ipv4:nameservers" << "ipv4:domains" << "ipv4:routes"
-            << "wired:carrier"
+            << "wired:carrier" << "wired:hardwareaddress" << "wired:bitrate"
             /* These come from Solid::Control::WirelessNetworkInterface _and_ its active
                Solid::Control::AccessPoint, if any */
             << "wireless:strength" << "wireless:ssid" << "wireless:bitrate" << "wireless:mode" << "wireless:accesspoint" << "wireless:hardwareaddress"
@@ -137,11 +167,14 @@ QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection *
         /* default set to use for initial development */
         tipElements << "interface:type" << "interface:name" << "interface:driver" << "interface:status"
                     << "interface:designspeed" << "ipv4:address" << "ipv4:nameservers" << "ipv4:domains"
-                    << "ipv4:routes" << "wireless:hardwareaddress";
+                    << "ipv4:routes" << "wired:hardwareaddress" << "wireless:hardwareaddress"
+                    << "wired:bitrate" << "wireless:bitrate";
 
         QString deviceUni = interfaceConnection->deviceUni();
         Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
-        Solid::Control::WirelessNetworkInterface * wiface = dynamic_cast<Solid::Control::WirelessNetworkInterface*> (iface);
+        Solid::Control::WirelessNetworkInterface * wliface = dynamic_cast<Solid::Control::WirelessNetworkInterface*> (iface);
+        Solid::Control::WiredNetworkInterface * wdiface = dynamic_cast<Solid::Control::WiredNetworkInterface*> (iface);
+
         if (iface) {
             // generate html table header
             tip = QLatin1String("<qt><table>");
@@ -158,12 +191,14 @@ QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection *
                     tip += ipv4TooltipHtmlPart(iface, requestedInfo);
                 }
                 else if (prefix == QLatin1String("wireless")) {
-                    if (wiface) {
-                        tip += wirelessTooltipHtmlPart(wiface, requestedInfo);
+                    if (wliface) {
+                        tip += wirelessTooltipHtmlPart(wliface, requestedInfo);
                     }
                 }
                 else if (prefix == QLatin1String("wired")) {
-                    // TODO
+                    if (wdiface) {
+                        tip += wiredTooltipHtmlPart(wdiface, requestedInfo);
+                    }
                 }
             }
             tip += QLatin1String("</table></qt>");
@@ -201,11 +236,6 @@ QString interfaceTooltipHtmlPart(Solid::Control::NetworkInterface * iface, const
                 .arg(i18nc("@info:tooltip The network device's maximum speed", "Max speed"))
                 .arg(iface->designSpeed());
     }
-    else if (requestedInfo == QLatin1String("bitrate")) {
-        // TODO
-        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
-                .arg(i18nc("@info:tooltip network connection bit rate","Bit rate"));
-    }
 
     return html;
 }
@@ -222,7 +252,7 @@ QString ipv4TooltipHtmlPart(Solid::Control::NetworkInterface * iface, const QStr
             QHostAddress addr(cfg.addresses().first().address());
             temp = addr.toString();
         }
-        else temp = QLatin1String("");
+        else temp = QLatin1String(""); // or something like 'i18nc("@info:tooltip No data available.","No data");'
 
         html = QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                .arg(i18nc("@info:tooltip IPv4 address", "IP address"))
@@ -232,7 +262,7 @@ QString ipv4TooltipHtmlPart(Solid::Control::NetworkInterface * iface, const QStr
         if (!cfg.nameservers().isEmpty()) {
             temp = buildNameserversHtmlTable(cfg.nameservers());
         }
-        else temp = QLatin1String("");
+        else temp = QLatin1String(""); // or something like 'i18nc("@info:tooltip No data available.","No data");'
 
         html = QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                 .arg(i18nc("@info:tooltip network name servers", "Name servers"))
@@ -242,20 +272,28 @@ QString ipv4TooltipHtmlPart(Solid::Control::NetworkInterface * iface, const QStr
         if (!cfg.domains().isEmpty()) {
             temp = buildDomainsHtmlTable(cfg.domains());
         }
-        else temp = QLatin1String("");
+        else temp = QLatin1String(""); // or something like 'i18nc("@info:tooltip No data available.","No data");'
 
         html = QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                 .arg(i18nc("@info:tooltip network domains", "Domains"))
                 .arg(temp);
     }
     else if (requestedInfo == QLatin1String("routes")) {
-        // TODO
-        temp = QLatin1String("");
+        QList<Solid::Control::IPv4Route> routes = cfg.routes();
 
+        if (!routes.isEmpty()) {
+            temp = buildRoutesHtmlTable(routes);
+        }
+        else temp = i18nc("@info:tooltip No network route data available", "No route data available");
+
+        /* PLEASE REMOVE THIS CODE
+        I dont have wireless connection, so check 'buildFlagsHtmlTable' this way
+        Solid::Control::AccessPoint::WpaFlags flags;
+        temp = buildFlagsHtmlTable(flags);
+        */
         html = QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                 .arg(i18nc("@info:tooltip network routes", "Routes"))
                 .arg(temp);
-        //QList<Solid::Control::IPv4Route> routes = cfg.routes();
     }
 
     return html;
@@ -265,14 +303,245 @@ QString wirelessTooltipHtmlPart(Solid::Control::WirelessNetworkInterface * wifac
                                 const QString & requestedInfo)
 {
     QString html;
+    QString temp;
+
+    Solid::Control::AccessPoint * ap = wiface->findAccessPoint(wiface->activeAccessPoint());
 
     if (requestedInfo == QLatin1String("hardwareaddress")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                 .arg(i18nc("@info:tooltip this is the hardware address of a network interface",
                            "Hardware address"), wiface->hardwareAddress());
     }
+    else if (requestedInfo == QLatin1String("bitrate")) {
+        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2 %3</td></tr>")
+                .arg(i18nc("@info:tooltip network connection bit rate","Bit rate"))
+                .arg(wiface->bitRate())
+                .arg(i18nc("@info:tooltip network connection bit rate units","Mbit/s"));
+    }
+    else if (requestedInfo == QLatin1String("ssid")) {
+        if (ap) {
+            temp = ap->ssid();
+        }
+        else temp = ""; // or something like 'i18nc("@info:tooltip No data available.","No data");'
+
+        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
+                .arg(i18nc("@info:tooltip SSID is a friendly name that identifies a 802.11 WLAN.","SSID"))
+                .arg(temp);
+    }
+    else if (requestedInfo == QLatin1String("strength")) {
+        if (ap) {
+            temp.setNum(ap->signalStrength());
+        }
+        else temp = "";
+
+        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2 %</td></tr>")
+                .arg(i18nc("@info:tooltip The signal strength of the wifi network","Strength"))
+                .arg(temp);
+    }
+    else if (requestedInfo == QLatin1String("mode")) {
+        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
+                .arg(i18nc("@info:tooltip the operation mode of wi-fi network","Mode"))
+                .arg(operationModeToString(wiface->mode()));
+    }
+    else if (requestedInfo == QLatin1String("accesspoint")) {
+        if (ap) {
+            html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
+                .arg(i18nc("@info:tooltip Active access point MAC address","Access point"))
+                .arg(ap->hardwareAddress());
+        }
+    }
+    else if (requestedInfo == QLatin1String("security")) {
+        if (ap) {
+            temp = securityLevel(ap);
+        }
+        else temp = "";
+
+        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
+                .arg(i18nc("@info:tooltip network security level, e.g. high, low", "Security"))
+                .arg(temp);
+    }
+    else if (requestedInfo == QLatin1String("wpaflags")) {
+        if (ap) {
+            temp = buildFlagsHtmlTable(ap->wpaFlags());
+        }
+        else temp = "";
+
+        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
+                .arg(i18nc("@info:tooltip Flags describing the access point's capabilities according to WPA (Wifi Protected Access)",
+                           "WPA flags"))
+                .arg(temp);
+    }
+    else if (requestedInfo == QLatin1String("rsnflags")) {
+        if (ap) {
+            temp = buildFlagsHtmlTable(ap->rsnFlags());
+        }
+        else temp = "";
+
+        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
+                .arg(i18nc("@info:tooltip Flags describing the access point's capabilities according to RSN (Robust Secure Network)",
+                           "RSN(WPA2) flags"))
+                .arg(temp);
+    }
+    else if (requestedInfo == QLatin1String("frequency")) {
+        if (ap) {
+            temp.setNum(ap->frequency());
+        }
+        else temp = "";
+
+        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2 %3</td></tr>")
+                .arg(i18nc("@info:tooltip the frequency of the radio channel that the access point is operating on","Frequency"))
+                .arg(wiface->bitRate())
+                .arg(i18nc("@info:tooltip frequency unit","MHz"));
+    }
 
     return html;
+}
+
+QString wiredTooltipHtmlPart(Solid::Control::WiredNetworkInterface * wdiface,
+                                const QString & requestedInfo)
+{
+    QString html;
+
+    if (requestedInfo == QLatin1String("hardwareaddress")) {
+        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
+                .arg(i18nc("@info:tooltip this is the hardware address of a network interface",
+                           "Hardware address"), wdiface->hardwareAddress());
+    }
+    else if (requestedInfo == QLatin1String("bitrate")) {
+        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2 %3</td></tr>")
+                .arg(i18nc("@info:tooltip network connection bit rate","Bit rate"))
+                .arg(wdiface->bitRate())
+                .arg(i18nc("@info:tooltip network connection bit rate units","Mbit/s"));
+    }
+
+    return html;
+}
+
+// copied from WirelessStatus::setSecurity()
+QString securityLevel(Solid::Control::AccessPoint * ap)
+{
+    Q_ASSERT(ap);
+
+    QString level;
+    Solid::Control::AccessPoint::WpaFlags wpaFlags = ap->wpaFlags();
+    Solid::Control::AccessPoint::WpaFlags rsnFlags = ap->rsnFlags();
+    Solid::Control::AccessPoint::Capabilities capabilities = ap->capabilities();
+
+    if (wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
+        wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep104 ) ||
+        (wpaFlags == 0 && capabilities.testFlag(Solid::Control::AccessPoint::Privacy))) {
+
+        level = i18nc("@info:tooltip security level", "WEP");
+    }
+    else if (wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+             wpaFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) ) {
+        level = i18nc("@info:tooltip security level", "WPA-PSK");
+    }
+    else if (rsnFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
+             rsnFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) ||
+             rsnFlags.testFlag( Solid::Control::AccessPoint::PairCcmp ) ) {
+        level = i18nc("@info:tooltip security level", "WPA-PSK");
+    }
+    else if (wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmt8021x ) ||
+             wpaFlags.testFlag( Solid::Control::AccessPoint::GroupCcmp ) ) {
+        level = i18nc("@info:tooltip security level", "WPA-EAP");
+    }
+    else {
+        level = i18nc("@info:tooltip security level", "Unencrypted");
+    }
+    return level;
+}
+
+QString buildHtmlTableHelper(const QStringList& list, int nItemsInRow)
+{
+    Q_ASSERT(nItemsInRow);
+
+    QString temp;
+
+    if (nItemsInRow) {
+        int nRows = list.size() / nItemsInRow;
+        if ((list.size() % nItemsInRow) > 0)
+            nRows++;
+
+        for(int i = 0; i < nRows; i++) {
+            temp += QLatin1String("<tr><td>");
+            for (int j = 0; j < nItemsInRow; j++) {
+                temp += list[i*nItemsInRow + j];
+
+                // check for the last item, in this case we will not put the comma sign.
+                if ((i*nItemsInRow + j) < (list.size() - 1))
+                    temp += QLatin1String(", ");
+                else
+                    break; // the last item
+            }
+            temp += QLatin1String("</td></tr>");
+        }
+    }
+    return temp;
+}
+
+QString buildFlagsHtmlTable(Solid::Control::AccessPoint::WpaFlags flags)
+{
+    QString table = QLatin1String("<table>");
+
+    /* for testing purposes
+    flags = Solid::Control::AccessPoint::PairWep40
+            | Solid::Control::AccessPoint::PairWep104
+            | Solid::Control::AccessPoint::PairTkip
+            | Solid::Control::AccessPoint::PairCcmp
+            | Solid::Control::AccessPoint::GroupWep40
+            | Solid::Control::AccessPoint::GroupWep104
+            | Solid::Control::AccessPoint::GroupTkip
+            | Solid::Control::AccessPoint::GroupCcmp
+            | Solid::Control::AccessPoint::KeyMgmtPsk
+            | Solid::Control::AccessPoint::KeyMgmt8021x; */
+
+    QStringList flagList;
+
+    if (flags.testFlag(Solid::Control::AccessPoint::PairWep40))
+        flagList.append(QLatin1String("Pairwise WEP40"));
+    if (flags.testFlag(Solid::Control::AccessPoint::PairWep104))
+        flagList.append(QLatin1String("Pairwise WEP104"));
+    if (flags.testFlag(Solid::Control::AccessPoint::PairTkip))
+        flagList.append(QLatin1String("Pairwise TKIP"));
+    if (flags.testFlag(Solid::Control::AccessPoint::PairCcmp))
+        flagList.append(QLatin1String("Pairwise CCMP"));
+    if (flags.testFlag(Solid::Control::AccessPoint::GroupWep40))
+        flagList.append(QLatin1String("Group WEP40"));
+    if (flags.testFlag(Solid::Control::AccessPoint::GroupWep104))
+        flagList.append(QLatin1String("Group WEP104"));
+    if (flags.testFlag(Solid::Control::AccessPoint::GroupTkip))
+        flagList.append(QLatin1String("Group TKIP"));
+    if (flags.testFlag(Solid::Control::AccessPoint::GroupCcmp))
+        flagList.append(QLatin1String("Group CCMP"));
+    if (flags.testFlag(Solid::Control::AccessPoint::KeyMgmtPsk))
+        flagList.append(QLatin1String("PSK"));
+    if (flags.testFlag(Solid::Control::AccessPoint::KeyMgmt8021x))
+        flagList.append(QLatin1String("802.1x"));
+
+    table += buildHtmlTableHelper(flagList, 2);
+    table += QLatin1String("</table>");
+
+    return table;
+}
+
+QString buildRoutesHtmlTable(const QList<Solid::Control::IPv4Route> &lst)
+{
+    QString table = QLatin1String("<table>");
+
+    foreach(Solid::Control::IPv4Route route, lst) {
+        table += QString("<tr><td>%1/%2 %3 %4</td></tr>")
+                 .arg(QHostAddress(route.route()).toString())
+                 .arg(route.prefix())
+                 .arg(QHostAddress(route.nextHop()).toString())
+                 .arg(route.metric());
+
+    }
+    table += QLatin1String("</table>");
+
+    //qDebug() << table;
+
+    return table;
 }
 
 QString buildDomainsHtmlTable(const QStringList &lst)
