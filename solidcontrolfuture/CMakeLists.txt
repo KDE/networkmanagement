@@ -16,8 +16,8 @@ target_link_libraries(solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS}
 
 install(TARGETS solidcontrolfuture EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
 
-install( FILES wirelessnetwork.h
-               wirelessnetworkinterfaceenvironment.h
-   DESTINATION
-   ${INCLUDE_INSTALL_DIR}/solid/control COMPONENT Devel)
+#install( FILES wirelessnetwork.h
+#               wirelessnetworkinterfaceenvironment.h
+#   DESTINATION
+#   ${INCLUDE_INSTALL_DIR}/solid/control COMPONENT Devel)
  
