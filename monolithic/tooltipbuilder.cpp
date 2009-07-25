@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "tooltipbuilder.h"
 
+#include <kdeversion.h>
+
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
@@ -279,12 +281,16 @@ QString ipv4TooltipHtmlPart(Solid::Control::NetworkInterface * iface, const QStr
                 .arg(temp);
     }
     else if (requestedInfo == QLatin1String("routes")) {
+#if KDE_IS_VERSION(4, 2, 95)
         QList<Solid::Control::IPv4Route> routes = cfg.routes();
 
         if (!routes.isEmpty()) {
             temp = buildRoutesHtmlTable(routes);
         }
         else temp = i18nc("@info:tooltip No network route data available", "No route data available");
+#else
+        temp = i18nc("@info:tooltip No network route data available", "No route data available");
+#endif
 
         /* PLEASE REMOVE THIS CODE
         I dont have wireless connection, so check 'buildFlagsHtmlTable' this way
