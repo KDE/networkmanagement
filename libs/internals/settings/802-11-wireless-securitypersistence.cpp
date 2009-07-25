@@ -52,8 +52,10 @@ void WirelessSecurityPersistence::load()
   }
   setting->setWeptxkeyindex(m_config->readEntry("weptxkeyindex", 0));
   {
-    QString contents = m_config->readEntry("authalg", "open");
-    if (contents == "open")
+    QString contents = m_config->readEntry("authalg", "none");
+    if (contents == "none")
+      setting->setAuthalg(WirelessSecuritySetting::EnumAuthalg::none);
+    else     if (contents == "open")
       setting->setAuthalg(WirelessSecuritySetting::EnumAuthalg::open);
     else     if (contents == "shared")
       setting->setAuthalg(WirelessSecuritySetting::EnumAuthalg::shared);
@@ -138,6 +140,9 @@ void WirelessSecurityPersistence::save()
   }
   m_config->writeEntry("weptxkeyindex", setting->weptxkeyindex());
   switch (setting->authalg()) {
+    case WirelessSecuritySetting::EnumAuthalg::none:
+      m_config->writeEntry("authalg", "none");
+      break;
     case WirelessSecuritySetting::EnumAuthalg::open:
       m_config->writeEntry("authalg", "open");
       break;

@@ -91,6 +91,9 @@ QVariantMap WirelessSecurityDbus::toMap()
   }
   map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX), setting->weptxkeyindex());
   switch (setting->authalg()) {
+    case Knm::WirelessSecuritySetting::EnumAuthalg::none:
+      // the none auth alg is internal
+      break;
     case Knm::WirelessSecuritySetting::EnumAuthalg::open:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "open");
       break;

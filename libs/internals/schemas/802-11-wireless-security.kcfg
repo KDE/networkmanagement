@@ -38,6 +38,7 @@
       <label>Authentication algorithm</label>
       <whatsthis></whatsthis>
       <choices>
+        <choice name="none"/>
         <choice name="open"/>
         <choice name="shared"/>
         <choice name="leap"/>

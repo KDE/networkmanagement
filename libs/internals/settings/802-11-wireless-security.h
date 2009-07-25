@@ -26,7 +26,7 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     class EnumAuthalg
     {
       public:
-      enum type { open, shared, leap, COUNT };
+      enum type { none, open, shared, leap, COUNT };
     };
 
     WirelessSecuritySetting( );
