@@ -4,6 +4,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals/settings
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/service
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/ui
+   ${CMAKE_CURRENT_SOURCE_DIR}/settings
    ${CMAKE_CURRENT_BINARY_DIR}
    )
 
@@ -17,27 +18,27 @@ set(knm_nm_LIB_SRCS
    pbkdf2.cpp
    wephash.cpp
 
-   802-11-wireless-securitydbus.cpp
+   settings/802-11-wireless-securitydbus.cpp
 
-   802-11-wirelessdbus.cpp
+   settings/802-11-wirelessdbus.cpp
 
-   802-3-ethernetdbus.cpp
+   settings/802-3-ethernetdbus.cpp
 
-   802-1xdbus.cpp
+   settings/802-1xdbus.cpp
 
-   gsmdbus.cpp
+   settings/gsmdbus.cpp
 
-   cdmadbus.cpp
+   settings/cdmadbus.cpp
 
-   ipv4dbus.cpp
+   settings/ipv4dbus.cpp
 
-   pppdbus.cpp
+   settings/pppdbus.cpp
 
-   pppoedbus.cpp
+   settings/pppoedbus.cpp
 
-   serialdbus.cpp
+   settings/serialdbus.cpp
 
-   vpndbus.cpp
+   settings/vpndbus.cpp
 
    nmdbussettingsservice.cpp
 
