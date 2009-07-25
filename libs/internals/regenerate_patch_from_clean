@@ -1,0 +1,1 @@
+diff -ur origsettings/ settings > settings_hand_edits.diff

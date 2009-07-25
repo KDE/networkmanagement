@@ -1,0 +1,1 @@
+make knm_compiler && for i in schemas/*.kcfg; do j=`basename $i .kcfg`; if [ -e schemas/$j.kcfgc ]; then /space/kde/builds/trunk/playground/base/plasma/applets/networkmanager/libs/internals/knm_compiler schemas/$j.kcfg schemas/$j.kcfgc -d settings; fi; done && patch -p0 < settings_hand_edits.diff
