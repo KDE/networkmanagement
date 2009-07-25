@@ -1,5 +1,5 @@
 File=ipv4.kcfg
 ClassName=Ipv4
 Mutators=true
-Visibility=KNM_EXPORT
+Visibility=KNMINTERNALS_EXPORT
 NameSpace=Knm

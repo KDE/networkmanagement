@@ -8,12 +8,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
-#include "knm_export.h"
+#include "nm07dbus_export.h"
 namespace Knm{
     class WiredSetting;
 }
 
-class KNM_EXPORT WiredDbus : public SettingDbus
+class NM07DBUS_EXPORT WiredDbus : public SettingDbus
 {
   public:
     WiredDbus(Knm::WiredSetting * setting);

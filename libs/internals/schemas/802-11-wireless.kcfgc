@@ -1,5 +1,5 @@
 File=802-11-wireless.kcfg
 ClassName=Wireless
 Mutators=true
-Visibility=KNM_EXPORT
+Visibility=KNMINTERNALS_EXPORT
 NameSpace=Knm

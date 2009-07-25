@@ -1419,7 +1419,7 @@ int main( int argc, char **argv )
   h << "#include <kdebug.h>" << endl;
   h << "#include <kcoreconfigskeleton.h>" << endl;
   h << "#include \"setting.h\"" << endl;
-  h << "#include \"knm_export.h\"" << endl;
+  h << "#include \"knminternals_export.h\"" << endl;
 
   // Includes
   for( it = includes.constBegin(); it != includes.constEnd(); ++it ) {
@@ -2178,7 +2178,7 @@ int main( int argc, char **argv )
   pH << "#include <kdebug.h>" << endl;
   pH << "#include <kcoreconfigskeleton.h>" << endl;
   pH << "#include \"settingpersistence.h\"" << endl;
-  pH << "#include \"knm_export.h\"" << endl;
+  pH << "#include \"knminternals_export.h\"" << endl;
 
   if ( !nameSpace.isEmpty() )
     pH << "namespace " << nameSpace << " {" << endl << endl;
@@ -2397,7 +2397,7 @@ int main( int argc, char **argv )
   dH << "#include <kdebug.h>" << endl;
   dH << "#include <kcoreconfigskeleton.h>" << endl;
   dH << "#include \"settingdbus.h\"" << endl;
-  dH << "#include \"knm_export.h\"" << endl;
+  dH << "#include \"nm07dbus_export.h\"" << endl;
 
   if ( !nameSpace.isEmpty() )
     dH << "namespace " << nameSpace << " {" << endl << endl;
@@ -2407,7 +2407,7 @@ int main( int argc, char **argv )
   dH << "}" << endl << endl;
 
   // Class declaration header
-  dH << "class " << visibility << className << "Dbus : public " << inherits << endl;
+  dH << "class NM07DBUS_EXPORT " << className << "Dbus : public " << inherits << endl;
   dH << "{" << endl;
   dH << "  public:" << endl;
   dH << "    " << className << "Dbus(Knm::" << className << "Setting * setting);" << endl;

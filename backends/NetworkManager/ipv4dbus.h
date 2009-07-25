@@ -8,12 +8,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
-#include "knm_export.h"
+#include "nm07dbus_export.h"
 namespace Knm{
     class Ipv4Setting;
 }
 
-class KNM_EXPORT Ipv4Dbus : public SettingDbus
+class NM07DBUS_EXPORT Ipv4Dbus : public SettingDbus
 {
   public:
     Ipv4Dbus(Knm::Ipv4Setting * setting);

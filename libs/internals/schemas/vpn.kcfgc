@@ -1,5 +1,5 @@
 File=vpn.kcfg
 ClassName=Vpn
 Mutators=true
-Visibility=KNM_EXPORT
+Visibility=KNMINTERNALS_EXPORT
 NameSpace=Knm

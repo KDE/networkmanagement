@@ -1,5 +1,5 @@
 File=serial.kcfg
 ClassName=Serial
 Mutators=true
-Visibility=KNM_EXPORT
+Visibility=KNMINTERNALS_EXPORT
 NameSpace=Knm

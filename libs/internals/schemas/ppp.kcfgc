@@ -1,5 +1,5 @@
 File=ppp.kcfg
 ClassName=Ppp
 Mutators=true
-Visibility=KNM_EXPORT
+Visibility=KNMINTERNALS_EXPORT
 NameSpace=Knm

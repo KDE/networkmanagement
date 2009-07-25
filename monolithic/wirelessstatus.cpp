@@ -51,10 +51,13 @@ public:
     SmallProgressBar(QWidget * parent = 0)
         : QProgressBar(parent)
     {
+        setMinimumHeight(10);
+        setMaximumHeight(10);
+        setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     }
     QSize sizeHint() const
     {
-        return QSize(50,20/* 20 must be about minimum for Oxygen style at least as it won't go any smaller */);
+        return QSize(50,10/* 20 must be about minimum for Oxygen style at least as it won't go any smaller */);
     }
 };
 

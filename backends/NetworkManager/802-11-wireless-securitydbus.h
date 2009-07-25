@@ -8,12 +8,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
-#include "knm_export.h"
+#include "nm07dbus_export.h"
 namespace Knm{
     class WirelessSecuritySetting;
 }
 
-class KNM_EXPORT WirelessSecurityDbus : public SettingDbus
+class NM07DBUS_EXPORT WirelessSecurityDbus : public SettingDbus
 {
   public:
     WirelessSecurityDbus(Knm::WirelessSecuritySetting * setting, const QString & essid);

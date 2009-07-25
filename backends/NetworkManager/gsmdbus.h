@@ -8,12 +8,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
-#include "knm_export.h"
+#include "nm07dbus_export.h"
 namespace Knm{
     class GsmSetting;
 }
 
-class KNM_EXPORT GsmDbus : public SettingDbus
+class NM07DBUS_EXPORT GsmDbus : public SettingDbus
 {
   public:
     GsmDbus(Knm::GsmSetting * setting);
