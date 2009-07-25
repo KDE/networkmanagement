@@ -2,7 +2,7 @@
 // All changes you do to this file will be lost.
 
 #include "802-11-wireless-securitydbus.h"
-
+#include "config-nm07backend.h"
 #include "802-11-wireless-security.h"
 #include "pbkdf2.h"
 #include "wephash.h"
@@ -166,13 +166,22 @@ QVariantMap WirelessSecurityDbus::toSecretsMap()
 
 QString WirelessSecurityDbus::hashWpaPsk(const QString & plainText)
 {
+    QString result;
+//#ifdef NM_0_7_1
+#if 0
+    kDebug() << "Built for NetworkManager that can hash WPA keys itself; passing through plaintext";
+    result = plainText.toLocal8Bit();
+    kDebug() << "  plaintext out:" << result;
+#else
 #define WPA_PMK_LEN 32
     kDebug() << "Hashing PSK. essid:" << m_essid << "psk:" << plainText;
     QByteArray buffer(WPA_PMK_LEN * 2, 0);
     pbkdf2_sha1(plainText.toLatin1(), m_essid.toLatin1(), m_essid.size(), 4096, (quint8*)buffer.data(), WPA_PMK_LEN);
-    QString hexHash = buffer.toHex().left(WPA_PMK_LEN*2);
-    kDebug() << "  hexadecimal key out:" << hexHash;
-    return hexHash;
+    result = buffer.toHex().left(WPA_PMK_LEN*2);
+    kDebug() << "  hexadecimal key out:" << result;
+#endif
+    return result;
+
 }
 
 QString WirelessSecurityDbus::hashWepPassphrase(const QString & plainText)

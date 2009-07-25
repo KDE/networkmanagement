@@ -5,12 +5,12 @@ include (KDE4Defaults)
 include(MacroOptionalAddSubdirectory)
 include(TestBigEndian)
 
+#indicate endianness to hashing functions
 TEST_BIG_ENDIAN(BIGENDIAN)
 if (BIGENDIAN)
 #can't just place WORDS_BIGENDIAN in TEST_BIGENDIAN as our code uses #ifndef
    set(WORDS_BIGENDIAN 1)
 endif (BIGENDIAN)
-configure_file(backends/NetworkManager/config-knmstorage.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-knmstorage.h )
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories (${KDE4_INCLUDES})
@@ -21,7 +21,11 @@ macro_optional_find_package(NetworkManager)
 macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager (any version)" "The Network Management applet requires NetworkManager, a daemon for user controlled networking" "http://www.freedesktop.org/wiki/NetworkManager")
 if (NETWORKMANAGER_FOUND)
 macro_ensure_version( "0.7.0" ${NETWORKMANAGER_VERSION} NM_0_7)
+macro_ensure_version( "0.7.1" ${NETWORKMANAGER_VERSION} NM_0_7_1)
 find_package(GLIB2 REQUIRED)
+
+configure_file(backends/NetworkManager/config-nm07backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm07backend.h )
+
 if (NM_0_7)
 
 include_directories(
