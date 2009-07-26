@@ -13,7 +13,7 @@
    id="svg2412"
    sodipodi:version="0.32"
    inkscape:version="0.46"
-   sodipodi:docname="networkmanager.svg"
+   sodipodi:docname="networkmanagement.svg"
    inkscape:output_extension="org.inkscape.output.svg.inkscape">
   <defs
      id="defs2414">
@@ -32,17 +32,17 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="2.7994505"
-     inkscape:cx="4.9263982"
-     inkscape:cy="16"
-     inkscape:current-layer="wired_disconnected"
+     inkscape:zoom="16.864982"
+     inkscape:cx="15.762022"
+     inkscape:cy="22.527887"
+     inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
      inkscape:document-units="px"
-     inkscape:window-width="1024"
-     inkscape:window-height="746"
-     inkscape:window-x="-5"
-     inkscape:window-y="-3" />
+     inkscape:window-width="1016"
+     inkscape:window-height="717"
+     inkscape:window-x="0"
+     inkscape:window-y="34" />
   <metadata
      id="metadata2417">
     <rdf:RDF>
@@ -589,5 +589,23 @@
        height="3.9293425"
        x="12.815015"
        y="14.585868" />
+  </g>
+  <g
+     inkscape:groupmode="layer"
+     id="layer1"
+     inkscape:label="changing"
+     style="display:inline">
+    <rect
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;display:inline"
+       id="rect2505"
+       width="25.63003"
+       height="8.6624146"
+       x="6.3370161"
+       y="10.036089"
+       transform="matrix(0.9776691,0.2101502,-0.2101502,0.9776691,0,0)" />
+    <path
+       style="fill:none;fill-opacity:0.75;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+       d="M 7.0214153,11.848216 L 18.774742,4.8527352 L 25.133089,15.620026 L 26.222064,15.914751"
+       id="path2515" />
   </g>
 </svg>
