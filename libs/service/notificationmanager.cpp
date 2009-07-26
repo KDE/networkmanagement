@@ -29,6 +29,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KNotification>
 
+#include <Solid/Device>
 #include <solid/control/networkmanager.h>
 #include <solid/control/wirelessnetworkinterface.h>
 
@@ -46,13 +47,15 @@ public:
     QStringList newWirelessNetworks;
     QStringList disappearedWirelessNetworks;
     QHash<Solid::Control::NetworkInterface *, KNotification *> interfaceNotifications;
+    // used to keep track of interface names so we can use them when the device has been removed.
+    QHash<QString,QString> interfaceNameRecord;
 };
 
 NotificationManager::NotificationManager(QObject * parent)
 : QObject(parent), d_ptr (new NotificationManagerPrivate)
 {
     Q_D(NotificationManager);
-    d->suppressHardwareEvents = false;
+    d->suppressHardwareEvents = true;
     d->newNetworkTimer = new QTimer(this);
     d->disappearedNetworkTimer = new QTimer(this);
     connect(d->newNetworkTimer, SIGNAL(timeout()), this, SLOT(notifyNewNetworks()));
@@ -75,6 +78,7 @@ NotificationManager::NotificationManager(QObject * parent)
     foreach (Solid::Control::NetworkInterface* interface, Solid::Control::NetworkManager::networkInterfaces()) {
         networkInterfaceAdded(interface->uni());
     }
+    d->suppressHardwareEvents = false;
 }
 
 NotificationManager::~NotificationManager()
@@ -104,11 +108,17 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
 {
     Q_D(NotificationManager);
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+
+    // Keep a record for when it is removed
+    Solid::Device* dev = new Solid::Device(uni);
+    QString deviceText = dev->product();
+    d->interfaceNameRecord.insert(uni, deviceText);
+
     if (iface && !d->suppressHardwareEvents) {
 
         QObject::connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(interfaceConnectionStateChanged(int,int,int)));
 
-        KNotification::event(Event::HwAdded, i18nc("@info:status Notification for hardware added", "%1 attached", iface->interfaceName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::HwAdded, i18nc("@info:status Notification for hardware added", "%1 attached", deviceText), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
     }
 
     // if wireless, listen for new networks
@@ -128,9 +138,21 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
     }
 }
 
-void NotificationManager::networkInterfaceRemoved(const QString &)
+void NotificationManager::networkInterfaceRemoved(const QString &uni)
 {
-        KNotification::event(Event::HwRemoved, i18nc("Notification for hardware removed", "Network interface removed"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+    Q_D(NotificationManager);
+    QString deviceText = d->interfaceNameRecord.take(uni);
+
+    if (!d->suppressHardwareEvents) {
+        QString notificationText;
+        if (deviceText.isEmpty()) {
+            notificationText = i18nc("@info:status Notification for hardware removed used if we don't have its user-visible name", "Network interface removed", deviceText);
+        } else {
+            notificationText = i18nc("@info:status Notification for hardware removed giving vendor supplied product name", "%1 removed", deviceText);
+        }
+
+        KNotification::event(Event::HwRemoved, notificationText, QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+    }
 }
 
 void NotificationManager::networkAppeared(const QString & ssid)

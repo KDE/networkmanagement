@@ -114,7 +114,8 @@ qt4_add_dbus_adaptor(knmservice_SRCS
 
 kde4_add_library(knmservice SHARED ${knmservice_SRCS})
 
-target_link_libraries(knmservice knminternals solidcontrol solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS})
+target_link_libraries(knmservice knminternals solidcontrol solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS}
+   )
 
 set_target_properties(knmservice PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}
