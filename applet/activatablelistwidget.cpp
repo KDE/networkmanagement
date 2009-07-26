@@ -47,6 +47,9 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_iface(iface),
     m_layout(0)
 {
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_widget = new QGraphicsWidget(this);
     m_widget->setMinimumSize(240, 50);
     m_layout = new QGraphicsLinearLayout(m_widget);
@@ -62,8 +65,8 @@ void ActivatableListWidget::init()
 {
     connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*)),
             SLOT(activatableAdded(RemoteActivatable *)));
-    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
-                    SLOT(activatableRemoved(RemoteActivatable *)));
+    //connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
+    //                SLOT(activatableRemoved(RemoteActivatable *)));
 
     connect(m_activatables, SIGNAL(appeared()), SLOT(listAppeared()));
     connect(m_activatables, SIGNAL(disappeared()), SLOT(listDisappeared()));

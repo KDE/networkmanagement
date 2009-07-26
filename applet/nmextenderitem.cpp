@@ -48,6 +48,7 @@ NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setName("nmextenderitem");
+    setTitle(i18nc("Extender title", "Network Management"));
     widget();
     init();
 }
