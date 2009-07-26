@@ -68,6 +68,8 @@ set(knminternals_SRCS
    wirelessnetwork.cpp
    unconfiguredinterface.cpp
    vpninterfaceconnection.cpp
+
+   wpasecretidentifier.cpp
    )
 
 kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)

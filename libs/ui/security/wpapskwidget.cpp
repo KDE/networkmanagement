@@ -18,23 +18,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QWidget>
-
-#include <KDebug>
-
 #include "wpapskwidget.h"
+
+#include <QWidget>
 
 #include <nm-setting-wireless-security.h>
 #include <nm-setting-connection.h>
 #include <nm-setting-wireless.h>
 #include <nm-setting-8021x.h>
 
+#include <KDebug>
+#include <wpasecretidentifier.h>
+
 #include "802_11_wireless_security_widget.h"
-#include "secretstoragehelper.h"
 #include "ui_wpapsk.h"
 #include "settings/802-11-wireless.h"
 #include "settings/802-11-wireless-security.h"
 #include "connection.h"
+
 
 class WpaPskWidget::Private
 {
@@ -68,7 +69,8 @@ void WpaPskWidget::chkShowPassToggled()
 
 bool WpaPskWidget::validate() const
 {
-    return true;
+    WpaSecretIdentifier::WpaSecretType secretType = WpaSecretIdentifier::identify(d->ui.psk->text());
+    return (secretType == WpaSecretIdentifier::Passphrase || secretType == WpaSecretIdentifier::PreSharedKey);
 }
 
 void WpaPskWidget::readConfig()
