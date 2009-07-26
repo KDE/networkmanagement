@@ -65,4 +65,9 @@ void ConnectionWidget::writeConfig()
     connection()->setAutoConnect(d->ui.autoconnect->isChecked());
 }
 
+bool ConnectionWidget::validate() const
+{
+    return !d->ui.id->text().isEmpty();
+}
+
 // vim: sw=4 sts=4 et tw=100

@@ -52,6 +52,10 @@ public:
      */
     void setConnectionName(const QString& name);
     QString connectionName() const;
+    /**
+     * guarantee that the connection name is not empty
+     */
+    bool validate() const;
 private:
     class Private;
     Private * d;
