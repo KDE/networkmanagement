@@ -2,6 +2,9 @@
 // All changes you do to this file will be lost.
 
 #include "802-11-wireless-securitydbus.h"
+
+#include <wpasecretidentifier.h>
+
 #include "config-nm07backend.h"
 #include "802-11-wireless-security.h"
 #include "pbkdf2.h"
@@ -57,7 +60,6 @@ void WirelessSecurityDbus::fromMap(const QVariantMap & map)
     setting->setWepkey3(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3)).value<QString>());
   }
   // SECRET
-  kDebug() << "Storing hashed PSK as plaintext!";
   if (map.contains("psk")) {
     setting->setPsk(map.value("psk").value<QString>());
   }
@@ -155,7 +157,12 @@ QVariantMap WirelessSecurityDbus::toSecretsMap()
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
   }
   if (!setting->psk().isEmpty()) {
-      map.insert("psk", hashWpaPsk(setting->psk()));
+      WpaSecretIdentifier::WpaSecretType secretType = WpaSecretIdentifier::identify(setting->psk());
+      if (secretType == WpaSecretIdentifier::Passphrase) {
+          map.insert("psk", hashWpaPsk(setting->psk()));
+      } else if (secretType == WpaSecretIdentifier::PreSharedKey) {
+          map.insert("psk", setting->psk());
+      }
   }
   if (!setting->leappassword().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
