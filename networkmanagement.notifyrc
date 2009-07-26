@@ -29,7 +29,7 @@ Comment[sv]=Nätverkshantering
 Comment[tr]=Ağ Yönetimi
 Comment[uk]=Керування мережею
 Comment[x-test]=xxNetwork Managementxx
-Version=2
+Version=3
 
 [Context/connectiontype]
 Name=Network Connection Type
@@ -253,6 +253,7 @@ Comment[pt_BR]=Uma ligação está a ser iniciada automaticamente
 Comment[sv]=En anslutning håller på att startas automatiskt
 Comment[uk]=Процедуру з’єднання було розпочато автоматично
 Comment[x-test]=xxA connection is being started automaticallyxx
+Action=Popup
 
 [Event/connecting]
 Name=Establishing Network Connection
@@ -542,5 +543,10 @@ Comment[pt_BR]=Uma interface de rede mudou de estado
 Comment[sv]=Ett gränssnitt har ändrat sitt tillstånd
 Comment[uk]=Змінений стан інтерфейсу
 Comment[x-test]=xxAn interface changed statexx
+
+[Event/networkingdisabled]
+Name=Network management disabled
+Comment=The network management subsystem was stopped or restarted
+Action=Popup
 
 X-Ubuntu-Gettext-Domain=desktop_plasma-widget-network-manager
