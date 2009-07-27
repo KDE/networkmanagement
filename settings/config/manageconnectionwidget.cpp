@@ -50,6 +50,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#include "dbus/nm-active-connectioninterface.h"
 //#include "dbus/nm-exported-connectioninterface.h"
 
+#include "traysettingswidget.h"
+
 #define ConnectionIdRole 1812
 #define ConnectionTypeRole 1066
 #define ConnectionLastUsedRole 1848
@@ -64,6 +66,7 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connect(mEditor, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
     mConnEditUi.setupUi(this);
+
     KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
     connect(mConnEditUi.addConnection, SIGNAL(clicked()), SLOT(addClicked()));
     connect(mConnEditUi.editConnection, SIGNAL(clicked()), SLOT(editClicked()));
@@ -95,6 +98,10 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     mLastUsedTimer = new QTimer(this);
     connect(mLastUsedTimer, SIGNAL(timeout()), SLOT(updateLastUsed()));
     mLastUsedTimer->start(1000 * 60);
+
+    TraySettingsWidget * tsw = new TraySettingsWidget(this);
+
+    mConnEditUi.tabWidget->addTab(tsw, i18nc("@title:tab tab containing general UI settings", "&Other Settings"));
 
     setButtons(KCModule::Help | KCModule::Apply);
 }

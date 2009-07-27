@@ -1,7 +1,8 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>ManageConnectionWidget</class>
- <widget class="QWidget" name="ManageConnectionWidget" >
-  <property name="geometry" >
+ <widget class="QWidget" name="ManageConnectionWidget">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
@@ -9,35 +10,35 @@
     <height>316</height>
    </rect>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_6" >
+  <layout class="QHBoxLayout" name="horizontalLayout_6">
    <item>
-    <widget class="QTabWidget" name="tabWidget" >
-     <property name="currentIndex" >
-      <number>0</number>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>4</number>
      </property>
-     <widget class="QWidget" name="tabWired" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tabWired">
+      <attribute name="title">
        <string>Wired</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout" >
+      <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="QTreeWidget" name="listWired" >
-         <property name="rootIsDecorated" >
+        <widget class="QTreeWidget" name="listWired">
+         <property name="rootIsDecorated">
           <bool>false</bool>
          </property>
-         <property name="allColumnsShowFocus" >
+         <property name="allColumnsShowFocus">
           <bool>true</bool>
          </property>
-         <property name="headerHidden" >
+         <property name="headerHidden">
           <bool>false</bool>
          </property>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Connection</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Last Used</string>
           </property>
          </column>
@@ -45,32 +46,32 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabWireless" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tabWireless">
+      <attribute name="title">
        <string>Wireless</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" >
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QTreeWidget" name="listWireless" >
-         <property name="rootIsDecorated" >
+        <widget class="QTreeWidget" name="listWireless">
+         <property name="rootIsDecorated">
           <bool>false</bool>
          </property>
-         <property name="uniformRowHeights" >
+         <property name="uniformRowHeights">
           <bool>false</bool>
          </property>
-         <property name="allColumnsShowFocus" >
+         <property name="allColumnsShowFocus">
           <bool>true</bool>
          </property>
-         <property name="headerHidden" >
+         <property name="headerHidden">
           <bool>false</bool>
          </property>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Connection</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Last Used</string>
           </property>
          </column>
@@ -78,29 +79,29 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabCellular" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tabCellular">
+      <attribute name="title">
        <string>Mobile Broadband</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_3" >
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
        <item>
-        <widget class="QTreeWidget" name="listCellular" >
-         <property name="rootIsDecorated" >
+        <widget class="QTreeWidget" name="listCellular">
+         <property name="rootIsDecorated">
           <bool>false</bool>
          </property>
-         <property name="allColumnsShowFocus" >
+         <property name="allColumnsShowFocus">
           <bool>true</bool>
          </property>
-         <property name="headerHidden" >
+         <property name="headerHidden">
           <bool>false</bool>
          </property>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Connection</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Last Used</string>
           </property>
          </column>
@@ -108,29 +109,29 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabVpn" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tabVpn">
+      <attribute name="title">
        <string>VPN</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_4" >
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
-        <widget class="QTreeWidget" name="listVpn" >
-         <property name="rootIsDecorated" >
+        <widget class="QTreeWidget" name="listVpn">
+         <property name="rootIsDecorated">
           <bool>false</bool>
          </property>
-         <property name="allColumnsShowFocus" >
+         <property name="allColumnsShowFocus">
           <bool>true</bool>
          </property>
-         <property name="headerHidden" >
+         <property name="headerHidden">
           <bool>false</bool>
          </property>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Connection</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Last Used</string>
           </property>
          </column>
@@ -138,29 +139,29 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabPppoe" >
-      <attribute name="title" >
+     <widget class="QWidget" name="tabPppoe">
+      <attribute name="title">
        <string>DSL</string>
       </attribute>
-      <layout class="QHBoxLayout" name="horizontalLayout_5" >
+      <layout class="QHBoxLayout" name="horizontalLayout_5">
        <item>
-        <widget class="QTreeWidget" name="listPppoe" >
-         <property name="rootIsDecorated" >
+        <widget class="QTreeWidget" name="listPppoe">
+         <property name="rootIsDecorated">
           <bool>false</bool>
          </property>
-         <property name="allColumnsShowFocus" >
+         <property name="allColumnsShowFocus">
           <bool>true</bool>
          </property>
-         <property name="headerHidden" >
+         <property name="headerHidden">
           <bool>false</bool>
          </property>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Connection</string>
           </property>
          </column>
          <column>
-          <property name="text" >
+          <property name="text">
            <string>Last Used</string>
           </property>
          </column>
@@ -171,13 +172,13 @@
     </widget>
    </item>
    <item>
-    <layout class="QVBoxLayout" name="verticalLayout" >
+    <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <spacer name="verticalSpacer" >
-       <property name="orientation" >
+      <spacer name="verticalSpacer">
+       <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
          <height>40</height>
@@ -186,25 +187,25 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="addConnection" >
-       <property name="text" >
+      <widget class="QPushButton" name="addConnection">
+       <property name="text">
         <string>&amp;Add...</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="editConnection" >
-       <property name="text" >
+      <widget class="QPushButton" name="editConnection">
+       <property name="text">
         <string>&amp;Edit...</string>
        </property>
       </widget>
      </item>
      <item>
-      <spacer name="verticalSpacer_2" >
-       <property name="orientation" >
+      <spacer name="verticalSpacer_2">
+       <property name="orientation">
         <enum>Qt::Vertical</enum>
        </property>
-       <property name="sizeHint" stdset="0" >
+       <property name="sizeHint" stdset="0">
         <size>
          <width>20</width>
          <height>40</height>
@@ -213,8 +214,8 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="deleteConnection" >
-       <property name="text" >
+      <widget class="QPushButton" name="deleteConnection">
+       <property name="text">
         <string>&amp;Delete</string>
        </property>
       </widget>
