@@ -44,6 +44,11 @@ NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::
 : Plasma::ExtenderItem(ext),
     m_activatables(activatableList),
     m_widget(0),
+    m_mainLayout(0),
+    m_leftWidget(0),
+    m_interfaceWidget(0),
+    m_leftLayout(0),
+    m_interfaceLayout(0),
     m_connectionTabs(0)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -102,27 +107,38 @@ QGraphicsItem * NMExtenderItem::widget()
         kDebug() << "Creating widget";
         m_widget = new QGraphicsWidget(this);
         m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        setWidget(m_widget);
 
         m_mainLayout = new QGraphicsGridLayout(m_widget);
         //m_mainLayout->setOrientation(Qt::Horizontal);
-        m_mainLayout->setColumnFixedWidth(0, 240);
-        m_mainLayout->setColumnFixedWidth(0, 240);
+        m_mainLayout->setColumnFixedWidth(0, 200);
+        m_mainLayout->setColumnFixedWidth(1, 260);
         m_widget->setLayout(m_mainLayout);
 
-        QGraphicsWidget* interfaceWidget = new QGraphicsWidget(m_widget);
-        m_interfaceLayout = new QGraphicsLinearLayout(interfaceWidget);
-        m_interfaceLayout->setOrientation(Qt::Vertical);
-        interfaceWidget->setLayout(m_interfaceLayout);
-        m_mainLayout->addItem(interfaceWidget, 0, 0);
+        m_leftLayout = new QGraphicsLinearLayout(m_widget);
 
+
+        m_leftWidget = new QGraphicsWidget(m_widget);
+        m_interfaceWidget = new QGraphicsWidget(m_leftWidget);
+
+        m_interfaceLayout = new QGraphicsLinearLayout(m_interfaceWidget);
+        m_interfaceLayout->setOrientation(Qt::Vertical);
+        m_interfaceWidget->setLayout(m_interfaceLayout);
+        m_leftLayout->addItem(m_interfaceWidget);
+        m_leftWidget->setLayout(m_leftLayout);
+        m_mainLayout->addItem(m_leftWidget, 0, 0, 1, 1);
+
+        // Manage connections and flight-mode buttons
+
+
+        // Tabs for activatables
         m_connectionTabs = new Plasma::TabBar(m_widget);
         //m_connectionTabs->setTabBarShown(false);
         m_connectionTabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         m_connectionTabs->setPreferredSize(260, 200);
         m_connectionTabs->setMinimumSize(260, 120);
 
-        m_mainLayout->addItem(m_connectionTabs, 0, 1);
+        m_mainLayout->addItem(m_connectionTabs, 0, 1, 1, 1);
+        setWidget(m_widget);
 
     } else {
         kDebug() << "widget non empty";

@@ -67,8 +67,12 @@ private:
     QHash<QString, InterfaceItem *> m_interfaces;
     QHash<QString, int> m_tabIndex;
 
+
     QGraphicsWidget* m_widget;
     QGraphicsGridLayout* m_mainLayout;
+    QGraphicsWidget* m_leftWidget;
+    QGraphicsWidget* m_interfaceWidget;
+    QGraphicsLinearLayout* m_leftLayout;
     QGraphicsLinearLayout* m_interfaceLayout;
     Plasma::TabBar* m_connectionTabs;
 };
