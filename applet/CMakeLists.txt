@@ -27,8 +27,8 @@ set(networkmanager_SRCS
 
 kde4_add_ui_files(networkmanager_SRCS nmConfig.ui )
 if(NOT DEFINED ${I_KNOW_WHAT_IM_DOING})
-   set(networkmanager_SRCS applet_wip.cpp)
-   message(STATUS ${networkmanager_SRCS})
+#   set(networkmanager_SRCS applet_wip.cpp)
+#   message(STATUS ${networkmanager_SRCS})
 endif(NOT DEFINED ${I_KNOW_WHAT_IM_DOING})
 
 kde4_add_plugin(plasma_applet_networkmanagement ${networkmanager_SRCS})
