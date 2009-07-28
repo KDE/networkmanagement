@@ -116,6 +116,7 @@ QGraphicsItem * NMExtenderItem::widget()
     if (!m_widget) {
         kDebug() << "Creating widget";
         m_widget = new QGraphicsWidget(this);
+        m_widget->setMinimumWidth(600);
         m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
         //m_mainLayout = new QGraphicsGridLayout(m_widget);
@@ -123,7 +124,7 @@ QGraphicsItem * NMExtenderItem::widget()
         m_mainLayout->setOrientation(Qt::Horizontal);
         //m_mainLayout->setColumnFixedWidth(0, 200);
         //m_mainLayout->setColumnFixedWidth(1, 260);
-        //m_widget->setLayout(m_mainLayout);
+        m_widget->setLayout(m_mainLayout);
 
 
         m_leftWidget = new QGraphicsWidget(m_widget);
