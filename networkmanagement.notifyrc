@@ -546,7 +546,15 @@ Comment[x-test]=xxAn interface changed statexx
 
 [Event/networkingdisabled]
 Name=Network management disabled
+Name[pt]=Gestão de rede desactivada
+Name[pt_BR]=Gestão de rede desactivada
+Name[sv]=Nätverkshantering inaktiverad
+Name[uk]=Керування мережею вимкнено
 Comment=The network management subsystem was stopped or restarted
+Comment[pt]=O sub-sistema de gestão da rede foi parado ou reiniciado
+Comment[pt_BR]=O sub-sistema de gestão da rede foi parado ou reiniciado
+Comment[sv]=Delsystemet för nätverkshantering stoppades eller startades om
+Comment[uk]=Систему керування мережею було зупинено або перезапущено
 Action=Popup
 
 X-Ubuntu-Gettext-Domain=desktop_plasma-widget-network-manager
