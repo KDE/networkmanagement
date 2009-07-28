@@ -59,7 +59,6 @@ public:
     void setNameDisplayMode(NameDisplayMode);
     NameDisplayMode nameDisplayMode() const;
 
-    virtual void setEnabled(bool active);
     virtual QString connectionName();
 
     QString label();
@@ -67,6 +66,9 @@ public:
 public Q_SLOTS:
     void activeConnectionsChanged();
     void connectionStateChanged(int);
+    virtual void setEnabled(bool enable);
+    // also updates the connection info
+    virtual void setActive(bool active);
     /**
      * The  button to connect the interface has been clicked
      */
@@ -90,18 +92,6 @@ protected:
      */
     virtual void setConnectionInfo();
     /**
-     * The interface is unavailable for connections, update the UI
-     */
-    //virtual void setUnavailable();
-    /**
-     * The interface is inactive but could be activated
-     */
-    virtual void setInactive();
-    /**
-     * The interface is currently active, update the UI
-     */
-    //virtual void setActiveConnection(int);
-    /**
      * Give us a pixmap for an icon
      */
     virtual QPixmap statePixmap(const QString &icon);
@@ -115,8 +105,6 @@ protected:
      * Returns all available connections for the device type.
      */
     //QList<RemoteConnection*> availableConnections() const;
-
-    void connectionStateChanged(int, bool silently);
 
     Solid::Control::NetworkInterface * m_iface;
 

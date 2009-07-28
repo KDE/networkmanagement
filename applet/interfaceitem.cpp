@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Solid/Device>
 
 #include <solid/control/networkinterface.h>
+#include <solid/control/wirednetworkinterface.h>
 #include <solid/control/networkipv4config.h>
 #include <solid/control/networkmanager.h>
 
@@ -172,13 +173,22 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
 //
     connect(m_iface, SIGNAL(connectionStateChanged(int)),
             this, SLOT(connectionStateChanged(int)));
+
+    connect(m_iface, SIGNAL(linkUpChanged(bool)), this, SLOT(setActive(bool)));
+
+    //RemoteInterfaceConnection * ric = static_cast<RemoteInterfaceConnection*>(activatable);
+    Solid::Control::WiredNetworkInterface* wirediface = static_cast<Solid::Control::WiredNetworkInterface*>(m_iface);
+    if (wirediface) {
+        connect(m_iface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
+        kDebug() << "CONNECTED Carrier !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
+    }
     setNameDisplayMode(mode);
     // the applet may be starting when NetworkManager is already connected,
     // so initialise the list of active connections
-//    activeConnectionsChanged();
+    // activeConnectionsChanged();
     // set the state of our UI correctly
     //
-    connectionStateChanged(m_iface->connectionState(), true);
+    connectionStateChanged(m_iface->connectionState());
     setLayout(m_layout);
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 }
@@ -192,7 +202,7 @@ void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED( event )
     if (m_icon->isEnabled()) {
-        m_connectButton->show();
+        //m_connectButton->show();
     }
 }
 
@@ -205,6 +215,12 @@ void InterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 QString InterfaceItem::label()
 {
     return m_ifaceNameLabel->text();
+}
+
+void InterfaceItem::setActive(bool active)
+{
+    kDebug() << "+ + + + + + Active?" << active;
+    connectionStateChanged(m_iface->connectionState());
 }
 
 void InterfaceItem::setEnabled(bool enable)
@@ -255,7 +271,7 @@ QString InterfaceItem::connectionName()
 
 void InterfaceItem::setConnectionInfo()
 {
-    connectionStateChanged(m_iface->connectionState(), true);
+    connectionStateChanged(m_iface->connectionState());
     return;
     if (m_connectionInfoLabel && m_connectionNameLabel) {
         if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
@@ -345,20 +361,13 @@ void InterfaceItem::activeConnectionsChanged()
 }
 
 // slot
-void InterfaceItem::connectionStateChanged(int state )
-{
-    kDebug() << "YAY!!!!!!!!";
-    connectionStateChanged( state, false );
-}
-
-void InterfaceItem::connectionStateChanged(int state, bool silently)
+void InterfaceItem::connectionStateChanged(int state)
 {
     // get the active connections
     // check if any of them affect our interface
     // setActiveConnection on ourself
 
     // button to connect, disconnect
-
     m_disconnect = false;
     // Name and info labels
     QString lname = QString();
@@ -435,13 +444,10 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
         m_connectButton->setIcon("dialog-cancel");
         m_connectButton->setToolTip(i18n("Disconnect"));
     }
-    // Update the labels with the new connection information
-    //if (!lname.isEmpty()) {
-        m_connectionNameLabel->setText(lname);
-    //}
-    //if (!linfo.isEmpty()) {
-        m_connectionInfoLabel->setText(linfo);
-    //}
+    m_connectionNameLabel->setText(lname);
+    m_connectionInfoLabel->setText(linfo);
+
+    kDebug() << ">>>>>>> State changed" << lname << linfo;
 
     emit stateChanged();
 }
@@ -450,81 +456,5 @@ QPixmap InterfaceItem::statePixmap(const QString &icon) {
     // Which pixmap should we display with the notification?
     return KIcon(icon).pixmap(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
 }
-
-/*
-void InterfaceItem::setUnavailable()
-{
-    //m_icon->setEnabled(false);
-    //m_ifaceNameLabel->setText(i18n("<b>Interface %1</b>", m_iface->interfaceName()));
-    m_connectionNameLabel->setText(m_unavailableText);
-    m_connectionInfoLabel->setText("");
-    m_connectionInfoIcon->hide();
-    if (m_strengthMeter) {
-        m_strengthMeter->hide();
-    }
-}
-*/
-
-void InterfaceItem::setInactive()
-{
-    m_icon->setEnabled(true);
-    m_connectionNameLabel->setText(i18nc("networking device is not connected", "Disconnected"));
-    m_connectionInfoLabel->setText("");
-
-    m_connectButton->setToolTip(i18n("Connect"));
-    m_connectButton->setEnabled(true);
-    m_connectButton->setIcon("dialog-ok");
-
-    m_connectionInfoIcon->hide();
-    if (m_strengthMeter) {
-        kDebug() << "BOOOOOOOOOOOOOOOOO";
-        m_strengthMeter->hide();
-    }
-    setEnabled(true);
-}
-
-#if 0
-void InterfaceItem::setActiveConnection(int state)
-{
-    m_icon->setEnabled(true);
-    QStringList connectionIds;
-    //kDebug();
-    foreach (const ActiveConnectionPair &connection, m_activeConnections) {
-        if (connection.second->isValid()) {
-            //connection name
-            connectionIds.append(connection.second->id());
-        } else {
-            // fallback label
-            connectionIds.append(i18nc("Text for connections not owned by a service", "Orphaned connection"));
-        }
-    }
-    QString stateString = "connections empty";
-    if (!connectionIds.isEmpty()) {
-        QString connId = connectionIds.join(QChar(','));
-        stateString = NetworkManagerApplet::connectionStateToString((Solid::Control::NetworkInterface::ConnectionState)state);
-        m_connectionInfoLabel->setText(i18n( "%1:\"%2\"", stateString, connId));
-    }
-    //m_connectionNameLabel->setText(stateString);
-    //activeConnectionsChanged();
-    m_connectionInfoIcon->show();
-
-    m_connectButton->setToolTip(i18n("Disconnect"));
-    m_connectButton->setEnabled(true);
-    m_connectButton->setIcon("dialog-cancel");
-}
-#endif
-#if 0
-QList<RemoteConnection*> InterfaceItem::availableConnections() const
-{
-    QList<RemoteConnection*> rconnections;
-    foreach (const QString &conn, m_userSettings->connections()) {
-       RemoteConnection *rconnection = m_userSettings->findConnection(conn);
-       if (rconnection && rconnection->type() == m_iface->type()) {
-           rconnections << rconnection;
-       }
-    }
-    return rconnections;
-}
-#endif
 
 // vim: sw=4 sts=4 et tw=100
