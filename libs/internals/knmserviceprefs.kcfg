@@ -22,4 +22,15 @@
       </choices>
     </entry>
   </group>
+  <group name="SystemTray">
+      <entry name="IconCount" type="UInt">
+          <default>1</default>
+          <min>1</min>
+          <max>5</max>
+      </entry>
+      <entry name="IconTypes$(IconIndex)" type="UInt" key="IconTypes_$(IconIndex)">
+          <parameter name="IconIndex" type="Int" max="4"/>
+          <default param="0">37</default>
+      </entry>
+  </group>
 </kcfg>
