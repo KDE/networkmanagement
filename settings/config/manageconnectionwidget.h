@@ -33,6 +33,8 @@ class QMenu;
 class QTreeWidget;
 class QTreeWidgetItem;
 
+class TraySettingsWidget;
+
 class ManageConnectionWidget : public KCModule
 {
 Q_OBJECT
@@ -86,6 +88,11 @@ private slots:
      * Update the relative last used labels (called once a minute on a timer, cheesy I know)
      */
     void updateLastUsed();
+
+    /**
+     * Used by the tray settings widget to indicate when its unmanaged widgets change
+     */
+    void otherSettingsChanged();
 private:
     /**
      * Get the connection type of the currently selected index
@@ -111,6 +118,7 @@ private:
     ConnectionEditor * mEditor;
     QHash<QString,QTreeWidgetItem*> mUuidItemHash;
     QTimer * mLastUsedTimer;
+    TraySettingsWidget * mTraySettingsWidget;
 };
 
 #endif // NM07_MANAGE_CONNECTION_WIDGET_H

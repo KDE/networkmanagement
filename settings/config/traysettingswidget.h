@@ -25,7 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_traysettings.h"
 
-class QTreeWidgetItem;
+class QListWidgetItem;
 
 class TraySettingsWidget : public QWidget
 {
@@ -33,13 +33,18 @@ Q_OBJECT
 public:
     TraySettingsWidget(QWidget * parent = 0);
     virtual ~TraySettingsWidget();
+    QList<uint> iconInterfaceAllocations() const;
+signals:
+    void changed();
 protected Q_SLOTS:
     void addIconClicked();
     void removeIconClicked();
+    void itemsMoved();
 private:
-    void readIconTypes(uint index, QTreeWidgetItem * item);
+    void readIconTypes(uint index, QListWidget * item);
     Ui_TraySettings m_ui;
     uint m_iconCount;
+    QListWidgetItem * m_firstIconItem;
 };
 
 #endif // TRAYSETTINGSWIDGET_H

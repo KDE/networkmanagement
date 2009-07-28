@@ -35,24 +35,13 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_7">
      <item>
-      <widget class="QTreeWidget" name="iconInterfaceTree">
+      <widget class="QListWidget" name="iconInterfaceList">
        <property name="dragDropMode">
         <enum>QAbstractItemView::InternalMove</enum>
        </property>
        <property name="alternatingRowColors">
         <bool>true</bool>
        </property>
-       <property name="rootIsDecorated">
-        <bool>false</bool>
-       </property>
-       <attribute name="headerVisible">
-        <bool>false</bool>
-       </attribute>
-       <column>
-        <property name="text">
-         <string>1</string>
-        </property>
-       </column>
       </widget>
      </item>
      <item>
@@ -60,28 +49,14 @@
        <item>
         <widget class="QPushButton" name="pbAddIcon">
          <property name="text">
-          <string>A&amp;dd icon</string>
+          <string>&amp;More Icons</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pbIconUp">
+        <widget class="QPushButton" name="pbRemoveIcon">
          <property name="text">
-          <string>Move u&amp;p</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pbMoveDown">
-         <property name="text">
-          <string>Move Do&amp;wn</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_4">
-         <property name="text">
-          <string>&amp;Remove icon</string>
+          <string>&amp;Fewer Icons</string>
          </property>
         </widget>
        </item>
