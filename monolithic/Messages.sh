@@ -1,3 +1,3 @@
 #!/bin/sh
-$XGETTEXT *.cpp -o $podir/KNetworkManager.pot
+$XGETTEXT *.cpp -o $podir/knetworkmanager.pot
 rm -f rc.cpp

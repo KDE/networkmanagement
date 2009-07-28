@@ -30,7 +30,7 @@ static const char version[] = "v0.8";
 
 int main( int argc, char** argv )
 {
-    KAboutData about("KNetworkManager", 0, ki18n("knetworkmanager"), version, ki18n(description), KAboutData::License_GPL, ki18n("(C) 2009 Will Stephenson"), KLocalizedString(), 0, "wstephenson@kde.org");
+    KAboutData about("knetworkmanager", 0, ki18n("KNetworkManager"), version, ki18n(description), KAboutData::License_GPL, ki18n("(C) 2009 Will Stephenson"), KLocalizedString(), 0, "wstephenson@kde.org");
     about.addAuthor( ki18n("Will Stephenson"), KLocalizedString(), "wstephenson@kde.org" );
     KCmdLineArgs::init(argc, argv, &about);
 
