@@ -51,6 +51,7 @@ public:
     QList<SortedActivatableList*> trayIconLists;
     ActivatableList * activatableList;
     NMDBusSettingsService * nmSettingsService;
+    bool autostart;
 };
 
 Monolithic::Monolithic()
@@ -66,6 +67,9 @@ Monolithic::~Monolithic()
 void Monolithic::init()
 {
     Q_D(Monolithic);
+
+    disableSessionManagement();
+
     // the most basic object
     ConnectionList * connectionList;
     // its loader/saver
@@ -145,6 +149,8 @@ void Monolithic::init()
     QDBusConnection::sessionBus().registerService("org.kde.knetworkmanager");
     QDBusConnection::sessionBus().registerObject("/tray", this, QDBusConnection::ExportScriptableSlots);
 
+    d->autostart = KNetworkManagerServicePrefs::self()->autostart();
+
     createTrayIcons();
 }
 
@@ -161,17 +167,17 @@ void Monolithic::createTrayIcons()
 
     KNetworkManagerServicePrefs::self()->readConfig();
 
-    for (int i = 0; i < KNetworkManagerServicePrefs::self()->iconCount(); ++i) {
+    for (uint i = 0; i < KNetworkManagerServicePrefs::self()->iconCount(); ++i) {
         Solid::Control::NetworkInterface::Types types(KNetworkManagerServicePrefs::self()->iconTypes(i));
 
         SortedActivatableList * sortedList = new SortedActivatableList(types, 0);
+        d->activatableList->registerObserver(sortedList);
 #if 0
         // for debugging the sorted list
         ActivatableDebug * debug = new ActivatableDebug;
 
         debug->setObjectName("SORTED");
         sortedList->registerObserver(debug);
-        d->activatableList->registerObserver(sortedList);
         kDebug() << "REGISTERED NEW SORTED LIST";
 #endif
         KNetworkManagerTrayIcon * simpleUi = new KNetworkManagerTrayIcon(types, QString::number(types),
@@ -186,7 +192,12 @@ void Monolithic::createTrayIcons()
 
 void Monolithic::reloadConfig()
 {
+    Q_D(Monolithic);
     kDebug();
     createTrayIcons();
+    if (d->autostart && !KNetworkManagerServicePrefs::self()->autostart()) {
+        kapp->quit();
+    }
+    d->autostart = KNetworkManagerServicePrefs::self()->autostart();
 }
 

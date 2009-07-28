@@ -17,9 +17,12 @@
       <whatsthis/>
       <choices name="Knm::ConnectionPersistence::SecretStorage">
         <choice name="DontStore"/>
-        <choice name="Secure"/>
         <choice name="PlainText"/>
+        <choice name="Secure"/>
       </choices>
+    </entry>
+    <entry name="Autostart" type="Bool">
+      <default>true</default>
     </entry>
   </group>
   <group name="SystemTray">

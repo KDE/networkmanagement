@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KRandom>
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
+#include <KToolInvocation>
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 
@@ -101,6 +102,10 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     mLastUsedTimer->start(1000 * 60);
 
     mTraySettingsWidget  = new TraySettingsWidget(this);
+
+    // KConfigXT magic
+    addConfig(KNetworkManagerServicePrefs::self(), mTraySettingsWidget);
+
     connect(mTraySettingsWidget, SIGNAL(changed()), SLOT(otherSettingsChanged()));
 
     mConnEditUi.tabWidget->addTab(mTraySettingsWidget, i18nc("@title:tab tab containing general UI settings", "&Other Settings"));
@@ -400,7 +405,11 @@ void ManageConnectionWidget::save()
     KCModule::save();
     QDBusInterface remoteApp("org.kde.knetworkmanager", "/tray",
                                        "org.kde.knetworkmanager");
-    remoteApp.call("reloadConfig");
+    if (remoteApp.isValid()) {
+        remoteApp.call("reloadConfig");
+    } else if (KNetworkManagerServicePrefs::self()->autostart()) {
+        KToolInvocation::kdeinitExec("knetworkmanager");
+    }
 }
 
 void ManageConnectionWidget::tabChanged(int index)
