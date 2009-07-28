@@ -247,7 +247,7 @@ QList<Solid::Control::AccessPoint*> WirelessInterfaceItem::availableAccessPoints
 
 void WirelessInterfaceItem::setEnabled(bool enable)
 {
-    kDebug() << enable;
+    //kDebug() << enable;
     m_strengthMeter->setEnabled(enable);
     InterfaceItem::setEnabled(enable);
 }

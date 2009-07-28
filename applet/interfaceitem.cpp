@@ -130,7 +130,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_connectionInfoLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionInfoLabel->nativeWidget()->setWordWrap(false);
     m_connectionInfoLabel->setText(i18n("<b>IP Address:</b> dum.my.ip.addr"));
-    m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 1, Qt::AlignCenter);
+    m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 2, Qt::AlignCenter);
 
     if (m_iface->type() == Solid::Control::NetworkInterface::Ieee80211 ||
             m_iface->type() == Solid::Control::NetworkInterface::Cdma ||
@@ -191,7 +191,9 @@ void InterfaceItem::itemClicked()
 void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED( event )
-    m_connectButton->show();
+    if (m_icon->isEnabled()) {
+        m_connectButton->show();
+    }
 }
 
 void InterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
@@ -207,17 +209,21 @@ QString InterfaceItem::label()
 
 void InterfaceItem::setEnabled(bool enable)
 {
-    kDebug() << "ENABLE?" << enable;
+    //kDebug() << "ENABLE?" << enable;
     m_enabled = enable;
+    m_icon->setEnabled(enable);
     m_connectionInfoLabel->setEnabled(enable);
     m_connectionNameLabel->setEnabled(enable);
     m_ifaceNameLabel->setEnabled(enable);
+    m_connectButton->setEnabled(enable);
     m_connectionInfoIcon->setEnabled(enable);
     if (m_strengthMeter) {
-        m_strengthMeter->setEnabled(enable);
+        if (enable) {
+            m_strengthMeter->show();
+        } else {
+            m_strengthMeter->hide();
+        }
     }
-    //connectionStateChanged(m_iface->connectionState(), false);
-    //connectioStateChanged();
 }
 
 InterfaceItem::~InterfaceItem()
@@ -243,8 +249,8 @@ InterfaceItem::NameDisplayMode InterfaceItem::nameDisplayMode() const
 
 QString InterfaceItem::connectionName()
 {
-    // Fixme: active connection's name
-    return "";
+    // Default active connection's name is empty, room for improvement?
+    return QString();
 }
 
 void InterfaceItem::setConnectionInfo()
@@ -379,33 +385,45 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
             lname = i18n("Connecting...");
             linfo = i18n("Preparing network connection");
             m_disconnect = true;
+            setEnabled(true);
             break;
         case Solid::Control::NetworkInterface::Configuring:
             lname = i18n("Connecting...");
             linfo = i18n("Configuring network connection");
             m_disconnect = true;
+            setEnabled(true);
             break;
         case Solid::Control::NetworkInterface::NeedAuth:
             lname = i18n("Connecting...");
             linfo = i18n("Requesting authentication");
             m_disconnect = true;
+            setEnabled(true);
             break;
         case Solid::Control::NetworkInterface::IPConfig:
             lname = i18n("Connecting...");
             linfo = i18n("Setting network address");
+            setEnabled(true);
             m_disconnect = true;
             break;
         case Solid::Control::NetworkInterface::Activated:
             if (connectionName().isEmpty()) {
-                m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
+                lname = i18nc("wireless interface is connected", "Connected");
             } else {
-                m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected to %1", connectionName()));
+                lname = i18nc("wireless interface is connected", "Connected to %1", connectionName());
             }
-            m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", currentIpAddress()));
+            linfo = i18nc("ip address of the network interface", "Address: %1", currentIpAddress());
             m_disconnect = true;
+            setEnabled(true);
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
+            lname = i18n("Unmanaged");
+            linfo = QString();
+            setEnabled(false);
+            break;
         case Solid::Control::NetworkInterface::UnknownState:
+            lname = i18n("Unknown");
+            linfo = QString();
+            setEnabled(false);
             break;
     }
 
@@ -418,12 +436,12 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
         m_connectButton->setToolTip(i18n("Disconnect"));
     }
     // Update the labels with the new connection information
-    if (!lname.isEmpty()) {
+    //if (!lname.isEmpty()) {
         m_connectionNameLabel->setText(lname);
-    }
-    if (!linfo.isEmpty()) {
+    //}
+    //if (!linfo.isEmpty()) {
         m_connectionInfoLabel->setText(linfo);
-    }
+    //}
 
     emit stateChanged();
 }
