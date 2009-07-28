@@ -25,8 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#include <QHash>
 //#include <QPair>
 
+#include <Plasma/CheckBox>
 #include <Plasma/ExtenderItem>
 #include <Plasma/Extender>
+#include <Plasma/IconWidget>
 #include <Plasma/TabBar>
 
 #include <solid/control/networkinterface.h>
@@ -55,6 +57,12 @@ public Q_SLOTS:
     void interfaceAdded(const QString&);
     void interfaceRemoved(const QString&);
     void switchTab(const QString&);
+
+    void managerWirelessEnabledChanged(bool);
+    void managerWirelessHardwareEnabledChanged(bool);
+    void wirelessEnabledToggled(bool checked);
+    void manageConnections();
+
 Q_SIGNALS:
     void connectionListUpdated();
 
@@ -69,11 +77,15 @@ private:
 
 
     QGraphicsWidget* m_widget;
-    QGraphicsGridLayout* m_mainLayout;
+    QGraphicsLinearLayout* m_mainLayout;
     QGraphicsWidget* m_leftWidget;
     QGraphicsWidget* m_interfaceWidget;
     QGraphicsLinearLayout* m_leftLayout;
     QGraphicsLinearLayout* m_interfaceLayout;
+
+    Plasma::CheckBox* m_rfCheckBox;
+    Plasma::IconWidget* m_connectionsButton;
+
     Plasma::TabBar* m_connectionTabs;
 };
 #endif // NMEXTENDERITEM_H

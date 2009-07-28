@@ -18,23 +18,33 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// Own
 #include "nmextenderitem.h"
 
+// Qt
 #include <QGraphicsLinearLayout>
 #include <QGraphicsGridLayout>
 
+// KDE
+#include <KDebug>
+#include <KIconLoader>
+#include <KToolInvocation>
+
+// Plasma
 #include <Plasma/Extender>
 #include <Plasma/Label>
 
-#include <KDebug>
+// Solid::Control
 #include <solid/control/networkmanager.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/wirednetworkinterface.h>
 
+// client lib
 #include "activatableitem.h"
 #include "remoteactivatable.h"
 #include "remoteactivatablelist.h"
 
+// More own includes
 #include "interfaceitem.h"
 #include "wirelessinterfaceitem.h"
 #include "wiredinterfaceitem.h"
@@ -108,38 +118,64 @@ QGraphicsItem * NMExtenderItem::widget()
         m_widget = new QGraphicsWidget(this);
         m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-        m_mainLayout = new QGraphicsGridLayout(m_widget);
-        //m_mainLayout->setOrientation(Qt::Horizontal);
-        m_mainLayout->setColumnFixedWidth(0, 200);
-        m_mainLayout->setColumnFixedWidth(1, 260);
-        m_widget->setLayout(m_mainLayout);
-
-        m_leftLayout = new QGraphicsLinearLayout(m_widget);
+        //m_mainLayout = new QGraphicsGridLayout(m_widget);
+        m_mainLayout = new QGraphicsLinearLayout(m_widget);
+        m_mainLayout->setOrientation(Qt::Horizontal);
+        //m_mainLayout->setColumnFixedWidth(0, 200);
+        //m_mainLayout->setColumnFixedWidth(1, 260);
+        //m_widget->setLayout(m_mainLayout);
 
 
         m_leftWidget = new QGraphicsWidget(m_widget);
         m_interfaceWidget = new QGraphicsWidget(m_leftWidget);
+        m_leftLayout = new QGraphicsLinearLayout(m_leftWidget);
+        m_leftLayout->setOrientation(Qt::Vertical);
 
         m_interfaceLayout = new QGraphicsLinearLayout(m_interfaceWidget);
         m_interfaceLayout->setOrientation(Qt::Vertical);
-        m_interfaceWidget->setLayout(m_interfaceLayout);
+        //m_interfaceWidget->setLayout(m_interfaceLayout);
         m_leftLayout->addItem(m_interfaceWidget);
         m_leftWidget->setLayout(m_leftLayout);
-        m_mainLayout->addItem(m_leftWidget, 0, 0, 1, 1);
+        m_mainLayout->addItem(m_leftWidget);
 
         // Manage connections and flight-mode buttons
+        m_rfCheckBox = new Plasma::CheckBox(m_leftWidget);
+        m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
+        m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+        m_rfCheckBox->setText(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable wireless"));
+        m_leftLayout->addItem(m_rfCheckBox);
 
+        connect(m_rfCheckBox, SIGNAL(toggled(bool)), SLOT(wirelessEnabledToggled(bool)));
+        connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
+                this, SLOT(managerWirelessEnabledChanged(bool)));
+        connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
+                this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
+
+        m_connectionsButton = new Plasma::IconWidget(m_leftWidget);
+        m_connectionsButton->setIcon("networkmanager");
+        m_connectionsButton->setOrientation(Qt::Horizontal);
+        m_connectionsButton->setText(i18nc("button in general settings extender", "Manage Connections..."));
+        m_connectionsButton->setMaximumHeight(KIconLoader::SizeMedium);
+        m_connectionsButton->setMinimumHeight(KIconLoader::SizeMedium);
+        m_connectionsButton->setDrawBackground(true);
+#if KDE_IS_VERSION(4,2,60)
+        m_connectionsButton->setTextBackgroundColor(QColor());
+#endif
+
+        connect(m_connectionsButton, SIGNAL(activated()), this, SLOT(manageConnections()));
+        m_leftLayout->addItem(m_connectionsButton);
+        m_mainLayout->addItem(m_leftWidget);
 
         // Tabs for activatables
         m_connectionTabs = new Plasma::TabBar(m_widget);
         //m_connectionTabs->setTabBarShown(false);
         m_connectionTabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        m_connectionTabs->setPreferredSize(260, 200);
-        m_connectionTabs->setMinimumSize(260, 120);
+        m_connectionTabs->setPreferredSize(260, 240);
+        m_connectionTabs->setMinimumSize(260, 240);
 
-        m_mainLayout->addItem(m_connectionTabs, 0, 1, 1, 1);
+        //m_mainLayout->addItem(m_connectionTabs, 0, 1, 1, 1);
+        m_mainLayout->addItem(m_connectionTabs);
         setWidget(m_widget);
-
     } else {
         kDebug() << "widget non empty";
     }
@@ -231,5 +267,36 @@ void NMExtenderItem::createTab(InterfaceItem * item, Solid::Control::NetworkInte
     m_tabIndex[iface->uni()] = m_connectionTabs->addTab(KIcon(icon), name, aList);
     connect(item, SIGNAL(clicked(const QString&)), this, SLOT(switchTab(const QString&)));
 }
+
+void NMExtenderItem::wirelessEnabledToggled(bool checked)
+{
+    kDebug() << "Applet wireless enable switch toggled" << checked;
+    Solid::Control::NetworkManager::setWirelessEnabled(checked);
+}
+
+void NMExtenderItem::managerWirelessEnabledChanged(bool enabled)
+{
+    kDebug() << "NM daemon changed wireless enable state" << enabled;
+    // it might have changed because we toggled the switch,
+    // but it might have been changed externally, so set it anyway
+    m_rfCheckBox->setChecked(enabled);
+}
+
+void NMExtenderItem::managerWirelessHardwareEnabledChanged(bool enabled)
+{
+    kDebug() << "Hardware wireless enable switch state changed" << enabled;
+    m_rfCheckBox->setChecked(enabled && Solid::Control::NetworkManager::isWirelessEnabled());
+    m_rfCheckBox->setEnabled(!enabled);
+}
+
+void NMExtenderItem::manageConnections()
+{
+    //kDebug() << "opening connection management dialog";
+    QStringList args;
+    args << "kcm_networkmanagement";
+    KToolInvocation::kdeinitExec("kcmshell4", args);
+}
+
+
 // vim: sw=4 sts=4 et tw=100
 
