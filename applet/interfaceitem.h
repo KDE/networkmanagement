@@ -80,7 +80,7 @@ protected Q_SLOTS:
      */
     virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
     virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
-
+    void handleConnectionStateChange(int new_state, int old_state, int reason);
     virtual void itemClicked();
 Q_SIGNALS:
     void stateChanged();

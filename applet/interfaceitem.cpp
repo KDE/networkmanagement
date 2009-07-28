@@ -173,7 +173,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
 //
     connect(m_iface, SIGNAL(connectionStateChanged(int)),
             this, SLOT(connectionStateChanged(int)));
-
+    QObject::connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
     connect(m_iface, SIGNAL(linkUpChanged(bool)), this, SLOT(setActive(bool)));
 
     //RemoteInterfaceConnection * ric = static_cast<RemoteInterfaceConnection*>(activatable);
@@ -358,6 +358,13 @@ void InterfaceItem::activeConnectionsChanged()
     //kDebug() << "Active connections changed ... setting connection info";
     setConnectionInfo();
 #endif
+}
+
+void InterfaceItem::handleConnectionStateChange(int new_state, int old_state, int reason)
+{
+    Q_UNUSED(old_state);
+    Q_UNUSED(reason);
+    connectionStateChanged(new_state);
 }
 
 // slot
