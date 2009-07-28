@@ -64,7 +64,7 @@ void ActivatableList::registerObserver(ActivatableObserver * observer, Activatab
 void ActivatableList::unregisterObserver(ActivatableObserver * observer)
 {
     Q_D(ActivatableList);
-    if (observer &&! !d->observers.isEmpty()) {
+    if (observer && !d->observers.isEmpty()) {
         d->observers.removeOne(observer);
     }
 }
