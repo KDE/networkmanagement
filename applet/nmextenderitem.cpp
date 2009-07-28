@@ -84,31 +84,6 @@ void NMExtenderItem::init()
             SLOT(interfaceAdded(const QString&)));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             SLOT(interfaceRemoved(const QString&)));
-
-    /*
-    m_widget = new QGraphicsWidget(this);
-    m_layout = new QGraphicsLinearLayout(Qt::Vertical, m_widget);
-    m_layout->addItem(m_connectionLayout);
-    m_widget->setLayout(m_layout);
-    setWidget(m_widget);
-
-    // adds items from subclasses above our layout
-    setupHeader();
-
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*)),
-            SLOT(activatableAdded(RemoteActivatable *)));
-    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
-            SLOT(activatableRemoved(RemoteActivatable *)));
-
-    connect(m_activatables, SIGNAL(appeared()), SLOT(getList()));
-    connect(m_activatables, SIGNAL(disappeared()), SLOT(listDisappeared()));
-
-    getList();
-
-    // adds items from subclasses below our layout
-    setupFooter();
-    m_layout->addStretch(5);
-    */
 }
 
 QGraphicsItem * NMExtenderItem::widget()
@@ -116,7 +91,7 @@ QGraphicsItem * NMExtenderItem::widget()
     if (!m_widget) {
         kDebug() << "Creating widget";
         m_widget = new QGraphicsWidget(this);
-        m_widget->setMinimumWidth(600);
+        m_widget->setMinimumWidth(500);
         m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
         //m_mainLayout = new QGraphicsGridLayout(m_widget);
@@ -222,7 +197,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
             case Solid::Control::NetworkInterface::Ieee80211:
             {
                 // Create the wireless interface item
-                WirelessInterfaceItem * wifiItem = 0;
+                WirelessInterfaceItem* wifiItem = 0;
                 wifiItem = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
                 ifaceItem = wifiItem;
                 //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
@@ -242,7 +217,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
             default:
             {
                 // Create the interfaceitem
-                WiredInterfaceItem * wiredItem = 0;
+                WiredInterfaceItem* wiredItem = 0;
                 ifaceItem = wiredItem = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
 
                 // Add a wired tab
@@ -257,8 +232,6 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         //m_interfaceLayout->updateGeometry();
         //updateNetworks();
     }
-    //show();
-    //emit updateLayout();
 }
 
 void NMExtenderItem::createTab(InterfaceItem * item, Solid::Control::NetworkInterface* iface, const QString &name, const QString &icon)

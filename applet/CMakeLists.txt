@@ -5,14 +5,9 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../libs/client
 add_subdirectory(pics)
 
 set(networkmanager_SRCS
-    connectionlist.cpp
     activatableitem.cpp
 
     interfaceconnectionitem.cpp
-
-    interfacegroup.cpp
-
-    generalextender.cpp
 
     networkmanager.cpp
 
