@@ -92,7 +92,7 @@ protected:
     /**
      * The interface is unavailable for connections, update the UI
      */
-    virtual void setUnavailable();
+    //virtual void setUnavailable();
     /**
      * The interface is inactive but could be activated
      */

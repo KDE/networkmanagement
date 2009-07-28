@@ -68,9 +68,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_layout->setColumnSpacing(0, 8);
     m_layout->setColumnSpacing(1, 4);
     m_layout->setColumnSpacing(2, 6);
-    m_layout->setPreferredWidth(280);
+    m_layout->setPreferredWidth(240);
     m_layout->setColumnFixedWidth(0, 48);
-    m_layout->setColumnMinimumWidth(1, 144);
+    m_layout->setColumnMinimumWidth(1, 104);
     m_layout->setColumnFixedWidth(2, 60); // FIXME: spacing?
     m_layout->setColumnFixedWidth(3, 22); // FIXME: spacing?
 
@@ -142,12 +142,12 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
         m_strengthMeter->setMaximum(100);
         m_strengthMeter->setValue(0);
         m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
-        m_strengthMeter->setPreferredSize(QSizeF(60, meterHeight));
-        m_strengthMeter->setMaximumWidth(60);
+        m_strengthMeter->setPreferredSize(QSizeF(48, meterHeight));
+        m_strengthMeter->setMaximumWidth(48);
         m_strengthMeter->setMaximumHeight(meterHeight);
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_strengthMeter->hide();
-        m_layout->addItem(m_strengthMeter, 2, 2, 1, 1, Qt::AlignCenter);
+        m_layout->addItem(m_strengthMeter, 2, 0, 1, 1, Qt::AlignCenter);
         //m_connectionInfoLabel->hide();
 
    // m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -207,7 +207,7 @@ QString InterfaceItem::label()
 
 void InterfaceItem::setEnabled(bool enable)
 {
-    kDebug() << enable;
+    kDebug() << "ENABLE?" << enable;
     m_enabled = enable;
     m_connectionInfoLabel->setEnabled(enable);
     m_connectionNameLabel->setEnabled(enable);
@@ -216,7 +216,8 @@ void InterfaceItem::setEnabled(bool enable)
     if (m_strengthMeter) {
         m_strengthMeter->setEnabled(enable);
     }
-    setConnectionInfo();
+    //connectionStateChanged(m_iface->connectionState(), false);
+    //connectioStateChanged();
 }
 
 InterfaceItem::~InterfaceItem()
@@ -248,6 +249,8 @@ QString InterfaceItem::connectionName()
 
 void InterfaceItem::setConnectionInfo()
 {
+    connectionStateChanged(m_iface->connectionState(), true);
+    return;
     if (m_connectionInfoLabel && m_connectionNameLabel) {
         if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
             if (connectionName().isEmpty()) {
@@ -338,6 +341,7 @@ void InterfaceItem::activeConnectionsChanged()
 // slot
 void InterfaceItem::connectionStateChanged(int state )
 {
+    kDebug() << "YAY!!!!!!!!";
     connectionStateChanged( state, false );
 }
 
@@ -356,20 +360,20 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
 
     switch (state) {
         case Solid::Control::NetworkInterface::Unavailable:
-            setUnavailable();
-            m_connectButton->setEnabled(false);
+            lname = i18n("Unavailable");
+            linfo = QString();
+            setEnabled(false);
             break;
         case Solid::Control::NetworkInterface::Disconnected:
-            if ( !silently )
-                KNotification::event(Event::Disconnected, i18nc("Notification text when a network interface was disconnected","%1 disconnected", m_interfaceName), statePixmap("network-disconnect"), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
-            setInactive();
+            lname = i18n("Disconnected");
+            linfo = QString();
+            setEnabled(true);
             break;
         case Solid::Control::NetworkInterface::Failed:
             // set the disconnected icon
-            if ( !silently )
-                KNotification::event(Event::ConnectFailed, i18nc("Notification text when a network interface connection attempt failed","Connection on %1 failed", m_interfaceName), statePixmap("network-disconnect"), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
-            setInactive();
+            lname = i18nc("Notification text when a network interface connection attempt failed","Connection on %1 failed", m_interfaceName);
             linfo = i18n("Connection failed");
+            setEnabled(true);
             break;
         case Solid::Control::NetworkInterface::Preparing:
             lname = i18n("Connecting...");
@@ -391,11 +395,13 @@ void InterfaceItem::connectionStateChanged(int state, bool silently)
             linfo = i18n("Setting network address");
             m_disconnect = true;
             break;
-        case Solid::Control::NetworkInterface::Activated: // lookup the active connection, get its state
-            if ( !silently )
-                KNotification::event(Event::Connected, i18nc("Notification text when a network interface connection succeeded","%1 connected", m_interfaceName), statePixmap("network-connect"), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
-                // ... set Pixmap
-            //setActiveConnection(state);
+        case Solid::Control::NetworkInterface::Activated:
+            if (connectionName().isEmpty()) {
+                m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
+            } else {
+                m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected to %1", connectionName()));
+            }
+            m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", currentIpAddress()));
             m_disconnect = true;
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
@@ -427,6 +433,7 @@ QPixmap InterfaceItem::statePixmap(const QString &icon) {
     return KIcon(icon).pixmap(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
 }
 
+/*
 void InterfaceItem::setUnavailable()
 {
     //m_icon->setEnabled(false);
@@ -438,6 +445,7 @@ void InterfaceItem::setUnavailable()
         m_strengthMeter->hide();
     }
 }
+*/
 
 void InterfaceItem::setInactive()
 {
@@ -454,6 +462,7 @@ void InterfaceItem::setInactive()
         kDebug() << "BOOOOOOOOOOOOOOOOO";
         m_strengthMeter->hide();
     }
+    setEnabled(true);
 }
 
 #if 0

@@ -43,9 +43,11 @@ public:
     WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent = 0);
     virtual ~WirelessNetworkItem();
     void setupItem();
-private slots:
+
+private Q_SLOTS:
     void setStrength(int strength);
     void update();
+
 private:
     RemoteWirelessNetwork * wirelessNetworkItem() const;
     void readSettings();

@@ -20,7 +20,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "wirelessnetworkitem.h"
-#include <nm-setting-wireless.h>
 
 #include <QLabel>
 #include <QGraphicsGridLayout>
@@ -31,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Meter>
-#include <plasma/theme.h>
+#include <Plasma/Theme>
 
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
@@ -69,14 +68,7 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
     setStrength(remote->strength());
     connect(remote, SIGNAL(changed()), SLOT(update()));
 
-    // TODO
-    #if 0
-    if ( ap->capabilities().testFlag( Solid::Control::AccessPoint::Privacy ) )
-        m_security = QLatin1String("wep"); // the minimum
-    #endif
-
-
-    // TODO: this was done by a clueless (coolo)
+    // this was done by a clueless (coolo)
     if ( wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
          wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep104 )
          || (wpaFlags == 0 && capabilities.testFlag(Solid::Control::AccessPoint::Privacy))) {
