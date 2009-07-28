@@ -45,30 +45,83 @@ public:
     }
 };
 
-TraySettingsWidget::TraySettingsWidget(QWidget * parent)
-: QWidget(parent), m_iconCount(0)
+class InterfaceTypeListWidgetItem : public QListWidgetItem
 {
-    m_ui.setupUi(this);
+public:
+    InterfaceTypeListWidgetItem(Solid::Control::NetworkInterface::Type type, QListWidget * parent = 0)
+        : QListWidgetItem(parent)
+    {
+        switch (type) {
+            case Solid::Control::NetworkInterface::Ieee8023:
+                setText(i18nc("@item:inlistbox", "Wired network interfaces"));
+                setData(IconInterfaceRole, Solid::Control::NetworkInterface::Ieee8023);
+                break;
+            case Solid::Control::NetworkInterface::Ieee80211:
+                setText(i18nc("@item:inlistbox", "Wireless network interfaces"));
+                setData(IconInterfaceRole, Solid::Control::NetworkInterface::Ieee80211);
+                break;
+            case Solid::Control::NetworkInterface::Serial:
+                setText(i18nc("@item:inlistbox", "DSL network devices"));
+                setData(IconInterfaceRole, Solid::Control::NetworkInterface::Serial);
+                break;
+            case Solid::Control::NetworkInterface::Gsm:
+                setText(i18nc("@item:inlistbox", "GSM network devices"));
+                setData(IconInterfaceRole, Solid::Control::NetworkInterface::Gsm);
+                break;
+            case Solid::Control::NetworkInterface::Cdma:
+                setText(i18nc("@item:inlistbox", "CDMA network devices"));
+                setData(IconInterfaceRole, Solid::Control::NetworkInterface::Cdma);
+                break;
+        }
+        setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled|Qt::ItemIsDragEnabled);
+    }
+};
 
-    kDebug() << m_iconCount;
-    m_iconCount = KNetworkManagerServicePrefs::self()->iconCount();
-    kDebug() << m_iconCount;
+class TraySettingsWidgetPrivate
+{
+public:
+    TraySettingsWidgetPrivate()
+        : iconCount(0), displayedTypes(0)
+    { }
+    Ui_TraySettings ui;
+    uint iconCount;
+    QListWidgetItem * firstIconItem;
+    Solid::Control::NetworkInterface::Types displayedTypes;
+};
 
-    for (uint i = 0; (i < m_iconCount && i < 5); ++i) {
+TraySettingsWidget::TraySettingsWidget(QWidget * parent)
+: QWidget(parent), d_ptr(new TraySettingsWidgetPrivate)
+{
+    Q_D(TraySettingsWidget);
+    d->ui.setupUi(this);
+kDebug() << d->iconCount;
+    d->iconCount = KNetworkManagerServicePrefs::self()->iconCount();
+    kDebug() << d->iconCount;
 
-        IconListWidgetItem * item = new IconListWidgetItem(m_ui.iconInterfaceList, i+1);
+    for (uint i = 0; (i < d->iconCount && i < 5); ++i) {
+
+        IconListWidgetItem * item = new IconListWidgetItem(d->ui.iconInterfaceList, i+1);
         if (i == 0) {
-            m_firstIconItem = item;
+            d->firstIconItem = item;
         }
 
-        readIconTypes(i, m_ui.iconInterfaceList);
+        readIconTypes(i);
+    }
+    // finally add any interface types that user has configured to not be shown
+    QList<Solid::Control::NetworkInterface::Type> allTypes;
+    allTypes << Solid::Control::NetworkInterface::Ieee8023 << Solid::Control::NetworkInterface::Ieee80211 << Solid::Control::NetworkInterface::Serial << Solid::Control::NetworkInterface::Gsm << Solid::Control::NetworkInterface::Cdma;
+    foreach (Solid::Control::NetworkInterface::Type type, allTypes) {
+        if (!d->displayedTypes.testFlag(type)) {
+            InterfaceTypeListWidgetItem * item =  new InterfaceTypeListWidgetItem(type);
+            d->ui.iconInterfaceList->insertItem(0, item);
+        }
     }
 
-    m_ui.pbRemoveIcon->setEnabled(m_iconCount > 1);
+    d->ui.pbRemoveIcon->setEnabled(d->iconCount > 1);
 
-    connect(m_ui.pbAddIcon, SIGNAL(clicked()), SLOT(addIconClicked()));
-    connect(m_ui.pbRemoveIcon, SIGNAL(clicked()), SLOT(removeIconClicked()));
-    connect(m_ui.iconInterfaceList->model(), SIGNAL( rowsInserted ( const QModelIndex &, int, int)), SLOT(itemsMoved()));
+    connect(d->ui.pbAddIcon, SIGNAL(clicked()), SLOT(addIconClicked()));
+    connect(d->ui.pbRemoveIcon, SIGNAL(clicked()), SLOT(removeIconClicked()));
+    connect(d->ui.iconInterfaceList->model(), SIGNAL( rowsInserted ( const QModelIndex &, int, int)), SLOT(itemsMoved()));
 }
 
 TraySettingsWidget::~TraySettingsWidget()
@@ -78,21 +131,22 @@ TraySettingsWidget::~TraySettingsWidget()
 
 QList<uint> TraySettingsWidget::iconInterfaceAllocations() const
 {
+    Q_D(const TraySettingsWidget);
     // iterate the list and OR together the interface types grouped under each icon, return
     // as a list of uints.
     // Ignore any icons that are empty (have no interface types before the end of the list or the
     // next icon.
     QList<uint> allocations;
-    for (int i = 0; i < m_ui.iconInterfaceList->count(); ++i) {
+    for (int i = 0; i < d->ui.iconInterfaceList->count(); ++i) {
         // is the item an icon or an interface type
-        QListWidgetItem * item = m_ui.iconInterfaceList->item(i);
+        QListWidgetItem * item = d->ui.iconInterfaceList->item(i);
         if (item->data(IconInterfaceRole).toUInt() == Solid::Control::NetworkInterface::UnknownType) {
             // start ORing together the following interface types until we reach the end or
             // another icon
             int allocation = 0;
             QListWidgetItem * iconItem = 0;
-            while (++i < m_ui.iconInterfaceList->count()) {
-                iconItem = m_ui.iconInterfaceList->item(i);
+            while (++i < d->ui.iconInterfaceList->count()) {
+                iconItem = d->ui.iconInterfaceList->item(i);
                 if (iconItem->data(IconInterfaceRole).toUInt() == Solid::Control::NetworkInterface::UnknownType) {
                     // we peeked the next icon, but i will be incremented at the end of the outer
                     // loop so decrement it now
@@ -113,65 +167,54 @@ QList<uint> TraySettingsWidget::iconInterfaceAllocations() const
     return allocations;
 }
 
-void TraySettingsWidget::readIconTypes(uint index, QListWidget* list)
+void TraySettingsWidget::readIconTypes(uint index)
 {
+    Q_D(TraySettingsWidget);
     Solid::Control::NetworkInterface::Types iconTypes(KNetworkManagerServicePrefs::self()->iconTypes(index));
-    QListWidgetItem * childItem;
-    if (iconTypes.testFlag(Solid::Control::NetworkInterface::Ieee8023)) {
-        childItem = new QListWidgetItem(i18nc("@item:inlistbox", "Wired network interfaces"), list);
-        childItem->setData(IconInterfaceRole, Solid::Control::NetworkInterface::Ieee8023);
-    }
-    if (iconTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
-        childItem = new QListWidgetItem(i18nc("@item:inlistbox", "Wireless network interfaces"), list);
-        childItem->setData(IconInterfaceRole, Solid::Control::NetworkInterface::Ieee80211);
-    }
-    if (iconTypes.testFlag(Solid::Control::NetworkInterface::Serial)) {
-        childItem = new QListWidgetItem(i18nc("@item:inlistbox", "DSL network devices"), list);
-        childItem->setData(IconInterfaceRole, Solid::Control::NetworkInterface::Serial);
-    }
-    if (iconTypes.testFlag(Solid::Control::NetworkInterface::Gsm)) {
-        childItem = new QListWidgetItem(i18nc("@item:inlistbox", "GSM network devices"), list);
-        childItem->setData(IconInterfaceRole, Solid::Control::NetworkInterface::Gsm);
-    }
-    if (iconTypes.testFlag(Solid::Control::NetworkInterface::Cdma)) {
-        childItem = new QListWidgetItem(i18nc("@item:inlistbox", "CDMA network devices"), list);
-        childItem->setData(IconInterfaceRole, Solid::Control::NetworkInterface::Cdma);
-    }
 
-    if (childItem)
-        childItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled|Qt::ItemIsDragEnabled);
+    QList<Solid::Control::NetworkInterface::Type> allTypes;
+
+    allTypes << Solid::Control::NetworkInterface::Ieee8023 << Solid::Control::NetworkInterface::Ieee80211 << Solid::Control::NetworkInterface::Serial << Solid::Control::NetworkInterface::Gsm << Solid::Control::NetworkInterface::Cdma;
+
+    foreach (Solid::Control::NetworkInterface::Type type, allTypes) {
+        if (iconTypes.testFlag(type)) {
+            new InterfaceTypeListWidgetItem(type, d->ui.iconInterfaceList);
+        }
+    }
 }
 
 
 void TraySettingsWidget::addIconClicked()
 {
-    if (m_iconCount < 5) {
-        new IconListWidgetItem(m_ui.iconInterfaceList, ++m_iconCount);
-        m_ui.pbRemoveIcon->setEnabled(true);
+    Q_D(TraySettingsWidget);
+    if (d->iconCount < 5) {
+        new IconListWidgetItem(d->ui.iconInterfaceList, ++d->iconCount);
+        d->ui.pbRemoveIcon->setEnabled(true);
     } else {
-        m_ui.pbAddIcon->setEnabled(false);
+        d->ui.pbAddIcon->setEnabled(false);
     }
     emit changed();
 }
 
 void TraySettingsWidget::removeIconClicked()
 {
+    Q_D(TraySettingsWidget);
     //iterate the items backwards and remove the first icon item found as long as it is not the
     //first one.
-    for (int i = m_ui.iconInterfaceList->count() - 1; i >= 0; --i) {
-        QListWidgetItem * item = m_ui.iconInterfaceList->item(i);
+    for (int i = d->ui.iconInterfaceList->count() - 1; i >= 0; --i) {
+        QListWidgetItem * item = d->ui.iconInterfaceList->item(i);
         if (item) {
-            if (item->data(IconInterfaceRole).toUInt() == Solid::Control::NetworkInterface::UnknownType && item != m_firstIconItem) {
-                m_ui.iconInterfaceList->takeItem(i);
-                --m_iconCount;
-                m_ui.pbAddIcon->setEnabled(true);
+            if (item->data(IconInterfaceRole).toUInt() == Solid::Control::NetworkInterface::UnknownType && item != d->firstIconItem) {
+                d->ui.iconInterfaceList->takeItem(i);
+                --d->iconCount;
+                d->ui.pbAddIcon->setEnabled(true);
                 break;
             }
         }
     }
-    if (m_iconCount == 1) {
+    if (d->iconCount == 1) {
         // removed the penultimate icon item, don't take any more
-        m_ui.pbRemoveIcon->setEnabled(false);
+        d->ui.pbRemoveIcon->setEnabled(false);
     }
     emit changed();
 }

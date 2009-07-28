@@ -23,13 +23,18 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QWidget>
 
+#include <solid/control/networkinterface.h>
+
 #include "ui_traysettings.h"
 
 class QListWidgetItem;
 
+class TraySettingsWidgetPrivate;
+
 class TraySettingsWidget : public QWidget
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(TraySettingsWidget);
 public:
     TraySettingsWidget(QWidget * parent = 0);
     virtual ~TraySettingsWidget();
@@ -41,10 +46,8 @@ protected Q_SLOTS:
     void removeIconClicked();
     void itemsMoved();
 private:
-    void readIconTypes(uint index, QListWidget * item);
-    Ui_TraySettings m_ui;
-    uint m_iconCount;
-    QListWidgetItem * m_firstIconItem;
+    void readIconTypes(uint index);
+    TraySettingsWidgetPrivate * d_ptr;
 };
 
 #endif // TRAYSETTINGSWIDGET_H
