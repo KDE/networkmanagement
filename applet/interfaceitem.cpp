@@ -60,15 +60,18 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
 {
     setAcceptHoverEvents(true);
-
+    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     Solid::Device* dev = new Solid::Device(m_iface->uni());
     m_interfaceName = dev->product();
-
+    int spacing = 4;
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
     m_layout->setColumnSpacing(0, 8);
     m_layout->setColumnSpacing(1, 4);
     m_layout->setColumnSpacing(2, 6);
+    m_layout->setRowSpacing(0, 6);
+    m_layout->setRowSpacing(1, 6);
+    m_layout->setRowSpacing(2, 6);
     m_layout->setPreferredWidth(240);
     m_layout->setColumnFixedWidth(0, 48);
     m_layout->setColumnMinimumWidth(1, 104);

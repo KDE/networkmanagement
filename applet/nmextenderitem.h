@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/CheckBox>
 #include <Plasma/ExtenderItem>
 #include <Plasma/Extender>
+#include <Plasma/Frame>
 #include <Plasma/IconWidget>
 #include <Plasma/TabBar>
 
@@ -78,9 +79,11 @@ private:
 
     QGraphicsWidget* m_widget;
     QGraphicsLinearLayout* m_mainLayout;
-    QGraphicsWidget* m_leftWidget;
+    Plasma::Frame* m_leftWidget;
+    Plasma::Frame* m_rightWidget;
     QGraphicsWidget* m_interfaceWidget;
     QGraphicsLinearLayout* m_leftLayout;
+    QGraphicsLinearLayout* m_rightLayout;
     QGraphicsLinearLayout* m_interfaceLayout;
 
     Plasma::CheckBox* m_rfCheckBox;

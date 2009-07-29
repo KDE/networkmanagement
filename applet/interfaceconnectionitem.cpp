@@ -85,9 +85,5 @@ InterfaceConnectionItem::~InterfaceConnectionItem()
 
 }
 
-RemoteInterfaceConnection * InterfaceConnectionItem::interfaceConnection() const
-{
-    return qobject_cast<RemoteInterfaceConnection*>(m_activatable);
-}
 
 // vim: sw=4 sts=4 et tw=100

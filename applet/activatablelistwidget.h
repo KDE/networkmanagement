@@ -55,7 +55,7 @@ Q_SIGNALS:
 private:
     ActivatableItem* createItem(RemoteActivatable* conn);
 
-    QHash<QString, ActivatableItem*> m_itemIndex;
+    QHash<RemoteActivatable*, ActivatableItem*> m_itemIndex;
     RemoteActivatableList* m_activatables;
     Solid::Control::NetworkInterface* m_iface;
     QGraphicsLinearLayout* m_layout;

@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QGraphicsWidget>
 
+#include "remoteinterfaceconnection.h"
+
 class RemoteActivatable;
 
 class ActivatableItem : public QGraphicsWidget
@@ -41,6 +43,8 @@ protected Q_SLOTS:
     void emitClicked();
 protected:
     RemoteActivatable * m_activatable;
+
+    RemoteInterfaceConnection* interfaceConnection() const;
 };
 
 #endif // ABSTRACTCONNECTABLEITEM_H

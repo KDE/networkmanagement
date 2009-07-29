@@ -37,4 +37,10 @@ void ActivatableItem::emitClicked()
     m_activatable->activate();
     emit clicked(this);
 }
+
+RemoteInterfaceConnection * ActivatableItem::interfaceConnection() const
+{
+    return qobject_cast<RemoteInterfaceConnection*>(m_activatable);
+}
+
 // vim: sw=4 sts=4 et tw=100

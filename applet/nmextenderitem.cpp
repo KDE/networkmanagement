@@ -31,7 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KToolInvocation>
 
 // Plasma
-#include <Plasma/Extender>
 #include <Plasma/Label>
 
 // Solid::Control
@@ -102,7 +101,8 @@ QGraphicsItem * NMExtenderItem::widget()
         m_widget->setLayout(m_mainLayout);
 
 
-        m_leftWidget = new QGraphicsWidget(m_widget);
+        m_leftWidget = new Plasma::Frame(m_widget);
+        m_leftWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         m_interfaceWidget = new QGraphicsWidget(m_leftWidget);
         m_leftLayout = new QGraphicsLinearLayout(m_leftWidget);
         m_leftLayout->setOrientation(Qt::Vertical);
@@ -111,8 +111,7 @@ QGraphicsItem * NMExtenderItem::widget()
         m_interfaceLayout->setOrientation(Qt::Vertical);
         //m_interfaceWidget->setLayout(m_interfaceLayout);
         m_leftLayout->addItem(m_interfaceWidget);
-        m_leftWidget->setLayout(m_leftLayout);
-        m_mainLayout->addItem(m_leftWidget);
+        m_leftLayout->addStretch(5);
 
         // Manage connections and flight-mode buttons
         m_rfCheckBox = new Plasma::CheckBox(m_leftWidget);
@@ -127,35 +126,44 @@ QGraphicsItem * NMExtenderItem::widget()
         connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
                 this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
 
-        m_connectionsButton = new Plasma::IconWidget(m_leftWidget);
-        m_connectionsButton->setIcon("networkmanager");
-        m_connectionsButton->setOrientation(Qt::Horizontal);
-        m_connectionsButton->setText(i18nc("button in general settings extender", "Manage Connections..."));
-        m_connectionsButton->setMaximumHeight(KIconLoader::SizeMedium);
-        m_connectionsButton->setMinimumHeight(KIconLoader::SizeMedium);
-        m_connectionsButton->setDrawBackground(true);
-#if KDE_IS_VERSION(4,2,60)
-        m_connectionsButton->setTextBackgroundColor(QColor());
-#endif
-
-        connect(m_connectionsButton, SIGNAL(activated()), this, SLOT(manageConnections()));
-        m_leftLayout->addItem(m_connectionsButton);
+        m_leftWidget->setLayout(m_leftLayout);
         m_mainLayout->addItem(m_leftWidget);
 
+
+        m_rightWidget = new Plasma::Frame(m_widget);
+        m_rightWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        m_rightLayout = new QGraphicsLinearLayout(m_rightWidget);
+        m_rightLayout->setOrientation(Qt::Vertical);
         // Tabs for activatables
-        m_connectionTabs = new Plasma::TabBar(m_widget);
+        m_connectionTabs = new Plasma::TabBar(m_rightWidget);
         //m_connectionTabs->setTabBarShown(false);
         m_connectionTabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         m_connectionTabs->setPreferredSize(260, 240);
         m_connectionTabs->setMinimumSize(260, 240);
 
         //m_mainLayout->addItem(m_connectionTabs, 0, 1, 1, 1);
-        m_mainLayout->addItem(m_connectionTabs);
+        m_rightLayout->addItem(m_connectionTabs);
+
+        m_connectionsButton = new Plasma::IconWidget(m_rightWidget);
+        m_connectionsButton->setIcon("networkmanager");
+        m_connectionsButton->setOrientation(Qt::Horizontal);
+        m_connectionsButton->setText(i18nc("button in general settings extender", "Manage Connections..."));
+        m_connectionsButton->setMaximumHeight(KIconLoader::SizeSmallMedium);
+        m_connectionsButton->setMinimumHeight(KIconLoader::SizeSmallMedium);
+        m_connectionsButton->setDrawBackground(true);
+#if KDE_IS_VERSION(4,2,60)
+        m_connectionsButton->setTextBackgroundColor(QColor());
+#endif
+
+        connect(m_connectionsButton, SIGNAL(activated()), this, SLOT(manageConnections()));
+        m_rightLayout->addItem(m_connectionsButton);
+
+        m_mainLayout->addItem(m_rightWidget);
         setWidget(m_widget);
     } else {
-        kDebug() << "widget non empty";
+        //kDebug() << "widget non empty";
     }
-    kDebug() << "widget() run";
+    //kDebug() << "widget() run";
     return m_widget;
 }
 

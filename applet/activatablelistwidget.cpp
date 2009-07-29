@@ -48,8 +48,9 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_layout(0)
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    //setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_widget = new QGraphicsWidget(this);
     m_widget->setMinimumSize(240, 50);
     m_layout = new QGraphicsLinearLayout(m_widget);
@@ -65,8 +66,8 @@ void ActivatableListWidget::init()
 {
     connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*)),
             SLOT(activatableAdded(RemoteActivatable *)));
-    //connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
-    //                SLOT(activatableRemoved(RemoteActivatable *)));
+    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
+                    SLOT(activatableRemoved(RemoteActivatable *)));
 
     connect(m_activatables, SIGNAL(appeared()), SLOT(listAppeared()));
     connect(m_activatables, SIGNAL(disappeared()), SLOT(listDisappeared()));
@@ -128,7 +129,7 @@ ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activata
     Q_ASSERT(ai);
     ai->setupItem();
     m_layout->addItem(ai);
-    m_itemIndex[activatable->deviceUni()] = ai;
+    m_itemIndex[activatable] = ai;
     m_layout->invalidate();
     return ai;
 }
@@ -168,23 +169,19 @@ void ActivatableListWidget::listDisappeared()
 void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
 {
     kDebug();
-    /*
-    if (registerActivatable(added)) {
-   emit connectionListUpdated();
-}
-*/
+    createItem(added);
 }
 
 void ActivatableListWidget::activatableRemoved(RemoteActivatable * removed)
 {
     kDebug();
-    if (m_itemIndex.keys().contains(removed->deviceUni())) {
-        kDebug() << "We have the activatable matching " << removed->deviceUni();
+    if (m_itemIndex.keys().contains(removed)) {
+        kDebug() << "We have the activatable matching ";
     } else {
-        kDebug() << "We DO NOT have the activatable matching " << removed->deviceUni();
+        kDebug() << "We DO NOT have the activatable matching ";
     }
-    delete m_itemIndex[removed->deviceUni()];
-    m_itemIndex.remove(removed->deviceUni());
+    delete m_itemIndex[removed];
+    m_itemIndex.remove(removed);
     /*
     // look up the ActivatableItem and remove it
     if (m_connections.contains(removed)) {

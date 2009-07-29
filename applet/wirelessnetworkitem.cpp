@@ -88,6 +88,7 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
         m_security = QLatin1String("wpa-eap");
     }
 }
+
 void WirelessNetworkItem::setupItem()
 {
     readSettings();
@@ -113,7 +114,16 @@ void WirelessNetworkItem::setupItem()
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setDrawBackground(true);
     m_connectButton->setIcon("network-wireless");
-    m_connectButton->setText(m_ssid);
+    if (interfaceConnection()) {
+        m_connectButton->setText(interfaceConnection()->connectionName());
+    } else {
+        m_connectButton->setText(m_ssid);
+    }
+    if (interfaceConnection()) {
+        m_connectButton->setText(interfaceConnection()->connectionName());
+    } else {
+        m_connectButton->setText(m_ssid);
+    }
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setOrientation(Qt::Horizontal);
 #if KDE_IS_VERSION(4,2,60)

@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class QGraphicsGridLayout;
 
-class RemoteInterfaceConnection;
+
 
 namespace Plasma
 {
@@ -41,7 +41,7 @@ Q_OBJECT
 public:
     InterfaceConnectionItem(RemoteInterfaceConnection *, QGraphicsItem * parent = 0);
     virtual ~InterfaceConnectionItem();
-    RemoteInterfaceConnection * interfaceConnection() const;
+    //RemoteInterfaceConnection * interfaceConnection() const;
     void setupItem();
 protected:
     QGraphicsGridLayout * m_layout;
