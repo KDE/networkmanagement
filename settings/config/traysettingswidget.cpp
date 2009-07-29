@@ -178,6 +178,7 @@ void TraySettingsWidget::readIconTypes(uint index)
 
     foreach (Solid::Control::NetworkInterface::Type type, allTypes) {
         if (iconTypes.testFlag(type)) {
+            d->displayedTypes |= type;
             new InterfaceTypeListWidgetItem(type, d->ui.iconInterfaceList);
         }
     }
