@@ -285,7 +285,9 @@ void KNetworkManagerTrayIcon::fillPopup()
         d->wirelessNetworkItemMenu->setTitle(i18nc("@title:menu Wireless network item menu title when no networks found", "Other networks"));
     }
 
-    if (Solid::Control::NetworkManager::isWirelessEnabled() && Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
+    if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)
+            && Solid::Control::NetworkManager::isWirelessEnabled()
+            && Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
 
         contextMenu()->insertAction(insertionPointForWirelessNetworkSubmenu, d->wirelessNetworkItemMenu->menuAction());
 
@@ -415,6 +417,7 @@ void KNetworkManagerTrayIcon::updateInterfaceToDisplay()
         }
     }
     updateTrayIcon();
+    updateToolTip();
 }
 
 void KNetworkManagerTrayIcon::updateTrayIcon()
@@ -495,29 +498,47 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
     }
     kDebug() << "setting overlay:" << overlayName;
     setOverlayIconByName(overlayName);
-    updateToolTip();
 }
 
 void KNetworkManagerTrayIcon::updateToolTip()
 {
     Q_D(KNetworkManagerTrayIcon);
     QString tip;
-    switch (Solid::Networking::status()) {
-        case Solid::Networking::Unknown:
-            tip = i18nc("@info:tooltip status string for when we don't know if we are online or not", "No networking status information");
-            break;
-        case Solid::Networking::Unconnected:
-            tip = i18nc("@info:tooltip status string for network not connected", "Not connected");
-            break;
-        case Solid::Networking::Disconnecting:
-            tip = i18nc("@info:tooltip status string for network in the process of disconnecting ", "Disconnecting");
-            break;
-        case Solid::Networking::Connecting:
-            tip = i18nc("@info:tooltip status string for network in the process of connecting", "Connecting");
-            break;
-        case Solid::Networking::Connected:
-            tip = i18nc("@info:tooltip status string for network connected", "Connected");
-            break;
+    if (d->displayedNetworkInterface) {
+        switch (d->displayedNetworkInterface->connectionState()) {
+            case Solid::Control::NetworkInterface::UnknownState:
+                tip = i18nc("@info:tooltip status string for network interface in unknown state state ", "Unknown");
+                break;
+            case Solid::Control::NetworkInterface::Unmanaged:
+                tip = i18nc("@info:tooltip status string for network interface not managed by networking subsystem", "Not managed");
+                break;
+            case Solid::Control::NetworkInterface::Unavailable:
+                tip = i18nc("@info:tooltip status string for network interface not available for use", "Unavailable");
+                break;
+            case Solid::Control::NetworkInterface::Disconnected:
+                tip = i18nc("@info:tooltip status string for disconnected network interface", "Not connected");
+                break;
+            case Solid::Control::NetworkInterface::Preparing:
+                tip = i18nc("@info:tooltip status string for network interface preparing to connect", "Preparing to connect");
+                break;
+            case Solid::Control::NetworkInterface::Configuring:
+                tip = i18nc("@info:tooltip status string for network interface being configured prior to connection", "Configuring interface");
+                break;
+            case Solid::Control::NetworkInterface::NeedAuth:
+                tip = i18nc("@info:tooltip status string for network interface awaiting authorizatoin", "Waiting for authorization");
+                break;
+            case Solid::Control::NetworkInterface::IPConfig:
+                tip = i18nc("@info:tooltip status string for network interface getting IP address", "Obtaining network address");
+                break;
+            case Solid::Control::NetworkInterface::Activated:
+                tip = i18nc("@info:tooltip status string for active network interface", "Active");
+                break;
+            case Solid::Control::NetworkInterface::Failed:
+                tip = i18nc("@info:tooltip status string for network interface with failed connection", "Connection failed");
+                break;
+        }
+    } else {
+        tip = "<qt>Networking <b>information</b> not available</qt>";
     }
     setToolTip(d->iconName, tip, QString());
 }
