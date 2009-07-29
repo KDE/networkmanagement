@@ -119,11 +119,6 @@ void WirelessNetworkItem::setupItem()
     } else {
         m_connectButton->setText(m_ssid);
     }
-    if (interfaceConnection()) {
-        m_connectButton->setText(interfaceConnection()->connectionName());
-    } else {
-        m_connectButton->setText(m_ssid);
-    }
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setOrientation(Qt::Horizontal);
 #if KDE_IS_VERSION(4,2,60)
