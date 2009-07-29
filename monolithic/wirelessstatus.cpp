@@ -84,7 +84,7 @@ WirelessStatus::WirelessStatus(ActivatableItem * item)
         d->rsnFlags = wobj->rsnFlags();
         if (wobj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc) {
             d->adhoc = new QLabel(0);
-            d->adhoc->setPixmap(SmallIcon("nm-adhoc"));
+            d->adhoc->setPixmap(SmallIcon("nm-adhoc")); //TODO real icon name
         }
         if (wobj->strength() < 0) {
             d->strength->hide();

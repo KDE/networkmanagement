@@ -489,6 +489,15 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
         iconName = "networkmanager";
     }
 
+    foreach (Knm::Activatable * activatable, d->list->activatables()) {
+        if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+            Knm::InterfaceConnection * ic = static_cast<Knm::InterfaceConnection*>(activatable);
+            if (ic->activationState() == Knm::InterfaceConnection::Activated) {
+                overlayName = QLatin1String("nm-vpn-lock"); //TODO real icon name
+            }
+        }
+    }
+
     kDebug() << "suggested icon name:" << iconName;
 
     if (iconName != d->iconName) {
