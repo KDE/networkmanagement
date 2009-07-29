@@ -75,6 +75,7 @@ WirelessStatus::WirelessStatus(ActivatableItem * item)
     d->capabilities = 0;
     d->wpaFlags = 0;
     d->rsnFlags = 0;
+    d->adhoc = 0;
 
     // discover the type of the activatable and connect its signals
     Knm::WirelessObject * wobj  = dynamic_cast<Knm::WirelessNetwork*>(item->activatable());
