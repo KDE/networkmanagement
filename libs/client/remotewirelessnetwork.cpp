@@ -69,4 +69,11 @@ Solid::Control::AccessPoint::WpaFlags RemoteWirelessNetwork::rsnFlags() const
     return (Solid::Control::AccessPoint::WpaFlags)rsnflags;
 }
 
+Solid::Control::WirelessNetworkInterface::OperationMode RemoteWirelessNetwork::operationMode() const
+{
+    Q_D(const RemoteWirelessNetwork);
+    uint rsnflags = d->wirelessNetworkItemInterface->operationMode();
+    return (Solid::Control::WirelessNetworkInterface::OperationMode)rsnflags;
+}
+
 // vim: sw=4 sts=4 et tw=100

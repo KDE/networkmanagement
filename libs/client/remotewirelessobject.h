@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef REMOTEWIRELESSOBJECT_H
 #define REMOTEWIRELESSOBJECT_H
 
+#include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/wirelessaccesspoint.h>
 
 class RemoteWirelessObject
@@ -32,6 +33,7 @@ public:
     virtual int strength() const = 0;
     virtual Solid::Control::AccessPoint::WpaFlags wpaFlags() const = 0;
     virtual Solid::Control::AccessPoint::WpaFlags rsnFlags() const = 0;
+    virtual Solid::Control::WirelessNetworkInterface::OperationMode operationMode() const = 0;
     virtual void strengthChanged(int) = 0;
 };
 

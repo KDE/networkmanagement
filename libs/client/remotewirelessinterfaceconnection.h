@@ -38,6 +38,7 @@ Q_PROPERTY(int strength READ strength)
 Q_PROPERTY(uint capabilities READ capabilities)
 Q_PROPERTY(uint wpaFlags READ wpaFlags)
 Q_PROPERTY(uint rsnFlags READ rsnFlags)
+Q_PROPERTY(uint operationMode READ operationMode)
 
 friend class RemoteActivatableList;
 
@@ -48,6 +49,7 @@ public:
     Solid::Control::AccessPoint::Capabilities capabilities() const;
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
+    Solid::Control::WirelessNetworkInterface::OperationMode operationMode() const;
 signals:
     void strengthChanged(int);
 protected:

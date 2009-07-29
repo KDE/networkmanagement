@@ -31,7 +31,7 @@ namespace Knm
 class KNMINTERNALS_EXPORT WirelessObject
 {
 public:
-    WirelessObject(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags);
+    WirelessObject(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode);
     virtual ~WirelessObject();
     QString ssid() const;
     int strength() const;
@@ -39,6 +39,7 @@ public:
     Solid::Control::AccessPoint::Capabilities capabilities() const;
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
+    Solid::Control::WirelessNetworkInterface::OperationMode operationMode() const;
     virtual void strengthChanged(int) = 0;
 protected:
     QString m_ssid;
@@ -46,6 +47,7 @@ protected:
     Solid::Control::AccessPoint::Capabilities m_capabilities;
     Solid::Control::AccessPoint::WpaFlags m_wpaFlags;
     Solid::Control::AccessPoint::WpaFlags m_rsnFlags;
+    Solid::Control::WirelessNetworkInterface::OperationMode m_operationMode;
 };
 
 } // namespace Knm

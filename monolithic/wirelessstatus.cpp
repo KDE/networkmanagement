@@ -43,6 +43,7 @@ public:
     Solid::Control::AccessPoint::WpaFlags rsnFlags;
     QLabel * security;
     QProgressBar * strength;
+    QLabel * adhoc;
 };
 
 class SmallProgressBar : public QProgressBar
@@ -76,34 +77,37 @@ WirelessStatus::WirelessStatus(ActivatableItem * item)
     d->rsnFlags = 0;
 
     // discover the type of the activatable and connect its signals
-    Knm::WirelessNetwork * wni = qobject_cast<Knm::WirelessNetwork*>(item->activatable());
-    if (wni) {
-        d->capabilities = wni->capabilities();
-        d->wpaFlags = wni->wpaFlags();
-        d->rsnFlags = wni->rsnFlags();
-        connect(wni, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
-        if (wni->strength() < 0) {
+    Knm::WirelessObject * wobj  = dynamic_cast<Knm::WirelessNetwork*>(item->activatable());
+    if (wobj) {
+        d->capabilities = wobj->capabilities();
+        d->wpaFlags = wobj->wpaFlags();
+        d->rsnFlags = wobj->rsnFlags();
+        if (wobj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc) {
+            d->adhoc = new QLabel(0);
+            d->adhoc->setPixmap(SmallIcon("nm-adhoc"));
+        }
+        if (wobj->strength() < 0) {
             d->strength->hide();
         }
-        d->strength->setValue(wni->strength());
-        d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wni->strength())));
-    } else {
-        Knm::WirelessInterfaceConnection * wic = qobject_cast<Knm::WirelessInterfaceConnection*>(item->activatable());
-        if (wic) {
-            d->capabilities = wic->capabilities();
-            d->wpaFlags = wic->wpaFlags();
-            d->rsnFlags = wic->rsnFlags();
-            connect(wic, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
-            if (wic->strength() < 0) {
-                d->strength->hide();
+        d->strength->setValue(wobj->strength());
+        d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wobj->strength())));
+        Knm::WirelessNetwork * wni = qobject_cast<Knm::WirelessNetwork*>(item->activatable());
+
+        if (wni) {
+            connect(wni, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
+        } else {
+            Knm::WirelessInterfaceConnection * wic = qobject_cast<Knm::WirelessInterfaceConnection*>(item->activatable());
+            if (wic) {
+                connect(wic, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
             }
-            d->strength->setValue(wic->strength());
-            d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wic->strength())));
         }
     }
 
     setSecurity();
 
+    if (d->adhoc) {
+        item->addIcon(d->adhoc);
+    }
     item->addIcon(d->security);
     item->addIcon(d->strength);
 }

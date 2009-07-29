@@ -48,9 +48,6 @@ set(knmservice_SRCS
    # updates connection state as they are used
    connectionusagemonitor.cpp
 
-   # experimental
-   hiddenwirelessnetwork.cpp
-
    # exports activatables on the session bus to Plasmoids etc
    sessionabstractedservice.cpp
 
