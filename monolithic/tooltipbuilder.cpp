@@ -168,8 +168,8 @@ QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection *
 
         /* default set to use for initial development */
         tipElements << "interface:type" << "interface:name" << "interface:driver" << "interface:status"
-                    << "interface:designspeed" << "ipv4:address" << "ipv4:nameservers" << "ipv4:domains"
-                    << "ipv4:routes" << "wired:hardwareaddress" << "wireless:hardwareaddress"
+                    << "ipv4:address" << "ipv4:nameservers" << "ipv4:domains"
+                    << "wired:hardwareaddress" << "wireless:hardwareaddress"
                     << "wired:bitrate" << "wireless:bitrate";
 
         QString deviceUni = interfaceConnection->deviceUni();
