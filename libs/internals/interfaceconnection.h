@@ -64,11 +64,12 @@ public:
      */
     void setHasDefaultRoute(bool hasDefault);
     bool hasDefaultRoute() const;
+    void disconnect();
 
 Q_SIGNALS:
     void activationStateChanged(Knm::InterfaceConnection::ActivationState);
     void hasDefaultRouteChanged(bool);
-
+    void deactivated();
 protected:
     InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, ActivatableType type, const QString & deviceUni, QObject * parent);
 
