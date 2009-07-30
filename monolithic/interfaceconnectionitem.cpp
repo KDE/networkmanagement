@@ -15,8 +15,7 @@ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 
 #include "interfaceconnectionitem.h"
 #include "interfaceconnectionitem_p.h"
@@ -24,9 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGridLayout>
 #include <QLabel>
 #include <QPixmap>
+#include <QPushButton>
 
 #include <KDebug>
 #include <KLocale>
+#include <KIcon>
 #include <KIconLoader>
 
 #include <solid/control/networkmanager.h>
@@ -36,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "tooltipbuilder.h"
 
 InterfaceConnectionItemPrivate::InterfaceConnectionItemPrivate()
-: state(Knm::InterfaceConnection::Unknown), connectionDetailsLabel(0), defaultRouteLabel(0)
+: state(Knm::InterfaceConnection::Unknown), connectionLayout(0), connectionDetailsLabel(0), defaultRouteLabel(0), disconnectButton(0)
 {
 }
 
@@ -45,9 +46,8 @@ InterfaceConnectionItem::InterfaceConnectionItem(Knm::InterfaceConnection * inte
 {
     Q_D(InterfaceConnectionItem);
 
-    setActivationState(interfaceConnection->activationState());
-
-    setText(interfaceConnection->connectionName());
+    d->connectionLayout = new QHBoxLayout(this);
+    d->outerLayout->addLayout(d->connectionLayout, 1, 1, 1, 1);
 
     d->defaultRouteLabel = new QLabel(this);
     d->defaultRouteLabel->setPixmap(SmallIcon("emblem-favorite"));
@@ -61,6 +61,10 @@ InterfaceConnectionItem::InterfaceConnectionItem(Knm::InterfaceConnection * inte
             this, SLOT(setHasDefaultRoute(bool)));
     connect(interfaceConnection, SIGNAL(changed()),
             this, SLOT(changed()));
+
+    setActivationState(interfaceConnection->activationState());
+
+    setText(interfaceConnection->connectionName());
 }
 
 InterfaceConnectionItem::InterfaceConnectionItem(InterfaceConnectionItemPrivate &dd, Knm::InterfaceConnection * interfaceConnection, QWidget * parent)
@@ -68,9 +72,8 @@ InterfaceConnectionItem::InterfaceConnectionItem(InterfaceConnectionItemPrivate 
 {
     Q_D(InterfaceConnectionItem);
 
-    setActivationState(interfaceConnection->activationState());
-
-    setText(interfaceConnection->connectionName());
+    d->connectionLayout = new QHBoxLayout(this);
+    d->outerLayout->addLayout(d->connectionLayout, 1, 1, 1, 1);
 
     d->defaultRouteLabel = new QLabel(this);
     d->defaultRouteLabel->setPixmap(SmallIcon("emblem-favorite"));
@@ -84,6 +87,10 @@ InterfaceConnectionItem::InterfaceConnectionItem(InterfaceConnectionItemPrivate 
             this, SLOT(setHasDefaultRoute(bool)));
     connect(interfaceConnection, SIGNAL(changed()),
             this, SLOT(changed()));
+
+    setActivationState(interfaceConnection->activationState());
+
+    setText(interfaceConnection->connectionName());
 }
 
 InterfaceConnectionItem::~InterfaceConnectionItem()
@@ -105,18 +112,36 @@ void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::Activ
         switch (state) {
             case Knm::InterfaceConnection::Unknown:
                 if (d->connectionDetailsLabel) {
-                    d->outerLayout->removeWidget(d->connectionDetailsLabel);
+                    d->connectionLayout->removeWidget(d->connectionDetailsLabel);
                     delete d->connectionDetailsLabel;
                     d->connectionDetailsLabel = 0;
+                }
+                if (d->disconnectButton) {
+                    d->connectionLayout->removeWidget(d->disconnectButton);
+                    delete d->disconnectButton;
+                    d->disconnectButton = 0;
                 }
                 // clear tooltip
                 setToolTip(QString());
                 break;
             case Knm::InterfaceConnection::Activating:
             case Knm::InterfaceConnection::Activated:
+                Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable()->deviceUni());
                 if (!d->connectionDetailsLabel) {
                     d->connectionDetailsLabel = new QLabel(this);
-                    d->outerLayout->addWidget(d->connectionDetailsLabel, 1, 1, 1, 1);
+                    d->connectionLayout->addWidget(d->connectionDetailsLabel);
+                }
+                if (!(iface->type() == Solid::Control::NetworkInterface::Ieee8023 || iface->type() == Solid::Control::NetworkInterface::Ieee80211)) {
+                    if (!d->disconnectButton) {
+                        d->disconnectButton = new QPushButton(this);
+                        d->disconnectButton->setIcon(KIcon("process-stop"));
+                        int buttonSize = d->connectionDetailsLabel->sizeHint().height();
+                        d->disconnectButton->setFixedSize(buttonSize, buttonSize);
+
+                        d->disconnectButton->setToolTip(i18nc("@info:tooltip network connection disconnect button tooltip", "Disconnect"));
+                        d->connectionLayout->addWidget(d->disconnectButton);
+                        connect(d->disconnectButton, SIGNAL(clicked()), this, SLOT(disconnectClicked()));
+                    }
                 }
                 d->connectionDetailsLabel->setText(textForConnection(d->state));
                 // set detailed tooltip using network interface state and ipv4
@@ -184,6 +209,12 @@ QString InterfaceConnectionItem::iconName() const
         }
     }
     return icon;
+}
+
+void InterfaceConnectionItem::disconnectClicked()
+{
+    kDebug();
+    interfaceConnection()->disconnect();
 }
 
 // vim: sw=4 sts=4 et tw=100

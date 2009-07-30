@@ -24,7 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceconnectionitem.h"
 #include "activatableitem_p.h"
 
-class QToolButton;
+class QPushButton;
 
 class InterfaceConnectionItemPrivate : public ActivatableItemPrivate
 {
@@ -32,10 +32,12 @@ Q_DECLARE_PUBLIC(InterfaceConnectionItem)
 protected:
     InterfaceConnectionItem *q_ptr;
 public:
-    Knm::InterfaceConnection::ActivationState state;
     InterfaceConnectionItemPrivate();
+    Knm::InterfaceConnection::ActivationState state;
+    QHBoxLayout * connectionLayout;
     QLabel * connectionDetailsLabel;
     QLabel * defaultRouteLabel;
+    QPushButton * disconnectButton;
 };
 
 #endif // INTERFACECONNECTIONITEM_P_H
