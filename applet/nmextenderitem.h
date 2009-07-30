@@ -33,8 +33,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/TabBar>
 
 #include <solid/control/networkinterface.h>
-//class AbstractConnectableItem;
-//class NetworkManagerSettings;
+
+#include "activatable.h"
+
 class QGraphicsLinearLayout;
 class QGraphicsGridLayout;
 class ActivatableItem;
@@ -42,6 +43,7 @@ class ActivatableItem;
 class RemoteActivatable;
 class RemoteActivatableList;
 
+class ActivatableListWidget;
 class InterfaceItem;
 
 class NMExtenderItem: public Plasma::ExtenderItem
@@ -57,7 +59,7 @@ public:
 public Q_SLOTS:
     void interfaceAdded(const QString&);
     void interfaceRemoved(const QString&);
-    void switchTab(const QString&);
+    void switchTab(int type); // Takes networkinterface type
 
     void managerWirelessEnabledChanged(bool);
     void managerWirelessHardwareEnabledChanged(bool);
@@ -69,13 +71,16 @@ Q_SIGNALS:
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
-    void createTab(InterfaceItem * item, Solid::Control::NetworkInterface* iface, const QString &name, const QString &icon = 0);
+    void createTab(Knm::Activatable::ActivatableType type);
 
     RemoteActivatableList* m_activatables;
-    // list of interfaces [uni] = iface
+    // uni, interfaceitem mapping
     QHash<QString, InterfaceItem *> m_interfaces;
-    QHash<QString, int> m_tabIndex;
+    // ActivatableType, index of tab mapping
+    QHash<int, int> m_tabIndex;
 
+    ActivatableListWidget* m_wiredList;
+    ActivatableListWidget* m_wirelessList;
 
     QGraphicsWidget* m_widget;
     QGraphicsLinearLayout* m_mainLayout;

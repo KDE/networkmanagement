@@ -86,7 +86,7 @@ protected Q_SLOTS:
 
 Q_SIGNALS:
     void stateChanged();
-    void clicked(const QString&);
+    void clicked(int);
 
 protected:
     /**

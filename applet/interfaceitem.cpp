@@ -198,7 +198,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
 
 void InterfaceItem::itemClicked()
 {
-    emit clicked(m_iface->uni());
+    emit clicked(m_iface->type());
 }
 
 void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)

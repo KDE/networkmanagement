@@ -42,9 +42,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceconnectionitem.h"
 #include "wirelessnetworkitem.h"
 
-ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables, Solid::Control::NetworkInterface* iface, QGraphicsWidget* parent) : Plasma::ScrollWidget(parent),
+ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent) : Plasma::ScrollWidget(parent),
     m_activatables(activatables),
-    m_iface(iface),
     m_layout(0)
 {
     setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -84,7 +83,9 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
     Knm::Activatable::ActivatableType aType = activatable->activatableType();
     kDebug() << activatable << aType;
     if (aType == Knm::Activatable::InterfaceConnection) {
-        RemoteInterfaceConnection * ric = static_cast<RemoteInterfaceConnection*>(activatable);
+        //RemoteInterfaceConnection * ric = static_cast<RemoteInterfaceConnection*>(activatable);
+        /*
+        // TODO: keep a list of acceptable types to match the activatable, and check against it here
         if (ric->connectionType() == Knm::Connection::Wired && m_iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
             acceptable = true;
         } else if (ric->connectionType() == Knm::Connection::Gsm && m_iface->type() == Solid::Control::NetworkInterface::Gsm) {
@@ -94,10 +95,12 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
         } else if (ric->connectionType() == Knm::Connection::Pppoe && m_iface->type() == Solid::Control::NetworkInterface::Serial) {
             acceptable = true;
         }
-    } else if (aType == Knm::Activatable::WirelessInterfaceConnection && m_iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+        */
+        acceptable = true;
+    } else if (aType == Knm::Activatable::WirelessInterfaceConnection) {
         kDebug() << "accepting wireless connection";
         acceptable = true;
-    } else if (aType == Knm::Activatable::WirelessNetwork && m_iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+    } else if (aType == Knm::Activatable::WirelessNetwork) {
         kDebug() << "accepting wireless network item";
         acceptable = true;
     }
@@ -109,8 +112,9 @@ ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activata
 {
     kDebug() << "Creating Item";
     ActivatableItem* ai = 0;
-    switch (m_iface->type()) {
-        case Solid::Control::NetworkInterface::Ieee80211:
+    switch (activatable->activatableType()) {
+        case Knm::Activatable::WirelessNetwork:
+        case Knm::Activatable::WirelessInterfaceConnection:
         { // Wireless
             kDebug() << "Wireless thingie";
             WirelessNetworkItem* wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetwork*>(activatable), m_widget);
@@ -118,7 +122,7 @@ ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activata
             break;
         }
         default:
-        case Solid::Control::NetworkInterface::Ieee8023:
+        case Knm::Activatable::InterfaceConnection:
         {
             kDebug() << "default ....";
             ai = new InterfaceConnectionItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);

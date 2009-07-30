@@ -36,7 +36,7 @@ class ActivatableListWidget: public Plasma::ScrollWidget
 {
 Q_OBJECT
 public:
-    ActivatableListWidget(RemoteActivatableList* activatables, Solid::Control::NetworkInterface* iface, QGraphicsWidget* parent = 0);
+    ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent = 0);
     virtual ~ActivatableListWidget();
 
     void init();
@@ -54,10 +54,11 @@ Q_SIGNALS:
 
 private:
     ActivatableItem* createItem(RemoteActivatable* conn);
+    int m_connectionType;
 
     QHash<RemoteActivatable*, ActivatableItem*> m_itemIndex;
     RemoteActivatableList* m_activatables;
-    Solid::Control::NetworkInterface* m_iface;
+    //Solid::Control::NetworkInterface* m_iface;
     QGraphicsLinearLayout* m_layout;
     QGraphicsWidget* m_widget;
 
