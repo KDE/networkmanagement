@@ -57,12 +57,11 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_layout->setSpacing(0);
     m_widget->setLayout(m_layout);
     setWidget(m_widget);
-    init();
-    listAppeared();
 }
 
 void ActivatableListWidget::init()
 {
+    listAppeared();
     connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*)),
             SLOT(activatableAdded(RemoteActivatable *)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
@@ -76,37 +75,18 @@ ActivatableListWidget::~ActivatableListWidget()
 {
 }
 
-bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
+void ActivatableListWidget::addType(Knm::Activatable::ActivatableType type)
 {
-    bool acceptable = false;
-
-    Knm::Activatable::ActivatableType aType = activatable->activatableType();
-    kDebug() << activatable << aType;
-    if (aType == Knm::Activatable::InterfaceConnection) {
-        //RemoteInterfaceConnection * ric = static_cast<RemoteInterfaceConnection*>(activatable);
-        /*
-        // TODO: keep a list of acceptable types to match the activatable, and check against it here
-        if (ric->connectionType() == Knm::Connection::Wired && m_iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
-            acceptable = true;
-        } else if (ric->connectionType() == Knm::Connection::Gsm && m_iface->type() == Solid::Control::NetworkInterface::Gsm) {
-            acceptable = true;
-        } else if (ric->connectionType() == Knm::Connection::Cdma && m_iface->type() == Solid::Control::NetworkInterface::Cdma) {
-            acceptable = true;
-        } else if (ric->connectionType() == Knm::Connection::Pppoe && m_iface->type() == Solid::Control::NetworkInterface::Serial) {
-            acceptable = true;
-        }
-        */
-        acceptable = true;
-    } else if (aType == Knm::Activatable::WirelessInterfaceConnection) {
-        kDebug() << "accepting wireless connection";
-        acceptable = true;
-    } else if (aType == Knm::Activatable::WirelessNetwork) {
-        kDebug() << "accepting wireless network item";
-        acceptable = true;
+    if (!m_types.contains(type)) {
+        m_types.append(type);
     }
-    return acceptable;
 }
 
+bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
+{
+    kDebug() << "ACCEPT:" << m_types << activatable->activatableType();
+    return m_types.contains(activatable->activatableType());
+}
 
 ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activatable)
 {
@@ -173,7 +153,9 @@ void ActivatableListWidget::listDisappeared()
 void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
 {
     kDebug();
-    createItem(added);
+    if (accept(added)) {
+        createItem(added);
+    }
 }
 
 void ActivatableListWidget::activatableRemoved(RemoteActivatable * removed)

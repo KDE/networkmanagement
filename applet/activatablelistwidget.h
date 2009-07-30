@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsWidget>
 
 #include <solid/control/networkinterface.h>
-
+#include "activatable.h"
 #include <Plasma/ScrollWidget>
 
 class QGraphicsLinearLayout;
@@ -40,6 +40,7 @@ public:
     virtual ~ActivatableListWidget();
 
     void init();
+    void addType(Knm::Activatable::ActivatableType type);
     bool accept(RemoteActivatable* activatable) const;
 
 public Q_SLOTS:
@@ -55,6 +56,7 @@ Q_SIGNALS:
 private:
     ActivatableItem* createItem(RemoteActivatable* conn);
     int m_connectionType;
+    QList<Knm::Activatable::ActivatableType> m_types;
 
     QHash<RemoteActivatable*, ActivatableItem*> m_itemIndex;
     RemoteActivatableList* m_activatables;

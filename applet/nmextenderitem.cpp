@@ -58,7 +58,9 @@ NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::
     m_interfaceWidget(0),
     m_leftLayout(0),
     m_interfaceLayout(0),
-    m_connectionTabs(0)
+    m_connectionTabs(0),
+    m_wiredList(0),
+    m_wirelessList(0)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     setName("nmextenderitem");
@@ -272,21 +274,30 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
     switch(type) {
         case Knm::Activatable::InterfaceConnection:
         {
-            m_wiredList = new ActivatableListWidget(m_activatables, m_connectionTabs);
-            name = i18nc("title of the wired tab", "Wired");
-            icon = KIcon("network-wired");
-            m_tabIndex[type] = m_connectionTabs->addTab(KIcon(icon), name, m_wiredList);
+            if (!m_wiredList) {
+                m_wiredList = new ActivatableListWidget(m_activatables, m_connectionTabs);
+                m_wiredList->addType(Knm::Activatable::InterfaceConnection);
+                m_wiredList->init();
+                name = i18nc("title of the wired tab", "Wired");
+                icon = KIcon("network-wired");
+                m_tabIndex[type] = m_connectionTabs->addTab(KIcon(icon), name, m_wiredList);
+            }
             break;
         }
         case Knm::Activatable::WirelessInterfaceConnection:
         case Knm::Activatable::WirelessNetwork:
         {
-            m_wirelessList = new ActivatableListWidget(m_activatables, m_connectionTabs);
-            name = i18nc("title of the wireless tab", "Wireless");
-            icon = KIcon("network-wireless");
-            // All wireless stuff goes into one tab, marked as WirelessInterfaceConnection
-            // (no separation between those connections and WirelessNetworks)
-            m_tabIndex[Knm::Activatable::WirelessInterfaceConnection] = m_connectionTabs->addTab(KIcon(icon), name, m_wirelessList);
+            if (!m_wirelessList) {
+                m_wirelessList = new ActivatableListWidget(m_activatables, m_connectionTabs);
+                m_wirelessList->addType(Knm::Activatable::WirelessInterfaceConnection);
+                m_wirelessList->addType(Knm::Activatable::WirelessNetwork);
+                m_wirelessList->init();
+                name = i18nc("title of the wireless tab", "Wireless");
+                icon = KIcon("network-wireless");
+                // All wireless stuff goes into one tab, marked as WirelessInterfaceConnection
+                // (no separation between those connections and WirelessNetworks)
+                m_tabIndex[Knm::Activatable::WirelessInterfaceConnection] = m_connectionTabs->addTab(KIcon(icon), name, m_wirelessList);
+            }
             break;
         }
     }
