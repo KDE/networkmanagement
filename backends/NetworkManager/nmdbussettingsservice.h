@@ -73,6 +73,7 @@ private Q_SLOTS:
     void serviceUnregistered(const QString&);
     // activate connections
     void interfaceConnectionActivated();
+    void interfaceConnectionDeactivated();
 
 private:
     Q_DECLARE_PRIVATE(NMDBusSettingsService)

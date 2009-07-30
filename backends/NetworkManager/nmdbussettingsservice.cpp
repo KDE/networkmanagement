@@ -208,6 +208,7 @@ void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
         kDebug() << ic->connectionUuid();
         //if (ic->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
             connect(ic, SIGNAL(activated()), this, SLOT(interfaceConnectionActivated()));
+            connect(ic, SIGNAL(deactivated()), this, SLOT(interfaceConnectionDeactivated()));
         //}
 
         // if derived from one of our connections, tag it with the service and object path of the
@@ -262,6 +263,12 @@ void NMDBusSettingsService::interfaceConnectionActivated()
                 .arg(ic->property("NMDBusService").toString(), ic->property("NMDBusObjectPath").toString()),
                 extraArguments);
     }
+}
+
+void NMDBusSettingsService::interfaceConnectionDeactivated()
+{
+    Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
+    Solid::Control::NetworkManager::deactivateConnection(ic->property("NMDBusActiveConnectionObject").toString());
 }
 
 void NMDBusSettingsService::handleUpdate(Knm::Activatable *)

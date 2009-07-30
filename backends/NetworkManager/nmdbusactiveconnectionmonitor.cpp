@@ -191,6 +191,8 @@ void NMDBusActiveConnectionMonitor::activeConnectionChangedInternal(OrgFreedeskt
 {
     Knm::InterfaceConnection * interfaceConnection = interfaceConnectionForConnectionActive(iface);
     if (interfaceConnection) {
+        interfaceConnection->setProperty("NMDBusActiveConnectionObject", iface->path());
+
         const QString defaultKey = QLatin1String("Default");
         const QString stateKey = QLatin1String("State");
         if (changedProps.contains(defaultKey)) {
@@ -206,6 +208,7 @@ void NMDBusActiveConnectionMonitor::activeConnectionChangedInternal(OrgFreedeskt
 {
     Knm::InterfaceConnection * interfaceConnection = interfaceConnectionForConnectionActive(iface);
     if (interfaceConnection) {
+        interfaceConnection->setProperty("NMDBusActiveConnectionObject", iface->path());
         interfaceConnection->setActivationState((Knm::InterfaceConnection::ActivationState)state);
     }
 }
