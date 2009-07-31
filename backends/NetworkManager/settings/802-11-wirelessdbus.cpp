@@ -65,16 +65,16 @@ QVariantMap WirelessDbus::toMap()
       break;
   }
   // leave out band, NM seems to work automatically without it
+#if 0
   switch (setting->band()) {
     case Knm::WirelessSetting::EnumBand::a:
-      //map.insert("band", "a");
       map.insert("band", "a");
       break;
     case Knm::WirelessSetting::EnumBand::bg:
-      //map.insert("band", "bg");
       map.insert("band", "bg");
       break;
   }
+#endif
   //map.insert("channel", setting->channel());
   if (!setting->bssid().isEmpty()) {
       map.insert("bssid", setting->bssid());
