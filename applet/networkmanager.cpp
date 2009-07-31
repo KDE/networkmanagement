@@ -59,7 +59,7 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Con
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
-    : Plasma::PopupApplet(parent, args), m_iconPerDevice(false), m_svg(0), m_wirelessSvg(0), m_wifiGroup(0)
+    : Plasma::PopupApplet(parent, args), m_iconPerDevice(false), m_svg(0), m_wirelessSvg(0)
 {
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
@@ -125,7 +125,7 @@ void NetworkManagerApplet::init()
 
     m_activatableList->init();
 
-    NMExtenderItem* eItem = new NMExtenderItem(m_activatableList, extender());
+    m_extenderItem = new NMExtenderItem(m_activatableList, extender());
 }
 
 
@@ -754,6 +754,9 @@ void NetworkManagerApplet::popupEvent(bool show)
 {
     // Notify the wireless extender of popup events so it can revert its hidden wireless network
     // item to button mode
+    if (m_extenderItem) {
+        m_extenderItem->switchToDefaultTab();
+    }
     return;
 }
 

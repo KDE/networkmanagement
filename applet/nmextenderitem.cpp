@@ -142,8 +142,8 @@ QGraphicsItem * NMExtenderItem::widget()
         m_connectionTabs = new Plasma::TabBar(m_rightWidget);
         //m_connectionTabs->setTabBarShown(false);
         m_connectionTabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        m_connectionTabs->setPreferredSize(260, 240);
-        m_connectionTabs->setMinimumSize(260, 240);
+        m_connectionTabs->setPreferredSize(300, 240);
+        m_connectionTabs->setMinimumSize(280, 240);
 
         //m_mainLayout->addItem(m_connectionTabs, 0, 1, 1, 1);
         m_rightLayout->addItem(m_connectionTabs);
@@ -180,6 +180,7 @@ void NMExtenderItem::interfaceAdded(const QString& uni)
     kDebug() << "Interface Added.";
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
+    switchToDefaultTab();
 }
 
 void NMExtenderItem::interfaceRemoved(const QString& uni)
@@ -190,27 +191,39 @@ void NMExtenderItem::interfaceRemoved(const QString& uni)
         // TODO: remove tab
         delete item;
     }
+    switchToDefaultTab();
 }
 
-void NMExtenderItem::switchTab(int type)
+Solid::Control::NetworkInterface* NMExtenderItem::defaultInterface()
 {
-    switch (type) {
-        case Solid::Control::NetworkInterface::Ieee80211:
-        {
-            m_connectionTabs->setCurrentIndex(m_tabIndex[Knm::Activatable::WirelessInterfaceConnection]);
-            break;
-        }
-        case Solid::Control::NetworkInterface::Serial:
-        case Solid::Control::NetworkInterface::Gsm:
-        case Solid::Control::NetworkInterface::Cdma:
-        case Solid::Control::NetworkInterface::Ieee8023:
-        default:
-        {
-            m_connectionTabs->setCurrentIndex(m_tabIndex[Knm::Activatable::InterfaceConnection]);
-            break;
+    // In fact we're returning the first available interface,
+    // and if there is none available just the first one we have
+    // and if we don't have one, 0. Make sure you check though.
+    if (!Solid::Control::NetworkManager::networkInterfaces().count()) {
+        return 0;
+    }
+    Solid::Control::NetworkInterface* iface = Solid::Control::NetworkManager::networkInterfaces().first();
+    foreach (Solid::Control::NetworkInterface * _iface, Solid::Control::NetworkManager::networkInterfaces()) {
+        switch (_iface->connectionState()) {
+            case Solid::Control::NetworkInterface::Disconnected:
+            case Solid::Control::NetworkInterface::Failed:
+            case Solid::Control::NetworkInterface::Preparing:
+            case Solid::Control::NetworkInterface::Configuring:
+            case Solid::Control::NetworkInterface::NeedAuth:
+            case Solid::Control::NetworkInterface::IPConfig:
+            case Solid::Control::NetworkInterface::Activated:
+                return _iface;
+                break;
+            case Solid::Control::NetworkInterface::Unavailable:
+            case Solid::Control::NetworkInterface::Unmanaged:
+            case Solid::Control::NetworkInterface::UnknownState:
+            default:
+                break;
         }
     }
+    return iface;
 }
+
 
 void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
 {
@@ -252,6 +265,9 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
         }
         // Connect tab switching
         connect(ifaceItem, SIGNAL(clicked(int)), this, SLOT(switchTab(int)));
+        // Catch connection changes
+        connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+        connect(iface, SIGNAL(linkUpChanged(bool)), this, SLOT(switchToDefaultTab()));
         m_interfaceLayout->addItem(ifaceItem);
         m_interfaces.insert(iface->uni(), ifaceItem);
     }
@@ -303,6 +319,64 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
     }
 }
 
+void NMExtenderItem::switchTab(int type)
+{
+    switch (type) {
+        case Solid::Control::NetworkInterface::Ieee80211:
+        {
+            m_connectionTabs->setCurrentIndex(m_tabIndex[Knm::Activatable::WirelessInterfaceConnection]);
+            break;
+        }
+        case Solid::Control::NetworkInterface::Serial:
+        case Solid::Control::NetworkInterface::Gsm:
+        case Solid::Control::NetworkInterface::Cdma:
+        case Solid::Control::NetworkInterface::Ieee8023:
+        default:
+        {
+            m_connectionTabs->setCurrentIndex(m_tabIndex[Knm::Activatable::InterfaceConnection]);
+            break;
+        }
+    }
+}
+
+void NMExtenderItem::switchToDefaultTab()
+{
+    if (m_interfaces.count()) {
+        switchTab(defaultInterface()->type());
+    }
+}
+
+void NMExtenderItem::handleConnectionStateChange(int new_state, int old_state, int reason)
+{
+    // Switch to default tab if an interface has become available, or unavailable
+    if (available(new_state) != available(old_state)) {
+        switchToDefaultTab();
+    }
+}
+
+bool NMExtenderItem::available(int state)
+{
+    // Can an interface be used?
+    switch (state) {
+        case Solid::Control::NetworkInterface::Disconnected:
+        case Solid::Control::NetworkInterface::Failed:
+        case Solid::Control::NetworkInterface::Preparing:
+        case Solid::Control::NetworkInterface::Configuring:
+        case Solid::Control::NetworkInterface::NeedAuth:
+        case Solid::Control::NetworkInterface::IPConfig:
+        case Solid::Control::NetworkInterface::Activated:
+            return true;
+            break;
+        case Solid::Control::NetworkInterface::Unavailable:
+        case Solid::Control::NetworkInterface::Unmanaged:
+        case Solid::Control::NetworkInterface::UnknownState:
+        default:
+            return false;
+            break;
+    }
+    return false;
+}
+
 void NMExtenderItem::wirelessEnabledToggled(bool checked)
 {
     kDebug() << "Applet wireless enable switch toggled" << checked;
@@ -315,6 +389,7 @@ void NMExtenderItem::managerWirelessEnabledChanged(bool enabled)
     // it might have changed because we toggled the switch,
     // but it might have been changed externally, so set it anyway
     m_rfCheckBox->setChecked(enabled);
+    switchToDefaultTab();
 }
 
 void NMExtenderItem::managerWirelessHardwareEnabledChanged(bool enabled)
@@ -322,6 +397,7 @@ void NMExtenderItem::managerWirelessHardwareEnabledChanged(bool enabled)
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
     m_rfCheckBox->setChecked(enabled && Solid::Control::NetworkManager::isWirelessEnabled());
     m_rfCheckBox->setEnabled(!enabled);
+    switchToDefaultTab();
 }
 
 void NMExtenderItem::manageConnections()

@@ -55,16 +55,19 @@ public:
 
     void init();
     virtual QGraphicsItem * widget();
+    Solid::Control::NetworkInterface* defaultInterface();
+    bool available(int state);
 
 public Q_SLOTS:
     void interfaceAdded(const QString&);
     void interfaceRemoved(const QString&);
     void switchTab(int type); // Takes networkinterface type
-
+    void switchToDefaultTab();
     void managerWirelessEnabledChanged(bool);
     void managerWirelessHardwareEnabledChanged(bool);
     void wirelessEnabledToggled(bool checked);
     void manageConnections();
+    void handleConnectionStateChange(int new_state, int old_state, int reason);
 
 Q_SIGNALS:
     void connectionListUpdated();

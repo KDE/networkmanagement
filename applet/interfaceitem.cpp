@@ -115,7 +115,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_connectButton->setMaximumHeight(22);
     m_connectButton->setMaximumWidth(22);
     m_connectButton->setIcon("dialog-ok");
-    m_connectButton->setToolTip(i18n("Connect wireless"));
+    //m_connectButton->setToolTip(i18n("Connect wireless"));
     m_connectButton->hide(); // Shown when hovered
 
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(connectButtonClicked()));

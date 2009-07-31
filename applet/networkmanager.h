@@ -45,7 +45,7 @@ namespace Plasma
     class Extender;
 } // namespace Plasma
 
-class InterfaceGroup;
+class NMExtenderItem;
 class RemoteActivatableList;
 
 class NetworkManagerApplet : public Plasma::PopupApplet
@@ -140,7 +140,6 @@ private:
     // Configuration dialog
     Ui::nmConfig ui;
 
-    InterfaceGroup * m_wifiGroup;
     bool m_showWired;
     bool m_showWireless;
     bool m_showVpn;
@@ -148,6 +147,7 @@ private:
     //bool m_showGeneral;
     int m_numberWirelessShown;
     RemoteActivatableList * m_activatableList;
+    NMExtenderItem* m_extenderItem;
 };
 
 #endif
