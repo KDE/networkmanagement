@@ -113,11 +113,13 @@ void WirelessNetworkItem::setupItem()
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setDrawBackground(true);
-    m_connectButton->setIcon("network-wireless");
+
     if (interfaceConnection()) {
+        m_connectButton->setIcon("dialog-ok-apply"); // Known connection, we probably have credentials
         m_connectButton->setText(interfaceConnection()->connectionName());
     } else {
         m_connectButton->setText(m_ssid);
+        m_connectButton->setIcon("network-wireless"); // "New" network
     }
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setOrientation(Qt::Horizontal);
