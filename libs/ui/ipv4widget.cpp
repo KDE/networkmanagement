@@ -180,7 +180,9 @@ void IpV4Widget::readConfig()
     }
     d->ui.dns->setText(dnsList.join(","));
     // dns search list
-    d->ui.dnsSearch->setText(d->setting->dnssearch().join(","));
+    if (!d->setting->dnssearch().isEmpty()) {
+        d->ui.dnsSearch->setText(d->setting->dnssearch().join(","));
+    }
 }
 
 void IpV4Widget::writeConfig()
@@ -231,7 +233,9 @@ void IpV4Widget::writeConfig()
     }
     d->setting->setDns(dnsList);
     // dns search list
-    d->setting->setDnssearch(d->ui.dnsSearch->text().split(','));
+    if (!d->ui.dnsSearch->text().isEmpty()) {
+        d->setting->setDnssearch(d->ui.dnsSearch->text().split(','));
+    }
 }
 
 void IpV4Widget::methodChanged(int currentIndex)
