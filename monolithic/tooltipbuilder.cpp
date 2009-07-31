@@ -154,12 +154,13 @@ QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection *
          * Eventually there will be a UI where the user can select which elements to show
          */
 
-        allTipElements << "interface:type" << "interface:name" << "interface:driver" << "interface:status" << "interface:designspeed"
+        allTipElements << "interface:type" << "interface:name" << "interface:driver" << "interface:status"
+            << "interface:designspeed" << "interface:hardwareaddress" << "interface:bitrate"
             << "ipv4:address" << "ipv4:nameservers" << "ipv4:domains" << "ipv4:routes"
-            << "wired:carrier" << "wired:hardwareaddress" << "wired:bitrate"
+            << "wired:carrier"
             /* These come from Solid::Control::WirelessNetworkInterface _and_ its active
                Solid::Control::AccessPoint, if any */
-            << "wireless:strength" << "wireless:ssid" << "wireless:bitrate" << "wireless:mode" << "wireless:accesspoint" << "wireless:hardwareaddress"
+            << "wireless:strength" << "wireless:ssid" << "wireless:mode" << "wireless:accesspoint"
             << /* High level description of security in use */ "wireless:security"
             << /* low level flags so ciphers can be seen*/ "wireless:wpaflags" << "wireless:rsnflags"
             << "wireless:frequency"
@@ -167,10 +168,9 @@ QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection *
             << "cellular:strength" << "cellular:network";
 
         /* default set to use for initial development */
-        tipElements << "interface:type" << "interface:name" << "interface:driver" << "interface:status"
-                    << "ipv4:address" << "ipv4:nameservers" << "ipv4:domains"
-                    << "wired:hardwareaddress" << "wireless:hardwareaddress"
-                    << "wired:bitrate" << "wireless:bitrate";
+        tipElements << "interface:type" << "interface:name" << "interface:hardwareaddress"
+                    << "interface:driver" << "interface:status" << "interface:bitrate"
+                    << "ipv4:address" << "ipv4:nameservers" << "ipv4:domains";
 
         QString deviceUni = interfaceConnection->deviceUni();
         Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
@@ -238,6 +238,49 @@ QString interfaceTooltipHtmlPart(Solid::Control::NetworkInterface * iface, const
                 .arg(i18nc("@info:tooltip The network device's maximum speed", "Max speed"))
                 .arg(iface->designSpeed());
     }
+    else if (requestedInfo == QLatin1String("hardwareaddress")) {
+        QString temp;
+
+        Solid::Control::WirelessNetworkInterface * wliface = dynamic_cast<Solid::Control::WirelessNetworkInterface*> (iface);
+
+        if (wliface) {
+            temp = wliface->hardwareAddress();
+        }
+        else {
+            Solid::Control::WiredNetworkInterface * wdiface = dynamic_cast<Solid::Control::WiredNetworkInterface*> (iface);
+            if (wdiface) {
+                temp = wdiface->hardwareAddress();
+            }
+        }
+
+        if (!temp.isEmpty()) {
+            html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
+                .arg(i18nc("@info:tooltip this is the hardware address of a network interface",
+                            "Hardware address"), temp);
+        }
+    }
+    else if (requestedInfo == QLatin1String("bitrate")) {
+        int bitRate = 0;
+
+        Solid::Control::WirelessNetworkInterface * wliface = dynamic_cast<Solid::Control::WirelessNetworkInterface*> (iface);
+
+        if (wliface) {
+            bitRate = wliface->bitRate();
+        }
+        else {
+            Solid::Control::WiredNetworkInterface * wdiface = dynamic_cast<Solid::Control::WiredNetworkInterface*> (iface);
+            if (wdiface) {
+                bitRate = wdiface->bitRate();
+            }
+        }
+
+        if (bitRate) {
+        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2 %3</td></tr>")
+                .arg(i18nc("@info:tooltip network connection bit rate","Bit rate"))
+                .arg(bitRate)
+                .arg(i18nc("@info:tooltip network connection bit rate units","Mbit/s"));
+        }
+    }
 
     return html;
 }
@@ -292,11 +335,6 @@ QString ipv4TooltipHtmlPart(Solid::Control::NetworkInterface * iface, const QStr
         temp = i18nc("@info:tooltip No network route data available", "No route data available");
 #endif
 
-        /* PLEASE REMOVE THIS CODE
-        I dont have wireless connection, so check 'buildFlagsHtmlTable' this way
-        Solid::Control::AccessPoint::WpaFlags flags;
-        temp = buildFlagsHtmlTable(flags);
-        */
         html = QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                 .arg(i18nc("@info:tooltip network routes", "Routes"))
                 .arg(temp);
@@ -313,18 +351,7 @@ QString wirelessTooltipHtmlPart(Solid::Control::WirelessNetworkInterface * wifac
 
     Solid::Control::AccessPoint * ap = wiface->findAccessPoint(wiface->activeAccessPoint());
 
-    if (requestedInfo == QLatin1String("hardwareaddress")) {
-        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
-                .arg(i18nc("@info:tooltip this is the hardware address of a network interface",
-                           "Hardware address"), wiface->hardwareAddress());
-    }
-    else if (requestedInfo == QLatin1String("bitrate")) {
-        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2 %3</td></tr>")
-                .arg(i18nc("@info:tooltip network connection bit rate","Bit rate"))
-                .arg(wiface->bitRate())
-                .arg(i18nc("@info:tooltip network connection bit rate units","Mbit/s"));
-    }
-    else if (requestedInfo == QLatin1String("ssid")) {
+    if (requestedInfo == QLatin1String("ssid")) {
         if (ap) {
             temp = ap->ssid();
         }
@@ -408,16 +435,13 @@ QString wiredTooltipHtmlPart(Solid::Control::WiredNetworkInterface * wdiface,
 {
     QString html;
 
-    if (requestedInfo == QLatin1String("hardwareaddress")) {
+    if (requestedInfo == QLatin1String("carrier")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
-                .arg(i18nc("@info:tooltip this is the hardware address of a network interface",
-                           "Hardware address"), wdiface->hardwareAddress());
-    }
-    else if (requestedInfo == QLatin1String("bitrate")) {
-        html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2 %3</td></tr>")
-                .arg(i18nc("@info:tooltip network connection bit rate","Bit rate"))
-                .arg(wdiface->bitRate())
-                .arg(i18nc("@info:tooltip network connection bit rate units","Mbit/s"));
+                .arg(i18nc("@info:tooltip carrier",
+                           "Carrier"), (wdiface->carrier()
+                               ? i18nc("@info:tooltip network interface status - carrier found", "Found")
+                               : i18nc("@info:tooltip network interface status - carrier not found", "Not Found"))
+                        );
     }
 
     return html;
