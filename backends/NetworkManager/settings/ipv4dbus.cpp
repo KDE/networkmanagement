@@ -40,7 +40,8 @@ QVariantMap Ipv4Dbus::toMap()
   Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting *>(m_setting);
   switch (setting->method()) {
     case Knm::Ipv4Setting::EnumMethod::Automatic:
-      map.insert("method", "auto");
+      // default, not needed
+      //map.insert("method", "auto");
       break;
     case Knm::Ipv4Setting::EnumMethod::LinkLocal:
       map.insert("method", "link-local");
