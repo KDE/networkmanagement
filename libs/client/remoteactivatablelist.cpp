@@ -101,6 +101,10 @@ QList<RemoteActivatable *> RemoteActivatableList::activatables() const
 
 void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uint type)
 {
+    kDebug() << "...... AddedPath:" << addedPath << type;
+    if (!addedPath.startsWith("/")) {
+        return;
+    }
     Q_D(RemoteActivatableList);
     if (!d->activatables.contains(addedPath)) {
         RemoteActivatable * newActivatable = 0;
