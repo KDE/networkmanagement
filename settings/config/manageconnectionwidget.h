@@ -34,6 +34,7 @@ class QTreeWidget;
 class QTreeWidgetItem;
 
 class TraySettingsWidget;
+class MenuToolTipSettingsWidget;
 
 class ManageConnectionWidget : public KCModule
 {
@@ -119,6 +120,7 @@ private:
     QHash<QString,QTreeWidgetItem*> mUuidItemHash;
     QTimer * mLastUsedTimer;
     TraySettingsWidget * mTraySettingsWidget;
+    MenuToolTipSettingsWidget * mMenuToolTipSettingsWidget;
 };
 
 #endif // NM07_MANAGE_CONNECTION_WIDGET_H

@@ -9,11 +9,12 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/../../libs/internals)
 set(kcm_networkmanagement_SRCS
    # UI logic
    manageconnectionwidget.cpp
+   menutooltipsettingswidget.cpp
    traysettingswidget.cpp
 )
 #kde4_add_kcfg_files(kcm_knetworkmanager_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/knmserviceprefs.kcfgc)
 
-kde4_add_ui_files(kcm_networkmanagement_SRCS manageconnectionwidget.ui traysettings.ui)
+kde4_add_ui_files(kcm_networkmanagement_SRCS manageconnectionwidget.ui menutooltipsettingswidget.ui traysettings.ui)
 kde4_add_plugin(kcm_networkmanagement ${kcm_networkmanagement_SRCS})
 
 target_link_libraries(kcm_networkmanagement knmui knminternals solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KUTILS_LIBS})

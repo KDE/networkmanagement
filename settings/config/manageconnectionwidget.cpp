@@ -48,10 +48,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 #include "connectionpersistence.h"
 #include "connectionprefs.h"
+#include <tooltips.h>
 
 //#include "dbus/nm-active-connectioninterface.h"
 //#include "dbus/nm-exported-connectioninterface.h"
 
+#include "menutooltipsettingswidget.h"
 #include "traysettingswidget.h"
 
 #define ConnectionIdRole 1812
@@ -109,6 +111,13 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connect(mTraySettingsWidget, SIGNAL(changed()), SLOT(otherSettingsChanged()));
 
     mConnEditUi.tabWidget->addTab(mTraySettingsWidget, i18nc("@title:tab tab containing general UI settings", "&Other Settings"));
+
+
+    QStringList selectedKeys = KNetworkManagerServicePrefs::self()->toolTipKeys();
+    mMenuToolTipSettingsWidget = new MenuToolTipSettingsWidget(Knm::ToolTips::allKeys(), selectedKeys, this);
+    connect(mMenuToolTipSettingsWidget, SIGNAL(changed()), SLOT(otherSettingsChanged()));
+
+    mConnEditUi.tabWidget->addTab(mMenuToolTipSettingsWidget, i18nc("@title:tab tab containing menu tooltip settings", "&ToolTips"));
 
     setButtons(KCModule::Help | KCModule::Apply);
 }
@@ -401,6 +410,9 @@ void ManageConnectionWidget::save()
             KNetworkManagerServicePrefs::self()->setIconTypes(i, iconInterfaceAllocations.at(i));
         }
     }
+
+    KNetworkManagerServicePrefs::self()->setToolTipKeys(mMenuToolTipSettingsWidget->toolTipKeys());
+
     KNetworkManagerServicePrefs::self()->writeConfig();
     KCModule::save();
     QDBusInterface remoteApp("org.kde.knetworkmanager", "/tray",

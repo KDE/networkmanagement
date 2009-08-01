@@ -40,6 +40,7 @@ public:
 public Q_SLOTS:
     void changed();
     void setActivationState(Knm::InterfaceConnection::ActivationState state);
+    void updateToolTip();
 protected Q_SLOTS:
     void setHasDefaultRoute(bool);
     void disconnectClicked();

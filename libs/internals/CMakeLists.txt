@@ -69,7 +69,11 @@ set(knminternals_SRCS
    unconfiguredinterface.cpp
    vpninterfaceconnection.cpp
 
+   # helper class for recognising the type of WPA secrets
    wpasecretidentifier.cpp
+
+   # helper functions for storing tooltip keys and UI strings
+   tooltips.cpp
    )
 
 kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)

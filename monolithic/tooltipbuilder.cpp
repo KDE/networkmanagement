@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "tooltipbuilder.h"
 
+#include <arpa/inet.h>
+
 #include <kdeversion.h>
 
 #include <solid/control/networkmanager.h>
@@ -34,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KLocale>
 
-#include <arpa/inet.h>
+#include <knmserviceprefs.h>
 
 // probably these functions should be in a separate file to be
 // easily included from different places.
@@ -167,10 +169,7 @@ QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection *
             /* These are not yet available in the API!*/
             << "cellular:strength" << "cellular:network";
 
-        /* default set to use for initial development */
-        tipElements << "interface:type" << "interface:name" << "interface:hardwareaddress"
-                    << "interface:driver" << "interface:status" << "interface:bitrate"
-                    << "ipv4:address" << "ipv4:nameservers" << "ipv4:domains";
+        tipElements = KNetworkManagerServicePrefs::self()->toolTipKeys();
 
         QString deviceUni = interfaceConnection->deviceUni();
         Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);

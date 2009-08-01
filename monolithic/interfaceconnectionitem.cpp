@@ -145,7 +145,7 @@ void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::Activ
                 }
                 d->connectionDetailsLabel->setText(textForConnection(d->state));
                 // set detailed tooltip using network interface state and ipv4
-                setToolTip(ToolTipBuilder::toolTipForInterfaceConnection(interfaceConnection()));
+                updateToolTip();
                 break;
         }
     }
@@ -217,4 +217,8 @@ void InterfaceConnectionItem::disconnectClicked()
     interfaceConnection()->disconnect();
 }
 
+void InterfaceConnectionItem::updateToolTip()
+{
+    setToolTip(ToolTipBuilder::toolTipForInterfaceConnection(interfaceConnection()));
+}
 // vim: sw=4 sts=4 et tw=100

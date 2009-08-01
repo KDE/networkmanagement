@@ -35,5 +35,8 @@
           <parameter name="IconIndex" type="Int" max="4"/>
           <default param="0">37</default>
       </entry>
+      <entry name="ToolTipKeys" type="StringList">
+          <default>interface:type,interface:name,interface:hardwareaddress,interface:driver,interface:status,interface:bitrate,ipv4:address,ipv4:nameservers,ipv4:domains</default>
+      </entry>
   </group>
 </kcfg>
