@@ -77,10 +77,8 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
 
-    // FIXME:: Add manage connection button
-    //QObject::connect(this, SIGNAL(manageConnections()),
-    //        this, SLOT(manageConnections()));
 
+    // FIXME: Is the following necessary at all???
     // This MUST happen before any InterfaceGroups are instantiated
     // kickstart the kded module
     QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
