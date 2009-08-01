@@ -82,8 +82,7 @@ private:
     // ActivatableType, index of tab mapping
     QHash<int, int> m_tabIndex;
 
-    ActivatableListWidget* m_wiredList;
-    ActivatableListWidget* m_wirelessList;
+    Plasma::TabBar* m_connectionTabs;
 
     QGraphicsWidget* m_widget;
     QGraphicsLinearLayout* m_mainLayout;
@@ -97,6 +96,7 @@ private:
     Plasma::CheckBox* m_rfCheckBox;
     Plasma::IconWidget* m_connectionsButton;
 
-    Plasma::TabBar* m_connectionTabs;
+    ActivatableListWidget* m_wiredList;
+    ActivatableListWidget* m_wirelessList;
 };
 #endif // NMEXTENDERITEM_H

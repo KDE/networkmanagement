@@ -180,9 +180,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     connect(m_iface, SIGNAL(linkUpChanged(bool)), this, SLOT(setActive(bool)));
 
     //RemoteInterfaceConnection * ric = static_cast<RemoteInterfaceConnection*>(activatable);
-    Solid::Control::WiredNetworkInterface* wirediface = static_cast<Solid::Control::WiredNetworkInterface*>(m_iface);
-    if (wirediface) {
-        connect(m_iface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
+    if (m_iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+        Solid::Control::WiredNetworkInterface* wirediface = static_cast<Solid::Control::WiredNetworkInterface*>(m_iface);
+        connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
         kDebug() << "CONNECTED Carrier !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
     }
     setNameDisplayMode(mode);

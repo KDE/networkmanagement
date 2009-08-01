@@ -52,13 +52,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::Extender * ext)
 : Plasma::ExtenderItem(ext),
     m_activatables(activatableList),
+    m_connectionTabs(0),
     m_widget(0),
     m_mainLayout(0),
     m_leftWidget(0),
     m_interfaceWidget(0),
     m_leftLayout(0),
     m_interfaceLayout(0),
-    m_connectionTabs(0),
     m_wiredList(0),
     m_wirelessList(0)
 {
@@ -286,7 +286,6 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
     */
     QString name;
     KIcon icon;
-    Knm::Activatable::ActivatableType t;
     switch(type) {
         case Knm::Activatable::InterfaceConnection:
         {
@@ -314,6 +313,9 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
                 // (no separation between those connections and WirelessNetworks)
                 m_tabIndex[Knm::Activatable::WirelessInterfaceConnection] = m_connectionTabs->addTab(KIcon(icon), name, m_wirelessList);
             }
+            break;
+        case Knm::Activatable::UnconfiguredInterface:
+        case Knm::Activatable::VpnInterfaceConnection:
             break;
         }
     }
@@ -348,6 +350,7 @@ void NMExtenderItem::switchToDefaultTab()
 
 void NMExtenderItem::handleConnectionStateChange(int new_state, int old_state, int reason)
 {
+    Q_UNUSED( reason );
     // Switch to default tab if an interface has become available, or unavailable
     if (available(new_state) != available(old_state)) {
         switchToDefaultTab();
