@@ -91,13 +91,19 @@ QVariantMap WirelessSecurityDbus::toMap()
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT), "wpa-eap");
       break;
   }
-  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX), setting->weptxkeyindex());
+  // only insert WEP key index if we are using WEP
+  if (setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::WEP40
+          || setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::WEP128
+          || setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWEP) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX), setting->weptxkeyindex());
+  }
   switch (setting->authalg()) {
-    case Knm::WirelessSecuritySetting::EnumAuthalg::none:
-      // the none auth alg is internal
-      break;
-    case Knm::WirelessSecuritySetting::EnumAuthalg::open:
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "open");
+      case Knm::WirelessSecuritySetting::EnumAuthalg::none:
+          // the none auth alg is internal
+          break;
+      case Knm::WirelessSecuritySetting::EnumAuthalg::open:
+          // the default
+          // map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "open");
       break;
     case Knm::WirelessSecuritySetting::EnumAuthalg::shared:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG), "shared");
