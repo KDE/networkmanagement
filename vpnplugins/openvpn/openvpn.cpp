@@ -40,7 +40,9 @@ OpenVpnUiPlugin::~OpenVpnUiPlugin()
 
 SettingWidget * OpenVpnUiPlugin::widget(Knm::Connection * connection, QWidget * parent)
 {
-    return new OpenVpnSettingWidget(connection, parent);
+    OpenVpnSettingWidget * wid = new OpenVpnSettingWidget(connection, parent);
+    wid->init();
+    return wid;
 }
 
 // vim: sw=4 sts=4 et tw=100

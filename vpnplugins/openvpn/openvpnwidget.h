@@ -23,6 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "settingwidget.h"
 
+#include <QProcess>
+
 #include "ui_openvpnprop.h"
 
 namespace Knm
@@ -36,9 +38,14 @@ Q_OBJECT
 public:
     OpenVpnSettingWidget(Knm::Connection *,  QWidget * parent = 0);
     ~OpenVpnSettingWidget();
+    void init();
     void readConfig();
     void writeConfig();
     void readSecrets();
+protected Q_SLOTS:
+    void gotOpenVpnOutput();
+    void openVpnError(QProcess::ProcessError);
+    void openVpnFinished(int, QProcess::ExitStatus);
 private:
     class Private;
     Private * d;

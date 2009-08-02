@@ -1,8 +1,8 @@
-/* -*- Mode: C; tab-width: 5; indent-tabs-mode: t; c-basic-offset: 5 -*- */
+/* -*- Mode: C; tab-width: 4; indent-tabs-mode: t; c-basic-offset: 4 -*- */
 /* nm-openvpn-service - openvpn integration with NetworkManager
  *
- * Tim Niemueller <tim@niemueller.de>
- * Based on work by Dan Williams <dcbw@redhat.com>
+ * Copyright (C) 2005 - 2008 Tim Niemueller <tim@niemueller.de>
+ * Copyright (C) 2005 - 2008 Dan Williams <dcbw@redhat.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,11 @@
 #ifndef KNM_OPENVPN_SERVICE_H
 #define KNM_OPENVPN_SERVICE_H
 
+#define NM_DBUS_SERVICE_OPENVPN    "org.freedesktop.NetworkManager.openvpn"
+#define NM_DBUS_INTERFACE_OPENVPN  "org.freedesktop.NetworkManager.openvpn"
+#define NM_DBUS_PATH_OPENVPN       "/org/freedesktop/NetworkManager/openvpn"
+
+#define NM_OPENVPN_KEY_AUTH "auth"
 #define NM_OPENVPN_KEY_CA "ca"
 #define NM_OPENVPN_KEY_CERT "cert"
 #define NM_OPENVPN_KEY_CIPHER "cipher"
@@ -47,6 +52,10 @@
  * required for the connection.
  */
 #define NM_OPENVPN_KEY_NOSECRET "no-secret"
+
+#define NM_OPENVPN_AUTH_NONE "none"
+#define NM_OPENVPN_AUTH_MD5  "MD5"
+#define NM_OPENVPN_AUTH_SHA1 "SHA1"
 
 #define NM_OPENVPN_CONTYPE_TLS          "tls"
 #define NM_OPENVPN_CONTYPE_STATIC_KEY   "static-key"
