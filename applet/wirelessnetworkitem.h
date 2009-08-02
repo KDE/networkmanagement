@@ -47,6 +47,7 @@ public:
 private Q_SLOTS:
     void setStrength(int strength);
     void update();
+    void activationStateChanged(Knm::InterfaceConnection::ActivationState state);
 
 private:
     RemoteWirelessNetwork * wirelessNetworkItem() const;
@@ -63,6 +64,7 @@ private:
     int m_strength;
     QString m_ssid;
     RemoteWirelessNetwork * m_remote;
+    Knm::InterfaceConnection::ActivationState m_state;
 };
 
 #endif //#define APPLET_WIRELESSCONNECTIONITEM_H

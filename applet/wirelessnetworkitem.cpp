@@ -40,7 +40,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatable.h"
 
 WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent)
-: ActivatableItem(remote, parent), m_security(0), m_securityIcon(0), m_securityIconName(0)
+: ActivatableItem(remote, parent),
+    m_remote(remote),
+    m_security(0),
+    m_securityIcon(0),
+    m_securityIconName(0)
 {
     m_strengthMeter = new Plasma::Meter(this);
     m_strength = 0;
@@ -50,7 +54,9 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
     Solid::Control::AccessPoint::WpaFlags rsnFlags;
     Solid::Control::AccessPoint::Capabilities capabilities;
 
-    Knm::Activatable::ActivatableType aType = remote->activatableType();
+    m_state = Knm::InterfaceConnection::Unknown;
+
+    Knm::Activatable::ActivatableType aType = m_remote->activatableType();
     if (aType == Knm::Activatable::WirelessInterfaceConnection) {
         //kDebug() << "adding WirelessInterfaceConnection";
         RemoteWirelessInterfaceConnection* remoteconnection = static_cast<RemoteWirelessInterfaceConnection*>(m_activatable);
@@ -58,15 +64,20 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
         wpaFlags = remoteconnection->wpaFlags();
         rsnFlags = remoteconnection->rsnFlags();
         capabilities = remoteconnection->capabilities();
+        kDebug() <<  "========== RemoteActivationState" << remoteconnection->activationState();
+        m_state = remoteconnection->activationState();
+        connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
+                                    SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
     } else if (aType == Knm::Activatable::WirelessNetwork) {
         m_ssid = remote->ssid();
-        wpaFlags = remote->wpaFlags();
-        rsnFlags = remote->rsnFlags();
-        capabilities = remote->capabilities();
+        wpaFlags = m_remote->wpaFlags();
+        rsnFlags = m_remote->rsnFlags();
+        capabilities = m_remote->capabilities();
     }
 
     setStrength(remote->strength());
-    connect(remote, SIGNAL(changed()), SLOT(update()));
+    connect(m_remote, SIGNAL(changed()), SLOT(update()));
+    connect(m_remote, SIGNAL(strengthChanged(int)), SLOT(setStrength(int)));
 
     // this was done by a clueless (coolo)
     if ( wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
@@ -115,7 +126,7 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setDrawBackground(true);
 
     if (interfaceConnection()) {
-        m_connectButton->setIcon("dialog-ok-apply"); // Known connection, we probably have credentials
+        m_connectButton->setIcon("bookmarks"); // Known connection, we probably have credentials
         m_connectButton->setText(interfaceConnection()->connectionName());
     } else {
         m_connectButton->setText(m_ssid);
@@ -149,6 +160,7 @@ void WirelessNetworkItem::setupItem()
     m_layout->addItem(m_securityIcon, 0, 2, 1, 1, Qt::AlignLeft);
 
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
+    update();
 }
 
 WirelessNetworkItem::~WirelessNetworkItem()
@@ -157,7 +169,7 @@ WirelessNetworkItem::~WirelessNetworkItem()
 
 void WirelessNetworkItem::setStrength(int strength)
 {
-    kDebug() << m_ssid << "signal strength changed to " << strength;
+    kDebug() << m_ssid << "signal strength changed from " << m_strength << "to " << strength;
     if (strength == m_strength) {
         return;
     }
@@ -165,6 +177,45 @@ void WirelessNetworkItem::setStrength(int strength)
     m_strengthMeter->setValue(m_strength);
 }
 
+void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
+{
+    kDebug() << m_state << "changes to" << state;
+    if (m_state == state) {
+        return;
+    }
+    // Indicate the active interface
+    QString t;
+    if (interfaceConnection()) {
+        t = interfaceConnection()->connectionName();
+    } else {
+        t = m_ssid;
+    }
+    //enum ActivationState { Unknown, Activating, Activated };
+    if (interfaceConnection()) {
+        m_connectButton->setIcon("bookmarks"); // Known connection, we probably have credentials
+        m_connectButton->setText(interfaceConnection()->connectionName());
+
+        switch (m_state) {
+            //Knm::InterfaceConnection::ActivationState
+            case Knm::InterfaceConnection::Activated:
+                m_connectButton->setIcon("dialog-ok-apply"); // The active connection
+                t = QString("%1 (connected)").arg(t);
+                break;
+            case Knm::InterfaceConnection::Unknown:
+                break;
+            case Knm::InterfaceConnection::Activating:
+                t = QString("%1 (connecting...)").arg(t);
+        }
+    } else {
+        m_connectButton->setText(m_ssid);
+        m_connectButton->setIcon("network-wireless"); // "New" network
+    }
+    if (m_connectButton->text() != t) {
+        m_connectButton->setText(t);
+    }
+    m_state = state;
+    update();
+}
 
 void WirelessNetworkItem::readSettings()
 {
@@ -198,6 +249,7 @@ void WirelessNetworkItem::update()
 {
     kDebug() << "updating" << m_ssid << wirelessNetworkItem()->strength();
     setStrength(wirelessNetworkItem()->strength());
+    return;
 }
 
 // vim: sw=4 sts=4 et tw=100

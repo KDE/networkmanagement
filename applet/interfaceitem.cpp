@@ -457,7 +457,7 @@ void InterfaceItem::connectionStateChanged(int state)
     m_connectionNameLabel->setText(lname);
     m_connectionInfoLabel->setText(linfo);
 
-    kDebug() << ">>>>>>> State changed" << lname << linfo;
+    //kDebug() << "State changed" << lname << linfo;
 
     emit stateChanged();
 }

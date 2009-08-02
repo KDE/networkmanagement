@@ -46,7 +46,7 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_activatables(activatables),
     m_layout(0)
 {
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn); // for testing
     //setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -84,19 +84,17 @@ void ActivatableListWidget::addType(Knm::Activatable::ActivatableType type)
 
 bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
 {
-    kDebug() << "ACCEPT:" << m_types << activatable->activatableType();
     return m_types.contains(activatable->activatableType());
 }
 
 ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activatable)
 {
-    kDebug() << "Creating Item";
     ActivatableItem* ai = 0;
     switch (activatable->activatableType()) {
         case Knm::Activatable::WirelessNetwork:
         case Knm::Activatable::WirelessInterfaceConnection:
         { // Wireless
-            kDebug() << "Wireless thingie";
+            kDebug() << "Creating Wireless thingie" << activatable->deviceUni();
             WirelessNetworkItem* wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetwork*>(activatable), m_widget);
             ai = wni;
             break;
@@ -104,7 +102,7 @@ ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activata
         default:
         case Knm::Activatable::InterfaceConnection:
         {
-            kDebug() << "default ....";
+            kDebug() << "Creating InterfaceConnection" << activatable->deviceUni();
             ai = new InterfaceConnectionItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
             break;
         }
@@ -114,40 +112,25 @@ ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activata
     ai->setupItem();
     m_layout->addItem(ai);
     m_itemIndex[activatable] = ai;
-    m_layout->invalidate();
     return ai;
 }
 
 void ActivatableListWidget::listAppeared()
 {
     foreach (RemoteActivatable* remote, m_activatables->activatables()) {
-        kDebug() << "FOREACH";
         if (accept(remote)) {
-            kDebug() << "accept";
             createItem(remote);
         }
     }
-#if 0
-    foreach (QString bla, QStringList() << "bla" << "foo" <<  "gna" << "snirk"<< "bla3" << "foo3" <<  "gna3" << "snirk3" << "bla" << "foo" <<  "gna" << "snirk"<< "bla3" << "foo3" <<  "gna3" << "snirk3") {
-        Plasma::IconWidget* l = new Plasma::IconWidget(m_widget);
-        l->setOrientation(Qt::Horizontal);
-        l->setMinimumSize(200, 32);
-        l->setIcon("network-wired");
-        l->setText(QString("dummy network connection %1").arg(bla));
-        m_layout->addItem(l);
-    }
-#endif
 }
 
 void ActivatableListWidget::listDisappeared()
 {
     foreach (ActivatableItem* item, m_itemIndex) {
-        kDebug() << "deleting";
         m_layout->removeItem(item);
         delete item;
     }
     m_itemIndex.clear();
-    kDebug() << "Cleared up";
 }
 
 void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
@@ -160,25 +143,9 @@ void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
 
 void ActivatableListWidget::activatableRemoved(RemoteActivatable * removed)
 {
-    kDebug();
-    if (m_itemIndex.keys().contains(removed)) {
-        kDebug() << "We have the activatable matching ";
-    } else {
-        kDebug() << "We DO NOT have the activatable matching ";
-    }
+    m_layout->removeItem(m_itemIndex[removed]);
     delete m_itemIndex[removed];
     m_itemIndex.remove(removed);
-    /*
-    // look up the ActivatableItem and remove it
-    if (m_connections.contains(removed)) {
-   ActivatableItem * item = m_connections.value(removed);
-   m_connectionLayout->removeItem(item);
-   m_connections.remove(removed);
-   delete item;
-   kDebug();
-   emit connectionListUpdated();
-}
-*/
 }
 
 // vim: sw=4 sts=4 et tw=100
