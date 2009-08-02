@@ -29,22 +29,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIconLoader>
 #include <KLocale>
 
-#include <activatableitem.h>
+#include <activatable.h>
+#include <wirelessobject.h>
 #include <wirelessinterfaceconnection.h>
 #include <wirelessobject.h>
 #include <wirelessnetwork.h>
 
-class WirelessStatusPrivate
-{
-public:
-    ActivatableItem * item;
-    Solid::Control::AccessPoint::Capabilities capabilities;
-    Solid::Control::AccessPoint::WpaFlags wpaFlags;
-    Solid::Control::AccessPoint::WpaFlags rsnFlags;
-    QLabel * security;
-    QProgressBar * strength;
-    QLabel * adhoc;
-};
+#include "activatableitem.h"
+#include "wirelessinterfaceconnectionitem.h"
+#include "wirelessnetworkitem.h"
 
 class SmallProgressBar : public QProgressBar
 {
@@ -58,59 +51,82 @@ public:
     }
     QSize sizeHint() const
     {
-        return QSize(50,10/* 20 must be about minimum for Oxygen style at least as it won't go any smaller */);
+        return QSize(50,10);
     }
 };
 
+class WirelessStatusPrivate
+{
+public:
+    WirelessStatusPrivate(ActivatableItem * theItem)
+        : item(theItem),
+        capabilities(0),
+        wpaFlags(0),
+        rsnFlags(0),
+        security(new QLabel(0)),
+        strength(new SmallProgressBar(0)),
+        adhoc(0)
+    {
+        strength->setTextVisible(false);
+        strength->setRange(0, 100);
+    }
 
-WirelessStatus::WirelessStatus(ActivatableItem * item)
-: QObject(item), d_ptr(new WirelessStatusPrivate)
+    void init(Knm::WirelessObject * obj)
+    {
+        capabilities = obj->capabilities();
+        wpaFlags = obj->wpaFlags();
+        rsnFlags = obj->rsnFlags();
+        if (obj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc) {
+            adhoc = new QLabel(0);
+            adhoc->setPixmap(SmallIcon("nm-adhoc")); //TODO real icon name
+        }
+        if (obj->strength() < 0) {
+            strength->hide();
+        }
+        strength->setValue(obj->strength());
+        strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(obj->strength())));
+
+        if (adhoc) {
+            item->addIcon(adhoc);
+        }
+        item->addIcon(security);
+        item->addIcon(strength);
+    }
+
+    ActivatableItem * item;
+    Solid::Control::AccessPoint::Capabilities capabilities;
+    Solid::Control::AccessPoint::WpaFlags wpaFlags;
+    Solid::Control::AccessPoint::WpaFlags rsnFlags;
+    QLabel * security;
+    QProgressBar * strength;
+    QLabel * adhoc;
+};
+
+
+WirelessStatus::WirelessStatus(WirelessInterfaceConnectionItem * item)
+: QObject(item), d_ptr(new WirelessStatusPrivate(item))
 {
     Q_D(WirelessStatus);
-    d->item = item;
-    d->security = new QLabel(0);
-    d->strength = new SmallProgressBar(0);
-    d->strength->setTextVisible(false);
-    d->strength->setRange(0, 100);
-    d->capabilities = 0;
-    d->wpaFlags = 0;
-    d->rsnFlags = 0;
-    d->adhoc = 0;
-
     // discover the type of the activatable and connect its signals
-    Knm::WirelessObject * wobj  = dynamic_cast<Knm::WirelessNetwork*>(item->activatable());
-    if (wobj) {
-        d->capabilities = wobj->capabilities();
-        d->wpaFlags = wobj->wpaFlags();
-        d->rsnFlags = wobj->rsnFlags();
-        if (wobj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc) {
-            d->adhoc = new QLabel(0);
-            d->adhoc->setPixmap(SmallIcon("nm-adhoc")); //TODO real icon name
-        }
-        if (wobj->strength() < 0) {
-            d->strength->hide();
-        }
-        d->strength->setValue(wobj->strength());
-        d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wobj->strength())));
-        Knm::WirelessNetwork * wni = qobject_cast<Knm::WirelessNetwork*>(item->activatable());
+    Knm::WirelessObject * wobj  = static_cast<Knm::WirelessObject*>(item->wirelessInterfaceConnection());
+    d->init(wobj);
 
-        if (wni) {
-            connect(wni, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
-        } else {
-            Knm::WirelessInterfaceConnection * wic = qobject_cast<Knm::WirelessInterfaceConnection*>(item->activatable());
-            if (wic) {
-                connect(wic, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
-            }
-        }
-    }
+    connect(item, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
 
     setSecurity();
+}
 
-    if (d->adhoc) {
-        item->addIcon(d->adhoc);
-    }
-    item->addIcon(d->security);
-    item->addIcon(d->strength);
+WirelessStatus::WirelessStatus(WirelessNetworkItem * item)
+: QObject(item), d_ptr(new WirelessStatusPrivate(item))
+{
+    Q_D(WirelessStatus);
+    // discover the type of the activatable and connect its signals
+    Knm::WirelessObject * wobj  = static_cast<Knm::WirelessObject*>(item->wirelessNetwork());
+    d->init(wobj);
+
+    connect(item, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
+
+    setSecurity();
 }
 
 WirelessStatus::~WirelessStatus()

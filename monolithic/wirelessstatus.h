@@ -23,7 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 
-class ActivatableItem;
+class WirelessInterfaceConnectionItem;
+class WirelessNetworkItem;
 class WirelessStatusPrivate;
 
 /**
@@ -38,7 +39,8 @@ public:
     /**
      * @param item takes ownership of the WirelessStatus
      */
-    WirelessStatus(ActivatableItem * item);
+    WirelessStatus(WirelessInterfaceConnectionItem * item);
+    WirelessStatus(WirelessNetworkItem * item);
     ~WirelessStatus();
 protected Q_SLOTS:
     void setSecurity();
