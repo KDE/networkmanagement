@@ -50,7 +50,7 @@ public:
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
     Solid::Control::WirelessNetworkInterface::OperationMode operationMode() const;
-signals:
+Q_SIGNALS:
     void strengthChanged(int);
 protected:
     RemoteWirelessInterfaceConnection(const QString & dbusPath, QObject * parent);
