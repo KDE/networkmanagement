@@ -228,7 +228,7 @@ void InterfaceItem::setActive(bool active)
 
 void InterfaceItem::setEnabled(bool enable)
 {
-    //kDebug() << "ENABLE?" << enable;
+    kDebug() << "ENABLE?" << enable;
     m_enabled = enable;
     m_icon->setEnabled(enable);
     m_connectionInfoLabel->setEnabled(enable);
@@ -279,19 +279,12 @@ void InterfaceItem::setConnectionInfo()
     if (m_connectionInfoLabel && m_connectionNameLabel) {
         if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
             if (connectionName().isEmpty()) {
-                m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected"));
+                m_connectionNameLabel->setText(i18nc("interface is connected", "Connected"));
             } else {
                 m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected to %1", connectionName()));
             }
             m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", currentIpAddress()));
             //kDebug() << "addresses non-empty" << m_currentIp;
-            if (m_strengthMeter) {
-                m_strengthMeter->show();
-            }
-        } else {
-            if (m_strengthMeter) {
-                m_strengthMeter->hide();
-            }
         }
     }
 }
@@ -312,55 +305,7 @@ QString InterfaceItem::currentIpAddress()
 
 void InterfaceItem::activeConnectionsChanged()
 {
-#if 0
-    QList<ActiveConnectionPair > newConnectionList;
-    QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
-    QString serviceName;
-    QDBusObjectPath connectionObjectPath;
-    //kDebug() << "... updating active connection list for " << m_iface->uni() << m_iface->interfaceName();
-    // find the active connection on this device
-    foreach (const QString &conn, activeConnections) {
-        OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
-                                                                        conn, QDBusConnection::systemBus(), 0);
-        if (candidate.isValid()) { // in case the Solid backend is broken and returns bad paths.
-            foreach (const QDBusObjectPath &path, candidate.devices()) {
-                if (path.path() == m_iface->uni()) {
-                    // this device is using the connection
-                    serviceName = candidate.serviceName();
-                    connectionObjectPath = candidate.connection();
-                    NetworkManagerSettings * service = 0;
-                    if (serviceName == NM_DBUS_SERVICE_USER_SETTINGS) {
-                        service = m_userSettings;
-                    }
-                    if (serviceName == NM_DBUS_SERVICE_SYSTEM_SETTINGS) {
-                        service = m_systemSettings;
-                    }
-
-                    if (service && service->isValid()) { // it's possible that the service is no longer running
-                        // but provided a connection in the past
-                        RemoteConnection * connection = service->findConnection(connectionObjectPath.path());
-                        if (connection) {
-                            newConnectionList.append(ActiveConnectionPair(conn, connection));
-                        }
-                    }
-                }
-            }
-        }
-    }
-    m_activeConnections = newConnectionList;
-    if (!m_activeConnections.isEmpty()) {
-        kDebug() << m_iface->interfaceName() << "Active connections:";
-        foreach (const ActiveConnectionPair &connection, m_activeConnections) {
-            kDebug() << connection.first << connection.second->path();
-        }
-    } else {
-        kDebug() << m_iface->interfaceName() << "Interface has no active connections";
-    }
-    // update our UI
-    m_layout->updateGeometry();
-    //kDebug() << "Active connections changed ... setting connection info";
     setConnectionInfo();
-#endif
 }
 
 void InterfaceItem::handleConnectionStateChange(int new_state, int old_state, int reason)
@@ -370,7 +315,6 @@ void InterfaceItem::handleConnectionStateChange(int new_state, int old_state, in
     connectionStateChanged(new_state);
 }
 
-// slot
 void InterfaceItem::connectionStateChanged(int state)
 {
     // get the active connections

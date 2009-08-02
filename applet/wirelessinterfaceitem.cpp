@@ -131,106 +131,28 @@ void WirelessInterfaceItem::connectButtonClicked()
 
 void WirelessInterfaceItem::setConnectionInfo()
 {
-    InterfaceItem::setConnectionInfo(); // Needed for m_currentIp
-
-    //kDebug() << m_activeAccessPoint;
-    //kDebug() << m_activeConnections;
-    if (m_activeAccessPoint) { // TODO this is called on activeConnectionsChanged - which seems to arrive before the destroyed() signal from the AP.
-        //TODO: this needs more streamlining, hiding and showing when APs come and go
-        if (m_strengthMeter) {
-            m_strengthMeter->setValue(m_activeAccessPoint->signalStrength());
-            m_strengthMeter->show();
-        }
-        // TODO update icon contents
-#if 0
-        QVariantMapMap settings;
-        if (!m_activeConnections.isEmpty()) {
-            QString security;
-            foreach (const ActiveConnectionPair &conn, m_activeConnections) {
-                if (!conn.second) {
-                    continue;
-                }
-                settings = conn.second->settings();
-                if ( settings.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME))) {
-                    QVariantMap connectionSetting = settings.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME));
-                    if (connectionSetting.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT))) {
-                        security = connectionSetting.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT)).toString();
-                    } else {
-                        security = "wep";
-                    }
-                }
-                if (!security.isEmpty()) {
-                    break;
+    kDebug() << "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS";
+    InterfaceItem::setConnectionInfo(); // Sets the labels
+    switch ( m_iface->connectionState()) {
+        case Solid::Control::NetworkInterface::Unavailable:
+        case Solid::Control::NetworkInterface::Disconnected:
+        case Solid::Control::NetworkInterface::Failed:
+            m_strengthMeter->hide();
+            m_connectionInfoIcon->hide();
+            break;
+        default:
+        {
+            if (m_activeAccessPoint) {
+                if (m_strengthMeter) {
+                    m_strengthMeter->setValue(m_activeAccessPoint->signalStrength());
+                    m_strengthMeter->show();
+                    m_connectionInfoIcon->show();
                 }
             }
-
-            if (security.isEmpty()) {
-                m_connectionInfoIcon->setIcon("security-low");
-                m_connectionInfoIcon->setToolTip(i18nc("wireless network is not encrypted", "Unencrypted network"));
-            } else if (security == QLatin1String("wep")) {
-                // security-weak
-                m_connectionInfoIcon->setIcon("security-medium");
-                m_connectionInfoIcon->setToolTip(i18nc("tooltip of the security icon in the connection list", "Weakly encrypted network (WEP)"));
-            } else if (security == QLatin1String("wpa-psk")) {
-                // security-medium
-                m_connectionInfoIcon->setToolTip(i18nc("tooltip of the security icon in the connection list", "Encrypted network (WPA-PSK)"));
-                m_connectionInfoIcon->setIcon("security-high");
-            } else if (security == QLatin1String("wpa-eap")) {
-                // security-strong
-                m_connectionInfoIcon->setToolTip(i18nc("tooltip of the security icon in the connection list", "Encrypted network (WPA-EAP)"));
-                m_connectionInfoIcon->setIcon("security-high");
-            }
-
-            // retrieve the name of the connection, or put the ssid into the label
-            QString _name;
-            if (!settings.value(NM_SETTING_CONNECTION_SETTING_NAME).isEmpty()) {
-                _name = settings.value(NM_SETTING_CONNECTION_SETTING_NAME).value(NM_SETTING_CONNECTION_ID).toString();
-            } else {
-                _name = m_activeAccessPoint->ssid();
-            }
-
-            m_connectionNameLabel->setText(i18n("Connected to \"%1\"", _name));
-            //m_connectionInfoLabel->setText(i18n("Address: %1", m_currentIp));
-        } else {
-            //kDebug() << "Active connections is empty while connected?";
-#endif
-        m_connectionInfoIcon->show();
-    } else {
-        // No active accesspoint
-        //m_connectionInfoLabel->setText(QString());
-        m_connectionInfoIcon->hide();
-        m_strengthMeter->hide();
-    }
-}
-
-#if 0
-QList<RemoteConnection*> WirelessInterfaceItem::appropriateConnections(const QList<RemoteConnection*> &connections, const QList<Solid::Control::AccessPoint*> accesspoints) const
-{
-    QList<RemoteConnection*> retVal;
-    foreach (RemoteConnection *conn, connections) {
-        QVariantMapMap settings = conn->settings();
-        //deterine if the accesspoint can apply to the connection
-        foreach (Solid::Control::AccessPoint *ap, accesspoints) {
-            if (settings[QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)][QLatin1String(NM_SETTING_WIRELESS_SSID)] != ap->ssid()) {
-                //kDebug() << settings[QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)][QLatin1String(NM_SETTING_WIRELESS_SSID)] << " != " << ap->ssid();
-                //kDebug() << "Skipping . . . ";
-                continue;
-            } else if (!settings[QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)][QLatin1String(NM_SETTING_WIRELESS_BSSID)].toString().isEmpty() &&
-                        settings[QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)][QLatin1String(NM_SETTING_WIRELESS_BSSID)] != ap->hardwareAddress()) {
-                //kDebug() << settings[QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)][QLatin1String(NM_SETTING_WIRELESS_BSSID)] << " != " << ap->hardwareAddress();
-                //kDebug() << "Skipping . . . ";
-                continue;
-            } else {
-                //kDebug() << "Connection " << conn->path() << " is applicable.";
-                if (!retVal.contains(conn)) { //prevent multiple includes
-                    retVal << conn;
-                }
-            }
+            break;
         }
     }
-    return retVal;
 }
-#endif
 
 QList<Solid::Control::AccessPoint*> WirelessInterfaceItem::availableAccessPoints() const
 {

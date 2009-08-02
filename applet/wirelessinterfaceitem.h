@@ -45,19 +45,14 @@ Q_OBJECT
 public:
     WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent = 0);
     virtual ~WirelessInterfaceItem();
-    //Solid::Control::FtuereWirelessEnvironment * wirelessEnvironment() const;
     /**
-     * The SSID of any active network, or an invalid QString if none
+     * The name of the connection, the SSID of any active network,
+     * or an invalid QString if none
      */
     QString connectionName();
     /** @reimp InterfaceItem */
     virtual void setEnabled(bool enable);
-    /**
-     * Checks whether this interface is using the supplied wireless network
-     * At the moment it only checks on SSID, but this should be extended to check on BSSIDs in the
-     * network, as SSID is an insufficient uniqueness guarantee
-     */
-   // bool isUsing(const AbstractWirelessNetwork *) const;
+
 public Q_SLOTS:
     void activeAccessPointChanged(const QString&);
     void activeSignalStrengthChanged(int);
