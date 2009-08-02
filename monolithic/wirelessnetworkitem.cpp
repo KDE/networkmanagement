@@ -44,7 +44,7 @@ WirelessNetworkItem::~WirelessNetworkItem()
 
 }
 
-Knm::WirelessNetwork * WirelessNetworkItem::wirelessNetworkItem() const
+Knm::WirelessNetwork * WirelessNetworkItem::wirelessNetwork() const
 {
     return qobject_cast<Knm::WirelessNetwork*>(activatable());
 }

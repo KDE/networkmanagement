@@ -36,7 +36,7 @@ Q_DECLARE_PRIVATE(WirelessNetworkItem)
 public:
     WirelessNetworkItem(Knm::WirelessNetwork *, QWidget * parent = 0);
     virtual ~WirelessNetworkItem();
-    Knm::WirelessNetwork * wirelessNetworkItem() const;
+    Knm::WirelessNetwork * wirelessNetwork() const;
 protected:
     virtual QString iconName() const;
 };
