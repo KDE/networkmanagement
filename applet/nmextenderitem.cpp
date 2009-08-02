@@ -97,11 +97,11 @@ QGraphicsItem * NMExtenderItem::widget()
         m_widget->setMinimumWidth(500);
         m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
-        //m_mainLayout = new QGraphicsGridLayout(m_widget);
-        m_mainLayout = new QGraphicsLinearLayout(m_widget);
-        m_mainLayout->setOrientation(Qt::Horizontal);
-        //m_mainLayout->setColumnFixedWidth(0, 200);
-        //m_mainLayout->setColumnFixedWidth(1, 260);
+        m_mainLayout = new QGraphicsGridLayout(m_widget);
+        //m_mainLayout = new QGraphicsLinearLayout(m_widget);
+        //m_mainLayout->setOrientation(Qt::Horizontal);
+        m_mainLayout->setColumnMinimumWidth(0, 200);
+        m_mainLayout->setColumnMinimumWidth(1, 340);
         m_widget->setLayout(m_mainLayout);
 
 
@@ -131,7 +131,7 @@ QGraphicsItem * NMExtenderItem::widget()
                 this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
 
         m_leftWidget->setLayout(m_leftLayout);
-        m_mainLayout->addItem(m_leftWidget);
+        m_mainLayout->addItem(m_leftWidget, 0, 0);
 
 
         m_rightWidget = new Plasma::Frame(m_widget);
@@ -162,7 +162,7 @@ QGraphicsItem * NMExtenderItem::widget()
         connect(m_connectionsButton, SIGNAL(activated()), this, SLOT(manageConnections()));
         m_rightLayout->addItem(m_connectionsButton);
 
-        m_mainLayout->addItem(m_rightWidget);
+        m_mainLayout->addItem(m_rightWidget, 0, 1);
         setWidget(m_widget);
     } else {
         //kDebug() << "widget non empty";

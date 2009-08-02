@@ -85,7 +85,7 @@ private:
     Plasma::TabBar* m_connectionTabs;
 
     QGraphicsWidget* m_widget;
-    QGraphicsLinearLayout* m_mainLayout;
+    QGraphicsGridLayout* m_mainLayout;
     Plasma::Frame* m_leftWidget;
     Plasma::Frame* m_rightWidget;
     QGraphicsWidget* m_interfaceWidget;
