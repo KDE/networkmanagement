@@ -73,6 +73,9 @@ p, li { white-space: pre-wrap; }
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="KLineEdit" name="leUserPassword">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="passwordMode">
           <bool>true</bool>
          </property>
@@ -82,12 +85,12 @@ p, li { white-space: pre-wrap; }
         <widget class="QComboBox" name="cboUserPassOptions">
          <item>
           <property name="text">
-           <string>Store</string>
+           <string>Always Ask</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Always Ask</string>
+           <string>Store</string>
           </property>
          </item>
          <item>
@@ -113,6 +116,9 @@ p, li { white-space: pre-wrap; }
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
         <widget class="KLineEdit" name="leGroupPassword">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="passwordMode">
           <bool>true</bool>
          </property>
@@ -122,12 +128,12 @@ p, li { white-space: pre-wrap; }
         <widget class="QComboBox" name="cboGroupPassOptions">
          <item>
           <property name="text">
-           <string>Store</string>
+           <string>Always Ask</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Always Ask</string>
+           <string>Store</string>
           </property>
          </item>
          <item>

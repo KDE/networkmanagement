@@ -43,6 +43,9 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
+protected Q_SLOTS:
+    void userPasswordTypeChanged(int);
+    void groupPasswordTypeChanged(int);
 private:
     void fillOnePasswordCombo(QComboBox * combo, const QString & key, const QStringMap & data, bool hasPassword);
     uint handleOnePasswordType(const QComboBox * combo, const QString & key, QStringMap & data);
