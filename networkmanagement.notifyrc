@@ -559,4 +559,3 @@ Comment[uk]=Систему керування мережею було зупин
 Comment[x-test]=xxThe network management subsystem was stopped or restartedxx
 Action=Popup
 
-X-Ubuntu-Gettext-Domain=desktop_plasma-widget-network-manager
