@@ -190,7 +190,7 @@ void OpenVpnSettingWidget::writeConfig()
 {
     kDebug();
 
-    d->setting->setServiceType(QLatin1String("org.freedesktop.NetworkManager.openvpn"));
+    d->setting->setServiceType(QLatin1String(NM_DBUS_SERVICE_OPENVPN));
 
     QStringMap data;
     QVariantMap secretData;
