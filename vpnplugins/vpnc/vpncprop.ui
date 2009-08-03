@@ -72,10 +72,14 @@ p, li { white-space: pre-wrap; }
      <item row="3" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
-        <widget class="KLineEdit" name="leUserPassword"/>
+        <widget class="KLineEdit" name="leUserPassword">
+         <property name="passwordMode">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="cbUserPassOptions">
+        <widget class="QComboBox" name="cboUserPassOptions">
          <item>
           <property name="text">
            <string>Store</string>
@@ -108,10 +112,14 @@ p, li { white-space: pre-wrap; }
      <item row="4" column="1">
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="KLineEdit" name="leGroupPassword"/>
+        <widget class="KLineEdit" name="leGroupPassword">
+         <property name="passwordMode">
+          <bool>true</bool>
+         </property>
+        </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="cbGroupPassOptions">
+        <widget class="QComboBox" name="cboGroupPassOptions">
          <item>
           <property name="text">
            <string>Store</string>
@@ -134,7 +142,10 @@ p, li { white-space: pre-wrap; }
      <item row="5" column="1">
       <widget class="QCheckBox" name="cbShowPasswords">
        <property name="text">
-        <string>&amp;Show passwords</string>
+        <string>&amp;Hide passwords</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -184,12 +195,12 @@ p, li { white-space: pre-wrap; }
         <string>&amp;Encryption Method:</string>
        </property>
        <property name="buddy">
-        <cstring>leEncryptionMethod</cstring>
+        <cstring>cboEncryptionMethod</cstring>
        </property>
       </widget>
      </item>
      <item row="9" column="1">
-      <widget class="QComboBox" name="leEncryptionMethod">
+      <widget class="QComboBox" name="cboEncryptionMethod">
        <item>
         <property name="text">
          <string>Secure</string>
@@ -213,12 +224,12 @@ p, li { white-space: pre-wrap; }
         <string>&amp;NAT Traversal:</string>
        </property>
        <property name="buddy">
-        <cstring>leNatTraversal</cstring>
+        <cstring>cboNatTraversal</cstring>
        </property>
       </widget>
      </item>
      <item row="10" column="1">
-      <widget class="QComboBox" name="leNatTraversal">
+      <widget class="QComboBox" name="cboNatTraversal">
        <item>
         <property name="text">
          <string>Cisco UDP</string>
@@ -237,7 +248,7 @@ p, li { white-space: pre-wrap; }
       </widget>
      </item>
      <item row="11" column="1">
-      <widget class="QCheckBox" name="checkBox_2">
+      <widget class="QCheckBox" name="chkDeadPeerDetection">
        <property name="text">
         <string>Enable Dead &amp;Peer Detection</string>
        </property>
@@ -273,5 +284,38 @@ p, li { white-space: pre-wrap; }
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cbShowPasswords</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>leGroupPassword</receiver>
+   <slot>setPasswordMode(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>181</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>234</x>
+     <y>144</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbShowPasswords</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>leUserPassword</receiver>
+   <slot>setPasswordMode(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>331</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>313</x>
+     <y>108</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

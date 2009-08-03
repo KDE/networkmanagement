@@ -24,15 +24,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settingwidget.h"
 
 #include "ui_vpncprop.h"
+#include "settings/vpn.h"
 
 namespace Knm
 {
     class Connection;
 } // namespace Knm
 
+class VpncSettingWidgetPrivate;
+
 class VpncSettingWidget : public SettingWidget
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(VpncSettingWidget)
 public:
     VpncSettingWidget(Knm::Connection *, QWidget * parent = 0);
     ~VpncSettingWidget();
@@ -40,7 +44,9 @@ public:
     void writeConfig();
     void readSecrets();
 private:
-    Ui_VpncProp m_ui;
+    void fillOnePasswordCombo(QComboBox * combo, const QString & key, const QStringMap & data, bool hasPassword);
+    uint handleOnePasswordType(const QComboBox * combo, const QString & key, QStringMap & data);
+    VpncSettingWidgetPrivate * d_ptr;
 };
 
 #endif // VPNCWIDGET_H
