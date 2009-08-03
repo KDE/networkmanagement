@@ -17,7 +17,7 @@
    <item row="0" column="0">
     <widget class="QTabWidget" name="kTabWidget1">
      <property name="currentIndex">
-      <number>3</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="TabPage">
       <attribute name="title">
@@ -667,9 +667,7 @@
           </item>
          </layout>
          <zorder></zorder>
-         <zorder>textLabel1</zorder>
          <zorder></zorder>
-         <zorder>layoutWidget_3</zorder>
         </widget>
        </item>
        <item>
@@ -711,10 +709,33 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>chkUseLZO</tabstop>
-  <tabstop>chkUseTAP</tabstop>
+  <tabstop>kTabWidget1</tabstop>
   <tabstop>gateway</tabstop>
   <tabstop>cmbConnectionType</tabstop>
+  <tabstop>x509CaFile</tabstop>
+  <tabstop>x509Cert</tabstop>
+  <tabstop>x509Key</tabstop>
+  <tabstop>chkCustomPort</tabstop>
+  <tabstop>sbCustomPort</tabstop>
+  <tabstop>chkUseLZO</tabstop>
+  <tabstop>chkUseTCP</tabstop>
+  <tabstop>chkUseTAP</tabstop>
+  <tabstop>cboCipher</tabstop>
+  <tabstop>cboHmac</tabstop>
+  <tabstop>useExtraTlsAuth</tabstop>
+  <tabstop>kurlTlsAuthKey</tabstop>
+  <tabstop>cboDirection</tabstop>
+  <tabstop>x509PassKey</tabstop>
+  <tabstop>x509PassUsername</tabstop>
+  <tabstop>x509PassPassword</tabstop>
+  <tabstop>pskSharedKey</tabstop>
+  <tabstop>pskRemoteIp</tabstop>
+  <tabstop>pskLocalIp</tabstop>
+  <tabstop>passCaFile</tabstop>
+  <tabstop>passUserName</tabstop>
+  <tabstop>passPassword</tabstop>
+  <tabstop>x509PassCaFile</tabstop>
+  <tabstop>x509PassCert</tabstop>
  </tabstops>
  <resources/>
  <connections>
