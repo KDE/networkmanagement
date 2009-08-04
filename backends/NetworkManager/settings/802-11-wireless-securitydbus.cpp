@@ -187,11 +187,11 @@ QString WirelessSecurityDbus::hashWpaPsk(const QString & plainText)
     kDebug() << "  plaintext out:" << result;
 #else
 #define WPA_PMK_LEN 32
-    kDebug() << "Hashing PSK. essid:" << m_essid << "psk:" << plainText;
+    //kDebug() << "Hashing PSK. essid:" << m_essid << "psk:" << plainText;
     QByteArray buffer(WPA_PMK_LEN * 2, 0);
     pbkdf2_sha1(plainText.toLatin1(), m_essid.toLatin1(), m_essid.size(), 4096, (quint8*)buffer.data(), WPA_PMK_LEN);
     result = buffer.toHex().left(WPA_PMK_LEN*2);
-    kDebug() << "  hexadecimal key out:" << result;
+    //kDebug() << "  hexadecimal key out:" << result;
 #endif
     return result;
 
