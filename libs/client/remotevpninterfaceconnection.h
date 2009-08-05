@@ -35,8 +35,6 @@ friend class RemoteActivatableList;
 
 public:
     virtual ~RemoteVpnInterfaceConnection();
-signals:
-    void strengthChanged(int);
 protected:
     RemoteVpnInterfaceConnection(const QString & dbusPath, QObject * parent);
     Q_DECLARE_PRIVATE(RemoteVpnInterfaceConnection)
