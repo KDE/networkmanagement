@@ -27,8 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <nm-setting-wireless-security.h>
 
-#include "802_11_wireless_security_widget.h"
-#include "secretstoragehelper.h"
+//#include "802_11_wireless_security_widget.h"
+//#include "secretstoragehelper.h"
 #include "ui_wep.h"
 #include "settings/802-11-wireless-security.h"
 #include "connection.h"

@@ -24,7 +24,10 @@ set(knmui_SRCS
    apitemview.cpp
    ifaceitemmodel.cpp
    scanwidget.cpp
-   security/802_11_wireless_security_widget.cpp
+
+   # top level wireless security widget
+   security/wirelesssecuritysettingwidget.cpp
+   security/nullsecuritywidget.cpp
    security/wepwidget.cpp
    security/wpapskwidget.cpp
    security/wpaeapwidget.cpp
@@ -44,11 +47,19 @@ set(knmui_SRCS
    connectionsecretsjob.cpp
    )
 
-kde4_add_ui_files(knmui_SRCS cdma.ui gsm.ui ppp.ui pppoe.ui 
-   #802_1x.ui #security.ui 
-   connection.ui wired.ui ipv4.ui 802-11-wireless.ui 
+kde4_add_ui_files(knmui_SRCS
+   #802_1x.ui
+   #security.ui
+   cdma.ui
+   gsm.ui
+   ppp.ui
+   pppoe.ui 
+   connection.ui
+   wired.ui
+   ipv4.ui
+   802-11-wireless.ui
    scanwidget.ui
-   security/802_11_wireless_security.ui
+   security/wirelesssecurity.ui
    security/wep.ui
    security/wpapsk.ui
    security/wpaeap.ui

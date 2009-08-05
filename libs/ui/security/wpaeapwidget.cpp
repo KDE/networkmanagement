@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-wireless-security.h>
 #include <nm-setting-8021x.h>
 
-#include "802_11_wireless_security_widget.h"
+//#include "802_11_wireless_security_widget.h"
 #include "ui_wpaeap.h"
 #include "peapwidget.h"
 #include "ttlswidget.h"

@@ -29,7 +29,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KTabWidget>
 
 #include "802_11_wirelesswidget.h"
-#include "security/802_11_wireless_security_widget.h"
+#include "security/wirelesssecuritysettingwidget.h"
 #include "ipv4widget.h"
 #include "connectionwidget.h"
 
@@ -66,7 +66,7 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
     m_contents = new ConnectionWidget(m_connection, (m_ssid.isEmpty() ? i18n("New Wireless Connection") : m_ssid), this);
     layout->addWidget(m_contents);
     Wireless80211Widget* connectionTypeWidget = new Wireless80211Widget(m_connection, m_ssid, this);
-    Wireless80211SecurityWidget * wirelessSecurityWidget = new Wireless80211SecurityWidget(setDefaults, m_connection, m_caps, m_wpa, m_rsn, this);
+    WirelessSecuritySettingWidget * wirelessSecurityWidget = new WirelessSecuritySettingWidget(setDefaults, m_connection, m_caps, m_wpa, m_rsn, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
 
     // the wireless security widget also creates the wpa-eap widget which

@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <wpasecretidentifier.h>
 
-#include "802_11_wireless_security_widget.h"
+//#include "802_11_wireless_security_widget.h"
 #include "ui_wpapsk.h"
 #include "settings/802-11-wireless.h"
 #include "settings/802-11-wireless-security.h"

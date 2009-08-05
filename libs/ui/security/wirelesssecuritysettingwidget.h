@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIRELESS_802_11_SECURITY_WIDGET_H
-#define WIRELESS_802_11_SECURITY_WIDGET_H
+#ifndef WIRELESSSECURITYSETTINGWIDGET_H
+#define WIRELESSSECURITYSETTINGWIDGET_H
 
 #include "settingwidget.h"
 
@@ -30,29 +30,28 @@ namespace Knm
     class Connection;
 } // namespace Knm
 
-class KNM_EXPORT Wireless80211SecurityWidget : public SettingWidget
+class WirelessSecuritySettingWidgetPrivate;
+
+class KNM_EXPORT WirelessSecuritySettingWidget : public SettingWidget
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(WirelessSecuritySettingWidget)
 public:
     /**
      * @param setDefaults if set, the widget sets its individual members according to caps, wpa and
      * rsn
      */
-    Wireless80211SecurityWidget(bool setDefaults, Knm::Connection * connection,
+    WirelessSecuritySettingWidget(bool setDefaults, Knm::Connection * connection,
                                 uint caps, uint wpa, uint rsn,
                                 QWidget * parent = 0 );
-    virtual ~Wireless80211SecurityWidget();
+    virtual ~WirelessSecuritySettingWidget();
     SettingInterface* wpaEapWidget();
     void readConfig();
     void writeConfig();
     void readSecrets();
 
-protected Q_SLOTS:
-    void securityTypeChanged(int index);
-    //void secretsLoaded(uint result);
 private:
-    class Private;
-    Private * d;
+    WirelessSecuritySettingWidgetPrivate * d_ptr;
 };
 
-#endif // 802_11_WIRELESS_SECURITY_WIDGET_H
+#endif // WIRELESSSECURITYSETTINGWIDGET_H
