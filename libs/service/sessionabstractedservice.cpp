@@ -61,7 +61,8 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
 {
     Q_D(SessionAbstractedService);
     if (added) {
-        if (added->activatableType() == Knm::Activatable::InterfaceConnection ) {
+        if (added->activatableType() == Knm::Activatable::InterfaceConnection
+                || added->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
             Knm::InterfaceConnection * realObj = static_cast<Knm::InterfaceConnection*>(added);
             new InterfaceConnectionAdaptor(realObj);
             new ActivatableAdaptor(realObj);
@@ -71,12 +72,13 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
             new WirelessInterfaceConnectionAdaptor(realObj);
             new InterfaceConnectionAdaptor(realObj);
             new ActivatableAdaptor(realObj);
-        } else { // WirelessNetwork
+        } else if (added->activatableType() == Knm::Activatable::WirelessNetwork) {
             Knm::WirelessNetwork * realObj
                 = static_cast<Knm::WirelessNetwork*>(added);
             new WirelessNetworkAdaptor(realObj);
             new ActivatableAdaptor(realObj);
         }
+
         QString path = nextObjectPath();
         d->adaptors.insert(added, path);
         QDBusConnection::sessionBus().registerObject(path, added);
