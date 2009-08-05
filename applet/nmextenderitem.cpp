@@ -82,6 +82,7 @@ void NMExtenderItem::init()
     }
     createTab(Knm::Activatable::InterfaceConnection);
     createTab(Knm::Activatable::WirelessInterfaceConnection);
+    createTab(Knm::Activatable::VpnInterfaceConnection);
     // hook up signals to allow us to change the connection list depending on APs present, etc
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             SLOT(interfaceAdded(const QString&)));
@@ -295,7 +296,7 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
                 m_wiredList->init();
                 name = i18nc("title of the wired tab", "Wired");
                 icon = KIcon("network-wired");
-                m_tabIndex[type] = m_connectionTabs->addTab(KIcon(icon), name, m_wiredList);
+                m_tabIndex[type] = m_connectionTabs->addTab(icon, name, m_wiredList);
             }
             break;
         }
@@ -311,11 +312,20 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
                 icon = KIcon("network-wireless");
                 // All wireless stuff goes into one tab, marked as WirelessInterfaceConnection
                 // (no separation between those connections and WirelessNetworks)
-                m_tabIndex[Knm::Activatable::WirelessInterfaceConnection] = m_connectionTabs->addTab(KIcon(icon), name, m_wirelessList);
+                m_tabIndex[Knm::Activatable::WirelessInterfaceConnection] = m_connectionTabs->addTab(icon, name, m_wirelessList);
             }
             break;
+        }
         case Knm::Activatable::UnconfiguredInterface:
         case Knm::Activatable::VpnInterfaceConnection:
+        {
+            m_vpnList = new ActivatableListWidget(m_activatables, m_connectionTabs);
+            m_vpnList->addType(Knm::Activatable::VpnInterfaceConnection);
+            m_vpnList->init();
+            name = i18nc("VPN connections tab", "VPN");
+            icon = KIcon("network-wired"); // FIXME: icon
+            kDebug() << "New VPN:" << name;
+            m_tabIndex[Knm::Activatable::VpnInterfaceConnection] = m_connectionTabs->addTab(icon, name, m_vpnList);
             break;
         }
     }

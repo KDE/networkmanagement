@@ -58,6 +58,7 @@ void InterfaceConnectionItem::setupItem()
     } else {
         m_connectButton->setText("missing name");
     }
+    kDebug() << "====> init face connection" << m_connectButton->text();
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setMaximumHeight(rowHeight);
     m_connectButton->setOrientation(Qt::Horizontal);

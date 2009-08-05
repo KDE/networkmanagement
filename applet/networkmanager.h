@@ -75,7 +75,7 @@ public:
     void showCellular(bool show);
     void loadExtender();
 
-    public Q_SLOTS:
+public Q_SLOTS:
     /**
      * Handle signals from NM if wireless was disabled in software
      */

@@ -98,5 +98,6 @@ private:
 
     ActivatableListWidget* m_wiredList;
     ActivatableListWidget* m_wirelessList;
+    ActivatableListWidget* m_vpnList;
 };
 #endif // NMEXTENDERITEM_H

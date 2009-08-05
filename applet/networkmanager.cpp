@@ -77,19 +77,6 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
 
-
-    // FIXME: Is the following necessary at all???
-    // This MUST happen before any InterfaceGroups are instantiated
-    // kickstart the kded module
-    QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
-                        "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
-
-    WId wid = QApplication::desktop()->effectiveWinId();
-    kDebug() << wid;
-    ref.call( "start", qlonglong( wid ) );
-    // not really interesting, for now we only care to kick the load-on-demand
-    kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
-
     m_activatableList = new RemoteActivatableList(this);
 
     // Now it is safe to create ExtenderItems and therefore InterfaceGroups
@@ -98,6 +85,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
 NetworkManagerApplet::~NetworkManagerApplet()
 {
+    /*
     // FIXME: we should not disconnect just because the plasmoid goes away ...
     QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
                         "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
@@ -105,6 +93,7 @@ NetworkManagerApplet::~NetworkManagerApplet()
     ref.call( QLatin1String("stop") );
     //ref.call("stop");
     kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
+    */
 }
 
 void NetworkManagerApplet::init()
