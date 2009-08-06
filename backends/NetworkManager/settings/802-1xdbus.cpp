@@ -130,7 +130,8 @@ QVariantMap Security8021xDbus::toMap()
         }
         switch (setting->phase2auth()) {
             case Knm::Security8021xSetting::EnumPhase2auth::none:
-                map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), "none");
+                // not needed on the bus
+                //map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), "none");
                 break;
             case Knm::Security8021xSetting::EnumPhase2auth::pap:
                 map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), "pap");
@@ -156,7 +157,8 @@ QVariantMap Security8021xDbus::toMap()
         }
         switch (setting->phase2autheap()) {
             case Knm::Security8021xSetting::EnumPhase2autheap::none:
-                map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "none");
+                // not needed on the bus
+                // map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "none");
                 break;
             case Knm::Security8021xSetting::EnumPhase2autheap::md5:
                 map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "md5");
@@ -191,7 +193,9 @@ QVariantMap Security8021xDbus::toMap()
         if (!setting->psk().isEmpty()) {
             map.insert("psk", setting->psk());
         }
-        map.insert(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS), setting->useSystemCaCerts());
+        if (setting->useSystemCaCerts()) {
+            map.insert(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS), setting->useSystemCaCerts());
+        }
     }
     return map;
 }
