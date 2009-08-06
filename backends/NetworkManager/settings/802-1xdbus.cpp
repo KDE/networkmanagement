@@ -66,14 +66,25 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
         if (map.contains(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY))) {
             setting->setPrivatekey(map.value(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY)).value<QByteArray>());
         }
+        // SECRET
+        if (map.contains(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD))) {
+            setting->setPrivatekeypassword(map.value(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD)).value<QString>());
+        }
         if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY))) {
             setting->setPhase2privatekey(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY)).value<QByteArray>());
+        }
+        // SECRET
+        if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD))) {
+            setting->setPhase2privatekeypassword(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD)).value<QString>());
         }
         if (map.contains("pin")) {
             setting->setPin(map.value("pin").value<QString>());
         }
         if (map.contains("psk")) {
             setting->setPsk(map.value("psk").value<QString>());
+        }
+        if (map.contains(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS))) {
+            setting->setUseSystemCaCerts(map.value(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS)).value<bool>());
         }
     }
 }
@@ -180,6 +191,7 @@ QVariantMap Security8021xDbus::toMap()
         if (!setting->psk().isEmpty()) {
             map.insert("psk", setting->psk());
         }
+        map.insert(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS), setting->useSystemCaCerts());
     }
     return map;
 }
@@ -190,6 +202,8 @@ QVariantMap Security8021xDbus::toSecretsMap()
   Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
   if (setting->enabled()) {
   map.insert("password", setting->password());
+  map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD), setting->privatekeypassword());
+  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD), setting->phase2privatekeypassword());
   }
   return map;
 }

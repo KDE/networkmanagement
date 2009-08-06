@@ -311,6 +311,22 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     }
 
     /**
+      Set Private key password
+    */
+    void setPrivatekeypassword( const QString & v )
+    {
+        mPrivatekeypassword = v;
+    }
+
+    /**
+      Get Private key password
+    */
+    QString privatekeypassword() const
+    {
+      return mPrivatekeypassword;
+    }
+
+    /**
       Set Phase 2 private key
     */
     void setPhase2privatekey( const QByteArray & v )
@@ -324,6 +340,22 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     QByteArray phase2privatekey() const
     {
       return mPhase2privatekey;
+    }
+
+    /**
+      Set Phase 2 private key password
+    */
+    void setPhase2privatekeypassword( const QString & v )
+    {
+        mPhase2privatekeypassword = v;
+    }
+
+    /**
+      Get Phase 2 private key password
+    */
+    QString phase2privatekeypassword() const
+    {
+      return mPhase2privatekeypassword;
     }
 
     /**
@@ -359,6 +391,22 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     }
 
     /**
+      Set Use System CA Certs
+    */
+    void setUseSystemCaCerts( bool v )
+    {
+        mUseSystemCaCerts = v;
+    }
+
+    /**
+      Get Use System CA Certs
+    */
+    bool useSystemCaCerts() const
+    {
+      return mUseSystemCaCerts;
+    }
+
+    /**
       Set Connection uses 802.1x
     */
     void setEnabled( bool v )
@@ -378,7 +426,8 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     {
         ttls = 1,
         peap = 2,
-        tls  = 4
+        tls  = 4,
+        leap = 8
     };
     Q_DECLARE_FLAGS(EapMethods, EapMethod)
 
@@ -391,6 +440,8 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
             eap.append("tls");
         if (methods.testFlag(peap))
             eap.append("peap");
+        if (methods.testFlag(leap))
+            eap.append("leap");
 kDebug() << eap;
         setEap(eap);
     }
@@ -405,6 +456,8 @@ kDebug() << eap;
             eapFlags = eapFlags | tls;
         if (eaps.contains("peap"))
             eapFlags = eapFlags | peap;
+        if (eaps.contains("leap"))
+            eapFlags = eapFlags | leap;
         return eapFlags;
     }
 
@@ -429,9 +482,12 @@ kDebug() << eap;
     QByteArray mPhase2clientcert;
     QString mPassword;
     QByteArray mPrivatekey;
+    QString mPrivatekeypassword;
     QByteArray mPhase2privatekey;
+    QString mPhase2privatekeypassword;
     QString mPin;
     QString mPsk;
+    bool mUseSystemCaCerts;
     bool mEnabled;
 
   private:

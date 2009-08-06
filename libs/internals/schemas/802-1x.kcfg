@@ -96,8 +96,16 @@
       <label>Private key</label>
       <whatsthis></whatsthis>
     </entry>
+    <entry name="privatekeypassword" type="String" secret="true" dbuskey="NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD">
+      <label>Private key password</label>
+      <whatsthis></whatsthis>
+    </entry>
     <entry name="phase2privatekey" type="ByteArray" dbuskey="NM_SETTING_802_1X_PHASE2_PRIVATE_KEY">
       <label>Phase 2 private key</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="phase2privatekeypassword" type="String" secret="true" dbuskey="NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD">
+      <label>Phase 2 private key password</label>
       <whatsthis></whatsthis>
     </entry>
     <entry name="pin" type="String">
@@ -107,6 +115,10 @@
     <entry name="psk" type="String">
       <label>PSK</label>
       <whatsthis></whatsthis>
+    </entry>
+    <entry name="UseSystemCaCerts" type="Bool" dbuskey="NM_SETTING_802_1X_SYSTEM_CA_CERTS">
+      <label>Use System CA Certs</label>
+      <default>false</default>
     </entry>
     <entry name="enabled" type="Bool" nodbus="true">
       <label>Connection uses 802.1x</label>
