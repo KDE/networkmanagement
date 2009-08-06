@@ -68,11 +68,11 @@ WpaEapWidget::WpaEapWidget(Knm::Connection* connection, QWidget * parent)
 
     verticalLayout->addWidget(d->chkShowPassword);
 
-    registerEapMethod(d->tlsKey, new TlsWidget(connection, eapMethods),
-            i18nc("TLS auth type", "TLS"));
-
+//X     registerEapMethod(d->tlsKey, new TlsWidget(connection, eapMethods),
+//X             i18nc("TLS auth type", "TLS"));
+//X 
     registerEapMethod(d->leapKey, new EapMethodLeap(connection, eapMethods),
-            i18nc("LEAP auth type", "Leap"));
+            i18nc("LEAP auth type", "LEAP"));
 
     registerEapMethod(d->peapKey, new PeapWidget(connection, eapMethods),
             i18nc("Peap outer auth type", "Protected EAP (PEAP)"));
