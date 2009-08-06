@@ -21,6 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "eapmethodstack.h"
 #include "eapmethodstack_p.h"
 
+#include <KDebug>
 
 #include <connection.h>
 #include "eapmethod.h"
@@ -49,16 +50,29 @@ EapMethodStack::~EapMethodStack()
 {
 }
 
-void EapMethodStack::registerEapMethod(EapMethod * eapMethod, const QString & theLabel, int & index)
+void EapMethodStack::registerEapMethod(int key, EapMethod * eapMethod, const QString & theLabel)
 {
+    Q_D(EapMethodStack);
+    if (d->keyToComboIndex.contains(key)) {
+        kDebug() << "Duplicate EapMethod inserted with key" << key << "!";
+    }
+
+    // although we use the index returned by QStackedWidget::addWidget() as the
+    // value for the combo index instead of the actual combo index of the label,
+    // this doesn't matter because they should be identical
+    d->keyToComboIndex.insert(key, eapMethods->addWidget(eapMethod));
     cboEapMethod->addItem(theLabel);
-    index = eapMethods->addWidget(eapMethod);
+    // make sure of that...
+    Q_ASSERT(cboEapMethod->count() == eapMethods->count());
 }
 
-void EapMethodStack::setCurrentEapMethod(int index)
+void EapMethodStack::setCurrentEapMethod(int key)
 {
-    if (index >= 0 && index < eapMethods->count()) {
-        cboEapMethod->setCurrentIndex(index);
+    Q_D(EapMethodStack);
+    if (d->keyToComboIndex.contains(key)) {
+        cboEapMethod->setCurrentIndex(d->keyToComboIndex.value(key));
+    } else {
+        kDebug() << "Unknown key!";
     }
 }
 

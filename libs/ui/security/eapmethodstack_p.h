@@ -21,12 +21,17 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef EAPMETHODSTACK_P_H
 #define EAPMETHODSTACK_P_H
 
-#include "eapmethodstack.h"
 #include "securitywidget_p.h"
+
+#include <QHash>
+
+#include "eapmethodstack.h"
 
 class EapMethodStackPrivate : public SecurityWidgetPrivate
 {
     Q_DECLARE_PUBLIC(EapMethodStack)
+    public:
+        QHash<int, int> keyToComboIndex;
     protected:
         EapMethodStack *q_ptr;
 };

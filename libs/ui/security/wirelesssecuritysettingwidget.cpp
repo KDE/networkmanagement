@@ -24,10 +24,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
-#include "connection.h"
-#include "connectionpersistence.h"
-#include "settings/802-11-wireless.h"
-#include "settings/802-11-wireless-security.h"
+#include <connection.h>
+#include <connectionpersistence.h>
+#include <settings/802-1x.h>
+#include <settings/802-11-wireless.h>
+#include <settings/802-11-wireless-security.h>
+
 #include "ui_wirelesssecurity.h"
 #include "securitywidget.h"
 
@@ -42,7 +44,7 @@ Q_DECLARE_PUBLIC(WirelessSecuritySettingWidget)
 public:
     WirelessSecuritySettingWidgetPrivate(WirelessSecuritySettingWidget * parent)
         : q_ptr(parent), noSecurityIndex(-1), staticWepIndex(-1), wpaPskIndex(-1), wpaEapIndex(-1), currentSecurity(-1),
-        wpaEapWidget(0), wirelessSetting(0), securitySetting(0), persistence(0)
+        wpaEapWidget(0), settingWireless(0), settingSecurity(0), persistence(0)
     {
     }
 
@@ -74,8 +76,9 @@ public:
     int wpaEapIndex;
     int currentSecurity;
     WpaEapWidget * wpaEapWidget;
-    Knm::WirelessSetting * wirelessSetting;
-    Knm::WirelessSecuritySetting * securitySetting;
+    Knm::WirelessSetting * settingWireless;
+    Knm::WirelessSecuritySetting * settingSecurity;
+    Knm::Security8021xSetting * setting8021x;
     Knm::ConnectionPersistence * persistence;
 };
 
@@ -88,8 +91,9 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(bool setDefaults, K
     d->ui.setupUi(this);
     QObject::connect(d->ui.cboType, SIGNAL(currentIndexChanged(int)), d->ui.securityWidgets, SLOT(setCurrentIndex(int)));
 
-    d->wirelessSetting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
-    d->securitySetting = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
+    d->settingWireless = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
+    d->settingSecurity = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
+    d->setting8021x = static_cast<Knm::Security8021xSetting *>(connection->setting(Knm::Setting::Security8021x));
 
     // cache ap and device capabilities here
     Solid::Control::AccessPoint::WpaFlags wpaFlags( wpa );
@@ -142,22 +146,26 @@ WirelessSecuritySettingWidget::~WirelessSecuritySettingWidget()
 void WirelessSecuritySettingWidget::writeConfig()
 {
     Q_D(WirelessSecuritySettingWidget);
-    d->wirelessSetting->setSecurity(d->securitySetting->name());
+    d->settingWireless->setSecurity(d->settingSecurity->name());
     if (d->ui.cboType->currentIndex() == d->noSecurityIndex) {
-        d->securitySetting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::None);
-        d->wirelessSetting->setSecurity("");
+        d->setting8021x->setEnabled(false);
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::None);
+        d->settingWireless->setSecurity("");
     }
     if (d->ui.cboType->currentIndex() == d->staticWepIndex) {
-        d->securitySetting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WEP40); // FIXME
-        d->securitySetting->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::None);
-    }
-    else if (d->ui.cboType->currentIndex() == d->wpaEapIndex) {
-        d->securitySetting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WPAEAP); // FIXME
-        d->securitySetting->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAEAP);
+        d->setting8021x->setEnabled(false);
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WEP40); // FIXME
+        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::None);
     }
     else if (d->ui.cboType->currentIndex() == d->wpaPskIndex) {
-        d->securitySetting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WPAPSK); // FIXME
-        d->securitySetting->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAPSK);
+        d->setting8021x->setEnabled(false);
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WPAPSK); // FIXME
+        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAPSK);
+    }
+    else if (d->ui.cboType->currentIndex() == d->wpaEapIndex) {
+        d->setting8021x->setEnabled(true);
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WPAEAP); // FIXME
+        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAEAP);
     }
 
     SecurityWidget * sw = d->currentSecurityWidget();
@@ -173,7 +181,7 @@ void WirelessSecuritySettingWidget::readConfig()
 //X         return;
 //X 
     SecurityWidget * sw = 0;
-    switch (d->securitySetting->securityType()) {
+    switch (d->settingSecurity->securityType()) {
         case Knm::WirelessSecuritySetting::EnumSecurityType::None:
             d->setCurrentSecurityWidget(d->noSecurityIndex);
             break;

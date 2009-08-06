@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "eapmethodstack.h"
 #include "eapmethodsimple.h"
 #include "eapmethodinnerauth_p.h"
+#include "settings/802-1x.h"
 
 TtlsWidget::TtlsWidget(Knm::Connection* connection, QWidget * parent)
 : EapMethodInnerAuth(connection, parent)
@@ -35,19 +36,19 @@ TtlsWidget::TtlsWidget(Knm::Connection* connection, QWidget * parent)
     Q_D(EapMethodInnerAuth);
     setupUi(this);
 
-    int dummyIndex;
-    d->innerAuth->registerEapMethod(new EapMethodSimple(EapMethodSimple::Pap, connection, d->innerAuth),
-            i18nc("PAP inner auth method", "PAP"), dummyIndex);
-    d->innerAuth->registerEapMethod(new EapMethodSimple(EapMethodSimple::MsChap, connection, d->innerAuth),
-            i18nc("MSCHAP inner auth method", "MSCHAP"), dummyIndex);
-    d->innerAuth->registerEapMethod(new EapMethodSimple(EapMethodSimple::MsChapV2, connection, d->innerAuth),
-            i18nc("MSCHAPv2 inner auth method", "MSCHAPv2"), dummyIndex);
-    d->innerAuth->registerEapMethod(new EapMethodSimple(EapMethodSimple::Chap, connection, d->innerAuth),
-            i18nc("CHAP inner auth method", "CHAP"), dummyIndex);
-    d->innerAuth->registerEapMethod(new EapMethodSimple(EapMethodSimple::Pap, connection, d->innerAuth),
-            i18nc("PAP inner auth method", "PAP"), dummyIndex);
+    d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::pap,
+            new EapMethodSimple(EapMethodSimple::Pap, connection, d->innerAuth),
+            i18nc("PAP inner auth method", "PAP"));
+    d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::mschap,
+            new EapMethodSimple(EapMethodSimple::MsChap, connection, d->innerAuth),
+            i18nc("MSCHAP inner auth method", "MSCHAP"));
+    d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::mschapv2,
+            new EapMethodSimple(EapMethodSimple::MsChapV2, connection, d->innerAuth),
+            i18nc("MSCHAPv2 inner auth method", "MSCHAPv2"));
+    d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::chap,
+            new EapMethodSimple(EapMethodSimple::Chap, connection, d->innerAuth),
+            i18nc("CHAP inner auth method", "CHAP"));
     gridLayout->addWidget(d->innerAuth, 2, 0, 2, 2);
-    // add eepmethodstack for inner auth
 }
 
 TtlsWidget::~TtlsWidget()
@@ -61,67 +62,39 @@ bool TtlsWidget::validate() const
 
 void TtlsWidget::readConfig()
 {
-#if 0
-    QString identity;
-    identity = d->setting->identity();
-    if (!identity.isEmpty())
-        d->ui.identity->setText(identity);
-
-    QString anonymousidentity = d->setting->anonymousidentity();
-    if (!anonymousidentity.isEmpty())
-        d->ui.anonidentity->setText(anonymousidentity);
+    Q_D(EapMethodInnerAuth);
+    anonidentity->setText(d->setting->anonymousidentity());
 
     QString capath = d->setting->capath();
     if (!capath.isEmpty())
-        d->ui.cacert->setUrl(capath);
+        cacert->setUrl(capath);
 
-    int phase2autheap = d->setting->phase2autheap();
-    if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::pap)
-        d->ui.phase2autheap->setCurrentIndex(0);
-    else if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::mschap)
-        d->ui.phase2autheap->setCurrentIndex(1);
-    else if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::mschapv2)
-        d->ui.phase2autheap->setCurrentIndex(2);
-    else if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::chap)
-        d->ui.phase2autheap->setCurrentIndex(3);
-#endif
+    if (d->setting->phase2autheap() != Knm::Security8021xSetting::EnumPhase2autheap::none) {
+        d->innerAuth->setCurrentEapMethod(d->setting->phase2autheap());
+    } else {
+        d->innerAuth->setCurrentEapMethod(d->setting->phase2auth());
+    }
+    d->innerAuth->readConfig();
 }
 
 void TtlsWidget::writeConfig()
 {
-#if 0
-    d->setting->setIdentity(d->ui.identity->text());
-    d->setting->setAnonymousidentity(d->ui.anonidentity->text());
-    if (!d->ui.cacert->url().directory().isEmpty() && !d->ui.cacert->url().fileName().isEmpty())
-        d->setting->setCapath(d->ui.cacert->url().directory() + "/" + d->ui.cacert->url().fileName());
+    Q_D(EapMethodInnerAuth);
+    // make the Setting TTLS
+    d->setting->setEapFlags(Knm::Security8021xSetting::ttls);
+    // TTLS specific config
+    d->setting->setAnonymousidentity(anonidentity->text());
 
-    switch(d->ui.phase2autheap->currentIndex())
-    {
-        case 0:
-            d->setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::pap);
-            break;
-        case 1:
-            d->setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::mschap);
-            break;
-        case 2:
-            d->setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::mschapv2);
-            break;
-        case 3:
-            d->setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::chap);
-            break;
-    }
+    if (!cacert->url().directory().isEmpty() && !cacert->url().fileName().isEmpty())
+        d->setting->setCapath(cacert->url().directory() + "/" + cacert->url().fileName());
 
-    d->setting->setPassword(d->ui.password->text());
-#endif
+    d->innerAuth->writeConfig();
 }
 
 void TtlsWidget::readSecrets()
 {
-#if 0
-    QString password = d->setting->password();
-    if (!password.isEmpty())
-        d->ui.password->setText(password);
-#endif
+    Q_D(EapMethodInnerAuth);
+    d->innerAuth->writeConfig();
 }
 
 

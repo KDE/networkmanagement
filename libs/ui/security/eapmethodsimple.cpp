@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "eapmethod_p.h"
 
+#include <settings/802-1x.h>
 EapMethodSimple::EapMethodSimple(Type type, Knm::Connection * connection, QWidget * parent)
     : EapMethod(connection, parent), m_type(type)
 {
@@ -45,17 +46,38 @@ bool EapMethodSimple::validate() const
 
 void EapMethodSimple::readConfig()
 {
-
+    Q_D(EapMethod);
+    leUserName->setText(d->setting->identity());
 }
 
 void EapMethodSimple::writeConfig()
 {
-
+    Q_D(EapMethod);
+    switch (m_type) {
+        case Pap:
+            d->setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::pap);
+            break;
+        case MsChap:
+            d->setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::mschap);
+            break;
+        case MsChapV2:
+            d->setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::mschapv2);
+            break;
+        case MD5:
+            d->setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::md5);
+            break;
+        case Chap:
+            d->setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::chap);
+            break;
+    }
+    d->setting->setIdentity(leUserName->text());
+    d->setting->setPassword(lePassword->text());
 }
 
 void EapMethodSimple::readSecrets()
 {
-
+    Q_D(EapMethod);
+    lePassword->setText(d->setting->password());
 }
 
 // vim: sw=4 sts=4 et tw=100

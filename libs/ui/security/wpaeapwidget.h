@@ -41,7 +41,7 @@ public:
     void writeConfig();
     void readSecrets();
 
-    void registerEapMethod(EapMethod * eapMethod, const QString & label, int & index);
+    void registerEapMethod(int key, EapMethod * eapMethod, const QString & label);
 };
 
 #endif // WPAEAPWIDGET_H

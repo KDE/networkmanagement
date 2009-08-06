@@ -41,10 +41,14 @@ public:
     EapMethodStack(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~EapMethodStack();
 
-    virtual void registerEapMethod(EapMethod * eapMethod, const QString & label, int & index);
-    void setCurrentEapMethod(int index);
+    /**
+     * Add an EAP method to the stack
+     * @param key uniquely identifying key - duplicates will be replaced!
+     */
+    virtual void registerEapMethod(int key, EapMethod * eapMethod, const QString & label);
+    void setCurrentEapMethod(int key);
     EapMethod * currentEapMethod() const;
-
+    
     // SecurityWidget methods
     bool validate() const;
     void readConfig();
