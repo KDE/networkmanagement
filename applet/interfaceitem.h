@@ -48,7 +48,7 @@ class RemoteInterfaceConnection;
  * Displays status, updates itself
  * Allows deactivating any active connection
  */
-class InterfaceItem : public QGraphicsWidget
+class InterfaceItem : public Plasma::IconWidget
 {
 Q_OBJECT
 public:
@@ -60,7 +60,7 @@ public:
     NameDisplayMode nameDisplayMode() const;
 
     virtual QString connectionName();
-
+    //void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
     QString label();
 
 public Q_SLOTS:
@@ -79,8 +79,8 @@ protected Q_SLOTS:
      * Remove any connections that were provided by this service
      * from our active connection list
      */
-    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    //virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    //virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     void handleConnectionStateChange(int new_state, int old_state, int reason);
     virtual void itemClicked();
 

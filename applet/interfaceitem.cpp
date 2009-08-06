@@ -50,7 +50,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkmanager.h"
 
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsItem * parent) : QGraphicsWidget(parent),
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsItem * parent) : Plasma::IconWidget(parent),
     m_iface(iface),
     m_connectionNameLabel(0),
     m_connectionInfoLabel(0),
@@ -59,7 +59,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_enabled(false),
     m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
 {
-    setAcceptHoverEvents(true);
+    setDrawBackground(true);
+    //setAcceptHoverEvents(false);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     Solid::Device* dev = new Solid::Device(m_iface->uni());
     m_interfaceName = dev->product();
@@ -81,30 +82,31 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_icon = new Plasma::IconWidget(this);
     m_icon->setMinimumHeight(48);
     m_icon->setMaximumHeight(48);
-    m_icon->setAcceptHoverEvents(true);
-    connect(m_icon, SIGNAL(clicked()), this, SLOT(itemClicked()));
+    //m_icon->setAcceptHoverEvents(false);
     m_layout->addItem(m_icon, 0, 0, 2, 1);
 
-
+    QString icon;
     switch (m_iface->type() ) {
         case Solid::Control::NetworkInterface::Ieee8023:
-            m_icon->setIcon("network-wired");
+            icon = "network-wired";
             break;
         case Solid::Control::NetworkInterface::Ieee80211:
-            m_icon->setIcon("network-wireless");
+            icon = "network-wireless";
             break;
         case Solid::Control::NetworkInterface::Serial:
-            m_icon->setIcon("modem");
+            icon = "modem";
             break;
         case Solid::Control::NetworkInterface::Gsm:
         case Solid::Control::NetworkInterface::Cdma:
-            m_icon->setIcon("phone");
+            icon = "phone";
             break;
         default:
-            m_icon->setIcon("network-wired");
+            icon = "network-wired";
             break;
     }
-
+    m_icon->setIcon(icon);
+    //Plasma::IconWidget::setIcon(icon);
+    setDrawBackground(true);
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
@@ -174,6 +176,11 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
 //X             SIGNAL(activeConnectionsChanged()),
 //X             this, SLOT(activeConnectionsChanged()));
 //
+    // Forward state between icon and this widget
+    connect(m_icon, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
+    connect(this, SIGNAL(pressed(bool)), m_icon, SLOT(setPressed(bool)));
+
+
     connect(m_iface, SIGNAL(connectionStateChanged(int)),
             this, SLOT(connectionStateChanged(int)));
     QObject::connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
@@ -194,27 +201,39 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     connectionStateChanged(m_iface->connectionState());
     setLayout(m_layout);
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+
+    //setText("ICON WIDGET");
 }
 
+/*
+void InterfaceItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
+{
+    kDebug() << "painting widget ...";
+    Plasma::IconWidget::paint(painter, option, widget);
+}
+*/
 void InterfaceItem::itemClicked()
 {
     emit clicked(m_iface->type());
 }
 
+/*
 void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED( event )
     if (m_icon->isEnabled()) {
         //m_connectButton->show();
     }
+    Plasma::IconWidget::hoverEnterEvent(event);
 }
 
 void InterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     Q_UNUSED( event )
     m_connectButton->hide();
+    Plasma::IconWidget::hoverLeaveEvent(event);
 }
-
+*/
 QString InterfaceItem::label()
 {
     return m_ifaceNameLabel->text();
