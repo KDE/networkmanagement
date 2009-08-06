@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "tlswidget.h"
 
-#include "ui_eapmethodtlsbase.h"
 #include "connection.h"
 #include "settings/802-1x.h"
 
