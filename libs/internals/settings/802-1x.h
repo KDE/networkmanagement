@@ -24,10 +24,15 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
       public:
       enum type { zero, one, COUNT };
     };
+    class EnumPhase2auth
+    {
+      public:
+      enum type { none, pap, mschap, mschapv2, chap, md5, gtc, otp, COUNT };
+    };
     class EnumPhase2autheap
     {
       public:
-      enum type { pap, mschap, mschapv2, chap, COUNT };
+      enum type { none, md5, gtc, otp, mschapv2, tls, COUNT };
     };
 
     Security8021xSetting( );
@@ -196,7 +201,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     /**
       Set Phase 2 auth
     */
-    void setPhase2auth( const QString & v )
+    void setPhase2auth( int v )
     {
         mPhase2auth = v;
     }
@@ -204,7 +209,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     /**
       Get Phase 2 auth
     */
-    QString phase2auth() const
+    int phase2auth() const
     {
       return mPhase2auth;
     }
@@ -417,7 +422,7 @@ kDebug() << eap;
     int mPhase1peapver;
     QString mPhase1peaplabel;
     QString mPhase1fastprovisioning;
-    QString mPhase2auth;
+    int mPhase2auth;
     int mPhase2autheap;
     QByteArray mPhase2cacert;
     QString mPhase2capath;

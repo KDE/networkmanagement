@@ -36,17 +36,40 @@ void Security8021xPersistence::load()
   }
   setting->setPhase1peaplabel(m_config->readEntry("phase1peaplabel", ""));
   setting->setPhase1fastprovisioning(m_config->readEntry("phase1fastprovisioning", ""));
-  setting->setPhase2auth(m_config->readEntry("phase2auth", ""));
   {
-    QString contents = m_config->readEntry("phase2autheap", "pap");
-    if (contents == "pap")
-      setting->setPhase2autheap(Security8021xSetting::EnumPhase2autheap::pap);
+    QString contents = m_config->readEntry("phase2auth", "none");
+    if (contents == "none")
+      setting->setPhase2auth(Security8021xSetting::EnumPhase2auth::none);
+    else     if (contents == "pap")
+      setting->setPhase2auth(Security8021xSetting::EnumPhase2auth::pap);
     else     if (contents == "mschap")
-      setting->setPhase2autheap(Security8021xSetting::EnumPhase2autheap::mschap);
+      setting->setPhase2auth(Security8021xSetting::EnumPhase2auth::mschap);
+    else     if (contents == "mschapv2")
+      setting->setPhase2auth(Security8021xSetting::EnumPhase2auth::mschapv2);
+    else     if (contents == "chap")
+      setting->setPhase2auth(Security8021xSetting::EnumPhase2auth::chap);
+    else     if (contents == "md5")
+      setting->setPhase2auth(Security8021xSetting::EnumPhase2auth::md5);
+    else     if (contents == "gtc")
+      setting->setPhase2auth(Security8021xSetting::EnumPhase2auth::gtc);
+    else     if (contents == "otp")
+      setting->setPhase2auth(Security8021xSetting::EnumPhase2auth::otp);
+
+  }
+  {
+    QString contents = m_config->readEntry("phase2autheap", "none");
+    if (contents == "none")
+      setting->setPhase2autheap(Security8021xSetting::EnumPhase2autheap::none);
+    else     if (contents == "md5")
+      setting->setPhase2autheap(Security8021xSetting::EnumPhase2autheap::md5);
+    else     if (contents == "gtc")
+      setting->setPhase2autheap(Security8021xSetting::EnumPhase2autheap::gtc);
+    else     if (contents == "otp")
+      setting->setPhase2autheap(Security8021xSetting::EnumPhase2autheap::otp);
     else     if (contents == "mschapv2")
       setting->setPhase2autheap(Security8021xSetting::EnumPhase2autheap::mschapv2);
-    else     if (contents == "chap")
-      setting->setPhase2autheap(Security8021xSetting::EnumPhase2autheap::chap);
+    else     if (contents == "tls")
+      setting->setPhase2autheap(Security8021xSetting::EnumPhase2autheap::tls);
 
   }
   setting->setPhase2cacert(m_config->readEntry("phase2cacert", QByteArray()));
@@ -83,19 +106,50 @@ void Security8021xPersistence::save()
   }
   m_config->writeEntry("phase1peaplabel", setting->phase1peaplabel());
   m_config->writeEntry("phase1fastprovisioning", setting->phase1fastprovisioning());
-  m_config->writeEntry("phase2auth", setting->phase2auth());
-  switch (setting->phase2autheap()) {
-    case Security8021xSetting::EnumPhase2autheap::pap:
-      m_config->writeEntry("phase2autheap", "pap");
+  switch (setting->phase2auth()) {
+    case Security8021xSetting::EnumPhase2auth::none:
+      m_config->writeEntry("phase2auth", "none");
       break;
-    case Security8021xSetting::EnumPhase2autheap::mschap:
-      m_config->writeEntry("phase2autheap", "mschap");
+    case Security8021xSetting::EnumPhase2auth::pap:
+      m_config->writeEntry("phase2auth", "pap");
+      break;
+    case Security8021xSetting::EnumPhase2auth::mschap:
+      m_config->writeEntry("phase2auth", "mschap");
+      break;
+    case Security8021xSetting::EnumPhase2auth::mschapv2:
+      m_config->writeEntry("phase2auth", "mschapv2");
+      break;
+    case Security8021xSetting::EnumPhase2auth::chap:
+      m_config->writeEntry("phase2auth", "chap");
+      break;
+    case Security8021xSetting::EnumPhase2auth::md5:
+      m_config->writeEntry("phase2auth", "md5");
+      break;
+    case Security8021xSetting::EnumPhase2auth::gtc:
+      m_config->writeEntry("phase2auth", "gtc");
+      break;
+    case Security8021xSetting::EnumPhase2auth::otp:
+      m_config->writeEntry("phase2auth", "otp");
+      break;
+  }
+  switch (setting->phase2autheap()) {
+    case Security8021xSetting::EnumPhase2autheap::none:
+      m_config->writeEntry("phase2autheap", "none");
+      break;
+    case Security8021xSetting::EnumPhase2autheap::md5:
+      m_config->writeEntry("phase2autheap", "md5");
+      break;
+    case Security8021xSetting::EnumPhase2autheap::gtc:
+      m_config->writeEntry("phase2autheap", "gtc");
+      break;
+    case Security8021xSetting::EnumPhase2autheap::otp:
+      m_config->writeEntry("phase2autheap", "otp");
       break;
     case Security8021xSetting::EnumPhase2autheap::mschapv2:
       m_config->writeEntry("phase2autheap", "mschapv2");
       break;
-    case Security8021xSetting::EnumPhase2autheap::chap:
-      m_config->writeEntry("phase2autheap", "chap");
+    case Security8021xSetting::EnumPhase2autheap::tls:
+      m_config->writeEntry("phase2autheap", "tls");
       break;
   }
   m_config->writeEntry("phase2cacert", setting->phase2cacert());

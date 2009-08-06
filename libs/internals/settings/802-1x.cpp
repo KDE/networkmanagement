@@ -6,7 +6,7 @@
 using namespace Knm;
 
 Security8021xSetting::Security8021xSetting() : Setting(Setting::Security8021x),
-    mPhase1peapver(0), mPhase2autheap(0), mEnabled(false)
+    mPhase1peapver(0), mPhase2auth(0), mPhase2autheap(0), mEnabled(false)
 {
 }
 
