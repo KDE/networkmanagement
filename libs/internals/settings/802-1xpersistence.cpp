@@ -27,7 +27,9 @@ void Security8021xPersistence::load()
   setting->setCapath(m_config->readEntry("capath", ""));
   setting->setClientcert(m_config->readEntry("clientcert", QByteArray()));
   {
-    QString contents = m_config->readEntry("phase1peapver", "zero");
+    QString contents = m_config->readEntry("phase1peapver", "automatic");
+    if (contents == "automatic")
+      setting->setPhase1peapver(Security8021xSetting::EnumPhase1peapver::automatic);
     if (contents == "zero")
       setting->setPhase1peapver(Security8021xSetting::EnumPhase1peapver::zero);
     else     if (contents == "one")
@@ -106,6 +108,9 @@ void Security8021xPersistence::save()
   m_config->writeEntry("capath", setting->capath());
   m_config->writeEntry("clientcert", setting->clientcert());
   switch (setting->phase1peapver()) {
+    case Security8021xSetting::EnumPhase1peapver::automatic:
+      m_config->writeEntry("phase1peapver", "automatic");
+      break;
     case Security8021xSetting::EnumPhase1peapver::zero:
       m_config->writeEntry("phase1peapver", "zero");
       break;

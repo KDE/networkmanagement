@@ -17,12 +17,12 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     class EnumPhase1peapver
     {
       public:
-      enum type { zero, one, COUNT };
+      enum type { automatic, zero, one, COUNT };
     };
     class EnumPhase1peaplabel
     {
       public:
-      enum type { zero, one, COUNT };
+      enum type { automatic, zero, one, COUNT };
     };
     class EnumPhase2auth
     {
@@ -440,7 +440,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
             eap.append("tls");
         if (methods.testFlag(peap))
             eap.append("peap");
-        if (methods.testFlag(leap))
+        if (methods.testFlag(peap))
             eap.append("leap");
 kDebug() << eap;
         setEap(eap);
@@ -456,7 +456,7 @@ kDebug() << eap;
             eapFlags = eapFlags | tls;
         if (eaps.contains("peap"))
             eapFlags = eapFlags | peap;
-        if (eaps.contains("leap"))
+        if (eaps.contains("peap"))
             eapFlags = eapFlags | leap;
         return eapFlags;
     }

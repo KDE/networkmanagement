@@ -33,6 +33,7 @@
       <label>Phase 1 PEAP version</label>
       <whatsthis></whatsthis>
       <choices>
+        <choice name="automatic"/>
         <choice name="zero"/>
         <choice name="one"/>
       </choices>
@@ -41,6 +42,7 @@
       <label>Phase 1 PEAP label</label>
       <whatsthis></whatsthis>
       <choices>
+        <choice name="automatic"/>
         <choice name="zero"/>
         <choice name="one"/>
       </choices>
