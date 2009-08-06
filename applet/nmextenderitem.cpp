@@ -67,6 +67,11 @@ NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::
     setTitle(i18nc("Extender title", "Network Management"));
     widget();
     init();
+
+    m_showWired = config().readEntry("showWired", true);
+    m_showWireless = config().readEntry("showWireless", true);
+    m_showCellular = config().readEntry("showCellular", true);
+    m_showVpn = config().readEntry("showVpn", true);
 }
 
 NMExtenderItem::~NMExtenderItem()
@@ -80,9 +85,21 @@ void NMExtenderItem::init()
         addInterfaceInternal(iface);
         kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
     }
-    createTab(Knm::Activatable::InterfaceConnection);
-    createTab(Knm::Activatable::WirelessInterfaceConnection);
-    createTab(Knm::Activatable::VpnInterfaceConnection);
+    if (m_showWired) {
+        createTab(Knm::Activatable::InterfaceConnection);
+    }
+    if (m_showWireless) {
+        createTab(Knm::Activatable::WirelessInterfaceConnection);
+    }
+    if (m_showVpn) {
+        createTab(Knm::Activatable::VpnInterfaceConnection);
+    }
+    /*
+    // TODO: doesn't exist in Activatable
+    if (m_showCellular) {
+        createTab(Knm::Activatable::
+    }
+    */
     // hook up signals to allow us to change the connection list depending on APs present, etc
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             SLOT(interfaceAdded(const QString&)));
@@ -357,6 +374,62 @@ void NMExtenderItem::switchToDefaultTab()
         switchTab(defaultInterface()->type());
     }
 }
+
+void NMExtenderItem::showWired(bool show)
+{
+    if (m_showWired == show) {
+        return;
+    }
+    kDebug() << "Show wired?" << show;
+    m_showWired = show;
+    if (!show) {
+        if (m_wiredList) {
+            kDebug() << "deleting the tab" << Knm::Activatable::InterfaceConnection;
+            m_connectionTabs->removeTab(m_tabIndex[Knm::Activatable::InterfaceConnection]);
+            //delete m_wiredList;
+            //m_wiredList = 0; this crashes at some point, but why?
+            m_tabIndex.remove(Knm::Activatable::InterfaceConnection);
+        }
+    } else {
+        createTab(Knm::Activatable::InterfaceConnection);
+    }
+    config().writeEntry("showWired", show);
+    emit configNeedsSaving();
+}
+
+void NMExtenderItem::showWireless(bool show)
+{
+    if (m_showWireless == show) {
+        return;
+    }
+    m_showWireless = show;
+    config().writeEntry("showWireless", show);
+    emit configNeedsSaving();
+    // TODO
+}
+
+void NMExtenderItem::showVpn(bool show)
+{
+    if (m_showVpn == show) {
+        return;
+    }
+    m_showVpn = show;
+    config().writeEntry("showVpn", show);
+    emit configNeedsSaving();
+    // TODO
+}
+
+void NMExtenderItem::showCellular(bool show)
+{
+    if (m_showCellular == show) {
+        return;
+    }
+    m_showCellular = show;
+    config().writeEntry("showCellular", show);
+    emit configNeedsSaving();
+    // TODO
+}
+
 
 void NMExtenderItem::handleConnectionStateChange(int new_state, int old_state, int reason)
 {

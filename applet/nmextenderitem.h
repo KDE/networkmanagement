@@ -58,6 +58,11 @@ public:
     Solid::Control::NetworkInterface* defaultInterface();
     bool available(int state);
 
+    bool m_showWired;
+    bool m_showWireless;
+    bool m_showVpn;
+    bool m_showCellular;
+
 public Q_SLOTS:
     void interfaceAdded(const QString&);
     void interfaceRemoved(const QString&);
@@ -69,8 +74,14 @@ public Q_SLOTS:
     void manageConnections();
     void handleConnectionStateChange(int new_state, int old_state, int reason);
 
+    void showWired(bool show);
+    void showWireless(bool show);
+    void showVpn(bool show);
+    void showCellular(bool show);
+
 Q_SIGNALS:
     void connectionListUpdated();
+    void configNeedsSaving();
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
@@ -100,4 +111,5 @@ private:
     ActivatableListWidget* m_wirelessList;
     ActivatableListWidget* m_vpnList;
 };
+
 #endif // NMEXTENDERITEM_H

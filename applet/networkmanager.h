@@ -69,10 +69,6 @@ public:
 
     static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
 
-    void showWired(bool show);
-    void showWireless(bool show);
-    void showVpn(bool show);
-    void showCellular(bool show);
     void loadExtender();
 
 public Q_SLOTS:
@@ -140,11 +136,6 @@ private:
     // Configuration dialog
     Ui::nmConfig ui;
 
-    bool m_showWired;
-    bool m_showWireless;
-    bool m_showVpn;
-    bool m_showCellular;
-    //bool m_showGeneral;
     int m_numberWirelessShown;
     RemoteActivatableList * m_activatableList;
     NMExtenderItem* m_extenderItem;
