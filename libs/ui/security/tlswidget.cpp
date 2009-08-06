@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 #include "settings/802-1x.h"
 
+#include "eapmethod_p.h"
+
 TlsWidget::TlsWidget(Knm::Connection* connection, QWidget * parent)
 : EapMethod(connection, parent)
 {
@@ -42,17 +44,27 @@ bool TlsWidget::validate() const
 
 void TlsWidget::readConfig()
 {
-    kDebug() << "TODO:: Implement";
+    Q_D(EapMethod);
+    leIdentity->setText(d->setting->identity());
+
+    QString capath = d->setting->capath();
+    if (!capath.isEmpty())
+        kurCaCert->setUrl(capath);
 }
 
 void TlsWidget::writeConfig()
 {
     kDebug() << "TODO:: Implement";
+    Q_D(EapMethod);
+    d->setting->setIdentity(leIdentity->text());
 
+    if (!kurCaCert->url().directory().isEmpty() && !kurCaCert->url().fileName().isEmpty())
+        d->setting->setCapath(kurCaCert->url().directory() + "/" + kurCaCert->url().fileName());
 }
 
 void TlsWidget::readSecrets()
 {
+    //Q_D(EapMethod);
     kDebug() << "TODO:: Implement";
 }
 
