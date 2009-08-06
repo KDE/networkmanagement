@@ -123,7 +123,6 @@ void WirelessNetworkItem::setupItem()
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setDrawBackground(true);
 
     if (interfaceConnection()) {
         m_connectButton->setIcon("bookmarks"); // Known connection, we probably have credentials
@@ -159,7 +158,19 @@ void WirelessNetworkItem::setupItem()
     m_securityIcon->setToolTip(m_securityIconToolTip);
     m_layout->addItem(m_securityIcon, 0, 2, 1, 1, Qt::AlignLeft);
 
+    connect(m_connectButton, SIGNAL(clicked()), this, SIGNAL(clicked()));
+    connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
+
+    // Forward clicks and presses between our widgets and this
+    connect(this, SIGNAL(pressed(bool)), m_connectButton, SLOT(setPressed(bool)));
+    connect(m_connectButton, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
+
+    connect(this, SIGNAL(pressed(bool)), m_securityIcon, SLOT(setPressed(bool)));
+    connect(m_securityIcon, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
+    connect(m_securityIcon, SIGNAL(clicked()), this, SLOT(emitClicked()));
+
+
     update();
 }
 

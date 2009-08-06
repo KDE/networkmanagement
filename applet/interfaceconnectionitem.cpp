@@ -51,7 +51,6 @@ void InterfaceConnectionItem::setupItem()
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setDrawBackground(true);
     m_connectButton->setIcon("network-wired");
     if (interfaceConnection()) {
         m_connectButton->setText(interfaceConnection()->connectionName());
@@ -78,7 +77,10 @@ void InterfaceConnectionItem::setupItem()
     m_icon->setMaximumHeight(22);
     m_layout->addItem(m_icon, 0, 2, 1, 1, Qt::AlignLeft);
 
-    connect( m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
+    connect(m_connectButton, SIGNAL(clicked()), this, SIGNAL(clicked()));
+    connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
+    connect(this, SIGNAL(pressed(bool)), m_connectButton, SLOT(setPressed(bool)));
+    connect(m_connectButton, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
 }
 
 InterfaceConnectionItem::~InterfaceConnectionItem()

@@ -179,7 +179,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     // Forward state between icon and this widget
     connect(m_icon, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
     connect(this, SIGNAL(pressed(bool)), m_icon, SLOT(setPressed(bool)));
-
+    connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
     connect(m_iface, SIGNAL(connectionStateChanged(int)),
             this, SLOT(connectionStateChanged(int)));

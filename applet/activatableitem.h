@@ -21,13 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef ABSTRACTCONNECTABLEITEM_H
 #define ABSTRACTCONNECTABLEITEM_H
 
-#include <QGraphicsWidget>
+#include <Plasma/IconWidget>
 
 #include "remoteinterfaceconnection.h"
 
 class RemoteActivatable;
 
-class ActivatableItem : public QGraphicsWidget
+class ActivatableItem : public Plasma::IconWidget
 {
 Q_OBJECT
 public:
