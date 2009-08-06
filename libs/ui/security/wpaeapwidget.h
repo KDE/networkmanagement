@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Helmut Schaa <helmut.schaa@googlemail.com>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -21,13 +22,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef WPAEAPWIDGET_H
 #define WPAEAPWIDGET_H
 
-#include "securitywidget.h"
+#include "eapmethodstack.h"
 
 #include <KSharedConfig>
 
-class WpaEapWidget : public SecurityWidget
+
+class WpaEapWidgetPrivate;
+
+class WpaEapWidget : public EapMethodStack
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(WpaEapWidget)
 public:
     WpaEapWidget(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~WpaEapWidget();
@@ -35,12 +40,8 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
-    QWidget* widget();
-private slots:
-    void methodChanged(int);
-private:
-    class Private;
-    Private * d;
+
+    void registerEapMethod(EapMethod * eapMethod, const QString & label, int & index);
 };
 
 #endif // WPAEAPWIDGET_H

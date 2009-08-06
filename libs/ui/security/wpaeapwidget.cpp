@@ -18,17 +18,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QWidget>
-
-#include <KDebug>
-
 #include "wpaeapwidget.h"
+#include "eapmethodstack_p.h"
+
+#include <QCheckBox>
+#include <KDebug>
 
 #include <nm-setting-wireless-security.h>
 #include <nm-setting-8021x.h>
 
 //#include "802_11_wireless_security_widget.h"
-#include "ui_wpaeap.h"
 #include "peapwidget.h"
 #include "ttlswidget.h"
 #include "tlswidget.h"
@@ -36,71 +35,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/802-11-wireless-security.h"
 #include "settings/802-1x.h"
 
-class WpaEapWidget::Private
+class WpaEapWidgetPrivate : public EapMethodStackPrivate
 {
 public:
-    Ui_WpaEap ui;
-
-    QHash<int, EapWidget*> eapWidgetHash;
-
     int peapIndex;
     int ttlsIndex;
     int tlsIndex;
-
-    Knm::WirelessSecuritySetting* settingSec;
-    Knm::Security8021xSetting* setting8021x;
+    QCheckBox * chkShowPassword;
 };
 
 WpaEapWidget::WpaEapWidget(Knm::Connection* connection, QWidget * parent)
-: SecurityWidget(connection, parent)
-, d(new WpaEapWidget::Private)
+: EapMethodStack(*new WpaEapWidgetPrivate, connection, parent)
 {
-    d->ui.setupUi((SecurityWidget*)this);
+    Q_D(WpaEapWidget);
 
-    d->settingSec = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
-    d->setting8021x = static_cast<Knm::Security8021xSetting *>(connection->setting(Knm::Setting::Security8021x));
+//    d->settingSec = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
+ //   d->setting8021x = static_cast<Knm::Security8021xSetting *>(connection->setting(Knm::Setting::Security8021x));
 
     // we have to be careful here as we deal with two settings objects.
     // the eap widgets need the 802.1x setting as KConfig attribute
 
-    int index = 0;
+    d->chkShowPassword = new QCheckBox(this);
+    d->chkShowPassword->setObjectName(QString::fromUtf8("chkShowPassword"));
+    d->chkShowPassword->setText(i18nc("show passwords button", "&Show Passwords"));
 
-    EapWidget* ew = new PeapWidget(connection, d->ui.stackedWidget);
-    d->eapWidgetHash.insert(index, ew);
-    d->ui.stackedWidget->insertWidget(index, ew);
-    d->peapIndex = index++;
+    verticalLayout->addWidget(d->chkShowPassword);
 
-    ew = new TtlsWidget(connection, d->ui.stackedWidget);
-    d->eapWidgetHash.insert(index, ew);
-    d->ui.stackedWidget->insertWidget(index, ew);
-    d->ttlsIndex = index++;
 
-    ew = new TlsWidget(connection, d->ui.stackedWidget);
-    d->eapWidgetHash.insert(index, ew);
-    d->ui.stackedWidget->insertWidget(index, ew);
-    d->tlsIndex = index++;
+    int index;
 
-    // TODO: remove TLS for now as TLS is not ready yet
-    d->ui.cboEAPMethod->removeItem(d->tlsIndex);
+    registerEapMethod(new TlsWidget(connection, eapMethods),
+            i18nc("TLS outer auth type", "TLS"), index);
 
-    methodChanged(d->ui.cboEAPMethod->currentIndex());
+    registerEapMethod(new PeapWidget(connection, eapMethods),
+            i18nc("Peap outer auth type", "Protected EAP (PEAP)"), index);
 
-    SecurityWidget::connect(d->ui.cboEAPMethod, SIGNAL(currentIndexChanged(int)), (SecurityWidget*)this, SLOT(methodChanged(int)));
+    registerEapMethod(new TtlsWidget(connection, eapMethods),
+            i18nc("TTLS outer auth type", "Tunnelled TLS (TTLS)"), index);
+
 }
 
 WpaEapWidget::~WpaEapWidget()
 {
-    delete d;
 }
 
-QWidget* WpaEapWidget::widget()
+void WpaEapWidget::registerEapMethod(EapMethod * eapMethod, const QString & theLabel, int & index)
 {
-    return this;
-}
+    Q_D(WpaEapWidget);
 
-void WpaEapWidget::methodChanged(int index)
-{
-    d->ui.stackedWidget->setCurrentWidget(d->eapWidgetHash.value(index));
+    connect(d->chkShowPassword, SIGNAL(toggled(bool)), eapMethod, SLOT(setPasswordMode(bool)));
+
+    EapMethodStack::registerEapMethod(eapMethod, theLabel, index);
 }
 
 bool WpaEapWidget::validate() const
@@ -110,6 +95,8 @@ bool WpaEapWidget::validate() const
 
 void WpaEapWidget::readConfig()
 {
+#if 0
+    Q_D(WpaEapWidget);
     // This is WPA EAP, we have to handle
     // 1. the wireless security setting called by the wireless security top level widget
     // 2. the 802.1x setting called directly by the KCModule
@@ -119,41 +106,43 @@ void WpaEapWidget::readConfig()
 
     // default is peap
     EapWidget * ew = d->eapWidgetHash.value(d->peapIndex);
-    d->ui.cboEAPMethod->setCurrentIndex(d->peapIndex);
+    d->ui.cboEapMethod->setCurrentIndex(d->peapIndex);
 
     kDebug() << "test " << eap;
 
     if (eap.testFlag(Knm::Security8021xSetting::ttls))
     {
-        d->ui.cboEAPMethod->setCurrentIndex(d->ttlsIndex);
+        d->ui.cboEapMethod->setCurrentIndex(d->ttlsIndex);
         ew = d->eapWidgetHash.value(d->ttlsIndex);
     } else if (eap.testFlag(Knm::Security8021xSetting::tls))
     {
-        d->ui.cboEAPMethod->setCurrentIndex(d->tlsIndex);
+        d->ui.cboEapMethod->setCurrentIndex(d->tlsIndex);
         ew = d->eapWidgetHash.value(d->tlsIndex);
     } else if (eap.testFlag(Knm::Security8021xSetting::peap))
     {
-        d->ui.cboEAPMethod->setCurrentIndex(d->peapIndex);
+        d->ui.cboEapMethod->setCurrentIndex(d->peapIndex);
         ew = d->eapWidgetHash.value(d->peapIndex);
     }
     ew->readConfig();
-    d->ui.stackedWidget->setCurrentWidget(ew);
-
+    d->ui.eapMethodWidgets->setCurrentWidget(ew);
+#endif
 }
 
 void WpaEapWidget::writeConfig()
 {
+#if 0
+    Q_D(WpaEapWidget);
     // This is WPA EAP, we have to handle
     // 1. the wireless security setting
     // 2. the 802.1x setting
     kDebug() << "write eap settings" ;
 
-    EapWidget * ew = d->eapWidgetHash.value(d->ui.cboEAPMethod->currentIndex());
+    EapWidget * ew = d->eapWidgetHash.value(d->ui.cboEapMethod->currentIndex());
     if (ew) {
         ew->writeConfig();
     }
 
-    switch(d->ui.cboEAPMethod->currentIndex())
+    switch(d->ui.cboEapMethod->currentIndex())
     {
         case 0:
             d->setting8021x->setEapFlags(Knm::Security8021xSetting::peap);
@@ -166,11 +155,14 @@ void WpaEapWidget::writeConfig()
             break;
     }
     d->setting8021x->setEnabled(true);
+#endif
 }
 
 
 void WpaEapWidget::readSecrets()
 {
+#if 0
+    Q_D(WpaEapWidget);
     Knm::Security8021xSetting::EapMethods eap = d->setting8021x->eapFlags();
 
     // default is peap
@@ -178,19 +170,19 @@ void WpaEapWidget::readSecrets()
 
     if (eap.testFlag(Knm::Security8021xSetting::ttls))
     {
-        d->ui.cboEAPMethod->setCurrentIndex(d->ttlsIndex);
+        d->ui.cboEapMethod->setCurrentIndex(d->ttlsIndex);
         ew = d->eapWidgetHash.value(d->ttlsIndex);
     } else if (eap.testFlag(Knm::Security8021xSetting::tls))
     {
-        d->ui.cboEAPMethod->setCurrentIndex(d->tlsIndex);
+        d->ui.cboEapMethod->setCurrentIndex(d->tlsIndex);
         ew = d->eapWidgetHash.value(d->tlsIndex);
     } else if (eap.testFlag(Knm::Security8021xSetting::peap))
     {
-        d->ui.cboEAPMethod->setCurrentIndex(d->peapIndex);
+        d->ui.cboEapMethod->setCurrentIndex(d->peapIndex);
         ew = d->eapWidgetHash.value(d->peapIndex);
     }
     ew->readSecrets();
+#endif
 }
 
-#include "wpaeapwidget.moc"
 // vim: sw=4 sts=4 et tw=100

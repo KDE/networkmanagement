@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Helmut Schaa <helmut.schaa@googlemail.com>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -21,25 +22,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef TLSWIDGET_H
 #define TLSWIDGET_H
 
-#include <KSharedConfig>
-#include "eapwidget.h"
+#include "eapmethod.h"
+#include "ui_eapmethodtlsbase.h"
 
-class TlsWidget : public EapWidget
+class TlsWidget : public EapMethod, public Ui_EapMethodTlsBase
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(EapMethod)
 public:
     TlsWidget(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~TlsWidget();
 
-    // implemenation of EapWidget methods
     bool validate() const;
     void readConfig();
     void writeConfig();
     void readSecrets();
-
-private:
-    class Private;
-    Private * d;
+public Q_SLOTS:
+    void setPasswordMode(bool b = true);
 };
 
 #endif

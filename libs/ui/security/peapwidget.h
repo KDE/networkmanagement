@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Helmut Schaa <helmut.schaa@googlemail.com>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -21,13 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PEAPWIDGET_H
 #define PEAPWIDGET_H
 
-#include <KSharedConfig>
-#include "eapwidget.h"
-#include "connection.h"
+#include "eapmethodinnerauth.h"
+#include "ui_eapmethodpeapbase.h"
 
-class PeapWidget : public EapWidget
+#include <KSharedConfig>
+
+class PeapWidget : public EapMethodInnerAuth, public Ui_EapMethodPeapBase
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(EapMethodInnerAuth)
 public:
     PeapWidget(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~PeapWidget();
@@ -38,12 +41,6 @@ public:
     void writeConfig();
     void readSecrets();
 
-private slots:
-    void chkShowPassToggled(bool);
-
-private:
-    class Private;
-    Private * d;
 };
 
 #endif

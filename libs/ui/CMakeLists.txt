@@ -1,6 +1,7 @@
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/..
    ${CMAKE_CURRENT_SOURCE_DIR}/../internals
+   ${CMAKE_CURRENT_BINARY_DIR}/security
    ${CMAKE_CURRENT_BINARY_DIR}/../internals
    )
 ## next target: ui library
@@ -31,9 +32,13 @@ set(knmui_SRCS
    security/wepwidget.cpp
    security/wpapskwidget.cpp
    security/wpaeapwidget.cpp
-   security/eapwidget.cpp
-   security/peapwidget.cpp
+   security/eapmethod.cpp
+   security/eapmethodstack.cpp
+   security/eapmethodsimple.cpp
+   # intermediate subclass for eap methods that use inner auth
+   security/eapmethodinnerauth.cpp
    security/ttlswidget.cpp
+   security/peapwidget.cpp
    security/tlswidget.cpp
    vpnuiplugin.cpp
    connectionprefs.cpp
@@ -50,23 +55,40 @@ set(knmui_SRCS
 kde4_add_ui_files(knmui_SRCS
    #802_1x.ui
    #security.ui
+
+   # Settings
    cdma.ui
    gsm.ui
    ppp.ui
-   pppoe.ui 
+   pppoe.ui
    connection.ui
    wired.ui
    ipv4.ui
    802-11-wireless.ui
+
+   # Scan widget for wireless
    scanwidget.ui
+
+   # base wireless security type selector
    security/wirelesssecurity.ui
+   # wireless security type specific UIs
    security/wep.ui
    security/wpapsk.ui
-   security/wpaeap.ui
    security/802_1x.ui
-   security/security_peap.ui
-   security/security_ttls.ui
-   security/security_tls.ui
+   #   WPA-EAP - a stack of eap methods UI
+   #   Used for both inner and outer auth methods
+   security/eapmethodstackbase.ui
+
+   # simple eap methods eg MD5 and *AP UI
+   security/eapmethodsimplebase.ui
+   # LEAP
+   security/eapmethodleapbase.ui
+   # PEAP
+   security/eapmethodpeapbase.ui
+   # TLS
+   security/eapmethodtlsbase.ui
+   # TTLS
+   security/eapmethodttlsbase.ui
    )
 
 kde4_add_library(knmui SHARED ${knmui_SRCS})

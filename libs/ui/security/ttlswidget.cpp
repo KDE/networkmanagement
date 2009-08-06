@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Helmut Schaa <helmut.schaa@googlemail.com>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,39 +19,39 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ttlswidget.h"
+
 #include <nm-setting-8021x.h>
 
-#include "ttlswidget.h"
-#include "ui_security_ttls.h"
-#include "secretstoragehelper.h"
-#include "settings/802-1x.h"
-#include "connection.h"
+#include <connection.h>
 
-class TtlsWidget::Private
-{
-public:
-    Ui_Ttls ui;
-    Knm::Security8021xSetting* setting;
-};
+#include "eapmethodstack.h"
+#include "eapmethodsimple.h"
+#include "eapmethodinnerauth_p.h"
 
 TtlsWidget::TtlsWidget(Knm::Connection* connection, QWidget * parent)
-: EapWidget(connection, parent), d(new TtlsWidget::Private)
+: EapMethodInnerAuth(connection, parent)
 {
-    d->ui.setupUi(this);
-    d->setting = static_cast<Knm::Security8021xSetting *>(connection->setting(Knm::Setting::Security8021x));
+    Q_D(EapMethodInnerAuth);
+    setupUi(this);
 
-    chkShowPassToggled(false);
-    connect(d->ui.chkShowPassword, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
+    int dummyIndex;
+    d->innerAuth->registerEapMethod(new EapMethodSimple(EapMethodSimple::Pap, connection, d->innerAuth),
+            i18nc("PAP inner auth method", "PAP"), dummyIndex);
+    d->innerAuth->registerEapMethod(new EapMethodSimple(EapMethodSimple::MsChap, connection, d->innerAuth),
+            i18nc("MSCHAP inner auth method", "MSCHAP"), dummyIndex);
+    d->innerAuth->registerEapMethod(new EapMethodSimple(EapMethodSimple::MsChapV2, connection, d->innerAuth),
+            i18nc("MSCHAPv2 inner auth method", "MSCHAPv2"), dummyIndex);
+    d->innerAuth->registerEapMethod(new EapMethodSimple(EapMethodSimple::Chap, connection, d->innerAuth),
+            i18nc("CHAP inner auth method", "CHAP"), dummyIndex);
+    d->innerAuth->registerEapMethod(new EapMethodSimple(EapMethodSimple::Pap, connection, d->innerAuth),
+            i18nc("PAP inner auth method", "PAP"), dummyIndex);
+    gridLayout->addWidget(d->innerAuth, 2, 0, 2, 2);
+    // add eepmethodstack for inner auth
 }
 
 TtlsWidget::~TtlsWidget()
 {
-    delete d;
-}
-
-void TtlsWidget::chkShowPassToggled(bool on)
-{
-    d->ui.password->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
 }
 
 bool TtlsWidget::validate() const
@@ -60,6 +61,7 @@ bool TtlsWidget::validate() const
 
 void TtlsWidget::readConfig()
 {
+#if 0
     QString identity;
     identity = d->setting->identity();
     if (!identity.isEmpty())
@@ -82,10 +84,12 @@ void TtlsWidget::readConfig()
         d->ui.phase2autheap->setCurrentIndex(2);
     else if (phase2autheap == Knm::Security8021xSetting::EnumPhase2autheap::chap)
         d->ui.phase2autheap->setCurrentIndex(3);
+#endif
 }
 
 void TtlsWidget::writeConfig()
 {
+#if 0
     d->setting->setIdentity(d->ui.identity->text());
     d->setting->setAnonymousidentity(d->ui.anonidentity->text());
     if (!d->ui.cacert->url().directory().isEmpty() && !d->ui.cacert->url().fileName().isEmpty())
@@ -108,13 +112,16 @@ void TtlsWidget::writeConfig()
     }
 
     d->setting->setPassword(d->ui.password->text());
+#endif
 }
 
 void TtlsWidget::readSecrets()
 {
+#if 0
     QString password = d->setting->password();
     if (!password.isEmpty())
         d->ui.password->setText(password);
+#endif
 }
 
 

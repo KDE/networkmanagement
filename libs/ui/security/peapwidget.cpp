@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Helmut Schaa <helmut.schaa@googlemail.com>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,40 +19,33 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <nm-setting-8021x.h>
-
 #include "peapwidget.h"
-#include "ui_security_peap.h"
-#include "secretstoragehelper.h"
-#include "settings/802-1x.h"
 
-class PeapWidget::Private
-{
-public:
-    Ui_Peap ui;
-    Knm::Security8021xSetting* setting;
-};
+#include <nm-setting-8021x.h>
+#include <connection.h>
+
+#include "eapmethodstack.h"
+#include "eapmethodsimple.h"
+#include "eapmethodinnerauth_p.h"
 
 PeapWidget::PeapWidget(Knm::Connection* connection, QWidget * parent)
-: EapWidget(connection, parent), d(new PeapWidget::Private)
+: EapMethodInnerAuth(connection, parent)
 {
-    d->ui.setupUi(this);
-    d->setting = static_cast<Knm::Security8021xSetting *>(connection->setting(Knm::Setting::Security8021x));
-  
-    d->ui.cacert->setMode(KFile::LocalOnly);
+    Q_D(EapMethodInnerAuth);
+    setupUi(this);
 
-    chkShowPassToggled(false);
-    connect(d->ui.chkShowPassword, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
+    int dummyIndex;
+    d->innerAuth->registerEapMethod(new EapMethodSimple(EapMethodSimple::MsChapV2, connection, d->innerAuth),
+            i18nc("MSCHAPv2 inner auth method", "MSCHAPv2"), dummyIndex);
+    d->innerAuth->registerEapMethod(new EapMethodSimple(EapMethodSimple::MD5, connection, d->innerAuth),
+            i18nc("MD5 inner auth method", "MD5"), dummyIndex);
+    gridLayout->addWidget(d->innerAuth, 3, 0, 2, 2);
+
+    cacert->setMode(KFile::LocalOnly);
 }
 
 PeapWidget::~PeapWidget()
 {
-    delete d;
-}
-
-void PeapWidget::chkShowPassToggled(bool on)
-{
-    d->ui.password->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
 }
 
 bool PeapWidget::validate() const
@@ -61,6 +55,7 @@ bool PeapWidget::validate() const
 
 void PeapWidget::readConfig()
 {
+#if 0
     QString identity;
     identity = d->setting->identity();
     if (!identity.isEmpty())
@@ -89,11 +84,12 @@ void PeapWidget::readConfig()
         d->ui.kcfg_phase1peapver->setCurrentIndex(0);
     else
         d->ui.kcfg_phase1peapver->setCurrentIndex(1);
-
+#endif
 }
 
 void PeapWidget::writeConfig()
 {
+#if 0
     d->setting->setIdentity(d->ui.identity->text());
     d->setting->setAnonymousidentity(d->ui.anonymousidentity->text());
     if (!d->ui.cacert->url().directory().isEmpty() && !d->ui.cacert->url().fileName().isEmpty())
@@ -119,12 +115,15 @@ void PeapWidget::writeConfig()
 
     d->setting->setPhase1peapver(d->ui.kcfg_phase1peapver->currentIndex());
     d->setting->setPassword(d->ui.password->text());
+#endif
 }
 
 void PeapWidget::readSecrets()
 {
+#if 0
     QString password = d->setting->password();
     if (!password.isEmpty())
         d->ui.password->setText(password);
+#endif
 }
 // vim: sw=4 sts=4 et tw=100

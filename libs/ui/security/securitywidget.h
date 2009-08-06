@@ -25,9 +25,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+class SecurityWidgetPrivate;
+
 class KNM_EXPORT SecurityWidget : public QWidget
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(SecurityWidget)
 public:
     SecurityWidget(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~SecurityWidget();
@@ -36,7 +39,8 @@ public:
     virtual void readSecrets() = 0;
     virtual bool validate() const = 0;
 protected:
-    Knm::Connection* m_connection;
+    SecurityWidget(SecurityWidgetPrivate &dd, Knm::Connection* connection, QWidget * parent = 0 );
+    SecurityWidgetPrivate * d_ptr;
 };
 
 #endif

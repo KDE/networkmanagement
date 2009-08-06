@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Helmut Schaa <helmut.schaa@googlemail.com>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -21,28 +22,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef TTLSWIDGET_H
 #define TTLSWIDGET_H
 
-#include <KSharedConfig>
-#include "eapwidget.h"
+#include "eapmethodinnerauth.h"
+#include "ui_eapmethodttlsbase.h"
 
-class TtlsWidget : public EapWidget
+class TtlsWidgetPrivate;
+
+class TtlsWidget : public EapMethodInnerAuth, public Ui_EapMethodTtlsBase
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(EapMethodInnerAuth)
 public:
-    TtlsWidget(Knm::Connection* connection, QWidget * parent = 0 );
+    TtlsWidget(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~TtlsWidget();
 
-    // implemenation of EapWidget methods
+    // implemenation of EapMethod methods
     bool validate() const;
     void readConfig();
     void writeConfig();
     void readSecrets();
-
-private slots:
-    void chkShowPassToggled(bool);
-
-private:
-    class Private;
-    Private * d;
 };
 
 #endif

@@ -20,13 +20,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "securitywidget.h"
 
+#include "securitywidget_p.h"
+
 SecurityWidget::SecurityWidget(Knm::Connection* connection,  QWidget * parent)
-: QWidget(parent), m_connection(connection)
+: QWidget(parent), d_ptr(new SecurityWidgetPrivate)
 {
+    d_ptr->connection = connection;
+}
+
+SecurityWidget::SecurityWidget(SecurityWidgetPrivate & dd, Knm::Connection* connection,  QWidget * parent)
+: QWidget(parent), d_ptr(&dd)
+{
+    d_ptr->connection = connection;
 }
 
 SecurityWidget::~SecurityWidget()
 {
+    delete d_ptr;
 }
 
 // vim: sw=4 sts=4 et tw=100
