@@ -40,6 +40,7 @@ Name[pt]=Tipo da Ligação de Rede
 Name[pt_BR]=Tipo da Ligação de Rede
 Name[ro]=Tipul conexiunii de rețea
 Name[sv]=Typ av nätverksanslutning
+Name[tr]=Ağ Bağlantısı Tipi
 Name[uk]=Тип мережного з'єднання
 Name[x-test]=xxNetwork Connection Typexx
 
@@ -577,6 +578,7 @@ Name[pt]=Gestão de rede desactivada
 Name[pt_BR]=Gestão de rede desactivada
 Name[ro]=Gestiunea rețelei a fost dezactivată
 Name[sv]=Nätverkshantering inaktiverad
+Name[tr]=Ağ yönetimi pasifleştirildi
 Name[uk]=Керування мережею вимкнено
 Name[x-test]=xxNetwork management disabledxx
 Comment=The network management subsystem was stopped or restarted

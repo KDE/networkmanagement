@@ -8,6 +8,7 @@ GenericName[pt]=KNetworkManager
 GenericName[pt_BR]=KNetworkManager
 GenericName[ro]=Gestionar rețea
 GenericName[sv]=Nätverkshantering
+GenericName[tr]=Ağ Yöneticisi
 GenericName[uk]=Керування мережею
 GenericName[x-test]=xxNetwork Managerxx
 Exec=knetworkmanager
