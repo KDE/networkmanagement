@@ -37,9 +37,12 @@ set(knmui_SRCS
    security/eapmethodsimple.cpp
    # intermediate subclass for eap methods that use inner auth
    security/eapmethodinnerauth.cpp
+
+   security/eapmethodleap.cpp
    security/ttlswidget.cpp
    security/peapwidget.cpp
    security/tlswidget.cpp
+
    vpnuiplugin.cpp
    connectionprefs.cpp
    gsmconnectioneditor.cpp

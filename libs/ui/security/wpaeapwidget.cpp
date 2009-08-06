@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-8021x.h>
 
 //#include "802_11_wireless_security_widget.h"
+#include "eapmethodleap.h"
 #include "peapwidget.h"
 #include "ttlswidget.h"
 #include "tlswidget.h"
@@ -41,6 +42,7 @@ public:
     Knm::WirelessSecuritySetting * settingSecurity;
     Knm::Security8021xSetting * setting8021x;
     int tlsKey;
+    int leapKey;
     int peapKey;
     int ttlsKey;
     QCheckBox * chkShowPassword;
@@ -51,8 +53,9 @@ WpaEapWidget::WpaEapWidget(Knm::Connection* connection, QWidget * parent)
 {
     Q_D(WpaEapWidget);
     d->tlsKey = 0;
-    d->peapKey = 1;
-    d->ttlsKey = 2;
+    d->leapKey = 1;
+    d->peapKey = 2;
+    d->ttlsKey = 3;
     d->settingSecurity = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
     d->setting8021x = static_cast<Knm::Security8021xSetting *>(connection->setting(Knm::Setting::Security8021x));
 
@@ -66,7 +69,10 @@ WpaEapWidget::WpaEapWidget(Knm::Connection* connection, QWidget * parent)
     verticalLayout->addWidget(d->chkShowPassword);
 
     registerEapMethod(d->tlsKey, new TlsWidget(connection, eapMethods),
-            i18nc("TLS outer auth type", "TLS"));
+            i18nc("TLS auth type", "TLS"));
+
+    registerEapMethod(d->leapKey, new EapMethodLeap(connection, eapMethods),
+            i18nc("LEAP auth type", "Leap"));
 
     registerEapMethod(d->peapKey, new PeapWidget(connection, eapMethods),
             i18nc("Peap outer auth type", "Protected EAP (PEAP)"));
@@ -112,6 +118,8 @@ void WpaEapWidget::readConfig()
         key = d->peapKey;
     } else if (eap.testFlag(Knm::Security8021xSetting::ttls)) {
         key = d->ttlsKey;
+    } else if (eap.testFlag(Knm::Security8021xSetting::leap)) {
+        key = d->leapKey;
     }
     setCurrentEapMethod(key);
     currentEapMethod()->readConfig();
