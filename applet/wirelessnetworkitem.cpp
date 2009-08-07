@@ -41,11 +41,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent)
 : ActivatableItem(remote, parent),
-    m_remote(remote),
     m_security(0),
     m_securityIcon(0),
-    m_securityIconName(0)
-{
+    m_securityIconName(0),
+    m_remote(remote)
+    {
     m_strengthMeter = new Plasma::Meter(this);
     m_strength = 0;
 
