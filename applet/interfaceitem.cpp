@@ -172,68 +172,37 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_layout->addItem(m_connectionInfoIcon, 2, 3, 1, 1, Qt::AlignRight);
     m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
 
-//X     connect(Solid::Control::NetworkManager::notifier(),
-//X             SIGNAL(activeConnectionsChanged()),
-//X             this, SLOT(activeConnectionsChanged()));
-//
     // Forward state between icon and this widget
     connect(m_icon, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
     connect(this, SIGNAL(pressed(bool)), m_icon, SLOT(setPressed(bool)));
-    connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
+    connect(m_icon, SIGNAL(clicked()), this, SLOT(itemClicked()));
+
+    connect(this, SIGNAL(clicked()), this, SLOT(itemClicked()));
 
     connect(m_iface, SIGNAL(connectionStateChanged(int)),
             this, SLOT(connectionStateChanged(int)));
-    QObject::connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+    connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)),
+            this, SLOT(handleConnectionStateChange(int,int,int)));
     connect(m_iface, SIGNAL(linkUpChanged(bool)), this, SLOT(setActive(bool)));
 
-    //RemoteInterfaceConnection * ric = static_cast<RemoteInterfaceConnection*>(activatable);
     if (m_iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
-        Solid::Control::WiredNetworkInterface* wirediface = static_cast<Solid::Control::WiredNetworkInterface*>(m_iface);
+        Solid::Control::WiredNetworkInterface* wirediface =
+                        static_cast<Solid::Control::WiredNetworkInterface*>(m_iface);
         connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
-        kDebug() << "CONNECTED Carrier !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!";
     }
     setNameDisplayMode(mode);
-    // the applet may be starting when NetworkManager is already connected,
-    // so initialise the list of active connections
-    // activeConnectionsChanged();
-    // set the state of our UI correctly
-    //
+
     connectionStateChanged(m_iface->connectionState());
     setLayout(m_layout);
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-    //setText("ICON WIDGET");
 }
 
-/*
-void InterfaceItem::paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget)
-{
-    kDebug() << "painting widget ...";
-    Plasma::IconWidget::paint(painter, option, widget);
-}
-*/
 void InterfaceItem::itemClicked()
 {
     emit clicked(m_iface->type());
 }
 
-/*
-void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
-{
-    Q_UNUSED( event )
-    if (m_icon->isEnabled()) {
-        //m_connectButton->show();
-    }
-    Plasma::IconWidget::hoverEnterEvent(event);
-}
-
-void InterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
-{
-    Q_UNUSED( event )
-    m_connectButton->hide();
-    Plasma::IconWidget::hoverLeaveEvent(event);
-}
-*/
 QString InterfaceItem::label()
 {
     return m_ifaceNameLabel->text();
@@ -247,7 +216,6 @@ void InterfaceItem::setActive(bool active)
 
 void InterfaceItem::setEnabled(bool enable)
 {
-    kDebug() << "ENABLE?" << enable;
     m_enabled = enable;
     m_icon->setEnabled(enable);
     m_connectionInfoLabel->setEnabled(enable);

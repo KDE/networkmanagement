@@ -350,6 +350,7 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
 
 void NMExtenderItem::switchTab(int type)
 {
+    kDebug() << "Switching to ..." << type;
     switch (type) {
         case Solid::Control::NetworkInterface::Ieee80211:
         {
