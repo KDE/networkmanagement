@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Sebastian Kügler <sebas@kde.org>
+Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -54,7 +54,7 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_widget->setMinimumSize(240, 50);
     m_layout = new QGraphicsLinearLayout(m_widget);
     m_layout->setOrientation(Qt::Vertical);
-    m_layout->setSpacing(0);
+    m_layout->setSpacing(1);
     m_widget->setLayout(m_layout);
     setWidget(m_widget);
 }

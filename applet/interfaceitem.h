@@ -79,10 +79,9 @@ protected Q_SLOTS:
      * Remove any connections that were provided by this service
      * from our active connection list
      */
-    //virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    //virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
     void handleConnectionStateChange(int new_state, int old_state, int reason);
     virtual void itemClicked();
+    void pppStats(uint in, uint out);
 
 Q_SIGNALS:
     void stateChanged();
@@ -103,14 +102,8 @@ protected:
     */
     virtual QString currentIpAddress();
 
-    /**
-     * Returns all available connections for the device type.
-     */
-    //QList<RemoteConnection*> availableConnections() const;
-
     Solid::Control::NetworkInterface * m_iface;
 
-    //QGraphicsLinearLayout * m_layout; // use with nested linear based layouts, when they work
     QGraphicsGridLayout * m_layout;
     QGraphicsLinearLayout * m_infoLayout;
     Plasma::IconWidget * m_icon;

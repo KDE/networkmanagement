@@ -20,20 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessinterfaceitem.h"
 
-#include <nm-setting-wireless.h>
-#include <nm-setting-connection.h>
-
 #include <QGraphicsGridLayout>
 
-#include <KNotification>
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkipv4config.h>
 #include <solid/control/networkmanager.h>
-
-#include "../libs/types.h"
-#include "events.h"
 
 WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface,  InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent)
 : InterfaceItem(iface, mode, parent), m_wirelessIface(iface), m_activeAccessPoint(0)
@@ -92,46 +85,11 @@ void WirelessInterfaceItem::accessPointDestroyed(QObject* ap)
 
 void WirelessInterfaceItem::connectButtonClicked()
 {
-#if 0
-    kDebug();
-    QList<RemoteConnection*> connections;
-    QList<Solid::Control::AccessPoint*> accesspoints;
-    switch ( m_iface->connectionState()) {
-        case Solid::Control::NetworkInterface::Unavailable:
-            // impossible, but nothing to do
-            break;
-        case Solid::Control::NetworkInterface::Disconnected:
-        case Solid::Control::NetworkInterface::Failed:
-             kDebug() << "Activating default connection.";
-             connections = availableConnections();
-             accesspoints = availableAccessPoints();
-             connections = appropriateConnections(connections, accesspoints);
-             if (!connections.isEmpty()) {
-                 //pick the first one.  TODO:Decide what to do if more than on connection is applicable.
-                 Solid::Control::NetworkManager::activateConnection(m_wirelessIface->uni(), connections[0]->service() + " " + connections[0]->path(), QVariantMap());
-                 KNotification::event(Event::Connecting, i18nc("Notification text when activating a connection","Connecting %1", connections[0]->id()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
-             }
-            break;
-        case Solid::Control::NetworkInterface::Preparing:
-        case Solid::Control::NetworkInterface::Configuring:
-        case Solid::Control::NetworkInterface::NeedAuth:
-        case Solid::Control::NetworkInterface::IPConfig:
-        case Solid::Control::NetworkInterface::Activated: // deactivate active connections
-            foreach (const ActiveConnectionPair &connection, m_activeConnections) {
-                kDebug() << "Deactivating connection" << connection.second->path() << connection;
-                Solid::Control::NetworkManager::deactivateConnection(connection.first);
-            }
-            break;
-        case Solid::Control::NetworkInterface::Unmanaged:
-        case Solid::Control::NetworkInterface::UnknownState:
-            break;
-    }
-#endif
+    // TODO
 }
 
 void WirelessInterfaceItem::setConnectionInfo()
 {
-    kDebug() << "SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS";
     InterfaceItem::setConnectionInfo(); // Sets the labels
     switch ( m_iface->connectionState()) {
         case Solid::Control::NetworkInterface::Unavailable:
@@ -169,7 +127,6 @@ QList<Solid::Control::AccessPoint*> WirelessInterfaceItem::availableAccessPoints
 
 void WirelessInterfaceItem::setEnabled(bool enable)
 {
-    //kDebug() << enable;
     m_strengthMeter->setEnabled(enable);
     InterfaceItem::setEnabled(enable);
 }

@@ -1,6 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2008 Sebastian Kügler <sebas@kde.org>
+Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -21,16 +21,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "interfaceitem.h"
 
-#include <NetworkManager.h>
-
 #include <QGraphicsGridLayout>
-#include <QGraphicsLinearLayout>
 #include <QLabel>
 
 #include <KDebug>
 #include <KGlobalSettings>
-#include <KNotification>
 #include <KIconLoader>
+#include <KIcon>
 
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
@@ -42,13 +39,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirednetworkinterface.h>
 #include <solid/control/networkipv4config.h>
 #include <solid/control/networkmanager.h>
-
-
-//#include "connectioninspector.h"
-#include "events.h"
-//#include "nm-active-connectioninterface.h"
-#include "networkmanager.h"
-
 
 InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsItem * parent) : Plasma::IconWidget(parent),
     m_iface(iface),
@@ -64,7 +54,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     Solid::Device* dev = new Solid::Device(m_iface->uni());
     m_interfaceName = dev->product();
-    int spacing = 4;
+
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
     m_layout->setColumnSpacing(0, 8);
@@ -94,6 +84,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
             icon = "network-wireless";
             break;
         case Solid::Control::NetworkInterface::Serial:
+            // for updating our UI
+            connect(iface, SIGNAL(pppStats(uint,uint)), SLOT(pppStats(uint,uint)));
             icon = "modem";
             break;
         case Solid::Control::NetworkInterface::Gsm:
@@ -290,6 +282,11 @@ QString InterfaceItem::currentIpAddress()
     return addr.toString();
 }
 
+void InterfaceItem::pppStats(uint in, uint out)
+{
+    kDebug() << "PPP Stats. in:" << in << "out:" << out;
+}
+
 void InterfaceItem::activeConnectionsChanged()
 {
     setConnectionInfo();
@@ -304,6 +301,7 @@ void InterfaceItem::handleConnectionStateChange(int new_state, int old_state, in
 
 void InterfaceItem::connectionStateChanged(int state)
 {
+    // TODO:
     // get the active connections
     // check if any of them affect our interface
     // setActiveConnection on ourself

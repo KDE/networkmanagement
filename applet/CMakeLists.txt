@@ -5,24 +5,18 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../libs/client
 add_subdirectory(pics)
 
 set(networkmanager_SRCS
-    activatableitem.cpp
-
-    interfaceconnectionitem.cpp
-
     networkmanager.cpp
-
-    interfaceitem.cpp
-    #serialinterfaceitem.cpp
-    events.cpp
-    #vpnconnectiongroup.cpp
-
-    wiredinterfaceitem.cpp
-
-    wirelessinterfaceitem.cpp
-    wirelessnetworkitem.cpp
 
     nmextenderitem.cpp
     activatablelistwidget.cpp
+
+    interfaceitem.cpp
+    wiredinterfaceitem.cpp
+    wirelessinterfaceitem.cpp
+
+    activatableitem.cpp
+    interfaceconnectionitem.cpp
+    wirelessnetworkitem.cpp
     )
 
 kde4_add_ui_files(networkmanager_SRCS nmConfig.ui )

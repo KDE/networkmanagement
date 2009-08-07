@@ -20,17 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wiredinterfaceitem.h"
 
-#include <nm-setting-wired.h>
-
 #include <solid/control/wirednetworkinterface.h>
 #include <solid/control/networkinterface.h>
-#include <solid/control/networkipv4config.h>
-#include <solid/control/networkmanager.h>
-
-#include "../libs/types.h"
-
-#include "events.h"
-#include "networkmanager.h"
 
 #include "remoteinterfaceconnection.h"
 
