@@ -26,6 +26,7 @@ void Security8021xPersistence::load()
   setting->setCacert(m_config->readEntry("cacert", QByteArray()));
   setting->setCapath(m_config->readEntry("capath", ""));
   setting->setClientcert(m_config->readEntry("clientcert", QByteArray()));
+  setting->setClientcertpath(m_config->readEntry("clientcertpath", ""));
   {
     QString contents = m_config->readEntry("phase1peapver", "automatic");
     if (contents == "automatic")
@@ -77,16 +78,19 @@ void Security8021xPersistence::load()
   setting->setPhase2cacert(m_config->readEntry("phase2cacert", QByteArray()));
   setting->setPhase2capath(m_config->readEntry("phase2capath", ""));
   setting->setPhase2clientcert(m_config->readEntry("phase2clientcert", QByteArray()));
+  setting->setPhase2clientcertpath(m_config->readEntry("phase2clientcertpath", ""));
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setPassword(m_config->readEntry("password", ""));
   }
   setting->setPrivatekey(m_config->readEntry("privatekey", QByteArray()));
+  setting->setPrivatekeypath(m_config->readEntry("privatekeypath", ""));
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setPrivatekeypassword(m_config->readEntry("privatekeypassword", ""));
   }
   setting->setPhase2privatekey(m_config->readEntry("phase2privatekey", QByteArray()));
+  setting->setPhase2privatekeypath(m_config->readEntry("phase2privatekeypath", ""));
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setPhase2privatekeypassword(m_config->readEntry("phase2privatekeypassword", ""));
@@ -107,6 +111,7 @@ void Security8021xPersistence::save()
   m_config->writeEntry("cacert", setting->cacert());
   m_config->writeEntry("capath", setting->capath());
   m_config->writeEntry("clientcert", setting->clientcert());
+  m_config->writeEntry("clientcertpath", setting->clientcertpath());
   switch (setting->phase1peapver()) {
     case Security8021xSetting::EnumPhase1peapver::automatic:
       m_config->writeEntry("phase1peapver", "automatic");
@@ -169,16 +174,19 @@ void Security8021xPersistence::save()
   m_config->writeEntry("phase2cacert", setting->phase2cacert());
   m_config->writeEntry("phase2capath", setting->phase2capath());
   m_config->writeEntry("phase2clientcert", setting->phase2clientcert());
+  m_config->writeEntry("phase2clientcertpath", setting->phase2clientcertpath());
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {
     m_config->writeEntry("password", setting->password());
   }
   m_config->writeEntry("privatekey", setting->privatekey());
+  m_config->writeEntry("privatekeypath", setting->privatekeypath());
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {
     m_config->writeEntry("privatekeypassword", setting->privatekeypassword());
   }
   m_config->writeEntry("phase2privatekey", setting->phase2privatekey());
+  m_config->writeEntry("phase2privatekeypath", setting->phase2privatekeypath());
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {
     m_config->writeEntry("phase2privatekeypassword", setting->phase2privatekeypassword());

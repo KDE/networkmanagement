@@ -29,6 +29,10 @@
       <label>Client Cert</label>
       <whatsthis></whatsthis>
     </entry>
+    <entry name="clientcertpath" type="Path" nodbus="true">
+      <label>Client Cert Path</label>
+      <whatsthis></whatsthis>
+    </entry>
     <entry name="phase1peapver" key="phase1peapver" type="Enum" dbuskey="NM_SETTING_802_1X_PHASE1_PEAPVER">
       <label>Phase 1 PEAP version</label>
       <whatsthis></whatsthis>
@@ -90,6 +94,10 @@
       <label>Phase 2 client cert</label>
       <whatsthis></whatsthis>
     </entry>
+    <entry name="phase2clientcertpath" type="Path" nodbus="true">
+      <label>Phase 2 client cert path</label>
+      <whatsthis></whatsthis>
+    </entry>
     <entry name="password" type="String" secret="true">
       <label>Password</label>
       <whatsthis></whatsthis>
@@ -98,12 +106,20 @@
       <label>Private key</label>
       <whatsthis></whatsthis>
     </entry>
+    <entry name="privatekeypath" type="Path" nodbus="true">
+      <label>Private key Path</label>
+      <whatsthis></whatsthis>
+    </entry>
     <entry name="privatekeypassword" type="String" secret="true" dbuskey="NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD">
       <label>Private key password</label>
       <whatsthis></whatsthis>
     </entry>
     <entry name="phase2privatekey" type="ByteArray" dbuskey="NM_SETTING_802_1X_PHASE2_PRIVATE_KEY">
       <label>Phase 2 private key</label>
+      <whatsthis></whatsthis>
+    </entry>
+    <entry name="phase2privatekeypath" type="Path" nodbus="true">
+      <label>Phase 2 Private key Path</label>
       <whatsthis></whatsthis>
     </entry>
     <entry name="phase2privatekeypassword" type="String" secret="true" dbuskey="NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD">

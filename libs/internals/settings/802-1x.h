@@ -151,6 +151,22 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     }
 
     /**
+      Set Client Cert Path
+    */
+    void setClientcertpath( const QString & v )
+    {
+        mClientcertpath = v;
+    }
+
+    /**
+      Get Client Cert Path
+    */
+    QString clientcertpath() const
+    {
+      return mClientcertpath;
+    }
+
+    /**
       Set Phase 1 PEAP version
     */
     void setPhase1peapver( int v )
@@ -279,6 +295,22 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     }
 
     /**
+      Set Phase 2 client cert path
+    */
+    void setPhase2clientcertpath( const QString & v )
+    {
+        mPhase2clientcertpath = v;
+    }
+
+    /**
+      Get Phase 2 client cert path
+    */
+    QString phase2clientcertpath() const
+    {
+      return mPhase2clientcertpath;
+    }
+
+    /**
       Set Password
     */
     void setPassword( const QString & v )
@@ -311,6 +343,22 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     }
 
     /**
+      Set Private key Path
+    */
+    void setPrivatekeypath( const QString & v )
+    {
+        mPrivatekeypath = v;
+    }
+
+    /**
+      Get Private key Path
+    */
+    QString privatekeypath() const
+    {
+      return mPrivatekeypath;
+    }
+
+    /**
       Set Private key password
     */
     void setPrivatekeypassword( const QString & v )
@@ -340,6 +388,22 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     QByteArray phase2privatekey() const
     {
       return mPhase2privatekey;
+    }
+
+    /**
+      Set Phase 2 Private key Path
+    */
+    void setPhase2privatekeypath( const QString & v )
+    {
+        mPhase2privatekeypath = v;
+    }
+
+    /**
+      Get Phase 2 Private key Path
+    */
+    QString phase2privatekeypath() const
+    {
+      return mPhase2privatekeypath;
     }
 
     /**
@@ -472,6 +536,7 @@ kDebug() << eap;
     QByteArray mCacert;
     QString mCapath;
     QByteArray mClientcert;
+    QString mClientcertpath;
     int mPhase1peapver;
     QString mPhase1peaplabel;
     QString mPhase1fastprovisioning;
@@ -480,10 +545,13 @@ kDebug() << eap;
     QByteArray mPhase2cacert;
     QString mPhase2capath;
     QByteArray mPhase2clientcert;
+    QString mPhase2clientcertpath;
     QString mPassword;
     QByteArray mPrivatekey;
+    QString mPrivatekeypath;
     QString mPrivatekeypassword;
     QByteArray mPhase2privatekey;
+    QString mPhase2privatekeypath;
     QString mPhase2privatekeypassword;
     QString mPin;
     QString mPsk;
