@@ -26,8 +26,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "eapmethod_p.h"
 
-TlsWidget::TlsWidget(Knm::Connection* connection, QWidget * parent)
-: EapMethod(connection, parent)
+class TlsWidgetPrivate : public EapMethodPrivate
+{
+public:
+    TlsWidgetPrivate(bool isInnerMethod)
+        : inner(isInnerMethod)
+    {
+
+    }
+    bool inner;
+};
+
+TlsWidget::TlsWidget(bool isInnerMethod, Knm::Connection* connection, QWidget * parent)
+: EapMethod(*new TlsWidgetPrivate(isInnerMethod), connection, parent)
 {
     setupUi(this);
 }
@@ -43,28 +54,105 @@ bool TlsWidget::validate() const
 
 void TlsWidget::readConfig()
 {
-    Q_D(EapMethod);
+    Q_D(TlsWidget);
     leIdentity->setText(d->setting->identity());
 
-    QString capath = d->setting->capath();
-    if (!capath.isEmpty())
-        kurCaCert->setUrl(capath);
+    QString value;
+    if (d->setting->useSystemCaCerts()) {
+        chkUseSystemCaCerts->setChecked(true);
+        kurCaCert->setEnabled(false);
+        kurClientCert->clear();
+    } else {
+
+        if (d->inner) {
+            value = d->setting->phase2capath();
+        } else {
+            value = d->setting->capath();
+        }
+        if (!value.isEmpty())
+            kurCaCert->setUrl(value);
+    }
+
+    if (d->inner) {
+        value = d->setting->phase2clientcertpath();
+    } else {
+        value = d->setting->clientcertpath();
+    }
+    if (!value.isEmpty())
+        kurClientCert->setUrl(value);
+
+    if (d->inner) {
+        value = d->setting->phase2privatekeypath();
+    } else {
+        value = d->setting->privatekeypath();
+    }
+    if (!value.isEmpty())
+        kurPrivateKey->setUrl(value);
 }
 
 void TlsWidget::writeConfig()
 {
-    kDebug() << "TODO:: Implement";
-    Q_D(EapMethod);
+    Q_D(TlsWidget);
+    if (!d->inner) {
+        // make it TLS
+        d->setting->setEapFlags(Knm::Security8021xSetting::tls);
+    }
+
+    // TLS specifics
+    // nm-applet also writes this if TLS is inner, but it feels dodgy to me
     d->setting->setIdentity(leIdentity->text());
 
-    if (!kurCaCert->url().directory().isEmpty() && !kurCaCert->url().fileName().isEmpty())
-        d->setting->setCapath(kurCaCert->url().directory() + "/" + kurCaCert->url().fileName());
+    KUrl url;
+    if (chkUseSystemCaCerts->isChecked()) {
+        d->setting->setUseSystemCaCerts(true);
+        d->setting->setPhase2capath("");
+        d->setting->setCapath("");
+    } else {
+        url = kurCaCert->url();
+        if (!url.directory().isEmpty() && !url.fileName().isEmpty()) {
+            QString path = url.directory() + "/" + url.fileName();
+            if (d->inner) {
+                d->setting->setPhase2capath(path);
+            } else {
+                d->setting->setCapath(path);
+            }
+        }
+    }
+
+    url = kurClientCert->url();
+    if (!url.directory().isEmpty() && !url.fileName().isEmpty()) {
+        QString path = url.directory() + "/" + url.fileName();
+        if (d->inner) {
+            d->setting->setPhase2clientcertpath(path);
+        } else {
+            d->setting->setClientcertpath(path);
+        }
+    }
+
+    url = kurPrivateKey->url();
+    if (!url.directory().isEmpty() && !url.fileName().isEmpty()) {
+        QString path = url.directory() + "/" + url.fileName();
+        if (d->inner) {
+            d->setting->setPhase2privatekeypath(path);
+        } else {
+            d->setting->setPrivatekeypath(path);
+        }
+    }
+    if (d->inner) {
+        d->setting->setPhase2privatekeypassword(lePrivateKeyPassword->text());
+    } else {
+        d->setting->setPrivatekeypassword(lePrivateKeyPassword->text());
+    }
 }
 
 void TlsWidget::readSecrets()
 {
-    //Q_D(EapMethod);
-    kDebug() << "TODO:: Implement";
+    Q_D(TlsWidget);
+    if (d->inner) {
+        lePrivateKeyPassword->setText(d->setting->phase2privatekeypassword());
+    } else {
+        lePrivateKeyPassword->setText(d->setting->privatekeypassword());
+    }
 }
 
 void TlsWidget::setPasswordMode(bool on)

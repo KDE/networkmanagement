@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Helmut Schaa <helmut.schaa@googlemail.com>
+Copyright 2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -59,18 +60,16 @@ WpaEapWidget::WpaEapWidget(Knm::Connection* connection, QWidget * parent)
     d->settingSecurity = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
     d->setting8021x = static_cast<Knm::Security8021xSetting *>(connection->setting(Knm::Setting::Security8021x));
 
-    // we have to be careful here as we deal with two settings objects.
-    // the eap widgets need the 802.1x setting as KConfig attribute
-
     d->chkShowPassword = new QCheckBox(this);
     d->chkShowPassword->setObjectName(QString::fromUtf8("chkShowPassword"));
     d->chkShowPassword->setText(i18nc("show passwords button", "&Show Passwords"));
 
     verticalLayout->addWidget(d->chkShowPassword);
 
-//X     registerEapMethod(d->tlsKey, new TlsWidget(connection, eapMethods),
-//X             i18nc("TLS auth type", "TLS"));
-//X 
+    bool isInnerMethod = false;
+    registerEapMethod(d->tlsKey, new TlsWidget(isInnerMethod, connection, eapMethods),
+            i18nc("TLS auth type", "TLS"));
+
     registerEapMethod(d->leapKey, new EapMethodLeap(connection, eapMethods),
             i18nc("LEAP auth type", "LEAP"));
 

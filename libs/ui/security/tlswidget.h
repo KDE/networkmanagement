@@ -25,12 +25,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "eapmethod.h"
 #include "ui_eapmethodtlsbase.h"
 
+class TlsWidgetPrivate;
+
+/**
+ * TLS may be used as an outer or as an inner auth method
+ * This is controlled by the isInnerMethod argument to the ctor
+ * If inner, it saves its settings to the 'phase2' versions of the
+ * relevant Security8021xSetting methods
+ */
 class TlsWidget : public EapMethod, public Ui_EapMethodTlsBase
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(EapMethod)
+Q_DECLARE_PRIVATE(TlsWidget)
 public:
-    TlsWidget(Knm::Connection* connection, QWidget * parent = 0 );
+    /**
+     * @param is TLS being used for inner or outer auth?
+     */
+    TlsWidget(bool isInnerMethod, Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~TlsWidget();
 
     bool validate() const;

@@ -48,7 +48,7 @@ TtlsWidget::TtlsWidget(Knm::Connection* connection, QWidget * parent)
     d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::chap,
             new EapMethodSimple(EapMethodSimple::Chap, connection, d->innerAuth),
             i18nc("CHAP inner auth method", "CHAP"));
-    gridLayout->addWidget(d->innerAuth, 2, 0, 2, 2);
+    gridLayout->addWidget(d->innerAuth, 3, 0, 2, 2);
 }
 
 TtlsWidget::~TtlsWidget()
@@ -63,11 +63,17 @@ bool TtlsWidget::validate() const
 void TtlsWidget::readConfig()
 {
     Q_D(EapMethodInnerAuth);
-    anonidentity->setText(d->setting->anonymousidentity());
+    leAnonIdentity->setText(d->setting->anonymousidentity());
 
-    QString capath = d->setting->capath();
-    if (!capath.isEmpty())
-        cacert->setUrl(capath);
+    if (d->setting->useSystemCaCerts()) {
+        chkUseSystemCaCerts->setChecked(true);
+        kurCaCert->setEnabled(false);
+        kurCaCert->clear();
+    } else {
+        QString capath = d->setting->capath();
+        if (!capath.isEmpty())
+            kurCaCert->setUrl(capath);
+    }
 
     if (d->setting->phase2autheap() != Knm::Security8021xSetting::EnumPhase2autheap::none) {
         d->innerAuth->setCurrentEapMethod(d->setting->phase2autheap());
@@ -83,10 +89,18 @@ void TtlsWidget::writeConfig()
     // make the Setting TTLS
     d->setting->setEapFlags(Knm::Security8021xSetting::ttls);
     // TTLS specific config
-    d->setting->setAnonymousidentity(anonidentity->text());
+    d->setting->setAnonymousidentity(leAnonIdentity->text());
 
-    if (!cacert->url().directory().isEmpty() && !cacert->url().fileName().isEmpty())
-        d->setting->setCapath(cacert->url().directory() + "/" + cacert->url().fileName());
+    KUrl url;
+
+    if (chkUseSystemCaCerts->isChecked()) {
+        d->setting->setUseSystemCaCerts(true);
+        d->setting->setCapath("");
+    } else {
+        url = kurCaCert->url();
+        if (!url.directory().isEmpty() && !url.fileName().isEmpty())
+            d->setting->setCapath(url.directory() + "/" + url.fileName());
+    }
 
     d->innerAuth->writeConfig();
 }
@@ -94,7 +108,7 @@ void TtlsWidget::writeConfig()
 void TtlsWidget::readSecrets()
 {
     Q_D(EapMethodInnerAuth);
-    d->innerAuth->writeConfig();
+    d->innerAuth->readSecrets();
 }
 
 

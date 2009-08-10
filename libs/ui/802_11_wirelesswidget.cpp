@@ -52,7 +52,7 @@ Wireless80211Widget::~Wireless80211Widget()
 
 void Wireless80211Widget::readConfig()
 {
-    kDebug() << kBacktrace();
+    //kDebug() << kBacktrace();
     switch(d->setting->mode())
     {
         case Knm::WirelessSetting::EnumMode::adhoc:

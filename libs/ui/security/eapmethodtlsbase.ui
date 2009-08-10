@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>388</width>
-    <height>176</height>
+    <height>213</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -61,7 +61,7 @@
      <item row="2" column="1">
       <widget class="KUrlRequester" name="kurCaCert"/>
      </item>
-     <item row="3" column="0">
+     <item row="4" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
         <string>Private &amp;Key:</string>
@@ -74,10 +74,10 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="4" column="1">
       <widget class="KUrlRequester" name="kurPrivateKey"/>
      </item>
-     <item row="4" column="0">
+     <item row="5" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
         <string>Private Key Pass&amp;word:</string>
@@ -90,8 +90,15 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="1">
+     <item row="5" column="1">
       <widget class="KLineEdit" name="lePrivateKeyPassword"/>
+     </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="chkUseSystemCaCerts">
+       <property name="text">
+        <string>Use Syste&amp;m CA Certs</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -123,5 +130,22 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>chkUseSystemCaCerts</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>kurCaCert</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>221</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>224</x>
+     <y>84</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

@@ -106,7 +106,7 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(bool setDefaults, K
     // and ibnm-util/nm-utils.c nm_utils_security_valid()
 
     // insecure
-    if (!setDefaults || caps || wpa || rsn) {
+    if (!setDefaults || !caps || wpa || rsn) {
         d->registerSecurityType(new NullSecurityWidget(connection, this), i18nc("Label for no wireless security", "None"), d->noSecurityIndex);
     }
 
