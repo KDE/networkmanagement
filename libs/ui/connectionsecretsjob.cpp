@@ -113,7 +113,7 @@ void ConnectionSecretsJob::doAskUser()
     if ( mSettingName == QLatin1String(NM_SETTING_802_1X_SETTING_NAME)) {
         // need a way to identify and only show WpaEapWidget here - perhaps a plain container
         // SettingWidget?
-        m_settingWidget = new WirelessSecuritySettingWidget(false, m_connection, 0, 0, 0, 0);
+        m_settingWidget = new WirelessSecuritySettingWidget(false, m_connection) ;
     } else if ( mSettingName == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
         m_settingWidget = new CdmaWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {

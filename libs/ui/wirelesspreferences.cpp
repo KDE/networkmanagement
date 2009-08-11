@@ -28,6 +28,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KTabWidget>
 
+#include <solid/control/networkmanager.h>
+#include <solid/control/wirelessaccesspoint.h>
+
+
 #include "802_11_wirelesswidget.h"
 #include "security/wirelesssecuritysettingwidget.h"
 #include "ipv4widget.h"
@@ -44,7 +48,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 //K_EXPORT_PLUGIN( WirelessPreferencesFactory( "kcm_knetworkmanager_wireless" ) )
 
 WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, const QVariantList &args)
-: ConnectionPreferences( KGlobal::mainComponent(), parent, args ), m_caps(0), m_wpa(0), m_rsn(0)
+: ConnectionPreferences( KGlobal::mainComponent(), parent, args )
 {
     // at least 1
     Q_ASSERT(args.count());
@@ -52,26 +56,39 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Wireless);
 
-    if (args.count() == 5) {
-        m_ssid = args[1].toString();
-        m_caps = args[2].toUInt();
-        m_wpa = args[3].toUInt();
-        m_rsn = args[4].toUInt();
-        kDebug() << "SSID:" << m_ssid << "CAPS:" << m_caps << "WPA:" << m_wpa << "RSN:" << m_rsn;
+    QString ssid;
+    QString deviceUni;
+    QString apUni;
+
+    if (args.count() == 3) {
+        deviceUni = args[1].toString();
+        apUni = args[2].toString();
+        kDebug() << "DeviceUni" << deviceUni << "AP UNI" << apUni;
     } else {
         kDebug() << args;
     }
 
-    QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(m_connection, (m_ssid.isEmpty() ? i18n("New Wireless Connection") : m_ssid), this);
-    layout->addWidget(m_contents);
-    Wireless80211Widget* connectionTypeWidget = new Wireless80211Widget(m_connection, m_ssid, this);
-    WirelessSecuritySettingWidget * wirelessSecurityWidget = new WirelessSecuritySettingWidget(setDefaults, m_connection, m_caps, m_wpa, m_rsn, this);
-    IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+    Solid::Control::AccessPoint * ap = 0;
+    Solid::Control::WirelessNetworkInterface * iface = 0;
 
-    // the wireless security widget also creates the wpa-eap widget which
-    // manages 802.1x parameters. 
-//    addSettingWidget(wirelessSecurityWidget->wpaEapWidget());
+    if (!deviceUni.isEmpty() && deviceUni != QLatin1String("/")) {
+        iface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(Solid::Control::NetworkManager::findNetworkInterface(deviceUni));
+        if (iface) {
+            if ( !apUni.isEmpty() && apUni != QLatin1String("/")) {
+                ap = iface->findAccessPoint(apUni);
+                if (ap) {
+                    ssid = ap->ssid();
+                }
+            }
+        }
+    }
+
+    QVBoxLayout * layout = new QVBoxLayout(this);
+    m_contents = new ConnectionWidget(m_connection, (ssid.isEmpty() ? i18n("New Wireless Connection") : ssid), this);
+    layout->addWidget(m_contents);
+    Wireless80211Widget* connectionTypeWidget = new Wireless80211Widget(m_connection, ssid, this);
+    WirelessSecuritySettingWidget * wirelessSecurityWidget = new WirelessSecuritySettingWidget(setDefaults, m_connection, iface, ap, this);
+    IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
 
     addToTabWidget(connectionTypeWidget);
     addToTabWidget(wirelessSecurityWidget);
@@ -91,6 +108,7 @@ WirelessPreferences::~WirelessPreferences()
 
 bool WirelessPreferences::needsEdits() const
 {
-    return !( !m_ssid.isEmpty() && m_caps == 0 && m_wpa == 0 && m_rsn == 0 );
+    return false;
 }
+
 // vim: sw=4 sts=4 et tw=100

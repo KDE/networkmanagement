@@ -69,7 +69,9 @@ void PeapWidget::readConfig()
             kurCaCert->setUrl(capath);
     }
 
-    d->innerAuth->setCurrentEapMethod(d->setting->phase2auth());
+    if (d->setting->phase2auth() != Knm::Security8021xSetting::EnumPhase2auth::none) {
+        d->innerAuth->setCurrentEapMethod(d->setting->phase2auth());
+    }
     d->innerAuth->readConfig();
 
     if (d->setting->phase1peapver() == Knm::Security8021xSetting::EnumPhase1peapver::zero)

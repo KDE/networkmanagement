@@ -30,6 +30,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
+#include <wirelessnetworkinterfaceenvironment.h>
 
 #include "unconfiguredinterface.h"
 #include "wirelessnetwork.h"
@@ -103,41 +104,48 @@ void ConfigurationLauncher::wirelessNetworkActivated()
     kDebug();
     Knm::WirelessNetwork * wni = qobject_cast<Knm::WirelessNetwork*>(sender());
     if (wni) {
-        configureWirelessNetworkInternal(wni->ssid(), wni->deviceUni(), wni->wpaFlags(), wni->rsnFlags());
+        configureWirelessNetworkInternal(wni->ssid(), wni->deviceUni());
     }
 }
 
 void ConfigurationLauncher::configureHiddenWirelessNetwork(const QString & ssid, const QString & deviceUni)
 {
-    configureWirelessNetworkInternal(ssid, deviceUni, 0, 0);
+    configureWirelessNetworkInternal(ssid, deviceUni);
 }
 
-void ConfigurationLauncher::configureWirelessNetworkInternal(const QString & ssid, const QString & deviceUni, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags)
+void ConfigurationLauncher::configureWirelessNetworkInternal(const QString & ssid, const QString & deviceUni)
 {
     Q_D(ConfigurationLauncher);
     d->pendingNetworks.append(QPair<QString,QString>(ssid, deviceUni));
     kDebug() << "watching for connection for" << ssid << "on" << deviceUni;
 
+    QString apUni = QLatin1String("/");
+
+    Solid::Control::WirelessNetworkInterface * iface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(Solid::Control::NetworkManager::findNetworkInterface(deviceUni));
+    if (iface) {
+        Solid::Control::WirelessNetworkInterfaceEnvironment envt(iface);
+        Solid::Control::WirelessNetwork * network = envt.findNetwork(ssid);
+        if (network) {
+            apUni = network->referenceAccessPoint();
+        }
+    }
+
     // Call the config UI
-    int caps = 1;
     //kDebug() << wni->net()->referenceAccessPoint()->hardwareAddress();
-    QDBusInterface kcm(QLatin1String("org.kde.NetworkManager.KCModule"), QLatin1String("/default"), QLatin1String("org.kde.kcmshell.ConnectionEditor"));
+    QDBusInterface kcm(QLatin1String("org.kde.NetworkManager.KCModule"), QLatin1String("/default"), QLatin1String("org.kde.kcmshell.ManageConnectionWidget"));
     if (kcm.isValid()) {
         kDebug() << "opening connection management dialog from running KCM";
         QVariantList args;
 
-        args << ssid << caps << (uint)wpaFlags << (uint)rsnFlags;
+        args << deviceUni << apUni;
         kcm.call(QDBus::NoBlock, "createConnection", "802-11-wireless", QVariant::fromValue(args));
     } else {
         kDebug() << "opening connection management dialog using networkmanagement_configshell";
         QStringList args;
-        QString escapedSsid = ssid;
         QString moduleArgs =
-            QString::fromLatin1("'%1' %2 %3 %4")
-            .arg(escapedSsid.replace('\'', "\\'"))
-            .arg(caps)
-            .arg(wpaFlags)
-            .arg(rsnFlags);
+            QString::fromLatin1("%1 %2")
+            .arg(deviceUni)
+            .arg(apUni);
 
         args << QLatin1String("create") << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("wifi_pass");
         int ret = KToolInvocation::kdeinitExec("networkmanagement_configshell", args);

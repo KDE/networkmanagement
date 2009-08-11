@@ -67,34 +67,10 @@ int main(int argc, char **argv)
     QString ssid;
     QVariantList specificArgs;
 
-    if ( !specifics.isEmpty() )
-    {
-        if ( specifics[0] == '\'' )
-        {
-            int index = 1;
-            while ( true )
-            {
-                index = specifics.indexOf( '\'', index );
-                if ( index == -1 )
-                    break;
-                if ( specifics[index-1] != '\\' )
-                    break;
-            }
-            ssid = specifics.mid(1, index - 1 );
-            specifics = specifics.mid( index + 1 ).trimmed();
-        } else {
-            ssid = specifics.left( specifics.indexOf( ' ' ) );
-            specifics = specifics.mid( specifics.indexOf( ' ' ) );
-        }
-    }
-
-    const QStringList argsList = specifics.split(' ');
-
-    specificArgs << ssid;
-
     foreach (const QString& arg, specifics.split( ' ' )) {
         specificArgs << QVariant(arg);
     }
+
     kDebug() << specificArgs;
 
     KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);

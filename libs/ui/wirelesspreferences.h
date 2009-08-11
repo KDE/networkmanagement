@@ -40,10 +40,6 @@ public:
 
 private:
     bool m_hasSecrets;
-    QString m_ssid;
-    uint m_caps;
-    uint m_wpa;
-    uint m_rsn;
 };
 
 #endif

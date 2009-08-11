@@ -24,16 +24,20 @@ void WirelessSecurityPersistence::load()
     QString contents = m_config->readEntry("securityType", "None");
     if (contents == "None")
       setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::None);
-    else     if (contents == "WEP40")
-      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::WEP40);
-    else     if (contents == "WEP128")
-      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::WEP128);
-    else     if (contents == "DynamicWEP")
-      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::DynamicWEP);
-    else     if (contents == "WPAPSK")
-      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::WPAPSK);
-    else     if (contents == "WPAEAP")
-      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::WPAEAP);
+    else     if (contents == "StaticWep")
+      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::StaticWep);
+    else     if (contents == "Leap")
+      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::Leap);
+    else     if (contents == "DynamicWep")
+      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::DynamicWep);
+    else     if (contents == "WpaPsk")
+      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::WpaPsk);
+    else     if (contents == "WpaEap")
+      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::WpaEap);
+    else     if (contents == "Wpa2Psk")
+      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::Wpa2Psk);
+    else     if (contents == "Wpa2Eap")
+      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::Wpa2Eap);
 
   }
   {
@@ -105,20 +109,26 @@ void WirelessSecurityPersistence::save()
     case WirelessSecuritySetting::EnumSecurityType::None:
         return; // don't save anything if no encryption
       break;
-    case WirelessSecuritySetting::EnumSecurityType::WEP40:
-      m_config->writeEntry("securityType", "WEP40");
+    case WirelessSecuritySetting::EnumSecurityType::StaticWep:
+      m_config->writeEntry("securityType", "StaticWep");
       break;
-    case WirelessSecuritySetting::EnumSecurityType::WEP128:
-      m_config->writeEntry("securityType", "WEP128");
+    case WirelessSecuritySetting::EnumSecurityType::Leap:
+      m_config->writeEntry("securityType", "Leap");
       break;
-    case WirelessSecuritySetting::EnumSecurityType::DynamicWEP:
-      m_config->writeEntry("securityType", "DynamicWEP");
+    case WirelessSecuritySetting::EnumSecurityType::DynamicWep:
+      m_config->writeEntry("securityType", "DynamicWep");
       break;
-    case WirelessSecuritySetting::EnumSecurityType::WPAPSK:
-      m_config->writeEntry("securityType", "WPAPSK");
+    case WirelessSecuritySetting::EnumSecurityType::WpaPsk:
+      m_config->writeEntry("securityType", "WpaPsk");
       break;
-    case WirelessSecuritySetting::EnumSecurityType::WPAEAP:
-      m_config->writeEntry("securityType", "WPAEAP");
+    case WirelessSecuritySetting::EnumSecurityType::WpaEap:
+      m_config->writeEntry("securityType", "WpaEap");
+      break;
+    case WirelessSecuritySetting::EnumSecurityType::Wpa2Psk:
+      m_config->writeEntry("securityType", "Wpa2Psk");
+      break;
+    case WirelessSecuritySetting::EnumSecurityType::Wpa2Eap:
+      m_config->writeEntry("securityType", "Wpa2Eap");
       break;
   }
   switch (setting->keymgmt()) {

@@ -75,6 +75,9 @@ NetworkInterfaceActivatableProvider::~NetworkInterfaceActivatableProvider()
         }
         d->activatableList->removeActivatable(d->unconfiguredActivatable);
     }
+
+    delete d_ptr;
+
     // all activatables we own are deleted since they are child QObjects
 }
 

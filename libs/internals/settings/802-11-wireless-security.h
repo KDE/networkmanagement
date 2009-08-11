@@ -16,7 +16,7 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     class EnumSecurityType
     {
       public:
-      enum type { None, WEP40, WEP128, DynamicWEP, WPAPSK, WPAEAP, COUNT };
+      enum type { None, StaticWep, Leap, DynamicWep, WpaPsk, WpaEap, Wpa2Psk, Wpa2Eap, COUNT };
     };
     class EnumKeymgmt
     {

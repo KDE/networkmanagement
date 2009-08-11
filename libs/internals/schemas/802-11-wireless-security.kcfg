@@ -8,11 +8,13 @@
     <entry name="securityType" key="securityType" type="Enum" nodbus="true">
       <choices>
         <choice name="None"/>
-        <choice name="WEP40"/>
-        <choice name="WEP128"/>
-        <choice name="DynamicWEP"/>
-        <choice name="WPAPSK"/>
-        <choice name="WPAEAP"/>
+        <choice name="StaticWep"/>
+        <choice name="Leap"/>
+        <choice name="DynamicWep"/>
+        <choice name="WpaPsk"/>
+        <choice name="WpaEap"/>
+        <choice name="Wpa2Psk"/>
+        <choice name="Wpa2Eap"/>
       </choices>
       <label>Security type</label>
       <default>None</default>

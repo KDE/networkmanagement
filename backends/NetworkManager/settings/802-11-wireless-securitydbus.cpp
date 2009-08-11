@@ -92,9 +92,8 @@ QVariantMap WirelessSecurityDbus::toMap()
       break;
   }
   // only insert WEP key index if we are using WEP
-  if (setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::WEP40
-          || setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::WEP128
-          || setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWEP) {
+  if (setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep
+          || setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX), setting->weptxkeyindex());
   }
   switch (setting->authalg()) {
