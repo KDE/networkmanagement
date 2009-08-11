@@ -51,7 +51,7 @@ private Q_SLOTS:
 
 private:
     RemoteWirelessNetwork * wirelessNetworkItem() const;
-    void readSettings();
+    bool readSettings();
     QGraphicsGridLayout * m_layout;
     Plasma::IconWidget * m_icon;
     Plasma::Label * m_ssidLabel;
