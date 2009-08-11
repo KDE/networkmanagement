@@ -130,7 +130,7 @@ QVariantMap Security8021xDbus::toMap()
         }
         switch (setting->phase2auth()) {
             case Knm::Security8021xSetting::EnumPhase2auth::none:
-                map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), "none");
+                //map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), "none");
                 break;
             case Knm::Security8021xSetting::EnumPhase2auth::pap:
                 map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), "pap");
@@ -156,7 +156,7 @@ QVariantMap Security8021xDbus::toMap()
         }
         switch (setting->phase2autheap()) {
             case Knm::Security8021xSetting::EnumPhase2autheap::none:
-                map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "none");
+                //map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "none");
                 break;
             case Knm::Security8021xSetting::EnumPhase2autheap::md5:
                 map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP), "md5");
