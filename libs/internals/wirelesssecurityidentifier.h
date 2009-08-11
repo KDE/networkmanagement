@@ -26,6 +26,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "../knm_export.h"
 
+namespace Knm
+{
 class KNM_EXPORT WirelessSecurity
 {
 public:
@@ -42,5 +44,6 @@ private:
     static bool interfaceSupportsApCiphers(Solid::Control::WirelessNetworkInterface::Capabilities, Solid::Control::AccessPoint::WpaFlags ciphers, WirelessSecurity::Type);
 };
 
+} // namespace Knm
 
 #endif // WIRELESSSECURITYIDENTIFIER_H

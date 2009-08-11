@@ -90,9 +90,9 @@ public:
         item->addIcon(security);
         item->addIcon(strength);
 
-        WirelessSecurity::Type best = WirelessSecurity::best(obj->interfaceCapabilities(), true, (obj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc), obj->apCapabilities(), obj->wpaFlags(), obj->rsnFlags());
-        security->setToolTip(WirelessSecurity::shortToolTip(best));
-        security->setPixmap(SmallIcon(WirelessSecurity::iconName(best)));
+        Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(obj->interfaceCapabilities(), true, (obj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc), obj->apCapabilities(), obj->wpaFlags(), obj->rsnFlags());
+        security->setToolTip(Knm::WirelessSecurity::shortToolTip(best));
+        security->setPixmap(SmallIcon(Knm::WirelessSecurity::iconName(best)));
     }
 
     ActivatableItem * item;

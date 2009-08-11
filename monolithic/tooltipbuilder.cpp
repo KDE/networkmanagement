@@ -384,8 +384,8 @@ QString wirelessTooltipHtmlPart(Solid::Control::WirelessNetworkInterface * wifac
     }
     else if (requestedInfo == QLatin1String("security")) {
         if (ap) {
-            WirelessSecurity::Type best = WirelessSecurity::best(wiface->wirelessCapabilities(), true, (wiface->mode() == Solid::Control::WirelessNetworkInterface::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags());
-            temp = WirelessSecurity::shortToolTip(best);
+            Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(wiface->wirelessCapabilities(), true, (wiface->mode() == Solid::Control::WirelessNetworkInterface::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags());
+            temp = Knm::WirelessSecurity::shortToolTip(best);
         }
         else temp = "";
 

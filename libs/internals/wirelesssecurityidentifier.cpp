@@ -28,7 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelesssecurityidentifier.h"
 
-bool WirelessSecurity::interfaceSupportsApCiphers(Solid::Control::WirelessNetworkInterface::Capabilities interfaceCaps, Solid::Control::AccessPoint::WpaFlags apCiphers, WirelessSecurity::Type type )
+bool Knm::WirelessSecurity::interfaceSupportsApCiphers(Solid::Control::WirelessNetworkInterface::Capabilities interfaceCaps, Solid::Control::AccessPoint::WpaFlags apCiphers, Knm::WirelessSecurity::Type type )
 {
     bool havePair = false;
     bool haveGroup = true;
@@ -67,34 +67,34 @@ bool WirelessSecurity::interfaceSupportsApCiphers(Solid::Control::WirelessNetwor
     return havePair && haveGroup;
 }
 
-bool WirelessSecurity::possible(WirelessSecurity::Type type, Solid::Control::WirelessNetworkInterface::Capabilities interfaceCaps, bool haveAp, bool adhoc, Solid::Control::AccessPoint::Capabilities apCaps, Solid::Control::AccessPoint::WpaFlags apWpa, Solid::Control::AccessPoint::WpaFlags apRsn)
+bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Control::WirelessNetworkInterface::Capabilities interfaceCaps, bool haveAp, bool adhoc, Solid::Control::AccessPoint::Capabilities apCaps, Solid::Control::AccessPoint::WpaFlags apWpa, Solid::Control::AccessPoint::WpaFlags apRsn)
 {
     bool good = TRUE;
 
     if (!haveAp) {
-        if (type == WirelessSecurity::None)
+        if (type == Knm::WirelessSecurity::None)
             return true;
-        if ((type == WirelessSecurity::StaticWep)
-                || ((type == WirelessSecurity::DynamicWep) && !adhoc)
-                || ((type == WirelessSecurity::Leap) && !adhoc)) {
+        if ((type == Knm::WirelessSecurity::StaticWep)
+                || ((type == Knm::WirelessSecurity::DynamicWep) && !adhoc)
+                || ((type == Knm::WirelessSecurity::Leap) && !adhoc)) {
             if (interfaceCaps & (Solid::Control::WirelessNetworkInterface::Wep40 | Solid::Control::WirelessNetworkInterface::Wep104))
                 return true;
         }
     }
 
     switch (type) {
-        case WirelessSecurity::None:
+        case Knm::WirelessSecurity::None:
             Q_ASSERT (haveAp);
             if (apCaps & Solid::Control::AccessPoint::Privacy)
                 return false;
             if (apWpa || apRsn)
                 return false;
             break;
-        case WirelessSecurity::Leap: /* require PRIVACY bit for LEAP? */
+        case Knm::WirelessSecurity::Leap: /* require PRIVACY bit for LEAP? */
             if (adhoc)
                 return false;
             /* Fall through */
-        case WirelessSecurity::StaticWep:
+        case Knm::WirelessSecurity::StaticWep:
             Q_ASSERT (haveAp);
             if (!(apCaps & Solid::Control::AccessPoint::Privacy))
                 return false;
@@ -104,7 +104,7 @@ bool WirelessSecurity::possible(WirelessSecurity::Type type, Solid::Control::Wir
                         return false;
             }
             break;
-        case WirelessSecurity::DynamicWep:
+        case Knm::WirelessSecurity::DynamicWep:
             if (adhoc)
                 return false;
             Q_ASSERT (haveAp);
@@ -118,7 +118,7 @@ bool WirelessSecurity::possible(WirelessSecurity::Type type, Solid::Control::Wir
                     return false;
             }
             break;
-        case WirelessSecurity::WpaPsk:
+        case Knm::WirelessSecurity::WpaPsk:
             if (!(interfaceCaps & Solid::Control::WirelessNetworkInterface::Wpa))
                 return false;
             if (haveAp) {
@@ -134,7 +134,7 @@ bool WirelessSecurity::possible(WirelessSecurity::Type type, Solid::Control::Wir
                 return false;
             }
             break;
-        case WirelessSecurity::Wpa2Psk:
+        case Knm::WirelessSecurity::Wpa2Psk:
             if (!(interfaceCaps & Solid::Control::WirelessNetworkInterface::Rsn))
                 return false;
             if (haveAp) {
@@ -150,7 +150,7 @@ bool WirelessSecurity::possible(WirelessSecurity::Type type, Solid::Control::Wir
                 return false;
             }
             break;
-        case WirelessSecurity::WpaEap:
+        case Knm::WirelessSecurity::WpaEap:
             if (adhoc)
                 return false;
             if (!(interfaceCaps & Solid::Control::WirelessNetworkInterface::Wpa))
@@ -163,7 +163,7 @@ bool WirelessSecurity::possible(WirelessSecurity::Type type, Solid::Control::Wir
                     return false;
             }
             break;
-        case WirelessSecurity::Wpa2Eap:
+        case Knm::WirelessSecurity::Wpa2Eap:
             if (adhoc)
                 return false;
             if (!(interfaceCaps & Solid::Control::WirelessNetworkInterface::Rsn))
@@ -184,21 +184,21 @@ bool WirelessSecurity::possible(WirelessSecurity::Type type, Solid::Control::Wir
     return good;
 }
 
-WirelessSecurity::Type WirelessSecurity::best(Solid::Control::WirelessNetworkInterface::Capabilities interfaceCaps, bool haveAp, bool adHoc, Solid::Control::AccessPoint::Capabilities apCaps, Solid::Control::AccessPoint::WpaFlags apWpa, Solid::Control::AccessPoint::WpaFlags apRsn)
+Knm::WirelessSecurity::Type Knm::WirelessSecurity::best(Solid::Control::WirelessNetworkInterface::Capabilities interfaceCaps, bool haveAp, bool adHoc, Solid::Control::AccessPoint::Capabilities apCaps, Solid::Control::AccessPoint::WpaFlags apWpa, Solid::Control::AccessPoint::WpaFlags apRsn)
 {
-    QList<WirelessSecurity::Type> types;
+    QList<Knm::WirelessSecurity::Type> types;
 
-    types << WirelessSecurity::Wpa2Eap << WirelessSecurity::WpaEap << WirelessSecurity::Wpa2Psk << WirelessSecurity::WpaPsk << WirelessSecurity::DynamicWep << WirelessSecurity::Leap << WirelessSecurity::StaticWep << WirelessSecurity::None;
+    types << Knm::WirelessSecurity::Wpa2Eap << Knm::WirelessSecurity::WpaEap << Knm::WirelessSecurity::Wpa2Psk << Knm::WirelessSecurity::WpaPsk << Knm::WirelessSecurity::DynamicWep << Knm::WirelessSecurity::Leap << Knm::WirelessSecurity::StaticWep << Knm::WirelessSecurity::None;
 
-    foreach (WirelessSecurity::Type type, types) {
+    foreach (Knm::WirelessSecurity::Type type, types) {
         if (possible(type, interfaceCaps, haveAp, adHoc, apCaps, apWpa, apRsn)) {
             return type;
         }
     }
-    return WirelessSecurity::Unknown;
+    return Knm::WirelessSecurity::Unknown;
 }
 
-QString WirelessSecurity::shortToolTip(WirelessSecurity::Type type)
+QString Knm::WirelessSecurity::shortToolTip(Knm::WirelessSecurity::Type type)
 {
     QString tip;
     switch (type) {
@@ -234,7 +234,7 @@ QString WirelessSecurity::shortToolTip(WirelessSecurity::Type type)
     return tip;
 }
 
-QString WirelessSecurity::iconName(WirelessSecurity::Type type)
+QString Knm::WirelessSecurity::iconName(Knm::WirelessSecurity::Type type)
 {
     QString icon;
     switch (type) {
