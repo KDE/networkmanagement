@@ -74,6 +74,7 @@ void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
                 QTimer::singleShot(0, ic, SIGNAL(activated()));
                 d->pendingDevices.removeOne(ic->deviceUni());
             }
+            break;
         case Knm::Activatable::WirelessInterfaceConnection:
             wic = qobject_cast<Knm::WirelessInterfaceConnection*>(added);
             foreach (PendingNetwork pending, d->pendingNetworks) {
