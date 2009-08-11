@@ -8,6 +8,12 @@
     <method name="strength">
       <arg type="i" direction="out" />
     </method>
+    <method name="interfaceCapabilities">
+      <arg type="u" direction="out" />
+    </method>
+    <method name="apCapabilities">
+      <arg type="u" direction="out" />
+    </method>
     <method name="wpaFlags">
       <arg type="u" direction="out" />
     </method>
@@ -19,7 +25,8 @@
     </method>
     <property name="ssid" type="s" access="read"/>
     <property name="strength" type="i" access="read"/>
-    <property name="capabilities" type="u" access="read"/>
+    <property name="apCapabilities" type="u" access="read"/>
+    <property name="interfaceCapabilities" type="u" access="read"/>
     <property name="wpaFlags" type="u" access="read"/>
     <property name="rsnFlags" type="u" access="read"/>
     <property name="operationMode" type="u" access="read"/>

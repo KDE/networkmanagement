@@ -29,11 +29,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIconLoader>
 #include <KLocale>
 
+#include <solid/control/networkmanager.h>
+#include <solid/control/wirelessnetworkinterface.h>
+
 #include <activatable.h>
 #include <wirelessobject.h>
 #include <wirelessinterfaceconnection.h>
 #include <wirelessobject.h>
 #include <wirelessnetwork.h>
+#include <wirelesssecurityidentifier.h>
 
 #include "activatableitem.h"
 #include "wirelessinterfaceconnectionitem.h"
@@ -60,12 +64,9 @@ class WirelessStatusPrivate
 public:
     WirelessStatusPrivate(ActivatableItem * theItem)
         : item(theItem),
-        capabilities(0),
-        wpaFlags(0),
-        rsnFlags(0),
+        adhoc(0),
         security(new QLabel(0)),
-        strength(new SmallProgressBar(0)),
-        adhoc(0)
+        strength(new SmallProgressBar(0))
     {
         strength->setTextVisible(false);
         strength->setRange(0, 100);
@@ -73,9 +74,6 @@ public:
 
     void init(Knm::WirelessObject * obj)
     {
-        capabilities = obj->capabilities();
-        wpaFlags = obj->wpaFlags();
-        rsnFlags = obj->rsnFlags();
         if (obj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc) {
             adhoc = new QLabel(0);
             adhoc->setPixmap(SmallIcon("nm-adhoc")); //TODO real icon name
@@ -91,15 +89,16 @@ public:
         }
         item->addIcon(security);
         item->addIcon(strength);
+
+        WirelessSecurity::Type best = WirelessSecurity::best(obj->interfaceCapabilities(), true, (obj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc), obj->apCapabilities(), obj->wpaFlags(), obj->rsnFlags());
+        security->setToolTip(WirelessSecurity::shortToolTip(best));
+        security->setPixmap(SmallIcon(WirelessSecurity::iconName(best)));
     }
 
     ActivatableItem * item;
-    Solid::Control::AccessPoint::Capabilities capabilities;
-    Solid::Control::AccessPoint::WpaFlags wpaFlags;
-    Solid::Control::AccessPoint::WpaFlags rsnFlags;
+    QLabel * adhoc;
     QLabel * security;
     QProgressBar * strength;
-    QLabel * adhoc;
 };
 
 
@@ -107,26 +106,22 @@ WirelessStatus::WirelessStatus(WirelessInterfaceConnectionItem * item)
 : QObject(item), d_ptr(new WirelessStatusPrivate(item))
 {
     Q_D(WirelessStatus);
-    // discover the type of the activatable and connect its signals
+
     Knm::WirelessObject * wobj  = static_cast<Knm::WirelessObject*>(item->wirelessInterfaceConnection());
     d->init(wobj);
 
     connect(item->wirelessInterfaceConnection(), SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
-
-    setSecurity();
 }
 
 WirelessStatus::WirelessStatus(WirelessNetworkItem * item)
 : QObject(item), d_ptr(new WirelessStatusPrivate(item))
 {
     Q_D(WirelessStatus);
-    // discover the type of the activatable and connect its signals
+
     Knm::WirelessObject * wobj  = static_cast<Knm::WirelessObject*>(item->wirelessNetwork());
     d->init(wobj);
 
     connect(item->wirelessNetwork(), SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
-
-    setSecurity();
 }
 
 WirelessStatus::~WirelessStatus()
@@ -155,38 +150,6 @@ void WirelessStatus::setStrength(int strength)
                 d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wic->strength())));
             }
         }
-    }
-}
-
-void WirelessStatus::setSecurity()
-{
-    Q_D(WirelessStatus);
-    // TODO: this was done by a clueless (coolo)
-    if ( d->wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
-            d->wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep104 )
-            || (d->wpaFlags == 0 && d->capabilities.testFlag(Solid::Control::AccessPoint::Privacy))) {
-        d->security->setPixmap(SmallIcon("security-medium"));
-        d->security->setToolTip(i18nc("tooltip for WEP security", "WEP"));
-        //m_security = QLatin1String("wep");
-    } else if ( d->wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
-            d->wpaFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) ) {
-        d->security->setPixmap(SmallIcon("security-high"));
-        d->security->setToolTip(i18nc("tooltip for WPA-PSK security", "WPA-PSK"));
-        //m_security = QLatin1String("wpa-psk");
-    } else if ( d->rsnFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
-            d->rsnFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) ||
-            d->rsnFlags.testFlag( Solid::Control::AccessPoint::PairCcmp ) ) {
-        d->security->setPixmap(SmallIcon("security-high"));
-        d->security->setToolTip(i18nc("tooltip for WPA-PSK security", "WPA-PSK"));
-        //m_security = QLatin1String("wpa-psk");
-    } else if ( d->wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmt8021x ) ||
-            d->wpaFlags.testFlag( Solid::Control::AccessPoint::GroupCcmp ) ) {
-        d->security->setPixmap(SmallIcon("security-high"));
-        d->security->setToolTip(i18nc("tooltip for WPA-EAP security", "WPA-EAP"));
-        //m_security = QLatin1String("wpa-eap");
-    } else {
-        d->security->setPixmap(SmallIcon("security-low"));
-        d->security->setToolTip(i18nc("tooltip for no security", "Insecure network"));
     }
 }
 

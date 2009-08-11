@@ -25,6 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remotewirelessobject.h"
 
 #include <solid/control/wirelessaccesspoint.h>
+#include <solid/control/wirelessnetworkinterface.h>
 
 #include "knmclient_export.h"
 
@@ -35,7 +36,8 @@ class KNMCLIENT_EXPORT RemoteWirelessInterfaceConnection : public RemoteInterfac
 Q_OBJECT
 Q_PROPERTY(QString ssid READ ssid)
 Q_PROPERTY(int strength READ strength)
-Q_PROPERTY(uint capabilities READ capabilities)
+Q_PROPERTY(uint interfaceCapabilities READ interfaceCapabilities)
+Q_PROPERTY(uint apCapabilities READ apCapabilities)
 Q_PROPERTY(uint wpaFlags READ wpaFlags)
 Q_PROPERTY(uint rsnFlags READ rsnFlags)
 Q_PROPERTY(uint operationMode READ operationMode)
@@ -46,7 +48,8 @@ public:
     virtual ~RemoteWirelessInterfaceConnection();
     QString ssid() const;
     int strength() const;
-    Solid::Control::AccessPoint::Capabilities capabilities() const;
+    Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities() const;
+    Solid::Control::AccessPoint::Capabilities apCapabilities() const;
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
     Solid::Control::WirelessNetworkInterface::OperationMode operationMode() const;

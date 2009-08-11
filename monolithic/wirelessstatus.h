@@ -43,7 +43,6 @@ public:
     WirelessStatus(WirelessNetworkItem * item);
     ~WirelessStatus();
 protected Q_SLOTS:
-    void setSecurity();
     void setStrength(int);
 private:
     Q_DECLARE_PRIVATE(WirelessStatus)

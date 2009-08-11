@@ -31,12 +31,13 @@ namespace Knm
 class KNMINTERNALS_EXPORT WirelessObject
 {
 public:
-    WirelessObject(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode);
+    WirelessObject(const QString & ssid, int strength, Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities, Solid::Control::AccessPoint::Capabilities apCapabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode);
     virtual ~WirelessObject();
     QString ssid() const;
     int strength() const;
     virtual void setStrength(int strength);
-    Solid::Control::AccessPoint::Capabilities capabilities() const;
+    Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities() const;
+    Solid::Control::AccessPoint::Capabilities apCapabilities() const;
     Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
     Solid::Control::WirelessNetworkInterface::OperationMode operationMode() const;
@@ -44,7 +45,8 @@ public:
 protected:
     QString m_ssid;
     int m_strength;
-    Solid::Control::AccessPoint::Capabilities m_capabilities;
+    Solid::Control::WirelessNetworkInterface::Capabilities m_interfaceCapabilities;
+    Solid::Control::AccessPoint::Capabilities m_apCapabilities;
     Solid::Control::AccessPoint::WpaFlags m_wpaFlags;
     Solid::Control::AccessPoint::WpaFlags m_rsnFlags;
     Solid::Control::WirelessNetworkInterface::OperationMode m_operationMode;

@@ -63,7 +63,7 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
         m_ssid = remoteconnection->ssid();
         wpaFlags = remoteconnection->wpaFlags();
         rsnFlags = remoteconnection->rsnFlags();
-        capabilities = remoteconnection->capabilities();
+        capabilities = remoteconnection->apCapabilities();
         kDebug() <<  "========== RemoteActivationState" << remoteconnection->activationState();
         m_state = remoteconnection->activationState();
         connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
@@ -72,7 +72,7 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
         m_ssid = remote->ssid();
         wpaFlags = m_remote->wpaFlags();
         rsnFlags = m_remote->rsnFlags();
-        capabilities = m_remote->capabilities();
+        capabilities = m_remote->apCapabilities();
     }
 
     setStrength(remote->strength());

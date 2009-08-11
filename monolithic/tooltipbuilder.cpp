@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 
 #include <knmserviceprefs.h>
+#include <wirelesssecurityidentifier.h>
 
 // probably these functions should be in a separate file to be
 // easily included from different places.
@@ -140,7 +141,6 @@ QString interfaceTooltipHtmlPart(Solid::Control::NetworkInterface *, const QStri
 QString ipv4TooltipHtmlPart(Solid::Control::NetworkInterface *, const QString &);
 QString wirelessTooltipHtmlPart(Solid::Control::WirelessNetworkInterface *, const QString &);
 QString wiredTooltipHtmlPart(Solid::Control::WiredNetworkInterface * , const QString &);
-QString securityLevel(Solid::Control::AccessPoint *);
 QString buildFlagsHtmlTable(Solid::Control::AccessPoint::WpaFlags);
 QString buildRoutesHtmlTable(const QList<Solid::Control::IPv4Route> &);
 QString buildDomainsHtmlTable(const QStringList &);
@@ -384,7 +384,8 @@ QString wirelessTooltipHtmlPart(Solid::Control::WirelessNetworkInterface * wifac
     }
     else if (requestedInfo == QLatin1String("security")) {
         if (ap) {
-            temp = securityLevel(ap);
+            WirelessSecurity::Type best = WirelessSecurity::best(wiface->wirelessCapabilities(), true, (wiface->mode() == Solid::Control::WirelessNetworkInterface::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags());
+            temp = WirelessSecurity::shortToolTip(best);
         }
         else temp = "";
 
@@ -444,41 +445,6 @@ QString wiredTooltipHtmlPart(Solid::Control::WiredNetworkInterface * wdiface,
     }
 
     return html;
-}
-
-// copied from WirelessStatus::setSecurity()
-QString securityLevel(Solid::Control::AccessPoint * ap)
-{
-    Q_ASSERT(ap);
-
-    QString level;
-    Solid::Control::AccessPoint::WpaFlags wpaFlags = ap->wpaFlags();
-    Solid::Control::AccessPoint::WpaFlags rsnFlags = ap->rsnFlags();
-    Solid::Control::AccessPoint::Capabilities capabilities = ap->capabilities();
-
-    if (wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep40 ) ||
-        wpaFlags.testFlag( Solid::Control::AccessPoint::PairWep104 ) ||
-        (wpaFlags == 0 && capabilities.testFlag(Solid::Control::AccessPoint::Privacy))) {
-
-        level = i18nc("@info:tooltip security level", "WEP");
-    }
-    else if (wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
-             wpaFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) ) {
-        level = i18nc("@info:tooltip security level", "WPA-PSK");
-    }
-    else if (rsnFlags.testFlag( Solid::Control::AccessPoint::KeyMgmtPsk ) ||
-             rsnFlags.testFlag( Solid::Control::AccessPoint::PairTkip ) ||
-             rsnFlags.testFlag( Solid::Control::AccessPoint::PairCcmp ) ) {
-        level = i18nc("@info:tooltip security level", "WPA-PSK");
-    }
-    else if (wpaFlags.testFlag( Solid::Control::AccessPoint::KeyMgmt8021x ) ||
-             wpaFlags.testFlag( Solid::Control::AccessPoint::GroupCcmp ) ) {
-        level = i18nc("@info:tooltip security level", "WPA-EAP");
-    }
-    else {
-        level = i18nc("@info:tooltip security level", "Unencrypted");
-    }
-    return level;
 }
 
 QString buildHtmlTableHelper(const QStringList& list, int nItemsInRow)

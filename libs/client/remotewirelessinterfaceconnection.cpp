@@ -46,10 +46,17 @@ int RemoteWirelessInterfaceConnection::strength() const
     return d->wirelessInterfaceConnectionIface->strength();
 }
 
-Solid::Control::AccessPoint::Capabilities RemoteWirelessInterfaceConnection::capabilities() const
+Solid::Control::WirelessNetworkInterface::Capabilities RemoteWirelessInterfaceConnection::interfaceCapabilities() const
 {
     Q_D(const RemoteWirelessInterfaceConnection);
-    uint caps = d->wirelessInterfaceConnectionIface->capabilities();
+    uint caps = d->wirelessInterfaceConnectionIface->interfaceCapabilities();
+    return (Solid::Control::WirelessNetworkInterface::Capabilities)caps;
+}
+
+Solid::Control::AccessPoint::Capabilities RemoteWirelessInterfaceConnection::apCapabilities() const
+{
+    Q_D(const RemoteWirelessInterfaceConnection);
+    uint caps = d->wirelessInterfaceConnectionIface->apCapabilities();
     return (Solid::Control::AccessPoint::Capabilities)caps;
 }
 

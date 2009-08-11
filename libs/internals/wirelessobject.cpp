@@ -20,10 +20,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessobject.h"
 
-Knm::WirelessObject::WirelessObject(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode)
+Knm::WirelessObject::WirelessObject(const QString & ssid, int strength, Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities, Solid::Control::AccessPoint::Capabilities apCapabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode)
 : m_ssid(ssid),
     m_strength(strength),
-    m_capabilities(capabilities),
+    m_interfaceCapabilities(interfaceCapabilities),
+    m_apCapabilities(apCapabilities),
     m_wpaFlags(wpaFlags),
     m_rsnFlags(rsnFlags),
     m_operationMode(mode)
@@ -51,9 +52,14 @@ void Knm::WirelessObject::setStrength(int strength)
     m_strength = strength;
 }
 
-Solid::Control::AccessPoint::Capabilities Knm::WirelessObject::capabilities() const
+Solid::Control::WirelessNetworkInterface::Capabilities Knm::WirelessObject::interfaceCapabilities() const
 {
-    return m_capabilities;
+    return m_interfaceCapabilities;
+}
+
+Solid::Control::AccessPoint::Capabilities Knm::WirelessObject::apCapabilities() const
+{
+    return m_apCapabilities;
 }
 
 

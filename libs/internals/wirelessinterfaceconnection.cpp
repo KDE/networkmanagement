@@ -23,8 +23,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Knm;
 
-WirelessInterfaceConnection::WirelessInterfaceConnection(const QString & ssid, int strength, Solid::Control::AccessPoint::Capabilities capabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent)
-: InterfaceConnection(connectionUuid, connectionName, Activatable::WirelessInterfaceConnection, deviceUni, parent), WirelessObject(ssid, strength, capabilities, wpaFlags, rsnFlags, mode)
+WirelessInterfaceConnection::WirelessInterfaceConnection(const QString & ssid, int strength,  Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities, Solid::Control::AccessPoint::Capabilities apCapabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent)
+: InterfaceConnection(connectionUuid, connectionName, Activatable::WirelessInterfaceConnection, deviceUni, parent), WirelessObject(ssid, strength, interfaceCapabilities, apCapabilities, wpaFlags, rsnFlags, mode)
 {
 }
 

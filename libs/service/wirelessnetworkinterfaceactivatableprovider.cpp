@@ -112,7 +112,7 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                         }
 
                         Knm::WirelessInterfaceConnection * ifaceConnection = new Knm::WirelessInterfaceConnection(
-                                wirelessSetting->ssid(), strength, caps, wpaFlags, rsnFlags, mode, addedConnection->uuid(), addedConnection->name(),
+                                wirelessSetting->ssid(), strength, d->wirelessInterface()->wirelessCapabilities(), caps, wpaFlags, rsnFlags, mode, addedConnection->uuid(), addedConnection->name(),
                                 d->interface->uni(), this);
 
                         if (network) {
@@ -194,7 +194,7 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
                     caps = ap->capabilities();
                     wpaFlags = ap->wpaFlags();
                     rsnFlags = ap->rsnFlags();
-                    Knm::WirelessNetwork * wirelessNetworkItem = new Knm::WirelessNetwork(ssid, strength, caps, wpaFlags, rsnFlags, ap->mode(), d->interface->uni(), this);
+                    Knm::WirelessNetwork * wirelessNetworkItem = new Knm::WirelessNetwork(ssid, strength, d->wirelessInterface()->wirelessCapabilities(), caps, wpaFlags, rsnFlags, ap->mode(), d->interface->uni(), this);
                     connect(network, SIGNAL(signalStrengthChanged(int)), wirelessNetworkItem, SLOT(setStrength(int)));
                     d->wirelessActivatables.insert(ssid, wirelessNetworkItem);
                     d->activatableList->addActivatable(wirelessNetworkItem);

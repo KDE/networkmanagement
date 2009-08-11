@@ -29,7 +29,8 @@ class RemoteWirelessObject
 public:
     virtual ~RemoteWirelessObject();
     virtual QString ssid() const = 0;
-    virtual Solid::Control::AccessPoint::Capabilities capabilities() const = 0;
+    virtual Solid::Control::AccessPoint::Capabilities apCapabilities() const = 0;
+    virtual Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities() const = 0;
     virtual int strength() const = 0;
     virtual Solid::Control::AccessPoint::WpaFlags wpaFlags() const = 0;
     virtual Solid::Control::AccessPoint::WpaFlags rsnFlags() const = 0;

@@ -72,6 +72,9 @@ set(knminternals_SRCS
    # helper class for recognising the type of WPA secrets
    wpasecretidentifier.cpp
 
+   # helper class for identifying wireless security
+   wirelesssecurityidentifier.cpp
+
    # helper functions for storing tooltip keys and UI strings
    tooltips.cpp
    )
