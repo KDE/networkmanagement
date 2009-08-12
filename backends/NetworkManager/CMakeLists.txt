@@ -57,6 +57,8 @@ set(knm_nm_LIB_SRCS
    nm-exported-connectioninterface.cpp
 )
 
+set_source_files_properties(pbkdf2.cpp wephash.cpp PROPERTIES COMPILE_FLAGS -fno-strict-aliasing)
+
 kde4_add_library(knm_nm SHARED ${knm_nm_LIB_SRCS})
 
 target_link_libraries(knm_nm ${KDE4_KDEUI_LIBS} solidcontrol knminternals knmservice knmui ${QT_QTNETWORK_LIBRARY})
