@@ -264,12 +264,12 @@ QString interfaceTooltipHtmlPart(Solid::Control::NetworkInterface * iface, const
         Solid::Control::WirelessNetworkInterface * wliface = dynamic_cast<Solid::Control::WirelessNetworkInterface*> (iface);
 
         if (wliface) {
-            bitRate = wliface->bitRate();
+            bitRate = wliface->bitRate() / 1000;
         }
         else {
             Solid::Control::WiredNetworkInterface * wdiface = dynamic_cast<Solid::Control::WiredNetworkInterface*> (iface);
             if (wdiface) {
-                bitRate = wdiface->bitRate();
+                bitRate = wdiface->bitRate() / 1000;
             }
         }
 
