@@ -45,7 +45,12 @@ PptpSettingWidget::PptpSettingWidget(Knm::Connection * connection, QWidget * par
 : SettingWidget(connection, parent), d_ptr(new PptpSettingWidgetPrivate)
 {
     Q_D(PptpSettingWidget);
+    d->ui.setupUi(this);
+
+    d->setting = static_cast<Knm::VpnSetting *>(connection->setting(Knm::Setting::Vpn));
+
     connect(d->ui.btnAdvanced, SIGNAL(clicked()), this, SLOT(doAdvancedDialog()));
+
     d->advancedDlg = new KDialog(this);
     d->advancedWid = new QWidget(this);
     d->advUi.setupUi(d->advancedWid);
