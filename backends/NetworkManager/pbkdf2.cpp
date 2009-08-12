@@ -395,9 +395,8 @@ void SHA1Transform(u32 state[5], const unsigned char buffer[64])
 {
 	u32 a, b, c, d, e;
 	typedef union {
-		unsigned char c[64];
 		u32 l[16];
-	} CHAR64LONG16;
+	} __attribute__((may_alias)) CHAR64LONG16;
 	CHAR64LONG16* block;
 #ifdef SHA1HANDSOFF
 	u32 workspace[16];
