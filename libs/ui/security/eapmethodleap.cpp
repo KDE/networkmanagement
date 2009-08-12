@@ -71,9 +71,9 @@ void EapMethodLeap::readSecrets()
     }
 }
 
-void EapMethodLeap::setPasswordMode(bool on)
+void EapMethodLeap::setShowPasswords(bool on)
 {
-    lePassword->setPasswordMode(on);
+    lePassword->setPasswordMode(!on);
 }
 
 // vim: sw=4 sts=4 et tw=100

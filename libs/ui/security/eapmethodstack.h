@@ -54,7 +54,7 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
-    void setPasswordMode(bool on);
+    void setShowPasswords(bool on);
 protected:
     EapMethodStack(EapMethodStackPrivate &dd, Knm::Connection* connection, QWidget * parent = 0);
 };

@@ -44,7 +44,11 @@
     </widget>
    </item>
    <item row="1" column="1">
-    <widget class="KLineEdit" name="lePassword"/>
+    <widget class="KLineEdit" name="lePassword">
+     <property name="passwordMode">
+      <bool>true</bool>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

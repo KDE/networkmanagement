@@ -155,9 +155,9 @@ void TlsWidget::readSecrets()
     }
 }
 
-void TlsWidget::setPasswordMode(bool on)
+void TlsWidget::setShowPasswords(bool on)
 {
-    lePrivateKeyPassword->setPasswordMode(on);
+    lePrivateKeyPassword->setPasswordMode(!on);
 }
 
 // vim: sw=4 sts=4 et tw=100

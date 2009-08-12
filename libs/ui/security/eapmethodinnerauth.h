@@ -34,6 +34,6 @@ public:
     virtual ~EapMethodInnerAuth();
 
 public Q_SLOTS:
-    void setPasswordMode(bool b = true);
+    void setShowPasswords(bool b = true);
 };
 #endif // EAPMETHODINNERAUTH_H

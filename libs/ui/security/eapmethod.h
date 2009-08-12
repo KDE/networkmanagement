@@ -45,7 +45,7 @@ public:
     virtual void readConfig() = 0;
     virtual void writeConfig() = 0;
     virtual void readSecrets() = 0;
-    virtual void setPasswordMode(bool b = true) = 0;
+    virtual void setShowPasswords(bool b = true) = 0;
 protected:
     EapMethod(EapMethodPrivate &dd, Knm::Connection * connection, QWidget * parent = 0);
     EapMethodPrivate * d_ptr;

@@ -88,7 +88,7 @@ void WpaEapWidget::registerEapMethod(int key, EapMethod * eapMethod, const QStri
 {
     Q_D(WpaEapWidget);
 
-    connect(d->chkShowPassword, SIGNAL(toggled(bool)), eapMethod, SLOT(setPasswordMode(bool)));
+    connect(d->chkShowPassword, SIGNAL(toggled(bool)), eapMethod, SLOT(setShowPasswords(bool)));
 
     EapMethodStack::registerEapMethod(key, eapMethod, theLabel);
 }

@@ -38,10 +38,10 @@ EapMethodInnerAuth::~EapMethodInnerAuth()
 {
 }
 
-void EapMethodInnerAuth::setPasswordMode(bool on)
+void EapMethodInnerAuth::setShowPasswords(bool on)
 {
     Q_D(EapMethodInnerAuth);
-    d->innerAuth->setPasswordMode(on);
+    d->innerAuth->setShowPasswords(on);
 }
 
 // vim: sw=4 sts=4 et tw=100

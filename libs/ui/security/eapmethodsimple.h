@@ -36,7 +36,7 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
-    void setPasswordMode(bool on = true);
+    void setShowPasswords(bool on = true);
 private:
     Type m_type;
 };

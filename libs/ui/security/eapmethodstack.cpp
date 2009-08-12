@@ -110,10 +110,10 @@ void EapMethodStack::readSecrets()
     }
 }
 
-void EapMethodStack::setPasswordMode(bool on)
+void EapMethodStack::setShowPasswords(bool on)
 {
     if (eapMethods->count()) {
-        qobject_cast<EapMethod *>( eapMethods->currentWidget())->setPasswordMode(on);
+        qobject_cast<EapMethod *>( eapMethods->currentWidget())->setShowPasswords(on);
     }
 }
 

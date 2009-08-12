@@ -34,9 +34,9 @@ EapMethodSimple::~EapMethodSimple()
 
 }
 
-void EapMethodSimple::setPasswordMode(bool on)
+void EapMethodSimple::setShowPasswords(bool on)
 {
-    lePassword->setPasswordMode(on);
+    lePassword->setPasswordMode(!on);
 }
 
 bool EapMethodSimple::validate() const
