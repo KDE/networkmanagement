@@ -1,3 +1,5 @@
+add_definitions(-DKDE_DEFAULT_DEBUG_AREA=51013)
+
 include_directories(../../libs)
 include_directories(../../libs/internals)
 include_directories(../../libs/ui)

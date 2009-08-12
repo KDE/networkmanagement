@@ -1,3 +1,5 @@
+add_definitions(-DKDE_DEFAULT_DEBUG_AREA=51014)
+
 add_subdirectory(icons)
 
 include_directories(
