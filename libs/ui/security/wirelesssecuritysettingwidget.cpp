@@ -151,6 +151,11 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(bool setDefaults, K
         d->registerSecurityType(new WpaEapWidget(connection, this), i18nc("Label for WPA-EAP wireless security", "WPA-EAP"), d->wpaEapIndex);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap);
     }
+
+    //HACK - default new connections without an AP or those which support both EAP and PSK to WPA-PSK.  This will be overwritten in  readConfig() if there is prior configuration
+    if (d->wpaPskIndex >= 0) {
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk);
+    }
 }
 
 WirelessSecuritySettingWidget::~WirelessSecuritySettingWidget()
