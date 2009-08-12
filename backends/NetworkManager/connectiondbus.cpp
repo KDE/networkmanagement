@@ -123,8 +123,16 @@ QVariantMapMap ConnectionDbus::toDbusMap()
     QVariantMapMap mapMap;
     // connection settings
     QVariantMap connectionMap;
+
+    // workaround Qt and NetworkManager master disagreeing on what makes a legal uuid
+    // Dedicated to Alexander Sack and Kubuntu Karmic Koala, with love from the Geekos
+    QString uuidString = m_connection->uuid().toString();
+    if (uuidString.startsWith('{')) {
+        uuidString = uuidString.mid(1, uuidString.length() - 2);
+    }
+
     connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_ID), m_connection->name());
-    connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_UUID), m_connection->uuid().toString());
+    connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_UUID), uuidString);
     QString dbusConnectionType;
     switch (m_connection->type()) {
         case Knm::Connection::Wired:
