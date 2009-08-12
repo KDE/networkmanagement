@@ -37,6 +37,7 @@ WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
 {
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
+    d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
 }
 
 WiredWidget::~WiredWidget()

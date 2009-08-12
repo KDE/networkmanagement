@@ -113,10 +113,7 @@
       </widget>
      </item>
      <item row="4" column="1">
-      <widget class="QSpinBox" name="mtu">
-       <property name="suffix">
-        <string> bytes</string>
-       </property>
+      <widget class="KIntSpinBox" name="mtu">
        <property name="maximum">
         <number>32000</number>
        </property>
@@ -149,6 +146,11 @@
    <class>KComboBox</class>
    <extends>QComboBox</extends>
    <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

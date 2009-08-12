@@ -68,7 +68,7 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QSpinBox" name="mtu">
+      <widget class="KIntSpinBox" name="mtu">
        <property name="toolTip">
         <string>Maximum Transmission Unit</string>
        </property>
@@ -80,9 +80,6 @@
        </property>
        <property name="specialValueText">
         <string>Automatic</string>
-       </property>
-       <property name="suffix">
-        <string> bytes</string>
        </property>
        <property name="maximum">
         <number>10000</number>
@@ -112,6 +109,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
