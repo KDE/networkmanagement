@@ -90,4 +90,3 @@ void ScanWidget::onInterfaceChanged(int index)
     m_scanModel->setNetworkInterface(m_ifaceModel->data(modelIndex, IfaceItemModel::UniRole).toString());
 }
 
-#include "scanwidget.moc"

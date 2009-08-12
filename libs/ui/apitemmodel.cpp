@@ -214,5 +214,3 @@ void ApItemModel::onScanComplete()
     sort();
 }
 
-#include "apitemmodel.moc"
-

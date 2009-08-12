@@ -90,5 +90,4 @@ void WpaPskWidget::readSecrets()
     d->ui.psk->setText(d->setting->psk());
 }
 
-#include "wpapskwidget.moc"
 // vim: sw=4 sts=4 et tw=100

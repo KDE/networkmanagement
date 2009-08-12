@@ -206,5 +206,4 @@ void WepWidget::readSecrets()
     d->ui.passphrase->setText(d->setting->weppassphrase());
 }
 
-#include "wepwidget.moc"
 // vim: sw=4 sts=4 et tw=100

@@ -76,6 +76,4 @@ void Wired8021xSecurityWidget::securityTypeChanged(int index)
 #endif
 }
 
-#include "802_1x_security_widget.moc"
-
 // vim: sw=4 sts=4 et tw=100

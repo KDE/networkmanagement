@@ -51,4 +51,3 @@ QSize ApItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelI
     return rect;
 }
 
-#include "apitemdelegate.moc"

@@ -203,5 +203,4 @@ Knm::Connection * ConnectionSecretsJob::connection() const
     return m_connection;
 }
 
-#include "connectionsecretsjob.moc"
 // vim: sw=4 sts=4 et tw=100

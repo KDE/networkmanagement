@@ -236,5 +236,3 @@ void ApItemView::mouseReleaseEvent ( QMouseEvent *event )
     }
 }
 
-#include "apitemview.moc"
-

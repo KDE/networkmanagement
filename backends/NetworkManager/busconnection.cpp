@@ -135,4 +135,3 @@ QString BusConnection::uuid() const
     return m_connection->uuid();
 }
 
-#include "busconnection.moc"

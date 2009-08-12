@@ -559,4 +559,3 @@ void ManageConnectionWidget::otherSettingsChanged()
     emit changed();
 }
 
-#include "manageconnectionwidget.moc"
