@@ -157,8 +157,11 @@ void OpenVpnSettingWidget::readConfig()
     d->ui.gateway->setText( dataMap[NM_OPENVPN_KEY_REMOTE] );
 
     // Optional Settings
-    d->ui.chkCustomPort->setChecked(d->ui.sbCustomPort->value() !=0);
-    d->ui.sbCustomPort->setValue(dataMap[NM_OPENVPN_KEY_PORT].toUInt());
+    if (dataMap.contains(NM_OPENVPN_KEY_PORT)) {
+        d->ui.sbCustomPort->setValue(dataMap[NM_OPENVPN_KEY_PORT].toUInt());
+    } else {
+        d->ui.sbCustomPort->setValue(0);
+    }
     d->ui.chkUseLZO->setChecked( dataMap[NM_OPENVPN_KEY_COMP_LZO] == "yes" );
     d->ui.chkUseTCP->setChecked( dataMap[NM_OPENVPN_KEY_PROTO_TCP] == "yes" );
     d->ui.chkUseTAP->setChecked( dataMap[NM_OPENVPN_KEY_TAP_DEV] == "yes" );
@@ -244,7 +247,7 @@ void OpenVpnSettingWidget::writeConfig()
     data.insert( NM_OPENVPN_KEY_CONNECTION_TYPE, contype);
 
     // optional settings
-    if ( !d->ui.chkCustomPort->isChecked() )
+    if ( d->ui.sbCustomPort->value() > 0 )
     {
         data.insert(NM_OPENVPN_KEY_PORT, QString::number(d->ui.sbCustomPort->value()));
     }
