@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2009 Pavel Andreev <apavelm@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -39,12 +40,14 @@ public:
     Knm::VpnSetting * setting;
     KDialog * advancedDlg;
     QWidget * advancedWid;
+    bool advancedIsDirty;
 };
 
 PptpSettingWidget::PptpSettingWidget(Knm::Connection * connection, QWidget * parent)
 : SettingWidget(connection, parent), d_ptr(new PptpSettingWidgetPrivate)
 {
     Q_D(PptpSettingWidget);
+    d->advancedIsDirty = false;
     d->ui.setupUi(this);
 
     d->setting = static_cast<Knm::VpnSetting *>(connection->setting(Knm::Setting::Vpn));
@@ -65,8 +68,9 @@ PptpSettingWidget::~PptpSettingWidget()
 void PptpSettingWidget::doAdvancedDialog()
 {
     Q_D(PptpSettingWidget);
-    d->advancedDlg->exec();
-    // Check return value and mark some flag indicating that the dialog is dirty
+    if (d->advancedDlg->exec() == QDialog::Accepted) {
+        d->advancedIsDirty = true;
+    }
 }
 
 void PptpSettingWidget::readConfig()
@@ -74,18 +78,171 @@ void PptpSettingWidget::readConfig()
     Q_D(PptpSettingWidget);
     // General settings
     QStringMap dataMap = d->setting->data();
+
+    // Authentification
+    QString sGateway = dataMap[NM_PPTP_KEY_GATEWAY];
+    if (!sGateway.isEmpty())
+    {
+        d->ui.edt_gateway->setText(sGateway);
+    }
+
+    QString sLogin = dataMap[NM_PPTP_KEY_USER];
+    if (!sLogin.isEmpty())
+    {
+        d->ui.edt_login->setText(sLogin);
+    }
+    // password storage type is set in readSecrets
+
+    QString sDomain = dataMap[NM_PPTP_KEY_DOMAIN];
+    if (!sDomain.isEmpty())
+    {
+        d->ui.edt_ntDomain->setText(sDomain);
+    }
+
+    // Options below is belongs to "Advanced" dialog
+
+    // Authenfication options
+    bool refuse_pap = (dataMap[NM_PPTP_KEY_REFUSE_PAP] == "yes" ? true : false);
+    bool refuse_chap = (dataMap[NM_PPTP_KEY_REFUSE_CHAP] == "yes" ? true : false);
+    bool refuse_mschap = (dataMap[NM_PPTP_KEY_REFUSE_MSCHAP] == "yes" ? true : false);
+    bool refuse_mschapv2 = (dataMap[NM_PPTP_KEY_REFUSE_MSCHAPV2] == "yes" ? true : false);
+    bool refuse_eap = (dataMap[NM_PPTP_KEY_REFUSE_EAP] == "yes" ? true : false);
+
+    QListWidgetItem * item = 0;
+    item = d->advUi.listWidget->item(0); // PAP
+    item->setCheckState(refuse_pap ? Qt::Unchecked : Qt::Checked);
+    item = d->advUi.listWidget->item(1); // CHAP
+    item->setCheckState(refuse_chap ? Qt::Unchecked : Qt::Checked);
+    item = d->advUi.listWidget->item(2); // MSCHAP
+    item->setCheckState(refuse_mschap ? Qt::Unchecked : Qt::Checked);
+    item = d->advUi.listWidget->item(3); // MSCHAPv2
+    item->setCheckState(refuse_mschapv2 ? Qt::Unchecked : Qt::Checked);
+    item = d->advUi.listWidget->item(4); // EAP
+    item->setCheckState(refuse_eap ? Qt::Unchecked : Qt::Checked);
+
+    // Cryptography and compression
+    bool mppe = (dataMap[NM_PPTP_KEY_REQUIRE_MPPE] == "yes" ? true : false);
+    bool mppe40 = (dataMap[NM_PPTP_KEY_REQUIRE_MPPE_40] == "yes" ? true : false);
+    bool mppe128 = (dataMap[NM_PPTP_KEY_REQUIRE_MPPE_128] == "yes" ? true : false);
+    bool mppe_stateful = (dataMap[NM_PPTP_KEY_MPPE_STATEFUL] == "yes" ? true : false);
+
+    if (mppe || mppe40 || mppe128) // If MPPE is used
+    {
+        d->advUi.cb_MPPE->setChecked(mppe || mppe40 || mppe128);
+        if (mppe128)
+        {
+            d->advUi.cb_MPPECrypto->setCurrentIndex(1); // 128 bit
+        }
+        else if (mppe40)
+        {
+            d->advUi.cb_MPPECrypto->setCurrentIndex(2); // 40 bit
+        }
+        else if (mppe)
+        {
+            d->advUi.cb_MPPECrypto->setCurrentIndex(0); // Any
+        }
+        d->advUi.cb_statefulEncryption->setChecked(mppe_stateful);
+    }
+
+    bool nobsd = (dataMap[NM_PPTP_KEY_NOBSDCOMP] == "yes" ? true : false);
+    d->advUi.cb_BSD->setChecked(!nobsd);
+
+    bool nodeflate = (dataMap[NM_PPTP_KEY_NODEFLATE] == "yes" ? true : false);
+    d->advUi.cb_deflate->setChecked(!nodeflate);
+
+    bool novjcomp = (dataMap[NM_PPTP_KEY_NO_VJ_COMP] == "yes" ? true : false);
+    d->advUi.cb_TCPheaders->setChecked(!novjcomp);
+
+    // Echo
+    int lcp_echo_interval = QString(dataMap[NM_PPTP_KEY_LCP_ECHO_INTERVAL]).toInt();
+    d->advUi.cb_sendEcho->setChecked(lcp_echo_interval > 0);
 }
 
 void PptpSettingWidget::writeConfig()
 {
+    Q_D(PptpSettingWidget);
+
+    d->setting->setServiceType(QLatin1String(NM_DBUS_SERVICE_PPTP));
+
     // save the main dialog's data in the setting
     // if the advanced dialog is dirty, save its data in the vpn setting too
+    //
+    QStringMap data;
+    QVariantMap secretData;
+
+    data.insert(NM_PPTP_KEY_GATEWAY,  d->ui.edt_gateway->text().toUtf8());
+    data.insert(NM_PPTP_KEY_USER, d->ui.edt_login->text().toUtf8());
+    secretData.insert(QLatin1String(NM_PPTP_KEY_PASSWORD), d->ui.edt_password->text());
+    data.insert(NM_PPTP_KEY_DOMAIN,  d->ui.edt_ntDomain->text().toUtf8());
+
+    // Advanced dialog settings
+    if (d->advancedIsDirty) {
+        // Authenfication options
+        QListWidgetItem * item = 0;
+        item = d->advUi.listWidget->item(0); // PAP
+        data.insert(NM_PPTP_KEY_REFUSE_PAP, item->checkState() == Qt::Checked ? "no" : "yes");
+        item = d->advUi.listWidget->item(1); // CHAP
+        data.insert(NM_PPTP_KEY_REFUSE_CHAP, item->checkState() == Qt::Checked ? "no" : "yes");
+        item = d->advUi.listWidget->item(2); // MSCHAP
+        data.insert(NM_PPTP_KEY_REFUSE_MSCHAP, item->checkState() == Qt::Checked ? "no" : "yes");
+        item = d->advUi.listWidget->item(3); // MSCHAPv2
+        data.insert(NM_PPTP_KEY_REFUSE_MSCHAPV2, item->checkState() == Qt::Checked ? "no" : "yes");
+        item = d->advUi.listWidget->item(4); // EAP
+        data.insert(NM_PPTP_KEY_REFUSE_EAP, (item->checkState() == Qt::Checked) ? "no" : "yes");
+
+        // Cryptography and compression
+        if (d->advUi.cb_MPPE->checkState() == Qt::Checked)
+        {
+            int index = d->advUi.cb_MPPECrypto->currentIndex();
+
+            switch (index)
+            {
+                case 0:
+                    {
+                        // "Any"
+                        data.insert(NM_PPTP_KEY_REQUIRE_MPPE, "yes");
+                    }
+                case 1:
+                    {
+                        // "128 bit"
+                        data.insert(NM_PPTP_KEY_REQUIRE_MPPE_128, "yes");
+                    }
+                case 2:
+                    {
+                        // "40 bit"
+                        data.insert(NM_PPTP_KEY_REQUIRE_MPPE_40, "yes");
+                    }
+            }
+
+            data.insert(NM_PPTP_KEY_MPPE_STATEFUL, d->advUi.cb_statefulEncryption->checkState() ==  Qt::Checked ? "yes" : "no");
+        }
+
+        data.insert(NM_PPTP_KEY_NOBSDCOMP, d->advUi.cb_BSD->checkState() ==  Qt::Checked ? "no" : "yes");
+        data.insert(NM_PPTP_KEY_NODEFLATE, d->advUi.cb_deflate->checkState() ==  Qt::Checked ? "no" : "yes");
+        data.insert(NM_PPTP_KEY_NO_VJ_COMP, d->advUi.cb_TCPheaders->checkState() ==  Qt::Checked ? "no" : "yes");
+
+        // Echo
+        bool lcp_echo = d->advUi.cb_sendEcho->checkState() ==  Qt::Checked;
+        if (lcp_echo)
+        {
+            data.insert(NM_PPTP_KEY_LCP_ECHO_FAILURE, "5");
+            data.insert(NM_PPTP_KEY_LCP_ECHO_INTERVAL, "30");
+        }
+        //reset save advanced flag
+        d->advancedIsDirty = false;
+    }
+
+    // save it all
+    d->setting->setData(data);
+    d->setting->setVpnSecrets(secretData);
 }
 
 void PptpSettingWidget::readSecrets()
 {
     Q_D(PptpSettingWidget);
     QVariantMap secrets = d->setting->vpnSecrets();
+
+    d->ui.edt_password->setText(secrets.value(QLatin1String(NM_PPTP_KEY_PASSWORD)).toString());
 }
 
 // vim: sw=4 sts=4 et tw=100

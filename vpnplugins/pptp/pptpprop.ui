@@ -10,6 +10,9 @@
     <height>341</height>
    </rect>
   </property>
+  <property name="windowTitle">
+   <string>PPTP Settings</string>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
     <widget class="QGroupBox" name="grp_general">
