@@ -22,3 +22,15 @@ bool Security8021xSetting::hasSecrets() const
 {
   return true;
 }
+
+
+QByteArray Security8021xSetting::getBytes(const QString & fileName)
+{
+    QByteArray bytes;
+    QFile file(fileName);
+
+    if (file.open(QIODevice::ReadOnly)) {
+        bytes = file.readAll();
+    }
+    return bytes;
+}

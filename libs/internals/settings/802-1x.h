@@ -113,17 +113,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     {
         mCapath = v;
 
-        // also update the ca cert blob
-        QFile ca_cert(v);
-
-        if (ca_cert.open(QIODevice::ReadOnly)) {
-           QByteArray bytes = ca_cert.readAll();
-
-           // FIXME: verify that the ca_cert is a X509 cert
-           // (see libnm-util/nm-setting-8021x.c function nm_setting_802_1x_set_ca_cert_from_file)
-
-           setCacert( bytes );
-        }
+        setCacert( getBytes(v));
     }
 
     /**
@@ -156,6 +146,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     void setClientcertpath( const QString & v )
     {
         mClientcertpath = v;
+        setClientcert( getBytes(v));
     }
 
     /**
@@ -268,6 +259,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     void setPhase2capath( const QString & v )
     {
         mPhase2capath = v;
+        setPhase2cacert( getBytes(v));
     }
 
     /**
@@ -300,6 +292,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     void setPhase2clientcertpath( const QString & v )
     {
         mPhase2clientcertpath = v;
+        setPhase2clientcert( getBytes(v));
     }
 
     /**
@@ -348,6 +341,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     void setPrivatekeypath( const QString & v )
     {
         mPrivatekeypath = v;
+        setPrivatekey( getBytes(v));
     }
 
     /**
@@ -396,6 +390,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     void setPhase2privatekeypath( const QString & v )
     {
         mPhase2privatekeypath = v;
+        setPhase2privatekey( getBytes(v));
     }
 
     /**
@@ -559,6 +554,7 @@ kDebug() << eap;
     bool mEnabled;
 
   private:
+    QByteArray getBytes(const QString & fileName);
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Security8021xSetting::EapMethods)
