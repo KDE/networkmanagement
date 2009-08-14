@@ -15,3 +15,7 @@ X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=PPTP
 Comment=PPTP Plugin
+Comment[pt]='Plugin' de PPTP
+Comment[pt_BR]='Plugin' de PPTP
+Comment[sv]=Insticksprogram för PPTP
+Comment[uk]=Додаток PPTP
