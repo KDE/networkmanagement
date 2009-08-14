@@ -118,6 +118,10 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(bool setDefaults, K
     }
 
     // populate cboType with appropriate wireless security types
+    // TODO this is probably too simplistic and does not check things that nm-applet checks like
+    // adhoc mode, whether the network interfaces supports the auth modes the AP is supporting
+    // see page-wireless-security.c in network-manager-applet
+    // and ibnm-util/nm-utils.c nm_utils_security_valid()
 
     // insecure
     if (!iface || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::None, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
