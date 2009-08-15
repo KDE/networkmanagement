@@ -134,35 +134,37 @@ void ConnectionUsageMonitor::networkInterfaceAccessPointChanged(const QString & 
     Solid::Control::WirelessNetworkInterface * wifiDevice = qobject_cast<Solid::Control::WirelessNetworkInterface *>(sender());
     if (wifiDevice && wifiDevice->connectionState() == Solid::Control::NetworkInterface::Activated) {
         Solid::Control::AccessPoint * ap = wifiDevice->findAccessPoint(apiUni);
-        // find the activatable
-        foreach (Knm::Activatable * activatable, d->activatableList->activatables()) {
-            Knm::WirelessInterfaceConnection * ic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
-            if (ic) {
-                if (ic->activationState() == Knm::InterfaceConnection::Activated && ic->deviceUni() == wifiDevice->uni()) {
-                    // find the connection
-                    Knm::Connection * connection = d->connectionList->findConnection(ic->connectionUuid());
-                    if (connection) {
-                        if (connection->type() == Knm::Connection::Wireless) {
-                            Knm::WirelessSetting * ws = static_cast<Knm::WirelessSetting * >(connection->setting(Knm::Setting::Wireless));
+        if (ap) {
+            // find the activatable
+            foreach (Knm::Activatable * activatable, d->activatableList->activatables()) {
+                Knm::WirelessInterfaceConnection * ic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
+                if (ic) {
+                    if (ic->activationState() == Knm::InterfaceConnection::Activated && ic->deviceUni() == wifiDevice->uni()) {
+                        // find the connection
+                        Knm::Connection * connection = d->connectionList->findConnection(ic->connectionUuid());
+                        if (connection) {
+                            if (connection->type() == Knm::Connection::Wireless) {
+                                Knm::WirelessSetting * ws = static_cast<Knm::WirelessSetting * >(connection->setting(Knm::Setting::Wireless));
 
-                            if (ws) {
-                                if (ws->ssid() == ap->ssid()) {
-                                    QStringList seenBssids = ws->seenbssids();
-                                    if (!seenBssids.contains(ap->hardwareAddress())) {
-                                        seenBssids.append(ap->hardwareAddress());
-                                        ws->setSeenbssids(seenBssids);
-                                        //kDebug() << "Updating connection" << connection->uuid() << "with" << seenBssids;
-                                        d->connectionList->updateConnection(connection);
+                                if (ws) {
+                                    if (ws->ssid() == ap->ssid()) {
+                                        QStringList seenBssids = ws->seenbssids();
+                                        if (!seenBssids.contains(ap->hardwareAddress())) {
+                                            seenBssids.append(ap->hardwareAddress());
+                                            ws->setSeenbssids(seenBssids);
+                                            //kDebug() << "Updating connection" << connection->uuid() << "with" << seenBssids;
+                                            d->connectionList->updateConnection(connection);
+                                        }
+                                    } else {
+                                        kDebug() << "SSIDs do not match!" << ws->ssid() << ap->ssid();
                                     }
-                                } else {
-                                    kDebug() << "SSIDs do not match!" << ws->ssid() << ap->ssid();
                                 }
+                            } else {
+                                kDebug() << "connection not wireless!";
                             }
                         } else {
-                            kDebug() << "connection not wireless!";
+                            kDebug() << "connection not found";
                         }
-                    } else {
-                        kDebug() << "connection not found";
                     }
                 }
             }
