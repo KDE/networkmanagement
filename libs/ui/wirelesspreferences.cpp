@@ -87,7 +87,7 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
     m_contents = new ConnectionWidget(m_connection, (ssid.isEmpty() ? i18n("New Wireless Connection") : ssid), this);
     layout->addWidget(m_contents);
     Wireless80211Widget* connectionTypeWidget = new Wireless80211Widget(m_connection, ssid, this);
-    WirelessSecuritySettingWidget * wirelessSecurityWidget = new WirelessSecuritySettingWidget(setDefaults, m_connection, iface, ap, this);
+    WirelessSecuritySettingWidget * wirelessSecurityWidget = new WirelessSecuritySettingWidget(m_connection, iface, ap, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
 
     addToTabWidget(connectionTypeWidget);

@@ -17,8 +17,7 @@ WirelessSecurityPersistence::~WirelessSecurityPersistence()
 
 void WirelessSecurityPersistence::load()
 {
-  WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
-  {
+    WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
     if (m_config->exists()) { // this persistence saves nothing if there is no security, so the 
       // group won't exist.  not indenting the code inside this test to keep the diff clean ;)
     QString contents = m_config->readEntry("securityType", "None");
@@ -39,7 +38,6 @@ void WirelessSecurityPersistence::load()
     else     if (contents == "Wpa2Eap")
       setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::Wpa2Eap);
 
-  }
   {
     QString contents = m_config->readEntry("keymgmt", "None");
     if (contents == "None")
@@ -99,6 +97,8 @@ void WirelessSecurityPersistence::load()
   if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setWeppassphrase(m_config->readEntry("weppassphrase", ""));
   }
+  } else {
+      setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::None);
   }
 }
 

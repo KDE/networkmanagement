@@ -20,6 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelesssecuritysettingwidget.h"
 
+#include <solid/control/networkmanager.h>
+#include <solid/control/networkinterface.h>
+#include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/wirelessaccesspoint.h>
 
 #include <KDebug>
@@ -84,7 +87,8 @@ public:
     Knm::ConnectionPersistence * persistence;
 };
 
-WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(bool setDefaults, Knm::Connection * connection,
+WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
+        Knm::Connection * connection,
         Solid::Control::WirelessNetworkInterface * iface,
         Solid::Control::AccessPoint * ap,
         QWidget * parent)
@@ -101,8 +105,8 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(bool setDefaults, K
 
     // cache ap and device capabilities here
     Solid::Control::WirelessNetworkInterface::Capabilities ifaceCaps(0);
-    Solid::Control::AccessPoint::Capabilities apCaps(0);
     bool adhoc = false;
+    Solid::Control::AccessPoint::Capabilities apCaps(0);
     Solid::Control::AccessPoint::WpaFlags apWpa(0);
     Solid::Control::AccessPoint::WpaFlags apRsn(0);
 
@@ -115,40 +119,43 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(bool setDefaults, K
             apWpa = ap->wpaFlags();
             apRsn = ap->rsnFlags();
         }
+    } else {
+        foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+            if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+                Solid::Control::WirelessNetworkInterface * wirelessIface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+                if (wirelessIface) {
+                    ifaceCaps |= wirelessIface->wirelessCapabilities();
+                }
+            }
+        }
     }
 
     // populate cboType with appropriate wireless security types
-    // TODO this is probably too simplistic and does not check things that nm-applet checks like
-    // adhoc mode, whether the network interfaces supports the auth modes the AP is supporting
-    // see page-wireless-security.c in network-manager-applet
-    // and ibnm-util/nm-utils.c nm_utils_security_valid()
 
     // insecure
-    if (!iface || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::None, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
+    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::None, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
         d->registerSecurityType(new NullSecurityWidget(connection, this), i18nc("Label for no wireless security", "None"), d->noSecurityIndex);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::None);
     }
 
     // WEP
-    if (!iface || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::StaticWep, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
+    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::StaticWep, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
         d->registerSecurityType(new WepWidget(WepWidget::Passphrase, connection, this), i18nc("Label for WEP wireless security", "WEP"), d->staticWepIndex);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep);
     }
 
-    // WPA
-    if (!iface
-            || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::WpaPsk, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
+    // WPA-PSK
+    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::WpaPsk, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
             || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Wpa2Psk, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
        ) {
-        d->registerSecurityType(new WpaPskWidget(connection, this), i18nc("Label for WPA-PSK wireless security", "WPA-PSK"), d->wpaPskIndex);
+        d->registerSecurityType(new WpaPskWidget(connection, this), i18nc("Label for WPA-PSK wireless security", "WPA/WPA2 Personal"), d->wpaPskIndex);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk);
     }
-    // what for EAP?
-    if (!iface
-            || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::WpaEap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
+    // WPA-EAP
+    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::WpaEap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
             || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Wpa2Eap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
                 ) {
-        d->registerSecurityType(new WpaEapWidget(connection, this), i18nc("Label for WPA-EAP wireless security", "WPA-EAP"), d->wpaEapIndex);
+        d->registerSecurityType(new WpaEapWidget(connection, this), i18nc("Label for WPA-EAP wireless security", "WPA/WPA2 Enterprise"), d->wpaEapIndex);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap);
     }
 
@@ -197,27 +204,28 @@ void WirelessSecuritySettingWidget::writeConfig()
 void WirelessSecuritySettingWidget::readConfig()
 {
     Q_D(WirelessSecuritySettingWidget);
-//X     if ( d->currentSecurity != -1 )
-//X         return;
-//X 
     SecurityWidget * sw = 0;
-    switch (d->settingSecurity->securityType()) {
-        case Knm::WirelessSecuritySetting::EnumSecurityType::None:
-            d->setCurrentSecurityWidget(d->noSecurityIndex);
-            break;
-        case Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep:
-            d->setCurrentSecurityWidget(d->staticWepIndex);
-            break;
-        case Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk:
-            d->setCurrentSecurityWidget(d->wpaPskIndex);
-            break;
-        case Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap:
-            d->setCurrentSecurityWidget(d->wpaEapIndex);
-            break;
-    }
+    if (d->settingWireless->security().isEmpty()) {
+        d->setCurrentSecurityWidget(d->noSecurityIndex);
+    } else {
+        switch (d->settingSecurity->securityType()) {
+            case Knm::WirelessSecuritySetting::EnumSecurityType::None:
+                d->setCurrentSecurityWidget(d->noSecurityIndex);
+                break;
+            case Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep:
+                d->setCurrentSecurityWidget(d->staticWepIndex);
+                break;
+            case Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk:
+                d->setCurrentSecurityWidget(d->wpaPskIndex);
+                break;
+            case Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap:
+                d->setCurrentSecurityWidget(d->wpaEapIndex);
+                break;
+        }
 
-    sw = d->currentSecurityWidget();
-    sw->readConfig();
+        sw = d->currentSecurityWidget();
+        sw->readConfig();
+    }
 }
 
 void WirelessSecuritySettingWidget::readSecrets()
