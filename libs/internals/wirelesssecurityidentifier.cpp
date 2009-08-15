@@ -80,6 +80,19 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Co
             if (interfaceCaps & (Solid::Control::WirelessNetworkInterface::Wep40 | Solid::Control::WirelessNetworkInterface::Wep104))
                 return true;
         }
+        if (type == Knm::WirelessSecurity::WpaPsk
+                ||type == Knm::WirelessSecurity::WpaEap) {
+            if (interfaceCaps & (Solid::Control::WirelessNetworkInterface::Wpa)) {
+                return true;
+            }
+        }
+        if (type == Knm::WirelessSecurity::Wpa2Psk
+                ||type == Knm::WirelessSecurity::Wpa2Eap) {
+            if (interfaceCaps & (Solid::Control::WirelessNetworkInterface::Rsn)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     switch (type) {
