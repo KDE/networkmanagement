@@ -45,10 +45,7 @@ void EapMethodLeap::readConfig()
 {
     Q_D(EapMethod);
 
-    Knm::WirelessSecuritySetting * ws = static_cast<Knm::WirelessSecuritySetting*>(d->connection->setting(Knm::Setting::WirelessSecurity));
-    if (ws) {
-        leUsername->setText(ws->leapusername());
-    }
+    leUsername->setText(d->setting->identity());
 }
 
 void EapMethodLeap::writeConfig()
@@ -59,15 +56,13 @@ void EapMethodLeap::writeConfig()
     // LEAP stuff
     d->setting->setIdentity(leUsername->text());
     d->setting->setPassword(lePassword->text());
+    d->setting->setUseSystemCaCerts(false);
 }
 
 void EapMethodLeap::readSecrets()
 {
     Q_D(EapMethod);
-    Knm::WirelessSecuritySetting * ws = static_cast<Knm::WirelessSecuritySetting*>(d->connection->setting(Knm::Setting::WirelessSecurity));
-    if (ws) {
-        lePassword->setText(ws->leappassword());
-    }
+    lePassword->setText(d->setting->password());
 }
 
 void EapMethodLeap::setShowPasswords(bool on)
