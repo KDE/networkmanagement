@@ -57,9 +57,8 @@ void EapMethodLeap::writeConfig()
     // make the Setting LEAP
     d->setting->setEapFlags(Knm::Security8021xSetting::leap);
     // LEAP stuff
-    Knm::WirelessSecuritySetting * ws = static_cast<Knm::WirelessSecuritySetting*>(d->connection->setting(Knm::Setting::WirelessSecurity));
-    ws->setLeapusername(leUsername->text());
-    ws->setLeappassword(lePassword->text());
+    d->setting->setIdentity(leUsername->text());
+    d->setting->setPassword(lePassword->text());
 }
 
 void EapMethodLeap::readSecrets()
