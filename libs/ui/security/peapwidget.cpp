@@ -64,6 +64,7 @@ void PeapWidget::readConfig()
         kurCaCert->setEnabled(false);
         kurCaCert->clear();
     } else {
+        chkUseSystemCaCerts->setChecked(false);
         QString capath = d->setting->capath();
         if (!capath.isEmpty())
             kurCaCert->setUrl(capath);
@@ -75,9 +76,9 @@ void PeapWidget::readConfig()
     d->innerAuth->readConfig();
 
     if (d->setting->phase1peapver() == Knm::Security8021xSetting::EnumPhase1peapver::zero)
-        cboPeapVersion->setCurrentIndex(0);
-    else
         cboPeapVersion->setCurrentIndex(1);
+    else if (d->setting->phase1peapver() == Knm::Security8021xSetting::EnumPhase1peapver::one)
+        cboPeapVersion->setCurrentIndex(2);
 }
 
 void PeapWidget::writeConfig()
@@ -93,6 +94,7 @@ void PeapWidget::writeConfig()
         d->setting->setUseSystemCaCerts(true);
         d->setting->setCapath("");
     } else {
+        d->setting->setUseSystemCaCerts(false);
         KUrl url = kurCaCert->url();
         if (!url.directory().isEmpty() && !url.fileName().isEmpty())
             d->setting->setCapath(url.directory() + "/" + url.fileName());
@@ -109,7 +111,7 @@ void PeapWidget::writeConfig()
 void PeapWidget::readSecrets()
 {
     Q_D(EapMethodInnerAuth);
-    d->innerAuth->readConfig();
+    d->innerAuth->readSecrets();
 }
 
 // vim: sw=4 sts=4 et tw=100

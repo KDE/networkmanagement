@@ -37,9 +37,9 @@
       <label>Phase 1 PEAP version</label>
       <whatsthis></whatsthis>
       <choices>
-        <choice name="automatic"/>
-        <choice name="zero"/>
-        <choice name="one"/>
+        <choice name="automatic" dbusvalue="auto"/>
+        <choice name="zero" dbusvalue="0"/>
+        <choice name="one" dbusvalue="1"/>
       </choices>
     </entry>
     <entry name="phase1peaplabel" key="phase1peaplabel" type="String" dbuskey="NM_SETTING_802_1X_PHASE1_PEAPLABEL">

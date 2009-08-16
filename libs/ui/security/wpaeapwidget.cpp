@@ -127,32 +127,6 @@ void WpaEapWidget::readConfig()
 void WpaEapWidget::writeConfig()
 {
     currentEapMethod()->writeConfig();
-#if 0
-    Q_D(WpaEapWidget);
-    // This is WPA EAP, we have to handle
-    // 1. the wireless security setting
-    // 2. the 802.1x setting
-    kDebug() << "write eap settings" ;
-
-    EapWidget * ew = d->eapWidgetHash.value(d->ui.cboEapMethod->currentIndex());
-    if (ew) {
-        ew->writeConfig();
-    }
-
-    switch(d->ui.cboEapMethod->currentIndex())
-    {
-        case 0:
-            d->setting8021x->setEapFlags(Knm::Security8021xSetting::peap);
-            break;
-        case 1:
-            d->setting8021x->setEapFlags(Knm::Security8021xSetting::ttls);
-            break;
-        case 2:
-            d->setting8021x->setEapFlags(Knm::Security8021xSetting::tls);
-            break;
-    }
-    d->setting8021x->setEnabled(true);
-#endif
 }
 
 
@@ -160,28 +134,6 @@ void WpaEapWidget::readSecrets()
 {
     // rely on readConfig before readSecrets!
     currentEapMethod()->readSecrets();
-#if 0
-    Q_D(WpaEapWidget);
-    Knm::Security8021xSetting::EapMethods eap = d->setting8021x->eapFlags();
-
-    // default is peap
-    EapWidget * ew = d->eapWidgetHash.value(d->peapIndex);
-
-    if (eap.testFlag(Knm::Security8021xSetting::ttls))
-    {
-        d->ui.cboEapMethod->setCurrentIndex(d->ttlsIndex);
-        ew = d->eapWidgetHash.value(d->ttlsIndex);
-    } else if (eap.testFlag(Knm::Security8021xSetting::tls))
-    {
-        d->ui.cboEapMethod->setCurrentIndex(d->tlsIndex);
-        ew = d->eapWidgetHash.value(d->tlsIndex);
-    } else if (eap.testFlag(Knm::Security8021xSetting::peap))
-    {
-        d->ui.cboEapMethod->setCurrentIndex(d->peapIndex);
-        ew = d->eapWidgetHash.value(d->peapIndex);
-    }
-    ew->readSecrets();
-#endif
 }
 
 // vim: sw=4 sts=4 et tw=100

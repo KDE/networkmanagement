@@ -70,6 +70,7 @@ void TtlsWidget::readConfig()
         kurCaCert->setEnabled(false);
         kurCaCert->clear();
     } else {
+        chkUseSystemCaCerts->setChecked(false);
         QString capath = d->setting->capath();
         if (!capath.isEmpty())
             kurCaCert->setUrl(capath);
@@ -97,6 +98,7 @@ void TtlsWidget::writeConfig()
         d->setting->setUseSystemCaCerts(true);
         d->setting->setCapath("");
     } else {
+        d->setting->setUseSystemCaCerts(false);
         url = kurCaCert->url();
         if (!url.directory().isEmpty() && !url.fileName().isEmpty())
             d->setting->setCapath(url.directory() + "/" + url.fileName());
