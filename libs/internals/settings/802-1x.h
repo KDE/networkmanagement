@@ -499,7 +499,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
             eap.append("tls");
         if (methods.testFlag(peap))
             eap.append("peap");
-        if (methods.testFlag(peap))
+        if (methods.testFlag(leap))
             eap.append("leap");
 kDebug() << eap;
         setEap(eap);
@@ -515,7 +515,7 @@ kDebug() << eap;
             eapFlags = eapFlags | tls;
         if (eaps.contains("peap"))
             eapFlags = eapFlags | peap;
-        if (eaps.contains("peap"))
+        if (eaps.contains("leap"))
             eapFlags = eapFlags | leap;
         return eapFlags;
     }
