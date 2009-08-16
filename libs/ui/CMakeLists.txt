@@ -32,6 +32,7 @@ set(knmui_SRCS
    security/wirelesssecuritysettingwidget.cpp
    security/nullsecuritywidget.cpp
    security/wepwidget.cpp
+   security/securityleap.cpp
    security/wpapskwidget.cpp
    security/wpaeapwidget.cpp
    security/eapmethod.cpp
@@ -78,6 +79,7 @@ kde4_add_ui_files(knmui_SRCS
    security/wirelesssecurity.ui
    # wireless security type specific UIs
    security/wep.ui
+   security/leap.ui
    security/wpapsk.ui
    security/802_1x.ui
    #   WPA-EAP - a stack of eap methods UI

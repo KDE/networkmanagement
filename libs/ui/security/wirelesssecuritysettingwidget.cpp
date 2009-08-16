@@ -40,6 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nullsecuritywidget.h"
 #include "wepwidget.h"
+#include "securityleap.h"
 #include "wpapskwidget.h"
 #include "wpaeapwidget.h"
 
@@ -48,7 +49,7 @@ class WirelessSecuritySettingWidgetPrivate
 Q_DECLARE_PUBLIC(WirelessSecuritySettingWidget)
 public:
     WirelessSecuritySettingWidgetPrivate(WirelessSecuritySettingWidget * parent)
-        : q_ptr(parent), noSecurityIndex(-1), staticWepIndex(-1), wpaPskIndex(-1), wpaEapIndex(-1), currentSecurity(-1),
+        : q_ptr(parent), noSecurityIndex(-1), staticWepIndex(-1), leapIndex(-1), wpaPskIndex(-1), wpaEapIndex(-1), currentSecurity(-1),
         wpaEapWidget(0), settingWireless(0), settingSecurity(0), persistence(0)
     {
     }
@@ -77,6 +78,7 @@ public:
     //QHash<int, SecurityWidget *> securityWidgetHash;
     int noSecurityIndex;
     int staticWepIndex;
+    int leapIndex;
     int wpaPskIndex;
     int wpaEapIndex;
     int currentSecurity;
@@ -144,6 +146,12 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep);
     }
 
+    // LEAP
+    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Leap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
+        d->registerSecurityType(new LeapWidget(connection, this), i18nc("Label for LEAP wireless security", "LEAP"), d->leapIndex);
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::Leap);
+    }
+
     // WPA-PSK
     if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::WpaPsk, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
             || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Wpa2Psk, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
@@ -179,10 +187,14 @@ void WirelessSecuritySettingWidget::writeConfig()
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::None);
         d->settingWireless->setSecurity("");
     }
-    if (d->ui.cboType->currentIndex() == d->staticWepIndex) {
+    else if (d->ui.cboType->currentIndex() == d->staticWepIndex) {
         d->setting8021x->setEnabled(false);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep); // FIXME
         d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::None);
+    }
+    else if (d->ui.cboType->currentIndex() == d->leapIndex) {
+        d->setting8021x->setEnabled(false);
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::Leap); // FIXME
     }
     else if (d->ui.cboType->currentIndex() == d->wpaPskIndex) {
         d->setting8021x->setEnabled(false);
@@ -214,6 +226,9 @@ void WirelessSecuritySettingWidget::readConfig()
                 break;
             case Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep:
                 d->setCurrentSecurityWidget(d->staticWepIndex);
+                break;
+            case Knm::WirelessSecuritySetting::EnumSecurityType::Leap:
+                d->setCurrentSecurityWidget(d->leapIndex);
                 break;
             case Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk:
                 d->setCurrentSecurityWidget(d->wpaPskIndex);
