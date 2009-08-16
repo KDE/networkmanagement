@@ -46,7 +46,11 @@ set(knm_nm_LIB_SRCS
 
    busconnection.cpp
 
+   #org.freedesktop.NetworkManagerSettings.Connection
    exportedconnection.cpp
+   
+   #org.freedesktop.NetworkManagerSettings.Connection.Secrets
+   exportedconnectionsecrets.cpp
 
    nmdbusactiveconnectionmonitor.cpp
 

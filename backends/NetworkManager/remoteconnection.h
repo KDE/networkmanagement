@@ -21,10 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef REMOTE_CONNECTION_H
 #define REMOTE_CONNECTION_H
 
-#include "nm-exported-connectioninterface.h"
+#include "types.h"
+#include "knm_export.h"
 
-#include "../types.h"
-#include "../knm_export.h"
+#include "nm-exported-connectioninterface.h"
 
 #include <solid/control/networkinterface.h>
 
