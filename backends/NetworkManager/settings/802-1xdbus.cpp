@@ -191,7 +191,9 @@ QVariantMap Security8021xDbus::toMap()
         if (!setting->psk().isEmpty()) {
             map.insert("psk", setting->psk());
         }
-        map.insert(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS), setting->useSystemCaCerts());
+        if (!setting->eap().contains(QLatin1String("leap"))) {
+            map.insert(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS), setting->useSystemCaCerts());
+        }
     }
     return map;
 }
