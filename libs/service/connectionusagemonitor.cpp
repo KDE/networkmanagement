@@ -97,14 +97,16 @@ void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnectio
                             qobject_cast<Solid::Control::WirelessNetworkInterface *>(networkInterface);
 
                         Solid::Control::AccessPoint * ap = wifiDevice->findAccessPoint(wifiDevice->activeAccessPoint());
-                        Knm::WirelessSetting * ws
-                            = static_cast<Knm::WirelessSetting * >(connection->setting(Knm::Setting::Wireless));
+                        if (ap) {
+                            Knm::WirelessSetting * ws
+                                = static_cast<Knm::WirelessSetting * >(connection->setting(Knm::Setting::Wireless));
 
-                        if (ws) {
-                            QStringList seenBssids = ws->seenbssids();
-                            if (!seenBssids.contains(ap->hardwareAddress()) && !ap->hardwareAddress().isEmpty()) {
-                                seenBssids.append(ap->hardwareAddress());
-                                ws->setSeenbssids(seenBssids);
+                            if (ws) {
+                                QStringList seenBssids = ws->seenbssids();
+                                if (!seenBssids.contains(ap->hardwareAddress()) && !ap->hardwareAddress().isEmpty()) {
+                                    seenBssids.append(ap->hardwareAddress());
+                                    ws->setSeenbssids(seenBssids);
+                                }
                             }
                         }
                     }
