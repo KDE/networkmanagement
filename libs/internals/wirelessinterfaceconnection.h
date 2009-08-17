@@ -38,8 +38,15 @@ Q_PROPERTY(uint wpaFlags READ wpaFlags)
 Q_PROPERTY(uint rsnFlags READ rsnFlags)
 
 public:
-    WirelessInterfaceConnection(const QString & ssid, int strength, Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities, Solid::Control::AccessPoint::Capabilities apCapabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode, const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent);
+    friend class WirelessInterfaceConnectionBuilder;
+
+    // To create an object of WirelessInterfaceConnection class please use
+    // Knm::WirelessInterfaceConnectionHelpers::build(..) function.
     virtual ~WirelessInterfaceConnection();
+
+protected:
+    WirelessInterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent);
+
 signals:
     void strengthChanged(int);
 public Q_SLOTS:

@@ -27,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <connection.h>
 #include <vpninterfaceconnection.h>
+#include <vpninterfaceconnectionhelpers.h>
 
 #include "connectionlist.h"
 #include "activatablelist.h"
@@ -70,7 +71,10 @@ void VpnInterfaceConnectionProvider::handleAdd(Knm::Connection * addedConnection
     if (Solid::Control::NetworkManager::status() == Solid::Networking::Connected) {
         if (!d->vpns.contains(addedConnection->uuid())) {
             if (addedConnection->type() == Knm::Connection::Vpn) {
-                Knm::VpnInterfaceConnection * vpnConnection = new Knm::VpnInterfaceConnection(addedConnection->uuid(), addedConnection->name(), QLatin1String("any"), this);
+                Knm::VpnInterfaceConnection * vpnConnection =
+                    Knm::VpnInterfaceConnectionHelpers::buildInterfaceConnection(addedConnection,
+                                                                                 QLatin1String("any"),
+                                                                                 this);
                 d->vpns.insert(addedConnection->uuid(), vpnConnection);
                 d->activatableList->addActivatable(vpnConnection);
             }
@@ -83,8 +87,7 @@ void VpnInterfaceConnectionProvider::handleUpdate(Knm::Connection * updatedConne
     Q_D(VpnInterfaceConnectionProvider);
     if (d->vpns.contains(updatedConnection->uuid())) {
         Knm::VpnInterfaceConnection * ifaceConnection = dynamic_cast<Knm::VpnInterfaceConnection *>(d->vpns[updatedConnection->uuid()]);
-        // assume only the name changed here
-        ifaceConnection->setConnectionName(updatedConnection->name());
+        Knm::VpnInterfaceConnectionHelpers::syncInterfaceConnection(ifaceConnection, updatedConnection);
     }
 }
 

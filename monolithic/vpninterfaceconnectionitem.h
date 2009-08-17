@@ -35,8 +35,7 @@ Q_DECLARE_PRIVATE(InterfaceConnectionItem)
 public:
     VpnInterfaceConnectionItem(Knm::VpnInterfaceConnection *, QWidget * parent = 0);
     virtual ~VpnInterfaceConnectionItem();
-protected:
-    virtual QString iconName() const;
+    Knm::VpnInterfaceConnection* vpnInterfaceConnection() const;
 };
 
 #endif // VPNINTERFACECONNECTIONITEM_H

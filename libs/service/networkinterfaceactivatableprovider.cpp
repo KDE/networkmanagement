@@ -29,6 +29,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatablelist.h"
 
+#include "interfaceconnectionhelpers.h"
+
 #include "networkinterfaceactivatableprovider_p.h"
 
 NetworkInterfaceActivatableProviderPrivate::NetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::NetworkInterface * theInterface)
@@ -159,8 +161,7 @@ void NetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedConne
     if (!d->activatables.contains(addedConnection->uuid())) {
         if (hardwareAddressMatches(addedConnection, d->interface)) {
             if (matches(addedConnection->type(), d->interface->type())) {
-                Knm::InterfaceConnection * ifaceConnection = new Knm::InterfaceConnection(addedConnection->uuid(), addedConnection->name(), d->interface->uni(), this);
-                ifaceConnection->setConnectionType(addedConnection->type());
+                Knm::InterfaceConnection * ifaceConnection = Knm::InterfaceConnectionHelpers::buildInterfaceConnection(addedConnection, d->interface->uni(), this);;
                 d->activatables.insert(addedConnection->uuid(), ifaceConnection);
                 d->activatableList->addActivatable(ifaceConnection);
             } else {
@@ -178,8 +179,8 @@ void NetworkInterfaceActivatableProvider::handleUpdate(Knm::Connection * updated
     Q_D(NetworkInterfaceActivatableProvider);
     if (d->activatables.contains(updatedConnection->uuid())) {
         Knm::InterfaceConnection * ifaceConnection = dynamic_cast<Knm::InterfaceConnection *>(d->activatables[updatedConnection->uuid()]);
-        // assume only the name changed here
-        ifaceConnection->setConnectionName(updatedConnection->name());
+
+        Knm::InterfaceConnectionHelpers::syncInterfaceConnection(ifaceConnection, updatedConnection);
     }
 }
 

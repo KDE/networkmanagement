@@ -22,6 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
+#include <kicondialog.h>
+#include <kstandarddirs.h>
+
 #include "ui_connection.h"
 #include "connection.h"
 
@@ -37,6 +40,11 @@ ConnectionWidget::ConnectionWidget(Knm::Connection * connection, const QString &
 {
     d->ui.setupUi(this);
     d->defaultName = defaultName;
+
+    d->ui.pushButtonChooseIcon->setToolTip(i18nc("@info:tooltip user action", "Choose a connection icon"));
+    // it doesn't make a sense to set up an icon here, lets do it in readConfig
+    connect(d->ui.pushButtonChooseIcon, SIGNAL(clicked()), this, SLOT(buttonChooseIconClicked()));
+
     kDebug() << "Connection id is " << connection->uuid();
 }
 
@@ -55,19 +63,43 @@ void ConnectionWidget::readConfig()
     if (connection()->name().isEmpty()) {
         connection()->setName(d->defaultName);
     }
+
     d->ui.id->setText(connection()->name());
     d->ui.autoconnect->setChecked(connection()->autoConnect());
+    d->ui.pushButtonChooseIcon->setIcon(KIcon(connection()->iconName()));
 }
 
 void ConnectionWidget::writeConfig()
 {
     connection()->setName(d->ui.id->text());
     connection()->setAutoConnect(d->ui.autoconnect->isChecked());
+    // connection()->setIconName(..) is already called from buttonChooseIconClicked()
 }
 
 bool ConnectionWidget::validate() const
 {
     return !d->ui.id->text().isEmpty();
+}
+
+void ConnectionWidget::buttonChooseIconClicked()
+{
+    KIconDialog dlg(this);
+
+    // set customLocation to kdedir/share/apps/networkmanagement/icons
+    QString customLocation(KStandardDirs::locate("data", QLatin1String("networkmanagement/icons/")));
+    //qDebug() << "Custom location: " << customLocation;
+    
+    dlg.setCustomLocation(customLocation);
+
+    dlg.setup(KIconLoader::NoGroup, KIconLoader::Any, false, 0, true, false, false);
+
+    QString iconName = dlg.openDialog();
+    if (!iconName.isEmpty())
+    {
+        //qDebug() << "Icon name: " << iconName;
+        d->ui.pushButtonChooseIcon->setIcon(KIcon(iconName));
+        connection()->setIconName(iconName);
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

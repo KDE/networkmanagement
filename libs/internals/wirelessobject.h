@@ -42,6 +42,10 @@ public:
     Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
     Solid::Control::WirelessNetworkInterface::OperationMode operationMode() const;
     virtual void strengthChanged(int) = 0;
+
+protected:
+    WirelessObject();
+
 protected:
     QString m_ssid;
     int m_strength;

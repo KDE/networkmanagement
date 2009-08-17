@@ -22,10 +22,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Knm;
 
-VpnInterfaceConnection::VpnInterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent)
-: InterfaceConnection( connectionUuid, connectionName, Knm::Activatable::VpnInterfaceConnection, deviceUni, parent)
+VpnInterfaceConnection::VpnInterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent)
+: InterfaceConnection(type, deviceUni, parent)
 {
-
 }
 
 VpnInterfaceConnection::~VpnInterfaceConnection()

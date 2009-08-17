@@ -51,6 +51,7 @@ public:
     virtual ~Connection();
 
     QString name() const;
+    QString iconName() const;
     QUuid uuid() const;
     Connection::Type type() const;
     void setType(Connection::Type);
@@ -72,6 +73,7 @@ public:
     Setting * setting(Setting::Type type) const;
 
     void setName(const QString &);
+    void setIconName(const QString &);
     void setUuid(const QUuid &);
     void setAutoConnect(bool);
     void setTimestamp(const QDateTime&);
@@ -106,6 +108,7 @@ private:
     void addSetting(Setting*);
 
     QString m_name;
+    QString m_iconName;
     QUuid m_uuid;
     Connection::Type m_type;
     bool m_autoConnect;

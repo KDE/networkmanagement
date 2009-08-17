@@ -143,6 +143,36 @@ QString Connection::name() const
     return m_name;
 }
 
+QString Connection::iconName() const
+{
+    QString iconName;
+    if (m_iconName.isEmpty()) {
+        switch (m_type) {
+            case Connection::Wired:
+                iconName = QLatin1String("network-wired");
+                break;
+            case Connection::Wireless:
+                iconName = QLatin1String("network-wireless");
+                break;
+            case Connection::Pppoe:
+                iconName = QLatin1String("modem");
+                break;
+            case Connection::Gsm:
+            case Connection::Cdma:
+                iconName = QLatin1String("phone");
+                break;
+            case Connection::Vpn:
+                iconName = QLatin1String("network-server");
+
+            default:
+                break;
+        }
+    } else {
+        iconName = m_iconName;
+    }
+    return iconName;
+}
+
 QUuid Connection::uuid() const
 {
     return m_uuid;
@@ -183,6 +213,11 @@ Setting * Connection::setting(Setting::Type settingType) const
 void Connection::setName(const QString & name)
 {
     m_name = name;
+}
+
+void Connection::setIconName(const QString & iconName)
+{
+    m_iconName = iconName;
 }
 
 void Connection::setUuid(const QUuid & uuid)

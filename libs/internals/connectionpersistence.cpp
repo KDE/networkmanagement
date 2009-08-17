@@ -145,6 +145,7 @@ void ConnectionPersistence::save()
     cg.writeEntry("type", Connection::typeAsString(m_connection->type()));
     cg.writeEntry("autoconnect", m_connection->autoConnect());
     cg.writeEntry("timestamp", m_connection->timestamp());
+    cg.writeEntry("icon", m_connection->iconName());
 
     // save each setting
     foreach (Setting * setting, m_connection->settings()) {
@@ -188,6 +189,7 @@ void ConnectionPersistence::load()
         m_connection->setName(cg.readEntry("id"));
         m_connection->setAutoConnect(cg.readEntry<bool>("autoconnect", false));
         m_connection->setTimestamp(cg.readEntry<QDateTime>("timestamp", QDateTime()));
+        m_connection->setIconName(cg.readEntry("icon"));
 
         // load each setting
         foreach (Setting * setting, m_connection->settings()) {

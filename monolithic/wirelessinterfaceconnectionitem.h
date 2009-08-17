@@ -38,8 +38,6 @@ public:
     WirelessInterfaceConnectionItem(Knm::WirelessInterfaceConnection *, QWidget * parent = 0);
     virtual ~WirelessInterfaceConnectionItem();
     Knm::WirelessInterfaceConnection* wirelessInterfaceConnection() const;
-protected:
-    virtual QString iconName() const;
 };
 
 #endif // WIRELESSINTERFACECONNECTIONITEM_H

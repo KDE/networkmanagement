@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkmanager.h>
 
 #include <wirelessinterfaceconnection.h>
+#include <wirelessinterfaceconnectionhelpers.h>
 #include <wirelessnetwork.h>
 #include <wirelessnetworkinterfaceenvironment.h>
 
@@ -92,28 +93,10 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
 
                         // get the info on the network
                         Solid::Control::WirelessNetwork * network = d->environment->findNetwork(wirelessSetting->ssid());
-                        int strength = -1;
-                        Solid::Control::AccessPoint::Capabilities caps = 0;
-                        Solid::Control::AccessPoint::WpaFlags wpaFlags = 0;
-                        Solid::Control::AccessPoint::WpaFlags rsnFlags = 0;
-                        Solid::Control::WirelessNetworkInterface::OperationMode mode
-                            = Solid::Control::WirelessNetworkInterface::Master;
 
-                        if (network) {
-                            strength = network->signalStrength();
-                            Solid::Control::AccessPoint * ap = d->wirelessInterface()->findAccessPoint(network->referenceAccessPoint());
-                            if (ap) {
-                                caps = ap->capabilities();
-                                wpaFlags = ap->wpaFlags();
-                                rsnFlags = ap->rsnFlags();
-                                mode = ap->mode();
-                            }
-
-                        }
-
-                        Knm::WirelessInterfaceConnection * ifaceConnection = new Knm::WirelessInterfaceConnection(
-                                wirelessSetting->ssid(), strength, d->wirelessInterface()->wirelessCapabilities(), caps, wpaFlags, rsnFlags, mode, addedConnection->uuid(), addedConnection->name(),
-                                d->interface->uni(), this);
+                        Knm::WirelessInterfaceConnection * ifaceConnection =
+                                Knm::WirelessInterfaceConnectionHelpers::buildInterfaceConnection(
+                                    d->wirelessInterface(), addedConnection, d->interface->uni(), this);
 
                         if (network) {
                             connect(network, SIGNAL(signalStrengthChanged(int)), ifaceConnection, SLOT(setStrength(int)));

@@ -47,9 +47,4 @@ Knm::WirelessInterfaceConnection* WirelessInterfaceConnectionItem::wirelessInter
     return qobject_cast<Knm::WirelessInterfaceConnection*>(d->activatable);
 }
 
-QString WirelessInterfaceConnectionItem::iconName() const
-{
-    return QLatin1String("network-wireless");
-}
-
 // vim: sw=4 sts=4 et tw=100

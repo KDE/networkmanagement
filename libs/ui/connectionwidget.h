@@ -35,6 +35,8 @@ namespace Knm
 
 class KNM_EXPORT ConnectionWidget : public SettingWidget
 {
+    Q_OBJECT
+
 public:
     /**
      * @param defaultName a default name to set on the connection, if the supplied connection does
@@ -56,6 +58,10 @@ public:
      * guarantee that the connection name is not empty
      */
     bool validate() const;
+
+private slots:
+    void buttonChooseIconClicked();
+
 private:
     class Private;
     Private * d;

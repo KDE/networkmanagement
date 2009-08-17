@@ -165,6 +165,7 @@ void InterfaceConnectionItem::changed()
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(d->activatable);
     if (ic) {
         setText(ic->connectionName());
+        d->activeIcon->setPixmap(pixmap());
     }
 }
 
@@ -187,30 +188,7 @@ QString InterfaceConnectionItem::textForConnection(Knm::InterfaceConnection::Act
 
 QString InterfaceConnectionItem::iconName() const
 {
-    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable()->deviceUni());
-    QString icon = QLatin1String("network-wired");
-    if (iface) {
-        switch (iface->type()) {
-            case Solid::Control::NetworkInterface::Ieee8023:
-                // default ok
-                break;
-            case Solid::Control::NetworkInterface::Ieee80211:
-                icon = QLatin1String("network-wireless");
-                break;
-            case Solid::Control::NetworkInterface::Serial:
-                icon = QLatin1String("modem");
-                break;
-            case Solid::Control::NetworkInterface::Gsm:
-                icon = QLatin1String("phone");
-                break;
-            case Solid::Control::NetworkInterface::Cdma:
-                icon = QLatin1String("phone");
-                break;
-            default:
-                break;
-        }
-    }
-    return icon;
+    return interfaceConnection()->iconName();
 }
 
 void InterfaceConnectionItem::disconnectClicked()

@@ -23,13 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using namespace Knm;
 
-InterfaceConnection::InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent)
-: Activatable(Activatable::InterfaceConnection, deviceUni, parent), m_type(Knm::Connection::Wired), m_uuid(connectionUuid), m_name(connectionName), m_state(InterfaceConnection::Unknown), m_hasDefaultRoute(false)
-{
-}
-
-InterfaceConnection::InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, ActivatableType type, const QString & deviceUni, QObject * parent)
-: Activatable(type, deviceUni, parent), m_type(Knm::Connection::Wired), m_uuid(connectionUuid), m_name(connectionName), m_state(InterfaceConnection::Unknown), m_hasDefaultRoute(false)
+InterfaceConnection::InterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent)
+: Activatable(type, deviceUni, parent), m_type(Knm::Connection::Wired),
+  m_state(InterfaceConnection::Unknown), m_hasDefaultRoute(false)
 {
 }
 
@@ -55,13 +51,28 @@ QUuid InterfaceConnection::connectionUuid() const
 
 void InterfaceConnection::setConnectionName(const QString& name)
 {
-    m_name = name;
-    emit changed();
+    if (name != m_name) {
+        m_name = name;
+        emit changed();
+    }
 }
 
 QString InterfaceConnection::connectionName() const
 {
     return m_name;
+}
+
+void InterfaceConnection::setIconName(const QString & iconName)
+{
+    if (iconName != m_iconName) {
+        m_iconName = iconName;
+        emit changed();
+    }
+}
+
+QString InterfaceConnection::iconName() const
+{
+    return m_iconName;
 }
 
 void InterfaceConnection::setActivationState(InterfaceConnection::ActivationState state)

@@ -32,6 +32,9 @@ Knm::WirelessObject::WirelessObject(const QString & ssid, int strength, Solid::C
 
 }
 
+Knm::WirelessObject::WirelessObject()
+{}
+
 Knm::WirelessObject::~WirelessObject()
 {
 

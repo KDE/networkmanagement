@@ -34,8 +34,14 @@ class KNMINTERNALS_EXPORT VpnInterfaceConnection : public InterfaceConnection
 {
 Q_OBJECT
 public:
-    VpnInterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent = 0);
+    friend class VpnInterfaceConnectionBuilder;
+
+    // To create an object of VpnInterfaceConnection class please use
+    // Knm::VpnInterfaceConnectionHelpers::build(..) function.
     virtual ~VpnInterfaceConnection();
+
+protected:
+    VpnInterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent);
 };
 
 } // namespace Knm

@@ -39,12 +39,18 @@ Q_OBJECT
 Q_PROPERTY(uint type READ connectionType)
 Q_PROPERTY(QString uuid READ connectionUuid)
 Q_PROPERTY(QString name READ connectionName)
+Q_PROPERTY(QString iconName READ iconName WRITE setIconName)
 Q_PROPERTY(uint activationState READ activationState)
 Q_PROPERTY(bool hasDefaultRoute READ hasDefaultRoute WRITE setHasDefaultRoute)
 
 public:
+    friend class InterfaceConnectionBuilder;
+
     enum ActivationState { Unknown, Activating, Activated };
-    InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, const QString & deviceUni, QObject * parent);
+
+
+    // To create an object of InterfaceConnection class please use
+    // Knm::InterfaceConnectionHelpers::build(..) function.
     virtual ~InterfaceConnection();
 
     void setConnectionType(Knm::Connection::Type type);
@@ -54,6 +60,9 @@ public:
 
     void setConnectionName(const QString& name);
     QString connectionName() const;
+
+    void setIconName(const QString &);
+    QString iconName() const;
 
     void setActivationState(ActivationState state);
     ActivationState activationState() const;
@@ -71,12 +80,15 @@ Q_SIGNALS:
     void hasDefaultRouteChanged(bool);
     void deactivated();
 protected:
-    InterfaceConnection(const QUuid & connectionUuid, const QString & connectionName, ActivatableType type, const QString & deviceUni, QObject * parent);
+    InterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent);
 
 private:
+    // After you've added a member please correct InterfaceConnectionBuilder::init(..)
+    // function which is responsible for correct initialization.
     Knm::Connection::Type m_type;
     QUuid m_uuid;
     QString m_name;
+    QString m_iconName;
     ActivationState m_state;
     bool m_hasDefaultRoute;
 };

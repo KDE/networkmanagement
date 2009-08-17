@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <vpninterfaceconnection.h>
 
+#include "interfaceconnectionitem_p.h"
+
 VpnInterfaceConnectionItem::VpnInterfaceConnectionItem(Knm::VpnInterfaceConnection * wic, QWidget * parent)
 : InterfaceConnectionItem(wic, parent)
 {
@@ -33,10 +35,10 @@ VpnInterfaceConnectionItem::~VpnInterfaceConnectionItem()
 {
 }
 
-QString VpnInterfaceConnectionItem::iconName() const
+Knm::VpnInterfaceConnection* VpnInterfaceConnectionItem::vpnInterfaceConnection() const
 {
-    kDebug();
-    return QLatin1String("network-server");
+    Q_D(const InterfaceConnectionItem);
+    return qobject_cast<Knm::VpnInterfaceConnection*>(d->activatable);
 }
 
 // vim: sw=4 sts=4 et tw=100

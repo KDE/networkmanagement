@@ -3,6 +3,7 @@ add_definitions(-DKDE_DEFAULT_DEBUG_AREA=51010)
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}
    ${CMAKE_CURRENT_BINARY_DIR}
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../solidcontrolfuture
    )
 
 ## next target: internals layer library
@@ -65,11 +66,14 @@ set(knminternals_SRCS
 
    activatable.cpp
    interfaceconnection.cpp
+   interfaceconnectionhelpers.cpp
    wirelessinterfaceconnection.cpp
+   wirelessinterfaceconnectionhelpers.cpp
    wirelessobject.cpp
    wirelessnetwork.cpp
    unconfiguredinterface.cpp
    vpninterfaceconnection.cpp
+   vpninterfaceconnectionhelpers.cpp
 
    # helper class for recognising the type of WPA secrets
    wpasecretidentifier.cpp
@@ -85,7 +89,7 @@ kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)
 
 kde4_add_library(knminternals SHARED ${knminternals_SRCS})
 
-target_link_libraries(knminternals ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} solidcontrol ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(knminternals solidcontrolfuture ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} solidcontrol ${QT_QTNETWORK_LIBRARY})
 
 set_target_properties(knminternals PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}
