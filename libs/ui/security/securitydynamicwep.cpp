@@ -18,17 +18,31 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wpaeapwidget.h"
+#include "securitydynamicwep.h"
+#include "securityeap_p.h"
 
-WpaEapWidget::WpaEapWidget(Knm::Connection * connection, QWidget * parent)
+SecurityDynamicWep::SecurityDynamicWep(Knm::Connection* connection, QWidget * parent)
     : SecurityEap(connection, true /*wireless*/, parent)
 {
 
 }
 
-WpaEapWidget::~WpaEapWidget()
+SecurityDynamicWep::~SecurityDynamicWep()
 {
 
+}
+
+void SecurityDynamicWep::writeConfig()
+{
+    Q_D(SecurityEap);
+    SecurityEap::writeConfig();
+
+    QStringList pairwise = d->settingSecurity->pairwise();
+    pairwise << "wep40" << "wep104";
+    QStringList group = d->settingSecurity->group();
+    group << "wep40" << "wep104";
+    d->settingSecurity->setPairwise(pairwise);
+    d->settingSecurity->setGroup(group);
 }
 
 // vim: sw=4 sts=4 et tw=100

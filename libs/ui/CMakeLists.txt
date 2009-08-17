@@ -34,6 +34,10 @@ set(knmui_SRCS
    security/wepwidget.cpp
    security/securityleap.cpp
    security/wpapskwidget.cpp
+   security/securitydynamicwep.cpp
+   # base UI for 802.1x
+   security/securityeap.cpp
+   # WPA-EAP
    security/wpaeapwidget.cpp
    security/eapmethod.cpp
    security/eapmethodstack.cpp

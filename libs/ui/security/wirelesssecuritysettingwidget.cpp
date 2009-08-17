@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "nullsecuritywidget.h"
 #include "wepwidget.h"
 #include "securityleap.h"
+#include "securitydynamicwep.h"
 #include "wpapskwidget.h"
 #include "wpaeapwidget.h"
 
@@ -49,7 +50,7 @@ class WirelessSecuritySettingWidgetPrivate
 Q_DECLARE_PUBLIC(WirelessSecuritySettingWidget)
 public:
     WirelessSecuritySettingWidgetPrivate(WirelessSecuritySettingWidget * parent)
-        : q_ptr(parent), noSecurityIndex(-1), staticWepIndex(-1), leapIndex(-1), wpaPskIndex(-1), wpaEapIndex(-1), currentSecurity(-1),
+        : q_ptr(parent), noSecurityIndex(-1), staticWepIndex(-1), leapIndex(-1), dynamicWepIndex(-1), wpaPskIndex(-1), wpaEapIndex(-1), currentSecurity(-1),
         wpaEapWidget(0), settingWireless(0), settingSecurity(0), persistence(0)
     {
     }
@@ -79,6 +80,7 @@ public:
     int noSecurityIndex;
     int staticWepIndex;
     int leapIndex;
+    int dynamicWepIndex;
     int wpaPskIndex;
     int wpaEapIndex;
     int currentSecurity;
@@ -153,6 +155,12 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::Leap);
     }
 
+    // Dynamic WEP
+    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::DynamicWep, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
+        d->registerSecurityType(new SecurityDynamicWep(connection, this), i18nc("Label for Dynamic WEP wireless security", "Dynamic WEP (802.1x)"), d->dynamicWepIndex);
+        d->settingWireless->setSecurity(d->settingSecurity->name());
+    }
+
     // WPA-PSK
     if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::WpaPsk, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
             || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Wpa2Psk, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
@@ -200,6 +208,9 @@ void WirelessSecuritySettingWidget::readConfig()
             case Knm::WirelessSecuritySetting::EnumSecurityType::Leap:
                 d->setCurrentSecurityWidget(d->leapIndex);
                 break;
+            case Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep:
+                d->setCurrentSecurityWidget(d->dynamicWepIndex);
+                break;
             case Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk:
                 d->setCurrentSecurityWidget(d->wpaPskIndex);
                 break;
@@ -237,6 +248,11 @@ void WirelessSecuritySettingWidget::writeConfig()
     else if (d->ui.cboType->currentIndex() == d->leapIndex) {
         d->setting8021x->setEnabled(false);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::Leap); // FIXME
+    }
+    else if (d->ui.cboType->currentIndex() == d->dynamicWepIndex) {
+        d->setting8021x->setEnabled(true);
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep); // FIXME
+        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAEAP);
     }
     else if (d->ui.cboType->currentIndex() == d->wpaPskIndex) {
         d->setting8021x->setEnabled(false);

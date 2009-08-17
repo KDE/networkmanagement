@@ -18,17 +18,27 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "wpaeapwidget.h"
+#ifndef SECURITYEAP_P_H
+#define SECURITYEAP_P_H
 
-WpaEapWidget::WpaEapWidget(Knm::Connection * connection, QWidget * parent)
-    : SecurityEap(connection, true /*wireless*/, parent)
+#include "eapmethodstack_p.h"
+
+#include <QCheckBox>
+
+#include "settings/802-11-wireless-security.h"
+#include "settings/802-1x.h"
+
+
+class SecurityEapPrivate : public EapMethodStackPrivate
 {
+public:
+    Knm::WirelessSecuritySetting * settingSecurity;
+    Knm::Security8021xSetting * setting8021x;
+    int tlsKey;
+    int leapKey;
+    int peapKey;
+    int ttlsKey;
+    QCheckBox * chkShowPassword;
+};
 
-}
-
-WpaEapWidget::~WpaEapWidget()
-{
-
-}
-
-// vim: sw=4 sts=4 et tw=100
+#endif // SECURITYEAP_P_H
