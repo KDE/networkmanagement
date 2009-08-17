@@ -50,7 +50,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settingwidget.h"
 #include "wiredwidget.h"
 #include "security/wirelesssecuritysettingwidget.h"
-#include "security/802_1x_security_widget.h"
 #include "security/securitywidget.h"
 
 #include "knmserviceprefs.h"
