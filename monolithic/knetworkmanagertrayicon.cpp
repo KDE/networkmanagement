@@ -20,7 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knetworkmanagertrayicon.h"
 
+#include <QApplication>
+#include <QClipboard>
+#include <QHostAddress>
 #include <QPointer>
+#include <QTimer>
 #include <QVBoxLayout>
 #include <QWidgetAction>
 
@@ -59,6 +63,8 @@ public:
         iconName(QLatin1String("networkmanager")),
         flightModeAction(0),
         prefsAction(0),
+        copyIpAddrAction(0),
+        propertiesAction(0),
         wirelessNetworkItemMenu(0), active(true)
     { }
     Solid::Control::NetworkInterface::Types interfaceTypes;
@@ -68,12 +74,15 @@ public:
     QString iconName;
     KAction * flightModeAction;
     KAction * prefsAction;
+    KAction * copyIpAddrAction;
+    KAction * propertiesAction;
     KMenu * wirelessNetworkItemMenu;
     bool active;
     // used for updating the tray icon, and indicates whether we are currently displaying a wireless
     // network interface's state in the tray
     QPointer<Solid::Control::NetworkInterface> displayedNetworkInterface;
     QPointer<Solid::Control::AccessPoint> activeAccessPoint;
+    QHostAddress hoveredActionIpAddress;
 };
 
 /* for qSort()ing */
@@ -140,6 +149,10 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
             QObject::connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
         }
     }
+
+    // show sub-context menu on connection actions
+    contextMenu()->contextMenu();
+    connect( contextMenu(), SIGNAL(aboutToShowContextMenu(KMenu*,QAction*,QMenu*)), this, SLOT(aboutToShowMenuContextMenu(KMenu*,QAction*,QMenu*)));
 
     updateInterfaceToDisplay();
 }
@@ -210,7 +223,6 @@ void KNetworkManagerTrayIcon::fillPopup()
             widget = qobject_cast<ActivatableItem*>(action->defaultWidget());
         } else {
             action = new QWidgetAction(this);
-            action->setData(QVariant::fromValue(activatable));
             if (activatable->activatableType() == Knm::Activatable::InterfaceConnection) {
                 Knm::InterfaceConnection * ic = static_cast<Knm::InterfaceConnection*>(activatable);
                 kDebug() << "IC" << ic->connectionName();
@@ -605,6 +617,73 @@ void KNetworkManagerTrayIcon::activeAccessPointChanged(const QString & uni)
         }
     }
     updateTrayIcon();
+}
+
+void KNetworkManagerTrayIcon::aboutToShowMenuContextMenu(KMenu * menu, QAction * action, QMenu * ctxMenu)
+{
+    Q_D(KNetworkManagerTrayIcon);
+    kDebug() << menu <<  action << ctxMenu;
+    if (menu == contextMenu()) {
+        QWidgetAction * widgetAction = qobject_cast<QWidgetAction*>(action);
+        if (widgetAction) {
+            InterfaceConnectionItem * ici = qobject_cast<InterfaceConnectionItem*>(widgetAction->defaultWidget());
+            if (ici) {
+                Knm::InterfaceConnection * ic = ici->interfaceConnection();
+                if ( ic ) {
+                    if (!d->copyIpAddrAction) {
+                        d->copyIpAddrAction = KStandardAction::copy(this, SLOT(copyIpAddress()), this);
+                        d->copyIpAddrAction->setText(i18nc("@action:inmenu copy ip address to clipboard", "Copy IP Address"));
+                        d->propertiesAction = new KAction(i18nc("@action:inmenu interface connection properties", "Properties"), this);
+                        connect(d->propertiesAction, SIGNAL(triggered(bool)), this, SLOT(showConnectionProperties(bool)));
+                        // TODO implement
+                        d->propertiesAction->setEnabled(false);
+
+                    }
+                    if (ic->activationState() == Knm::InterfaceConnection::Activated) {
+                        QString deviceUni = ic->deviceUni();
+                        Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
+                        QHostAddress addr;
+                        if (iface) {
+                            Solid::Control::IPv4Config cfg = iface->ipV4Config();
+                            if (!cfg.addresses().isEmpty()) {
+                                addr = QHostAddress(cfg.addresses().first().address());
+                            }
+                        }
+                        d->hoveredActionIpAddress = addr;
+                        d->copyIpAddrAction->setEnabled(true);
+                    } else {
+                        d->hoveredActionIpAddress = QHostAddress();
+                        d->copyIpAddrAction->setEnabled(false);
+                    }
+                    ctxMenu->addAction(d->copyIpAddrAction);
+                    ctxMenu->addAction(d->propertiesAction);
+                } else {
+                    kDebug() << "InterfaceconnectionItem did not have an InterfaceConnection";
+                }
+            } else {
+                ctxMenu->removeAction(d->copyIpAddrAction);
+                QTimer::singleShot(0, ctxMenu, SLOT(hide()));
+
+            }
+        } else {
+            ctxMenu->removeAction(d->copyIpAddrAction);
+            QTimer::singleShot(0, ctxMenu, SLOT(hide()));
+        }
+    }
+}
+
+void KNetworkManagerTrayIcon::copyIpAddress()
+{
+    Q_D(KNetworkManagerTrayIcon);
+    QClipboard * clip = QApplication::clipboard();
+    clip->setText(d->hoveredActionIpAddress.toString());
+    d->hoveredActionIpAddress = QHostAddress();
+}
+
+void KNetworkManagerTrayIcon::showConnectionProperties()
+{
+    // This is not yet implemented.  When it is implemented, remove the setEnabled(false) call to
+    // d->propertiesAction
 }
 
 bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Control::NetworkInterface * if2)

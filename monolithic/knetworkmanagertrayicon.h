@@ -30,8 +30,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Solid/Networking>
 #include <solid/control/networkinterface.h>
 
+class QAction;
+class QMenu;
 class QSignalMapper;
-class QVBoxLayout; class QWidgetAction;
+class QVBoxLayout;
+class QWidgetAction;
 
 class KMenu;
 class ActivatableItem;
@@ -112,6 +115,19 @@ protected Q_SLOTS:
      * Update the access point used for the signal strength indicator on the tray icon
      */
     void activeAccessPointChanged(const QString &);
+    /**
+     * Populate the popup's context menu with copy IP address action, if appropriate
+     */
+    void aboutToShowMenuContextMenu(KMenu * menu, QAction *, QMenu *);
+    /**
+     * Copy the IP address of the active connection to the clipboard
+     */
+    void copyIpAddress();
+    /**
+     * Show connection properties dialog
+     */
+    void showConnectionProperties();
+
 private:
     void fillPopup();
     QString iconForWirelessState();
