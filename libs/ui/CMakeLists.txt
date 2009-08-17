@@ -13,7 +13,6 @@ set(knmui_SRCS
    gsmwidget.cpp
    pppwidget.cpp
    pppoewidget.cpp
-   security/802_1x_security_widget.cpp
    security/securitywidget.cpp
    settinginterface.cpp
    settingwidget.cpp
@@ -35,6 +34,7 @@ set(knmui_SRCS
    security/securityleap.cpp
    security/wpapskwidget.cpp
    security/securitydynamicwep.cpp
+   security/securitywired8021x.cpp
    # base UI for 802.1x
    security/securityeap.cpp
    # WPA-EAP
@@ -63,7 +63,6 @@ set(knmui_SRCS
    )
 
 kde4_add_ui_files(knmui_SRCS
-   #802_1x.ui
    #security.ui
 
    # Settings
@@ -85,7 +84,6 @@ kde4_add_ui_files(knmui_SRCS
    security/wep.ui
    security/leap.ui
    security/wpapsk.ui
-   security/802_1x.ui
    #   WPA-EAP - a stack of eap methods UI
    #   Used for both inner and outer auth methods
    security/eapmethodstackbase.ui
