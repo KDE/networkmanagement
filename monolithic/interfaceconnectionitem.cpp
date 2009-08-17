@@ -131,16 +131,18 @@ void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::Activ
                     d->connectionDetailsLabel = new QLabel(this);
                     d->connectionLayout->addWidget(d->connectionDetailsLabel);
                 }
-                if (!(iface->type() == Solid::Control::NetworkInterface::Ieee8023 || iface->type() == Solid::Control::NetworkInterface::Ieee80211)) {
-                    if (!d->disconnectButton) {
-                        d->disconnectButton = new QPushButton(this);
-                        d->disconnectButton->setIcon(KIcon("process-stop"));
-                        int buttonSize = d->connectionDetailsLabel->sizeHint().height();
-                        d->disconnectButton->setFixedSize(buttonSize, buttonSize);
+                if (iface) {
+                    if (!(iface->type() == Solid::Control::NetworkInterface::Ieee8023 || iface->type() == Solid::Control::NetworkInterface::Ieee80211)) {
+                        if (!d->disconnectButton) {
+                            d->disconnectButton = new QPushButton(this);
+                            d->disconnectButton->setIcon(KIcon("process-stop"));
+                            int buttonSize = d->connectionDetailsLabel->sizeHint().height();
+                            d->disconnectButton->setFixedSize(buttonSize, buttonSize);
 
-                        d->disconnectButton->setToolTip(i18nc("@info:tooltip network connection disconnect button tooltip", "Disconnect"));
-                        d->connectionLayout->addWidget(d->disconnectButton);
-                        connect(d->disconnectButton, SIGNAL(clicked()), this, SLOT(disconnectClicked()));
+                            d->disconnectButton->setToolTip(i18nc("@info:tooltip network connection disconnect button tooltip", "Disconnect"));
+                            d->connectionLayout->addWidget(d->disconnectButton);
+                            connect(d->disconnectButton, SIGNAL(clicked()), this, SLOT(disconnectClicked()));
+                        }
                     }
                 }
                 d->connectionDetailsLabel->setText(textForConnection(d->state));
