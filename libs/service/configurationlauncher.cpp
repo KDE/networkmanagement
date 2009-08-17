@@ -59,10 +59,10 @@ ConfigurationLauncher::~ConfigurationLauncher()
 void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
 {
     Q_D(ConfigurationLauncher);
-    Knm::WirelessNetwork * wni;
-    Knm::InterfaceConnection * ic;
-    Knm::WirelessInterfaceConnection * wic;
-    Knm::UnconfiguredInterface * unco;
+    Knm::WirelessNetwork * wni = 0;
+    Knm::InterfaceConnection * ic = 0;
+    Knm::WirelessInterfaceConnection * wic = 0;
+    Knm::UnconfiguredInterface * unco = 0;
     switch (added->activatableType()) {
         case Knm::Activatable::WirelessNetwork:
             wni = qobject_cast<Knm::WirelessNetwork*>(added);
@@ -71,7 +71,7 @@ void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
         case Knm::Activatable::InterfaceConnection:
             ic = qobject_cast<Knm::InterfaceConnection*>(added);
             if (d->pendingDevices.contains(ic->deviceUni())) {
-                kDebug() << "activating new connection on" << wic->deviceUni();
+                kDebug() << "activating new connection on" << ic->deviceUni();
                 QTimer::singleShot(0, ic, SIGNAL(activated()));
                 d->pendingDevices.removeOne(ic->deviceUni());
             }
