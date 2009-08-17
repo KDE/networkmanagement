@@ -121,7 +121,7 @@ void ConnectionUsageMonitor::networkInterfaceAdded(const QString& uni)
 {
     Solid::Control::NetworkInterface * interface = Solid::Control::NetworkManager::findNetworkInterface(uni);
 
-    if (interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+    if (interface && interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
         Solid::Control::WirelessNetworkInterface * wifiDevice =
             qobject_cast<Solid::Control::WirelessNetworkInterface *>(interface);
         if (wifiDevice)
