@@ -143,12 +143,13 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
     // WEP
     if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::StaticWep, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
         d->registerSecurityType(new WepWidget(WepWidget::Passphrase, connection, this), i18nc("Label for WEP wireless security", "WEP"), d->staticWepIndex);
-        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep);
+        d->settingWireless->setSecurity(d->settingSecurity->name());
     }
 
     // LEAP
     if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Leap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
         d->registerSecurityType(new LeapWidget(connection, this), i18nc("Label for LEAP wireless security", "LEAP"), d->leapIndex);
+        d->settingWireless->setSecurity(d->settingSecurity->name());
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::Leap);
     }
 
@@ -157,19 +158,23 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
             || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Wpa2Psk, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
        ) {
         d->registerSecurityType(new WpaPskWidget(connection, this), i18nc("Label for WPA-PSK wireless security", "WPA/WPA2 Personal"), d->wpaPskIndex);
-        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk);
+        d->settingWireless->setSecurity(d->settingSecurity->name());
     }
     // WPA-EAP
     if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::WpaEap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
             || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Wpa2Eap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
                 ) {
         d->registerSecurityType(new WpaEapWidget(connection, this), i18nc("Label for WPA-EAP wireless security", "WPA/WPA2 Enterprise"), d->wpaEapIndex);
-        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap);
+        d->settingWireless->setSecurity(d->settingSecurity->name());
     }
 
     //HACK - default new connections without an AP or those which support both EAP and PSK to WPA-PSK.  This will be overwritten in  readConfig() if there is prior configuration
     if (d->wpaPskIndex >= 0) {
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk);
+    } else if (d->wpaEapIndex >= 0) {
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap);
+    } else if (d->staticWepIndex >= 0) {
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep);
     }
 }
 
