@@ -23,6 +23,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 #include <QPointer>
 
+#include <solid/control/networkmanager.h>
+
 #include <connection.h>
 #include <vpninterfaceconnection.h>
 
@@ -43,6 +45,8 @@ VpnInterfaceConnectionProvider::VpnInterfaceConnectionProvider(ConnectionList * 
     Q_D(VpnInterfaceConnectionProvider);
     d->connectionList = connectionList;
     d->activatableList = activatableList;
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
+            this, SLOT(statusChanged(Solid::Networking::Status)));
 }
 
 VpnInterfaceConnectionProvider::~VpnInterfaceConnectionProvider()
@@ -54,20 +58,22 @@ void VpnInterfaceConnectionProvider::init()
 {
     Q_D(VpnInterfaceConnectionProvider);
     // assess all connections
-    foreach (QString uuid, d->connectionList->connections()) {
-        Knm::Connection * connection = d->connectionList->findConnection(uuid);
-        handleAdd(connection);
-    }
+        foreach (QString uuid, d->connectionList->connections()) {
+            Knm::Connection * connection = d->connectionList->findConnection(uuid);
+            handleAdd(connection);
+        }
 }
 
 void VpnInterfaceConnectionProvider::handleAdd(Knm::Connection * addedConnection)
 {
     Q_D(VpnInterfaceConnectionProvider);
-    if (!d->vpns.contains(addedConnection->uuid())) {
-        if (addedConnection->type() == Knm::Connection::Vpn) {
-            Knm::VpnInterfaceConnection * vpnConnection = new Knm::VpnInterfaceConnection(addedConnection->uuid(), addedConnection->name(), QLatin1String("any"), this);
-            d->vpns.insert(addedConnection->uuid(), vpnConnection);
-            d->activatableList->addActivatable(vpnConnection);
+    if (Solid::Control::NetworkManager::status() == Solid::Networking::Connected) {
+        if (!d->vpns.contains(addedConnection->uuid())) {
+            if (addedConnection->type() == Knm::Connection::Vpn) {
+                Knm::VpnInterfaceConnection * vpnConnection = new Knm::VpnInterfaceConnection(addedConnection->uuid(), addedConnection->name(), QLatin1String("any"), this);
+                d->vpns.insert(addedConnection->uuid(), vpnConnection);
+                d->activatableList->addActivatable(vpnConnection);
+            }
         }
     }
 }
@@ -89,6 +95,20 @@ void VpnInterfaceConnectionProvider::handleRemove(Knm::Connection * removedConne
         Knm::VpnInterfaceConnection * activatable = d->vpns.take(removedConnection->uuid());
         d->activatableList->removeActivatable(activatable);
         delete activatable;
+    }
+}
+
+void VpnInterfaceConnectionProvider::statusChanged(Solid::Networking::Status status)
+{
+    Q_D(VpnInterfaceConnectionProvider);
+    if (status == Solid::Networking::Connected) {
+        init();
+    } else {
+        foreach (Knm::VpnInterfaceConnection * vpnConnection, d->vpns) {
+            d->activatableList->removeActivatable(vpnConnection);
+            delete vpnConnection;
+            d->vpns.clear();
+        }
     }
 }
 
