@@ -201,7 +201,11 @@ Knm::WirelessSecurity::Type Knm::WirelessSecurity::best(Solid::Control::Wireless
 {
     QList<Knm::WirelessSecurity::Type> types;
 
-    types << Knm::WirelessSecurity::Wpa2Eap << Knm::WirelessSecurity::WpaEap << Knm::WirelessSecurity::Wpa2Psk << Knm::WirelessSecurity::WpaPsk << Knm::WirelessSecurity::DynamicWep << Knm::WirelessSecurity::Leap << Knm::WirelessSecurity::StaticWep << Knm::WirelessSecurity::None;
+    // The ordering of this list is a pragmatic combination of security level and popularity.
+    // Therefore static WEP is before LEAP and Dynamic WEP because there is no way to detect
+    // if an AP is capable of Dynamic WEP and showing Dynamic WEP first would confuse
+    // Static WEP users.
+    types << Knm::WirelessSecurity::Wpa2Eap << Knm::WirelessSecurity::Wpa2Psk << Knm::WirelessSecurity::WpaEap << Knm::WirelessSecurity::WpaPsk << Knm::WirelessSecurity::StaticWep << Knm::WirelessSecurity::DynamicWep << Knm::WirelessSecurity::Leap << Knm::WirelessSecurity::None;
 
     foreach (Knm::WirelessSecurity::Type type, types) {
         if (possible(type, interfaceCaps, haveAp, adHoc, apCaps, apWpa, apRsn)) {
