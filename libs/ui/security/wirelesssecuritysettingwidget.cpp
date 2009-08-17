@@ -178,41 +178,6 @@ WirelessSecuritySettingWidget::~WirelessSecuritySettingWidget()
     delete d_ptr;
 }
 
-void WirelessSecuritySettingWidget::writeConfig()
-{
-    Q_D(WirelessSecuritySettingWidget);
-    d->settingWireless->setSecurity(d->settingSecurity->name());
-    if (d->ui.cboType->currentIndex() == d->noSecurityIndex) {
-        d->setting8021x->setEnabled(false);
-        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::None);
-        d->settingWireless->setSecurity("");
-    }
-    else if (d->ui.cboType->currentIndex() == d->staticWepIndex) {
-        d->setting8021x->setEnabled(false);
-        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep); // FIXME
-        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::None);
-    }
-    else if (d->ui.cboType->currentIndex() == d->leapIndex) {
-        d->setting8021x->setEnabled(false);
-        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::Leap); // FIXME
-    }
-    else if (d->ui.cboType->currentIndex() == d->wpaPskIndex) {
-        d->setting8021x->setEnabled(false);
-        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk); // FIXME
-        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAPSK);
-    }
-    else if (d->ui.cboType->currentIndex() == d->wpaEapIndex) {
-        d->setting8021x->setEnabled(true);
-        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap); // FIXME
-        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAEAP);
-    }
-
-    SecurityWidget * sw = d->currentSecurityWidget();
-    if (sw) {
-        sw->writeConfig();
-    }
-}
-
 void WirelessSecuritySettingWidget::readConfig()
 {
     Q_D(WirelessSecuritySettingWidget);
@@ -248,6 +213,41 @@ void WirelessSecuritySettingWidget::readSecrets()
     Q_D(WirelessSecuritySettingWidget);
     SecurityWidget * sw = d->currentSecurityWidget();
     sw->readSecrets();
+}
+
+void WirelessSecuritySettingWidget::writeConfig()
+{
+    Q_D(WirelessSecuritySettingWidget);
+    d->settingWireless->setSecurity(d->settingSecurity->name());
+    if (d->ui.cboType->currentIndex() == d->noSecurityIndex) {
+        d->setting8021x->setEnabled(false);
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::None);
+        d->settingWireless->setSecurity("");
+    }
+    else if (d->ui.cboType->currentIndex() == d->staticWepIndex) {
+        d->setting8021x->setEnabled(false);
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep); // FIXME
+        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::None);
+    }
+    else if (d->ui.cboType->currentIndex() == d->leapIndex) {
+        d->setting8021x->setEnabled(false);
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::Leap); // FIXME
+    }
+    else if (d->ui.cboType->currentIndex() == d->wpaPskIndex) {
+        d->setting8021x->setEnabled(false);
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk); // FIXME
+        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAPSK);
+    }
+    else if (d->ui.cboType->currentIndex() == d->wpaEapIndex) {
+        d->setting8021x->setEnabled(true);
+        d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap); // FIXME
+        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAEAP);
+    }
+
+    SecurityWidget * sw = d->currentSecurityWidget();
+    if (sw) {
+        sw->writeConfig();
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100
