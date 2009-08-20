@@ -34,7 +34,7 @@ class TraySettingsWidgetPrivate;
 class TraySettingsWidget : public QWidget
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(TraySettingsWidget);
+Q_DECLARE_PRIVATE(TraySettingsWidget)
 public:
     TraySettingsWidget(QWidget * parent = 0);
     virtual ~TraySettingsWidget();

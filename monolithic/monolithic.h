@@ -28,7 +28,7 @@ class MonolithicPrivate;
 class Monolithic : public KUniqueApplication
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(Monolithic);
+Q_DECLARE_PRIVATE(Monolithic)
 Q_CLASSINFO("D-Bus Interface", "org.kde.knetworkmanager")
 public:
     Monolithic();
