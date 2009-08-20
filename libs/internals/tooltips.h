@@ -32,7 +32,7 @@ namespace ToolTips
     KNMINTERNALS_EXPORT QStringList allKeys();
     KNMINTERNALS_EXPORT QString labelForKey(const QString & key);
     KNMINTERNALS_EXPORT QString toolTipForKey(const QString & key);
-};
+}
 
 } // namespace Knm
 
