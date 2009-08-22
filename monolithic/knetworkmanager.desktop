@@ -5,6 +5,7 @@ Name[x-test]=xxKNetworkManagerxx
 GenericName=Network Manager
 GenericName[da]=Netværkshåndtering
 GenericName[de]=Netzwerkverwaltung
+GenericName[es]=Gestor de red
 GenericName[pt]=KNetworkManager
 GenericName[pt_BR]=KNetworkManager
 GenericName[ro]=Gestionar rețea
