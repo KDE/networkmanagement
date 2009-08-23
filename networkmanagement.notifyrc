@@ -278,6 +278,7 @@ Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=A connection is being started automatically
 Comment[de]=Es wird automatisch eine Verbindung aufgebaut
+Comment[es]=Se ha iniciado una conexión automáticamente
 Comment[pt]=Uma ligação está a ser iniciada automaticamente
 Comment[pt_BR]=Uma ligação está a ser iniciada automaticamente
 Comment[ro]=O conexiune este pornită automat

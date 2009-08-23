@@ -19,6 +19,7 @@ Type=Application
 Comment=A KDE frontend for NetworkManager
 Comment[da]=En KDE-brugerflade til Networkmanager
 Comment[de]=Eine KDE-Oberfläche für NetworkManager
+Comment[es]=Una interfaz KDE para NetworkManager
 Comment[pt]=Uma interface para KDE do NetworkManager
 Comment[pt_BR]=Uma interface para KDE do NetworkManager
 Comment[ro]=Interfață KDE pentru NetworkManager

@@ -22,6 +22,7 @@ Comment[da]=Leverer netværkskonfiguration af NetworkManager-dæmonen
 Comment[de]=Stellt dem NetworkManager-Dienst eine Netzwerkeinrichtung zur Verfügung
 Comment[el]=Προσφέρει ρυθμίσεις δικτύου με το δαίμονα διαχείρισης δικτύου
 Comment[en_GB]=Provides network configuration to the NetworkManager dæmon
+Comment[es]=Permite realizar configuraciones de red al demonio NetworkManager
 Comment[et]=Võrguseadistuse edastamine võrguhalduri deemonile
 Comment[fr]=Fournit la configuration réseau au démon du NetworkManager
 Comment[gl]=Fornece configuración de rede ao daemon NetworkManager
