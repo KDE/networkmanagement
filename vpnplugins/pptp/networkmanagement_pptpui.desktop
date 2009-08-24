@@ -17,6 +17,7 @@ Name=PPTP
 Name[x-test]=xxPPTPxx
 Comment=PPTP Plugin
 Comment[de]=PPTP-Modul
+Comment[fr]=Module PPTP
 Comment[pt]='Plugin' de PPTP
 Comment[pt_BR]='Plugin' de PPTP
 Comment[sv]=Insticksprogram för PPTP
