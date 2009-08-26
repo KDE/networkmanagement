@@ -39,6 +39,11 @@ GsmWidget::GsmWidget(Knm::Connection * connection, QWidget * parent)
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
     d->ui.pin->setEchoMode(QLineEdit::Password);
     d->ui.puk->setEchoMode(QLineEdit::Password);
+    /* Not used yet*/
+    d->ui.lblBand->setVisible(false);
+    d->ui.band->setVisible(false);
+    d->ui.lblNetwork->setVisible(false);
+    d->ui.network->setVisible(false);
 }
 
 GsmWidget::~GsmWidget()

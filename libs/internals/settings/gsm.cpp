@@ -5,7 +5,7 @@
 
 using namespace Knm;
 
-GsmSetting::GsmSetting() : Setting(Setting::Gsm)
+GsmSetting::GsmSetting() : Setting(Setting::Gsm), mNetworktype(-1), mBand(-1)
 {
 }
 

@@ -33,7 +33,7 @@ class KNMINTERNALS_EXPORT WirelessInterfaceConnection : public InterfaceConnecti
 {
 Q_OBJECT
 Q_PROPERTY(QString ssid READ ssid)
-Q_PROPERTY(int strength READ strength)
+Q_PROPERTY(int strength READ strength WRITE setStrength)
 Q_PROPERTY(uint wpaFlags READ wpaFlags)
 Q_PROPERTY(uint rsnFlags READ rsnFlags)
 
@@ -43,14 +43,14 @@ public:
     // To create an object of WirelessInterfaceConnection class please use
     // Knm::WirelessInterfaceConnectionHelpers::build(..) function.
     virtual ~WirelessInterfaceConnection();
-
-protected:
-    WirelessInterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent);
-
 signals:
     void strengthChanged(int);
 public Q_SLOTS:
     void setStrength(int);
+
+protected:
+    WirelessInterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent);
+
 };
 } // namespace
 

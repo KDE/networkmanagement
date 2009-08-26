@@ -98,7 +98,7 @@
        <widget class="KLineEdit" name="apn"/>
       </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
+       <widget class="QLabel" name="lblNetwork">
         <property name="text">
          <string>Net&amp;work:</string>
         </property>
@@ -156,7 +156,7 @@
        </widget>
       </item>
       <item row="3" column="0">
-       <widget class="QLabel" name="label_4">
+       <widget class="QLabel" name="lblBand">
         <property name="text">
          <string>&amp;Band:</string>
         </property>

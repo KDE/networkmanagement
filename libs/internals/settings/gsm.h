@@ -90,7 +90,9 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     */
     void setNetworkid( const QString & v )
     {
-        mNetworkid = v;
+        if (v.length() == 5 || v.length() == 6) {
+            mNetworkid = v;
+        }
     }
 
     /**
