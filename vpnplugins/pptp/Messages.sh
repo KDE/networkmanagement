@@ -1,3 +1,3 @@
 #!/bin/sh
-$XGETTEXT *.cpp -o $podir/networkmanagement_vpncui.pot
+$XGETTEXT *.cpp -o $podir/networkmanagement_pptpui.pot
 rm -f rc.cpp
