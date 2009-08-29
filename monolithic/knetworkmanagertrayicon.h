@@ -128,6 +128,8 @@ protected Q_SLOTS:
      */
     void showConnectionProperties();
 
+    void showOtherWirelessDialog();
+
 private:
     void fillPopup();
     QString iconForWirelessState();

@@ -36,7 +36,12 @@ set(monolithic_SRCS
 
    # helper class
    tooltipbuilder.cpp
+
+   # other networks dialog
+   otherwirelessnetworkdialog.cpp
    )
+
+kde4_add_ui_files(monolithic_SRCS otherwirelessnetworkwidget.ui)
 
 kde4_add_executable(knetworkmanager ${monolithic_SRCS})
 

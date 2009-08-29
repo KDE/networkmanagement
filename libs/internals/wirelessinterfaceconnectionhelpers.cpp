@@ -25,12 +25,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connection.h"
 #include "settings/802-11-wireless.h"
+#include "hiddenwirelessinterfaceconnection.h"
 #include "wirelessinterfaceconnection.h"
 #include "wirelessnetworkinterfaceenvironment.h"
 
 using namespace Knm;
 
-Knm::WirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildInterfaceConnection(
+Knm::WirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildWirelessInterfaceConnection(
         Solid::Control::WirelessNetworkInterface *interface,
         Knm::Connection *connection, const QString & deviceUni, QObject * parent)
 {
@@ -39,7 +40,16 @@ Knm::WirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildInter
     return builder.build();
 }
 
-void WirelessInterfaceConnectionHelpers::syncInterfaceConnection(WirelessInterfaceConnection *ic, Knm::Connection *c)
+Knm::HiddenWirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildHiddenWirelessInterfaceConnection(
+        Solid::Control::WirelessNetworkInterface *interface,
+        Knm::Connection *connection, const QString & deviceUni, QObject * parent)
+{
+    HiddenWirelessInterfaceConnectionBuilder builder(interface, connection, deviceUni, parent);
+
+    return builder.build();
+}
+
+void WirelessInterfaceConnectionHelpers::syncWirelessInterfaceConnection(WirelessInterfaceConnection *ic, Knm::Connection *c)
 {
     WirelessInterfaceConnectionSync sync;
 
@@ -114,6 +124,32 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
         ic->m_rsnFlags = rsnFlags;
         ic->m_operationMode = mode;
     }
+}
+
+HiddenWirelessInterfaceConnectionBuilder::HiddenWirelessInterfaceConnectionBuilder(
+                    Solid::Control::WirelessNetworkInterface *interface,
+                    Knm::Connection *connection,
+                    const QString &deviceUni,
+                    QObject *parent)
+: WirelessInterfaceConnectionBuilder(interface, connection, deviceUni, parent)
+{
+}
+
+HiddenWirelessInterfaceConnectionBuilder::~HiddenWirelessInterfaceConnectionBuilder()
+{
+}
+
+Knm::HiddenWirelessInterfaceConnection* HiddenWirelessInterfaceConnectionBuilder::build()
+{
+    HiddenWirelessInterfaceConnection *ic =
+        new HiddenWirelessInterfaceConnection(Activatable::HiddenWirelessInterfaceConnection,
+                m_deviceUni, m_parent);
+
+    if (ic) {
+        init(ic);
+    }
+
+    return ic;
 }
 
 WirelessInterfaceConnectionSync::WirelessInterfaceConnectionSync()

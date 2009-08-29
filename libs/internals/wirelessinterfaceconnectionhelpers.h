@@ -35,25 +35,36 @@ namespace Solid {
 namespace Knm {
 
 class Connection;
+class HiddenWirelessInterfaceConnection;
 class WirelessInterfaceConnection;
 
 class KNMINTERNALS_EXPORT WirelessInterfaceConnectionHelpers {
 public:
     /**
-     * This helper builds an InterfaceConnection object from
+     * This helper builds a WirelessInterfaceConnection object from
      * the corresponding Connection object.
      */
-    static Knm::WirelessInterfaceConnection * buildInterfaceConnection(
+    static Knm::WirelessInterfaceConnection * buildWirelessInterfaceConnection(
                        Solid::Control::WirelessNetworkInterface *interface,
                        Knm::Connection * connection,
                        const QString & deviceUni,
                        QObject * parent);
 
     /**
-     * This helper syncs an InterfaceConnection object with
+     * This helper builds a HiddenWirelessInterfaceConnection object from
      * the corresponding Connection object.
      */
-    static void syncInterfaceConnection(Knm::WirelessInterfaceConnection *ic, Knm::Connection *c);
+    static Knm::HiddenWirelessInterfaceConnection * buildHiddenWirelessInterfaceConnection(
+                       Solid::Control::WirelessNetworkInterface *interface,
+                       Knm::Connection * connection,
+                       const QString & deviceUni,
+                       QObject * parent);
+
+    /**
+     * This helper syncs a WirelessInterfaceConnection object with
+     * the corresponding Connection object.
+     */
+    static void syncWirelessInterfaceConnection(Knm::WirelessInterfaceConnection *ic, Knm::Connection *c);
 };
 } //Knm
 

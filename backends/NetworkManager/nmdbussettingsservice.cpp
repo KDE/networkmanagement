@@ -204,7 +204,7 @@ void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
 {
     Q_D(NMDBusSettingsService);
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(added);
-    if (ic) {
+    if (ic && ic->activatableType() != Knm::Activatable::HiddenWirelessInterfaceConnection) {
         // listen to the IC
         kDebug() << ic->connectionUuid();
         //if (ic->activatableType() != Knm::Activatable::VpnInterfaceConnection) {

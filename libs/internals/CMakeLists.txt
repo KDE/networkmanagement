@@ -67,6 +67,7 @@ set(knminternals_SRCS
    activatable.cpp
    interfaceconnection.cpp
    interfaceconnectionhelpers.cpp
+   hiddenwirelessinterfaceconnection.cpp
    wirelessinterfaceconnection.cpp
    wirelessinterfaceconnectionhelpers.cpp
    wirelessobject.cpp

@@ -27,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <activatable.h>
 #include <interfaceconnection.h>
 #include <vpninterfaceconnection.h>
+#include <hiddenwirelessinterfaceconnection.h>
 #include <wirelessinterfaceconnection.h>
 #include <wirelessnetwork.h>
 
@@ -63,6 +64,10 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
         case Knm::Activatable::WirelessInterfaceConnection:
             wic = qobject_cast<Knm::WirelessInterfaceConnection*>(activatable);
             string = QString::fromLatin1("WirelessConnection %1 (%2) on %3 with state %4 for network %5 with strength %6").arg(wic->connectionName(), wic->connectionUuid(), identifier, QString::number(wic->activationState()), wic->ssid(), QString::number(wic->strength()));
+            break;
+        case Knm::Activatable::HiddenWirelessInterfaceConnection:
+            wic = qobject_cast<Knm::HiddenWirelessInterfaceConnection*>(activatable);
+            string = QString::fromLatin1("HiddenWirelessConnection %1 (%2) on %3 with state %4 for network %5 with strength %6").arg(wic->connectionName(), wic->connectionUuid(), identifier, QString::number(wic->activationState()), wic->ssid(), QString::number(wic->strength()));
             break;
         case Knm::Activatable::WirelessNetwork:
             wni = qobject_cast<Knm::WirelessNetwork*>(activatable);

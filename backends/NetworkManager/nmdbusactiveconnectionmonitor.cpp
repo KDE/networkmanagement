@@ -172,7 +172,8 @@ Knm::InterfaceConnection * NMDBusActiveConnectionMonitor::interfaceConnectionFor
     // check whether each interfaceconnection is for the changed active connection
     foreach (Knm::Activatable * activatable, activatables) {
         Knm::InterfaceConnection * candidate = qobject_cast<Knm::InterfaceConnection*>(activatable);
-        if (candidate) {
+        // ignore HiddenWICs, we don't set status on these
+        if (candidate && candidate->activatableType() != Knm::Activatable::HiddenWirelessInterfaceConnection) {
             if (candidate->property("NMDBusService") == connectionActive->serviceName()
                     && candidate->property("NMDBusObjectPath") == connectionActive->connection().path()
                     && (candidate->activatableType() == Knm::Activatable::VpnInterfaceConnection

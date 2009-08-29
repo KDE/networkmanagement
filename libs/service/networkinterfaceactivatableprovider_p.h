@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkinterfaceactivatableprovider.h"
 
+#include <QMultiHash>
 #include <QPointer>
 
 namespace Knm
@@ -39,7 +40,7 @@ public:
     ConnectionList * connectionList;
     QPointer<ActivatableList> activatableList;
     // map connection UUID to activatable
-    QHash<QString, Knm::Activatable*> activatables;
+    QMultiHash<QString, Knm::Activatable*> activatables;
     // special activatable for devices with no connections
     Knm::UnconfiguredInterface * unconfiguredActivatable;
 protected:

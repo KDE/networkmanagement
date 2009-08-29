@@ -40,7 +40,8 @@ public:
         WirelessInterfaceConnection,
         WirelessNetwork,
         UnconfiguredInterface,
-        VpnInterfaceConnection
+        VpnInterfaceConnection,
+        HiddenWirelessInterfaceConnection
     };
 
     virtual ~Activatable();

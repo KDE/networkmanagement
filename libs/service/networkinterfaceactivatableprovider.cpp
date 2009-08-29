@@ -20,8 +20,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkinterfaceactivatableprovider.h"
 
-#include <QHash>
-
 #include "connection.h"
 #include "connectionlist.h"
 #include "interfaceconnection.h"
@@ -177,20 +175,23 @@ void NetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedConne
 void NetworkInterfaceActivatableProvider::handleUpdate(Knm::Connection * updatedConnection)
 {
     Q_D(NetworkInterfaceActivatableProvider);
-    if (d->activatables.contains(updatedConnection->uuid())) {
-        Knm::InterfaceConnection * ifaceConnection = dynamic_cast<Knm::InterfaceConnection *>(d->activatables[updatedConnection->uuid()]);
-
+    QMultiHash<QString, Knm::Activatable*>::const_iterator i = d->activatables.find(updatedConnection->uuid());
+    while (i != d->activatables.end() && i.key() == updatedConnection->uuid()) {
+        Knm::InterfaceConnection * ifaceConnection = dynamic_cast<Knm::InterfaceConnection *>(i.value());
         Knm::InterfaceConnectionHelpers::syncInterfaceConnection(ifaceConnection, updatedConnection);
+        ++i;
     }
 }
 
 void NetworkInterfaceActivatableProvider::handleRemove(Knm::Connection * removedConnection)
 {
     Q_D(NetworkInterfaceActivatableProvider);
-    if (d->activatables.contains(removedConnection->uuid())) {
-        Knm::Activatable * activatable = d->activatables.take(removedConnection->uuid());
+    QMultiHash<QString, Knm::Activatable*>::const_iterator i = d->activatables.find(removedConnection->uuid());
+    while (i != d->activatables.end() && i.key() == removedConnection->uuid()) {
+        Knm::Activatable * activatable = i.value();
         d->activatableList->removeActivatable(activatable);
         delete activatable;
+        ++i;
     }
 
     maintainActivatableForUnconfigured();

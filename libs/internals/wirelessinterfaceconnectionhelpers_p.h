@@ -58,6 +58,24 @@ protected:
     Solid::Control::WirelessNetworkInterface *m_interface;
 };
 
+class HiddenWirelessInterfaceConnectionBuilder : public WirelessInterfaceConnectionBuilder
+{
+public:
+    HiddenWirelessInterfaceConnectionBuilder(Solid::Control::WirelessNetworkInterface * interface,
+                                       Knm::Connection *connection,
+                                       const QString & deviceUni,
+                                       QObject * parent);
+    virtual ~HiddenWirelessInterfaceConnectionBuilder();
+
+    Knm::HiddenWirelessInterfaceConnection* build();
+
+private:
+    Q_DISABLE_COPY(HiddenWirelessInterfaceConnectionBuilder)
+
+protected:
+    Solid::Control::WirelessNetworkInterface *m_interface;
+};
+
 class WirelessInterfaceConnectionSync : public InterfaceConnectionSync
 {
 public:

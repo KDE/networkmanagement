@@ -142,11 +142,12 @@ void WirelessStatus::setStrength(int strength)
 
         Knm::WirelessNetwork * wni = qobject_cast<Knm::WirelessNetwork*>(d->item->activatable());
         if (wni) {
-            d->strength->setValue(strength);
+            d->strength->setValue(wni->strength());
             d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wni->strength())));
         } else {
             Knm::WirelessInterfaceConnection * wic = qobject_cast<Knm::WirelessInterfaceConnection*>(d->item->activatable());
             if (wic) {
+                d->strength->setValue(wic->strength());
                 d->strength->setToolTip(i18nc("@info:tooltip signal strength", "%1%", QString::number(wic->strength())));
             }
         }
