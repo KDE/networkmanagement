@@ -20,10 +20,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wiredwidget.h"
 
-#include "connection.h"
+#include <QComboBox>
+
+#include <Solid/Device>
+#include <solid/control/networkmanager.h>
+#include <solid/control/wirednetworkinterface.h>
+
+#include <connection.h>
+#include <settings/802-3-ethernet.h>
+
 #include "ui_wired.h"
 
-#include "settings/802-3-ethernet.h"
 
 class WiredWidget::Private
 {
@@ -38,6 +45,13 @@ WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
     d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
+    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+        if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+            Solid::Device * dev = new Solid::Device(iface->uni());
+            Solid::Control::WiredNetworkInterface * wired = static_cast<Solid::Control::WiredNetworkInterface*>(iface);
+            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", dev->product(), wired->interfaceName()), wired->hardwareAddress().toLatin1());
+        }
+    }
 }
 
 WiredWidget::~WiredWidget()
@@ -47,18 +61,28 @@ WiredWidget::~WiredWidget()
 
 void WiredWidget::readConfig()
 {
-    if (!d->setting->macaddress().isEmpty())
-        d->ui.macAddress->setText(d->setting->macaddress());
-    d->ui.mtu->setValue(d->setting->mtu());
+    if (!d->setting->macaddress().isEmpty()) {
+        int i = d->ui.cmbMacAddress->findData(d->setting->macaddress());
+        if (i == -1) {
+            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist item for hardware that is currently not attached to the machine with MAC address", "Disconnected interface (%1)", QLatin1String(d->setting->macaddress())));
+            d->ui.cmbMacAddress->setCurrentIndex(d->ui.cmbMacAddress->count() - 1);
+        } else {
+            d->ui.cmbMacAddress->setCurrentIndex(i);
+        }
+    }
+    if (d->setting->mtu()) {
+        d->ui.mtu->setValue(d->setting->mtu());
+    }
 }
 
 void WiredWidget::writeConfig()
 {
     d->setting->setMtu(d->ui.mtu->value());
-    if (d->ui.macAddress->text() == QLatin1String(":::::")) {
+    int i = d->ui.cmbMacAddress->currentIndex();
+    if ( i == 0) {
         d->setting->setMacaddress(QByteArray());
     } else {
-        d->setting->setMacaddress(d->ui.macAddress->text().toAscii());
+        d->setting->setMacaddress(d->ui.cmbMacAddress->itemData(i).toByteArray());
     }
 }
 

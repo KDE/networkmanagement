@@ -22,10 +22,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
+#include <Solid/Device>
+#include <solid/control/networkmanager.h>
+#include <solid/control/wirelessnetworkinterface.h>
+
+#include <connection.h>
+#include <settings/802-11-wireless.h>
+
 #include "scanwidget.h"
-#include "connection.h"
 #include "ui_802-11-wireless.h"
-#include "settings/802-11-wireless.h"
 
 class Wireless80211Widget::Private
 {
@@ -44,6 +49,13 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
     d->ui.ssid->setText(d->proposedSsid);
     d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
+    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+            Solid::Device * dev = new Solid::Device(iface->uni());
+            Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", dev->product(), wiface->interfaceName()), wiface->hardwareAddress().toLatin1());
+        }
+    }
 }
 
 Wireless80211Widget::~Wireless80211Widget()
@@ -68,7 +80,15 @@ void Wireless80211Widget::readConfig()
         d->ui.ssid->setText(QString::fromAscii(d->setting->ssid()));
     }
     d->ui.bssid->setText(QString::fromAscii(d->setting->bssid()));
-    d->ui.macaddress->setText(QString::fromAscii(d->setting->macaddress()));
+    if (!d->setting->macaddress().isEmpty()) {
+        int i = d->ui.cmbMacAddress->findData(d->setting->macaddress());
+        if (i == -1) {
+            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist item for hardware that is currently not attached to the machine with MAC address", "Disconnected interface (%1)", QLatin1String(d->setting->macaddress())));
+            d->ui.cmbMacAddress->setCurrentIndex(d->ui.cmbMacAddress->count() - 1);
+        } else {
+            d->ui.cmbMacAddress->setCurrentIndex(i);
+        }
+    }
     d->ui.mtu->setValue(d->setting->mtu());
 }
 
@@ -86,9 +106,14 @@ void Wireless80211Widget::writeConfig()
             d->setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
             break;
     }
-    if (d->ui.macaddress->text() != QString::fromLatin1(":::::")) {
-        d->setting->setMacaddress(d->ui.macaddress->text().toAscii());
+
+    int i = d->ui.cmbMacAddress->currentIndex();
+    if ( i == 0) {
+        d->setting->setMacaddress(QByteArray());
+    } else {
+        d->setting->setMacaddress(d->ui.cmbMacAddress->itemData(i).toByteArray());
     }
+
     if (d->ui.bssid->text() != QString::fromLatin1(":::::")) {
         d->setting->setBssid(d->ui.bssid->text().toAscii());
     }
