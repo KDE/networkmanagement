@@ -30,9 +30,9 @@ WpaSecretIdentifier::WpaSecretType WpaSecretIdentifier::identify(const QString &
         if (!(current >= (char)0x20 && current <= (char)0x7e)) {
             secretIsPassphrase = false;
         }
-        if (! ( current >= (char)0x30 && current <= (char)0x39)
+        if (! (( current >= (char)0x30 && current <= (char)0x39)
                 || ( current >= (char)0x41 && current <= (char)0x46)
-                || ( current >= (char)0x61 && current <= (char)0x66)) {
+                || ( current >= (char)0x61 && current <= (char)0x66))) {
             secretIsPsk = false;
         }
     }
