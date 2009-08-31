@@ -178,7 +178,9 @@ void NetworkInterfaceActivatableProvider::handleUpdate(Knm::Connection * updated
     QMultiHash<QString, Knm::Activatable*>::const_iterator i = d->activatables.find(updatedConnection->uuid());
     while (i != d->activatables.end() && i.key() == updatedConnection->uuid()) {
         Knm::InterfaceConnection * ifaceConnection = dynamic_cast<Knm::InterfaceConnection *>(i.value());
-        Knm::InterfaceConnectionHelpers::syncInterfaceConnection(ifaceConnection, updatedConnection);
+        if (ifaceConnection) {
+            Knm::InterfaceConnectionHelpers::syncInterfaceConnection(ifaceConnection, updatedConnection);
+        }
         ++i;
     }
 }
