@@ -23,51 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "settingwidget.h"
 
-#include <QItemDelegate>
-#include <QItemSelection>
-
 #include "knm_export.h"
 
 namespace Knm
 {
     class Connection;
 } // namespace Knm
-
-class Ipv4Delegate : public QItemDelegate
-{
-Q_OBJECT
-public:
-    Ipv4Delegate(QObject * parent = 0);
-    virtual ~Ipv4Delegate();
-
-    QWidget * createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-            const QModelIndex &index) const;
-    void setEditorData(QWidget *editor, const QModelIndex &index) const;
-
-    void setModelData(QWidget *editor, QAbstractItemModel *model,
-            const QModelIndex &index) const;
-
-    void updateEditorGeometry(QWidget *editor,
-            const QStyleOptionViewItem &option, const QModelIndex &index) const;
-};
-
-class NetmaskPrefixDelegate : public QItemDelegate
-{
-Q_OBJECT
-public:
-    NetmaskPrefixDelegate(QObject * parent = 0);
-    virtual ~NetmaskPrefixDelegate();
-
-    QWidget * createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-            const QModelIndex &index) const;
-    void setEditorData(QWidget *editor, const QModelIndex &index) const;
-
-    void setModelData(QWidget *editor, QAbstractItemModel *model,
-            const QModelIndex &index) const;
-
-    void updateEditorGeometry(QWidget *editor,
-            const QStyleOptionViewItem &option, const QModelIndex &index) const;
-};
 
 class KNM_EXPORT IpV4Widget : public SettingWidget
 {
@@ -82,12 +43,12 @@ protected Q_SLOTS:
      * Update state of widgets dependent on IP setting method
      */
     void methodChanged(int);
-    void addIpClicked();
-    void removeIpClicked();
-    /**
-     * Update remove IP button depending on if there is a selection
-     */
-    void selectionChanged(const QItemSelection &);
+    void addressEditingFinished();
+    void settingsModeClicked();
+
+private:
+    void switchSettingsMode();
+
 private:
     class Private;
     Private * d;
