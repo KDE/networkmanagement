@@ -1,73 +1,74 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>Ppp</class>
- <widget class="QWidget" name="Ppp" >
-  <property name="geometry" >
+ <widget class="QWidget" name="Ppp">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>298</width>
-    <height>431</height>
+    <width>313</width>
+    <height>452</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>PPP</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout" >
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="auth" >
-     <property name="title" >
+    <widget class="QGroupBox" name="auth">
+     <property name="title">
       <string>Authentication</string>
      </property>
-     <property name="checkable" >
+     <property name="checkable">
       <bool>true</bool>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_4" >
+     <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <widget class="QCheckBox" name="pap" >
-        <property name="text" >
+       <widget class="QCheckBox" name="pap">
+        <property name="text">
          <string>PAP</string>
         </property>
-        <property name="checked" >
+        <property name="checked">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="chap" >
-        <property name="text" >
+       <widget class="QCheckBox" name="chap">
+        <property name="text">
          <string>CHAP</string>
         </property>
-        <property name="checked" >
+        <property name="checked">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="mschapv2" >
-        <property name="text" >
+       <widget class="QCheckBox" name="mschapv2">
+        <property name="text">
          <string>MSCHAPv2</string>
         </property>
-        <property name="checked" >
+        <property name="checked">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="mschap" >
-        <property name="text" >
+       <widget class="QCheckBox" name="mschap">
+        <property name="text">
          <string>MSCHAP</string>
         </property>
-        <property name="checked" >
+        <property name="checked">
          <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="eap" >
-        <property name="text" >
+       <widget class="QCheckBox" name="eap">
+        <property name="text">
          <string>EAP</string>
         </property>
-        <property name="checked" >
+        <property name="checked">
          <bool>true</bool>
         </property>
        </widget>
@@ -76,33 +77,33 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2" >
-     <property name="title" >
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
       <string>Compression</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_3" >
+     <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QGroupBox" name="requiremppe" >
-        <property name="title" >
+       <widget class="QGroupBox" name="requiremppe">
+        <property name="title">
          <string>Point-to-Point Encryption (MPPE)</string>
         </property>
-        <property name="checkable" >
+        <property name="checkable">
          <bool>true</bool>
         </property>
-        <property name="checked" >
+        <property name="checked">
          <bool>false</bool>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_2" >
+        <layout class="QVBoxLayout" name="verticalLayout_2">
          <item>
-          <widget class="QCheckBox" name="requiremppe128" >
-           <property name="text" >
+          <widget class="QCheckBox" name="requiremppe128">
+           <property name="text">
             <string>Require 128-bit encryption</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="mppestateful" >
-           <property name="text" >
+          <widget class="QCheckBox" name="mppestateful">
+           <property name="text">
             <string>Stateful MPPE</string>
            </property>
           </widget>
@@ -111,23 +112,32 @@
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="bsdcomp" >
-        <property name="text" >
+       <widget class="QCheckBox" name="bsdcomp">
+        <property name="text">
          <string>Allow BSD compression</string>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="deflate" >
-        <property name="text" >
-         <string>Allow Deflate compression</string>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="vjcomp" >
-        <property name="text" >
+       <widget class="QCheckBox" name="deflate">
+        <property name="text">
+         <string>Allow Deflate compression</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="vjcomp">
+        <property name="text">
          <string>Use TCP header compression</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -135,8 +145,8 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="pppecho" >
-     <property name="text" >
+    <widget class="QCheckBox" name="pppecho">
+     <property name="text">
       <string>Send PPP echo packets</string>
      </property>
     </widget>
