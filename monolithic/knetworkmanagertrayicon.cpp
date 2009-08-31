@@ -279,14 +279,15 @@ void KNetworkManagerTrayIcon::fillPopup()
             }
         }
     }
-    if (wirelessInterfaceConnectionCount) {
-        if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)
-                && Solid::Control::NetworkManager::isWirelessEnabled()
-                && Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
 
-            contextMenu()->insertAction(insertionPointForConnectToOtherWireless, d->otherWirelessNetworksAction);
-        }
-    } else {
+    if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)
+            && Solid::Control::NetworkManager::isWirelessEnabled()
+            && Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
+
+        contextMenu()->insertAction(insertionPointForConnectToOtherWireless, d->otherWirelessNetworksAction);
+    }
+
+    if (!wirelessInterfaceConnectionCount) {
         foreach (QWidgetAction * action, wirelessUnconfiguredInterfaceItems) {
             contextMenu()->insertAction(insertionPointForConnectToOtherWireless, action);
         }
@@ -314,7 +315,7 @@ void KNetworkManagerTrayIcon::handleRemove(Knm::Activatable * removed)
 void KNetworkManagerTrayIcon::slotPreferences()
 {
     QStringList args;
-    args << "kcm_networkmanagement";
+    args << "--icon" << "networkmanager" << "kcm_networkmanagement" << "kcm_networkmanagement_tray";
     KToolInvocation::kdeinitExec("kcmshell4", args);
 }
 

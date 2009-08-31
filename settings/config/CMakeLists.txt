@@ -11,8 +11,6 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/../../libs/internals)
 set(kcm_networkmanagement_SRCS
    # UI logic
    manageconnectionwidget.cpp
-   menutooltipsettingswidget.cpp
-   traysettingswidget.cpp
 )
 #kde4_add_kcfg_files(kcm_knetworkmanager_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/knmserviceprefs.kcfgc)
 
@@ -21,7 +19,20 @@ kde4_add_plugin(kcm_networkmanagement ${kcm_networkmanagement_SRCS})
 
 target_link_libraries(kcm_networkmanagement knmui knminternals solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KUTILS_LIBS})
 
-install(TARGETS kcm_networkmanagement DESTINATION ${PLUGIN_INSTALL_DIR})
+## next target: tray config KCM
 
-install(FILES kcm_networkmanagement.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+set(kcm_networkmanagement_tray_SRCS
+   managetraywidget.cpp
+   menutooltipsettingswidget.cpp
+   traysettingswidget.cpp
+   )
+
+kde4_add_ui_files(kcm_networkmanagement_tray_SRCS storage.ui menutooltipsettingswidget.ui traysettings.ui)
+kde4_add_plugin(kcm_networkmanagement_tray ${kcm_networkmanagement_tray_SRCS})
+
+target_link_libraries(kcm_networkmanagement_tray knminternals ${KDE4_KDEUI_LIBS})
+
+install(TARGETS kcm_networkmanagement kcm_networkmanagement_tray DESTINATION ${PLUGIN_INSTALL_DIR})
+
+install(FILES kcm_networkmanagement.desktop kcm_networkmanagement_tray.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 

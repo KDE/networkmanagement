@@ -90,10 +90,6 @@ private slots:
      */
     void updateLastUsed();
 
-    /**
-     * Used by the tray settings widget to indicate when its unmanaged widgets change
-     */
-    void otherSettingsChanged();
 private:
     /**
      * Get the connection type of the currently selected index
@@ -119,8 +115,6 @@ private:
     ConnectionEditor * mEditor;
     QHash<QString,QTreeWidgetItem*> mUuidItemHash;
     QTimer * mLastUsedTimer;
-    TraySettingsWidget * mTraySettingsWidget;
-    MenuToolTipSettingsWidget * mMenuToolTipSettingsWidget;
 };
 
 #endif // NM07_MANAGE_CONNECTION_WIDGET_H

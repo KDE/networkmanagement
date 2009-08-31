@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=Network Management
+Name=Network Connections
 Name[da]=Netværkshåndtering
 Name[de]=Netzwerkverwaltung
 Name[es]=Gestión de red
@@ -19,7 +19,7 @@ Name[tr]=Ağ Yönetimi
 Name[uk]=Керування мережею
 Name[wa]=Manaedjmint del rantoele
 Name[x-test]=xxNetwork Managementxx
-Comment=Manage Network Connections
+Comment=Add, Edit and Remove network connections
 Comment[da]=Håndtér netværksforbindelser
 Comment[de]=Netzwerkverbindungen verwalten
 Comment[es]=Gestionar las conexiones de red

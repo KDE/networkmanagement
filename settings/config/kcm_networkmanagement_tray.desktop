@@ -1,0 +1,13 @@
+[Desktop Entry]
+Name=Other
+Comment=Configure the Network Management tool
+Type=Service
+Exec=kcmshell4 kcm_networkmanagement_tray
+Icon=networkmanager
+X-KDE-ServiceTypes=KCModule
+X-KDE-Library=kcm_networkmanagement_tray
+X-KDE-FactoryName=kcm_networkmanagement_tray
+X-KDE-ParentApp=kcontrol
+X-KDE-System-Settings-Parent-Category=network-and-connectivity
+Categories=Qt;KDE;X-KDE-settings-system;
+
