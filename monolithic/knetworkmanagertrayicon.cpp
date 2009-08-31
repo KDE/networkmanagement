@@ -121,6 +121,7 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     d->prefsAction = KStandardAction::preferences(this, SLOT(slotPreferences()), this);
     d->prefsAction->setText(i18nc("@action:inmenu Preferences action title", "Manage Connections..."));
     d->otherWirelessNetworksDialog = new OtherWirelessNetworkDialog(list, contextMenu());
+    d->otherWirelessNetworksDialog->resize(370, 390);
     list->registerObserver(d->otherWirelessNetworksDialog);
 
     d->list = list;
