@@ -77,7 +77,6 @@ ActivatableItem::ActivatableItem(ActivatableItemPrivate & dd, Knm::Activatable *
     d->init(this);
     d->activatable = activatable;
     QObject::connect(this, SIGNAL(clicked()), d->activatable, SLOT(activate()));
-    //setFrameStyle(QFrame::Plain | QFrame::NoFrame);
 }
 
 ActivatableItem::ActivatableItem(Knm::Activatable * activatable, QWidget * parent)
@@ -87,7 +86,6 @@ ActivatableItem::ActivatableItem(Knm::Activatable * activatable, QWidget * paren
     d->init(this);
     d->activatable = activatable;
     QObject::connect(this, SIGNAL(clicked()), d->activatable, SLOT(activate()));
-    //setFrameStyle(QFrame::Plain | QFrame::NoFrame);
 }
 
 ActivatableItem::~ActivatableItem()

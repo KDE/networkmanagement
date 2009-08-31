@@ -230,6 +230,12 @@ void KNetworkManagerTrayIcon::fillPopup()
                 Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(activatable);
                 kDebug() << "WIC" << wic->connectionName();
                 widget = new WirelessInterfaceConnectionItem(wic, 0);
+            } else if ( activatable->activatableType() == Knm::Activatable::UnconfiguredInterface) {
+                Knm::UnconfiguredInterface * unco = static_cast<Knm::UnconfiguredInterface*>(activatable);
+                kDebug() << "UCI" << unco->deviceUni();
+                widget = new UnconfiguredInterfaceItem(unco, 0);
+                widget->setObjectName(unco->deviceUni());
+                connect (widget, SIGNAL(clicked()), this, SLOT(showOtherWirelessDialog()));
             } else if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
                 Knm::VpnInterfaceConnection * vpn = static_cast<Knm::VpnInterfaceConnection*>(activatable);
                 kDebug() << "VPN" << vpn->connectionName();
@@ -272,13 +278,18 @@ void KNetworkManagerTrayIcon::fillPopup()
             }
         }
     }
-    if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)
-            && Solid::Control::NetworkManager::isWirelessEnabled()
-            && Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
+    if (wirelessInterfaceConnectionCount) {
+        if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)
+                && Solid::Control::NetworkManager::isWirelessEnabled()
+                && Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
 
-        contextMenu()->insertAction(insertionPointForConnectToOtherWireless, d->otherWirelessNetworksAction);
+            contextMenu()->insertAction(insertionPointForConnectToOtherWireless, d->otherWirelessNetworksAction);
+        }
+    } else {
+        foreach (QWidgetAction * action, wirelessUnconfiguredInterfaceItems) {
+            contextMenu()->insertAction(insertionPointForConnectToOtherWireless, action);
+        }
     }
-
     // add the housekeeping actions
     contextMenu()->addSeparator();
     if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {

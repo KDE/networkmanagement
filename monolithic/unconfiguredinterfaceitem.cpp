@@ -60,11 +60,14 @@ UnconfiguredInterfaceItem::UnconfiguredInterfaceItem(Knm::UnconfiguredInterface 
 
     d->subtitleLabel = new QLabel(this);
     d->subtitleLabel->setFont(KGlobalSettings::toolBarFont());
-    d->subtitleLabel->setText(i18nc("Text for menu item for setting up devices which until now do not have any connections", "Configure other network..."));
+    d->subtitleLabel->setText(i18nc("Text for menu item for setting up devices which until now do not have any connections", "Create network connection..."));
     d->outerLayout->addWidget(d->subtitleLabel, 1, 1, 1, 1);
 
     d->activeIcon->setPixmap(pixmap());
     d->activeIcon->show();
+    // disconnects us from to the activatable's activate slot, because this is handled indirectly by
+    // KnetworkManagerTrayIcon now.
+    disconnect(this, SIGNAL(clicked()), unconfigured, SLOT(activate()));
 }
 
 UnconfiguredInterfaceItem::~UnconfiguredInterfaceItem()
