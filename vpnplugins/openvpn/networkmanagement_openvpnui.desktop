@@ -17,6 +17,7 @@ Name=OpenVPN
 Name[tr]=AçıkVPN
 Name[x-test]=xxOpenVPNxx
 Comment=OpenVPN plugin
+Comment[da]=OpenVPN-plugin
 Comment[de]=OpenVPN-Modul
 Comment[el]=πρόσθετο OpenVPN
 Comment[es]=Complemento de OpenVPN
