@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 
 K_PLUGIN_FACTORY( VpncUiPluginFactory, registerPlugin<VpncUiPlugin>(); )
-K_EXPORT_PLUGIN( VpncUiPluginFactory( "networkmanagement_vpncui" ) )
+K_EXPORT_PLUGIN( VpncUiPluginFactory( "networkmanagement_vpncui", "libknetworkmanager" ) )
 
 VpncUiPlugin::VpncUiPlugin(QObject * parent, const QVariantList &) : VpnUiPlugin(parent)
 {

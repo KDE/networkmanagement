@@ -68,9 +68,7 @@ void Monolithic::init()
 {
     Q_D(Monolithic);
 
-    KGlobal::locale()->insertCatalog("libknmui");
-    KGlobal::locale()->insertCatalog("libknmservice");
-    KGlobal::locale()->insertCatalog("libknminternals");
+    KGlobal::locale()->insertCatalog("libknetworkmanager");
 
     disableSessionManagement();
 

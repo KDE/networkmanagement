@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ui_storage.h"
 
 K_PLUGIN_FACTORY( ManageTrayWidgetFactory, registerPlugin<ManageTrayWidget>();)
-K_EXPORT_PLUGIN( ManageTrayWidgetFactory( "kcm_networkmanagementtray" ) )
+K_EXPORT_PLUGIN( ManageTrayWidgetFactory( "kcm_networkmanagementtray", "libknetworkmanager" ) )
 
 ManageTrayWidget::ManageTrayWidget(QWidget *parent, const QVariantList &args)
 : KCModule( ManageTrayWidgetFactory::componentData(), parent, args ), mTraySettingsWidget(0)

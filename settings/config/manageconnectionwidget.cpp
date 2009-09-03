@@ -55,12 +55,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ConnectionLastUsedRole 1848
 
 K_PLUGIN_FACTORY( ManageConnectionWidgetFactory, registerPlugin<ManageConnectionWidget>();)
-K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_networkmanagement" ) )
+K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_networkmanagement", "libknetworkmanager" ) )
 
 ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantList &args)
 : KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this))
 {
-    KGlobal::locale()->insertCatalog("libknmui");
     connect(mEditor, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
     mConnEditUi.setupUi(this);
