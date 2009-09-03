@@ -48,7 +48,6 @@ kde4_add_executable(knetworkmanager ${monolithic_SRCS})
 target_link_libraries(knetworkmanager
    ${KDE4_KDECORE_LIBS}
    ${KDE4_KDEUI_LIBS}
-   knotificationitem-1
    knminternals
    knmservice
    knm_nm

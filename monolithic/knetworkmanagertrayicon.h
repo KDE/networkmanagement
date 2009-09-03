@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SIMPLEUI_H
 #define SIMPLEUI_H
 
-#include <knotificationitem-1/knotificationitem.h>
+#include <KNotificationItem>
 #include <activatableobserver.h>
 
 #include <QHash>
@@ -54,7 +54,7 @@ namespace Solid
 /**
  * Tray icon representing one or more network interfaces
  */
-class KNetworkManagerTrayIcon : public Experimental::KNotificationItem, public ActivatableObserver
+class KNetworkManagerTrayIcon : public KNotificationItem, public ActivatableObserver
 {
 Q_OBJECT
 Q_DECLARE_PRIVATE(KNetworkManagerTrayIcon)

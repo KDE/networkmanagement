@@ -99,7 +99,7 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     d->active = active;
 
     setStandardActionsEnabled(false);
-    setCategory(Experimental::KNotificationItem::Hardware);
+    setCategory(KNotificationItem::Hardware);
     setTitle(i18nc("@title:window KNotificationItem tray icon title", "Network Management"));
     setIconByName(d->iconName);
 
@@ -536,9 +536,9 @@ void KNetworkManagerTrayIcon::updateToolTip()
 void KNetworkManagerTrayIcon::networkingStatusChanged(Solid::Networking::Status status)
 {
     if (status == Solid::Networking::Unknown) {
-        setStatus(Experimental::KNotificationItem::Passive);
+        setStatus(KNotificationItem::Passive);
     } else {
-        setStatus(Experimental::KNotificationItem::Active);
+        setStatus(KNotificationItem::Active);
     }
 }
 
