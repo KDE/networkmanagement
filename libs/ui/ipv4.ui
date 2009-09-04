@@ -43,6 +43,9 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="toolTip">
+           <string>Use this field to specify the subnet the above IP address belongs to.</string>
+          </property>
          </widget>
         </item>
         <item row="6" column="0">
@@ -63,6 +66,9 @@
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
+          <property name="toolTip">
+           <string>Use this field to specify the IP address of the gateway for requests outside requests.</string>
+          </property>
          </widget>
         </item>
         <item row="7" column="1">
@@ -72,6 +78,9 @@
             <width>250</width>
             <height>0</height>
            </size>
+          </property>
+          <property name="toolTip">
+           <string>Use this field to specify the IP address of one or more DNS servers to use. Use ',' to separate entries.</string>
           </property>
          </widget>
         </item>
@@ -142,6 +151,9 @@
             <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Use this field to specify the IP address that should be used by this computer.</string>
           </property>
          </widget>
         </item>
@@ -260,6 +272,15 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>method</tabstop>
+  <tabstop>address</tabstop>
+  <tabstop>netMask</tabstop>
+  <tabstop>gateway</tabstop>
+  <tabstop>dns</tabstop>
+  <tabstop>dnsSearch</tabstop>
+  <tabstop>pushButtonSettingsMode</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>
