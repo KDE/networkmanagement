@@ -123,8 +123,13 @@ void IpV4AdvancedWidget::setAdditionalAddresses(const QList<Solid::Control::IPv4
         entry.setPrefixLength(addr.netMask());
 
         item << new QStandardItem(entry.ip().toString())
-             << new QStandardItem(entry.netmask().toString())
-             << new QStandardItem(QHostAddress(addr.gateway()).toString());
+             << new QStandardItem(entry.netmask().toString());
+
+        QString gateway;
+        if (addr.gateway()) {
+            gateway = QHostAddress(addr.gateway()).toString();
+        }
+        item << new QStandardItem(gateway);
 
         d->model.appendRow(item);
     }

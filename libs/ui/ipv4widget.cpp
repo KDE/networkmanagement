@@ -101,7 +101,9 @@ void IpV4Widget::readConfig()
 
         d->ui.address->setText(QHostAddress(addrList[0].address()).toString());
         d->ui.netMask->setText(entry.netmask().toString());
-        d->ui.gateway->setText(QHostAddress(addrList[0].gateway()).toString());
+        if (addrList[0].gateway()) {
+            d->ui.gateway->setText(QHostAddress(addrList[0].gateway()).toString());
+        }
 
         // remove first item
         addrList.removeFirst();
@@ -152,7 +154,7 @@ void IpV4Widget::writeConfig()
     entry.setNetmask(QHostAddress(d->ui.netMask->text()));
 
     QHostAddress gateway(d->ui.gateway->text());
-    if (entry.ip() != QHostAddress::Null && gateway != QHostAddress::Null) {
+    if (entry.ip() != QHostAddress::Null) {
         Solid::Control::IPv4Address addr(entry.ip().toIPv4Address(),
                                          entry.prefixLength(), gateway.toIPv4Address());
 
