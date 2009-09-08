@@ -99,12 +99,20 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     d->active = active;
 
     setStandardActionsEnabled(false);
+#if KDE_IS_VERSION(4,3,67)
     setCategory(KNotificationItem::Hardware);
+#else
+    setCategory(Experimental::KNotificationItem::Hardware);
+#endif
     setTitle(i18nc("@title:window KNotificationItem tray icon title", "Network Management"));
     setIconByName(d->iconName);
 
     setAssociatedWidget(contextMenu());
+#if KDE_IS_VERSION(4,3,67)
     setStatus( (!active || Solid::Control::NetworkManager::status() == Solid::Networking::Unknown )? KNotificationItem::Passive : KNotificationItem::Active);
+#else
+    setStatus( (!active || Solid::Control::NetworkManager::status() == Solid::Networking::Unknown )? Experimental::KNotificationItem::Passive : Experimental::KNotificationItem::Active);
+#endif
 
     if (types.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
         d->flightModeAction = new KAction(i18nc("@action:inmenu turns off wireless networking", "Enable wireless"), this);
@@ -536,9 +544,17 @@ void KNetworkManagerTrayIcon::updateToolTip()
 void KNetworkManagerTrayIcon::networkingStatusChanged(Solid::Networking::Status status)
 {
     if (status == Solid::Networking::Unknown) {
+#if KDE_IS_VERSION(4,3,67)
         setStatus(KNotificationItem::Passive);
+#else
+        setStatus(Experimental::KNotificationItem::Passive);
+#endif
     } else {
+#if KDE_IS_VERSION(4,3,67)
         setStatus(KNotificationItem::Active);
+#else
+        setStatus(Experimental::KNotificationItem::Active);
+#endif
     }
 }
 

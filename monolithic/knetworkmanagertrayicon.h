@@ -21,7 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef SIMPLEUI_H
 #define SIMPLEUI_H
 
+#include <kdeversion.h>
+
+#if KDE_IS_VERSION(4,3,67)
 #include <KNotificationItem>
+#else
+#include <knotificationitem-1/knotificationitem.h>
+#endif
+
 #include <activatableobserver.h>
 
 #include <QHash>
@@ -54,6 +61,10 @@ namespace Solid
 /**
  * Tray icon representing one or more network interfaces
  */
+#if KDE_IS_VERSION(4,3,67)
+#else
+using namespace Experimental;
+#endif
 class KNetworkManagerTrayIcon : public KNotificationItem, public ActivatableObserver
 {
 Q_OBJECT
