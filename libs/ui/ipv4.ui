@@ -106,7 +106,12 @@
           </item>
           <item>
            <property name="text">
-            <string>Auto IP</string>
+            <string>DHCP (only address)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Link-Local</string>
            </property>
           </item>
           <item>

@@ -36,7 +36,7 @@ public:
     Private() : setting(0), isAdvancedModeOn(false)
     {
     }
-    enum MethodIndex { AutomaticMethodIndex = 0, LinkLocalMethodIndex, ManualMethodIndex, SharedMethodIndex };
+    enum MethodIndex { AutomaticMethodIndex = 0, AutomaticOnlyIPMethodIndex, LinkLocalMethodIndex, ManualMethodIndex, SharedMethodIndex };
     Ui_SettingsIp4Config ui;
     Knm::Ipv4Setting * setting;
     bool isAdvancedModeOn;
@@ -46,6 +46,38 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     : SettingWidget(connection, parent), d(new IpV4Widget::Private)
 {
     d->ui.setupUi(this);
+
+    QString str_auto;
+    QString str_auto_only;
+    Knm::Connection::Type connType = connection->type();
+
+    if (Knm::Connection::Vpn == connType) {
+        str_auto = i18nc("@item:inlistbox IPv4 settings configuration method",
+                         "Automatic (VPN)");
+        str_auto_only = i18nc("@item:inlistbox IPv4 settings configuration method",
+                              "Automatic (VPN) addresses only");
+    }
+    else if (Knm::Connection::Gsm == connType
+             || Knm::Connection::Cdma == connType) {
+        str_auto = i18nc("@item:inlistbox IPv4 settings configuration method",
+                         "Automatic (PPP)");
+        str_auto_only = i18nc("@item:inlistbox IPv4 settings configuration method",
+                              "Automatic (PPP) addresses only");
+    }
+    else if (Knm::Connection::Pppoe == connType) {
+        str_auto = i18nc("@item:inlistbox IPv4 settings configuration method",
+                         "Automatic (PPPoE)");
+        str_auto_only = i18nc("@item:inlistbox IPv4 settings configuration method",
+                              "Automatic (PPPoE) addresses only");
+    }
+    else {
+        str_auto = i18nc("@item:inlistbox IPv4 settings configuration method",
+                         "Automatic (DHCP)");
+        str_auto_only = i18nc("@item:inlistbox IPv4 settings configuration method",
+                              "Automatic (DHCP) addresses only");
+    }
+    d->ui.method->setItemText(0, str_auto);
+    d->ui.method->setItemText(1, str_auto_only);
 
     d->ui.advancedSettings->setVisible(false);
     d->ui.address->setValidator(new SimpleIpV4AddressValidator(this));
@@ -72,7 +104,12 @@ void IpV4Widget::readConfig()
 {
     switch (d->setting->method()) {
         case Knm::Ipv4Setting::EnumMethod::Automatic:
-            d->ui.method->setCurrentIndex(d->AutomaticMethodIndex);
+            if (d->setting->ignoredhcpdns()) {
+                d->ui.method->setCurrentIndex(d->AutomaticOnlyIPMethodIndex);
+            }
+            else {
+                d->ui.method->setCurrentIndex(d->AutomaticMethodIndex);
+            }
             break;
         case Knm::Ipv4Setting::EnumMethod::LinkLocal:
             d->ui.method->setCurrentIndex(d->LinkLocalMethodIndex);
@@ -127,16 +164,19 @@ void IpV4Widget::writeConfig()
 {
     // save method
     switch ( d->ui.method->currentIndex()) {
-        case 0:
+        case IpV4Widget::Private::AutomaticOnlyIPMethodIndex:
+            d->setting->setIgnoredhcpdns(true);
+            // set the same Knm::Ipv4Setting::EnumMethod::Automatic value
+        case IpV4Widget::Private::AutomaticMethodIndex:
             d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Automatic);
             break;
-        case 1:
+        case IpV4Widget::Private::LinkLocalMethodIndex:
             d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::LinkLocal);
             break;
-        case 2:
+        case IpV4Widget::Private::ManualMethodIndex:
             d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Manual);
             break;
-        case 3:
+        case IpV4Widget::Private::SharedMethodIndex:
             d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Shared);
             break;
         default:
@@ -181,21 +221,7 @@ void IpV4Widget::writeConfig()
 
 void IpV4Widget::methodChanged(int currentIndex)
 {
-    if (currentIndex == d->AutomaticMethodIndex ||
-        currentIndex == d->LinkLocalMethodIndex) {
-        d->ui.address->setEnabled(false);
-        d->ui.addressLabel->setEnabled(false);
-        d->ui.netMask->setEnabled(false);
-        d->ui.netMaskLabel->setEnabled(false);
-        d->ui.gateway->setEnabled(false);
-        d->ui.gatewayLabel->setEnabled(false);
-        d->ui.dns->setEnabled(false);
-        d->ui.dnsLabel->setEnabled(false);
-        d->ui.dnsSearch->setEnabled(false);
-        d->ui.dnsSearchLabel->setEnabled(false);
-        d->ui.pushButtonSettingsMode->setVisible(false);
-    }
-    else if (currentIndex == d->ManualMethodIndex) {
+    if (currentIndex == IpV4Widget::Private::ManualMethodIndex) {
         d->ui.address->setEnabled(true);
         d->ui.addressLabel->setEnabled(true);
         d->ui.netMask->setEnabled(true);
@@ -208,19 +234,30 @@ void IpV4Widget::methodChanged(int currentIndex)
         d->ui.dnsSearchLabel->setEnabled(true);
         d->ui.pushButtonSettingsMode->setVisible(true);
     }
-    else if (currentIndex == d->SharedMethodIndex) {
+    else {
         d->ui.address->setEnabled(false);
         d->ui.addressLabel->setEnabled(false);
         d->ui.netMask->setEnabled(false);
         d->ui.netMaskLabel->setEnabled(false);
         d->ui.gateway->setEnabled(false);
         d->ui.gatewayLabel->setEnabled(false);
-        d->ui.dns->setEnabled(true);
-        d->ui.dnsLabel->setEnabled(true);
-        d->ui.dnsSearch->setEnabled(true);
-        d->ui.dnsSearchLabel->setEnabled(true);
+
+        if (IpV4Widget::Private::AutomaticOnlyIPMethodIndex == currentIndex) {
+            d->ui.dns->setEnabled(true);
+            d->ui.dnsLabel->setEnabled(true);
+            d->ui.dnsSearch->setEnabled(true);
+            d->ui.dnsSearchLabel->setEnabled(true);
+        }
+        else {
+            d->ui.dns->setEnabled(false);
+            d->ui.dnsLabel->setEnabled(false);
+            d->ui.dnsSearch->setEnabled(false);
+            d->ui.dnsSearchLabel->setEnabled(false);
+        }
+
         d->ui.pushButtonSettingsMode->setVisible(false);
     }
+
 }
 
 quint32 suggestNetmask(quint32 ip)
