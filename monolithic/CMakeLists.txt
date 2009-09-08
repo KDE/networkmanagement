@@ -46,9 +46,9 @@ kde4_add_ui_files(monolithic_SRCS otherwirelessnetworkwidget.ui)
 kde4_add_executable(knetworkmanager ${monolithic_SRCS})
 
 
-if (${KDE_VERSION} VERSION_GREATER "4.3.60")
+if (${KDE_VERSION} VERSION_LESS "4.3.67")
    set(KNOTIFICATIONITEM_LIB "knotificationitem-1")
-endif (${KDE_VERSION} VERSION_GREATER "4.3.60")
+endif (${KDE_VERSION} VERSION_LESS "4.3.67")
 
 target_link_libraries(knetworkmanager
    ${KDE4_KDECORE_LIBS}
