@@ -24,9 +24,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 #include <solid/control/wirednetworkinterface.h>
 
-#include "activatable.h"
 #include "activatablelist.h"
 #include "connectionlist.h"
+#include "interfaceconnection.h"
 
 class WiredNetworkInterfaceActivatableProviderPrivate : public NetworkInterfaceActivatableProviderPrivate
 {
@@ -69,7 +69,7 @@ void WiredNetworkInterfaceActivatableProvider::handleCarrierChange(bool carrier)
             handleAdd(connection);
         }
     } else {
-        foreach (Knm::Activatable * activatable, d->activatables) {
+        foreach (Knm::InterfaceConnection * activatable, d->activatables) {
             d->activatableList->removeActivatable(activatable);
             delete activatable;
         }

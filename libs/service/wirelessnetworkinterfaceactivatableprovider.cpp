@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkmanager.h>
 
 #include <hiddenwirelessinterfaceconnection.h>
+#include <interfaceconnection.h>
 #include <wirelessinterfaceconnection.h>
 #include <wirelessinterfaceconnectionhelpers.h>
 #include <wirelessnetwork.h>
@@ -35,6 +36,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionlist.h"
 #include "unconfiguredinterface.h"
 
+/** WICs are added on connection add if visible, removed/updated etc
+ *           added on network appeared if connection exists, removed etc
+ * HiddenWICs are always added on connection add if no other exists
+ *
+ * WNIs are added on network appeared if no connection exists
+ */
 class WirelessNetworkInterfaceActivatableProviderPrivate : public NetworkInterfaceActivatableProviderPrivate
 {
 public:
@@ -44,8 +51,8 @@ public:
 
     Solid::Control::WirelessNetworkInterfaceEnvironment * environment;
 
-    // essid to activatable
-    QMultiHash<QString, Knm::Activatable *> wirelessActivatables;
+    // essid to WirelessNetwork - only 1 exists per network
+    QHash<QString, Knm::WirelessNetwork *> wirelessNetworks;
 
     Solid::Control::WirelessNetworkInterface * wirelessInterface() const
     {
@@ -82,94 +89,79 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
     // check that WICs for this connection exist
     bool ourWicFound = false;
     bool ourHiddenWicFound = false;
-    // FIX THIS CHECK d->activatables INSTEAD!
-    QMultiHash<QString, Knm::Activatable*>::const_iterator i = d->activatables.find(addedConnection->uuid());
-    while (i != d->activatables.end() && i.key() == addedConnection->uuid()) {
-        if (i.value()->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
-            ourWicFound = true;
-        }
-        if (i.value()->activatableType() == Knm::Activatable::HiddenWirelessInterfaceConnection) {
-            ourHiddenWicFound = true;
-        }
-        ++i;
-    }
 
-    if (matches(addedConnection->type(), d->interface->type())) {
-        if (hardwareAddressMatches(addedConnection, d->interface)) {
-            Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(addedConnection->setting(Knm::Setting::Wireless));
-            if (wirelessSetting) {
-                // create WirelessInterfaceConnections only where the network is present
-                if (d->environment->networks().contains(wirelessSetting->ssid())) {
-                    if (!ourWicFound) {
-                        //kDebug() << d->environment->networks();
-                        kDebug() << "Adding WIC:" << wirelessSetting->ssid() <<  addedConnection->uuid() << addedConnection->name() << d->interface->uni();
+    Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(addedConnection->setting(Knm::Setting::Wireless));
 
-                        // get the info on the network
-                        Solid::Control::WirelessNetwork * network = d->environment->findNetwork(wirelessSetting->ssid());
+    if (wirelessSetting) {
 
-                        Knm::WirelessInterfaceConnection * ifaceConnection =
-                            Knm::WirelessInterfaceConnectionHelpers::buildWirelessInterfaceConnection(
-                                    d->wirelessInterface(), addedConnection, d->interface->uni(), this);
+        if (matches(addedConnection->type(), d->interface->type())) {
+            if (hardwareAddressMatches(addedConnection, d->interface)) {
 
-                        if (network) {
-                            connect(network, SIGNAL(signalStrengthChanged(int)), ifaceConnection, SLOT(setStrength(int)));
-                        }
-
-                        // remove any WirelessNetwork created previously
-                        QMultiHash<QString, Knm::Activatable*>::iterator i = d->wirelessActivatables.find(wirelessSetting->ssid());
-                        while (i != d->wirelessActivatables.end() && i.key() == wirelessSetting->ssid()) {
-                            if (i.value()->activatableType() == Knm::Activatable::WirelessNetwork) {
-                                Knm::Activatable * act = i.value();
-                                i = d->wirelessActivatables.erase(i);
-                                d->activatableList->removeActivatable(act);
-                                delete act;
-                            } else {
-                                ++i;
-                            }
-                        }
-
-                        // register the InterfaceConnection
-                        d->activatables.insert(addedConnection->uuid().toString(), ifaceConnection);
-                        d->wirelessActivatables.insert(wirelessSetting->ssid(), ifaceConnection);
-                        d->activatableList->addActivatable(ifaceConnection);
+                foreach (Knm::InterfaceConnection * ic, d->activatables) {
+                    if (ic->activatableType() == Knm::Activatable::WirelessInterfaceConnection && ic->connectionUuid() == addedConnection->uuid()) {
+                        ourWicFound = true;
+                    }
+                    if (ic->activatableType() == Knm::Activatable::HiddenWirelessInterfaceConnection && ic->connectionUuid() == addedConnection->uuid()) {
+                        ourHiddenWicFound = true;
                     }
                 }
+
+                // create WirelessInterfaceConnections only where the network is present
+                if (!ourWicFound && d->environment->networks().contains(wirelessSetting->ssid())) {
+                    kDebug() << "Adding WIC:" << wirelessSetting->ssid() <<  addedConnection->uuid() << addedConnection->name() << d->interface->uni();
+
+                    Knm::WirelessInterfaceConnection * ifaceConnection =
+                        Knm::WirelessInterfaceConnectionHelpers::buildWirelessInterfaceConnection(
+                                d->wirelessInterface(), addedConnection, d->interface->uni(), this);
+
+                    Solid::Control::WirelessNetwork * network = d->environment->findNetwork(wirelessSetting->ssid());
+
+                    if (network) {
+                        connect(network, SIGNAL(signalStrengthChanged(int)), ifaceConnection, SLOT(setStrength(int)));
+                    }
+
+                    // remove any WirelessNetwork created previously
+                    Knm::WirelessNetwork * knmNetwork = d->wirelessNetworks.take(wirelessSetting->ssid());
+                    if (knmNetwork) {
+                        d->activatableList->removeActivatable(knmNetwork);
+                        delete knmNetwork;
+                    }
+
+                    // register the InterfaceConnection
+                    d->activatables.insert(addedConnection->uuid().toString(), ifaceConnection);
+                    d->activatableList->addActivatable(ifaceConnection);
+                }
                 if (!ourHiddenWicFound) {
-                        kDebug() << "Adding HIDDENWIC:" << wirelessSetting->ssid() <<  addedConnection->uuid() << addedConnection->name() << d->interface->uni();
                     // create a HiddenWirelessInterfaceConnection for this connection as well
                     // this allows adhoc and hidden wireless networks' connections to be activated
                     // see HiddenWIC's docu for why this is needed
+                    kDebug() << "Adding HIDDENWIC:" << wirelessSetting->ssid() <<  addedConnection->uuid() << addedConnection->name() << d->interface->uni();
                     Knm::HiddenWirelessInterfaceConnection * hiddenWic =
                         Knm::WirelessInterfaceConnectionHelpers::buildHiddenWirelessInterfaceConnection(
                                 d->wirelessInterface(), addedConnection, d->interface->uni(), this);
                     d->activatables.insert(addedConnection->uuid().toString(), hiddenWic);
-                    d->wirelessActivatables.insert(wirelessSetting->ssid(), hiddenWic);
                     d->activatableList->addActivatable(hiddenWic);
                 }
             }
         }
+        maintainActivatableForUnconfigured();
     }
-    maintainActivatableForUnconfigured();
 }
 
 void WirelessNetworkInterfaceActivatableProvider::handleRemove(Knm::Connection * removedConnection)
 {
     Q_D(WirelessNetworkInterfaceActivatableProvider);
-    // check type
-    // if we know this connection, remove any references to its WirelessInterfaceConnection
-    if (d->activatables.contains(removedConnection->uuid())) {
-        Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(removedConnection->setting(Knm::Setting::Wireless));
-        if (wirelessSetting) {
-            // remove it any references we hold
-            d->wirelessActivatables.remove(wirelessSetting->ssid());
-            // if the network is present, create a WirelessNetwork for it
-            if (d->environment->networks().contains(wirelessSetting->ssid())) {
-                networkAppeared(wirelessSetting->ssid());
-            }
+    // let our superclass update its state too.  This includes deleting any
+    // WirelessInterfaceConnections created by our handleAdd() reimpl
+    NetworkInterfaceActivatableProvider::handleRemove(removedConnection);
+
+    // try to create a WirelessNetwork - this will do nothing if other connections for this network
+    // still exist
+    Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(removedConnection->setting(Knm::Setting::Wireless));
+    if (wirelessSetting) {
+        if (d->environment->networks().contains(wirelessSetting->ssid())) {
+            networkAppeared(wirelessSetting->ssid());
         }
-        // let our superclass update its state too.  This includes deleting any
-        // WirelessInterfaceConnection created by our handleAdd() reimpl
-        NetworkInterfaceActivatableProvider::handleRemove(removedConnection);
     }
 }
 
@@ -185,15 +177,16 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
     }
     // if we still don't have an activatable for this network, we have no connection
     bool hasConnection = false;
-    QMultiHash<QString, Knm::Activatable*>::iterator i = d->wirelessActivatables.find(ssid);
-    while (i != d->wirelessActivatables.end() && i.key() == ssid) {
-        Knm::WirelessInterfaceConnection * wirelessInterfaceConnection
-            = qobject_cast<Knm::WirelessInterfaceConnection*>(i.value());
-        if (wirelessInterfaceConnection) {
-            hasConnection = true;
+    foreach (Knm::InterfaceConnection * ic, d->activatables) {
+        if (ic->activatableType() == Knm::Activatable::HiddenWirelessInterfaceConnection) {
+            Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(ic);
+            if (wic->ssid() == ssid) {
+                hasConnection = true;
+                break;
+            }
         }
-        ++i;
     }
+
     if (!hasConnection) {
         // create a wirelessnetwork, register it, tell the list
         // get the info on the network
@@ -211,9 +204,8 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
                 rsnFlags = ap->rsnFlags();
                 Knm::WirelessNetwork * wirelessNetworkItem = new Knm::WirelessNetwork(ssid, strength, d->wirelessInterface()->wirelessCapabilities(), caps, wpaFlags, rsnFlags, ap->mode(), d->interface->uni(), this);
                 connect(network, SIGNAL(signalStrengthChanged(int)), wirelessNetworkItem, SLOT(setStrength(int)));
-                d->wirelessActivatables.insert(ssid, wirelessNetworkItem);
+                d->wirelessNetworks.insert(ssid, wirelessNetworkItem);
                 d->activatableList->addActivatable(wirelessNetworkItem);
-
             }
         }
     }
@@ -222,17 +214,32 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
 void WirelessNetworkInterfaceActivatableProvider::networkDisappeared(const QString & ssid)
 {
     Q_D(WirelessNetworkInterfaceActivatableProvider);
-    QMultiHash<QString, Knm::Activatable*>::iterator i = d->wirelessActivatables.find(ssid);
-    while (i != d->wirelessActivatables.end() && i.key() == ssid) {
-        Knm::Activatable * act = i.value();
-        if (act->activatableType() == Knm::Activatable::WirelessInterfaceConnection
-                || act->activatableType() == Knm::Activatable::WirelessNetwork) {
-            d->activatableList->removeActivatable(act);
-            delete act;
-            i = d->wirelessActivatables.erase(i);
-        } else  {
+
+    // remove any WICs that use this SSID
+    QMultiHash<QString, Knm::InterfaceConnection*>::iterator i = d->activatables.begin();
+    while (i != d->activatables.end()) {
+
+        Knm::InterfaceConnection * ic = i.value();
+
+        if (ic->activatableType() == Knm::Activatable::WirelessInterfaceConnection ) {
+            Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(ic);
+
+            if (wic->ssid() == ssid) {
+                d->activatableList->removeActivatable(ic);
+                i = d->activatables.erase(i);
+                delete wic;
+            } else {
+                ++i;
+            }
+        } else {
             ++i;
         }
+    }
+    // remove any WirelessNetwork
+    Knm::WirelessNetwork * wni = d->wirelessNetworks.take(ssid);
+    if (wni) {
+        d->activatableList->removeActivatable(wni);
+        delete wni;
     }
 }
 
