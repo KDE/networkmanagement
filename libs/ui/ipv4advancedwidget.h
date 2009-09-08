@@ -46,6 +46,7 @@ public:
 };
 
 class QStandardItem;
+class QItemSelection;
 
 class IpV4AdvancedWidget : public QWidget
 {
