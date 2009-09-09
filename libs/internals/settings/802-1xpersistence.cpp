@@ -98,6 +98,7 @@ void Security8021xPersistence::load()
   setting->setPin(m_config->readEntry("pin", ""));
   setting->setPsk(m_config->readEntry("psk", ""));
   setting->setUseSystemCaCerts(m_config->readEntry("UseSystemCaCerts", false));
+  setting->setInitialized();
   }
 }
 

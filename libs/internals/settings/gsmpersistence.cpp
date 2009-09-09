@@ -36,6 +36,7 @@ void GsmPersistence::load()
   if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setPuk(m_config->readEntry("puk", ""));
   }
+  setting->setInitialized();
 }
 
 void GsmPersistence::save()

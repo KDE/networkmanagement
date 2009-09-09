@@ -2277,6 +2277,7 @@ int main( int argc, char **argv )
         pC << "  }" << endl;
     }
   }
+  pC << "  setting->setInitialized();" << endl;
   pC << "}" << endl << endl;
 
   // save method

@@ -27,6 +27,7 @@ void VpnPersistence::load()
       setting->setVpnSecrets(variantMapFromStringList(m_config->readEntry("VpnSecrets", QStringList())));
   }
   setting->setPluginName(m_config->readEntry("PluginName", ""));
+  setting->setInitialized();
 }
 
 void VpnPersistence::save()

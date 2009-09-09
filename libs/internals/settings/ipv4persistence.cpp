@@ -73,6 +73,7 @@ void Ipv4Persistence::load()
   }
   setting->setRoutes(routes);
   setting->setIgnoredhcpdns(m_config->readEntry("ignoredhcpdns", false));
+  setting->setInitialized();
 }
 
 void Ipv4Persistence::save()

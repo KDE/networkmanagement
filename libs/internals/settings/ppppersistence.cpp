@@ -36,6 +36,7 @@ void PppPersistence::load()
   setting->setMtu(m_config->readEntry("mtu", 0));
   setting->setLcpechofailure(m_config->readEntry("lcpechofailure", 0));
   setting->setLcpechointerval(m_config->readEntry("lcpechointerval", 0));
+  setting->setInitialized();
 }
 
 void PppPersistence::save()

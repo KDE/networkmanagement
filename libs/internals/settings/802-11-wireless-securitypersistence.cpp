@@ -100,6 +100,7 @@ void WirelessSecurityPersistence::load()
   } else {
       setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::None);
   }
+  setting->setInitialized();
 }
 
 void WirelessSecurityPersistence::save()
@@ -107,7 +108,7 @@ void WirelessSecurityPersistence::save()
   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
   switch (setting->securityType()) {
     case WirelessSecuritySetting::EnumSecurityType::None:
-        return; // don't save anything if no encryption
+      return; // don't save anything if no encryption
       break;
     case WirelessSecuritySetting::EnumSecurityType::StaticWep:
       m_config->writeEntry("securityType", "StaticWep");

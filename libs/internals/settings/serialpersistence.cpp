@@ -23,6 +23,7 @@ void SerialPersistence::load()
   setting->setParity(m_config->readEntry("parity", "None"));
   setting->setStopbits(m_config->readEntry("stopbits", 1));
   setting->setSenddelay(m_config->readEntry("senddelay", 0));
+  setting->setInitialized();
 }
 
 void SerialPersistence::save()

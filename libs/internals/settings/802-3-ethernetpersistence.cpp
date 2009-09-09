@@ -42,6 +42,7 @@ void WiredPersistence::load()
   setting->setAutonegotiate(m_config->readEntry("autonegotiate", true));
   setting->setMacaddress(m_config->readEntry("macaddress", QByteArray()));
   setting->setMtu(m_config->readEntry("mtu", 0));
+  setting->setInitialized();
 }
 
 void WiredPersistence::save()

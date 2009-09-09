@@ -24,6 +24,7 @@ void PppoePersistence::load()
   if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setPassword(m_config->readEntry("password", ""));
   }
+  setting->setInitialized();
 }
 
 void PppoePersistence::save()

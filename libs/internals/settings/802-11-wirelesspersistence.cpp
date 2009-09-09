@@ -43,6 +43,7 @@ void WirelessPersistence::load()
   setting->setMtu(m_config->readEntry("mtu", 0));
   setting->setSeenbssids(m_config->readEntry("seenbssids", QStringList()));
   setting->setSecurity(m_config->readEntry("security", ""));
+  setting->setInitialized();
 }
 
 void WirelessPersistence::save()

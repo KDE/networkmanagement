@@ -112,7 +112,7 @@ Setting::Type Setting::typeFromString(const QString & typeString)
 }
 
 Setting::Setting(Setting::Type type)
-    : m_type(type), m_secretsAvailable(false)
+    : m_initialized(false), m_type(type), m_secretsAvailable(false)
 {
 
 }
@@ -120,6 +120,16 @@ Setting::Setting(Setting::Type type)
 Setting::~Setting()
 {
 
+}
+
+bool Setting::isNull() const
+{
+    return !m_initialized;
+}
+
+void Setting::setInitialized()
+{
+    m_initialized = true;
 }
 
 Setting::Type Setting::type() const
