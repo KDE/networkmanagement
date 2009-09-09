@@ -284,121 +284,121 @@ void NotificationManager::interfaceConnectionStateChanged(int new_state, int, in
         switch (reason) {
             case Solid::Control::NetworkInterface::NoReason:
             case Solid::Control::NetworkInterface::UnknownReason:
-                text = i18nc("@info:status Notification when an interface connection state changes", "%1 %2", identifier, stateString );
+                text = i18nc("@info:status Notification when an interface (%1) connection state (%2) changes ", "%1 %2", identifier, stateString );
                 break;
             case Solid::Control::NetworkInterface::NowManagedReason:
-                text = i18nc("@info:status Notification when an interface changes state to NowManagedReason","%1 is now %2 because it is now being managed", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to NowManagedReason","Interface %1 is now %2 because it is now being managed", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::NowUnmanagedReason:
-                text = i18nc("@info:status Notification when an interface changes state to NowUnmanagedReason","%1 is now %2 because it is now unmanaged", identifier, stateString );
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to NowUnmanagedReason","Interface %1 is now %2 because no longer being managed", identifier, stateString );
                 break;
             case Solid::Control::NetworkInterface::ConfigFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to ConfigFailedReason","%1 is now %2 because configuration failed", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to ConfigFailedReason","Interface %1 is now %2 because configuration failed", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::ConfigUnavailableReason:
-                text = i18nc("@info:status Notification when an interface changes state to ConfigUnavailableReason","%1 is now %2 because the configuration is unavailable", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to ConfigUnavailableReason","%1 is now %2 because the configuration is unavailable", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::ConfigExpiredReason:
-                text = i18nc("@info:status Notification when an interface changes state to ConfigExpiredReason","%1 is now %2 because the configuration has expired", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to ConfigExpiredReason","%1 is now %2 because the configuration has expired", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::NoSecretsReason:
-                text = i18nc("@info:status Notification when an interface changes state to NoSecretsReason","%1 is now %2 because secrets were not provided", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to NoSecretsReason","%1 is now %2 because secrets were not provided", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::AuthSupplicantDisconnectReason:
-                text = i18nc("@info:status Notification when an interface changes state to AuthSupplicantDisconnectReason","%1 is now %2 because the authorization supplicant disconnected", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to AuthSupplicantDisconnectReason","%1 is now %2 because the authorization supplicant disconnected", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::AuthSupplicantConfigFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to AuthSupplicantConfigFailedReason","%1 is now %2 because the authorization supplicant's configuration failed", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to AuthSupplicantConfigFailedReason","%1 is now %2 because the authorization supplicant's configuration failed", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::AuthSupplicantFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to AuthSupplicantFailedReason","%1 is now %2 because the authorization supplicant failed", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to AuthSupplicantFailedReason","%1 is now %2 because the authorization supplicant failed", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::AuthSupplicantTimeoutReason:
-                text = i18nc("@info:status Notification when an interface changes state to AuthSupplicantTimeoutReason","%1 is now %2 because the authorization supplicant timed out", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to AuthSupplicantTimeoutReason","%1 is now %2 because the authorization supplicant timed out", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::PppStartFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to PppStartFailedReason","%1 is now %2 because PPP failed to start", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to PppStartFailedReason","%1 is now %2 because PPP failed to start", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::PppDisconnectReason:
-                text = i18nc("@info:status Notification when an interface changes state to PppDisconnectReason","%1 is now %2 because PPP disconnected", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to PppDisconnectReason","%1 is now %2 because PPP disconnected", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::PppFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to PppFailedReason","%1 is now %2 because PPP failed", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to PppFailedReason","%1 is now %2 because PPP failed", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::DhcpStartFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to DhcpStartFailedReason","%1 is now %2 because DHCP failed to start", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to DhcpStartFailedReason","%1 is now %2 because DHCP failed to start", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::DhcpErrorReason:
-                text = i18nc("@info:status Notification when an interface changes state to DhcpErrorReason","%1 is now %2 because a DHCP error occurred", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to DhcpErrorReason","%1 is now %2 because a DHCP error occurred", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::DhcpFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to DhcpFailedReason","%1 is now %2 because DHCP failed ", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to DhcpFailedReason","%1 is now %2 because DHCP failed ", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::SharedStartFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to SharedStartFailedReason","%1 is now %2 because the shared service failed to start", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to SharedStartFailedReason","%1 is now %2 because the shared service failed to start", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::SharedFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to SharedFailedReason","%1 is now %2 because the shared service failed", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to SharedFailedReason","%1 is now %2 because the shared service failed", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::AutoIpStartFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to AutoIpStartFailedReason","%1 is now %2 because the auto IP service failed to start", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to AutoIpStartFailedReason","%1 is now %2 because the auto IP service failed to start", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::AutoIpErrorReason:
-                text = i18nc("@info:status Notification when an interface changes state to AutoIpErrorReason","%1 is now %2 because the auto IP service reported an error", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to AutoIpErrorReason","%1 is now %2 because the auto IP service reported an error", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::AutoIpFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to AutoIpFailedReason","%1 is now %2 because the auto IP service failed", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to AutoIpFailedReason","%1 is now %2 because the auto IP service failed", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::ModemBusyReason:
-                text = i18nc("@info:status Notification when an interface changes state to ModemBusyReason","%1 is now %2 because the modem is busy", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to ModemBusyReason","%1 is now %2 because the modem is busy", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::ModemNoDialToneReason:
-                text = i18nc("@info:status Notification when an interface changes state to ModemNoDialToneReason","%1 is now %2 because the modem has no dial tone", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to ModemNoDialToneReason","%1 is now %2 because the modem has no dial tone", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::ModemNoCarrierReason:
-                text = i18nc("@info:status Notification when an interface changes state to ModemNoCarrierReason","%1 is now %2 because the modem shows no carrier", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to ModemNoCarrierReason","%1 is now %2 because the modem shows no carrier", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::ModemDialTimeoutReason:
-                text = i18nc("@info:status Notification when an interface changes state to ModemDialTimeoutReason","%1 is now %2 because the modem dial timed out", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to ModemDialTimeoutReason","%1 is now %2 because the modem dial timed out", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::ModemInitFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to ModemInitFailedReason","%1 is now %2 because the modem could not be initialized", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to ModemInitFailedReason","%1 is now %2 because the modem could not be initialized", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::GsmApnSelectFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to GsmApnSelectFailedReason","%1 is now %2 because the GSM APN could not be selected", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to GsmApnSelectFailedReason","%1 is now %2 because the GSM APN could not be selected", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::GsmNotSearchingReason:
-                text = i18nc("@info:status Notification when an interface changes state to GsmNotSearchingReason","%1 is now %2 because the GSM modem is not searching", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to GsmNotSearchingReason","%1 is now %2 because the GSM modem is not searching", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::GsmRegistrationDeniedReason:
-                text = i18nc("@info:status Notification when an interface changes state to GsmRegistrationDeniedReason","%1 is now %2 because GSM network registration was denied", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to GsmRegistrationDeniedReason","%1 is now %2 because GSM network registration was denied", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::GsmRegistrationTimeoutReason:
-                text = i18nc("@info:status Notification when an interface changes state to GsmRegistrationTimeoutReason","%1 is now %2 because GSM network registration timed out", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to GsmRegistrationTimeoutReason","%1 is now %2 because GSM network registration timed out", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::GsmRegistrationFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to GsmRegistrationFailedReason","%1 is now %2 because GSM registration failed", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to GsmRegistrationFailedReason","%1 is now %2 because GSM registration failed", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::GsmPinCheckFailedReason:
-                text = i18nc("@info:status Notification when an interface changes state to GsmPinCheckFailedReason","%1 is now %2 because the GSM PIN check failed", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to GsmPinCheckFailedReason","%1 is now %2 because the GSM PIN check failed", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::FirmwareMissingReason:
-                text = i18nc("@info:status Notification when an interface changes state to FirmwareMissingReason","%1 is now %2 because firmware is missing", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to FirmwareMissingReason","%1 is now %2 because firmware is missing", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::DeviceRemovedReason:
-                text = i18nc("@info:status Notification when an interface changes state to DeviceRemovedReason","%1 is now %2 because the deivce was removed", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to DeviceRemovedReason","%1 is now %2 because the deivce was removed", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::SleepingReason:
-                text = i18nc("@info:status Notification when an interface changes state to SleepingReason","%1 is now %2 because the networking system is now sleeping", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to SleepingReason","%1 is now %2 because the networking system is now sleeping", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::ConnectionRemovedReason:
-                text = i18nc("@info:status Notification when an interface changes state to ConnectionRemovedReason","%1 is now %2 because the connection was removed", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to ConnectionRemovedReason","%1 is now %2 because the connection was removed", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::UserRequestedReason:
-                text = i18nc("@info:status Notification when an interface changes state to UserRequestedReason","%1 is now %2 at user request", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to UserRequestedReason","%1 is now %2 at user request", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::CarrierReason:
-                text = i18nc("@info:status Notification when an interface changes state to CarrierReason","%1 is now %2 because the link changed state", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to CarrierReason","%1 is now %2 because the link changed state", identifier, stateString);
                 break;
         }
         KNotification * notification = 0;
