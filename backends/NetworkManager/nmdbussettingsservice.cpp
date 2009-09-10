@@ -63,40 +63,29 @@ NMDBusSettingsService::NMDBusSettingsService(QObject * parent)
 : QObject(parent), d_ptr(new NMDBusSettingsServicePrivate)
 {
     Q_D(NMDBusSettingsService);
-    d->active = false;
+    d->active = true;
     d->nextConnectionId = 0;
 
-    if ( QDBusConnection::systemBus().interface()->registerService( SERVICE_USER_SETTINGS, QDBusConnectionInterface::QueueService, QDBusConnectionInterface::AllowReplacement ) ) {
-        kDebug() << "registered" << SERVICE_USER_SETTINGS;
-    } else {
+    if ( !QDBusConnection::systemBus().interface()->registerService(SERVICE_USER_SETTINGS)) {
         // trouble;
         kDebug() << "Unable to register service" << QDBusConnection::systemBus().lastError();
         d->active = false;
     }
 
-    connect(QDBusConnection::systemBus().interface(), SIGNAL(serviceRegistered(const QString&)),
-            SLOT(serviceRegistered(const QString&)));
-    connect(QDBusConnection::systemBus().interface(), SIGNAL(serviceUnregistered(const QString&)),
-            SLOT(serviceUnregistered(const QString&)));
-    connect( QDBusConnection::systemBus().interface(),
-            SIGNAL(serviceOwnerChanged(const QString&, const QString&, const QString & ) ),
-            SLOT(serviceOwnerChanged(const QString&, const QString&, const QString & ) ) );
-
     //declare types
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
 
     QDBusConnection dbus = QDBusConnection::systemBus();
-    if (dbus.registerObject(QLatin1String(NM_DBUS_PATH_SETTINGS), this, QDBusConnection::ExportScriptableContents)) {
-        kDebug() << "Registered settings object " << NM_DBUS_PATH_SETTINGS;
-    } else {
+    if (!dbus.registerObject(QLatin1String(NM_DBUS_PATH_SETTINGS), this, QDBusConnection::ExportScriptableContents)) {
         kDebug() << "Unable to register settings object " << NM_DBUS_PATH_SETTINGS;
+        d->active = false;
     }
-
 }
 
 NMDBusSettingsService::~NMDBusSettingsService()
 {
-    if ( !QDBusConnection::systemBus().unregisterService( "org.freedesktop.NetworkManagerUserSettings" ) ) {
+    Q_D(const NMDBusSettingsService);
+    if ( d->active && !QDBusConnection::systemBus().unregisterService( "org.freedesktop.NetworkManagerUserSettings" ) ) {
         // trouble;
         kDebug() << "Unable to unregister service";
     }
@@ -113,52 +102,13 @@ QUuid NMDBusSettingsService::uuidForPath(const QDBusObjectPath& path) const
     return QUuid();
 }
 
-void NMDBusSettingsService::serviceOwnerChanged( const QString& service,const QString& oldOwner, const QString& newOwner )
-{
-    Q_D(NMDBusSettingsService);
-    if (!oldOwner.isEmpty() && service == QLatin1String("org.freedesktop.NetworkManager")) {
-        kDebug() << "NetworkManager stopped";
-    }
-    if (!newOwner.isEmpty() && service == QLatin1String("org.freedesktop.NetworkManager")) {
-        kDebug() << "NetworkManager started!";
-    }
-    if (newOwner.isEmpty() && service == SERVICE_USER_SETTINGS && !d->active) {
-        kDebug() << "User settings service was released, trying to register it ourselves";
-        if (QDBusConnection::systemBus().interface()->registerService(SERVICE_USER_SETTINGS, QDBusConnectionInterface::QueueService, QDBusConnectionInterface::AllowReplacement)) {
-            d->active = true;
-            emit serviceAvailable(d->active);
-        }
-    }
-}
-
-void NMDBusSettingsService::serviceRegistered(const QString & name)
-{
-    Q_D(NMDBusSettingsService);
-    if (name == SERVICE_USER_SETTINGS) {
-        kDebug() << "service registered";
-        d->active = true;
-        emit serviceAvailable(d->active);
-    }
-}
-
-void NMDBusSettingsService::serviceUnregistered(const QString & name)
-{
-    Q_D(NMDBusSettingsService);
-    if (name == SERVICE_USER_SETTINGS) {
-        kDebug() << "service lost, queueing reregistration";
-        QDBusConnection::systemBus().interface()->registerService( SERVICE_USER_SETTINGS, QDBusConnectionInterface::QueueService, QDBusConnectionInterface::AllowReplacement );
-        d->active = false;
-        emit serviceAvailable(d->active);
-    }
-}
-
 void NMDBusSettingsService::handleAdd(Knm::Connection * added)
 {
     Q_D(NMDBusSettingsService);
 
     // only handle connections that come from local storage, not those from the system settings
     // service
-    if (added->origin() == QLatin1String("ConnectionListPersistence")) {
+    if (d->active && added->origin() == QLatin1String("ConnectionListPersistence")) {
         // put it on our bus 
         QDBusObjectPath objectPath;
         BusConnection * busConn = new BusConnection(added, this);
@@ -180,7 +130,7 @@ void NMDBusSettingsService::handleUpdate(Knm::Connection * updated)
 {
     Q_D(NMDBusSettingsService);
 
-    if (d->uuidToConnections.contains(updated->uuid())) {
+    if (d->active && d->uuidToConnections.contains(updated->uuid())) {
         BusConnection * busConn = d->uuidToConnections[updated->uuid()];
         if (busConn) {
             busConn->updateInternal(updated);
@@ -191,37 +141,40 @@ void NMDBusSettingsService::handleUpdate(Knm::Connection * updated)
 void NMDBusSettingsService::handleRemove(Knm::Connection * removed)
 {
     Q_D(NMDBusSettingsService);
-    BusConnection * busConn = d->uuidToConnections.take(removed->uuid());
-    if (busConn) {
-        QDBusObjectPath key = d->pathToConnections.key(busConn);
-        d->uuidToPath.remove(removed->uuid());
-        d->pathToConnections.remove(key);
+    if (d->active) {
+        BusConnection * busConn = d->uuidToConnections.take(removed->uuid());
+        if (busConn) {
+            QDBusObjectPath key = d->pathToConnections.key(busConn);
+            d->uuidToPath.remove(removed->uuid());
+            d->pathToConnections.remove(key);
+        }
+        busConn->Delete();
     }
-    busConn->Delete();
 }
 
 void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
 {
     Q_D(NMDBusSettingsService);
-    Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(added);
-    if (ic && ic->activatableType() != Knm::Activatable::HiddenWirelessInterfaceConnection) {
-        // listen to the IC
-        kDebug() << ic->connectionUuid();
-        //if (ic->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
+    if (d->active) {
+        Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(added);
+        if (ic && ic->activatableType() != Knm::Activatable::HiddenWirelessInterfaceConnection) {
+            // listen to the IC
+            kDebug() << ic->connectionUuid();
+            //if (ic->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
             connect(ic, SIGNAL(activated()), this, SLOT(interfaceConnectionActivated()));
             connect(ic, SIGNAL(deactivated()), this, SLOT(interfaceConnectionDeactivated()));
-        //}
+            //}
 
-        // if derived from one of our connections, tag it with the service and object path of the
-        // connection.  The system settings monitor NMDBusSettingsConnectionProvider does this for
-        // its connections.
-        if (d->uuidToPath.contains(ic->connectionUuid())) {
-            kDebug() << "tagging local InterfaceConnection " << ic->connectionName() << SERVICE_USER_SETTINGS << d->uuidToPath[ic->connectionUuid()].path();
-            ic->setProperty("NMDBusService", SERVICE_USER_SETTINGS);
-            ic->setProperty("NMDBusObjectPath", d->uuidToPath[ic->connectionUuid()].path());
+            // if derived from one of our connections, tag it with the service and object path of the
+            // connection.  The system settings monitor NMDBusSettingsConnectionProvider does this for
+            // its connections.
+            if (d->uuidToPath.contains(ic->connectionUuid())) {
+                kDebug() << "tagging local InterfaceConnection " << ic->connectionName() << SERVICE_USER_SETTINGS << d->uuidToPath[ic->connectionUuid()].path();
+                ic->setProperty("NMDBusService", SERVICE_USER_SETTINGS);
+                ic->setProperty("NMDBusObjectPath", d->uuidToPath[ic->connectionUuid()].path());
+            }
         }
     }
-    //if (ic->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
 }
 
 void NMDBusSettingsService::interfaceConnectionActivated()

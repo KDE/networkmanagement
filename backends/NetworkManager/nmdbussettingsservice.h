@@ -67,18 +67,12 @@ Q_SIGNALS:
      */
     void serviceAvailable(bool);
 private Q_SLOTS:
-    // DBus service management
-    void serviceOwnerChanged(const QString& service, const QString& oldOwner, const QString& newOwner);
-    void serviceRegistered(const QString&);
-    void serviceUnregistered(const QString&);
     // activate connections
     void interfaceConnectionActivated();
     void interfaceConnectionDeactivated();
 
 private:
     Q_DECLARE_PRIVATE(NMDBusSettingsService)
-    // experimental
-    //QDBusObjectPath pathForConnection(const QUuid &uuid);
     QUuid uuidForPath(const QDBusObjectPath&) const;
 
     void registerService();

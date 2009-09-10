@@ -91,12 +91,12 @@ public:
 bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 
-KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterface::Types types, const QString & id, SortedActivatableList * list, bool active, QObject * parent)
+KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterface::Types types, const QString & id, SortedActivatableList * list, bool serviceAvailable, QObject * parent)
     : KNotificationItem(id, parent), d_ptr(new KNetworkManagerTrayIconPrivate)
 {
     Q_D(KNetworkManagerTrayIcon);
     d->interfaceTypes = types;
-    d->active = active;
+    d->active = serviceAvailable;
 
     setStandardActionsEnabled(false);
 #if KDE_IS_VERSION(4,3,67)
@@ -109,9 +109,9 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
 
     setAssociatedWidget(contextMenu());
 #if KDE_IS_VERSION(4,3,67)
-    setStatus( (!active || Solid::Control::NetworkManager::status() == Solid::Networking::Unknown )? KNotificationItem::Passive : KNotificationItem::Active);
+    setStatus( (!d->active || Solid::Control::NetworkManager::status() == Solid::Networking::Unknown )? KNotificationItem::Passive : KNotificationItem::Active);
 #else
-    setStatus( (!active || Solid::Control::NetworkManager::status() == Solid::Networking::Unknown )? Experimental::KNotificationItem::Passive : Experimental::KNotificationItem::Active);
+    setStatus( (!d->active || Solid::Control::NetworkManager::status() == Solid::Networking::Unknown )? Experimental::KNotificationItem::Passive : Experimental::KNotificationItem::Active);
 #endif
 
     if (types.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
@@ -204,6 +204,19 @@ void KNetworkManagerTrayIcon::fillPopup()
         }
     }
 
+    // if not active, add a warning notice and stop
+    if (Solid::Control::NetworkManager::status() == Solid::Networking::Unknown) {
+        QString passiveText = i18nc("@action:inmenu Disable action text used when the NetworkManager daemon is not running", "Network Management disabled");
+        QString passiveTooltip = i18nc("@info:tooltip NetworkManager is not running, this client cannot do anything", "The system Network Management service is not running");
+
+        QAction * passiveAction = new QAction(passiveText, this);
+        passiveAction->setToolTip(passiveTooltip);
+        passiveAction->setEnabled(false);
+        contextMenu()->addAction(passiveAction);
+        return;
+    }
+
+    // fill the menu
     QAction * insertionPointForConnectToOtherWireless = 0;
 
     // list of wireless unconfigured interface items.  We put these in the main menu if there are
@@ -212,15 +225,6 @@ void KNetworkManagerTrayIcon::fillPopup()
     // counter of wirelessinterfaceconnections, to tell where to put the wireless unconfigured
     // interface items
     uint wirelessInterfaceConnectionCount = 0;
-
-    // if not active only add a warning notice
-    if (!d->active) {
-        QAction * passiveAction = new QAction(i18nc("@action:inmenu Disable action text used when it is not possible to actively control networking", "Applet in passive mode"), this);
-        passiveAction->setToolTip(i18nc("@info:tooltip when it is not possible to actively control networking", "Another applet is currently responsible for Network Management"));
-        passiveAction->setEnabled(false);
-        contextMenu()->addAction(passiveAction);
-        return;
-    }
 
     foreach (Knm::Activatable * activatable, d->list->activatables()) {
         QWidgetAction * action = 0;
@@ -549,6 +553,7 @@ void KNetworkManagerTrayIcon::networkingStatusChanged(Solid::Networking::Status 
 #else
         setStatus(Experimental::KNotificationItem::Passive);
 #endif
+        fillPopup();
     } else {
 #if KDE_IS_VERSION(4,3,67)
         setStatus(KNotificationItem::Active);

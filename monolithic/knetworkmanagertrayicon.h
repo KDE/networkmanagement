@@ -78,7 +78,7 @@ public:
      * @param active If true, show activatables; if false, only show status in the tray and a minimal context menu
      * @param parent QObject owning this tray icon
      */
-    KNetworkManagerTrayIcon(Solid::Control::NetworkInterface::Types types, const QString & id, SortedActivatableList * list, bool active = true, QObject * parent = 0);
+    KNetworkManagerTrayIcon(Solid::Control::NetworkInterface::Types types, const QString & id, SortedActivatableList * list, bool serviceAvailable, QObject * parent = 0);
     virtual ~KNetworkManagerTrayIcon();
     // respond to activatable changes
     void handleAdd(Knm::Activatable *);
