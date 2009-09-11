@@ -26,12 +26,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 static const char description[] =
     I18N_NOOP("KNetworkManager, the KDE 4 NetworkManager client");
 
-static const char version[] = "v0.8";
+static const char version[] = "v0.9";
 
 int main( int argc, char** argv )
 {
-    KAboutData about("knetworkmanager", 0, ki18n("KNetworkManager"), version, ki18n(description), KAboutData::License_GPL, ki18n("(C) 2009 Will Stephenson"), KLocalizedString(), 0, "wstephenson@kde.org");
-    about.addAuthor( ki18n("Will Stephenson"), KLocalizedString(), "wstephenson@kde.org" );
+    KAboutData about("knetworkmanager", 0, ki18n("KNetworkManager"), version, ki18n(description), KAboutData::License_GPL, ki18n("(C) 2009 Will Stephenson"), KLocalizedString(), "http://techbase.kde.org/Projects/Network_Management");
+    about.addAuthor( ki18n("Will Stephenson"), ki18n("Original Author, Maintainer"), "wstephenson@kde.org" );
+    about.addAuthor( ki18n("Paul Marchouk"), ki18n("User Interface Polish"), "pmarchouk@gmail.com" );
+    about.addAuthor( ki18n("Christopher Blauvelt"), ki18n("Original Author, Wireless Scan UI"), "cblauvelt@gmail.com" );
     KCmdLineArgs::init(argc, argv, &about);
 
     KCmdLineOptions options;
