@@ -32,6 +32,8 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     WirelessSecuritySetting( );
     ~WirelessSecuritySetting();
 
+    void reset();
+
     QString name() const;
 
     bool hasSecrets() const;

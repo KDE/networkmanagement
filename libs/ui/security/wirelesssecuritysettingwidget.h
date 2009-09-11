@@ -59,7 +59,8 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
-
+protected Q_SLOTS:
+    void securityTypeChanged(int);
 private:
     WirelessSecuritySettingWidgetPrivate * d_ptr;
 };

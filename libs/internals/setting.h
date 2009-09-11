@@ -43,8 +43,9 @@ public:
     virtual bool hasSecrets() const = 0;
     bool secretsAvailable() const;
     void setSecretsAvailable(bool secretsAvailable);
-private:
+protected:
     bool m_initialized;
+private:
     Setting::Type m_type;
     bool m_secretsAvailable;
 };

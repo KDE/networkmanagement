@@ -65,6 +65,7 @@ public:
     {
         if (index >= 0 && index < ui.securityWidgets->count()) {
             ui.cboType->setCurrentIndex(index);
+            ui.securityWidgets->setCurrentIndex(index);
         }
     }
 
@@ -101,7 +102,7 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
     Q_D(WirelessSecuritySettingWidget);
 
     d->ui.setupUi(this);
-    QObject::connect(d->ui.cboType, SIGNAL(currentIndexChanged(int)), d->ui.securityWidgets, SLOT(setCurrentIndex(int)));
+    QObject::connect(d->ui.cboType, SIGNAL(activated(int)), this, SLOT(securityTypeChanged(int)));
 
     d->settingWireless = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
     d->settingSecurity = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
@@ -174,6 +175,13 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
 WirelessSecuritySettingWidget::~WirelessSecuritySettingWidget()
 {
     delete d_ptr;
+}
+
+void WirelessSecuritySettingWidget::securityTypeChanged(int index)
+{
+    Q_D(WirelessSecuritySettingWidget);
+    d->settingSecurity->reset();
+    d->ui.securityWidgets->setCurrentIndex(index);
 }
 
 void WirelessSecuritySettingWidget::readConfig()

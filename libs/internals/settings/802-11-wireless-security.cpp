@@ -22,3 +22,23 @@ bool WirelessSecuritySetting::hasSecrets() const
 {
   return true;
 }
+
+void WirelessSecuritySetting::reset()
+{
+    m_initialized = false;
+    mSecurityType = EnumSecurityType::None;
+    mKeymgmt = EnumKeymgmt::None;
+    mWeptxkeyindex = 0;
+    mAuthalg = EnumAuthalg::none;
+    mProto = QStringList();
+    mPairwise = QStringList();
+    mGroup = QStringList();
+    mLeapusername = QString();
+    mWepkey0 = QString();
+    mWepkey1 = QString();
+    mWepkey2 = QString();
+    mWepkey3 = QString();
+    mPsk = QString();
+    mLeappassword = QString();
+    mWeppassphrase = QString();
+}
