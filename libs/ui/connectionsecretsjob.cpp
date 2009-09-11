@@ -143,7 +143,7 @@ void ConnectionSecretsJob::doAskUser()
         m_askUserDialog = new KDialog(0);
         m_askUserDialog->setCaption(i18nc("@title:window for network secrets request", "Secrets for %1", m_connection->name()));
         m_askUserDialog->setMainWidget(m_settingWidget);
-        m_askUserDialog->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
+        m_askUserDialog->setButtons(KDialog::Ok | KDialog::Cancel);
 
         connect(m_askUserDialog, SIGNAL(okClicked()), SLOT(dialogAccepted()));
         connect(m_askUserDialog, SIGNAL(cancelClicked()), SLOT(dialogRejected()));
