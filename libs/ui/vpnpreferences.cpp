@@ -86,6 +86,7 @@ void VpnPreferences::load()
                 addToTabWidget(vpnWidget);
                 // load this widget manually, as it was not present when ConnectionPreferences::load() ran
                 vpnWidget->readConfig();
+                vpnWidget->readSecrets();
             }
         }
     } else { // we are loading a new connection's settings.  Set the plugin name after the load so this can be saved later
