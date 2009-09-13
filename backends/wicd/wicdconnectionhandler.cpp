@@ -1,6 +1,5 @@
 /*
-    <one line to give the program's name and a brief idea of what it does.>
-    Copyright (C) <year>  <name of author>
+    Copyright (C) 2009 Dario Freddi <drf@kde.org>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -20,6 +19,11 @@
 
 #include "wicdconnectionhandler.h"
 
+#include <connection.h>
+#include <interfaceconnection.h>
+
+#include <kdebug.h>
+
 void WicdConnectionHandler::handleRemove(Knm::Activatable* )
 {
 
@@ -30,9 +34,8 @@ void WicdConnectionHandler::handleUpdate(Knm::Activatable* )
 
 }
 
-void WicdConnectionHandler::handleAdd(Knm::Activatable* )
+void WicdConnectionHandler::handleAdd(Knm::Activatable *added)
 {
-
 }
 
 void WicdConnectionHandler::handleRemove(Knm::Connection* )
