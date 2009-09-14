@@ -36,9 +36,11 @@ QVariantMap VpnDbus::toMap()
   QVariantMap map;
   Knm::VpnSetting * setting = static_cast<Knm::VpnSetting *>(m_setting);
   map.insert(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE), setting->serviceType());
-  map.insert(QLatin1String(NM_SETTING_VPN_DATA), QVariant::fromValue(setting->data()));
+  if (!setting->data().isEmpty())
+      map.insert(QLatin1String(NM_SETTING_VPN_DATA), QVariant::fromValue(setting->data()));
   map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(QStringMap()));
-  map.insert(QLatin1String(NM_SETTING_VPN_USER_NAME), setting->userName());
+  if (!setting->userName().isEmpty())
+      map.insert(QLatin1String(NM_SETTING_VPN_USER_NAME), setting->userName());
   return map;
 }
 
