@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ipv4widget.h"
 
 #include <KDebug>
+#include <KEditListBox>
 
 #include <QNetworkAddressEntry>
 
@@ -29,6 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 #include "settings/ipv4.h"
 #include "simpleipv4addressvalidator.h"
+#include "listvalidator.h"
+#include "editlistdialog.h"
 
 class IpV4Widget::Private
 {
@@ -84,8 +87,15 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     // unable to check netmask strictly until user finish the input
     d->ui.netMask->setValidator(new SimpleIpV4AddressValidator(this));
     d->ui.gateway->setValidator(new SimpleIpV4AddressValidator(this));
+    
+    ListValidator *listValidator = new ListValidator(this);
+    listValidator->setInnerValidator(new SimpleIpV4AddressValidator(listValidator));
+    d->ui.dns->setValidator(listValidator);
 
     connect(d->ui.address, SIGNAL(editingFinished()), this, SLOT(addressEditingFinished()));
+
+    connect(d->ui.dnsMorePushButton, SIGNAL(clicked()), this, SLOT(showDnsEditor()));
+    connect(d->ui.dnsSearchMorePushButton, SIGNAL(clicked()), this, SLOT(showDnsSearchEditor()));
 
     connect(d->ui.pushButtonSettingsMode, SIGNAL(clicked()), this, SLOT(settingsModeClicked()));
 
@@ -230,8 +240,10 @@ void IpV4Widget::methodChanged(int currentIndex)
         d->ui.gatewayLabel->setEnabled(true);
         d->ui.dns->setEnabled(true);
         d->ui.dnsLabel->setEnabled(true);
+        d->ui.dnsMorePushButton->setEnabled(true);
         d->ui.dnsSearch->setEnabled(true);
         d->ui.dnsSearchLabel->setEnabled(true);
+        d->ui.dnsSearchMorePushButton->setEnabled(true);
         d->ui.pushButtonSettingsMode->setVisible(true);
     }
     else {
@@ -245,14 +257,18 @@ void IpV4Widget::methodChanged(int currentIndex)
         if (IpV4Widget::Private::AutomaticOnlyIPMethodIndex == currentIndex) {
             d->ui.dns->setEnabled(true);
             d->ui.dnsLabel->setEnabled(true);
+            d->ui.dnsMorePushButton->setEnabled(true);
             d->ui.dnsSearch->setEnabled(true);
             d->ui.dnsSearchLabel->setEnabled(true);
+            d->ui.dnsSearchMorePushButton->setEnabled(true);
         }
         else {
             d->ui.dns->setEnabled(false);
             d->ui.dnsLabel->setEnabled(false);
+            d->ui.dnsMorePushButton->setEnabled(false);
             d->ui.dnsSearch->setEnabled(false);
             d->ui.dnsSearchLabel->setEnabled(false);
+            d->ui.dnsSearchMorePushButton->setEnabled(false);
         }
 
         d->ui.pushButtonSettingsMode->setVisible(false);
@@ -320,6 +336,37 @@ void IpV4Widget::switchSettingsMode()
     d->ui.pushButtonSettingsMode->setText(text);
     d->ui.basicSettingsWidget->setVisible(!d->isAdvancedModeOn);
     d->ui.advancedSettings->setVisible(d->isAdvancedModeOn);
+}
+
+void IpV4Widget::dnsEdited(QStringList addresses)
+{
+    d->ui.dns->setText(addresses.join(","));
+}
+
+void IpV4Widget::dnsSearchEdited(QStringList addresses)
+{
+    d->ui.dnsSearch->setText(addresses.join(","));
+}
+
+void IpV4Widget::showDnsEditor()
+{
+    EditListDialog * dnsEditor = new EditListDialog;
+    dnsEditor->setAddresses(d->ui.dns->text().split(","));
+    connect(dnsEditor, SIGNAL(addressesEdited(QStringList)), this, SLOT(dnsEdited(QStringList)));
+    dnsEditor->setCaption(i18n("DNS Servers"));
+    dnsEditor->setModal(true);
+    dnsEditor->setValidator(new SimpleIpV4AddressValidator(dnsEditor));
+    dnsEditor->show();
+}
+
+void IpV4Widget::showDnsSearchEditor()
+{
+    EditListDialog * dnsSearchEditor = new EditListDialog;
+    dnsSearchEditor->setAddresses(d->ui.dnsSearch->text().split(","));
+    connect(dnsSearchEditor, SIGNAL(addressesEdited(QStringList)), this, SLOT(dnsSearchEdited(QStringList)));
+    dnsSearchEditor->setCaption(i18n("Search domains"));
+    dnsSearchEditor->setModal(true);
+    dnsSearchEditor->show();
 }
 
 // vim: sw=4 sts=4 et tw=100

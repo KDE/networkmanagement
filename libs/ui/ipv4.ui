@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>415</width>
-    <height>322</height>
+    <width>489</width>
+    <height>310</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,6 +25,48 @@
         <property name="fieldGrowthPolicy">
          <enum>QFormLayout::ExpandingFieldsGrow</enum>
         </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>&amp;Configure:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+          <property name="buddy">
+           <cstring>method</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="KComboBox" name="method">
+          <item>
+           <property name="text">
+            <string>DHCP</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>DHCP (only address)</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Link-Local</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Manual</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Shared</string>
+           </property>
+          </item>
+         </widget>
+        </item>
         <item row="2" column="0">
          <widget class="QLabel" name="addressLabel">
           <property name="text">
@@ -32,6 +74,29 @@
           </property>
           <property name="buddy">
            <cstring>address</cstring>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="KLineEdit" name="address">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="toolTip">
+           <string>Use this field to specify the IP address that should be used by this computer.</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="netMaskLabel">
+          <property name="text">
+           <string>Subnet &amp;Mask:</string>
+          </property>
+          <property name="buddy">
+           <cstring>netMask</cstring>
           </property>
          </widget>
         </item>
@@ -71,20 +136,7 @@
           </property>
          </widget>
         </item>
-        <item row="7" column="1">
-         <widget class="KLineEdit" name="dns">
-          <property name="minimumSize">
-           <size>
-            <width>250</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="toolTip">
-           <string>Use this field to specify the IP address(es) of one or more DNS servers. Use ',' to separate entries.</string>
-          </property>
-         </widget>
-        </item>
-        <item row="8" column="0">
+        <item row="7" column="0">
          <widget class="QLabel" name="dnsSearchLabel">
           <property name="text">
            <string>&amp;Search Domains:</string>
@@ -97,72 +149,7 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="1">
-         <widget class="KComboBox" name="method">
-          <item>
-           <property name="text">
-            <string>DHCP</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>DHCP (only address)</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Link-Local</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Manual</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Shared</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="8" column="1">
-         <widget class="KLineEdit" name="dnsSearch">
-          <property name="minimumSize">
-           <size>
-            <width>250</width>
-            <height>0</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="text">
-           <string>&amp;Configure:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-          <property name="buddy">
-           <cstring>method</cstring>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="KLineEdit" name="address">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="toolTip">
-           <string>Use this field to specify the IP address that should be used by this computer.</string>
-          </property>
-         </widget>
-        </item>
-        <item row="7" column="0">
+        <item row="8" column="0">
          <widget class="QLabel" name="dnsLabel">
           <property name="text">
            <string>&amp;DNS Servers:</string>
@@ -178,15 +165,56 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="netMaskLabel">
-          <property name="text">
-           <string>Subnet &amp;Mask:</string>
-          </property>
-          <property name="buddy">
-           <cstring>netMask</cstring>
-          </property>
-         </widget>
+        <item row="8" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="KLineEdit" name="dns">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>250</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="toolTip">
+             <string>Use this field to specify the IP address(es) of one or more DNS servers. Use ',' to separate entries.</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="KPushButton" name="dnsMorePushButton">
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="7" column="1">
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="KLineEdit" name="dnsSearch">
+            <property name="minimumSize">
+             <size>
+              <width>250</width>
+              <height>0</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="KPushButton" name="dnsSearchMorePushButton">
+            <property name="text">
+             <string>...</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -282,8 +310,6 @@
   <tabstop>address</tabstop>
   <tabstop>netMask</tabstop>
   <tabstop>gateway</tabstop>
-  <tabstop>dns</tabstop>
-  <tabstop>dnsSearch</tabstop>
   <tabstop>pushButtonSettingsMode</tabstop>
  </tabstops>
  <resources/>

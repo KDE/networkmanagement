@@ -63,6 +63,8 @@ set(knmui_SRCS
    connectionsecretsjob.cpp
    
    simpleipv4addressvalidator.cpp
+   listvalidator.cpp
+   editlistdialog.cpp
    )
 
 kde4_add_ui_files(knmui_SRCS
