@@ -18,7 +18,8 @@ include_directories (${KDE4_INCLUDES})
 #include(ConfigureChecks.cmake)
 
 macro_optional_find_package(NetworkManager)
-macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager (any version)" "The Network Management applet requires NetworkManager, a daemon for user controlled networking" "http://www.freedesktop.org/wiki/NetworkManager")
+
+macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.7" "Needed for NetworkManager support in Network Management")
 if (NETWORKMANAGER_FOUND)
 macro_ensure_version( "0.7.0" ${NETWORKMANAGER_VERSION} NM_0_7)
 macro_ensure_version( "0.7.1" ${NETWORKMANAGER_VERSION} NM_0_7_1)
@@ -58,3 +59,6 @@ else(NM_0_7)
       macro_log_feature(NM_0_7 "NetworkManager ${NETWORKMANAGER_VERSION}" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
 endif(NM_0_7)
 endif(NETWORKMANAGER_FOUND)
+
+macro_display_feature_log()
+
