@@ -111,7 +111,7 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
 
     // Keep a record for when it is removed
     Solid::Device* dev = new Solid::Device(uni);
-    QString deviceText = dev->product();
+    QString deviceText = dev->description();
     d->interfaceNameRecord.insert(uni, deviceText);
 
     if (iface && !d->suppressHardwareEvents) {

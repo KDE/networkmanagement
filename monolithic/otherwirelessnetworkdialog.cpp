@@ -69,7 +69,7 @@ void OtherWirelessNetworkDialog::handleAdd(Knm::Activatable * activatable)
             break;
         case Knm::Activatable::UnconfiguredInterface:
             dev = new Solid::Device(activatable->deviceUni());
-            item = new QListWidgetItem(SmallIcon("document-new"), i18nc("@item:inlist Create connection to other wireless network using named device", "Connect To Other With %1...", dev->product()), m_ui.lwNetworks);
+            item = new QListWidgetItem(SmallIcon("document-new"), i18nc("@item:inlist Create connection to other wireless network using named device", "Connect To Other With %1...", dev->description()), m_ui.lwNetworks);
             item->setData(ItemActivatableRole, QVariant::fromValue(activatable));
             m_ui.lwNetworks->addItem(item);
             break;

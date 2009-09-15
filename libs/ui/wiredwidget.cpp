@@ -49,7 +49,7 @@ WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
         if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
             Solid::Device * dev = new Solid::Device(iface->uni());
             Solid::Control::WiredNetworkInterface * wired = static_cast<Solid::Control::WiredNetworkInterface*>(iface);
-            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", dev->product(), wired->interfaceName()), wired->hardwareAddress().toLatin1());
+            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", dev->description(), wired->interfaceName()), wired->hardwareAddress().toLatin1());
         }
     }
 }

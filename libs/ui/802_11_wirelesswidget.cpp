@@ -53,7 +53,7 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             Solid::Device * dev = new Solid::Device(iface->uni());
             Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
-            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", dev->product(), wiface->interfaceName()), wiface->hardwareAddress().toLatin1());
+            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", dev->description(), wiface->interfaceName()), wiface->hardwareAddress().toLatin1());
         }
     }
 }

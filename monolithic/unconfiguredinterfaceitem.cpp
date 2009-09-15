@@ -48,7 +48,7 @@ UnconfiguredInterfaceItem::UnconfiguredInterfaceItem(Knm::UnconfiguredInterface 
     QString deviceText;
     if (true) /*TODO, add configurability here*/ {
         Solid::Device* dev = new Solid::Device(unconfigured->deviceUni());
-        deviceText = dev->product();
+        deviceText = dev->description();
     } else {
         Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(unconfigured->deviceUni());
         if (iface) {

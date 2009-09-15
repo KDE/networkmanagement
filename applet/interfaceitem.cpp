@@ -53,7 +53,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     //setAcceptHoverEvents(false);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     Solid::Device* dev = new Solid::Device(m_iface->uni());
-    m_interfaceName = dev->product();
+    m_interfaceName = dev->description();
 
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
@@ -233,8 +233,8 @@ void InterfaceItem::setNameDisplayMode(NameDisplayMode mode)
     m_nameMode = mode;
     if ( m_nameMode == InterfaceName ) {
         Solid::Device* dev = new Solid::Device(m_iface->uni());
-        kDebug() << "Product:" << dev->product();
-        m_ifaceNameLabel->setText(i18n("<b>%1</b>", dev->product()));
+        kDebug() << "Product:" << dev->description();
+        m_ifaceNameLabel->setText(i18n("<b>%1</b>", dev->description()));
     } else {
         m_ifaceNameLabel->setText(i18nc("network interface name unknown", "<b>Unknown Network Interface</b>"));
     }
