@@ -1,0 +1,5 @@
+Requires:
+kdebase4-workspace-devel, its prerequisites
+NetworkManager-devel
+libknotificationitem-devel (if building vs KDE 4.3 branch SVN or trunk you have this, but if building vs KDE 4.3 packages, you may need this as an additional package to kdelibs4-devel)
+
