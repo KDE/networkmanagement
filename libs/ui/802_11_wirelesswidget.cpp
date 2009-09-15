@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "802_11_wirelesswidget.h"
 
 #include <KDebug>
+#include <kdeversion.h>
 
 #include <Solid/Device>
 #include <solid/control/networkmanager.h>
@@ -52,8 +53,13 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             Solid::Device * dev = new Solid::Device(iface->uni());
+#if KDE_IS_VERSION(4,3,60)
+            QString deviceText = dev->description();
+#else
+            QString deviceText = dev->product();
+#endif
             Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
-            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", dev->description(), wiface->interfaceName()), wiface->hardwareAddress().toLatin1());
+            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", deviceText, wiface->interfaceName()), wiface->hardwareAddress().toLatin1());
         }
     }
 }

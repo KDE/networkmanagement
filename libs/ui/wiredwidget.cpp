@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QComboBox>
 
+#include <kdeversion.h>
 #include <Solid/Device>
 #include <solid/control/networkmanager.h>
 #include <solid/control/wirednetworkinterface.h>
@@ -48,8 +49,13 @@ WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
             Solid::Device * dev = new Solid::Device(iface->uni());
+#if KDE_IS_VERSION(4,3,60)
+            QString deviceText = dev->description();
+#else
+            QString deviceText = dev->product();
+#endif
             Solid::Control::WiredNetworkInterface * wired = static_cast<Solid::Control::WiredNetworkInterface*>(iface);
-            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", dev->description(), wired->interfaceName()), wired->hardwareAddress().toLatin1());
+            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", deviceText, wired->interfaceName()), wired->hardwareAddress().toLatin1());
         }
     }
 }

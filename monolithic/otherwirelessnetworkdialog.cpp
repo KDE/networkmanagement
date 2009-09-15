@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QWidget>
 
+#include <kdeversion.h>
+
 #include <activatablelist.h>
 #include <unconfiguredinterface.h>
 #include <Solid/Device>
@@ -60,6 +62,7 @@ void OtherWirelessNetworkDialog::handleAdd(Knm::Activatable * activatable)
     QListWidgetItem * item = 0;
     Solid::Device* dev = 0;
 
+    QString deviceText;
     switch (activatable->activatableType()) {
         case Knm::Activatable::HiddenWirelessInterfaceConnection:
             wic = static_cast<Knm::HiddenWirelessInterfaceConnection*>(activatable);
@@ -69,7 +72,12 @@ void OtherWirelessNetworkDialog::handleAdd(Knm::Activatable * activatable)
             break;
         case Knm::Activatable::UnconfiguredInterface:
             dev = new Solid::Device(activatable->deviceUni());
-            item = new QListWidgetItem(SmallIcon("document-new"), i18nc("@item:inlist Create connection to other wireless network using named device", "Connect To Other With %1...", dev->description()), m_ui.lwNetworks);
+#if KDE_IS_VERSION(4,3,60)
+            deviceText = dev->description();
+#else
+            deviceText = dev->product();
+#endif
+            item = new QListWidgetItem(SmallIcon("document-new"), i18nc("@item:inlist Create connection to other wireless network using named device", "Connect To Other With %1...", deviceText), m_ui.lwNetworks);
             item->setData(ItemActivatableRole, QVariant::fromValue(activatable));
             m_ui.lwNetworks->addItem(item);
             break;

@@ -28,6 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIcon>
 #include <KLocale>
 #include <KNotification>
+#include <kdeversion.h>
 
 #include <Solid/Device>
 #include <solid/control/networkmanager.h>
@@ -111,7 +112,11 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
 
     // Keep a record for when it is removed
     Solid::Device* dev = new Solid::Device(uni);
+#if KDE_IS_VERSION(4,3,60)
     QString deviceText = dev->description();
+#else
+    QString deviceText = dev->product();
+#endif
     d->interfaceNameRecord.insert(uni, deviceText);
 
     if (iface && !d->suppressHardwareEvents) {

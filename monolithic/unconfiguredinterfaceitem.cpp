@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KGlobalSettings>
 #include <KLocale>
+#include <kdeversion.h>
 
 #include <Solid/Device>
 
@@ -48,7 +49,11 @@ UnconfiguredInterfaceItem::UnconfiguredInterfaceItem(Knm::UnconfiguredInterface 
     QString deviceText;
     if (true) /*TODO, add configurability here*/ {
         Solid::Device* dev = new Solid::Device(unconfigured->deviceUni());
-        deviceText = dev->description();
+#if KDE_IS_VERSION(4,3,60)
+            deviceText = dev->description();
+#else
+            deviceText = dev->product();
+#endif
     } else {
         Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(unconfigured->deviceUni());
         if (iface) {
