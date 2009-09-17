@@ -1,7 +1,19 @@
 [Desktop Entry]
 Encoding=UTF-8
 Name=KNetworkManager
+Name[da]=KNetworkManager
+Name[de]=KNetworkManager
+Name[es]=KNetworkManager
+Name[fr]=KNetworkManager
+Name[hr]=KNetworkManager
+Name[nb]=KNetworkManager
 Name[pa]=ਕੇਨੈੱਟਵਰਕਮੈਨੇਜਰ
+Name[pt]=KNetworkManager
+Name[pt_BR]=KNetworkManager
+Name[ro]=KNetworkManager
+Name[sv]=KNetworkManager
+Name[tr]=KNetworkManager
+Name[uk]=KNetworkManager
 Name[wa]=KManaedjeuRantoele
 Name[x-test]=xxKNetworkManagerxx
 GenericName=Network Manager
