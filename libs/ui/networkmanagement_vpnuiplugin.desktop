@@ -2,6 +2,7 @@
 Type=ServiceType
 X-KDE-ServiceType=NetworkManagement/VpnUiPlugin
 Name=Network Management VPN UI Plugin
+Name[ar]=ملحق إدارة الشبكة VPN UI
 Name[da]=UI-plugin til VPN-netværkshåndtering
 Name[de]=Netzwerkverwaltung VPN-Modul
 Name[en_GB]=Network Management VPN UI Plugin
@@ -22,6 +23,7 @@ Name[uk]=Додаток інтерфейсу користувача керува
 Name[wa]=Tchôke-divins eterface uzeu VPN di Manaedjmint del rantoele
 Name[x-test]=xxNetwork Management VPN UI Pluginxx
 Comment=Defines KDE Network Management UI Plugins
+Comment[ar]=تحديد ملحقات إدارة شبكة كدي UI
 Comment[da]=Definerer UI-plugins til KDE's netværkshåndtering
 Comment[de]=Legt die Module der KDE-Netzwerkverwaltung fest
 Comment[en_GB]=Defines KDE Network Management UI Plugins

@@ -16,6 +16,7 @@ Name[uk]=ВИПРОБУВАННЯ: Служба параметрів корис�
 Name[wa]=Siervice ESPERIMINTÅ d' apontiaedje di l' uzeu po ManaedjeuRantoele
 Name[x-test]=xxEXPERIMENTAL NetworkManager User Settings Servicexx
 Comment=Provides network configuration to the NetworkManager daemon
+Comment[ar]=يوفر تضبيط الشبكة لمراقب مدير الشبكة
 Comment[da]=Leverer netværkskonfiguration af NetworkManager-dæmonen
 Comment[de]=Stellt dem NetworkManager-Dienst eine Netzwerkeinrichtung zur Verfügung
 Comment[el]=Προσφέρει ρυθμίσεις δικτύου με το δαίμονα διαχείρισης δικτύου

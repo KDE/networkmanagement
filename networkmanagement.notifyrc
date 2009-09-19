@@ -23,6 +23,7 @@ Name[wa]=Manaedjmint del rantoele
 Name[x-test]=xxNetwork Managementxx
 IconName=networkmanager
 Comment=Network Management
+Comment[ar]=إدارة الشبكة
 Comment[da]=Netværkshåndtering
 Comment[de]=Netzwerkverwaltung
 Comment[en_GB]=Network Management
@@ -49,6 +50,7 @@ Version=3
 
 [Context/connectiontype]
 Name=Network Connection Type
+Name[ar]=نوع الاتصال الشبكي
 Name[da]=Type af netværksforbindelse
 Name[de]=Art der Netzwerkverbindung
 Name[es]=Tipo de conexión de red
@@ -68,6 +70,7 @@ Name[x-test]=xxNetwork Connection Typexx
 
 [Event/hwadded]
 Name=Network Interface Attached
+Name[ar]=وُصِلت واجهة شبكية
 Name[da]=Netkort tilsluttet
 Name[de]=Netzwerkschnittstelle angeschlossen
 Name[el]=Σύναψη διασύνδεσης δικτύου
@@ -93,6 +96,7 @@ Name[uk]=Доданий інтерфейс мережі
 Name[wa]=Eterface rantoele ataetchî
 Name[x-test]=xxNetwork Interface Attachedxx
 Comment=A network interface was attached
+Comment[ar]=قد أوصِلت واجهة شبكية
 Comment[da]=Et netkort blev tilsluttet
 Comment[de]=Eine Netzwerkschnittstelle ist angeschlossen worden.
 Comment[el]=Έγινε σύναψη μιας διασύνδεσης δικτύου
@@ -122,6 +126,7 @@ Action=Popup
 
 [Event/hwremoved]
 Name=Network Interface Removed
+Name[ar]=فُصِلت واجهة شبكية
 Name[da]=Netkort fjernet
 Name[de]=Netzwerkschnittstelle entfernt
 Name[el]=Αφαίρεση διασύνδεσης δικτύου
@@ -148,6 +153,7 @@ Name[uk]=Вилучено інтерфейс мережі
 Name[wa]=Eterface rantoele oisté
 Name[x-test]=xxNetwork Interface Removedxx
 Comment=A network interface was removed
+Comment[ar]=قد فُصِلت واجهة شبكية
 Comment[da]=Et netkort blev fjernet
 Comment[de]=Eine Netzwerkschnittstelle ist entfernt worden.
 Comment[el]=Έγινε αφαίρεση μιας διασύνδεσης δικτύου
@@ -176,6 +182,7 @@ Comment[x-test]=xxA network interface was removedxx
 
 [Event/networkappeared]
 Name=Found Wireless Network
+Name[ar]=وجد الشبكة اللاسلكية
 Name[da]=Fandt trådløst netværk
 Name[de]=Drahtloses Netzwerk gefunden
 Name[el]=Βρέθηκε ασύρματο δίκτυο
@@ -202,6 +209,7 @@ Name[uk]=Знайдено бездротову мережу
 Name[wa]=Dj' a trové ene rantoele sins fyi
 Name[x-test]=xxFound Wireless Networkxx
 Comment=A wireless network appeared
+Comment[ar]=ظهرت شبكة لاسلكية
 Comment[da]=Et trådløst netværk er dukket op
 Comment[de]=Ein drahtloses Netzwerk ist gefunden worden.
 Comment[el]=Βρέθηκε ένα ασύρματο δίκτυο
@@ -229,6 +237,7 @@ Comment[x-test]=xxA wireless network appearedxx
 
 [Event/networkdisappeared]
 Name=Lost Wireless Network
+Name[ar]=فقد الشبكة اللاسلكية
 Name[da]=Mistede trådløst netværk
 Name[de]=Drahtloses Netzwerk verloren
 Name[el]=Απώλεια ασύρματου δικτύου
@@ -254,6 +263,7 @@ Name[uk]=Втрачено зв’язок з радіомережею
 Name[wa]=Dj' a pierdou l' rantoele sins fyi
 Name[x-test]=xxLost Wireless Networkxx
 Comment=A wireless network disappeared
+Comment[ar]=اختفت شبكة لاسلكية
 Comment[da]=Et trådløst netværk forsvandt
 Comment[de]=Ein drahtloses Netzwerk ist nicht mehr vorhanden.
 Comment[el]=΄Ενα ασύρματο δίκτυο εξαφανίστηκε
@@ -281,6 +291,7 @@ Comment[x-test]=xxA wireless network disappearedxx
 
 [Event/userconnectionattempt]
 Name=Establishing Network Connection
+Name[ar]=ينشئ شبكة لاسلكية
 Name[da]=Opretter netværksforbindelse
 Name[de]=Netzwerkverbindung wird hergestellt
 Name[el]=Εδραίωση σύνδεσης δικτύου
@@ -307,6 +318,7 @@ Name[uk]=Встановлення мережевого з'єднання
 Name[wa]=Dji met en ouve li raloyaedje al rantoele
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=The user started making a connection
+Comment[ar]=بدأ المستخدم بتشكيل اتصال
 Comment[da]=Brugeren begyndte at oprette en forbindelse
 Comment[de]=Der Benutzer hat einen Verbindungsaufbau gestartet.
 Comment[es]=El usuario ha empezado a establecer una conexión
@@ -324,6 +336,7 @@ Comment[x-test]=xxThe user started making a connectionxx
 
 [Event/autoconnectionattempt]
 Name=Establishing Network Connection
+Name[ar]=ينشئ شبكة لاسلكية
 Name[da]=Opretter netværksforbindelse
 Name[de]=Netzwerkverbindung wird hergestellt
 Name[el]=Εδραίωση σύνδεσης δικτύου
@@ -350,6 +363,7 @@ Name[uk]=Встановлення мережевого з'єднання
 Name[wa]=Dji met en ouve li raloyaedje al rantoele
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=A connection is being started automatically
+Comment[ar]=يجري بدء اتصالٍ آليا
 Comment[da]=En forbindelse er blevet startet automatisk
 Comment[de]=Es wird automatisch eine Verbindung aufgebaut.
 Comment[es]=Se está iniciado automáticamente una conexión
@@ -368,6 +382,7 @@ Action=Popup
 
 [Event/connecting]
 Name=Establishing Network Connection
+Name[ar]=ينشئ شبكة لاسلكية
 Name[da]=Opretter netværksforbindelse
 Name[de]=Netzwerkverbindung wird hergestellt
 Name[el]=Εδραίωση σύνδεσης δικτύου
@@ -394,6 +409,7 @@ Name[uk]=Встановлення мережевого з'єднання
 Name[wa]=Dji met en ouve li raloyaedje al rantoele
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=A network connection attempt was begun
+Comment[ar]=بدأت محاولة اتصال شبكي
 Comment[da]=Et netværksforbindelsesforsøg er påbegyndt
 Comment[de]=Ein Verbindungsversuch ist begonnen worden.
 Comment[el]=Αρχή προσπάθειας σύνδεσης δικτύου
@@ -422,6 +438,7 @@ Action=Popup
 
 [Event/disconnected]
 Name=Network Connection Disconnected
+Name[ar]=قطع اتصال شبكي
 Name[da]=Netværksforbindelse afbrudt
 Name[de]=Netzwerkverbindung getrennt
 Name[el]=Αποσύνδεση σύνδεσης δικτύου
@@ -447,6 +464,7 @@ Name[uk]=Мережеве з’єднання розірвано
 Name[wa]=Raloyaedje al rantoele disraloyî
 Name[x-test]=xxNetwork Connection Disconnectedxx
 Comment=A network connection was disconnected
+Comment[ar]=قد قطع اتصال شبكي
 Comment[da]=En netværksforbindelse blev afbrudt
 Comment[de]=Eine Netzwerkverbindung ist getrennt worden.
 Comment[el]=Αποσύνδεση μιας σύνδεσης δικτύου
@@ -474,6 +492,7 @@ Comment[x-test]=xxA network connection was disconnectedxx
 
 [Event/connected]
 Name=Network Connection Succeeded
+Name[ar]=نجح اتصال شبكي
 Name[da]=Netværksforbindelse gennemført
 Name[de]=Netzwerkverbindung erfolgreich hergestellt
 Name[el]=Επιτυχής σύνδεση δικτύου
@@ -500,6 +519,7 @@ Name[uk]=Успішне з’єднання з мережею
 Name[wa]=Raloyaedje al rantoele comifåt
 Name[x-test]=xxNetwork Connection Succeededxx
 Comment=A network connection was established
+Comment[ar]=قد أنشئ اتصال شبكي
 Comment[da]=En netværksforbindelse blev oprettet
 Comment[de]=Eine Netzwerkverbindung ist erfolgreich hergestellt worden.
 Comment[el]=Έγινε εδραίωση μιας σύνδεσης δικτύου
@@ -529,6 +549,7 @@ Action=Popup
 
 [Event/connfailed]
 Name=Network Connection Failed
+Name[ar]=فشل الاتصال الشبكي
 Name[da]=Netværksforbindelse mislykkedes
 Name[de]=Netzwerkverbindung fehlgeschlagen
 Name[el]=Αποτυχία σύνδεσης δικτύου
@@ -555,6 +576,7 @@ Name[uk]=Спроба встановлення з'єднання зазнала 
 Name[wa]=Li raloyaedje al rantoele a fwait berwete
 Name[x-test]=xxNetwork Connection Failedxx
 Comment=A network connection attempt failed
+Comment[ar]=فشلت محاولة اتصال شبكي
 Comment[da]=Et netværksforbindelsesforsøg mislykkedes
 Comment[de]=Ein Verbindungsversuch ist fehlgeschlagen.
 Comment[el]=Αποτυχία προσπάθειας σύνδεσης με ένα δίκτυο
@@ -583,6 +605,7 @@ Action=Popup
 
 [Event/rfoff]
 Name=Radio Hardware Switched Off
+Name[ar]=أطفأ عتاد الراديو
 Name[da]=Radio-hardware slået fra
 Name[de]=Hardware für drahtlose Verbindungen ausgeschaltet
 Name[el]=Ασύρματο υλικό επικοινωνίας κλειστό
@@ -604,6 +627,7 @@ Name[uk]=Радіозв’язок апаратно вимкнено
 Name[wa]=Éndjolreye radio disclitcheye
 Name[x-test]=xxRadio Hardware Switched Offxx
 Comment=Wireless transceivers disabled by hardware switch
+Comment[ar]=أجهزة الإرسال والاستقبال اللاسلكية عطّلت بواسطة تبديل جهاز
 Comment[da]=Trådløs-transceivere deaktiveret af hardware-kontakt
 Comment[de]=Die Hardware für drahtlose Verbindungen ist am Gerät ausgeschaltet worden.
 Comment[el]=Απενεργοποίηση ασύρματων συσκευών μέσω ενός διακόπτη υλικού
@@ -627,6 +651,7 @@ Action=Popup
 
 [Event/rfon]
 Name=Radio Hardware Switched On
+Name[ar]=شغّل عتاد الراديو
 Name[da]=Radio-hardware slået til
 Name[de]=Hardware für drahtlose Verbindungen eingeschaltet
 Name[el]=Ασύρματο υλικό επικοινωνίας ενεργό
@@ -648,6 +673,7 @@ Name[uk]=Радіозв’язок апаратно увімкнено
 Name[wa]=Éndjolreye radio eclitcheye
 Name[x-test]=xxRadio Hardware Switched Onxx
 Comment=Wireless transceivers enabled
+Comment[ar]=فعّلت أجهزة الإرسال والاستقبال اللاسلكية
 Comment[da]=Trådløs-transceivere aktiveret
 Comment[de]=Hardware für drahtlose Verbindungen aktiviert
 Comment[el]=Ενεργοποίηση ασύρματων συσκευών
@@ -672,6 +698,7 @@ Action=Popup
 
 [Event/lowsignal]
 Name=Low Wireless Signal Strength
+Name[ar]=شدة إشارات لاسلكية منخفضة
 Name[da]=Lav trådløs signalstyrke
 Name[de]=Niedrige Signalstärke
 Name[el]=Χαμηλή ισχύ σήματος ασύρματου
@@ -694,6 +721,7 @@ Name[uk]=Низька потужність радіосигналу
 Name[wa]=Basse foice do signå sins fyi
 Name[x-test]=xxLow Wireless Signal Strengthxx
 Comment=The wireless signal strength is low
+Comment[ar]=شدة الإشارة اللاسلكية منخفضة
 Comment[da]=Den trådløse signalstyrke er lav
 Comment[de]=Die Signalstärke der drahtlosen Verbindung ist niedrig.
 Comment[el]=Η ασύρματη ισχύ του σήματος είναι χαμηλή
@@ -719,6 +747,7 @@ Action=Popup
 
 [Event/ifacestatechange]
 Name=Interface changed state
+Name[ar]=غيرت الواجهة الحالة
 Name[da]=Netkort ændrede tilstand
 Name[de]=Schnittstellenstatus geändert
 Name[es]=La interfaz ha cambiado de estado
@@ -733,6 +762,7 @@ Name[uk]=Змінений стан інтерфейсу
 Name[wa]=L' eterface a candjî d' estat
 Name[x-test]=xxInterface changed statexx
 Comment=An interface changed state
+Comment[ar]=غيرت واجهة الحالة
 Comment[da]=Et netkort ændrede tilstand
 Comment[de]=Der Status einer Schnittstelle hat sich geändert.
 Comment[es]=Una interfaz ha cambiado de estado
@@ -750,6 +780,7 @@ Comment[x-test]=xxAn interface changed statexx
 
 [Event/networkingdisabled]
 Name=Network management disabled
+Name[ar]=عطّلت إدارة الشبكة
 Name[da]=Netværkshåndtering deaktiveret
 Name[de]=Netzwerkverwaltung deaktiviert
 Name[es]=Gestión de red inhabilitada
@@ -767,6 +798,7 @@ Name[uk]=Керування мережею вимкнено
 Name[wa]=Manaedjmint del rantoele essocté
 Name[x-test]=xxNetwork management disabledxx
 Comment=The network management subsystem was stopped or restarted
+Comment[ar]=إدارة نظام الشبكة الفرعي تم إيقافها أو إعادة تشغيلها
 Comment[da]=Undersystemet til netværkshåndtering blev stoppet eller genstartet
 Comment[de]=Die Netzwerkverwaltung ist angehalten oder neu gestartet worden.
 Comment[es]=El subsistema de gestión de red ha sido detenido o reiniciado
