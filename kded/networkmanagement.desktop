@@ -34,6 +34,7 @@ Comment[nl]=Levert de netwerkconfiguratie voor de Netwerkbeheer-daemon
 Comment[pa]=ਨੈੱਟਵਰਕਮੈਨੇਜਰ ਡੈਮੇਨ ਲਈ ਨੈੱਟਵਰਕ ਸੰਰਚਨਾ ਦਿੰਦੀ ਹੈ
 Comment[pt]=Oferece a configuração da rede ao servidor do NetworkManager
 Comment[pt_BR]=Fornece a configuração da rede para o daemon do NetworkManager
+Comment[ro]=Furnizează configurări de rețea către demonul NetworkManager
 Comment[sv]=Tillhandahåller nätverksinställning för nätverkshanteringsdemonen
 Comment[uk]=Надає налаштування мережі фоновій службі NetworkManager
 Comment[wa]=Dene l' apontiaedje del rantoele å démon di ManaedjeuRantoele
