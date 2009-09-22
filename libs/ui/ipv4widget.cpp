@@ -33,6 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "listvalidator.h"
 #include "editlistdialog.h"
 
+//void removeEmptyItems(QStringList &list);
+
 class IpV4Widget::Private
 {
 public:
@@ -88,9 +90,13 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     d->ui.netMask->setValidator(new SimpleIpV4AddressValidator(this));
     d->ui.gateway->setValidator(new SimpleIpV4AddressValidator(this));
     
-    ListValidator *listValidator = new ListValidator(this);
-    listValidator->setInnerValidator(new SimpleIpV4AddressValidator(listValidator));
-    d->ui.dns->setValidator(listValidator);
+    ListValidator *dnsEntriesValidator = new ListValidator(this);
+    dnsEntriesValidator->setInnerValidator(new SimpleIpV4AddressValidator(dnsEntriesValidator));
+    d->ui.dns->setValidator(dnsEntriesValidator);
+    
+    ListValidator *dnsSearchEntriesValidator = new ListValidator(this);
+    dnsSearchEntriesValidator->setInnerValidator(new QRegExpValidator(QRegExp("\\S+"), this));
+    d->ui.dnsSearch->setValidator(dnsSearchEntriesValidator);
 
     connect(d->ui.address, SIGNAL(editingFinished()), this, SLOT(addressEditingFinished()));
 
@@ -163,10 +169,10 @@ void IpV4Widget::readConfig()
     foreach (QHostAddress dns, d->setting->dns()) {
        dnsList << dns.toString();
     }
-    d->ui.dns->setText(dnsList.join(","));
+    d->ui.dns->setText(dnsList.join(QLatin1String(", ")));
     // dns search list
     if (!d->setting->dnssearch().isEmpty()) {
-        d->ui.dnsSearch->setText(d->setting->dnssearch().join(","));
+        d->ui.dnsSearch->setText(d->setting->dnssearch().join(QLatin1String(", ")));
     }
 }
 
@@ -214,7 +220,8 @@ void IpV4Widget::writeConfig()
 
     // dns
     QList<QHostAddress> dnsList;
-    QStringList dnsInput = d->ui.dns->text().split(',');
+    QString tempStr = d->ui.dns->text().remove(QLatin1Char(' '));
+    QStringList dnsInput = tempStr.split(QLatin1Char(','), QString::SkipEmptyParts);
     foreach (QString dns, dnsInput) {
         QHostAddress dnsAddr(dns);
         if (dnsAddr != QHostAddress::Null) {
@@ -224,9 +231,12 @@ void IpV4Widget::writeConfig()
     }
     d->setting->setDns(dnsList);
     // dns search list
+    QStringList dnsSearchEntries;
     if (!d->ui.dnsSearch->text().isEmpty()) {
-        d->setting->setDnssearch(d->ui.dnsSearch->text().split(','));
+        QString tempStr = d->ui.dnsSearch->text().remove(QLatin1Char(' '));
+        dnsSearchEntries = tempStr.split(QLatin1Char(','), QString::SkipEmptyParts);
     }
+    d->setting->setDnssearch(dnsSearchEntries);
 }
 
 void IpV4Widget::methodChanged(int currentIndex)
@@ -338,21 +348,23 @@ void IpV4Widget::switchSettingsMode()
     d->ui.advancedSettings->setVisible(d->isAdvancedModeOn);
 }
 
-void IpV4Widget::dnsEdited(QStringList addresses)
+void IpV4Widget::dnsEdited(QStringList items)
 {
-    d->ui.dns->setText(addresses.join(","));
+    d->ui.dns->setText(items.join(QLatin1String(", ")));
 }
 
-void IpV4Widget::dnsSearchEdited(QStringList addresses)
+void IpV4Widget::dnsSearchEdited(QStringList items)
 {
-    d->ui.dnsSearch->setText(addresses.join(","));
+    d->ui.dnsSearch->setText(items.join(QLatin1String(", ")));
 }
 
 void IpV4Widget::showDnsEditor()
 {
     EditListDialog * dnsEditor = new EditListDialog;
-    dnsEditor->setAddresses(d->ui.dns->text().split(","));
-    connect(dnsEditor, SIGNAL(addressesEdited(QStringList)), this, SLOT(dnsEdited(QStringList)));
+    // at first remove space characters
+    QString dnsEntries = d->ui.dns->text().remove(QLatin1Char(' '));
+    dnsEditor->setItems(dnsEntries.split(QLatin1Char(','), QString::SkipEmptyParts));
+    connect(dnsEditor, SIGNAL(itemsEdited(QStringList)), this, SLOT(dnsEdited(QStringList)));
     dnsEditor->setCaption(i18n("DNS Servers"));
     dnsEditor->setModal(true);
     dnsEditor->setValidator(new SimpleIpV4AddressValidator(dnsEditor));
@@ -362,8 +374,10 @@ void IpV4Widget::showDnsEditor()
 void IpV4Widget::showDnsSearchEditor()
 {
     EditListDialog * dnsSearchEditor = new EditListDialog;
-    dnsSearchEditor->setAddresses(d->ui.dnsSearch->text().split(","));
-    connect(dnsSearchEditor, SIGNAL(addressesEdited(QStringList)), this, SLOT(dnsSearchEdited(QStringList)));
+    // at first remove space characters
+    QString dnsSearchEntries = d->ui.dnsSearch->text().remove(QLatin1Char(' '));
+    dnsSearchEditor->setItems(dnsSearchEntries.split(QLatin1Char(','), QString::SkipEmptyParts));
+    connect(dnsSearchEditor, SIGNAL(itemsEdited(QStringList)), this, SLOT(dnsSearchEdited(QStringList)));
     dnsSearchEditor->setCaption(i18n("Search domains"));
     dnsSearchEditor->setModal(true);
     dnsSearchEditor->show();

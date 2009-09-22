@@ -23,13 +23,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KEditListBox>
 #include <KLineEdit>
 
+void removeEmptyItems(QStringList &list);
+
 class EditListDialog::Private
 {
 public:
-    Private() : addressesEditListBox(0)
+    Private() : editListBox(0)
     {
     }
-    KEditListBox * addressesEditListBox;
+    KEditListBox * editListBox;
 
 };
 
@@ -37,35 +39,56 @@ EditListDialog::EditListDialog(QWidget *parent, Qt::WFlags flags) : KDialog(pare
 {
     setButtons(KDialog::Ok | KDialog::Cancel);
 
-    d->addressesEditListBox = new KEditListBox(this);
-    d->addressesEditListBox->setCheckAtEntering(true);
+    d->editListBox = new KEditListBox(this);
+    d->editListBox->setCheckAtEntering(true);
 
-    setMainWidget(d->addressesEditListBox);
+    setMainWidget(d->editListBox);
     connect(this, SIGNAL(okClicked()), this, SLOT(okClicked()));
 }
 
-void EditListDialog::setAddresses(const QStringList &addresses)
+EditListDialog::~EditListDialog()
 {
-    d->addressesEditListBox->setItems(addresses);
+    delete d;
 }
 
-QStringList EditListDialog::addresses() const
+void EditListDialog::setItems(const QStringList &items)
 {
-    return d->addressesEditListBox->items();
+    d->editListBox->setItems(items);
+}
+
+QStringList EditListDialog::items() const
+{
+    return d->editListBox->items();
+}
+
+void removeEmptyItems(QStringList &list)
+{
+    QStringList::iterator it = list.begin();
+    QStringList::const_iterator end = list.constEnd();
+    while (it != end) {
+        if ((*it).trimmed().isEmpty()) {
+            it = list.erase(it);
+        }
+        else {
+            it++;
+        }
+    }
 }
 
 void EditListDialog::okClicked()
 {
-    emit addressesEdited(addresses());
+    QStringList list = items();
+    removeEmptyItems(list);
+    emit itemsEdited(list);
 }
 
 void EditListDialog::setValidator(const QValidator *validator)
 {
-    d->addressesEditListBox->lineEdit()->setValidator(validator);
+    d->editListBox->lineEdit()->setValidator(validator);
 }
 
 const QValidator* EditListDialog::validator() const
 {
-    return d->addressesEditListBox->lineEdit()->validator();
+    return d->editListBox->lineEdit()->validator();
 }
 

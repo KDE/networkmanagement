@@ -31,6 +31,7 @@ public:
     }
 
     QValidator *inner;
+    bool allowEmptyString;
 };
 
 ListValidator::ListValidator(QObject *parent)
@@ -40,30 +41,40 @@ ListValidator::ListValidator(QObject *parent)
 
 ListValidator::~ListValidator()
 {
+    delete d;
 }
 
-QValidator::State ListValidator::validate(QString &text, int &pos) const
+QValidator::State ListValidator::validate(QString &text, int &/*pos*/) const
 {
-    QStringList strings = text.split(',');
+    Q_ASSERT(d->inner);
+
+    QStringList strings = text.split(QLatin1Char(','));
     int trash;
     QValidator::State state = Acceptable;
-    foreach (QString string, strings) {
+    for (QStringList::iterator i = strings.begin(); i != strings.end(); i++) {
+        QString string = i->trimmed();
+        int position = i->indexOf(string);
+        int size = string.size();
         QValidator::State current = d->inner->validate(string, trash);
-        if (current == Invalid)
-            return Invalid;
-        if (current == Intermediate)
+        i->replace(position, size, string);
+        if (current == Invalid) {
+            state = Invalid;
+            break;
+        }
+        if (current == Intermediate) {
+            if (state == Intermediate) {
+                state = Invalid;
+                break;
+            }
             state = Intermediate;
+        }
     }
+    text = strings.join(QLatin1String(","));
     return state;
 }
 
 void ListValidator::setInnerValidator(QValidator *validator)
 {
-    d->inner = validator; 
-}
-
-const QValidator* ListValidator::innerValidator() const
-{
-    return d->inner;
+    d->inner = validator;
 }
 

@@ -23,6 +23,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QValidator>
 
+/**
+ * This class validates each string item with a validator.
+ * String items are separated by comma.
+ * The validator should be set with setInnerValidator(..) method.
+ * Please note, space characters are allowed only after comma characters.
+ */
 class ListValidator : public QValidator
 {
 public:
@@ -30,9 +36,7 @@ public:
     virtual ~ListValidator();
     
     virtual State validate(QString &, int &) const;
-
     void setInnerValidator(QValidator *validator);
-    const QValidator* innerValidator() const;
 
 private:
     class Private;

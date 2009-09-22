@@ -22,20 +22,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define EDITLISTDIALOG_H
 
 #include <KDialog>
-#include <QValidator>
+
+class QValidator;
 
 class EditListDialog : public KDialog
 {
 Q_OBJECT
 public:
     EditListDialog(QWidget *parent=0, Qt::WFlags flags=0);
-    void setAddresses(const QStringList &addresses);
-    QStringList addresses() const;
+    virtual ~EditListDialog();
+    void setItems(const QStringList &items);
+    QStringList items() const;
     void setValidator(const QValidator *validator);
     const QValidator* validator() const;
 
 Q_SIGNALS:
-    void addressesEdited(QStringList addresses);
+    void itemsEdited(QStringList items);
 
 protected Q_SLOTS:
     void okClicked();

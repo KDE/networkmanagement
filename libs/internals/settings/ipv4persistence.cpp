@@ -98,11 +98,10 @@ void Ipv4Persistence::save()
   foreach (QHostAddress dns, setting->dns()) {
     rawDns.append(dns.toString());
   }
-  if (!rawDns.isEmpty())
-      m_config->writeEntry("dns", rawDns);
 
-  if (!setting->dnssearch().isEmpty())
-      m_config->writeEntry("dnssearch", setting->dnssearch());
+  m_config->writeEntry("dns", rawDns);
+
+  m_config->writeEntry("dnssearch", setting->dnssearch());
 
   QStringList rawAddresses;
   foreach (Solid::Control::IPv4Address addr, setting->addresses()) {
