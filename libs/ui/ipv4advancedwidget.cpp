@@ -115,6 +115,7 @@ IpV4AdvancedWidget::~IpV4AdvancedWidget()
 
 void IpV4AdvancedWidget::setAdditionalAddresses(const QList<Solid::Control::IPv4Address> &list)
 {
+    d->model.removeRows(0, d->model.rowCount());
     foreach (Solid::Control::IPv4Address addr, list) {
         QList<QStandardItem *> item;
         QNetworkAddressEntry entry;

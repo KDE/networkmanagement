@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>489</width>
-    <height>310</height>
+    <height>313</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -310,6 +310,10 @@
   <tabstop>address</tabstop>
   <tabstop>netMask</tabstop>
   <tabstop>gateway</tabstop>
+  <tabstop>dnsSearch</tabstop>
+  <tabstop>dnsSearchMorePushButton</tabstop>
+  <tabstop>dns</tabstop>
+  <tabstop>dnsMorePushButton</tabstop>
   <tabstop>pushButtonSettingsMode</tabstop>
  </tabstops>
  <resources/>
