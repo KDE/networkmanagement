@@ -205,7 +205,6 @@ void VpncSettingWidget::writeConfig()
         data.insert(NM_VPNC_KEY_DPD_IDLE_TIMEOUT, QString::number(0));
     }
 
-    d->setting->setUserName(d->ui.leUserName->text());
     d->setting->setData(data);
     d->setting->setVpnSecrets(secretData);
 }

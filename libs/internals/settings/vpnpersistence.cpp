@@ -3,6 +3,8 @@
 
 #include "vpnpersistence.h"
 
+#include <KUser>
+
 #include "vpn.h"
 
 using namespace Knm;
@@ -20,7 +22,7 @@ void VpnPersistence::load()
   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
   setting->setServiceType(m_config->readEntry("ServiceType", ""));
   setting->setData(stringMapFromStringList(m_config->readEntry("Data", QStringList())));
-  setting->setUserName(m_config->readEntry("UserName", ""));
+  setting->setUserName(KUser().loginName());
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {
       // the map is flattened to a list of key,value,key,value
@@ -35,7 +37,6 @@ void VpnPersistence::save()
   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
   m_config->writeEntry("ServiceType", setting->serviceType());
   m_config->writeEntry("Data", stringMapToStringList(setting->data()));
-  m_config->writeEntry("UserName", setting->userName());
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {
     m_config->writeEntry("VpnSecrets", variantMapToStringList(setting->vpnSecrets()));
