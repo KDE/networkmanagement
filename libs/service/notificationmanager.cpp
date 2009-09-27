@@ -391,7 +391,7 @@ void NotificationManager::interfaceConnectionStateChanged(int new_state, int, in
                 text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to FirmwareMissingReason","%1 is now %2 because firmware is missing", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::DeviceRemovedReason:
-                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to DeviceRemovedReason","%1 is now %2 because the deivce was removed", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to DeviceRemovedReason","%1 is now %2 because the device was removed", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::SleepingReason:
                 text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to SleepingReason","%1 is now %2 because the networking system is now sleeping", identifier, stateString);
