@@ -32,6 +32,7 @@ Q_OBJECT
 public:
     PppoePreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~PppoePreferences();
+    virtual bool needsEdits() const { return true; /*TODO until auto connection name generation code is in place*/ }
 };
 
 #endif

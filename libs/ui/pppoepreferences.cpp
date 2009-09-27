@@ -37,7 +37,7 @@ PppoePreferences::PppoePreferences(QWidget *parent, const QVariantList &args)
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Pppoe);
     QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(m_connection, i18n("New Wired Connection"), this);
+    m_contents = new ConnectionWidget(m_connection, i18n("New PPPoE Connection"), this);
     layout->addWidget(m_contents);
     PppoeWidget * pppoeWidget = new PppoeWidget(m_connection, this);
     WiredWidget * wiredWidget = new WiredWidget(m_connection, this);

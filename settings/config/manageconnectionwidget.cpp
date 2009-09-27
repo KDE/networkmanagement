@@ -246,7 +246,7 @@ void ManageConnectionWidget::updateTabStates()
     } else {
         mConnEditUi.tabWidget->setTabEnabled(3, true);
     }
-    mConnEditUi.tabWidget->setTabEnabled(4, (hasDsl || mConnEditUi.listPppoe->topLevelItemCount()));
+    mConnEditUi.tabWidget->setTabEnabled(4, (hasWired || hasDsl || mConnEditUi.listPppoe->topLevelItemCount()));
 }
 
 void ManageConnectionWidget::addClicked()
