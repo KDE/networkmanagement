@@ -275,8 +275,12 @@ void OpenVpnSettingWidget::writeConfig()
 
     // optional tls authentication
     if (d->ui.useExtraTlsAuth->isChecked()) {
+        KUrl tlsAuthKeyUrl = d->ui.kurlTlsAuthKey->url();
+        if (!tlsAuthKeyUrl.isEmpty()) {
+            data.insert(NM_OPENVPN_KEY_TA, tlsAuthKeyUrl.path());
+        }
         if (d->ui.cboDirection->currentIndex() > 0) {
-            data.insert(NM_OPENVPN_KEY_TA_DIR, QString::number(d->ui.cboDirection->currentIndex()));
+            data.insert(NM_OPENVPN_KEY_TA_DIR, QString::number(d->ui.cboDirection->currentIndex() - 1));
         }
     }
 
