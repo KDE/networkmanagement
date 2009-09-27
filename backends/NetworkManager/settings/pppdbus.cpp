@@ -72,28 +72,45 @@ void PppDbus::fromMap(const QVariantMap & map)
   }
 }
 
+void PppDbus::insertIfTrue(QVariantMap& map, const char * key, bool setting)
+{
+    if (setting) {
+        map.insert(QLatin1String(key), true);
+    }
+}
+
+void PppDbus::insertIfNonZero(QVariantMap& map, const char * key, uint setting)
+{
+    if (setting != 0) {
+        map.insert(QLatin1String(key), setting);
+    }
+}
+
 QVariantMap PppDbus::toMap()
 {
   QVariantMap map;
   Knm::PppSetting * setting = static_cast<Knm::PppSetting *>(m_setting);
-  map.insert("noauth", setting->noauth());
-  map.insert(QLatin1String(NM_SETTING_PPP_REFUSE_EAP), setting->refuseeap());
-  map.insert(QLatin1String(NM_SETTING_PPP_REFUSE_PAP), setting->refusepap());
-  map.insert(QLatin1String(NM_SETTING_PPP_REFUSE_CHAP), setting->refusechap());
-  map.insert(QLatin1String(NM_SETTING_PPP_REFUSE_MSCHAP), setting->refusemschap());
-  map.insert(QLatin1String(NM_SETTING_PPP_REFUSE_MSCHAPV2), setting->refusemschapv2());
-  map.insert("nobsdcomp", setting->nobsdcomp());
-  map.insert("nodeflate", setting->nodeflate());
-  map.insert(QLatin1String(NM_SETTING_PPP_NO_VJ_COMP), setting->novjcomp());
-  map.insert(QLatin1String(NM_SETTING_PPP_REQUIRE_MPPE), setting->requiremppe());
-  map.insert(QLatin1String(NM_SETTING_PPP_REQUIRE_MPPE_128), setting->requiremppe128());
-  map.insert(QLatin1String(NM_SETTING_PPP_MPPE_STATEFUL), setting->mppestateful());
-  map.insert("crtscts", setting->crtscts());
-  map.insert("baud", setting->baud());
-  map.insert("mru", setting->mru());
-  map.insert("mtu", setting->mtu());
-  map.insert(QLatin1String(NM_SETTING_PPP_LCP_ECHO_FAILURE), setting->lcpechofailure());
-  map.insert(QLatin1String(NM_SETTING_PPP_LCP_ECHO_INTERVAL), setting->lcpechointerval());
+  insertIfTrue(map, "noauth", setting->noauth());
+  insertIfTrue(map, NM_SETTING_PPP_REFUSE_EAP, setting->refuseeap());
+  insertIfTrue(map, NM_SETTING_PPP_REFUSE_PAP, setting->refusepap());
+  insertIfTrue(map, NM_SETTING_PPP_REFUSE_CHAP, setting->refusechap());
+  insertIfTrue(map, NM_SETTING_PPP_REFUSE_MSCHAP, setting->refusemschap());
+  insertIfTrue(map, NM_SETTING_PPP_REFUSE_MSCHAPV2, setting->refusemschapv2());
+  insertIfTrue(map, "nobsdcomp", setting->nobsdcomp());
+  insertIfTrue(map, "nodeflate", setting->nodeflate());
+  insertIfTrue(map, NM_SETTING_PPP_NO_VJ_COMP, setting->novjcomp());
+  if (setting->requiremppe()) {
+      map.insert(QLatin1String(NM_SETTING_PPP_REQUIRE_MPPE), true);
+
+          insertIfTrue(map, NM_SETTING_PPP_REQUIRE_MPPE_128, setting->requiremppe128());
+          insertIfTrue(map, NM_SETTING_PPP_MPPE_STATEFUL, setting->mppestateful());
+  }
+  insertIfTrue(map, "crtscts", setting->crtscts());
+  insertIfNonZero(map, "baud", setting->baud());
+  insertIfNonZero(map, "mru", setting->mru());
+  insertIfNonZero(map, "mtu", setting->mtu());
+  insertIfNonZero(map, NM_SETTING_PPP_LCP_ECHO_FAILURE, setting->lcpechofailure());
+  insertIfNonZero(map, NM_SETTING_PPP_LCP_ECHO_INTERVAL, setting->lcpechointerval());
   return map;
 }
 

@@ -33,15 +33,29 @@ void SerialDbus::fromMap(const QVariantMap & map)
   }
 }
 
+void SerialDbus::insertIfTrue(QVariantMap& map, const char * key, bool setting)
+{
+    if (setting) {
+        map.insert(QLatin1String(key), true);
+    }
+}
+
+void SerialDbus::insertIfNonZero(QVariantMap& map, const char * key, uint setting)
+{
+    if (setting != 0) {
+        map.insert(QLatin1String(key), setting);
+    }
+}
+
 QVariantMap SerialDbus::toMap()
 {
   QVariantMap map;
   Knm::SerialSetting * setting = static_cast<Knm::SerialSetting *>(m_setting);
-  map.insert("baud", setting->baud());
-  map.insert("bits", setting->bits());
+  insertIfNonZero(map, "baud", setting->baud());
+  insertIfNonZero(map, "bits", setting->bits());
   map.insert("parity", setting->parity());
-  map.insert("stopbits", setting->stopbits());
-  map.insert(QLatin1String(NM_SETTING_SERIAL_SEND_DELAY), setting->senddelay());
+  insertIfNonZero(map, "stopbits", setting->stopbits());
+  insertIfNonZero(map, NM_SETTING_SERIAL_SEND_DELAY, setting->senddelay());
   return map;
 }
 

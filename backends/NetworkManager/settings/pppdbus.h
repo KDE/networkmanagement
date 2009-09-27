@@ -21,6 +21,9 @@ class NM07DBUS_EXPORT PppDbus : public SettingDbus
     void fromMap(const QVariantMap&);
     QVariantMap toMap();
     QVariantMap toSecretsMap();
+  private:
+    void insertIfTrue(QVariantMap& map, const char * key, bool setting);
+    void insertIfNonZero(QVariantMap& map, const char * key, uint setting);
 };
 #endif
 
