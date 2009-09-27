@@ -54,6 +54,7 @@ PptpSettingWidget::PptpSettingWidget(Knm::Connection * connection, QWidget * par
 
     connect(d->ui.btnAdvanced, SIGNAL(clicked()), this, SLOT(doAdvancedDialog()));
 
+    connect(d->ui.cb_showPassword, SIGNAL(toggled(bool)), this, SLOT(setShowPassword(bool)));
     d->advancedDlg = new KDialog(this);
     d->advancedWid = new QWidget(this);
     d->advUi.setupUi(d->advancedWid);
@@ -63,6 +64,12 @@ PptpSettingWidget::PptpSettingWidget(Knm::Connection * connection, QWidget * par
 PptpSettingWidget::~PptpSettingWidget()
 {
 
+}
+
+void PptpSettingWidget::setShowPassword(bool show)
+{
+    Q_D(PptpSettingWidget);
+    d->ui.edt_password->setPasswordMode(!show);
 }
 
 void PptpSettingWidget::doAdvancedDialog()
@@ -101,12 +108,13 @@ void PptpSettingWidget::readConfig()
 
     // Options below is belongs to "Advanced" dialog
 
-    // Authenfication options
-    bool refuse_pap = (dataMap[NM_PPTP_KEY_REFUSE_PAP] == "yes" ? true : false);
-    bool refuse_chap = (dataMap[NM_PPTP_KEY_REFUSE_CHAP] == "yes" ? true : false);
-    bool refuse_mschap = (dataMap[NM_PPTP_KEY_REFUSE_MSCHAP] == "yes" ? true : false);
-    bool refuse_mschapv2 = (dataMap[NM_PPTP_KEY_REFUSE_MSCHAPV2] == "yes" ? true : false);
-    bool refuse_eap = (dataMap[NM_PPTP_KEY_REFUSE_EAP] == "yes" ? true : false);
+    // Authentification options
+    QString yesString = QLatin1String("yes");
+    bool refuse_pap = (dataMap[NM_PPTP_KEY_REFUSE_PAP] == yesString);
+    bool refuse_chap = (dataMap[NM_PPTP_KEY_REFUSE_CHAP] == yesString);
+    bool refuse_mschap = (dataMap[NM_PPTP_KEY_REFUSE_MSCHAP] == yesString);
+    bool refuse_mschapv2 = (dataMap[NM_PPTP_KEY_REFUSE_MSCHAPV2] == yesString);
+    bool refuse_eap = (dataMap[NM_PPTP_KEY_REFUSE_EAP] == yesString);
 
     QListWidgetItem * item = 0;
     item = d->advUi.listWidget->item(0); // PAP
@@ -121,36 +129,32 @@ void PptpSettingWidget::readConfig()
     item->setCheckState(refuse_eap ? Qt::Unchecked : Qt::Checked);
 
     // Cryptography and compression
-    bool mppe = (dataMap[NM_PPTP_KEY_REQUIRE_MPPE] == "yes" ? true : false);
-    bool mppe40 = (dataMap[NM_PPTP_KEY_REQUIRE_MPPE_40] == "yes" ? true : false);
-    bool mppe128 = (dataMap[NM_PPTP_KEY_REQUIRE_MPPE_128] == "yes" ? true : false);
-    bool mppe_stateful = (dataMap[NM_PPTP_KEY_MPPE_STATEFUL] == "yes" ? true : false);
+    bool mppe = (dataMap[NM_PPTP_KEY_REQUIRE_MPPE] == yesString);
+    bool mppe40 = (dataMap[NM_PPTP_KEY_REQUIRE_MPPE_40] == yesString);
+    bool mppe128 = (dataMap[NM_PPTP_KEY_REQUIRE_MPPE_128] == yesString);
+    bool mppe_stateful = (dataMap[NM_PPTP_KEY_MPPE_STATEFUL] == yesString);
 
-    if (mppe || mppe40 || mppe128) // If MPPE is used
-    {
-        d->advUi.cb_MPPE->setChecked(mppe || mppe40 || mppe128);
-        if (mppe128)
-        {
+    if (mppe || mppe40 || mppe128) { // If MPPE is use
+        d->advUi.gb_MPPE->setChecked(mppe || mppe40 || mppe128);
+        if (mppe128) {
             d->advUi.cb_MPPECrypto->setCurrentIndex(1); // 128 bit
         }
-        else if (mppe40)
-        {
+        else if (mppe40) {
             d->advUi.cb_MPPECrypto->setCurrentIndex(2); // 40 bit
         }
-        else if (mppe)
-        {
+        else {
             d->advUi.cb_MPPECrypto->setCurrentIndex(0); // Any
         }
         d->advUi.cb_statefulEncryption->setChecked(mppe_stateful);
     }
 
-    bool nobsd = (dataMap[NM_PPTP_KEY_NOBSDCOMP] == "yes" ? true : false);
+    bool nobsd = (dataMap[NM_PPTP_KEY_NOBSDCOMP] == yesString);
     d->advUi.cb_BSD->setChecked(!nobsd);
 
-    bool nodeflate = (dataMap[NM_PPTP_KEY_NODEFLATE] == "yes" ? true : false);
+    bool nodeflate = (dataMap[NM_PPTP_KEY_NODEFLATE] == yesString);
     d->advUi.cb_deflate->setChecked(!nodeflate);
 
-    bool novjcomp = (dataMap[NM_PPTP_KEY_NO_VJ_COMP] == "yes" ? true : false);
+    bool novjcomp = (dataMap[NM_PPTP_KEY_NO_VJ_COMP] == yesString);
     d->advUi.cb_TCPheaders->setChecked(!novjcomp);
 
     // Echo
@@ -173,25 +177,33 @@ void PptpSettingWidget::writeConfig()
     data.insert(NM_PPTP_KEY_GATEWAY,  d->ui.edt_gateway->text().toUtf8());
     data.insert(NM_PPTP_KEY_USER, d->ui.edt_login->text().toUtf8());
     secretData.insert(QLatin1String(NM_PPTP_KEY_PASSWORD), d->ui.edt_password->text());
-    data.insert(NM_PPTP_KEY_DOMAIN,  d->ui.edt_ntDomain->text().toUtf8());
+    if (!d->ui.edt_ntDomain->text().isEmpty()) {
+        data.insert(NM_PPTP_KEY_DOMAIN,  d->ui.edt_ntDomain->text().toUtf8());
+    }
 
     // Advanced dialog settings
     if (d->advancedIsDirty) {
         // Authenfication options
         QListWidgetItem * item = 0;
         item = d->advUi.listWidget->item(0); // PAP
-        data.insert(NM_PPTP_KEY_REFUSE_PAP, item->checkState() == Qt::Checked ? "no" : "yes");
+        QString yesString = QLatin1String("yes");
+        if (item->checkState() == Qt::Unchecked)
+            data.insert(NM_PPTP_KEY_REFUSE_PAP, yesString);
         item = d->advUi.listWidget->item(1); // CHAP
-        data.insert(NM_PPTP_KEY_REFUSE_CHAP, item->checkState() == Qt::Checked ? "no" : "yes");
+        if (item->checkState() == Qt::Unchecked)
+            data.insert(NM_PPTP_KEY_REFUSE_CHAP, yesString);
         item = d->advUi.listWidget->item(2); // MSCHAP
-        data.insert(NM_PPTP_KEY_REFUSE_MSCHAP, item->checkState() == Qt::Checked ? "no" : "yes");
+        if (item->checkState() == Qt::Unchecked)
+            data.insert(NM_PPTP_KEY_REFUSE_MSCHAP, yesString);
         item = d->advUi.listWidget->item(3); // MSCHAPv2
-        data.insert(NM_PPTP_KEY_REFUSE_MSCHAPV2, item->checkState() == Qt::Checked ? "no" : "yes");
+        if (item->checkState() == Qt::Unchecked)
+            data.insert(NM_PPTP_KEY_REFUSE_MSCHAPV2, yesString);
         item = d->advUi.listWidget->item(4); // EAP
-        data.insert(NM_PPTP_KEY_REFUSE_EAP, (item->checkState() == Qt::Checked) ? "no" : "yes");
+        if (item->checkState() == Qt::Unchecked)
+            data.insert(NM_PPTP_KEY_REFUSE_EAP, yesString);
 
         // Cryptography and compression
-        if (d->advUi.cb_MPPE->checkState() == Qt::Checked)
+        if (d->advUi.gb_MPPE->isChecked())
         {
             int index = d->advUi.cb_MPPECrypto->currentIndex();
 
@@ -200,31 +212,41 @@ void PptpSettingWidget::writeConfig()
                 case 0:
                     {
                         // "Any"
-                        data.insert(NM_PPTP_KEY_REQUIRE_MPPE, "yes");
+                        data.insert(NM_PPTP_KEY_REQUIRE_MPPE, yesString);
                     }
+                    break;
                 case 1:
                     {
                         // "128 bit"
-                        data.insert(NM_PPTP_KEY_REQUIRE_MPPE_128, "yes");
+                        data.insert(NM_PPTP_KEY_REQUIRE_MPPE_128, yesString);
                     }
+                    break;
                 case 2:
                     {
                         // "40 bit"
-                        data.insert(NM_PPTP_KEY_REQUIRE_MPPE_40, "yes");
+                        data.insert(NM_PPTP_KEY_REQUIRE_MPPE_40, yesString);
                     }
+                    break;
             }
 
-            data.insert(NM_PPTP_KEY_MPPE_STATEFUL, d->advUi.cb_statefulEncryption->checkState() ==  Qt::Checked ? "yes" : "no");
+            if (d->advUi.cb_statefulEncryption->isChecked()) {
+                data.insert(NM_PPTP_KEY_MPPE_STATEFUL, yesString);
+            }
         }
 
-        data.insert(NM_PPTP_KEY_NOBSDCOMP, d->advUi.cb_BSD->checkState() ==  Qt::Checked ? "no" : "yes");
-        data.insert(NM_PPTP_KEY_NODEFLATE, d->advUi.cb_deflate->checkState() ==  Qt::Checked ? "no" : "yes");
-        data.insert(NM_PPTP_KEY_NO_VJ_COMP, d->advUi.cb_TCPheaders->checkState() ==  Qt::Checked ? "no" : "yes");
+        if (!d->advUi.cb_BSD->isChecked()) {
+            data.insert(NM_PPTP_KEY_NOBSDCOMP, yesString);
 
+        }
+        if (!d->advUi.cb_deflate->isChecked()) {
+            data.insert(NM_PPTP_KEY_NODEFLATE, yesString);
+        }
+
+        if (!d->advUi.cb_TCPheaders->isChecked()) {
+            data.insert(NM_PPTP_KEY_NO_VJ_COMP, yesString);
+        }
         // Echo
-        bool lcp_echo = d->advUi.cb_sendEcho->checkState() ==  Qt::Checked;
-        if (lcp_echo)
-        {
+        if (d->advUi.cb_sendEcho->isChecked()) {
             data.insert(NM_PPTP_KEY_LCP_ECHO_FAILURE, "5");
             data.insert(NM_PPTP_KEY_LCP_ECHO_INTERVAL, "30");
         }

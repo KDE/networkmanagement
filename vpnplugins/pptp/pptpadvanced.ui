@@ -22,7 +22,10 @@
         <item>
          <widget class="QLabel" name="lbl_auth">
           <property name="text">
-           <string>Allow next authenfication methods:</string>
+           <string>Allow following &amp;authentification methods:</string>
+          </property>
+          <property name="buddy">
+           <cstring>listWidget</cstring>
           </property>
          </widget>
         </item>
@@ -76,121 +79,112 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="grp_cryptoAndCompression">
-     <property name="title">
-      <string>Cryptography and Compression</string>
+    <widget class="QGroupBox" name="gb_MPPE">
+     <property name="toolTip">
+      <string>Use Microsoft Point-to-Point Encryption</string>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
-       <layout class="QVBoxLayout" name="verticalLayout">
+     <property name="title">
+      <string>Use &amp;MPPE Encryption</string>
+     </property>
+     <property name="checkable">
+      <bool>true</bool>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QCheckBox" name="cb_MPPE">
-          <property name="text">
-           <string>Use MPPE</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <layout class="QHBoxLayout" name="horizontalLayout">
           <item>
-           <spacer name="horizontalSpacer">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
+           <widget class="QLabel" name="lbl_MMPEcrypto">
+            <property name="maximumSize">
              <size>
-              <width>20</width>
-              <height>20</height>
+              <width>100</width>
+              <height>16777215</height>
              </size>
             </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" name="horizontalLayout">
-            <item>
-             <widget class="QLabel" name="lbl_MMPEcrypto">
-              <property name="maximumSize">
-               <size>
-                <width>100</width>
-                <height>16777215</height>
-               </size>
-              </property>
-              <property name="text">
-               <string>Crypto:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QComboBox" name="cb_MPPECrypto">
-              <item>
-               <property name="text">
-                <string>Any</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>128 bit</string>
-               </property>
-              </item>
-              <item>
-               <property name="text">
-                <string>40 bit</string>
-               </property>
-              </item>
-             </widget>
-            </item>
-           </layout>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_3">
-          <item>
-           <spacer name="horizontalSpacer_2">
-            <property name="orientation">
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType">
-             <enum>QSizePolicy::Fixed</enum>
-            </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>20</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="cb_statefulEncryption">
             <property name="text">
-             <string>Use stateful Encryption</string>
+             <string>&amp;Crypto:</string>
             </property>
+            <property name="buddy">
+             <cstring>cb_MPPECrypto</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QComboBox" name="cb_MPPECrypto">
+            <item>
+             <property name="text">
+              <string>Any</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>128 bit</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>40 bit</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>
         </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_3">
+        <item>
+         <widget class="QCheckBox" name="cb_statefulEncryption">
+          <property name="text">
+           <string>Use &amp;stateful encryption</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="grp_cryptoAndCompression">
+     <property name="title">
+      <string>Compression</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="1" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout">
         <item>
          <widget class="QCheckBox" name="cb_BSD">
           <property name="text">
-           <string>Use BSD compression</string>
+           <string>Allow &amp;BSD compression</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="cb_deflate">
           <property name="text">
-           <string>Use Deflate compression</string>
+           <string>Allow &amp;Deflate compression</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QCheckBox" name="cb_TCPheaders">
           <property name="text">
-           <string>Use compression TCP headers</string>
+           <string>Allow &amp;TCP header compression</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -208,7 +202,7 @@
       <item row="0" column="0">
        <widget class="QCheckBox" name="cb_sendEcho">
         <property name="text">
-         <string>Send echo-packets PPP</string>
+         <string>Send PPP &amp;echo packets </string>
         </property>
        </widget>
       </item>
@@ -216,8 +210,10 @@
     </widget>
    </item>
   </layout>
-  <zorder>layoutWidget</zorder>
+  <zorder>grp_authenfication</zorder>
+  <zorder>grp_echo</zorder>
   <zorder>grp_cryptoAndCompression</zorder>
+  <zorder>gb_MPPE</zorder>
  </widget>
  <resources/>
  <connections/>

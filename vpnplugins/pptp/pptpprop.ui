@@ -31,7 +31,10 @@
         <item>
          <widget class="QLabel" name="lbl_gateway">
           <property name="text">
-           <string>Gateway:</string>
+           <string>&amp;Gateway:</string>
+          </property>
+          <property name="buddy">
+           <cstring>edt_gateway</cstring>
           </property>
          </widget>
         </item>
@@ -68,7 +71,10 @@
              </size>
             </property>
             <property name="text">
-             <string>Login:</string>
+             <string>&amp;Login:</string>
+            </property>
+            <property name="buddy">
+             <cstring>edt_login</cstring>
             </property>
            </widget>
           </item>
@@ -94,19 +100,26 @@
              </size>
             </property>
             <property name="text">
-             <string>Password:</string>
+             <string>&amp;Password:</string>
+            </property>
+            <property name="buddy">
+             <cstring>edt_password</cstring>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="edt_password"/>
+           <widget class="KLineEdit" name="edt_password">
+            <property name="passwordMode">
+             <bool>true</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
         <item>
          <widget class="QCheckBox" name="cb_showPassword">
           <property name="text">
-           <string>Show password</string>
+           <string>&amp;Show password</string>
           </property>
          </widget>
         </item>
@@ -127,7 +140,10 @@
              </size>
             </property>
             <property name="text">
-             <string>NT-domain:</string>
+             <string>&amp;NT Domain:</string>
+            </property>
+            <property name="buddy">
+             <cstring>edt_ntDomain</cstring>
             </property>
            </widget>
           </item>
@@ -183,6 +199,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
