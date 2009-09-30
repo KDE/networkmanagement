@@ -47,4 +47,4 @@ X-KDE-Library=networkmanagement
 X-KDE-DBus-ModuleName=networkmanagement
 X-KDE-Kded-autoload=false
 X-KDE-Kded-load-on-demand=true
-OnlyShowIn=KDE
+OnlyShowIn=KDE;
