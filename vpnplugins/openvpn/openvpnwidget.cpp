@@ -207,14 +207,14 @@ void OpenVpnSettingWidget::writeConfig()
     {
     case 0:
         contype = NM_OPENVPN_CONTYPE_TLS;
-        kDebug() << "saving VPN TLS settings as urls:" << d->ui.x509CaFile->url().url() << d->ui.x509Cert->url().url() << d->ui.x509Key->url().url();
-        data.insert( NM_OPENVPN_KEY_CA, d->ui.x509CaFile->url().url().toUtf8());
-        data.insert( NM_OPENVPN_KEY_CERT, d->ui.x509Cert->url().url().toUtf8());
-        data.insert( NM_OPENVPN_KEY_KEY, d->ui.x509Key->url().url().toUtf8());
+        kDebug() << "saving VPN TLS settings as urls:" << d->ui.x509CaFile->url().path() << d->ui.x509Cert->url().path() << d->ui.x509Key->url().path();
+        data.insert( NM_OPENVPN_KEY_CA, d->ui.x509CaFile->url().path().toUtf8());
+        data.insert( NM_OPENVPN_KEY_CERT, d->ui.x509Cert->url().path().toUtf8());
+        data.insert( NM_OPENVPN_KEY_KEY, d->ui.x509Key->url().path().toUtf8());
         break;
     case 1:
         contype = NM_OPENVPN_CONTYPE_STATIC_KEY;
-        data.insert( NM_OPENVPN_KEY_STATIC_KEY, d->ui.pskSharedKey->url().url().toUtf8());
+        data.insert( NM_OPENVPN_KEY_STATIC_KEY, d->ui.pskSharedKey->url().path().toUtf8());
         // ip addresses
         data.insert( NM_OPENVPN_KEY_REMOTE_IP, d->ui.pskRemoteIp->text());
         data.insert( NM_OPENVPN_KEY_LOCAL_IP, d->ui.pskLocalIp->text());
@@ -227,7 +227,7 @@ void OpenVpnSettingWidget::writeConfig()
         // password
         secretData.insert(QLatin1String( NM_OPENVPN_KEY_PASSWORD ), d->ui.passPassword->text());
         // ca
-        data.insert(NM_OPENVPN_KEY_CA, d->ui.passCaFile->url().url().toUtf8());
+        data.insert(NM_OPENVPN_KEY_CA, d->ui.passCaFile->url().path().toUtf8());
         break;
     case 3:
         contype = NM_OPENVPN_CONTYPE_PASSWORD_TLS;
@@ -235,11 +235,11 @@ void OpenVpnSettingWidget::writeConfig()
         data.insert(NM_OPENVPN_KEY_USERNAME, d->ui.x509PassUsername->text());
         d->setting->setUserName(d->ui.x509PassUsername->text());
         // ca
-        data.insert(NM_OPENVPN_KEY_CA, d->ui.x509PassCaFile->url().url().toUtf8());
+        data.insert(NM_OPENVPN_KEY_CA, d->ui.x509PassCaFile->url().path().toUtf8());
         // cert
-        data.insert(NM_OPENVPN_KEY_CERT, d->ui.x509PassCert->url().url().toUtf8());
+        data.insert(NM_OPENVPN_KEY_CERT, d->ui.x509PassCert->url().path().toUtf8());
         // key file
-        data.insert(NM_OPENVPN_KEY_KEY, d->ui.x509PassKey->url().url().toUtf8());
+        data.insert(NM_OPENVPN_KEY_KEY, d->ui.x509PassKey->url().path().toUtf8());
         // password
         secretData.insert(NM_OPENVPN_KEY_PASSWORD, d->ui.x509PassPassword->text());
         break;
