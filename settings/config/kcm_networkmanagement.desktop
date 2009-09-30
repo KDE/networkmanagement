@@ -50,6 +50,7 @@ X-KDE-ServiceTypes=KCModule
 X-KDE-Library=kcm_networkmanagement
 X-KDE-FactoryName=kcm_networkmanagement
 X-KDE-ParentApp=kcontrol
-X-KDE-System-Settings-Parent-Category=network-and-connectivity
+X-KDE-System-Settings-Parent-Category=network-settings
+X-KDE-Weight=5
 Categories=Qt;KDE;X-KDE-settings-system;
 
