@@ -41,7 +41,6 @@ add_subdirectory(backends)
 add_subdirectory(libs)
 add_subdirectory(tests)
 add_subdirectory(settings)
-#disabled pending porting
 add_subdirectory(vpnplugins)
 add_subdirectory(solidcontrolfuture)
 add_subdirectory(monolithic)
