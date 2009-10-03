@@ -41,6 +41,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkipv4config.h>
 #include <solid/control/networkmanager.h>
 
+#include "knmserviceprefs.h"
+
+
 InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsItem * parent) : Plasma::IconWidget(parent),
     m_iface(iface),
     m_connectionNameLabel(0),
@@ -54,11 +57,19 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     //setAcceptHoverEvents(false);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     Solid::Device* dev = new Solid::Device(m_iface->uni());
+    QString deviceText;
+    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    
+    if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
+        
 #if KDE_IS_VERSION(4,3,60)
-    QString deviceText = dev->description();
+        deviceText = dev->description();
 #else
-    QString deviceText = dev->product();
+        deviceText = dev->product();
 #endif
+    } else {
+        deviceText = m_iface->interfaceName();
+    }  
     m_interfaceName = deviceText;
 
     m_layout = new QGraphicsGridLayout(this);

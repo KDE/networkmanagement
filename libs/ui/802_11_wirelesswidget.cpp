@@ -33,6 +33,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "scanwidget.h"
 #include "ui_802-11-wireless.h"
 
+#include "knmserviceprefs.h"
+
+
 class Wireless80211Widget::Private
 {
 public:
@@ -53,11 +56,21 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             Solid::Device * dev = new Solid::Device(iface->uni());
+            
+            QString deviceText;
+            KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    
+            if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
+                
 #if KDE_IS_VERSION(4,3,60)
-            QString deviceText = dev->description();
+                deviceText = dev->description();
 #else
-            QString deviceText = dev->product();
+                deviceText = dev->product();
 #endif
+            } else {               
+                deviceText = iface->interfaceName();
+            }
+    
             Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
             d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", deviceText, wiface->interfaceName()), wiface->hardwareAddress().toLatin1());
         }

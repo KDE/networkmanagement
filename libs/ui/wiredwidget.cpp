@@ -32,6 +32,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_wired.h"
 
+#include "knmserviceprefs.h"
+
+
 
 class WiredWidget::Private
 {
@@ -49,11 +52,19 @@ WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
             Solid::Device * dev = new Solid::Device(iface->uni());
+            QString deviceText;
+            KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    
+            if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
+        
 #if KDE_IS_VERSION(4,3,60)
-            QString deviceText = dev->description();
+                deviceText = dev->description();
 #else
-            QString deviceText = dev->product();
+                deviceText = dev->product();
 #endif
+            } else {                
+                deviceText = iface->interfaceName();
+            }
             Solid::Control::WiredNetworkInterface * wired = static_cast<Solid::Control::WiredNetworkInterface*>(iface);
             d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", deviceText, wired->interfaceName()), wired->hardwareAddress().toLatin1());
         }

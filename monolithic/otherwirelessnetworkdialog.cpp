@@ -27,9 +27,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <activatablelist.h>
 #include <unconfiguredinterface.h>
 #include <Solid/Device>
+#include <solid/control/networkmanager.h>
+#include <solid/control/wirelessnetworkinterface.h>
 #include <wirelessnetwork.h>
 
 #include <hiddenwirelessinterfaceconnection.h>
+
+#include "knmserviceprefs.h"
+
 
 static const int ItemActivatableRole = 34706;
 
@@ -72,11 +77,22 @@ void OtherWirelessNetworkDialog::handleAdd(Knm::Activatable * activatable)
             break;
         case Knm::Activatable::UnconfiguredInterface:
             dev = new Solid::Device(activatable->deviceUni());
+            
+            KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    
+            if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
+        
 #if KDE_IS_VERSION(4,3,60)
             deviceText = dev->description();
 #else
             deviceText = dev->product();
 #endif
+            } else {
+                Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable->deviceUni());
+                if (iface) {
+                    deviceText = iface->interfaceName();
+                }
+            }
             item = new QListWidgetItem(SmallIcon("document-new"), i18nc("@item:inlist Create connection to other wireless network using named device", "Connect To Other With %1...", deviceText), m_ui.lwNetworks);
             item->setData(ItemActivatableRole, QVariant::fromValue(activatable));
             m_ui.lwNetworks->addItem(item);

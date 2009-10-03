@@ -39,6 +39,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "events.h"
 
+#include "knmserviceprefs.h"
+
+
 class NotificationManagerPrivate
 {
 public:
@@ -112,11 +115,19 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
 
     // Keep a record for when it is removed
     Solid::Device* dev = new Solid::Device(uni);
+    QString deviceText;
+    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    
+    if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
+        
 #if KDE_IS_VERSION(4,3,60)
-    QString deviceText = dev->description();
+        deviceText = dev->description();
 #else
-    QString deviceText = dev->product();
+        deviceText = dev->product();
 #endif
+    } else {        
+        deviceText = iface->interfaceName();        
+    }
     d->interfaceNameRecord.insert(uni, deviceText);
 
     if (iface && !d->suppressHardwareEvents) {

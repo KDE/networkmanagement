@@ -51,6 +51,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceitem.h"
 #include "nmextenderitem.h"
 
+#include "knmserviceprefs.h"
+
 
 
 K_EXPORT_PLASMA_APPLET(networkmanagement, NetworkManagerApplet)
@@ -400,11 +402,20 @@ void NetworkManagerApplet::toolTipAboutToShow()
             if (iface->connectionState() != Solid::Control::NetworkInterface::Unavailable) {
                 hasActive = true;
                 Solid::Device* dev = new Solid::Device(iface->uni());
+                
+                QString deviceText;
+                KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    
+                if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
+        
 #if KDE_IS_VERSION(4,3,60)
-                QString description = dev->description();
+                    deviceText = dev->description();
 #else
-                QString description = dev->product();
+                    deviceText = dev->product();
 #endif
+                } else {
+                    deviceText = iface->interfaceName();
+                }
 
                 QString ifaceName = iface->interfaceName();
                 subText += QString::fromLatin1("<b>%1</b>: %2").arg(description).arg(connectionStateToString(iface->connectionState()));
