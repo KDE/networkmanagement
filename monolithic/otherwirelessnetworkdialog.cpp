@@ -93,7 +93,7 @@ void OtherWirelessNetworkDialog::handleAdd(Knm::Activatable * activatable)
                     deviceText = iface->interfaceName();
                 }
             }
-            item = new QListWidgetItem(SmallIcon("document-new"), i18nc("@item:inlist Create connection to other wireless network using named device", "Connect To Other With %1...", deviceText), m_ui.lwNetworks);
+            item = new QListWidgetItem(SmallIcon("document-new"), i18nc("@item:inlist Create connection to other wireless network using named device", "Connect To Other Network With %1...", deviceText), m_ui.lwNetworks);
             item->setData(ItemActivatableRole, QVariant::fromValue(activatable));
             m_ui.lwNetworks->addItem(item);
             break;
