@@ -59,7 +59,6 @@ VpnPreferences::VpnPreferences(QWidget *parent, const QVariantList &args)
         m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( m_vpnPluginName ), this, QVariantList(), &error );
         if (error.isEmpty()) {
             SettingWidget * vpnWidget = m_uiPlugin->widget(m_connection, this);
-            Knm::VpnSetting * vpnSetting = static_cast<Knm::VpnSetting*>(m_connection->setting(Knm::Setting::Vpn));
             addToTabWidget(vpnWidget);
         } else {
             kDebug() << error;
