@@ -19,12 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "pppoewidget.h"
+#include "settingwidget_p.h"
 
 #include "connection.h"
 #include "settings/pppoe.h"
 #include "ui_pppoe.h"
 
-class PppoeWidget::Private
+class PppoeWidgetPrivate : public SettingWidgetPrivate
 {
 public:
     Ui_Pppoe ui;
@@ -32,8 +33,9 @@ public:
 };
 
 PppoeWidget::PppoeWidget(Knm::Connection * connection, QWidget * parent)
-: SettingWidget(connection, parent), d(new PppoeWidget::Private)
+: SettingWidget(*new PppoeWidgetPrivate, connection, parent)
 {
+    Q_D(PppoeWidget);
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::PppoeSetting *>(connection->setting(Knm::Setting::Pppoe));
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
@@ -42,24 +44,25 @@ PppoeWidget::PppoeWidget(Knm::Connection * connection, QWidget * parent)
 
 PppoeWidget::~PppoeWidget()
 {
-    delete d;
 }
 
 void PppoeWidget::chkShowPassToggled()
 {
+    Q_D(PppoeWidget);
     bool on = d->ui.chkShowPass->isChecked();
     d->ui.password->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
 }
 
 void PppoeWidget::readConfig()
 {
+    Q_D(PppoeWidget);
     d->ui.service->setText(d->setting->service());
     d->ui.username->setText(d->setting->username());
-
 }
 
 void PppoeWidget::writeConfig()
 {
+    Q_D(PppoeWidget);
     d->setting->setService(d->ui.service->text());
     d->setting->setUsername(d->ui.username->text());
     d->setting->setPassword(d->ui.password->text());
@@ -67,6 +70,7 @@ void PppoeWidget::writeConfig()
 
 void PppoeWidget::readSecrets()
 {
+    Q_D(PppoeWidget);
     d->ui.password->setText(d->setting->password());
 }
 

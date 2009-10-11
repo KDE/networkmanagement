@@ -33,10 +33,11 @@ namespace Knm
     class Connection;
 } // namespace Knm
 
+class ConnectionWidgetPrivate;
 class KNM_EXPORT ConnectionWidget : public SettingWidget
 {
-    Q_OBJECT
-
+Q_OBJECT
+Q_DECLARE_PRIVATE(ConnectionWidget)
 public:
     /**
      * @param defaultName a default name to set on the connection, if the supplied connection does
@@ -61,10 +62,6 @@ public:
 
 private slots:
     void buttonChooseIconClicked();
-
-private:
-    class Private;
-    Private * d;
 };
 
 #endif // CONNECTIONWIDGET_H

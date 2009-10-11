@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "connectionwidget.h"
+#include "settingwidget_p.h"
 
 #include <KDebug>
 
@@ -28,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ui_connection.h"
 #include "connection.h"
 
-class ConnectionWidget::Private
+class ConnectionWidgetPrivate : public SettingWidgetPrivate
 {
 public:
     Ui_ConnectionSettings ui;
@@ -36,8 +37,9 @@ public:
 };
 
 ConnectionWidget::ConnectionWidget(Knm::Connection * connection, const QString & defaultName, QWidget * parent)
-    : SettingWidget(connection, parent), d(new ConnectionWidget::Private())
+    : SettingWidget(*new ConnectionWidgetPrivate, connection, parent)
 {
+    Q_D(ConnectionWidget);
     d->ui.setupUi(this);
     d->defaultName = defaultName;
 
@@ -50,16 +52,17 @@ ConnectionWidget::ConnectionWidget(Knm::Connection * connection, const QString &
 
 ConnectionWidget::~ConnectionWidget()
 {
-    delete d;
 }
 
 QTabWidget * ConnectionWidget::connectionSettingsWidget()
 {
+    Q_D(ConnectionWidget);
     return d->ui.tabwidget;
 }
 
 void ConnectionWidget::readConfig()
 {
+    Q_D(ConnectionWidget);
     if (connection()->name().isEmpty()) {
         connection()->setName(d->defaultName);
     }
@@ -71,6 +74,7 @@ void ConnectionWidget::readConfig()
 
 void ConnectionWidget::writeConfig()
 {
+    Q_D(ConnectionWidget);
     connection()->setName(d->ui.id->text());
     connection()->setAutoConnect(d->ui.autoconnect->isChecked());
     // connection()->setIconName(..) is already called from buttonChooseIconClicked()
@@ -78,11 +82,13 @@ void ConnectionWidget::writeConfig()
 
 bool ConnectionWidget::validate() const
 {
+    Q_D(const ConnectionWidget);
     return !d->ui.id->text().isEmpty();
 }
 
 void ConnectionWidget::buttonChooseIconClicked()
 {
+    Q_D(ConnectionWidget);
     KIconDialog dlg(this);
 
     // set customLocation to kdedir/share/apps/networkmanagement/icons

@@ -19,30 +19,42 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "settingwidget.h"
-
-class SettingWidget::Private
-{
-public:
-
-};
-
+#include "settingwidget_p.h"
+#include <connection.h>
 
 SettingWidget::SettingWidget(Knm::Connection * connection, QWidget* parent)
 : QWidget(parent)
-, SettingInterface(connection)
-, d(new Private)
+, d_ptr(new SettingWidgetPrivate)
 {
+    d_ptr->connection = connection;
+}
 
+SettingWidget::SettingWidget(SettingWidgetPrivate &dd, Knm::Connection * connection, QWidget* parent)
+: QWidget(parent)
+, d_ptr(&dd)
+{
+    d_ptr->connection = connection;
 }
 
 SettingWidget::~SettingWidget()
 {
-    delete d;
+    delete d_ptr;
 }
 
-QWidget* SettingWidget::widget()
+Knm::Connection * SettingWidget::connection() const
 {
-    return this;
+    Q_D(const SettingWidget);
+    return d->connection;
+}
+
+void SettingWidget::readSecrets()
+{
+    //default impl does nothing
+}
+
+bool SettingWidget::validate() const
+{
+    return true;
 }
 
 // vim: sw=4 sts=4 et tw=100

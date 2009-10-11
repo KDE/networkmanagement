@@ -25,14 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-namespace Knm
-{
-    class Connection;
-} // namespace Knm
-
+class Wireless80211WidgetPrivate;
 class KNM_EXPORT Wireless80211Widget : public SettingWidget
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(Wireless80211Widget)
 public:
     Wireless80211Widget(Knm::Connection * connection, const QString &ssid = QString(), QWidget * parent = 0 );
     virtual ~Wireless80211Widget();
@@ -41,9 +38,6 @@ public:
     void writeConfig();
 public Q_SLOTS:
     void scanClicked();
-private:
-    class Private;
-    Private * d;
 };
 
 #endif // 802_11_WIRELESSWIDGET_H

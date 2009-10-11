@@ -47,7 +47,7 @@ Knm::Connection * ConnectionPreferences::connection() const
     return m_connection;
 }
 
-void ConnectionPreferences::addSettingWidget(SettingInterface* iface)
+void ConnectionPreferences::addSettingWidget(SettingWidget* iface)
 {
     m_settingWidgets.append(iface);
 }
@@ -69,7 +69,7 @@ void ConnectionPreferences::load()
     m_connectionPersistence->load();
     // and initialise the UI from the Connection
     m_contents->readConfig();
-    foreach (SettingInterface * wid, m_settingWidgets) {
+    foreach (SettingWidget * wid, m_settingWidgets) {
         wid->readConfig();
     }
     // asynchronously fetch secrets
@@ -85,7 +85,7 @@ void ConnectionPreferences::save()
 {
     // save the UI to the Connection
     m_contents->writeConfig();
-    foreach (SettingInterface * wid, m_settingWidgets) {
+    foreach (SettingWidget * wid, m_settingWidgets) {
         wid->writeConfig();
     }
     // persist the Connection
@@ -103,7 +103,7 @@ void ConnectionPreferences::save()
 void ConnectionPreferences::gotSecrets(uint result)
 {
     if (result == Knm::ConnectionPersistence::EnumError::NoError) {
-        foreach (SettingInterface * wid, m_settingWidgets) {
+        foreach (SettingWidget * wid, m_settingWidgets) {
             wid->readSecrets();
         }
     }

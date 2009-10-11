@@ -25,14 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-namespace Knm
-{
-    class Connection;
-}
-
+class PppoeWidgetPrivate;
 class KNM_EXPORT PppoeWidget : public SettingWidget
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(PppoeWidget)
 public:
     PppoeWidget(Knm::Connection *, QWidget * parent = 0 );
     virtual ~PppoeWidget();
@@ -42,9 +39,6 @@ public:
     void readSecrets();
 protected Q_SLOTS:
     void chkShowPassToggled();
-private:
-    class Private;
-    Private * d;
 };
 
 #endif

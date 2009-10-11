@@ -25,21 +25,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-namespace Knm
-{
-    class Connection;
-} // namespace Knm
-
+class WiredWidgetPrivate;
 class KNM_EXPORT WiredWidget : public SettingWidget
 {
+Q_OBJECT
+Q_DECLARE_PRIVATE(WiredWidget)
 public:
     WiredWidget(Knm::Connection * connection, QWidget * parent = 0 );
     virtual ~WiredWidget();
     void readConfig();
     void writeConfig();
-private:
-    class Private;
-    Private * d;
 };
 
 #endif

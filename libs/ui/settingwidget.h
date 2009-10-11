@@ -23,26 +23,47 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define SETTINGWIDGET_H
 
 #include <QWidget>
-#include <QVariant>
 
 #include "knm_export.h"
-#include "settinginterface.h"
 
 namespace Knm
 {
     class Connection;
 } // namespace Knm
 
-class KNM_EXPORT SettingWidget : public QWidget, public SettingInterface
+class SettingWidgetPrivate;
+
+class KNM_EXPORT SettingWidget : public QWidget
 {
+Q_OBJECT
+Q_DECLARE_PRIVATE(SettingWidget)
 public:
     SettingWidget(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~SettingWidget();
 
-    QWidget* widget();
-private:
-    class Private;
-    Private * d;
+    Knm::Connection * connection() const;
+    /**
+     * populate the UI from the Connection
+     */
+    virtual void readConfig() = 0;
+    /**
+     * set the Connection from the UI
+     */
+    virtual void writeConfig() = 0;
+    /**
+     * Populate the UI with any secrets from the Setting.
+     * Separate from readConfig because secrets are fetched
+     * asynchronously.
+     */
+    virtual void readSecrets();
+    /** 
+     * Check that the settings in this widget are valid
+     */
+    virtual bool validate() const;
+
+protected:
+    SettingWidget(SettingWidgetPrivate &dd, Knm::Connection * connection, QWidget * parent = 0);
+    SettingWidgetPrivate * d_ptr;
 };
 
 #endif // SETTINGWIDGET_H

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "ipv4widget.h"
+#include "settingwidget_p.h"
 
 #include <KDebug>
 #include <KEditListBox>
@@ -35,10 +36,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //void removeEmptyItems(QStringList &list);
 
-class IpV4Widget::Private
+class IpV4WidgetPrivate : public SettingWidgetPrivate
 {
 public:
-    Private() : setting(0), isAdvancedModeOn(false)
+    IpV4WidgetPrivate() : setting(0), isAdvancedModeOn(false)
     {
     }
     enum MethodIndex { AutomaticMethodIndex = 0, AutomaticOnlyIPMethodIndex, LinkLocalMethodIndex, ManualMethodIndex, SharedMethodIndex };
@@ -48,8 +49,9 @@ public:
 };
 
 IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
-    : SettingWidget(connection, parent), d(new IpV4Widget::Private)
+    : SettingWidget(*new IpV4WidgetPrivate, connection, parent)
 {
+    Q_D(IpV4Widget);
     d->ui.setupUi(this);
 
     QString str_auto;
@@ -113,11 +115,11 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
 
 IpV4Widget::~IpV4Widget()
 {
-    delete d;
 }
 
 void IpV4Widget::readConfig()
 {
+    Q_D(IpV4Widget);
     // The following flags are used to not fill disabled fields.
     // Setting and handling them is quite redundant, but it's necessary
     // when we have a connection config in inconsistent state.
@@ -190,21 +192,22 @@ void IpV4Widget::readConfig()
 
 void IpV4Widget::writeConfig()
 {
+    Q_D(IpV4Widget);
     // save method
     switch ( d->ui.method->currentIndex()) {
-        case IpV4Widget::Private::AutomaticOnlyIPMethodIndex:
+        case IpV4WidgetPrivate::AutomaticOnlyIPMethodIndex:
             d->setting->setIgnoredhcpdns(true);
             // set the same Knm::Ipv4Setting::EnumMethod::Automatic value
-        case IpV4Widget::Private::AutomaticMethodIndex:
+        case IpV4WidgetPrivate::AutomaticMethodIndex:
             d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Automatic);
             break;
-        case IpV4Widget::Private::LinkLocalMethodIndex:
+        case IpV4WidgetPrivate::LinkLocalMethodIndex:
             d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::LinkLocal);
             break;
-        case IpV4Widget::Private::ManualMethodIndex:
+        case IpV4WidgetPrivate::ManualMethodIndex:
             d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Manual);
             break;
-        case IpV4Widget::Private::SharedMethodIndex:
+        case IpV4WidgetPrivate::SharedMethodIndex:
             d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Shared);
             break;
         default:
@@ -256,16 +259,17 @@ void IpV4Widget::writeConfig()
 
 void IpV4Widget::methodChanged(int currentIndex)
 {
+    Q_D(IpV4Widget);
     bool addressPartEnabled = false;
     bool dnsPartEnabled = false;
 
-    if (currentIndex == IpV4Widget::Private::ManualMethodIndex) {
+    if (currentIndex == IpV4WidgetPrivate::ManualMethodIndex) {
         addressPartEnabled = true;
         dnsPartEnabled = true;
         d->ui.pushButtonSettingsMode->setVisible(true);
     }
     else {
-        if (IpV4Widget::Private::AutomaticOnlyIPMethodIndex == currentIndex) {
+        if (IpV4WidgetPrivate::AutomaticOnlyIPMethodIndex == currentIndex) {
             dnsPartEnabled = true;
         }
         d->ui.pushButtonSettingsMode->setVisible(false);
@@ -325,6 +329,7 @@ quint32 suggestNetmask(quint32 ip)
 
 void IpV4Widget::addressEditingFinished()
 {
+    Q_D(IpV4Widget);
     if (d->ui.netMask->text().isEmpty()) {
         QHostAddress addr(d->ui.address->text());
         quint32 netmask = suggestNetmask(addr.toIPv4Address());
@@ -337,6 +342,7 @@ void IpV4Widget::addressEditingFinished()
 
 void IpV4Widget::settingsModeClicked()
 {
+    Q_D(IpV4Widget);
     d->isAdvancedModeOn ^= true; // XOR toggles value;
 
     switchSettingsMode();
@@ -344,6 +350,7 @@ void IpV4Widget::settingsModeClicked()
 
 void IpV4Widget::switchSettingsMode()
 {
+    Q_D(IpV4Widget);
     QString text;
 
     if (false == d->isAdvancedModeOn) {
@@ -360,16 +367,19 @@ void IpV4Widget::switchSettingsMode()
 
 void IpV4Widget::dnsEdited(QStringList items)
 {
+    Q_D(IpV4Widget);
     d->ui.dns->setText(items.join(QLatin1String(", ")));
 }
 
 void IpV4Widget::dnsSearchEdited(QStringList items)
 {
+    Q_D(IpV4Widget);
     d->ui.dnsSearch->setText(items.join(QLatin1String(", ")));
 }
 
 void IpV4Widget::showDnsEditor()
 {
+    Q_D(IpV4Widget);
     EditListDialog * dnsEditor = new EditListDialog;
     // at first remove space characters
     QString dnsEntries = d->ui.dns->text().remove(QLatin1Char(' '));
@@ -383,6 +393,7 @@ void IpV4Widget::showDnsEditor()
 
 void IpV4Widget::showDnsSearchEditor()
 {
+    Q_D(IpV4Widget);
     EditListDialog * dnsSearchEditor = new EditListDialog;
     // at first remove space characters
     QString dnsSearchEntries = d->ui.dnsSearch->text().remove(QLatin1Char(' '));

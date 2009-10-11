@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "802_11_wirelesswidget.h"
+#include "settingwidget_p.h"
 
 #include <KDebug>
 #include <kdeversion.h>
@@ -36,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knmserviceprefs.h"
 
 
-class Wireless80211Widget::Private
+class Wireless80211WidgetPrivate : public SettingWidgetPrivate
 {
 public:
     Ui_Wireless80211Config ui;
@@ -45,8 +46,9 @@ public:
 };
 
 Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QString &ssid, QWidget * parent)
-    : SettingWidget(connection, parent), d(new Wireless80211Widget::Private)
+    : SettingWidget(*new Wireless80211WidgetPrivate, connection, parent)
 {
+    Q_D(Wireless80211Widget);
     d->ui.setupUi(this);
     d->proposedSsid = ssid;
     d->setting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
@@ -79,11 +81,11 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
 
 Wireless80211Widget::~Wireless80211Widget()
 {
-    delete d;
 }
 
 void Wireless80211Widget::readConfig()
 {
+    Q_D(Wireless80211Widget);
     //kDebug() << kBacktrace();
     switch(d->setting->mode())
     {
@@ -113,6 +115,7 @@ void Wireless80211Widget::readConfig()
 
 void Wireless80211Widget::writeConfig()
 {
+    Q_D(Wireless80211Widget);
     kDebug();
 
     d->setting->setSsid(d->ui.ssid->text().toAscii());
@@ -141,6 +144,7 @@ void Wireless80211Widget::writeConfig()
 
 void Wireless80211Widget::scanClicked()
 {
+    Q_D(Wireless80211Widget);
     KDialog scanDialog;
     scanDialog.setCaption(i18n("Available Access Points"));
     scanDialog.setButtons( KDialog::Ok | KDialog::Cancel);

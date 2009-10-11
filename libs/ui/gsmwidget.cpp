@@ -19,12 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gsmwidget.h"
-
+#include "settingwidget_p.h"
 #include "ui_gsm.h"
 #include "connection.h"
 #include "settings/gsm.h"
 
-class GsmWidget::Private
+class GsmWidgetPrivate : public SettingWidgetPrivate
 {
 public:
     Ui_Gsm ui;
@@ -32,8 +32,9 @@ public:
 };
 
 GsmWidget::GsmWidget(Knm::Connection * connection, QWidget * parent)
-: SettingWidget(connection, parent), d(new GsmWidget::Private)
+: SettingWidget(*new GsmWidgetPrivate, connection, parent)
 {
+    Q_D(GsmWidget);
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::GsmSetting *>(connection->setting(Knm::Setting::Gsm));
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
@@ -48,11 +49,11 @@ GsmWidget::GsmWidget(Knm::Connection * connection, QWidget * parent)
 
 GsmWidget::~GsmWidget()
 {
-    delete d;
 }
 
 void GsmWidget::readConfig()
 {
+    Q_D(GsmWidget);
     d->ui.number->setText(d->setting->number());
     d->ui.username->setText(d->setting->username());
     d->ui.apn->setText(d->setting->apn());
@@ -63,6 +64,7 @@ void GsmWidget::readConfig()
 
 void GsmWidget::chkShowPassToggled()
 {
+    Q_D(GsmWidget);
     bool on = d->ui.chkShowPass->isChecked();
     d->ui.password->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
     d->ui.pin->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
@@ -72,6 +74,7 @@ void GsmWidget::chkShowPassToggled()
 
 void GsmWidget::writeConfig()
 {
+    Q_D(GsmWidget);
     d->setting->setNumber(d->ui.number->text());
     d->setting->setUsername(d->ui.username->text());
     d->setting->setPassword(d->ui.password->text());
@@ -84,10 +87,10 @@ void GsmWidget::writeConfig()
 
 void GsmWidget::readSecrets()
 {
+    Q_D(GsmWidget);
     d->ui.password->setText(d->setting->password());
     d->ui.pin->setText(d->setting->pin());
     d->ui.puk->setText(d->setting->puk());
-
 }
 
 // vim: sw=4 sts=4 et tw=100

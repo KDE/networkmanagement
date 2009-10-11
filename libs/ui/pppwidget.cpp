@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "pppwidget.h"
+#include "settingwidget_p.h"
 
 #include "ui_ppp.h"
 #include "connection.h"
@@ -27,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LCP_ECHO_FAILURE 5
 #define LCP_ECHO_INTERVAL 30
 
-class PppWidget::Private
+class PppWidgetPrivate : public SettingWidgetPrivate
 {
 public:
     Ui_Ppp ui;
@@ -35,19 +36,20 @@ public:
 };
 
 PppWidget::PppWidget(Knm::Connection * connection, QWidget * parent)
-: SettingWidget(connection, parent), d(new PppWidget::Private)
+: SettingWidget(*new PppWidgetPrivate, connection, parent)
 {
+    Q_D(PppWidget);
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::PppSetting *>(connection->setting(Knm::Setting::Ppp));
 }
 
 PppWidget::~PppWidget()
 {
-    delete d;
 }
 
 void PppWidget::readConfig()
 {
+    Q_D(PppWidget);
     d->ui.auth->setChecked(!d->setting->noauth());
     d->ui.pap->setChecked(!d->setting->refusepap());
     d->ui.chap->setChecked(!d->setting->refusechap());
@@ -65,6 +67,7 @@ void PppWidget::readConfig()
 
 void PppWidget::writeConfig()
 {
+    Q_D(PppWidget);
     d->setting->setNoauth(!d->ui.auth->isChecked());
     d->setting->setRefusepap(!d->ui.pap->isChecked());
     d->setting->setRefusechap(!d->ui.chap->isChecked());

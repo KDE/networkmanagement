@@ -73,11 +73,11 @@ protected:
     /**
      * Add widgets to the KConfig magic but _not_ to the tab widget
      */
-    void addSettingWidget(SettingInterface *);
+    void addSettingWidget(SettingWidget *);
     /** Main widget for connection info UI, common to all connections **/
     ConnectionWidget * m_contents;
     /** All setting widgets except m_contents, including connectionTypeWidget*/
-    QList<SettingInterface*> m_settingWidgets;
+    QList<SettingWidget*> m_settingWidgets;
     Knm::Connection * m_connection;
     Knm::ConnectionPersistence * m_connectionPersistence;
 };

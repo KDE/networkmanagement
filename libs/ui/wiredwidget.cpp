@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "wiredwidget.h"
+#include "settingwidget_p.h"
 
 #include <QComboBox>
 
@@ -36,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-class WiredWidget::Private
+class WiredWidgetPrivate : public SettingWidgetPrivate
 {
 public:
     Ui_Settings8023Ethernet ui;
@@ -44,8 +45,9 @@ public:
 };
 
 WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
-: SettingWidget(connection, parent), d(new WiredWidget::Private)
+: SettingWidget(*new WiredWidgetPrivate, connection, parent)
 {
+    Q_D(WiredWidget);
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
     d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
@@ -73,11 +75,11 @@ WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
 
 WiredWidget::~WiredWidget()
 {
-    delete d;
 }
 
 void WiredWidget::readConfig()
 {
+    Q_D(WiredWidget);
     if (!d->setting->macaddress().isEmpty()) {
         int i = d->ui.cmbMacAddress->findData(d->setting->macaddress());
         if (i == -1) {
@@ -94,6 +96,7 @@ void WiredWidget::readConfig()
 
 void WiredWidget::writeConfig()
 {
+    Q_D(WiredWidget);
     d->setting->setMtu(d->ui.mtu->value());
     int i = d->ui.cmbMacAddress->currentIndex();
     if ( i == 0) {

@@ -55,7 +55,7 @@ public:
             Solid::Control::AccessPoint * ap = 0,
             QWidget * parent = 0 );
     virtual ~WirelessSecuritySettingWidget();
-    SettingInterface* wpaEapWidget();
+    //SettingInterface* wpaEapWidget();
     void readConfig();
     void writeConfig();
     void readSecrets();
