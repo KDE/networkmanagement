@@ -36,6 +36,8 @@ public:
     QString settingName() const;
     void readConfig();
     void writeConfig();
+    QByteArray selectedInterfaceHardwareAddress() const;
+    QString enteredSsid() const;
 public Q_SLOTS:
     void scanClicked();
 };

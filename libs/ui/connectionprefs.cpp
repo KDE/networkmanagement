@@ -52,10 +52,11 @@ void ConnectionPreferences::addSettingWidget(SettingWidget* iface)
     m_settingWidgets.append(iface);
 }
 
-void ConnectionPreferences::addToTabWidget(SettingWidget * widget)
+int ConnectionPreferences::addToTabWidget(SettingWidget * widget)
 {
-    m_contents->connectionSettingsWidget()->addTab(widget, widget->windowTitle());
+    int tabIndex = m_contents->connectionSettingsWidget()->addTab(widget, widget->windowTitle());
     m_settingWidgets.append(widget);
+    return tabIndex;
 }
 
 void ConnectionPreferences::load()

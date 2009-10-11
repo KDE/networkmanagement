@@ -58,21 +58,21 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             Solid::Device * dev = new Solid::Device(iface->uni());
-            
+
             QString deviceText;
             KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
-    
+
             if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
-                
+
 #if KDE_IS_VERSION(4,3,60)
                 deviceText = dev->description();
 #else
                 deviceText = dev->product();
 #endif
-            } else {               
+            } else {
                 deviceText = iface->interfaceName();
             }
-    
+
             Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
             d->ui.cmbMacAddress->addItem(i18nc("@item:inlist Solid Device Name (kernel interface name)", "%1 (%2)", deviceText, wiface->interfaceName()), wiface->hardwareAddress().toLatin1());
         }
@@ -155,4 +155,20 @@ void Wireless80211Widget::scanClicked()
     }
 }
 
+QByteArray Wireless80211Widget::selectedInterfaceHardwareAddress() const
+{
+    Q_D(const Wireless80211Widget);
+    QByteArray hwAddr;
+    int i = d->ui.cmbMacAddress->currentIndex();
+    if ( i != 0) {
+        hwAddr = d->ui.cmbMacAddress->itemData(i).toByteArray();
+    }
+    return hwAddr;
+}
+
+QString Wireless80211Widget::enteredSsid() const
+{
+    Q_D(const Wireless80211Widget);
+    return d->ui.ssid->text();
+}
 // vim: sw=4 sts=4 et tw=100

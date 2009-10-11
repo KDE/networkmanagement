@@ -59,10 +59,10 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
+public Q_SLOTS:
+    void setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterface * iface, Solid::Control::AccessPoint * ap);
 protected Q_SLOTS:
     void securityTypeChanged(int);
-private:
-    WirelessSecuritySettingWidgetPrivate * d_ptr;
 };
 
 #endif // WIRELESSSECURITYSETTINGWIDGET_H

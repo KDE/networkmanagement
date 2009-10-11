@@ -23,8 +23,21 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionprefs.h"
 
+namespace Solid
+{
+namespace Control
+{
+class AccessPoint;
+
+} // namespace Control
+
+} // namespace Solid
+
+class Wireless80211Widget;
+class WirelessSecuritySettingWidget;
+
 /**
- * Configuration module for wired connections
+ * Configuration module for wireless connections
  */
 class KNM_EXPORT WirelessPreferences : public ConnectionPreferences
 {
@@ -37,9 +50,13 @@ public:
     WirelessPreferences(bool setDefaults, QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~WirelessPreferences();
     virtual bool needsEdits() const;
-
+private Q_SLOTS:
+    void tabChanged(int index);
 private:
     bool m_hasSecrets;
+    int m_securityTabIndex;
+    Wireless80211Widget * m_wirelessWidget;
+    WirelessSecuritySettingWidget * m_securityWidget;
 };
 
 #endif

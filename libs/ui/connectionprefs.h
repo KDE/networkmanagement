@@ -68,7 +68,7 @@ protected:
     /**
      * Add widgets to the tabs in the connection widget
      */
-    void addToTabWidget(SettingWidget *);
+    int addToTabWidget(SettingWidget *);
 
     /**
      * Add widgets to the KConfig magic but _not_ to the tab widget
