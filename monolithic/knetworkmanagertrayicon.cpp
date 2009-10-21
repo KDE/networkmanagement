@@ -292,18 +292,18 @@ void KNetworkManagerTrayIcon::fillPopup()
         }
     }
 
-    if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)
-            && Solid::Control::NetworkManager::isWirelessEnabled()
-            && Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
-
-        contextMenu()->insertAction(insertionPointForConnectToOtherWireless, d->otherWirelessNetworksAction);
-    }
-
     if (!wirelessInterfaceConnectionCount) {
         foreach (QWidgetAction * action, wirelessUnconfiguredInterfaceItems) {
             contextMenu()->insertAction(insertionPointForConnectToOtherWireless, action);
         }
     }
+
+    if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)
+            && Solid::Control::NetworkManager::isWirelessEnabled()
+            && Solid::Control::NetworkManager::isWirelessHardwareEnabled() && wirelessInterfaceConnectionCount) {
+        contextMenu()->insertAction(insertionPointForConnectToOtherWireless, d->otherWirelessNetworksAction);
+    }
+
     // add the housekeeping actions
     contextMenu()->addSeparator();
     if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
