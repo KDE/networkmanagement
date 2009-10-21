@@ -36,6 +36,7 @@ public:
     static bool possible(WirelessSecurity::Type, Solid::Control::WirelessNetworkInterface::Capabilities, bool haveAp, bool adHoc, Solid::Control::AccessPoint::Capabilities apCaps, Solid::Control::AccessPoint::WpaFlags apWpa, Solid::Control::AccessPoint::WpaFlags apRsn);
 
     static QString shortToolTip(WirelessSecurity::Type);
+    static QString label(WirelessSecurity::Type);
 
     static QString iconName(WirelessSecurity::Type);
 

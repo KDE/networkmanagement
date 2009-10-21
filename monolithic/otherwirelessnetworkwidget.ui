@@ -24,25 +24,41 @@
       </widget>
      </item>
      <item>
-      <widget class="KListWidgetSearchLine" name="searchLine"/>
+      <widget class="KTreeWidgetSearchLine" name="searchLine"/>
      </item>
     </layout>
    </item>
    <item>
-    <widget class="QListWidget" name="lwNetworks"/>
+    <widget class="QTreeWidget" name="twNetworks">
+     <column>
+      <property name="text">
+       <string>Network name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Signal</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Security</string>
+      </property>
+     </column>
+    </widget>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
+   <class>KTreeWidgetSearchLine</class>
+   <extends>KLineEdit</extends>
+   <header>ktreewidgetsearchline.h</header>
+  </customwidget>
+  <customwidget>
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KListWidgetSearchLine</class>
-   <extends>KLineEdit</extends>
-   <header>klistwidgetsearchline.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

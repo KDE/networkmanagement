@@ -33,7 +33,7 @@ namespace Knm
 } // namespace Knm
 
 class ActivatableList;
-class QListWidgetItem;
+class QTreeWidgetItem;
 
 class OtherWirelessNetworkDialog : public KDialog, public ActivatableObserver
 {
@@ -45,14 +45,14 @@ protected:
     void handleAdd(Knm::Activatable*);
     void handleUpdate(Knm::Activatable*);
     void handleRemove(Knm::Activatable*);
-    void activateInternal(QListWidgetItem *);
+    void activateInternal(QTreeWidgetItem *);
 protected Q_SLOTS:
-    void itemDoubleClicked(QListWidgetItem *);
+    void itemDoubleClicked(QTreeWidgetItem *);
     void itemSelectionChanged();
     void slotButtonClicked(int button);
 private:
     ActivatableList * m_activatables;
-    QListWidgetItem * m_newAdhocItem;
+    QTreeWidgetItem * m_newAdhocItem;
     int m_networkItemCount;
     Ui_OtherWirelessNetworkWidget m_ui;
 };

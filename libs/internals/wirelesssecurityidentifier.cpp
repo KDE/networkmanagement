@@ -215,6 +215,42 @@ Knm::WirelessSecurity::Type Knm::WirelessSecurity::best(Solid::Control::Wireless
     return Knm::WirelessSecurity::Unknown;
 }
 
+QString Knm::WirelessSecurity::label(Knm::WirelessSecurity::Type type)
+{
+    QString tip;
+    switch (type) {
+        case None:
+            tip = i18nc("@label no security", "Insecure");
+            break;
+        case StaticWep:
+            tip = i18nc("@label WEP security", "WEP");
+            break;
+        case Leap:
+            tip = i18nc("@label LEAP security", "LEAP");
+            break;
+        case DynamicWep:
+            tip = i18nc("@label Dynamic WEP security", "Dynamic WEP");
+            break;
+        case WpaPsk:
+            tip = i18nc("@label WPA-PSK security", "WPA-PSK");
+            break;
+        case WpaEap:
+            tip = i18nc("@label WPA-EAP security", "WPA-EAP");
+            break;
+        case Wpa2Psk:
+            tip = i18nc("@label WPA2-PSK security", "WPA2-PSK");
+            break;
+        case Wpa2Eap:
+            tip = i18nc("@label WPA2-EAP security", "WPA2-EAP");
+            break;
+        default:
+        case Unknown:
+            tip = i18nc("@label unknown security", "Unknown security type");
+            break;
+    }
+    return tip;
+}
+
 QString Knm::WirelessSecurity::shortToolTip(Knm::WirelessSecurity::Type type)
 {
     QString tip;
