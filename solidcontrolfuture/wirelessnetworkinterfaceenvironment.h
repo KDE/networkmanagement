@@ -60,8 +60,8 @@ private Q_SLOTS:
     void wirelessEnabledChanged(bool);
 
 Q_SIGNALS:
-    virtual void networkAppeared(const QString &ssid);
-    virtual void networkDisappeared(const QString &ssid);
+    void networkAppeared(const QString &ssid);
+    void networkDisappeared(const QString &ssid);
 private:
     void accessPointAppearedInternal(const QString&);
     WirelessNetworkInterfaceEnvironmentPrivate * const d_ptr;
