@@ -33,7 +33,7 @@
      </item>
      <item>
       <property name="text">
-       <string>Hex Key (for 64 or 128 bits)</string>
+       <string>Hex or Ascii Key (for 64 or 128 bit)</string>
       </property>
      </item>
     </widget>

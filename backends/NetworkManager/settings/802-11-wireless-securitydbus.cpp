@@ -127,6 +127,18 @@ QVariantMap WirelessSecurityDbus::toMap()
   return map;
 }
 
+/**
+ * Turns a key that may be ascii into the equivalent hex string
+ */
+static QString toHexKey(const QString & key)
+{
+    if (key.length() == 5 || key.length() == 13) {
+        return key.toAscii().toHex();
+    } else {
+        return key;
+    }
+}
+
 QVariantMap WirelessSecurityDbus::toSecretsMap()
 {
   QVariantMap map;
@@ -150,16 +162,16 @@ QVariantMap WirelessSecurityDbus::toSecretsMap()
       }
   }
   if (!setting->wepkey0().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), toHexKey(setting->wepkey0()));
   }
   if (!setting->wepkey1().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), toHexKey(setting->wepkey1()));
   }
   if (!setting->wepkey2().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), toHexKey(setting->wepkey2()));
   }
   if (!setting->wepkey3().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), toHexKey(setting->wepkey3()));
   }
   if (!setting->psk().isEmpty()) {
       WpaSecretIdentifier::WpaSecretType secretType = WpaSecretIdentifier::identify(setting->psk());

@@ -190,6 +190,8 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::Wirel
                 ) {
         d->registerSecurityType(new WpaEapWidget(d->connection, this), i18nc("Label for WPA-EAP wireless security", "WPA/WPA2 Enterprise"), d->wpaEapIndex);
     }
+    readConfig();
+    readSecrets();
 }
 
 WirelessSecuritySettingWidget::~WirelessSecuritySettingWidget()
