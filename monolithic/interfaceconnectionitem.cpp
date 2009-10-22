@@ -136,7 +136,7 @@ void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::Activ
                         if (!d->disconnectButton) {
                             d->disconnectButton = new QPushButton(this);
                             d->disconnectButton->setIcon(KIcon("process-stop"));
-                            int buttonSize = d->connectionDetailsLabel->sizeHint().height();
+                            int buttonSize = qMax(d->connectionDetailsLabel->sizeHint().height(), int(KIconLoader::SizeSmall));
                             d->disconnectButton->setFixedSize(buttonSize, buttonSize);
 
                             d->disconnectButton->setToolTip(i18nc("@info:tooltip network connection disconnect button tooltip", "Disconnect"));
