@@ -18,7 +18,7 @@ SerialPersistence::~SerialPersistence()
 void SerialPersistence::load()
 {
   SerialSetting * setting = static_cast<SerialSetting *>(m_setting);
-  setting->setBaud(m_config->readEntry("baud", 0));
+  setting->setBaud(m_config->readEntry("baud", 115200));
   setting->setBits(m_config->readEntry("bits", 8));
   setting->setParity(m_config->readEntry("parity", "None"));
   setting->setStopbits(m_config->readEntry("stopbits", 1));

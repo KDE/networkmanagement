@@ -53,7 +53,8 @@ QVariantMap SerialDbus::toMap()
   Knm::SerialSetting * setting = static_cast<Knm::SerialSetting *>(m_setting);
   insertIfNonZero(map, "baud", setting->baud());
   insertIfNonZero(map, "bits", setting->bits());
-  map.insert("parity", setting->parity());
+  if (!setting->parity().isEmpty())
+      map.insert("parity", setting->parity());
   insertIfNonZero(map, "stopbits", setting->stopbits());
   insertIfNonZero(map, NM_SETTING_SERIAL_SEND_DELAY, setting->senddelay());
   return map;

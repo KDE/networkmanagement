@@ -170,8 +170,11 @@ QVariantMapMap ConnectionDbus::toDbusMap()
             // IN GENERAL, we don't serialise empty maps.
             // Except if they are the setting for the connection's specific type, NM requires this
             // And NM 0.7 requires that PPPoE connections always have a PPP setting
+            // And NM 0.7 requires that serial connections always have a PPP setting
             if (!map.isEmpty()
                     || (setting->name() == dbusConnectionType)
+                    || (m_connection->type() == Knm::Connection::Gsm && setting->type() == Knm::Setting::Ppp)
+                    || (m_connection->type() == Knm::Connection::Cdma && setting->type() == Knm::Setting::Ppp)
                     || (m_connection->type() == Knm::Connection::Pppoe && setting->type() == Knm::Setting::Ppp)) {
                 mapMap.insert(setting->name(), map);
             }
