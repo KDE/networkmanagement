@@ -58,6 +58,7 @@ void GsmWidget::readConfig()
     d->ui.username->setText(d->setting->username());
     d->ui.apn->setText(d->setting->apn());
     d->ui.network->setText(d->setting->networkid());
+    d->ui.type->setCurrentIndex(qBound(0, d->setting->networktype() + 1, d->ui.type->count() - 1));
     d->ui.band->setValue(d->setting->band());
     d->ui.password->setEchoMode(QLineEdit::Password);
 }
@@ -80,6 +81,7 @@ void GsmWidget::writeConfig()
     d->setting->setPassword(d->ui.password->text());
     d->setting->setApn(d->ui.apn->text());
     d->setting->setNetworkid(d->ui.network->text());
+    d->setting->setNetworktype(d->ui.type->currentIndex() - 1);
     d->setting->setBand(d->ui.band->value());
     d->setting->setPin(d->ui.pin->text());
     d->setting->setPuk(d->ui.puk->text());
