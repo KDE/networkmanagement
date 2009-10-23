@@ -476,7 +476,11 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
                 overlayName = QLatin1String("emblem-mounted");
                 break;
             case Solid::Control::NetworkInterface::Activated:
-                overlayName = QLatin1String("checkbox");
+                if (iconName == QLatin1String("network-wired"))
+                    iconName = QLatin1String("network-wired-activated");
+                else
+
+                    overlayName = QLatin1String("checkbox");
                 break;
             default:
                 break;
