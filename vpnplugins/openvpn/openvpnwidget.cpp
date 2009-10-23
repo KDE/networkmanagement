@@ -171,7 +171,7 @@ void OpenVpnSettingWidget::readConfig()
         d->ui.cboHmac->setCurrentIndex(1);
     } else if (hmacKeyAuth == QLatin1String(NM_OPENVPN_AUTH_MD5)) {
         d->ui.cboHmac->setCurrentIndex(2);
-    } else if (hmacKeyAuth == QLatin1String(NM_OPENVPN_AUTH_MD5)) {
+    } else if (hmacKeyAuth == QLatin1String(NM_OPENVPN_AUTH_SHA1)) {
         d->ui.cboHmac->setCurrentIndex(3);
     }
     // ciphers populated above?
