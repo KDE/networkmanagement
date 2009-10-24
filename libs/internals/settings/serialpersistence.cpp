@@ -20,7 +20,16 @@ void SerialPersistence::load()
   SerialSetting * setting = static_cast<SerialSetting *>(m_setting);
   setting->setBaud(m_config->readEntry("baud", 115200));
   setting->setBits(m_config->readEntry("bits", 8));
-  setting->setParity(m_config->readEntry("parity", "None"));
+  {
+    QString contents = m_config->readEntry("parity", "None");
+    if (contents == "None")
+      setting->setParity(SerialSetting::EnumParity::None);
+    else     if (contents == "Even")
+      setting->setParity(SerialSetting::EnumParity::Even);
+    else     if (contents == "Odd")
+      setting->setParity(SerialSetting::EnumParity::Odd);
+
+  }
   setting->setStopbits(m_config->readEntry("stopbits", 1));
   setting->setSenddelay(m_config->readEntry("senddelay", 0));
   setting->setInitialized();
@@ -31,7 +40,17 @@ void SerialPersistence::save()
   SerialSetting * setting = static_cast<SerialSetting *>(m_setting);
   m_config->writeEntry("baud", setting->baud());
   m_config->writeEntry("bits", setting->bits());
-  m_config->writeEntry("parity", setting->parity());
+  switch (setting->parity()) {
+    case SerialSetting::EnumParity::None:
+      m_config->writeEntry("parity", "None");
+      break;
+    case SerialSetting::EnumParity::Even:
+      m_config->writeEntry("parity", "Even");
+      break;
+    case SerialSetting::EnumParity::Odd:
+      m_config->writeEntry("parity", "Odd");
+      break;
+  }
   m_config->writeEntry("stopbits", setting->stopbits());
   m_config->writeEntry("senddelay", setting->senddelay());
 }

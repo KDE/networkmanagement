@@ -73,6 +73,10 @@ void Ipv4Persistence::load()
   }
   setting->setRoutes(routes);
   setting->setIgnoredhcpdns(m_config->readEntry("ignoredhcpdns", false));
+  setting->setIgnoreautoroute(m_config->readEntry("ignoreautoroute", false));
+  setting->setNeverdefault(m_config->readEntry("neverdefault", false));
+  setting->setDhcpclientid(m_config->readEntry("dhcpclientid", ""));
+  setting->setDhcphostname(m_config->readEntry("dhcphostname", ""));
   setting->setInitialized();
 }
 
@@ -125,6 +129,10 @@ void Ipv4Persistence::save()
   m_config->writeEntry("routes", rawRoutes);
 
   m_config->writeEntry("ignoredhcpdns", setting->ignoredhcpdns());
+  m_config->writeEntry("ignoreautoroute", setting->ignoreautoroute());
+  m_config->writeEntry("neverdefault", setting->neverdefault());
+  m_config->writeEntry("dhcpclientid", setting->dhcpclientid());
+  m_config->writeEntry("dhcphostname", setting->dhcphostname());
 }
 
 QMap<QString,QString> Ipv4Persistence::secrets() const

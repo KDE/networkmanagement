@@ -23,7 +23,7 @@ void SerialDbus::fromMap(const QVariantMap & map)
     setting->setBits(map.value("bits").value<uint>());
   }
   if (map.contains("parity")) {
-    setting->setParity(map.value("parity").value<QString>());
+    setting->setParity(map.value("parity").value<int>());
   }
   if (map.contains("stopbits")) {
     setting->setStopbits(map.value("stopbits").value<uint>());
@@ -53,8 +53,17 @@ QVariantMap SerialDbus::toMap()
   Knm::SerialSetting * setting = static_cast<Knm::SerialSetting *>(m_setting);
   insertIfNonZero(map, "baud", setting->baud());
   insertIfNonZero(map, "bits", setting->bits());
-  if (!setting->parity().isEmpty())
-      map.insert("parity", setting->parity());
+  switch (setting->parity()) {
+//X     case Knm::SerialSetting::EnumParity::None:
+//X       map.insert("parity", "n");
+//X       break;
+    case Knm::SerialSetting::EnumParity::Even:
+      map.insert("parity", "E");
+      break;
+    case Knm::SerialSetting::EnumParity::Odd:
+      map.insert("parity", "o");
+      break;
+  }
   insertIfNonZero(map, "stopbits", setting->stopbits());
   insertIfNonZero(map, NM_SETTING_SERIAL_SEND_DELAY, setting->senddelay());
   return map;

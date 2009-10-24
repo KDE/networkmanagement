@@ -15,12 +15,12 @@
       <default>8</default>
       <whatsthis></whatsthis>
     </entry>
-    <entry name="parity" type="String">
+    <entry name="parity" type="Enum">
       <label>Parity</label>
       <choices>
-        <choice name="None"/>
-        <choice name="Even"/>
-        <choice name="Odd"/>
+        <choice name="None" dbusvalue="n"/>
+        <choice name="Even" dbusvalue="E"/>
+        <choice name="Odd" dbusvalue="o"/>
       </choices>
       <default>None</default>
       <whatsthis></whatsthis>

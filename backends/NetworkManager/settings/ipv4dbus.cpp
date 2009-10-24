@@ -32,6 +32,18 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS))) {
     setting->setIgnoredhcpdns(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS)).value<bool>());
   }
+  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_ROUTES))) {
+    setting->setIgnoreautoroute(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_ROUTES)).value<bool>());
+  }
+  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_NEVER_DEFAULT))) {
+    setting->setNeverdefault(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_NEVER_DEFAULT)).value<bool>());
+  }
+  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DHCP_CLIENT_ID))) {
+    setting->setDhcpclientid(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DHCP_CLIENT_ID)).value<QString>());
+  }
+  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DHCP_HOSTNAME))) {
+    setting->setDhcphostname(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DHCP_HOSTNAME)).value<QString>());
+  }
 }
 
 QVariantMap Ipv4Dbus::toMap()
@@ -91,6 +103,10 @@ QVariantMap Ipv4Dbus::toMap()
   }
 
   //map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS), setting->ignoredhcpdns());
+  map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_ROUTES), setting->ignoreautoroute());
+  map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_NEVER_DEFAULT), setting->neverdefault());
+  map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_DHCP_CLIENT_ID), setting->dhcpclientid());
+  map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_DHCP_HOSTNAME), setting->dhcphostname());
   return map;
 }
 

@@ -61,7 +61,7 @@ class KNMINTERNALS_EXPORT SerialSetting : public Setting
     /**
       Set Parity
     */
-    void setParity( const QString & v )
+    void setParity( int v )
     {
         mParity = v;
     }
@@ -69,7 +69,7 @@ class KNMINTERNALS_EXPORT SerialSetting : public Setting
     /**
       Get Parity
     */
-    QString parity() const
+    int parity() const
     {
       return mParity;
     }
@@ -111,7 +111,7 @@ class KNMINTERNALS_EXPORT SerialSetting : public Setting
     // serial
     uint mBaud;
     uint mBits;
-    QString mParity;
+    int mParity;
     uint mStopbits;
     quint64 mSenddelay;
 

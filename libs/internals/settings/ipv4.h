@@ -112,6 +112,70 @@ class KNMINTERNALS_EXPORT Ipv4Setting : public Setting
       return mIgnoredhcpdns;
     }
 
+    /**
+      Set Ignore Automatic Routes
+    */
+    void setIgnoreautoroute( bool v )
+    {
+        mIgnoreautoroute = v;
+    }
+
+    /**
+      Get Ignore Automatic Routes
+    */
+    bool ignoreautoroute() const
+    {
+      return mIgnoreautoroute;
+    }
+
+    /**
+      Set Never Default Route
+    */
+    void setNeverdefault( bool v )
+    {
+        mNeverdefault = v;
+    }
+
+    /**
+      Get Never Default Route
+    */
+    bool neverdefault() const
+    {
+      return mNeverdefault;
+    }
+
+    /**
+      Set DHCP Client ID
+    */
+    void setDhcpclientid( const QString & v )
+    {
+        mDhcpclientid = v;
+    }
+
+    /**
+      Get DHCP Client ID
+    */
+    QString dhcpclientid() const
+    {
+      return mDhcpclientid;
+    }
+
+    /**
+      Set DHCP hostname
+    */
+    void setDhcphostname( const QString & v )
+    {
+        mDhcphostname = v;
+    }
+
+    /**
+      Get DHCP hostname
+    */
+    QString dhcphostname() const
+    {
+      return mDhcphostname;
+    }
+
     QList<Solid::Control::IPv4Route> routes() const
     {
         return mRoutes;
@@ -131,6 +195,10 @@ class KNMINTERNALS_EXPORT Ipv4Setting : public Setting
     QList<Solid::Control::IPv4Address> mAddresses;
     QList<Solid::Control::IPv4Route> mRoutes;
     bool mIgnoredhcpdns;
+    bool mIgnoreautoroute;
+    bool mNeverdefault;
+    QString mDhcpclientid;
+    QString mDhcphostname;
   private:
 };
 

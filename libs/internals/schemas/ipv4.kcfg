@@ -33,6 +33,25 @@
       <label>Ignore DHCP DNS</label>
       <whatsthis>Ignore DNS servers returned by DHCP and use the configured servers instead</whatsthis>
     </entry>
+    <entry name="ignoreautoroute" type="Bool" dbuskey="NM_SETTING_IP4_CONFIG_IGNORE_AUTO_ROUTES">
+      <label>Ignore Automatic Routes</label>
+      <whatsthis>Ignore routes returned by automatic configuration mechanisms and use the manually configured routes instead</whatsthis>
+    </entry>
+    <entry name="neverdefault" type="Bool" dbuskey="NM_SETTING_IP4_CONFIG_NEVER_DEFAULT">
+      <label>Never Default Route</label>
+      <whatsthis>Never assign the default route to this connection</whatsthis>
+    </entry>
+    <entry name="dhcpclientid" type="String" dbuskey="NM_SETTING_IP4_CONFIG_DHCP_CLIENT_ID">
+      <label>DHCP Client ID</label>
+    </entry>
+    <!-- commented out because NM 0.7.1 doesn't have this; master does
+    <entry name="dhcpsendhostname" type="Bool" dbuskey="NM_SETTING_IP4_CONFIG_DHCP_SEND_HOSTNAME">
+      <label>Send hostname to DHCP server</label>
+    </entry>
+    -->
+    <entry name="dhcphostname" type="String" dbuskey="NM_SETTING_IP4_CONFIG_DHCP_HOSTNAME">
+      <label>DHCP hostname</label>
+    </entry>
   </group>
 </kcfg>
 
