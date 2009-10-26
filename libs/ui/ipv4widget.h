@@ -41,14 +41,10 @@ protected Q_SLOTS:
      */
     void methodChanged(int);
     void addressEditingFinished();
-    void settingsModeClicked();
     void dnsEdited(QStringList addresses);
     void dnsSearchEdited(QStringList addresses);
     void showDnsEditor();
     void showDnsSearchEditor();
-
-private:
-    void switchSettingsMode();
 };
 
 #endif

@@ -86,16 +86,15 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     d->ui.method->setItemText(0, str_auto);
     d->ui.method->setItemText(1, str_auto_only);
 
-    d->ui.advancedSettings->setVisible(false);
     d->ui.address->setValidator(new SimpleIpV4AddressValidator(this));
     // unable to check netmask strictly until user finish the input
     d->ui.netMask->setValidator(new SimpleIpV4AddressValidator(this));
     d->ui.gateway->setValidator(new SimpleIpV4AddressValidator(this));
-    
+
     ListValidator *dnsEntriesValidator = new ListValidator(this);
     dnsEntriesValidator->setInnerValidator(new SimpleIpV4AddressValidator(dnsEntriesValidator));
     d->ui.dns->setValidator(dnsEntriesValidator);
-    
+
     ListValidator *dnsSearchEntriesValidator = new ListValidator(this);
     dnsSearchEntriesValidator->setInnerValidator(new QRegExpValidator(QRegExp("\\S+"), this));
     d->ui.dnsSearch->setValidator(dnsSearchEntriesValidator);
@@ -105,12 +104,9 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     connect(d->ui.dnsMorePushButton, SIGNAL(clicked()), this, SLOT(showDnsEditor()));
     connect(d->ui.dnsSearchMorePushButton, SIGNAL(clicked()), this, SLOT(showDnsSearchEditor()));
 
-    connect(d->ui.pushButtonSettingsMode, SIGNAL(clicked()), this, SLOT(settingsModeClicked()));
-
     d->setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
     connect(d->ui.method, SIGNAL(currentIndexChanged(int)), this, SLOT(methodChanged(int)));
     methodChanged(d->AutomaticMethodIndex);
-    switchSettingsMode();
 }
 
 IpV4Widget::~IpV4Widget()
@@ -188,6 +184,11 @@ void IpV4Widget::readConfig()
             d->ui.dnsSearch->setText(d->setting->dnssearch().join(QLatin1String(", ")));
         }
     }
+    // dhcp client ID
+    d->ui.dhcpClientId->setText(d->setting->dhcpclientid());
+    // routing
+    d->ui.cbNeverDefault->setChecked(d->setting->neverdefault());
+    d->ui.cbIgnoreAutoRoutes->setChecked(d->setting->ignoreautoroute());
 }
 
 void IpV4Widget::writeConfig()
@@ -255,6 +256,12 @@ void IpV4Widget::writeConfig()
 
     d->setting->setDns(dnsList);
     d->setting->setDnssearch(dnsSearchEntries);
+
+    // dhcp client ID
+    d->setting->setDhcpclientid(d->ui.dhcpClientId->text());
+    // routing
+    d->setting->setNeverdefault(d->ui.cbNeverDefault->isChecked());
+    d->setting->setIgnoreautoroute(d->ui.cbIgnoreAutoRoutes->isChecked());
 }
 
 void IpV4Widget::methodChanged(int currentIndex)
@@ -262,17 +269,16 @@ void IpV4Widget::methodChanged(int currentIndex)
     Q_D(IpV4Widget);
     bool addressPartEnabled = false;
     bool dnsPartEnabled = false;
+    bool dhcpClientIdEnabled = false;
 
-    if (currentIndex == IpV4WidgetPrivate::ManualMethodIndex) {
+    if (IpV4WidgetPrivate::ManualMethodIndex == currentIndex) {
         addressPartEnabled = true;
         dnsPartEnabled = true;
-        d->ui.pushButtonSettingsMode->setVisible(true);
-    }
-    else {
-        if (IpV4WidgetPrivate::AutomaticOnlyIPMethodIndex == currentIndex) {
-            dnsPartEnabled = true;
-        }
-        d->ui.pushButtonSettingsMode->setVisible(false);
+    } else if (IpV4WidgetPrivate::AutomaticOnlyIPMethodIndex == currentIndex) {
+        dnsPartEnabled = true;
+        dhcpClientIdEnabled = true;
+    } else if (IpV4WidgetPrivate::AutomaticMethodIndex == currentIndex) {
+        dhcpClientIdEnabled = true;
     }
 
     if (!addressPartEnabled) {
@@ -281,6 +287,8 @@ void IpV4Widget::methodChanged(int currentIndex)
         d->ui.gateway->clear();
         d->ui.advancedSettings->setAdditionalAddresses(QList<Solid::Control::IPv4Address>());
     }
+
+    d->ui.advancedSettings->setEnabled(addressPartEnabled);
     d->ui.address->setEnabled(addressPartEnabled);
     d->ui.addressLabel->setEnabled(addressPartEnabled);
     d->ui.netMask->setEnabled(addressPartEnabled);
@@ -298,6 +306,9 @@ void IpV4Widget::methodChanged(int currentIndex)
     d->ui.dnsSearchLabel->setEnabled(dnsPartEnabled);
     d->ui.dnsSearchMorePushButton->setEnabled(dnsPartEnabled);
     d->ui.dnsMorePushButton->setEnabled(dnsPartEnabled);
+
+    d->ui.labelDhcpClientId->setEnabled(dhcpClientIdEnabled);
+    d->ui.dhcpClientId->setEnabled(dhcpClientIdEnabled);
 }
 
 quint32 suggestNetmask(quint32 ip)
@@ -338,31 +349,6 @@ void IpV4Widget::addressEditingFinished()
             d->ui.netMask->setText(v.toString());
         }
     }
-}
-
-void IpV4Widget::settingsModeClicked()
-{
-    Q_D(IpV4Widget);
-    d->isAdvancedModeOn ^= true; // XOR toggles value;
-
-    switchSettingsMode();
-}
-
-void IpV4Widget::switchSettingsMode()
-{
-    Q_D(IpV4Widget);
-    QString text;
-
-    if (false == d->isAdvancedModeOn) {
-        text = i18nc("@action:button Additional IPv4 addresses (aliases)","&Additional Addresses");
-    }
-    else {
-        text = i18nc("@action:button Basic IPv4 settings","&Basic settings");
-    }
-
-    d->ui.pushButtonSettingsMode->setText(text);
-    d->ui.basicSettingsWidget->setVisible(!d->isAdvancedModeOn);
-    d->ui.advancedSettings->setVisible(d->isAdvancedModeOn);
 }
 
 void IpV4Widget::dnsEdited(QStringList items)
