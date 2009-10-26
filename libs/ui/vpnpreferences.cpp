@@ -34,7 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-connection.h>
 #include <nm-setting-vpn.h>
 
-//#include "pppwidget.h"
+#include "ipv4widget.h"
 #include "connectionwidget.h"
 #include "vpnuiplugin.h"
 
@@ -50,7 +50,6 @@ VpnPreferences::VpnPreferences(QWidget *parent, const QVariantList &args)
     QVBoxLayout * layout = new QVBoxLayout(this);
     m_contents = new ConnectionWidget(m_connection, i18n("New VPN Connection"), this);
     layout->addWidget(m_contents);
-    //PppWidget * pppWidget = new PppWidget(m_connection, this);
     // load the plugin in m_vpnType, get its SettingWidget and add it
     
     QString error;
@@ -64,7 +63,8 @@ VpnPreferences::VpnPreferences(QWidget *parent, const QVariantList &args)
             kDebug() << error;
         }
     }
-    //addToTabWidget(pppWidget);
+    IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+    addToTabWidget(ipv4Widget);
 }
 
 VpnPreferences::~VpnPreferences()

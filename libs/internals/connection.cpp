@@ -123,6 +123,7 @@ void Connection::init()
             break;
         case Vpn:
             addSetting(new VpnSetting());
+            addSetting(new Ipv4Setting());
             break;
         case Wired:
             addSetting(new Ipv4Setting());
