@@ -12,6 +12,7 @@ include_directories(
 
 ## next target: internals layer library
 
+
 set(knm_nm_LIB_SRCS
    connectiondbus.cpp
 
@@ -48,13 +49,17 @@ set(knm_nm_LIB_SRCS
 
    #org.freedesktop.NetworkManagerSettings.Connection
    exportedconnection.cpp
-   
+
    #org.freedesktop.NetworkManagerSettings.Connection.Secrets
    exportedconnectionsecrets.cpp
 
    nmdbusactiveconnectionmonitor.cpp
 
+   #org.freedesktop.NetworkManagerSettings.Connection.Active
    nm-active-connectioninterface.cpp
+
+   #org.freedesktop.NetworkManagerSettings.VPN.Connection
+   nm-vpn-connectioninterface.cpp
 
    nmdbussettingsconnectionprovider.cpp
 

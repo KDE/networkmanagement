@@ -39,6 +39,7 @@ class NMDBusSystemSettingsMonitor;
 
 class NMDBusActiveConnectionMonitorPrivate;
 class OrgFreedesktopNetworkManagerConnectionActiveInterface;
+class OrgFreedesktopNetworkManagerVPNConnectionInterface;
 
 /**
  * Watches the list of active connections and updates InterfaceConnections' state
@@ -72,11 +73,6 @@ private Q_SLOTS:
     void activeConnectionListChanged();
 
     /**
-     * Update the state on affected activatables
-     */
-    void activeConnectionChanged(const QVariantMap &);
-
-    /**
      * Clean state if NetworkManager exits
      */
     void networkingStatusChanged(Solid::Networking::Status);
@@ -84,12 +80,40 @@ private Q_SLOTS:
 private:
     // locate the interfaceconnection object for a remote active connection (that has signalled)
     Knm::InterfaceConnection * interfaceConnectionForConnectionActive(OrgFreedesktopNetworkManagerConnectionActiveInterface * connectionActive);
-    // update all properties
-    void activeConnectionChangedInternal(OrgFreedesktopNetworkManagerConnectionActiveInterface *, const QVariantMap&);
-    // just update state
-    void activeConnectionChangedInternal(OrgFreedesktopNetworkManagerConnectionActiveInterface *, uint);
     Q_DECLARE_PRIVATE(NMDBusActiveConnectionMonitor)
     NMDBusActiveConnectionMonitorPrivate * d_ptr;
+};
+
+/**
+ * Links a DBUS interface object for an active connection to a Knm::InterfaceConnection,
+ * updating its state
+ */
+class NMDBusActiveConnectionProxy : public QObject
+{
+Q_OBJECT
+public:
+    NMDBusActiveConnectionProxy(Knm::InterfaceConnection * interfaceConnection,
+            OrgFreedesktopNetworkManagerConnectionActiveInterface * activeConnectionIface);
+    virtual ~NMDBusActiveConnectionProxy();
+    Knm::InterfaceConnection * interfaceConnection() const;
+public slots:
+    void handlePropertiesChanged(const QVariantMap & changedProps);
+protected:
+    OrgFreedesktopNetworkManagerConnectionActiveInterface * m_activeConnectionIface;
+    Knm::InterfaceConnection * m_interfaceConnection;
+};
+
+class NMDBusVPNConnectionProxy : public NMDBusActiveConnectionProxy
+{
+Q_OBJECT
+public:
+    NMDBusVPNConnectionProxy(Knm::InterfaceConnection * interfaceConnection,
+            OrgFreedesktopNetworkManagerConnectionActiveInterface * activeConnectionIface);
+public slots:
+    void handleVPNPropertiesChanged(const QVariantMap & changedProps);
+protected:
+    void setState(uint vpnState);
+    OrgFreedesktopNetworkManagerVPNConnectionInterface * m_vpnConnectionIface;
 };
 
 #endif // BACKENDS_NETWORKMANAGER_NMDBUSACTIVECONNECTIONMONITOR_H

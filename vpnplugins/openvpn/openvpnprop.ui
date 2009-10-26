@@ -412,7 +412,7 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TabPage">
+     <widget class="QWidget" name="TabPage2">
       <attribute name="title">
        <string>Optional Settings</string>
       </attribute>
