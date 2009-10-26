@@ -33,20 +33,6 @@ void SerialDbus::fromMap(const QVariantMap & map)
   }
 }
 
-void SerialDbus::insertIfTrue(QVariantMap& map, const char * key, bool setting)
-{
-    if (setting) {
-        map.insert(QLatin1String(key), true);
-    }
-}
-
-void SerialDbus::insertIfNonZero(QVariantMap& map, const char * key, uint setting)
-{
-    if (setting != 0) {
-        map.insert(QLatin1String(key), setting);
-    }
-}
-
 QVariantMap SerialDbus::toMap()
 {
   QVariantMap map;

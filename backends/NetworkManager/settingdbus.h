@@ -40,6 +40,9 @@ public:
     virtual QVariantMap toMap() = 0;
     virtual QVariantMap toSecretsMap() = 0;
 protected:
+    static void insertIfTrue(QVariantMap& map, const char * key, bool value);
+    static void insertIfNonZero(QVariantMap& map, const char * key, uint value);
+    static void insertIfNonEmpty(QVariantMap& map, const char * key, const QString & value);
     Knm::Setting *m_setting;
 };
 

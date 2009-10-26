@@ -72,20 +72,6 @@ void PppDbus::fromMap(const QVariantMap & map)
   }
 }
 
-void PppDbus::insertIfTrue(QVariantMap& map, const char * key, bool setting)
-{
-    if (setting) {
-        map.insert(QLatin1String(key), true);
-    }
-}
-
-void PppDbus::insertIfNonZero(QVariantMap& map, const char * key, uint setting)
-{
-    if (setting != 0) {
-        map.insert(QLatin1String(key), setting);
-    }
-}
-
 QVariantMap PppDbus::toMap()
 {
   QVariantMap map;

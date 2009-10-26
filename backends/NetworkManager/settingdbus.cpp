@@ -33,4 +33,26 @@ SettingDbus::~SettingDbus()
 
 }
 
+void SettingDbus::insertIfTrue(QVariantMap& map, const char * key, bool setting)
+{
+    if (setting) {
+        map.insert(QLatin1String(key), true);
+    }
+}
+
+void SettingDbus::insertIfNonZero(QVariantMap& map, const char * key, uint setting)
+{
+    if (setting != 0) {
+        map.insert(QLatin1String(key), setting);
+    }
+}
+
+void SettingDbus::insertIfNonEmpty(QVariantMap& map, const char * key, const QString & setting)
+{
+    if (!setting.isEmpty()) {
+        map.insert(QLatin1String(key), setting);
+    }
+}
+
+
 // vim: sw=4 sts=4 et tw=100

@@ -22,8 +22,6 @@ class NM07DBUS_EXPORT SerialDbus : public SettingDbus
     QVariantMap toMap();
     QVariantMap toSecretsMap();
   private:
-    void insertIfTrue(QVariantMap& map, const char * key, bool setting);
-    void insertIfNonZero(QVariantMap& map, const char * key, uint setting);
 };
 #endif
 
