@@ -248,7 +248,13 @@ void KNetworkManagerTrayIcon::fillPopup()
                 kDebug() << "UCI" << unco->deviceUni();
                 widget = new UnconfiguredInterfaceItem(unco, 0);
                 widget->setObjectName(unco->deviceUni());
-                connect (widget, SIGNAL(clicked()), this, SLOT(showOtherWirelessDialog()));
+                Solid::Control::NetworkInterface * iface
+                    = Solid::Control::NetworkManager::findNetworkInterface(unco->deviceUni());
+                if (iface) {
+                    if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+                        connect (widget, SIGNAL(clicked()), this, SLOT(showOtherWirelessDialog()));
+                    }
+                }
             } else if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
                 Knm::VpnInterfaceConnection * vpn = static_cast<Knm::VpnInterfaceConnection*>(activatable);
                 kDebug() << "VPN" << vpn->connectionName();

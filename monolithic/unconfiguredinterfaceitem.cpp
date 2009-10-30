@@ -76,7 +76,12 @@ UnconfiguredInterfaceItem::UnconfiguredInterfaceItem(Knm::UnconfiguredInterface 
     d->activeIcon->show();
     // disconnects us from to the activatable's activate slot, because this is handled indirectly by
     // KnetworkManagerTrayIcon now.
-    disconnect(this, SIGNAL(clicked()), unconfigured, SLOT(activate()));
+    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(unconfigured->deviceUni());
+    if (iface) {
+        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+            disconnect(this, SIGNAL(clicked()), unconfigured, SLOT(activate()));
+        }
+    }
 }
 
 UnconfiguredInterfaceItem::~UnconfiguredInterfaceItem()
