@@ -42,6 +42,7 @@ class Wireless80211WidgetPrivate : public SettingWidgetPrivate
 public:
     Ui_Wireless80211Config ui;
     Knm::WirelessSetting * setting;
+    QString originalSsid;
     QString proposedSsid;
 };
 
@@ -99,6 +100,7 @@ void Wireless80211Widget::readConfig()
     // need to check that ssids containing international characters are restored correctly
     if (!d->setting->ssid().isEmpty()) {
         d->ui.ssid->setText(QString::fromAscii(d->setting->ssid()));
+        d->originalSsid = QString::fromAscii(d->setting->ssid());
     }
     d->ui.bssid->setText(QString::fromAscii(d->setting->bssid()));
     if (!d->setting->macaddress().isEmpty()) {
@@ -170,5 +172,17 @@ QString Wireless80211Widget::enteredSsid() const
 {
     Q_D(const Wireless80211Widget);
     return d->ui.ssid->text();
+}
+
+bool Wireless80211Widget::enteredSsidIsDirty() const
+{
+    Q_D(const Wireless80211Widget);
+    return (d->ui.ssid->text() != d->originalSsid);
+}
+
+void Wireless80211Widget::setEnteredSsidClean()
+{
+    Q_D(Wireless80211Widget);
+    d->originalSsid = d->ui.ssid->text();
 }
 // vim: sw=4 sts=4 et tw=100

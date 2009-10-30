@@ -37,6 +37,8 @@ public:
     void readConfig();
     void writeConfig();
     QByteArray selectedInterfaceHardwareAddress() const;
+    bool enteredSsidIsDirty() const;
+    void setEnteredSsidClean();
     QString enteredSsid() const;
 public Q_SLOTS:
     void scanClicked();

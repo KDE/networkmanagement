@@ -115,7 +115,7 @@ bool WirelessPreferences::needsEdits() const
 
 void WirelessPreferences::tabChanged(int index)
 {
-    if (index == m_securityTabIndex) {
+    if (index == m_securityTabIndex && m_wirelessWidget->enteredSsidIsDirty()) {
         Solid::Control::WirelessNetworkInterface * ifaceForSsid = 0;
         Solid::Control::AccessPoint * apForSsid = 0;
         // look up AP given by m_wirelessWidget, and set it on m_securityWidget
@@ -147,6 +147,7 @@ void WirelessPreferences::tabChanged(int index)
             }
         }
         m_securityWidget->setIfaceAndAccessPoint(ifaceForSsid, apForSsid);
+        m_wirelessWidget->setEnteredSsidClean();
     }
 }
 // vim: sw=4 sts=4 et tw=100
