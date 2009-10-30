@@ -74,12 +74,16 @@ void OtherWirelessNetworkDialog::handleAdd(Knm::Activatable * activatable)
     Solid::Device* dev = 0;
     QStringList itemStrings;
     QString deviceText;
+    QString strengthString;
     Knm::WirelessSecurity::Type best;
     switch (activatable->activatableType()) {
         case Knm::Activatable::HiddenWirelessInterfaceConnection:
             wic = static_cast<Knm::HiddenWirelessInterfaceConnection*>(activatable);
             best = Knm::WirelessSecurity::best(wic->interfaceCapabilities(), true, (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc), wic->apCapabilities(), wic->wpaFlags(), wic->rsnFlags());
-            itemStrings << wic->connectionName() << QString::fromLatin1("%1%").arg(wic->strength()) << Knm::WirelessSecurity::label(best);
+            if (wic->strength() >= 0) {
+                strengthString = QString::fromLatin1("%1%").arg(wic->strength());
+            }
+            itemStrings << wic->connectionName() << strengthString << Knm::WirelessSecurity::label(best);
             item = new QTreeWidgetItem(itemStrings);
             item->setIcon(0, SmallIcon("document-properties"));
             item->setData(0, ItemActivatableRole, QVariant::fromValue(activatable));
