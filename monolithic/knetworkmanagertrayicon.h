@@ -23,12 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <kdeversion.h>
 
-#if KDE_IS_VERSION(4,3,67)
-#include <KNotificationItem>
-#else
-#include <knotificationitem-1/knotificationitem.h>
-#endif
-
 #include <activatableobserver.h>
 
 #include <QHash>
@@ -61,11 +55,16 @@ namespace Solid
 /**
  * Tray icon representing one or more network interfaces
  */
-#if KDE_IS_VERSION(4,3,67)
+#if KDE_IS_VERSION(4,3,73)
+  #define PARENT_ICON_CLASS KStatusNotifierItem
+  #include <KStatusNotifierItem>
 #else
-using namespace Experimental;
+  #define PARENT_ICON_CLASS KNotificationItem
+  #include <knotificationitem-1/knotificationitem.h>
+  using namespace Experimental;
 #endif
-class KNetworkManagerTrayIcon : public KNotificationItem, public ActivatableObserver
+
+class KNetworkManagerTrayIcon : public PARENT_ICON_CLASS, public ActivatableObserver
 {
 Q_OBJECT
 Q_DECLARE_PRIVATE(KNetworkManagerTrayIcon)
