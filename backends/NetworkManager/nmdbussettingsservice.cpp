@@ -69,6 +69,8 @@ NMDBusSettingsService::NMDBusSettingsService(QObject * parent)
 
     if ( !QDBusConnection::systemBus().interface()->registerService(SERVICE_USER_SETTINGS)) {
         // trouble;
+        // TODO use QDBusConnectionInterface to get the error and handle AccessDenied as well as the
+        // owner error
         kDebug() << "Unable to register service" << QDBusConnection::systemBus().lastError();
         d->active = false;
     }
