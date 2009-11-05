@@ -54,9 +54,11 @@ target_link_libraries(knetworkmanager
    ${KDE4_KDECORE_LIBS}
    ${KDE4_KDEUI_LIBS}
    ${KNOTIFICATIONITEM_LIB}
+   ${QT_QTNETWORK_LIBRARY}
    knminternals
    knmservice
    knm_nm
+   solid
    solidcontrol
    )
 
