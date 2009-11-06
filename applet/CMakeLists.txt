@@ -1,5 +1,7 @@
-include_directories( ${CMAKE_CURRENT_SOURCE_DIR}/../libs/client
-   ${CMAKE_CURRENT_SOURCE_DIR}/../libs/internals
+include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libs/client
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../libs/internals
+                    ${CMAKE_CURRENT_BINARY_DIR}
+                    ${CMAKE_CURRENT_BINARY_DIR}/../libs/internals
    )
 
 add_subdirectory(pics)
