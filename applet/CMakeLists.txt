@@ -21,11 +21,6 @@ set(networkmanager_SRCS
 
 kde4_add_ui_files(networkmanager_SRCS nmConfig.ui )
 
-if(NOT I_KNOW_WHAT_IM_DOING)
-   set(networkmanager_SRCS applet_wip.cpp)
-   message(STATUS "Compiling dummy plasmoid because the real one is still work in progress...")
-endif(NOT I_KNOW_WHAT_IM_DOING)
-
 kde4_add_plugin(plasma_applet_networkmanagement ${networkmanager_SRCS})
 target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmclient knminternals ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} solidcontrol)
 
