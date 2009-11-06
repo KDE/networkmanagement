@@ -1,0 +1,15 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+import os, time
+
+
+cmd1 = "./qdbusfornm --system org.freedesktop.NetworkManagerUserSettings /org/freedesktop/NetworkManagerSettings/"
+0 
+cmd2 = " org.freedesktop.NetworkManagerSettings.Connection.GetSettings"
+
+for i in range(32):
+    cmd = cmd1+str(i)+cmd2
+    print cmd
+    time.sleep(1)
+    os.system(cmd)

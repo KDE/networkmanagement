@@ -1,0 +1,13 @@
+#!/bin/sh
+
+echo "I'm deleting your networkmanager config."
+echo "sorry, don't just run some script you find somewhere."
+
+c1=" ${KDEHOME}/share/apps/networkmanagement"
+rm -rf  ${c1}
+
+c2="${KDEHOME}/share/config/networkmanagementrc"
+
+rm $c2
+
+echo "\nDone. You can curse now."
