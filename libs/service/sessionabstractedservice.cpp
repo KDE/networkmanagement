@@ -66,7 +66,8 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
             Knm::InterfaceConnection * realObj = static_cast<Knm::InterfaceConnection*>(added);
             new InterfaceConnectionAdaptor(realObj);
             new ActivatableAdaptor(realObj);
-        } else if (added->activatableType() == Knm::Activatable::WirelessInterfaceConnection ) {
+        } else if (added->activatableType() == Knm::Activatable::WirelessInterfaceConnection
+                || added->activatableType() == Knm::Activatable::HiddenWirelessInterfaceConnection ) {
             Knm::WirelessInterfaceConnection * realObj
                 = static_cast<Knm::WirelessInterfaceConnection*>(added);
             new WirelessInterfaceConnectionAdaptor(realObj);
