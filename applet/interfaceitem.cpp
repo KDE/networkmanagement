@@ -35,7 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Meter>
 
 #include <Solid/Device>
-
+#include <Solid/NetworkInterface>
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirednetworkinterface.h>
 #include <solid/control/networkipv4config.h>
@@ -57,20 +57,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     //setAcceptHoverEvents(false);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     Solid::Device* dev = new Solid::Device(m_iface->uni());
-    QString deviceText;
     KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
     
-    if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
-        
-#if KDE_IS_VERSION(4,3,60)
-        deviceText = dev->description();
-#else
-        deviceText = dev->product();
-#endif
-    } else {
-        deviceText = m_iface->interfaceName();
-    }  
-    m_interfaceName = deviceText;
+
 
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
@@ -93,33 +82,42 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_layout->addItem(m_icon, 0, 0, 2, 1);
 
     QString icon;
+    QString deviceText;
     switch (m_iface->type() ) {
         case Solid::Control::NetworkInterface::Ieee8023:
             icon = "network-wired";
+            deviceText = i18nc("title of the interface widget in nm's popup", "Wired Ethernet"); Solid::DeviceInterface::typeDescription(Solid::NetworkInterface::deviceInterfaceType());
             break;
         case Solid::Control::NetworkInterface::Ieee80211:
-            icon = "network-wireless";
+            deviceText = i18nc("title of the interface widget in nm's popup", "Wireless 802.11");             icon = "network-wireless";
             break;
         case Solid::Control::NetworkInterface::Serial:
             // for updating our UI
             connect(iface, SIGNAL(pppStats(uint,uint)), SLOT(pppStats(uint,uint)));
-            icon = "modem";
+            deviceText = i18nc("title of the interface widget in nm's popup", "Serial Modem");             icon = "modem";
             break;
         case Solid::Control::NetworkInterface::Gsm:
         case Solid::Control::NetworkInterface::Cdma:
-            icon = "phone";
+            deviceText = i18nc("title of the interface widget in nm's popup", "Mobile Broadband");             icon = "phone";
             break;
         default:
             icon = "network-wired";
+            deviceText = i18nc("title of the interface widget in nm's popup", "Wired Ethernet");   Solid::DeviceInterface::typeDescription(Solid::NetworkInterface::deviceInterfaceType());
             break;
     }
+    if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() != KNetworkManagerServicePrefs::DescriptiveNames) {
+        deviceText = m_iface->interfaceName();
+    }
+
+    m_interfaceName = deviceText;
+
     m_icon->setIcon(icon);
-    //Plasma::IconWidget::setIcon(icon);
+
     setDrawBackground(true);
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
+    m_ifaceNameLabel->setText(deviceText);
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
-    //m_ifaceNameLabel->setMinimumWidth(176);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 2);
 
     m_connectButton = new Plasma::IconWidget(this);
@@ -248,15 +246,11 @@ InterfaceItem::~InterfaceItem()
 void InterfaceItem::setNameDisplayMode(NameDisplayMode mode)
 {
     m_nameMode = mode;
-    if ( m_nameMode == InterfaceName ) {
-        Solid::Device* dev = new Solid::Device(m_iface->uni());
-#if KDE_IS_VERSION(4,3,60)
-    QString deviceText = dev->description();
-#else
-    QString deviceText = dev->product();
-#endif
-        kDebug() << "Product:" << deviceText;
-        m_ifaceNameLabel->setText(i18n("<b>%1</b>", deviceText));
+    if (m_nameMode == InterfaceName) {
+        m_ifaceNameLabel->setText(QString("<b>%1</b>").arg(m_interfaceName));
+    } else if (m_nameMode == HardwareName) {
+        m_ifaceNameLabel->setText(QString("<b>%1</b>").arg(m_iface->interfaceName()));
+
     } else {
         m_ifaceNameLabel->setText(i18nc("network interface name unknown", "<b>Unknown Network Interface</b>"));
     }
