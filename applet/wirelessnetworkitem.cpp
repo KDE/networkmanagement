@@ -1,5 +1,5 @@
 /*
-Copyright 2008,2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2008,2009 Sebastian K?gler <sebas@kde.org>
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
@@ -183,7 +183,7 @@ WirelessNetworkItem::~WirelessNetworkItem()
 
 void WirelessNetworkItem::setStrength(int strength)
 {
-    kDebug() << m_ssid << "signal strength changed from " << m_strength << "to " << strength;
+    //kDebug() << m_ssid << "signal strength changed from " << m_strength << "to " << strength;
     if (strength == m_strength) {
         return;
     }

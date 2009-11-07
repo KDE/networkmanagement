@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteactivatablelist.h"
 
 #include "../libs/types.h"
-#include "interfaceitem.h"
+//#include "interfaceitem.h"
 #include "nmextenderitem.h"
 
 #include "knmserviceprefs.h"
@@ -290,6 +290,30 @@ void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterfa
     }
 }
 
+QString NetworkManagerApplet::interfaceName(const Solid::Control::NetworkInterface::Type type)
+{
+    QString deviceText;
+    switch (type) {
+        case Solid::Control::NetworkInterface::Ieee8023:
+            deviceText = i18nc("title of the interface widget in nm's popup", "Wired Ethernet");
+            break;
+        case Solid::Control::NetworkInterface::Ieee80211:
+            deviceText = i18nc("title of the interface widget in nm's popup", "Wireless 802.11");
+            break;
+        case Solid::Control::NetworkInterface::Serial:
+            deviceText = i18nc("title of the interface widget in nm's popup", "Serial Modem");
+            break;
+        case Solid::Control::NetworkInterface::Gsm:
+        case Solid::Control::NetworkInterface::Cdma:
+            deviceText = i18nc("title of the interface widget in nm's popup", "Mobile Broadband");
+            break;
+        default:
+            deviceText = i18nc("title of the interface widget in nm's popup", "Wired Ethernet");
+            break;
+    }
+    return deviceText;
+}
+
 /* Slots to react to changes from the daemon */
 void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
 {
@@ -401,20 +425,16 @@ void NetworkManagerApplet::toolTipAboutToShow()
             }
             if (iface->connectionState() != Solid::Control::NetworkInterface::Unavailable) {
                 hasActive = true;
-                Solid::Device* dev = new Solid::Device(iface->uni());
 
                 QString deviceText;
                 KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
 
                 if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
 
-#if KDE_IS_VERSION(4,3,60)
-                    deviceText = dev->description();
-#else
-                    deviceText = dev->product();
-#endif
+                    deviceText = interfaceName(iface->type());
                 } else {
                     deviceText = iface->interfaceName();
+                    Solid::Device* dev = new Solid::Device(iface->uni());
                 }
 
                 QString ifaceName = iface->interfaceName();
@@ -682,8 +702,8 @@ void NetworkManagerApplet::managerWirelessEnabledChanged(bool )
 void NetworkManagerApplet::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     Q_UNUSED( enabled );
-    // TODO: in theory, this shouldn't be necessary since all interfaceitems
-    // should react to changes by themselves
+    // This isn't necessary since all interfaceitems
+    // should react to changes by themselves.
 }
 
 void NetworkManagerApplet::userNetworkingEnabledChanged(bool enabled)
