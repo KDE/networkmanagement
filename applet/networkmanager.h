@@ -119,7 +119,7 @@ private Q_SLOTS:
     // used to let the user easily hide VPN
     void hideVpnGroup();
 private:
-    QString interfaceName(const Solid::Control::NetworkInterface::Type type);
+    QString descriptiveName(const Solid::Control::NetworkInterface::Type type);
 
     bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
     void updateIcons();

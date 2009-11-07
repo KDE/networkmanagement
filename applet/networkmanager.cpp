@@ -290,7 +290,7 @@ void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterfa
     }
 }
 
-QString NetworkManagerApplet::interfaceName(const Solid::Control::NetworkInterface::Type type)
+QString NetworkManagerApplet::descriptiveName(const Solid::Control::NetworkInterface::Type type)
 {
     QString deviceText;
     switch (type) {
@@ -430,11 +430,9 @@ void NetworkManagerApplet::toolTipAboutToShow()
                 KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
 
                 if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
-
-                    deviceText = interfaceName(iface->type());
+                    deviceText = descriptiveName(iface->type());
                 } else {
                     deviceText = iface->interfaceName();
-                    Solid::Device* dev = new Solid::Device(iface->uni());
                 }
 
                 QString ifaceName = iface->interfaceName();
