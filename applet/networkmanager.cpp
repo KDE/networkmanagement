@@ -436,7 +436,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
                 }
 
                 QString ifaceName = iface->interfaceName();
-                subText += QString::fromLatin1("<b>%1</b>: %2").arg(deviceText).arg(connectionStateToString(iface->connectionState()));
+                subText += QString::fromLatin1("<b>%1</b>: %2").arg(deviceText).arg(UiUtils::connectionStateToString(iface->connectionState()));
                 Solid::Control::IPv4Config ip4Config = iface->ipV4Config();
                 QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
                 if (!addresses.isEmpty()) {
@@ -475,45 +475,6 @@ void NetworkManagerApplet::toolTipAboutToShow()
     Plasma::ToolTipManager::self()->setContent(this, m_toolTip);
 }
 
-QString NetworkManagerApplet::connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state)
-{
-    QString stateString;
-    switch (state) {
-        case Solid::Control::NetworkInterface::UnknownState:
-            stateString = i18nc("description of unknown network interface state", "Unknown");
-            break;
-        case Solid::Control::NetworkInterface::Unmanaged:
-            stateString = i18nc("description of unmanaged network interface state", "Unmanaged");
-            break;
-        case Solid::Control::NetworkInterface::Unavailable:
-            stateString = i18nc("description of unavailable network interface state", "Unavailable");
-            break;
-        case Solid::Control::NetworkInterface::Disconnected:
-            stateString = i18nc("description of unconnected network interface state", "Not connected");
-            break;
-        case Solid::Control::NetworkInterface::Preparing:
-            stateString = i18nc("description of preparing to connect network interface state", "Preparing to connect");
-            break;
-        case Solid::Control::NetworkInterface::Configuring:
-            stateString = i18nc("description of configuring hardware network interface state", "Configuring interface");
-            break;
-        case Solid::Control::NetworkInterface::NeedAuth:
-            stateString = i18nc("description of waiting for authentication network interface state", "Waiting for authorization");
-            break;
-        case Solid::Control::NetworkInterface::IPConfig:
-            stateString = i18nc("network interface doing dhcp request in most cases", "Setting network address");
-            break;
-        case Solid::Control::NetworkInterface::Activated:
-            stateString = i18nc("network interface connected state label", "Connected");
-            break;
-        case Solid::Control::NetworkInterface::Failed:
-            stateString = i18nc("network interface connection failed state label", "Connection Failed");
-            break;
-        default:
-            stateString = I18N_NOOP("UNKNOWN STATE FIX ME");
-    }
-    return stateString;
-}
 
 bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Control::NetworkInterface * if2)
 {

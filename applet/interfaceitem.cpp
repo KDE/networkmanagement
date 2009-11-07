@@ -80,21 +80,19 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_layout->addItem(m_icon, 0, 0, 2, 1);
 
     QString icon;
-    QString deviceText(i18nc("interface widget title", "Unknown Device"));
+
     if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
         m_interfaceName = UiUtils::descriptiveInterfaceName(m_iface->type());
     } else {
         m_interfaceName = m_iface->interfaceName();
     }
 
-    m_interfaceName = deviceText;
-
-    m_icon->setIcon(UiUtils::iconName(m_iface->type()));
+    m_icon->setIcon(UiUtils::iconName(m_iface));
 
     setDrawBackground(true);
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
-    m_ifaceNameLabel->setText(deviceText);
+    m_ifaceNameLabel->setText(m_interfaceName);
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 2);
 
@@ -139,21 +137,14 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_strengthMeter->hide();
         m_layout->addItem(m_strengthMeter, 2, 0, 1, 1, Qt::AlignCenter);
-        //m_connectionInfoLabel->hide();
-
-   // m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    //m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
-
     }
 
     //       security
     m_connectionInfoIcon = new Plasma::IconWidget(this);
-    //m_connectionInfoIcon->setIcon("object-unlocked"); // FIXME: set correct icon on start
     m_connectionInfoIcon->setMinimumHeight(22);
     m_connectionInfoIcon->setMinimumWidth(22);
     m_connectionInfoIcon->setMaximumHeight(22);
     //m_connectionInfoIcon->setAcceptHoverEvents(false);
-    //m_layout->addItem(m_connectionInfoStrengthLabel, 2, 2, 1, 1);
     m_layout->addItem(m_connectionInfoIcon, 2, 3, 1, 1, Qt::AlignRight);
     m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
 
@@ -303,47 +294,21 @@ void InterfaceItem::connectionStateChanged(int state)
     // button to connect, disconnect
     m_disconnect = false;
     // Name and info labels
-    QString lname = QString();
+    QString lname = UiUtils::connectionStateToString(state);
     QString linfo = QString();
 
     switch (state) {
         case Solid::Control::NetworkInterface::Unavailable:
-            lname = i18n("Unavailable");
-            linfo = QString();
             setEnabled(false);
             break;
         case Solid::Control::NetworkInterface::Disconnected:
-            lname = i18n("Disconnected");
-            linfo = QString();
             setEnabled(true);
-            break;
-        case Solid::Control::NetworkInterface::Failed:
-            // set the disconnected icon
-            lname = i18nc("Notification text when a network interface connection attempt failed","Connection on %1 failed", m_interfaceName);
-            linfo = i18n("Connection failed");
             setEnabled(true);
             break;
         case Solid::Control::NetworkInterface::Preparing:
-            lname = i18n("Connecting...");
-            linfo = i18n("Preparing network connection");
-            m_disconnect = true;
-            setEnabled(true);
-            break;
         case Solid::Control::NetworkInterface::Configuring:
-            lname = i18n("Connecting...");
-            linfo = i18n("Configuring network connection");
-            m_disconnect = true;
-            setEnabled(true);
-            break;
         case Solid::Control::NetworkInterface::NeedAuth:
-            lname = i18n("Connecting...");
-            linfo = i18n("Requesting authentication");
-            m_disconnect = true;
-            setEnabled(true);
-            break;
         case Solid::Control::NetworkInterface::IPConfig:
-            lname = i18n("Connecting...");
-            linfo = i18n("Setting network address");
             setEnabled(true);
             m_disconnect = true;
             break;
@@ -358,13 +323,7 @@ void InterfaceItem::connectionStateChanged(int state)
             setEnabled(true);
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
-            lname = i18n("Unmanaged");
-            linfo = QString();
-            setEnabled(false);
-            break;
         case Solid::Control::NetworkInterface::UnknownState:
-            lname = i18n("Unknown");
-            linfo = QString();
             setEnabled(false);
             break;
     }

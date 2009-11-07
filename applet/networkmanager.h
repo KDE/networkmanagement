@@ -67,8 +67,6 @@ public:
     virtual QList<QAction*> contextualActions();
     virtual void initExtenderItem(Plasma::ExtenderItem *);
 
-    static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
-
     void loadExtender();
 
 public Q_SLOTS:

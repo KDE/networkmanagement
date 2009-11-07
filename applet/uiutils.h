@@ -43,12 +43,27 @@ public:
     static QString descriptiveInterfaceName(const Solid::Control::NetworkInterface::Type type);
 
     /**
+     * @return a human-readable description of the connection state of a given network interface
+     * @param state The connection state
+     */
+    static QString connectionStateToString(int state);
+
+    /**
      * @return an icon name suitable for the interface type
      * @param type the type of the network interface
      */
-    static QString iconName(const Solid::Control::NetworkInterface::Type type);
+    static QString iconName(Solid::Control::NetworkInterface *iface);
 
-    static QPixmap interfacePixmap(const QSizeF size, const Solid::Control::NetworkInterface::Type type);
+    /** This method can be used to retrieve an icon size that fits into a given size.
+     * The resulting size can be used to render Pixmaps from KIconLoader without
+     * rescaling them (and thereby losing quality)
+     *
+     * @return a size available in KIconLoader.
+     * @param size The size of the rect it should fit in
+     */
+    static int iconSize(const QSizeF size);
+
+    static QPixmap interfacePixmap(const QSizeF size, const Solid::Control::NetworkInterface *iface);
 
 };
 #endif // UIUTILS_H
