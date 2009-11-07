@@ -45,13 +45,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Extender>
 #include <Plasma/ExtenderItem>
 
-#include "remoteactivatablelist.h"
 
 #include "../libs/types.h"
-//#include "interfaceitem.h"
-#include "nmextenderitem.h"
-
 #include "knmserviceprefs.h"
+#include "remoteactivatablelist.h"
+
+#include "nmextenderitem.h"
+#include "uiutils.h"
 
 
 
@@ -66,7 +66,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 {
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
-    //setPassivePopup(true); // only for testing ...
+    setPassivePopup(true); // FIXME: disable, only true for testing ...
 
     Plasma::ToolTipManager::self()->registerWidget(this);
     setAspectRatioMode(Plasma::ConstrainedSquare);
@@ -289,7 +289,7 @@ void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterfa
             break;
     }
 }
-
+/*
 QString NetworkManagerApplet::descriptiveName(const Solid::Control::NetworkInterface::Type type)
 {
     QString deviceText;
@@ -313,7 +313,7 @@ QString NetworkManagerApplet::descriptiveName(const Solid::Control::NetworkInter
     }
     return deviceText;
 }
-
+*/
 /* Slots to react to changes from the daemon */
 void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
 {
@@ -430,7 +430,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
                 KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
 
                 if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
-                    deviceText = descriptiveName(iface->type());
+                    deviceText = UiUtils::descriptiveInterfaceName(iface->type());
                 } else {
                     deviceText = iface->interfaceName();
                 }

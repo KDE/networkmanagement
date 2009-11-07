@@ -19,6 +19,7 @@ set(networkmanager_SRCS
     activatableitem.cpp
     interfaceconnectionitem.cpp
     wirelessnetworkitem.cpp
+    uiutils.cpp
     )
 
 kde4_add_ui_files(networkmanager_SRCS nmConfig.ui )

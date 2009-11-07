@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "interfaceitem.h"
+#include "uiutils.h"
 
 #include <QGraphicsGridLayout>
 #include <QLabel>
@@ -56,10 +57,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     setDrawBackground(true);
     //setAcceptHoverEvents(false);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    Solid::Device* dev = new Solid::Device(m_iface->uni());
     KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
-    
-
 
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
@@ -82,36 +80,16 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_layout->addItem(m_icon, 0, 0, 2, 1);
 
     QString icon;
-    QString deviceText;
-    switch (m_iface->type() ) {
-        case Solid::Control::NetworkInterface::Ieee8023:
-            icon = "network-wired";
-            deviceText = i18nc("title of the interface widget in nm's popup", "Wired Ethernet"); Solid::DeviceInterface::typeDescription(Solid::NetworkInterface::deviceInterfaceType());
-            break;
-        case Solid::Control::NetworkInterface::Ieee80211:
-            deviceText = i18nc("title of the interface widget in nm's popup", "Wireless 802.11");             icon = "network-wireless";
-            break;
-        case Solid::Control::NetworkInterface::Serial:
-            // for updating our UI
-            connect(iface, SIGNAL(pppStats(uint,uint)), SLOT(pppStats(uint,uint)));
-            deviceText = i18nc("title of the interface widget in nm's popup", "Serial Modem");             icon = "modem";
-            break;
-        case Solid::Control::NetworkInterface::Gsm:
-        case Solid::Control::NetworkInterface::Cdma:
-            deviceText = i18nc("title of the interface widget in nm's popup", "Mobile Broadband");             icon = "phone";
-            break;
-        default:
-            icon = "network-wired";
-            deviceText = i18nc("title of the interface widget in nm's popup", "Wired Ethernet");   Solid::DeviceInterface::typeDescription(Solid::NetworkInterface::deviceInterfaceType());
-            break;
-    }
-    if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() != KNetworkManagerServicePrefs::DescriptiveNames) {
-        deviceText = m_iface->interfaceName();
+    QString deviceText(i18nc("interface widget title", "Unknown Device"));
+    if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
+        m_interfaceName = UiUtils::descriptiveInterfaceName(m_iface->type());
+    } else {
+        m_interfaceName = m_iface->interfaceName();
     }
 
     m_interfaceName = deviceText;
 
-    m_icon->setIcon(icon);
+    m_icon->setIcon(UiUtils::iconName(m_iface->type()));
 
     setDrawBackground(true);
     //     interface layout
