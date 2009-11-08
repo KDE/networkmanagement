@@ -84,17 +84,22 @@ QString UiUtils::iconName(Solid::Control::NetworkInterface *iface)
                 QString uni = wiface->activeAccessPoint();
                 //QString uni = wiface->activeAccessPoint()->signalStrength();
                 //int s =
-                int s = wiface->findAccessPoint(uni)->signalStrength();
-                if (s < 13) {
-                    strength = "00";
-                } else if (s < 38) {
-                    strength = "25";
-                } else if (s < 63) {
-                    strength = "50";
-                } else if (s < 88) {
-                    strength = "75";
-                } else if (s >= 88) {
-                    strength = "100";
+                Solid::Control::AccessPoint *ap = wiface->findAccessPoint(uni);
+                if (ap) {
+                    int s = ap->signalStrength();
+                    if (s < 13) {
+                        strength = "00";
+                    } else if (s < 38) {
+                        strength = "25";
+                    } else if (s < 63) {
+                        strength = "50";
+                    } else if (s < 88) {
+                        strength = "75";
+                    } else if (s >= 88) {
+                        strength = "100";
+                    }
+                } else {
+                        strength = "00";
                 }
             }
             icon = "network-wireless-connected-" + strength;
@@ -110,7 +115,7 @@ QString UiUtils::iconName(Solid::Control::NetworkInterface *iface)
             icon = "network-wired";
             break;
     }
-    kDebug() << "icon:" << icon;
+    //kDebug() << "icon:" << icon;
     return icon;
 }
 

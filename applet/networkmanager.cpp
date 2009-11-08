@@ -28,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsLinearLayout>
 #include <QGraphicsPixmapItem>
 
+#include <QGraphicsBlurEffect>
+
 #include <KIcon>
 #include <KIconLoader>
 #include <KToolInvocation>
@@ -44,6 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
 
+#include <Plasma/Animator>
 #include <Plasma/CheckBox>
 #include <Plasma/Extender>
 #include <Plasma/ExtenderItem>
@@ -81,7 +84,9 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     interfaceConnectionStateChanged();
 
     m_activatableList = new RemoteActivatableList(this);
+    setMinimumSize(16, 16);
     resize(64, 64);
+    updatePixmap();
     // TODO: read config into m_extenderItem ...
     // Now it is safe to create ExtenderItems and therefore InterfaceGroups
 
@@ -137,11 +142,26 @@ void NetworkManagerApplet::updatePixmap()
 {
     if (!m_pixmapItem) {
         m_pixmapItem = new QGraphicsPixmapItem(UiUtils::interfacePixmap(contentsRect().size(), activeInterface()), this);
+
+        //QGraphicsBlurEffect *blur = new QGraphicsBlurEffect(this);
+        //m_pixmapItem->setGraphicsEffect(blur);
+        QPropertyAnimation animation(this, "bla");
+        animation.setDuration(4000);
+        animation.setStartValue(0);
+        animation.setEndValue(255);
+
+        //animation.setEasingCurve(QEasingCurve::OutBounce);
+
+        animation.start();
+        kDebug() << "animation started";
+        //Plasma::Animator::self()->animateItem(m_pixmapItem, Plasma::Animator::PulseAnimation);
+        //kDebug() << "animation started";
     }
     if (activeInterface()) {
         m_pixmapItem->setPixmap(UiUtils::interfacePixmap(contentsRect().size(), activeInterface()));
     }
     positionPixmap();
+    update();
 }
 
 void NetworkManagerApplet::positionPixmap()
@@ -152,7 +172,7 @@ void NetworkManagerApplet::positionPixmap()
     int s = UiUtils::iconSize(contentsRect().size());
     QRectF r = contentsRect();
     QPointF _pos( ( r.topLeft().x() + (contentsRect().width() - s)/2 ), (r.topLeft().y() + (contentsRect().height() - s)/2 ) );
-    kDebug() << _pos;
+    //kDebug() << _pos;
     m_pixmapItem->setPos(_pos);
 }
 
@@ -266,6 +286,7 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
     }
 
     interfaceConnectionStateChanged();
+    updatePixmap();
     update();
 }
 
@@ -283,6 +304,7 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
     KConfigGroup cg = config();
 
     interfaceConnectionStateChanged();
+    updatePixmap();
     update();
     // kill any animations involving this interface
 }
@@ -560,8 +582,7 @@ void NetworkManagerApplet::managerWirelessEnabledChanged(bool )
 void NetworkManagerApplet::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     Q_UNUSED( enabled );
-    // This isn't necessary since all interfaceitems
-    // should react to changes by themselves.
+    updatePixmap();
 }
 
 void NetworkManagerApplet::userNetworkingEnabledChanged(bool enabled)
@@ -583,6 +604,7 @@ void NetworkManagerApplet::managerStatusChanged(Solid::Networking::Status status
     } else {
         // ...
     }
+    updatePixmap();
 }
 
 bool NetworkManagerApplet::hasInterfaceOfType(Solid::Control::NetworkInterface::Type type)
