@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // KDE
 #include <KDebug>
+#include <KIcon>
 #include <KIconLoader>
 #include <KLocale>
 
@@ -132,10 +133,9 @@ int UiUtils::iconSize(const QSizeF size)
 }
 
 
-QPixmap UiUtils::interfacePixmap(const QSizeF size, const Solid::Control::NetworkInterface *iface)
+QPixmap UiUtils::interfacePixmap(const QSizeF size, Solid::Control::NetworkInterface *iface)
 {
-
-    return QPixmap(size.toSize());
+    return KIcon(UiUtils::iconName(iface)).pixmap(size.toSize());
 }
 
 QString UiUtils::connectionStateToString(int state)
@@ -177,5 +177,31 @@ QString UiUtils::connectionStateToString(int state)
     }
     return stateString;
 }
+
+qreal UiUtils::interfaceState(const Solid::Control::NetworkInterface *interface)
+{
+    switch (interface->connectionState()) {
+        case Solid::Control::NetworkInterface::Preparing:
+            return 0.25;
+            break;
+        case Solid::Control::NetworkInterface::Configuring:
+            return 0.50;
+            break;
+        case Solid::Control::NetworkInterface::NeedAuth:
+            return 0.50;
+            break;
+        case Solid::Control::NetworkInterface::IPConfig:
+            return 0.75;
+            break;
+        case Solid::Control::NetworkInterface::Activated:
+            return 1.0;
+            break;
+        default:
+            return 0;
+            break;
+    }
+    return 0;
+}
+
 
 // vim: sw=4 sts=4 et tw=100

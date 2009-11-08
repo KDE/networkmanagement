@@ -50,7 +50,7 @@ public:
 
     /**
      * @return an icon name suitable for the interface type
-     * @param type the type of the network interface
+     * @param iface the network interface
      */
     static QString iconName(Solid::Control::NetworkInterface *iface);
 
@@ -63,7 +63,15 @@ public:
      */
     static int iconSize(const QSizeF size);
 
-    static QPixmap interfacePixmap(const QSizeF size, const Solid::Control::NetworkInterface *iface);
+    /** This method can be used to retrieve the progess of a connection attempt
+     * as a qreal, for painting progress bars.
+     *
+     * @return the progress between 0 (disconnected) and 1 (activated).
+     * @param interface the network interface
+     */
+    static qreal interfaceState(const Solid::Control::NetworkInterface *interface);
+
+    static QPixmap interfacePixmap(const QSizeF size, Solid::Control::NetworkInterface *iface);
 
 };
 #endif // UIUTILS_H

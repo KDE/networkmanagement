@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkmanager.h"
 
 #include <QIcon>
+#include <QPaintEngine>
 #include <QPainter>
 #include <QDesktopWidget>
 
@@ -126,14 +127,16 @@ void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
    if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint)) {
         m_svg->resize(contentsRect().size().toSize());
         m_wirelessSvg->resize(contentsRect().size().toSize());
-        updateIcons();
+        // TODO: optimize: doesn't need to happen on *every* resize
+        // only for icon size jumps
+        updatePixmap();
     }
 }
 
-void NetworkManagerApplet::updateIcons()
+void NetworkManagerApplet::updatePixmap()
 {
-    m_pixmapWiredConnected = KIcon("network-connect").pixmap(contentsRect().size().toSize());
-    m_pixmapWiredDisconnected = KIcon("network-disconnect").pixmap(contentsRect().size().toSize());
+    // Todo
+    //m_pixmap = UiUtils::interfacePix
 }
 
 void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
@@ -149,7 +152,6 @@ void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
     ui.showWireless->setChecked(m_extenderItem->m_showWireless);
     ui.showVpn->setChecked(m_extenderItem->m_showVpn);
     ui.showCellular->setChecked(m_extenderItem->m_showCellular);
-    ui.numberOfWlans->setValue(m_numberWirelessShown);
 }
 
 void NetworkManagerApplet::configAccepted()
@@ -193,127 +195,54 @@ QList<QAction*> NetworkManagerApplet::contextualActions()
 
 void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
-    // i can't figure out how to do layouting of multiple items in constraintsEvent properly,
-    // so only have 1 rather than hack something ugly that will be thrown out later
+    int _i = UiUtils::iconSize(contentsRect.size());
+    QSize s(_i, _i);
+    QPixmap pixmap;
+
     if (!m_interfaces.isEmpty()) {
         Solid::Control::NetworkInterface *interface = m_interfaces.first();
-        // TODO: figure out the default route and use that connection
-        //kDebug() << "most interesting interface to paint: " << interface->uni() << " with icon " << m_elementName;
-
-        // Call the correct method to paint the applet, depending on the kind of connection
-        switch (interface->type() ) {
-            case Solid::Control::NetworkInterface::Ieee80211:
-                paintWirelessInterface(interface, p, option, contentsRect);
-                break;
-            case Solid::Control::NetworkInterface::Ieee8023:
-                paintWiredInterface(interface, p, option, contentsRect);
-                break;
-            case Solid::Control::NetworkInterface::Serial:
-            case Solid::Control::NetworkInterface::Gsm:
-            case Solid::Control::NetworkInterface::Cdma:
-            default:
-                paintDefaultInterface(interface, p, option, contentsRect);
-                break;
-        }
-    }
-}
-
-void NetworkManagerApplet::paintDefaultInterface(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
-{
-    Q_UNUSED(option);
-    Q_UNUSED(interface);
-    //kDebug() << " ============== Default Interface" << m_elementName;
-    m_svg->paint(p, contentsRect, m_elementName);
-}
-
-void NetworkManagerApplet::paintWiredInterface(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
-{
-    Q_UNUSED( option );
-    if (interface->connectionState() == Solid::Control::NetworkInterface::Activated) {
-        p->drawPixmap(contentsRect.topLeft(), m_pixmapWiredConnected);
+        pixmap = KIcon(UiUtils::iconName(interface)).pixmap(s);
     } else {
-        p->drawPixmap(contentsRect.topLeft(), m_pixmapWiredDisconnected);
+        pixmap = KIcon("dialog-error").pixmap(s);
+    }
+    paintPixmap(p, pixmap, contentsRect);
+}
+
+
+void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap &pixmap, const QRectF &rect, qreal opacity)
+{
+    int size = pixmap.size().width();
+    QPointF iconOrigin = QPointF(rect.left() + (rect.width() - size) / 2,
+                                 rect.top() + (rect.height() - size) / 2);
+
+    painter->setRenderHint(QPainter::SmoothPixmapTransform);
+    painter->setRenderHint(QPainter::Antialiasing);
+
+    if (!painter->paintEngine()->hasFeature(QPaintEngine::ConstantOpacity)) {
+        QPixmap temp(QSize(size, size));
+        temp.fill(Qt::transparent);
+
+        QPainter p;
+        p.begin(&temp);
+
+        p.setCompositionMode(QPainter::CompositionMode_Source);
+        p.drawPixmap(QPoint(0,0), pixmap);
+
+        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
+        p.fillRect(pixmap.rect(), QColor(0, 0, 0, opacity * 254));
+        p.end();
+
+        // draw the pixmap
+        painter->drawPixmap(iconOrigin, temp);
+    } else {
+        // FIXME: Works, but makes hw acceleration impossible, use above code path
+        qreal old = painter->opacity();
+        painter->setOpacity(opacity);
+        painter->drawPixmap(iconOrigin, pixmap);
+        painter->setOpacity(old);
     }
 }
 
-void NetworkManagerApplet::paintWirelessInterface(Solid::Control::NetworkInterface* interface, QPainter * p, const QStyleOptionGraphicsItem * option, const QRect &contentsRect)
-{
-    Q_UNUSED(option);
-    //kDebug() << interface->type();
-    /* TODO:
-        enum ConnectionState{ UnknownState, Unmanaged, Unavailable, Disconnected, Preparing,
-                    Configuring, NeedAuth, IPConfig, Activated, Failed };
-        make use of this information...
-    */
-    //kDebug() << " ============== Wireless Interface";
-    switch (interface->connectionState()) {
-        case Solid::Control::NetworkInterface::UnknownState:
-            //kDebug() << " ... UnknownState";
-            m_wirelessSvg->paint(p, contentsRect, "antenna");
-            break;
-        case Solid::Control::NetworkInterface::Unmanaged:
-            //kDebug() << " ... Unmanaged";
-            m_wirelessSvg->paint(p, contentsRect, "antenna");
-            break;
-        case Solid::Control::NetworkInterface::Unavailable:
-            //kDebug() << " ... Unavailable";
-            m_wirelessSvg->paint(p, contentsRect, "antenna");
-            break;
-        case Solid::Control::NetworkInterface::Disconnected:
-            //kDebug() << " ... Disconnected";
-            m_wirelessSvg->paint(p, contentsRect, "antenna");
-            break;
-        case Solid::Control::NetworkInterface::Preparing:
-            //kDebug() << " ... Preparing";
-            break;
-        case Solid::Control::NetworkInterface::Configuring:
-            //kDebug() << " ... Configuring";
-            break;
-        case Solid::Control::NetworkInterface::NeedAuth:
-            //kDebug() << " ... NeedAuth";
-            break;
-        case Solid::Control::NetworkInterface::IPConfig:
-            //kDebug() << " ... IPConfig";
-            break;
-        case Solid::Control::NetworkInterface::Activated:
-            //kDebug() << " ... Activated";
-            m_wirelessSvg->paint(p, contentsRect, "connected");
-            m_wirelessSvg->paint(p, contentsRect, "antenna");
-            break;
-        case Solid::Control::NetworkInterface::Failed:
-            //kDebug() << " ... Failed";
-            m_wirelessSvg->paint(p, contentsRect, "antenna");
-            break;
-        default:
-            //kDebug() << "dunno ...";
-            break;
-    }
-}
-/*
-QString NetworkManagerApplet::descriptiveName(const Solid::Control::NetworkInterface::Type type)
-{
-    QString deviceText;
-    switch (type) {
-        case Solid::Control::NetworkInterface::Ieee8023:
-            deviceText = i18nc("title of the interface widget in nm's popup", "Wired Ethernet");
-            break;
-        case Solid::Control::NetworkInterface::Ieee80211:
-            deviceText = i18nc("title of the interface widget in nm's popup", "Wireless 802.11");
-            break;
-        case Solid::Control::NetworkInterface::Serial:
-            deviceText = i18nc("title of the interface widget in nm's popup", "Serial Modem");
-            break;
-        case Solid::Control::NetworkInterface::Gsm:
-        case Solid::Control::NetworkInterface::Cdma:
-            deviceText = i18nc("title of the interface widget in nm's popup", "Mobile Broadband");
-            break;
-        default:
-            deviceText = i18nc("title of the interface widget in nm's popup", "Wired Ethernet");
-            break;
-    }
-    return deviceText;
-}
-*/
 /* Slots to react to changes from the daemon */
 void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
 {
@@ -351,37 +280,9 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
 
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
-    /* Solid::Control::NetworkInterface * interface = dynamic_cast<Solid::Control::NetworkInterface *>(sender());
-    if (interface)
-       kDebug() << "Updating connection state ..." << interface->uni() << interface->type(); */
-    // update appearance
-    QString elementNameToPaint;
     if (!m_interfaces.isEmpty()) {
         qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
         Solid::Control::NetworkInterface * interface = m_interfaces.first();
-        switch (interface->type() ) {
-            case Solid::Control::NetworkInterface::Ieee8023:
-                elementNameToPaint = "wired";
-                break;
-            case Solid::Control::NetworkInterface::Ieee80211:
-                elementNameToPaint = "wireless";
-                break;
-            case Solid::Control::NetworkInterface::Serial:
-                elementNameToPaint = "ppp";
-                break;
-            case Solid::Control::NetworkInterface::Gsm:
-            case Solid::Control::NetworkInterface::Cdma:
-                elementNameToPaint = "cellular";
-                break;
-            default:
-                elementNameToPaint = "wired";
-                break;
-        }
-        if (interface->connectionState() == Solid::Control::NetworkInterface::Activated) {
-            elementNameToPaint += "_connected";
-        } else {
-            elementNameToPaint += "_disconnected";
-        }
         //kDebug() << "busy ... ?";
         switch (interface->connectionState()) {
             case Solid::Control::NetworkInterface::Preparing:
@@ -394,14 +295,8 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
                 setBusy(false);
                 break;
         }
-    } else {
-        elementNameToPaint = "nointerfaces";
     }
-
-    if (elementNameToPaint != m_elementName) {
-        m_elementName = elementNameToPaint;
-        update();
-    }
+    updatePixmap();
 }
 
 void NetworkManagerApplet::toolTipAboutToShow()
@@ -446,20 +341,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
                 }
                 // Show the first active connection's icon, otherwise the networkmanager icon
                 if (!iconChanged && iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
-                    switch (iface->type()) {
-                        case Solid::Control::NetworkInterface::Ieee8023:
-                            icon = "network-wired";
-                            break;
-                        case Solid::Control::NetworkInterface::Ieee80211:
-                            icon = "network-wireless";
-                            break;
-                        case Solid::Control::NetworkInterface::Serial:
-                        case Solid::Control::NetworkInterface::Gsm:
-                        case Solid::Control::NetworkInterface::Cdma:
-                        default:
-                            icon = "phone";
-                            break;
-                    }
+                    icon = UiUtils::iconName(iface);
                     iconChanged = true; // we only want the first one
                 }
             }

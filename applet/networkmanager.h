@@ -116,27 +116,23 @@ private Q_SLOTS:
     void manageConnections();
     // used to let the user easily hide VPN
     void hideVpnGroup();
-private:
-    QString descriptiveName(const Solid::Control::NetworkInterface::Type type);
+    void updatePixmap();
 
+private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
-    void updateIcons();
-    void paintDefaultInterface(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
-    void paintWiredInterface(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
-    void paintWirelessInterface(Solid::Control::NetworkInterface*, QPainter *painter, const QStyleOptionGraphicsItem * option, const QRect & rect);
+
+    void paintPixmap(QPainter *painter, QPixmap &pixmap,
+                     const QRectF &rect, qreal opacity = 1.0);
+
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;
     Plasma::Svg *m_svg;
     Plasma::Svg *m_wirelessSvg;
-    QPixmap m_pixmapWiredConnected;
-    QPixmap m_pixmapWiredDisconnected;
+    QPixmap m_pixmap;
     Solid::Control::NetworkInterfaceList m_interfaces;
-    QString m_elementName;
     Plasma::ToolTipContent m_toolTip;
     // Configuration dialog
     Ui::nmConfig ui;
-
-    int m_numberWirelessShown;
     RemoteActivatableList * m_activatableList;
     NMExtenderItem* m_extenderItem;
 };
