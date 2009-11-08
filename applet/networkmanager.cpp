@@ -63,7 +63,7 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Con
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
-    : Plasma::PopupApplet(parent, args), m_iconPerDevice(false), m_svg(0), m_wirelessSvg(0)
+    : Plasma::PopupApplet(parent, args), m_iconPerDevice(false)
 {
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
@@ -72,11 +72,6 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     Plasma::ToolTipManager::self()->registerWidget(this);
     setAspectRatioMode(Plasma::ConstrainedSquare);
     setHasConfigurationInterface(true);
-    m_svg = new Plasma::Svg(this);
-    m_svg->setImagePath("networkmanagement/networkmanagement");
-
-    m_wirelessSvg = new Plasma::Svg(this);
-    m_wirelessSvg->setImagePath("networkmanagement/networkmanagement-wireless");
 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
@@ -97,7 +92,6 @@ void NetworkManagerApplet::init()
     kDebug();
     KConfigGroup cg = config();
     m_iconPerDevice = cg.readEntry("IconPerDevice", false);
-    m_svg->resize(contentsRect().size());
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
@@ -125,8 +119,6 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
 {
    if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint)) {
-        m_svg->resize(contentsRect().size().toSize());
-        m_wirelessSvg->resize(contentsRect().size().toSize());
         // TODO: optimize: doesn't need to happen on *every* resize
         // only for icon size jumps
         updatePixmap();

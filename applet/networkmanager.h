@@ -126,8 +126,6 @@ private:
 
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;
-    Plasma::Svg *m_svg;
-    Plasma::Svg *m_wirelessSvg;
     QPixmap m_pixmap;
     Solid::Control::NetworkInterfaceList m_interfaces;
     Plasma::ToolTipContent m_toolTip;
