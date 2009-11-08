@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 QString UiUtils::stateDescription()
 {
-    return i18n("UiUtils: connecting");
+    return i18n("FIXME: UiUtils: connecting");
 }
 
 
@@ -67,6 +67,9 @@ QString UiUtils::descriptiveInterfaceName(const Solid::Control::NetworkInterface
 
 QString UiUtils::iconName(Solid::Control::NetworkInterface *iface)
 {
+    if (!iface) {
+        return QString("dialog-error");
+    }
     QString icon;
     QString strength = "00";
     Solid::Control::WirelessNetworkInterface *wiface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface);
@@ -180,6 +183,9 @@ QString UiUtils::connectionStateToString(int state)
 
 qreal UiUtils::interfaceState(const Solid::Control::NetworkInterface *interface)
 {
+    if (!interface) {
+        return 0;
+    }
     switch (interface->connectionState()) {
         case Solid::Control::NetworkInterface::Preparing:
             return 0.25;

@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPaintEngine>
 #include <QPainter>
 #include <QDesktopWidget>
+#include <QGraphicsLinearLayout>
+#include <QGraphicsPixmapItem>
 
 #include <KIcon>
 #include <KIconLoader>
@@ -63,7 +65,9 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface * if1, Solid::Con
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2);
 
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
-    : Plasma::PopupApplet(parent, args), m_iconPerDevice(false)
+    : Plasma::PopupApplet(parent, args),
+        m_iconPerDevice(false),
+        m_pixmapItem(0)
 {
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
@@ -77,7 +81,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     interfaceConnectionStateChanged();
 
     m_activatableList = new RemoteActivatableList(this);
-
+    resize(64, 64);
     // TODO: read config into m_extenderItem ...
     // Now it is safe to create ExtenderItems and therefore InterfaceGroups
 
@@ -119,16 +123,37 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
 {
    if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint)) {
-        // TODO: optimize: doesn't need to happen on *every* resize
-        // only for icon size jumps
-        updatePixmap();
+        if (UiUtils::iconSize(contentsRect().size()) != UiUtils::iconSize(m_pixmapItem->pixmap().size())) {
+            int _i = UiUtils::iconSize(m_pixmapItem->pixmap().size());
+            kDebug() << "cevent" << UiUtils::iconSize(contentsRect().size()) << UiUtils::iconSize(QSize(_i, _i));
+            updatePixmap();
+        } else {
+            positionPixmap();
+        }
     }
 }
 
 void NetworkManagerApplet::updatePixmap()
 {
-    // Todo
-    //m_pixmap = UiUtils::interfacePix
+    if (!m_pixmapItem) {
+        m_pixmapItem = new QGraphicsPixmapItem(UiUtils::interfacePixmap(contentsRect().size(), activeInterface()), this);
+    }
+    if (activeInterface()) {
+        m_pixmapItem->setPixmap(UiUtils::interfacePixmap(contentsRect().size(), activeInterface()));
+    }
+    positionPixmap();
+}
+
+void NetworkManagerApplet::positionPixmap()
+{
+    if (!m_pixmapItem) {
+        return;
+    }
+    int s = UiUtils::iconSize(contentsRect().size());
+    QRectF r = contentsRect();
+    QPointF _pos( ( r.topLeft().x() + (contentsRect().width() - s)/2 ), (r.topLeft().y() + (contentsRect().height() - s)/2 ) );
+    kDebug() << _pos;
+    m_pixmapItem->setPos(_pos);
 }
 
 void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
@@ -187,21 +212,13 @@ QList<QAction*> NetworkManagerApplet::contextualActions()
 
 void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
-    int _i = UiUtils::iconSize(contentsRect.size());
-    QSize s(_i, _i);
-    QPixmap pixmap;
+    Q_UNUSED( option );
 
-    if (!m_interfaces.isEmpty()) {
-        Solid::Control::NetworkInterface *interface = m_interfaces.first();
-        pixmap = KIcon(UiUtils::iconName(interface)).pixmap(s);
-    } else {
-        pixmap = KIcon("dialog-error").pixmap(s);
-    }
-    paintPixmap(p, pixmap, contentsRect);
+    //paintPixmap(p, m_pixmapItem->pixmap(), contentsRect);
 }
 
 
-void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap &pixmap, const QRectF &rect, qreal opacity)
+void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap pixmap, const QRectF &rect, qreal opacity)
 {
     int size = pixmap.size().width();
     QPointF iconOrigin = QPointF(rect.left() + (rect.width() - size) / 2,
@@ -270,13 +287,21 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
     // kill any animations involving this interface
 }
 
-void NetworkManagerApplet::interfaceConnectionStateChanged()
+Solid::Control::NetworkInterface* NetworkManagerApplet::activeInterface()
 {
     if (!m_interfaces.isEmpty()) {
         qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
-        Solid::Control::NetworkInterface * interface = m_interfaces.first();
+        return m_interfaces.first();
+    } else {
+        return 0;
+    }
+}
+
+void NetworkManagerApplet::interfaceConnectionStateChanged()
+{
+    if (activeInterface()) {
         //kDebug() << "busy ... ?";
-        switch (interface->connectionState()) {
+        switch (activeInterface()->connectionState()) {
             case Solid::Control::NetworkInterface::Preparing:
             case Solid::Control::NetworkInterface::Configuring:
             case Solid::Control::NetworkInterface::NeedAuth:

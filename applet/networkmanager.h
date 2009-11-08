@@ -117,22 +117,25 @@ private Q_SLOTS:
     // used to let the user easily hide VPN
     void hideVpnGroup();
     void updatePixmap();
+    void positionPixmap();
 
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
+    Solid::Control::NetworkInterface* activeInterface();
 
-    void paintPixmap(QPainter *painter, QPixmap &pixmap,
+    void paintPixmap(QPainter *painter, QPixmap pixmap,
                      const QRectF &rect, qreal opacity = 1.0);
 
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;
-    QPixmap m_pixmap;
     Solid::Control::NetworkInterfaceList m_interfaces;
     Plasma::ToolTipContent m_toolTip;
     // Configuration dialog
     Ui::nmConfig ui;
     RemoteActivatableList * m_activatableList;
     NMExtenderItem* m_extenderItem;
+
+    QGraphicsPixmapItem *m_pixmapItem;
 };
 
 #endif
