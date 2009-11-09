@@ -33,108 +33,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkipv4config.h>
 
 #include <interfaceconnection.h>
+#include <ui/uiutils.h>
 
 #include <KLocale>
 
 #include <knmserviceprefs.h>
 #include <wirelesssecurityidentifier.h>
-
-// probably these functions should be in a separate file to be
-// easily included from different places.
-QString interfaceTypeToString(Solid::Control::NetworkInterface::Type type)
-{
-    QString str;
-    switch (type) {
-        case Solid::Control::NetworkInterface::UnknownType:
-            str = i18n("Unknown type");
-            break;
-        case Solid::Control::NetworkInterface::Ieee8023:
-            str = i18nc("The network interface type","Ethernet");
-            break;
-        case Solid::Control::NetworkInterface::Ieee80211:
-            str = i18nc("The network interface type","Wi-Fi");
-            break;
-        case Solid::Control::NetworkInterface::Serial:
-            str = i18nc("The network interface type","Serial");
-            break;
-        case Solid::Control::NetworkInterface::Gsm:
-            str = i18nc("The network interface type","GSM");
-            break;
-        case Solid::Control::NetworkInterface::Cdma:
-            str = i18nc("The network interface type","CDMA");
-            break;
-        default:
-            // oops, we need update this function, or something went wrong
-            break;
-    }
-
-    return str;
-}
-
-QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state)
-{
-    QString stateString;
-    switch (state) {
-        case Solid::Control::NetworkInterface::UnknownState:
-            stateString = i18nc("description of unknown network interface state", "Unknown");
-            break;
-        case Solid::Control::NetworkInterface::Unmanaged:
-            stateString = i18nc("description of unmanaged network interface state", "Unmanaged");
-            break;
-        case Solid::Control::NetworkInterface::Unavailable:
-            stateString = i18nc("description of unavailable network interface state", "Unavailable");
-            break;
-        case Solid::Control::NetworkInterface::Disconnected:
-            stateString = i18nc("description of unconnected network interface state", "Not connected");
-            break;
-        case Solid::Control::NetworkInterface::Preparing:
-            stateString = i18nc("description of preparing to connect network interface state", "Preparing to connect");
-            break;
-        case Solid::Control::NetworkInterface::Configuring:
-            stateString = i18nc("description of configuring hardware network interface state", "Configuring interface");
-            break;
-        case Solid::Control::NetworkInterface::NeedAuth:
-            stateString = i18nc("description of waiting for authentication network interface state", "Waiting for authorization");
-            break;
-        case Solid::Control::NetworkInterface::IPConfig:
-            stateString = i18nc("network interface doing dhcp request in most cases", "Setting network address");
-            break;
-        case Solid::Control::NetworkInterface::Activated:
-            stateString = i18nc("network interface connected state label", "Connected");
-            break;
-        case Solid::Control::NetworkInterface::Failed:
-            stateString = i18nc("network interface connection failed state label", "Connection Failed");
-            break;
-        default:
-            stateString = I18N_NOOP("UNKNOWN STATE FIX ME");
-    }
-    return stateString;
-}
-
-QString operationModeToString(Solid::Control::WirelessNetworkInterface::OperationMode mode)
-{
-    QString modeString;
-    switch (mode) {
-        case Solid::Control::WirelessNetworkInterface::Unassociated:
-            modeString = i18nc("wireless network operation mode", "Unassociated");
-            break;
-        case Solid::Control::WirelessNetworkInterface::Adhoc:
-            modeString = i18nc("wireless network operation mode", "Adhoc");
-            break;
-        case Solid::Control::WirelessNetworkInterface::Managed:
-            modeString = i18nc("wireless network operation mode", "Managed");
-            break;
-        case Solid::Control::WirelessNetworkInterface::Master:
-            modeString = i18nc("wireless network operation mode", "Master");
-            break;
-        case Solid::Control::WirelessNetworkInterface::Repeater:
-            modeString = i18nc("wireless network operation mode", "Repeater");
-            break;
-        default:
-            modeString = I18N_NOOP("UNKNOWN MODE FIX ME");
-    }
-    return modeString;
-}
 
 // private functions. Not included in the ToolTipBuilder class.
 QString interfaceTooltipHtmlPart(Solid::Control::NetworkInterface *, const QString &);
@@ -220,7 +124,7 @@ QString interfaceTooltipHtmlPart(Solid::Control::NetworkInterface * iface, const
     else if (requestedInfo == QLatin1String("type")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                         .arg(i18nc("@info:tooltip interface type", "Type"))
-                        .arg(interfaceTypeToString(iface->type()));
+                        .arg(UiUtils::descriptiveInterfaceName(iface->type()));
     }
     else if (requestedInfo == QLatin1String("driver")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
@@ -230,7 +134,7 @@ QString interfaceTooltipHtmlPart(Solid::Control::NetworkInterface * iface, const
     else if (requestedInfo == QLatin1String("status")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                 .arg(i18nc("@info:tooltip network interface status", "Status"))
-                .arg(connectionStateToString(iface->connectionState()));
+                .arg(UiUtils::connectionStateToString(iface->connectionState()));
     }
     else if (requestedInfo == QLatin1String("designspeed")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
@@ -373,7 +277,7 @@ QString wirelessTooltipHtmlPart(Solid::Control::WirelessNetworkInterface * wifac
     else if (requestedInfo == QLatin1String("mode")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                 .arg(i18nc("@info:tooltip the operation mode of wi-fi network","Mode"))
-                .arg(operationModeToString(wiface->mode()));
+                .arg(UiUtils::operationModeToString(wiface->mode()));
     }
     else if (requestedInfo == QLatin1String("accesspoint")) {
         if (ap) {
@@ -479,42 +383,7 @@ QString buildFlagsHtmlTable(Solid::Control::AccessPoint::WpaFlags flags)
 {
     QString table = QLatin1String("<table>");
 
-    /* for testing purposes
-    flags = Solid::Control::AccessPoint::PairWep40
-            | Solid::Control::AccessPoint::PairWep104
-            | Solid::Control::AccessPoint::PairTkip
-            | Solid::Control::AccessPoint::PairCcmp
-            | Solid::Control::AccessPoint::GroupWep40
-            | Solid::Control::AccessPoint::GroupWep104
-            | Solid::Control::AccessPoint::GroupTkip
-            | Solid::Control::AccessPoint::GroupCcmp
-            | Solid::Control::AccessPoint::KeyMgmtPsk
-            | Solid::Control::AccessPoint::KeyMgmt8021x; */
-
-    QStringList flagList;
-
-    if (flags.testFlag(Solid::Control::AccessPoint::PairWep40))
-        flagList.append(QLatin1String("Pairwise WEP40"));
-    if (flags.testFlag(Solid::Control::AccessPoint::PairWep104))
-        flagList.append(QLatin1String("Pairwise WEP104"));
-    if (flags.testFlag(Solid::Control::AccessPoint::PairTkip))
-        flagList.append(QLatin1String("Pairwise TKIP"));
-    if (flags.testFlag(Solid::Control::AccessPoint::PairCcmp))
-        flagList.append(QLatin1String("Pairwise CCMP"));
-    if (flags.testFlag(Solid::Control::AccessPoint::GroupWep40))
-        flagList.append(QLatin1String("Group WEP40"));
-    if (flags.testFlag(Solid::Control::AccessPoint::GroupWep104))
-        flagList.append(QLatin1String("Group WEP104"));
-    if (flags.testFlag(Solid::Control::AccessPoint::GroupTkip))
-        flagList.append(QLatin1String("Group TKIP"));
-    if (flags.testFlag(Solid::Control::AccessPoint::GroupCcmp))
-        flagList.append(QLatin1String("Group CCMP"));
-    if (flags.testFlag(Solid::Control::AccessPoint::KeyMgmtPsk))
-        flagList.append(QLatin1String("PSK"));
-    if (flags.testFlag(Solid::Control::AccessPoint::KeyMgmt8021x))
-        flagList.append(QLatin1String("802.1x"));
-
-    table += buildHtmlTableHelper(flagList, 2);
+    table += buildHtmlTableHelper(UiUtils::wpaFlagsToStringList(flags), 2);
     table += QLatin1String("</table>");
 
     return table;
