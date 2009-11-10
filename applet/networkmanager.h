@@ -108,6 +108,7 @@ protected:
      * Reimplemented from Plasma::PopupApplet
      */
     void popupEvent(bool);
+
 private Q_SLOTS:
     void networkInterfaceAdded(const QString& = QString());
     void networkInterfaceRemoved(const QString&);
@@ -125,6 +126,7 @@ private:
 
     void paintPixmap(QPainter *painter, QPixmap pixmap,
                      const QRectF &rect, qreal opacity = 1.0);
+    void paintProgress(QPainter *p);
 
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;

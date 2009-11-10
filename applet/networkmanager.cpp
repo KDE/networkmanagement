@@ -52,7 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/CheckBox>
 #include <Plasma/Extender>
 #include <Plasma/ExtenderItem>
-
+#include <Plasma/Theme>
 
 #include "../libs/types.h"
 #include "knmserviceprefs.h"
@@ -283,8 +283,33 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     Q_UNUSED( option );
 
     //paintPixmap(p, m_pixmapItem->pixmap(), contentsRect);
+    paintProgress(p);
 }
 
+void NetworkManagerApplet::paintProgress(QPainter *p)
+{
+    qreal state = UiUtils::interfaceState(activeInterface());
+    // height, space and width
+    int fh = contentsRect().height();
+    int fw = contentsRect().width();
+    int h = qMax((qreal)(4.0), (qreal)(fh/20));
+    int s = 1;
+    int w = contentsRect().width() - s*2;
+
+    QColor fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    QColor bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+    QPen linePen(fgColor);
+
+    QRectF background = QRectF(QPoint(0, fh - h - s - s ) + contentsRect().topLeft(), QSizeF(w+2*2, h+2*s));
+    QRectF progress = QRectF(QPoint(s, fh - h - s) + contentsRect().topLeft(), QSizeF((w-2*s)*state, h));
+    kDebug() << contentsRect() << background;
+    p->setPen(linePen);
+    p->drawRect(background);
+
+    p->setPen(QPen(bgColor));
+    p->setBrush(QBrush(bgColor));
+    p->drawRect(progress);
+}
 
 void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap pixmap, const QRectF &rect, qreal opacity)
 {
