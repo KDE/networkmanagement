@@ -135,7 +135,7 @@ void ActivatableListWidget::listDisappeared()
 
 void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
 {
-    kDebug();
+    //kDebug();
     if (accept(added)) {
         createItem(added);
     }

@@ -1,5 +1,5 @@
 /*
-Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -193,16 +193,16 @@ qreal UiUtils::interfaceState(const Solid::Control::NetworkInterface *interface)
     }
     switch (interface->connectionState()) {
         case Solid::Control::NetworkInterface::Preparing:
-            return 0.25;
+            return 0.20;
             break;
         case Solid::Control::NetworkInterface::Configuring:
-            return 0.50;
+            return 0.40;
             break;
         case Solid::Control::NetworkInterface::NeedAuth:
-            return 0.50;
+            return 0.60;
             break;
         case Solid::Control::NetworkInterface::IPConfig:
-            return 0.75;
+            return 0.80;
             break;
         case Solid::Control::NetworkInterface::Activated:
             return 1.0;

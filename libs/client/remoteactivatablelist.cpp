@@ -151,7 +151,7 @@ void RemoteActivatableList::handleActivatableRemoved(const QString &removed)
 void RemoteActivatableList::serviceOwnerChanged(const QString & changedService, const QString & oldOwner, const QString & newOwner)
 {
     Q_D(RemoteActivatableList);
-    kDebug() << changedService << changedService << oldOwner << newOwner;
+    //kDebug() << changedService << changedService << oldOwner << newOwner;
     if (changedService == d->iface->service()) {
         if (!oldOwner.isEmpty() && newOwner.isEmpty()) {
             emit disappeared();

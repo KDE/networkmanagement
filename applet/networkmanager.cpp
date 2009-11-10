@@ -1,6 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2008 Sebastian Kügler <sebas@kde.org>
+Copyright 2008 Sebastian K?gler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -44,6 +44,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/networking.h>
 #include <solid/control/networking.h>
 #include <solid/control/networkinterface.h>
+#include <solid/control/wirednetworkinterface.h>
+#include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/networkmanager.h>
 
 #include <Plasma/Animator>
@@ -70,7 +72,8 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
     : Plasma::PopupApplet(parent, args),
         m_iconPerDevice(false),
-        m_pixmapItem(0)
+        m_pixmapItem(0),
+        m_activeInterface(0)
 {
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
@@ -82,7 +85,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     interfaceConnectionStateChanged();
-
+    setupInterface();
     m_activatableList = new RemoteActivatableList(this);
     setMinimumSize(16, 16);
     resize(64, 64);
@@ -94,6 +97,90 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
 NetworkManagerApplet::~NetworkManagerApplet()
 {
+}
+
+void NetworkManagerApplet::setupInterface()
+{
+    /*
+    kDebug() << "...................................";
+    Solid::Control::NetworkInterface *iface = activeInterface();
+
+    if (iface)
+        kDebug() << "Now Connecting ::: " << UiUtils::descriptiveInterfaceName(iface->type());
+    if (m_activeInterface)
+        kDebug() << "OLD:" << UiUtils::descriptiveInterfaceName(m_activeInterface->type());
+
+    if (m_activeInterface == iface) {
+        kDebug() << "same iface" << UiUtils::descriptiveInterfaceName(iface->type());
+        // Nothing changed, don't do anything
+        //return;
+    }
+
+    // Disconnect the currently active interface
+    if (m_activeInterface) {
+        if (m_activeInterface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+            Solid::Control::WiredNetworkInterface* wirediface =
+                            static_cast<Solid::Control::WiredNetworkInterface*>(m_activeInterface);
+            kDebug() << "disco wirediface";
+            disconnect(wirediface);
+        } else if (m_activeInterface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+            Solid::Control::WirelessNetworkInterface* wirelessiface =
+                            static_cast<Solid::Control::WirelessNetworkInterface*>(m_activeInterface);
+            QString uni = wirelessiface->activeAccessPoint();
+            Solid::Control::AccessPoint *ap = wirelessiface->findAccessPoint(uni);
+            if (ap) {
+                kDebug() << "disco AP";
+                disconnect(ap);
+            }
+        }
+        //disconnect(m_activeInterface);
+    }
+
+    // Now connect the new one
+    if (iface) {
+        kDebug() << "Now Connecting ::: " << UiUtils::descriptiveInterfaceName(iface->type());
+        m_activeInterface = iface;
+        connect(m_activeInterface, SIGNAL(connectionStateChanged(int)),
+                this, SLOT(interfaceConnectionStateChanged()));
+        //connect(m_activeInterface, SIGNAL(connectionStateChanged(int,int,int)),
+        //        this, SLOT(handleConnectionStateChange(int,int,int)));
+        connect(m_activeInterface, SIGNAL(linkUpChanged(bool)), this, SLOT(interfaceConnectionStateChanged()));
+        kDebug() << "connect linkUpChanged";
+        if (m_activeInterface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+            Solid::Control::WiredNetworkInterface* wirediface =
+                            static_cast<Solid::Control::WiredNetworkInterface*>(m_activeInterface);
+            kDebug() << "connect carrierChanged";
+            connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(interfaceConnectionStateChanged()));
+        } else if (m_activeInterface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+            Solid::Control::WirelessNetworkInterface* wirelessiface =
+                            static_cast<Solid::Control::WirelessNetworkInterface*>(m_activeInterface);
+            QString uni = wirelessiface->activeAccessPoint();
+            Solid::Control::AccessPoint *ap = wirelessiface->findAccessPoint(uni);
+            if (ap) {
+                kDebug() << "connect ap";
+                connect(ap, SIGNAL(signalStrengthChanged(int)), SLOT(interfaceConnectionStateChanged()));
+                connect(ap, SIGNAL(destroyed(QObject*)), SLOT(interfaceConnectionStateChanged()));
+            }
+        }
+    }
+    */
+    foreach (Solid::Control::NetworkInterface* interface, m_interfaces) {
+        // be aware of state changes
+        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int, int, int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::disconnect(interface, SIGNAL(linkUpChanged(bool)));
+
+        //connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+        connect(interface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(interfaceConnectionStateChanged()));
+        //connect(iface, SIGNAL(linkUpChanged(bool)), this, SLOT(switchToDefaultTab()));
+
+        QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::connect(interface, SIGNAL(linkUpChanged(bool)), this, SLOT(interfaceConnectionStateChanged()));
+    }
+
+    kDebug() << "...................................";
+    updatePixmap(); // do we really want to do this here?
+
 }
 
 void NetworkManagerApplet::init()
@@ -157,6 +244,7 @@ void NetworkManagerApplet::updatePixmap()
         //Plasma::Animator::self()->animateItem(m_pixmapItem, Plasma::Animator::PulseAnimation);
         //kDebug() << "animation started";
     }
+    kDebug() << "UPDATE PIXMAP" << UiUtils::iconName(activeInterface());
     if (activeInterface()) {
         m_pixmapItem->setPixmap(UiUtils::interfacePixmap(contentsRect().size(), activeInterface()));
     }
@@ -232,6 +320,8 @@ QList<QAction*> NetworkManagerApplet::contextualActions()
 
 void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
+    Q_UNUSED( p );
+    Q_UNUSED( contentsRect );
     Q_UNUSED( option );
 
     //paintPixmap(p, m_pixmapItem->pixmap(), contentsRect);
@@ -278,13 +368,8 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
     Q_UNUSED(uni);
     // update the tray icon
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
-    foreach (Solid::Control::NetworkInterface* interface, m_interfaces) {
 
-        // be aware of state changes
-        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
-        QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
-    }
-
+    setupInterface();
     interfaceConnectionStateChanged();
     updatePixmap();
     update();
@@ -295,14 +380,10 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
     Q_UNUSED(uni);
     // update the tray icon
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
-    foreach (Solid::Control::NetworkInterface * interface, m_interfaces) {
-        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
-        QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
-    }
-
     // update extender visibility
     KConfigGroup cg = config();
 
+    setupInterface();
     interfaceConnectionStateChanged();
     updatePixmap();
     update();
@@ -321,6 +402,7 @@ Solid::Control::NetworkInterface* NetworkManagerApplet::activeInterface()
 
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
+    kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
     if (activeInterface()) {
         //kDebug() << "busy ... ?";
         switch (activeInterface()->connectionState()) {
@@ -335,6 +417,8 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
                 break;
         }
     }
+    setupInterface();
+    kDebug() << "Now " << UiUtils::descriptiveInterfaceName(activeInterface()->type()) << " is more important";
     updatePixmap();
 }
 
@@ -399,6 +483,13 @@ void NetworkManagerApplet::toolTipAboutToShow()
 
 bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Control::NetworkInterface * if2)
 {
+    QString i1 = UiUtils::descriptiveInterfaceName(if1->type());
+    QString i2 = UiUtils::descriptiveInterfaceName(if2->type());
+
+    QString is1, is2;
+    is1 = "1Disco";
+    is2 = "2Disco";
+
     /*
      * status merging algorithm
      * In descending order of importance:
@@ -419,9 +510,11 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Cont
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
             if1status = Connecting;
+            is1 = "1Connecting";
             break;
         case Solid::Control::NetworkInterface::Activated:
             if1status = Connected;
+            is1 = "1Active";
             break;
         default: // all kind of disconnected
             break;
@@ -432,30 +525,46 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Cont
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
             if2status = Connecting;
+            is2 = "2Connecting";
             break;
         case Solid::Control::NetworkInterface::Activated:
+            is2 = "2Active";
             if2status = Connected;
             break;
         default: // all kind of disconnected
             break;
     }
+    kDebug() << " ===========================";
+    bool lessThan = false;
     switch (if1status) {
         case Connecting:
-            return if2status != Connecting || networkInterfaceSameConnectionStateLessThan(if1, if2);
+            kDebug() << "1 connecting, 2" << is2 << networkInterfaceSameConnectionStateLessThan(if1, if2);
+            lessThan = (if2status != Connecting || networkInterfaceSameConnectionStateLessThan(if1, if2));
+            //return true;//
             break;
         case Connected:
+            kDebug() << "1 active, 2" << is2 << networkInterfaceSameConnectionStateLessThan(if1, if2);
             if ( if2status == Connecting)
                return false;
-            return if2status != Connected || networkInterfaceSameConnectionStateLessThan(if1, if2);
+            lessThan = ((if2status != Connected) || networkInterfaceSameConnectionStateLessThan(if1, if2));
             break;
         case Disconnected:
             if ( if2status == Disconnected)
-                return networkInterfaceSameConnectionStateLessThan(if1, if2);
-            return false;
+                lessThan = networkInterfaceSameConnectionStateLessThan(if1, if2);
+            kDebug() << "1 disco, 2" << is2;
+            lessThan = false;
             break;
     }
-    // satisfy compiler
-    return false;
+
+    kDebug() << i1 << is1;
+    if (lessThan)
+        kDebug() << "LESS";
+    else
+        kDebug() << "MORE";
+    kDebug() << i2 << is2;
+    kDebug() << " ===========================";
+
+    return lessThan;
 }
 
 bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterface * if1, Solid::Control::NetworkInterface * if2)
@@ -577,11 +686,13 @@ void NetworkManagerApplet::loadExtender()
 
 void NetworkManagerApplet::managerWirelessEnabledChanged(bool )
 {
+    setupInterface();
 }
 
 void NetworkManagerApplet::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     Q_UNUSED( enabled );
+    setupInterface();
     updatePixmap();
 }
 
@@ -599,6 +710,7 @@ void NetworkManagerApplet::userWirelessEnabledChanged(bool enabled)
 
 void NetworkManagerApplet::managerStatusChanged(Solid::Networking::Status status)
 {
+    kDebug() << "managerstatuschanged";
     if (Solid::Networking::Unknown == status ) {
         // FIXME: Do something smart
     } else {

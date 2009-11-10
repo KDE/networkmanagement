@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/networking.h>
 #include <solid/control/networking.h>
 #include <solid/control/networkinterface.h>
+#include <solid/control/wirelessaccesspoint.h>
 
 #include "../libs/types.h"
 //#include "vpnconnectiongroup.h"
@@ -36,8 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <plasma/popupapplet.h>
 
 #include <Plasma/ToolTipManager>
-
-#include <solid/control/networkinterface.h>
 
 namespace Plasma
 {
@@ -122,6 +121,7 @@ private Q_SLOTS:
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
     Solid::Control::NetworkInterface* activeInterface();
+    void setupInterface();
 
     void paintPixmap(QPainter *painter, QPixmap pixmap,
                      const QRectF &rect, qreal opacity = 1.0);
@@ -136,6 +136,10 @@ private:
     NMExtenderItem* m_extenderItem;
 
     QGraphicsPixmapItem *m_pixmapItem;
+
+    // For tracking which status we should show
+    Solid::Control::NetworkInterface *m_activeInterface;
+    Solid::Control::AccessPoint *m_accessPoint;
 };
 
 #endif
