@@ -478,10 +478,6 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Cont
     QString i1 = UiUtils::descriptiveInterfaceName(if1->type());
     QString i2 = UiUtils::descriptiveInterfaceName(if2->type());
 
-    QString is1, is2;
-    is1 = "1n/a";
-    is2 = "2n/a";
-
     /*
      * status merging algorithm
      * In descending order of importance:
@@ -495,22 +491,25 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Cont
      * - Disconnected devices
      *   - order as above
      */
-    enum { Connecting, Connected, Disconnected, Unavailable } if2status = Unavailable, if1status = Unavailable;
+    enum {  Connecting,
+            Connected,
+            Disconnected,
+            Unavailable }
+        if2status = Unavailable,
+        if1status = Unavailable;
+
     switch (if1->connectionState()) {
         case Solid::Control::NetworkInterface::Preparing:
         case Solid::Control::NetworkInterface::Configuring:
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
             if1status = Connecting;
-            is1 = "1Connecting";
             break;
         case Solid::Control::NetworkInterface::Activated:
             if1status = Connected;
-            is1 = "1Active";
             break;
         case Solid::Control::NetworkInterface::Disconnected:
             if1status = Disconnected;
-            is1 = "1Disconnected";
             break;
         default: // all kind of unavailable
             break;
@@ -521,57 +520,45 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Cont
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
             if2status = Connecting;
-            is2 = "2Connecting";
             break;
         case Solid::Control::NetworkInterface::Activated:
-            is2 = "2Active";
             if2status = Connected;
             break;
         case Solid::Control::NetworkInterface::Disconnected:
             if2status = Disconnected;
-            is2 = "2Disconnected";
             break;
         default: // all kind of disconnected
             break;
     }
-    kDebug() << " ===========================";
+
     bool lessThan = false;
     switch (if1status) {
         case Connecting:
-            kDebug() << "1 connecting, 2" << is2 << networkInterfaceSameConnectionStateLessThan(if1, if2);
             lessThan = (if2status != Connecting || networkInterfaceSameConnectionStateLessThan(if1, if2));
             //return true;//
             break;
         case Connected:
-            kDebug() << "1 active, 2" << is2 << networkInterfaceSameConnectionStateLessThan(if1, if2);
-            if ( if2status == Connecting)
+            if ( if2status == Connecting) {
                return false;
+            }
             lessThan = ((if2status != Connected) || networkInterfaceSameConnectionStateLessThan(if1, if2));
             break;
         case Disconnected:
             lessThan = false;
-            if ( if2status == Disconnected)
+            if ( if2status == Disconnected) {
                 lessThan = networkInterfaceSameConnectionStateLessThan(if1, if2);
-            if (if2status == Unavailable)
+            }
+            if (if2status == Unavailable) {
                 lessThan = true;
-
-            kDebug() << "1 disco, 2" << is2;
+            }
             break;
         case Unavailable:
             lessThan = false;
-            if ( if2status == Unavailable)
+            if ( if2status == Unavailable) {
                 lessThan = networkInterfaceSameConnectionStateLessThan(if1, if2);
-            kDebug() << "1 n/a, 2" << is2;
+            }
             break;
     }
-
-    kDebug() << i1 << is1;
-    if (lessThan)
-        kDebug() << "LESS";
-    else
-        kDebug() << "MORE";
-    kDebug() << i2 << is2;
-    kDebug() << " ===========================";
 
     return lessThan;
 }

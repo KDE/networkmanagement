@@ -100,12 +100,12 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_connectButton->setMaximumHeight(22);
     m_connectButton->setMaximumWidth(22);
     m_connectButton->setIcon("dialog-ok");
-    //m_connectButton->setToolTip(i18n("Connect wireless"));
-    m_connectButton->hide(); // Shown when hovered
+    m_connectButton->setToolTip(i18n("Disconnect"));
+    //m_connectButton->hide(); // Shown when hovered
 
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(connectButtonClicked()));
 
-    m_layout->addItem(m_connectButton, 0, 3, 1, 1, Qt::AlignRight);
+    m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
 
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
