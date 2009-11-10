@@ -185,8 +185,9 @@ void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
 
 void NetworkManagerApplet::updatePixmap()
 {
+    QPixmap pix = KIcon(UiUtils::iconName(activeInterface())).pixmap(contentsRect().size().toSize());
     if (!m_pixmapItem) {
-        m_pixmapItem = new QGraphicsPixmapItem(UiUtils::interfacePixmap(contentsRect().size(), activeInterface()), this);
+        m_pixmapItem = new QGraphicsPixmapItem(pix, this);
 
         //QGraphicsBlurEffect *blur = new QGraphicsBlurEffect(this);
         //m_pixmapItem->setGraphicsEffect(blur);
@@ -204,7 +205,7 @@ void NetworkManagerApplet::updatePixmap()
     }
     kDebug() << "UPDATE PIXMAP" << UiUtils::iconName(activeInterface());
     if (activeInterface()) {
-        m_pixmapItem->setPixmap(UiUtils::interfacePixmap(contentsRect().size(), activeInterface()));
+        m_pixmapItem->setPixmap(pix);
     }
     positionPixmap();
     update();

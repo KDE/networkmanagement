@@ -1,5 +1,5 @@
 /*
-Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
+Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // KDE
 #include <KDebug>
-#include <KIcon>
 #include <KIconLoader>
 #include <KLocale>
 
@@ -32,7 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessnetworkinterface.h>
 
 // Qt
-#include <QPixmap>
 #include <QSizeF>
 
 QString UiUtils::stateDescription()
@@ -138,12 +136,6 @@ int UiUtils::iconSize(const QSizeF size)
         s = KIconLoader::SizeSmall;
     }
     return s;
-}
-
-
-QPixmap UiUtils::interfacePixmap(const QSizeF size, Solid::Control::NetworkInterface *iface)
-{
-    return KIcon(UiUtils::iconName(iface)).pixmap(size.toSize());
 }
 
 QString UiUtils::connectionStateToString(int state)

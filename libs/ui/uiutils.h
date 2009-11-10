@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef UIUTILS_H
 #define UIUTILS_H
 
-class QPixmap;
 class QSizeF;
 
 #include "knm_export.h"
@@ -75,9 +74,7 @@ public:
      */
     static qreal interfaceState(const Solid::Control::NetworkInterface *interface);
 
-    static QPixmap interfacePixmap(const QSizeF size, Solid::Control::NetworkInterface *iface);
-
-    /** 
+    /**
      * @return a human-readable description of operation mode. 
      * @param mode the operation mode
      */
