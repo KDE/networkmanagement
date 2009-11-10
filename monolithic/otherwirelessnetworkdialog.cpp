@@ -60,7 +60,7 @@ OtherWirelessNetworkDialog::OtherWirelessNetworkDialog(ActivatableList * activat
     m_ui.twNetworks->setFirstItemColumnSpanned(m_newAdhocItem, true);
     m_newAdhocItem->setIcon(0, SmallIcon("document-new"));
 
-    connect(m_ui.twNetworks, SIGNAL(itemDoubleClicked(QTreeWidgetItem*)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*)));
+    connect(m_ui.twNetworks, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(itemDoubleClicked(QTreeWidgetItem*)));
     connect(m_ui.twNetworks, SIGNAL(itemSelectionChanged()), this, SLOT(itemSelectionChanged()));
 }
 
