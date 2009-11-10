@@ -38,6 +38,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkmanager.h>
 
+#include <connectioninfodialog.h>
+
 #include <activatable.h>
 #include <activatabledebug.h>
 #include <sortedactivatablelist.h>
@@ -87,6 +89,8 @@ public:
     QPointer<Solid::Control::NetworkInterface> displayedNetworkInterface;
     QPointer<Solid::Control::AccessPoint> activeAccessPoint;
     QHostAddress hoveredActionIpAddress;
+    QHash<Knm::Activatable *, QPointer<ConnectionInfoDialog> > connectionPropertiesDialogs;
+    Knm::InterfaceConnection *hoveredActionInterfaceConnection;
 };
 
 /* for qSort()ing */
@@ -589,14 +593,12 @@ void KNetworkManagerTrayIcon::aboutToShowMenuContextMenu(KMenu * menu, QAction *
                         d->copyIpAddrAction = KStandardAction::copy(this, SLOT(copyIpAddress()), this);
                         d->copyIpAddrAction->setText(i18nc("@action:inmenu copy ip address to clipboard", "Copy IP Address"));
                         d->propertiesAction = new KAction(i18nc("@action:inmenu interface connection properties", "Properties"), this);
-                        connect(d->propertiesAction, SIGNAL(triggered(bool)), this, SLOT(showConnectionProperties(bool)));
-                        // TODO implement
-                        d->propertiesAction->setEnabled(false);
-
+                        connect(d->propertiesAction, SIGNAL(triggered(Qt::MouseButtons,Qt::KeyboardModifiers)), this, SLOT(showConnectionProperties()));
                     }
+                    d->hoveredActionInterfaceConnection = ic;
+                    QString deviceUni = ic->deviceUni();
+                    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
                     if (ic->activationState() == Knm::InterfaceConnection::Activated) {
-                        QString deviceUni = ic->deviceUni();
-                        Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
                         QHostAddress addr;
                         if (iface) {
                             Solid::Control::IPv4Config cfg = iface->ipV4Config();
@@ -637,8 +639,19 @@ void KNetworkManagerTrayIcon::copyIpAddress()
 
 void KNetworkManagerTrayIcon::showConnectionProperties()
 {
-    // This is not yet implemented.  When it is implemented, remove the setEnabled(false) call to
-    // d->propertiesAction
+    Q_D(KNetworkManagerTrayIcon);
+    ConnectionInfoDialog *connectionInfoDialog;
+    
+    connectionInfoDialog = d->connectionPropertiesDialogs[d->hoveredActionInterfaceConnection];
+    if (connectionInfoDialog == 0) {
+        connectionInfoDialog = new ConnectionInfoDialog(d->hoveredActionInterfaceConnection);
+        d->connectionPropertiesDialogs[d->hoveredActionInterfaceConnection] = connectionInfoDialog;
+        connectionInfoDialog->show();
+    } else {
+        connectionInfoDialog->show();
+        connectionInfoDialog->raise();
+    }
+    contextMenu()->hide();
 }
 
 void KNetworkManagerTrayIcon::showOtherWirelessDialog()
