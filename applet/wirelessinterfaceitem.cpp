@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "wirelessinterfaceitem.h"
+#include "uiutils.h"
 
 #include <QGraphicsGridLayout>
 
@@ -110,6 +111,7 @@ void WirelessInterfaceItem::setConnectionInfo()
             break;
         }
     }
+    m_icon->setIcon(UiUtils::iconName(m_iface));
 }
 
 QList<Solid::Control::AccessPoint*> WirelessInterfaceItem::availableAccessPoints() const
