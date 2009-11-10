@@ -153,7 +153,7 @@ QGraphicsItem * NMExtenderItem::widget()
         m_rightLayout->setOrientation(Qt::Vertical);
         // Tabs for activatables
         m_connectionTabs = new Plasma::TabBar(m_rightWidget);
-        m_connectionTabs->setTabBarShown(false);
+        //m_connectionTabs->setTabBarShown(false);
         //m_connectionTabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
         //m_connectionTabs->setPreferredSize(300, 240);
         m_connectionTabs->setMinimumSize(280, 240);

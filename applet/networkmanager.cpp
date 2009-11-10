@@ -252,35 +252,55 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 
 void NetworkManagerApplet::paintProgress(QPainter *p)
 {
+    bool bar = false;
     qreal state = UiUtils::interfaceState(activeInterface());
     if (state == 0 || state == 1) {
         return;
     }
-    p->translate(0.5, 0.5);
-    // height, space and width
-    int fh = contentsRect().height();
-    int fw = contentsRect().width();
-    int h = qMax((qreal)(2.0), (qreal)(fh/20));
-    int s = 1;
-    int w = (contentsRect().width() - s*2) * state;
-
     QColor fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QColor bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
 
-    bgColor.setAlphaF(.5);
-    fgColor.setAlphaF(.4);
+    bgColor.setAlphaF(.7);
+    fgColor.setAlphaF(.6);
 
-    QPen linePen(bgColor);
+    //p->translate(0.5, 0.5);
 
-    QRectF background = QRectF(QPoint(0, fh - h - s - s ) + contentsRect().topLeft(), QSizeF(fw, h+2*s));
-    QRectF progress = QRectF(QPoint(s, fh - h - s) + contentsRect().topLeft(), QSizeF(w, h));
-    kDebug() << contentsRect() << background;
-    p->setPen(linePen);
-    p->drawRect(background);
+    if (bar) {
+        // paint a progress bar
+        // height, space and width and position of the bar
+        int fh = contentsRect().height();
+        int fw = contentsRect().width();
+        int h = qMax((qreal)(2.0), (qreal)(fh/20));
+        int s = 1;
+        int w = (contentsRect().width() - s*2) * state;
+        QRectF background = QRectF(QPoint(0, fh - h - s - s ) + contentsRect().topLeft(), QSizeF(fw, h+2*s));
+        QRectF progress = QRectF(QPoint(s, fh - h - s) + contentsRect().topLeft(), QSizeF(w, h));
+        kDebug() << contentsRect() << background;
 
-    p->setPen(QPen(fgColor));
-    p->setBrush(QBrush(fgColor));
-    p->drawRect(progress);
+
+        QPen linePen(bgColor);
+
+        p->setPen(linePen);
+        p->drawRect(background);
+
+        p->setPen(QPen(fgColor));
+        p->setBrush(QBrush(fgColor));
+        p->drawRect(progress);
+
+    } else {
+        // paint an arc completing a circle
+        // 1 degree = 16 ticks, that's how drawArc() works
+        // 0 is at 3 o'clock
+        int top = 90 * 16;
+        int progress = -360 * 16 * state;
+        QPen pen(fgColor, 3);
+         
+        kDebug() << "progress circle" << top << progress;
+        p->setPen(pen);
+        p->setBrush(QBrush(bgColor));
+
+        p->drawArc(contentsRect(), top, progress);
+    }
 }
 
 void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap pixmap, const QRectF &rect, qreal opacity)
