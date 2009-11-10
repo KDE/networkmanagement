@@ -35,7 +35,9 @@ void ActivatableItem::emitClicked()
 {
     //HACK this slot needs renaming
     kDebug() << "EMIT CLICKED";
-    m_activatable->activate();
+    if (m_activatable) {
+        m_activatable->activate();
+    }
     emit clicked(this);
 }
 
