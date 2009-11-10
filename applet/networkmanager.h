@@ -121,7 +121,7 @@ private Q_SLOTS:
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
     Solid::Control::NetworkInterface* activeInterface();
-    void setupInterface();
+    void setupInterfaceSignals();
 
     void paintPixmap(QPainter *painter, QPixmap pixmap,
                      const QRectF &rect, qreal opacity = 1.0);
