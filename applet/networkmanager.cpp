@@ -289,25 +289,33 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 void NetworkManagerApplet::paintProgress(QPainter *p)
 {
     qreal state = UiUtils::interfaceState(activeInterface());
+    if (state == 0 || state == 1) {
+        return;
+    }
+
     // height, space and width
     int fh = contentsRect().height();
     int fw = contentsRect().width();
     int h = qMax((qreal)(4.0), (qreal)(fh/20));
     int s = 1;
-    int w = contentsRect().width() - s*2;
+    int w = (contentsRect().width() - s*2) * state;
 
     QColor fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QColor bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-    QPen linePen(fgColor);
 
-    QRectF background = QRectF(QPoint(0, fh - h - s - s ) + contentsRect().topLeft(), QSizeF(w+2*2, h+2*s));
-    QRectF progress = QRectF(QPoint(s, fh - h - s) + contentsRect().topLeft(), QSizeF((w-2*s)*state, h));
+    bgColor.setAlphaF(.5);
+    fgColor.setAlphaF(.7);
+
+    QPen linePen(bgColor);
+
+    QRectF background = QRectF(QPoint(0, fh - h - s - s ) + contentsRect().topLeft(), QSizeF(fw, h+2*s));
+    QRectF progress = QRectF(QPoint(s, fh - h - s) + contentsRect().topLeft(), QSizeF(w, h));
     kDebug() << contentsRect() << background;
     p->setPen(linePen);
     p->drawRect(background);
 
-    p->setPen(QPen(bgColor));
-    p->setBrush(QBrush(bgColor));
+    p->setPen(QPen(fgColor));
+    p->setBrush(QBrush(fgColor));
     p->drawRect(progress);
 }
 
