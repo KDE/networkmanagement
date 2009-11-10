@@ -130,26 +130,28 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
     }
     d->interfaceNameRecord.insert(uni, deviceText);
 
-    if (iface && !d->suppressHardwareEvents) {
+    if (iface) {
 
         QObject::connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(interfaceConnectionStateChanged(int,int,int)));
 
-        KNotification::event(Event::HwAdded, i18nc("@info:status Notification for hardware added", "%1 attached", deviceText), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
-    }
+        if (!d->suppressHardwareEvents) {
+            KNotification::event(Event::HwAdded, i18nc("@info:status Notification for hardware added", "%1 attached", deviceText), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
 
-    // if wireless, listen for new networks
-    if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-        Solid::Control::WirelessNetworkInterface * wireless = qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+            // if wireless, listen for new networks
+            if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+                Solid::Control::WirelessNetworkInterface * wireless = qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface);
 
-        if (wireless) {
-            // this is a bit wasteful because WirelessNetworkInterfaceActivatableProvider is also
-            // creating these objects, but I expect these will move into Solid and become singletons
-            Solid::Control::WirelessNetworkInterfaceEnvironment * environment = new Solid::Control::WirelessNetworkInterfaceEnvironment(wireless);
+                if (wireless) {
+                    // this is a bit wasteful because WirelessNetworkInterfaceActivatableProvider is also
+                    // creating these objects, but I expect these will move into Solid and become singletons
+                    Solid::Control::WirelessNetworkInterfaceEnvironment * environment = new Solid::Control::WirelessNetworkInterfaceEnvironment(wireless);
 
-            QObject::connect(environment, SIGNAL(networkAppeared(const QString &)),
-                    this, SLOT(networkAppeared(const QString&)));
-            QObject::connect(environment, SIGNAL(networkDisappeared(const QString &)),
-                    this, SLOT(networkDisappeared(const QString&)));
+                    QObject::connect(environment, SIGNAL(networkAppeared(const QString &)),
+                            this, SLOT(networkAppeared(const QString&)));
+                    QObject::connect(environment, SIGNAL(networkDisappeared(const QString &)),
+                            this, SLOT(networkDisappeared(const QString&)));
+                }
+            }
         }
     }
 }
@@ -294,7 +296,7 @@ void NotificationManager::interfaceConnectionStateChanged(int new_state, int, in
                 || new_state == Solid::Control::NetworkInterface::Configuring
                 || new_state == Solid::Control::NetworkInterface::NeedAuth
                 || new_state == Solid::Control::NetworkInterface::IPConfig) {
-            keepNotification = false;
+            keepNotification = true;
         }
 
         switch (reason) {
@@ -420,6 +422,7 @@ void NotificationManager::interfaceConnectionStateChanged(int new_state, int, in
         KNotification * notification = 0;
 
         if (d->interfaceNotifications.contains(iface)) {
+            kDebug() << "reusing notification";
             notification = d->interfaceNotifications.take(iface);
         } else {
             notification = new KNotification(Event::InterfaceStateChange, 0, KNotification::Persistent);
@@ -432,6 +435,7 @@ void NotificationManager::interfaceConnectionStateChanged(int new_state, int, in
         if (keepNotification) {
             d->interfaceNotifications.insert(iface, notification);
         } else {
+            kDebug() << "disposing of notification";
             notification->setFlags(KNotification::CloseOnTimeout);
         }
         notification->sendEvent();
