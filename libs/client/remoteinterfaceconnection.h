@@ -54,6 +54,7 @@ public:
 
     Knm::InterfaceConnection::ActivationState activationState() const;
 
+    void disconnect();
 Q_SIGNALS:
     void activationStateChanged(Knm::InterfaceConnection::ActivationState);
 protected Q_SLOTS:

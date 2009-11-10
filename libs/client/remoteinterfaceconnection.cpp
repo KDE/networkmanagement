@@ -75,4 +75,11 @@ void RemoteInterfaceConnection::handleActivationStateChange(uint state)
     emit activationStateChanged((Knm::InterfaceConnection::ActivationState)state);
 }
 
+
+void RemoteInterfaceConnection::disconnect()
+{
+    Q_D(RemoteInterfaceConnection);
+    d->interfaceConnectionIface->disconnect();
+}
+
 // vim: sw=4 sts=4 et tw=100

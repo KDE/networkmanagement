@@ -14,6 +14,7 @@
     <method name="activationState">
       <arg name="uni" type="i" direction="out" />
     </method>
+    <method name="disconnect"/>
     <signal name="activationStateChanged">
       <arg name="state" type="u" direction="out" />
     </signal>
