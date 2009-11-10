@@ -112,16 +112,11 @@ QGraphicsItem * NMExtenderItem::widget()
     if (!m_widget) {
         kDebug() << "Creating widget";
         m_widget = new QGraphicsWidget(this);
-        m_widget->setMinimumWidth(500);
+        m_widget->setMinimumWidth(600);
         m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
         m_mainLayout = new QGraphicsGridLayout(m_widget);
-        //m_mainLayout = new QGraphicsLinearLayout(m_widget);
-        //m_mainLayout->setOrientation(Qt::Horizontal);
-        m_mainLayout->setColumnMinimumWidth(0, 200);
-        m_mainLayout->setColumnMinimumWidth(1, 340);
         m_widget->setLayout(m_mainLayout);
-
 
         m_leftWidget = new Plasma::Frame(m_widget);
         m_leftWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -159,11 +154,10 @@ QGraphicsItem * NMExtenderItem::widget()
         // Tabs for activatables
         m_connectionTabs = new Plasma::TabBar(m_rightWidget);
         //m_connectionTabs->setTabBarShown(false);
-        m_connectionTabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        m_connectionTabs->setPreferredSize(300, 240);
+        //m_connectionTabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        //m_connectionTabs->setPreferredSize(300, 240);
         m_connectionTabs->setMinimumSize(280, 240);
 
-        //m_mainLayout->addItem(m_connectionTabs, 0, 1, 1, 1);
         m_rightLayout->addItem(m_connectionTabs);
 
         m_connectionsButton = new Plasma::IconWidget(m_rightWidget);
@@ -182,10 +176,7 @@ QGraphicsItem * NMExtenderItem::widget()
 
         m_mainLayout->addItem(m_rightWidget, 0, 1);
         setWidget(m_widget);
-    } else {
-        //kDebug() << "widget non empty";
     }
-    //kDebug() << "widget() run";
     return m_widget;
 }
 
