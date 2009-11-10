@@ -72,7 +72,6 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
     : Plasma::PopupApplet(parent, args),
         m_iconPerDevice(false),
-        m_pixmapItem(0),
         m_activeInterface(0)
 {
     setHasConfigurationInterface(false);
@@ -173,54 +172,20 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
 {
    if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint)) {
-        if (UiUtils::iconSize(contentsRect().size()) != UiUtils::iconSize(m_pixmapItem->pixmap().size())) {
-            int _i = UiUtils::iconSize(m_pixmapItem->pixmap().size());
+        if (UiUtils::iconSize(contentsRect().size()) != UiUtils::iconSize(m_pixmap.size())) {
+            int _i = UiUtils::iconSize(m_pixmap.size());
             kDebug() << "cevent" << UiUtils::iconSize(contentsRect().size()) << UiUtils::iconSize(QSize(_i, _i));
             updatePixmap();
         } else {
-            positionPixmap();
+            //positionPixmap();
         }
     }
 }
 
 void NetworkManagerApplet::updatePixmap()
 {
-    QPixmap pix = KIcon(UiUtils::iconName(activeInterface())).pixmap(contentsRect().size().toSize());
-    if (!m_pixmapItem) {
-        m_pixmapItem = new QGraphicsPixmapItem(pix, this);
-
-        //QGraphicsBlurEffect *blur = new QGraphicsBlurEffect(this);
-        //m_pixmapItem->setGraphicsEffect(blur);
-        QPropertyAnimation animation(this, "bla");
-        animation.setDuration(4000);
-        animation.setStartValue(0);
-        animation.setEndValue(255);
-
-        //animation.setEasingCurve(QEasingCurve::OutBounce);
-
-        animation.start();
-        kDebug() << "animation started";
-        //Plasma::Animator::self()->animateItem(m_pixmapItem, Plasma::Animator::PulseAnimation);
-        //kDebug() << "animation started";
-    }
-    kDebug() << "UPDATE PIXMAP" << UiUtils::iconName(activeInterface());
-    if (activeInterface()) {
-        m_pixmapItem->setPixmap(pix);
-    }
-    positionPixmap();
+    m_pixmap = KIcon(UiUtils::iconName(activeInterface())).pixmap(contentsRect().size().toSize());
     update();
-}
-
-void NetworkManagerApplet::positionPixmap()
-{
-    if (!m_pixmapItem) {
-        return;
-    }
-    int s = UiUtils::iconSize(contentsRect().size());
-    QRectF r = contentsRect();
-    QPointF _pos( ( r.topLeft().x() + (contentsRect().width() - s)/2 ), (r.topLeft().y() + (contentsRect().height() - s)/2 ) );
-    //kDebug() << _pos;
-    m_pixmapItem->setPos(_pos);
 }
 
 void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
@@ -279,11 +244,9 @@ QList<QAction*> NetworkManagerApplet::contextualActions()
 
 void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
-    Q_UNUSED( p );
-    Q_UNUSED( contentsRect );
     Q_UNUSED( option );
 
-    //paintPixmap(p, m_pixmapItem->pixmap(), contentsRect);
+    paintPixmap(p, m_pixmap, contentsRect);
     paintProgress(p);
 }
 
@@ -293,11 +256,11 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
     if (state == 0 || state == 1) {
         return;
     }
-
+    p->translate(0.5, 0.5);
     // height, space and width
     int fh = contentsRect().height();
     int fw = contentsRect().width();
-    int h = qMax((qreal)(4.0), (qreal)(fh/20));
+    int h = qMax((qreal)(2.0), (qreal)(fh/20));
     int s = 1;
     int w = (contentsRect().width() - s*2) * state;
 
@@ -305,7 +268,7 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
     QColor bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
 
     bgColor.setAlphaF(.5);
-    fgColor.setAlphaF(.7);
+    fgColor.setAlphaF(.4);
 
     QPen linePen(bgColor);
 
@@ -378,7 +341,6 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
     setupInterfaceSignals();
     interfaceConnectionStateChanged();
     updatePixmap();
-    update();
     // kill any animations involving this interface
 }
 
@@ -394,7 +356,7 @@ Solid::Control::NetworkInterface* NetworkManagerApplet::activeInterface()
 
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
-    kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
+    //kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
     if (activeInterface()) {
         //kDebug() << "busy ... ?";
         switch (activeInterface()->connectionState()) {
@@ -410,7 +372,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
         }
     }
     //setupInterface();
-    kDebug() << "Now " << UiUtils::descriptiveInterfaceName(activeInterface()->type()) << " is more important";
+    //kDebug() << "Now " << UiUtils::descriptiveInterfaceName(activeInterface()->type()) << " is more important";
     updatePixmap();
 }
 
@@ -475,9 +437,6 @@ void NetworkManagerApplet::toolTipAboutToShow()
 
 bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Control::NetworkInterface * if2)
 {
-    QString i1 = UiUtils::descriptiveInterfaceName(if1->type());
-    QString i2 = UiUtils::descriptiveInterfaceName(if2->type());
-
     /*
      * status merging algorithm
      * In descending order of importance:

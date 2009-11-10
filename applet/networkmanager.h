@@ -117,7 +117,6 @@ private Q_SLOTS:
     // used to let the user easily hide VPN
     void hideVpnGroup();
     void updatePixmap();
-    void positionPixmap();
 
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
@@ -137,7 +136,7 @@ private:
     RemoteActivatableList * m_activatableList;
     NMExtenderItem* m_extenderItem;
 
-    QGraphicsPixmapItem *m_pixmapItem;
+    QPixmap m_pixmap;
 
     // For tracking which status we should show
     Solid::Control::NetworkInterface *m_activeInterface;
