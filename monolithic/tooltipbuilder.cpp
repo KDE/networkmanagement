@@ -124,7 +124,7 @@ QString interfaceTooltipHtmlPart(Solid::Control::NetworkInterface * iface, const
     else if (requestedInfo == QLatin1String("type")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                         .arg(i18nc("@info:tooltip interface type", "Type"))
-                        .arg(UiUtils::descriptiveInterfaceName(iface->type()));
+                        .arg(UiUtils::interfaceTypeLabel(iface->type()));
     }
     else if (requestedInfo == QLatin1String("driver")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")

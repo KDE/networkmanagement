@@ -462,14 +462,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
             if (iface->connectionState() != Solid::Control::NetworkInterface::Unavailable) {
                 hasActive = true;
 
-                QString deviceText;
-                KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
-
-                if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
-                    deviceText = UiUtils::descriptiveInterfaceName(iface->type());
-                } else {
-                    deviceText = iface->interfaceName();
-                }
+                QString deviceText = UiUtils::interfaceNameLabel(iface->uni());
 
                 QString ifaceName = iface->interfaceName();
                 subText += QString::fromLatin1("<b>%1</b>: %2").arg(deviceText).arg(UiUtils::connectionStateToString(iface->connectionState()));

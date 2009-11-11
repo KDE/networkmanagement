@@ -28,6 +28,7 @@
       <choices name="InterfaceNamingChoices">
         <choice name="DescriptiveNames"/>
         <choice name="SystemNames"/>
+        <choice name="VendorProductNames"/>
       </choices>
     </entry>
   </group>

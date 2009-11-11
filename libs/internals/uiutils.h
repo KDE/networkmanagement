@@ -40,10 +40,17 @@ public:
     static QString stateDescription();
 
     /**
-     * @return a human-readable name for the network interface type for use as label
+     * @return a human-readable description for the network interface type for use as label
      * @param type the type of the network interface
      */
-    static QString descriptiveInterfaceName(const Solid::Control::NetworkInterface::Type type);
+    static QString interfaceTypeLabel(const Solid::Control::NetworkInterface::Type type);
+
+    /**
+     * @return a human-readable name for a given network interface according to the configured
+     * naming style
+     * @param type the type of the network interface
+     */
+    static QString interfaceNameLabel(const QString & uni);
 
     /**
      * @return a human-readable description of the connection state of a given network interface

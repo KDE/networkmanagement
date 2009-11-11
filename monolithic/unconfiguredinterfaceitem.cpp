@@ -33,11 +33,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 
 #include <unconfiguredinterface.h>
+#include <uiutils.h>
 
 #include "activatableitem_p.h"
-
-#include "knmserviceprefs.h"
-
 
 class UnconfiguredInterfaceItemPrivate : public ActivatableItemPrivate
 {
@@ -49,22 +47,8 @@ UnconfiguredInterfaceItem::UnconfiguredInterfaceItem(Knm::UnconfiguredInterface 
 : ActivatableItem(*new UnconfiguredInterfaceItemPrivate, unconfigured, parent)
 {
     Q_D(UnconfiguredInterfaceItem);
-    QString deviceText;
-    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
-    
-    if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
-        Solid::Device* dev = new Solid::Device(unconfigured->deviceUni());
-#if KDE_IS_VERSION(4,3,60)
-            deviceText = dev->description();
-#else
-            deviceText = dev->product();
-#endif
-    } else {
-        Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(unconfigured->deviceUni());
-        if (iface) {
-            deviceText = iface->interfaceName();
-        }
-    }
+    QString deviceText = UiUtils::interfaceNameLabel(unconfigured->deviceUni());
+
     setText(deviceText);
 
     d->subtitleLabel = new QLabel(this);

@@ -72,6 +72,8 @@ public:
                 setText(i18nc("@item:inlistbox", "CDMA network devices"));
                 setData(IconInterfaceRole, Solid::Control::NetworkInterface::Cdma);
                 break;
+            default:
+                break;
         }
         setFlags(Qt::ItemIsSelectable|Qt::ItemIsEnabled|Qt::ItemIsDragEnabled);
     }

@@ -25,7 +25,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KIconLoader>
 #include <KLocale>
+#include <kdeversion.h>
 
+#include <Solid/Device>
+#include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
@@ -33,13 +36,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Qt
 #include <QSizeF>
 
+#include "knmserviceprefs.h"
+
 QString UiUtils::stateDescription()
 {
     return i18n("FIXME: UiUtils: connecting");
 }
 
 
-QString UiUtils::descriptiveInterfaceName(const Solid::Control::NetworkInterface::Type type)
+QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterface::Type type)
 {
     QString deviceText;
     switch (type) {
@@ -176,6 +181,29 @@ QString UiUtils::connectionStateToString(Solid::Control::NetworkInterface::Conne
             stateString = I18N_NOOP("UNKNOWN STATE FIX ME");
     }
     return stateString;
+}
+
+QString UiUtils::interfaceNameLabel(const QString & uni)
+{
+    QString label;
+    if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::SystemNames) {
+        Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+        if (iface) {
+            label = iface->interfaceName();
+        }
+    } else {
+        Solid::Device* dev = new Solid::Device(uni);
+        if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
+#if KDE_IS_VERSION(4,3,60)
+            label = dev->description();
+#else
+            label = dev->product();
+#endif
+        } else {
+            label = QString(i18nc("Format for <Vendor> <Product>", "%1 - %2", dev->vendor(), dev->product()));
+        }
+    }
+    return label;
 }
 
 qreal UiUtils::interfaceState(const Solid::Control::NetworkInterface *interface)

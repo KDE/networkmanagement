@@ -23,20 +23,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #include <QTreeWidget>
 
-#include <kdeversion.h>
-
 #include <activatablelist.h>
+#include <uiutils.h>
 #include <unconfiguredinterface.h>
-#include <Solid/Device>
-#include <solid/control/networkmanager.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <wirelessnetwork.h>
 
 #include <hiddenwirelessinterfaceconnection.h>
 #include <wirelesssecurityidentifier.h>
-
-#include "knmserviceprefs.h"
-
 
 static const int ItemActivatableRole = 34706;
 
@@ -71,7 +65,6 @@ void OtherWirelessNetworkDialog::handleAdd(Knm::Activatable * activatable)
     Knm::WirelessInterfaceConnection * wic = 0;
     Knm::WirelessNetwork * wn = 0;
     QTreeWidgetItem * item = 0;
-    Solid::Device* dev = 0;
     QStringList itemStrings;
     QString deviceText;
     QString strengthString;
@@ -90,23 +83,8 @@ void OtherWirelessNetworkDialog::handleAdd(Knm::Activatable * activatable)
             m_ui.twNetworks->insertTopLevelItem(m_ui.twNetworks->topLevelItemCount() - 2, item);
             break;
         case Knm::Activatable::UnconfiguredInterface:
-            dev = new Solid::Device(activatable->deviceUni());
+            deviceText = UiUtils::interfaceNameLabel(activatable->deviceUni());
 
-            KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
-
-            if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
-
-#if KDE_IS_VERSION(4,3,60)
-            deviceText = dev->description();
-#else
-            deviceText = dev->product();
-#endif
-            } else {
-                Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable->deviceUni());
-                if (iface) {
-                    deviceText = iface->interfaceName();
-                }
-            }
             itemStrings << i18nc("@item:inlist Create connection to other wireless network using named device", "Connect To Other Network With %1...", deviceText);
             item = new QTreeWidgetItem(itemStrings);
             item->setIcon(0, SmallIcon("document-new"));

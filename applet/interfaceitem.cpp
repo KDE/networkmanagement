@@ -57,7 +57,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     setDrawBackground(true);
     //setAcceptHoverEvents(false);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
 
     m_layout = new QGraphicsGridLayout(this);
     m_layout->setVerticalSpacing(0);
@@ -81,11 +80,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
 
     QString icon;
 
-    if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
-        m_interfaceName = UiUtils::descriptiveInterfaceName(m_iface->type());
-    } else {
-        m_interfaceName = m_iface->interfaceName();
-    }
+    m_interfaceName = UiUtils::interfaceNameLabel(m_iface->uni());
 
     m_icon->setIcon(UiUtils::iconName(m_iface));
 

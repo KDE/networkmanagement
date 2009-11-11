@@ -79,16 +79,17 @@ void ConnectionInfoDialog::buildGUI()
     ConnectionInfoIPv4Tab *ipTab = new ConnectionInfoIPv4Tab(m_iface, m_ui.infoTabWidget);
     m_ui.infoTabWidget->addTab(ipTab, i18nc("@title:tab information about ip address, nameserveres, etc", "IPv4"));
     
+    QString deviceType = UiUtils::interfaceTypeLabel(m_iface->type());
     switch (m_iface->type()) {
     case Solid::Control::NetworkInterface::Ieee8023: {
             ConnectionInfoWiredTab *wiredTab = new ConnectionInfoWiredTab(qobject_cast<Solid::Control::WiredNetworkInterface*>(m_iface), m_ui.infoTabWidget);
-            m_ui.infoTabWidget->addTab(wiredTab, UiUtils::descriptiveInterfaceName(m_iface->type()));
+            m_ui.infoTabWidget->addTab(wiredTab, deviceType);
             m_ui.connectionIcon->setPixmap(KIconLoader::global()->loadIcon("network-wired", KIconLoader::Panel));
             break;
         }
     case Solid::Control::NetworkInterface::Ieee80211: {
             ConnectionInfoWirelessTab *wirelessTab = new ConnectionInfoWirelessTab(qobject_cast<Solid::Control::WirelessNetworkInterface*>(m_iface), m_ui.infoTabWidget);
-            m_ui.infoTabWidget->addTab(wirelessTab, UiUtils::descriptiveInterfaceName(m_iface->type()));
+            m_ui.infoTabWidget->addTab(wirelessTab, deviceType);
             m_ui.connectionIcon->setPixmap(KIconLoader::global()->loadIcon("network-wireless", KIconLoader::Panel));
             break;
         }

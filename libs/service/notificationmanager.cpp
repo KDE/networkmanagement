@@ -42,8 +42,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "events.h"
 
-#include "knmserviceprefs.h"
-
 K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration))
 
 class NotificationManagerPrivate
@@ -124,19 +122,8 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
 
     // Keep a record for when it is removed
     Solid::Device* dev = new Solid::Device(uni);
-    QString deviceText;
-    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    QString deviceText = UiUtils::interfaceNameLabel(uni);
 
-    if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
-
-#if KDE_IS_VERSION(4,3,60)
-        deviceText = dev->description();
-#else
-        deviceText = dev->product();
-#endif
-    } else {
-        deviceText = iface->interfaceName();
-    }
     d->interfaceNameRecord.insert(uni, deviceText);
 
     if (iface) {
@@ -252,7 +239,7 @@ void NotificationManager::interfaceConnectionStateChanged(int new_state, int, in
     Solid::Control::NetworkInterface * iface = qobject_cast<Solid::Control::NetworkInterface *>(sender());
     if (iface) {
         QString text;
-        QString identifier = iface->interfaceName();
+        QString identifier = UiUtils::interfaceNameLabel(iface->uni());
         QString stateString = UiUtils::connectionStateToString((Solid::Control::NetworkInterface::ConnectionState)new_state);
         /*
         // need to keep the notification object around to reset it during connection cycles, but
