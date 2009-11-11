@@ -144,7 +144,8 @@ void ConnectionPersistence::save()
     cg.writeEntry("uuid", m_connection->uuid().toString());
     cg.writeEntry("type", Connection::typeAsString(m_connection->type()));
     cg.writeEntry("autoconnect", m_connection->autoConnect());
-    cg.writeEntry("timestamp", m_connection->timestamp());
+    if (m_connection->timestamp().isValid())
+        cg.writeEntry("timestamp", m_connection->timestamp());
     cg.writeEntry("icon", m_connection->iconName());
 
     // save each setting
