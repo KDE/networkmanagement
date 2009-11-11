@@ -54,7 +54,7 @@ MenuToolTipSettingsWidget::MenuToolTipSettingsWidget(const QStringList & allKeys
 {
     m_ui.setupUi(this);
 
-    foreach (QString toolTipKey, allKeys) {
+    foreach (const QString &toolTipKey, allKeys) {
         if (!selectedKeys.contains(toolTipKey)) {
             addItemToKeysWidget(m_ui.allOptionsListWidget, toolTipKey);
         }
@@ -62,7 +62,7 @@ MenuToolTipSettingsWidget::MenuToolTipSettingsWidget(const QStringList & allKeys
 
     m_ui.allOptionsListWidget->sortItems(Qt::AscendingOrder);
 
-    foreach(QString key, selectedKeys) {
+    foreach(const QString &key, selectedKeys) {
         addItemToKeysWidget(m_ui.selectedOptionsListWidget, key);
     }
 

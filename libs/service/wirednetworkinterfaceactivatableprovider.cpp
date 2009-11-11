@@ -64,7 +64,7 @@ void WiredNetworkInterfaceActivatableProvider::handleCarrierChange(bool carrier)
 {
     Q_D(WiredNetworkInterfaceActivatableProvider);
     if (carrier) {
-        foreach (QString uuid, d->connectionList->connections()) {
+        foreach (const QString &uuid, d->connectionList->connections()) {
             Knm::Connection * connection = d->connectionList->findConnection(uuid);
             handleAdd(connection);
         }

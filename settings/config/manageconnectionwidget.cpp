@@ -153,7 +153,7 @@ void ManageConnectionWidget::restoreConnections()
 
     QStringList connectionIds = KNetworkManagerServicePrefs::self()->connections();
     QList<QTreeWidgetItem *> wiredItems, wirelessItems, cellularItems, vpnItems, pppoeItems;
-    foreach (QString connectionId, connectionIds) {
+    foreach (const QString &connectionId, connectionIds) {
         // look in the corresponding group
         // read name, type, last used
         kDebug() << connectionId;

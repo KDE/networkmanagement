@@ -91,7 +91,7 @@ void ConnectionListPersistence::init()
         QStringList connectionIds;
         connectionIds = KNetworkManagerServicePrefs::self()->connections();
         // 2) restore each connection
-        foreach (QString connectionId, connectionIds) {
+        foreach (const QString &connectionId, connectionIds) {
             Knm::Connection * connection = restoreConnection(connectionId);
             if (connection ) {
                 d->list->addConnection(connection);
@@ -165,7 +165,7 @@ void ConnectionListPersistence::configure(const QStringList& changedConnections)
     // figure out which connections were added
     QStringList allConnections = d->list->connections();
     QStringList localConnections;
-    foreach (QString connectionId, allConnections) {
+    foreach (const QString &connectionId, allConnections) {
         Knm::Connection * connection = d->list->findConnection(connectionId);
         if (connection->origin() == QLatin1String("ConnectionListPersistence")) {
             localConnections.append(connectionId);
@@ -178,13 +178,13 @@ void ConnectionListPersistence::configure(const QStringList& changedConnections)
     kDebug() << "known local connections are:" << localConnections;
     kDebug() << "on-disk connections are:" << onDiskConnections;
 
-    foreach (QString connectionId, onDiskConnections) {
+    foreach (const QString &connectionId, onDiskConnections) {
         if (!localConnections.contains(connectionId)) {
             addedConnections.append(connectionId);
         }
     }
     // figure out which connections were deleted
-    foreach (QString connectionId, localConnections) {
+    foreach (const QString &connectionId, localConnections) {
         if (!onDiskConnections.contains(connectionId)) {
             deletedConnections.append(connectionId);
         }
@@ -195,20 +195,20 @@ void ConnectionListPersistence::configure(const QStringList& changedConnections)
 
     // update the service
     // remove
-    foreach (QString connectionId, deletedConnections) {
+    foreach (const QString &connectionId, deletedConnections) {
         d->list->removeConnection(connectionId);
     }
 
     // changed - we are going to get our own change signals back now, but since
     // d->ignoreChangedConnections is set, nothing happens
-    foreach (const QString connectionId, changedConnections) {
+    foreach (const QString &connectionId, changedConnections) {
         d->list->replaceConnection(restoreConnection(connectionId));
     }
     // if this is accidentally removed, updated timestamps and seenBSSID lists will not be saved
     d->ignoreChangedConnections = false;
 
     // added
-    foreach (QString connectionId, addedConnections) {
+    foreach (const QString &connectionId, addedConnections) {
         d->list->addConnection(restoreConnection(connectionId));
     }
 }

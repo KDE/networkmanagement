@@ -156,7 +156,7 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
     QStringList currentActiveConnections = Solid::Control::NetworkManager::activeConnections();
 
     // delete any stale interfaces
-    foreach (QString key, d->activeConnections.keys()) {
+    foreach (const QString &key, d->activeConnections.keys()) {
         if (!currentActiveConnections.contains(key)) {
             NMDBusActiveConnectionProxy * stale = d->activeConnections.take(key);
             kDebug() << "removing stale active connection" << key;
@@ -166,7 +166,7 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
 
     // create an interface to any active connections we're not already tracking
     // and update their interfaceconnections
-    foreach (QString activeConnectionPath, currentActiveConnections) {
+    foreach (const QString &activeConnectionPath, currentActiveConnections) {
         if (!d->activeConnections.contains(activeConnectionPath)) {
             kDebug() << "Adding active connection interface for " << activeConnectionPath;
 

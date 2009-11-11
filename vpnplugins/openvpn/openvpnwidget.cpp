@@ -94,7 +94,7 @@ void OpenVpnSettingWidget::openVpnFinished(int exitCode, QProcess::ExitStatus ex
         QList<QByteArray> rawOutputLines = d->openVpnCiphers.split('\n');
         QStringList ciphers;
         bool foundFirstSpace = false;;
-        foreach (QByteArray cipher, rawOutputLines) {
+        foreach (const QByteArray &cipher, rawOutputLines) {
             if (cipher.length() == 0) {
                 foundFirstSpace = true;
             } else if (foundFirstSpace) {

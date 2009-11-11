@@ -59,7 +59,7 @@ void VpnInterfaceConnectionProvider::init()
 {
     Q_D(VpnInterfaceConnectionProvider);
     // assess all connections
-        foreach (QString uuid, d->connectionList->connections()) {
+        foreach (const QString &uuid, d->connectionList->connections()) {
             Knm::Connection * connection = d->connectionList->findConnection(uuid);
             handleAdd(connection);
         }

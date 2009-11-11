@@ -72,7 +72,7 @@ WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatable
     // already ran and created WirelessInterfaceConnections as needed, but a hash lookup in
     // networkAppeared prevents duplicate WirelessInterfaceConnections, so this
     // iteration creates any WirelessNetworks needed for unconfigured networks.
-    foreach (QString network, d->environment->networks()) {
+    foreach (const QString &network, d->environment->networks()) {
         networkAppeared(network);
     }
 }
@@ -170,7 +170,7 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
     kDebug() << ssid;
     Q_D(WirelessNetworkInterfaceActivatableProvider);
     // try all connections to see if they are for this network
-    foreach (QString uuid, d->connectionList->connections()) {
+    foreach (const QString &uuid, d->connectionList->connections()) {
         Knm::Connection * connection = d->connectionList->findConnection(uuid);
         // it is safe to call this multiple times with a connection that is already known
         handleAdd(connection);

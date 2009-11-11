@@ -66,7 +66,7 @@ void RemoteActivatableList::init()
             QStringList activatables = d->iface->ListActivatables();
 
             //kDebug() << "activatables" << activatables;
-            foreach (QString activatable, activatables) {
+            foreach (const QString &activatable, activatables) {
                 // messy, I know, but making ListActivatables return a(si) is boring
                 QDBusInterface iface(QLatin1String("org.kde.networkmanagement"),
                         activatable, "org.kde.networkmanagement.Activatable", QDBusConnection::sessionBus());

@@ -2306,7 +2306,7 @@ int main( int argc, char **argv )
             pC << "  m_config->writeEntry(\"" << (*itEntry)->key() << "\", setting->" << getFunction(n) << "());" << endl;
         } else { // switch the value and write the choice name as string instead of the enum's int value
             pC << "  switch (setting->" << getFunction(n) << "()) {" << endl;
-            foreach (CfgEntry::Choice ch, chlist) {
+            foreach (const CfgEntry::Choice &ch, chlist) {
                 pC << "    case " << className << "Setting::" << enumName(n, choices) << "::" << choices.prefix << ch.name << ":" << endl;
                 pC << "      m_config->writeEntry(\"" << (*itEntry)->key() << "\", \"" << ch.name << "\");" << endl;
                 pC << "      break;" << endl;
@@ -2505,7 +2505,7 @@ int main( int argc, char **argv )
             dC << "  map.insert(" << (*itEntry)->dbusKey() << ", setting->" << getFunction(n) << "());" << endl;
         } else {
             dC << "  switch (setting->" << getFunction(n) << "()) {" << endl;
-            foreach (CfgEntry::Choice ch, chlist) {
+            foreach (const CfgEntry::Choice &ch, chlist) {
                 dC << "    case Knm::" << className << "Setting::" << enumName(n, choices) << "::" << choices.prefix << ch.name << ":" << endl;
                 dC << "      map.insert(" << (*itEntry)->dbusKey() << ", \"" << (ch.dbusValue.isEmpty() ? ch.name : ch.dbusValue) << "\");" << endl;
                 dC << "      break;" << endl;

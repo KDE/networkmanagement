@@ -193,7 +193,7 @@ void NMDBusSettingsService::interfaceConnectionActivated()
             // look up the active connection (a real connection, not this vpn that is being activated)
             // because NM needs its details to bring up the VPN
             QString activeConnPath;
-            foreach (QString activeConnectionPath, Solid::Control::NetworkManager::activeConnections()) {
+            foreach (const QString &activeConnectionPath, Solid::Control::NetworkManager::activeConnections()) {
                 OrgFreedesktopNetworkManagerConnectionActiveInterface activeConnection("org.freedesktop.NetworkManager", activeConnectionPath, QDBusConnection::systemBus());
 
                 if ( activeConnection.getDefault() && activeConnection.state() == NM_ACTIVE_CONNECTION_STATE_ACTIVATED) {

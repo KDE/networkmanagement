@@ -78,7 +78,7 @@ void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
             break;
         case Knm::Activatable::WirelessInterfaceConnection:
             wic = qobject_cast<Knm::WirelessInterfaceConnection*>(added);
-            foreach (PendingNetwork pending, d->pendingNetworks) {
+            foreach (const PendingNetwork &pending, d->pendingNetworks) {
                 if (pending.first == wic->ssid() && pending.second == wic->deviceUni()) {
                     kDebug() << "activating WIC for" << wic->ssid() << "on" << wic->deviceUni();
                     // HACK - for activate to do anything, it has to be connected to something.  

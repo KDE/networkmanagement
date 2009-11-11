@@ -53,7 +53,7 @@ Solid::Control::WirelessNetworkInterfaceEnvironment::WirelessNetworkInterfaceEnv
 {
     Q_D(WirelessNetworkInterfaceEnvironment);
     d->iface = iface;
-    foreach (QString apUni, iface->accessPoints()) {
+    foreach (const QString &apUni, iface->accessPoints()) {
         accessPointAppearedInternal(apUni);
     }
     // for managing our list of wireless networks

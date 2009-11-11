@@ -62,7 +62,7 @@ void ConnectionInfoIPv4Tab::updateIpDetails()
     QStringList ipAddresses,
                 netmasks,
                 gateways;
-    foreach(Solid::Control::IPv4Address addr, config.addresses()) {
+    foreach(const Solid::Control::IPv4Address &addr, config.addresses()) {
         ipAddresses << QHostAddress(addr.address()).toString();
 #if KDE_IS_VERSION(4, 3, 67)
         netmasks << QHostAddress((0xffffffff) << (32 - addr.netMask())).toString();
@@ -76,7 +76,7 @@ void ConnectionInfoIPv4Tab::updateIpDetails()
     m_gatewaysLabel->setText(gateways.join("\n"));
 
     QStringList nameservers;
-    foreach(quint32 addr, config.nameservers())
+    foreach(const quint32 &addr, config.nameservers())
 #if KDE_IS_VERSION(4, 3, 67)
         nameservers << QHostAddress(addr).toString();
 #else

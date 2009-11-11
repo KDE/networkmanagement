@@ -85,7 +85,7 @@ QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection *
             tip = QLatin1String("<qt><table>");
 
             // iterate each item in tipElements and generate a table row for it
-            foreach (QString element, tipElements) {
+            foreach (const QString &element, tipElements) {
                 const QString prefix = element.section(QLatin1String(":"), 0, 0);
                 const QString requestedInfo = element.section(QLatin1String(":"), 1);
 
@@ -393,7 +393,7 @@ QString buildRoutesHtmlTable(const QList<Solid::Control::IPv4Route> &lst)
 {
     QString table = QLatin1String("<table>");
 
-    foreach(Solid::Control::IPv4Route route, lst) {
+    foreach(const Solid::Control::IPv4Route &route, lst) {
         table += QString("<tr><td>%1/%2 %3 %4</td></tr>")
                  .arg(QHostAddress(route.route()).toString())
                  .arg(route.prefix())

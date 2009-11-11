@@ -62,7 +62,7 @@ ConnectionSecretsJob::ConnectionSecretsJob(Knm::Connection* connection, const QS
       mRequest(request), m_askUserDialog(0), m_settingWidget(0)
 {
     // record the secrets that we are looking for
-    foreach (QString secretKey, secrets) {
+    foreach (const QString &secretKey, secrets) {
         mSecrets.insert(secretKey, QVariant());
     }
 }

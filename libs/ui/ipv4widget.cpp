@@ -175,7 +175,7 @@ void IpV4Widget::readConfig()
     // dns
     if (dnsPartEnabled) {
         QStringList dnsList;
-        foreach (QHostAddress dns, d->setting->dns()) {
+        foreach (const QHostAddress &dns, d->setting->dns()) {
            dnsList << dns.toString();
         }
         d->ui.dns->setText(dnsList.join(QLatin1String(", ")));
@@ -241,7 +241,7 @@ void IpV4Widget::writeConfig()
     // dns
     QString tempStr = d->ui.dns->text().remove(QLatin1Char(' '));
     QStringList dnsInput = tempStr.split(QLatin1Char(','), QString::SkipEmptyParts);
-    foreach (QString dns, dnsInput) {
+    foreach (const QString &dns, dnsInput) {
         QHostAddress dnsAddr(dns);
         if (dnsAddr != QHostAddress::Null) {
             //kDebug() << "Address parses to: " << dnsAddr.toString();

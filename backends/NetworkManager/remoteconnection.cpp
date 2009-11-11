@@ -95,7 +95,7 @@ QVariantMapMap RemoteConnection::settings() const
 bool RemoteConnection::active() const
 {
     QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
-    foreach (QString conn, activeConnections) {
+    foreach (const QString &conn, activeConnections) {
         OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
                 conn, QDBusConnection::systemBus(), 0);
         if (candidate.serviceName() == service() && candidate.connection().path() == path()) {

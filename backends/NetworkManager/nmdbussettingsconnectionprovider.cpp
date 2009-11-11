@@ -79,7 +79,7 @@ void NMDBusSettingsConnectionProvider::initConnections()
     kDebug();
     Q_D(NMDBusSettingsConnectionProvider);
     QList<QDBusObjectPath> connections = d->iface->ListConnections();
-    foreach (QDBusObjectPath op, connections) {
+    foreach (const QDBusObjectPath &op, connections) {
         kDebug() << op.path();
         initialiseAndRegisterRemoteConnection(op.path());
     }
