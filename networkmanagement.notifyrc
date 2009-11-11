@@ -124,7 +124,6 @@ Comment[tr]=Bir ağ arayüzü takıldı
 Comment[uk]=Було додано інтерфейс мережі
 Comment[wa]=En eterface rantoele a stî ataetchî
 Comment[x-test]=xxA network interface was attachedxx
-Action=Popup
 
 [Event/hwremoved]
 Name=Network Interface Removed
