@@ -97,7 +97,7 @@ void PeapWidget::writeConfig()
         d->setting->setUseSystemCaCerts(false);
         KUrl url = kurCaCert->url();
         if (!url.directory().isEmpty() && !url.fileName().isEmpty())
-            d->setting->setCapath(url.directory() + "/" + url.fileName());
+            d->setting->setCapath(url.directory() + '/' + url.fileName());
         else {
             d->setting->setCapath(QString());
         }

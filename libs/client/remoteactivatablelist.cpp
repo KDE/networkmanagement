@@ -101,7 +101,7 @@ QList<RemoteActivatable *> RemoteActivatableList::activatables() const
 
 void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uint type)
 {
-    if (!addedPath.startsWith("/")) {
+    if (!addedPath.startsWith('/')) {
         kDebug() << "Invalid path:" << addedPath << type;
         return;
     }

@@ -101,7 +101,7 @@ void TtlsWidget::writeConfig()
         d->setting->setUseSystemCaCerts(false);
         url = kurCaCert->url();
         if (!url.directory().isEmpty() && !url.fileName().isEmpty())
-            d->setting->setCapath(url.directory() + "/" + url.fileName());
+            d->setting->setCapath(url.directory() + '/' + url.fileName());
     }
 
     d->innerAuth->writeConfig();

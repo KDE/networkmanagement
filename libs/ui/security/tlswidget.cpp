@@ -110,7 +110,7 @@ void TlsWidget::writeConfig()
     } else {
         url = kurCaCert->url();
         if (!url.directory().isEmpty() && !url.fileName().isEmpty()) {
-            QString path = url.directory() + "/" + url.fileName();
+            QString path = url.directory() + '/' + url.fileName();
             if (d->inner) {
                 d->setting->setPhase2capath(path);
             } else {
@@ -121,7 +121,7 @@ void TlsWidget::writeConfig()
 
     url = kurClientCert->url();
     if (!url.directory().isEmpty() && !url.fileName().isEmpty()) {
-        QString path = url.directory() + "/" + url.fileName();
+        QString path = url.directory() + '/' + url.fileName();
         if (d->inner) {
             d->setting->setPhase2clientcertpath(path);
         } else {
@@ -131,7 +131,7 @@ void TlsWidget::writeConfig()
 
     url = kurPrivateKey->url();
     if (!url.directory().isEmpty() && !url.fileName().isEmpty()) {
-        QString path = url.directory() + "/" + url.fileName();
+        QString path = url.directory() + '/' + url.fileName();
         if (d->inner) {
             d->setting->setPhase2privatekeypath(path);
         } else {

@@ -477,7 +477,7 @@ void ConfigXmlHandler::addItem()
         }
     } else if (m_type == "stringlist") {
         //FIXME: the split() is naive and will break on lists with ,'s in them
-        item = m_config->addItemStringList(m_name, *d->newStringList(), m_default.split(","), m_key);
+        item = m_config->addItemStringList(m_name, *d->newStringList(), m_default.split(','), m_key);
     } else if (m_type == "uint") {
         KConfigSkeleton::ItemUInt* uintItem = m_config->addItemUInt(m_name,
                 *d->newUint(),
@@ -509,7 +509,7 @@ void ConfigXmlHandler::addItem()
         }
         item = doubleItem;
     } else if (m_type == "intlist") {
-        QStringList tmpList = m_default.split(",");
+        QStringList tmpList = m_default.split(',');
         QList<qint32> defaultList;
         foreach (const QString &tmp, tmpList) {
             defaultList.append(tmp.toInt());
@@ -531,7 +531,7 @@ void ConfigXmlHandler::addItem()
         item = m_config->addItemPathList(m_name, *d->newStringList(), m_default.split(","), m_key); */
     } else if (m_type == "point") {
         QPoint defaultPoint;
-        QStringList tmpList = m_default.split(",");
+        QStringList tmpList = m_default.split(',');
         while (tmpList.size() >= 2) {
             defaultPoint.setX(tmpList[0].toInt());
             defaultPoint.setY(tmpList[1].toInt());
@@ -539,7 +539,7 @@ void ConfigXmlHandler::addItem()
         item = m_config->addItemPoint(m_name, *d->newPoint(), defaultPoint, m_key);
     } else if (m_type == "rect") {
         QRect defaultRect;
-        QStringList tmpList = m_default.split(",");
+        QStringList tmpList = m_default.split(',');
         while (tmpList.size() >= 4) {
             defaultRect.setCoords(tmpList[0].toInt(), tmpList[1].toInt(),
                                   tmpList[2].toInt(), tmpList[3].toInt());
@@ -547,7 +547,7 @@ void ConfigXmlHandler::addItem()
         item = m_config->addItemRect(m_name, *d->newRect(), defaultRect, m_key);
     } else if (m_type == "size") {
         QSize defaultSize;
-        QStringList tmpList = m_default.split(",");
+        QStringList tmpList = m_default.split(',');
         while (tmpList.size() >= 2) {
             defaultSize.setWidth(tmpList[0].toInt());
             defaultSize.setHeight(tmpList[1].toInt());

@@ -47,7 +47,7 @@ static inline std::ostream &operator<<(std::ostream &o, const QString &str)
 static void parseArgs(const QStringList &args, QString &directory, QString &file1, QString &file2)
 {
     int fileCount = 0;
-    directory = ".";
+    directory = '.';
 
     for (int i = 1; i < args.count(); ++i) {
         if (args.at(i) == "-d" ||  args.at(i) == "--directory") {
