@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include "connectioninfowirelesstab.h"
 
-#include <ui/uiutils.h>
+#include <uiutils.h>
 
 
 ConnectionInfoWirelessTab::ConnectionInfoWirelessTab(Solid::Control::WirelessNetworkInterface *iface, QWidget *parent)

@@ -37,6 +37,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessnetworkinterface.h>
 
 #include <interfaceconnection.h>
+#include <uiutils.h>
 #include <wirelessnetworkinterfaceenvironment.h>
 
 #include "events.h"
@@ -244,46 +245,6 @@ void NotificationManager::statusChanged(Solid::Networking::Status status)
     }
 }
 
-QString NotificationManager::connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state)
-{
-    QString stateString;
-    switch (state) {
-        case Solid::Control::NetworkInterface::UnknownState:
-            stateString = i18nc("description of unknown network interface state", "in an unknown state");
-            break;
-        case Solid::Control::NetworkInterface::Unmanaged:
-            stateString = i18nc("description of unmanaged network interface state", "unmanaged");
-            break;
-        case Solid::Control::NetworkInterface::Unavailable:
-            stateString = i18nc("description of unavailable network interface state", "unavailable");
-            break;
-        case Solid::Control::NetworkInterface::Disconnected:
-            stateString = i18nc("description of unconnected network interface state", "not connected");
-            break;
-        case Solid::Control::NetworkInterface::Preparing:
-            stateString = i18nc("description of preparing to connect network interface state", "preparing to connect");
-            break;
-        case Solid::Control::NetworkInterface::Configuring:
-            stateString = i18nc("description of configuring hardware network interface state", "being configured");
-            break;
-        case Solid::Control::NetworkInterface::NeedAuth:
-            stateString = i18nc("description of waiting for authentication network interface state", "waiting for authorization");
-            break;
-        case Solid::Control::NetworkInterface::IPConfig:
-            stateString = i18nc("network interface doing dhcp request in most cases", "setting network address");
-            break;
-        case Solid::Control::NetworkInterface::Activated:
-            stateString = i18nc("network interface connected state label", "connected");
-            break;
-        case Solid::Control::NetworkInterface::Failed:
-            stateString = i18nc("network interface connection failed state label", "failed");
-            break;
-        default:
-            stateString = I18N_NOOP("UNKNOWN STATE FIX ME");
-    }
-    return stateString;
-}
-
 void NotificationManager::interfaceConnectionStateChanged(int new_state, int, int reason)
 {
     Q_D(NotificationManager);
@@ -292,7 +253,7 @@ void NotificationManager::interfaceConnectionStateChanged(int new_state, int, in
     if (iface) {
         QString text;
         QString identifier = iface->interfaceName();
-        QString stateString = connectionStateToString((Solid::Control::NetworkInterface::ConnectionState)new_state);
+        QString stateString = UiUtils::connectionStateToString((Solid::Control::NetworkInterface::ConnectionState)new_state);
         /*
         // need to keep the notification object around to reset it during connection cycles, but
         // delete it at the end of a connection cycle

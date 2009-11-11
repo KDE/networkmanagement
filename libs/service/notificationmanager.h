@@ -59,7 +59,6 @@ protected Q_SLOTS:
     void statusChanged(Solid::Networking::Status);
 private:
     KComponentData componentData() const;
-    static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
     NotificationManagerPrivate * d_ptr;
 };
 

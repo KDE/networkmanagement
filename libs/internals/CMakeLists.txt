@@ -84,6 +84,8 @@ set(knminternals_SRCS
 
    # helper functions for storing tooltip keys and UI strings
    tooltips.cpp
+   # helper functions to obtain UI strings for various enums
+   uiutils.cpp
    )
 
 kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)

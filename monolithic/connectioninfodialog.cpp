@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkmanager.h>
 
-#include <ui/uiutils.h>
+#include <uiutils.h>
 
 
 ConnectionInfoDialog::ConnectionInfoDialog(Knm::InterfaceConnection *ic, QWidget *parent)
@@ -115,7 +115,7 @@ void ConnectionInfoDialog::clearGUI()
     m_guiMade = false;
 }
 
-void ConnectionInfoDialog::updateConnectionState(int new_state, int old_state, int reason)
+void ConnectionInfoDialog::updateConnectionState(int new_state, int, int)
 {
-    m_ui.connectionState->setText(UiUtils::connectionStateToString(new_state));
+    m_ui.connectionState->setText(UiUtils::connectionStateToString((Solid::Control::NetworkInterface::ConnectionState)new_state));
 }

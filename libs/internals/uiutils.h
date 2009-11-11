@@ -23,13 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class QSizeF;
 
-#include "knm_export.h"
+#include "knminternals_export.h"
 
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/wirelessaccesspoint.h>
 
-class KNM_EXPORT UiUtils
+class KNMINTERNALS_EXPORT UiUtils
 {
 public:
     /**
@@ -49,7 +49,7 @@ public:
      * @return a human-readable description of the connection state of a given network interface
      * @param state The connection state
      */
-    static QString connectionStateToString(int state);
+    static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
 
     /**
      * @return an icon name suitable for the interface type
@@ -79,8 +79,8 @@ public:
      * @param mode the operation mode
      */
     static QString operationModeToString(Solid::Control::WirelessNetworkInterface::OperationMode mode);
-    
-    /** 
+
+    /**
      * @return string list with a human-readable description of wpa flags. 
      * @param flags the wpa flags
      */

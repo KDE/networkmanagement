@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDBusObjectPath>
 #include <QGraphicsWidget>
 
+#include <solid/control/networkinterface.h>
+
 #include "interfaceconnection.h"
 
 #include <Plasma/IconWidget>
@@ -65,7 +67,7 @@ public:
 
 public Q_SLOTS:
     void activeConnectionsChanged();
-    void connectionStateChanged(int);
+    void connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState);
     virtual void setEnabled(bool enable);
     // also updates the connection info
     virtual void setActive(bool active);

@@ -44,11 +44,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <activatabledebug.h>
 #include <sortedactivatablelist.h>
 #include <interfaceconnection.h>
+#include <uiutils.h>
 #include <unconfiguredinterface.h>
 #include <vpninterfaceconnection.h>
 #include <wirelessinterfaceconnection.h>
 #include <wirelessnetwork.h>
-#include <ui/uiutils.h>
 
 #include "interfaceconnectionitem.h"
 #include "otherwirelessnetworkdialog.h"

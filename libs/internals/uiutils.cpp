@@ -138,7 +138,7 @@ int UiUtils::iconSize(const QSizeF size)
     return s;
 }
 
-QString UiUtils::connectionStateToString(int state)
+QString UiUtils::connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state)
 {
     QString stateString;
     switch (state) {

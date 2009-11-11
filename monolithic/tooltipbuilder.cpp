@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkipv4config.h>
 
 #include <interfaceconnection.h>
-#include <ui/uiutils.h>
+#include <uiutils.h>
 
 #include <KLocale>
 

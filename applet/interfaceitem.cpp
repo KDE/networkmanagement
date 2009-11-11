@@ -281,10 +281,10 @@ void InterfaceItem::handleConnectionStateChange(int new_state, int old_state, in
 {
     Q_UNUSED(old_state);
     Q_UNUSED(reason);
-    connectionStateChanged(new_state);
+    connectionStateChanged((Solid::Control::NetworkInterface::ConnectionState)new_state);
 }
 
-void InterfaceItem::connectionStateChanged(int state)
+void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState state)
 {
     // TODO:
     // get the active connections

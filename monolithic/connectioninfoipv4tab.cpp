@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectioninfoipv4tab.h"
 
-#include <ui/uiutils.h>
+#include <uiutils.h>
 
 #if KDE_IS_VERSION(4, 3, 67)
 #else
