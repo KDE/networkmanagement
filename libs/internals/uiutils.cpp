@@ -185,6 +185,7 @@ QString UiUtils::connectionStateToString(Solid::Control::NetworkInterface::Conne
 
 QString UiUtils::interfaceNameLabel(const QString & uni)
 {
+    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
     QString label;
     if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::SystemNames) {
         Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
