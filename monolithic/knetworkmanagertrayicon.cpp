@@ -310,7 +310,8 @@ void KNetworkManagerTrayIcon::fillPopup()
 
     // add the housekeeping actions
     contextMenu()->addSeparator();
-    if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
+
+    if (!wirelessDeviceUnis.isEmpty() /*TODO Bluetooth too */ && d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
         contextMenu()->addAction(d->flightModeAction);
     }
     contextMenu()->addAction(d->prefsAction);
