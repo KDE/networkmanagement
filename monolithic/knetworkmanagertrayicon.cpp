@@ -465,26 +465,26 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
         switch (d->displayedNetworkInterface->connectionState()) {
             case Solid::Control::NetworkInterface::Preparing:
                 overlayName = QLatin1String("busy-phase1");
-                overlayName = QLatin1String("emblem-mounted");
+                overlayName = QLatin1String("emblem-link");
                 break;
             case Solid::Control::NetworkInterface::Configuring:
                 overlayName = QLatin1String("busy-phase2");
-                overlayName = QLatin1String("emblem-mounted");
+                overlayName = QLatin1String("emblem-link");
                 break;
             case Solid::Control::NetworkInterface::NeedAuth:
                 overlayName = QLatin1String("busy-phase2");
-                overlayName = QLatin1String("emblem-mounted");
+                overlayName = QLatin1String("emblem-link");
                 break;
             case Solid::Control::NetworkInterface::IPConfig:
                 overlayName = QLatin1String("busy-phase3");
-                overlayName = QLatin1String("emblem-mounted");
+                overlayName = QLatin1String("emblem-link");
                 break;
             case Solid::Control::NetworkInterface::Activated:
                 if (iconName == QLatin1String("network-wired"))
                     iconName = QLatin1String("network-wired-activated");
                 else
 
-                    overlayName = QLatin1String("checkbox");
+                    overlayName = QLatin1String("emblem-mounted");
                 break;
             default:
                 break;
