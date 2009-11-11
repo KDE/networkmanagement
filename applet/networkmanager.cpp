@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDesktopWidget>
 #include <QGraphicsLinearLayout>
 #include <QGraphicsPixmapItem>
+#include <QTimeLine>
 
 #include <QGraphicsBlurEffect>
 
@@ -77,12 +78,18 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
     setPassivePopup(true); // FIXME: disable, only true for testing ...
+    m_overlayTimeline.setEasingCurve(QEasingCurve::OutExpo);
+    m_currentState = 0;
+    connect(&m_overlayTimeline, SIGNAL(valueChanged(qreal)), this, SLOT(repaint()));
 
     Plasma::ToolTipManager::self()->registerWidget(this);
     setAspectRatioMode(Plasma::ConstrainedSquare);
     setHasConfigurationInterface(true);
 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
+    if (activeInterface()) {
+        m_currentState = activeInterface()->connectionState();
+    }
     interfaceConnectionStateChanged();
     m_activatableList = new RemoteActivatableList(this);
     setMinimumSize(16, 16);
@@ -121,7 +128,7 @@ void NetworkManagerApplet::setupInterfaceSignals()
         } else if (interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             Solid::Control::WirelessNetworkInterface* wirelessiface =
                             static_cast<Solid::Control::WirelessNetworkInterface*>(interface);
-            connect(wirelessiface, SLOT(activeAccessPointChanged (const QString &)), SLOT(interfaceConnectionStateChanged()));
+            connect(wirelessiface, SIGNAL(activeAccessPointChanged(const QString&)), SLOT(interfaceConnectionStateChanged()));
             QString uni = wirelessiface->activeAccessPoint();
             Solid::Control::AccessPoint *ap = wirelessiface->findAccessPoint(uni);
             if (ap) {
@@ -254,14 +261,21 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
 {
     bool bar = false;
     qreal state = UiUtils::interfaceState(activeInterface());
-    if (state == 0 || state == 1) {
+
+    qreal opacity = m_overlayTimeline.currentValue();
+    if (opacity == 0) {
+        return;
+    } else if (state == 1) {
+        //kDebug() << "painting OK overlay with opacity: " << opacity;
+        paintOkOverlay(p, contentsRect(), opacity);
         return;
     }
+
     QColor fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QColor bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
 
-    bgColor.setAlphaF(.7);
-    fgColor.setAlphaF(.6);
+    bgColor.setAlphaF(.7 * opacity);
+    fgColor.setAlphaF(.6 * opacity);
 
     //p->translate(0.5, 0.5);
 
@@ -293,14 +307,27 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
         // 0 is at 3 o'clock
         int top = 90 * 16;
         int progress = -360 * 16 * state;
-        QPen pen(fgColor, 3);
-         
-        kDebug() << "progress circle" << top << progress;
+        QPen pen(fgColor, 2); // color and line width
+
+        //kDebug() << "progress circle" << top << progress;
         p->setPen(pen);
         p->setBrush(QBrush(bgColor));
 
         p->drawArc(contentsRect(), top, progress);
     }
+}
+
+void NetworkManagerApplet::paintOkOverlay(QPainter *p, const QRectF &rect, qreal opacity)
+{
+    QColor color = QColor("#37B237");
+    if (UiUtils::interfaceState(activeInterface()) == 0) {
+        color = QColor("#B23636");
+    }
+
+    color.setAlphaF(opacity * 0.6);
+    QPen pen(color, 2); // green, px width
+    p->setPen(pen);
+    p->drawEllipse(rect);
 }
 
 void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap pixmap, const QRectF &rect, qreal opacity)
@@ -335,6 +362,11 @@ void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap pixmap, const 
         painter->drawPixmap(iconOrigin, pixmap);
         painter->setOpacity(old);
     }
+}
+
+void NetworkManagerApplet::repaint()
+{
+    update();
 }
 
 /* Slots to react to changes from the daemon */
@@ -379,20 +411,32 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
     //kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
     if (activeInterface()) {
         //kDebug() << "busy ... ?";
-        switch (activeInterface()->connectionState()) {
+        int state = activeInterface()->connectionState();
+        switch (state) {
             case Solid::Control::NetworkInterface::Preparing:
             case Solid::Control::NetworkInterface::Configuring:
             case Solid::Control::NetworkInterface::NeedAuth:
             case Solid::Control::NetworkInterface::IPConfig:
+                if (m_currentState != state) {
+                    m_overlayTimeline.start();
+                    m_overlayTimeline.setDuration(2000);
+                    m_overlayTimeline.setDirection(QTimeLine::Forward);
+                    m_overlayTimeline.start();
+                }
                 setBusy(true);
                 break;
             default:
                 setBusy(false);
+                if (m_currentState != state) {
+                    m_overlayTimeline.stop();
+                    m_overlayTimeline.setDirection(QTimeLine::Backward);
+                    m_overlayTimeline.setDuration(4000);
+                    m_overlayTimeline.start();
+                }
                 break;
         }
+        m_currentState = state;
     }
-    //setupInterface();
-    //kDebug() << "Now " << UiUtils::descriptiveInterfaceName(activeInterface()->type()) << " is more important";
     updatePixmap();
 }
 

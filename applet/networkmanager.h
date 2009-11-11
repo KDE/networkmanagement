@@ -44,6 +44,8 @@ namespace Plasma
     class Extender;
 } // namespace Plasma
 
+class QTimeLine;
+
 class NMExtenderItem;
 class RemoteActivatableList;
 
@@ -117,6 +119,7 @@ private Q_SLOTS:
     // used to let the user easily hide VPN
     void hideVpnGroup();
     void updatePixmap();
+    void repaint();
 
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
@@ -125,6 +128,7 @@ private:
 
     void paintPixmap(QPainter *painter, QPixmap pixmap,
                      const QRectF &rect, qreal opacity = 1.0);
+    void paintOkOverlay(QPainter *p, const QRectF &rect, qreal opacity = 1.0);
     void paintProgress(QPainter *p);
 
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
@@ -141,6 +145,9 @@ private:
     // For tracking which status we should show
     Solid::Control::NetworkInterface *m_activeInterface;
     Solid::Control::AccessPoint *m_accessPoint;
+
+    QTimeLine m_overlayTimeline;
+    int m_currentState;
 };
 
 #endif
