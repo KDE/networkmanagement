@@ -23,12 +23,14 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 #include <QStringList>
 #include <QTimer>
+#include <QWeakPointer>
 
 #include <KDebug>
 #include <KIcon>
 #include <KLocale>
 #include <KNotification>
 #include <kdeversion.h>
+#include "kglobal.h"
 
 #include <Solid/Device>
 #include <solid/control/networkmanager.h>
@@ -41,6 +43,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knmserviceprefs.h"
 
+K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration))
 
 class NotificationManagerPrivate
 {
@@ -50,7 +53,7 @@ public:
     QTimer * disappearedNetworkTimer;
     QStringList newWirelessNetworks;
     QStringList disappearedWirelessNetworks;
-    QHash<Solid::Control::NetworkInterface *, KNotification *> interfaceNotifications;
+    QHash<Solid::Control::NetworkInterface *, QWeakPointer<KNotification> > interfaceNotifications;
     // used to keep track of interface names so we can use them when the device has been removed.
     QHash<QString,QString> interfaceNameRecord;
 };
@@ -90,6 +93,11 @@ NotificationManager::~NotificationManager()
     delete d_ptr;
 }
 
+KComponentData NotificationManager::componentData() const
+{
+    return *s_networkManagementComponentData;
+}
+
 void NotificationManager::handleAdd(Knm::Activatable * activatable)
 {
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(activatable);
@@ -117,16 +125,16 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
     Solid::Device* dev = new Solid::Device(uni);
     QString deviceText;
     KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
-    
+
     if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
-        
+
 #if KDE_IS_VERSION(4,3,60)
         deviceText = dev->description();
 #else
         deviceText = dev->product();
 #endif
-    } else {        
-        deviceText = iface->interfaceName();        
+    } else {
+        deviceText = iface->interfaceName();
     }
     d->interfaceNameRecord.insert(uni, deviceText);
 
@@ -135,7 +143,7 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
         QObject::connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(interfaceConnectionStateChanged(int,int,int)));
 
         if (!d->suppressHardwareEvents) {
-            KNotification::event(Event::HwAdded, i18nc("@info:status Notification for hardware added", "%1 attached", deviceText), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+            KNotification::event(Event::HwAdded, i18nc("@info:status Notification for hardware added", "%1 attached", deviceText), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
 
             // if wireless, listen for new networks
             if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
@@ -164,12 +172,12 @@ void NotificationManager::networkInterfaceRemoved(const QString &uni)
     if (!d->suppressHardwareEvents) {
         QString notificationText;
         if (deviceText.isEmpty()) {
-            notificationText = i18nc("@info:status Notification for hardware removed used if we don't have its user-visible name", "Network interface removed", deviceText);
+            notificationText = i18nc("@info:status Notification for hardware removed used if we don't have its user-visible name", "Network interface removed");
         } else {
             notificationText = i18nc("@info:status Notification for hardware removed giving vendor supplied product name", "%1 removed", deviceText);
         }
 
-        KNotification::event(Event::HwRemoved, notificationText, QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::HwRemoved, notificationText, QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
     }
 }
 
@@ -216,23 +224,23 @@ void NotificationManager::interfaceConnectionActivated()
 {
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(sender());
 
-    KNotification::event(Event::UserConnectionAttempt, i18nc("@info:status Notification text when activating a connection","Connecting %1", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+    KNotification::event(Event::UserConnectionAttempt, i18nc("@info:status Notification text when activating a connection","Connecting %1", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
 
 }
 
 void NotificationManager::wirelessHardwareEnabledChanged(bool enabled)
 {
     if (enabled) {
-        KNotification::event(Event::RfOn, i18nc("@info:status Notification for radio kill switch turned on", "Wireless hardware enabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::RfOn, i18nc("@info:status Notification for radio kill switch turned on", "Wireless hardware enabled"), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
     } else {
-        KNotification::event(Event::RfOff, i18nc("@info:status Notification for radio kill switch turned on", "Wireless hardware disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::RfOff, i18nc("@info:status Notification for radio kill switch turned on", "Wireless hardware disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
     }
 }
 
 void NotificationManager::statusChanged(Solid::Networking::Status status)
 {
     if (status == Solid::Networking::Unknown) {
-        KNotification::event(Event::NetworkingDisabled, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is disabled", "Networking system disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::NetworkingDisabled, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is disabled", "Networking system disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
     }
 }
 
@@ -241,34 +249,34 @@ QString NotificationManager::connectionStateToString(Solid::Control::NetworkInte
     QString stateString;
     switch (state) {
         case Solid::Control::NetworkInterface::UnknownState:
-            stateString = i18nc("description of unknown network interface state", "is in an unknown state");
+            stateString = i18nc("description of unknown network interface state", "in an unknown state");
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
-            stateString = i18nc("description of unmanaged network interface state", "is unmanaged");
+            stateString = i18nc("description of unmanaged network interface state", "unmanaged");
             break;
         case Solid::Control::NetworkInterface::Unavailable:
-            stateString = i18nc("description of unavailable network interface state", "is unavailable");
+            stateString = i18nc("description of unavailable network interface state", "unavailable");
             break;
         case Solid::Control::NetworkInterface::Disconnected:
-            stateString = i18nc("description of unconnected network interface state", "is not connected");
+            stateString = i18nc("description of unconnected network interface state", "not connected");
             break;
         case Solid::Control::NetworkInterface::Preparing:
-            stateString = i18nc("description of preparing to connect network interface state", "is preparing to connect");
+            stateString = i18nc("description of preparing to connect network interface state", "preparing to connect");
             break;
         case Solid::Control::NetworkInterface::Configuring:
-            stateString = i18nc("description of configuring hardware network interface state", "is being configured");
+            stateString = i18nc("description of configuring hardware network interface state", "being configured");
             break;
         case Solid::Control::NetworkInterface::NeedAuth:
-            stateString = i18nc("description of waiting for authentication network interface state", "is waiting for authorization");
+            stateString = i18nc("description of waiting for authentication network interface state", "waiting for authorization");
             break;
         case Solid::Control::NetworkInterface::IPConfig:
-            stateString = i18nc("network interface doing dhcp request in most cases", "is setting network address");
+            stateString = i18nc("network interface doing dhcp request in most cases", "setting network address");
             break;
         case Solid::Control::NetworkInterface::Activated:
-            stateString = i18nc("network interface connected state label", "is connected");
+            stateString = i18nc("network interface connected state label", "connected");
             break;
         case Solid::Control::NetworkInterface::Failed:
-            stateString = i18nc("network interface connection failed state label", "Connection Failed");
+            stateString = i18nc("network interface connection failed state label", "failed");
             break;
         default:
             stateString = I18N_NOOP("UNKNOWN STATE FIX ME");
@@ -285,6 +293,7 @@ void NotificationManager::interfaceConnectionStateChanged(int new_state, int, in
         QString text;
         QString identifier = iface->interfaceName();
         QString stateString = connectionStateToString((Solid::Control::NetworkInterface::ConnectionState)new_state);
+        /*
         // need to keep the notification object around to reset it during connection cycles, but
         // delete it at the end of a connection cycle
         // keep a map of interface to KNotification
@@ -298,11 +307,11 @@ void NotificationManager::interfaceConnectionStateChanged(int new_state, int, in
                 || new_state == Solid::Control::NetworkInterface::IPConfig) {
             keepNotification = true;
         }
-
+*/
         switch (reason) {
             case Solid::Control::NetworkInterface::NoReason:
             case Solid::Control::NetworkInterface::UnknownReason:
-                text = i18nc("@info:status Notification when an interface (%1) connection state (%2) changes ", "%1 %2", identifier, stateString );
+                text = i18nc("@info:status Notification when an interface (%1) connection state (%2) changes ", "%1 is %2", identifier, stateString );
                 break;
             case Solid::Control::NetworkInterface::NowManagedReason:
                 text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to NowManagedReason","Interface %1 is now %2 because it is now being managed", identifier, stateString);
@@ -416,29 +425,35 @@ void NotificationManager::interfaceConnectionStateChanged(int new_state, int, in
                 text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to UserRequestedReason","%1 is now %2 at user request", identifier, stateString);
                 break;
             case Solid::Control::NetworkInterface::CarrierReason:
-                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to CarrierReason","%1 is now %2 because the link changed state", identifier, stateString);
+                text = i18nc("@info:status Notification when an interface (%1) changes state (%2) due to CarrierReason","%1 is now %2 because the cable was disconnected", identifier, stateString);
                 break;
         }
-        KNotification * notification = 0;
+        QWeakPointer<KNotification> notificationPtr;
+        KNotification * notification;
+        bool newNotification = false;
 
         if (d->interfaceNotifications.contains(iface)) {
-            kDebug() << "reusing notification";
-            notification = d->interfaceNotifications.take(iface);
-        } else {
-            notification = new KNotification(Event::InterfaceStateChange, 0, KNotification::Persistent);
-            notification->setComponentData(KComponentData("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration));
+            kDebug() << "trying to reuse notification";
+            notificationPtr = d->interfaceNotifications.take(iface);
+        }
+        if (notificationPtr.isNull()) {
+            newNotification = true;
+            notification = new KNotification(Event::InterfaceStateChange, 0, KNotification::CloseOnTimeout);
+            notification->setComponentData(componentData());
+            //notification->setFlags(KNotification::CloseOnTimeout);
+            notificationPtr = QWeakPointer<KNotification>(notification);
             //notification->addContext(QLatin1String("connectiontype"), /*need to get the connection being activated on this device...*/);
+        } else {
+            notification = notificationPtr.data();
         }
 
         notification->setText(text);
 
-        if (keepNotification) {
-            d->interfaceNotifications.insert(iface, notification);
-        } else {
-            kDebug() << "disposing of notification";
-            notification->setFlags(KNotification::CloseOnTimeout);
-        }
+        d->interfaceNotifications.insert(iface, notificationPtr);
+
+        //if (newNotification) {
         notification->sendEvent();
+       // }
     }
 }
 

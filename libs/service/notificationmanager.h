@@ -22,6 +22,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define NOTIFICATIONMANAGER_H
 
 #include <QObject>
+
+#include <KComponentData>
+
 #include "activatableobserver.h"
 #include <Solid/Networking>
 #include <solid/control/networkinterface.h>
@@ -55,6 +58,7 @@ protected Q_SLOTS:
     void wirelessHardwareEnabledChanged(bool);
     void statusChanged(Solid::Networking::Status);
 private:
+    KComponentData componentData() const;
     static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
     NotificationManagerPrivate * d_ptr;
 };
