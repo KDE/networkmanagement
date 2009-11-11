@@ -290,7 +290,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
     m_disconnect = false;
     // Name and info labels
     QString lname = UiUtils::connectionStateToString(state);
-    QString linfo = QString();
+    QString linfo;
 
     switch (state) {
         case Solid::Control::NetworkInterface::Unavailable:

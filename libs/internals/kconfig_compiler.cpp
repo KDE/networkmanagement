@@ -2370,7 +2370,7 @@ int main( int argc, char **argv )
 
   // NM DBUS classes are not part of the namespace
   QString savedNameSpace = nameSpace;
-  nameSpace = QString();
+  nameSpace.clear();
 
   QString dbusHeaderFilename = baseName + "dbus.h";
   QString dbusFileName = baseName + "dbus.cpp";

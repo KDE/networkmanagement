@@ -93,7 +93,7 @@ QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type 
     ConnectionPreferences * cprefs = editorForConnectionType(useDefaults, &configDialog, type, args);
 
     if (!cprefs) {
-        return QString::null;
+        return QString();
     }
 
     configDialog.setMainWidget(cprefs);

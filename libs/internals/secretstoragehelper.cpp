@@ -51,7 +51,7 @@ void SecretStorageHelper::readSecret(const QString &key, QString &secret )
         }
     }
     kDebug() << "Failed to get secret '" << keyForEntry(key) << "' in folder " << s_walletFolderName;
-    secret = QString();
+    secret.clear();
 }
 
 void SecretStorageHelper::writeSecret(const QString &key, const QString &secret )
