@@ -83,7 +83,7 @@ void OpenVpnSettingWidget::gotOpenVpnOutput()
 void OpenVpnSettingWidget::openVpnError(QProcess::ProcessError)
 {
     d->ui.cboCipher->removeItem(0);
-    d->ui.cboCipher->addItem(i18nc("@item:inlist Item added when openvpn cipher lookup failed", "Openvpn cipher lookup failed"));
+    d->ui.cboCipher->addItem(i18nc("@item:inlist Item added when OpenVPN cipher lookup failed", "OpenVPN cipher lookup failed"));
 }
 
 void OpenVpnSettingWidget::openVpnFinished(int exitCode, QProcess::ExitStatus exitStatus)
@@ -105,10 +105,10 @@ void OpenVpnSettingWidget::openVpnFinished(int exitCode, QProcess::ExitStatus ex
         if (d->ui.cboCipher->count()) {
             d->ui.cboCipher->setEnabled(true);
         } else {
-            d->ui.cboCipher->addItem(i18nc("@item:inlist Item added when openvpn cipher lookup failed", "No openvpn ciphers found"));
+            d->ui.cboCipher->addItem(i18nc("@item:inlist Item added when OpenVPN cipher lookup failed", "No OpenVPN ciphers found"));
         }
     } else {
-        d->ui.cboCipher->addItem(i18nc("@item:inlist Item added when openvpn cipher lookup failed", "openvpn cipher lookup failed"));
+        d->ui.cboCipher->addItem(i18nc("@item:inlist Item added when OpenVPN cipher lookup failed", "OpenVPN cipher lookup failed"));
     }
     delete d->openvpnProcess;
     d->openvpnProcess = 0;

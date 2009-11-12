@@ -185,11 +185,15 @@ void NotificationManager::networkDisappeared(const QString & ssid)
 
 void NotificationManager::notifyNewNetworks()
 {
-    Q_D(NotificationManager);
+    Q_D(NotificationManager);    
     if (d->newWirelessNetworks.count() == 1) {
         KNotification::event(Event::NetworkAppeared, i18nc("@info:status Notification text when a single wireless network was found","Wireless network %1 found", d->newWirelessNetworks[0]), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
     } else {
-        KNotification::event(Event::NetworkAppeared, i18nc("@info:status Notification text when multiple wireless networks are found","<b>New wireless networks:</b><br /> %1", d->newWirelessNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(48,48)), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::NetworkAppeared, i18ncp("@info:status Notification text when multiple wireless networks are found. %2 is a list of networks, and the %1 value (not printed) is just used to determine the plural form of network.",
+							    "<b>New wireless network:</b><br /> %2",
+							    "<b>New wireless networks:</b><br /> %2",
+							    d->newWirelessNetworks.count(), // the %1 parameter, used only to choose between plural forms on the word network
+							    d->newWirelessNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(48,48)), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
     }
     d->newNetworkTimer->stop();
     d->newWirelessNetworks.clear();
@@ -202,7 +206,11 @@ void NotificationManager::notifyDisappearedNetworks()
         KNotification::event(Event::NetworkDisappeared, i18nc("@info:status Notification text when a single wireless network disappeared","Wireless network %1 disappeared", d->disappearedWirelessNetworks[0]), QPixmap(), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
 
     } else {
-        KNotification::event(Event::NetworkDisappeared, i18nc("@info:status Notification text when multiple wireless networks have disappeared","<b>Wireless networks disappeared:</b><br /> %1", d->disappearedWirelessNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(48,48)), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
+        KNotification::event(Event::NetworkDisappeared, i18ncp("@info:status Notification text when multiple wireless networks have disappeared.  %2 is a list of networks, and the %1 value (not printed) is just used to determine the plural form of network.",
+							       "<b>Wireless network disappeared:</b><br /> %2",
+							       "<b>Wireless networks disappeared:</b><br /> %2",
+							       d->disappearedWirelessNetworks.count(), // the %1 parameter, used only to choose between plural forms on the word network
+							       d->disappearedWirelessNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(48,48)), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
     }
     d->disappearedNetworkTimer->stop();
     d->disappearedWirelessNetworks.clear();

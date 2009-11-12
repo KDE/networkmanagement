@@ -14,7 +14,7 @@
    <item>
     <widget class="QGroupBox" name="grp_authenfication">
      <property name="title">
-      <string>Authentification</string>
+      <string>Authentication</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="0">
@@ -22,7 +22,7 @@
         <item>
          <widget class="QLabel" name="lbl_auth">
           <property name="text">
-           <string>Allow following &amp;authentification methods:</string>
+           <string>Allow following &amp;authentication methods:</string>
           </property>
           <property name="buddy">
            <cstring>listWidget</cstring>

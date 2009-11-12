@@ -172,7 +172,7 @@ p, li { white-space: pre-wrap; }
      <item row="7" column="0">
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>&amp;User Name:</string>
+        <string>&amp;Username:</string>
        </property>
        <property name="buddy">
         <cstring>leUserName</cstring>
