@@ -24,6 +24,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 
 #include <KComponentData>
+#include <KNotification>
+
+#include <interfaceconnection.h>
 
 #include "activatableobserver.h"
 #include <Solid/Networking>
@@ -43,6 +46,8 @@ public:
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
+
+    KComponentData componentData() const;
 protected Q_SLOTS:
     void networkInterfaceAdded(const QString &);
     void networkInterfaceRemoved(const QString &);
@@ -52,14 +57,54 @@ protected Q_SLOTS:
     void notifyNewNetworks();
     void notifyDisappearedNetworks();
 
-    void interfaceConnectionStateChanged(int,int,int);
-    void interfaceConnectionActivated();
-
     void wirelessHardwareEnabledChanged(bool);
     void statusChanged(Solid::Networking::Status);
 private:
-    KComponentData componentData() const;
     NotificationManagerPrivate * d_ptr;
+};
+
+/**
+ * Tracks notifications concerning an interface
+ * Keeps at most one notification per interface
+ * If closed opens another
+ * Else reuses
+ * Knows which interfaceconnections are active/activating per interface
+ * Uses this knowledge to show which interfaceconnection interface status changes refer to
+ * on ASC, add sending InterfaceConnection to list of actives
+ * On ICSC, show name of currently activating connection together with new interface state
+ */
+class InterfaceNotificationHost : public QObject
+{
+Q_OBJECT
+public:
+    InterfaceNotificationHost(Solid::Control::NetworkInterface * iface, NotificationManager * parent);
+    ~InterfaceNotificationHost();
+
+    void addInterfaceConnection(Knm::InterfaceConnection* added);
+    void removeInterfaceConnection(Knm::InterfaceConnection* removed);
+
+    QString label() const;
+public Q_SLOTS:
+    void interfaceConnectionActivated();
+    /*
+     * Update notification with with state changes for iface's active connections
+     */
+    void interfaceConnectionStateChanged(int,int,int);
+    /*
+     * So we know which ICs interface state changes refer to
+     */
+    void interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState);
+
+private:
+    void performInterfaceNotification(const QString & title, const QString & text, KNotification::NotificationFlag flag);
+
+    NotificationManager * m_manager;
+    Solid::Control::NetworkInterface * m_interface;
+    // used to refer to the interface if it is removed
+    QString m_interfaceNameLabel;
+    QWeakPointer<KNotification> m_notification;
+    QSet<Knm::InterfaceConnection*> m_activating;
+    QSet<Knm::InterfaceConnection*> m_interfaceConnections;
 };
 
 #endif // NOTIFICATIONMANAGER_H
