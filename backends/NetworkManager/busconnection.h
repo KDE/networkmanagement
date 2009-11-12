@@ -69,7 +69,7 @@ class BusConnection : public QObject
         QString uuid() const;
         Knm::Connection * connection() const;
     Q_SIGNALS:
-        Q_SCRIPTABLE void Updated(QMap<QString, QMap<QString, QVariant> >);
+        Q_SCRIPTABLE void Updated(const QVariantMapMap &settings);
         Q_SCRIPTABLE void Removed();
 
     public Q_SLOTS:
