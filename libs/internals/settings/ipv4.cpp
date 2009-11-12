@@ -7,7 +7,9 @@ using namespace Knm;
 
 Ipv4Setting::Ipv4Setting() : Setting(Setting::Ipv4),
     mMethod(Ipv4Setting::EnumMethod::Automatic),
-    mIgnoredhcpdns(false)
+    mIgnoredhcpdns(false),
+    mIgnoreautoroute(false),
+    mNeverdefault(false)
 {
 }
 
