@@ -2,6 +2,7 @@
 Name=Other
 Name[da]=Andet
 Name[de]=Sonstiges
+Name[en_GB]=Other
 Name[es]=Otros
 Name[fr]=Autre
 Name[nds]=Anner
@@ -16,6 +17,7 @@ Name[x-test]=xxOtherxx
 Comment=Configure the Network Management tool
 Comment[da]=Indstil værktøjet til netværkshåndtering
 Comment[de]=Die Netzwerkverwaltung einrichten
+Comment[en_GB]=Configure the Network Management tool
 Comment[es]=Configurar la herramientas de gestión de red
 Comment[fr]=Configurer l'outil de gestion du réseau
 Comment[nds]=Dat Nettwark-Pleegwarktüüch instellen
