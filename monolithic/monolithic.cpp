@@ -104,7 +104,7 @@ void Monolithic::init()
 
     if (!d->nmSettingsService->isServiceAvailable()) {
         KNetworkManagerServicePrefs::self()->setAutostart(
-                KMessageBox::Yes == KMessageBox::questionYesNo(0, i18nc("@info:status detailed text when client cannot start because another client is already running", "Another NetworkManager client is already running.  Use KNetworkManager in future? "), i18nc("@title:window message when client cannot start because another client is already running", "Network Management already active"), KGuiItem(i18nc("@action:button enable autostart", "Start automatically")), KGuiItem(i18nc("@action:button disable autostart", "Don't start automatically")))
+                KMessageBox::Yes == KMessageBox::questionYesNo(0, i18nc("@info:status detailed text when client cannot start because another client is already running", "Another NetworkManager client is already running.  Use KNetworkManager in future? "), i18nc("@title:window message when client cannot start because another client is already running", "Network Management already active"), KGuiItem(i18nc("@action:button enable autostart", "Start automatically")), KGuiItem(i18nc("@action:button disable autostart", "Do not start automatically")))
                 );
         KNetworkManagerServicePrefs::self()->writeConfig();
         QTimer::singleShot(0, this, SLOT(quit()));
