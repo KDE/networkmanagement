@@ -64,7 +64,7 @@ QStringList EditListDialog::items() const
 void removeEmptyItems(QStringList &list)
 {
     QStringList::iterator it = list.begin();
-    QStringList::const_iterator end = list.constEnd();
+    const QStringList::iterator end = list.end();
     while (it != end) {
         if ((*it).trimmed().isEmpty()) {
             it = list.erase(it);
