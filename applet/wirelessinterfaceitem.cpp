@@ -97,17 +97,12 @@ void WirelessInterfaceItem::setConnectionInfo()
         case Solid::Control::NetworkInterface::Unavailable:
         case Solid::Control::NetworkInterface::Disconnected:
         case Solid::Control::NetworkInterface::Failed:
-            m_strengthMeter->hide();
             m_connectionInfoIcon->hide();
             break;
         default:
         {
             if (m_activeAccessPoint) {
-                if (m_strengthMeter) {
-                    m_strengthMeter->setValue(m_activeAccessPoint->signalStrength());
-                    m_strengthMeter->show();
-                    m_connectionInfoIcon->show();
-                }
+                m_connectionInfoIcon->show();
             }
             break;
         }
@@ -130,7 +125,6 @@ QList<Solid::Control::AccessPoint*> WirelessInterfaceItem::availableAccessPoints
 
 void WirelessInterfaceItem::setEnabled(bool enable)
 {
-    m_strengthMeter->setEnabled(enable);
     InterfaceItem::setEnabled(enable);
 }
 

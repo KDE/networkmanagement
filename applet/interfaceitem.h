@@ -1,6 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -115,7 +115,6 @@ protected:
     Plasma::Label * m_connectionNameLabel;
     QGraphicsLinearLayout * m_connectionInfoLayout;
     Plasma::Label * m_connectionInfoLabel;
-    Plasma::Meter * m_strengthMeter;
     Plasma::Label * m_connectionInfoStrengthLabel;
     Plasma::IconWidget * m_connectionInfoIcon;
     NameDisplayMode m_nameMode;

@@ -1,6 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -49,7 +49,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_iface(iface),
     m_connectionNameLabel(0),
     m_connectionInfoLabel(0),
-    m_strengthMeter(0),
     m_nameMode(mode),
     m_enabled(false),
     m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
@@ -94,9 +93,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setMaximumHeight(22);
     m_connectButton->setMaximumWidth(22);
-    m_connectButton->setIcon("dialog-ok");
+    m_connectButton->setIcon("dialog-cancel");
     m_connectButton->setToolTip(i18n("Disconnect"));
-    //m_connectButton->hide(); // Shown when hovered
+    m_connectButton->hide(); // Shown when hovered
 
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(connectButtonClicked()));
 
@@ -115,24 +114,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_connectionInfoLabel->nativeWidget()->setWordWrap(false);
     m_connectionInfoLabel->setText(i18n("<b>IP Address:</b> dum.my.ip.addr"));
     m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 2, Qt::AlignCenter);
-
-    if (m_iface->type() == Solid::Control::NetworkInterface::Ieee80211 ||
-            m_iface->type() == Solid::Control::NetworkInterface::Cdma ||
-            m_iface->type() == Solid::Control::NetworkInterface::Gsm ) {
-        // Signal strength meter
-        int meterHeight = 12;
-        m_strengthMeter = new Plasma::Meter(this);
-        m_strengthMeter->setMinimum(0);
-        m_strengthMeter->setMaximum(100);
-        m_strengthMeter->setValue(0);
-        m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
-        m_strengthMeter->setPreferredSize(QSizeF(48, meterHeight));
-        m_strengthMeter->setMaximumWidth(48);
-        m_strengthMeter->setMaximumHeight(meterHeight);
-        m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        m_strengthMeter->hide();
-        m_layout->addItem(m_strengthMeter, 2, 0, 1, 1, Qt::AlignCenter);
-    }
 
     //       security
     m_connectionInfoIcon = new Plasma::IconWidget(this);
@@ -194,13 +175,6 @@ void InterfaceItem::setEnabled(bool enable)
     m_ifaceNameLabel->setEnabled(enable);
     m_connectButton->setEnabled(enable);
     m_connectionInfoIcon->setEnabled(enable);
-    if (m_strengthMeter) {
-        if (enable) {
-            m_strengthMeter->show();
-        } else {
-            m_strengthMeter->hide();
-        }
-    }
 }
 
 InterfaceItem::~InterfaceItem()
@@ -318,6 +292,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
             setEnabled(true);
             break;
         case Solid::Control::NetworkInterface::Unmanaged:
+        case Solid::Control::NetworkInterface::Failed:
         case Solid::Control::NetworkInterface::UnknownState:
             setEnabled(false);
             break;
