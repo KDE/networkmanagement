@@ -192,7 +192,7 @@ QGraphicsItem * NMExtenderItem::widget()
 // Interfaces
 void NMExtenderItem::interfaceAdded(const QString& uni)
 {
-    if (m_interfaces.keys().contains(uni)) {
+    if (m_interfaces.contains(uni)) {
         return;
     }
     kDebug() << "Interface Added.";
