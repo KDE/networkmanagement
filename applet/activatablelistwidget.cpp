@@ -125,12 +125,12 @@ void ActivatableListWidget::listAppeared()
     }
 }
 
-void ActivatableListWidget::disconnectActiveConnection()
+void ActivatableListWidget::deactivateConnection()
 {
     foreach (ActivatableItem* item, m_itemIndex) {
         RemoteInterfaceConnection *conn = item->interfaceConnection();
         if (conn) {
-            conn->disconnect();
+            conn->deactivate();
         }
     }
 }

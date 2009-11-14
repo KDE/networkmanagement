@@ -49,7 +49,7 @@ public Q_SLOTS:
     void activatableRemoved(RemoteActivatable *);
     void listDisappeared();
     void listAppeared();
-    void disconnectActiveConnection();
+    void deactivateConnection();
 
 Q_SIGNALS:
     void connectionListUpdated();

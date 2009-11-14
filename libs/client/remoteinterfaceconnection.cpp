@@ -76,10 +76,10 @@ void RemoteInterfaceConnection::handleActivationStateChange(uint state)
 }
 
 
-void RemoteInterfaceConnection::disconnect()
+void RemoteInterfaceConnection::deactivate()
 {
     Q_D(RemoteInterfaceConnection);
-    d->interfaceConnectionIface->disconnect();
+    d->interfaceConnectionIface->deactivate();
 }
 
 // vim: sw=4 sts=4 et tw=100

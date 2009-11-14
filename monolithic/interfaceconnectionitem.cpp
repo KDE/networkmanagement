@@ -193,7 +193,7 @@ QString InterfaceConnectionItem::iconName() const
 void InterfaceConnectionItem::disconnectClicked()
 {
     kDebug();
-    interfaceConnection()->disconnect();
+    interfaceConnection()->deactivate();
 }
 
 void InterfaceConnectionItem::updateToolTip()

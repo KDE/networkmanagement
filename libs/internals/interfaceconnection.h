@@ -73,7 +73,7 @@ public:
      */
     void setHasDefaultRoute(bool hasDefault);
     bool hasDefaultRoute() const;
-    void disconnect();// FIXME: this overloads QObject::disconnect but has totally different meaning
+    void deactivate();
 
 Q_SIGNALS:
     void activationStateChanged(Knm::InterfaceConnection::ActivationState);

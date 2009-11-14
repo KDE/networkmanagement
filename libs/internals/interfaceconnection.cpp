@@ -103,7 +103,7 @@ bool InterfaceConnection::hasDefaultRoute() const
     return m_hasDefaultRoute;
 }
 
-void InterfaceConnection::disconnect()
+void InterfaceConnection::deactivate()
 {
     emit deactivated();
 }
