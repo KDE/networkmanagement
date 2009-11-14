@@ -80,6 +80,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     QString icon;
 
     m_interfaceName = UiUtils::interfaceNameLabel(m_iface->uni());
+    kDebug() << "^^^^^^^^^^^^^^^^^" << m_interfaceName;
 
     m_icon->setIcon(UiUtils::iconName(m_iface));
 
@@ -300,11 +301,13 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
 
     // Update connect button
     if (!m_disconnect) {
-        m_connectButton->setIcon("dialog-ok");
-        m_connectButton->setToolTip(i18n("Connect"));
+        //m_connectButton->setIcon("dialog-ok");
+        //m_connectButton->setToolTip(i18n("Connect"));
+        m_connectButton->hide();
     } else {
         m_connectButton->setIcon("dialog-cancel");
         m_connectButton->setToolTip(i18n("Disconnect"));
+        m_connectButton->show();
     }
     m_connectionNameLabel->setText(lname);
     m_connectionInfoLabel->setText(linfo);

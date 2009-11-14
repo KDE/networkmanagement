@@ -1,5 +1,5 @@
 /*
-Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -37,12 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSizeF>
 
 #include "knmserviceprefs.h"
-
-QString UiUtils::stateDescription()
-{
-    return i18n("FIXME: UiUtils: connecting");
-}
-
 
 QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterface::Type type)
 {
@@ -187,8 +181,8 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
 {
     KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
     QString label;
+    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::SystemNames) {
-        Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
         if (iface) {
             label = iface->interfaceName();
         }
@@ -200,8 +194,16 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
 #else
             label = dev->product();
 #endif
+        kDebug() << dev->vendor() << dev->product();
         } else {
             label = QString(i18nc("Format for <Vendor> <Product>", "%1 - %2", dev->vendor(), dev->product()));
+        }
+    }
+    if (label.isEmpty()) {
+        // if we don't get sensible information from Solid,
+        // let's try to use the type of the interface
+        if (iface) {
+            label = UiUtils::interfaceTypeLabel(iface->type());
         }
     }
     return label;

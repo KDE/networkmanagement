@@ -1,5 +1,5 @@
 /*
-Copyright 2008,2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2008,2009 Sebastian K?gler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -32,12 +32,6 @@ class QSizeF;
 class KNMINTERNALS_EXPORT UiUtils
 {
 public:
-    /**
-     * @param state
-     * @return A human-readable string describing the network state
-     *
-     */
-    static QString stateDescription();
 
     /**
      * @return a human-readable description for the network interface type for use as label
