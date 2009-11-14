@@ -15,7 +15,6 @@ set(knmui_SRCS
    pppwidget.cpp
    pppoewidget.cpp
    security/securitywidget.cpp
-   settinginterface.cpp
    settingwidget.cpp
    connectionwidget.cpp
    ipv4widget.cpp
