@@ -81,7 +81,7 @@ ConnectionPersistence::ConnectionPersistence(KSharedConfig::Ptr config, SecretSt
 
 ConnectionPersistence::~ConnectionPersistence()
 {
-    qDeleteAll(m_persistences.values());
+    qDeleteAll(m_persistences);
 }
 
 Connection * ConnectionPersistence::connection() const

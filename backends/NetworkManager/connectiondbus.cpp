@@ -65,7 +65,7 @@ ConnectionDbus::ConnectionDbus(Knm::Connection * conn)
 
 ConnectionDbus::~ConnectionDbus()
 {
-    qDeleteAll(m_dbus.values());
+    qDeleteAll(m_dbus);
 }
 
 SettingDbus * ConnectionDbus::dbusFor(Setting * setting)
