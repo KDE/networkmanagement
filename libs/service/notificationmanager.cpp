@@ -175,7 +175,7 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
             text = i18nc("@info:status Notification when an interface changes state (%1) due to NowManagedReason","%1 because it is now being managed", stateString);
             break;
         case Solid::Control::NetworkInterface::NowUnmanagedReason:
-            text = i18nc("@info:status Notification when an interface changes state (%1) due to NowUnmanagedReason","%1 because no longer being managed", stateString );
+            text = i18nc("@info:status Notification when an interface changes state (%1) due to NowUnmanagedReason","%1 because it is no longer being managed", stateString );
             break;
         case Solid::Control::NetworkInterface::ConfigFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ConfigFailedReason","%1 because configuration failed", stateString);
@@ -280,7 +280,7 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ConnectionRemovedReason","%1 because the connection was removed", stateString);
             break;
         case Solid::Control::NetworkInterface::UserRequestedReason:
-            text = i18nc("@info:status Notification when an interface changes state (%1) due to UserRequestedReason","%1 at user request", stateString);
+            text = i18nc("@info:status Notification when an interface changes state (%1) due to UserRequestedReason","%1 by request", stateString);
             break;
         case Solid::Control::NetworkInterface::CarrierReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to CarrierReason","%1 because the cable was disconnected", stateString);
