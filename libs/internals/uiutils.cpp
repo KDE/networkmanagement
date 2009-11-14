@@ -194,7 +194,7 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
 #else
             label = dev->product();
 #endif
-        kDebug() << dev->vendor() << dev->product();
+        //kDebug() << "Vendor, Product:" << dev->vendor() << dev->product();
         } else {
             label = QString(i18nc("Format for <Vendor> <Product>", "%1 - %2", dev->vendor(), dev->product()));
         }

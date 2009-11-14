@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // KDE
 #include <KDebug>
+#include <solid/control/networkmanager.h>
 
 // Plasma
 #include <Plasma/Label>
@@ -121,6 +122,16 @@ void ActivatableListWidget::listAppeared()
         if (accept(remote)) {
             createItem(remote);
         }
+    }
+}
+
+void ActivatableListWidget::disconnectActiveConnection()
+{
+    kDebug() << "Active:" << Solid::Control::NetworkManager::activeConnections();
+    foreach (const QString &conn, Solid::Control::NetworkManager::activeConnections()) {
+        kDebug() << "cutting ... " << conn;
+        // FIXME: figure out *which* connection to disconnect
+        Solid::Control::NetworkManager::deactivateConnection(conn);
     }
 }
 

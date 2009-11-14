@@ -90,6 +90,7 @@ protected Q_SLOTS:
 Q_SIGNALS:
     void stateChanged();
     void clicked(int);
+    void disconnectInterface();
 
 protected:
     /**

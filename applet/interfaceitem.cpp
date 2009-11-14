@@ -66,9 +66,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_layout->setRowSpacing(2, 6);
     m_layout->setPreferredWidth(240);
     m_layout->setColumnFixedWidth(0, 48);
-    m_layout->setColumnMinimumWidth(1, 104);
-    m_layout->setColumnFixedWidth(2, 60); // FIXME: spacing?
-    m_layout->setColumnFixedWidth(3, 22); // FIXME: spacing?
+    m_layout->setColumnMinimumWidth(1, 160);
+    m_layout->setColumnFixedWidth(2, 16); // FIXME: spacing?
+    //m_layout->setColumnFixedWidth(3, 22); // FIXME: spacing?
 
     m_icon = new Plasma::IconWidget(this);
     m_icon->setMinimumHeight(48);
@@ -87,22 +87,21 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_ifaceNameLabel = new Plasma::Label(this);
     m_ifaceNameLabel->setText(m_interfaceName);
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
-    m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 2);
+    m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
 
     m_disconnectButton = new Plasma::IconWidget(this);
-    m_disconnectButton->setMaximumHeight(22);
-    m_disconnectButton->setMaximumWidth(22);
+    m_disconnectButton->setMaximumHeight(16);
+    m_disconnectButton->setMaximumWidth(16);
     m_disconnectButton->setIcon("dialog-cancel");
     m_disconnectButton->setToolTip(i18n("Disconnect"));
-    m_disconnectButton->hide(); // Shown when hovered
-
-    connect(m_disconnectButton, SIGNAL(clicked()), this, SLOT(connectButtonClicked()));
+    m_disconnectButton->hide();
+    // forward disconnect signal
+    connect(m_disconnectButton, SIGNAL(clicked()), this, SIGNAL(disconnectInterface()));
 
     m_layout->addItem(m_disconnectButton, 0, 2, 1, 1, Qt::AlignRight);
 
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
-    m_connectionNameLabel->setText(i18n("[not updated yet]")); // TODO: check connection status
     m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
     m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 2);
@@ -111,7 +110,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_connectionInfoLabel = new Plasma::Label(this);
     m_connectionInfoLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionInfoLabel->nativeWidget()->setWordWrap(false);
-    m_connectionInfoLabel->setText(i18n("<b>IP Address:</b> dum.my.ip.addr"));
     m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 2, Qt::AlignCenter);
 
     //       security

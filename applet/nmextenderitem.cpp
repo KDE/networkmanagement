@@ -1,6 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -81,11 +81,6 @@ NMExtenderItem::~NMExtenderItem()
 
 void NMExtenderItem::init()
 {
-    kDebug() << "Adding interfaces initially";
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-        addInterfaceInternal(iface);
-        kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
-    }
     if (m_showWired) {
         createTab(Knm::Activatable::InterfaceConnection);
     }
@@ -101,6 +96,11 @@ void NMExtenderItem::init()
         createTab(Knm::Activatable::
     }
     */
+    kDebug() << "Adding interfaces initially";
+    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+        addInterfaceInternal(iface);
+        kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
+    }
     // hook up signals to allow us to change the connection list depending on APs present, etc
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             SLOT(interfaceAdded(const QString&)));
@@ -252,6 +252,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
                 //createTab(ifaceItem, iface, i18nc("title of the wireless tab", "Wireless"), "network-wireless");
                 kDebug() << "WiFi added";
+                connect(wifiItem, SIGNAL(disconnectInterface()), m_wirelessList, SLOT(disconnectActiveConnection()));
                 break;
             }
             case Solid::Control::NetworkInterface::Serial:
@@ -268,6 +269,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 WiredInterfaceItem* wiredItem = 0;
                 ifaceItem = wiredItem = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
 
+                connect(wiredItem, SIGNAL(disconnectInterface()), m_wiredList, SLOT(disconnectActiveConnection()));
                 // Add a wired tab
                 //createTab(wiredItem, iface, i18nc("title of the wired tab", "Wired"), icon);
                 break;
