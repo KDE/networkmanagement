@@ -82,6 +82,7 @@ protected Q_SLOTS:
      * Remove any connections that were provided by this service
      * from our active connection list
      */
+    void handleConnectionStateChange(int new_state);
     void handleConnectionStateChange(int new_state, int old_state, int reason);
     virtual void itemClicked();
     void pppStats(uint in, uint out);
@@ -110,7 +111,7 @@ protected:
     QGraphicsGridLayout * m_layout;
     QGraphicsLinearLayout * m_infoLayout;
     Plasma::IconWidget * m_icon;
-    Plasma::IconWidget* m_connectButton;
+    Plasma::IconWidget* m_disconnectButton;
     Plasma::Label * m_ifaceNameLabel;
     Plasma::Label * m_connectionNameLabel;
     QGraphicsLinearLayout * m_connectionInfoLayout;
@@ -120,7 +121,6 @@ protected:
     NameDisplayMode m_nameMode;
     bool m_enabled;
 
-    QString m_unavailableText;
     QString m_interfaceName;
     bool m_disconnect;
 };

@@ -50,8 +50,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_connectionNameLabel(0),
     m_connectionInfoLabel(0),
     m_nameMode(mode),
-    m_enabled(false),
-    m_unavailableText(i18nc("Label for network interfaces that cannot be activated", "Unavailable"))
+    m_enabled(false)
 {
     setDrawBackground(true);
     //setAcceptHoverEvents(false);
@@ -80,7 +79,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     QString icon;
 
     m_interfaceName = UiUtils::interfaceNameLabel(m_iface->uni());
-    kDebug() << "^^^^^^^^^^^^^^^^^" << m_interfaceName;
 
     m_icon->setIcon(UiUtils::iconName(m_iface));
 
@@ -91,16 +89,16 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 2);
 
-    m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setMaximumHeight(22);
-    m_connectButton->setMaximumWidth(22);
-    m_connectButton->setIcon("dialog-cancel");
-    m_connectButton->setToolTip(i18n("Disconnect"));
-    m_connectButton->hide(); // Shown when hovered
+    m_disconnectButton = new Plasma::IconWidget(this);
+    m_disconnectButton->setMaximumHeight(22);
+    m_disconnectButton->setMaximumWidth(22);
+    m_disconnectButton->setIcon("dialog-cancel");
+    m_disconnectButton->setToolTip(i18n("Disconnect"));
+    m_disconnectButton->hide(); // Shown when hovered
 
-    connect(m_connectButton, SIGNAL(clicked()), this, SLOT(connectButtonClicked()));
+    connect(m_disconnectButton, SIGNAL(clicked()), this, SLOT(connectButtonClicked()));
 
-    m_layout->addItem(m_connectButton, 0, 2, 1, 1, Qt::AlignRight);
+    m_layout->addItem(m_disconnectButton, 0, 2, 1, 1, Qt::AlignRight);
 
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
@@ -132,8 +130,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
 
     connect(this, SIGNAL(clicked()), this, SLOT(itemClicked()));
 
-    connect(m_iface, SIGNAL(connectionStateChanged(int)),
-            this, SLOT(connectionStateChanged(int)));
     connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)),
             this, SLOT(handleConnectionStateChange(int,int,int)));
     connect(m_iface, SIGNAL(linkUpChanged(bool)), this, SLOT(setActive(bool)));
@@ -174,7 +170,7 @@ void InterfaceItem::setEnabled(bool enable)
     m_connectionInfoLabel->setEnabled(enable);
     m_connectionNameLabel->setEnabled(enable);
     m_ifaceNameLabel->setEnabled(enable);
-    m_connectButton->setEnabled(enable);
+    m_disconnectButton->setEnabled(enable);
     m_connectionInfoIcon->setEnabled(enable);
 }
 
@@ -213,11 +209,11 @@ void InterfaceItem::setConnectionInfo()
     if (m_connectionInfoLabel && m_connectionNameLabel) {
         if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
             if (connectionName().isEmpty()) {
-                m_connectionNameLabel->setText(i18nc("interface is connected", "Connected"));
+                m_connectionNameLabel->setText(i18nc("label of the interface: interface is connected", "Connected"));
             } else {
-                m_connectionNameLabel->setText(i18nc("wireless interface is connected", "Connected to %1", connectionName()));
+                m_connectionNameLabel->setText(i18nc("label of the interface: wireless interface is connected", "Connected to %1", connectionName()));
             }
-            m_connectionInfoLabel->setText(i18nc("ip address of the network interface", "Address: %1", currentIpAddress()));
+            m_connectionInfoLabel->setText(i18nc("label of the interface: ip address of the network interface", "Address: %1", currentIpAddress()));
             //kDebug() << "addresses non-empty" << m_currentIp;
         }
     }
@@ -226,12 +222,12 @@ void InterfaceItem::setConnectionInfo()
 QString InterfaceItem::currentIpAddress()
 {
     if (m_iface->connectionState() != Solid::Control::NetworkInterface::Activated) {
-        return i18n("No IP address.");
+        return i18nc("label of the network interface", "No IP address.");
     }
     Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();
     QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
     if (addresses.isEmpty()) {
-        return i18n("IP display error.");
+        return i18nc("label of the network interface", "IP display error.");
     }
     QHostAddress addr(addresses.first().address());
     return addr.toString();
@@ -251,6 +247,11 @@ void InterfaceItem::handleConnectionStateChange(int new_state, int old_state, in
 {
     Q_UNUSED(old_state);
     Q_UNUSED(reason);
+    connectionStateChanged((Solid::Control::NetworkInterface::ConnectionState)new_state);
+}
+
+void InterfaceItem::handleConnectionStateChange(int new_state)
+{
     connectionStateChanged((Solid::Control::NetworkInterface::ConnectionState)new_state);
 }
 
@@ -301,13 +302,13 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
 
     // Update connect button
     if (!m_disconnect) {
-        //m_connectButton->setIcon("dialog-ok");
-        //m_connectButton->setToolTip(i18n("Connect"));
-        m_connectButton->hide();
+        //m_disconnectButton->setIcon("dialog-ok");
+        //m_disconnectButton->setToolTip(i18n("Connect"));
+        m_disconnectButton->hide();
     } else {
-        m_connectButton->setIcon("dialog-cancel");
-        m_connectButton->setToolTip(i18n("Disconnect"));
-        m_connectButton->show();
+        m_disconnectButton->setIcon("dialog-cancel");
+        m_disconnectButton->setToolTip(i18n("Disconnect"));
+        m_disconnectButton->show();
     }
     m_connectionNameLabel->setText(lname);
     m_connectionInfoLabel->setText(linfo);
