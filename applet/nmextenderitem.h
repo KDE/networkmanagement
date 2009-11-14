@@ -71,6 +71,7 @@ public Q_SLOTS:
     void managerWirelessEnabledChanged(bool);
     void managerWirelessHardwareEnabledChanged(bool);
     void wirelessEnabledToggled(bool checked);
+    void networkingEnabledToggled(bool checked);
     void manageConnections();
     void handleConnectionStateChange(int new_state, int old_state, int reason);
 
@@ -104,6 +105,7 @@ private:
     QGraphicsLinearLayout* m_rightLayout;
     QGraphicsLinearLayout* m_interfaceLayout;
 
+    Plasma::CheckBox* m_networkingCheckBox;
     Plasma::CheckBox* m_rfCheckBox;
     Plasma::IconWidget* m_connectionsButton;
 

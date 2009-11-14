@@ -131,7 +131,15 @@ QGraphicsItem * NMExtenderItem::widget()
         m_leftLayout->addItem(m_interfaceWidget);
         m_leftLayout->addStretch(5);
 
-        // Manage connections and flight-mode buttons
+        // flight-mode checkbox
+        m_networkingCheckBox = new Plasma::CheckBox(m_leftWidget);
+        m_networkingCheckBox->setChecked(Solid::Control::NetworkManager::isNetworkingEnabled());
+        m_networkingCheckBox->setText(i18nc("CheckBox to enable or disable networking completely", "Enable networking"));
+        m_leftLayout->addItem(m_networkingCheckBox);
+        connect(m_networkingCheckBox, SIGNAL(toggled(bool)),
+                this, SLOT(networkingEnabledToggled(bool)));
+
+        // flight-mode checkbox
         m_rfCheckBox = new Plasma::CheckBox(m_leftWidget);
         m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
         m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
@@ -462,6 +470,12 @@ void NMExtenderItem::wirelessEnabledToggled(bool checked)
 {
     kDebug() << "Applet wireless enable switch toggled" << checked;
     Solid::Control::NetworkManager::setWirelessEnabled(checked);
+}
+
+void NMExtenderItem::networkingEnabledToggled(bool checked)
+{
+    kDebug() << "Applet networking enable switch toggled" << checked;
+    Solid::Control::NetworkManager::setNetworkingEnabled(checked);
 }
 
 void NMExtenderItem::managerWirelessEnabledChanged(bool enabled)
