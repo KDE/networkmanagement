@@ -39,6 +39,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDialog>
 #include <KLocale>
+#include <KServiceTypeTrader>
 #include <KStandardDirs>
 
 #include "802_11_wirelesswidget.h"
@@ -53,8 +54,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "security/securitywidget.h"
 #include "security/securitywired8021x.h"
 
+#include "settings/vpn.h"
+
 #include "knmserviceprefs.h"
 #include "connection.h"
+#include "vpnuiplugin.h"
 
 ConnectionSecretsJob::ConnectionSecretsJob(Knm::Connection* connection, const QString &settingName,
                                            const QStringList& secrets, bool requestNew, const QDBusMessage& request)
@@ -131,7 +135,20 @@ void ConnectionSecretsJob::doAskUser()
     } else if ( mSettingName == QLatin1String(NM_SETTING_SERIAL_SETTING_NAME)) {
         m_settingWidget = new PppWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
-        // not supported yet, figure out the type of the vpn plugin, load it and its m_settingWidgetget
+        // get the type of vpn service
+        QString configFile = KStandardDirs::locate("data",
+                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
+        m_connectionPersistence = new Knm::ConnectionPersistence(m_connection,
+                KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
+                (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
+        m_connectionPersistence->load();
+        Knm::VpnSetting * vpnSetting = static_cast<Knm::VpnSetting*>(m_connection->setting(Knm::Setting::Vpn));
+        // load the plugin and get its setting widget
+        QString error;
+        VpnUiPlugin * uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg(vpnSetting->pluginName() ), this, QVariantList(), &error );
+        if (uiPlugin && error.isEmpty()) {
+            m_settingWidget= uiPlugin->widget(m_connection, 0);
+        }
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
         m_settingWidget = new WiredWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME)) {

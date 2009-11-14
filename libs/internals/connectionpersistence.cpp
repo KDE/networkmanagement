@@ -252,6 +252,7 @@ void ConnectionPersistence::walletOpenedForRead(bool success)
             kDebug() << "Reading all entries for connection";
             QMap<QString,QMap<QString,QString> > entries;
             QString key = m_connection->uuid() + QLatin1String("*");
+            bool missingEntry = false;
 
             if (wallet->readMapList(key, entries) == 0) {
                 foreach (Setting * setting, m_connection->settings()) {
@@ -259,14 +260,23 @@ void ConnectionPersistence::walletOpenedForRead(bool success)
 
                     if (entries.contains(settingKey)) {
                         QMap<QString,QString> settingSecrets = entries.value(settingKey);
+                        if (settingSecrets.isEmpty()) {
+                            kDebug() << "no secrets found for" << settingKey;
+                            missingEntry = true;
+                            break;
+                        }
                         kDebug() << settingSecrets;
                         persistenceFor(setting)->restoreSecrets(settingSecrets);
+                    } else if (setting->hasSecrets()) {
+                        missingEntry = true;
                     }
                 }
                 kDebug() << "Check connection:";
                 kDebug() << "secretsAvailable:" << m_connection->secretsAvailable();
-
-                emit loadSecretsResult(EnumError::NoError);
+                if (missingEntry)
+                    emit loadSecretsResult(EnumError::MissingContents);
+                else
+                    emit loadSecretsResult(EnumError::NoError);
             } else {
                 kDebug() << "Wallet::readEntryList for :" << key << " failed";
                 emit loadSecretsResult(EnumError::MissingContents);
