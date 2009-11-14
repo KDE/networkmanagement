@@ -67,7 +67,7 @@ QVariantMap Ipv4Dbus::toMap()
 
   if (!setting->dns().isEmpty()) {
       QList<uint> dbusDns;
-      foreach (QHostAddress dns, setting->dns()) {
+      foreach (const QHostAddress &dns, setting->dns()) {
           dbusDns << htonl(dns.toIPv4Address());
       }
       map.insert("dns", QVariant::fromValue(dbusDns));
@@ -78,7 +78,7 @@ QVariantMap Ipv4Dbus::toMap()
   }
   if (!setting->addresses().isEmpty()) {
       QList<QList<uint> > dbusAddresses;
-      foreach (Solid::Control::IPv4Address addr, setting->addresses()) {
+      foreach (const Solid::Control::IPv4Address &addr, setting->addresses()) {
           QList<uint> dbusAddress;
           dbusAddress << htonl(addr.address())
               << addr.netMask()
@@ -89,7 +89,7 @@ QVariantMap Ipv4Dbus::toMap()
   }
   if (!setting->routes().isEmpty()) {
       QList<QList<uint> > dbusRoutes;
-      foreach (Solid::Control::IPv4Route route, setting->routes()) {
+      foreach (const Solid::Control::IPv4Route &route, setting->routes()) {
           QList<uint> dbusRoute;
           dbusRoute << htonl(route.route())
               << route.prefix()

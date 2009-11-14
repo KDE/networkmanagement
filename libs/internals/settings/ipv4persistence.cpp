@@ -34,7 +34,7 @@ void Ipv4Persistence::load()
   // dns
   QList<QHostAddress> dnsServers;
   QStringList rawDnsServers = m_config->readEntry("dns", QStringList());
-  foreach (QString server, rawDnsServers) {
+  foreach (const QString &server, rawDnsServers) {
       dnsServers.append(QHostAddress(server));
   }
   setting->setDns(dnsServers);
@@ -44,7 +44,7 @@ void Ipv4Persistence::load()
   // addresses
   QList<Solid::Control::IPv4Address> addresses;
   QStringList rawAddresses = m_config->readEntry("addresses", QStringList());
-  foreach (QString rawAddress, rawAddresses) {
+  foreach (const QString &rawAddress, rawAddresses) {
       QStringList parts = rawAddress.split(';');
       if (parts.count() != 3) { // sanity check
           continue;
@@ -59,7 +59,7 @@ void Ipv4Persistence::load()
   // routes
   QList<Solid::Control::IPv4Route> routes;
   QStringList rawRoutes = m_config->readEntry("routes", QStringList());
-  foreach (QString rawRoute, rawRoutes) {
+  foreach (const QString &rawRoute, rawRoutes) {
       QStringList parts = rawRoute.split(';');
       if (parts.count() != 4) { // sanity check
           continue;
@@ -99,7 +99,7 @@ void Ipv4Persistence::save()
   }
 
   QStringList rawDns;
-  foreach (QHostAddress dns, setting->dns()) {
+  foreach (const QHostAddress &dns, setting->dns()) {
     rawDns.append(dns.toString());
   }
 
@@ -108,7 +108,7 @@ void Ipv4Persistence::save()
   m_config->writeEntry("dnssearch", setting->dnssearch());
 
   QStringList rawAddresses;
-  foreach (Solid::Control::IPv4Address addr, setting->addresses()) {
+  foreach (const Solid::Control::IPv4Address &addr, setting->addresses()) {
       QStringList rawAddress;
       rawAddress << QHostAddress(addr.address()).toString()
           << QString::number(addr.netMask())
@@ -118,7 +118,7 @@ void Ipv4Persistence::save()
   m_config->writeEntry("addresses", rawAddresses);
 
   QStringList rawRoutes;
-  foreach (Solid::Control::IPv4Route route, setting->routes()) {
+  foreach (const Solid::Control::IPv4Route &route, setting->routes()) {
       QStringList rawRoute;
       rawRoute << QHostAddress(route.route()).toString()
           << QString::number(route.prefix())
