@@ -127,11 +127,11 @@ void ActivatableListWidget::listAppeared()
 
 void ActivatableListWidget::disconnectActiveConnection()
 {
-    kDebug() << "Active:" << Solid::Control::NetworkManager::activeConnections();
-    foreach (const QString &conn, Solid::Control::NetworkManager::activeConnections()) {
-        kDebug() << "cutting ... " << conn;
-        // FIXME: figure out *which* connection to disconnect
-        Solid::Control::NetworkManager::deactivateConnection(conn);
+    foreach (ActivatableItem* item, m_itemIndex) {
+        RemoteInterfaceConnection *conn = item->interfaceConnection();
+        if (conn) {
+            conn->disconnect();
+        }
     }
 }
 

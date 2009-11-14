@@ -35,6 +35,7 @@ public:
     ActivatableItem(RemoteActivatable *, QGraphicsItem * parent = 0);
     virtual ~ActivatableItem();
     virtual void setupItem() = 0;
+    RemoteInterfaceConnection* interfaceConnection() const;
 signals:
     /** * Indicate that the 'connect' button was clicked.  Used by the containing InterfaceGroup to
      * tell the manager to activate the connection on one of its devices
@@ -45,7 +46,6 @@ protected Q_SLOTS:
 protected:
     RemoteActivatable * m_activatable;
 
-    RemoteInterfaceConnection* interfaceConnection() const;
 };
 
 #endif // ABSTRACTCONNECTABLEITEM_H
