@@ -35,7 +35,7 @@ namespace Solid
 } // namespace Solid
 
 /**
- * Specialised Activatable provider for wireless interfaces
+ * Specialized Activatable provider for wireless interfaces
  * Encapsulates logic governing when and how to show Activatables for them.
  */
 class KNM_EXPORT WirelessNetworkInterfaceActivatableProvider : public NetworkInterfaceActivatableProvider

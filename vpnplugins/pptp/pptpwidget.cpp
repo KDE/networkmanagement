@@ -86,7 +86,7 @@ void PptpSettingWidget::readConfig()
     // General settings
     QStringMap dataMap = d->setting->data();
 
-    // Authentification
+    // Authentication
     QString sGateway = dataMap[NM_PPTP_KEY_GATEWAY];
     if (!sGateway.isEmpty())
     {

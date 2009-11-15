@@ -35,7 +35,7 @@ public:
     PeapWidget(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~PeapWidget();
 
-    // implemenation of EapWidget methods
+    // implementation of EapWidget methods
     bool validate() const;
     void readConfig();
     void writeConfig();

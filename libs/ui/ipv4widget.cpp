@@ -152,7 +152,7 @@ void IpV4Widget::readConfig()
         QList<Solid::Control::IPv4Address> addrList = d->setting->addresses();
         if (!addrList.isEmpty())
         {
-            // show only the fisrt IP address, the rest addresses will be shown
+            // show only the first IP address, the rest addresses will be shown
             // via "Advanced..."
             QNetworkAddressEntry entry;
             // we need to set up IP before prefix/netmask manipulation

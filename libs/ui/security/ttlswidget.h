@@ -35,7 +35,7 @@ public:
     TtlsWidget(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~TtlsWidget();
 
-    // implemenation of EapMethod methods
+    // implementation of EapMethod methods
     bool validate() const;
     void readConfig();
     void writeConfig();

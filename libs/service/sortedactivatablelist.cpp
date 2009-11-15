@@ -242,7 +242,7 @@ bool activatableLessThan(const Knm::Activatable * first, const Knm::Activatable 
 
 int compareDevices(const Knm::Activatable * first, const Knm::Activatable * second)
 {
-    // cheap optimisation!
+    // cheap optimization!
     if (first == second) {
         return 0;
     }

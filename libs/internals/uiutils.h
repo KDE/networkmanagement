@@ -67,7 +67,7 @@ public:
      */
     static int iconSize(const QSizeF size);
 
-    /** This method can be used to retrieve the progess of a connection attempt
+    /** This method can be used to retrieve the progress of a connection attempt
      * as a qreal, for painting progress bars.
      *
      * @return the progress between 0 (disconnected) and 1 (activated).
