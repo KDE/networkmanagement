@@ -1,6 +1,10 @@
 [Desktop Entry]
 Name=Network Management
+Name[en_GB]=Network Management
+Name[uk]=Керування мережею
 Comment=Network status and control utility
+Comment[en_GB]=Network status and control utility
+Comment[uk]=Інструмент стеження за станом і керування мережею
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 Icon=networkmanager

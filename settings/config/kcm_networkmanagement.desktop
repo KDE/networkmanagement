@@ -1,6 +1,11 @@
 [Desktop Entry]
 Name=Network Connections
+Name[en_GB]=Network Connections
+Name[pt]=Ligações de Rede
+Name[uk]=Мережеві з'єднання
 Comment=Add, Edit and Remove network connections
+Comment[en_GB]=Add, Edit and Remove network connections
+Comment[uk]=Додати, змінити або вилучити мережеві з’єднання
 Type=Service
 Exec=kcmshell4 kcm_networkmanagement
 Icon=networkmanager

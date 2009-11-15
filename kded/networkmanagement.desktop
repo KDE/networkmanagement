@@ -1,6 +1,10 @@
 [Desktop Entry]
 Name=EXPERIMENTAL NetworkManager User Settings Service
+Name[en_GB]=EXPERIMENTAL NetworkManager User Settings Service
+Name[uk]=ВИПРОБУВАННЯ: Служба параметрів користувача NetworkManager
 Comment=Provides network configuration to the NetworkManager daemon
+Comment[en_GB]=Provides network configuration to the NetworkManager dæmon
+Comment[uk]=Надає налаштування мережі фоновій службі NetworkManager
 Type=Service
 X-KDE-ServiceTypes=KDEDModule
 X-KDE-ModuleType=Library

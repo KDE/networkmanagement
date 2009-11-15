@@ -1,77 +1,143 @@
 [Global]
 Name=Network Management
+Name[en_GB]=Network Management
+Name[uk]=Керування мережею
 IconName=networkmanager
 Comment=Network Management
+Comment[en_GB]=Network Management
+Comment[uk]=Керування мережею
 Version=3
 
 [Context/connectiontype]
 Name=Network Connection Type
+Name[en_GB]=Network Connection Type
+Name[uk]=Тип мережевого з'єднання
 
 [Event/hwadded]
 Name=Network Interface Attached
+Name[en_GB]=Network Interface Attached
+Name[uk]=Доданий інтерфейс мережі
 Comment=A network interface was attached
+Comment[en_GB]=A network interface was attached
+Comment[uk]=Було додано інтерфейс мережі
 
 [Event/hwremoved]
 Name=Network Interface Removed
+Name[en_GB]=Network Interface Removed
+Name[uk]=Вилучено інтерфейс мережі
 Comment=A network interface was removed
+Comment[en_GB]=A network interface was removed
+Comment[uk]=Було вилучено інтерфейс мережі
 
 [Event/networkappeared]
 Name=Found Wireless Network
+Name[en_GB]=Found Wireless Network
+Name[uk]=Знайдено бездротову мережу
 Comment=A wireless network appeared
+Comment[en_GB]=A wireless network appeared
+Comment[uk]=Встановлено зв’язок з бездротовою мережею
 
 [Event/networkdisappeared]
 Name=Lost Wireless Network
+Name[en_GB]=Lost Wireless Network
+Name[uk]=Втрачено зв’язок з радіомережею
 Comment=A wireless network disappeared
+Comment[en_GB]=A wireless network disappeared
+Comment[uk]=Зв’язок з бездротовою мережею увірвався
 
 [Event/userconnectionattempt]
 Name=Establishing Network Connection
+Name[en_GB]=Establishing Network Connection
+Name[uk]=Встановлення мережевого з'єднання
 Comment=The user started making a connection
+Comment[en_GB]=The user started making a connection
+Comment[uk]=Користувач почав створення з’єднання
 
 [Event/autoconnectionattempt]
 Name=Establishing Network Connection
+Name[en_GB]=Establishing Network Connection
+Name[uk]=Встановлення мережевого з'єднання
 Comment=A connection is being started automatically
+Comment[en_GB]=A connection is being started automatically
+Comment[uk]=Процедуру з’єднання було розпочато автоматично
 Action=Popup
 
 [Event/connecting]
 Name=Establishing Network Connection
+Name[en_GB]=Establishing Network Connection
+Name[uk]=Встановлення мережевого з'єднання
 Comment=A network connection attempt was begun
+Comment[en_GB]=A network connection attempt was begun
+Comment[uk]=Було розпочато спробу встановлення мережевого з’єднання
 Action=Popup
 
 [Event/disconnected]
 Name=Network Connection Disconnected
+Name[en_GB]=Network Connection Disconnected
+Name[uk]=Мережеве з’єднання розірвано
 Comment=A network connection was disconnected
+Comment[en_GB]=A network connection was disconnected
+Comment[uk]=Мережеве з’єднання було розірвано
 
 [Event/connected]
 Name=Network Connection Succeeded
+Name[en_GB]=Network Connection Succeeded
+Name[uk]=Успішне з’єднання з мережею
 Comment=A network connection was established
+Comment[en_GB]=A network connection was established
+Comment[uk]=Було встановлено з’єднання з мережею
 Action=Popup
 
 [Event/connfailed]
 Name=Network Connection Failed
+Name[en_GB]=Network Connection Failed
+Name[uk]=Спроба встановлення з'єднання зазнала невдачі
 Comment=A network connection attempt failed
+Comment[en_GB]=A network connection attempt failed
+Comment[uk]=Спроба встановлення з’єднання зазнала невдачі
 Action=Popup
 
 [Event/rfoff]
 Name=Radio Hardware Switched Off
+Name[en_GB]=Radio Hardware Switched Off
+Name[uk]=Радіозв’язок апаратно вимкнено
 Comment=Wireless transceivers disabled by hardware switch
+Comment[en_GB]=Wireless transceivers disabled by hardware switch
+Comment[uk]=Бездротовий приймач-передавач було вимкнено апаратним тумблером
 Action=Popup
 
 [Event/rfon]
 Name=Radio Hardware Switched On
+Name[en_GB]=Radio Hardware Switched On
+Name[uk]=Радіозв’язок апаратно увімкнено
 Comment=Wireless transceivers enabled
+Comment[en_GB]=Wireless transceivers enabled
+Comment[uk]=Увімкнено бездротовий приймач-передавач
 Action=Popup
 
 [Event/lowsignal]
 Name=Low Wireless Signal Strength
+Name[en_GB]=Low Wireless Signal Strength
+Name[uk]=Низька потужність радіосигналу
 Comment=The wireless signal strength is low
+Comment[en_GB]=The wireless signal strength is low
+Comment[uk]=Занизька потужність радіосигналу
 Action=Popup
 
 [Event/ifacestatechange]
 Name=Interface changed state
+Name[en_GB]=Interface changed state
+Name[uk]=Змінений стан інтерфейсу
 Comment=An interface changed state
+Comment[en_GB]=An interface changed state
+Comment[uk]=Змінений стан інтерфейсу
 
 [Event/networkingdisabled]
 Name=Network management disabled
+Name[en_GB]=Network management disabled
+Name[uk]=Керування мережею вимкнено
 Comment=The network management subsystem was stopped or restarted
+Comment[en_GB]=The network management subsystem was stopped or restarted
+Comment[uk]=Систему керування мережею було зупинено або перезапущено
 Action=Popup
 
