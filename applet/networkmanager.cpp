@@ -699,14 +699,4 @@ bool NetworkManagerApplet::hasInterfaceOfType(Solid::Control::NetworkInterface::
     return false;
 }
 
-void NetworkManagerApplet::popupEvent(bool show)
-{
-    // Notify the wireless extender of popup events so it can revert its hidden wireless network
-    // item to button mode
-    if (show && m_extenderItem) {
-        m_extenderItem->switchToDefaultTab();
-    }
-    return;
-}
-
 #include "networkmanager.moc"

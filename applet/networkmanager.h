@@ -104,12 +104,6 @@ protected Q_SLOTS:
     // called by Plasma::ToolTipManager
     void toolTipAboutToShow();
 
-protected:
-    /**
-     * Reimplemented from Plasma::PopupApplet
-     */
-    void popupEvent(bool);
-
 private Q_SLOTS:
     void networkInterfaceAdded(const QString& = QString());
     void networkInterfaceRemoved(const QString&);

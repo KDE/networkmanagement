@@ -48,6 +48,7 @@ private Q_SLOTS:
     void setStrength(int strength);
     void update();
     void activationStateChanged(Knm::InterfaceConnection::ActivationState state);
+    void stateChanged();
 
 private:
     RemoteWirelessNetwork * wirelessNetworkItem() const;

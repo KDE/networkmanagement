@@ -1,5 +1,5 @@
 /*
-Copyright 2008,2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2008,2009 Sebastian K?gler <sebas@kde.org>
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
@@ -98,6 +98,7 @@ bool WirelessNetworkItem::readSettings()
 
     setStrength(m_remote->strength());
     connect(m_remote, SIGNAL(changed()), SLOT(update()));
+    connect(m_remote, SIGNAL(changed()), SLOT(stateChanged()));
     connect(m_remote, SIGNAL(strengthChanged(int)), SLOT(setStrength(int)));
 
     Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(interfaceCapabilities, true, (operationMode == Solid::Control::WirelessNetworkInterface::Adhoc), capabilities, wpaFlags, rsnFlags);
@@ -187,6 +188,15 @@ WirelessNetworkItem::~WirelessNetworkItem()
 {
 }
 
+void WirelessNetworkItem::stateChanged()
+{
+    RemoteWirelessInterfaceConnection* remoteconnection = static_cast<RemoteWirelessInterfaceConnection*>(m_activatable);
+    if (remoteconnection) {
+        kDebug() <<  "========== RemoteActivationState Changed: " << remoteconnection->activationState();
+        activationStateChanged(remoteconnection->activationState());
+    }
+}
+
 void WirelessNetworkItem::setStrength(int strength)
 {
     //kDebug() << m_ssid << "signal strength changed from " << m_strength << "to " << strength;
@@ -195,6 +205,7 @@ void WirelessNetworkItem::setStrength(int strength)
     }
     m_strength = strength;
     m_strengthMeter->setValue(m_strength);
+    stateChanged();
 }
 
 void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
@@ -218,7 +229,7 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
         //m_connectButton->setIcon("bookmarks"); // Known connection, we probably have credentials
         //m_connectButton->setText(interfaceConnection()->connectionName());
         switch (m_state) {
-            //Knm::InterfaceConnection::ActivationState
+            //Knm::InterfaceConnectihon::ActivationState
             case Knm::InterfaceConnection::Activated:
                 m_connectButton->setIcon("dialog-ok-apply"); // The active connection
                 t = i18nc("label on the connectabel button", "%1 (connected)", t);

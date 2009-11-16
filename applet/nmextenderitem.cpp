@@ -156,8 +156,8 @@ QGraphicsItem * NMExtenderItem::widget()
         m_connectionsButton->setIcon("networkmanager");
         m_connectionsButton->setOrientation(Qt::Horizontal);
         m_connectionsButton->setText(i18nc("button in general settings extender", "Manage Connections..."));
-        m_connectionsButton->setMaximumHeight(KIconLoader::SizeSmallMedium);
-        m_connectionsButton->setMinimumHeight(KIconLoader::SizeSmallMedium);
+        m_connectionsButton->setMaximumHeight(KIconLoader::SizeMedium);
+        m_connectionsButton->setMinimumHeight(KIconLoader::SizeMedium);
         m_connectionsButton->setDrawBackground(true);
 #if KDE_IS_VERSION(4,2,60)
         m_connectionsButton->setTextBackgroundColor(QColor());
@@ -301,8 +301,8 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
                 m_wirelessList->addType(Knm::Activatable::WirelessInterfaceConnection);
                 m_wirelessList->init();
                 name = i18nc("title of the wireless tab", "Wireless Networks");
-                icon = KIcon("network-wireless");
-                m_tabIndex[Knm::Activatable::WirelessInterfaceConnection] = m_connectionTabs->addTab(icon, name, m_wirelessList);
+                //icon = KIcon("network-wireless");
+                m_tabIndex[Knm::Activatable::WirelessInterfaceConnection] = m_connectionTabs->addTab(QIcon(), name, m_wirelessList);
             }
             break;
         }
@@ -319,8 +319,8 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
                 m_connectionList->addType(Knm::Activatable::VpnInterfaceConnection);
                 m_connectionList->init();
                 name = i18nc("title of the connections tab", "Connections");
-                icon = KIcon("emblem-favorite");
-                m_tabIndex[type] = m_connectionTabs->addTab(icon, name, m_connectionList);
+                //icon = KIcon("emblem-favorite");
+                m_tabIndex[type] = m_connectionTabs->addTab(QIcon(), name, m_connectionList);
             }
             break;
         }
