@@ -40,7 +40,7 @@ class WiredInterfaceItem : public InterfaceItem
 {
 Q_OBJECT
 public:
-    WiredInterfaceItem(Solid::Control::WiredNetworkInterface * iface, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent = 0);
+    WiredInterfaceItem(Solid::Control::WiredNetworkInterface * iface, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent = 0);
     virtual ~WiredInterfaceItem();
 public slots:
     void connectButtonClicked();

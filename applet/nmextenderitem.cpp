@@ -266,8 +266,6 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 break;
             }
         }
-        // Connect tab switching
-        connect(ifaceItem, SIGNAL(clicked(int)), this, SLOT(switchTab(int)));
         // Catch connection changes
         connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
         connect(iface, SIGNAL(linkUpChanged(bool)), this, SLOT(switchToDefaultTab()));

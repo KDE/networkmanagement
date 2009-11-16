@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "remoteinterfaceconnection.h"
 
-WiredInterfaceItem::WiredInterfaceItem(Solid::Control::WiredNetworkInterface * iface, InterfaceItem::NameDisplayMode mode, QGraphicsItem* parent)
+WiredInterfaceItem::WiredInterfaceItem(Solid::Control::WiredNetworkInterface * iface, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
 : InterfaceItem(iface, mode, parent), m_wiredIface(iface)
 {
 }

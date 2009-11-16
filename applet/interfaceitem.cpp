@@ -45,15 +45,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knmserviceprefs.h"
 
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsItem * parent) : Plasma::IconWidget(parent),
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::Frame(parent),
     m_iface(iface),
     m_connectionNameLabel(0),
     m_connectionInfoLabel(0),
     m_nameMode(mode),
     m_enabled(false)
 {
-    setDrawBackground(true);
-    //setAcceptHoverEvents(false);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     m_layout = new QGraphicsGridLayout(this);
@@ -81,8 +79,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_interfaceName = UiUtils::interfaceNameLabel(m_iface->uni());
 
     m_icon->setIcon(UiUtils::iconName(m_iface));
+    m_icon->setAcceptHoverEvents(false);
 
-    setDrawBackground(true);
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
     m_ifaceNameLabel->setText(m_interfaceName);
@@ -117,16 +115,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_connectionInfoIcon->setMinimumHeight(22);
     m_connectionInfoIcon->setMinimumWidth(22);
     m_connectionInfoIcon->setMaximumHeight(22);
-    //m_connectionInfoIcon->setAcceptHoverEvents(false);
     m_layout->addItem(m_connectionInfoIcon, 2, 3, 1, 1, Qt::AlignRight);
     m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
-
-    // Forward state between icon and this widget
-    connect(m_icon, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
-    connect(this, SIGNAL(pressed(bool)), m_icon, SLOT(setPressed(bool)));
-    connect(m_icon, SIGNAL(clicked()), this, SLOT(itemClicked()));
-
-    connect(this, SIGNAL(clicked()), this, SLOT(itemClicked()));
 
     connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)),
             this, SLOT(handleConnectionStateChange(int,int,int)));
@@ -143,11 +133,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     setLayout(m_layout);
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
-}
-
-void InterfaceItem::itemClicked()
-{
-    emit clicked(m_iface->type());
 }
 
 QString InterfaceItem::label()

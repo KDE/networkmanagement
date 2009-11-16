@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "interfaceconnection.h"
 
+#include <Plasma/Frame>
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Meter>
@@ -51,12 +52,12 @@ class RemoteInterfaceConnection;
  * Displays status, updates itself
  * Allows deactivating any active connection
  */
-class InterfaceItem : public Plasma::IconWidget
+class InterfaceItem : public Plasma::Frame
 {
 Q_OBJECT
 public:
     enum NameDisplayMode {InterfaceName, HardwareName};
-    InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode = InterfaceName, QGraphicsItem* parent = 0);
+    InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode = InterfaceName, QGraphicsWidget* parent = 0);
     virtual ~InterfaceItem();
 
     void setNameDisplayMode(NameDisplayMode);
@@ -84,12 +85,10 @@ protected Q_SLOTS:
      */
     void handleConnectionStateChange(int new_state);
     void handleConnectionStateChange(int new_state, int old_state, int reason);
-    virtual void itemClicked();
     void pppStats(uint in, uint out);
 
 Q_SIGNALS:
     void stateChanged();
-    void clicked(int);
     void disconnectInterface();
 
 protected:
