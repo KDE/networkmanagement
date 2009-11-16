@@ -40,8 +40,9 @@ public:
     bool enteredSsidIsDirty() const;
     void setEnteredSsidClean();
     QString enteredSsid() const;
-public Q_SLOTS:
+protected Q_SLOTS:
     void scanClicked();
+    void validate();
 };
 
 #endif // 802_11_WIRELESSWIDGET_H

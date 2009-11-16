@@ -83,4 +83,8 @@ void SecurityWired8021x::readSecrets()
     }
 }
 
+void SecurityWired8021x::validate()
+{
+
+}
 // vim: sw=4 sts=4 et tw=100

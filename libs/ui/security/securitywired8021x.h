@@ -32,6 +32,8 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
+protected Q_SLOTS:
+    void validate();
 private:
     class Private;
     Private * d_ptr;

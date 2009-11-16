@@ -22,7 +22,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <nm-setting-wired.h>
 
-#include <QVBoxLayout>
 #include <QFile>
 
 #include <KDebug>
@@ -37,14 +36,15 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connection.h"
 
-WiredPreferences::WiredPreferences(QWidget *parent, const QVariantList &args)
-: ConnectionPreferences( KGlobal::mainComponent(), parent, args )
+WiredPreferences::WiredPreferences(const QVariantList &args, QWidget *parent)
+: ConnectionPreferences(args, parent)
 {
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Wired);
-    QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(m_connection, i18n("New Wired Connection"), this);
-    layout->addWidget(m_contents);
+
+    m_contents->setConnection(m_connection);
+    m_contents->setDefaultName(i18n("New Wired Connection"));
+
     WiredWidget * wiredWidget = new WiredWidget(m_connection, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
     SecurityWired8021x * securityWidget = new SecurityWired8021x(m_connection, this);

@@ -22,6 +22,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settingwidget_p.h"
 #include <connection.h>
 
+SettingWidgetPrivate::SettingWidgetPrivate()
+: valid(true)
+{
+}
+
 SettingWidget::SettingWidget(Knm::Connection * connection, QWidget* parent)
 : QWidget(parent)
 , d_ptr(new SettingWidgetPrivate)
@@ -36,9 +41,20 @@ SettingWidget::SettingWidget(SettingWidgetPrivate &dd, Knm::Connection * connect
     d_ptr->connection = connection;
 }
 
+SettingWidget::SettingWidget(SettingWidgetPrivate &dd, QWidget* parent)
+: QWidget(parent)
+, d_ptr(&dd)
+{
+}
+
 SettingWidget::~SettingWidget()
 {
     delete d_ptr;
+}
+
+void SettingWidget::setConnection(Knm::Connection * connection)
+{
+    d_ptr->connection = connection;
 }
 
 Knm::Connection * SettingWidget::connection() const
@@ -52,9 +68,10 @@ void SettingWidget::readSecrets()
     //default impl does nothing
 }
 
-bool SettingWidget::validate() const
+bool SettingWidget::isValid() const
 {
-    return true;
+    Q_D(const SettingWidget);
+    return d->valid;
 }
 
 // vim: sw=4 sts=4 et tw=100

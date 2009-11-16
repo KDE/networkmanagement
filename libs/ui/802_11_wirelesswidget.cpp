@@ -50,9 +50,13 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
 {
     Q_D(Wireless80211Widget);
     d->ui.setupUi(this);
+    d->valid = false; //until there is a SSID at least
+    // setup validation
+    connect(d->ui.ssid, SIGNAL(textChanged(const QString&)), SLOT(validate()));
     d->proposedSsid = ssid;
     d->setting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
     d->ui.ssid->setText(d->proposedSsid);
+
     d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
@@ -168,5 +172,12 @@ void Wireless80211Widget::setEnteredSsidClean()
 {
     Q_D(Wireless80211Widget);
     d->originalSsid = d->ui.ssid->text();
+}
+
+void Wireless80211Widget::validate()
+{
+    Q_D(Wireless80211Widget);
+    d->valid = (d->ui.ssid->text().length() > 0 && d->ui.ssid->text().length() < 33);
+    emit valid(d->valid);
 }
 // vim: sw=4 sts=4 et tw=100

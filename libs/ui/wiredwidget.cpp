@@ -94,4 +94,8 @@ void WiredWidget::writeConfig()
     }
 }
 
+void WiredWidget::validate()
+{
+
+}
 // vim: sw=4 sts=4 et tw=100

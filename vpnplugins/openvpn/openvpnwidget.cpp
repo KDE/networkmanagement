@@ -295,4 +295,9 @@ void OpenVpnSettingWidget::readSecrets()
     d->ui.passPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)).toString());
 }
 
+void OpenVpnSettingWidget::validate()
+{
+
+}
+
 // vim: sw=4 sts=4 et tw=100

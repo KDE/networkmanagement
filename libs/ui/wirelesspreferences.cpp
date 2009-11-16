@@ -20,7 +20,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelesspreferences.h"
 
-#include <QVBoxLayout>
 #include <QFile>
 
 #include <KPluginFactory>
@@ -46,8 +45,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessnetworkinterfaceenvironment.h"
 
-WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, const QVariantList &args)
-: ConnectionPreferences( KGlobal::mainComponent(), parent, args ), m_securityTabIndex(0)
+WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &args, QWidget *parent)
+: ConnectionPreferences(args, parent), m_securityTabIndex(0)
 {
     // at least 1
     Q_ASSERT(args.count());
@@ -82,9 +81,9 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, QWidget *parent, cons
         }
     }
 
-    QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(m_connection, (ssid.isEmpty() ? i18n("New Wireless Connection") : ssid), this);
-    layout->addWidget(m_contents);
+    m_contents->setConnection(m_connection);
+    m_contents->setDefaultName(ssid.isEmpty() ? i18n("New Wireless Connection") : ssid);
+
     m_wirelessWidget = new Wireless80211Widget(m_connection, ssid, this);
     m_securityWidget = new WirelessSecuritySettingWidget(m_connection, iface, ap, this);
 

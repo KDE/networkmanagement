@@ -241,4 +241,8 @@ void VpncSettingWidget::readSecrets()
     fillOnePasswordCombo(d->ui.cboGroupPassOptions, NM_VPNC_KEY_SECRET_TYPE, d->setting->data(), !d->ui.leGroupPassword->text().isEmpty());
 }
 
+void VpncSettingWidget::validate()
+{
+
+}
 // vim: sw=4 sts=4 et tw=100

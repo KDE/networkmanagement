@@ -267,4 +267,9 @@ void PptpSettingWidget::readSecrets()
     d->ui.edt_password->setText(secrets.value(QLatin1String(NM_PPTP_KEY_PASSWORD)).toString());
 }
 
+void PptpSettingWidget::validate()
+{
+
+}
+
 // vim: sw=4 sts=4 et tw=100

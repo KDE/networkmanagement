@@ -43,6 +43,7 @@ public:
     void writeConfig();
     void readSecrets();
 protected Q_SLOTS:
+    void validate();
     void gotOpenVpnOutput();
     void openVpnError(QProcess::ProcessError);
     void openVpnFinished(int, QProcess::ExitStatus);

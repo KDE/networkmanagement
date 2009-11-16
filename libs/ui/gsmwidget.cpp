@@ -95,4 +95,9 @@ void GsmWidget::readSecrets()
     d->ui.puk->setText(d->setting->puk());
 }
 
+void GsmWidget::validate()
+{
+
+}
+
 // vim: sw=4 sts=4 et tw=100

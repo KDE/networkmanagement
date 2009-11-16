@@ -36,22 +36,33 @@ public:
     QString defaultName;
 };
 
-ConnectionWidget::ConnectionWidget(Knm::Connection * connection, const QString & defaultName, QWidget * parent)
-    : SettingWidget(*new ConnectionWidgetPrivate, connection, parent)
+ConnectionWidget::ConnectionWidget(QWidget * parent)
+    : SettingWidget(*new ConnectionWidgetPrivate, parent)
 {
     Q_D(ConnectionWidget);
     d->ui.setupUi(this);
-    d->defaultName = defaultName;
+    d->valid = false; // valid on creation because connection name (id) is empty
 
     d->ui.pushButtonChooseIcon->setToolTip(i18nc("@info:tooltip user action", "Choose a connection icon"));
     // it doesn't make a sense to set up an icon here, lets do it in readConfig
     connect(d->ui.pushButtonChooseIcon, SIGNAL(clicked()), this, SLOT(buttonChooseIconClicked()));
-
-    kDebug() << "Connection id is " << connection->uuid();
+    connect(d->ui.id, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
 }
 
 ConnectionWidget::~ConnectionWidget()
 {
+}
+
+void ConnectionWidget::setConnection(Knm::Connection * connection)
+{
+    kDebug() << "Connection id is " << connection->uuid();
+    d_ptr->connection = connection;
+}
+
+void ConnectionWidget::setDefaultName(const QString & defaultName)
+{
+    Q_D(ConnectionWidget);
+    d->defaultName = defaultName;
 }
 
 QTabWidget * ConnectionWidget::connectionSettingsWidget()
@@ -80,10 +91,11 @@ void ConnectionWidget::writeConfig()
     // connection()->setIconName(..) is already called from buttonChooseIconClicked()
 }
 
-bool ConnectionWidget::validate() const
+void ConnectionWidget::validate()
 {
-    Q_D(const ConnectionWidget);
-    return !d->ui.id->text().isEmpty();
+    Q_D(ConnectionWidget);
+    d->valid = !d->ui.id->text().isEmpty();
+    emit valid(d->valid);
 }
 
 void ConnectionWidget::buttonChooseIconClicked()

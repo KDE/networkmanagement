@@ -62,6 +62,7 @@ public Q_SLOTS:
     void setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterface * iface, Solid::Control::AccessPoint * ap);
 protected Q_SLOTS:
     void securityTypeChanged(int);
+    void validate();
 };
 
 #endif // WIRELESSSECURITYSETTINGWIDGET_H

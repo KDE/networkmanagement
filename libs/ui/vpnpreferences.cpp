@@ -20,7 +20,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "vpnpreferences.h"
 
-#include <QVBoxLayout>
 #include <QFile>
 
 #include <KDebug>
@@ -41,17 +40,15 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 #include "settings/vpn.h"
 
-VpnPreferences::VpnPreferences(QWidget *parent, const QVariantList &args)
-: ConnectionPreferences( KGlobal::mainComponent(), parent, args ), m_uiPlugin(0)
+VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
+: ConnectionPreferences(args, parent ), m_uiPlugin(0)
 {
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Vpn);
+    m_contents->setConnection(m_connection);
+    m_contents->setDefaultName(i18n("New VPN Connection"));
 
-    QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(m_connection, i18n("New VPN Connection"), this);
-    layout->addWidget(m_contents);
     // load the plugin in m_vpnType, get its SettingWidget and add it
-    
     QString error;
     if (args.count() > 1) {  // if we have a vpn type in the args, we are creating a new connection
         m_vpnPluginName = args[1].toString();

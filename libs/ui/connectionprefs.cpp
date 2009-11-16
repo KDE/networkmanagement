@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionprefs.h"
 
 #include <QFile>
+#include <QVBoxLayout>
+
 #include <KTabWidget>
 #include <KDebug>
 #include <KStandardDirs>
@@ -31,11 +33,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionpersistence.h"
 #include "knmserviceprefs.h"
 
-ConnectionPreferences::ConnectionPreferences(const KComponentData& cdata, QWidget * parent, const QVariantList & args)
-    : KCModule( cdata, parent, args ),
-      m_contents(0), m_connection(0), m_connectionPersistence(0)
+ConnectionPreferences::ConnectionPreferences(const QVariantList &, QWidget * parent)
+    : QWidget(parent),
+      m_contents(new ConnectionWidget(this)), m_connection(0), m_connectionPersistence(0)
 {
+    QVBoxLayout * layout = new QVBoxLayout(this);
+    layout->addWidget(m_contents);
 
+    connect(m_contents, SIGNAL(valid(bool)), this, SLOT(validate()));
 }
 
 ConnectionPreferences::~ConnectionPreferences()
@@ -47,21 +52,43 @@ Knm::Connection * ConnectionPreferences::connection() const
     return m_connection;
 }
 
-void ConnectionPreferences::addSettingWidget(SettingWidget* iface)
-{
-    m_settingWidgets.append(iface);
-}
-
 int ConnectionPreferences::addToTabWidget(SettingWidget * widget)
 {
-    int tabIndex = m_contents->connectionSettingsWidget()->addTab(widget, widget->windowTitle());
-    m_settingWidgets.append(widget);
-    return tabIndex;
+    int tabindex = -1;
+    if (!m_settingWidgets.contains(widget)) {
+        tabindex = m_contents->connectionSettingsWidget()->addTab(widget, widget->windowTitle());
+        const bool v = widget->isValid();
+        m_settingWidgets.insert(widget, v);
+
+        connect(widget, SIGNAL(valid(bool)), this, SLOT(updateSettingValidation(bool)));
+        validate();
+    }
+    return tabindex;
+}
+
+void ConnectionPreferences::updateSettingValidation(bool valid)
+{
+    SettingWidget * widget = static_cast<SettingWidget*>(sender());
+    if (m_settingWidgets.contains(widget)) {
+        m_settingWidgets.insert(widget, valid);
+    }
+    validate();
+}
+
+void ConnectionPreferences::validate()
+{
+    bool isValid = true;
+    foreach (const bool validity, m_settingWidgets) {
+        isValid &= validity;
+    }
+    if (m_contents)
+        isValid &= m_contents->isValid();
+
+    emit valid(isValid);
 }
 
 void ConnectionPreferences::load()
 {
-    //kDebug() << kBacktrace();
     // restore the Connection if possible
     QString connectionFile(KStandardDirs::locateLocal("data",
                 Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid()));
@@ -70,7 +97,7 @@ void ConnectionPreferences::load()
     m_connectionPersistence->load();
     // and initialise the UI from the Connection
     m_contents->readConfig();
-    foreach (SettingWidget * wid, m_settingWidgets) {
+    foreach (SettingWidget * wid, m_settingWidgets.keys()) {
         wid->readConfig();
     }
     // asynchronously fetch secrets
@@ -86,7 +113,7 @@ void ConnectionPreferences::save()
 {
     // save the UI to the Connection
     m_contents->writeConfig();
-    foreach (SettingWidget * wid, m_settingWidgets) {
+    foreach (SettingWidget * wid, m_settingWidgets.keys()) {
         wid->writeConfig();
     }
     // persist the Connection
@@ -104,7 +131,7 @@ void ConnectionPreferences::save()
 void ConnectionPreferences::gotSecrets(uint result)
 {
     if (result == Knm::ConnectionPersistence::EnumError::NoError) {
-        foreach (SettingWidget * wid, m_settingWidgets) {
+        foreach (SettingWidget * wid, m_settingWidgets.keys()) {
             wid->readSecrets();
         }
     }

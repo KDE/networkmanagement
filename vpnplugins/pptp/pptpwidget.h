@@ -45,6 +45,7 @@ public:
 protected Q_SLOTS:
     void doAdvancedDialog();
     void setShowPassword(bool);
+    void validate();
 protected:
     PptpSettingWidgetPrivate * d_ptr;
 };

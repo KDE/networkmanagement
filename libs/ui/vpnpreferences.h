@@ -32,7 +32,7 @@ class KNM_EXPORT VpnPreferences : public ConnectionPreferences
 {
 Q_OBJECT
 public:
-    VpnPreferences(QWidget * parent = 0, const QVariantList & args = QVariantList());
+    VpnPreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
     virtual ~VpnPreferences();
     virtual void load();
     bool needsEdits() const;

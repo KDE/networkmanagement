@@ -75,4 +75,8 @@ void CdmaWidget::readSecrets()
 }
 
 
+void CdmaWidget::validate()
+{
+}
+
 // vim: sw=4 sts=4 et tw=100

@@ -20,7 +20,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "gsmconnectioneditor.h"
 
-#include <QVBoxLayout>
 
 #include <KDebug>
 #include <KGlobal>
@@ -32,18 +31,18 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connection.h"
 
-GsmConnectionEditor::GsmConnectionEditor(QWidget *parent, const QVariantList &args)
-: ConnectionPreferences( KGlobal::mainComponent(), parent, args )
+GsmConnectionEditor::GsmConnectionEditor(const QVariantList &args, QWidget *parent)
+: ConnectionPreferences(args, parent)
 {
-    QVBoxLayout * layout = new QVBoxLayout(this);
-
     Q_ASSERT(args.count());
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Gsm);
-    m_contents = new ConnectionWidget(m_connection, i18n("New Cellular Connection"), this);
+    m_contents->setConnection(m_connection);
+    m_contents->setDefaultName(i18n("New Cellular Connection"));
+
     GsmWidget * gsmWidget = new GsmWidget(m_connection, this);
     PppWidget * pppWidget = new PppWidget(m_connection, this);
-    layout->addWidget(m_contents);
+
     addToTabWidget(gsmWidget);
     addToTabWidget(pppWidget);
 }

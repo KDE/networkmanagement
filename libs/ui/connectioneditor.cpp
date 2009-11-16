@@ -68,7 +68,11 @@ void ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariant
     configDialog.setWindowIcon(KIcon("networkmanager"));
 
     ConnectionPreferences * cprefs = editorForConnectionType(false, &configDialog, type, args);
+    connect(cprefs, SIGNAL(valid(bool)), &configDialog, SLOT(enableButtonOk(bool)));
     configDialog.setMainWidget(cprefs);
+
+    cprefs->load();
+    cprefs->validate();
 
     if ( cprefs && configDialog.exec() == QDialog::Accepted ) {
         QStringList changedConnections;
@@ -91,6 +95,10 @@ QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type 
     args << connectionId;
     args += otherArgs;
     ConnectionPreferences * cprefs = editorForConnectionType(useDefaults, &configDialog, type, args);
+
+    connect(cprefs, SIGNAL(valid(bool)), &configDialog, SLOT(enableButtonOk(bool)));
+    cprefs->load();
+    cprefs->validate();
 
     if (!cprefs) {
         return QString();
@@ -136,22 +144,22 @@ ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaul
     ConnectionPreferences * wid = 0;
     switch (type) {
         case Knm::Connection::Wired:
-            wid = new WiredPreferences(parent, args);
+            wid = new WiredPreferences(args, parent);
             break;
         case Knm::Connection::Wireless:
-            wid = new WirelessPreferences(setDefaults, parent, args);
+            wid = new WirelessPreferences(setDefaults, args, parent);
             break;
         case Knm::Connection::Cdma:
-            wid = new CdmaConnectionEditor(parent, args);
+            wid = new CdmaConnectionEditor(args, parent);
             break;
         case Knm::Connection::Gsm:
-            wid = new GsmConnectionEditor(parent, args);
+            wid = new GsmConnectionEditor(args, parent);
             break;
         case Knm::Connection::Vpn:
-            wid = new VpnPreferences(parent, args);
+            wid = new VpnPreferences(args, parent);
             break;
         case Knm::Connection::Pppoe:
-            wid = new PppoePreferences(parent, args);
+            wid = new PppoePreferences(args, parent);
             break;
         default:
             break;

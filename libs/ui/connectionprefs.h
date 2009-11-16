@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef CONNECTIONPREFS_H
 #define CONNECTIONPREFS_H
 
-#include <KCModule>
+#include <QHash>
+#include <QWidget>
+#include <QVariantList>
 
 #include "knm_export.h"
 
@@ -40,7 +42,7 @@ namespace Knm
  * name() and type() so these values can be cached in the main
  * knetworkmanagerrc file
  */
-class KNM_EXPORT ConnectionPreferences : public KCModule
+class KNM_EXPORT ConnectionPreferences : public QWidget
 {
 Q_OBJECT
 public:
@@ -49,7 +51,7 @@ public:
      * Subsequent args are type dependent.
      * Hint: @see WirelessPreferences
      */
-    ConnectionPreferences(const KComponentData&, QWidget * parent = 0, const QVariantList & args = QVariantList());
+    ConnectionPreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
     virtual ~ConnectionPreferences();
 
     Knm::Connection * connection() const;
@@ -57,29 +59,33 @@ public:
     // if this returns true in derived classes
     // it signals that the defaults are good enough to connect
     virtual bool needsEdits() const = 0;
-
 public Q_SLOTS:
-    // reimplemented from KCModule, to call embedded settingswidgets' load/save methods
     virtual void load();
     virtual void save();
+    /**
+     * check validity of all widgets and signal result
+     */
+    void validate();
+signals:
+    void valid(bool);
 protected Q_SLOTS:
     void gotSecrets(uint result);
+    void updateSettingValidation(bool);
+
 protected:
     /**
      * Add widgets to the tabs in the connection widget
      */
     int addToTabWidget(SettingWidget *);
 
-    /**
-     * Add widgets to the KConfig magic but _not_ to the tab widget
-     */
-    void addSettingWidget(SettingWidget *);
+
     /** Main widget for connection info UI, common to all connections **/
     ConnectionWidget * m_contents;
-    /** All setting widgets except m_contents, including connectionTypeWidget*/
-    QList<SettingWidget*> m_settingWidgets;
     Knm::Connection * m_connection;
     Knm::ConnectionPersistence * m_connectionPersistence;
+    /** All setting widgets except m_contents, including connectionTypeWidget, mapped to their
+     * validation state*/
+    QHash<SettingWidget *,bool> m_settingWidgets;
 };
 
 #endif // CONNECTIONPREFS_H

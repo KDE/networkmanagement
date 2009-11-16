@@ -20,7 +20,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "pppoepreferences.h"
 
-#include <QVBoxLayout>
 #include <KGlobal>
 #include <KLocale>
 
@@ -31,14 +30,16 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionwidget.h"
 #include "connection.h"
 
-PppoePreferences::PppoePreferences(QWidget *parent, const QVariantList &args)
-: ConnectionPreferences( KGlobal::mainComponent(), parent, args )
+PppoePreferences::PppoePreferences(const QVariantList &args, QWidget *parent)
+: ConnectionPreferences(args, parent)
 {
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Pppoe);
-    QVBoxLayout * layout = new QVBoxLayout(this);
-    m_contents = new ConnectionWidget(m_connection, i18n("New PPPoE Connection"), this);
-    layout->addWidget(m_contents);
+
+    m_contents->setConnection(m_connection);
+    m_contents->setDefaultName(i18n("New PPPoE Connection"));
+
+
     PppoeWidget * pppoeWidget = new PppoeWidget(m_connection, this);
     WiredWidget * wiredWidget = new WiredWidget(m_connection, this);
     PppWidget * pppWidget = new PppWidget(m_connection, this);

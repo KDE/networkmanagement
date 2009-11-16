@@ -326,4 +326,9 @@ void WirelessSecuritySettingWidget::writeConfig()
     d->setting8021x->setInitialized();
 }
 
+void WirelessSecuritySettingWidget::validate()
+{
+
+}
+
 // vim: sw=4 sts=4 et tw=100

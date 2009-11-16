@@ -30,7 +30,7 @@ class KNM_EXPORT CdmaConnectionEditor : public ConnectionPreferences
 {
 Q_OBJECT
 public:
-    CdmaConnectionEditor(QWidget * parent = 0, const QVariantList & args = QVariantList());
+    CdmaConnectionEditor(const QVariantList & args = QVariantList(), QWidget * parent = 0);
     virtual ~CdmaConnectionEditor();
     virtual bool needsEdits() const { return true; }
 };

@@ -45,6 +45,7 @@ protected Q_SLOTS:
     void dnsSearchEdited(QStringList addresses);
     void showDnsEditor();
     void showDnsSearchEditor();
+    void validate();
 };
 
 #endif

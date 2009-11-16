@@ -47,7 +47,7 @@ public:
      * @param setDefaults if set, the widget and its children should preset any defaults using the
      * information encoded in args
      */
-    WirelessPreferences(bool setDefaults, QWidget * parent = 0, const QVariantList & args = QVariantList());
+    WirelessPreferences(bool setDefaults, const QVariantList & args = QVariantList(), QWidget * parent = 0);
     virtual ~WirelessPreferences();
     virtual bool needsEdits() const;
 private Q_SLOTS:

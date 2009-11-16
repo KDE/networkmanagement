@@ -37,6 +37,7 @@ public:
     void writeConfig();
     void readSecrets();
 protected Q_SLOTS:
+    void validate();
     void chkShowPassToggled();
 };
 

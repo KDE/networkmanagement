@@ -74,4 +74,8 @@ void PppoeWidget::readSecrets()
     d->ui.password->setText(d->setting->password());
 }
 
+void PppoeWidget::validate()
+{
+
+}
 // vim: sw=4 sts=4 et tw=100

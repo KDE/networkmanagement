@@ -390,4 +390,8 @@ void IpV4Widget::showDnsSearchEditor()
     dnsSearchEditor->show();
 }
 
+void IpV4Widget::validate()
+{
+
+}
 // vim: sw=4 sts=4 et tw=100

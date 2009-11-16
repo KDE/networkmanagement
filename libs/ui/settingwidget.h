@@ -38,9 +38,11 @@ class KNM_EXPORT SettingWidget : public QWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(SettingWidget)
 public:
+    SettingWidget(QWidget * parent = 0);
     SettingWidget(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~SettingWidget();
 
+    void setConnection(Knm::Connection *);
     Knm::Connection * connection() const;
     /**
      * populate the UI from the Connection
@@ -59,9 +61,13 @@ public:
     /** 
      * Check that the settings in this widget are valid
      */
-    virtual bool validate() const;
-
+    bool isValid() const;
+signals:
+    void valid(bool);
+protected Q_SLOTS:
+    virtual void validate() = 0;
 protected:
+    SettingWidget(SettingWidgetPrivate &dd, QWidget * parent = 0);
     SettingWidget(SettingWidgetPrivate &dd, Knm::Connection * connection, QWidget * parent = 0);
     SettingWidgetPrivate * d_ptr;
 };

@@ -20,8 +20,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "cdmaconnectioneditor.h"
 
-#include <QVBoxLayout>
-
 #include <KDebug>
 #include <KGlobal>
 #include <KLocale>
@@ -33,18 +31,18 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connection.h"
 
-CdmaConnectionEditor::CdmaConnectionEditor(QWidget *parent, const QVariantList &args)
-: ConnectionPreferences( KGlobal::mainComponent(), parent, args )
+CdmaConnectionEditor::CdmaConnectionEditor(const QVariantList &args, QWidget *parent)
+: ConnectionPreferences(args, parent)
 {
-    QVBoxLayout * layout = new QVBoxLayout(this);
-
     Q_ASSERT(args.count());
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Cdma);
-    m_contents = new ConnectionWidget(m_connection, i18n("New Cellular Connection"), this);
+    m_contents->setConnection(m_connection);
+    m_contents->setDefaultName(i18n("New Cellular Connection"));
+
     CdmaWidget * cdmaWidget = new CdmaWidget(m_connection, this);
     PppWidget * pppWidget = new PppWidget(m_connection, this);
-    layout->addWidget(m_contents);
+
     addToTabWidget(cdmaWidget);
     addToTabWidget(pppWidget);
 }

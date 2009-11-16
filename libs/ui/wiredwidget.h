@@ -35,6 +35,8 @@ public:
     virtual ~WiredWidget();
     void readConfig();
     void writeConfig();
+protected Q_SLOTS:
+    void validate();
 };
 
 #endif
