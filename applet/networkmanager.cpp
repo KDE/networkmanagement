@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkmanager.h"
 
+#include <QAction>
 #include <QIcon>
 #include <QPaintEngine>
 #include <QPainter>
@@ -84,7 +85,6 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
     Plasma::ToolTipManager::self()->registerWidget(this);
     setAspectRatioMode(Plasma::ConstrainedSquare);
-    setHasConfigurationInterface(true);
 
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     if (activeInterface()) {
@@ -193,51 +193,6 @@ void NetworkManagerApplet::updatePixmap()
 {
     m_pixmap = KIcon(UiUtils::iconName(activeInterface())).pixmap(contentsRect().size().toSize());
     update();
-}
-
-void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
-{
-    QWidget *widget = new QWidget(parent);
-    ui.setupUi(widget);
-    parent->setButtons( KDialog::Ok | KDialog::Cancel | KDialog::Apply );
-    parent->addPage(widget, parent->windowTitle(), Applet::icon());
-    connect(parent, SIGNAL(applyClicked()), this, SLOT(configAccepted()));
-    connect(parent, SIGNAL(okClicked()), this, SLOT(configAccepted()));
-
-    ui.showWired->setChecked(m_extenderItem->m_showWired);
-    ui.showWireless->setChecked(m_extenderItem->m_showWireless);
-    ui.showVpn->setChecked(m_extenderItem->m_showVpn);
-    ui.showCellular->setChecked(m_extenderItem->m_showCellular);
-}
-
-void NetworkManagerApplet::configAccepted()
-{
-    KConfigGroup cg = config();
-
-    if (m_extenderItem->m_showWired != ui.showWired->isChecked()) {
-        m_extenderItem->showWired(!m_extenderItem->m_showWired);
-        cg.writeEntry("showWired", m_extenderItem->m_showWired);
-        m_extenderItem->showWired(m_extenderItem->m_showWired);
-        kDebug() << "Wired Changed" << m_extenderItem->m_showWired;
-    }
-    if (m_extenderItem->m_showWireless != ui.showWireless->isChecked()) {
-        m_extenderItem->showWireless(!m_extenderItem->m_showWireless);
-        cg.writeEntry("showWireless", m_extenderItem->m_showWireless);
-        kDebug() << "Wireless Changed" << m_extenderItem->m_showWireless;
-    }
-    if (m_extenderItem->m_showCellular != ui.showCellular->isChecked()) {
-        m_extenderItem->showCellular(!m_extenderItem->m_showCellular);
-        cg.writeEntry("showCellular", m_extenderItem->m_showCellular);
-        kDebug() << "Gsm Changed" << m_extenderItem->m_showCellular;
-    }
-    if (m_extenderItem->m_showVpn != ui.showVpn->isChecked()) {
-        m_extenderItem->showVpn(!m_extenderItem->m_showVpn);
-        cg.writeEntry("showVpn", m_extenderItem->m_showVpn);
-        kDebug() << "VPN Changed" << m_extenderItem->m_showVpn;
-    }
-
-    Plasma::Applet::configNeedsSaving();
-    kDebug() << "config done";
 }
 
 QList<QAction*> NetworkManagerApplet::contextualActions()
@@ -742,15 +697,6 @@ bool NetworkManagerApplet::hasInterfaceOfType(Solid::Control::NetworkInterface::
         }
     }
     return false;
-}
-
-void NetworkManagerApplet::hideVpnGroup()
-{
-    m_extenderItem->m_showVpn = false;
-    KConfigGroup cg = config();
-    cg.writeEntry("showVpn", m_extenderItem->m_showVpn);
-    m_extenderItem->showVpn(false);
-    Plasma::Applet::configNeedsSaving();
 }
 
 void NetworkManagerApplet::popupEvent(bool show)

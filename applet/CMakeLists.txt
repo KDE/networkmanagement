@@ -21,8 +21,6 @@ set(networkmanager_SRCS
     wirelessnetworkitem.cpp
     )
 
-kde4_add_ui_files(networkmanager_SRCS nmConfig.ui )
-
 kde4_add_plugin(plasma_applet_networkmanagement ${networkmanager_SRCS})
 target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmclient knminternals ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} solidcontrol)
 

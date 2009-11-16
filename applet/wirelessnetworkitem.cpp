@@ -199,7 +199,7 @@ void WirelessNetworkItem::setStrength(int strength)
 
 void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
 {
-    kDebug() << m_state << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> changes to" << state;
+    kDebug() << m_state << "changes to" << state;
     if (!m_connectButton) {
         return;
     }
@@ -209,7 +209,7 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
         t = interfaceConnection()->connectionName();
     } else {
         t = m_ssid;
-        kDebug() << "======="<< m_ssid;
+        //kDebug() << "ssid:"<< m_ssid;
         m_connectButton->setText(m_ssid);
         return;
     }
@@ -217,17 +217,16 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
     if (interfaceConnection()) {
         //m_connectButton->setIcon("bookmarks"); // Known connection, we probably have credentials
         //m_connectButton->setText(interfaceConnection()->connectionName());
-        kDebug() << "it's an interfaceconnection";
         switch (m_state) {
             //Knm::InterfaceConnection::ActivationState
             case Knm::InterfaceConnection::Activated:
                 m_connectButton->setIcon("dialog-ok-apply"); // The active connection
                 t = i18nc("label on the connectabel button", "%1 (connected)", t);
-                m_connectButton->setInfoText(i18nc("subtext on connection button", "Connected"));
-                kDebug() << "ACTIVE ---------" << t;
+                //m_connectButton->setInfoText(i18nc("subtext on connection button", "Connected"));
+                //kDebug() << "active" << t;
                 break;
             case Knm::InterfaceConnection::Unknown:
-                m_connectButton->setInfoText(QString());
+                //m_connectButton->setInfoText(QString());
                 break;
             case Knm::InterfaceConnection::Activating:
                 t = i18nc("label on the connectabel button", "%1 (connecting...)", t);
@@ -240,7 +239,7 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
     if (!t.isEmpty()) {
         m_connectButton->setText(t);
     }
-    kDebug() << "state updated" << t;
+    //kDebug() << "state updated" << t;
     m_state = state;
     update();
 }

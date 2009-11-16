@@ -1,6 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PLASMA_NETWORKMANAGER_APPLET_H
 #define PLASMA_NETWORKMANAGER_APPLET_H
 
+class QAction;
+
 #include <kdeversion.h>
 
 #include <plasma/svg.h>
@@ -31,9 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessaccesspoint.h>
 
 #include "../libs/types.h"
-//#include "vpnconnectiongroup.h"
-
-#include "ui_nmConfig.h"
 
 #include <plasma/popupapplet.h>
 
@@ -104,9 +103,8 @@ public Q_SLOTS:
 protected Q_SLOTS:
     // called by Plasma::ToolTipManager
     void toolTipAboutToShow();
-    void configAccepted();
+
 protected:
-    void createConfigurationInterface(KConfigDialog *parent);
     /**
      * Reimplemented from Plasma::PopupApplet
      */
@@ -117,8 +115,6 @@ private Q_SLOTS:
     void networkInterfaceRemoved(const QString&);
     void interfaceConnectionStateChanged();
     void manageConnections();
-    // used to let the user easily hide VPN
-    void hideVpnGroup();
     void updatePixmap();
     void repaint();
 
@@ -136,8 +132,7 @@ private:
     bool m_iconPerDevice;
     Solid::Control::NetworkInterfaceList m_interfaces;
     Plasma::ToolTipContent m_toolTip;
-    // Configuration dialog
-    Ui::nmConfig ui;
+
     RemoteActivatableList * m_activatableList;
     NMExtenderItem* m_extenderItem;
 
