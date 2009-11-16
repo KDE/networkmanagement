@@ -21,10 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessnetworkitem.h"
 
+#include <QAction>
 #include <QLabel>
 #include <QGraphicsGridLayout>
 
 #include <KGlobalSettings>
+#include <KIcon>
 #include <KIconLoader>
 
 #include <Plasma/IconWidget>
@@ -42,6 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent)
 : ActivatableItem(remote, parent),
+    m_connectButton(0),
     m_security(0),
     m_securityIcon(0),
     m_securityIconName(0),
@@ -76,6 +79,7 @@ bool WirelessNetworkItem::readSettings()
         interfaceCapabilities = remoteconnection->interfaceCapabilities();
         kDebug() <<  "========== RemoteActivationState" << remoteconnection->activationState();
         m_state = remoteconnection->activationState();
+        activationStateChanged(m_state);
         connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
                                     SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
         RemoteWirelessObject * wobj  = static_cast<RemoteWirelessObject*>(remoteconnection);
@@ -127,12 +131,13 @@ void WirelessNetworkItem::setupItem()
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
 
+    m_connectButton->setIcon("network-wireless"); // Known connection, we probably have credentials
     if (interfaceConnection()) {
-        m_connectButton->setIcon("bookmarks"); // Known connection, we probably have credentials
         m_connectButton->setText(interfaceConnection()->connectionName());
+        QAction *a = new QAction(KIcon("emblem-favorite"), QString(), m_connectButton);
+        m_connectButton->addIconAction(a);
     } else {
         m_connectButton->setText(m_ssid);
-        m_connectButton->setIcon("network-wireless"); // "New" network
     }
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setOrientation(Qt::Horizontal);
@@ -172,7 +177,8 @@ void WirelessNetworkItem::setupItem()
     connect(this, SIGNAL(pressed(bool)), m_securityIcon, SLOT(setPressed(bool)));
     connect(m_securityIcon, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
     connect(m_securityIcon, SIGNAL(clicked()), this, SLOT(emitClicked()));
-
+    //readSettings();
+    activationStateChanged(m_state);
 
     update();
 }
@@ -193,8 +199,8 @@ void WirelessNetworkItem::setStrength(int strength)
 
 void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
 {
-    kDebug() << m_state << "changes to" << state;
-    if (m_state == state) {
+    kDebug() << m_state << ">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> changes to" << state;
+    if (!m_connectButton) {
         return;
     }
     // Indicate the active interface
@@ -203,30 +209,38 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
         t = interfaceConnection()->connectionName();
     } else {
         t = m_ssid;
+        kDebug() << "======="<< m_ssid;
+        m_connectButton->setText(m_ssid);
+        return;
     }
     //enum ActivationState { Unknown, Activating, Activated };
     if (interfaceConnection()) {
-        m_connectButton->setIcon("bookmarks"); // Known connection, we probably have credentials
-        m_connectButton->setText(interfaceConnection()->connectionName());
-
+        //m_connectButton->setIcon("bookmarks"); // Known connection, we probably have credentials
+        //m_connectButton->setText(interfaceConnection()->connectionName());
+        kDebug() << "it's an interfaceconnection";
         switch (m_state) {
             //Knm::InterfaceConnection::ActivationState
             case Knm::InterfaceConnection::Activated:
                 m_connectButton->setIcon("dialog-ok-apply"); // The active connection
-                t = QString("%1 (connected)").arg(t);
+                t = i18nc("label on the connectabel button", "%1 (connected)", t);
+                m_connectButton->setInfoText(i18nc("subtext on connection button", "Connected"));
+                kDebug() << "ACTIVE ---------" << t;
                 break;
             case Knm::InterfaceConnection::Unknown:
+                m_connectButton->setInfoText(QString());
                 break;
             case Knm::InterfaceConnection::Activating:
-                t = QString("%1 (connecting...)").arg(t);
+                t = i18nc("label on the connectabel button", "%1 (connecting...)", t);
+                m_connectButton->setInfoText(i18nc("subtext on connection button", "Connecting..."));
         }
     } else {
         m_connectButton->setText(m_ssid);
         m_connectButton->setIcon("network-wireless"); // "New" network
     }
-    if (m_connectButton->text() != t) {
+    if (!t.isEmpty()) {
         m_connectButton->setText(t);
     }
+    kDebug() << "state updated" << t;
     m_state = state;
     update();
 }
