@@ -60,7 +60,7 @@ NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::
     m_interfaceWidget(0),
     m_leftLayout(0),
     m_interfaceLayout(0),
-    m_wiredList(0),
+    m_connectionList(0),
     m_wirelessList(0)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -260,7 +260,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 WiredInterfaceItem* wiredItem = 0;
                 ifaceItem = wiredItem = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
 
-                connect(wiredItem, SIGNAL(disconnectInterface()), m_wiredList, SLOT(deactivateConnection()));
+                connect(wiredItem, SIGNAL(disconnectInterface()), m_connectionList, SLOT(deactivateConnection()));
                 // Add a wired tab
                 //createTab(wiredItem, iface, i18nc("title of the wired tab", "Wired"), icon);
                 break;
@@ -288,24 +288,6 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
     QString name;
     KIcon icon;
     switch(type) {
-        case Knm::Activatable::InterfaceConnection:
-        {
-            /*
-                The Connections tab shows all known available connections, wired,
-                wireless and VPN.
-            */
-            if (!m_wiredList) {
-                m_wiredList = new ActivatableListWidget(m_activatables, m_connectionTabs);
-                m_wiredList->addType(Knm::Activatable::InterfaceConnection);
-                m_wiredList->addType(Knm::Activatable::WirelessInterfaceConnection);
-                m_wiredList->addType(Knm::Activatable::VpnInterfaceConnection);
-                m_wiredList->init();
-                name = i18nc("title of the connections tab", "Connections");
-                icon = KIcon("emblem-favorite");
-                m_tabIndex[type] = m_connectionTabs->addTab(icon, name, m_wiredList);
-            }
-            break;
-        }
         case Knm::Activatable::WirelessInterfaceConnection:
         case Knm::Activatable::WirelessNetwork:
         {
@@ -324,15 +306,22 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
             }
             break;
         }
-        case Knm::Activatable::UnconfiguredInterface:
+        default:
         {
-            m_vpnList = new ActivatableListWidget(m_activatables, m_connectionTabs);
-            m_vpnList->addType(Knm::Activatable::VpnInterfaceConnection);
-            m_vpnList->init();
-            name = i18nc("VPN connections tab", "VPN");
-            icon = KIcon("network-wired"); // FIXME: icon
-            kDebug() << "New VPN:" << name;
-            m_tabIndex[Knm::Activatable::VpnInterfaceConnection] = m_connectionTabs->addTab(icon, name, m_vpnList);
+            /*
+                The Connections tab shows all known available connections, wired,
+                wireless and VPN.
+            */
+            if (!m_connectionList) {
+                m_connectionList = new ActivatableListWidget(m_activatables, m_connectionTabs);
+                m_connectionList->addType(Knm::Activatable::InterfaceConnection);
+                m_connectionList->addType(Knm::Activatable::WirelessInterfaceConnection);
+                m_connectionList->addType(Knm::Activatable::VpnInterfaceConnection);
+                m_connectionList->init();
+                name = i18nc("title of the connections tab", "Connections");
+                icon = KIcon("emblem-favorite");
+                m_tabIndex[type] = m_connectionTabs->addTab(icon, name, m_connectionList);
+            }
             break;
         }
     }

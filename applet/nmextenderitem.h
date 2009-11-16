@@ -99,9 +99,8 @@ private:
     Plasma::CheckBox* m_rfCheckBox;
     Plasma::IconWidget* m_connectionsButton;
 
-    ActivatableListWidget* m_wiredList;
+    ActivatableListWidget* m_connectionList;
     ActivatableListWidget* m_wirelessList;
-    ActivatableListWidget* m_vpnList;
 };
 
 #endif // NMEXTENDERITEM_H
