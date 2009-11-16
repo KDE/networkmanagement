@@ -73,10 +73,6 @@ public Q_SLOTS:
     virtual void setEnabled(bool enable);
     // also updates the connection info
     virtual void setActive(bool active);
-    /**
-     * The  button to connect the interface has been clicked
-     */
-    virtual void connectButtonClicked() = 0;
 
 protected Q_SLOTS:
     /**

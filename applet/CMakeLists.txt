@@ -13,7 +13,6 @@ set(networkmanager_SRCS
     activatablelistwidget.cpp
 
     interfaceitem.cpp
-    wiredinterfaceitem.cpp
     wirelessinterfaceitem.cpp
 
     activatableitem.cpp

@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // More own includes
 #include "interfaceitem.h"
 #include "wirelessinterfaceitem.h"
-#include "wiredinterfaceitem.h"
+//#include "wiredinterfaceitem.h"
 #include "activatablelistwidget.h"
 
 NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::Extender * ext)
@@ -257,8 +257,8 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
             default:
             {
                 // Create the interfaceitem
-                WiredInterfaceItem* wiredItem = 0;
-                ifaceItem = wiredItem = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
+                InterfaceItem* wiredItem = 0;
+                ifaceItem = wiredItem = new InterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
 
                 connect(wiredItem, SIGNAL(disconnectInterface()), m_connectionList, SLOT(deactivateConnection()));
                 // Add a wired tab
