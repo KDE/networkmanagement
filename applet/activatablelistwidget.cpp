@@ -66,7 +66,7 @@ void ActivatableListWidget::init()
     connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*)),
             SLOT(activatableAdded(RemoteActivatable *)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
-                    SLOT(activatableRemoved(RemoteActivatable *)));
+            SLOT(activatableRemoved(RemoteActivatable *)));
 
     connect(m_activatables, SIGNAL(appeared()), SLOT(listAppeared()));
     connect(m_activatables, SIGNAL(disappeared()), SLOT(listDisappeared()));
@@ -78,7 +78,7 @@ ActivatableListWidget::~ActivatableListWidget()
 
 void ActivatableListWidget::addType(Knm::Activatable::ActivatableType type)
 {
-    if (!m_types.contains(type)) {
+    if (!(m_types.contains(type))) {
         m_types.append(type);
     }
 }
@@ -127,10 +127,12 @@ void ActivatableListWidget::listAppeared()
 
 void ActivatableListWidget::deactivateConnection()
 {
+    kDebug() << "deactivating ...";
     foreach (ActivatableItem* item, m_itemIndex) {
         RemoteInterfaceConnection *conn = item->interfaceConnection();
         if (conn) {
             conn->deactivate();
+            kDebug() << "... done ";
         }
     }
 }

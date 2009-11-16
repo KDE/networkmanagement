@@ -260,7 +260,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
                 //createTab(ifaceItem, iface, i18nc("title of the wireless tab", "Wireless"), "network-wireless");
                 kDebug() << "WiFi added";
-                connect(wifiItem, SIGNAL(disconnectInterface()), m_wirelessList, SLOT(disconnectActiveConnection()));
+                connect(wifiItem, SIGNAL(disconnectInterface()), m_wirelessList, SLOT(deactivateConnection()));
                 break;
             }
             case Solid::Control::NetworkInterface::Serial:
@@ -277,7 +277,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 WiredInterfaceItem* wiredItem = 0;
                 ifaceItem = wiredItem = new WiredInterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
 
-                connect(wiredItem, SIGNAL(disconnectInterface()), m_wiredList, SLOT(disconnectActiveConnection()));
+                connect(wiredItem, SIGNAL(disconnectInterface()), m_wiredList, SLOT(deactivateConnection()));
                 // Add a wired tab
                 //createTab(wiredItem, iface, i18nc("title of the wired tab", "Wired"), icon);
                 break;
@@ -309,12 +309,18 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
     switch(type) {
         case Knm::Activatable::InterfaceConnection:
         {
+            /*
+                The Connections tab shows all known available connections, wired,
+                wireless and VPN.
+            */
             if (!m_wiredList) {
                 m_wiredList = new ActivatableListWidget(m_activatables, m_connectionTabs);
                 m_wiredList->addType(Knm::Activatable::InterfaceConnection);
+                m_wiredList->addType(Knm::Activatable::WirelessInterfaceConnection);
+                m_wiredList->addType(Knm::Activatable::VpnInterfaceConnection);
                 m_wiredList->init();
-                name = i18nc("title of the wired tab", "Wired");
-                icon = KIcon("network-wired");
+                name = i18nc("title of the connections tab", "Connections");
+                icon = KIcon("emblem-favorite");
                 m_tabIndex[type] = m_connectionTabs->addTab(icon, name, m_wiredList);
             }
             break;
@@ -322,15 +328,17 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
         case Knm::Activatable::WirelessInterfaceConnection:
         case Knm::Activatable::WirelessNetwork:
         {
+            /*
+                The Wireless Networks tab shows all wireless networks, preconfigured
+                and new.
+            */
             if (!m_wirelessList) {
                 m_wirelessList = new ActivatableListWidget(m_activatables, m_connectionTabs);
-                m_wirelessList->addType(Knm::Activatable::WirelessInterfaceConnection);
                 m_wirelessList->addType(Knm::Activatable::WirelessNetwork);
+                m_wirelessList->addType(Knm::Activatable::WirelessInterfaceConnection);
                 m_wirelessList->init();
-                name = i18nc("title of the wireless tab", "Wireless");
+                name = i18nc("title of the wireless tab", "Wireless Networks");
                 icon = KIcon("network-wireless");
-                // All wireless stuff goes into one tab, marked as WirelessInterfaceConnection
-                // (no separation between those connections and WirelessNetworks)
                 m_tabIndex[Knm::Activatable::WirelessInterfaceConnection] = m_connectionTabs->addTab(icon, name, m_wirelessList);
             }
             break;
