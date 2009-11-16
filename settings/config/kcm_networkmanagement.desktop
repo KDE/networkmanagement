@@ -2,10 +2,17 @@
 Name=Network Connections
 Name[en_GB]=Network Connections
 Name[pt]=Ligações de Rede
+Name[sv]=Nätverksanslutningar
+Name[tr]=Ağ Bağlantıları
 Name[uk]=Мережеві з'єднання
+Name[x-test]=xxNetwork Connectionsxx
 Comment=Add, Edit and Remove network connections
 Comment[en_GB]=Add, Edit and Remove network connections
+Comment[pt]=Adicionar, Editar e Remover as Ligações de Rede
+Comment[sv]=Lägg till, redigera och ta bort nätverksanslutningar
+Comment[tr]=Ağ bağlantısı ekle, düzenle ve sil
 Comment[uk]=Додати, змінити або вилучити мережеві з’єднання
+Comment[x-test]=xxAdd, Edit and Remove network connectionsxx
 Type=Service
 Exec=kcmshell4 kcm_networkmanagement
 Icon=networkmanager
