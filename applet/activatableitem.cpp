@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdebug.h>
 #include "remoteactivatable.h"
 
-ActivatableItem::ActivatableItem(RemoteActivatable * remote, QGraphicsItem * parent) : Plasma::IconWidget(parent), m_activatable(remote)
+ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * parent) : Plasma::IconWidget(parent), m_activatable(remote)
 {
     setDrawBackground(true);
 }
