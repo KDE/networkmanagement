@@ -62,6 +62,14 @@ OpenVpnSettingWidget::OpenVpnSettingWidget(Knm::Connection * connection, QWidget
     connect(d->openvpnProcess, SIGNAL(finished(int,QProcess::ExitStatus)), this, SLOT(openVpnFinished(int,QProcess::ExitStatus)));
 
     d->openvpnProcess->setProgram(openVpnBinary, args);
+
+    // use requesters' urlSelected signals to set other requester's startDirs to save clicking
+    // around the filesystem
+    QList<const KUrlRequester *> requesters;
+    requesters << d->ui.x509CaFile << d->ui.x509Cert << d->ui.x509Key << d->ui.pskSharedKey << d->ui.passCaFile << d->ui.x509PassCaFile << d->ui.x509PassCert << d->ui.x509PassKey << d->ui.kurlTlsAuthKey;
+    foreach (const KUrlRequester * requester, requesters) {
+        connect(requester, SIGNAL(urlSelected(const KUrl &)), this, SLOT(updateStartDir(const KUrl&)));
+    }
 }
 
 OpenVpnSettingWidget::~OpenVpnSettingWidget()
@@ -298,6 +306,15 @@ void OpenVpnSettingWidget::readSecrets()
 void OpenVpnSettingWidget::validate()
 {
 
+}
+
+void OpenVpnSettingWidget::updateStartDir(const KUrl & url)
+{
+    QList<KUrlRequester *> requesters;
+    requesters << d->ui.x509CaFile << d->ui.x509Cert << d->ui.x509Key << d->ui.pskSharedKey << d->ui.passCaFile << d->ui.x509PassCaFile << d->ui.x509PassCert << d->ui.x509PassKey << d->ui.kurlTlsAuthKey;
+    foreach (KUrlRequester * requester, requesters) {
+        requester->setStartDir(KUrl(url.directory()));
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100
