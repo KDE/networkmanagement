@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Other
 Name[en_GB]=Other
+Name[et]=Muu
 Name[pt]=Outra
 Name[sv]=Övriga
 Name[tr]=Diğer
@@ -8,6 +9,7 @@ Name[uk]=Інше
 Name[x-test]=xxOtherxx
 Comment=Configure the Network Management tool
 Comment[en_GB]=Configure the Network Management tool
+Comment[et]=Võrguhalduri seadistamine
 Comment[pt]=Configurar a ferramenta de Gestão da Rede
 Comment[sv]=Anpassa nätverkshanteringsverktyget
 Comment[tr]=Ağ Yönetimi Aracını Yapılandır

@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Network Management
 Name[en_GB]=Network Management
+Name[et]=Võrguhaldur
 Name[pt]=Gestão de Rede
 Name[sv]=Nätverkshantering
 Name[tr]=Ağ Yönetimi
@@ -8,6 +9,7 @@ Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managementxx
 Comment=Network status and control utility
 Comment[en_GB]=Network status and control utility
+Comment[et]=Võrgu oleku ja juhtimise tööriist
 Comment[pt]=Utilitário de estado e controlo da rede
 Comment[sv]=Verktyg för nätverksstatus och kontroll
 Comment[uk]=Інструмент стеження за станом і керування мережею

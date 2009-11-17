@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=EXPERIMENTAL NetworkManager User Settings Service
 Name[en_GB]=EXPERIMENTAL NetworkManager User Settings Service
+Name[et]=Võrguhalduri kasutaja seadistuste teenus
 Name[pt]=Serviço de Configuração do Utilizador do NetworkManager EXPERIMENTAL
 Name[sv]=Nätverkshanterarens användarinställningstjänst (EXPERIMENTELL)
 Name[tr]=DENEYSEL NetworkManager Kullanıcı Ayarları Servisi
@@ -8,6 +9,7 @@ Name[uk]=ВИПРОБУВАННЯ: Служба параметрів корис�
 Name[x-test]=xxEXPERIMENTAL NetworkManager User Settings Servicexx
 Comment=Provides network configuration to the NetworkManager daemon
 Comment[en_GB]=Provides network configuration to the NetworkManager dæmon
+Comment[et]=Võrguseadistuse edastamine võrguhalduri deemonile
 Comment[pt]=Oferece a configuração da rede ao servidor do NetworkManager
 Comment[sv]=Tillhandahåller nätverksinställning för nätverkshanteringsdemonen
 Comment[uk]=Надає налаштування мережі фоновій службі NetworkManager
