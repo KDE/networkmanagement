@@ -42,6 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // networkmanagement applet
 #include "interfaceconnectionitem.h"
 #include "wirelessnetworkitem.h"
+#include "hiddenwirelessnetworkitem.h"
 
 ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent) : Plasma::ScrollWidget(parent),
     m_activatables(activatables),
@@ -100,14 +101,24 @@ ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activata
             ai = wni;
             break;
         }
-        default:
         case Knm::Activatable::InterfaceConnection:
+        case Knm::Activatable::VpnInterfaceConnection:
         {
             kDebug() << "Creating InterfaceConnection" << activatable->deviceUni();
             ai = new InterfaceConnectionItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
             break;
         }
+        case Knm::Activatable::HiddenWirelessInterfaceConnection:
+        {
+            kDebug() << "FIXME: implement HiddenWirelessInterfaceConnection" << activatable->deviceUni();
+            //kDebug() << "Creating InterfaceConnection" << activatable->deviceUni();
+            ai = new HiddenWirelessNetworkItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
+            break;
+        }
+        default:
+            break;
     }
+        //VpnInterfaceConnection,
 
     Q_ASSERT(ai);
     ai->setupItem();
