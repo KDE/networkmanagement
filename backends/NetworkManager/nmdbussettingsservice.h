@@ -46,6 +46,7 @@ Q_OBJECT
 Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings")
 
 public:
+    enum ServiceStatus { Available, AlreadyRunning, AccessDenied, UnknownError };
     NMDBusSettingsService(QObject * parent = 0);
     virtual ~NMDBusSettingsService();
     static const QString SERVICE_USER_SETTINGS;
@@ -57,7 +58,7 @@ public:
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
-    bool isServiceAvailable() const;
+    ServiceStatus serviceStatus() const;
 public Q_SLOTS:
     Q_SCRIPTABLE QList<QDBusObjectPath> ListConnections() const;
 Q_SIGNALS:

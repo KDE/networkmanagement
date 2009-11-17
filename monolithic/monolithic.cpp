@@ -102,10 +102,30 @@ void Monolithic::init()
 
     d->nmSettingsService = new NMDBusSettingsService(connectionList);
 
-    if (!d->nmSettingsService->isServiceAvailable()) {
-        KNetworkManagerServicePrefs::self()->setAutostart(
-                KMessageBox::Yes == KMessageBox::questionYesNo(0, i18nc("@info:status detailed text when client cannot start because another client is already running", "Another NetworkManager client is already running.  Use KNetworkManager in future? "), i18nc("@title:window message when client cannot start because another client is already running", "Network Management already active"), KGuiItem(i18nc("@action:button enable autostart", "Start automatically")), KGuiItem(i18nc("@action:button disable autostart", "Do not start automatically")))
-                );
+    QString errorMessage, errorTitle;
+
+    NMDBusSettingsService::ServiceStatus serviceStatus = d->nmSettingsService->serviceStatus();
+
+    if (serviceStatus != NMDBusSettingsService::Available) {
+
+        if (serviceStatus == NMDBusSettingsService::AccessDenied) {
+            errorMessage = i18nc("@info:status detailed text when client cannot start because dbus security policy prevents it",
+                    "KNetworkManager cannot start because the installation is misconfigured.\nSystem DBUS policy does not allow it to provide user settings;\ncontact your system administrator or distribution.\nKNetworkManager will not start automatically in future.");
+            errorTitle = i18nc("@title:window message when client cannot start because dbus security policy prevents it",
+                    "Installation problem");
+            KNetworkManagerServicePrefs::self()->setAutostart(false);
+            KMessageBox::error(0, errorMessage, errorTitle);
+        }
+        else if (serviceStatus == NMDBusSettingsService::AlreadyRunning) {
+            errorMessage = i18nc("@info:status detailed text when client cannot start because another client is already running",
+                    "Another NetworkManager client is already running.  Use KNetworkManager in future? ");
+            errorTitle = i18nc("@title:window message when client cannot start because another client is already running",
+                    "Network Management already active");
+
+            KNetworkManagerServicePrefs::self()->setAutostart(
+                    KMessageBox::Yes == KMessageBox::questionYesNo(0, errorMessage, errorTitle, KGuiItem(i18nc("@action:button enable autostart", "Start automatically")), KGuiItem(i18nc("@action:button disable autostart", "Do not start automatically")))
+                    );
+        }
         KNetworkManagerServicePrefs::self()->writeConfig();
         QTimer::singleShot(0, this, SLOT(quit()));
     }
@@ -192,7 +212,7 @@ void Monolithic::createTrayIcons()
         kDebug() << "REGISTERED NEW SORTED LIST";
 #endif
         KNetworkManagerTrayIcon * simpleUi = new KNetworkManagerTrayIcon(types, QString::number(types),
-                sortedList, d->nmSettingsService->isServiceAvailable(), sortedList);
+                sortedList, d->nmSettingsService->serviceStatus() == NMDBusSettingsService::Available, sortedList);
 
         QObject::connect(d->nmSettingsService, SIGNAL(serviceAvailable(bool)), simpleUi, SLOT(setActive(bool)));
         sortedList->registerObserver(simpleUi);

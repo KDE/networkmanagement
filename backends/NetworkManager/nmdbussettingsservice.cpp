@@ -50,7 +50,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class NMDBusSettingsServicePrivate
 {
 public:
-    bool active;
+    NMDBusSettingsService::ServiceStatus status;
     uint nextConnectionId;
     QHash<QDBusObjectPath, BusConnection *> pathToConnections;
     QHash<QUuid, BusConnection *> uuidToConnections;
@@ -64,16 +64,25 @@ NMDBusSettingsService::NMDBusSettingsService(QObject * parent)
 : QObject(parent), d_ptr(new NMDBusSettingsServicePrivate)
 {
     Q_D(NMDBusSettingsService);
-    d->active = true;
+    d->status = Available;
     d->nextConnectionId = 0;
 
-    if ( !QDBusConnection::systemBus().interface()->registerService(SERVICE_USER_SETTINGS)) {
+    QDBusReply<QDBusConnectionInterface::RegisterServiceReply> reply = QDBusConnection::systemBus().interface()->registerService(SERVICE_USER_SETTINGS);
+
+    if (reply.value() != QDBusConnectionInterface::ServiceRegistered) {
         // trouble;
         // TODO use QDBusConnectionInterface to get the error and handle AccessDenied as well as the
         // owner error
         kDebug() << "Unable to register service" << QDBusConnection::systemBus().lastError();
-        d->active = false;
+        if (reply.error().type() == QDBusError::AccessDenied) {
+            d->status = AccessDenied;
+        } else if (reply.value() == QDBusConnectionInterface::ServiceNotRegistered) {
+            d->status = AlreadyRunning;
+        } else {
+            d->status = UnknownError;
+        }
     }
+
 
     //declare types
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
@@ -81,14 +90,14 @@ NMDBusSettingsService::NMDBusSettingsService(QObject * parent)
     QDBusConnection dbus = QDBusConnection::systemBus();
     if (!dbus.registerObject(QLatin1String(NM_DBUS_PATH_SETTINGS), this, QDBusConnection::ExportScriptableContents)) {
         kDebug() << "Unable to register settings object " << NM_DBUS_PATH_SETTINGS;
-        d->active = false;
+        d->status = UnknownError;
     }
 }
 
 NMDBusSettingsService::~NMDBusSettingsService()
 {
     Q_D(const NMDBusSettingsService);
-    if ( d->active && !QDBusConnection::systemBus().unregisterService( "org.freedesktop.NetworkManagerUserSettings" ) ) {
+    if ((d->status == Available) && !QDBusConnection::systemBus().unregisterService( "org.freedesktop.NetworkManagerUserSettings" ) ) {
         // trouble;
         kDebug() << "Unable to unregister service";
     }
@@ -111,7 +120,7 @@ void NMDBusSettingsService::handleAdd(Knm::Connection * added)
 
     // only handle connections that come from local storage, not those from the system settings
     // service
-    if (d->active && added->origin() == QLatin1String("ConnectionListPersistence")) {
+    if ((d->status == Available) && added->origin() == QLatin1String("ConnectionListPersistence")) {
         // put it on our bus 
         QDBusObjectPath objectPath;
         BusConnection * busConn = new BusConnection(added, this);
@@ -133,7 +142,7 @@ void NMDBusSettingsService::handleUpdate(Knm::Connection * updated)
 {
     Q_D(NMDBusSettingsService);
 
-    if (d->active && d->uuidToConnections.contains(updated->uuid())) {
+    if ((d->status == Available) && d->uuidToConnections.contains(updated->uuid())) {
         BusConnection * busConn = d->uuidToConnections[updated->uuid()];
         if (busConn) {
             busConn->updateInternal(updated);
@@ -144,7 +153,7 @@ void NMDBusSettingsService::handleUpdate(Knm::Connection * updated)
 void NMDBusSettingsService::handleRemove(Knm::Connection * removed)
 {
     Q_D(NMDBusSettingsService);
-    if (d->active) {
+    if (d->status == Available) {
         BusConnection * busConn = d->uuidToConnections.take(removed->uuid());
         if (busConn) {
             QDBusObjectPath key = d->pathToConnections.key(busConn);
@@ -158,7 +167,7 @@ void NMDBusSettingsService::handleRemove(Knm::Connection * removed)
 void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
 {
     Q_D(NMDBusSettingsService);
-    if (d->active) {
+    if (d->status == Available) {
         Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(added);
         if (ic && ic->activatableType() != Knm::Activatable::HiddenWirelessInterfaceConnection) {
             // listen to the IC
@@ -251,10 +260,10 @@ QList<QDBusObjectPath> NMDBusSettingsService::ListConnections() const
     return pathList;
 }
 
-bool NMDBusSettingsService::isServiceAvailable() const
+NMDBusSettingsService::ServiceStatus NMDBusSettingsService::serviceStatus() const
 {
     Q_D(const NMDBusSettingsService);
-    return d->active;
+    return d->status;
 }
 
 #if QT_VERSION < 0x040500
