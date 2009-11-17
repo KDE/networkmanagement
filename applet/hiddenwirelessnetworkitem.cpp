@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2009 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -27,39 +28,43 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/IconWidget>
 #include <Plasma/LineEdit>
 
-HiddenWirelessNetwork::HiddenWirelessNetwork(QObject * parent) : AbstractWirelessNetwork(parent)
+HiddenWirelessNetworkItem::HiddenWirelessNetworkItem(RemoteActivatable *remote, QGraphicsWidget *parent) : ActivatableItem(remote, parent),
+    m_layout(0),
+    m_connect(0),
+    m_ssidEdit(0)
+{
+    kDebug() << "HIIDDDDDDDDDDDDDEEEEN";
+}
+
+HiddenWirelessNetworkItem::~HiddenWirelessNetworkItem()
 {
 
 }
 
-HiddenWirelessNetwork::~HiddenWirelessNetwork()
-{
 
-}
-
-
-void HiddenWirelessNetwork::setSsid(const QString & ssid)
+void HiddenWirelessNetworkItem::setSsid(const QString & ssid)
 {
     m_ssid = ssid;
 }
 
-QString HiddenWirelessNetwork::ssid() const
+QString HiddenWirelessNetworkItem::ssid() const
 {
     return m_ssid;
 }
 
-int HiddenWirelessNetwork::strength() const
+int HiddenWirelessNetworkItem::strength() const
 {
     return -1;
 }
 
-Solid::Control::AccessPoint * HiddenWirelessNetwork::referenceAccessPoint() const
+Solid::Control::AccessPoint * HiddenWirelessNetworkItem::referenceAccessPoint() const
 {
     return 0;
 }
 
 QString HiddenWirelessNetworkItem::s_defaultText = i18nc("default KLineEdit::clickMessage() for hidden wireless network SSID entry", "Enter hidden SSID and press <enter>");
 
+/*
 HiddenWirelessNetworkItem::HiddenWirelessNetworkItem(QGraphicsItem * parent): AbstractWirelessNetworkItem(parent), m_layout(0), m_connect(0), m_ssidEdit(0)
 {
     m_wirelessNetwork = new HiddenWirelessNetwork(this);
@@ -68,7 +73,7 @@ HiddenWirelessNetworkItem::HiddenWirelessNetworkItem(QGraphicsItem * parent): Ab
 HiddenWirelessNetworkItem::~HiddenWirelessNetworkItem()
 {
 }
-
+*/
 void HiddenWirelessNetworkItem::setupItem()
 {
     if (!m_layout) {
@@ -100,7 +105,7 @@ void HiddenWirelessNetworkItem::connectClicked()
 
 void HiddenWirelessNetworkItem::ssidEntered()
 {
-    qobject_cast<HiddenWirelessNetwork*>(m_wirelessNetwork)->setSsid(m_ssidEdit->text());
+    setSsid(m_ssidEdit->text());
     emitClicked();
 }
 

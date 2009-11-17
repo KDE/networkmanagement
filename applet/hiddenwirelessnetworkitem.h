@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2009 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -33,45 +34,38 @@ namespace Plasma
     class LineEdit;
 }
 
-class HiddenWirelessNetwork : public AbstractWirelessNetwork
+class HiddenWirelessNetworkItem : public ActivatableItem
 {
 Q_OBJECT
-public:
-    HiddenWirelessNetwork(QObject * parent);
-    ~HiddenWirelessNetwork();
-    QString ssid() const;
-    void setSsid(const QString & ssid);
-    int strength() const;
-    Solid::Control::AccessPoint * referenceAccessPoint() const;
-private:
-    QString m_ssid;
-};
 
-class HiddenWirelessNetworkItem : public AbstractWirelessNetworkItem
-{
-Q_OBJECT
-public:
-    HiddenWirelessNetworkItem(QGraphicsItem * parent = 0);
-    virtual ~HiddenWirelessNetworkItem();
-    void setupItem();
-public Q_SLOTS:
-    /*
-     * called if the user hits Esc or the popup is hidden
-     * safe to call repeatedly
-     */
-    void resetSsidEntry();
-private Q_SLOTS:
-    /*
-     * switch into SSID entry mode
-     * safe to call repeatedly
-     */
-    void connectClicked();
-    // called if the user hits Enter
-    void ssidEntered();
-private:
-    static QString s_defaultText;
-    QGraphicsLinearLayout * m_layout;
-    Plasma::IconWidget * m_connect;
-    Plasma::LineEdit * m_ssidEdit;
+    public:
+        HiddenWirelessNetworkItem(RemoteActivatable *remote, QGraphicsWidget *parent = 0);
+        virtual ~HiddenWirelessNetworkItem();
+        void setupItem();
+        QString ssid() const;
+        void setSsid(const QString & ssid);
+        int strength() const;
+        Solid::Control::AccessPoint * referenceAccessPoint() const;
+
+    public Q_SLOTS:
+        /*
+        * called if the user hits Esc or the popup is hidden
+        * safe to call repeatedly
+        */
+        void resetSsidEntry();
+    private Q_SLOTS:
+        /*
+        * switch into SSID entry mode
+        * safe to call repeatedly
+        */
+        void connectClicked();
+        // called if the user hits Enter
+        void ssidEntered();
+    private:
+        static QString s_defaultText;
+        QGraphicsLinearLayout * m_layout;
+        Plasma::IconWidget * m_connect;
+        Plasma::LineEdit * m_ssidEdit;
+        QString m_ssid;
 };
 #endif // HIDDENWIRELESSNETWORKITEM_H
