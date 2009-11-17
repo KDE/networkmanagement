@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Qt
 #include <QSizeF>
 
+//#include "remoteinterfaceconnection.h"
 #include "knmserviceprefs.h"
 
 QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterface::Type type)

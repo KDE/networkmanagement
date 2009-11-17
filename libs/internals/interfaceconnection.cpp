@@ -77,8 +77,7 @@ QString InterfaceConnection::iconName() const
 
 void InterfaceConnection::setActivationState(InterfaceConnection::ActivationState state)
 {
-    if (m_state != state)
-    {
+    if (m_state != state) {
         m_state = state;
         emit changed();
         emit activationStateChanged(m_state);

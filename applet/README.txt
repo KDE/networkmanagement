@@ -20,6 +20,7 @@ Happy hacking!
 * regression: disconnect button doesn't work anymore (stopped working after the /sidsconnect/deactivate patch)
 * integrate nuno/ademmer's new artwork
 * use network-wired-active for active wired connections
+* integrate hiddenwirelessitem into wireless networks tab
 
 == somewhat lower priority ==
 * signals for networking enabled changed seems missing

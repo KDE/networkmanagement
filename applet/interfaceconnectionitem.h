@@ -45,7 +45,6 @@ public:
     void setupItem();
 protected:
     QGraphicsGridLayout * m_layout;
-    Plasma::IconWidget * m_icon;
     Plasma::IconWidget * m_connectButton;
 };
 

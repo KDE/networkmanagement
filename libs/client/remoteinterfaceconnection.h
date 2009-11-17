@@ -52,6 +52,8 @@ public:
 
     QString connectionName() const;
 
+    QString iconName() const;
+
     Knm::InterfaceConnection::ActivationState activationState() const;
 
     void deactivate();

@@ -243,6 +243,8 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
                 t = i18nc("label on the connectabel button", "%1 (connecting...)", t);
                 m_connectButton->setInfoText(i18nc("subtext on connection button", "Connecting..."));
         }
+        m_connectButton->setIcon(interfaceConnection()->iconName());
+
     } else {
         m_connectButton->setText(m_ssid);
         m_connectButton->setIcon("network-wireless"); // "New" network

@@ -63,6 +63,12 @@ QString RemoteInterfaceConnection::connectionName() const
     return d->interfaceConnectionIface->connectionName();
 }
 
+QString RemoteInterfaceConnection::iconName() const
+{
+    Q_D(const RemoteInterfaceConnection);
+    return d->interfaceConnectionIface->iconName();
+}
+
 Knm::InterfaceConnection::ActivationState RemoteInterfaceConnection::activationState() const
 {
     Q_D(const RemoteInterfaceConnection);

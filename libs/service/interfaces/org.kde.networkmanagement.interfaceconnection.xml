@@ -11,6 +11,9 @@
     <method name="connectionName">
       <arg name="name" type="s" direction="out" />
     </method>
+    <method name="iconName">
+      <arg name="iconName" type="s" direction="out" />
+    </method>
     <method name="activationState">
       <arg name="uni" type="i" direction="out" />
     </method>
@@ -21,6 +24,7 @@
     <property name="type" type="u" access="read"/>
     <property name="uuid" type="s" access="read"/>
     <property name="name" type="s" access="read"/>
+    <property name="iconName" type="s" access="read"/>
     <property name="activationState" type="u" access="read"/>
   </interface>
 </node>
