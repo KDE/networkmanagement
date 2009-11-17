@@ -219,6 +219,9 @@ void OpenVpnSettingWidget::writeConfig()
         data.insert( NM_OPENVPN_KEY_CA, d->ui.x509CaFile->url().path().toUtf8());
         data.insert( NM_OPENVPN_KEY_CERT, d->ui.x509Cert->url().path().toUtf8());
         data.insert( NM_OPENVPN_KEY_KEY, d->ui.x509Key->url().path().toUtf8());
+        // The OpenVPM NetworkManager plugin requires that the secrets map be
+        // nonempty, even if there's no real password,
+        secretData.insert(NM_OPENVPN_KEY_NOSECRET, "");
         break;
     case 1:
         contype = NM_OPENVPN_CONTYPE_STATIC_KEY;
