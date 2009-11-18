@@ -8,11 +8,11 @@ interfaceconnectionitem: activatableitem for non-wireless connections
 wirelessnetworkitem: specialised activatableitem for wifi
 (wireless)interfaceitem: paint an interface, in the left column
 
-Happy hacking!
-
 
 
 = TODO =
+
+[ o = done; * = todo ]
 
 o kill right icon in connectionitem
 o fix updating of state of connectionitems
@@ -27,3 +27,7 @@ o indicate default route in interfaceitem
 * signals for networking enabled changed seems missing
 * unavailable for wired -> unplugged
 
+
+Happy hacking!
+
+-- sebas

@@ -23,7 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdebug.h>
 #include "remoteactivatable.h"
 
-ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * parent) : Plasma::IconWidget(parent), m_activatable(remote)
+ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * parent) : Plasma::IconWidget(parent),
+    m_activatable(remote),
+    m_routeIcon(0)
 {
     setDrawBackground(true);
     RemoteInterfaceConnection *remoteconnection = interfaceConnection();
@@ -39,7 +41,7 @@ ActivatableItem::~ActivatableItem()
 void ActivatableItem::emitClicked()
 {
     //HACK this slot needs renaming
-    kDebug() << "EMIT CLICKED";
+    //kDebug() << "EMIT CLICKED";
     if (m_activatable) {
         m_activatable->activate();
     }
@@ -53,14 +55,15 @@ RemoteInterfaceConnection * ActivatableItem::interfaceConnection() const
 
 void ActivatableItem::handleHasDefaultRouteChanged(bool has)
 {
-    // do something nice to show that this connection has the default route
-    if (has) {
-        kDebug() << "We now have the default route";
-        m_routeIcon->show();
-    } else {
-        m_routeIcon->hide();
+    if (m_routeIcon) {
+        // do something nice to show that this connection has the default route
+        if (has) {
+            kDebug() << "We now have the default route";
+            m_routeIcon->show();
+        } else {
+            m_routeIcon->hide();
+        }
     }
 }
-
 
 // vim: sw=4 sts=4 et tw=100

@@ -256,6 +256,8 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
     if (!t.isEmpty()) {
         m_connectButton->setText(t);
     }
+    handleHasDefaultRouteChanged(interfaceConnection()->hasDefaultRoute());
+
     kDebug() << "state updated" << t;
     m_state = state;
     update();
@@ -265,7 +267,6 @@ RemoteWirelessNetwork * WirelessNetworkItem::wirelessNetworkItem() const
 {
     return static_cast<RemoteWirelessNetwork*>(m_activatable);
 }
-
 void WirelessNetworkItem::update()
 {
     //kDebug() << "updating" << m_ssid << wirelessNetworkItem()->strength();

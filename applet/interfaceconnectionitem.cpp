@@ -44,13 +44,6 @@ void InterfaceConnectionItem::setupItem()
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
-    if (interfaceConnection()) {
-        m_connectButton->setIcon(interfaceConnection()->iconName());
-        m_connectButton->setText(interfaceConnection()->connectionName());
-    } else {
-        m_connectButton->setIcon("network-wired");
-        //m_connectButton->setText("missing name");
-    }
     kDebug() << "====> init face connection" << m_connectButton->text();
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setMaximumHeight(rowHeight);
@@ -63,6 +56,19 @@ void InterfaceConnectionItem::setupItem()
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
 
+    m_routeIcon = new Plasma::IconWidget(this);
+    m_routeIcon->setIcon("emblem-favorite");
+    m_routeIcon->setGeometry(QRectF(m_connectButton->geometry().topLeft(), QSizeF(16, 16)));
+    m_routeIcon->hide(); // this will be shown in handleHasDefaultRouteChanged(bool);
+
+    if (interfaceConnection()) {
+        m_connectButton->setIcon(interfaceConnection()->iconName());
+        m_connectButton->setText(interfaceConnection()->connectionName());
+        handleHasDefaultRouteChanged(interfaceConnection()->hasDefaultRoute());
+    } else {
+        m_connectButton->setIcon("network-wired");
+        //m_connectButton->setText("missing name");
+    }
     connect(m_connectButton, SIGNAL(clicked()), this, SIGNAL(clicked()));
     connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
     connect(this, SIGNAL(pressed(bool)), m_connectButton, SLOT(setPressed(bool)));
