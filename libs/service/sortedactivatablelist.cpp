@@ -92,12 +92,11 @@ void SortedActivatableList::handleAdd(Knm::Activatable * activatable)
         // add all vpn connections
         if ((iface && (d->types.testFlag(iface->type())))
                 || (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection)) {
-
             addActivatableInternal(activatable);
-
+            qSort(d->activatables.begin(), d->activatables.end(), activatableLessThan);
+            notifyOnAddActivatable(activatable);
         }
     }
-    qSort(d->activatables.begin(), d->activatables.end(), activatableLessThan);
 }
 
 void SortedActivatableList::handleUpdate(Knm::Activatable *)
