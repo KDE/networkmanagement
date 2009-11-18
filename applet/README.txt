@@ -2,10 +2,11 @@ The structure of the networkmanager applet is is (roughly):
 
 networkmanager: paint icon, initialize the extenderitem inside it
 nmextenderitem: holds interfaceitems and the tab-thing for activatables
-activatablelist: scrollwidget holding the list of activatables, used as tabs
+activatablelistwidget: scrollwidget holding the list of activatables, used as tabs
 activatableitem: base class for painting activatable
-(wireless)interfaceitem: paint an interface, in the left column
+interfaceconnectionitem: activatableitem for non-wireless connections
 wirelessnetworkitem: specialised activatableitem for wifi
+(wireless)interfaceitem: paint an interface, in the left column
 
 Happy hacking!
 
@@ -13,11 +14,11 @@ Happy hacking!
 
 = TODO =
 
-* kill right icon in connectionitem
-* fix updating of state of connectionitems
-* indicate default route in interfaceitem
+o kill right icon in connectionitem
+o fix updating of state of connectionitems
+o indicate default route in interfaceitem
 * fix layouting / scrollwidget for Connections and Wireless Networks tab
-* regression: disconnect button doesn't work anymore (stopped working after the /sidsconnect/deactivate patch)
+* disconnect button disconnects wrong connections
 * integrate nuno/ademmer's new artwork
 * use network-wired-active for active wired connections
 * integrate hiddenwirelessitem into wireless networks tab
