@@ -22,6 +22,12 @@ o indicate default route in interfaceitem
 * integrate nuno/ademmer's new artwork
 * use network-wired-active for active wired connections
 * integrate hiddenwirelessitem into wireless networks tab
+* Check that the plasmoid is robust for
+ * NetworkManager restarts
+ * dbus restarts
+ * kded quit and restart
+ * kded module loaded, but unable to obtain NMUserSettings because another client had it
+ * network interface kernel module unload/reload
 
 == somewhat lower priority ==
 * signals for networking enabled changed seems missing
