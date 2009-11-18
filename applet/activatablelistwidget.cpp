@@ -48,16 +48,15 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_activatables(activatables),
     m_layout(0)
 {
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn); // for testing
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // for testing
     //setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     m_widget = new QGraphicsWidget(this);
-    m_widget->setMinimumSize(240, 50);
+    //m_widget->setMinimumSize(240, 50);
     m_layout = new QGraphicsLinearLayout(m_widget);
     m_layout->setOrientation(Qt::Vertical);
     m_layout->setSpacing(1);
-    m_widget->setLayout(m_layout);
     setWidget(m_widget);
 }
 

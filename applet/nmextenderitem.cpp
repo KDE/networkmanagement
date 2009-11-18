@@ -96,14 +96,15 @@ QGraphicsItem * NMExtenderItem::widget()
     if (!m_widget) {
         kDebug() << "Creating widget";
         m_widget = new QGraphicsWidget(this);
-        m_widget->setMinimumWidth(600);
-        m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        //add the default space of the layout, joys of hardcoded sizes (this hardcoded size can't still be removed, could be an extenderitem bug?)
+        m_widget->setMinimumSize(600+4, 300);
+        m_widget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
 
         m_mainLayout = new QGraphicsGridLayout(m_widget);
         m_widget->setLayout(m_mainLayout);
 
         m_leftWidget = new Plasma::Frame(m_widget);
-        m_leftWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        m_leftWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
         m_interfaceWidget = new QGraphicsWidget(m_leftWidget);
         m_leftLayout = new QGraphicsLinearLayout(m_leftWidget);
         m_leftLayout->setOrientation(Qt::Vertical);
@@ -140,15 +141,16 @@ QGraphicsItem * NMExtenderItem::widget()
 
 
         m_rightWidget = new Plasma::Frame(m_widget);
-        m_rightWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+        m_rightWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
         m_rightLayout = new QGraphicsLinearLayout(m_rightWidget);
         m_rightLayout->setOrientation(Qt::Vertical);
         // Tabs for activatables
         m_connectionTabs = new Plasma::TabBar(m_rightWidget);
         //m_connectionTabs->setTabBarShown(false);
-        //m_connectionTabs->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-        //m_connectionTabs->setPreferredSize(300, 240);
-        m_connectionTabs->setMinimumSize(280, 240);
+        m_connectionTabs->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+	//m_connectionTabs->setMinimumHeight(240);
+        m_connectionTabs->setPreferredHeight(240);
+        //m_connectionTabs->setMinimumSize(280, 240);
 
         m_rightLayout->addItem(m_connectionTabs);
 
