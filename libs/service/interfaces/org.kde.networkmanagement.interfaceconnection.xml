@@ -21,10 +21,14 @@
     <signal name="activationStateChanged">
       <arg name="state" type="u" direction="out" />
     </signal>
+    <signal name="hasDefaultRouteChanged">
+      <arg name="hasDefaultRoute" type="b" direction="out"/>
+    </signal>
     <property name="type" type="u" access="read"/>
     <property name="uuid" type="s" access="read"/>
     <property name="name" type="s" access="read"/>
     <property name="iconName" type="s" access="read"/>
     <property name="activationState" type="u" access="read"/>
+    <property name="hasDefaultRoute" type="b" access="read"/>
   </interface>
 </node>

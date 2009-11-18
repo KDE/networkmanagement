@@ -28,6 +28,8 @@ RemoteInterfaceConnection::RemoteInterfaceConnection(RemoteInterfaceConnectionPr
     d->interfaceConnectionIface = new InterfaceConnectionInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
     connect(d->interfaceConnectionIface, SIGNAL(activationStateChanged(uint)),
             this, SLOT(handleActivationStateChange(uint)));
+    connect(d->interfaceConnectionIface, SIGNAL(hasDefaultRouteChanged(bool)),
+            this, SIGNAL(hasDefaultRouteChanged(bool)));
 }
 
 RemoteInterfaceConnection::RemoteInterfaceConnection(const QString &dbusPath, QObject * parent)
@@ -37,6 +39,8 @@ RemoteInterfaceConnection::RemoteInterfaceConnection(const QString &dbusPath, QO
     d->interfaceConnectionIface = new InterfaceConnectionInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
     connect(d->interfaceConnectionIface, SIGNAL(activationStateChanged(uint)),
             this, SLOT(handleActivationStateChange(uint)));
+    connect(d->interfaceConnectionIface, SIGNAL(hasDefaultRouteChanged(bool)),
+            this, SIGNAL(hasDefaultRouteChanged(bool)));
 }
 
 RemoteInterfaceConnection::~RemoteInterfaceConnection()
@@ -74,6 +78,12 @@ Knm::InterfaceConnection::ActivationState RemoteInterfaceConnection::activationS
     Q_D(const RemoteInterfaceConnection);
     uint aState = d->interfaceConnectionIface->activationState();
     return (Knm::InterfaceConnection::ActivationState)aState;
+}
+
+bool RemoteInterfaceConnection::hasDefaultRoute() const
+{
+    Q_D(const RemoteInterfaceConnection);
+    return d->interfaceConnectionIface->hasDefaultRoute();
 }
 
 void RemoteInterfaceConnection::handleActivationStateChange(uint state)

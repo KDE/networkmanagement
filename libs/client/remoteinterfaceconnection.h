@@ -40,6 +40,7 @@ Q_PROPERTY(uint type READ connectionType)
 Q_PROPERTY(QString uuid READ connectionUuid)
 Q_PROPERTY(QString name READ connectionName)
 Q_PROPERTY(uint activationState READ activationState)
+Q_PROPERTY(uint hasDefaultRoute READ hasDefaultRoute)
 
 friend class RemoteActivatableList;
 
@@ -54,11 +55,14 @@ public:
 
     QString iconName() const;
 
+    bool hasDefaultRoute() const;
+
     Knm::InterfaceConnection::ActivationState activationState() const;
 
     void deactivate();
 Q_SIGNALS:
     void activationStateChanged(Knm::InterfaceConnection::ActivationState);
+    void hasDefaultRouteChanged(bool);
 protected Q_SLOTS:
     void handleActivationStateChange(uint);
 protected:
