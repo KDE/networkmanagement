@@ -37,15 +37,19 @@ namespace Plasma
  */
 class InterfaceConnectionItem : public ActivatableItem
 {
-Q_OBJECT
-public:
-    InterfaceConnectionItem(RemoteInterfaceConnection *, QGraphicsItem * parent = 0);
-    virtual ~InterfaceConnectionItem();
-    //RemoteInterfaceConnection * interfaceConnection() const;
-    void setupItem();
-protected:
-    QGraphicsGridLayout * m_layout;
-    Plasma::IconWidget * m_connectButton;
+    Q_OBJECT
+
+    public:
+        InterfaceConnectionItem(RemoteInterfaceConnection *, QGraphicsItem * parent = 0);
+        virtual ~InterfaceConnectionItem();
+        //RemoteInterfaceConnection * interfaceConnection() const;
+        void setupItem();
+
+
+    protected:
+        QGraphicsGridLayout * m_layout;
+        Plasma::IconWidget * m_connectButton;
+
 };
 
 #endif //#define APPLET_CONNECTIONITEM_H

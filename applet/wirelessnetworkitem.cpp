@@ -150,6 +150,11 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
 
+    m_routeIcon = new Plasma::IconWidget(this);
+    m_routeIcon->setIcon("emblem-favorite");
+    m_routeIcon->setGeometry(QRectF(m_connectButton->geometry().topLeft(), QSizeF(16, 16)));
+    m_routeIcon->hide(); // this will be shown in handleHasDefaultRouteChanged(bool);
+
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);
@@ -178,7 +183,6 @@ void WirelessNetworkItem::setupItem()
     connect(this, SIGNAL(pressed(bool)), m_securityIcon, SLOT(setPressed(bool)));
     connect(m_securityIcon, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
     connect(m_securityIcon, SIGNAL(clicked()), this, SLOT(emitClicked()));
-    //readSettings();
     activationStateChanged(m_state);
 
     update();
@@ -204,31 +208,30 @@ void WirelessNetworkItem::setStrength(int strength)
     }
     m_strength = strength;
     m_strengthMeter->setValue(m_strength);
-    //stateChanged();
 }
 
 void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
 {
     if (!m_connectButton) {
-        kDebug() << "no connectbutton";
         return;
     }
     // Indicate the active interface
     QString t;
     if (interfaceConnection()) {
         t = interfaceConnection()->connectionName();
+        if (interfaceConnection()->hasDefaultRoute()) {
+            m_routeIcon->show();
+        } else {
+            m_routeIcon->hide();
+        }
     } else {
         t = m_ssid;
-        //kDebug() << "ssid:"<< m_ssid;
         m_connectButton->setText(m_ssid);
         return;
     }
-    kDebug();
-    //enum ActivationState { Unknown, Activating, Activated };
+
     if (m_state != state && interfaceConnection()) {
-        kDebug() << interfaceConnection()->connectionName() << m_state << " ============> changes to" << state;
         //m_connectButton->setIcon("bookmarks"); // Known connection, we probably have credentials
-        //m_connectButton->setText(interfaceConnection()->connectionName());
         switch (state) {
             //Knm::InterfaceConnectihon::ActivationState
             case Knm::InterfaceConnection::Activated:
@@ -265,7 +268,7 @@ RemoteWirelessNetwork * WirelessNetworkItem::wirelessNetworkItem() const
 
 void WirelessNetworkItem::update()
 {
-    kDebug() << "updating" << m_ssid << wirelessNetworkItem()->strength();
+    //kDebug() << "updating" << m_ssid << wirelessNetworkItem()->strength();
     setStrength(wirelessNetworkItem()->strength());
     return;
 }

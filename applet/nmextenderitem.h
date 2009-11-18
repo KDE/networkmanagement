@@ -61,7 +61,6 @@ public:
 public Q_SLOTS:
     void interfaceAdded(const QString&);
     void interfaceRemoved(const QString&);
-    void switchTab(int type); // Takes networkinterface type
     void switchToDefaultTab();
     void managerWirelessEnabledChanged(bool);
     void managerWirelessHardwareEnabledChanged(bool);

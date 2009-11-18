@@ -38,34 +38,34 @@ class RemoteWirelessNetwork;
  */
 class WirelessNetworkItem : public ActivatableItem
 {
-Q_OBJECT
-public:
-    WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent = 0);
-    virtual ~WirelessNetworkItem();
-    void setupItem();
+    Q_OBJECT
+    public:
+        WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent = 0);
+        virtual ~WirelessNetworkItem();
+        void setupItem();
 
-private Q_SLOTS:
-    void setStrength(int strength);
-    void update();
-    void activationStateChanged(Knm::InterfaceConnection::ActivationState state);
-    void stateChanged();
+    private Q_SLOTS:
+        void setStrength(int strength);
+        void update();
+        void activationStateChanged(Knm::InterfaceConnection::ActivationState state);
+        void stateChanged();
 
-private:
-    RemoteWirelessNetwork * wirelessNetworkItem() const;
-    bool readSettings();
-    QGraphicsGridLayout * m_layout;
-    Plasma::IconWidget * m_icon;
-    Plasma::Label * m_ssidLabel;
-    Plasma::Meter * m_strengthMeter;
-    Plasma::IconWidget * m_connectButton;
-    QString m_security;
-    Plasma::IconWidget * m_securityIcon;
-    QString m_securityIconName;
-    QString m_securityIconToolTip;
-    int m_strength;
-    QString m_ssid;
-    RemoteWirelessNetwork * m_remote;
-    Knm::InterfaceConnection::ActivationState m_state;
+    private:
+        RemoteWirelessNetwork * wirelessNetworkItem() const;
+        bool readSettings();
+        QGraphicsGridLayout * m_layout;
+        Plasma::IconWidget * m_icon;
+        Plasma::Label * m_ssidLabel;
+        Plasma::Meter * m_strengthMeter;
+        Plasma::IconWidget * m_connectButton;
+        QString m_security;
+        Plasma::IconWidget * m_securityIcon;
+        QString m_securityIconName;
+        QString m_securityIconToolTip;
+        int m_strength;
+        QString m_ssid;
+        RemoteWirelessNetwork * m_remote;
+        Knm::InterfaceConnection::ActivationState m_state;
 };
 
 #endif //#define APPLET_WIRELESSCONNECTIONITEM_H

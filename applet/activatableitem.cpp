@@ -26,6 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * parent) : Plasma::IconWidget(parent), m_activatable(remote)
 {
     setDrawBackground(true);
+    RemoteInterfaceConnection *remoteconnection = interfaceConnection();
+    if (remoteconnection) {
+        connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)), SLOT(handleHasDefaultRouteChanged(bool)));
+    }
 }
 
 ActivatableItem::~ActivatableItem()
@@ -46,5 +50,17 @@ RemoteInterfaceConnection * ActivatableItem::interfaceConnection() const
 {
     return qobject_cast<RemoteInterfaceConnection*>(m_activatable);
 }
+
+void ActivatableItem::handleHasDefaultRouteChanged(bool has)
+{
+    // do something nice to show that this connection has the default route
+    if (has) {
+        kDebug() << "We now have the default route";
+        m_routeIcon->show();
+    } else {
+        m_routeIcon->hide();
+    }
+}
+
 
 // vim: sw=4 sts=4 et tw=100

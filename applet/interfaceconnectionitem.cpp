@@ -36,18 +36,11 @@ InterfaceConnectionItem::InterfaceConnectionItem(RemoteInterfaceConnection * con
 
 void InterfaceConnectionItem::setupItem()
 {
-    /*
-    // painting of a non-active connection wired connection
-
-    +----+------------------+------+
-    |icon| connection name  |status|
-    +----+------------------+------+
-    */
     int rowHeight = 24;
 
     m_layout = new QGraphicsGridLayout(this);
     // last colunm has fixed width for the icon
-    m_layout->setColumnFixedWidth(2, rowHeight);
+    //m_layout->setColumnFixedWidth(2, rowHeight);
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
@@ -56,7 +49,7 @@ void InterfaceConnectionItem::setupItem()
         m_connectButton->setText(interfaceConnection()->connectionName());
     } else {
         m_connectButton->setIcon("network-wired");
-        m_connectButton->setText("missing name");
+        //m_connectButton->setText("missing name");
     }
     kDebug() << "====> init face connection" << m_connectButton->text();
     m_connectButton->setMinimumWidth(160);

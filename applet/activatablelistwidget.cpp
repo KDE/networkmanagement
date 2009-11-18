@@ -96,7 +96,7 @@ ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activata
         case Knm::Activatable::WirelessNetwork:
         case Knm::Activatable::WirelessInterfaceConnection:
         { // Wireless
-            kDebug() << "Creating Wireless thingie" << activatable->deviceUni();
+            //kDebug() << "Creating Wireless thingie" << activatable->deviceUni();
             WirelessNetworkItem* wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetwork*>(activatable), m_widget);
             ai = wni;
             break;
@@ -104,21 +104,19 @@ ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activata
         case Knm::Activatable::InterfaceConnection:
         case Knm::Activatable::VpnInterfaceConnection:
         {
-            kDebug() << "Creating InterfaceConnection" << activatable->deviceUni();
+            //kDebug() << "Creating InterfaceConnection" << activatable->deviceUni();
             ai = new InterfaceConnectionItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
             break;
         }
         case Knm::Activatable::HiddenWirelessInterfaceConnection:
         {
             kDebug() << "FIXME: implement HiddenWirelessInterfaceConnection" << activatable->deviceUni();
-            //kDebug() << "Creating InterfaceConnection" << activatable->deviceUni();
             ai = new HiddenWirelessNetworkItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
             break;
         }
         default:
             break;
     }
-        //VpnInterfaceConnection,
 
     Q_ASSERT(ai);
     ai->setupItem();
@@ -138,12 +136,11 @@ void ActivatableListWidget::listAppeared()
 
 void ActivatableListWidget::deactivateConnection()
 {
-    kDebug() << "deactivating ...";
     foreach (ActivatableItem* item, m_itemIndex) {
         RemoteInterfaceConnection *conn = item->interfaceConnection();
         if (conn) {
+            kDebug() << "deactivating ...";
             conn->deactivate();
-            kDebug() << "... done ";
         }
     }
 }

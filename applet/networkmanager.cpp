@@ -123,7 +123,6 @@ void NetworkManagerApplet::setupInterfaceSignals()
         if (interface->type() == Solid::Control::NetworkInterface::Ieee8023) {
             Solid::Control::WiredNetworkInterface* wirediface =
                             static_cast<Solid::Control::WiredNetworkInterface*>(interface);
-            kDebug() << "connect carrierChanged";
             connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(interfaceConnectionStateChanged()));
         } else if (interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             Solid::Control::WirelessNetworkInterface* wirelessiface =
@@ -132,16 +131,11 @@ void NetworkManagerApplet::setupInterfaceSignals()
             QString uni = wirelessiface->activeAccessPoint();
             Solid::Control::AccessPoint *ap = wirelessiface->findAccessPoint(uni);
             if (ap) {
-                kDebug() << "connect ap";
                 connect(ap, SIGNAL(signalStrengthChanged(int)), SLOT(interfaceConnectionStateChanged()));
                 connect(ap, SIGNAL(destroyed(QObject*)), SLOT(interfaceConnectionStateChanged()));
             }
         }
     }
-
-    kDebug() << "...................................";
-    //updatePixmap(); // do we really want to do this here?
-
 }
 
 void NetworkManagerApplet::init()

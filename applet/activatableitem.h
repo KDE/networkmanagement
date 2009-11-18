@@ -36,15 +36,21 @@ public:
     virtual ~ActivatableItem();
     virtual void setupItem() = 0;
     RemoteInterfaceConnection* interfaceConnection() const;
-signals:
+
+Q_SIGNALS:
     /** * Indicate that the 'connect' button was clicked.  Used by the containing InterfaceGroup to
      * tell the manager to activate the connection on one of its devices
      */
     void clicked(ActivatableItem *);
+    void hasDefaultRouteChanged(bool);
+
 protected Q_SLOTS:
     void emitClicked();
+    void handleHasDefaultRouteChanged(bool);
+
 protected:
-    RemoteActivatable * m_activatable;
+    RemoteActivatable *m_activatable;
+    Plasma::IconWidget *m_routeIcon;
 
 };
 

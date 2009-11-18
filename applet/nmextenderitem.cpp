@@ -327,36 +327,12 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
     }
 }
 
-void NMExtenderItem::switchTab(int type)
-{
-    kDebug() << "Switching to ..." << type;
-    switch (type) {
-        case Solid::Control::NetworkInterface::Ieee80211:
-        {
-            m_connectionTabs->setCurrentIndex(m_tabIndex[Knm::Activatable::WirelessInterfaceConnection]);
-            break;
-        }
-        case Solid::Control::NetworkInterface::Serial:
-        case Solid::Control::NetworkInterface::Gsm:
-        case Solid::Control::NetworkInterface::Cdma:
-        case Solid::Control::NetworkInterface::Ieee8023:
-        default:
-        {
-            m_connectionTabs->setCurrentIndex(m_tabIndex[Knm::Activatable::InterfaceConnection]);
-            break;
-        }
-    }
-}
-
 void NMExtenderItem::switchToDefaultTab()
 {
     if (m_interfaces.count()) {
         m_connectionTabs->setCurrentIndex(0);
-        //switchTab(defaultInterface()->type());
     }
 }
-
-
 
 void NMExtenderItem::handleConnectionStateChange(int new_state, int old_state, int reason)
 {
