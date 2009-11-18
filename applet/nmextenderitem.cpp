@@ -399,7 +399,7 @@ void NMExtenderItem::manageConnections()
 {
     //kDebug() << "opening connection management dialog";
     QStringList args;
-    args << "kcm_networkmanagement";
+    args << "--icon" << "networkmanager" << "kcm_networkmanagement" << "kcm_networkmanagement_tray";
     KToolInvocation::kdeinitExec("kcmshell4", args);
 }
 
