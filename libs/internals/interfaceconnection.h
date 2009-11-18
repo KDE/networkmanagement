@@ -53,8 +53,6 @@ public:
     // Knm::InterfaceConnectionHelpers::build(..) function.
     virtual ~InterfaceConnection();
 
-
-public Q_SLOTS:
     void setConnectionType(Knm::Connection::Type type);
     Knm::Connection::Type connectionType() const;
 
