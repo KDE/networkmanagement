@@ -67,6 +67,7 @@ signals:
 protected Q_SLOTS:
     virtual void validate() = 0;
 protected:
+    void setValid(bool);
     SettingWidget(SettingWidgetPrivate &dd, QWidget * parent = 0);
     SettingWidget(SettingWidgetPrivate &dd, Knm::Connection * connection, QWidget * parent = 0);
     SettingWidgetPrivate * d_ptr;

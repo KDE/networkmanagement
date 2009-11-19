@@ -74,4 +74,10 @@ bool SettingWidget::isValid() const
     return d->valid;
 }
 
+void SettingWidget::setValid(bool valid)
+{
+    Q_D(SettingWidget);
+    d->valid = valid;
+}
+
 // vim: sw=4 sts=4 et tw=100
