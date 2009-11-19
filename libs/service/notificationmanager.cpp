@@ -295,7 +295,7 @@ void InterfaceNotificationHost::performInterfaceNotification(const QString & tit
     KNotification * notification = 0;
 
     if (m_notification.isNull()) {
-        notification = new KNotification(Event::InterfaceStateChange, flag, this);
+        notification = new KNotification(Event::InterfaceStateChange, 0, flag);
         notification->setComponentData(m_manager->componentData());
         if (flag == KNotification::Persistent)
             m_notification = QWeakPointer<KNotification>(notification);
