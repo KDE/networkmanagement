@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=KNetworkManager
+Name[cs]=KNetworkManager
 Name[en_GB]=KNetworkManager
+Name[eo]=KNetworkManager
 Name[et]=KNetworkManager
 Name[pt]=KNetworkManager
 Name[sv]=KNetworkManager
@@ -8,6 +10,7 @@ Name[tr]=KNetworkManager
 Name[uk]=KNetworkManager
 Name[x-test]=xxKNetworkManagerxx
 GenericName=Network Manager
+GenericName[cs]=Network Manager
 GenericName[en_GB]=Network Manager
 GenericName[et]=Võrguhaldur
 GenericName[pt]=KNetworkManager
