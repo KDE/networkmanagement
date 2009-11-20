@@ -21,37 +21,59 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "novellvpnwidget.h"
 #include "nm-novellvpn-service.h"
 
+#include "settingwidget_p.h"
+
 #include <KDebug>
-#include <KProcess>
+#include <KLocale>
+
 #include <nm-setting-vpn.h>
 #include "settings/vpn.h"
 #include "connection.h"
 
 #include "ui_novellvpnprop.h"
+#include "ui_novellvpnadvancedprop.h"
 
 class NovellVpnSettingWidget::Private
 {
 public:
     Ui_NovellVpnWidget ui;
     Knm::VpnSetting * setting;
+    Ui_NovellVpnAdvancedWidget advUi;
+    KDialog * advancedDialog;
 };
 
 
 NovellVpnSettingWidget::NovellVpnSettingWidget(Knm::Connection * connection, QWidget * parent)
 : SettingWidget(connection, parent), d(new Private)
 {
+    setValid(false);
     d->ui.setupUi(this);
     d->ui.x509Cert->setMode(KFile::LocalOnly);
     d->setting = static_cast<Knm::VpnSetting *>(connection->setting(Knm::Setting::Vpn));
 
+    connect(d->ui.leGateway, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
     connect(d->ui.cbShowPasswords, SIGNAL(toggled(bool)), this, SLOT(showPasswordsChanged(bool)));
 
     connect(d->ui.cmbGwType, SIGNAL(currentIndexChanged(int)), this, SLOT(gatewayTypeChanged(int)));
+
+    connect(d->ui.btnAdvanced, SIGNAL(clicked()), this, SLOT(advancedClicked()));
+
+    d->advancedDialog = new KDialog(this);
+    d->advancedDialog->setButtons(KDialog::Ok);
+    d->advancedDialog->setCaption(i18nc("@window:title NovellVPN advanced connection options", "NovellVPN advanced options"));
+    QWidget * advWid = new QWidget(d->advancedDialog);
+    d->advUi.setupUi(advWid);
+    d->advancedDialog->setMainWidget(advWid);
 }
 
 NovellVpnSettingWidget::~NovellVpnSettingWidget()
 {
     delete d;
+}
+
+void NovellVpnSettingWidget::advancedClicked()
+{
+    d->advancedDialog->exec();
 }
 
 void NovellVpnSettingWidget::gatewayTypeChanged(int gatewayType)
@@ -84,8 +106,8 @@ void NovellVpnSettingWidget::readConfig()
         d->ui.cmbGwType->setCurrentIndex(0);
         QString authType = dataMap[NM_NOVELLVPN_KEY_AUTHTYPE];
         if (authType == QLatin1String(NM_NOVELLVPN_CONTYPE_GROUPAUTH_STRING)) {
-            d->ui.leUserName->setText( d->setting->userName() );
-            d->ui.leGroupName->setText( d->setting->userName() );
+            d->ui.leUserName->setText(dataMap[NM_NOVELLVPN_KEY_USER_NAME]);
+            d->ui.leGroupName->setText(dataMap[NM_NOVELLVPN_KEY_GROUP_NAME]);
         } else if (authType == QLatin1String(NM_NOVELLVPN_CONTYPE_X509_STRING)) {
             readX509Auth(dataMap);
         }
@@ -93,45 +115,28 @@ void NovellVpnSettingWidget::readConfig()
             readX509Auth(dataMap);
     }
 
-#if 0
-    // Optional Settings
-    if (dataMap.contains(NM_NOVELLVPN_KEY_PORT)) {
-        d->ui.sbCustomPort->setValue(dataMap[NM_NOVELLVPN_KEY_PORT].toUInt());
-    } else {
-        d->ui.sbCustomPort->setValue(0);
-    }
-    d->ui.chkUseLZO->setChecked( dataMap[NM_NOVELLVPN_KEY_COMP_LZO] == "yes" );
-    d->ui.chkUseTCP->setChecked( dataMap[NM_NOVELLVPN_KEY_PROTO_TCP] == "yes" );
-    d->ui.chkUseTAP->setChecked( dataMap[NM_NOVELLVPN_KEY_TAP_DEV] == "yes" );
-    // Optional Security Settings
-    QString hmacKeyAuth = dataMap[NM_NOVELLVPN_KEY_AUTH];
-    if (hmacKeyAuth == QLatin1String(NM_NOVELLVPN_AUTH_NONE)) {
-        d->ui.cboHmac->setCurrentIndex(1);
-    } else if (hmacKeyAuth == QLatin1String(NM_NOVELLVPN_AUTH_MD5)) {
-        d->ui.cboHmac->setCurrentIndex(2);
-    } else if (hmacKeyAuth == QLatin1String(NM_NOVELLVPN_AUTH_SHA1)) {
-        d->ui.cboHmac->setCurrentIndex(3);
-    }
-    // ciphers populated above?
-    if (d->gotNovellVpnCiphers && dataMap.contains(NM_NOVELLVPN_KEY_CIPHER)) {
-        d->ui.cboCipher->setCurrentIndex(d->ui.cboCipher->findText(dataMap[NM_NOVELLVPN_KEY_CIPHER]));
+    // advanced
+    QString dhGroup = dataMap[QLatin1String(NM_NOVELLVPN_KEY_DHGROUP)];
+    if (dhGroup.toUInt() == 1) {
+        d->advUi.rbDh2->setChecked(true);
     }
 
-    // Optional TLS
-    d->ui.useExtraTlsAuth->setChecked(!dataMap[NM_NOVELLVPN_KEY_TA].isEmpty());
-    d->ui.kurlTlsAuthKey->setUrl(KUrl(dataMap[NM_NOVELLVPN_KEY_TA]) );
-    if (dataMap.contains(NM_NOVELLVPN_KEY_TA_DIR)) {
-        uint tlsAuthDirection = dataMap[NM_NOVELLVPN_KEY_TA_DIR].toUInt();
-        d->ui.cboDirection->setCurrentIndex(tlsAuthDirection + 1);
+    QString pfsGroup = dataMap[QLatin1String(NM_NOVELLVPN_KEY_PFSGROUP)];
+    if (pfsGroup.toUInt() == PFSGROUP_PFS1) {
+        d->advUi.rbPf1->setChecked(true);
+    } else if (pfsGroup.toUInt() == PFSGROUP_PFS2) {
+        d->advUi.rbPf2->setChecked(true);
     }
-#endif
+
+    if (dataMap[QLatin1String(NM_NOVELLVPN_KEY_NOSPLITTUNNEL)] == QLatin1String("yes")) {
+        d->advUi.cbDisableSplit->setChecked(true);
+    }
 }
 
 void NovellVpnSettingWidget::readX509Auth(const QStringMap & dataMap)
 {
     d->ui.cmbGwType->setCurrentIndex(1);
     d->ui.x509Cert->setUrl(KUrl(dataMap[NM_NOVELLVPN_KEY_CERTIFICATE]));
-    //d->ui.x509CertPass->setText(dataMap[NM_NOVELLVPN_KEY_KEY]);
 }
 
 void NovellVpnSettingWidget::writeConfig()
@@ -147,32 +152,54 @@ void NovellVpnSettingWidget::writeConfig()
     data.insert(NM_NOVELLVPN_KEY_GATEWAY, d->ui.leGateway->text());
 
     if (d->ui.cmbGwType->currentIndex() == 0) {
-        data.insert(QLatin1String(NM_NOVELLVPN_KEY_GWTYPE), QLatin1String(NM_NOVELLVPN_CONTYPE_GROUPAUTH_STRING));
+        data.insert(QLatin1String(NM_NOVELLVPN_KEY_GWTYPE), QLatin1String(NM_NOVELLVPN_GWTYPE_NORTEL_STRING));
 
         if (d->ui.cmbAuthType->currentIndex() == 0) {
+            data.insert(QLatin1String(NM_NOVELLVPN_KEY_AUTHTYPE), QLatin1String(NM_NOVELLVPN_CONTYPE_GROUPAUTH_STRING));
+
             data.insert(QLatin1String(NM_NOVELLVPN_KEY_USER_NAME), d->ui.leUserName->text());
             data.insert(QLatin1String(NM_NOVELLVPN_KEY_GROUP_NAME), d->ui.leGroupName->text());
             secretData.insert(QLatin1String(NM_NOVELLVPN_KEY_USER_PWD), d->ui.leUserPass->text());
             secretData.insert(QLatin1String(NM_NOVELLVPN_KEY_GRP_PWD), d->ui.leGroupPass->text());
-        } else if (d->ui.cmbAuthType->currentIndex() == 1 ) {
+        } else {
             writeX509Auth(data, secretData);
         }
-    } else if (d->ui.cmbGwType->currentIndex() == 1) {
-        data.insert(QLatin1String(NM_NOVELLVPN_KEY_GWTYPE), QLatin1String(NM_NOVELLVPN_CONTYPE_X509_STRING));
+    } else {
+        data.insert(QLatin1String(NM_NOVELLVPN_KEY_GWTYPE), QLatin1String(NM_NOVELLVPN_GWTYPE_STDGW_STRING));
         writeX509Auth(data, secretData);
     }
 
     // advanced dialog
+    data.insert(QLatin1String(NM_NOVELLVPN_KEY_DHGROUP),
+            (d->advUi.rbDh1->isChecked()
+             ? QString::number(DHGROUP_DH1)
+             : QString::number(DHGROUP_DH2)));
+
+    if (d->advUi.rbPfOff->isChecked()) {
+        data.insert(QLatin1String(NM_NOVELLVPN_KEY_PFSGROUP), QString::number(PFSGROUP_OFF));
+    } else if (d->advUi.rbPf1->isChecked()) {
+        data.insert(QLatin1String(NM_NOVELLVPN_KEY_PFSGROUP), QString::number(PFSGROUP_PFS1));
+    } else {
+        data.insert(QLatin1String(NM_NOVELLVPN_KEY_PFSGROUP), QString::number(PFSGROUP_PFS2));
+    }
+
+    data.insert(QLatin1String(NM_NOVELLVPN_KEY_NOSPLITTUNNEL), d->advUi.cbDisableSplit->isChecked() ? QLatin1String("yes") : QLatin1String("no"));
+
+    d->setting->setData(data);
+    d->setting->setVpnSecrets(secretData);
 }
 
 void NovellVpnSettingWidget::writeX509Auth(QStringMap & data, QVariantMap & secretData)
 {
-
+    data.insert(QLatin1String(NM_NOVELLVPN_KEY_AUTHTYPE), QLatin1String(NM_NOVELLVPN_CONTYPE_X509_STRING));
+    data.insert(NM_NOVELLVPN_KEY_CERTIFICATE, d->ui.x509Cert->url().path().toUtf8());
+    secretData.insert(QLatin1String(NM_NOVELLVPN_KEY_CERT_PWD), d->ui.x509CertPass->text());
 }
 
 void NovellVpnSettingWidget::readSecrets()
 {
     QVariantMap secrets = d->setting->vpnSecrets();
+    kDebug() << "Value of" << NM_NOVELLVPN_KEY_CERT_PWD << secrets.value(QLatin1String(NM_NOVELLVPN_KEY_CERT_PWD)).toString();
     d->ui.x509CertPass->setText(secrets.value(QLatin1String(NM_NOVELLVPN_KEY_CERT_PWD)).toString());
     d->ui.leUserPass->setText(secrets.value(QLatin1String(NM_NOVELLVPN_KEY_USER_PWD)).toString());
     d->ui.leGroupPass->setText(secrets.value(QLatin1String(NM_NOVELLVPN_KEY_GRP_PWD)).toString());
@@ -180,7 +207,8 @@ void NovellVpnSettingWidget::readSecrets()
 
 void NovellVpnSettingWidget::validate()
 {
-
+    setValid(!d->ui.leGateway->text().isEmpty());
+    emit valid(isValid());
 }
 
 // vim: sw=4 sts=4 et tw=100

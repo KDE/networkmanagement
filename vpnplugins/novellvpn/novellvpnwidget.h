@@ -42,6 +42,8 @@ public:
 protected Q_SLOTS:
     void validate();
 
+    void advancedClicked();
+
     void gatewayTypeChanged(int);
     void showPasswordsChanged(bool);
 private:

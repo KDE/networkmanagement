@@ -7,7 +7,7 @@ set(novellvpn_SRCS
    novellvpnwidget.cpp
    )
 
-kde4_add_ui_files(novellvpn_SRCS novellvpnprop.ui)
+kde4_add_ui_files(novellvpn_SRCS novellvpnprop.ui novellvpnadvancedprop.ui)
 
 kde4_add_plugin(networkmanagement_novellvpnui ${novellvpn_SRCS})
 
