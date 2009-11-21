@@ -14,5 +14,10 @@ X-KDE-PluginInfo-Depends=
 X-KDE-PluginInfo-License=GPL
 X-KDE-PluginInfo-EnabledByDefault=false
 Name=Novell VPN (turnpike)
+Name[en_GB]=Novell VPN (turnpike)
+Name[pt]=VPN da Novell (turnpike)
+Name[sv]=Novell VPN (turnpike)
+Name[uk]=Novell VPN (turnpike)
+Name[x-test]=xxNovell VPN (turnpike)xx
 Comment=Allows KNetworkManager to connect to Novell VPN (turnpike) VPNs.
 
