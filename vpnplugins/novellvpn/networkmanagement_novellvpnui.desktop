@@ -20,4 +20,7 @@ Name[sv]=Novell VPN (turnpike)
 Name[uk]=Novell VPN (turnpike)
 Name[x-test]=xxNovell VPN (turnpike)xx
 Comment=Allows KNetworkManager to connect to Novell VPN (turnpike) VPNs.
+Comment[en_GB]=Allows KNetworkManager to connect to Novell VPN (turnpike) VPNs.
+Comment[uk]=Надає змогу KNetworkManager з’єднуватися з Novell VPN (turnpike).
+Comment[x-test]=xxAllows KNetworkManager to connect to Novell VPN (turnpike) VPNs.xx
 
