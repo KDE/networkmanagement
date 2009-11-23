@@ -1,5 +1,6 @@
 [Global]
 Name=Network Management
+Name[da]=Netværkshåndtering
 Name[en_GB]=Network Management
 Name[et]=Võrguhaldur
 Name[pt]=Gestão de Rede
@@ -9,6 +10,7 @@ Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managementxx
 IconName=networkmanager
 Comment=Network Management
+Comment[da]=Netværkshåndtering
 Comment[en_GB]=Network Management
 Comment[et]=Võrguhaldur
 Comment[pt]=Gestão de Rede
@@ -20,6 +22,7 @@ Version=3
 
 [Context/connectiontype]
 Name=Network Connection Type
+Name[da]=Type af netværksforbindelse
 Name[en_GB]=Network Connection Type
 Name[et]=Võrguühenduse tüüp
 Name[pt]=Tipo da Ligação de Rede
@@ -30,6 +33,7 @@ Name[x-test]=xxNetwork Connection Typexx
 
 [Event/hwadded]
 Name=Network Interface Attached
+Name[da]=Netkort tilsluttet
 Name[en_GB]=Network Interface Attached
 Name[et]=Võrguliides on ühendatud
 Name[pt]=Interface de Rede Ligada
@@ -38,6 +42,7 @@ Name[tr]=Ağ Arayüzü Takıldı
 Name[uk]=Доданий інтерфейс мережі
 Name[x-test]=xxNetwork Interface Attachedxx
 Comment=A network interface was attached
+Comment[da]=Et netkort blev tilsluttet
 Comment[en_GB]=A network interface was attached
 Comment[et]=Võrguliides on ühendatud
 Comment[pt]=Foi ligada uma interface de rede
@@ -48,6 +53,7 @@ Comment[x-test]=xxA network interface was attachedxx
 
 [Event/hwremoved]
 Name=Network Interface Removed
+Name[da]=Netkort fjernet
 Name[en_GB]=Network Interface Removed
 Name[et]=Võrguliides on eemaldatud
 Name[pt]=Interface de Rede Removida
@@ -56,6 +62,7 @@ Name[tr]=Ağ Arayüzü Çıkarıldı
 Name[uk]=Вилучено інтерфейс мережі
 Name[x-test]=xxNetwork Interface Removedxx
 Comment=A network interface was removed
+Comment[da]=Et netkort blev fjernet
 Comment[en_GB]=A network interface was removed
 Comment[et]=Võrguliides on eemaldatud
 Comment[pt]=Foi removida uma interface de rede
@@ -66,6 +73,7 @@ Comment[x-test]=xxA network interface was removedxx
 
 [Event/networkappeared]
 Name=Found Wireless Network
+Name[da]=Fandt trådløst netværk
 Name[en_GB]=Found Wireless Network
 Name[et]=Leiti juhtmeta võrk
 Name[pt]=Rede Sem-Fios Descoberta
@@ -74,6 +82,7 @@ Name[tr]=Kablosuz Ağ Bulundu
 Name[uk]=Знайдено бездротову мережу
 Name[x-test]=xxFound Wireless Networkxx
 Comment=A wireless network appeared
+Comment[da]=Et trådløst netværk er dukket op
 Comment[en_GB]=A wireless network appeared
 Comment[et]=Saadavale ilmus juhtmeta võrk
 Comment[pt]=Apareceu uma rede sem-fios
@@ -84,6 +93,7 @@ Comment[x-test]=xxA wireless network appearedxx
 
 [Event/networkdisappeared]
 Name=Lost Wireless Network
+Name[da]=Mistede trådløst netværk
 Name[en_GB]=Lost Wireless Network
 Name[et]=Juhtmeta võrk kadus
 Name[pt]=Rede Sem-Fios Perdida
@@ -92,6 +102,7 @@ Name[tr]=Kablosuz Ağ Kaybedildi
 Name[uk]=Втрачено зв’язок з радіомережею
 Name[x-test]=xxLost Wireless Networkxx
 Comment=A wireless network disappeared
+Comment[da]=Et trådløst netværk forsvandt
 Comment[en_GB]=A wireless network disappeared
 Comment[et]=Juhtmeta võrk kadus
 Comment[pt]=Desapareceu uma rede sem-fios
@@ -102,6 +113,7 @@ Comment[x-test]=xxA wireless network disappearedxx
 
 [Event/userconnectionattempt]
 Name=Establishing Network Connection
+Name[da]=Opretter netværksforbindelse
 Name[en_GB]=Establishing Network Connection
 Name[et]=Võrguühenduse loomine
 Name[pt]=A Estabelecer a Ligação à Rede
@@ -110,6 +122,7 @@ Name[tr]=Ağ Bağlantısı Yapılıyor
 Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=The user started making a connection
+Comment[da]=Brugeren begyndte at oprette en forbindelse
 Comment[en_GB]=The user started making a connection
 Comment[et]=Kasutaja alustas ühenduse loomist
 Comment[pt]=O utilizador começou a estabelecer uma ligação
@@ -119,6 +132,7 @@ Comment[x-test]=xxThe user started making a connectionxx
 
 [Event/autoconnectionattempt]
 Name=Establishing Network Connection
+Name[da]=Opretter netværksforbindelse
 Name[en_GB]=Establishing Network Connection
 Name[et]=Võrguühenduse loomine
 Name[pt]=A Estabelecer a Ligação à Rede
@@ -127,6 +141,7 @@ Name[tr]=Ağ Bağlantısı Yapılıyor
 Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=A connection is being started automatically
+Comment[da]=En forbindelse er blevet startet automatisk
 Comment[en_GB]=A connection is being started automatically
 Comment[et]=Ühendus käivitatakse automaatselt
 Comment[pt]=Uma ligação está a ser iniciada automaticamente
@@ -137,6 +152,7 @@ Action=Popup
 
 [Event/connecting]
 Name=Establishing Network Connection
+Name[da]=Opretter netværksforbindelse
 Name[en_GB]=Establishing Network Connection
 Name[et]=Võrguühenduse loomine
 Name[pt]=A Estabelecer a Ligação à Rede
@@ -145,6 +161,7 @@ Name[tr]=Ağ Bağlantısı Yapılıyor
 Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=A network connection attempt was begun
+Comment[da]=Et netværksforbindelsesforsøg er påbegyndt
 Comment[en_GB]=A network connection attempt was begun
 Comment[et]=Alustati võrguühenduse loomist
 Comment[pt]=Iniciou-se uma tentativa de ligação à rede
@@ -156,6 +173,7 @@ Action=Popup
 
 [Event/disconnected]
 Name=Network Connection Disconnected
+Name[da]=Netværksforbindelse afbrudt
 Name[en_GB]=Network Connection Disconnected
 Name[et]=Võrguühendus on katkestatud
 Name[pt]=Ligação de Rede Desligada
@@ -164,6 +182,7 @@ Name[tr]=Ağ Bağlantısı Kapatıldı
 Name[uk]=Мережеве з’єднання розірвано
 Name[x-test]=xxNetwork Connection Disconnectedxx
 Comment=A network connection was disconnected
+Comment[da]=En netværksforbindelse blev afbrudt
 Comment[en_GB]=A network connection was disconnected
 Comment[et]=Võrguühendus on katkestatud
 Comment[pt]=A ligação de rede terminou
@@ -174,6 +193,7 @@ Comment[x-test]=xxA network connection was disconnectedxx
 
 [Event/connected]
 Name=Network Connection Succeeded
+Name[da]=Netværksforbindelse gennemført
 Name[en_GB]=Network Connection Succeeded
 Name[et]=Võrguühenduse loomine õnnestus
 Name[pt]=Ligação à Rede com Sucesso
@@ -182,6 +202,7 @@ Name[tr]=Ağ Bağlantısı Başarılı
 Name[uk]=Успішне з’єднання з мережею
 Name[x-test]=xxNetwork Connection Succeededxx
 Comment=A network connection was established
+Comment[da]=En netværksforbindelse blev oprettet
 Comment[en_GB]=A network connection was established
 Comment[et]=Loodi võrguühendus
 Comment[pt]=Foi estabelecida uma ligação à rede
@@ -193,6 +214,7 @@ Action=Popup
 
 [Event/connfailed]
 Name=Network Connection Failed
+Name[da]=Netværksforbindelse mislykkedes
 Name[en_GB]=Network Connection Failed
 Name[et]=Võrguühenduse loomine nurjus
 Name[pt]=Ligação à Rede sem Sucesso
@@ -201,6 +223,7 @@ Name[tr]=Ağ Bağlantısı Başarısız
 Name[uk]=Спроба встановлення з'єднання зазнала невдачі
 Name[x-test]=xxNetwork Connection Failedxx
 Comment=A network connection attempt failed
+Comment[da]=Et netværksforbindelsesforsøg mislykkedes
 Comment[en_GB]=A network connection attempt failed
 Comment[et]=Katse luua võrguühendust nurjus
 Comment[pt]=A tentativa de ligação à rede foi mal-sucedida
@@ -212,6 +235,7 @@ Action=Popup
 
 [Event/rfoff]
 Name=Radio Hardware Switched Off
+Name[da]=Radio-hardware slået fra
 Name[en_GB]=Radio Hardware Switched Off
 Name[et]=Raadioriistvara lülitati välja
 Name[pt]='Hardware' de Rádio Desligado
@@ -220,6 +244,7 @@ Name[tr]=Radyo Donanımı Kapatıldı
 Name[uk]=Радіозв’язок апаратно вимкнено
 Name[x-test]=xxRadio Hardware Switched Offxx
 Comment=Wireless transceivers disabled by hardware switch
+Comment[da]=Trådløs-transceivere deaktiveret af hardware-kontakt
 Comment[en_GB]=Wireless transceivers disabled by hardware switch
 Comment[et]=Riistvaralüliti keelas juhtmeta ühenduse vastuvõtjad
 Comment[pt]=Os receptores/transmissores sem-fios foram desligados pelo interruptor
@@ -231,6 +256,7 @@ Action=Popup
 
 [Event/rfon]
 Name=Radio Hardware Switched On
+Name[da]=Radio-hardware slået til
 Name[en_GB]=Radio Hardware Switched On
 Name[et]=Raadioriistvara lülitati sisse
 Name[pt]='Hardware' de Rádio Ligado
@@ -239,6 +265,7 @@ Name[tr]=Radyo Donanımı Açıldı
 Name[uk]=Радіозв’язок апаратно увімкнено
 Name[x-test]=xxRadio Hardware Switched Onxx
 Comment=Wireless transceivers enabled
+Comment[da]=Trådløs-transceivere aktiveret
 Comment[en_GB]=Wireless transceivers enabled
 Comment[et]=Juhtmeta ühenduse vastuvõtjad on lubatud
 Comment[pt]=Os receptores/transmissores sem-fios foram ligados
@@ -250,6 +277,7 @@ Action=Popup
 
 [Event/lowsignal]
 Name=Low Wireless Signal Strength
+Name[da]=Lav signalstyrke på trådløst
 Name[en_GB]=Low Wireless Signal Strength
 Name[et]=Juhtmeta ühenduse nõrk signaal
 Name[pt]=Potência do Sinal Sem-Fios Fraca
@@ -258,6 +286,7 @@ Name[tr]=Düşük kablosuz sinyali
 Name[uk]=Низька потужність радіосигналу
 Name[x-test]=xxLow Wireless Signal Strengthxx
 Comment=The wireless signal strength is low
+Comment[da]=Den trådløse signalstyrke er lav
 Comment[en_GB]=The wireless signal strength is low
 Comment[et]=Juhtmeta ühenduse signaal on nõrk
 Comment[pt]=A potência do sinal sem-fios é fraca
@@ -269,6 +298,7 @@ Action=Popup
 
 [Event/ifacestatechange]
 Name=Interface changed state
+Name[da]=Netkort ændrede tilstand
 Name[en_GB]=Interface changed state
 Name[et]=Liides muutis olekut
 Name[pt]=A interface mudou de estado
@@ -276,6 +306,7 @@ Name[sv]=Gränssnitt ändrade tillstånd
 Name[uk]=Змінений стан інтерфейсу
 Name[x-test]=xxInterface changed statexx
 Comment=An interface changed state
+Comment[da]=Et netkort ændrede tilstand
 Comment[en_GB]=An interface changed state
 Comment[et]=Liides muutis olekut
 Comment[pt]=Uma interface de rede mudou de estado
@@ -285,6 +316,7 @@ Comment[x-test]=xxAn interface changed statexx
 
 [Event/networkingdisabled]
 Name=Network management disabled
+Name[da]=Netværkshåndtering deaktiveret
 Name[en_GB]=Network management disabled
 Name[et]=Võrguhaldus on keelatud
 Name[pt]=Gestão de rede desactivada
@@ -293,6 +325,7 @@ Name[tr]=Ağ yönetimi pasifleştirildi
 Name[uk]=Керування мережею вимкнено
 Name[x-test]=xxNetwork management disabledxx
 Comment=The network management subsystem was stopped or restarted
+Comment[da]=Undersystemet til netværkshåndtering blev stoppet eller genstartet
 Comment[en_GB]=The network management subsystem was stopped or restarted
 Comment[et]=Võrguhalduse allsüsteem peatati või taaskäivitati
 Comment[pt]=O sub-sistema de gestão da rede foi parado ou reiniciado

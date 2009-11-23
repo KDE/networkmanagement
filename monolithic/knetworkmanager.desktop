@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=KNetworkManager
 Name[cs]=KNetworkManager
+Name[da]=KNetworkManager
 Name[en_GB]=KNetworkManager
 Name[eo]=KNetworkManager
 Name[et]=KNetworkManager
@@ -11,6 +12,7 @@ Name[uk]=KNetworkManager
 Name[x-test]=xxKNetworkManagerxx
 GenericName=Network Manager
 GenericName[cs]=Network Manager
+GenericName[da]=Netværkshåndtering
 GenericName[en_GB]=Network Manager
 GenericName[et]=Võrguhaldur
 GenericName[pt]=KNetworkManager
@@ -22,6 +24,7 @@ Exec=knetworkmanager
 Icon=knetworkmanager
 Type=Application
 Comment=A KDE frontend for NetworkManager
+Comment[da]=En KDE-brugerflade til Networkmanager
 Comment[en_GB]=A KDE frontend for NetworkManager
 Comment[et]=KDE NetworkManageri kasutajaliides
 Comment[pt]=Uma interface para KDE do NetworkManager

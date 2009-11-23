@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Other
 Name[cs]=Jiné
+Name[da]=Andet
 Name[en_GB]=Other
 Name[et]=Muu
 Name[pt]=Outra
@@ -9,6 +10,7 @@ Name[tr]=Diğer
 Name[uk]=Інше
 Name[x-test]=xxOtherxx
 Comment=Configure the Network Management tool
+Comment[da]=Indstil værktøjet til netværkshåndtering
 Comment[en_GB]=Configure the Network Management tool
 Comment[et]=Võrguhalduri seadistamine
 Comment[pt]=Configurar a ferramenta de Gestão da Rede
