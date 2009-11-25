@@ -70,7 +70,9 @@ QString RemoteActivatable::deviceUni() const
 void RemoteActivatable::activate()
 {
     Q_D(RemoteActivatable);
-    d->activatableIface->activate();
+    if (d->activatableIface) {
+        d->activatableIface->activate();
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

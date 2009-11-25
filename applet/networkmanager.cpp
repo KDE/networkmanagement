@@ -152,9 +152,7 @@ void NetworkManagerApplet::init()
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
 
     m_activatableList->init();
-
     setupInterfaceSignals();
-
 
     m_extenderItem = new NMExtenderItem(m_activatableList, extender());
     connect(m_extenderItem, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
@@ -172,20 +170,20 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
 
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
 {
-   if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint)) {
+    // update the pixmap when a new size from kiconloader fits in, this makes sure the
+    // icon is only displayed in sizes provides by KIconLoader, so we don't get blurry
+    // icons
+    if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint)) {
         if (UiUtils::iconSize(contentsRect().size()) != UiUtils::iconSize(m_pixmap.size())) {
-            int _i = UiUtils::iconSize(m_pixmap.size());
-            kDebug() << "cevent" << UiUtils::iconSize(contentsRect().size()) << UiUtils::iconSize(QSize(_i, _i));
             updatePixmap();
-        } else {
-            //positionPixmap();
         }
     }
 }
 
 void NetworkManagerApplet::updatePixmap()
 {
-    m_pixmap = KIcon(UiUtils::iconName(activeInterface())).pixmap(contentsRect().size().toSize());
+    int s = UiUtils::iconSize(contentsRect().size());
+    m_pixmap = KIcon(UiUtils::iconName(activeInterface())).pixmap(s, s);
     update();
 }
 
