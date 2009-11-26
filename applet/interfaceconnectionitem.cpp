@@ -32,6 +32,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 InterfaceConnectionItem::InterfaceConnectionItem(RemoteInterfaceConnection * conn, QGraphicsItem * parent)
 : ActivatableItem(conn, parent)
 {
+    if (interfaceConnection()) {
+        if (interfaceConnection()->iconName().startsWith("No such interface 'org.kde.networkmanagement.InterfaceConnection'")) {
+            kDebug() << "Houston ...";
+        }
+    }
 }
 
 void InterfaceConnectionItem::setupItem()
@@ -44,7 +49,6 @@ void InterfaceConnectionItem::setupItem()
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
-    kDebug() << "====> init face connection" << m_connectButton->text();
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setMaximumHeight(rowHeight);
     m_connectButton->setOrientation(Qt::Horizontal);
@@ -58,16 +62,17 @@ void InterfaceConnectionItem::setupItem()
 
     m_routeIcon = new Plasma::IconWidget(this);
     m_routeIcon->setIcon("emblem-favorite");
-    m_routeIcon->setGeometry(QRectF(m_connectButton->geometry().topLeft(), QSizeF(16, 16)));
+    m_routeIcon->setGeometry(QRectF(m_connectButton->geometry().topLeft(), QSizeF(8, 8)));
     m_routeIcon->hide(); // this will be shown in handleHasDefaultRouteChanged(bool);
 
     if (interfaceConnection()) {
         m_connectButton->setIcon(interfaceConnection()->iconName());
         m_connectButton->setText(interfaceConnection()->connectionName());
+        kDebug() << interfaceConnection()->connectionName() << interfaceConnection()->iconName();
         handleHasDefaultRouteChanged(interfaceConnection()->hasDefaultRoute());
     } else {
         m_connectButton->setIcon("network-wired");
-        //m_connectButton->setText("missing name");
+        m_connectButton->setText(i18nc("name of the connection not known", "Unknown"));
     }
     connect(m_connectButton, SIGNAL(clicked()), this, SIGNAL(clicked()));
     connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));

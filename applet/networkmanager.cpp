@@ -78,7 +78,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 {
     setHasConfigurationInterface(false);
     setPopupIcon(QIcon());
-    //setPassivePopup(true); // FIXME: disable, only true for testing ...
+    setPassivePopup(true); // FIXME: disable, only true for testing ...
     m_overlayTimeline.setEasingCurve(QEasingCurve::OutExpo);
     m_currentState = 0;
     connect(&m_overlayTimeline, SIGNAL(valueChanged(qreal)), this, SLOT(repaint()));
