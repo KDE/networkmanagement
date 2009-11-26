@@ -85,6 +85,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_ifaceNameLabel = new Plasma::Label(this);
     m_ifaceNameLabel->setText(m_interfaceName);
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
+    m_ifaceNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
 
     m_disconnectButton = new Plasma::IconWidget(this);
@@ -290,7 +291,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
         m_disconnectButton->hide();
     } else {
         m_disconnectButton->setIcon("dialog-cancel");
-        m_disconnectButton->setToolTip(i18n("Disconnect"));
+        m_disconnectButton->setToolTip(i18nc("tooltip on disconnect icon", "Disconnect"));
         m_disconnectButton->show();
     }
     m_connectionNameLabel->setText(lname);
