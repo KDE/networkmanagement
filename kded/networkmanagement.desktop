@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=EXPERIMENTAL NetworkManager User Settings Service
 Name[da]=EKSPERIMENTEL tjeneste til brugerindstillinger for NetworkManager 
+Name[de]=EXPERIMENTELLER Benutzereinstellungsdienst für NetworkManager
 Name[en_GB]=EXPERIMENTAL NetworkManager User Settings Service
 Name[es]=EXPERIMENTAL Servicio de ajustes de usuario de NetworkManager
 Name[et]=Võrguhalduri kasutaja seadistuste teenus
@@ -11,6 +12,7 @@ Name[uk]=ВИПРОБУВАННЯ: Служба параметрів корис�
 Name[x-test]=xxEXPERIMENTAL NetworkManager User Settings Servicexx
 Comment=Provides network configuration to the NetworkManager daemon
 Comment[da]=Leverer netværkskonfiguration af NetworkManager-dæmonen
+Comment[de]=Stellt dem NetworkManager-Dienst eine Netzwerkeinrichtung zur Verfügung
 Comment[en_GB]=Provides network configuration to the NetworkManager dæmon
 Comment[es]=Provee una configuración de red para el demonio NetworkManager
 Comment[et]=Võrguseadistuse edastamine võrguhalduri deemonile

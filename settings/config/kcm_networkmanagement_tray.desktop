@@ -2,6 +2,7 @@
 Name=Other
 Name[cs]=Jiné
 Name[da]=Andet
+Name[de]=Sonstiges
 Name[en_GB]=Other
 Name[es]=Otro
 Name[et]=Muu
@@ -12,6 +13,7 @@ Name[uk]=Інше
 Name[x-test]=xxOtherxx
 Comment=Configure the Network Management tool
 Comment[da]=Indstil værktøjet til netværkshåndtering
+Comment[de]=Die Netzwerkverwaltung einrichten
 Comment[en_GB]=Configure the Network Management tool
 Comment[es]=Configurar la herramienta de gestión de red
 Comment[et]=Võrguhalduri seadistamine
