@@ -47,7 +47,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // More own includes
 #include "interfaceitem.h"
 #include "wirelessinterfaceitem.h"
-//#include "wiredinterfaceitem.h"
 #include "activatablelistwidget.h"
 
 NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::Extender * ext)
@@ -139,18 +138,14 @@ QGraphicsItem * NMExtenderItem::widget()
         m_leftWidget->setLayout(m_leftLayout);
         m_mainLayout->addItem(m_leftWidget, 0, 0);
 
-
         m_rightWidget = new Plasma::Frame(m_widget);
         m_rightWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
         m_rightLayout = new QGraphicsLinearLayout(m_rightWidget);
         m_rightLayout->setOrientation(Qt::Vertical);
         // Tabs for activatables
         m_connectionTabs = new Plasma::TabBar(m_rightWidget);
-        //m_connectionTabs->setTabBarShown(false);
         m_connectionTabs->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-	//m_connectionTabs->setMinimumHeight(240);
         m_connectionTabs->setPreferredHeight(240);
-        //m_connectionTabs->setMinimumSize(280, 240);
 
         m_rightLayout->addItem(m_connectionTabs);
 
@@ -162,9 +157,8 @@ QGraphicsItem * NMExtenderItem::widget()
         m_connectionsButton->setMinimumHeight(KIconLoader::SizeMedium);
         m_connectionsButton->setDrawBackground(true);
 #if KDE_IS_VERSION(4,2,60)
-        m_connectionsButton->setTextBackgroundColor(QColor());
+        m_connectionsButton->setTextBackgroundColor(QColor(Qt::transparent));
 #endif
-
         connect(m_connectionsButton, SIGNAL(activated()), this, SLOT(manageConnections()));
         m_rightLayout->addItem(m_connectionsButton);
 
@@ -261,10 +255,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
                 // Create the interfaceitem
                 InterfaceItem* wiredItem = 0;
                 ifaceItem = wiredItem = new InterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
-
                 connect(wiredItem, SIGNAL(disconnectInterface()), m_connectionList, SLOT(deactivateConnection()));
-                // Add a wired tab
-                //createTab(wiredItem, iface, i18nc("title of the wired tab", "Wired"), icon);
                 break;
             }
         }

@@ -28,6 +28,9 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
     m_routeIcon(0)
 {
     setDrawBackground(true);
+#if KDE_IS_VERSION(4,2,60)
+    setTextBackgroundColor(QColor(Qt::transparent));
+#endif
     RemoteInterfaceConnection *remoteconnection = interfaceConnection();
     if (remoteconnection) {
         connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)), SLOT(handleHasDefaultRouteChanged(bool)));

@@ -143,7 +143,7 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setOrientation(Qt::Horizontal);
 #if KDE_IS_VERSION(4,2,60)
-    m_connectButton->setTextBackgroundColor(QColor());
+    m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
 #endif
     //m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", ssid));
     m_connectButton->setMinimumHeight(rowHeight);

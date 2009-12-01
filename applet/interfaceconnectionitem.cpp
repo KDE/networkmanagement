@@ -53,7 +53,7 @@ void InterfaceConnectionItem::setupItem()
     m_connectButton->setMaximumHeight(rowHeight);
     m_connectButton->setOrientation(Qt::Horizontal);
 #if KDE_IS_VERSION(4,2,60)
-    m_connectButton->setTextBackgroundColor(QColor());
+    m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
 #endif
 
     m_connectButton->setMinimumHeight(rowHeight);
