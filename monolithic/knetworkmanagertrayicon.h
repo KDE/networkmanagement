@@ -33,12 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class QAction;
 class QMenu;
-class QSignalMapper;
-class QVBoxLayout;
-class QWidgetAction;
 
 class KMenu;
-class ActivatableItem;
 class ActivatableList;
 class SortedActivatableList;
 
@@ -48,7 +44,6 @@ namespace Solid
 {
     namespace Control
     {
-        class WirelessNetworkInterface;
     } // namespace Control
 } // namespace Solid
 

@@ -33,8 +33,6 @@ class QMenu;
 class QTreeWidget;
 class QTreeWidgetItem;
 
-class TraySettingsWidget;
-class MenuToolTipSettingsWidget;
 
 class ManageConnectionWidget : public KCModule
 {
