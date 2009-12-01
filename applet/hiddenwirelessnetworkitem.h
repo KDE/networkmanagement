@@ -25,7 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetwork.h"
 #include "wirelessnetworkitem.h"
 
-class AbstractWirelessNetwork;
 class QGraphicsLinearLayout;
 
 namespace Plasma

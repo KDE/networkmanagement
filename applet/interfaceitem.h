@@ -45,7 +45,6 @@ namespace Solid
     } // namespace Control
 } // namespace Solid
 
-class RemoteInterfaceConnection;
 
 /**
  * Represents a single network interface

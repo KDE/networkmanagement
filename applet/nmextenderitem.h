@@ -38,7 +38,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class QGraphicsLinearLayout;
 class QGraphicsGridLayout;
-class ActivatableItem;
 
 class RemoteActivatable;
 class RemoteActivatableList;
