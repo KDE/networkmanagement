@@ -103,7 +103,7 @@ QGraphicsItem * NMExtenderItem::widget()
         m_widget->setLayout(m_mainLayout);
 
         m_leftWidget = new Plasma::Frame(m_widget);
-        m_leftWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
+        m_leftWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
         m_interfaceWidget = new QGraphicsWidget(m_leftWidget);
         m_leftLayout = new QGraphicsLinearLayout(m_leftWidget);
         m_leftLayout->setOrientation(Qt::Vertical);
@@ -139,13 +139,14 @@ QGraphicsItem * NMExtenderItem::widget()
         m_mainLayout->addItem(m_leftWidget, 0, 0);
 
         m_rightWidget = new Plasma::Frame(m_widget);
-        m_rightWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
+        m_rightWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::MinimumExpanding);
         m_rightLayout = new QGraphicsLinearLayout(m_rightWidget);
         m_rightLayout->setOrientation(Qt::Vertical);
         // Tabs for activatables
         m_connectionTabs = new Plasma::TabBar(m_rightWidget);
-        m_connectionTabs->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        m_connectionTabs->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
         m_connectionTabs->setPreferredHeight(240);
+        m_connectionTabs->setPreferredWidth(320);
 
         m_rightLayout->addItem(m_connectionTabs);
 
