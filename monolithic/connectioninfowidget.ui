@@ -53,14 +53,14 @@
           </font>
          </property>
          <property name="text">
-          <string>connectionName</string>
+          <string notr="true">connectionName</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QLabel" name="connectionState">
          <property name="text">
-          <string>connectionState</string>
+          <string notr="true">connectionState</string>
          </property>
         </widget>
        </item>
