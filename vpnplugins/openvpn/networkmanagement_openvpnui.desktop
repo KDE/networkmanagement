@@ -28,6 +28,7 @@ Name[sv]=OpenVPN
 Name[tr]=OpenVPN
 Name[uk]=OpenVPN
 Name[x-test]=xxOpenVPNxx
+Name[zh_TW]=OpenVPN
 Comment=OpenVPN plugin
 Comment[cs]= odul OpenVPN
 Comment[da]=OpenVPN-plugin
@@ -42,4 +43,5 @@ Comment[sv]=Insticksprogram för OpenVPN
 Comment[tr]=OpenVPN eklentisi
 Comment[uk]=Додаток OpenVPN
 Comment[x-test]=xxOpenVPN pluginxx
+Comment[zh_TW]=OpenVPN 外掛程式
 
