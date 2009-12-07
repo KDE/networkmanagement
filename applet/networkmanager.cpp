@@ -202,6 +202,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 
     paintPixmap(p, m_pixmap, contentsRect);
     paintProgress(p);
+    paintOverlay(p);
 }
 
 void NetworkManagerApplet::paintProgress(QPainter *p)
@@ -262,6 +263,21 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
 
         p->drawArc(contentsRect(), top, progress);
     }
+}
+
+void NetworkManagerApplet::paintOverlay(QPainter *p)
+{
+    // Needs authentication, show this in the panel
+    if (activeInterface()->connectionState() == Solid::Control::NetworkInterface::NeedAuth) {
+        int i_s = (int)contentsRect().width()/4;
+        int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
+        kDebug() << "iconsize" << iconsize;
+        QPixmap icon = KIcon("dialog-password").pixmap(QSize(iconsize, iconsize));
+        QPointF pos = QPointF(contentsRect().bottomRight().x() - iconsize,
+                            contentsRect().bottomRight().y() - iconsize);
+        p->drawPixmap(pos, icon);
+
+    };
 }
 
 void NetworkManagerApplet::paintOkOverlay(QPainter *p, const QRectF &rect, qreal opacity)
@@ -362,22 +378,24 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
         switch (state) {
             case Solid::Control::NetworkInterface::Preparing:
             case Solid::Control::NetworkInterface::Configuring:
-            case Solid::Control::NetworkInterface::NeedAuth:
             case Solid::Control::NetworkInterface::IPConfig:
                 if (m_currentState != state) {
-                    m_overlayTimeline.start();
+                    m_overlayTimeline.stop();
                     m_overlayTimeline.setDuration(2000);
                     m_overlayTimeline.setDirection(QTimeLine::Forward);
                     m_overlayTimeline.start();
                 }
                 setBusy(true);
                 break;
+            case Solid::Control::NetworkInterface::NeedAuth:
+                setBusy(false);
+                break;
             default:
                 setBusy(false);
                 if (m_currentState != state) {
                     m_overlayTimeline.stop();
                     m_overlayTimeline.setDirection(QTimeLine::Backward);
-                    m_overlayTimeline.setDuration(4000);
+                    m_overlayTimeline.setDuration(10000);
                     m_overlayTimeline.start();
                 }
                 break;

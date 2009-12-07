@@ -121,6 +121,7 @@ private:
                      const QRectF &rect, qreal opacity = 1.0);
     void paintOkOverlay(QPainter *p, const QRectF &rect, qreal opacity = 1.0);
     void paintProgress(QPainter *p);
+    void paintOverlay(QPainter *p);
 
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;
