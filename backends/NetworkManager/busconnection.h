@@ -37,6 +37,7 @@
 
 
 class KJob;
+class ConnectionSecretsJob;
 
 namespace Knm
 {
@@ -76,7 +77,7 @@ class BusConnection : public QObject
         void gotSecrets(KJob*);
     private:
         Knm::Connection * m_connection;
-        KJob * m_job;
+        ConnectionSecretsJob * m_job;
         // a connection persistence while it is doing a wallet look up for us
 };
 

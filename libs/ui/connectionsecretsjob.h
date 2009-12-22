@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define CONNECTIONSECRETSJOB_H
 
 #include <QDBusMessage>
+#include <QPointer>
 #include <QStringList>
 
 #include <KJob>
@@ -53,7 +54,7 @@ public:
             const QStringList &secrets,
             bool requestNew,
             const QDBusMessage& request);
-    ~ConnectionSecretsJob();
+    virtual ~ConnectionSecretsJob();
     void start();
     Knm::Connection * connection() const;
     QString settingName() const;
@@ -68,6 +69,8 @@ public Q_SLOTS:
 protected Q_SLOTS:
     void gotPersistedSecrets(uint);
 
+protected:
+    virtual bool doKill();
 private:
     void doAskUser();
     QString keyForEntry(const QString & entry) const;
@@ -79,8 +82,8 @@ private:
     QVariantMap mSecrets;
     bool mRequestNew;
     QDBusMessage mRequest;
-    KDialog * m_askUserDialog;
-    SettingWidget * m_settingWidget;
+    QPointer<KDialog> m_askUserDialog;
+    QPointer<SettingWidget> m_settingWidget;
 };
 
 #endif // CONNECTIONSECRETSJOB_H

@@ -159,8 +159,8 @@ void NMDBusSettingsService::handleRemove(Knm::Connection * removed)
             QDBusObjectPath key = d->pathToConnections.key(busConn);
             d->uuidToPath.remove(removed->uuid());
             d->pathToConnections.remove(key);
+            busConn->Delete();
         }
-        busConn->Delete();
     }
 }
 

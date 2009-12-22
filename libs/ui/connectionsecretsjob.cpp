@@ -73,6 +73,8 @@ ConnectionSecretsJob::ConnectionSecretsJob(Knm::Connection* connection, const QS
 
 ConnectionSecretsJob::~ConnectionSecretsJob()
 {
+    delete m_askUserDialog;
+    delete m_settingWidget;
 }
 
 void ConnectionSecretsJob::start()
@@ -221,6 +223,14 @@ QDBusMessage ConnectionSecretsJob::requestMessage() const
 Knm::Connection * ConnectionSecretsJob::connection() const
 {
     return m_connection;
+}
+
+
+bool ConnectionSecretsJob::doKill()
+{
+    delete m_askUserDialog;
+    delete m_settingWidget;
+    return true;
 }
 
 // vim: sw=4 sts=4 et tw=100
