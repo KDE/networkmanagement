@@ -2,6 +2,7 @@
 Name=EXPERIMENTAL NetworkManager User Settings Service
 Name[da]=EKSPERIMENTEL tjeneste til brugerindstillinger for NetworkManager 
 Name[de]=EXPERIMENTELLER Benutzereinstellungsdienst für NetworkManager
+Name[el]=ΠΕΙΡΑΜΑΤΙΚΗ Υπηρεσία ρυθμίσεων διαχείρισης δικτύου χρήστη
 Name[en_GB]=EXPERIMENTAL NetworkManager User Settings Service
 Name[es]=EXPERIMENTAL Servicio de ajustes de usuario de NetworkManager
 Name[et]=Võrguhalduri kasutaja seadistuste teenus
@@ -17,6 +18,7 @@ Name[zh_TW]=【實驗性】網路管理使用者設定服務
 Comment=Provides network configuration to the NetworkManager daemon
 Comment[da]=Leverer netværkskonfiguration af NetworkManager-dæmonen
 Comment[de]=Stellt dem NetworkManager-Dienst eine Netzwerkeinrichtung zur Verfügung
+Comment[el]=Προσφέρει ρυθμίσεις δικτύου με το δαίμονα διαχείρισης δικτύου
 Comment[en_GB]=Provides network configuration to the NetworkManager dæmon
 Comment[es]=Provee una configuración de red para el demonio NetworkManager
 Comment[et]=Võrguseadistuse edastamine võrguhalduri deemonile
