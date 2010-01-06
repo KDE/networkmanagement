@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2008 Christopher Blauvelt <cblauvelt@gmail.com>
+Copyright 2010 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -32,9 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "apitemview.h"
 #include "networkitemmodel.h"
 #include "apitemdelegate.h"
-#include "ifaceitemmodel.h"
 
-class QTableView;
+class QTreeView;
 
 class ScanWidget : public QWidget, public Ui::ScanWidget
 {
@@ -53,10 +53,9 @@ class ScanWidget : public QWidget, public Ui::ScanWidget
     private:
         ApItemView * m_scanView;
         NetworkItemModel *m_scanModel;
-        QTableView * m_detailsView;
+        QTreeView * m_detailsView;
         ApItemDelegate *m_scanDelegate;
         QItemSelectionModel *m_scanSelectionModel;
-        IfaceItemModel *m_ifaceModel;
 
         QStringList m_wirelessInterfaces;
 };

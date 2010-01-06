@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class ApItemView : public QWidget
 {
     Q_OBJECT
-            
+
     public:
         ApItemView(QWidget *parent=0);
         ~ApItemView();

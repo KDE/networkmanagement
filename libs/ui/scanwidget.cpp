@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2008 Christopher Blauvelt <cblauvelt@gmail.com>
+Copyright 2010 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -19,12 +20,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "scanwidget.h"
-#include "ifaceitemmodel.h"
 
-#include <QTableView>
+#include <QTreeView>
 #include <QHeaderView>
 
 #include <KDebug>
+
+#include "uiutils.h"
 
 ScanWidget::ScanWidget(QWidget *parent)
     : QWidget(parent)
@@ -32,14 +34,16 @@ ScanWidget::ScanWidget(QWidget *parent)
     setupUi(this);
 
     //populate the interfaces combobox
-    m_ifaceModel = new IfaceItemModel(m_interface);
-    m_ifaceModel->filter(IfaceItemModel::Ieee80211); //we only want wifi devices
-    m_interface->setModel(m_ifaceModel);
-    m_interface->setModelColumn(2);//Interface name
+    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
 
-    //setup scanview if it doesn't already exist
+            Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+            m_interface->addItem(UiUtils::interfaceNameLabel(iface->uni()), wiface->uni());
+        }
+    }
+
     m_scanView = new ApItemView(this);
-    m_scanModel = new NetworkItemModel(m_ifaceModel->data(m_ifaceModel->index(m_interface->currentIndex(),0),IfaceItemModel::UniRole).toString());
+    m_scanModel = new NetworkItemModel(m_interface->itemData(0).toString());
     m_scanDelegate = new ApItemDelegate(m_scanView);
     m_scanSelectionModel = new QItemSelectionModel(m_scanModel);
 
@@ -48,11 +52,12 @@ ScanWidget::ScanWidget(QWidget *parent)
     m_scanView->setSelectionModel(m_scanSelectionModel);
     m_stack->insertWidget(0, m_scanView);
 
-    m_detailsView = new QTableView(this);
+    m_detailsView = new QTreeView(this);
+    m_detailsView->setSelectionBehavior(QAbstractItemView::SelectRows);
+    m_detailsView->setAllColumnsShowFocus(true);
+    m_detailsView->setRootIsDecorated(false);
     m_detailsView->setModel(m_scanModel);
     m_detailsView->setSelectionModel(m_scanSelectionModel);
-    QHeaderView* tableHeader = m_detailsView->horizontalHeader();
-    tableHeader->setResizeMode(QHeaderView::Stretch);
     m_stack->insertWidget(1, m_detailsView);
 
     m_stack->setCurrentWidget(m_scanView);
@@ -81,13 +86,6 @@ QString ScanWidget::currentAccessPoint() const
 
 void ScanWidget::onInterfaceChanged(int index)
 {
-    QModelIndex modelIndex = m_ifaceModel->index(index,0);
-    if(!modelIndex.isValid()) {
-        kDebug() << "Interface could not be loaded.";
-        return;
-    }
-
-    kDebug() << "Loading: " << m_ifaceModel->data(modelIndex, IfaceItemModel::UniRole);
-    m_scanModel->setNetworkInterface(m_ifaceModel->data(modelIndex, IfaceItemModel::UniRole).toString());
+    m_scanModel->setNetworkInterface(m_interface->itemData(index).toString());
 }
 

@@ -26,6 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KIcon>
 #include <KDebug>
+#include <KLocale>
+
+#include "wirelesssecurityidentifier.h"
 
 NetworkItemModel::NetworkItemModel(const QString & uni, QObject *parent)
     : QAbstractItemModel(parent),
@@ -40,8 +43,12 @@ NetworkItemModel::~NetworkItemModel()
 
 QModelIndex NetworkItemModel::index(int row, int column, const QModelIndex &parent) const
 {
-    Q_UNUSED(parent)
-    return createIndex(row, column);
+    Q_UNUSED(parent);
+    if (row < 0 || row >= m_networks.count() || column < 0 || column >= s_numColumns) {
+        return QModelIndex();
+    } else {
+        return createIndex(row, column);
+    }
 }
 
 QModelIndex NetworkItemModel::parent(const QModelIndex &index) const
@@ -52,15 +59,21 @@ QModelIndex NetworkItemModel::parent(const QModelIndex &index) const
 
 int NetworkItemModel::rowCount(const QModelIndex &parent) const
 {
-    Q_UNUSED(parent)
-    return m_networks.size();
+    if (parent == QModelIndex())
+        return m_networks.size();
+    else
+        return 0;
 }
 
 int NetworkItemModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     //columns are: essid(QString), signal strength(int), encrypted(bool/QString), mac address(QString)
-    return s_numColumns;
+    if (parent == QModelIndex())
+        return s_numColumns;
+    else {
+        return 0;
+    }
 }
 
 QVariant NetworkItemModel::data(const QModelIndex &index, int role) const
@@ -76,30 +89,52 @@ QVariant NetworkItemModel::data(const QModelIndex &index, int role) const
         kDebug() << "Network could not be found.";
         return QVariant();
     }
+    Solid::Control::AccessPoint * ap = 0;
     switch (index.column()) {
         case 0:
             switch (role){
                 case Qt::DisplayRole:
                     return network->ssid();
                 case Qt::DecorationRole:
-                    return KIcon("network-wireless");
+                    return KIcon(QLatin1String("network-wireless"));
                 case SignalStrength:
                     return network->signalStrength();
                 case EncryptionRole:
-                    return (m_networkInterface->findAccessPoint(network->referenceAccessPoint())->wpaFlags() != 0) ? QString("object-locked") : QString("object-unlocked");
+                    ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                    return KIcon(Knm::WirelessSecurity::iconName(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == Solid::Control::WirelessNetworkInterface::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags())));
+                case Qt::ToolTipRole:
+                    ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                    if (ap) {
+                        return Knm::WirelessSecurity::label(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == Solid::Control::WirelessNetworkInterface::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags()));
+                    } else {
+                        return QVariant();
+                    }
                 case MacAddress:
-                    return m_networkInterface->findAccessPoint(network->referenceAccessPoint())->hardwareAddress();
+                    ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                    if (ap) {
+                        return ap->hardwareAddress();
+                    } else {
+                        return QVariant();
+                    }
                 default:
                     return QVariant();
             }
         case 1:
-            if (role ==  Qt::DisplayRole)
-                return network->signalStrength();
+            if (role == Qt::DisplayRole)
+                return i18nc("@item:inlist signal strength percentage", "%1%", network->signalStrength());
             else
                 return QVariant();
         case 2:
-            if (role ==  Qt::DisplayRole)
-                return (m_networkInterface->findAccessPoint(network->referenceAccessPoint())->wpaFlags() != 0) ? QString("Yes") : QString("No");
+            ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+            if (role == Qt::DisplayRole) {
+                    if (ap) {
+                        return Knm::WirelessSecurity::label(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == Solid::Control::WirelessNetworkInterface::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags()));
+                    } else {
+                        return QVariant();
+                    }
+            } else if (role ==  Qt::DecorationRole) {
+                return KIcon(Knm::WirelessSecurity::iconName(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == Solid::Control::WirelessNetworkInterface::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags())));
+            }
             else
                 return QVariant();
         case 3:
@@ -124,13 +159,13 @@ QVariant NetworkItemModel::headerData(int section, Qt::Orientation orientation, 
 
                 switch (section) {
                     case 0:
-                        return QVariant("Name");
+                        return QVariant(i18nc("@item:intable wireless network name", "Name"));
                     case 1:
-                        return QVariant("Signal Strength");
+                        return QVariant(i18nc("@item:intable wireless signal strength", "Signal Strength"));
                     case 2:
-                        return QVariant("Encrypted");
+                        return QVariant(i18nc("@item:intable wireless encryption type", "Encryption"));
                     case 3:
-                        return QVariant("MAC Address");
+                        return QVariant(i18nc("@item:intable wireless access point hardware address", "MAC Address"));
                     default:
                         return QVariant();
                 }

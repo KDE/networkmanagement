@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2008 Christopher Blauvelt <cblauvelt@gmail.com>
+Copyright 2010 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -34,7 +35,7 @@ ApItemDelegate::~ApItemDelegate()
 
 void ApItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    KIcon encryptedIcon = KIcon(index.data(ApItemModel::EncryptionRole).toString());
+    KIcon encryptedIcon(index.data(ApItemModel::EncryptionRole).value<QIcon>());
     encryptedIcon.paint(painter, QRect(option.rect.topLeft(),option.decorationSize));
 
     QSize iconSize = encryptedIcon.actualSize(option.decorationSize);

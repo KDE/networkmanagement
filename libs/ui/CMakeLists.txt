@@ -26,7 +26,6 @@ set(knmui_SRCS
    apitemmodel.cpp
    networkitemmodel.cpp
    apitemview.cpp
-   ifaceitemmodel.cpp
    scanwidget.cpp
 
    # top level wireless security widget
