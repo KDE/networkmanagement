@@ -24,6 +24,7 @@ set(knmui_SRCS
    accesspoint.cpp
    apitemdelegate.cpp
    apitemmodel.cpp
+   networkitemmodel.cpp
    apitemview.cpp
    ifaceitemmodel.cpp
    scanwidget.cpp
