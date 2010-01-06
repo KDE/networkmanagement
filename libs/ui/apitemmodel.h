@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2008 Christopher Blauvelt <cblauvelt@gmail.com>
+Copyright 2010 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -29,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/wirelessaccesspoint.h>
+#include "wirelessnetworkinterfaceenvironment.h"
 
 class ApItemModel : public QAbstractItemModel
 {
@@ -36,7 +38,7 @@ class ApItemModel : public QAbstractItemModel
 
     public:
         enum UserRoles { SignalStrength=Qt::UserRole, MacAddress, ConnectionType, EncryptionRole };
-        
+
         ApItemModel(QString uni, QObject *parent=0);
         ~ApItemModel();
 
@@ -46,28 +48,19 @@ class ApItemModel : public QAbstractItemModel
         int columnCount(const QModelIndex &parent=QModelIndex()) const;
         QVariant data(const QModelIndex &index, int role=Qt::DisplayRole) const;
         QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
-        void sort(int column=0, Qt::SortOrder order=Qt::DescendingOrder);
-
         void setNetworkInterface(const QString &uni);
-        Solid::Control::WirelessNetworkInterface* networkInterface() const;
 
         void scan();
 
-    Q_SIGNALS:
-        void scanComplete();
-
     private Q_SLOTS:
-        void onScanComplete();
+        void accessPointAdded(const QString &);
+        void accessPointRemoved(const QString &);
 
     private:
-        static bool isSignalStrengthLesser(Solid::Control::AccessPoint *first, Solid::Control::AccessPoint *second);
-        static bool isSignalStrengthGreater(Solid::Control::AccessPoint *first, Solid::Control::AccessPoint *second);
-        
-        Solid::Control::AccessPointList m_ssids;
-        QList<Solid::Control::AccessPoint*> m_accessPoints;
+        QStringList m_accessPoints;
         Solid::Control::WirelessNetworkInterface *m_networkInterface;
 
-        static const int m_numColumns = 4;
+        static const int s_numColumns = 4;
 };
 
 #endif

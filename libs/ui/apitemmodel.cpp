@@ -1,5 +1,6 @@
 /*
 Copyright (C) 2008 Christopher Blauvelt <cblauvelt@gmail.com>
+Copyright 2010 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -32,7 +33,6 @@ ApItemModel::ApItemModel(QString uni, QObject *parent)
       m_accessPoints(),
       m_networkInterface(0)
 {
-    connect(this, SIGNAL(scanComplete()), this, SLOT(onScanComplete()));
     setNetworkInterface(uni);
 }
 
@@ -62,7 +62,7 @@ int ApItemModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent)
     //columns are: essid(QString), signal strength(int), encrypted(bool/QString), mac address(QString)
-    return m_numColumns;
+    return s_numColumns;
 }
 
 QVariant ApItemModel::data(const QModelIndex &index, int role) const
@@ -70,11 +70,11 @@ QVariant ApItemModel::data(const QModelIndex &index, int role) const
     if (!index.isValid())
         return QVariant();
 
-    if (index.row() >= m_accessPoints.size() || index.row() < 0 || index.column() >= m_numColumns || index.column() < 0)
+    if (index.row() >= m_accessPoints.size() || index.row() < 0 || index.column() >= s_numColumns || index.column() < 0)
         return QVariant();
 
-    Solid::Control::AccessPoint *accessPoint = m_accessPoints.value(index.row());
-    if (accessPoint == 0) {
+    Solid::Control::AccessPoint *accessPoint = m_networkInterface->findAccessPoint(m_accessPoints.value(index.row()));
+    if (!accessPoint) {
         kDebug() << "Access point could not be found.";
         return QVariant();
     }
@@ -107,27 +107,29 @@ QVariant ApItemModel::data(const QModelIndex &index, int role) const
 
 QVariant ApItemModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    switch (orientation) {
-        case Qt::Horizontal:
-            if (section < 0 || section >= m_numColumns) {
-                kDebug() << "Section is out of bounds: " << section;
-                return QVariant();
-            }
-
-            switch (section) {
-                case 0:
-                    return QVariant("Name");
-                case 1:
-                    return QVariant("Signal Strength");
-                case 2:
-                    return QVariant("Encrypted");
-                case 3:
-                    return QVariant("Mac Address");
-                default:
+    if (role == Qt::DisplayRole) {
+        switch (orientation) {
+            case Qt::Horizontal:
+                if (section < 0 || section >= s_numColumns) {
+                    kDebug() << "Section is out of bounds: " << section;
                     return QVariant();
-            }
-        case Qt::Vertical:
-            return QVariant(section);
+                }
+
+                switch (section) {
+                    case 0:
+                        return QVariant("Name");
+                    case 1:
+                        return QVariant("Signal Strength");
+                    case 2:
+                        return QVariant("Encrypted");
+                    case 3:
+                        return QVariant("MAC Address");
+                    default:
+                        return QVariant();
+                }
+            case Qt::Vertical:
+                return QVariant(section);
+        }
     }
     return QVariant();
 }
@@ -149,69 +151,46 @@ void ApItemModel::setNetworkInterface(const QString &uni)
         m_networkInterface=0;
         return;
     }
-    m_networkInterface = (Solid::Control::WirelessNetworkInterface*)networkInterface;
+    m_networkInterface = static_cast<Solid::Control::WirelessNetworkInterface*>(networkInterface);
     scan();
-}
-
-Solid::Control::WirelessNetworkInterface* ApItemModel::networkInterface() const
-{
-    return m_networkInterface;
-}
-
-void ApItemModel::sort(int column, Qt::SortOrder order)
-{
-    Q_UNUSED(column)
-    if (order == Qt::DescendingOrder) {
-        qSort(m_accessPoints.begin(), m_accessPoints.end(), ApItemModel::isSignalStrengthGreater);
-    } else {
-        qSort(m_accessPoints);
-    }
-}
-
-bool ApItemModel::isSignalStrengthGreater(Solid::Control::AccessPoint *first, Solid::Control::AccessPoint *second)
-{
-    return (first->signalStrength() > second->signalStrength());
-}
-
-bool ApItemModel::isSignalStrengthLesser(Solid::Control::AccessPoint *first, Solid::Control::AccessPoint *second)
-{
-    return (first->signalStrength() < second->signalStrength());
 }
 
 void ApItemModel::scan()
 {
     m_accessPoints.clear();
 
-    emit scanComplete();
-}
-
-void ApItemModel::onScanComplete()
-{
     kDebug() << "Scan complete.";
-    m_ssids.clear();
     m_accessPoints.clear();
     reset();
 
     if (m_networkInterface == 0) {
         kDebug() << "Primary interface not set.";
     }
-    Solid::Control::AccessPointList apList = m_networkInterface->accessPoints();
-    kDebug() << apList.size() << " access points were found.";
-    if (apList.size() == 0) {
-        kDebug() << "No networks found.";
+    m_accessPoints = m_networkInterface->accessPoints();
+
+    kDebug() << m_accessPoints.size() << " access points were found.";
+    if (m_accessPoints.size() == 0) {
+        kDebug() << "No access points found.";
     }
-    
-    foreach (const QString &ap, apList) {
-        kDebug() << "Proccessing ap: " << ap;
-        Solid::Control::AccessPoint *accesspoint = m_networkInterface->findAccessPoint(ap);
-        if (accesspoint == 0) {
-            continue;
-        }
-        kDebug() << "Adding to AP list.";
-        
-        m_ssids << ap;
-        m_accessPoints << accesspoint;
+}
+
+void ApItemModel::accessPointAdded(const QString & uni)
+{
+    if (!m_accessPoints.contains(uni)) {
+        int newIndex = m_accessPoints.count();
+        beginInsertRows(QModelIndex(), newIndex, newIndex);
+        m_accessPoints.append(uni);
+        endInsertRows();
     }
-    sort();
+}
+
+void ApItemModel::accessPointRemoved(const QString & uni)
+{
+    int i = m_accessPoints.indexOf(uni);
+    if (i > -1) {
+        beginRemoveRows(QModelIndex(), i, i);
+        m_accessPoints.takeAt(i);
+        endRemoveRows();
+    }
 }
 
