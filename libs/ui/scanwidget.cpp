@@ -39,7 +39,7 @@ ScanWidget::ScanWidget(QWidget *parent)
 
     //setup scanview if it doesn't already exist
     m_scanView = new ApItemView(this);
-    m_scanModel = new ApItemModel(m_ifaceModel->data(m_ifaceModel->index(m_interface->currentIndex(),0),IfaceItemModel::UniRole).toString());
+    m_scanModel = new NetworkItemModel(m_ifaceModel->data(m_ifaceModel->index(m_interface->currentIndex(),0),IfaceItemModel::UniRole).toString());
     m_scanDelegate = new ApItemDelegate(m_scanView);
     m_scanSelectionModel = new QItemSelectionModel(m_scanModel);
 

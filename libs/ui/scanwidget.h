@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessaccesspoint.h>
 
 #include "apitemview.h"
-#include "apitemmodel.h"
+#include "networkitemmodel.h"
 #include "apitemdelegate.h"
 #include "ifaceitemmodel.h"
 
@@ -52,7 +52,7 @@ class ScanWidget : public QWidget, public Ui::ScanWidget
 
     private:
         ApItemView * m_scanView;
-        ApItemModel *m_scanModel;
+        NetworkItemModel *m_scanModel;
         QTableView * m_detailsView;
         ApItemDelegate *m_scanDelegate;
         QItemSelectionModel *m_scanSelectionModel;

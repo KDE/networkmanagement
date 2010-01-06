@@ -61,7 +61,7 @@ void ApItemView::initStyleOptions()
     m_options.decorationSize = QSize(fm.height(),fm.height());
 }
 
-void ApItemView::setModel(ApItemModel *model)
+void ApItemView::setModel(QAbstractItemModel *model)
 {
     if (m_model == model) {
         return;
@@ -69,7 +69,7 @@ void ApItemView::setModel(ApItemModel *model)
     m_model = model;
 }
 
-ApItemModel* ApItemView::model()
+QAbstractItemModel * ApItemView::model()
 {
     return m_model;
 }
