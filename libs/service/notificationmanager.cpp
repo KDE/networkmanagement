@@ -23,7 +23,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 #include <QSet>
 #include <QTimer>
-#include <QWeakPointer>
 
 #include <KDebug>
 #include <KIcon>
@@ -298,7 +297,7 @@ void InterfaceNotificationHost::performInterfaceNotification(const QString & tit
         notification = new KNotification(Event::InterfaceStateChange, 0, flag);
         notification->setComponentData(m_manager->componentData());
         if (flag == KNotification::Persistent)
-            m_notification = QWeakPointer<KNotification>(notification);
+            m_notification = QPointer<KNotification>(notification);
         //notification->addContext(QLatin1String("connectiontype"), /*need to get the connection being activated on this device...*/);
     } else {
         notification = m_notification.data();

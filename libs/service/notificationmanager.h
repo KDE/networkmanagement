@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define NOTIFICATIONMANAGER_H
 
 #include <QObject>
+#include <QPointer>
 
 #include <KComponentData>
 #include <KNotification>
@@ -102,7 +103,7 @@ private:
     Solid::Control::NetworkInterface * m_interface;
     // used to refer to the interface if it is removed
     QString m_interfaceNameLabel;
-    QWeakPointer<KNotification> m_notification;
+    QPointer<KNotification> m_notification;
     QSet<Knm::InterfaceConnection*> m_activating;
     QSet<Knm::InterfaceConnection*> m_interfaceConnections;
 };
