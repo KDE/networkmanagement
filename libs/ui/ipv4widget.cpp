@@ -197,19 +197,24 @@ void IpV4Widget::writeConfig()
     // save method
     switch ( d->ui.method->currentIndex()) {
         case IpV4WidgetPrivate::AutomaticOnlyIPMethodIndex:
+            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Automatic);
             d->setting->setIgnoredhcpdns(true);
-            // set the same Knm::Ipv4Setting::EnumMethod::Automatic value
+            break;
         case IpV4WidgetPrivate::AutomaticMethodIndex:
             d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Automatic);
+            d->setting->setIgnoredhcpdns(false);
             break;
         case IpV4WidgetPrivate::LinkLocalMethodIndex:
             d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::LinkLocal);
+            d->setting->setIgnoredhcpdns(false);
             break;
         case IpV4WidgetPrivate::ManualMethodIndex:
             d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Manual);
+            d->setting->setIgnoredhcpdns(false);
             break;
         case IpV4WidgetPrivate::SharedMethodIndex:
             d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Shared);
+            d->setting->setIgnoredhcpdns(false);
             break;
         default:
             kDebug() << "Unrecognised combo box index for method:" << d->ui.method->currentIndex();
