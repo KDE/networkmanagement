@@ -103,6 +103,7 @@ QVariantMap Ipv4Dbus::toMap()
 
 
   //map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS), setting->ignoredhcpdns());
+  insertIfTrue(map, NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS, setting->ignoredhcpdns());
   insertIfTrue(map, NM_SETTING_IP4_CONFIG_IGNORE_AUTO_ROUTES, setting->ignoreautoroute());
   insertIfTrue(map, NM_SETTING_IP4_CONFIG_NEVER_DEFAULT, setting->neverdefault());
   insertIfNonEmpty(map, NM_SETTING_IP4_CONFIG_DHCP_CLIENT_ID, setting->dhcpclientid());
