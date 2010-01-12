@@ -77,11 +77,8 @@ void ConnectionInfoIPv4Tab::updateIpDetails()
 
     QStringList nameservers;
     foreach(const quint32 &addr, config.nameservers())
-#if KDE_IS_VERSION(4, 3, 67)
         nameservers << QHostAddress(addr).toString();
-#else
-        nameservers << QHostAddress(htonl(addr)).toString();
-#endif
+
     m_nameserversLabel->setText(nameservers.join("\n"));
 
     m_domainsLabel->setText(config.domains().join("\n"));
