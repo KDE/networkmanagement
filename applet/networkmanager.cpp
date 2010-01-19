@@ -268,6 +268,9 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
 void NetworkManagerApplet::paintOverlay(QPainter *p)
 {
     // Needs authentication, show this in the panel
+    if (!activeInterface()) {
+        return;
+    }
     if (activeInterface()->connectionState() == Solid::Control::NetworkInterface::NeedAuth) {
         int i_s = (int)contentsRect().width()/4;
         int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
