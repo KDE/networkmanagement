@@ -46,6 +46,7 @@ Exec=knetworkmanager
 Icon=networkmanager
 Type=Application
 Comment=A KDE frontend for NetworkManager
+Comment[cs]=KDE rozhraní pro NetworkManager
 Comment[da]=En KDE-brugerflade til Networkmanager
 Comment[de]=Eine KDE-Oberfläche für NetworkManager
 Comment[el]=Μια διασύνδεση περιβάλλοντος KDE για το NetworkManager

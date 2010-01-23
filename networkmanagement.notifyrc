@@ -46,6 +46,7 @@ Version=3
 
 [Context/connectiontype]
 Name=Network Connection Type
+Name[cs]=Typ síťového připojení
 Name[da]=Type af netværksforbindelse
 Name[de]=Art der Netzwerkverbindung
 Name[el]=Σύνδεση δικτύου τύπου
@@ -110,6 +111,7 @@ Comment[zh_TW]=網路介面已插入
 
 [Event/hwremoved]
 Name=Network Interface Removed
+Name[cs]=Síťové zařízení odstraněno
 Name[da]=Netkort fjernet
 Name[de]=Netzwerkschnittstelle entfernt
 Name[el]=Αφαίρεση διασύνδεσης δικτύου
@@ -130,6 +132,7 @@ Name[uk]=Вилучено інтерфейс мережі
 Name[x-test]=xxNetwork Interface Removedxx
 Name[zh_TW]=網路介面已移除
 Comment=A network interface was removed
+Comment[cs]=Síťové zařízení odstraněno
 Comment[da]=Et netkort blev fjernet
 Comment[de]=Eine Netzwerkschnittstelle ist entfernt worden
 Comment[el]=Έγινε αφαίρεση μιας διασύνδεσης δικτύου
@@ -215,6 +218,7 @@ Name[uk]=Втрачено зв’язок з радіомережею
 Name[x-test]=xxLost Wireless Networkxx
 Name[zh_TW]=遺失無線網路
 Comment=A wireless network disappeared
+Comment[cs]=Bezdrátová síť zmizela
 Comment[da]=Et trådløst netværk forsvandt
 Comment[de]=Ein drahtloses Netzwerk ist nicht mehr vorhanden
 Comment[el]=΄Ενα ασύρματο δίκτυο εξαφανίστηκε
@@ -425,6 +429,7 @@ Name[uk]=Успішне з’єднання з мережею
 Name[x-test]=xxNetwork Connection Succeededxx
 Name[zh_TW]=網路連線成功
 Comment=A network connection was established
+Comment[cs]=Síťové spojení bylo navázáno
 Comment[da]=En netværksforbindelse blev oprettet
 Comment[de]=Eine Netzwerkverbindung ist erfolgreich hergestellt worden
 Comment[el]=Έγινε εδραίωση μιας σύνδεσης δικτύου
