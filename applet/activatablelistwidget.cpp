@@ -85,10 +85,6 @@ void ActivatableListWidget::addType(Knm::Activatable::ActivatableType type)
 
 bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
 {
-    if (m_activatables->contains(activatable)) {
-        //kDebug() << "already in there ...";
-        //return false;
-    }
     return m_types.contains(activatable->activatableType());
 }
 
