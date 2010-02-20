@@ -186,7 +186,6 @@ void NMExtenderItem::interfaceRemoved(const QString& uni)
     if (m_interfaces.contains(uni)) {
         InterfaceItem * item = m_interfaces.take(uni);
         m_interfaceLayout->removeItem(item);
-        // TODO: remove tab
         delete item;
     }
     switchToDefaultTab();

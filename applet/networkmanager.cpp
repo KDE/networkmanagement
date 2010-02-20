@@ -285,9 +285,9 @@ void NetworkManagerApplet::paintOverlay(QPainter *p)
 
 void NetworkManagerApplet::paintOkOverlay(QPainter *p, const QRectF &rect, qreal opacity)
 {
-    QColor color = QColor("#37B237");
+    QColor color = QColor("#37B237"); // GNA! hardcoded colors == teh suck
     if (UiUtils::interfaceState(activeInterface()) == 0) {
-        color = QColor("#B23636");
+        color = QColor("#B23636"); // green; GNA! hardcoded colors == teh suck
     }
 
     color.setAlphaF(opacity * 0.6);
@@ -322,7 +322,8 @@ void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap pixmap, const 
         // draw the pixmap
         painter->drawPixmap(iconOrigin, temp);
     } else {
-        // FIXME: Works, but makes hw acceleration impossible, use above code path
+        // NOTE: Works, but makes hw acceleration impossible, use above code path
+        kWarning() << "You don't really want to hit this path, it means slow painting. Your paintengine is not good enough.";
         qreal old = painter->opacity();
         painter->setOpacity(opacity);
         painter->drawPixmap(iconOrigin, pixmap);

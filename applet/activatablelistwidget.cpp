@@ -85,11 +85,22 @@ void ActivatableListWidget::addType(Knm::Activatable::ActivatableType type)
 
 bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
 {
+    if (m_activatables->contains(activatable)) {
+        //kDebug() << "already in there ...";
+        //return false;
+    }
     return m_types.contains(activatable->activatableType());
 }
 
-ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activatable)
+void ActivatableListWidget::createItem(RemoteActivatable * activatable)
 {
+    foreach (RemoteActivatable* a, m_itemIndex.keys()) {
+        if (activatable == a) {
+            kDebug() << "activatable already in the layout, not creating an item" << a;
+            return;
+        }
+    }
+
     ActivatableItem* ai = 0;
     switch (activatable->activatableType()) {
         case Knm::Activatable::WirelessNetwork:
@@ -118,7 +129,7 @@ ActivatableItem * ActivatableListWidget::createItem(RemoteActivatable * activata
     ai->setupItem();
     m_layout->addItem(ai);
     m_itemIndex[activatable] = ai;
-    return ai;
+    //return ai;
 }
 
 void ActivatableListWidget::listAppeared()

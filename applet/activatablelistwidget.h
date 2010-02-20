@@ -53,7 +53,7 @@ Q_SIGNALS:
     void connectionListUpdated();
 
 private:
-    ActivatableItem* createItem(RemoteActivatable* conn);
+    void createItem(RemoteActivatable* conn);
     int m_connectionType;
     QList<Knm::Activatable::ActivatableType> m_types;
 
