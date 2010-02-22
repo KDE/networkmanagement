@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PLASMA_NETWORKMANAGER_APPLET_H
 
 class QAction;
+class KCModuleProxy;
 
 #include <kdeversion.h>
 
@@ -65,7 +66,6 @@ public:
     //Qt::Orientations expandingDirections() const;
     /* reimp Plasma::Applet */
     void constraintsEvent(Plasma::Constraints constraints);
-    virtual QList<QAction*> contextualActions();
     virtual void initExtenderItem(Plasma::ExtenderItem *);
 
     void loadExtender();
@@ -92,14 +92,10 @@ public Q_SLOTS:
      */
     void managerStatusChanged(Solid::Networking::Status);
 
-signals:
-    /**
-     * Tell the applet to show our KCModule
-     */
-    //void manageConnections();
+protected:
+    void createConfigurationInterface(KConfigDialog *parent);
 
-public Q_SLOTS:
-
+    
 protected Q_SLOTS:
     // called by Plasma::ToolTipManager
     void toolTipAboutToShow();
@@ -108,7 +104,6 @@ private Q_SLOTS:
     void networkInterfaceAdded(const QString& = QString());
     void networkInterfaceRemoved(const QString&);
     void interfaceConnectionStateChanged();
-    void manageConnections();
     void updatePixmap();
     void repaint();
 
@@ -139,6 +134,11 @@ private:
 
     QTimeLine m_overlayTimeline;
     int m_currentState;
+
+    ///embedded KCM modules in the configuration dialog
+    KCModuleProxy *m_kcmNM;
+    KCModuleProxy *m_kcmNMTray;
+
 };
 
 #endif

@@ -32,6 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QGraphicsBlurEffect>
 
+#include <KCModuleProxy>
+#include <KCModuleInfo>
 #include <KIcon>
 #include <KIconLoader>
 #include <KToolInvocation>
@@ -76,7 +78,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
         m_iconPerDevice(false),
         m_activeInterface(0)
 {
-    setHasConfigurationInterface(false);
+    setHasConfigurationInterface(true);
     setPopupIcon(QIcon());
     setPassivePopup(true); // FIXME: disable, only true for testing ...
     m_overlayTimeline.setEasingCurve(QEasingCurve::OutExpo);
@@ -158,6 +160,18 @@ void NetworkManagerApplet::init()
     connect(m_extenderItem, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
 }
 
+void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
+{
+    // Add the networkmanager KCM pages to the applet's configdialog
+    m_kcmNM = new KCModuleProxy("kcm_networkmanagement");
+    m_kcmNMTray = new KCModuleProxy("kcm_networkmanagement_tray");
+    parent->addPage(m_kcmNM, m_kcmNM->moduleInfo().moduleName(),
+                    m_kcmNM->moduleInfo().icon());
+    parent->addPage(m_kcmNMTray, m_kcmNMTray->moduleInfo().moduleName(),
+                    m_kcmNMTray->moduleInfo().icon());
+}
+
+
 
 void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
 {
@@ -185,15 +199,6 @@ void NetworkManagerApplet::updatePixmap()
     int s = UiUtils::iconSize(contentsRect().size());
     m_pixmap = KIcon(UiUtils::iconName(activeInterface())).pixmap(s, s);
     update();
-}
-
-QList<QAction*> NetworkManagerApplet::contextualActions()
-{
-    QAction* configAction = new QAction(KIcon("networkmanager"), i18n("Manage Connections..."), this);
-    connect(configAction, SIGNAL(triggered(bool)), this, SLOT(manageConnections()));
-    QList<QAction*> tempActions;
-    tempActions << configAction;
-    return tempActions;
 }
 
 void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
@@ -644,6 +649,7 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
     return lessThan;
 }
 
+/*
 void NetworkManagerApplet::manageConnections()
 {
     //kDebug() << "opening connection management dialog";
@@ -652,7 +658,7 @@ void NetworkManagerApplet::manageConnections()
     KToolInvocation::kdeinitExec("kcmshell4", args);
     hidePopup();
 }
-
+*/
 void NetworkManagerApplet::loadExtender()
 {
     Plasma::ExtenderItem *eItem = extender()->item("networkmanagement");
