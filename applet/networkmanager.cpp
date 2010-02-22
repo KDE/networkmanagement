@@ -305,7 +305,14 @@ void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap pixmap, const 
     painter->setRenderHint(QPainter::SmoothPixmapTransform);
     painter->setRenderHint(QPainter::Antialiasing);
 
-    if (!painter->paintEngine()->hasFeature(QPaintEngine::ConstantOpacity)) {
+    if (painter->paintEngine()->hasFeature(QPaintEngine::ConstantOpacity)) {
+        // NOTE: Works, but makes hw acceleration impossible, use above code path
+        kWarning() << "You don't really want to hit this path, it means slow painting. Your paintengine is not good enough.";
+        qreal old = painter->opacity();
+        painter->setOpacity(opacity);
+        painter->drawPixmap(iconOrigin, pixmap);
+        painter->setOpacity(old);
+    } else {
         QPixmap temp(QSize(size, size));
         temp.fill(Qt::transparent);
 
@@ -321,13 +328,6 @@ void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap pixmap, const 
 
         // draw the pixmap
         painter->drawPixmap(iconOrigin, temp);
-    } else {
-        // NOTE: Works, but makes hw acceleration impossible, use above code path
-        kWarning() << "You don't really want to hit this path, it means slow painting. Your paintengine is not good enough.";
-        qreal old = painter->opacity();
-        painter->setOpacity(opacity);
-        painter->drawPixmap(iconOrigin, pixmap);
-        painter->setOpacity(old);
     }
 }
 
