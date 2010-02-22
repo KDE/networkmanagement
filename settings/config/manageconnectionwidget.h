@@ -117,7 +117,7 @@ private:
     /**
      * Connect add/edit/delete button signals to relevant slots
      */
-    void connectButtonSet(AddEditDeleteButtonSet*);
+    void connectButtonSet(AddEditDeleteButtonSet*, QTreeWidget*);
 };
 
 #endif // NM07_MANAGE_CONNECTION_WIDGET_H

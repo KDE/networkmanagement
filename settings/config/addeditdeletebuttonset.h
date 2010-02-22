@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QWidget>
 
+class QTreeWidget;
 class KPushButton;
 
 /**
@@ -33,14 +34,21 @@ Q_OBJECT
 public:
     AddEditDeleteButtonSet(QWidget* parent = 0);
 
+    void setTree(QTreeWidget* tree);
+
     KPushButton* addButton() const { return mAddButton; }
     KPushButton* editButton() const { return mEditButton; }
     KPushButton* deleteButton() const { return mDeleteButton; }
+
+private slots:
+    void updateButtons();
 
 private:
     KPushButton* mAddButton;
     KPushButton* mEditButton;
     KPushButton* mDeleteButton;
+
+    QTreeWidget* mTree;
 };
 
 #endif /* ADDEDITDELETEBUTTONSET_H */

@@ -66,11 +66,11 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     mConnEditUi.setupUi(this);
 
     KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
-    connectButtonSet(mConnEditUi.buttonSetWired);
-    connectButtonSet(mConnEditUi.buttonSetWireless);
-    connectButtonSet(mConnEditUi.buttonSetCellular);
-    connectButtonSet(mConnEditUi.buttonSetVpn);
-    connectButtonSet(mConnEditUi.buttonSetPppoe);
+    connectButtonSet(mConnEditUi.buttonSetWired, mConnEditUi.listWired);
+    connectButtonSet(mConnEditUi.buttonSetWireless, mConnEditUi.listWireless);
+    connectButtonSet(mConnEditUi.buttonSetCellular, mConnEditUi.listCellular);
+    connectButtonSet(mConnEditUi.buttonSetVpn, mConnEditUi.listVpn);
+    connectButtonSet(mConnEditUi.buttonSetPppoe, mConnEditUi.listPppoe);
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             SLOT(updateTabStates()));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
@@ -510,8 +510,9 @@ void ManageConnectionWidget::updateLastUsed(QTreeWidget * list)
     }
 }
 
-void ManageConnectionWidget::connectButtonSet(AddEditDeleteButtonSet* buttonSet)
+void ManageConnectionWidget::connectButtonSet(AddEditDeleteButtonSet* buttonSet, QTreeWidget* tree)
 {
+    buttonSet->setTree(tree);
     connect(buttonSet->addButton(), SIGNAL(clicked()), SLOT(addClicked()));
     connect(buttonSet->editButton(), SIGNAL(clicked()), SLOT(editClicked()));
     connect(buttonSet->deleteButton(), SIGNAL(clicked()), SLOT(deleteClicked()));

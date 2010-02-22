@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "addeditdeletebuttonset.h"
 
+#include <QTreeWidget>
 #include <QVBoxLayout>
 
 #include <KDebug>
@@ -31,10 +32,15 @@ AddEditDeleteButtonSet::AddEditDeleteButtonSet(QWidget* parent)
 , mAddButton(new KPushButton)
 , mEditButton(new KPushButton)
 , mDeleteButton(new KPushButton)
+, mTree(0)
 {
     mAddButton->setGuiItem(KGuiItem(i18n("Add..."), "list-add"));
+
     mEditButton->setGuiItem(KGuiItem(i18n("Edit..."), "configure"));
+    mEditButton->setEnabled(false);
+
     mDeleteButton->setGuiItem(KStandardGuiItem::del());
+    mDeleteButton->setEnabled(false);
 
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->setMargin(0);
@@ -42,4 +48,18 @@ AddEditDeleteButtonSet::AddEditDeleteButtonSet(QWidget* parent)
     layout->addWidget(mEditButton);
     layout->addWidget(mDeleteButton);
     layout->addStretch();
+}
+
+void AddEditDeleteButtonSet::setTree(QTreeWidget* tree)
+{
+    mTree = tree;
+    connect(mTree, SIGNAL(itemSelectionChanged()), SLOT(updateButtons()));
+    updateButtons();
+}
+
+void AddEditDeleteButtonSet::updateButtons()
+{
+    bool hasSelection = !mTree->selectedItems().isEmpty();
+    mEditButton->setEnabled(hasSelection);
+    mDeleteButton->setEnabled(hasSelection);
 }
