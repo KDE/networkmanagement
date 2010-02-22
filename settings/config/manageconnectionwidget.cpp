@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KMessageBox>
 #include <KPluginFactory>
 #include <KPluginInfo>
+#include <KPushButton>
 #include <KRandom>
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
@@ -65,9 +66,11 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     mConnEditUi.setupUi(this);
 
     KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
-    connect(mConnEditUi.addConnection, SIGNAL(clicked()), SLOT(addClicked()));
-    connect(mConnEditUi.editConnection, SIGNAL(clicked()), SLOT(editClicked()));
-    connect(mConnEditUi.deleteConnection, SIGNAL(clicked()), SLOT(deleteClicked()));
+    connectButtonSet(mConnEditUi.buttonSetWired);
+    connectButtonSet(mConnEditUi.buttonSetWireless);
+    connectButtonSet(mConnEditUi.buttonSetCellular);
+    connectButtonSet(mConnEditUi.buttonSetVpn);
+    connectButtonSet(mConnEditUi.buttonSetPppoe);
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             SLOT(updateTabStates()));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
@@ -397,8 +400,8 @@ void ManageConnectionWidget::tabChanged(int index)
             mCellularMenu->addAction(gsmAction);
             mCellularMenu->addAction(cdmaAction);
             connect(mCellularMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
+            mConnEditUi.buttonSetCellular->addButton()->setMenu(mCellularMenu);
         }
-        mConnEditUi.addConnection->setMenu(mCellularMenu);
     } else if (index == 3) {
         if ( !mVpnMenu ) {
             mVpnMenu = new QMenu(this);
@@ -409,17 +412,10 @@ void ManageConnectionWidget::tabChanged(int index)
                 vpnAction->setData(QVariant(pi.pluginName()));
                 mVpnMenu->addAction(vpnAction);
             }
-        }
-        if (mVpnMenu->isEmpty()) {
-            mConnEditUi.addConnection->setEnabled(false);
-        } else {
-            mConnEditUi.addConnection->setEnabled(true);
             connect(mVpnMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
-            mConnEditUi.addConnection->setMenu(mVpnMenu);
+            mConnEditUi.buttonSetVpn->addButton()->setMenu(mVpnMenu);
         }
-    } else {
-        mConnEditUi.addConnection->setEnabled(true);
-        mConnEditUi.addConnection->setMenu(0);
+        mConnEditUi.buttonSetVpn->addButton()->setEnabled(!mVpnMenu->isEmpty());
     }
 }
 
@@ -512,5 +508,12 @@ void ManageConnectionWidget::updateLastUsed(QTreeWidget * list)
         (*it)->setText(1, formatDateRelative(lastUsed));
         ++it;
     }
+}
+
+void ManageConnectionWidget::connectButtonSet(AddEditDeleteButtonSet* buttonSet)
+{
+    connect(buttonSet->addButton(), SIGNAL(clicked()), SLOT(addClicked()));
+    connect(buttonSet->editButton(), SIGNAL(clicked()), SLOT(editClicked()));
+    connect(buttonSet->deleteButton(), SIGNAL(clicked()), SLOT(deleteClicked()));
 }
 

@@ -113,6 +113,11 @@ private:
     ConnectionEditor * mEditor;
     QHash<QString,QTreeWidgetItem*> mUuidItemHash;
     QTimer * mLastUsedTimer;
+
+    /**
+     * Connect add/edit/delete button signals to relevant slots
+     */
+    void connectButtonSet(AddEditDeleteButtonSet*);
 };
 
 #endif // NM07_MANAGE_CONNECTION_WIDGET_H

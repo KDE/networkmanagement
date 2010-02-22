@@ -10,6 +10,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/../../libs/internals)
 
 set(kcm_networkmanagement_SRCS
    # UI logic
+   addeditdeletebuttonset.cpp
    manageconnectionwidget.cpp
 )
 #kde4_add_kcfg_files(kcm_knetworkmanager_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/knmserviceprefs.kcfgc)
@@ -22,6 +23,7 @@ target_link_libraries(kcm_networkmanagement knmui knminternals solidcontrol ${KD
 ## next target: tray config KCM
 
 set(kcm_networkmanagement_tray_SRCS
+   addeditdeletebuttonset.cpp
    managetraywidget.cpp
    menutooltipsettingswidget.cpp
    traysettingswidget.cpp

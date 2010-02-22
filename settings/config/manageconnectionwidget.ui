@@ -14,7 +14,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>1</number>
+      <number>4</number>
      </property>
      <widget class="QWidget" name="tabWired">
       <attribute name="title">
@@ -43,6 +43,9 @@
           </property>
          </column>
         </widget>
+       </item>
+       <item>
+        <widget class="AddEditDeleteButtonSet" name="buttonSetWired" native="true"/>
        </item>
       </layout>
      </widget>
@@ -77,6 +80,9 @@
          </column>
         </widget>
        </item>
+       <item>
+        <widget class="AddEditDeleteButtonSet" name="buttonSetWireless" native="true"/>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tabCellular">
@@ -106,6 +112,9 @@
           </property>
          </column>
         </widget>
+       </item>
+       <item>
+        <widget class="AddEditDeleteButtonSet" name="buttonSetCellular" native="true"/>
        </item>
       </layout>
      </widget>
@@ -137,6 +146,9 @@
          </column>
         </widget>
        </item>
+       <item>
+        <widget class="AddEditDeleteButtonSet" name="buttonSetVpn" native="true"/>
+       </item>
       </layout>
      </widget>
      <widget class="QWidget" name="tabPppoe">
@@ -167,63 +179,23 @@
          </column>
         </widget>
        </item>
+       <item>
+        <widget class="AddEditDeleteButtonSet" name="buttonSetPppoe" native="true"/>
+       </item>
       </layout>
      </widget>
     </widget>
    </item>
-   <item>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="addConnection">
-       <property name="text">
-        <string>&amp;Add...</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="editConnection">
-       <property name="text">
-        <string>&amp;Edit...</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="verticalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="deleteConnection">
-       <property name="text">
-        <string>&amp;Delete</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>AddEditDeleteButtonSet</class>
+   <extends>QWidget</extends>
+   <header>addeditdeletebuttonset.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
