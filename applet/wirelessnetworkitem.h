@@ -51,7 +51,6 @@ class WirelessNetworkItem : public ActivatableItem
         void stateChanged();
 
     private:
-        RemoteWirelessNetwork * wirelessNetworkItem() const;
         bool readSettings();
         QGraphicsGridLayout * m_layout;
         Plasma::IconWidget * m_icon;

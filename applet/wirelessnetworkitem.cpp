@@ -264,14 +264,10 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
     update();
 }
 
-RemoteWirelessNetwork * WirelessNetworkItem::wirelessNetworkItem() const
-{
-    return static_cast<RemoteWirelessNetwork*>(m_activatable);
-}
 void WirelessNetworkItem::update()
 {
     //kDebug() << "updating" << m_ssid << wirelessNetworkItem()->strength();
-    setStrength(wirelessNetworkItem()->strength());
+    setStrength((static_cast<RemoteWirelessNetwork*>(m_activatable))->strength());
     return;
 }
 
