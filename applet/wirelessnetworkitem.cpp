@@ -153,6 +153,7 @@ void WirelessNetworkItem::setupItem()
     m_routeIcon = new Plasma::IconWidget(this);
     m_routeIcon->setIcon("emblem-favorite");
     m_routeIcon->setGeometry(QRectF(m_connectButton->geometry().topLeft(), QSizeF(16, 16)));
+    m_routeIcon->setToolTip(i18nc("@info:tooltip Tooltip for indicator that connection supplies the network default route", "Default"));
     m_routeIcon->hide(); // this will be shown in handleHasDefaultRouteChanged(bool);
 
     m_strengthMeter = new Plasma::Meter(this);
