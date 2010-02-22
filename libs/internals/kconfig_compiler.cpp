@@ -901,6 +901,7 @@ QString itemType( const QString &type )
 
 static QString itemDeclaration(const CfgEntry *e)
 {
+  Q_UNUSED( e )
   if (itemAccessors)
      return QString();
 
