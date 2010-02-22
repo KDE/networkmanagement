@@ -160,7 +160,7 @@ QGraphicsItem * NMExtenderItem::widget()
 #if KDE_IS_VERSION(4,2,60)
         m_connectionsButton->setTextBackgroundColor(QColor(Qt::transparent));
 #endif
-        connect(m_connectionsButton, SIGNAL(activated()), this, SLOT(manageConnections()));
+        connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
         m_rightLayout->addItem(m_connectionsButton);
 
         m_mainLayout->addItem(m_rightWidget, 0, 1);
