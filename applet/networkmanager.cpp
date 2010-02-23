@@ -436,28 +436,29 @@ void NetworkManagerApplet::toolTipAboutToShow()
                                         KIcon("networkmanager").pixmap(IconSize(KIconLoader::Desktop))
                                         );
     } else {
-        QString subText;
         qSort(interfaces.begin(), interfaces.end(), networkInterfaceLessThan);
         bool hasActive = false;
         bool iconChanged = false;
         QString icon = "networkmanager";
+        QStringList lines;
         foreach (Solid::Control::NetworkInterface *iface, interfaces) {
             if (iface->connectionState() != Solid::Control::NetworkInterface::Unavailable) {
-                if (!subText.isEmpty()) {
-                    subText += QLatin1String("<br><br>");
+                if (!lines.isEmpty()) {
+                    lines << QString();
                 }
                 hasActive = true;
 
                 QString deviceText = UiUtils::interfaceNameLabel(iface->uni());
 
                 QString ifaceName = iface->interfaceName();
-                subText += QString::fromLatin1("<b>%1</b>: %2").arg(deviceText).arg(UiUtils::connectionStateToString(iface->connectionState()));
+                lines << QString::fromLatin1("<b>%1</b>").arg(deviceText);
+                lines << UiUtils::connectionStateToString(iface->connectionState());
                 Solid::Control::IPv4Config ip4Config = iface->ipV4Config();
                 QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
                 if (!addresses.isEmpty()) {
                     QHostAddress addr(addresses.first().address());
                     QString currentIp = addr.toString();
-                    subText += QString::fromLatin1("<br>") + i18nc("Display of the IP (network) address in the tooltip", "<font size=\"-1\">Address: %1</font>", currentIp);
+                    lines << i18nc("Display of the IP (network) address in the tooltip", "<font size=\"-1\">Address: %1</font>", currentIp);
                 }
                 // Show the first active connection's icon, otherwise the networkmanager icon
                 if (!iconChanged && iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
@@ -466,8 +467,11 @@ void NetworkManagerApplet::toolTipAboutToShow()
                 }
             }
         }
-        if (!hasActive) {
-            subText += i18nc("tooltip, all interfaces are down", "Disconnected");
+        QString subText;
+        if (hasActive) {
+            subText = lines.join(QLatin1String("<br>"));
+        } else {
+            subText = i18nc("tooltip, all interfaces are down", "Disconnected");
         }
         m_toolTip = Plasma::ToolTipContent(QString(),
                                            subText,
