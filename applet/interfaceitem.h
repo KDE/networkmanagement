@@ -1,6 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
+Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -56,14 +56,14 @@ class InterfaceItem : public Plasma::Frame
 Q_OBJECT
 public:
     enum NameDisplayMode {InterfaceName, HardwareName};
-    InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode = InterfaceName, QGraphicsWidget* parent = 0);
+    InterfaceItem(Solid::Control::NetworkInterface* iface, NameDisplayMode mode = InterfaceName, QGraphicsWidget* parent = 0);
     virtual ~InterfaceItem();
 
     void setNameDisplayMode(NameDisplayMode);
     NameDisplayMode nameDisplayMode() const;
 
     virtual QString connectionName();
-    //void paint ( QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0 );
+    //void paint ( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0 );
     QString label();
 
 public Q_SLOTS:
@@ -101,18 +101,18 @@ protected:
     */
     virtual QString currentIpAddress();
 
-    Solid::Control::NetworkInterface * m_iface;
+    Solid::Control::NetworkInterface* m_iface;
 
-    QGraphicsGridLayout * m_layout;
-    QGraphicsLinearLayout * m_infoLayout;
-    Plasma::IconWidget * m_icon;
+    QGraphicsGridLayout* m_layout;
+    QGraphicsLinearLayout* m_infoLayout;
+    Plasma::IconWidget* m_icon;
     Plasma::IconWidget* m_disconnectButton;
-    Plasma::Label * m_ifaceNameLabel;
-    Plasma::Label * m_connectionNameLabel;
-    QGraphicsLinearLayout * m_connectionInfoLayout;
-    Plasma::Label * m_connectionInfoLabel;
-    Plasma::Label * m_connectionInfoStrengthLabel;
-    Plasma::IconWidget * m_connectionInfoIcon;
+    Plasma::Label* m_ifaceNameLabel;
+    Plasma::Label* m_connectionNameLabel;
+    QGraphicsLinearLayout* m_connectionInfoLayout;
+    Plasma::Label* m_connectionInfoLabel;
+    Plasma::Label* m_connectionInfoStrengthLabel;
+    Plasma::IconWidget* m_connectionInfoIcon;
     NameDisplayMode m_nameMode;
     bool m_enabled;
 

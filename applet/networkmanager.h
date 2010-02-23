@@ -112,32 +112,32 @@ private:
     Solid::Control::NetworkInterface* activeInterface();
     void setupInterfaceSignals();
 
-    void paintPixmap(QPainter *painter, QPixmap pixmap,
+    void paintPixmap(QPainter* painter, QPixmap pixmap,
                      const QRectF &rect, qreal opacity = 1.0);
-    void paintOkOverlay(QPainter *p, const QRectF &rect, qreal opacity = 1.0);
-    void paintProgress(QPainter *p);
-    void paintOverlay(QPainter *p);
+    void paintOkOverlay(QPainter* p, const QRectF &rect, qreal opacity = 1.0);
+    void paintProgress(QPainter* p);
+    void paintOverlay(QPainter* p);
 
     Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;
     Solid::Control::NetworkInterfaceList m_interfaces;
     Plasma::ToolTipContent m_toolTip;
 
-    RemoteActivatableList * m_activatableList;
+    RemoteActivatableList* m_activatableList;
     NMExtenderItem* m_extenderItem;
 
     QPixmap m_pixmap;
 
     // For tracking which status we should show
-    Solid::Control::NetworkInterface *m_activeInterface;
-    Solid::Control::AccessPoint *m_accessPoint;
+    Solid::Control::NetworkInterface* m_activeInterface;
+    Solid::Control::AccessPoint* m_accessPoint;
 
     QTimeLine m_overlayTimeline;
     int m_currentState;
 
     ///embedded KCM modules in the configuration dialog
-    KCModuleProxy *m_kcmNM;
-    KCModuleProxy *m_kcmNMTray;
+    KCModuleProxy* m_kcmNM;
+    KCModuleProxy* m_kcmNMTray;
 
 };
 

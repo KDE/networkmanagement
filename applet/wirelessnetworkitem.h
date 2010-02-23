@@ -34,7 +34,8 @@ namespace Plasma
 }
 
 class RemoteWirelessNetwork;
-/** * Represents an wireless network for which no connection exists
+/**
+    Represents an wireless network for which no connection exists
  */
 class WirelessNetworkItem : public ActivatableItem
 {
@@ -52,18 +53,17 @@ class WirelessNetworkItem : public ActivatableItem
 
     private:
         bool readSettings();
-        QGraphicsGridLayout * m_layout;
-        Plasma::IconWidget * m_icon;
-        Plasma::Label * m_ssidLabel;
-        Plasma::Meter * m_strengthMeter;
-        Plasma::IconWidget * m_connectButton;
+        QGraphicsGridLayout* m_layout;
+        Plasma::Label* m_ssidLabel;
+        Plasma::Meter* m_strengthMeter;
+        Plasma::IconWidget* m_connectButton;
         QString m_security;
-        Plasma::IconWidget * m_securityIcon;
+        Plasma::IconWidget* m_securityIcon;
         QString m_securityIconName;
         QString m_securityIconToolTip;
         int m_strength;
         QString m_ssid;
-        RemoteWirelessNetwork * m_remote;
+        RemoteWirelessNetwork* m_remote;
         Knm::InterfaceConnection::ActivationState m_state;
 };
 

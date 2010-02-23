@@ -157,9 +157,7 @@ QGraphicsItem * NMExtenderItem::widget()
         m_connectionsButton->setMaximumHeight(KIconLoader::SizeMedium);
         m_connectionsButton->setMinimumHeight(KIconLoader::SizeMedium);
         m_connectionsButton->setDrawBackground(true);
-#if KDE_IS_VERSION(4,2,60)
         m_connectionsButton->setTextBackgroundColor(QColor(Qt::transparent));
-#endif
         connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
         m_rightLayout->addItem(m_connectionsButton);
 

@@ -131,7 +131,7 @@ void WirelessNetworkItem::setupItem()
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
-
+    m_connectButton->setAcceptsHoverEvents(false);
     m_connectButton->setIcon("network-wireless"); // Known connection, we probably have credentials
     if (interfaceConnection()) {
         m_connectButton->setText(interfaceConnection()->connectionName());
@@ -142,9 +142,7 @@ void WirelessNetworkItem::setupItem()
     }
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setOrientation(Qt::Horizontal);
-#if KDE_IS_VERSION(4,2,60)
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
-#endif
     //m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", ssid));
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);

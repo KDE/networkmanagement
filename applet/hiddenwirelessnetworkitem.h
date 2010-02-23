@@ -62,9 +62,9 @@ Q_OBJECT
         void ssidEntered();
     private:
         static QString s_defaultText;
-        QGraphicsLinearLayout * m_layout;
-        Plasma::IconWidget * m_connect;
-        Plasma::LineEdit * m_ssidEdit;
+        QGraphicsLinearLayout* m_layout;
+        Plasma::IconWidget* m_connect;
+        Plasma::LineEdit* m_ssidEdit;
         QString m_ssid;
 };
 #endif // HIDDENWIRELESSNETWORKITEM_H

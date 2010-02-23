@@ -43,8 +43,8 @@ public:
     bool accept(RemoteActivatable* activatable) const;
 
 public Q_SLOTS:
-    void activatableAdded(RemoteActivatable *);
-    void activatableRemoved(RemoteActivatable *);
+    void activatableAdded(RemoteActivatable*);
+    void activatableRemoved(RemoteActivatable*);
     void listDisappeared();
     void listAppeared();
     void deactivateConnection();
