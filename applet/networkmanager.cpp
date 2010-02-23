@@ -442,10 +442,10 @@ void NetworkManagerApplet::toolTipAboutToShow()
         bool iconChanged = false;
         QString icon = "networkmanager";
         foreach (Solid::Control::NetworkInterface *iface, interfaces) {
-            if (!subText.isEmpty()) {
-                subText += QLatin1String("<br><br>");
-            }
             if (iface->connectionState() != Solid::Control::NetworkInterface::Unavailable) {
+                if (!subText.isEmpty()) {
+                    subText += QLatin1String("<br><br>");
+                }
                 hasActive = true;
 
                 QString deviceText = UiUtils::interfaceNameLabel(iface->uni());
