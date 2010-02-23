@@ -47,7 +47,7 @@ Q_SIGNALS:
 protected Q_SLOTS:
     void emitClicked();
     void handleHasDefaultRouteChanged(bool);
-
+    virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 protected:
     RemoteActivatable *m_activatable;
     Plasma::IconWidget *m_routeIcon;

@@ -148,12 +148,13 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
 
+    /*
     m_routeIcon = new Plasma::IconWidget(this);
     m_routeIcon->setIcon("emblem-favorite");
     m_routeIcon->setGeometry(QRectF(m_connectButton->geometry().topLeft(), QSizeF(16, 16)));
     m_routeIcon->setToolTip(i18nc("@info:tooltip Tooltip for indicator that connection supplies the network default route", "Default"));
     m_routeIcon->hide(); // this will be shown in handleHasDefaultRouteChanged(bool);
-
+    */
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);
@@ -219,9 +220,9 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
     if (interfaceConnection()) {
         t = interfaceConnection()->connectionName();
         if (interfaceConnection()->hasDefaultRoute()) {
-            m_routeIcon->show();
+            //m_routeIcon->show();
         } else {
-            m_routeIcon->hide();
+            //m_routeIcon->hide();
         }
     } else {
         t = m_ssid;

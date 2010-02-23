@@ -42,8 +42,8 @@ namespace Solid
     namespace Control
     {
         class NetworkInterface;
-    } // namespace Control
-} // namespace Solid
+    }
+}
 
 
 /**
@@ -63,7 +63,6 @@ public:
     NameDisplayMode nameDisplayMode() const;
 
     virtual QString connectionName();
-    //void paint ( QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0 );
     QString label();
 
 public Q_SLOTS:

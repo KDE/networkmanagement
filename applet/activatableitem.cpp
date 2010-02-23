@@ -23,6 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdebug.h>
 #include "remoteactivatable.h"
 
+#include <QPainter>
+#include <KIcon>
+
 ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * parent) : Plasma::IconWidget(parent),
     m_activatable(remote),
     m_routeIcon(0)
@@ -60,11 +63,19 @@ void ActivatableItem::handleHasDefaultRouteChanged(bool has)
         // do something nice to show that this connection has the default route
         if (has) {
             kDebug() << "We now have the default route";
-            m_routeIcon->show();
+            //m_routeIcon->show();
         } else {
-            m_routeIcon->hide();
+            //m_routeIcon->hide();
         }
     }
 }
+
+void ActivatableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+    // TODO: emblem-favorite
+    painter->drawPixmap(QRect(2,2,10,10), KIcon("face-smile-big").pixmap(QSize(8,8)));
+    Plasma::IconWidget::paint(painter, option, widget);
+}
+
 
 // vim: sw=4 sts=4 et tw=100
