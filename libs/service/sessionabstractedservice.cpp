@@ -78,6 +78,9 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
                 = static_cast<Knm::WirelessNetwork*>(added);
             new WirelessNetworkAdaptor(realObj);
             new ActivatableAdaptor(realObj);
+        } else {
+            // do not put any other types on the bus
+            return;
         }
 
         QString path = nextObjectPath();
