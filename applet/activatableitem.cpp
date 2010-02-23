@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * parent) : Plasma::IconWidget(parent),
     m_activatable(remote),
-    m_routeIcon(0)
+    m_hasDefaultRoute(false)
 {
     setDrawBackground(true);
     setTextBackgroundColor(QColor(Qt::transparent));
@@ -59,22 +59,16 @@ RemoteInterfaceConnection * ActivatableItem::interfaceConnection() const
 
 void ActivatableItem::handleHasDefaultRouteChanged(bool has)
 {
-    if (m_routeIcon) {
-        // do something nice to show that this connection has the default route
-        if (has) {
-            kDebug() << "We now have the default route";
-            //m_routeIcon->show();
-        } else {
-            //m_routeIcon->hide();
-        }
-    }
+    // do something nice to show that this connection has the default route
+    m_hasDefaultRoute = has;
 }
 
 void ActivatableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-    // TODO: emblem-favorite
-    painter->drawPixmap(QRect(2,2,10,10), KIcon("face-smile-big").pixmap(QSize(8,8)));
     Plasma::IconWidget::paint(painter, option, widget);
+    if (m_hasDefaultRoute) {
+        painter->drawPixmap(QRect(4,4,10,10), KIcon("emblem-favorite").pixmap(QSize(8,8)));
+    }
 }
 
 

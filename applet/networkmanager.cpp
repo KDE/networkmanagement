@@ -80,7 +80,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 {
     setHasConfigurationInterface(true);
     setPopupIcon(QIcon());
-    setPassivePopup(true); // FIXME: disable, only true for testing ...
+    //setPassivePopup(true); // FIXME: disable, only true for testing ...
     m_overlayTimeline.setEasingCurve(QEasingCurve::OutExpo);
     m_currentState = 0;
     connect(&m_overlayTimeline, SIGNAL(valueChanged(qreal)), this, SLOT(repaint()));
@@ -215,12 +215,19 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
     bool bar = false;
     qreal state = UiUtils::interfaceState(activeInterface());
 
+    int i_s = (int)contentsRect().width()/4;
+    int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
+
+    //QRectF r = QRectF(contentsRect().width()*.25, contentsRect().height()*.75, contentsRect().width()*.5, contentsRect().height()*.5);
+    QRectF r = QRectF(iconsize, iconsize*2, iconsize, iconsize);
+
     qreal opacity = m_overlayTimeline.currentValue();
     if (opacity == 0) {
         return;
     } else if (state == 1) {
         //kDebug() << "painting OK overlay with opacity: " << opacity;
-        paintOkOverlay(p, contentsRect(), opacity);
+        //paintOkOverlay(p, contentsRect(), opacity);
+        paintOkOverlay(p, r, opacity);
         return;
     }
 
@@ -258,15 +265,19 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
         // paint an arc completing a circle
         // 1 degree = 16 ticks, that's how drawArc() works
         // 0 is at 3 o'clock
+        p->save();
         int top = 90 * 16;
         int progress = -360 * 16 * state;
         QPen pen(fgColor, 2); // color and line width
 
         //kDebug() << "progress circle" << top << progress;
         p->setPen(pen);
-        p->setBrush(QBrush(bgColor));
+        p->setBrush(fgColor);
+        //p->setBrush(QBrush(bgColor));
 
-        p->drawArc(contentsRect(), top, progress);
+        //p->drawArc(contentsRect(), top, progress);
+        p->drawPie(r, top, progress);
+        p->restore();
     }
 }
 
@@ -298,6 +309,7 @@ void NetworkManagerApplet::paintOkOverlay(QPainter *p, const QRectF &rect, qreal
     color.setAlphaF(opacity * 0.6);
     QPen pen(color, 2); // green, px width
     p->setPen(pen);
+    p->setBrush(color);
     p->drawEllipse(rect);
 }
 
@@ -312,7 +324,7 @@ void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap pixmap, const 
 
     if (painter->paintEngine()->hasFeature(QPaintEngine::ConstantOpacity)) {
         // NOTE: Works, but makes hw acceleration impossible, use above code path
-        kWarning() << "You don't really want to hit this path, it means slow painting. Your paintengine is not good enough.";
+        //kWarning() << "You don't really want to hit this path, it means slow painting. Your paintengine is not good enough.";
         qreal old = painter->opacity();
         painter->setOpacity(opacity);
         painter->drawPixmap(iconOrigin, pixmap);

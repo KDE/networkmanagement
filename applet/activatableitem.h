@@ -50,7 +50,7 @@ protected Q_SLOTS:
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
 protected:
     RemoteActivatable *m_activatable;
-    Plasma::IconWidget *m_routeIcon;
+    bool m_hasDefaultRoute;
 
 };
 
