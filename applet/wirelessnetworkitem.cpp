@@ -172,7 +172,6 @@ void WirelessNetworkItem::setupItem()
     m_securityIcon->setToolTip(m_securityIconToolTip);
     m_layout->addItem(m_securityIcon, 0, 2, 1, 1, Qt::AlignLeft);
 
-    connect(m_connectButton, SIGNAL(clicked()), this, SIGNAL(clicked()));
     connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
     // Forward clicks and presses between our widgets and this
