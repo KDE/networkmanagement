@@ -88,6 +88,10 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     Plasma::ToolTipManager::self()->registerWidget(this);
     setAspectRatioMode(Plasma::ConstrainedSquare);
 
+    m_svg = new Plasma::Svg(this);
+    m_svg->setImagePath("widgets/wireless");
+    m_svg->setContainsMultipleImages(true);
+    setStatus(Plasma::ActiveStatus);
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     if (activeInterface()) {
         m_currentState = activeInterface()->connectionState();
@@ -205,7 +209,11 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 {
     Q_UNUSED( option );
 
-    paintPixmap(p, m_pixmap, contentsRect);
+    if (m_useSvg) {
+        
+    } else {
+        paintPixmap(p, m_pixmap, contentsRect);
+    }
     paintProgress(p);
     paintOverlay(p);
 }

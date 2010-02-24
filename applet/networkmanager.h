@@ -139,6 +139,9 @@ private:
     KCModuleProxy* m_kcmNM;
     KCModuleProxy* m_kcmNMTray;
 
+    Plasma::Svg* m_svg;
+    bool m_useSvg;
+
 };
 
 #endif
