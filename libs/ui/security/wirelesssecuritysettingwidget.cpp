@@ -70,6 +70,9 @@ public:
     {
         ui.cboType->addItem(label);
         security.first = ui.securityWidgets->addWidget(security.second);
+        if (security.second->layout()) {
+            security.second->layout()->setMargin(0);
+        }
     }
 
     void setCurrentSecurityWidget(int index)

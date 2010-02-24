@@ -53,6 +53,9 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
 {
     Q_D(IpV4Widget);
     d->ui.setupUi(this);
+    for(int index=0; index < d->ui.stackedWidget->count(); ++index) {
+        d->ui.stackedWidget->widget(index)->layout()->setMargin(0);
+    }
 
     QString str_auto;
     QString str_auto_only;

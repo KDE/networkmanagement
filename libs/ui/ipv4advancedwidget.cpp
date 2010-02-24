@@ -87,6 +87,7 @@ IpV4AdvancedWidget::IpV4AdvancedWidget(QWidget * parent)
 : QWidget(parent), d(new IpV4AdvancedWidget::Private())
 {
     d->ui.setupUi(this);
+    layout()->setMargin(0);
     d->ui.tableViewAddresses->setModel(&d->model);
     d->ui.tableViewAddresses->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     d->ui.tableViewAddresses->horizontalHeader()->setStretchLastSection(true);
