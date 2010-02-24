@@ -110,6 +110,108 @@ NetworkManagerApplet::~NetworkManagerApplet()
 {
 }
 
+QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface)
+{
+    if (iface->type() != Solid::Control::NetworkInterface::Ieee80211) {
+        return QString();
+    }
+
+    int _s = qMin(contentsRect().width(), contentsRect().height());
+    int s;
+    // Figure out the maximum size of the element
+    // those pixelsizes are taken from the svg
+    if (_s >= 19) {
+        s = 19;
+    }
+    if (_s >= 24) {
+        s = 24;
+    }
+    if (_s >= 38) {
+        s = 38;
+    }
+    if (_s >= 50) {
+        s = 50;
+    }
+    if (_s >= 76) {
+        s = 76;
+    }
+    if (_s >= 19 && _s <= 76) {
+        m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - s) / 2,
+                                contentsRect().y() + (contentsRect().height() - s) / 2,
+                                s, s);
+    } else {
+        m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - _s) / 2,
+                                contentsRect().y() + (contentsRect().height() - _s) / 2,
+                                _s, _s);
+
+    }
+
+    // Now figure out which exact element we'll use
+    QString strength = "00";
+    Solid::Control::WirelessNetworkInterface *wiface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+
+    if (wiface) {
+        QString uni = wiface->activeAccessPoint();
+        //QString uni = wiface->activeAccessPoint()->signalStrength();
+        //int s =
+        Solid::Control::AccessPoint *ap = wiface->findAccessPoint(uni);
+        if (ap) {
+            int str = ap->signalStrength();
+            if (s == 19) {
+                // The size 19 in the svg only has 4 states
+                if (str < 13) {
+                    strength = "00";
+                } else if (str < 38) {
+                    strength = "25";
+                } else if (str < 63) {
+                    strength = "50";
+                } else if (str < 88) {
+                    strength = "75";
+                } else if (str >= 88) {
+                    strength = "100";
+                }
+            } else {
+                if (str < 13) {
+                    strength = "00";
+                } else if (str < 30) {
+                    strength = "20";
+                } else if (str < 50) {
+                    strength = "40";
+                } else if (str < 70) {
+                    strength = "60";
+                } else if (str < 90) {
+                    strength = "80";
+                } else {
+                    strength = "100";
+                }
+            }
+        } else {
+                strength = "00";
+        }
+    } else {
+        return QString("dialog-error");
+    }
+    QString w = QString::number(s);
+
+    // <width>-<height>-wireless-signal-<strenght>
+    QString icon;
+    if (_s < 19 || _s > 76) {
+        icon = QString("wireless-signal-%1").arg(strength);
+        //m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - _s) / 2,
+        //                contentsRect().y() + (contentsRect().height() - _s) / 2,
+        //                _s, _s);
+
+    } else {
+        icon = QString("%1-%2-wireless-signal-%3").arg(w, w, strength);
+    }
+    //kDebug() << "============================ icon:" << icon;
+    //m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - s) / 2,
+    //                        contentsRect().y() + (contentsRect().height() - s) / 2,
+    //                        s, s);
+
+    return icon;
+}
+
 void NetworkManagerApplet::setupInterfaceSignals()
 {
     foreach (Solid::Control::NetworkInterface* interface, m_interfaces) {
@@ -146,6 +248,8 @@ void NetworkManagerApplet::setupInterfaceSignals()
 
 void NetworkManagerApplet::init()
 {
+    // bogus, just to make sure we have some remotely sensible value
+    m_contentSquare = contentsRect().toRect();
     kDebug();
     KConfigGroup cg = config();
     m_iconPerDevice = cg.readEntry("IconPerDevice", false);
@@ -210,8 +314,12 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     Q_UNUSED( option );
 
     if (m_useSvg) {
-        
+        QString el = svgElement(activeInterface());
+        //<width>-<height>-wireless-signal-<strenght>
+        m_svg->paint(p, m_contentSquare, el);
+        //kDebug() << "------- using svg" << el << m_contentSquare;
     } else {
+        //kDebug() << "------- not using svg";
         paintPixmap(p, m_pixmap, contentsRect);
     }
     paintProgress(p);
@@ -392,8 +500,14 @@ Solid::Control::NetworkInterface* NetworkManagerApplet::activeInterface()
 {
     if (!m_interfaces.isEmpty()) {
         qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
+        if (m_interfaces.first()->type() == Solid::Control::NetworkInterface::Ieee80211) {
+            m_useSvg = true;
+        } else {
+            m_useSvg = false;
+        }
         return m_interfaces.first();
     } else {
+        m_useSvg = false;
         return 0;
     }
 }
@@ -414,13 +528,13 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
                     m_overlayTimeline.setDirection(QTimeLine::Forward);
                     m_overlayTimeline.start();
                 }
-                setBusy(true);
+                //setBusy(true);
                 break;
             case Solid::Control::NetworkInterface::NeedAuth:
-                setBusy(false);
+                //setBusy(false);
                 break;
             default:
-                setBusy(false);
+                //setBusy(false);
                 if (m_currentState != state) {
                     m_overlayTimeline.stop();
                     m_overlayTimeline.setDirection(QTimeLine::Backward);

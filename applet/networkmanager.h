@@ -111,6 +111,7 @@ private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
     Solid::Control::NetworkInterface* activeInterface();
     void setupInterfaceSignals();
+    QString svgElement(Solid::Control::NetworkInterface *iface);
 
     void paintPixmap(QPainter* painter, QPixmap pixmap,
                      const QRectF &rect, qreal opacity = 1.0);
@@ -141,6 +142,7 @@ private:
 
     Plasma::Svg* m_svg;
     bool m_useSvg;
+    QRect m_contentSquare;
 
 };
 
