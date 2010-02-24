@@ -68,8 +68,6 @@ set(knmui_SRCS
    )
 
 kde4_add_ui_files(knmui_SRCS
-   #security.ui
-
    # Settings
    cdma.ui
    gsm.ui
