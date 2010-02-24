@@ -71,6 +71,9 @@
          <property name="text">
           <string>&amp;IP Address:</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
          <property name="buddy">
           <cstring>address</cstring>
          </property>
@@ -93,6 +96,9 @@
         <widget class="QLabel" name="netMaskLabel">
          <property name="text">
           <string>Subnet &amp;Mask:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
          <property name="buddy">
           <cstring>netMask</cstring>
@@ -117,6 +123,9 @@
          <property name="text">
           <string>&amp;Gateway:</string>
          </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
          <property name="buddy">
           <cstring>gateway</cstring>
          </property>
@@ -139,6 +148,9 @@
         <widget class="QLabel" name="dnsSearchLabel">
          <property name="text">
           <string>&amp;Search Domains:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
          <property name="buddy">
           <cstring>dnsSearch</cstring>
@@ -173,6 +185,9 @@
          </property>
          <property name="textFormat">
           <enum>Qt::AutoText</enum>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
          <property name="buddy">
           <cstring>dns</cstring>
@@ -232,6 +247,9 @@
         <widget class="QLabel" name="labelDhcpClientId">
          <property name="text">
           <string>DHCP &amp;Client ID:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
          <property name="buddy">
           <cstring>dhcpClientId</cstring>
