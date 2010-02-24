@@ -48,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceitem.h"
 #include "wirelessinterfaceitem.h"
 #include "activatablelistwidget.h"
+#include "interfacedetailswidget.h"
 
 NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::Extender * ext)
 : Plasma::ExtenderItem(ext),
@@ -102,10 +103,10 @@ QGraphicsItem * NMExtenderItem::widget()
         m_mainLayout = new QGraphicsGridLayout(m_widget);
         m_widget->setLayout(m_mainLayout);
 
-        m_leftWidget = new Plasma::Frame(m_widget);
+        m_leftWidget = new Plasma::TabBar(m_widget);
         m_leftWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
         m_interfaceWidget = new QGraphicsWidget(m_leftWidget);
-        m_leftLayout = new QGraphicsLinearLayout(m_leftWidget);
+        m_leftLayout = new QGraphicsLinearLayout;
         m_leftLayout->setOrientation(Qt::Vertical);
 
         m_interfaceLayout = new QGraphicsLinearLayout(m_interfaceWidget);
@@ -135,7 +136,14 @@ QGraphicsItem * NMExtenderItem::widget()
         connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
                 this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
 
-        m_leftWidget->setLayout(m_leftLayout);
+        //m_leftWidget->setLayout(m_leftLayout);
+        m_leftWidget->addTab(i18nc("tabbar on the left side", "Interfaces"), m_leftLayout);
+        //m_leftWidget->setTabBarShown(false); // TODO: enable
+
+
+        m_interfaceDetailsWidget = new InterfaceDetailsWidget(m_leftWidget);
+        m_leftWidget->addTab(i18nc("details for the interface", "Details"), m_interfaceDetailsWidget);
+
         m_mainLayout->addItem(m_leftWidget, 0, 0);
 
         m_rightWidget = new Plasma::Frame(m_widget);

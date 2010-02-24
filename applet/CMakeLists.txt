@@ -14,6 +14,7 @@ set(networkmanager_SRCS
 
     interfaceitem.cpp
     wirelessinterfaceitem.cpp
+    interfacedetailswidget.cpp
 
     activatableitem.cpp
     interfaceconnectionitem.cpp

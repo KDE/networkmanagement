@@ -44,6 +44,7 @@ class RemoteActivatableList;
 
 class ActivatableListWidget;
 class InterfaceItem;
+class InterfaceDetailsWidget;
 
 class NMExtenderItem: public Plasma::ExtenderItem
 {
@@ -86,12 +87,13 @@ private:
 
     QGraphicsWidget* m_widget;
     QGraphicsGridLayout* m_mainLayout;
-    Plasma::Frame* m_leftWidget;
+    Plasma::TabBar* m_leftWidget;
     Plasma::Frame* m_rightWidget;
     QGraphicsWidget* m_interfaceWidget;
     QGraphicsLinearLayout* m_leftLayout;
     QGraphicsLinearLayout* m_rightLayout;
     QGraphicsLinearLayout* m_interfaceLayout;
+    InterfaceDetailsWidget* m_interfaceDetailsWidget;
 
     Plasma::CheckBox* m_networkingCheckBox;
     Plasma::CheckBox* m_rfCheckBox;
