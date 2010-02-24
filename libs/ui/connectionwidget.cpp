@@ -41,6 +41,8 @@ ConnectionWidget::ConnectionWidget(QWidget * parent)
 {
     Q_D(ConnectionWidget);
     d->ui.setupUi(this);
+    // Avoid double margins in dialog
+    layout()->setMargin(0);
     d->valid = false; // valid on creation because connection name (id) is empty
 
     d->ui.pushButtonChooseIcon->setToolTip(i18nc("@info:tooltip user action", "Choose a connection icon"));
