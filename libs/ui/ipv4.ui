@@ -95,7 +95,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
-          <string>&amp;Configure:</string>
+          <string>Method:</string>
          </property>
          <property name="alignment">
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -212,40 +212,6 @@
          </property>
         </widget>
        </item>
-       <item row="4" column="0">
-        <widget class="QLabel" name="dnsSearchLabel">
-         <property name="text">
-          <string>&amp;Search Domains:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy">
-          <cstring>dnsSearch</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <layout class="QHBoxLayout" name="horizontalLayout_5">
-         <item>
-          <widget class="KLineEdit" name="dnsSearch">
-           <property name="minimumSize">
-            <size>
-             <width>250</width>
-             <height>0</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="KPushButton" name="dnsSearchMorePushButton">
-           <property name="text">
-            <string>...</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
        <item row="5" column="0">
         <widget class="QLabel" name="dnsLabel">
          <property name="text">
@@ -293,6 +259,40 @@
         </layout>
        </item>
        <item row="6" column="0">
+        <widget class="QLabel" name="dnsSearchLabel">
+         <property name="text">
+          <string>&amp;Search Domains:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy">
+          <cstring>dnsSearch</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="KLineEdit" name="dnsSearch">
+           <property name="minimumSize">
+            <size>
+             <width>250</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="KPushButton" name="dnsSearchMorePushButton">
+           <property name="text">
+            <string>...</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="8" column="0">
         <widget class="QLabel" name="labelDhcpClientId">
          <property name="text">
           <string>DHCP &amp;Client ID:</string>
@@ -305,8 +305,40 @@
          </property>
         </widget>
        </item>
-       <item row="6" column="1">
+       <item row="8" column="1">
         <widget class="KLineEdit" name="dhcpClientId"/>
+       </item>
+       <item row="4" column="1">
+        <spacer name="verticalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>12</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="7" column="1">
+        <spacer name="verticalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Fixed</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>12</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -399,10 +431,14 @@
   <tabstop>address</tabstop>
   <tabstop>netMask</tabstop>
   <tabstop>gateway</tabstop>
-  <tabstop>dnsSearch</tabstop>
-  <tabstop>dnsSearchMorePushButton</tabstop>
   <tabstop>dns</tabstop>
   <tabstop>dnsMorePushButton</tabstop>
+  <tabstop>dnsSearch</tabstop>
+  <tabstop>dnsSearchMorePushButton</tabstop>
+  <tabstop>dhcpClientId</tabstop>
+  <tabstop>cmbSettingsMode</tabstop>
+  <tabstop>cbIgnoreAutoRoutes</tabstop>
+  <tabstop>cbNeverDefault</tabstop>
  </tabstops>
  <resources/>
  <connections>
