@@ -132,14 +132,9 @@ void NMPopup::init()
 
     m_rightLayout->addItem(m_connectionTabs);
 
-    m_connectionsButton = new Plasma::IconWidget(m_rightWidget);
-    m_connectionsButton->setIcon("networkmanager");
-    m_connectionsButton->setOrientation(Qt::Horizontal);
+    m_connectionsButton = new Plasma::PushButton(m_rightWidget);
+    m_connectionsButton->setIcon(KIcon("networkmanager"));
     m_connectionsButton->setText(i18nc("manage connections button in the applet's popup", "Manage Connections..."));
-    m_connectionsButton->setMaximumHeight(KIconLoader::SizeMedium);
-    m_connectionsButton->setMinimumHeight(KIconLoader::SizeMedium);
-    m_connectionsButton->setDrawBackground(true);
-    m_connectionsButton->setTextBackgroundColor(QColor(Qt::transparent));
     connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
     m_rightLayout->addItem(m_connectionsButton);
 

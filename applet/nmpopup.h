@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/CheckBox>
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
+#include <Plasma/PushButton>
 #include <Plasma/TabBar>
 
 #include <solid/control/networkinterface.h>
@@ -93,7 +94,7 @@ private:
 
     Plasma::CheckBox* m_networkingCheckBox;
     Plasma::CheckBox* m_rfCheckBox;
-    Plasma::IconWidget* m_connectionsButton;
+    Plasma::PushButton* m_connectionsButton;
 
     ActivatableListWidget* m_connectionList;
     ActivatableListWidget* m_wirelessList;

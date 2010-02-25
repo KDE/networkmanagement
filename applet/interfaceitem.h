@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Label>
 #include <Plasma/Meter>
 #include <Plasma/CheckBox>
+#include <Plasma/PushButton>
 
 class QGraphicsGridLayout;
 class QGraphicsLinearLayout;
@@ -105,7 +106,7 @@ protected:
     QGraphicsGridLayout* m_layout;
     QGraphicsLinearLayout* m_infoLayout;
     Plasma::IconWidget* m_icon;
-    Plasma::IconWidget* m_disconnectButton;
+    Plasma::PushButton* m_disconnectButton;
     Plasma::Label* m_ifaceNameLabel;
     Plasma::Label* m_connectionNameLabel;
     QGraphicsLinearLayout* m_connectionInfoLayout;

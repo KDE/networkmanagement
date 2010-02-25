@@ -88,10 +88,10 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_ifaceNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
 
-    m_disconnectButton = new Plasma::IconWidget(this);
+    m_disconnectButton = new Plasma::PushButton(this);
     m_disconnectButton->setMaximumHeight(16);
     m_disconnectButton->setMaximumWidth(16);
-    m_disconnectButton->setIcon("dialog-cancel");
+    m_disconnectButton->setIcon(KIcon("dialog-close"));
     m_disconnectButton->setToolTip(i18n("Disconnect"));
     m_disconnectButton->hide();
     // forward disconnect signal
@@ -290,7 +290,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
         //m_disconnectButton->setToolTip(i18n("Connect"));
         m_disconnectButton->hide();
     } else {
-        m_disconnectButton->setIcon("dialog-cancel");
+        m_disconnectButton->setIcon(KIcon("dialog-close"));
         m_disconnectButton->setToolTip(i18nc("tooltip on disconnect icon", "Disconnect"));
         m_disconnectButton->show();
     }
