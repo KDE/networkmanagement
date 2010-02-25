@@ -256,7 +256,7 @@ void NetworkManagerApplet::init()
 QGraphicsWidget* NetworkManagerApplet::graphicsWidget()
 {
     if (!m_extenderItem) {
-        m_extenderItem = new NMPopup(m_activatableList);
+        m_extenderItem = new NMPopup(m_activatableList, this);
         connect(m_extenderItem, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
     }
     return m_extenderItem;
