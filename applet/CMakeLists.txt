@@ -9,7 +9,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libs/client
 set(networkmanager_SRCS
     networkmanager.cpp
 
-    nmextenderitem.cpp
+    nmpopup.cpp
     activatablelistwidget.cpp
 
     interfaceitem.cpp

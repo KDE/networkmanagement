@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 // Own
-#include "nmextenderitem.h"
+#include "nmpopup.h"
 
 // Qt
 #include <QGraphicsLinearLayout>
@@ -51,7 +51,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelistwidget.h"
 #include "interfacedetailswidget.h"
 
-NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, QGraphicsWidget* parent)
+NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* parent)
 : QGraphicsWidget(parent),
     m_activatables(activatableList),
     m_connectionTabs(0),
@@ -73,21 +73,21 @@ NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, QGraphic
     init();
 }
 
-NMExtenderItem::~NMExtenderItem()
+NMPopup::~NMPopup()
 {
 }
 
-void NMExtenderItem::init()
+void NMPopup::init()
 {
 
     kDebug() << "Creating widget";
-    m_widget = new QGraphicsWidget(this);
+    //m_widget = new QGraphicsWidget(this);
     //add the default space of the layout, joys of hardcoded sizes (this hardcoded size can't still be removed, could be an extenderitem bug?)
-    m_widget->setMinimumSize(600+4, 300);
-    m_widget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+    //m_widget->setMinimumSize(600+4, 300);
+    //m_widget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
 
     m_mainLayout = new QGraphicsGridLayout(this);
-    m_widget->setLayout(m_mainLayout);
+    //m_widget->setLayout(m_mainLayout);
 
     m_leftWidget = new Plasma::TabBar(this);
     m_leftWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
@@ -174,7 +174,7 @@ void NMExtenderItem::init()
 }
 
 // Interfaces
-void NMExtenderItem::interfaceAdded(const QString& uni)
+void NMPopup::interfaceAdded(const QString& uni)
 {
     if (m_interfaces.contains(uni)) {
         return;
@@ -185,7 +185,7 @@ void NMExtenderItem::interfaceAdded(const QString& uni)
     switchToDefaultTab();
 }
 
-void NMExtenderItem::interfaceRemoved(const QString& uni)
+void NMPopup::interfaceRemoved(const QString& uni)
 {
     if (m_interfaces.contains(uni)) {
         InterfaceItem * item = m_interfaces.take(uni);
@@ -195,7 +195,7 @@ void NMExtenderItem::interfaceRemoved(const QString& uni)
     switchToDefaultTab();
 }
 
-Solid::Control::NetworkInterface* NMExtenderItem::defaultInterface()
+Solid::Control::NetworkInterface* NMPopup::defaultInterface()
 {
     // In fact we're returning the first available interface,
     // and if there is none available just the first one we have
@@ -226,7 +226,7 @@ Solid::Control::NetworkInterface* NMExtenderItem::defaultInterface()
 }
 
 
-void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
+void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
 {
     Q_ASSERT(iface);
     if (!m_interfaces.contains(iface->uni())) {
@@ -271,7 +271,7 @@ void NMExtenderItem::addInterfaceInternal(Solid::Control::NetworkInterface* ifac
     }
 }
 
-void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
+void NMPopup::createTab(Knm::Activatable::ActivatableType type)
 {
     /*
     enum ActivatableType {
@@ -326,14 +326,14 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
     }
 }
 
-void NMExtenderItem::switchToDefaultTab()
+void NMPopup::switchToDefaultTab()
 {
     if (m_interfaces.count()) {
         m_connectionTabs->setCurrentIndex(0);
     }
 }
 
-void NMExtenderItem::handleConnectionStateChange(int new_state, int old_state, int reason)
+void NMPopup::handleConnectionStateChange(int new_state, int old_state, int reason)
 {
     Q_UNUSED( reason );
     // Switch to default tab if an interface has become available, or unavailable
@@ -342,7 +342,7 @@ void NMExtenderItem::handleConnectionStateChange(int new_state, int old_state, i
     }
 }
 
-bool NMExtenderItem::available(int state)
+bool NMPopup::available(int state)
 {
     // Can an interface be used?
     switch (state) {
@@ -365,19 +365,19 @@ bool NMExtenderItem::available(int state)
     return false;
 }
 
-void NMExtenderItem::wirelessEnabledToggled(bool checked)
+void NMPopup::wirelessEnabledToggled(bool checked)
 {
     kDebug() << "Applet wireless enable switch toggled" << checked;
     Solid::Control::NetworkManager::setWirelessEnabled(checked);
 }
 
-void NMExtenderItem::networkingEnabledToggled(bool checked)
+void NMPopup::networkingEnabledToggled(bool checked)
 {
     kDebug() << "Applet networking enable switch toggled" << checked;
     Solid::Control::NetworkManager::setNetworkingEnabled(checked);
 }
 
-void NMExtenderItem::managerWirelessEnabledChanged(bool enabled)
+void NMPopup::managerWirelessEnabledChanged(bool enabled)
 {
     kDebug() << "NM daemon changed wireless enable state" << enabled;
     // it might have changed because we toggled the switch,
@@ -386,7 +386,7 @@ void NMExtenderItem::managerWirelessEnabledChanged(bool enabled)
     switchToDefaultTab();
 }
 
-void NMExtenderItem::managerWirelessHardwareEnabledChanged(bool enabled)
+void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
     m_rfCheckBox->setChecked(enabled && Solid::Control::NetworkManager::isWirelessEnabled());
@@ -394,7 +394,7 @@ void NMExtenderItem::managerWirelessHardwareEnabledChanged(bool enabled)
     switchToDefaultTab();
 }
 
-void NMExtenderItem::manageConnections()
+void NMPopup::manageConnections()
 {
     //kDebug() << "opening connection management dialog";
     QStringList args;

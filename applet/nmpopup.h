@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NMEXTENDERITEM_H
-#define NMEXTENDERITEM_H
+#ifndef NMPOPUP_H
+#define NMPOPUP_H
 
 #include <QGraphicsWidget>
 //#include <QHash>
@@ -46,12 +46,12 @@ class ActivatableListWidget;
 class InterfaceItem;
 class InterfaceDetailsWidget;
 
-class NMExtenderItem: public QGraphicsWidget
+class NMPopup: public QGraphicsWidget
 {
 Q_OBJECT
 public:
-    NMExtenderItem(RemoteActivatableList *, QGraphicsWidget* parent = 0);
-    virtual ~NMExtenderItem();
+    NMPopup(RemoteActivatableList *, QGraphicsWidget* parent = 0);
+    virtual ~NMPopup();
 
     void init();
     //virtual QGraphicsItem * widget();
@@ -103,4 +103,4 @@ private:
     ActivatableListWidget* m_wirelessList;
 };
 
-#endif // NMEXTENDERITEM_H
+#endif // NMPOPUP_H

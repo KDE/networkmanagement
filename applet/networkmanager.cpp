@@ -62,7 +62,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knmserviceprefs.h"
 #include "remoteactivatablelist.h"
 
-#include "nmextenderitem.h"
+#include "nmpopup.h"
 #include "uiutils.h"
 
 
@@ -102,9 +102,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     setMinimumSize(16, 16);
     resize(64, 64);
     updatePixmap();
-    // TODO: read config into m_extenderItem ...
-    // Now it is safe to create ExtenderItems and therefore InterfaceGroups
-
+    (void)graphicsWidget();
 }
 
 NetworkManagerApplet::~NetworkManagerApplet()
@@ -136,15 +134,15 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
     if (_s >= 76) {
         s = 76;
     }
+    // For our fixed sizes, we want a fixed rect to render into
     if (_s >= 19 && _s <= 76) {
         m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - s) / 2,
                                 contentsRect().y() + (contentsRect().height() - s) / 2,
                                 s, s);
-    } else {
+    } else { // .... otherwise, for free scaling, we just want a square that fits in 
         m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - _s) / 2,
                                 contentsRect().y() + (contentsRect().height() - _s) / 2,
                                 _s, _s);
-
     }
 
     // Now figure out which exact element we'll use
@@ -153,8 +151,6 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
 
     if (wiface) {
         QString uni = wiface->activeAccessPoint();
-        //QString uni = wiface->activeAccessPoint()->signalStrength();
-        //int s =
         Solid::Control::AccessPoint *ap = wiface->findAccessPoint(uni);
         if (ap) {
             int str = ap->signalStrength();
@@ -171,7 +167,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
                 } else if (str >= 88) {
                     strength = "100";
                 }
-            } else {
+            } else { // ... the other sizes have more states.
                 if (str < 13) {
                     strength = "00";
                 } else if (str < 30) {
@@ -194,22 +190,13 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
     }
     QString w = QString::number(s);
 
-    // <width>-<height>-wireless-signal-<strenght>
+    // The format in the SVG looks like this: <width>-<height>-wireless-signal-<strenght>
     QString icon;
     if (_s < 19 || _s > 76) {
         icon = QString("wireless-signal-%1").arg(strength);
-        //m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - _s) / 2,
-        //                contentsRect().y() + (contentsRect().height() - _s) / 2,
-        //                _s, _s);
-
     } else {
         icon = QString("%1-%2-wireless-signal-%3").arg(w, w, strength);
     }
-    //kDebug() << "============================ icon:" << icon;
-    //m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - s) / 2,
-    //                        contentsRect().y() + (contentsRect().height() - s) / 2,
-    //                        s, s);
-
     return icon;
 }
 
@@ -264,15 +251,12 @@ void NetworkManagerApplet::init()
 
     m_activatableList->init();
     setupInterfaceSignals();
-    //kDebug() << "Plop.";
-    //(void)graphicsWidget();
-    //kDebug() << "Plop 2.";
 }
 
 QGraphicsWidget* NetworkManagerApplet::graphicsWidget()
 {
     if (!m_extenderItem) {
-        m_extenderItem = new NMExtenderItem(m_activatableList);
+        m_extenderItem = new NMPopup(m_activatableList);
         connect(m_extenderItem, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
     }
     return m_extenderItem;
@@ -290,17 +274,6 @@ void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
                     m_kcmNMTray->moduleInfo().icon());
 }
 
-
-/*
-void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
-{
-    // Let's just load a new one, hackish but works for now
-    if (eItem->name() == "nmextenderitem") {
-        eItem->destroy();
-    }
-    return;
-}
-*/
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
 {
     // update the pixmap when a new size from kiconloader fits in, this makes sure the
@@ -326,11 +299,8 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 
     if (m_useSvg) {
         QString el = svgElement(activeInterface());
-        //<width>-<height>-wireless-signal-<strenght>
         m_svg->paint(p, m_contentSquare, el);
-        //kDebug() << "------- using svg" << el << m_contentSquare;
     } else {
-        //kDebug() << "------- not using svg";
         paintPixmap(p, m_pixmap, contentsRect);
     }
     paintProgress(p);
@@ -345,15 +315,12 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
     int i_s = (int)contentsRect().width()/4;
     int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
 
-    //QRectF r = QRectF(contentsRect().width()*.25, contentsRect().height()*.75, contentsRect().width()*.5, contentsRect().height()*.5);
     QRectF r = QRectF(iconsize, iconsize*2, iconsize, iconsize);
 
     qreal opacity = m_overlayTimeline.currentValue();
     if (opacity == 0) {
         return;
     } else if (state == 1) {
-        //kDebug() << "painting OK overlay with opacity: " << opacity;
-        //paintOkOverlay(p, contentsRect(), opacity);
         paintOkOverlay(p, r, opacity);
         return;
     }
@@ -365,47 +332,22 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
     fgColor.setAlphaF(.6 * opacity);
 
     //p->translate(0.5, 0.5);
+    // paint an arc completing a circle
+    // 1 degree = 16 ticks, that's how drawArc() works
+    // 0 is at 3 o'clock
+    p->save();
+    int top = 90 * 16;
+    int progress = -360 * 16 * state;
+    QPen pen(fgColor, 2); // color and line width
 
-    if (bar) {
-        // paint a progress bar
-        // height, space and width and position of the bar
-        int fh = contentsRect().height();
-        int fw = contentsRect().width();
-        int h = qMax((qreal)(2.0), (qreal)(fh/20));
-        int s = 1;
-        int w = (contentsRect().width() - s*2) * state;
-        QRectF background = QRectF(QPoint(0, fh - h - s - s ) + contentsRect().topLeft(), QSizeF(fw, h+2*s));
-        QRectF progress = QRectF(QPoint(s, fh - h - s) + contentsRect().topLeft(), QSizeF(w, h));
-        kDebug() << contentsRect() << background;
+    //kDebug() << "progress circle" << top << progress;
+    p->setPen(pen);
+    p->setBrush(fgColor);
+    //p->setBrush(QBrush(bgColor));
 
-
-        QPen linePen(bgColor);
-
-        p->setPen(linePen);
-        p->drawRect(background);
-
-        p->setPen(QPen(fgColor));
-        p->setBrush(QBrush(fgColor));
-        p->drawRect(progress);
-
-    } else {
-        // paint an arc completing a circle
-        // 1 degree = 16 ticks, that's how drawArc() works
-        // 0 is at 3 o'clock
-        p->save();
-        int top = 90 * 16;
-        int progress = -360 * 16 * state;
-        QPen pen(fgColor, 2); // color and line width
-
-        //kDebug() << "progress circle" << top << progress;
-        p->setPen(pen);
-        p->setBrush(fgColor);
-        //p->setBrush(QBrush(bgColor));
-
-        //p->drawArc(contentsRect(), top, progress);
-        p->drawPie(r, top, progress);
-        p->restore();
-    }
+    //p->drawArc(contentsRect(), top, progress);
+    p->drawPie(r, top, progress);
+    p->restore();
 }
 
 void NetworkManagerApplet::paintOverlay(QPainter *p)
@@ -422,15 +364,14 @@ void NetworkManagerApplet::paintOverlay(QPainter *p)
         QPointF pos = QPointF(contentsRect().bottomRight().x() - iconsize,
                             contentsRect().bottomRight().y() - iconsize);
         p->drawPixmap(pos, icon);
-
-    };
+    }
 }
 
 void NetworkManagerApplet::paintOkOverlay(QPainter *p, const QRectF &rect, qreal opacity)
 {
     QColor color = QColor("#37B237"); // GNA! hardcoded colors == teh suck
     if (UiUtils::interfaceState(activeInterface()) == 0) {
-        color = QColor("#B23636"); // green; GNA! hardcoded colors == teh suck
+        color = QColor("#B23636"); // green; GNA! hardcoded colors == teh suck^2
     }
 
     color.setAlphaF(opacity * 0.6);
@@ -798,28 +739,6 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
         }
     return lessThan;
 }
-
-/*
-void NetworkManagerApplet::manageConnections()
-{
-    //kDebug() << "opening connection management dialog";
-    QStringList args;
-    args << "--icon" << "networkmanager" << "kcm_networkmanagement" << "kcm_networkmanagement_tray";
-    KToolInvocation::kdeinitExec("kcmshell4", args);
-    hidePopup();
-}
-void NetworkManagerApplet::loadExtender()
-{
-    //Plasma::ExtenderItem *eItem = extender()->item("networkmanagement");
-    //if (eItem) {
-    //    eItem->destroy(); // Apparently, we need to "refresh the extenderitem
-    //}
-    QGraphicsWidget* eItem = new NMExtenderItem(m_activatableList, extender());
-    //eItem->setName("networkmanagement");
-    //eItem->setTitle(i18nc("Label for extender","Network Management"));
-    //eItem->widget();
-}
-*/
 
 void NetworkManagerApplet::managerWirelessEnabledChanged(bool)
 {
