@@ -95,7 +95,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_disconnectButton->setToolTip(i18n("Disconnect"));
     m_disconnectButton->hide();
     // forward disconnect signal
-    connect(m_disconnectButton, SIGNAL(clicked()), this, SIGNAL(disconnectInterface()));
+    connect(m_disconnectButton, SIGNAL(clicked()), this, SLOT(emitDisconnectInterfaceRequest()));
 
     m_layout->addItem(m_disconnectButton, 0, 2, 1, 1, Qt::AlignRight);
 
@@ -305,6 +305,12 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
 QPixmap InterfaceItem::statePixmap(const QString &icon) {
     // Which pixmap should we display with the notification?
     return KIcon(icon).pixmap(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
+}
+
+void InterfaceItem::emitDisconnectInterfaceRequest()
+{
+    kDebug() << m_iface->uni();
+    emit disconnectInterfaceRequested(m_iface->uni());
 }
 
 // vim: sw=4 sts=4 et tw=100

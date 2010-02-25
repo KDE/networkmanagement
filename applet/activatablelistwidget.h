@@ -47,7 +47,7 @@ public Q_SLOTS:
     void activatableRemoved(RemoteActivatable*);
     void listDisappeared();
     void listAppeared();
-    void deactivateConnection();
+    void deactivateConnection(const QString& deviceUni);
 
 Q_SIGNALS:
     void connectionListUpdated();

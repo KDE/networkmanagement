@@ -84,7 +84,7 @@ protected Q_SLOTS:
 
 Q_SIGNALS:
     void stateChanged();
-    void disconnectInterface();
+    void disconnectInterfaceRequested(const QString& deviceUni);
 
 protected:
     /**
@@ -118,5 +118,8 @@ protected:
 
     QString m_interfaceName;
     bool m_disconnect;
+
+private Q_SLOTS:
+    void emitDisconnectInterfaceRequest();
 };
 #endif // APPLET_INTERFACEWIDGET_H

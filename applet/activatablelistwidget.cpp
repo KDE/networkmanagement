@@ -137,12 +137,12 @@ void ActivatableListWidget::listAppeared()
     }
 }
 
-void ActivatableListWidget::deactivateConnection()
+void ActivatableListWidget::deactivateConnection(const QString& deviceUni)
 {
     foreach (ActivatableItem* item, m_itemIndex) {
         RemoteInterfaceConnection *conn = item->interfaceConnection();
-        if (conn) {
-            kDebug() << "deactivating ...";
+        if (conn && conn->deviceUni() == deviceUni) {
+            kDebug() << "deactivating" << conn->connectionName();
             conn->deactivate();
         }
     }
