@@ -54,8 +54,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Plasma/Animator>
 #include <Plasma/CheckBox>
-#include <Plasma/Extender>
-#include <Plasma/ExtenderItem>
 #include <Plasma/Theme>
 
 #include "../libs/types.h"
@@ -439,7 +437,6 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
     Q_UNUSED(uni);
     // update the tray icon
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
-    // update extender visibility
     KConfigGroup cg = config();
 
     setupInterfaceSignals();

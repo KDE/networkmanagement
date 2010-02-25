@@ -64,12 +64,7 @@ NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* paren
     m_connectionList(0),
     m_wirelessList(0)
 {
-    kDebug() << "1111 New Extenderthingie";
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    //setName("nmextenderitem");
-    //setTitle(i18nc("Extender title", "Network Management"));
-    //widget();
-    kDebug() << "Floep!";
     init();
 }
 
@@ -79,15 +74,7 @@ NMPopup::~NMPopup()
 
 void NMPopup::init()
 {
-
-    kDebug() << "Creating widget";
-    //m_widget = new QGraphicsWidget(this);
-    //add the default space of the layout, joys of hardcoded sizes (this hardcoded size can't still be removed, could be an extenderitem bug?)
-    //m_widget->setMinimumSize(600+4, 300);
-    //m_widget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
-
     m_mainLayout = new QGraphicsGridLayout(this);
-    //m_widget->setLayout(m_mainLayout);
 
     m_leftWidget = new Plasma::TabBar(this);
     m_leftWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
@@ -148,7 +135,7 @@ void NMPopup::init()
     m_connectionsButton = new Plasma::IconWidget(m_rightWidget);
     m_connectionsButton->setIcon("networkmanager");
     m_connectionsButton->setOrientation(Qt::Horizontal);
-    m_connectionsButton->setText(i18nc("button in general settings extender", "Manage Connections..."));
+    m_connectionsButton->setText(i18nc("manage connections button in the applet's popup", "Manage Connections..."));
     m_connectionsButton->setMaximumHeight(KIconLoader::SizeMedium);
     m_connectionsButton->setMinimumHeight(KIconLoader::SizeMedium);
     m_connectionsButton->setDrawBackground(true);

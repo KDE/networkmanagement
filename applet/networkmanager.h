@@ -35,14 +35,13 @@ class KCModuleProxy;
 
 #include "../libs/types.h"
 
-#include <plasma/popupapplet.h>
+#include <Plasma/PopupApplet>
 
 #include <Plasma/ToolTipManager>
 
 namespace Plasma
 {
     class Applet;
-    class Extender;
 } // namespace Plasma
 
 class QTimeLine;

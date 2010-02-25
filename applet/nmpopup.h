@@ -22,12 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define NMPOPUP_H
 
 #include <QGraphicsWidget>
-//#include <QHash>
-//#include <QPair>
 
 #include <Plasma/CheckBox>
-//#include <Plasma/ExtenderItem>
-//#include <Plasma/Extender>
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
 #include <Plasma/TabBar>
