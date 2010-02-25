@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // KDE
 #include <KDebug>
+#include <KIcon>
 #include <KIconLoader>
 #include <KToolInvocation>
 
@@ -50,8 +51,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelistwidget.h"
 #include "interfacedetailswidget.h"
 
-NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::Extender * ext)
-: Plasma::ExtenderItem(ext),
+NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, QGraphicsWidget* parent)
+: QGraphicsWidget(parent),
     m_activatables(activatableList),
     m_connectionTabs(0),
     m_widget(0),
@@ -63,10 +64,12 @@ NMExtenderItem::NMExtenderItem(RemoteActivatableList * activatableList, Plasma::
     m_connectionList(0),
     m_wirelessList(0)
 {
+    kDebug() << "1111 New Extenderthingie";
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    setName("nmextenderitem");
-    setTitle(i18nc("Extender title", "Network Management"));
-    widget();
+    //setName("nmextenderitem");
+    //setTitle(i18nc("Extender title", "Network Management"));
+    //widget();
+    kDebug() << "Floep!";
     init();
 }
 
@@ -76,9 +79,87 @@ NMExtenderItem::~NMExtenderItem()
 
 void NMExtenderItem::init()
 {
+
+    kDebug() << "Creating widget";
+    m_widget = new QGraphicsWidget(this);
+    //add the default space of the layout, joys of hardcoded sizes (this hardcoded size can't still be removed, could be an extenderitem bug?)
+    m_widget->setMinimumSize(600+4, 300);
+    m_widget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
+
+    m_mainLayout = new QGraphicsGridLayout(this);
+    m_widget->setLayout(m_mainLayout);
+
+    m_leftWidget = new Plasma::TabBar(this);
+    m_leftWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
+    m_interfaceWidget = new QGraphicsWidget(m_leftWidget);
+    m_leftLayout = new QGraphicsLinearLayout;
+    m_leftLayout->setOrientation(Qt::Vertical);
+
+    m_interfaceLayout = new QGraphicsLinearLayout(m_interfaceWidget);
+    m_interfaceLayout->setOrientation(Qt::Vertical);
+    //m_interfaceWidget->setLayout(m_interfaceLayout);
+    m_leftLayout->addItem(m_interfaceWidget);
+    m_leftLayout->addStretch(5);
+
+    // flight-mode checkbox
+    m_networkingCheckBox = new Plasma::CheckBox(m_leftWidget);
+    m_networkingCheckBox->setChecked(Solid::Control::NetworkManager::isNetworkingEnabled());
+    m_networkingCheckBox->setText(i18nc("CheckBox to enable or disable networking completely", "Enable networking"));
+    m_leftLayout->addItem(m_networkingCheckBox);
+    connect(m_networkingCheckBox, SIGNAL(toggled(bool)),
+            this, SLOT(networkingEnabledToggled(bool)));
+
+    // flight-mode checkbox
+    m_rfCheckBox = new Plasma::CheckBox(m_leftWidget);
+    m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
+    m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+    m_rfCheckBox->setText(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable wireless"));
+    m_leftLayout->addItem(m_rfCheckBox);
+
+    connect(m_rfCheckBox, SIGNAL(toggled(bool)), SLOT(wirelessEnabledToggled(bool)));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
+            this, SLOT(managerWirelessEnabledChanged(bool)));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
+            this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
+
+    //m_leftWidget->setLayout(m_leftLayout);
+    m_leftWidget->addTab(i18nc("tabbar on the left side", "Interfaces"), m_leftLayout);
+    //m_leftWidget->setTabBarShown(false); // TODO: enable
+
+
+    m_interfaceDetailsWidget = new InterfaceDetailsWidget(m_leftWidget);
+    m_leftWidget->addTab(i18nc("details for the interface", "Details"), m_interfaceDetailsWidget);
+
+    m_mainLayout->addItem(m_leftWidget, 0, 0);
+
+    m_rightWidget = new Plasma::Frame(this);
+    m_rightWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::MinimumExpanding);
+    m_rightLayout = new QGraphicsLinearLayout(m_rightWidget);
+    m_rightLayout->setOrientation(Qt::Vertical);
+    // Tabs for activatables
+    kDebug() << "Creating tABS";
+    m_connectionTabs = new Plasma::TabBar(m_rightWidget);
+    m_connectionTabs->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
+    m_connectionTabs->setPreferredHeight(240);
+    m_connectionTabs->setPreferredWidth(320);
+
+    m_rightLayout->addItem(m_connectionTabs);
+
+    m_connectionsButton = new Plasma::IconWidget(m_rightWidget);
+    m_connectionsButton->setIcon("networkmanager");
+    m_connectionsButton->setOrientation(Qt::Horizontal);
+    m_connectionsButton->setText(i18nc("button in general settings extender", "Manage Connections..."));
+    m_connectionsButton->setMaximumHeight(KIconLoader::SizeMedium);
+    m_connectionsButton->setMinimumHeight(KIconLoader::SizeMedium);
+    m_connectionsButton->setDrawBackground(true);
+    m_connectionsButton->setTextBackgroundColor(QColor(Qt::transparent));
+    connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
+    m_rightLayout->addItem(m_connectionsButton);
+
+    m_mainLayout->addItem(m_rightWidget, 0, 1);
+
     createTab(Knm::Activatable::InterfaceConnection);
     createTab(Knm::Activatable::WirelessInterfaceConnection);
-
     kDebug() << "Adding interfaces initially";
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         addInterfaceInternal(iface);
@@ -89,90 +170,7 @@ void NMExtenderItem::init()
             SLOT(interfaceAdded(const QString&)));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             SLOT(interfaceRemoved(const QString&)));
-}
 
-QGraphicsItem * NMExtenderItem::widget()
-{
-    if (!m_widget) {
-        kDebug() << "Creating widget";
-        m_widget = new QGraphicsWidget(this);
-        //add the default space of the layout, joys of hardcoded sizes (this hardcoded size can't still be removed, could be an extenderitem bug?)
-        m_widget->setMinimumSize(600+4, 300);
-        m_widget->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Preferred);
-
-        m_mainLayout = new QGraphicsGridLayout(m_widget);
-        m_widget->setLayout(m_mainLayout);
-
-        m_leftWidget = new Plasma::TabBar(m_widget);
-        m_leftWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
-        m_interfaceWidget = new QGraphicsWidget(m_leftWidget);
-        m_leftLayout = new QGraphicsLinearLayout;
-        m_leftLayout->setOrientation(Qt::Vertical);
-
-        m_interfaceLayout = new QGraphicsLinearLayout(m_interfaceWidget);
-        m_interfaceLayout->setOrientation(Qt::Vertical);
-        //m_interfaceWidget->setLayout(m_interfaceLayout);
-        m_leftLayout->addItem(m_interfaceWidget);
-        m_leftLayout->addStretch(5);
-
-        // flight-mode checkbox
-        m_networkingCheckBox = new Plasma::CheckBox(m_leftWidget);
-        m_networkingCheckBox->setChecked(Solid::Control::NetworkManager::isNetworkingEnabled());
-        m_networkingCheckBox->setText(i18nc("CheckBox to enable or disable networking completely", "Enable networking"));
-        m_leftLayout->addItem(m_networkingCheckBox);
-        connect(m_networkingCheckBox, SIGNAL(toggled(bool)),
-                this, SLOT(networkingEnabledToggled(bool)));
-
-        // flight-mode checkbox
-        m_rfCheckBox = new Plasma::CheckBox(m_leftWidget);
-        m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
-        m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
-        m_rfCheckBox->setText(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable wireless"));
-        m_leftLayout->addItem(m_rfCheckBox);
-
-        connect(m_rfCheckBox, SIGNAL(toggled(bool)), SLOT(wirelessEnabledToggled(bool)));
-        connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
-                this, SLOT(managerWirelessEnabledChanged(bool)));
-        connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
-                this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
-
-        //m_leftWidget->setLayout(m_leftLayout);
-        m_leftWidget->addTab(i18nc("tabbar on the left side", "Interfaces"), m_leftLayout);
-        //m_leftWidget->setTabBarShown(false); // TODO: enable
-
-
-        m_interfaceDetailsWidget = new InterfaceDetailsWidget(m_leftWidget);
-        m_leftWidget->addTab(i18nc("details for the interface", "Details"), m_interfaceDetailsWidget);
-
-        m_mainLayout->addItem(m_leftWidget, 0, 0);
-
-        m_rightWidget = new Plasma::Frame(m_widget);
-        m_rightWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::MinimumExpanding);
-        m_rightLayout = new QGraphicsLinearLayout(m_rightWidget);
-        m_rightLayout->setOrientation(Qt::Vertical);
-        // Tabs for activatables
-        m_connectionTabs = new Plasma::TabBar(m_rightWidget);
-        m_connectionTabs->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
-        m_connectionTabs->setPreferredHeight(240);
-        m_connectionTabs->setPreferredWidth(320);
-
-        m_rightLayout->addItem(m_connectionTabs);
-
-        m_connectionsButton = new Plasma::IconWidget(m_rightWidget);
-        m_connectionsButton->setIcon("networkmanager");
-        m_connectionsButton->setOrientation(Qt::Horizontal);
-        m_connectionsButton->setText(i18nc("button in general settings extender", "Manage Connections..."));
-        m_connectionsButton->setMaximumHeight(KIconLoader::SizeMedium);
-        m_connectionsButton->setMinimumHeight(KIconLoader::SizeMedium);
-        m_connectionsButton->setDrawBackground(true);
-        m_connectionsButton->setTextBackgroundColor(QColor(Qt::transparent));
-        connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
-        m_rightLayout->addItem(m_connectionsButton);
-
-        m_mainLayout->addItem(m_rightWidget, 0, 1);
-        setWidget(m_widget);
-    }
-    return m_widget;
 }
 
 // Interfaces
@@ -319,6 +317,8 @@ void NMExtenderItem::createTab(Knm::Activatable::ActivatableType type)
                 m_connectionList->init();
                 name = i18nc("title of the connections tab", "Connections");
                 //icon = KIcon("emblem-favorite");
+                if (!m_connectionTabs)
+                    kDebug() << "see, it's no there! :P";
                 m_tabIndex[type] = m_connectionTabs->addTab(QIcon(), name, m_connectionList);
             }
             break;

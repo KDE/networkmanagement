@@ -66,9 +66,11 @@ public:
     //Qt::Orientations expandingDirections() const;
     /* reimp Plasma::Applet */
     void constraintsEvent(Plasma::Constraints constraints);
-    virtual void initExtenderItem(Plasma::ExtenderItem *);
+    QGraphicsWidget *graphicsWidget();
 
-    void loadExtender();
+    //virtual void initExtenderItem(Plasma::ExtenderItem *);
+
+    //void loadExtender();
 
 public Q_SLOTS:
     /**
@@ -125,7 +127,7 @@ private:
     Plasma::ToolTipContent m_toolTip;
 
     RemoteActivatableList* m_activatableList;
-    NMExtenderItem* m_extenderItem;
+    QGraphicsWidget* m_extenderItem;
 
     QPixmap m_pixmap;
 

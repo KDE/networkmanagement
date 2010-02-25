@@ -26,8 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#include <QPair>
 
 #include <Plasma/CheckBox>
-#include <Plasma/ExtenderItem>
-#include <Plasma/Extender>
+//#include <Plasma/ExtenderItem>
+//#include <Plasma/Extender>
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
 #include <Plasma/TabBar>
@@ -46,15 +46,15 @@ class ActivatableListWidget;
 class InterfaceItem;
 class InterfaceDetailsWidget;
 
-class NMExtenderItem: public Plasma::ExtenderItem
+class NMExtenderItem: public QGraphicsWidget
 {
 Q_OBJECT
 public:
-    NMExtenderItem(RemoteActivatableList *, Plasma::Extender * ext = 0);
+    NMExtenderItem(RemoteActivatableList *, QGraphicsWidget* parent = 0);
     virtual ~NMExtenderItem();
 
     void init();
-    virtual QGraphicsItem * widget();
+    //virtual QGraphicsItem * widget();
     Solid::Control::NetworkInterface* defaultInterface();
     bool available(int state);
 

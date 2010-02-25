@@ -76,7 +76,8 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
     : Plasma::PopupApplet(parent, args),
         m_iconPerDevice(false),
-        m_activeInterface(0)
+        m_activeInterface(0),
+        m_extenderItem(0)
 {
     setHasConfigurationInterface(true);
     setPopupIcon(QIcon());
@@ -263,9 +264,19 @@ void NetworkManagerApplet::init()
 
     m_activatableList->init();
     setupInterfaceSignals();
+    //kDebug() << "Plop.";
+    //(void)graphicsWidget();
+    //kDebug() << "Plop 2.";
+}
 
-    m_extenderItem = new NMExtenderItem(m_activatableList, extender());
-    connect(m_extenderItem, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
+QGraphicsWidget* NetworkManagerApplet::graphicsWidget()
+{
+    if (!m_extenderItem) {
+        m_extenderItem = new NMExtenderItem(m_activatableList);
+        connect(m_extenderItem, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
+    }
+    return m_extenderItem;
+
 }
 
 void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
@@ -280,7 +291,7 @@ void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
 }
 
 
-
+/*
 void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
 {
     // Let's just load a new one, hackish but works for now
@@ -289,7 +300,7 @@ void NetworkManagerApplet::initExtenderItem(Plasma::ExtenderItem * eItem)
     }
     return;
 }
-
+*/
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
 {
     // update the pixmap when a new size from kiconloader fits in, this makes sure the
@@ -510,6 +521,7 @@ Solid::Control::NetworkInterface* NetworkManagerApplet::activeInterface()
         m_useSvg = false;
         return 0;
     }
+
 }
 
 void NetworkManagerApplet::interfaceConnectionStateChanged()
@@ -796,18 +808,18 @@ void NetworkManagerApplet::manageConnections()
     KToolInvocation::kdeinitExec("kcmshell4", args);
     hidePopup();
 }
-*/
 void NetworkManagerApplet::loadExtender()
 {
-    Plasma::ExtenderItem *eItem = extender()->item("networkmanagement");
-    if (eItem) {
-        eItem->destroy(); // Apparently, we need to "refresh the extenderitem
-    }
-    eItem = new NMExtenderItem(m_activatableList, extender());
-    eItem->setName("networkmanagement");
-    eItem->setTitle(i18nc("Label for extender","Network Management"));
-    eItem->widget();
+    //Plasma::ExtenderItem *eItem = extender()->item("networkmanagement");
+    //if (eItem) {
+    //    eItem->destroy(); // Apparently, we need to "refresh the extenderitem
+    //}
+    QGraphicsWidget* eItem = new NMExtenderItem(m_activatableList, extender());
+    //eItem->setName("networkmanagement");
+    //eItem->setTitle(i18nc("Label for extender","Network Management"));
+    //eItem->widget();
 }
+*/
 
 void NetworkManagerApplet::managerWirelessEnabledChanged(bool)
 {
