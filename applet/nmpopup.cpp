@@ -218,37 +218,20 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
     Q_ASSERT(iface);
     if (!m_interfaces.contains(iface->uni())) {
         InterfaceItem * ifaceItem = 0;
-        QString icon;
-        switch (iface->type()) {
-            case Solid::Control::NetworkInterface::Ieee80211:
-            {
-                // Create the wireless interface item
-                WirelessInterfaceItem* wifiItem = 0;
-                wifiItem = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
-                ifaceItem = wifiItem;
-                //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
-                wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
-                //createTab(ifaceItem, iface, i18nc("title of the wireless tab", "Wireless"), "network-wireless");
-                kDebug() << "WiFi added";
-                connect(wifiItem, SIGNAL(disconnectInterface()), m_wirelessList, SLOT(deactivateConnection()));
-                break;
-            }
-            case Solid::Control::NetworkInterface::Serial:
-                icon = "phone";
-            case Solid::Control::NetworkInterface::Gsm:
-                icon = "phone";
-            case Solid::Control::NetworkInterface::Cdma:
-                icon = "phone";
-            case Solid::Control::NetworkInterface::Ieee8023:
-                icon = "network-wired";
-            default:
-            {
-                // Create the interfaceitem
-                InterfaceItem* wiredItem = 0;
-                ifaceItem = wiredItem = new InterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
-                connect(wiredItem, SIGNAL(disconnectInterface()), m_connectionList, SLOT(deactivateConnection()));
-                break;
-            }
+        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+            // Create the wireless interface item
+            WirelessInterfaceItem* wifiItem = 0;
+            wifiItem = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
+            ifaceItem = wifiItem;
+            //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
+            wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
+            //createTab(ifaceItem, iface, i18nc("title of the wireless tab", "Wireless"), "network-wireless");
+            kDebug() << "WiFi added";
+            connect(wifiItem, SIGNAL(disconnectInterface()), m_wirelessList, SLOT(deactivateConnection()));
+        } else {
+            // Create the interfaceitem
+            ifaceItem = new InterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
+            connect(ifaceItem, SIGNAL(disconnectInterface()), m_connectionList, SLOT(deactivateConnection()));
         }
         // Catch connection changes
         connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
