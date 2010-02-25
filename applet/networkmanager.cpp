@@ -102,7 +102,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     setMinimumSize(16, 16);
     resize(64, 64);
     updatePixmap();
-    (void)graphicsWidget();
+    //(void)graphicsWidget();
 }
 
 NetworkManagerApplet::~NetworkManagerApplet()
