@@ -295,26 +295,27 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 {
     Q_UNUSED( option );
 
+    paintProgress(p);
     if (m_useSvg) {
         QString el = svgElement(activeInterface());
         m_svg->paint(p, m_contentSquare, el);
     } else {
         paintPixmap(p, m_pixmap, contentsRect);
     }
-    paintProgress(p);
     paintOverlay(p);
 }
 
 void NetworkManagerApplet::paintProgress(QPainter *p)
 {
-    bool bar = false;
     qreal state = UiUtils::interfaceState(activeInterface());
-
+    p->setRenderHint(QPainter::Antialiasing);
     int i_s = (int)contentsRect().width()/4;
-    int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
+    int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 4);
+    iconsize = qMax((int)contentsRect().width()/4, 8);
+    QRectF r = QRectF(iconsize, iconsize, iconsize, iconsize);
+    //kDebug() << "Iconsize" << iconsize;
 
-    QRectF r = QRectF(iconsize, iconsize*2, iconsize, iconsize);
-
+    r = QRectF(contentsRect().x(), contentsRect().y() + contentsRect().height() - iconsize, iconsize, iconsize);
     qreal opacity = m_overlayTimeline.currentValue();
     if (opacity == 0) {
         return;
@@ -322,45 +323,60 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
         paintOkOverlay(p, r, opacity);
         return;
     }
-
     QColor fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QColor bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
 
-    bgColor.setAlphaF(.7 * opacity);
-    fgColor.setAlphaF(.6 * opacity);
+    bgColor.setAlphaF(.5 * opacity);
+    fgColor.setAlphaF(.3 * opacity);
 
-    //p->translate(0.5, 0.5);
+    p->translate(0.5, 0.5);
     // paint an arc completing a circle
     // 1 degree = 16 ticks, that's how drawArc() works
     // 0 is at 3 o'clock
-    p->save();
     int top = 90 * 16;
     int progress = -360 * 16 * state;
-    QPen pen(fgColor, 2); // color and line width
+    QPen pen(fgColor, 1); // color and line width
 
-    //kDebug() << "progress circle" << top << progress;
     p->setPen(pen);
     p->setBrush(fgColor);
-    //p->setBrush(QBrush(bgColor));
 
     //p->drawArc(contentsRect(), top, progress);
     p->drawPie(r, top, progress);
-    p->restore();
 }
 
 void NetworkManagerApplet::paintOverlay(QPainter *p)
 {
     // Needs authentication, show this in the panel
     if (!activeInterface()) {
+        kDebug() << "No active interface";
         return;
     }
+    /*
+    enum ConnectionState{ UnknownState, Unmanaged, Unavailable, Disconnected, Preparing,
+                              Configuring, NeedAuth, IPConfig, Activated, Failed };
+    kDebug() << "UnknownState: " << Solid::Control::NetworkInterface::UnknownState;
+    kDebug() << "Unmanaged   : " << Solid::Control::NetworkInterface::Unmanaged;
+    kDebug() << "Unavailable : " << Solid::Control::NetworkInterface::Unavailable;
+    kDebug() << "Disconnected: " << Solid::Control::NetworkInterface::Disconnected;
+    kDebug() << "Preparing   : " << Solid::Control::NetworkInterface::Preparing;
+    kDebug() << "Configuring : " << Solid::Control::NetworkInterface::Configuring;
+    kDebug() << "NeeAuth     : " << Solid::Control::NetworkInterface::NeedAuth;
+    kDebug() << "IPConfig    : " << Solid::Control::NetworkInterface::IPConfig;
+    kDebug() << "Activated   : " << Solid::Control::NetworkInterface::Activated;
+    kDebug() << "Failed      : " << Solid::Control::NetworkInterface::Failed;
+    kDebug() << "Painting overlay ...>" << activeInterface()->connectionState();
+    */
     if (activeInterface()->connectionState() == Solid::Control::NetworkInterface::NeedAuth) {
+        kDebug() << "Needing auth ...>";
         int i_s = (int)contentsRect().width()/4;
         int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
-        kDebug() << "iconsize" << iconsize;
+
+        kDebug() << "Security:iconsize" << iconsize;
         QPixmap icon = KIcon("dialog-password").pixmap(QSize(iconsize, iconsize));
         QPointF pos = QPointF(contentsRect().bottomRight().x() - iconsize,
                             contentsRect().bottomRight().y() - iconsize);
+        p->translate(0.5, 0.5);
+
         p->drawPixmap(pos, icon);
     }
 }
@@ -373,7 +389,7 @@ void NetworkManagerApplet::paintOkOverlay(QPainter *p, const QRectF &rect, qreal
     }
 
     color.setAlphaF(opacity * 0.6);
-    QPen pen(color, 2); // green, px width
+    QPen pen(color, 1); // green, px width
     p->setPen(pen);
     p->setBrush(color);
     p->drawEllipse(rect);
