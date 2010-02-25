@@ -136,7 +136,12 @@ void NMPopup::init()
     m_connectionsButton->setIcon(KIcon("networkmanager"));
     m_connectionsButton->setText(i18nc("manage connections button in the applet's popup", "Manage Connections..."));
     connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
-    m_rightLayout->addItem(m_connectionsButton);
+
+    QGraphicsLinearLayout* connectionLayout = new QGraphicsLinearLayout;
+    connectionLayout->addStretch();
+    connectionLayout->addItem(m_connectionsButton);
+
+    m_rightLayout->addItem(connectionLayout);
 
     m_mainLayout->addItem(m_rightWidget, 0, 1);
 
