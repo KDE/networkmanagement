@@ -155,7 +155,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
             if (s == 19) {
                 // The size 19 in the svg only has 4 states
                 if (str < 13) {
-                    strength = "00";
+                    strength = "0";
                 } else if (str < 38) {
                     strength = "25";
                 } else if (str < 63) {
@@ -167,7 +167,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
                 }
             } else { // ... the other sizes have more states.
                 if (str < 13) {
-                    strength = "00";
+                    strength = "0";
                 } else if (str < 30) {
                     strength = "20";
                 } else if (str < 50) {
@@ -181,7 +181,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
                 }
             }
         } else {
-                strength = "00";
+                strength = "0";
         }
     } else {
         return QString("dialog-error");
@@ -195,6 +195,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
     } else {
         icon = QString("%1-%2-wireless-signal-%3").arg(w, w, strength);
     }
+    kDebug() << "Icon:" << icon;
     return icon;
 }
 
@@ -389,7 +390,7 @@ void NetworkManagerApplet::paintOkOverlay(QPainter *p, const QRectF &rect, qreal
     }
 
     color.setAlphaF(opacity * 0.6);
-    QPen pen(color, 1); // green, px width
+    QPen pen(color, 1); // green, 1 px width
     p->setPen(pen);
     p->setBrush(color);
     p->drawEllipse(rect);
@@ -405,7 +406,7 @@ void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap pixmap, const 
     painter->setRenderHint(QPainter::Antialiasing);
 
     if (painter->paintEngine()->hasFeature(QPaintEngine::ConstantOpacity)) {
-        // NOTE: Works, but makes hw acceleration impossible, use above code path
+        // NOTE: Works, but makes hw acceleration impossible, use below code path
         //kWarning() << "You don't really want to hit this path, it means slow painting. Your paintengine is not good enough.";
         qreal old = painter->opacity();
         painter->setOpacity(opacity);
