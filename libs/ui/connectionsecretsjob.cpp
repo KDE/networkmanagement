@@ -166,6 +166,7 @@ void ConnectionSecretsJob::doAskUser()
         m_settingWidget->readSecrets();
         m_askUserDialog = new KDialog(0);
         m_askUserDialog->setCaption(i18nc("@title:window for network secrets request", "Secrets for %1", m_connection->name()));
+        m_askUserDialog->setWindowIcon(KIcon("dialog-password"));
         m_askUserDialog->setMainWidget(m_settingWidget);
         m_askUserDialog->setButtons(KDialog::Ok | KDialog::Cancel);
 
