@@ -18,7 +18,7 @@ o kill right icon in connectionitem
 o fix updating of state of connectionitems
 o indicate default route in interfaceitem
 o fix layouting / scrollwidget for Connections and Wireless Networks tab
-* disconnect button disconnects wrong connections
+o disconnect button disconnects wrong connections
 * integrate nuno/ademmer's new artwork
 * use network-wired-active for active wired connections
 * integrate hiddenwirelessitem into wireless networks tab
