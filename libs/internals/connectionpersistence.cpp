@@ -265,7 +265,9 @@ void ConnectionPersistence::walletOpenedForRead(bool success)
                             missingEntry = true;
                             break;
                         }
-                        kDebug() << settingSecrets;
+                        // This line will dump the wep key or other valuable information to stderr,
+                        // so do not commit it uncommented
+                        //kDebug() << settingSecrets;
                         persistenceFor(setting)->restoreSecrets(settingSecrets);
                     } else if (setting->hasSecrets()) {
                         missingEntry = true;
