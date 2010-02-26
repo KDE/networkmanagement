@@ -120,19 +120,19 @@ void NMPopup::init()
     m_mainLayout->addItem(m_leftWidget, 0, 0);
 
     m_rightWidget = new Plasma::Frame(this);
-    m_rightWidget->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::MinimumExpanding);
+    m_rightWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
     m_rightLayout = new QGraphicsLinearLayout(m_rightWidget);
     m_rightLayout->setOrientation(Qt::Vertical);
     // Tabs for activatables
     kDebug() << "Creating tABS";
     m_connectionTabs = new Plasma::TabBar(m_rightWidget);
-    m_connectionTabs->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
-    m_connectionTabs->setPreferredHeight(240);
+    m_connectionTabs->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     m_connectionTabs->setPreferredWidth(320);
 
     m_rightLayout->addItem(m_connectionTabs);
 
     m_connectionsButton = new Plasma::PushButton(m_rightWidget);
+    m_connectionsButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     m_connectionsButton->setIcon(KIcon("networkmanager"));
     m_connectionsButton->setText(i18nc("manage connections button in the applet's popup", "Manage Connections..."));
     connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
