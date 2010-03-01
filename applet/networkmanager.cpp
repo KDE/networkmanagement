@@ -296,13 +296,13 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 {
     Q_UNUSED( option );
 
-    paintStatusOverlay(p);
     if (m_useSvg) {
         QString el = svgElement(activeInterface());
         m_svg->paint(p, m_contentSquare, el);
     } else {
         paintPixmap(p, m_pixmap, contentsRect);
     }
+    paintStatusOverlay(p);
     paintNeedAuthOverlay(p);
 }
 
