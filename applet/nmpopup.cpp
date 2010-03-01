@@ -128,6 +128,10 @@ void NMPopup::init()
     kDebug() << "Creating tABS";
     m_connectionTabs = new Plasma::TabBar(m_rightWidget);
     m_connectionTabs->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+/*
+    m_connectionTabs->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
+    m_connectionTabs->setPreferredHeight(320);
+*/
     m_connectionTabs->setPreferredWidth(320);
 
     m_rightLayout->addItem(m_connectionTabs);

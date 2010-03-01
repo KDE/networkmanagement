@@ -48,7 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::IconWidget(parent),
     m_iface(iface),
     m_connectionNameLabel(0),
-    m_connectionInfoLabel(0),
+    //m_connectionInfoLabel(0),
     m_nameMode(mode),
     m_enabled(false)
 {
@@ -61,7 +61,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_layout->setColumnSpacing(2, 6);
     m_layout->setRowSpacing(0, 6);
     m_layout->setRowSpacing(1, 6);
-    m_layout->setRowSpacing(2, 6);
+    //m_layout->setRowSpacing(2, 6);
     m_layout->setPreferredWidth(240);
     m_layout->setColumnFixedWidth(0, 48);
     m_layout->setColumnMinimumWidth(1, 160);
@@ -104,21 +104,21 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_connectionNameLabel = new Plasma::Label(this);
     m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
-    m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 2);
+    m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 1);
 
-    //       IP address
+    /*       IP address
     m_connectionInfoLabel = new Plasma::Label(this);
     m_connectionInfoLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionInfoLabel->nativeWidget()->setWordWrap(false);
     m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 2, Qt::AlignCenter);
-
+    */
     //       security
     m_connectionInfoIcon = new Plasma::IconWidget(this);
-    m_connectionInfoIcon->setMinimumHeight(22);
-    m_connectionInfoIcon->setMinimumWidth(22);
-    m_connectionInfoIcon->setMaximumHeight(22);
-    m_layout->addItem(m_connectionInfoIcon, 2, 3, 1, 1, Qt::AlignRight);
-    m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
+    m_connectionInfoIcon->setMinimumHeight(16);
+    m_connectionInfoIcon->setMinimumWidth(16);
+    m_connectionInfoIcon->setMaximumHeight(16);
+    m_layout->addItem(m_connectionInfoIcon, 1, 2, 1, 1, Qt::AlignRight); // check...
+    //m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
 
     connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)),
             this, SLOT(handleConnectionStateChange(int,int,int)));
@@ -157,7 +157,7 @@ void InterfaceItem::setEnabled(bool enable)
 {
     m_enabled = enable;
     m_icon->setEnabled(enable);
-    m_connectionInfoLabel->setEnabled(enable);
+    //m_connectionInfoLabel->setEnabled(enable);
     m_connectionNameLabel->setEnabled(enable);
     m_ifaceNameLabel->setEnabled(enable);
     m_disconnectButton->setEnabled(enable);
@@ -196,14 +196,14 @@ void InterfaceItem::setConnectionInfo()
 {
     connectionStateChanged(m_iface->connectionState());
     return;
-    if (m_connectionInfoLabel && m_connectionNameLabel) {
+    if (m_connectionNameLabel) {
         if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
             if (connectionName().isEmpty()) {
                 m_connectionNameLabel->setText(i18nc("label of the interface: interface is connected", "Connected"));
             } else {
                 m_connectionNameLabel->setText(i18nc("label of the interface: wireless interface is connected", "Connected to %1", connectionName()));
             }
-            m_connectionInfoLabel->setText(i18nc("label of the interface: ip address of the network interface", "Address: %1", currentIpAddress()));
+            //m_connectionInfoLabel->setText(i18nc("label of the interface: ip address of the network interface", "Address: %1", currentIpAddress()));
             //kDebug() << "addresses non-empty" << m_currentIp;
         }
     }
@@ -256,7 +256,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
     m_disconnect = false;
     // Name and info labels
     QString lname = UiUtils::connectionStateToString(state);
-    QString linfo;
+    //QString linfo;
 
     switch (state) {
         case Solid::Control::NetworkInterface::Unavailable:
@@ -282,7 +282,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
             } else {
                 lname = i18nc("wireless interface is connected", "Connected to %1", connectionName());
             }
-            linfo = i18nc("ip address of the network interface", "Address: %1", currentIpAddress());
+            //linfo = i18nc("ip address of the network interface", "Address: %1", currentIpAddress());
             m_disconnect = true;
             setEnabled(true);
             break;
@@ -304,7 +304,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
         m_disconnectButton->show();
     }
     m_connectionNameLabel->setText(lname);
-    m_connectionInfoLabel->setText(linfo);
+    //m_connectionInfoLabel->setText(linfo);
 
     //kDebug() << "State changed" << lname << linfo;
 
