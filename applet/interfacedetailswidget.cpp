@@ -29,20 +29,31 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Plasma
 #include <Plasma/Label>
-
-
+#include <Plasma/IconWidget>
 
 InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphicsWidget(parent, 0)
 {
     QGraphicsLinearLayout* layout = new QGraphicsLinearLayout(this);
     setLayout(layout);
-    Plasma::Label* label = new Plasma::Label(this);
-    label->setText("Interface Details go here!");
-    layout->addItem(label);
+
+    m_label = new Plasma::Label(this);
+    m_label->setText("Interface Details go here!");
+    layout->addItem(m_label);
+
+    Plasma::IconWidget* back = new Plasma::IconWidget(this);
+    back->setIcon("go-previous");
+    layout->addItem(back);
+    connect(back, SIGNAL(clicked()), this, SIGNAL(back()));
 }
 
 InterfaceDetailsWidget::~InterfaceDetailsWidget()
 {
+}
+
+void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* iface)
+{
+    m_iface = iface;
+    m_label->setText(m_iface->interfaceName());
 }
 
 

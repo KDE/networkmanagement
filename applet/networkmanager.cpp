@@ -195,7 +195,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
     } else {
         icon = QString("%1-%2-wireless-signal-%3").arg(w, w, strength);
     }
-    kDebug() << "Icon:" << icon;
+    //kDebug() << "Icon:" << icon;
     return icon;
 }
 

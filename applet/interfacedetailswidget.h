@@ -22,17 +22,25 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define INTERFACEDETAILSWIDGET_H
 
 #include <QGraphicsWidget>
-
+#include <solid/control/networkinterface.h>
+#include <Plasma/Label>
 
 class RemoteActivatable;
 
 class InterfaceDetailsWidget : public QGraphicsWidget
 {
 Q_OBJECT
-public:
-    InterfaceDetailsWidget(QGraphicsItem* parent = 0);
-    virtual ~InterfaceDetailsWidget();
+    public:
+        InterfaceDetailsWidget(QGraphicsItem* parent = 0);
+        virtual ~InterfaceDetailsWidget();
+        void setInterface(Solid::Control::NetworkInterface* iface);
 
+    Q_SIGNALS:
+        void back();
+
+    private:
+        Solid::Control::NetworkInterface* m_iface;
+        Plasma::Label* m_label;
 };
 
 #endif // INTERFACEDETAILSWIDGET_H

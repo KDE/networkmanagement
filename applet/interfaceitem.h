@@ -52,7 +52,7 @@ namespace Solid
  * Displays status, updates itself
  * Allows deactivating any active connection
  */
-class InterfaceItem : public Plasma::Frame
+class InterfaceItem : public Plasma::IconWidget
 {
 Q_OBJECT
 public:
@@ -62,7 +62,7 @@ public:
 
     void setNameDisplayMode(NameDisplayMode);
     NameDisplayMode nameDisplayMode() const;
-
+    Solid::Control::NetworkInterface* interface();
     virtual QString connectionName();
     QString label();
 

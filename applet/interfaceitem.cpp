@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knmserviceprefs.h"
 
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::Frame(parent),
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::IconWidget(parent),
     m_iface(iface),
     m_connectionNameLabel(0),
     m_connectionInfoLabel(0),
@@ -71,6 +71,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_icon = new Plasma::IconWidget(this);
     m_icon->setMinimumHeight(48);
     m_icon->setMaximumHeight(48);
+    setMinimumHeight(54);
     //m_icon->setAcceptHoverEvents(false);
     m_layout->addItem(m_icon, 0, 0, 2, 1);
 
@@ -139,6 +140,11 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
 QString InterfaceItem::label()
 {
     return m_ifaceNameLabel->text();
+}
+
+Solid::Control::NetworkInterface* InterfaceItem::interface()
+{
+    return m_iface;
 }
 
 void InterfaceItem::setActive(bool active)

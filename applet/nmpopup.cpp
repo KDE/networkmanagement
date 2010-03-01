@@ -111,10 +111,11 @@ void NMPopup::init()
 
     //m_leftWidget->setLayout(m_leftLayout);
     m_leftWidget->addTab(i18nc("tabbar on the left side", "Interfaces"), m_leftLayout);
-    //m_leftWidget->setTabBarShown(false); // TODO: enable
+    m_leftWidget->setTabBarShown(false); // TODO: enable
 
 
     m_interfaceDetailsWidget = new InterfaceDetailsWidget(m_leftWidget);
+    connect(m_interfaceDetailsWidget, SIGNAL(back()), this, SLOT(toggleInterfaceTab()));
     m_leftWidget->addTab(i18nc("details for the interface", "Details"), m_interfaceDetailsWidget);
 
     m_mainLayout->addItem(m_leftWidget, 0, 0);
@@ -135,6 +136,7 @@ void NMPopup::init()
     m_connectionsButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     m_connectionsButton->setIcon(KIcon("networkmanager"));
     m_connectionsButton->setText(i18nc("manage connections button in the applet's popup", "Manage Connections..."));
+    m_connectionsButton->setMaximumHeight(28);
     connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
 
     QGraphicsLinearLayout* connectionLayout = new QGraphicsLinearLayout;
@@ -233,6 +235,8 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
             ifaceItem = new InterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
             connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
         }
+        connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
+
         // Catch connection changes
         connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
         connect(iface, SIGNAL(linkUpChanged(bool)), this, SLOT(switchToDefaultTab()));
@@ -372,5 +376,17 @@ void NMPopup::manageConnections()
     KToolInvocation::kdeinitExec("kcmshell4", args);
 }
 
+void NMPopup::toggleInterfaceTab()
+{
+    InterfaceItem* item = qobject_cast<InterfaceItem*>(sender());
+    if (item) {
+        m_interfaceDetailsWidget->setInterface(item->interface());
+    }
+    if (m_leftWidget->currentIndex() == 0) {
+        m_leftWidget->setCurrentIndex(1);
+    } else {
+        m_leftWidget->setCurrentIndex(0);
+    }
+}
 // vim: sw=4 sts=4 et tw=100
 
