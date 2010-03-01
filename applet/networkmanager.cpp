@@ -311,12 +311,10 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
     qreal state = UiUtils::interfaceState(activeInterface());
     p->setRenderHint(QPainter::Antialiasing);
     int i_s = (int)contentsRect().width()/4;
-    int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 4);
-    iconsize = qMax((int)contentsRect().width()/4, 8);
-    QRectF r = QRectF(iconsize, iconsize, iconsize, iconsize);
+    int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
     //kDebug() << "Iconsize" << iconsize;
 
-    r = QRectF(contentsRect().x(), contentsRect().y() + contentsRect().height() - iconsize, iconsize, iconsize);
+    QRectF r = QRectF(contentsRect().x(), contentsRect().y() + contentsRect().height() - iconsize, iconsize, iconsize);
     qreal opacity = m_overlayTimeline.currentValue();
     if (opacity == 0) {
         return;
@@ -384,16 +382,11 @@ void NetworkManagerApplet::paintOverlay(QPainter *p)
 
 void NetworkManagerApplet::paintOkOverlay(QPainter *p, const QRectF &rect, qreal opacity)
 {
-    QColor color = QColor("#37B237"); // GNA! hardcoded colors == teh suck
-    if (UiUtils::interfaceState(activeInterface()) == 0) {
-        color = QColor("#B23636"); // green; GNA! hardcoded colors == teh suck^2
-    }
-
-    color.setAlphaF(opacity * 0.6);
-    QPen pen(color, 1); // green, 1 px width
-    p->setPen(pen);
-    p->setBrush(color);
-    p->drawEllipse(rect);
+    QPixmap icon = KIcon("task-complete").pixmap(rect.size().toSize());
+    int oldOpacity = p->opacity();
+    p->setOpacity(opacity);
+    p->drawPixmap(rect.topLeft().toPoint(), icon);
+    p->setOpacity(oldOpacity);
 }
 
 void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap pixmap, const QRectF &rect, qreal opacity)
@@ -505,7 +498,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
                 if (m_currentState != state) {
                     m_overlayTimeline.stop();
                     m_overlayTimeline.setDirection(QTimeLine::Backward);
-                    m_overlayTimeline.setDuration(10000);
+                    m_overlayTimeline.setDuration(5000);
                     m_overlayTimeline.start();
                 }
                 break;
