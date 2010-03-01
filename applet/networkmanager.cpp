@@ -314,7 +314,7 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
     int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
     //kDebug() << "Iconsize" << iconsize;
 
-    QRectF r = QRectF(contentsRect().x(), contentsRect().y() + contentsRect().height() - iconsize, iconsize, iconsize);
+    QRectF r = QRectF(contentsRect().left(), contentsRect().bottom() - iconsize, iconsize, iconsize);
     qreal opacity = m_overlayTimeline.currentValue();
     if (opacity == 0) {
         return;
@@ -372,9 +372,9 @@ void NetworkManagerApplet::paintOverlay(QPainter *p)
         int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
 
         kDebug() << "Security:iconsize" << iconsize;
-        QPixmap icon = KIcon("dialog-password").pixmap(QSize(iconsize, iconsize));
-        QPoint pos = QPoint(contentsRect().bottomRight().x() - iconsize,
-                            contentsRect().bottomRight().y() - iconsize);
+        QPixmap icon = KIcon("dialog-password").pixmap(iconsize);
+        QPoint pos = QPoint(contentsRect().right() - iconsize,
+                            contentsRect().bottom() - iconsize);
 
         p->drawPixmap(pos, icon);
     }
