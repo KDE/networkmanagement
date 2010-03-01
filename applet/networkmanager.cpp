@@ -296,55 +296,17 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 {
     Q_UNUSED( option );
 
-    paintProgress(p);
+    paintStatusOverlay(p);
     if (m_useSvg) {
         QString el = svgElement(activeInterface());
         m_svg->paint(p, m_contentSquare, el);
     } else {
         paintPixmap(p, m_pixmap, contentsRect);
     }
-    paintOverlay(p);
+    paintNeedAuthOverlay(p);
 }
 
-void NetworkManagerApplet::paintProgress(QPainter *p)
-{
-    qreal state = UiUtils::interfaceState(activeInterface());
-    p->setRenderHint(QPainter::Antialiasing);
-    int i_s = (int)contentsRect().width()/4;
-    int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
-    //kDebug() << "Iconsize" << iconsize;
-
-    QRectF r = QRectF(contentsRect().left(), contentsRect().bottom() - iconsize, iconsize, iconsize);
-    qreal opacity = m_overlayTimeline.currentValue();
-    if (opacity == 0) {
-        return;
-    } else if (state == 1) {
-        paintOkOverlay(p, r, opacity);
-        return;
-    }
-    QColor fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    QColor bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-
-    bgColor.setAlphaF(.5 * opacity);
-    fgColor.setAlphaF(.3 * opacity);
-
-    // paint an arc completing a circle
-    // 1 degree = 16 ticks, that's how drawArc() works
-    // 0 is at 3 o'clock
-    int top = 90 * 16;
-    int progress = -360 * 16 * state;
-    QPen pen(fgColor, 1); // color and line width
-
-    p->setPen(pen);
-    p->setBrush(fgColor);
-
-    //p->drawArc(contentsRect(), top, progress);
-    p->translate(0.5, 0.5);
-    p->drawPie(r, top, progress);
-    p->translate(-0.5, -0.5);
-}
-
-void NetworkManagerApplet::paintOverlay(QPainter *p)
+void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p)
 {
     // Needs authentication, show this in the panel
     if (!activeInterface()) {
@@ -380,12 +342,18 @@ void NetworkManagerApplet::paintOverlay(QPainter *p)
     }
 }
 
-void NetworkManagerApplet::paintOkOverlay(QPainter *p, const QRectF &rect, qreal opacity)
+void NetworkManagerApplet::paintStatusOverlay(QPainter *p)
 {
-    QPixmap icon = KIcon("task-complete").pixmap(rect.size().toSize());
     int oldOpacity = p->opacity();
-    p->setOpacity(opacity);
-    p->drawPixmap(rect.topLeft().toPoint(), icon);
+    qreal opacity = m_overlayTimeline.currentValue();
+    if (!qFuzzyCompare(opacity, 1) && !m_previousStatusOverlay.isNull()) {
+        p->setOpacity(1 - opacity);
+        p->drawPixmap(contentsRect().left(), contentsRect().bottom() - m_previousStatusOverlay.height(), m_previousStatusOverlay);
+    }
+    if (!m_statusOverlay.isNull()) {
+        p->setOpacity(opacity);
+        p->drawPixmap(contentsRect().left(), contentsRect().bottom() - m_statusOverlay.height(), m_statusOverlay);
+    }
     p->setOpacity(oldOpacity);
 }
 
@@ -483,10 +451,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
             case Solid::Control::NetworkInterface::Configuring:
             case Solid::Control::NetworkInterface::IPConfig:
                 if (m_currentState != state) {
-                    m_overlayTimeline.stop();
-                    m_overlayTimeline.setDuration(2000);
-                    m_overlayTimeline.setDirection(QTimeLine::Forward);
-                    m_overlayTimeline.start();
+                    setStatusOverlay(generateProgressStatusOverlay());
                 }
                 //setBusy(true);
                 break;
@@ -496,21 +461,25 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
             case Solid::Control::NetworkInterface::Activated:
                 //setBusy(false);
                 if (m_currentState != state) {
-                    m_overlayTimeline.stop();
-                    m_overlayTimeline.setDirection(QTimeLine::Backward);
-                    m_overlayTimeline.setDuration(5000);
-                    m_overlayTimeline.start();
+                    // We want to show the full circle a bit
+                    setStatusOverlay(generateProgressStatusOverlay());
+                    setStatusOverlay("task-complete");
+                    QTimer::singleShot(4000, this, SLOT(clearActivatedOverlay()));
                 }
                 break;
             case Solid::Control::NetworkInterface::UnknownState:
-                break;
+                kDebug() << "UnknownState! should this happen?";
             case Solid::Control::NetworkInterface::Unmanaged:
-                break;
             case Solid::Control::NetworkInterface::Unavailable:
+            case Solid::Control::NetworkInterface::Failed:
+                if (m_currentState != state) {
+                    setStatusOverlay("dialog-error");
+                }
                 break;
             case Solid::Control::NetworkInterface::Disconnected:
-                break;
-            case Solid::Control::NetworkInterface::Failed:
+                if (m_currentState != state) {
+                    setStatusOverlay("dialog-cancel");
+                }
                 break;
         }
         m_currentState = state;
@@ -803,6 +772,65 @@ bool NetworkManagerApplet::hasInterfaceOfType(Solid::Control::NetworkInterface::
         }
     }
     return false;
+}
+
+void NetworkManagerApplet::setStatusOverlay(const QPixmap& pix)
+{
+    m_previousStatusOverlay = m_statusOverlay;
+    m_statusOverlay = pix;
+    if (m_overlayTimeline.state() == QTimeLine::Running) {
+        m_overlayTimeline.stop();
+    }
+    m_overlayTimeline.start();
+}
+
+void NetworkManagerApplet::setStatusOverlay(const QString& name)
+{
+    int i_s = (int)contentsRect().width()/4;
+    int size = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
+    QPixmap pix = KIcon(name).pixmap(size);
+    setStatusOverlay(pix);
+}
+
+QPixmap NetworkManagerApplet::generateProgressStatusOverlay()
+{
+    // FIXME: Duplicated from setStatusOverlay()
+    int i_s = (int)contentsRect().width()/4;
+    int size = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
+
+    QPixmap pix(size, size);
+    pix.fill(Qt::transparent);
+    qreal state = UiUtils::interfaceState(activeInterface());
+
+    QColor fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
+    QColor bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
+
+    bgColor.setAlphaF(.5);
+    fgColor.setAlphaF(.3);
+
+    // paint an arc completing a circle
+    // 1 degree = 16 ticks, that's how drawArc() works
+    // 0 is at 3 o'clock
+    int top = 90 * 16;
+    int progress = -360 * 16 * state;
+    QPen pen(fgColor, 1); // color and line width
+
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+    p.setPen(pen);
+    p.setBrush(fgColor);
+    //p.drawArc(contentsRect(), top, progress);
+    p.drawPie(pix.rect().adjusted(.5, .5, -.5, -.5), top, progress);
+
+    return pix;
+}
+
+void NetworkManagerApplet::clearActivatedOverlay()
+{
+    if (activeInterface() && activeInterface()->connectionState() == Solid::Control::NetworkInterface::Activated) {
+        // Clear the overlay, but only if we are still activated
+        setStatusOverlay(QPixmap());
+    }
 }
 
 #include "networkmanager.moc"

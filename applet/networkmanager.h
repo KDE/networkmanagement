@@ -107,6 +107,7 @@ private Q_SLOTS:
     void interfaceConnectionStateChanged();
     void updatePixmap();
     void repaint();
+    void clearActivatedOverlay();
 
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
@@ -116,9 +117,11 @@ private:
 
     void paintPixmap(QPainter* painter, QPixmap pixmap,
                      const QRectF &rect, qreal opacity = 1.0);
-    void paintOkOverlay(QPainter* p, const QRectF &rect, qreal opacity = 1.0);
-    void paintProgress(QPainter* p);
-    void paintOverlay(QPainter* p);
+    void paintStatusOverlay(QPainter* p);
+    void paintNeedAuthOverlay(QPainter* p);
+    QPixmap generateProgressStatusOverlay();
+    void setStatusOverlay(const QPixmap&);
+    void setStatusOverlay(const QString&);
 
     bool m_iconPerDevice;
     Solid::Control::NetworkInterfaceList m_interfaces;
@@ -134,6 +137,8 @@ private:
     Solid::Control::AccessPoint* m_accessPoint;
 
     QTimeLine m_overlayTimeline;
+    QPixmap m_previousStatusOverlay;
+    QPixmap m_statusOverlay;
     Solid::Control::NetworkInterface::ConnectionState m_currentState;
 
     ///embedded KCM modules in the configuration dialog
