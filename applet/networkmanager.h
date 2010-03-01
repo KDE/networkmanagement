@@ -120,7 +120,6 @@ private:
     void paintProgress(QPainter* p);
     void paintOverlay(QPainter* p);
 
-    Solid::Control::NetworkInterfaceList sortInterfacesByImportance(const Solid::Control::NetworkInterfaceList& interfaces) const;
     bool m_iconPerDevice;
     Solid::Control::NetworkInterfaceList m_interfaces;
     Plasma::ToolTipContent m_toolTip;
