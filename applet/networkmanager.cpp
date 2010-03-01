@@ -328,7 +328,6 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
     bgColor.setAlphaF(.5 * opacity);
     fgColor.setAlphaF(.3 * opacity);
 
-    p->translate(0.5, 0.5);
     // paint an arc completing a circle
     // 1 degree = 16 ticks, that's how drawArc() works
     // 0 is at 3 o'clock
@@ -340,7 +339,9 @@ void NetworkManagerApplet::paintProgress(QPainter *p)
     p->setBrush(fgColor);
 
     //p->drawArc(contentsRect(), top, progress);
+    p->translate(0.5, 0.5);
     p->drawPie(r, top, progress);
+    p->translate(-0.5, -0.5);
 }
 
 void NetworkManagerApplet::paintOverlay(QPainter *p)
@@ -372,9 +373,8 @@ void NetworkManagerApplet::paintOverlay(QPainter *p)
 
         kDebug() << "Security:iconsize" << iconsize;
         QPixmap icon = KIcon("dialog-password").pixmap(QSize(iconsize, iconsize));
-        QPointF pos = QPointF(contentsRect().bottomRight().x() - iconsize,
+        QPoint pos = QPoint(contentsRect().bottomRight().x() - iconsize,
                             contentsRect().bottomRight().y() - iconsize);
-        p->translate(0.5, 0.5);
 
         p->drawPixmap(pos, icon);
     }
