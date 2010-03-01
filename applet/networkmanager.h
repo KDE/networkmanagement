@@ -134,7 +134,7 @@ private:
     Solid::Control::AccessPoint* m_accessPoint;
 
     QTimeLine m_overlayTimeline;
-    int m_currentState;
+    Solid::Control::NetworkInterface::ConnectionState m_currentState;
 
     ///embedded KCM modules in the configuration dialog
     KCModuleProxy* m_kcmNM;

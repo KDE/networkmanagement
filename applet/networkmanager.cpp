@@ -81,7 +81,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     setPopupIcon(QIcon());
     //setPassivePopup(true); // FIXME: disable, only true for testing ...
     m_overlayTimeline.setEasingCurve(QEasingCurve::OutExpo);
-    m_currentState = 0;
+    m_currentState = Solid::Control::NetworkInterface::UnknownState;
     connect(&m_overlayTimeline, SIGNAL(valueChanged(qreal)), this, SLOT(repaint()));
 
     Plasma::ToolTipManager::self()->registerWidget(this);
@@ -477,7 +477,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
     //kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
     if (activeInterface()) {
         //kDebug() << "busy ... ?";
-        int state = activeInterface()->connectionState();
+        Solid::Control::NetworkInterface::ConnectionState state = activeInterface()->connectionState();
         switch (state) {
             case Solid::Control::NetworkInterface::Preparing:
             case Solid::Control::NetworkInterface::Configuring:
@@ -493,7 +493,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
             case Solid::Control::NetworkInterface::NeedAuth:
                 //setBusy(false);
                 break;
-            default:
+            case Solid::Control::NetworkInterface::Activated:
                 //setBusy(false);
                 if (m_currentState != state) {
                     m_overlayTimeline.stop();
@@ -501,6 +501,16 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
                     m_overlayTimeline.setDuration(5000);
                     m_overlayTimeline.start();
                 }
+                break;
+            case Solid::Control::NetworkInterface::UnknownState:
+                break;
+            case Solid::Control::NetworkInterface::Unmanaged:
+                break;
+            case Solid::Control::NetworkInterface::Unavailable:
+                break;
+            case Solid::Control::NetworkInterface::Disconnected:
+                break;
+            case Solid::Control::NetworkInterface::Failed:
                 break;
         }
         m_currentState = state;
