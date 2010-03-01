@@ -254,6 +254,9 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
 
     switch (state) {
         case Solid::Control::NetworkInterface::Unavailable:
+            if (m_iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+                lname = i18nc("wired interface network cable unplugged", "Cable Unplugged");
+            }
             setEnabled(false);
             break;
         case Solid::Control::NetworkInterface::Disconnected:
@@ -269,7 +272,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
             break;
         case Solid::Control::NetworkInterface::Activated:
             if (connectionName().isEmpty()) {
-                lname = i18nc("wireless interface is connected", "Connected");
+                lname = i18nc("wired interface is connected", "Connected");
             } else {
                 lname = i18nc("wireless interface is connected", "Connected to %1", connectionName());
             }
