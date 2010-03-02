@@ -80,8 +80,8 @@ bool WirelessNetworkItem::readSettings()
         //kDebug() <<  "========== RemoteActivationState" << remoteconnection->activationState();
         m_state = remoteconnection->activationState();
         activationStateChanged(m_state);
-        connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
-                                    SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
+        //connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
+        //                            SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
         RemoteWirelessObject * wobj  = static_cast<RemoteWirelessObject*>(remoteconnection);
         operationMode = wobj->operationMode();
     } else if (aType == Knm::Activatable::WirelessNetwork) {
@@ -260,6 +260,7 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
     kDebug() << "state updated" << t;
     m_state = state;
     update();
+    ActivatableItem::activationStateChanged(state);
 }
 
 void WirelessNetworkItem::update()

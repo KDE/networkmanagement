@@ -98,18 +98,19 @@ void WirelessInterfaceItem::setConnectionInfo()
         case Solid::Control::NetworkInterface::Unavailable:
         case Solid::Control::NetworkInterface::Disconnected:
         case Solid::Control::NetworkInterface::Failed:
-            m_connectionInfoIcon->hide();
+            //m_connectionInfoIcon->hide();
             break;
         default:
         {
             kDebug() << "showing infoicon";
             if (m_activeAccessPoint) {
+                kDebug() << "showing infoicon";
                 m_connectionInfoIcon->show();
             }
             break;
         }
     }
-    kDebug() << "Icon:" << UiUtils::iconName(m_iface);
+    //kDebug() << "Icon:" << UiUtils::iconName(m_iface);
     //m_icon->nativeWidget()->setPixmap(UiUtils::iconName(m_iface));
 }
 

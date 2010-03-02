@@ -34,8 +34,15 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
     setTextBackgroundColor(QColor(Qt::transparent));
     RemoteInterfaceConnection *remoteconnection = interfaceConnection();
     if (remoteconnection) {
-        connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)), SLOT(handleHasDefaultRouteChanged(bool)));
+        connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)),
+                SLOT(handleHasDefaultRouteChanged(bool)));
+        connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
+                SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
     }
+
+    //activationStateChanged(m_state);
+    
+
 }
 
 ActivatableItem::~ActivatableItem()
@@ -67,9 +74,34 @@ void ActivatableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* o
 {
     Plasma::IconWidget::paint(painter, option, widget);
     if (m_hasDefaultRoute) {
-        painter->drawPixmap(QRect(4,4,10,10), KIcon("emblem-favorite").pixmap(QSize(8,8)));
+        painter->drawPixmap(QRect(4,4,10,10), KIcon("face-smile").pixmap(QSize(8,8)));
     }
 }
 
+void ActivatableItem::setActive(bool active)
+{
+    QFont f = font();
+    f.setBold(active);
+    setFont(f);
+}
+
+void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
+{
+    kDebug() << "changed" << state;
+    switch (state) {
+        //Knm::InterfaceConnectihon::ActivationState
+        case Knm::InterfaceConnection::Activated:
+            setActive(true);
+            kDebug() << "Setting BOLD";
+            break;
+        case Knm::InterfaceConnection::Unknown:
+            setActive(false);
+            kDebug() << "Setting THIN";
+            break;
+        case Knm::InterfaceConnection::Activating:
+            setActive(false);
+            kDebug() << "Setting THIN";
+    }
+}
 
 // vim: sw=4 sts=4 et tw=100
