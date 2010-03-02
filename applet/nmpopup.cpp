@@ -117,6 +117,7 @@ void NMPopup::init()
     m_interfaceDetailsWidget = new InterfaceDetailsWidget(m_leftWidget);
     connect(m_interfaceDetailsWidget, SIGNAL(back()), this, SLOT(toggleInterfaceTab()));
     m_leftWidget->addTab(i18nc("details for the interface", "Details"), m_interfaceDetailsWidget);
+    m_leftWidget->setPreferredWidth(300);
 
     m_mainLayout->addItem(m_leftWidget, 0, 0);
 
@@ -127,11 +128,10 @@ void NMPopup::init()
     // Tabs for activatables
     kDebug() << "Creating tABS";
     m_connectionTabs = new Plasma::TabBar(m_rightWidget);
-    m_connectionTabs->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-/*
+    //m_connectionTabs->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     m_connectionTabs->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
     m_connectionTabs->setPreferredHeight(320);
-*/
+
     m_connectionTabs->setPreferredWidth(320);
 
     m_rightLayout->addItem(m_connectionTabs);
