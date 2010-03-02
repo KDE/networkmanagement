@@ -64,7 +64,6 @@ class WirelessNetworkItem : public ActivatableItem
         int m_strength;
         QString m_ssid;
         RemoteWirelessNetwork* m_remote;
-        Knm::InterfaceConnection::ActivationState m_state;
 };
 
 #endif //#define APPLET_WIRELESSCONNECTIONITEM_H

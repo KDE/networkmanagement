@@ -231,6 +231,7 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
 
     if (m_state != state && interfaceConnection()) {
         //m_connectButton->setIcon("bookmarks"); // Known connection, we probably have credentials
+        /*
         switch (state) {
             //Knm::InterfaceConnectihon::ActivationState
             case Knm::InterfaceConnection::Activated:
@@ -246,6 +247,7 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
                 t = i18nc("label on the connectabel button", "%1 (connecting...)", t);
                 m_connectButton->setInfoText(i18nc("subtext on connection button", "Connecting..."));
         }
+        */
         m_connectButton->setIcon(interfaceConnection()->iconName());
 
     } else {
@@ -257,7 +259,7 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
     }
     handleHasDefaultRouteChanged(interfaceConnection()->hasDefaultRoute());
 
-    kDebug() << "state updated" << t;
+    //kDebug() << "state updated" << t;
     m_state = state;
     update();
     ActivatableItem::activationStateChanged(state);

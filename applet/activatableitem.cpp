@@ -68,6 +68,7 @@ void ActivatableItem::handleHasDefaultRouteChanged(bool has)
 {
     // do something nice to show that this connection has the default route
     m_hasDefaultRoute = has;
+    update();
 }
 
 void ActivatableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
@@ -78,30 +79,25 @@ void ActivatableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* o
     }
 }
 
-void ActivatableItem::setActive(bool active)
-{
-    QFont f = font();
-    f.setBold(active);
-    setFont(f);
-}
-
 void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
 {
-    kDebug() << "changed" << state;
+    // Update the view of the connection, manipulate font based on activation state.
+    QFont f = font();
     switch (state) {
         //Knm::InterfaceConnectihon::ActivationState
         case Knm::InterfaceConnection::Activated:
-            setActive(true);
-            kDebug() << "Setting BOLD";
+            f.setBold(true);
+            f.setItalic(false);
             break;
         case Knm::InterfaceConnection::Unknown:
-            setActive(false);
-            kDebug() << "Setting THIN";
+            f.setBold(false);
+            f.setItalic(false);
             break;
         case Knm::InterfaceConnection::Activating:
-            setActive(false);
-            kDebug() << "Setting THIN";
+            f.setBold(false);
+            f.setItalic(true);
     }
+    setFont(f);
 }
 
 // vim: sw=4 sts=4 et tw=100

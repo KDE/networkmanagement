@@ -48,12 +48,12 @@ protected Q_SLOTS:
     void emitClicked();
     void handleHasDefaultRouteChanged(bool);
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
-    virtual void setActive(bool active);
     void activationStateChanged(Knm::InterfaceConnection::ActivationState state);
 
 protected:
     RemoteActivatable *m_activatable;
     bool m_hasDefaultRoute;
+    Knm::InterfaceConnection::ActivationState m_state;
 
 };
 
