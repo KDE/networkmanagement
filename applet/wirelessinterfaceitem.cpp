@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "uiutils.h"
 
 #include <QGraphicsGridLayout>
+#include <QLabel>
 
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
@@ -101,13 +102,15 @@ void WirelessInterfaceItem::setConnectionInfo()
             break;
         default:
         {
+            kDebug() << "showing infoicon";
             if (m_activeAccessPoint) {
                 m_connectionInfoIcon->show();
             }
             break;
         }
     }
-    m_icon->setIcon(UiUtils::iconName(m_iface));
+    kDebug() << "Icon:" << UiUtils::iconName(m_iface);
+    //m_icon->nativeWidget()->setPixmap(UiUtils::iconName(m_iface));
 }
 
 QList<Solid::Control::AccessPoint*> WirelessInterfaceItem::availableAccessPoints() const

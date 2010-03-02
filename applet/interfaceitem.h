@@ -105,7 +105,7 @@ protected:
 
     QGraphicsGridLayout* m_layout;
     QGraphicsLinearLayout* m_infoLayout;
-    Plasma::IconWidget* m_icon;
+    Plasma::Label* m_icon;
     Plasma::PushButton* m_disconnectButton;
     Plasma::Label* m_ifaceNameLabel;
     Plasma::Label* m_connectionNameLabel;

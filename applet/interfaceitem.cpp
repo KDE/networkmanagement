@@ -68,7 +68,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     m_layout->setColumnFixedWidth(2, 16); // FIXME: spacing?
     //m_layout->setColumnFixedWidth(3, 22); // FIXME: spacing?
 
-    m_icon = new Plasma::IconWidget(this);
+    m_icon = new Plasma::Label(this);
     m_icon->setMinimumHeight(48);
     m_icon->setMaximumHeight(48);
     setMinimumHeight(54);
@@ -79,8 +79,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
 
     m_interfaceName = UiUtils::interfaceNameLabel(m_iface->uni());
 
-    m_icon->setIcon(UiUtils::iconName(m_iface));
-    m_icon->setAcceptHoverEvents(false);
+    //m_icon->setIcon(UiUtils::iconName(m_iface));
+    //m_icon->setAcceptHoverEvents(false);
+    m_icon->nativeWidget()->setPixmap(KIcon(UiUtils::iconName(m_iface)).pixmap(QSize(48, 48)));
 
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
@@ -207,6 +208,7 @@ void InterfaceItem::setConnectionInfo()
             //kDebug() << "addresses non-empty" << m_currentIp;
         }
     }
+    m_icon->nativeWidget()->setPixmap(KIcon(UiUtils::iconName(m_iface)).pixmap(QSize(64, 64)));
 }
 
 QString InterfaceItem::currentIpAddress()
