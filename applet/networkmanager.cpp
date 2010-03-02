@@ -805,8 +805,8 @@ QPixmap NetworkManagerApplet::generateProgressStatusOverlay()
     QColor fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
     QColor bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
 
-    bgColor.setAlphaF(.5);
-    fgColor.setAlphaF(.3);
+    bgColor.setAlphaF(.6);
+    fgColor.setAlphaF(.4);
 
     // paint an arc completing a circle
     // 1 degree = 16 ticks, that's how drawArc() works
