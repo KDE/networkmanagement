@@ -84,9 +84,36 @@ void ActivatableListWidget::addType(Knm::Activatable::ActivatableType type)
     }
 }
 
+void ActivatableListWidget::addInterface(Solid::Control::NetworkInterface* iface)
+{
+    m_interfaces << iface->uni();
+    kDebug() << "m_interfaces is now" << m_interfaces;
+    filter();
+}
+
+void ActivatableListWidget::clearInterfaces()
+{
+    m_interfaces = QStringList();
+    kDebug() << "m_interfaces cleared" << m_interfaces;
+    filter();
+}
+
 bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
 {
-    return m_types.contains(activatable->activatableType());
+    if (m_types.contains(activatable->activatableType())) {
+        kDebug() << "type: yes";
+    } else {
+        kDebug() << "type: no";
+        return false;
+    }
+    if (m_interfaces.count()) {
+        if (m_interfaces.contains(activatable->deviceUni())) {
+        } else {
+            kDebug() << "Filtering out by interface";
+            return false;
+        }
+    }
+    return true;
 }
 
 void ActivatableListWidget::createItem(RemoteActivatable * activatable)
@@ -163,6 +190,17 @@ void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
     //kDebug();
     if (accept(added)) {
         createItem(added);
+    }
+}
+
+void ActivatableListWidget::filter()
+{
+    foreach (RemoteActivatable *act, m_activatables->activatables()) {
+        if (accept(act)) {
+            createItem(act);
+        } else {
+            activatableRemoved(act);
+        }
     }
 }
 

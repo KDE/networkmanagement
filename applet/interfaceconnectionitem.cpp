@@ -32,11 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 InterfaceConnectionItem::InterfaceConnectionItem(RemoteInterfaceConnection* conn, QGraphicsItem* parent)
 : ActivatableItem(conn, parent)
 {
-    if (interfaceConnection()) {
-        if (interfaceConnection()->iconName().startsWith("No such interface 'org.kde.networkmanagement.InterfaceConnection'")) {
-            kDebug() << "Houston ...";
-        }
-    }
 }
 
 void InterfaceConnectionItem::setupItem()
@@ -58,12 +53,6 @@ void InterfaceConnectionItem::setupItem()
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
 
-    /*
-    m_routeIcon = new Plasma::IconWidget(this);
-    m_routeIcon->setIcon("emblem-favorite");
-    m_routeIcon->setGeometry(QRectF(m_connectButton->geometry().topLeft(), QSizeF(8, 8)));
-    m_routeIcon->hide(); // this will be shown in handleHasDefaultRouteChanged(bool);
-    */
     if (interfaceConnection()) {
         m_connectButton->setIcon(interfaceConnection()->iconName());
         m_connectButton->setText(interfaceConnection()->connectionName());

@@ -81,10 +81,12 @@ protected Q_SLOTS:
     void handleConnectionStateChange(int new_state);
     void handleConnectionStateChange(int new_state, int old_state, int reason);
     void pppStats(uint in, uint out);
+    void slotClicked();
 
 Q_SIGNALS:
     void stateChanged();
     void disconnectInterfaceRequested(const QString& deviceUni);
+    void clicked(Solid::Control::NetworkInterface*);
 
 protected:
     /**

@@ -102,9 +102,7 @@ void WirelessInterfaceItem::setConnectionInfo()
             break;
         default:
         {
-            kDebug() << "showing infoicon";
             if (m_activeAccessPoint) {
-                kDebug() << "showing infoicon";
                 m_connectionInfoIcon->show();
             }
             break;

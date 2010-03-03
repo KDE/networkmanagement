@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatable.h"
 #include <Plasma/ScrollWidget>
+#include <solid/control/networkmanager.h>
 
 class QGraphicsLinearLayout;
 class ActivatableItem;
@@ -48,14 +49,18 @@ public Q_SLOTS:
     void listDisappeared();
     void listAppeared();
     void deactivateConnection(const QString& deviceUni);
+    void addInterface(Solid::Control::NetworkInterface*);
+    void clearInterfaces();
 
 Q_SIGNALS:
     void connectionListUpdated();
 
 private:
+    void filter();
     void createItem(RemoteActivatable* conn);
     int m_connectionType;
     QList<Knm::Activatable::ActivatableType> m_types;
+    QStringList m_interfaces;
 
     QHash<RemoteActivatable*, ActivatableItem*> m_itemIndex;
     RemoteActivatableList* m_activatables;

@@ -136,6 +136,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
     setLayout(m_layout);
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
+    connect(this, SIGNAL(clicked()), this, SLOT(slotClicked()));
+
 }
 
 QString InterfaceItem::label()
@@ -233,6 +235,12 @@ void InterfaceItem::pppStats(uint in, uint out)
 void InterfaceItem::activeConnectionsChanged()
 {
     setConnectionInfo();
+}
+
+void InterfaceItem::slotClicked()
+{
+    kDebug() << "Interface Clicked" << m_iface->interfaceName() << m_iface->uni();
+    emit clicked(m_iface);
 }
 
 void InterfaceItem::handleConnectionStateChange(int new_state, int old_state, int reason)

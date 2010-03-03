@@ -240,6 +240,8 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
             connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
         }
         connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
+        connect(ifaceItem, SIGNAL(clicked(Solid::Control::NetworkInterface*)),
+                m_connectionList,  SLOT(addInterface(Solid::Control::NetworkInterface*)));
 
         // Catch connection changes
         connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
