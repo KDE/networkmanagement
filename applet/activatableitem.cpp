@@ -39,10 +39,6 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
         connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
                 SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
     }
-
-    //activationStateChanged(m_state);
-    kDebug() << "deviceUni" << m_activatable->deviceUni();
-
 }
 
 ActivatableItem::~ActivatableItem()
@@ -51,10 +47,6 @@ ActivatableItem::~ActivatableItem()
 
 void ActivatableItem::emitClicked()
 {
-    //HACK this slot needs renaming
-    //kDebug() << "EMIT CLICKED";
-    kDebug() << "deviceUni" << m_activatable->deviceUni();
-
     if (m_activatable) {
         m_activatable->activate();
     }

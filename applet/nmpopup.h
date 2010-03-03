@@ -51,14 +51,12 @@ public:
     virtual ~NMPopup();
 
     void init();
-    //virtual QGraphicsItem * widget();
     Solid::Control::NetworkInterface* defaultInterface();
     bool available(int state);
 
 public Q_SLOTS:
     void interfaceAdded(const QString&);
     void interfaceRemoved(const QString&);
-    void switchToDefaultTab();
     void managerWirelessEnabledChanged(bool);
     void managerWirelessHardwareEnabledChanged(bool);
     void wirelessEnabledToggled(bool checked);
@@ -73,15 +71,10 @@ Q_SIGNALS:
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
-    void createTab(Knm::Activatable::ActivatableType type);
 
     RemoteActivatableList* m_activatables;
     // uni, interfaceitem mapping
     QHash<QString, InterfaceItem *> m_interfaces;
-    // ActivatableType, index of tab mapping
-    QHash<int, int> m_tabIndex;
-
-    Plasma::TabBar* m_connectionTabs;
 
     QGraphicsWidget* m_widget;
     QGraphicsGridLayout* m_mainLayout;
@@ -98,7 +91,6 @@ private:
     Plasma::PushButton* m_connectionsButton;
 
     ActivatableListWidget* m_connectionList;
-    ActivatableListWidget* m_wirelessList;
 };
 
 #endif // NMPOPUP_H

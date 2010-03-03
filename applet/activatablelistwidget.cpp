@@ -48,12 +48,9 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_activatables(activatables),
     m_layout(0)
 {
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff); // for testing
-    //setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_widget = new QGraphicsWidget(this);
-    //m_widget->setMinimumSize(240, 50);
     m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_layout = new QGraphicsLinearLayout(m_widget);
     m_layout->setOrientation(Qt::Vertical);
@@ -87,38 +84,31 @@ void ActivatableListWidget::addType(Knm::Activatable::ActivatableType type)
 void ActivatableListWidget::addInterface(Solid::Control::NetworkInterface* iface)
 {
     m_interfaces << iface->uni();
-    kDebug() << "m_interfaces is now" << m_interfaces;
     filter();
 }
 
 void ActivatableListWidget::clearInterfaces()
 {
     m_interfaces = QStringList();
-    kDebug() << "m_interfaces cleared" << m_interfaces;
     filter();
 }
 
 bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
 {
     // Policy wether an activatable should be shown or not.
-
     if (m_interfaces.count()) {
         // If interfaces are set, activatables for other interfaces are not shown
-        //kDebug() << "interface filter set";
         if (m_interfaces.contains(activatable->deviceUni())) {
         } else {
-            kDebug() << "Filtering out by interface";
             return false;
         }
     } else {
         // when no filter is set, only show activatables of a certain type
         if (m_types.contains(activatable->activatableType())) {
         } else {
-            kDebug() << "type: no";
             return false;
         }
     }
-    kDebug() << "Will be shown. :)";
     return true;
 }
 
@@ -126,7 +116,7 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
 {
     foreach (RemoteActivatable* a, m_itemIndex.keys()) {
         if (activatable == a) {
-            kDebug() << "activatable already in the layout, not creating an item" << a;
+            //kDebug() << "activatable already in the layout, not creating an item" << a;
             return;
         }
     }
@@ -159,7 +149,6 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
     ai->setupItem();
     m_layout->addItem(ai);
     m_itemIndex[activatable] = ai;
-    //return ai;
 }
 
 void ActivatableListWidget::listAppeared()
@@ -176,7 +165,7 @@ void ActivatableListWidget::deactivateConnection(const QString& deviceUni)
     foreach (ActivatableItem* item, m_itemIndex) {
         RemoteInterfaceConnection *conn = item->interfaceConnection();
         if (conn && conn->deviceUni() == deviceUni) {
-            kDebug() << "deactivating" << conn->connectionName();
+            //kDebug() << "deactivating" << conn->connectionName();
             conn->deactivate();
         }
     }

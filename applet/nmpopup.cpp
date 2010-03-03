@@ -1,6 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
+Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -54,15 +54,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* parent)
 : QGraphicsWidget(parent),
     m_activatables(activatableList),
-    m_connectionTabs(0),
     m_widget(0),
     m_mainLayout(0),
     m_leftWidget(0),
     m_interfaceWidget(0),
     m_leftLayout(0),
     m_interfaceLayout(0),
-    m_connectionList(0),
-    m_wirelessList(0)
+    m_connectionList(0)
 {
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     init();
@@ -126,16 +124,23 @@ void NMPopup::init()
     m_rightWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
     m_rightLayout = new QGraphicsLinearLayout(m_rightWidget);
     m_rightLayout->setOrientation(Qt::Vertical);
-    // Tabs for activatables
-    kDebug() << "Creating tABS";
-    m_connectionTabs = new Plasma::TabBar(m_rightWidget);
-    //m_connectionTabs->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    m_connectionTabs->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
-    m_connectionTabs->setPreferredHeight(320);
 
-    m_connectionTabs->setPreferredWidth(320);
+    // List with activatables
+    m_connectionList = new ActivatableListWidget(m_activatables, m_rightWidget);
+    m_connectionList->addType(Knm::Activatable::InterfaceConnection);
+    m_connectionList->addType(Knm::Activatable::WirelessInterfaceConnection);
+    m_connectionList->addType(Knm::Activatable::VpnInterfaceConnection);
+    // FIXME: Mobile broadband
+    m_connectionList->init();
+    connect(m_interfaceDetailsWidget, SIGNAL(back()), m_connectionList, SLOT(clearInterfaces()));
 
-    m_rightLayout->addItem(m_connectionTabs);
+    m_connectionList->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
+    m_connectionList->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
+    m_connectionList->setPreferredHeight(320);
+
+    m_connectionList->setPreferredWidth(320);
+
+    m_rightLayout->addItem(m_connectionList);
 
     m_connectionsButton = new Plasma::PushButton(m_rightWidget);
     m_connectionsButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
@@ -152,8 +157,7 @@ void NMPopup::init()
 
     m_mainLayout->addItem(m_rightWidget, 0, 1);
 
-    createTab(Knm::Activatable::InterfaceConnection);
-    createTab(Knm::Activatable::WirelessInterfaceConnection);
+    //createTab(Knm::Activatable::WirelessInterfaceConnection);
     kDebug() << "Adding interfaces initially";
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         addInterfaceInternal(iface);
@@ -176,7 +180,6 @@ void NMPopup::interfaceAdded(const QString& uni)
     kDebug() << "Interface Added.";
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
-    switchToDefaultTab();
 }
 
 void NMPopup::interfaceRemoved(const QString& uni)
@@ -186,7 +189,6 @@ void NMPopup::interfaceRemoved(const QString& uni)
         m_interfaceLayout->removeItem(item);
         delete item;
     }
-    switchToDefaultTab();
 }
 
 Solid::Control::NetworkInterface* NMPopup::defaultInterface()
@@ -234,7 +236,7 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
             wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
             //createTab(ifaceItem, iface, i18nc("title of the wireless tab", "Wireless"), "network-wireless");
             kDebug() << "WiFi added";
-            connect(wifiItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_wirelessList, SLOT(deactivateConnection(const QString&)));
+            connect(wifiItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
         } else {
             // Create the interfaceitem
             ifaceItem = new InterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
@@ -246,73 +248,8 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
 
         // Catch connection changes
         connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
-        connect(iface, SIGNAL(linkUpChanged(bool)), this, SLOT(switchToDefaultTab()));
         m_interfaceLayout->addItem(ifaceItem);
         m_interfaces.insert(iface->uni(), ifaceItem);
-    }
-}
-
-void NMPopup::createTab(Knm::Activatable::ActivatableType type)
-{
-    /*
-    enum ActivatableType {
-        InterfaceConnection,
-        WirelessInterfaceConnection,
-        WirelessNetwork,
-        UnconfiguredInterface,
-        VpnInterfaceConnection
-    };
-    */
-    QString name;
-    KIcon icon;
-    switch(type) {
-        case Knm::Activatable::WirelessInterfaceConnection:
-        case Knm::Activatable::WirelessNetwork:
-        {
-            /*
-                The Wireless Networks tab shows all wireless networks, preconfigured
-                and new.
-            */
-            if (!m_wirelessList) {
-                m_wirelessList = new ActivatableListWidget(m_activatables, m_connectionTabs);
-                m_wirelessList->addType(Knm::Activatable::WirelessNetwork);
-                m_wirelessList->addType(Knm::Activatable::WirelessInterfaceConnection);
-                m_wirelessList->init();
-                name = i18nc("title of the wireless tab", "Wireless Networks");
-                //icon = KIcon("network-wireless");
-                m_tabIndex[Knm::Activatable::WirelessInterfaceConnection] = m_connectionTabs->addTab(QIcon(), name, m_wirelessList);
-            }
-            break;
-        }
-        default:
-        {
-            /*
-                The Connections tab shows all known available connections, wired,
-                wireless and VPN.
-            */
-            if (!m_connectionList) {
-                m_connectionList = new ActivatableListWidget(m_activatables, m_connectionTabs);
-                m_connectionList->addType(Knm::Activatable::InterfaceConnection);
-                m_connectionList->addType(Knm::Activatable::WirelessInterfaceConnection);
-                m_connectionList->addType(Knm::Activatable::VpnInterfaceConnection);
-                m_connectionList->init();
-                name = i18nc("title of the connections tab", "Connections");
-                //icon = KIcon("emblem-favorite");
-                if (!m_connectionTabs)
-                    kDebug() << "see, it's no there! :P";
-                m_tabIndex[type] = m_connectionTabs->addTab(QIcon(), name, m_connectionList);
-                connect(m_interfaceDetailsWidget, SIGNAL(back()), m_connectionList, SLOT(clearInterfaces()));
-
-            }
-            break;
-        }
-    }
-}
-
-void NMPopup::switchToDefaultTab()
-{
-    if (m_interfaces.count()) {
-        m_connectionTabs->setCurrentIndex(0);
     }
 }
 
@@ -321,7 +258,7 @@ void NMPopup::handleConnectionStateChange(int new_state, int old_state, int reas
     Q_UNUSED( reason );
     // Switch to default tab if an interface has become available, or unavailable
     if (available(new_state) != available(old_state)) {
-        switchToDefaultTab();
+        m_connectionList->clearInterfaces();
     }
 }
 
@@ -366,7 +303,6 @@ void NMPopup::managerWirelessEnabledChanged(bool enabled)
     // it might have changed because we toggled the switch,
     // but it might have been changed externally, so set it anyway
     m_rfCheckBox->setChecked(enabled);
-    switchToDefaultTab();
 }
 
 void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
@@ -374,7 +310,6 @@ void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
     m_rfCheckBox->setChecked(enabled && Solid::Control::NetworkManager::isWirelessEnabled());
     m_rfCheckBox->setEnabled(!enabled);
-    switchToDefaultTab();
 }
 
 void NMPopup::manageConnections()
