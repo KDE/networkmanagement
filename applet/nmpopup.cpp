@@ -149,8 +149,17 @@ void NMPopup::init()
     m_connectionsButton->setMaximumHeight(28);
     connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
 
+    m_showMoreButton = new Plasma::PushButton(m_rightWidget);
+    m_showMoreButton->setCheckable(true);
+    m_showMoreButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    m_showMoreButton->setIcon(KIcon("network-wireless"));
+    m_showMoreButton->setText(i18nc("manage connections button in the applet's popup", "Show More..."));
+    m_showMoreButton->setMaximumHeight(28);
+    connect(m_showMoreButton, SIGNAL(clicked()), this, SLOT(showMore()));
+
     QGraphicsLinearLayout* connectionLayout = new QGraphicsLinearLayout;
-    connectionLayout->addStretch();
+    //connectionLayout->addStretch();
+    connectionLayout->addItem(m_showMoreButton);
     connectionLayout->addItem(m_connectionsButton);
 
     m_rightLayout->addItem(connectionLayout);
@@ -312,6 +321,34 @@ void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
     m_rfCheckBox->setEnabled(!enabled);
 }
 
+void NMPopup::showMore()
+{
+    if (m_showMoreButton->isChecked()) {
+        /*
+
+        Knm::Activatable::WirelessNetwork,
+        UnconfiguredInterface,
+        VpnInterfaceConnection,
+        HiddenWirelessInterfaceConnection
+
+
+        */
+        kDebug() << "show more!";
+        m_showMoreButton->setText(i18nc("pressed show more button", "Show Less..."));
+        m_connectionList->setShowAllTypes(true);
+        //m_connectionList->addType(Knm::Activatable::WirelessNetwork);
+        //m_connectionList->addType(Knm::Activatable::HiddenWirelessInterfaceConnection);
+        //m_connectionList->addType(Knm::Activatable::VpnInterfaceConnection);
+    } else {
+        kDebug() << "show less";
+        m_showMoreButton->setText(i18nc("unpressed show more button", "Show More..."));
+        m_connectionList->setShowAllTypes(false);
+        //m_connectionList->removeType(Knm::Activatable::WirelessNetwork);
+        //m_connectionList->removeType(Knm::Activatable::HiddenWirelessInterfaceConnection);
+        //m_connectionList->removeType(Knm::Activatable::VpnInterfaceConnection);
+    }
+}
+
 void NMPopup::manageConnections()
 {
     //kDebug() << "opening connection management dialog";
@@ -327,10 +364,13 @@ void NMPopup::toggleInterfaceTab()
         m_interfaceDetailsWidget->setInterface(item->interface());
     }
     if (m_leftWidget->currentIndex() == 0) {
+        m_showMoreButton->setChecked(true);
         m_leftWidget->setCurrentIndex(1);
     } else {
+        m_showMoreButton->setChecked(false);
         m_leftWidget->setCurrentIndex(0);
     }
+    showMore();
 }
 // vim: sw=4 sts=4 et tw=100
 

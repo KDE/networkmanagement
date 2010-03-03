@@ -79,17 +79,36 @@ void ActivatableListWidget::addType(Knm::Activatable::ActivatableType type)
     if (!(m_types.contains(type))) {
         m_types.append(type);
     }
+    filter();
+}
+
+void ActivatableListWidget::removeType(Knm::Activatable::ActivatableType type)
+{
+    kDebug() << "";
+    if (m_types.contains(type)) {
+        m_types.removeAll(type);
+    }
+    filter();
 }
 
 void ActivatableListWidget::addInterface(Solid::Control::NetworkInterface* iface)
 {
     m_interfaces << iface->uni();
+    m_showAllTypes = true;
     filter();
 }
 
 void ActivatableListWidget::clearInterfaces()
 {
     m_interfaces = QStringList();
+    m_showAllTypes = false;
+    filter();
+}
+
+void ActivatableListWidget::setShowAllTypes(bool show)
+{
+    m_showAllTypes = show;
+    kDebug() << "Showing all types;" << show;
     filter();
 }
 
@@ -102,10 +121,11 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
         } else {
             return false;
         }
-    } else {
-        // when no filter is set, only show activatables of a certain type
-        if (m_types.contains(activatable->activatableType())) {
-        } else {
+    }
+    if (!m_showAllTypes) {
+    // when no filter is set, only show activatables of a certain type
+        if (!(m_types.contains(activatable->activatableType()))) {
+            kDebug() << "Showing all types;" << m_showAllTypes;
             return false;
         }
     }

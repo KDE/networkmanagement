@@ -62,6 +62,7 @@ public Q_SLOTS:
     void wirelessEnabledToggled(bool checked);
     void networkingEnabledToggled(bool checked);
     void manageConnections();
+    void showMore();
     void handleConnectionStateChange(int new_state, int old_state, int reason);
     void toggleInterfaceTab();
 
@@ -89,6 +90,7 @@ private:
     Plasma::CheckBox* m_networkingCheckBox;
     Plasma::CheckBox* m_rfCheckBox;
     Plasma::PushButton* m_connectionsButton;
+    Plasma::PushButton* m_showMoreButton;
 
     ActivatableListWidget* m_connectionList;
 };

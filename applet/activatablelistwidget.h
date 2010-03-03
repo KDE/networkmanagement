@@ -41,7 +41,9 @@ public:
 
     void init();
     void addType(Knm::Activatable::ActivatableType type);
+    void removeType(Knm::Activatable::ActivatableType type);
     bool accept(RemoteActivatable* activatable) const;
+    void setShowAllTypes(bool show);
 
 public Q_SLOTS:
     void activatableAdded(RemoteActivatable*);
@@ -66,6 +68,8 @@ private:
     RemoteActivatableList* m_activatables;
     QGraphicsLinearLayout* m_layout;
     QGraphicsWidget* m_widget;
+
+    bool m_showAllTypes;
 
 };
 #endif // ACTIVATABLELISTWIDGET_H
