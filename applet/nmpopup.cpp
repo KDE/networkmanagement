@@ -116,6 +116,7 @@ void NMPopup::init()
 
     m_interfaceDetailsWidget = new InterfaceDetailsWidget(m_leftWidget);
     connect(m_interfaceDetailsWidget, SIGNAL(back()), this, SLOT(toggleInterfaceTab()));
+
     m_leftWidget->addTab(i18nc("details for the interface", "Details"), m_interfaceDetailsWidget);
     m_leftWidget->setPreferredWidth(300);
 
@@ -300,6 +301,8 @@ void NMPopup::createTab(Knm::Activatable::ActivatableType type)
                 if (!m_connectionTabs)
                     kDebug() << "see, it's no there! :P";
                 m_tabIndex[type] = m_connectionTabs->addTab(QIcon(), name, m_connectionList);
+                connect(m_interfaceDetailsWidget, SIGNAL(back()), m_connectionList, SLOT(clearInterfaces()));
+
             }
             break;
         }
