@@ -100,19 +100,25 @@ void ActivatableListWidget::clearInterfaces()
 
 bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
 {
-    if (m_types.contains(activatable->activatableType())) {
-        kDebug() << "type: yes";
-    } else {
-        kDebug() << "type: no";
-        return false;
-    }
+    // Policy wether an activatable should be shown or not.
+
     if (m_interfaces.count()) {
+        // If interfaces are set, activatables for other interfaces are not shown
+        //kDebug() << "interface filter set";
         if (m_interfaces.contains(activatable->deviceUni())) {
         } else {
             kDebug() << "Filtering out by interface";
             return false;
         }
+    } else {
+        // when no filter is set, only show activatables of a certain type
+        if (m_types.contains(activatable->activatableType())) {
+        } else {
+            kDebug() << "type: no";
+            return false;
+        }
     }
+    kDebug() << "Will be shown. :)";
     return true;
 }
 
