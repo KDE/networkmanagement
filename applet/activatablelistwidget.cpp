@@ -84,7 +84,6 @@ void ActivatableListWidget::addType(Knm::Activatable::ActivatableType type)
 
 void ActivatableListWidget::removeType(Knm::Activatable::ActivatableType type)
 {
-    kDebug() << "";
     if (m_types.contains(type)) {
         m_types.removeAll(type);
     }
@@ -108,7 +107,6 @@ void ActivatableListWidget::clearInterfaces()
 void ActivatableListWidget::setShowAllTypes(bool show)
 {
     m_showAllTypes = show;
-    kDebug() << "Showing all types;" << show;
     filter();
 }
 
@@ -125,7 +123,6 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
     if (!m_showAllTypes) {
     // when no filter is set, only show activatables of a certain type
         if (!(m_types.contains(activatable->activatableType()))) {
-            kDebug() << "Showing all types;" << m_showAllTypes;
             return false;
         }
     }
