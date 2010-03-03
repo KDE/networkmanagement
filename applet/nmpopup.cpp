@@ -233,7 +233,10 @@ Solid::Control::NetworkInterface* NMPopup::defaultInterface()
 
 void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
 {
-    Q_ASSERT(iface);
+    if (!iface) {
+        // the interface might be gone in the meantime...
+        return;
+    }
     if (!m_interfaces.contains(iface->uni())) {
         InterfaceItem * ifaceItem = 0;
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
