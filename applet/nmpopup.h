@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/CheckBox>
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
+#include <Plasma/Label>
 #include <Plasma/PushButton>
 #include <Plasma/TabBar>
 
@@ -81,6 +82,8 @@ private:
     QGraphicsGridLayout* m_mainLayout;
     Plasma::TabBar* m_leftWidget;
     QGraphicsWidget* m_rightWidget;
+    Plasma::Label* m_leftLabel;
+    Plasma::Label* m_rightLabel;
     QGraphicsWidget* m_interfaceWidget;
     QGraphicsLinearLayout* m_leftLayout;
     QGraphicsLinearLayout* m_rightLayout;

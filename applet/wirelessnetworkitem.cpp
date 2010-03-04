@@ -1,5 +1,5 @@
 /*
-Copyright 2008,2009 Sebastian K?gler <sebas@kde.org>
+Copyright 2008-2010 Sebastian Kügler <sebas@kde.org>
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
@@ -32,7 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Meter>
-#include <Plasma/Theme>
 
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
@@ -44,6 +43,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent)
 : ActivatableItem(remote, parent),
+    m_strengthMeter(0),
     m_connectButton(0),
     m_security(0),
     m_securityIcon(0),
@@ -51,7 +51,6 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
     m_strength(0),
     m_remote(remote)
 {
-    m_strengthMeter = new Plasma::Meter(this);
     m_strength = 0;
 
     readSettings();
@@ -64,24 +63,18 @@ bool WirelessNetworkItem::readSettings()
     Solid::Control::AccessPoint::Capabilities capabilities;
     Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities;
 
-    //Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities() const;
-
     m_state = Knm::InterfaceConnection::Unknown;
     int operationMode = 0;
     Knm::Activatable::ActivatableType aType = m_remote->activatableType();
     if (aType == Knm::Activatable::WirelessInterfaceConnection) {
-        //kDebug() << "adding WirelessInterfaceConnection";
         RemoteWirelessInterfaceConnection* remoteconnection = static_cast<RemoteWirelessInterfaceConnection*>(m_activatable);
         m_ssid = remoteconnection->ssid();
         wpaFlags = remoteconnection->wpaFlags();
         rsnFlags = remoteconnection->rsnFlags();
         capabilities = remoteconnection->apCapabilities();
         interfaceCapabilities = remoteconnection->interfaceCapabilities();
-        //kDebug() <<  "========== RemoteActivationState" << remoteconnection->activationState();
         m_state = remoteconnection->activationState();
         activationStateChanged(m_state);
-        //connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
-        //                            SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
         RemoteWirelessObject * wobj  = static_cast<RemoteWirelessObject*>(remoteconnection);
         operationMode = wobj->operationMode();
     } else if (aType == Knm::Activatable::WirelessNetwork) {
@@ -110,10 +103,7 @@ bool WirelessNetworkItem::readSettings()
 
 void WirelessNetworkItem::setupItem()
 {
-    //readSettings();
-    //kDebug();// << "Connection Settings:" << m_connection->settings();
-    //kDebug();// << "Security:" << m_connection->type() << m_security;
-    // painting of a non-active wifi network
+    // painting of a wifi network, known connection or available access point
     /*
     +----+-------------+-----+---+
     |icon essid        |meter|sec|
@@ -148,13 +138,6 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
 
-    /*
-    m_routeIcon = new Plasma::IconWidget(this);
-    m_routeIcon->setIcon("emblem-favorite");
-    m_routeIcon->setGeometry(QRectF(m_connectButton->geometry().topLeft(), QSizeF(16, 16)));
-    m_routeIcon->setToolTip(i18nc("@info:tooltip Tooltip for indicator that connection supplies the network default route", "Default"));
-    m_routeIcon->hide(); // this will be shown in handleHasDefaultRouteChanged(bool);
-    */
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);
@@ -206,7 +189,9 @@ void WirelessNetworkItem::setStrength(int strength)
         return;
     }
     m_strength = strength;
-    m_strengthMeter->setValue(m_strength);
+    if (m_strengthMeter) {
+        m_strengthMeter->setValue(m_strength);
+    }
 }
 
 void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
@@ -230,26 +215,7 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
     }
 
     if (m_state != state && interfaceConnection()) {
-        //m_connectButton->setIcon("bookmarks"); // Known connection, we probably have credentials
-        /*
-        switch (state) {
-            //Knm::InterfaceConnectihon::ActivationState
-            case Knm::InterfaceConnection::Activated:
-                m_connectButton->setIcon("dialog-ok-apply"); // The active connection
-                t = i18nc("label on the connectabel button", "%1 (connected)", t);
-                //m_connectButton->setInfoText(i18nc("subtext on connection button", "Connected"));
-                //kDebug() << "active" << t;
-                break;
-            case Knm::InterfaceConnection::Unknown:
-                //m_connectButton->setInfoText(QString());
-                break;
-            case Knm::InterfaceConnection::Activating:
-                t = i18nc("label on the connectabel button", "%1 (connecting...)", t);
-                m_connectButton->setInfoText(i18nc("subtext on connection button", "Connecting..."));
-        }
-        */
         m_connectButton->setIcon(interfaceConnection()->iconName());
-
     } else {
         m_connectButton->setText(m_ssid);
         m_connectButton->setIcon("network-wireless"); // "New" network
@@ -258,8 +224,6 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
         m_connectButton->setText(t);
     }
     handleHasDefaultRouteChanged(interfaceConnection()->hasDefaultRoute());
-
-    //kDebug() << "state updated" << t;
     m_state = state;
     update();
     ActivatableItem::activationStateChanged(state);

@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Sebastian Kügler <sebas@kde.org>
+Copyright 2008-2010 Sebastian Kügler <sebas@kde.org>
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
@@ -35,7 +35,7 @@ namespace Plasma
 
 class RemoteWirelessNetwork;
 /**
-    Represents an wireless network for which no connection exists
+    Represents a wireless network or a known connection
  */
 class WirelessNetworkItem : public ActivatableItem
 {

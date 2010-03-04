@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Plasma
 #include <Plasma/Label>
+#include <Plasma/Separator>
 
 // Solid::Control
 #include <solid/control/networkmanager.h>
@@ -74,15 +75,28 @@ void NMPopup::init()
 {
     m_mainLayout = new QGraphicsGridLayout(this);
 
+    m_leftLabel = new Plasma::Label(this);
+    m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
+    m_mainLayout->addItem(m_leftLabel, 0, 0);
+
+    m_rightLabel = new Plasma::Label(this);
+    m_rightLabel->setText(i18nc("title on the RHS of the plasmoid", "<h3>Connections</h3>"));
+    m_mainLayout->addItem(m_rightLabel, 0, 2);
+
+    Plasma::Separator* sep = new Plasma::Separator(this);
+    sep->setOrientation(Qt::Vertical);
+    m_mainLayout->addItem(sep, 0, 1, 2, 1);
+
+
     m_leftWidget = new Plasma::TabBar(this);
     m_leftWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
-    m_interfaceWidget = new QGraphicsWidget(m_leftWidget);
     m_leftLayout = new QGraphicsLinearLayout;
     m_leftLayout->setOrientation(Qt::Vertical);
 
+    m_interfaceWidget = new QGraphicsWidget(m_leftWidget);
     m_interfaceLayout = new QGraphicsLinearLayout(m_interfaceWidget);
     m_interfaceLayout->setOrientation(Qt::Vertical);
-    //m_interfaceWidget->setLayout(m_interfaceLayout);
+
     m_leftLayout->addItem(m_interfaceWidget);
     m_leftLayout->addStretch(5);
 
@@ -118,10 +132,10 @@ void NMPopup::init()
     m_leftWidget->addTab(i18nc("details for the interface", "Details"), m_interfaceDetailsWidget);
     m_leftWidget->setPreferredWidth(300);
 
-    m_mainLayout->addItem(m_leftWidget, 0, 0);
+    m_mainLayout->addItem(m_leftWidget, 1, 0);
 
     m_rightWidget = new QGraphicsWidget(this);
-    m_rightWidget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::MinimumExpanding);
+    m_rightWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
     m_rightLayout = new QGraphicsLinearLayout(m_rightWidget);
     m_rightLayout->setOrientation(Qt::Vertical);
 
@@ -134,11 +148,11 @@ void NMPopup::init()
     m_connectionList->init();
     connect(m_interfaceDetailsWidget, SIGNAL(back()), m_connectionList, SLOT(clearInterfaces()));
 
-    m_connectionList->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-    m_connectionList->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
-    m_connectionList->setPreferredHeight(320);
+    m_connectionList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    //m_connectionList->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
+    m_connectionList->setPreferredHeight(240);
 
-    m_connectionList->setPreferredWidth(320);
+    m_connectionList->setMinimumWidth(320);
 
     m_rightLayout->addItem(m_connectionList);
 
@@ -164,7 +178,7 @@ void NMPopup::init()
 
     m_rightLayout->addItem(connectionLayout);
 
-    m_mainLayout->addItem(m_rightWidget, 0, 1);
+    m_mainLayout->addItem(m_rightWidget, 1, 2);
 
     //createTab(Knm::Activatable::WirelessInterfaceConnection);
     kDebug() << "Adding interfaces initially";
