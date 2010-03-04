@@ -242,16 +242,18 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             // Create the wireless interface item
             WirelessInterfaceItem* wifiItem = 0;
-            wifiItem = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
+            wifiItem = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
             ifaceItem = wifiItem;
             //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
             wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
+            //wifiItem->setActivatableList(m_activatables);
             //createTab(ifaceItem, iface, i18nc("title of the wireless tab", "Wireless"), "network-wireless");
             kDebug() << "WiFi added";
             connect(wifiItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
         } else {
             // Create the interfaceitem
-            ifaceItem = new InterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), InterfaceItem::InterfaceName, this);
+            ifaceItem = new InterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
+            //ifaceItem->setActivatableList(m_activatables);
             connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
         }
         connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));

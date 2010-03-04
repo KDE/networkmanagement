@@ -46,6 +46,9 @@ namespace Solid
     }
 }
 
+class RemoteInterfaceConnection;
+class RemoteActivatableList;
+
 
 /**
  * Represents a single network interface
@@ -57,7 +60,7 @@ class InterfaceItem : public Plasma::IconWidget
 Q_OBJECT
 public:
     enum NameDisplayMode {InterfaceName, HardwareName};
-    InterfaceItem(Solid::Control::NetworkInterface* iface, NameDisplayMode mode = InterfaceName, QGraphicsWidget* parent = 0);
+    InterfaceItem(Solid::Control::NetworkInterface* iface, RemoteActivatableList* activatables, NameDisplayMode mode = InterfaceName,  QGraphicsWidget* parent = 0);
     virtual ~InterfaceItem();
 
     void setNameDisplayMode(NameDisplayMode);
@@ -65,6 +68,7 @@ public:
     Solid::Control::NetworkInterface* interface();
     virtual QString connectionName();
     QString label();
+    virtual void setActivatableList(RemoteActivatableList* activatables);
 
 public Q_SLOTS:
     void activeConnectionsChanged();
@@ -102,8 +106,10 @@ protected:
     * The current IP address when the connection is active.
     */
     virtual QString currentIpAddress();
+    virtual RemoteInterfaceConnection* currentConnection();
 
     Solid::Control::NetworkInterface* m_iface;
+    RemoteActivatableList* m_activatables;
 
     QGraphicsGridLayout* m_layout;
     QGraphicsLinearLayout* m_infoLayout;

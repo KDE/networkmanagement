@@ -31,8 +31,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkipv4config.h>
 #include <solid/control/networkmanager.h>
 
-WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface,  InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
-: InterfaceItem(iface, mode, parent), m_wirelessIface(iface), m_activeAccessPoint(0)
+WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
+: InterfaceItem(iface, activatables, mode, parent),
+    m_wirelessIface(iface),
+    m_activeAccessPoint(0)
 {
     // for updating our UI
     connect(iface, SIGNAL(activeAccessPointChanged(const QString&)),

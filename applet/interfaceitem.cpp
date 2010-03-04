@@ -21,6 +21,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "interfaceitem.h"
 #include "uiutils.h"
+#include "remoteinterfaceconnection.h"
+#include "remoteactivatable.h"
+#include "remoteactivatablelist.h"
+#include "remoteinterfaceconnection.h"
 
 #include <QGraphicsGridLayout>
 #include <QLabel>
@@ -45,8 +49,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knmserviceprefs.h"
 
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::IconWidget(parent),
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteActivatableList* activatables,  NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::IconWidget(parent),
     m_iface(iface),
+    m_activatables(activatables),
     m_connectionNameLabel(0),
     //m_connectionInfoLabel(0),
     m_nameMode(mode),
@@ -138,6 +143,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, NameDispl
 
     connect(this, SIGNAL(clicked()), this, SLOT(slotClicked()));
 
+    //m_activatables = new RemoteActivatableList(this);
 }
 
 QString InterfaceItem::label()
@@ -192,6 +198,10 @@ InterfaceItem::NameDisplayMode InterfaceItem::nameDisplayMode() const
 QString InterfaceItem::connectionName()
 {
     // Default active connection's name is empty, room for improvement?
+    RemoteInterfaceConnection *conn = currentConnection();
+    if (conn) {
+        return conn->connectionName();
+    }
     return QString();
 }
 
@@ -227,6 +237,29 @@ QString InterfaceItem::currentIpAddress()
     return addr.toString();
 }
 
+RemoteInterfaceConnection* InterfaceItem::currentConnection()
+{
+    int i = 0;
+    foreach (RemoteActivatable* activatable, m_activatables->activatables()) {
+        //kDebug() << "Number ... " << i << activatable->deviceUni() << m_iface->uni();
+        //i++;
+        if (activatable->deviceUni() == m_iface->uni()) {
+            //kDebug() << "found connection!" << i;
+            //return
+            RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
+            //if (remoteconnection) kDebug() << "Yay, non-null";
+            return remoteconnection;
+        }
+    }
+    return 0;
+}
+
+void InterfaceItem::setActivatableList(RemoteActivatableList* activatables)
+{
+    m_activatables = activatables;
+}
+
+
 void InterfaceItem::pppStats(uint in, uint out)
 {
     kDebug() << "PPP Stats. in:" << in << "out:" << out;
@@ -239,6 +272,8 @@ void InterfaceItem::activeConnectionsChanged()
 
 void InterfaceItem::slotClicked()
 {
+    kDebug() << "Current connection:";
+    kDebug() << "cc:" << connectionName();
     kDebug() << "Interface Clicked" << m_iface->interfaceName() << m_iface->uni();
     emit clicked(m_iface);
 }

@@ -44,7 +44,7 @@ class WirelessInterfaceItem : public InterfaceItem
 {
 Q_OBJECT
 public:
-    WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent = 0);
+    WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent = 0);
     virtual ~WirelessInterfaceItem();
     /**
      * The name of the connection, the SSID of any active network,
