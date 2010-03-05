@@ -137,7 +137,7 @@ int UiUtils::iconSize(const QSizeF size)
     return s;
 }
 
-QString UiUtils::connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state)
+QString UiUtils::connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state, const QString &connectionName)
 {
     QString stateString;
     switch (state) {
@@ -166,7 +166,11 @@ QString UiUtils::connectionStateToString(Solid::Control::NetworkInterface::Conne
             stateString = i18nc("network interface doing dhcp request in most cases", "Setting network address");
             break;
         case Solid::Control::NetworkInterface::Activated:
-            stateString = i18nc("network interface connected state label", "Connected");
+            if (connectionName.isEmpty()) {
+                stateString = i18nc("network interface connected state label", "Connected");
+            } else {
+                stateString = i18nc("network interface connected state label", "Connected to %1", connectionName);
+            }
             break;
         case Solid::Control::NetworkInterface::Failed:
             stateString = i18nc("network interface connection failed state label", "Connection Failed");
@@ -189,12 +193,8 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
     } else {
         Solid::Device* dev = new Solid::Device(uni);
         if (KNetworkManagerServicePrefs::self()->interfaceNamingStyle() == KNetworkManagerServicePrefs::DescriptiveNames) {
-#if KDE_IS_VERSION(4,3,60)
             label = dev->description();
-#else
-            label = dev->product();
-#endif
-        //kDebug() << "Vendor, Product:" << dev->vendor() << dev->product();
+            //kDebug() << "Vendor, Product:" << dev->vendor() << dev->product();
         } else {
             label = QString(i18nc("Format for <Vendor> <Product>", "%1 - %2", dev->vendor(), dev->product()));
         }
@@ -208,6 +208,25 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
     }
     return label;
 }
+
+RemoteInterfaceConnection* UiUtils::connectionForInterface(RemoteActivatableList* activatables, Solid::Control::NetworkInterface *interface)
+{
+    int i = 0;
+    foreach (RemoteActivatable* activatable, activatables->activatables()) {
+        if (activatable->deviceUni() == interface->uni()) {
+            RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
+            if (remoteconnection) {
+                if (remoteconnection->activationState() == Knm::InterfaceConnection::Activated
+                    || remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
+                    return remoteconnection;
+                }
+            }
+
+        }
+    }
+    return 0;
+}
+
 
 qreal UiUtils::interfaceState(const Solid::Control::NetworkInterface *interface)
 {

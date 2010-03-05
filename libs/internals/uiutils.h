@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class QSizeF;
 
 #include "knminternals_export.h"
+#include "../client/remoteinterfaceconnection.h"
+#include "../client/remoteactivatablelist.h"
 
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
@@ -50,7 +52,14 @@ public:
      * @return a human-readable description of the connection state of a given network interface
      * @param state The connection state
      */
-    static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state);
+    static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state, const QString &connectionName = QString());
+
+    /**
+     * @return the RemoteInterfaceConnection for a given network interface
+     * @param interface the Solid::Control::NetworkInterface state
+     * @param activatables the RemoteActivatableList of all connections
+     */
+    static RemoteInterfaceConnection* connectionForInterface(RemoteActivatableList* activatables, Solid::Control::NetworkInterface *interface);
 
     /**
      * @return an icon name suitable for the interface type

@@ -100,7 +100,7 @@ protected:
     /**
      * Give us a pixmap for an icon
      */
-    virtual QPixmap statePixmap(const QString &icon);
+    //virtual QPixmap statePixmap(const QString &icon);
 
     /**
     * The current IP address when the connection is active.

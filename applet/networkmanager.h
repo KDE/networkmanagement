@@ -127,8 +127,8 @@ private:
     Solid::Control::NetworkInterfaceList m_interfaces;
     Plasma::ToolTipContent m_toolTip;
 
-    RemoteActivatableList* m_activatableList;
-    QGraphicsWidget* m_extenderItem;
+    RemoteActivatableList* m_activatables;
+    QGraphicsWidget* m_popup;
 
     QPixmap m_pixmap;
 

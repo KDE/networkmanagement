@@ -198,7 +198,8 @@ InterfaceItem::NameDisplayMode InterfaceItem::nameDisplayMode() const
 QString InterfaceItem::connectionName()
 {
     // Default active connection's name is empty, room for improvement?
-    RemoteInterfaceConnection *conn = currentConnection();
+    //RemoteInterfaceConnection *conn = currentConnection();
+    RemoteInterfaceConnection *conn = UiUtils::connectionForInterface(m_activatables, m_iface);
     if (conn) {
         return conn->connectionName();
     }
@@ -216,8 +217,6 @@ void InterfaceItem::setConnectionInfo()
             } else {
                 m_connectionNameLabel->setText(i18nc("label of the interface: wireless interface is connected", "Connected to %1", connectionName()));
             }
-            //m_connectionInfoLabel->setText(i18nc("label of the interface: ip address of the network interface", "Address: %1", currentIpAddress()));
-            //kDebug() << "addresses non-empty" << m_currentIp;
         }
     }
     m_icon->nativeWidget()->setPixmap(KIcon(UiUtils::iconName(m_iface)).pixmap(QSize(64, 64)));
@@ -237,21 +236,10 @@ QString InterfaceItem::currentIpAddress()
     return addr.toString();
 }
 
+
 RemoteInterfaceConnection* InterfaceItem::currentConnection()
 {
-    int i = 0;
-    foreach (RemoteActivatable* activatable, m_activatables->activatables()) {
-        //kDebug() << "Number ... " << i << activatable->deviceUni() << m_iface->uni();
-        //i++;
-        if (activatable->deviceUni() == m_iface->uni()) {
-            //kDebug() << "found connection!" << i;
-            //return
-            RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
-            //if (remoteconnection) kDebug() << "Yay, non-null";
-            return remoteconnection;
-        }
-    }
-    return 0;
+    return UiUtils::connectionForInterface(m_activatables, m_iface);
 }
 
 void InterfaceItem::setActivatableList(RemoteActivatableList* activatables)
@@ -322,15 +310,18 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
             m_disconnect = true;
             break;
         case Solid::Control::NetworkInterface::Activated:
-            if (connectionName().isEmpty()) {
+        {
+            QString cname = connectionName();
+            if (cname.isEmpty()) {
                 lname = i18nc("wired interface is connected", "Connected");
             } else {
-                lname = i18nc("wireless interface is connected", "Connected to %1", connectionName());
+                lname = i18nc("wireless interface is connected", "Connected to %1", cname);
             }
             //linfo = i18nc("ip address of the network interface", "Address: %1", currentIpAddress());
             m_disconnect = true;
             setEnabled(true);
             break;
+        }
         case Solid::Control::NetworkInterface::Unmanaged:
         case Solid::Control::NetworkInterface::Failed:
         case Solid::Control::NetworkInterface::UnknownState:
@@ -349,18 +340,18 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
         m_disconnectButton->show();
     }
     m_connectionNameLabel->setText(lname);
-    //m_connectionInfoLabel->setText(linfo);
 
     //kDebug() << "State changed" << lname << linfo;
 
     emit stateChanged();
 }
 
+/*
 QPixmap InterfaceItem::statePixmap(const QString &icon) {
     // Which pixmap should we display with the notification?
     return KIcon(icon).pixmap(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
 }
-
+*/
 void InterfaceItem::emitDisconnectInterfaceRequest()
 {
     kDebug() << m_iface->uni();

@@ -55,6 +55,8 @@ public:
     Solid::Control::NetworkInterface* defaultInterface();
     bool available(int state);
 
+    QHash<QString, InterfaceItem *> m_interfaces;
+
 public Q_SLOTS:
     void interfaceAdded(const QString&);
     void interfaceRemoved(const QString&);
@@ -76,7 +78,6 @@ private:
 
     RemoteActivatableList* m_activatables;
     // uni, interfaceitem mapping
-    QHash<QString, InterfaceItem *> m_interfaces;
 
     QGraphicsWidget* m_widget;
     QGraphicsGridLayout* m_mainLayout;

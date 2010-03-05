@@ -59,7 +59,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../libs/types.h"
 #include "knmserviceprefs.h"
 #include "remoteactivatablelist.h"
-
 #include "nmpopup.h"
 #include "uiutils.h"
 
@@ -74,7 +73,7 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
     : Plasma::PopupApplet(parent, args),
         m_iconPerDevice(false),
-        m_extenderItem(0),
+        m_popup(0),
         m_activeInterface(0)
 {
     setHasConfigurationInterface(true);
@@ -96,7 +95,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
         m_currentState = activeInterface()->connectionState();
     }
     interfaceConnectionStateChanged();
-    m_activatableList = new RemoteActivatableList(this);
+    m_activatables = new RemoteActivatableList(this);
     setMinimumSize(16, 16);
     resize(64, 64);
     updatePixmap();
@@ -248,17 +247,17 @@ void NetworkManagerApplet::init()
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
 
-    m_activatableList->init();
+    m_activatables->init();
     setupInterfaceSignals();
 }
 
 QGraphicsWidget* NetworkManagerApplet::graphicsWidget()
 {
-    if (!m_extenderItem) {
-        m_extenderItem = new NMPopup(m_activatableList, this);
-        connect(m_extenderItem, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
+    if (!m_popup) {
+        m_popup = new NMPopup(m_activatables, this);
+        connect(m_popup, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
     }
-    return m_extenderItem;
+    return m_popup;
 
 }
 
@@ -513,7 +512,13 @@ void NetworkManagerApplet::toolTipAboutToShow()
 
                 QString ifaceName = iface->interfaceName();
                 lines << QString::fromLatin1("<b>%1</b>").arg(deviceText);
-                lines << UiUtils::connectionStateToString(iface->connectionState());
+                QString connectionName;
+                RemoteInterfaceConnection *conn = UiUtils::connectionForInterface(m_activatables, iface);
+                if (conn) {
+                    connectionName = conn->connectionName();
+                }
+
+                lines << QString("<font size=\"-1\">%1</font>").arg(UiUtils::connectionStateToString(iface->connectionState(), connectionName));
                 Solid::Control::IPv4Config ip4Config = iface->ipV4Config();
                 QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
                 if (!addresses.isEmpty()) {
