@@ -63,7 +63,7 @@ NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* paren
     m_interfaceLayout(0),
     m_connectionList(0)
 {
-    setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     init();
 }
 
@@ -76,20 +76,26 @@ void NMPopup::init()
     m_mainLayout = new QGraphicsGridLayout(this);
 
     m_leftLabel = new Plasma::Label(this);
+    //m_leftLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    m_leftLabel->setMaximumHeight(24);
+    m_leftLabel->setMinimumHeight(24);
     m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
     m_mainLayout->addItem(m_leftLabel, 0, 0);
 
     m_rightLabel = new Plasma::Label(this);
+    //m_rightLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
+    m_leftLabel->setMaximumHeight(24);
+    m_leftLabel->setMinimumHeight(24);
     m_rightLabel->setText(i18nc("title on the RHS of the plasmoid", "<h3>Connections</h3>"));
     m_mainLayout->addItem(m_rightLabel, 0, 2);
 
     Plasma::Separator* sep = new Plasma::Separator(this);
     sep->setOrientation(Qt::Vertical);
     m_mainLayout->addItem(sep, 0, 1, 2, 1);
-
+    m_mainLayout->setRowFixedHeight(0, 24);
 
     m_leftWidget = new Plasma::TabBar(this);
-    m_leftWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::MinimumExpanding);
+    m_leftWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     m_leftLayout = new QGraphicsLinearLayout;
     m_leftLayout->setOrientation(Qt::Vertical);
 
@@ -192,6 +198,9 @@ void NMPopup::init()
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             SLOT(interfaceRemoved(const QString&)));
 
+    //setPreferredSize(640, 400);
+
+
 }
 
 // Interfaces
@@ -260,14 +269,11 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
             ifaceItem = wifiItem;
             //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
             wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
-            //wifiItem->setActivatableList(m_activatables);
-            //createTab(ifaceItem, iface, i18nc("title of the wireless tab", "Wireless"), "network-wireless");
             kDebug() << "WiFi added";
             connect(wifiItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
         } else {
             // Create the interfaceitem
             ifaceItem = new InterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
-            //ifaceItem->setActivatableList(m_activatables);
             connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
         }
         connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
