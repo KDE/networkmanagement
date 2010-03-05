@@ -224,18 +224,6 @@ QString InterfaceItem::connectionName()
 void InterfaceItem::setConnectionInfo()
 {
     connectionStateChanged(m_iface->connectionState());
-    return;
-    if (m_connectionNameLabel) {
-        if (m_iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
-            if (connectionName().isEmpty()) {
-                m_connectionNameLabel->setText(i18nc("label of the interface: interface is connected", "Connected"));
-            } else {
-                m_connectionNameLabel->setText(i18nc("label of the interface: wireless interface is connected", "Connected to %1", connectionName()));
-            }
-        }
-    }
-    //m_icon->nativeWidget()->setPixmap(KIcon(UiUtils::iconName(m_iface)).pixmap(QSize(64, 64)));
-    m_icon->nativeWidget()->setPixmap(interfacePixmap());
 }
 
 QString InterfaceItem::currentIpAddress()
@@ -290,13 +278,13 @@ void InterfaceItem::currentConnectionChanged()
 void InterfaceItem::handleHasDefaultRouteChanged(bool changed)
 {
     if (m_hasDefaultRoute == changed) {
-        return;
+        //return;
     }
     m_hasDefaultRoute = changed;
-    kDebug() << "Default Route changed!!" << changed;
-    if (m_icon)
-    m_icon->nativeWidget()->setPixmap(interfacePixmap());
-
+    //kDebug() << "Default Route changed!!" << changed;
+    if (m_icon) {
+        m_icon->nativeWidget()->setPixmap(interfacePixmap());
+    }
     update();
 }
 
@@ -313,9 +301,6 @@ void InterfaceItem::activeConnectionsChanged()
 
 void InterfaceItem::slotClicked()
 {
-    kDebug() << "Current connection:";
-    kDebug() << "cc:" << connectionName();
-    kDebug() << "Interface Clicked" << m_iface->interfaceName() << m_iface->uni();
     emit clicked(m_iface);
 }
 
@@ -337,16 +322,10 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
     // get the active connections
     // check if any of them affect our interface
     // setActiveConnection on ourself
-    /*
-    Plasma::Animation* pulseAnimation = Plasma::Animator::create(Plasma::Animator::PulseAnimation);
-    pulseAnimation->setTargetWidget(this);
-    pulseAnimation->start();
-    */
     // button to connect, disconnect
     m_disconnect = false;
     // Name and info labels
-    QString lname = UiUtils::connectionStateToString(state);
-    //QString linfo;
+    QString lname = UiUtils::connectionStateToString(state, connectionName());
 
     switch (state) {
         case Solid::Control::NetworkInterface::Unavailable:
@@ -367,18 +346,9 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
             m_disconnect = true;
             break;
         case Solid::Control::NetworkInterface::Activated:
-        {
-            QString cname = connectionName();
-            if (cname.isEmpty()) {
-                lname = i18nc("wired interface is connected", "Connected");
-            } else {
-                lname = i18nc("wireless interface is connected", "Connected to %1", cname);
-            }
-            //linfo = i18nc("ip address of the network interface", "Address: %1", currentIpAddress());
             m_disconnect = true;
             setEnabled(true);
             break;
-        }
         case Solid::Control::NetworkInterface::Unmanaged:
         case Solid::Control::NetworkInterface::Failed:
         case Solid::Control::NetworkInterface::UnknownState:
