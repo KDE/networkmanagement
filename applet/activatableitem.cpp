@@ -24,7 +24,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteactivatable.h"
 
 #include <QPainter>
+
 #include <KIcon>
+
+#include <Plasma/Animation>
+#include <Plasma/Animator>
 
 ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * parent) : Plasma::IconWidget(parent),
     m_activatable(remote),
@@ -39,10 +43,25 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
         connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
                 SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
     }
+
+    // Fade in when this widget appears
+    Plasma::Animation* fadeAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation);
+    fadeAnimation->setTargetWidget(this);
+    fadeAnimation->setProperty("startOpacity", 0.0);
+    fadeAnimation->setProperty("targetOpacity", 1.0);
+    fadeAnimation->start();
 }
 
 ActivatableItem::~ActivatableItem()
 {
+    // Fade out when this widget appears
+    Plasma::Animation* fadeAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation);
+    fadeAnimation->setTargetWidget(this);
+    fadeAnimation->setProperty("startOpacity", 1.0);
+    fadeAnimation->setProperty("targetOpacity", 0.0);
+    fadeAnimation->setProperty("Duration", 2000);
+    fadeAnimation->start();
+
 }
 
 void ActivatableItem::emitClicked()

@@ -36,6 +36,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIcon>
 #include <kdeversion.h>
 
+#include <Plasma/Animation>
+#include <Plasma/Animator>
+
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 #include <Plasma/Meter>
@@ -115,12 +118,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
     m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 1);
 
-    /*       IP address
-    m_connectionInfoLabel = new Plasma::Label(this);
-    m_connectionInfoLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
-    m_connectionInfoLabel->nativeWidget()->setWordWrap(false);
-    m_layout->addItem(m_connectionInfoLabel, 2, 1, 1, 2, Qt::AlignCenter);
-    */
     //       security
     m_connectionInfoIcon = new Plasma::IconWidget(this);
     m_connectionInfoIcon->setMinimumHeight(16);
@@ -146,7 +143,26 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
 
     connect(this, SIGNAL(clicked()), this, SLOT(slotClicked()));
 
-    //m_activatables = new RemoteActivatableList(this);
+    // Fade in when this widget appears
+    Plasma::Animation* fadeAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation);
+    fadeAnimation->setTargetWidget(this);
+    fadeAnimation->setProperty("startOpacity", 0.0);
+    fadeAnimation->setProperty("targetOpacity", 1.0);
+    fadeAnimation->setProperty("Duration", 2000);
+
+    fadeAnimation->start();
+}
+
+InterfaceItem::~InterfaceItem()
+{
+    Plasma::Animation* fadeAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation);
+    fadeAnimation->setTargetWidget(this);
+    fadeAnimation->setProperty("startOpacity", 1.0);
+    fadeAnimation->setProperty("targetOpacity", 0.0);
+    fadeAnimation->setProperty("Duration", 2000);
+
+    //fadeAnimation->setTargetOpacity(1.0);
+    fadeAnimation->start();
 }
 
 QString InterfaceItem::label()
@@ -174,10 +190,6 @@ void InterfaceItem::setEnabled(bool enable)
     m_ifaceNameLabel->setEnabled(enable);
     m_disconnectButton->setEnabled(enable);
     m_connectionInfoIcon->setEnabled(enable);
-}
-
-InterfaceItem::~InterfaceItem()
-{
 }
 
 void InterfaceItem::setNameDisplayMode(NameDisplayMode mode)
@@ -277,6 +289,9 @@ void InterfaceItem::currentConnectionChanged()
 
 void InterfaceItem::handleHasDefaultRouteChanged(bool changed)
 {
+    if (m_hasDefaultRoute == changed) {
+        return;
+    }
     m_hasDefaultRoute = changed;
     kDebug() << "Default Route changed!!" << changed;
     if (m_icon)
@@ -322,7 +337,11 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
     // get the active connections
     // check if any of them affect our interface
     // setActiveConnection on ourself
-
+    /*
+    Plasma::Animation* pulseAnimation = Plasma::Animator::create(Plasma::Animator::PulseAnimation);
+    pulseAnimation->setTargetWidget(this);
+    pulseAnimation->start();
+    */
     // button to connect, disconnect
     m_disconnect = false;
     // Name and info labels
@@ -334,7 +353,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
             if (m_iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
                 lname = i18nc("wired interface network cable unplugged", "Cable Unplugged");
             }
-            setEnabled(false);
+            setEnabled(false); // FIXME: tone down colors using an animation
             break;
         case Solid::Control::NetworkInterface::Disconnected:
             setEnabled(true);
@@ -390,7 +409,7 @@ QPixmap InterfaceItem::interfacePixmap(const QString &icon) {
     if (overlayIcon.isEmpty()) {
         overlayIcon = "face-smile";
     }
-    kDebug() << "painting icon" << overlayIcon;
+    //kDebug() << "painting icon" << overlayIcon;
     QPixmap pmap = KIcon(UiUtils::iconName(m_iface)).pixmap(m_pixmapSize);
     //QPixmap pmap = KIcon(icon).pixmap(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     if (m_hasDefaultRoute) {
