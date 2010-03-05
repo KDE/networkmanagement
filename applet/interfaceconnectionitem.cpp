@@ -49,7 +49,7 @@ void InterfaceConnectionItem::setupItem()
     m_connectButton->setMaximumHeight(rowHeight);
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
-    //m_connectButton->setZOrder(-100);
+    m_connectButton->setZValue(100); // FIXME: doesn't work
 
     m_connectButton->setMinimumHeight(rowHeight);
     m_connectButton->setMaximumHeight(rowHeight);
