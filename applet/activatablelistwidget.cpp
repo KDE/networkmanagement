@@ -214,6 +214,7 @@ void ActivatableListWidget::filter()
             activatableRemoved(act);
         }
     }
+    m_layout->invalidate();
 }
 
 void ActivatableListWidget::activatableRemoved(RemoteActivatable * removed)

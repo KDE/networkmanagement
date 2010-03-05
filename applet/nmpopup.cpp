@@ -172,7 +172,7 @@ void NMPopup::init()
     m_showMoreButton = new Plasma::PushButton(m_rightWidget);
     m_showMoreButton->setCheckable(true);
     m_showMoreButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    m_showMoreButton->setIcon(KIcon("network-wireless"));
+    m_showMoreButton->setIcon(KIcon("list-add"));
     m_showMoreButton->setText(i18nc("manage connections button in the applet's popup", "Show More..."));
     m_showMoreButton->setMaximumHeight(28);
     connect(m_showMoreButton, SIGNAL(clicked()), this, SLOT(showMore()));
@@ -360,6 +360,7 @@ void NMPopup::showMore()
         */
         kDebug() << "show more!";
         m_showMoreButton->setText(i18nc("pressed show more button", "Show Less..."));
+        m_showMoreButton->setIcon(KIcon("list-remove"));
         m_connectionList->setShowAllTypes(true);
         //m_connectionList->addType(Knm::Activatable::WirelessNetwork);
         //m_connectionList->addType(Knm::Activatable::HiddenWirelessInterfaceConnection);
@@ -368,6 +369,7 @@ void NMPopup::showMore()
         kDebug() << "show less";
         m_showMoreButton->setText(i18nc("unpressed show more button", "Show More..."));
         m_connectionList->setShowAllTypes(false);
+        m_showMoreButton->setIcon(KIcon("list-add"));
         //m_connectionList->removeType(Knm::Activatable::WirelessNetwork);
         //m_connectionList->removeType(Knm::Activatable::HiddenWirelessInterfaceConnection);
         //m_connectionList->removeType(Knm::Activatable::VpnInterfaceConnection);
