@@ -211,13 +211,12 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
 
 RemoteInterfaceConnection* UiUtils::connectionForInterface(RemoteActivatableList* activatables, Solid::Control::NetworkInterface *interface)
 {
-    int i = 0;
     foreach (RemoteActivatable* activatable, activatables->activatables()) {
         if (activatable->deviceUni() == interface->uni()) {
             RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
             if (remoteconnection) {
                 if (remoteconnection->activationState() == Knm::InterfaceConnection::Activated
-                    || remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
+                            || remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
                     return remoteconnection;
                 }
             }

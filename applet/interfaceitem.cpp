@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QGraphicsGridLayout>
 #include <QLabel>
+#include <QPainter>
 
 #include <KDebug>
 #include <KGlobalSettings>
@@ -50,13 +51,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteActivatableList* activatables,  NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::IconWidget(parent),
+    m_currentConnection(0),
     m_iface(iface),
     m_activatables(activatables),
+    m_icon(0),
     m_connectionNameLabel(0),
-    //m_connectionInfoLabel(0),
     m_nameMode(mode),
-    m_enabled(false)
+    m_enabled(false),
+    m_hasDefaultRoute(false)
 {
+    m_pixmapSize = QSize(48, 48);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
     m_layout = new QGraphicsGridLayout(this);
@@ -66,18 +70,16 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_layout->setColumnSpacing(2, 6);
     m_layout->setRowSpacing(0, 6);
     m_layout->setRowSpacing(1, 6);
-    //m_layout->setRowSpacing(2, 6);
     m_layout->setPreferredWidth(240);
-    m_layout->setColumnFixedWidth(0, 48);
+    m_layout->setColumnFixedWidth(0, m_pixmapSize.width());
     m_layout->setColumnMinimumWidth(1, 160);
     m_layout->setColumnFixedWidth(2, 16); // FIXME: spacing?
-    //m_layout->setColumnFixedWidth(3, 22); // FIXME: spacing?
 
     m_icon = new Plasma::Label(this);
-    m_icon->setMinimumHeight(48);
-    m_icon->setMaximumHeight(48);
-    setMinimumHeight(54);
-    //m_icon->setAcceptHoverEvents(false);
+    m_icon->setMinimumHeight(m_pixmapSize.height());
+    m_icon->setMaximumHeight(m_pixmapSize.height());
+
+    setMinimumHeight(m_pixmapSize.height()+6);
     m_layout->addItem(m_icon, 0, 0, 2, 1);
 
     QString icon;
@@ -86,7 +88,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
 
     //m_icon->setIcon(UiUtils::iconName(m_iface));
     //m_icon->setAcceptHoverEvents(false);
-    m_icon->nativeWidget()->setPixmap(KIcon(UiUtils::iconName(m_iface)).pixmap(QSize(48, 48)));
+    //m_icon->nativeWidget()->setPixmap(KIcon(UiUtils::iconName(m_iface)).pixmap(QSize(48, 48)));
+    m_icon->nativeWidget()->setPixmap(interfacePixmap());
 
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
@@ -219,7 +222,8 @@ void InterfaceItem::setConnectionInfo()
             }
         }
     }
-    m_icon->nativeWidget()->setPixmap(KIcon(UiUtils::iconName(m_iface)).pixmap(QSize(64, 64)));
+    //m_icon->nativeWidget()->setPixmap(KIcon(UiUtils::iconName(m_iface)).pixmap(QSize(64, 64)));
+    m_icon->nativeWidget()->setPixmap(interfacePixmap());
 }
 
 QString InterfaceItem::currentIpAddress()
@@ -239,12 +243,46 @@ QString InterfaceItem::currentIpAddress()
 
 RemoteInterfaceConnection* InterfaceItem::currentConnection()
 {
-    return UiUtils::connectionForInterface(m_activatables, m_iface);
+    if (m_currentConnection && m_currentConnection->activationState() != Knm::InterfaceConnection::Unknown) {
+        return m_currentConnection;
+    } else {
+        currentConnectionChanged();
+        return m_currentConnection;
+    }
 }
 
 void InterfaceItem::setActivatableList(RemoteActivatableList* activatables)
 {
     m_activatables = activatables;
+}
+
+void InterfaceItem::currentConnectionChanged()
+{
+    RemoteInterfaceConnection* remoteconnection = UiUtils::connectionForInterface(m_activatables, m_iface);
+    if (remoteconnection) {
+        if (m_currentConnection) {
+            QObject::disconnect(m_currentConnection, SIGNAL(hasDefaultRouteChanged(bool)));
+        }
+        m_currentConnection = remoteconnection;
+
+        connect(m_currentConnection, SIGNAL(hasDefaultRouteChanged(bool)),
+                                        SLOT(handleHasDefaultRouteChanged(bool)));
+        handleHasDefaultRouteChanged(m_currentConnection->hasDefaultRoute());
+        return;
+    }
+    handleHasDefaultRouteChanged(false);
+    m_currentConnection = 0;
+    return;
+}
+
+void InterfaceItem::handleHasDefaultRouteChanged(bool changed)
+{
+    m_hasDefaultRoute = changed;
+    kDebug() << "Default Route changed!!" << changed;
+    if (m_icon)
+    m_icon->nativeWidget()->setPixmap(interfacePixmap());
+
+    update();
 }
 
 
@@ -342,16 +380,26 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
     m_connectionNameLabel->setText(lname);
 
     //kDebug() << "State changed" << lname << linfo;
-
+    currentConnectionChanged();
     emit stateChanged();
 }
 
-/*
-QPixmap InterfaceItem::statePixmap(const QString &icon) {
+QPixmap InterfaceItem::interfacePixmap(const QString &icon) {
     // Which pixmap should we display with the notification?
-    return KIcon(icon).pixmap(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
+    QString overlayIcon = icon;
+    if (overlayIcon.isEmpty()) {
+        overlayIcon = "face-smile";
+    }
+    kDebug() << "painting icon" << overlayIcon;
+    QPixmap pmap = KIcon(UiUtils::iconName(m_iface)).pixmap(m_pixmapSize);
+    //QPixmap pmap = KIcon(icon).pixmap(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
+    if (m_hasDefaultRoute) {
+        QPainter p(&pmap);
+        p.drawPixmap(QRect(2,2,18,18), KIcon(overlayIcon).pixmap(QSize(16,16)));
+    }
+    return pmap;
 }
-*/
+
 void InterfaceItem::emitDisconnectInterfaceRequest()
 {
     kDebug() << m_iface->uni();

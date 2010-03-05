@@ -84,6 +84,7 @@ protected Q_SLOTS:
      */
     void handleConnectionStateChange(int new_state);
     void handleConnectionStateChange(int new_state, int old_state, int reason);
+    void handleHasDefaultRouteChanged(bool);
     void pppStats(uint in, uint out);
     void slotClicked();
 
@@ -100,7 +101,7 @@ protected:
     /**
      * Give us a pixmap for an icon
      */
-    //virtual QPixmap statePixmap(const QString &icon);
+    virtual QPixmap interfacePixmap(const QString &icon = QString());
 
     /**
     * The current IP address when the connection is active.
@@ -108,12 +109,15 @@ protected:
     virtual QString currentIpAddress();
     virtual RemoteInterfaceConnection* currentConnection();
 
+    RemoteInterfaceConnection* m_currentConnection;
+
     Solid::Control::NetworkInterface* m_iface;
     RemoteActivatableList* m_activatables;
 
     QGraphicsGridLayout* m_layout;
     QGraphicsLinearLayout* m_infoLayout;
     Plasma::Label* m_icon;
+    QPixmap* m_pixmap;
     Plasma::PushButton* m_disconnectButton;
     Plasma::Label* m_ifaceNameLabel;
     Plasma::Label* m_connectionNameLabel;
@@ -126,8 +130,11 @@ protected:
 
     QString m_interfaceName;
     bool m_disconnect;
+    bool m_hasDefaultRoute;
+    QSize m_pixmapSize;
 
 private Q_SLOTS:
     void emitDisconnectInterfaceRequest();
+    void currentConnectionChanged();
 };
 #endif // APPLET_INTERFACEWIDGET_H
