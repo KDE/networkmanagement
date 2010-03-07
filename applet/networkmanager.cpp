@@ -295,8 +295,14 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 {
     Q_UNUSED( option );
 
-    if (m_useSvg) {
-        QString el = svgElement(activeInterface());
+    Solid::Control::NetworkInterface* interface = activeInterface();
+    bool useSvg = false;
+    if (interface) {
+        useSvg = interface->type() == Solid::Control::NetworkInterface::Ieee80211;
+    }
+
+    if (useSvg) {
+        QString el = svgElement(interface);
         m_svg->paint(p, m_contentSquare, el);
     } else {
         paintPixmap(p, m_pixmap, contentsRect);
@@ -426,14 +432,8 @@ Solid::Control::NetworkInterface* NetworkManagerApplet::activeInterface()
 {
     if (!m_interfaces.isEmpty()) {
         qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
-        if (m_interfaces.first()->type() == Solid::Control::NetworkInterface::Ieee80211) {
-            m_useSvg = true;
-        } else {
-            m_useSvg = false;
-        }
         return m_interfaces.first();
     } else {
-        m_useSvg = false;
         return 0;
     }
 

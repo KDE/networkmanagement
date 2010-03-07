@@ -146,7 +146,6 @@ private:
     KCModuleProxy* m_kcmNMTray;
 
     Plasma::Svg* m_svg;
-    bool m_useSvg;
     QRect m_contentSquare;
 
 };
