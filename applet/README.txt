@@ -31,7 +31,7 @@ o disconnect button disconnects wrong connections
 
 == somewhat lower priority ==
 * signals for networking enabled changed seems missing
-* unavailable for wired -> unplugged
+o unavailable for wired -> unplugged
 
 
 Happy hacking!
