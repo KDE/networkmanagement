@@ -43,9 +43,6 @@ Q_OBJECT
         virtual ~VpnInterfaceItem();
         virtual QString connectionName();
 
-    public Q_SLOTS:
-        virtual void connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState);
-
     protected Q_SLOTS:
         virtual void setConnectionInfo();
         void disconnectCurrentConnection();

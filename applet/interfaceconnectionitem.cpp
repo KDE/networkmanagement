@@ -80,7 +80,7 @@ InterfaceConnectionItem::~InterfaceConnectionItem()
 
 void InterfaceConnectionItem::stateChanged()
 {
-    kDebug() << "activatable State Changed!" << interfaceConnection()->connectionName();
+    //kDebug() << "activatable State Changed!" << interfaceConnection()->connectionName();
     RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(m_activatable);
     if (remoteconnection) {
         activationStateChanged(remoteconnection->activationState());

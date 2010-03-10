@@ -127,7 +127,7 @@ protected:
     Plasma::IconWidget* m_connectionInfoIcon;
     NameDisplayMode m_nameMode;
     bool m_enabled;
-
+    Solid::Control::NetworkInterface::ConnectionState m_state;
     QString m_interfaceName;
     bool m_disconnect;
     bool m_hasDefaultRoute;

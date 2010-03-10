@@ -41,7 +41,7 @@ VpnInterfaceItem::VpnInterfaceItem(Solid::Control::NetworkInterface * iface, Rem
 : InterfaceItem(iface, activatables, mode, parent)
 {
     m_icon->nativeWidget()->setPixmap(KIcon("secure-card").pixmap(48,48));
-    m_connectionNameLabel->setText(i18nc("initial label for VPN connection name", "Not Connected"));
+    m_connectionNameLabel->setText(i18nc("initial label for VPN connection name", "Not Available"));
 
     // Catch all kinds of signals to update the VPN widget
 
@@ -53,15 +53,12 @@ VpnInterfaceItem::VpnInterfaceItem(Solid::Control::NetworkInterface * iface, Rem
     connect(m_activatables, SIGNAL(appeared()), SLOT(listAppeared()));
     connect(m_activatables, SIGNAL(disappeared()), SLOT(listDisappeared()));
 
-    connect(this, SIGNAL(stateChanged()), this, SLOT(currentConnectionChanged()));
-    connect(this, SIGNAL(clicked()), this, SLOT(currentConnectionChanged()));
+    //connect(this, SIGNAL(stateChanged()), this, SLOT(currentConnectionChanged()));
 
     connect(m_disconnectButton, SIGNAL(clicked()), this, SLOT(disconnectCurrentConnection()));
 
-    listAppeared();
     // Update state
-    currentConnectionChanged();
-    setConnectionInfo();
+    listAppeared();
 }
 
 VpnInterfaceItem::~VpnInterfaceItem()
@@ -118,10 +115,10 @@ void VpnInterfaceItem::setConnectionInfo()
         m_disconnectButton->show();
     }
     if (m_vpnActivatables.count()) {
-        kDebug() << "showing: we have VPN connections!" << m_vpnActivatables.count();
+        //kDebug() << m_vpnActivatables.count() << "VPN connections have become available!";
         show();
     } else {
-        kDebug() << "hiding: no VPN connections!" << m_vpnActivatables.count();
+        //kDebug() << "hiding VPN widget:" << m_vpnActivatables.count();
         hide();
     }
 }
@@ -133,15 +130,8 @@ void VpnInterfaceItem::currentConnectionChanged()
         if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
             RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
             if (remoteconnection) {
-                /*
-                if (!(m_vpnActivatables.contains(activatable))) {
-                    m_vpnActivatables << activatable;
-                    connect(remoteconnection, SIGNAL(changed()), SLOT(currentConnectionChanged()));
-                }
-                */
                 if (remoteconnection->activationState() == Knm::InterfaceConnection::Activated
                             || remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
-
                     vpns++;
                     if (m_currentConnection != remoteconnection) {
                         m_currentConnection = remoteconnection;
@@ -154,11 +144,6 @@ void VpnInterfaceItem::currentConnectionChanged()
         m_currentConnection = 0;
     }
     setConnectionInfo();
-}
-
-void VpnInterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState)
-{
-    kDebug() << "fake...";
 }
 
 void VpnInterfaceItem::listAppeared()
@@ -176,9 +161,7 @@ void VpnInterfaceItem::listDisappeared()
 
 void VpnInterfaceItem::activatableAdded(RemoteActivatable * added)
 {
-    kDebug() << "Added activatable!";
     if (accept(added) && added->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
-        kDebug() << "woei, vpn ...";
         m_vpnActivatables << added;
         RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(added);
         if (remoteconnection) {
@@ -192,12 +175,6 @@ void VpnInterfaceItem::activatableRemoved(RemoteActivatable * removed)
 {
     if (m_vpnActivatables.contains(removed)) {
         m_vpnActivatables.removeAll(removed);
-        /*
-        RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(removed);
-        if (remoteconnection) {
-            disconnect(remoteconnection, SIGNAL(changed()));
-        }
-        */
         currentConnectionChanged();
     }
 }

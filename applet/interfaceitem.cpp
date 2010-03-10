@@ -329,6 +329,10 @@ void InterfaceItem::handleConnectionStateChange(int new_state)
 
 void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState state)
 {
+    if (m_state == state) {
+        return;
+    }
+    m_state = state;
     // TODO:
     // get the active connections
     // check if any of them affect our interface
@@ -377,7 +381,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
         m_disconnectButton->setToolTip(i18nc("tooltip on disconnect icon", "Disconnect"));
         m_disconnectButton->show();
     }
-    
+
     m_connectionNameLabel->setText(lname);
 
     kDebug() << "State changed" << lname;
@@ -394,7 +398,7 @@ QPixmap InterfaceItem::interfacePixmap(const QString &icon) {
     //kDebug() << "painting icon" << overlayIcon;
     QPixmap pmap = KIcon(UiUtils::iconName(m_iface)).pixmap(m_pixmapSize);
     //QPixmap pmap = KIcon(icon).pixmap(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
-    if (m_hasDefaultRoute) {
+    if (m_hasDefaultRoute && !pmap.isNull()) {
         QPainter p(&pmap);
         p.drawPixmap(QRect(2,2,18,18), KIcon(overlayIcon).pixmap(QSize(16,16)));
     }

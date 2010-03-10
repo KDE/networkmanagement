@@ -79,7 +79,6 @@ private:
     void addVpnInterface();
 
     RemoteActivatableList* m_activatables;
-    // uni, interfaceitem mapping
 
     QGraphicsWidget* m_widget;
     QGraphicsGridLayout* m_mainLayout;
@@ -87,7 +86,6 @@ private:
     QGraphicsWidget* m_rightWidget;
     Plasma::Label* m_leftLabel;
     Plasma::Label* m_rightLabel;
-    QGraphicsWidget* m_interfaceWidget;
     QGraphicsLinearLayout* m_leftLayout;
     QGraphicsLinearLayout* m_rightLayout;
     QGraphicsLinearLayout* m_interfaceLayout;

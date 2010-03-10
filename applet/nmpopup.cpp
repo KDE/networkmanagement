@@ -59,7 +59,6 @@ NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* paren
     m_widget(0),
     m_mainLayout(0),
     m_leftWidget(0),
-    m_interfaceWidget(0),
     m_leftLayout(0),
     m_interfaceLayout(0),
     m_connectionList(0),
@@ -101,13 +100,16 @@ void NMPopup::init()
     m_leftLayout = new QGraphicsLinearLayout;
     m_leftLayout->setOrientation(Qt::Vertical);
 
-    m_interfaceWidget = new QGraphicsWidget(m_leftWidget);
-    m_interfaceLayout = new QGraphicsLinearLayout(m_interfaceWidget);
+    m_interfaceLayout = new QGraphicsLinearLayout;
     m_interfaceLayout->setOrientation(Qt::Vertical);
+    m_interfaceLayout->setSpacing(0);
 
-    m_leftLayout->addItem(m_interfaceWidget);
+    m_leftLayout->addItem(m_interfaceLayout);
     m_leftLayout->addStretch(5);
 
+    Plasma::Separator* sep2 = new Plasma::Separator(this);
+    sep->setOrientation(Qt::Vertical);
+    m_leftLayout->addItem(sep2);
     // flight-mode checkbox
     m_networkingCheckBox = new Plasma::CheckBox(m_leftWidget);
     m_networkingCheckBox->setChecked(Solid::Control::NetworkManager::isNetworkingEnabled());
@@ -291,24 +293,14 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
 
 void NMPopup::addVpnInterface()
 {
-    //InterfaceItem * ifaceItem = 0;
     m_vpnItem = new VpnInterfaceItem(0, m_activatables, InterfaceItem::InterfaceName, this);
-        //wifiItem = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
-        //ifaceItem = wifiItem;
-        //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
-        //wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
-    kDebug() << "WiFi added";
-        //connect(wifiItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
     connect(m_vpnItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
     connect(m_vpnItem, SIGNAL(clicked(Solid::Control::NetworkInterface*)),
             m_connectionList,  SLOT(addInterface(Solid::Control::NetworkInterface*)));
 
     connect(m_vpnItem, SIGNAL(clicked()), m_connectionList, SLOT(toggleVpn()));
 
-    // Catch connection changes
-    //connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
-    m_interfaceLayout->addItem(m_vpnItem);
-    //m_interfaces.insert("VPN", ifaceItem);
+    m_leftLayout->insertItem(2, m_vpnItem);
 }
 
 void NMPopup::handleConnectionStateChange(int new_state, int old_state, int reason)
@@ -374,15 +366,12 @@ void NMPopup::showMore()
 {
     if (m_showMoreButton->isChecked()) {
         /*
-
         Knm::Activatable::WirelessNetwork,
         UnconfiguredInterface,
         VpnInterfaceConnection,
         HiddenWirelessInterfaceConnection
-
-
         */
-        kDebug() << "show more!";
+        //kDebug() << "show more!";
         m_showMoreButton->setText(i18nc("pressed show more button", "Show Less..."));
         m_showMoreButton->setIcon(KIcon("list-remove"));
         m_connectionList->setShowAllTypes(true);
@@ -390,7 +379,7 @@ void NMPopup::showMore()
         //m_connectionList->addType(Knm::Activatable::HiddenWirelessInterfaceConnection);
         //m_connectionList->addType(Knm::Activatable::VpnInterfaceConnection);
     } else {
-        kDebug() << "show less";
+        //kDebug() << "show less";
         m_showMoreButton->setText(i18nc("unpressed show more button", "Show More..."));
         m_connectionList->setShowAllTypes(false);
         m_showMoreButton->setIcon(KIcon("list-add"));
@@ -417,7 +406,10 @@ void NMPopup::toggleInterfaceTab()
     if (m_leftWidget->currentIndex() == 0) {
         m_showMoreButton->setChecked(true);
         m_leftWidget->setCurrentIndex(1);
+        m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interface Details</h3>"));
+
     } else {
+        m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
         m_showMoreButton->setChecked(false);
         m_leftWidget->setCurrentIndex(0);
     }
