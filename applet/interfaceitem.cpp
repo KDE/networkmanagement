@@ -86,9 +86,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_layout->addItem(m_icon, 0, 0, 2, 1);
 
     QString icon;
-
-    m_interfaceName = UiUtils::interfaceNameLabel(m_iface->uni());
-
+    if (m_iface) {
+        m_interfaceName = UiUtils::interfaceNameLabel(m_iface->uni());
+    }
     //m_icon->setIcon(UiUtils::iconName(m_iface));
     //m_icon->setAcceptHoverEvents(false);
     //m_icon->nativeWidget()->setPixmap(KIcon(UiUtils::iconName(m_iface)).pixmap(QSize(48, 48)));
@@ -130,14 +130,16 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
             this, SLOT(handleConnectionStateChange(int,int,int)));
     connect(m_iface, SIGNAL(linkUpChanged(bool)), this, SLOT(setActive(bool)));
 
-    if (m_iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+    setNameDisplayMode(mode);
+
+    if (m_iface && m_iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
         Solid::Control::WiredNetworkInterface* wirediface =
                         static_cast<Solid::Control::WiredNetworkInterface*>(m_iface);
         connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
+        connectionStateChanged(m_iface->connectionState());
     }
-    setNameDisplayMode(mode);
 
-    connectionStateChanged(m_iface->connectionState());
+    setNameDisplayMode(mode);
     setLayout(m_layout);
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
@@ -178,7 +180,9 @@ Solid::Control::NetworkInterface* InterfaceItem::interface()
 void InterfaceItem::setActive(bool active)
 {
     kDebug() << "+ + + + + + Active?" << active;
-    connectionStateChanged(m_iface->connectionState());
+    if (m_iface) {
+        connectionStateChanged(m_iface->connectionState());
+    }
 }
 
 void InterfaceItem::setEnabled(bool enable)
@@ -198,7 +202,11 @@ void InterfaceItem::setNameDisplayMode(NameDisplayMode mode)
     if (m_nameMode == InterfaceName) {
         m_ifaceNameLabel->setText(QString("<b>%1</b>").arg(m_interfaceName));
     } else if (m_nameMode == HardwareName) {
-        m_ifaceNameLabel->setText(QString("<b>%1</b>").arg(m_iface->interfaceName()));
+        if (m_iface) {
+            m_ifaceNameLabel->setText(QString("<b>%1</b>").arg(m_iface->interfaceName()));
+        } else {
+            m_ifaceNameLabel->setText(i18nc("generic label for an interface", "<b>Network Interface</b>"));
+        }
 
     } else {
         m_ifaceNameLabel->setText(i18nc("network interface name unknown", "<b>Unknown Network Interface</b>"));

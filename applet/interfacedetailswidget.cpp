@@ -31,7 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Label>
 #include <Plasma/IconWidget>
 
-InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphicsWidget(parent, 0)
+InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphicsWidget(parent, 0),
+    m_iface(0)
 {
     QGraphicsLinearLayout* layout = new QGraphicsLinearLayout(this);
     setLayout(layout);
@@ -52,8 +53,10 @@ InterfaceDetailsWidget::~InterfaceDetailsWidget()
 
 void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* iface)
 {
-    m_iface = iface;
-    m_label->setText(m_iface->interfaceName());
+    if (iface) {
+        m_iface = iface;
+        m_label->setText(m_iface->interfaceName());
+    }
 }
 
 

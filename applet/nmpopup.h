@@ -55,7 +55,7 @@ public:
     Solid::Control::NetworkInterface* defaultInterface();
     bool available(int state);
 
-    QHash<QString, InterfaceItem *> m_interfaces;
+    QHash<QString, InterfaceItem*> m_interfaces;
 
 public Q_SLOTS:
     void interfaceAdded(const QString&);
@@ -75,6 +75,7 @@ Q_SIGNALS:
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
+    void addVpnInterface();
 
     RemoteActivatableList* m_activatables;
     // uni, interfaceitem mapping

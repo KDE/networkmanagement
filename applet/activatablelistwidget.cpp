@@ -92,9 +92,11 @@ void ActivatableListWidget::removeType(Knm::Activatable::ActivatableType type)
 
 void ActivatableListWidget::addInterface(Solid::Control::NetworkInterface* iface)
 {
-    m_interfaces << iface->uni();
-    m_showAllTypes = true;
-    filter();
+    if (iface) {
+        m_interfaces << iface->uni();
+        m_showAllTypes = true;
+        filter();
+    }
 }
 
 void ActivatableListWidget::clearInterfaces()

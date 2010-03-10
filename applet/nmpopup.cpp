@@ -49,6 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // More own includes
 #include "interfaceitem.h"
 #include "wirelessinterfaceitem.h"
+#include "vpninterfaceitem.h"
 #include "activatablelistwidget.h"
 #include "interfacedetailswidget.h"
 
@@ -192,6 +193,7 @@ void NMPopup::init()
         addInterfaceInternal(iface);
         kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
     }
+    addVpnInterface();
     // hook up signals to allow us to change the connection list depending on APs present, etc
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             SLOT(interfaceAdded(const QString&)));
@@ -253,7 +255,6 @@ Solid::Control::NetworkInterface* NMPopup::defaultInterface()
     return iface;
 }
 
-
 void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
 {
     if (!iface) {
@@ -285,6 +286,26 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
         m_interfaceLayout->addItem(ifaceItem);
         m_interfaces.insert(iface->uni(), ifaceItem);
     }
+}
+
+void NMPopup::addVpnInterface()
+{
+    //InterfaceItem * ifaceItem = 0;
+    VpnInterfaceItem* ifaceItem = new VpnInterfaceItem(0, m_activatables, InterfaceItem::InterfaceName, this);
+        //wifiItem = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
+        //ifaceItem = wifiItem;
+        //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
+        //wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
+    kDebug() << "WiFi added";
+        //connect(wifiItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
+    connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
+    connect(ifaceItem, SIGNAL(clicked(Solid::Control::NetworkInterface*)),
+            m_connectionList,  SLOT(addInterface(Solid::Control::NetworkInterface*)));
+
+    // Catch connection changes
+    //connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+    m_interfaceLayout->addItem(ifaceItem);
+    m_interfaces.insert("VPN", ifaceItem);
 }
 
 void NMPopup::handleConnectionStateChange(int new_state, int old_state, int reason)

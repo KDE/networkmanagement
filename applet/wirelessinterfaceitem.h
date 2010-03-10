@@ -50,7 +50,7 @@ public:
      * The name of the connection, the SSID of any active network,
      * or an invalid QString if none
      */
-    QString connectionName();
+    virtual QString connectionName();
     /** @reimp InterfaceItem */
     virtual void setEnabled(bool enable);
 
