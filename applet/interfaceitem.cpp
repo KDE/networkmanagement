@@ -403,8 +403,10 @@ QPixmap InterfaceItem::interfacePixmap(const QString &icon) {
 
 void InterfaceItem::emitDisconnectInterfaceRequest()
 {
-    kDebug() << m_iface->uni();
-    emit disconnectInterfaceRequested(m_iface->uni());
+    if (m_iface) {
+        kDebug() << m_iface->uni();
+        emit disconnectInterfaceRequested(m_iface->uni());
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

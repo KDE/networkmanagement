@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //#include <QGraphicsGridLayout>
 #include <QLabel>
+#include <QTimer>
 
 //#include <solid/control/wirelessaccesspoint.h>
 //#include <solid/control/wirelessnetworkinterface.h>
@@ -50,8 +51,10 @@ VpnInterfaceItem::VpnInterfaceItem(Solid::Control::NetworkInterface * iface, Rem
     connect(m_activatables, SIGNAL(appeared()), SLOT(currentConnectionChanged()));
     connect(m_activatables, SIGNAL(disappeared()), SLOT(currentConnectionChanged()));
 
-    connect(this, SIGNAL(stateChanged()), this, SLOT(setConnectionInfo()));
-    connect(this, SIGNAL(clicked()), this, SLOT(setConnectionInfo()));
+    connect(this, SIGNAL(stateChanged()), this, SLOT(currentConnectionChanged()));
+    connect(this, SIGNAL(clicked()), this, SLOT(currentConnectionChanged()));
+
+    connect(m_disconnectButton, SIGNAL(clicked()), this, SLOT(disconnectCurrentConnection()));
 
     // Update state
     currentConnectionChanged();
@@ -82,6 +85,17 @@ RemoteInterfaceConnection* VpnInterfaceItem::currentConnection()
     return 0;
 }
 
+void VpnInterfaceItem::disconnectCurrentConnection()
+{
+    if (m_currentConnection) {
+        kDebug() << "deactivating:" << m_currentConnection->connectionName();
+        m_currentConnection->deactivate();
+    }
+    //currentConnectionChanged();
+    //setConnectionInfo();
+    QTimer::singleShot(3000, this, SLOT(currentConnectionChanged()));
+}
+
 QString VpnInterfaceItem::connectionName()
 {
     if (m_currentConnection) {
@@ -94,14 +108,17 @@ QString VpnInterfaceItem::connectionName()
 void VpnInterfaceItem::setConnectionInfo()
 {
     kDebug();
+    bool showDisconnect = false;
     if (m_currentConnection) {
         m_ifaceNameLabel->setText(i18nc("VPN label in interfaces", "<b>%1</b>", m_currentConnection->connectionName()));
         if (m_currentConnection->activationState() == Knm::InterfaceConnection::Activated) {
             m_connectionNameLabel->setText(i18nc("VPN state label", "Connected"));
             kDebug() << "active..." << m_currentConnection->connectionName();
+            showDisconnect = true;
         } else if (m_currentConnection->activationState() == Knm::InterfaceConnection::Activating) {
             m_connectionNameLabel->setText(i18nc("VPN state label", "Connecting..."));
             kDebug() << "activating..." << m_currentConnection->connectionName();
+            showDisconnect = true;
         } else {
             m_connectionNameLabel->setText("Impossible!");
             kDebug() << "puzzled..." << m_currentConnection->connectionName();
@@ -114,12 +131,23 @@ void VpnInterfaceItem::setConnectionInfo()
         m_connectionNameLabel->setText(i18nc("VPN state label", "Not Connected..."));
         kDebug() << "no connection...";
     }
+    if (!showDisconnect) {
+        //m_disconnectButton->setIcon("dialog-ok");
+        //m_disconnectButton->setToolTip(i18n("Connect"));
+        m_disconnectButton->hide();
+    } else {
+        m_disconnectButton->setIcon(KIcon("dialog-close"));
+        m_disconnectButton->setToolTip(i18nc("tooltip on disconnect icon", "Disconnect"));
+        m_disconnectButton->show();
+    }
+
     kDebug() << "Set to:" << m_connectionNameLabel->text();
 }
 
 void VpnInterfaceItem::currentConnectionChanged()
 {
     kDebug() << "VPN: currentConnectionChanged()!";
+    int vpns = 0;
     foreach (RemoteActivatable* activatable, m_activatables->activatables()) {
         if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
             RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
@@ -128,6 +156,7 @@ void VpnInterfaceItem::currentConnectionChanged()
                             || remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
                     kDebug() << "active or activating VPN connection" << remoteconnection->connectionName();
 
+                    vpns++;
                     if (m_currentConnection != remoteconnection) {
                         if (m_currentConnection) {
                             // disconnect
@@ -149,6 +178,9 @@ void VpnInterfaceItem::currentConnectionChanged()
                 }
             }
         }
+    }
+    if (!vpns) {
+        m_currentConnection = 0;
     }
     setConnectionInfo();
 }

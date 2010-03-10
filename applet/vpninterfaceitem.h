@@ -46,6 +46,7 @@ Q_OBJECT
 
     protected Q_SLOTS:
         virtual void setConnectionInfo();
+        void disconnectCurrentConnection();
 
     protected:
         virtual RemoteInterfaceConnection* currentConnection();
