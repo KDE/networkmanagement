@@ -46,7 +46,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent) : Plasma::ScrollWidget(parent),
     m_activatables(activatables),
-    m_layout(0)
+    m_layout(0),
+    m_vpn(false)
 {
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -112,8 +113,22 @@ void ActivatableListWidget::setShowAllTypes(bool show)
     filter();
 }
 
+void ActivatableListWidget::toggleVpn()
+{
+    kDebug() << "VPN toggled";
+    m_vpn = !m_vpn;
+    filter();
+}
+
 bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
 {
+    if (m_vpn) {
+        if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+            return true;
+        } else {
+            return false;
+        }
+    }
     // Policy wether an activatable should be shown or not.
     if (m_interfaces.count()) {
         // If interfaces are set, activatables for other interfaces are not shown

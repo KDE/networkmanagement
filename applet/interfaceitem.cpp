@@ -126,10 +126,11 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_layout->addItem(m_connectionInfoIcon, 1, 2, 1, 1, Qt::AlignRight); // check...
     //m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
 
-    connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)),
-            this, SLOT(handleConnectionStateChange(int,int,int)));
-    connect(m_iface, SIGNAL(linkUpChanged(bool)), this, SLOT(setActive(bool)));
-
+    if (m_iface) {
+        connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)),
+                this, SLOT(handleConnectionStateChange(int,int,int)));
+        connect(m_iface, SIGNAL(linkUpChanged(bool)), this, SLOT(setActive(bool)));
+    }
     setNameDisplayMode(mode);
 
     if (m_iface && m_iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
@@ -231,7 +232,9 @@ QString InterfaceItem::connectionName()
 
 void InterfaceItem::setConnectionInfo()
 {
-    connectionStateChanged(m_iface->connectionState());
+    if (m_iface) {
+        connectionStateChanged(m_iface->connectionState());
+    }
 }
 
 QString InterfaceItem::currentIpAddress()
@@ -374,9 +377,10 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
         m_disconnectButton->setToolTip(i18nc("tooltip on disconnect icon", "Disconnect"));
         m_disconnectButton->show();
     }
+    
     m_connectionNameLabel->setText(lname);
 
-    //kDebug() << "State changed" << lname << linfo;
+    kDebug() << "State changed" << lname;
     currentConnectionChanged();
     emit stateChanged();
 }

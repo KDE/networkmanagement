@@ -43,6 +43,7 @@ class RemoteActivatableList;
 class ActivatableListWidget;
 class InterfaceItem;
 class InterfaceDetailsWidget;
+class VpnInterfaceItem;
 
 class NMPopup: public QGraphicsWidget
 {
@@ -98,6 +99,7 @@ private:
     Plasma::PushButton* m_showMoreButton;
 
     ActivatableListWidget* m_connectionList;
+    VpnInterfaceItem* m_vpnItem;
 };
 
 #endif // NMPOPUP_H

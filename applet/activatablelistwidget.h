@@ -53,6 +53,7 @@ public Q_SLOTS:
     void deactivateConnection(const QString& deviceUni);
     void addInterface(Solid::Control::NetworkInterface*);
     void clearInterfaces();
+    void toggleVpn();
 
 Q_SIGNALS:
     void connectionListUpdated();
@@ -70,6 +71,7 @@ private:
     QGraphicsWidget* m_widget;
 
     bool m_showAllTypes;
+    bool m_vpn;
 
 };
 #endif // ACTIVATABLELISTWIDGET_H

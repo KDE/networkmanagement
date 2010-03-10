@@ -72,7 +72,7 @@ public:
 
 public Q_SLOTS:
     void activeConnectionsChanged();
-    void connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState);
+    virtual void connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState);
     virtual void setEnabled(bool enable);
     // also updates the connection info
     virtual void setActive(bool active);
@@ -87,6 +87,7 @@ protected Q_SLOTS:
     void handleHasDefaultRouteChanged(bool);
     void pppStats(uint in, uint out);
     void slotClicked();
+    virtual void setConnectionInfo();
 
 Q_SIGNALS:
     void stateChanged();
@@ -97,7 +98,6 @@ protected:
     /**
      * Fill in interface type connection info
      */
-    virtual void setConnectionInfo();
     /**
      * Give us a pixmap for an icon
      */
@@ -133,8 +133,10 @@ protected:
     bool m_hasDefaultRoute;
     QSize m_pixmapSize;
 
+protected Q_SLOTS:
+    virtual void currentConnectionChanged();
+
 private Q_SLOTS:
     void emitDisconnectInterfaceRequest();
-    void currentConnectionChanged();
 };
 #endif // APPLET_INTERFACEWIDGET_H

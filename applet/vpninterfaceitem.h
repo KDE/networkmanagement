@@ -1,5 +1,5 @@
 /*
-Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2010 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -42,10 +42,14 @@ Q_OBJECT
         virtual QString connectionName();
 
     public Q_SLOTS:
+        virtual void connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState);
+
+    protected Q_SLOTS:
+        virtual void setConnectionInfo();
 
     protected:
-            virtual RemoteInterfaceConnection* currentConnection();
+        virtual RemoteInterfaceConnection* currentConnection();
+        virtual void currentConnectionChanged();
 
-    private:
 };
 #endif // VPNINTERFACEITEM_H

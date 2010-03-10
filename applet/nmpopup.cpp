@@ -62,7 +62,8 @@ NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* paren
     m_interfaceWidget(0),
     m_leftLayout(0),
     m_interfaceLayout(0),
-    m_connectionList(0)
+    m_connectionList(0),
+    m_vpnItem(0)
 {
     //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     init();
@@ -291,21 +292,23 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
 void NMPopup::addVpnInterface()
 {
     //InterfaceItem * ifaceItem = 0;
-    VpnInterfaceItem* ifaceItem = new VpnInterfaceItem(0, m_activatables, InterfaceItem::InterfaceName, this);
+    m_vpnItem = new VpnInterfaceItem(0, m_activatables, InterfaceItem::InterfaceName, this);
         //wifiItem = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterface *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
         //ifaceItem = wifiItem;
         //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
         //wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
     kDebug() << "WiFi added";
         //connect(wifiItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
-    connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
-    connect(ifaceItem, SIGNAL(clicked(Solid::Control::NetworkInterface*)),
+    connect(m_vpnItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
+    connect(m_vpnItem, SIGNAL(clicked(Solid::Control::NetworkInterface*)),
             m_connectionList,  SLOT(addInterface(Solid::Control::NetworkInterface*)));
+
+    connect(m_vpnItem, SIGNAL(clicked()), m_connectionList, SLOT(toggleVpn()));
 
     // Catch connection changes
     //connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
-    m_interfaceLayout->addItem(ifaceItem);
-    m_interfaces.insert("VPN", ifaceItem);
+    m_interfaceLayout->addItem(m_vpnItem);
+    //m_interfaces.insert("VPN", ifaceItem);
 }
 
 void NMPopup::handleConnectionStateChange(int new_state, int old_state, int reason)
