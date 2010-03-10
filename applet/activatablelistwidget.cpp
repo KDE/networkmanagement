@@ -148,6 +148,7 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
 
 void ActivatableListWidget::createItem(RemoteActivatable * activatable)
 {
+    // FIXME: m_itemIndex.contains()?
     foreach (RemoteActivatable* a, m_itemIndex.keys()) {
         if (activatable == a) {
             //kDebug() << "activatable already in the layout, not creating an item" << a;

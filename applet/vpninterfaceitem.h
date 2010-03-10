@@ -33,6 +33,8 @@ namespace Solid
     }
 }
 
+class RemoteActivatable;
+
 class VpnInterfaceItem : public InterfaceItem
 {
 Q_OBJECT
@@ -47,10 +49,18 @@ Q_OBJECT
     protected Q_SLOTS:
         virtual void setConnectionInfo();
         void disconnectCurrentConnection();
+        void activatableAdded(RemoteActivatable*);
+        void activatableRemoved(RemoteActivatable*);
+        void listDisappeared();
+        void listAppeared();
 
     protected:
         virtual RemoteInterfaceConnection* currentConnection();
         virtual void currentConnectionChanged();
+
+    private:
+        QList<RemoteActivatable*> m_vpnActivatables;
+        bool accept(RemoteActivatable* activatable) const;
 
 };
 #endif // VPNINTERFACEITEM_H

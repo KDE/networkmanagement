@@ -58,7 +58,7 @@ void InterfaceConnectionItem::setupItem()
     if (interfaceConnection()) {
         m_connectButton->setIcon(interfaceConnection()->iconName());
         m_connectButton->setText(interfaceConnection()->connectionName());
-        kDebug() << interfaceConnection()->connectionName() << interfaceConnection()->iconName();
+        //kDebug() << interfaceConnection()->connectionName() << interfaceConnection()->iconName();
         handleHasDefaultRouteChanged(interfaceConnection()->hasDefaultRoute());
     } else {
         m_connectButton->setIcon("network-wired");
@@ -80,7 +80,7 @@ InterfaceConnectionItem::~InterfaceConnectionItem()
 
 void InterfaceConnectionItem::stateChanged()
 {
-    kDebug() << "State Changed for wired!";
+    kDebug() << "activatable State Changed!" << interfaceConnection()->connectionName();
     RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(m_activatable);
     if (remoteconnection) {
         activationStateChanged(remoteconnection->activationState());
