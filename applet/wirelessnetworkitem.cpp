@@ -45,9 +45,9 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
 : ActivatableItem(remote, parent),
     m_strengthMeter(0),
     m_connectButton(0),
-    m_security(0),
+    m_security(),
     m_securityIcon(0),
-    m_securityIconName(0),
+    m_securityIconName(),
     m_strength(0),
     m_remote(remote)
 {
