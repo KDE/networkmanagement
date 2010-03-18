@@ -136,6 +136,7 @@ private:
     Solid::Control::NetworkInterface* m_activeInterface;
     Solid::Control::AccessPoint* m_accessPoint;
 
+    // Timeline controlling a connection progress overlay on the main icon
     QTimeLine m_overlayTimeline;
     QPixmap m_previousStatusOverlay;
     QPixmap m_statusOverlay;

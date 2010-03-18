@@ -82,14 +82,23 @@ private:
 
     QGraphicsWidget* m_widget;
     QGraphicsGridLayout* m_mainLayout;
-    Plasma::TabBar* m_leftWidget;
-    QGraphicsWidget* m_rightWidget;
+    // Interfaces label
     Plasma::Label* m_leftLabel;
-    Plasma::Label* m_rightLabel;
+    // Container for interface overview and interface details widgets
+    Plasma::TabBar* m_leftWidget;
+    // Overall layout for interface overview
     QGraphicsLinearLayout* m_leftLayout;
-    QGraphicsLinearLayout* m_rightLayout;
+    // Inner layout for interface list
     QGraphicsLinearLayout* m_interfaceLayout;
+
     InterfaceDetailsWidget* m_interfaceDetailsWidget;
+
+    // Connections Label
+    Plasma::Label* m_rightLabel;
+    // Container for connection List
+    QGraphicsWidget* m_rightWidget;
+
+    QGraphicsLinearLayout* m_rightLayout;
 
     Plasma::CheckBox* m_networkingCheckBox;
     Plasma::CheckBox* m_rfCheckBox;
