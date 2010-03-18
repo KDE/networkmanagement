@@ -47,6 +47,7 @@ InterfaceConnectionItem::InterfaceConnectionItem(Knm::InterfaceConnection * inte
     Q_D(InterfaceConnectionItem);
 
     d->connectionLayout = new QHBoxLayout(this);
+    d->connectionLayout->setObjectName("connectionLayout");
     d->outerLayout->addLayout(d->connectionLayout, 1, 1, 1, 1);
 
     d->defaultRouteLabel = new QLabel(this);
@@ -73,6 +74,7 @@ InterfaceConnectionItem::InterfaceConnectionItem(InterfaceConnectionItemPrivate 
     Q_D(InterfaceConnectionItem);
 
     d->connectionLayout = new QHBoxLayout(this);
+    d->connectionLayout->setObjectName("connectionLayout");
     d->outerLayout->addLayout(d->connectionLayout, 1, 1, 1, 1);
 
     d->defaultRouteLabel = new QLabel(this);

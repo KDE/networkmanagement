@@ -53,7 +53,9 @@ QSize IconSizedSpacer::sizeHint() const
 void ActivatableItemPrivate::init(QWidget * widgetParent)
 {
     outerLayout = new QGridLayout(widgetParent);
+    outerLayout->setObjectName("activatableitem_outerlayout");
     innerLayout = new QHBoxLayout();
+    innerLayout->setObjectName("activatableitem_innerlayout");
     activeIcon = new QLabel(widgetParent);
     mainLabel = new QLabel(widgetParent);
     spacer = new IconSizedSpacer(widgetParent);
