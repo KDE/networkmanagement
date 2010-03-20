@@ -123,8 +123,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_connectionInfoIcon->setMinimumHeight(16);
     m_connectionInfoIcon->setMinimumWidth(16);
     m_connectionInfoIcon->setMaximumHeight(16);
+    m_connectionInfoIcon->setIcon(KIcon("security-low"));
     m_layout->addItem(m_connectionInfoIcon, 1, 2, 1, 1, Qt::AlignRight); // check...
-    //m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
+    m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
 
     if (m_iface) {
         connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)),
@@ -195,6 +196,9 @@ void InterfaceItem::setEnabled(bool enable)
     m_ifaceNameLabel->setEnabled(enable);
     m_disconnectButton->setEnabled(enable);
     m_connectionInfoIcon->setEnabled(enable);
+    if (!enable) {
+        m_connectionInfoIcon->hide();
+    }
 }
 
 void InterfaceItem::setNameDisplayMode(NameDisplayMode mode)
@@ -383,6 +387,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
     }
 
     m_connectionNameLabel->setText(lname);
+    m_icon->nativeWidget()->setPixmap(interfacePixmap());
 
     kDebug() << "State changed" << lname;
     currentConnectionChanged();

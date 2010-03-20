@@ -20,7 +20,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "wirelessinterfaceitem.h"
+#include "wirelessstatus.h"
 #include "uiutils.h"
+#include "remotewirelessinterfaceconnection.h"
 
 #include <QGraphicsGridLayout>
 #include <QLabel>
@@ -32,64 +34,24 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkmanager.h>
 
 WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
-: InterfaceItem(iface, activatables, mode, parent),
-    m_wirelessIface(iface),
-    m_activeAccessPoint(0)
+: InterfaceItem(iface, activatables, mode, parent)
 {
-    // for updating our UI
     connect(iface, SIGNAL(activeAccessPointChanged(const QString&)),
-            SLOT(activeAccessPointChanged(const QString&)));
+            SLOT(updateInfo()));
 
-    activeAccessPointChanged(m_wirelessIface->activeAccessPoint());
+    m_wirelessStatus = new WirelessStatus(iface);
+    connect(m_wirelessStatus, SIGNAL(strengthChanged(int)), this, SLOT(updateInfo()));
+    setConnectionInfo();
 }
 
 WirelessInterfaceItem::~WirelessInterfaceItem()
 {
+    delete m_wirelessStatus;
 }
 
-void WirelessInterfaceItem::activeAccessPointChanged(const QString &uni)
-{
-    //kDebug() << "*** AP changed:" << uni << "***";
-    // this is not called when the device is deactivated..
-    if (m_activeAccessPoint) {
-        m_activeAccessPoint->disconnect(this);
-        m_activeAccessPoint = 0;
-    }
-    if (uni != "/") {
-        m_activeAccessPoint = m_wirelessIface->findAccessPoint(uni);
-        //kDebug() << "new:" << m_activeAccessPoint;
-        if (m_activeAccessPoint) {
-            connect(m_activeAccessPoint, SIGNAL(signalStrengthChanged(int)), SLOT(activeSignalStrengthChanged(int)));
-            connect(m_activeAccessPoint, SIGNAL(destroyed(QObject*)),
-                    SLOT(accessPointDestroyed(QObject*)));
-        }
-    }
-    setConnectionInfo();
-}
-
-QString WirelessInterfaceItem::connectionName()
-{
-    QString cname = InterfaceItem::connectionName();
-    if (!cname.isEmpty()) {
-        return cname;
-    }
-    if (m_activeAccessPoint) {
-        return m_activeAccessPoint->ssid();
-    }
-    return QString();
-}
-
-void WirelessInterfaceItem::activeSignalStrengthChanged(int)
+void WirelessInterfaceItem::updateInfo()
 {
     setConnectionInfo();
-}
-
-void WirelessInterfaceItem::accessPointDestroyed(QObject* ap)
-{
-    //kDebug() << "*** AP gone ***";
-    if (ap == m_activeAccessPoint) {
-        m_activeAccessPoint = 0;
-    }
 }
 
 void WirelessInterfaceItem::connectButtonClicked()
@@ -99,41 +61,30 @@ void WirelessInterfaceItem::connectButtonClicked()
 
 void WirelessInterfaceItem::setConnectionInfo()
 {
+    kDebug() << "Ping.";
     InterfaceItem::setConnectionInfo(); // Sets the labels
-    switch ( m_iface->connectionState()) {
+    switch (m_iface->connectionState()) {
         case Solid::Control::NetworkInterface::Unavailable:
         case Solid::Control::NetworkInterface::Disconnected:
         case Solid::Control::NetworkInterface::Failed:
-            //m_connectionInfoIcon->hide();
+            m_connectionInfoIcon->hide();
             break;
         default:
         {
-            if (m_activeAccessPoint) {
+            RemoteWirelessInterfaceConnection* wremote =
+                                static_cast<RemoteWirelessInterfaceConnection*>(currentConnection());
+            if (wremote) {
+                m_wirelessStatus->init(wremote);
+            }
+            if (!m_wirelessStatus->securityIcon().isEmpty()) {
+                m_connectionInfoIcon->setIcon(KIcon(m_wirelessStatus->securityIcon()));
                 m_connectionInfoIcon->show();
+            } else {
+                m_connectionInfoIcon->hide();
             }
             break;
         }
     }
-    //kDebug() << "Icon:" << UiUtils::iconName(m_iface);
-    //m_icon->nativeWidget()->setPixmap(UiUtils::iconName(m_iface));
-}
-
-QList<Solid::Control::AccessPoint*> WirelessInterfaceItem::availableAccessPoints() const
-{
-    QList<Solid::Control::AccessPoint*> retVal;
-    AccessPointList aps = m_wirelessIface->accessPoints(); //NOTE: AccessPointList is a QStringList
-    foreach (const QString &ap, aps) {
-        Solid::Control::AccessPoint *accesspoint = m_wirelessIface->findAccessPoint(ap);
-        if(accesspoint) {
-            retVal << accesspoint;
-        }
-    }
-    return retVal;
-}
-
-void WirelessInterfaceItem::setEnabled(bool enable)
-{
-    InterfaceItem::setEnabled(enable);
 }
 
 // vim: sw=4 sts=4 et tw=100

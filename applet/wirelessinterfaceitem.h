@@ -34,6 +34,7 @@ namespace Control
     class WirelessNetworkInterface;
 }
 }
+class WirelessStatus;
 
 /** Represents a wireless network interface in the popup
  * Provides custom UI for wireless connection status
@@ -46,27 +47,13 @@ Q_OBJECT
 public:
     WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent = 0);
     virtual ~WirelessInterfaceItem();
-    /**
-     * The name of the connection, the SSID of any active network,
-     * or an invalid QString if none
-     */
-    virtual QString connectionName();
-    /** @reimp InterfaceItem */
-    virtual void setEnabled(bool enable);
 
 public Q_SLOTS:
-    void activeAccessPointChanged(const QString&);
-    void activeSignalStrengthChanged(int);
-    void accessPointDestroyed(QObject *);
+    void updateInfo();
     void connectButtonClicked();
 
 private:
     void setConnectionInfo();
-
-    // returns a list of available accesspoint objects
-    QList<Solid::Control::AccessPoint*> availableAccessPoints() const;
-
-    Solid::Control::WirelessNetworkInterface * m_wirelessIface;
-    Solid::Control::AccessPoint * m_activeAccessPoint;
+    WirelessStatus* m_wirelessStatus;
 };
 #endif // WIRELESSINTERFACEITEM_H
