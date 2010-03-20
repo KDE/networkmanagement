@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "wirelessnetworkitem.h"
+#include "wirelessstatus.h"
 
 #include <QAction>
 #include <QLabel>
@@ -45,60 +46,25 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
 : ActivatableItem(remote, parent),
     m_strengthMeter(0),
     m_connectButton(0),
-    m_security(),
     m_securityIcon(0),
-    m_securityIconName(),
+    //m_securityIconName(),
     m_strength(0),
-    m_remote(remote)
+    m_remote(remote),
+    m_wirelessStatus(0)
 {
-    m_strength = 0;
-
-    readSettings();
-}
-
-bool WirelessNetworkItem::readSettings()
-{
-    Solid::Control::AccessPoint::WpaFlags wpaFlags;
-    Solid::Control::AccessPoint::WpaFlags rsnFlags;
-    Solid::Control::AccessPoint::Capabilities capabilities;
-    Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities;
-
-    m_state = Knm::InterfaceConnection::Unknown;
-    int operationMode = 0;
-    Knm::Activatable::ActivatableType aType = m_remote->activatableType();
-    if (aType == Knm::Activatable::WirelessInterfaceConnection) {
-        RemoteWirelessInterfaceConnection* remoteconnection = static_cast<RemoteWirelessInterfaceConnection*>(m_activatable);
-        m_ssid = remoteconnection->ssid();
-        wpaFlags = remoteconnection->wpaFlags();
-        rsnFlags = remoteconnection->rsnFlags();
-        capabilities = remoteconnection->apCapabilities();
-        interfaceCapabilities = remoteconnection->interfaceCapabilities();
-        m_state = remoteconnection->activationState();
-        activationStateChanged(m_state);
-        RemoteWirelessObject * wobj  = static_cast<RemoteWirelessObject*>(remoteconnection);
-        operationMode = wobj->operationMode();
-    } else if (aType == Knm::Activatable::WirelessNetwork) {
-        m_ssid = m_remote->ssid();
-        wpaFlags = m_remote->wpaFlags();
-        rsnFlags = m_remote->rsnFlags();
-        capabilities = m_remote->apCapabilities();
-        interfaceCapabilities = m_remote->interfaceCapabilities();
-        RemoteWirelessObject * wobj  = static_cast<RemoteWirelessObject*>(m_remote);
-        operationMode = wobj->apCapabilities();
-    } else {
-        return false;
-    }
-
-    setStrength(m_remote->strength());
+    //m_strength = 0;
+    m_wirelessStatus = new WirelessStatus(remote);
+    connect(m_wirelessStatus, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
     connect(m_remote, SIGNAL(changed()), SLOT(update()));
     connect(m_remote, SIGNAL(changed()), SLOT(stateChanged()));
-    connect(m_remote, SIGNAL(strengthChanged(int)), SLOT(setStrength(int)));
+    m_state = Knm::InterfaceConnection::Unknown;
+    RemoteWirelessInterfaceConnection* remoteconnection = static_cast<RemoteWirelessInterfaceConnection*>(m_activatable);
+    if (remoteconnection) {
+        m_state = remoteconnection->activationState();
+    }
+    stateChanged();
+    update();
 
-    Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(interfaceCapabilities, true, (operationMode == Solid::Control::WirelessNetworkInterface::Adhoc), capabilities, wpaFlags, rsnFlags);
-
-    m_securityIconName = Knm::WirelessSecurity::iconName(best);
-    m_securityIconToolTip = Knm::WirelessSecurity::shortToolTip(best);
-    return true;
 }
 
 void WirelessNetworkItem::setupItem()
@@ -128,7 +94,7 @@ void WirelessNetworkItem::setupItem()
         QAction *a = new QAction(KIcon("emblem-favorite"), QString(), m_connectButton);
         m_connectButton->addIconAction(a);
     } else {
-        m_connectButton->setText(m_ssid);
+        m_connectButton->setText(m_wirelessStatus->ssid());
     }
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setOrientation(Qt::Horizontal);
@@ -149,7 +115,7 @@ void WirelessNetworkItem::setupItem()
     m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
 
     m_securityIcon = new Plasma::IconWidget(this);
-    m_securityIcon->setIcon(m_securityIconName);
+    m_securityIcon->setIcon(m_wirelessStatus->securityIcon());
     m_securityIcon->setMinimumHeight(22);
     m_securityIcon->setMaximumHeight(22);
     m_securityIcon->setToolTip(m_securityIconToolTip);
@@ -184,7 +150,7 @@ void WirelessNetworkItem::stateChanged()
 
 void WirelessNetworkItem::setStrength(int strength)
 {
-    //kDebug() << m_ssid << "signal strength changed from " << m_strength << "to " << strength;
+    //kDebug() << m_wirelessStatus->ssid() << "signal strength changed from " << m_strength << "to " << strength;
     if (strength == m_strength) {
         return;
     }
@@ -209,15 +175,15 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
             //m_routeIcon->hide();
         }
     } else {
-        t = m_ssid;
-        m_connectButton->setText(m_ssid);
+        t = m_wirelessStatus->ssid();
+        m_connectButton->setText(t);
         return;
     }
 
     if (m_state != state && interfaceConnection()) {
         m_connectButton->setIcon(interfaceConnection()->iconName());
     } else {
-        m_connectButton->setText(m_ssid);
+        m_connectButton->setText(m_wirelessStatus->ssid());
         m_connectButton->setIcon("network-wireless"); // "New" network
     }
     if (!t.isEmpty()) {
@@ -231,7 +197,7 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
 
 void WirelessNetworkItem::update()
 {
-    //kDebug() << "updating" << m_ssid << wirelessNetworkItem()->strength();
+    //kDebug() << "updating" << m_wirelessStatus->ssid() << wirelessNetworkItem()->strength();
     setStrength((static_cast<RemoteWirelessNetwork*>(m_activatable))->strength());
     return;
 }

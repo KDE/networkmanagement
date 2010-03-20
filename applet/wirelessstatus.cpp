@@ -47,7 +47,9 @@ class WirelessStatusPrivate
 public:
     WirelessStatusPrivate()
         :
+        ssid(QString()),
         securityIcon(QString()),
+        securityTooltip(QString()),
         strength(-1),
         adhoc(false),
         iface(0),
@@ -61,9 +63,12 @@ public:
             adhoc = true;
             //adhoc->setIcon(QIcon("nm-adhoc"));
         }
+        ssid = wobj->ssid();
         Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(wobj->interfaceCapabilities(), true, (wobj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc), wobj->apCapabilities(), wobj->wpaFlags(), wobj->rsnFlags());
         //security->setToolTip(Knm::WirelessSecurity::shortToolTip(best));
         securityIcon = Knm::WirelessSecurity::iconName(best);
+        securityTooltip = Knm::WirelessSecurity::shortToolTip(best);
+
     }
 
     void init(Solid::Control::WirelessNetworkInterface * wiface)
@@ -87,7 +92,9 @@ public:
         return retVal;
     }
 
+    QString ssid;
     QString securityIcon;
+    QString securityTooltip;
     int strength;
     bool adhoc;
 
@@ -146,6 +153,19 @@ QString WirelessStatus::securityIcon()
     return d->securityIcon;
 }
 
+QString WirelessStatus::ssid()
+{
+    Q_D(WirelessStatus);
+    return d->ssid;
+}
+
+QString WirelessStatus::securityTooltip()
+{
+    Q_D(WirelessStatus);
+    return d->securityTooltip;
+
+}
+
 bool WirelessStatus::isAdhoc()
 {
     Q_D(WirelessStatus);
@@ -157,7 +177,7 @@ void WirelessStatus::setStrength(int strength)
     Q_D(WirelessStatus);
     if (!strength != d->strength) {
         d->strength = strength;
-        kDebug() << "strength changed:" << d->strength;
+        //kDebug() << d->ssid <<  "strength changed:" << d->strength;
         emit strengthChanged(d->strength);
     }
 }
@@ -173,9 +193,10 @@ void WirelessStatus::activeAccessPointChanged(const QString &uni)
     }
     if (uni != "/") {
         d->activeAccessPoint = d->iface->findAccessPoint(uni);
-        //kDebug() << "new:" << d->activeAccessPoint;
         if (d->activeAccessPoint) {
+            kDebug() << "new:" << d->activeAccessPoint->ssid();
             setStrength(d->activeAccessPoint->signalStrength());
+            d->ssid = d->activeAccessPoint->ssid();
             connect(d->activeAccessPoint, SIGNAL(signalStrengthChanged(int)), SLOT(setStrength(int)));
             connect(d->activeAccessPoint, SIGNAL(destroyed(QObject*)),
                     SLOT(accessPointDestroyed(QObject*)));

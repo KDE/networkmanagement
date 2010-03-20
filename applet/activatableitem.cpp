@@ -95,18 +95,22 @@ void ActivatableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* o
 void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
 {
     // Update the view of the connection, manipulate font based on activation state.
+    kDebug() << state;
     QFont f = font();
     switch (state) {
         //Knm::InterfaceConnectihon::ActivationState
         case Knm::InterfaceConnection::Activated:
+            kDebug() << "activated";
             f.setBold(true);
             f.setItalic(false);
             break;
         case Knm::InterfaceConnection::Unknown:
+            kDebug() << "unknown";
             f.setBold(false);
             f.setItalic(false);
             break;
         case Knm::InterfaceConnection::Activating:
+            kDebug() << "activatING....";
             f.setBold(false);
             f.setItalic(true);
     }

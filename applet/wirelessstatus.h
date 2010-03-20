@@ -49,7 +49,9 @@ Q_OBJECT
         void init(RemoteWirelessObject* obj);
 
         int strength();
+        QString ssid();
         QString securityIcon();
+        QString securityTooltip();
         bool isAdhoc();
 
     Q_SIGNALS:

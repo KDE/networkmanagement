@@ -33,7 +33,9 @@ namespace Plasma
     class Meter;
 }
 
+
 class RemoteWirelessNetwork;
+class WirelessStatus;
 /**
     Represents a wireless network or a known connection
  */
@@ -52,7 +54,7 @@ class WirelessNetworkItem : public ActivatableItem
         void stateChanged();
 
     private:
-        bool readSettings();
+        //bool readSettings();
         QGraphicsGridLayout* m_layout;
         Plasma::Label* m_ssidLabel;
         Plasma::Meter* m_strengthMeter;
@@ -62,8 +64,9 @@ class WirelessNetworkItem : public ActivatableItem
         QString m_securityIconName;
         QString m_securityIconToolTip;
         int m_strength;
-        QString m_ssid;
+        //QString m_ssid;
         RemoteWirelessNetwork* m_remote;
+        WirelessStatus* m_wirelessStatus;
 };
 
 #endif //#define APPLET_WIRELESSCONNECTIONITEM_H
