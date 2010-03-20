@@ -169,23 +169,14 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
     QString t;
     if (interfaceConnection()) {
         t = interfaceConnection()->connectionName();
-        if (interfaceConnection()->hasDefaultRoute()) {
-            //m_routeIcon->show();
-        } else {
-            //m_routeIcon->hide();
-        }
+        m_connectButton->setIcon(interfaceConnection()->iconName());
     } else {
         t = m_wirelessStatus->ssid();
         m_connectButton->setText(t);
+        m_connectButton->setIcon("network-wireless"); // "New" network
         return;
     }
 
-    if (m_state != state && interfaceConnection()) {
-        m_connectButton->setIcon(interfaceConnection()->iconName());
-    } else {
-        m_connectButton->setText(m_wirelessStatus->ssid());
-        m_connectButton->setIcon("network-wireless"); // "New" network
-    }
     if (!t.isEmpty()) {
         m_connectButton->setText(t);
     }
