@@ -89,9 +89,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     if (m_iface) {
         m_interfaceName = UiUtils::interfaceNameLabel(m_iface->uni());
     }
-    //m_icon->setIcon(UiUtils::iconName(m_iface));
-    //m_icon->setAcceptHoverEvents(false);
-    //m_icon->nativeWidget()->setPixmap(KIcon(UiUtils::iconName(m_iface)).pixmap(QSize(48, 48)));
     m_icon->nativeWidget()->setPixmap(interfacePixmap());
 
     //     interface layout
@@ -119,13 +116,14 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 1);
 
     //       security
-    m_connectionInfoIcon = new Plasma::IconWidget(this);
+    m_connectionInfoIcon = new Plasma::Label(this);
     m_connectionInfoIcon->setMinimumHeight(16);
     m_connectionInfoIcon->setMinimumWidth(16);
     m_connectionInfoIcon->setMaximumHeight(16);
-    m_connectionInfoIcon->setIcon(KIcon("security-low"));
-    m_layout->addItem(m_connectionInfoIcon, 1, 2, 1, 1, Qt::AlignRight); // check...
+    m_connectionInfoIcon->nativeWidget()->setPixmap(KIcon("security-low").pixmap(16, 16));
     m_connectionInfoIcon->hide(); // hide by default, we'll enable it later
+
+    m_layout->addItem(m_connectionInfoIcon, 1, 2, 1, 1, Qt::AlignRight); // check...
 
     if (m_iface) {
         connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)),
@@ -226,7 +224,6 @@ InterfaceItem::NameDisplayMode InterfaceItem::nameDisplayMode() const
 QString InterfaceItem::connectionName()
 {
     // Default active connection's name is empty, room for improvement?
-    //RemoteInterfaceConnection *conn = currentConnection();
     RemoteInterfaceConnection *conn = UiUtils::connectionForInterface(m_activatables, m_iface);
     if (conn) {
         return conn->connectionName();

@@ -124,7 +124,7 @@ protected:
     QGraphicsLinearLayout* m_connectionInfoLayout;
     Plasma::Label* m_connectionInfoLabel;
     Plasma::Label* m_connectionInfoStrengthLabel;
-    Plasma::IconWidget* m_connectionInfoIcon;
+    Plasma::Label* m_connectionInfoIcon;
     NameDisplayMode m_nameMode;
     bool m_enabled;
     Solid::Control::NetworkInterface::ConnectionState m_state;

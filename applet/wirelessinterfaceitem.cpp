@@ -61,7 +61,6 @@ void WirelessInterfaceItem::connectButtonClicked()
 
 void WirelessInterfaceItem::setConnectionInfo()
 {
-    kDebug() << "Ping.";
     InterfaceItem::setConnectionInfo(); // Sets the labels
     switch (m_iface->connectionState()) {
         case Solid::Control::NetworkInterface::Unavailable:
@@ -77,7 +76,9 @@ void WirelessInterfaceItem::setConnectionInfo()
                 m_wirelessStatus->init(wremote);
             }
             if (!m_wirelessStatus->securityIcon().isEmpty()) {
-                m_connectionInfoIcon->setIcon(KIcon(m_wirelessStatus->securityIcon()));
+                m_connectionInfoIcon->nativeWidget()->setPixmap(KIcon(m_wirelessStatus->securityIcon()).pixmap(16, 16));
+
+                m_connectionInfoIcon->setToolTip(m_wirelessStatus->securityTooltip());
                 m_connectionInfoIcon->show();
             } else {
                 m_connectionInfoIcon->hide();

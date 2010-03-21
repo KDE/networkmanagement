@@ -60,11 +60,7 @@ class WirelessNetworkItem : public ActivatableItem
         Plasma::Meter* m_strengthMeter;
         Plasma::IconWidget* m_connectButton;
         QString m_security;
-        Plasma::IconWidget* m_securityIcon;
-        QString m_securityIconName;
-        QString m_securityIconToolTip;
-        int m_strength;
-        //QString m_ssid;
+        Plasma::Label* m_securityIcon;
         RemoteWirelessNetwork* m_remote;
         WirelessStatus* m_wirelessStatus;
 };
