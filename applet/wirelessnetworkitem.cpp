@@ -126,9 +126,6 @@ void WirelessNetworkItem::setupItem()
     connect(m_connectButton, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
-    connect(this, SIGNAL(pressed(bool)), m_securityIcon, SLOT(setPressed(bool)));
-    connect(m_securityIcon, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
-    connect(m_securityIcon, SIGNAL(clicked()), this, SLOT(emitClicked()));
     activationStateChanged(m_state);
 
     update();
