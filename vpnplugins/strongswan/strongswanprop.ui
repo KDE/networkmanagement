@@ -179,7 +179,7 @@ p, li { white-space: pre-wrap; }
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>Rquest an inner IP address</string>
+        <string>Request an inner IP address</string>
        </property>
        <property name="checked">
         <bool>true</bool>
