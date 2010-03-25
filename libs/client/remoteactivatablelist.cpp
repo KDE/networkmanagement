@@ -63,16 +63,15 @@ void RemoteActivatableList::init()
     Q_D(RemoteActivatableList);
     if (d->iface->isValid()) {
         if (d->activatables.isEmpty()) {
-            QStringList activatables = d->iface->ListActivatables();
-
-            //kDebug() << "activatables" << activatables;
-            foreach (const QString &activatable, activatables) {
-                // messy, I know, but making ListActivatables return a(si) is boring
-                QDBusInterface iface(QLatin1String("org.kde.networkmanagement"),
-                        activatable, "org.kde.networkmanagement.Activatable", QDBusConnection::sessionBus());
-                QDBusReply<uint> type = iface.call("activatableType");
-                kDebug() << activatable << type.value();
-                handleActivatableAdded(activatable, type.value());
+            QDBusReply<QStringList> rv = d->iface->ListActivatables();
+            if (!rv.error().isValid()) {
+                foreach (const QString &activatable, rv.value()) {
+                    // messy, I know, but making ListActivatables return a(si) is boring
+                    QDBusInterface iface(QLatin1String("org.kde.networkmanagement"),
+                            activatable, "org.kde.networkmanagement.Activatable", QDBusConnection::sessionBus());
+                    QDBusReply<uint> type = iface.call("activatableType");
+                    handleActivatableAdded(activatable, type.value());
+                }
             }
         }
     }
