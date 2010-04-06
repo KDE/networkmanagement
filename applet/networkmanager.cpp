@@ -333,7 +333,7 @@ void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p)
     kDebug() << "Failed      : " << Solid::Control::NetworkInterface::Failed;
     kDebug() << "Painting overlay ...>" << activeInterface()->connectionState();
     */
-    if (activeInterface()->connectionState() == Solid::Control::NetworkInterface::NeedAuth) {
+    if (activeInterface() && activeInterface()->connectionState() == Solid::Control::NetworkInterface::NeedAuth) {
         kDebug() << "Needing auth ...>";
         int i_s = (int)contentsRect().width()/4;
         int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
