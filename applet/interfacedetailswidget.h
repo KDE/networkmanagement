@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define INTERFACEDETAILSWIDGET_H
 
 #include <QGraphicsWidget>
+#include <QGraphicsLinearLayout>
 #include <solid/control/networkinterface.h>
 #include <Plasma/Label>
 
