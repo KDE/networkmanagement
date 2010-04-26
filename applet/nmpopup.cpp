@@ -401,8 +401,11 @@ void NMPopup::toggleInterfaceTab()
 {
     InterfaceItem* item = qobject_cast<InterfaceItem*>(sender());
     if (item) {
-        m_interfaceDetailsWidget->setInterface(item->interface());
+	m_interfaceDetailsWidget->setInterface(item->interface());
+	m_interfaceDetailsWidget->setIP(item->currentIpAddress());
+	m_interfaceDetailsWidget->setMAC(item->interface());
     }
+
     if (m_leftWidget->currentIndex() == 0) {
         m_showMoreButton->setChecked(true);
         m_leftWidget->setCurrentIndex(1);
@@ -415,5 +418,7 @@ void NMPopup::toggleInterfaceTab()
     }
     showMore();
 }
+
+
 // vim: sw=4 sts=4 et tw=100
 

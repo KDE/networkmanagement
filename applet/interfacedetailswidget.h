@@ -21,12 +21,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef INTERFACEDETAILSWIDGET_H
 #define INTERFACEDETAILSWIDGET_H
 
+#include <QGraphicsGridLayout>
 #include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
+
 #include <solid/control/networkinterface.h>
 #include <Plasma/Label>
 
 class RemoteActivatable;
+class RemoteInterfaceConnection;
+class RemoteInterfaceList;
 
 class InterfaceDetailsWidget : public QGraphicsWidget
 {
@@ -35,13 +39,33 @@ Q_OBJECT
         InterfaceDetailsWidget(QGraphicsItem* parent = 0);
         virtual ~InterfaceDetailsWidget();
         void setInterface(Solid::Control::NetworkInterface* iface);
+	void setMAC(Solid::Control::NetworkInterface* iface);
+	void setIP(QString ip);
 
     Q_SIGNALS:
         void back();
 
     private:
         Solid::Control::NetworkInterface* m_iface;
-        Plasma::Label* m_label;
+	
+	Plasma::Label* m_interfaceLabel;
+	Plasma::Label* m_interface;
+	Plasma::Label* m_macLabel;
+	Plasma::Label* m_mac;
+	Plasma::Label* m_ipLabel;
+	Plasma::Label* m_ip;
+	Plasma::Label* m_driverLabel;
+	Plasma::Label* m_driver;
+	Plasma::Label* m_typeLabel;
+	Plasma::Label* m_type;
+	//Plasma::Label* m_speedLabel;
+	//Plasma::Label* m_speed;
+	Plasma::Label* m_stateLabel;
+	Plasma::Label* m_state;
+	Plasma::Label* m_bitLabel;
+	Plasma::Label* m_bit;
+	//Plasma::Label* m_otherLabel;
+	//Plasma::Label* m_other;
 };
 
 #endif // INTERFACEDETAILSWIDGET_H

@@ -69,6 +69,8 @@ public:
     virtual QString connectionName();
     QString label();
     virtual void setActivatableList(RemoteActivatableList* activatables);
+    virtual QString currentIpAddress();
+
 
 public Q_SLOTS:
     void activeConnectionsChanged();
@@ -106,7 +108,7 @@ protected:
     /**
     * The current IP address when the connection is active.
     */
-    virtual QString currentIpAddress();
+   //----- virtual QString currentIpAddress();
     virtual RemoteInterfaceConnection* currentConnection();
 
     RemoteInterfaceConnection* m_currentConnection;
