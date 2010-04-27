@@ -240,7 +240,7 @@ void InterfaceItem::setConnectionInfo()
 
 QString InterfaceItem::currentIpAddress()
 {
-    if (m_iface->connectionState() != Solid::Control::NetworkInterface::Activated) {
+    if (m_iface && m_iface->connectionState() != Solid::Control::NetworkInterface::Activated) {
         return i18nc("label of the network interface", "No IP address.");
     }
     Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();

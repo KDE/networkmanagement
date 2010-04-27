@@ -87,6 +87,12 @@ QString VpnInterfaceItem::connectionName()
     }
 }
 
+
+QString VpnInterfaceItem::currentIpAddress()
+{
+    return i18nc("ip of vpn interface item", "not available");
+}
+
 void VpnInterfaceItem::setConnectionInfo()
 {
     bool showDisconnect = false;

@@ -42,6 +42,7 @@ Q_OBJECT
         VpnInterfaceItem(Solid::Control::NetworkInterface * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent = 0);
         virtual ~VpnInterfaceItem();
         virtual QString connectionName();
+        virtual QString currentIpAddress();
 
     protected Q_SLOTS:
         virtual void setConnectionInfo();
