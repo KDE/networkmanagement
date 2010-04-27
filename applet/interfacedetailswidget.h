@@ -39,33 +39,33 @@ Q_OBJECT
         InterfaceDetailsWidget(QGraphicsItem* parent = 0);
         virtual ~InterfaceDetailsWidget();
         void setInterface(Solid::Control::NetworkInterface* iface);
-	void setMAC(Solid::Control::NetworkInterface* iface);
-	void setIP(QString ip);
+        void setMAC(Solid::Control::NetworkInterface* iface);
+        void setIP(QString ip);
 
     Q_SIGNALS:
         void back();
 
     private:
         Solid::Control::NetworkInterface* m_iface;
-	
-	Plasma::Label* m_interfaceLabel;
-	Plasma::Label* m_interface;
-	Plasma::Label* m_macLabel;
-	Plasma::Label* m_mac;
-	Plasma::Label* m_ipLabel;
-	Plasma::Label* m_ip;
-	Plasma::Label* m_driverLabel;
-	Plasma::Label* m_driver;
-	Plasma::Label* m_typeLabel;
-	Plasma::Label* m_type;
-	//Plasma::Label* m_speedLabel;
-	//Plasma::Label* m_speed;
-	Plasma::Label* m_stateLabel;
-	Plasma::Label* m_state;
-	Plasma::Label* m_bitLabel;
-	Plasma::Label* m_bit;
-	//Plasma::Label* m_otherLabel;
-	//Plasma::Label* m_other;
+
+        Plasma::Label* m_interfaceLabel;
+        Plasma::Label* m_interface;
+        Plasma::Label* m_macLabel;
+        Plasma::Label* m_mac;
+        Plasma::Label* m_ipLabel;
+        Plasma::Label* m_ip;
+        Plasma::Label* m_driverLabel;
+        Plasma::Label* m_driver;
+        Plasma::Label* m_typeLabel;
+        Plasma::Label* m_type;
+        //Plasma::Label* m_speedLabel;
+        //Plasma::Label* m_speed;
+        Plasma::Label* m_stateLabel;
+        Plasma::Label* m_state;
+        Plasma::Label* m_bitLabel;
+        Plasma::Label* m_bit;
+        //Plasma::Label* m_otherLabel;
+        //Plasma::Label* m_other;
 };
 
 #endif // INTERFACEDETAILSWIDGET_H

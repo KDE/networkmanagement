@@ -53,7 +53,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_iface(0)
 {
     QGraphicsGridLayout *m_gridLayout = new QGraphicsGridLayout;
-    
+
     //Interface
     m_interfaceLabel = new Plasma::Label;
     m_interfaceLabel->setText("<h4>Interface:</h4>");
@@ -81,7 +81,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_ip->setText("IP details!");
     m_gridLayout->addItem(m_ip, 2, 1);
 
-    
+
     //Driver
     m_driverLabel = new Plasma::Label;
     m_driverLabel->setText("<h4>Driver:</h4>");
@@ -90,7 +90,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_driver = new Plasma::Label;
     m_driver->setText("Driver details!");
     m_gridLayout->addItem(m_driver, 3, 1);
-   
+
     //Type
     m_typeLabel = new Plasma::Label;
     m_typeLabel->setText("<h4>Type:</h4>");
@@ -113,7 +113,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_bitLabel = new Plasma::Label;
     m_bitLabel->setText("<h4>MBit/s:</h4>");
     m_gridLayout->addItem(m_bitLabel, 6, 0);
-    
+
     m_bit = new Plasma::Label;
     m_bit->setText("Bit details!");
     m_gridLayout->addItem(m_bit, 6, 1);
@@ -123,7 +123,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_speedLabel = new Plasma::Label(this);
     m_speedLabel->setText("<h4>Speed:</h4> ");
     m_gridLayout->addItem(m_speedLabel, 7, 0);
-    
+
     m_speed = new Plasma::Label(this);
     m_speed->setText("Speed details!");
     m_gridLayout->addItem(m_speed, 7, 1);
@@ -145,59 +145,48 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
     if (iface) {
         m_iface = iface;
         m_interface->setText(m_iface->interfaceName());
-	m_driver->setText(iface->driver());
-//	m_speed->setText(QString::number(iface->designSpeed()));
-	m_type->setText(UiUtils::interfaceTypeLabel(iface->type()));
-	m_state->setText(UiUtils::connectionStateToString(iface->connectionState()));
+        m_driver->setText(iface->driver());
+        //m_speed->setText(QString::number(iface->designSpeed()));
+        m_type->setText(UiUtils::interfaceTypeLabel(iface->type()));
+        m_state->setText(UiUtils::connectionStateToString(iface->connectionState()));
     }
 }
 
 void InterfaceDetailsWidget::setMAC(Solid::Control::NetworkInterface* iface)
 {
     QString temp;
-    int bitRate = 0;
-    
+    //int bitRate = 0;
+
     //wifi
     Solid::Control::WirelessNetworkInterface * wliface =
-	    dynamic_cast<Solid::Control::WirelessNetworkInterface*> (iface);
+                    dynamic_cast<Solid::Control::WirelessNetworkInterface*> (iface);
 
     if (wliface) {
-    	temp = wliface->hardwareAddress(); //MAC
-	m_mac->setText(temp);
+        temp = wliface->hardwareAddress(); //MAC
+        m_mac->setText(temp);
 
-	bitRate = wliface->bitRate() / 1000; //Bit
-	m_bit->setText(QString::number(bitRate));
+        int bitRate = wliface->bitRate() / 1000; //Bit
+        m_bit->setText(QString::number(bitRate));
 
-
-	Solid::Control::AccessPoint * ap = wliface->findAccessPoint(wliface->activeAccessPoint());
-	if(ap) {
-	    temp = ap->ssid();
-	    kDebug() << "temp = " << temp;
-	    }
-	}
-
-    //wired
-    else {
-    Solid::Control::WiredNetworkInterface * wdiface = 
-	    dynamic_cast<Solid::Control::WiredNetworkInterface*> (iface);
-    if (wdiface) {
-    	temp = wdiface->hardwareAddress();
-	m_mac->setText(temp);
-
-	bitRate = wdiface->bitRate() / 1000;
-	m_bit->setText(QString::number(bitRate));
-	}
+        Solid::Control::AccessPoint * ap = wliface->findAccessPoint(wliface->activeAccessPoint());
+        if(ap) {
+            temp = ap->ssid();
+            kDebug() << "temp = " << temp;
+        }
+    } else {     // wired
+        Solid::Control::WiredNetworkInterface * wdiface =
+                                    dynamic_cast<Solid::Control::WiredNetworkInterface*> (iface);
+        if (wdiface) {
+            temp = wdiface->hardwareAddress();
+            m_mac->setText(temp);
+            int bitRate = wdiface->bitRate() / 1000;
+            m_bit->setText(QString::number(bitRate));
+        }
     }
-
-    //if (!temp.isEmpty()) {
-	//html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
-	//.arg(i18nc("@info:tooltip this is the hardware address of a network interface",
-	//"Hardware address"), temp);
-    //}
 }
 
 void InterfaceDetailsWidget::setIP(QString ip)
-{	
+{
     m_ip->setText(ip);
 }
 
