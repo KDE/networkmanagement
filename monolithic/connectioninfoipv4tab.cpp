@@ -23,11 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectioninfoipv4tab.h"
 
 #include <uiutils.h>
-
-#if KDE_IS_VERSION(4, 3, 67)
-#else
 #include <arpa/inet.h>
-#endif
 
 ConnectionInfoIPv4Tab::ConnectionInfoIPv4Tab(Solid::Control::NetworkInterface *iface, QWidget *parent)
     : QWidget(parent), m_iface(iface)
@@ -77,7 +73,7 @@ void ConnectionInfoIPv4Tab::updateIpDetails()
 
     QStringList nameservers;
     foreach(const quint32 &addr, config.nameservers())
-        nameservers << QHostAddress(addr).toString();
+        nameservers << QHostAddress(ntohl(addr)).toString();
 
     m_nameserversLabel->setText(nameservers.join("\n"));
 
