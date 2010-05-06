@@ -48,6 +48,8 @@ Q_OBJECT
     private:
         Solid::Control::NetworkInterface* m_iface;
 
+        QGraphicsGridLayout *m_gridLayout;
+        Plasma::Label* m_interfaceNameLabel;
         Plasma::Label* m_interfaceLabel;
         Plasma::Label* m_interface;
         Plasma::Label* m_macLabel;
