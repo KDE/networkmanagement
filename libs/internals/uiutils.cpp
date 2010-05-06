@@ -176,7 +176,7 @@ QString UiUtils::connectionStateToString(Solid::Control::NetworkInterface::Conne
             stateString = i18nc("network interface connection failed state label", "Connection Failed");
             break;
         default:
-            stateString = I18N_NOOP("UNKNOWN STATE FIX ME");
+            stateString = i18nc("interface state", "Error: Invalid state");
     }
     return stateString;
 }
