@@ -69,45 +69,44 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_typeLabel->setText(i18nc("interface details", "Interface Type:"));
     m_typeLabel->setAlignment(Qt::AlignRight);
     m_gridLayout->addItem(m_typeLabel, row, 0);
-    
+
     m_type = new Plasma::Label(this);
     m_type->setText("Type details!");
     m_type->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_type, row, 1);
-    
-    
+
+
     //State
     row++;
     m_stateLabel = new Plasma::Label(this);
     m_stateLabel->setText(i18nc("interface details", "Connection State:"));
     m_stateLabel->setAlignment(Qt::AlignRight);
     m_gridLayout->addItem(m_stateLabel, row, 0);
-    
+
     m_state = new Plasma::Label(this);
     m_state->setText("State details!");
     m_state->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_state, row, 1);
-    
-    
+
     //IP
     row++;
     m_ipLabel = new Plasma::Label(this);
     m_ipLabel->setText(i18nc("interface details", "Network Address (IP):"));
     m_ipLabel->setAlignment(Qt::AlignRight);
     m_gridLayout->addItem(m_ipLabel, row, 0);
-    
+
     m_ip = new Plasma::Label(this);
     m_ip->setText("IP details!");
     m_ip->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_ip, row, 1);
-    
+
     //Bit
     row++;
     m_bitLabel = new Plasma::Label(this);
     m_bitLabel->setText(i18nc("interface details", "Connection Speed:"));
     m_bitLabel->setAlignment(Qt::AlignRight);
     m_gridLayout->addItem(m_bitLabel, row, 0);
-    
+
     m_bit = new Plasma::Label(this);
     m_bit->setText("Bit details!");
     m_bit->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -119,12 +118,12 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_interfaceLabel->setText(i18nc("interface details", "System Name:"));
     m_interfaceLabel->setAlignment(Qt::AlignRight);
     m_gridLayout->addItem(m_interfaceLabel, row, 0);
-    
+
     m_interface = new Plasma::Label(this);
     m_interface->setText("Interface details!");
     m_interface->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_interface, row, 1);
-    
+
     //MAC
     row++;
     m_macLabel = new Plasma::Label(this);
@@ -148,19 +147,6 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_driver->setText("Driver details!");
     m_driver->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_driver, row, 1);
-
-    /*
-    //Speed
-    row++;
-    m_speedLabel = new Plasma::Label(this);
-    m_speedLabel->setText("Speed: ");
-    m_speedLabel->setAlignment(Qt::AlignRight);
-    m_gridLayout->addItem(m_speedLabel, row, 0);
-
-    m_speed = new Plasma::Label(this);
-    m_speed->setText("Speed details!");
-    m_gridLayout->addItem(m_speed, row, 1);
-    */
 
     Plasma::IconWidget* back = new Plasma::IconWidget(this);
     back->setIcon("go-previous");
@@ -191,11 +177,13 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
         m_state->setText(UiUtils::connectionStateToString(iface->connectionState()));
     }
     Solid::Device *dev = new Solid::Device(iface->uni());
+    /*
     kDebug() << "IFACE:" << dev->vendor();
     kDebug() << "product:" << dev->product();
     kDebug() << "udi:" << dev->udi();
     kDebug() << "desc:" << dev->description();
     kDebug() << "icon:" << dev->icon();
+    */
 }
 
 void InterfaceDetailsWidget::setMAC(Solid::Control::NetworkInterface* iface)
@@ -218,7 +206,7 @@ void InterfaceDetailsWidget::setMAC(Solid::Control::NetworkInterface* iface)
             kDebug() << "temp = " << temp;
         }
         */
-    } else {     // wired
+    } else {     // wired?
         Solid::Control::WiredNetworkInterface * wdiface =
                                     dynamic_cast<Solid::Control::WiredNetworkInterface*> (iface);
         if (wdiface) {
@@ -227,9 +215,8 @@ void InterfaceDetailsWidget::setMAC(Solid::Control::NetworkInterface* iface)
             bitRate = wdiface->bitRate();
             //m_bit->setText(QString::number(bitRate));
         }
+        // NOTE: handle other kinds of interfaces as well here, for example GSM or bluetooth
     }
-    //*/
-    //m_mac->setText(iface->hardwareAddress());
     if (bitRate) {
         m_bit->setText(UiUtils::connectionSpeed(bitRate));
     } else {
