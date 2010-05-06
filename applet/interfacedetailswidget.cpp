@@ -176,8 +176,8 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
         m_type->setText(UiUtils::interfaceTypeLabel(iface->type()));
         m_state->setText(UiUtils::connectionStateToString(iface->connectionState()));
     }
-    Solid::Device *dev = new Solid::Device(iface->uni());
     /*
+    Solid::Device *dev = new Solid::Device(iface->uni());
     kDebug() << "IFACE:" << dev->vendor();
     kDebug() << "product:" << dev->product();
     kDebug() << "udi:" << dev->udi();
