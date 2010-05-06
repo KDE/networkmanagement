@@ -59,6 +59,7 @@ VpnInterfaceItem::VpnInterfaceItem(Solid::Control::NetworkInterface * iface, Rem
 
     // Update state
     listAppeared();
+    setConnectionInfo();
 }
 
 VpnInterfaceItem::~VpnInterfaceItem()
