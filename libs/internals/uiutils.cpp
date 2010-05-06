@@ -320,4 +320,17 @@ QStringList UiUtils::wpaFlagsToStringList(Solid::Control::AccessPoint::WpaFlags 
     return flagList;
 }
 
+QString UiUtils::connectionSpeed(double bitrate)
+{
+    QString out;
+    if (bitrate < 1000) {
+        out = i18nc("connection speed", "%1 Bit/s", QString::number(bitrate));
+    } else if (bitrate < 1000000) {
+        out = i18nc("connection speed", "%1 MBit/s", QString::number(bitrate/1000));
+    } else {
+        out = i18nc("connection speed", "%1 GBit/s", QString::number(bitrate/1000000));
+    }
+    return out;
+}
+
 // vim: sw=4 sts=4 et tw=100

@@ -91,10 +91,16 @@ public:
     static QString operationModeToString(Solid::Control::WirelessNetworkInterface::OperationMode mode);
 
     /**
-     * @return string list with a human-readable description of wpa flags. 
+     * @return string list with a human-readable description of wpa flags.
      * @param flags the wpa flags
      */
     static QStringList wpaFlagsToStringList(Solid::Control::AccessPoint::WpaFlags flags);
+
+    /**
+     * @return localized string showing a human-readable connection speed. 1000 is used as base.
+     * @param bitrate bitrate of the connection per second
+     */
+    static QString connectionSpeed(double bitrate);
 
 };
 #endif // UIUTILS_H
