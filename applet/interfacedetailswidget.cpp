@@ -68,12 +68,15 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_typeLabel = new Plasma::Label(this);
     m_typeLabel->setText(i18nc("interface details", "Interface Type:"));
     m_typeLabel->setAlignment(Qt::AlignRight);
-    m_typeLabel->setWordWrap(false);
+    // FIXME 4.5: setWordWrap() is now a method in Plasma::Label, we're keeping this
+    // for a while for backwards compat though. Remove the nativeWidget() call in between
+    // when we depend on 4.5
+    m_typeLabel->nativeWidget()->setWordWrap(false);
     m_gridLayout->addItem(m_typeLabel, row, 0);
 
     m_type = new Plasma::Label(this);
     m_type->setText("Type details!");
-    m_type->setWordWrap(false);
+    m_type->nativeWidget()->setWordWrap(false);
     m_type->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_type, row, 1, Qt::AlignTop);
 
@@ -83,12 +86,12 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_stateLabel = new Plasma::Label(this);
     m_stateLabel->setText(i18nc("interface details", "Connection State:"));
     m_stateLabel->setAlignment(Qt::AlignRight);
-    m_stateLabel->setWordWrap(false);
+    m_stateLabel->nativeWidget()->setWordWrap(false);
     m_gridLayout->addItem(m_stateLabel, row, 0);
 
     m_state = new Plasma::Label(this);
     m_state->setText("State details!");
-    m_state->setWordWrap(false);
+    m_state->nativeWidget()->setWordWrap(false);
     m_state->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_state, row, 1, 1, 2, Qt::AlignTop);
 
@@ -97,12 +100,12 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_ipLabel = new Plasma::Label(this);
     m_ipLabel->setText(i18nc("interface details", "Network Address (IP):"));
     m_ipLabel->setAlignment(Qt::AlignRight);
-    m_ipLabel->setWordWrap(false);
+    m_ipLabel->nativeWidget()->setWordWrap(false);
     m_gridLayout->addItem(m_ipLabel, row, 0);
 
     m_ip = new Plasma::Label(this);
     m_ip->setText("IP details!");
-    m_ip->setWordWrap(false);
+    m_ip->nativeWidget()->setWordWrap(false);
     m_ip->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_ip, row, 1, 1, 2, Qt::AlignTop);
 
@@ -111,12 +114,12 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_bitLabel = new Plasma::Label(this);
     m_bitLabel->setText(i18nc("interface details", "Connection Speed:"));
     m_bitLabel->setAlignment(Qt::AlignRight);
-    m_bitLabel->setWordWrap(false);
+    m_bitLabel->nativeWidget()->setWordWrap(false);
     m_gridLayout->addItem(m_bitLabel, row, 0);
 
     m_bit = new Plasma::Label(this);
     m_bit->setText("Bit details!");
-    m_bit->setWordWrap(false);
+    m_bit->nativeWidget()->setWordWrap(false);
     m_bit->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_bit, row, 1, 1, 2, Qt::AlignTop);
 
@@ -125,12 +128,12 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_interfaceLabel = new Plasma::Label(this);
     m_interfaceLabel->setText(i18nc("interface details", "System Name:"));
     m_interfaceLabel->setAlignment(Qt::AlignRight);
-    m_interfaceLabel->setWordWrap(false);
+    m_interfaceLabel->nativeWidget()->setWordWrap(false);
     m_gridLayout->addItem(m_interfaceLabel, row, 0);
 
     m_interface = new Plasma::Label(this);
     m_interface->setText("Interface details!");
-    m_interface->setWordWrap(false);
+    m_interface->nativeWidget()->setWordWrap(false);
     m_interface->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_interface, row, 1, 1, 2, Qt::AlignTop);
 
@@ -139,12 +142,12 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_macLabel = new Plasma::Label(this);
     m_macLabel->setText(i18nc("interface details", "Hardware Address (MAC):"));
     m_macLabel->setAlignment(Qt::AlignRight);
-    m_macLabel->setWordWrap(false);
+    m_macLabel->nativeWidget()->setWordWrap(false);
     m_gridLayout->addItem(m_macLabel, row, 0);
 
     m_mac = new Plasma::Label(this);
     m_mac->setText("MAC details!");
-    m_mac->setWordWrap(false);
+    m_mac->nativeWidget()->setWordWrap(false);
     m_mac->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_mac, row, 1, 1, 2, Qt::AlignTop);
 
@@ -153,12 +156,12 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_driverLabel = new Plasma::Label(this);
     m_driverLabel->setText(i18nc("interface details", "Driver:"));
     m_driverLabel->setAlignment(Qt::AlignRight);
-    m_driverLabel->setWordWrap(false);
+    m_driverLabel->nativeWidget()->setWordWrap(false);
     m_gridLayout->addItem(m_driverLabel, row, 0);
 
     m_driver = new Plasma::Label(this);
     m_driver->setText("Driver details!");
-    m_driver->setWordWrap(false);
+    m_driver->nativeWidget()->setWordWrap(false);
     m_driver->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_driver, row, 1, 1, 2, Qt::AlignTop);
 
