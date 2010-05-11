@@ -91,14 +91,19 @@ void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::I
 
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(sender());
 
-    if (state == Knm::InterfaceConnection::Activating) {
-        kDebug() << ic->connectionName() << "is activating";
-        m_activating.insert(ic);
-    } else {
-        m_activating.remove(ic);
-
-        if (state == Knm::InterfaceConnection::Unknown)
-	    KNotification::event(Event::Disconnected, m_interfaceNameLabel, i18nc("@info:status Notification text when deactivating a connection","%1 deactivated", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+    switch (state) {
+        case Knm::InterfaceConnection::Activating: 
+            kDebug() << ic->connectionName() << "is activating";
+            m_activating.insert(ic);
+            break;
+        case Knm::InterfaceConnection::Activated:
+            m_activating.remove(ic);
+    	    KNotification::event(Event::Connected, m_interfaceNameLabel, i18nc("@info:status Notification text when a connection has been activated","%1 activated", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+            break;
+        case Knm::InterfaceConnection::Unknown:
+            m_activating.remove(ic);
+    	    KNotification::event(Event::Disconnected, m_interfaceNameLabel, i18nc("@info:status Notification text when deactivating a connection","%1 deactivated", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+            break;
     }
 }
 
