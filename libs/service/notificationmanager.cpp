@@ -96,6 +96,9 @@ void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::I
         m_activating.insert(ic);
     } else {
         m_activating.remove(ic);
+
+        if (state == Knm::InterfaceConnection::Unknown)
+	    KNotification::event(Event::Disconnected, m_interfaceNameLabel, i18nc("@info:status Notification text when deactivating a connection","%1 deactivated", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
     }
 }
 
