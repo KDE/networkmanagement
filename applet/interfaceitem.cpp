@@ -234,6 +234,7 @@ QString InterfaceItem::connectionName()
 void InterfaceItem::setConnectionInfo()
 {
     if (m_iface) {
+        currentConnectionChanged();
         connectionStateChanged(m_iface->connectionState());
     }
 }
@@ -255,6 +256,7 @@ QString InterfaceItem::currentIpAddress()
 
 RemoteInterfaceConnection* InterfaceItem::currentConnection()
 {
+    kDebug() << m_currentConnection;
     if (m_currentConnection && m_currentConnection->activationState() != Knm::InterfaceConnection::Unknown) {
         return m_currentConnection;
     } else {

@@ -70,18 +70,22 @@ void WirelessInterfaceItem::setConnectionInfo()
             break;
         default:
         {
-            RemoteWirelessInterfaceConnection* wremote =
-                                static_cast<RemoteWirelessInterfaceConnection*>(currentConnection());
-            if (wremote) {
-                m_wirelessStatus->init(wremote);
-            }
-            if (!m_wirelessStatus->securityIcon().isEmpty()) {
-                m_connectionInfoIcon->nativeWidget()->setPixmap(KIcon(m_wirelessStatus->securityIcon()).pixmap(16, 16));
-
-                m_connectionInfoIcon->setToolTip(m_wirelessStatus->securityTooltip());
-                m_connectionInfoIcon->show();
-            } else {
+            if (!currentConnection()) {
                 m_connectionInfoIcon->hide();
+            } else {
+                RemoteWirelessInterfaceConnection* wremote =
+                                    static_cast<RemoteWirelessInterfaceConnection*>(currentConnection());
+                if (wremote) {
+                    m_wirelessStatus->init(wremote);
+                }
+                if (!m_wirelessStatus->securityIcon().isEmpty()) {
+                    m_connectionInfoIcon->nativeWidget()->setPixmap(KIcon(m_wirelessStatus->securityIcon()).pixmap(16, 16));
+
+                    m_connectionInfoIcon->setToolTip(m_wirelessStatus->securityTooltip());
+                    m_connectionInfoIcon->show();
+                } else {
+                    m_connectionInfoIcon->hide();
+                }
             }
             break;
         }
