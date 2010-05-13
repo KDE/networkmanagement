@@ -343,7 +343,11 @@ void NMPopup::wirelessEnabledToggled(bool checked)
 
 void NMPopup::networkingEnabledToggled(bool checked)
 {
-    kDebug() << "Applet networking enable switch toggled" << checked;
+    // Update wireless checkbox
+    m_rfCheckBox->setEnabled(checked);
+    m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessHardwareEnabled() &&  Solid::Control::NetworkManager::isWirelessEnabled());
+
+    // Switch networking on / off
     Solid::Control::NetworkManager::setNetworkingEnabled(checked);
 }
 
