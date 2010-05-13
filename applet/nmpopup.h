@@ -67,11 +67,11 @@ public Q_SLOTS:
     void networkingEnabledToggled(bool checked);
     void manageConnections();
     void showMore();
+    void showMore(bool);
     void handleConnectionStateChange(int new_state, int old_state, int reason);
     void toggleInterfaceTab();
 
 Q_SIGNALS:
-    void connectionListUpdated();
     void configNeedsSaving();
 
 private:

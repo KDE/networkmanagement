@@ -339,16 +339,31 @@ void NMPopup::wirelessEnabledToggled(bool checked)
 {
     kDebug() << "Applet wireless enable switch toggled" << checked;
     Solid::Control::NetworkManager::setWirelessEnabled(checked);
+    showMore(false);
+    if (checked && Solid::Control::NetworkManager::isNetworkingEnabled()) {
+        showMore(false);
+        m_showMoreButton->show();
+    } else {
+        m_showMoreButton->hide();
+    }
 }
 
 void NMPopup::networkingEnabledToggled(bool checked)
 {
+    // Switch networking on / off
+    Solid::Control::NetworkManager::setNetworkingEnabled(checked);
     // Update wireless checkbox
     m_rfCheckBox->setEnabled(checked);
     m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessHardwareEnabled() &&  Solid::Control::NetworkManager::isWirelessEnabled());
+    m_showMoreButton->setChecked(false);
+    if (checked && Solid::Control::NetworkManager::isWirelessHardwareEnabled() &&
+                   Solid::Control::NetworkManager::isWirelessEnabled()) {
+        showMore(false);
+        m_showMoreButton->show();
+    } else {
+        m_showMoreButton->hide();
+    }
 
-    // Switch networking on / off
-    Solid::Control::NetworkManager::setNetworkingEnabled(checked);
 }
 
 void NMPopup::managerWirelessEnabledChanged(bool enabled)
@@ -368,28 +383,21 @@ void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
 
 void NMPopup::showMore()
 {
-    if (m_showMoreButton->isChecked()) {
-        /*
-        Knm::Activatable::WirelessNetwork,
-        UnconfiguredInterface,
-        VpnInterfaceConnection,
-        HiddenWirelessInterfaceConnection
-        */
-        //kDebug() << "show more!";
+    showMore(m_showMoreButton->isChecked());
+}
+
+void NMPopup::showMore(bool more)
+{
+    if (more) {
         m_showMoreButton->setText(i18nc("pressed show more button", "Show Less..."));
         m_showMoreButton->setIcon(KIcon("list-remove"));
+        m_showMoreButton->setChecked(true);
         m_connectionList->setShowAllTypes(true);
-        //m_connectionList->addType(Knm::Activatable::WirelessNetwork);
-        //m_connectionList->addType(Knm::Activatable::HiddenWirelessInterfaceConnection);
-        //m_connectionList->addType(Knm::Activatable::VpnInterfaceConnection);
     } else {
-        //kDebug() << "show less";
         m_showMoreButton->setText(i18nc("unpressed show more button", "Show More..."));
+        m_showMoreButton->setChecked(false);
         m_connectionList->setShowAllTypes(false);
         m_showMoreButton->setIcon(KIcon("list-add"));
-        //m_connectionList->removeType(Knm::Activatable::WirelessNetwork);
-        //m_connectionList->removeType(Knm::Activatable::HiddenWirelessInterfaceConnection);
-        //m_connectionList->removeType(Knm::Activatable::VpnInterfaceConnection);
     }
 }
 
@@ -411,16 +419,18 @@ void NMPopup::toggleInterfaceTab()
     }
 
     if (m_leftWidget->currentIndex() == 0) {
-        m_showMoreButton->setChecked(true);
+        showMore(true);
         m_leftWidget->setCurrentIndex(1);
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interface Details</h3>"));
 
     } else {
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
-        m_showMoreButton->setChecked(false);
+        showMore(false);
         m_leftWidget->setCurrentIndex(0);
     }
-    showMore();
+    // Enable / disable updating of the details widget
+    m_interfaceDetailsWidget->setUpdateEnabled(m_leftWidget->currentIndex() == 1);
+    //showMore();
 }
 
 

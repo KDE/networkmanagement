@@ -183,6 +183,13 @@ InterfaceDetailsWidget::~InterfaceDetailsWidget()
 {
 }
 
+void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
+{
+    // disconnect / connect goes here
+
+    m_updateEnabled = enable;
+}
+
 void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* iface)
 {
     if (iface) {

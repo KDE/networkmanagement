@@ -41,6 +41,7 @@ Q_OBJECT
         void setInterface(Solid::Control::NetworkInterface* iface);
         void setMAC(Solid::Control::NetworkInterface* iface);
         void setIP(QString ip);
+        void setUpdateEnabled(bool enable);
 
     Q_SIGNALS:
         void back();
@@ -68,6 +69,8 @@ Q_OBJECT
         Plasma::Label* m_bit;
         //Plasma::Label* m_otherLabel;
         //Plasma::Label* m_other;
+
+        bool m_updateEnabled;
 };
 
 #endif // INTERFACEDETAILSWIDGET_H

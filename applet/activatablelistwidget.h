@@ -56,7 +56,7 @@ public Q_SLOTS:
     void toggleVpn();
 
 Q_SIGNALS:
-    void connectionListUpdated();
+    //void connectionListUpdated();
 
 private:
     void filter();
