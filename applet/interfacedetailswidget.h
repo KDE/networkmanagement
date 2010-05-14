@@ -43,10 +43,18 @@ Q_OBJECT
         void setIP(QString ip);
         void setUpdateEnabled(bool enable);
 
+    public Q_SLOTS:
+        void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
+        //void dataUpdated(const QString&, const Plasma::DataEngine::Data&);
+        void sourceAdded(const QString&);
+
     Q_SIGNALS:
         void back();
 
     private:
+        Plasma::DataEngine* engine();
+        void updateWidgets();
+
         Solid::Control::NetworkInterface* m_iface;
 
         QGraphicsGridLayout *m_gridLayout;
@@ -67,8 +75,15 @@ Q_OBJECT
         Plasma::Label* m_state;
         Plasma::Label* m_bitLabel;
         Plasma::Label* m_bit;
-        //Plasma::Label* m_otherLabel;
-        //Plasma::Label* m_other;
+        Plasma::Label* m_trafficLabel;
+        Plasma::Label* m_traffic;
+
+        QString m_tx;
+        QString m_txSource;
+        QString m_txUnit;
+        QString m_rx;
+        QString m_rxSource;
+        QString m_rxUnit;
 
         bool m_updateEnabled;
 };

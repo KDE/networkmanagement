@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdebug.h>
 
 // Plasma
+#include <Plasma/DataEngineManager>
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 
@@ -165,6 +166,20 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_driver->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_driver, row, 1, 1, 2, Qt::AlignTop);
 
+    // Traffic
+    row++;
+    m_trafficLabel = new Plasma::Label(this);
+    m_trafficLabel->setText(i18nc("traffic details", "Traffic in:\nTraffic out:"));
+    m_trafficLabel->setAlignment(Qt::AlignRight);
+    m_trafficLabel->nativeWidget()->setWordWrap(false);
+    m_gridLayout->addItem(m_trafficLabel, row, 0);
+
+    m_traffic = new Plasma::Label(this);
+    m_traffic->setText("traffic details!");
+    m_traffic->nativeWidget()->setWordWrap(false);
+    m_traffic->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    m_gridLayout->addItem(m_traffic, row, 1, 1, 2, Qt::AlignTop);
+
     Plasma::IconWidget* back = new Plasma::IconWidget(this);
     back->setIcon("go-previous");
     back->setMaximumSize(QSize(16, 16));
@@ -177,6 +192,15 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     QGraphicsWidget *spacer = new QGraphicsWidget(this);
     spacer->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     m_gridLayout->addItem(spacer, row, 0);
+
+    Plasma::DataEngine *e = Plasma::DataEngineManager::self()->loadEngine("systemmonitor");
+
+    //connect(e, SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
+}
+
+void InterfaceDetailsWidget::sourceAdded(const QString &source)
+{
+    //kDebug() << "Source added:" << source;
 }
 
 InterfaceDetailsWidget::~InterfaceDetailsWidget()
@@ -186,8 +210,55 @@ InterfaceDetailsWidget::~InterfaceDetailsWidget()
 void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
 {
     // disconnect / connect goes here
-
+    Plasma::DataEngine *e = engine();
+    if (e) {
+        int interval = 2000;
+        if (enable) {
+            kDebug() << "connecting ..." << m_rxSource << m_txSource;
+            e->connectSource(m_rxSource, this, interval);
+            e->connectSource(m_txSource, this, interval);
+        } else {
+            kDebug() << "disconnecting ..." << m_rxSource << m_txSource;
+            e->disconnectSource(m_rxSource, this);
+            e->disconnectSource(m_txSource, this);
+        }
+    }
     m_updateEnabled = enable;
+}
+
+void InterfaceDetailsWidget::updateWidgets()
+{
+    QString s = i18nc("traffic, e.g. n KB/s\n m KB/s", "%1 %2\n%3 %4", m_rx, m_rxUnit, m_tx, m_txUnit);
+    kDebug() << s;
+    m_traffic->setText(s);
+}
+
+Plasma::DataEngine* InterfaceDetailsWidget::engine()
+{
+    Plasma::DataEngine *e = Plasma::DataEngineManager::self()->engine("systemmonitor");
+
+
+    if (e->isValid()) {
+        kDebug() << "engine loaded. :-)";
+    } else {
+        kDebug() << "engine NOT loaded. )-:";
+    }
+    return e;
+
+}
+
+void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data)
+{
+    kDebug() << "Source Updated!!!" << sourceName << data;
+    if (sourceName == m_txSource) {
+        m_tx = data["value"].toString();
+        m_txUnit = data["units"].toString();
+    } else if (sourceName == m_rxSource) {
+        m_rx = data["value"].toString();
+        m_rxUnit = data["units"].toString();
+    }
+    //QString trafficInfo = i18nc("traffic status in details widget", "In: %1%2\nOut: ...", m_tx, m_txUnit);
+    updateWidgets();
 }
 
 void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* iface)
@@ -200,6 +271,9 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
         //m_speed->setText(QString::number(iface->designSpeed()));
         m_type->setText(UiUtils::interfaceTypeLabel(iface->type()));
         m_state->setText(UiUtils::connectionStateToString(iface->connectionState()));
+
+        m_rxSource = QString("network/interfaces/%1/receiver/data").arg(m_iface->interfaceName());
+        m_txSource = QString("network/interfaces/%1/transmitter/data").arg(m_iface->interfaceName());
     }
     /*
     Solid::Device *dev = new Solid::Device(iface->uni());

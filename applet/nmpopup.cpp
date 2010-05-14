@@ -421,15 +421,16 @@ void NMPopup::toggleInterfaceTab()
     if (m_leftWidget->currentIndex() == 0) {
         showMore(true);
         m_leftWidget->setCurrentIndex(1);
+        // Enable / disable updating of the details widget
+        m_interfaceDetailsWidget->setUpdateEnabled(true);
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interface Details</h3>"));
 
     } else {
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
         showMore(false);
+        m_interfaceDetailsWidget->setUpdateEnabled(false);
         m_leftWidget->setCurrentIndex(0);
     }
-    // Enable / disable updating of the details widget
-    m_interfaceDetailsWidget->setUpdateEnabled(m_leftWidget->currentIndex() == 1);
     //showMore();
 }
 
