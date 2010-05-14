@@ -29,12 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QLabel>
 
 // KDE
+#include <KGlobalSettings>
 #include <kdebug.h>
 
 // Plasma
 #include <Plasma/DataEngineManager>
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
+#include <Plasma/SignalPlotter>
 
 //Solid
 #include <solid/control/wirelessaccesspoint.h>
@@ -180,6 +182,24 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_traffic->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_traffic, row, 1, 1, 2, Qt::AlignTop);
 
+    // Traffic plotter
+    row++;
+    m_trafficPlotter = new Plasma::SignalPlotter(this);
+    m_trafficPlotter->addPlot(QColor("green")); // receiver
+    m_trafficPlotter->addPlot(QColor("#F1DE3C")); // transmitter
+    m_trafficPlotter->setMinimumHeight(80);
+    m_trafficPlotter->setFont(KGlobalSettings::smallestReadableFont());
+    m_trafficPlotter->setThinFrame(false);
+    m_trafficPlotter->setShowLabels(true);
+    m_trafficPlotter->setShowTopBar(false);
+    m_trafficPlotter->setShowVerticalLines(false);
+    m_trafficPlotter->setShowHorizontalLines(true);
+    m_trafficPlotter->setHorizontalLinesCount(2);
+    m_trafficPlotter->setUseAutoRange(true);
+    m_trafficPlotter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+    m_gridLayout->addItem(m_trafficPlotter, row, 0, 1, 3);
+
     Plasma::IconWidget* back = new Plasma::IconWidget(this);
     back->setIcon("go-previous");
     back->setMaximumSize(QSize(16, 16));
@@ -189,9 +209,9 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
 
     // Add spacer to push content to the top
     row++;
-    QGraphicsWidget *spacer = new QGraphicsWidget(this);
-    spacer->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
-    m_gridLayout->addItem(spacer, row, 0);
+    //QGraphicsWidget *spacer = new QGraphicsWidget(this);
+    //spacer->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+    //m_gridLayout->addItem(spacer, row, 0);
 
     Plasma::DataEngine *e = Plasma::DataEngineManager::self()->loadEngine("systemmonitor");
 
@@ -212,7 +232,7 @@ void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
     // disconnect / connect goes here
     Plasma::DataEngine *e = engine();
     if (e) {
-        int interval = 2000;
+        int interval = 1000;
         if (enable) {
             kDebug() << "connecting ..." << m_rxSource << m_txSource;
             e->connectSource(m_rxSource, this, interval);
@@ -229,8 +249,14 @@ void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
 void InterfaceDetailsWidget::updateWidgets()
 {
     QString s = i18nc("traffic, e.g. n KB/s\n m KB/s", "%1 %2\n%3 %4", m_rx, m_rxUnit, m_tx, m_txUnit);
-    kDebug() << s;
+    //kDebug() << s;
     m_traffic->setText(s);
+
+    QList<double> v;
+    v << m_rx.toDouble() << m_tx.toDouble();
+    m_trafficPlotter->addSample(v);
+    m_trafficPlotter->setUnit(m_rxUnit);
+    m_trafficPlotter->setTitle(i18nc("traffic, e.g. n KB/s / m KB/s", "%1 %2\n%3 %4", m_rx, m_rxUnit, m_tx, m_txUnit));
 }
 
 Plasma::DataEngine* InterfaceDetailsWidget::engine()
@@ -249,7 +275,7 @@ Plasma::DataEngine* InterfaceDetailsWidget::engine()
 
 void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data)
 {
-    kDebug() << "Source Updated!!!" << sourceName << data;
+    //kDebug() << "Source Updated!!!" << sourceName << data;
     if (sourceName == m_txSource) {
         m_tx = data["value"].toString();
         m_txUnit = data["units"].toString();

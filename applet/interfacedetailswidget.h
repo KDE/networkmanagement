@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkinterface.h>
 #include <Plasma/Label>
+#include <Plasma/SignalPlotter>
 
 class RemoteActivatable;
 class RemoteInterfaceConnection;
@@ -77,6 +78,7 @@ Q_OBJECT
         Plasma::Label* m_bit;
         Plasma::Label* m_trafficLabel;
         Plasma::Label* m_traffic;
+        Plasma::SignalPlotter *m_trafficPlotter;
 
         QString m_tx;
         QString m_txSource;
