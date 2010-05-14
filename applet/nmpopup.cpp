@@ -52,6 +52,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vpninterfaceitem.h"
 #include "activatablelistwidget.h"
 #include "interfacedetailswidget.h"
+#include "uiutils.h"
 
 NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* parent)
 : QGraphicsWidget(parent),
@@ -423,7 +424,8 @@ void NMPopup::toggleInterfaceTab()
         m_leftWidget->setCurrentIndex(1);
         // Enable / disable updating of the details widget
         m_interfaceDetailsWidget->setUpdateEnabled(true);
-        m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interface Details</h3>"));
+        m_leftLabel->setText(QString("<h3>%1</h3>").arg(
+                             UiUtils::interfaceNameLabel(item->interface()->uni())));
 
     } else {
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));

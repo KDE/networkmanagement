@@ -59,18 +59,12 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_gridLayout = new QGraphicsGridLayout(this);
 
     int row = 0;
-
-    //Interface
-    m_interfaceNameLabel = new Plasma::Label(this);
-    m_interfaceNameLabel->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    //m_interfaceNameLabel->setText("Interface:");
-    m_gridLayout->addItem(m_interfaceNameLabel, row, 0, 1, 2);
-
     //Type
-    row++;
+    //row++;
     m_typeLabel = new Plasma::Label(this);
-    m_typeLabel->setText(i18nc("interface details", "Interface Type:"));
+    m_typeLabel->setText(i18nc("interface details", "Type:"));
     m_typeLabel->setAlignment(Qt::AlignRight);
+    m_typeLabel->setFont(KGlobalSettings::smallestReadableFont());
     // FIXME 4.5: setWordWrap() is now a method in Plasma::Label, we're keeping this
     // for a while for backwards compat though. Remove the nativeWidget() call in between
     // when we depend on 4.5
@@ -81,6 +75,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_type->setText("Type details!");
     m_type->nativeWidget()->setWordWrap(false);
     m_type->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    m_type->setFont(KGlobalSettings::smallestReadableFont());
     m_gridLayout->addItem(m_type, row, 1, Qt::AlignTop);
 
 
@@ -90,12 +85,14 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_stateLabel->setText(i18nc("interface details", "Connection State:"));
     m_stateLabel->setAlignment(Qt::AlignRight);
     m_stateLabel->nativeWidget()->setWordWrap(false);
+    m_stateLabel->setFont(KGlobalSettings::smallestReadableFont());
     m_gridLayout->addItem(m_stateLabel, row, 0);
 
     m_state = new Plasma::Label(this);
     m_state->setText("State details!");
     m_state->nativeWidget()->setWordWrap(false);
     m_state->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    m_state->setFont(KGlobalSettings::smallestReadableFont());
     m_gridLayout->addItem(m_state, row, 1, 1, 2, Qt::AlignTop);
 
     //IP
@@ -104,11 +101,13 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_ipLabel->setText(i18nc("interface details", "Network Address (IP):"));
     m_ipLabel->setAlignment(Qt::AlignRight);
     m_ipLabel->nativeWidget()->setWordWrap(false);
+    m_ipLabel->setFont(KGlobalSettings::smallestReadableFont());
     m_gridLayout->addItem(m_ipLabel, row, 0);
 
     m_ip = new Plasma::Label(this);
     m_ip->setText("IP details!");
     m_ip->nativeWidget()->setWordWrap(false);
+    m_ip->setFont(KGlobalSettings::smallestReadableFont());
     m_ip->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_ip, row, 1, 1, 2, Qt::AlignTop);
 
@@ -117,12 +116,14 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_bitLabel = new Plasma::Label(this);
     m_bitLabel->setText(i18nc("interface details", "Connection Speed:"));
     m_bitLabel->setAlignment(Qt::AlignRight);
+    m_bitLabel->setFont(KGlobalSettings::smallestReadableFont());
     m_bitLabel->nativeWidget()->setWordWrap(false);
     m_gridLayout->addItem(m_bitLabel, row, 0);
 
     m_bit = new Plasma::Label(this);
     m_bit->setText("Bit details!");
     m_bit->nativeWidget()->setWordWrap(false);
+    m_bit->setFont(KGlobalSettings::smallestReadableFont());
     m_bit->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_bit, row, 1, 1, 2, Qt::AlignTop);
 
@@ -132,11 +133,13 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_interfaceLabel->setText(i18nc("interface details", "System Name:"));
     m_interfaceLabel->setAlignment(Qt::AlignRight);
     m_interfaceLabel->nativeWidget()->setWordWrap(false);
+    m_interfaceLabel->setFont(KGlobalSettings::smallestReadableFont());
     m_gridLayout->addItem(m_interfaceLabel, row, 0);
 
     m_interface = new Plasma::Label(this);
     m_interface->setText("Interface details!");
     m_interface->nativeWidget()->setWordWrap(false);
+    m_interface->setFont(KGlobalSettings::smallestReadableFont());
     m_interface->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_interface, row, 1, 1, 2, Qt::AlignTop);
 
@@ -145,12 +148,14 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_macLabel = new Plasma::Label(this);
     m_macLabel->setText(i18nc("interface details", "Hardware Address (MAC):"));
     m_macLabel->setAlignment(Qt::AlignRight);
+    m_macLabel->setFont(KGlobalSettings::smallestReadableFont());
     m_macLabel->nativeWidget()->setWordWrap(false);
     m_gridLayout->addItem(m_macLabel, row, 0);
 
     m_mac = new Plasma::Label(this);
     m_mac->setText("MAC details!");
     m_mac->nativeWidget()->setWordWrap(false);
+    m_mac->setFont(KGlobalSettings::smallestReadableFont());
     m_mac->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_mac, row, 1, 1, 2, Qt::AlignTop);
 
@@ -160,38 +165,35 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_driverLabel->setText(i18nc("interface details", "Driver:"));
     m_driverLabel->setAlignment(Qt::AlignRight);
     m_driverLabel->nativeWidget()->setWordWrap(false);
+    m_driverLabel->setFont(KGlobalSettings::smallestReadableFont());
     m_gridLayout->addItem(m_driverLabel, row, 0);
 
     m_driver = new Plasma::Label(this);
     m_driver->setText("Driver details!");
     m_driver->nativeWidget()->setWordWrap(false);
+    m_driver->setFont(KGlobalSettings::smallestReadableFont());
     m_driver->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_driver, row, 1, 1, 2, Qt::AlignTop);
 
     // Traffic
+
+    //Interface
     row++;
-    m_trafficLabel = new Plasma::Label(this);
-    m_trafficLabel->setText(i18nc("traffic details", "Traffic in:\nTraffic out:"));
-    m_trafficLabel->setAlignment(Qt::AlignRight);
-    m_trafficLabel->nativeWidget()->setWordWrap(false);
-    m_gridLayout->addItem(m_trafficLabel, row, 0);
-
-    m_traffic = new Plasma::Label(this);
-    m_traffic->setText("traffic details!");
-    m_traffic->nativeWidget()->setWordWrap(false);
-    m_traffic->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
-    m_gridLayout->addItem(m_traffic, row, 1, 1, 2, Qt::AlignTop);
-
+    m_trafficNameLabel = new Plasma::Label(this);
+    m_trafficNameLabel->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    m_trafficNameLabel->setText(i18nc("interface details", "<b>Traffic</b>"));
+    m_gridLayout->addItem(m_trafficNameLabel, row, 0, 1, 2);
+    
     // Traffic plotter
     row++;
     m_trafficPlotter = new Plasma::SignalPlotter(this);
-    m_trafficPlotter->addPlot(QColor("green")); // receiver
-    m_trafficPlotter->addPlot(QColor("#F1DE3C")); // transmitter
-    m_trafficPlotter->setMinimumHeight(80);
+    m_trafficPlotter->addPlot(QColor("green")); // receiver green
+    m_trafficPlotter->addPlot(QColor("#F1DE3C")); // transmitter yellow
+    m_trafficPlotter->setMinimumHeight(50);
     m_trafficPlotter->setFont(KGlobalSettings::smallestReadableFont());
     m_trafficPlotter->setThinFrame(false);
     m_trafficPlotter->setShowLabels(true);
-    m_trafficPlotter->setShowTopBar(false);
+    m_trafficPlotter->setShowTopBar(true);
     m_trafficPlotter->setShowVerticalLines(false);
     m_trafficPlotter->setShowHorizontalLines(true);
     m_trafficPlotter->setHorizontalLinesCount(2);
@@ -199,6 +201,21 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_trafficPlotter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 
     m_gridLayout->addItem(m_trafficPlotter, row, 0, 1, 3);
+
+    row++;
+    m_trafficRx = new Plasma::Label(this);
+    m_trafficRx->setText(i18nc("traffic received empty", "Received: -"));
+    m_trafficRx->setAlignment(Qt::AlignRight);
+    m_trafficRx->setFont(KGlobalSettings::smallestReadableFont());
+    m_trafficRx->nativeWidget()->setWordWrap(false);
+    m_gridLayout->addItem(m_trafficRx, row, 0);
+
+    m_trafficTx = new Plasma::Label(this);
+    m_trafficTx->setText(i18nc("traffic transmitted empty", "Transmitted: -"));
+    m_trafficTx->nativeWidget()->setWordWrap(false);
+    m_trafficTx->setFont(KGlobalSettings::smallestReadableFont());
+    m_trafficTx->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    m_gridLayout->addItem(m_trafficTx, row, 1, 1, 2, Qt::AlignTop);
 
     Plasma::IconWidget* back = new Plasma::IconWidget(this);
     back->setIcon("go-previous");
@@ -213,14 +230,14 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     //spacer->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     //m_gridLayout->addItem(spacer, row, 0);
 
-    Plasma::DataEngine *e = Plasma::DataEngineManager::self()->loadEngine("systemmonitor");
+    Plasma::DataEngineManager::self()->loadEngine("systemmonitor");
 
     //connect(e, SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
 }
 
 void InterfaceDetailsWidget::sourceAdded(const QString &source)
 {
-    //kDebug() << "Source added:" << source;
+    kDebug() << "Source added:" << source;
 }
 
 InterfaceDetailsWidget::~InterfaceDetailsWidget()
@@ -237,10 +254,14 @@ void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
             kDebug() << "connecting ..." << m_rxSource << m_txSource;
             e->connectSource(m_rxSource, this, interval);
             e->connectSource(m_txSource, this, interval);
+            e->connectSource(m_rxTotalSource, this, interval);
+            e->connectSource(m_txTotalSource, this, interval);
         } else {
             kDebug() << "disconnecting ..." << m_rxSource << m_txSource;
             e->disconnectSource(m_rxSource, this);
             e->disconnectSource(m_txSource, this);
+            e->disconnectSource(m_rxTotalSource, this);
+            e->disconnectSource(m_txTotalSource, this);
         }
     }
     m_updateEnabled = enable;
@@ -248,15 +269,26 @@ void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
 
 void InterfaceDetailsWidget::updateWidgets()
 {
-    QString s = i18nc("traffic, e.g. n KB/s\n m KB/s", "%1 %2\n%3 %4", m_rx, m_rxUnit, m_tx, m_txUnit);
     //kDebug() << s;
-    m_traffic->setText(s);
+    //m_traffic->setText(s);
 
+    double _r = m_rx.toDouble();
+    double _t = m_tx.toDouble();
     QList<double> v;
-    v << m_rx.toDouble() << m_tx.toDouble();
+    v << _r << _t;
     m_trafficPlotter->addSample(v);
     m_trafficPlotter->setUnit(m_rxUnit);
-    m_trafficPlotter->setTitle(i18nc("traffic, e.g. n KB/s / m KB/s", "%1 %2\n%3 %4", m_rx, m_rxUnit, m_tx, m_txUnit));
+    //m_trafficPlotter->setTitle(i18nc("traffic, e.g. n KB/s / m KB/s", "%1 %2 %3 %4", m_rx, m_rxUnit, m_tx, m_txUnit));
+
+    QString r = KGlobal::locale()->formatByteSize(_r*1000);
+    r.append("/s");
+    QString t = KGlobal::locale()->formatByteSize(_t*1000);
+    t.append("/s");
+    QString s = i18nc("traffic, e.g. n KB/s\n m KB/s", "%1 %2", r, t);
+    m_trafficPlotter->setTitle(s);
+
+    m_trafficRx->setText(i18nc("", "Received: %1", KGlobal::locale()->formatByteSize(m_rxTotal*1000)));
+    m_trafficTx->setText(i18nc("", "Transmitted: %1", KGlobal::locale()->formatByteSize(m_txTotal*1000)));
 }
 
 Plasma::DataEngine* InterfaceDetailsWidget::engine()
@@ -282,6 +314,11 @@ void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma
     } else if (sourceName == m_rxSource) {
         m_rx = data["value"].toString();
         m_rxUnit = data["units"].toString();
+    } else if (sourceName == m_rxTotalSource) {
+        m_rxTotal = data["value"].toString().toLong();
+        QString _srx = QString("%1Total").arg(m_rxSource);
+    } else if (sourceName == m_txTotalSource) {
+        m_txTotal = data["value"].toString().toLong();
     }
     //QString trafficInfo = i18nc("traffic status in details widget", "In: %1%2\nOut: ...", m_tx, m_txUnit);
     updateWidgets();
@@ -291,7 +328,7 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
 {
     if (iface) {
         m_iface = iface;
-        m_interfaceNameLabel->setText(QString("<b>%1</b>").arg(UiUtils::interfaceNameLabel(iface->uni())));
+        //m_trafficNameLabel->setText(QString("<b>%1</b>").arg(UiUtils::interfaceNameLabel(iface->uni())));
         m_interface->setText(m_iface->interfaceName());
         m_driver->setText(iface->driver());
         //m_speed->setText(QString::number(iface->designSpeed()));
@@ -300,6 +337,8 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
 
         m_rxSource = QString("network/interfaces/%1/receiver/data").arg(m_iface->interfaceName());
         m_txSource = QString("network/interfaces/%1/transmitter/data").arg(m_iface->interfaceName());
+        m_rxTotalSource = QString("network/interfaces/%1/receiver/dataTotal").arg(m_iface->interfaceName());
+        m_txTotalSource = QString("network/interfaces/%1/transmitter/dataTotal").arg(m_iface->interfaceName());
     }
     /*
     Solid::Device *dev = new Solid::Device(iface->uni());

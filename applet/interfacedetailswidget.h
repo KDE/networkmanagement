@@ -59,7 +59,6 @@ Q_OBJECT
         Solid::Control::NetworkInterface* m_iface;
 
         QGraphicsGridLayout *m_gridLayout;
-        Plasma::Label* m_interfaceNameLabel;
         Plasma::Label* m_interfaceLabel;
         Plasma::Label* m_interface;
         Plasma::Label* m_macLabel;
@@ -70,22 +69,26 @@ Q_OBJECT
         Plasma::Label* m_driver;
         Plasma::Label* m_typeLabel;
         Plasma::Label* m_type;
-        //Plasma::Label* m_speedLabel;
-        //Plasma::Label* m_speed;
         Plasma::Label* m_stateLabel;
         Plasma::Label* m_state;
         Plasma::Label* m_bitLabel;
         Plasma::Label* m_bit;
-        Plasma::Label* m_trafficLabel;
-        Plasma::Label* m_traffic;
+
+        Plasma::Label* m_trafficNameLabel;
         Plasma::SignalPlotter *m_trafficPlotter;
+        Plasma::Label* m_trafficRx;
+        Plasma::Label* m_trafficTx;
 
         QString m_tx;
         QString m_txSource;
+        QString m_txTotalSource;
         QString m_txUnit;
         QString m_rx;
         QString m_rxSource;
+        QString m_rxTotalSource;
         QString m_rxUnit;
+        qlonglong m_rxTotal;
+        qlonglong m_txTotal;
 
         bool m_updateEnabled;
 };
