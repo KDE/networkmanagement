@@ -186,9 +186,15 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     
     // Traffic plotter
     row++;
+    m_rxColor = QColor("#0099FF"); // blue
+    //m_rxColor = QColor("lightblue"); // blue
+    //m_rxColor.setAlphaF(0.6);
+    m_txColor = QColor("#91FF00"); // yellow
+    //m_txColor = QColor("lightgreen"); // yellow
+    m_txColor.setAlphaF(0.6);
     m_trafficPlotter = new Plasma::SignalPlotter(this);
-    m_trafficPlotter->addPlot(QColor("green")); // receiver green
-    m_trafficPlotter->addPlot(QColor("#F1DE3C")); // transmitter yellow
+    m_trafficPlotter->addPlot(m_rxColor); // receiver green
+    m_trafficPlotter->addPlot(m_txColor); // transmitter yellow
     m_trafficPlotter->setMinimumHeight(50);
     m_trafficPlotter->setFont(KGlobalSettings::smallestReadableFont());
     m_trafficPlotter->setThinFrame(false);
@@ -280,15 +286,15 @@ void InterfaceDetailsWidget::updateWidgets()
     m_trafficPlotter->setUnit(m_rxUnit);
     //m_trafficPlotter->setTitle(i18nc("traffic, e.g. n KB/s / m KB/s", "%1 %2 %3 %4", m_rx, m_rxUnit, m_tx, m_txUnit));
 
-    QString r = KGlobal::locale()->formatByteSize(_r*1000);
+    QString r = KGlobal::locale()->formatByteSize(_r*1024);
     r.append("/s");
-    QString t = KGlobal::locale()->formatByteSize(_t*1000);
+    QString t = KGlobal::locale()->formatByteSize(_t*1024);
     t.append("/s");
     QString s = i18nc("traffic, e.g. n KB/s\n m KB/s", "%1 %2", r, t);
     m_trafficPlotter->setTitle(s);
 
-    m_trafficRx->setText(i18nc("", "Received: %1", KGlobal::locale()->formatByteSize(m_rxTotal*1000)));
-    m_trafficTx->setText(i18nc("", "Transmitted: %1", KGlobal::locale()->formatByteSize(m_txTotal*1000)));
+    m_trafficRx->setText(i18nc("", "Received: %1", KGlobal::locale()->formatByteSize(m_rxTotal*1000, 2)));
+    m_trafficTx->setText(i18nc("", "Transmitted: %1", KGlobal::locale()->formatByteSize(m_txTotal*1000, 2)));
 }
 
 Plasma::DataEngine* InterfaceDetailsWidget::engine()

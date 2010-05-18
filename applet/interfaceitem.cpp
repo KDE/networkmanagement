@@ -361,7 +361,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
         case Solid::Control::NetworkInterface::NeedAuth:
         case Solid::Control::NetworkInterface::IPConfig:
             setEnabled(true);
-            m_disconnect = true;
+            m_disconnect = false;
             break;
         case Solid::Control::NetworkInterface::Activated:
             m_disconnect = true;

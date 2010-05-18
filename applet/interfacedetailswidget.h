@@ -76,6 +76,8 @@ Q_OBJECT
 
         Plasma::Label* m_trafficNameLabel;
         Plasma::SignalPlotter *m_trafficPlotter;
+        QColor m_rxColor;
+        QColor m_txColor;
         Plasma::Label* m_trafficRx;
         Plasma::Label* m_trafficTx;
 
