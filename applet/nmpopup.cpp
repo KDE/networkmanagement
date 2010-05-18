@@ -178,7 +178,8 @@ void NMPopup::init()
     m_showMoreButton->setCheckable(true);
     m_showMoreButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     m_showMoreButton->setIcon(KIcon("list-add"));
-    m_showMoreButton->setText(i18nc("manage connections button in the applet's popup", "Show More..."));
+    m_showMoreButton->setText(i18nc("show more button in the applet's popup", "Show More..."));
+    m_showMoreButton->setMinimumHeight(28);
     m_showMoreButton->setMaximumHeight(28);
     connect(m_showMoreButton, SIGNAL(clicked()), this, SLOT(showMore()));
 
@@ -414,10 +415,9 @@ void NMPopup::toggleInterfaceTab()
 {
     InterfaceItem* item = qobject_cast<InterfaceItem*>(sender());
     if (item) {
-        //m_interfaceDetailsWidget->resetUi();
-        m_interfaceDetailsWidget->setInterface(item->interface());
-        m_interfaceDetailsWidget->setIP(item->currentIpAddress());
-        //m_interfaceDetailsWidget->setMAC(item->interface());
+    m_interfaceDetailsWidget->setInterface(item->interface());
+    m_interfaceDetailsWidget->setIP(item->currentIpAddress());
+    m_interfaceDetailsWidget->setMAC(item->interface());
     }
 
     if (m_leftWidget->currentIndex() == 0) {
@@ -425,10 +425,9 @@ void NMPopup::toggleInterfaceTab()
         m_leftWidget->setCurrentIndex(1);
         // Enable / disable updating of the details widget
         m_interfaceDetailsWidget->setUpdateEnabled(true);
-        if (item->interface()) {
-            m_leftLabel->setText(QString("<h3>%1</h3>").arg(
-                                UiUtils::interfaceNameLabel(item->interface()->uni())));
-        }
+        m_leftLabel->setText(QString("<h3>%1</h3>").arg(
+                             UiUtils::interfaceNameLabel(item->interface()->uni())));
+
     } else {
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
         showMore(false);
