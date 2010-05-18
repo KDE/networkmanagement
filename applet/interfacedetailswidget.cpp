@@ -223,12 +223,17 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_trafficTx->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_trafficTx, row, 1, 1, 2, Qt::AlignTop);
 
-    Plasma::IconWidget* back = new Plasma::IconWidget(this);
-    back->setIcon("go-previous");
-    back->setMaximumSize(QSize(16, 16));
-    m_gridLayout->addItem(back, 0, 2, 2, 1);
+    // add pushbutton for "back" action
+    m_backButton = new Plasma::PushButton(this);
+    m_backButton->setMaximumHeight(16);
+    m_backButton->setMaximumWidth(16);
+    m_backButton->setIcon(KIcon("go-previous"));
+    m_backButton->setToolTip(i18n("back"));
+
+    connect(m_backButton, SIGNAL(clicked()), this, SIGNAL(back()));
+
+    m_gridLayout->addItem(m_backButton, 0, 2, 2, 1);
     setLayout(m_gridLayout);
-    connect(back, SIGNAL(clicked()), this, SIGNAL(back()));
 
     // Add spacer to push content to the top
     row++;

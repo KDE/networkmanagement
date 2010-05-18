@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkinterface.h>
 #include <Plasma/Label>
+#include <Plasma/PushButton>
 #include <Plasma/SignalPlotter>
 
 class RemoteActivatable;
@@ -80,6 +81,8 @@ Q_OBJECT
         QColor m_txColor;
         Plasma::Label* m_trafficRx;
         Plasma::Label* m_trafficTx;
+
+        Plasma::PushButton* m_backButton;
 
         QString m_tx;
         QString m_txSource;
