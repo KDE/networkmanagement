@@ -88,7 +88,7 @@ void ActivatableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* o
 {
     Plasma::IconWidget::paint(painter, option, widget);
     if (m_hasDefaultRoute) {
-        painter->drawPixmap(QRect(4,4,12,12), KIcon("face-smile").pixmap(QSize(16,16)));
+        painter->drawPixmap(QRect(4,4,12,12), KIcon("network-defaultroute").pixmap(QSize(16,16)));
     }
 }
 

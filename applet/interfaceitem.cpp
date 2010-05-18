@@ -397,7 +397,7 @@ QPixmap InterfaceItem::interfacePixmap(const QString &icon) {
     // Which pixmap should we display with the notification?
     QString overlayIcon = icon;
     if (overlayIcon.isEmpty()) {
-        overlayIcon = "face-smile";
+        overlayIcon = "network-defaultroute";
     }
     //kDebug() << "painting icon" << overlayIcon;
     QPixmap pmap = KIcon(UiUtils::iconName(m_iface)).pixmap(m_pixmapSize);

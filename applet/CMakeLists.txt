@@ -30,6 +30,8 @@ target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmcli
 install(TARGETS plasma_applet_networkmanagement DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-networkmanagement.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
+add_subdirectory(icons)
+
 # We only install the theme for the version where it isn't in SVN
 macro_ensure_version("4.4.76" ${KDE_VERSION} IS45)
 if (NOT IS45)
