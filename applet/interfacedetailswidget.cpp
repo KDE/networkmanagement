@@ -365,6 +365,10 @@ void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma
 
 void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* iface)
 {
+    if (m_iface == iface) {
+        return;
+    }
+    resetUi();
     if (iface) {
         m_iface = iface;
         //m_trafficNameLabel->setText(QString("<b>%1</b>").arg(UiUtils::interfaceNameLabel(iface->uni())));

@@ -414,7 +414,7 @@ void NMPopup::toggleInterfaceTab()
 {
     InterfaceItem* item = qobject_cast<InterfaceItem*>(sender());
     if (item) {
-        m_interfaceDetailsWidget->resetUi();
+        //m_interfaceDetailsWidget->resetUi();
         m_interfaceDetailsWidget->setInterface(item->interface());
         m_interfaceDetailsWidget->setIP(item->currentIpAddress());
         //m_interfaceDetailsWidget->setMAC(item->interface());
