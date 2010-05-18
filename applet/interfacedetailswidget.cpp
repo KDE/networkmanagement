@@ -216,8 +216,8 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
 
     // add pushbutton for "back" action
     m_backButton = new Plasma::PushButton(this);
-    m_backButton->setMaximumHeight(16);
-    m_backButton->setMaximumWidth(16);
+    m_backButton->setMaximumHeight(22);
+    m_backButton->setMaximumWidth(22);
     m_backButton->setIcon(KIcon("go-previous"));
     m_backButton->setToolTip(i18n("back"));
 
