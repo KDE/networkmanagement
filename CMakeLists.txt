@@ -1,5 +1,8 @@
 project(plasma-networkmanagement)
 
+option(INSTALL_KNM_AUTOSTART "Install the autostart file for knetworkmanager. Warning: This prevents the plasmoid from working properly")
+
+
 find_package(KDE4 REQUIRED)
 include (KDE4Defaults)
 include(MacroOptionalAddSubdirectory)
@@ -58,6 +61,10 @@ else(NM_0_7)
       macro_log_feature(NM_0_7 "NetworkManager ${NETWORKMANAGER_VERSION}" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
 endif(NM_0_7)
 endif(NETWORKMANAGER_FOUND)
+
+if(INSTALL_KNM_AUTOSTART)
+	message("Installing autostart file for knm, use cmake -DINSTALL_KNM_AUTOSTART=ON to switch it on. Note that this will break the plasmoid. For this to work, make sure the kded DBus service is NOT loaded.")
+endif(INSTALL_KNM_AUTOSTART)
 
 macro_display_feature_log()
 
