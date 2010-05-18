@@ -87,7 +87,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     setAspectRatioMode(Plasma::ConstrainedSquare);
 
     m_svg = new Plasma::Svg(this);
-    m_svg->setImagePath("widgets/wireless");
+    m_svg->setImagePath("icons/network");
     m_svg->setContainsMultipleImages(true);
     setStatus(Plasma::ActiveStatus);
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
@@ -151,33 +151,18 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
         Solid::Control::AccessPoint *ap = wiface->findAccessPoint(uni);
         if (ap) {
             int str = ap->signalStrength();
-            if (s == 19) {
-                // The size 19 in the svg only has 4 states
-                if (str < 13) {
-                    strength = "0";
-                } else if (str < 38) {
-                    strength = "25";
-                } else if (str < 63) {
-                    strength = "50";
-                } else if (str < 88) {
-                    strength = "75";
-                } else if (str >= 88) {
-                    strength = "100";
-                }
-            } else { // ... the other sizes have more states.
-                if (str < 13) {
-                    strength = "0";
-                } else if (str < 30) {
-                    strength = "20";
-                } else if (str < 50) {
-                    strength = "40";
-                } else if (str < 70) {
-                    strength = "60";
-                } else if (str < 90) {
-                    strength = "80";
-                } else {
-                    strength = "100";
-                }
+            if (str < 13) {
+                strength = "0";
+            } else if (str < 30) {
+                strength = "20";
+            } else if (str < 50) {
+                strength = "40";
+            } else if (str < 70) {
+                strength = "60";
+            } else if (str < 90) {
+                strength = "80";
+            } else {
+                strength = "100";
             }
         } else {
                 strength = "0";
@@ -187,13 +172,8 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
     }
     QString w = QString::number(s);
 
-    // The format in the SVG looks like this: <width>-<height>-wireless-signal-<strenght>
-    QString icon;
-    if (_s < 19 || _s > 76) {
-        icon = QString("wireless-signal-%1").arg(strength);
-    } else {
-        icon = QString("%1-%2-wireless-signal-%3").arg(w, w, strength);
-    }
+    // The format in the SVG looks like this: wireless-signal-<strenght>
+    QString icon = QString("network-wireless-%1").arg(strength);
     //kDebug() << "Icon:" << icon;
     return icon;
 }
