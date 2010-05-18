@@ -30,6 +30,10 @@ target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmcli
 install(TARGETS plasma_applet_networkmanagement DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-networkmanagement.desktop DESTINATION ${SERVICES_INSTALL_DIR})
 
-install(FILES
-    wireless.svgz
-    DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/widgets/)
+# We only install the theme for the version where it isn't in SVN
+macro_ensure_version("4.4.76" ${KDE_VERSION} IS45)
+if (NOT IS45)
+    install(FILES
+        network.svgz
+        DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/icons/)
+endif (NOT IS45)
