@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MONOLITHIC_H
 
 #include <KUniqueApplication>
+#include <solid/networking.h>
 
 class MonolithicPrivate;
 
@@ -37,6 +38,10 @@ public:
     void createTrayIcons();
 public slots:
     Q_SCRIPTABLE void reloadConfig();
+Q_SIGNALS:
+    void statusChanged(Solid::Networking::Status);
+protected:
+    int newInstance();
 private:
     MonolithicPrivate * d_ptr;
 };

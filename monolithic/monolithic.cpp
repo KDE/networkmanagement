@@ -23,6 +23,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KLocale>
 #include <KMessageBox>
+#include <KMainWindow>
+#include <KStartupInfo>
+#include <KMenu>
 
 #include <solid/control/networkinterface.h>
 
@@ -45,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <sortedactivatablelist.h>
 
 #include "knetworkmanagertrayicon.h"
+#include "events.h"
 
 class MonolithicPrivate
 {
@@ -52,6 +56,7 @@ public:
     QList<SortedActivatableList*> trayIconLists;
     ActivatableList * activatableList;
     NMDBusSettingsService * nmSettingsService;
+    NotificationManager * notificationManager;
     bool autostart;
 };
 
@@ -146,6 +151,8 @@ void Monolithic::init()
     connectionList->registerConnectionHandler(vpnInterfaceConnectionProvider);
 
     notificationManager = new NotificationManager(this);
+    d->notificationManager = notificationManager;
+    QObject::connect(this, SIGNAL(statusChanged(Solid::Networking::Status)), d->notificationManager, SLOT(statusChanged(Solid::Networking::Status)));
 
     nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, connectionList);
 
@@ -220,6 +227,39 @@ void Monolithic::createTrayIcons()
     }
 }
 
+int Monolithic::newInstance()
+{
+    static int instance = -1;
+
+    instance++;
+    if (instance) {
+        Q_D(Monolithic);
+        QList<KMainWindow*> allWindows = KMainWindow::memberList();
+
+	emit statusChanged(Solid::Networking::Connected);
+
+        if (!allWindows.isEmpty()) {
+            // This method is documented to only work for applications
+            // with only one mainwindow.
+            KMainWindow* mainWindow = allWindows.first();
+            if (mainWindow) {
+                mainWindow->show();
+#ifdef Q_WS_X11
+                // This is the line that handles window activation if necessary,
+                // and what's important, it does it properly. If you reimplement newInstance(),
+                // and don't call the inherited one, use this (but NOT when newInstance()
+                // is called for the first time, like here).
+                KStartupInfo::setNewStartupId(mainWindow, startupId());
+#endif
+#ifdef Q_WS_WIN
+                KWindowSystem::forceActiveWindow( mainWindow->winId() );
+#endif
+
+            }
+        }
+    }
+    return 0; // do nothing in default implementation
+}
 
 void Monolithic::reloadConfig()
 {

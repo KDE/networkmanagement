@@ -524,6 +524,12 @@ void NotificationManager::statusChanged(Solid::Networking::Status status)
 {
     if (status == Solid::Networking::Unknown) {
         KNotification::event(Event::NetworkingDisabled, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is disabled", "Networking system disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
+    } else {
+        Solid::Control::NetworkManager::Notifier * n = qobject_cast<Solid::Control::NetworkManager::Notifier *>(sender());
+
+        /* If the signal does not come from a Solid::Control::NetworkManager::Notifier object then it is from a Monolithic Knm object. */
+        if (n == NULL and status == Solid::Networking::Connected)
+	    KNotification::event(Event::AlreadyRunning, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is already running", "Networking system already running"), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
     }
 }
 

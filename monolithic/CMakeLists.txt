@@ -45,6 +45,9 @@ set(monolithic_SRCS
    connectioninfoipv4tab.cpp
    connectioninfowiredtab.cpp
    connectioninfowirelesstab.cpp
+
+   # static global definitions of event string ids
+   ../libs/service/events.cpp
    )
 
 kde4_add_ui_files(monolithic_SRCS
