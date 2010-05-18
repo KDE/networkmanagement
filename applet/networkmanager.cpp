@@ -108,8 +108,19 @@ NetworkManagerApplet::~NetworkManagerApplet()
 
 QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface)
 {
-    if (iface->type() != Solid::Control::NetworkInterface::Ieee80211) {
+    if (iface->type() != Solid::Control::NetworkInterface::Ieee80211
+        && iface->type() != Solid::Control::NetworkInterface::Ieee8023) {
         return QString();
+    }
+    QString icon;
+
+    if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+        if (iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+            icon = "network-wired-activated";
+        } else {
+            icon = "network-wired";
+        }
+        return icon;
     }
 
     int _s = qMin(contentsRect().width(), contentsRect().height());
@@ -173,7 +184,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
     QString w = QString::number(s);
 
     // The format in the SVG looks like this: wireless-signal-<strenght>
-    QString icon = QString("network-wireless-%1").arg(strength);
+    icon = QString("network-wireless-%1").arg(strength);
     //kDebug() << "Icon:" << icon;
     return icon;
 }
@@ -278,7 +289,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     Solid::Control::NetworkInterface* interface = activeInterface();
     bool useSvg = false;
     if (interface) {
-        useSvg = interface->type() == Solid::Control::NetworkInterface::Ieee80211;
+        useSvg = interface->type() == Solid::Control::NetworkInterface::Ieee80211 || interface->type() == Solid::Control::NetworkInterface::Ieee8023;
     }
 
     if (useSvg) {
