@@ -233,7 +233,6 @@ int Monolithic::newInstance()
 
     instance++;
     if (instance) {
-        Q_D(Monolithic);
         QList<KMainWindow*> allWindows = KMainWindow::memberList();
 
 	emit statusChanged(Solid::Networking::Connected);
