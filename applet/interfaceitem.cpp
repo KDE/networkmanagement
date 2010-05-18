@@ -404,7 +404,7 @@ QPixmap InterfaceItem::interfacePixmap(const QString &icon) {
     //QPixmap pmap = KIcon(icon).pixmap(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     if (m_hasDefaultRoute && !pmap.isNull()) {
         QPainter p(&pmap);
-        p.drawPixmap(QRect(2,2,18,18), KIcon(overlayIcon).pixmap(QSize(16,16)));
+        p.drawPixmap(QRect(2,2,18,18), KIcon(overlayIcon).pixmap(QSize(18,18)));
     }
     return pmap;
 }
