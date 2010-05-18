@@ -44,6 +44,7 @@ Q_OBJECT
         void setMAC(Solid::Control::NetworkInterface* iface);
         void setIP(QString ip);
         void setUpdateEnabled(bool enable);
+        void resetUi();
 
     public Q_SLOTS:
         void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);

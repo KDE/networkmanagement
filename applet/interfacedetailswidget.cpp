@@ -72,7 +72,6 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_gridLayout->addItem(m_typeLabel, row, 0);
 
     m_type = new Plasma::Label(this);
-    m_type->setText("Type details!");
     m_type->nativeWidget()->setWordWrap(false);
     m_type->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_type->setFont(KGlobalSettings::smallestReadableFont());
@@ -89,7 +88,6 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_gridLayout->addItem(m_stateLabel, row, 0);
 
     m_state = new Plasma::Label(this);
-    m_state->setText("State details!");
     m_state->nativeWidget()->setWordWrap(false);
     m_state->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_state->setFont(KGlobalSettings::smallestReadableFont());
@@ -105,7 +103,6 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_gridLayout->addItem(m_ipLabel, row, 0);
 
     m_ip = new Plasma::Label(this);
-    m_ip->setText("IP details!");
     m_ip->nativeWidget()->setWordWrap(false);
     m_ip->setFont(KGlobalSettings::smallestReadableFont());
     m_ip->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -121,7 +118,6 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_gridLayout->addItem(m_bitLabel, row, 0);
 
     m_bit = new Plasma::Label(this);
-    m_bit->setText("Bit details!");
     m_bit->nativeWidget()->setWordWrap(false);
     m_bit->setFont(KGlobalSettings::smallestReadableFont());
     m_bit->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -137,7 +133,6 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_gridLayout->addItem(m_interfaceLabel, row, 0);
 
     m_interface = new Plasma::Label(this);
-    m_interface->setText("Interface details!");
     m_interface->nativeWidget()->setWordWrap(false);
     m_interface->setFont(KGlobalSettings::smallestReadableFont());
     m_interface->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -153,7 +148,6 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_gridLayout->addItem(m_macLabel, row, 0);
 
     m_mac = new Plasma::Label(this);
-    m_mac->setText("MAC details!");
     m_mac->nativeWidget()->setWordWrap(false);
     m_mac->setFont(KGlobalSettings::smallestReadableFont());
     m_mac->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -169,7 +163,6 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_gridLayout->addItem(m_driverLabel, row, 0);
 
     m_driver = new Plasma::Label(this);
-    m_driver->setText("Driver details!");
     m_driver->nativeWidget()->setWordWrap(false);
     m_driver->setFont(KGlobalSettings::smallestReadableFont());
     m_driver->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -193,11 +186,11 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     //m_txColor = QColor("lightgreen"); // yellow
     m_txColor.setAlphaF(0.6);
     m_trafficPlotter = new Plasma::SignalPlotter(this);
-    m_trafficPlotter->addPlot(m_rxColor); // receiver green
-    m_trafficPlotter->addPlot(m_txColor); // transmitter yellow
     m_trafficPlotter->setMinimumHeight(50);
     m_trafficPlotter->setFont(KGlobalSettings::smallestReadableFont());
-    m_trafficPlotter->setThinFrame(false);
+    m_trafficPlotter->addPlot(m_rxColor); // receiver green
+    m_trafficPlotter->addPlot(m_txColor); // transmitter yellow
+    m_trafficPlotter->setThinFrame(true);
     m_trafficPlotter->setShowLabels(true);
     m_trafficPlotter->setShowTopBar(true);
     m_trafficPlotter->setShowVerticalLines(false);
@@ -210,14 +203,12 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
 
     row++;
     m_trafficRx = new Plasma::Label(this);
-    m_trafficRx->setText(i18nc("traffic received empty", "Received: -"));
     m_trafficRx->setAlignment(Qt::AlignRight);
     m_trafficRx->setFont(KGlobalSettings::smallestReadableFont());
     m_trafficRx->nativeWidget()->setWordWrap(false);
     m_gridLayout->addItem(m_trafficRx, row, 0);
 
     m_trafficTx = new Plasma::Label(this);
-    m_trafficTx->setText(i18nc("traffic transmitted empty", "Transmitted: -"));
     m_trafficTx->nativeWidget()->setWordWrap(false);
     m_trafficTx->setFont(KGlobalSettings::smallestReadableFont());
     m_trafficTx->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
@@ -236,14 +227,49 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     setLayout(m_gridLayout);
 
     // Add spacer to push content to the top
-    row++;
+    row++; 
     //QGraphicsWidget *spacer = new QGraphicsWidget(this);
     //spacer->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
     //m_gridLayout->addItem(spacer, row, 0);
 
+    //resetUi();
+
     Plasma::DataEngineManager::self()->loadEngine("systemmonitor");
 
     //connect(e, SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
+}
+
+void InterfaceDetailsWidget::resetUi()
+{
+
+    QString na = i18nc("entry not available", "not available");
+
+    m_type->setText(na);
+    m_state->setText(na);
+    m_ip->setText(na);
+    m_bit->setText(na);
+    m_interface->setText(na);
+    m_mac->setText(na);
+    m_driver->setText(na);
+
+    m_trafficRx->setText(i18nc("traffic received empty", "Received: -"));
+    m_trafficTx->setText(i18nc("traffic transmitted empty", "Transmitted: -"));
+
+    // Quite ugly, but I need to investigate why I'm getting those crashes after removePlot calls
+    for (int i = 0; i < 500; i++) {
+        QList<double> v;
+        v << 0 << 0;
+        m_trafficPlotter->addSample(v);
+    }
+    /*
+    kDebug() << m_trafficPlotter->plotColors().count() << "clrs, now removing";
+    m_trafficPlotter->removePlot(0);
+    m_trafficPlotter->removePlot(1);
+    kDebug() << "Now:" << m_trafficPlotter->plotColors().count();
+    m_trafficPlotter->addPlot(m_rxColor); // receiver green
+    m_trafficPlotter->addPlot(m_txColor); // transmitter yellow
+    kDebug() << "and adding back" << m_trafficPlotter->plotColors().count();
+    */
 }
 
 void InterfaceDetailsWidget::sourceAdded(const QString &source)
@@ -262,11 +288,13 @@ void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
     if (e) {
         int interval = 1000;
         if (enable) {
-            kDebug() << "connecting ..." << m_rxSource << m_txSource;
-            e->connectSource(m_rxSource, this, interval);
-            e->connectSource(m_txSource, this, interval);
-            e->connectSource(m_rxTotalSource, this, interval);
-            e->connectSource(m_txTotalSource, this, interval);
+            if (m_iface) {
+                kDebug() << "connecting ..." << m_rxSource << m_txSource;
+                e->connectSource(m_rxSource, this, interval);
+                e->connectSource(m_txSource, this, interval);
+                e->connectSource(m_rxTotalSource, this, interval);
+                e->connectSource(m_txTotalSource, this, interval);
+            }
         } else {
             kDebug() << "disconnecting ..." << m_rxSource << m_txSource;
             e->disconnectSource(m_rxSource, this);
@@ -350,6 +378,7 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
         m_txSource = QString("network/interfaces/%1/transmitter/data").arg(m_iface->interfaceName());
         m_rxTotalSource = QString("network/interfaces/%1/receiver/dataTotal").arg(m_iface->interfaceName());
         m_txTotalSource = QString("network/interfaces/%1/transmitter/dataTotal").arg(m_iface->interfaceName());
+        setMAC(iface);
     }
     /*
     Solid::Device *dev = new Solid::Device(iface->uni());
