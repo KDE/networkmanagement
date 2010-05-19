@@ -164,6 +164,7 @@ void NMPopup::init()
     m_connectionList->setPreferredHeight(240);
 
     m_connectionList->setMinimumWidth(320);
+    m_connectionList->setShowAllTypes(false);
 
     m_rightLayout->addItem(m_connectionList);
 
