@@ -85,6 +85,7 @@ void PptpSettingWidget::readConfig()
     Q_D(PptpSettingWidget);
     // General settings
     QStringMap dataMap = d->setting->data();
+    QVariantMap vpnSecretsMap = d->setting->vpnSecrets();
 
     // Authentication
     QString sGateway = dataMap[NM_PPTP_KEY_GATEWAY];
@@ -97,6 +98,11 @@ void PptpSettingWidget::readConfig()
     if (!sLogin.isEmpty())
     {
         d->ui.edt_login->setText(sLogin);
+    }
+
+    QString sPassword = vpnSecretsMap[NM_PPTP_KEY_PASSWORD].toString();
+    if (!sPassword.isEmpty()) {
+        d->ui.edt_password->setText(sPassword);
     }
     // password storage type is set in readSecrets
 
