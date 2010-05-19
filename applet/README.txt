@@ -20,16 +20,21 @@ o indicate default route in interfaceitem
 o fix layouting / scrollwidget for Connections and Wireless Networks tab
 o disconnect button disconnects wrong connections
 o integrate nuno/ademmer's new artwork
-* use network-wired-active for active wired connections
+o use SVG artwork for wired connections
 * integrate hiddenwirelessitem into wireless networks tab
 * Check that the plasmoid is robust for
  * NetworkManager restarts
  * dbus restarts
- * kded quit and restart
+ * kded quit and restart (seems broken!)
  * kded module loaded, but unable to obtain NMUserSettings because another client had it
- * network interface kernel module unload/reload
-* Condistionally install network.svgz
+ o network interface kernel module unload/reload
+o Condistionally install network.svgz
 * update title label when less/more is clicked or details shown
+* hide show/more less button when it makes sense
+* sizehint of dialog: resizable using corner
+* check why kded4 module doesn't load automatically
+* Find a way to disconnect (instead of automatically reconnect on those auto connections)
+
 
 == somewhat lower priority ==
 o signals for networking enabled changed seems missing
