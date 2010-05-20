@@ -428,29 +428,28 @@ void InterfaceDetailsWidget::setMAC(Solid::Control::NetworkInterface* iface)
             m_mac->setText(temp);
             bitRate = wdiface->bitRate();
             //m_bit->setText(QString::number(bitRate));
-        }
-        else {
-           QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkInterface.ifaceName == '%1'").arg(iface->interfaceName()));
-           QList<Solid::Device>::iterator it = list.begin();
+        } else {
+            QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkInterface.ifaceName == '%1'").arg(iface->interfaceName()));
+            QList<Solid::Device>::iterator it = list.begin();
 
-           if (it != list.end()) {
-               Solid::Device device = *it;
-               Solid::DeviceInterface *interface = it->asDeviceInterface(Solid::DeviceInterface::NetworkInterface);
+            if (it != list.end()) {
+                Solid::Device device = *it;
+                Solid::DeviceInterface *interface = it->asDeviceInterface(Solid::DeviceInterface::NetworkInterface);
 
-               if (interface) {
-                   const QMetaObject *meta = interface->metaObject();
+                if (interface) {
+                    const QMetaObject *meta = interface->metaObject();
 
-                   for (int i = meta->propertyOffset(); i<meta->propertyCount(); i++) {
-                       QMetaProperty property = meta->property(i);
+                    for (int i = meta->propertyOffset(); i<meta->propertyCount(); i++) {
+                        QMetaProperty property = meta->property(i);
 
-                       if (QString(meta->className()).mid(7) + "." + property.name() == QString::fromLatin1("NetworkInterface.hwAddress")) {
-                           QVariant value = property.read(interface);
-                           m_mac->setText(value.toString());
-                           break;
-                       }
-                   }
-               }
-           }
+                        if (QString(meta->className()).mid(7) + "." + property.name() == QString::fromLatin1("NetworkInterface.hwAddress")) {
+                            QVariant value = property.read(interface);
+                            m_mac->setText(value.toString());
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
     if (bitRate) {
