@@ -430,7 +430,7 @@ void InterfaceDetailsWidget::setMAC(Solid::Control::NetworkInterface* iface)
             //m_bit->setText(QString::number(bitRate));
         }
         else {
-           QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkInterface.ifaceName == '%1'").arg(giface->interfaceName()));
+           QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkInterface.ifaceName == '%1'").arg(iface->interfaceName()));
            QList<Solid::Device>::iterator it = list.begin();
 
            if (it != list.end()) {
