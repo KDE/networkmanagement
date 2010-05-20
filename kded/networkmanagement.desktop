@@ -1,24 +1,6 @@
 [Desktop Entry]
 Name=NetworkManager User Settings Service
-Name[da]=EKSPERIMENTEL tjeneste til brugerindstillinger for NetworkManager 
-Name[de]=EXPERIMENTELLER Benutzereinstellungsdienst für NetworkManager
-Name[el]=ΠΕΙΡΑΜΑΤΙΚΗ Υπηρεσία ρυθμίσεων διαχείρισης δικτύου χρήστη
-Name[en_GB]=EXPERIMENTAL NetworkManager User Settings Service
-Name[es]=EXPERIMENTAL Servicio de ajustes de usuario de NetworkManager
-Name[et]=Võrguhalduri kasutaja seadistuste teenus
-Name[fr]=EXPÉRIMENTAL Service des paramètres utilisateur pour NetworkManager
-Name[gl]=Servizo de configuración do usuario de NetworkManager EXPERIMENTAL
-Name[nb]=EKSPERIMENTELL tjeneste for brukerinnstillinger i NetworkManager
-Name[nds]=Experimentell NetworkManager-Brukerinstellen-Deenst
-Name[nl]=EXPERIMENTEEL Service voor gebruikersinstellingen voor netwerkbeheer
-Name[pt]=Serviço de Configuração do Utilizador do NetworkManager EXPERIMENTAL
-Name[pt_BR]=Serviço de configuração do usuário do NetworkManager EXPERIMENTAL
-Name[sk]=Služba užívateľských nastavení pre NetworkManager (EXPERIMENTÁLNA)
-Name[sv]=Nätverkshanterarens användarinställningstjänst (EXPERIMENTELL)
-Name[tr]=DENEYSEL NetworkManager Kullanıcı Ayarları Servisi
-Name[uk]=ВИПРОБУВАННЯ: Служба параметрів користувача NetworkManager
-Name[x-test]=xxEXPERIMENTAL NetworkManager User Settings Servicexx
-Name[zh_TW]=【實驗性】網路管理使用者設定服務
+Name[x-test]=xxNetworkManager User Settings Servicexx
 Comment=Provides network configuration to the NetworkManager daemon
 Comment[da]=Leverer netværkskonfiguration af NetworkManager-dæmonen
 Comment[de]=Stellt dem NetworkManager-Dienst eine Netzwerkeinrichtung zur Verfügung
