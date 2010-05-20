@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGridLayout>
 //#include <QGraphicsLayout>
 #include <QLabel>
+#include <QMetaProperty>
 
 // KDE
 #include <KGlobalSettings>
@@ -428,7 +429,29 @@ void InterfaceDetailsWidget::setMAC(Solid::Control::NetworkInterface* iface)
             bitRate = wdiface->bitRate();
             //m_bit->setText(QString::number(bitRate));
         }
-        // NOTE: handle other kinds of interfaces as well here, for example GSM or bluetooth
+        else {
+           QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkInterface.ifaceName == '%1'").arg(giface->interfaceName()));
+           QList<Solid::Device>::iterator it = list.begin();
+
+           if (it != list.end()) {
+               Solid::Device device = *it;
+               Solid::DeviceInterface *interface = it->asDeviceInterface(Solid::DeviceInterface::NetworkInterface);
+
+               if (interface) {
+                   const QMetaObject *meta = interface->metaObject();
+
+                   for (int i = meta->propertyOffset(); i<meta->propertyCount(); i++) {
+                       QMetaProperty property = meta->property(i);
+
+                       if (QString(meta->className()).mid(7) + "." + property.name() == QString::fromLatin1("NetworkInterface.hwAddress")) {
+                           QVariant value = property.read(interface);
+                           m_mac->setText(value.toString());
+                           break;
+                       }
+                   }
+               }
+           }
+        }
     }
     if (bitRate) {
         m_bit->setText(UiUtils::connectionSpeed(bitRate));
