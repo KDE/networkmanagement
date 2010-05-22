@@ -343,11 +343,11 @@ Plasma::DataEngine* InterfaceDetailsWidget::engine()
 
     if (e->isValid()) {
         kDebug() << "engine loaded. :-)";
-    } else {
-        kDebug() << "engine NOT loaded. )-:";
+        return e;
     }
-    return e;
 
+    kDebug() << "engine NOT loaded. )-:";
+    return 0;
 }
 
 void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data)
