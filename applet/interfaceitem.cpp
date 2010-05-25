@@ -132,10 +132,12 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     }
     setNameDisplayMode(mode);
 
-    if (m_iface && m_iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
-        Solid::Control::WiredNetworkInterface* wirediface =
-                        static_cast<Solid::Control::WiredNetworkInterface*>(m_iface);
-        connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
+    if (m_iface) {
+        if (m_iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+            Solid::Control::WiredNetworkInterface* wirediface =
+                            static_cast<Solid::Control::WiredNetworkInterface*>(m_iface);
+            connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
+	}
         connectionStateChanged(m_iface->connectionState());
     }
 
