@@ -364,6 +364,15 @@ void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma
     updateWidgets();
 }
 
+void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_state, int reason)
+{
+    if (new_state == Solid::Control::NetworkInterface::Unavailable ||
+                     Solid::Control::NetworkInterface::Unmanaged ||
+                     Solid::Control::NetworkInterface::UnknownState ) {
+        setInterface(0);
+    }
+}
+
 void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* iface)
 {
     if (m_iface == iface) {
@@ -371,7 +380,13 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
     }
     resetUi();
     if (iface) {
+        if (m_iface) {
+            disconnect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+        }
+
         m_iface = iface;
+        m_ifaceUni = iface->uni();
+        connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
         //m_trafficNameLabel->setText(QString("<b>%1</b>").arg(UiUtils::interfaceNameLabel(iface->uni())));
         m_interface->setText(m_iface->interfaceName());
         m_driver->setText(iface->driver());
@@ -384,6 +399,8 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
         m_rxTotalSource = QString("network/interfaces/%1/receiver/dataTotal").arg(m_iface->interfaceName());
         m_txTotalSource = QString("network/interfaces/%1/transmitter/dataTotal").arg(m_iface->interfaceName());
         setMAC(iface);
+    } else {
+        m_iface = iface;
     }
     /*
     Solid::Device *dev = new Solid::Device(iface->uni());
@@ -460,6 +477,11 @@ void InterfaceDetailsWidget::setMAC(Solid::Control::NetworkInterface* iface)
 void InterfaceDetailsWidget::setIP(QString ip)
 {
     m_ip->setText(ip);
+}
+
+QString InterfaceDetailsWidget::getLastIfaceUni()
+{
+    return m_ifaceUni;
 }
 
 // vim: sw=4 sts=4 et tw=100

@@ -225,6 +225,15 @@ void NMPopup::interfaceAdded(const QString& uni)
 void NMPopup::interfaceRemoved(const QString& uni)
 {
     if (m_interfaces.contains(uni)) {
+        // To prevent crashes when the interface removed is the one in interfaceDetailsWidget.
+        // the m_iface pointer in interfaceDetailsWidget become invalid in this case.
+        if (uni == m_interfaceDetailsWidget->getLastIfaceUni()) {
+            m_interfaceDetailsWidget->setInterface(0);
+    
+	    // Since it is invalid go back to "main" window. 
+            m_leftWidget->setCurrentIndex(0);
+        }
+
         InterfaceItem * item = m_interfaces.take(uni);
         m_interfaceLayout->removeItem(item);
         delete item;

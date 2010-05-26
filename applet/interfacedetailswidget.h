@@ -45,11 +45,13 @@ Q_OBJECT
         void setIP(QString ip);
         void setUpdateEnabled(bool enable);
         void resetUi();
+        QString getLastIfaceUni();
 
     public Q_SLOTS:
         void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
         //void dataUpdated(const QString&, const Plasma::DataEngine::Data&);
         void sourceAdded(const QString&);
+        void handleConnectionStateChange(int new_state, int old_state, int reason);
 
     Q_SIGNALS:
         void back();
@@ -59,6 +61,7 @@ Q_OBJECT
         void updateWidgets();
 
         Solid::Control::NetworkInterface* m_iface;
+        QString m_ifaceUni;
 
         QGraphicsGridLayout *m_gridLayout;
         Plasma::Label* m_interfaceLabel;
