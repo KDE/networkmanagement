@@ -114,15 +114,6 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
     }
     QString icon;
 
-    if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
-        if (iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
-            icon = "network-wired-activated";
-        } else {
-            icon = "network-wired";
-        }
-        return icon;
-    }
-
     int _s = qMin(contentsRect().width(), contentsRect().height());
     int s;
     // Figure out the maximum size of the element
@@ -151,6 +142,15 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
         m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - _s) / 2,
                                 contentsRect().y() + (contentsRect().height() - _s) / 2,
                                 _s, _s);
+    }
+
+    if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+        if (iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+            icon = "network-wired-activated";
+        } else {
+            icon = "network-wired";
+        }
+        return icon;
     }
 
     // Now figure out which exact element we'll use
