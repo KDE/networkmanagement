@@ -273,11 +273,6 @@ void InterfaceDetailsWidget::resetUi()
     */
 }
 
-void InterfaceDetailsWidget::adjustTrafficPlotterHeight()
-{
-    m_trafficPlotter->setMinimumHeight(m_trafficPlotter->size().rwidth() / 3);
-}
-
 void InterfaceDetailsWidget::sourceAdded(const QString &source)
 {
     kDebug() << "Source added:" << source;

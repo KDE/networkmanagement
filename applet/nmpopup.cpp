@@ -431,10 +431,6 @@ void NMPopup::toggleInterfaceTab()
 	  m_leftLabel->setText(QString("<h3>%1</h3>").arg(
 			      UiUtils::interfaceNameLabel(item->interface()->uni())));
 	}
-
-        m_leftWidget->setPreferredWidth(m_interfaceDetailsWidget->size().rwidth());
-        m_interfaceDetailsWidget->adjustTrafficPlotterHeight();
-
     } else {
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
         showMore(false);
@@ -444,6 +440,18 @@ void NMPopup::toggleInterfaceTab()
     //showMore();
 }
 
+QSizeF NMPopup::sizeHint (Qt::SizeHint which, const QSizeF & constraint) const
+{
+    QSizeF sh = QGraphicsWidget::sizeHint(which, constraint);
+    qreal temp1 = m_interfaceDetailsWidget->size().rwidth();
 
+    if (temp1 < 300) {
+        temp1 = 300;
+    }
+
+    m_leftWidget->setPreferredWidth(temp1);
+
+    return sh;
+}
 // vim: sw=4 sts=4 et tw=100
 

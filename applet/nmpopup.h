@@ -77,6 +77,7 @@ Q_SIGNALS:
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
     void addVpnInterface();
+    QSizeF sizeHint ( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
 
     RemoteActivatableList* m_activatables;
 
