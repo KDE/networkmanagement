@@ -30,6 +30,7 @@ class QSizeF;
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/wirelessaccesspoint.h>
+#include <Solid/Device>
 
 class KNMINTERNALS_EXPORT UiUtils
 {
@@ -47,6 +48,12 @@ public:
      * @param type the type of the network interface
      */
     static QString interfaceNameLabel(const QString & uni);
+
+    /**
+     * @return a Solid::Device from a NetworkManager uni. The returned object must be deleted after use
+     * @param type the type of the network interface
+     */
+    static Solid::Device* findSolidDevice(const QString & uni);
 
     /**
      * @return a human-readable description of the connection state of a given network interface
