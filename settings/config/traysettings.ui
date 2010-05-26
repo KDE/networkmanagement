@@ -39,6 +39,11 @@
            <string>Vendor's Name</string>
           </property>
          </item>
+         <item>
+          <property name="text">
+           <string>Type Name</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>

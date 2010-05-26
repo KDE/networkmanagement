@@ -29,6 +29,7 @@
         <choice name="DescriptiveNames"/>
         <choice name="SystemNames"/>
         <choice name="VendorProductNames"/>
+        <choice name="TypeNames"/>
       </choices>
     </entry>
   </group>
