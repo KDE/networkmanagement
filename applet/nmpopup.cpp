@@ -230,7 +230,7 @@ void NMPopup::interfaceRemoved(const QString& uni)
         if (uni == m_interfaceDetailsWidget->getLastIfaceUni()) {
             m_interfaceDetailsWidget->setInterface(0);
     
-	    // Since it is invalid go back to "main" window. 
+            // Since it is invalid go back to "main" window. 
             m_leftWidget->setCurrentIndex(0);
         }
 
@@ -426,8 +426,6 @@ void NMPopup::toggleInterfaceTab()
     InterfaceItem* item = qobject_cast<InterfaceItem*>(sender());
     if (item) {
     m_interfaceDetailsWidget->setInterface(item->interface());
-    m_interfaceDetailsWidget->setIP(item->currentIpAddress());
-    m_interfaceDetailsWidget->setMAC(item->interface());
     }
 
     if (m_leftWidget->currentIndex() == 0) {
@@ -435,7 +433,7 @@ void NMPopup::toggleInterfaceTab()
         m_leftWidget->setCurrentIndex(1);
         // Enable / disable updating of the details widget
         m_interfaceDetailsWidget->setUpdateEnabled(true);
-	
+
 	if (item->interface()) {
 	  m_leftLabel->setText(QString("<h3>%1</h3>").arg(
 			      UiUtils::interfaceNameLabel(item->interface()->uni())));

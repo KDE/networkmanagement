@@ -41,8 +41,6 @@ Q_OBJECT
         InterfaceDetailsWidget(QGraphicsItem* parent = 0);
         virtual ~InterfaceDetailsWidget();
         void setInterface(Solid::Control::NetworkInterface* iface);
-        void setMAC(Solid::Control::NetworkInterface* iface);
-        void setIP(QString ip);
         void setUpdateEnabled(bool enable);
         void resetUi();
         QString getLastIfaceUni();
@@ -59,32 +57,21 @@ Q_OBJECT
     private:
         Plasma::DataEngine* engine();
         void updateWidgets();
+        QString bitRate();
+        QString currentIpAddress();
+        QString getMAC();
+        void updateInfo(bool reset);
 
         Solid::Control::NetworkInterface* m_iface;
         QString m_ifaceUni;
 
         QGraphicsGridLayout *m_gridLayout;
-        Plasma::Label* m_interfaceLabel;
-        Plasma::Label* m_interface;
-        Plasma::Label* m_macLabel;
-        Plasma::Label* m_mac;
-        Plasma::Label* m_ipLabel;
-        Plasma::Label* m_ip;
-        Plasma::Label* m_driverLabel;
-        Plasma::Label* m_driver;
-        Plasma::Label* m_typeLabel;
-        Plasma::Label* m_type;
-        Plasma::Label* m_stateLabel;
-        Plasma::Label* m_state;
-        Plasma::Label* m_bitLabel;
-        Plasma::Label* m_bit;
-
+        Plasma::Label* m_info;
         Plasma::Label* m_trafficNameLabel;
         Plasma::SignalPlotter *m_trafficPlotter;
         QColor m_rxColor;
         QColor m_txColor;
-        Plasma::Label* m_trafficRx;
-        Plasma::Label* m_trafficTx;
+        Plasma::Label* m_traffic;
 
         Plasma::PushButton* m_backButton;
 
