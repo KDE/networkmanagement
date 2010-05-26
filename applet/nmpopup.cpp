@@ -170,7 +170,7 @@ void NMPopup::init()
 
     m_connectionsButton = new Plasma::PushButton(m_rightWidget);
     m_connectionsButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
-    m_connectionsButton->setIcon(KIcon("networkmanager"));
+    m_connectionsButton->setIcon(KIcon("configure"));
     m_connectionsButton->setText(i18nc("manage connections button in the applet's popup", "Manage Connections..."));
     m_connectionsButton->setMaximumHeight(28);
     connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
