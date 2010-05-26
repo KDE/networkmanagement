@@ -63,6 +63,9 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_enabled(false),
     m_hasDefaultRoute(false)
 {
+    setDrawBackground(true);
+    setTextBackgroundColor(QColor(Qt::transparent));
+
     m_pixmapSize = QSize(48, 48);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
 
