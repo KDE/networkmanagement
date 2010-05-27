@@ -366,10 +366,14 @@ void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma
 
 void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_state, int reason)
 {
-    if (new_state == Solid::Control::NetworkInterface::Unavailable ||
+    if ((new_state == Solid::Control::NetworkInterface::Unavailable ||
                      Solid::Control::NetworkInterface::Unmanaged ||
-                     Solid::Control::NetworkInterface::UnknownState ) {
+                     Solid::Control::NetworkInterface::UnknownState) &&
+        reason == (Solid::Control::NetworkInterface::UnknownReason ||
+	           Solid::Control::NetworkInterface::DeviceRemovedReason)) {
         setInterface(0);
+    } else {
+        updateInfo(false);
     }
 }
 
