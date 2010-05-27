@@ -446,4 +446,15 @@ QString InterfaceDetailsWidget::getLastIfaceUni()
     return m_ifaceUni;
 }
 
+QSizeF InterfaceDetailsWidget::sizeHint (Qt::SizeHint which, const QSizeF & constraint) const
+{
+    QSizeF sh = QGraphicsWidget::sizeHint(which, constraint);
+    QSize infoSh = m_info->nativeWidget()->sizeHint();
+    QSize infoMinSh = m_info->nativeWidget()->minimumSizeHint();
+
+    qreal temp = (infoSh.width() - infoMinSh.width()) / 2 + infoMinSh.width();
+    sh.setWidth(qMax(temp, 330.0));
+
+    return sh;
+}
 // vim: sw=4 sts=4 et tw=100

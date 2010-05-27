@@ -61,6 +61,7 @@ Q_OBJECT
         QString currentIpAddress();
         QString getMAC();
         void updateInfo(bool reset);
+        QSizeF sizeHint (Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
 
         Solid::Control::NetworkInterface* m_iface;
         QString m_ifaceUni;
