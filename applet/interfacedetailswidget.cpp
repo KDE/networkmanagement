@@ -412,27 +412,47 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
 
 QString InterfaceDetailsWidget::getMAC()
 {
-    if (!m_iface) {
-        return QString();
-    }
-
-    QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkInterface.ifaceName == '%1'").arg(m_iface->interfaceName()));
-    QList<Solid::Device>::iterator it = list.begin();
-
-    if (it != list.end()) {
-        Solid::Device device = *it;
-        Solid::DeviceInterface *interface = it->asDeviceInterface(Solid::DeviceInterface::NetworkInterface);
-
-        if (interface) {
-            const QMetaObject *meta = interface->metaObject();
-
-            for (int i = meta->propertyOffset(); i<meta->propertyCount(); i++) {
-                QMetaProperty property = meta->property(i);
-
-                if (QString(meta->className()).mid(7) + "." + property.name() == QString::fromLatin1("NetworkInterface.hwAddress")) {
-                    QVariant value = property.read(interface);
-                    return value.toString();
-                    break;
+    //wifi?
+    Solid::Control::WirelessNetworkInterface * wliface =
+                    dynamic_cast<Solid::Control::WirelessNetworkInterface*>(m_iface);
+    if (wliface) {
+        return wliface->hardwareAddress();
+        /*
+         * for later use ...
+        Solid::Control::AccessPoint * ap = wliface->findAccessPoint(wliface->activeAccessPoint());
+        if(ap) {
+            temp = ap->ssid();
+            kDebug() << "temp = " << temp;
+        }
+        */
+    } else {     // wired?
+        Solid::Control::WiredNetworkInterface * wdiface =
+                                    dynamic_cast<Solid::Control::WiredNetworkInterface*> (m_iface);
+        if (wdiface) {
+            QString temp = wdiface->hardwareAddress();
+            return temp;
+        } else {
+            // prevent crash for unconnected devices
+            if (m_iface) { // last resort, although using ifaceName is not portable
+                QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkInterface.ifaceName == '%1'").arg(m_iface->interfaceName()));
+                QList<Solid::Device>::iterator it = list.begin();
+            
+                if (it != list.end()) {
+                    Solid::Device device = *it;
+                    Solid::DeviceInterface *interface = it->asDeviceInterface(Solid::DeviceInterface::NetworkInterface);
+            
+                    if (interface) {
+                        const QMetaObject *meta = interface->metaObject();
+            
+                        for (int i = meta->propertyOffset(); i<meta->propertyCount(); i++) {
+                            QMetaProperty property = meta->property(i);
+            
+                            if (QString(meta->className()).mid(7) + "." + property.name() == QString::fromLatin1("NetworkInterface.hwAddress")) {
+                                QVariant value = property.read(interface);
+                                return value.toString();
+                            }
+                        }
+                    }
                 }
             }
         }
