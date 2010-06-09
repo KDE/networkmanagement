@@ -325,9 +325,9 @@ void InterfaceDetailsWidget::updateWidgets()
     QString temp;
 
     temp = QString("<qt><table align=\"center\" border=\"0\"><tr><td align=\"right\" width=\"50%\">");
-    temp += QString(format).arg(i18nc("", "Received")).arg(KGlobal::locale()->formatByteSize(m_rxTotal*1000, 2));
+    temp += QString(format).arg(i18n("Received")).arg(KGlobal::locale()->formatByteSize(m_rxTotal*1000, 2));
     temp += QString("</td><td width=\"50%\">&nbsp;");
-    temp += QString(format).arg(i18nc("", "Transmitted")).arg(KGlobal::locale()->formatByteSize(m_txTotal*1000, 2));
+    temp += QString(format).arg(i18n("Transmitted")).arg(KGlobal::locale()->formatByteSize(m_txTotal*1000, 2));
     temp += QString("</td></tr></table></qt>");
     m_traffic->setText(temp);
 }
