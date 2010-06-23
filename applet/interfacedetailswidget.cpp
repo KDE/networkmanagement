@@ -473,7 +473,7 @@ QSizeF InterfaceDetailsWidget::sizeHint (Qt::SizeHint which, const QSizeF & cons
     QSize infoMinSh = m_info->nativeWidget()->minimumSizeHint();
 
     qreal temp = (infoSh.width() - infoMinSh.width()) / 2 + infoMinSh.width();
-    sh.setWidth(qMax(temp, 330.0));
+    sh.setWidth(qMax(temp, qreal(330.0)));
 
     return sh;
 }
