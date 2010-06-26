@@ -198,7 +198,7 @@ void KNetworkManagerTrayIcon::fillPopup()
         contextMenu()->removeAction(action);
         // throw away separators, easier than tracking them
         if (action->isSeparator()) {
-            delete action;
+            action->deleteLater();
         }
     }
 
