@@ -163,7 +163,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
         if (ap) {
             int str = ap->signalStrength();
             if (str < 13) {
-                strength = "0";
+                strength = '0';
             } else if (str < 30) {
                 strength = "20";
             } else if (str < 50) {
@@ -176,7 +176,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
                 strength = "100";
             }
         } else {
-                strength = "0";
+                strength = '0';
         }
     } else {
         return QString("dialog-error");

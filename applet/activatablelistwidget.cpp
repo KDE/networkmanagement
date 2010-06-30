@@ -129,7 +129,7 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
             return false;
         }
     }
-    // Policy wether an activatable should be shown or not.
+    // Policy whether an activatable should be shown or not.
     if (m_interfaces.count()) {
         // If interfaces are set, activatables for other interfaces are not shown
         if (m_interfaces.contains(activatable->deviceUni())) {

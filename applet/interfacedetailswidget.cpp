@@ -447,7 +447,7 @@ QString InterfaceDetailsWidget::getMAC()
                         for (int i = meta->propertyOffset(); i<meta->propertyCount(); i++) {
                             QMetaProperty property = meta->property(i);
             
-                            if (QString(meta->className()).mid(7) + "." + property.name() == QString::fromLatin1("NetworkInterface.hwAddress")) {
+                            if (QString(meta->className()).mid(7) + '.' + property.name() == QString::fromLatin1("NetworkInterface.hwAddress")) {
                                 QVariant value = property.read(interface);
                                 return value.toString();
                             }
