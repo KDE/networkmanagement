@@ -129,6 +129,9 @@ SettingPersistence * ConnectionPersistence::persistenceFor(Setting * setting)
                         static_cast<WirelessSecuritySetting*>(setting), m_config, m_storageMode
                         );
                 break;
+	    case Setting::Ipv6:
+	    	kDebug() << "IPv6 persistence is not handled" << endl;
+		break;
         }
     if (sp) {
         m_persistences.insert(setting, sp);
