@@ -18,6 +18,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef ACTIVATABLEITEM_P_H
+#define ACTIVATABLEITEM_P_H
+
 #include "activatableitem.h"
 
 #include "activatable.h"
@@ -49,3 +52,4 @@ public:
     bool first;
 };
 
+#endif
