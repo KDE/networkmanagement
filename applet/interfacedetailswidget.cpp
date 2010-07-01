@@ -366,6 +366,7 @@ void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma
 
 void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_state, int reason)
 {
+    Q_UNUSED(old_state)
     if ((new_state == Solid::Control::NetworkInterface::Unavailable ||
                      Solid::Control::NetworkInterface::Unmanaged ||
                      Solid::Control::NetworkInterface::UnknownState) &&
