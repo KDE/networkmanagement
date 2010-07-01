@@ -21,7 +21,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef VPNINTERFACECONNECTION_H
 #define VPNINTERFACECONNECTION_H
 
-#endif // VPNINTERFACECONNECTION_H
 
 #include "interfaceconnection.h"
 
@@ -45,3 +44,5 @@ protected:
 };
 
 } // namespace Knm
+
+#endif // VPNINTERFACECONNECTION_H
