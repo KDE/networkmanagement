@@ -34,8 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 static const int ItemActivatableRole = 34706;
 
-Q_DECLARE_METATYPE(Knm::Activatable*)
-
 OtherWirelessNetworkDialog::OtherWirelessNetworkDialog(ActivatableList * activatables, QWidget * parent)
     : KDialog(parent), m_activatables(activatables), m_networkItemCount(0)
 {

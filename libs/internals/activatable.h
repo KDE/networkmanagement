@@ -64,4 +64,6 @@ private:
 
 } // namespace
 
+Q_DECLARE_METATYPE(Knm::Activatable*)
+
 #endif

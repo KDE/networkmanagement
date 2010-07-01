@@ -58,8 +58,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkitem.h"
 
 
-Q_DECLARE_METATYPE(Knm::Activatable *)
-
 class KNetworkManagerTrayIconPrivate
 {
 public:
