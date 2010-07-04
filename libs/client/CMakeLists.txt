@@ -15,6 +15,7 @@ set(knmclient_SRCS
    remotewirelessinterfaceconnection.cpp
    remotewirelessnetwork.cpp
    remoteactivatablelist.cpp
+   remotegsminterfaceconnection.cpp
 )
 
 set_source_files_properties( ../service/interfaces/org.kde.networkmanagement.xml PROPERTIES NO_NAMESPACE TRUE CLASSNAME NetworkManagementInterface)
@@ -50,6 +51,13 @@ set_source_files_properties( ../service/interfaces/org.kde.networkmanagement.wir
 QT4_ADD_DBUS_INTERFACE(knmclient_SRCS
    ../service/interfaces/org.kde.networkmanagement.wirelessnetwork.xml
    wirelessnetworkinterface
+   )
+
+set_source_files_properties( ../service/interfaces/org.kde.networkmanagement.gsminterfaceconnection.xml PROPERTIES NO_NAMESPACE TRUE CLASSNAME GsmInterfaceConnectionInterface)
+
+QT4_ADD_DBUS_INTERFACE(knmclient_SRCS
+   ../service/interfaces/org.kde.networkmanagement.gsminterfaceconnection.xml
+   gsminterfaceconnectioninterface
    )
 
 kde4_add_library(knmclient SHARED ${knmclient_SRCS})

@@ -69,6 +69,7 @@ void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
             connect(wni, SIGNAL(activated()), this, SLOT(wirelessNetworkActivated()));
             break;
         case Knm::Activatable::InterfaceConnection:
+        case Knm::Activatable::GsmInterfaceConnection:
             ic = qobject_cast<Knm::InterfaceConnection*>(added);
             if (d->pendingDevices.contains(ic->deviceUni())) {
                 kDebug() << "activating new connection on" << ic->deviceUni();

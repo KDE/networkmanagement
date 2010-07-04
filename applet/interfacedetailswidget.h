@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsLinearLayout>
 
 #include <solid/control/networkinterface.h>
+#include <solid/control/networkgsminterface.h>
 #include <Plasma/Label>
 #include <Plasma/PushButton>
 #include <Plasma/SignalPlotter>
@@ -60,7 +61,7 @@ Q_OBJECT
         QString bitRate();
         QString currentIpAddress();
         QString getMAC();
-        void updateInfo(bool reset);
+        void updateInfo(bool reset, int signalQuality = -1);
         QSizeF sizeHint (Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
 
         Solid::Control::NetworkInterface* m_iface;
@@ -88,6 +89,12 @@ Q_OBJECT
         qlonglong m_txTotal;
 
         bool m_updateEnabled;
+
+    private Q_SLOTS:
+        void update();
+
+        // To update signal quality quickly, other information are not updated as fast as this one.
+        void updateSignalQuality(uint signalQuality);
 };
 
 #endif // INTERFACEDETAILSWIDGET_H

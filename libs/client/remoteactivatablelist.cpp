@@ -34,6 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remotevpninterfaceconnection.h"
 #include "remotewirelessinterfaceconnection.h"
 #include "remotewirelessnetwork.h"
+#include "remotegsminterfaceconnection.h"
 
 class RemoteActivatableListPrivate
 {
@@ -127,6 +128,10 @@ void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uin
             case Knm::Activatable::VpnInterfaceConnection:
                 newActivatable = new RemoteVpnInterfaceConnection(addedPath, this);
                 //kDebug() << "vpnconnection at" << addedPath << "with type" << newActivatable->activatableType();
+                break;
+            case Knm::Activatable::GsmInterfaceConnection:
+                newActivatable = new RemoteGsmInterfaceConnection(addedPath, this);
+                //kDebug() << "gsminterfaceconnection at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
         }
         if (newActivatable) {

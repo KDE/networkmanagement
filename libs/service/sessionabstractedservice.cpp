@@ -31,6 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceconnectionadaptor.h"
 #include "wirelessinterfaceconnectionadaptor.h"
 #include "wirelessnetworkadaptor.h"
+#include "gsminterfaceconnectionadaptor.h"
 
 class SessionAbstractedServicePrivate
 {
@@ -77,6 +78,11 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
             Knm::WirelessNetwork * realObj
                 = static_cast<Knm::WirelessNetwork*>(added);
             new WirelessNetworkAdaptor(realObj);
+            new ActivatableAdaptor(realObj);
+        } else if (added->activatableType() == Knm::Activatable::GsmInterfaceConnection) {
+            Knm::GsmInterfaceConnection * realObj = static_cast<Knm::GsmInterfaceConnection*>(added);
+            new GsmInterfaceConnectionAdaptor(realObj);
+            new InterfaceConnectionAdaptor(realObj);
             new ActivatableAdaptor(realObj);
         } else {
             // do not put any other types on the bus

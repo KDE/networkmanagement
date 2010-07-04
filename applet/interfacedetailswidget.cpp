@@ -46,6 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkipv4config.h>
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
+#include <solid/control/modemmanager.h>
 #include <Solid/Device>
 
 #include <uiutils.h>
@@ -167,7 +168,7 @@ void InterfaceDetailsWidget::resetUi()
     */
 }
 
-void InterfaceDetailsWidget::updateInfo(bool reset)
+void InterfaceDetailsWidget::updateInfo(bool reset, int signalQuality)
 {
     QString info;
     QString na = i18nc("entry not available", "not available");
@@ -198,6 +199,69 @@ void InterfaceDetailsWidget::updateInfo(bool reset)
         info += QString(format)
                        .arg(i18nc("interface details", "Driver"))
                        .arg(m_iface->driver());
+
+        Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
+
+        if (giface) {
+            Solid::Control::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+            if (modemNetworkIface) {
+                Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType r = modemNetworkIface->getRegistrationInfo();
+                info += QString(format)
+                               .arg(i18nc("interface details", "Operator"))
+                               .arg(r.operatorName);
+
+                info += QString(format)
+                               .arg(i18nc("interface details", "Signal Quality"))
+                               .arg(QString("%1 %").arg(signalQuality != -1 ? signalQuality : modemNetworkIface->getSignalQuality()));
+
+                info += QString(format)
+                               .arg(i18nc("interface details", "Access Technology"))
+                               .arg(QString("%1/%2").arg(Solid::Control::ModemInterface::convertTypeToString(modemNetworkIface->type())).arg(Solid::Control::ModemInterface::convertAccessTechnologyToString(modemNetworkIface->getAccessTechnology())));
+
+                /* TODO: create another tab to show this stuff
+                info += QString(format)
+                               .arg(i18nc("interface details", "Frequency Band"))
+                               .arg(Solid::Control::ModemInterface::convertBandToString(modemNetworkIface->getBand()));
+
+                info += QString(format)
+                               .arg(i18nc("interface details", "Allowed Mode"))
+                               .arg(Solid::Control::ModemInterface::convertAllowedModeToString(modemNetworkIface->getAllowedMode()));
+
+                info += QString(format)
+                               .arg(i18nc("interface details", "Enabled"))
+                               .arg(modemNetworkIface->enabled() ? i18n("Yes") : i18n("No"));
+
+                info += QString(format)
+                               .arg(i18nc("interface details", "UDI"))
+                               .arg(modemNetworkIface->udi());
+
+                info += QString(format)
+                               .arg(i18nc("interface details", "Device"))
+                               .arg(modemNetworkIface->device());
+
+                info += QString(format)
+                               .arg(i18nc("interface details", "Master Device"))
+                               .arg(modemNetworkIface->masterDevice());
+
+                info += QString(format)
+                               .arg(i18nc("interface details", "Unlock Required"))
+                               .arg(modemNetworkIface->unlockRequired().isEmpty() ? i18n("No") : QString("%1: %2").arg(i18n("Yes")).arg(modemNetworkIface->unlockRequired()));*/
+
+            }
+
+            /* TODO: create another tab to show this stuff
+            Solid::Control::ModemGsmCardInterface *modemCardIface = giface->getModemCardIface();
+            if (modemCardIface) {
+                info += QString(format)
+                               .arg(i18nc("interface details", "IMEI"))
+                               .arg(modemCardIface->getImei());
+
+                info += QString(format)
+                               .arg(i18nc("interface details", "IMSI"))
+                               .arg(modemCardIface->getImsi());
+            }*/
+        }
+
     } else {
         info += QString(format)
                        .arg(i18nc("interface details", "Type"))
@@ -290,15 +354,56 @@ void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
                 e->connectSource(m_rxTotalSource, this, interval);
                 e->connectSource(m_txTotalSource, this, interval);
             }
+
+            if (m_iface->type() == Solid::Control::NetworkInterface::Gsm) {
+                    Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
+
+                    if (giface) {
+                        Solid::Control::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+
+                        if (modemNetworkIface) {
+                            connect(modemNetworkIface, SIGNAL(registrationInfoChanged(const Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType &)), this, SLOT(update()));
+                            connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), this, SLOT(updateSignalQuality(uint)));
+                            connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(Solid::Control::ModemInterface::AccessTechnology)), this, SLOT(update()));
+                            updateInfo(false);
+
+//                            connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(handleModemRemoved(const QString &)));
+                        }
+                    }
+            }
         } else {
             kDebug() << "disconnecting ..." << m_rxSource << m_txSource;
             e->disconnectSource(m_rxSource, this);
             e->disconnectSource(m_txSource, this);
             e->disconnectSource(m_rxTotalSource, this);
             e->disconnectSource(m_txTotalSource, this);
+
+            if (m_iface && m_iface->type() == Solid::Control::NetworkInterface::Gsm) {
+                Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
+
+                if (giface) {
+                    Solid::Control::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+
+                    if (modemNetworkIface) {
+                        disconnect(modemNetworkIface, SIGNAL(registrationInfoChanged(const Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType &)), this, SLOT(update()));
+                        disconnect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), this, SLOT(updateSignalQuality(uint)));
+                        disconnect(modemNetworkIface, SIGNAL(accessTechnologyChanged(Solid::Control::ModemInterface::AccessTechnology)), this, SLOT(update()));
+                    }
+                }
+            }
         }
     }
     m_updateEnabled = enable;
+}
+
+void InterfaceDetailsWidget::update()
+{
+    updateInfo(false);
+}
+
+void InterfaceDetailsWidget::updateSignalQuality(uint signalQuality)
+{
+    updateInfo(false, signalQuality);
 }
 
 void InterfaceDetailsWidget::updateWidgets()

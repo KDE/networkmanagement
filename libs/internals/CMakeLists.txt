@@ -76,6 +76,8 @@ set(knminternals_SRCS
    unconfiguredinterface.cpp
    vpninterfaceconnection.cpp
    vpninterfaceconnectionhelpers.cpp
+   gsminterfaceconnection.cpp
+   gsminterfaceconnectionhelpers.cpp
 
    # helper class for recognising the type of WPA secrets
    wpasecretidentifier.cpp

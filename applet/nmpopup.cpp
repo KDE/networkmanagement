@@ -155,7 +155,7 @@ void NMPopup::init()
     m_connectionList->addType(Knm::Activatable::InterfaceConnection);
     m_connectionList->addType(Knm::Activatable::WirelessInterfaceConnection);
     m_connectionList->addType(Knm::Activatable::VpnInterfaceConnection);
-    // FIXME: Mobile broadband
+    m_connectionList->addType(Knm::Activatable::GsmInterfaceConnection);
     m_connectionList->init();
     connect(m_interfaceDetailsWidget, SIGNAL(back()), m_connectionList, SLOT(clearInterfaces()));
 

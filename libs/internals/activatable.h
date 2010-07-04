@@ -41,7 +41,8 @@ public:
         WirelessNetwork,
         UnconfiguredInterface,
         VpnInterfaceConnection,
-        HiddenWirelessInterfaceConnection
+        HiddenWirelessInterfaceConnection,
+        GsmInterfaceConnection
     };
 
     virtual ~Activatable();

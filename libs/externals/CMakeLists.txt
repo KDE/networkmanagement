@@ -9,6 +9,7 @@ set(knmconnection_SRCS
     interfaceconnection.cpp
     wirelessinterfaceconnection.cpp
     wirelessnetworkitem.cpp
+    gsminterfaceconnectionitem.cpp
     )
 
 qt4_add_dbus_adaptor(
@@ -39,6 +40,12 @@ qt4_add_dbus_adaptor(
     Knm::Externals::WirelessNetworkItem
 )
 
+qt4_add_dbus_adaptor(
+    knmconnection_SRCS
+    interfaces/org.kde.networkmanagement.gsminterfaceconnection.xml
+    gsminterfaceconnection.h
+    Knm::Externals::GsmInterfaceConnection
+)
 kde4_add_library(
     knmexternals SHARED ${knmconnection_SRCS}
 )

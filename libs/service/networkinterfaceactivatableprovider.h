@@ -27,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirednetworkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
+#include <solid/control/networkgsminterface.h>
 
 #include "connection.h"
 #include "setting.h"

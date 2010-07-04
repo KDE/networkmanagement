@@ -37,12 +37,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteactivatablelist.h"
 #include "remoteinterfaceconnection.h"
 #include "remotewirelessnetwork.h"
+#include "remotegsminterfaceconnection.h"
 #include "activatableitem.h"
 
 // networkmanagement applet
 #include "interfaceconnectionitem.h"
 #include "wirelessnetworkitem.h"
 #include "hiddenwirelessnetworkitem.h"
+#include "gsminterfaceconnectionitem.h"
 
 ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent) : Plasma::ScrollWidget(parent),
     m_activatables(activatables),
@@ -176,6 +178,13 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
             ai = new HiddenWirelessNetworkItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
             break;
         }
+        case Knm::Activatable::GsmInterfaceConnection:
+        { // Gsm (2G, 3G, etc)
+            GsmInterfaceConnectionItem* gici = new GsmInterfaceConnectionItem(static_cast<RemoteGsmInterfaceConnection*>(activatable), m_widget);
+            ai = gici;
+            break;
+        }
+
         default:
             break;
     }
