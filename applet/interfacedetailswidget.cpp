@@ -46,7 +46,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkipv4config.h>
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
-#include <solid/control/modemmanager.h>
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+    #include <solid/control/modemmanager.h>
+#endif
 #include <Solid/Device>
 
 #include <uiutils.h>
