@@ -75,6 +75,8 @@ void GsmNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedCo
                 if (modemNetworkIface) {
                     connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), ifaceConnection, SLOT(setSignalQuality(uint)));
                     connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(const Solid::Control::ModemInterface::AccessTechnology)), ifaceConnection, SLOT(setAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology)));
+                    connect(modemNetworkIface, SIGNAL(enabledChanged(const bool)), ifaceConnection, SLOT(setEnabled(const bool)));
+		    modemNetworkIface->enable(true);
                 }
             } else {
                 kDebug() << "connection type mismatch: " << addedConnection->type() << d->interface->type();
