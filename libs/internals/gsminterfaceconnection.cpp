@@ -27,8 +27,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 GsmInterfaceConnection::GsmInterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent)
-: InterfaceConnection(type, deviceUni, parent), m_signalQuality(0), m_accessTechnology("")
+: InterfaceConnection(type, deviceUni, parent), m_signalQuality(0), m_enabled(false)
 {
+    m_accessTechnology = Solid::Control::ModemInterface::convertAccessTechnologyToString(Solid::Control::ModemInterface::UnknownTechnology);
 }
 
 GsmInterfaceConnection::~GsmInterfaceConnection()
@@ -61,4 +62,14 @@ int GsmInterfaceConnection::getSignalQuality() const
 QString GsmInterfaceConnection::getAccessTechnology() const
 {
     return m_accessTechnology;
+}
+
+void GsmInterfaceConnection::setEnabled(const bool enabled)
+{
+    m_enabled = enabled;
+    emit enabledChanged(m_enabled);
+
+    if (!enabled) {
+        setSignalQuality(0);
+    }
 }

@@ -48,13 +48,16 @@ public:
 Q_SIGNALS:
     void signalQualityChanged(int);
     void accessTechnologyChanged(const QString);
+    void enabledChanged(const bool enabled);
 public Q_SLOTS:
     void setSignalQuality(uint signalQuality);
     void setAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology accessTechnology);
+    void setEnabled(const bool enabled);
 protected:
     GsmInterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent);
     int m_signalQuality;
     QString m_accessTechnology;
+    bool m_enabled;
 };
 } // namespace
 
