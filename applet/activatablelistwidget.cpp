@@ -178,12 +178,14 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
             ai = new HiddenWirelessNetworkItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
             break;
         }
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         case Knm::Activatable::GsmInterfaceConnection:
         { // Gsm (2G, 3G, etc)
             GsmInterfaceConnectionItem* gici = new GsmInterfaceConnectionItem(static_cast<RemoteGsmInterfaceConnection*>(activatable), m_widget);
             ai = gici;
             break;
         }
+#endif
 
         default:
             break;

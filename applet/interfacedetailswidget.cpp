@@ -200,6 +200,7 @@ void InterfaceDetailsWidget::updateInfo(bool reset, int signalQuality)
                        .arg(i18nc("interface details", "Driver"))
                        .arg(m_iface->driver());
 
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
 
         if (giface) {
@@ -261,7 +262,7 @@ void InterfaceDetailsWidget::updateInfo(bool reset, int signalQuality)
                                .arg(modemCardIface->getImsi());
             }*/
         }
-
+#endif
     } else {
         info += QString(format)
                        .arg(i18nc("interface details", "Type"))
@@ -355,6 +356,7 @@ void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
                 e->connectSource(m_txTotalSource, this, interval);
             }
 
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
             if (m_iface->type() == Solid::Control::NetworkInterface::Gsm) {
                     Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
 
@@ -371,6 +373,7 @@ void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
                         }
                     }
             }
+#endif
         } else {
             kDebug() << "disconnecting ..." << m_rxSource << m_txSource;
             e->disconnectSource(m_rxSource, this);
@@ -378,6 +381,7 @@ void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
             e->disconnectSource(m_rxTotalSource, this);
             e->disconnectSource(m_txTotalSource, this);
 
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
             if (m_iface && m_iface->type() == Solid::Control::NetworkInterface::Gsm) {
                 Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
 
@@ -391,6 +395,7 @@ void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
                     }
                 }
             }
+#endif
         }
     }
     m_updateEnabled = enable;

@@ -15,6 +15,12 @@ if (BIGENDIAN)
    set(WORDS_BIGENDIAN 1)
 endif (BIGENDIAN)
 
+find_file(KDE4_MM_BACKEND_FOUND solid/control/modeminterface.h ${KDE4_INCLUDE_DIR} NO_DEFAULT_PATH)
+if (KDE4_MM_BACKEND_FOUND)
+	message("Compiling Modem Manager support.")
+	add_definitions(-DCOMPILE_MODEM_MANAGER_SUPPORT=1)
+endif (KDE4_MM_BACKEND_FOUND)
+
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories (${KDE4_INCLUDES})
 

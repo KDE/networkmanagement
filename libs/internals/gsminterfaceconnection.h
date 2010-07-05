@@ -20,6 +20,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+
 #ifndef KNM_EXTERNALS_GSMINTERFACECONNECTION_H
 #define KNM_EXTERNALS_GSMINTERFACECONNECTION_H
 
@@ -60,5 +62,7 @@ protected:
     bool m_enabled;
 };
 } // namespace
+
+#endif
 
 #endif

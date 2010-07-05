@@ -19,6 +19,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+
 #ifndef GSMNETWORKINTERFACEACTIVATABLEPROVIDER_H
 #define GSMNETWORKINTERFACEACTIVATABLEPROVIDER_H
 
@@ -56,3 +58,5 @@ private:
     Q_DECLARE_PRIVATE(GsmNetworkInterfaceActivatableProvider)
 };
 #endif // GSMNETWORKINTERFACEACTIVATABLEPROVIDER_H
+
+#endif

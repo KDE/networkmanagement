@@ -106,14 +106,16 @@ qt4_add_dbus_adaptor(
     WirelessNetworkAdaptor
 )
 
-qt4_add_dbus_adaptor(
-    knmservice_SRCS
-    interfaces/org.kde.networkmanagement.gsminterfaceconnection.xml
-    gsminterfaceconnection.h
-    Knm::GsmInterfaceConnection
-    gsminterfaceconnectionadaptor
-    GsmInterfaceConnectionAdaptor
-)
+if (KDE4_MM_BACKEND_FOUND)
+	qt4_add_dbus_adaptor(
+	    knmservice_SRCS
+	    interfaces/org.kde.networkmanagement.gsminterfaceconnection.xml
+	    gsminterfaceconnection.h
+	    Knm::GsmInterfaceConnection
+	    gsminterfaceconnectionadaptor
+	    GsmInterfaceConnectionAdaptor
+	)
+endif (KDE4_MM_BACKEND_FOUND)
 
 qt4_add_dbus_adaptor(knmservice_SRCS
    interfaces/org.kde.networkmanagement.xml

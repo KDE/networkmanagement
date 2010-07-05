@@ -20,6 +20,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+
 #ifndef APPLET_GSMINTERFACECONNECTIONITEM_H
 #define APPLET_GSMINTERFACECONNECTIONITEM_H
 
@@ -64,3 +66,4 @@ class GsmInterfaceConnectionItem : public ActivatableItem
 
 #endif //#define APPLET_GSMCONNECTIONITEM_H
 
+#endif

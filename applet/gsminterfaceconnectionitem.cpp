@@ -20,6 +20,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+
 #include "gsminterfaceconnectionitem.h"
 
 #include <QAction>
@@ -166,4 +168,5 @@ void GsmInterfaceConnectionItem::update()
     setAccessTechnology(m_remote->getAccessTechnology());
 }
 
+#endif
 // vim: sw=4 sts=4 et tw=100

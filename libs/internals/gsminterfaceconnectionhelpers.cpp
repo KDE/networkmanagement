@@ -19,6 +19,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+
 #include <solid/control/modemmanager.h>
 #include <solid/control/modemgsmnetworkinterface.h>
 
@@ -108,3 +110,5 @@ void GsmInterfaceConnectionSync::sync(Knm::GsmInterfaceConnection * interfaceCon
 {
     InterfaceConnectionSync::sync(interfaceConnection, connection);
 }
+
+#endif
