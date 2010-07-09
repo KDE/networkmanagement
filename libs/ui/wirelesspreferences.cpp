@@ -85,6 +85,8 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
     m_contents->setDefaultName(ssid.isEmpty() ? i18n("New Wireless Connection") : ssid);
 
     m_wirelessWidget = new Wireless80211Widget(m_connection, ssid, this);
+    connect(m_wirelessWidget, SIGNAL(ssidSelected(const QString &)), m_contents, SLOT(setDefaultName(const QString &)));
+
     m_securityWidget = new WirelessSecuritySettingWidget(m_connection, iface, ap, this);
 
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);

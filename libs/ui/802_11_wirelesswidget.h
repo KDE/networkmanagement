@@ -43,6 +43,9 @@ public:
 protected Q_SLOTS:
     void scanClicked();
     void validate();
+
+Q_SIGNALS:
+    void ssidSelected(const QString & ssid);
 };
 
 #endif // 802_11_WIRELESSWIDGET_H

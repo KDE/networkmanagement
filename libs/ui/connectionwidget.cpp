@@ -65,6 +65,7 @@ void ConnectionWidget::setDefaultName(const QString & defaultName)
 {
     Q_D(ConnectionWidget);
     d->defaultName = defaultName;
+    d->ui.id->setText(defaultName);
 }
 
 QTabWidget * ConnectionWidget::connectionSettingsWidget()

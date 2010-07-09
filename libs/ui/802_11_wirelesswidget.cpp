@@ -143,6 +143,7 @@ void Wireless80211Widget::scanClicked()
     scanDialog.setMainWidget(&scanWid);
     if (scanDialog.exec() == QDialog::Accepted) {
         d->ui.ssid->setText(scanWid.currentAccessPoint());
+	emit ssidSelected(scanWid.currentAccessPoint());
     }
 }
 

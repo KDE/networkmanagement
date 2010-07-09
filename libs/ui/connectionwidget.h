@@ -47,7 +47,6 @@ public:
     ~ConnectionWidget();
 
     void setConnection(Knm::Connection * connection);
-    void setDefaultName(const QString & defaultName);
     QTabWidget * connectionSettingsWidget();
     QString settingName() const;
 
@@ -62,6 +61,9 @@ public:
      * guarantee that the connection name is not empty
      */
     void validate();
+
+public Q_SLOTS:
+    void setDefaultName(const QString & defaultName);
 
 private slots:
     void buttonChooseIconClicked();
