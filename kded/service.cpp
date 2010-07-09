@@ -89,7 +89,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 
     d->connectionList->registerConnectionHandler(d->listPersistence);
     d->connectionList->registerConnectionHandler(d->nmSettingsService);
-    d->connectionList->registerConnectionHandler(d->nmSettingsService);
 
 
     d->activatableList = new ActivatableList(d->connectionList);
