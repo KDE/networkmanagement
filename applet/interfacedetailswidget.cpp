@@ -483,8 +483,9 @@ void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_
                      Solid::Control::NetworkInterface::Unmanaged ||
                      Solid::Control::NetworkInterface::UnknownState) &&
         reason == (Solid::Control::NetworkInterface::UnknownReason ||
-	           Solid::Control::NetworkInterface::DeviceRemovedReason)) {
+                   Solid::Control::NetworkInterface::DeviceRemovedReason)) {
         setInterface(0);
+        emit back();
     } else {
         updateInfo(false);
     }
@@ -507,12 +508,12 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
         connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
 
         QString interfaceName = m_iface->interfaceName();
-	
-	/* TODO: ugly and error prone if more than one 3G modem/cellphone is attached,
-	 * but I do not know any other way to convert a serial device name to a network interface name. */
-	if (interfaceName.contains("ttyACM") || interfaceName.contains("ttyUSB")) {
-	    interfaceName = "ppp0";
-	}
+        
+        /* TODO: ugly and error prone if more than one 3G modem/cellphone is connected to the Internet.
+         * If anyone knows a way to convert a serial device name to a network interface name let me know. */
+        if (interfaceName.contains("ttyACM") || interfaceName.contains("ttyUSB")) {
+            interfaceName = "ppp0";
+        }
 
         m_rxSource = QString("network/interfaces/%1/receiver/data").arg(interfaceName);
         m_txSource = QString("network/interfaces/%1/transmitter/data").arg(interfaceName);
