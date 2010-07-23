@@ -1,7 +1,19 @@
 [Desktop Entry]
 Name=Other
+Name[nds]=Anner
+Name[pt]=Outra
+Name[pt_BR]=Outra
+Name[sk]=Ostatné
+Name[sv]=Övriga
+Name[uk]=Інше
 Name[x-test]=xxOtherxx
 Comment=Configure the Network Management tool
+Comment[nds]=Dat Nettwark-Pleegwarktüüch instellen
+Comment[pt]=Configurar a ferramenta de Gestão da Rede
+Comment[pt_BR]=Configurar a ferramenta de gerenciamento de redes
+Comment[sk]=Nastavenie nástroja pre správu siete
+Comment[sv]=Anpassa nätverkshanteringsverktyget
+Comment[uk]=Налаштувати інструмент керування мережею
 Comment[x-test]=xxConfigure the Network Management toolxx
 Type=Service
 Exec=kcmshell4 kcm_networkmanagement_tray
