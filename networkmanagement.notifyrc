@@ -1,5 +1,6 @@
 [Global]
 Name=Network Management
+Name[da]=Netværkshåndtering
 Name[nds]=Nettwarkpleeg
 Name[pt]=Gestão de Rede
 Name[pt_BR]=Gerenciamento de redes
@@ -9,6 +10,7 @@ Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managementxx
 IconName=networkmanager
 Comment=Network Management
+Comment[da]=Netværkshåndtering
 Comment[nds]=Nettwarkpleeg
 Comment[pt]=Gestão de Rede
 Comment[pt_BR]=Gerenciamento de redes
@@ -20,6 +22,7 @@ Version=3
 
 [Context/connectiontype]
 Name=Network Connection Type
+Name[da]=Type af netværksforbindelse
 Name[nds]=Nettwarkverbinnentyp
 Name[pt]=Tipo da Ligação de Rede
 Name[pt_BR]=Tipo de conexão de rede
@@ -30,6 +33,7 @@ Name[x-test]=xxNetwork Connection Typexx
 
 [Event/hwadded]
 Name=Network Interface Attached
+Name[da]=Netkort tilsluttet
 Name[nds]=Nettwarkkoppelsteed toföögt
 Name[pt]=Interface de Rede Ligada
 Name[pt_BR]=Interface de rede conectada
@@ -38,6 +42,7 @@ Name[sv]=Nätverksgränssnitt anslutet
 Name[uk]=Доданий інтерфейс мережі
 Name[x-test]=xxNetwork Interface Attachedxx
 Comment=A network interface was attached
+Comment[da]=Et netkort blev tilsluttet
 Comment[nds]=En Nettwarkkoppelsteed wöör toföögt.
 Comment[pt]=Foi ligada uma interface de rede
 Comment[pt_BR]=Uma interface de rede foi conectada
@@ -48,6 +53,7 @@ Comment[x-test]=xxA network interface was attachedxx
 
 [Event/hwremoved]
 Name=Network Interface Removed
+Name[da]=Netkort fjernet
 Name[nds]=Nettwark-Koppelsteed wegdaan
 Name[pt]=Interface de Rede Removida
 Name[pt_BR]=Interface de rede removida
@@ -56,6 +62,7 @@ Name[sv]=Nätverksgränssnitt borttaget
 Name[uk]=Вилучено інтерфейс мережі
 Name[x-test]=xxNetwork Interface Removedxx
 Comment=A network interface was removed
+Comment[da]=Et netkort blev fjernet
 Comment[nds]=En Nettwark-Koppelsteed wöör wegdaan.
 Comment[pt]=Foi removida uma interface de rede
 Comment[pt_BR]=Uma interface de rede foi removida
@@ -66,6 +73,7 @@ Comment[x-test]=xxA network interface was removedxx
 
 [Event/networkappeared]
 Name=Found Wireless Network
+Name[da]=Fandt trådløst netværk
 Name[nds]=Funknettwark opdeckt
 Name[pt]=Rede Sem-Fios Descoberta
 Name[pt_BR]=Rede sem fio encontrada
@@ -74,6 +82,7 @@ Name[sv]=Hittade trådlöst nätverk
 Name[uk]=Знайдено бездротову мережу
 Name[x-test]=xxFound Wireless Networkxx
 Comment=A wireless network appeared
+Comment[da]=Et trådløst netværk er dukket op
 Comment[nds]=En Funknettwark is opdukt.
 Comment[pt]=Apareceu uma rede sem-fios
 Comment[pt_BR]=Um rede sem fio apareceu
@@ -84,6 +93,7 @@ Comment[x-test]=xxA wireless network appearedxx
 
 [Event/networkdisappeared]
 Name=Lost Wireless Network
+Name[da]=Mistede trådløst netværk
 Name[nds]=Funknettwark wegkamen
 Name[pt]=Rede Sem-Fios Perdida
 Name[pt_BR]=Rede sem fio perdida
@@ -92,6 +102,7 @@ Name[sv]=Förlorade trådlöst nätverk
 Name[uk]=Втрачено зв’язок з радіомережею
 Name[x-test]=xxLost Wireless Networkxx
 Comment=A wireless network disappeared
+Comment[da]=Et trådløst netværk forsvandt
 Comment[nds]=En Funknettwark is wegkamen.
 Comment[pt]=Desapareceu uma rede sem-fios
 Comment[pt_BR]=Uma rede sem fio desapareceu
@@ -102,6 +113,7 @@ Comment[x-test]=xxA wireless network disappearedxx
 
 [Event/userconnectionattempt]
 Name=Establishing Network Connection
+Name[da]=Opretter netværksforbindelse
 Name[nds]=Tokoppeln na Nettwark
 Name[pt]=A Estabelecer a Ligação à Rede
 Name[pt_BR]=Estabelecendo conexão de rede
@@ -110,6 +122,7 @@ Name[sv]=Upprättar nätverksanslutning
 Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=The user started making a connection
+Comment[da]=Brugeren begyndte at oprette en forbindelse
 Comment[nds]=De Bruker hett mit dat Opstellen vun en Verbinnen anfungen.
 Comment[pt]=O utilizador começou a estabelecer uma ligação
 Comment[pt_BR]=O usuário começou a estabelecer uma conexão
@@ -120,6 +133,7 @@ Comment[x-test]=xxThe user started making a connectionxx
 
 [Event/autoconnectionattempt]
 Name=Establishing Network Connection
+Name[da]=Opretter netværksforbindelse
 Name[nds]=Tokoppeln na Nettwark
 Name[pt]=A Estabelecer a Ligação à Rede
 Name[pt_BR]=Estabelecendo conexão de rede
@@ -128,6 +142,7 @@ Name[sv]=Upprättar nätverksanslutning
 Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=A connection is being started automatically
+Comment[da]=En forbindelse er blevet startet automatisk
 Comment[nds]=En Verbinnen warrt automaatsch opstellt.
 Comment[pt]=Uma ligação está a ser iniciada automaticamente
 Comment[pt_BR]=Uma conexão foi iniciada automaticamente
@@ -139,6 +154,7 @@ Action=Popup
 
 [Event/connecting]
 Name=Establishing Network Connection
+Name[da]=Opretter netværksforbindelse
 Name[nds]=Tokoppeln na Nettwark
 Name[pt]=A Estabelecer a Ligação à Rede
 Name[pt_BR]=Estabelecendo conexão de rede
@@ -147,6 +163,7 @@ Name[sv]=Upprättar nätverksanslutning
 Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Comment=A network connection attempt was begun
+Comment[da]=Et netværksforbindelsesforsøg er påbegyndt
 Comment[nds]=Mit Tokoppeln na en Nettwark anfungen
 Comment[pt]=Iniciou-se uma tentativa de ligação à rede
 Comment[pt_BR]=Foi iniciada uma tentativa de conexão de rede
@@ -158,6 +175,7 @@ Action=Popup
 
 [Event/disconnected]
 Name=Network Connection Disconnected
+Name[da]=Netværksforbindelse afbrudt
 Name[nds]=Vun Nettwark afkoppelt
 Name[pt]=Ligação de Rede Desligada
 Name[pt_BR]=Conexão de rede desconectada
@@ -166,6 +184,7 @@ Name[sv]=Nätverksanslutning nerkopplad
 Name[uk]=Мережеве з’єднання розірвано
 Name[x-test]=xxNetwork Connection Disconnectedxx
 Comment=A network connection was disconnected
+Comment[da]=En netværksforbindelse blev afbrudt
 Comment[nds]=En Nettwark-Verbinnen wöör afkoppelt.
 Comment[pt]=A ligação de rede terminou
 Comment[pt_BR]=Uma conexão de rede foi desconectada
@@ -176,6 +195,7 @@ Comment[x-test]=xxA network connection was disconnectedxx
 
 [Event/connected]
 Name=Network Connection Succeeded
+Name[da]=Netværksforbindelse gennemført
 Name[nds]=Mit Spood na Nettwark tokoppelt
 Name[pt]=Ligação à Rede com Sucesso
 Name[pt_BR]=Conexão de rede estabelecida com sucesso
@@ -184,6 +204,7 @@ Name[sv]=Nätverksanslutning lyckades
 Name[uk]=Успішне з’єднання з мережею
 Name[x-test]=xxNetwork Connection Succeededxx
 Comment=A network connection was established
+Comment[da]=En netværksforbindelse blev oprettet
 Comment[nds]=En Nettwark-Verbinnen wöör opstellt.
 Comment[pt]=Foi estabelecida uma ligação à rede
 Comment[pt_BR]=Uma conexão de rede foi estabelecida
@@ -195,6 +216,7 @@ Action=Popup
 
 [Event/connfailed]
 Name=Network Connection Failed
+Name[da]=Netværksforbindelse mislykkedes
 Name[nds]=Tokoppeln na Nettwark fehlslaan
 Name[pt]=Ligação à Rede sem Sucesso
 Name[pt_BR]=Falha na conexão de rede
@@ -203,6 +225,7 @@ Name[sv]=Nätverksanslutning misslyckades
 Name[uk]=Спроба встановлення з'єднання зазнала невдачі
 Name[x-test]=xxNetwork Connection Failedxx
 Comment=A network connection attempt failed
+Comment[da]=Et netværksforbindelsesforsøg mislykkedes
 Comment[nds]=Dat Tokoppeln na en Nettwark is fehlslaan.
 Comment[pt]=A tentativa de ligação à rede foi mal-sucedida
 Comment[pt_BR]=Uma tentativa de conexão de rede falhou
@@ -214,6 +237,7 @@ Action=Popup
 
 [Event/rfoff]
 Name=Radio Hardware Switched Off
+Name[da]=Radio-hardware slået fra
 Name[nds]=Funkreedschap utmaakt
 Name[pt]='Hardware' de Rádio Desligado
 Name[pt_BR]=Hardware de rádio desligado
@@ -222,6 +246,7 @@ Name[sv]=Radiohårdvara avstängd
 Name[uk]=Радіозв’язок апаратно вимкнено
 Name[x-test]=xxRadio Hardware Switched Offxx
 Comment=Wireless transceivers disabled by hardware switch
+Comment[da]=Trådløs-transceivere deaktiveret af hardware-kontakt
 Comment[nds]=Funkreedschap mit Hardwareschalter utmaakt
 Comment[pt]=Os receptores/transmissores sem-fios foram desligados pelo interruptor
 Comment[pt_BR]=Os transmissores/receptores sem fio foram desabilitados pelo interruptor do hardware
@@ -233,6 +258,7 @@ Action=Popup
 
 [Event/rfon]
 Name=Radio Hardware Switched On
+Name[da]=Radio-hardware slået til
 Name[nds]=Funkreedschap anmaakt
 Name[pt]='Hardware' de Rádio Ligado
 Name[pt_BR]=Hardware de rádio ligado
@@ -241,6 +267,7 @@ Name[sv]=Radiohårdvara aktiverad
 Name[uk]=Радіозв’язок апаратно увімкнено
 Name[x-test]=xxRadio Hardware Switched Onxx
 Comment=Wireless transceivers enabled
+Comment[da]=Trådløs-transceivere aktiveret
 Comment[nds]=Funkreedschap wöör anmaakt
 Comment[pt]=Os receptores/transmissores sem-fios foram ligados
 Comment[pt_BR]=Os transmissores/receptores sem fio foram habilitados
@@ -252,6 +279,7 @@ Action=Popup
 
 [Event/lowsignal]
 Name=Low Wireless Signal Strength
+Name[da]=Lav signalstyrke på trådløst
 Name[nds]=Minn Funksignaalstärk
 Name[pt]=Potência do Sinal Sem-Fios Fraca
 Name[pt_BR]=Potência baixa do sinal sem fio
@@ -260,6 +288,7 @@ Name[sv]=Låg trådlös signalstyrka
 Name[uk]=Низька потужність радіосигналу
 Name[x-test]=xxLow Wireless Signal Strengthxx
 Comment=The wireless signal strength is low
+Comment[da]=Den trådløse signalstyrke er lav
 Comment[nds]=De Stärk vun't Funksignaal is minn.
 Comment[pt]=A potência do sinal sem-fios é fraca
 Comment[pt_BR]=A potência do sinal sem fio está baixa
@@ -271,6 +300,7 @@ Action=Popup
 
 [Event/ifacestatechange]
 Name=Interface changed state
+Name[da]=Netkort ændrede tilstand
 Name[nds]=Koppelsteed hett Status wesselt
 Name[pt]=A interface mudou de estado
 Name[pt_BR]=A interface alterou o estado
@@ -279,6 +309,7 @@ Name[sv]=Gränssnitt ändrade tillstånd
 Name[uk]=Змінений стан інтерфейсу
 Name[x-test]=xxInterface changed statexx
 Comment=An interface changed state
+Comment[da]=Et netkort ændrede tilstand
 Comment[nds]=En Koppelsteed hett den Status wesselt.
 Comment[pt]=Uma interface de rede mudou de estado
 Comment[pt_BR]=Uma interface alterou o estado
@@ -289,6 +320,7 @@ Comment[x-test]=xxAn interface changed statexx
 
 [Event/networkingdisabled]
 Name=Network management disabled
+Name[da]=Netværkshåndtering deaktiveret
 Name[nds]=Nettwarkpleeg utmaakt
 Name[pt]=Gestão de rede desactivada
 Name[pt_BR]=Gerenciamento de redes desabilitado
@@ -297,6 +329,7 @@ Name[sv]=Nätverkshantering inaktiverad
 Name[uk]=Керування мережею вимкнено
 Name[x-test]=xxNetwork management disabledxx
 Comment=The network management subsystem was stopped or restarted
+Comment[da]=Undersystemet til netværkshåndtering blev stoppet eller genstartet
 Comment[nds]=Dat Nettwarkpleeg-Ünnersysteem wöör anhollen oder nieg opropen.
 Comment[pt]=O sub-sistema de gestão da rede foi parado ou reiniciado
 Comment[pt_BR]=O subsistema de gerenciamento de redes foi parado ou reiniciado
