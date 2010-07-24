@@ -34,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class RemoteActivatable;
 class RemoteInterfaceConnection;
 class RemoteInterfaceList;
+class InterfaceDetails;
 
 class InterfaceDetailsWidget : public QGraphicsWidget
 {
@@ -58,11 +59,14 @@ Q_OBJECT
     private:
         Plasma::DataEngine* engine();
         void updateWidgets();
-        QString bitRate();
+        int bitRate();
         QString currentIpAddress();
         QString getMAC();
-        void updateInfo(bool reset, int signalQuality = -1);
+        void getDetails();
+        void showDetails(bool reset = false);
         QSizeF sizeHint (Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
+        void connectSignals();
+        void disconnectSignals();
 
         Solid::Control::NetworkInterface* m_iface;
         QString m_ifaceUni;
@@ -89,12 +93,20 @@ Q_OBJECT
         qlonglong m_txTotal;
 
         bool m_updateEnabled;
+        InterfaceDetails * details;
 
     private Q_SLOTS:
-        void update();
-
-        // To update signal quality quickly, other information are not updated as fast as this one.
-        void updateSignalQuality(uint signalQuality);
+        void updateIpAddress();
+        void updateBitRate(int bitRate);
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+        void modemUpdateEnabled(const bool enabled);
+        void modemUpdateBand();
+        void modemUpdateUnlockRequired(const QString &);
+        void modemUpdateRegistrationInfo(const Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType & registrationInfo);
+        void modemUpdateAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology & tech);
+        void modemUpdateSignalQuality(const uint signalQuality);
+        void modemUpdateAllowedMode(const Solid::Control::ModemInterface::AllowedMode mode);
+#endif
 };
 
 #endif // INTERFACEDETAILSWIDGET_H
