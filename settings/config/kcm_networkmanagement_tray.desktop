@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Other
 Name[da]=Andet
+Name[de]=Sonstiges
 Name[fr]=Autre
 Name[ms]=Lain-lain
 Name[nds]=Anner
@@ -12,6 +13,7 @@ Name[uk]=Інше
 Name[x-test]=xxOtherxx
 Comment=Configure the Network Management tool
 Comment[da]=Indstil værktøjet til netværkshåndtering
+Comment[de]=Die Netzwerkverwaltung einrichten
 Comment[fr]=Configurer l'outil de gestion de réseau
 Comment[nds]=Dat Nettwark-Pleegwarktüüch instellen
 Comment[pt]=Configurar a ferramenta de Gestão da Rede
