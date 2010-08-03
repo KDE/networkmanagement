@@ -1,5 +1,6 @@
 [Global]
 Name=Network Management
+Name[cs]=Správa sítě
 Name[da]=Netværkshåndtering
 Name[de]=Netzwerkverwaltung
 Name[fr]=Gestion de réseau
@@ -14,6 +15,7 @@ Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managementxx
 IconName=networkmanager
 Comment=Network Management
+Comment[cs]=Správa sítě
 Comment[da]=Netværkshåndtering
 Comment[de]=Netzwerkverwaltung
 Comment[fr]=Gestion de réseau
@@ -28,6 +30,7 @@ Version=3
 
 [Context/connectiontype]
 Name=Network Connection Type
+Name[cs]=Typ síťového připojení
 Name[da]=Type af netværksforbindelse
 Name[de]=Art der Netzwerkverbindung
 Name[fr]=Type de connexion réseau
@@ -65,6 +68,7 @@ Comment[x-test]=xxA network interface was attachedxx
 
 [Event/hwremoved]
 Name=Network Interface Removed
+Name[cs]=Síťové zařízení odstraněno
 Name[da]=Netkort fjernet
 Name[de]=Netzwerkschnittstelle entfernt
 Name[fr]=Interface réseau supprimée
@@ -76,6 +80,7 @@ Name[sv]=Nätverksgränssnitt borttaget
 Name[uk]=Вилучено інтерфейс мережі
 Name[x-test]=xxNetwork Interface Removedxx
 Comment=A network interface was removed
+Comment[cs]=Síťové zařízení odstraněno
 Comment[da]=Et netkort blev fjernet
 Comment[de]=Eine Netzwerkschnittstelle ist entfernt worden
 Comment[fr]=Une interface réseau a été supprimée
@@ -246,6 +251,7 @@ Name[sv]=Nätverksanslutning lyckades
 Name[uk]=Успішне з’єднання з мережею
 Name[x-test]=xxNetwork Connection Succeededxx
 Comment=A network connection was established
+Comment[cs]=Síťové spojení bylo navázáno
 Comment[da]=En netværksforbindelse blev oprettet
 Comment[de]=Eine Netzwerkverbindung ist erfolgreich hergestellt worden
 Comment[fr]=Une connexion réseau a été établie

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Other
+Name[cs]=Jiné
 Name[da]=Andet
 Name[de]=Sonstiges
 Name[fr]=Autre
@@ -12,6 +13,7 @@ Name[sv]=Övriga
 Name[uk]=Інше
 Name[x-test]=xxOtherxx
 Comment=Configure the Network Management tool
+Comment[cs]=Nastavit nástroj pro správu sítě
 Comment[da]=Indstil værktøjet til netværkshåndtering
 Comment[de]=Die Netzwerkverwaltung einrichten
 Comment[fr]=Configurer l'outil de gestion de réseau
