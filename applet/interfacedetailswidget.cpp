@@ -146,7 +146,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_backButton->setMaximumHeight(22);
     m_backButton->setMaximumWidth(22);
     m_backButton->setIcon(KIcon("go-previous"));
-    m_backButton->setToolTip(i18n("back"));
+    m_backButton->setToolTip(i18n("Go Back"));
 
     connect(m_backButton, SIGNAL(clicked()), this, SIGNAL(back()));
 

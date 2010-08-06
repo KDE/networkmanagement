@@ -65,6 +65,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
 {
     setDrawBackground(true);
     setTextBackgroundColor(QColor(Qt::transparent));
+    QString tt = i18nc("tooltip on the LHS widgets", "Click here for interface details");
 
     m_pixmapSize = QSize(48, 48);
     setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
@@ -82,6 +83,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_layout->setColumnFixedWidth(2, 16); // FIXME: spacing?
 
     m_icon = new Plasma::Label(this);
+    m_icon->setToolTip(tt);
     m_icon->setMinimumHeight(m_pixmapSize.height());
     m_icon->setMaximumHeight(m_pixmapSize.height());
 
@@ -96,6 +98,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
 
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
+    m_ifaceNameLabel->setToolTip(tt);
     m_ifaceNameLabel->setText(m_interfaceName);
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
     m_ifaceNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -114,6 +117,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
 
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
+    m_connectionNameLabel->setToolTip(tt);
     m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
     m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 1);
