@@ -182,6 +182,21 @@ void InterfaceItem::disappear()
     connect(fadeAnimation, SIGNAL(finished()), this, SIGNAL(disappearAnimationFinished()));
 }
 
+void InterfaceItem::showItem(QGraphicsWidget* widget, bool show)
+{
+    Plasma::Animation* fadeAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation);
+    fadeAnimation->setTargetWidget(widget);
+    widget->show();
+    if (show) {
+        fadeAnimation->setProperty("startOpacity", 0.0);
+        fadeAnimation->setProperty("targetOpacity", 1.0);
+    } else {
+        fadeAnimation->setProperty("startOpacity", 1.0);
+        fadeAnimation->setProperty("targetOpacity", 0.0);
+    }
+    fadeAnimation->start();
+}
+
 QString InterfaceItem::label()
 {
     return m_ifaceNameLabel->text();
@@ -210,7 +225,7 @@ void InterfaceItem::setEnabled(bool enable)
     m_disconnectButton->setEnabled(enable);
     m_connectionInfoIcon->setEnabled(enable);
     if (!enable) {
-        m_connectionInfoIcon->hide();
+        showItem(m_connectionInfoIcon, false);
     }
 }
 
@@ -356,6 +371,8 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
     // check if any of them affect our interface
     // setActiveConnection on ourself
     // button to connect, disconnect
+    bool old_disco = m_disconnect;
+
     m_disconnect = false;
     // Name and info labels
     QString lname = UiUtils::connectionStateToString(state, connectionName());
@@ -390,16 +407,15 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
     }
 
     // Update connect button
-    if (!m_disconnect) {
-        //m_disconnectButton->setIcon("dialog-ok");
-        //m_disconnectButton->setToolTip(i18n("Connect"));
-        m_disconnectButton->hide();
-    } else {
-        m_disconnectButton->setIcon(KIcon("dialog-close"));
-        m_disconnectButton->setToolTip(i18nc("tooltip on disconnect icon", "Disconnect"));
-        m_disconnectButton->show();
+    if (old_disco != m_disconnect) {
+        if (!m_disconnect) {
+            showItem(m_disconnectButton, false);
+        } else {
+            m_disconnectButton->setIcon(KIcon("dialog-close"));
+            m_disconnectButton->setToolTip(i18nc("tooltip on disconnect icon", "Disconnect"));
+            showItem(m_disconnectButton, true);
+        }
     }
-
     m_connectionNameLabel->setText(lname);
     m_icon->nativeWidget()->setPixmap(interfacePixmap());
 

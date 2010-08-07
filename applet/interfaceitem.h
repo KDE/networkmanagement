@@ -113,6 +113,7 @@ protected:
     */
    //----- virtual QString currentIpAddress();
     virtual RemoteInterfaceConnection* currentConnection();
+    void showItem(QGraphicsWidget* widget, bool show = true);
 
     RemoteInterfaceConnection* m_currentConnection;
 
