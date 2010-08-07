@@ -68,8 +68,8 @@ void ActivatableItem::disappear()
     Plasma::Animation* disappearAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation);
     disappearAnimation->setTargetWidget(this);
     disappearAnimation->setProperty("startOpacity", 1.0);
-    disappearAnimation->setProperty("targetOpacity", 0.5);
-    disappearAnimation->setProperty("Duration", 2000);
+    disappearAnimation->setProperty("targetOpacity", 0.0);
+    //disappearAnimation->setProperty("duration", 2000);
     disappearAnimation->start();
     connect(disappearAnimation, SIGNAL(finished()), this, SIGNAL(disappearAnimationFinished()));
 }

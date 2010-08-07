@@ -97,7 +97,7 @@ void NMPopup::init()
     m_mainLayout->setRowFixedHeight(0, 24);
 
     m_leftWidget = new Plasma::TabBar(this);
-    m_leftWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    m_leftWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     m_leftLayout = new QGraphicsLinearLayout;
     m_leftLayout->setOrientation(Qt::Vertical);
 
@@ -230,15 +230,22 @@ void NMPopup::interfaceRemoved(const QString& uni)
         // the m_iface pointer in interfaceDetailsWidget become invalid in this case.
         if (uni == m_interfaceDetailsWidget->getLastIfaceUni()) {
             m_interfaceDetailsWidget->setInterface(0);
-    
             // Since it is invalid go back to "main" window. 
             m_leftWidget->setCurrentIndex(0);
         }
 
-        InterfaceItem * item = m_interfaces.take(uni);
-        m_interfaceLayout->removeItem(item);
-        delete item;
+        InterfaceItem* item = m_interfaces.take(uni);
+        connect(item, SIGNAL(disappearAnimationFinished()), this, SLOT(deleteInterfaceItem()));
+        item->disappear();
     }
+}
+
+void NMPopup::deleteInterfaceItem()
+{
+    // slot is called from animation's finished()
+    InterfaceItem* item = dynamic_cast<InterfaceItem*>(sender());
+    m_interfaceLayout->removeItem(item);
+    delete item;
 }
 
 Solid::Control::NetworkInterface* NMPopup::defaultInterface()

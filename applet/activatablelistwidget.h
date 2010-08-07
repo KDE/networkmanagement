@@ -58,9 +58,6 @@ public Q_SLOTS:
 private Q_SLOTS:
     void deleteItem();
 
-Q_SIGNALS:
-    //void connectionListUpdated();
-
 private:
     void filter();
     void createItem(RemoteActivatable* conn);

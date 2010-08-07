@@ -101,7 +101,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_ifaceNameLabel->setToolTip(tt);
     m_ifaceNameLabel->setText(m_interfaceName);
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
-    m_ifaceNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_ifaceNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
 
     m_disconnectButton = new Plasma::PushButton(this);
@@ -118,6 +118,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
     m_connectionNameLabel->setToolTip(tt);
+    m_connectionNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
     m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 1);
@@ -159,21 +160,26 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     fadeAnimation->setTargetWidget(this);
     fadeAnimation->setProperty("startOpacity", 0.0);
     fadeAnimation->setProperty("targetOpacity", 1.0);
-    fadeAnimation->setProperty("Duration", 2000);
+    //fadeAnimation->setProperty("duration", 2000);
 
     fadeAnimation->start();
 }
 
 InterfaceItem::~InterfaceItem()
 {
+}
+
+void InterfaceItem::disappear()
+{
     Plasma::Animation* fadeAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation);
     fadeAnimation->setTargetWidget(this);
     fadeAnimation->setProperty("startOpacity", 1.0);
     fadeAnimation->setProperty("targetOpacity", 0.0);
-    fadeAnimation->setProperty("Duration", 2000);
+    //fadeAnimation->setProperty("duration", 2000);
 
     //fadeAnimation->setTargetOpacity(1.0);
     fadeAnimation->start();
+    connect(fadeAnimation, SIGNAL(finished()), this, SIGNAL(disappearAnimationFinished()));
 }
 
 QString InterfaceItem::label()

@@ -70,7 +70,7 @@ public:
     QString label();
     virtual void setActivatableList(RemoteActivatableList* activatables);
     virtual QString currentIpAddress();
-
+    void disappear();
 
 public Q_SLOTS:
     void activeConnectionsChanged();
@@ -78,6 +78,9 @@ public Q_SLOTS:
     virtual void setEnabled(bool enable);
     // also updates the connection info
     virtual void setActive(bool active);
+
+Q_SIGNALS:
+    void disappearAnimationFinished();
 
 protected Q_SLOTS:
     /**
