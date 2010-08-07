@@ -93,11 +93,11 @@ public Q_SLOTS:
      * React to manager status changes
      */
     void managerStatusChanged(Solid::Networking::Status);
+    void configChanged();
 
 protected:
     void createConfigurationInterface(KConfigDialog *parent);
 
-    
 protected Q_SLOTS:
     // called by Plasma::ToolTipManager
     void toolTipAboutToShow();

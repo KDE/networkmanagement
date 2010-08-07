@@ -145,7 +145,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
             Solid::Control::WiredNetworkInterface* wirediface =
                             static_cast<Solid::Control::WiredNetworkInterface*>(m_iface);
             connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
-	}
+        }
         connectionStateChanged(m_iface->connectionState());
     }
 
@@ -160,8 +160,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     fadeAnimation->setTargetWidget(this);
     fadeAnimation->setProperty("startOpacity", 0.0);
     fadeAnimation->setProperty("targetOpacity", 1.0);
-    //fadeAnimation->setProperty("duration", 2000);
-
     fadeAnimation->start();
 }
 
@@ -175,9 +173,6 @@ void InterfaceItem::disappear()
     fadeAnimation->setTargetWidget(this);
     fadeAnimation->setProperty("startOpacity", 1.0);
     fadeAnimation->setProperty("targetOpacity", 0.0);
-    //fadeAnimation->setProperty("duration", 2000);
-
-    //fadeAnimation->setTargetOpacity(1.0);
     fadeAnimation->start();
     connect(fadeAnimation, SIGNAL(finished()), this, SIGNAL(disappearAnimationFinished()));
 }
@@ -209,7 +204,6 @@ Solid::Control::NetworkInterface* InterfaceItem::interface()
 
 void InterfaceItem::setActive(bool active)
 {
-    kDebug() << "+ + + + + + Active?" << active;
     if (m_iface) {
         connectionStateChanged(m_iface->connectionState());
     }
@@ -286,7 +280,7 @@ QString InterfaceItem::currentIpAddress()
 
 RemoteInterfaceConnection* InterfaceItem::currentConnection()
 {
-    kDebug() << m_currentConnection;
+    //kDebug() << m_currentConnection;
     if (m_currentConnection && m_currentConnection->activationState() != Knm::InterfaceConnection::Unknown) {
         return m_currentConnection;
     } else {
@@ -419,7 +413,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
     m_connectionNameLabel->setText(lname);
     m_icon->nativeWidget()->setPixmap(interfacePixmap());
 
-    kDebug() << "State changed" << lname;
+    //kDebug() << "State changed" << lname;
     currentConnectionChanged();
     emit stateChanged();
 }
@@ -443,7 +437,7 @@ QPixmap InterfaceItem::interfacePixmap(const QString &icon) {
 void InterfaceItem::emitDisconnectInterfaceRequest()
 {
     if (m_iface) {
-        kDebug() << m_iface->uni();
+        //kDebug() << m_iface->uni();
         emit disconnectInterfaceRequested(m_iface->uni());
     }
 }

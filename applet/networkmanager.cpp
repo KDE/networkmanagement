@@ -227,9 +227,7 @@ void NetworkManagerApplet::init()
 {
     // bogus, just to make sure we have some remotely sensible value
     m_contentSquare = contentsRect().toRect();
-    kDebug();
-    KConfigGroup cg = config();
-    m_iconPerDevice = cg.readEntry("IconPerDevice", false);
+    configChanged();
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
@@ -241,6 +239,14 @@ void NetworkManagerApplet::init()
     m_activatables->init();
     setupInterfaceSignals();
 }
+
+void NetworkManagerApplet::configChanged()
+{
+    KConfigGroup cg = config();
+    m_iconPerDevice = cg.readEntry("IconPerDevice", false);
+}
+
+
 
 QGraphicsWidget* NetworkManagerApplet::graphicsWidget()
 {
@@ -325,11 +331,11 @@ void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p)
     kDebug() << "Painting overlay ...>" << activeInterface()->connectionState();
     */
     if (activeInterface() && activeInterface()->connectionState() == Solid::Control::NetworkInterface::NeedAuth) {
-        kDebug() << "Needing auth ...>";
+        //kDebug() << "Needing auth ...>";
         int i_s = (int)contentsRect().width()/4;
         int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
 
-        kDebug() << "Security:iconsize" << iconsize;
+        //kDebug() << "Security:iconsize" << iconsize;
         QPixmap icon = KIcon("dialog-password").pixmap(iconsize);
         QPoint pos = QPoint(contentsRect().right() - iconsize,
                             contentsRect().bottom() - iconsize);
@@ -750,7 +756,7 @@ void NetworkManagerApplet::userWirelessEnabledChanged(bool enabled)
 
 void NetworkManagerApplet::managerStatusChanged(Solid::Networking::Status status)
 {
-    kDebug() << "managerstatuschanged";
+    //kDebug() << "managerstatuschanged";
     if (Solid::Networking::Unknown == status ) {
         // FIXME: Do something smart
     } else {
