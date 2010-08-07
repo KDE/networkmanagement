@@ -95,6 +95,7 @@ void ActivatableListWidget::removeType(Knm::Activatable::ActivatableType type)
 
 void ActivatableListWidget::addInterface(Solid::Control::NetworkInterface* iface)
 {
+    kDebug() << "interface added";
     if (iface) {
         m_interfaces << iface->uni();
         m_showAllTypes = true;
@@ -186,7 +187,6 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
             break;
         }
 #endif
-
         default:
             break;
     }
@@ -195,6 +195,9 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
     ai->setupItem();
     m_layout->addItem(ai);
     m_itemIndex[activatable] = ai;
+    connect(ai, SIGNAL(disappearAnimationFinished()),
+            this, SLOT(deleteItem()));
+
 }
 
 void ActivatableListWidget::listAppeared()
@@ -209,6 +212,9 @@ void ActivatableListWidget::listAppeared()
 void ActivatableListWidget::deactivateConnection(const QString& deviceUni)
 {
     foreach (ActivatableItem* item, m_itemIndex) {
+        if (!item) { // the item might be gone here
+            continue;
+        }
         RemoteInterfaceConnection *conn = item->interfaceConnection();
         if (conn && conn->deviceUni() == deviceUni) {
             //kDebug() << "deactivating" << conn->connectionName();
@@ -240,7 +246,9 @@ void ActivatableListWidget::filter()
         if (accept(act)) {
             createItem(act);
         } else {
-            activatableRemoved(act);
+            if (m_itemIndex.keys().contains(act)) {
+                activatableRemoved(act);
+            }
         }
     }
     m_layout->invalidate();
@@ -248,9 +256,19 @@ void ActivatableListWidget::filter()
 
 void ActivatableListWidget::activatableRemoved(RemoteActivatable * removed)
 {
-    m_layout->removeItem(m_itemIndex[removed]);
-    delete m_itemIndex[removed];
-    m_itemIndex.remove(removed);
+    ActivatableItem *it = m_itemIndex[removed];
+    if (!it) {
+        return;
+    }
+    it->disappear();
+}
+
+void ActivatableListWidget::deleteItem()
+{
+    ActivatableItem* ai = dynamic_cast<ActivatableItem*>(sender());
+    m_layout->removeItem(ai);
+    m_itemIndex.remove(m_itemIndex.key(ai));
+    delete ai;
 }
 
 // vim: sw=4 sts=4 et tw=100

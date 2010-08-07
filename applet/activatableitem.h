@@ -36,6 +36,7 @@ public:
     virtual ~ActivatableItem();
     virtual void setupItem() = 0;
     RemoteInterfaceConnection* interfaceConnection() const;
+    void disappear();
 
 Q_SIGNALS:
     /** * Indicate that the 'connect' button was clicked.  Used by the containing InterfaceGroup to
@@ -43,6 +44,7 @@ Q_SIGNALS:
      */
     void clicked(ActivatableItem *);
     void hasDefaultRouteChanged(bool);
+    void disappearAnimationFinished();
 
 protected Q_SLOTS:
     void emitClicked();
@@ -54,6 +56,7 @@ protected:
     RemoteActivatable *m_activatable;
     bool m_hasDefaultRoute;
     Knm::InterfaceConnection::ActivationState m_state;
+    bool m_deleting;
 
 };
 

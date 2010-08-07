@@ -55,6 +55,9 @@ public Q_SLOTS:
     void clearInterfaces();
     void toggleVpn();
 
+private Q_SLOTS:
+    void deleteItem();
+
 Q_SIGNALS:
     //void connectionListUpdated();
 
