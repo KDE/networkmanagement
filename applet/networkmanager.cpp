@@ -227,6 +227,7 @@ void NetworkManagerApplet::init()
 {
     // bogus, just to make sure we have some remotely sensible value
     m_contentSquare = contentsRect().toRect();
+    //kDebug();
     configChanged();
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
@@ -800,7 +801,7 @@ QPixmap NetworkManagerApplet::generateProgressStatusOverlay()
     int i_s = (int)contentsRect().width()/4;
     int size = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
 
-    QPixmap pix(size-2, size-2);
+    QPixmap pix(size, size);
     pix.fill(Qt::transparent);
     qreal state = UiUtils::interfaceState(activeInterface());
 
@@ -823,8 +824,8 @@ QPixmap NetworkManagerApplet::generateProgressStatusOverlay()
     p.setPen(pen);
     p.setBrush(fgColor);
     //p.drawArc(contentsRect(), top, progress);
-    //p.drawPie(pix.rect().adjusted(1.5, 1.5, -2.5, -2.5), top, progress);
-    p.drawPie(pix.rect().adjusted(1.0, 1.0, -2.0, -2.0), top, progress);
+    p.drawPie(pix.rect().adjusted(1.5, 1.5, -2.5, -2.5), top, progress);
+    //p.drawPie(pix.rect().adjusted(1.0, 1.0, -2.0, -2.0), top, progress);
 
     return pix;
 }
