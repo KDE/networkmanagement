@@ -433,7 +433,7 @@ void NMPopup::toggleInterfaceTab()
 {
     InterfaceItem* item = qobject_cast<InterfaceItem*>(sender());
     if (item) {
-    m_interfaceDetailsWidget->setInterface(item->interface());
+        m_interfaceDetailsWidget->setInterface(item->interface());
     }
 
     if (m_leftWidget->currentIndex() == 0) {
