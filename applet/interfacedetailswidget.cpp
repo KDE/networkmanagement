@@ -202,8 +202,9 @@ void InterfaceDetailsWidget::resetUi()
 
 void InterfaceDetailsWidget::getDetails()
 {
-    if (!m_iface)
+    if (!m_iface) {
         return;
+    }
 
     details->type = m_iface->type();
     details->connectionState = m_iface->connectionState();
@@ -630,6 +631,9 @@ QSizeF InterfaceDetailsWidget::sizeHint (Qt::SizeHint which, const QSizeF & cons
 
 void InterfaceDetailsWidget::connectSignals()
 {
+    if (!m_iface) {
+        return;
+    }
     connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
     connect(m_iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
 

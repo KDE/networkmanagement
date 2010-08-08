@@ -442,10 +442,10 @@ void NMPopup::toggleInterfaceTab()
         // Enable / disable updating of the details widget
         m_interfaceDetailsWidget->setUpdateEnabled(true);
 
-	if (item->interface()) {
-	  m_leftLabel->setText(QString("<h3>%1</h3>").arg(
-			      UiUtils::interfaceNameLabel(item->interface()->uni())));
-	}
+        if (item->interface()) {
+            m_leftLabel->setText(QString("<h3>%1</h3>").arg(
+                                UiUtils::interfaceNameLabel(item->interface()->uni())));
+        }
     } else {
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
         showMore(false);
