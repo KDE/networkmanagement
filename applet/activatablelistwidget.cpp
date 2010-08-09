@@ -116,7 +116,6 @@ void ActivatableListWidget::setShowAllTypes(bool show)
     if (show) {
         m_vpn = false;
     }
-    filter();
 }
 
 void ActivatableListWidget::toggleVpn()

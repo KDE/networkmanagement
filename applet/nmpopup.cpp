@@ -448,8 +448,8 @@ void NMPopup::toggleInterfaceTab()
         }
     } else {
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
-        showMore(false);
         m_connectionList->setShowAllTypes(true);
+        showMore(false);
         m_interfaceDetailsWidget->setUpdateEnabled(false);
         m_leftWidget->setCurrentIndex(0);
     }
