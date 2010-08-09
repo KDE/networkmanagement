@@ -122,7 +122,7 @@ void ActivatableListWidget::setShowAllTypes(bool show)
 void ActivatableListWidget::toggleVpn()
 {
     kDebug() << "VPN toggled";
-    m_vpn = !m_vpn;
+    m_vpn = true;
     filter();
 }
 
