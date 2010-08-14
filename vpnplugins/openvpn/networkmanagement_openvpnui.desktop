@@ -25,6 +25,7 @@ Name[pt]=OpenVPN
 Name[pt_BR]=OpenVPN
 Name[sk]=OpenVPN
 Name[sv]=OpenVPN
+Name[th]=OpenVPN
 Name[uk]=OpenVPN
 Name[x-test]=xxOpenVPNxx
 Comment=OpenVPN plugin
@@ -39,6 +40,7 @@ Comment[pt]='Plugin' do OpenVPN
 Comment[pt_BR]=Plug-in do OpenVPN
 Comment[sk]=OpenVPN modul
 Comment[sv]=Insticksprogram för OpenVPN
+Comment[th]=โปรแกรมเสริมของ OpenVPN
 Comment[uk]=Додаток OpenVPN
 Comment[x-test]=xxOpenVPN pluginxx
 
