@@ -544,6 +544,16 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
             interfaceName = "ppp0";
         }
 
+	/* Usb network interfaces are hotpluggable and Plasma::DataEngine seems to have difficulty
+	 * to recognise them after the engine is loaded, reloading the engine does the trick.
+	 * Eventually the engine will recognise them but not before the user get upset because
+	 * the traffic plot is not updating.
+	 */
+	if (interfaceName.contains("usb")) {
+    		Plasma::DataEngineManager::self()->unloadEngine("systemmonitor");
+    		Plasma::DataEngineManager::self()->loadEngine("systemmonitor");
+	}
+
         m_rxSource = QString("network/interfaces/%1/receiver/data").arg(interfaceName);
         m_txSource = QString("network/interfaces/%1/transmitter/data").arg(interfaceName);
         m_rxTotalSource = QString("network/interfaces/%1/receiver/dataTotal").arg(interfaceName);
