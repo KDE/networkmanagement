@@ -524,13 +524,11 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
     if (m_iface == iface) {
         return;
     }
+    disconnectSignals();
     resetUi();
-    if (iface) {
-        if (m_iface) {
-            disconnectSignals();
-        }
+    m_iface = iface;
 
-        m_iface = iface;
+    if (iface) {
         m_ifaceUni = iface->uni();
         getDetails();
         showDetails();
@@ -544,22 +542,20 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
             interfaceName = "ppp0";
         }
 
-	/* Usb network interfaces are hotpluggable and Plasma::DataEngine seems to have difficulty
-	 * to recognise them after the engine is loaded, reloading the engine does the trick.
-	 * Eventually the engine will recognise them but not before the user get upset because
-	 * the traffic plot is not updating.
-	 */
-	if (interfaceName.contains("usb")) {
-    		Plasma::DataEngineManager::self()->unloadEngine("systemmonitor");
-    		Plasma::DataEngineManager::self()->loadEngine("systemmonitor");
-	}
+        /* Usb network interfaces are hotpluggable and Plasma::DataEngine seems to have difficulty
+         * to recognise them after the engine is loaded, reloading the engine does the trick.
+         * Eventually the engine will recognise them but not before the user get upset because
+         * the traffic plot is not updating.
+         */
+        if (interfaceName.contains("usb")) {
+            Plasma::DataEngineManager::self()->unloadEngine("systemmonitor");
+            Plasma::DataEngineManager::self()->loadEngine("systemmonitor");
+        }
 
         m_rxSource = QString("network/interfaces/%1/receiver/data").arg(interfaceName);
         m_txSource = QString("network/interfaces/%1/transmitter/data").arg(interfaceName);
         m_rxTotalSource = QString("network/interfaces/%1/receiver/dataTotal").arg(interfaceName);
         m_txTotalSource = QString("network/interfaces/%1/transmitter/dataTotal").arg(interfaceName);
-    } else {
-        m_iface = iface;
     }
     /*
     Solid::Device *dev = new Solid::Device(iface->uni());
@@ -670,6 +666,9 @@ void InterfaceDetailsWidget::connectSignals()
 
 void InterfaceDetailsWidget::disconnectSignals()
 {
+    if (!m_iface)
+        return;
+
     disconnect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
     disconnect(m_iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
 
