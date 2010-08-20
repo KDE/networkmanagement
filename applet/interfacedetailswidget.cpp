@@ -525,11 +525,10 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
         return;
     }
 
-    if (disconnectOld)
+    if (disconnectOld) {
         disconnectSignals();
-
+    }
     resetUi();
-    m_iface = iface;
 
     if (iface) {
         m_ifaceUni = iface->uni();
@@ -538,7 +537,7 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
         connectSignals();
 
         QString interfaceName = m_iface->interfaceName();
-        
+
         /* TODO: ugly and error prone if more than one 3G modem/cellphone is connected to the Internet.
          * If anyone knows a way to convert a serial device name to a network interface name let me know. */
         if (interfaceName.contains("ttyACM") || interfaceName.contains("ttyUSB")) {
@@ -670,8 +669,9 @@ void InterfaceDetailsWidget::connectSignals()
 
 void InterfaceDetailsWidget::disconnectSignals()
 {
-    if (!m_iface)
+    if (!m_iface) {
         return;
+    }
 
     disconnect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
     disconnect(m_iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
