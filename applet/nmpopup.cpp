@@ -229,7 +229,7 @@ void NMPopup::interfaceRemoved(const QString& uni)
         // To prevent crashes when the interface removed is the one in interfaceDetailsWidget.
         // the m_iface pointer in interfaceDetailsWidget become invalid in this case.
         if (uni == m_interfaceDetailsWidget->getLastIfaceUni()) {
-            m_interfaceDetailsWidget->setInterface(0);
+            m_interfaceDetailsWidget->setInterface(0, false);
             // Since it is invalid go back to "main" window. 
             m_leftWidget->setCurrentIndex(0);
         }

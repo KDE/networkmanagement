@@ -42,7 +42,7 @@ Q_OBJECT
     public:
         InterfaceDetailsWidget(QGraphicsItem* parent = 0);
         virtual ~InterfaceDetailsWidget();
-        void setInterface(Solid::Control::NetworkInterface* iface);
+        void setInterface(Solid::Control::NetworkInterface* iface, bool disconnectOld = true);
         void setUpdateEnabled(bool enable);
         void resetUi();
         QString getLastIfaceUni();

@@ -519,12 +519,15 @@ void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_
     }
 }
 
-void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* iface)
+void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* iface, bool disconnectOld)
 {
     if (m_iface == iface) {
         return;
     }
-    disconnectSignals();
+
+    if (disconnectOld)
+        disconnectSignals();
+
     resetUi();
     m_iface = iface;
 
