@@ -555,7 +555,8 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
          * Eventually the engine will recognise them but not before the user get upset because
          * the traffic plot is not updating.
          */
-        if (engine()->query(m_rxSource).empty()) {
+        Plasma::DataEngine *e = engine();
+        if (e && e->query(m_rxSource).empty()) {
             Plasma::DataEngineManager::self()->unloadEngine("systemmonitor");
             Plasma::DataEngineManager::self()->loadEngine("systemmonitor");
         }
