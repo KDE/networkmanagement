@@ -528,9 +528,10 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
     if (disconnectOld) {
         disconnectSignals();
     }
+    m_iface = iface;
     resetUi();
 
-    if (iface) {
+    if (m_iface) {
         m_ifaceUni = iface->uni();
         getDetails();
         showDetails();
