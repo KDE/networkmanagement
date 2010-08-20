@@ -110,6 +110,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_disconnectButton->setIcon(KIcon("dialog-close"));
     m_disconnectButton->setToolTip(i18n("Disconnect"));
     m_disconnectButton->hide();
+    m_disconnect = false;
     // forward disconnect signal
     connect(m_disconnectButton, SIGNAL(clicked()), this, SLOT(emitDisconnectInterfaceRequest()));
 
@@ -365,7 +366,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
     // check if any of them affect our interface
     // setActiveConnection on ourself
     // button to connect, disconnect
-//    bool old_disco = m_disconnect;
+    bool old_disco = m_disconnect;
 
     m_disconnect = false;
     // Name and info labels
@@ -401,7 +402,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
     }
 
     // Update connect button
-//    if (old_disco != m_disconnect) {
+    if (old_disco != m_disconnect) {
         if (!m_disconnect) {
             showItem(m_disconnectButton, false);
         } else {
@@ -409,7 +410,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
             m_disconnectButton->setToolTip(i18nc("tooltip on disconnect icon", "Disconnect"));
             showItem(m_disconnectButton, true);
         }
-//    }
+    }
     m_connectionNameLabel->setText(lname);
     m_icon->nativeWidget()->setPixmap(interfacePixmap());
 
