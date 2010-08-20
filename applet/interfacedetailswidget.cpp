@@ -532,7 +532,7 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
     resetUi();
 
     if (m_iface) {
-        m_ifaceUni = iface->uni();
+        m_ifaceUni = m_iface->uni();
         getDetails();
         showDetails();
         connectSignals();
