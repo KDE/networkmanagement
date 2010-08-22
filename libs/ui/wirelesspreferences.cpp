@@ -52,18 +52,19 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
     Q_ASSERT(args.count());
 
     QString connectionId = args[0].toString();
+    kDebug() << "connection ID from arg" << connectionId << QUuid(connectionId);
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Wireless);
 
     QString ssid;
     QString deviceUni;
     QString apUni;
 
-    if (args.count() == 3) {
+    if (args.count() >= 3) {
         deviceUni = args[1].toString();
         apUni = args[2].toString();
         kDebug() << "DeviceUni" << deviceUni << "AP UNI" << apUni;
     } else {
-        kDebug() << args;
+        kWarning() << "Could not find deviceUni or AP UNI in args:" << args;
     }
 
     Solid::Control::AccessPoint * ap = 0;
