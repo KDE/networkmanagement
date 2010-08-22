@@ -156,11 +156,12 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
 
     connect(this, SIGNAL(clicked()), this, SLOT(slotClicked()));
 
+    qreal targetOpacity = m_enabled ? 1.0 : 0.6;
     // Fade in when this widget appears
     Plasma::Animation* fadeAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation);
     fadeAnimation->setTargetWidget(this);
     fadeAnimation->setProperty("startOpacity", 0.0);
-    fadeAnimation->setProperty("targetOpacity", 1.0);
+    fadeAnimation->setProperty("targetOpacity", targetOpacity);
     fadeAnimation->start();
 }
 
@@ -213,14 +214,11 @@ void InterfaceItem::setActive(bool active)
 void InterfaceItem::setEnabled(bool enable)
 {
     m_enabled = enable;
-    m_icon->setEnabled(enable);
-    //m_connectionInfoLabel->setEnabled(enable);
-    m_connectionNameLabel->setEnabled(enable);
-    m_ifaceNameLabel->setEnabled(enable);
-    m_disconnectButton->setEnabled(enable);
-    m_connectionInfoIcon->setEnabled(enable);
     if (!enable) {
         showItem(m_connectionInfoIcon, false);
+        setOpacity(.6);
+    } else {
+        setOpacity(1);
     }
 }
 

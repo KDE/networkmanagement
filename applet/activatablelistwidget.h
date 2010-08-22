@@ -43,7 +43,7 @@ public:
     void addType(Knm::Activatable::ActivatableType type);
     void removeType(Knm::Activatable::ActivatableType type);
     bool accept(RemoteActivatable* activatable) const;
-    void setShowAllTypes(bool show);
+    void setShowAllTypes(bool show, bool refresh = false);
 
 public Q_SLOTS:
     void activatableAdded(RemoteActivatable*);

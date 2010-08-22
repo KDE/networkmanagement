@@ -412,13 +412,14 @@ void NMPopup::showMore(bool more)
         m_showMoreButton->setText(i18nc("pressed show more button", "Show Less..."));
         m_showMoreButton->setIcon(KIcon("list-remove"));
         m_showMoreButton->setChecked(true);
-        m_connectionList->setShowAllTypes(true);
+        m_connectionList->setShowAllTypes(true, true); // also refresh list
     } else {
         m_showMoreButton->setText(i18nc("unpressed show more button", "Show More..."));
         m_showMoreButton->setChecked(false);
-        m_connectionList->setShowAllTypes(false);
+        m_connectionList->setShowAllTypes(false, true); // also refresh list
         m_showMoreButton->setIcon(KIcon("list-add"));
     }
+    kDebug() << m_showMoreButton->text();
 }
 
 void NMPopup::manageConnections()

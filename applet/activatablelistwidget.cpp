@@ -110,11 +110,14 @@ void ActivatableListWidget::clearInterfaces()
     filter();
 }
 
-void ActivatableListWidget::setShowAllTypes(bool show)
+void ActivatableListWidget::setShowAllTypes(bool show, bool refresh)
 {
     m_showAllTypes = show;
     if (show) {
         m_vpn = false;
+    }
+    if (refresh) {
+        filter();
     }
 }
 
