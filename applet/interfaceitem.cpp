@@ -61,7 +61,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_connectionNameLabel(0),
     m_nameMode(mode),
     m_enabled(false),
-    m_hasDefaultRoute(false)
+    m_hasDefaultRoute(false),
+    m_starting(true)
 {
     setDrawBackground(true);
     setTextBackgroundColor(QColor(Qt::transparent));
@@ -163,6 +164,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     fadeAnimation->setProperty("startOpacity", 0.0);
     fadeAnimation->setProperty("targetOpacity", targetOpacity);
     fadeAnimation->start();
+    m_starting = false;
 }
 
 InterfaceItem::~InterfaceItem()
@@ -214,11 +216,20 @@ void InterfaceItem::setActive(bool active)
 void InterfaceItem::setEnabled(bool enable)
 {
     m_enabled = enable;
-    if (!enable) {
+    Plasma::Animation* fadeAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation);
+    fadeAnimation->setTargetWidget(this);
+    if (enable) {
         showItem(m_connectionInfoIcon, false);
-        setOpacity(.6);
+        fadeAnimation->setProperty("startOpacity", 0.7);
+        fadeAnimation->setProperty("targetOpacity", 1.0);
     } else {
-        setOpacity(1);
+        fadeAnimation->setProperty("startOpacity", 1.0);
+        fadeAnimation->setProperty("targetOpacity", 0.7);
+    }
+    if (!m_starting) {
+        // we only animate when setEnabled is not called during initialization,
+        // as that would conflict with the appear animation
+        fadeAnimation->start();
     }
 }
 

@@ -138,6 +138,7 @@ protected:
     bool m_disconnect;
     bool m_hasDefaultRoute;
     QSize m_pixmapSize;
+    bool m_starting;
 
 protected Q_SLOTS:
     virtual void currentConnectionChanged();
