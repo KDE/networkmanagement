@@ -157,7 +157,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
 
     connect(this, SIGNAL(clicked()), this, SLOT(slotClicked()));
 
-    qreal targetOpacity = m_enabled ? 1.0 : 0.6;
+    qreal targetOpacity = m_enabled ? 1.0 : 0.7;
     // Fade in when this widget appears
     Plasma::Animation* fadeAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation);
     fadeAnimation->setTargetWidget(this);
