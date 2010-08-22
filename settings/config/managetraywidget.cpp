@@ -96,6 +96,7 @@ void ManageTrayWidget::save()
 
     KNetworkManagerServicePrefs::self()->writeConfig();
     KCModule::save();
+    /*
     QDBusInterface remoteApp("org.kde.knetworkmanager", "/tray",
                                        "org.kde.knetworkmanager");
     if (remoteApp.isValid()) {
@@ -103,6 +104,7 @@ void ManageTrayWidget::save()
     } else if (KNetworkManagerServicePrefs::self()->autostart()) {
         KToolInvocation::kdeinitExec("knetworkmanager");
     }
+    */
 }
 
 void ManageTrayWidget::otherSettingsChanged()
