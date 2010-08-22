@@ -510,7 +510,7 @@ void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_
                      Solid::Control::NetworkInterface::UnknownState) &&
         reason == (Solid::Control::NetworkInterface::UnknownReason ||
                    Solid::Control::NetworkInterface::DeviceRemovedReason)) {
-        setInterface(0);
+        setInterface(0, false);
         emit back();
     } else {
         details->ipAddress = currentIpAddress();
