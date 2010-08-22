@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-wireless.h>
 
 #include <QDBusInterface>
+#include <QDir>
 // debug only
 #include <QFile>
 
@@ -91,7 +92,32 @@ QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type 
     configDialog.setWindowIcon(KIcon("networkmanager"));
 
     QVariantList args;
+
     QString connectionId = QUuid::createUuid().toString();
+
+    // Check if there is already a connection with this uuid, if so, pick a new uuid
+    // If 50 runs have passed, something is really fishy as we only get existing uuid
+    // try at max
+    // We check the newly created uuid against the list of configured connections
+    QString connectionPath(KStandardDirs::locateLocal("data",
+                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH));
+    const QStringList connectionFiles = QDir(connectionPath).entryList();
+
+    // try really hard to get a unique id
+    for (int i = 0; i < 999; i++) {
+        if (connectionFiles.contains(connectionId)) {
+            //kDebug() << i << "Woops, duplicate connnection ID" << connectionId << ". Creating another one.";
+            connectionId = QUuid::createUuid().toString();
+            if (i > 50) {
+                kWarning() << "We have " << i << " times gotten existing uuids, QUuid QUuid::createUuid() something is fishy here: " << connectionId;
+            }
+        } else {
+            kDebug() << "found new uuid which is not used yet:" << connectionId;
+            i = 1000; // stop searching
+        }
+    }
+    // Let's hope the connection ID is unique now...
+
     args << connectionId;
     args += otherArgs;
     ConnectionPreferences * cprefs = editorForConnectionType(useDefaults, &configDialog, type, args);
