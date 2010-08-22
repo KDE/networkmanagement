@@ -516,7 +516,8 @@ void NetworkManagerApplet::toolTipAboutToShow()
                     connectionName = conn->connectionName();
                 }
 
-                lines << QString("<font size=\"-1\">%1</font>").arg(UiUtils::connectionStateToString(iface->connectionState(), connectionName));
+                lines << QString("%1").arg(UiUtils::connectionStateToString(iface->connectionState(), connectionName));
+                /*
                 Solid::Control::IPv4Config ip4Config = iface->ipV4Config();
                 QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
                 if (!addresses.isEmpty()) {
@@ -524,6 +525,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
                     QString currentIp = addr.toString();
                     lines << i18nc("Display of the IP (network) address in the tooltip", "<font size=\"-1\">Address: %1</font>", currentIp);
                 }
+                */
                 // Show the first active connection's icon, otherwise the networkmanager icon
                 if (!iconChanged && iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
                     icon = UiUtils::iconName(iface);
