@@ -93,10 +93,14 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     //row++;
     m_info = new Plasma::Label(this);
     m_info->setFont(KGlobalSettings::smallestReadableFont());
+#if KDE_IS_VERSION(4, 5, 0)
+    m_info->setTextSelectable(true);
+#else
     // FIXME 4.5: setWordWrap() is now a method in Plasma::Label, we're keeping this
     // for a while for backwards compat though. Remove the nativeWidget() call in between
     // when we depend on 4.5
     m_info->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
+#endif
     m_info->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_gridLayout->addItem(m_info, row, 0);
 
