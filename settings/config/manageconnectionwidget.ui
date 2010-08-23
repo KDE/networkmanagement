@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>409</width>
-    <height>256</height>
+    <width>352</width>
+    <height>262</height>
    </rect>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_6">
@@ -25,7 +25,7 @@
         <widget class="QTreeWidget" name="listWired">
          <property name="minimumSize">
           <size>
-           <width>0</width>
+           <width>320</width>
            <height>210</height>
           </size>
          </property>
