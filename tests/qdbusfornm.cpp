@@ -51,30 +51,25 @@ typedef QPair<int,int> IntPair;
 
 Q_DECLARE_METATYPE(IntPair)
 
-// Qt version < 4.7.0
-#if QT_VERSION < 0x040700
-#define Q_DBUS_EXPORT QDBUS_EXPORT
-#endif
-
 namespace QDBusUtil
 {
-    Q_DBUS_EXPORT bool isValidInterfaceName(const QString &ifaceName);
+    Q_DECL_IMPORT bool isValidInterfaceName(const QString &ifaceName);
 
-    Q_DBUS_EXPORT bool isValidUniqueConnectionName(const QString &busName);
+    Q_DECL_IMPORT bool isValidUniqueConnectionName(const QString &busName);
 
-    Q_DBUS_EXPORT bool isValidBusName(const QString &busName);
+    Q_DECL_IMPORT bool isValidBusName(const QString &busName);
 
-    Q_DBUS_EXPORT bool isValidMemberName(const QString &memberName);
+    Q_DECL_IMPORT bool isValidMemberName(const QString &memberName);
 
-    Q_DBUS_EXPORT bool isValidErrorName(const QString &errorName);
+    Q_DECL_IMPORT bool isValidErrorName(const QString &errorName);
 
-    Q_DBUS_EXPORT bool isValidPartOfObjectPath(const QString &path);
+    Q_DECL_IMPORT bool isValidPartOfObjectPath(const QString &path);
 
-    Q_DBUS_EXPORT bool isValidObjectPath(const QString &path);
+    Q_DECL_IMPORT bool isValidObjectPath(const QString &path);
 
-    Q_DBUS_EXPORT bool isValidSignature(const QString &signature);
+    Q_DECL_IMPORT bool isValidSignature(const QString &signature);
 
-    Q_DBUS_EXPORT bool isValidSingleSignature(const QString &signature);
+    Q_DECL_IMPORT bool isValidSingleSignature(const QString &signature);
 }
 
 #include "../libs/types.h"
