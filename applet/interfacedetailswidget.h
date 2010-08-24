@@ -64,7 +64,6 @@ Q_OBJECT
         QString getMAC();
         void getDetails();
         void showDetails(bool reset = false);
-        QSizeF sizeHint (Qt::SizeHint which, const QSizeF & constraint = QSizeF()) const;
         void connectSignals();
         void disconnectSignals();
 

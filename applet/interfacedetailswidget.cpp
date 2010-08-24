@@ -417,7 +417,7 @@ void InterfaceDetailsWidget::setUpdateEnabled(bool enable)
     // disconnect / connect goes here
     Plasma::DataEngine *e = engine();
     if (e) {
-        int interval = 1000;
+        int interval = 2000;
         if (enable) {
             if (m_iface) {
                 kDebug() << "connecting ..." << m_rxSource << m_txSource;
@@ -631,25 +631,17 @@ QString InterfaceDetailsWidget::getLastIfaceUni()
     return m_ifaceUni;
 }
 
-QSizeF InterfaceDetailsWidget::sizeHint (Qt::SizeHint which, const QSizeF & constraint) const
-{
-    QSizeF sh = QGraphicsWidget::sizeHint(which, constraint);
-    QSize infoSh = m_info->nativeWidget()->sizeHint();
-    QSize infoMinSh = m_info->nativeWidget()->minimumSizeHint();
-
-    qreal temp = (infoSh.width() - infoMinSh.width()) / 2 + infoMinSh.width();
-    sh.setWidth(qMax(temp, qreal(330.0)));
-
-    return sh;
-}
-
 void InterfaceDetailsWidget::connectSignals()
 {
     if (!m_iface) {
         return;
     }
     connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
-    connect(m_iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
+
+    if (m_iface->type() == Solid::Control::NetworkInterface::Ieee8023 ||
+        m_iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+        connect(m_iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
+    }
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
     if (m_iface->type() == Solid::Control::NetworkInterface::Gsm) {

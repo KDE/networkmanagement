@@ -146,7 +146,7 @@ void NMPopup::init()
     m_mainLayout->addItem(m_leftWidget, 1, 0);
 
     m_rightWidget = new QGraphicsWidget(this);
-    m_rightWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
+    m_rightWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
     m_rightLayout = new QGraphicsLinearLayout(m_rightWidget);
     m_rightLayout->setOrientation(Qt::Vertical);
 
