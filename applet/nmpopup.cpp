@@ -164,7 +164,7 @@ void NMPopup::init()
     m_connectionList->setPreferredHeight(240);
 
     m_connectionList->setMinimumWidth(320);
-    m_connectionList->setShowAllTypes(false);
+    m_connectionList->setShowAllTypes(false, true);
 
     m_rightLayout->addItem(m_connectionList);
 
@@ -181,6 +181,7 @@ void NMPopup::init()
     m_showMoreButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     m_showMoreButton->setIcon(KIcon("list-add"));
     m_showMoreButton->setText(i18nc("show more button in the applet's popup", "Show More..."));
+    m_showMoreButton->setChecked(false);
     m_showMoreButton->setMinimumHeight(28);
     m_showMoreButton->setMaximumHeight(28);
     connect(m_showMoreButton, SIGNAL(clicked()), this, SLOT(showMore()));
