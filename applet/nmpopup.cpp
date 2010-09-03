@@ -304,6 +304,8 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
         connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
         connect(ifaceItem, SIGNAL(clicked(Solid::Control::NetworkInterface*)),
                 m_connectionList,  SLOT(addInterface(Solid::Control::NetworkInterface*)));
+        connect(ifaceItem, SIGNAL(hoverEnter(const QString&)), m_connectionList, SLOT(hoverEnter(const QString&)));
+        connect(ifaceItem, SIGNAL(hoverLeave(const QString&)), m_connectionList, SLOT(hoverLeave(const QString&)));
 
         // Catch connection changes
         connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));

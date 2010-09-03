@@ -57,6 +57,8 @@ public Q_SLOTS:
 
 private Q_SLOTS:
     void deleteItem();
+    void hoverEnter(const QString& uni);
+    void hoverLeave(const QString& uni);
 
 private:
     void filter();

@@ -37,6 +37,8 @@ public:
     virtual void setupItem() = 0;
     RemoteInterfaceConnection* interfaceConnection() const;
     void disappear();
+    void hoverEnter();
+    void hoverLeave();
 
 Q_SIGNALS:
     /** * Indicate that the 'connect' button was clicked.  Used by the containing InterfaceGroup to

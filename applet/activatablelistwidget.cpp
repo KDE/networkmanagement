@@ -276,4 +276,34 @@ void ActivatableListWidget::deleteItem()
     delete ai;
 }
 
+void ActivatableListWidget::hoverEnter(const QString& uni)
+{
+    foreach (ActivatableItem* item, m_itemIndex) {
+        if (!item) { // the item might be gone here
+            continue;
+        }
+
+        RemoteInterfaceConnection *conn = item->interfaceConnection();
+        if (conn && conn->deviceUni() == uni) {
+            item->hoverEnter();
+            break;
+        }
+    }
+}
+
+void ActivatableListWidget::hoverLeave(const QString& uni)
+{
+    foreach (ActivatableItem* item, m_itemIndex) {
+        if (!item) { // the item might be gone here
+            continue;
+        }
+
+        RemoteInterfaceConnection *conn = item->interfaceConnection();
+        if (conn && conn->deviceUni() == uni) {
+            item->hoverLeave();
+            break;
+        }
+    }
+}
+
 // vim: sw=4 sts=4 et tw=100

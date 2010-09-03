@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteactivatable.h"
 
 #include <QPainter>
+#include <QGraphicsSceneHoverEvent>
 
 #include <KIcon>
 
@@ -127,4 +128,13 @@ void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::Activatio
     setFont(f);
 }
 
+void ActivatableItem::hoverEnter()
+{
+    hoverEnterEvent(new QGraphicsSceneHoverEvent());
+}
+
+void ActivatableItem::hoverLeave()
+{
+    hoverLeaveEvent(new QGraphicsSceneHoverEvent());
+}
 // vim: sw=4 sts=4 et tw=100

@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 
 #include "interfaceconnection.h"
+#include "remoteactivatable.h"
 
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
@@ -98,6 +99,8 @@ Q_SIGNALS:
     void stateChanged();
     void disconnectInterfaceRequested(const QString& deviceUni);
     void clicked(Solid::Control::NetworkInterface*);
+    void hoverEnter(const QString& uni);
+    void hoverLeave(const QString& uni);
 
 protected:
     /**
@@ -139,6 +142,9 @@ protected:
     bool m_hasDefaultRoute;
     QSize m_pixmapSize;
     bool m_starting;
+
+    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 protected Q_SLOTS:
     virtual void currentConnectionChanged();

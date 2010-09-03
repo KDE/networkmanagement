@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceitem.h"
 #include "uiutils.h"
 #include "remoteinterfaceconnection.h"
-#include "remoteactivatable.h"
 #include "remoteactivatablelist.h"
 #include "remoteinterfaceconnection.h"
 
@@ -450,6 +449,22 @@ void InterfaceItem::emitDisconnectInterfaceRequest()
         //kDebug() << m_iface->uni();
         emit disconnectInterfaceRequested(m_iface->uni());
     }
+}
+
+void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    if (m_iface) {
+        emit hoverEnter(m_iface->uni());
+    }
+    IconWidget::hoverEnterEvent(event);
+}
+
+void InterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    if (m_iface) {
+        emit hoverLeave(m_iface->uni());
+    }
+    IconWidget::hoverLeaveEvent(event);
 }
 
 // vim: sw=4 sts=4 et tw=100
