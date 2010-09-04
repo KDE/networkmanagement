@@ -446,7 +446,7 @@ void NMPopup::toggleInterfaceTab()
         // Enable / disable updating of the details widget
         m_interfaceDetailsWidget->setUpdateEnabled(true);
 
-        if (item->interface()) {
+        if (item && item->interface()) {
             m_leftLabel->setText(QString("<h3>%1</h3>").arg(
                                 UiUtils::interfaceNameLabel(item->interface()->uni())));
         }
