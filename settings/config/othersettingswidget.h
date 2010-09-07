@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2010 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,35 +19,27 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef TRAYSETTINGSWIDGET_H
-#define TRAYSETTINGSWIDGET_H
+#ifndef OTHERSETTINGSWIDGET_H
+#define OTHERSETTINGSWIDGET_H
 
 #include <QWidget>
 
 #include <solid/control/networkinterface.h>
 
-#include "ui_traysettings.h"
+#include "ui_othersettings.h"
 
 
-class TraySettingsWidgetPrivate;
+class OtherSettingsWidgetPrivate;
 
-class TraySettingsWidget : public QWidget
+class OtherSettingsWidget : public QWidget
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(TraySettingsWidget)
+Q_DECLARE_PRIVATE(OtherSettingsWidget)
 public:
-    TraySettingsWidget(QWidget * parent = 0);
-    virtual ~TraySettingsWidget();
-    QList<uint> iconInterfaceAllocations() const;
-signals:
-    void changed();
-protected Q_SLOTS:
-    void addIconClicked();
-    void removeIconClicked();
-    void itemsMoved();
+    OtherSettingsWidget(QWidget * parent = 0);
+    virtual ~OtherSettingsWidget();
 private:
-    void readIconTypes(uint index);
-    TraySettingsWidgetPrivate * d_ptr;
+    OtherSettingsWidgetPrivate * d_ptr;
 };
 
-#endif // TRAYSETTINGSWIDGET_H
+#endif // OTHERSETTINGSWIDGET_H

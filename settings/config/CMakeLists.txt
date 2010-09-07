@@ -15,7 +15,7 @@ set(kcm_networkmanagement_SRCS
 )
 #kde4_add_kcfg_files(kcm_knetworkmanager_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/knmserviceprefs.kcfgc)
 
-kde4_add_ui_files(kcm_networkmanagement_SRCS manageconnectionwidget.ui menutooltipsettingswidget.ui traysettings.ui)
+kde4_add_ui_files(kcm_networkmanagement_SRCS manageconnectionwidget.ui)
 kde4_add_plugin(kcm_networkmanagement ${kcm_networkmanagement_SRCS})
 
 target_link_libraries(kcm_networkmanagement knmui knminternals solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KCMUTILS_LIBS})
@@ -25,11 +25,10 @@ target_link_libraries(kcm_networkmanagement knmui knminternals solidcontrol ${KD
 set(kcm_networkmanagement_tray_SRCS
    addeditdeletebuttonset.cpp
    managetraywidget.cpp
-   menutooltipsettingswidget.cpp
-   traysettingswidget.cpp
+   othersettingswidget.cpp
    )
 
-kde4_add_ui_files(kcm_networkmanagement_tray_SRCS storage.ui menutooltipsettingswidget.ui traysettings.ui)
+kde4_add_ui_files(kcm_networkmanagement_tray_SRCS othersettings.ui othersettings.ui)
 kde4_add_plugin(kcm_networkmanagement_tray ${kcm_networkmanagement_tray_SRCS})
 
 target_link_libraries(kcm_networkmanagement_tray knminternals ${KDE4_KDEUI_LIBS})
