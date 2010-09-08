@@ -74,8 +74,6 @@ Q_OBJECT
         Plasma::Label* m_info;
         Plasma::Label* m_trafficNameLabel;
         Plasma::SignalPlotter *m_trafficPlotter;
-        QColor m_rxColor;
-        QColor m_txColor;
         Plasma::Label* m_traffic;
 
         Plasma::PushButton* m_backButton;
@@ -84,10 +82,12 @@ Q_OBJECT
         QString m_txSource;
         QString m_txTotalSource;
         QString m_txUnit;
+        QColor m_txColor;
         QString m_rx;
         QString m_rxSource;
         QString m_rxTotalSource;
         QString m_rxUnit;
+        QColor m_rxColor;
         qlonglong m_rxTotal;
         qlonglong m_txTotal;
 

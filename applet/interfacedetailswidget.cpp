@@ -116,10 +116,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     // Traffic plotter
     row++;
     m_rxColor = QColor("#0099FF"); // blue
-    //m_rxColor = QColor("lightblue"); // blue
-    //m_rxColor.setAlphaF(0.6);
-    m_txColor = QColor("#91FF00"); // yellow
-    //m_txColor = QColor("lightgreen"); // yellow
+    m_txColor = QColor("#91FF00"); // green
     m_txColor.setAlphaF(0.6);
     m_trafficPlotter = new Plasma::SignalPlotter(this);
     m_trafficPlotter->setMinimumHeight(50);
@@ -466,9 +463,12 @@ void InterfaceDetailsWidget::updateWidgets()
     QString format = "<b>%1:</b>&nbsp;%2";
     QString temp;
 
-    temp = QString("<qt><table align=\"center\" border=\"0\"><tr><td align=\"right\" width=\"50%\">");
+    temp = QString("<qt><table align=\"center\" border=\"0\"><tr>");
+    temp += QString("<td width=\"20pt\" bgcolor=\"%1\">&nbsp;&nbsp;").arg(m_rxColor.name());
+    temp += QString("</td><td width=\"50%\">");
     temp += QString(format).arg(i18n("Received")).arg(KGlobal::locale()->formatByteSize(m_rxTotal*1000, 2));
-    temp += QString("</td><td width=\"50%\">&nbsp;");
+    temp += QString("&nbsp;&nbsp;</td><td width=\"20pt\" bgcolor=\"%1\">&nbsp;&nbsp;").arg(m_txColor.name());
+    temp += QString("</td><td width=\"50%\">");
     temp += QString(format).arg(i18n("Transmitted")).arg(KGlobal::locale()->formatByteSize(m_txTotal*1000, 2));
     temp += QString("</td></tr></table></qt>");
     m_traffic->setText(temp);
