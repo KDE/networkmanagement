@@ -26,7 +26,6 @@ set(networkmanager_SRCS
     )
 
 kde4_add_plugin(plasma_applet_networkmanagement ${networkmanager_SRCS})
-target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmclient knminternals ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} solidcontrol ${KDE4_KCMUTILS_LIBS})
 
 install(TARGETS plasma_applet_networkmanagement DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-networkmanagement.desktop DESTINATION ${SERVICES_INSTALL_DIR})
@@ -39,4 +38,7 @@ if (NOT IS45)
     install(FILES
         network.svgz
         DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/icons/)
+    target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmclient knminternals ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} solidcontrol ${KDE4_KUTILS_LIBS})
+else (NOT IS45)
+    target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmclient knminternals ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} solidcontrol ${KDE4_KCMUTILS_LIBS})
 endif (NOT IS45)

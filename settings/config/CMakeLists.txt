@@ -18,7 +18,12 @@ set(kcm_networkmanagement_SRCS
 kde4_add_ui_files(kcm_networkmanagement_SRCS manageconnectionwidget.ui)
 kde4_add_plugin(kcm_networkmanagement ${kcm_networkmanagement_SRCS})
 
-target_link_libraries(kcm_networkmanagement knmui knminternals solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KCMUTILS_LIBS})
+macro_ensure_version("4.4.76" ${KDE_VERSION} IS45)
+if (IS45)
+   target_link_libraries(kcm_networkmanagement knmui knminternals solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KCMUTILS_LIBS})
+else (IS45)
+   target_link_libraries(kcm_networkmanagement knmui knminternals solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KUTILS_LIBS})
+endif (IS45)
 
 ## next target: tray config KCM
 
