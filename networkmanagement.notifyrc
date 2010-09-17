@@ -20,6 +20,7 @@ Name[sv]=Nätverkshantering
 Name[th]=การจัดการเครือข่าย
 Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managementxx
+Name[zh_TW]=網路管理
 IconName=networkmanager
 Comment=Network Management
 Comment[cs]=Správa sítě
@@ -41,6 +42,7 @@ Comment[sv]=Nätverkshantering
 Comment[th]=การจัดการเครือข่าย
 Comment[uk]=Керування мережею
 Comment[x-test]=xxNetwork Managementxx
+Comment[zh_TW]=網路管理
 Version=3
 
 [Context/connectiontype]
@@ -64,6 +66,7 @@ Name[sv]=Typ av nätverksanslutning
 Name[th]=ชนิดการเชื่อมต่อเครือข่าย
 Name[uk]=Тип мережевого з'єднання
 Name[x-test]=xxNetwork Connection Typexx
+Name[zh_TW]=網路連線型態
 
 [Event/hwadded]
 Name=Network Interface Attached
@@ -85,6 +88,7 @@ Name[sv]=Nätverksgränssnitt anslutet
 Name[th]=ส่วนติดต่อเครือข่ายที่เชื่อมต่อแล้ว
 Name[uk]=Доданий інтерфейс мережі
 Name[x-test]=xxNetwork Interface Attachedxx
+Name[zh_TW]=網路介面已接上
 Comment=A network interface was attached
 Comment[da]=Et netkort blev tilsluttet
 Comment[de]=Eine Netzwerkschnittstelle ist angeschlossen worden
@@ -103,6 +107,7 @@ Comment[sv]=Ett nätverksgränssnitt har anslutits
 Comment[th]=ส่วนติดต่อเครือข่ายถูกเชื่อมต่อแล้ว
 Comment[uk]=Було додано інтерфейс мережі
 Comment[x-test]=xxA network interface was attachedxx
+Comment[zh_TW]=網路介面已接上
 
 [Event/hwremoved]
 Name=Network Interface Removed
@@ -125,6 +130,7 @@ Name[sv]=Nätverksgränssnitt borttaget
 Name[th]=ส่วนติดต่อเครือข่ายที่เอาออกแล้ว
 Name[uk]=Вилучено інтерфейс мережі
 Name[x-test]=xxNetwork Interface Removedxx
+Name[zh_TW]=網路介面已移除
 Comment=A network interface was removed
 Comment[cs]=Síťové zařízení odstraněno
 Comment[da]=Et netkort blev fjernet
@@ -144,6 +150,7 @@ Comment[sv]=Ett nätverksgränssnitt har tagits bort
 Comment[th]=ส่วนติดต่อเครือข่ายถูกเอาออกแล้ว
 Comment[uk]=Було вилучено інтерфейс мережі
 Comment[x-test]=xxA network interface was removedxx
+Comment[zh_TW]=網路介面已移除
 
 [Event/networkappeared]
 Name=Found Wireless Network
@@ -165,6 +172,7 @@ Name[sv]=Hittade trådlöst nätverk
 Name[th]=พบเครือข่ายไร้สาย
 Name[uk]=Знайдено бездротову мережу
 Name[x-test]=xxFound Wireless Networkxx
+Name[zh_TW]=找到無線網路
 Comment=A wireless network appeared
 Comment[da]=Et trådløst netværk er dukket op
 Comment[de]=Ein drahtloses Netzwerk ist entdeckt worden
@@ -183,6 +191,7 @@ Comment[sv]=Ett trådlöst nätverk dök upp
 Comment[th]=มีเครือข่ายไร้สายหนึ่งวง
 Comment[uk]=Встановлено зв’язок з бездротовою мережею
 Comment[x-test]=xxA wireless network appearedxx
+Comment[zh_TW]=找到無線網路
 
 [Event/networkdisappeared]
 Name=Lost Wireless Network
@@ -203,6 +212,7 @@ Name[sv]=Förlorade trådlöst nätverk
 Name[th]=เครือข่ายไร้สายหายไป
 Name[uk]=Втрачено зв’язок з радіомережею
 Name[x-test]=xxLost Wireless Networkxx
+Name[zh_TW]=遺失無線網路
 Comment=A wireless network disappeared
 Comment[da]=Et trådløst netværk forsvandt
 Comment[de]=Ein drahtloses Netzwerk ist nicht mehr vorhanden
@@ -221,6 +231,7 @@ Comment[sv]=Ett trådlöst nätverk försvann
 Comment[th]=มีเครือข่ายไร้สายหนึ่งวงหายไป
 Comment[uk]=Зв’язок з бездротовою мережею увірвався
 Comment[x-test]=xxA wireless network disappearedxx
+Comment[zh_TW]=遺失無線網路
 
 [Event/userconnectionattempt]
 Name=Establishing Network Connection
@@ -241,6 +252,7 @@ Name[sv]=Upprättar nätverksanslutning
 Name[th]=กำลังสร้างการเชื่อมต่อเครือข่าย
 Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
+Name[zh_TW]=建立網路連線中
 Comment=The user started making a connection
 Comment[da]=Brugeren begyndte at oprette en forbindelse
 Comment[de]=Der Benutzer hat einen Verbindungsaufbau gestartet
@@ -259,6 +271,7 @@ Comment[sv]=Användaren håller på att göra en anslutning
 Comment[th]=ผู้ใช้เริ่มสร้างการเชื่อมต่อแล้ว
 Comment[uk]=Користувач почав створення з’єднання
 Comment[x-test]=xxThe user started making a connectionxx
+Comment[zh_TW]=使用者開始連線
 
 [Event/autoconnectionattempt]
 Name=Establishing Network Connection
@@ -279,6 +292,7 @@ Name[sv]=Upprättar nätverksanslutning
 Name[th]=กำลังสร้างการเชื่อมต่อเครือข่าย
 Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
+Name[zh_TW]=建立網路連線中
 Comment=A connection is being started automatically
 Comment[da]=En forbindelse er blevet startet automatisk
 Comment[de]=Es wird automatisch eine Verbindung aufgebaut
@@ -297,6 +311,7 @@ Comment[sv]=En anslutning håller på att startas automatiskt
 Comment[th]=การเชื่อมต่ออันหนึ่งกำลังถูกเริ่มใช้งานอัตโนมัติ
 Comment[uk]=Процедуру з’єднання було розпочато автоматично
 Comment[x-test]=xxA connection is being started automaticallyxx
+Comment[zh_TW]=已自動開始連線
 Action=Popup
 
 [Event/connecting]
@@ -318,6 +333,7 @@ Name[sv]=Upprättar nätverksanslutning
 Name[th]=กำลังสร้างการเชื่อมต่อเครือข่าย
 Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
+Name[zh_TW]=建立網路連線中
 Comment=A network connection attempt was begun
 Comment[da]=Et netværksforbindelsesforsøg er påbegyndt
 Comment[de]=Ein Verbindungsversuch ist begonnen worden
@@ -336,6 +352,7 @@ Comment[sv]=Ett försök att ansluta till nätverket har påbörjats
 Comment[th]=การเชื่อมต่อเครือข่ายอันหนึ่งเริ่มทำงานแล้ว
 Comment[uk]=Було розпочато спробу встановлення мережевого з’єднання
 Comment[x-test]=xxA network connection attempt was begunxx
+Comment[zh_TW]=已開始試著連接網路
 Action=Popup
 
 [Event/disconnected]
@@ -357,6 +374,7 @@ Name[sv]=Nätverksanslutning nerkopplad
 Name[th]=การเชื่อมต่อเครือข่ายถูกตัดแล้ว
 Name[uk]=Мережеве з’єднання розірвано
 Name[x-test]=xxNetwork Connection Disconnectedxx
+Name[zh_TW]=網路連線已中斷
 Comment=A network connection was disconnected
 Comment[da]=En netværksforbindelse blev afbrudt
 Comment[de]=Eine Netzwerkverbindung ist getrennt worden
@@ -375,6 +393,7 @@ Comment[sv]=En nätverksanslutning har kopplats ner
 Comment[th]=การเชื่อมต่อเครือข่ายอันหนึ่งถูกตัดแล้ว
 Comment[uk]=Мережеве з’єднання було розірвано
 Comment[x-test]=xxA network connection was disconnectedxx
+Comment[zh_TW]=網路連線已中斷
 
 [Event/connected]
 Name=Network Connection Succeeded
@@ -395,6 +414,7 @@ Name[sv]=Nätverksanslutning lyckades
 Name[th]=การเชื่อมต่อเครือข่ายสำเร็จแล้ว
 Name[uk]=Успішне з’єднання з мережею
 Name[x-test]=xxNetwork Connection Succeededxx
+Name[zh_TW]=網路連線已成功
 Comment=A network connection was established
 Comment[cs]=Síťové spojení bylo navázáno
 Comment[da]=En netværksforbindelse blev oprettet
@@ -414,6 +434,7 @@ Comment[sv]=En nätverksanslutning har upprättats
 Comment[th]=การเชื่อมต่อเครือข่ายอันหนึ่งถูกสร้างแล้ว
 Comment[uk]=Було встановлено з’єднання з мережею
 Comment[x-test]=xxA network connection was establishedxx
+Comment[zh_TW]=網路連線已建立。
 Action=Popup
 
 [Event/connfailed]
@@ -435,6 +456,7 @@ Name[sv]=Nätverksanslutning misslyckades
 Name[th]=การเชื่อมต่อเครือข่ายล้มเหลว
 Name[uk]=Спроба встановлення з'єднання зазнала невдачі
 Name[x-test]=xxNetwork Connection Failedxx
+Name[zh_TW]=網路連線失敗
 Comment=A network connection attempt failed
 Comment[da]=Et netværksforbindelsesforsøg mislykkedes
 Comment[de]=Ein Verbindungsversuch ist fehlgeschlagen
@@ -453,6 +475,7 @@ Comment[sv]=Försök att ansluta till ett nätverk misslyckades
 Comment[th]=การเชื่อมต่อเครือข่ายอันหนึ่งล้มเหลว
 Comment[uk]=Спроба встановлення з’єднання зазнала невдачі
 Comment[x-test]=xxA network connection attempt failedxx
+Comment[zh_TW]=網路連線失敗
 Action=Popup
 
 [Event/rfoff]
@@ -473,6 +496,7 @@ Name[sv]=Radiohårdvara avstängd
 Name[th]=ฮาร์ดแวร์คลื่นวิทยุถูกปิด
 Name[uk]=Радіозв’язок апаратно вимкнено
 Name[x-test]=xxRadio Hardware Switched Offxx
+Name[zh_TW]=無線網路硬體已關閉
 Comment=Wireless transceivers disabled by hardware switch
 Comment[da]=Trådløs-transceivere deaktiveret af hardware-kontakt
 Comment[de]=Die Hardware für drahtlose Verbindungen ist am Gerät ausgeschaltet worden
@@ -490,6 +514,7 @@ Comment[sv]=Trådlös sändning och mottagning inaktiverad av hårdvarubrytare
 Comment[th]=ตัวรับส่งแบบไร้สายหยุดทำงานเนื่องจากฮาร์ดแวร์สวิตช์
 Comment[uk]=Бездротовий приймач-передавач було вимкнено апаратним тумблером
 Comment[x-test]=xxWireless transceivers disabled by hardware switchxx
+Comment[zh_TW]=無線傳輸器硬體已被關閉
 Action=Popup
 
 [Event/rfon]
@@ -510,6 +535,7 @@ Name[sv]=Radiohårdvara aktiverad
 Name[th]=ฮาร์ดแวร์คลื่นวิทยุถูกเปิด
 Name[uk]=Радіозв’язок апаратно увімкнено
 Name[x-test]=xxRadio Hardware Switched Onxx
+Name[zh_TW]=無線網路硬體已開啟
 Comment=Wireless transceivers enabled
 Comment[da]=Trådløs-transceivere aktiveret
 Comment[de]=Hardware für drahtlose Verbindungen aktiviert
@@ -527,6 +553,7 @@ Comment[sv]=Trådlös sändning och mottagning aktiverad
 Comment[th]=ตัวรับส่งแบบไร้สายทำงานได้
 Comment[uk]=Увімкнено бездротовий приймач-передавач
 Comment[x-test]=xxWireless transceivers enabledxx
+Comment[zh_TW]=無線網路傳輸已開啟
 Action=Popup
 
 [Event/lowsignal]
@@ -548,6 +575,7 @@ Name[sv]=Låg trådlös signalstyrka
 Name[th]=ความแรงของสัญญาณไร้สายต่ำ
 Name[uk]=Низька потужність радіосигналу
 Name[x-test]=xxLow Wireless Signal Strengthxx
+Name[zh_TW]=無線網路信號強度偏低
 Comment=The wireless signal strength is low
 Comment[da]=Den trådløse signalstyrke er lav
 Comment[de]=Die Signalstärke der drahtlosen Verbindung ist niedrig
@@ -566,6 +594,7 @@ Comment[sv]=Den trådlösa signalstyrkan är låg
 Comment[th]=ความแรงของสัญญาณไร้สายต่ำ
 Comment[uk]=Занизька потужність радіосигналу
 Comment[x-test]=xxThe wireless signal strength is lowxx
+Comment[zh_TW]=無線網路信號強度偏低
 Action=Popup
 
 [Event/ifacestatechange]
@@ -587,6 +616,7 @@ Name[sv]=Gränssnitt ändrade tillstånd
 Name[th]=การติดต่อเปลี่ยนสถานะแล้ว
 Name[uk]=Змінений стан інтерфейсу
 Name[x-test]=xxInterface changed statexx
+Name[zh_TW]=介面已變更狀態
 Comment=An interface changed state
 Comment[da]=Et netkort ændrede tilstand
 Comment[de]=Der Status einer Schnittstelle hat sich geändert
@@ -606,6 +636,7 @@ Comment[sv]=Ett gränssnitt har ändrat sitt tillstånd
 Comment[th]=การติดต่ออันหนึ่งเปลี่ยนสถานะแล้ว
 Comment[uk]=Змінений стан інтерфейсу
 Comment[x-test]=xxAn interface changed statexx
+Comment[zh_TW]=介面已變更狀態
 
 [Event/networkingdisabled]
 Name=Network management disabled
@@ -627,6 +658,7 @@ Name[sv]=Nätverkshantering inaktiverad
 Name[th]=การจัดการเครือข่ายหยุดทำงาน
 Name[uk]=Керування мережею вимкнено
 Name[x-test]=xxNetwork management disabledxx
+Name[zh_TW]=網路管理已關閉
 Comment=The network management subsystem was stopped or restarted
 Comment[da]=Undersystemet til netværkshåndtering blev stoppet eller genstartet
 Comment[de]=Die Netzwerkverwaltung ist angehalten oder neu gestartet worden
@@ -646,5 +678,6 @@ Comment[sv]=Delsystemet för nätverkshantering stoppades eller startades om
 Comment[th]=ระบบย่อยการจัดการเครือข่ายหยุดทำงานไปแล้วหรือไม่ก็กำลังเริ่มต้นใหม่
 Comment[uk]=Систему керування мережею було зупинено або перезапущено
 Comment[x-test]=xxThe network management subsystem was stopped or restartedxx
+Comment[zh_TW]=網路管理子系統已被關閉或重新啟動
 Action=Popup
 
