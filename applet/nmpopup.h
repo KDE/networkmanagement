@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/PushButton>
 #include <Plasma/TabBar>
 
+#include <solid/networking.h>
 #include <solid/control/networkinterface.h>
 
 #include "activatable.h"
@@ -65,6 +66,7 @@ public Q_SLOTS:
     void managerWirelessHardwareEnabledChanged(bool);
     void wirelessEnabledToggled(bool checked);
     void networkingEnabledToggled(bool checked);
+    void managerNetworkingEnabledChanged(bool);
     void manageConnections();
     void showMore();
     void showMore(bool);

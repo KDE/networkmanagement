@@ -118,6 +118,8 @@ void NMPopup::init()
     m_leftLayout->addItem(m_networkingCheckBox);
     connect(m_networkingCheckBox, SIGNAL(toggled(bool)),
             this, SLOT(networkingEnabledToggled(bool)));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
+            this, SLOT(managerNetworkingEnabledChanged(bool)));
 
     // flight-mode checkbox
     m_rfCheckBox = new Plasma::CheckBox(m_leftWidget);
@@ -402,6 +404,12 @@ void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
     m_rfCheckBox->setChecked(enabled && Solid::Control::NetworkManager::isWirelessEnabled());
     m_rfCheckBox->setEnabled(!enabled);
+}
+
+void NMPopup::managerNetworkingEnabledChanged(bool enabled)
+{
+    kDebug() << "NM daemon changed networking enable state" << enabled;
+    m_networkingCheckBox->setChecked(enabled);
 }
 
 void NMPopup::showMore()
