@@ -399,6 +399,7 @@ Comment[zh_TW]=網路連線已中斷
 
 [Event/connected]
 Name=Network Connection Succeeded
+Name[cs]=Připojení k síti bylo úspěšné
 Name[da]=Netværksforbindelse gennemført
 Name[de]=Netzwerkverbindung erfolgreich hergestellt
 Name[en_GB]=Network Connection Succeeded
@@ -441,6 +442,7 @@ Action=Popup
 
 [Event/connfailed]
 Name=Network Connection Failed
+Name[cs]=Připojení k síti selhalo
 Name[da]=Netværksforbindelse mislykkedes
 Name[de]=Netzwerkverbindung fehlgeschlagen
 Name[en_GB]=Network Connection Failed
@@ -460,6 +462,7 @@ Name[uk]=Спроба встановлення з'єднання зазнала 
 Name[x-test]=xxNetwork Connection Failedxx
 Name[zh_TW]=網路連線失敗
 Comment=A network connection attempt failed
+Comment[cs]=Pokus o připojení k síti selhal
 Comment[da]=Et netværksforbindelsesforsøg mislykkedes
 Comment[de]=Ein Verbindungsversuch ist fehlgeschlagen
 Comment[en_GB]=A network connection attempt failed
