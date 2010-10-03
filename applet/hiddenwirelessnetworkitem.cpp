@@ -1,6 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2009-2010 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/IconWidget>
 #include <Plasma/LineEdit>
 
-HiddenWirelessNetworkItem::HiddenWirelessNetworkItem(RemoteActivatable *remote, QGraphicsWidget *parent) : ActivatableItem(remote, parent),
+HiddenWirelessNetworkItem::HiddenWirelessNetworkItem(QGraphicsWidget *parent) : ActivatableItem(0, parent),
     m_layout(0),
     m_connect(0),
     m_ssidEdit(0)
@@ -65,7 +65,7 @@ QString HiddenWirelessNetworkItem::s_defaultText = i18nc("default KLineEdit::cli
 void HiddenWirelessNetworkItem::setupItem()
 {
     if (!m_layout) {
-    int rowHeight = 24;
+        int rowHeight = 24;
 
         m_layout = new QGraphicsLinearLayout(this);
         m_connect = new Plasma::IconWidget(this);

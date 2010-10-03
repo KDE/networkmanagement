@@ -38,7 +38,7 @@ class HiddenWirelessNetworkItem : public ActivatableItem
 Q_OBJECT
 
     public:
-        HiddenWirelessNetworkItem(RemoteActivatable *remote, QGraphicsWidget *parent = 0);
+        HiddenWirelessNetworkItem(QGraphicsWidget *parent = 0);
         virtual ~HiddenWirelessNetworkItem();
         void setupItem();
         QString ssid() const;

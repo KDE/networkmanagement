@@ -181,7 +181,8 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
         }
         case Knm::Activatable::HiddenWirelessInterfaceConnection:
         {
-            ai = new HiddenWirelessNetworkItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
+            kWarning() << "This is handled differently, this codepath should be disabled.";
+            //ai = new HiddenWirelessNetworkItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
             break;
         }
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
@@ -205,8 +206,22 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
 
 }
 
+void ActivatableListWidget::createHiddenItem()
+{
+    //HiddenWirelessNetworkItem* ai = 0;
+    m_hiddenItem = new HiddenWirelessNetworkItem(m_widget);
+    Q_ASSERT(m_hiddenItem);
+    m_hiddenItem->setupItem();
+    m_layout->addItem(m_hiddenItem);
+    //m_itemIndex[activatable] = ai;
+    connect(m_hiddenItem, SIGNAL(disappearAnimationFinished()),
+            this, SLOT(deleteItem()));
+}
+
 void ActivatableListWidget::listAppeared()
 {
+    createHiddenItem(); // TODO: move to end
+
     foreach (RemoteActivatable* remote, m_activatables->activatables()) {
         if (accept(remote)) {
             createItem(remote);
