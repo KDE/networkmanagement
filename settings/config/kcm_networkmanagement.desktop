@@ -23,6 +23,7 @@ Name[uk]=Мережеві з'єднання
 Name[x-test]=xxNetwork Connectionsxx
 Name[zh_TW]=網路連線
 Comment=Add, Edit and Remove network connections
+Comment[cs]=Přidejte, upravte nebo odstraňte síťová spojení
 Comment[da]=Tilføj, redigér og fjern netværksforbindelser
 Comment[de]=Netzwerkverbindungen hinzufügen, bearbeiten und entfernen
 Comment[en_GB]=Add, Edit and Remove network connections
