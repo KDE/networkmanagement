@@ -183,4 +183,12 @@ void WirelessNetworkItem::update()
     return;
 }
 
+QString WirelessNetworkItem::ssid()
+{
+    if (m_wirelessStatus) {
+        return QString();
+    }
+    return m_wirelessStatus->ssid();
+}
+
 // vim: sw=4 sts=4 et tw=100

@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Own
 #include "activatablelistwidget.h"
+#include "wirelessstatus.h"
 
 // Qt
 #include <QGraphicsLinearLayout>
@@ -27,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // KDE
 #include <KDebug>
 #include <solid/control/networkmanager.h>
+#include <KToolInvocation>
 
 // Plasma
 #include <Plasma/Label>
@@ -49,7 +51,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent) : Plasma::ScrollWidget(parent),
     m_activatables(activatables),
     m_layout(0),
-    m_vpn(false)
+    m_vpn(false),
+    m_hiddenItem(0)
 {
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -171,6 +174,13 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
         { // Wireless
             WirelessNetworkItem* wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetwork*>(activatable), m_widget);
             ai = wni;
+            QString ssid = wni->ssid();
+            if (m_hiddenConnectionInProgress.contains(ssid)) {
+                kDebug() << "hidden network" << ssid << "appeared, connecting ...";
+                activatable->activate();
+            }
+            m_hiddenConnectionInProgress.removeAll(ssid);
+
             break;
         }
         case Knm::Activatable::InterfaceConnection:
@@ -212,10 +222,12 @@ void ActivatableListWidget::createHiddenItem()
     m_hiddenItem = new HiddenWirelessNetworkItem(m_widget);
     Q_ASSERT(m_hiddenItem);
     m_hiddenItem->setupItem();
-    m_layout->addItem(m_hiddenItem);
+    m_layout->insertItem(1337, m_hiddenItem);
     //m_itemIndex[activatable] = ai;
     connect(m_hiddenItem, SIGNAL(disappearAnimationFinished()),
             this, SLOT(deleteItem()));
+    connect(m_hiddenItem, SIGNAL(connectToHiddenNetwork(const QString&)),
+            this, SLOT(connectToHiddenNetwork(const QString&)));
 }
 
 void ActivatableListWidget::listAppeared()
@@ -250,6 +262,8 @@ void ActivatableListWidget::listDisappeared()
         delete item;
     }
     m_itemIndex.clear();
+
+    delete m_hiddenItem;
 }
 
 void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
@@ -257,6 +271,20 @@ void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
     //kDebug();
     if (accept(added)) {
         createItem(added);
+    }
+}
+
+void ActivatableListWidget::setHasWireless(bool hasWireless)
+{
+    kDebug() << "++++++++++++++" << hasWireless;
+    m_hasWireless = hasWireless;
+    if (hasWireless) {
+        if (!m_hiddenItem) {
+            createHiddenItem();
+        }
+    } else {
+        delete m_hiddenItem;
+        m_hiddenItem = 0;
     }
 }
 
@@ -321,4 +349,11 @@ void ActivatableListWidget::hoverLeave(const QString& uni)
     }
 }
 
+void ActivatableListWidget::connectToHiddenNetwork(const QString &ssid)
+{
+    m_hiddenConnectionInProgress << ssid;
+    QStringList args = QStringList(ssid) << "create";
+    kDebug() << "invoking networkmanagement_configshell" << args;
+    KToolInvocation::kdeinitExec("networkmanagement_configshell", args);
+}
 // vim: sw=4 sts=4 et tw=100

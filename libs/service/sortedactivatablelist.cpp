@@ -108,6 +108,7 @@ void SortedActivatableList::handleUpdate(Knm::Activatable *)
 void SortedActivatableList::handleRemove(Knm::Activatable * activatable)
 {
     ActivatableList::removeActivatable(activatable);
+    //dump();
 }
 
 QList<Knm::Activatable*> SortedActivatableList::activatables() const

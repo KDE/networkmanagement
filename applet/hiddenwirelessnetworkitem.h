@@ -60,6 +60,10 @@ Q_OBJECT
         void connectClicked();
         // called if the user hits Enter
         void ssidEntered();
+
+    Q_SIGNALS:
+        void connectToHiddenNetwork(const QString&);
+
     private:
         static QString s_defaultText;
         QGraphicsLinearLayout* m_layout;

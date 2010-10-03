@@ -60,7 +60,7 @@ Solid::Control::AccessPoint * HiddenWirelessNetworkItem::referenceAccessPoint() 
     return 0;
 }
 
-QString HiddenWirelessNetworkItem::s_defaultText = i18nc("default KLineEdit::clickMessage() for hidden wireless network SSID entry", "Enter hidden SSID and press <enter>");
+QString HiddenWirelessNetworkItem::s_defaultText = i18nc("default KLineEdit::clickMessage() for hidden wireless network SSID entry", "Enter network name and press <enter>");
 
 void HiddenWirelessNetworkItem::setupItem()
 {
@@ -69,10 +69,12 @@ void HiddenWirelessNetworkItem::setupItem()
 
         m_layout = new QGraphicsLinearLayout(this);
         m_connect = new Plasma::IconWidget(this);
-        m_connect->setDrawBackground(true);
+        m_connect->setDrawBackground(false);
+        m_connect->setOrientation(Qt::Horizontal);
+        m_connect->setIcon("network-wireless");
         m_connect->setMaximumHeight(rowHeight);
         m_connect->setMinimumHeight(rowHeight);
-        m_connect->setText(i18nc("label for creating a connection to a hidden wireless network", "Connect to hidden network"));
+        m_connect->setText(i18nc("label for creating a connection to a hidden wireless network", "<hidden network>"));
         m_layout->addItem(m_connect);
         connect(m_connect, SIGNAL(activated()), SLOT(connectClicked()));
 
@@ -94,8 +96,10 @@ void HiddenWirelessNetworkItem::connectClicked()
 
 void HiddenWirelessNetworkItem::ssidEntered()
 {
+    kDebug() << "... ssid is now" << m_ssid;
     setSsid(m_ssidEdit->text());
     emitClicked();
+    emit connectToHiddenNetwork(m_ssid);
 }
 
 void HiddenWirelessNetworkItem::resetSsidEntry()

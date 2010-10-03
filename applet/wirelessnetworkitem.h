@@ -46,6 +46,7 @@ class WirelessNetworkItem : public ActivatableItem
         WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent = 0);
         virtual ~WirelessNetworkItem();
         void setupItem();
+        QString ssid();
 
     private Q_SLOTS:
         void setStrength(int strength);

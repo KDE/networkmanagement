@@ -1,6 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2008-2010 Sebastian Kügler <sebas@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -224,6 +224,7 @@ void NMPopup::interfaceAdded(const QString& uni)
     kDebug() << "Interface Added.";
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
+    updateHasWireless();
 }
 
 void NMPopup::interfaceRemoved(const QString& uni)
@@ -240,6 +241,7 @@ void NMPopup::interfaceRemoved(const QString& uni)
         InterfaceItem* item = m_interfaces.take(uni);
         connect(item, SIGNAL(disappearAnimationFinished()), this, SLOT(deleteInterfaceItem()));
         item->disappear();
+        updateHasWireless();
     }
 }
 
@@ -314,6 +316,7 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
         m_interfaceLayout->addItem(ifaceItem);
         m_interfaces.insert(iface->uni(), ifaceItem);
     }
+    updateHasWireless();
 }
 
 void NMPopup::addVpnInterface()
@@ -371,6 +374,7 @@ void NMPopup::wirelessEnabledToggled(bool checked)
     } else {
         m_showMoreButton->hide();
     }
+    updateHasWireless();
 }
 
 void NMPopup::networkingEnabledToggled(bool checked)
@@ -379,7 +383,8 @@ void NMPopup::networkingEnabledToggled(bool checked)
     Solid::Control::NetworkManager::setNetworkingEnabled(checked);
     // Update wireless checkbox
     m_rfCheckBox->setEnabled(checked);
-    m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessHardwareEnabled() &&  Solid::Control::NetworkManager::isWirelessEnabled());
+    m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessHardwareEnabled() &&
+                            Solid::Control::NetworkManager::isWirelessEnabled());
     m_showMoreButton->setChecked(false);
     if (checked && Solid::Control::NetworkManager::isWirelessHardwareEnabled() &&
                    Solid::Control::NetworkManager::isWirelessEnabled()) {
@@ -388,7 +393,39 @@ void NMPopup::networkingEnabledToggled(bool checked)
     } else {
         m_showMoreButton->hide();
     }
+    updateHasWireless();
+}
 
+void NMPopup::updateHasWireless()
+{
+    kDebug() << "UPDATE!!!!!!!!!!!!";
+    bool hasWireless = true;
+    if (!Solid::Control::NetworkManager::isWirelessHardwareEnabled() ||
+        !Solid::Control::NetworkManager::isNetworkingEnabled() ||
+        !Solid::Control::NetworkManager::isWirelessEnabled()) {
+
+        // either networking is disabled, or wireless is disabled
+        hasWireless = false;
+        m_connectionList->setHasWireless(hasWireless);
+    
+    }
+    kDebug() << "After chckboxn" << hasWireless;
+
+    bool hasWirelessInterface = false;
+    foreach (InterfaceItem* ifaceitem, m_interfaces) {
+        Solid::Control::NetworkInterface* iface = ifaceitem->interface();
+        Solid::Control::WirelessNetworkInterface* wiface = qobject_cast<Solid::Control::WirelessNetworkInterface *>(iface);
+        if (wiface) {
+            kDebug() << "there's a wifi iface" << ifaceitem->connectionName() << iface->interfaceName();
+            hasWirelessInterface = true; // at least one interface is wireless. We're happy.
+            continue;
+        }
+    }
+    if (!hasWirelessInterface) {
+        kDebug() << "no ifaces";
+        hasWireless = false;
+    }
+    m_connectionList->setHasWireless(hasWireless);
 }
 
 void NMPopup::managerWirelessEnabledChanged(bool enabled)
@@ -397,6 +434,7 @@ void NMPopup::managerWirelessEnabledChanged(bool enabled)
     // it might have changed because we toggled the switch,
     // but it might have been changed externally, so set it anyway
     m_rfCheckBox->setChecked(enabled);
+    updateHasWireless();
 }
 
 void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
@@ -404,12 +442,14 @@ void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
     m_rfCheckBox->setChecked(enabled && Solid::Control::NetworkManager::isWirelessEnabled());
     m_rfCheckBox->setEnabled(!enabled);
+    updateHasWireless();
 }
 
 void NMPopup::managerNetworkingEnabledChanged(bool enabled)
 {
     kDebug() << "NM daemon changed networking enable state" << enabled;
     m_networkingCheckBox->setChecked(enabled);
+    updateHasWireless();
 }
 
 void NMPopup::showMore()

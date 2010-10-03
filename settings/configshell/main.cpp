@@ -47,6 +47,7 @@ int main(int argc, char **argv)
 
     KCmdLineOptions options;
     options.add("connection <connection-id>", ki18n("Connection ID to edit"));
+    options.add("hiddennetwork <ssid>", ki18n("Connect to a hidden wireless network"));
     options.add("type <type>", ki18n("Connection type to create, must be one of '802-3-ethernet', '802-11-wireless', 'pppoe', 'vpn', 'cellular'"));
     options.add("specific-args <args>", ki18n("Space-separated connection type-specific arguments, may be either 'gsm' or 'cdma' for cellular, or 'openvpn' or 'vpnc' for vpn connections, and interface and AP identifiers for wireless connections"));
     options.add("+mode", ki18n("Operation mode, may be either 'create' or 'edit'"), "create");
@@ -74,6 +75,7 @@ int main(int argc, char **argv)
     kDebug() << specificArgs;
 
     KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    kDebug() << args;
 
     if (args->arg(0) == QLatin1String("create")) {
         if (args->isSet("type")) {
@@ -85,6 +87,10 @@ int main(int argc, char **argv)
             QStringList ids(cid);
             ref.call( QLatin1String( "configure" ), ids );
             kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
+        } else if (args->isSet("hiddennetwork")) {
+            QString ssidOfHiddenNetwork = args->getOption("hiddennetwork");
+            kDebug() << "I have been told to setup a connection to a hidden network..." << ssidOfHiddenNetwork;
+            return 0;
         } else {
             args->usage();
             return -1;
