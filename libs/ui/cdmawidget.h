@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef CDMAWIDGET_H
 #define CDMAWIDGET_H
 
+#include <QVariantMap>
+
 #include "settingwidget.h"
 
 #include "knm_export.h"
@@ -36,6 +38,7 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
+    void setCdmaInfo(const QVariantMap info);
 protected Q_SLOTS:
     void validate();
     void chkShowPassToggled();

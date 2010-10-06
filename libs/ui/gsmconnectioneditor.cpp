@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "gsmconnectioneditor.h"
 
+#include <QMap>
 
 #include <KDebug>
 #include <KGlobal>
@@ -27,6 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "gsmwidget.h"
 #include "pppwidget.h"
+#include "ipv4widget.h"
 #include "connectionwidget.h"
 
 #include "connection.h"
@@ -38,13 +40,34 @@ GsmConnectionEditor::GsmConnectionEditor(const QVariantList &args, QWidget *pare
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Gsm);
     m_contents->setConnection(m_connection);
-    m_contents->setDefaultName(i18n("New Cellular Connection"));
-
     GsmWidget * gsmWidget = new GsmWidget(m_connection, this);
     PppWidget * pppWidget = new PppWidget(m_connection, this);
+    IpV4Widget * ipV4Widget = new IpV4Widget(m_connection, this);
+
+    if (!args[1].isNull() && !args[2].isNull() && !args[3].isNull()) {
+        QList<QVariant> networkIds = args[2].toList();
+        if (!networkIds.isEmpty()) {
+            gsmWidget->setNetworkIds(networkIds);
+        }
+
+        QMap<QString, QVariant> apnInfo = args[3].toMap();
+        if (apnInfo["name"].isNull()) {
+            m_contents->setDefaultName(args[1].toString());
+        } else {
+            m_contents->setDefaultName(args[1].toString() + " - " + apnInfo["name"].toString());
+        }
+        gsmWidget->setApnInfo(apnInfo);
+
+        if (!apnInfo["dnsList"].isNull()) {
+            ipV4Widget->setDns(apnInfo["dnsList"].toList());
+        }
+    } else {
+        m_contents->setDefaultName(i18n("New Cellular Connection"));
+    }
 
     addToTabWidget(gsmWidget);
     addToTabWidget(pppWidget);
+    addToTabWidget(ipV4Widget);
 }
 
 GsmConnectionEditor::~GsmConnectionEditor()

@@ -398,6 +398,27 @@ void IpV4Widget::showDnsSearchEditor()
     dnsSearchEditor->show();
 }
 
+void IpV4Widget::setDns(const QList<QVariant> dnsList)
+{
+    if (dnsList.isEmpty()) {
+        return;
+    }
+
+    Q_D(IpV4Widget);
+    QList<QHostAddress> temp;
+    foreach (const QVariant &dns, dnsList) {
+        QHostAddress dnsAddr(dns.toString());
+        if (dnsAddr != QHostAddress::Null) {
+            temp << dnsAddr;
+        }
+    }
+
+    d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Automatic);
+    d->setting->setIgnoredhcpdns(true);
+    d->setting->setDns(temp);
+    readConfig();
+}
+
 void IpV4Widget::validate()
 {
 

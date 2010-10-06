@@ -12,6 +12,8 @@ set(kcm_networkmanagement_SRCS
    # UI logic
    addeditdeletebuttonset.cpp
    manageconnectionwidget.cpp
+   mobileconnectionwizard.cpp
+   mobileproviders.cpp
 )
 #kde4_add_kcfg_files(kcm_knetworkmanager_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/storage/knmserviceprefs.kcfgc)
 
@@ -20,9 +22,9 @@ kde4_add_plugin(kcm_networkmanagement ${kcm_networkmanagement_SRCS})
 
 macro_ensure_version("4.4.76" ${KDE_VERSION} IS45)
 if (IS45)
-   target_link_libraries(kcm_networkmanagement knmui knminternals solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KCMUTILS_LIBS})
+   target_link_libraries(kcm_networkmanagement knmui knminternals solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KCMUTILS_LIBS} ${QT_QTXML_LIBRARY})
 else (IS45)
-   target_link_libraries(kcm_networkmanagement knmui knminternals solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KUTILS_LIBS})
+   target_link_libraries(kcm_networkmanagement knmui knminternals solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_KUTILS_LIBS} ${QT_QTXML_LIBRARY})
 endif (IS45)
 
 ## next target: tray config KCM

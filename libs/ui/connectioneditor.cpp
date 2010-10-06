@@ -85,7 +85,7 @@ void ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariant
     }
 }
 
-QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type type, const QVariantList &otherArgs)
+QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type type, const QVariantList &otherArgs, const bool autoAccept)
 {
     KDialog configDialog(0);
     configDialog.setCaption(i18nc("Add connection dialog caption", "Add Network Connection"));
@@ -132,7 +132,7 @@ QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type 
 
     configDialog.setMainWidget(cprefs);
 
-    if ( configDialog.exec() == QDialog::Accepted ) {
+    if ( autoAccept || configDialog.exec() == QDialog::Accepted ) {
         // update the connection from the UI and save it to a file in appdata/connections
         cprefs->save();
         // update our rcfile (Must happen after cprefs->save())

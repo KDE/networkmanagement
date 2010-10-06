@@ -35,6 +35,7 @@ public:
     virtual ~IpV4Widget();
     void readConfig();
     void writeConfig();
+    void setDns(const QList<QVariant> dnsList);
 protected Q_SLOTS:
     /**
      * Update state of widgets dependent on IP setting method

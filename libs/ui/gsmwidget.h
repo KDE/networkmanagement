@@ -37,6 +37,8 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
+    void setApnInfo(const QMap<QString, QVariant> apnInfo);
+    void setNetworkIds(const QList<QVariant> networkIds);
 protected Q_SLOTS:
     void validate();
     void chkShowPassToggled();

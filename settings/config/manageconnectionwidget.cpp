@@ -100,6 +100,7 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     mLastUsedTimer->start(1000 * 60);
 
     setButtons(KCModule::Help | KCModule::Apply);
+    mMobileConnectionWizard = 0;
 }
 
 ManageConnectionWidget::~ManageConnectionWidget()
@@ -254,8 +255,16 @@ void ManageConnectionWidget::updateTabStates()
 
 void ManageConnectionWidget::addClicked()
 {
-    // show connection settings widget for the active tab
-    mEditor->addConnection(false, connectionTypeForCurrentIndex());
+    if (connectionTypeForCurrentIndex() == Knm::Connection::Gsm) {
+        delete mMobileConnectionWizard;
+        mMobileConnectionWizard = new MobileConnectionWizard();
+
+        if (mMobileConnectionWizard->exec() == QDialog::Accepted) {
+            mEditor->addConnection(false, connectionTypeForCurrentIndex(), mMobileConnectionWizard->args(), true);
+        }
+    } else { // show connection settings widget for the active tab
+         mEditor->addConnection(false, connectionTypeForCurrentIndex());
+    }
     emit changed();
 }
 
@@ -393,20 +402,7 @@ void ManageConnectionWidget::save()
 
 void ManageConnectionWidget::tabChanged(int index)
 {
-    if (index == 2) {
-        if ( !mCellularMenu ) {
-            mCellularMenu = new QMenu(this);
-            QAction * gsmAction = new QAction(i18nc("Menu item for GSM connections", "GSM Connection"), this);
-            gsmAction->setData(Knm::Connection::Gsm);
-            QAction * cdmaAction = new QAction(i18nc("Menu item for CDMA connections", "CDMA Connection"), this);
-            cdmaAction->setData(Knm::Connection::Cdma);
-
-            mCellularMenu->addAction(gsmAction);
-            mCellularMenu->addAction(cdmaAction);
-            connect(mCellularMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
-            mConnEditUi.buttonSetCellular->addButton()->setMenu(mCellularMenu);
-        }
-    } else if (index == 3) {
+    if (index == 3) {
         if ( !mVpnMenu ) {
             mVpnMenu = new QMenu(this);
             // foreach vpn service, add one of these

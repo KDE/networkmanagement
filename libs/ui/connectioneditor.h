@@ -42,7 +42,7 @@ public:
     virtual ~ConnectionEditor();
 
     QString addConnection(bool useDefaults, Knm::Connection::Type type,
-            const QVariantList &otherArgs = QVariantList());
+            const QVariantList &otherArgs = QVariantList(), const bool autoAccept = false);
 
     void editConnection(Knm::Connection::Type type,
             const QVariantList &otherArgs = QVariantList());

@@ -90,9 +90,12 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     */
     void setNetworkid( const QString & v )
     {
+        /* TODO: change this checks to verify if the colon separated list of mmc-mnc in v is valid.
+         * Since NetworkManager-0.8 does not use this list yet we do not need to hurry.*/
         if (v.length() == 5 || v.length() == 6) {
             mNetworkid = v;
         }
+        mNetworkid = v;
     }
 
     /**

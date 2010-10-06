@@ -100,4 +100,40 @@ void GsmWidget::validate()
 
 }
 
+void GsmWidget::setNetworkIds(const QList<QVariant> networkIds)
+{
+    Q_D(GsmWidget);
+
+    QString temp;
+
+    foreach (const QVariant &v, networkIds) {
+        temp.append(v.toString() + ",");
+    }
+    temp.remove(temp.size()-1, 1);
+
+    // TODO: nm-applet-0.8 does not save network-id list, which probably means
+    // NetworkManager does not use this list yet.
+    //d->setting->setNetworkid(temp);
+    readConfig();
+}
+
+void GsmWidget::setApnInfo(const QMap<QString, QVariant> apnInfo)
+{
+    Q_D(GsmWidget);
+
+    d->setting->setNumber(apnInfo["number"].toString());
+
+    if (!apnInfo["username"].isNull()) {
+        d->setting->setUsername(apnInfo["username"].toString());
+    }
+    if (!apnInfo["password"].isNull()) {
+        d->setting->setPassword(apnInfo["password"].toString());
+    }
+
+    d->setting->setApn(apnInfo["apn"].toString());
+
+    readConfig();
+    d->ui.password->setText(d->setting->password());
+}
+
 // vim: sw=4 sts=4 et tw=100

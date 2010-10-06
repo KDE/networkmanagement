@@ -74,6 +74,21 @@ void CdmaWidget::readSecrets()
     d->ui.password->setText(d->setting->password());
 }
 
+void CdmaWidget::setCdmaInfo(const QVariantMap info)
+{
+    Q_D(CdmaWidget);
+    d->setting->setNumber(info["number"].toString());
+
+    if (!info["username"].isNull()) {
+        d->setting->setUsername(info["username"].toString());
+    }
+    if (!info["password"].isNull()) {
+        d->setting->setPassword(info["password"].toString());
+    }
+
+    // TODO: save the sids.
+    readConfig();
+}
 
 void CdmaWidget::validate()
 {
