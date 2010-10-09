@@ -54,9 +54,8 @@ void ActivatableList::nm_restart_workaround(Solid::Networking::Status status)
 {
     if (status == Solid::Networking::Unknown || status == Solid::Networking::Unconnected) {
         Q_D(ActivatableList);
-        foreach (Knm::Activatable * c, d->activatables) {
-	    removeActivatable(c);
-        }
+	kDebug() << "----- Emptying activatables list, activatables cleared: " << d->activatables.count();
+	d->activatables.clear();
     }
 }
 
