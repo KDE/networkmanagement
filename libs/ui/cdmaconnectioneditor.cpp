@@ -38,10 +38,19 @@ CdmaConnectionEditor::CdmaConnectionEditor(const QVariantList &args, QWidget *pa
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Cdma);
     m_contents->setConnection(m_connection);
-    m_contents->setDefaultName(i18n("New Cellular Connection"));
 
     CdmaWidget * cdmaWidget = new CdmaWidget(m_connection, this);
     PppWidget * pppWidget = new PppWidget(m_connection, this);
+
+    if (args.count() > 1) {
+        m_contents->setDefaultName(args[1].toString());
+
+        if (args.count() > 2) {
+            cdmaWidget->setCdmaInfo(args[2].toMap());
+        }
+    } else {
+        m_contents->setDefaultName(i18n("New Cellular Connection"));
+    }
 
     addToTabWidget(cdmaWidget);
     addToTabWidget(pppWidget);

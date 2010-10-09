@@ -32,7 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "mobileconnectionwizard.h"
 
-MobileConnectionWizard::MobileConnectionWizard(QWidget * parent): QWizard(parent), mType(0), mPlanComboBox(0), mCountryList(0), mProvidersList(0), userApn(0), mProviders(0)
+MobileConnectionWizard::MobileConnectionWizard(QWidget * parent): QWizard(parent)
 {
     mProviders = new MobileProviders();
     setWindowTitle(i18nc("Mobile Connection Wizard", "New Mobile Broadband Connection"));
@@ -187,6 +187,15 @@ QVariantList MobileConnectionWizard::args()
         }
     }
     return temp;
+}
+
+Knm::Connection::Type MobileConnectionWizard::type()
+{
+    if (mIface && mIface ->type() == Solid::Control::NetworkInterface::Cdma) {
+        return Knm::Connection::Cdma;
+    }
+
+    return Knm::Connection::Gsm;
 }
 
 /**********************************************************/

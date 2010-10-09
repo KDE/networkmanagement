@@ -44,22 +44,28 @@ GsmConnectionEditor::GsmConnectionEditor(const QVariantList &args, QWidget *pare
     PppWidget * pppWidget = new PppWidget(m_connection, this);
     IpV4Widget * ipV4Widget = new IpV4Widget(m_connection, this);
 
-    if (!args[1].isNull() && !args[2].isNull() && !args[3].isNull()) {
-        QList<QVariant> networkIds = args[2].toList();
-        if (!networkIds.isEmpty()) {
-            gsmWidget->setNetworkIds(networkIds);
+    if (args.count() > 1) {
+        if (args.count() > 2) {
+            QList<QVariant> networkIds = args[2].toList();
+            if (!networkIds.isEmpty()) {
+                gsmWidget->setNetworkIds(networkIds);
+            }
         }
 
-        QMap<QString, QVariant> apnInfo = args[3].toMap();
-        if (apnInfo["name"].isNull()) {
-            m_contents->setDefaultName(args[1].toString());
+        if (args.count() > 3) {
+            QMap<QString, QVariant> apnInfo = args[3].toMap();
+            if (apnInfo["name"].isNull()) {
+                m_contents->setDefaultName(args[1].toString());
+            } else {
+                m_contents->setDefaultName(args[1].toString() + " - " + apnInfo["name"].toString());
+            }
+            gsmWidget->setApnInfo(apnInfo);
+    
+            if (!apnInfo["dnsList"].isNull()) {
+                ipV4Widget->setDns(apnInfo["dnsList"].toList());
+            }
         } else {
-            m_contents->setDefaultName(args[1].toString() + " - " + apnInfo["name"].toString());
-        }
-        gsmWidget->setApnInfo(apnInfo);
-
-        if (!apnInfo["dnsList"].isNull()) {
-            ipV4Widget->setDns(apnInfo["dnsList"].toList());
+            m_contents->setDefaultName(args[1].toString());
         }
     } else {
         m_contents->setDefaultName(i18n("New Cellular Connection"));

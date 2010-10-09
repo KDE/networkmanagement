@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkmanager.h>
 
 #include "mobileproviders.h"
+#include "../../libs/internals/connection.h"
 
 class MobileConnectionWizard : public QWizard
 {
@@ -48,6 +49,8 @@ public:
      * where cdma information is: name (optional) + username (optional) + password (optional) + list of sids (optional)
      */
     QVariantList args();
+
+    Knm::Connection::Type type();
 
 private Q_SLOTS:
     void introDeviceAdded(const QString uni);
