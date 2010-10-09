@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define ACTIVATABLELIST_H
 
 #include <QObject>
+#include <solid/control/networkmanager.h>
 #include "knm_export.h"
 
 namespace Knm
@@ -59,7 +60,9 @@ public:
     virtual void unregisterObserver(ActivatableObserver *);
 protected Q_SLOTS:
     void activatableChanged();
+    void nm_restart_workaround(Solid::Networking::Status status);
 protected:
+    void init();
     void addActivatableInternal(Knm::Activatable * activatable);
     void notifyOnAddActivatable(Knm::Activatable * activatable);
     ActivatableListPrivate * d_ptr;
