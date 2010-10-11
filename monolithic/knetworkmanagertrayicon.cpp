@@ -64,6 +64,7 @@ public:
     KNetworkManagerTrayIconPrivate()
         : list(0),
         iconName(QLatin1String("networkmanager")),
+        networkingEnableAction(0),
         flightModeAction(0),
         prefsAction(0),
         copyIpAddrAction(0),
@@ -75,6 +76,7 @@ public:
     QHash<Knm::Activatable *, QWidgetAction *> actions;
     QStringList deviceUnis;
     QString iconName;
+    KAction * networkingEnableAction;
     KAction * flightModeAction;
     KAction * prefsAction;
     KAction * copyIpAddrAction;
@@ -109,6 +111,13 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
 
     setAssociatedWidget(contextMenu());
     setStatus( (!d->active || Solid::Control::NetworkManager::status() == Solid::Networking::Unknown )? PARENT_ICON_CLASS::Passive : PARENT_ICON_CLASS::Active);
+
+    d->networkingEnableAction = new KAction(i18nc("@action:inmenu turns off networking", "Enable networking"), this);
+    d->networkingEnableAction->setCheckable(true);
+    d->networkingEnableAction->setChecked(Solid::Control::NetworkManager::isNetworkingEnabled());
+    connect(d->networkingEnableAction, SIGNAL(toggled(bool)), this, SLOT(enableNetworking(bool)));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
+            this, SLOT(networkingEnabledChanged()));
 
     if (types.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
         d->flightModeAction = new KAction(i18nc("@action:inmenu turns off wireless networking", "Enable wireless"), this);
@@ -200,7 +209,7 @@ void KNetworkManagerTrayIcon::fillPopup()
         }
     }
 
-    // if not active, add a warning notice and stop
+    // if not active, add a warning notice, show Networking and Wireless check buttons and stop
     if (Solid::Control::NetworkManager::status() == Solid::Networking::Unknown) {
         QString passiveText = i18nc("@action:inmenu Disable action text used when the NetworkManager daemon is not running", "Network Management disabled");
         QString passiveTooltip = i18nc("@info:tooltip NetworkManager is not running, this client cannot do anything", "The system Network Management service is not running");
@@ -209,6 +218,12 @@ void KNetworkManagerTrayIcon::fillPopup()
         passiveAction->setToolTip(passiveTooltip);
         passiveAction->setEnabled(false);
         contextMenu()->addAction(passiveAction);
+
+        // show "Enable" check buttons
+        contextMenu()->addAction(d->networkingEnableAction);
+        if (!wirelessDeviceUnis.isEmpty() /*TODO Bluetooth too */ && d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
+            contextMenu()->addAction(d->flightModeAction);
+        }
         return;
     }
 
@@ -309,9 +324,11 @@ void KNetworkManagerTrayIcon::fillPopup()
     // add the housekeeping actions
     contextMenu()->addSeparator();
 
+    contextMenu()->addAction(d->networkingEnableAction);
     if (!wirelessDeviceUnis.isEmpty() /*TODO Bluetooth too */ && d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
         contextMenu()->addAction(d->flightModeAction);
     }
+    contextMenu()->addSeparator();
     contextMenu()->addAction(d->prefsAction);
 }
 
@@ -531,6 +548,12 @@ void KNetworkManagerTrayIcon::networkingStatusChanged(Solid::Networking::Status 
     }
 }
 
+void KNetworkManagerTrayIcon::enableNetworking(bool enabled)
+{
+    kDebug() << enabled;
+    Solid::Control::NetworkManager::setNetworkingEnabled(enabled);
+}
+
 void KNetworkManagerTrayIcon::enableWireless(bool enabled)
 {
     kDebug() << enabled;
@@ -546,6 +569,12 @@ void KNetworkManagerTrayIcon::wirelessEnabledChanged()
     if (!(Solid::Control::NetworkManager::isWirelessHardwareEnabled() && Solid::Control::NetworkManager::isWirelessEnabled())) {
         contextMenu()->removeAction(d->otherWirelessNetworksAction);
     }
+}
+
+void KNetworkManagerTrayIcon::networkingEnabledChanged()
+{
+    Q_D(KNetworkManagerTrayIcon);
+    d->networkingEnableAction->setChecked(Solid::Control::NetworkManager::isNetworkingEnabled());
 }
 
 void KNetworkManagerTrayIcon::setActive(bool active)
