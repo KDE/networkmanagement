@@ -75,6 +75,7 @@ Name[zh_TW]=網路連線型態
 
 [Event/hwadded]
 Name=Network Interface Attached
+Name[cs]=Síťové rozhraní připojeno
 Name[da]=Netkort tilsluttet
 Name[de]=Netzwerkschnittstelle angeschlossen
 Name[en_GB]=Network Interface Attached
@@ -96,6 +97,7 @@ Name[uk]=Доданий інтерфейс мережі
 Name[x-test]=xxNetwork Interface Attachedxx
 Name[zh_TW]=網路介面已接上
 Comment=A network interface was attached
+Comment[cs]=Síťové rozhraní bylo připojeno
 Comment[da]=Et netkort blev tilsluttet
 Comment[de]=Eine Netzwerkschnittstelle ist angeschlossen worden
 Comment[en_GB]=A network interface was attached
@@ -165,6 +167,7 @@ Comment[zh_TW]=網路介面已移除
 
 [Event/networkappeared]
 Name=Found Wireless Network
+Name[cs]=Nalezena bezdrátová síť
 Name[da]=Fandt trådløst netværk
 Name[de]=Drahtloses Netzwerk gefunden
 Name[en_GB]=Found Wireless Network
@@ -186,6 +189,7 @@ Name[uk]=Знайдено бездротову мережу
 Name[x-test]=xxFound Wireless Networkxx
 Name[zh_TW]=找到無線網路
 Comment=A wireless network appeared
+Comment[cs]=Objevila se bezdrátová síť
 Comment[da]=Et trådløst netværk er dukket op
 Comment[de]=Ein drahtloses Netzwerk ist entdeckt worden
 Comment[en_GB]=A wireless network appeared
@@ -209,6 +213,7 @@ Comment[zh_TW]=找到無線網路
 
 [Event/networkdisappeared]
 Name=Lost Wireless Network
+Name[cs]=Bezdrátová síť ztracena
 Name[da]=Mistede trådløst netværk
 Name[de]=Drahtloses Netzwerk verloren
 Name[en_GB]=Lost Wireless Network
@@ -230,6 +235,7 @@ Name[uk]=Втрачено зв’язок з радіомережею
 Name[x-test]=xxLost Wireless Networkxx
 Name[zh_TW]=遺失無線網路
 Comment=A wireless network disappeared
+Comment[cs]=Bezdrátová síť zmizela
 Comment[da]=Et trådløst netværk forsvandt
 Comment[de]=Ein drahtloses Netzwerk ist nicht mehr vorhanden
 Comment[en_GB]=A wireless network disappeared
@@ -253,6 +259,7 @@ Comment[zh_TW]=遺失無線網路
 
 [Event/userconnectionattempt]
 Name=Establishing Network Connection
+Name[cs]=Navazuje se síťové spojení
 Name[da]=Opretter netværksforbindelse
 Name[de]=Netzwerkverbindung wird hergestellt
 Name[en_GB]=Establishing Network Connection
@@ -274,6 +281,7 @@ Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Name[zh_TW]=建立網路連線中
 Comment=The user started making a connection
+Comment[cs]=Uživatel zahájil spojení
 Comment[da]=Brugeren begyndte at oprette en forbindelse
 Comment[de]=Der Benutzer hat einen Verbindungsaufbau gestartet
 Comment[en_GB]=The user started making a connection
@@ -297,6 +305,7 @@ Comment[zh_TW]=使用者開始連線
 
 [Event/autoconnectionattempt]
 Name=Establishing Network Connection
+Name[cs]=Navazuje se síťové spojení
 Name[da]=Opretter netværksforbindelse
 Name[de]=Netzwerkverbindung wird hergestellt
 Name[en_GB]=Establishing Network Connection
@@ -318,6 +327,7 @@ Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Name[zh_TW]=建立網路連線中
 Comment=A connection is being started automatically
+Comment[cs]=Spojení je automaticky navazováno
 Comment[da]=En forbindelse er blevet startet automatisk
 Comment[de]=Es wird automatisch eine Verbindung aufgebaut
 Comment[en_GB]=A connection is being started automatically
@@ -342,6 +352,7 @@ Action=Popup
 
 [Event/connecting]
 Name=Establishing Network Connection
+Name[cs]=Navazuje se síťové spojení
 Name[da]=Opretter netværksforbindelse
 Name[de]=Netzwerkverbindung wird hergestellt
 Name[en_GB]=Establishing Network Connection
@@ -363,6 +374,7 @@ Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Name[zh_TW]=建立網路連線中
 Comment=A network connection attempt was begun
+Comment[cs]=Zahájen pokus o síťové spojení
 Comment[da]=Et netværksforbindelsesforsøg er påbegyndt
 Comment[de]=Ein Verbindungsversuch ist begonnen worden
 Comment[en_GB]=A network connection attempt was begun
@@ -387,6 +399,7 @@ Action=Popup
 
 [Event/disconnected]
 Name=Network Connection Disconnected
+Name[cs]=Síťové spojení odpojeno
 Name[da]=Netværksforbindelse afbrudt
 Name[de]=Netzwerkverbindung getrennt
 Name[en_GB]=Network Connection Disconnected
@@ -408,6 +421,7 @@ Name[uk]=Мережеве з’єднання розірвано
 Name[x-test]=xxNetwork Connection Disconnectedxx
 Name[zh_TW]=網路連線已中斷
 Comment=A network connection was disconnected
+Comment[cs]=Síťové spojení bylo odpojeno
 Comment[da]=En netværksforbindelse blev afbrudt
 Comment[de]=Eine Netzwerkverbindung ist getrennt worden
 Comment[en_GB]=A network connection was disconnected
@@ -611,6 +625,7 @@ Action=Popup
 
 [Event/lowsignal]
 Name=Low Wireless Signal Strength
+Name[cs]=Slabý bezdrátový signál
 Name[da]=Lav signalstyrke på trådløst
 Name[de]=Niedrige Signalstärke
 Name[en_GB]=Low Wireless Signal Strength
@@ -633,6 +648,7 @@ Name[uk]=Низька потужність радіосигналу
 Name[x-test]=xxLow Wireless Signal Strengthxx
 Name[zh_TW]=無線網路信號強度偏低
 Comment=The wireless signal strength is low
+Comment[cs]=Síla bezdrátového signálu je slabá
 Comment[da]=Den trådløse signalstyrke er lav
 Comment[de]=Die Signalstärke der drahtlosen Verbindung ist niedrig
 Comment[en_GB]=The wireless signal strength is low
@@ -657,6 +673,7 @@ Action=Popup
 
 [Event/ifacestatechange]
 Name=Interface changed state
+Name[cs]=Rozhraní změnilo stav
 Name[da]=Netkort ændrede tilstand
 Name[de]=Schnittstellenstatus geändert
 Name[en_GB]=Interface changed state
@@ -678,6 +695,7 @@ Name[uk]=Змінений стан інтерфейсу
 Name[x-test]=xxInterface changed statexx
 Name[zh_TW]=介面已變更狀態
 Comment=An interface changed state
+Comment[cs]=Stav rozhraní se změnil
 Comment[da]=Et netkort ændrede tilstand
 Comment[de]=Der Status einer Schnittstelle hat sich geändert
 Comment[en_GB]=An interface changed state
@@ -701,6 +719,7 @@ Comment[zh_TW]=介面已變更狀態
 
 [Event/networkingdisabled]
 Name=Network management disabled
+Name[cs]=Správa sítě zakázána
 Name[da]=Netværkshåndtering deaktiveret
 Name[de]=Netzwerkverwaltung deaktiviert
 Name[en_GB]=Network management disabled

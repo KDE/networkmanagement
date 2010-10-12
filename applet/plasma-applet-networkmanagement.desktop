@@ -24,6 +24,7 @@ Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managementxx
 Name[zh_TW]=網路管理
 Comment=Network status and control utility
+Comment[cs]=Nástroj stavu a ovládání sítě
 Comment[da]=Værktøj til netværksstatus og -kontrol
 Comment[de]=Dienstprogramm für Netzwerkstatus und -kontrolle
 Comment[en_GB]=Network status and control utility
