@@ -29,20 +29,22 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 ActivatableList::ActivatableList(QObject * parent)
     : QObject(parent), d_ptr(new ActivatableListPrivate)
 {
-	init();
+    // Disabling for now, it needs more work.
+    //init();
 }
 
 ActivatableList::ActivatableList(ActivatableListPrivate & dd, QObject * parent)
     : QObject(parent), d_ptr(&dd)
 {
-	init();
+    // Disabling for now, it needs more work.
+    //init();
 }
 
 void ActivatableList::init()
 {
     QObject::connect(Solid::Control::NetworkManager::notifier(),
             SIGNAL(statusChanged(Solid::Networking::Status)),
-	    this, SLOT(nm_restart_workaround(Solid::Networking::Status)));
+            this, SLOT(nm_restart_workaround(Solid::Networking::Status)));
 }
 
 ActivatableList::~ActivatableList()
@@ -54,8 +56,8 @@ void ActivatableList::nm_restart_workaround(Solid::Networking::Status status)
 {
     if (status == Solid::Networking::Unknown || status == Solid::Networking::Unconnected) {
         Q_D(ActivatableList);
-	kDebug() << "----- Emptying activatables list, activatables cleared: " << d->activatables.count();
-	d->activatables.clear();
+        kDebug() << "----- Emptying activatables list, activatables cleared: " << d->activatables.count();
+        d->activatables.clear();
     }
 }
 
