@@ -56,6 +56,7 @@ public:
     void init();
     Solid::Control::NetworkInterface* defaultInterface();
     bool available(int state);
+    bool hasWireless();
 
     QHash<QString, InterfaceItem*> m_interfaces;
 
@@ -84,7 +85,7 @@ private:
     QSizeF sizeHint ( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
 
     RemoteActivatableList* m_activatables;
-
+    bool m_hasWirelessInterface;
     QGraphicsWidget* m_widget;
     QGraphicsGridLayout* m_mainLayout;
     // Interfaces label

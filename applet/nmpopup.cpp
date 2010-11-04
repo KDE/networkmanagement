@@ -57,6 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* parent)
 : QGraphicsWidget(parent),
     m_activatables(activatableList),
+    m_hasWirelessInterface(false),
     m_widget(0),
     m_mainLayout(0),
     m_leftWidget(0),
@@ -340,6 +341,10 @@ void NMPopup::handleConnectionStateChange(int new_state, int old_state, int reas
     }
 }
 
+bool NMPopup::hasWireless() {
+    return m_hasWirelessInterface;
+}
+
 bool NMPopup::available(int state)
 {
     // Can an interface be used?
@@ -398,30 +403,32 @@ void NMPopup::networkingEnabledToggled(bool checked)
 
 void NMPopup::updateHasWireless()
 {
-    kDebug() << "UPDATE!!!!!!!!!!!!";
+    //kDebug() << "UPDATE!!!!!!!!!!!!";
     bool hasWireless = true;
     if (!Solid::Control::NetworkManager::isWirelessHardwareEnabled() ||
         !Solid::Control::NetworkManager::isNetworkingEnabled() ||
         !Solid::Control::NetworkManager::isWirelessEnabled()) {
 
+        //kDebug () << "networking enabled?" << Solid::Control::NetworkManager::isNetworkingEnabled();
+        //kDebug () << "wireless hardware enabled?" << Solid::Control::NetworkManager::isWirelessHardwareEnabled();
+        //kDebug () << "wireless enabled?" << Solid::Control::NetworkManager::isWirelessEnabled();
+
         // either networking is disabled, or wireless is disabled
         hasWireless = false;
         m_connectionList->setHasWireless(hasWireless);
-    
     }
     kDebug() << "After chckboxn" << hasWireless;
 
-    bool hasWirelessInterface = false;
     foreach (InterfaceItem* ifaceitem, m_interfaces) {
         Solid::Control::NetworkInterface* iface = ifaceitem->interface();
         Solid::Control::WirelessNetworkInterface* wiface = qobject_cast<Solid::Control::WirelessNetworkInterface *>(iface);
         if (wiface) {
-            kDebug() << "there's a wifi iface" << ifaceitem->connectionName() << iface->interfaceName();
-            hasWirelessInterface = true; // at least one interface is wireless. We're happy.
+            //kDebug() << "there's a wifi iface" << ifaceitem->connectionName() << iface->interfaceName();
+            m_hasWirelessInterface = true; // at least one interface is wireless. We're happy.
             continue;
         }
     }
-    if (!hasWirelessInterface) {
+    if (!m_hasWirelessInterface) {
         kDebug() << "no ifaces";
         hasWireless = false;
     }

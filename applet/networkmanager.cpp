@@ -534,12 +534,24 @@ void NetworkManagerApplet::toolTipAboutToShow()
             }
         }
         QString subText;
+        QString text;
         if (hasActive) {
             subText = lines.join(QLatin1String("<br>"));
         } else {
-            subText = i18nc("tooltip, all interfaces are down", "Disconnected");
+            text = i18nc("tooltip, all interfaces are down", "Disconnected");
+
+            if (m_popup->hasWireless() && !Solid::Control::NetworkManager::isWirelessEnabled()) {
+                subText = i18nc("tooltip, wireless is disabled in software", "Wireless is disabled");
+            }
+            if (!Solid::Control::NetworkManager::isNetworkingEnabled()) {
+                subText = i18nc("tooltip, all interfaces are down", "Networking is disabled");
+            }
+            if (m_popup->hasWireless() && !Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
+                subText = i18nc("tooltip, all interfaces are down", "Wireless killswitch is disabled");
+            }
+
         }
-        m_toolTip = Plasma::ToolTipContent(QString(),
+        m_toolTip = Plasma::ToolTipContent(text,
                                            subText,
                                            KIcon(icon).pixmap(IconSize(KIconLoader::Desktop))
                                            );

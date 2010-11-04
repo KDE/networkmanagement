@@ -46,7 +46,7 @@ namespace Plasma
 
 class QTimeLine;
 
-class NMExtenderItem;
+class NMPopup;
 class RemoteActivatableList;
 
 class NetworkManagerApplet : public Plasma::PopupApplet
@@ -129,7 +129,7 @@ private:
     Plasma::ToolTipContent m_toolTip;
 
     RemoteActivatableList* m_activatables;
-    QGraphicsWidget* m_popup;
+    NMPopup* m_popup;
 
     QPixmap m_pixmap;
 
