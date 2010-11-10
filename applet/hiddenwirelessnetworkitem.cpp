@@ -19,12 +19,18 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// Own
 #include "hiddenwirelessnetworkitem.h"
 
+// Qt
 #include <QGraphicsLinearLayout>
 
+// KDE
+#include <KDebug>
 #include <KLineEdit>
 #include <KLocale>
+
+// Plasma
 #include <Plasma/IconWidget>
 #include <Plasma/LineEdit>
 
