@@ -18,20 +18,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "vpninterfaceitem.h"
-//#include "uiutils.h"
-#include "activatableitem.h"
-
-//#include <QGraphicsGridLayout>
+// Qt
 #include <QLabel>
 #include <QTimer>
 
-//#include <solid/control/wirelessaccesspoint.h>
-//#include <solid/control/wirelessnetworkinterface.h>
-#include <solid/control/networkinterface.h>
-//#include <solid/control/networkipv4config.h>
-//#include <solid/control/networkmanager.h>
+// KDE
+#include <KDebug>
 
+// Network Management
+#include <solid/control/networkinterface.h>
+#include "vpninterfaceitem.h"
+#include "activatableitem.h"
 #include "remoteactivatable.h"
 #include "remoteactivatablelist.h"
 #include "remoteinterfaceconnection.h"
