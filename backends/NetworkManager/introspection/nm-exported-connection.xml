@@ -13,8 +13,8 @@
           </tp:docstring>
           <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_exported_connection_update"/>
           <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
-          <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QVariantMapMap"/>
           <arg name="properties" type="a{sa{sv}}" direction="in">
+            <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QVariantMapMap"/>
             <tp:docstring>
               New connection properties.
             </tp:docstring>
@@ -35,7 +35,7 @@
             </tp:docstring>
             <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_exported_connection_get_settings"/>
             <arg name="settings" type="a{sa{sv}}" direction="out" tp:type="String_String_Variant_Map_Map">
-            <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMapMap"/>
+                <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMapMap"/>
                 <tp:docstring>
                     The nested settings maps describing this object.
                 </tp:docstring>
@@ -47,19 +47,18 @@
                 Emitted when some settings changed.
             </tp:docstring>
             <arg name="settings" type="a{sa{sv}}" tp:type="String_String_Variant_Map_Map">
-            <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QVariantMapMap"/>
+                <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QVariantMapMap"/>
                 <tp:docstring>
-                    Contains the changed settings.
+                    Contains complete connection setting parameters, including changes.
                 </tp:docstring>
             </arg>
         </signal>
 
         <signal name="Removed">
             <tp:docstring>
-                Emitted when this settings object was removed. FIXME: Is this emitted after it was removed or when it is about to be removed?  If after removed, then different semantics to Device removed.  if prior to removal, should be called AboutToBeRemoved.
+                Emitted when this connection has been deleted/removed.  After receipt of this signal, the object no longer exists.
             </tp:docstring>
         </signal>
 
     </interface>
-
 </node>
