@@ -51,6 +51,7 @@ public:
     QVariantList args();
 
     Knm::Connection::Type type();
+    MobileProviders::ErrorCodes getError();
 
 private Q_SLOTS:
     void introDeviceAdded(const QString uni);

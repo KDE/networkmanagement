@@ -260,7 +260,11 @@ void ManageConnectionWidget::addClicked()
         mMobileConnectionWizard = new MobileConnectionWizard();
 
         if (mMobileConnectionWizard->exec() == QDialog::Accepted) {
-            mEditor->addConnection(false, mMobileConnectionWizard->type(), mMobileConnectionWizard->args(), true);
+            if (mMobileConnectionWizard->getError() == MobileProviders::Success) {
+                mEditor->addConnection(false, mMobileConnectionWizard->type(), mMobileConnectionWizard->args(), true);
+            } else { // fallback to old manual editing if something wrong happened with the wizard
+                mEditor->addConnection(false, mMobileConnectionWizard->type());
+            }
         }
     } else { // show connection settings widget for the active tab
          mEditor->addConnection(false, connectionTypeForCurrentIndex());

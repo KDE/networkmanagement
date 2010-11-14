@@ -48,6 +48,15 @@ MobileConnectionWizard::~MobileConnectionWizard()
 {
 }
 
+MobileProviders::ErrorCodes MobileConnectionWizard::getError()
+{
+    if (mProviders)
+    {
+        return mProviders->getError();
+    }
+    return MobileProviders::Success;
+}
+
 void MobileConnectionWizard::initializePage(int id)
 {
     switch (id) {
@@ -64,6 +73,11 @@ void MobileConnectionWizard::initializePage(int id)
                     mCountryList->setCurrentItem(items.at(0));
                 }
             }
+
+            mIface = Solid::Control::NetworkManager::findNetworkInterface(mDeviceComboBox->itemData(mDeviceComboBox->currentIndex()).toString());
+            if (mProviders->getError() != MobileProviders::Success) {
+                accept();
+            }
             break;
 
         case 2: // Providers Page
@@ -72,7 +86,6 @@ void MobileConnectionWizard::initializePage(int id)
             lineEditProvider->setText("");
             radioAutoProvider->setChecked(true);
     
-            mIface = Solid::Control::NetworkManager::findNetworkInterface(mDeviceComboBox->itemData(mDeviceComboBox->currentIndex()).toString());
             if (mIface) {
                 switch (mIface->type()) {
                     case Solid::Control::NetworkInterface::Gsm:

@@ -31,6 +31,7 @@ const QString MobileProviders::ProvidersFile = "/usr/share/mobile-broadband-prov
 MobileProviders::MobileProviders()
 {
     QFile file(CountryCodesFile);
+    mError = Success;
 
     if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         QTextStream in(&file);
@@ -43,6 +44,8 @@ MobileProviders::MobileProviders()
             mCountries.insert(pieces.at(0), pieces.at(1));
         }
         file.close();
+    } else {
+        mError = CountryCodesMissing;
     }
 
     QFile file2(ProvidersFile);
@@ -53,12 +56,15 @@ MobileProviders::MobileProviders()
 
             if (docElement.isNull()) {
                 kDebug() << ProvidersFile << ": document is null";
+                mError = ProvidersIsNull;
             } else {
                 if (docElement.isNull() || docElement.tagName() != "serviceproviders") {
                     kDebug() << ProvidersFile << ": wrong format";
+                    mError = ProvidersWrongFormat;
                 } else {
                     if (docElement.attribute("format") != "2.0") {
                         kDebug() << ProvidersFile << ": mobile broadband provider database format '" << docElement.attribute("format") << "' not supported.";
+                        mError = ProvidersFormatNotSupported;
                     } else {
                         //kDebug() << "Everything is alright so far";
                     }
@@ -69,6 +75,7 @@ MobileProviders::MobileProviders()
         file2.close();
     } else {
         kDebug() << "Error opening providers file" << ProvidersFile;
+        mError = ProvidersMissing;
     }
 }
 
