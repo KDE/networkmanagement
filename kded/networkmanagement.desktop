@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=NetworkManager User Settings Service
+Name[ca]=Servei d'arranjaments de l'usuari del GestorDeXarxa
 Name[cs]=Služba uživatelského nastavení NetworkManageru
 Name[da]=Tjeneste til brugerindstillinger for NetworkManager
 Name[de]=Benutzereinstellungsdienst für NetworkManager
@@ -23,6 +24,7 @@ Name[uk]=Служба параметрів користувача NetworkManager
 Name[x-test]=xxNetworkManager User Settings Servicexx
 Name[zh_TW]=NetworkManager 使用者設定服務
 Comment=Provides network configuration to the NetworkManager daemon
+Comment[ca]=Proporciona la configuració de xarxa al dimoni del Gestor de xarxa
 Comment[da]=Leverer netværkskonfiguration af NetworkManager-dæmonen
 Comment[de]=Stellt dem NetworkManager-Dienst eine Netzwerkeinrichtung zur Verfügung
 Comment[en_GB]=Provides network configuration to the NetworkManager dæmon
