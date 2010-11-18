@@ -113,7 +113,7 @@ QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type 
             }
         } else {
             kDebug() << "found new uuid which is not used yet:" << connectionId;
-            i = 1000; // stop searching
+            break; // stop searching
         }
     }
     // Let's hope the connection ID is unique now...
