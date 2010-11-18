@@ -111,7 +111,6 @@ bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType
 {
      return ( (connType == Knm::Connection::Wired && ifaceType == Solid::Control::NetworkInterface::Ieee8023)
              || (connType == Knm::Connection::Wireless && ifaceType == Solid::Control::NetworkInterface::Ieee80211)
-             || (connType == Knm::Connection::Wireless && ifaceType == Solid::Control::NetworkInterface::Ieee80211)
              || (connType == Knm::Connection::Gsm && ifaceType == Solid::Control::NetworkInterface::Gsm)
              || (connType == Knm::Connection::Cdma && ifaceType == Solid::Control::NetworkInterface::Cdma)
              || (connType == Knm::Connection::Pppoe && ifaceType == Solid::Control::NetworkInterface::Serial)
