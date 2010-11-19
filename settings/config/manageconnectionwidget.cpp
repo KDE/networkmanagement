@@ -148,13 +148,17 @@ QString ManageConnectionWidget::formatDateRelative(const QDateTime & lastUsed)
 
 void ManageConnectionWidget::restoreConnections()
 {
-    //clean up the lists
+    // clean up the lists
     mConnEditUi.listWired->clear();
     mConnEditUi.listWireless->clear();
     mConnEditUi.listCellular->clear();
     mConnEditUi.listVpn->clear();
     mConnEditUi.listPppoe->clear();
 
+    // if settings are accessed from plasma applet settings, KNetworkManagerServicePrefs reads the configuration once
+    // and always displays the same connection list, even if connections are updated from systemsettings. Line below,
+    // always makes the list up-to-date by reading configuration from disk.
+    KNetworkManagerServicePrefs::self()->readConfig();
     QStringList connectionIds = KNetworkManagerServicePrefs::self()->connections();
     QList<QTreeWidgetItem *> wiredItems, wirelessItems, cellularItems, vpnItems, pppoeItems;
     foreach (const QString &connectionId, connectionIds) {
