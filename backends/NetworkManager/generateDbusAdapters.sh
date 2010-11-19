@@ -19,5 +19,6 @@ sed -i -e "s,inline bool default() const,inline bool getDefault() const," nm-act
 
 # Another manual workarounds should be done while generating adapter and proxy classes
 # 0- Remove org.freedesktop.NetworkManager.Connection.Active interface from introspection/nm-vpn-connection.xml
-# 1- Fix double inclusion guards of qdbusxml2cpp like: NM-ACTIVE_H_12345 -> NM_ACTIVE_H
+# 1- Fix double inclusion guards of qdbusxml2cpp like: NM-ACTIVE_H_12345 -> NM_ACTIVE_H (no numbers and dashes)
 # 2- Add last an additional parameter to GetSecrets method in type: const QDBusMessage & message
+# 3- Clean all tp: namespace tags since qdbusxml2cpp does not support namespaces: http://mail.kde.org/pipermail/kde-hardware-devel/2010-November/001136.html
