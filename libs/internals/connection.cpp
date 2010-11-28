@@ -18,6 +18,9 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
+#include <kdebug.h>
+
 #include "connection.h"
 
 #include "settings/802-11-wireless-security.h"
@@ -102,6 +105,8 @@ Connection::~Connection()
 
 void Connection::init()
 {
+    m_settings.clear();
+
     switch (m_type) {
         case Cdma:
             addSetting(new CdmaSetting());
@@ -282,7 +287,14 @@ QString Connection::origin() const
 
 void Connection::setType(Connection::Type type)
 {
+    if (type == m_type)
+        return;
+
     m_type = type;
+
+    init();
+
+    kDebug() << "Connection type is set as " << typeAsString(type) << ". Settings of the connection removed since its type has been changed.";
 }
 
 // vim: sw=4 sts=4 et tw=100
