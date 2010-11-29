@@ -165,10 +165,11 @@ void NetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedConne
                 d->activatables.insert(addedConnection->uuid(), ifaceConnection);
                 d->activatableList->addActivatable(ifaceConnection);
             } else {
-                kDebug() << "connection type mismatch: " << addedConnection->type() << d->interface->type();
+                kDebug() << "Connection type mismatch!";
+               kDebug() << "Added connection is " << addedConnection->typeAsString(addedConnection->type()) << " interface type: " << d->interface->type() << " name: " << d->interface->interfaceName() << " driver: " << d->interface->driver();
             }
         } else {
-            kDebug() << "hardware address mismatch!";
+            kDebug() << "Hardware address mismatch!";
         }
     }
     maintainActivatableForUnconfigured();
