@@ -308,7 +308,7 @@ void WirelessSecuritySettingWidget::writeConfig()
     else if (d->ui.cboType->currentIndex() == d->dynamicWep.first) {
         d->setting8021x->setEnabled(true);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep); // FIXME
-        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAEAP);
+        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::Ieee8021x);
     }
     else if (d->ui.cboType->currentIndex() == d->wpaPsk.first) {
         d->setting8021x->setEnabled(false);
