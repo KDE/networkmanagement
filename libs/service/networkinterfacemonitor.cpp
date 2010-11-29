@@ -68,18 +68,24 @@ NetworkInterfaceMonitor::~NetworkInterfaceMonitor()
 void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
 {
     Q_D(NetworkInterfaceMonitor);
+    kDebug();
+
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     if (iface && !d->providers.contains(uni)) {
         NetworkInterfaceActivatableProvider * provider;
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+            kDebug() << "Wireless interface added";
             provider = new WirelessNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface), this);
         } else if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+            kDebug() << "Wired interface added";
             provider = new WiredNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::WiredNetworkInterface*>(iface), this);
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
         } else if (iface->type() == Solid::Control::NetworkInterface::Gsm) {
+            kDebug() << "Gsm interface added";
             provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::GsmNetworkInterface*>(iface), this);
 #endif
         } else {
+            kDebug() << "Unknown interface added";
             provider = new NetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, iface, this);
         }
         d->connectionList->registerConnectionHandler(provider);

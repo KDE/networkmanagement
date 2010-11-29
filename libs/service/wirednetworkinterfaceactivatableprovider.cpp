@@ -54,6 +54,7 @@ WiredNetworkInterfaceActivatableProvider::~WiredNetworkInterfaceActivatableProvi
 
 void WiredNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedConnection)
 {
+    kDebug();
     Q_D(WiredNetworkInterfaceActivatableProvider);
     if (d->wiredInterface()->carrier()) {
         NetworkInterfaceActivatableProvider::handleAdd(addedConnection);
@@ -63,6 +64,8 @@ void WiredNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * added
 void WiredNetworkInterfaceActivatableProvider::handleCarrierChange(bool carrier)
 {
     Q_D(WiredNetworkInterfaceActivatableProvider);
+
+    kDebug();
     if (carrier) {
         foreach (const QString &uuid, d->connectionList->connections()) {
             Knm::Connection * connection = d->connectionList->findConnection(uuid);
