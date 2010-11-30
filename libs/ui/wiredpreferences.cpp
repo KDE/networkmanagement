@@ -49,8 +49,8 @@ WiredPreferences::WiredPreferences(const QVariantList &args, QWidget *parent)
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
     SecurityWired8021x * securityWidget = new SecurityWired8021x(m_connection, this);
 
-    addToTabWidget(wiredWidget);
     addToTabWidget(ipv4Widget);
+    addToTabWidget(wiredWidget);
     addToTabWidget(securityWidget);
 }
 
