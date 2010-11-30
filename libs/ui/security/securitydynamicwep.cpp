@@ -38,9 +38,21 @@ void SecurityDynamicWep::writeConfig()
     SecurityEap::writeConfig();
 
     QStringList pairwise = d->settingSecurity->pairwise();
-    pairwise << "wep40" << "wep104";
+
+    if (!pairwise.contains("wep40"))
+        pairwise << "wep40";
+
+    if (!pairwise.contains("wep104"))
+        pairwise << "wep104";
+
     QStringList group = d->settingSecurity->group();
-    group << "wep40" << "wep104";
+
+    if(!group.contains("wep40"))
+        group << "wep40";
+
+    if (!group.contains("wep104"))
+        group << "wep104";
+
     d->settingSecurity->setPairwise(pairwise);
     d->settingSecurity->setGroup(group);
 }
