@@ -42,7 +42,9 @@ public:
     IpV4WidgetPrivate() : setting(0), isAdvancedModeOn(false)
     {
     }
-    enum MethodIndex { AutomaticMethodIndex = 0, AutomaticOnlyIPMethodIndex, LinkLocalMethodIndex, ManualMethodIndex, SharedMethodIndex };
+
+    // Make sure that this order is same as the combobox shown in ipv4.ui file
+    enum MethodIndex { AutomaticMethodIndex = 0, AutomaticOnlyIPMethodIndex, ManualMethodIndex, LinkLocalMethodIndex, SharedMethodIndex };
     Ui_SettingsIp4Config ui;
     Knm::Ipv4Setting * setting;
     bool isAdvancedModeOn;
