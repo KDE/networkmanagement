@@ -17,18 +17,71 @@ Ipv4Dbus::~Ipv4Dbus()
 
 void Ipv4Dbus::fromMap(const QVariantMap & map)
 {
-  Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting
-    *>(m_setting); if (map.contains("method")) {
-      setting->setMethod(map.value("method").value<int>()); }
-  //if (map.contains("dns")) { setting->setDns(map.value("dns").value<QStringList>()); }
+
+  kDebug() << "IPv4 map: ";
+  foreach(QString key, map.keys())
+      kDebug() << key << " : " << map.value(key);
+
+  Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting*>(m_setting); 
+
+  if (map.contains("method")) {
+      setting->setMethod(methodStringToEnum(map.value("method").value<QString>())); }
+
+  if (map.contains("dns")) {
+      QDBusArgument dnsArg = map.value("dns").value< QDBusArgument>();
+      QList<QHostAddress> dbusDns;
+
+      dnsArg.beginArray();
+      while(!dnsArg.atEnd())
+      {
+          uint utmp = 0;
+          dnsArg >> utmp;
+          QHostAddress tmpHost(ntohl(utmp));
+          dbusDns << tmpHost;
+          kDebug() << "DNS IP is " << tmpHost.toString();
+      }
+      dnsArg.endArray();
+
+      setting->setDns(dbusDns);
+  }
+
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)) &&
       !map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)).value<QStringList>().isEmpty()
      ) {
     setting->setDnssearch(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)).value<QStringList>());
   }
-  //if (map.contains("addresses")) {
-  //  setting->setAddresses(map.value("addresses").value<QStringList>());
-  //}
+
+  if (map.contains("addresses")) {
+      QDBusArgument addressArg = map.value("addresses").value< QDBusArgument>();
+      QList<Solid::Control::IPv4Address> addresses;
+
+      addressArg.beginArray();
+      while(!addressArg.atEnd())
+      {
+          QList<uint> uintList;
+          addressArg >> uintList;
+
+          if (uintList.count() != 3)
+          {
+            kWarning() << "Invalid address format detected. UInt count is " << uintList.count();
+            continue;
+          }
+
+          Solid::Control::IPv4Address addr((quint32)ntohl(uintList.at(0)), (quint32)uintList.at(1), (quint32) ntohl(uintList.at(2)));
+          if (!addr.isValid())
+          {
+            kWarning() << "Invalid address format detected.";
+            continue;
+          }
+          kDebug() << "IP Address:" << QHostAddress(ntohl(uintList.at(0))).toString() << " Subnet:" << uintList.at(1) << "Gateway:" << QHostAddress(ntohl(uintList.at(2))).toString();
+
+          addresses << addr;
+      }
+      addressArg.endArray();
+
+      setting->setAddresses(addresses);
+  }
+
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS))) {
     setting->setIgnoredhcpdns(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS)).value<bool>());
   }
@@ -44,6 +97,23 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DHCP_HOSTNAME))) {
     setting->setDhcphostname(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DHCP_HOSTNAME)).value<QString>());
   }
+}
+
+Knm::Ipv4Setting::EnumMethod::type Ipv4Dbus::methodStringToEnum(QString method)
+{
+    if (method.toLower() == "automatic" || method.toLower() == "auto")
+        return Knm::Ipv4Setting::EnumMethod::Automatic;
+    else if (method.toLower() == "linklocal" || method.toLower() == "link-local")
+        return Knm::Ipv4Setting::EnumMethod::LinkLocal;
+    else if (method.toLower() == "manual")
+        return Knm::Ipv4Setting::EnumMethod::Manual;
+    else if (method.toLower() == "shared")
+        return Knm::Ipv4Setting::EnumMethod::Shared;
+    else
+    {
+        kDebug() << "Unknown method given:" << method;
+        return Knm::Ipv4Setting::EnumMethod::Automatic;
+    }
 }
 
 QVariantMap Ipv4Dbus::toMap()

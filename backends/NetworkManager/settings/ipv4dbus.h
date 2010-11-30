@@ -9,9 +9,8 @@
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
 #include "nm07dbus_export.h"
-namespace Knm{
-    class Ipv4Setting;
-}
+
+#include "settings/ipv4.h"
 
 class NM07DBUS_EXPORT Ipv4Dbus : public SettingDbus
 {
@@ -21,6 +20,8 @@ class NM07DBUS_EXPORT Ipv4Dbus : public SettingDbus
     void fromMap(const QVariantMap&);
     QVariantMap toMap();
     QVariantMap toSecretsMap();
+
+    Knm::Ipv4Setting::EnumMethod::type methodStringToEnum(QString method);
 };
 #endif
 
