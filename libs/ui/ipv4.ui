@@ -119,12 +119,12 @@
          </item>
          <item>
           <property name="text">
-           <string>Link-Local</string>
+           <string>Manual</string>
           </property>
          </item>
          <item>
           <property name="text">
-           <string>Manual</string>
+           <string>Link-Local</string>
           </property>
          </item>
          <item>
