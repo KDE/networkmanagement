@@ -61,6 +61,8 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     QString str_auto_only;
     Knm::Connection::Type connType = connection->type();
 
+    kDebug() << connection->name() << connection->uuid().toString() << connection->typeAsString(connection->type());
+
     if (Knm::Connection::Vpn == connType) {
         str_auto = i18nc("@item:inlistbox IPv4 settings configuration method",
                          "Automatic (VPN)");
@@ -108,6 +110,9 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     connect(d->ui.dnsSearchMorePushButton, SIGNAL(clicked()), this, SLOT(showDnsSearchEditor()));
 
     d->setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
+
+    kDebug() << "Method is" << d->setting->method() << d->setting->dhcpclientid();
+
     connect(d->ui.method, SIGNAL(currentIndexChanged(int)), this, SLOT(methodChanged(int)));
     methodChanged(d->AutomaticMethodIndex);
 }
@@ -118,6 +123,8 @@ IpV4Widget::~IpV4Widget()
 
 void IpV4Widget::readConfig()
 {
+    kDebug() << "Reading IPv4 settings...";
+
     Q_D(IpV4Widget);
     // The following flags are used to not fill disabled fields.
     // Setting and handling them is quite redundant, but it's necessary
@@ -127,6 +134,7 @@ void IpV4Widget::readConfig()
 
     switch (d->setting->method()) {
         case Knm::Ipv4Setting::EnumMethod::Automatic:
+            kDebug() << "Method: Automatic";
             if (d->setting->ignoredhcpdns()) {
                 d->ui.method->setCurrentIndex(d->AutomaticOnlyIPMethodIndex);
                 dnsPartEnabled = true;
@@ -136,13 +144,16 @@ void IpV4Widget::readConfig()
             }
             break;
         case Knm::Ipv4Setting::EnumMethod::LinkLocal:
+            kDebug() << "Method: LinkLocal";
             d->ui.method->setCurrentIndex(d->LinkLocalMethodIndex);
             break;
         case Knm::Ipv4Setting::EnumMethod::Manual:
+            kDebug() << "Method: Manual";
             d->ui.method->setCurrentIndex(d->ManualMethodIndex);
             addressPartEnabled = dnsPartEnabled = true;
             break;
         case Knm::Ipv4Setting::EnumMethod::Shared:
+            kDebug() << "Method: Shared";
             d->ui.method->setCurrentIndex(d->SharedMethodIndex);
             break;
         default:
