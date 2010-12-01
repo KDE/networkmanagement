@@ -169,7 +169,7 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::Wirel
     }
 
     // populate cboType with appropriate wireless security types
-
+    // Note: security types are populated even if ap == NULL, since we don't know which sec. type is the right one
 
     // insecure
     if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::None, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
@@ -221,7 +221,11 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::Wirel
         }
         d->registerSecurityType(d->wpaEap, i18nc("Label for WPA-EAP wireless security", "WPA/WPA2 Enterprise"));
     }
-    d->setCurrentSecurityWidget(d->ui.cboType->count() - 1);
+
+    if (ap)
+        d->setCurrentSecurityWidget(d->ui.cboType->count() - 1);
+    else //if we don't know about AP, set None as security type instead of the last option which is WPA Enterprise for a NULL ap
+        d->setCurrentSecurityWidget(0);
 }
 
 WirelessSecuritySettingWidget::~WirelessSecuritySettingWidget()
