@@ -219,6 +219,10 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
     QString connName = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_ID)).toString();
     QUuid uuid(connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_UUID)).toString());
     QString dbusConnectionType = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_TYPE)).toString();
+    bool autoconnect = true; //default value must be true according to NM settings spec
+
+    if (connectionSettings.contains(QLatin1String(NM_SETTING_CONNECTION_AUTOCONNECT)))
+        autoconnect = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_AUTOCONNECT)).toBool();
 
     Connection::Type type = Connection::Wired;
     if (dbusConnectionType == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
@@ -238,6 +242,7 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
     m_connection->setName(connName);
     m_connection->setUuid(uuid);
     m_connection->setType(type);
+    m_connection->setAutoConnect(autoconnect);
 
     // all other settings
     foreach (Setting * setting, m_connection->settings()) {
