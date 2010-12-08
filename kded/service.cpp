@@ -102,7 +102,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->connectionList->registerConnectionHandler(d->vpnInterfaceConnectionProvider);
 
     d->nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(d->connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, d->connectionList);
-    d->nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(d->activatableList, d->nmSettingsService);
 
     // there is a problem setting this as a child of connectionList or of activatableList since it has
     // references to both and NetworkInterfaceActivatableProvider touches the activatableList
@@ -116,6 +115,11 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 
     d->activatableList->registerObserver(d->nmSettingsService);
     d->activatableList->registerObserver(d->nmDBusConnectionProvider);
+
+    // create ActiveConnectionMonitor here because, activatableList is filled in NetworkInterfaceMonitor and
+    // updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has 
+    // Unknown activationState in its /org/kde/networkmanagement/Activatable interface
+    d->nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(d->activatableList, d->nmSettingsService);
 
     // register after nmSettingsService and nmDBusConnectionProvider because it relies on changes they
     // make to interfaceconnections
