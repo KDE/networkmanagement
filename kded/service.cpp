@@ -116,8 +116,8 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->activatableList->registerObserver(d->nmSettingsService);
     d->activatableList->registerObserver(d->nmDBusConnectionProvider);
 
-    // create ActiveConnectionMonitor here because, activatableList is filled in NetworkInterfaceMonitor and
-    // updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has 
+    // create ActiveConnectionMonitor after construction of NMDBusSettingsConnectionProvider and observer registrations 
+    // because, activatableList is filled in NetworkInterfaceMonitor and updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has 
     // Unknown activationState in its /org/kde/networkmanagement/Activatable interface
     d->nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(d->activatableList, d->nmSettingsService);
 
