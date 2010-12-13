@@ -40,7 +40,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
           dbusDns << tmpHost;
           kDebug() << "DNS IP is " << tmpHost.toString();
       }
-      dnsArg.endArray();
+      //NO dnsArg.endArray(); it's fatal in debug builds.
 
       setting->setDns(dbusDns);
   }
@@ -77,7 +77,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
 
           addresses << addr;
       }
-      addressArg.endArray();
+      //NO addressArg.endArray(); it's fatal in debug builds.
 
       setting->setAddresses(addresses);
   }
