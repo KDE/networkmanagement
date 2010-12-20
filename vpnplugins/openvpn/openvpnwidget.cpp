@@ -219,9 +219,14 @@ void OpenVpnSettingWidget::writeConfig()
         data.insert( NM_OPENVPN_KEY_CA, d->ui.x509CaFile->url().path().toUtf8());
         data.insert( NM_OPENVPN_KEY_CERT, d->ui.x509Cert->url().path().toUtf8());
         data.insert( NM_OPENVPN_KEY_KEY, d->ui.x509Key->url().path().toUtf8());
-        // The OpenVPN NetworkManager plugin requires that the secrets map be
-        // nonempty, even if there's no real password,
-        secretData.insert(NM_OPENVPN_KEY_NOSECRET, "");
+        // key password
+        if (d->ui.x509KeyPassword->text().isEmpty()) {
+            // The OpenVPN NetworkManager plugin requires that the secrets map be
+            // nonempty, even if there's no real password,
+            secretData.insert(NM_OPENVPN_KEY_NOSECRET, "");
+        } else {
+            secretData.insert(NM_OPENVPN_KEY_CERTPASS, d->ui.x509KeyPassword->text());
+        }
         break;
     case 1:
         contype = NM_OPENVPN_CONTYPE_STATIC_KEY;
@@ -251,6 +256,10 @@ void OpenVpnSettingWidget::writeConfig()
         data.insert(NM_OPENVPN_KEY_CERT, d->ui.x509PassCert->url().path().toUtf8());
         // key file
         data.insert(NM_OPENVPN_KEY_KEY, d->ui.x509PassKey->url().path().toUtf8());
+        // key password
+        if (!d->ui.x509PassKeyPassword->text().isEmpty()) {
+            secretData.insert(NM_OPENVPN_KEY_CERTPASS, d->ui.x509PassKeyPassword->text());
+        }
         // password
         secretData.insert(NM_OPENVPN_KEY_PASSWORD, d->ui.x509PassPassword->text());
         break;
@@ -304,6 +313,8 @@ void OpenVpnSettingWidget::readSecrets()
     QVariantMap secrets = d->setting->vpnSecrets();
     d->ui.x509PassPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)).toString());
     d->ui.passPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)).toString());
+    d->ui.x509PassKeyPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_CERTPASS)).toString());
+    d->ui.x509KeyPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_CERTPASS)).toString());
 }
 
 void OpenVpnSettingWidget::validate()
