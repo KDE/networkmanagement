@@ -51,6 +51,7 @@ void GsmInterfaceConnection::setAccessTechnology(const Solid::Control::ModemInte
     QString temp = Solid::Control::ModemInterface::convertAccessTechnologyToString(accessTechnology);
 
     if (temp != m_accessTechnology) {
+        setSignalQuality(0);
         m_accessTechnology = temp;
         emit accessTechnologyChanged(m_accessTechnology);
     }
