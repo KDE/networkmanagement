@@ -20,21 +20,16 @@ void GsmPersistence::load()
   GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
   setting->setNumber(m_config->readEntry("number", "*99#"));
   setting->setUsername(m_config->readEntry("username", ""));
-  // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
-    setting->setPassword(m_config->readEntry("password", ""));
-  }
   setting->setApn(m_config->readEntry("apn", ""));
   setting->setNetworkid(m_config->readEntry("networkid", ""));
   setting->setNetworktype(m_config->readEntry("networktype", 0));
   setting->setBand(m_config->readEntry("band", 0));
-  // SECRET
+  // SECRETS
   if (m_storageMode != ConnectionPersistence::Secure) {
+    setting->setPassword(m_config->readEntry("password", ""));
     setting->setPin(m_config->readEntry("pin", ""));
-  }
-  // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setPuk(m_config->readEntry("puk", ""));
+    setting->setSecretsAvailable(true);
   }
   setting->setInitialized();
 }

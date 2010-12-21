@@ -23,6 +23,7 @@ void CdmaPersistence::load()
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setPassword(m_config->readEntry("password", ""));
+    setting->setSecretsAvailable(true);
   }
   setting->setInitialized();
 }

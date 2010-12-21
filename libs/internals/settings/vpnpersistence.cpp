@@ -27,6 +27,7 @@ void VpnPersistence::load()
   if (m_storageMode != ConnectionPersistence::Secure) {
       // the map is flattened to a list of key,value,key,value
       setting->setVpnSecrets(variantMapFromStringList(m_config->readEntry("VpnSecrets", QStringList())));
+    setting->setSecretsAvailable(true);
   }
   setting->setPluginName(m_config->readEntry("PluginName", ""));
   setting->setInitialized();

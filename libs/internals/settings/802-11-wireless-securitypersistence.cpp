@@ -69,33 +69,16 @@ void WirelessSecurityPersistence::load()
   setting->setPairwise(m_config->readEntry("pairwise", QStringList()));
   setting->setGroup(m_config->readEntry("group", QStringList()));
   setting->setLeapusername(m_config->readEntry("leapusername", ""));
-  // SECRET
+  // SECRETS
   if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setWepkey0(m_config->readEntry("wepkey0", ""));
-  }
-  // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setWepkey1(m_config->readEntry("wepkey1", ""));
-  }
-  // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setWepkey2(m_config->readEntry("wepkey2", ""));
-  }
-  // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setWepkey3(m_config->readEntry("wepkey3", ""));
-  }
-  // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setPsk(m_config->readEntry("psk", ""));
-  }
-  // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setLeappassword(m_config->readEntry("leappassword", ""));
-  }
-  // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setWeppassphrase(m_config->readEntry("weppassphrase", ""));
+    setting->setSecretsAvailable(true);
   }
   } else {
       setting->setSecurityType(WirelessSecuritySetting::EnumSecurityType::None);

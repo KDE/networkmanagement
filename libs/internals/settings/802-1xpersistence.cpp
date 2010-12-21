@@ -94,6 +94,7 @@ void Security8021xPersistence::load()
   // SECRET
   if (m_storageMode != ConnectionPersistence::Secure) {
     setting->setPhase2privatekeypassword(m_config->readEntry("phase2privatekeypassword", ""));
+    setting->setSecretsAvailable(true);
   }
   setting->setPin(m_config->readEntry("pin", ""));
   setting->setPsk(m_config->readEntry("psk", ""));

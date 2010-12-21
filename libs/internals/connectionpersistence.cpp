@@ -217,8 +217,8 @@ void ConnectionPersistence::loadSecrets()
 
         if (m_storageMode != ConnectionPersistence::Secure) {
 
-            foreach (Setting * setting, m_connection->settings()) {
-                setting->setSecretsAvailable(true);
+            if (!m_connection->secretsAvailable()){
+                errorCode = EnumError::MissingContents;
             }
 
         } else if (!m_connection->hasSecrets() ||
