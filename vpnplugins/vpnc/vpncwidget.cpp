@@ -119,9 +119,9 @@ void VpncSettingWidget::readConfig()
 void VpncSettingWidget::fillOnePasswordCombo(QComboBox * combo, const QString & key, const QStringMap & data, bool hasPassword)
 {
     if (data.contains(key)) {
-        if (data.value(key) == NM_VPNC_PW_TYPE_SAVE) {
+        if (data.value(key) == NM_VPN_PW_TYPE_SAVE) {
             combo->setCurrentIndex(1);
-        } else if (data.value(key) == NM_VPNC_PW_TYPE_UNUSED) {
+        } else if (data.value(key) == NM_VPN_PW_TYPE_UNUSED) {
             combo->setCurrentIndex(2);
         }
     } else if (!hasPassword) {
@@ -214,13 +214,13 @@ uint VpncSettingWidget::handleOnePasswordType(const QComboBox * combo, const QSt
     uint type = combo->currentIndex();
     switch (type) {
         case 0:
-            data.insert(key, NM_VPNC_PW_TYPE_ASK);
+            data.insert(key, NM_VPN_PW_TYPE_ASK);
             break;
         case 1:
-            data.insert(key, NM_VPNC_PW_TYPE_SAVE);
+            data.insert(key, NM_VPN_PW_TYPE_SAVE);
             break;
         case 2:
-            data.insert(key, NM_VPNC_PW_TYPE_UNUSED);
+            data.insert(key, NM_VPN_PW_TYPE_UNUSED);
             break;
     }
     return type;
@@ -230,12 +230,12 @@ void VpncSettingWidget::readSecrets()
 {
     Q_D(VpncSettingWidget);
     QVariantMap secrets = d->setting->vpnSecrets();
-    if (d->setting->data().value(NM_VPNC_KEY_XAUTH_PASSWORD_TYPE) == QLatin1String(NM_VPNC_PW_TYPE_SAVE)) {
+    if (d->setting->data().value(NM_VPNC_KEY_XAUTH_PASSWORD_TYPE) == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
         d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_XAUTH_PASSWORD)).toString());
     }
     fillOnePasswordCombo(d->ui.cboUserPassOptions, NM_VPNC_KEY_XAUTH_PASSWORD_TYPE, d->setting->data(), !d->ui.leUserName->text().isEmpty());
 
-    if (d->setting->data().value(NM_VPNC_KEY_SECRET_TYPE) == QLatin1String(NM_VPNC_PW_TYPE_SAVE)) {
+    if (d->setting->data().value(NM_VPNC_KEY_SECRET_TYPE) == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
         d->ui.leGroupPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_SECRET)).toString());
     }
     fillOnePasswordCombo(d->ui.cboGroupPassOptions, NM_VPNC_KEY_SECRET_TYPE, d->setting->data(), !d->ui.leGroupPassword->text().isEmpty());

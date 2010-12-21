@@ -105,7 +105,8 @@ void ConnectionSecretsJob::gotPersistedSecrets(uint result)
     m_connectionPersistence->deleteLater();
     m_connectionPersistence = 0;
     setError(result);
-    if (result == Knm::ConnectionPersistence::EnumError::NoError) {
+    if (result == Knm::ConnectionPersistence::EnumError::NoError &&
+        m_connection->secretsAvailable()) {
         emitResult();
     } else {
         doAskUser();

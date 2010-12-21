@@ -7,6 +7,7 @@ using namespace Knm;
 
 VpnSetting::VpnSetting() : Setting(Setting::Vpn)
 {
+  mSecretsStorageType = QStringMap();
 }
 
 VpnSetting::~VpnSetting()
@@ -21,3 +22,22 @@ bool VpnSetting::hasSecrets() const
 {
   return true;
 }
+
+bool VpnSetting::secretsAvailable() const
+{
+  /*
+   * secrets were loaded from persistente storage
+   * Now verify that all secrets of type "save" are actually present
+   * and no secret of type "ask" exists
+   */
+
+  foreach(const QString & s, mSecretsStorageType.keys()) {
+    if (mSecretsStorageType.value(s) == NM_VPN_PW_TYPE_ASK)
+      return false;
+    if (mSecretsStorageType.value(s) == NM_VPN_PW_TYPE_SAVE && !mVpnSecrets.contains(s))
+      return false;
+  }
+
+  return true;
+}
+

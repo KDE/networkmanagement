@@ -47,8 +47,4 @@
 #define NM_VPNC_NATT_MODE_NONE "none"
 #define NM_VPNC_NATT_MODE_CISCO "cisco-udp"
 
-#define NM_VPNC_PW_TYPE_SAVE   "save"
-#define NM_VPNC_PW_TYPE_ASK    "ask"
-#define NM_VPNC_PW_TYPE_UNUSED "unused"
-
 #endif /* NM_VPNC_PLUGIN_H */
