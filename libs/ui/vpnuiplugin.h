@@ -45,6 +45,7 @@ public:
     virtual ~VpnUiPlugin();
 
     virtual SettingWidget * widget(Knm::Connection * connection, QWidget * parent = 0) = 0;
+    SettingWidget * askUser(Knm::Connection * connection, QWidget * parent = 0){ return widget(connection, parent); };
 private:
     class Private;
     Private * d;

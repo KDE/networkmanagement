@@ -149,7 +149,7 @@ void ConnectionSecretsJob::doAskUser()
         QString error;
         VpnUiPlugin * uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg(vpnSetting->pluginName() ), this, QVariantList(), &error );
         if (uiPlugin && error.isEmpty()) {
-            m_settingWidget= uiPlugin->widget(m_connection, 0);
+            m_settingWidget= uiPlugin->askUser(m_connection, 0);
         }
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
         m_settingWidget = new WiredWidget(m_connection, 0);
