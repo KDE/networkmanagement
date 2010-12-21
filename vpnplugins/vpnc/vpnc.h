@@ -37,6 +37,7 @@ public:
     VpncUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
     virtual ~VpncUiPlugin();
     SettingWidget * widget(Knm::Connection *, QWidget * parent = 0);
+    SettingWidget * askUser(Knm::Connection *, QWidget * parent = 0);
 };
 
 #endif //  KNM4_VPNC_H

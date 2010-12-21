@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KPluginFactory>
 
 #include "vpncwidget.h"
+#include "vpncauth.h"
 #include "connection.h"
 
 K_PLUGIN_FACTORY( VpncUiPluginFactory, registerPlugin<VpncUiPlugin>(); )
@@ -41,6 +42,11 @@ VpncUiPlugin::~VpncUiPlugin()
 SettingWidget * VpncUiPlugin::widget(Knm::Connection * connection, QWidget * parent)
 {
     return new VpncSettingWidget(connection, parent);
+}
+
+SettingWidget * VpncUiPlugin::askUser(Knm::Connection * connection, QWidget * parent)
+{
+    return new VpncAuthWidget(connection, parent);
 }
 
 // vim: sw=4 sts=4 et tw=100
