@@ -89,6 +89,12 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_svg = new Plasma::Svg(this);
     m_svg->setImagePath("icons/network");
     m_svg->setContainsMultipleImages(true);
+    m_meterBgSvg = new Plasma::FrameSvg(this);
+    m_meterBgSvg->setImagePath("widgets/bar_meter_horizontal");
+    m_meterBgSvg->setElementPrefix("bar-inactive");
+    m_meterFgSvg = new Plasma::FrameSvg(this);
+    m_meterFgSvg->setImagePath("widgets/bar_meter_horizontal");
+    m_meterFgSvg->setElementPrefix("bar-active");
     setStatus(Plasma::ActiveStatus);
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     if (activeInterface()) {
@@ -811,35 +817,22 @@ void NetworkManagerApplet::setStatusOverlay(const QString& name)
 
 QPixmap NetworkManagerApplet::generateProgressStatusOverlay()
 {
-    // FIXME: Duplicated from setStatusOverlay()
-    int i_s = (int)contentsRect().width()/4;
-    int size = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
+    int width = contentsRect().width();
+    int height = qMax(width / 4, 4);
 
-    QPixmap pix(size, size);
+    QPixmap pix(width, height);
     pix.fill(Qt::transparent);
     qreal state = UiUtils::interfaceState(activeInterface());
 
-    QColor fgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::TextColor);
-    QColor bgColor = Plasma::Theme::defaultTheme()->color(Plasma::Theme::BackgroundColor);
-
-    bgColor.setAlphaF(.6);
-    fgColor.setAlphaF(.4);
-
-    // paint an arc completing a circle
-    // 1 degree = 16 ticks, that's how drawArc() works
-    // 0 is at 3 o'clock
-    int top = 90 * 16;
-    int progress = -360 * 16 * state;
-    QPen pen(bgColor, 2); // color and line width
-
     QPainter p(&pix);
     p.setRenderHint(QPainter::Antialiasing);
-    p.setRenderHint(QPainter::SmoothPixmapTransform);
-    p.setPen(pen);
-    p.setBrush(fgColor);
-    //p.drawArc(contentsRect(), top, progress);
-    p.drawPie(pix.rect().adjusted(1.5, 1.5, -2.5, -2.5), top, progress);
-    //p.drawPie(pix.rect().adjusted(1.0, 1.0, -2.0, -2.0), top, progress);
+    m_meterBgSvg->resizeFrame(pix.size());
+    m_meterBgSvg->paintFrame(&p, pix.rect());
+
+    QRectF innerRect = pix.rect();
+    innerRect.setWidth(innerRect.width() * state);
+    m_meterFgSvg->resizeFrame(innerRect.size());
+    m_meterFgSvg->paintFrame(&p, innerRect);
 
     return pix;
 }

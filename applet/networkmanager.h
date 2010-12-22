@@ -27,6 +27,7 @@ class KCModuleProxy;
 
 #include <kdeversion.h>
 
+#include <plasma/framesvg.h>
 #include <plasma/svg.h>
 #include <solid/networking.h>
 #include <solid/control/networking.h>
@@ -148,6 +149,8 @@ private:
     KCModuleProxy* m_kcmNMTray;
 
     Plasma::Svg* m_svg;
+    Plasma::FrameSvg* m_meterBgSvg;
+    Plasma::FrameSvg* m_meterFgSvg;
     QRect m_contentSquare;
 
 };
