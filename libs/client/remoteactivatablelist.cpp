@@ -65,15 +65,18 @@ void RemoteActivatableList::init()
     if (d->iface->isValid()) {
         if (d->activatables.isEmpty()) {
             QDBusReply<QStringList> rv = d->iface->ListActivatables();
-            if (!rv.error().isValid()) {
+            if (rv.isValid()) {
                 foreach (const QString &activatable, rv.value()) {
                     // messy, I know, but making ListActivatables return a(si) is boring
                     QDBusInterface iface(QLatin1String("org.kde.networkmanagement"),
                             activatable, "org.kde.networkmanagement.Activatable", QDBusConnection::sessionBus());
                     QDBusReply<uint> type = iface.call("activatableType");
-                    handleActivatableAdded(activatable, type.value());
+                    if (type.isValid())
+                        handleActivatableAdded(activatable, type.value());
                 }
             }
+            else
+                kWarning() << "ListActivatables method of KDED module is not available!";
         }
     }
 }
@@ -101,6 +104,8 @@ QList<RemoteActivatable *> RemoteActivatableList::activatables() const
 
 void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uint type)
 {
+    kDebug() << "RemoteActivatable Added " << addedPath;
+
     if (!addedPath.startsWith('/')) {
         kDebug() << "Invalid path:" << addedPath << type;
         return;
