@@ -38,6 +38,7 @@ class KNMINTERNALS_EXPORT Connection
 
 public:
     enum Type { Wired = 1, Wireless, Gsm, Cdma, Vpn, Pppoe };
+    enum Scope { User = 1, System };
     static QString typeAsString(Connection::Type);
     static Connection::Type typeFromString(const QString & type);
     static QString iconName(const Connection::Type type);
@@ -45,7 +46,7 @@ public:
     /**
      * Create a connection with a new Uuid
      */
-    Connection(const QString & name, Connection::Type type);
+    Connection(const QString & name, Connection::Type type, Connection::Scope = User);
     /**
      * Create a connection with a given Uuid
      */
@@ -56,6 +57,7 @@ public:
     QString iconName() const;
     QUuid uuid() const;
     Connection::Type type() const;
+    Connection::Scope scope() const;
     bool autoConnect() const;
     QDateTime timestamp() const;
 
@@ -87,6 +89,9 @@ public:
      * @param type Type of the connection to be set
      */
     void setType(Connection::Type type);
+
+
+    void setScope(Connection::Scope scope);
 
     /**
      *  Syntactic sugar for setTimestamp(QDateTime::currentDateTime())
@@ -129,6 +134,7 @@ private:
     QString m_iconName;
     QUuid m_uuid;
     Connection::Type m_type;
+    Connection::Scope m_scope;
     bool m_autoConnect;
     QDateTime m_timestamp;
     QString m_origin;

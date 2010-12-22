@@ -86,8 +86,8 @@ Connection::Type Connection::typeFromString(const QString & typeString)
 
 Connection::Type typeFromString(const QString & type);
 
-Connection::Connection(const QString & name, const Connection::Type type)
-    : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false)
+Connection::Connection(const QString & name, const Connection::Type type, const Connection::Scope scope)
+    : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_scope(scope), m_autoConnect(false)
 {
     init();
 }
@@ -193,6 +193,11 @@ Connection::Type Connection::type() const
     return m_type;
 }
 
+Connection::Scope Connection::scope() const
+{
+    return m_scope;
+}
+
 bool Connection::autoConnect() const
 {
     return m_autoConnect;
@@ -288,6 +293,12 @@ QString Connection::origin() const
 {
     return m_origin;
 }
+
+void Connection::setScope(Connection::Scope scope)
+{
+    m_scope = scope;
+}
+
 
 void Connection::setType(Connection::Type type)
 {
