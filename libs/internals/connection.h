@@ -117,6 +117,8 @@ public:
      */
     bool secretsAvailable() const;
 
+    QStringList secretSettings() const;
+
 private:
     /**
      * Set up internal structure, including all settings specific to this connection type

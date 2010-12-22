@@ -272,6 +272,18 @@ bool Connection::hasSecrets() const
     return connectionHasSecrets;
 }
 
+QStringList Connection::secretSettings() const
+{
+    QStringList settings;
+    foreach (Setting * setting, m_settings) {
+        if (setting->hasSecrets()) {
+            settings << setting->name();
+        }
+    }
+
+    return settings;
+}
+
 bool Connection::secretsAvailable() const
 {
     bool allSecretsAvailable = true;
