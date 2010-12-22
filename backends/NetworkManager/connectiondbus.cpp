@@ -60,6 +60,7 @@ ConnectionDbus::ConnectionDbus(Knm::Connection * conn)
     : m_connection(conn)
 {
     qDBusRegisterMetaType<QList<uint> >();
+    qDBusRegisterMetaType<QVariantMapMap>();
     qDBusRegisterMetaType<QList<QList<uint> > >();
 }
 
@@ -212,9 +213,7 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
     // connection settings
     QVariantMap connectionSettings = settings.value(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
 
-    kDebug() << "Printing connection map: ";
-    foreach(QString key, connectionSettings.keys())
-        kDebug() << key << " : " << connectionSettings.value(key);
+    kDebug() << "Settings map is " << settings;
 
     QString connName = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_ID)).toString();
     QUuid uuid(connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_UUID)).toString());
@@ -252,4 +251,47 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
         }
     }
 }
+
+//TODO: Write real fromDbusSecretsMap method, this one is fake, just uses toDbusMap, unite and fromDbusMap
+//correct one must be the exact reverse of toDbusSecretsMap method
+
+void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
+{
+    QVariantMapMap origs = toDbusMap();
+
+    kDebug() << "Printing connection map: ";
+    kDebug() << "Secrets:" << secrets;
+    kDebug() << "Original settings:" << origs;
+
+    foreach(QString secretName, secrets.keys())
+    {
+        //kDebug() << "Secret setting name " << secretName;
+        QVariantMap secret = secrets.value(secretName);
+
+        if (secret.count() == 0)
+        {
+            kDebug() << "Empty secret setting found '" << secretName << "', skipping...";
+            continue;
+        }
+
+        if (origs.contains(secretName))
+        {
+            QVariantMap origSetting = origs.take(secretName);
+            kDebug() << "Uniting setting " << secret.keys() << " with values " << secret.values();
+            origSetting.unite(secret);
+            origs.insert(secretName, origSetting);
+
+        }
+        else
+        {
+            origs.insert(secretName, secret);
+            kDebug() << "Inserted setting " << secretName<< " " << secret;
+        }
+    }
+
+    kDebug() << "New settings: " << origs;
+
+    fromDbusMap(origs);
+}
+
 // vim: sw=4 sts=4 et tw=100
