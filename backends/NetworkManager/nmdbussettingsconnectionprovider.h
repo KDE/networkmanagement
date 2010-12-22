@@ -58,6 +58,9 @@ public:
     void handleUpdate(Knm::Activatable * activatable);
     void handleRemove(Knm::Activatable * activatable);
 
+Q_SIGNALS:
+    void connectionsChanged();
+
 private Q_SLOTS:
     void onConnectionAdded(const QDBusObjectPath&);
     // should probably be handled in RemoteConnection

@@ -106,6 +106,13 @@ void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(con
         kDebug() << connection->uuid();
 
         connection->setOrigin(QLatin1String("NMDBusSettingsConnectionProvider"));
+
+        //TODO: make a better check here
+        if (d->serviceName.contains("NetworkManagerUserSettings"))
+            connection->setScope(Knm::Connection::User);
+        else if (d->serviceName.contains("NetworkManagerSystemSettings"))
+            connection->setScope(Knm::Connection::System);
+
         d->connectionList->addConnection(connection);
     }
 }
@@ -120,6 +127,7 @@ void NMDBusSettingsConnectionProvider::makeConnections(RemoteConnection * connec
 void NMDBusSettingsConnectionProvider::onConnectionAdded(const QDBusObjectPath& op)
 {
     initialiseAndRegisterRemoteConnection(op.path());
+    emit connectionsChanged();
 }
 
 void NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved()
@@ -128,9 +136,14 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved()
     RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
     QString removedPath = connection->path();
     kDebug() << removedPath;
-    QPair<Knm::Connection *, RemoteConnection *> removed = d->connections.take(removedPath);
-    delete removed.second;
-    d->connectionList->removeConnection(removed.first);
+    if (d->connections.contains(connection->path())) {
+        QPair<Knm::Connection *, RemoteConnection *> removed = d->connections.take(removedPath);
+        d->uuidToPath.remove(removed.first->uuid());
+        delete removed.second;
+        d->connectionList->removeConnection(removed.first);
+
+        emit connectionsChanged();
+    }
 }
 
 void NMDBusSettingsConnectionProvider::onRemoteConnectionUpdated(const QVariantMapMap& updatedSettings)
@@ -139,10 +152,12 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionUpdated(const QVariantM
     RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
     kDebug() << connection->path();
     if (d->connections.contains(connection->path())) {
-        QPair<Knm::Connection *, RemoteConnection *> updated = d->connections.take(connection->path());
+        QPair<Knm::Connection *, RemoteConnection *> updated = d->connections.value(connection->path());
         ConnectionDbus dbusConverter(updated.first);
         dbusConverter.fromDbusMap(updatedSettings);
         d->connectionList->updateConnection(updated.first);
+
+        emit connectionsChanged();
     }
 }
 
@@ -177,6 +192,7 @@ void NMDBusSettingsConnectionProvider::clearConnections()
         delete toDelete.second;
     }
     d->connections.clear();
+    d->uuidToPath.clear();
 }
 
 void NMDBusSettingsConnectionProvider::handleAdd(Knm::Activatable * added)
