@@ -24,12 +24,14 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatableobserver.h"
 
 #include <QDBusObjectPath>
+#include <QDBusPendingCallWatcher>
 
 #include "knm_export.h"
 
 namespace Knm
 {
     class Activatable;
+    class Connection;
 } // namespace Knm
 
 typedef QMap<QString,QVariantMap> QVariantMapMap;
@@ -58,8 +60,15 @@ public:
     void handleUpdate(Knm::Activatable * activatable);
     void handleRemove(Knm::Activatable * activatable);
 
+    void updateConnection(const QString &uuid, Knm::Connection *newConnection);
+    void addConnection(Knm::Connection *newConnection);
+    bool getConnectionSecrets(Knm::Connection *con);
+    void removeConnection(const QString &uuid);
+
 Q_SIGNALS:
     void connectionsChanged();
+    void getConnectionSecretsCompleted(bool, const QString &);
+    void addConnectionCompleted(bool, const QString &);
 
 private Q_SLOTS:
     void onConnectionAdded(const QDBusObjectPath&);
@@ -68,6 +77,8 @@ private Q_SLOTS:
     // should probably be handled in RemoteConnection
     void onRemoteConnectionUpdated(const QVariantMapMap&);
     void serviceOwnerChanged(const QString&, const QString&, const QString&);
+    void onConnectionSecretsArrived(QDBusPendingCallWatcher *watcher);
+    void onConnectionAddArrived(QDBusPendingCallWatcher *watcher);
 private:
     void initialiseAndRegisterRemoteConnection(const QString & path);
     void makeConnections(RemoteConnection*);

@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <NetworkManager.h>
 
 #include <QHash>
+#include <QUuid>
 
 #include <KDebug>
 
@@ -34,10 +35,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelist.h"
 #include "connectionlist.h"
 
+#include "settings/ipv4.h"
+
 #include "connectiondbus.h"
 #include "remoteconnection.h"
 #include "nm-settingsinterface.h"
 #include "nm-exported-connectioninterface.h"
+#include "nm-exported-connection-secrets-interface.h"
 
 class NMDBusSettingsConnectionProviderPrivate
 {
@@ -217,6 +221,187 @@ void NMDBusSettingsConnectionProvider::handleUpdate(Knm::Activatable *)
 void NMDBusSettingsConnectionProvider::handleRemove(Knm::Activatable *)
 {
 
+}
+
+void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm::Connection *newConnection)
+{
+    Q_D(NMDBusSettingsConnectionProvider);
+
+    if ( d->uuidToPath.contains(QUuid(uuid))) {
+
+        QDBusObjectPath objPath = d->uuidToPath.value(QUuid(uuid));
+
+        if (!d->connections.contains(objPath.path()))
+        {
+            kWarning() << "Connection could not found!" << uuid << objPath.path();
+            return;
+        }
+
+        QPair<Knm::Connection *, RemoteConnection *> pair = d->connections.value(objPath.path());
+        RemoteConnection *remote = pair.second;
+
+        kDebug() << "Updating connection "<< remote->id() << pair.first->uuid().toString();
+
+        ConnectionDbus converter(newConnection);
+        QVariantMapMap map = converter.toDbusMap();
+
+        remote->Update(map);
+
+        // don't do any processing on d->connections and d->connectionList here
+        // because onRemoteConnectionUpdated() method will take care of them
+        //
+
+        return;
+    }
+
+    kWarning() << "Connection could not found!"<< uuid;
+
+}
+
+void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnection)
+{
+    Q_D(NMDBusSettingsConnectionProvider);
+    ConnectionDbus converter(newConnection);
+    QVariantMapMap map = converter.toDbusMap();
+    kDebug() << "Adding connection " << newConnection->name() << newConnection->uuid().toString();
+    kDebug() << "Here is the map: " << map;
+
+    if(newConnection && newConnection->name().isEmpty())
+        kWarning() << "Trying to add connection without a name!";
+
+    QDBusPendingCall reply = d->iface->AddConnection(map);
+    //do not check if reply is valid or not because it's an async call and invalid till reply is really arrived
+
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+
+    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(onConnectionAddArrived(QDBusPendingCallWatcher*)));
+}
+
+void NMDBusSettingsConnectionProvider::onConnectionAddArrived(QDBusPendingCallWatcher *watcher)
+{
+    QDBusPendingReply<> reply = *watcher;
+
+    if (!reply.isValid())
+    {
+        kWarning() << "Adding connection failed:" << reply.error().message();
+        emit addConnectionCompleted(false, reply.error().message());
+    }
+    else
+    {
+        kDebug() << "Connection added successfully.";
+        emit addConnectionCompleted(true, QString());
+    }
+
+    watcher->deleteLater();
+}
+
+
+bool NMDBusSettingsConnectionProvider::getConnectionSecrets(Knm::Connection *con)
+{
+    Q_D(NMDBusSettingsConnectionProvider);
+
+    if (!con->hasSecrets())
+    {
+        kDebug() << "Connection seems not to have any secret information. Ignoring...";
+        return false;
+    }
+
+    QUuid uuid = con->uuid();
+    if ( !d->uuidToPath.contains(uuid)){
+        kWarning() << "Secrets requested but connection not found!";
+        return false;
+    }
+
+    QString objPath = d->uuidToPath.value(uuid).path();
+
+    OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface *secretIface = new OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface(d->serviceName, objPath, QDBusConnection::systemBus(), this);
+
+    kDebug() << "Getting connection secrets for " << uuid.toString();
+
+    QStringList secretSettings = con->secretSettings();
+
+    kDebug() << "Settings containing secret values are " << secretSettings;
+
+    if (secretSettings.count() != 1)
+        kWarning() << "This connection has more than 1 secret setting, not supported yet :/";
+
+
+    QDBusPendingReply<QVariantMapMap> reply = secretIface->GetSecrets( secretSettings.at(0), QStringList(), false);
+    //do not check if reply is valid or not because it's an async call and invalid till reply is really arrived
+
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+
+    //Ugly hack to access Knm::Connection pointer in the onConnectionSecretsArrived slot
+    watcher->setProperty("connection", d->uuidToPath.value(con->uuid()).path());
+
+    connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(onConnectionSecretsArrived(QDBusPendingCallWatcher*)));
+
+    return true;
+}
+
+void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCallWatcher *watcher)
+{
+    Q_D(NMDBusSettingsConnectionProvider);
+
+    if (!watcher)
+        return;
+
+    QDBusPendingReply<QVariantMapMap> reply = *watcher;
+
+    if (reply.isValid())
+    {
+        QVariantMapMap set = reply.argumentAt<0>();
+        kDebug() << "Got secrets, yay! " << set;
+
+        Knm::Connection *con = d->connections.value(watcher->property("connection").toString()).first;
+        if (!con)
+        {
+            kWarning() << "Connection not found!" << watcher->property("connection").toString();
+            return;
+        }
+
+        ConnectionDbus dbusConverter(con);
+        dbusConverter.fromDbusSecretsMap(set); //update secretSettings in connection
+
+        emit getConnectionSecretsCompleted(true, QString());
+    }
+    else
+    {
+        kWarning () << "Secret fetching failed...";
+        emit getConnectionSecretsCompleted(false, reply.error().message());
+    }
+
+    watcher->deleteLater();
+}
+
+void NMDBusSettingsConnectionProvider::removeConnection(const QString &uuid)
+{
+    Q_D(NMDBusSettingsConnectionProvider);
+
+    if ( d->uuidToPath.contains(QUuid(uuid))) {
+
+        QDBusObjectPath objPath = d->uuidToPath.value(QUuid(uuid));
+
+        if (!d->connections.contains(objPath.path()))
+        {
+            kWarning() << "Connection could not found!" << uuid << objPath.path();
+            return;
+        }
+
+        QPair<Knm::Connection *, RemoteConnection *> pair = d->connections.value(objPath.path());
+        RemoteConnection *remote = pair.second;
+
+        kDebug() << "Removing connection "<< remote->id() << uuid;
+        remote->Delete();
+
+        // don't do any processing on d->connections and d->connectionList here
+        // because onRemoteConnectionRemoved() method will take care of them
+        //
+
+        return;
+    }
+
+    kWarning() << "Connection could not found!"<< uuid;
 }
 
 // vim: sw=4 sts=4 et tw=100
