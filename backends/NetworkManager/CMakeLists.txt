@@ -66,6 +66,7 @@ set(knm_nm_LIB_SRCS
    remoteconnection.cpp
    nm-settingsinterface.cpp
    nm-exported-connectioninterface.cpp
+   nm-exported-connection-secrets-interface.cpp
 )
 
 kde4_add_library(knm_nm SHARED ${knm_nm_LIB_SRCS})
