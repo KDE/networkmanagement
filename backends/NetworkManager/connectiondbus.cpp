@@ -161,9 +161,9 @@ QVariantMapMap ConnectionDbus::toDbusMap()
         connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_TIMESTAMP), m_connection->timestamp().toTime_t());
     }
 
-    kDebug() << "Printing connection map: ";
-    foreach(QString key, connectionMap.keys())
-        kDebug() << key << " : " << connectionMap.value(key);
+    //kDebug() << "Printing connection map: ";
+    //foreach(QString key, connectionMap.keys())
+        //kDebug() << key << " : " << connectionMap.value(key);
 
     mapMap.insert(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME), connectionMap);
 
@@ -182,14 +182,14 @@ QVariantMapMap ConnectionDbus::toDbusMap()
                     || (m_connection->type() == Knm::Connection::Cdma && setting->type() == Knm::Setting::Ppp)
                     || (m_connection->type() == Knm::Connection::Pppoe && setting->type() == Knm::Setting::Ppp)) {
                 mapMap.insert(setting->name(), map);
-                kDebug() << "  Settings: " << setting->name();
-                foreach(QString key, map.keys())
-                    kDebug() << "    " << key << " : " << map.value(key);
+                //kDebug() << "  Settings: " << setting->name();
+                //foreach(QString key, map.keys())
+                    //kDebug() << "    " << key << " : " << map.value(key);
             }
         }
     }
     if (!mapMap.contains(dbusConnectionType)) {
-        kDebug() << "The setting group for the specified connection type" << dbusConnectionType << "is missing, expect a bumpy ride!";
+        kWarning() << "The setting group for the specified connection type" << dbusConnectionType << "is missing, expect a bumpy ride!";
     }
     return mapMap;
 }
