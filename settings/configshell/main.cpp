@@ -80,7 +80,14 @@ int main(int argc, char **argv)
     if (args->arg(0) == QLatin1String("create")) {
         if (args->isSet("type")) {
             const QString type = args->getOption("type");
-            QString cid = editor.addConnection(true, Knm::Connection::typeFromString(args->getOption("type")), specificArgs);
+            Knm::Connection *con = editor.createConnection(true, Knm::Connection::typeFromString(args->getOption("type")), specificArgs);
+
+            if(!con)
+            {
+                kDebug() << Knm::Connection::typeFromString(args->getOption("type")) << "type connection cannot be created.";
+                return -1;
+            }
+            QString cid = con->uuid().toString();
             QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
                                 "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
 

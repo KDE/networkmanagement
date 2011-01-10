@@ -26,6 +26,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KCModule>
 
 #include "connectioneditor.h"
+#include "connectionlist.h"
+#include "nmdbussettingsconnectionprovider.h"
+#include "nmdbussettingsservice.h"
+
+#include "internals/settings/ipv4.h"
 
 #include "ui_manageconnectionwidget.h"
 #include "mobileconnectionwizard.h"
@@ -64,9 +69,10 @@ private slots:
      */
     void editClicked();
     /**
-     * Edit given item
+     * Called when GetSecrets call of Connection.Secrets interface is arrived
      */
-    void editItem(QTreeWidgetItem*);
+    void editGotSecrets(bool valid, const QString &errorMessage);
+    void addGotConnection(bool valid, const QString &errorMessage);
     /**
      * Delete selected connection
      */
@@ -111,12 +117,29 @@ private:
 
     Ui_ManageConnectionWidget mConnEditUi;
     QTreeWidget * mWiredList;
+    Knm::Connection * mEditConnection;
     QMenu * mCellularMenu;
     QMenu * mVpnMenu;
     ConnectionEditor * mEditor;
     QHash<QString,QTreeWidgetItem*> mUuidItemHash;
     QTimer * mLastUsedTimer;
     MobileConnectionWizard * mMobileConnectionWizard;
+
+
+    /**
+     * ConnectionList for user-wide and system-wide settings
+     */
+    ConnectionList * mConnections;
+
+    /**
+     * ConnectionProvider to add/remove/update user wide settings
+     */
+    NMDBusSettingsConnectionProvider *mUserSettings;
+
+    /**
+     * ConnectionProvider to add/remove/update system wide settings
+     */
+    NMDBusSettingsConnectionProvider *mSystemSettings;
 
     /**
      * Connect add/edit/delete button signals to relevant slots

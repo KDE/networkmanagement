@@ -49,25 +49,36 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knmserviceprefs.h"
 #include "connection.h"
+#include "connectionlist.h"
 #include "connectionpersistence.h"
 #include "connectionprefs.h"
 #include <tooltips.h>
 
-#define ConnectionIdRole 1812
-#define ConnectionTypeRole 1066
-#define ConnectionLastUsedRole 1848
+#define ConnectionIdRole Qt::UserRole + 1
+#define ConnectionTypeRole Qt::UserRole + 2
+#define ConnectionLastUsedRole Qt::UserRole + 3
+#define ConnectionScopeRole Qt::UserRole + 4
 
 K_PLUGIN_FACTORY( ManageConnectionWidgetFactory, registerPlugin<ManageConnectionWidget>();)
 K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_networkmanagement", "libknetworkmanager" ) )
 
 ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantList &args)
-: KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this))
+: KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this)), mEditConnection(0)
 {
     connect(mEditor, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
     mConnEditUi.setupUi(this);
 
-    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    mConnections = new ConnectionList(this);
+    //mUserSettings = new NMDBusSettingsConnectionProvider(mConnections, NMDBusSettingsService::SERVICE_USER_SETTINGS, this);
+    mSystemSettings = new NMDBusSettingsConnectionProvider(mConnections, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, this);
+
+    connect(mSystemSettings, SIGNAL(getConnectionSecretsCompleted(bool, const QString &)), this, SLOT(editGotSecrets(bool, const QString&)) );
+    connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool, const QString &)), this, SLOT(addGotConnection(bool, const QString&)) );
+
+    //connect(mUserSettings, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
+    connect(mSystemSettings, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
+
     connectButtonSet(mConnEditUi.buttonSetWired, mConnEditUi.listWired);
     connectButtonSet(mConnEditUi.buttonSetWireless, mConnEditUi.listWireless);
     connectButtonSet(mConnEditUi.buttonSetCellular, mConnEditUi.listCellular);
@@ -83,15 +94,15 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
 
     // handle doubleclicks
     connect(mConnEditUi.listWired, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
-            SLOT(editItem(QTreeWidgetItem*)));
+            SLOT(editClicked()));
     connect(mConnEditUi.listWireless, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
-            SLOT(editItem(QTreeWidgetItem*)));
+            SLOT(editClicked()));
     connect(mConnEditUi.listCellular, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
-            SLOT(editItem(QTreeWidgetItem*)));
+            SLOT(editClicked()));
     connect(mConnEditUi.listVpn, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
-            SLOT(editItem(QTreeWidgetItem*)));
+            SLOT(editClicked()));
     connect(mConnEditUi.listPppoe, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)),
-            SLOT(editItem(QTreeWidgetItem*)));
+            SLOT(editClicked()));
 
     restoreConnections();
     if (QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.NetworkManager.KCModule"))) {
@@ -111,7 +122,21 @@ ManageConnectionWidget::~ManageConnectionWidget()
 
 void ManageConnectionWidget::createConnection(const QString &connectionType, const QVariantList &args)
 {
-    mEditor->addConnection(false, Knm::Connection::typeFromString(connectionType), args);
+    Knm::Connection * con = mEditor->createConnection(false, Knm::Connection::typeFromString(connectionType), args);
+
+    kDebug() << "con is " << con;
+
+    if (con)
+    {
+        // TODO: Check for scope and mUserUserSettings if necessary
+        /*
+        if (conScope == Knm::Connection::User)
+            mUserSettings->addConnection(con);
+        else
+        */
+        mSystemSettings->addConnection(con);
+    }
+
 }
 
 QString ManageConnectionWidget::formatDateRelative(const QDateTime & lastUsed)
@@ -160,23 +185,39 @@ void ManageConnectionWidget::restoreConnections()
     // if settings are accessed from plasma applet settings, KNetworkManagerServicePrefs reads the configuration once
     // and always displays the same connection list, even if connections are updated from systemsettings. Line below,
     // always makes the list up-to-date by reading configuration from disk.
-    KNetworkManagerServicePrefs::self()->readConfig();
-    QStringList connectionIds = KNetworkManagerServicePrefs::self()->connections();
+    //KNetworkManagerServicePrefs::self()->readConfig();
+    //QStringList connectionIds = KNetworkManagerServicePrefs::self()->connections();
+    //
+
+
     QList<QTreeWidgetItem *> wiredItems, wirelessItems, cellularItems, vpnItems, pppoeItems;
-    foreach (const QString &connectionId, connectionIds) {
+    foreach (const QString &connectionId, mConnections->connections()) {
         // look in the corresponding group
         // read name, type, last used
         kDebug() << connectionId;
-        KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("Connection_") + connectionId);
-        if (!config.exists()) {
+        //KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("Connection_") + connectionId);
+        //if (!config.exists()) {
+        //    continue;
+        //}
+
+        Knm::Connection *con = mConnections->findConnection(connectionId);
+
+        if (!con)
             continue;
-        }
-        QString name = config.readEntry("Name", QString());
-        QString type = config.readEntry("Type", QString());
+
+        QString name = con->name();
+        QString type = con->typeAsString(con->type());
+
+        Knm::Ipv4Setting *setting = static_cast<Knm::Ipv4Setting*>(con->setting(Knm::Setting::Ipv4));
+        if (setting)
+            kDebug() << "IPv4 setting method" << setting->method();
+
+        kDebug() << "Restoring connection " <<  name << type;
+
         if ( name.isEmpty() || type.isEmpty() ) {
             continue;
         }
-        QDateTime lastUsed = config.readEntry("LastUsed", QDateTime());
+        QDateTime lastUsed = con->timestamp();
         // add an item to the editor widget for that type
         QStringList itemContents;
         itemContents << name;
@@ -203,11 +244,13 @@ void ManageConnectionWidget::restoreConnections()
             item = new QTreeWidgetItem(mConnEditUi.listPppoe, itemContents);
             pppoeItems.append(item);
         }
+
         if (item) {
             mUuidItemHash.insert(connectionId, item);
             item->setData(0, ConnectionIdRole, connectionId);
             item->setData(0, ConnectionTypeRole, Knm::Connection::typeFromString(type));
             item->setData(0, ConnectionLastUsedRole, lastUsed);
+            item->setData(0, ConnectionScopeRole, con->scope());
         }
     }
     mConnEditUi.listWired->insertTopLevelItems(0, wiredItems);
@@ -247,6 +290,7 @@ void ManageConnectionWidget::updateTabStates()
                 break;
         }
     }
+
     mConnEditUi.tabWidget->setTabEnabled(0, (hasWired || mConnEditUi.listWired->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(1, (hasWireless || mConnEditUi.listWireless->topLevelItemCount()));
     mConnEditUi.tabWidget->setTabEnabled(2, (hasCellular || mConnEditUi.listCellular->topLevelItemCount()));
@@ -261,34 +305,59 @@ void ManageConnectionWidget::updateTabStates()
 
 void ManageConnectionWidget::addClicked()
 {
+    Knm::Connection *con = NULL;
+
+    kDebug() << "Add clicked, currentIndex is " << connectionTypeForCurrentIndex();
+
     if (connectionTypeForCurrentIndex() == Knm::Connection::Gsm) {
+
+        kDebug() << "GSM tab selected, connection wizard will be shown.";
+
         delete mMobileConnectionWizard;
         mMobileConnectionWizard = new MobileConnectionWizard();
 
         if (mMobileConnectionWizard->exec() == QDialog::Accepted) {
             if (mMobileConnectionWizard->getError() == MobileProviders::Success) {
-                mEditor->addConnection(false, mMobileConnectionWizard->type(), mMobileConnectionWizard->args(), true);
+                kDebug() << "Got no error, creating connection";
+                con = mEditor->createConnection(false, mMobileConnectionWizard->type(), mMobileConnectionWizard->args(), true);
             } else { // fallback to old manual editing if something wrong happened with the wizard
-                mEditor->addConnection(false, mMobileConnectionWizard->type());
+                kDebug() << "Got error, falling back to old method";
+                con = mEditor->createConnection(false, mMobileConnectionWizard->type());
             }
         }
     } else { // show connection settings widget for the active tab
-         mEditor->addConnection(false, connectionTypeForCurrentIndex());
+         con = mEditor->createConnection(false, connectionTypeForCurrentIndex());
     }
+
+    if (con) {
+
+        // TODO: Check for scope and mUserUserSettings if necessary
+        /*
+        if (conScope == Knm::Connection::User)
+            mUserSettings->addConnection(con);
+        else
+        */
+        mSystemSettings->addConnection(con);
+
+        //Enable this if connections do not appears in plasma-applet
+        //mEditor->updateService();
+
+        kDebug() << "Connection pointer is set, connection will be added.";
+    }
+    else
+        kDebug() << "Connection pointer is not set, connection will not be added!";
+
     emit changed();
 }
 
 void ManageConnectionWidget::editClicked()
 {
     //edit might be clicked on a system connection, in which case we need a connectionid for it
-    QTreeWidgetItem * item = selectedItem();
-    editItem(item);
-    emit changed();
-}
+    QTreeWidgetItem *item = selectedItem();
 
-void ManageConnectionWidget::editItem(QTreeWidgetItem * item)
-{
     if (item) {
+        Knm::Connection *con = NULL;
+
         QString connectionId = item->data(0, ConnectionIdRole).toString();
         Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, ConnectionTypeRole).toUInt();
         if (connectionId.isEmpty()) {
@@ -296,12 +365,85 @@ void ManageConnectionWidget::editItem(QTreeWidgetItem * item)
             return;
         }
 
-        QVariantList args;
-        args << connectionId;
+        //QVariantList args;
+        //args << connectionId;
 
-        mEditor->editConnection(type, args);
+        //find clicked connection from our connection list
+        con = mConnections->findConnection(connectionId);
+        if (!con)
+        {
+            kWarning() << "Clicked connection with id" << connectionId << " could not be found in connection list!";
+            return;
+        }
+
+        mEditConnection = con;
+        if (con->hasSecrets())
+        {
+            bool rep = mSystemSettings->getConnectionSecrets(con);
+
+            if (!rep)
+            {
+                KMessageBox::error(this, i18n("Connection edit option failed, make sure that NetworkManager is properly running."));
+                return;
+            }
+
+            kDebug() << "Get secrets " << rep;
+        }
+        else
+        {
+            kDebug() << "This connection has no secrets, good.";
+            editGotSecrets(true, QString());
+        }
+        //emit changed();
     }
 }
+
+void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMessage)
+{
+    if (!valid)
+    {
+        if (errorMessage.isEmpty())
+            KMessageBox::error(this, i18n("Error"));
+        else
+            KMessageBox::error(this, errorMessage);
+
+        return;
+    }
+
+    Knm::Connection *con = mEditConnection;
+    if (!con)
+        return;
+
+    con = mEditor->editConnection(con); //starts editor window
+    if (con)
+    {
+        // TODO: Check for scope and mUserUserSettings if necessary
+        /*
+           if (conScope == Knm::Connection::User)
+           mUserSettings->updateConnection(connectionId, con);
+           else
+           */
+        mSystemSettings->updateConnection(con->uuid().toString(), con);
+
+        //Enable this if connections do not updated in plasma-applet
+        //mEditor->updateService();
+    }
+    mEditConnection = NULL;
+}
+
+void ManageConnectionWidget::addGotConnection(bool valid, const QString &errorMessage)
+{
+    if (!valid)
+    {
+        if (errorMessage.isEmpty())
+            KMessageBox::error(this, i18n("Connection create operation failed."));
+        else
+            KMessageBox::error(this, errorMessage);
+
+        return;
+    }
+}
+
 
 void ManageConnectionWidget::deleteClicked()
 {
@@ -322,27 +464,39 @@ void ManageConnectionWidget::deleteClicked()
         i18n("Confirm Delete"),
         KStandardGuiItem::del())
         == KMessageBox::Continue) {
+
         // delete it
         // remove it from our hash
         mUuidItemHash.remove(connectionId);
         // remove connection file
-        QFile connFile(KStandardDirs::locateLocal("data",
-                    Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId));
-        if (!connFile.exists()) {
-            kDebug() << "Connection file not found: " << connFile.fileName();
-        }
-        connFile.remove();
+        //QFile connFile(KStandardDirs::locateLocal("data",
+        //            Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId));
+        //if (!connFile.exists()) {
+        //    kDebug() << "Connection file not found: " << connFile.fileName();
+        //}
+        //connFile.remove();
 
         // remove from networkmanagerrc
-        KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
-        prefs->config()->deleteGroup(QLatin1String("Connection_") + connectionId);
+        //KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
+        //prefs->config()->deleteGroup(QLatin1String("Connection_") + connectionId);
 
-        QStringList connectionIds = prefs->connections();
-        connectionIds.removeAll(connectionId);
-        prefs->setConnections(connectionIds);
-        prefs->writeConfig();
-        mEditor->updateService();
-        restoreConnections();
+        //QStringList connectionIds = prefs->connections();
+        //connectionIds.removeAll(connectionId);
+        //prefs->setConnections(connectionIds);
+        //prefs->writeConfig();
+
+
+        Knm::Connection::Scope conScope = (Knm::Connection::Scope) item->data(0, ConnectionScopeRole).toUInt();
+
+        /*
+        if (conScope == Knm::Connection::User)
+            mUserSettings->removeConnection(connectionId);
+        else
+        */
+        mSystemSettings->removeConnection(connectionId);
+
+        //Enable this if connections is not removed from plasma-applet
+        //mEditor->updateService();
     }
     emit changed();
 }
@@ -441,11 +595,11 @@ void ManageConnectionWidget::connectionTypeMenuTriggered(QAction* action)
     // If it is a VPN type, keep Vpn, but use the data() on the action for the plugin
     Knm::Connection::Type tabType = connectionTypeForCurrentIndex();
     if (tabType == Knm::Connection::Gsm) {
-        mEditor->addConnection(false, (Knm::Connection::Type)action->data().toUInt());
+        mEditor->createConnection(false, (Knm::Connection::Type)action->data().toUInt());
     } else if (tabType == Knm::Connection::Vpn) {
         QVariantList vl;
         vl << action->data();
-        mEditor->addConnection(false, tabType, vl);
+        mEditor->createConnection(false, tabType, vl);
     }
 }
 
