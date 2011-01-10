@@ -85,8 +85,40 @@ void ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariant
     }
 }
 
-QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type type, const QVariantList &otherArgs, const bool autoAccept)
+Knm::Connection *ConnectionEditor::editConnection(Knm::Connection *con)
 {
+
+    Knm::Connection *cprefsCon = NULL;
+    KDialog configDialog(0);
+    configDialog.setCaption(i18nc("Edit connection dialog caption", "Edit Network Connection"));
+    configDialog.setWindowIcon(KIcon("networkmanager"));
+
+    ConnectionPreferences * cprefs = editorForConnectionType(false, &configDialog, con);
+    connect(cprefs, SIGNAL(valid(bool)), &configDialog, SLOT(enableButtonOk(bool)));
+    configDialog.setMainWidget(cprefs);
+
+    cprefs->load();
+    cprefs->validate();
+
+    if ( cprefs && configDialog.exec() == QDialog::Accepted ) {
+        cprefs->save();
+        cprefsCon = cprefs->connection();
+
+        kDebug() << "Edit dialog accepted: Connection name: " << cprefsCon->name() << "type: " << cprefsCon->typeAsString(cprefsCon->type()) << "uuid: " << cprefsCon->uuid().toString() << "iconname: "<< cprefsCon->iconName();
+
+        foreach(Knm::Setting *set, cprefsCon->settings())
+            kDebug() << "    Setting name: " << set->name();
+
+        return cprefs->connection();
+    }
+
+    return NULL;
+}
+
+
+Knm::Connection *ConnectionEditor::createConnection(bool useDefaults, Knm::Connection::Type type, const QVariantList &otherArgs, const bool autoAccept)
+{
+    Knm::Connection *cprefsCon = NULL;
     KDialog configDialog(0);
     configDialog.setCaption(i18nc("Add connection dialog caption", "Add Network Connection"));
     configDialog.setWindowIcon(KIcon("networkmanager"));
@@ -95,6 +127,7 @@ QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type 
 
     QString connectionId = QUuid::createUuid().toString();
 
+#if 0
     // Check if there is already a connection with this uuid, if so, pick a new uuid
     // If 50 runs have passed, something is really fishy as we only get existing uuid
     // try at max
@@ -117,30 +150,41 @@ QString ConnectionEditor::addConnection(bool useDefaults, Knm::Connection::Type 
         }
     }
     // Let's hope the connection ID is unique now...
+#endif
 
     args << connectionId;
     args += otherArgs;
     ConnectionPreferences * cprefs = editorForConnectionType(useDefaults, &configDialog, type, args);
 
+    if (!cprefs) {
+        return NULL;
+    }
+
     connect(cprefs, SIGNAL(valid(bool)), &configDialog, SLOT(enableButtonOk(bool)));
     cprefs->load();
     cprefs->validate();
-
-    if (!cprefs) {
-        return QString();
-    }
 
     configDialog.setMainWidget(cprefs);
 
     if ( autoAccept || configDialog.exec() == QDialog::Accepted ) {
         // update the connection from the UI and save it to a file in appdata/connections
         cprefs->save();
+
         // update our rcfile (Must happen after cprefs->save())
-        persist(cprefs->connection());
-        updateService();
-        emit connectionsChanged();
+        //persist(cprefs->connection());
+        //updateService();
+        //emit connectionsChanged();
+        //
+        cprefsCon = cprefs->connection();
+
+        kDebug() << "Add dialog accepted: Connection name: " << cprefsCon->name() << "type: " << cprefsCon->typeAsString(cprefsCon->type()) << "uuid: " << cprefsCon->uuid().toString() << "iconname: "<< cprefsCon->iconName();
+
+        foreach(Knm::Setting *set, cprefsCon->settings())
+            kDebug() << "    Setting name: " << set->name();
+
+        return cprefs->connection();
     }
-    return connectionId;
+    return NULL;
 }
 
 void ConnectionEditor::persist(Knm::Connection* connection)
@@ -186,6 +230,35 @@ ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaul
             break;
         case Knm::Connection::Pppoe:
             wid = new PppoePreferences(args, parent);
+            break;
+        default:
+            break;
+    }
+    return wid;
+}
+
+ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaults, QWidget * parent,
+                                                                  Knm::Connection *con) const
+{
+    ConnectionPreferences * wid = 0;
+    switch (con->type()) {
+        case Knm::Connection::Wired:
+            wid = new WiredPreferences(con, parent);
+            break;
+        case Knm::Connection::Wireless:
+            wid = new WirelessPreferences(con, parent);
+            break;
+        case Knm::Connection::Cdma:
+            wid = new CdmaConnectionEditor(con, parent);
+            break;
+        case Knm::Connection::Gsm:
+            wid = new GsmConnectionEditor(con, parent);
+            break;
+        case Knm::Connection::Vpn:
+            wid = new VpnPreferences(con, parent);
+            break;
+        case Knm::Connection::Pppoe:
+            wid = new PppoePreferences(con, parent);
             break;
         default:
             break;
