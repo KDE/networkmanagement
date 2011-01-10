@@ -146,7 +146,7 @@ void WepWidget::readConfig()
     d->ui.chkShowPass->setChecked(false);
 
     // auth alg
-    if (d->setting->authalg()  == Knm::WirelessSecuritySetting::EnumAuthalg::shared) {
+    if (d->setting->authalg() == Knm::WirelessSecuritySetting::EnumAuthalg::shared) {
         d->ui.authalg->setCurrentIndex( 1 );
     } else {
         d->ui.authalg->setCurrentIndex( 0 );
