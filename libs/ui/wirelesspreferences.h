@@ -33,6 +33,11 @@ class AccessPoint;
 
 } // namespace Solid
 
+namespace Knm
+{
+    class Connection;
+}
+
 class Wireless80211Widget;
 class WirelessSecuritySettingWidget;
 
@@ -48,6 +53,7 @@ public:
      * information encoded in args
      */
     WirelessPreferences(bool setDefaults, const QVariantList & args = QVariantList(), QWidget * parent = 0);
+    WirelessPreferences(Knm::Connection *con, QWidget * parent);
     virtual ~WirelessPreferences();
     virtual bool needsEdits() const;
 private Q_SLOTS:

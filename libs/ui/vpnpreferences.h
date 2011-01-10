@@ -25,6 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class VpnUiPlugin;
 
+namespace Knm
+{
+    class Connection;
+}
+
 /**
  * Configuration module for cellular connections
  */
@@ -33,6 +38,7 @@ class KNM_EXPORT VpnPreferences : public ConnectionPreferences
 Q_OBJECT
 public:
     VpnPreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
+    VpnPreferences(Knm::Connection *con, QWidget * parent);
     virtual ~VpnPreferences();
     virtual void load();
     bool needsEdits() const;

@@ -23,6 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionprefs.h"
 
+namespace Knm
+{
+    class Connection;
+}
+
 /**
  * Configuration module for wired connections
  */
@@ -31,8 +36,12 @@ class KNM_EXPORT PppoePreferences : public ConnectionPreferences
 Q_OBJECT
 public:
     PppoePreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
+    PppoePreferences(Knm::Connection *con, QWidget * parent);
     virtual ~PppoePreferences();
     virtual bool needsEdits() const { return true; /*TODO until auto connection name generation code is in place*/ }
+
+private:
+    void prepareSettings();
 };
 
 #endif

@@ -64,6 +64,41 @@ VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
     addToTabWidget(ipv4Widget);
 }
 
+VpnPreferences::VpnPreferences(Knm::Connection *con, QWidget *parent)
+: ConnectionPreferences(QVariantList(), parent ), m_uiPlugin(0)
+{
+    if (!con)
+    {
+        kDebug() << "Connection pointer is NULL, creating a new connection.";
+        m_connection = new Knm::Connection(QUuid::createUuid(), Knm::Connection::Vpn);
+    }
+    else
+        m_connection = con;
+
+    QString connectionId = m_connection->uuid().toString();
+
+    m_contents->setConnection(m_connection);
+    m_contents->setDefaultName(i18n("New VPN Connection"));
+
+    /*
+    // load the plugin in m_vpnType, get its SettingWidget and add it
+    QString error;
+    if (args.count() > 1) {  // if we have a vpn type in the args, we are creating a new connection
+        m_vpnPluginName = args[1].toString();
+        m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( m_vpnPluginName ), this, QVariantList(), &error );
+        if (error.isEmpty()) {
+            SettingWidget * vpnWidget = m_uiPlugin->widget(m_connection, this);
+            addToTabWidget(vpnWidget);
+        } else {
+            kDebug() << error;
+        }
+    }
+    */
+    IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+    addToTabWidget(ipv4Widget);
+}
+
+
 VpnPreferences::~VpnPreferences()
 {
 }
