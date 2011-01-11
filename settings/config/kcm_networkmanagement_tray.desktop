@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Other
 Name[ca]=Altra
+Name[ca@valencia]=Altra
 Name[cs]=Jiné
 Name[da]=Andet
 Name[de]=Sonstiges
@@ -29,6 +30,7 @@ Name[x-test]=xxOtherxx
 Name[zh_TW]=其他
 Comment=Configure the Network Management tool
 Comment[ca]=Configura l'eina de gestió de xarxa
+Comment[ca@valencia]=Configura l'eina de gestió de xarxa
 Comment[cs]=Nastavit nástroj pro správu sítě
 Comment[da]=Indstil værktøjet til netværkshåndtering
 Comment[de]=Die Netzwerkverwaltung einrichten
