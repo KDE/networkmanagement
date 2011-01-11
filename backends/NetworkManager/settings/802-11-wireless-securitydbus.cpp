@@ -108,6 +108,17 @@ void WirelessSecurityDbus::fromMap(const QVariantMap & map)
     setting->setPsk(map.value("psk").value<QString>());
   }
 
+  if (map.contains("wep-key-type")) {
+      if (map.value(QLatin1String("wep-key-type")).value<int>() == 1)
+      {
+        setting->setWepKeyType(Knm::WirelessSecuritySetting::Hex);
+      }
+      else
+      {
+        setting->setWepKeyType(Knm::WirelessSecuritySetting::Passphrase);
+      }
+  }
+
 }
 
 QVariantMap WirelessSecurityDbus::toMap()
@@ -194,6 +205,14 @@ QVariantMap WirelessSecurityDbus::toMap()
   // SECRET
   if(!setting->psk().isEmpty())
       map.insert("psk",  setting->psk());
+
+  if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Hex)
+      map.insert("wep-key-type", 1);
+  else if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Passphrase)
+      map.insert("wep-key-type", 2);
+  else
+      kWarning() << "Wep key type is not set!";
+
 
   } // end of if not setting->clear()
   return map;

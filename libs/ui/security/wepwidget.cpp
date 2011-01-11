@@ -159,6 +159,9 @@ void WepWidget::writeConfig()
 
     d->setting->setWeptxkeyindex(d->ui.weptxkeyindex->currentIndex());
 
+    //FIXME: Handling of hex/ascii and passphrase is wrong, users must be able to specify 4 different passphrases 
+    //       in wep-key[0-3]
+
     // keys
     if (d->format == WepWidget::Passphrase)
     {
@@ -168,12 +171,14 @@ void WepWidget::writeConfig()
         d->setting->setWepkey1(QString());
         d->setting->setWepkey2(QString());
         d->setting->setWepkey3(QString());
+        d->setting->setWepKeyType(Knm::WirelessSecuritySetting::Passphrase);
     } else {
         d->setting->setWeppassphrase(QString());
         d->setting->setWepkey0(d->keys[0]);
         d->setting->setWepkey1(d->keys[1]);
         d->setting->setWepkey2(d->keys[2]);
         d->setting->setWepkey3(d->keys[3]);
+        d->setting->setWepKeyType(Knm::WirelessSecuritySetting::Hex);
     }
 
     QString authAlg;
@@ -194,9 +199,11 @@ void WepWidget::readSecrets()
     d->keys.replace(3, d->setting->wepkey3());
 
     // passphrase
-    if(d->keys.value(d->keyIndex).isEmpty()) {
+    if(d->setting->wepKeyType() == Knm::WirelessSecuritySetting::Passphrase)
+    {
         d->ui.keyType->setCurrentIndex(0);
-    } else {
+    } else if(d->setting->wepKeyType() == Knm::WirelessSecuritySetting::Hex)
+    {
         d->ui.keyType->setCurrentIndex(1);
     }
 
