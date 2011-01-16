@@ -498,7 +498,7 @@ void MobileConnectionWizard::slotEnablePlanEditBox(const QString & text)
     } else {
         QStringList mApns;
         if (mProvidersList->currentItem() != 0) {
-            mProviders->getApns(mProvidersList->currentItem()->text());
+            mApns = mProviders->getApns(mProvidersList->currentItem()->text());
             userApn->setText(mApns.at(0));
         }
         userApn->setEnabled(false);
