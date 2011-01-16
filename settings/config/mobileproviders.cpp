@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "mobileproviders.h"
 
 const QString MobileProviders::CountryCodesFile = "/usr/share/zoneinfo/iso3166.tab";
-const QString MobileProviders::ProvidersFile = "/usr/share/mobile-broadband-provider-info/serviceproviders.xml";
+const QString MobileProviders::ProvidersFile = MOBILE_BROADBAND_PROVIDER_INFO;
 
 MobileProviders::MobileProviders()
 {
