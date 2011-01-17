@@ -134,14 +134,13 @@ void MobileConnectionWizard::initializePage(int id)
                     lineEditProvider->setText(i18nc("Mobile Connection Wizard", "Unknown Provider"));
                 }
             } else {
-                QStringList mApns;
                 if (mProvidersList->currentItem() != 0) {
-                    mApns = mProviders->getApns(mProvidersList->currentItem()->text());
+                    QStringList mApns = mProviders->getApns(mProvidersList->currentItem()->text());
                     userApn->setText(mApns.at(0));
+                    mPlanComboBox->insertItems(0, mApns);
+                    mPlanComboBox->setItemText(0, i18nc("Mobile Connection Wizard", "Default"));
                 }
 
-                mPlanComboBox->insertItems(0, mApns);
-                mPlanComboBox->setItemText(0, i18nc("Mobile Connection Wizard", "Default"));
                 mPlanComboBox->insertSeparator(1);
                 mPlanComboBox->addItem(i18nc("Mobile Connection Wizard", "My plan is not listed..."));
             }
@@ -415,6 +414,8 @@ QWizardPage * MobileConnectionWizard::createProvidersPage()
     layout->addWidget(radioAutoProvider);
 
     mProvidersList = new QListWidget();
+    connect(mProvidersList, SIGNAL(itemSelectionChanged()), this, SLOT(slotCheckProviderList()));
+    connect(mProvidersList, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(slotCheckProviderList()));
     layout->addWidget(mProvidersList);
 
     radioManualProvider = new QRadioButton(i18nc("Mobile Connection Wizard", "I can't find my provider and I wish to enter it &manually:"));
@@ -444,6 +445,12 @@ void MobileConnectionWizard::slotCheckProviderEdit()
     radioManualProvider->setChecked(true);
     // TODO: this does not work, try reimplementing QWizardPage::isComplete()
     //button(QWizard::NextButton)->setEnabled(true);
+}
+
+void MobileConnectionWizard::slotCheckProviderList()
+{
+    radioAutoProvider->setChecked(true);
+    lineEditProvider->setText("");
 }
 
 /**********************************************************/
@@ -496,9 +503,8 @@ void MobileConnectionWizard::slotEnablePlanEditBox(const QString & text)
         userApn->setText("");
         userApn->setEnabled(true);
     } else {
-        QStringList mApns;
         if (mProvidersList->currentItem() != 0) {
-            mApns = mProviders->getApns(mProvidersList->currentItem()->text());
+            QStringList mApns = mProviders->getApns(mProvidersList->currentItem()->text());
             userApn->setText(mApns.at(0));
         }
         userApn->setEnabled(false);
