@@ -245,7 +245,7 @@ RemoteInterfaceConnection* UiUtils::connectionForInterface(RemoteActivatableList
 {
     foreach (RemoteActivatable* activatable, activatables->activatables()) {
         if (activatable->deviceUni() == interface->uni()) {
-            RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
+            RemoteInterfaceConnection* remoteconnection = dynamic_cast<RemoteInterfaceConnection*>(activatable);
             if (remoteconnection) {
                 if (remoteconnection->activationState() == Knm::InterfaceConnection::Activated
                             || remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
