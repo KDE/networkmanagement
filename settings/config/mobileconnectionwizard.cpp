@@ -108,7 +108,15 @@ void MobileConnectionWizard::initializePage(int id)
                 }
             }
             mProvidersList->setCurrentRow(0);
-            mProvidersList->setFocus();
+            if (mProvidersList->count() > 0) {
+                mProvidersList->setFocus();
+            } else {
+                mProvidersList->setEnabled(false);
+                radioAutoProvider->setEnabled(false);
+                radioManualProvider->setChecked(true);
+                // TODO: this does not work, try reimplementing QWizardPage::isComplete()
+                //button(QWizard::NextButton)->setEnabled(false);
+            }
             break;
 
         case 3: // Plans Page
@@ -121,14 +129,20 @@ void MobileConnectionWizard::initializePage(int id)
                 mPlanComboBox->addItem(i18nc("Mobile Connection Wizard", "My plan is not listed..."));
                 mPlanComboBox->setCurrentIndex(1);
                 userApn->setText("");
+
+                if (lineEditProvider->text().isEmpty()) {
+                    lineEditProvider->setText(i18nc("Mobile Connection Wizard", "Unknown Provider"));
+                }
             } else {
-                QStringList mApns = mProviders->getApns(mProvidersList->currentItem()->text());
-                mPlanComboBox->insertItems(0, mApns);
-                mPlanComboBox->setItemText(0, i18nc("Mobile Connection Wizard", "Default"));
+                if (mProvidersList->currentItem() != 0) {
+                    QStringList mApns = mProviders->getApns(mProvidersList->currentItem()->text());
+                    userApn->setText(mApns.at(0));
+                    mPlanComboBox->insertItems(0, mApns);
+                    mPlanComboBox->setItemText(0, i18nc("Mobile Connection Wizard", "Default"));
+                }
+
                 mPlanComboBox->insertSeparator(1);
                 mPlanComboBox->addItem(i18nc("Mobile Connection Wizard", "My plan is not listed..."));
-    
-                userApn->setText(mApns.at(0));
             }
         break;
 
@@ -400,6 +414,8 @@ QWizardPage * MobileConnectionWizard::createProvidersPage()
     layout->addWidget(radioAutoProvider);
 
     mProvidersList = new QListWidget();
+    connect(mProvidersList, SIGNAL(itemSelectionChanged()), this, SLOT(slotCheckProviderList()));
+    connect(mProvidersList, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(slotCheckProviderList()));
     layout->addWidget(mProvidersList);
 
     radioManualProvider = new QRadioButton(i18nc("Mobile Connection Wizard", "I can't find my provider and I wish to enter it &manually:"));
@@ -427,6 +443,14 @@ void MobileConnectionWizard::slotEnableProviderEdit(bool checked)
 void MobileConnectionWizard::slotCheckProviderEdit()
 {
     radioManualProvider->setChecked(true);
+    // TODO: this does not work, try reimplementing QWizardPage::isComplete()
+    //button(QWizard::NextButton)->setEnabled(true);
+}
+
+void MobileConnectionWizard::slotCheckProviderList()
+{
+    radioAutoProvider->setChecked(true);
+    lineEditProvider->setText("");
 }
 
 /**********************************************************/
@@ -475,12 +499,14 @@ void MobileConnectionWizard::slotEnablePlanEditBox(const QString & text)
     if (mIface->type() != Solid::Control::NetworkInterface::Gsm) {
         return;
     }
-    if (text == "My plan is not listed...") {
+    if (text == i18nc("Mobile Connection Wizard", "My plan is not listed...")) {
         userApn->setText("");
         userApn->setEnabled(true);
     } else {
-        QStringList mApns = mProviders->getApns(mProvidersList->currentItem()->text());
-        userApn->setText(mApns.at(0));
+        if (mProvidersList->currentItem() != 0) {
+            QStringList mApns = mProviders->getApns(mProvidersList->currentItem()->text());
+            userApn->setText(mApns.at(0));
+        }
         userApn->setEnabled(false);
     }
 }

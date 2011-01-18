@@ -60,6 +60,7 @@ private Q_SLOTS:
     void slotEnablePlanEditBox(const QString & text);
     void slotEnableProviderEdit(bool enable);
     void slotCheckProviderEdit();
+    void slotCheckProviderList();
 
 private:
     QWizardPage * createIntroPage();
