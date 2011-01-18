@@ -49,10 +49,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "gsminterfaceconnectionitem.h"
 
 ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent) : Plasma::ScrollWidget(parent),
+    m_hiddenItem(0),
     m_activatables(activatables),
     m_layout(0),
-    m_vpn(false),
-    m_hiddenItem(0)
+    m_vpn(false)
 {
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
