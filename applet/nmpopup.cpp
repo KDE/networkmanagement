@@ -87,8 +87,8 @@ void NMPopup::init()
 
     m_rightLabel = new Plasma::Label(this);
     //m_rightLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
-    m_leftLabel->setMaximumHeight(24);
-    m_leftLabel->setMinimumHeight(24);
+    m_rightLabel->setMaximumHeight(24);
+    m_rightLabel->setMinimumHeight(24);
     m_rightLabel->setText(i18nc("title on the RHS of the plasmoid", "<h3>Connections</h3>"));
     m_mainLayout->addItem(m_rightLabel, 0, 2);
 

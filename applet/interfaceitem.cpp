@@ -122,6 +122,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_connectionNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_connectionNameLabel->nativeWidget()->setFont(KGlobalSettings::smallestReadableFont());
     m_connectionNameLabel->nativeWidget()->setWordWrap(false);
+    m_connectionNameLabel->nativeWidget()->setMaximumWidth(210);
     m_layout->addItem(m_connectionNameLabel, 1, 1, 1, 1);
 
     //       security
