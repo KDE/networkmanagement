@@ -23,10 +23,6 @@ if (KDE4_MM_BACKEND_FOUND)
     set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR} ${CMAKE_MODULE_PATH})
     macro_optional_find_package(MobileBroadbandProviderInfo)
     macro_log_feature(MOBILEBROADBANDPROVIDERINFO_FOUND "mobile-broadband-provider-info" "Database of mobile broadband service providers" "http://live.gnome.org/NetworkManager/MobileBroadband/ServiceProviders" FALSE "" "Needed for Mobile Connection Wizard support in Broadband Modem Management")
-
-    if (MOBILEBROADBANDPROVIDERINFO_FOUND)
-        add_definitions(${MOBILEBROADBANDPROVIDERINFO_CFLAGS})
-    endif (MOBILEBROADBANDPROVIDERINFO_FOUND)
 endif (KDE4_MM_BACKEND_FOUND)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
