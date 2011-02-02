@@ -44,6 +44,7 @@ Name[zh_TW]=Novell VPN (turnpike)
 Comment=Allows KNetworkManager to connect to Novell VPN (turnpike) VPNs.
 Comment[ca]=Permet al KNetworkManager connectar-se a la VPN de Novell (turnpike).
 Comment[ca@valencia]=Permet al KNetworkManager connectar-s'a la VPN de Novell (turnpike).
+Comment[cs]=Umožní KNetworkManager připojit se k Novell VPN (turnpike).
 Comment[da]=Lader KNetworkManager forbinde VPN med Novell VPN (turnpike).
 Comment[de]=Ermöglicht KNetworkManager Verbindungen zu Novell VPNs (Turnpike) herzustellen.
 Comment[en_GB]=Allows KNetworkManager to connect to Novell VPN (turnpike) VPNs.

@@ -29,6 +29,7 @@ Name[zh_TW]=NetworkManager 使用者設定服務
 Comment=Provides network configuration to the NetworkManager daemon
 Comment[ca]=Proporciona la configuració de xarxa al dimoni del Gestor de xarxa
 Comment[ca@valencia]=Proporciona la configuració de xarxa al dimoni del Gestor de xarxa
+Comment[cs]=Poskytuje síťovou konfiguraci démona NetworkManageru
 Comment[da]=Leverer netværkskonfiguration af NetworkManager-dæmonen
 Comment[de]=Stellt dem NetworkManager-Dienst eine Netzwerkeinrichtung zur Verfügung
 Comment[en_GB]=Provides network configuration to the NetworkManager dæmon

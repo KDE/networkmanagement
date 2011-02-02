@@ -32,6 +32,7 @@ Name[zh_TW]=網路管理 VPN 使用者介面外掛程式
 Comment=Defines KDE Network Management UI Plugins
 Comment[ca]=Defineix els connector de la IU del Gestor de xarxa del KDE
 Comment[ca@valencia]=Defineix els connector de la IU del Gestor de xarxa del KDE
+Comment[cs]=Definuje grafické moduly správy sítě KDE
 Comment[da]=Definerer UI-plugins til KDE's netværkshåndtering
 Comment[de]=Legt die Module der KDE-Netzwerkverwaltung fest
 Comment[en_GB]=Defines KDE Network Management UI Plugins
