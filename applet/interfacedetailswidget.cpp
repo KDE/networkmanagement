@@ -545,7 +545,8 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
 
         /* TODO: ugly and error prone if more than one 3G modem/cellphone is connected to the Internet.
          * If anyone knows a way to convert a serial device name to a network interface name let me know. */
-        if (interfaceName.contains("ttyACM") || interfaceName.contains("ttyUSB")) {
+        if (interfaceName.contains("ttyACM") || interfaceName.contains("ttyUSB") || // USB modems
+	    interfaceName.contains("rfcomm")) { // bluetooth modems
             interfaceName = "ppp0";
         }
 
