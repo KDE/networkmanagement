@@ -60,9 +60,7 @@ public:
     virtual void unregisterObserver(ActivatableObserver *);
 protected Q_SLOTS:
     void activatableChanged();
-    void nm_restart_workaround(Solid::Networking::Status status);
 protected:
-    void init();
     void addActivatableInternal(Knm::Activatable * activatable);
     void notifyOnAddActivatable(Knm::Activatable * activatable);
     ActivatableListPrivate * d_ptr;
