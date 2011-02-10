@@ -79,7 +79,31 @@ WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatable
 
 WirelessNetworkInterfaceActivatableProvider::~WirelessNetworkInterfaceActivatableProvider()
 {
+    Q_D(WirelessNetworkInterfaceActivatableProvider);
 
+    // remove WICs
+    QMultiHash<QString, Knm::InterfaceConnection*>::iterator i = d->activatables.begin();
+    while (i != d->activatables.end()) {
+        Knm::InterfaceConnection * ic = i.value();
+
+        if (ic->activatableType() == Knm::Activatable::WirelessInterfaceConnection ) {
+            Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(ic);
+
+            d->activatableList->removeActivatable(ic);
+            i = d->activatables.erase(i);
+            delete wic;
+        } else {
+            ++i;
+        }
+    }
+    // remove all WirelessNetwork
+    QHash<QString, Knm::WirelessNetwork *>::iterator w = d->wirelessNetworks.begin();
+    while (w != d->wirelessNetworks.end()) {
+        Knm::WirelessNetwork * wni = w.value();
+        d->activatableList->removeActivatable(wni);
+        delete wni;
+	++w;
+    }
 }
 
 void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedConnection)

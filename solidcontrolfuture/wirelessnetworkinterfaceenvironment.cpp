@@ -66,7 +66,6 @@ Solid::Control::WirelessNetworkInterfaceEnvironment::WirelessNetworkInterfaceEnv
 Solid::Control::WirelessNetworkInterfaceEnvironment::~WirelessNetworkInterfaceEnvironment()
 {
     kDebug();
-    wirelessEnabledChanged(false);
     delete d_ptr;
 }
 
