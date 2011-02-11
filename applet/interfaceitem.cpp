@@ -309,7 +309,8 @@ void InterfaceItem::currentConnectionChanged()
     RemoteInterfaceConnection* remoteconnection = UiUtils::connectionForInterface(m_activatables, m_iface);
     if (remoteconnection) {
         if (m_currentConnection) {
-            QObject::disconnect(m_currentConnection, SIGNAL(hasDefaultRouteChanged(bool)));
+            QObject::disconnect(m_currentConnection, SIGNAL(hasDefaultRouteChanged(bool)),
+                                this, SLOT(handleHasDefaultRouteChanged(bool)));
         }
         m_currentConnection = remoteconnection;
 
