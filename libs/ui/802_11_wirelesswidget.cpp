@@ -128,6 +128,8 @@ void Wireless80211Widget::writeConfig()
 
     if (d->ui.bssid->text() != QString::fromLatin1(":::::")) {
         d->setting->setBssid(d->ui.bssid->text().toAscii());
+    } else {
+        d->setting->setBssid(QByteArray());
     }
     d->setting->setMtu(d->ui.mtu->value());
 }

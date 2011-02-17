@@ -29,7 +29,7 @@ void WiredDbus::fromMap(const QVariantMap & map)
     setting->setAutonegotiate(map.value(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE)).value<bool>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS))) {
-    setting->setMacaddress(map.value(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS)).value<QByteArray>());
+    setting->setMacaddress(SettingDbus::macBin2Hex(map.value(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS)).value<QByteArray>()));
   }
   if (map.contains("mtu")) {
     setting->setMtu(map.value("mtu").value<uint>());
@@ -67,10 +67,10 @@ QVariantMap WiredDbus::toMap()
   }
   map.insert(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE), setting->autonegotiate());
 #endif
-  // broken
-  //QString mac = setting->macaddress();
-  //map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), mac.remove(':').toAscii());
-  if (setting->mtu() > 0 ) {
+  if (!setting->macaddress().isEmpty()) {
+    map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), SettingDbus::macHex2Bin(setting->macaddress()));
+  }
+  if (setting->mtu() > 0) {
     map.insert("mtu", setting->mtu());
   }
   return map;

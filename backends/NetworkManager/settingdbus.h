@@ -39,6 +39,10 @@ public:
     virtual void fromMap(const QVariantMap &) = 0;
     virtual QVariantMap toMap() = 0;
     virtual QVariantMap toSecretsMap() = 0;
+
+    // static methods to convert between binary and hex string MAC representation
+    static QByteArray macHex2Bin(const QByteArray &hexMac);
+    static QByteArray macBin2Hex(const QByteArray &binMac);
 protected:
     static void insertIfTrue(QVariantMap& map, const char * key, bool value);
     static void insertIfNonZero(QVariantMap& map, const char * key, uint value);

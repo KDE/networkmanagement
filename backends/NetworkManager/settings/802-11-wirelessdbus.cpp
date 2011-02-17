@@ -29,7 +29,7 @@ void WirelessDbus::fromMap(const QVariantMap & map)
     setting->setChannel(map.value("channel").value<uint>());
   }
   if (map.contains("bssid")) {
-    setting->setBssid(map.value("bssid").value<QByteArray>());
+    setting->setBssid(SettingDbus::macBin2Hex(map.value("bssid").value<QByteArray>()));
   }
   if (map.contains("rate")) {
     setting->setRate(map.value("rate").value<uint>());
@@ -38,7 +38,7 @@ void WirelessDbus::fromMap(const QVariantMap & map)
     setting->setTxpower(map.value(QLatin1String(NM_SETTING_WIRELESS_TX_POWER)).value<uint>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS))) {
-    setting->setMacaddress(map.value(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS)).value<QByteArray>());
+    setting->setMacaddress(SettingDbus::macBin2Hex(map.value(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS)).value<QByteArray>()));
   }
   if (map.contains("mtu")) {
     setting->setMtu(map.value("mtu").value<uint>());
@@ -77,12 +77,12 @@ QVariantMap WirelessDbus::toMap()
 #endif
   //map.insert("channel", setting->channel());
   if (!setting->bssid().isEmpty()) {
-      map.insert("bssid", setting->bssid());
+      map.insert("bssid", SettingDbus::macHex2Bin(setting->bssid()));
   }
   //map.insert("rate", setting->rate());
   //map.insert(QLatin1String(NM_SETTING_WIRELESS_TX_POWER), setting->txpower());
   if (!setting->macaddress().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), SettingDbus::macHex2Bin(setting->macaddress()));
   }
   if (setting->mtu() > 0 )
        map.insert("mtu", setting->mtu());
