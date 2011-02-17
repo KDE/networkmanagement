@@ -1,0 +1,16 @@
+[Desktop Entry]
+Name=Akonadi
+Comment=Akonadi PIM data engine
+X-KDE-ServiceTypes=Plasma/DataEngine
+Type=Service
+Icon=akonadi
+X-KDE-Library=plasma_engine_networkmanagement
+
+X-KDE-PluginInfo-Author=Sebastian Kügler
+X-KDE-PluginInfo-Email=sebas@kde.org
+X-KDE-PluginInfo-Name=networkmanagement
+X-KDE-PluginInfo-Version=0.1
+X-KDE-PluginInfo-Website=http://kde.org
+X-KDE-PluginInfo-Category=networkmanager
+X-KDE-PluginInfo-Depends=
+
