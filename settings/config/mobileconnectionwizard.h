@@ -69,7 +69,7 @@ private:
     QWizardPage * createPlansPage();
     QWizardPage * createConfirmPage();
     void initializePage(int id);
-    int nextId() const;
+    int nextId();
 
     MobileProviders * mProviders;
     Solid::Control::NetworkInterface * mIface;

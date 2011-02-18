@@ -86,26 +86,15 @@ void MobileConnectionWizard::initializePage(int id)
             lineEditProvider->setText("");
             radioAutoProvider->setChecked(true);
     
-            if (mIface) {
-                switch (mIface->type()) {
-                    case Solid::Control::NetworkInterface::Gsm:
-                        mProvidersList->insertItems(0, mProviders->getProvidersList(country, Solid::Control::NetworkInterface::Gsm));
-                        break;
-                    case Solid::Control::NetworkInterface::Cdma:
-                        mProvidersList->insertItems(0, mProviders->getProvidersList(country, Solid::Control::NetworkInterface::Cdma));
-                        break;
-                    case Solid::Control::NetworkInterface::UnknownType:
-                        if (!mType)
-                            mType = new QComboBox();
-    
-                        mType->addItem(i18nc("Mobile Connection Wizard", "My provider uses GSM technology (GPRS, EDGE, UMTS, HSPA)"), Solid::Control::NetworkInterface::Gsm);
-                        mType->addItem(i18nc("Mobile Connection Wizard", "My provider uses CDMA technology (1xRTT, EVDO)"), Solid::Control::NetworkInterface::Cdma);
-                        mType->setCurrentIndex(0);
-                        page(id)->layout()->addWidget(mType);
-                        break;
-                    default:
-                        break;
-                }
+            switch (type()) {
+                case Knm::Connection::Gsm:
+                    mProvidersList->insertItems(0, mProviders->getProvidersList(country, Knm::Connection::Gsm));
+                    break;
+                case Knm::Connection::Cdma:
+                    mProvidersList->insertItems(0, mProviders->getProvidersList(country, Knm::Connection::Cdma));
+                    break;
+                default:
+                    break;
             }
             mProvidersList->setCurrentRow(0);
             if (mProvidersList->count() > 0) {
@@ -121,7 +110,7 @@ void MobileConnectionWizard::initializePage(int id)
 
         case 3: // Plans Page
             mPlanComboBox->clear();
-            if (mIface->type() != Solid::Control::NetworkInterface::Gsm) {
+            if (type() != Knm::Connection::Gsm) {
                 break;
             }
             if (radioManualProvider->isChecked()) {
@@ -155,7 +144,7 @@ void MobileConnectionWizard::initializePage(int id)
                 provider = mProvidersList->currentItem()->text();
             }
     
-            if (mIface && mIface->type() == Solid::Control::NetworkInterface::Cdma) {
+            if (type() == Knm::Connection::Cdma) {
                 labelPlanLabel->hide();
                 labelPlan->hide();
                 labelApn->hide();
@@ -184,10 +173,10 @@ void MobileConnectionWizard::initializePage(int id)
     }
 }
 
-int MobileConnectionWizard::nextId() const
+int MobileConnectionWizard::nextId()
 {
     // Providers page
-    if (currentId() == 2 && mIface && mIface->type() != Solid::Control::NetworkInterface::Gsm) {
+    if (currentId() == 2 && type() != Knm::Connection::Gsm) {
         // Jumps to Confirm page instead of Plans page if type != Gsm.
         return 4;
     } else {
@@ -199,26 +188,24 @@ QVariantList MobileConnectionWizard::args()
 {
     QVariantList temp;
 
-    if (mIface) {
-        switch (mIface->type()) {
-            case Solid::Control::NetworkInterface::Cdma:
-                temp << provider << mProviders->getCdmaInfo(provider);
-                break;
+    switch (type()) {
+        case Knm::Connection::Cdma:
+            temp << provider << mProviders->getCdmaInfo(provider);
+            break;
     
-            case Solid::Control::NetworkInterface::Gsm:
-                temp << provider << mProviders->getNetworkIds(provider) << mProviders->getApnInfo(apn);
-                break;
+        case Knm::Connection::Gsm:
+            temp << provider << mProviders->getNetworkIds(provider) << mProviders->getApnInfo(apn);
+            break;
 
-            default:
-                break;
-        }
+        default:
+            break;
     }
     return temp;
 }
 
 Knm::Connection::Type MobileConnectionWizard::type()
 {
-    if (mIface && mIface ->type() == Solid::Control::NetworkInterface::Cdma) {
+    if (mIface && mIface->type() == Solid::Control::NetworkInterface::Cdma) {
         return Knm::Connection::Cdma;
     }
 
@@ -496,7 +483,7 @@ QWizardPage * MobileConnectionWizard::createPlansPage()
 
 void MobileConnectionWizard::slotEnablePlanEditBox(const QString & text)
 {
-    if (mIface->type() != Solid::Control::NetworkInterface::Gsm) {
+    if (type() != Knm::Connection::Gsm) {
         return;
     }
     if (text == i18nc("Mobile Connection Wizard", "My plan is not listed...")) {
