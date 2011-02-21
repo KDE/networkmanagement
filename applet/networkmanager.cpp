@@ -76,6 +76,9 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
         m_popup(0),
         m_activeInterface(0)
 {
+    KGlobal::locale()->insertCatalog("libknetworkmanager");
+    KGlobal::locale()->insertCatalog("solidcontrol");
+
     setHasConfigurationInterface(true);
     setPopupIcon(QIcon());
     //setPassivePopup(true); // FIXME: disable, only true for testing ...
