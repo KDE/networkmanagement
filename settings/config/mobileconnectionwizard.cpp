@@ -46,6 +46,7 @@ MobileConnectionWizard::MobileConnectionWizard(QWidget * parent): QWizard(parent
 
 MobileConnectionWizard::~MobileConnectionWizard()
 {
+    delete mProviders;
 }
 
 MobileProviders::ErrorCodes MobileConnectionWizard::getError()
