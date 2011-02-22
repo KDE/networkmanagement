@@ -26,6 +26,7 @@
 
 class RemoteActivatableList;
 class RemoteActivatable;
+class WirelessStatus;
 
 class NetworkManagementEnginePrivate;
 
@@ -44,11 +45,16 @@ class NetworkManagementEngine : public Plasma::DataEngine
         void activatableRemoved(RemoteActivatable*);
         void listDisappeared();
         void listAppeared();
+        void updateWireless();
+        void updateWirelessStrength(int s);
 
     protected:
         bool sourceRequestEvent(const QString &name);
 
     private:
+        QString sourceForActivatable(RemoteActivatable* remote);
+        void updateWireless(const QString &source, WirelessStatus *wirelessStatus);
+
         NetworkManagementEnginePrivate* d;
 };
 
