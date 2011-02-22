@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDomDocument>
 #include <QVariantMap>
 
-#include <solid/control/networkinterface.h>
+#include <connection.h>
 
 class MobileProviders
 {
@@ -42,7 +42,7 @@ public:
     QStringList getCountryList();
     QString countryFromLocale();
     QString getCountryName(const QString key) { return mCountries[key]; }
-    QStringList getProvidersList(QString country, const Solid::Control::NetworkInterface::Type type);
+    QStringList getProvidersList(QString country, const Knm::Connection::Type type);
     QStringList getApns(const QString provider);
     QStringList getNetworkIds(const QString provider);
     QVariantMap getApnInfo(const QString apn);

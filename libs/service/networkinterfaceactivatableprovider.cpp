@@ -197,7 +197,6 @@ void NetworkInterfaceActivatableProvider::handleRemove(Knm::Connection * removed
         d->activatableList->removeActivatable(activatable);
         i = d->activatables.erase(i);
         delete activatable;
-	++i;
     }
 
     maintainActivatableForUnconfigured();
