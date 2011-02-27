@@ -39,13 +39,13 @@ Item {
           }
           onSourceAdded: {
              if (source != "networkStatus") {
-                console.log("QML addedd ......." + source)
+                //console.log("QML addedd ......." + source)
                 connectSource(source)
              }
           }
           onSourceRemoved: {
              if (source != "networkStatus") {
-                console.log("QML removed ......." + source)
+                //console.log("QML removed ......." + source)
                 disconnectSource(source)
              }
           }
@@ -79,18 +79,19 @@ Item {
         delegate: Item {
             property int collapsedHeight: 38
             property int expandedHeight: 96
-            property string iconString: (typeof securityIcon != "undefined") ? securityIcon : "security-medium"
+            property string iconString: (typeof securityIcon != "undefined") ? securityIcon : "security-low"
             //property string iconString: "security-medium";
 
             id: citem
             height: collapsedHeight
+            width: parent.width
             anchors.margins: 4
-
+            /*
             PlasmaWidgets.Frame {
                 id: itemFrame
                 anchors.fill: parent
             }
-
+            */
             PlasmaWidgets.IconWidget {
                 id: strengthIconWidget
                 height: collapsedHeight
@@ -99,7 +100,11 @@ Item {
                 anchors.left: parent.left
 
                 Component.onCompleted: {
-                    setIcon("network-wireless");
+                    //if (typeof networkEngineSource.data[DataEngineSource]["securityIcon"] != "undefined") {
+                    //    setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
+                    //} else {
+                        setIcon("network-wireless");
+                    //}
                 }
                 onClicked: citem.state = (citem.state == "expanded") ? "collapsed" : "expanded"
 
@@ -109,18 +114,18 @@ Item {
                 id: securityIconWidget
                 height: collapsedHeight
                 width: collapsedHeight
-                anchors.top: parent.top
-                anchors.right: parent.right
+                //height: 40
+                //width: 50
+                anchors.top: citem.top
+                anchors.right: citem.right
+                //anchors.left: mainText.right
                 //anchors.left: parent.left
                 //anchors.bottom: parent.bottom
                 opacity: .8
 
                 Component.onCompleted: {
-                    //securityIconWidget.setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
-                    //console.log("new sec icon" + networkEngineSource.data[DataEngineSource]["securityIcon"]);
                     if (typeof networkEngineSource.data[DataEngineSource]["securityIcon"] != "undefined") {
-                        setIcon: networkEngineSource.data[DataEngineSource]["securityIcon"];
-                        print("ICON:" + networkEngineSource.data[DataEngineSource]["securityIcon"]);
+                        setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
                     }
                 }
                 onClicked: citem.state = (citem.state == "expanded") ? "collapsed" : "expanded"
@@ -132,7 +137,7 @@ Item {
                 text: networkEngineSource.data[DataEngineSource]["connectionName"];
                 anchors.top: parent.top
                 anchors.left: strengthIconWidget.right
-                anchors.right: parent.right
+                //anchors.right: securityIconWidget.left
             }
             Text {
                 id: infoText;
@@ -156,7 +161,7 @@ Item {
                 id: connectButton
                 text: "Connect"
                 height: 0
-                //setIcon: "kmail"
+                //setIcon("kmail")
                 anchors.top: infoText.bottom
                 anchors.bottom: parent.bottom
                 anchors.left: strengthIconWidget.right
@@ -186,10 +191,10 @@ Item {
                         //visible: true
                         opacity: .9
                     }
-                    PropertyChanges {
-                        target: securityIconWidget
-                        opacity: 1.0
-                    }
+                    //PropertyChanges {
+                    //    target: securityIconWidget
+                    //    opacity: 1.0
+                    //}
                 },
 
                 State {
@@ -203,10 +208,10 @@ Item {
                         target: connectButton
                         opacity: 0.0
                     }
-                    PropertyChanges {
-                        target: securityIconWidget
-                        opacity: 0.0
-                    }
+                    //PropertyChanges {
+                    //    target: securityIconWidget
+                    //    opacity: 0.0
+                    //}
                 }
             ]
 
@@ -230,7 +235,7 @@ Item {
                     }
                 }
             ]
-            /*
+
             MouseArea {
                 anchors.fill: parent
 
@@ -239,7 +244,8 @@ Item {
                     console.log("MA clicked, citem state" + citem.state );
                 }
             }
-            */
+
+            
         }
     }
 
