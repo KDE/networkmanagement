@@ -22,10 +22,12 @@
 #define NETWORKMANAGEMENTENGINE_H
 
 #include <plasma/dataengine.h>
+#include "remoteinterfaceconnection.h"
 
 
 class RemoteActivatableList;
 class RemoteActivatable;
+class RemoteInterfaceConnection;
 class WirelessStatus;
 
 class NetworkManagementEnginePrivate;
@@ -47,12 +49,15 @@ class NetworkManagementEngine : public Plasma::DataEngine
         void listAppeared();
         void updateWireless();
         void updateWirelessStrength(int s);
+        void activationStateChanged(Knm::InterfaceConnection::ActivationState);
+        void hasDefaultRouteChanged(bool);
 
     protected:
         bool sourceRequestEvent(const QString &name);
 
     private:
         QString sourceForActivatable(RemoteActivatable* remote);
+        void updateConnection(const QString &source, RemoteActivatable* remote);
         void updateWireless(const QString &source, WirelessStatus *wirelessStatus);
 
         NetworkManagementEnginePrivate* d;

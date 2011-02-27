@@ -39,8 +39,12 @@ public:
     QHash<RemoteActivatable*, QString> sources;
     int i;
 };
-
-
+/*
+NetworkManagementEngine::NetworkManagementEngine(QObject* parent, const QVariantList& args)
+    : Plasma::DataEngine(parent)
+{
+}
+*/
 NetworkManagementEngine::NetworkManagementEngine(QObject* parent, const QVariantList& args)
     : Plasma::DataEngine(parent)
 {
@@ -117,7 +121,7 @@ void NetworkManagementEngine::activatableAdded(RemoteActivatable* remote)
             connect(wirelessStatus, SIGNAL(strengthChanged(int)), this, SLOT(updateWirelessStrength(int)));
             connect(rwn, SIGNAL(changed()), SLOT(updateWireless()));
             QString source = sourceForActivatable(rwn);
-
+            updateConnection(sourceForActivatable(remote), remote);
             updateWireless(sourceForActivatable(remote), wirelessStatus);
             break;
         }
@@ -148,6 +152,61 @@ void NetworkManagementEngine::activatableAdded(RemoteActivatable* remote)
     scheduleSourcesUpdated();
 }
 
+void NetworkManagementEngine::updateConnection(const QString &source, RemoteActivatable* remote)
+{
+    RemoteInterfaceConnection* remoteconnection = dynamic_cast<RemoteInterfaceConnection*>(remote);
+    if (!remoteconnection) {
+        kDebug() << "cast RemoteActivatable -> RemoteConnection failed";
+        return;
+    }
+
+    // set data
+    // see libs/client/interfaceconnectioninterface.h
+
+    //RemoteInterfaceConnection *remoteconnection = interfaceConnection();
+    connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)),
+            SLOT(hasDefaultRouteChanged(bool)));
+    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
+            SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
+    QString _state("Empty");
+    switch (remoteconnection->activationState()) {
+        //Knm::InterfaceConnectihon::ActivationState
+        case Knm::InterfaceConnection::Activated:
+            _state = "Activated";
+            break;
+        case Knm::InterfaceConnection::Unknown:
+            _state = "Unknown";
+            break;
+        case Knm::InterfaceConnection::Activating:
+            _state = "Activating";
+            break;
+    }
+    setData(source, "activationState", _state);
+    setData(source, "hasDefaultRoute", remoteconnection->hasDefaultRoute());
+
+
+    scheduleSourcesUpdated();
+}
+
+void NetworkManagementEngine::activationStateChanged(Knm::InterfaceConnection::ActivationState)
+{
+    kDebug() << "activation state changed";
+    RemoteActivatable* remote = static_cast<RemoteActivatable*>(sender());
+    if (remote) {
+        updateConnection(sourceForActivatable(remote), remote);
+    }
+}
+
+void NetworkManagementEngine::hasDefaultRouteChanged(bool)
+{
+    //kDebug() << "hasdefaultreoute changed";
+    RemoteActivatable* remote = static_cast<RemoteActivatable*>(sender());
+    if (remote) {
+        updateConnection(sourceForActivatable(remote), remote);
+    }
+}
+
+//SLOT(handleHasDefaultRouteChanged(bool))
 
 void NetworkManagementEngine::updateWireless()
 {
@@ -159,7 +218,7 @@ void NetworkManagementEngine::updateWireless()
     if (!rwn) {
 
     }
-    WirelessStatus* wirelessStatus = new WirelessStatus(rwn);
+    WirelessStatus* wirelessStatus = new WirelessStatus(rwn); // leak!!!
     wirelessStatus->setParent(remote);
     updateWireless(sourceForActivatable(remote), wirelessStatus);
 }
@@ -172,42 +231,12 @@ void NetworkManagementEngine::updateWirelessStrength(int s)
 
 void NetworkManagementEngine::updateWireless(const QString &source, WirelessStatus *wirelessStatus)
 {
-    QString _s = wirelessStatus->ssid();
-    setData(_s, "connectionName", wirelessStatus->ssid());
-    setData(_s, "connectionType", "Wireless");
-    setData(_s, "ssid", wirelessStatus->ssid());
-    setData(_s, "securityToolTip", wirelessStatus->securityTooltip());
-    setData(_s, "securityIcon", wirelessStatus->securityIcon());
-    setData(_s, "adhoc", wirelessStatus->isAdhoc());
-    scheduleSourcesUpdated();
-    /*
-    RemoteInterfaceConnection *remoteconnection = interfaceConnection();
-    if (remoteconnection) {
-        connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)),
-                SLOT(handleHasDefaultRouteChanged(bool)));
-        connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
-                SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
-    }
-
-    switch (state) {
-        //Knm::InterfaceConnectihon::ActivationState
-        case Knm::InterfaceConnection::Activated:
-            kDebug() << "activated";
-            //f.setBold(true);
-            //f.setItalic(false);
-            break;
-        case Knm::InterfaceConnection::Unknown:
-            kDebug() << "unknown";
-            //f.setBold(false);
-            //f.setItalic(false);
-            break;
-        case Knm::InterfaceConnection::Activating:
-            kDebug() << "activatING....";
-            //f.setBold(false);
-            //f.setItalic(true);
-    }
-    */
-
+    setData(source, "connectionName", wirelessStatus->ssid());
+    setData(source, "connectionType", "Wireless");
+    setData(source, "ssid", wirelessStatus->ssid());
+    setData(source, "securityToolTip", wirelessStatus->securityTooltip());
+    setData(source, "securityIcon", wirelessStatus->securityIcon());
+    setData(source, "adhoc", wirelessStatus->isAdhoc());
 }
 
 void NetworkManagementEngine::activatableRemoved(RemoteActivatable* remote)
