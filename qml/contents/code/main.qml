@@ -78,7 +78,7 @@ Item {
 
         delegate: Item {
             property int collapsedHeight: 38
-            property int expandedHeight: 96
+            property int expandedHeight: 72
             property string iconString: (typeof securityIcon != "undefined") ? securityIcon : "security-low"
             //property string iconString: "security-medium";
 
@@ -86,12 +86,15 @@ Item {
             height: collapsedHeight
             width: parent.width
             anchors.margins: 4
-            /*
+
             PlasmaWidgets.Frame {
                 id: itemFrame
-                anchors.fill: parent
+                anchors.top: citem.top
+                anchors.bottom: citem.bottom
+                height: citem.height
+                width: citem.width
             }
-            */
+
             PlasmaWidgets.IconWidget {
                 id: strengthIconWidget
                 height: collapsedHeight
@@ -111,7 +114,7 @@ Item {
             }
 
             PlasmaWidgets.IconWidget {
-                id: securityIconWidget
+                id: "securityIconWidget"
                 height: collapsedHeight
                 width: collapsedHeight
                 //height: 40
@@ -121,11 +124,19 @@ Item {
                 //anchors.left: mainText.right
                 //anchors.left: parent.left
                 //anchors.bottom: parent.bottom
-                opacity: .8
+                scale: 0.8
+                opacity: 0.3
 
                 Component.onCompleted: {
-                    if (typeof networkEngineSource.data[DataEngineSource]["securityIcon"] != "undefined") {
-                        setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
+                    try {
+                        //if (typeof networkEngineSource.data[DataEngineSource]["securityIcon"] != "undefined") {
+                            setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
+                        //}
+                    } catch (TypeError) {
+                        //print("oops");
+                        print(" TypeError" + mainText.text);
+                    } finally {
+                        //print(" Exception ignored in " + mainText.text);
                     }
                 }
                 onClicked: citem.state = (citem.state == "expanded") ? "collapsed" : "expanded"
@@ -153,7 +164,7 @@ Item {
                 font.pixelSize: mainText.font.pixelSize - 2
                 opacity: 0.4
                 anchors.top: mainText.bottom
-                anchors.left: strengthIconWidget.right
+                anchors.left: mainText.left
                 //anchors.bottom: parent.top
             }
 
@@ -164,7 +175,7 @@ Item {
                 //setIcon("kmail")
                 anchors.top: infoText.bottom
                 anchors.bottom: parent.bottom
-                anchors.left: strengthIconWidget.right
+                anchors.right: securityIconWidget.left
                 opacity: 0.0
 
                 onClicked: {
@@ -189,12 +200,14 @@ Item {
                     PropertyChanges {
                         target: connectButton
                         //visible: true
-                        opacity: .9
+                        opacity: 1.0
                     }
-                    //PropertyChanges {
-                    //    target: securityIconWidget
-                    //    opacity: 1.0
-                    //}
+                    PropertyChanges {
+                        //animation: buttonAnimation
+                        target: securityIconWidget
+                        scale: 1.0
+                        opacity: 1.0
+                    }
                 },
 
                 State {
@@ -208,30 +221,22 @@ Item {
                         target: connectButton
                         opacity: 0.0
                     }
-                    //PropertyChanges {
-                    //    target: securityIconWidget
-                    //    opacity: 0.0
-                    //}
+                    PropertyChanges {
+                        //animation: buttonAnimation
+                        scale: 0.8
+                        target: securityIconWidget
+                        opacity: 0.3
+                    }
                 }
             ]
 
             transitions: [
                 Transition {
                     PropertyAnimation {
-                        properties: "height"
-                        duration: 500;
+                        properties: "height,opacity,scale"
+                        duration: 400;
                         easing.type: Easing.InOutElastic;
                         easing.amplitude: 2.0; easing.period: 1.5
-                    }
-                },
-
-                Transition {
-                    PropertyAnimation {
-                        //id: buttonAnimation;
-                        properties: "opacity"
-                        duration: 2000;
-                        //easing.type: Easing.InOutElastic;
-                        //easing.amplitude: 2.0; easing.period: 1.5
                     }
                 }
             ]
@@ -245,7 +250,19 @@ Item {
                 }
             }
 
-            
+            function iconForSignalStrength(strength) {
+                if (strength > 80) {
+                    return "network-wireless-connnected-100";
+                } else if (strength > 60) {
+                    return "network-wireless-connnected-75";
+                } else if (strength > 30) {
+                    return "network-wireless-connnected-50";
+                } else if (strength > 10) {
+                    return "network-wireless-connnected-25";
+                }
+                return "network-wireless-connnected-00";
+            }
+
         }
     }
 
