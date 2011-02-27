@@ -234,11 +234,16 @@ void InterfaceDetailsWidget::getDetails()
             details->unlockRequired = modemNetworkIface->unlockRequired();
         }
 
-        Solid::Control::ModemGsmCardInterface *modemCardIface = giface->getModemCardIface();
+        /*
+	 * These calls are protectec by policy kit. Without proper configuration policy kit agent
+	 * will ask por password, which is bothering users (BUG #266807).
+	 * Plasma NM still does not use this information, so I will leave them
+	 * commented until I really need them.
+	Solid::Control::ModemGsmCardInterface *modemCardIface = giface->getModemCardIface();
         if (modemCardIface) {
             details->imei = modemCardIface->getImei();
             details->imsi = modemCardIface->getImsi();
-        }
+        }*/
     }
 #endif
 }
