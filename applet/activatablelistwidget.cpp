@@ -264,6 +264,7 @@ void ActivatableListWidget::listDisappeared()
     m_itemIndex.clear();
 
     delete m_hiddenItem;
+    m_hiddenItem = 0;
 }
 
 void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
