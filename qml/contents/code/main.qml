@@ -35,7 +35,7 @@ Item {
           interval: 0
           connectedSources: ["connections"]
           onDataChanged: {
-              console.log("data changed...")
+              //console.log("data changed...")
           }
           onSourceAdded: {
              if (source != "networkStatus") {
@@ -53,7 +53,11 @@ Item {
               //connectedSources = sources
               //connectSource("connections")
           }
-      }
+    }
+
+    PlasmaCore.Theme {
+        id: theme
+    }
 
     ListView {
         id: list
@@ -75,8 +79,8 @@ Item {
         delegate: Item {
             property int collapsedHeight: 38
             property int expandedHeight: 96
-            //property string iconString: securityIcon ? securityIcon : "security-medium";
-            property string iconString: "security-medium";
+            property string iconString: (typeof securityIcon != "undefined") ? securityIcon : "security-medium"
+            //property string iconString: "security-medium";
 
             id: citem
             height: collapsedHeight
@@ -95,7 +99,7 @@ Item {
                 anchors.left: parent.left
 
                 Component.onCompleted: {
-                    setIcon("network-wireless")
+                    setIcon("network-wireless");
                 }
                 onClicked: citem.state = (citem.state == "expanded") ? "collapsed" : "expanded"
 
@@ -109,11 +113,15 @@ Item {
                 anchors.right: parent.right
                 //anchors.left: parent.left
                 //anchors.bottom: parent.bottom
-                opacity: .3
+                opacity: .8
 
                 Component.onCompleted: {
-                    setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"])
-                    console.log("new sec icon")
+                    //securityIconWidget.setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
+                    //console.log("new sec icon" + networkEngineSource.data[DataEngineSource]["securityIcon"]);
+                    if (typeof networkEngineSource.data[DataEngineSource]["securityIcon"] != "undefined") {
+                        setIcon: networkEngineSource.data[DataEngineSource]["securityIcon"];
+                        print("ICON:" + networkEngineSource.data[DataEngineSource]["securityIcon"]);
+                    }
                 }
                 onClicked: citem.state = (citem.state == "expanded") ? "collapsed" : "expanded"
 
@@ -121,7 +129,7 @@ Item {
 
             Text {
                 id: mainText
-                text: connectionName;
+                text: networkEngineSource.data[DataEngineSource]["connectionName"];
                 anchors.top: parent.top
                 anchors.left: strengthIconWidget.right
                 anchors.right: parent.right
@@ -129,7 +137,14 @@ Item {
             Text {
                 id: infoText;
                 //text: "Wireless Network"
-                text: i18n("Security: ") + networkEngineSource.data[DataEngineSource]["securityToolTip"]
+                //text: i18n("Security: ") + networkEngineSource.data[DataEngineSource]["securityToolTip"]
+                text: {
+                    if (typeof networkEngineSource.data[DataEngineSource]["connectionType"] != "undefined") {
+                        return networkEngineSource.data[DataEngineSource]["connectionType"];
+                    }
+                    return "";
+                }
+                //text: connectionType
                 font.pixelSize: mainText.font.pixelSize - 2
                 opacity: 0.4
                 anchors.top: mainText.bottom
