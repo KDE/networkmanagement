@@ -33,6 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <networkinterfacemonitor.h>
 #include <sortedactivatablelist.h>
 #include <vpninterfaceconnectionprovider.h>
+#include <notificationmanager.h>
 
 #include <nmdbussettingsservice.h>
 #include <nmdbusactiveconnectionmonitor.h>
@@ -76,6 +77,8 @@ public:
     SortedActivatableList * sortedList;
 
     SessionAbstractedService * sessionAbstractedService;
+
+    NotificationManager * notificationManager;
 };
 
 NetworkManagementService::NetworkManagementService(QObject * parent, const QVariantList&)
@@ -101,6 +104,10 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->vpnInterfaceConnectionProvider = new VpnInterfaceConnectionProvider(d->connectionList, d->activatableList, d->activatableList);
     d->connectionList->registerConnectionHandler(d->vpnInterfaceConnectionProvider);
 
+    // watches events and creates KNotifications
+    d->notificationManager = new NotificationManager(this);
+    QObject::connect(this, SIGNAL(statusChanged(Solid::Networking::Status)), d->notificationManager, SLOT(statusChanged(Solid::Networking::Status)));
+
     d->nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(d->connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, d->connectionList);
 
     // there is a problem setting this as a child of connectionList or of activatableList since it has
@@ -115,6 +122,7 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 
     d->activatableList->registerObserver(d->nmSettingsService);
     d->activatableList->registerObserver(d->nmDBusConnectionProvider);
+    d->activatableList->registerObserver(d->notificationManager);
 
     // create ActiveConnectionMonitor after construction of NMDBusSettingsConnectionProvider and observer registrations 
     // because, activatableList is filled in NetworkInterfaceMonitor and updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has 
