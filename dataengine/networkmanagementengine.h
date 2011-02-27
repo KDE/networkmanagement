@@ -26,8 +26,17 @@
 
 
 class RemoteActivatableList;
+
 class RemoteActivatable;
 class RemoteInterfaceConnection;
+class RemoteInterfaceConnection;
+class RemoteWirelessInterfaceConnection;
+class RemoteWirelessNetwork;
+class RemoteUnconfiguredInterface;
+class RemoteVpnInterfaceConnection;
+class RemoteHiddenWirelessInterfaceConnection;
+class RemoteGsmInterfaceConnection;
+
 class WirelessStatus;
 
 class NetworkManagementEnginePrivate;
@@ -52,6 +61,29 @@ class NetworkManagementEngine : public Plasma::DataEngine
         void activationStateChanged(Knm::InterfaceConnection::ActivationState);
         void hasDefaultRouteChanged(bool);
 
+        void addInterfaceConnection(RemoteInterfaceConnection* remote);
+        void updateInterfaceConnection(RemoteInterfaceConnection* remote);
+
+        void addWirelessInterfaceConnection(RemoteWirelessInterfaceConnection* remote);
+        void updateWirelessInterfaceConnection(RemoteWirelessInterfaceConnection* remote);
+
+        void addRemoteWirelessNetwork(RemoteWirelessNetwork* remote);
+        void updateRemoteWirelessNetwork(RemoteWirelessNetwork* remote);
+
+        //void addHiddenWirelessInterfaceConnection(RemoteHiddenWirelessInterfaceConnection* remote);
+        //void updateHiddenWirelessInterfaceConnection(RemoteHiddenWirelessInterfaceConnection* remote);
+
+        void addUnconfiguredInterface(RemoteUnconfiguredInterface* remote);
+        void updateUnconfiguredInterface(RemoteUnconfiguredInterface* remote);
+
+        void addVpnInterfaceConnection(RemoteVpnInterfaceConnection* remote);
+        void updateVpnInterfaceConnection(RemoteVpnInterfaceConnection* remote);
+
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+        void addGsmInterfaceConnection(RemoteGsmInterfaceConnection* remote);
+        void updateGsmInterfaceConnection(RemoteGsmInterfaceConnection* remote);
+#endif
+
     protected:
         bool sourceRequestEvent(const QString &name);
 
@@ -59,6 +91,17 @@ class NetworkManagementEngine : public Plasma::DataEngine
         QString sourceForActivatable(RemoteActivatable* remote);
         void updateConnection(const QString &source, RemoteActivatable* remote);
         void updateWireless(const QString &source, WirelessStatus *wirelessStatus);
+        /*
+        enum ActivatableType {
+            InterfaceConnection,
+            WirelessInterfaceConnection,
+            WirelessNetwork,
+            UnconfiguredInterface,
+            VpnInterfaceConnection,
+            HiddenWirelessInterfaceConnection,
+            GsmInterfaceConnection
+        };
+        */
 
         NetworkManagementEnginePrivate* d;
 };

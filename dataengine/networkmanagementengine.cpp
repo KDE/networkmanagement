@@ -26,8 +26,11 @@
 #include "remoteactivatable.h"
 #include "remoteactivatablelist.h"
 #include "remoteinterfaceconnection.h"
+#include "remoteunconfiguredinterface.h"
+#include "remotewirelessinterfaceconnection.h"
 #include "remotewirelessnetwork.h"
 #include "remotegsminterfaceconnection.h"
+#include "remotevpninterfaceconnection.h"
 
 #include "../applet/wirelessstatus.h"
 
@@ -261,5 +264,79 @@ void NetworkManagementEngine::listAppeared()
     }
     //scheduleSourcesUpdated();
 }
+
+void NetworkManagementEngine::addInterfaceConnection(RemoteInterfaceConnection* remote)
+{
+
+}
+
+void NetworkManagementEngine::updateInterfaceConnection(RemoteInterfaceConnection* remote)
+{
+
+}
+
+
+void NetworkManagementEngine::addWirelessInterfaceConnection(RemoteWirelessInterfaceConnection* remote)
+{
+
+}
+
+void NetworkManagementEngine::updateWirelessInterfaceConnection(RemoteWirelessInterfaceConnection* remote)
+{
+
+}
+
+
+void NetworkManagementEngine::addRemoteWirelessNetwork(RemoteWirelessNetwork* remote)
+{
+
+}
+
+void NetworkManagementEngine::updateRemoteWirelessNetwork(RemoteWirelessNetwork* remote)
+{
+
+}
+
+
+//void addHiddenWirelessInterfaceConnection(RemoteHiddenWirelessInterfaceConnection* remote);
+//void updateHiddenWirelessInterfaceConnection(RemoteHiddenWirelessInterfaceConnection* remote);
+
+void NetworkManagementEngine::addUnconfiguredInterface(RemoteUnconfiguredInterface* remote)
+{
+
+}
+
+void NetworkManagementEngine::updateUnconfiguredInterface(RemoteUnconfiguredInterface* remote)
+{
+
+}
+
+
+void NetworkManagementEngine::addVpnInterfaceConnection(RemoteVpnInterfaceConnection* remote)
+{
+
+}
+
+void NetworkManagementEngine::updateVpnInterfaceConnection(RemoteVpnInterfaceConnection* remote)
+{
+
+}
+
+
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+
+void NetworkManagementEngine::addGsmInterfaceConnection(RemoteGsmInterfaceConnection* remote)
+{
+
+}
+
+void NetworkManagementEngine::updateGsmInterfaceConnection(RemoteGsmInterfaceConnection* remote)
+{
+
+}
+
+#endif
+
+
 
 #include "networkmanagementengine.moc"
