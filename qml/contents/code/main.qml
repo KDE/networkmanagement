@@ -35,17 +35,17 @@ Item {
           interval: 0
           connectedSources: ["connections"]
           onDataChanged: {
-              console.log("data changed...")
+              //console.log("data changed...")
           }
           onSourceAdded: {
              if (source != "networkStatus") {
-                console.log("QML addedd ......." + source)
+                //console.log("QML addedd ......." + source)
                 connectSource(source)
              }
           }
           onSourceRemoved: {
              if (source != "networkStatus") {
-                console.log("QML removed ......." + source)
+                //console.log("QML removed ......." + source)
                 disconnectSource(source)
              }
           }
@@ -53,7 +53,11 @@ Item {
               //connectedSources = sources
               //connectSource("connections")
           }
-      }
+    }
+
+    PlasmaCore.Theme {
+        id: theme
+    }
 
     ListView {
         id: list
@@ -74,17 +78,21 @@ Item {
 
         delegate: Item {
             property int collapsedHeight: 38
-            property int expandedHeight: 96
-            //property string iconString: securityIcon ? securityIcon : "security-medium";
-            property string iconString: "security-medium";
+            property int expandedHeight: 72
+            property string iconString: (typeof securityIcon != "undefined") ? securityIcon : "security-low"
+            //property string iconString: "security-medium";
 
             id: citem
             height: collapsedHeight
+            width: parent.width
             anchors.margins: 4
 
             PlasmaWidgets.Frame {
                 id: itemFrame
-                anchors.fill: parent
+                anchors.top: citem.top
+                anchors.bottom: citem.bottom
+                height: citem.height
+                width: citem.width
             }
 
             PlasmaWidgets.IconWidget {
@@ -95,25 +103,41 @@ Item {
                 anchors.left: parent.left
 
                 Component.onCompleted: {
-                    setIcon("network-wireless")
+                    //if (typeof networkEngineSource.data[DataEngineSource]["securityIcon"] != "undefined") {
+                    //    setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
+                    //} else {
+                        setIcon("network-wireless");
+                    //}
                 }
                 onClicked: citem.state = (citem.state == "expanded") ? "collapsed" : "expanded"
 
             }
 
             PlasmaWidgets.IconWidget {
-                id: securityIconWidget
+                id: "securityIconWidget"
                 height: collapsedHeight
                 width: collapsedHeight
-                anchors.top: parent.top
-                anchors.right: parent.right
+                //height: 40
+                //width: 50
+                anchors.top: citem.top
+                anchors.right: citem.right
+                //anchors.left: mainText.right
                 //anchors.left: parent.left
                 //anchors.bottom: parent.bottom
-                opacity: .3
+                scale: 0.8
+                opacity: 0.3
 
                 Component.onCompleted: {
-                    setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"])
-                    console.log("new sec icon")
+                    try {
+                        //if (typeof networkEngineSource.data[DataEngineSource]["securityIcon"] != "undefined") {
+                            setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
+                        //}
+                    } catch (TypeError) {
+                        //print("oops");
+                        print(" TypeError" + mainText.text);
+                    } finally {
+                        //print(" Exception ignored in " + mainText.text);
+                    }
                 }
                 onClicked: citem.state = (citem.state == "expanded") ? "collapsed" : "expanded"
 
@@ -121,19 +145,26 @@ Item {
 
             Text {
                 id: mainText
-                text: connectionName;
+                text: networkEngineSource.data[DataEngineSource]["connectionName"];
                 anchors.top: parent.top
                 anchors.left: strengthIconWidget.right
-                anchors.right: parent.right
+                //anchors.right: securityIconWidget.left
             }
             Text {
                 id: infoText;
                 //text: "Wireless Network"
-                text: i18n("Security: ") + networkEngineSource.data[DataEngineSource]["securityToolTip"]
+                //text: i18n("Security: ") + networkEngineSource.data[DataEngineSource]["securityToolTip"]
+                text: {
+                    if (typeof networkEngineSource.data[DataEngineSource]["connectionType"] != "undefined") {
+                        return networkEngineSource.data[DataEngineSource]["connectionType"];
+                    }
+                    return "";
+                }
+                //text: connectionType
                 font.pixelSize: mainText.font.pixelSize - 2
                 opacity: 0.4
                 anchors.top: mainText.bottom
-                anchors.left: strengthIconWidget.right
+                anchors.left: mainText.left
                 //anchors.bottom: parent.top
             }
 
@@ -141,10 +172,10 @@ Item {
                 id: connectButton
                 text: "Connect"
                 height: 0
-                //setIcon: "kmail"
+                //setIcon("kmail")
                 anchors.top: infoText.bottom
                 anchors.bottom: parent.bottom
-                anchors.left: strengthIconWidget.right
+                anchors.right: securityIconWidget.left
                 opacity: 0.0
 
                 onClicked: {
@@ -169,10 +200,12 @@ Item {
                     PropertyChanges {
                         target: connectButton
                         //visible: true
-                        opacity: .9
+                        opacity: 1.0
                     }
                     PropertyChanges {
+                        //animation: buttonAnimation
                         target: securityIconWidget
+                        scale: 1.0
                         opacity: 1.0
                     }
                 },
@@ -189,8 +222,10 @@ Item {
                         opacity: 0.0
                     }
                     PropertyChanges {
+                        //animation: buttonAnimation
+                        scale: 0.8
                         target: securityIconWidget
-                        opacity: 0.0
+                        opacity: 0.3
                     }
                 }
             ]
@@ -198,24 +233,14 @@ Item {
             transitions: [
                 Transition {
                     PropertyAnimation {
-                        properties: "height"
-                        duration: 500;
+                        properties: "height,opacity,scale"
+                        duration: 400;
                         easing.type: Easing.InOutElastic;
                         easing.amplitude: 2.0; easing.period: 1.5
                     }
-                },
-
-                Transition {
-                    PropertyAnimation {
-                        //id: buttonAnimation;
-                        properties: "opacity"
-                        duration: 2000;
-                        //easing.type: Easing.InOutElastic;
-                        //easing.amplitude: 2.0; easing.period: 1.5
-                    }
                 }
             ]
-            /*
+
             MouseArea {
                 anchors.fill: parent
 
@@ -224,7 +249,20 @@ Item {
                     console.log("MA clicked, citem state" + citem.state );
                 }
             }
-            */
+
+            function iconForSignalStrength(strength) {
+                if (strength > 80) {
+                    return "network-wireless-connnected-100";
+                } else if (strength > 60) {
+                    return "network-wireless-connnected-75";
+                } else if (strength > 30) {
+                    return "network-wireless-connnected-50";
+                } else if (strength > 10) {
+                    return "network-wireless-connnected-25";
+                }
+                return "network-wireless-connnected-00";
+            }
+
         }
     }
 
