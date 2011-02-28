@@ -25,7 +25,7 @@ using namespace Knm;
 
 InterfaceConnection::InterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent)
 : Activatable(type, deviceUni, parent), m_type(Knm::Connection::Wired),
-  m_state(InterfaceConnection::Unknown), m_hasDefaultRoute(false)
+  m_state(InterfaceConnection::Unknown), m_oldState(InterfaceConnection::Unknown), m_hasDefaultRoute(false)
 {
 }
 
@@ -78,6 +78,7 @@ QString InterfaceConnection::iconName() const
 void InterfaceConnection::setActivationState(InterfaceConnection::ActivationState state)
 {
     if (m_state != state) {
+        m_oldState = m_state;
         m_state = state;
         emit changed();
         emit activationStateChanged(m_state);
@@ -87,6 +88,11 @@ void InterfaceConnection::setActivationState(InterfaceConnection::ActivationStat
 InterfaceConnection::ActivationState InterfaceConnection::activationState() const
 {
     return m_state;
+}
+
+InterfaceConnection::ActivationState InterfaceConnection::oldActivationState() const
+{
+    return m_oldState;
 }
 
 void InterfaceConnection::setHasDefaultRoute(bool hasDefault)
