@@ -100,6 +100,7 @@ public:
 
     Solid::Control::WirelessNetworkInterface * iface;
     Solid::Control::AccessPoint * activeAccessPoint;
+    RemoteActivatable* activatable;
 };
 
 
@@ -107,7 +108,7 @@ WirelessStatus::WirelessStatus(RemoteWirelessNetwork * remote)
 : QObject(), d_ptr(new WirelessStatusPrivate())
 {
     Q_D(WirelessStatus);
-
+    d->activatable = remote;
     RemoteWirelessObject * wobj  = static_cast<RemoteWirelessObject*>(remote);
     d->init(wobj);
 
@@ -118,6 +119,7 @@ WirelessStatus::WirelessStatus(RemoteWirelessNetwork * remote)
 
     //connect(item->wirelessInterfaceConnection(), SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
 }
+
 void WirelessStatus::init(RemoteWirelessObject* wobj)
 {
     Q_D(WirelessStatus);
@@ -145,6 +147,12 @@ int WirelessStatus::strength()
 {
     Q_D(WirelessStatus);
     return d->strength;
+}
+
+RemoteActivatable* WirelessStatus::activatable()
+{
+    Q_D(WirelessStatus);
+    return d->activatable;
 }
 
 QString WirelessStatus::securityIcon()

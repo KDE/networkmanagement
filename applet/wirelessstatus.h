@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include <solid/control/wirelessnetworkinterface.h>
 
+class RemoteActivatable;
 class RemoteWirelessNetwork;
 class RemoteWirelessObject;
 class WirelessInterfaceConnectionItem;
@@ -47,6 +48,7 @@ Q_OBJECT
         WirelessStatus(Solid::Control::WirelessNetworkInterface* iface);
         ~WirelessStatus();
         void init(RemoteWirelessObject* obj);
+        RemoteActivatable* activatable();
 
         int strength();
         QString ssid();

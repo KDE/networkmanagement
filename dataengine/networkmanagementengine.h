@@ -22,10 +22,21 @@
 #define NETWORKMANAGEMENTENGINE_H
 
 #include <plasma/dataengine.h>
+#include "remoteinterfaceconnection.h"
 
 
 class RemoteActivatableList;
+
 class RemoteActivatable;
+class RemoteInterfaceConnection;
+class RemoteInterfaceConnection;
+class RemoteWirelessInterfaceConnection;
+class RemoteWirelessNetwork;
+class RemoteUnconfiguredInterface;
+class RemoteVpnInterfaceConnection;
+class RemoteHiddenWirelessInterfaceConnection;
+class RemoteGsmInterfaceConnection;
+
 class WirelessStatus;
 
 class NetworkManagementEnginePrivate;
@@ -45,17 +56,61 @@ class NetworkManagementEngine : public Plasma::DataEngine
         void activatableRemoved(RemoteActivatable*);
         void listDisappeared();
         void listAppeared();
-        void updateWireless();
-        void updateWirelessStrength(int s);
+        void activationStateChanged(Knm::InterfaceConnection::ActivationState); // for debugging
+
+        void addActivatable(RemoteActivatable* remote);
+        void updateActivatable(RemoteActivatable* remote = 0);
+
+        void addInterfaceConnection(RemoteActivatable* remote);
+        void updateInterfaceConnection(RemoteActivatable* remote = 0);
+
+        void addWirelessInterfaceConnection(RemoteActivatable* remote);
+        void updateWirelessInterfaceConnection(RemoteActivatable* remote = 0);
+
+        void addWirelessNetwork(RemoteActivatable* remote);
+        void updateWirelessNetwork(RemoteActivatable* remote = 0);
+
+        void addHiddenWirelessInterfaceConnection(RemoteActivatable* remote = 0);
+        void updateHiddenWirelessInterfaceConnection(RemoteActivatable* remote);
+
+        void updateWirelessStatus(const QString &source, WirelessStatus *wirelessStatus);
+
+        void addUnconfiguredInterface(RemoteActivatable* remote);
+        void updateUnconfiguredInterface(RemoteActivatable* remote = 0);
+
+        void addVpnInterfaceConnection(RemoteActivatable* remote);
+        void updateVpnInterfaceConnection(RemoteActivatable* remote = 0);
+
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+        void addGsmInterfaceConnection(RemoteActivatable* remote);
+        void updateGsmInterfaceConnection(RemoteActivatable* remote = 0);
+#endif
 
     protected:
         bool sourceRequestEvent(const QString &name);
 
     private:
-        QString sourceForActivatable(RemoteActivatable* remote);
-        void updateWireless(const QString &source, WirelessStatus *wirelessStatus);
+        //QString sourceForActivatable(RemoteActivatable* remote);
+        QString source(RemoteActivatable* remote);
+        //void updateConnection(const QString &source, RemoteActivatable* remote);
+        //void updateWireless(const QString &source, WirelessStatus *wirelessStatus);
+        /*
+        enum ActivatableType {
+            InterfaceConnection = RemoteActivatable
+            WirelessInterfaceConnection = RemoteInterfaceConnection, WirelessObject
+            WirelessNetwork,
+            UnconfiguredInterface = RemoteActivatable
+            VpnInterfaceConnection = RemoteInterfaceConnection,
+            HiddenWirelessInterfaceConnection,
+            GsmInterfaceConnection = RemoteInterfaceConnection
+
+            WirelessObject = 
+        };
+        */
 
         NetworkManagementEnginePrivate* d;
+//public slots:
+    //void updateWirelessNetwork();
 };
 
 K_EXPORT_PLASMA_DATAENGINE(networkmanagementengine, NetworkManagementEngine)
