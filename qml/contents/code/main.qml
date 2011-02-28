@@ -145,7 +145,13 @@ Item {
 
             Text {
                 id: mainText
-                text: networkEngineSource.data[DataEngineSource]["connectionName"];
+                text: {
+                    if (typeof networkEngineSource.data[DataEngineSource]["connectionName"] != "undefined") {
+                        networkEngineSource.data[DataEngineSource]["connectionName"]
+                    } else{
+                        networkEngineSource.data[DataEngineSource]["ssid"]
+                    }
+                }
                 anchors.top: parent.top
                 anchors.left: strengthIconWidget.right
                 //anchors.right: securityIconWidget.left
