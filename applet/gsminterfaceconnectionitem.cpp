@@ -76,13 +76,14 @@ void GsmInterfaceConnectionItem::setupItem()
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setAcceptsHoverEvents(false);
-    m_connectButton->setIcon("network-wired");
     if (interfaceConnection()) {
         m_connectButton->setIcon(interfaceConnection()->iconName());
         setAccessTechnology(m_remote->getAccessTechnology());
         handleHasDefaultRouteChanged(interfaceConnection()->hasDefaultRoute());
         QAction *a = new QAction(KIcon("emblem-favorite"), QString(), m_connectButton);
         m_connectButton->addIconAction(a);
+    } else {
+        m_connectButton->setIcon("network-wired");
     }
     m_connectButton->setMinimumWidth(160);
     m_connectButton->setOrientation(Qt::Horizontal);
