@@ -56,10 +56,7 @@ class NetworkManagementEngine : public Plasma::DataEngine
         void activatableRemoved(RemoteActivatable*);
         void listDisappeared();
         void listAppeared();
-        void updateWireless();
-        void updateWirelessStrength(int s);
-        void activationStateChanged(Knm::InterfaceConnection::ActivationState);
-        void hasDefaultRouteChanged(bool);
+        void activationStateChanged(Knm::InterfaceConnection::ActivationState); // for debugging
 
         void addActivatable(RemoteActivatable* remote);
         void updateActivatable(RemoteActivatable* remote = 0);
@@ -79,24 +76,24 @@ class NetworkManagementEngine : public Plasma::DataEngine
         void updateWirelessStatus(const QString &source, WirelessStatus *wirelessStatus);
 
         void addUnconfiguredInterface(RemoteActivatable* remote);
-        void updateUnconfiguredInterface(RemoteActivatable* remote);
+        void updateUnconfiguredInterface(RemoteActivatable* remote = 0);
 
         void addVpnInterfaceConnection(RemoteActivatable* remote);
-        void updateVpnInterfaceConnection(RemoteActivatable* remote);
+        void updateVpnInterfaceConnection(RemoteActivatable* remote = 0);
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
         void addGsmInterfaceConnection(RemoteActivatable* remote);
-        void updateGsmInterfaceConnection(RemoteActivatable* remote);
+        void updateGsmInterfaceConnection(RemoteActivatable* remote = 0);
 #endif
 
     protected:
         bool sourceRequestEvent(const QString &name);
 
     private:
-        QString sourceForActivatable(RemoteActivatable* remote);
+        //QString sourceForActivatable(RemoteActivatable* remote);
         QString source(RemoteActivatable* remote);
-        void updateConnection(const QString &source, RemoteActivatable* remote);
-        void updateWireless(const QString &source, WirelessStatus *wirelessStatus);
+        //void updateConnection(const QString &source, RemoteActivatable* remote);
+        //void updateWireless(const QString &source, WirelessStatus *wirelessStatus);
         /*
         enum ActivatableType {
             InterfaceConnection = RemoteActivatable
