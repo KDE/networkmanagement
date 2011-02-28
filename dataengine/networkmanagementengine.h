@@ -76,6 +76,8 @@ class NetworkManagementEngine : public Plasma::DataEngine
         void addHiddenWirelessInterfaceConnection(RemoteActivatable* remote = 0);
         void updateHiddenWirelessInterfaceConnection(RemoteActivatable* remote);
 
+        void updateWirelessStatus(const QString &source, WirelessStatus *wirelessStatus);
+
         void addUnconfiguredInterface(RemoteActivatable* remote);
         void updateUnconfiguredInterface(RemoteActivatable* remote);
 
@@ -110,6 +112,8 @@ class NetworkManagementEngine : public Plasma::DataEngine
         */
 
         NetworkManagementEnginePrivate* d;
+//public slots:
+    //void updateWirelessNetwork();
 };
 
 K_EXPORT_PLASMA_DATAENGINE(networkmanagementengine, NetworkManagementEngine)
