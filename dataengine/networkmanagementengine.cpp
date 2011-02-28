@@ -265,34 +265,44 @@ void NetworkManagementEngine::listAppeared()
     //scheduleSourcesUpdated();
 }
 
-void NetworkManagementEngine::addInterfaceConnection(RemoteInterfaceConnection* remote)
+void NetworkManagementEngine::addActivatable(RemoteActivatable* remote)
 {
 
 }
 
-void NetworkManagementEngine::updateInterfaceConnection(RemoteInterfaceConnection* remote)
-{
-
-}
-
-
-void NetworkManagementEngine::addWirelessInterfaceConnection(RemoteWirelessInterfaceConnection* remote)
-{
-
-}
-
-void NetworkManagementEngine::updateWirelessInterfaceConnection(RemoteWirelessInterfaceConnection* remote)
+void NetworkManagementEngine::updateActivatable(RemoteActivatable* remote)
 {
 
 }
 
 
-void NetworkManagementEngine::addRemoteWirelessNetwork(RemoteWirelessNetwork* remote)
+void NetworkManagementEngine::addInterfaceConnection(RemoteActivatable* remote)
 {
 
 }
 
-void NetworkManagementEngine::updateRemoteWirelessNetwork(RemoteWirelessNetwork* remote)
+void NetworkManagementEngine::updateInterfaceConnection(RemoteActivatable* remote)
+{
+
+}
+
+void NetworkManagementEngine::addWirelessInterfaceConnection(RemoteActivatable* remote)
+{
+
+}
+
+void NetworkManagementEngine::updateWirelessInterfaceConnection(RemoteActivatable* remote)
+{
+
+}
+
+
+void NetworkManagementEngine::addRemoteWirelessNetwork(RemoteActivatable* remote)
+{
+
+}
+
+void NetworkManagementEngine::updateRemoteWirelessNetwork(RemoteActivatable* remote)
 {
 
 }
@@ -301,23 +311,23 @@ void NetworkManagementEngine::updateRemoteWirelessNetwork(RemoteWirelessNetwork*
 //void addHiddenWirelessInterfaceConnection(RemoteHiddenWirelessInterfaceConnection* remote);
 //void updateHiddenWirelessInterfaceConnection(RemoteHiddenWirelessInterfaceConnection* remote);
 
-void NetworkManagementEngine::addUnconfiguredInterface(RemoteUnconfiguredInterface* remote)
+void NetworkManagementEngine::addUnconfiguredInterface(RemoteActivatable* remote)
 {
 
 }
 
-void NetworkManagementEngine::updateUnconfiguredInterface(RemoteUnconfiguredInterface* remote)
+void NetworkManagementEngine::updateUnconfiguredInterface(RemoteActivatable* remote)
 {
 
 }
 
 
-void NetworkManagementEngine::addVpnInterfaceConnection(RemoteVpnInterfaceConnection* remote)
+void NetworkManagementEngine::addVpnInterfaceConnection(RemoteActivatable* remote)
 {
 
 }
 
-void NetworkManagementEngine::updateVpnInterfaceConnection(RemoteVpnInterfaceConnection* remote)
+void NetworkManagementEngine::updateVpnInterfaceConnection(RemoteActivatable* remote)
 {
 
 }
@@ -325,12 +335,12 @@ void NetworkManagementEngine::updateVpnInterfaceConnection(RemoteVpnInterfaceCon
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
 
-void NetworkManagementEngine::addGsmInterfaceConnection(RemoteGsmInterfaceConnection* remote)
+void NetworkManagementEngine::addGsmInterfaceConnection(RemoteActivatable* remote)
 {
 
 }
 
-void NetworkManagementEngine::updateGsmInterfaceConnection(RemoteGsmInterfaceConnection* remote)
+void NetworkManagementEngine::updateGsmInterfaceConnection(RemoteActivatable* remote)
 {
 
 }

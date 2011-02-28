@@ -61,27 +61,30 @@ class NetworkManagementEngine : public Plasma::DataEngine
         void activationStateChanged(Knm::InterfaceConnection::ActivationState);
         void hasDefaultRouteChanged(bool);
 
-        void addInterfaceConnection(RemoteInterfaceConnection* remote);
-        void updateInterfaceConnection(RemoteInterfaceConnection* remote);
+        void addActivatable(RemoteActivatable* remote);
+        void updateActivatable(RemoteActivatable* remote = 0);
 
-        void addWirelessInterfaceConnection(RemoteWirelessInterfaceConnection* remote);
-        void updateWirelessInterfaceConnection(RemoteWirelessInterfaceConnection* remote);
+        void addInterfaceConnection(RemoteActivatable* remote);
+        void updateInterfaceConnection(RemoteActivatable* remote = 0);
 
-        void addRemoteWirelessNetwork(RemoteWirelessNetwork* remote);
-        void updateRemoteWirelessNetwork(RemoteWirelessNetwork* remote);
+        void addWirelessInterfaceConnection(RemoteActivatable* remote);
+        void updateWirelessInterfaceConnection(RemoteActivatable* remote = 0);
 
-        //void addHiddenWirelessInterfaceConnection(RemoteHiddenWirelessInterfaceConnection* remote);
-        //void updateHiddenWirelessInterfaceConnection(RemoteHiddenWirelessInterfaceConnection* remote);
+        void addRemoteWirelessNetwork(RemoteActivatable* remote);
+        void updateRemoteWirelessNetwork(RemoteActivatable* remote = 0);
 
-        void addUnconfiguredInterface(RemoteUnconfiguredInterface* remote);
-        void updateUnconfiguredInterface(RemoteUnconfiguredInterface* remote);
+        //void addHiddenWirelessInterfaceConnection(RemoteActivatable* remote);
+        //void updateHiddenWirelessInterfaceConnection(RemoteActivatable* remote);
 
-        void addVpnInterfaceConnection(RemoteVpnInterfaceConnection* remote);
-        void updateVpnInterfaceConnection(RemoteVpnInterfaceConnection* remote);
+        void addUnconfiguredInterface(RemoteActivatable* remote);
+        void updateUnconfiguredInterface(RemoteActivatable* remote);
+
+        void addVpnInterfaceConnection(RemoteActivatable* remote);
+        void updateVpnInterfaceConnection(RemoteActivatable* remote);
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
-        void addGsmInterfaceConnection(RemoteGsmInterfaceConnection* remote);
-        void updateGsmInterfaceConnection(RemoteGsmInterfaceConnection* remote);
+        void addGsmInterfaceConnection(RemoteActivatable* remote);
+        void updateGsmInterfaceConnection(RemoteActivatable* remote);
 #endif
 
     protected:
@@ -93,13 +96,15 @@ class NetworkManagementEngine : public Plasma::DataEngine
         void updateWireless(const QString &source, WirelessStatus *wirelessStatus);
         /*
         enum ActivatableType {
-            InterfaceConnection,
-            WirelessInterfaceConnection,
+            InterfaceConnection = RemoteActivatable
+            WirelessInterfaceConnection = RemoteInterfaceConnection, WirelessObject
             WirelessNetwork,
-            UnconfiguredInterface,
-            VpnInterfaceConnection,
+            UnconfiguredInterface = RemoteActivatable
+            VpnInterfaceConnection = RemoteInterfaceConnection,
             HiddenWirelessInterfaceConnection,
-            GsmInterfaceConnection
+            GsmInterfaceConnection = RemoteInterfaceConnection
+
+            WirelessObject = 
         };
         */
 
