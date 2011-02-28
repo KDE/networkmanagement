@@ -70,11 +70,11 @@ class NetworkManagementEngine : public Plasma::DataEngine
         void addWirelessInterfaceConnection(RemoteActivatable* remote);
         void updateWirelessInterfaceConnection(RemoteActivatable* remote = 0);
 
-        void addRemoteWirelessNetwork(RemoteActivatable* remote);
-        void updateRemoteWirelessNetwork(RemoteActivatable* remote = 0);
+        void addWirelessNetwork(RemoteActivatable* remote);
+        void updateWirelessNetwork(RemoteActivatable* remote = 0);
 
-        //void addHiddenWirelessInterfaceConnection(RemoteActivatable* remote);
-        //void updateHiddenWirelessInterfaceConnection(RemoteActivatable* remote);
+        void addHiddenWirelessInterfaceConnection(RemoteActivatable* remote = 0);
+        void updateHiddenWirelessInterfaceConnection(RemoteActivatable* remote);
 
         void addUnconfiguredInterface(RemoteActivatable* remote);
         void updateUnconfiguredInterface(RemoteActivatable* remote);
@@ -92,6 +92,7 @@ class NetworkManagementEngine : public Plasma::DataEngine
 
     private:
         QString sourceForActivatable(RemoteActivatable* remote);
+        QString source(RemoteActivatable* remote);
         void updateConnection(const QString &source, RemoteActivatable* remote);
         void updateWireless(const QString &source, WirelessStatus *wirelessStatus);
         /*

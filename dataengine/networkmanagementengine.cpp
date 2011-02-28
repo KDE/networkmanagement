@@ -101,55 +101,76 @@ bool NetworkManagementEngine::sourceRequestEvent(const QString &name)
 
 QString NetworkManagementEngine::sourceForActivatable(RemoteActivatable* remote)
 {
+    // deprecated
+    return d->sources[remote];
+}
+
+QString NetworkManagementEngine::source(RemoteActivatable* remote)
+{
     return d->sources[remote];
 }
 
 void NetworkManagementEngine::activatableAdded(RemoteActivatable* remote)
 {
-    d->i++;
+    //d->i++;
     kDebug() << "activatableAdded" << d->i << "/" << d->activatables->activatables().count();
+
+    addActivatable(remote);
+
     QString source = sourceForActivatable(remote);
 
-    //setData(source, "someRandomString", "thrilleeeeeeeerrrr!");
-    d->sources[remote] = sourceForActivatable(remote);
+    //d->sources[remote] = sourceForActivatable(remote);
 
     switch (remote->activatableType()) {
         case Knm::Activatable::WirelessNetwork:
+        {
+            addWirelessNetwork(remote);
+            break;
+        }
         case Knm::Activatable::WirelessInterfaceConnection:
         { // Wireless
+            addWirelessInterfaceConnection(remote);
+            /*
             RemoteWirelessNetwork* rwn = static_cast<RemoteWirelessNetwork*>(remote);
             WirelessStatus* wirelessStatus = new WirelessStatus(rwn);
             wirelessStatus->setParent(remote);
-            d->sources[remote] = wirelessStatus->ssid();
+            d->sources[remote] = remote->uuid();
             connect(wirelessStatus, SIGNAL(strengthChanged(int)), this, SLOT(updateWirelessStrength(int)));
             connect(rwn, SIGNAL(changed()), SLOT(updateWireless()));
             QString source = sourceForActivatable(rwn);
             updateConnection(sourceForActivatable(remote), remote);
             updateWireless(sourceForActivatable(remote), wirelessStatus);
+            */
             break;
         }
         case Knm::Activatable::InterfaceConnection:
+        {
+            addInterfaceConnection(remote);
+            break;
+        }
         case Knm::Activatable::VpnInterfaceConnection:
         {
-            //ai = new InterfaceConnectionItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
+            addVpnInterfaceConnection(remote);
             break;
         }
         case Knm::Activatable::HiddenWirelessInterfaceConnection:
         {
-            kWarning() << "This is handled differently, this codepath should be disabled.";
-            //ai = new HiddenWirelessNetworkItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
+            kWarning() << "Hidden wireless networks not supported :/";
+            addHiddenWirelessInterfaceConnection(remote);
             break;
         }
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
         case Knm::Activatable::GsmInterfaceConnection:
         { // Gsm (2G, 3G, etc)
-            //GsmInterfaceConnectionItem* gici = new GsmInterfaceConnectionItem(static_cast<RemoteGsmInterfaceConnection*>(activatable), m_widget);
-            //ai = gici;
+            addGsmInterfaceConnection(remote);
             break;
         }
 #endif
         default:
+        {
+            addActivatable(remote);
             break;
+        }
     }
 
     scheduleSourcesUpdated();
@@ -267,69 +288,114 @@ void NetworkManagementEngine::listAppeared()
 
 void NetworkManagementEngine::addActivatable(RemoteActivatable* remote)
 {
-
+    // create a unique-per-source uuid and use that as source string
+    QString uuid = QUuid::createUuid();
+    while(d->sources.values().contains(uuid)) {
+        uuid = QUuid::createUuid();
+    }
+    d->sources[remote] = uuid;
 }
 
 void NetworkManagementEngine::updateActivatable(RemoteActivatable* remote)
 {
+    if (!remote) {
+        // handling for SLOT usage
+        remote = qobject_cast<RemoteActivatable*>(sender());
+    }
 
+    setData(source(remote), "deviceUni", remote->deviceUni());
 }
 
 
 void NetworkManagementEngine::addInterfaceConnection(RemoteActivatable* remote)
 {
 
+
+    updateActivatable(remote);
 }
 
 void NetworkManagementEngine::updateInterfaceConnection(RemoteActivatable* remote)
 {
+    if (!remote) {
+        // handling for SLOT usage
+        remote = qobject_cast<RemoteActivatable*>(sender());
+    }
+    if (!remote) {
+        // invalid caller
+        return;
+    }
+    RemoteInterfaceConnection* remoteconnection = qobject_cast<RemoteInterfaceConnection*>(remote);
+    if (!remoteconnection) {
+        kDebug() << "cast RemoteActivatable -> RemoteConnection failed";
+        return;
+    }
 
+    connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)),
+            SLOT(hasDefaultRouteChanged(bool)));
+    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
+            SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
+
+    updateActivatable(remote);
 }
 
 void NetworkManagementEngine::addWirelessInterfaceConnection(RemoteActivatable* remote)
 {
 
+    updateWirelessInterfaceConnection(remote);
 }
 
 void NetworkManagementEngine::updateWirelessInterfaceConnection(RemoteActivatable* remote)
 {
 
+    updateInterfaceConnection(remote);
 }
 
 
-void NetworkManagementEngine::addRemoteWirelessNetwork(RemoteActivatable* remote)
+void NetworkManagementEngine::addWirelessNetwork(RemoteActivatable* remote)
 {
 
+    updateWirelessNetwork(remote);
 }
 
-void NetworkManagementEngine::updateRemoteWirelessNetwork(RemoteActivatable* remote)
+void NetworkManagementEngine::updateWirelessNetwork(RemoteActivatable* remote)
 {
 
+    updateActivatable(remote);
 }
 
+void NetworkManagementEngine::addHiddenWirelessInterfaceConnection(RemoteActivatable* remote)
+{
+    Q_UNUSED(remote);
+}
 
-//void addHiddenWirelessInterfaceConnection(RemoteHiddenWirelessInterfaceConnection* remote);
-//void updateHiddenWirelessInterfaceConnection(RemoteHiddenWirelessInterfaceConnection* remote);
+void NetworkManagementEngine::updateHiddenWirelessInterfaceConnection(RemoteActivatable* remote)
+{
+    Q_UNUSED(remote);
+}
 
 void NetworkManagementEngine::addUnconfiguredInterface(RemoteActivatable* remote)
 {
 
+    updateUnconfiguredInterface(remote);
 }
 
 void NetworkManagementEngine::updateUnconfiguredInterface(RemoteActivatable* remote)
 {
 
+    updateActivatable(remote);
 }
 
 
 void NetworkManagementEngine::addVpnInterfaceConnection(RemoteActivatable* remote)
 {
 
+    updateVpnInterfaceConnection(remote);
 }
 
 void NetworkManagementEngine::updateVpnInterfaceConnection(RemoteActivatable* remote)
 {
 
+    updateInterfaceConnection(remote);
 }
 
 
@@ -338,11 +404,13 @@ void NetworkManagementEngine::updateVpnInterfaceConnection(RemoteActivatable* re
 void NetworkManagementEngine::addGsmInterfaceConnection(RemoteActivatable* remote)
 {
 
+    updateGsmInterfaceConnection(remote);
 }
 
 void NetworkManagementEngine::updateGsmInterfaceConnection(RemoteActivatable* remote)
 {
 
+    updateInterfaceConnection(remote);
 }
 
 #endif
