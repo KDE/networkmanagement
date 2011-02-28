@@ -61,6 +61,12 @@ void InterfaceNotificationHost::addInterfaceConnection(Knm::InterfaceConnection 
         m_interfaceConnections.insert(ic);
         connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
                 this, SLOT(interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState)));
+
+        switch (ic->connectionType()) {
+            case Knm::Connection::Wireless: connect(ic, SIGNAL(strengthChanged(int)), this, SLOT(strengthChanged(int))); break;
+            case Knm::Connection::Gsm: connect(ic, SIGNAL(signalQualityChanged(int)), this, SLOT(strengthChanged(int))); break;
+            default: break;
+        }
     }
 }
 
@@ -71,6 +77,14 @@ QString InterfaceNotificationHost::label() const
 
 void InterfaceNotificationHost::removeInterfaceConnection(Knm::InterfaceConnection * ic)
 {
+    if (ic) {
+        switch (ic->connectionType()) {
+            case Knm::Connection::Wireless: connect(ic, SIGNAL(strengthChanged(int)), this, SLOT(strengthChanged(int))); break;
+            case Knm::Connection::Gsm: connect(ic, SIGNAL(signalQualityChanged(int)), this, SLOT(strengthChanged(int))); break;
+            default: break;
+        }
+    }
+
     m_interfaceConnections.remove(ic);
     m_activating.remove(ic);
 }
@@ -85,19 +99,27 @@ void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::I
         case Knm::InterfaceConnection::Activating: 
             kDebug() << ic->connectionName() << "is activating";
             m_activating.insert(ic);
-    	    KNotification::event(Event::Connecting, m_interfaceNameLabel, i18nc("@info:status Notification text when connecting","Activating %1", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+            KNotification::event(Event::Connecting, m_interfaceNameLabel, i18nc("@info:status Notification text when connecting","Activating %1", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
             break;
         case Knm::InterfaceConnection::Activated:
             m_activating.remove(ic);
-    	    KNotification::event(Event::Connected, m_interfaceNameLabel, i18nc("@info:status Notification text when a connection has been activated","%1 activated", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+            KNotification::event(Event::Connected, m_interfaceNameLabel, i18nc("@info:status Notification text when a connection has been activated","%1 activated", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
             break;
         case Knm::InterfaceConnection::Unknown:
             m_activating.remove(ic);
-	    if (ic->oldActivationState() == Knm::InterfaceConnection::Activating)
-    	        KNotification::event(Event::ConnectFailed, m_interfaceNameLabel, i18nc("@info:status Notification text when connection has failed","Connection %1 failed", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
-	    else
-    	        KNotification::event(Event::Disconnected, m_interfaceNameLabel, i18nc("@info:status Notification text when deactivating a connection","%1 deactivated", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+            if (ic->oldActivationState() == Knm::InterfaceConnection::Activating)
+                KNotification::event(Event::ConnectFailed, m_interfaceNameLabel, i18nc("@info:status Notification text when connection has failed","Connection %1 failed", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+            else
+                KNotification::event(Event::Disconnected, m_interfaceNameLabel, i18nc("@info:status Notification text when deactivating a connection","%1 deactivated", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
             break;
+    }
+}
+
+void InterfaceNotificationHost::strengthChanged(int strength)
+{
+    if (strength < 30) {
+        Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(sender());
+        KNotification::event(Event::LowSignal, m_interfaceNameLabel, i18nc("@info:status Notification text when wireless/gsm signal is low","Low signal on %1", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
     }
 }
 
@@ -523,7 +545,7 @@ void NotificationManager::statusChanged(Solid::Networking::Status status)
 
         /* If the signal does not come from a Solid::Control::NetworkManager::Notifier object then it is from a Monolithic Knm object. */
         if (n == NULL and status == Solid::Networking::Connected)
-	    KNotification::event(Event::AlreadyRunning, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is already running", "Networking system already running"), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
+            KNotification::event(Event::AlreadyRunning, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is already running", "Networking system already running"), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
     }
 }
 

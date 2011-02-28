@@ -95,6 +95,7 @@ public Q_SLOTS:
      */
     void interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState);
 
+    void strengthChanged(int strength);
 private:
     void performInterfaceNotification(const QString & title, const QString & text, KNotification::NotificationFlag flag);
 
