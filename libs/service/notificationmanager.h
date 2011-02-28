@@ -86,7 +86,6 @@ public:
 
     QString label() const;
 public Q_SLOTS:
-    void interfaceConnectionActivated();
     /*
      * Update notification with with state changes for iface's active connections
      */

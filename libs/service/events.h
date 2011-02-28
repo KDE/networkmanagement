@@ -29,8 +29,6 @@ extern const QString HwAdded;
 extern const QString HwRemoved;
 extern const QString NetworkAppeared;
 extern const QString NetworkDisappeared;
-extern const QString UserConnectionAttempt;
-extern const QString AutomaticConnectionAttempt;
 extern const QString Connecting;
 extern const QString Disconnected;
 extern const QString Connected;
