@@ -59,7 +59,6 @@ void InterfaceNotificationHost::addInterfaceConnection(Knm::InterfaceConnection 
 {
     if (ic) {
         m_interfaceConnections.insert(ic);
-        connect(ic, SIGNAL(activated()), this, SLOT(interfaceConnectionActivated()));
         connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
                 this, SLOT(interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState)));
     }
@@ -76,15 +75,6 @@ void InterfaceNotificationHost::removeInterfaceConnection(Knm::InterfaceConnecti
     m_activating.remove(ic);
 }
 
-void InterfaceNotificationHost::interfaceConnectionActivated()
-{
-    //Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(sender());
-
-    //m_activating.insert(ic);
-
-    //KNotification::event(Event::UserConnectionAttempt, m_interfaceNameLabel, i18nc("@info:status Notification text when activating a connection","Activating %1", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
-}
-
 void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState state)
 {
     kDebug() << state;
@@ -95,6 +85,7 @@ void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::I
         case Knm::InterfaceConnection::Activating: 
             kDebug() << ic->connectionName() << "is activating";
             m_activating.insert(ic);
+    	    KNotification::event(Event::Connecting, m_interfaceNameLabel, i18nc("@info:status Notification text when connecting","Activating %1", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
             break;
         case Knm::InterfaceConnection::Activated:
             m_activating.remove(ic);
@@ -102,7 +93,10 @@ void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::I
             break;
         case Knm::InterfaceConnection::Unknown:
             m_activating.remove(ic);
-    	    KNotification::event(Event::Disconnected, m_interfaceNameLabel, i18nc("@info:status Notification text when deactivating a connection","%1 deactivated", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+	    if (ic->oldActivationState() == Knm::InterfaceConnection::Activating)
+    	        KNotification::event(Event::ConnectFailed, m_interfaceNameLabel, i18nc("@info:status Notification text when connection has failed","Connection %1 failed", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+	    else
+    	        KNotification::event(Event::Disconnected, m_interfaceNameLabel, i18nc("@info:status Notification text when deactivating a connection","%1 deactivated", ic->connectionName()), QPixmap(), 0, KNotification::CloseOnTimeout, m_manager->componentData());
             break;
     }
 }

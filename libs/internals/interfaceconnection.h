@@ -66,6 +66,7 @@ public:
 
     void setActivationState(ActivationState state);
     ActivationState activationState() const;
+    ActivationState oldActivationState() const;
 
     /**
      * Indicates if this InterfaceConnection provides the default route
@@ -90,6 +91,7 @@ private:
     QString m_name;
     QString m_iconName;
     ActivationState m_state;
+    ActivationState m_oldState;
     bool m_hasDefaultRoute;
 };
 } // namespace
