@@ -436,21 +436,21 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
             // notify hardware added
             if (!d->suppressHardwareEvents) {
                 KNotification::event(Event::HwAdded, i18nc("@info:status Notification for hardware added", "%1 attached", host->label()), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
+            }
 
-                // if wireless, listen for new networks
-                if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-                    Solid::Control::WirelessNetworkInterface * wireless = qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+            // if wireless, listen for new networks
+            if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+                Solid::Control::WirelessNetworkInterface * wireless = qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface);
 
-                    if (wireless) {
-                        // this is a bit wasteful because WirelessNetworkInterfaceActivatableProvider is also
-                        // creating these objects, but I expect these will move into Solid and become singletons
-                        Solid::Control::WirelessNetworkInterfaceEnvironment * environment = new Solid::Control::WirelessNetworkInterfaceEnvironment(wireless);
+                if (wireless) {
+                    // this is a bit wasteful because WirelessNetworkInterfaceActivatableProvider is also
+                    // creating these objects, but I expect these will move into Solid and become singletons
+                    Solid::Control::WirelessNetworkInterfaceEnvironment * environment = new Solid::Control::WirelessNetworkInterfaceEnvironment(wireless);
 
-                        QObject::connect(environment, SIGNAL(networkAppeared(const QString &)),
-                                this, SLOT(networkAppeared(const QString&)));
-                        QObject::connect(environment, SIGNAL(networkDisappeared(const QString &)),
-                                this, SLOT(networkDisappeared(const QString&)));
-                    }
+                    QObject::connect(environment, SIGNAL(networkAppeared(const QString &)),
+                            this, SLOT(networkAppeared(const QString&)));
+                    QObject::connect(environment, SIGNAL(networkDisappeared(const QString &)),
+                            this, SLOT(networkDisappeared(const QString&)));
                 }
             }
         }
