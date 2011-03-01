@@ -41,7 +41,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "events.h"
 #include "../internals/connection.h"
 
-static int iconSize = 48;
+static const int iconSize = 48;
 Knm::Connection::Type solidToKnmType(const Solid::Control::NetworkInterface::Type sType);
 
 K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration))
@@ -50,6 +50,9 @@ InterfaceNotificationHost::InterfaceNotificationHost(Solid::Control::NetworkInte
 {
     // Keep a record for when it is removed
     m_interfaceNameLabel = UiUtils::interfaceNameLabel(interface->uni());
+    
+    // For the notification icon
+    m_type = interface->type();
 
     QObject::connect(interface, SIGNAL(connectionStateChanged(int,int,int)),
             this, SLOT(interfaceConnectionStateChanged(int,int,int)));
@@ -77,6 +80,11 @@ void InterfaceNotificationHost::addInterfaceConnection(Knm::InterfaceConnection 
 QString InterfaceNotificationHost::label() const
 {
     return m_interfaceNameLabel;
+}
+
+Solid::Control::NetworkInterface::Type InterfaceNotificationHost::type() const
+{
+    return m_type;
 }
 
 void InterfaceNotificationHost::removeInterfaceConnection(Knm::InterfaceConnection * ic)
@@ -494,8 +502,7 @@ void NotificationManager::networkInterfaceRemoved(const QString &uni)
             notificationText = i18nc("@info:status Notification for hardware removed used if we don't have its user-visible name", "Network interface removed");
         }
 
-        Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
-        KNotification::event(Event::HwRemoved, notificationText, KIcon(Knm::Connection::iconName(solidToKnmType(iface->type()))).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
+        KNotification::event(Event::HwRemoved, notificationText, KIcon(Knm::Connection::iconName(solidToKnmType(host->type()))).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
     }
 }
 

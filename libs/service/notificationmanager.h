@@ -85,6 +85,7 @@ public:
     void removeInterfaceConnection(Knm::InterfaceConnection* removed);
 
     QString label() const;
+    Solid::Control::NetworkInterface::Type type() const;
 public Q_SLOTS:
     /*
      * Update notification with with state changes for iface's active connections
@@ -103,6 +104,7 @@ private:
     Solid::Control::NetworkInterface * m_interface;
     // used to refer to the interface if it is removed
     QString m_interfaceNameLabel;
+    Solid::Control::NetworkInterface::Type m_type;
     QPointer<KNotification> m_notification;
     QSet<Knm::InterfaceConnection*> m_activating;
     QSet<Knm::InterfaceConnection*> m_interfaceConnections;
