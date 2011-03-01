@@ -218,6 +218,9 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
 
 void ActivatableListWidget::createHiddenItem()
 {
+    if (m_hiddenItem) {
+        return;
+    }
     //HiddenWirelessNetworkItem* ai = 0;
     m_hiddenItem = new HiddenWirelessNetworkItem(m_widget);
     Q_ASSERT(m_hiddenItem);
@@ -280,9 +283,7 @@ void ActivatableListWidget::setHasWireless(bool hasWireless)
     kDebug() << "++++++++++++++" << hasWireless;
     m_hasWireless = hasWireless;
     if (hasWireless) {
-        if (!m_hiddenItem) {
-            createHiddenItem();
-        }
+        createHiddenItem();
     } else {
         delete m_hiddenItem;
         m_hiddenItem = 0;
