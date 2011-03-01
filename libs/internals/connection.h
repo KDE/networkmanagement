@@ -40,6 +40,7 @@ public:
     enum Type { Wired = 1, Wireless, Gsm, Cdma, Vpn, Pppoe };
     static QString typeAsString(Connection::Type);
     static Connection::Type typeFromString(const QString & type);
+    static QString iconName(const Connection::Type type);
 
     /**
      * Create a connection with a new Uuid

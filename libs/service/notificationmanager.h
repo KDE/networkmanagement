@@ -97,7 +97,7 @@ public Q_SLOTS:
 
     void strengthChanged(int strength);
 private:
-    void performInterfaceNotification(const QString & title, const QString & text, KNotification::NotificationFlag flag);
+    void performInterfaceNotification(const QString & title, const QString & text, const QPixmap & pixmap, KNotification::NotificationFlag flag);
 
     NotificationManager * m_manager;
     Solid::Control::NetworkInterface * m_interface;
