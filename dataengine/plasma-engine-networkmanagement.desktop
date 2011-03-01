@@ -1,6 +1,8 @@
 [Desktop Entry]
 Name=Akonadi
 Name[da]=Akonadi
+Name[et]=Akonadi
+Name[fr]=Akonadi
 Name[hu]=Akonadi
 Name[nl]=Akonadi
 Name[pt]=Akonadi
@@ -10,6 +12,8 @@ Name[uk]=Akonadi
 Name[x-test]=xxAkonadixx
 Comment=Akonadi PIM data engine
 Comment[da]=Akonadi datamotor til PIM
+Comment[et]=Akonadi PIM-i andmete mootor
+Comment[fr]=Moteur de données PIM pour Akonadi
 Comment[hu]=Akonadi PIM adatmodul
 Comment[nl]=Akonadi PIM gegevensengine
 Comment[pt]=Motor de dados PIM do Akonadi
