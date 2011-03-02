@@ -13,6 +13,7 @@ Name[pt_BR]=networkqml
 Name[sv]=networkqml
 Name[uk]=networkqml
 Name[x-test]=xxnetworkqmlxx
+Name[zh_TW]=networkqml
 Type=Service
 X-KDE-ParentApp=
 X-KDE-PluginInfo-Author=Sebastian Kügler
