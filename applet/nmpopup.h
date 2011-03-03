@@ -66,6 +66,9 @@ public Q_SLOTS:
     void managerWirelessEnabledChanged(bool);
     void managerWirelessHardwareEnabledChanged(bool);
     void wirelessEnabledToggled(bool checked);
+    void managerWwanEnabledChanged(bool);
+    void managerWwanHardwareEnabledChanged(bool);
+    void wwanEnabledToggled(bool checked);
     void networkingEnabledToggled(bool checked);
     void managerNetworkingEnabledChanged(bool);
     void manageConnections();
@@ -108,6 +111,7 @@ private:
 
     Plasma::CheckBox* m_networkingCheckBox;
     Plasma::CheckBox* m_rfCheckBox;
+    Plasma::CheckBox* m_wwanCheckBox;
     Plasma::PushButton* m_connectionsButton;
     Plasma::PushButton* m_showMoreButton;
 

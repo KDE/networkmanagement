@@ -112,22 +112,38 @@ void NMPopup::init()
     Plasma::Separator* sep2 = new Plasma::Separator(this);
     sep->setOrientation(Qt::Vertical);
     m_leftLayout->addItem(sep2);
+
+    QGraphicsWidget* checkboxWidget = new QGraphicsWidget(this);
+    QGraphicsGridLayout* checkboxLayout = new QGraphicsGridLayout(checkboxWidget);
     // flight-mode checkbox
     m_networkingCheckBox = new Plasma::CheckBox(m_leftWidget);
     m_networkingCheckBox->setChecked(Solid::Control::NetworkManager::isNetworkingEnabled());
     m_networkingCheckBox->setText(i18nc("CheckBox to enable or disable networking completely", "Enable networking"));
-    m_leftLayout->addItem(m_networkingCheckBox);
+    checkboxLayout->addItem(m_networkingCheckBox, 0, 0);
     connect(m_networkingCheckBox, SIGNAL(toggled(bool)),
             this, SLOT(networkingEnabledToggled(bool)));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
             this, SLOT(managerNetworkingEnabledChanged(bool)));
 
     // flight-mode checkbox
+    m_wwanCheckBox = new Plasma::CheckBox(m_leftWidget);
+    m_wwanCheckBox->setChecked(Solid::Control::NetworkManager::isWwanEnabled());
+    m_wwanCheckBox->setEnabled(Solid::Control::NetworkManager::isWwanHardwareEnabled());
+    m_wwanCheckBox->setText(i18nc("CheckBox to enable or disable wwan (mobile broadband) interface)", "Enable mobile broadband"));
+    checkboxLayout->addItem(m_wwanCheckBox, 0, 1);
+
+    connect(m_wwanCheckBox, SIGNAL(toggled(bool)), SLOT(wwanEnabledToggled(bool)));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wwanEnabledChanged(bool)),
+            this, SLOT(managerWwanEnabledChanged(bool)));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wwanHardwareEnabledChanged(bool)),
+            this, SLOT(managerWwanHardwareEnabledChanged(bool)));
+
+    // flight-mode checkbox
     m_rfCheckBox = new Plasma::CheckBox(m_leftWidget);
     m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
     m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
     m_rfCheckBox->setText(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable wireless"));
-    m_leftLayout->addItem(m_rfCheckBox);
+    checkboxLayout->addItem(m_rfCheckBox, 1, 0);
 
     connect(m_rfCheckBox, SIGNAL(toggled(bool)), SLOT(wirelessEnabledToggled(bool)));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
@@ -135,10 +151,11 @@ void NMPopup::init()
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
             this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
 
+    m_leftLayout->addItem(checkboxWidget);
+
     //m_leftWidget->setLayout(m_leftLayout);
     m_leftWidget->addTab(i18nc("tabbar on the left side", "Interfaces"), m_leftLayout);
     m_leftWidget->setTabBarShown(false); // TODO: enable
-
 
     m_interfaceDetailsWidget = new InterfaceDetailsWidget(m_leftWidget);
     connect(m_interfaceDetailsWidget, SIGNAL(back()), this, SLOT(toggleInterfaceTab()));
@@ -382,6 +399,11 @@ void NMPopup::wirelessEnabledToggled(bool checked)
     updateHasWireless();
 }
 
+void NMPopup::wwanEnabledToggled(bool checked)
+{
+    kDebug() << "Applet wwan enable switch toggled" << checked;
+    Solid::Control::NetworkManager::setWwanEnabled(checked);
+}
 void NMPopup::networkingEnabledToggled(bool checked)
 {
     // Switch networking on / off
@@ -457,6 +479,21 @@ void NMPopup::managerNetworkingEnabledChanged(bool enabled)
     kDebug() << "NM daemon changed networking enable state" << enabled;
     m_networkingCheckBox->setChecked(enabled);
     updateHasWireless();
+}
+
+void NMPopup::managerWwanEnabledChanged(bool enabled)
+{
+    kDebug() << "NM daemon changed wwan enable state" << enabled;
+    // it might have changed because we toggled the switch,
+    // but it might have been changed externally, so set it anyway
+    m_wwanCheckBox->setChecked(enabled);
+}
+
+void NMPopup::managerWwanHardwareEnabledChanged(bool enabled)
+{
+    kDebug() << "Hardware wwan enable switch state changed" << enabled;
+    m_wwanCheckBox->setChecked(enabled && Solid::Control::NetworkManager::isWwanEnabled());
+    m_wwanCheckBox->setEnabled(!enabled);
 }
 
 void NMPopup::showMore()
