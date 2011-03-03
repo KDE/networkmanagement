@@ -243,6 +243,7 @@ void NMPopup::interfaceAdded(const QString& uni)
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
     updateHasWireless();
+    updateHasWwan();
 }
 
 void NMPopup::interfaceRemoved(const QString& uni)
@@ -260,6 +261,7 @@ void NMPopup::interfaceRemoved(const QString& uni)
         connect(item, SIGNAL(disappearAnimationFinished()), this, SLOT(deleteInterfaceItem()));
         item->disappear();
         updateHasWireless();
+        updateHasWwan();
     }
 }
 
@@ -404,6 +406,7 @@ void NMPopup::wwanEnabledToggled(bool checked)
     kDebug() << "Applet wwan enable switch toggled" << checked;
     Solid::Control::NetworkManager::setWwanEnabled(checked);
 }
+
 void NMPopup::networkingEnabledToggled(bool checked)
 {
     // Switch networking on / off
@@ -455,6 +458,25 @@ void NMPopup::updateHasWireless()
         hasWireless = false;
     }
     m_connectionList->setHasWireless(hasWireless);
+}
+
+void NMPopup::updateHasWwan()
+{
+    bool hasWwan = false;
+    foreach (InterfaceItem* ifaceitem, m_interfaces) {
+        Solid::Control::NetworkInterface* iface = ifaceitem->interface();
+        Solid::Control::GsmNetworkInterface* giface = qobject_cast<Solid::Control::GsmNetworkInterface *>(iface);
+        if (giface) {
+            hasWwan = true;
+            continue;
+        }
+    }
+    if (hasWwan) {
+        m_wwanCheckBox->show();
+        hasWwan = m_wwanCheckBox->isChecked();
+    } else {
+        m_wwanCheckBox->hide();
+    }
 }
 
 void NMPopup::managerWirelessEnabledChanged(bool enabled)
