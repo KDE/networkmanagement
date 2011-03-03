@@ -95,9 +95,7 @@ void GsmInterfaceConnectionBuilder::init(GsmInterfaceConnection *ic)
 
         ic->m_signalQuality = modemNetworkIface->getSignalQuality();
         ic->m_accessTechnology = Solid::Control::ModemInterface::convertAccessTechnologyToString(modemNetworkIface->getAccessTechnology());
-    } else {
-        ic->m_signalQuality = 0;
-        ic->m_accessTechnology = Solid::Control::ModemInterface::convertAccessTechnologyToString(Solid::Control::ModemInterface::UnknownTechnology);
+        ic->m_enabled = modemNetworkIface->enabled();
     }
 }
 
