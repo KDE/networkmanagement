@@ -131,6 +131,7 @@ void NMPopup::init()
     m_wwanCheckBox->setChecked(Solid::Control::NetworkManager::isWwanEnabled());
     m_wwanCheckBox->setEnabled(Solid::Control::NetworkManager::isWwanHardwareEnabled());
     m_wwanCheckBox->setText(i18nc("CheckBox to enable or disable wwan (mobile broadband) interface)", "Enable mobile broadband"));
+    m_wwanCheckBox->hide();
     checkboxLayout->addItem(m_wwanCheckBox, 0, 1);
 
     connect(m_wwanCheckBox, SIGNAL(toggled(bool)), SLOT(wwanEnabledToggled(bool)));
