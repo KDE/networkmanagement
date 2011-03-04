@@ -125,6 +125,7 @@ void NMPopup::init()
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
             this, SLOT(managerNetworkingEnabledChanged(bool)));
 
+#ifdef NM_0_8
     // flight-mode checkbox
     m_wwanCheckBox = new Plasma::CheckBox(m_leftWidget);
     m_wwanCheckBox->setChecked(Solid::Control::NetworkManager::isWwanEnabled());
@@ -137,6 +138,7 @@ void NMPopup::init()
             this, SLOT(managerWwanEnabledChanged(bool)));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wwanHardwareEnabledChanged(bool)),
             this, SLOT(managerWwanHardwareEnabledChanged(bool)));
+#endif
 
     // flight-mode checkbox
     m_rfCheckBox = new Plasma::CheckBox(m_leftWidget);
@@ -243,7 +245,9 @@ void NMPopup::interfaceAdded(const QString& uni)
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
     updateHasWireless();
+#ifdef NM_0_8
     updateHasWwan();
+#endif
 }
 
 void NMPopup::interfaceRemoved(const QString& uni)
@@ -261,7 +265,9 @@ void NMPopup::interfaceRemoved(const QString& uni)
         connect(item, SIGNAL(disappearAnimationFinished()), this, SLOT(deleteInterfaceItem()));
         item->disappear();
         updateHasWireless();
+#ifdef NM_0_8
         updateHasWwan();
+#endif
     }
 }
 
@@ -401,11 +407,13 @@ void NMPopup::wirelessEnabledToggled(bool checked)
     updateHasWireless();
 }
 
+#ifdef NM_0_8
 void NMPopup::wwanEnabledToggled(bool checked)
 {
     kDebug() << "Applet wwan enable switch toggled" << checked;
     Solid::Control::NetworkManager::setWwanEnabled(checked);
 }
+#endif
 
 void NMPopup::networkingEnabledToggled(bool checked)
 {
@@ -460,6 +468,7 @@ void NMPopup::updateHasWireless()
     m_connectionList->setHasWireless(hasWireless);
 }
 
+#ifdef NM_0_8
 void NMPopup::updateHasWwan()
 {
     bool hasWwan = false;
@@ -478,6 +487,7 @@ void NMPopup::updateHasWwan()
         m_wwanCheckBox->hide();
     }
 }
+#endif
 
 void NMPopup::managerWirelessEnabledChanged(bool enabled)
 {
@@ -503,6 +513,7 @@ void NMPopup::managerNetworkingEnabledChanged(bool enabled)
     updateHasWireless();
 }
 
+#ifdef NM_0_8
 void NMPopup::managerWwanEnabledChanged(bool enabled)
 {
     kDebug() << "NM daemon changed wwan enable state" << enabled;
@@ -517,6 +528,7 @@ void NMPopup::managerWwanHardwareEnabledChanged(bool enabled)
     m_wwanCheckBox->setChecked(enabled && Solid::Control::NetworkManager::isWwanEnabled());
     m_wwanCheckBox->setEnabled(!enabled);
 }
+#endif
 
 void NMPopup::showMore()
 {

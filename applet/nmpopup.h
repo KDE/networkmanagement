@@ -66,9 +66,11 @@ public Q_SLOTS:
     void managerWirelessEnabledChanged(bool);
     void managerWirelessHardwareEnabledChanged(bool);
     void wirelessEnabledToggled(bool checked);
+#ifdef NM_0_8
     void managerWwanEnabledChanged(bool);
     void managerWwanHardwareEnabledChanged(bool);
     void wwanEnabledToggled(bool checked);
+#endif
     void networkingEnabledToggled(bool checked);
     void managerNetworkingEnabledChanged(bool);
     void manageConnections();
@@ -85,7 +87,9 @@ private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
     void addVpnInterface();
     void updateHasWireless();
+#ifdef NM_0_8
     void updateHasWwan();
+#endif
     QSizeF sizeHint ( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
 
     RemoteActivatableList* m_activatables;
@@ -112,7 +116,9 @@ private:
 
     Plasma::CheckBox* m_networkingCheckBox;
     Plasma::CheckBox* m_rfCheckBox;
+#ifdef NM_0_8
     Plasma::CheckBox* m_wwanCheckBox;
+#endif
     Plasma::PushButton* m_connectionsButton;
     Plasma::PushButton* m_showMoreButton;
 

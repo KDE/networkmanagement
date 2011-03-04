@@ -40,6 +40,20 @@ find_package(GLIB2 REQUIRED)
 
 configure_file(backends/NetworkManager/config-nm07backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm07backend.h )
 
+# Check if Solid has been compiled with NetworkManager 0.8 support.
+set (CMAKE_REQUIRED_DEFINITIONS ${KDE4_DEFINITIONS})
+set (CMAKE_REQUIRED_INCLUDES ${KDE4_INCLUDES})
+set (CMAKE_REQUIRED_LIBRARIES -L${KDE4_LIB_DIR} -lsolidcontrol)
+CHECK_CXX_SOURCE_COMPILES("#include <solid/control/networkmanager.h>
+int main()
+{
+    Solid::Control::NetworkManager::isWwanEnabled();
+    return 0;
+}" NM_0_8)
+if (NM_0_8)
+    add_definitions(-DNM_0_8=1)
+endif (NM_0_8)
+
 if (NM_0_7)
 
 include_directories(
