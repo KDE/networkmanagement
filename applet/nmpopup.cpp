@@ -474,10 +474,10 @@ void NMPopup::updateHasWwan()
     bool hasWwan = false;
     foreach (InterfaceItem* ifaceitem, m_interfaces) {
         Solid::Control::NetworkInterface* iface = ifaceitem->interface();
-        Solid::Control::GsmNetworkInterface* giface = qobject_cast<Solid::Control::GsmNetworkInterface *>(iface);
-        if (giface) {
+        if (iface->type() == Solid::Control::NetworkInterface::Gsm ||
+            iface->type() == Solid::Control::NetworkInterface::Cdma) {
             hasWwan = true;
-            continue;
+            break;
         }
     }
     if (hasWwan) {
