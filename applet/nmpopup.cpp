@@ -146,6 +146,7 @@ void NMPopup::init()
     m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
     m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
     m_rfCheckBox->setText(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable wireless"));
+    m_rfCheckBox->hide();
     checkboxLayout->addItem(m_rfCheckBox, 1, 0);
 
     connect(m_rfCheckBox, SIGNAL(toggled(bool)), SLOT(wirelessEnabledToggled(bool)));
@@ -455,16 +456,17 @@ void NMPopup::updateHasWireless()
 
     foreach (InterfaceItem* ifaceitem, m_interfaces) {
         Solid::Control::NetworkInterface* iface = ifaceitem->interface();
-        Solid::Control::WirelessNetworkInterface* wiface = qobject_cast<Solid::Control::WirelessNetworkInterface *>(iface);
-        if (wiface) {
+        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             //kDebug() << "there's a wifi iface" << ifaceitem->connectionName() << iface->interfaceName();
             m_hasWirelessInterface = true; // at least one interface is wireless. We're happy.
-            continue;
+            m_rfCheckBox->show();
+            break;
         }
     }
     if (!m_hasWirelessInterface) {
         kDebug() << "no ifaces";
         hasWireless = false;
+        m_rfCheckBox->hide();
     }
     m_connectionList->setHasWireless(hasWireless);
 }
