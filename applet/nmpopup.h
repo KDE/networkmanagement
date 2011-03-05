@@ -84,7 +84,9 @@ Q_SIGNALS:
     void configNeedsSaving();
 
 private Q_SLOTS:
+#ifdef NM_0_8
     void enabledWwan();
+#endif
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
