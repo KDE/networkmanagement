@@ -237,7 +237,7 @@ void NMDBusSettingsService::interfaceConnectionDeactivated()
 #if NM_0_8
     Solid::Control::NetworkInterface *iface = Solid::Control::NetworkManager::findNetworkInterface(ic->deviceUni());
     if (iface) {
-    	iface->disconnect();
+    	iface->disconnectInterface();
     }
 #else
     Solid::Control::NetworkManager::deactivateConnection(ic->property("NMDBusActiveConnectionObject").toString());
