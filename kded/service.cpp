@@ -106,7 +106,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 
     // watches events and creates KNotifications
     d->notificationManager = new NotificationManager(this);
-    QObject::connect(this, SIGNAL(statusChanged(Solid::Networking::Status)), d->notificationManager, SLOT(statusChanged(Solid::Networking::Status)));
 
     d->nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(d->connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, d->connectionList);
 
