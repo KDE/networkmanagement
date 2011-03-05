@@ -265,17 +265,10 @@ void MobileConnectionWizard::introAddDevice(Solid::Control::NetworkInterface *de
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
     Solid::Control::ModemInterface *modem = Solid::Control::ModemManager::findModemInterface(device->udi(), Solid::Control::ModemInterface::GsmCard);
-    if (modem) {
-        if (!modem->enabled()) {
-            modem->enable(true);
-        }
-
-        /* By default polkit allows only root to enable devices. */
-        if (modem->enabled()) {
-            desc.append(modem->getInfo().manufacturer);
-            desc.append(" ");
-            desc.append(modem->getInfo().model);
-        }
+    if (modem && modem->enabled()) {
+        desc.append(modem->getInfo().manufacturer);
+        desc.append(" ");
+        desc.append(modem->getInfo().model);
     }
 #endif
 
