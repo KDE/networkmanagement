@@ -83,6 +83,9 @@ public Q_SLOTS:
 Q_SIGNALS:
     void configNeedsSaving();
 
+private Q_SLOTS:
+    void enabledWwan();
+
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
     void addVpnInterface();
