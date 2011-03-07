@@ -84,9 +84,16 @@ Q_SIGNALS:
     void configNeedsSaving();
 
 private Q_SLOTS:
+    void enableNetworking();
+    void disableNetworking();
+    void enableWireless();
+    void disableWireless();
 #ifdef NM_0_8
-    void enabledWwan();
+    void enableWwan();
+    void disableWwan();
 #endif
+    void readConfig();
+    void saveConfig();
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
