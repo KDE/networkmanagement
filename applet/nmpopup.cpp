@@ -240,6 +240,7 @@ void NMPopup::init()
 
 void NMPopup::readConfig()
 {
+    kDebug();
     KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
     KNetworkManagerServicePrefs::self()->readConfig();
     KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("SystemTray"));
@@ -247,36 +248,49 @@ void NMPopup::readConfig()
         bool networkingEnabled = config.readEntry("NetworkingEnabled",
                                                   Solid::Control::NetworkManager::isNetworkingEnabled());
         bool wirelessEnabled = config.readEntry("WirelessEnabled",
-                                                Solid::Control::NetworkManager::isWirelessEnabled() &&
-                                                Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+                                                Solid::Control::NetworkManager::isWirelessEnabled());
 
         Solid::Control::NetworkManager::setNetworkingEnabled(networkingEnabled);
         Solid::Control::NetworkManager::setWirelessEnabled(wirelessEnabled);
 #ifdef NM_0_8
         bool wwanEnabled = config.readEntry("WwanEnabled",
-                                            Solid::Control::NetworkManager::isWwanEnabled() &&
-                                            Solid::Control::NetworkManager::isWwanHardwareEnabled());
+                                            Solid::Control::NetworkManager::isWwanEnabled());
         Solid::Control::NetworkManager::setWwanEnabled(wwanEnabled);
 #endif
     }
     m_networkingCheckBox->setChecked(Solid::Control::NetworkManager::isNetworkingEnabled());
-    m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled() &&
-                             Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+    m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
+
+    /* There is a bug in Solid < 4.6.2 where it does not emit the wirelessHardwareEnabledChanged signal.
+     * So we always enable the wireless checkbox for versions below 4.6.2. */
+#if KDE_IS_VERSION(4,6,2)
+    m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+#else
+    m_rfCheckBox->setEnabled(true);
+#endif
+
 #ifdef NM_0_8
-    m_wwanCheckBox->setChecked(Solid::Control::NetworkManager::isWwanEnabled() &&
-                               Solid::Control::NetworkManager::isWwanHardwareEnabled());
+    m_wwanCheckBox->setChecked(Solid::Control::NetworkManager::isWwanEnabled());
+    m_wwanCheckBox->setEnabled(Solid::Control::NetworkManager::isWwanHardwareEnabled());
 #endif
 }
 
 void NMPopup::saveConfig()
 {
-    KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("SystemTray"));
-    config.writeEntry("NetworkingEnabled", m_networkingCheckBox->isChecked());
-    config.writeEntry("WirelessEnabled", m_rfCheckBox->isChecked());
+    kDebug();
+    /* If networking is disabled system is probably suspending to ram/disk.
+       When it resumes we want to put NetworkManager at the same state as before the suspend,
+       so we do not save config now. */
+    if (Solid::Control::NetworkManager::isNetworkingEnabled()) {
+        kDebug() << "Saving config";
+        KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("SystemTray"));
+        config.writeEntry("NetworkingEnabled", m_networkingCheckBox->isChecked());
+        config.writeEntry("WirelessEnabled", m_rfCheckBox->isChecked());
 #ifdef NM_0_8
-    config.writeEntry("WwanEnabled", m_wwanCheckBox->isChecked());
+        config.writeEntry("WwanEnabled", m_wwanCheckBox->isChecked());
 #endif
-    KNetworkManagerServicePrefs::self()->writeConfig();
+        KNetworkManagerServicePrefs::self()->writeConfig();
+    }
 }
 
 // Interfaces
@@ -440,7 +454,9 @@ bool NMPopup::available(int state)
 void NMPopup::wirelessEnabledToggled(bool checked)
 {
     kDebug() << "Applet wireless enable switch toggled" << checked;
-    Solid::Control::NetworkManager::setWirelessEnabled(checked);
+    if (Solid::Control::NetworkManager::isWirelessEnabled() != checked) {
+        Solid::Control::NetworkManager::setWirelessEnabled(checked);
+    }
     showMore(false);
     if (checked && Solid::Control::NetworkManager::isNetworkingEnabled()) {
         showMore(false);
@@ -456,7 +472,9 @@ void NMPopup::wirelessEnabledToggled(bool checked)
 void NMPopup::wwanEnabledToggled(bool checked)
 {
     kDebug() << "Applet wwan enable switch toggled" << checked;
-    Solid::Control::NetworkManager::setWwanEnabled(checked);
+    if (Solid::Control::NetworkManager::isWwanEnabled() != checked) {
+        Solid::Control::NetworkManager::setWwanEnabled(checked);
+    }
     saveConfig();
 }
 #endif
@@ -464,15 +482,20 @@ void NMPopup::wwanEnabledToggled(bool checked)
 void NMPopup::networkingEnabledToggled(bool checked)
 {
     // Switch networking on / off
-    Solid::Control::NetworkManager::setNetworkingEnabled(checked);
+    if (Solid::Control::NetworkManager::isNetworkingEnabled() != checked) {
+        Solid::Control::NetworkManager::setNetworkingEnabled(checked);
+    }
     // Update wireless checkbox
-    m_rfCheckBox->setEnabled(checked);
-    m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessHardwareEnabled() &&
-                             Solid::Control::NetworkManager::isWirelessEnabled());
+    m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
+
+#if KDE_IS_VERSION(4,6,2)
+    m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+#endif
+
 #ifdef NM_0_8
-    m_wwanCheckBox->setEnabled(checked);
-    m_wwanCheckBox->setChecked(Solid::Control::NetworkManager::isWwanHardwareEnabled() &&
-                               Solid::Control::NetworkManager::isWwanEnabled());
+    m_wwanCheckBox->setChecked(Solid::Control::NetworkManager::isWwanEnabled());
+    m_wwanCheckBox->setEnabled(Solid::Control::NetworkManager::isWwanHardwareEnabled());
+
 #endif
     m_showMoreButton->setChecked(false);
     if (checked && Solid::Control::NetworkManager::isWirelessHardwareEnabled() &&
@@ -542,70 +565,27 @@ void NMPopup::updateHasWwan()
 }
 #endif
 
-void NMPopup::enableWireless()
-{
-    Solid::Control::NetworkManager::setWirelessEnabled(true);
-}
-
-void NMPopup::disableWireless()
-{
-    Solid::Control::NetworkManager::setWirelessEnabled(false);
-}
-
 void NMPopup::managerWirelessEnabledChanged(bool enabled)
 {
-    static bool first = true;
-
     kDebug() << "NM daemon changed wireless enable state" << enabled;
     // it might have changed because we toggled the switch,
     // but it might have been changed externally, so set it anyway
-    if (!enabled && m_rfCheckBox->isChecked() && first) {
-        first = false;
-        QTimer::singleShot(2000, this, SLOT(enableWireless()));
-    } else if (enabled && !m_rfCheckBox->isChecked() && first) {
-        first = false;
-        QTimer::singleShot(2000, this, SLOT(disableWireless()));
-    } else {
-        first = true;
-        m_rfCheckBox->setChecked(enabled);
-        updateHasWireless();
-    }
+    m_rfCheckBox->setChecked(enabled);
+    updateHasWireless();
 }
 
 void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
-    m_rfCheckBox->setChecked(enabled && Solid::Control::NetworkManager::isWirelessEnabled());
     m_rfCheckBox->setEnabled(enabled);
     updateHasWireless();
 }
 
-void NMPopup::enableNetworking()
-{
-    Solid::Control::NetworkManager::setNetworkingEnabled(true);
-}
-
-void NMPopup::disableNetworking()
-{
-    Solid::Control::NetworkManager::setNetworkingEnabled(false);
-}
-
 void NMPopup::managerNetworkingEnabledChanged(bool enabled)
 {
-    static bool first = true;
     kDebug() << "NM daemon changed networking enable state" << enabled;
-
-    if (!enabled && m_networkingCheckBox->isChecked() && first) {
-        first = false;
-        QTimer::singleShot(2000, this, SLOT(enableNetworking()));
-    } else if (enabled && !m_networkingCheckBox->isChecked() && first) {
-        first = false;
-        QTimer::singleShot(2000, this, SLOT(disableNetworking()));
-    } else {
-        first = true;
-        m_networkingCheckBox->setChecked(enabled);
-        updateHasWireless();
-    }
+    m_networkingCheckBox->setChecked(enabled);
+    updateHasWireless();
 }
 
 #ifdef NM_0_8
@@ -647,8 +627,7 @@ void NMPopup::managerWwanEnabledChanged(bool enabled)
 void NMPopup::managerWwanHardwareEnabledChanged(bool enabled)
 {
     kDebug() << "Hardware wwan enable switch state changed" << enabled;
-    m_wwanCheckBox->setChecked(enabled && Solid::Control::NetworkManager::isWwanEnabled());
-    m_wwanCheckBox->setEnabled(!enabled);
+    m_wwanCheckBox->setEnabled(enabled);
 }
 #endif
 
