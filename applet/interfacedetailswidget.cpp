@@ -119,7 +119,6 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_txColor = QColor("#91FF00"); // green
     m_txColor.setAlphaF(0.6);
     m_trafficPlotter = new Plasma::SignalPlotter(this);
-    m_trafficPlotter->setMinimumHeight(50);
     m_trafficPlotter->setFont(KGlobalSettings::smallestReadableFont());
     m_trafficPlotter->addPlot(m_rxColor); // receiver green
     m_trafficPlotter->addPlot(m_txColor); // transmitter yellow
