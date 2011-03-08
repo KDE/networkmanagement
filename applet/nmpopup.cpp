@@ -247,15 +247,15 @@ void NMPopup::readConfig()
         bool networkingEnabled = config.readEntry("NetworkingEnabled",
                                                   Solid::Control::NetworkManager::isNetworkingEnabled());
         bool wirelessEnabled = config.readEntry("WirelessEnabled",
-                                                Solid::Control::NetworkManager::isWwanEnabled() &&
-                                                Solid::Control::NetworkManager::isWwanHardwareEnabled());
+                                                Solid::Control::NetworkManager::isWirelessEnabled() &&
+                                                Solid::Control::NetworkManager::isWirelessHardwareEnabled());
 
         Solid::Control::NetworkManager::setNetworkingEnabled(networkingEnabled);
         Solid::Control::NetworkManager::setWirelessEnabled(wirelessEnabled);
 #ifdef NM_0_8
         bool wwanEnabled = config.readEntry("WwanEnabled",
-                                            Solid::Control::NetworkManager::isWirelessEnabled() &&
-                                            Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+                                            Solid::Control::NetworkManager::isWwanEnabled() &&
+                                            Solid::Control::NetworkManager::isWwanHardwareEnabled());
         Solid::Control::NetworkManager::setWwanEnabled(wwanEnabled);
 #endif
     }
