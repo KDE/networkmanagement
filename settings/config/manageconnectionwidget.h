@@ -107,6 +107,8 @@ private:
     QString formatDateRelative(const QDateTime & lastUsed);
     void updateLastUsed(QTreeWidget *);
 
+    bool event(QEvent *ev);
+
     Ui_ManageConnectionWidget mConnEditUi;
     QTreeWidget * mWiredList;
     QMenu * mCellularMenu;

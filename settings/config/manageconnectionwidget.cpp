@@ -31,6 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QFile>
 #include <QMenu>
 #include <QTimer>
+#include <QEvent>
+#include <QKeyEvent>
 
 #include <KCModuleProxy>
 #include <KLocale>
@@ -526,3 +528,16 @@ void ManageConnectionWidget::connectButtonSet(AddEditDeleteButtonSet* buttonSet,
     connect(buttonSet->deleteButton(), SIGNAL(clicked()), SLOT(deleteClicked()));
 }
 
+bool ManageConnectionWidget::event(QEvent *ev)
+{
+    if (ev->type() == QEvent::KeyPress) {
+        int key = static_cast<QKeyEvent*>(ev)->key();
+
+	if (key == Qt::Key_Delete) {
+	    deleteClicked();
+	    return true;
+	}
+    }
+
+    return KCModule::event(ev);
+}
