@@ -1,6 +1,6 @@
 // -*- coding: iso-8859-1 -*-
 /*
- *   Author: Marco Martin <mart@kde.org>
+ *   Author: Sebastian Kügler <sebas@kde.org>
  *   Date: Sun Nov 7 2010, 18:51:24
  *
  *   This program is free software; you can redistribute it and/or modify
@@ -146,10 +146,16 @@ Item {
             Text {
                 id: mainText
                 text: {
-                    if (typeof networkEngineSource.data[DataEngineSource]["connectionName"] != "undefined") {
-                        networkEngineSource.data[DataEngineSource]["connectionName"]
-                    } else{
-                        networkEngineSource.data[DataEngineSource]["ssid"]
+                    if (isInterfaceConnection(activatableType)) {
+                        var t = networkEngineSource.data[DataEngineSource]["connectionName"];
+                        if (networkEngineSource.data[DataEngineSource]["activationState"] == "Activated") {
+                            t = t + " (Connected)";
+                        }
+                        return t;
+                    } else if ("WirelessNetwork" == activatableType) {
+                        return networkEngineSource.data[DataEngineSource]["ssid"];
+                    } else {
+                        return activatableType;
                     }
                 }
                 anchors.top: parent.top
@@ -158,11 +164,23 @@ Item {
             }
             Text {
                 id: infoText;
-                //text: "Wireless Network"
-                //text: i18n("Security: ") + networkEngineSource.data[DataEngineSource]["securityToolTip"]
                 text: {
-                    if (typeof networkEngineSource.data[DataEngineSource]["connectionType"] != "undefined") {
-                        return networkEngineSource.data[DataEngineSource]["connectionType"];
+                    if (isInterfaceConnection(activatableType)) {
+                        var conType = networkEngineSource.data[DataEngineSource]["connectionType"];
+                        // Wired, Wireless, Gsm, Cdma, Vpn or Pppoe
+                        if (conType == "Wireless") {
+                            return i18n("Remembered Wifi Connection");
+                        } else if (conType == "Wired") {
+                            return i18n("Wired Connection");
+                        } else if (conType == "Gsm") {
+                            return i18n("Mobile Broadband");
+                        } else if (conType == "Cdma") {
+                            return i18n("Mobile Internet");
+                        } else if (conType == "Pppoe") {
+                            return i18n("Modem Connection");
+                        } else if (conType == "Vpn") {
+                            return i18n("Virtual Private Network");
+                        }
                     }
                     return "";
                 }
@@ -267,6 +285,12 @@ Item {
                     return "network-wireless-connnected-25";
                 }
                 return "network-wireless-connnected-00";
+            }
+
+            function isInterfaceConnection(activatableType) {
+                var cons = ["InterfaceConnection", "WirelessInterfaceConnection", "VpnInterfaceConnection", "GsmInterfaceConnection"];
+                //print(activatableType);
+                return cons.indexOf(activatableType) >= 0;
             }
 
         }

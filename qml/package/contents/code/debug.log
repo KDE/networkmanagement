@@ -1,0 +1,30 @@
+"73433604" "79691867" QVariant(
+    QVariantHash, QHash(
+        ("onAllDesktops", QVariant(bool, false) )
+        ( "minimized" ,  QVariant(bool, false) )
+        ( "keptBelowOthers" ,  QVariant(bool, false) )
+        ( "className" ,  QVariant(QString, "assistant") )
+        ( "classClass" ,  QVariant(QString, "Assistant") )
+        ( "actionFullScreen" ,  QVariant(bool, true) )
+        ( "task" ,  QVariant(bool, true) )
+        ( "shaded" ,  QVariant(bool, false) )
+        ( "name" ,  QVariant(QString, "Qt Assistant") ) ( "onCurrentActivity" ,  QVariant(bool, true) ) ( "active" ,  QVariant(bool, false) ) ( "onTop" ,  QVariant(bool, false) ) ( "actionClose" ,  QVariant(bool, true) ) ( "actionChangeDesktop" ,  QVariant(bool, true) ) ( "visibleNameWithState" ,  QVariant(QString, "Qt Assistant") ) ( "actionShade" ,  QVariant(bool, true) ) ( "alwaysOnTop" ,  QVariant(bool, false) ) ( "onAllActivities" ,  QVariant(bool, false) ) ( "actionMinimize" ,  QVariant(bool, true) ) ( "activities" ,  QVariant(QStringList, ("6f4c2f8b-62b4-4c9f-9e54-f0d1ab259877") ) ) ( "desktop" ,  QVariant(int, 1) ) ( "visibleName" ,  QVariant(QString, "Qt Assistant") ) ( "icon" ,  QVariant(QIcon, ) ) ( "actionMove" ,  QVariant(bool, true) ) ( "onCurrentDesktop" ,  QVariant(bool, true) ) ( "fullScreen" ,  QVariant(bool, false) ) ( "maximized" ,  QVariant(bool, false) ) ( "startup" ,  QVariant(bool, false) )
+        ( "actionMaximize" ,  QVariant(bool, true) )
+        ( "actionResize" ,  QVariant(bool, true) )
+    )
+)
+
+
+
+
+QVariant(
+    QVariantHash, QHash(
+        ("securityIcon", QVariant(QString, "security-low") )
+        ( "securityToolTip" ,  QVariant(QString, "<html>Insecure</html>") )
+        ( "adhoc" ,  QVariant(bool, false) )
+        ( "connectionType" ,  QVariant(QString, "Wireless") )
+        ( "ssid" ,  QVariant(QString, "peters") )
+        ( "connectionName" ,  QVariant(QString, "peters") )
+    )
+)
+plasmoidviewer(12724) Plasma::DataModel::dataUpdated:            "SX551E74992" "vizZzion.net" QVariant(QVariantHash, QHash(("securityIcon", QVariant(QString, "security-high") ) ( "securityToolTip" ,  QVariant(QString, "<html>WPA2-PSK</html>") ) ( "adhoc" ,  QVariant(bool, false) ) ( "connectionType" ,  QVariant(QString, "Wireless") ) ( "ssid" ,  QVariant(QString, "vizZzion.net") ) ( "connectionName" ,  QVariant(QString, "vizZzion.net") ) )  )
