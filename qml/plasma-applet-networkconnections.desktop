@@ -1,5 +1,9 @@
 [Desktop Entry]
 Comment=Connect to the Internet
+Comment[pt]=Ligar-se à Internet
+Comment[uk]=Встановити з’єднання з мережею Інтернет
+Comment[x-test]=xxConnect to the Internetxx
+Comment[zh_TW]=連線到網際網路
 Encoding=UTF-8
 Keywords=
 Name=Network Connections
