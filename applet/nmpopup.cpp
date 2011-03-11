@@ -142,12 +142,12 @@ void NMPopup::init()
 #endif
 
     // flight-mode checkbox
-    m_rfCheckBox = new Plasma::CheckBox(m_leftWidget);
-    m_rfCheckBox->setText(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable wireless"));
-    m_rfCheckBox->hide();
-    checkboxLayout->addItem(m_rfCheckBox, 1, 0);
+    m_wifiCheckBox = new Plasma::CheckBox(m_leftWidget);
+    m_wifiCheckBox->setText(i18nc("CheckBox to enable or disable wireless interface (rfkill)", "Enable wireless"));
+    m_wifiCheckBox->hide();
+    checkboxLayout->addItem(m_wifiCheckBox, 1, 0);
 
-    connect(m_rfCheckBox, SIGNAL(toggled(bool)), SLOT(wirelessEnabledToggled(bool)));
+    connect(m_wifiCheckBox, SIGNAL(toggled(bool)), SLOT(wirelessEnabledToggled(bool)));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
             this, SLOT(managerWirelessEnabledChanged(bool)));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
@@ -259,14 +259,14 @@ void NMPopup::readConfig()
 #endif
     }
     m_networkingCheckBox->setChecked(Solid::Control::NetworkManager::isNetworkingEnabled());
-    m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
+    m_wifiCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
 
     /* There is a bug in Solid < 4.6.2 where it does not emit the wirelessHardwareEnabledChanged signal.
      * So we always enable the wireless checkbox for versions below 4.6.2. */
 #if KDE_IS_VERSION(4,6,2)
-    m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+    m_wifiCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
 #else
-    m_rfCheckBox->setEnabled(true);
+    m_wifiCheckBox->setEnabled(true);
 #endif
 
 #ifdef NM_0_8
@@ -285,7 +285,7 @@ void NMPopup::saveConfig()
         kDebug() << "Saving config";
         KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("SystemTray"));
         config.writeEntry("NetworkingEnabled", m_networkingCheckBox->isChecked());
-        config.writeEntry("WirelessEnabled", m_rfCheckBox->isChecked());
+        config.writeEntry("WirelessEnabled", m_wifiCheckBox->isChecked());
 #ifdef NM_0_8
         config.writeEntry("WwanEnabled", m_wwanCheckBox->isChecked());
 #endif
@@ -302,7 +302,6 @@ void NMPopup::interfaceAdded(const QString& uni)
     kDebug() << "Interface Added.";
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
-    updateHasWireless();
 #ifdef NM_0_8
     updateHasWwan();
 #endif
@@ -486,10 +485,10 @@ void NMPopup::networkingEnabledToggled(bool checked)
         Solid::Control::NetworkManager::setNetworkingEnabled(checked);
     }
     // Update wireless checkbox
-    m_rfCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
+    m_wifiCheckBox->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
 
 #if KDE_IS_VERSION(4,6,2)
-    m_rfCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
+    m_wifiCheckBox->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
 #endif
 
 #ifdef NM_0_8
@@ -532,14 +531,14 @@ void NMPopup::updateHasWireless()
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             //kDebug() << "there's a wifi iface" << ifaceitem->connectionName() << iface->interfaceName();
             m_hasWirelessInterface = true; // at least one interface is wireless. We're happy.
-            m_rfCheckBox->show();
+            m_wifiCheckBox->show();
             break;
         }
     }
     if (!m_hasWirelessInterface) {
         kDebug() << "no ifaces";
         hasWireless = false;
-        m_rfCheckBox->hide();
+        m_wifiCheckBox->hide();
     }
     m_connectionList->setHasWireless(hasWireless);
 }
@@ -570,14 +569,13 @@ void NMPopup::managerWirelessEnabledChanged(bool enabled)
     kDebug() << "NM daemon changed wireless enable state" << enabled;
     // it might have changed because we toggled the switch,
     // but it might have been changed externally, so set it anyway
-    m_rfCheckBox->setChecked(enabled);
-    updateHasWireless();
+    m_wifiCheckBox->setChecked(enabled);
 }
 
 void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
-    m_rfCheckBox->setEnabled(enabled);
+    m_wifiCheckBox->setEnabled(enabled);
     updateHasWireless();
 }
 
@@ -585,7 +583,6 @@ void NMPopup::managerNetworkingEnabledChanged(bool enabled)
 {
     kDebug() << "NM daemon changed networking enable state" << enabled;
     m_networkingCheckBox->setChecked(enabled);
-    updateHasWireless();
 }
 
 #ifdef NM_0_8

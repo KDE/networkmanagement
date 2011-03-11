@@ -123,7 +123,7 @@ private:
     QGraphicsLinearLayout* m_rightLayout;
 
     Plasma::CheckBox* m_networkingCheckBox;
-    Plasma::CheckBox* m_rfCheckBox;
+    Plasma::CheckBox* m_wifiCheckBox;
 #ifdef NM_0_8
     Plasma::CheckBox* m_wwanCheckBox;
 #endif
