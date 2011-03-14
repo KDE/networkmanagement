@@ -106,7 +106,7 @@ void ConnectionSecretsJob::gotPersistedSecrets(uint result)
     m_connectionPersistence = 0;
     setError(result);
     if (result == Knm::ConnectionPersistence::EnumError::NoError &&
-        m_connection->secretsAvailable()) {
+        !m_connection->hasVolatileSecrets()) {
         emitResult();
     } else {
         doAskUser();
@@ -194,6 +194,7 @@ void ConnectionSecretsJob::dialogAccepted()
             KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
             (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
     cp.save();
+    setError(EnumError::NoError);
     m_settingWidget->deleteLater();
     m_askUserDialog->deleteLater();
     emitResult();

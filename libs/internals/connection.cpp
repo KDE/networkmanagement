@@ -301,4 +301,14 @@ void Connection::setType(Connection::Type type)
     kDebug() << "Connection type is set as " << typeAsString(type) << ". Settings of the connection removed since its type has been changed.";
 }
 
+bool Connection::hasVolatileSecrets() const
+{
+    foreach (Setting * setting, m_settings) {
+        if (setting->hasVolatileSecrets()) {
+            return true;
+        }
+    }
+    return false;
+}
+
 // vim: sw=4 sts=4 et tw=100

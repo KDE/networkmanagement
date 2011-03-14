@@ -123,7 +123,7 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
       return mSecretsStorageType;
     }
 
-    bool secretsAvailable() const;
+    bool hasVolatileSecrets() const;
 
   protected:
 

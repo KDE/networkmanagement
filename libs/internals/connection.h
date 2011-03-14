@@ -99,6 +99,13 @@ public:
     bool hasSecrets() const;
 
     /**
+     * Check if this connection has volatile secrets; if yes,
+     * ask user every time secrets are requested
+     * Connections which have no volatile secrets always return false
+     */
+    bool hasVolatileSecrets() const;
+
+    /**
      * Check if this connection's secrets are currently loaded (secrets may be lazy loaded)
      * If not, use @ref ConnectionPersistence::loadSecrets()
      * Connections which have no secrets always return true

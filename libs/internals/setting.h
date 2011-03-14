@@ -41,7 +41,8 @@ public:
     Setting::Type type() const;
     virtual QString name() const = 0;
     virtual bool hasSecrets() const = 0;
-    virtual bool secretsAvailable() const;
+    virtual bool hasVolatileSecrets() const { return false; }
+    bool secretsAvailable() const;
     void setSecretsAvailable(bool secretsAvailable);
 protected:
     bool m_initialized;

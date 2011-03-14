@@ -118,7 +118,7 @@ QVariantMap VpnPersistence::secretsToSave(const QStringMap & type, const QVarian
   QMapIterator<QString,QVariant> i(secrets);
   while (i.hasNext()) {
       i.next();
-      if (type[i.key()].isNull() || type[i.key()] == NM_VPN_PW_TYPE_SAVE)
+      if (type[i.key()].isNull() || type[i.key()] == QLatin1String(NM_VPN_PW_TYPE_SAVE))
 	  toSave.insert( i.key(), i.value() );
   }
   return toSave;
