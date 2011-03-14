@@ -234,7 +234,7 @@ void NMDBusSettingsService::interfaceConnectionActivated()
 void NMDBusSettingsService::interfaceConnectionDeactivated()
 {
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
-#if NM_0_8
+#ifdef NM_0_8
     Solid::Control::NetworkInterface *iface = Solid::Control::NetworkManager::findNetworkInterface(ic->deviceUni());
     if (iface) {
     	iface->disconnectInterface();
