@@ -131,7 +131,10 @@ void InterfaceNotificationHost::strengthChanged(int strength)
 {
     if (strength < 30) {
         Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(sender());
-        KNotification::event(Event::LowSignal, m_interfaceNameLabel, i18nc("@info:status Notification text when wireless/gsm signal is low","Low signal on %1", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+
+        if (ic->activationState() == Knm::InterfaceConnection::Activated) {
+            KNotification::event(Event::LowSignal, m_interfaceNameLabel, i18nc("@info:status Notification text when wireless/gsm signal is low","Low signal on %1", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+        }
     }
 }
 
