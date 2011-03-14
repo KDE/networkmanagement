@@ -20,7 +20,11 @@ QString Security8021xSetting::name() const
 }
 bool Security8021xSetting::hasSecrets() const
 {
-  return true;
+    if (mEnabled) {
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
