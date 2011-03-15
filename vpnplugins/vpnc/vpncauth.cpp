@@ -66,7 +66,7 @@ void VpncAuthWidget::readSecrets()
      * First time "old" settings are loaded secretsType map is empty, so
      * try to read from data as fallback
      */
-    userType = secretsType.value(NM_VPNC_KEY_XAUTH_PASSWORD_TYPE);
+    userType = secretsType.value(NM_VPNC_KEY_XAUTH_PASSWORD);
     if (userType.isNull()) {
         userType = d->setting->data().value(NM_VPNC_KEY_XAUTH_PASSWORD_TYPE);
     }
@@ -75,8 +75,8 @@ void VpncAuthWidget::readSecrets()
         d->ui.leUserPassword->setEnabled(false);
     }
 
-    groupType = secretsType.value(NM_VPNC_KEY_SECRET_TYPE);
-    if (userType.isNull()) {
+    groupType = secretsType.value(NM_VPNC_KEY_SECRET);
+    if (groupType.isNull()) {
         groupType = d->setting->data().value(NM_VPNC_KEY_SECRET_TYPE);
     }
     if (groupType == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
