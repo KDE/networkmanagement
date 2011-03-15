@@ -2248,7 +2248,7 @@ int main( int argc, char **argv )
 
     if ((*itEntry)->secret()) {
         pC << "  // SECRET" << endl;
-        pC << "  if (m_storageMode != ConnectionPersistence::Secure) {" << endl << "  ";
+        pC << "  if (m_storageMode == ConnectionPersistence::PlainText) {" << endl << "  ";
     }
     if (t == "Enum") {
         const CfgEntry::Choices &choices = (*itEntry)->choices();
@@ -2297,7 +2297,7 @@ int main( int argc, char **argv )
 
     if ((*itEntry)->secret()) {
         pC << "  // SECRET" << endl;
-        pC << "  if (m_storageMode != ConnectionPersistence::Secure) {" << endl << "  ";
+        pC << "  if (m_storageMode == ConnectionPersistence::PlainText) {" << endl << "  ";
     }
     if (t == "Enum") {
         const CfgEntry::Choices &choices = (*itEntry)->choices();

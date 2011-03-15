@@ -70,7 +70,7 @@ void WirelessSecurityPersistence::load()
   setting->setGroup(m_config->readEntry("group", QStringList()));
   setting->setLeapusername(m_config->readEntry("leapusername", ""));
   // SECRETS
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     setting->setWepkey0(m_config->readEntry("wepkey0", ""));
     setting->setWepkey1(m_config->readEntry("wepkey1", ""));
     setting->setWepkey2(m_config->readEntry("wepkey2", ""));
@@ -152,31 +152,31 @@ void WirelessSecurityPersistence::save()
   m_config->writeEntry("group", setting->group());
   m_config->writeEntry("leapusername", setting->leapusername());
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("wepkey0", setting->wepkey0());
   }
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("wepkey1", setting->wepkey1());
   }
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("wepkey2", setting->wepkey2());
   }
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("wepkey3", setting->wepkey3());
   }
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("psk", setting->psk());
   }
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("leappassword", setting->leappassword());
   }
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("weppassphrase", setting->weppassphrase());
   }
 }

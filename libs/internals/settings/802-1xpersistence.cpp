@@ -80,19 +80,19 @@ void Security8021xPersistence::load()
   setting->setPhase2clientcert(m_config->readEntry("phase2clientcert", QByteArray()));
   setting->setPhase2clientcertpath(m_config->readEntry("phase2clientcertpath", ""));
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     setting->setPassword(m_config->readEntry("password", ""));
   }
   setting->setPrivatekey(m_config->readEntry("privatekey", QByteArray()));
   setting->setPrivatekeypath(m_config->readEntry("privatekeypath", ""));
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     setting->setPrivatekeypassword(m_config->readEntry("privatekeypassword", ""));
   }
   setting->setPhase2privatekey(m_config->readEntry("phase2privatekey", QByteArray()));
   setting->setPhase2privatekeypath(m_config->readEntry("phase2privatekeypath", ""));
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     setting->setPhase2privatekeypassword(m_config->readEntry("phase2privatekeypassword", ""));
     setting->setSecretsAvailable(true);
   }
@@ -178,19 +178,19 @@ void Security8021xPersistence::save()
   m_config->writeEntry("phase2clientcert", setting->phase2clientcert());
   m_config->writeEntry("phase2clientcertpath", setting->phase2clientcertpath());
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("password", setting->password());
   }
   m_config->writeEntry("privatekey", setting->privatekey());
   m_config->writeEntry("privatekeypath", setting->privatekeypath());
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("privatekeypassword", setting->privatekeypassword());
   }
   m_config->writeEntry("phase2privatekey", setting->phase2privatekey());
   m_config->writeEntry("phase2privatekeypath", setting->phase2privatekeypath());
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("phase2privatekeypassword", setting->phase2privatekeypassword());
   }
   m_config->writeEntry("pin", setting->pin());

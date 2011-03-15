@@ -216,6 +216,7 @@ void ConnectionPersistence::loadSecrets()
         EnumError::type errorCode = EnumError::NoError;
 
         if (m_storageMode != ConnectionPersistence::Secure) {
+            /* This implicitly covers DontStore as well */
 
             if (!m_connection->secretsAvailable()){
                 errorCode = EnumError::MissingContents;

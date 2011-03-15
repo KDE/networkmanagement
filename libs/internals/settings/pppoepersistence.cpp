@@ -21,7 +21,7 @@ void PppoePersistence::load()
   setting->setService(m_config->readEntry("service", ""));
   setting->setUsername(m_config->readEntry("username", ""));
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     setting->setPassword(m_config->readEntry("password", ""));
   }
   setting->setInitialized();
@@ -33,7 +33,7 @@ void PppoePersistence::save()
   m_config->writeEntry("service", setting->service());
   m_config->writeEntry("username", setting->username());
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("password", setting->password());
   }
 }

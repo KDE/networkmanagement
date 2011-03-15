@@ -21,7 +21,7 @@ void CdmaPersistence::load()
   setting->setNumber(m_config->readEntry("number", ""));
   setting->setUsername(m_config->readEntry("username", ""));
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     setting->setPassword(m_config->readEntry("password", ""));
     setting->setSecretsAvailable(true);
   }
@@ -34,7 +34,7 @@ void CdmaPersistence::save()
   m_config->writeEntry("number", setting->number());
   m_config->writeEntry("username", setting->username());
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("password", setting->password());
   }
 }

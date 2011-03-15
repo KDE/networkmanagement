@@ -25,7 +25,7 @@ void GsmPersistence::load()
   setting->setNetworktype(m_config->readEntry("networktype", 0));
   setting->setBand(m_config->readEntry("band", 0));
   // SECRETS
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     setting->setPassword(m_config->readEntry("password", ""));
     setting->setPin(m_config->readEntry("pin", ""));
     setting->setPuk(m_config->readEntry("puk", ""));
@@ -40,7 +40,7 @@ void GsmPersistence::save()
   m_config->writeEntry("number", setting->number());
   m_config->writeEntry("username", setting->username());
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("password", setting->password());
   }
   m_config->writeEntry("apn", setting->apn());
@@ -48,11 +48,11 @@ void GsmPersistence::save()
   m_config->writeEntry("networktype", setting->networktype());
   m_config->writeEntry("band", setting->band());
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("pin", setting->pin());
   }
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("puk", setting->puk());
   }
 }

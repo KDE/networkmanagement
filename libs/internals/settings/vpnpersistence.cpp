@@ -25,7 +25,7 @@ void VpnPersistence::load()
   setting->setSecretsStorageType(stringMapFromStringList(m_config->readEntry("SecretsStorageType", QStringList())));
   setting->setUserName(KUser().loginName());
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
       // the map is flattened to a list of key,value,key,value
       setting->setVpnSecrets(variantMapFromStringList(m_config->readEntry("VpnSecrets", QStringList())));
     setting->setSecretsAvailable(true);
@@ -41,7 +41,7 @@ void VpnPersistence::save()
   m_config->writeEntry("Data", stringMapToStringList(setting->data()));
   m_config->writeEntry("SecretsStorageType", stringMapToStringList(setting->secretsStorageType()));
   // SECRET
-  if (m_storageMode != ConnectionPersistence::Secure) {
+  if (m_storageMode == ConnectionPersistence::PlainText) {
     /*
      * Save only secrets with storage type == "save"
      * For compatibility treat empty storage type as "save"
