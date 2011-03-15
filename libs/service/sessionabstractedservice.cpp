@@ -139,6 +139,11 @@ QStringList SessionAbstractedService::ListActivatables() const
     return sortedPaths;
 }
 
+void SessionAbstractedService::ReadConfig()
+{
+    emit DoReadConfig();
+}
+
 QString SessionAbstractedService::nextObjectPath()
 {
     Q_D(SessionAbstractedService);

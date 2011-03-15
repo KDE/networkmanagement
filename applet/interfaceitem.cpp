@@ -89,17 +89,11 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
 
     setMinimumHeight(m_pixmapSize.height()+6);
     m_layout->addItem(m_icon, 0, 0, 2, 1);
-
-    QString icon;
-    if (m_iface) {
-        m_interfaceName = UiUtils::interfaceNameLabel(m_iface->uni());
-    }
     m_icon->nativeWidget()->setPixmap(interfacePixmap());
 
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
     m_ifaceNameLabel->setToolTip(tt);
-    m_ifaceNameLabel->setText(m_interfaceName);
     m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
     m_ifaceNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
@@ -151,7 +145,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
         connectionStateChanged(m_iface->connectionState());
     }
 
-    setNameDisplayMode(mode);
     setLayout(m_layout);
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
 
@@ -236,6 +229,9 @@ void InterfaceItem::setEnabled(bool enable)
 void InterfaceItem::setNameDisplayMode(NameDisplayMode mode)
 {
     m_nameMode = mode;
+    if (m_iface) {
+        m_interfaceName = UiUtils::interfaceNameLabel(m_iface->uni());
+    }
     if (m_nameMode == InterfaceName) {
         m_ifaceNameLabel->setText(QString("<b>%1</b>").arg(m_interfaceName));
     } else if (m_nameMode == HardwareName) {

@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "managetraywidget.h"
 
 #include <QHBoxLayout>
+#include <QDBusInterface>
+#include <QDBusPendingReply>    				    
 
 #include <KLocale>
 #include <KPluginFactory>
@@ -59,4 +61,8 @@ void ManageTrayWidget::save()
 {
     KNetworkManagerServicePrefs::self()->writeConfig();
     KCModule::save();
+
+    // To make the plasmoid reread the "Show network interface using:" property.
+    QDBusInterface dbus("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement");
+    dbus.asyncCall(QLatin1String("ReadConfig"));
 }

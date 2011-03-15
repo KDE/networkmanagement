@@ -52,9 +52,11 @@ public:
     static const QString SESSION_SERVICE_DBUS_PATH;
 public slots:
     Q_SCRIPTABLE QStringList ListActivatables() const;
+    Q_SCRIPTABLE void ReadConfig();
 signals:
     Q_SCRIPTABLE void ActivatableAdded(const QString & path, uint type);
     Q_SCRIPTABLE void ActivatableRemoved(const QString &);
+    Q_SCRIPTABLE void DoReadConfig();
 private:
     Q_DECLARE_PRIVATE(SessionAbstractedService)
     QString nextObjectPath();

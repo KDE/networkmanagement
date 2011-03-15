@@ -5,7 +5,8 @@
     <method name="ListActivatables">
       <arg type="as" direction="out"/>
     </method>
- 
+    <method name="ReadConfig" />
+
     <signal name="ActivatableAdded">
 	  <arg name="added" type="s" direction="out" />
 	  <arg name="type" type="u" direction="out" />
@@ -13,5 +14,6 @@
     <signal name="ActivatableRemoved">
 	  <arg name="removed" type="s" direction="out" />
     </signal>
+    <signal name="DoReadConfig" />
   </interface>
 </node>

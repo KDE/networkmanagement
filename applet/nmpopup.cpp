@@ -236,6 +236,7 @@ void NMPopup::init()
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(readConfig()));
+    dbus.connect("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement", "DoReadConfig", this, SLOT(readConfig()));
 }
 
 void NMPopup::readConfig()
@@ -273,6 +274,10 @@ void NMPopup::readConfig()
     m_wwanCheckBox->setChecked(Solid::Control::NetworkManager::isWwanEnabled());
     m_wwanCheckBox->setEnabled(Solid::Control::NetworkManager::isWwanHardwareEnabled());
 #endif
+
+    foreach(InterfaceItem * i, m_interfaces) {
+        i->setNameDisplayMode(InterfaceItem::InterfaceName);
+    }
 }
 
 void NMPopup::saveConfig()
