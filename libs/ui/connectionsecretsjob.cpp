@@ -158,8 +158,6 @@ void ConnectionSecretsJob::doAskUser()
         m_settingWidget = new WirelessSecuritySettingWidget(m_connection, 0, 0, 0); // TODO: find out AP and device
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
         m_settingWidget = new Wireless80211Widget(m_connection, 0);
-    } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
-        // todo: vpn secrets!
     }
 
     if (m_settingWidget) {
