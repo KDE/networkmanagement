@@ -236,7 +236,7 @@ void NMPopup::init()
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(readConfig()));
-    dbus.connect("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement", "DoReadConfig", this, SLOT(readConfig()));
+    dbus.connect("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement", "ReloadConfig", this, SLOT(readConfig()));
 }
 
 void NMPopup::readConfig()

@@ -141,7 +141,7 @@ QStringList SessionAbstractedService::ListActivatables() const
 
 void SessionAbstractedService::ReadConfig()
 {
-    emit DoReadConfig();
+    emit ReloadConfig();
 }
 
 QString SessionAbstractedService::nextObjectPath()

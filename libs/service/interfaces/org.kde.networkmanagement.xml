@@ -14,6 +14,6 @@
     <signal name="ActivatableRemoved">
 	  <arg name="removed" type="s" direction="out" />
     </signal>
-    <signal name="DoReadConfig" />
+    <signal name="ReloadConfig" />
   </interface>
 </node>
