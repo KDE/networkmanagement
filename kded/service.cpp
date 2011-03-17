@@ -150,7 +150,7 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->sortedList->registerObserver(d->sessionAbstractedService);
 
     // load our local connections
-    d->listPersistence->init();
+//    d->listPersistence->init();
 }
 
 
