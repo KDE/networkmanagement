@@ -43,6 +43,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "nm-exported-connectioninterface.h"
 #include "nm-exported-connection-secrets-interface.h"
 
+// NetworkManager settings service object path for NM 0.9
+// TODO: ifdef for NM 0.8 x NM 0.9 ?
+const QString KNM_NM_DBUS_PATH_SETTINGS = QLatin1String("/org/freedesktop/NetworkManager/Settings");
+
 class NMDBusSettingsConnectionProviderPrivate
 {
 public:
@@ -60,7 +64,7 @@ NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionLis
     Q_D(NMDBusSettingsConnectionProvider);
     d->connectionList = connectionList;
     d->iface = new OrgFreedesktopNetworkManagerSettingsInterface(service,
-            QLatin1String(NM_DBUS_PATH_SETTINGS),
+            KNM_NM_DBUS_PATH_SETTINGS,
             QDBusConnection::systemBus(), parent);
     d->serviceName = service;
 

@@ -58,11 +58,13 @@ public:
 };
 
 const QString NMDBusSettingsService::SERVICE_USER_SETTINGS = QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS);
-const QString NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS = QLatin1String(NM_DBUS_SERVICE_SYSTEM_SETTINGS);
+const QString NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS = QLatin1String("org.freedesktop.NetworkManager");
 
 NMDBusSettingsService::NMDBusSettingsService(QObject * parent)
 : QObject(parent), d_ptr(new NMDBusSettingsServicePrivate)
 {
+// disable user service
+#if 0
     Q_D(NMDBusSettingsService);
     d->status = Available;
     d->nextConnectionId = 0;
@@ -90,17 +92,22 @@ NMDBusSettingsService::NMDBusSettingsService(QObject * parent)
     QDBusConnection dbus = QDBusConnection::systemBus();
     if (!dbus.registerObject(QLatin1String(NM_DBUS_PATH_SETTINGS), this, QDBusConnection::ExportScriptableContents)) {
         kDebug() << "Unable to register settings object " << NM_DBUS_PATH_SETTINGS;
+
         d->status = UnknownError;
     }
+#endif
 }
 
 NMDBusSettingsService::~NMDBusSettingsService()
 {
+// disable user service
+#if 0
     Q_D(const NMDBusSettingsService);
     if ((d->status == Available) && !QDBusConnection::systemBus().unregisterService(SERVICE_USER_SETTINGS) ) {
         // trouble;
         kDebug() << "Unable to unregister service";
     }
+#endif
 }
 
 QUuid NMDBusSettingsService::uuidForPath(const QDBusObjectPath& path) const

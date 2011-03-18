@@ -25,14 +25,14 @@ class QStringList;
 class QVariant;
 
 /*
- * Adaptor class for interface org.freedesktop.NetworkManagerSettings.Connection.Secrets
+ * Adaptor class for interface org.freedesktop.NetworkManager.Settings.Connection.Secrets
  */
 class SecretsAdaptor: public QDBusAbstractAdaptor
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection.Secrets")
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManager.Settings.Connection.Secrets")
     Q_CLASSINFO("D-Bus Introspection", ""
-"  <interface name=\"org.freedesktop.NetworkManagerSettings.Connection.Secrets\">\n"
+"  <interface name=\"org.freedesktop.NetworkManager.Settings.Connection.Secrets\">\n"
 "    <method name=\"GetSecrets\">\n"
 "      <annotation value=\"impl_exported_connection_get_secrets\" name=\"org.freedesktop.DBus.GLib.CSymbol\"/>\n"
 "      <annotation value=\"\" name=\"org.freedesktop.DBus.GLib.Async\"/>\n"

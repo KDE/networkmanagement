@@ -22,14 +22,14 @@
 #include "types.h"
 
 /*
- * Proxy class for interface org.freedesktop.NetworkManagerSettings.Connection
+ * Proxy class for interface org.freedesktop.NetworkManager.Settings.Connection
  */
 class OrgFreedesktopNetworkManagerSettingsConnectionInterface: public QDBusAbstractInterface
 {
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    { return "org.freedesktop.NetworkManagerSettings.Connection"; }
+    { return "org.freedesktop.NetworkManager.Settings.Connection"; }
 
 public:
     OrgFreedesktopNetworkManagerSettingsConnectionInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);

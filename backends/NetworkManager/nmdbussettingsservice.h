@@ -43,7 +43,7 @@ class NMDBusSettingsServicePrivate;
 class KNM_EXPORT NMDBusSettingsService : public QObject, public ActivatableObserver, public ConnectionHandler
 {
 Q_OBJECT
-Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings")
+Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManager.Settings")
 
 public:
     enum ServiceStatus { Available, AlreadyRunning, AccessDenied, UnknownError };

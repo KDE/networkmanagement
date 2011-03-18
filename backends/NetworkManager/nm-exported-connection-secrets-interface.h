@@ -22,14 +22,14 @@
 #include "types.h"
 
 /*
- * Proxy class for interface org.freedesktop.NetworkManagerSettings.Connection.Secrets
+ * Proxy class for interface org.freedesktop.NetworkManager.Settings.Connection.Secrets
  */
 class OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface: public QDBusAbstractInterface
 {
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    { return "org.freedesktop.NetworkManagerSettings.Connection.Secrets"; }
+    { return "org.freedesktop.NetworkManager.Settings.Connection.Secrets"; }
 
 public:
     OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);

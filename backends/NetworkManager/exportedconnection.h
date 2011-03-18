@@ -25,14 +25,14 @@ class QStringList;
 class QVariant;
 
 /*
- * Adaptor class for interface org.freedesktop.NetworkManagerSettings.Connection
+ * Adaptor class for interface org.freedesktop.NetworkManager.Settings.Connection
  */
 class ConnectionAdaptor: public QDBusAbstractAdaptor
 {
     Q_OBJECT
-    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManagerSettings.Connection")
+    Q_CLASSINFO("D-Bus Interface", "org.freedesktop.NetworkManager.Settings.Connection")
     Q_CLASSINFO("D-Bus Introspection", ""
-"  <interface name=\"org.freedesktop.NetworkManagerSettings.Connection\">\n"
+"  <interface name=\"org.freedesktop.NetworkManager.Settings.Connection\">\n"
 "    <method name=\"Update\">\n"
 "      <annotation value=\"impl_exported_connection_update\" name=\"org.freedesktop.DBus.GLib.CSymbol\"/>\n"
 "      <annotation value=\"\" name=\"org.freedesktop.DBus.GLib.Async\"/>\n"
