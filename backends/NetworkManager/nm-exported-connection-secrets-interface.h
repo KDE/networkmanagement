@@ -29,7 +29,7 @@ class OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface: public QDB
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    { return "org.freedesktop.NetworkManager.Settings.Connection.Secrets"; }
+    { return "org.freedesktop.NetworkManager.Settings.Connection"; }
 
 public:
     OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
@@ -37,10 +37,10 @@ public:
     ~OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface();
 
 public Q_SLOTS: // METHODS
-    inline QDBusPendingReply<QVariantMapMap> GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new)
+    inline QDBusPendingReply<QVariantMapMap> GetSecrets(const QString &setting_name)
     {
         QList<QVariant> argumentList;
-        argumentList << qVariantFromValue(setting_name) << qVariantFromValue(hints) << qVariantFromValue(request_new);
+        argumentList << qVariantFromValue(setting_name);
         return asyncCallWithArgumentList(QLatin1String("GetSecrets"), argumentList);
     }
 

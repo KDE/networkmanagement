@@ -35,7 +35,7 @@ SecretsAdaptor::~SecretsAdaptor()
 
 QVariantMapMap SecretsAdaptor::GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new, const QDBusMessage & message)
 {
-    // handle method call org.freedesktop.NetworkManagerSettings.Connection.Secrets.GetSecrets
+    // handle method call org.freedesktop.NetworkManagerSettings.Connection.GetSecrets
     return parent()->GetSecrets(setting_name, hints, request_new, message);
 }
 
