@@ -1,31 +1,9 @@
 [Desktop Entry]
-Name=Akonadi
-Name[da]=Akonadi
-Name[et]=Akonadi
-Name[fr]=Akonadi
-Name[hu]=Akonadi
-Name[nl]=Akonadi
-Name[pt]=Akonadi
-Name[pt_BR]=Akonadi
-Name[sv]=Akonadi
-Name[uk]=Akonadi
-Name[x-test]=xxAkonadixx
-Name[zh_TW]=Akonadi
-Comment=Akonadi PIM data engine
-Comment[da]=Akonadi datamotor til PIM
-Comment[et]=Akonadi PIM-i andmete mootor
-Comment[fr]=Moteur de données PIM pour Akonadi
-Comment[hu]=Akonadi PIM adatmodul
-Comment[nl]=Akonadi PIM gegevensengine
-Comment[pt]=Motor de dados PIM do Akonadi
-Comment[pt_BR]=Mecanismo de dados PIM do Akonadi
-Comment[sv]=Akonadi-datagränssnitt för personlig informationshantering
-Comment[uk]=Рушій даних Akonadi PIM
-Comment[x-test]=xxAkonadi PIM data enginexx
-Comment[zh_TW]=Akonadi PIM 資料引擎
+Name=Network Manager
+Comment=Network Manager data engine
 X-KDE-ServiceTypes=Plasma/DataEngine
 Type=Service
-Icon=akonadi
+Icon=networkmanager
 X-KDE-Library=plasma_engine_networkmanagement
 
 X-KDE-PluginInfo-Author=Sebastian Kügler
