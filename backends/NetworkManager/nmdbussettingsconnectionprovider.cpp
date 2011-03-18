@@ -82,14 +82,20 @@ void NMDBusSettingsConnectionProvider::initConnections()
 {
     kDebug();
     Q_D(NMDBusSettingsConnectionProvider);
+    // ListConnections() is asynchronous; we need to wait until completion, else it won't work
     QDBusPendingReply<QList<QDBusObjectPath> > reply = d->iface->ListConnections();
-    if (reply.isValid()) {
+    reply.waitForFinished();
+    if (!reply.isError()) {
         QList<QDBusObjectPath> connections = reply.value();
         foreach (const QDBusObjectPath &op, connections) {
             kDebug() << op.path();
             initialiseAndRegisterRemoteConnection(op.path());
         }
+    } else {
+        kDebug() << "Error in ListConnections() D-Bus call:" << reply.error();
     }
+
+
 }
 
 void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(const QString & path)
