@@ -675,12 +675,12 @@
               </item>
               <item>
                <property name="text">
-                <string>0</string>
+                <string>Server (0)</string>
                </property>
               </item>
               <item>
                <property name="text">
-                <string>1</string>
+                <string>Client (1)</string>
                </property>
               </item>
              </widget>
