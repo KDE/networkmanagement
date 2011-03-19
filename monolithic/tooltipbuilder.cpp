@@ -134,7 +134,7 @@ QString interfaceTooltipHtmlPart(Solid::Control::NetworkInterface * iface, const
     else if (requestedInfo == QLatin1String("status")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                 .arg(i18nc("@info:tooltip network interface status", "Status"))
-                .arg(UiUtils::connectionStateToString(iface->connectionState()));
+                .arg(UiUtils::connectionStateToString(static_cast<NM09DeviceState>(iface->connectionState())));
     }
     else if (requestedInfo == QLatin1String("designspeed")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")

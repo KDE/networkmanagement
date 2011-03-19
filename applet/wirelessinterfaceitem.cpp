@@ -63,9 +63,9 @@ void WirelessInterfaceItem::setConnectionInfo()
 {
     InterfaceItem::setConnectionInfo(); // Sets the labels
     switch (m_iface->connectionState()) {
-        case Solid::Control::NetworkInterface::Unavailable:
-        case Solid::Control::NetworkInterface::Disconnected:
-        case Solid::Control::NetworkInterface::Failed:
+        case Unavailable:
+        case Disconnected:
+        case Failed:
             m_connectionInfoIcon->hide();
             break;
         default:

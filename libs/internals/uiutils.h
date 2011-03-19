@@ -26,6 +26,7 @@ class QSizeF;
 #include "knminternals_export.h"
 #include "../client/remoteinterfaceconnection.h"
 #include "../client/remoteactivatablelist.h"
+#include "../libs/types.h"
 
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
@@ -59,7 +60,7 @@ public:
      * @return a human-readable description of the connection state of a given network interface
      * @param state The connection state
      */
-    static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state, const QString &connectionName = QString());
+    static QString connectionStateToString(NM09DeviceState state, const QString &connectionName = QString());
 
     /**
      * @return the RemoteInterfaceConnection for a given network interface

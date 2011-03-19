@@ -531,7 +531,7 @@ void KNetworkManagerTrayIcon::updateToolTip()
     Q_D(KNetworkManagerTrayIcon);
     QString tip;
     if (d->displayedNetworkInterface) {
-        tip = UiUtils::connectionStateToString(d->displayedNetworkInterface->connectionState());
+        tip = UiUtils::connectionStateToString(static_cast<NM09DeviceState>(d->displayedNetworkInterface->connectionState()));
     } else {
         tip = "<qt>Networking <b>information</b> not available</qt>";
     }

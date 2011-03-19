@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "interfaceconnection.h"
 #include "remoteactivatable.h"
+#include "types.h"
 
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
@@ -75,7 +76,7 @@ public:
 
 public Q_SLOTS:
     void activeConnectionsChanged();
-    virtual void connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState);
+    virtual void connectionStateChanged(NM09DeviceState);
     virtual void setEnabled(bool enable);
     // also updates the connection info
     virtual void setActive(bool active);
@@ -136,7 +137,7 @@ protected:
     Plasma::Label* m_connectionInfoIcon;
     NameDisplayMode m_nameMode;
     bool m_enabled;
-    Solid::Control::NetworkInterface::ConnectionState m_state;
+    NM09DeviceState m_state;
     QString m_interfaceName;
     bool m_disconnect;
     bool m_hasDefaultRoute;

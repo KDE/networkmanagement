@@ -33,6 +33,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelist.h"
 #include "connectionlist.h"
 
+#include "types.h"
+
 class ConnectionUsageMonitorPrivate
 {
 public:
@@ -134,7 +136,7 @@ void ConnectionUsageMonitor::networkInterfaceAccessPointChanged(const QString & 
 {
     Q_D(ConnectionUsageMonitor);
     Solid::Control::WirelessNetworkInterface * wifiDevice = qobject_cast<Solid::Control::WirelessNetworkInterface *>(sender());
-    if (wifiDevice && wifiDevice->connectionState() == Solid::Control::NetworkInterface::Activated) {
+    if (wifiDevice && static_cast<NM09DeviceState>(wifiDevice->connectionState()) == Activated) {
         Solid::Control::AccessPoint * ap = wifiDevice->findAccessPoint(apiUni);
         if (ap) {
             // find the activatable

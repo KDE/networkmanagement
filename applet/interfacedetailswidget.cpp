@@ -59,7 +59,7 @@ class InterfaceDetails
 {
     public:
         Solid::Control::NetworkInterface::Type type;
-        Solid::Control::NetworkInterface::ConnectionState connectionState;
+        NM09DeviceState connectionState;
         QString ipAddress;
         int bitRate;
         QString interfaceName;
@@ -207,7 +207,7 @@ void InterfaceDetailsWidget::getDetails()
     }
 
     details->type = m_iface->type();
-    details->connectionState = m_iface->connectionState();
+    details->connectionState = static_cast<NM09DeviceState>(m_iface->connectionState());
     details->ipAddress = currentIpAddress();
     details->bitRate = bitRate();
     details->interfaceName = m_iface->interfaceName();
@@ -372,7 +372,7 @@ QString InterfaceDetailsWidget::currentIpAddress()
     if (!m_iface)
         return QString();
 
-    if (m_iface->connectionState() != Solid::Control::NetworkInterface::Activated) {
+    if (static_cast<NM09DeviceState>(m_iface->connectionState()) != Activated) {
         return i18nc("label of the network interface", "No IP address.");
     }
     Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();
@@ -513,16 +513,14 @@ void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma
 void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_state, int reason)
 {
     Q_UNUSED(old_state)
-    if ((new_state == Solid::Control::NetworkInterface::Unavailable ||
-                     Solid::Control::NetworkInterface::Unmanaged ||
-                     Solid::Control::NetworkInterface::UnknownState) &&
-        reason == (Solid::Control::NetworkInterface::UnknownReason ||
-                   Solid::Control::NetworkInterface::DeviceRemovedReason)) {
+    if ((new_state == Unavailable || new_state == Unmanaged || UnknownState) &&
+        (reason == Solid::Control::NetworkInterface::UnknownReason ||
+         reason == Solid::Control::NetworkInterface::DeviceRemovedReason)) {
         setInterface(0, false);
         emit back();
     } else {
         details->ipAddress = currentIpAddress();
-        details->connectionState = static_cast<Solid::Control::NetworkInterface::ConnectionState>(new_state);
+        details->connectionState = static_cast<NM09DeviceState>(new_state);
         showDetails();
     }
 }

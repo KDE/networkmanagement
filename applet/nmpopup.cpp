@@ -352,18 +352,21 @@ Solid::Control::NetworkInterface* NMPopup::defaultInterface()
     Solid::Control::NetworkInterface* iface = Solid::Control::NetworkManager::networkInterfaces().first();
     foreach (Solid::Control::NetworkInterface * _iface, Solid::Control::NetworkManager::networkInterfaces()) {
         switch (_iface->connectionState()) {
-            case Solid::Control::NetworkInterface::Disconnected:
-            case Solid::Control::NetworkInterface::Failed:
-            case Solid::Control::NetworkInterface::Preparing:
-            case Solid::Control::NetworkInterface::Configuring:
-            case Solid::Control::NetworkInterface::NeedAuth:
-            case Solid::Control::NetworkInterface::IPConfig:
-            case Solid::Control::NetworkInterface::Activated:
+            case Disconnected:
+            case Preparing:
+            case Configuring:
+            case NeedAuth:
+            case IPConfig:
+            case IPCheck:
+            case Secondaries:
+            case Activated:
+            case Deactivating:
+            case Failed:
                 return _iface;
                 break;
-            case Solid::Control::NetworkInterface::Unavailable:
-            case Solid::Control::NetworkInterface::Unmanaged:
-            case Solid::Control::NetworkInterface::UnknownState:
+            case Unavailable:
+            case Unmanaged:
+            case UnknownState:
             default:
                 break;
         }
@@ -436,18 +439,21 @@ bool NMPopup::available(int state)
 {
     // Can an interface be used?
     switch (state) {
-        case Solid::Control::NetworkInterface::Disconnected:
-        case Solid::Control::NetworkInterface::Failed:
-        case Solid::Control::NetworkInterface::Preparing:
-        case Solid::Control::NetworkInterface::Configuring:
-        case Solid::Control::NetworkInterface::NeedAuth:
-        case Solid::Control::NetworkInterface::IPConfig:
-        case Solid::Control::NetworkInterface::Activated:
+        case Disconnected:
+        case Preparing:
+        case Configuring:
+        case NeedAuth:
+        case IPConfig:
+        case IPCheck:
+        case Secondaries:
+        case Activated:
+        case Deactivating:
+        case Failed:
             return true;
             break;
-        case Solid::Control::NetworkInterface::Unavailable:
-        case Solid::Control::NetworkInterface::Unmanaged:
-        case Solid::Control::NetworkInterface::UnknownState:
+        case Unavailable:
+        case Unmanaged:
+        case UnknownState:
         default:
             return false;
             break;

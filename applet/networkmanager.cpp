@@ -83,7 +83,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     setPopupIcon(QIcon());
     //setPassivePopup(true); // FIXME: disable, only true for testing ...
     m_overlayTimeline.setEasingCurve(QEasingCurve::OutExpo);
-    m_currentState = Solid::Control::NetworkInterface::UnknownState;
+    m_currentState = UnknownState;
     connect(&m_overlayTimeline, SIGNAL(valueChanged(qreal)), this, SLOT(repaint()));
 
     Plasma::ToolTipManager::self()->registerWidget(this);
@@ -101,7 +101,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     setStatus(Plasma::ActiveStatus);
     m_interfaces = Solid::Control::NetworkManager::networkInterfaces();
     if (activeInterface()) {
-        m_currentState = activeInterface()->connectionState();
+        m_currentState = static_cast<NM09DeviceState>(activeInterface()->connectionState());
     }
     interfaceConnectionStateChanged();
     m_activatables = new RemoteActivatableList(this);
@@ -154,7 +154,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterface *iface
     }
 
     if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
-        if (iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+        if (iface->connectionState() == Activated) {
             icon = "network-wired-activated";
         } else {
             icon = "network-wired";
@@ -326,21 +326,9 @@ void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p)
         return;
     }
     /*
-    enum ConnectionState{ UnknownState, Unmanaged, Unavailable, Disconnected, Preparing,
-                              Configuring, NeedAuth, IPConfig, Activated, Failed };
-    kDebug() << "UnknownState: " << Solid::Control::NetworkInterface::UnknownState;
-    kDebug() << "Unmanaged   : " << Solid::Control::NetworkInterface::Unmanaged;
-    kDebug() << "Unavailable : " << Solid::Control::NetworkInterface::Unavailable;
-    kDebug() << "Disconnected: " << Solid::Control::NetworkInterface::Disconnected;
-    kDebug() << "Preparing   : " << Solid::Control::NetworkInterface::Preparing;
-    kDebug() << "Configuring : " << Solid::Control::NetworkInterface::Configuring;
-    kDebug() << "NeeAuth     : " << Solid::Control::NetworkInterface::NeedAuth;
-    kDebug() << "IPConfig    : " << Solid::Control::NetworkInterface::IPConfig;
-    kDebug() << "Activated   : " << Solid::Control::NetworkInterface::Activated;
-    kDebug() << "Failed      : " << Solid::Control::NetworkInterface::Failed;
     kDebug() << "Painting overlay ...>" << activeInterface()->connectionState();
     */
-    if (activeInterface() && activeInterface()->connectionState() == Solid::Control::NetworkInterface::NeedAuth) {
+    if (activeInterface() && activeInterface()->connectionState() == NeedAuth) {
         //kDebug() << "Needing auth ...>";
         int i_s = (int)contentsRect().width()/4;
         int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
@@ -451,20 +439,22 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
     //kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
     if (activeInterface()) {
         //kDebug() << "busy ... ?";
-        Solid::Control::NetworkInterface::ConnectionState state = activeInterface()->connectionState();
+        NM09DeviceState state = static_cast<NM09DeviceState>(activeInterface()->connectionState());
         switch (state) {
-            case Solid::Control::NetworkInterface::Preparing:
-            case Solid::Control::NetworkInterface::Configuring:
-            case Solid::Control::NetworkInterface::IPConfig:
+            case Preparing:
+            case Configuring:
+            case IPConfig:
+            case IPCheck:
+            case Secondaries:
                 if (m_currentState != state) {
                     setStatusOverlay(generateProgressStatusOverlay());
                 }
                 //setBusy(true);
                 break;
-            case Solid::Control::NetworkInterface::NeedAuth:
+            case NeedAuth:
                 //setBusy(false);
                 break;
-            case Solid::Control::NetworkInterface::Activated:
+            case Activated:
                 //setBusy(false);
                 if (m_currentState != state) {
                     // We want to show the full circle a bit
@@ -473,16 +463,16 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
                     QTimer::singleShot(4000, this, SLOT(clearActivatedOverlay()));
                 }
                 break;
-            case Solid::Control::NetworkInterface::UnknownState:
+            case UnknownState:
                 kDebug() << "UnknownState! should this happen?";
-            case Solid::Control::NetworkInterface::Unmanaged:
-            case Solid::Control::NetworkInterface::Unavailable:
-            case Solid::Control::NetworkInterface::Failed:
+            case Unmanaged:
+            case Unavailable:
+            case Failed:
                 if (m_currentState != state) {
                     setStatusOverlay("dialog-error");
                 }
                 break;
-            case Solid::Control::NetworkInterface::Disconnected:
+            case Disconnected:
                 if (m_currentState != state) {
                     setStatusOverlay("dialog-cancel");
                 }
@@ -509,7 +499,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
         QString icon = "networkmanager";
         QStringList lines;
         foreach (Solid::Control::NetworkInterface *iface, interfaces) {
-            if (iface->connectionState() != Solid::Control::NetworkInterface::Unavailable) {
+            if (iface->connectionState() != Unavailable) {
                 if (!lines.isEmpty()) {
                     lines << QString();
                 }
@@ -525,7 +515,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
                     connectionName = conn->connectionName();
                 }
 
-                lines << QString("%1").arg(UiUtils::connectionStateToString(iface->connectionState(), connectionName));
+                lines << QString("%1").arg(UiUtils::connectionStateToString(static_cast<NM09DeviceState>(iface->connectionState()), connectionName));
                 /*
                 Solid::Control::IPv4Config ip4Config = iface->ipV4Config();
                 QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
@@ -536,7 +526,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
                 }
                 */
                 // Show the first active connection's icon, otherwise the networkmanager icon
-                if (!iconChanged && iface->connectionState() == Solid::Control::NetworkInterface::Activated) {
+                if (!iconChanged && iface->connectionState() == Activated) {
                     icon = UiUtils::iconName(iface);
                     iconChanged = true; // we only want the first one
                 }
@@ -592,32 +582,36 @@ bool networkInterfaceLessThan(Solid::Control::NetworkInterface *if1, Solid::Cont
         if1status = Unavailable;
 
     switch (if1->connectionState()) {
-        case Solid::Control::NetworkInterface::Preparing:
-        case Solid::Control::NetworkInterface::Configuring:
-        case Solid::Control::NetworkInterface::NeedAuth:
-        case Solid::Control::NetworkInterface::IPConfig:
+        case Preparing:
+        case Configuring:
+        case NeedAuth:
+        case IPConfig:
+        case IPCheck:
+        case Secondaries:
             if1status = Connecting;
             break;
-        case Solid::Control::NetworkInterface::Activated:
+        case Activated:
             if1status = Connected;
             break;
-        case Solid::Control::NetworkInterface::Disconnected:
+        case Disconnected:
             if1status = Disconnected;
             break;
         default: // all kind of unavailable
             break;
     }
     switch (if2->connectionState()) {
-        case Solid::Control::NetworkInterface::Preparing:
-        case Solid::Control::NetworkInterface::Configuring:
-        case Solid::Control::NetworkInterface::NeedAuth:
-        case Solid::Control::NetworkInterface::IPConfig:
+        case Preparing:
+        case Configuring:
+        case NeedAuth:
+        case IPConfig:
+        case IPCheck:
+        case Secondaries:
             if2status = Connecting;
             break;
-        case Solid::Control::NetworkInterface::Activated:
+        case Activated:
             if2status = Connected;
             break;
-        case Solid::Control::NetworkInterface::Disconnected:
+        case Disconnected:
             if2status = Disconnected;
             break;
         default: // all kind of disconnected
@@ -842,7 +836,7 @@ QPixmap NetworkManagerApplet::generateProgressStatusOverlay()
 
 void NetworkManagerApplet::clearActivatedOverlay()
 {
-    if (activeInterface() && activeInterface()->connectionState() == Solid::Control::NetworkInterface::Activated) {
+    if (activeInterface() && static_cast<NM09DeviceState>(activeInterface()->connectionState()) == Activated) {
         // Clear the overlay, but only if we are still activated
         setStatusOverlay(QPixmap());
     }

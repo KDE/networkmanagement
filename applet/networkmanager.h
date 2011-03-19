@@ -142,7 +142,7 @@ private:
     QTimeLine m_overlayTimeline;
     QPixmap m_previousStatusOverlay;
     QPixmap m_statusOverlay;
-    Solid::Control::NetworkInterface::ConnectionState m_currentState;
+    NM09DeviceState m_currentState;
 
     ///embedded KCM modules in the configuration dialog
     KCModuleProxy* m_kcmNM;

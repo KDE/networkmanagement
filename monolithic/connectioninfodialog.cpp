@@ -97,7 +97,7 @@ void ConnectionInfoDialog::buildGUI()
 
     connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(updateConnectionState(int,int,int)));
 
-    Solid::Control::NetworkInterface::ConnectionState state = m_iface->connectionState();
+    NM09DeviceState state = static_cast<NM09DeviceState>(m_iface->connectionState());
     m_ui.connectionState->setText(UiUtils::connectionStateToString(state));
     m_guiMade = true;
 }
@@ -118,5 +118,5 @@ void ConnectionInfoDialog::clearGUI()
 
 void ConnectionInfoDialog::updateConnectionState(int new_state, int, int)
 {
-    m_ui.connectionState->setText(UiUtils::connectionStateToString((Solid::Control::NetworkInterface::ConnectionState)new_state));
+    m_ui.connectionState->setText(UiUtils::connectionStateToString((NM09DeviceState)new_state));
 }

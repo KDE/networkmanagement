@@ -136,42 +136,51 @@ int UiUtils::iconSize(const QSizeF size)
     return s;
 }
 
-QString UiUtils::connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state, const QString &connectionName)
+QString UiUtils::connectionStateToString(NM09DeviceState state, const QString &connectionName)
 {
     QString stateString;
     switch (state) {
-        case Solid::Control::NetworkInterface::UnknownState:
+        case UnknownState:
             stateString = i18nc("description of unknown network interface state", "Unknown");
             break;
-        case Solid::Control::NetworkInterface::Unmanaged:
+        case Unmanaged:
             stateString = i18nc("description of unmanaged network interface state", "Unmanaged");
             break;
-        case Solid::Control::NetworkInterface::Unavailable:
+        case Unavailable:
             stateString = i18nc("description of unavailable network interface state", "Unavailable");
             break;
-        case Solid::Control::NetworkInterface::Disconnected:
+        case Disconnected:
             stateString = i18nc("description of unconnected network interface state", "Not connected");
             break;
-        case Solid::Control::NetworkInterface::Preparing:
+        case Preparing:
             stateString = i18nc("description of preparing to connect network interface state", "Preparing to connect");
             break;
-        case Solid::Control::NetworkInterface::Configuring:
+        case Configuring:
             stateString = i18nc("description of configuring hardware network interface state", "Configuring interface");
             break;
-        case Solid::Control::NetworkInterface::NeedAuth:
+        case NeedAuth:
             stateString = i18nc("description of waiting for authentication network interface state", "Waiting for authorization");
             break;
-        case Solid::Control::NetworkInterface::IPConfig:
+        case IPConfig:
             stateString = i18nc("network interface doing dhcp request in most cases", "Setting network address");
             break;
-        case Solid::Control::NetworkInterface::Activated:
+        case IPCheck:
+            stateString = i18nc("is other action required to fully connect? captive portals, etc.", "Checking further connectivity");
+            break;
+        case Secondaries:
+            stateString = i18nc("a secondary connection (e.g. VPN) has to be activated first to continue", "Waiting for a secodary connection");
+            break;
+        case Activated:
             if (connectionName.isEmpty()) {
                 stateString = i18nc("network interface connected state label", "Connected");
             } else {
                 stateString = i18nc("network interface connected state label", "Connected to %1", connectionName);
             }
             break;
-        case Solid::Control::NetworkInterface::Failed:
+        case Deactivating:
+            stateString = i18nc("network interface disconnecting state label", "Deactivating connection");
+            break;
+        case Failed:
             stateString = i18nc("network interface connection failed state label", "Connection Failed");
             break;
         default:
@@ -265,19 +274,25 @@ qreal UiUtils::interfaceState(const Solid::Control::NetworkInterface *interface)
         return 0;
     }
     switch (interface->connectionState()) {
-        case Solid::Control::NetworkInterface::Preparing:
-            return 0.20;
+        case Preparing:
+            return 0.15;
             break;
-        case Solid::Control::NetworkInterface::Configuring:
-            return 0.40;
+        case Configuring:
+            return 0.30;
             break;
-        case Solid::Control::NetworkInterface::NeedAuth:
+        case NeedAuth:
+            return 0.45;
+            break;
+        case IPConfig:
             return 0.60;
             break;
-        case Solid::Control::NetworkInterface::IPConfig:
-            return 0.80;
+        case IPCheck:
+            return 0.75;
             break;
-        case Solid::Control::NetworkInterface::Activated:
+        case Secondaries:
+            return 0.90;
+            break;
+        case Activated:
             return 1.0;
             break;
         default:
