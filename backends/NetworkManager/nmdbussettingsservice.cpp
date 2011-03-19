@@ -232,11 +232,6 @@ void NMDBusSettingsService::interfaceConnectionActivated()
             deviceToActivateOn = ic->deviceUni();
         }
 
-//        Solid::Control::NetworkManager::activateConnection(deviceToActivateOn,
-//                QString::fromLatin1("%1 %2")
-//                .arg(ic->property("NMDBusService").toString(), ic->property("NMDBusObjectPath").toString()),
-//                extraArguments);
-
         // Now activate the connection
         OrgFreedesktopNetworkManagerInterface *nm_iface = new OrgFreedesktopNetworkManagerInterface(QLatin1String(NM_DBUS_SERVICE),
                                                                   QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus(), this);
@@ -247,17 +242,26 @@ void NMDBusSettingsService::interfaceConnectionActivated()
 
 void NMDBusSettingsService::interfaceConnectionDeactivated()
 {
+    // Now deactivate the connection
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
-#ifdef NM_0_8
     Solid::Control::NetworkInterface *iface = Solid::Control::NetworkManager::findNetworkInterface(ic->deviceUni());
     if (iface) {
+#ifdef NM_0_8
+        // disconnecting this way means that the connection won't be autoactivated
         iface->disconnectInterface();
-    } else {
-        Solid::Control::NetworkManager::deactivateConnection(ic->property("NMDBusActiveConnectionObject").toString());
-    }
 #else
-    Solid::Control::NetworkManager::deactivateConnection(ic->property("NMDBusActiveConnectionObject").toString());
+        // deactivating connection this way doesn't prevent immediate auto-activating this (or another) connection
+        OrgFreedesktopNetworkManagerInterface *nm_iface = new OrgFreedesktopNetworkManagerInterface(QLatin1String(NM_DBUS_SERVICE),
+                                                                  QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus(), this);
+        //nm_iface->DeactivateConnection(QDBusObjectPath(ic->property("NMDBusActiveConnectionObject").toString()));
+        nm_iface->DeactivateConnection(QDBusObjectPath(ic->property("NMDBusObjectPath").toString()));
 #endif
+    } else {
+        // deactivating connection this way doesn't prevent immediate auto-activating this (or another) connection
+        OrgFreedesktopNetworkManagerInterface *nm_iface = new OrgFreedesktopNetworkManagerInterface(QLatin1String(NM_DBUS_SERVICE),
+                                                                  QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus(), this);
+        nm_iface->DeactivateConnection(QDBusObjectPath(ic->property("NMDBusObjectPath").toString()));
+    }
 }
 
 void NMDBusSettingsService::handleUpdate(Knm::Activatable *)
