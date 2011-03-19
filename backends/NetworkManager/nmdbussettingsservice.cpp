@@ -46,6 +46,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "exportedconnectionsecrets.h"
 
 #include "nm-active-connectioninterface.h"
+#include "nm-manager-interface.h"
 
 class NMDBusSettingsServicePrivate
 {
@@ -231,10 +232,16 @@ void NMDBusSettingsService::interfaceConnectionActivated()
             deviceToActivateOn = ic->deviceUni();
         }
 
-        Solid::Control::NetworkManager::activateConnection(deviceToActivateOn,
-                QString::fromLatin1("%1 %2")
-                .arg(ic->property("NMDBusService").toString(), ic->property("NMDBusObjectPath").toString()),
-                extraArguments);
+//        Solid::Control::NetworkManager::activateConnection(deviceToActivateOn,
+//                QString::fromLatin1("%1 %2")
+//                .arg(ic->property("NMDBusService").toString(), ic->property("NMDBusObjectPath").toString()),
+//                extraArguments);
+
+        // Now activate the connection
+        OrgFreedesktopNetworkManagerInterface *nm_iface = new OrgFreedesktopNetworkManagerInterface(QLatin1String(NM_DBUS_SERVICE),
+                                                                  QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus(), this);
+        nm_iface->ActivateConnection(QDBusObjectPath(ic->property("NMDBusObjectPath").toString()), QDBusObjectPath(deviceToActivateOn), QDBusObjectPath("/"));
+
     }
 }
 
