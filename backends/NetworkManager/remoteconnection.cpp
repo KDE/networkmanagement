@@ -98,7 +98,7 @@ bool RemoteConnection::active() const
     foreach (const QString &conn, activeConnections) {
         OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
                 conn, QDBusConnection::systemBus(), 0);
-        if (candidate.serviceName() == service() && candidate.connection().path() == path()) {
+        if (candidate.connection().path() == path()) {
             return true;
         }
     }

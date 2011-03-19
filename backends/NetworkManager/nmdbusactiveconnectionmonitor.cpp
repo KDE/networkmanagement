@@ -182,8 +182,8 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
                 }
                 d->activeConnections.insert(activeConnectionPath, proxy);
             }
-            // put the service and the object path into a list of active connections
-            kDebug() << "Connection active at" << active->serviceName() << active->connection().path() << (active->vpn() ? "is" : "is not") << "a VPN connection";
+            // put the object path into a list of active connections
+            kDebug() << "Connection active at" << active->connection().path() << (active->vpn() ? "is" : "is not") << "a VPN connection";
         }
     }
 }
@@ -198,8 +198,7 @@ Knm::InterfaceConnection * NMDBusActiveConnectionMonitor::interfaceConnectionFor
         Knm::InterfaceConnection * candidate = qobject_cast<Knm::InterfaceConnection*>(activatable);
         // ignore HiddenWICs, we don't set status on these
         if (candidate && candidate->activatableType() != Knm::Activatable::HiddenWirelessInterfaceConnection) {
-            if (candidate->property("NMDBusService") == connectionActive->serviceName()
-                    && candidate->property("NMDBusObjectPath") == connectionActive->connection().path()
+              if (candidate->property("NMDBusObjectPath") == connectionActive->connection().path()
                     && (candidate->activatableType() == Knm::Activatable::VpnInterfaceConnection
                         || connectionActive->devices().contains(QDBusObjectPath(candidate->deviceUni())))
                     ) {
