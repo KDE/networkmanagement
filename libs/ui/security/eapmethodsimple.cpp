@@ -69,6 +69,9 @@ void EapMethodSimple::writeConfig()
         case Chap:
             d->setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::chap);
             break;
+        case GTC:
+            d->setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::gtc);
+            break;
     }
     d->setting->setIdentity(leUserName->text());
     d->setting->setPassword(lePassword->text());

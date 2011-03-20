@@ -7,7 +7,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -39,6 +39,8 @@ PeapWidget::PeapWidget(Knm::Connection* connection, QWidget * parent)
             i18nc("MSCHAPv2 inner auth method", "MSCHAPv2"));
     d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::md5, new EapMethodSimple(EapMethodSimple::MD5, connection, d->innerAuth),
             i18nc("MD5 inner auth method", "MD5"));
+    d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::gtc, new EapMethodSimple(EapMethodSimple::GTC, connection, d->innerAuth),
+            i18nc("GTC inner auth method", "GTC"));
     gridLayout->addWidget(d->innerAuth, 4, 0, 2, 2);
 
     kurCaCert->setMode(KFile::LocalOnly);

@@ -29,7 +29,7 @@ class EapMethodSimple : public EapMethod, public Ui_EapMethodSimpleBase
 Q_OBJECT
 Q_DECLARE_PRIVATE(EapMethod)
 public:
-    enum Type { Pap = 0, MsChap, MsChapV2, MD5, Chap };
+    enum Type { Pap = 0, MsChap, MsChapV2, MD5, Chap, GTC };
     EapMethodSimple(Type type, Knm::Connection * connection, QWidget * parent = 0);
     virtual ~EapMethodSimple();
     bool validate() const;
