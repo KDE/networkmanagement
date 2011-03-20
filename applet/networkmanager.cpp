@@ -550,13 +550,13 @@ void NetworkManagerApplet::toolTipAboutToShow()
             text = i18nc("tooltip, all interfaces are down", "Disconnected");
 
             if (m_popup->hasWireless() && !Solid::Control::NetworkManager::isWirelessEnabled()) {
-                subText = i18nc("tooltip, wireless is disabled in software", "Wireless is disabled");
+                subText = i18nc("tooltip, wireless is disabled in software", "Wireless disabled in software");
             }
             if (!Solid::Control::NetworkManager::isNetworkingEnabled()) {
-                subText = i18nc("tooltip, all interfaces are down", "Networking is disabled");
+                subText = i18nc("tooltip, all interfaces are down", "Networking disabled");
             }
             if (m_popup->hasWireless() && !Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
-                subText = i18nc("tooltip, all interfaces are down", "Wireless killswitch is disabled");
+                subText = i18nc("tooltip, wireless is disabled by hardware", "Wireless disabled by hardware");
             }
 
         }
