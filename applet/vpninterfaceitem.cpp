@@ -109,15 +109,9 @@ void VpnInterfaceItem::setConnectionInfo()
         m_ifaceNameLabel->setText(i18nc("VPN connections interface", "<b>Virtual Private Network</b>"));
         m_connectionNameLabel->setText(i18nc("VPN state label", "Not Connected..."));
     }
-    if (!showDisconnect) {
-        //m_disconnectButton->setIcon("dialog-ok");
-        //m_disconnectButton->setToolTip(i18n("Connect"));
-        //m_disconnectButton->hide();
-    } else {
-        m_disconnectButton->setIcon(KIcon("dialog-close"));
-        m_disconnectButton->setToolTip(i18nc("tooltip on disconnect icon", "Disconnect"));
-        m_disconnectButton->show();
-    }
+    m_disconnectButton->setIcon(KIcon("dialog-close"));
+    m_disconnectButton->setToolTip(i18nc("tooltip on disconnect icon", "Disconnect"));
+    m_disconnectButton->setVisible(showDisconnect);
     if (m_vpnActivatables.count()) {
         //kDebug() << m_vpnActivatables.count() << "VPN connections have become available!";
         show();
