@@ -39,20 +39,14 @@ void GsmPersistence::save()
   GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
   m_config->writeEntry("number", setting->number());
   m_config->writeEntry("username", setting->username());
-  // SECRET
-  if (m_storageMode == ConnectionPersistence::PlainText) {
-    m_config->writeEntry("password", setting->password());
-  }
   m_config->writeEntry("apn", setting->apn());
   m_config->writeEntry("networkid", setting->networkid());
   m_config->writeEntry("networktype", setting->networktype());
   m_config->writeEntry("band", setting->band());
   // SECRET
   if (m_storageMode == ConnectionPersistence::PlainText) {
+    m_config->writeEntry("password", setting->password());
     m_config->writeEntry("pin", setting->pin());
-  }
-  // SECRET
-  if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("puk", setting->puk());
   }
 }
@@ -70,7 +64,7 @@ QMap<QString,QString> GsmPersistence::secrets() const
 void GsmPersistence::restoreSecrets(QMap<QString,QString> secrets) const
 {
   if (m_storageMode == ConnectionPersistence::Secure) {
-  GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
+    GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
     setting->setPassword(secrets.value("password"));
     setting->setPin(secrets.value("pin"));
     setting->setPuk(secrets.value("puk"));
