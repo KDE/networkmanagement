@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QTreeView>
 #include <QHeaderView>
+#include <QSortFilterProxyModel>
 
 #include <KDebug>
 
@@ -52,12 +53,17 @@ ScanWidget::ScanWidget(QWidget *parent)
     m_scanView->setSelectionModel(m_scanSelectionModel);
     m_stack->insertWidget(0, m_scanView);
 
+    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
+    proxyModel->setSourceModel(m_scanModel);
+    proxyModel->setDynamicSortFilter(true);
+    proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
     m_detailsView = new QTreeView(this);
     m_detailsView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_detailsView->setAllColumnsShowFocus(true);
     m_detailsView->setRootIsDecorated(false);
-    m_detailsView->setModel(m_scanModel);
+    m_detailsView->setModel(proxyModel);
     m_detailsView->setSelectionModel(m_scanSelectionModel);
+    m_detailsView->setSortingEnabled(true);
     m_stack->insertWidget(1, m_detailsView);
 
     m_stack->setCurrentWidget(m_scanView);
