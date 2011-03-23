@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Network Manager
 Name[da]=Network Manager
+Name[et]=Võrguhaldur
 Name[pt]=Gestor da Rede
 Name[pt_BR]=Gerenciador de redes
 Name[uk]=Керування мережею
@@ -8,6 +9,7 @@ Name[x-test]=xxNetwork Managerxx
 Name[zh_TW]=Network Manager
 Comment=Network Manager data engine
 Comment[da]=Datamotor til Network Manager
+Comment[et]=Võrguhalduri andmemootor
 Comment[pt]=Motor de dados da Gestão da Rede
 Comment[pt_BR]=Mecanismo de dados do gerenciador de redes
 Comment[uk]=Рушій даних керування мережею
