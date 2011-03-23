@@ -12,6 +12,7 @@ qdbusxml2cpp -N -i types.h -p nm-settingsinterface introspection/nm-settings.xml
 qdbusxml2cpp -m -p nm-vpn-connectioninterface introspection/nm-vpn-connection.xml
 qdbusxml2cpp -i types.h -N -p nm-manager-interface introspection/nm-manager.xml
 qdbusxml2cpp -i types.h -N -p nm-device-interface introspection/nm-device.xml
+qdbusxml2cpp -i types.h -N -p nm-ip4-config-interface introspection/nm-ip4-config.xml
 
 # 'default' is a forbidden property name, change it to getDefault
 sed -i -e "s,Q_PROPERTY(bool Default READ default),Q_PROPERTY(bool Default READ getDefault)," nm-active-connectioninterface.h

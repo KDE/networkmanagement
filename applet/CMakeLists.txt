@@ -2,6 +2,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libs/client
                     ${CMAKE_CURRENT_SOURCE_DIR}/../libs/internals
                     ${CMAKE_CURRENT_SOURCE_DIR}/../libs/ui
                     ${CMAKE_CURRENT_SOURCE_DIR}/../libs
+                    ${CMAKE_CURRENT_SOURCE_DIR}/../backends/NetworkManager
                     ${CMAKE_CURRENT_BINARY_DIR}
                     ${CMAKE_CURRENT_BINARY_DIR}/../libs/internals
    )
@@ -38,7 +39,7 @@ if (NOT IS45)
     install(FILES
         network.svgz
         DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/icons/)
-    target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmclient knminternals ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} solidcontrol ${KDE4_KUTILS_LIBS})
+    target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmclient knminternals knm_nm ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} solidcontrol ${KDE4_KUTILS_LIBS})
 else (NOT IS45)
-    target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmclient knminternals ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} solidcontrol ${KDE4_KCMUTILS_LIBS})
+    target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS} knmclient knminternals knm_nm ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} solidcontrol ${KDE4_KCMUTILS_LIBS})
 endif (NOT IS45)

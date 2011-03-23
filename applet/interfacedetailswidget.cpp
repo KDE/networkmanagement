@@ -22,6 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // own
 #include <interfacedetailswidget.h>
 
+// system
+#include <arpa/inet.h>
+
 // Qt
 //#include <QGraphicsLinearLayout>
 #include <QGridLayout>
@@ -54,6 +57,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <uiutils.h>
 
 #include "interfaceitem.h"
+#include "nm-device-interface.h"
+#include "nm-ip4-config-interface.h"
 
 class InterfaceDetails
 {
@@ -375,12 +380,32 @@ QString InterfaceDetailsWidget::currentIpAddress()
     if (static_cast<NM09DeviceState>(m_iface->connectionState()) != Activated) {
         return i18nc("label of the network interface", "No IP address.");
     }
-    Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();
-    QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
-    if (addresses.isEmpty()) {
+
+    QHostAddress addr;
+
+    OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, m_ifaceUni, QDBusConnection::systemBus());
+    if (devIface.isValid()) {
+        QDBusObjectPath ip4ConfigPath = devIface.ip4Config();
+
+        OrgFreedesktopNetworkManagerIP4ConfigInterface ip4Iface(NM_DBUS_SERVICE, ip4ConfigPath.path(), QDBusConnection::systemBus());
+        if (ip4Iface.isValid()) {
+            QDBusObjectPath ip4ConfigPath;
+
+            // get the first IP address
+            qDBusRegisterMetaType<QList<QList<uint> > >();
+            QList<QList<uint> > addresses = ip4Iface.addresses();
+            foreach (QList<uint> addressList, addresses) {
+               if (addressList.count() == 3) {
+                    addr.setAddress(ntohl(addressList[0]));
+                    break;
+                }
+            }
+        }
+    }
+
+    if (addr.isNull()) {
         return i18nc("label of the network interface", "IP display error.");
     }
-    QHostAddress addr(addresses.first().address());
     return addr.toString();
 }
 

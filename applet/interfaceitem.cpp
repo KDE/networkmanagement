@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteactivatablelist.h"
 #include "remoteinterfaceconnection.h"
 
+#include <arpa/inet.h>
+
 #include <QGraphicsGridLayout>
 #include <QLabel>
 #include <QPainter>
@@ -50,6 +52,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkmanager.h>
 
 #include "knmserviceprefs.h"
+#include "nm-device-interface.cpp"
+#include "nm-ip4-config-interface.cpp"
 
 
 InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteActivatableList* activatables,  NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::IconWidget(parent),
@@ -271,15 +275,38 @@ void InterfaceItem::setConnectionInfo()
 
 QString InterfaceItem::currentIpAddress()
 {
-    if (m_iface && static_cast<NM09DeviceState>(m_iface->connectionState()) != Activated) {
+    if (!m_iface)
+        return QString();
+
+    if (static_cast<NM09DeviceState>(m_iface->connectionState()) != Activated) {
         return i18nc("label of the network interface", "No IP address.");
     }
-    Solid::Control::IPv4Config ip4Config = m_iface->ipV4Config();
-    QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
-    if (addresses.isEmpty()) {
+
+    QHostAddress addr;
+
+    OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, m_iface->uni(), QDBusConnection::systemBus());
+    if (devIface.isValid()) {
+        QDBusObjectPath ip4ConfigPath = devIface.ip4Config();
+
+        OrgFreedesktopNetworkManagerIP4ConfigInterface ip4Iface(NM_DBUS_SERVICE, ip4ConfigPath.path(), QDBusConnection::systemBus());
+        if (ip4Iface.isValid()) {
+            QDBusObjectPath ip4ConfigPath;
+
+            // get the first IP address
+            qDBusRegisterMetaType<QList<QList<uint> > >();
+            QList<QList<uint> > addresses = ip4Iface.addresses();
+            foreach (QList<uint> addressList, addresses) {
+               if (addressList.count() == 3) {
+                    addr.setAddress(ntohl(addressList[0]));
+                    break;
+                }
+            }
+        }
+    }
+
+    if (addr.isNull()) {
         return i18nc("label of the network interface", "IP display error.");
     }
-    QHostAddress addr(addresses.first().address());
     return addr.toString();
 }
 
