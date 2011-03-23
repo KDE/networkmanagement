@@ -234,10 +234,8 @@ void NMDBusSettingsService::interfaceConnectionActivated()
         }
 
         // Now activate the connection
-        OrgFreedesktopNetworkManagerInterface *nm_iface = new OrgFreedesktopNetworkManagerInterface(QLatin1String(NM_DBUS_SERVICE),
-                                                                  QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus(), this);
-        nm_iface->ActivateConnection(QDBusObjectPath(ic->property("NMDBusObjectPath").toString()), QDBusObjectPath(deviceToActivateOn), QDBusObjectPath("/"));
-
+        OrgFreedesktopNetworkManagerInterface nmIface(QLatin1String(NM_DBUS_SERVICE), QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus());
+        nmIface.ActivateConnection(QDBusObjectPath(ic->property("NMDBusObjectPath").toString()), QDBusObjectPath(deviceToActivateOn), QDBusObjectPath("/"));
     }
 }
 
