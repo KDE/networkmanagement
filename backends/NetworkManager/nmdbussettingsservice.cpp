@@ -47,6 +47,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nm-active-connectioninterface.h"
 #include "nm-manager-interface.h"
+#include "nm-device-interface.h"
 
 class NMDBusSettingsServicePrivate
 {
@@ -242,33 +243,12 @@ void NMDBusSettingsService::interfaceConnectionActivated()
 
 void NMDBusSettingsService::interfaceConnectionDeactivated()
 {
-    // Now deactivate the connection
+    // Solid::Control::NetworkInterface's disconnectInterface() is only available from KDE 4.7 -> use own proxy class
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
-    QString activePath = ic->property("NMDBusActiveConnectionObject").toString();
-    Solid::Control::NetworkInterface *iface = Solid::Control::NetworkManager::findNetworkInterface(ic->deviceUni());
+    OrgFreedesktopNetworkManagerDeviceInterface devIface(QLatin1String(NM_DBUS_SERVICE), ic->deviceUni(), QDBusConnection::systemBus());
 
-    if (iface) {
-#ifdef NM_0_8
-        // disconnecting this way means that the connection won't be autoactivated
-        iface->disconnectInterface();
-#else
-        if (!activePath.isEmpty()) {
-            kDebug() << "Deactivating active path:" << activePath;
-            // deactivating connection this way doesn't prevent immediate auto-activating this (or another) connection
-            OrgFreedesktopNetworkManagerInterface *nm_iface = new OrgFreedesktopNetworkManagerInterface(QLatin1String(NM_DBUS_SERVICE),
-                                                                  QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus(), this);
-            nm_iface->DeactivateConnection(QDBusObjectPath(activePath));
-        }
-#endif
-    } else {
-        if (!activePath.isEmpty()) {
-            kDebug() << "Deactivating active path:" << activePath;
-            // deactivating connection this way doesn't prevent immediate auto-activating this (or another) connection
-            OrgFreedesktopNetworkManagerInterface *nm_iface = new OrgFreedesktopNetworkManagerInterface(QLatin1String(NM_DBUS_SERVICE),
-                                                                  QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus(), this);
-            nm_iface->DeactivateConnection(QDBusObjectPath(activePath));
-        }
-    }
+    // Now disconnect the interface (Disconnect() prevents an immediate auto-activation)
+    devIface.Disconnect();
 }
 
 void NMDBusSettingsService::handleUpdate(Knm::Activatable *)
