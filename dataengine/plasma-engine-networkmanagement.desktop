@@ -2,6 +2,7 @@
 Name=Network Manager
 Name[da]=Network Manager
 Name[et]=Võrguhaldur
+Name[nl]=Netwerkbeheerder
 Name[pt]=Gestor da Rede
 Name[pt_BR]=Gerenciador de redes
 Name[uk]=Керування мережею
@@ -10,6 +11,7 @@ Name[zh_TW]=Network Manager
 Comment=Network Manager data engine
 Comment[da]=Datamotor til Network Manager
 Comment[et]=Võrguhalduri andmemootor
+Comment[nl]=Gegevens-engine van netwerkbeheerder
 Comment[pt]=Motor de dados da Gestão da Rede
 Comment[pt_BR]=Mecanismo de dados do gerenciador de redes
 Comment[uk]=Рушій даних керування мережею
