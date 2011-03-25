@@ -573,7 +573,7 @@ void ManageConnectionWidget::tabChanged(int index)
             KPluginInfo::List vpnServices = KPluginInfo::fromServices(KServiceTypeTrader::self()->query(QLatin1String("NetworkManagement/VpnUiPlugin")));
             foreach (const KPluginInfo &pi, vpnServices) {
                 QString serviceType = pi.service()->property("X-NetworkManager-Services", QVariant::String).toString();
-                QAction * vpnAction = new QAction(serviceType.split('.').last(), this);
+                QAction * vpnAction = new QAction(pi.name(), this);
                 vpnAction->setData(serviceType);
                 mVpnMenu->addAction(vpnAction);
             }
