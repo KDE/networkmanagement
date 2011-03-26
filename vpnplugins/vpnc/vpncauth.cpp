@@ -83,6 +83,11 @@ void VpncAuthWidget::readSecrets()
         d->ui.leGroupPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_SECRET)).toString());
         d->ui.leGroupPassword->setEnabled(false);
     }
+
+    if (d->ui.leUserPassword->text().isEmpty())
+        d->ui.leUserPassword->setFocus(Qt::OtherFocusReason);
+    else if (d->ui.leGroupPassword->text().isEmpty())
+        d->ui.leGroupPassword->setFocus(Qt::OtherFocusReason);
 }
 
 void VpncAuthWidget::writeConfig()
