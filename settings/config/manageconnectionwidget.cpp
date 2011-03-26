@@ -68,6 +68,11 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connect(mEditor, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
     mConnEditUi.setupUi(this);
+    mConnEditUi.listWired->setSortingEnabled(true);
+    mConnEditUi.listWireless->setSortingEnabled(true);
+    mConnEditUi.listCellular->setSortingEnabled(true);
+    mConnEditUi.listVpn->setSortingEnabled(true);
+    mConnEditUi.listPppoe->setSortingEnabled(true);
 
     mConnections = new ConnectionList(this);
     //mUserSettings = new NMDBusSettingsConnectionProvider(mConnections, NMDBusSettingsService::SERVICE_USER_SETTINGS, this);
