@@ -25,12 +25,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-namespace {
-
-    class Knm::Connection;
-}
-
-
 /**
  * Configuration module for wired connections
  */

@@ -63,7 +63,7 @@ K_PLUGIN_FACTORY( ManageConnectionWidgetFactory, registerPlugin<ManageConnection
 K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_networkmanagement", "libknetworkmanager" ) )
 
 ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantList &args)
-: KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this)), mEditConnection(0)
+: KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mEditConnection(0), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this))
 {
     connect(mEditor, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
@@ -359,7 +359,7 @@ void ManageConnectionWidget::editClicked()
         Knm::Connection *con = NULL;
 
         QString connectionId = item->data(0, ConnectionIdRole).toString();
-        Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, ConnectionTypeRole).toUInt();
+        //Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, ConnectionTypeRole).toUInt();
         if (connectionId.isEmpty()) {
             kDebug() << "selected item had no connectionId!";
             return;
@@ -486,7 +486,7 @@ void ManageConnectionWidget::deleteClicked()
         //prefs->writeConfig();
 
 
-        Knm::Connection::Scope conScope = (Knm::Connection::Scope) item->data(0, ConnectionScopeRole).toUInt();
+        //Knm::Connection::Scope conScope = (Knm::Connection::Scope) item->data(0, ConnectionScopeRole).toUInt();
 
         /*
         if (conScope == Knm::Connection::User)

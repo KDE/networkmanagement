@@ -93,6 +93,7 @@ void ConnectionInfoDialog::buildGUI()
             m_ui.connectionIcon->setPixmap(KIconLoader::global()->loadIcon("network-wireless", KIconLoader::Panel));
             break;
         }
+    default: break;
     }
 
     connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(updateConnectionState(int,int,int)));

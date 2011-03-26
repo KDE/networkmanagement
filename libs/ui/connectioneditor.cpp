@@ -240,6 +240,7 @@ ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaul
 ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaults, QWidget * parent,
                                                                   Knm::Connection *con) const
 {
+    Q_UNUSED(setDefaults);
     ConnectionPreferences * wid = 0;
     switch (con->type()) {
         case Knm::Connection::Wired:

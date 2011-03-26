@@ -273,6 +273,8 @@ qreal UiUtils::interfaceState(const Solid::Control::NetworkInterface *interface)
     if (!interface) {
         return 0;
     }
+
+    // from libs/types.h
     switch (interface->connectionState()) {
         case Preparing:
             return 0.15;

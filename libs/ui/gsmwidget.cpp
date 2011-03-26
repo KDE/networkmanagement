@@ -102,7 +102,7 @@ void GsmWidget::validate()
 
 void GsmWidget::setNetworkIds(const QList<QVariant> networkIds)
 {
-    Q_D(GsmWidget);
+//    Q_D(GsmWidget);
 
     QString temp;
 

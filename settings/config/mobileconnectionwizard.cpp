@@ -174,7 +174,7 @@ void MobileConnectionWizard::initializePage(int id)
     }
 }
 
-int MobileConnectionWizard::nextId()
+int MobileConnectionWizard::nextId() const
 {
     // Providers page
     if (currentId() == 2 && type() != Knm::Connection::Gsm) {
@@ -204,7 +204,7 @@ QVariantList MobileConnectionWizard::args()
     return temp;
 }
 
-Knm::Connection::Type MobileConnectionWizard::type()
+Knm::Connection::Type MobileConnectionWizard::type() const
 {
     if (mIface && mIface->type() == Solid::Control::NetworkInterface::Cdma) {
         return Knm::Connection::Cdma;

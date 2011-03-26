@@ -388,11 +388,11 @@ static QString getFunction(const QString &n, const QString &className = QString(
 }
 
 
-static void addQuotes( QString &s )
+/*static void addQuotes( QString &s )
 {
   if ( !s.startsWith( '"' ) ) s.prepend( '"' );
   if ( !s.endsWith( '"' ) ) s.append( '"' );
-}
+}*/
 
 static QString quoteString( const QString &s )
 {
@@ -899,7 +899,7 @@ QString itemType( const QString &type )
   return t;
 }
 
-static QString itemDeclaration(const CfgEntry *e)
+/*static QString itemDeclaration(const CfgEntry *e)
 {
   Q_UNUSED( e )
   if (itemAccessors)
@@ -911,7 +911,7 @@ static QString itemDeclaration(const CfgEntry *e)
          "  *item" + fCap +
          ( (!e->param().isEmpty())?(QString("[%1]").arg(e->paramMax()+1)) : QString()) +
          ";\n";
-}
+}*/
 
 // returns the name of an item variable
 // use itemPath to know the full path

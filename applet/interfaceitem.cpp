@@ -205,6 +205,7 @@ Solid::Control::NetworkInterface* InterfaceItem::interface()
 
 void InterfaceItem::setActive(bool active)
 {
+    Q_UNUSED(active);
     if (m_iface) {
         connectionStateChanged(static_cast<NM09DeviceState>(m_iface->connectionState()));
     }
