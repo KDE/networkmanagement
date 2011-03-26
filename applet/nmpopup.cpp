@@ -307,9 +307,6 @@ void NMPopup::interfaceAdded(const QString& uni)
     kDebug() << "Interface Added.";
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     addInterfaceInternal(iface);
-#ifdef NM_0_8
-    updateHasWwan();
-#endif
 }
 
 void NMPopup::interfaceRemoved(const QString& uni)
@@ -405,6 +402,9 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
         m_interfaces.insert(iface->uni(), ifaceItem);
     }
     updateHasWireless();
+#ifdef NM_0_8
+    updateHasWwan();
+#endif
 }
 
 void NMPopup::addVpnInterface()
