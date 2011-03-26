@@ -41,6 +41,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
+#include <KWindowSystem>
 
 #include "802_11_wirelesswidget.h"
 #include "cdmawidget.h"
@@ -173,6 +174,7 @@ void ConnectionSecretsJob::doAskUser()
         connect(m_askUserDialog, SIGNAL(cancelClicked()), SLOT(dialogRejected()));
 
         m_askUserDialog->show();
+        KWindowSystem::forceActiveWindow(m_askUserDialog->winId());
     } else {
         kDebug() << "Setting widget for" << mSettingName << "not yet ported, rejecting secrets request.";
         dialogRejected();
