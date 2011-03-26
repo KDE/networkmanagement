@@ -50,7 +50,7 @@ public:
      */
     QVariantList args();
 
-    Knm::Connection::Type type();
+    Knm::Connection::Type type() const;
     MobileProviders::ErrorCodes getError();
 
 private Q_SLOTS:
@@ -69,7 +69,7 @@ private:
     QWizardPage * createPlansPage();
     QWizardPage * createConfirmPage();
     void initializePage(int id);
-    int nextId();
+    int nextId() const;
 
     MobileProviders * mProviders;
     Solid::Control::NetworkInterface * mIface;
