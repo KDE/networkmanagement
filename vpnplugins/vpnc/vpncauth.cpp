@@ -72,7 +72,6 @@ void VpncAuthWidget::readSecrets()
     }
     if (userType == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
         d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_XAUTH_PASSWORD)).toString());
-        d->ui.leUserPassword->setEnabled(false);
     }
 
     groupType = secretsType.value(NM_VPNC_KEY_SECRET);
@@ -81,7 +80,6 @@ void VpncAuthWidget::readSecrets()
     }
     if (groupType == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
         d->ui.leGroupPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_SECRET)).toString());
-        d->ui.leGroupPassword->setEnabled(false);
     }
 
     if (d->ui.leUserPassword->text().isEmpty())
