@@ -66,6 +66,11 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connect(mEditor, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
     mConnEditUi.setupUi(this);
+    mConnEditUi.listWired->setSortingEnabled(true);
+    mConnEditUi.listWireless->setSortingEnabled(true);
+    mConnEditUi.listCellular->setSortingEnabled(true);
+    mConnEditUi.listVpn->setSortingEnabled(true);
+    mConnEditUi.listPppoe->setSortingEnabled(true);
 
     KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
     connectButtonSet(mConnEditUi.buttonSetWired, mConnEditUi.listWired);
