@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ACTIVATABLELISTWIDGET_H
 
 #include <QGraphicsWidget>
+#include <QAtomicInt>
 
 #include "activatable.h"
 #include <Plasma/ScrollWidget>
@@ -46,6 +47,9 @@ public:
     bool accept(RemoteActivatable* activatable) const;
     void setShowAllTypes(bool show, bool refresh = false);
     void setHasWireless(bool hasWireless); // Used to decide wether or not to show the hidden item
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+    inline bool hasCellular() const { return m_cellular != 0; }
+#endif
 
 public Q_SLOTS:
     void activatableAdded(RemoteActivatable*);
@@ -80,6 +84,9 @@ private:
     bool m_showAllTypes;
     bool m_vpn;
     bool m_hasWireless; // Used to determine wether or not to show hidden config
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+    QAtomicInt m_cellular;
+#endif
 
     QStringList m_hiddenConnectionInProgress;
 

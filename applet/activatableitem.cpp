@@ -53,6 +53,12 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
     fadeAnimation->setProperty("startOpacity", 0.0);
     fadeAnimation->setProperty("targetOpacity", 1.0);
     fadeAnimation->start();
+
+    if (remote) {
+        m_type = remote->activatableType();
+    } else {
+        m_type = Knm::Activatable::HiddenWirelessInterfaceConnection;
+    }
 }
 
 ActivatableItem::~ActivatableItem()

@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectioneditor.h"
 #include "connectionpersistence.h"
 #include "knmserviceprefs.h"
+#include "../config/mobileconnectionwizard.h"
 
 int main(int argc, char **argv)
 {
@@ -80,7 +81,27 @@ int main(int argc, char **argv)
     if (args->arg(0) == QLatin1String("create")) {
         if (args->isSet("type")) {
             const QString type = args->getOption("type");
-            QString cid = editor.addConnection(true, Knm::Connection::typeFromString(args->getOption("type")), specificArgs);
+            QString cid;
+            if (type == QLatin1String("cellular")) {
+                MobileConnectionWizard *mobileConnectionWizard = new MobileConnectionWizard();
+
+                if (mobileConnectionWizard->exec() == QDialog::Accepted) {
+                    if (mobileConnectionWizard->getError() == MobileProviders::Success) {
+                        cid = editor.addConnection(true, mobileConnectionWizard->type(), mobileConnectionWizard->args(), false);
+                    } else {
+                        cid = editor.addConnection(true, Knm::Connection::typeFromString(type), specificArgs);
+                    }
+                }
+                delete mobileConnectionWizard;
+            } else {
+                cid = editor.addConnection(true, Knm::Connection::typeFromString(type), specificArgs);
+            }
+
+            if (cid.isEmpty()) {
+                kDebug() << Knm::Connection::typeFromString(type) << "type connection cannot be created.";
+                return -1;
+            }
+
             QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
                                 "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
 
