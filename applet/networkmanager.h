@@ -110,6 +110,8 @@ private Q_SLOTS:
     void updatePixmap();
     void repaint();
     void clearActivatedOverlay();
+    // Request KCM module to persist changes
+    void saveConfiguration();
 
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
