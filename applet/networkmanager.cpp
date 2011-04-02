@@ -277,6 +277,18 @@ void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
                     m_kcmNM->moduleInfo().icon());
     parent->addPage(m_kcmNMTray, m_kcmNMTray->moduleInfo().moduleName(),
                     m_kcmNMTray->moduleInfo().icon());
+
+    connect(parent, SIGNAL(applyClicked()), this, SLOT(saveConfiguration()));
+    connect(parent, SIGNAL(okClicked()), this, SLOT(saveConfiguration()));
+}
+
+void NetworkManagerApplet::saveConfiguration()
+{
+    // kcm_networkmanagement implicitly saves connection definition after
+    // editing is finished, so no need to call its save() method
+    // FIXME This just writes out changed values to ini file. kded module
+    // still continues to use old value
+    m_kcmNMTray->save();
 }
 
 void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
