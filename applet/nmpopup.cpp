@@ -33,7 +33,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIcon>
 #include <KIconLoader>
 #include <KToolInvocation>
-#include <KStandardDirs>
 
 // Plasma
 #include <Plasma/Label>
@@ -408,16 +407,6 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
     updateHasWireless();
 #ifdef NM_0_8
     updateHasWwan();
-#endif
-
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-    if ((iface->type() == Solid::Control::NetworkInterface::Gsm ||
-         iface->type() == Solid::Control::NetworkInterface::Cdma) &&
-         !m_connectionList->hasCellular()) {
-         QStringList args;
-         args << QLatin1String("create") << QLatin1String("--type") << QLatin1String("cellular");
-         KToolInvocation::kdeinitExec(KGlobal::dirs()->findResource("exe", "networkmanagement_configshell"), args);
-    }
 #endif
 }
 
