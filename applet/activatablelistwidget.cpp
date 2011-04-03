@@ -200,7 +200,6 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
         { // Gsm (2G, 3G, etc)
             GsmInterfaceConnectionItem* gici = new GsmInterfaceConnectionItem(static_cast<RemoteGsmInterfaceConnection*>(activatable), m_widget);
             ai = gici;
-            m_cellular.ref();
             break;
         }
 #endif
@@ -319,11 +318,6 @@ void ActivatableListWidget::deleteItem()
     ActivatableItem* ai = dynamic_cast<ActivatableItem*>(sender());
     m_layout->removeItem(ai);
     m_itemIndex.remove(m_itemIndex.key(ai));
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-    if (ai->activatableType() == Knm::Activatable::GsmInterfaceConnection) {
-        m_cellular.deref();
-    }
-#endif
     delete ai;
 }
 
