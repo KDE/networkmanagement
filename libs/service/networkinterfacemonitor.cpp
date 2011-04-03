@@ -103,8 +103,8 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
             bool hasCellular = false;
             foreach (const QString uuid, d->connectionList->connections()) {
                 const Knm::Connection *c = d->connectionList->findConnection(uuid);
-                if (c->type() == Knm::Connection::Gsm ||
-                    c->type() == Knm::Connection::Cdma) {
+                if ((c->type() == Knm::Connection::Gsm && iface->type() == Solid::Control::NetworkInterface::Gsm) ||
+                    (c->type() == Knm::Connection::Cdma && iface->type() == Solid::Control::NetworkInterface::Cdma)) {
                     hasCellular = true;
                     break;
                 }
