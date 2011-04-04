@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <solid/control/networkmanager.h>
 #include <KToolInvocation>
+#include <KStandardDirs>
 
 // Plasma
 #include <Plasma/Label>
@@ -356,6 +357,6 @@ void ActivatableListWidget::connectToHiddenNetwork(const QString &ssid)
     m_hiddenConnectionInProgress << ssid;
     QStringList args = QStringList(ssid) << "create";
     kDebug() << "invoking networkmanagement_configshell" << args;
-    KToolInvocation::kdeinitExec("networkmanagement_configshell", args);
+    KToolInvocation::kdeinitExec(KGlobal::dirs()->findResource("exe", "networkmanagement_configshell"), args);
 }
 // vim: sw=4 sts=4 et tw=100
