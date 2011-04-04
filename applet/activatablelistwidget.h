@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ACTIVATABLELISTWIDGET_H
 
 #include <QGraphicsWidget>
-#include <QAtomicInt>
 
 #include "activatable.h"
 #include <Plasma/ScrollWidget>
