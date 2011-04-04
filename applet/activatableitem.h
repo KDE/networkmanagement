@@ -39,7 +39,6 @@ public:
     void disappear();
     void hoverEnter();
     void hoverLeave();
-    inline Knm::Activatable::ActivatableType activatableType() const { return m_type; }
 
 Q_SIGNALS:
     /** * Indicate that the 'connect' button was clicked.  Used by the containing InterfaceGroup to
@@ -60,9 +59,6 @@ protected:
     bool m_hasDefaultRoute;
     Knm::InterfaceConnection::ActivationState m_state;
     bool m_deleting;
-
-private:
-    Knm::Activatable::ActivatableType m_type;
 };
 
 #endif // ABSTRACTCONNECTABLEITEM_H
