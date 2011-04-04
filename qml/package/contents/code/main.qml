@@ -35,7 +35,7 @@ Item {
           interval: 0
           connectedSources: ["connections"]
           onDataChanged: {
-              //console.log("data changed...")
+              console.log("data changed...");
           }
           onSourceAdded: {
              if (source != "networkStatus") {
@@ -59,16 +59,17 @@ Item {
         id: theme
     }
 
+    PlasmaWidgets.Label {
+        id: header
+        text: i18n("Available Connections")
+        font.pixelSize: 20
+        anchors { top: parent.top; left: parent.left; right: parent.right; }
+    }
+
     ListView {
         id: list
         //height: 200
-        /*
-        anchors.top: parent.top
-        anchors.left: parent.left
-        anchors.right: parent.right
-        anchors.bottom: statusText
-        */
-        anchors.fill: parent
+        anchors { top: header.bottom; left: parent.left; right: parent.right; bottom: parent.bottom; margins: 8}
         clip: true
         spacing: 10
 
@@ -89,10 +90,11 @@ Item {
 
             PlasmaWidgets.Frame {
                 id: itemFrame
-                anchors.top: citem.top
-                anchors.bottom: citem.bottom
+                anchors.fill: parent
+                //anchors.top: citem.top
+                //anchors.bottom: citem.bottom
                 height: citem.height
-                width: citem.width
+                //width: citem.width
             }
 
             PlasmaWidgets.IconWidget {
@@ -101,6 +103,7 @@ Item {
                 width: collapsedHeight
                 anchors.top: parent.top
                 anchors.left: parent.left
+                anchors.margins: 4
 
                 Component.onCompleted: {
                     //if (typeof networkEngineSource.data[DataEngineSource]["securityIcon"] != "undefined") {
@@ -130,71 +133,88 @@ Item {
                 Component.onCompleted: {
                     try {
                         //if (typeof networkEngineSource.data[DataEngineSource]["securityIcon"] != "undefined") {
-                            setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
+                            //setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
+                            setIcon(securityIcon);
                         //}
                     } catch (TypeError) {
                         //print("oops");
                         print(" TypeError" + mainText.text);
                     } finally {
-                        //print(" Exception ignored in " + mainText.text);
+                        print(" Exception ignored in " + mainText.text);
                     }
                 }
                 onClicked: citem.state = (citem.state == "expanded") ? "collapsed" : "expanded"
 
             }
 
-            Text {
+            PlasmaWidgets.Label {
                 id: mainText
                 text: {
-                    if (isInterfaceConnection(activatableType)) {
-                        var t = networkEngineSource.data[DataEngineSource]["connectionName"];
-                        if (networkEngineSource.data[DataEngineSource]["activationState"] == "Activated") {
-                            t = t + " (Connected)";
+                    print(" Hmm ... " + activatableType);
+                    if (activatableType != "" && isInterfaceConnection(activatableType)) {
+                        print("ifaceconnnection :)");
+                        if (connectionName) {
+                            var t = connectionName;
+                            //if (networkEngineSource.data[DataEngineSource]["activationState"] == "Activated") {
+                            //    t = t + " (Connected)";
+                            //}
+                            return t;
+                        } else {
+                            return "empty";
                         }
-                        return t;
                     } else if ("WirelessNetwork" == activatableType) {
-                        return networkEngineSource.data[DataEngineSource]["ssid"];
+                        //return citem.ssid;
+                        return "ssid";
                     } else {
-                        return activatableType;
+                        return citem.activatableType;
                     }
+                    return "empty";
                 }
+
                 anchors.top: parent.top
                 anchors.left: strengthIconWidget.right
+                anchors.right: parent.right
                 //anchors.right: securityIconWidget.left
             }
-            Text {
-                id: infoText;
+            PlasmaWidgets.Label {
+                id: infoText
                 text: {
                     if (isInterfaceConnection(activatableType)) {
-                        var conType = networkEngineSource.data[DataEngineSource]["connectionType"];
-                        // Wired, Wireless, Gsm, Cdma, Vpn or Pppoe
-                        if (conType == "Wireless") {
-                            return i18n("Remembered Wifi Connection");
-                        } else if (conType == "Wired") {
-                            return i18n("Wired Connection");
-                        } else if (conType == "Gsm") {
-                            return i18n("Mobile Broadband");
-                        } else if (conType == "Cdma") {
-                            return i18n("Mobile Internet");
-                        } else if (conType == "Pppoe") {
-                            return i18n("Modem Connection");
-                        } else if (conType == "Vpn") {
-                            return i18n("Virtual Private Network");
+                        //var conType = networkEngineSource.data[DataEngineSource]["connectionType"];
+                        try {
+                            var conType = connectionType;
+                            // Wired, Wireless, Gsm, Cdma, Vpn or Pppoe
+                            if (conType == "Wireless") {
+                                return i18n("Remembered Wifi Connection");
+                            } else if (conType == "Wired") {
+                                return i18n("Wired Connection");
+                            } else if (conType == "Gsm") {
+                                return i18n("Mobile Broadband");
+                            } else if (conType == "Cdma") {
+                                return i18n("Mobile Internet");
+                            } else if (conType == "Pppoe") {
+                                return i18n("Modem Connection");
+                            } else if (conType == "Vpn") {
+                                return i18n("Virtual Private Network");
+                            }
+                        } catch (ReferenceError) {
+                            print("Exception caught in infoText.Label connectionType");
                         }
                     }
-                    return "";
+                    return "unknown type";
                 }
                 //text: connectionType
-                font.pixelSize: mainText.font.pixelSize - 2
+                font.pixelSize: 12
                 opacity: 0.4
                 anchors.top: mainText.bottom
                 anchors.left: mainText.left
-                //anchors.bottom: parent.top
+                anchors.right: parent.right
             }
 
             PlasmaWidgets.PushButton {
                 id: connectButton
                 text: "Connect"
+                z: 100
                 height: 0
                 //setIcon("kmail")
                 anchors.top: infoText.bottom
@@ -287,18 +307,18 @@ Item {
                 return "network-wireless-connnected-00";
             }
 
-            function isInterfaceConnection(activatableType) {
+            function isInterfaceConnection(myType) {
                 var cons = ["InterfaceConnection", "WirelessInterfaceConnection", "VpnInterfaceConnection", "GsmInterfaceConnection"];
-                //print(activatableType);
-                return cons.indexOf(activatableType) >= 0;
+                //print("T:" + myType + " " + cons.indexOf(myType));
+                return cons.indexOf(myType) >= 0;
             }
 
         }
     }
 
-    Text {
+    PlasmaWidgets.Label {
         id: statusText
-        text: "statuslabel ....."
+        text: "Connected to some.network."
         anchors.top: list.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left

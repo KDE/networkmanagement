@@ -74,14 +74,15 @@ NetworkManagementEngine::~NetworkManagementEngine()
 
 QStringList NetworkManagementEngine::sources() const
 {
-    return QStringList() << "networkStatus" << "connections";
+    return QStringList("connections");
+    //return QStringList() << "networkStatus" << "connections";
 }
 
 bool NetworkManagementEngine::sourceRequestEvent(const QString &name)
 {
     kDebug() << "Source requested:" << name << sources();
     setData(name, DataEngine::Data());
-    //setData("networkStatus", "isConnected", true);
+    setData("networkStatus", "isConnected", true);
     //scheduleSourcesUpdated();
 
     if (name == "connections") {
@@ -308,6 +309,9 @@ void NetworkManagementEngine::updateInterfaceConnection(RemoteActivatable* remot
         case Knm::Connection::Pppoe:
             _type = "Pppoe";
             break;
+        default:
+            _type = "I don't know.";
+            break;
     }
 
     setData(source(remote), "connectionType", _type);
@@ -417,6 +421,8 @@ void NetworkManagementEngine::updateWirelessStatus(const QString &source, Wirele
     setData(source, "securityToolTip", wirelessStatus->securityTooltip());
     setData(source, "securityIcon", wirelessStatus->securityIcon());
     setData(source, "adhoc", wirelessStatus->isAdhoc());
+    setData(source, "iconName", "network-wireless");
+
     scheduleSourcesUpdated();
 }
 
@@ -440,6 +446,7 @@ void NetworkManagementEngine::updateUnconfiguredInterface(RemoteActivatable* rem
     }
     updateActivatable(remote);
     setData(source(remote), "activatableType", "UnconfiguredInterface");
+    setData(source(remote), "securityIcon", "security-low");
 
     scheduleSourcesUpdated();
 }
@@ -488,6 +495,8 @@ void NetworkManagementEngine::updateGsmInterfaceConnection(RemoteActivatable* re
     }
     updateInterfaceConnection(remote);
     setData(source(remote), "activatableType", "GsmInterfaceConnection");
+    setData(source(remote), "connectionName", " generic activatable");
+    setData(source(remote), "securityIcon", "security-low");
 
     scheduleSourcesUpdated();
 }
