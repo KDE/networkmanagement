@@ -27,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 #include <KToolInvocation>
+#include <KStandardDirs>
 
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
@@ -149,7 +150,7 @@ void ConfigurationLauncher::configureWirelessNetworkInternal(const QString & ssi
             .arg(apUni);
 
         args << QLatin1String("create") << QLatin1String("--type") << QLatin1String("802-11-wireless") << QLatin1String("--specific-args") << moduleArgs << QLatin1String("wifi_pass");
-        int ret = KToolInvocation::kdeinitExec("networkmanagement_configshell", args);
+        int ret = KToolInvocation::kdeinitExec(KGlobal::dirs()->findResource("exe", "networkmanagement_configshell"), args);
         kDebug() << ret << args;
     }
 }
@@ -217,7 +218,7 @@ void ConfigurationLauncher::unconfiguredInterfaceActivated()
             if (!editorArgs.isEmpty()) {
                 args << QLatin1String("--specific-args") << editorArgs;
             }
-            int ret = KToolInvocation::kdeinitExec("networkmanagement_configshell", args);
+            int ret = KToolInvocation::kdeinitExec(KGlobal::dirs()->findResource("exe", "networkmanagement_configshell"), args);
             kDebug() << ret << args;
         }
     }
