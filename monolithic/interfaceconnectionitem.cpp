@@ -133,8 +133,7 @@ void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::Activ
                     d->connectionDetailsLabel = new QLabel(this);
                     d->connectionLayout->addWidget(d->connectionDetailsLabel);
                 }
-                if ((iface && !(iface->type() == Solid::Control::NetworkInterface::Ieee8023 || iface->type() == Solid::Control::NetworkInterface::Ieee80211))
-                        || activatable()->deviceUni() == QLatin1String("any")) {
+                if (iface) {
                     if (!d->disconnectButton) {
                         d->disconnectButton = new QPushButton(this);
                         d->disconnectButton->setIcon(KIcon("process-stop"));

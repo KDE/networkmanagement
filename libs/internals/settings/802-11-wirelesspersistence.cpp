@@ -23,7 +23,7 @@ void WirelessPersistence::load()
     QString contents = m_config->readEntry("mode", "infrastructure");
     if (contents == "infrastructure")
       setting->setMode(WirelessSetting::EnumMode::infrastructure);
-    else     if (contents == "adhoc")
+    else if (contents == "adhoc")
       setting->setMode(WirelessSetting::EnumMode::adhoc);
 
   }
@@ -31,7 +31,7 @@ void WirelessPersistence::load()
     QString contents = m_config->readEntry("band", "bg");
     if (contents == "a")
       setting->setBand(WirelessSetting::EnumBand::a);
-    else     if (contents == "bg")
+    else if (contents == "bg")
       setting->setBand(WirelessSetting::EnumBand::bg);
 
   }
@@ -72,7 +72,9 @@ void WirelessPersistence::save()
   m_config->writeEntry("txpower", setting->txpower());
   m_config->writeEntry("macaddress", setting->macaddress());
   m_config->writeEntry("mtu", setting->mtu());
-  m_config->writeEntry("seenbssids", setting->seenbssids());
+  if (setting->mode() != WirelessSetting::EnumMode::adhoc) {
+      m_config->writeEntry("seenbssids", setting->seenbssids());
+  }
 kDebug() << setting->security();
   m_config->writeEntry("security", setting->security());
 }

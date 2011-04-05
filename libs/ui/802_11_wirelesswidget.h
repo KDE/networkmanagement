@@ -21,6 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef WIRELESS802_11_WIDGET_H
 #define WIRELESS802_11_WIDGET_H
 
+#include <QSpinBox>
+#include <QValidator>
+
 #include "settingwidget.h"
 
 #include "knm_export.h"
@@ -43,9 +46,25 @@ public:
 protected Q_SLOTS:
     void scanClicked();
     void validate();
+    void modeChanged(int);
+    void bandChanged(int);
 
 Q_SIGNALS:
     void ssidSelected(const QString & ssid);
+};
+
+class Wireless80211WidgetBand : public QSpinBox
+{
+Q_OBJECT
+public:
+    Wireless80211WidgetBand(QWidget * parent = 0);
+    QString textFromValue(int) const;
+    uint channelFromPos(int) const;
+    uint posFromChannel(int) const;
+    void setBand(int);
+private:
+    QList< QList<int> > channels;
+    int selectedBand;
 };
 
 #endif // 802_11_WIRELESSWIDGET_H

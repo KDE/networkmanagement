@@ -198,6 +198,11 @@ bool Connection::autoConnect() const
     return m_autoConnect;
 }
 
+bool Connection::originalAutoConnect() const
+{
+    return m_originalAutoConnect;
+}
+
 QDateTime Connection::timestamp() const
 {
     return m_timestamp;
@@ -243,6 +248,11 @@ void Connection::setTimestamp(const QDateTime & timestamp)
 void Connection::setAutoConnect(bool autoConnect)
 {
     m_autoConnect = autoConnect;
+}
+
+void Connection::setOriginalAutoConnect(bool autoConnect)
+{
+    m_originalAutoConnect = autoConnect;
 }
 
 void Connection::updateTimestamp()

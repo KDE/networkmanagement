@@ -146,7 +146,7 @@ void ConnectionPersistence::save()
     cg.writeEntry("id", m_connection->name());
     cg.writeEntry("uuid", m_connection->uuid().toString());
     cg.writeEntry("type", Connection::typeAsString(m_connection->type()));
-    cg.writeEntry("autoconnect", m_connection->autoConnect());
+    cg.writeEntry("autoconnect", m_connection->originalAutoConnect());
     if (m_connection->timestamp().isValid())
         cg.writeEntry("timestamp", m_connection->timestamp());
     cg.writeEntry("icon", m_connection->iconName());
@@ -195,6 +195,7 @@ void ConnectionPersistence::load()
     if (cg.exists()) { // don't bother to try if the KConfigGroup doesn't exist, save opening the wallet too
         m_connection->setName(cg.readEntry("id"));
         m_connection->setAutoConnect(cg.readEntry<bool>("autoconnect", false));
+        m_connection->setOriginalAutoConnect(cg.readEntry<bool>("autoconnect", false));
         m_connection->setTimestamp(cg.readEntry<QDateTime>("timestamp", QDateTime()));
         m_connection->setIconName(cg.readEntry("icon"));
 

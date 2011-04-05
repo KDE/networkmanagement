@@ -144,6 +144,13 @@ protected Q_SLOTS:
     void showConnectionProperties();
 
     void showOtherWirelessDialog();
+    
+    void adHocActivated();
+    void adHocDeactivated();
+    
+  signals:
+    void adhocActivated(bool);
+    void adhocDeactivated(bool);
 
 private:
     void fillPopup();

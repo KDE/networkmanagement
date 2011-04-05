@@ -99,6 +99,23 @@ void OtherWirelessNetworkDialog::handleAdd(Knm::Activatable * activatable)
             item->setData(0, ItemActivatableRole, QVariant::fromValue(activatable));
             m_ui.twNetworks->insertTopLevelItem(m_networkItemCount++, item);
             break;
+        case Knm::Activatable::WirelessInterfaceConnection:
+            wic = static_cast<Knm::WirelessInterfaceConnection*>(activatable);
+            best = Knm::WirelessSecurity::best(wic->interfaceCapabilities(), true, (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc), wic->apCapabilities(), wic->wpaFlags(), wic->rsnFlags());
+            if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc) {
+                strengthString = i18nc("@item:inlist Signal strength replaced by description on ad-hoc", "create Ad-Hoc");
+            }
+            else
+            {
+                strengthString = (QString::fromLatin1("%1%").arg(wic->strength()));
+            }
+            connect(wic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)), this, SLOT(setActivationState(Knm::InterfaceConnection::ActivationState)));
+            itemStrings << wic->connectionName() << strengthString << Knm::WirelessSecurity::label(best);
+            item = new QTreeWidgetItem(itemStrings);
+            item->setIcon(0, SmallIcon("network-wireless"));
+            item->setData(0, ItemActivatableRole, QVariant::fromValue(activatable));
+            m_ui.twNetworks->insertTopLevelItem(m_networkItemCount++, item);
+            break;
         default:
             break;
     }
@@ -156,6 +173,31 @@ void OtherWirelessNetworkDialog::activateInternal(QTreeWidgetItem * item)
         Knm::Activatable * act = item->data(0, ItemActivatableRole).value<Knm::Activatable*>();
         if (act) {
             act->activate();
+        }
+    }
+}
+
+void OtherWirelessNetworkDialog::setActivationState(Knm::InterfaceConnection::ActivationState state)
+{
+    Knm::WirelessInterfaceConnection * wic = qobject_cast<Knm::WirelessInterfaceConnection*>(sender());
+    for (int i = 0; i < m_ui.twNetworks->topLevelItemCount(); ++i) {
+        QTreeWidgetItem * item = m_ui.twNetworks->topLevelItem(i);
+        if (item->data(0, ItemActivatableRole).value<Knm::Activatable*>() == static_cast<Knm::Activatable*>(wic)) {
+            QString strengthString;
+            if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc)
+            {
+                strengthString = i18nc("@item:inlist Signal strength replaced by description on ad-hoc", "create Ad-Hoc");
+            }
+            else
+            {
+                strengthString = (QString::fromLatin1("%1%").arg(wic->strength()));
+            }
+            if (state == Knm::InterfaceConnection::Activated)
+            {
+                strengthString.append(i18nc("@item:inlist connection status added to signal strength if we are connected", " (connected)"));
+            }
+            item->setData(1,0,strengthString);
+            break;
         }
     }
 }
