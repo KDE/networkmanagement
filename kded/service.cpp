@@ -109,12 +109,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 
     d->nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(d->connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, d->connectionList);
 
-    // there is a problem setting this as a child of connectionList or of activatableList since it has
-    // references to both and NetworkInterfaceActivatableProvider touches the activatableList
-    // in its dtor (needed so it cleans up when removed by the monitor)
-    // ideally this will always be deleted before the other list
-    d->networkInterfaceMonitor = new NetworkInterfaceMonitor(d->connectionList, d->activatableList, d->activatableList);
-
     // generic observers
     d->activatableList->registerObserver(d->configurationLauncher);
     d->activatableList->registerObserver(d->connectionUsageMonitor);
@@ -151,6 +145,12 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 
     // load our local connections
 //    d->listPersistence->init();
+
+    // there is a problem setting this as a child of connectionList or of activatableList since it has
+    // references to both and NetworkInterfaceActivatableProvider touches the activatableList
+    // in its dtor (needed so it cleans up when removed by the monitor)
+    // ideally this will always be deleted before the other list
+    d->networkInterfaceMonitor = new NetworkInterfaceMonitor(d->connectionList, d->activatableList, d->activatableList);
 }
 
 
