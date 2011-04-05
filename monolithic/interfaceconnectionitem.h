@@ -32,7 +32,10 @@ class InterfaceConnectionItemPrivate;
 class InterfaceConnectionItem : public ActivatableItem
 {
 Q_OBJECT
+
 Q_DECLARE_PRIVATE(InterfaceConnectionItem)
+signals:
+    void hasDefaultRouteChanged(bool);
 public:
     InterfaceConnectionItem(Knm::InterfaceConnection *, QWidget * parent = 0);
     virtual ~InterfaceConnectionItem();

@@ -191,6 +191,14 @@ void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
             // its connections.
             if (d->uuidToPath.contains(ic->connectionUuid())) {
                 kDebug() << "tagging local InterfaceConnection " << ic->connectionName() << SERVICE_USER_SETTINGS << d->uuidToPath[ic->connectionUuid()].path();
+                kDebug() << "is default: " << ic->hasDefaultRoute();
+                Knm::Connection * conn = d->uuidToConnections[ic->connectionUuid()]->connection();
+                if (conn->autoConnect() != conn->originalAutoConnect())
+                {
+                    conn->setAutoConnect(conn->originalAutoConnect());
+                    handleUpdate(conn);
+                }
+                
                 ic->setProperty("NMDBusService", SERVICE_USER_SETTINGS);
                 ic->setProperty("NMDBusObjectPath", d->uuidToPath[ic->connectionUuid()].path());
             }
@@ -200,6 +208,7 @@ void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
 
 void NMDBusSettingsService::interfaceConnectionActivated()
 {
+    Q_D(NMDBusSettingsService);
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
 
     if (ic) {
@@ -247,6 +256,14 @@ void NMDBusSettingsService::interfaceConnectionDeactivated()
 
     // Now disconnect the interface (Disconnect() prevents an immediate auto-activation)
     devIface.Disconnect();
+
+    if (ic->hasDefaultRoute())
+    {
+       Q_D(NMDBusSettingsService);
+       Knm::Connection * connection = d->uuidToConnections[ic->connectionUuid()]->connection();
+       connection->setAutoConnect(false);
+       handleUpdate(connection);
+    }
 }
 
 void NMDBusSettingsService::handleUpdate(Knm::Activatable *)

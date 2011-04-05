@@ -114,8 +114,11 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
                     mode = ap->mode();
                 }
             }
+            else if (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc) {
+                mode = Solid::Control::WirelessNetworkInterface::Adhoc;
+            }
         }
-
+        
         ic->m_interfaceCapabilities = m_interface->wirelessCapabilities();
         ic->m_ssid = wirelessSetting->ssid();
         ic->m_strength = strength;

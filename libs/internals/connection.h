@@ -59,6 +59,7 @@ public:
     Connection::Type type() const;
     Connection::Scope scope() const;
     bool autoConnect() const;
+    bool originalAutoConnect() const;
     QDateTime timestamp() const;
 
     QString origin() const;
@@ -80,6 +81,7 @@ public:
     void setIconName(const QString &);
     void setUuid(const QUuid &);
     void setAutoConnect(bool);
+    void setOriginalAutoConnect(bool);
     void setTimestamp(const QDateTime&);
 
     /**
@@ -138,6 +140,7 @@ private:
     Connection::Type m_type;
     Connection::Scope m_scope;
     bool m_autoConnect;
+    bool m_originalAutoConnect;
     QDateTime m_timestamp;
     QString m_origin;
     QList<Setting*> m_settings;

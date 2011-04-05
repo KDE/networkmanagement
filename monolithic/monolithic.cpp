@@ -137,7 +137,6 @@ void Monolithic::init()
 
     connectionList->registerConnectionHandler(listPersistence);
     connectionList->registerConnectionHandler(d->nmSettingsService);
-    connectionList->registerConnectionHandler(d->nmSettingsService);
 
 
     d->activatableList = new ActivatableList(connectionList);

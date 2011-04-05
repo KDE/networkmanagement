@@ -109,7 +109,7 @@ WirelessStatus::WirelessStatus(WirelessInterfaceConnectionItem * item)
 
     Knm::WirelessObject * wobj  = static_cast<Knm::WirelessObject*>(item->wirelessInterfaceConnection());
     d->init(wobj);
-
+    
     connect(item->wirelessInterfaceConnection(), SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
 }
 

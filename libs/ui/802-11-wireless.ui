@@ -87,6 +87,68 @@
    <item row="2" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
+      <string>B&amp;and:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>band</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="KComboBox" name="band">
+     <property name="toolTip">
+      <string>Frequency band of the wireless network.</string>
+     </property>
+     <property name="whatsThis">
+      <string>b/g is the most common band around 2.4 GHz. Less common is a at 5 GHz.</string>
+     </property>
+     <item>
+      <property name="text">
+       <string>a</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>b/g</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>&amp;Channel:</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy">
+      <cstring>channel</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="Wireless80211WidgetBand" name="channel">
+     <property name="toolTip">
+      <string>Channel</string>
+     </property>
+     <property name="whatsThis">
+      <string>Sets the channel of the network.</string>
+     </property>
+     <property name="minimum">
+      <number>0</number>
+     </property>
+     <property name="singleStep">
+      <number>1</number>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
       <string>&amp;BSSID:</string>
      </property>
      <property name="alignment">
@@ -97,7 +159,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="4" column="1">
     <widget class="KLineEdit" name="bssid">
      <property name="toolTip">
       <string>Only connect to the station with this hardware address</string>
@@ -110,8 +172,8 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QLabel" name="label_4">
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_6">
      <property name="text">
       <string>&amp;Restrict To Interface:</string>
      </property>
@@ -123,7 +185,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="1">
+   <item row="5" column="1">
     <widget class="KComboBox" name="cmbMacAddress">
      <item>
       <property name="text">
@@ -132,8 +194,8 @@
      </item>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="label_5">
+   <item row="6" column="0">
+    <widget class="QLabel" name="label_7">
      <property name="text">
       <string>MT&amp;U:</string>
      </property>
@@ -145,7 +207,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="1">
+   <item row="6" column="1">
     <widget class="KIntSpinBox" name="mtu">
      <property name="toolTip">
       <string>Maximum Transmission Unit</string>
@@ -186,6 +248,11 @@
    <class>KComboBox</class>
    <extends>QComboBox</extends>
    <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Wireless80211WidgetBand</class>
+   <extends>QSpinBox</extends>
+   <header>802_11_wirelesswidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -254,6 +254,14 @@ void KNetworkManagerTrayIcon::fillPopup()
                 Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(activatable);
                 kDebug() << "WIC" << wic->connectionName();
                 widget = new WirelessInterfaceConnectionItem(wic, 0);
+                if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc)
+                {
+                    widget->setVisible(false);
+                    connect(wic,SIGNAL(activated()),this,SLOT(adHocActivated()));
+                    connect(wic,SIGNAL(deactivated()),this,SLOT(adHocDeactivated()));
+                    connect (this, SIGNAL(adhocActivated(bool)), action, SLOT(setVisible(bool)));
+                    connect (this, SIGNAL(adhocDeactivated(bool)), action, SLOT(setVisible(bool)));
+                }
             } else if ( activatable->activatableType() == Knm::Activatable::UnconfiguredInterface) {
                 Knm::UnconfiguredInterface * unco = static_cast<Knm::UnconfiguredInterface*>(activatable);
                 kDebug() << "UCI" << unco->deviceUni();
@@ -300,7 +308,7 @@ void KNetworkManagerTrayIcon::fillPopup()
                     }
                     d->deviceUnis.append(activatable->deviceUni());
                 }
-                if (activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
+                if (activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection && static_cast<Knm::WirelessInterfaceConnection*>(activatable)->operationMode() != Solid::Control::WirelessNetworkInterface::Adhoc) {
                     wirelessInterfaceConnectionCount++;
                 }
 
@@ -309,8 +317,10 @@ void KNetworkManagerTrayIcon::fillPopup()
         }
     }
 
-    if (!wirelessInterfaceConnectionCount) {
+    if (!wirelessInterfaceConnectionCount && Solid::Control::NetworkManager::isWirelessEnabled()
+            && Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
         foreach (QWidgetAction * action, wirelessUnconfiguredInterfaceItems) {
+            contextMenu()->insertSeparator(insertionPointForConnectToOtherWireless);
             contextMenu()->insertAction(insertionPointForConnectToOtherWireless, action);
         }
     }
@@ -342,6 +352,16 @@ void KNetworkManagerTrayIcon::handleRemove(Knm::Activatable * removed)
     Q_D(KNetworkManagerTrayIcon);
     QWidgetAction * removedAction = d->actions.take(removed);
     delete removedAction;
+}
+
+void KNetworkManagerTrayIcon::adHocActivated()
+{
+    emit adhocActivated(true);
+}
+
+void KNetworkManagerTrayIcon::adHocDeactivated()
+{
+    emit adhocDeactivated(false);
 }
 
 void KNetworkManagerTrayIcon::slotPreferences()
@@ -566,9 +586,7 @@ void KNetworkManagerTrayIcon::wirelessEnabledChanged()
     d->flightModeAction->setEnabled(Solid::Control::NetworkManager::isWirelessHardwareEnabled());
 
     d->flightModeAction->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
-    if (!(Solid::Control::NetworkManager::isWirelessHardwareEnabled() && Solid::Control::NetworkManager::isWirelessEnabled())) {
-        contextMenu()->removeAction(d->otherWirelessNetworksAction);
-    }
+    fillPopup();
 }
 
 void KNetworkManagerTrayIcon::networkingEnabledChanged()
@@ -581,7 +599,6 @@ void KNetworkManagerTrayIcon::setActive(bool active)
 {
     Q_D(KNetworkManagerTrayIcon);
     d->active = active;
-    setStatus( active ? PARENT_ICON_CLASS::Active : PARENT_ICON_CLASS::Passive);
     fillPopup();
 }
 

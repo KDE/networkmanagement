@@ -71,6 +71,7 @@ public slots:
      * Remove any Activatables related to this network
      */
     void networkDisappeared(const QString & ssid);
+    void wirelessEnabledChanged(bool);
 protected:
     virtual bool needsActivatableForUnconfigured() const;
 private:

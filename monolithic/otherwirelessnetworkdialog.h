@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <activatableobserver.h>
 
 #include "ui_otherwirelessnetworkwidget.h"
+#include "interfaceconnection.h"
 
 namespace Knm
 {
@@ -50,6 +51,7 @@ protected Q_SLOTS:
     void itemDoubleClicked(QTreeWidgetItem *);
     void itemSelectionChanged();
     void slotButtonClicked(int button);
+    void setActivationState(Knm::InterfaceConnection::ActivationState);
 private:
     ActivatableList * m_activatables;
     QTreeWidgetItem * m_newAdhocItem;
