@@ -234,11 +234,11 @@ void InterfaceDetailsWidget::getDetails()
         }
 
         /*
-	 * These calls are protectec by policy kit. Without proper configuration policy kit agent
-	 * will ask por password, which is bothering users (BUG #266807).
-	 * Plasma NM still does not use this information, so I will leave them
-	 * commented until I really need them.
-	Solid::Control::ModemGsmCardInterface *modemCardIface = giface->getModemCardIface();
+         * These calls are protectec by policy kit. Without proper configuration policy kit agent
+         * will ask por password, which is bothering users (BUG #266807).
+         * Plasma NM still does not use this information, so I will leave them
+         * commented until I really need them.
+        Solid::Control::ModemGsmCardInterface *modemCardIface = giface->getModemCardIface();
         if (modemCardIface) {
             details->imei = modemCardIface->getImei();
             details->imsi = modemCardIface->getImsi();
@@ -550,7 +550,7 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
         /* TODO: ugly and error prone if more than one 3G modem/cellphone is connected to the Internet.
          * If anyone knows a way to convert a serial device name to a network interface name let me know. */
         if (interfaceName.contains("ttyACM") || interfaceName.contains("ttyUSB") || // USB modems
-	    interfaceName.contains("rfcomm")) { // bluetooth modems
+            interfaceName.contains("rfcomm")) { // bluetooth modems
             interfaceName = "ppp0";
         }
 
@@ -558,6 +558,7 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
         m_txSource = QString("network/interfaces/%1/transmitter/data").arg(interfaceName);
         m_rxTotalSource = QString("network/interfaces/%1/receiver/dataTotal").arg(interfaceName);
         m_txTotalSource = QString("network/interfaces/%1/transmitter/dataTotal").arg(interfaceName);
+        m_rxTotal = m_txTotal = 0;
 
         /* Usb network interfaces are hotpluggable and Plasma::DataEngine seems to have difficulty
          * to recognise them after the engine is loaded, reloading the engine does the trick.

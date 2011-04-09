@@ -53,6 +53,7 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_hiddenItem(0),
     m_activatables(activatables),
     m_layout(0),
+    m_showAllTypes(true),
     m_vpn(false)
 {
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
