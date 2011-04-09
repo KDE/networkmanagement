@@ -146,6 +146,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
                             static_cast<Solid::Control::WiredNetworkInterface*>(m_iface);
             connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
         }
+        m_state = UnknownState;
         connectionStateChanged(static_cast<NM09DeviceState>(m_iface->connectionState()));
     }
 

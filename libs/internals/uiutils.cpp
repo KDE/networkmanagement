@@ -202,7 +202,7 @@ Solid::Device* UiUtils::findSolidDevice(const QString & uni)
 
     if (it != list.end()) {
         Solid::Device* dev = new Solid::Device(*it);
-	return dev;
+        return dev;
     }
 
     return 0;
@@ -220,24 +220,22 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
             if (iface) {
                 label = iface->interfaceName();
             }
-	    break;
+            break;
         case KNetworkManagerServicePrefs::DescriptiveNames:
-	    if (dev) {
+            if (dev) {
                 label = dev->description();
                 //kDebug() << "Vendor, Product:" << dev->vendor() << dev->product();
-	        delete dev;
-	    }
-	    break;
+            }
+            break;
         case KNetworkManagerServicePrefs::VendorProductNames:
-	    if (dev) {
-    	        if (!dev->vendor().isEmpty() && !dev->product().isEmpty()) {
+            if (dev) {
+                if (!dev->vendor().isEmpty() && !dev->product().isEmpty()) {
                     label = QString(i18nc("Format for <Vendor> <Product>", "%1 - %2", dev->vendor(), dev->product()));
-    	        }
-	        delete dev;
-	    }
-	    break;
+                }
+            }
+            break;
         case KNetworkManagerServicePrefs::TypeNames:
-	    break;
+            break;
     }
 
     if (label.isEmpty()) {
@@ -246,6 +244,9 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
         if (iface) {
             label = UiUtils::interfaceTypeLabel(iface->type());
         }
+    }
+    if (dev) {
+        delete dev;
     }
     return label;
 }
