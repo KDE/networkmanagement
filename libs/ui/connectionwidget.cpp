@@ -94,6 +94,7 @@ void ConnectionWidget::writeConfig()
     Q_D(ConnectionWidget);
     connection()->setName(d->ui.id->text());
     connection()->setAutoConnect(d->ui.autoconnect->isChecked());
+    connection()->setOriginalAutoConnect(d->ui.autoconnect->isChecked());
     // connection()->setIconName(..) is already called from buttonChooseIconClicked()
 }
 

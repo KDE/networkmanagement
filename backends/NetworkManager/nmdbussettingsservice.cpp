@@ -253,13 +253,6 @@ void NMDBusSettingsService::interfaceConnectionDeactivated()
 #else
     Solid::Control::NetworkManager::deactivateConnection(ic->property("NMDBusActiveConnectionObject").toString());
 #endif
-
-    if (ic->hasDefaultRoute())
-    {
-       Knm::Connection * connection = d->uuidToConnections[ic->connectionUuid()]->connection();
-       connection->setAutoConnect(false);
-       handleUpdate(connection);
-    }
 }
 
 void NMDBusSettingsService::handleUpdate(Knm::Activatable *)
