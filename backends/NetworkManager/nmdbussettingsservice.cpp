@@ -256,14 +256,6 @@ void NMDBusSettingsService::interfaceConnectionDeactivated()
 
     // Now disconnect the interface (Disconnect() prevents an immediate auto-activation)
     devIface.Disconnect();
-
-    if (ic->hasDefaultRoute())
-    {
-       Q_D(NMDBusSettingsService);
-       Knm::Connection * connection = d->uuidToConnections[ic->connectionUuid()]->connection();
-       connection->setAutoConnect(false);
-       handleUpdate(connection);
-    }
 }
 
 void NMDBusSettingsService::handleUpdate(Knm::Activatable *)
