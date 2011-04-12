@@ -1,5 +1,7 @@
 add_definitions(-DKDE_DEFAULT_DEBUG_AREA=51014)
 
+add_subdirectory(icon)
+
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/../libs
    ${CMAKE_CURRENT_SOURCE_DIR}/../libs/internals
