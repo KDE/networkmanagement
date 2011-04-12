@@ -168,7 +168,7 @@ QString UiUtils::connectionStateToString(NM09DeviceState state, const QString &c
             stateString = i18nc("is other action required to fully connect? captive portals, etc.", "Checking further connectivity");
             break;
         case Secondaries:
-            stateString = i18nc("a secondary connection (e.g. VPN) has to be activated first to continue", "Waiting for a secodary connection");
+            stateString = i18nc("a secondary connection (e.g. VPN) has to be activated first to continue", "Waiting for a secondary connection");
             break;
         case Activated:
             if (connectionName.isEmpty()) {
