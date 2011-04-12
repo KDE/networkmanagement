@@ -14,3 +14,6 @@ add_subdirectory(service)
 
 # library knmclient providing remote interfaces to Activatables provided by the service
 add_subdirectory(client)
+
+# Icons used by the tray icons and the Plasmoid
+add_subdirectory(icons)
