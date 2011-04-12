@@ -71,8 +71,10 @@ add_subdirectory(tests)
 add_subdirectory(settings)
 add_subdirectory(vpnplugins)
 add_subdirectory(solidcontrolfuture)
-add_subdirectory(monolithic)
 add_subdirectory(kded)
+
+# This is unmaintained, do not use it.
+#add_subdirectory(monolithic)
 
 install( FILES networkmanagement.notifyrc DESTINATION ${DATA_INSTALL_DIR}/networkmanagement )
 
