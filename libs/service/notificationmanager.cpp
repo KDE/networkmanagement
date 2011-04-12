@@ -498,14 +498,16 @@ void NotificationManager::networkInterfaceRemoved(const QString &uni)
 
     if (!d->suppressHardwareEvents) {
         QString notificationText;
+        Knm::Connection::Type type = Knm::Connection::Wired;
         if (host) {
             notificationText = i18nc("@info:status Notification for hardware removed giving vendor supplied product name", "%1 removed", host->label());
+            type = solidToKnmType(host->type());
             delete host;
         } else {
             notificationText = i18nc("@info:status Notification for hardware removed used if we don't have its user-visible name", "Network interface removed");
         }
 
-        KNotification::event(Event::HwRemoved, notificationText, KIcon(Knm::Connection::iconName(solidToKnmType(host->type()))).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
+        KNotification::event(Event::HwRemoved, notificationText, KIcon(Knm::Connection::iconName(type)).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
     }
 }
 
