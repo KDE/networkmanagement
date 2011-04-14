@@ -516,15 +516,21 @@ void NotificationManager::networkInterfaceRemoved(const QString &uni)
 void NotificationManager::networkAppeared(const QString & ssid)
 {
     Q_D(NotificationManager);
-    d->newWirelessNetworks.append(ssid);
-    d->newNetworkTimer->start(500);
+    Solid::Control::WirelessNetworkInterfaceEnvironment * environment = qobject_cast<Solid::Control::WirelessNetworkInterfaceEnvironment *>(sender());
+    if (environment && environment->interface()->activeAccessPoint() == "/") {
+        d->newWirelessNetworks.append(ssid);
+        d->newNetworkTimer->start(500);
+    }
 }
 
 void NotificationManager::networkDisappeared(const QString & ssid)
 {
     Q_D(NotificationManager);
-    d->disappearedWirelessNetworks.append(ssid);
-    d->disappearedNetworkTimer->start(500);
+    Solid::Control::WirelessNetworkInterfaceEnvironment * environment = qobject_cast<Solid::Control::WirelessNetworkInterfaceEnvironment *>(sender());
+    if (environment && environment->interface()->activeAccessPoint() == "/") {
+        d->disappearedWirelessNetworks.append(ssid);
+        d->disappearedNetworkTimer->start(500);
+    }
 }
 
 void NotificationManager::notifyNewNetworks()
