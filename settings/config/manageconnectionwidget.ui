@@ -45,6 +45,11 @@
          </column>
          <column>
           <property name="text">
+           <string>Scope</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
            <string>Last Used</string>
           </property>
          </column>
@@ -77,6 +82,11 @@
          <column>
           <property name="text">
            <string>Connection</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Scope</string>
           </property>
          </column>
          <column>
@@ -114,6 +124,11 @@
          </column>
          <column>
           <property name="text">
+           <string>Scope</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
            <string>Last Used</string>
           </property>
          </column>
@@ -147,6 +162,11 @@
          </column>
          <column>
           <property name="text">
+           <string>Scope</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
            <string>Last Used</string>
           </property>
          </column>
@@ -176,6 +196,11 @@
          <column>
           <property name="text">
            <string>Connection</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>Scope</string>
           </property>
          </column>
          <column>

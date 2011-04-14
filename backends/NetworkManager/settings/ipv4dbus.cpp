@@ -18,9 +18,7 @@ Ipv4Dbus::~Ipv4Dbus()
 void Ipv4Dbus::fromMap(const QVariantMap & map)
 {
 
-  kDebug() << "IPv4 map: ";
-  foreach(QString key, map.keys())
-      kDebug() << key << " : " << map.value(key);
+  kDebug() << "IPv4 map: " << map;
 
   Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting*>(m_setting); 
 
@@ -42,7 +40,23 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
       }
       //NO dnsArg.endArray(); it's fatal in debug builds.
 
-      setting->setDns(dbusDns);
+      // try QList<uint> if QDBusArgument demarshalling does not work
+      // in toMap method we use QList<uint> to marshall DNS addresses, this hack makes
+      // the DNS addresses we marshall at toMap possible to parse
+      if (dbusDns.isEmpty())
+      {
+          QList <uint> dnsArg = map.value("dns").value< QList<uint> >();
+
+          foreach (uint utmp, dnsArg)
+          {
+              QHostAddress tmpHost(ntohl(utmp));
+              dbusDns << tmpHost;
+              kDebug() << "DNS IP is " << tmpHost.toString();
+          }
+      }
+
+      if (!dbusDns.isEmpty())
+          setting->setDns(dbusDns);
   }
 
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)) &&
@@ -79,7 +93,31 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
       }
       //NO addressArg.endArray(); it's fatal in debug builds.
 
-      setting->setAddresses(addresses);
+      if (addresses.isEmpty()) // workaround for reading values come from our toMap function below
+      {
+          QList<QList <uint> > addressArgUint = map.value("addresses").value< QList <QList <uint> > >();
+          foreach(QList<uint> uintList, addressArgUint)
+          {
+              if (uintList.count() != 3)
+              {
+                kWarning() << "Invalid address format detected. UInt count is " << uintList.count();
+                continue;
+              }
+
+              Solid::Control::IPv4Address addr((quint32)ntohl(uintList.at(0)), (quint32)uintList.at(1), (quint32) ntohl(uintList.at(2)));
+              if (!addr.isValid())
+              {
+                kWarning() << "Invalid address format detected.";
+                continue;
+              }
+              kDebug() << "IP Address:" << QHostAddress(ntohl(uintList.at(0))).toString() << " Subnet:" << uintList.at(1) << "Gateway:" << QHostAddress(ntohl(uintList.at(2))).toString();
+
+              addresses << addr;
+          }
+      }
+
+      if (!addresses.isEmpty())
+          setting->setAddresses(addresses);
   }
 
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS))) {
@@ -136,6 +174,7 @@ QVariantMap Ipv4Dbus::toMap()
   }
 
   if (!setting->dns().isEmpty()) {
+      //FIXME: Use QDBusArgument instead of QList<uint> to remove hack in fromMap DNS code
       QList<uint> dbusDns;
       foreach (const QHostAddress &dns, setting->dns()) {
           dbusDns << htonl(dns.toIPv4Address());
@@ -147,6 +186,7 @@ QVariantMap Ipv4Dbus::toMap()
       map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH), setting->dnssearch());
   }
   if (!setting->addresses().isEmpty()) {
+      //FIXME: Use QDBusArgument instead of QList<QList<uint>> to remove hack in fromMap Ip Address code
       QList<QList<uint> > dbusAddresses;
       foreach (const Solid::Control::IPv4Address &addr, setting->addresses()) {
           QList<uint> dbusAddress;

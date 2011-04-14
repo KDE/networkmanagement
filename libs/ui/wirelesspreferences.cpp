@@ -109,6 +109,74 @@ WirelessPreferences::~WirelessPreferences()
 {
 }
 
+WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
+: ConnectionPreferences(QVariantList(), parent), m_securityTabIndex(0)
+{
+
+    if (!con)
+    {
+        kDebug() << "Connection pointer is NULL, creating a new connection.";
+        m_connection = new Knm::Connection(QUuid::createUuid(), Knm::Connection::Wireless);
+    }
+    else
+        m_connection = con;
+
+    QString connectionId = m_connection->uuid().toString();
+
+    /*
+
+    QString ssid;
+    QString deviceUni;
+    QString apUni;
+
+    if (args.count() >= 3) {
+        deviceUni = args[1].toString();
+        apUni = args[2].toString();
+        kDebug() << "DeviceUni" << deviceUni << "AP UNI" << apUni;
+    } else {
+        kWarning() << "Could not find deviceUni or AP UNI in args:" << args;
+    }
+
+    Solid::Control::AccessPoint * ap = 0;
+    Solid::Control::WirelessNetworkInterface * iface = 0;
+
+    if (!deviceUni.isEmpty() && deviceUni != QLatin1String("/")) {
+        iface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(Solid::Control::NetworkManager::findNetworkInterface(deviceUni));
+        if (iface) {
+            if ( !apUni.isEmpty() && apUni != QLatin1String("/")) {
+                ap = iface->findAccessPoint(apUni);
+                if (ap) {
+                    ssid = ap->ssid();
+                }
+            }
+        }
+    }
+*/
+    m_contents->setConnection(m_connection);
+    //m_contents->setDefaultName(ssid.isEmpty() ? i18n("New Wireless Connection") : ssid);
+
+    m_wirelessWidget = new Wireless80211Widget(m_connection, NULL, this);
+    connect(m_wirelessWidget, SIGNAL(ssidSelected(const QString &)), m_contents, SLOT(setDefaultName(const QString &)));
+
+    m_securityWidget = new WirelessSecuritySettingWidget(m_connection, NULL, NULL, this);
+
+    IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+
+    connect (m_contents->connectionSettingsWidget(), SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
+
+    addToTabWidget(m_wirelessWidget);
+    m_securityTabIndex = addToTabWidget(m_securityWidget);
+    addToTabWidget(ipv4Widget);
+
+    /*
+    if ( setDefaults )
+    {
+        // for defaults the security is most interesting
+        m_contents->connectionSettingsWidget()->setCurrentIndex( 1 );
+    }
+    */
+}
+
 
 bool WirelessPreferences::needsEdits() const
 {
@@ -148,6 +216,8 @@ void WirelessPreferences::tabChanged(int index)
                 }
             }
         }
+
+        // Ignore that in edit mode
         m_securityWidget->setIfaceAndAccessPoint(ifaceForSsid, apForSsid);
         m_wirelessWidget->setEnteredSsidClean();
     }

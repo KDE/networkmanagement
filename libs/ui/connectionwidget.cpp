@@ -85,6 +85,7 @@ void ConnectionWidget::readConfig()
     }
 
     d->ui.id->setText(connection()->name());
+    d->ui.system->setChecked(connection()->scope() == Knm::Connection::System);
     d->ui.autoconnect->setChecked(connection()->autoConnect());
     d->ui.pushButtonChooseIcon->setIcon(KIcon(connection()->iconName()));
 }
@@ -93,6 +94,7 @@ void ConnectionWidget::writeConfig()
 {
     Q_D(ConnectionWidget);
     connection()->setName(d->ui.id->text());
+    connection()->setScope(d->ui.system->isChecked() ? Knm::Connection::System : Knm::Connection::User);
     connection()->setAutoConnect(d->ui.autoconnect->isChecked());
     connection()->setOriginalAutoConnect(d->ui.autoconnect->isChecked());
     // connection()->setIconName(..) is already called from buttonChooseIconClicked()
@@ -112,7 +114,7 @@ void ConnectionWidget::buttonChooseIconClicked()
 
     // set customLocation to kdedir/share/apps/networkmanagement/icons
     QString customLocation(KStandardDirs::locate("data", QLatin1String("networkmanagement/icons/")));
-    //qDebug() << "Custom location: " << customLocation;
+    //kDebug() << "Custom location: " << customLocation;
     
     dlg.setCustomLocation(customLocation);
 
@@ -121,7 +123,7 @@ void ConnectionWidget::buttonChooseIconClicked()
     QString iconName = dlg.openDialog();
     if (!iconName.isEmpty())
     {
-        //qDebug() << "Icon name: " << iconName;
+        //kDebug() << "Icon name: " << iconName;
         d->ui.pushButtonChooseIcon->setIcon(KIcon(iconName));
         connection()->setIconName(iconName);
     }

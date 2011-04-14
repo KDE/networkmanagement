@@ -154,22 +154,6 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
       return mPin;
     }
 
-    /**
-      Set PUK
-    */
-    void setPuk( const QString & v )
-    {
-        mPuk = v;
-    }
-
-    /**
-      Get PUK
-    */
-    QString puk() const
-    {
-      return mPuk;
-    }
-
   protected:
 
     // gsm
@@ -181,7 +165,6 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     int mNetworktype;
     int mBand;
     QString mPin;
-    QString mPuk;
 
   private:
 };

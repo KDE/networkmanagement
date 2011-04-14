@@ -56,6 +56,41 @@ CdmaConnectionEditor::CdmaConnectionEditor(const QVariantList &args, QWidget *pa
     addToTabWidget(pppWidget);
 }
 
+
+CdmaConnectionEditor::CdmaConnectionEditor(Knm::Connection *con, QWidget *parent)
+: ConnectionPreferences(QVariantList(), parent)
+{
+    if (!con)
+    {
+        kDebug() << "Connection pointer is NULL, creating a new connection.";
+        m_connection = new Knm::Connection(QUuid::createUuid(), Knm::Connection::Cdma);
+    }
+    else
+        m_connection = con;
+
+    QString connectionId = m_connection->uuid().toString();
+
+    m_contents->setConnection(m_connection);
+
+    CdmaWidget * cdmaWidget = new CdmaWidget(m_connection, this);
+    PppWidget * pppWidget = new PppWidget(m_connection, this);
+
+    /*
+    if (args.count() > 1) {
+        m_contents->setDefaultName(args[1].toString());
+
+        if (args.count() > 2) {
+            cdmaWidget->setCdmaInfo(args[2].toMap());
+        }
+    } else {
+        m_contents->setDefaultName(i18n("New Cellular Connection"));
+    }
+    */
+
+    addToTabWidget(cdmaWidget);
+    addToTabWidget(pppWidget);
+}
+
 CdmaConnectionEditor::~CdmaConnectionEditor()
 {
 }

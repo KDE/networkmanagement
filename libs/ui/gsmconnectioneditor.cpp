@@ -60,11 +60,12 @@ GsmConnectionEditor::GsmConnectionEditor(const QVariantList &args, QWidget *pare
                 m_contents->setDefaultName(args[1].toString() + " - " + apnInfo["name"].toString());
             }
             gsmWidget->setApnInfo(apnInfo);
-    
+
             if (!apnInfo["dnsList"].isNull()) {
                 ipV4Widget->setDns(apnInfo["dnsList"].toList());
             }
         } else {
+            kDebug() << "Args count <= 3";
             m_contents->setDefaultName(args[1].toString());
         }
     } else {
@@ -76,6 +77,57 @@ GsmConnectionEditor::GsmConnectionEditor(const QVariantList &args, QWidget *pare
     addToTabWidget(ipV4Widget);
 }
 
+GsmConnectionEditor::GsmConnectionEditor(Knm::Connection *con, QWidget *parent)
+: ConnectionPreferences(QVariantList(), parent)
+{
+    if (!con)
+    {
+        kDebug() << "Connection pointer is NULL, creating a new connection.";
+        m_connection = new Knm::Connection(QUuid::createUuid(), Knm::Connection::Gsm);
+    }
+    else
+        m_connection = con;
+
+    QString connectionId = m_connection->uuid().toString();
+
+    m_contents->setConnection(m_connection);
+    GsmWidget * gsmWidget = new GsmWidget(m_connection, this);
+    PppWidget * pppWidget = new PppWidget(m_connection, this);
+    IpV4Widget * ipV4Widget = new IpV4Widget(m_connection, this);
+
+    /*
+    if (args.count() > 1) {
+        if (args.count() > 2) {
+            QList<QVariant> networkIds = args[2].toList();
+            if (!networkIds.isEmpty()) {
+                gsmWidget->setNetworkIds(networkIds);
+            }
+        }
+
+        if (args.count() > 3) {
+            QMap<QString, QVariant> apnInfo = args[3].toMap();
+            if (apnInfo["name"].isNull()) {
+                m_contents->setDefaultName(args[1].toString());
+            } else {
+                m_contents->setDefaultName(args[1].toString() + " - " + apnInfo["name"].toString());
+            }
+            gsmWidget->setApnInfo(apnInfo);
+    
+            if (!apnInfo["dnsList"].isNull()) {
+                ipV4Widget->setDns(apnInfo["dnsList"].toList());
+            }
+        } else {
+            m_contents->setDefaultName(args[1].toString());
+        }
+    } else {
+        m_contents->setDefaultName(i18n("New Cellular Connection"));
+    }
+    */
+
+    addToTabWidget(gsmWidget);
+    addToTabWidget(pppWidget);
+    addToTabWidget(ipV4Widget);
+}
 GsmConnectionEditor::~GsmConnectionEditor()
 {
 }

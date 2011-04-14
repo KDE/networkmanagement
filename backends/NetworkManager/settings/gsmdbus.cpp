@@ -44,10 +44,6 @@ void GsmDbus::fromMap(const QVariantMap & map)
   if (map.contains("pin")) {
     setting->setPin(map.value("pin").value<QString>());
   }
-  // SECRET
-  if (map.contains("puk")) {
-    setting->setPuk(map.value("puk").value<QString>());
-  }
 }
 
 QVariantMap GsmDbus::toMap()
@@ -66,6 +62,14 @@ QVariantMap GsmDbus::toMap()
       map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_TYPE), setting->networktype());
   }
 
+  // SECRET
+  if(!setting->pin().isEmpty())
+      map.insert("pin", setting->pin());
+
+  // SECRET
+  if(!setting->password().isEmpty())
+      map.insert("password", setting->password());
+
   //map.insert("band", setting->band());
   return map;
 }
@@ -78,8 +82,6 @@ QVariantMap GsmDbus::toSecretsMap()
       map.insert("password", setting->password());
   if (!setting->pin().isEmpty())
       map.insert("pin", setting->pin());
-  if (!setting->puk().isEmpty())
-      map.insert("puk", setting->puk());
   return map;
 }
 

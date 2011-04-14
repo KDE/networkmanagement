@@ -50,7 +50,7 @@ ManageTrayWidget::ManageTrayWidget(QWidget *parent, const QVariantList &args)
     // KConfigXT magic
     addConfig(KNetworkManagerServicePrefs::self(), ui);
 
-    setButtons(KCModule::Help | KCModule::Apply);
+    setButtons(KCModule::NoAdditionalButton);
 }
 
 ManageTrayWidget::~ManageTrayWidget()

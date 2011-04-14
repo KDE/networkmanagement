@@ -29,7 +29,7 @@ Q_OBJECT
 public:
     LeapWidget(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~LeapWidget();
-    bool validate() const;
+    bool validate();
     void readConfig();
     void writeConfig();
     void readSecrets();

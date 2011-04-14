@@ -69,7 +69,7 @@ public Q_SLOTS:
 signals:
     void valid(bool);
 protected Q_SLOTS:
-    void gotSecrets(uint result);
+    //void gotSecrets(uint result);
     void updateSettingValidation(bool);
 
 protected:

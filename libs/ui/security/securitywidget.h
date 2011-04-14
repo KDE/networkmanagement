@@ -37,10 +37,14 @@ public:
     virtual void readConfig() = 0;
     virtual void writeConfig() = 0;
     virtual void readSecrets() = 0;
-    virtual bool validate() const = 0;
+    virtual bool validate() = 0;
+    bool isValid() const;
+signals:
+    void valid(bool);
 protected:
     SecurityWidget(SecurityWidgetPrivate &dd, Knm::Connection* connection, QWidget * parent = 0 );
     SecurityWidgetPrivate * d_ptr;
+    void setValid(bool);
 };
 
 #endif

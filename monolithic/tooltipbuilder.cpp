@@ -403,7 +403,7 @@ QString buildRoutesHtmlTable(const QList<Solid::Control::IPv4Route> &lst)
     }
     table += QLatin1String("</table>");
 
-    //qDebug() << table;
+    //kDebug() << table;
 
     return table;
 }

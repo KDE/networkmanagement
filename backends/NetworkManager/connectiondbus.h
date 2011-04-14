@@ -44,6 +44,7 @@ public:
     QVariantMapMap toDbusMap();
     QVariantMapMap toDbusSecretsMap();
     void fromDbusMap(const QVariantMapMap&);
+    void fromDbusSecretsMap(const QVariantMapMap&);
 private:
     SettingDbus * dbusFor(Knm::Setting *);
     QHash<Knm::Setting*, SettingDbus*> m_dbus;

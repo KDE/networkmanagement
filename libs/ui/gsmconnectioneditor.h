@@ -23,6 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionprefs.h"
 
+namespace Knm
+{
+    class Connection;
+}
+
 /**
  * Configuration module for cellular connections
  */
@@ -31,6 +36,7 @@ class KNM_EXPORT GsmConnectionEditor : public ConnectionPreferences
 Q_OBJECT
 public:
     GsmConnectionEditor(const QVariantList & args = QVariantList(), QWidget * parent = 0);
+    GsmConnectionEditor(Knm::Connection *con, QWidget * parent);
     virtual ~GsmConnectionEditor();
     virtual bool needsEdits() const { return true; }
 };

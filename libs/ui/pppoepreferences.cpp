@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KGlobal>
 #include <KLocale>
+#include <kdebug.h>
 
 #include "pppoewidget.h"
 #include "pppwidget.h"
@@ -39,7 +40,35 @@ PppoePreferences::PppoePreferences(const QVariantList &args, QWidget *parent)
     m_contents->setConnection(m_connection);
     m_contents->setDefaultName(i18n("New PPPoE Connection"));
 
+    prepareSettings();
+}
 
+
+PppoePreferences::PppoePreferences(Knm::Connection *con, QWidget *parent)
+: ConnectionPreferences(QVariantList(), parent)
+{
+    if (!con)
+    {
+        kDebug() << "Connection pointer is NULL, creating a new connection.";
+        m_connection = new Knm::Connection(QUuid::createUuid(), Knm::Connection::Pppoe);
+    }
+    else
+        m_connection = con;
+
+    QString connectionId = m_connection->uuid().toString();
+
+    m_contents->setConnection(m_connection);
+    m_contents->setDefaultName(i18n("New PPPoE Connection"));
+
+    prepareSettings();
+}
+
+PppoePreferences::~PppoePreferences()
+{
+}
+
+void PppoePreferences::prepareSettings()
+{
     PppoeWidget * pppoeWidget = new PppoeWidget(m_connection, this);
     WiredWidget * wiredWidget = new WiredWidget(m_connection, this);
     PppWidget * pppWidget = new PppWidget(m_connection, this);
@@ -51,8 +80,5 @@ PppoePreferences::PppoePreferences(const QVariantList &args, QWidget *parent)
     addToTabWidget(pppWidget);
 }
 
-PppoePreferences::~PppoePreferences()
-{
-}
 
 // vim: sw=4 sts=4 et tw=100

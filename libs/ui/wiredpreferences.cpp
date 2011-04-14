@@ -45,6 +45,36 @@ WiredPreferences::WiredPreferences(const QVariantList &args, QWidget *parent)
     m_contents->setConnection(m_connection);
     m_contents->setDefaultName(i18n("New Wired Connection"));
 
+    prepareSettings();
+}
+
+WiredPreferences::WiredPreferences(Knm::Connection *con, QWidget *parent)
+: ConnectionPreferences(QVariantList(), parent)
+{
+    if (!con)
+    {
+        kDebug() << "Connection pointer is NULL, creating a new connection.";
+        m_connection = new Knm::Connection(QUuid::createUuid(), Knm::Connection::Wired);
+    }
+    else
+        m_connection = con;
+
+    QString connectionId = m_connection->uuid().toString();
+
+    m_contents->setConnection(m_connection);
+    //m_contents->setDefaultName(i18n("New Wired Connection"));
+
+    prepareSettings();
+
+}
+
+WiredPreferences::~WiredPreferences()
+{
+}
+
+void WiredPreferences::prepareSettings()
+{
+
     WiredWidget * wiredWidget = new WiredWidget(m_connection, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
     SecurityWired8021x * securityWidget = new SecurityWired8021x(m_connection, this);
@@ -52,10 +82,6 @@ WiredPreferences::WiredPreferences(const QVariantList &args, QWidget *parent)
     addToTabWidget(ipv4Widget);
     addToTabWidget(wiredWidget);
     addToTabWidget(securityWidget);
-}
-
-WiredPreferences::~WiredPreferences()
-{
 }
 
 // vim: sw=4 sts=4 et tw=100

@@ -29,6 +29,8 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
       enum type { none, open, shared, leap, COUNT };
     };
 
+    enum WepKeyType { None = 0, Hex, Passphrase, COUNT};
+
     WirelessSecuritySetting( );
     ~WirelessSecuritySetting();
 
@@ -278,6 +280,32 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
       return mWeppassphrase;
     }
 
+    /**
+      Set WEP Key Type
+    */
+    void setWepKeyType( WepKeyType t )
+    {
+        mWepKeyType = t;
+    }
+
+    /**
+      Get WEP Key Type
+    */
+    WepKeyType wepKeyType() const
+    {
+      return mWepKeyType;
+    }
+
+    void setEnabled(bool b)
+    {
+        mEnabled = b;
+    }
+
+    bool enabled()
+    {
+        return mEnabled;
+    }
+
   protected:
 
     // 802-11-wireless-security
@@ -296,6 +324,8 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     QString mPsk;
     QString mLeappassword;
     QString mWeppassphrase;
+    WepKeyType mWepKeyType;
+    bool mEnabled;
 
   private:
 };

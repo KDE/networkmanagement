@@ -66,7 +66,7 @@ void LeapWidget::chkShowPassToggled(bool on)
     d->ui.lePassword->setPasswordMode(!on);
 }
 
-bool LeapWidget::validate() const
+bool LeapWidget::validate()
 {
     return !(d->ui.lePassword->text().isEmpty() || d->ui.leUserName->text().isEmpty());
 }

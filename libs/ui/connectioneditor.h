@@ -28,6 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "internals/connection.h"
 
+namespace Knm {
+    class Connection;
+}
+
 class ConnectionPreferences;
 typedef  QList<QVariant> QVariantList;
 
@@ -41,18 +45,29 @@ public:
     ConnectionEditor(QObject * parent);
     virtual ~ConnectionEditor();
 
-    QString addConnection(bool useDefaults, Knm::Connection::Type type,
+    Knm::Connection *createConnection(bool useDefaults, Knm::Connection::Type type,
             const QVariantList &otherArgs = QVariantList(), const bool autoAccept = false);
 
     void editConnection(Knm::Connection::Type type,
             const QVariantList &otherArgs = QVariantList());
 
+    Knm::Connection *editConnection(Knm::Connection *con);
+
     /**
-     * Construct an editor widget for the given connection type.
+     * Construct an editor widget for the given connection type to create
+     * new connection.
      */
     ConnectionPreferences * editorForConnectionType(bool setDefaults, QWidget * parent,
                                                     Knm::Connection::Type type,
                                                     const QVariantList & args) const;
+
+    /**
+     * Construct an editor widget for the given connection object
+     * to edit its settings
+     */
+    ConnectionPreferences * editorForConnectionType(QWidget * parent,
+                                                    Knm::Connection *con) const;
+
     /**
      * Tell the UserSettings service to reload its configuration (via DBUS)
      * Provide a list of changed connection IDs so the service can notify NetworkManager

@@ -6,7 +6,7 @@
 using namespace Knm;
 
 WirelessSecuritySetting::WirelessSecuritySetting() : Setting(Setting::WirelessSecurity)
-                                                     , mSecurityType(WirelessSecuritySetting::EnumSecurityType::None), mKeymgmt(0), mWeptxkeyindex(0), mAuthalg(0)
+                                                     , mSecurityType(WirelessSecuritySetting::EnumSecurityType::None), mKeymgmt(0), mWeptxkeyindex(0), mAuthalg(0), mWepKeyType(None), mEnabled(false)
 {
 }
 
@@ -20,7 +20,7 @@ QString WirelessSecuritySetting::name() const
 }
 bool WirelessSecuritySetting::hasSecrets() const
 {
-  return true;
+  return mEnabled;
 }
 
 void WirelessSecuritySetting::reset()
@@ -41,4 +41,5 @@ void WirelessSecuritySetting::reset()
     mPsk = QString();
     mLeappassword = QString();
     mWeppassphrase = QString();
+    mWepKeyType = None;
 }

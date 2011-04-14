@@ -50,7 +50,7 @@ public:
     EapMethod * currentEapMethod() const;
     
     // SecurityWidget methods
-    virtual bool validate() const;
+    virtual bool validate();
     virtual void readConfig();
     virtual void writeConfig();
     virtual void readSecrets();

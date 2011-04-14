@@ -198,6 +198,7 @@ void ConnectionPersistence::load()
         m_connection->setOriginalAutoConnect(cg.readEntry<bool>("autoconnect", false));
         m_connection->setTimestamp(cg.readEntry<QDateTime>("timestamp", QDateTime()));
         m_connection->setIconName(cg.readEntry("icon"));
+        m_connection->setScope(Knm::Connection::User);
 
         // load each setting
         foreach (Setting * setting, m_connection->settings()) {

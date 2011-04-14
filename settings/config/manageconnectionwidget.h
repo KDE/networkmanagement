@@ -25,7 +25,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KCModule>
 
+#include "connectionpersistence.h"
 #include "connectioneditor.h"
+#include "connectionlist.h"
+#include "nmdbussettingsconnectionprovider.h"
+#include "nmdbussettingsservice.h"
+
+#include "internals/settings/ipv4.h"
 
 #include "ui_manageconnectionwidget.h"
 #include "mobileconnectionwizard.h"
@@ -64,9 +70,10 @@ private slots:
      */
     void editClicked();
     /**
-     * Edit given item
+     * Called when GetSecrets call of Connection.Secrets interface is arrived
      */
-    void editItem(QTreeWidgetItem*);
+    void editGotSecrets(bool valid, const QString &errorMessage);
+    void addGotConnection(bool valid, const QString &errorMessage);
     /**
      * Delete selected connection
      */
@@ -89,6 +96,7 @@ private slots:
      */
     void updateLastUsed();
 
+    void gotSecrets(uint result);
 private:
     /**
      * Get the connection type of the currently selected index
@@ -109,19 +117,49 @@ private:
 
     bool event(QEvent *ev);
 
+    void restoreUserConnections();
+
     Ui_ManageConnectionWidget mConnEditUi;
     QTreeWidget * mWiredList;
     QMenu * mCellularMenu;
     QMenu * mVpnMenu;
     ConnectionEditor * mEditor;
+    Knm::Connection * mEditConnection;
     QHash<QString,QTreeWidgetItem*> mUuidItemHash;
     QTimer * mLastUsedTimer;
     MobileConnectionWizard * mMobileConnectionWizard;
+
+
+    /**
+     * ConnectionList for user-wide and system-wide settings
+     */
+    ConnectionList * mConnections;
+
+    /**
+     * ConnectionProvider to add/remove/update user wide settings
+     */
+    NMDBusSettingsConnectionProvider *mUserSettings;
+
+    /**
+     * ConnectionProvider to add/remove/update system wide settings
+     */
+    NMDBusSettingsConnectionProvider *mSystemSettings;
 
     /**
      * Connect add/edit/delete button signals to relevant slots
      */
     void connectButtonSet(AddEditDeleteButtonSet*, QTreeWidget*);
+    Knm::ConnectionPersistence *connectionPersistence;
+    void loadConnection(Knm::Connection *con);
+    void saveConnection(Knm::Connection *con);
+    void deleteConnection(QString id, Knm::Connection::Scope scope);
+    /**
+     * Inform kded module about changed connection and update our
+     * connections list in UI
+     */
+    void updateServiceAndUi(QString id, Knm::Connection::Scope scope);
+    void updateServiceAndUi(Knm::Connection *con);
+    Knm::Connection::Scope oldScope;
 };
 
 #endif // NM07_MANAGE_CONNECTION_WIDGET_H

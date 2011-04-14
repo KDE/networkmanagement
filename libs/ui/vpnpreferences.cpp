@@ -51,8 +51,8 @@ VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
     // load the plugin in m_vpnType, get its SettingWidget and add it
     QString error;
     if (args.count() > 1) {  // if we have a vpn type in the args, we are creating a new connection
-        m_vpnPluginName = args[1].toString();
-        m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( m_vpnPluginName ), this, QVariantList(), &error );
+        QString serviceType = args[1].toString();
+        m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-NetworkManager-Services]=='%1'" ).arg( serviceType ), this, QVariantList(), &error );
         if (error.isEmpty()) {
             SettingWidget * vpnWidget = m_uiPlugin->widget(m_connection, this);
             addToTabWidget(vpnWidget);
@@ -64,6 +64,43 @@ VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
     addToTabWidget(ipv4Widget);
 }
 
+VpnPreferences::VpnPreferences(Knm::Connection *con, QWidget *parent)
+: ConnectionPreferences(QVariantList(), parent ), m_uiPlugin(0)
+{
+    if (!con)
+    {
+        kDebug() << "Connection pointer is NULL, creating a new connection.";
+        m_connection = new Knm::Connection(QUuid::createUuid(), Knm::Connection::Vpn);
+    }
+    else
+        m_connection = con;
+
+    QString connectionId = m_connection->uuid().toString();
+
+    m_contents->setConnection(m_connection);
+    m_contents->setDefaultName(i18n("New VPN Connection"));
+
+    // load the plugin in m_vpnType, get its SettingWidget and add it
+    QString error;
+    Knm::VpnSetting *vpnSetting = static_cast<Knm::VpnSetting*>(m_connection->setting(Knm::Setting::Vpn));
+    if (!vpnSetting) {
+        kDebug() << "Missing VPN setting!";
+    } else {
+        QString serviceType = vpnSetting->serviceType();
+        kDebug() << serviceType;
+        m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-NetworkManager-Services]=='%1'" ).arg( serviceType ), this, QVariantList(), &error );
+        if (error.isEmpty()) {
+            SettingWidget * vpnWidget = m_uiPlugin->widget(m_connection, this);
+            addToTabWidget(vpnWidget);
+        } else {
+            kDebug() << error;
+        }
+    }
+    IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+    addToTabWidget(ipv4Widget);
+}
+
+
 VpnPreferences::~VpnPreferences()
 {
 }
@@ -74,9 +111,9 @@ void VpnPreferences::load()
     Knm::VpnSetting * vpnSetting = static_cast<Knm::VpnSetting*>(m_connection->setting(Knm::Setting::Vpn));
     if (!m_uiPlugin) { // if this is not set yet, we are restoring a connection.  Look in the vpn setting for the plugin
         if (vpnSetting) {
-            m_vpnPluginName = vpnSetting->pluginName();
+            QString serviceType = vpnSetting->serviceType();
             QString error;
-            m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-KDE-PluginInfo-Name]=='%1'" ).arg( m_vpnPluginName ), this, QVariantList(), &error );
+            m_uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-NetworkManager-Services]=='%1'" ).arg( serviceType ), this, QVariantList(), &error );
             if (m_uiPlugin && error.isEmpty()) {
                 SettingWidget * vpnWidget = m_uiPlugin->widget(m_connection, this);
                 addToTabWidget(vpnWidget);
@@ -84,8 +121,6 @@ void VpnPreferences::load()
                 vpnWidget->readConfig();
             }
         }
-    } else { // we are loading a new connection's settings.  Set the plugin name after the load so this can be saved later
-        vpnSetting->setPluginName(m_vpnPluginName);
     }
 }
 

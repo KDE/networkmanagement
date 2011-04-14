@@ -34,7 +34,7 @@ public:
     enum KeyFormat { Hex, Passphrase };
     WepWidget(KeyFormat keyFormat, Knm::Connection* connectionId, QWidget * parent = 0);
     virtual ~WepWidget();
-    bool validate() const;
+    bool validate();
     void readConfig();
     void writeConfig();
     void readSecrets();
@@ -42,6 +42,7 @@ private slots:
     void keyTypeChanged(int);
     void chkShowPassToggled(bool);
     void keyIndexChanged(int);
+    void secretTextChanged();
 private:
     class Private;
     Private * d;

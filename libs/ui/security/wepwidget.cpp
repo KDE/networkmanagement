@@ -51,10 +51,12 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
 : SecurityWidget(connection, parent), d(new WepWidget::Private)
 {
     d->format = format;
+    setValid(false);
     d->keys << "" << "" << "" << "";
     d->keyIndex = 0;
     d->setting = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
-    QString hexRegExp = "([0-9]|[a-f]|[A-F]){10,26}";
+    QString hexRegExp = "((([0-9]|[a-f]|[A-F]){10})|(([0-9]|[a-f]|[A-F]){26}))"; //10 or 26 hex characters
+
     QString asciiRegExp = "[-";
     for (char ch = ASCII_MIN; ch <= ASCII_MAX; ++ch) {
         if (ch != '-') {
@@ -64,8 +66,10 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
             asciiRegExp.append(ch);
         }
     }
-    asciiRegExp.append("]{5,13}");
-    QRegExp regExp(QString("^(%1|%2)$").arg(hexRegExp).arg(asciiRegExp));
+    asciiRegExp.append("]");
+    QString realAsciiRegExp(QString("(%1{5}|%2{13})").arg(asciiRegExp).arg(asciiRegExp));
+
+    QRegExp regExp(QString("^(%1|%2)$").arg(hexRegExp).arg(realAsciiRegExp));
     d->hexKeyValidator = new QRegExpValidator(regExp, this);
 
     d->ui.setupUi(this);
@@ -83,6 +87,9 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
 
     connect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
     connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
+    connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
+    connect(d->ui.key, SIGNAL(textChanged(const QString &)), this, SLOT(secretTextChanged()));
+    connect(d->ui.passphrase, SIGNAL(textChanged(const QString &)), this, SLOT(secretTextChanged()));
 }
 
 WepWidget::~WepWidget()
@@ -108,6 +115,12 @@ void WepWidget::keyTypeChanged(int index)
             d->format = WepWidget::Hex;
             break;
     }
+    validate();
+}
+
+void WepWidget::secretTextChanged()
+{
+    validate();
 }
 
 void WepWidget::keyIndexChanged(int index)
@@ -125,12 +138,17 @@ void WepWidget::chkShowPassToggled(bool on)
     d->ui.key->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
 }
 
-bool WepWidget::validate() const
+bool WepWidget::validate()
 {
     if (d->ui.keyType->currentIndex() == 1) {
-        return d->ui.key->hasAcceptableInput();
+        bool result = d->ui.key->hasAcceptableInput();
+        setValid(result);
+        emit valid(result);
+        return result;
     }
     else {
+        setValid(true);
+        emit valid(true);
         return true;
     }
 }
@@ -146,7 +164,7 @@ void WepWidget::readConfig()
     d->ui.chkShowPass->setChecked(false);
 
     // auth alg
-    if (d->setting->authalg()  == Knm::WirelessSecuritySetting::EnumAuthalg::shared) {
+    if (d->setting->authalg() == Knm::WirelessSecuritySetting::EnumAuthalg::shared) {
         d->ui.authalg->setCurrentIndex( 1 );
     } else {
         d->ui.authalg->setCurrentIndex( 0 );
@@ -159,6 +177,9 @@ void WepWidget::writeConfig()
 
     d->setting->setWeptxkeyindex(d->ui.weptxkeyindex->currentIndex());
 
+    //FIXME: Handling of hex/ascii and passphrase is wrong, users must be able to specify 4 different passphrases 
+    //       in wep-key[0-3]
+
     // keys
     if (d->format == WepWidget::Passphrase)
     {
@@ -168,12 +189,14 @@ void WepWidget::writeConfig()
         d->setting->setWepkey1(QString());
         d->setting->setWepkey2(QString());
         d->setting->setWepkey3(QString());
+        d->setting->setWepKeyType(Knm::WirelessSecuritySetting::Passphrase);
     } else {
         d->setting->setWeppassphrase(QString());
         d->setting->setWepkey0(d->keys[0]);
         d->setting->setWepkey1(d->keys[1]);
         d->setting->setWepkey2(d->keys[2]);
         d->setting->setWepkey3(d->keys[3]);
+        d->setting->setWepKeyType(Knm::WirelessSecuritySetting::Hex);
     }
 
     QString authAlg;
@@ -194,9 +217,11 @@ void WepWidget::readSecrets()
     d->keys.replace(3, d->setting->wepkey3());
 
     // passphrase
-    if(d->keys.value(d->keyIndex).isEmpty()) {
+    if(d->setting->wepKeyType() == Knm::WirelessSecuritySetting::Passphrase)
+    {
         d->ui.keyType->setCurrentIndex(0);
-    } else {
+    } else if(d->setting->wepKeyType() == Knm::WirelessSecuritySetting::Hex)
+    {
         d->ui.keyType->setCurrentIndex(1);
     }
 

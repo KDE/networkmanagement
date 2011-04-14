@@ -28,7 +28,6 @@ void GsmPersistence::load()
   if (m_storageMode == ConnectionPersistence::PlainText) {
     setting->setPassword(m_config->readEntry("password", ""));
     setting->setPin(m_config->readEntry("pin", ""));
-    setting->setPuk(m_config->readEntry("puk", ""));
     setting->setSecretsAvailable(true);
   }
   setting->setInitialized();
@@ -47,7 +46,6 @@ void GsmPersistence::save()
   if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("password", setting->password());
     m_config->writeEntry("pin", setting->pin());
-    m_config->writeEntry("puk", setting->puk());
   }
 }
 
@@ -57,7 +55,6 @@ QMap<QString,QString> GsmPersistence::secrets() const
   QMap<QString,QString> map;
   map.insert(QLatin1String("password"), setting->password());
   map.insert(QLatin1String("pin"), setting->pin());
-  map.insert(QLatin1String("puk"), setting->puk());
   return map;
 }
 
@@ -67,7 +64,6 @@ void GsmPersistence::restoreSecrets(QMap<QString,QString> secrets) const
     GsmSetting * setting = static_cast<GsmSetting *>(m_setting);
     setting->setPassword(secrets.value("password"));
     setting->setPin(secrets.value("pin"));
-    setting->setPuk(secrets.value("puk"));
     setting->setSecretsAvailable(true);
   }
 }

@@ -81,6 +81,7 @@ QVariantMap WirelessDbus::toMap()
   }
   //map.insert("rate", setting->rate());
   //map.insert(QLatin1String(NM_SETTING_WIRELESS_TX_POWER), setting->txpower());
+
   if (!setting->macaddress().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), SettingDbus::macHex2Bin(setting->macaddress()));
   }

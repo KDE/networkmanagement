@@ -15,6 +15,7 @@ PppoeDbus::~PppoeDbus()
 
 void PppoeDbus::fromMap(const QVariantMap & map)
 {
+    kDebug() << map;
   Knm::PppoeSetting * setting = static_cast<Knm::PppoeSetting *>(m_setting);
   if (map.contains("service")) {
     setting->setService(map.value("service").value<QString>());
@@ -32,8 +33,12 @@ QVariantMap PppoeDbus::toMap()
 {
   QVariantMap map;
   Knm::PppoeSetting * setting = static_cast<Knm::PppoeSetting *>(m_setting);
-  map.insert("service", setting->service());
-  map.insert("username", setting->username());
+  if(!setting->service().isEmpty())
+      map.insert("service", setting->service());
+  if(!setting->username().isEmpty())
+      map.insert("username", setting->username());
+  if(!setting->password().isEmpty())
+      map.insert("password", setting->password());
   return map;
 }
 

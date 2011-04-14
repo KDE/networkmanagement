@@ -81,7 +81,7 @@ EapMethod * EapMethodStack::currentEapMethod() const
     return static_cast<EapMethod *>(eapMethods->currentWidget());
 }
 
-bool EapMethodStack::validate() const
+bool EapMethodStack::validate()
 {
     if (eapMethods->count()) {
         return qobject_cast<EapMethod *>( eapMethods->currentWidget())->validate();

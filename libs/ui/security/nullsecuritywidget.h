@@ -32,7 +32,7 @@ public:
     virtual void readConfig();
     virtual void writeConfig();
     virtual void readSecrets();
-    virtual bool validate() const;
+    virtual bool validate();
 };
 
 #endif // NULLSECURITYWIDGET_H

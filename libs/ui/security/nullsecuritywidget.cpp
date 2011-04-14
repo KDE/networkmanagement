@@ -45,7 +45,7 @@ void NullSecurityWidget::readSecrets()
 
 }
 
-bool NullSecurityWidget::validate() const
+bool NullSecurityWidget::validate()
 {
     return true;
 }

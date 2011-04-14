@@ -25,6 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
+namespace Knm {
+
+    class Connection;
+} // namespace Knm
+
 
 /**
  * Configuration module for wired connections
@@ -34,8 +39,12 @@ class KNM_EXPORT WiredPreferences : public ConnectionPreferences
 Q_OBJECT
 public:
     WiredPreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
+    WiredPreferences(Knm::Connection *con, QWidget * parent = 0);
     virtual ~WiredPreferences();
     virtual bool needsEdits() const { return true; /*TODO until auto connection name generation code is in place*/ }
+
+private:
+    void prepareSettings();
 };
 
 #endif

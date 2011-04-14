@@ -239,12 +239,12 @@ void ConnectionListPersistence::handleUpdate(Knm::Connection * connection)
 
 void ConnectionListPersistence::handleAdd(Knm::Connection *)
 {
-    qDebug();
+    kDebug();
 }
 
 void ConnectionListPersistence::handleRemove(Knm::Connection *)
 {
-    qDebug();
+    kDebug();
 }
 
 //move to separate object

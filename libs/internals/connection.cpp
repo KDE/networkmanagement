@@ -84,16 +84,38 @@ Connection::Type Connection::typeFromString(const QString & typeString)
     return type;
 }
 
-Connection::Type typeFromString(const QString & type);
+QString Connection::scopeAsString(Connection::Scope scope)
+{
+    QString scopeString;
+    switch (scope) {
+        case User:
+            scopeString = QLatin1String("User");
+            break;
+        case System:
+            scopeString = QLatin1String("System");
+            break;
+        default:
+            break;
+    }
+    return scopeString;
+}
 
-Connection::Connection(const QString & name, const Connection::Type type)
-    : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false)
+Connection::Scope Connection::scopeFromString(const QString & scopeString)
+{
+    if (scopeString == QLatin1String("User")) {
+        return Connection::User;
+    }
+    return Connection::System;
+}
+
+Connection::Connection(const QString & name, const Connection::Type type, const Connection::Scope scope)
+    : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_scope(scope), m_autoConnect(true)
 {
     init();
 }
 
 Connection::Connection(const QUuid & uuid, const Connection::Type type)
-    : m_uuid(uuid), m_type(type), m_autoConnect(false)
+    : m_uuid(uuid), m_type(type), m_autoConnect(true)
 {
     init();
 }
@@ -193,6 +215,11 @@ Connection::Type Connection::type() const
     return m_type;
 }
 
+Connection::Scope Connection::scope() const
+{
+    return m_scope;
+}
+
 bool Connection::autoConnect() const
 {
     return m_autoConnect;
@@ -274,7 +301,21 @@ bool Connection::hasSecrets() const
             break;
         }
     }
+    kDebug() << "These settings seems to provide secret info:" << secretSettings();
+
     return connectionHasSecrets;
+}
+
+QStringList Connection::secretSettings() const
+{
+    QStringList settings;
+    foreach (Setting * setting, m_settings) {
+        if (setting->hasSecrets()) {
+            settings << setting->name();
+        }
+    }
+
+    return settings;
 }
 
 bool Connection::secretsAvailable() const
@@ -297,6 +338,11 @@ void Connection::setOrigin(const QString & origin)
 QString Connection::origin() const
 {
     return m_origin;
+}
+
+void Connection::setScope(Connection::Scope scope)
+{
+    m_scope = scope;
 }
 
 void Connection::setType(Connection::Type type)
