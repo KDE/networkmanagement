@@ -91,8 +91,8 @@ void InterfaceNotificationHost::removeInterfaceConnection(Knm::InterfaceConnecti
 {
     if (ic) {
         switch (ic->connectionType()) {
-            case Knm::Connection::Wireless: connect(ic, SIGNAL(strengthChanged(int)), this, SLOT(strengthChanged(int))); break;
-            case Knm::Connection::Gsm: connect(ic, SIGNAL(signalQualityChanged(int)), this, SLOT(strengthChanged(int))); break;
+            case Knm::Connection::Wireless: disconnect(ic, SIGNAL(strengthChanged(int)), this, SLOT(strengthChanged(int))); break;
+            case Knm::Connection::Gsm: disconnect(ic, SIGNAL(signalQualityChanged(int)), this, SLOT(strengthChanged(int))); break;
             default: break;
         }
     }
