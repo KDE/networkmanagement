@@ -119,10 +119,12 @@ void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::I
             break;
         case Knm::InterfaceConnection::Unknown:
             m_activating.remove(ic);
-            if (ic->oldActivationState() == Knm::InterfaceConnection::Activating)
-                KNotification::event(Event::ConnectFailed, m_interfaceNameLabel, i18nc("@info:status Notification text when connection has failed","Connection %1 failed", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
-            else
-                KNotification::event(Event::Disconnected, m_interfaceNameLabel, i18nc("@info:status Notification text when deactivating a connection","%1 deactivated", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+	    if (ic->connectionType() != Knm::Connection::Wireless || Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
+                if (ic->oldActivationState() == Knm::InterfaceConnection::Activating)
+                    KNotification::event(Event::ConnectFailed, m_interfaceNameLabel, i18nc("@info:status Notification text when connection has failed","Connection %1 failed", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+                else
+                    KNotification::event(Event::Disconnected, m_interfaceNameLabel, i18nc("@info:status Notification text when deactivating a connection","%1 deactivated", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+            }
             break;
     }
 }
@@ -536,7 +538,9 @@ void NotificationManager::networkDisappeared(const QString & ssid)
 void NotificationManager::notifyNewNetworks()
 {
     Q_D(NotificationManager);    
-    if (d->newWirelessNetworks.count() == 1) {
+    if (d->newWirelessNetworks.count() == 0) {
+        return;
+    } else if (d->newWirelessNetworks.count() == 1) {
         KNotification::event(Event::NetworkAppeared, i18nc("@info:status Notification text when a single wireless network was found","Wireless network %1 found", d->newWirelessNetworks[0]), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
     } else {
         KNotification::event(Event::NetworkAppeared, i18ncp("@info:status Notification text when multiple wireless networks are found. %2 is a list of networks, and the %1 value (not printed) is just used to determine the plural form of network.",
@@ -552,7 +556,9 @@ void NotificationManager::notifyNewNetworks()
 void NotificationManager::notifyDisappearedNetworks()
 {
     Q_D(NotificationManager);
-    if (d->disappearedWirelessNetworks.count() == 1) {
+    if (d->disappearedWirelessNetworks.count() == 0) {
+        return;
+    } else if (d->disappearedWirelessNetworks.count() == 1) {
         KNotification::event(Event::NetworkDisappeared, i18nc("@info:status Notification text when a single wireless network disappeared","Wireless network %1 disappeared", d->disappearedWirelessNetworks[0]), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
 
     } else {
@@ -571,6 +577,11 @@ void NotificationManager::wirelessHardwareEnabledChanged(bool enabled)
     if (enabled) {
         KNotification::event(Event::RfOn, i18nc("@info:status Notification for radio kill switch turned on", "Wireless hardware enabled"), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
     } else {
+        Q_D(NotificationManager);
+        d->newNetworkTimer->stop();
+        d->newWirelessNetworks.clear();
+        d->disappearedNetworkTimer->stop();
+        d->disappearedWirelessNetworks.clear();
         KNotification::event(Event::RfOff, i18nc("@info:status Notification for radio kill switch turned on", "Wireless hardware disabled"), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
     }
 }
