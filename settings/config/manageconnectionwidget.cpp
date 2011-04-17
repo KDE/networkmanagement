@@ -69,10 +69,15 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
 
     mConnEditUi.setupUi(this);
     mConnEditUi.listWired->setSortingEnabled(true);
+    mConnEditUi.listWired->sortByColumn(0, Qt::AscendingOrder);
     mConnEditUi.listWireless->setSortingEnabled(true);
+    mConnEditUi.listWireless->sortByColumn(0, Qt::AscendingOrder);
     mConnEditUi.listCellular->setSortingEnabled(true);
+    mConnEditUi.listCellular->sortByColumn(0, Qt::AscendingOrder);
     mConnEditUi.listVpn->setSortingEnabled(true);
+    mConnEditUi.listVpn->sortByColumn(0, Qt::AscendingOrder);
     mConnEditUi.listPppoe->setSortingEnabled(true);
+    mConnEditUi.listPppoe->sortByColumn(0, Qt::AscendingOrder);
 
     mConnections = new ConnectionList(this);
     //mUserSettings = new NMDBusSettingsConnectionProvider(mConnections, NMDBusSettingsService::SERVICE_USER_SETTINGS, this);
