@@ -59,7 +59,7 @@ public:
     QHash<QUuid, QDBusObjectPath> uuidToPath;
 };
 
-const QString NMDBusSettingsService::SERVICE_USER_SETTINGS = QLatin1String(NM_DBUS_SERVICE_USER_SETTINGS);
+const QString NMDBusSettingsService::SERVICE_USER_SETTINGS = QLatin1String("org.freedesktop.NetworkManagerUserSettings");
 const QString NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS = QLatin1String("org.freedesktop.NetworkManager");
 
 NMDBusSettingsService::NMDBusSettingsService(QObject * parent)

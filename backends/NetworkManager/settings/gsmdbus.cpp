@@ -35,7 +35,7 @@ void GsmDbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_GSM_NETWORK_TYPE))) {
     setting->setNetworktype(map.value(QLatin1String(NM_SETTING_GSM_NETWORK_TYPE)).value<int>());
   } else {
-      setting->setNetworktype(NM_GSM_NETWORK_ANY);
+      setting->setNetworktype(NM_SETTING_GSM_NETWORK_TYPE_ANY);
   }
   if (map.contains("band")) {
     setting->setBand(map.value("band").value<int>());
@@ -62,7 +62,7 @@ QVariantMap GsmDbus::toMap()
       map.insert("apn", setting->apn());
   if (!setting->networkid().isEmpty())
       map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_ID), setting->networkid());
-  if (setting->networktype() != NM_GSM_NETWORK_ANY) {
+  if (setting->networktype() != NM_SETTING_GSM_NETWORK_TYPE_ANY) {
       map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_TYPE), setting->networktype());
   }
 
