@@ -90,11 +90,7 @@ Solid::Control::NetworkInterface::Type InterfaceNotificationHost::type() const
 void InterfaceNotificationHost::removeInterfaceConnection(Knm::InterfaceConnection * ic)
 {
     if (ic) {
-        switch (ic->connectionType()) {
-            case Knm::Connection::Wireless: disconnect(ic, SIGNAL(strengthChanged(int)), this, SLOT(strengthChanged(int))); break;
-            case Knm::Connection::Gsm: disconnect(ic, SIGNAL(signalQualityChanged(int)), this, SLOT(strengthChanged(int))); break;
-            default: break;
-        }
+        disconnect(ic, 0, this, 0);
     }
 
     m_interfaceConnections.remove(ic);

@@ -699,8 +699,7 @@ void InterfaceDetailsWidget::disconnectSignals()
         return;
     }
 
-    disconnect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
-    disconnect(m_iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
+    disconnect(m_iface, 0, this, 0);
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
     if (m_iface && m_iface->type() == Solid::Control::NetworkInterface::Gsm) {
@@ -710,12 +709,7 @@ void InterfaceDetailsWidget::disconnectSignals()
             Solid::Control::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
 
             if (modemNetworkIface) {
-                disconnect(modemNetworkIface, SIGNAL(enabledChanged(const bool)), this, SLOT(modemUpdateEnabled(const bool)));
-                disconnect(modemNetworkIface, SIGNAL(unlockRequiredChanged(const QString &)), this, SLOT(modemUpdateUnlockRequired(const QString &)));
-
-                disconnect(modemNetworkIface, SIGNAL(registrationInfoChanged(const Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType &)), this, SLOT(modemUpdateRegistrationInfo(const Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType &)));
-                disconnect(modemNetworkIface, SIGNAL(accessTechnologyChanged(Solid::Control::ModemInterface::AccessTechnology)), this, SLOT(modemUpdateAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology &)));
-                disconnect(modemNetworkIface, SIGNAL(signalQualityChanged(const uint)), this, SLOT(modemUpdateSignalQuality(const uint)));
+                disconnect(modemNetworkIface, 0, this, 0);
             }
         }
     }
