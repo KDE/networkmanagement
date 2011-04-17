@@ -119,7 +119,7 @@ void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::I
             break;
         case Knm::InterfaceConnection::Unknown:
             m_activating.remove(ic);
-	    if (ic->connectionType() != Knm::Connection::Wireless || Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
+            if (ic->connectionType() != Knm::Connection::Wireless || Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
                 if (ic->oldActivationState() == Knm::InterfaceConnection::Activating)
                     KNotification::event(Event::ConnectFailed, m_interfaceNameLabel, i18nc("@info:status Notification text when connection has failed","Connection %1 failed", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
                 else
