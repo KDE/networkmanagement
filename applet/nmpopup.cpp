@@ -203,10 +203,10 @@ void NMPopup::init()
     m_showMoreButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     m_showMoreButton->setIcon(KIcon("list-add"));
     m_showMoreButton->setText(i18nc("show more button in the applet's popup", "Show More..."));
-    m_showMoreButton->setChecked(false);
     m_showMoreButton->setMinimumHeight(28);
     m_showMoreButton->setMaximumHeight(28);
     connect(m_showMoreButton, SIGNAL(clicked()), this, SLOT(showMore()));
+    showMore(false);
 
     QGraphicsLinearLayout* connectionLayout = new QGraphicsLinearLayout;
     //connectionLayout->addStretch();
@@ -461,7 +461,6 @@ void NMPopup::wirelessEnabledToggled(bool checked)
     if (Solid::Control::NetworkManager::isWirelessEnabled() != checked) {
         Solid::Control::NetworkManager::setWirelessEnabled(checked);
     }
-    showMore(false);
     if (checked && Solid::Control::NetworkManager::isNetworkingEnabled()) {
         showMore(false);
         m_showMoreButton->show();
@@ -501,7 +500,6 @@ void NMPopup::networkingEnabledToggled(bool checked)
     m_wwanCheckBox->setEnabled(Solid::Control::NetworkManager::isWwanHardwareEnabled());
 
 #endif
-    m_showMoreButton->setChecked(false);
     if (checked && Solid::Control::NetworkManager::isWirelessHardwareEnabled() &&
                    Solid::Control::NetworkManager::isWirelessEnabled()) {
         showMore(false);
@@ -533,7 +531,7 @@ void NMPopup::updateHasWireless()
 
     foreach (InterfaceItem* ifaceitem, m_interfaces) {
         Solid::Control::NetworkInterface* iface = ifaceitem->interface();
-        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+        if (iface && iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             //kDebug() << "there's a wifi iface" << ifaceitem->connectionName() << iface->interfaceName();
             m_hasWirelessInterface = true; // at least one interface is wireless. We're happy.
             m_wifiCheckBox->show();
@@ -554,8 +552,8 @@ void NMPopup::updateHasWwan()
     bool hasWwan = false;
     foreach (InterfaceItem* ifaceitem, m_interfaces) {
         Solid::Control::NetworkInterface* iface = ifaceitem->interface();
-        if (iface->type() == Solid::Control::NetworkInterface::Gsm ||
-            iface->type() == Solid::Control::NetworkInterface::Cdma) {
+        if (iface && (iface->type() == Solid::Control::NetworkInterface::Gsm ||
+                      iface->type() == Solid::Control::NetworkInterface::Cdma)) {
             hasWwan = true;
             break;
         }
