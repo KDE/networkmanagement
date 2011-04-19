@@ -91,6 +91,7 @@ void WirelessSecurityPersistence::save()
   WirelessSecuritySetting * setting = static_cast<WirelessSecuritySetting *>(m_setting);
   switch (setting->securityType()) {
     case WirelessSecuritySetting::EnumSecurityType::None:
+      m_config->deleteGroup();
       return; // don't save anything if no encryption
       break;
     case WirelessSecuritySetting::EnumSecurityType::StaticWep:

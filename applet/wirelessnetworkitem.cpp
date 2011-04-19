@@ -102,15 +102,18 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
 
-    m_strengthMeter = new Plasma::Meter(this);
-    m_strengthMeter->setMinimum(0);
-    m_strengthMeter->setMaximum(100);
-    m_strengthMeter->setValue(m_wirelessStatus->strength());
-    m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
-    m_strengthMeter->setPreferredSize(QSizeF(60, rowHeight/2));
-    m_strengthMeter->setMaximumHeight(rowHeight/2);
-    m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
+    if (m_remote->strength() >= 0)
+    {
+        m_strengthMeter = new Plasma::Meter(this);
+        m_strengthMeter->setMinimum(0);
+        m_strengthMeter->setMaximum(100);
+        m_strengthMeter->setValue(m_wirelessStatus->strength());
+        m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
+        m_strengthMeter->setPreferredSize(QSizeF(60, rowHeight/2));
+        m_strengthMeter->setMaximumHeight(rowHeight/2);
+        m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
+    }
 
     m_securityIcon = new Plasma::Label(this);
     m_securityIcon->nativeWidget()->setPixmap(KIcon(m_wirelessStatus->securityIcon()).pixmap(22,22));
