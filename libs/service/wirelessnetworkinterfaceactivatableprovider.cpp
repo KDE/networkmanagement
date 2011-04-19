@@ -217,9 +217,14 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
     // if we still don't have an activatable for this network, we have no connection
     bool hasConnection = false;
     foreach (Knm::InterfaceConnection * ic, d->activatables) {
-        if (ic->activatableType() == Knm::Activatable::HiddenWirelessInterfaceConnection) {
+        if (ic->activatableType() == Knm::Activatable::WirelessInterfaceConnection || ic->activatableType() == Knm::Activatable::HiddenWirelessInterfaceConnection) {
             Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(ic);
-            if (wic->ssid() == ssid) {
+            if (wic->operationMode() != Solid::Control::WirelessNetworkInterface::Adhoc && wic->ssid() == ssid) {
+                hasConnection = true;
+                break;
+            }
+            else if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc && wic->ssid() == ssid && (wic->activationState() == Knm::InterfaceConnection::Activated || wic->activationState() == Knm::InterfaceConnection::Activating))
+            {
                 hasConnection = true;
                 break;
             }

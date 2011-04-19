@@ -62,9 +62,9 @@ private Q_SLOTS:
     void hoverEnter(const QString& uni);
     void hoverLeave(const QString& uni);
     void connectToHiddenNetwork(const QString &ssid);
+    void filter();
 
 private:
-    void filter();
     void createItem(RemoteActivatable* conn);
     void createHiddenItem();
     int m_connectionType;

@@ -107,8 +107,6 @@ void Wireless80211Widget::readConfig()
         }
     }
     d->ui.mtu->setValue(d->setting->mtu());
-    d->ui.band->setCurrentIndex(d->setting->band());
-    d->ui.channel->setValue(d->setting->channel());
 }
 
 void Wireless80211Widget::writeConfig()

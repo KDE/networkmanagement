@@ -85,9 +85,6 @@ void ActivatableItem::emitClicked()
 
 RemoteInterfaceConnection* ActivatableItem::interfaceConnection() const
 {
-    if (m_deleting) {
-        return 0;
-    }
     return dynamic_cast<RemoteInterfaceConnection*>(m_activatable);
 }
 
