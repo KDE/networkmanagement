@@ -205,8 +205,12 @@ void NMPopup::init()
     m_showMoreButton->setText(i18nc("show more button in the applet's popup", "Show More..."));
     m_showMoreButton->setMinimumHeight(28);
     m_showMoreButton->setMaximumHeight(28);
-    m_showMoreButton->setMinimumWidth(130);
-    m_showMoreButton->setMaximumWidth(130);
+    QSizeF sMore = m_showMoreButton->size();
+    m_showMoreButton->setText(i18nc("show more button in the applet's popup", "Show Less..."));
+    QSizeF sLess = m_showMoreButton->size();
+    QSizeF sMax = sMore.width() > sLess.width() ? sMore : sLess;
+    m_showMoreButton->setMinimumSize(sMax);
+    m_showMoreButton->setMaximumSize(sMax);
     connect(m_showMoreButton, SIGNAL(clicked()), this, SLOT(showMore()));
     showMore(false);
 
