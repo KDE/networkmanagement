@@ -311,10 +311,31 @@ void IpV4Widget::methodChanged(int currentIndex)
         advancedSettingsPartEnabled = false;
     }
 
-    if (!addressPartEnabled && !advancedSettingsPartEnabled) {
+    if (!addressPartEnabled && advancedSettingsPartEnabled)
+    {
+        QList<Solid::Control::IPv4Address> addresses = d->ui.advancedSettings->additionalAddresses();
+        QNetworkAddressEntry entry;
+        // we need to set up IP before prefix/netmask manipulation
+        entry.setIp(QHostAddress(d->ui.address->text()));
+        entry.setNetmask(QHostAddress(d->ui.netMask->text()));
+
+        QHostAddress gateway(d->ui.gateway->text());
+        if (entry.ip() != QHostAddress::Null)
+        {
+            Solid::Control::IPv4Address addr(entry.ip().toIPv4Address(),
+                                            entry.prefixLength(), gateway.toIPv4Address());
+            addresses.prepend(addr);
+        }
+        d->ui.advancedSettings->setAdditionalAddresses(addresses);
+    }
+    if (!addressPartEnabled)
+    {
         d->ui.address->clear();
         d->ui.netMask->clear();
         d->ui.gateway->clear();
+    }
+    if (!advancedSettingsPartEnabled)
+    {
         d->ui.advancedSettings->setAdditionalAddresses(QList<Solid::Control::IPv4Address>());
     }
 
