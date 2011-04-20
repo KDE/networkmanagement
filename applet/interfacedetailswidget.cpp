@@ -284,6 +284,10 @@ void InterfaceDetailsWidget::showDetails(bool reset)
 
         if (giface) {
             info += QString(format)
+                           .arg(i18nc("interface details", "Enabled"))
+                           .arg(details->enabled ? i18n("Yes") : i18n("No"));
+
+            info += QString(format)
                            .arg(i18nc("interface details", "Operator"))
                            .arg(details->registrationInfo.operatorName);
 
@@ -303,10 +307,6 @@ void InterfaceDetailsWidget::showDetails(bool reset)
             info += QString(format)
                            .arg(i18nc("interface details", "Allowed Mode"))
                            .arg(Solid::Control::ModemInterface::convertAllowedModeToString(details->allowedMode));
-
-            info += QString(format)
-                           .arg(i18nc("interface details", "Enabled"))
-                           .arg(details->enabled ? i18n("Yes") : i18n("No"));
 
             info += QString(format)
                            .arg(i18nc("interface details", "UDI"))
