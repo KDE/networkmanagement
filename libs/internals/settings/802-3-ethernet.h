@@ -107,12 +107,14 @@ class KNMINTERNALS_EXPORT WiredSetting : public Setting
     {
         QStringList macStringList = s.split(":");
         QByteArray ba;
-        ba.resize(6);
-        int i = 0;
+        if (!s.isEmpty())
+        {
+            ba.resize(6);
+            int i = 0;
 
-        foreach (QString macPart, macStringList)
-            ba[i++] = macPart.toUInt(0, 16);
-
+            foreach (QString macPart, macStringList)
+                ba[i++] = macPart.toUInt(0, 16);
+        }
         setMacaddress(ba);
     }
 
