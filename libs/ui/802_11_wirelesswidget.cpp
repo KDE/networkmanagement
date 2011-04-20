@@ -43,6 +43,9 @@ public:
     Knm::WirelessSetting * setting;
     QString originalSsid;
     QString proposedSsid;
+
+    enum BandIndex { AIndex = 0, BGIndex};
+    enum ModeIndex { InfrastructureIndex = 0, AdhocIndex};
 };
 
 Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QString &ssid, QWidget * parent)
@@ -83,14 +86,22 @@ void Wireless80211Widget::readConfig()
     switch(d->setting->mode())
     {
         case Knm::WirelessSetting::EnumMode::adhoc:
-            d->ui.cmbMode->setCurrentIndex(1);
-            d->ui.band->setCurrentIndex(d->setting->band());
-            d->ui.channel->setValue(d->ui.channel->posFromChannel(d->setting->channel()));
+            d->ui.cmbMode->setCurrentIndex(d->AdhocIndex);
             break;
         case Knm::WirelessSetting::EnumMode::infrastructure:
         default:
-            d->ui.cmbMode->setCurrentIndex(0);
-      }
+            d->ui.cmbMode->setCurrentIndex(d->InfrastructureIndex);
+    }
+    switch(d->setting->band())
+    {
+        case Knm::WirelessSetting::EnumBand::a:
+            d->ui.band->setCurrentIndex(d->AIndex);
+            break;
+        case Knm::WirelessSetting::EnumBand::bg:
+        default:
+            d->ui.band->setCurrentIndex(d->BGIndex);
+            break;
+    }
     // need to check that ssids containing international characters are restored correctly
     if (!d->setting->ssid().isEmpty()) {
         d->ui.ssid->setText(QString::fromAscii(d->setting->ssid()));
@@ -107,6 +118,7 @@ void Wireless80211Widget::readConfig()
         }
     }
     d->ui.mtu->setValue(d->setting->mtu());
+    d->ui.channel->setValue(d->ui.channel->posFromChannel(d->setting->channel()));
 }
 
 void Wireless80211Widget::writeConfig()
@@ -117,12 +129,20 @@ void Wireless80211Widget::writeConfig()
     d->setting->setSsid(d->ui.ssid->text().toAscii());
     kDebug() << d->setting->ssid();
     switch ( d->ui.cmbMode->currentIndex()) {
-        case 0:
+        case Wireless80211WidgetPrivate::InfrastructureIndex:
             d->setting->setMode(Knm::WirelessSetting::EnumMode::infrastructure);
             break;
-        case 1:
+        case Wireless80211WidgetPrivate::AdhocIndex:
             d->setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
-            d->setting->setBand(d->ui.band->currentIndex());
+            switch (d->ui.band->currentIndex())
+            {
+                case Wireless80211WidgetPrivate::AIndex:
+                    d->setting->setBand(Knm::WirelessSetting::EnumBand::a);
+                    break;
+                case Wireless80211WidgetPrivate::BGIndex:
+                    d->setting->setBand(Knm::WirelessSetting::EnumBand::bg);
+                    break;
+            }
             d->setting->setChannel(d->ui.channel->channelFromPos(d->ui.channel->value()));
             break;
     }

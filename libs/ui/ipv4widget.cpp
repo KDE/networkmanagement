@@ -132,6 +132,7 @@ void IpV4Widget::readConfig()
     // Setting and handling them is quite redundant, but it's necessary
     // when we have a connection config in inconsistent state.
     bool addressPartEnabled = false;
+    bool advancedSettingsPartEnabled = false;
     bool dnsPartEnabled = false;
 
     switch (d->setting->method()) {
@@ -144,6 +145,7 @@ void IpV4Widget::readConfig()
             else {
                 d->ui.method->setCurrentIndex(d->AutomaticMethodIndex);
             }
+            advancedSettingsPartEnabled = true;
             break;
         case Knm::Ipv4Setting::EnumMethod::LinkLocal:
             kDebug() << "Method: LinkLocal";
@@ -152,7 +154,7 @@ void IpV4Widget::readConfig()
         case Knm::Ipv4Setting::EnumMethod::Manual:
             kDebug() << "Method: Manual";
             d->ui.method->setCurrentIndex(d->ManualMethodIndex);
-            addressPartEnabled = dnsPartEnabled = true;
+            advancedSettingsPartEnabled = addressPartEnabled = dnsPartEnabled = true;
             break;
         case Knm::Ipv4Setting::EnumMethod::Shared:
             kDebug() << "Method: Shared";
@@ -164,26 +166,29 @@ void IpV4Widget::readConfig()
     }
 
     // ip addresses
-    if (addressPartEnabled) {
+    if (advancedSettingsPartEnabled) {
         QList<Solid::Control::IPv4Address> addrList = d->setting->addresses();
         if (!addrList.isEmpty())
         {
-            // show only the first IP address, the rest addresses will be shown
-            // via "Advanced..."
-            QNetworkAddressEntry entry;
-            // we need to set up IP before prefix/netmask manipulation
-            entry.setIp(QHostAddress(addrList[0].address()));
-            entry.setPrefixLength(addrList[0].netMask());
+            if (addressPartEnabled)
+            {
+                // show only the first IP address, the rest addresses will be shown
+                // via "Advanced..."
+                QNetworkAddressEntry entry;
+                // we need to set up IP before prefix/netmask manipulation
+                entry.setIp(QHostAddress(addrList[0].address()));
+                entry.setPrefixLength(addrList[0].netMask());
 
-            d->ui.address->setText(QHostAddress(addrList[0].address()).toString());
-            d->ui.netMask->setText(entry.netmask().toString());
-            if (addrList[0].gateway()) {
-                d->ui.gateway->setText(QHostAddress(addrList[0].gateway()).toString());
+                d->ui.address->setText(QHostAddress(addrList[0].address()).toString());
+                d->ui.netMask->setText(entry.netmask().toString());
+                if (addrList[0].gateway()) {
+                    d->ui.gateway->setText(QHostAddress(addrList[0].gateway()).toString());
+                }
+
+                // remove first item
+                addrList.removeFirst();
             }
-
-            // remove first item
-            addrList.removeFirst();
-            // put the rest to advanced settings
+             // put the rest to advanced settings
             d->ui.advancedSettings->setAdditionalAddresses(addrList);
         }
     }
@@ -289,6 +294,7 @@ void IpV4Widget::methodChanged(int currentIndex)
 {
     Q_D(IpV4Widget);
     bool addressPartEnabled = false;
+    bool advancedSettingsPartEnabled = true;
     bool dnsPartEnabled = false;
     bool dhcpClientIdEnabled = false;
 
@@ -301,15 +307,18 @@ void IpV4Widget::methodChanged(int currentIndex)
     } else if (IpV4WidgetPrivate::AutomaticMethodIndex == currentIndex) {
         dhcpClientIdEnabled = true;
     }
+    else {
+        advancedSettingsPartEnabled = false;
+    }
 
-    if (!addressPartEnabled) {
+    if (!addressPartEnabled && !advancedSettingsPartEnabled) {
         d->ui.address->clear();
         d->ui.netMask->clear();
         d->ui.gateway->clear();
         d->ui.advancedSettings->setAdditionalAddresses(QList<Solid::Control::IPv4Address>());
     }
 
-    d->ui.advancedSettings->setEnabled(addressPartEnabled);
+    d->ui.advancedSettings->setEnabled(advancedSettingsPartEnabled);
     d->ui.address->setEnabled(addressPartEnabled);
     d->ui.addressLabel->setEnabled(addressPartEnabled);
     d->ui.netMask->setEnabled(addressPartEnabled);
