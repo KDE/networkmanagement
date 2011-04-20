@@ -54,7 +54,7 @@ WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
     d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
-            QString deviceText = UiUtils::interfaceNameLabel(iface->uni());
+            QString deviceText = UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames);
             Solid::Control::WiredNetworkInterface * wired = static_cast<Solid::Control::WiredNetworkInterface*>(iface);
             d->ui.cmbMacAddress->addItem(deviceText, wired->hardwareAddress().toLatin1());
         }

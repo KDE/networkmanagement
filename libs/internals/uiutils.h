@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class QSizeF;
 
+#include "knmserviceprefs.h"
 #include "knminternals_export.h"
 #include "../client/remoteinterfaceconnection.h"
 #include "../client/remoteactivatablelist.h"
@@ -45,9 +46,17 @@ public:
     /**
      * @return a human-readable name for a given network interface according to the configured
      * naming style
-     * @param type the type of the network interface
+     * @param uni uni of the network interface
      */
     static QString interfaceNameLabel(const QString & uni);
+
+    /**
+     * @return a human-readable name for a given network interface according to the configured
+     * naming style
+     * @param uni uni of the network interface
+     * @param interfaceNamingStyle name style to use when generating the name
+     */
+    static QString interfaceNameLabel(const QString & uni, const KNetworkManagerServicePrefs::InterfaceNamingChoices interfaceNamingStyle);
 
     /**
      * @return a Solid::Device from a NetworkManager uni. The returned object must be deleted after use
