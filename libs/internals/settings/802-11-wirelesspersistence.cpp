@@ -39,7 +39,7 @@ void WirelessPersistence::load()
   setting->setBssid(m_config->readEntry("bssid", QByteArray()));
   setting->setRate(m_config->readEntry("rate", 0));
   setting->setTxpower(m_config->readEntry("txpower", 0));
-  setting->setMacaddress(m_config->readEntry("macaddress", QByteArray()));
+  setting->setMacaddressFromString(m_config->readEntry("macaddress", QString()));
   setting->setMtu(m_config->readEntry("mtu", 0));
   setting->setSeenbssids(m_config->readEntry("seenbssids", QStringList()));
   setting->setSecurity(m_config->readEntry("security", ""));
@@ -70,7 +70,7 @@ void WirelessPersistence::save()
   m_config->writeEntry("bssid", setting->bssid());
   m_config->writeEntry("rate", setting->rate());
   m_config->writeEntry("txpower", setting->txpower());
-  m_config->writeEntry("macaddress", setting->macaddress());
+  m_config->writeEntry("macaddress", setting->macaddressAsString());
   m_config->writeEntry("mtu", setting->mtu());
   if (setting->mode() != WirelessSetting::EnumMode::adhoc) {
       m_config->writeEntry("seenbssids", setting->seenbssids());

@@ -38,7 +38,7 @@ void WirelessDbus::fromMap(const QVariantMap & map)
     setting->setTxpower(map.value(QLatin1String(NM_SETTING_WIRELESS_TX_POWER)).value<uint>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS))) {
-    setting->setMacaddress(SettingDbus::macBin2Hex(map.value(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS)).value<QByteArray>()));
+    setting->setMacaddress(map.value(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS)).value<QByteArray>());
   }
   if (map.contains("mtu")) {
     setting->setMtu(map.value("mtu").value<uint>());
@@ -83,7 +83,7 @@ QVariantMap WirelessDbus::toMap()
   //map.insert(QLatin1String(NM_SETTING_WIRELESS_TX_POWER), setting->txpower());
 
   if (!setting->macaddress().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), SettingDbus::macHex2Bin(setting->macaddress()));
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
   }
   if (setting->mtu() > 0 )
        map.insert("mtu", setting->mtu());
