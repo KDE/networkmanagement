@@ -150,7 +150,7 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved()
     RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
     QString removedPath = connection->path();
     kDebug() << removedPath;
-    if (d->connections.contains(connection->path())) {
+    if (d->connections.contains(removedPath)) {
         QPair<Knm::Connection *, RemoteConnection *> removed = d->connections.take(removedPath);
         d->uuidToPath.remove(removed.first->uuid());
         delete removed.second;
@@ -198,13 +198,16 @@ void NMDBusSettingsConnectionProvider::serviceOwnerChanged(const QString & chang
 void NMDBusSettingsConnectionProvider::clearConnections()
 {
     Q_D(NMDBusSettingsConnectionProvider);
-    QHashIterator <QString, QPair<Knm::Connection*, RemoteConnection*> > it (d->connections);
-    while (it.hasNext()) {
-        it.next();
-        QPair<Knm::Connection*, RemoteConnection*> toDelete = it.value();
+    foreach (const QString &key, d->connections.keys()) {
+        // Remove it from d->connections first to prevent a crash because
+        // of the "delete toDelete.second" emmiting a Delete signal captured by
+        // NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved(), which deletes
+        // toDelete.second again.
+        QPair<Knm::Connection*, RemoteConnection*> toDelete = d->connections.take(key);
         d->connectionList->removeConnection(toDelete.first);
         delete toDelete.second;
     }
+    // Just to make sure d->connections is really clear.
     d->connections.clear();
     d->uuidToPath.clear();
 }
