@@ -103,12 +103,40 @@ class KNMINTERNALS_EXPORT WiredSetting : public Setting
         mMacaddress = v;
     }
 
+    void setMacaddressFromString( const QString & s)
+    {
+        QStringList macStringList = s.split(":");
+        QByteArray ba;
+        if (!s.isEmpty())
+        {
+            ba.resize(6);
+            int i = 0;
+
+            foreach (QString macPart, macStringList)
+                ba[i++] = macPart.toUInt(0, 16);
+        }
+        setMacaddress(ba);
+    }
+
     /**
       Get MAC Address
     */
     QByteArray macaddress() const
     {
       return mMacaddress;
+    }
+
+    QString macaddressAsString() const
+    {
+     QStringList mac;
+
+     for (int i=0; i < mMacaddress.size(); i++)
+     {
+        mac << QString("%1").arg((quint8)mMacaddress[i], 2, 16, QLatin1Char('0')).toUpper();
+     }
+
+     return mac.join(":");
+
     }
 
     /**
