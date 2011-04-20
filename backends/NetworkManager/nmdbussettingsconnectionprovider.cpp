@@ -202,6 +202,7 @@ void NMDBusSettingsConnectionProvider::clearConnections()
     // Just to make sure d->connections is really clear.
     d->connections.clear();
     d->uuidToPath.clear();
+    emit connectionsChanged();
 }
 
 void NMDBusSettingsConnectionProvider::handleAdd(Knm::Activatable * added)
