@@ -200,11 +200,13 @@ void NMPopup::init()
 
     m_showMoreButton = new Plasma::PushButton(m_rightWidget);
     m_showMoreButton->setCheckable(true);
-    m_showMoreButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    m_showMoreButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_showMoreButton->setIcon(KIcon("list-add"));
     m_showMoreButton->setText(i18nc("show more button in the applet's popup", "Show More..."));
     m_showMoreButton->setMinimumHeight(28);
     m_showMoreButton->setMaximumHeight(28);
+    m_showMoreButton->setMinimumWidth(130);
+    m_showMoreButton->setMaximumWidth(130);
     connect(m_showMoreButton, SIGNAL(clicked()), this, SLOT(showMore()));
     showMore(false);
 
