@@ -63,7 +63,7 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
 
             Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
-            d->ui.cmbMacAddress->addItem(UiUtils::interfaceNameLabel(iface->uni()), wiface->hardwareAddress().toLatin1());
+            d->ui.cmbMacAddress->addItem(UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames), wiface->hardwareAddress().toLatin1());
         }
     }
     

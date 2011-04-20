@@ -35,8 +35,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Qt
 #include <QSizeF>
 
-#include "knmserviceprefs.h"
-
 QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterface::Type type)
 {
     QString deviceText;
@@ -208,14 +206,13 @@ Solid::Device* UiUtils::findSolidDevice(const QString & uni)
     return 0;
 }
 
-QString UiUtils::interfaceNameLabel(const QString & uni)
+QString UiUtils::interfaceNameLabel(const QString & uni, const KNetworkManagerServicePrefs::InterfaceNamingChoices interfaceNamingStyle)
 {
-    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
     QString label;
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
     Solid::Device* dev = findSolidDevice(uni);
 
-    switch (KNetworkManagerServicePrefs::self()->interfaceNamingStyle()) {
+    switch (interfaceNamingStyle) {
         case KNetworkManagerServicePrefs::SystemNames:
             if (iface) {
                 label = iface->interfaceName();
@@ -249,6 +246,13 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
         delete dev;
     }
     return label;
+}
+
+QString UiUtils::interfaceNameLabel(const QString & uni)
+{
+    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+
+    return interfaceNameLabel(uni, static_cast<KNetworkManagerServicePrefs::InterfaceNamingChoices>(KNetworkManagerServicePrefs::self()->interfaceNamingStyle()));
 }
 
 RemoteInterfaceConnection* UiUtils::connectionForInterface(RemoteActivatableList* activatables, Solid::Control::NetworkInterface *interface)
