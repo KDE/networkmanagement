@@ -550,8 +550,8 @@ kDebug() << eap;
     QString mPhase2privatekeypassword;
     QString mPin;
     QString mPsk;
-    bool mUseSystemCaCerts;
     bool mEnabled;
+    bool mUseSystemCaCerts;
 
   private:
     QByteArray getBytes(const QString & fileName);
