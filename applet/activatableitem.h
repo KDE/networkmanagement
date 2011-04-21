@@ -59,6 +59,8 @@ protected:
     bool m_hasDefaultRoute;
     Knm::InterfaceConnection::ActivationState m_state;
     bool m_deleting;
+    int rowHeight;
+    int spacing;
 };
 
 #endif // ABSTRACTCONNECTABLEITEM_H

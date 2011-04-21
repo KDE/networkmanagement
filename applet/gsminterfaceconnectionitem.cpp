@@ -63,9 +63,6 @@ void GsmInterfaceConnectionItem::setupItem()
     |icon essid        |meter|sec|
     +----+-------------+-----+---+
     */
-    int rowHeight = 24;
-    int spacing = 4;
-
     m_layout = new QGraphicsGridLayout(this);
     // First, third and fourth colunm are fixed width for the icons
     m_layout->setColumnPreferredWidth(0, 160);
@@ -89,8 +86,6 @@ void GsmInterfaceConnectionItem::setupItem()
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
     //m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", ssid));
-    m_connectButton->setMinimumHeight(rowHeight);
-    m_connectButton->setMaximumHeight(rowHeight);
     m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
 
     m_strengthMeter = new Plasma::Meter(this);

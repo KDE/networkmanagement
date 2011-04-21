@@ -71,15 +71,11 @@ QString HiddenWirelessNetworkItem::s_defaultText = i18nc("default KLineEdit::cli
 void HiddenWirelessNetworkItem::setupItem()
 {
     if (!m_layout) {
-        int rowHeight = 24;
-
         m_layout = new QGraphicsLinearLayout(this);
         m_connect = new Plasma::IconWidget(this);
         m_connect->setDrawBackground(false);
         m_connect->setOrientation(Qt::Horizontal);
         m_connect->setIcon("network-wireless");
-        m_connect->setMaximumHeight(rowHeight);
-        m_connect->setMinimumHeight(rowHeight);
         m_connect->setText(i18nc("label for creating a connection to a hidden wireless network", "<hidden network>"));
         m_layout->addItem(m_connect);
         connect(m_connect, SIGNAL(activated()), SLOT(connectClicked()));
