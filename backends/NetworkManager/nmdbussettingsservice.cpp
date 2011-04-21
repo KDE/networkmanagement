@@ -208,7 +208,6 @@ void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
 
 void NMDBusSettingsService::interfaceConnectionActivated()
 {
-    Q_D(NMDBusSettingsService);
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
 
     if (ic) {
