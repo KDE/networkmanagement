@@ -65,6 +65,7 @@ class InterfaceDetails
         QString interfaceName;
         QString mac;
         QString driver;
+        QString activeAccessPoint;
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
         Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType registrationInfo;
@@ -214,6 +215,13 @@ void InterfaceDetailsWidget::getDetails()
     details->mac = getMAC();
     details->driver = m_iface->driver();
 
+    Solid::Control::WirelessNetworkInterface *wiface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(m_iface);
+    if (wiface) {
+        details->activeAccessPoint = wiface->activeAccessPoint();
+    } else {
+        details->activeAccessPoint = QString();
+    }
+
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
     Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
     if (giface) {
@@ -278,6 +286,19 @@ void InterfaceDetailsWidget::showDetails(bool reset)
         info += QString(format)
                        .arg(i18nc("interface details", "Driver"))
                        .arg(details->driver);
+
+        Solid::Control::WirelessNetworkInterface *wiface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(m_iface);
+        if (wiface) {
+            Solid::Control::AccessPoint *ap = wiface->findAccessPoint(details->activeAccessPoint);
+            if (ap) {
+                info += QString(format)
+                               .arg(i18nc("interface details", "Access Point (SSID)"))
+                               .arg(ap->ssid());
+                info += QString(format)
+                               .arg(i18nc("interface details", "Access Point (MAC)"))
+                               .arg(ap->hardwareAddress());
+            }
+        }
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
         Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
@@ -647,6 +668,10 @@ void InterfaceDetailsWidget::connectSignals()
     if (m_iface->type() == Solid::Control::NetworkInterface::Ieee8023 ||
         m_iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
         connect(m_iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
+
+        if (m_iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+            connect(m_iface, SIGNAL(activeAccessPointChanged(const QString &)), this, SLOT(updateActiveAccessPoint(QString &)));
+        }
     }
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
@@ -704,6 +729,13 @@ void InterfaceDetailsWidget::updateBitRate(int bitRate)
     details->bitRate = bitRate;
     showDetails();
 }
+
+void InterfaceDetailsWidget::updateActiveAccessPoint(const QString &ap)
+{
+    details->activeAccessPoint = ap;
+    showDetails();
+}
+
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
 void InterfaceDetailsWidget::modemUpdateEnabled(const bool enabled)

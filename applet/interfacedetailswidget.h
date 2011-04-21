@@ -97,6 +97,7 @@ Q_OBJECT
     private Q_SLOTS:
         void updateIpAddress();
         void updateBitRate(int bitRate);
+        void updateActiveAccessPoint(const QString &ap);
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
         void modemUpdateEnabled(const bool enabled);
         void modemUpdateBand();
