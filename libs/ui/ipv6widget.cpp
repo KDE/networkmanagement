@@ -1,5 +1,5 @@
 /*
-Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2011 Ilia Kats <ilia-kats@gmx.net>, based on work by Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,7 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ipv4widget.h"
+#include "ipv6widget.h"
 #include "settingwidget_p.h"
 
 #include <KDebug>
@@ -26,34 +26,32 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QNetworkAddressEntry>
 
-#include "ui_ipv4.h"
+#include "ui_ipv6.h"
 
 #include "connection.h"
-#include "settings/ipv4.h"
-#include "simpleipv4addressvalidator.h"
+#include "settings/ipv6.h"
+#include "simpleipv6addressvalidator.h"
 #include "listvalidator.h"
 #include "editlistdialog.h"
 
-//void removeEmptyItems(QStringList &list);
-
-class IpV4WidgetPrivate : public SettingWidgetPrivate
+class IpV6WidgetPrivate : public SettingWidgetPrivate
 {
 public:
-    IpV4WidgetPrivate() : setting(0), isAdvancedModeOn(false)
+    IpV6WidgetPrivate() : setting(0), isAdvancedModeOn(false)
     {
     }
 
     // Make sure that this order is same as the combobox shown in ipv4.ui file
-    enum MethodIndex { AutomaticMethodIndex = 0, AutomaticOnlyIPMethodIndex, ManualMethodIndex, LinkLocalMethodIndex, SharedMethodIndex, DisabledMethodIndex};
-    Ui_SettingsIp4Config ui;
-    Knm::Ipv4Setting * setting;
+    enum MethodIndex { AutomaticMethodIndex = 0, AutomaticOnlyIPMethodIndex, ManualMethodIndex, LinkLocalMethodIndex, SharedMethodIndex, IgnoreMethodIndex };
+    Ui_SettingsIp6Config ui;
+    Knm::Ipv6Setting * setting;
     bool isAdvancedModeOn;
 };
 
-IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
-    : SettingWidget(*new IpV4WidgetPrivate, connection, parent)
+IpV6Widget::IpV6Widget(Knm::Connection * connection, QWidget * parent)
+    : SettingWidget(*new IpV6WidgetPrivate, connection, parent)
 {
-    Q_D(IpV4Widget);
+    Q_D(IpV6Widget);
     d->ui.setupUi(this);
     for(int index=0; index < d->ui.stackedWidget->count(); ++index) {
         d->ui.stackedWidget->widget(index)->layout()->setMargin(0);
@@ -66,40 +64,39 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     kDebug() << connection->name() << connection->uuid().toString() << connection->typeAsString(connection->type());
 
     if (Knm::Connection::Vpn == connType) {
-        str_auto = i18nc("@item:inlistbox IPv4 settings configuration method",
+        str_auto = i18nc("@item:inlistbox IPv6 settings configuration method",
                          "Automatic (VPN)");
-        str_auto_only = i18nc("@item:inlistbox IPv4 settings configuration method",
+        str_auto_only = i18nc("@item:inlistbox IPv6 settings configuration method",
                               "Automatic (VPN) addresses only");
     }
     else if (Knm::Connection::Gsm == connType
              || Knm::Connection::Cdma == connType) {
-        str_auto = i18nc("@item:inlistbox IPv4 settings configuration method",
+        str_auto = i18nc("@item:inlistbox IPv6 settings configuration method",
                          "Automatic (PPP)");
-        str_auto_only = i18nc("@item:inlistbox IPv4 settings configuration method",
+        str_auto_only = i18nc("@item:inlistbox IPv6 settings configuration method",
                               "Automatic (PPP) addresses only");
     }
     else if (Knm::Connection::Pppoe == connType) {
-        str_auto = i18nc("@item:inlistbox IPv4 settings configuration method",
+        str_auto = i18nc("@item:inlistbox IPv6 settings configuration method",
                          "Automatic (PPPoE)");
-        str_auto_only = i18nc("@item:inlistbox IPv4 settings configuration method",
+        str_auto_only = i18nc("@item:inlistbox IPv6 settings configuration method",
                               "Automatic (PPPoE) addresses only");
     }
     else {
-        str_auto = i18nc("@item:inlistbox IPv4 settings configuration method",
+        str_auto = i18nc("@item:inlistbox IPv6 settings configuration method",
                          "Automatic (DHCP)");
-        str_auto_only = i18nc("@item:inlistbox IPv4 settings configuration method",
+        str_auto_only = i18nc("@item:inlistbox IPv6 settings configuration method",
                               "Automatic (DHCP) addresses only");
     }
     d->ui.method->setItemText(0, str_auto);
     d->ui.method->setItemText(1, str_auto_only);
 
-    d->ui.address->setValidator(new SimpleIpV4AddressValidator(this));
-    // unable to check netmask strictly until user finish the input
-    d->ui.netMask->setValidator(new SimpleIpV4AddressValidator(this));
-    d->ui.gateway->setValidator(new SimpleIpV4AddressValidator(this));
+    d->ui.address->setValidator(new SimpleIpV6AddressValidator(this));
+    d->ui.netMask->setValidator(new QIntValidator(0, 128, this));
+    d->ui.gateway->setValidator(new SimpleIpV6AddressValidator(this));
 
     ListValidator *dnsEntriesValidator = new ListValidator(this);
-    dnsEntriesValidator->setInnerValidator(new SimpleIpV4AddressValidator(dnsEntriesValidator));
+    dnsEntriesValidator->setInnerValidator(new SimpleIpV6AddressValidator(dnsEntriesValidator));
     d->ui.dns->setValidator(dnsEntriesValidator);
 
     ListValidator *dnsSearchEntriesValidator = new ListValidator(this);
@@ -111,23 +108,23 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     connect(d->ui.dnsMorePushButton, SIGNAL(clicked()), this, SLOT(showDnsEditor()));
     connect(d->ui.dnsSearchMorePushButton, SIGNAL(clicked()), this, SLOT(showDnsSearchEditor()));
 
-    d->setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
+    d->setting = static_cast<Knm::Ipv6Setting*>(connection->setting(Knm::Setting::Ipv6));
 
-    kDebug() << "Method is" << d->setting->method() << d->setting->dhcpclientid();
+    kDebug() << "Method is" << d->setting->method();
 
     connect(d->ui.method, SIGNAL(currentIndexChanged(int)), this, SLOT(methodChanged(int)));
     methodChanged(d->AutomaticMethodIndex);
 }
 
-IpV4Widget::~IpV4Widget()
+IpV6Widget::~IpV6Widget()
 {
 }
 
-void IpV4Widget::readConfig()
+void IpV6Widget::readConfig()
 {
-    kDebug() << "Reading IPv4 settings...";
+    kDebug() << "Reading IPv6 settings...";
 
-    Q_D(IpV4Widget);
+    Q_D(IpV6Widget);
     // The following flags are used to not fill disabled fields.
     // Setting and handling them is quite redundant, but it's necessary
     // when we have a connection config in inconsistent state.
@@ -136,7 +133,7 @@ void IpV4Widget::readConfig()
     bool dnsPartEnabled = false;
 
     switch (d->setting->method()) {
-        case Knm::Ipv4Setting::EnumMethod::Automatic:
+        case Knm::Ipv6Setting::EnumMethod::Automatic:
             kDebug() << "Method: Automatic";
             if (d->setting->ignoredhcpdns()) {
                 d->ui.method->setCurrentIndex(d->AutomaticOnlyIPMethodIndex);
@@ -147,22 +144,22 @@ void IpV4Widget::readConfig()
             }
             advancedSettingsPartEnabled = true;
             break;
-        case Knm::Ipv4Setting::EnumMethod::LinkLocal:
+        case Knm::Ipv6Setting::EnumMethod::LinkLocal:
             kDebug() << "Method: LinkLocal";
             d->ui.method->setCurrentIndex(d->LinkLocalMethodIndex);
             break;
-        case Knm::Ipv4Setting::EnumMethod::Manual:
+        case Knm::Ipv6Setting::EnumMethod::Manual:
             kDebug() << "Method: Manual";
             d->ui.method->setCurrentIndex(d->ManualMethodIndex);
             advancedSettingsPartEnabled = addressPartEnabled = dnsPartEnabled = true;
             break;
-        case Knm::Ipv4Setting::EnumMethod::Shared:
+        case Knm::Ipv6Setting::EnumMethod::Shared:
             kDebug() << "Method: Shared";
             d->ui.method->setCurrentIndex(d->SharedMethodIndex);
             break;
-        case Knm::Ipv4Setting::EnumMethod::Disabled:
-            kDebug() << "Method: Shared";
-            d->ui.method->setCurrentIndex(d->DisabledMethodIndex);
+         case Knm::Ipv6Setting::EnumMethod::Ignore:
+            kDebug() << "Method: Ignore";
+            d->ui.method->setCurrentIndex(d->IgnoreMethodIndex);
             break;
         default:
             kDebug() << "Unrecognised value for method:" << d->setting->method();
@@ -171,7 +168,7 @@ void IpV4Widget::readConfig()
 
     // ip addresses
     if (advancedSettingsPartEnabled) {
-        QList<Solid::Control::IPv4Address> addrList = d->setting->addresses();
+        QList<Solid::Control::IPv6Address> addrList = d->setting->addresses();
         if (!addrList.isEmpty())
         {
             if (addressPartEnabled)
@@ -184,15 +181,15 @@ void IpV4Widget::readConfig()
                 entry.setPrefixLength(addrList[0].netMask());
 
                 d->ui.address->setText(QHostAddress(addrList[0].address()).toString());
-                d->ui.netMask->setText(entry.netmask().toString());
-                if (addrList[0].gateway()) {
+                d->ui.netMask->setText(QString::number(entry.prefixLength(),10));
+                if (!QHostAddress(addrList[0].gateway()).isNull()) {
                     d->ui.gateway->setText(QHostAddress(addrList[0].gateway()).toString());
                 }
 
                 // remove first item
                 addrList.removeFirst();
             }
-             // put the rest to advanced settings
+            // put the rest to advanced settings
             d->ui.advancedSettings->setAdditionalAddresses(addrList);
         }
     }
@@ -209,8 +206,7 @@ void IpV4Widget::readConfig()
             d->ui.dnsSearch->setText(d->setting->dnssearch().join(QLatin1String(", ")));
         }
     }
-    // dhcp client ID
-    d->ui.dhcpClientId->setText(d->setting->dhcpclientid());
+
     // routing
     d->ui.cbNeverDefault->setChecked(d->setting->neverdefault());
     d->ui.cbIgnoreAutoRoutes->setChecked(d->setting->ignoreautoroute());
@@ -219,33 +215,33 @@ void IpV4Widget::readConfig()
     d->ui.cbMayFail->setChecked(!d->setting->mayfail());
 }
 
-void IpV4Widget::writeConfig()
+void IpV6Widget::writeConfig()
 {
-    Q_D(IpV4Widget);
+    Q_D(IpV6Widget);
     // save method
     switch ( d->ui.method->currentIndex()) {
-        case IpV4WidgetPrivate::AutomaticOnlyIPMethodIndex:
-            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Automatic);
+        case IpV6WidgetPrivate::AutomaticMethodIndex:
+            d->setting->setMethod(Knm::Ipv6Setting::EnumMethod::Automatic);
+            d->setting->setIgnoredhcpdns(false);
+            break;
+        case IpV6WidgetPrivate::AutomaticOnlyIPMethodIndex:
+            d->setting->setMethod(Knm::Ipv6Setting::EnumMethod::Automatic);
             d->setting->setIgnoredhcpdns(true);
             break;
-        case IpV4WidgetPrivate::AutomaticMethodIndex:
-            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Automatic);
+        case IpV6WidgetPrivate::LinkLocalMethodIndex:
+            d->setting->setMethod(Knm::Ipv6Setting::EnumMethod::LinkLocal);
             d->setting->setIgnoredhcpdns(false);
             break;
-        case IpV4WidgetPrivate::LinkLocalMethodIndex:
-            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::LinkLocal);
+        case IpV6WidgetPrivate::ManualMethodIndex:
+            d->setting->setMethod(Knm::Ipv6Setting::EnumMethod::Manual);
             d->setting->setIgnoredhcpdns(false);
             break;
-        case IpV4WidgetPrivate::ManualMethodIndex:
-            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Manual);
+        case IpV6WidgetPrivate::SharedMethodIndex:
+            d->setting->setMethod(Knm::Ipv6Setting::EnumMethod::Shared);
             d->setting->setIgnoredhcpdns(false);
             break;
-        case IpV4WidgetPrivate::SharedMethodIndex:
-            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Shared);
-            d->setting->setIgnoredhcpdns(false);
-            break;
-        case IpV4WidgetPrivate::DisabledMethodIndex:
-            d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Disabled);
+        case IpV6WidgetPrivate::IgnoreMethodIndex:
+            d->setting->setMethod(Knm::Ipv6Setting::EnumMethod::Ignore);
             d->setting->setIgnoredhcpdns(false);
             break;
         default:
@@ -254,19 +250,18 @@ void IpV4Widget::writeConfig()
     }
 
     // addresses
-    QList<Solid::Control::IPv4Address> addresses = d->ui.advancedSettings->additionalAddresses();
+    QList<Solid::Control::IPv6Address> addresses = d->ui.advancedSettings->additionalAddresses();
     // update only the first item, the rest items are already updated
     QNetworkAddressEntry entry;
     // we need to set up IP before prefix/netmask manipulation
     entry.setIp(QHostAddress(d->ui.address->text()));
-    entry.setNetmask(QHostAddress(d->ui.netMask->text()));
+    entry.setPrefixLength(d->ui.netMask->text().toInt());
 
     QHostAddress gateway(d->ui.gateway->text());
     if (entry.ip() != QHostAddress::Null) {
-        Solid::Control::IPv4Address addr(entry.ip().toIPv4Address(),
-                                         entry.prefixLength(), gateway.toIPv4Address());
-
-        addresses.prepend(addr);
+        Solid::Control::IPv6Address addr(entry.ip().toIPv6Address(),
+                                         entry.prefixLength(), gateway.toIPv6Address());
+            addresses.prepend(addr);
     }
 
     d->setting->setAddresses(addresses);
@@ -294,8 +289,6 @@ void IpV4Widget::writeConfig()
     d->setting->setDns(dnsList);
     d->setting->setDnssearch(dnsSearchEntries);
 
-    // dhcp client ID
-    d->setting->setDhcpclientid(d->ui.dhcpClientId->text());
     // routing
     d->setting->setNeverdefault(d->ui.cbNeverDefault->isChecked());
     d->setting->setIgnoreautoroute(d->ui.cbIgnoreAutoRoutes->isChecked());
@@ -304,50 +297,45 @@ void IpV4Widget::writeConfig()
     d->setting->setMayfail(!d->ui.cbMayFail->isChecked());
 }
 
-void IpV4Widget::methodChanged(int currentIndex)
+void IpV6Widget::methodChanged(int currentIndex)
 {
-    Q_D(IpV4Widget);
+    Q_D(IpV6Widget);
     bool addressPartEnabled = false;
     bool advancedSettingsPartEnabled = true;
     bool dnsPartEnabled = false;
-    bool dhcpClientIdEnabled = false;
 
-    if (IpV4WidgetPrivate::ManualMethodIndex == currentIndex) {
+    if (IpV6WidgetPrivate::ManualMethodIndex == currentIndex) {
         addressPartEnabled = true;
         dnsPartEnabled = true;
-    } else if (IpV4WidgetPrivate::AutomaticOnlyIPMethodIndex == currentIndex) {
+    }else if (IpV6WidgetPrivate::AutomaticOnlyIPMethodIndex == currentIndex) {
         dnsPartEnabled = true;
-        dhcpClientIdEnabled = true;
-    } else if (IpV4WidgetPrivate::AutomaticMethodIndex == currentIndex) {
-        dhcpClientIdEnabled = true;
     }
-    else {
+    else if (IpV6WidgetPrivate::AutomaticMethodIndex != currentIndex){
         advancedSettingsPartEnabled = false;
     }
 
     if (!addressPartEnabled && advancedSettingsPartEnabled)
     {
-        QList<Solid::Control::IPv4Address> addresses = d->ui.advancedSettings->additionalAddresses();
+        QList<Solid::Control::IPv6Address> addresses = d->ui.advancedSettings->additionalAddresses();
         QNetworkAddressEntry entry;
         // we need to set up IP before prefix/netmask manipulation
         entry.setIp(QHostAddress(d->ui.address->text()));
-        entry.setNetmask(QHostAddress(d->ui.netMask->text()));
-
+        entry.setPrefixLength(d->ui.netMask->text().toUInt());
         QHostAddress gateway(d->ui.gateway->text());
         if (entry.ip() != QHostAddress::Null)
         {
-            Solid::Control::IPv4Address addr(entry.ip().toIPv4Address(),
-                                            entry.prefixLength(), gateway.toIPv4Address());
+            Solid::Control::IPv6Address addr(entry.ip().toIPv6Address(),
+                                         entry.prefixLength(), gateway.toIPv6Address());
             addresses.prepend(addr);
         }
         d->ui.advancedSettings->setAdditionalAddresses(addresses);
     }
     else if (addressPartEnabled && advancedSettingsPartEnabled)
     {
-        QList<Solid::Control::IPv4Address> addresses = d->ui.advancedSettings->additionalAddresses();
+        QList<Solid::Control::IPv6Address> addresses = d->ui.advancedSettings->additionalAddresses();
         if (!addresses.isEmpty())
         {
-            Solid::Control::IPv4Address addr = addresses.takeFirst();
+            Solid::Control::IPv6Address addr = addresses.takeFirst();
             QNetworkAddressEntry entry;
             // we need to set up IP before prefix/netmask manipulation
             entry.setIp(QHostAddress(addr.address()));
@@ -356,7 +344,7 @@ void IpV4Widget::methodChanged(int currentIndex)
             QHostAddress gateway(addr.gateway());
 
             d->ui.address->setText(entry.ip().toString());
-            d->ui.netMask->setText(entry.netmask().toString());
+            d->ui.netMask->setText(QString::number(entry.prefixLength(),10));
             d->ui.gateway->setText(gateway.toString());
 
             d->ui.advancedSettings->setAdditionalAddresses(addresses);
@@ -370,7 +358,7 @@ void IpV4Widget::methodChanged(int currentIndex)
     }
     if (!advancedSettingsPartEnabled)
     {
-        d->ui.advancedSettings->setAdditionalAddresses(QList<Solid::Control::IPv4Address>());
+        d->ui.advancedSettings->setAdditionalAddresses(QList<Solid::Control::IPv6Address>());
     }
 
     d->ui.advancedSettings->setEnabled(advancedSettingsPartEnabled);
@@ -391,66 +379,46 @@ void IpV4Widget::methodChanged(int currentIndex)
     d->ui.dnsSearchLabel->setEnabled(dnsPartEnabled);
     d->ui.dnsSearchMorePushButton->setEnabled(dnsPartEnabled);
     d->ui.dnsMorePushButton->setEnabled(dnsPartEnabled);
-
-    d->ui.labelDhcpClientId->setEnabled(dhcpClientIdEnabled);
-    d->ui.dhcpClientId->setEnabled(dhcpClientIdEnabled);
 }
 
-quint32 suggestNetmask(quint32 ip)
+quint32 suggestNetmask(Q_IPV6ADDR ip)
 {
     /*
-        A   0       0.0.0.0 	127.255.255.255  255.0.0.0 	/8
-        B   10      128.0.0.0 	191.255.255.255  255.255.0.0 	/16
-        C   110     192.0.0.0 	223.255.255.255  255.255.255.0 	/24
-        D   1110    224.0.0.0 	239.255.255.255  not defined 	not defined
-        E   1111    240.0.0.0 	255.255.255.254  not defined 	not defined
-    */
-    quint32 netmask = 0;
+    TODO: find out common IPv6-netmasks and make a complete function
 
-    if (!(ip & 0x80000000)) {
-        // test 0 leading bit
-        netmask = 0xFF000000;
-    }
-    else if (!(ip & 0x40000000)) {
-        // test 10 leading bits
-        netmask = 0xFFFF0000;
-    }
-    else if (!(ip & 0x20000000)) {
-        // test 110 leading bits
-        netmask = 0xFFFFFF00;
-    }
+    */
+    quint32 netmask = 64;
 
     return netmask;
 }
 
-void IpV4Widget::addressEditingFinished()
+void IpV6Widget::addressEditingFinished()
 {
-    Q_D(IpV4Widget);
+    Q_D(IpV6Widget);
     if (d->ui.netMask->text().isEmpty()) {
         QHostAddress addr(d->ui.address->text());
-        quint32 netmask = suggestNetmask(addr.toIPv4Address());
+        quint32 netmask = suggestNetmask(addr.toIPv6Address());kDebug();
         if (netmask) {
-            QHostAddress v(netmask);
-            d->ui.netMask->setText(v.toString());
+            d->ui.netMask->setText(QString::number(netmask,10));
         }
     }
 }
 
-void IpV4Widget::dnsEdited(QStringList items)
+void IpV6Widget::dnsEdited(QStringList items)
 {
-    Q_D(IpV4Widget);
+    Q_D(IpV6Widget);
     d->ui.dns->setText(items.join(QLatin1String(", ")));
 }
 
-void IpV4Widget::dnsSearchEdited(QStringList items)
+void IpV6Widget::dnsSearchEdited(QStringList items)
 {
-    Q_D(IpV4Widget);
+    Q_D(IpV6Widget);
     d->ui.dnsSearch->setText(items.join(QLatin1String(", ")));
 }
 
-void IpV4Widget::showDnsEditor()
+void IpV6Widget::showDnsEditor()
 {
-    Q_D(IpV4Widget);
+    Q_D(IpV6Widget);
     EditListDialog * dnsEditor = new EditListDialog;
     // at first remove space characters
     QString dnsEntries = d->ui.dns->text().remove(QLatin1Char(' '));
@@ -458,13 +426,13 @@ void IpV4Widget::showDnsEditor()
     connect(dnsEditor, SIGNAL(itemsEdited(QStringList)), this, SLOT(dnsEdited(QStringList)));
     dnsEditor->setCaption(i18n("DNS Servers"));
     dnsEditor->setModal(true);
-    dnsEditor->setValidator(new SimpleIpV4AddressValidator(dnsEditor));
+    dnsEditor->setValidator(new SimpleIpV6AddressValidator(dnsEditor));
     dnsEditor->show();
 }
 
-void IpV4Widget::showDnsSearchEditor()
+void IpV6Widget::showDnsSearchEditor()
 {
-    Q_D(IpV4Widget);
+    Q_D(IpV6Widget);
     EditListDialog * dnsSearchEditor = new EditListDialog;
     // at first remove space characters
     QString dnsSearchEntries = d->ui.dnsSearch->text().remove(QLatin1Char(' '));
@@ -475,13 +443,13 @@ void IpV4Widget::showDnsSearchEditor()
     dnsSearchEditor->show();
 }
 
-void IpV4Widget::setDns(const QList<QVariant> dnsList)
+void IpV6Widget::setDns(const QList<QVariant> dnsList)
 {
     if (dnsList.isEmpty()) {
         return;
     }
 
-    Q_D(IpV4Widget);
+    Q_D(IpV6Widget);
     QList<QHostAddress> temp;
     foreach (const QVariant &dns, dnsList) {
         QHostAddress dnsAddr(dns.toString());
@@ -490,13 +458,13 @@ void IpV4Widget::setDns(const QList<QVariant> dnsList)
         }
     }
 
-    d->setting->setMethod(Knm::Ipv4Setting::EnumMethod::Automatic);
+    d->setting->setMethod(Knm::Ipv6Setting::EnumMethod::Automatic);
     d->setting->setIgnoredhcpdns(true);
     d->setting->setDns(temp);
     readConfig();
 }
 
-void IpV4Widget::validate()
+void IpV6Widget::validate()
 {
 
 }

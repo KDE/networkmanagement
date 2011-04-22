@@ -44,6 +44,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/bluetoothpersistence.h"
 #include "settings/ipv4.h"
 #include "settings/ipv4persistence.h"
+#include "settings/ipv6.h"
+#include "settings/ipv6persistence.h"
 #include "settings/ppp.h"
 #include "settings/ppppersistence.h"
 #include "settings/pppoe.h"
@@ -109,6 +111,9 @@ SettingPersistence * ConnectionPersistence::persistenceFor(Setting * setting)
             case Setting::Ipv4:
                 sp = new Ipv4Persistence(static_cast<Ipv4Setting*>(setting), m_config, m_storageMode);
                 break;
+            case Setting::Ipv6:
+                sp = new Ipv6Persistence(static_cast<Ipv6Setting*>(setting), m_config, m_storageMode);
+                break;
             case Setting::Ppp:
                 sp = new PppPersistence(static_cast<PppSetting*>(setting), m_config, m_storageMode);
                 break;
@@ -135,9 +140,6 @@ SettingPersistence * ConnectionPersistence::persistenceFor(Setting * setting)
                         static_cast<WirelessSecuritySetting*>(setting), m_config, m_storageMode
                         );
                 break;
-	    case Setting::Ipv6:
-	    	kDebug() << "IPv6 persistence is not handled" << endl;
-		break;
         }
     if (sp) {
         m_persistences.insert(setting, sp);

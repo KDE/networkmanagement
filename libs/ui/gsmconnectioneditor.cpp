@@ -29,6 +29,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "gsmwidget.h"
 #include "pppwidget.h"
 #include "ipv4widget.h"
+#include "ipv6widget.h"
 #include "connectionwidget.h"
 
 #include "connection.h"
@@ -43,6 +44,7 @@ GsmConnectionEditor::GsmConnectionEditor(const QVariantList &args, QWidget *pare
     GsmWidget * gsmWidget = new GsmWidget(m_connection, this);
     PppWidget * pppWidget = new PppWidget(m_connection, this);
     IpV4Widget * ipV4Widget = new IpV4Widget(m_connection, this);
+    IpV6Widget * ipV6Widget = new IpV6Widget(m_connection, this);
 
     if (args.count() > 1) {
         if (args.count() > 2) {
@@ -74,6 +76,7 @@ GsmConnectionEditor::GsmConnectionEditor(const QVariantList &args, QWidget *pare
     addToTabWidget(gsmWidget);
     addToTabWidget(pppWidget);
     addToTabWidget(ipV4Widget);
+    addToTabWidget(ipV6Widget);
 }
 
 GsmConnectionEditor::GsmConnectionEditor(Knm::Connection *con, QWidget *parent)
@@ -93,10 +96,12 @@ GsmConnectionEditor::GsmConnectionEditor(Knm::Connection *con, QWidget *parent)
     GsmWidget * gsmWidget = new GsmWidget(m_connection, this);
     PppWidget * pppWidget = new PppWidget(m_connection, this);
     IpV4Widget * ipV4Widget = new IpV4Widget(m_connection, this);
+    IpV6Widget * ipV6Widget = new IpV6Widget(m_connection, this);
 
     addToTabWidget(gsmWidget);
     addToTabWidget(pppWidget);
     addToTabWidget(ipV4Widget);
+    addToTabWidget(ipV6Widget);
 }
 GsmConnectionEditor::~GsmConnectionEditor()
 {

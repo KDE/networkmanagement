@@ -47,6 +47,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "bluetoothdbus.h"
 #include "settings/ipv4.h"
 #include "ipv4dbus.h"
+#include "settings/ipv6.h"
+#include "ipv6dbus.h"
 #include "settings/ppp.h"
 #include "pppdbus.h"
 #include "settings/pppoe.h"
@@ -64,6 +66,14 @@ ConnectionDbus::ConnectionDbus(Knm::Connection * conn)
     qDBusRegisterMetaType<QList<uint> >();
     qDBusRegisterMetaType<QVariantMapMap>();
     qDBusRegisterMetaType<QList<QList<uint> > >();
+
+    qDBusRegisterMetaType<IpV6AddressMap>();
+    qDBusRegisterMetaType<QList<IpV6AddressMap> >();
+
+    qDBusRegisterMetaType<IpV6RouteMap>();
+    qDBusRegisterMetaType<QList<IpV6RouteMap> >();
+
+    qDBusRegisterMetaType<QList<QByteArray> >();
 }
 
 ConnectionDbus::~ConnectionDbus()
@@ -87,6 +97,9 @@ SettingDbus * ConnectionDbus::dbusFor(Setting * setting)
                 break;
             case Setting::Ipv4:
                 sd = new Ipv4Dbus(static_cast<Ipv4Setting*>(setting));
+                break;
+            case Setting::Ipv6:
+                sd = new Ipv6Dbus(static_cast<Ipv6Setting*>(setting));
                 break;
             case Setting::Ppp:
                 sd = new PppDbus(static_cast<PppSetting*>(setting));
@@ -112,8 +125,6 @@ SettingDbus * ConnectionDbus::dbusFor(Setting * setting)
             case Setting::WirelessSecurity:
                 sd = new WirelessSecurityDbus(static_cast<WirelessSecuritySetting*>(setting),
                         static_cast<WirelessSetting*>(m_connection->setting(Setting::Wireless))->ssid());
-                break;
-            case Setting::Ipv6:
                 break;
         }
     }

@@ -8,6 +8,7 @@ include_directories (${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${KDE4_INCLUDES})
 set(solidcontrolfuture_LIB_SRCS
    wirelessnetworkinterfaceenvironment.cpp
    wirelessnetwork.cpp
+   networkipv6config.cpp
    )
 
 kde4_add_library(solidcontrolfuture SHARED ${solidcontrolfuture_LIB_SRCS})

@@ -20,6 +20,8 @@ set(knmui_SRCS
    connectionwidget.cpp
    ipv4widget.cpp
    ipv4advancedwidget.cpp
+   ipv6widget.cpp
+   ipv6advancedwidget.cpp
    wiredwidget.cpp
    802_11_wirelesswidget.cpp
    accesspoint.cpp
@@ -65,6 +67,7 @@ set(knmui_SRCS
    connectionsecretsjob.cpp
    
    simpleipv4addressvalidator.cpp
+   simpleipv6addressvalidator.cpp
    listvalidator.cpp
    editlistdialog.cpp
    )
@@ -80,6 +83,8 @@ kde4_add_ui_files(knmui_SRCS
    wired.ui
    ipv4.ui
    ipv4advanced.ui
+   ipv6.ui
+   ipv6advanced.ui
    802-11-wireless.ui
 
    # Scan widget for wireless

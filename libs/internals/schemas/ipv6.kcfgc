@@ -1,0 +1,5 @@
+File=ipv6.kcfg
+ClassName=Ipv6
+Mutators=true
+Visibility=KNMINTERNALS_EXPORT
+NameSpace=Knm

@@ -34,6 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "802_11_wirelesswidget.h"
 #include "security/wirelesssecuritysettingwidget.h"
 #include "ipv4widget.h"
+#include "ipv6widget.h"
 #include "connectionwidget.h"
 
 #include "connection.h"
@@ -91,12 +92,14 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
     m_securityWidget = new WirelessSecuritySettingWidget(m_connection, iface, ap, this);
 
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+    IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
 
     connect (m_contents->connectionSettingsWidget(), SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
     addToTabWidget(m_wirelessWidget);
     m_securityTabIndex = addToTabWidget(m_securityWidget);
     addToTabWidget(ipv4Widget);
+    addToTabWidget(ipv6Widget);
 
     if ( setDefaults )
     {
@@ -161,12 +164,14 @@ WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
     m_securityWidget = new WirelessSecuritySettingWidget(m_connection, NULL, NULL, this);
 
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+    IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
 
     connect (m_contents->connectionSettingsWidget(), SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
     addToTabWidget(m_wirelessWidget);
     m_securityTabIndex = addToTabWidget(m_securityWidget);
     addToTabWidget(ipv4Widget);
+    addToTabWidget(ipv6Widget);
 
     /*
     if ( setDefaults )

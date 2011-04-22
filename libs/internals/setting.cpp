@@ -24,8 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-connection.h>
 #include <nm-setting-wired.h>
 #include <nm-setting-ip4-config.h>
-// Removed in NM0.7rc1
-// #include <nm-setting-ip6-config.h>
+#include <nm-setting-ip6-config.h>
 #include <nm-setting-8021x.h>
 #include <nm-setting-gsm.h>
 #include <nm-setting-bluetooth.h>
@@ -55,6 +54,9 @@ QString Setting::typeAsString(Setting::Type type)
             break;
         case Ipv4:
             typeString = QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME);
+            break;
+        case Ipv6:
+            typeString = QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME);
             break;
         case Ppp:
             typeString = QLatin1String(NM_SETTING_PPP_SETTING_NAME);
@@ -97,6 +99,8 @@ Setting::Type Setting::typeFromString(const QString & typeString)
         type = Bluetooth;
     } else if (typeString == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
         type = Ipv4;
+    } else if (typeString == QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME)) {
+        type = Ipv6;
     } else if (typeString == QLatin1String(NM_SETTING_PPP_SETTING_NAME)) {
         type = Ppp;
     } else if (typeString == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
