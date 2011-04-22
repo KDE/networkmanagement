@@ -21,7 +21,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "securitywired8021x.h"
 
 #include <QCheckBox>
-#include <QSpacerItem>
 
 #include <connection.h>
 
@@ -48,7 +47,6 @@ SecurityWired8021x::SecurityWired8021x(Knm::Connection * connection, QWidget * p
     d_ptr->securityEap = new SecurityEap(connection, this);
     d_ptr->securityEap->setEnabled(false);
     layout->addWidget(d_ptr->securityEap);
-    layout->addItem(new QSpacerItem(0,20,QSizePolicy::Minimum, QSizePolicy::Expanding));
 
     connect(d_ptr->box, SIGNAL(toggled(bool)), d_ptr->securityEap, SLOT(setEnabled(bool)));
 
