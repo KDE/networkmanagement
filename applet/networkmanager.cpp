@@ -26,7 +26,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QPaintEngine>
 #include <QPainter>
 #include <QDesktopWidget>
-#include <QGraphicsLinearLayout>
 #include <QGraphicsPixmapItem>
 #include <QTimeLine>
 
@@ -106,7 +105,6 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     interfaceConnectionStateChanged();
     m_activatables = new RemoteActivatableList(this);
     setMinimumSize(16, 16);
-    resize(64, 64);
     updatePixmap();
     //(void)graphicsWidget();
 }

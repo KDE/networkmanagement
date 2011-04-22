@@ -126,7 +126,7 @@ int UiUtils::iconSize(const QSizeF size)
         s = KIconLoader::SizeLarge;
     } else if (c >= KIconLoader::SizeMedium) { // 32
         s = KIconLoader::SizeMedium;
-    } else if (c >= KIconLoader::SizeSmallMedium) { // 32
+    } else if (c >= KIconLoader::SizeSmallMedium) { // 22
         s = KIconLoader::SizeSmallMedium;
     } else { // 16
         s = KIconLoader::SizeSmall;
