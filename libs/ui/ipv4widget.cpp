@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -327,6 +327,26 @@ void IpV4Widget::methodChanged(int currentIndex)
             addresses.prepend(addr);
         }
         d->ui.advancedSettings->setAdditionalAddresses(addresses);
+    }
+    else if (addressPartEnabled && advancedSettingsPartEnabled)
+    {
+        QList<Solid::Control::IPv4Address> addresses = d->ui.advancedSettings->additionalAddresses();
+        if (!addresses.isEmpty())
+        {
+            Solid::Control::IPv4Address addr = addresses.takeFirst();
+            QNetworkAddressEntry entry;
+            // we need to set up IP before prefix/netmask manipulation
+            entry.setIp(QHostAddress(addr.address()));
+            entry.setPrefixLength(addr.netMask());
+            kDebug()<<entry.netmask().toString();
+            QHostAddress gateway(addr.gateway());
+
+            d->ui.address->setText(entry.ip().toString());
+            d->ui.netMask->setText(entry.netmask().toString());
+            d->ui.gateway->setText(gateway.toString());
+
+            d->ui.advancedSettings->setAdditionalAddresses(addresses);
+        }
     }
     if (!addressPartEnabled)
     {
