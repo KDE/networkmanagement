@@ -4,6 +4,7 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals/settings
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../solidcontrolfuture
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/service
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs/ui
    ${CMAKE_CURRENT_SOURCE_DIR}/settings
@@ -36,6 +37,8 @@ set(knm_nm_LIB_SRCS
    settings/bluetoothdbus.cpp
 
    settings/ipv4dbus.cpp
+
+   settings/ipv6dbus.cpp
 
    settings/pppdbus.cpp
 
@@ -73,7 +76,7 @@ set(knm_nm_LIB_SRCS
 
 kde4_add_library(knm_nm SHARED ${knm_nm_LIB_SRCS})
 
-target_link_libraries(knm_nm ${KDE4_KDEUI_LIBS} solidcontrol knminternals knmservice knmui ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(knm_nm ${KDE4_KDEUI_LIBS} solidcontrolfuture solidcontrol knminternals knmservice knmui ${QT_QTNETWORK_LIBRARY})
 
 
 #set_target_properties(nmbackend PROPERTIES

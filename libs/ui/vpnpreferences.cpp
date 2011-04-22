@@ -34,6 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-vpn.h>
 
 #include "ipv4widget.h"
+#include "ipv6widget.h"
 #include "connectionwidget.h"
 #include "vpnuiplugin.h"
 
@@ -61,7 +62,9 @@ VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
         }
     }
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+    IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
     addToTabWidget(ipv4Widget);
+    addToTabWidget(ipv6Widget);
 }
 
 VpnPreferences::VpnPreferences(Knm::Connection *con, QWidget *parent)
@@ -97,7 +100,9 @@ VpnPreferences::VpnPreferences(Knm::Connection *con, QWidget *parent)
         }
     }
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+    IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
     addToTabWidget(ipv4Widget);
+    addToTabWidget(ipv6Widget);
 }
 
 

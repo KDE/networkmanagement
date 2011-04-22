@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SettingsIp4Config</class>
- <widget class="QWidget" name="SettingsIp4Config">
+ <class>SettingsIp6Config</class>
+ <widget class="QWidget" name="SettingsIp6Config">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>IPv4 Address</string>
+   <string>IPv6 Address</string>
   </property>
   <property name="toolTip">
    <string extracomment="Advanced IP settings"/>
@@ -297,26 +297,6 @@
          </item>
         </layout>
        </item>
-       <item row="8" column="0">
-        <widget class="QLabel" name="labelDhcpClientId">
-         <property name="text">
-          <string>DHCP &amp;Client ID:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy">
-          <cstring>dhcpClientId</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="8" column="1">
-        <widget class="KLineEdit" name="dhcpClientId">
-         <property name="toolTip">
-          <string>Use this field to specify the DHCP client ID which is a string sent to the DHCP server to identify the local machine that the DHCP server may use to customize the DHCP lease and options.</string>
-         </property>
-        </widget>
-       </item>
        <item row="4" column="1">
         <spacer name="verticalSpacer_2">
          <property name="orientation">
@@ -354,7 +334,7 @@
      <widget class="QWidget" name="pageAdditionalAddresses">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="IpV4AdvancedWidget" name="advancedSettings" native="true"/>
+        <widget class="IpV6AdvancedWidget" name="advancedSettings" native="true"/>
        </item>
        <item>
         <spacer name="verticalSpacer_3">
@@ -413,7 +393,7 @@
    <item>
     <widget class="QCheckBox" name="cbMayFail">
      <property name="text">
-      <string>IPv4 is required for this connection</string>
+      <string>IPv6 is required for this connection</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -439,9 +419,9 @@
    <header>kcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>IpV4AdvancedWidget</class>
+   <class>IpV6AdvancedWidget</class>
    <extends>QWidget</extends>
-   <header>ipv4advancedwidget.h</header>
+   <header>ipv6advancedwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
@@ -454,7 +434,6 @@
   <tabstop>dnsMorePushButton</tabstop>
   <tabstop>dnsSearch</tabstop>
   <tabstop>dnsSearchMorePushButton</tabstop>
-  <tabstop>dhcpClientId</tabstop>
   <tabstop>cmbSettingsMode</tabstop>
   <tabstop>cbIgnoreAutoRoutes</tabstop>
   <tabstop>cbNeverDefault</tabstop>

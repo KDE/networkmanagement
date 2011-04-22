@@ -51,6 +51,10 @@ set(knminternals_SRCS
    #settings/ipv4dbus.cpp
    settings/ipv4persistence.cpp
 
+   settings/ipv6.cpp
+   #settings/ipv6dbus.cpp
+   settings/ipv6persistence.cpp
+
    settings/ppp.cpp
    #settings/pppdbus.cpp
    settings/ppppersistence.cpp

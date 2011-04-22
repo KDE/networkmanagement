@@ -135,6 +135,9 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DHCP_HOSTNAME))) {
     setting->setDhcphostname(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DHCP_HOSTNAME)).value<QString>());
   }
+  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_MAY_FAIL))) {
+    setting->setMayfail(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_MAY_FAIL)).value<bool>());
+  }
 }
 
 Knm::Ipv4Setting::EnumMethod::type Ipv4Dbus::methodStringToEnum(QString method)
@@ -147,6 +150,8 @@ Knm::Ipv4Setting::EnumMethod::type Ipv4Dbus::methodStringToEnum(QString method)
         return Knm::Ipv4Setting::EnumMethod::Manual;
     else if (method.toLower() == "shared")
         return Knm::Ipv4Setting::EnumMethod::Shared;
+    else if (method.toLower() == "disabled")
+        return Knm::Ipv4Setting::EnumMethod::Disabled;
     else
     {
         kDebug() << "Unknown method given:" << method;
@@ -170,6 +175,9 @@ QVariantMap Ipv4Dbus::toMap()
           break;
       case Knm::Ipv4Setting::EnumMethod::Shared:
           map.insert("method", "shared");
+          break;
+       case Knm::Ipv4Setting::EnumMethod::Disabled:
+          map.insert("method", "disabled");
           break;
   }
 
@@ -218,6 +226,7 @@ QVariantMap Ipv4Dbus::toMap()
   insertIfTrue(map, NM_SETTING_IP4_CONFIG_NEVER_DEFAULT, setting->neverdefault());
   insertIfNonEmpty(map, NM_SETTING_IP4_CONFIG_DHCP_CLIENT_ID, setting->dhcpclientid());
   insertIfNonEmpty(map, NM_SETTING_IP4_CONFIG_DHCP_HOSTNAME, setting->dhcphostname());
+  insertIfTrue(map, NM_SETTING_IP4_CONFIG_MAY_FAIL, setting->mayfail());
   return map;
 }
 

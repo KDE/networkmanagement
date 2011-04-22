@@ -31,6 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wiredwidget.h"
 #include "ipv4widget.h"
+#include "ipv6widget.h"
 #include "connectionwidget.h"
 #include "security/securitywired8021x.h"
 
@@ -77,9 +78,11 @@ void WiredPreferences::prepareSettings()
 
     WiredWidget * wiredWidget = new WiredWidget(m_connection, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+    IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
     SecurityWired8021x * securityWidget = new SecurityWired8021x(m_connection, this);
 
     addToTabWidget(ipv4Widget);
+    addToTabWidget(ipv6Widget);
     addToTabWidget(wiredWidget);
     addToTabWidget(securityWidget);
 }

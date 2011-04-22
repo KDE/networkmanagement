@@ -13,7 +13,7 @@
         <choice name="LinkLocal" dbusvalue="link-local"/>
         <choice name="Manual" dbusvalue="manual"/>
         <choice name="Shared" dbusvalue="shared"/>
-        <choice name="Disabled" dbusvalue="disabled"/>
+        <choice name="Disabled" dbusvalue="ignore"/>
       </choices>
       <default>42</default><!-- invalid default so that the choice is always sent; NM requires this -->
     </entry>
@@ -21,7 +21,7 @@
       <label>DNS Servers</label>
       <whatsthis>List of Domain Name System servers to use</whatsthis>
     </entry>
-    <entry name="dnssearch" type="StringList" dbuskey="NM_SETTING_IP4_CONFIG_DNS_SEARCH">
+    <entry name="dnssearch" type="StringList" dbuskey="NM_SETTING_IP6_CONFIG_DNS_SEARCH">
       <label>Search Domains</label>
       <whatsthis>List of domains to search for a hostname</whatsthis>
     </entry>
@@ -30,30 +30,19 @@
       <label>IP Addresses</label>
       <whatsthis>List of IP addresses to configure on this connection</whatsthis>
     </entry>
-    <entry name="ignoredhcpdns" type="Bool" dbuskey="NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS">
+    <entry name="ignoredhcpdns" type="Bool" dbuskey="NM_SETTING_IP6_CONFIG_IGNORE_AUTO_DNS">
       <label>Ignore DHCP DNS</label>
       <whatsthis>Ignore DNS servers returned by DHCP and use the configured servers instead</whatsthis>
     </entry>
-    <entry name="ignoreautoroute" type="Bool" dbuskey="NM_SETTING_IP4_CONFIG_IGNORE_AUTO_ROUTES">
+    <entry name="ignoreautoroute" type="Bool" dbuskey="NM_SETTING_IP6_CONFIG_IGNORE_AUTO_ROUTES">
       <label>Ignore Automatic Routes</label>
       <whatsthis>Ignore routes returned by automatic configuration mechanisms and use the manually configured routes instead</whatsthis>
     </entry>
-    <entry name="neverdefault" type="Bool" dbuskey="NM_SETTING_IP4_CONFIG_NEVER_DEFAULT">
+    <entry name="neverdefault" type="Bool" dbuskey="NM_SETTING_IP6_CONFIG_NEVER_DEFAULT">
       <label>Never Default Route</label>
       <whatsthis>Never assign the default route to this connection</whatsthis>
     </entry>
-    <entry name="dhcpclientid" type="String" dbuskey="NM_SETTING_IP4_CONFIG_DHCP_CLIENT_ID">
-      <label>DHCP Client ID</label>
-    </entry>
-    <!-- commented out because NM 0.7.1 doesn't have this; master does
-    <entry name="dhcpsendhostname" type="Bool" dbuskey="NM_SETTING_IP4_CONFIG_DHCP_SEND_HOSTNAME">
-      <label>Send hostname to DHCP server</label>
-    </entry>
-    -->
-    <entry name="dhcphostname" type="String" dbuskey="NM_SETTING_IP4_CONFIG_DHCP_HOSTNAME">
-      <label>DHCP hostname</label>
-    </entry>
-    <entry name="mayfail" type="Bool" dbuskey="NM_SETTING_IP4_CONFIG_MAY_FAIL">
+    <entry name="mayfail" type="Bool" dbuskey="NM_SETTING_IP6_CONFIG_MAY_FAIL">
       <label>Required for this connection</label>
     </entry>
   </group>

@@ -28,6 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "pppwidget.h"
 #include "wiredwidget.h"
 #include "ipv4widget.h"
+#include "ipv6widget.h"
 #include "connectionwidget.h"
 #include "connection.h"
 
@@ -73,10 +74,12 @@ void PppoePreferences::prepareSettings()
     WiredWidget * wiredWidget = new WiredWidget(m_connection, this);
     PppWidget * pppWidget = new PppWidget(m_connection, this);
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+    IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
 
     addToTabWidget(pppoeWidget);
     addToTabWidget(wiredWidget);
     addToTabWidget(ipv4Widget);
+    addToTabWidget(ipv6Widget);
     addToTabWidget(pppWidget);
 }
 

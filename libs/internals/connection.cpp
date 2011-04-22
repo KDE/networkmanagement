@@ -31,6 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/gsm.h"
 #include "settings/bluetooth.h"
 #include "settings/ipv4.h"
+#include "settings/ipv6.h"
 #include "settings/ppp.h"
 #include "settings/pppoe.h"
 #include "settings/serial.h"
@@ -155,12 +156,14 @@ void Connection::init()
         case Cdma:
             addSetting(new CdmaSetting());
             addSetting(new Ipv4Setting());
+            addSetting(new Ipv6Setting());
             addSetting(new PppSetting());
             addSetting(new SerialSetting());
             break;
         case Gsm:
             addSetting(new GsmSetting());
             addSetting(new Ipv4Setting());
+            addSetting(new Ipv6Setting());
             addSetting(new PppSetting());
             addSetting(new SerialSetting());
             break;
@@ -173,6 +176,7 @@ void Connection::init()
             break;
         case Pppoe:
             addSetting(new Ipv4Setting());
+            addSetting(new Ipv6Setting());
             addSetting(new PppSetting());
             addSetting(new PppoeSetting());
             addSetting(new WiredSetting());
@@ -180,14 +184,17 @@ void Connection::init()
         case Vpn:
             addSetting(new VpnSetting());
             addSetting(new Ipv4Setting());
+            addSetting(new Ipv6Setting());
             break;
         case Wired:
             addSetting(new Ipv4Setting());
+            addSetting(new Ipv6Setting());
             addSetting(new Security8021xSetting());
             addSetting(new WiredSetting());
             break;
         case Wireless:
             addSetting(new Ipv4Setting());
+            addSetting(new Ipv6Setting());
             addSetting(new Security8021xSetting());
             addSetting(new WirelessSetting());
             addSetting(new WirelessSecuritySetting());
