@@ -32,8 +32,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "mobileconnectionwizard.h"
 
-MobileConnectionWizard::MobileConnectionWizard(QWidget * parent): QWizard(parent)
+MobileConnectionWizard::MobileConnectionWizard(Knm::Connection::Type connectionType, QWidget * parent): QWizard(parent)
 {
+    if (connectionType == Knm::Connection::Unknown) {
+        mInitialMethodType = false;
+    } else {
+        mInitialMethodType = true;
+
+        if (connectionType == Knm::Connection::Bluetooth) {
+            mType = Knm::Connection::Gsm;
+        } else {
+            mType = connectionType;
+        }
+    }
+
     mProviders = new MobileProviders();
     setWindowTitle(i18nc("Mobile Connection Wizard", "New Mobile Broadband Connection"));
     addPage(createIntroPage());
@@ -61,7 +73,7 @@ MobileProviders::ErrorCodes MobileConnectionWizard::getError()
 void MobileConnectionWizard::initializePage(int id)
 {
     switch (id) {
-        case 1: // Country Page
+        case 1: { // Country Page
             //QString country = KGlobal::locale()->country();
             if (country.isEmpty()) {
                 country = mProviders->countryFromLocale();
@@ -75,11 +87,20 @@ void MobileConnectionWizard::initializePage(int id)
                 }
             }
 
-            mIface = Solid::Control::NetworkManager::findNetworkInterface(mDeviceComboBox->itemData(mDeviceComboBox->currentIndex()).toString());
+            if (!mInitialMethodType) {
+                Solid::Control::NetworkInterface *iface = Solid::Control::NetworkManager::findNetworkInterface(mDeviceComboBox->itemData(mDeviceComboBox->currentIndex()).toString());
+                if (iface && iface->type() == Solid::Control::NetworkInterface::Cdma) {
+                    mType = Knm::Connection::Cdma;
+                } else {
+                    mType = Knm::Connection::Gsm;
+                }
+            }
+
             if (mProviders->getError() != MobileProviders::Success) {
                 accept();
             }
             break;
+        }
 
         case 2: // Providers Page
             country = mCountryList->currentItem()->text();
@@ -204,15 +225,6 @@ QVariantList MobileConnectionWizard::args()
     return temp;
 }
 
-Knm::Connection::Type MobileConnectionWizard::type() const
-{
-    if (mIface && mIface->type() == Solid::Control::NetworkInterface::Cdma) {
-        return Knm::Connection::Cdma;
-    }
-
-    return Knm::Connection::Gsm;
-}
-
 /**********************************************************/
 /* Intro page */
 /**********************************************************/
@@ -236,23 +248,25 @@ QWizardPage * MobileConnectionWizard::createIntroPage()
                                     arg(i18nc("Mobile Connection Wizard", "(in some cases) Your broadband billing plan APN (Access Point Name)")));
     layout->addWidget(label);
 
-    label = new QLabel("\n" + i18nc("Mobile Connection Wizard", "Create a connection for &this mobile broadband device:"));
-    layout->addWidget(label);
-
-    mDeviceComboBox = new QComboBox();
-    mDeviceComboBox->addItem(i18nc("Mobile Connection Wizard", "Any device"));
-    mDeviceComboBox->insertSeparator(1);
-    label->setBuddy(mDeviceComboBox);
-    layout->addWidget(mDeviceComboBox);
-
-    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString)),
-                     this, SLOT(introDeviceAdded(const QString)));
-    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString)),
-                     this, SLOT(introDeviceRemoved(const QString)));
-    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
-                     this, SLOT(introStatusChanged(Solid::Networking::Status)));
-
-    introAddInitialDevices();
+    if (!mInitialMethodType) {
+        label = new QLabel("\n" + i18nc("Mobile Connection Wizard", "Create a connection for &this mobile broadband device:"));
+        layout->addWidget(label);
+    
+        mDeviceComboBox = new QComboBox();
+        mDeviceComboBox->addItem(i18nc("Mobile Connection Wizard", "Any device"));
+        mDeviceComboBox->insertSeparator(1);
+        label->setBuddy(mDeviceComboBox);
+        layout->addWidget(mDeviceComboBox);
+    
+        QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString)),
+                         this, SLOT(introDeviceAdded(const QString)));
+        QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString)),
+                         this, SLOT(introDeviceRemoved(const QString)));
+        QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
+                         this, SLOT(introStatusChanged(Solid::Networking::Status)));
+    
+        introAddInitialDevices();
+    }
 
     page->setLayout(layout);
 

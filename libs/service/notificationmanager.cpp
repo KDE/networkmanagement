@@ -42,7 +42,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "../internals/connection.h"
 
 static const int iconSize = 48;
-Knm::Connection::Type solidToKnmType(const Solid::Control::NetworkInterface::Type sType);
 
 K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration))
 
@@ -322,7 +321,7 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
             text = i18nc("@info:status Notification when an interface changes state (%1) due to CarrierReason","%1 because the cable was disconnected", stateString);
             break;
     }
-    performInterfaceNotification(title, text, KIcon(Knm::Connection::iconName(solidToKnmType(m_interface->type()))).pixmap(QSize(iconSize,iconSize)), flag);
+    performInterfaceNotification(title, text, KIcon(Knm::Connection::iconName(Knm::Connection::typeFromSolidType(m_interface->type()))).pixmap(QSize(iconSize,iconSize)), flag);
 }
 
 void InterfaceNotificationHost::performInterfaceNotification(const QString & title, const QString & text, const QPixmap & pixmap, KNotification::NotificationFlag flag)
@@ -353,19 +352,6 @@ void InterfaceNotificationHost::performInterfaceNotification(const QString & tit
     notification->setPixmap(pixmap);
 
     notification->sendEvent();
-}
-
-Knm::Connection::Type solidToKnmType(const Solid::Control::NetworkInterface::Type sType)
-{
-    Knm::Connection::Type type;
-    switch (sType) {
-        case Solid::Control::NetworkInterface::Ieee80211: type = Knm::Connection::Wireless; break;
-        case Solid::Control::NetworkInterface::Gsm: type = Knm::Connection::Gsm; break;
-        case Solid::Control::NetworkInterface::Cdma: type = Knm::Connection::Cdma; break;
-        case Solid::Control::NetworkInterface::Serial: type = Knm::Connection::Pppoe; break;
-        default: type = Knm::Connection::Wired;
-    }
-    return type;
 }
 
 class NotificationManagerPrivate
@@ -462,7 +448,7 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
 
             // notify hardware added
             if (!d->suppressHardwareEvents) {
-                KNotification::event(Event::HwAdded, i18nc("@info:status Notification for hardware added", "%1 attached", host->label()), KIcon(Knm::Connection::iconName(solidToKnmType(iface->type()))).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
+                KNotification::event(Event::HwAdded, i18nc("@info:status Notification for hardware added", "%1 attached", host->label()), KIcon(Knm::Connection::iconName(Knm::Connection::typeFromSolidType(iface->type()))).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
             }
 
             // if wireless, listen for new networks
@@ -499,7 +485,7 @@ void NotificationManager::networkInterfaceRemoved(const QString &uni)
         Knm::Connection::Type type = Knm::Connection::Wired;
         if (host) {
             notificationText = i18nc("@info:status Notification for hardware removed giving vendor supplied product name", "%1 removed", host->label());
-            type = solidToKnmType(host->type());
+            type = Knm::Connection::typeFromSolidType(host->type());
             delete host;
         } else {
             notificationText = i18nc("@info:status Notification for hardware removed used if we don't have its user-visible name", "Network interface removed");

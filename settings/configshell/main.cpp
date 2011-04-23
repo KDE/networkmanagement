@@ -32,10 +32,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectioneditor.h"
 #include "connectionpersistence.h"
 #include "knmserviceprefs.h"
-#include "../config/mobileconnectionwizard.h"
 #include "nmdbussettingsconnectionprovider.h"
 #include "nmdbussettingsservice.h"
 #include "connectionlist.h"
+#include "bluetooth.h"
 
 int main(int argc, char **argv)
 {
@@ -52,8 +52,8 @@ int main(int argc, char **argv)
     KCmdLineOptions options;
     options.add("connection <connection-id>", ki18n("Connection ID to edit"));
     options.add("hiddennetwork <ssid>", ki18n("Connect to a hidden wireless network"));
-    options.add("type <type>", ki18n("Connection type to create, must be one of '802-3-ethernet', '802-11-wireless', 'pppoe', 'vpn', 'cellular'"));
-    options.add("specific-args <args>", ki18n("Space-separated connection type-specific arguments, may be either 'gsm' or 'cdma' for cellular, or 'openvpn' or 'vpnc' for vpn connections, and interface and AP identifiers for wireless connections"));
+    options.add("type <type>", ki18n("Connection type to create, must be one of '802-3-ethernet', '802-11-wireless', 'pppoe', 'vpn', 'cellular', 'bluetooth'"));
+    options.add("specific-args <args>", ki18n("Space-separated connection type-specific arguments, may be either 'gsm' or 'cdma' for cellular, or 'openvpn' or 'vpnc' for vpn connections, interface and AP identifiers for wireless connections, bluetooth mac address for bluetooth pan, and bluetooth mac address and serial bluetooth identifies (i.e. rfcomm0) for bluetooth dun. Specific args are separated by commas and without spaces."));
     options.add("+mode", ki18n("Operation mode, may be either 'create' or 'edit'"), "create");
     KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
     KApplication app;
@@ -72,7 +72,7 @@ int main(int argc, char **argv)
     QString ssid;
     QVariantList specificArgs;
 
-    foreach (const QString& arg, specifics.split( ' ' )) {
+    foreach (const QString& arg, specifics.split( ',' )) {
         specificArgs << QVariant(arg);
     }
 
@@ -88,14 +88,18 @@ int main(int argc, char **argv)
             if (type == QLatin1String("cellular")) {
                 MobileConnectionWizard *mobileConnectionWizard = new MobileConnectionWizard();
 
-                if (mobileConnectionWizard->exec() == QDialog::Accepted) {
-                    if (mobileConnectionWizard->getError() == MobileProviders::Success) {
-                        con = editor.createConnection(true, mobileConnectionWizard->type(), mobileConnectionWizard->args(), false);
-                    } else {
-                        con = editor.createConnection(true, Knm::Connection::typeFromString(type), specificArgs);
-                    }
+                if (mobileConnectionWizard->exec() == QDialog::Accepted &&
+                    mobileConnectionWizard->getError() == MobileProviders::Success) {
+                    con = editor.createConnection(true, mobileConnectionWizard->type(), mobileConnectionWizard->args(), false);
                 }
                 delete mobileConnectionWizard;
+            } else if (type == QLatin1String("bluetooth")) {
+                if (specificArgs.count() > 1) {
+                    new Bluetooth(specificArgs[0].toString(), specificArgs[1].toString());
+                    return app.exec();
+                } else {
+                    return -1;
+                }
             } else {
                 con = editor.createConnection(true, Knm::Connection::typeFromString(type), specificArgs);
             }
@@ -105,13 +109,8 @@ int main(int argc, char **argv)
                 kDebug() << Knm::Connection::typeFromString(type) << "type connection cannot be created.";
                 return -1;
             }
-            QString cid = con->uuid().toString();
-            QDBusInterface ref( "org.kde.kded", "/modules/knetworkmanager",
-                                "org.kde.knetworkmanagerd", QDBusConnection::sessionBus() );
 
-            QStringList ids(cid);
-            ref.call( QLatin1String( "configure" ), ids );
-            kDebug() << ref.isValid() << ref.lastError().message() << ref.lastError().name();
+            Bluetooth::saveConnection(con);
         } else if (args->isSet("hiddennetwork")) {
             QString ssidOfHiddenNetwork = args->getOption("hiddennetwork");
             kDebug() << "I have been told to setup a connection to a hidden network..." << ssidOfHiddenNetwork;

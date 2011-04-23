@@ -1,5 +1,5 @@
 /*
-Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2011 Lamarque Souza <lamarque@gmail.com>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -18,7 +18,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gsmconnectioneditor.h"
+#include "bluetoothconnectioneditor.h"
 
 #include <QMap>
 
@@ -26,24 +26,28 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KGlobal>
 #include <KLocale>
 
+#include "internals/settings/bluetooth.h"
+#include "bluetoothwidget.h"
 #include "gsmwidget.h"
 #include "pppwidget.h"
-#include "ipv4widget.h"
 #include "connectionwidget.h"
 
 #include "connection.h"
 
-GsmConnectionEditor::GsmConnectionEditor(const QVariantList &args, QWidget *parent)
+using namespace Knm;
+
+BluetoothConnectionEditor::BluetoothConnectionEditor(const QVariantList &args, QWidget *parent)
 : ConnectionPreferences(args, parent)
 {
     Q_ASSERT(args.count());
     QString connectionId = args[0].toString();
-    m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Gsm);
+    m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Bluetooth);
     m_contents->setConnection(m_connection);
+    BluetoothWidget * bluetoothWidget = new BluetoothWidget(m_connection, this);
     GsmWidget * gsmWidget = new GsmWidget(m_connection, this);
     PppWidget * pppWidget = new PppWidget(m_connection, this);
-    IpV4Widget * ipV4Widget = new IpV4Widget(m_connection, this);
 
+    // Gsm part
     if (args.count() > 1) {
         if (args.count() > 2) {
             QList<QVariant> networkIds = args[2].toList();
@@ -61,28 +65,33 @@ GsmConnectionEditor::GsmConnectionEditor(const QVariantList &args, QWidget *pare
             }
             gsmWidget->setApnInfo(apnInfo);
 
-            if (!apnInfo["dnsList"].isNull()) {
-                ipV4Widget->setDns(apnInfo["dnsList"].toList());
+            // Bluetooth part
+            if (args.count() > 5) {
+                BluetoothSetting *b = static_cast<BluetoothSetting *>(m_connection->setting(Setting::Bluetooth));
+                if (b) {
+                    b->setBdaddrFromString(args[4].toString());
+                    b->setNetworkname(args[5].toString());
+                }
             }
         } else {
             m_contents->setDefaultName(args[1].toString());
         }
     } else {
-        m_contents->setDefaultName(i18n("New Cellular Connection"));
+        m_contents->setDefaultName(i18n("New Bluetooth Connection"));
     }
 
+    addToTabWidget(bluetoothWidget);
     addToTabWidget(gsmWidget);
     addToTabWidget(pppWidget);
-    addToTabWidget(ipV4Widget);
 }
 
-GsmConnectionEditor::GsmConnectionEditor(Knm::Connection *con, QWidget *parent)
+BluetoothConnectionEditor::BluetoothConnectionEditor(Knm::Connection *con, QWidget *parent)
 : ConnectionPreferences(QVariantList(), parent)
 {
     if (!con)
     {
         kDebug() << "Connection pointer is NULL, creating a new connection.";
-        m_connection = new Knm::Connection(QUuid::createUuid(), Knm::Connection::Gsm);
+        m_connection = new Knm::Connection(QUuid::createUuid(), Knm::Connection::Bluetooth);
     }
     else
         m_connection = con;
@@ -90,9 +99,9 @@ GsmConnectionEditor::GsmConnectionEditor(Knm::Connection *con, QWidget *parent)
     QString connectionId = m_connection->uuid().toString();
 
     m_contents->setConnection(m_connection);
+    BluetoothWidget * bluetoothWidget = new BluetoothWidget(m_connection, this);
     GsmWidget * gsmWidget = new GsmWidget(m_connection, this);
     PppWidget * pppWidget = new PppWidget(m_connection, this);
-    IpV4Widget * ipV4Widget = new IpV4Widget(m_connection, this);
 
     /*
     if (args.count() > 1) {
@@ -123,11 +132,11 @@ GsmConnectionEditor::GsmConnectionEditor(Knm::Connection *con, QWidget *parent)
     }
     */
 
+    addToTabWidget(bluetoothWidget);
     addToTabWidget(gsmWidget);
     addToTabWidget(pppWidget);
-    addToTabWidget(ipV4Widget);
 }
-GsmConnectionEditor::~GsmConnectionEditor()
+BluetoothConnectionEditor::~BluetoothConnectionEditor()
 {
 }
 

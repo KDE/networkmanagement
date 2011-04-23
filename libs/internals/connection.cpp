@@ -29,6 +29,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/802-3-ethernet.h"
 #include "settings/cdma.h"
 #include "settings/gsm.h"
+#include "settings/bluetooth.h"
 #include "settings/ipv4.h"
 #include "settings/ppp.h"
 #include "settings/pppoe.h"
@@ -53,6 +54,9 @@ QString Connection::typeAsString(Connection::Type type)
         case Cdma:
             typeString = QLatin1String("cdma");
             break;
+        case Bluetooth:
+            typeString = QLatin1String("bluetooth");
+            break;
         case Vpn:
             typeString = QLatin1String("vpn");
             break;
@@ -76,12 +80,30 @@ Connection::Type Connection::typeFromString(const QString & typeString)
         type = Gsm;
     } else if (typeString == QLatin1String("cdma")) {
         type = Cdma;
+    } else if (typeString == QLatin1String("bluetooth")) {
+        type = Bluetooth;
     } else if (typeString == QLatin1String("vpn")) {
         type = Vpn;
     } else if (typeString == QLatin1String("pppoe")) {
         type = Pppoe;
     }
     return type;
+}
+
+Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInterface::Type type)
+{
+    switch (type) {
+        case Solid::Control::NetworkInterface::Ieee8023: return Knm::Connection::Wired;
+        case Solid::Control::NetworkInterface::Ieee80211: return Knm::Connection::Wireless;
+        case Solid::Control::NetworkInterface::Gsm: return Knm::Connection::Gsm;
+        case Solid::Control::NetworkInterface::Cdma: return Knm::Connection::Cdma;
+#ifdef NM_0_8
+        case Solid::Control::NetworkInterface::Bluetooth: return Knm::Connection::Bluetooth;
+#endif
+        case Solid::Control::NetworkInterface::Serial: return Knm::Connection::Pppoe;
+        case Solid::Control::NetworkInterface::UnknownType: return Knm::Connection::Unknown;
+    }
+    return Knm::Connection::Wired;
 }
 
 QString Connection::scopeAsString(Connection::Scope scope)
@@ -142,6 +164,12 @@ void Connection::init()
             addSetting(new PppSetting());
             addSetting(new SerialSetting());
             break;
+        case Bluetooth:
+            addSetting(new BluetoothSetting());
+            addSetting(new GsmSetting());
+            addSetting(new PppSetting());
+            addSetting(new SerialSetting());
+            break;
         case Pppoe:
             addSetting(new Ipv4Setting());
             addSetting(new PppSetting());
@@ -162,6 +190,8 @@ void Connection::init()
             addSetting(new Security8021xSetting());
             addSetting(new WirelessSetting());
             addSetting(new WirelessSecuritySetting());
+            break;
+        default:
             break;
     }
 }
@@ -186,6 +216,7 @@ QString Connection::iconName(const Connection::Type type)
             break;
         case Connection::Gsm:
         case Connection::Cdma:
+        case Connection::Bluetooth:
             iconName = QLatin1String("phone");
             break;
         case Connection::Vpn:

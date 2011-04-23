@@ -12,6 +12,7 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/../../libs/internals)
 
 set(networkmanagement_configshell_SRCS
    main.cpp
+   bluetooth.cpp
    ../config/mobileconnectionwizard.cpp
    ../config/mobileproviders.cpp
 )
