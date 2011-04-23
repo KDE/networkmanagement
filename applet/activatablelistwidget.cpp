@@ -63,7 +63,7 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     //m_widget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_layout = new QGraphicsLinearLayout(m_widget);
     m_layout->setOrientation(Qt::Vertical);
-    m_layout->setSpacing(1);
+    m_layout->setSpacing(0);
     setWidget(m_widget);
 }
 
