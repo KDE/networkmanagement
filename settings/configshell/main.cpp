@@ -36,6 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "nmdbussettingsservice.h"
 #include "connectionlist.h"
 #include "bluetooth.h"
+#include "../config/mobileconnectionwizard.h"
 
 int main(int argc, char **argv)
 {
@@ -93,14 +94,18 @@ int main(int argc, char **argv)
                     con = editor.createConnection(true, mobileConnectionWizard->type(), mobileConnectionWizard->args(), false);
                 }
                 delete mobileConnectionWizard;
-            } else if (type == QLatin1String("bluetooth")) {
+            }
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+            else if (type == QLatin1String("bluetooth")) {
                 if (specificArgs.count() > 1) {
                     new Bluetooth(specificArgs[0].toString(), specificArgs[1].toString());
                     return app.exec();
                 } else {
                     return -1;
                 }
-            } else {
+            }
+#endif
+            else {
                 con = editor.createConnection(true, Knm::Connection::typeFromString(type), specificArgs);
             }
 

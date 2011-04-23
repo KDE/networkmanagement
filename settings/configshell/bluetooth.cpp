@@ -11,6 +11,8 @@
 
 #include "bluetooth.h"
 
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+
 Bluetooth::Bluetooth(const QString bdaddr, const QString device): QObject(), mBdaddr(bdaddr), mDevice(device), mobileConnectionWizard(0)
 {
     connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceAdded(const QString &)),
@@ -66,6 +68,7 @@ void Bluetooth::modemAdded(const QString &udi)
     delete mobileConnectionWizard;
     kapp->quit();
 }
+#endif
 
 // For now all connections are user scope. For NM-0.9 we will have to change that to system scope.
 void Bluetooth::saveConnection(Knm::Connection *con)
