@@ -18,25 +18,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QDBusInterface>
 #include <kaboutdata.h>
 #include <kapplication.h>
 #include <kcmdlineargs.h>
 #include <kdebug.h>
-#include <kdialog.h>
-#include <kiconloader.h>
-#include <klocale.h>
 
-#include <kicon.h>
-
-#include "connectioneditor.h"
-#include "connectionpersistence.h"
-#include "knmserviceprefs.h"
-#include "nmdbussettingsconnectionprovider.h"
-#include "nmdbussettingsservice.h"
-#include "connectionlist.h"
 #include "bluetooth.h"
-#include "../config/mobileconnectionwizard.h"
 
 int main(int argc, char **argv)
 {
@@ -96,8 +83,19 @@ int main(int argc, char **argv)
                 delete mobileConnectionWizard;
             }
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
+            /* To create a bluetooth DUN connection:
+	     * networkmanagement_configshell create --type bluetooth --specific-args 00:11:22:33:44:55,rfcomm0
+	     *
+	     * Warning: there is no space in 00:11:22:33:44:55,rfcomm0
+	     *
+	     * For PANU:
+	     * networkmanagement_configshell create --type bluetooth --specific-args 00:11:22:33:44:55
+	     */
             else if (type == QLatin1String("bluetooth")) {
-                if (specificArgs.count() > 1) {
+                if (specificArgs.count() == 1) {
+                    new Bluetooth(specificArgs[0].toString());
+                    return app.exec();
+		} else if (specificArgs.count() == 2) {
                     new Bluetooth(specificArgs[0].toString(), specificArgs[1].toString());
                     return app.exec();
                 } else {
@@ -115,7 +113,7 @@ int main(int argc, char **argv)
                 return -1;
             }
 
-            Bluetooth::saveConnection(con);
+            saveConnection(con);
         } else if (args->isSet("hiddennetwork")) {
             QString ssidOfHiddenNetwork = args->getOption("hiddennetwork");
             kDebug() << "I have been told to setup a connection to a hidden network..." << ssidOfHiddenNetwork;
