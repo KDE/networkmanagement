@@ -104,8 +104,8 @@ void WirelessNetworkItem::setupItem()
         m_strengthMeter->setMaximum(100);
         m_strengthMeter->setValue(m_wirelessStatus->strength());
         m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
-        m_strengthMeter->setPreferredSize(QSizeF(60, rowHeight/2));
-        m_strengthMeter->setMaximumHeight(rowHeight/2);
+        m_strengthMeter->setPreferredSize(QSizeF(60, 12));
+        m_strengthMeter->setMaximumHeight(12);
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
     }
