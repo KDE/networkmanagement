@@ -586,7 +586,7 @@ void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMess
                 mSystemSettings->updateConnection(con->uuid().toString(), con);
         } else {
             if (con->scope() == Knm::Connection::User) {
-                if (deleteConnection(con->uuid().toString(), Knm::Connection::System)) {
+                if (deleteConnection(con->uuid().toString(), Knm::Connection::System, con->type())) {
                     saveConnection(con);
                 } else {
                     // FIXME: when changing one system connection to user scope con is a pointer to
@@ -600,7 +600,7 @@ void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMess
                 }
             } else {
                 if (mSystemSettings->addConnection(con)) {
-                    deleteConnection(con->uuid().toString(), Knm::Connection::User);
+                    deleteConnection(con->uuid().toString(), Knm::Connection::User, con->type());
                     mConnections->replaceConnection(con);
                 } else {
                     restoreConnections();
@@ -628,24 +628,31 @@ void ManageConnectionWidget::addGotConnection(bool valid, const QString &errorMe
     }
 }
 
-
-bool ManageConnectionWidget::deleteConnection(QString id, Knm::Connection::Scope scope)
+bool ManageConnectionWidget::deleteConnection(QString id, Knm::Connection::Scope scope, Knm::Connection::Type type)
 {
-    // remove it from our hash
-    mUuidItemHash.remove(id);
-
-    if (scope == Knm::Connection::System) {
-        return mSystemSettings->removeConnection(id);
-    } else {
+    // delete it
+    if (scope == Knm::Connection::System)
+        mSystemSettings->removeConnection(id);
+    else {
         // remove secrets from wallet if using encrypted storage
         Knm::ConnectionPersistence::deleteSecrets(id);
 
-        // remove connection file
+        // delete everything related, like certificates
         QFile connFile(KStandardDirs::locateLocal("data",
                     Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + id));
         if (!connFile.exists()) {
-            kDebug() << "Connection file not found: " << connFile.fileName();
+        kDebug() << "Connection file not found: " << connFile.fileName();
         }
+
+        Knm::Connection *con = new Knm::Connection(QUuid(id), type);
+        connectionPersistence = new Knm::ConnectionPersistence(con, KSharedConfig::openConfig(connFile.fileName()),
+            (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
+        connectionPersistence->load();
+        con->removeCertificates();
+        delete(connectionPersistence);
+        delete(con);
+
+        // remove connection file
         connFile.remove();
 
         // remove from networkmanagerrc
@@ -657,6 +664,9 @@ bool ManageConnectionWidget::deleteConnection(QString id, Knm::Connection::Scope
         prefs->setConnections(connectionIds);
         prefs->writeConfig();
     }
+
+    // remove it from our hash
+    mUuidItemHash.remove(id);
 
     updateServiceAndUi(id, scope);
     return true;
@@ -676,14 +686,15 @@ void ManageConnectionWidget::deleteClicked()
     }
     KMessageBox::Options options;
     options |= KMessageBox::Dangerous;
-    if ( KMessageBox::warningContinueCancel(this, 
+    if ( KMessageBox::warningContinueCancel(this,
         i18nc("Warning message on attempting to delete a connection", "Do you really want to delete the connection '%1'?",item->data(0, Qt::DisplayRole).toString()),
         i18n("Confirm Delete"),
         KStandardGuiItem::del())
         == KMessageBox::Continue) {
 
         Knm::Connection::Scope conScope = (Knm::Connection::Scope) item->data(0, ConnectionScopeRole).toUInt();
-        deleteConnection(connectionId, conScope);
+        Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, ConnectionTypeRole).toUInt();
+        deleteConnection(connectionId, conScope, type);
     }
 }
 

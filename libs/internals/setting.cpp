@@ -157,4 +157,14 @@ void Setting::setSecretsAvailable(bool available)
     m_secretsAvailable = available;
 }
 
+void Setting::save(int)
+{
+
+}
+
+void Setting::remove()
+{
+
+}
+
 // vim: sw=4 sts=4 et tw=100

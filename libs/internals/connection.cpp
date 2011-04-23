@@ -204,6 +204,20 @@ void Connection::init()
     }
 }
 
+void Connection::saveCertificates()
+{
+    foreach (Setting * setting, m_settings) {
+        setting->save((int)m_scope);
+    }
+}
+
+void Connection::removeCertificates()
+{
+    foreach (Setting * setting, m_settings) {
+        setting->remove();
+    }
+}
+
 QString Connection::name() const
 {
     return m_name;

@@ -296,6 +296,7 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
 
         kDebug() << "Updating connection "<< remote->id() << pair.first->uuid().toString();
 
+        newConnection->saveCertificates();
         ConnectionDbus converter(newConnection);
         QVariantMapMap map = converter.toDbusMap();
 
@@ -335,6 +336,7 @@ void NMDBusSettingsConnectionProvider::checkConnectionAdded()
 bool NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnection)
 {
     Q_D(NMDBusSettingsConnectionProvider);
+    newConnection->saveCertificates();
     ConnectionDbus converter(newConnection);
     QVariantMapMap map = converter.toDbusMap();
     kDebug() << "Adding connection " << newConnection->name() << newConnection->uuid().toString();

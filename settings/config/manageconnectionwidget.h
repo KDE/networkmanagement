@@ -61,8 +61,8 @@ public slots:
      */
     void activeConnectionsChanged();
 private slots:
-    /** 
-     * Add a new connection 
+    /**
+     * Add a new connection
      */
     void addClicked();
     /**
@@ -152,7 +152,8 @@ private:
     Knm::ConnectionPersistence *connectionPersistence;
     void loadConnection(Knm::Connection *con);
     void saveConnection(Knm::Connection *con);
-    bool deleteConnection(QString id, Knm::Connection::Scope scope);
+    bool deleteConnection(QString id, Knm::Connection::Scope scope, Knm::Connection::Type type);
+
     /**
      * Inform kded module about changed connection and update our
      * connections list in UI

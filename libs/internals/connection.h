@@ -45,9 +45,10 @@ public:
     static Connection::Type typeFromString(const QString & type);
     static Connection::Type typeFromSolidType(const Solid::Control::NetworkInterface::Type type);
     static QString scopeAsString(Connection::Scope);
-    static Connection::Scope scopeFromString(const QString & scope);    
+    static Connection::Scope scopeFromString(const QString & scope);
     static QString iconName(const Connection::Type type);
-
+    void saveCertificates();
+    void removeCertificates();
     /**
      * Create a connection with a new Uuid
      */
@@ -90,8 +91,8 @@ public:
     void setTimestamp(const QDateTime&);
 
     /**
-     * Sets connection type. If type to be set and the type of the connection is already the 
-     * same, then this method will do nothing, otherwise m_settings will be cleared and 
+     * Sets connection type. If type to be set and the type of the connection is already the
+     * same, then this method will do nothing, otherwise m_settings will be cleared and
      * m_type will be set as given parameter.
      * @param type Type of the connection to be set
      */
@@ -139,7 +140,7 @@ private:
      */
     void addSetting(Setting*);
 
-    
+
     QString m_name;
     QString m_iconName;
     QUuid m_uuid;
