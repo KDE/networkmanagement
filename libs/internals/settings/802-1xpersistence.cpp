@@ -23,9 +23,9 @@ void Security8021xPersistence::load()
   setting->setEap(m_config->readEntry("eap", QStringList()));
   setting->setIdentity(m_config->readEntry("identity", ""));
   setting->setAnonymousidentity(m_config->readEntry("anonymousidentity", ""));
-  setting->setCacert(m_config->readEntry("cacert", QByteArray()));
+  setting->setCacert(QByteArray::fromBase64(m_config->readEntry("cacert", QByteArray())));
   setting->setCapath(m_config->readEntry("capath", ""));
-  setting->setClientcert(m_config->readEntry("clientcert", QByteArray()));
+  setting->setClientcert(QByteArray::fromBase64(m_config->readEntry("clientcert", QByteArray())));
   setting->setClientcertpath(m_config->readEntry("clientcertpath", ""));
   {
     QString contents = m_config->readEntry("phase1peapver", "automatic");
@@ -75,21 +75,21 @@ void Security8021xPersistence::load()
       setting->setPhase2autheap(Security8021xSetting::EnumPhase2autheap::tls);
 
   }
-  setting->setPhase2cacert(m_config->readEntry("phase2cacert", QByteArray()));
+  setting->setPhase2cacert(QByteArray::fromBase64(m_config->readEntry("phase2cacert", QByteArray())));
   setting->setPhase2capath(m_config->readEntry("phase2capath", ""));
-  setting->setPhase2clientcert(m_config->readEntry("phase2clientcert", QByteArray()));
+  setting->setPhase2clientcert(QByteArray::fromBase64(m_config->readEntry("phase2clientcert", QByteArray())));
   setting->setPhase2clientcertpath(m_config->readEntry("phase2clientcertpath", ""));
   // SECRET
   if (m_storageMode == ConnectionPersistence::PlainText) {
     setting->setPassword(m_config->readEntry("password", ""));
   }
-  setting->setPrivatekey(m_config->readEntry("privatekey", QByteArray()));
+  setting->setPrivatekey(QByteArray::fromBase64(m_config->readEntry("privatekey", QByteArray())));
   setting->setPrivatekeypath(m_config->readEntry("privatekeypath", ""));
   // SECRET
   if (m_storageMode == ConnectionPersistence::PlainText) {
     setting->setPrivatekeypassword(m_config->readEntry("privatekeypassword", ""));
   }
-  setting->setPhase2privatekey(m_config->readEntry("phase2privatekey", QByteArray()));
+  setting->setPhase2privatekey(QByteArray::fromBase64(m_config->readEntry("phase2privatekey", QByteArray())));
   setting->setPhase2privatekeypath(m_config->readEntry("phase2privatekeypath", ""));
   // SECRET
   if (m_storageMode == ConnectionPersistence::PlainText) {
@@ -110,9 +110,9 @@ void Security8021xPersistence::save()
   m_config->writeEntry("eap", setting->eap());
   m_config->writeEntry("identity", setting->identity());
   m_config->writeEntry("anonymousidentity", setting->anonymousidentity());
-  m_config->writeEntry("cacert", setting->cacert());
+  m_config->writeEntry("cacert", setting->cacert().toBase64());
   m_config->writeEntry("capath", setting->capath());
-  m_config->writeEntry("clientcert", setting->clientcert());
+  m_config->writeEntry("clientcert", setting->clientcert().toBase64());
   m_config->writeEntry("clientcertpath", setting->clientcertpath());
   switch (setting->phase1peapver()) {
     case Security8021xSetting::EnumPhase1peapver::automatic:
@@ -173,21 +173,21 @@ void Security8021xPersistence::save()
       m_config->writeEntry("phase2autheap", "tls");
       break;
   }
-  m_config->writeEntry("phase2cacert", setting->phase2cacert());
+  m_config->writeEntry("phase2cacert", setting->phase2cacert().toBase64());
   m_config->writeEntry("phase2capath", setting->phase2capath());
-  m_config->writeEntry("phase2clientcert", setting->phase2clientcert());
+  m_config->writeEntry("phase2clientcert", setting->phase2clientcert().toBase64());
   m_config->writeEntry("phase2clientcertpath", setting->phase2clientcertpath());
   // SECRET
   if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("password", setting->password());
   }
-  m_config->writeEntry("privatekey", setting->privatekey());
+  m_config->writeEntry("privatekey", setting->privatekey().toBase64());
   m_config->writeEntry("privatekeypath", setting->privatekeypath());
   // SECRET
   if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("privatekeypassword", setting->privatekeypassword());
   }
-  m_config->writeEntry("phase2privatekey", setting->phase2privatekey());
+  m_config->writeEntry("phase2privatekey", setting->phase2privatekey().toBase64());
   m_config->writeEntry("phase2privatekeypath", setting->phase2privatekeypath());
   // SECRET
   if (m_storageMode == ConnectionPersistence::PlainText) {

@@ -60,8 +60,8 @@ public slots:
      */
     void activeConnectionsChanged();
 private slots:
-    /** 
-     * Add a new connection 
+    /**
+     * Add a new connection
      */
     void addClicked();
     /**

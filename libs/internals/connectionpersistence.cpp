@@ -159,11 +159,11 @@ void ConnectionPersistence::save()
         cg.writeEntry("timestamp", m_connection->timestamp());
     cg.writeEntry("icon", m_connection->iconName());
 
+    m_connection->saveCertificates();
     // save each setting
     foreach (Setting * setting, m_connection->settings()) {
         SettingPersistence * sp = persistenceFor(setting);
         sp->save();
-
     }
     m_config->sync();
 
