@@ -32,14 +32,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectioneditor.h"
 #include "connectionpersistence.h"
 #include "knmserviceprefs.h"
-//<<<<<<< HEAD
-//#include "../config/mobileconnectionwizard.h"
-//=======
-//#include "nmdbussettingsconnectionprovider.h"
-//#include "nmdbussettingsservice.h"
-//#include "connectionlist.h"
+#include "../config/mobileconnectionwizard.h"
 #include "bluetooth.h"
-//>>>>>>> 0280af3... Implement bluetooth tethering support. Use
 
 int main(int argc, char **argv)
 {
@@ -97,16 +91,20 @@ int main(int argc, char **argv)
                     con = editor.createConnection(true, mobileConnectionWizard->type(), mobileConnectionWizard->args(), false);
                 }
                 delete mobileConnectionWizard;
-            } else if (type == QLatin1String("bluetooth")) {
+            }
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+            else if (type == QLatin1String("bluetooth")) {
                 if (specificArgs.count() > 1) {
                     new Bluetooth(specificArgs[0].toString(), specificArgs[1].toString());
                     return app.exec();
                 } else {
                     return -1;
                 }
-            } else {
+            }
+#endif
+            else {
                 con = editor.createConnection(true, Knm::Connection::typeFromString(type), specificArgs);
-	    }
+            }
 
             if(!con)
             {
