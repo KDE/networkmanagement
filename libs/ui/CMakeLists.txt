@@ -12,6 +12,7 @@ include_directories(
 set(knmui_SRCS
    cdmawidget.cpp
    gsmwidget.cpp
+   bluetoothwidget.cpp
    pppwidget.cpp
    pppoewidget.cpp
    security/securitywidget.cpp
@@ -54,6 +55,7 @@ set(knmui_SRCS
    vpnuiplugin.cpp
    connectionprefs.cpp
    gsmconnectioneditor.cpp
+   bluetoothconnectioneditor.cpp
    cdmaconnectioneditor.cpp
    pppoepreferences.cpp
    vpnpreferences.cpp
@@ -71,6 +73,7 @@ kde4_add_ui_files(knmui_SRCS
    # Settings
    cdma.ui
    gsm.ui
+   bluetooth.ui
    ppp.ui
    pppoe.ui
    connection.ui

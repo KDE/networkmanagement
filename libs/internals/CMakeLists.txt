@@ -65,6 +65,10 @@ set(knminternals_SRCS
    #settings/vpndbus.cpp
    settings/vpnpersistence.cpp
 
+   settings/bluetooth.cpp
+   #settings/bluetoothdbus.cpp
+   settings/bluetoothpersistence.cpp
+
    activatable.cpp
    interfaceconnection.cpp
    interfaceconnectionhelpers.cpp

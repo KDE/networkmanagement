@@ -247,6 +247,9 @@ void ManageConnectionWidget::restoreConnections()
         } else if (type == Knm::Connection::typeAsString(Knm::Connection::Cdma)) {
             item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
             cellularItems.append(item);
+        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Bluetooth)) {
+            item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
+            cellularItems.append(item);
         } else if (type == Knm::Connection::typeAsString(Knm::Connection::Vpn)) {
             item = new QTreeWidgetItem(mConnEditUi.listVpn, itemContents);
             vpnItems.append(item);
@@ -294,6 +297,9 @@ void ManageConnectionWidget::updateTabStates()
                 break;
             case Solid::Control::NetworkInterface::Gsm:
             case Solid::Control::NetworkInterface::Cdma:
+#ifdef NM_0_8
+            case Solid::Control::NetworkInterface::Bluetooth:
+#endif
                 hasCellular = true;
                 break;
             default:

@@ -36,7 +36,10 @@ class MobileConnectionWizard : public QWizard
 {
 Q_OBJECT
 public:
-    MobileConnectionWizard(QWidget * parent = 0);
+    /*
+     * Do not use Knm::Connection::Bluetooth here, use either Knm::Connection::Gsm or Knm::Connection::Cdma.
+     */
+    MobileConnectionWizard(Knm::Connection::Type connectionType = Knm::Connection::Unknown, QWidget * parent = 0);
     ~MobileConnectionWizard();
 
     /*
@@ -50,7 +53,7 @@ public:
      */
     QVariantList args();
 
-    Knm::Connection::Type type() const;
+    Knm::Connection::Type type() const { return mType; }
     MobileProviders::ErrorCodes getError();
 
 private Q_SLOTS:
@@ -72,11 +75,12 @@ private:
     int nextId() const;
 
     MobileProviders * mProviders;
-    Solid::Control::NetworkInterface * mIface;
     QString getCountryFromLocale();
     QString country;
     QString provider;
     QString apn;
+    Knm::Connection::Type mType;
+    bool mInitialMethodType;
 
     // Intro page
     QComboBox * mDeviceComboBox;
@@ -92,7 +96,6 @@ private:
     QRadioButton * radioAutoProvider;
     QRadioButton * radioManualProvider;
     QLineEdit * lineEditProvider;
-    QComboBox * mType;
 
     // Plan page
     QComboBox * mPlanComboBox;

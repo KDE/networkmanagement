@@ -39,6 +39,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/cdmapersistence.h"
 #include "settings/gsm.h"
 #include "settings/gsmpersistence.h"
+#include "settings/bluetooth.h"
+#include "settings/bluetoothpersistence.h"
 #include "settings/ipv4.h"
 #include "settings/ipv4persistence.h"
 #include "settings/ppp.h"
@@ -99,6 +101,9 @@ SettingPersistence * ConnectionPersistence::persistenceFor(Setting * setting)
                 break;
             case Setting::Gsm:
                 sp = new GsmPersistence(static_cast<GsmSetting*>(setting), m_config, m_storageMode);
+                break;
+            case Setting::Bluetooth:
+                sp = new BluetoothPersistence(static_cast<BluetoothSetting*>(setting), m_config, m_storageMode);
                 break;
             case Setting::Ipv4:
                 sp = new Ipv4Persistence(static_cast<Ipv4Setting*>(setting), m_config, m_storageMode);

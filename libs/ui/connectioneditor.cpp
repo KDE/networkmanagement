@@ -45,6 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelesspreferences.h"
 #include "gsmconnectioneditor.h"
 #include "cdmaconnectioneditor.h"
+#include "bluetoothconnectioneditor.h"
 #include "pppoepreferences.h"
 #include "vpnpreferences.h"
 
@@ -225,6 +226,9 @@ ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaul
         case Knm::Connection::Gsm:
             wid = new GsmConnectionEditor(args, parent);
             break;
+        case Knm::Connection::Bluetooth:
+            wid = new BluetoothConnectionEditor(args, parent);
+            break;
         case Knm::Connection::Vpn:
             wid = new VpnPreferences(args, parent);
             break;
@@ -254,6 +258,9 @@ ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaul
             break;
         case Knm::Connection::Gsm:
             wid = new GsmConnectionEditor(con, parent);
+            break;
+        case Knm::Connection::Bluetooth:
+            wid = new BluetoothConnectionEditor(con, parent);
             break;
         case Knm::Connection::Vpn:
             wid = new VpnPreferences(con, parent);

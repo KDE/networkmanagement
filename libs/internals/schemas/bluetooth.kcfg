@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<kcfg xmlns="http://www.kde.org/standards/kcfg/1.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.kde.org/standards/kcfg/1.0
+  http://www.kde.org/standards/kcfg/1.0/kcfg.xsd" >
+  <kcfgfile arg="false"/>
+  <group name="bluetooth">
+    <entry name="networkname" type="String">
+      <label>Network Name</label>
+      <whatsthis></whatsthis>
+      <default></default>
+    </entry>
+    <entry name="bdaddr" type="String">
+      <label>Bdaddr</label>
+      <whatsthis></whatsthis>
+      <default></default>
+    </entry>
+    <entry name="networktype" type="String" dbuskey="NM_SETTING_BLUETOOTH_NETWORK_TYPE">
+      <label>Network Type</label>
+      <whatsthis></whatsthis>
+    </entry>
+  </group>
+</kcfg>
+

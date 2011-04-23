@@ -33,6 +33,8 @@ set(knm_nm_LIB_SRCS
 
    settings/cdmadbus.cpp
 
+   settings/bluetoothdbus.cpp
+
    settings/ipv4dbus.cpp
 
    settings/pppdbus.cpp

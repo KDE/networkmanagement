@@ -26,6 +26,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QString>
 #include <QUuid>
 
+#include <solid/control/networkinterface.h>
+
 #include "setting.h"
 
 #include "knminternals_export.h"
@@ -37,10 +39,13 @@ class KNMINTERNALS_EXPORT Connection
 {
 
 public:
-    enum Type { Wired = 1, Wireless, Gsm, Cdma, Vpn, Pppoe };
+    enum Type { Unknown = 0, Wired, Wireless, Gsm, Cdma, Vpn, Pppoe, Bluetooth };
     enum Scope { User = 1, System };
     static QString typeAsString(Connection::Type);
     static Connection::Type typeFromString(const QString & type);
+    static Connection::Type typeFromSolidType(const Solid::Control::NetworkInterface::Type type);
+    static QString scopeAsString(Connection::Scope);
+    static Connection::Scope scopeFromString(const QString & scope);    
     static QString iconName(const Connection::Type type);
 
     /**

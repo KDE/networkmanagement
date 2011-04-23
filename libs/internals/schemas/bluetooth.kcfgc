@@ -1,0 +1,5 @@
+File=bluetooth.kcfg
+ClassName=Bluetooth
+Mutators=true
+Visibility=KNMINTERNALS_EXPORT
+NameSpace=Knm

@@ -43,6 +43,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "cdmadbus.h"
 #include "settings/gsm.h"
 #include "gsmdbus.h"
+#include "settings/bluetooth.h"
+#include "bluetoothdbus.h"
 #include "settings/ipv4.h"
 #include "ipv4dbus.h"
 #include "settings/ppp.h"
@@ -79,6 +81,9 @@ SettingDbus * ConnectionDbus::dbusFor(Setting * setting)
                 break;
             case Setting::Gsm:
                 sd = new GsmDbus(static_cast<GsmSetting*>(setting));
+                break;
+            case Setting::Bluetooth:
+                sd = new BluetoothDbus(static_cast<BluetoothSetting*>(setting));
                 break;
             case Setting::Ipv4:
                 sd = new Ipv4Dbus(static_cast<Ipv4Setting*>(setting));
@@ -145,6 +150,9 @@ QVariantMapMap ConnectionDbus::toDbusMap()
         case Knm::Connection::Gsm:
             dbusConnectionType = QLatin1String(NM_SETTING_GSM_SETTING_NAME);
             break;
+        case Knm::Connection::Bluetooth:
+            dbusConnectionType = QLatin1String(NM_SETTING_BLUETOOTH_SETTING_NAME);
+            break;
         case Knm::Connection::Cdma:
             dbusConnectionType = QLatin1String(NM_SETTING_CDMA_SETTING_NAME);
             break;
@@ -153,6 +161,8 @@ QVariantMapMap ConnectionDbus::toDbusMap()
             break;
         case Knm::Connection::Pppoe:
             dbusConnectionType = QLatin1String(NM_SETTING_PPPOE_SETTING_NAME);
+            break;
+        default:
             break;
     }
     connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_TYPE), dbusConnectionType);
@@ -181,6 +191,7 @@ QVariantMapMap ConnectionDbus::toDbusMap()
                     || (setting->name() == dbusConnectionType)
                     || (m_connection->type() == Knm::Connection::Gsm && setting->type() == Knm::Setting::Ppp)
                     || (m_connection->type() == Knm::Connection::Cdma && setting->type() == Knm::Setting::Ppp)
+                    || (m_connection->type() == Knm::Connection::Bluetooth && setting->type() == Knm::Setting::Ppp)
                     || (m_connection->type() == Knm::Connection::Pppoe && setting->type() == Knm::Setting::Ppp)) {
                 mapMap.insert(setting->name(), map);
                 //kDebug() << "  Settings: " << setting->name();
@@ -232,6 +243,8 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
         type = Connection::Gsm;
     } else if (dbusConnectionType == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
         type = Connection::Cdma;
+    } else if (dbusConnectionType == QLatin1String(NM_SETTING_BLUETOOTH_SETTING_NAME)) {
+        type = Connection::Bluetooth;
     } else if (dbusConnectionType == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
         type = Connection::Vpn;
     } else if (dbusConnectionType == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
