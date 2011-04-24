@@ -42,7 +42,7 @@ RemoteGsmInterfaceConnection::~RemoteGsmInterfaceConnection()
 int RemoteGsmInterfaceConnection::getAccessTechnology() const
 {
     Q_D(const RemoteGsmInterfaceConnection);
-    QDBusReply<uint> reply = d->gsmInterfaceConnectionIface->getAccessTechnology();
+    QDBusReply<int> reply = d->gsmInterfaceConnectionIface->getAccessTechnology();
 
     if (reply.isValid()) {
         return reply.value();
