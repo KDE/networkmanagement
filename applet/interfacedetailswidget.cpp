@@ -49,6 +49,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
     #include <solid/control/modemmanager.h>
 #endif
+#ifdef NM_0_8
+    #include <solid/control/networkbtinterface.h>
+#endif
 #include <Solid/Device>
 
 #include <uiutils.h>
@@ -211,7 +214,11 @@ void InterfaceDetailsWidget::getDetails()
     details->connectionState = m_iface->connectionState();
     details->ipAddress = currentIpAddress();
     details->bitRate = bitRate();
+#ifdef NM_0_8
+    details->interfaceName = m_iface->ipInterfaceName();
+#else
     details->interfaceName = m_iface->interfaceName();
+#endif
     details->mac = getMAC();
     details->driver = m_iface->driver();
 
@@ -566,14 +573,18 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
         showDetails();
         connectSignals();
 
+#ifdef NM_0_8
+        QString interfaceName = m_iface->ipInterfaceName();
+#else
         QString interfaceName = m_iface->interfaceName();
 
-        /* TODO: ugly and error prone if more than one 3G modem/cellphone is connected to the Internet.
-         * If anyone knows a way to convert a serial device name to a network interface name let me know. */
+        /* Ugly and error prone hack: if more than one 3G modem/cellphone is connected to the Internet this
+         * will make Plasma NM always report connection speed for the first one. */
         if (interfaceName.contains("ttyACM") || interfaceName.contains("ttyUSB") || // USB modems
             interfaceName.contains("rfcomm")) { // bluetooth modems
             interfaceName = "ppp0";
         }
+#endif
 
         m_rxSource = QString("network/interfaces/%1/receiver/data").arg(interfaceName);
         m_txSource = QString("network/interfaces/%1/transmitter/data").arg(interfaceName);
@@ -617,12 +628,20 @@ QString InterfaceDetailsWidget::getMAC()
             kDebug() << "temp = " << temp;
         }
         */
-    } else {     // wired?
+    } else {
+#ifdef NM_0_8
+        Solid::Control::BtNetworkInterface * btiface =
+                    dynamic_cast<Solid::Control::BtNetworkInterface*>(m_iface);
+        if (btiface) {
+            return btiface->interfaceName();
+        }
+#endif
+
+        // wired?
         Solid::Control::WiredNetworkInterface * wdiface =
                                     dynamic_cast<Solid::Control::WiredNetworkInterface*> (m_iface);
         if (wdiface) {
-            QString temp = wdiface->hardwareAddress();
-            return temp;
+            return wdiface->hardwareAddress();
         } else {
             // prevent crash for unconnected devices
             if (m_iface) { // last resort, although using ifaceName is not portable
@@ -675,7 +694,8 @@ void InterfaceDetailsWidget::connectSignals()
     }
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
-    if (m_iface->type() == Solid::Control::NetworkInterface::Gsm) {
+    if (m_iface->type() == Solid::Control::NetworkInterface::Gsm ||
+        m_iface->type() == Solid::Control::NetworkInterface::Bluetooth) {
             Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
 
             if (giface) {
@@ -704,7 +724,8 @@ void InterfaceDetailsWidget::disconnectSignals()
     disconnect(m_iface, 0, this, 0);
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
-    if (m_iface && m_iface->type() == Solid::Control::NetworkInterface::Gsm) {
+    if (m_iface && (m_iface->type() == Solid::Control::NetworkInterface::Gsm ||
+                    m_iface->type() == Solid::Control::NetworkInterface::Bluetooth)) {
         Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
 
         if (giface) {

@@ -24,6 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-cdma.h>
 #include <nm-setting-connection.h>
 #include <nm-setting-gsm.h>
+#include <nm-setting-bluetooth.h>
 #include <nm-setting-pppoe.h>
 #include <nm-setting-vpn.h>
 #include <nm-setting-wired.h>
@@ -63,6 +64,8 @@ RemoteConnection::RemoteConnection(const QString& service, const QString & path,
             m_type = Solid::Control::NetworkInterface::Cdma;
         } else if (nmType == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
             m_type = Solid::Control::NetworkInterface::Gsm;
+        } else if (nmType == QLatin1String(NM_SETTING_BLUETOOTH_SETTING_NAME)) {
+            m_type = Solid::Control::NetworkInterface::Bluetooth;
         } else if (nmType == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
             m_type = Solid::Control::NetworkInterface::Serial;
         } else if (nmType == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {

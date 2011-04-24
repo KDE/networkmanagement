@@ -25,7 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkinterfaceactivatableprovider_p.h"
 
 #include <solid/control/modemmanager.h>
-#include <solid/control/networkgsminterface.h>
+#include <solid/control/networkbtinterface.h>
 
 #include <gsminterfaceconnection.h>
 #include <gsminterfaceconnectionhelpers.h>
@@ -64,7 +64,13 @@ void GsmNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedCo
     kDebug() << addedConnection->uuid();
     if (!d->activatables.contains(addedConnection->uuid())) {
         if (hardwareAddressMatches(addedConnection, d->interface)) {
-            if (matches(addedConnection->type(), d->interface->type())) {
+            Solid::Control::NetworkInterface::Type type = d->interface->type();
+            Solid::Control::BtNetworkInterface *btIface = qobject_cast<Solid::Control::BtNetworkInterface *>(d->interface);
+            if (btIface) {
+                kDebug() << btIface->uni() << " is actually a gsm bluetooth device";
+                type = btIface->type();
+            }
+            if (matches(addedConnection->type(), type)) {
                 Knm::GsmInterfaceConnection * ifaceConnection =
                     Knm::GsmInterfaceConnectionHelpers::buildGsmInterfaceConnection(
                             d->gsmInterface(), addedConnection, d->interface->uni(), this);
@@ -72,7 +78,7 @@ void GsmNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedCo
                 d->activatables.insert(addedConnection->uuid(), ifaceConnection);
                 d->activatableList->addActivatable(ifaceConnection);
             } else {
-                kDebug() << "connection type mismatch: " << addedConnection->type() << d->interface->type();
+                kDebug() << "connection type mismatch: " << addedConnection->type() << type;
             }
         } else {
             kDebug() << "hardware address mismatch!";
