@@ -3,15 +3,15 @@
 <node>
   <interface name="org.kde.networkmanagement.GsmInterfaceConnection">
     <method name="getAccessTechnology">
-      <arg type="s" direction="out" />
+      <arg type="i" direction="out" />
     </method>
     <method name="getSignalQuality">
       <arg type="i" direction="out" />
     </method>
-    <property name="accessTechnology" type="s" access="read"/>
+    <property name="accessTechnology" type="i" access="read"/>
     <property name="signalQuality" type="i" access="read"/>
     <signal name="accessTechnologyChanged">
-      <arg name="tech" type="s" direction="out"/>
+      <arg name="tech" type="i" direction="out"/>
     </signal>
     <signal name="signalQualityChanged">
       <arg name="quality" type="i" direction="out"/>
