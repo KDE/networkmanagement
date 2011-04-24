@@ -64,8 +64,10 @@ RemoteConnection::RemoteConnection(const QString& service, const QString & path,
             m_type = Solid::Control::NetworkInterface::Cdma;
         } else if (nmType == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
             m_type = Solid::Control::NetworkInterface::Gsm;
+#ifdef NM_0_8
         } else if (nmType == QLatin1String(NM_SETTING_BLUETOOTH_SETTING_NAME)) {
             m_type = Solid::Control::NetworkInterface::Bluetooth;
+#endif
         } else if (nmType == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
             m_type = Solid::Control::NetworkInterface::Serial;
         } else if (nmType == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {

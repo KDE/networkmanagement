@@ -136,7 +136,10 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
          | Solid::Control::NetworkInterface::Serial
          | Solid::Control::NetworkInterface::Gsm
          | Solid::Control::NetworkInterface::Cdma
-         | Solid::Control::NetworkInterface::Bluetooth);
+#ifdef NM_0_8
+         | Solid::Control::NetworkInterface::Bluetooth
+#endif
+	 );
 
     d->sortedList = new SortedActivatableList(types, this);
     d->activatableList->registerObserver(d->sortedList);

@@ -84,9 +84,11 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
             kDebug() << "Wired interface added";
             provider = new WiredNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::WiredNetworkInterface*>(iface), this);
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
+#ifdef NM_0_8
         } else if (iface->type() == Solid::Control::NetworkInterface::Bluetooth) {
             kDebug() << "Bluetooth interface added";
             provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::GsmNetworkInterface*>(iface), this);
+#endif	    
         } else if (iface->type() == Solid::Control::NetworkInterface::Gsm) {
             kDebug() << "Gsm interface added";
             provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::GsmNetworkInterface*>(iface), this);

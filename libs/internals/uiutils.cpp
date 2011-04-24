@@ -48,7 +48,9 @@ QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterface::Type
         case Solid::Control::NetworkInterface::Serial:
             deviceText = i18nc("title of the interface widget in nm's popup", "Serial Modem");
             break;
+#ifdef NM_0_8
         case Solid::Control::NetworkInterface::Bluetooth:
+#endif
         case Solid::Control::NetworkInterface::Gsm:
         case Solid::Control::NetworkInterface::Cdma:
             deviceText = i18nc("title of the interface widget in nm's popup", "Mobile Broadband");
@@ -102,9 +104,11 @@ QString UiUtils::iconName(Solid::Control::NetworkInterface *iface)
         case Solid::Control::NetworkInterface::Serial:
             icon = "modem";
             break;
+#ifdef NM_0_8
         case Solid::Control::NetworkInterface::Bluetooth:
             icon = "bluetooth";
             break;
+#endif	    
         case Solid::Control::NetworkInterface::Gsm:
         case Solid::Control::NetworkInterface::Cdma:
             icon = "phone";

@@ -717,8 +717,11 @@ void InterfaceDetailsWidget::connectSignals()
     }
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
-    if (m_iface->type() == Solid::Control::NetworkInterface::Gsm ||
-        m_iface->type() == Solid::Control::NetworkInterface::Bluetooth) {
+    if (m_iface->type() == Solid::Control::NetworkInterface::Gsm
+#ifdef NM_0_8
+        || m_iface->type() == Solid::Control::NetworkInterface::Bluetooth
+#endif	
+       ) {
             Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
 
             if (giface) {
@@ -747,8 +750,11 @@ void InterfaceDetailsWidget::disconnectSignals()
     disconnect(m_iface, 0, this, 0);
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
-    if (m_iface && (m_iface->type() == Solid::Control::NetworkInterface::Gsm ||
-                    m_iface->type() == Solid::Control::NetworkInterface::Bluetooth)) {
+    if (m_iface && (m_iface->type() == Solid::Control::NetworkInterface::Gsm
+#ifdef NM_0_8
+                 || m_iface->type() == Solid::Control::NetworkInterface::Bluetooth
+#endif		 
+       )) {
         Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
 
         if (giface) {
