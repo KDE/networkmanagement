@@ -25,7 +25,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkinterfaceactivatableprovider_p.h"
 
 #include <solid/control/modemmanager.h>
+#ifdef NM_0_8
 #include <solid/control/networkbtinterface.h>
+#endif
 
 #include <gsminterfaceconnection.h>
 #include <gsminterfaceconnectionhelpers.h>
@@ -65,11 +67,13 @@ void GsmNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedCo
     if (!d->activatables.contains(addedConnection->uuid())) {
         if (hardwareAddressMatches(addedConnection, d->interface)) {
             Solid::Control::NetworkInterface::Type type = d->interface->type();
+#ifdef NM_0_8
             Solid::Control::BtNetworkInterface *btIface = qobject_cast<Solid::Control::BtNetworkInterface *>(d->interface);
             if (btIface) {
                 kDebug() << btIface->uni() << " is actually a gsm bluetooth device";
                 type = btIface->type();
             }
+#endif
             if (matches(addedConnection->type(), type)) {
                 Knm::GsmInterfaceConnection * ifaceConnection =
                     Knm::GsmInterfaceConnectionHelpers::buildGsmInterfaceConnection(
