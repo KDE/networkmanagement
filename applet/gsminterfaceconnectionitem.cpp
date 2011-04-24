@@ -131,7 +131,6 @@ void GsmInterfaceConnectionItem::setAccessTechnology(const int tech)
     }
 
     if (tech != ModemInterface::UnknownTechnology) {
-        kDebug() << "Updating access technology to " << tech << ModemInterface::convertAccessTechnologyToString(ModemInterface::UnknownTechnology);
         m_connectButton->setText(QString("%1 (%2)").
                                  arg(interfaceConnection()->connectionName()).
                                  arg(ModemInterface::convertAccessTechnologyToString(static_cast<ModemInterface::AccessTechnology>(tech))));
