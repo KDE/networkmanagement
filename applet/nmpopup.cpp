@@ -310,9 +310,11 @@ void NMPopup::interfaceAdded(const QString& uni)
     if (m_interfaces.contains(uni)) {
         return;
     }
-    kDebug() << "Interface Added.";
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
-    addInterfaceInternal(iface);
+    if (iface) {
+        kDebug() << "Interface Added:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
+        addInterfaceInternal(iface);
+    }
 }
 
 void NMPopup::interfaceRemoved(const QString& uni)
