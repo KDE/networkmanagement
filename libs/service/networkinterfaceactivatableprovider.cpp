@@ -114,6 +114,9 @@ bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType
              || (connType == Knm::Connection::Gsm && ifaceType == Solid::Control::NetworkInterface::Gsm)
              || (connType == Knm::Connection::Cdma && ifaceType == Solid::Control::NetworkInterface::Cdma)
              || (connType == Knm::Connection::Pppoe && ifaceType == Solid::Control::NetworkInterface::Serial)
+#ifdef NM_0_8
+             || (connType == Knm::Connection::Bluetooth && ifaceType == Solid::Control::NetworkInterface::Bluetooth)
+#endif
              );
 }
 
