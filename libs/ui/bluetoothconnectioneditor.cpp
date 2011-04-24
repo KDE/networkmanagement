@@ -58,10 +58,9 @@ BluetoothConnectionEditor::BluetoothConnectionEditor(const QVariantList &args, Q
 
         if (args.count() > 3) {
             QMap<QString, QVariant> apnInfo = args[3].toMap();
-            if (apnInfo["name"].isNull()) {
-                m_contents->setDefaultName(args[1].toString());
-            } else {
-                m_contents->setDefaultName(args[1].toString() + " - " + apnInfo["name"].toString());
+            QString defaultName = args[1].toString();
+            if (!apnInfo["name"].isNull()) {
+                defaultName += " - " + apnInfo["name"].toString();
             }
             gsmWidget->setApnInfo(apnInfo);
 
@@ -71,8 +70,10 @@ BluetoothConnectionEditor::BluetoothConnectionEditor(const QVariantList &args, Q
                 if (b) {
                     b->setBdaddrFromString(args[4].toString());
                     b->setNetworkname(args[5].toString());
+                    defaultName = args[5].toString() + " " + defaultName;
                 }
             }
+            m_contents->setDefaultName(defaultName);
         } else {
             m_contents->setDefaultName(args[1].toString());
         }
