@@ -97,7 +97,7 @@ void WirelessNetworkItem::setupItem()
     //m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", ssid));
     m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
 
-    if (m_remote->strength() >= 0)
+    if (m_remote->strength()>=0)
     {
         m_strengthMeter = new Plasma::Meter(this);
         m_strengthMeter->setMinimum(0);
@@ -108,6 +108,14 @@ void WirelessNetworkItem::setupItem()
         m_strengthMeter->setMaximumHeight(12);
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
         m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
+    }
+    else
+    {
+        QGraphicsWidget *widget = new QGraphicsWidget(this);
+        widget->setPreferredSize(QSizeF(60, 12));
+        widget->setMaximumHeight(12);
+        widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        m_layout->addItem(widget, 0, 1, 1, 1, Qt::AlignCenter);
     }
 
     m_securityIcon = new Plasma::Label(this);
