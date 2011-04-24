@@ -37,7 +37,7 @@ class KNMINTERNALS_EXPORT GsmInterfaceConnection : public InterfaceConnection
 {
 Q_OBJECT
 Q_PROPERTY(int quality READ getSignalQuality)
-Q_PROPERTY(QString tech READ getAccessTechnology)
+Q_PROPERTY(int tech READ getAccessTechnology)
 
 public:
     friend class GsmInterfaceConnectionBuilder;
@@ -46,10 +46,10 @@ public:
     // Knm::GsmInterfaceConnectionHelpers::build(..) function.
     virtual ~GsmInterfaceConnection();
     int getSignalQuality() const;
-    QString getAccessTechnology() const;
+    int getAccessTechnology() const;
 Q_SIGNALS:
     void signalQualityChanged(int);
-    void accessTechnologyChanged(const QString);
+    void accessTechnologyChanged(const int);
     void enabledChanged(const bool enabled);
 public Q_SLOTS:
     void setSignalQuality(uint signalQuality);
@@ -58,7 +58,7 @@ public Q_SLOTS:
 protected:
     GsmInterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent);
     int m_signalQuality;
-    QString m_accessTechnology;
+    int m_accessTechnology;
     bool m_enabled;
 };
 } // namespace

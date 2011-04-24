@@ -31,7 +31,7 @@ using namespace Knm;
 GsmInterfaceConnection::GsmInterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent)
 : InterfaceConnection(type, deviceUni, parent), m_signalQuality(0), m_enabled(false)
 {
-    m_accessTechnology = Solid::Control::ModemInterface::convertAccessTechnologyToString(Solid::Control::ModemInterface::UnknownTechnology);
+    m_accessTechnology = Solid::Control::ModemInterface::UnknownTechnology;
 }
 
 GsmInterfaceConnection::~GsmInterfaceConnection()
@@ -48,7 +48,7 @@ void GsmInterfaceConnection::setSignalQuality(uint signalQuality)
 
 void GsmInterfaceConnection::setAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology accessTechnology)
 {
-    QString temp = Solid::Control::ModemInterface::convertAccessTechnologyToString(accessTechnology);
+    int temp =accessTechnology;
 
     if (temp != m_accessTechnology) {
         setSignalQuality(0);
@@ -62,7 +62,7 @@ int GsmInterfaceConnection::getSignalQuality() const
     return m_signalQuality;
 }
 
-QString GsmInterfaceConnection::getAccessTechnology() const
+int GsmInterfaceConnection::getAccessTechnology() const
 {
     return m_accessTechnology;
 }

@@ -40,6 +40,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatable.h"
 
+using namespace Solid::Control;
+
 GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnection * remote, QGraphicsItem * parent)
 : ActivatableItem(remote, parent),
     m_strengthMeter(0),
@@ -47,7 +49,7 @@ GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnect
     m_remote(remote)
 {
     connect(remote, SIGNAL(signalQualityChanged(int)), this, SLOT(setQuality(int)));
-    connect(remote, SIGNAL(accessTechnologyChanged(const QString)), this, SLOT(setAccessTechnology(const QString)));
+    connect(remote, SIGNAL(accessTechnologyChanged(const int)), this, SLOT(setAccessTechnology(const int)));
     connect(remote, SIGNAL(changed()), SLOT(update()));
     connect(remote, SIGNAL(changed()), SLOT(stateChanged()));
     m_state = remote->activationState();
@@ -122,16 +124,17 @@ void GsmInterfaceConnectionItem::setQuality(int quality)
     }
 }
 
-void GsmInterfaceConnectionItem::setAccessTechnology(const QString tech)
+void GsmInterfaceConnectionItem::setAccessTechnology(const int tech)
 {
     if (!m_connectButton) {
         return;
     }
 
-    if (tech != Solid::Control::ModemInterface::convertAccessTechnologyToString(Solid::Control::ModemInterface::UnknownTechnology)) {
+    if (tech != ModemInterface::UnknownTechnology) {
+        kDebug() << "Updating access technology to " << tech << ModemInterface::convertAccessTechnologyToString(ModemInterface::UnknownTechnology);
         m_connectButton->setText(QString("%1 (%2)").
                                  arg(interfaceConnection()->connectionName()).
-                                 arg(tech));
+                                 arg(ModemInterface::convertAccessTechnologyToString(static_cast<ModemInterface::AccessTechnology>(tech))));
     }
     else {
         m_connectButton->setText(interfaceConnection()->connectionName());
