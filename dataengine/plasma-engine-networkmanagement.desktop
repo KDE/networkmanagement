@@ -14,6 +14,7 @@ Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managerxx
 Name[zh_TW]=Network Manager
 Comment=Network Manager data engine
+Comment[ca]=Motor de dades del gestor de xarxa
 Comment[da]=Datamotor til Network Manager
 Comment[el]=Μηχανή δεδομένων για διαχειριστή δικτύου
 Comment[et]=Võrguhalduri andmemootor
