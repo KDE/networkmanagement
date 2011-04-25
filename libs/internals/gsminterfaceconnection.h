@@ -55,6 +55,7 @@ public Q_SLOTS:
     void setSignalQuality(uint signalQuality);
     void setAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology accessTechnology);
     void setEnabled(const bool enabled);
+    void connectMMSignals();
 protected:
     GsmInterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent);
     int m_signalQuality;
