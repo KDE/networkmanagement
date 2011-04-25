@@ -88,7 +88,7 @@ class InterfaceDetails
 };
 
 InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphicsWidget(parent, 0),
-    m_iface(0)
+    m_iface(0), m_updateEnabled(false)
 {
     m_gridLayout = new QGraphicsGridLayout(this);
 
@@ -204,9 +204,18 @@ void InterfaceDetailsWidget::resetUi()
     */
 }
 
+void InterfaceDetailsWidget::resetInterfaceDetails()
+{
+    delete details;
+    details = new InterfaceDetails();
+    getDetails();
+    showDetails();
+}
+
 void InterfaceDetailsWidget::getDetails()
 {
     if (!m_iface) {
+        emit back();
         return;
     }
 
@@ -551,6 +560,18 @@ void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_
     } else {
         details->ipAddress = currentIpAddress();
         details->connectionState = static_cast<Solid::Control::NetworkInterface::ConnectionState>(new_state);
+#ifdef NM_0_8
+        // For bluetooth devices.
+        QString interfaceName = m_iface->ipInterfaceName();
+        if (interfaceName != details->interfaceName) {
+            // Hack to force updating interfaceName and traffic plot.
+            Solid::Control::NetworkInterface *temp = m_iface;
+            m_iface = 0;
+            kDebug() << "Reseting interface " << temp->uni() << "(" << interfaceName << ")";
+            setInterface(temp);
+            setUpdateEnabled(m_updateEnabled);
+        } else
+#endif
         showDetails();
     }
 }
@@ -692,12 +713,11 @@ void InterfaceDetailsWidget::connectSignals()
             connect(m_iface, SIGNAL(activeAccessPointChanged(const QString &)), this, SLOT(updateActiveAccessPoint(QString &)));
         }
     }
-
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
     if (m_iface->type() == Solid::Control::NetworkInterface::Gsm
 #ifdef NM_0_8
         || m_iface->type() == Solid::Control::NetworkInterface::Bluetooth
-#endif	
+#endif
        ) {
             Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
 
@@ -705,6 +725,8 @@ void InterfaceDetailsWidget::connectSignals()
                 Solid::Control::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
 
                 if (modemNetworkIface) {
+                    // this one is for bluetooth devices, which always have a NetworkManager object but do not always have a ModemManager object.
+                    connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(resetInterfaceDetails()));
                     connect(modemNetworkIface, SIGNAL(enabledChanged(const bool)), this, SLOT(modemUpdateEnabled(const bool)));
                     connect(modemNetworkIface, SIGNAL(unlockRequiredChanged(const QString &)), this, SLOT(modemUpdateUnlockRequired(const QString &)));
 
@@ -730,7 +752,7 @@ void InterfaceDetailsWidget::disconnectSignals()
     if (m_iface && (m_iface->type() == Solid::Control::NetworkInterface::Gsm
 #ifdef NM_0_8
                  || m_iface->type() == Solid::Control::NetworkInterface::Bluetooth
-#endif		 
+#endif
        )) {
         Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
 

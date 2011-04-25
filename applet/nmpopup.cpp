@@ -42,6 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkmanager.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/wirednetworkinterface.h>
+#include <solid/control/networkserialinterface.h>
 
 // client lib
 #include "activatableitem.h"
@@ -559,9 +560,8 @@ void NMPopup::updateHasWwan()
 {
     bool hasWwan = false;
     foreach (InterfaceItem* ifaceitem, m_interfaces) {
-        Solid::Control::NetworkInterface* iface = ifaceitem->interface();
-        if (iface && (iface->type() == Solid::Control::NetworkInterface::Gsm ||
-                      iface->type() == Solid::Control::NetworkInterface::Cdma)) {
+        Solid::Control::SerialNetworkInterface* iface = qobject_cast<Solid::Control::SerialNetworkInterface *>(ifaceitem->interface());
+        if (iface) {
             hasWwan = true;
             break;
         }

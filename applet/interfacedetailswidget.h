@@ -95,6 +95,7 @@ Q_OBJECT
         InterfaceDetails * details;
 
     private Q_SLOTS:
+        void resetInterfaceDetails();
         void updateIpAddress();
         void updateBitRate(int bitRate);
         void updateActiveAccessPoint(const QString &ap);
