@@ -43,15 +43,11 @@ int RemoteGsmInterfaceConnection::getAccessTechnology() const
 {
     Q_D(const RemoteGsmInterfaceConnection);
     QDBusReply<int> reply = d->gsmInterfaceConnectionIface->getAccessTechnology();
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
     if (reply.isValid()) {
         return reply.value();
     } else {
         return Solid::Control::ModemInterface::UnknownTechnology;
     }
-#else
-    return reply.value();
-#endif
 }
 
 int RemoteGsmInterfaceConnection::getSignalQuality() const
