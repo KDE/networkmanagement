@@ -48,6 +48,8 @@ GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnect
     m_connectButton(0),
     m_remote(remote)
 {
+    // TODO: the next two signals are not working for bluetooth devices because the ModemGsmNetworkInterface object
+    // is null when the remote object is constructed and is never updated to a valid object.
     connect(remote, SIGNAL(signalQualityChanged(int)), this, SLOT(setQuality(int)));
     connect(remote, SIGNAL(accessTechnologyChanged(const int)), this, SLOT(setAccessTechnology(const int)));
     connect(remote, SIGNAL(changed()), SLOT(update()));
@@ -94,7 +96,6 @@ void GsmInterfaceConnectionItem::setupItem()
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);
     m_strengthMeter->setValue(m_remote->getSignalQuality());
-    m_strengthMeter->setValue(0);
     m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
     m_strengthMeter->setPreferredSize(QSizeF(60, 12));
     m_strengthMeter->setMaximumHeight(12);
