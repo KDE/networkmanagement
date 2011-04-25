@@ -30,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // For now all connections are user scope. For NM-0.9 we will have to change that to system scope.
 void saveConnection(Knm::Connection *con)
 {
-    kDebug(KDE_DEFAULT_DEBUG_AREA);
     // persist the Connection
     QString connectionFile = KStandardDirs::locateLocal("data",
         Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + con->uuid());
@@ -63,20 +62,116 @@ void saveConnection(Knm::Connection *con)
 }
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
-Bluetooth::Bluetooth(const QString bdaddr): QObject(), mBdaddr(bdaddr), mDunDevice(QString()), mobileConnectionWizard(0)
-{
-    connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceAdded(const QString &)),
-            SLOT(modemAdded(const QString &)));
-}
+#include <QTimer>
 
-Bluetooth::Bluetooth(const QString bdaddr, const QString dunDevice): QObject(), mBdaddr(bdaddr), mDunDevice(dunDevice), mobileConnectionWizard(0)
+Bluetooth::Bluetooth(const QString bdaddr, const QString service): QObject(), mBdaddr(bdaddr), mService(service), mobileConnectionWizard(0)
 {
+    mService = mService.toLower();
     connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceAdded(const QString &)),
             SLOT(modemAdded(const QString &)));
+
+    QTimer::singleShot(0, this, SLOT(init()));
 }
 
 Bluetooth::~Bluetooth()
 {
+}
+
+void Bluetooth::init()
+{
+    QRegExp rx("dun|rfcomm?");
+
+    if (rx.indexIn(mService) < 0) {
+        kDebug(KDE_DEFAULT_DEBUG_AREA) << "Error: we only support 'dun' service.";
+        kapp->quit();
+    }
+//    kDebug(KDE_DEFAULT_DEBUG_AREA) << "Bdaddr == " << mBdaddr;
+
+    /*
+     * Find default bluetooth adapter registered in BlueZ.
+     */
+
+    QDBusInterface bluez(QLatin1String("org.bluez"), QLatin1String("/"),
+                         QLatin1String("org.bluez.Manager"), QDBusConnection::systemBus());
+
+    if (!bluez.isValid()) {
+        kDebug(KDE_DEFAULT_DEBUG_AREA) << "Error: could not contact BlueZ.";
+        kapp->quit();
+        return;
+    }
+
+//    kDebug(KDE_DEFAULT_DEBUG_AREA) << "Querying default adapter";
+    QDBusReply<QDBusObjectPath> adapterPath = bluez.call(QLatin1String("DefaultAdapter"));
+
+    if (!adapterPath.isValid()) {
+        kDebug(KDE_DEFAULT_DEBUG_AREA) << "Error: default bluetooth adapter not found. Quiting.";
+        kapp->quit();
+        return;
+    }
+
+//    kDebug(KDE_DEFAULT_DEBUG_AREA) << "Default adapter path is " << adapterPath.value().path();
+
+    /*
+     * Find device path registered in BlueZ.
+     */
+
+    QDBusInterface adapter(QLatin1String("org.bluez"), adapterPath.value().path(),
+                           QLatin1String("org.bluez.Adapter"), QDBusConnection::systemBus());
+
+    QDBusReply<QDBusObjectPath> devicePath = adapter.call(QLatin1String("FindDevice"), mBdaddr);
+
+    if (!devicePath.isValid()) {
+        kDebug(KDE_DEFAULT_DEBUG_AREA) << mBdaddr << " is not registered in default bluetooth adapter, it may be in another adapter.";
+        kDebug(KDE_DEFAULT_DEBUG_AREA) << mBdaddr << " waiting for it to be registered in ModemManager";
+        return;
+    }
+
+    mDevicePath = devicePath.value().path();
+    kDebug(KDE_DEFAULT_DEBUG_AREA) << "Device path for " << mBdaddr << " is " << mDevicePath;
+
+    /*
+     * Find name registered in BlueZ.
+     */
+
+    // get device properties
+    QDBusInterface device(QLatin1String("org.bluez"), mDevicePath,
+                          QLatin1String("org.bluez.Device"), QDBusConnection::systemBus());
+
+    QDBusReply<QMap<QString, QVariant> > deviceProperties = device.call(QLatin1String("GetProperties"));
+
+    if (!deviceProperties.isValid()) {
+        return;
+    }
+
+    QMap<QString, QVariant> properties = deviceProperties.value();
+//    kDebug(KDE_DEFAULT_DEBUG_AREA) << "Device properties == " << properties;
+
+    if (properties.contains("Name")) {
+        kDebug(KDE_DEFAULT_DEBUG_AREA) << "Name for" << mBdaddr << "is" << properties["Name"].toString();
+        mDeviceName = properties["Name"].toString();
+    }
+
+    // TODO: add panu support.
+    if (mService != QLatin1String("dun")) {
+        mDunDevice = mService;
+        kDebug(KDE_DEFAULT_DEBUG_AREA) << "device(" << mDunDevice << ") for" << mBdaddr << " passed as argument";
+        kDebug(KDE_DEFAULT_DEBUG_AREA) << "waiting for it to be registered in ModemManager";
+        return;
+    }
+
+    /*
+     * Contact BlueZ to connect phone's service.
+     */
+    QDBusInterface serial(QLatin1String("org.bluez"), mDevicePath,
+                          QLatin1String("org.bluez.Serial"), QDBusConnection::systemBus());
+   
+    QDBusReply<QString> reply = serial.call(QLatin1String("Connect"), mService);
+    if (!reply.isValid()) {
+        kDebug(KDE_DEFAULT_DEBUG_AREA) << "Error: org.bluez.Serial.Connect did not work. Quiting.";
+        kapp->quit();
+    }
+
+    mDunDevice = reply.value();
 }
 
 void Bluetooth::modemAdded(const QString &udi)
@@ -87,6 +182,11 @@ void Bluetooth::modemAdded(const QString &udi)
     if (!modem) {
         // Try CDMA if no GSM device has been found.
         modem = Solid::Control::ModemManager::findModemInterface(udi, Solid::Control::ModemInterface::NotGsm);
+    }
+
+    QStringList temp = mDunDevice.split("/");
+    if (temp.count() == 3) {
+        mDunDevice = temp[2];
     }
 
     // TODO: implement PANU (mDunDevice is empty with PANU)
@@ -120,63 +220,11 @@ void Bluetooth::modemAdded(const QString &udi)
 
     if (mobileConnectionWizard->exec() == QDialog::Accepted &&
         mobileConnectionWizard->getError() == MobileProviders::Success) {
-        con = editor.createConnection(true, Knm::Connection::Bluetooth, mobileConnectionWizard->args() << mBdaddr << deviceName(), false);
+        con = editor.createConnection(true, Knm::Connection::Bluetooth, mobileConnectionWizard->args() << mBdaddr << mDeviceName, false);
         saveConnection(con);
     }
     delete mobileConnectionWizard;
     kapp->quit();
 }
 
-QString Bluetooth::deviceName()
-{
-//    kDebug(KDE_DEFAULT_DEBUG_AREA) << "Bdaddr == " << mBdaddr;
-    // find the default adapter
-    QDBusInterface bluez(QLatin1String("org.bluez"), QLatin1String("/"),
-                         QLatin1String("org.bluez.Manager"), QDBusConnection::systemBus());
-
-    if (!bluez.isValid()) {
-        return QString();
-    }
-
-//    kDebug(KDE_DEFAULT_DEBUG_AREA) << "Querying default adapter";
-
-    QDBusReply<QDBusObjectPath> adapterPath = bluez.call(QLatin1String("DefaultAdapter"));
-
-    if (!adapterPath.isValid()) {
-        return QString();
-    }
-
-//    kDebug(KDE_DEFAULT_DEBUG_AREA) << "Default adapter path == " << adapterPath.value().path();
-
-    // find the device path
-    QDBusInterface adapter(QLatin1String("org.bluez"), adapterPath.value().path(),
-                     QLatin1String("org.bluez.Adapter"), QDBusConnection::systemBus());
-
-    QDBusReply<QDBusObjectPath> devicePath = adapter.call(QLatin1String("FindDevice"), mBdaddr);
-
-    if (!devicePath.isValid()) {
-        return QString();
-    }
-
-//    kDebug(KDE_DEFAULT_DEBUG_AREA) << "Device path == " << devicePath.value().path();
-
-    // get the properties
-    QDBusInterface device(QLatin1String("org.bluez"), devicePath.value().path(),
-                     QLatin1String("org.bluez.Device"), QDBusConnection::systemBus());
-
-    QDBusReply<QMap<QString, QVariant> > deviceProperties = device.call(QLatin1String("GetProperties"));
-
-    if (!deviceProperties.isValid()) {
-        return QString();
-    }
-
-    QMap<QString, QVariant> properties = deviceProperties.value();
-//    kDebug(KDE_DEFAULT_DEBUG_AREA) << "Device properties == " << properties;
-
-    if (properties.contains("Name")) {
-//        kDebug(KDE_DEFAULT_DEBUG_AREA) << "Name for" << mBdaddr << "is" << properties["Name"].toString();
-        return properties["Name"].toString();
-    }
-    return QString();
-}
 #endif

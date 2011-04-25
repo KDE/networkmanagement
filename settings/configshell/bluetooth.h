@@ -25,25 +25,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 extern void saveConnection(Knm::Connection *con);
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
+#include <QDBusObjectPath>
 #include <solid/control/modemmanager.h>
 
 class Bluetooth: public QObject
 {
 Q_OBJECT
 public:
-    // Bluetooth PANU
-    Bluetooth(const QString bdaddr);
-
-    // Bluetooth DUN
-    Bluetooth(const QString bdaddr, const QString dunDevice);
+    // dunDevice must be empty for PANU connections.
+    Bluetooth(const QString bdaddr, const QString service = QString("dun"));
     ~Bluetooth();
 
-
 private Q_SLOTS:
+    void init();
     void modemAdded(const QString &udi);
 private:
     QString mBdaddr;
+    QString mService;
     QString mDunDevice;
+    QString mDevicePath;
+    QString mDeviceName;
     MobileConnectionWizard *mobileConnectionWizard;
 
     QString deviceName();
