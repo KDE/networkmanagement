@@ -62,6 +62,7 @@ Q_OBJECT
         int bitRate();
         QString currentIpAddress();
         QString getMAC();
+        QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState connectionState);
         void getDetails();
         void showDetails(bool reset = false);
         void connectSignals();
