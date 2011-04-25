@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     options.add("connection <connection-id>", ki18n("Connection ID to edit"));
     options.add("hiddennetwork <ssid>", ki18n("Connect to a hidden wireless network"));
     options.add("type <type>", ki18n("Connection type to create, must be one of '802-3-ethernet', '802-11-wireless', 'pppoe', 'vpn', 'cellular', 'bluetooth'"));
-    options.add("specific-args <args>", ki18n("Space-separated connection type-specific arguments, may be either 'gsm' or 'cdma' for cellular, or 'openvpn' or 'vpnc' for vpn connections, interface and AP identifiers for wireless connections, bluetooth mac address for bluetooth pan, and bluetooth mac address and serial bluetooth identifies (i.e. rfcomm0) for bluetooth dun. Specific args are separated by commas and without spaces."));
+    options.add("specific-args <args>", ki18n("Space-separated connection type-specific arguments, may be either 'gsm' or 'cdma' for cellular, or 'openvpn' or 'vpnc' for vpn connections, interface and AP identifiers for wireless connections, bluetooth mac address for bluetooth pan, and bluetooth mac address and serial bluetooth identifies (i.e. rfcomm0) for bluetooth dun."));
     options.add("+mode", ki18n("Operation mode, may be either 'create' or 'edit'"), "create");
     KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
     KApplication app;
@@ -60,7 +60,7 @@ int main(int argc, char **argv)
     QString ssid;
     QVariantList specificArgs;
 
-    foreach (const QString& arg, specifics.split( ',' )) {
+    foreach (const QString& arg, specifics.split( ' ' )) {
         specificArgs << QVariant(arg);
     }
 
