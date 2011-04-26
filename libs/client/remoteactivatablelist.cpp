@@ -86,7 +86,7 @@ void RemoteActivatableList::clear()
     Q_D(RemoteActivatableList);
     foreach (RemoteActivatable * activatable, d->activatables) {
         emit activatableRemoved(activatable);
-        delete activatable;
+        activatable->deleteLater();
     }
     d->activatables.clear();
 }
@@ -152,8 +152,8 @@ void RemoteActivatableList::handleActivatableRemoved(const QString &removed)
     kDebug() << "removed" << removed;
     RemoteActivatable * removedActivatable = d->activatables.take(removed);
     if (removedActivatable) {
-        delete removedActivatable;
         emit activatableRemoved(removedActivatable);
+        removedActivatable->deleteLater();
     }
 }
 
