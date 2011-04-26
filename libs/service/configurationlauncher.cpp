@@ -61,7 +61,9 @@ void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
 {
     Q_D(ConfigurationLauncher);
     Knm::WirelessNetwork * wni = 0;
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
     Knm::InterfaceConnection * ic = 0;
+#endif
     Knm::WirelessInterfaceConnection * wic = 0;
     Knm::UnconfiguredInterface * unco = 0;
     switch (added->activatableType()) {
@@ -70,6 +72,7 @@ void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
             connect(wni, SIGNAL(activated()), this, SLOT(wirelessNetworkActivated()));
             break;
         case Knm::Activatable::InterfaceConnection:
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         case Knm::Activatable::GsmInterfaceConnection:
             ic = qobject_cast<Knm::InterfaceConnection*>(added);
             if (d->pendingDevices.contains(ic->deviceUni())) {
@@ -78,6 +81,7 @@ void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
                 d->pendingDevices.removeOne(ic->deviceUni());
             }
             break;
+#endif
         case Knm::Activatable::WirelessInterfaceConnection:
             wic = qobject_cast<Knm::WirelessInterfaceConnection*>(added);
             foreach (const PendingNetwork &pending, d->pendingNetworks) {

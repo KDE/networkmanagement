@@ -178,7 +178,9 @@ void NMPopup::init()
     m_connectionList->addType(Knm::Activatable::InterfaceConnection);
     m_connectionList->addType(Knm::Activatable::WirelessInterfaceConnection);
     m_connectionList->addType(Knm::Activatable::VpnInterfaceConnection);
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
     m_connectionList->addType(Knm::Activatable::GsmInterfaceConnection);
+#endif
     m_connectionList->init();
     connect(m_interfaceDetailsWidget, SIGNAL(back()), m_connectionList, SLOT(clearInterfaces()));
 
