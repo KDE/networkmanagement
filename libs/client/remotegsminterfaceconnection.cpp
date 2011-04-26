@@ -19,6 +19,7 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
 #include <QDBusReply>
 
 #include "remotegsminterfaceconnection.h"
@@ -57,4 +58,5 @@ int RemoteGsmInterfaceConnection::getSignalQuality() const
     return d->gsmInterfaceConnectionIface->getSignalQuality();
 }
 
+#endif
 // vim: sw=4 sts=4 et tw=100

@@ -134,10 +134,12 @@ void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uin
                 newActivatable = new RemoteVpnInterfaceConnection(addedPath, this);
                 //kDebug() << "vpnconnection at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
             case Knm::Activatable::GsmInterfaceConnection:
                 newActivatable = new RemoteGsmInterfaceConnection(addedPath, this);
                 //kDebug() << "gsminterfaceconnection at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
+#endif
         }
         if (newActivatable) {
             d->activatables.insert(addedPath, newActivatable);
