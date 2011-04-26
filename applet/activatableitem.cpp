@@ -90,7 +90,7 @@ void ActivatableItem::emitClicked()
 
 RemoteInterfaceConnection* ActivatableItem::interfaceConnection() const
 {
-    return dynamic_cast<RemoteInterfaceConnection*>(m_activatable);
+    return qobject_cast<RemoteInterfaceConnection*>(m_activatable);
 }
 
 void ActivatableItem::handleHasDefaultRouteChanged(bool has)
