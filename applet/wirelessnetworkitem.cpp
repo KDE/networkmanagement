@@ -183,7 +183,10 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
 void WirelessNetworkItem::update()
 {
     //kDebug() << "updating" << m_wirelessStatus->ssid() << wirelessNetworkItem()->strength();
-    setStrength((static_cast<RemoteWirelessNetwork*>(m_activatable))->strength());
+    if (m_activatable) {
+        setStrength((static_cast<RemoteWirelessNetwork*>(m_activatable))->strength());
+    }
+
     return;
 }
 
