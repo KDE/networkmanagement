@@ -183,7 +183,7 @@ bool WirelessStatus::isAdhoc()
 void WirelessStatus::setStrength(int strength)
 {
     Q_D(WirelessStatus);
-    if (!strength != d->strength) {
+    if (strength != d->strength) {
         d->strength = strength;
         //kDebug() << d->ssid <<  "strength changed:" << d->strength;
         emit strengthChanged(d->strength);
