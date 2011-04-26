@@ -288,6 +288,13 @@ QString InterfaceItem::currentIpAddress()
 
 RemoteInterfaceConnection* InterfaceItem::currentConnection()
 {
+    RemoteInterfaceConnection* remoteconnection = UiUtils::connectionForInterface(m_activatables, m_iface);
+    if (!remoteconnection) {
+        m_currentConnection = 0;
+        handleHasDefaultRouteChanged(false);
+        return m_currentConnection;
+    }
+
     //kDebug() << m_currentConnection;
     if (m_currentConnection && m_currentConnection->activationState() != Knm::InterfaceConnection::Unknown) {
         return m_currentConnection;
