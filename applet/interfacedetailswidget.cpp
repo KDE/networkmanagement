@@ -1,6 +1,7 @@
 /*
 Copyright 2010 Sebastian Kügler <sebas@kde.org>
 Copyright 2010 Alexander Naumov <posix.ru@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -401,12 +402,12 @@ int InterfaceDetailsWidget::bitRate()
 
     //wifi?
     Solid::Control::WirelessNetworkInterface * wliface =
-                    dynamic_cast<Solid::Control::WirelessNetworkInterface*>(m_iface);
+                    qobject_cast<Solid::Control::WirelessNetworkInterface*>(m_iface);
     if (wliface) {
         bitRate = wliface->bitRate(); //Bit
     } else {     // wired?
         Solid::Control::WiredNetworkInterface * wdiface =
-                                    dynamic_cast<Solid::Control::WiredNetworkInterface*> (m_iface);
+                                    qobject_cast<Solid::Control::WiredNetworkInterface*> (m_iface);
         if (wdiface) {
             bitRate = wdiface->bitRate();
         }
@@ -414,10 +415,10 @@ int InterfaceDetailsWidget::bitRate()
     return bitRate;
 }
 
-void InterfaceDetailsWidget::sourceAdded(const QString &source)
+/*void InterfaceDetailsWidget::sourceAdded(const QString &source)
 {
     kDebug() << "Source added:" << source;
-}
+}*/
 
 InterfaceDetailsWidget::~InterfaceDetailsWidget()
 {
@@ -534,11 +535,10 @@ void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_
         details->connectionState = static_cast<NM09DeviceState>(new_state);
         details->connectionState = static_cast<Solid::Control::NetworkInterface::ConnectionState>(new_state);
 #ifdef NM_0_8
-        // For bluetooth devices.
         if (m_iface->type() == Solid::Control::NetworkInterface::Bluetooth) {
             QString interfaceName = m_iface->ipInterfaceName();
             if (interfaceName != details->interfaceName) {
-                // Hack to force updating interfaceName and traffic plot.
+                // Hack to force updating interfaceName and traffic plot source.
                 Solid::Control::NetworkInterface *temp = m_iface;
                 m_iface = 0;
                 kDebug() << "Reseting interface " << temp->uni() << "(" << interfaceName << ")";
@@ -618,7 +618,7 @@ QString InterfaceDetailsWidget::getMAC()
 {
     //wifi?
     Solid::Control::WirelessNetworkInterface * wliface =
-                    dynamic_cast<Solid::Control::WirelessNetworkInterface*>(m_iface);
+                    qobject_cast<Solid::Control::WirelessNetworkInterface*>(m_iface);
     if (wliface) {
         return wliface->hardwareAddress();
         /*
@@ -632,7 +632,7 @@ QString InterfaceDetailsWidget::getMAC()
     } else {
 #ifdef NM_0_8
         Solid::Control::BtNetworkInterface * btiface =
-                    dynamic_cast<Solid::Control::BtNetworkInterface*>(m_iface);
+                    qobject_cast<Solid::Control::BtNetworkInterface*>(m_iface);
         if (btiface) {
             return btiface->interfaceName();
         }
@@ -640,7 +640,7 @@ QString InterfaceDetailsWidget::getMAC()
 
         // wired?
         Solid::Control::WiredNetworkInterface * wdiface =
-                                    dynamic_cast<Solid::Control::WiredNetworkInterface*> (m_iface);
+                                    qobject_cast<Solid::Control::WiredNetworkInterface*> (m_iface);
         if (wdiface) {
             return wdiface->hardwareAddress();
         } else {
