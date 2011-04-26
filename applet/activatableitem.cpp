@@ -68,6 +68,7 @@ void ActivatableItem::disappear()
     if (m_deleting) {
         return;
     }
+    m_activatable = 0;
     m_deleting = true;
     // Fade out when this widget appears
     Plasma::Animation* disappearAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation);
