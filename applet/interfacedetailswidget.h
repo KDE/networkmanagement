@@ -50,7 +50,7 @@ Q_OBJECT
     public Q_SLOTS:
         void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
         //void dataUpdated(const QString&, const Plasma::DataEngine::Data&);
-        void sourceAdded(const QString&);
+        //void sourceAdded(const QString&);
         void handleConnectionStateChange(int new_state, int old_state, int reason);
 
     Q_SIGNALS:
