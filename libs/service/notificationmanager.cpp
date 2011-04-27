@@ -562,7 +562,7 @@ void NotificationManager::wirelessHardwareEnabledChanged(bool enabled)
         d->newWirelessNetworks.clear();
         d->disappearedNetworkTimer->stop();
         d->disappearedWirelessNetworks.clear();
-        KNotification::event(Event::RfOff, i18nc("@info:status Notification for radio kill switch turned on", "Wireless hardware disabled"), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
+        KNotification::event(Event::RfOff, i18nc("@info:status Notification for radio kill switch turned off", "Wireless hardware disabled"), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
     }
 }
 
