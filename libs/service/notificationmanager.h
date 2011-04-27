@@ -88,7 +88,7 @@ public:
     Solid::Control::NetworkInterface::Type type() const;
 public Q_SLOTS:
     /*
-     * Update notification with with state changes for iface's active connections
+     * Update notification with state changes for iface's active connections
      */
     void interfaceConnectionStateChanged(int,int,int);
     /*
