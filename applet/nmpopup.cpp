@@ -48,6 +48,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatableitem.h"
 #include "remoteactivatable.h"
 #include "remoteactivatablelist.h"
+#include "remotewirelessinterfaceconnection.h"
 
 // More own includes
 #include "interfaceitem.h"
@@ -215,7 +216,8 @@ void NMPopup::init()
     m_showMoreButton->setMinimumSize(sMax);
     m_showMoreButton->setMaximumSize(sMax);
     connect(m_showMoreButton, SIGNAL(clicked()), this, SLOT(showMore()));
-    showMore(false);
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable *)), this, SLOT(uncheckShowMore(RemoteActivatable *)));
+    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable *)), this, SLOT(checkShowMore(RemoteActivatable *)));
 
     QGraphicsLinearLayout* connectionLayout = new QGraphicsLinearLayout;
     //connectionLayout->addStretch();
@@ -238,6 +240,21 @@ void NMPopup::init()
             SLOT(interfaceAdded(const QString&)));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             SLOT(interfaceRemoved(const QString&)));
+
+    oldShowMore = true;
+    wicCount = 0; // number of wireless networks which user explicitly configured using the kcm module.
+    foreach (RemoteActivatable *ra, m_activatables->activatables()) {
+        RemoteWirelessInterfaceConnection * wic = qobject_cast<RemoteWirelessInterfaceConnection*>(ra);
+        if (wic) {
+            if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc &&
+                wic->activationState() == Knm::InterfaceConnection::Unknown) {
+                continue;
+            }
+            uncheckShowMore(ra);
+        }
+    }
+    oldShowMore = false;
+    showMore(oldShowMore);
 
     //setPreferredSize(640, 400);
 
@@ -473,7 +490,7 @@ void NMPopup::wirelessEnabledToggled(bool checked)
         Solid::Control::NetworkManager::setWirelessEnabled(checked);
     }
     if (checked && Solid::Control::NetworkManager::isNetworkingEnabled()) {
-        showMore(false);
+//        showMore(false);
         m_showMoreButton->show();
     } else {
         m_showMoreButton->hide();
@@ -513,7 +530,7 @@ void NMPopup::networkingEnabledToggled(bool checked)
 #endif
     if (checked && Solid::Control::NetworkManager::isWirelessHardwareEnabled() &&
                    Solid::Control::NetworkManager::isWirelessEnabled()) {
-        showMore(false);
+//        showMore(false);
         m_showMoreButton->show();
     } else {
         m_showMoreButton->hide();
@@ -643,7 +660,8 @@ void NMPopup::managerWwanHardwareEnabledChanged(bool enabled)
 
 void NMPopup::showMore()
 {
-    showMore(m_showMoreButton->isChecked());
+    oldShowMore = m_showMoreButton->isChecked();
+    showMore(oldShowMore);
 }
 
 void NMPopup::showMore(bool more)
@@ -660,6 +678,40 @@ void NMPopup::showMore(bool more)
         m_showMoreButton->setIcon(KIcon("list-add"));
     }
     kDebug() << m_showMoreButton->text();
+}
+
+void NMPopup::checkShowMore(RemoteActivatable * ra)
+{
+    RemoteWirelessInterfaceConnection * wic = qobject_cast<RemoteWirelessInterfaceConnection*>(ra);
+    if (wic) {
+        if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc &&
+            wic->activationState() == Knm::InterfaceConnection::Unknown) {
+            return;
+        }
+        wicCount--;
+    }
+    if (wicCount == 0 && !m_showMoreButton->isChecked()) {
+        // There is no wireless network which the user had explicitly configured around,
+        // so temporaly show all the others wireless networks available.
+        showMore(true);
+    }
+}
+
+void NMPopup::uncheckShowMore(RemoteActivatable *ra)
+{
+    RemoteWirelessInterfaceConnection * wic = qobject_cast<RemoteWirelessInterfaceConnection*>(ra);
+    if (wic) {
+        if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc &&
+            wic->activationState() == Knm::InterfaceConnection::Unknown) {
+            return;
+        }
+        wicCount++;
+        if (oldShowMore != m_showMoreButton->isChecked()) {
+            // One wireless network explicity configured by the user appeared, reset "Show More" button
+            // state to the value before the checkShowMore method above took action.
+            showMore(oldShowMore);
+        }
+    }
 }
 
 void NMPopup::manageConnections()
@@ -690,7 +742,7 @@ void NMPopup::toggleInterfaceTab()
     } else {
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
         m_connectionList->setShowAllTypes(true);
-        showMore(false);
+        showMore(oldShowMore);
         m_interfaceDetailsWidget->setUpdateEnabled(false);
         m_leftWidget->setCurrentIndex(0);
     }
