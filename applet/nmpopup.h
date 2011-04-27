@@ -90,6 +90,8 @@ private Q_SLOTS:
 #endif
     void readConfig();
     void saveConfig();
+    void checkShowMore(RemoteActivatable *);
+    void uncheckShowMore(RemoteActivatable *);
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
@@ -102,6 +104,8 @@ private:
 
     RemoteActivatableList* m_activatables;
     bool m_hasWirelessInterface;
+    bool oldShowMore;
+    int wicCount;
     QGraphicsWidget* m_widget;
     QGraphicsGridLayout* m_mainLayout;
     // Interfaces label
