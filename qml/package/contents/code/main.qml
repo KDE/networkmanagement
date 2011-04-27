@@ -26,7 +26,7 @@ import org.kde.plasma.graphicslayouts 4.7 as GraphicsLayouts
 
 Item {
     width: 200
-    height: 400
+    height: 200
     anchors.fill: parent
 
     PlasmaCore.DataSource {
@@ -35,11 +35,12 @@ Item {
           interval: 0
           connectedSources: ["connections"]
           onDataChanged: {
-              console.log("data changed...");
+                console.log("data changed...")
           }
           onSourceAdded: {
+            print ("source added:" + source);
              if (source != "networkStatus") {
-                //console.log("QML addedd ......." + source)
+                console.log("QML addedd ......." + source)
                 connectSource(source)
              }
           }
@@ -60,16 +61,21 @@ Item {
     }
 
     PlasmaWidgets.Label {
-        id: header
-        text: i18n("Available Connections")
-        font.pixelSize: 20
-        anchors { top: parent.top; left: parent.left; right: parent.right; }
+        anchors { top: parent.top; left: parent.left; right: parent.right }
+        id: titleLabel
+        text: i18n("<h2>Connect to the Internet</h2>")
+        anchors.margins: 8
     }
 
     ListView {
         id: list
-        //height: 200
-        anchors { top: header.bottom; left: parent.left; right: parent.right; bottom: parent.bottom; margins: 8}
+        //height: 300
+
+        anchors.top: titleLabel.bottom
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: statusText.top
+        //anchors.fill: parent
         clip: true
         spacing: 10
 
@@ -80,8 +86,8 @@ Item {
         delegate: Item {
             property int collapsedHeight: 38
             property int expandedHeight: 72
-            property string iconString: (typeof securityIcon != "undefined") ? securityIcon : "security-low"
-            //property string iconString: "security-medium";
+            //property string iconString: (typeof securityIcon != "undefined") ? securityIcon : "security-low"
+            property string iconString: "security-medium";
 
             id: citem
             height: collapsedHeight
@@ -90,11 +96,10 @@ Item {
 
             PlasmaWidgets.Frame {
                 id: itemFrame
-                anchors.fill: parent
-                //anchors.top: citem.top
-                //anchors.bottom: citem.bottom
+                anchors.top: citem.top
+                anchors.bottom: citem.bottom
                 height: citem.height
-                //width: citem.width
+                width: citem.width
             }
 
             PlasmaWidgets.IconWidget {
@@ -103,13 +108,13 @@ Item {
                 width: collapsedHeight
                 anchors.top: parent.top
                 anchors.left: parent.left
-                anchors.margins: 4
 
                 Component.onCompleted: {
                     //if (typeof networkEngineSource.data[DataEngineSource]["securityIcon"] != "undefined") {
                     //    setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
                     //} else {
-                        setIcon("network-wireless");
+                        setIcon(iconName);
+                        print ("XXXXX we're done");
                     //}
                 }
                 onClicked: citem.state = (citem.state == "expanded") ? "collapsed" : "expanded"
@@ -133,88 +138,71 @@ Item {
                 Component.onCompleted: {
                     try {
                         //if (typeof networkEngineSource.data[DataEngineSource]["securityIcon"] != "undefined") {
-                            //setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
-                            setIcon(securityIcon);
+                            setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
                         //}
                     } catch (TypeError) {
                         //print("oops");
                         print(" TypeError" + mainText.text);
                     } finally {
-                        print(" Exception ignored in " + mainText.text);
+                        //print(" Exception ignored in " + mainText.text);
                     }
                 }
                 onClicked: citem.state = (citem.state == "expanded") ? "collapsed" : "expanded"
 
             }
 
-            PlasmaWidgets.Label {
+            Text {
                 id: mainText
                 text: {
-                    print(" Hmm ... " + activatableType);
-                    if (activatableType != "" && isInterfaceConnection(activatableType)) {
-                        print("ifaceconnnection :)");
-                        if (connectionName) {
-                            var t = connectionName;
-                            //if (networkEngineSource.data[DataEngineSource]["activationState"] == "Activated") {
-                            //    t = t + " (Connected)";
-                            //}
-                            return t;
-                        } else {
-                            return "empty";
+                    if (isInterfaceConnection(activatableType)) {
+                        //var t = networkEngineSource.data[DataEngineSource]["connectionName"];
+                        var t = connectionName;
+                        if (activationState == "Activated") {
+                            t = t + " (Connected)";
                         }
+                        return t;
                     } else if ("WirelessNetwork" == activatableType) {
-                        //return citem.ssid;
-                        return "ssid";
+                        return ssid;
                     } else {
-                        return citem.activatableType;
+                        return activatableType;
                     }
-                    return "empty";
                 }
-
                 anchors.top: parent.top
                 anchors.left: strengthIconWidget.right
-                anchors.right: parent.right
                 //anchors.right: securityIconWidget.left
             }
-            PlasmaWidgets.Label {
-                id: infoText
+            Text {
+                id: infoText;
                 text: {
                     if (isInterfaceConnection(activatableType)) {
-                        //var conType = networkEngineSource.data[DataEngineSource]["connectionType"];
-                        try {
-                            var conType = connectionType;
-                            // Wired, Wireless, Gsm, Cdma, Vpn or Pppoe
-                            if (conType == "Wireless") {
-                                return i18n("Remembered Wifi Connection");
-                            } else if (conType == "Wired") {
-                                return i18n("Wired Connection");
-                            } else if (conType == "Gsm") {
-                                return i18n("Mobile Broadband");
-                            } else if (conType == "Cdma") {
-                                return i18n("Mobile Internet");
-                            } else if (conType == "Pppoe") {
-                                return i18n("Modem Connection");
-                            } else if (conType == "Vpn") {
-                                return i18n("Virtual Private Network");
-                            }
-                        } catch (ReferenceError) {
-                            print("Exception caught in infoText.Label connectionType");
+                        // Wired, Wireless, Gsm, Cdma, Vpn or Pppoe
+                        if (connectionType == "Wireless") {
+                            return i18n("Remembered Wifi Connection");
+                        } else if (connectionType == "Wired") {
+                            return i18n("Wired Connection");
+                        } else if (connectionType == "Gsm") {
+                            return i18n("Mobile Broadband");
+                        } else if (connectionType == "Cdma") {
+                            return i18n("Mobile Internet");
+                        } else if (connectionType == "Pppoe") {
+                            return i18n("Modem Connection");
+                        } else if (connectionType == "Vpn") {
+                            return i18n("Virtual Private Network");
                         }
                     }
-                    return "unknown type";
+                    return "";
                 }
                 //text: connectionType
-                font.pixelSize: 12
+                font.pixelSize: mainText.font.pixelSize - 2
                 opacity: 0.4
                 anchors.top: mainText.bottom
                 anchors.left: mainText.left
-                anchors.right: parent.right
+                //anchors.bottom: parent.top
             }
 
             PlasmaWidgets.PushButton {
                 id: connectButton
-                text: "Connect"
-                z: 100
+                text: i18n("Connect")
                 height: 0
                 //setIcon("kmail")
                 anchors.top: infoText.bottom
@@ -229,7 +217,7 @@ Item {
             }
 
             Component.onCompleted: {
-                //console.log("item completed" + mainText.text + "|" + index);
+                console.log("XXXX item completed" + mainText.text + "|" + index);
             }
 
             states: [
@@ -307,19 +295,28 @@ Item {
                 return "network-wireless-connnected-00";
             }
 
-            function isInterfaceConnection(myType) {
+            function isInterfaceConnection(activatableType) {
                 var cons = ["InterfaceConnection", "WirelessInterfaceConnection", "VpnInterfaceConnection", "GsmInterfaceConnection"];
-                //print("T:" + myType + " " + cons.indexOf(myType));
-                return cons.indexOf(myType) >= 0;
+                //print(activatableType);
+                return cons.indexOf(activatableType) >= 0;
             }
-
         }
+    }
+
+    Rectangle {
+        anchors.fill: list
+        color: theme.backgroundColor
+        radius: 12
+        opacity: 0.4
+        border.width: 1
+        border.color: theme.backgroundColor
+        //border.opacity: 0.1
     }
 
     PlasmaWidgets.Label {
         id: statusText
-        text: "Connected to some.network."
-        anchors.top: list.bottom
+        text: "statuslabel ....."
+        //anchors.top: list.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
