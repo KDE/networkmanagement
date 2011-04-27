@@ -38,6 +38,8 @@ Q_DECLARE_PRIVATE(OtherSettingsWidget)
 public:
     OtherSettingsWidget(QWidget * parent = 0);
     virtual ~OtherSettingsWidget();
+public Q_SLOTS:
+    void configureNotifications();
 private:
     OtherSettingsWidgetPrivate * d_ptr;
 };
