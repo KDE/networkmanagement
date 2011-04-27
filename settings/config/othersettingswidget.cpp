@@ -19,6 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <KNotifyConfigWidget>
+
 #include "othersettingswidget.h"
 #include "knmserviceprefs.h"
 
@@ -35,10 +37,16 @@ OtherSettingsWidget::OtherSettingsWidget(QWidget * parent)
 {
     Q_D(OtherSettingsWidget);
     d->ui.setupUi(this);
+    d->ui.notificationsButton->setIcon(KIcon("preferences-desktop-notification"));
+    connect(d->ui.notificationsButton, SIGNAL(clicked()), SLOT(configureNotifications()));
 }
 
 OtherSettingsWidget::~OtherSettingsWidget()
 {
 }
 
+void OtherSettingsWidget::configureNotifications()
+{
+    KNotifyConfigWidget::configure(this, "networkmanagement");
+}
 // vim: sw=4 sts=4 et tw=100
