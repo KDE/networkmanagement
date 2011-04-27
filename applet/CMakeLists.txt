@@ -24,6 +24,8 @@ set(networkmanager_SRCS
     hiddenwirelessnetworkitem.cpp
     wirelessstatus.cpp
     gsminterfaceconnectionitem.cpp
+
+    ../libs/service/events.cpp
     )
 
 kde4_add_plugin(plasma_applet_networkmanagement ${networkmanager_SRCS})
