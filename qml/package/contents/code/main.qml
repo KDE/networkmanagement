@@ -26,7 +26,7 @@ import org.kde.plasma.graphicslayouts 4.7 as GraphicsLayouts
 
 Item {
     width: 200
-    height: 400
+    height: 200
     anchors.fill: parent
 
     PlasmaCore.DataSource {
@@ -35,11 +35,12 @@ Item {
           interval: 0
           connectedSources: ["connections"]
           onDataChanged: {
-              //console.log("data changed...")
+                console.log("data changed...")
           }
           onSourceAdded: {
+            print ("source added:" + source);
              if (source != "networkStatus") {
-                //console.log("QML addedd ......." + source)
+                console.log("QML addedd ......." + source)
                 connectSource(source)
              }
           }
@@ -59,16 +60,22 @@ Item {
         id: theme
     }
 
+    PlasmaWidgets.Label {
+        anchors { top: parent.top; left: parent.left; right: parent.right }
+        id: titleLabel
+        text: i18n("<h2>Connect to the Internet</h2>")
+        anchors.margins: 8
+    }
+
     ListView {
         id: list
-        //height: 200
-        /*
-        anchors.top: parent.top
+        //height: 300
+
+        anchors.top: titleLabel.bottom
         anchors.left: parent.left
         anchors.right: parent.right
-        anchors.bottom: statusText
-        */
-        anchors.fill: parent
+        anchors.bottom: statusText.top
+        //anchors.fill: parent
         clip: true
         spacing: 10
 
@@ -79,8 +86,8 @@ Item {
         delegate: Item {
             property int collapsedHeight: 38
             property int expandedHeight: 72
-            property string iconString: (typeof securityIcon != "undefined") ? securityIcon : "security-low"
-            //property string iconString: "security-medium";
+            //property string iconString: (typeof securityIcon != "undefined") ? securityIcon : "security-low"
+            property string iconString: "security-medium";
 
             id: citem
             height: collapsedHeight
@@ -106,7 +113,8 @@ Item {
                     //if (typeof networkEngineSource.data[DataEngineSource]["securityIcon"] != "undefined") {
                     //    setIcon(networkEngineSource.data[DataEngineSource]["securityIcon"]);
                     //} else {
-                        setIcon("network-wireless");
+                        setIcon(iconName);
+                        print ("XXXXX we're done");
                     //}
                 }
                 onClicked: citem.state = (citem.state == "expanded") ? "collapsed" : "expanded"
@@ -147,13 +155,14 @@ Item {
                 id: mainText
                 text: {
                     if (isInterfaceConnection(activatableType)) {
-                        var t = networkEngineSource.data[DataEngineSource]["connectionName"];
-                        if (networkEngineSource.data[DataEngineSource]["activationState"] == "Activated") {
+                        //var t = networkEngineSource.data[DataEngineSource]["connectionName"];
+                        var t = connectionName;
+                        if (activationState == "Activated") {
                             t = t + " (Connected)";
                         }
                         return t;
                     } else if ("WirelessNetwork" == activatableType) {
-                        return networkEngineSource.data[DataEngineSource]["ssid"];
+                        return ssid;
                     } else {
                         return activatableType;
                     }
@@ -166,19 +175,18 @@ Item {
                 id: infoText;
                 text: {
                     if (isInterfaceConnection(activatableType)) {
-                        var conType = networkEngineSource.data[DataEngineSource]["connectionType"];
                         // Wired, Wireless, Gsm, Cdma, Vpn or Pppoe
-                        if (conType == "Wireless") {
+                        if (connectionType == "Wireless") {
                             return i18n("Remembered Wifi Connection");
-                        } else if (conType == "Wired") {
+                        } else if (connectionType == "Wired") {
                             return i18n("Wired Connection");
-                        } else if (conType == "Gsm") {
+                        } else if (connectionType == "Gsm") {
                             return i18n("Mobile Broadband");
-                        } else if (conType == "Cdma") {
+                        } else if (connectionType == "Cdma") {
                             return i18n("Mobile Internet");
-                        } else if (conType == "Pppoe") {
+                        } else if (connectionType == "Pppoe") {
                             return i18n("Modem Connection");
-                        } else if (conType == "Vpn") {
+                        } else if (connectionType == "Vpn") {
                             return i18n("Virtual Private Network");
                         }
                     }
@@ -194,7 +202,7 @@ Item {
 
             PlasmaWidgets.PushButton {
                 id: connectButton
-                text: "Connect"
+                text: i18n("Connect")
                 height: 0
                 //setIcon("kmail")
                 anchors.top: infoText.bottom
@@ -209,7 +217,7 @@ Item {
             }
 
             Component.onCompleted: {
-                //console.log("item completed" + mainText.text + "|" + index);
+                console.log("XXXX item completed" + mainText.text + "|" + index);
             }
 
             states: [
@@ -292,14 +300,23 @@ Item {
                 //print(activatableType);
                 return cons.indexOf(activatableType) >= 0;
             }
-
         }
     }
 
-    Text {
+    Rectangle {
+        anchors.fill: list
+        color: theme.backgroundColor
+        radius: 12
+        opacity: 0.4
+        border.width: 1
+        border.color: theme.backgroundColor
+        //border.opacity: 0.1
+    }
+
+    PlasmaWidgets.Label {
         id: statusText
         text: "statuslabel ....."
-        anchors.top: list.bottom
+        //anchors.top: list.bottom
         anchors.bottom: parent.bottom
         anchors.left: parent.left
         anchors.right: parent.right
