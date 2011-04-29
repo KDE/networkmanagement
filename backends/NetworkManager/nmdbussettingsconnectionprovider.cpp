@@ -248,6 +248,12 @@ bool NMDBusSettingsConnectionProvider::checkAuthorization(const QString &name)
     // See /usr/share/polkit-1/actions/org.freedesktop.network-manager-settings.system.policy
     // KAuth is the KDE's Polkit wrapper.
     KAuth::Action action(QLatin1String("org.freedesktop.network-manager-settings.system.modify"));
+
+    QWidget *w = qobject_cast<QWidget *>(parent());
+    if (w) {
+        action.setParentWidget(w);
+    }
+
     KAuth::ActionReply reply = action.execute(QLatin1String("org.freedesktop.network-manager-settings.system"));
     if (reply.failed()) {
         KMessageBox::error(0, name + i18n(" failed. KAuth error code is %1/%2 (%3).", QString::number(reply.type()), QString::number(reply.errorCode()), reply.errorDescription()), i18n("Error"));
