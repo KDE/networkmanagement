@@ -82,6 +82,7 @@ private Q_SLOTS:
 private:
     void initialiseAndRegisterRemoteConnection(const QString & path);
     void makeConnections(RemoteConnection*);
+    bool checkAuthorization(const QString&);
 
     void clearConnections();
     void initConnections();
