@@ -243,7 +243,7 @@ void NMDBusSettingsConnectionProvider::handleRemove(Knm::Activatable *)
 
 }
 
-bool NMDBusSettingsConnectionProvider::checkAuthorization(const QString &name)
+bool NMDBusSettingsConnectionProvider::checkAuthorization(const Operation oper)
 {
     // See /usr/share/polkit-1/actions/org.freedesktop.network-manager-settings.system.policy
     // KAuth is the KDE's Polkit wrapper.
@@ -256,7 +256,18 @@ bool NMDBusSettingsConnectionProvider::checkAuthorization(const QString &name)
 
     KAuth::ActionReply reply = action.execute(QLatin1String("org.freedesktop.network-manager-settings.system"));
     if (reply.failed()) {
-        KMessageBox::error(0, name + i18n(" failed. KAuth error code is %1/%2 (%3).", QString::number(reply.type()), QString::number(reply.errorCode()), reply.errorDescription()), i18n("Error"));
+        QString errorMessage;
+        switch (oper) {
+            case Add: errorMessage = i18n("Adding connection failed. Error code is %1/%2 (%3).", QString::number(reply.type()), QString::number(reply.errorCode()), reply.errorDescription());
+            break;
+
+            case Remove: errorMessage = i18n("Removing connection failed. Error code is %1/%2 (%3).", QString::number(reply.type()), QString::number(reply.errorCode()), reply.errorDescription());
+            break;
+
+            case Update: errorMessage = i18n("Updating connection failed. Error code is %1/%2 (%3).", QString::number(reply.type()), QString::number(reply.errorCode()), reply.errorDescription());
+            break;
+        }
+        KMessageBox::error(0, errorMessage, i18n("Error"));
         return false;
     }
     return true;
@@ -284,7 +295,7 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
         ConnectionDbus converter(newConnection);
         QVariantMapMap map = converter.toDbusMap();
 
-        if (getuid() != 0 && !checkAuthorization(i18n("Updating connection"))) {
+        if (getuid() != 0 && !checkAuthorization(Update)) {
             return;
         }
 
@@ -317,7 +328,7 @@ void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnect
     if(newConnection && newConnection->name().isEmpty())
         kWarning() << "Trying to add connection without a name!";
 
-    if (getuid() != 0 && !checkAuthorization(i18n("Adding connection"))) {
+    if (getuid() != 0 && !checkAuthorization(Add)) {
         return;
     }
 
@@ -440,7 +451,7 @@ void NMDBusSettingsConnectionProvider::removeConnection(const QString &uuid)
             return;
         }
 
-        if (getuid() != 0 && !checkAuthorization(i18n("Removing connection"))) {
+        if (getuid() != 0 && !checkAuthorization(Remove)) {
             return;
         }
 
