@@ -18,6 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <unistd.h>
+
 #include "nmdbussettingsconnectionprovider.h"
 
 #include <NetworkManager.h>
@@ -26,6 +28,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QUuid>
 
 #include <KDebug>
+#include <KAuth/Action>
+#include <kauthactionreply.h>
+#include <KMessageBox>
+#include <KLocale>
 
 // knminternals includes
 #include "connection.h"
@@ -229,6 +235,19 @@ void NMDBusSettingsConnectionProvider::handleRemove(Knm::Activatable *)
 
 }
 
+bool NMDBusSettingsConnectionProvider::checkAuthorization(const QString &name)
+{
+    // See /usr/share/polkit-1/actions/org.freedesktop.network-manager-settings.system.policy
+    // KAuth is the KDE's Polkit wrapper.
+    KAuth::Action action(QLatin1String("org.freedesktop.network-manager-settings.system.modify"));
+    KAuth::ActionReply reply = action.execute(QLatin1String("org.freedesktop.network-manager-settings.system"));
+    if (reply.failed()) {
+        KMessageBox::error(0, name + i18n(" failed. KAuth error code is %1/%2 (%3).", QString::number(reply.type()), QString::number(reply.errorCode()), reply.errorDescription()), i18n("Error"));
+        return false;
+    }
+    return true;
+}
+
 void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm::Connection *newConnection)
 {
     Q_D(NMDBusSettingsConnectionProvider);
@@ -251,7 +270,16 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
         ConnectionDbus converter(newConnection);
         QVariantMapMap map = converter.toDbusMap();
 
+        if (getuid() != 0 && !checkAuthorization(i18n("Updating connection"))) {
+            return;
+        }
+
         remote->Update(map);
+
+        // FIXME: if connection's name (id in NM termonology) changed in the Update call above,
+        // NM will leave the old connection file intact and create/update a new connection file
+        // in /etc/NetworkManager/system-connections/ with the same uuid, which is wrong in my oppinion.
+        // Furthermore the old connection is not shown in kcm's because we use the uuid as connection identifier.
 
         // don't do any processing on d->connections and d->connectionList here
         // because onRemoteConnectionUpdated() method will take care of them
@@ -273,6 +301,10 @@ void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnect
 
     if(newConnection && newConnection->name().isEmpty())
         kWarning() << "Trying to add connection without a name!";
+
+    if (getuid() != 0 && !checkAuthorization(i18n("Adding connection"))) {
+        return;
+    }
 
     QDBusPendingCall reply = d->iface->AddConnection(map);
     //do not check if reply is valid or not because it's an async call and invalid till reply is really arrived
@@ -389,6 +421,10 @@ void NMDBusSettingsConnectionProvider::removeConnection(const QString &uuid)
         if (!d->connections.contains(objPath.path()))
         {
             kWarning() << "Connection could not found!" << uuid << objPath.path();
+            return;
+        }
+
+        if (getuid() != 0 && !checkAuthorization(i18n("Removing connection"))) {
             return;
         }
 
