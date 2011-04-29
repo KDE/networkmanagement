@@ -48,6 +48,7 @@ protected Q_SLOTS:
     void validate();
     void modeChanged(int);
     void bandChanged(int);
+    void copyToBssid();
 
 Q_SIGNALS:
     void ssidSelected(const QString & ssid);
