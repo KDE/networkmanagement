@@ -112,8 +112,6 @@ void ActivatableListWidget::addInterface(Solid::Control::NetworkInterface* iface
 void ActivatableListWidget::clearInterfaces()
 {
     m_interfaces = QStringList();
-    m_showAllTypes = false;
-    filter();
 }
 
 void ActivatableListWidget::setShowAllTypes(bool show, bool refresh)

@@ -183,7 +183,6 @@ void NMPopup::init()
     m_connectionList->addType(Knm::Activatable::GsmInterfaceConnection);
 #endif
     m_connectionList->init();
-    connect(m_interfaceDetailsWidget, SIGNAL(back()), m_connectionList, SLOT(clearInterfaces()));
 
     m_connectionList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     //m_connectionList->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
@@ -741,7 +740,7 @@ void NMPopup::toggleInterfaceTab()
         }
     } else {
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
-        m_connectionList->setShowAllTypes(true);
+        m_connectionList->clearInterfaces();
         showMore(oldShowMore);
         m_interfaceDetailsWidget->setUpdateEnabled(false);
         m_leftWidget->setCurrentIndex(0);
