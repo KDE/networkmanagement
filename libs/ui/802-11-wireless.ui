@@ -172,7 +172,14 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="0">
+   <item row="5" column="1">
+    <widget class="QPushButton" name="useCurrentApAsBssid">
+     <property name="text">
+      <string>&amp;Copy current AP's MAC to BSSID</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0">
     <widget class="QLabel" name="label_6">
      <property name="text">
       <string>&amp;Restrict To Interface:</string>
@@ -185,7 +192,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="6" column="1">
     <widget class="KComboBox" name="cmbMacAddress">
      <item>
       <property name="text">
@@ -194,7 +201,7 @@
      </item>
     </widget>
    </item>
-   <item row="6" column="0">
+   <item row="7" column="0">
     <widget class="QLabel" name="label_7">
      <property name="text">
       <string>MT&amp;U:</string>
@@ -207,7 +214,7 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="1">
+   <item row="7" column="1">
     <widget class="KIntSpinBox" name="mtu">
      <property name="toolTip">
       <string>Maximum Transmission Unit</string>
