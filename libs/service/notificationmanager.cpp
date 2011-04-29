@@ -429,15 +429,15 @@ void NotificationManager::handleUpdate(Knm::Activatable *activatable)
                     KNotification::event(Event::Connecting, QString(), i18nc("@info:status Notification text when connecting","Activating %1", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
                     break;
                 case Knm::InterfaceConnection::Activated:
+                    kDebug() << ic->connectionName() << "is activated";
                     KNotification::event(Event::Connected, QString(), i18nc("@info:status Notification text when a connection has been activated","%1 activated", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
                     break;
                 case Knm::InterfaceConnection::Unknown:
-                    if (ic->connectionType() != Knm::Connection::Wireless || Solid::Control::NetworkManager::isWirelessHardwareEnabled()) {
-                        if (ic->oldActivationState() == Knm::InterfaceConnection::Activating)
-                            KNotification::event(Event::ConnectFailed, QString(), i18nc("@info:status Notification text when connection has failed","Connection %1 failed", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
-                        else
-                            KNotification::event(Event::Disconnected, QString(), i18nc("@info:status Notification text when deactivating a connection","%1 deactivated", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
-                    }
+                    kDebug() << ic->connectionName() << "is unknown";
+                    if (ic->oldActivationState() == Knm::InterfaceConnection::Activating)
+                        KNotification::event(Event::ConnectFailed, QString(), i18nc("@info:status Notification text when connection has failed","Connection %1 failed", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
+                    else
+                        KNotification::event(Event::Disconnected, QString(), i18nc("@info:status Notification text when deactivating a connection","%1 deactivated", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
                     break;
             }
         }
