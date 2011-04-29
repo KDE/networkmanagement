@@ -80,9 +80,11 @@ private Q_SLOTS:
     void onConnectionSecretsArrived(QDBusPendingCallWatcher *watcher);
     void onConnectionAddArrived(QDBusPendingCallWatcher *watcher);
 private:
+    enum Operation {Add, Remove, Update};
+
     void initialiseAndRegisterRemoteConnection(const QString & path);
     void makeConnections(RemoteConnection*);
-    bool checkAuthorization(const QString&);
+    bool checkAuthorization(const Operation);
 
     void clearConnections();
     void initConnections();
