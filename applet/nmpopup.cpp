@@ -693,7 +693,9 @@ void NMPopup::checkShowMore(RemoteActivatable * ra)
             wic->activationState() == Knm::InterfaceConnection::Unknown) {
             return;
         }
-        wicCount--;
+        if (wicCount > 0) {
+            wicCount--;
+        }
     }
     if (wicCount == 0 && !m_showMoreButton->isChecked()) {
         // There is no wireless network which the user had explicitly configured around,
