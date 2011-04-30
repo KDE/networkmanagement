@@ -690,7 +690,7 @@ void InterfaceDetailsWidget::connectSignals()
         connect(m_iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
 
         if (m_iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-            connect(m_iface, SIGNAL(activeAccessPointChanged(const QString &)), this, SLOT(updateActiveAccessPoint(QString &)));
+            connect(m_iface, SIGNAL(activeAccessPointChanged(const QString &)), this, SLOT(updateActiveAccessPoint(const QString &)));
         }
     }
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT

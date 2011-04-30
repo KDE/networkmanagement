@@ -136,7 +136,7 @@ void GsmInterfaceConnectionItem::setAccessTechnology(const int tech)
                                  arg(interfaceConnection()->connectionName()).
                                  arg(ModemInterface::convertAccessTechnologyToString(static_cast<ModemInterface::AccessTechnology>(tech))));
     }
-    else {
+    else if (interfaceConnection()) {
         m_connectButton->setText(interfaceConnection()->connectionName());
     }
 }
