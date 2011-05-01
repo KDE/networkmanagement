@@ -182,6 +182,10 @@ void ConnectionPersistence::save()
             foreach (Setting * setting, m_connection->settings()) {
                 SettingPersistence * sp = persistenceFor(setting);
                 QMap<QString,QString> secrets = sp->secrets();
+
+                // Do not save pin.
+                secrets.take("pin");
+
                 if (!secrets.isEmpty()) {
                     wallet->writeMap(walletKeyFor(setting), secrets);
                 }

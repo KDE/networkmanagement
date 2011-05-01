@@ -27,7 +27,8 @@ void GsmPersistence::load()
   // SECRETS
   if (m_storageMode == ConnectionPersistence::PlainText) {
     setting->setPassword(m_config->readEntry("password", ""));
-    setting->setPin(m_config->readEntry("pin", ""));
+    // Do not read pin.
+    //setting->setPin(m_config->readEntry("pin", ""));
     setting->setSecretsAvailable(true);
   }
   setting->setInitialized();
@@ -45,7 +46,8 @@ void GsmPersistence::save()
   // SECRET
   if (m_storageMode == ConnectionPersistence::PlainText) {
     m_config->writeEntry("password", setting->password());
-    m_config->writeEntry("pin", setting->pin());
+    // Do not save pin.
+    //m_config->writeEntry("pin", setting->pin());
   }
 }
 
