@@ -201,8 +201,25 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
         return;
     }
 
+RETRY:
+
     if (dialog->exec() != QDialog::Accepted) {
         goto OUT;
+    }
+
+    if (dialog->type() == PinDialog::PinPuk) {
+        if (dialog->pin() != dialog->pin2()) {
+            dialog->showErrorMessage(PinDialog::PinCodesDoNotMatch);
+            goto RETRY;
+        } else if (dialog->puk().length() < 8) {
+            dialog->showErrorMessage(PinDialog::PukCodeTooShort);
+            goto RETRY;
+        }
+    }
+
+    if (dialog->pin().length() < 4) {
+        dialog->showErrorMessage(PinDialog::PinCodeTooShort);
+        goto RETRY;
     }
 
     {

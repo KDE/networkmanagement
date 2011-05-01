@@ -36,13 +36,17 @@ class PinDialog : public KDialog
 Q_OBJECT
 public:
     enum Type {Pin, PinPuk};
+    enum ErrorCode {PinCodeTooShort, PinCodesDoNotMatch, PukCodeTooShort};
 
     PinDialog(const Type type = Pin, QWidget *parent=0);
     ~PinDialog();
 
     Type type() const;
     QString pin() const;
+    QString pin2() const;
     QString puk() const;
+
+    void showErrorMessage(const PinDialog::ErrorCode);
 
 protected Q_SLOTS:
     void chkShowPassToggled();
