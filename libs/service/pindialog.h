@@ -48,6 +48,9 @@ public:
 
     void showErrorMessage(const PinDialog::ErrorCode);
 
+public Q_SLOTS:
+    void accept();
+
 protected Q_SLOTS:
     void chkShowPassToggled();
 protected:

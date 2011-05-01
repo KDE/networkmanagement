@@ -157,4 +157,25 @@ void PinDialog::showErrorMessage(const PinDialog::ErrorCode error)
     ui->errorMessage->setText(msg, KTitleWidget::ErrorMessage);
     adjustSize();
 }
+
+
+void PinDialog::accept()
+{
+    if (m_type == PinPuk) {
+        if (pin() != pin2()) {
+            showErrorMessage(PinCodesDoNotMatch);
+            return;
+        } else if (puk().length() < 8) {
+            showErrorMessage(PukCodeTooShort);
+            return;
+        }
+    }
+
+    if (pin().length() < 4) {
+        showErrorMessage(PinCodeTooShort);
+        return;
+    }
+
+    QDialog::accept();
+}
 #endif
