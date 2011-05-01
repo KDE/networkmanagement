@@ -18,6 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <nm-setting-bluetooth.h>
+
 #include "bluetoothconnectioneditor.h"
 
 #include <QMap>
@@ -29,6 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "internals/settings/bluetooth.h"
 #include "bluetoothwidget.h"
 #include "gsmwidget.h"
+#include "ipv4widget.h"
 #include "pppwidget.h"
 #include "connectionwidget.h"
 
@@ -43,47 +46,65 @@ BluetoothConnectionEditor::BluetoothConnectionEditor(const QVariantList &args, Q
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Bluetooth);
     m_contents->setConnection(m_connection);
+    BluetoothSetting *b = static_cast<BluetoothSetting *>(m_connection->setting(Setting::Bluetooth));
     BluetoothWidget * bluetoothWidget = new BluetoothWidget(m_connection, this);
+    IpV4Widget * ipV4Widget = new IpV4Widget(m_connection, this);
+    QString defaultName;
+
+    // Bluetooth part
+    if (args.count() > 3) {
+        b->setNetworkname(args[1].toString());
+        b->setNetworktype(args[2].toString());
+        b->setBdaddrFromString(args[3].toString());
+        defaultName = i18n("%1 Network", args[1].toString());
+    } else {
+        defaultName = i18n("New Bluetooth Connection");
+    }
+
+    if (b->networktype() == NM_SETTING_BLUETOOTH_TYPE_PANU) {
+        m_contents->setDefaultName(defaultName);
+        addToTabWidget(bluetoothWidget);
+        addToTabWidget(ipV4Widget);
+        return;
+    }
+
+    // Gsm part for DUN
     GsmWidget * gsmWidget = new GsmWidget(m_connection, this);
     PppWidget * pppWidget = new PppWidget(m_connection, this);
 
-    // Gsm part
     if (args.count() > 1) {
-        if (args.count() > 2) {
-            QList<QVariant> networkIds = args[2].toList();
+        defaultName = args[1].toString();
+    }
+
+    if (args.count() > 4) {
+        defaultName += " " + args[4].toString();
+
+        if (args.count() > 5) {
+            QList<QVariant> networkIds = args[5].toList();
             if (!networkIds.isEmpty()) {
                 gsmWidget->setNetworkIds(networkIds);
             }
         }
 
-        if (args.count() > 3) {
-            QMap<QString, QVariant> apnInfo = args[3].toMap();
-            QString defaultName = args[1].toString();
+        if (args.count() > 6) {
+            QMap<QString, QVariant> apnInfo = args[6].toMap();
+            gsmWidget->setApnInfo(apnInfo);
+
+            if (!apnInfo["dnsList"].isNull()) {
+                ipV4Widget->setDns(apnInfo["dnsList"].toList());
+            }
+
             if (!apnInfo["name"].isNull()) {
                 defaultName += " - " + apnInfo["name"].toString();
             }
-            gsmWidget->setApnInfo(apnInfo);
-
-            // Bluetooth part
-            if (args.count() > 5) {
-                BluetoothSetting *b = static_cast<BluetoothSetting *>(m_connection->setting(Setting::Bluetooth));
-                if (b) {
-                    b->setBdaddrFromString(args[4].toString());
-                    b->setNetworkname(args[5].toString());
-                    defaultName = args[5].toString() + " " + defaultName;
-                }
-            }
-            m_contents->setDefaultName(defaultName);
-        } else {
-            m_contents->setDefaultName(args[1].toString());
         }
-    } else {
-        m_contents->setDefaultName(i18n("New Bluetooth Connection"));
     }
 
+    m_contents->setDefaultName(defaultName);
     addToTabWidget(bluetoothWidget);
     addToTabWidget(gsmWidget);
     addToTabWidget(pppWidget);
+    addToTabWidget(ipV4Widget);
 }
 
 BluetoothConnectionEditor::BluetoothConnectionEditor(Knm::Connection *con, QWidget *parent)
@@ -97,45 +118,23 @@ BluetoothConnectionEditor::BluetoothConnectionEditor(Knm::Connection *con, QWidg
     else
         m_connection = con;
 
-    QString connectionId = m_connection->uuid().toString();
-
     m_contents->setConnection(m_connection);
+    BluetoothSetting *b = static_cast<BluetoothSetting *>(m_connection->setting(Setting::Bluetooth));
+
     BluetoothWidget * bluetoothWidget = new BluetoothWidget(m_connection, this);
-    GsmWidget * gsmWidget = new GsmWidget(m_connection, this);
-    PppWidget * pppWidget = new PppWidget(m_connection, this);
+    IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
 
-    /*
-    if (args.count() > 1) {
-        if (args.count() > 2) {
-            QList<QVariant> networkIds = args[2].toList();
-            if (!networkIds.isEmpty()) {
-                gsmWidget->setNetworkIds(networkIds);
-            }
-        }
-
-        if (args.count() > 3) {
-            QMap<QString, QVariant> apnInfo = args[3].toMap();
-            if (apnInfo["name"].isNull()) {
-                m_contents->setDefaultName(args[1].toString());
-            } else {
-                m_contents->setDefaultName(args[1].toString() + " - " + apnInfo["name"].toString());
-            }
-            gsmWidget->setApnInfo(apnInfo);
-    
-            if (!apnInfo["dnsList"].isNull()) {
-                ipV4Widget->setDns(apnInfo["dnsList"].toList());
-            }
-        } else {
-            m_contents->setDefaultName(args[1].toString());
-        }
-    } else {
-        m_contents->setDefaultName(i18n("New Cellular Connection"));
+    if (b->networktype() == NM_SETTING_BLUETOOTH_TYPE_PANU) {
+        addToTabWidget(bluetoothWidget);
+        addToTabWidget(ipv4Widget);
+    } else if (b->networktype() == NM_SETTING_BLUETOOTH_TYPE_DUN){
+        GsmWidget * gsmWidget = new GsmWidget(m_connection, this);
+        PppWidget * pppWidget = new PppWidget(m_connection, this);
+        addToTabWidget(bluetoothWidget);
+        addToTabWidget(gsmWidget);
+        addToTabWidget(pppWidget);
+        addToTabWidget(ipv4Widget);
     }
-    */
-
-    addToTabWidget(bluetoothWidget);
-    addToTabWidget(gsmWidget);
-    addToTabWidget(pppWidget);
 }
 BluetoothConnectionEditor::~BluetoothConnectionEditor()
 {

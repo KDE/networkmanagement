@@ -41,7 +41,7 @@ int main(int argc, char **argv)
     options.add("connection <connection-id>", ki18n("Connection ID to edit"));
     options.add("hiddennetwork <ssid>", ki18n("Connect to a hidden wireless network"));
     options.add("type <type>", ki18n("Connection type to create, must be one of '802-3-ethernet', '802-11-wireless', 'pppoe', 'vpn', 'cellular', 'bluetooth'"));
-    options.add("specific-args <args>", ki18n("Space-separated connection type-specific arguments, may be either 'gsm' or 'cdma' for cellular connections,\n'openvpn' or 'vpnc' for vpn connections,\ninterface and AP identifiers for wireless connections,\nbluetooth mac address and service (only 'dun' for now) for bluetooth connections.\n\nYou can also pass the serial device (i.e. 'rfcomm0') instead of service for bluetooth connections,\nin that case this program will block waiting for that device to be registered in ModemManager."));
+    options.add("specific-args <args>", ki18n("Space-separated connection type-specific arguments, may be either 'gsm' or 'cdma' for cellular connections,\n'openvpn' or 'vpnc' for vpn connections,\ninterface and AP identifiers for wireless connections,\nbluetooth mac address and service ('dun' or 'nap') for bluetooth connections.\n\nYou can also pass the serial device (i.e. 'rfcomm0') instead of service for dun bluetooth connections,\nin that case this program will block waiting for that device to be registered in ModemManager."));
     options.add("+mode", ki18n("Operation mode, may be either 'create' or 'edit'"), "create");
     KCmdLineArgs::addCmdLineOptions( options ); // Add our own options.
     KApplication app;

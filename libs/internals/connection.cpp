@@ -167,6 +167,7 @@ void Connection::init()
         case Bluetooth:
             addSetting(new BluetoothSetting());
             addSetting(new GsmSetting());
+            addSetting(new Ipv4Setting());
             addSetting(new PppSetting());
             addSetting(new SerialSetting());
             break;
