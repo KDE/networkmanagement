@@ -484,6 +484,8 @@ void ManageConnectionWidget::deleteClicked()
         // delete it
         // remove it from our hash
         mUuidItemHash.remove(connectionId);
+	// remove secrets from wallet if using encrypted storage
+	Knm::ConnectionPersistence::deleteSecrets(connectionId);
         // remove connection file
         //QFile connFile(KStandardDirs::locateLocal("data",
         //            Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId));

@@ -79,6 +79,10 @@ public:
      * If the SecretStorageMode is PlainText, the signal will be emitted immediately!
      */
     void loadSecrets();
+    /**
+     * Delete all secrets for connection with specifed UUID from wallet.
+     */
+    static void deleteSecrets(const QString &);
 Q_SIGNALS:
     /**
      * Emitted when secrets have become available
