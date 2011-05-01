@@ -38,7 +38,7 @@ public:
     enum Type {Pin, PinPuk};
     enum ErrorCode {PinCodeTooShort, PinCodesDoNotMatch, PukCodeTooShort};
 
-    PinDialog(const Type type = Pin, QWidget *parent=0);
+    PinDialog(const QString deviceName, const Type type = Pin, QWidget *parent=0);
     ~PinDialog();
 
     Type type() const;
@@ -57,6 +57,7 @@ protected:
     Ui::PinWidget * ui;
     QLabel* pixmapLabel;
 private:
+    QString m_name;
     Type m_type;
 };
 

@@ -25,8 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <kwindowsystem.h>
 
-PinDialog::PinDialog(const Type type, QWidget *parent)
-    : KDialog(parent), m_type(type)
+PinDialog::PinDialog(const QString deviceName, const Type type, QWidget *parent)
+    : KDialog(parent), m_name(deviceName), m_type(type)
 {
     QWidget *w = new QWidget();
     ui = new Ui::PinWidget();
@@ -49,7 +49,7 @@ PinDialog::PinDialog(const Type type, QWidget *parent)
     if (m_type == PinPuk) {
         setWindowTitle(i18n("SIM PUK unlock required"));
         ui->title->setText(i18n("SIM PUK Unlock Required"));
-        ui->prompt->setText(i18n("The mobile broadband device '%s' requires a SIM PUK code before it can be used."));
+        ui->prompt->setText(i18n("The mobile broadband device '%1' requires a SIM PUK code before it can be used.", m_name));
         ui->pukLabel->setText(i18n("PUK code:"));
         ui->pinLabel->setText(i18n("New PIN code:"));
         ui->pin2Label->setText(i18n("Re-enter new PIN code:"));
@@ -63,7 +63,7 @@ PinDialog::PinDialog(const Type type, QWidget *parent)
     } else {
         setWindowTitle(i18n("SIM PIN unlock required"));
         ui->title->setText(i18n("SIM PIN Unlock Required"));
-        ui->prompt->setText(i18n("The mobile broadband device '%s' requires a SIM PIN code before it can be used."));
+        ui->prompt->setText(i18n("The mobile broadband device '%1' requires a SIM PIN code before it can be used.", m_name));
         ui->pinLabel->setText(i18n("PIN code:"));
         ui->chkShowPass->setText(i18n("Show PIN code"));
 

@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
+#include <solid/device.h>
 
 #include <connection.h>
 #include "activatablelist.h"
@@ -176,8 +177,7 @@ void NetworkInterfaceMonitor::modemInterfaceAdded(const QString & udi)
 void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
 {
     kDebug() << "unlockRequired == " << unlockRequired;
-    if (unlockRequired.isEmpty() || unlockRequired == QLatin1String("sim-puk2") ||
-                                    unlockRequired == QLatin1String("sim-pin2")) {
+    if (unlockRequired.isEmpty()) {
         return;
     }
 
@@ -186,16 +186,26 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
         return;
     }
 
-    // PinDialog already running.
+    QString deviceName = modem->masterDevice();
+    foreach (const Solid::Device &d, Solid::Device::allDevices()) {
+        if (d.udi().contains(deviceName, Qt::CaseInsensitive)) {
+            deviceName = d.product();
+            if (!deviceName.startsWith(d.vendor())) {
+                deviceName = d.vendor() + " " + deviceName;
+            }
+            break;
+        }
+    }
+
     if (dialog) {
         kDebug() << "PinDialog already running";
         return;
     }
 
     if (unlockRequired == QLatin1String("sim-pin")) {
-        dialog = new PinDialog(PinDialog::Pin);
+        dialog = new PinDialog(deviceName, PinDialog::Pin);
     } else if (unlockRequired == QLatin1String("sim-puk")) {
-        dialog = new PinDialog(PinDialog::PinPuk);
+        dialog = new PinDialog(deviceName, PinDialog::PinPuk);
     } else {
         kWarning() << "Unhandled unlock request for '" << unlockRequired << "'";
         return;
