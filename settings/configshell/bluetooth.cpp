@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <nm-setting-bluetooth.h>
+
 #include <QDBusInterface>
 #include <QDBusReply>
 
@@ -67,9 +69,10 @@ void saveConnection(Knm::Connection *con)
 Bluetooth::Bluetooth(const QString bdaddr, const QString service): QObject(), mBdaddr(bdaddr), mService(service), mobileConnectionWizard(0)
 {
     mService = mService.toLower();
-    connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceAdded(const QString &)),
-            SLOT(modemAdded(const QString &)));
-
+    if (mService == "dun") {
+        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceAdded(const QString &)),
+                SLOT(modemAdded(const QString &)));
+    }
     QTimer::singleShot(0, this, SLOT(init()));
 }
 
@@ -79,11 +82,12 @@ Bluetooth::~Bluetooth()
 
 void Bluetooth::init()
 {
-    QRegExp rx("dun|rfcomm?");
+    QRegExp rx("dun|rfcomm?|nap");
 
     if (rx.indexIn(mService) < 0) {
-        kDebug(KDE_DEFAULT_DEBUG_AREA) << "Error: we only support 'dun' service.";
+        kDebug(KDE_DEFAULT_DEBUG_AREA) << "Error: we only support 'dun' and 'nap' services.";
         kapp->quit();
+        return;
     }
 //    kDebug(KDE_DEFAULT_DEBUG_AREA) << "Bdaddr == " << mBdaddr;
 
@@ -151,8 +155,15 @@ void Bluetooth::init()
         mDeviceName = properties["Name"].toString();
     }
 
-    // TODO: add panu support.
-    if (mService != QLatin1String("dun")) {
+    if (mService == "nap") {
+        ConnectionEditor editor(0);
+        Knm::Connection *con = editor.createConnection(true, Knm::Connection::Bluetooth, QVariantList() << mDeviceName << QLatin1String(NM_SETTING_BLUETOOTH_TYPE_PANU) << mBdaddr, false);
+        if (con) {
+            saveConnection(con);
+        }
+        kapp->quit();
+        return;
+    } else if (mService != QLatin1String("dun")) {
         mDunDevice = mService;
         kDebug(KDE_DEFAULT_DEBUG_AREA) << "device(" << mDunDevice << ") for" << mBdaddr << " passed as argument";
         kDebug(KDE_DEFAULT_DEBUG_AREA) << "waiting for it to be registered in ModemManager";
@@ -169,6 +180,7 @@ void Bluetooth::init()
     if (!reply.isValid()) {
         kDebug(KDE_DEFAULT_DEBUG_AREA) << "Error: org.bluez.Serial.Connect did not work. Quiting.";
         kapp->quit();
+        return;
     }
 
     mDunDevice = reply.value();
@@ -189,7 +201,6 @@ void Bluetooth::modemAdded(const QString &udi)
         mDunDevice = temp[2];
     }
 
-    // TODO: implement PANU (mDunDevice is empty with PANU)
     if (!modem || modem->device() != mDunDevice) {
         if (modem) {
             kDebug(KDE_DEFAULT_DEBUG_AREA) << "Modem" << modem->device() << " is not the one we want(" << mDunDevice << "). Quitting.";
@@ -197,6 +208,7 @@ void Bluetooth::modemAdded(const QString &udi)
             kDebug(KDE_DEFAULT_DEBUG_AREA) << "Modem interface for " << udi << " not found. Quitting";
         }
         kapp->quit();
+        return;
     }
 
     Knm::Connection::Type type;
@@ -208,6 +220,7 @@ void Bluetooth::modemAdded(const QString &udi)
 
     if (type == Knm::Connection::Unknown) {
         kapp->quit();
+        return;
     }
 
     if (mobileConnectionWizard) {
@@ -220,8 +233,10 @@ void Bluetooth::modemAdded(const QString &udi)
 
     if (mobileConnectionWizard->exec() == QDialog::Accepted &&
         mobileConnectionWizard->getError() == MobileProviders::Success) {
-        con = editor.createConnection(true, Knm::Connection::Bluetooth, mobileConnectionWizard->args() << mBdaddr << mDeviceName, false);
-        saveConnection(con);
+        con = editor.createConnection(true, Knm::Connection::Bluetooth, QVariantList() << mDeviceName << QLatin1String(NM_SETTING_BLUETOOTH_TYPE_DUN) << mBdaddr << mobileConnectionWizard->args(), false);
+        if (con) {
+            saveConnection(con);
+        }
     }
     delete mobileConnectionWizard;
     kapp->quit();
