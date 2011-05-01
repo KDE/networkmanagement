@@ -57,7 +57,9 @@ PinDialog::PinDialog(const Type type, QWidget *parent)
 
         ui->puk->setFocus();
         ui->pukLabel->show();
+        ui->puk->show();
         ui->pin2Label->show();
+        ui->pin2->show();
     } else {
         setWindowTitle(i18n("SIM PIN unlock required"));
         ui->title->setText(i18n("SIM PIN Unlock Required"));
@@ -67,8 +69,14 @@ PinDialog::PinDialog(const Type type, QWidget *parent)
 
         ui->pin->setFocus();
         ui->pukLabel->hide();
+        ui->puk->hide();
         ui->pin2Label->hide();
+        ui->pin2->hide();
     }
+
+    ui->puk->setCursorPosition(0);
+    ui->pin->setCursorPosition(0);
+    ui->pin2->setCursorPosition(0);
 
     KWindowSystem::setState( winId(), NET::KeepAbove );
     KWindowSystem::setOnAllDesktops( winId(), true );
