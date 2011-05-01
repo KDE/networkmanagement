@@ -192,9 +192,9 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
         return;
     }
 
-    if (unlockRequired == QLatin1String("sin-pin")) {
+    if (unlockRequired == QLatin1String("sim-pin")) {
         dialog = new PinDialog(PinDialog::Pin);
-    } else if (unlockRequired == QLatin1String("sin-puk")) {
+    } else if (unlockRequired == QLatin1String("sim-puk")) {
         dialog = new PinDialog(PinDialog::PinPuk);
     } else {
         kWarning() << "Unhandled unlock request for '" << unlockRequired << "'";
