@@ -74,6 +74,9 @@ PinDialog::PinDialog(const Type type, QWidget *parent)
         ui->pin2->hide();
     }
 
+    ui->puk->setText("");
+    ui->pin->setText("");
+    ui->pin2->setText("");
     ui->puk->setCursorPosition(0);
     ui->pin->setCursorPosition(0);
     ui->pin2->setCursorPosition(0);
@@ -96,6 +99,16 @@ void PinDialog::chkShowPassToggled()
     ui->pin->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
     ui->pin2->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
     ui->puk->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
+
+    ui->puk->setCursorPosition(0);
+    ui->pin->setCursorPosition(0);
+    ui->pin2->setCursorPosition(0);
+
+    if (m_type == PinPuk) {
+        ui->puk->setFocus();
+    } else {
+        ui->pin->setFocus();
+    }
 }
 
 PinDialog::Type PinDialog::type() const
@@ -108,9 +121,40 @@ QString PinDialog::pin() const
     return ui->pin->text();
 }
 
+QString PinDialog::pin2() const
+{
+    return ui->pin2->text();
+}
+
 QString PinDialog::puk() const
 {
     return ui->puk->text();
 }
 
+void PinDialog::showErrorMessage(const PinDialog::ErrorCode error)
+{
+    QString msg;
+    QFont bold = font();
+    ui->pinLabel->setFont(bold);
+    ui->pin2Label->setFont(bold);
+    ui->pukLabel->setFont(bold);
+    bold.setBold( true );
+    switch(error) {
+        case PinCodeTooShort: msg = i18n("PIN code too short. It should be at least 4 digits.");
+                              ui->pin->setFocus();
+                              ui->pinLabel->setFont(bold);
+        break;
+        case PinCodesDoNotMatch: msg = i18n("The two PIN codes do not match");
+                              ui->pin2->setFocus();
+                              ui->pin2Label->setFont(bold);
+        break;
+        case PukCodeTooShort: msg = i18n("PUK code too short. It should be 8 digits.");
+                              ui->puk->setFocus();
+                              ui->pukLabel->setFont(bold);
+        break;
+        default: msg = i18n("Unkwown Error");
+    }
+    ui->errorMessage->setText(msg, KTitleWidget::ErrorMessage);
+    adjustSize();
+}
 #endif
