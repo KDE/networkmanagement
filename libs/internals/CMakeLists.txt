@@ -5,6 +5,8 @@ include_directories(
    ${CMAKE_CURRENT_BINARY_DIR}
    ${CMAKE_CURRENT_SOURCE_DIR}/../../solidcontrolfuture
    ${CMAKE_CURRENT_SOURCE_DIR}/../libs/client
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../backends/NetworkManager
+   ${CMAKE_CURRENT_SOURCE_DIR}/../../libs
    )
 
 ## next target: internals layer library

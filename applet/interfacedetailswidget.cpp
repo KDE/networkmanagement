@@ -280,7 +280,7 @@ void InterfaceDetailsWidget::getDetails()
 #endif
 }
 
-QString InterfaceDetailsWidget::connectionStateToString(Solid::Control::NetworkInterface::ConnectionState connectionState)
+QString InterfaceDetailsWidget::connectionStateToString(NM09DeviceState state, const QString &connectionName)
 {
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
     Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
@@ -289,7 +289,7 @@ QString InterfaceDetailsWidget::connectionStateToString(Solid::Control::NetworkI
     }
 #endif
 
-    return UiUtils::connectionStateToString(connectionState);
+    return UiUtils::connectionStateToString(state, connectionName);
 }
 
 void InterfaceDetailsWidget::showDetails(bool reset)
@@ -533,7 +533,6 @@ void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_
     } else {
         details->ipAddress = currentIpAddress();
         details->connectionState = static_cast<NM09DeviceState>(new_state);
-        details->connectionState = static_cast<Solid::Control::NetworkInterface::ConnectionState>(new_state);
 #ifdef NM_0_8
         if (m_iface->type() == Solid::Control::NetworkInterface::Bluetooth) {
             QString interfaceName = m_iface->ipInterfaceName();

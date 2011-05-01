@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KToolInvocation>
 #include <KStandardDirs>
+#include <KLocale>
 
 #include "networkinterfacemonitor.h"
 
@@ -34,7 +35,15 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkinterfaceactivatableprovider.h"
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
+#include <KAuth/Action>
+#include <kauthactionreply.h>
+#include <KMessageBox>
+
+#include <solid/control/modeminterface.h>
+#include <solid/control/modemmanager.h>
+
 #include "gsmnetworkinterfaceactivatableprovider.h"
+#include "pindialog.h"
 #endif
 
 class NetworkInterfaceMonitorPrivate
@@ -63,6 +72,17 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         networkInterfaceAdded(iface->uni());
     }
+
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+    dialog = 0;
+    QObject::connect(Solid::Control::ModemManager::notifier(),
+            SIGNAL(modemInterfaceAdded(const QString&)),
+            this, SLOT(modemInterfaceAdded(const QString&)));
+
+    foreach (Solid::Control::ModemInterface * iface, Solid::Control::ModemManager::modemInterfaces()) {
+        modemInterfaceAdded(iface->udi());
+    }
+#endif
 }
 
 NetworkInterfaceMonitor::~NetworkInterfaceMonitor()
@@ -88,7 +108,7 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
         } else if (iface->type() == Solid::Control::NetworkInterface::Bluetooth) {
             kDebug() << "Bluetooth interface added";
             provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::GsmNetworkInterface*>(iface), this);
-#endif	    
+#endif
         } else if (iface->type() == Solid::Control::NetworkInterface::Gsm) {
             kDebug() << "Gsm interface added";
             provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::GsmNetworkInterface*>(iface), this);
@@ -133,4 +153,80 @@ void NetworkInterfaceMonitor::networkInterfaceRemoved(const QString & uni)
     delete provider;
 }
 
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+void NetworkInterfaceMonitor::modemInterfaceAdded(const QString & udi)
+{
+    Solid::Control::ModemGsmCardInterface * modem = qobject_cast<Solid::Control::ModemGsmCardInterface *>(Solid::Control::ModemManager::findModemInterface(udi, Solid::Control::ModemInterface::GsmCard));
+
+    if (!modem) {
+        return;
+    }
+
+    connect(modem, SIGNAL(unlockRequiredChanged(const QString &)), SLOT(requestPin(const QString &)));
+
+    if (dialog || modem->unlockRequired().isEmpty()) {
+        return;
+    }
+
+    // Using queued invokation to prevent kded stalling here until user enter the pin.
+    QMetaObject::invokeMethod(modem, "unlockRequiredChanged", Qt::QueuedConnection,
+                              Q_ARG(QString, modem->unlockRequired()));
+}
+
+void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
+{
+    kDebug() << "unlockRequired == " << unlockRequired;
+    if (unlockRequired.isEmpty() || unlockRequired == QLatin1String("sim-puk2") ||
+                                    unlockRequired == QLatin1String("sim-pin2")) {
+        return;
+    }
+
+    Solid::Control::ModemGsmCardInterface * modem = qobject_cast<Solid::Control::ModemGsmCardInterface *>(sender());
+    if (!modem) {
+        return;
+    }
+
+    // PinDialog already running.
+    if (dialog) {
+        kDebug() << "PinDialog already running";
+        return;
+    }
+
+    if (unlockRequired == QLatin1String("sin-pin")) {
+        dialog = new PinDialog(PinDialog::Pin);
+    } else if (unlockRequired == QLatin1String("sin-puk")) {
+        dialog = new PinDialog(PinDialog::PinPuk);
+    } else {
+        kWarning() << "Unhandled unlock request for '" << unlockRequired << "'";
+        return;
+    }
+
+    if (dialog->exec() != QDialog::Accepted) {
+        goto OUT;
+    }
+
+    {
+    // See /usr/share/polkit-1/actions/org.freedesktop.modem-manager.policy
+    // KAuth is the KDE's Polkit wrapper.
+    KAuth::Action action(QLatin1String("org.freedesktop.ModemManager.Device.Control"));
+
+    KAuth::ActionReply reply = action.execute(QLatin1String("org.freedesktop.ModemManager.Device"));
+    if (reply.failed()) {
+        KMessageBox::error(0, i18n("Unlock failed. Error code is %1/%2 (%3).").arg(QString::number(reply.type()), QString::number(reply.errorCode()), reply.errorDescription()), i18n("Error"));
+        goto OUT;
+    }
+    }
+
+    kDebug() << "Sending unlock code";
+    if (dialog->type() == PinDialog::Pin) {
+        modem->sendPin(dialog->pin());
+    } else if (dialog->type() == PinDialog::PinPuk) {
+        modem->sendPuk(dialog->puk(), dialog->pin());
+    }
+
+OUT:
+    delete dialog;
+    dialog = 0;
+}
+#endif
 // vim: sw=4 sts=4 et tw=100

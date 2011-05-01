@@ -41,6 +41,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <interfaceconnection.h>
 #include <vpninterfaceconnection.h>
 
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+#include <solid/control/networkgsminterface.h>
+#include <solid/control/modeminterface.h>
+#endif
+
 #include "busconnection.h"
 #include "exportedconnection.h"
 #include "exportedconnectionsecrets.h"
@@ -240,6 +245,21 @@ void NMDBusSettingsService::interfaceConnectionActivated()
         } else {
             deviceToActivateOn = ic->deviceUni();
         }
+
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+        // Enable modem before connecting.
+        Solid::Control::GsmNetworkInterface *iface = qobject_cast<Solid::Control::GsmNetworkInterface *>(Solid::Control::NetworkManager::findNetworkInterface(deviceToActivateOn));
+        if (iface) {
+            Solid::Control::ModemGsmCardInterface *modem = iface->getModemCardIface();
+            if (modem && !modem->enabled()) {
+                // Try to pin-unlock the modem.
+                QMetaObject::invokeMethod(modem, "unlockRequiredChanged", Qt::DirectConnection,
+                                          Q_ARG(QString, modem->unlockRequired()));
+                kDebug() << "Trying to enable modem";
+                modem->enable(true);
+            }
+        }
+#endif
 
         // Now activate the connection
         OrgFreedesktopNetworkManagerInterface nmIface(QLatin1String(NM_DBUS_SERVICE), QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus());

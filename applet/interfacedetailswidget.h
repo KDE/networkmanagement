@@ -31,6 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/PushButton>
 #include <Plasma/SignalPlotter>
 
+#include "types.h"
+
 class RemoteActivatable;
 class RemoteInterfaceConnection;
 class RemoteInterfaceList;
@@ -62,7 +64,7 @@ Q_OBJECT
         int bitRate();
         QString currentIpAddress();
         QString getMAC();
-        QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState connectionState);
+        QString connectionStateToString(NM09DeviceState state, const QString &connectionName = QString());
         void getDetails();
         void showDetails(bool reset = false);
         void connectSignals();

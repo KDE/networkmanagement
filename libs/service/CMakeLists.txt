@@ -67,8 +67,15 @@ set(knmservice_SRCS
 
    # sort logic for activatables
    sortedactivatablelist.cpp
+
+   # dialog to ask for PIN code
+   pindialog.cpp
    )
 
+kde4_add_ui_files(knmservice_SRCS
+   # Ask for PIN unlock code
+   pinwidget.ui
+)
 
 qt4_add_dbus_adaptor(
     knmservice_SRCS
