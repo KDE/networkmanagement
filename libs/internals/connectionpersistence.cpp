@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KConfigGroup>
 #include <kwallet.h>
 
+#include "knmserviceprefs.h"
 #include "connection.h"
 #include "setting.h"
 #include "settingpersistence.h"
@@ -189,6 +190,20 @@ void ConnectionPersistence::save()
                 if (!secrets.isEmpty()) {
                     wallet->writeMap(walletKeyFor(setting), secrets);
                 }
+            }
+        }
+    }
+}
+
+/* FIXME move into separate class for secrets persistence */
+void ConnectionPersistence::deleteSecrets(QString &id)
+{
+    if (KNetworkManagerServicePrefs::self()->secretStorageMode() == ConnectionPersistence::Secure) {
+        KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Synchronous );
+        if( wallet && wallet->isOpen() && wallet->hasFolder( s_walletFolderName ) && wallet->setFolder( s_walletFolderName )) {
+            foreach (const QString & k, wallet->entryList()) {
+                if (k.startsWith(id + ';'))
+                    wallet->removeEntry(k);
             }
         }
     }

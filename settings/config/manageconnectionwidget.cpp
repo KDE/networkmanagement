@@ -604,13 +604,14 @@ void ManageConnectionWidget::addGotConnection(bool valid, const QString &errorMe
 void ManageConnectionWidget::deleteConnection(QString id, Knm::Connection::Scope scope)
 {
     // delete it
-
     // remove it from our hash
     mUuidItemHash.remove(id);
 
     if (scope == Knm::Connection::System)
         mSystemSettings->removeConnection(id);
     else {
+    // remove secrets from wallet if using encrypted storage
+    Knm::ConnectionPersistence::deleteSecrets(id);
 
     // remove connection file
     QFile connFile(KStandardDirs::locateLocal("data",
