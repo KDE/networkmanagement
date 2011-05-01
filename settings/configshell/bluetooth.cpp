@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDBusInterface>
 #include <QDBusReply>
+#include <QUuid>
 
 #include <KDebug>
 #include <KApplication>
@@ -85,7 +86,7 @@ void Bluetooth::init()
     QRegExp rx("dun|rfcomm?|nap");
 
     if (rx.indexIn(mService) < 0) {
-        kDebug(KDE_DEFAULT_DEBUG_AREA) << "Error: we only support 'dun' and 'nap' services.";
+        kError(KDE_DEFAULT_DEBUG_AREA) << "Error: we only support 'dun' and 'nap' services.";
         kapp->quit();
         return;
     }
@@ -99,7 +100,7 @@ void Bluetooth::init()
                          QLatin1String("org.bluez.Manager"), QDBusConnection::systemBus());
 
     if (!bluez.isValid()) {
-        kDebug(KDE_DEFAULT_DEBUG_AREA) << "Error: could not contact BlueZ.";
+        kError(KDE_DEFAULT_DEBUG_AREA) << "Error: could not contact BlueZ.";
         kapp->quit();
         return;
     }
@@ -108,7 +109,7 @@ void Bluetooth::init()
     QDBusReply<QDBusObjectPath> adapterPath = bluez.call(QLatin1String("DefaultAdapter"));
 
     if (!adapterPath.isValid()) {
-        kDebug(KDE_DEFAULT_DEBUG_AREA) << "Error: default bluetooth adapter not found. Quiting.";
+        kError(KDE_DEFAULT_DEBUG_AREA) << "Error: default bluetooth adapter not found. Quiting.";
         kapp->quit();
         return;
     }
@@ -125,8 +126,8 @@ void Bluetooth::init()
     QDBusReply<QDBusObjectPath> devicePath = adapter.call(QLatin1String("FindDevice"), mBdaddr);
 
     if (!devicePath.isValid()) {
-        kDebug(KDE_DEFAULT_DEBUG_AREA) << mBdaddr << " is not registered in default bluetooth adapter, it may be in another adapter.";
-        kDebug(KDE_DEFAULT_DEBUG_AREA) << mBdaddr << " waiting for it to be registered in ModemManager";
+        kWarning(KDE_DEFAULT_DEBUG_AREA) << mBdaddr << " is not registered in default bluetooth adapter, it may be in another adapter.";
+        kWarning(KDE_DEFAULT_DEBUG_AREA) << mBdaddr << " waiting for it to be registered in ModemManager";
         return;
     }
 
@@ -155,7 +156,34 @@ void Bluetooth::init()
         mDeviceName = properties["Name"].toString();
     }
 
-    if (mService == "nap") {
+    /*
+     * Check if phone supports the requested service.
+     */
+    bool dun, nap = false;
+    if (properties.contains("UUIDs")) {
+        foreach (const QVariant &u, properties["UUIDs"].toMap()) {
+            QUuid uuid(u.toString());
+            if (uuid.data1 == 0x1103) {
+                dun = true;
+            } else if (uuid.data1 == 0x1116) {
+                nap = true;
+            }
+        }
+    }
+
+    if (mService != QLatin1String("nap") && !dun) {
+        kError(KDE_DEFAULT_DEBUG_AREA) << "Error: " << mBdaddr << "does not support Dialup Networking (DUN).";
+        kapp->quit();
+        return;
+    }
+
+    if (mService == QLatin1String("nap") && !nap) {
+        kError(KDE_DEFAULT_DEBUG_AREA) << "Error: " << mBdaddr << "does not support Network Access Point (NAP).";
+        kapp->quit();
+        return;
+    }
+
+    if (mService == QLatin1String("nap")) {
         ConnectionEditor editor(0);
         Knm::Connection *con = editor.createConnection(true, Knm::Connection::Bluetooth, QVariantList() << mDeviceName << QLatin1String(NM_SETTING_BLUETOOTH_TYPE_PANU) << mBdaddr, false);
         if (con) {
@@ -165,8 +193,8 @@ void Bluetooth::init()
         return;
     } else if (mService != QLatin1String("dun")) {
         mDunDevice = mService;
-        kDebug(KDE_DEFAULT_DEBUG_AREA) << "device(" << mDunDevice << ") for" << mBdaddr << " passed as argument";
-        kDebug(KDE_DEFAULT_DEBUG_AREA) << "waiting for it to be registered in ModemManager";
+        kWarning(KDE_DEFAULT_DEBUG_AREA) << "device(" << mDunDevice << ") for" << mBdaddr << " passed as argument";
+        kWarning(KDE_DEFAULT_DEBUG_AREA) << "waiting for it to be registered in ModemManager";
         return;
     }
 
@@ -178,7 +206,7 @@ void Bluetooth::init()
    
     QDBusReply<QString> reply = serial.call(QLatin1String("Connect"), mService);
     if (!reply.isValid()) {
-        kDebug(KDE_DEFAULT_DEBUG_AREA) << "Error: org.bluez.Serial.Connect did not work. Quiting.";
+        kError(KDE_DEFAULT_DEBUG_AREA) << "Error: org.bluez.Serial.Connect did not work. Quiting.";
         kapp->quit();
         return;
     }
@@ -203,9 +231,9 @@ void Bluetooth::modemAdded(const QString &udi)
 
     if (!modem || modem->device() != mDunDevice) {
         if (modem) {
-            kDebug(KDE_DEFAULT_DEBUG_AREA) << "Modem" << modem->device() << " is not the one we want(" << mDunDevice << "). Quitting.";
+            kError(KDE_DEFAULT_DEBUG_AREA) << "Error: modem" << modem->device() << " is not the one we want(" << mDunDevice << "). Quitting.";
         } else {
-            kDebug(KDE_DEFAULT_DEBUG_AREA) << "Modem interface for " << udi << " not found. Quitting";
+            kError(KDE_DEFAULT_DEBUG_AREA) << "Error: modem interface for " << udi << " not found. Quitting";
         }
         kapp->quit();
         return;
