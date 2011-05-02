@@ -38,7 +38,7 @@ public:
     enum Type {Pin, PinPuk};
     enum ErrorCode {PinCodeTooShort, PinCodesDoNotMatch, PukCodeTooShort};
 
-    PinDialog(const QString deviceName, const Type type = Pin, QWidget *parent=0);
+    PinDialog(const QString &deviceName, const QString &udi, const Type type = Pin, QWidget *parent=0);
     ~PinDialog();
 
     Type type() const;
@@ -46,19 +46,20 @@ public:
     QString pin2() const;
     QString puk() const;
 
-    void showErrorMessage(const PinDialog::ErrorCode);
-
 public Q_SLOTS:
     void accept();
 
 protected Q_SLOTS:
     void chkShowPassToggled();
-protected:
+    void modemInterfaceRemoved(const QString &udi);
+
+private:
+    void showErrorMessage(const PinDialog::ErrorCode);
     Ui::PinWidget * ui;
     QLabel* pixmapLabel;
-private:
     QString m_name;
     Type m_type;
+    QString m_udi;
 };
 
 #endif
