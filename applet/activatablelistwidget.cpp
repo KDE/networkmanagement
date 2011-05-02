@@ -339,7 +339,6 @@ void ActivatableListWidget::hoverEnter(const QString& uni)
         RemoteInterfaceConnection *conn = item->interfaceConnection();
         if (conn && conn->deviceUni() == uni) {
             item->hoverEnter();
-            break;
         }
     }
 }
@@ -354,7 +353,6 @@ void ActivatableListWidget::hoverLeave(const QString& uni)
         RemoteInterfaceConnection *conn = item->interfaceConnection();
         if (conn && conn->deviceUni() == uni) {
             item->hoverLeave();
-            break;
         }
     }
 }
