@@ -236,9 +236,9 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
 
     if (connectionSettings.contains(QLatin1String(NM_SETTING_CONNECTION_TIMESTAMP))) {
         int timestamp = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_TIMESTAMP)).toInt();
-	QDateTime dateTime;
-	dateTime.setTime_t(timestamp);
-	m_connection->setTimestamp(dateTime);
+        QDateTime dateTime;
+        dateTime.setTime_t(timestamp);
+        m_connection->setTimestamp(dateTime);
     }
 
     Connection::Type type = Connection::Wired;
