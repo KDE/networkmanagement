@@ -24,9 +24,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 #include <kwindowsystem.h>
+#include <solid/control/modemmanager.h>
 
-PinDialog::PinDialog(const QString deviceName, const Type type, QWidget *parent)
-    : KDialog(parent), m_name(deviceName), m_type(type)
+PinDialog::PinDialog(const QString &deviceName, const QString &udi, const Type type, QWidget *parent)
+    : KDialog(parent), m_name(deviceName), m_type(type), m_udi(udi)
 {
     QWidget *w = new QWidget();
     ui = new Ui::PinWidget();
@@ -87,6 +88,7 @@ PinDialog::PinDialog(const QString deviceName, const Type type, QWidget *parent)
 
     move((desktop.width() - width()) / 2, (desktop.height() - height()) / 2);
     connect(ui->chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
+    connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), SLOT(modemInterfaceRemoved(const QString &)));
 }
 
 PinDialog::~PinDialog()
@@ -108,6 +110,13 @@ void PinDialog::chkShowPassToggled()
         ui->puk->setFocus();
     } else {
         ui->pin->setFocus();
+    }
+}
+
+void PinDialog::modemInterfaceRemoved(const QString &udi)
+{
+    if (udi == m_udi) {
+        reject();
     }
 }
 
