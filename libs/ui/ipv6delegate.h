@@ -1,5 +1,5 @@
 /*
-Copyright 2011 Ilia Kats <ilia-kats@gmx.net>, based on work by Will Stephenson <wstephenson@kde.org> and Paul Marchouk <pmarchouk@gmail.com>
+Copyright 2011 Ilia Kats <ilia-kats@gmx.net>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,37 +18,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IPV6ADVANCEDWIDGET_H
-#define IPV6ADVANCEDWIDGET_H
+#ifndef IPV6DELEGATE_H
+#define IPV6DELEGATE_H
 
 #include <QWidget>
-#include <QStandardItem>
 #include <QStyledItemDelegate>
 
-#include "networkipv6config.h"
+#include "delegate.h"
 
-class IpV6AdvancedWidget : public QWidget
+class IpV6Delegate : public Delegate
 {
 Q_OBJECT
 public:
-    IpV6AdvancedWidget(QWidget * parent = 0);
-    virtual ~IpV6AdvancedWidget();
+    IpV6Delegate(QObject * parent = 0);
+    virtual ~IpV6Delegate();
 
-    void setAdditionalAddresses(const QList<Solid::Control::IPv6Address> &list);
-    QList<Solid::Control::IPv6Address> additionalAddresses();
-
-protected slots:
-    void addIPAddress();
-    void removeIPAddress();
-    /**
-     * Update remove IP button depending on if there is a selection
-     */
-    void selectionChanged(const QItemSelection &);
-    void tableViewItemChanged(QStandardItem *);
-
-private:
-    class Private;
-    Private *d;
+    QWidget * createEditor(QWidget *parent, const QStyleOptionViewItem &option,
+            const QModelIndex &index) const;
 };
 
-#endif //IPV6ADVANCEDWIDGET_H
+#endif

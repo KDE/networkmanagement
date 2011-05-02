@@ -23,27 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define IPV4ADVANCEDWIDGET_H
 
 #include <QWidget>
+#include <QStandardItem>
 #include <QStyledItemDelegate>
 
 #include <solid/control/networkipv4config.h>
-
-class Ipv4Delegate : public QStyledItemDelegate
-{
-Q_OBJECT
-public:
-    Ipv4Delegate(QObject * parent = 0);
-    virtual ~Ipv4Delegate();
-
-    QWidget * createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-            const QModelIndex &index) const;
-    void setEditorData(QWidget *editor, const QModelIndex &index) const;
-
-    void setModelData(QWidget *editor, QAbstractItemModel *model,
-            const QModelIndex &index) const;
-
-    void updateEditorGeometry(QWidget *editor,
-            const QStyleOptionViewItem &option, const QModelIndex &index) const;
-};
 
 class QStandardItem;
 class QItemSelection;

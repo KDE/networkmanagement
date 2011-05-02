@@ -130,7 +130,7 @@ void Ipv4Persistence::save()
           << QString::number(route.prefix())
           << QHostAddress(route.nextHop()).toString()
           << QString::number(route.metric());
-      rawRoutes << rawRoute;
+      rawRoutes << rawRoute.join(";");
   }
   m_config->writeEntry("routes", rawRoutes);
 
