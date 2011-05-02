@@ -374,24 +374,7 @@
      <widget class="QWidget" name="pageRoutes">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QCheckBox" name="cbIgnoreAutoRoutes">
-         <property name="toolTip">
-          <string>If checked, only manually configured routes will be used</string>
-         </property>
-         <property name="text">
-          <string>Ignore &amp;automatically obtained routes</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbNeverDefault">
-         <property name="toolTip">
-          <string>Determines whether this connection should receive the default route</string>
-         </property>
-         <property name="text">
-          <string>Use &amp;only for resources on this connection</string>
-         </property>
-        </widget>
+        <widget class="IpV4RoutesWidget" name="routesSettings" native="true"/>
        </item>
        <item>
         <spacer name="verticalSpacer">
@@ -444,6 +427,12 @@
    <header>ipv4advancedwidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>IpV4RoutesWidget</class>
+   <extends>QWidget</extends>
+   <header>ipv4routeswidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>method</tabstop>
@@ -456,8 +445,6 @@
   <tabstop>dnsSearchMorePushButton</tabstop>
   <tabstop>dhcpClientId</tabstop>
   <tabstop>cmbSettingsMode</tabstop>
-  <tabstop>cbIgnoreAutoRoutes</tabstop>
-  <tabstop>cbNeverDefault</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -468,8 +455,8 @@
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>291</x>
-     <y>30</y>
+     <x>294</x>
+     <y>26</y>
     </hint>
     <hint type="destinationlabel">
      <x>429</x>
