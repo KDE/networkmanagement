@@ -209,9 +209,12 @@ void IpV6Widget::readConfig()
     }
 
     // routing
-    d->ui.routesSettings->setNeverDefault(d->setting->neverdefault());
-    d->ui.routesSettings->setIgnoreAutoRoutes(d->setting->ignoreautoroute());
-    d->ui.routesSettings->setRoutes(d->setting->routes());
+    if (advancedSettingsPartEnabled)
+    {
+        d->ui.routesSettings->setNeverDefault(d->setting->neverdefault());
+        d->ui.routesSettings->setIgnoreAutoRoutes(d->setting->ignoreautoroute());
+        d->ui.routesSettings->setRoutes(d->setting->routes());
+    }
 
     //required or not
     d->ui.cbMayFail->setChecked(!d->setting->mayfail());
@@ -365,6 +368,7 @@ void IpV6Widget::methodChanged(int currentIndex)
     }
 
     d->ui.advancedSettings->setEnabled(advancedSettingsPartEnabled);
+    d->ui.routesSettings->setEnabled(advancedSettingsPartEnabled);
     d->ui.address->setEnabled(addressPartEnabled);
     d->ui.addressLabel->setEnabled(addressPartEnabled);
     d->ui.netMask->setEnabled(addressPartEnabled);
