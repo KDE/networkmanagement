@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
+    <width>280</width>
     <height>318</height>
    </rect>
   </property>
@@ -136,7 +136,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
+   <item row="4" column="0" colspan="3">
     <widget class="QCheckBox" name="cbIgnoreAutoRoutes">
      <property name="text">
       <string>Ignore &amp;automatically obtained routes</string>
@@ -159,7 +159,7 @@
      </property>
     </spacer>
    </item>
-   <item row="5" column="0">
+   <item row="5" column="0" colspan="3">
     <widget class="QCheckBox" name="cbNeverDefault">
      <property name="text">
       <string>Use &amp;only for resources on this connection</string>
