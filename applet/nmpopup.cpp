@@ -743,6 +743,10 @@ void NMPopup::toggleInterfaceTab()
         m_interfaceDetailsWidget->setUpdateEnabled(true);
 
         if (item && item->interface()) {
+            // Temporaly disables hightlight for all connections of this interface.
+            QMetaObject::invokeMethod(item, "hoverLeave", Qt::QueuedConnection,
+                                      Q_ARG(QString, item->interface()->uni()));
+
             m_leftLabel->setText(QString("<h3>%1</h3>").arg(
                                 UiUtils::interfaceNameLabel(item->interface()->uni())));
         }
