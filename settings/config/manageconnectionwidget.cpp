@@ -288,10 +288,14 @@ void ManageConnectionWidget::restoreConnections()
 
         Knm::Connection *con = mConnections->findConnection(connectionId);
 
-        if (!con)
+        if (!con) {
+            //kDebug() << "Connection" << con->name() << "not found";
             continue;
-        if (con->scope() == Knm::Connection::User)
+        }
+        if (con->scope() == Knm::Connection::User) {
+            //kDebug() << "Connection" << con->name() << "is user scope";
             continue;
+        }
 
         QString name = con->name();
         QString type = con->typeAsString(con->type());
@@ -517,6 +521,7 @@ void ManageConnectionWidget::editClicked()
 
         } else
             //find clicked connection from our connection list
+            // FIXME: we should create a copy here like above instead of using the original.
             con = mConnections->findConnection(connectionId);
 
         if (!con)
@@ -574,13 +579,36 @@ void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMess
     mEditor->editConnection(con); //starts editor window
     if (con)
     {
-        if (oldScope != con->scope())
-            deleteConnection(con->uuid().toString(), oldScope);
-
-        if (con->scope() == Knm::Connection::User)
-            saveConnection(con);
-        else
-            mSystemSettings->updateConnection(con->uuid().toString(), con);
+        if (oldScope == con->scope()) {
+            if (con->scope() == Knm::Connection::User)
+                saveConnection(con);
+            else
+                mSystemSettings->updateConnection(con->uuid().toString(), con);
+        } else {
+            if (con->scope() == Knm::Connection::User) {
+                if (deleteConnection(con->uuid().toString(), Knm::Connection::System)) {
+                    saveConnection(con);
+                } else {
+                    // FIXME: when changing one system connection to user scope con is a pointer to
+                    // the connection, when changing from user scope to system, con is just a copy.
+                    // Since we could not restore all the original settings restore at least
+                    // the scope.
+                    con->setScope(Knm::Connection::System);
+                    restoreConnections();
+                    mEditConnection = NULL;
+                    return;
+                }
+            } else {
+                if (mSystemSettings->addConnection(con)) {
+                    deleteConnection(con->uuid().toString(), Knm::Connection::User);
+                    mConnections->replaceConnection(con);
+                } else {
+                    restoreConnections();
+                    mEditConnection = NULL;
+                    return;
+                }
+            }
+        }
 
         updateServiceAndUi(con);
     }
@@ -601,37 +629,37 @@ void ManageConnectionWidget::addGotConnection(bool valid, const QString &errorMe
 }
 
 
-void ManageConnectionWidget::deleteConnection(QString id, Knm::Connection::Scope scope)
+bool ManageConnectionWidget::deleteConnection(QString id, Knm::Connection::Scope scope)
 {
-    // delete it
     // remove it from our hash
     mUuidItemHash.remove(id);
 
-    if (scope == Knm::Connection::System)
-        mSystemSettings->removeConnection(id);
-    else {
-    // remove secrets from wallet if using encrypted storage
-    Knm::ConnectionPersistence::deleteSecrets(id);
+    if (scope == Knm::Connection::System) {
+        return mSystemSettings->removeConnection(id);
+    } else {
+        // remove secrets from wallet if using encrypted storage
+        Knm::ConnectionPersistence::deleteSecrets(id);
 
-    // remove connection file
-    QFile connFile(KStandardDirs::locateLocal("data",
-                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + id));
-    if (!connFile.exists()) {
-        kDebug() << "Connection file not found: " << connFile.fileName();
-    }
-    connFile.remove();
+        // remove connection file
+        QFile connFile(KStandardDirs::locateLocal("data",
+                    Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + id));
+        if (!connFile.exists()) {
+            kDebug() << "Connection file not found: " << connFile.fileName();
+        }
+        connFile.remove();
 
-    // remove from networkmanagerrc
-    KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
-    prefs->config()->deleteGroup(QLatin1String("Connection_") + id);
+        // remove from networkmanagerrc
+        KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
+        prefs->config()->deleteGroup(QLatin1String("Connection_") + id);
 
-    QStringList connectionIds = prefs->connections();
-    connectionIds.removeAll(id);
-    prefs->setConnections(connectionIds);
-    prefs->writeConfig();
+        QStringList connectionIds = prefs->connections();
+        connectionIds.removeAll(id);
+        prefs->setConnections(connectionIds);
+        prefs->writeConfig();
     }
 
     updateServiceAndUi(id, scope);
+    return true;
 }
 
 void ManageConnectionWidget::deleteClicked()

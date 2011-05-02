@@ -61,9 +61,9 @@ public:
     void handleRemove(Knm::Activatable * activatable);
 
     void updateConnection(const QString &uuid, Knm::Connection *newConnection);
-    void addConnection(Knm::Connection *newConnection);
+    bool addConnection(Knm::Connection *newConnection);
     bool getConnectionSecrets(Knm::Connection *con);
-    void removeConnection(const QString &uuid);
+    bool removeConnection(const QString &uuid);
 
 Q_SIGNALS:
     void connectionsChanged();
@@ -79,6 +79,7 @@ private Q_SLOTS:
     void serviceOwnerChanged(const QString&, const QString&, const QString&);
     void onConnectionSecretsArrived(QDBusPendingCallWatcher *watcher);
     void onConnectionAddArrived(QDBusPendingCallWatcher *watcher);
+    void checkConnectionAdded();
 private:
     enum Operation {Add, Remove, Update};
 

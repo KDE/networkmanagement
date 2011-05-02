@@ -152,7 +152,7 @@ private:
     Knm::ConnectionPersistence *connectionPersistence;
     void loadConnection(Knm::Connection *con);
     void saveConnection(Knm::Connection *con);
-    void deleteConnection(QString id, Knm::Connection::Scope scope);
+    bool deleteConnection(QString id, Knm::Connection::Scope scope);
     /**
      * Inform kded module about changed connection and update our
      * connections list in UI
