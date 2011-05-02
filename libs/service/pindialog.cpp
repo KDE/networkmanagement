@@ -152,7 +152,7 @@ void PinDialog::showErrorMessage(const PinDialog::ErrorCode error)
                               ui->puk->setFocus();
                               ui->pukLabel->setFont(bold);
         break;
-        default: msg = i18n("Unkwown Error");
+        default: msg = i18n("Unknown Error");
     }
     ui->errorMessage->setText(msg, KTitleWidget::ErrorMessage);
     adjustSize();
