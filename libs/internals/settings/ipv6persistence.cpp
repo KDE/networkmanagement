@@ -145,6 +145,7 @@ QMap<QString,QString> Ipv6Persistence::secrets() const
 
 void Ipv6Persistence::restoreSecrets(QMap<QString,QString> secrets) const
 {
+  Q_UNUSED(secrets);
   if (m_storageMode == ConnectionPersistence::Secure) {
   }
 }
