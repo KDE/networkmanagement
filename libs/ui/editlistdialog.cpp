@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "editlistdialog.h"
 
-#include <KEditListBox>
+#include <KEditListWidget>
 #include <KLineEdit>
 
 void removeEmptyItems(QStringList &list);
@@ -28,10 +28,10 @@ void removeEmptyItems(QStringList &list);
 class EditListDialog::Private
 {
 public:
-    Private() : editListBox(0)
+    Private() : editListWidget(0)
     {
     }
-    KEditListBox * editListBox;
+    KEditListWidget * editListWidget;
 
 };
 
@@ -39,10 +39,10 @@ EditListDialog::EditListDialog(QWidget *parent, Qt::WFlags flags) : KDialog(pare
 {
     setButtons(KDialog::Ok | KDialog::Cancel);
 
-    d->editListBox = new KEditListBox(this);
-    d->editListBox->setCheckAtEntering(true);
+    d->editListWidget = new KEditListWidget(this);
+    d->editListWidget->setCheckAtEntering(true);
 
-    setMainWidget(d->editListBox);
+    setMainWidget(d->editListWidget);
     connect(this, SIGNAL(okClicked()), this, SLOT(okClicked()));
 }
 
@@ -53,12 +53,12 @@ EditListDialog::~EditListDialog()
 
 void EditListDialog::setItems(const QStringList &items)
 {
-    d->editListBox->setItems(items);
+    d->editListWidget->setItems(items);
 }
 
 QStringList EditListDialog::items() const
 {
-    return d->editListBox->items();
+    return d->editListWidget->items();
 }
 
 void removeEmptyItems(QStringList &list)
@@ -84,11 +84,11 @@ void EditListDialog::okClicked()
 
 void EditListDialog::setValidator(const QValidator *validator)
 {
-    d->editListBox->lineEdit()->setValidator(validator);
+    d->editListWidget->lineEdit()->setValidator(validator);
 }
 
 const QValidator* EditListDialog::validator() const
 {
-    return d->editListBox->lineEdit()->validator();
+    return d->editListWidget->lineEdit()->validator();
 }
 
