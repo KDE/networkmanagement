@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settingwidget_p.h"
 
 #include <KDebug>
-#include <KEditListBox>
 
 #include <QNetworkAddressEntry>
 
