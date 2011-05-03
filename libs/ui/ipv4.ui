@@ -354,12 +354,22 @@
      <widget class="QWidget" name="pageAdditionalAddresses">
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="IpV4AdvancedWidget" name="advancedSettings" native="true"/>
+        <widget class="IpV4AdvancedWidget" name="advancedSettings" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer name="verticalSpacer_3">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Preferred</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -374,22 +384,12 @@
      <widget class="QWidget" name="pageRoutes">
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QCheckBox" name="cbIgnoreAutoRoutes">
-         <property name="toolTip">
-          <string>If checked, only manually configured routes will be used</string>
-         </property>
-         <property name="text">
-          <string>Ignore &amp;automatically obtained routes</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="cbNeverDefault">
-         <property name="toolTip">
-          <string>Determines whether this connection should receive the default route</string>
-         </property>
-         <property name="text">
-          <string>Use &amp;only for resources on this connection</string>
+        <widget class="IpV4RoutesWidget" name="routesSettings" native="true">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
         </widget>
        </item>
@@ -397,6 +397,9 @@
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType">
+          <enum>QSizePolicy::Preferred</enum>
          </property>
          <property name="sizeHint" stdset="0">
           <size>
@@ -444,6 +447,12 @@
    <header>ipv4advancedwidget.h</header>
    <container>1</container>
   </customwidget>
+  <customwidget>
+   <class>IpV4RoutesWidget</class>
+   <extends>QWidget</extends>
+   <header>ipv4routeswidget.h</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>method</tabstop>
@@ -456,8 +465,6 @@
   <tabstop>dnsSearchMorePushButton</tabstop>
   <tabstop>dhcpClientId</tabstop>
   <tabstop>cmbSettingsMode</tabstop>
-  <tabstop>cbIgnoreAutoRoutes</tabstop>
-  <tabstop>cbNeverDefault</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -468,8 +475,8 @@
    <slot>setCurrentIndex(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>291</x>
-     <y>30</y>
+     <x>294</x>
+     <y>26</y>
     </hint>
     <hint type="destinationlabel">
      <x>429</x>

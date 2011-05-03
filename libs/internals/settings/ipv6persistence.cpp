@@ -129,7 +129,7 @@ void Ipv6Persistence::save()
           << QString::number(route.metric());
       rawRoutes << rawRoute;
   }
-  m_config->writeEntry("routes", rawRoutes);
+  m_config->writeEntry("routes", rawRoutes.join(";"));
 
   m_config->writeEntry("ignoredhcpdns", setting->ignoredhcpdns());
   m_config->writeEntry("ignoreautoroute", setting->ignoreautoroute());
