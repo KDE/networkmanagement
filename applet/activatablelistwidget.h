@@ -69,7 +69,7 @@ private:
     void createHiddenItem();
     int m_connectionType;
     QList<Knm::Activatable::ActivatableType> m_types;
-    QStringList m_interfaces;
+    QHash<QString, Solid::Control::NetworkInterface::Type> m_interfaces;
 
     QHash<RemoteActivatable*, ActivatableItem*> m_itemIndex;
     HiddenWirelessNetworkItem* m_hiddenItem;
