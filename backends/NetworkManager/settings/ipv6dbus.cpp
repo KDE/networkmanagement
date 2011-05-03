@@ -70,11 +70,11 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
             continue;
           }
           Q_IPV6ADDR ip, gateway;
-          for (int i = 0; i < addressMap.address.size(); i++)
+          for (int i = 0; i < 16; i++)
           {
               ip[i] = addressMap.address[i];
           }
-          for (int i = 0; i < addressMap.gateway.size(); i++)
+          for (int i = 0; i < 16; i++)
           {
               gateway[i] = addressMap.gateway[i];
           }
@@ -91,6 +91,44 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
       //NO addressArg.endArray(); it's fatal in debug builds.
 
       setting->setAddresses(addresses);
+  }
+
+  if (map.contains("routes"))
+  {
+      QDBusArgument routeArg = map.value("routes").value< QDBusArgument>();
+      QList<Solid::Control::IPv6Route> routes;
+
+      routeArg.beginArray();
+      while(!routeArg.atEnd())
+      {
+          IpV6RouteMap routeMap;
+          routeArg >> routeMap;
+
+          if (routeMap.route.isEmpty() || !routeMap.prefix || routeMap.nextHop.isEmpty() || !routeMap.metric)
+          {
+              kWarning() << "Invalid route format detected.";
+              continue;
+          }
+          Q_IPV6ADDR addr, nexthop;
+          for (int i = 0; i < 16; i++)
+          {
+              addr[i] = routeMap.route[i];
+          }
+          for (int i = 0; i < 16; i++)
+          {
+              nexthop[i] = routeMap.nextHop[i];
+          }
+
+          Solid::Control::IPv6Route route(addr, routeMap.prefix, nexthop, routeMap.metric);
+          if (!route.isValid())
+          {
+              kWarning() << "Invalid route format detected.";
+              continue;
+          }
+
+          routes << route;
+      }
+      setting->setRoutes(routes);
   }
 
   if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_IGNORE_AUTO_DNS))) {
@@ -200,14 +238,14 @@ QVariantMap Ipv6Dbus::toMap()
           QList<quint8> assembledRoute;
           for (int i = 0; i < 16; i++)
           {
-              assembledRoute[i] = Route[i];
+              assembledRoute << Route[i];
           }
 
           Q_IPV6ADDR nextHop = route.nextHop();
           QList<quint8> assembledNextHop;
           for (int i = 0; i < 16; i++)
           {
-              assembledNextHop[i] = nextHop[i];
+              assembledNextHop << nextHop[i];
           }
 
           dbusRoute.route = assembledRoute;

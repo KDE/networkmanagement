@@ -1,5 +1,5 @@
 /*
-Copyright 2011 Ilia Kats <ilia-kats@gmx.net>, based on work by Will Stephenson <wstephenson@kde.org> and Paul Marchouk <pmarchouk@gmail.com>
+Copyright 2011 Ilia Kats <ilia-kats@gmx.net>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,28 +18,34 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IPV6ADVANCEDWIDGET_H
-#define IPV6ADVANCEDWIDGET_H
+#ifndef IPV4ROUTESWIDGET_H
+#define IPV4ROUTESWIDGET_H
 
 #include <QWidget>
-#include <QStandardItem>
 #include <QStyledItemDelegate>
 
-#include "networkipv6config.h"
+#include <solid/control/networkipv4config.h>
 
-class IpV6AdvancedWidget : public QWidget
+class QStandardItem;
+class QItemSelection;
+
+class IpV4RoutesWidget : public QWidget
 {
 Q_OBJECT
 public:
-    IpV6AdvancedWidget(QWidget * parent = 0);
-    virtual ~IpV6AdvancedWidget();
+    IpV4RoutesWidget(QWidget * parent = 0);
+    virtual ~IpV4RoutesWidget();
 
-    void setAdditionalAddresses(const QList<Solid::Control::IPv6Address> &list);
-    QList<Solid::Control::IPv6Address> additionalAddresses();
+    void setRoutes(const QList<Solid::Control::IPv4Route> &list);
+    QList<Solid::Control::IPv4Route> routes();
+    void setNeverDefault(bool checked);
+    bool neverdefault();
+    void setIgnoreAutoRoutes(bool checked);
+    bool ignoreautoroutes();
 
 protected slots:
-    void addIPAddress();
-    void removeIPAddress();
+    void addRoute();
+    void removeRoute();
     /**
      * Update remove IP button depending on if there is a selection
      */
@@ -51,4 +57,4 @@ private:
     Private *d;
 };
 
-#endif //IPV6ADVANCEDWIDGET_H
+#endif //IPV4ADVANCEDWIDGET_H

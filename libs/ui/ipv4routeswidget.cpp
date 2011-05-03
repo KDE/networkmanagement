@@ -1,6 +1,5 @@
 /*
-Copyright 2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2009 Paul Marchouk <pmarchouk@gmail.com>
+Copyright 2011 Ilia Kats <ilia-kats@gmx.net>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -20,22 +19,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <QLineEdit>
+#include <QStandardItem>
 #include <QStandardItemModel>
 #include <QNetworkAddressEntry>
-//#include <QHostAddress>
 
 #include <KDebug>
 
-#include "ui_ipv4advanced.h"
+#include "ui_ipv4routes.h"
 
-#include "ipv4advancedwidget.h"
-#include "simpleipv4addressvalidator.h"
+#include "ipv4routeswidget.h"
 #include "ipv4delegate.h"
+#include "intdelegate.h"
 
-class IpV4AdvancedWidget::Private
+class IpV4RoutesWidget::Private
 {
 public:
-    Private() : model(0,3)
+    Private() : model(0,4)
     {
         QStandardItem * headerItem = new QStandardItem(i18nc("Header text for IPv4 address", "Address"));
         model.setHorizontalHeaderItem(0, headerItem);
@@ -43,13 +42,15 @@ public:
         model.setHorizontalHeaderItem(1, headerItem);
         headerItem = new QStandardItem(i18nc("Header text for IPv4 gateway", "Gateway"));
         model.setHorizontalHeaderItem(2, headerItem);
+        headerItem = new QStandardItem(i18nc("Header text for IPv4 route metric", "Metric"));
+        model.setHorizontalHeaderItem(3, headerItem);
     }
-    Ui_AdvancedSettingsIp4Config ui;
+    Ui_RoutesIp4Config ui;
     QStandardItemModel model;
 };
 
-IpV4AdvancedWidget::IpV4AdvancedWidget(QWidget * parent)
-: QWidget(parent), d(new IpV4AdvancedWidget::Private())
+IpV4RoutesWidget::IpV4RoutesWidget(QWidget * parent)
+: QWidget(parent), d(new IpV4RoutesWidget::Private())
 {
     d->ui.setupUi(this);
     layout()->setMargin(0);
@@ -58,15 +59,17 @@ IpV4AdvancedWidget::IpV4AdvancedWidget(QWidget * parent)
     d->ui.tableViewAddresses->horizontalHeader()->setStretchLastSection(true);
 
     IpV4Delegate *ipDelegate = new IpV4Delegate(this);
+    IntDelegate *metricDelegate = new IntDelegate(this);
     d->ui.tableViewAddresses->setItemDelegateForColumn(0, ipDelegate);
     d->ui.tableViewAddresses->setItemDelegateForColumn(1, ipDelegate);
     d->ui.tableViewAddresses->setItemDelegateForColumn(2, ipDelegate);
+    d->ui.tableViewAddresses->setItemDelegateForColumn(3, metricDelegate);
 
     d->ui.pushButtonAdd->setIcon(KIcon("list-add"));
     d->ui.pushButtonRemove->setIcon(KIcon("list-remove"));
 
-    connect(d->ui.pushButtonAdd, SIGNAL(clicked()), this, SLOT(addIPAddress()));
-    connect(d->ui.pushButtonRemove, SIGNAL(clicked()), this, SLOT(removeIPAddress()));
+    connect(d->ui.pushButtonAdd, SIGNAL(clicked()), this, SLOT(addRoute()));
+    connect(d->ui.pushButtonRemove, SIGNAL(clicked()), this, SLOT(removeRoute()));
 
     connect(d->ui.tableViewAddresses->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
             SLOT(selectionChanged(const QItemSelection&)));
@@ -74,56 +77,77 @@ IpV4AdvancedWidget::IpV4AdvancedWidget(QWidget * parent)
     connect(&d->model, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(tableViewItemChanged(QStandardItem *)));
 }
 
-IpV4AdvancedWidget::~IpV4AdvancedWidget()
+IpV4RoutesWidget::~IpV4RoutesWidget()
 {
     delete d;
 }
 
-void IpV4AdvancedWidget::setAdditionalAddresses(const QList<Solid::Control::IPv4Address> &list)
+void IpV4RoutesWidget::setNeverDefault(bool checked)
+{
+    d->ui.cbNeverDefault->setChecked(checked);
+}
+
+bool IpV4RoutesWidget::neverdefault()
+{
+    return d->ui.cbNeverDefault->isChecked();
+}
+
+void IpV4RoutesWidget::setIgnoreAutoRoutes(bool checked)
+{
+    d->ui.cbIgnoreAutoRoutes->setChecked(checked);
+}
+
+bool IpV4RoutesWidget::ignoreautoroutes()
+{
+    return d->ui.cbIgnoreAutoRoutes->isChecked();
+}
+
+void IpV4RoutesWidget::setRoutes(const QList<Solid::Control::IPv4Route> &list)
 {
     d->model.removeRows(0, d->model.rowCount());
-    foreach (const Solid::Control::IPv4Address &addr, list) {
+    foreach (const Solid::Control::IPv4Route &addr, list) {
         QList<QStandardItem *> item;
         QNetworkAddressEntry entry;
+        QNetworkAddressEntry nexthop;
         // we need to set up IP before prefix/netmask manipulation
-        entry.setIp(QHostAddress(addr.address()));
-        entry.setPrefixLength(addr.netMask());
-
+        entry.setIp(QHostAddress(addr.route()));
+        entry.setPrefixLength(addr.prefix());
+        nexthop.setIp(QHostAddress(addr.nextHop()));
+kDebug()<<entry.ip().toString();
         item << new QStandardItem(entry.ip().toString())
-             << new QStandardItem(entry.netmask().toString());
-
-        QString gateway;
-        if (addr.gateway()) {
-            gateway = QHostAddress(addr.gateway()).toString();
-        }
-        item << new QStandardItem(gateway);
+             << new QStandardItem(entry.netmask().toString())
+             << new QStandardItem(nexthop.ip().toString())
+             << new QStandardItem(QString::number(addr.metric(),10));
 
         d->model.appendRow(item);
     }
 }
 
-QList<Solid::Control::IPv4Address> IpV4AdvancedWidget::additionalAddresses()
+QList<Solid::Control::IPv4Route> IpV4RoutesWidget::routes()
 {
-    QList<Solid::Control::IPv4Address> list;
+    QList<Solid::Control::IPv4Route> list;
 
     for (int i = 0, rowCount = d->model.rowCount(); i < rowCount; i++) {
-        QHostAddress ip, mask, gw;
+        QHostAddress ip, mask, nhop;
         QNetworkAddressEntry entry;
+        quint32 metric;
 
         ip.setAddress(d->model.item(i, 0)->text());
         entry.setIp(ip);
         mask.setAddress(d->model.item(i, 1)->text());
         entry.setNetmask(mask);
-        gw.setAddress(d->model.item(i, 2)->text());
+        nhop.setAddress(d->model.item(i, 2)->text());
+        metric = d->model.item(i, 3)->text().toUInt();
 
-        list.append(Solid::Control::IPv4Address(ip.toIPv4Address(),
+        list.append(Solid::Control::IPv4Route(ip.toIPv4Address(),
                                                 entry.prefixLength(),
-                                                gw.toIPv4Address()));
+                                                nhop.toIPv4Address(),
+                                                metric));
     }
     return list;
 }
 
-void IpV4AdvancedWidget::addIPAddress()
+void IpV4RoutesWidget::addRoute()
 {
     QList<QStandardItem *> item;
     item << new QStandardItem << new QStandardItem << new QStandardItem;
@@ -143,7 +167,7 @@ void IpV4AdvancedWidget::addIPAddress()
     }
 }
 
-void IpV4AdvancedWidget::removeIPAddress()
+void IpV4RoutesWidget::removeRoute()
 {
     QItemSelectionModel * selectionModel = d->ui.tableViewAddresses->selectionModel();
     if (selectionModel->hasSelection()) {
@@ -153,7 +177,7 @@ void IpV4AdvancedWidget::removeIPAddress()
     d->ui.pushButtonRemove->setEnabled(false);
 }
 
-void IpV4AdvancedWidget::selectionChanged(const QItemSelection & selected)
+void IpV4RoutesWidget::selectionChanged(const QItemSelection & selected)
 {
     kDebug() << "selectionChanged";
     d->ui.pushButtonRemove->setEnabled(!selected.isEmpty());
@@ -161,7 +185,7 @@ void IpV4AdvancedWidget::selectionChanged(const QItemSelection & selected)
 
 extern quint32 suggestNetmask(quint32 ip);
 
-void IpV4AdvancedWidget::tableViewItemChanged(QStandardItem *item)
+void IpV4RoutesWidget::tableViewItemChanged(QStandardItem *item)
 {
     if (item->text().isEmpty()) {
         return;

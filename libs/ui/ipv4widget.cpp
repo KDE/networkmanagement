@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settingwidget_p.h"
 
 #include <KDebug>
-#include <KEditListBox>
 
 #include <QNetworkAddressEntry>
 
@@ -211,9 +210,14 @@ void IpV4Widget::readConfig()
     }
     // dhcp client ID
     d->ui.dhcpClientId->setText(d->setting->dhcpclientid());
+
     // routing
-    d->ui.cbNeverDefault->setChecked(d->setting->neverdefault());
-    d->ui.cbIgnoreAutoRoutes->setChecked(d->setting->ignoreautoroute());
+    if (advancedSettingsPartEnabled)
+    {
+        d->ui.routesSettings->setNeverDefault(d->setting->neverdefault());
+        d->ui.routesSettings->setIgnoreAutoRoutes(d->setting->ignoreautoroute());
+        d->ui.routesSettings->setRoutes(d->setting->routes());
+    }
 
     //required or not
     d->ui.cbMayFail->setChecked(!d->setting->mayfail());
@@ -297,8 +301,9 @@ void IpV4Widget::writeConfig()
     // dhcp client ID
     d->setting->setDhcpclientid(d->ui.dhcpClientId->text());
     // routing
-    d->setting->setNeverdefault(d->ui.cbNeverDefault->isChecked());
-    d->setting->setIgnoreautoroute(d->ui.cbIgnoreAutoRoutes->isChecked());
+    d->setting->setNeverdefault(d->ui.routesSettings->neverdefault());
+    d->setting->setIgnoreautoroute(d->ui.routesSettings->ignoreautoroutes());
+    d->setting->setRoutes(d->ui.routesSettings->routes());
 
     //required or not
     d->setting->setMayfail(!d->ui.cbMayFail->isChecked());
@@ -374,6 +379,7 @@ void IpV4Widget::methodChanged(int currentIndex)
     }
 
     d->ui.advancedSettings->setEnabled(advancedSettingsPartEnabled);
+    d->ui.routesSettings->setEnabled(advancedSettingsPartEnabled);
     d->ui.address->setEnabled(addressPartEnabled);
     d->ui.addressLabel->setEnabled(addressPartEnabled);
     d->ui.netMask->setEnabled(addressPartEnabled);

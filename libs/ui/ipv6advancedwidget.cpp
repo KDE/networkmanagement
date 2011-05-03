@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <QLineEdit>
-#include <QStandardItem>
 #include <QStandardItemModel>
 #include <QNetworkAddressEntry>
 
@@ -29,6 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ipv6advancedwidget.h"
 #include "simpleipv6addressvalidator.h"
+#include "intdelegate.h"
+#include "ipv6delegate.h"
 
 class IpV6AdvancedWidget::Private
 {
@@ -46,41 +47,6 @@ public:
     QStandardItemModel model;
 };
 
-Ipv6Delegate::Ipv6Delegate(QObject * parent) : QStyledItemDelegate(parent) {}
-Ipv6Delegate::~Ipv6Delegate() {}
-
-QWidget * Ipv6Delegate::createEditor(QWidget *parent, const QStyleOptionViewItem &,
-        const QModelIndex &) const
-{
-    QLineEdit *editor = new QLineEdit(parent);
-    editor->setValidator(new SimpleIpV6AddressValidator(editor));
-
-    return editor;
-}
-
-void Ipv6Delegate::setEditorData(QWidget *editor, const QModelIndex &index) const
-{
-    QString value = index.model()->data(index, Qt::EditRole).toString();
-
-    QLineEdit *le = static_cast<QLineEdit*>(editor);
-    le->setText(value);
-}
-
-void Ipv6Delegate::setModelData(QWidget *editor, QAbstractItemModel *model,
-        const QModelIndex &index) const
-{
-    QLineEdit *le = static_cast<QLineEdit*>(editor);
-
-    model->setData(index, le->text(), Qt::EditRole);
-}
-
-void Ipv6Delegate::updateEditorGeometry(QWidget *editor,
-        const QStyleOptionViewItem &option, const QModelIndex &) const
-{
-    editor->setGeometry(option.rect);
-
-}
-
 IpV6AdvancedWidget::IpV6AdvancedWidget(QWidget * parent)
 : QWidget(parent), d(new IpV6AdvancedWidget::Private())
 {
@@ -90,9 +56,10 @@ IpV6AdvancedWidget::IpV6AdvancedWidget(QWidget * parent)
     d->ui.tableViewAddresses->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
     d->ui.tableViewAddresses->horizontalHeader()->setStretchLastSection(true);
 
-    Ipv6Delegate *ipDelegate = new Ipv6Delegate(this);
+    IpV6Delegate *ipDelegate = new IpV6Delegate(this);
+    IntDelegate *prefixDelegate = new IntDelegate (0, 128, this);
     d->ui.tableViewAddresses->setItemDelegateForColumn(0, ipDelegate);
-    d->ui.tableViewAddresses->setItemDelegateForColumn(1, ipDelegate);
+    d->ui.tableViewAddresses->setItemDelegateForColumn(1, prefixDelegate);
     d->ui.tableViewAddresses->setItemDelegateForColumn(2, ipDelegate);
 
     d->ui.pushButtonAdd->setIcon(KIcon("list-add"));

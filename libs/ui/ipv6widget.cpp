@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settingwidget_p.h"
 
 #include <KDebug>
-#include <KEditListBox>
 
 #include <QNetworkAddressEntry>
 
@@ -32,6 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/ipv6.h"
 #include "simpleipv6addressvalidator.h"
 #include "listvalidator.h"
+#include "intvalidator.h"
 #include "editlistdialog.h"
 
 class IpV6WidgetPrivate : public SettingWidgetPrivate
@@ -92,7 +92,7 @@ IpV6Widget::IpV6Widget(Knm::Connection * connection, QWidget * parent)
     d->ui.method->setItemText(1, str_auto_only);
 
     d->ui.address->setValidator(new SimpleIpV6AddressValidator(this));
-    d->ui.netMask->setValidator(new QIntValidator(0, 128, this));
+    d->ui.netMask->setValidator(new IntValidator(0, 128, this));
     d->ui.gateway->setValidator(new SimpleIpV6AddressValidator(this));
 
     ListValidator *dnsEntriesValidator = new ListValidator(this);
@@ -208,8 +208,12 @@ void IpV6Widget::readConfig()
     }
 
     // routing
-    d->ui.cbNeverDefault->setChecked(d->setting->neverdefault());
-    d->ui.cbIgnoreAutoRoutes->setChecked(d->setting->ignoreautoroute());
+    if (advancedSettingsPartEnabled)
+    {
+        d->ui.routesSettings->setNeverDefault(d->setting->neverdefault());
+        d->ui.routesSettings->setIgnoreAutoRoutes(d->setting->ignoreautoroute());
+        d->ui.routesSettings->setRoutes(d->setting->routes());
+    }
 
     //required or not
     d->ui.cbMayFail->setChecked(!d->setting->mayfail());
@@ -290,8 +294,9 @@ void IpV6Widget::writeConfig()
     d->setting->setDnssearch(dnsSearchEntries);
 
     // routing
-    d->setting->setNeverdefault(d->ui.cbNeverDefault->isChecked());
-    d->setting->setIgnoreautoroute(d->ui.cbIgnoreAutoRoutes->isChecked());
+    d->setting->setNeverdefault(d->ui.routesSettings->neverdefault());
+    d->setting->setIgnoreautoroute(d->ui.routesSettings->ignoreautoroutes());
+    d->setting->setRoutes(d->ui.routesSettings->routes());
 
     //required or not
     d->setting->setMayfail(!d->ui.cbMayFail->isChecked());
@@ -362,6 +367,7 @@ void IpV6Widget::methodChanged(int currentIndex)
     }
 
     d->ui.advancedSettings->setEnabled(advancedSettingsPartEnabled);
+    d->ui.routesSettings->setEnabled(advancedSettingsPartEnabled);
     d->ui.address->setEnabled(addressPartEnabled);
     d->ui.addressLabel->setEnabled(addressPartEnabled);
     d->ui.netMask->setEnabled(addressPartEnabled);

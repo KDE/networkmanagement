@@ -20,7 +20,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
 
   kDebug() << "IPv4 map: " << map;
 
-  Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting*>(m_setting); 
+  Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting*>(m_setting);
 
   if (map.contains("method")) {
       setting->setMethod(methodStringToEnum(map.value("method").value<QString>())); }
@@ -118,6 +118,35 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
 
       if (!addresses.isEmpty())
           setting->setAddresses(addresses);
+  }
+
+  if (map.contains("routes"))
+  {
+      QDBusArgument routeArg = map.value("routes").value< QDBusArgument>();
+      QList<Solid::Control::IPv4Route> routes;
+
+      routeArg.beginArray();
+      while(!routeArg.atEnd())
+      {
+          QList<uint> uintList;
+          routeArg >> uintList;
+
+          if (uintList.count() != 4)
+          {
+              kWarning() << "Invalid route format detected. UInt count is " << uintList.count();
+              continue;
+          }
+
+          Solid::Control::IPv4Route route((quint32)ntohl(uintList.at(0)), (quint32)uintList.at(1), (quint32)ntohl(uintList.at(2)), (quint32)uintList.at(3));
+          if (!route.isValid())
+          {
+              kWarning() << "Invalid route format detected.";
+              continue;
+          }
+          routes << route;
+      }
+      if (!routes.isEmpty())
+          setting->setRoutes(routes);
   }
 
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_IGNORE_AUTO_DNS))) {
