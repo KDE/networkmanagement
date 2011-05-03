@@ -1,6 +1,6 @@
 
 /*
-Copyright 2010 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIconLoader>
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
 #include <solid/control/modemmanager.h>
+#include <solid/device.h>
 #endif
 
 #include "mobileconnectionwizard.h"
@@ -279,10 +280,24 @@ void MobileConnectionWizard::introAddDevice(Solid::Control::NetworkInterface *de
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
     Solid::Control::ModemInterface *modem = Solid::Control::ModemManager::findModemInterface(device->udi(), Solid::Control::ModemInterface::GsmCard);
-    if (modem && modem->enabled()) {
-        desc.append(modem->getInfo().manufacturer);
-        desc.append(" ");
-        desc.append(modem->getInfo().model);
+    if (modem) {
+        if (modem->enabled()) {
+            desc.append(modem->getInfo().manufacturer);
+            desc.append(" ");
+            desc.append(modem->getInfo().model);
+        } else {
+            QString deviceName = modem->masterDevice();
+            foreach (const Solid::Device &d, Solid::Device::allDevices()) {
+                if (d.udi().contains(deviceName, Qt::CaseInsensitive)) {
+                    deviceName = d.product();
+                    if (!deviceName.startsWith(d.vendor())) {
+                        deviceName = d.vendor() + " " + deviceName;
+                    }
+                    desc.append(deviceName);
+                    break;
+                }
+            }
+        }
     }
 #endif
 
