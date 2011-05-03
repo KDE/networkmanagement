@@ -343,7 +343,7 @@ void NMPopup::interfaceRemoved(const QString& uni)
         // the m_iface pointer in interfaceDetailsWidget become invalid in this case.
         if (uni == m_interfaceDetailsWidget->getLastIfaceUni()) {
             m_interfaceDetailsWidget->setInterface(0, false);
-            // Since it is invalid go back to "main" window. 
+            // Since it is invalid go back to "main" window.
             m_leftWidget->setCurrentIndex(0);
         }
 
@@ -500,7 +500,7 @@ void NMPopup::wirelessEnabledToggled(bool checked)
     } else {
         m_showMoreButton->hide();
     }
-    updateHasWireless();
+    updateHasWireless(checked);
     saveConfig();
 }
 
@@ -540,17 +540,17 @@ void NMPopup::networkingEnabledToggled(bool checked)
     } else {
         m_showMoreButton->hide();
     }
-    updateHasWireless();
+    updateHasWireless(checked);
     saveConfig();
 }
 
-void NMPopup::updateHasWireless()
+void NMPopup::updateHasWireless(bool checked)
 {
     //kDebug() << "UPDATE!!!!!!!!!!!!";
     bool hasWireless = true;
     if (!Solid::Control::NetworkManager::isWirelessHardwareEnabled() ||
         !Solid::Control::NetworkManager::isNetworkingEnabled() ||
-        !Solid::Control::NetworkManager::isWirelessEnabled()) {
+        !Solid::Control::NetworkManager::isWirelessEnabled() || !checked) {
 
         //kDebug () << "networking enabled?" << Solid::Control::NetworkManager::isNetworkingEnabled();
         //kDebug () << "wireless hardware enabled?" << Solid::Control::NetworkManager::isWirelessHardwareEnabled();
@@ -558,8 +558,10 @@ void NMPopup::updateHasWireless()
 
         // either networking is disabled, or wireless is disabled
         hasWireless = false;
-        m_connectionList->setHasWireless(hasWireless);
     }
+    //solid is too slow, we need to see if the checkbox was checked by the user
+    if (checked)
+        hasWireless = true;
     kDebug() << "After chckboxn" << hasWireless;
 
     foreach (InterfaceItem* ifaceitem, m_interfaces) {
@@ -611,7 +613,7 @@ void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
 {
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
     m_wifiCheckBox->setEnabled(enabled);
-    updateHasWireless();
+    updateHasWireless(enabled);
 }
 
 void NMPopup::managerNetworkingEnabledChanged(bool enabled)
@@ -696,11 +698,11 @@ void NMPopup::checkShowMore(RemoteActivatable * ra)
         if (wicCount > 0) {
             wicCount--;
         }
-    }
-    if (wicCount == 0 && !m_showMoreButton->isChecked()) {
-        // There is no wireless network which the user had explicitly configured around,
-        // so temporaly show all the others wireless networks available.
-        showMore(true);
+        if (wicCount == 0 &&  !m_showMoreButton->isChecked()) {
+            // There is no wireless network which the user had explicitly configured around,
+            // so temporaly show all the others wireless networks available.
+            showMore(true);
+        }
     }
 }
 

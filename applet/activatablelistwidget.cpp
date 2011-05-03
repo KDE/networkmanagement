@@ -103,7 +103,7 @@ void ActivatableListWidget::addInterface(Solid::Control::NetworkInterface* iface
 {
     kDebug() << "interface added";
     if (iface) {
-        m_interfaces << iface->uni();
+        m_interfaces.insert(iface->uni(), iface->type());
         m_showAllTypes = true;
         filter();
     }
@@ -111,7 +111,7 @@ void ActivatableListWidget::addInterface(Solid::Control::NetworkInterface* iface
 
 void ActivatableListWidget::clearInterfaces()
 {
-    m_interfaces = QStringList();
+    m_interfaces.clear();
     m_vpn = false;
 }
 
@@ -233,7 +233,7 @@ void ActivatableListWidget::createHiddenItem()
     m_hiddenItem = new HiddenWirelessNetworkItem(m_widget);
     Q_ASSERT(m_hiddenItem);
     m_hiddenItem->setupItem();
-    m_layout->insertItem(1337, m_hiddenItem);
+    m_layout->insertItem(0, m_hiddenItem);
     //m_itemIndex[activatable] = ai;
     connect(m_hiddenItem, SIGNAL(disappearAnimationFinished()),
             this, SLOT(deleteItem()));
@@ -243,11 +243,10 @@ void ActivatableListWidget::createHiddenItem()
 
 void ActivatableListWidget::listAppeared()
 {
-    createHiddenItem(); // TODO: move to end
-
     foreach (RemoteActivatable* remote, m_activatables->activatables()) {
         activatableAdded(remote);
     }
+    filter();
 }
 
 void ActivatableListWidget::deactivateConnection(const QString& deviceUni)
@@ -290,12 +289,7 @@ void ActivatableListWidget::setHasWireless(bool hasWireless)
 {
     kDebug() << "++++++++++++++" << hasWireless;
     m_hasWireless = hasWireless;
-    if (hasWireless) {
-        createHiddenItem();
-    } else {
-        delete m_hiddenItem;
-        m_hiddenItem = 0;
-    }
+    filter();
 }
 
 void ActivatableListWidget::filter()
@@ -309,6 +303,26 @@ void ActivatableListWidget::filter()
             }
         }
     }
+
+    if (m_interfaces.count() && m_hasWireless)
+    {
+        foreach (QString uni, m_interfaces.keys())
+        {
+            if (m_interfaces.value(uni) == Solid::Control::NetworkInterface::Ieee80211)
+            {
+                createHiddenItem();
+                break;
+            }
+        }
+    }
+    else if (m_showAllTypes && m_hasWireless)
+        createHiddenItem();
+    else if (m_hiddenItem)
+        {
+            m_hiddenItem->disappear();
+            m_hiddenItem = 0;
+        }
+
     m_layout->invalidate();
 }
 
@@ -325,7 +339,8 @@ void ActivatableListWidget::deleteItem()
 {
     ActivatableItem* ai = dynamic_cast<ActivatableItem*>(sender());
     m_layout->removeItem(ai);
-    m_itemIndex.remove(m_itemIndex.key(ai));
+    if (m_itemIndex.key(ai))
+        m_itemIndex.remove(m_itemIndex.key(ai));
     delete ai;
 }
 

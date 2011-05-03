@@ -96,7 +96,7 @@ private Q_SLOTS:
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
     void addVpnInterface();
-    void updateHasWireless();
+    void updateHasWireless(bool checked = true);
 #ifdef NM_0_8
     void updateHasWwan();
 #endif
