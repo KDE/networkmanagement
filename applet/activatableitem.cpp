@@ -44,7 +44,7 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
     m_activatable(remote),
     m_hasDefaultRoute(false),
     m_deleting(false),
-    rowHeight(28),
+    rowHeight(28), // TODO: try not to use hard coded value.
     spacing(4)
 {
     setDrawBackground(true);
