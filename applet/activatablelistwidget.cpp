@@ -233,7 +233,7 @@ void ActivatableListWidget::createHiddenItem()
     m_hiddenItem = new HiddenWirelessNetworkItem(m_widget);
     Q_ASSERT(m_hiddenItem);
     m_hiddenItem->setupItem();
-    m_layout->insertItem(0, m_hiddenItem);
+    m_layout->addItem(m_hiddenItem);
     //m_itemIndex[activatable] = ai;
     connect(m_hiddenItem, SIGNAL(disappearAnimationFinished()),
             this, SLOT(deleteItem()));
@@ -306,13 +306,20 @@ void ActivatableListWidget::filter()
 
     if (m_interfaces.count() && m_hasWireless)
     {
+        bool found = false;
         foreach (QString uni, m_interfaces.keys())
         {
             if (m_interfaces.value(uni) == Solid::Control::NetworkInterface::Ieee80211)
             {
                 createHiddenItem();
+                found = true;
                 break;
             }
+        }
+        if (!found && m_hiddenItem)
+        {
+            m_hiddenItem->disappear();
+            m_hiddenItem = 0;
         }
     }
     else if (m_showAllTypes && m_hasWireless)
