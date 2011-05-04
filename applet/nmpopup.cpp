@@ -170,7 +170,7 @@ void NMPopup::init()
     m_mainLayout->addItem(m_leftWidget, 1, 0);
 
     m_rightWidget = new QGraphicsWidget(this);
-    m_rightWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::MinimumExpanding);
+    m_rightWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     m_rightLayout = new QGraphicsLinearLayout(m_rightWidget);
     m_rightLayout->setOrientation(Qt::Vertical);
 
@@ -765,7 +765,9 @@ QSizeF NMPopup::sizeHint (Qt::SizeHint which, const QSizeF & constraint) const
         temp1 = 300;
     }
 
-    m_leftWidget->setPreferredWidth(temp1);
+    if (temp1 < (2*sh.rwidth()) / 3) {
+        m_leftWidget->setPreferredWidth(temp1);
+    }
 
     return sh;
 }
