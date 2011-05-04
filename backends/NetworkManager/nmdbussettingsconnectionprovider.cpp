@@ -245,16 +245,17 @@ void NMDBusSettingsConnectionProvider::handleRemove(Knm::Activatable *)
 
 bool NMDBusSettingsConnectionProvider::checkAuthorization(const Operation oper)
 {
-    // See /usr/share/polkit-1/actions/org.freedesktop.network-manager-settings.system.policy
+    // See /usr/share/polkit-1/actions/org.freedesktop.network-manager-settings.system.policy (or
+    // /usr/share/polkit-1/actions/org.freedesktop.NetworkManager.policy)
     // KAuth is the KDE's Polkit wrapper.
-    KAuth::Action action(QLatin1String("org.freedesktop.network-manager-settings.system.modify"));
+    KAuth::Action action(QLatin1String("org.freedesktop.NetworkManager.settings.modify.system"));
 
     QWidget *w = qobject_cast<QWidget *>(parent());
     if (w) {
         action.setParentWidget(w);
     }
 
-    KAuth::ActionReply reply = action.execute(QLatin1String("org.freedesktop.network-manager-settings.system"));
+    KAuth::ActionReply reply = action.execute();
     if (reply.failed()) {
         QString errorMessage;
         switch (oper) {
