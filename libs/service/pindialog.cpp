@@ -26,9 +26,23 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kwindowsystem.h>
 #include <solid/control/modemmanager.h>
 
-PinDialog::PinDialog(const QString &deviceName, const QString &udi, const Type type, QWidget *parent)
-    : KDialog(parent), m_name(deviceName), m_type(type), m_udi(udi)
+PinDialog::PinDialog(Solid::Control::ModemGsmCardInterface *modem, const Type type, QWidget *parent)
+    : KDialog(parent), m_type(type)
 {
+    if (modem) {
+        m_udi = modem->udi();
+        m_name = modem->masterDevice();
+        foreach (const Solid::Device &d, Solid::Device::allDevices()) {
+            if (d.udi().contains(m_name, Qt::CaseInsensitive)) {
+                m_name = d.product();
+                if (!m_name.startsWith(d.vendor())) {
+                    m_name = d.vendor() + " " + m_name;
+                }
+                break;
+            }
+        }
+    }
+
     QWidget *w = new QWidget();
     ui = new Ui::PinWidget();
     ui->setupUi(w);
