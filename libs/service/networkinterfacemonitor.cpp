@@ -26,7 +26,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
-#include <solid/device.h>
 
 #include <connection.h>
 #include "activatablelist.h"
@@ -40,7 +39,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <kauthactionreply.h>
 #include <KMessageBox>
 
-#include <solid/control/modeminterface.h>
 #include <solid/control/modemmanager.h>
 
 #include "gsmnetworkinterfaceactivatableprovider.h"
@@ -186,26 +184,15 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
         return;
     }
 
-    QString deviceName = modem->masterDevice();
-    foreach (const Solid::Device &d, Solid::Device::allDevices()) {
-        if (d.udi().contains(deviceName, Qt::CaseInsensitive)) {
-            deviceName = d.product();
-            if (!deviceName.startsWith(d.vendor())) {
-                deviceName = d.vendor() + " " + deviceName;
-            }
-            break;
-        }
-    }
-
     if (dialog) {
         kDebug() << "PinDialog already running";
         return;
     }
 
     if (unlockRequired == QLatin1String("sim-pin")) {
-        dialog = new PinDialog(deviceName, modem->udi(), PinDialog::Pin);
+        dialog = new PinDialog(modem, PinDialog::Pin);
     } else if (unlockRequired == QLatin1String("sim-puk")) {
-        dialog = new PinDialog(deviceName, modem->udi(), PinDialog::PinPuk);
+        dialog = new PinDialog(modem, PinDialog::PinPuk);
     } else {
         kWarning() << "Unhandled unlock request for '" << unlockRequired << "'";
         return;
