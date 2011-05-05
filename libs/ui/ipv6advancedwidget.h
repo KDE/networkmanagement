@@ -27,6 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkipv6config.h"
 
+class QStandardItem;
+class QItemSelection;
+
 class IpV6AdvancedWidget : public QWidget
 {
 Q_OBJECT
