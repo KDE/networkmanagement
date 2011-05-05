@@ -163,7 +163,14 @@ void NetworkInterfaceMonitor::modemInterfaceAdded(const QString & udi)
 
     connect(modem, SIGNAL(unlockRequiredChanged(const QString &)), SLOT(requestPin(const QString &)));
 
-    if (dialog || modem->unlockRequired().isEmpty()) {
+    if (modem->unlockRequired().isEmpty()) {
+        if (Solid::Control::NetworkManager::isWwanEnabled()) {
+            modem->enable(true);
+        }
+        return;
+    }
+
+    if (dialog) {
         return;
     }
 
@@ -219,6 +226,10 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
         modem->sendPin(dialog->pin());
     } else if (dialog->type() == PinDialog::PinPuk) {
         modem->sendPuk(dialog->puk(), dialog->pin());
+    }
+
+    if (Solid::Control::NetworkManager::isWwanEnabled()) {
+        modem->enable(true);
     }
 
 OUT:
