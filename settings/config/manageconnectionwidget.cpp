@@ -576,7 +576,7 @@ void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMess
     if (!con)
         return;
 
-    mEditor->editConnection(con); //starts editor window
+    con = mEditor->editConnection(con); //starts editor window
     if (con)
     {
         if (oldScope == con->scope()) {
