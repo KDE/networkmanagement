@@ -155,6 +155,7 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved()
         // If connection changed scope do not delete it because it is still needed in the other scope.
         if ((d->serviceName.contains("NetworkManagerSystemSettings") && removed.first->scope() == Knm::Connection::System) ||
             (d->serviceName.contains("NetworkManagerUserSettings") && removed.first->scope() == Knm::Connection::User)) {
+            removed.first->removeCertificates();
             d->connectionList->removeConnection(removed.first);
         }
 
