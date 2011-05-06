@@ -160,8 +160,8 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved()
         QPair<Knm::Connection *, RemoteConnection *> removed = d->connections.take(removedPath);
         d->uuidToPath.remove(removed.first->uuid());
         delete removed.second;
-        d->connectionList->removeConnection(removed.first);
         removed.first->removeCertificates();
+        d->connectionList->removeConnection(removed.first);
 
         emit connectionsChanged();
     }
