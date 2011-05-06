@@ -104,7 +104,7 @@ private:
 
     RemoteActivatableList* m_activatables;
     bool m_hasWirelessInterface;
-    bool oldShowMore;
+    bool m_showMoreChecked, m_oldShowMoreChecked;
     int wicCount;
     QGraphicsWidget* m_widget;
     QGraphicsGridLayout* m_mainLayout;
