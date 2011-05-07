@@ -180,6 +180,7 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
 
 KNetworkManagerTrayIcon::~KNetworkManagerTrayIcon()
 {
+    delete d_ptr;
 }
 
 void KNetworkManagerTrayIcon::handleAdd(Knm::Activatable *)
