@@ -43,6 +43,7 @@ OtherSettingsWidget::OtherSettingsWidget(QWidget * parent)
 
 OtherSettingsWidget::~OtherSettingsWidget()
 {
+    delete d_ptr;
 }
 
 void OtherSettingsWidget::configureNotifications()
