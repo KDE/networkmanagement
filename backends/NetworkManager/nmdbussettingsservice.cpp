@@ -106,6 +106,7 @@ NMDBusSettingsService::~NMDBusSettingsService()
         // trouble;
         kDebug() << "Unable to unregister service";
     }
+    delete d_ptr;
 }
 
 QUuid NMDBusSettingsService::uuidForPath(const QDBusObjectPath& path) const

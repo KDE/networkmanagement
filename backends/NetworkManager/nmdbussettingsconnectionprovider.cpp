@@ -82,6 +82,7 @@ NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionLis
 
 NMDBusSettingsConnectionProvider::~NMDBusSettingsConnectionProvider()
 {
+   delete d_ptr;
 }
 
 void NMDBusSettingsConnectionProvider::initConnections()
