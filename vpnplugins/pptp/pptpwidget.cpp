@@ -63,7 +63,7 @@ PptpSettingWidget::PptpSettingWidget(Knm::Connection * connection, QWidget * par
 
 PptpSettingWidget::~PptpSettingWidget()
 {
-
+    delete d_ptr;
 }
 
 void PptpSettingWidget::setShowPassword(bool show)

@@ -58,7 +58,7 @@ StrongswanSettingWidget::StrongswanSettingWidget(Knm::Connection * connection, Q
 
 StrongswanSettingWidget::~StrongswanSettingWidget()
 {
-
+    delete d_ptr;
 }
 
 void StrongswanSettingWidget::userPasswordTypeChanged(int index)

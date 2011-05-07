@@ -44,7 +44,7 @@ VpncAuthWidget::VpncAuthWidget(Knm::Connection * connection, QWidget * parent)
 
 VpncAuthWidget::~VpncAuthWidget()
 {
-
+    delete d_ptr;
 }
 
 #if 0
