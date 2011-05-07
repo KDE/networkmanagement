@@ -48,7 +48,7 @@ VpncSettingWidget::VpncSettingWidget(Knm::Connection * connection, QWidget * par
 
 VpncSettingWidget::~VpncSettingWidget()
 {
-
+   delete d_ptr;
 }
 
 void VpncSettingWidget::userPasswordTypeChanged(int index)
