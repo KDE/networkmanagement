@@ -59,6 +59,7 @@ SessionAbstractedService::SessionAbstractedService(ActivatableList * list, QObje
 
 SessionAbstractedService::~SessionAbstractedService()
 {
+    delete d_ptr;
 }
 
 void SessionAbstractedService::handleAdd(Knm::Activatable * added)

@@ -80,6 +80,7 @@ ConnectionListPersistence::ConnectionListPersistence(ConnectionList * list, cons
 
 ConnectionListPersistence::~ConnectionListPersistence()
 {
+    delete d_ptr;
 }
 
 void ConnectionListPersistence::init()

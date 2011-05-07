@@ -43,4 +43,5 @@ ConnectionListPersistenceDBus::~ConnectionListPersistenceDBus()
 {
     QDBusConnection::sessionBus().unregisterObject("/connections");
     QDBusConnection::sessionBus().unregisterService("org.kde.networkmanagement");
+    delete d_ptr;
 }

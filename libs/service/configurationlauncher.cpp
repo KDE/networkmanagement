@@ -55,6 +55,7 @@ ConfigurationLauncher::ConfigurationLauncher(QObject * parent)
 
 ConfigurationLauncher::~ConfigurationLauncher()
 {
+    delete d_ptr;
 }
 
 void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
