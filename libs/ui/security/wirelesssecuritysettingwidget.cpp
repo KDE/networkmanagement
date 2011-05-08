@@ -205,7 +205,7 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::Wirel
     // WEP
     if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::StaticWep, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn) || noDevice ) {
         if (!d->staticWep.second) {
-            d->staticWep.second = new WepWidget(WepWidget::Passphrase, d->connection, this);
+            d->staticWep.second = new WepWidget(WepWidget::Hex, d->connection, this);
             connect(d->staticWep.second, SIGNAL(valid(bool)), this, SLOT(validate()));
         }
         d->registerSecurityType(d->staticWep, i18nc("Label for WEP wireless security", "WEP"));
