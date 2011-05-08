@@ -76,9 +76,11 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
     connect(d->ui.keyType, SIGNAL(currentIndexChanged(int)), this, SLOT(keyTypeChanged(int)));
 
     if (d->format == WepWidget::Passphrase) {
+        // currentIndex is already 0, calling d->ui.keyType->setCurrentIndex(0) has no effect.
+        // so call the slot here.
         keyTypeChanged(0);
     } else {
-        keyTypeChanged(1);
+        d->ui.keyType->setCurrentIndex(1);
     }
 
     connect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
@@ -143,6 +145,12 @@ void WepWidget::readConfig()
     d->ui.weptxkeyindex->setCurrentIndex(d->keyIndex <= 3 ? d->keyIndex : 0 );
     connect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
 
+    switch (d->setting->wepKeyType()) {
+        case Knm::WirelessSecuritySetting::Passphrase: d->ui.keyType->setCurrentIndex(0);
+          break;
+        default: d->ui.keyType->setCurrentIndex(1);
+    }
+
     d->ui.chkShowPass->setChecked(false);
 
     // auth alg
@@ -198,13 +206,10 @@ void WepWidget::readSecrets()
     d->keys.replace(2, d->setting->wepkey2());
     d->keys.replace(3, d->setting->wepkey3());
 
-    // passphrase
-    if(d->setting->wepKeyType() == Knm::WirelessSecuritySetting::Passphrase)
-    {
-        d->ui.keyType->setCurrentIndex(0);
-    } else if(d->setting->wepKeyType() == Knm::WirelessSecuritySetting::Hex)
-    {
-        d->ui.keyType->setCurrentIndex(1);
+    switch (d->setting->wepKeyType()) {
+        case Knm::WirelessSecuritySetting::Passphrase: d->ui.keyType->setCurrentIndex(0);
+          break;
+        default: d->ui.keyType->setCurrentIndex(1);
     }
 
     d->ui.key->setText(d->keys.value(d->keyIndex));
