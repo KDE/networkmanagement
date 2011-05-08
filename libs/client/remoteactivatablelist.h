@@ -24,6 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 
 #include "knmclient_export.h"
+#include "remoteinterfaceconnection.h"
 
 class RemoteActivatable;
 class RemoteActivatableListPrivate;
@@ -36,6 +37,14 @@ public:
     ~RemoteActivatableList();
     QList<RemoteActivatable *> activatables() const;
     void init();
+
+    /**
+     * @return the RemoteInterfaceConnection for a given network interface
+     * @param interface the Solid::Control::NetworkInterface state
+     * @param activatables the RemoteActivatableList of all connections
+     */
+    RemoteInterfaceConnection* connectionForInterface(Solid::Control::NetworkInterface *interface);
+
 Q_SIGNALS:
     void activatableAdded(RemoteActivatable*);
     void activatableRemoved(RemoteActivatable*);

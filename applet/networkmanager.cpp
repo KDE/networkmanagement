@@ -535,7 +535,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
                 QString ifaceName = iface->interfaceName();
                 lines << QString::fromLatin1("<b>%1</b>").arg(deviceText);
                 QString connectionName;
-                RemoteInterfaceConnection *conn = UiUtils::connectionForInterface(m_activatables, iface);
+                RemoteInterfaceConnection *conn = m_activatables->connectionForInterface(iface);
                 if (conn) {
                     connectionName = conn->connectionName();
                 }

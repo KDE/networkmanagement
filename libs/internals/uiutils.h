@@ -71,13 +71,6 @@ public:
     static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state, const QString &connectionName = QString());
 
     /**
-     * @return the RemoteInterfaceConnection for a given network interface
-     * @param interface the Solid::Control::NetworkInterface state
-     * @param activatables the RemoteActivatableList of all connections
-     */
-    static RemoteInterfaceConnection* connectionForInterface(RemoteActivatableList* activatables, Solid::Control::NetworkInterface *interface);
-
-    /**
      * @return an icon name suitable for the interface type
      * @param iface the network interface
      */
