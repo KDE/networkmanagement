@@ -98,7 +98,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     //     interface layout
     m_ifaceNameLabel = new Plasma::Label(this);
     m_ifaceNameLabel->setToolTip(tt);
-    m_ifaceNameLabel->nativeWidget()->setWordWrap(false);
+    m_ifaceNameLabel->nativeWidget()->setWordWrap(true);
+    m_ifaceNameLabel->setMaximumHeight(QFontMetrics(KGlobalSettings::generalFont()).height());
     m_ifaceNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
 
