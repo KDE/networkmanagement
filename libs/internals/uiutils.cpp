@@ -263,24 +263,6 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
     return interfaceNameLabel(uni, static_cast<KNetworkManagerServicePrefs::InterfaceNamingChoices>(KNetworkManagerServicePrefs::self()->interfaceNamingStyle()));
 }
 
-RemoteInterfaceConnection* UiUtils::connectionForInterface(RemoteActivatableList* activatables, Solid::Control::NetworkInterface *interface)
-{
-    foreach (RemoteActivatable* activatable, activatables->activatables()) {
-        if (activatable->deviceUni() == interface->uni()) {
-            RemoteInterfaceConnection* remoteconnection = dynamic_cast<RemoteInterfaceConnection*>(activatable);
-            if (remoteconnection) {
-                if (remoteconnection->activationState() == Knm::InterfaceConnection::Activated
-                            || remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
-                    return remoteconnection;
-                }
-            }
-
-        }
-    }
-    return 0;
-}
-
-
 qreal UiUtils::interfaceState(const Solid::Control::NetworkInterface *interface)
 {
     if (!interface) {
