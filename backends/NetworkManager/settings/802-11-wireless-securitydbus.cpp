@@ -228,7 +228,9 @@ QVariantMap WirelessSecurityDbus::toMap()
     else if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Passphrase)
     {
         map.insert(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE, NM_WEP_KEY_TYPE_PASSPHRASE);
-        map.insert(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0, setting->weppassphrase());
+
+        if (!setting->weppassphrase().isEmpty())
+            map.insert(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0, setting->weppassphrase());
     }
     else
         kWarning() << "Wep key type is not set!";
