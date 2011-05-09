@@ -202,34 +202,37 @@ QVariantMap WirelessSecurityDbus::toMap()
   if(!setting->psk().isEmpty())
       map.insert("psk",  setting->psk());
 
-  if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Hex)
-  {
-      map.insert(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE, NM_WEP_KEY_TYPE_KEY);
-
-      // SECRET
-      if(!setting->wepkey0().isEmpty())
-          map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0),  setting->wepkey0());
-
-      // SECRET
-      if(!setting->wepkey1().isEmpty())
-          map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1),  setting->wepkey1());
-
-      // SECRET
-      if(!setting->wepkey2().isEmpty())
-          map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2),  setting->wepkey2());
-
-      // SECRET
-      if(!setting->wepkey3().isEmpty())
-          map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3),  setting->wepkey3());
-
+  if (setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep ||
+      setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep) {
+    if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Hex)
+    {
+        map.insert(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE, NM_WEP_KEY_TYPE_KEY);
+  
+        // SECRET
+        if(!setting->wepkey0().isEmpty())
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0),  setting->wepkey0());
+  
+        // SECRET
+        if(!setting->wepkey1().isEmpty())
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1),  setting->wepkey1());
+  
+        // SECRET
+        if(!setting->wepkey2().isEmpty())
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2),  setting->wepkey2());
+  
+        // SECRET
+        if(!setting->wepkey3().isEmpty())
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3),  setting->wepkey3());
+  
+    }
+    else if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Passphrase)
+    {
+        map.insert(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE, NM_WEP_KEY_TYPE_PASSPHRASE);
+        map.insert(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0, setting->weppassphrase());
+    }
+    else
+        kWarning() << "Wep key type is not set!";
   }
-  else if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Passphrase)
-  {
-      map.insert(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE, NM_WEP_KEY_TYPE_PASSPHRASE);
-      map.insert(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0, setting->weppassphrase());
-  }
-  else
-      kWarning() << "Wep key type is not set!";
   } // end of if not setting->clear()
   return map;
 }
