@@ -62,7 +62,7 @@ void WirelessInterfaceItem::connectButtonClicked()
 void WirelessInterfaceItem::setConnectionInfo()
 {
     InterfaceItem::setConnectionInfo(); // Sets the labels
-    switch (m_iface->state()) {
+    switch (m_iface.data()->state()) {
         case NetworkManager::Device::Unavailable:
         case NetworkManager::Device::Disconnected:
         case NetworkManager::Device::Failed:
