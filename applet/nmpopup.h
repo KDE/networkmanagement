@@ -92,6 +92,7 @@ private Q_SLOTS:
     void saveConfig();
     void checkShowMore(RemoteActivatable *);
     void uncheckShowMore(RemoteActivatable *);
+    void refresh();
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
