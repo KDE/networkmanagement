@@ -190,30 +190,31 @@ QVariantMap WirelessSecurityDbus::toMap()
   if(!setting->wepkey0().isEmpty())
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0),  setting->wepkey0());
 
-  // SECRET
-  if(!setting->wepkey1().isEmpty())
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1),  setting->wepkey1());
-
-  // SECRET
-  if(!setting->wepkey2().isEmpty())
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2),  setting->wepkey2());
-
-  // SECRET
-  if(!setting->wepkey3().isEmpty())
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3),  setting->wepkey3());
-
-  // SECRET
-  if(!setting->psk().isEmpty())
-      map.insert("psk",  setting->psk());
-
-  if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Hex)
-      map.insert("wep-key-type", 1);
-  else if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Passphrase)
-      map.insert("wep-key-type", 2);
-  else
-      kWarning() << "Wep key type is not set!";
-
-
+  if (setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep ||
+      setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep) {
+    // SECRET
+    if(!setting->wepkey1().isEmpty())
+        map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1),  setting->wepkey1());
+  
+    // SECRET
+    if(!setting->wepkey2().isEmpty())
+        map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2),  setting->wepkey2());
+  
+    // SECRET
+    if(!setting->wepkey3().isEmpty())
+        map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3),  setting->wepkey3());
+  
+    // SECRET
+    if(!setting->psk().isEmpty())
+        map.insert("psk",  setting->psk());
+  
+    if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Hex)
+        map.insert("wep-key-type", 1);
+    else if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Passphrase)
+        map.insert("wep-key-type", 2);
+    else
+        kWarning() << "Wep key type is not set!";
+  }
   } // end of if not setting->clear()
   return map;
 }
