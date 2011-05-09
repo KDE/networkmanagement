@@ -164,6 +164,9 @@ void NMPopup::init()
     m_interfaceDetailsWidget = new InterfaceDetailsWidget(m_leftWidget);
     connect(m_interfaceDetailsWidget, SIGNAL(back()), this, SLOT(toggleInterfaceTab()));
 
+    // Hack to prevent graphical artifacts during tab transition.
+    connect(m_leftWidget, SIGNAL(currentChanged(int)), SLOT(refresh()));
+
     m_leftWidget->addTab(i18nc("details for the interface", "Details"), m_interfaceDetailsWidget);
     m_leftWidget->setPreferredWidth(300);
 
@@ -741,8 +744,6 @@ void NMPopup::toggleInterfaceTab()
     }
 
     if (m_leftWidget->currentIndex() == 0) {
-        showMore(true);
-        m_leftWidget->setCurrentIndex(1);
         // Enable / disable updating of the details widget
         m_interfaceDetailsWidget->setUpdateEnabled(true);
 
@@ -754,6 +755,12 @@ void NMPopup::toggleInterfaceTab()
             m_leftLabel->setText(QString("<h3>%1</h3>").arg(
                                 UiUtils::interfaceNameLabel(item->interface()->uni())));
         }
+        showMore(true);
+
+        // Hack to prevent graphical artifact during tab transition.
+        // m_interfaceDetailsWidget will be shown again when transition finishes.
+        m_interfaceDetailsWidget->hide();
+        m_leftWidget->setCurrentIndex(1);
     } else {
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
         m_connectionList->clearInterfaces();
@@ -778,6 +785,11 @@ QSizeF NMPopup::sizeHint (Qt::SizeHint which, const QSizeF & constraint) const
     }
 
     return sh;
+}
+
+void NMPopup::refresh()
+{
+    m_interfaceDetailsWidget->show();
 }
 // vim: sw=4 sts=4 et tw=100
 
