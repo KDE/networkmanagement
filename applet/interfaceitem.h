@@ -113,7 +113,7 @@ protected:
 
     RemoteInterfaceConnection* m_currentConnection;
 
-    NetworkManager::Device* m_iface;
+    QWeakPointer<NetworkManager::Device> m_iface;
     RemoteActivatableList* m_activatables;
 
     QGraphicsGridLayout* m_layout;

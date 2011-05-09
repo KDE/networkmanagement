@@ -137,22 +137,22 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
     m_layout->addItem(m_connectionInfoIcon, 1, 2, 1, 1, Qt::AlignRight); // check...
 
     if (m_iface) {
-        connect(m_iface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
+        connect(m_iface.data(), SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
                 this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
-        if (m_iface->type() == NetworkManager::Device::Ethernet) {
-            connect(m_iface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
+        if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
+            connect(m_iface.data(), SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
         }
     }
     setNameDisplayMode(mode);
 
     if (m_iface) {
-        if (m_iface->type() == NetworkManager::Device::Ethernet) {
+        if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
             NetworkManager::WiredDevice* wirediface =
-                            static_cast<NetworkManager::WiredDevice*>(m_iface);
+                            static_cast<NetworkManager::WiredDevice*>(m_iface.data());
             connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
         }
         m_state = NetworkManager::Device::UnknownState;
-        connectionStateChanged(m_iface->state());
+        connectionStateChanged(m_iface.data()->state());
     }
 
     setLayout(m_layout);
@@ -206,14 +206,14 @@ QString InterfaceItem::label()
 
 NetworkManager::Device* InterfaceItem::interface()
 {
-    return m_iface;
+    return m_iface.data();
 }
 
 void InterfaceItem::setActive(bool active)
 {
     Q_UNUSED(active);
     if (m_iface) {
-        connectionStateChanged(m_iface->state());
+        connectionStateChanged(m_iface.data()->state());
     }
 }
 
@@ -241,13 +241,13 @@ void InterfaceItem::setNameDisplayMode(NameDisplayMode mode)
 {
     m_nameMode = mode;
     if (m_iface) {
-        m_interfaceName = UiUtils::interfaceNameLabel(m_iface->uni());
+        m_interfaceName = UiUtils::interfaceNameLabel(m_iface.data()->uni());
     }
     if (m_nameMode == InterfaceName) {
         m_ifaceNameLabel->setText(QString("<b>%1</b>").arg(m_interfaceName));
     } else if (m_nameMode == HardwareName) {
         if (m_iface) {
-            m_ifaceNameLabel->setText(QString("<b>%1</b>").arg(m_iface->interfaceName()));
+            m_ifaceNameLabel->setText(QString("<b>%1</b>").arg(m_iface.data()->interfaceName()));
         } else {
             m_ifaceNameLabel->setText(i18nc("generic label for an interface", "<b>Network Interface</b>"));
         }
@@ -265,7 +265,7 @@ InterfaceItem::NameDisplayMode InterfaceItem::nameDisplayMode() const
 QString InterfaceItem::connectionName()
 {
     // Default active connection's name is empty, room for improvement?
-    RemoteInterfaceConnection *conn = RemoteUtils::connectionForInterface(m_activatables, m_iface);
+    RemoteInterfaceConnection *conn = RemoteUtils::connectionForInterface(m_activatables, m_iface.data());
     if (conn) {
         return conn->connectionName();
     }
@@ -276,7 +276,7 @@ void InterfaceItem::setConnectionInfo()
 {
     if (m_iface) {
         currentConnectionChanged();
-        connectionStateChanged(m_iface->state());
+        connectionStateChanged(m_iface.data()->state());
     }
 }
 
@@ -285,13 +285,13 @@ QString InterfaceItem::currentIpAddress()
     if (!m_iface)
         return QString();
 
-    if (static_cast<NetworkManager::Device::State>(m_iface->state()) != NetworkManager::Device::Activated) {
+    if (static_cast<NetworkManager::Device::State>(m_iface.data()->state()) != NetworkManager::Device::Activated) {
         return i18nc("label of the network interface", "No IP address.");
     }
     //willtodo: use IPv4Config
     QHostAddress addr;
 
-    OrgFreedesktopNetworkManagerDeviceInterface devIface("org.freedesktop.NetworkManager", m_iface->uni(), QDBusConnection::systemBus());
+    OrgFreedesktopNetworkManagerDeviceInterface devIface("org.freedesktop.NetworkManager", m_iface.data()->uni(), QDBusConnection::systemBus());
     if (devIface.isValid()) {
         QDBusObjectPath ip4ConfigPath = devIface.ip4Config();
 
@@ -320,7 +320,7 @@ QString InterfaceItem::currentIpAddress()
 
 RemoteInterfaceConnection* InterfaceItem::currentConnection()
 {
-    RemoteInterfaceConnection* remoteconnection = RemoteUtils::connectionForInterface(m_activatables, m_iface);
+    RemoteInterfaceConnection* remoteconnection = RemoteUtils::connectionForInterface(m_activatables, m_iface.data());
     if (!remoteconnection) {
         m_currentConnection = 0;
         handleHasDefaultRouteChanged(false);
@@ -343,7 +343,7 @@ void InterfaceItem::setActivatableList(RemoteActivatableList* activatables)
 
 void InterfaceItem::currentConnectionChanged()
 {
-    RemoteInterfaceConnection* remoteconnection = RemoteUtils::connectionForInterface(m_activatables, m_iface);
+    RemoteInterfaceConnection* remoteconnection = RemoteUtils::connectionForInterface(m_activatables, m_iface.data());
     if (remoteconnection) {
         if (m_currentConnection) {
             QObject::disconnect(m_currentConnection, 0, this, 0);
@@ -386,7 +386,7 @@ void InterfaceItem::activeConnectionsChanged()
 
 void InterfaceItem::slotClicked()
 {
-    emit clicked(m_iface);
+    emit clicked(m_iface.data());
 }
 
 void InterfaceItem::handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason)
@@ -415,7 +415,7 @@ void InterfaceItem::connectionStateChanged(NetworkManager::Device::State state)
 
     switch (state) {
         case NetworkManager::Device::Unavailable:
-            if (m_iface->type() == NetworkManager::Device::Ethernet) {
+            if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
                 lname = i18nc("wired interface network cable unplugged", "Cable Unplugged");
             }
             setEnabled(false); // FIXME: tone down colors using an animation
@@ -464,7 +464,7 @@ QPixmap InterfaceItem::interfacePixmap(const QString &icon) {
         overlayIcon = "network-defaultroute";
     }
     //kDebug() << "painting icon" << overlayIcon;
-    QPixmap pmap = KIcon(UiUtils::iconName(m_iface)).pixmap(m_pixmapSize);
+    QPixmap pmap = KIcon(UiUtils::iconName(m_iface.data())).pixmap(m_pixmapSize);
     //QPixmap pmap = KIcon(icon).pixmap(QSize(KIconLoader::SizeMedium, KIconLoader::SizeMedium));
     if (m_hasDefaultRoute && !pmap.isNull()) {
         QPainter p(&pmap);
@@ -477,14 +477,14 @@ void InterfaceItem::emitDisconnectInterfaceRequest()
 {
     if (m_iface) {
         //kDebug() << m_iface->uni();
-        emit disconnectInterfaceRequested(m_iface->uni());
+        emit disconnectInterfaceRequested(m_iface.data()->uni());
     }
 }
 
 void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 {
     if (m_iface) {
-        emit hoverEnter(m_iface->uni());
+        emit hoverEnter(m_iface.data()->uni());
     }
     IconWidget::hoverEnterEvent(event);
 }
@@ -492,7 +492,7 @@ void InterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
 void InterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
 {
     if (m_iface) {
-        emit hoverLeave(m_iface->uni());
+        emit hoverLeave(m_iface.data()->uni());
     }
     IconWidget::hoverLeaveEvent(event);
 }
