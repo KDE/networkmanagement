@@ -221,7 +221,6 @@ void InterfaceDetailsWidget::resetInterfaceDetails()
 void InterfaceDetailsWidget::getDetails()
 {
     if (!m_iface) {
-        emit back();
         return;
     }
 
