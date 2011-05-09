@@ -120,7 +120,7 @@ protected:
 
     RemoteInterfaceConnection* m_currentConnection;
 
-    Solid::Control::NetworkInterface* m_iface;
+    QWeakPointer<Solid::Control::NetworkInterface> m_iface;
     RemoteActivatableList* m_activatables;
 
     QGraphicsGridLayout* m_layout;
