@@ -1,5 +1,6 @@
 /*
 Copyright 2008-2010 Sebastian Kügler <sebas@kde.org>
+Copyright 2011 Will Stephenson <wstephenson@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -27,33 +28,26 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <kdeversion.h>
 
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirelessaccesspoint.h>
-#include <solid/control/wirelessnetworkinterface.h>
+#include <libnm-qt/manager.h>
 
 // Qt
 #include <QSizeF>
 
-QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterface::Type type)
+QString UiUtils::interfaceTypeLabel(const NetworkManager::Device::Type type)
 {
     QString deviceText;
     switch (type) {
-        case Solid::Control::NetworkInterface::Ieee8023:
+        case NetworkManager::Device::Ethernet:
             deviceText = i18nc("title of the interface widget in nm's popup", "Wired Ethernet");
             break;
-        case Solid::Control::NetworkInterface::Ieee80211:
+        case NetworkManager::Device::Wifi:
             deviceText = i18nc("title of the interface widget in nm's popup", "Wireless 802.11");
             break;
-        case Solid::Control::NetworkInterface::Serial:
+        case NetworkManager::Device::Modem:
             deviceText = i18nc("title of the interface widget in nm's popup", "Serial Modem");
             break;
-#ifdef NM_0_8
-        case Solid::Control::NetworkInterface::Bluetooth:
-#endif
-        case Solid::Control::NetworkInterface::Gsm:
-        case Solid::Control::NetworkInterface::Cdma:
-            deviceText = i18nc("title of the interface widget in nm's popup", "Mobile Broadband");
+        case NetworkManager::Device::Bluetooth:
+            deviceText = i18nc("title of the interface widget in nm's popup", "Bluetooth");
             break;
         default:
             deviceText = i18nc("title of the interface widget in nm's popup", "Wired Ethernet");
@@ -62,26 +56,26 @@ QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterface::Type
     return deviceText;
 }
 
-QString UiUtils::iconName(Solid::Control::NetworkInterface *iface)
+QString UiUtils::iconName(NetworkManager::Device *iface)
 {
     if (!iface) {
         return QString("dialog-error");
     }
     QString icon;
     QString strength = "00";
-    Solid::Control::WirelessNetworkInterface *wiface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+    NetworkManager::WirelessDevice *wiface = qobject_cast<NetworkManager::WirelessDevice*>(iface);
 
     switch (iface->type()) {
-        case Solid::Control::NetworkInterface::Ieee8023:
+        case NetworkManager::Device::Ethernet:
             icon = "network-wired";
             break;
-        case Solid::Control::NetworkInterface::Ieee80211:
+        case NetworkManager::Device::Wifi:
 
             if (wiface) {
                 QString uni = wiface->activeAccessPoint();
                 //QString uni = wiface->activeAccessPoint()->signalStrength();
                 //int s =
-                Solid::Control::AccessPoint *ap = wiface->findAccessPoint(uni);
+                NetworkManager::AccessPoint *ap = wiface->findAccessPoint(uni);
                 if (ap) {
                     int s = ap->signalStrength();
                     if (s < 13) {
@@ -101,17 +95,11 @@ QString UiUtils::iconName(Solid::Control::NetworkInterface *iface)
             }
             icon = "network-wireless-connected-" + strength;
             break;
-        case Solid::Control::NetworkInterface::Serial:
+        case NetworkManager::Device::Modem:
             icon = "modem";
             break;
-#ifdef NM_0_8
-        case Solid::Control::NetworkInterface::Bluetooth:
+        case NetworkManager::Device::Bluetooth:
             icon = "bluetooth";
-            break;
-#endif	    
-        case Solid::Control::NetworkInterface::Gsm:
-        case Solid::Control::NetworkInterface::Cdma:
-            icon = "phone";
             break;
         default:
             icon = "network-wired";
@@ -197,7 +185,7 @@ QString UiUtils::connectionStateToString(NM09DeviceState state, const QString &c
 
 Solid::Device* UiUtils::findSolidDevice(const QString & uni)
 {
-    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
 
     if (!iface) {
         return 0;
@@ -217,7 +205,7 @@ Solid::Device* UiUtils::findSolidDevice(const QString & uni)
 QString UiUtils::interfaceNameLabel(const QString & uni, const KNetworkManagerServicePrefs::InterfaceNamingChoices interfaceNamingStyle)
 {
     QString label;
-    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
     Solid::Device* dev = findSolidDevice(uni);
 
     switch (interfaceNamingStyle) {
@@ -263,7 +251,7 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
     return interfaceNameLabel(uni, static_cast<KNetworkManagerServicePrefs::InterfaceNamingChoices>(KNetworkManagerServicePrefs::self()->interfaceNamingStyle()));
 }
 
-RemoteInterfaceConnection* UiUtils::connectionForInterface(RemoteActivatableList* activatables, Solid::Control::NetworkInterface *interface)
+RemoteInterfaceConnection* UiUtils::connectionForInterface(RemoteActivatableList* activatables, NetworkManager::Device *interface)
 {
     foreach (RemoteActivatable* activatable, activatables->activatables()) {
         if (activatable->deviceUni() == interface->uni()) {
@@ -281,33 +269,33 @@ RemoteInterfaceConnection* UiUtils::connectionForInterface(RemoteActivatableList
 }
 
 
-qreal UiUtils::interfaceState(const Solid::Control::NetworkInterface *interface)
+qreal UiUtils::interfaceState(const NetworkManager::Device *interface)
 {
     if (!interface) {
         return 0;
     }
 
     // from libs/types.h
-    switch (interface->connectionState()) {
-        case Preparing:
+    switch (interface->state()) {
+        case NetworkManager::Device::Preparing:
             return 0.15;
             break;
-        case Configuring:
+        case NetworkManager::Device::ConfiguringHardware:
             return 0.30;
             break;
-        case NeedAuth:
+        case NetworkManager::Device::NeedAuth:
             return 0.45;
             break;
-        case IPConfig:
+        case NetworkManager::Device::ConfiguringIp:
             return 0.60;
             break;
-        case IPCheck:
+        case NetworkManager::Device::CheckingIp:
             return 0.75;
             break;
-        case Secondaries:
+        case NetworkManager::Device::WaitingForSecondaries:
             return 0.90;
             break;
-        case Activated:
+        case NetworkManager::Device::Activated:
             return 1.0;
             break;
         default:
@@ -317,23 +305,23 @@ qreal UiUtils::interfaceState(const Solid::Control::NetworkInterface *interface)
     return 0;
 }
 
-QString UiUtils::operationModeToString(Solid::Control::WirelessNetworkInterface::OperationMode mode)
+QString UiUtils::operationModeToString(NetworkManager::WirelessDevice::OperationMode mode)
 {
     QString modeString;
     switch (mode) {
-        case Solid::Control::WirelessNetworkInterface::Unassociated:
+        case NetworkManager::WirelessDevice::Unassociated:
             modeString = i18nc("wireless network operation mode", "Unassociated");
             break;
-        case Solid::Control::WirelessNetworkInterface::Adhoc:
+        case NetworkManager::WirelessDevice::Adhoc:
             modeString = i18nc("wireless network operation mode", "Adhoc");
             break;
-        case Solid::Control::WirelessNetworkInterface::Managed:
+        case NetworkManager::WirelessDevice::Managed:
             modeString = i18nc("wireless network operation mode", "Managed");
             break;
-        case Solid::Control::WirelessNetworkInterface::Master:
+        case NetworkManager::WirelessDevice::Master:
             modeString = i18nc("wireless network operation mode", "Master");
             break;
-        case Solid::Control::WirelessNetworkInterface::Repeater:
+        case NetworkManager::WirelessDevice::Repeater:
             modeString = i18nc("wireless network operation mode", "Repeater");
             break;
         default:
@@ -342,41 +330,41 @@ QString UiUtils::operationModeToString(Solid::Control::WirelessNetworkInterface:
     return modeString;
 }
 
-QStringList UiUtils::wpaFlagsToStringList(Solid::Control::AccessPoint::WpaFlags flags)
+QStringList UiUtils::wpaFlagsToStringList(NetworkManager::AccessPoint::WpaFlags flags)
 {
     /* for testing purposes
-    flags = Solid::Control::AccessPoint::PairWep40
-            | Solid::Control::AccessPoint::PairWep104
-            | Solid::Control::AccessPoint::PairTkip
-            | Solid::Control::AccessPoint::PairCcmp
-            | Solid::Control::AccessPoint::GroupWep40
-            | Solid::Control::AccessPoint::GroupWep104
-            | Solid::Control::AccessPoint::GroupTkip
-            | Solid::Control::AccessPoint::GroupCcmp
-            | Solid::Control::AccessPoint::KeyMgmtPsk
-            | Solid::Control::AccessPoint::KeyMgmt8021x; */
+    flags = NetworkManager::AccessPoint::PairWep40
+            | NetworkManager::AccessPoint::PairWep104
+            | NetworkManager::AccessPoint::PairTkip
+            | NetworkManager::AccessPoint::PairCcmp
+            | NetworkManager::AccessPoint::GroupWep40
+            | NetworkManager::AccessPoint::GroupWep104
+            | NetworkManager::AccessPoint::GroupTkip
+            | NetworkManager::AccessPoint::GroupCcmp
+            | NetworkManager::AccessPoint::KeyMgmtPsk
+            | NetworkManager::AccessPoint::KeyMgmt8021x; */
 
     QStringList flagList;
 
-    if (flags.testFlag(Solid::Control::AccessPoint::PairWep40))
+    if (flags.testFlag(NetworkManager::AccessPoint::PairWep40))
         flagList.append(i18nc("wireless network cipher", "Pairwise WEP40"));
-    if (flags.testFlag(Solid::Control::AccessPoint::PairWep104))
+    if (flags.testFlag(NetworkManager::AccessPoint::PairWep104))
         flagList.append(i18nc("wireless network cipher", "Pairwise WEP104"));
-    if (flags.testFlag(Solid::Control::AccessPoint::PairTkip))
+    if (flags.testFlag(NetworkManager::AccessPoint::PairTkip))
         flagList.append(i18nc("wireless network cipher", "Pairwise TKIP"));
-    if (flags.testFlag(Solid::Control::AccessPoint::PairCcmp))
+    if (flags.testFlag(NetworkManager::AccessPoint::PairCcmp))
         flagList.append(i18nc("wireless network cipher", "Pairwise CCMP"));
-    if (flags.testFlag(Solid::Control::AccessPoint::GroupWep40))
+    if (flags.testFlag(NetworkManager::AccessPoint::GroupWep40))
         flagList.append(i18nc("wireless network cipher", "Group WEP40"));
-    if (flags.testFlag(Solid::Control::AccessPoint::GroupWep104))
+    if (flags.testFlag(NetworkManager::AccessPoint::GroupWep104))
         flagList.append(i18nc("wireless network cipher", "Group WEP104"));
-    if (flags.testFlag(Solid::Control::AccessPoint::GroupTkip))
+    if (flags.testFlag(NetworkManager::AccessPoint::GroupTkip))
         flagList.append(i18nc("wireless network cipher", "Group TKIP"));
-    if (flags.testFlag(Solid::Control::AccessPoint::GroupCcmp))
+    if (flags.testFlag(NetworkManager::AccessPoint::GroupCcmp))
         flagList.append(i18nc("wireless network cipher", "Group CCMP"));
-    if (flags.testFlag(Solid::Control::AccessPoint::KeyMgmtPsk))
+    if (flags.testFlag(NetworkManager::AccessPoint::KeyMgmtPsk))
         flagList.append(i18nc("wireless network cipher", "PSK"));
-    if (flags.testFlag(Solid::Control::AccessPoint::KeyMgmt8021x))
+    if (flags.testFlag(NetworkManager::AccessPoint::KeyMgmt8021x))
         flagList.append(i18nc("wireless network cipher", "802.1x"));
 
     return flagList;

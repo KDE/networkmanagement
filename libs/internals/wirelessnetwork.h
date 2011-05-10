@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2011 Will Stephenson <wstephenson@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -39,7 +40,7 @@ Q_PROPERTY(int strength READ strength)
 Q_PROPERTY(uint wpaFlags READ wpaFlags)
 Q_PROPERTY(uint rsnFlags READ rsnFlags)
 public:
-    WirelessNetwork(const QString & ssid, int strength, Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities, Solid::Control::AccessPoint::Capabilities apCapabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode, const QString & deviceUni, QObject * parent);
+    WirelessNetwork(const QString & ssid, int strength, NetworkManager::WirelessDevice::Capabilities interfaceCapabilities, NetworkManager::AccessPoint::Capabilities apCapabilities, NetworkManager::AccessPoint::WpaFlags wpaFlags, NetworkManager::AccessPoint::WpaFlags rsnFlags, NetworkManager::WirelessDevice::OperationMode mode, const QString & deviceUni, QObject * parent);
     virtual ~WirelessNetwork();
 signals:
     void strengthChanged(int);

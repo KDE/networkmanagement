@@ -86,8 +86,8 @@ set(knminternals_SRCS
    unconfiguredinterface.cpp
    vpninterfaceconnection.cpp
    vpninterfaceconnectionhelpers.cpp
-   gsminterfaceconnection.cpp
-   gsminterfaceconnectionhelpers.cpp
+   #gsminterfaceconnection.cpp
+   #gsminterfaceconnectionhelpers.cpp
 
    # helper class for recognising the type of WPA secrets
    wpasecretidentifier.cpp
@@ -105,7 +105,7 @@ kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)
 
 kde4_add_library(knminternals SHARED ${knminternals_SRCS})
 
-target_link_libraries(knminternals knmclient solidcontrolfuture ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_SOLID_LIBS} solidcontrol ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(knminternals ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_SOLID_LIBS} ${QT_QTNETWORK_LIBRARY} nm-qt)
 
 set_target_properties(knminternals PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}

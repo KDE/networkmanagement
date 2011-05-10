@@ -1,5 +1,5 @@
 /*
-Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2009,2011 Will Stephenson <wstephenson@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WIRELESSOBJECT_H
 
 #include <QString>
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/accesspoint.h>
 
 #include "knminternals_export.h"
 
@@ -31,16 +31,16 @@ namespace Knm
 class KNMINTERNALS_EXPORT WirelessObject
 {
 public:
-    WirelessObject(const QString & ssid, int strength, Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities, Solid::Control::AccessPoint::Capabilities apCapabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode);
+    WirelessObject(const QString & ssid, int strength, NetworkManager::WirelessDevice::Capabilities interfaceCapabilities, NetworkManager::AccessPoint::Capabilities apCapabilities, NetworkManager::AccessPoint::WpaFlags wpaFlags, NetworkManager::AccessPoint::WpaFlags rsnFlags, NetworkManager::WirelessDevice::OperationMode mode);
     virtual ~WirelessObject();
     QString ssid() const;
     int strength() const;
     virtual void setStrength(int strength);
-    Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities() const;
-    Solid::Control::AccessPoint::Capabilities apCapabilities() const;
-    Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
-    Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
-    Solid::Control::WirelessNetworkInterface::OperationMode operationMode() const;
+    NetworkManager::WirelessDevice::Capabilities interfaceCapabilities() const;
+    NetworkManager::AccessPoint::Capabilities apCapabilities() const;
+    NetworkManager::AccessPoint::WpaFlags wpaFlags() const;
+    NetworkManager::AccessPoint::WpaFlags rsnFlags() const;
+    NetworkManager::WirelessDevice::OperationMode operationMode() const;
     virtual void strengthChanged(int) = 0;
 
 protected:
@@ -49,11 +49,11 @@ protected:
 protected:
     QString m_ssid;
     int m_strength;
-    Solid::Control::WirelessNetworkInterface::Capabilities m_interfaceCapabilities;
-    Solid::Control::AccessPoint::Capabilities m_apCapabilities;
-    Solid::Control::AccessPoint::WpaFlags m_wpaFlags;
-    Solid::Control::AccessPoint::WpaFlags m_rsnFlags;
-    Solid::Control::WirelessNetworkInterface::OperationMode m_operationMode;
+    NetworkManager::WirelessDevice::Capabilities m_interfaceCapabilities;
+    NetworkManager::AccessPoint::Capabilities m_apCapabilities;
+    NetworkManager::AccessPoint::WpaFlags m_wpaFlags;
+    NetworkManager::AccessPoint::WpaFlags m_rsnFlags;
+    NetworkManager::WirelessDevice::OperationMode m_operationMode;
 };
 
 } // namespace Knm

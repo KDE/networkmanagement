@@ -29,9 +29,9 @@ class QSizeF;
 #include "../client/remoteactivatablelist.h"
 #include "../libs/types.h"
 
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirelessnetworkinterface.h>
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/wirelessdevice.h>
+#include <libnm-qt/accesspoint.h>
 #include <Solid/Device>
 
 class KNMINTERNALS_EXPORT UiUtils
@@ -42,7 +42,7 @@ public:
      * @return a human-readable description for the network interface type for use as label
      * @param type the type of the network interface
      */
-    static QString interfaceTypeLabel(const Solid::Control::NetworkInterface::Type type);
+    static QString interfaceTypeLabel(const NetworkManager::Device::Type type);
 
     /**
      * @return a human-readable name for a given network interface according to the configured
@@ -73,16 +73,16 @@ public:
 
     /**
      * @return the RemoteInterfaceConnection for a given network interface
-     * @param interface the Solid::Control::NetworkInterface state
+     * @param interface the NetworkManager::Device state
      * @param activatables the RemoteActivatableList of all connections
      */
-    static RemoteInterfaceConnection* connectionForInterface(RemoteActivatableList* activatables, Solid::Control::NetworkInterface *interface);
+    static RemoteInterfaceConnection* connectionForInterface(RemoteActivatableList* activatables, NetworkManager::Device *interface);
 
     /**
      * @return an icon name suitable for the interface type
      * @param iface the network interface
      */
-    static QString iconName(Solid::Control::NetworkInterface *iface);
+    static QString iconName(NetworkManager::Device *iface);
 
     /** This method can be used to retrieve an icon size that fits into a given size.
      * The resulting size can be used to render Pixmaps from KIconLoader without
@@ -99,19 +99,19 @@ public:
      * @return the progress between 0 (disconnected) and 1 (activated).
      * @param interface the network interface
      */
-    static qreal interfaceState(const Solid::Control::NetworkInterface *interface);
+    static qreal interfaceState(const NetworkManager::Device *interface);
 
     /**
      * @return a human-readable description of operation mode. 
      * @param mode the operation mode
      */
-    static QString operationModeToString(Solid::Control::WirelessNetworkInterface::OperationMode mode);
+    static QString operationModeToString(NetworkManager::WirelessDevice::OperationMode mode);
 
     /**
      * @return string list with a human-readable description of wpa flags.
      * @param flags the wpa flags
      */
-    static QStringList wpaFlagsToStringList(Solid::Control::AccessPoint::WpaFlags flags);
+    static QStringList wpaFlagsToStringList(NetworkManager::AccessPoint::WpaFlags flags);
 
     /**
      * @return localized string showing a human-readable connection speed. 1000 is used as base.

@@ -44,7 +44,7 @@ void Ipv4Persistence::load()
   setting->setDnssearch(m_config->readEntry("dnssearch", QStringList()));
 
   // addresses
-  QList<Solid::Control::IPv4Address> addresses;
+  QList<NetworkManager::IPv4Address> addresses;
   QStringList rawAddresses = m_config->readEntry("addresses", QStringList());
   foreach (const QString &rawAddress, rawAddresses) {
       QStringList parts = rawAddress.split(';');
@@ -53,13 +53,13 @@ void Ipv4Persistence::load()
       }
       QHostAddress ip(parts[0]);
       QHostAddress gateway(parts[2]);
-      Solid::Control::IPv4Address addr(ip.toIPv4Address(), parts[1].toUInt(), gateway.toIPv4Address());
+      NetworkManager::IPv4Address addr(ip.toIPv4Address(), parts[1].toUInt(), gateway.toIPv4Address());
       addresses.append(addr);
   }
   setting->setAddresses(addresses);
 
   // routes
-  QList<Solid::Control::IPv4Route> routes;
+  QList<NetworkManager::IPv4Route> routes;
   QStringList rawRoutes = m_config->readEntry("routes", QStringList());
   foreach (const QString &rawRoute, rawRoutes) {
       QStringList parts = rawRoute.split(';');
@@ -70,7 +70,7 @@ void Ipv4Persistence::load()
       quint32 prefix = parts[1].toUInt();
       QHostAddress nextHop(parts[2]);
       quint32 metric = parts[3].toUInt();
-      Solid::Control::IPv4Route route(address.toIPv4Address(), prefix, nextHop.toIPv4Address(), metric);
+      NetworkManager::IPv4Route route(address.toIPv4Address(), prefix, nextHop.toIPv4Address(), metric);
       routes.append(route);
   }
   setting->setRoutes(routes);
@@ -114,7 +114,7 @@ void Ipv4Persistence::save()
   m_config->writeEntry("dnssearch", setting->dnssearch());
 
   QStringList rawAddresses;
-  foreach (const Solid::Control::IPv4Address &addr, setting->addresses()) {
+  foreach (const NetworkManager::IPv4Address &addr, setting->addresses()) {
       QStringList rawAddress;
       rawAddress << QHostAddress(addr.address()).toString()
           << QString::number(addr.netMask())
@@ -124,7 +124,7 @@ void Ipv4Persistence::save()
   m_config->writeEntry("addresses", rawAddresses);
 
   QStringList rawRoutes;
-  foreach (const Solid::Control::IPv4Route &route, setting->routes()) {
+  foreach (const NetworkManager::IPv4Route &route, setting->routes()) {
       QStringList rawRoute;
       rawRoute << QHostAddress(route.route()).toString()
           << QString::number(route.prefix())

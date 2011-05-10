@@ -91,18 +91,19 @@ Connection::Type Connection::typeFromString(const QString & typeString)
     return type;
 }
 
-Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInterface::Type type)
+Connection::Type Connection::typeFromSolidType(const NetworkManager::Device::Type type)
 {
     switch (type) {
-        case Solid::Control::NetworkInterface::Ieee8023: return Knm::Connection::Wired;
-        case Solid::Control::NetworkInterface::Ieee80211: return Knm::Connection::Wireless;
-        case Solid::Control::NetworkInterface::Gsm: return Knm::Connection::Gsm;
-        case Solid::Control::NetworkInterface::Cdma: return Knm::Connection::Cdma;
+        case NetworkManager::Device::Ethernet: return Knm::Connection::Wired;
+        case NetworkManager::Device::Wifi: return Knm::Connection::Wireless;
+        //case NetworkManager::Device::Gsm: return Knm::Connection::Gsm;
+        case NetworkManager::Device::Modem: return Knm::Connection::Gsm;
 #ifdef NM_0_8
-        case Solid::Control::NetworkInterface::Bluetooth: return Knm::Connection::Bluetooth;
+        case NetworkManager::Device::Bluetooth: return Knm::Connection::Bluetooth;
 #endif
-        case Solid::Control::NetworkInterface::Serial: return Knm::Connection::Pppoe;
-        case Solid::Control::NetworkInterface::UnknownType: return Knm::Connection::Unknown;
+        //case NetworkManager::Device::Serial: return Knm::Connection::Pppoe;
+        default:
+        case NetworkManager::Device::UnknownType: return Knm::Connection::Unknown;
     }
     return Knm::Connection::Wired;
 }

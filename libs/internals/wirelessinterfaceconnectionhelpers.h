@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Paul Marchouk <pmarchouk@gmail.com>
+Copyright 2011 Will Stephenson <wstephenson@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -26,11 +27,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class QObject;
 class QString;
 
-namespace Solid {
-    namespace Control {
-        class WirelessNetworkInterface;
-    }
-}
+namespace NetworkManager
+{
+    class WirelessDevice;
+} // namespace NetworkManager
 
 namespace Knm {
 
@@ -45,7 +45,7 @@ public:
      * the corresponding Connection object.
      */
     static Knm::WirelessInterfaceConnection * buildWirelessInterfaceConnection(
-                       Solid::Control::WirelessNetworkInterface *interface,
+                       NetworkManager::WirelessDevice *interface,
                        Knm::Connection * connection,
                        const QString & deviceUni,
                        QObject * parent);
@@ -55,7 +55,7 @@ public:
      * the corresponding Connection object.
      */
     static Knm::HiddenWirelessInterfaceConnection * buildHiddenWirelessInterfaceConnection(
-                       Solid::Control::WirelessNetworkInterface *interface,
+                       NetworkManager::WirelessDevice *interface,
                        Knm::Connection * connection,
                        const QString & deviceUni,
                        QObject * parent);

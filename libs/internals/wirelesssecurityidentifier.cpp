@@ -28,38 +28,38 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelesssecurityidentifier.h"
 
-bool Knm::WirelessSecurity::interfaceSupportsApCiphers(Solid::Control::WirelessNetworkInterface::Capabilities interfaceCaps, Solid::Control::AccessPoint::WpaFlags apCiphers, Knm::WirelessSecurity::Type type )
+bool Knm::WirelessSecurity::interfaceSupportsApCiphers(NetworkManager::WirelessDevice::Capabilities interfaceCaps, NetworkManager::AccessPoint::WpaFlags apCiphers, Knm::WirelessSecurity::Type type )
 {
     bool havePair = false;
     bool haveGroup = true;
     if ( type == WirelessSecurity::StaticWep ) {
         havePair = true;
     } else {
-        if ( interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterface::Wep40) && apCiphers.testFlag(Solid::Control::AccessPoint::PairWep40)) {
+        if ( interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wep40) && apCiphers.testFlag(NetworkManager::AccessPoint::PairWep40)) {
             havePair = true;
         }
-        if ( interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterface::Wep104) && apCiphers.testFlag(Solid::Control::AccessPoint::PairWep104)) {
+        if ( interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wep104) && apCiphers.testFlag(NetworkManager::AccessPoint::PairWep104)) {
             havePair = true;
         }
-        if ( interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterface::Tkip) && apCiphers.testFlag(Solid::Control::AccessPoint::PairTkip)) {
+        if ( interfaceCaps.testFlag(NetworkManager::WirelessDevice::Tkip) && apCiphers.testFlag(NetworkManager::AccessPoint::PairTkip)) {
             havePair = true;
         }
-        if ( interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterface::Ccmp) && apCiphers.testFlag(Solid::Control::AccessPoint::PairCcmp)) {
+        if ( interfaceCaps.testFlag(NetworkManager::WirelessDevice::Ccmp) && apCiphers.testFlag(NetworkManager::AccessPoint::PairCcmp)) {
             havePair = true;
         }
     }
 
-    if ( interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterface::Wep40) && apCiphers.testFlag(Solid::Control::AccessPoint::GroupWep40)) {
+    if ( interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wep40) && apCiphers.testFlag(NetworkManager::AccessPoint::GroupWep40)) {
         haveGroup = true;
     }
-    if ( interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterface::Wep104) && apCiphers.testFlag(Solid::Control::AccessPoint::GroupWep104)) {
+    if ( interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wep104) && apCiphers.testFlag(NetworkManager::AccessPoint::GroupWep104)) {
         haveGroup = true;
     }
     if (type != StaticWep) {
-        if ( interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterface::Tkip) && apCiphers.testFlag(Solid::Control::AccessPoint::GroupTkip)) {
+        if ( interfaceCaps.testFlag(NetworkManager::WirelessDevice::Tkip) && apCiphers.testFlag(NetworkManager::AccessPoint::GroupTkip)) {
             haveGroup = true;
         }
-        if ( interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterface::Ccmp) && apCiphers.testFlag(Solid::Control::AccessPoint::GroupCcmp)) {
+        if ( interfaceCaps.testFlag(NetworkManager::WirelessDevice::Ccmp) && apCiphers.testFlag(NetworkManager::AccessPoint::GroupCcmp)) {
             haveGroup = true;
         }
     }
@@ -67,7 +67,7 @@ bool Knm::WirelessSecurity::interfaceSupportsApCiphers(Solid::Control::WirelessN
     return havePair && haveGroup;
 }
 
-bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Control::WirelessNetworkInterface::Capabilities interfaceCaps, bool haveAp, bool adhoc, Solid::Control::AccessPoint::Capabilities apCaps, Solid::Control::AccessPoint::WpaFlags apWpa, Solid::Control::AccessPoint::WpaFlags apRsn)
+bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkManager::WirelessDevice::Capabilities interfaceCaps, bool haveAp, bool adhoc, NetworkManager::AccessPoint::Capabilities apCaps, NetworkManager::AccessPoint::WpaFlags apWpa, NetworkManager::AccessPoint::WpaFlags apRsn)
 {
     bool good = TRUE;
 
@@ -77,18 +77,18 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Co
         if ((type == Knm::WirelessSecurity::StaticWep)
                 || ((type == Knm::WirelessSecurity::DynamicWep) && !adhoc)
                 || ((type == Knm::WirelessSecurity::Leap) && !adhoc)) {
-            if (interfaceCaps & (Solid::Control::WirelessNetworkInterface::Wep40 | Solid::Control::WirelessNetworkInterface::Wep104))
+            if (interfaceCaps & (NetworkManager::WirelessDevice::Wep40 | NetworkManager::WirelessDevice::Wep104))
                 return true;
         }
         if (type == Knm::WirelessSecurity::WpaPsk
                 ||type == Knm::WirelessSecurity::WpaEap) {
-            if (interfaceCaps & (Solid::Control::WirelessNetworkInterface::Wpa)) {
+            if (interfaceCaps & (NetworkManager::WirelessDevice::Wpa)) {
                 return true;
             }
         }
         if (type == Knm::WirelessSecurity::Wpa2Psk
                 ||type == Knm::WirelessSecurity::Wpa2Eap) {
-            if (interfaceCaps & (Solid::Control::WirelessNetworkInterface::Rsn)) {
+            if (interfaceCaps & (NetworkManager::WirelessDevice::Rsn)) {
                 return true;
             }
         }
@@ -98,7 +98,7 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Co
     switch (type) {
         case Knm::WirelessSecurity::None:
             Q_ASSERT (haveAp);
-            if (apCaps & Solid::Control::AccessPoint::Privacy)
+            if (apCaps & NetworkManager::AccessPoint::Privacy)
                 return false;
             if (apWpa || apRsn)
                 return false;
@@ -109,7 +109,7 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Co
             /* Fall through */
         case Knm::WirelessSecurity::StaticWep:
             Q_ASSERT (haveAp);
-            if (!(apCaps & Solid::Control::AccessPoint::Privacy))
+            if (!(apCaps & NetworkManager::AccessPoint::Privacy))
                 return false;
             if (apWpa || apRsn) {
                 if (!interfaceSupportsApCiphers (interfaceCaps, apWpa, StaticWep))
@@ -121,43 +121,43 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Co
             if (adhoc)
                 return false;
             Q_ASSERT (haveAp);
-            if (apRsn || !(apCaps & Solid::Control::AccessPoint::Privacy))
+            if (apRsn || !(apCaps & NetworkManager::AccessPoint::Privacy))
                 return false;
             /* Some APs broadcast minimal WPA-enabled beacons that must be handled */
             if (apWpa) {
-                if (!(apWpa & Solid::Control::AccessPoint::KeyMgmt8021x))
+                if (!(apWpa & NetworkManager::AccessPoint::KeyMgmt8021x))
                     return false;
                 if (!interfaceSupportsApCiphers (interfaceCaps, apWpa, DynamicWep))
                     return false;
             }
             break;
         case Knm::WirelessSecurity::WpaPsk:
-            if (!(interfaceCaps & Solid::Control::WirelessNetworkInterface::Wpa))
+            if (!(interfaceCaps & NetworkManager::WirelessDevice::Wpa))
                 return false;
             if (haveAp) {
                 /* Ad-Hoc WPA APs won't necessarily have the PSK flag set */
-                if ((apWpa & Solid::Control::AccessPoint::KeyMgmtPsk) || adhoc) {
-                    if (   (apWpa & Solid::Control::AccessPoint::PairTkip)
-                            && (interfaceCaps & Solid::Control::WirelessNetworkInterface::Tkip))
+                if ((apWpa & NetworkManager::AccessPoint::KeyMgmtPsk) || adhoc) {
+                    if (   (apWpa & NetworkManager::AccessPoint::PairTkip)
+                            && (interfaceCaps & NetworkManager::WirelessDevice::Tkip))
                         return true;
-                    if (   (apWpa & Solid::Control::AccessPoint::PairCcmp)
-                            && (interfaceCaps & Solid::Control::WirelessNetworkInterface::Ccmp))
+                    if (   (apWpa & NetworkManager::AccessPoint::PairCcmp)
+                            && (interfaceCaps & NetworkManager::WirelessDevice::Ccmp))
                         return true;
                 }
                 return false;
             }
             break;
         case Knm::WirelessSecurity::Wpa2Psk:
-            if (!(interfaceCaps & Solid::Control::WirelessNetworkInterface::Rsn))
+            if (!(interfaceCaps & NetworkManager::WirelessDevice::Rsn))
                 return false;
             if (haveAp) {
                 /* Ad-Hoc WPA APs won't necessarily have the PSK flag set */
-                if ((apRsn & Solid::Control::AccessPoint::KeyMgmtPsk) || adhoc) {
-                    if (   (apRsn & Solid::Control::AccessPoint::PairTkip)
-                            && (interfaceCaps & Solid::Control::WirelessNetworkInterface::Tkip))
+                if ((apRsn & NetworkManager::AccessPoint::KeyMgmtPsk) || adhoc) {
+                    if (   (apRsn & NetworkManager::AccessPoint::PairTkip)
+                            && (interfaceCaps & NetworkManager::WirelessDevice::Tkip))
                         return true;
-                    if (   (apRsn & Solid::Control::AccessPoint::PairCcmp)
-                            && (interfaceCaps & Solid::Control::WirelessNetworkInterface::Ccmp))
+                    if (   (apRsn & NetworkManager::AccessPoint::PairCcmp)
+                            && (interfaceCaps & NetworkManager::WirelessDevice::Ccmp))
                         return true;
                 }
                 return false;
@@ -166,10 +166,10 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Co
         case Knm::WirelessSecurity::WpaEap:
             if (adhoc)
                 return false;
-            if (!(interfaceCaps & Solid::Control::WirelessNetworkInterface::Wpa))
+            if (!(interfaceCaps & NetworkManager::WirelessDevice::Wpa))
                 return false;
             if (haveAp) {
-                if (!(apWpa & Solid::Control::AccessPoint::KeyMgmt8021x))
+                if (!(apWpa & NetworkManager::AccessPoint::KeyMgmt8021x))
                     return false;
                 /* Ensure at least one WPA cipher is supported */
                 if (!interfaceSupportsApCiphers (interfaceCaps, apWpa, WpaEap))
@@ -179,10 +179,10 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Co
         case Knm::WirelessSecurity::Wpa2Eap:
             if (adhoc)
                 return false;
-            if (!(interfaceCaps & Solid::Control::WirelessNetworkInterface::Rsn))
+            if (!(interfaceCaps & NetworkManager::WirelessDevice::Rsn))
                 return false;
             if (haveAp) {
-                if (!(apRsn & Solid::Control::AccessPoint::KeyMgmt8021x))
+                if (!(apRsn & NetworkManager::AccessPoint::KeyMgmt8021x))
                     return false;
                 /* Ensure at least one WPA cipher is supported */
                 if (!interfaceSupportsApCiphers (interfaceCaps, apRsn, Wpa2Eap))
@@ -197,7 +197,7 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Co
     return good;
 }
 
-Knm::WirelessSecurity::Type Knm::WirelessSecurity::best(Solid::Control::WirelessNetworkInterface::Capabilities interfaceCaps, bool haveAp, bool adHoc, Solid::Control::AccessPoint::Capabilities apCaps, Solid::Control::AccessPoint::WpaFlags apWpa, Solid::Control::AccessPoint::WpaFlags apRsn)
+Knm::WirelessSecurity::Type Knm::WirelessSecurity::best(NetworkManager::WirelessDevice::Capabilities interfaceCaps, bool haveAp, bool adHoc, NetworkManager::AccessPoint::Capabilities apCaps, NetworkManager::AccessPoint::WpaFlags apWpa, NetworkManager::AccessPoint::WpaFlags apRsn)
 {
     QList<Knm::WirelessSecurity::Type> types;
 

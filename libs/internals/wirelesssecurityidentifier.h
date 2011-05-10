@@ -21,8 +21,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef WIRELESSSECURITYIDENTIFIER_H
 #define WIRELESSSECURITYIDENTIFIER_H
 
-#include <solid/control/wirelessaccesspoint.h>
-#include <solid/control/wirelessnetworkinterface.h>
+#include <libnm-qt/accesspoint.h>
+#include <libnm-qt/wirelessdevice.h>
 
 #include "../knm_export.h"
 
@@ -33,16 +33,16 @@ class KNM_EXPORT WirelessSecurity
 public:
     enum Type { Unknown, None, StaticWep, Leap, DynamicWep, WpaPsk, WpaEap, Wpa2Psk, Wpa2Eap };
 
-    static bool possible(WirelessSecurity::Type, Solid::Control::WirelessNetworkInterface::Capabilities, bool haveAp, bool adHoc, Solid::Control::AccessPoint::Capabilities apCaps, Solid::Control::AccessPoint::WpaFlags apWpa, Solid::Control::AccessPoint::WpaFlags apRsn);
+    static bool possible(WirelessSecurity::Type, NetworkManager::WirelessDevice::Capabilities, bool haveAp, bool adHoc, NetworkManager::AccessPoint::Capabilities apCaps, NetworkManager::AccessPoint::WpaFlags apWpa, NetworkManager::AccessPoint::WpaFlags apRsn);
 
     static QString shortToolTip(WirelessSecurity::Type);
     static QString label(WirelessSecurity::Type);
 
     static QString iconName(WirelessSecurity::Type);
 
-    static WirelessSecurity::Type best(Solid::Control::WirelessNetworkInterface::Capabilities, bool haveAp, bool adHoc, Solid::Control::AccessPoint::Capabilities apCaps, Solid::Control::AccessPoint::WpaFlags apWpa, Solid::Control::AccessPoint::WpaFlags apRsn);
+    static WirelessSecurity::Type best(NetworkManager::WirelessDevice::Capabilities, bool haveAp, bool adHoc, NetworkManager::AccessPoint::Capabilities apCaps, NetworkManager::AccessPoint::WpaFlags apWpa, NetworkManager::AccessPoint::WpaFlags apRsn);
 private:
-    static bool interfaceSupportsApCiphers(Solid::Control::WirelessNetworkInterface::Capabilities, Solid::Control::AccessPoint::WpaFlags ciphers, WirelessSecurity::Type);
+    static bool interfaceSupportsApCiphers(NetworkManager::WirelessDevice::Capabilities, NetworkManager::AccessPoint::WpaFlags ciphers, WirelessSecurity::Type);
 };
 
 } // namespace Knm
