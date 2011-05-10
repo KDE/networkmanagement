@@ -18,8 +18,6 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <KToolInvocation>
-#include <KStandardDirs>
 #include <KLocale>
 
 #include "networkinterfacemonitor.h"
@@ -119,28 +117,6 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
         d->connectionList->registerConnectionHandler(provider);
         d->providers.insert(uni, provider);
         provider->init();
-
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-        if (iface->type() == Solid::Control::NetworkInterface::Gsm ||
-            iface->type() == Solid::Control::NetworkInterface::Cdma) {
-
-            bool hasCellular = false;
-            foreach (const QString uuid, d->connectionList->connections()) {
-                const Knm::Connection *c = d->connectionList->findConnection(uuid);
-                if ((c->type() == Knm::Connection::Gsm && iface->type() == Solid::Control::NetworkInterface::Gsm) ||
-                    (c->type() == Knm::Connection::Cdma && iface->type() == Solid::Control::NetworkInterface::Cdma)) {
-                    hasCellular = true;
-                    break;
-                }
-            }
-
-            if (!hasCellular) {
-                QStringList args;
-                args << QLatin1String("create") << QLatin1String("--type") << QLatin1String("cellular");
-                KToolInvocation::kdeinitExec(KGlobal::dirs()->findResource("exe", "networkmanagement_configshell"), args);
-            }
-        }
-#endif
     }
 }
 
