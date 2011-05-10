@@ -104,7 +104,7 @@
       <string>Automatically set the BSSID in the connection settings to the selected AP's BSSID. This is useful if multiple networks with the same SSID, but different BSSIDs exist.</string>
      </property>
      <property name="text">
-      <string>Use the APs BSSID</string>
+      <string>Use the AP's BSSID</string>
      </property>
      <property name="checked">
       <bool>false</bool>
