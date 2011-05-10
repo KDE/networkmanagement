@@ -157,7 +157,7 @@ void VpnInterfaceItem::listDisappeared()
 
 void VpnInterfaceItem::activatableAdded(RemoteActivatable * added)
 {
-    if (accept(added) && added->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+    if (accept(added)) {
         m_vpnActivatables << added;
         RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(added);
         if (remoteconnection) {
