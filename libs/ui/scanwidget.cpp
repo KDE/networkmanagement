@@ -79,8 +79,9 @@ void ScanWidget::setWirelessInterface(const QString &interface)
     m_scanModel->setNetworkInterface(interface);
 }
 
-QString ScanWidget::currentAccessPoint() const
+QPair<QString,QString> ScanWidget::currentAccessPoint() const
 {
+    QPair<QString, QString> accessPoint(QString(""), QString(""));
     QModelIndex index;
     switch (m_stack->currentIndex())
     {
@@ -94,10 +95,22 @@ QString ScanWidget::currentAccessPoint() const
     }
 
     if (!index.isValid()) {
-        return QString();
+        return accessPoint;
+    }
+    accessPoint.first = m_scanModel->data(m_scanModel->index(index.row(),0)).toString();
+
+    switch (m_useBssid->isChecked())
+    {
+        case false:
+            accessPoint.second = QString();
+            break;
+        case true:
+        default:
+            accessPoint.second = m_scanModel->data(m_scanModel->index(index.row(),3)).toString();
+            break;
     }
 
-    return m_scanModel->data(m_scanModel->index(index.row(),0)).toString();
+    return accessPoint;
 }
 
 void ScanWidget::onInterfaceChanged(int index)
