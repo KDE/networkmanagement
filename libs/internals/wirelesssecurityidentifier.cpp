@@ -1,5 +1,5 @@
 /*
-Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2009,2011 Will Stephenson <wstephenson@kde.org>
 
  possible() incorporates code from nm-utils.c by
  Ray Strode <rstrode@redhat.com>
