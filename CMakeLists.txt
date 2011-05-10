@@ -15,15 +15,15 @@ if (BIGENDIAN)
    set(WORDS_BIGENDIAN 1)
 endif (BIGENDIAN)
 
-find_file(KDE4_MM_BACKEND_FOUND solid/control/modeminterface.h ${KDE4_INCLUDE_DIR} NO_DEFAULT_PATH)
-if (KDE4_MM_BACKEND_FOUND)
-    message("Compiling Modem Manager support.")
+#find_file(KDE4_MM_BACKEND_FOUND solid/control/modeminterface.h ${KDE4_INCLUDE_DIR} NO_DEFAULT_PATH)
+#if (KDE4_MM_BACKEND_FOUND)
+#    message("Compiling Modem Manager support.")
     add_definitions(-DCOMPILE_MODEM_MANAGER_SUPPORT=1)
 
     set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR} ${CMAKE_MODULE_PATH})
     macro_optional_find_package(MobileBroadbandProviderInfo)
     macro_log_feature(MOBILEBROADBANDPROVIDERINFO_FOUND "mobile-broadband-provider-info" "Database of mobile broadband service providers" "http://live.gnome.org/NetworkManager/MobileBroadband/ServiceProviders" FALSE "" "Needed for Mobile Connection Wizard support in Broadband Modem Management")
-endif (KDE4_MM_BACKEND_FOUND)
+    #endif (KDE4_MM_BACKEND_FOUND)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories (${KDE4_INCLUDES})
@@ -43,16 +43,16 @@ configure_file(backends/NetworkManager/config-nm07backend.h.cmake ${CMAKE_CURREN
 # Check if Solid has been compiled with NetworkManager 0.8 support.
 set (CMAKE_REQUIRED_DEFINITIONS ${KDE4_DEFINITIONS})
 set (CMAKE_REQUIRED_INCLUDES ${KDE4_INCLUDES})
-set (CMAKE_REQUIRED_LIBRARIES -L${KDE4_LIB_DIR} -lsolidcontrol)
-CHECK_CXX_SOURCE_COMPILES("#include <solid/control/networkmanager.h>
-int main()
-{
-    Solid::Control::NetworkManager::isWwanEnabled();
-    return 0;
-}" NM_0_8)
-if (NM_0_8)
+set (CMAKE_REQUIRED_LIBRARIES -L${KDE4_LIB_DIR} -lnm-qt)
+#CHECK_CXX_SOURCE_COMPILES("#include <solid/control/networkmanager.h>
+#int main()
+#{
+#    Solid::Control::NetworkManager::isWwanEnabled();
+#    return 0;
+#}" NM_0_8)
+#if (NM_0_8)
     add_definitions(-DNM_0_8=1)
-endif (NM_0_8)
+    #endif (NM_0_8)
 
 if (NM_0_7)
 
@@ -63,18 +63,18 @@ include_directories(
    ${CMAKE_CURRENT_BUILD_DIR}
 )
 
-add_subdirectory(applet)
-add_subdirectory(backends)
-add_subdirectory(dataengine)
+#add_subdirectory(applet)
+#add_subdirectory(backends)
+#add_subdirectory(dataengine)
 add_subdirectory(libs)
-add_subdirectory(tests)
-add_subdirectory(settings)
-add_subdirectory(vpnplugins)
-add_subdirectory(solidcontrolfuture)
-add_subdirectory(kded)
+#add_subdirectory(tests)
+#add_subdirectory(settings)
+#add_subdirectory(vpnplugins)
+#add_subdirectory(solidcontrolfuture)
+#add_subdirectory(kded)
 
 # This is unmaintained, do not use it.
-#add_subdirectory(monolithic)
+add_subdirectory(monolithic)
 
 install( FILES networkmanagement.notifyrc DESTINATION ${DATA_INSTALL_DIR}/networkmanagement )
 install( DIRECTORY DESTINATION ${DATA_INSTALL_DIR}/networkmanagement/certificates)
