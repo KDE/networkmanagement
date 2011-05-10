@@ -105,7 +105,7 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->connectionList->registerConnectionHandler(d->vpnInterfaceConnectionProvider);
 
     // watches events and creates KNotifications
-    d->notificationManager = new NotificationManager(this);
+    d->notificationManager = new NotificationManager(d->connectionList, this);
 
     d->nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(d->connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, d->connectionList);
 

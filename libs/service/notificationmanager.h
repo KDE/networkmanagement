@@ -28,6 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KNotification>
 
 #include <interfaceconnection.h>
+#include <connectionlist.h>
 
 #include "activatableobserver.h"
 #include <Solid/Networking>
@@ -42,7 +43,7 @@ class KNM_EXPORT NotificationManager : public QObject, public ActivatableObserve
 Q_OBJECT
 Q_DECLARE_PRIVATE(NotificationManager)
 public:
-    NotificationManager(QObject * parent = 0);
+    NotificationManager(ConnectionList *connectionList, QObject * parent = 0);
     virtual ~NotificationManager();
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);
@@ -60,6 +61,9 @@ protected Q_SLOTS:
 
     void wirelessHardwareEnabledChanged(bool);
     void statusChanged(Solid::Networking::Status);
+#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+    void createCellularConnection();
+#endif
 private:
     NotificationManagerPrivate * d_ptr;
 };
