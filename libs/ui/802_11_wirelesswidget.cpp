@@ -69,7 +69,7 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
             d->ui.cmbMacAddress->addItem(UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames), wiface->hardwareAddress().toLatin1());
         }
     }
-    
+
     modeChanged(d->ui.cmbMode->currentIndex());
     connect(d->ui.cmbMode,SIGNAL(currentIndexChanged(int)),SLOT(modeChanged(int)));
     connect(d->ui.band,SIGNAL(currentIndexChanged(int)),SLOT(bandChanged(int)));
@@ -173,8 +173,10 @@ void Wireless80211Widget::scanClicked()
     ScanWidget scanWid;
     scanDialog.setMainWidget(&scanWid);
     if (scanDialog.exec() == QDialog::Accepted) {
-        d->ui.ssid->setText(scanWid.currentAccessPoint());
-        emit ssidSelected(scanWid.currentAccessPoint());
+        QPair<QString,QString> accessPoint = scanWid.currentAccessPoint();
+        d->ui.ssid->setText(accessPoint.first);
+        d->ui.bssid->setText(accessPoint.second);
+        emit ssidSelected(accessPoint.first);
     }
 }
 
@@ -264,13 +266,13 @@ Wireless80211WidgetBand::Wireless80211WidgetBand(QWidget * parent)
     :QSpinBox(parent)
 {
     selectedBand = 0;
-  
+
     QList<int> channels_a;
     QList<int> channels_b;
 
     channels_a << 7 << 8 << 9 << 11 << 12 << 16 << 34 << 36 << 38 << 40 << 42 << 44 << 46 << 48 << 52 << 56 << 60 << 64 << 100 << 104 << 108 << 112 << 116 << 120 << 124 << 128 << 132 << 136 << 140 << 149 << 153 << 157 << 161 << 165 << 183 << 184 << 185 << 187 << 188 << 189 << 192 << 196;
     channels_b << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9 << 10 << 11 << 12 << 13;
-    
+
     channels << channels_a << channels_b;
 }
 
