@@ -104,7 +104,7 @@
       </size>
      </property>
      <property name="text">
-      <string extracomment="Insert a row">Add</string>
+      <string comment="Insert a row">Add</string>
      </property>
     </widget>
    </item>
@@ -132,7 +132,7 @@
       </size>
      </property>
      <property name="text">
-      <string extracomment="Remove a selected row">R&amp;emove</string>
+      <string comment="Remove a selected row">R&amp;emove</string>
      </property>
     </widget>
    </item>
