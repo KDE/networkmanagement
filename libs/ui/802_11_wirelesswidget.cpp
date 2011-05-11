@@ -249,14 +249,25 @@ void Wireless80211Widget::copyToBssid()
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
-            QString activeAp = wiface->activeAccessPoint();
-            if (!activeAp.isEmpty()) {
-                Solid::Control::AccessPoint * ap = wiface->findAccessPoint(wiface->activeAccessPoint());
-                if (ap) {
-                    d->ui.bssid->setText(ap->hardwareAddress());
+            int i = d->ui.cmbMacAddress->currentIndex();
+            if (i == 0 || d->ui.cmbMacAddress->itemData(i).toString() == wiface->hardwareAddress()){
+                QString activeAp = wiface->activeAccessPoint();
+                Solid::Control::AccessPoint * ap = 0;
+                if (!activeAp.isEmpty() && activeAp != QLatin1String("/")) {
+                    ap = wiface->findAccessPoint(activeAp);
+                    if (ap && ap->ssid() != d->ui.ssid->text())
+                        ap = 0;
                 }
+                if (!ap && !d->ui.ssid->text().isEmpty()) {
+                    Solid::Control::WirelessNetworkInterfaceEnvironment environment(wiface);
+                    Solid::Control::WirelessNetwork * network = environment.findNetwork(d->ui.ssid->text());
+                    if (network)
+                        ap = wiface->findAccessPoint(network->referenceAccessPoint());
+                }
+                if (ap)
+                    d->ui.bssid->setText(ap->hardwareAddress());
+                return;
             }
-            return;
         }
     }
 }
