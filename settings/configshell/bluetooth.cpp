@@ -159,10 +159,10 @@ void Bluetooth::init()
     /*
      * Check if phone supports the requested service.
      */
-    bool dun, nap = false;
+    bool dun = false, nap = false;
     if (properties.contains("UUIDs")) {
-        foreach (const QVariant &u, properties["UUIDs"].toMap()) {
-            QUuid uuid(u.toString());
+        foreach (const QString &u, properties["UUIDs"].toStringList()) {
+            QUuid uuid(u);
             if (uuid.data1 == 0x1103) {
                 dun = true;
             } else if (uuid.data1 == 0x1116) {
