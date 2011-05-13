@@ -176,6 +176,8 @@ void WirelessSecurityPersistence::save()
         break;
       case Knm::WirelessSecuritySetting::Hex: m_config->writeEntry("wepkeytype", "key");
         break;
+      default:
+        break;
   }
 }
 
