@@ -322,7 +322,7 @@ void ActivatableListWidget::filter()
             m_hiddenItem = 0;
         }
     }
-    else if (m_showAllTypes && m_hasWireless)
+    else if (m_showAllTypes && m_hasWireless && !m_vpn)
         createHiddenItem();
     else if (m_hiddenItem)
         {
