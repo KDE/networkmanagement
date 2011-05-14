@@ -209,46 +209,58 @@ void ManageConnectionWidget::restoreUserConnections()
             continue;
         }
         QString name = config.readEntry("Name", QString());
-        QString type = config.readEntry("Type", QString());
-        if ( name.isEmpty() || type.isEmpty() ) {
+        QString typeString = config.readEntry("Type", QString());
+        if ( name.isEmpty() || typeString.isEmpty() ) {
             continue;
         }
         QDateTime lastUsed = config.readEntry("LastUsed", QDateTime());
+        Knm::Connection::Type type = Knm::Connection::typeFromString(typeString);
         // add an item to the editor widget for that type
         QStringList itemContents;
         itemContents << name;
-        itemContents << QLatin1String("User"); // scope
+        itemContents << Knm::Connection::scopeAsLocalizedString(Knm::Connection::User);
         itemContents << formatDateRelative(lastUsed);
 
-        kDebug() << type << name << lastUsed;
+        kDebug() << typeString << name << lastUsed;
         QTreeWidgetItem * item = 0;
-        if (type == Knm::Connection::typeAsString(Knm::Connection::Wired)) {
-            item = new QTreeWidgetItem(mConnEditUi.listWired, itemContents);
-            wiredItems.append(item);
-        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Wireless)) {
-            item = new QTreeWidgetItem(mConnEditUi.listWireless, itemContents);
-            wirelessItems.append(item);
-        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Gsm)) {
-            item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
-            cellularItems.append(item);
-        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Cdma)) {
-            item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
-            cellularItems.append(item);
-        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Bluetooth)) {
-            item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
-            cellularItems.append(item);
-        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Vpn)) {
-            item = new QTreeWidgetItem(mConnEditUi.listVpn, itemContents);
-            vpnItems.append(item);
-        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Pppoe)) {
-            item = new QTreeWidgetItem(mConnEditUi.listPppoe, itemContents);
-            pppoeItems.append(item);
+
+        switch(type) {
+            case Knm::Connection::Wired:
+                item = new QTreeWidgetItem(mConnEditUi.listWired, itemContents);
+                wiredItems.append(item);
+                break;
+            case Knm::Connection::Wireless:
+                item = new QTreeWidgetItem(mConnEditUi.listWireless, itemContents);
+                wirelessItems.append(item);
+                break;
+            case Knm::Connection::Gsm:
+                item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
+                cellularItems.append(item);
+                break;
+            case Knm::Connection::Cdma:
+                item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
+                cellularItems.append(item);
+                break;
+            case Knm::Connection::Bluetooth:
+                item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
+                cellularItems.append(item);
+                break;
+            case Knm::Connection::Vpn:
+                item = new QTreeWidgetItem(mConnEditUi.listVpn, itemContents);
+                vpnItems.append(item);
+                break;
+            case Knm::Connection::Pppoe:
+                item = new QTreeWidgetItem(mConnEditUi.listPppoe, itemContents);
+                pppoeItems.append(item);
+                break;
+            default:
+                break;
         }
 
         if (item) {
             mUuidItemHash.insert(connectionId, item);
             item->setData(0, ConnectionIdRole, connectionId);
-            item->setData(0, ConnectionTypeRole, Knm::Connection::typeFromString(type));
+            item->setData(0, ConnectionTypeRole, typeString);
             item->setData(0, ConnectionLastUsedRole, lastUsed);
             item->setData(0, ConnectionScopeRole, Knm::Connection::User);
         }
@@ -298,53 +310,66 @@ void ManageConnectionWidget::restoreConnections()
         }
 
         QString name = con->name();
-        QString type = con->typeAsString(con->type());
+        QString typeString = con->typeAsString(con->type());
 
         Knm::Ipv4Setting *setting = static_cast<Knm::Ipv4Setting*>(con->setting(Knm::Setting::Ipv4));
         if (setting)
             kDebug() << "IPv4 setting method" << setting->method();
 
-        kDebug() << "Restoring connection " <<  name << type;
+        kDebug() << "Restoring connection " <<  name << typeString;
 
-        if ( name.isEmpty() || type.isEmpty() ) {
+        if ( name.isEmpty() || typeString.isEmpty() ) {
             continue;
         }
+
+        Knm::Connection::Type type = Knm::Connection::typeFromString(typeString);
         QDateTime lastUsed = con->timestamp();
         // add an item to the editor widget for that type
         QStringList itemContents;
         itemContents << name;
-        itemContents << QLatin1String("System"); // scope
+        itemContents << Knm::Connection::scopeAsLocalizedString(Knm::Connection::System);
         itemContents << formatDateRelative(lastUsed);
 
-        kDebug() << type << name << lastUsed;
+        kDebug() << typeString << name << lastUsed;
         QTreeWidgetItem * item = 0;
-        if (type == Knm::Connection::typeAsString(Knm::Connection::Wired)) {
-            item = new QTreeWidgetItem(mConnEditUi.listWired, itemContents);
-            wiredItems.append(item);
-        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Wireless)) {
-            item = new QTreeWidgetItem(mConnEditUi.listWireless, itemContents);
-            wirelessItems.append(item);
-        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Gsm)) {
-            item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
-            cellularItems.append(item);
-        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Cdma)) {
-            item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
-            cellularItems.append(item);
-        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Bluetooth)) {
-            item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
-            cellularItems.append(item);
-        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Vpn)) {
-            item = new QTreeWidgetItem(mConnEditUi.listVpn, itemContents);
-            vpnItems.append(item);
-        } else if (type == Knm::Connection::typeAsString(Knm::Connection::Pppoe)) {
-            item = new QTreeWidgetItem(mConnEditUi.listPppoe, itemContents);
-            pppoeItems.append(item);
+
+        switch (type) {
+            case Knm::Connection::Wired:
+                item = new QTreeWidgetItem(mConnEditUi.listWired, itemContents);
+                wiredItems.append(item);
+                break;
+            case Knm::Connection::Wireless:
+                item = new QTreeWidgetItem(mConnEditUi.listWireless, itemContents);
+                wirelessItems.append(item);
+                break;
+            case Knm::Connection::Gsm:
+                item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
+                cellularItems.append(item);
+                break;
+            case Knm::Connection::Cdma:
+                item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
+                cellularItems.append(item);
+                break;
+            case Knm::Connection::Bluetooth:
+                item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
+                cellularItems.append(item);
+                break;
+            case Knm::Connection::Vpn:
+                item = new QTreeWidgetItem(mConnEditUi.listVpn, itemContents);
+                vpnItems.append(item);
+                break;
+            case Knm::Connection::Pppoe:
+                item = new QTreeWidgetItem(mConnEditUi.listPppoe, itemContents);
+                pppoeItems.append(item);
+                break;
+            default:
+                break;
         }
 
         if (item) {
             mUuidItemHash.insert(connectionId, item);
             item->setData(0, ConnectionIdRole, connectionId);
-            item->setData(0, ConnectionTypeRole, Knm::Connection::typeFromString(type));
+            item->setData(0, ConnectionTypeRole, typeString);
             item->setData(0, ConnectionLastUsedRole, lastUsed);
             item->setData(0, ConnectionScopeRole, con->scope());
         }

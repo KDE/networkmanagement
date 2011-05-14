@@ -107,6 +107,22 @@ Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInte
     return Knm::Connection::Wired;
 }
 
+QString Connection::scopeAsLocalizedString(Connection::Scope scope)
+{
+    QString scopeString;
+    switch (scope) {
+        case User:
+            scopeString = i18n("User");
+            break;
+        case System:
+            scopeString = i18n("System");
+            break;
+        default:
+            break;
+    }
+    return scopeString;
+}
+
 QString Connection::scopeAsString(Connection::Scope scope)
 {
     QString scopeString;

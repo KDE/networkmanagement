@@ -26,6 +26,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QString>
 #include <QUuid>
 
+#include <klocalizedstring.h>
+
 #include <solid/control/networkinterface.h>
 
 #include "setting.h"
@@ -44,6 +46,7 @@ public:
     static QString typeAsString(Connection::Type);
     static Connection::Type typeFromString(const QString & type);
     static Connection::Type typeFromSolidType(const Solid::Control::NetworkInterface::Type type);
+    static QString scopeAsLocalizedString(Connection::Scope);
     static QString scopeAsString(Connection::Scope);
     static Connection::Scope scopeFromString(const QString & scope);
     static QString iconName(const Connection::Type type);
