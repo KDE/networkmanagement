@@ -32,7 +32,7 @@ include_directories (${KDE4_INCLUDES})
 
 macro_optional_find_package(NetworkManager)
 
-macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.8.1" "Needed for NetworkManager support in Network Management")
+macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.8.996" "Needed for NetworkManager support in Network Management")
 if (NETWORKMANAGER_FOUND)
     # Check if Solid has been compiled with NetworkManager 0.8 support.
     set (CMAKE_REQUIRED_DEFINITIONS ${KDE4_DEFINITIONS})
@@ -49,12 +49,12 @@ if (NETWORKMANAGER_FOUND)
     endif (NM_0_8)
 
     # Check NetworkManager version found.
-    macro_ensure_version_range("0.8.1" ${NETWORKMANAGER_VERSION} "0.8.10" NM_0_8_1)
+    macro_ensure_version("0.8.996" ${NETWORKMANAGER_VERSION} NM_0_9)
     find_package(GLIB2 REQUIRED)
 
     configure_file(backends/NetworkManager/config-nm07backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm07backend.h )
 
-    if (NM_0_8_1)
+    if (NM_0_9)
         include_directories(
            ${NETWORKMANAGER_INCLUDE_DIRS}
            ${NM-UTIL_INCLUDE_DIRS}
@@ -83,9 +83,9 @@ if (NETWORKMANAGER_FOUND)
         else (DBUS_SYSTEM_POLICY_DIR)
             message(STATUS "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
         endif (DBUS_SYSTEM_POLICY_DIR)
-    else(NM_0_8_1)
-        macro_log_feature(NM_0_8_1 "NetworkManager version between 0.8.1 and 0.8.10" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
-    endif(NM_0_8_1)
+    else(NM_0_9)
+        macro_log_feature(NM_0_9 "NetworkManager at least version 0.8.99" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
+    endif(NM_0_9)
 endif(NETWORKMANAGER_FOUND)
 
 if(INSTALL_KNM_AUTOSTART)
