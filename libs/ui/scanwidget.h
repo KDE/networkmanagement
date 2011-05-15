@@ -62,6 +62,9 @@ class ScanWidget : public QWidget, public Ui::ScanWidget
 
         QStringList m_wirelessInterfaces;
         enum Views {Map = 0, Details};
+
+    Q_SIGNALS:
+        void doubleClicked();
 };
 
 #endif
