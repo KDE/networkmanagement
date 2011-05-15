@@ -260,7 +260,7 @@ void ManageConnectionWidget::restoreUserConnections()
         if (item) {
             mUuidItemHash.insert(connectionId, item);
             item->setData(0, ConnectionIdRole, connectionId);
-            item->setData(0, ConnectionTypeRole, typeString);
+            item->setData(0, ConnectionTypeRole, type);
             item->setData(0, ConnectionLastUsedRole, lastUsed);
             item->setData(0, ConnectionScopeRole, Knm::Connection::User);
         }
@@ -369,7 +369,7 @@ void ManageConnectionWidget::restoreConnections()
         if (item) {
             mUuidItemHash.insert(connectionId, item);
             item->setData(0, ConnectionIdRole, connectionId);
-            item->setData(0, ConnectionTypeRole, typeString);
+            item->setData(0, ConnectionTypeRole, type);
             item->setData(0, ConnectionLastUsedRole, lastUsed);
             item->setData(0, ConnectionScopeRole, con->scope());
         }
