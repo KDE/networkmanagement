@@ -172,6 +172,7 @@ void Wireless80211Widget::scanClicked()
     scanDialog.setButtons( KDialog::Ok | KDialog::Cancel);
     ScanWidget scanWid;
     scanDialog.setMainWidget(&scanWid);
+    connect(&scanWid,SIGNAL(doubleClicked()),&scanDialog,SLOT(accept()));
     if (scanDialog.exec() == QDialog::Accepted) {
         QPair<QString,QString> accessPoint = scanWid.currentAccessPoint();
         d->ui.ssid->setText(accessPoint.first);

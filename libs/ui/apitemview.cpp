@@ -151,7 +151,7 @@ void ApItemView::paintEvent(QPaintEvent *event)
 void ApItemView::layoutItems()
 {
     QList<QModelIndex> list75, list50, list25, list00;
-    
+
     m_apLayout.clear();
     int numRows = m_model->rowCount();
     for (int ctr=0; ctr < numRows; ctr++) {
@@ -237,3 +237,8 @@ void ApItemView::mouseReleaseEvent ( QMouseEvent *event )
     }
 }
 
+void ApItemView::mouseDoubleClickEvent (QMouseEvent *event)
+{
+    QModelIndex clickedIndex = indexAt(event->pos());
+    emit doubleClicked(clickedIndex);
+}

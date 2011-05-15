@@ -68,6 +68,9 @@ ScanWidget::ScanWidget(QWidget *parent)
 
     m_stack->setCurrentWidget(m_scanView);
     connect(m_view, SIGNAL(currentIndexChanged(int)), m_stack, SLOT(setCurrentIndex(int)));
+
+    connect(m_scanView, SIGNAL(doubleClicked(const QModelIndex&)), SIGNAL(doubleClicked()));
+    connect(m_detailsView, SIGNAL(doubleClicked(const QModelIndex&)), SIGNAL(doubleClicked()));
 }
 
 ScanWidget::~ScanWidget()
