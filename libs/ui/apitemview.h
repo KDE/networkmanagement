@@ -60,6 +60,7 @@ class ApItemView : public QWidget
 
         //mouse events
         void mouseReleaseEvent(QMouseEvent *event);
+        void mouseDoubleClickEvent(QMouseEvent *event);
 
         QAbstractItemModel *m_model;
         QAbstractItemDelegate *m_delegate;
@@ -74,6 +75,9 @@ class ApItemView : public QWidget
         static const int itemCharWidth = 10;
         static const int computerHeight = 44;
         static const int padding = 3;
+
+    Q_SIGNALS:
+        void doubleClicked(const QModelIndex&);
 };
 
 #endif
