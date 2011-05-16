@@ -263,7 +263,6 @@ void ManageConnectionWidget::restoreConnections()
             item->setData(0, ConnectionIdRole, connectionId);
             item->setData(0, ConnectionTypeRole, Knm::Connection::typeFromString(type));
             item->setData(0, ConnectionLastUsedRole, lastUsed);
-            item->setData(0, ConnectionScopeRole, con->scope());
         }
     }
     mConnEditUi.listWired->insertTopLevelItems(0, wiredItems);

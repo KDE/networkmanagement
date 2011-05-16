@@ -135,7 +135,7 @@ void NMDBusSettingsService::handleAdd(Knm::Connection * added)
     // only handle connections that come from local storage, not those from the system settings
     // service
     if ((d->status == Available) && added->origin() == QLatin1String("ConnectionListPersistence")) {
-        // put it on our bus 
+        // put it on our bus
         QDBusObjectPath objectPath;
         BusConnection * busConn = new BusConnection(added, this);
         new ConnectionAdaptor(busConn);
@@ -197,13 +197,7 @@ void NMDBusSettingsService::handleAdd(Knm::Activatable * added)
             if (d->uuidToPath.contains(ic->connectionUuid())) {
                 kDebug() << "tagging local InterfaceConnection " << ic->connectionName() << SERVICE_USER_SETTINGS << d->uuidToPath[ic->connectionUuid()].path();
                 kDebug() << "is default: " << ic->hasDefaultRoute();
-                Knm::Connection * conn = d->uuidToConnections[ic->connectionUuid()]->connection();
-                if (conn->autoConnect() != conn->originalAutoConnect())
-                {
-                    conn->setAutoConnect(conn->originalAutoConnect());
-                    handleUpdate(conn);
-                }
-                
+
                 ic->setProperty("NMDBusService", SERVICE_USER_SETTINGS);
                 ic->setProperty("NMDBusObjectPath", d->uuidToPath[ic->connectionUuid()].path());
             }

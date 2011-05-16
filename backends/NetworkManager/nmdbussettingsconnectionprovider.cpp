@@ -127,12 +127,6 @@ void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(con
 
         connection->setOrigin(QLatin1String("NMDBusSettingsConnectionProvider"));
 
-        //TODO: make a better check here
-        if (d->serviceName.contains("NetworkManagerUserSettings"))
-            connection->setScope(Knm::Connection::User);
-        else if (d->serviceName.contains("NetworkManagerSystemSettings"))
-            connection->setScope(Knm::Connection::System);
-
         d->connectionList->addConnection(connection);
     }
 }
@@ -249,7 +243,7 @@ bool NMDBusSettingsConnectionProvider::checkAuthorization(const Operation oper)
     // See /usr/share/polkit-1/actions/org.freedesktop.network-manager-settings.system.policy (or
     // /usr/share/polkit-1/actions/org.freedesktop.NetworkManager.policy)
     // KAuth is the KDE's Polkit wrapper.
-    KAuth::Action action(QLatin1String("org.freedesktop.NetworkManager.settings.modify.system"));
+    KAuth::Action action(QLatin1String("org.freedesktop.NetworkManager.settings.modify.own"));
 
     QWidget *w = qobject_cast<QWidget *>(parent());
     if (w) {

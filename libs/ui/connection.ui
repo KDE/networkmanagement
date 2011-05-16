@@ -48,9 +48,6 @@
      </item>
      <item row="2" column="1">
       <widget class="QCheckBox" name="system">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
        <property name="text">
         <string>&amp;System connection</string>
        </property>

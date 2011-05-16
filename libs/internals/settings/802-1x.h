@@ -693,8 +693,8 @@ kDebug() << eap;
         return eapFlags;
     }
 
-    QString importCertFromPath( const QString & oldpath, const QString & newpath = QString(), Knm::Connection::Scope scope = Knm::Connection::User );
-    void save(int scope = (int) Knm::Connection::User);
+    QString importCertFromPath( const QString & oldpath, const QString & newpath = QString(), bool scope = true );
+    void save(bool scope);
     void remove();
 
   protected:

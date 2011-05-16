@@ -16,76 +16,74 @@ Security8021xDbus::~Security8021xDbus()
 void Security8021xDbus::fromMap(const QVariantMap & map)
 {
     Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
-    if (setting->enabled()) {
-        if (map.contains("eap")) {
-            setting->setEap(map.value("eap").value<QStringList>());
-        }
-        if (map.contains("identity")) {
-            setting->setIdentity(map.value("identity").value<QString>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY))) {
-            setting->setAnonymousidentity(map.value(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY)).value<QString>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_CA_CERT))) {
-            setting->setCacert(map.value(QLatin1String(NM_SETTING_802_1X_CA_CERT)).value<QByteArray>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_CA_PATH))) {
-            setting->setCapath(map.value(QLatin1String(NM_SETTING_802_1X_CA_PATH)).value<QString>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT))) {
-            setting->setClientcert(map.value(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT)).value<QByteArray>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER))) {
-            setting->setPhase1peapver(map.value(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER)).value<int>() + 1 ); // 0 is automatic
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL))) {
-            setting->setPhase1peaplabel(map.value(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL)).value<QString>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING))) {
-            setting->setPhase1fastprovisioning(map.value(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING)).value<QString>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH))) {
-            setting->setPhase2auth(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH)).value<int>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP))) {
-            setting->setPhase2autheap(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP)).value<int>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT))) {
-            setting->setPhase2cacert(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT)).value<QByteArray>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH))) {
-            setting->setPhase2capath(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH)).value<QString>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT))) {
-            setting->setPhase2clientcert(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT)).value<QByteArray>());
-        }
-        // SECRET
-        if (map.contains("password")) {
-            setting->setPassword(map.value("password").value<QString>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY))) {
-            setting->setPrivatekey(map.value(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY)).value<QByteArray>());
-        }
-        // SECRET
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD))) {
-            setting->setPrivatekeypassword(map.value(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD)).value<QString>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY))) {
-            setting->setPhase2privatekey(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY)).value<QByteArray>());
-        }
-        // SECRET
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD))) {
-            setting->setPhase2privatekeypassword(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD)).value<QString>());
-        }
-        if (map.contains("pin")) {
-            setting->setPin(map.value("pin").value<QString>());
-        }
-        if (map.contains("psk")) {
-            setting->setPsk(map.value("psk").value<QString>());
-        }
-        if (map.contains(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS))) {
-            setting->setUseSystemCaCerts(map.value(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS)).value<bool>());
-        }
+    if (map.contains("eap")) {
+        setting->setEap(map.value("eap").value<QStringList>());
+    }
+    if (map.contains("identity")) {
+        setting->setIdentity(map.value("identity").value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY))) {
+        setting->setAnonymousidentity(map.value(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY)).value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_CA_CERT))) {
+        setting->setCacert(map.value(QLatin1String(NM_SETTING_802_1X_CA_CERT)).value<QByteArray>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_CA_PATH))) {
+        setting->setCapath(map.value(QLatin1String(NM_SETTING_802_1X_CA_PATH)).value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT))) {
+        setting->setClientcert(map.value(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT)).value<QByteArray>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER))) {
+        setting->setPhase1peapver(map.value(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPVER)).value<int>() + 1 ); // 0 is automatic
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL))) {
+        setting->setPhase1peaplabel(map.value(QLatin1String(NM_SETTING_802_1X_PHASE1_PEAPLABEL)).value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING))) {
+        setting->setPhase1fastprovisioning(map.value(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING)).value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH))) {
+        setting->setPhase2auth(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH)).value<int>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP))) {
+        setting->setPhase2autheap(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP)).value<int>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT))) {
+        setting->setPhase2cacert(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT)).value<QByteArray>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH))) {
+        setting->setPhase2capath(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH)).value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT))) {
+        setting->setPhase2clientcert(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT)).value<QByteArray>());
+    }
+    // SECRET
+    if (map.contains("password")) {
+        setting->setPassword(map.value("password").value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY))) {
+        setting->setPrivatekey(map.value(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY)).value<QByteArray>());
+    }
+    // SECRET
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD))) {
+        setting->setPrivatekeypassword(map.value(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD)).value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY))) {
+        setting->setPhase2privatekey(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY)).value<QByteArray>());
+    }
+    // SECRET
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD))) {
+        setting->setPhase2privatekeypassword(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD)).value<QString>());
+    }
+    if (map.contains("pin")) {
+        setting->setPin(map.value("pin").value<QString>());
+    }
+    if (map.contains("psk")) {
+        setting->setPsk(map.value("psk").value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS))) {
+        setting->setUseSystemCaCerts(map.value(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS)).value<bool>());
     }
 }
 

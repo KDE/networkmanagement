@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <kicondialog.h>
 #include <kstandarddirs.h>
+#include <KUser>
 
 #include "ui_connection.h"
 #include "connection.h"
@@ -94,7 +95,8 @@ void ConnectionWidget::writeConfig()
     Q_D(ConnectionWidget);
     connection()->setName(d->ui.id->text());
     connection()->setAutoConnect(d->ui.autoconnect->isChecked());
-    connection()->setOriginalAutoConnect(d->ui.autoconnect->isChecked());
+    if (!d->ui.system->isChecked())
+        connection()->addToPermissions(KUser().loginName());
     // connection()->setIconName(..) is already called from buttonChooseIconClicked()
 }
 
@@ -113,7 +115,7 @@ void ConnectionWidget::buttonChooseIconClicked()
     // set customLocation to kdedir/share/apps/networkmanagement/icons
     QString customLocation(KStandardDirs::locate("data", QLatin1String("networkmanagement/icons/")));
     //qDebug() << "Custom location: " << customLocation;
-    
+
     dlg.setCustomLocation(customLocation);
 
     dlg.setup(KIconLoader::NoGroup, KIconLoader::Any, false, 0, true, false, false);

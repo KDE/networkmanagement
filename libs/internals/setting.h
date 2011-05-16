@@ -45,9 +45,7 @@ public:
     bool secretsAvailable() const;
     void setSecretsAvailable(bool secretsAvailable);
 
-    /*scope must be one of Knm::Connection::Scope, cant't include connection.h
-    here because it is already including setting.h */
-    virtual void save(int scope);
+    virtual void save(bool);
     virtual void remove();
 protected:
     bool m_initialized;
