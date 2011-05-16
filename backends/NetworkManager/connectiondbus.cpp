@@ -183,6 +183,9 @@ QVariantMapMap ConnectionDbus::toDbusMap()
         connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_TIMESTAMP), m_connection->timestamp().toTime_t());
     }
 
+    if (!m_connection->permissions().isEmpty())
+        connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS), m_connection->permissions());
+
     //kDebug() << "Printing connection map: ";
     //foreach(QString key, connectionMap.keys())
         //kDebug() << key << " : " << connectionMap.value(key);
@@ -251,6 +254,9 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
         dateTime.setTime_t(timestamp);
         m_connection->setTimestamp(dateTime);
     }
+
+    if (connectionSettings.contains(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS)))
+        m_connection->setPermissions(connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS)).toStringList());
 
     Connection::Type type = Connection::Wired;
     if (dbusConnectionType == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {

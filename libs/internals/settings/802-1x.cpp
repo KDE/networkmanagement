@@ -45,17 +45,17 @@ QByteArray Security8021xSetting::getBytes(const QString & fileName)
     return bytes;
 }
 
-QString Security8021xSetting::importCertFromPath(const QString & oldpath, const QString & newpath, Knm::Connection::Scope scope)
+QString Security8021xSetting::importCertFromPath(const QString & oldpath, const QString & newpath, bool scope)
 {
     if (newpath.isEmpty()) {
         QString certificateId = QUuid::createUuid().toString();
         QString ourCertFile;
         switch (scope)
         {
-            case Knm::Connection::System:
+            case true:
                 ourCertFile = KStandardDirs::installPath("data")+ CERTIFICATE_PERSISTENCE_PATH + certificateId;
                 break;
-            case Knm::Connection::User:
+            case false:
             default:
                 ourCertFile = KStandardDirs::locateLocal("data", CERTIFICATE_PERSISTENCE_PATH + certificateId,true);
                 break;
@@ -73,7 +73,7 @@ QString Security8021xSetting::importCertFromPath(const QString & oldpath, const 
     }
 }
 
-void Security8021xSetting::save(int scope)
+void Security8021xSetting::save(bool scope)
 {
     if (certtodelete() & Knm::Security8021xSetting::CACert) {
         QFile::remove(pathFromCert(cacert()));
@@ -108,17 +108,17 @@ void Security8021xSetting::save(int scope)
     }
 
     if (!cacerttoimport().isEmpty())
-        setCacert( certPathAsByteArray(importCertFromPath(cacerttoimport(),pathFromCert(cacert()),(Knm::Connection::Scope)scope)) );
+        setCacert( certPathAsByteArray(importCertFromPath(cacerttoimport(),pathFromCert(cacert()),scope)) );
     if (!clientcerttoimport().isEmpty())
-        setClientcert( certPathAsByteArray(importCertFromPath(clientcerttoimport(),pathFromCert(clientcert()),(Knm::Connection::Scope)scope)) );
+        setClientcert( certPathAsByteArray(importCertFromPath(clientcerttoimport(),pathFromCert(clientcert()),scope)) );
     if (!phase2cacerttoimport().isEmpty())
-        setPhase2cacert( certPathAsByteArray(importCertFromPath(phase2cacerttoimport(),pathFromCert(phase2cacert()),(Knm::Connection::Scope)scope)) );
+        setPhase2cacert( certPathAsByteArray(importCertFromPath(phase2cacerttoimport(),pathFromCert(phase2cacert()),scope)) );
     if (!phase2clientcerttoimport().isEmpty())
-        setPhase2clientcert( certPathAsByteArray(importCertFromPath(phase2clientcerttoimport(),pathFromCert(phase2clientcert()),(Knm::Connection::Scope)scope)) );
+        setPhase2clientcert( certPathAsByteArray(importCertFromPath(phase2clientcerttoimport(),pathFromCert(phase2clientcert()),scope)) );
     if (!privatekeytoimport().isEmpty())
-        setPrivatekey( certPathAsByteArray(importCertFromPath(privatekeytoimport(),pathFromCert(privatekey()),(Knm::Connection::Scope)scope)) );
+        setPrivatekey( certPathAsByteArray(importCertFromPath(privatekeytoimport(),pathFromCert(privatekey()),scope)) );
     if (!phase2privatekeytoimport().isEmpty())
-        setPhase2privatekey( certPathAsByteArray(importCertFromPath(phase2privatekeytoimport(),pathFromCert(phase2privatekey()),(Knm::Connection::Scope)scope)) );
+        setPhase2privatekey( certPathAsByteArray(importCertFromPath(phase2privatekeytoimport(),pathFromCert(phase2privatekey()),scope)) );
 }
 
 void Security8021xSetting::remove()

@@ -40,19 +40,16 @@ class KNMINTERNALS_EXPORT Connection
 
 public:
     enum Type { Unknown = 0, Wired, Wireless, Gsm, Cdma, Vpn, Pppoe, Bluetooth };
-    enum Scope { User = 1, System };
     static QString typeAsString(Connection::Type);
     static Connection::Type typeFromString(const QString & type);
     static Connection::Type typeFromSolidType(const Solid::Control::NetworkInterface::Type type);
-    static QString scopeAsString(Connection::Scope);
-    static Connection::Scope scopeFromString(const QString & scope);
     static QString iconName(const Connection::Type type);
     void saveCertificates();
     void removeCertificates();
     /**
      * Create a connection with a new Uuid
      */
-    Connection(const QString & name, Connection::Type type, Connection::Scope = User);
+    Connection(const QString & name, Connection::Type type);
     /**
      * Create a connection with a given Uuid
      */
@@ -63,10 +60,9 @@ public:
     QString iconName() const;
     QUuid uuid() const;
     Connection::Type type() const;
-    Connection::Scope scope() const;
     bool autoConnect() const;
-    bool originalAutoConnect() const;
     QDateTime timestamp() const;
+    QStringList permissions() const;
 
     QString origin() const;
     void setOrigin(const QString &);
@@ -87,7 +83,6 @@ public:
     void setIconName(const QString &);
     void setUuid(const QUuid &);
     void setAutoConnect(bool);
-    void setOriginalAutoConnect(bool);
     void setTimestamp(const QDateTime&);
 
     /**
@@ -98,8 +93,9 @@ public:
      */
     void setType(Connection::Type type);
 
-
-    void setScope(Connection::Scope scope);
+    void setPermissions(const QStringList&);
+    void addToPermissions(const QString&);
+    void removeFromPermissions(const QString&);
 
     /**
      *  Syntactic sugar for setTimestamp(QDateTime::currentDateTime())
@@ -144,12 +140,11 @@ private:
     QString m_iconName;
     QUuid m_uuid;
     Connection::Type m_type;
-    Connection::Scope m_scope;
     bool m_autoConnect;
-    bool m_originalAutoConnect;
     QDateTime m_timestamp;
     QString m_origin;
     QList<Setting*> m_settings;
+    QStringList m_permissions;
 };
 } // namespace Knm
 

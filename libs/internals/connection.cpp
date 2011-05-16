@@ -107,32 +107,8 @@ Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInte
     return Knm::Connection::Wired;
 }
 
-QString Connection::scopeAsString(Connection::Scope scope)
-{
-    QString scopeString;
-    switch (scope) {
-        case User:
-            scopeString = QLatin1String("User");
-            break;
-        case System:
-            scopeString = QLatin1String("System");
-            break;
-        default:
-            break;
-    }
-    return scopeString;
-}
-
-Connection::Scope Connection::scopeFromString(const QString & scopeString)
-{
-    if (scopeString == QLatin1String("User")) {
-        return Connection::User;
-    }
-    return Connection::System;
-}
-
-Connection::Connection(const QString & name, const Connection::Type type, const Connection::Scope scope)
-    : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_scope(scope), m_autoConnect(false)
+Connection::Connection(const QString & name, const Connection::Type type)
+    : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false)
 {
     init();
 }
@@ -207,14 +183,14 @@ void Connection::init()
 void Connection::saveCertificates()
 {
     foreach (Setting * setting, m_settings) {
-        setting->save((int)m_scope);
+        setting->save(m_permissions.isEmpty());
     }
 }
 
 void Connection::removeCertificates()
 {
     foreach (Setting * setting, m_settings) {
-        setting->remove();
+        setting->remove();kDebug();
     }
 }
 
@@ -268,19 +244,9 @@ Connection::Type Connection::type() const
     return m_type;
 }
 
-Connection::Scope Connection::scope() const
-{
-    return m_scope;
-}
-
 bool Connection::autoConnect() const
 {
     return m_autoConnect;
-}
-
-bool Connection::originalAutoConnect() const
-{
-    return m_originalAutoConnect;
 }
 
 QDateTime Connection::timestamp() const
@@ -328,11 +294,6 @@ void Connection::setTimestamp(const QDateTime & timestamp)
 void Connection::setAutoConnect(bool autoConnect)
 {
     m_autoConnect = autoConnect;
-}
-
-void Connection::setOriginalAutoConnect(bool autoConnect)
-{
-    m_originalAutoConnect = autoConnect;
 }
 
 void Connection::updateTimestamp()
@@ -391,11 +352,25 @@ QString Connection::origin() const
     return m_origin;
 }
 
-void Connection::setScope(Connection::Scope scope)
+void Connection::addToPermissions(const QString &user)
 {
-    m_scope = scope;
+    m_permissions.append(QLatin1String("user:") + user + QLatin1String(":"));
 }
 
+void Connection::removeFromPermissions(const QString &user)
+{
+    m_permissions.removeAll(QLatin1String("user:") + user + QLatin1String(":"));
+}
+
+void Connection::setPermissions(const QStringList &permissions)
+{
+    m_permissions = permissions;
+}
+
+QStringList Connection::permissions() const
+{
+    return m_permissions;
+}
 
 void Connection::setType(Connection::Type type)
 {
