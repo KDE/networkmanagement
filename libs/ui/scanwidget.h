@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ui_scanwidget.h"
 
 #include <QItemSelectionModel>
+#include <QSortFilterProxyModel>
 
 #include <KLocale>
 #include <solid/control/wirelessaccesspoint.h>
@@ -45,7 +46,7 @@ class ScanWidget : public QWidget, public Ui::ScanWidget
         ~ScanWidget();
 
         void setWirelessInterface(const QString &interface);
-        QString currentAccessPoint() const;
+        QPair<QString,QString> currentAccessPoint() const;
 
     private Q_SLOTS:
         void onInterfaceChanged(int index);
@@ -53,11 +54,17 @@ class ScanWidget : public QWidget, public Ui::ScanWidget
     private:
         ApItemView * m_scanView;
         NetworkItemModel *m_scanModel;
+        QSortFilterProxyModel *m_proxyModel;
         QTreeView * m_detailsView;
         ApItemDelegate *m_scanDelegate;
         QItemSelectionModel *m_scanSelectionModel;
+        QItemSelectionModel *m_scanProxySelectionModel;
 
         QStringList m_wirelessInterfaces;
+        enum Views {Map = 0, Details};
+
+    Q_SIGNALS:
+        void doubleClicked();
 };
 
 #endif

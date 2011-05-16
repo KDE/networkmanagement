@@ -62,7 +62,7 @@ QT4_ADD_DBUS_INTERFACE(knmclient_SRCS
 
 kde4_add_library(knmclient SHARED ${knmclient_SRCS})
 
-target_link_libraries(knmclient ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${KDE4_KDECORE_LIBS})
+target_link_libraries(knmclient ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} solidcontrol)
 
 set_target_properties(knmclient PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}

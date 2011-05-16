@@ -304,32 +304,26 @@ void ActivatableListWidget::filter()
         }
     }
 
-    if (m_interfaces.count() && m_hasWireless)
-    {
+    if (m_interfaces.count() && m_hasWireless) {
         bool found = false;
         foreach (QString uni, m_interfaces.keys())
         {
-            if (m_interfaces.value(uni) == Solid::Control::NetworkInterface::Ieee80211)
-            {
+            if (m_interfaces.value(uni) == Solid::Control::NetworkInterface::Ieee80211) {
                 createHiddenItem();
                 found = true;
                 break;
             }
         }
-        if (!found && m_hiddenItem)
-        {
+        if (!found && m_hiddenItem) {
             m_hiddenItem->disappear();
             m_hiddenItem = 0;
         }
-    }
-    else if (m_showAllTypes && m_hasWireless)
+    } else if (m_showAllTypes && m_hasWireless && !m_vpn) {
         createHiddenItem();
-    else if (m_hiddenItem)
-        {
-            m_hiddenItem->disappear();
-            m_hiddenItem = 0;
-        }
-
+    } else if (m_hiddenItem) {
+        m_hiddenItem->disappear();
+        m_hiddenItem = 0;
+    }
     m_layout->invalidate();
 }
 

@@ -69,7 +69,7 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
             d->ui.cmbMacAddress->addItem(UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames), wiface->hardwareAddress().toLatin1());
         }
     }
-    
+
     modeChanged(d->ui.cmbMode->currentIndex());
     connect(d->ui.cmbMode,SIGNAL(currentIndexChanged(int)),SLOT(modeChanged(int)));
     connect(d->ui.band,SIGNAL(currentIndexChanged(int)),SLOT(bandChanged(int)));
@@ -172,9 +172,12 @@ void Wireless80211Widget::scanClicked()
     scanDialog.setButtons( KDialog::Ok | KDialog::Cancel);
     ScanWidget scanWid;
     scanDialog.setMainWidget(&scanWid);
+    connect(&scanWid,SIGNAL(doubleClicked()),&scanDialog,SLOT(accept()));
     if (scanDialog.exec() == QDialog::Accepted) {
-        d->ui.ssid->setText(scanWid.currentAccessPoint());
-        emit ssidSelected(scanWid.currentAccessPoint());
+        QPair<QString,QString> accessPoint = scanWid.currentAccessPoint();
+        d->ui.ssid->setText(accessPoint.first);
+        d->ui.bssid->setText(accessPoint.second);
+        emit ssidSelected(accessPoint.first);
     }
 }
 
@@ -247,14 +250,25 @@ void Wireless80211Widget::copyToBssid()
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
-            QString activeAp = wiface->activeAccessPoint();
-            if (!activeAp.isEmpty()) {
-                Solid::Control::AccessPoint * ap = wiface->findAccessPoint(wiface->activeAccessPoint());
-                if (ap) {
-                    d->ui.bssid->setText(ap->hardwareAddress());
+            int i = d->ui.cmbMacAddress->currentIndex();
+            if (i == 0 || d->ui.cmbMacAddress->itemData(i).toString() == wiface->hardwareAddress()){
+                QString activeAp = wiface->activeAccessPoint();
+                Solid::Control::AccessPoint * ap = 0;
+                if (!activeAp.isEmpty() && activeAp != QLatin1String("/")) {
+                    ap = wiface->findAccessPoint(activeAp);
+                    if (ap && ap->ssid() != d->ui.ssid->text())
+                        ap = 0;
                 }
+                if (!ap && !d->ui.ssid->text().isEmpty()) {
+                    Solid::Control::WirelessNetworkInterfaceEnvironment environment(wiface);
+                    Solid::Control::WirelessNetwork * network = environment.findNetwork(d->ui.ssid->text());
+                    if (network)
+                        ap = wiface->findAccessPoint(network->referenceAccessPoint());
+                }
+                if (ap)
+                    d->ui.bssid->setText(ap->hardwareAddress());
+                return;
             }
-            return;
         }
     }
 }
@@ -264,13 +278,13 @@ Wireless80211WidgetBand::Wireless80211WidgetBand(QWidget * parent)
     :QSpinBox(parent)
 {
     selectedBand = 0;
-  
+
     QList<int> channels_a;
     QList<int> channels_b;
 
     channels_a << 7 << 8 << 9 << 11 << 12 << 16 << 34 << 36 << 38 << 40 << 42 << 44 << 46 << 48 << 52 << 56 << 60 << 64 << 100 << 104 << 108 << 112 << 116 << 120 << 124 << 128 << 132 << 136 << 140 << 149 << 153 << 157 << 161 << 165 << 183 << 184 << 185 << 187 << 188 << 189 << 192 << 196;
     channels_b << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9 << 10 << 11 << 12 << 13;
-    
+
     channels << channels_a << channels_b;
 }
 

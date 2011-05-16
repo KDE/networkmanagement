@@ -164,6 +164,9 @@ void NMPopup::init()
     m_interfaceDetailsWidget = new InterfaceDetailsWidget(m_leftWidget);
     connect(m_interfaceDetailsWidget, SIGNAL(back()), this, SLOT(toggleInterfaceTab()));
 
+    // Hack to prevent graphical artifacts during tab transition.
+    connect(m_leftWidget, SIGNAL(currentChanged(int)), SLOT(refresh()));
+
     m_leftWidget->addTab(i18nc("details for the interface", "Details"), m_interfaceDetailsWidget);
     m_leftWidget->setPreferredWidth(300);
 
@@ -202,7 +205,8 @@ void NMPopup::init()
     connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
 
     m_showMoreButton = new Plasma::PushButton(m_rightWidget);
-    m_showMoreButton->setCheckable(true);
+    // Do not use this according to KDE HIG. Bug #272492
+    //m_showMoreButton->setCheckable(true);
     m_showMoreButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_showMoreButton->setIcon(KIcon("list-add"));
     m_showMoreButton->setText(i18nc("show more button in the applet's popup", "Show More..."));
@@ -240,7 +244,8 @@ void NMPopup::init()
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             SLOT(interfaceRemoved(const QString&)));
 
-    oldShowMore = true;
+    m_showMoreChecked = false;
+    m_oldShowMoreChecked = true;
     wicCount = 0; // number of wireless networks which user explicitly configured using the kcm module.
     foreach (RemoteActivatable *ra, m_activatables->activatables()) {
         RemoteWirelessInterfaceConnection * wic = qobject_cast<RemoteWirelessInterfaceConnection*>(ra);
@@ -252,8 +257,8 @@ void NMPopup::init()
             uncheckShowMore(ra);
         }
     }
-    oldShowMore = false;
-    showMore(oldShowMore);
+    m_oldShowMoreChecked = false;
+    showMore(m_oldShowMoreChecked);
 
     //setPreferredSize(640, 400);
 
@@ -495,7 +500,6 @@ void NMPopup::wirelessEnabledToggled(bool checked)
         Solid::Control::NetworkManager::setWirelessEnabled(checked);
     }
     if (checked && Solid::Control::NetworkManager::isNetworkingEnabled()) {
-//        showMore(false);
         m_showMoreButton->show();
     } else {
         m_showMoreButton->hide();
@@ -535,7 +539,6 @@ void NMPopup::networkingEnabledToggled(bool checked)
 #endif
     if (checked && Solid::Control::NetworkManager::isWirelessHardwareEnabled() &&
                    Solid::Control::NetworkManager::isWirelessEnabled()) {
-//        showMore(false);
         m_showMoreButton->show();
     } else {
         m_showMoreButton->hide();
@@ -667,8 +670,10 @@ void NMPopup::managerWwanHardwareEnabledChanged(bool enabled)
 
 void NMPopup::showMore()
 {
-    oldShowMore = m_showMoreButton->isChecked();
-    showMore(oldShowMore);
+    // Simulate button toggling.
+    m_showMoreChecked = !m_showMoreChecked;
+    m_oldShowMoreChecked = m_showMoreChecked;
+    showMore(m_oldShowMoreChecked);
 }
 
 void NMPopup::showMore(bool more)
@@ -676,11 +681,11 @@ void NMPopup::showMore(bool more)
     if (more) {
         m_showMoreButton->setText(i18nc("pressed show more button", "Show Less..."));
         m_showMoreButton->setIcon(KIcon("list-remove"));
-        m_showMoreButton->setChecked(true);
+        m_showMoreChecked = true;
         m_connectionList->setShowAllTypes(true, true); // also refresh list
     } else {
         m_showMoreButton->setText(i18nc("unpressed show more button", "Show More..."));
-        m_showMoreButton->setChecked(false);
+        m_showMoreChecked = false;
         m_connectionList->setShowAllTypes(false, true); // also refresh list
         m_showMoreButton->setIcon(KIcon("list-add"));
     }
@@ -698,7 +703,7 @@ void NMPopup::checkShowMore(RemoteActivatable * ra)
         if (wicCount > 0) {
             wicCount--;
         }
-        if (wicCount == 0 &&  !m_showMoreButton->isChecked()) {
+        if (wicCount == 0 &&  !m_showMoreChecked) {
             // There is no wireless network which the user had explicitly configured around,
             // so temporaly show all the others wireless networks available.
             showMore(true);
@@ -715,10 +720,10 @@ void NMPopup::uncheckShowMore(RemoteActivatable *ra)
             return;
         }
         wicCount++;
-        if (oldShowMore != m_showMoreButton->isChecked()) {
+        if (m_oldShowMoreChecked != m_showMoreChecked) {
             // One wireless network explicity configured by the user appeared, reset "Show More" button
             // state to the value before the checkShowMore method above took action.
-            showMore(oldShowMore);
+            showMore(m_oldShowMoreChecked);
         }
     }
 }
@@ -739,8 +744,6 @@ void NMPopup::toggleInterfaceTab()
     }
 
     if (m_leftWidget->currentIndex() == 0) {
-        showMore(true);
-        m_leftWidget->setCurrentIndex(1);
         // Enable / disable updating of the details widget
         m_interfaceDetailsWidget->setUpdateEnabled(true);
 
@@ -752,10 +755,16 @@ void NMPopup::toggleInterfaceTab()
             m_leftLabel->setText(QString("<h3>%1</h3>").arg(
                                 UiUtils::interfaceNameLabel(item->interface()->uni())));
         }
+        showMore(true);
+
+        // Hack to prevent graphical artifact during tab transition.
+        // m_interfaceDetailsWidget will be shown again when transition finishes.
+        m_interfaceDetailsWidget->hide();
+        m_leftWidget->setCurrentIndex(1);
     } else {
         m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
         m_connectionList->clearInterfaces();
-        showMore(oldShowMore);
+        showMore(m_oldShowMoreChecked);
         m_interfaceDetailsWidget->setUpdateEnabled(false);
         m_leftWidget->setCurrentIndex(0);
     }
@@ -776,6 +785,11 @@ QSizeF NMPopup::sizeHint (Qt::SizeHint which, const QSizeF & constraint) const
     }
 
     return sh;
+}
+
+void NMPopup::refresh()
+{
+    m_interfaceDetailsWidget->show();
 }
 // vim: sw=4 sts=4 et tw=100
 

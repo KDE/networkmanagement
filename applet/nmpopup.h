@@ -92,6 +92,7 @@ private Q_SLOTS:
     void saveConfig();
     void checkShowMore(RemoteActivatable *);
     void uncheckShowMore(RemoteActivatable *);
+    void refresh();
 
 private:
     void addInterfaceInternal(Solid::Control::NetworkInterface *);
@@ -104,7 +105,7 @@ private:
 
     RemoteActivatableList* m_activatables;
     bool m_hasWirelessInterface;
-    bool oldShowMore;
+    bool m_showMoreChecked, m_oldShowMoreChecked;
     int wicCount;
     QGraphicsWidget* m_widget;
     QGraphicsGridLayout* m_mainLayout;

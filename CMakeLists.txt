@@ -32,66 +32,64 @@ include_directories (${KDE4_INCLUDES})
 
 macro_optional_find_package(NetworkManager)
 
-macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.7" "Needed for NetworkManager support in Network Management")
+macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.8.996" "Needed for NetworkManager support in Network Management")
 if (NETWORKMANAGER_FOUND)
-macro_ensure_version( "0.7.0" ${NETWORKMANAGER_VERSION} NM_0_7)
-macro_ensure_version( "0.7.1" ${NETWORKMANAGER_VERSION} NM_0_7_1)
-find_package(GLIB2 REQUIRED)
+    # Check if Solid has been compiled with NetworkManager 0.8 support.
+    set (CMAKE_REQUIRED_DEFINITIONS ${KDE4_DEFINITIONS})
+    set (CMAKE_REQUIRED_INCLUDES ${KDE4_INCLUDES})
+    set (CMAKE_REQUIRED_LIBRARIES -L${KDE4_LIB_DIR} -lsolidcontrol)
+    CHECK_CXX_SOURCE_COMPILES("#include <solid/control/networkmanager.h>
+    int main()
+    {
+        Solid::Control::NetworkManager::isWwanEnabled();
+        return 0;
+    }" NM_0_8)
+    if (NM_0_8)
+        add_definitions(-DNM_0_8=1)
+    endif (NM_0_8)
 
-configure_file(backends/NetworkManager/config-nm07backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm07backend.h )
+    # Check NetworkManager version found.
+    macro_ensure_version("0.8.996" ${NETWORKMANAGER_VERSION} NM_0_9)
+    find_package(GLIB2 REQUIRED)
 
-# Check if Solid has been compiled with NetworkManager 0.8 support.
-set (CMAKE_REQUIRED_DEFINITIONS ${KDE4_DEFINITIONS})
-set (CMAKE_REQUIRED_INCLUDES ${KDE4_INCLUDES})
-set (CMAKE_REQUIRED_LIBRARIES -L${KDE4_LIB_DIR} -lsolidcontrol)
-CHECK_CXX_SOURCE_COMPILES("#include <solid/control/networkmanager.h>
-int main()
-{
-    Solid::Control::NetworkManager::isWwanEnabled();
-    return 0;
-}" NM_0_8)
-if (NM_0_8)
-    add_definitions(-DNM_0_8=1)
-endif (NM_0_8)
+    configure_file(backends/NetworkManager/config-nm07backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm07backend.h )
 
-if (NM_0_7)
+    if (NM_0_9)
+        include_directories(
+           ${NETWORKMANAGER_INCLUDE_DIRS}
+           ${NM-UTIL_INCLUDE_DIRS}
+           ${GLIB2_INCLUDE_DIR}
+           ${CMAKE_CURRENT_BUILD_DIR}
+        )
 
-include_directories(
-   ${NETWORKMANAGER_INCLUDE_DIRS}
-   ${NM-UTIL_INCLUDE_DIRS}
-   ${GLIB2_INCLUDE_DIR}
-   ${CMAKE_CURRENT_BUILD_DIR}
-)
+        add_subdirectory(applet)
+        add_subdirectory(backends)
+        add_subdirectory(dataengine)
+        add_subdirectory(libs)
+        add_subdirectory(tests)
+        add_subdirectory(settings)
+        add_subdirectory(vpnplugins)
+        add_subdirectory(solidcontrolfuture)
+        add_subdirectory(kded)
 
-add_subdirectory(applet)
-add_subdirectory(backends)
-add_subdirectory(dataengine)
-add_subdirectory(libs)
-add_subdirectory(tests)
-add_subdirectory(settings)
-add_subdirectory(vpnplugins)
-add_subdirectory(solidcontrolfuture)
-add_subdirectory(kded)
+        # This is unmaintained, do not use it.
+        #add_subdirectory(monolithic)
 
-# This is unmaintained, do not use it.
-#add_subdirectory(monolithic)
+        install( FILES networkmanagement.notifyrc DESTINATION ${DATA_INSTALL_DIR}/networkmanagement )
+        install( DIRECTORY DESTINATION ${DATA_INSTALL_DIR}/networkmanagement/certificates)
 
-install( FILES networkmanagement.notifyrc DESTINATION ${DATA_INSTALL_DIR}/networkmanagement )
-install( DIRECTORY DESTINATION ${DATA_INSTALL_DIR}/networkmanagement/certificates)
-
-if (DBUS_SYSTEM_POLICY_DIR)
-install( FILES NetworkManager-kde4.conf DESTINATION ${DBUS_SYSTEM_POLICY_DIR})
-else (DBUS_SYSTEM_POLICY_DIR)
-message(STATUS "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
-endif (DBUS_SYSTEM_POLICY_DIR)
-
-else(NM_0_7)
-      macro_log_feature(NM_0_7 "NetworkManager ${NETWORKMANAGER_VERSION}" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
-endif(NM_0_7)
+        if (DBUS_SYSTEM_POLICY_DIR)
+            install( FILES NetworkManager-kde4.conf DESTINATION ${DBUS_SYSTEM_POLICY_DIR})
+        else (DBUS_SYSTEM_POLICY_DIR)
+            message(STATUS "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
+        endif (DBUS_SYSTEM_POLICY_DIR)
+    else(NM_0_9)
+        macro_log_feature(NM_0_9 "NetworkManager at least version 0.8.99" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
+    endif(NM_0_9)
 endif(NETWORKMANAGER_FOUND)
 
 if(INSTALL_KNM_AUTOSTART)
-	message("Installing autostart file for knm, use cmake -DINSTALL_KNM_AUTOSTART=ON to switch it on. Note that this will break the plasmoid. For this to work, make sure the kded DBus service is NOT loaded.")
+    message("Installing autostart file for knm, use cmake -DINSTALL_KNM_AUTOSTART=ON to switch it on. Note that this will break the plasmoid. For this to work, make sure the kded DBus service is NOT loaded.")
 endif(INSTALL_KNM_AUTOSTART)
 
 macro_display_feature_log()

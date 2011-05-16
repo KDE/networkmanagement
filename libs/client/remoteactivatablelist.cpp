@@ -81,6 +81,63 @@ void RemoteActivatableList::init()
     }
 }
 
+RemoteInterfaceConnection* RemoteActivatableList::connectionForInterface(Solid::Control::NetworkInterface *interface)
+{
+    foreach (RemoteActivatable* activatable, activatables()) {
+        if (activatable->deviceUni() == interface->uni()) {
+            RemoteInterfaceConnection* remoteconnection = dynamic_cast<RemoteInterfaceConnection*>(activatable);
+            if (remoteconnection) {
+                if (remoteconnection->activationState() == Knm::InterfaceConnection::Activated
+                            || remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
+                    return remoteconnection;
+                }
+            }
+        }
+    }
+
+    // Try a little harder to find a remote interface connection.
+    // This is necessary for interfaces that change state faster than
+    // org.kde.networkmanagement can handle, such as ethernet interfaces.
+    Q_D(RemoteActivatableList);
+    QDBusReply<QStringList> rv = d->iface->ListActivatables();
+    if (!rv.isValid()) {
+        return 0;
+    }
+
+    foreach (const QString &path, rv.value()) {
+        if (!d->activatables.contains(path)) {
+            // messy, I know, but making ListActivatables return a(si) is boring
+            QDBusInterface iface(QLatin1String("org.kde.networkmanagement"),
+                    path, "org.kde.networkmanagement.Activatable", QDBusConnection::sessionBus());
+            QDBusReply<uint> type = iface.call("activatableType");
+   
+            if (type.isValid() && type.value() != Knm::Activatable::HiddenWirelessInterfaceConnection) {
+                handleActivatableAdded(path, type.value());
+                kDebug() << "Trying to add:" << path << type.value();
+                if (!d->activatables.contains(path)) {
+                    kDebug() << "Add failed:" << path << type.value();
+                }
+            }
+        }
+    }
+
+    foreach (RemoteActivatable* activatable, activatables()) {
+        if (activatable->deviceUni() == interface->uni()) {
+            RemoteInterfaceConnection* remoteconnection = dynamic_cast<RemoteInterfaceConnection*>(activatable);
+            if (remoteconnection) {
+                if (remoteconnection->activationState() == Knm::InterfaceConnection::Activated ||
+                    remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
+                    kDebug() << "Now I found it:" << remoteconnection->connectionName();
+                    return remoteconnection;
+                }
+            }
+        }
+    }
+    kDebug() << "Still not found:";
+
+    return 0;
+}
+
 void RemoteActivatableList::clear()
 {
     Q_D(RemoteActivatableList);
@@ -104,8 +161,6 @@ QList<RemoteActivatable *> RemoteActivatableList::activatables() const
 
 void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uint type)
 {
-    kDebug() << "RemoteActivatable Added " << addedPath;
-
     if (!addedPath.startsWith('/')) {
         kDebug() << "Invalid path:" << addedPath << type;
         return;
@@ -142,6 +197,7 @@ void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uin
 #endif
         }
         if (newActivatable) {
+            kDebug() << "RemoteActivatable Added " << addedPath;
             d->activatables.insert(addedPath, newActivatable);
             emit activatableAdded(newActivatable);
         }

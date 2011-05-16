@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QTreeView>
 #include <QHeaderView>
-#include <QSortFilterProxyModel>
 
 #include <KDebug>
 
@@ -51,23 +50,27 @@ ScanWidget::ScanWidget(QWidget *parent)
     m_scanView->setModel(m_scanModel);
     m_scanView->setItemDelegate(m_scanDelegate);
     m_scanView->setSelectionModel(m_scanSelectionModel);
-    m_stack->insertWidget(0, m_scanView);
+    m_stack->insertWidget(Map, m_scanView);
 
-    QSortFilterProxyModel *proxyModel = new QSortFilterProxyModel(this);
-    proxyModel->setSourceModel(m_scanModel);
-    proxyModel->setDynamicSortFilter(true);
-    proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+    m_proxyModel = new QSortFilterProxyModel(this);
+    m_proxyModel->setSourceModel(m_scanModel);
+    m_proxyModel->setDynamicSortFilter(true);
+    m_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
+    m_scanProxySelectionModel = new QItemSelectionModel(m_proxyModel);
     m_detailsView = new QTreeView(this);
     m_detailsView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_detailsView->setAllColumnsShowFocus(true);
     m_detailsView->setRootIsDecorated(false);
-    m_detailsView->setModel(proxyModel);
-    m_detailsView->setSelectionModel(m_scanSelectionModel);
+    m_detailsView->setModel(m_proxyModel);
+    m_detailsView->setSelectionModel(m_scanProxySelectionModel);
     m_detailsView->setSortingEnabled(true);
-    m_stack->insertWidget(1, m_detailsView);
+    m_stack->insertWidget(Details, m_detailsView);
 
     m_stack->setCurrentWidget(m_scanView);
     connect(m_view, SIGNAL(currentIndexChanged(int)), m_stack, SLOT(setCurrentIndex(int)));
+
+    connect(m_scanView, SIGNAL(doubleClicked(const QModelIndex&)), SIGNAL(doubleClicked()));
+    connect(m_detailsView, SIGNAL(doubleClicked(const QModelIndex&)), SIGNAL(doubleClicked()));
 }
 
 ScanWidget::~ScanWidget()
@@ -79,15 +82,38 @@ void ScanWidget::setWirelessInterface(const QString &interface)
     m_scanModel->setNetworkInterface(interface);
 }
 
-QString ScanWidget::currentAccessPoint() const
+QPair<QString,QString> ScanWidget::currentAccessPoint() const
 {
-    QModelIndex index = m_scanSelectionModel->currentIndex();
-
-    if (!index.isValid()) {
-        return QString();
+    QPair<QString, QString> accessPoint(QString(""), QString(""));
+    QModelIndex index;
+    switch (m_stack->currentIndex())
+    {
+        case Details:
+            index = m_proxyModel->mapToSource(m_scanProxySelectionModel->currentIndex());
+            break;
+        case Map:
+        default:
+            index = m_scanSelectionModel->currentIndex();
+            break;
     }
 
-    return m_scanModel->data(m_scanModel->index(index.row(),0)).toString();
+    if (!index.isValid()) {
+        return accessPoint;
+    }
+    accessPoint.first = m_scanModel->data(m_scanModel->index(index.row(),0)).toString();
+
+    switch (m_useBssid->isChecked())
+    {
+        case false:
+            accessPoint.second = QString();
+            break;
+        case true:
+        default:
+            accessPoint.second = m_scanModel->data(m_scanModel->index(index.row(),3)).toString();
+            break;
+    }
+
+    return accessPoint;
 }
 
 void ScanWidget::onInterfaceChanged(int index)

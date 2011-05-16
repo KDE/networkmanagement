@@ -62,7 +62,7 @@ void WirelessInterfaceItem::connectButtonClicked()
 void WirelessInterfaceItem::setConnectionInfo()
 {
     InterfaceItem::setConnectionInfo(); // Sets the labels
-    switch (m_iface->connectionState()) {
+    switch (m_iface.data()->connectionState()) {
         case Unavailable:
         case Disconnected:
         case Failed:
