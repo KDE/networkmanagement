@@ -25,17 +25,10 @@
 #include "remoteinterfaceconnection.h"
 
 
-class RemoteActivatableList;
 
 class RemoteActivatable;
 class RemoteInterfaceConnection;
 class RemoteInterfaceConnection;
-class RemoteWirelessInterfaceConnection;
-class RemoteWirelessNetwork;
-class RemoteUnconfiguredInterface;
-class RemoteVpnInterfaceConnection;
-class RemoteHiddenWirelessInterfaceConnection;
-class RemoteGsmInterfaceConnection;
 
 class WirelessStatus;
 
