@@ -106,6 +106,7 @@ PinDialog::PinDialog(Solid::Control::ModemGsmCardInterface *modem, const Type ty
 
 PinDialog::~PinDialog()
 {
+    delete ui;
 }
 
 void PinDialog::chkShowPassToggled()
