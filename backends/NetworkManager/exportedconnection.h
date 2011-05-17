@@ -17,11 +17,9 @@
 #include "marshalarguments.h"
 #include "types.h"
 #include "busconnection.h"
-class QByteArray;
 template<class T> class QList;
 template<class Key, class Value> class QMap;
 class QString;
-class QStringList;
 class QVariant;
 
 /*

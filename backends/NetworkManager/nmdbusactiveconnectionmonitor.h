@@ -35,7 +35,6 @@ namespace Knm
 } // namespace Knm
 
 class ActivatableList;
-class NMDBusSystemSettingsMonitor;
 
 class NMDBusActiveConnectionMonitorPrivate;
 class OrgFreedesktopNetworkManagerConnectionActiveInterface;
