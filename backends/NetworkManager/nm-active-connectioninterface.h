@@ -29,7 +29,7 @@ class OrgFreedesktopNetworkManagerConnectionActiveInterface: public QDBusAbstrac
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    { return "org.freedesktop.NetworkManagerCompat.Connection.Active"; }
+    { return "org.freedesktop.NetworkManager.Connection.Active"; }
 
 public:
     OrgFreedesktopNetworkManagerConnectionActiveInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);

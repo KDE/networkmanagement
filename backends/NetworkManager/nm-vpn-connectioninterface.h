@@ -28,7 +28,7 @@ class OrgFreedesktopNetworkManagerVPNConnectionInterface: public QDBusAbstractIn
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    { return "org.freedesktop.NetworkManagerCompat.VPN.Connection"; }
+    { return "org.freedesktop.NetworkManager.VPN.Connection"; }
 
 public:
     OrgFreedesktopNetworkManagerVPNConnectionInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
