@@ -46,8 +46,6 @@ GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnect
     m_connectButton(0),
     m_remote(remote)
 {
-    // TODO: the next two signals are not working for bluetooth devices because the ModemGsmNetworkInterface object
-    // is null when the remote object is constructed and is never updated to a valid object.
     connect(remote, SIGNAL(signalQualityChanged(int)), this, SLOT(setQuality(int)));
     connect(remote, SIGNAL(accessTechnologyChanged(const int)), this, SLOT(setAccessTechnology(const int)));
     connect(remote, SIGNAL(changed()), SLOT(update()));
@@ -67,7 +65,7 @@ void GsmInterfaceConnectionItem::setupItem()
     */
     m_layout = new QGraphicsGridLayout(this);
     // First, third and fourth colunm are fixed width for the icons
-    m_layout->setColumnPreferredWidth(0, 160);
+    m_layout->setColumnPreferredWidth(0, 150);
     m_layout->setColumnFixedWidth(1, 60);
     m_layout->setColumnFixedWidth(2, rowHeight);
     m_layout->setColumnSpacing(1, spacing);
@@ -84,10 +82,9 @@ void GsmInterfaceConnectionItem::setupItem()
     } else {
         m_connectButton->setIcon("network-wired");
     }
-    m_connectButton->setMinimumWidth(160);
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
-    //m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", ssid));
+    //m_connectButton->setToolTip(i18nc("icon to connect to mobile broadband network", "Connect to mobile broadband network %1", ssid));
     m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
 
     m_strengthMeter = new Plasma::Meter(this);

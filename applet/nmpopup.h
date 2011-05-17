@@ -95,7 +95,6 @@ private:
     void addVpnInterface();
     void updateHasWireless(bool checked = true);
     void updateHasWwan();
-    QSizeF sizeHint ( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
 
     RemoteActivatableList* m_activatables;
     bool m_hasWirelessInterface;

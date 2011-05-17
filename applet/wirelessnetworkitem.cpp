@@ -75,7 +75,7 @@ void WirelessNetworkItem::setupItem()
     */
     m_layout = new QGraphicsGridLayout(this);
     // First, third and fourth colunm are fixed width for the icons
-    m_layout->setColumnPreferredWidth(0, 160);
+    m_layout->setColumnPreferredWidth(0, 150);
     m_layout->setColumnFixedWidth(1, 60);
     m_layout->setColumnFixedWidth(2, rowHeight);
     m_layout->setColumnSpacing(1, spacing);
@@ -91,7 +91,6 @@ void WirelessNetworkItem::setupItem()
     } else {
         m_connectButton->setText(m_wirelessStatus->ssid());
     }
-    m_connectButton->setMinimumWidth(160);
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
     //m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", ssid));
