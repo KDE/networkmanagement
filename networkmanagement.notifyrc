@@ -1,5 +1,6 @@
 [Global]
 Name=Network Management
+Name[bs]=Upravljanje mrežom
 Name[ca]=Gestió de xarxa
 Name[ca@valencia]=Gestió de xarxa
 Name[cs]=Správa sítě
