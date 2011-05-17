@@ -40,7 +40,7 @@ namespace Ifaces
      * available network interfaces and reachable network. It has also the
      * responsibility to notify when a network interface or a network appear or disappear.
      */
-    class SOLIDCONTROLIFACES_EXPORT NetworkManagerNm09 : public QObject
+    class SOLIDCONTROLIFACES_EXPORT NetworkManager : public QObject
     {
         Q_OBJECT
     public:
@@ -49,11 +49,11 @@ namespace Ifaces
          *
          * @param parent the parent object
          */
-        NetworkManagerNm09(QObject * parent = 0);
+        NetworkManager(QObject * parent = 0);
         /**
          * Destructs a NetworkManager object.
          */
-        virtual ~NetworkManagerNm09();
+        virtual ~NetworkManager();
 
         /**
          * Get the manager connection state
@@ -212,6 +212,6 @@ namespace Ifaces
 
 } // Solid
 
-Q_DECLARE_INTERFACE(Solid::Control::Ifaces::NetworkManagerNm09, "org.kde.Solid.Control.Ifaces.NetworkManager/0.1")
+Q_DECLARE_INTERFACE(Solid::Control::Ifaces::NetworkManager, "org.kde.Solid.Control.Ifaces.NetworkManager/0.1")
 
 #endif

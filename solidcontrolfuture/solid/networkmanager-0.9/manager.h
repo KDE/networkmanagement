@@ -28,11 +28,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class NMNetworkInterface;
 class NMNetworkManagerPrivate;
 
-class KDE_EXPORT NMNetworkManager : public Solid::Control::Ifaces::NetworkManagerNm09
+class KDE_EXPORT NMNetworkManager : public Solid::Control::Ifaces::NetworkManager
 {
 Q_OBJECT
 Q_DECLARE_PRIVATE(NMNetworkManager)
-Q_INTERFACES(Solid::Control::Ifaces::NetworkManagerNm09)
+Q_INTERFACES(Solid::Control::Ifaces::NetworkManager)
 
 public:
     static const QString DBUS_DEVICES;

@@ -43,7 +43,7 @@ Solid::Control::NetworkManagerNm09Private::NetworkManagerNm09Private() : m_inval
 {
     loadBackend("Network Management",
                 "SolidNetworkManager",
-                "Solid::Control::Ifaces::NetworkManagerNm09");
+                "Solid::Control::Ifaces::NetworkManager");
 
     if (managerBackend()!=0) {
         connect(managerBackend(), SIGNAL(networkInterfaceAdded(const QString &)),
@@ -83,7 +83,7 @@ Solid::Control::NetworkManagerNm09Private::~NetworkManagerNm09Private()
 Solid::Control::NetworkInterfaceNm09List Solid::Control::NetworkManagerNm09Private::buildDeviceList(const QStringList &uniList)
 {
     NetworkInterfaceNm09List list;
-    Ifaces::NetworkManagerNm09 *backend = qobject_cast<Ifaces::NetworkManagerNm09 *>(managerBackend());
+    Ifaces::NetworkManager *backend = qobject_cast<Ifaces::NetworkManager *>(managerBackend());
 
     if (backend == 0) return list;
 
@@ -102,7 +102,7 @@ Solid::Control::NetworkInterfaceNm09List Solid::Control::NetworkManagerNm09Priva
 
 Solid::Control::NetworkInterfaceNm09List Solid::Control::NetworkManagerNm09Private::networkInterfaces()
 {
-    Ifaces::NetworkManagerNm09 *backend = qobject_cast<Ifaces::NetworkManagerNm09 *>(managerBackend());
+    Ifaces::NetworkManager *backend = qobject_cast<Ifaces::NetworkManager *>(managerBackend());
 
     if (backend!= 0)
     {
@@ -121,58 +121,58 @@ Solid::Control::NetworkInterfaceNm09List Solid::Control::NetworkManagerNm09::net
 
 bool Solid::Control::NetworkManagerNm09::isNetworkingEnabled()
 {
-    return_SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), false, isNetworkingEnabled());
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), false, isNetworkingEnabled());
 }
 
 bool Solid::Control::NetworkManagerNm09::isWirelessEnabled()
 {
-    return_SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), false, isWirelessEnabled());
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), false, isWirelessEnabled());
 }
 
 bool Solid::Control::NetworkManagerNm09::isWirelessHardwareEnabled()
 {
-    return_SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), false, isWirelessHardwareEnabled());
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), false, isWirelessHardwareEnabled());
 }
 
 bool Solid::Control::NetworkManagerNm09::isWwanEnabled()
 {
-    return_SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), false, isWwanEnabled());
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), false, isWwanEnabled());
 }
 
 bool Solid::Control::NetworkManagerNm09::isWwanHardwareEnabled()
 {
-    return_SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), false, isWwanHardwareEnabled());
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), false, isWwanHardwareEnabled());
 }
 
 void Solid::Control::NetworkManagerNm09::setNetworkingEnabled(bool enabled)
 {
-    SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), setNetworkingEnabled(enabled));
+    SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), setNetworkingEnabled(enabled));
 }
 
 void Solid::Control::NetworkManagerNm09::setWirelessEnabled(bool enabled)
 {
-    SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), setWirelessEnabled(enabled));
+    SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), setWirelessEnabled(enabled));
 }
 
 void Solid::Control::NetworkManagerNm09::setWwanEnabled(bool enabled)
 {
-    SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), setWwanEnabled(enabled));
+    SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), setWwanEnabled(enabled));
 }
 
 Solid::Networking::Status Solid::Control::NetworkManagerNm09::status()
 {
-    return_SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), Solid::Networking::Unknown, status());
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), Solid::Networking::Unknown, status());
 }
 
 Solid::Control::NetworkInterfaceNm09::Types Solid::Control::NetworkManagerNm09::supportedInterfaceTypes()
 {
-    return_SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(),
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(),
                       Solid::Control::NetworkInterfaceNm09::Types(), supportedInterfaceTypes());
 }
 
 Solid::Control::NetworkInterfaceNm09 * Solid::Control::NetworkManagerNm09Private::findNetworkInterface(const QString &uni)
 {
-    Ifaces::NetworkManagerNm09 *backend = qobject_cast<Ifaces::NetworkManagerNm09 *>(managerBackend());
+    Ifaces::NetworkManager *backend = qobject_cast<Ifaces::NetworkManager *>(managerBackend());
 
     if (backend == 0) return 0;
 
@@ -251,7 +251,7 @@ Solid::Control::NetworkManagerNm09Private::findRegisteredNetworkInterface(const 
     if (m_networkInterfaceMap.contains(uni)) {
         return m_networkInterfaceMap[uni];
     } else {
-        Ifaces::NetworkManagerNm09 *backend = qobject_cast<Ifaces::NetworkManagerNm09 *>(managerBackend());
+        Ifaces::NetworkManager *backend = qobject_cast<Ifaces::NetworkManager *>(managerBackend());
 
         if (backend!=0)
         {
@@ -291,17 +291,17 @@ Solid::Control::NetworkManagerNm09Private::findRegisteredNetworkInterface(const 
 void Solid::Control::NetworkManagerNm09::activateConnection(const QString & interfaceUni, const QString & connectionUni,
                 const QVariantMap & connectionParameters )
 {
-    SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), activateConnection(interfaceUni, connectionUni, connectionParameters));
+    SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), activateConnection(interfaceUni, connectionUni, connectionParameters));
 }
 
 void Solid::Control::NetworkManagerNm09::deactivateConnection(const QString & activeConnectionUni)
 {
-    SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), deactivateConnection(activeConnectionUni));
+    SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), deactivateConnection(activeConnectionUni));
 }
 
 QStringList Solid::Control::NetworkManagerNm09::activeConnections()
 {
-    return_SOLID_CALL(Ifaces::NetworkManagerNm09 *, globalNetworkManager->managerBackend(), QStringList(), activeConnections());
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), QStringList(), activeConnections());
 }
 
 #include "networkmanager_p.moc"
