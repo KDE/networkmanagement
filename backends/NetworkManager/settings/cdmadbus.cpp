@@ -16,15 +16,18 @@ CdmaDbus::~CdmaDbus()
 void CdmaDbus::fromMap(const QVariantMap & map)
 {
   Knm::CdmaSetting * setting = static_cast<Knm::CdmaSetting *>(m_setting);
-  if (map.contains("number")) {
-    setting->setNumber(map.value("number").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_CDMA_NUMBER))) {
+    setting->setNumber(map.value(QLatin1String(NM_SETTING_CDMA_NUMBER)).value<QString>());
   }
-  if (map.contains("username")) {
-    setting->setUsername(map.value("username").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_CDMA_USERNAME))) {
+    setting->setUsername(map.value(QLatin1String(NM_SETTING_CDMA_USERNAME)).value<QString>());
   }
   // SECRET
-  if (map.contains("password")) {
-    setting->setPassword(map.value("password").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_CDMA_PASSWORD))) {
+    setting->setPassword(map.value(QLatin1String(NM_SETTING_CDMA_PASSWORD)).value<QString>());
+  }
+  if (map.contains(QLatin1String(NM_SETTING_CDMA_PASSWORD_FLAGS))) {
+      setting->setPasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_CDMA_PASSWORD_FLAGS)).value<int>());
   }
 }
 
@@ -32,8 +35,10 @@ QVariantMap CdmaDbus::toMap()
 {
   QVariantMap map;
   Knm::CdmaSetting * setting = static_cast<Knm::CdmaSetting *>(m_setting);
-  map.insert("number", setting->number());
-  map.insert("username", setting->username());
+  map.insert(QLatin1String(NM_SETTING_CDMA_NUMBER), setting->number());
+  map.insert(QLatin1String(NM_SETTING_CDMA_USERNAME), setting->username());
+  map.insert(QLatin1String(NM_SETTING_CDMA_PASSWORD), setting->password());
+  map.insert(QLatin1String(QLatin1String(NM_SETTING_CDMA_PASSWORD_FLAGS)), (int)setting->passwordflags());
   return map;
 }
 

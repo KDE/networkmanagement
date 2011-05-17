@@ -43,3 +43,21 @@ void WirelessSecuritySetting::reset()
     mWeppassphrase = QString();
     mWepKeyType = None;
 }
+
+void WirelessSecuritySetting::setSecrets(Setting::secretsTypes types)
+{
+    switch (mSecurityType)
+    {
+        case EnumSecurityType::StaticWep:
+            setWepkeyflags(types);
+            break;
+        case EnumSecurityType::WpaPsk:
+            setPskflags(types);
+            break;
+        case EnumSecurityType::Leap:
+            setLeappasswordflags(types);
+            break;
+        default:
+            break;
+    }
+}

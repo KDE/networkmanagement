@@ -21,6 +21,8 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
 
     bool hasSecrets() const;
 
+    void setSecrets(Setting::secretsTypes);
+
     /**
       Set Number
     */
@@ -67,6 +69,22 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     QString password() const
     {
       return mPassword;
+    }
+
+    /**
+     * Set Password flags
+     */
+    void setPasswordflags( Setting::secretsTypes types )
+    {
+        mPasswordflags = types;
+    }
+
+    /**
+     * Get Password flags
+     */
+    Setting::secretsTypes passwordflags()
+    {
+        return mPasswordflags;
     }
 
     /**
@@ -155,6 +173,22 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     }
 
     /**
+     * Set PIN flags
+     */
+    void setPinflags( Setting::secretsTypes types )
+    {
+        mPinflags = types;
+    }
+
+    /**
+     * Get PIN flags
+     */
+    Setting::secretsTypes pinflags()
+    {
+        return mPinflags;
+    }
+
+    /**
       Set PUK
     */
     void setPuk( const QString & v )
@@ -182,6 +216,8 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     int mBand;
     QString mPin;
     QString mPuk;
+    Setting::secretsTypes mPasswordflags;
+    Setting::secretsTypes mPinflags;
 
   private:
 };

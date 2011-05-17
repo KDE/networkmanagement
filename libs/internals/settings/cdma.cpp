@@ -21,3 +21,8 @@ bool CdmaSetting::hasSecrets() const
 {
   return true;
 }
+void CdmaSetting::setSecrets(Setting::secretsTypes types)
+{
+    if (!mPassword.isEmpty())
+        setPasswordflags(types);
+}

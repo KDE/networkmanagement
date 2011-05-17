@@ -157,6 +157,11 @@ void Setting::setSecretsAvailable(bool available)
     m_secretsAvailable = available;
 }
 
+void Setting::setSecrets(Setting::secretsTypes)
+{
+
+}
+
 void Setting::save(bool)
 {
 

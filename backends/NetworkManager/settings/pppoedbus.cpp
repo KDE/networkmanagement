@@ -16,15 +16,18 @@ PppoeDbus::~PppoeDbus()
 void PppoeDbus::fromMap(const QVariantMap & map)
 {
   Knm::PppoeSetting * setting = static_cast<Knm::PppoeSetting *>(m_setting);
-  if (map.contains("service")) {
-    setting->setService(map.value("service").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_PPPOE_SERVICE))) {
+    setting->setService(map.value(QLatin1String(NM_SETTING_PPPOE_SERVICE)).value<QString>());
   }
-  if (map.contains("username")) {
-    setting->setUsername(map.value("username").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_PPPOE_USERNAME))) {
+    setting->setUsername(map.value(QLatin1String(NM_SETTING_PPPOE_USERNAME)).value<QString>());
   }
   // SECRET
-  if (map.contains("password")) {
-    setting->setPassword(map.value("password").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_PPPOE_PASSWORD))) {
+    setting->setPassword(map.value(QLatin1String(NM_SETTING_PPPOE_PASSWORD)).value<QString>());
+  }
+  if (map.contains(QLatin1String(NM_SETTING_PPPOE_PASSWORD_FLAGS))) {
+      setting->setPasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_PPPOE_PASSWORD_FLAGS)).value<int>());
   }
 }
 
@@ -32,8 +35,12 @@ QVariantMap PppoeDbus::toMap()
 {
   QVariantMap map;
   Knm::PppoeSetting * setting = static_cast<Knm::PppoeSetting *>(m_setting);
-  map.insert("service", setting->service());
-  map.insert("username", setting->username());
+  map.insert(QLatin1String(NM_SETTING_PPPOE_SERVICE), setting->service());
+  map.insert(QLatin1String(NM_SETTING_PPPOE_USERNAME), setting->username());
+  if (!setting->password().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_PPPOE_PASSWORD), setting->password());
+      map.insert(QLatin1String(NM_SETTING_PPPOE_PASSWORD_FLAGS), (int)setting->passwordflags());
+  }
   return map;
 }
 

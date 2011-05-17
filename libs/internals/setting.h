@@ -22,14 +22,17 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define KNM_INTERNALS_SETTING_H
 
 #include "knminternals_export.h"
-
+#include <QObject>
 
 namespace Knm
 {
 
-class KNMINTERNALS_EXPORT Setting
+class KNMINTERNALS_EXPORT Setting: public QObject
 {
 public:
+    Q_FLAGS(secretsTypes)
+    enum secretsType { None = 0, AgentOwned = 0x01, NotSaved = 0x02, NotRequired = 0x04 };
+    Q_DECLARE_FLAGS(secretsTypes, secretsType)
     enum Type { Cdma, Gsm, Ipv4, Ipv6, Ppp, Pppoe, Security8021x, Serial, Vpn, Wired, Wireless, WirelessSecurity, Bluetooth };
     static QString typeAsString(Setting::Type);
     static Setting::Type typeFromString(const QString & type);
@@ -42,6 +45,7 @@ public:
     virtual QString name() const = 0;
     virtual bool hasSecrets() const = 0;
     virtual bool hasVolatileSecrets() const { return false; }
+    virtual void setSecrets(secretsTypes);
     bool secretsAvailable() const;
     void setSecretsAvailable(bool secretsAvailable);
 

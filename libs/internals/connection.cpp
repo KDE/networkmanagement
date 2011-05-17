@@ -200,7 +200,24 @@ void Connection::saveCertificates()
 void Connection::removeCertificates()
 {
     foreach (Setting * setting, m_settings) {
-        setting->remove();kDebug();
+        setting->remove();
+    }
+}
+
+void Connection::setSecrets()
+{
+    Setting::secretsTypes type = 0;
+    switch (m_permissions.isEmpty())
+    {
+        case true:
+            type |= Setting::None;
+            break;
+        case false:
+            type |= Setting::AgentOwned;
+            break;
+    }
+    foreach (Setting * setting, m_settings) {
+        setting->setSecrets(type);
     }
 }
 
@@ -364,7 +381,8 @@ QString Connection::origin() const
 
 void Connection::addToPermissions(const QString &user)
 {
-    m_permissions.append(QLatin1String("user:") + user + QLatin1String(":"));
+    if (!m_permissions.contains(QLatin1String("user:") + user + QLatin1String(":")))
+        m_permissions.append(QLatin1String("user:") + user + QLatin1String(":"));
 }
 
 void Connection::removeFromPermissions(const QString &user)

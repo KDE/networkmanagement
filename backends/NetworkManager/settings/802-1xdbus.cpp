@@ -16,11 +16,11 @@ Security8021xDbus::~Security8021xDbus()
 void Security8021xDbus::fromMap(const QVariantMap & map)
 {
     Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
-    if (map.contains("eap")) {
-        setting->setEap(map.value("eap").value<QStringList>());
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_EAP))) {
+        setting->setEap(map.value(QLatin1String(NM_SETTING_802_1X_EAP)).value<QStringList>());
     }
-    if (map.contains("identity")) {
-        setting->setIdentity(map.value("identity").value<QString>());
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_IDENTITY))) {
+        setting->setIdentity(map.value(QLatin1String(NM_SETTING_802_1X_IDENTITY)).value<QString>());
     }
     if (map.contains(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY))) {
         setting->setAnonymousidentity(map.value(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY)).value<QString>());
@@ -59,8 +59,8 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
         setting->setPhase2clientcert(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT)).value<QByteArray>());
     }
     // SECRET
-    if (map.contains("password")) {
-        setting->setPassword(map.value("password").value<QString>());
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PASSWORD))) {
+        setting->setPassword(map.value(QLatin1String(NM_SETTING_802_1X_PASSWORD)).value<QString>());
     }
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY))) {
         setting->setPrivatekey(map.value(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY)).value<QByteArray>());
@@ -76,14 +76,23 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD))) {
         setting->setPhase2privatekeypassword(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD)).value<QString>());
     }
-    if (map.contains("pin")) {
-        setting->setPin(map.value("pin").value<QString>());
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PIN))) {
+        setting->setPin(map.value(QLatin1String(NM_SETTING_802_1X_PIN)).value<QString>());
     }
     if (map.contains("psk")) {
         setting->setPsk(map.value("psk").value<QString>());
     }
     if (map.contains(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS))) {
         setting->setUseSystemCaCerts(map.value(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS)).value<bool>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS))) {
+        setting->setPasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS)).value<int>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD_FLAGS))) {
+        setting->setPrivatekeypasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD_FLAGS)).value<int>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS))) {
+        setting->setPhase2privatekeypasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS)).value<int>());
     }
 }
 
@@ -93,10 +102,10 @@ QVariantMap Security8021xDbus::toMap()
     Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
     if (setting->enabled()) {
         if (!setting->eap().isEmpty()) {
-            map.insert("eap", setting->eap());
+            map.insert(QLatin1String(NM_SETTING_802_1X_EAP), setting->eap());
         }
         if (!setting->identity().isEmpty()) {
-            map.insert("identity", setting->identity());
+            map.insert(QLatin1String(NM_SETTING_802_1X_IDENTITY), setting->identity());
         }
         if (!setting->anonymousidentity().isEmpty()) {
             map.insert(QLatin1String(NM_SETTING_802_1X_ANONYMOUS_IDENTITY), setting->anonymousidentity());
@@ -184,13 +193,26 @@ QVariantMap Security8021xDbus::toMap()
             map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY), setting->privatekey());
         }
         if (!setting->pin().isEmpty()) {
-            map.insert("pin", setting->pin());
+            map.insert(QLatin1String(NM_SETTING_802_1X_PIN), setting->pin());
         }
         if (!setting->psk().isEmpty()) {
             map.insert("psk", setting->psk());
         }
         if (!setting->eap().contains(QLatin1String("leap"))) {
             map.insert(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS), setting->useSystemCaCerts());
+        }
+
+        if (!setting->password().isEmpty()) {
+            map.insert(QLatin1String(NM_SETTING_802_1X_PASSWORD), setting->password());
+            map.insert(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS), (int)setting->passwordflags());
+        }
+        if (!setting->privatekeypassword().isEmpty()) {
+            map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD), setting->privatekeypassword());
+            map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD_FLAGS), (int)setting->privatekeypasswordflags());
+        }
+        if (!setting->phase2privatekeypassword().isEmpty()) {
+            map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD), setting->phase2privatekeypassword());
+            map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS), (int)setting->phase2privatekeypasswordflags());
         }
     }
     return map;
@@ -201,9 +223,9 @@ QVariantMap Security8021xDbus::toSecretsMap()
   QVariantMap map;
   Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
   if (setting->enabled()) {
-  map.insert("password", setting->password());
-  map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD), setting->privatekeypassword());
-  map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD), setting->phase2privatekeypassword());
+      map.insert(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS), setting->password());
+      map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD), setting->privatekeypassword());
+      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD), setting->phase2privatekeypassword());
   }
   return map;
 }

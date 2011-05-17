@@ -48,6 +48,8 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
 
     bool hasSecrets() const;
 
+    void setSecrets(Setting::secretsTypes);
+
     /**
       Set EAP
     */
@@ -409,6 +411,22 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     }
 
     /**
+     * Set Password flags
+     */
+    void setPasswordflags( Setting::secretsTypes types )
+    {
+        mPasswordflags = types;
+    }
+
+    /**
+     * Get Password flags
+     */
+    Setting::secretsTypes passwordflags()
+    {
+        return mPasswordflags;
+    }
+
+    /**
       Set Private key
     */
     void setPrivatekey( const QByteArray & v )
@@ -479,6 +497,22 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     }
 
     /**
+     * Set Private key password flags
+     */
+    void setPrivatekeypasswordflags( Setting::secretsTypes types )
+    {
+        mPrivatekeypasswordflags = types;
+    }
+
+    /**
+     * Get Private key password flags
+     */
+    Setting::secretsTypes privatekeypasswordflags()
+    {
+        return mPrivatekeypasswordflags;
+    }
+
+    /**
       Set Phase 2 private key
     */
     void setPhase2privatekey( const QByteArray & v )
@@ -546,6 +580,22 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     QString phase2privatekeypassword() const
     {
       return mPhase2privatekeypassword;
+    }
+
+    /**
+     * Set Phase 2 private key password flags
+     */
+    void setPhase2privatekeypasswordflags( Setting::secretsTypes types )
+    {
+        mPhase2privatekeypasswordflags = types;
+    }
+
+    /**
+     * Get Phase 2 private key password flags
+     */
+    Setting::secretsTypes phase2privatekeypasswordflags()
+    {
+        return mPhase2privatekeypasswordflags;
     }
 
     /**
@@ -734,6 +784,9 @@ kDebug() << eap;
     bool mEnabled;
     bool mUseSystemCaCerts;
     Certificates mCertificatesToDelete;
+    Setting::secretsTypes mPasswordflags;
+    Setting::secretsTypes mPrivatekeypasswordflags;
+    Setting::secretsTypes mPhase2privatekeypasswordflags;
 
   private:
     static const QString CERTIFICATE_PERSISTENCE_PATH;

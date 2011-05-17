@@ -29,6 +29,16 @@ bool Security8021xSetting::hasSecrets() const
     return mEnabled;
 }
 
+void Security8021xSetting::setSecrets(Setting::secretsTypes types)
+{
+    if (!mPassword.isEmpty())
+        setPasswordflags(types);
+    if (!mPrivatekeypassword.isEmpty())
+        setPrivatekeypasswordflags(types);
+    if (!mPhase2privatekeypassword.isEmpty())
+        setPhase2privatekeypasswordflags(types);
+}
+
 QByteArray Security8021xSetting::getBytes(const QString & fileName)
 {
     QByteArray bytes;

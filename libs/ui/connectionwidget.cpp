@@ -88,6 +88,7 @@ void ConnectionWidget::readConfig()
     d->ui.id->setText(connection()->name());
     d->ui.autoconnect->setChecked(connection()->autoConnect());
     d->ui.pushButtonChooseIcon->setIcon(KIcon(connection()->iconName()));
+    d->ui.system->setChecked(connection()->permissions().isEmpty());
 }
 
 void ConnectionWidget::writeConfig()

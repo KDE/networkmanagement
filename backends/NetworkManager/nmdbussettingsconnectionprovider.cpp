@@ -313,6 +313,7 @@ void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnect
 {
     Q_D(NMDBusSettingsConnectionProvider);
     newConnection->saveCertificates();
+    newConnection->setSecrets();
     ConnectionDbus converter(newConnection);
     QVariantMapMap map = converter.toDbusMap();
     kDebug() << "Adding connection " << newConnection->name() << newConnection->uuid().toString();
