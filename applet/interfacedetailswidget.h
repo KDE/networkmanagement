@@ -31,9 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/PushButton>
 #include <Plasma/SignalPlotter>
 
-class RemoteActivatable;
-class RemoteInterfaceConnection;
-class RemoteInterfaceList;
 class InterfaceDetails;
 
 class InterfaceDetailsWidget : public QGraphicsWidget

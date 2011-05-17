@@ -22,7 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PLASMA_NETWORKMANAGER_APPLET_H
 #define PLASMA_NETWORKMANAGER_APPLET_H
 
-class QAction;
 class KCModuleProxy;
 
 #include <kdeversion.h>

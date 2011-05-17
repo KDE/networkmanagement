@@ -33,7 +33,6 @@ class QGraphicsGridLayout;
 namespace Plasma
 {
     class IconWidget;
-    class Label;
     class Meter;
 }
 

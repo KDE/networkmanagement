@@ -30,7 +30,6 @@ namespace Solid
 {
 namespace Control
 {
-    class AccessPoint;
     class WirelessNetworkInterface;
 }
 }
