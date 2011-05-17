@@ -70,6 +70,7 @@ public: // PROPERTIES
 public Q_SLOTS: // METHODS
     void Delete();
     QVariantMapMap GetSettings();
+    QVariantMapMap GetSecrets(const QString &setting_name);
     void Update(const QVariantMapMap &properties);
 Q_SIGNALS: // SIGNALS
     void Removed();

@@ -55,9 +55,6 @@ set(knm_nm_LIB_SRCS
    #org.freedesktop.NetworkManager.Settings.Connection
    exportedconnection.cpp
 
-   #org.freedesktop.NetworkManager.Settings.Connection.Secrets
-   exportedconnectionsecrets.cpp
-
    nmdbusactiveconnectionmonitor.cpp
 
    #org.freedesktop.NetworkManager.Settings.Connection.Active
@@ -71,7 +68,6 @@ set(knm_nm_LIB_SRCS
    remoteconnection.cpp
    nm-settingsinterface.cpp
    nm-exported-connectioninterface.cpp
-   nm-exported-connection-secrets-interface.cpp
 
    nm-manager-interface.cpp
    nm-device-interface.cpp

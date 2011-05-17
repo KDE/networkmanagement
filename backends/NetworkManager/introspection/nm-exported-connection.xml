@@ -42,6 +42,30 @@
             </arg>
         </method>
 
+        <method name="GetSecrets">
+            <tp:docstring>
+                Get the secrets belonging to this network configuration.  Only
+                secrets from persistent storage or a Secret Agent running in
+                the requestor's session will be returned.  The user will never
+                be prompted for secrets as a result of this request.
+            </tp:docstring>
+            <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="impl_settings_connection_get_secrets"/>
+            <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+            <arg name="setting_name" type="s" direction="in">
+                <tp:docstring>
+                    Name of the setting to return secrets for.  If empty, all
+                    all secrets will be returned.
+                </tp:docstring>
+            </arg>
+
+            <arg name="secrets" type="a{sa{sv}}" direction="out" tp:type="String_String_Variant_Map_Map">
+            <annotation name="com.trolltech.QtDBus.QtTypeName.Out0" value="QVariantMapMap"/>
+                <tp:docstring>
+                    Nested settings maps containing secrets.
+                </tp:docstring>
+            </arg>
+        </method>
+
         <signal name="Updated">
             <tp:docstring>
                 Emitted when some settings changed.

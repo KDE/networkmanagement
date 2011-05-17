@@ -45,7 +45,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "busconnection.h"
 #include "exportedconnection.h"
-#include "exportedconnectionsecrets.h"
 
 #include "nm-active-connectioninterface.h"
 #include "nm-manager-interface.h"
@@ -136,7 +135,6 @@ void NMDBusSettingsService::handleAdd(Knm::Connection * added)
         QDBusObjectPath objectPath;
         BusConnection * busConn = new BusConnection(added, this);
         new ConnectionAdaptor(busConn);
-        new SecretsAdaptor(busConn);
 
         objectPath = QDBusObjectPath(nextObjectPath());
         // important - make sure all 3 hashes are up to date!

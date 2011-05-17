@@ -45,6 +45,12 @@ QVariantMapMap ConnectionAdaptor::GetSettings()
     return parent()->GetSettings();
 }
 
+QVariantMapMap ConnectionAdaptor::GetSecrets(const QString &setting_name)
+{
+    // handle method call org.freedesktop.NetworkManager.Settings.Connection.GetSecrets
+    return parent()->GetSecrets(setting_name, QStringList(), true, QDBusMessage());  // TODO port to secret agent
+}
+
 void ConnectionAdaptor::Update(const QVariantMapMap &properties)
 {
     // handle method call org.freedesktop.NetworkManager.Settings.Connection.Update

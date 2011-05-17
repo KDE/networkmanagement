@@ -49,6 +49,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QLatin1String("GetSettings"), argumentList);
     }
 
+    inline QDBusPendingReply<QVariantMapMap> GetSecrets(const QString &setting_name)
+    {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(setting_name);
+        return asyncCallWithArgumentList(QLatin1String("GetSecrets"), argumentList);
+    }
+
     inline QDBusPendingReply<> Update(const QVariantMapMap &properties)
     {
         QList<QVariant> argumentList;

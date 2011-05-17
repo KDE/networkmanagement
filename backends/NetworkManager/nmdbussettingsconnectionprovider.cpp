@@ -47,11 +47,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 #include "nm-settingsinterface.h"
 #include "nm-exported-connectioninterface.h"
-#include "nm-exported-connection-secrets-interface.h"
-
-// NetworkManager settings service object path for NM 0.9
-// TODO: ifdef for NM 0.8 x NM 0.9 ?
-const QString KNM_NM_DBUS_PATH_SETTINGS = QLatin1String("/org/freedesktop/NetworkManager/Settings");
 
 class NMDBusSettingsConnectionProviderPrivate
 {
@@ -70,7 +65,7 @@ NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionLis
     Q_D(NMDBusSettingsConnectionProvider);
     d->connectionList = connectionList;
     d->iface = new OrgFreedesktopNetworkManagerSettingsInterface(service,
-            KNM_NM_DBUS_PATH_SETTINGS,
+            NM_DBUS_PATH_SETTINGS,
             QDBusConnection::systemBus(), parent);
     d->serviceName = service;
 
@@ -375,7 +370,7 @@ bool NMDBusSettingsConnectionProvider::getConnectionSecrets(Knm::Connection *con
 
     QString objPath = d->uuidToPath.value(uuid).path();
 
-    OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface *secretIface = new OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface(d->serviceName, objPath, QDBusConnection::systemBus(), this);
+    OrgFreedesktopNetworkManagerSettingsConnectionInterface *secretIface = new OrgFreedesktopNetworkManagerSettingsConnectionInterface(d->serviceName, objPath, QDBusConnection::systemBus(), this);
 
     kDebug() << "Getting connection secrets for " << uuid.toString();
 
