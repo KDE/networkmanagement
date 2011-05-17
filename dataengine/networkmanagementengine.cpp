@@ -70,6 +70,7 @@ void NetworkManagementEngine::init()
 
 NetworkManagementEngine::~NetworkManagementEngine()
 {
+    delete d;
 }
 
 QStringList NetworkManagementEngine::sources() const
