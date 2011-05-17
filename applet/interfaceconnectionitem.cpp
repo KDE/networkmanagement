@@ -38,12 +38,9 @@ InterfaceConnectionItem::InterfaceConnectionItem(RemoteInterfaceConnection* conn
 void InterfaceConnectionItem::setupItem()
 {
     m_layout = new QGraphicsGridLayout(this);
-    // last colunm has fixed width for the icon
-    //m_layout->setColumnFixedWidth(2, rowHeight);
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setMinimumWidth(160);
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
     m_connectButton->setZValue(100); // FIXME: doesn't work

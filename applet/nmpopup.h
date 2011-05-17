@@ -101,7 +101,6 @@ private:
 #ifdef NM_0_8
     void updateHasWwan();
 #endif
-    QSizeF sizeHint ( Qt::SizeHint which, const QSizeF & constraint = QSizeF() ) const;
 
     RemoteActivatableList* m_activatables;
     bool m_hasWirelessInterface;

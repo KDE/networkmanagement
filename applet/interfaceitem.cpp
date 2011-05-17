@@ -79,7 +79,6 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_layout->setRowSpacing(1, 6);
     m_layout->setPreferredWidth(240);
     m_layout->setColumnFixedWidth(0, m_pixmapSize.width());
-    m_layout->setColumnMinimumWidth(1, 160);
     m_layout->setColumnFixedWidth(2, 16); // FIXME: spacing?
 
     m_icon = new Plasma::Label(this);
@@ -147,8 +146,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
         connectionStateChanged(m_iface.data()->connectionState());
     }
 
-    setLayout(m_layout);
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    setLayout(m_layout);
 
     connect(this, SIGNAL(clicked()), this, SLOT(slotClicked()));
 

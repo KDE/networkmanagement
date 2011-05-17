@@ -97,6 +97,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     //Info
     //row++;
     m_info = new Plasma::Label(this);
+    m_info->nativeWidget()->setTextFormat(Qt::RichText);
     m_info->setFont(KGlobalSettings::smallestReadableFont());
 #if KDE_IS_VERSION(4, 5, 0)
     m_info->setTextSelectable(true);
@@ -106,7 +107,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     // when we depend on 4.5
     m_info->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
 #endif
-    m_info->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_info->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     m_gridLayout->addItem(m_info, row, 0);
 
     // Traffic
@@ -290,7 +291,7 @@ void InterfaceDetailsWidget::showDetails(bool reset)
 {
     QString info;
     QString na = i18nc("entry not available", "not available");
-    QString format = "<tr><td align=\"right\" width=\"50%\" style=\"white-space: nowrap\"><b>%1:</b></td><td width=\"50%\">&nbsp;%2</td></tr>";
+    QString format = "<tr><td align=\"right\" width=\"30%\" style=\"white-space: nowrap\"><b>%1:</b></td><td width=\"30%\">&nbsp;%2</td></tr>";
 
     // generate html table header
     info = QString("<qt><table align=\"center\" border=\"0\">");

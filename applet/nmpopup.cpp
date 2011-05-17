@@ -71,7 +71,6 @@ NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* paren
     m_connectionList(0),
     m_vpnItem(0)
 {
-    //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     init();
 }
 
@@ -84,14 +83,12 @@ void NMPopup::init()
     m_mainLayout = new QGraphicsGridLayout(this);
 
     m_leftLabel = new Plasma::Label(this);
-    //m_leftLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     m_leftLabel->setMaximumHeight(24);
     m_leftLabel->setMinimumHeight(24);
     m_leftLabel->setText(i18nc("title on the LHS of the plasmoid", "<h3>Interfaces</h3>"));
     m_mainLayout->addItem(m_leftLabel, 0, 0);
 
     m_rightLabel = new Plasma::Label(this);
-    //m_rightLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Minimum);
     m_rightLabel->setMaximumHeight(24);
     m_rightLabel->setMinimumHeight(24);
     m_rightLabel->setText(i18nc("title on the RHS of the plasmoid", "<h3>Connections</h3>"));
@@ -99,7 +96,7 @@ void NMPopup::init()
 
     Plasma::Separator* sep = new Plasma::Separator(this);
     sep->setOrientation(Qt::Vertical);
-    m_mainLayout->addItem(sep, 0, 1, 2, 1);
+    m_mainLayout->addItem(sep, 0, 1, 2, 1, Qt::AlignRight);
     m_mainLayout->setRowFixedHeight(0, 24);
 
     m_leftWidget = new Plasma::TabBar(this);
@@ -157,18 +154,17 @@ void NMPopup::init()
 
     m_leftLayout->addItem(checkboxWidget);
 
-    //m_leftWidget->setLayout(m_leftLayout);
     m_leftWidget->addTab(i18nc("tabbar on the left side", "Interfaces"), m_leftLayout);
     m_leftWidget->setTabBarShown(false); // TODO: enable
 
     m_interfaceDetailsWidget = new InterfaceDetailsWidget(m_leftWidget);
+    m_interfaceDetailsWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     connect(m_interfaceDetailsWidget, SIGNAL(back()), this, SLOT(toggleInterfaceTab()));
 
     // Hack to prevent graphical artifacts during tab transition.
     connect(m_leftWidget, SIGNAL(currentChanged(int)), SLOT(refresh()));
 
     m_leftWidget->addTab(i18nc("details for the interface", "Details"), m_interfaceDetailsWidget);
-    m_leftWidget->setPreferredWidth(300);
 
     m_mainLayout->addItem(m_leftWidget, 1, 0);
 
@@ -188,10 +184,8 @@ void NMPopup::init()
     m_connectionList->init();
 
     m_connectionList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    //m_connectionList->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Expanding);
     m_connectionList->setPreferredHeight(240);
 
-    m_connectionList->setMinimumWidth(320);
     m_connectionList->setShowAllTypes(false, true);
 
     m_rightLayout->addItem(m_connectionList);
@@ -223,7 +217,6 @@ void NMPopup::init()
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable *)), this, SLOT(checkShowMore(RemoteActivatable *)));
 
     QGraphicsLinearLayout* connectionLayout = new QGraphicsLinearLayout;
-    //connectionLayout->addStretch();
     connectionLayout->addItem(m_showMoreButton);
     connectionLayout->addItem(m_connectionsButton);
 
@@ -260,13 +253,13 @@ void NMPopup::init()
     m_oldShowMoreChecked = false;
     showMore(m_oldShowMoreChecked);
 
-    //setPreferredSize(640, 400);
-
     readConfig();
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
     dbus.connect("org.kde.Solid.PowerManagement", "/org/kde/Solid/PowerManagement", "org.kde.Solid.PowerManagement", "resumingFromSuspend", this, SLOT(readConfig()));
     dbus.connect("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement", "ReloadConfig", this, SLOT(readConfig()));
+
+    adjustSize();
 }
 
 void NMPopup::readConfig()
@@ -762,23 +755,6 @@ void NMPopup::toggleInterfaceTab()
         m_interfaceDetailsWidget->setUpdateEnabled(false);
         m_leftWidget->setCurrentIndex(0);
     }
-    //showMore();
-}
-
-QSizeF NMPopup::sizeHint (Qt::SizeHint which, const QSizeF & constraint) const
-{
-    QSizeF sh = QGraphicsWidget::sizeHint(which, constraint);
-    qreal temp1 = m_interfaceDetailsWidget->size().rwidth();
-
-    if (temp1 < 300) {
-        temp1 = 300;
-    }
-
-    if (temp1 < (2*sh.rwidth()) / 3) {
-        m_leftWidget->setPreferredWidth(temp1);
-    }
-
-    return sh;
 }
 
 void NMPopup::refresh()
