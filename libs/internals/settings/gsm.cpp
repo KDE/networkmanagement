@@ -21,3 +21,10 @@ bool GsmSetting::hasSecrets() const
 {
   return true;
 }
+void GsmSetting::setSecrets(Setting::secretsTypes types)
+{
+    if (!mPassword.isEmpty())
+        setPasswordflags(types);
+    if (!mPin.isEmpty())
+        setPinflags(types);
+}

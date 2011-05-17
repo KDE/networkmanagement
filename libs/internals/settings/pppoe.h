@@ -21,6 +21,8 @@ class KNMINTERNALS_EXPORT PppoeSetting : public Setting
 
     bool hasSecrets() const;
 
+    void setSecrets(Setting::secretsTypes);
+
     /**
       Set Service
     */
@@ -69,12 +71,29 @@ class KNMINTERNALS_EXPORT PppoeSetting : public Setting
       return mPassword;
     }
 
+    /**
+     * Set Password flags
+     */
+    void setPasswordflags( Setting::secretsTypes types )
+    {
+        mPasswordflags = types;
+    }
+
+    /**
+     * Get Password flags
+     */
+    Setting::secretsTypes passwordflags()
+    {
+        return mPasswordflags;
+    }
+
   protected:
 
     // pppoe
     QString mService;
     QString mUsername;
     QString mPassword;
+    Setting::secretsTypes mPasswordflags;
 
   private:
 };

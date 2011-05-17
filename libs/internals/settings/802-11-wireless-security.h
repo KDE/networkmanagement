@@ -31,7 +31,7 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
 
     enum WepKeyType { None = 0, Hex, Passphrase, COUNT};
 
-    WirelessSecuritySetting( );
+    WirelessSecuritySetting();
     ~WirelessSecuritySetting();
 
     void reset();
@@ -39,6 +39,8 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     QString name() const;
 
     bool hasSecrets() const;
+
+    void setSecrets(Setting::secretsTypes);
 
     /**
       Set Security type
@@ -233,6 +235,22 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     }
 
     /**
+     * Set WEP key flags
+     */
+    void setWepkeyflags( Setting::secretsTypes types )
+    {
+        mWepkeyflags = types;
+    }
+
+    /**
+     * Get WEP key flags
+     */
+    Setting::secretsTypes wepkeyflags()
+    {
+        return mWepkeyflags;
+    }
+
+    /**
       Set PSK
     */
     void setPsk( const QString & v )
@@ -249,6 +267,22 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     }
 
     /**
+     * Set PSK flags
+     */
+    void setPskflags( Setting::secretsTypes types )
+    {
+        mPskflags = types;
+    }
+
+    /**
+     * Get PSK flags
+     */
+    Setting::secretsTypes pskflags()
+    {
+        return mPskflags;
+    }
+
+    /**
       Set LEAP Password
     */
     void setLeappassword( const QString & v )
@@ -262,6 +296,22 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     QString leappassword() const
     {
       return mLeappassword;
+    }
+
+    /**
+     * Set LEAP Password flags
+     */
+    void setLeappasswordflags( Setting::secretsTypes types )
+    {
+        mLeappasswordflags = types;
+    }
+
+    /**
+     * Get LEAP Password flags
+     */
+    Setting::secretsTypes leappasswordflags()
+    {
+        return mLeappasswordflags;
     }
 
     /**
@@ -315,6 +365,9 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     QString mLeappassword;
     QString mWeppassphrase;
     WepKeyType mWepKeyType;
+    Setting::secretsTypes mWepkeyflags;
+    Setting::secretsTypes mPskflags;
+    Setting::secretsTypes mLeappasswordflags;
 
   private:
 };

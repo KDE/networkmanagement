@@ -21,3 +21,8 @@ bool PppoeSetting::hasSecrets() const
 {
   return true;
 }
+void PppoeSetting::setSecrets(Setting::secretsTypes types)
+{
+    if (!mPassword.isEmpty())
+        setPasswordflags(types);
+}

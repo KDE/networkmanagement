@@ -78,14 +78,14 @@ void WirelessSecurityDbus::fromMap(const QVariantMap & map)
     }
   }
 
-  if (map.contains("proto")) {
-    setting->setProto(map.value("proto").value<QStringList>());
+if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PROTO))) {
+    setting->setProto(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PROTO)).value<QStringList>());
   }
-  if (map.contains("pairwise")) {
-    setting->setPairwise(map.value("pairwise").value<QStringList>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PAIRWISE))) {
+      setting->setPairwise(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PAIRWISE)).value<QStringList>());
   }
-  if (map.contains("group")) {
-    setting->setGroup(map.value("group").value<QStringList>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_GROUP))) {
+      setting->setGroup(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_GROUP)).value<QStringList>());
   }
   // SECRET
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0))) {
@@ -104,12 +104,12 @@ void WirelessSecurityDbus::fromMap(const QVariantMap & map)
     setting->setWepkey3(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3)).value<QString>());
   }
   // SECRET
-  if (map.contains("psk")) {
-    setting->setPsk(map.value("psk").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK))) {
+    setting->setPsk(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK)).value<QString>());
   }
 
-  if (map.contains("wep-key-type")) {
-      if (map.value(QLatin1String("wep-key-type")).value<int>() == 1)
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE))) {
+      if (map.value(QLatin1String(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE))).value<int>() == 1)
       {
         setting->setWepKeyType(Knm::WirelessSecuritySetting::Hex);
       }
@@ -117,6 +117,16 @@ void WirelessSecurityDbus::fromMap(const QVariantMap & map)
       {
         setting->setWepKeyType(Knm::WirelessSecuritySetting::Passphrase);
       }
+  }
+
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK_FLAGS))) {
+      setting->setPskflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK_FLAGS)).value<int>());
+  }
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_FLAGS))) {
+      setting->setWepkeyflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_FLAGS)).value<int>());
+  }
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS))) {
+      setting->setLeappasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS)).value<int>());
   }
 
 }
@@ -170,13 +180,13 @@ QVariantMap WirelessSecurityDbus::toMap()
       break;
   }
   if (!setting->proto().isEmpty()) {
-      map.insert("proto", setting->proto());
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PROTO), setting->proto());
   }
   if (!setting->pairwise().isEmpty()) {
-      map.insert("pairwise", setting->pairwise());
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PAIRWISE), setting->pairwise());
   }
   if (!setting->group().isEmpty()) {
-      map.insert("group", setting->group());
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_GROUP), setting->group());
   }
   if (!setting->leapusername().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME), setting->leapusername());
@@ -184,37 +194,45 @@ QVariantMap WirelessSecurityDbus::toMap()
 
   if (!setting->leappassword().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS), (int)setting->leappasswordflags());
   }
 
   // SECRET
   if(!setting->wepkey0().isEmpty())
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0),  setting->wepkey0());
 
+  if (!setting->wepkey0().isEmpty() || !setting->wepkey1().isEmpty() ||  !setting->wepkey2().isEmpty() || !setting->wepkey3().isEmpty())
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_FLAGS), (int)setting->wepkeyflags());
+
   if (setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep ||
       setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep) {
     // SECRET
     if(!setting->wepkey1().isEmpty())
         map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1),  setting->wepkey1());
-  
+
     // SECRET
     if(!setting->wepkey2().isEmpty())
         map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2),  setting->wepkey2());
-  
+
     // SECRET
     if(!setting->wepkey3().isEmpty())
         map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3),  setting->wepkey3());
-  
-    // SECRET
-    if(!setting->psk().isEmpty())
-        map.insert("psk",  setting->psk());
-  
+
     if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Hex)
-        map.insert("wep-key-type", 1);
+        map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE), 1);
     else if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Passphrase)
-        map.insert("wep-key-type", 2);
+        map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE), 2);
     else
         kWarning() << "Wep key type is not set!";
   }
+
+  // SECRET
+  if(!setting->psk().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK), setting->psk());
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK_FLAGS), (int)setting->pskflags());
+  }
+
+
   } // end of if not setting->clear()
   return map;
 }
