@@ -1,6 +1,6 @@
 /*
 Copyright 2009 Paul Marchouk <pmarchouk@gmail.com>
-Copyright 2010 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,6 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-
 #include <solid/control/modemmanager.h>
 #include <solid/control/modemgsmnetworkinterface.h>
 
@@ -36,7 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 Knm::GsmInterfaceConnection* GsmInterfaceConnectionHelpers::buildGsmInterfaceConnection(
-        Solid::Control::GsmNetworkInterface *interface,
+        Solid::Control::ModemNetworkInterfaceNm09 *interface,
         Knm::Connection *connection, const QString & deviceUni, QObject * parent)
 {
     GsmInterfaceConnectionBuilder builder(interface, connection, deviceUni, parent);
@@ -52,7 +50,7 @@ void GsmInterfaceConnectionHelpers::syncGsmInterfaceConnection(GsmInterfaceConne
 }
 
 GsmInterfaceConnectionBuilder::GsmInterfaceConnectionBuilder(
-                    Solid::Control::GsmNetworkInterface *interface,
+                    Solid::Control::ModemNetworkInterfaceNm09 *interface,
                     Knm::Connection *connection,
                     const QString &deviceUni,
                     QObject *parent)
@@ -112,5 +110,3 @@ void GsmInterfaceConnectionSync::sync(Knm::GsmInterfaceConnection * interfaceCon
 {
     InterfaceConnectionSync::sync(interfaceConnection, connection);
 }
-
-#endif

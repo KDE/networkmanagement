@@ -114,10 +114,10 @@ private Q_SLOTS:
     void saveConfiguration();
 
 private:
-    bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
-    Solid::Control::NetworkInterface* activeInterface();
+    bool hasInterfaceOfType(Solid::Control::NetworkInterfaceNm09::Type type);
+    Solid::Control::NetworkInterfaceNm09* activeInterface();
     void setupInterfaceSignals();
-    QString svgElement(Solid::Control::NetworkInterface *iface);
+    QString svgElement(Solid::Control::NetworkInterfaceNm09 *iface);
 
     void paintPixmap(QPainter* painter, QPixmap pixmap,
                      const QRectF &rect, qreal opacity = 1.0);
@@ -128,7 +128,7 @@ private:
     void setStatusOverlay(const QString&);
 
     bool m_iconPerDevice;
-    Solid::Control::NetworkInterfaceList m_interfaces;
+    Solid::Control::NetworkInterfaceNm09List m_interfaces;
     Plasma::ToolTipContent m_toolTip;
 
     RemoteActivatableList* m_activatables;
@@ -137,14 +137,14 @@ private:
     QPixmap m_pixmap;
 
     // For tracking which status we should show
-    Solid::Control::NetworkInterface* m_activeInterface;
-    Solid::Control::AccessPoint* m_accessPoint;
+    Solid::Control::NetworkInterfaceNm09* m_activeInterface;
+    Solid::Control::AccessPointNm09* m_accessPoint;
 
     // Timeline controlling a connection progress overlay on the main icon
     QTimeLine m_overlayTimeline;
     QPixmap m_previousStatusOverlay;
     QPixmap m_statusOverlay;
-    NM09DeviceState m_currentState;
+    Solid::Control::NetworkInterfaceNm09::ConnectionState m_currentState;
 
     ///embedded KCM modules in the configuration dialog
     KCModuleProxy* m_kcmNM;

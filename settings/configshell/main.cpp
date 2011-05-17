@@ -82,7 +82,6 @@ int main(int argc, char **argv)
                 }
                 delete mobileConnectionWizard;
             }
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
             /* To create a bluetooth DUN connection:
              * networkmanagement_configshell create --type bluetooth --specific-args "00:11:22:33:44:55 dun"
              *     or
@@ -99,7 +98,6 @@ int main(int argc, char **argv)
                     return -1;
                 }
             }
-#endif
             else {
                 con = editor.createConnection(true, Knm::Connection::typeFromString(type), specificArgs);
             }

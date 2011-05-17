@@ -29,8 +29,8 @@ namespace Solid
 {
 namespace Control
 {
-class AccessPoint;
-class WirelessNetworkInterface;
+class AccessPointNm09;
+class WirelessNetworkInterfaceNm09;
 } // namespace Control
 } // namespace Solid
 
@@ -51,15 +51,15 @@ public:
      * rsn
      */
     WirelessSecuritySettingWidget(Knm::Connection * connection,
-            Solid::Control::WirelessNetworkInterface * iface = 0,
-            Solid::Control::AccessPoint * ap = 0,
+            Solid::Control::WirelessNetworkInterfaceNm09 * iface = 0,
+            Solid::Control::AccessPointNm09 * ap = 0,
             QWidget * parent = 0 );
     virtual ~WirelessSecuritySettingWidget();
     void readConfig();
     void writeConfig();
     void readSecrets();
 public Q_SLOTS:
-    void setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterface * iface, Solid::Control::AccessPoint * ap);
+    void setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterfaceNm09 * iface, Solid::Control::AccessPointNm09 * ap);
 protected Q_SLOTS:
     void securityTypeChanged(int);
     void validate();

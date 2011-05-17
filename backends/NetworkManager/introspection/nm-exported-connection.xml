@@ -2,7 +2,7 @@
 
 <node name="/" xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
 
-    <interface name="org.freedesktop.NetworkManagerSettings.Connection">
+    <interface name="org.freedesktop.NetworkManager.Settings.Connection">
         <tp:docstring>
             Represents a single network connection configuration.
         </tp:docstring>

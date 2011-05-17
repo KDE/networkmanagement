@@ -47,15 +47,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/wirednetworkinterface.h>
-#include <solid/control/networkipv4config.h>
+#include <solid/control/networkipv4confignm09.h>
 #include <solid/control/networkinterface.h>
 #include <solid/control/networkmanager.h>
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-    #include <solid/control/modemmanager.h>
-#endif
-#ifdef NM_0_8
-    #include <solid/control/networkbtinterface.h>
-#endif
+#include <solid/control/modemmanager.h>
+#include <solid/control/networkbtinterface.h>
 #include <Solid/Device>
 
 #include <uiutils.h>
@@ -67,8 +63,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class InterfaceDetails
 {
     public:
-        Solid::Control::NetworkInterface::Type type;
-        NM09DeviceState connectionState;
+        Solid::Control::NetworkInterfaceNm09::Type type;
+        Solid::Control::NetworkInterfaceNm09::ConnectionState connectionState;
         QString ipAddress;
         int bitRate;
         QString interfaceName;
@@ -76,7 +72,7 @@ class InterfaceDetails
         QString driver;
         QString activeAccessPoint;
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
+        /* ModemManager */
         Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType registrationInfo;
         uint signalQuality;
         Solid::Control::ModemInterface::Type modemType;
@@ -90,7 +86,6 @@ class InterfaceDetails
         QString unlockRequired;
         QString imei;
         QString imsi;
-#endif
 };
 
 InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphicsWidget(parent, 0),
@@ -225,29 +220,24 @@ void InterfaceDetailsWidget::getDetails()
     }
 
     details->type = m_iface->type();
-    details->connectionState = static_cast<NM09DeviceState>(m_iface->connectionState());
+    details->connectionState = static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface->connectionState());
     details->ipAddress = currentIpAddress();
     details->bitRate = bitRate();
-#ifdef NM_0_8
     details->interfaceName = m_iface->ipInterfaceName();
     if (details->interfaceName.isEmpty()) {
         details->interfaceName = m_iface->interfaceName();
     }
-#else
-    details->interfaceName = m_iface->interfaceName();
-#endif
     details->mac = getMAC();
     details->driver = m_iface->driver();
 
-    Solid::Control::WirelessNetworkInterface *wiface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(m_iface);
+    Solid::Control::WirelessNetworkInterfaceNm09 *wiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(m_iface);
     if (wiface) {
         details->activeAccessPoint = wiface->activeAccessPoint();
     } else {
         details->activeAccessPoint = QString();
     }
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-    Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
+    Solid::Control::ModemNetworkInterfaceNm09 *giface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(m_iface);
     if (giface) {
         Solid::Control::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
         if (modemNetworkIface) {
@@ -276,17 +266,14 @@ void InterfaceDetailsWidget::getDetails()
             details->imsi = modemCardIface->getImsi();
         }*/
     }
-#endif
 }
 
-QString InterfaceDetailsWidget::connectionStateToString(NM09DeviceState state, const QString &connectionName)
+QString InterfaceDetailsWidget::connectionStateToString(Solid::Control::NetworkInterfaceNm09::ConnectionState state, const QString &connectionName)
 {
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-    Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
+    Solid::Control::ModemNetworkInterfaceNm09 *giface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(m_iface);
     if (giface && !details->enabled) {
         return i18nc("state of mobile broadband connection", "not enabled");
     }
-#endif
 
     return UiUtils::connectionStateToString(state, connectionName);
 }
@@ -301,7 +288,7 @@ void InterfaceDetailsWidget::showDetails(bool reset)
     info = QString("<qt><table align=\"center\" border=\"0\">");
 
     if (!reset && m_iface) {
-        info += QString(format).arg(i18nc("interface details", "Type"), UiUtils::interfaceTypeLabel(details->type));
+        info += QString(format).arg(i18nc("interface details", "Type"), UiUtils::interfaceTypeLabel(details->type, m_iface));
         info += QString(format).arg(i18nc("interface details", "Connection State"), connectionStateToString(details->connectionState));
         info += QString(format).arg(i18nc("interface details", "IP Address"), details->ipAddress);
         info += QString(format).arg(i18nc("interface details", "Connection Speed"), details->bitRate ? UiUtils::connectionSpeed(details->bitRate) : i18nc("bitrate", "Unknown"));
@@ -309,17 +296,16 @@ void InterfaceDetailsWidget::showDetails(bool reset)
         info += QString(format).arg(i18nc("interface details", "MAC Address"), details->mac);
         info += QString(format).arg(i18nc("interface details", "Driver"), details->driver);
 
-        Solid::Control::WirelessNetworkInterface *wiface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(m_iface);
+        Solid::Control::WirelessNetworkInterfaceNm09 *wiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(m_iface);
         if (wiface) {
-            Solid::Control::AccessPoint *ap = wiface->findAccessPoint(details->activeAccessPoint);
+            Solid::Control::AccessPointNm09 *ap = wiface->findAccessPoint(details->activeAccessPoint);
             if (ap) {
                 info += QString(format).arg(i18nc("interface details", "Access Point (SSID)"), ap->ssid());
                 info += QString(format).arg(i18nc("interface details", "Access Point (MAC)"), ap->hardwareAddress());
             }
         }
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-        Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
+        Solid::Control::ModemNetworkInterfaceNm09 *giface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(m_iface);
 
         if (giface) {
             info += QString(format).arg(i18nc("interface details", "Operator"), details->registrationInfo.operatorName);
@@ -339,7 +325,6 @@ void InterfaceDetailsWidget::showDetails(bool reset)
             info += QString(format).arg(i18nc("interface details", "IMSI"), details->imsi);
             */
         }
-#endif
     } else {
         info += QString(format).arg(i18nc("interface details", "Type"), na);
         info += QString(format).arg(i18nc("interface details", "Connection State"), na);
@@ -363,7 +348,7 @@ QString InterfaceDetailsWidget::currentIpAddress()
     if (!m_iface)
         return QString();
 
-    if (static_cast<NM09DeviceState>(m_iface->connectionState()) != Activated) {
+    if (static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface->connectionState()) != Solid::Control::NetworkInterfaceNm09::Activated) {
         return i18nc("label of the network interface", "No IP address.");
     }
 
@@ -400,13 +385,13 @@ int InterfaceDetailsWidget::bitRate()
     int bitRate = 0;
 
     //wifi?
-    Solid::Control::WirelessNetworkInterface * wliface =
-                    qobject_cast<Solid::Control::WirelessNetworkInterface*>(m_iface);
+    Solid::Control::WirelessNetworkInterfaceNm09 * wliface =
+                    qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(m_iface);
     if (wliface) {
         bitRate = wliface->bitRate(); //Bit
     } else {     // wired?
-        Solid::Control::WiredNetworkInterface * wdiface =
-                                    qobject_cast<Solid::Control::WiredNetworkInterface*> (m_iface);
+        Solid::Control::WiredNetworkInterfaceNm09 * wdiface =
+                                    qobject_cast<Solid::Control::WiredNetworkInterfaceNm09*> (m_iface);
         if (wdiface) {
             bitRate = wdiface->bitRate();
         }
@@ -524,20 +509,19 @@ void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma
 void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_state, int reason)
 {
     Q_UNUSED(old_state)
-    if ((new_state == Unavailable || new_state == Unmanaged || UnknownState) &&
-        (reason == Solid::Control::NetworkInterface::UnknownReason ||
-         reason == Solid::Control::NetworkInterface::DeviceRemovedReason)) {
+    if ((new_state == Solid::Control::NetworkInterfaceNm09::Unavailable || new_state == Solid::Control::NetworkInterfaceNm09::Unmanaged || Solid::Control::NetworkInterfaceNm09::UnknownState) &&
+        (reason == Solid::Control::NetworkInterfaceNm09::UnknownReason ||
+         reason == Solid::Control::NetworkInterfaceNm09::DeviceRemovedReason)) {
         setInterface(0, false);
         emit back();
     } else {
         details->ipAddress = currentIpAddress();
-        details->connectionState = static_cast<NM09DeviceState>(new_state);
-#ifdef NM_0_8
-        if (m_iface->type() == Solid::Control::NetworkInterface::Bluetooth) {
+        details->connectionState = static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(new_state);
+        if (m_iface->type() == Solid::Control::NetworkInterfaceNm09::Bluetooth) {
             QString interfaceName = m_iface->ipInterfaceName();
             if (interfaceName != details->interfaceName) {
                 // Hack to force updating interfaceName and traffic plot source.
-                Solid::Control::NetworkInterface *temp = m_iface;
+                Solid::Control::NetworkInterfaceNm09 *temp = m_iface;
                 m_iface = 0;
                 kDebug() << "Reseting interface " << temp->uni() << "(" << interfaceName << ")";
                 setInterface(temp);
@@ -546,12 +530,11 @@ void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_
                 showDetails();
             }
         } else
-#endif
-        showDetails();
+            showDetails();
     }
 }
 
-void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* iface, bool disconnectOld)
+void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterfaceNm09* iface, bool disconnectOld)
 {
     if (m_iface == iface) {
         return;
@@ -569,21 +552,10 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
         showDetails();
         connectSignals();
 
-#ifdef NM_0_8
         QString interfaceName = m_iface->ipInterfaceName();
         if (details->interfaceName.isEmpty()) {
             details->interfaceName = m_iface->interfaceName();
         }
-#else
-        QString interfaceName = m_iface->interfaceName();
-
-        /* Ugly and error prone hack: if more than one 3G modem/cellphone is connected to the Internet this
-         * will make Plasma NM always report connection speed for the first one. */
-        if (interfaceName.contains("ttyACM") || interfaceName.contains("ttyUSB") || // USB modems
-            interfaceName.contains("rfcomm")) { // bluetooth modems
-            interfaceName = "ppp0";
-        }
-#endif
 
         m_rxSource = QString("network/interfaces/%1/receiver/data").arg(interfaceName);
         m_txSource = QString("network/interfaces/%1/transmitter/data").arg(interfaceName);
@@ -615,30 +587,28 @@ void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterface* ifac
 QString InterfaceDetailsWidget::getMAC()
 {
     //wifi?
-    Solid::Control::WirelessNetworkInterface * wliface =
-                    qobject_cast<Solid::Control::WirelessNetworkInterface*>(m_iface);
+    Solid::Control::WirelessNetworkInterfaceNm09 * wliface =
+                    qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09 *>(m_iface);
     if (wliface) {
         return wliface->hardwareAddress();
         /*
          * for later use ...
-        Solid::Control::AccessPoint * ap = wliface->findAccessPoint(wliface->activeAccessPoint());
+        Solid::Control::AccessPointNm09 * ap = wliface->findAccessPoint(wliface->activeAccessPoint());
         if(ap) {
             temp = ap->ssid();
             kDebug() << "temp = " << temp;
         }
         */
     } else {
-#ifdef NM_0_8
-        Solid::Control::BtNetworkInterface * btiface =
-                    qobject_cast<Solid::Control::BtNetworkInterface*>(m_iface);
+        Solid::Control::BtNetworkInterfaceNm09 * btiface =
+                    qobject_cast<Solid::Control::BtNetworkInterfaceNm09 *>(m_iface);
         if (btiface) {
             return btiface->interfaceName();
         }
-#endif
 
         // wired?
-        Solid::Control::WiredNetworkInterface * wdiface =
-                                    qobject_cast<Solid::Control::WiredNetworkInterface*> (m_iface);
+        Solid::Control::WiredNetworkInterfaceNm09 * wdiface =
+                                    qobject_cast<Solid::Control::WiredNetworkInterfaceNm09 *> (m_iface);
         if (wdiface) {
             return wdiface->hardwareAddress();
         } else {
@@ -683,21 +653,18 @@ void InterfaceDetailsWidget::connectSignals()
     }
     connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
 
-    if (m_iface->type() == Solid::Control::NetworkInterface::Ieee8023 ||
-        m_iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+    if (m_iface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet ||
+        m_iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
         connect(m_iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
 
-        if (m_iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+        if (m_iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
             connect(m_iface, SIGNAL(activeAccessPointChanged(const QString &)), this, SLOT(updateActiveAccessPoint(const QString &)));
         }
     }
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-    if (m_iface->type() == Solid::Control::NetworkInterface::Gsm
-#ifdef NM_0_8
-        || m_iface->type() == Solid::Control::NetworkInterface::Bluetooth
-#endif
+    if (m_iface->type() == Solid::Control::NetworkInterfaceNm09::Modem ||
+        m_iface->type() == Solid::Control::NetworkInterfaceNm09::Bluetooth
        ) {
-            Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
+            Solid::Control::ModemNetworkInterfaceNm09 *giface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(m_iface);
 
             if (giface) {
                 Solid::Control::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
@@ -715,7 +682,6 @@ void InterfaceDetailsWidget::connectSignals()
                 }
             }
     }
-#endif
 }
 
 void InterfaceDetailsWidget::disconnectSignals()
@@ -726,13 +692,10 @@ void InterfaceDetailsWidget::disconnectSignals()
 
     disconnect(m_iface, 0, this, 0);
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-    if (m_iface && (m_iface->type() == Solid::Control::NetworkInterface::Gsm
-#ifdef NM_0_8
-                 || m_iface->type() == Solid::Control::NetworkInterface::Bluetooth
-#endif
+    if (m_iface && (m_iface->type() == Solid::Control::NetworkInterfaceNm09::Modem
+                 || m_iface->type() == Solid::Control::NetworkInterfaceNm09::Bluetooth
        )) {
-        Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
+        Solid::Control::ModemNetworkInterfaceNm09 *giface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(m_iface);
 
         if (giface) {
             Solid::Control::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
@@ -742,7 +705,6 @@ void InterfaceDetailsWidget::disconnectSignals()
             }
         }
     }
-#endif
 }
 
 void InterfaceDetailsWidget::updateIpAddress()
@@ -764,7 +726,6 @@ void InterfaceDetailsWidget::updateActiveAccessPoint(const QString &ap)
 }
 
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
 void InterfaceDetailsWidget::modemUpdateEnabled(const bool enabled)
 {
     details->enabled = enabled;
@@ -779,7 +740,7 @@ void InterfaceDetailsWidget::modemUpdateUnlockRequired(const QString & codeRequi
 
 void InterfaceDetailsWidget::modemUpdateBand()
 {
-    Solid::Control::GsmNetworkInterface *giface = qobject_cast<Solid::Control::GsmNetworkInterface*>(m_iface);
+    Solid::Control::ModemNetworkInterfaceNm09 *giface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(m_iface);
     if (giface) {
         Solid::Control::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
         if (modemNetworkIface) {
@@ -813,6 +774,5 @@ void InterfaceDetailsWidget::modemUpdateAllowedMode(const Solid::Control::ModemI
     details->allowedMode = mode;
     showDetails();
 }
-#endif
 
 // vim: sw=4 sts=4 et tw=100

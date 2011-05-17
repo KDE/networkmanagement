@@ -28,10 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class ConnectionList;
 class ActivatableList;
 class NetworkInterfaceMonitorPrivate;
-
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
 class PinDialog;
-#endif
 
 /**
  * Monitors network hardware and maintains NetworkInterfaceActivatableProviders for them
@@ -46,15 +43,11 @@ public:
 public Q_SLOTS:
     void networkInterfaceAdded(const QString &);
     void networkInterfaceRemoved(const QString &);
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
     void modemInterfaceAdded(const QString&);
     void requestPin(const QString &);
-#endif
 private:
     NetworkInterfaceMonitorPrivate * d_ptr;
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
     PinDialog * dialog;
-#endif
 };
 
 #endif // NETWORKINTERFACEMONITOR_H

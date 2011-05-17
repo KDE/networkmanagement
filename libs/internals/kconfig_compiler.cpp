@@ -2399,7 +2399,7 @@ int main( int argc, char **argv )
   dH << "#include <kdebug.h>" << endl;
   dH << "#include <kcoreconfigskeleton.h>" << endl;
   dH << "#include \"settingdbus.h\"" << endl;
-  dH << "#include \"nm07dbus_export.h\"" << endl;
+  dH << "#include \"nm09dbus_export.h\"" << endl;
 
   if ( !nameSpace.isEmpty() )
     dH << "namespace " << nameSpace << " {" << endl << endl;
@@ -2409,7 +2409,7 @@ int main( int argc, char **argv )
   dH << "}" << endl << endl;
 
   // Class declaration header
-  dH << "class NM07DBUS_EXPORT " << className << "Dbus : public " << inherits << endl;
+  dH << "class NM09DBUS_EXPORT " << className << "Dbus : public " << inherits << endl;
   dH << "{" << endl;
   dH << "  public:" << endl;
   dH << "    " << className << "Dbus(Knm::" << className << "Setting * setting);" << endl;

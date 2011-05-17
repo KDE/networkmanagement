@@ -119,8 +119,8 @@ public:
 
 WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
         Knm::Connection * connection,
-        Solid::Control::WirelessNetworkInterface * iface,
-        Solid::Control::AccessPoint * ap,
+        Solid::Control::WirelessNetworkInterfaceNm09 * iface,
+        Solid::Control::AccessPointNm09 * ap,
         QWidget * parent)
 : SettingWidget(*new WirelessSecuritySettingWidgetPrivate, connection, parent)
 {
@@ -136,31 +136,31 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
     setIfaceAndAccessPoint(iface, ap);
 }
 
-void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterface * iface, Solid::Control::AccessPoint * ap)
+void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterfaceNm09 * iface, Solid::Control::AccessPointNm09 * ap)
 {
     Q_D(WirelessSecuritySettingWidget);
     d->clearSecurityWidgets();
 
     // cache ap and device capabilities here
-    Solid::Control::WirelessNetworkInterface::Capabilities ifaceCaps(0);
+    Solid::Control::WirelessNetworkInterfaceNm09::Capabilities ifaceCaps(0);
     bool adhoc = false;
-    Solid::Control::AccessPoint::Capabilities apCaps(0);
-    Solid::Control::AccessPoint::WpaFlags apWpa(0);
-    Solid::Control::AccessPoint::WpaFlags apRsn(0);
+    Solid::Control::AccessPointNm09::Capabilities apCaps(0);
+    Solid::Control::AccessPointNm09::WpaFlags apWpa(0);
+    Solid::Control::AccessPointNm09::WpaFlags apRsn(0);
 
 
     if (iface) {
         ifaceCaps = iface->wirelessCapabilities();
         if (ap) {
             apCaps = ap->capabilities();
-            adhoc = (ap->mode() == Solid::Control::WirelessNetworkInterface::Adhoc);
+            adhoc = (ap->mode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc);
             apWpa = ap->wpaFlags();
             apRsn = ap->rsnFlags();
         }
     } else {
-        foreach (Solid::Control::NetworkInterface * candidate , Solid::Control::NetworkManager::networkInterfaces()) {
-            if (candidate->type() == Solid::Control::NetworkInterface::Ieee80211) {
-                Solid::Control::WirelessNetworkInterface * wirelessIface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(candidate);
+        foreach (Solid::Control::NetworkInterfaceNm09 * candidate , Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+            if (candidate->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+                Solid::Control::WirelessNetworkInterfaceNm09 * wirelessIface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(candidate);
                 if (wirelessIface) {
                     ifaceCaps |= wirelessIface->wirelessCapabilities();
                 }

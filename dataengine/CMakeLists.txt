@@ -22,6 +22,7 @@ target_link_libraries(plasma_engine_networkmanagement
     knmclient knminternals
     ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS}
     solidcontrol
+    solidcontrolnm09
     ${KDE4_KCMUTILS_LIBS}
 )
 

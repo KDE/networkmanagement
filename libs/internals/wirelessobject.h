@@ -31,16 +31,16 @@ namespace Knm
 class KNMINTERNALS_EXPORT WirelessObject
 {
 public:
-    WirelessObject(const QString & ssid, int strength, Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities, Solid::Control::AccessPoint::Capabilities apCapabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode);
+    WirelessObject(const QString & ssid, int strength, Solid::Control::WirelessNetworkInterfaceNm09::Capabilities interfaceCapabilities, Solid::Control::AccessPointNm09::Capabilities apCapabilities, Solid::Control::AccessPointNm09::WpaFlags wpaFlags, Solid::Control::AccessPointNm09::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterfaceNm09::OperationMode mode);
     virtual ~WirelessObject();
     QString ssid() const;
     int strength() const;
     virtual void setStrength(int strength);
-    Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities() const;
-    Solid::Control::AccessPoint::Capabilities apCapabilities() const;
-    Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
-    Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
-    Solid::Control::WirelessNetworkInterface::OperationMode operationMode() const;
+    Solid::Control::WirelessNetworkInterfaceNm09::Capabilities interfaceCapabilities() const;
+    Solid::Control::AccessPointNm09::Capabilities apCapabilities() const;
+    Solid::Control::AccessPointNm09::WpaFlags wpaFlags() const;
+    Solid::Control::AccessPointNm09::WpaFlags rsnFlags() const;
+    Solid::Control::WirelessNetworkInterfaceNm09::OperationMode operationMode() const;
     virtual void strengthChanged(int) = 0;
 
 protected:
@@ -49,11 +49,11 @@ protected:
 protected:
     QString m_ssid;
     int m_strength;
-    Solid::Control::WirelessNetworkInterface::Capabilities m_interfaceCapabilities;
-    Solid::Control::AccessPoint::Capabilities m_apCapabilities;
-    Solid::Control::AccessPoint::WpaFlags m_wpaFlags;
-    Solid::Control::AccessPoint::WpaFlags m_rsnFlags;
-    Solid::Control::WirelessNetworkInterface::OperationMode m_operationMode;
+    Solid::Control::WirelessNetworkInterfaceNm09::Capabilities m_interfaceCapabilities;
+    Solid::Control::AccessPointNm09::Capabilities m_apCapabilities;
+    Solid::Control::AccessPointNm09::WpaFlags m_wpaFlags;
+    Solid::Control::AccessPointNm09::WpaFlags m_rsnFlags;
+    Solid::Control::WirelessNetworkInterfaceNm09::OperationMode m_operationMode;
 };
 
 } // namespace Knm

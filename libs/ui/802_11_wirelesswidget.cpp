@@ -62,10 +62,10 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
 
     d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+    foreach (Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+        if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
 
-            Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+            Solid::Control::WirelessNetworkInterfaceNm09 * wiface = static_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
             d->ui.cmbMacAddress->addItem(UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames), wiface->hardwareAddress().toLatin1());
         }
     }
@@ -247,13 +247,13 @@ void Wireless80211Widget::bandChanged(int index)
 void Wireless80211Widget::copyToBssid()
 {
     Q_D(Wireless80211Widget);
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-            Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+    foreach (Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+        if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+            Solid::Control::WirelessNetworkInterfaceNm09 * wiface = static_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
             int i = d->ui.cmbMacAddress->currentIndex();
             if (i == 0 || d->ui.cmbMacAddress->itemData(i).toString() == wiface->hardwareAddress()){
                 QString activeAp = wiface->activeAccessPoint();
-                Solid::Control::AccessPoint * ap = 0;
+                Solid::Control::AccessPointNm09 * ap = 0;
                 if (!activeAp.isEmpty() && activeAp != QLatin1String("/")) {
                     ap = wiface->findAccessPoint(activeAp);
                     if (ap && ap->ssid() != d->ui.ssid->text())

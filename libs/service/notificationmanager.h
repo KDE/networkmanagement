@@ -61,9 +61,7 @@ protected Q_SLOTS:
 
     void wirelessHardwareEnabledChanged(bool);
     void statusChanged(Solid::Networking::Status);
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
     void createCellularConnection();
-#endif
 private:
     NotificationManagerPrivate * d_ptr;
 };
@@ -82,14 +80,14 @@ class InterfaceNotificationHost : public QObject
 {
 Q_OBJECT
 public:
-    InterfaceNotificationHost(Solid::Control::NetworkInterface * iface, NotificationManager * parent);
+    InterfaceNotificationHost(Solid::Control::NetworkInterfaceNm09 * iface, NotificationManager * parent);
     ~InterfaceNotificationHost();
 
     void addInterfaceConnection(Knm::InterfaceConnection* added);
     void removeInterfaceConnection(Knm::InterfaceConnection* removed);
 
     QString label() const;
-    Solid::Control::NetworkInterface::Type type() const;
+    Knm::Connection::Type type() const;
 public Q_SLOTS:
     /*
      * Update notification with state changes for iface's active connections
@@ -105,10 +103,10 @@ private:
     void performInterfaceNotification(const QString & title, const QString & text, const QPixmap & pixmap, KNotification::NotificationFlag flag);
 
     NotificationManager * m_manager;
-    Solid::Control::NetworkInterface * m_interface;
+    Solid::Control::NetworkInterfaceNm09 * m_interface;
     // used to refer to the interface if it is removed
     QString m_interfaceNameLabel;
-    Solid::Control::NetworkInterface::Type m_type;
+    Knm::Connection::Type m_type;
     QPointer<KNotification> m_notification;
     QSet<Knm::InterfaceConnection*> m_activating;
     QSet<Knm::InterfaceConnection*> m_interfaceConnections;

@@ -99,7 +99,7 @@ void ActivatableListWidget::removeType(Knm::Activatable::ActivatableType type)
     filter();
 }
 
-void ActivatableListWidget::addInterface(Solid::Control::NetworkInterface* iface)
+void ActivatableListWidget::addInterface(Solid::Control::NetworkInterfaceNm09* iface)
 {
     kDebug() << "interface added";
     if (iface) {
@@ -155,7 +155,7 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
         if (activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection)
         {
             RemoteWirelessInterfaceConnection * wic = qobject_cast<RemoteWirelessInterfaceConnection*>(activatable);
-            if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc && wic->activationState() == Knm::InterfaceConnection::Unknown)
+            if (wic->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc && wic->activationState() == Knm::InterfaceConnection::Unknown)
             {
                 return false;
             }
@@ -203,14 +203,12 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
             //ai = new HiddenWirelessNetworkItem(static_cast<RemoteInterfaceConnection*>(activatable), m_widget);
             break;
         }
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         case Knm::Activatable::GsmInterfaceConnection:
         { // Gsm (2G, 3G, etc)
             GsmInterfaceConnectionItem* gici = new GsmInterfaceConnectionItem(static_cast<RemoteGsmInterfaceConnection*>(activatable), m_widget);
             ai = gici;
             break;
         }
-#endif
         default:
             break;
     }
@@ -281,7 +279,7 @@ void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
     if (accept(added)) {
         createItem(added);
     }
-    if(added->activatableType() == Knm::Activatable::WirelessInterfaceConnection && static_cast<RemoteWirelessInterfaceConnection*>(added)->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc)
+    if(added->activatableType() == Knm::Activatable::WirelessInterfaceConnection && static_cast<RemoteWirelessInterfaceConnection*>(added)->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc)
         connect(added,SIGNAL(changed()),SLOT(filter()));
 }
 
@@ -308,7 +306,7 @@ void ActivatableListWidget::filter()
         bool found = false;
         foreach (QString uni, m_interfaces.keys())
         {
-            if (m_interfaces.value(uni) == Solid::Control::NetworkInterface::Ieee80211) {
+            if (m_interfaces.value(uni) == Solid::Control::NetworkInterfaceNm09::Wifi) {
                 createHiddenItem();
                 found = true;
                 break;

@@ -42,9 +42,7 @@ public:
         UnconfiguredInterface,
         VpnInterfaceConnection,
         HiddenWirelessInterfaceConnection,
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         GsmInterfaceConnection
-#endif
     };
 
     virtual ~Activatable();

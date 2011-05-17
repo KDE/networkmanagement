@@ -96,9 +96,9 @@ void ActivatableItem::emitClicked()
     }
     emit clicked(this);
 
-    if (!Solid::Control::NetworkManager::isNetworkingEnabled()) {
+    if (!Solid::Control::NetworkManagerNm09::isNetworkingEnabled()) {
         KNotification::event(Event::NetworkingDisabled, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is disabled", "Networking system disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData)->sendEvent();
-    } else if (!Solid::Control::NetworkManager::isWirelessEnabled() &&
+    } else if (!Solid::Control::NetworkManagerNm09::isWirelessEnabled() &&
                m_activatable &&
                m_activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
         KNotification::event(Event::RfOff, i18nc("@info:status Notification for radio kill switch turned off", "Wireless hardware disabled"), KIcon("network-wireless").pixmap(QSize(m_iconSize,m_iconSize)), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData)->sendEvent();

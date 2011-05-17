@@ -29,7 +29,7 @@ class OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface: public QDB
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    { return "org.freedesktop.NetworkManager.Settings.Connection"; }
+    { return "org.freedesktop.NetworkManager.Settings.Connection.Secrets"; }
 
 public:
     OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);

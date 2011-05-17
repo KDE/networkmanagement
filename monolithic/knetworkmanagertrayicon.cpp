@@ -119,7 +119,7 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
             this, SLOT(networkingEnabledChanged()));
 
-    if (types.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
+    if (types.testFlag(Solid::Control::NetworkInterface::Wifi)) {
         d->flightModeAction = new KAction(i18nc("@action:inmenu turns off wireless networking", "Enable wireless"), this);
         d->flightModeAction->setCheckable(true);
         d->flightModeAction->setChecked(Solid::Control::NetworkManager::isWirelessEnabled());
@@ -195,7 +195,7 @@ void KNetworkManagerTrayIcon::fillPopup()
     // build a list of wireless devices, so we can put its UnconfiguredInterface in the submenu
     QStringList wirelessDeviceUnis;
     foreach (Solid::Control::NetworkInterface * interface, Solid::Control::NetworkManager::networkInterfaces()) {
-        if (interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+        if (interface->type() == Solid::Control::NetworkInterface::Wifi) {
             wirelessDeviceUnis.append(interface->uni());
         }
     }
@@ -221,7 +221,7 @@ void KNetworkManagerTrayIcon::fillPopup()
 
         // show "Enable" check buttons
         contextMenu()->addAction(d->networkingEnableAction);
-        if (!wirelessDeviceUnis.isEmpty() /*TODO Bluetooth too */ && d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
+        if (!wirelessDeviceUnis.isEmpty() /*TODO Bluetooth too */ && d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Wifi)) {
             contextMenu()->addAction(d->flightModeAction);
         }
         return;
@@ -270,7 +270,7 @@ void KNetworkManagerTrayIcon::fillPopup()
                 Solid::Control::NetworkInterface * iface
                     = Solid::Control::NetworkManager::findNetworkInterface(unco->deviceUni());
                 if (iface) {
-                    if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+                    if (iface->type() == Solid::Control::NetworkInterface::Wifi) {
                         connect (widget, SIGNAL(clicked()), this, SLOT(showOtherWirelessDialog()));
                     }
                 }
@@ -325,7 +325,7 @@ void KNetworkManagerTrayIcon::fillPopup()
         }
     }
 
-    if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)
+    if (d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Wifi)
             && Solid::Control::NetworkManager::isWirelessEnabled()
             && Solid::Control::NetworkManager::isWirelessHardwareEnabled() && wirelessInterfaceConnectionCount) {
         contextMenu()->insertAction(insertionPointForConnectToOtherWireless, d->otherWirelessNetworksAction);
@@ -335,7 +335,7 @@ void KNetworkManagerTrayIcon::fillPopup()
     contextMenu()->addSeparator();
 
     contextMenu()->addAction(d->networkingEnableAction);
-    if (!wirelessDeviceUnis.isEmpty() /*TODO Bluetooth too */ && d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Ieee80211)) {
+    if (!wirelessDeviceUnis.isEmpty() /*TODO Bluetooth too */ && d->interfaceTypes.testFlag(Solid::Control::NetworkInterface::Wifi)) {
         contextMenu()->addAction(d->flightModeAction);
     }
     contextMenu()->addSeparator();
@@ -465,10 +465,10 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
     if (!d->displayedNetworkInterface.isNull()) {
 
         switch (d->displayedNetworkInterface->type() ) {
-            case Solid::Control::NetworkInterface::Ieee8023:
+            case Solid::Control::NetworkInterface::Ethernet:
                 iconName = QLatin1String("network-wired");
                 break;
-            case Solid::Control::NetworkInterface::Ieee80211:
+            case Solid::Control::NetworkInterface::Wifi:
                 if (!d->activeAccessPoint.isNull()) {
                     int strength = d->activeAccessPoint->signalStrength();
                     if ( strength > 80 )
@@ -551,7 +551,7 @@ void KNetworkManagerTrayIcon::updateToolTip()
     Q_D(KNetworkManagerTrayIcon);
     QString tip;
     if (d->displayedNetworkInterface) {
-        tip = UiUtils::connectionStateToString(static_cast<NM09DeviceState>(d->displayedNetworkInterface->connectionState()));
+        tip = UiUtils::connectionStateToString(static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(d->displayedNetworkInterface->connectionState()));
     } else {
         tip = "<qt>Networking <b>information</b> not available</qt>";
     }
@@ -770,12 +770,12 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
 {
     bool lessThan = false;
     switch (if1->type() ) {
-        case Solid::Control::NetworkInterface::Ieee8023:
+        case Solid::Control::NetworkInterface::Ethernet:
             switch (if2->type()) {
-                case Solid::Control::NetworkInterface::Ieee8023:
+                case Solid::Control::NetworkInterface::Ethernet:
                     lessThan = if1->uni() < if2->uni();
                     break;
-                case Solid::Control::NetworkInterface::Ieee80211:
+                case Solid::Control::NetworkInterface::Wifi:
                     lessThan = true;
                     break;
                 case Solid::Control::NetworkInterface::Serial:
@@ -786,12 +786,12 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
                     break;
             }
             break;
-        case Solid::Control::NetworkInterface::Ieee80211:
+        case Solid::Control::NetworkInterface::Wifi:
             switch (if2->type()) {
-                case Solid::Control::NetworkInterface::Ieee8023:
+                case Solid::Control::NetworkInterface::Ethernet:
                     lessThan = false;
                     break;
-                case Solid::Control::NetworkInterface::Ieee80211:
+                case Solid::Control::NetworkInterface::Wifi:
                     lessThan = if1->uni() < if2->uni();
                     break;
                 case Solid::Control::NetworkInterface::Serial:
@@ -806,8 +806,8 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
             break;
         case Solid::Control::NetworkInterface::Serial:
             switch (if2->type()) {
-                case Solid::Control::NetworkInterface::Ieee8023:
-                case Solid::Control::NetworkInterface::Ieee80211:
+                case Solid::Control::NetworkInterface::Ethernet:
+                case Solid::Control::NetworkInterface::Wifi:
                     lessThan = true;
                     break;
                 case Solid::Control::NetworkInterface::Serial:
@@ -824,8 +824,8 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
             break;
         case Solid::Control::NetworkInterface::Gsm:
             switch (if2->type()) {
-                case Solid::Control::NetworkInterface::Ieee8023:
-                case Solid::Control::NetworkInterface::Ieee80211:
+                case Solid::Control::NetworkInterface::Ethernet:
+                case Solid::Control::NetworkInterface::Wifi:
                 case Solid::Control::NetworkInterface::Serial:
                     lessThan = true;
                     break;
@@ -842,8 +842,8 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
             break;
         case Solid::Control::NetworkInterface::Cdma:
             switch (if2->type()) {
-                case Solid::Control::NetworkInterface::Ieee8023:
-                case Solid::Control::NetworkInterface::Ieee80211:
+                case Solid::Control::NetworkInterface::Ethernet:
+                case Solid::Control::NetworkInterface::Wifi:
                 case Solid::Control::NetworkInterface::Serial:
                 case Solid::Control::NetworkInterface::Gsm:
                     lessThan = true;

@@ -62,12 +62,12 @@ class InterfaceItem : public Plasma::IconWidget
 Q_OBJECT
 public:
     enum NameDisplayMode {InterfaceName, HardwareName};
-    InterfaceItem(Solid::Control::NetworkInterface* iface, RemoteActivatableList* activatables, NameDisplayMode mode = InterfaceName,  QGraphicsWidget* parent = 0);
+    InterfaceItem(Solid::Control::NetworkInterfaceNm09* iface, RemoteActivatableList* activatables, NameDisplayMode mode = InterfaceName,  QGraphicsWidget* parent = 0);
     virtual ~InterfaceItem();
 
     void setNameDisplayMode(NameDisplayMode);
     NameDisplayMode nameDisplayMode() const;
-    Solid::Control::NetworkInterface* interface();
+    Solid::Control::NetworkInterfaceNm09* interface();
     virtual QString connectionName();
     QString label();
     virtual void setActivatableList(RemoteActivatableList* activatables);
@@ -76,7 +76,7 @@ public:
 
 public Q_SLOTS:
     void activeConnectionsChanged();
-    virtual void connectionStateChanged(NM09DeviceState);
+    virtual void connectionStateChanged(Solid::Control::NetworkInterfaceNm09::ConnectionState);
     virtual void setEnabled(bool enable);
     // also updates the connection info
     virtual void setActive(bool active);
@@ -99,7 +99,7 @@ protected Q_SLOTS:
 Q_SIGNALS:
     void stateChanged();
     void disconnectInterfaceRequested(const QString& deviceUni);
-    void clicked(Solid::Control::NetworkInterface*);
+    void clicked(Solid::Control::NetworkInterfaceNm09*);
     void hoverEnter(const QString& uni);
     void hoverLeave(const QString& uni);
 
@@ -121,7 +121,7 @@ protected:
 
     RemoteInterfaceConnection* m_currentConnection;
 
-    QWeakPointer<Solid::Control::NetworkInterface> m_iface;
+    QWeakPointer<Solid::Control::NetworkInterfaceNm09> m_iface;
     RemoteActivatableList* m_activatables;
 
     QGraphicsGridLayout* m_layout;
@@ -137,7 +137,7 @@ protected:
     Plasma::Label* m_connectionInfoIcon;
     NameDisplayMode m_nameMode;
     bool m_enabled;
-    NM09DeviceState m_state;
+    Solid::Control::NetworkInterfaceNm09::ConnectionState m_state;
     QString m_interfaceName;
     bool m_disconnect;
     bool m_hasDefaultRoute;

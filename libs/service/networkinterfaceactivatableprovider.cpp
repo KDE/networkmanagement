@@ -34,7 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 /* Normal interfaceconnections are added to d->activatables on connection add, updated on update,
  * removed on remove
  */
-NetworkInterfaceActivatableProviderPrivate::NetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::NetworkInterface * theInterface)
+NetworkInterfaceActivatableProviderPrivate::NetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::NetworkInterfaceNm09 * theInterface)
 : interface(theInterface), connectionList(theConnectionList), unconfiguredActivatable(0)
 {
     activatableList = theActivatableList;
@@ -45,7 +45,7 @@ NetworkInterfaceActivatableProviderPrivate::~NetworkInterfaceActivatableProvider
 
 }
 
-NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent)
+NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterfaceNm09 * interface, QObject * parent)
     : QObject(parent), d_ptr(new NetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface))
 {
 }
@@ -107,20 +107,20 @@ bool NetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() cons
     return d->activatables.isEmpty();
 }
 
-bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType, Solid::Control::NetworkInterface::Type ifaceType)
+bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType, Solid::Control::NetworkInterfaceNm09::Type ifaceType, Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities modemCaps)
 {
-     return ( (connType == Knm::Connection::Wired && ifaceType == Solid::Control::NetworkInterface::Ieee8023)
-             || (connType == Knm::Connection::Wireless && ifaceType == Solid::Control::NetworkInterface::Ieee80211)
-             || (connType == Knm::Connection::Gsm && ifaceType == Solid::Control::NetworkInterface::Gsm)
-             || (connType == Knm::Connection::Cdma && ifaceType == Solid::Control::NetworkInterface::Cdma)
-             || (connType == Knm::Connection::Pppoe && ifaceType == Solid::Control::NetworkInterface::Serial)
-#ifdef NM_0_8
-             || (connType == Knm::Connection::Bluetooth && ifaceType == Solid::Control::NetworkInterface::Bluetooth)
-#endif
-             );
+     return ( (connType == Knm::Connection::Wired && ifaceType == Solid::Control::NetworkInterfaceNm09::Ethernet)
+           || (connType == Knm::Connection::Wireless && ifaceType == Solid::Control::NetworkInterfaceNm09::Wifi)
+           || (connType == Knm::Connection::Bluetooth && ifaceType == Solid::Control::NetworkInterfaceNm09::Bluetooth)
+           || (ifaceType == Solid::Control::NetworkInterfaceNm09::Modem && (
+              (connType == Knm::Connection::Gsm && modemCaps & Solid::Control::ModemNetworkInterfaceNm09::GsmUmts)
+           || (connType == Knm::Connection::Cdma && modemCaps & Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo)
+           || (connType == Knm::Connection::Pppoe && modemCaps & Solid::Control::ModemNetworkInterfaceNm09::Pots)
+              ))
+            ); /* TODO: implement Bluetooth Cdma */
 }
 
-bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection * connection, Solid::Control::NetworkInterface * iface)
+bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection * connection, Solid::Control::NetworkInterfaceNm09 * iface)
 {
     bool matches = true;
     Q_UNUSED(connection);

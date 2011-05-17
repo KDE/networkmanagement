@@ -81,10 +81,8 @@ class NetworkManagementEngine : public Plasma::DataEngine
         void addVpnInterfaceConnection(RemoteActivatable* remote);
         void updateVpnInterfaceConnection(RemoteActivatable* remote = 0);
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         void addGsmInterfaceConnection(RemoteActivatable* remote);
         void updateGsmInterfaceConnection(RemoteActivatable* remote = 0);
-#endif
 
     protected:
         bool sourceRequestEvent(const QString &name);

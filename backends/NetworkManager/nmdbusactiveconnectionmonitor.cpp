@@ -132,11 +132,11 @@ NMDBusActiveConnectionMonitor::NMDBusActiveConnectionMonitor(ActivatableList * a
     Q_D(NMDBusActiveConnectionMonitor);
     d->activatableList = activatables;
 
-    connect(Solid::Control::NetworkManager::notifier(),
+    connect(Solid::Control::NetworkManagerNm09::notifier(),
             SIGNAL(activeConnectionsChanged()),
             this, SLOT(activeConnectionListChanged()));
 
-    connect(Solid::Control::NetworkManager::notifier(),
+    connect(Solid::Control::NetworkManagerNm09::notifier(),
             SIGNAL(statusChanged(Solid::Networking::Status)),
             this, SLOT(networkingStatusChanged(Solid::Networking::Status)));
 
@@ -153,7 +153,7 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
     // update all InterfaceConnections we know about
     Q_D(NMDBusActiveConnectionMonitor);
 
-    QStringList currentActiveConnections = Solid::Control::NetworkManager::activeConnections();
+    QStringList currentActiveConnections = Solid::Control::NetworkManagerNm09::activeConnections();
 
     // delete any stale interfaces
     foreach (const QString &key, d->activeConnections.keys()) {

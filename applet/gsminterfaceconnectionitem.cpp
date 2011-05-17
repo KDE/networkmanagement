@@ -1,7 +1,7 @@
 /*
 Copyright 2008-2010 Sebastian Kügler <sebas@kde.org>
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2010 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -20,8 +20,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-
 #include "gsminterfaceconnectionitem.h"
 
 #include <QAction>
@@ -36,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Label>
 #include <Plasma/Meter>
 
-#include <solid/control/networkgsminterface.h>
+#include <solid/control/networkmodeminterface.h>
 
 #include "activatable.h"
 
@@ -167,5 +165,4 @@ void GsmInterfaceConnectionItem::update()
     setAccessTechnology(m_remote->getAccessTechnology());
 }
 
-#endif
 // vim: sw=4 sts=4 et tw=100

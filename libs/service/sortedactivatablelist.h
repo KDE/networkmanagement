@@ -55,7 +55,7 @@ public:
      * to collect
      * @param parent the parent QObject
      */
-    SortedActivatableList(Solid::Control::NetworkInterface::Types types, QObject * parent = 0);
+    SortedActivatableList(Solid::Control::NetworkInterfaceNm09::Types types, QObject * parent = 0);
 
     // respond to activatable changes
     void handleAdd(Knm::Activatable *);

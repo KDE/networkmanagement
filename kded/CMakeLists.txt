@@ -18,6 +18,7 @@ target_link_libraries(kded_networkmanagement
    knminternals
    knmservice
    knm_nm
+   solidcontrolnm09
    )
 
 install(TARGETS kded_networkmanagement DESTINATION ${PLUGIN_INSTALL_DIR})

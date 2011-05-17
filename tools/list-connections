@@ -4,9 +4,9 @@
 import os, time
 
 
-cmd1 = "./qdbusfornm --system org.freedesktop.NetworkManagerUserSettings /org/freedesktop/NetworkManagerSettings/"
+cmd1 = "./qdbusfornm --system org.freedesktop.NetworkManagerUserSettings /org.freedesktop.NetworkManager.Settings/"
 0 
-cmd2 = " org.freedesktop.NetworkManagerSettings.Connection.GetSettings"
+cmd2 = " org.freedesktop.NetworkManager.Settings.Connection.GetSettings"
 
 for i in range(32):
     cmd = cmd1+str(i)+cmd2

@@ -43,7 +43,7 @@ public:
      * @param interface the Solid::Control::NetworkInterface state
      * @param activatables the RemoteActivatableList of all connections
      */
-    RemoteInterfaceConnection* connectionForInterface(Solid::Control::NetworkInterface *interface);
+    RemoteInterfaceConnection* connectionForInterface(Solid::Control::NetworkInterfaceNm09 *interface);
 
 Q_SIGNALS:
     void activatableAdded(RemoteActivatable*);

@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <kdebug.h>
+#include <solid/control/networkmodeminterface.h>
 
 #include "connection.h"
 
@@ -91,18 +92,27 @@ Connection::Type Connection::typeFromString(const QString & typeString)
     return type;
 }
 
-Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInterface::Type type)
+Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInterfaceNm09 *iface)
 {
-    switch (type) {
-        case Solid::Control::NetworkInterface::Ieee8023: return Knm::Connection::Wired;
-        case Solid::Control::NetworkInterface::Ieee80211: return Knm::Connection::Wireless;
-        case Solid::Control::NetworkInterface::Gsm: return Knm::Connection::Gsm;
-        case Solid::Control::NetworkInterface::Cdma: return Knm::Connection::Cdma;
-#ifdef NM_0_8
-        case Solid::Control::NetworkInterface::Bluetooth: return Knm::Connection::Bluetooth;
-#endif
-        case Solid::Control::NetworkInterface::Serial: return Knm::Connection::Pppoe;
-        case Solid::Control::NetworkInterface::UnknownType: return Knm::Connection::Unknown;
+    switch (iface->type()) {
+        case Solid::Control::NetworkInterfaceNm09::Ethernet: return Knm::Connection::Wired;
+        case Solid::Control::NetworkInterfaceNm09::Wifi: return Knm::Connection::Wireless;
+        case Solid::Control::NetworkInterfaceNm09::Bluetooth: return Knm::Connection::Bluetooth;
+        case Solid::Control::NetworkInterfaceNm09::Modem: {
+             const Solid::Control::ModemNetworkInterfaceNm09 * nmModemIface = qobject_cast<const Solid::Control::ModemNetworkInterfaceNm09 *>(iface);
+             if (nmModemIface) {
+                 switch(nmModemIface->subType()) {
+                     case Solid::Control::ModemNetworkInterfaceNm09::GsmUmts: return Knm::Connection::Gsm;
+                     case Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo: return Knm::Connection::Cdma;
+                     case Solid::Control::ModemNetworkInterfaceNm09::Pots: return Knm::Connection::Pppoe;
+                     /* TODO: add Solid::Control::ModemNetworkInterfaceNm09::Lte */
+                 }
+             }
+        }
+        case Solid::Control::NetworkInterfaceNm09::UnknownType:
+        case Solid::Control::NetworkInterfaceNm09::Unused1:
+        case Solid::Control::NetworkInterfaceNm09::Unused2:
+            return Knm::Connection::Unknown;
     }
     return Knm::Connection::Wired;
 }

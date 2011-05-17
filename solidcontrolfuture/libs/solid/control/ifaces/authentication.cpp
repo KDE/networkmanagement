@@ -1,10 +1,9 @@
 /*  This file is part of the KDE project
-    Copyright (C) 2007 David Faure <faure@kde.org>
+    Copyright (C) 2006,2007 Will Stephenson <wstephenson@kde.org>
 
     This library is free software; you can redistribute it and/or
     modify it under the terms of the GNU Library General Public
-    License as published by the Free Software Foundation; either
-    version 2 of the License, or (at your option) any later version.
+    License version 2 as published by the Free Software Foundation.
 
     This library is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -15,26 +14,14 @@
     along with this library; see the file COPYING.LIB.  If not, write to
     the Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
     Boston, MA 02110-1301, USA.
+
 */
 
-#ifndef NM07DBUS_EXPORT_H
-#define NM07DBUS_EXPORT_H
+#include "authentication.h"
 
-/* needed for KDE_EXPORT and KDE_IMPORT macros */
-#include <kdemacros.h>
 
-#ifndef NM07DBUS_EXPORT
-# if defined(MAKE_NM07DBUS_LIB)
-   /* We are building this library */ 
-#  define NM07DBUS_EXPORT KDE_EXPORT
-# else
-   /* We are using this library */ 
-#  define NM07DBUS_EXPORT KDE_IMPORT
-# endif
-#endif
+/******************************************************************************/
 
-# ifndef NM07DBUS_EXPORT_DEPRECATED
-#  define NM07DBUS_EXPORT_DEPRECATED KDE_DEPRECATED KDEPIM_EXPORT
-# endif
-
-#endif
+Solid::Control::Ifaces::AuthenticationValidator::~AuthenticationValidator()
+{
+}

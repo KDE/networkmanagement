@@ -38,7 +38,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class SortedActivatableListPrivate : public ActivatableListPrivate
 {
 public:
-    Solid::Control::NetworkInterface::Types types;
+    Solid::Control::NetworkInterfaceNm09::Types types;
 };
 
 // sorting activatables
@@ -77,7 +77,7 @@ int compareSsid(const Knm::WirelessObject * first, const Knm::WirelessObject * s
 
 SortedActivatableList::WirelessSortPolicy SortedActivatableList::s_wirelessSortPolicy = SortedActivatableList::WirelessSortByStrength;
 
-SortedActivatableList::SortedActivatableList(Solid::Control::NetworkInterface::Types types, QObject * parent)
+SortedActivatableList::SortedActivatableList(Solid::Control::NetworkInterfaceNm09::Types types, QObject * parent)
     : ActivatableList(*new SortedActivatableListPrivate, parent)
 {
     Q_D(SortedActivatableList);
@@ -88,7 +88,7 @@ void SortedActivatableList::handleAdd(Knm::Activatable * activatable)
 {
     Q_D(SortedActivatableList);
     if (!d->activatables.contains(activatable)) {
-        Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable->deviceUni());
+        Solid::Control::NetworkInterfaceNm09 * iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(activatable->deviceUni());
         // add all vpn connections
         if ((iface && (d->types.testFlag(iface->type())))
                 || (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection)) {
@@ -260,8 +260,8 @@ int compareDevices(const Knm::Activatable * first, const Knm::Activatable * seco
     }
 
     // not VPN, therefore use the real logic
-    Solid::Control::NetworkInterface * firstIface = Solid::Control::NetworkManager::findNetworkInterface(first->deviceUni());
-    Solid::Control::NetworkInterface * secondIface = Solid::Control::NetworkManager::findNetworkInterface(second->deviceUni());
+    Solid::Control::NetworkInterfaceNm09 * firstIface = Solid::Control::NetworkManagerNm09::findNetworkInterface(first->deviceUni());
+    Solid::Control::NetworkInterfaceNm09 * secondIface = Solid::Control::NetworkManagerNm09::findNetworkInterface(second->deviceUni());
 
     if (firstIface != 0 && secondIface != 0) {
         if (firstIface->type() == secondIface->type()) {

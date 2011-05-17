@@ -28,7 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class QObject;
 namespace Solid {
     namespace Control {
-        class WirelessNetworkInterface;
+        class WirelessNetworkInterfaceNm09;
     }
 }
 
@@ -40,7 +40,7 @@ class WirelessInterfaceConnection;
 class WirelessInterfaceConnectionBuilder : public InterfaceConnectionBuilder
 {
 public:
-    WirelessInterfaceConnectionBuilder(Solid::Control::WirelessNetworkInterface * interface,
+    WirelessInterfaceConnectionBuilder(Solid::Control::WirelessNetworkInterfaceNm09 * interface,
                                        Knm::Connection *connection,
                                        const QString & deviceUni,
                                        QObject * parent);
@@ -55,13 +55,13 @@ private:
     Q_DISABLE_COPY(WirelessInterfaceConnectionBuilder)
 
 protected:
-    Solid::Control::WirelessNetworkInterface *m_interface;
+    Solid::Control::WirelessNetworkInterfaceNm09 *m_interface;
 };
 
 class HiddenWirelessInterfaceConnectionBuilder : public WirelessInterfaceConnectionBuilder
 {
 public:
-    HiddenWirelessInterfaceConnectionBuilder(Solid::Control::WirelessNetworkInterface * interface,
+    HiddenWirelessInterfaceConnectionBuilder(Solid::Control::WirelessNetworkInterfaceNm09 * interface,
                                        Knm::Connection *connection,
                                        const QString & deviceUni,
                                        QObject * parent);
@@ -73,7 +73,7 @@ private:
     Q_DISABLE_COPY(HiddenWirelessInterfaceConnectionBuilder)
 
 protected:
-    Solid::Control::WirelessNetworkInterface *m_interface;
+    Solid::Control::WirelessNetworkInterfaceNm09 *m_interface;
 };
 
 class WirelessInterfaceConnectionSync : public InterfaceConnectionSync

@@ -42,7 +42,7 @@ public:
     enum Type { Unknown = 0, Wired, Wireless, Gsm, Cdma, Vpn, Pppoe, Bluetooth };
     static QString typeAsString(Connection::Type);
     static Connection::Type typeFromString(const QString & type);
-    static Connection::Type typeFromSolidType(const Solid::Control::NetworkInterface::Type type);
+    static Connection::Type typeFromSolidType(const Solid::Control::NetworkInterfaceNm09 * iface);
     static QString iconName(const Connection::Type type);
     void saveCertificates();
     void removeCertificates();

@@ -79,10 +79,10 @@ IpV4AdvancedWidget::~IpV4AdvancedWidget()
     delete d;
 }
 
-void IpV4AdvancedWidget::setAdditionalAddresses(const QList<Solid::Control::IPv4Address> &list)
+void IpV4AdvancedWidget::setAdditionalAddresses(const QList<Solid::Control::IPv4AddressNm09> &list)
 {
     d->model.removeRows(0, d->model.rowCount());
-    foreach (const Solid::Control::IPv4Address &addr, list) {
+    foreach (const Solid::Control::IPv4AddressNm09 &addr, list) {
         QList<QStandardItem *> item;
         QNetworkAddressEntry entry;
         // we need to set up IP before prefix/netmask manipulation
@@ -102,9 +102,9 @@ void IpV4AdvancedWidget::setAdditionalAddresses(const QList<Solid::Control::IPv4
     }
 }
 
-QList<Solid::Control::IPv4Address> IpV4AdvancedWidget::additionalAddresses()
+QList<Solid::Control::IPv4AddressNm09> IpV4AdvancedWidget::additionalAddresses()
 {
-    QList<Solid::Control::IPv4Address> list;
+    QList<Solid::Control::IPv4AddressNm09> list;
 
     for (int i = 0, rowCount = d->model.rowCount(); i < rowCount; i++) {
         QHostAddress ip, mask, gw;
@@ -116,7 +116,7 @@ QList<Solid::Control::IPv4Address> IpV4AdvancedWidget::additionalAddresses()
         entry.setNetmask(mask);
         gw.setAddress(d->model.item(i, 2)->text());
 
-        list.append(Solid::Control::IPv4Address(ip.toIPv4Address(),
+        list.append(Solid::Control::IPv4AddressNm09(ip.toIPv4Address(),
                                                 entry.prefixLength(),
                                                 gw.toIPv4Address()));
     }

@@ -1,7 +1,7 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2010 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,6 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
-
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
 
 #include <KDebug>
 
@@ -50,8 +48,8 @@ GsmInterfaceConnection::~GsmInterfaceConnection()
 void GsmInterfaceConnection::connectMMSignals()
 {
     kDebug();
-    GsmNetworkInterface *interface = qobject_cast<GsmNetworkInterface *>(NetworkManager::findNetworkInterface(deviceUni()));
-    if (!interface) {
+    ModemNetworkInterfaceNm09 *nmModemIface = qobject_cast<ModemNetworkInterfaceNm09 *>(NetworkManagerNm09::findNetworkInterface(deviceUni()));
+    if (!nmModemIface) {
         return;
     }
 
@@ -60,7 +58,7 @@ void GsmInterfaceConnection::connectMMSignals()
         kDebug() << "Loading ModemManager backend";
     }
 
-    ModemGsmNetworkInterface * modemNetworkIface = interface->getModemNetworkIface();
+    ModemGsmNetworkInterface * modemNetworkIface = nmModemIface->getModemNetworkIface();
 
     if (modemNetworkIface) {
         kDebug() << "Connecting signals of " << modemNetworkIface->udi() << " to " << deviceUni();
@@ -112,5 +110,3 @@ void GsmInterfaceConnection::setEnabled(const bool enabled)
         setSignalQuality(0);
     }
 }
-
-#endif

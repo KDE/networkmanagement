@@ -7,12 +7,12 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
-#include <solid/control/networkipv4config.h>
+#include <solid/control/networkipv4confignm09.h>
 #include "setting.h"
 #include "knminternals_export.h"
 
-Q_DECLARE_METATYPE(Solid::Control::IPv4Address)
-Q_DECLARE_METATYPE(Solid::Control::IPv4Route)
+Q_DECLARE_METATYPE(Solid::Control::IPv4AddressNm09)
+Q_DECLARE_METATYPE(Solid::Control::IPv4RouteNm09)
 
 namespace Knm {
 
@@ -83,7 +83,7 @@ class KNMINTERNALS_EXPORT Ipv4Setting : public Setting
     /**
       Set IP Addresses
     */
-    void setAddresses( const QList<Solid::Control::IPv4Address> & v )
+    void setAddresses( const QList<Solid::Control::IPv4AddressNm09> & v )
     {
         mAddresses = v;
     }
@@ -91,7 +91,7 @@ class KNMINTERNALS_EXPORT Ipv4Setting : public Setting
     /**
       Get IP Addresses
     */
-    QList<Solid::Control::IPv4Address> addresses() const
+    QList<Solid::Control::IPv4AddressNm09> addresses() const
     {
       return mAddresses;
     }
@@ -176,12 +176,12 @@ class KNMINTERNALS_EXPORT Ipv4Setting : public Setting
       return mDhcphostname;
     }
 
-    QList<Solid::Control::IPv4Route> routes() const
+    QList<Solid::Control::IPv4RouteNm09> routes() const
     {
         return mRoutes;
     }
 
-    void setRoutes(QList<Solid::Control::IPv4Route> routes)
+    void setRoutes(QList<Solid::Control::IPv4RouteNm09> routes)
     {
         mRoutes = routes;
     }
@@ -209,8 +209,8 @@ class KNMINTERNALS_EXPORT Ipv4Setting : public Setting
     int mMethod;
     QList<QHostAddress> mDns;
     QStringList mDnssearch;
-    QList<Solid::Control::IPv4Address> mAddresses;
-    QList<Solid::Control::IPv4Route> mRoutes;
+    QList<Solid::Control::IPv4AddressNm09> mAddresses;
+    QList<Solid::Control::IPv4RouteNm09> mRoutes;
     bool mIgnoredhcpdns;
     bool mIgnoreautoroute;
     bool mNeverdefault;

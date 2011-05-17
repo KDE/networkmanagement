@@ -28,7 +28,7 @@ class QString;
 
 namespace Solid {
     namespace Control {
-        class WirelessNetworkInterface;
+        class WirelessNetworkInterfaceNm09;
     }
 }
 
@@ -45,7 +45,7 @@ public:
      * the corresponding Connection object.
      */
     static Knm::WirelessInterfaceConnection * buildWirelessInterfaceConnection(
-                       Solid::Control::WirelessNetworkInterface *interface,
+                       Solid::Control::WirelessNetworkInterfaceNm09 *interface,
                        Knm::Connection * connection,
                        const QString & deviceUni,
                        QObject * parent);
@@ -55,7 +55,7 @@ public:
      * the corresponding Connection object.
      */
     static Knm::HiddenWirelessInterfaceConnection * buildHiddenWirelessInterfaceConnection(
-                       Solid::Control::WirelessNetworkInterface *interface,
+                       Solid::Control::WirelessNetworkInterfaceNm09 *interface,
                        Knm::Connection * connection,
                        const QString & deviceUni,
                        QObject * parent);

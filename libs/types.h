@@ -19,8 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM07_TYPES_H
-#define KNM07_TYPES_H
+#ifndef KNM09_TYPES_H
+#define KNM09_TYPES_H
 
 #include <QMap>
 #include <QVariant>
@@ -38,22 +38,5 @@ Q_DECLARE_METATYPE(QVariantMapMap)
 typedef QMap<QString, QString> QStringMap;
 typedef QMapIterator<QString, QString> QStringMapIterator;
 Q_DECLARE_METATYPE(QStringMap)
-
-// Device states of NM 0.9
-enum NM09DeviceState {
-    UnknownState = 0   /* NM_DEVICE_STATE_UNKNOWN */,
-    Unmanaged    = 10  /* NM_DEVICE_STATE_UNMANAGED */,
-    Unavailable  = 20  /* NM_DEVICE_STATE_UNAVAILABLE */,
-    Disconnected = 30  /* NM_DEVICE_STATE_DISCONNECTED */,
-    Preparing    = 40  /* NM_DEVICE_STATE_PREPARE */,
-    Configuring  = 50  /* NM_DEVICE_STATE_CONFIG */,
-    NeedAuth     = 60  /* NM_DEVICE_STATE_NEED_AUTH */,
-    IPConfig     = 70  /* NM_DEVICE_STATE_IP_CONFIG */,
-    IPCheck      = 80  /* NM_DEVICE_STATE_IP_CHECK */,
-    Secondaries  = 90  /* NM_DEVICE_STATE_SECONDARIES */,
-    Activated    = 100 /* NM_DEVICE_STATE_ACTIVATED */,
-    Deactivating = 110 /* NM_DEVICE_STATE_DEACTIVATING */,
-    Failed       = 120 /* NM_DEVICE_STATE_FAILED */
-};
 
 #endif

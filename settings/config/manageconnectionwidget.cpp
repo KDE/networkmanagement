@@ -45,7 +45,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KStandardDirs>
 #include <KToolInvocation>
 #include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
+#include <solid/control/networkmodeminterface.h>
 
 #include "knmserviceprefs.h"
 #include "connection.h"
@@ -94,11 +94,11 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connectButtonSet(mConnEditUi.buttonSetCellular, mConnEditUi.listCellular);
     connectButtonSet(mConnEditUi.buttonSetVpn, mConnEditUi.listVpn);
     connectButtonSet(mConnEditUi.buttonSetPppoe, mConnEditUi.listPppoe);
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             SLOT(updateTabStates()));
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             SLOT(updateTabStates()));
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(activeConnectionsChanged()),
+    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(activeConnectionsChanged()),
             SLOT(activeConnectionsChanged()));
     connect(mConnEditUi.tabWidget, SIGNAL(currentChanged(int)), SLOT(tabChanged(int)));
 
@@ -283,22 +283,30 @@ void ManageConnectionWidget::restoreConnections()
 void ManageConnectionWidget::updateTabStates()
 {
     bool hasWired = false, hasWireless = false, hasCellular = false, hasDsl = false;
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+    foreach (Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
         switch (iface->type()) {
-            case Solid::Control::NetworkInterface::Ieee8023:
+            case Solid::Control::NetworkInterfaceNm09::Ethernet:
                 hasWired = true;
                 break;
-            case Solid::Control::NetworkInterface::Ieee80211:
+            case Solid::Control::NetworkInterfaceNm09::Wifi:
                 hasWireless = true;
                 break;
-            case Solid::Control::NetworkInterface::Serial:
-                hasDsl = true;
-                break;
-            case Solid::Control::NetworkInterface::Gsm:
-            case Solid::Control::NetworkInterface::Cdma:
-#ifdef NM_0_8
-            case Solid::Control::NetworkInterface::Bluetooth:
-#endif
+            case Solid::Control::NetworkInterfaceNm09::Modem: {
+                const Solid::Control::ModemNetworkInterfaceNm09 * nmModemIface = qobject_cast<const Solid::Control::ModemNetworkInterfaceNm09 *>(iface);
+                if (nmModemIface) {
+                    switch(nmModemIface->subType()) {
+                        case Solid::Control::ModemNetworkInterfaceNm09::Pots:
+                            hasDsl = true;
+                            break;
+                        case Solid::Control::ModemNetworkInterfaceNm09::GsmUmts:
+                        case Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo:
+                        /* TODO: case Solid::Control::ModemNetworkInterfaceNm09::Lte: */
+                            hasCellular = true;
+                            break;
+                    }
+                }
+            }
+            case Solid::Control::NetworkInterfaceNm09::Bluetooth:
                 hasCellular = true;
                 break;
             default:
@@ -482,8 +490,8 @@ void ManageConnectionWidget::deleteClicked()
         // delete it
         // remove it from our hash
         mUuidItemHash.remove(connectionId);
-	// remove secrets from wallet if using encrypted storage
-	Knm::ConnectionPersistence::deleteSecrets(connectionId);
+        // remove secrets from wallet if using encrypted storage
+        Knm::ConnectionPersistence::deleteSecrets(connectionId);
         // remove connection file
         //QFile connFile(KStandardDirs::locateLocal("data",
         //            Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId));
@@ -625,7 +633,7 @@ void ManageConnectionWidget::activeConnectionsChanged()
 {
 #if 0
     // indicate which connections are in use right now
-    QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
+    QStringList activeConnections = Solid::Control::NetworkManagerNm09::activeConnections();
     foreach (QString conn, activeConnections) {
         OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
                                                                         conn, QDBusConnection::systemBus(), 0);
@@ -704,10 +712,10 @@ bool ManageConnectionWidget::event(QEvent *ev)
     if (ev->type() == QEvent::KeyPress) {
         int key = static_cast<QKeyEvent*>(ev)->key();
 
-	if (key == Qt::Key_Delete) {
-	    deleteClicked();
-	    return true;
-	}
+        if (key == Qt::Key_Delete) {
+            deleteClicked();
+            return true;
+        }
     }
 
     return KCModule::event(ev);

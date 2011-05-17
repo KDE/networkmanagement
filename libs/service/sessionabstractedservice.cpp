@@ -31,10 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceconnectionadaptor.h"
 #include "wirelessinterfaceconnectionadaptor.h"
 #include "wirelessnetworkadaptor.h"
-
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
 #include "gsminterfaceconnectionadaptor.h"
-#endif
 
 class SessionAbstractedServicePrivate
 {
@@ -82,13 +79,11 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
                 = static_cast<Knm::WirelessNetwork*>(added);
             new WirelessNetworkAdaptor(realObj);
             new ActivatableAdaptor(realObj);
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         } else if (added->activatableType() == Knm::Activatable::GsmInterfaceConnection) {
             Knm::GsmInterfaceConnection * realObj = static_cast<Knm::GsmInterfaceConnection*>(added);
             new GsmInterfaceConnectionAdaptor(realObj);
             new InterfaceConnectionAdaptor(realObj);
             new ActivatableAdaptor(realObj);
-#endif
         } else {
             // do not put any other types on the bus
             return;

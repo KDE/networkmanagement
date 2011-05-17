@@ -49,11 +49,11 @@ ConnectionUsageMonitor::ConnectionUsageMonitor(ConnectionList * connectionList, 
     d->connectionList = connectionList;
     d->activatableList = activatableList;
 
-    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
 
-    Solid::Control::NetworkInterfaceList allInterfaces = Solid::Control::NetworkManager::networkInterfaces();
-    foreach (Solid::Control::NetworkInterface * interface, allInterfaces) {
+    Solid::Control::NetworkInterfaceNm09List allInterfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
+    foreach (Solid::Control::NetworkInterfaceNm09 * interface, allInterfaces) {
         networkInterfaceAdded(interface->uni());
     }
 }
@@ -91,14 +91,14 @@ void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnectio
                 // update timestamp
                 connection->setTimestamp(QDateTime::currentDateTime());
                 // update with the BSSID of the device's AP
-                Solid::Control::NetworkInterface * networkInterface
-                    = Solid::Control::NetworkManager::findNetworkInterface(ic->deviceUni());
+                Solid::Control::NetworkInterfaceNm09 * networkInterface
+                    = Solid::Control::NetworkManagerNm09::findNetworkInterface(ic->deviceUni());
                 if (networkInterface) {
-                    if (networkInterface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-                        Solid::Control::WirelessNetworkInterface * wifiDevice =
-                            qobject_cast<Solid::Control::WirelessNetworkInterface *>(networkInterface);
+                    if (networkInterface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+                        Solid::Control::WirelessNetworkInterfaceNm09 * wifiDevice =
+                            qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09 *>(networkInterface);
 
-                        Solid::Control::AccessPoint * ap = wifiDevice->findAccessPoint(wifiDevice->activeAccessPoint());
+                        Solid::Control::AccessPointNm09 * ap = wifiDevice->findAccessPoint(wifiDevice->activeAccessPoint());
                         if (ap) {
                             Knm::WirelessSetting * ws
                                 = static_cast<Knm::WirelessSetting * >(connection->setting(Knm::Setting::Wireless));
@@ -121,11 +121,11 @@ void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnectio
 
 void ConnectionUsageMonitor::networkInterfaceAdded(const QString& uni)
 {
-    Solid::Control::NetworkInterface * interface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+    Solid::Control::NetworkInterfaceNm09 * interface = Solid::Control::NetworkManagerNm09::findNetworkInterface(uni);
 
-    if (interface && interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-        Solid::Control::WirelessNetworkInterface * wifiDevice =
-            qobject_cast<Solid::Control::WirelessNetworkInterface *>(interface);
+    if (interface && interface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+        Solid::Control::WirelessNetworkInterfaceNm09 * wifiDevice =
+            qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09 *>(interface);
         if (wifiDevice)
             connect(wifiDevice, SIGNAL(activeAccessPointChanged(const QString &)),
                     this, SLOT(networkInterfaceAccessPointChanged(const QString &)));
@@ -135,9 +135,9 @@ void ConnectionUsageMonitor::networkInterfaceAdded(const QString& uni)
 void ConnectionUsageMonitor::networkInterfaceAccessPointChanged(const QString & apiUni)
 {
     Q_D(ConnectionUsageMonitor);
-    Solid::Control::WirelessNetworkInterface * wifiDevice = qobject_cast<Solid::Control::WirelessNetworkInterface *>(sender());
-    if (wifiDevice && static_cast<NM09DeviceState>(wifiDevice->connectionState()) == Activated) {
-        Solid::Control::AccessPoint * ap = wifiDevice->findAccessPoint(apiUni);
+    Solid::Control::WirelessNetworkInterfaceNm09 * wifiDevice = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09 *>(sender());
+    if (wifiDevice && static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(wifiDevice->connectionState()) == Solid::Control::NetworkInterfaceNm09::Activated) {
+        Solid::Control::AccessPointNm09 * ap = wifiDevice->findAccessPoint(apiUni);
         if (ap) {
             // find the activatable
             foreach (Knm::Activatable * activatable, d->activatableList->activatables()) {

@@ -8,12 +8,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
-#include "nm07dbus_export.h"
+#include "nm09dbus_export.h"
 namespace Knm{
     class Security8021xSetting;
 }
 
-class NM07DBUS_EXPORT Security8021xDbus : public SettingDbus
+class NM09DBUS_EXPORT Security8021xDbus : public SettingDbus
 {
   public:
     Security8021xDbus(Knm::Security8021xSetting * setting);

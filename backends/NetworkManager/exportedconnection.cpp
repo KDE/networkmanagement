@@ -35,19 +35,19 @@ ConnectionAdaptor::~ConnectionAdaptor()
 
 void ConnectionAdaptor::Delete()
 {
-    // handle method call org.freedesktop.NetworkManagerSettings.Connection.Delete
+    // handle method call org.freedesktop.NetworkManager.Settings.Connection.Delete
     parent()->Delete();
 }
 
 QVariantMapMap ConnectionAdaptor::GetSettings()
 {
-    // handle method call org.freedesktop.NetworkManagerSettings.Connection.GetSettings
+    // handle method call org.freedesktop.NetworkManager.Settings.Connection.GetSettings
     return parent()->GetSettings();
 }
 
 void ConnectionAdaptor::Update(const QVariantMapMap &properties)
 {
-    // handle method call org.freedesktop.NetworkManagerSettings.Connection.Update
+    // handle method call org.freedesktop.NetworkManager.Settings.Connection.Update
     parent()->Update(properties);
 }
 

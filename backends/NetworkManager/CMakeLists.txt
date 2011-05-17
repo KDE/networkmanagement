@@ -52,18 +52,18 @@ set(knm_nm_LIB_SRCS
 
    busconnection.cpp
 
-   #org.freedesktop.NetworkManagerSettings.Connection
+   #org.freedesktop.NetworkManager.Settings.Connection
    exportedconnection.cpp
 
-   #org.freedesktop.NetworkManagerSettings.Connection.Secrets
+   #org.freedesktop.NetworkManager.Settings.Connection.Secrets
    exportedconnectionsecrets.cpp
 
    nmdbusactiveconnectionmonitor.cpp
 
-   #org.freedesktop.NetworkManagerSettings.Connection.Active
+   #org.freedesktop.NetworkManager.Settings.Connection.Active
    nm-active-connectioninterface.cpp
 
-   #org.freedesktop.NetworkManagerSettings.VPN.Connection
+   #org.freedesktop.NetworkManager.Settings.VPN.Connection
    nm-vpn-connectioninterface.cpp
 
    nmdbussettingsconnectionprovider.cpp
@@ -80,7 +80,7 @@ set(knm_nm_LIB_SRCS
 
 kde4_add_library(knm_nm SHARED ${knm_nm_LIB_SRCS})
 
-target_link_libraries(knm_nm ${KDE4_KDEUI_LIBS} solidcontrolfuture solidcontrol knminternals knmservice knmui ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(knm_nm ${KDE4_KDEUI_LIBS} solidcontrolfuture solidcontrolnm09 solidcontrol knminternals knmservice knmui ${QT_QTNETWORK_LIBRARY})
 
 
 #set_target_properties(nmbackend PROPERTIES

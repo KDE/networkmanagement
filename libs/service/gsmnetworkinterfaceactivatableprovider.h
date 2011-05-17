@@ -1,6 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2010 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,6 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-
 #ifndef GSMNETWORKINTERFACEACTIVATABLEPROVIDER_H
 #define GSMNETWORKINTERFACEACTIVATABLEPROVIDER_H
 
@@ -33,7 +31,7 @@ namespace Solid
 {
     namespace Control
     {
-        class GsmNetworkInterface;
+        class ModemNetworkInterface;
     } // namespace Control
 } // namespace Solid
 
@@ -45,7 +43,7 @@ class KNM_EXPORT GsmNetworkInterfaceActivatableProvider : public NetworkInterfac
 {
 Q_OBJECT
 public:
-    GsmNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::GsmNetworkInterface * interface, QObject * parent);
+    GsmNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::ModemNetworkInterfaceNm09 * interface, QObject * parent);
     virtual ~GsmNetworkInterfaceActivatableProvider();
 public slots:
     /**
@@ -58,5 +56,3 @@ private:
     Q_DECLARE_PRIVATE(GsmNetworkInterfaceActivatableProvider)
 };
 #endif // GSMNETWORKINTERFACEACTIVATABLEPROVIDER_H
-
-#endif

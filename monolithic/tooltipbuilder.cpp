@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirednetworkinterface.h>
-#include <solid/control/networkipv4config.h>
+#include <solid/control/networkipv4confignm09.h>
 
 #include <interfaceconnection.h>
 #include <uiutils.h>
@@ -134,7 +134,7 @@ QString interfaceTooltipHtmlPart(Solid::Control::NetworkInterface * iface, const
     else if (requestedInfo == QLatin1String("status")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                 .arg(i18nc("@info:tooltip network interface status", "Status"))
-                .arg(UiUtils::connectionStateToString(static_cast<NM09DeviceState>(iface->connectionState())));
+                .arg(UiUtils::connectionStateToString(static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(iface->connectionState())));
     }
     else if (requestedInfo == QLatin1String("designspeed")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")

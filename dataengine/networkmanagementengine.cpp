@@ -141,13 +141,11 @@ void NetworkManagementEngine::activatableAdded(RemoteActivatable* remote)
             addHiddenWirelessInterfaceConnection(remote);
             break;
         }
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         case Knm::Activatable::GsmInterfaceConnection:
         { // Gsm (2G, 3G, etc)
             addGsmInterfaceConnection(remote);
             break;
         }
-#endif
         default:
         {
             addActivatable(remote);
@@ -468,8 +466,6 @@ void NetworkManagementEngine::updateVpnInterfaceConnection(RemoteActivatable* re
 }
 
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-
 void NetworkManagementEngine::addGsmInterfaceConnection(RemoteActivatable* remote)
 {
     addInterfaceConnection(remote);
@@ -491,9 +487,5 @@ void NetworkManagementEngine::updateGsmInterfaceConnection(RemoteActivatable* re
 
     scheduleSourcesUpdated();
 }
-
-#endif
-
-
 
 #include "networkmanagementengine.moc"

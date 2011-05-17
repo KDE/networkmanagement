@@ -39,7 +39,7 @@ class VpnInterfaceItem : public InterfaceItem
 {
 Q_OBJECT
     public:
-        VpnInterfaceItem(Solid::Control::NetworkInterface * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent = 0);
+        VpnInterfaceItem(Solid::Control::NetworkInterfaceNm09 * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent = 0);
         virtual ~VpnInterfaceItem();
         virtual QString connectionName();
         virtual QString currentIpAddress();

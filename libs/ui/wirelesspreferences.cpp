@@ -68,11 +68,11 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
         kWarning() << "Could not find deviceUni or AP UNI in args:" << args;
     }
 
-    Solid::Control::AccessPoint * ap = 0;
-    Solid::Control::WirelessNetworkInterface * iface = 0;
+    Solid::Control::AccessPointNm09 * ap = 0;
+    Solid::Control::WirelessNetworkInterfaceNm09 * iface = 0;
 
     if (!deviceUni.isEmpty() && deviceUni != QLatin1String("/")) {
-        iface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(Solid::Control::NetworkManager::findNetworkInterface(deviceUni));
+        iface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(Solid::Control::NetworkManagerNm09::findNetworkInterface(deviceUni));
         if (iface) {
             if ( !apUni.isEmpty() && apUni != QLatin1String("/")) {
                 ap = iface->findAccessPoint(apUni);
@@ -140,11 +140,11 @@ WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
         kWarning() << "Could not find deviceUni or AP UNI in args:" << args;
     }
 
-    Solid::Control::AccessPoint * ap = 0;
-    Solid::Control::WirelessNetworkInterface * iface = 0;
+    Solid::Control::AccessPointNm09 * ap = 0;
+    Solid::Control::WirelessNetworkInterfaceNm09 * iface = 0;
 
     if (!deviceUni.isEmpty() && deviceUni != QLatin1String("/")) {
-        iface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(Solid::Control::NetworkManager::findNetworkInterface(deviceUni));
+        iface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(Solid::Control::NetworkManagerNm09::findNetworkInterface(deviceUni));
         if (iface) {
             if ( !apUni.isEmpty() && apUni != QLatin1String("/")) {
                 ap = iface->findAccessPoint(apUni);
@@ -191,8 +191,8 @@ bool WirelessPreferences::needsEdits() const
 void WirelessPreferences::tabChanged(int index)
 {
     if (index == m_securityTabIndex && m_wirelessWidget->enteredSsidIsDirty()) {
-        Solid::Control::WirelessNetworkInterface * ifaceForSsid = 0;
-        Solid::Control::AccessPoint * apForSsid = 0;
+        Solid::Control::WirelessNetworkInterfaceNm09 * ifaceForSsid = 0;
+        Solid::Control::AccessPointNm09 * apForSsid = 0;
         // look up AP given by m_wirelessWidget, and set it on m_securityWidget
         QByteArray hwAddr = m_wirelessWidget->selectedInterfaceHardwareAddress();
         QString ssid = m_wirelessWidget->enteredSsid();
@@ -200,10 +200,10 @@ void WirelessPreferences::tabChanged(int index)
             // find the S::C::WNI for this ssid
             // if hwAddr set, take that one
             // else, take the first one that can see this ssid
-            foreach (Solid::Control::NetworkInterface * iface,
-                    Solid::Control::NetworkManager::networkInterfaces()) {
-                if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-                    Solid::Control::WirelessNetworkInterface * candidate = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+            foreach (Solid::Control::NetworkInterfaceNm09 * iface,
+                    Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+                if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+                    Solid::Control::WirelessNetworkInterfaceNm09 * candidate = static_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
                     if (candidate->hardwareAddress() == hwAddr) {
                         ifaceForSsid = candidate;
                         break;

@@ -36,15 +36,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 
 #include <solid/control/networkmanager.h>
+#include <solid/control/networkmodeminterface.h>
+#include <solid/control/modeminterface.h>
 
 #include <connection.h>
 #include <interfaceconnection.h>
 #include <vpninterfaceconnection.h>
-
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-#include <solid/control/networkgsminterface.h>
-#include <solid/control/modeminterface.h>
-#endif
 
 #include "busconnection.h"
 #include "exportedconnection.h"
@@ -218,7 +215,7 @@ void NMDBusSettingsService::interfaceConnectionActivated()
             // look up the active connection (a real connection, not this vpn that is being activated)
             // because NM needs its details to bring up the VPN
             QString activeConnPath;
-            foreach (const QString &activeConnectionPath, Solid::Control::NetworkManager::activeConnections()) {
+            foreach (const QString &activeConnectionPath, Solid::Control::NetworkManagerNm09::activeConnections()) {
                 OrgFreedesktopNetworkManagerConnectionActiveInterface activeConnection("org.freedesktop.NetworkManager", activeConnectionPath, QDBusConnection::systemBus());
 
                 if ( activeConnection.getDefault() && activeConnection.state() == NM_ACTIVE_CONNECTION_STATE_ACTIVATED) {
@@ -240,9 +237,8 @@ void NMDBusSettingsService::interfaceConnectionActivated()
             deviceToActivateOn = ic->deviceUni();
         }
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         // Enable modem before connecting.
-        Solid::Control::GsmNetworkInterface *iface = qobject_cast<Solid::Control::GsmNetworkInterface *>(Solid::Control::NetworkManager::findNetworkInterface(deviceToActivateOn));
+        Solid::Control::ModemNetworkInterfaceNm09 *iface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09 *>(Solid::Control::NetworkManagerNm09::findNetworkInterface(deviceToActivateOn));
         if (iface) {
             Solid::Control::ModemGsmCardInterface *modem = iface->getModemCardIface();
             if (modem && !modem->enabled()) {
@@ -253,7 +249,6 @@ void NMDBusSettingsService::interfaceConnectionActivated()
                 modem->enable(true);
             }
         }
-#endif
 
         // Now activate the connection
         OrgFreedesktopNetworkManagerInterface nmIface(QLatin1String(NM_DBUS_SERVICE), QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus());

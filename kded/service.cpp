@@ -130,16 +130,12 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     //ActivatableDebug debug;
     //activatableList->registerObserver(&debug);
     
-    Solid::Control::NetworkInterface::Types types =
-        (Solid::Control::NetworkInterface::Ieee8023
-         | Solid::Control::NetworkInterface::Ieee80211
-         | Solid::Control::NetworkInterface::Serial
-         | Solid::Control::NetworkInterface::Gsm
-         | Solid::Control::NetworkInterface::Cdma
-#ifdef NM_0_8
-         | Solid::Control::NetworkInterface::Bluetooth
-#endif
-	 );
+    Solid::Control::NetworkInterfaceNm09::Types types =
+        (Solid::Control::NetworkInterfaceNm09::Ethernet
+         | Solid::Control::NetworkInterfaceNm09::Wifi
+         | Solid::Control::NetworkInterfaceNm09::Modem
+         | Solid::Control::NetworkInterfaceNm09::Bluetooth
+         );
 
     d->sortedList = new SortedActivatableList(types, this);
     d->activatableList->registerObserver(d->sortedList);

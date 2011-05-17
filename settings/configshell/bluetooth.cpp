@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QUuid>
+#include <QTimer>
 
 #include <KDebug>
 #include <KApplication>
@@ -63,9 +64,6 @@ void saveConnection(Knm::Connection *con)
     ConnectionEditor editor(0);
     editor.updateService(QStringList() << con->uuid().toString());
 }
-
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-#include <QTimer>
 
 Bluetooth::Bluetooth(const QString bdaddr, const QString service): QObject(), mBdaddr(bdaddr), mService(service), mobileConnectionWizard(0)
 {
@@ -269,5 +267,3 @@ void Bluetooth::modemAdded(const QString &udi)
     delete mobileConnectionWizard;
     kapp->quit();
 }
-
-#endif

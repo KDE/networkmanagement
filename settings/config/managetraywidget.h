@@ -19,8 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM07_MANAGE_TRAY_WIDGET_H
-#define NM07_MANAGE_TRAY_WIDGET_H
+#ifndef NM09_MANAGE_TRAY_WIDGET_H
+#define NM09_MANAGE_TRAY_WIDGET_H
 
 #include <KCModule>
 
@@ -37,4 +37,4 @@ private:
     OtherSettingsWidget* ui;
 };
 
-#endif // NM07_MANAGE_TRAY_WIDGET_H
+#endif // NM09_MANAGE_TRAY_WIDGET_H

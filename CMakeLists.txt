@@ -15,15 +15,9 @@ if (BIGENDIAN)
    set(WORDS_BIGENDIAN 1)
 endif (BIGENDIAN)
 
-find_file(KDE4_MM_BACKEND_FOUND solid/control/modeminterface.h ${KDE4_INCLUDE_DIR} NO_DEFAULT_PATH)
-if (KDE4_MM_BACKEND_FOUND)
-    message("Compiling Modem Manager support.")
-    add_definitions(-DCOMPILE_MODEM_MANAGER_SUPPORT=1)
-
-    set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR} ${CMAKE_MODULE_PATH})
-    macro_optional_find_package(MobileBroadbandProviderInfo)
-    macro_log_feature(MOBILEBROADBANDPROVIDERINFO_FOUND "mobile-broadband-provider-info" "Database of mobile broadband service providers" "http://live.gnome.org/NetworkManager/MobileBroadband/ServiceProviders" FALSE "" "Needed for Mobile Connection Wizard support in Broadband Modem Management")
-endif (KDE4_MM_BACKEND_FOUND)
+set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR} ${CMAKE_MODULE_PATH})
+macro_optional_find_package(MobileBroadbandProviderInfo)
+macro_log_feature(MOBILEBROADBANDPROVIDERINFO_FOUND "mobile-broadband-provider-info" "Database of mobile broadband service providers" "http://live.gnome.org/NetworkManager/MobileBroadband/ServiceProviders" FALSE "" "Needed for Mobile Connection Wizard support in Broadband Modem Management")
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
 include_directories (${KDE4_INCLUDES})
@@ -32,27 +26,12 @@ include_directories (${KDE4_INCLUDES})
 
 macro_optional_find_package(NetworkManager)
 
-macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.8.996" "Needed for NetworkManager support in Network Management")
+macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.9" "Needed for NetworkManager support in Network Management")
 if (NETWORKMANAGER_FOUND)
-    # Check if Solid has been compiled with NetworkManager 0.8 support.
-    set (CMAKE_REQUIRED_DEFINITIONS ${KDE4_DEFINITIONS})
-    set (CMAKE_REQUIRED_INCLUDES ${KDE4_INCLUDES})
-    set (CMAKE_REQUIRED_LIBRARIES -L${KDE4_LIB_DIR} -lsolidcontrol)
-    CHECK_CXX_SOURCE_COMPILES("#include <solid/control/networkmanager.h>
-    int main()
-    {
-        Solid::Control::NetworkManager::isWwanEnabled();
-        return 0;
-    }" NM_0_8)
-    if (NM_0_8)
-        add_definitions(-DNM_0_8=1)
-    endif (NM_0_8)
-
-    # Check NetworkManager version found.
-    macro_ensure_version("0.8.996" ${NETWORKMANAGER_VERSION} NM_0_9)
+    macro_ensure_version("0.8.998" ${NETWORKMANAGER_VERSION} NM_0_9)
     find_package(GLIB2 REQUIRED)
 
-    configure_file(backends/NetworkManager/config-nm07backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm07backend.h )
+    configure_file(backends/NetworkManager/config-nm09backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm07backend.h )
 
     if (NM_0_9)
         include_directories(
@@ -60,8 +39,11 @@ if (NETWORKMANAGER_FOUND)
            ${NM-UTIL_INCLUDE_DIRS}
            ${GLIB2_INCLUDE_DIR}
            ${CMAKE_CURRENT_BUILD_DIR}
+           solidcontrolfuture/libs
+           ${KDE4_INCLUDE_DIR}/solid/control
         )
 
+        add_subdirectory(solidcontrolfuture)
         add_subdirectory(applet)
         add_subdirectory(backends)
         add_subdirectory(dataengine)
@@ -69,7 +51,6 @@ if (NETWORKMANAGER_FOUND)
         add_subdirectory(tests)
         add_subdirectory(settings)
         add_subdirectory(vpnplugins)
-        add_subdirectory(solidcontrolfuture)
         add_subdirectory(kded)
 
         # This is unmaintained, do not use it.
@@ -84,7 +65,7 @@ if (NETWORKMANAGER_FOUND)
             message(STATUS "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
         endif (DBUS_SYSTEM_POLICY_DIR)
     else(NM_0_9)
-        macro_log_feature(NM_0_9 "NetworkManager at least version 0.8.99" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
+        macro_log_feature(NM_0_9 "NetworkManager at least version 0.8.998" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
     endif(NM_0_9)
 endif(NETWORKMANAGER_FOUND)
 

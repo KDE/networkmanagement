@@ -24,7 +24,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 extern void saveConnection(Knm::Connection *con);
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
 #include <QDBusObjectPath>
 #include <solid/control/modemmanager.h>
 
@@ -49,4 +48,3 @@ private:
 
     QString deviceName();
 };
-#endif

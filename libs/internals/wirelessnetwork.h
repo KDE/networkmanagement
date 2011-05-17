@@ -39,7 +39,7 @@ Q_PROPERTY(int strength READ strength)
 Q_PROPERTY(uint wpaFlags READ wpaFlags)
 Q_PROPERTY(uint rsnFlags READ rsnFlags)
 public:
-    WirelessNetwork(const QString & ssid, int strength, Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities, Solid::Control::AccessPoint::Capabilities apCapabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode, const QString & deviceUni, QObject * parent);
+    WirelessNetwork(const QString & ssid, int strength, Solid::Control::WirelessNetworkInterfaceNm09::Capabilities interfaceCapabilities, Solid::Control::AccessPointNm09::Capabilities apCapabilities, Solid::Control::AccessPointNm09::WpaFlags wpaFlags, Solid::Control::AccessPointNm09::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterfaceNm09::OperationMode mode, const QString & deviceUni, QObject * parent);
     virtual ~WirelessNetwork();
 signals:
     void strengthChanged(int);

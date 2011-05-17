@@ -19,9 +19,7 @@ kde4_add_executable(networkmanagement_configshell ${networkmanagement_configshel
 
 target_link_libraries(networkmanagement_configshell knmui knminternals solidcontrol ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY})
 
-if (KDE4_MM_BACKEND_FOUND)
-    target_link_libraries(networkmanagement_configshell ${KDE4_SOLID_LIBS})
-endif (KDE4_MM_BACKEND_FOUND)
+target_link_libraries(networkmanagement_configshell ${KDE4_SOLID_LIBS})
 
 macro_ensure_version("4.4.76" ${KDE_VERSION} IS45)
 if (IS45)

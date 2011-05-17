@@ -30,7 +30,7 @@ namespace Solid
 {
     namespace Control
     {
-        class WirelessNetworkInterface;
+        class WirelessNetworkInterfaceNm09;
     } // namespace Control
 } // namespace Solid
 
@@ -42,7 +42,7 @@ class KNM_EXPORT WirelessNetworkInterfaceActivatableProvider : public NetworkInt
 {
 Q_OBJECT
 public:
-    WirelessNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::WirelessNetworkInterface * interface, QObject * parent);
+    WirelessNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::WirelessNetworkInterfaceNm09 * interface, QObject * parent);
     virtual ~WirelessNetworkInterfaceActivatableProvider();
 public slots:
     /**

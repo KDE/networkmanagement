@@ -30,8 +30,8 @@ namespace Control
     public:
         QString ssid;
         int strength;
-        const Solid::Control::WirelessNetworkInterface * wirelessNetworkInterface;
-        QHash<QString, Solid::Control::AccessPoint *> aps;
+        const Solid::Control::WirelessNetworkInterfaceNm09 * wirelessNetworkInterface;
+        QHash<QString, Solid::Control::AccessPointNm09 *> aps;
     };
 } // namespace Control
 } // namespace Solid
