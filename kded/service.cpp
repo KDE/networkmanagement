@@ -86,17 +86,17 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 {
     Q_D(NetworkManagementService);
     d->connectionList = new ConnectionList(this);
-    d->listPersistence = new ConnectionListPersistence(d->connectionList);
+    //d->listPersistence = new ConnectionListPersistence(d->connectionList);
 
     d->nmSettingsService = new NMDBusSettingsService(d->connectionList);
 
-    d->connectionList->registerConnectionHandler(d->listPersistence);
+    //d->connectionList->registerConnectionHandler(d->listPersistence);
     d->connectionList->registerConnectionHandler(d->nmSettingsService);
 
 
     d->activatableList = new ActivatableList(d->connectionList);
 
-    d->sessionDbusConfigureInterface = new ConnectionListPersistenceDBus(d->listPersistence, d->listPersistence);
+    //d->sessionDbusConfigureInterface = new ConnectionListPersistenceDBus(d->listPersistence, d->listPersistence);
 
     d->configurationLauncher = new ConfigurationLauncher(this);
     d->connectionUsageMonitor = new ConnectionUsageMonitor(d->connectionList, d->activatableList, d->activatableList);
