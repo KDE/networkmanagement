@@ -61,7 +61,7 @@ int main(int argc, char **argv)
     QString ssid;
     QVariantList specificArgs;
 
-    foreach (const QString& arg, specifics.split( ',' )) {
+    foreach (const QString& arg, specifics.split( ' ' )) {
         specificArgs << QVariant(arg);
     }
 

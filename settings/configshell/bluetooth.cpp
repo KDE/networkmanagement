@@ -153,7 +153,6 @@ void Bluetooth::init()
         if (con) {
             ManageConnection::saveConnection(con);
         }
-        kapp->quit();
         return;
     } else if (mService != QLatin1String("dun")) {
         mDunDevice = mService;
@@ -231,5 +230,4 @@ void Bluetooth::modemAdded(const QString &udi)
         }
     }
     delete mobileConnectionWizard;
-    kapp->quit();
 }
