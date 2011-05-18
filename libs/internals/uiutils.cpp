@@ -46,6 +46,8 @@ QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterfaceNm09::
             deviceText = i18nc("title of the interface widget in nm's popup", "Wireless 802.11");
             break;
         case Solid::Control::NetworkInterfaceNm09::Bluetooth:
+            deviceText = i18nc("title of the interface widget in nm's popup", "Mobile Broadband");
+            break;
         case Solid::Control::NetworkInterfaceNm09::Modem: {
             const Solid::Control::ModemNetworkInterfaceNm09 *nmModemIface = qobject_cast<const Solid::Control::ModemNetworkInterfaceNm09 *>(iface);
             if (nmModemIface) {
@@ -62,6 +64,7 @@ QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterfaceNm09::
                 }
             }
         }
+            break;
         default:
             deviceText = i18nc("title of the interface widget in nm's popup", "Wired Ethernet");
             break;

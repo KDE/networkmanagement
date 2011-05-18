@@ -86,6 +86,8 @@ void ConnectionListPersistence::init()
 {
     Q_D(ConnectionListPersistence);
     if (!d->init) {
+// TODO: I think this is not needed for NM-0.9 anymore.
+#if 0
         // 1) get the names of all the connections from the main config file
         // (this could also be just the connections in one profile, after removing all connections)
         QStringList connectionIds;
@@ -97,6 +99,7 @@ void ConnectionListPersistence::init()
                 d->list->addConnection(connection);
             }
         }
+#endif
         d->init = true;
     }
 }
