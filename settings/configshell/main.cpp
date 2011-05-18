@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdebug.h>
 
 #include "bluetooth.h"
+#include "manageconnection.h"
 
 int main(int argc, char **argv)
 {
@@ -64,10 +65,8 @@ int main(int argc, char **argv)
         specificArgs << QVariant(arg);
     }
 
-    kDebug() << specificArgs;
-
-    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
-    kDebug() << args;
+    kDebug(KDE_DEFAULT_DEBUG_AREA) << specificArgs;
+    kDebug(KDE_DEFAULT_DEBUG_AREA) << args;
 
     if (args->arg(0) == QLatin1String("create")) {
         if (args->isSet("type")) {
@@ -104,14 +103,15 @@ int main(int argc, char **argv)
 
             if(!con)
             {
-                kDebug() << Knm::Connection::typeFromString(type) << "type connection cannot be created.";
+                kDebug(KDE_DEFAULT_DEBUG_AREA) << Knm::Connection::typeFromString(type) << "type connection cannot be created.";
                 return -1;
             }
 
-            saveConnection(con);
+            ManageConnection::saveConnection(con);
+            return app.exec();
         } else if (args->isSet("hiddennetwork")) {
             QString ssidOfHiddenNetwork = args->getOption("hiddennetwork");
-            kDebug() << "I have been told to setup a connection to a hidden network..." << ssidOfHiddenNetwork;
+            kDebug(KDE_DEFAULT_DEBUG_AREA) << "I have been told to setup a connection to a hidden network..." << ssidOfHiddenNetwork;
             return 0;
         } else {
             args->usage();
@@ -120,7 +120,7 @@ int main(int argc, char **argv)
     } else {
         if (args->isSet("connection")) {
             QString connectionId = args->getOption("connection");
-            kDebug() << "Editing connections is not yet implemented";
+            kDebug(KDE_DEFAULT_DEBUG_AREA) << "Editing connections is not yet implemented";
             return 0;
             // do edit
         } else {

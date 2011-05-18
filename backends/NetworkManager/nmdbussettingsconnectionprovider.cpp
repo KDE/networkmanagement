@@ -63,7 +63,11 @@ NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionLis
     : QObject(parent), d_ptr(new NMDBusSettingsConnectionProviderPrivate)
 {
     Q_D(NMDBusSettingsConnectionProvider);
-    d->connectionList = connectionList;
+    if (connectionList) {
+        d->connectionList = connectionList;
+    } else {
+        d->connectionList = new ConnectionList(this);
+    }
     d->iface = new OrgFreedesktopNetworkManagerSettingsInterface(service,
             NM_DBUS_PATH_SETTINGS,
             QDBusConnection::systemBus(), parent);

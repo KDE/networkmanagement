@@ -18,11 +18,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "connectioneditor.h"
-#include "knmserviceprefs.h"
 #include "../config/mobileconnectionwizard.h"
-
-extern void saveConnection(Knm::Connection *con);
 
 #include <QDBusObjectPath>
 #include <solid/control/modemmanager.h>
