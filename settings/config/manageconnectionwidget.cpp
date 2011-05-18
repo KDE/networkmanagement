@@ -353,7 +353,6 @@ void ManageConnectionWidget::addClicked()
     }
 
     if (con) {
-
         // TODO: Check for scope and mUserUserSettings if necessary
         /*
         if (conScope == Knm::Connection::User)
@@ -624,7 +623,12 @@ void ManageConnectionWidget::connectionTypeMenuTriggered(QAction* action)
     } else if (tabType == Knm::Connection::Vpn) {
         QVariantList vl;
         vl << action->data();
-        mEditor->createConnection(false, tabType, vl);
+        Knm::Connection *con = mEditor->createConnection(false, tabType, vl);
+
+        if (con) {
+            mSystemSettings->addConnection(con);
+            emit changed();
+        }
     }
 }
 

@@ -73,6 +73,9 @@ NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionLis
             QDBusConnection::systemBus(), parent);
     d->serviceName = service;
 
+    // For VPN connections.
+    qDBusRegisterMetaType<QStringMap>();
+
     initConnections();
     // signal is from parent class
     connect(d->iface, SIGNAL(NewConnection(const QDBusObjectPath&)),
