@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NM09_NETWORKMANAGER_H
 #define NM09_NETWORKMANAGER_H
 
+#include <NetworkManager.h>
+
 #include "solid/control/ifaces/networkmanager.h"
 #include <QDBusObjectPath>
 #include <kdemacros.h>
@@ -35,12 +37,6 @@ Q_DECLARE_PRIVATE(NMNetworkManager)
 Q_INTERFACES(Solid::Control::Ifaces::NetworkManager)
 
 public:
-    static const QString DBUS_DEVICES;
-    static const QString DBUS_SERVICE;
-    static const QString DBUS_DAEMON_PATH;
-    static const QString DBUS_USER_SETTINGS_PATH;
-    static const QString DBUS_SYSTEM_SETTINGS_PATH;
-
     NMNetworkManager(QObject * parent, const QVariantList & args);
     ~NMNetworkManager();
     Solid::Networking::Status status() const;

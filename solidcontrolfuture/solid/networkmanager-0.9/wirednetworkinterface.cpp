@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define NM_DEVICE_802_3_ETHERNET_CARRIER     "carrier"
 
 NMWiredNetworkInterfacePrivate::NMWiredNetworkInterfacePrivate(const QString & path, QObject * owner)
-    : NMNetworkInterfacePrivate(path, owner), wiredIface(NMNetworkManager::DBUS_SERVICE, path, QDBusConnection::systemBus()),
+    : NMNetworkInterfacePrivate(path, owner), wiredIface(NM_DBUS_SERVICE, path, QDBusConnection::systemBus()),
     bitrate(0), carrier(false)
 {
 }

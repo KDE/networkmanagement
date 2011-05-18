@@ -21,7 +21,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "manager_p.h"
 
 #include <KDebug>
-#include <NetworkManager.h>
 
 #include "dbus/nm-deviceinterface.h"
 #include "networkmanagerdefinitions.h"
@@ -30,15 +29,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkmodeminterface.h"
 #include "networkbtinterface.h"
 
-const QString NMNetworkManager::DBUS_SERVICE(QString::fromLatin1(NM_DBUS_SERVICE /* "org.freedesktop.NetworkManager" */));
-const QString NMNetworkManager::DBUS_DAEMON_PATH(QString::fromLatin1("/org/freedesktop/NetworkManager"));
-const QString NMNetworkManager::DBUS_USER_SETTINGS_PATH(QString::fromLatin1("org.freedesktop.NetworkManagerUserSettings"));
-const QString NMNetworkManager::DBUS_SYSTEM_SETTINGS_PATH(QString::fromLatin1("org.freedesktop.NetworkManager"));
-
-
-NMNetworkManagerPrivate::NMNetworkManagerPrivate() : iface(NMNetworkManager::DBUS_SERVICE, "/org/freedesktop/NetworkManager", QDBusConnection::systemBus())
+NMNetworkManagerPrivate::NMNetworkManagerPrivate()
+    : iface(NM_DBUS_SERVICE, NM_DBUS_PATH, QDBusConnection::systemBus())
 {
-    kDebug(1441) << NMNetworkManager::DBUS_SERVICE;
+    kDebug(1441) << NM_DBUS_SERVICE;
 }
 
 NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList &) 
@@ -116,7 +110,7 @@ QStringList NMNetworkManager::networkInterfaces() const
 QObject *NMNetworkManager::createNetworkInterface(const QString &uni)
 {
     kDebug(1441);
-    OrgFreedesktopNetworkManagerDeviceInterface devIface(NMNetworkManager::DBUS_SERVICE, uni, QDBusConnection::systemBus());
+    OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, uni, QDBusConnection::systemBus());
     uint deviceType = devIface.deviceType();
     NMNetworkInterface * createdInterface = 0;
     switch ( deviceType ) {
