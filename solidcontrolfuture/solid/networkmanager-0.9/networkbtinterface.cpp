@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "solid/control/modemmanager.h"
 
 NMBtNetworkInterfacePrivate::NMBtNetworkInterfacePrivate(const QString & path, QObject * owner)
-    : NMModemNetworkInterfacePrivate(path, owner), btIface(NMNetworkManager::DBUS_SERVICE, path, QDBusConnection::systemBus())
+    : NMModemNetworkInterfacePrivate(path, owner), btIface(NM_DBUS_SERVICE, path, QDBusConnection::systemBus())
 {
     btCapabilities = static_cast<QFlags<Solid::Control::BtNetworkInterfaceNm09::Capability> >(btIface.btCapabilities());
     hardwareAddress = btIface.hwAddress();

@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "solid/control/modemmanager.h"
 
 NMModemNetworkInterfacePrivate::NMModemNetworkInterfacePrivate(const QString & path, QObject * owner)
-    : NMNetworkInterfacePrivate(path, owner), modemIface(NMNetworkManager::DBUS_SERVICE, path, QDBusConnection::systemBus())
+    : NMNetworkInterfacePrivate(path, owner), modemIface(NM_DBUS_SERVICE, path, QDBusConnection::systemBus())
 {
 }
 

@@ -18,11 +18,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/* Modes of operation */
-#define NM_802_11_MODE_UNKNOWN 0 /* Mode is unknown. */
-#define NM_802_11_MODE_ADHOC   1 /* Uncoordinated network without central infrastructure. */
-#define NM_802_11_MODE_INFRA   2 /* Coordinated network with one or more central controllers. */
-
 #include "wirelessnetworkinterface.h"
 #include "wirelessnetworkinterface_p.h"
 
@@ -32,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "manager.h"
 
 NMWirelessNetworkInterfacePrivate::NMWirelessNetworkInterfacePrivate(const QString & path, QObject * owner)
-    : NMNetworkInterfacePrivate(path, owner), wirelessIface(NMNetworkManager::DBUS_SERVICE, path, QDBusConnection::systemBus())
+    : NMNetworkInterfacePrivate(path, owner), wirelessIface(NM_DBUS_SERVICE, path, QDBusConnection::systemBus())
       , bitRate(0)
 {
 

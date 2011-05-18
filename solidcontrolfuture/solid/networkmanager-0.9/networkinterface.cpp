@@ -40,7 +40,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define NM_DEVICE_VENDOR "vendor"
 #define NM_DEVICE_PRODUCT "product"
 
-NMNetworkInterfacePrivate::NMNetworkInterfacePrivate( const QString & path, QObject * owner ) : deviceIface(NMNetworkManager::DBUS_SERVICE, path, QDBusConnection::systemBus()), uni(path), designSpeed(0), manager(0)/*, propHelper(owner)*/
+NMNetworkInterfacePrivate::NMNetworkInterfacePrivate( const QString & path, QObject * owner ) : deviceIface(NM_DBUS_SERVICE, path, QDBusConnection::systemBus()), uni(path), designSpeed(0), manager(0)/*, propHelper(owner)*/
 {
     Q_UNUSED(owner);
     //isLinkUp = deviceIface.isLinkUp();
@@ -160,7 +160,7 @@ Solid::Control::IPv4ConfigNm09 NMNetworkInterface::ipV4Config() const
     } else {
         // ask the daemon for the details
         QDBusObjectPath ipV4ConfigPath = d->deviceIface.ip4Config();
-        OrgFreedesktopNetworkManagerIP4ConfigInterface iface(NMNetworkManager::DBUS_SERVICE, ipV4ConfigPath.path(), QDBusConnection::systemBus());
+        OrgFreedesktopNetworkManagerIP4ConfigInterface iface(NM_DBUS_SERVICE, ipV4ConfigPath.path(), QDBusConnection::systemBus());
         if (iface.isValid()) {
             //convert ipaddresses into object
             UIntListList addresses = iface.addresses();
