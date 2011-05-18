@@ -50,7 +50,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "knmserviceprefs.h"
 #include "connection.h"
 #include "connectionlist.h"
-#include "connectionpersistence.h"
 #include "connectionprefs.h"
 #include <tooltips.h>
 
@@ -421,8 +420,6 @@ void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMess
             KMessageBox::error(this, i18n("Error"));
         else
             KMessageBox::error(this, errorMessage);
-
-        return;
     }
 
     Knm::Connection *con = mEditConnection;
@@ -483,7 +480,7 @@ void ManageConnectionWidget::deleteClicked()
         // remove it from our hash
         mUuidItemHash.remove(connectionId);
         // remove secrets from wallet if using encrypted storage
-        Knm::ConnectionPersistence::deleteSecrets(connectionId);
+        //Knm::ConnectionPersistence::deleteSecrets(connectionId);
         // remove connection file
         //QFile connFile(KStandardDirs::locateLocal("data",
         //            Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId));

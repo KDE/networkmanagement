@@ -14,66 +14,71 @@ include_directories(
 set(knminternals_SRCS
    connection.cpp
    #connectiondbus.cpp
-   connectionpersistence.cpp
 
    setting.cpp
    #settingdbus.cpp
-   settingpersistence.cpp
+   #settingpersistence.cpp
+
+   secrets.cpp
 
    #settings/pbkdf2.cpp
    #settings/wephash.cpp
 
    settings/802-11-wireless-security.cpp
-   #settings/802-11-wireless-securitydbus.cpp
-   settings/802-11-wireless-securitypersistence.cpp
+   settings/802-11-wireless-securitysecrets.cpp
+   #settings/802-11-wireless-securitypersistence.cpp
 
    settings/802-11-wireless.cpp
    #settings/802-11-wirelessdbus.cpp
-   settings/802-11-wirelesspersistence.cpp
+   #settings/802-11-wirelesspersistence.cpp
 
    settings/802-3-ethernet.cpp
    #settings/802-3-ethernetdbus.cpp
-   settings/802-3-ethernetpersistence.cpp
+   #settings/802-3-ethernetpersistence.cpp
 
    settings/802-1x.cpp
+   settings/802-1xsecrets.cpp
    #settings/802-1xdbus.cpp
-   settings/802-1xpersistence.cpp
+   #settings/802-1xpersistence.cpp
 
    settings/gsm.cpp
+   settings/gsmsecrets.cpp
    #settings/gsmdbus.cpp
-   settings/gsmpersistence.cpp
+   #settings/gsmpersistence.cpp
 
    settings/cdma.cpp
+   settings/cdmasecrets.cpp
    #settings/cdmadbus.cpp
-   settings/cdmapersistence.cpp
+   #settings/cdmapersistence.cpp
 
    settings/ipv4.cpp
    #settings/ipv4dbus.cpp
-   settings/ipv4persistence.cpp
+   #settings/ipv4persistence.cpp
 
    settings/ipv6.cpp
    #settings/ipv6dbus.cpp
-   settings/ipv6persistence.cpp
+   #settings/ipv6persistence.cpp
 
    settings/ppp.cpp
    #settings/pppdbus.cpp
-   settings/ppppersistence.cpp
+   #settings/ppppersistence.cpp
 
    settings/pppoe.cpp
+   settings/pppoesecrets.cpp
    #settings/pppoedbus.cpp
-   settings/pppoepersistence.cpp
+   #settings/pppoepersistence.cpp
 
    settings/serial.cpp
    #settings/serialdbus.cpp
-   settings/serialpersistence.cpp
+   #settings/serialpersistence.cpp
 
    settings/vpn.cpp
    #settings/vpndbus.cpp
-   settings/vpnpersistence.cpp
+   #settings/vpnpersistence.cpp
 
    settings/bluetooth.cpp
    #settings/bluetoothdbus.cpp
-   settings/bluetoothpersistence.cpp
+   #settings/bluetoothpersistence.cpp
 
    activatable.cpp
    interfaceconnection.cpp

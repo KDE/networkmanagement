@@ -128,7 +128,6 @@ if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PROTO))) {
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS))) {
       setting->setLeappasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS)).value<int>());
   }
-
 }
 
 QVariantMap WirelessSecurityDbus::toMap()
@@ -159,11 +158,6 @@ QVariantMap WirelessSecurityDbus::toMap()
       qDebug() << "Adding key-mgmt: wpa-eap";
       break;
   }
-  // only insert WEP key index if we are using WEP
-  if (setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep
-          || setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX), setting->weptxkeyindex());
-  }
   switch (setting->authalg()) {
       case Knm::WirelessSecuritySetting::EnumAuthalg::none:
           // the none auth alg is internal
@@ -192,46 +186,17 @@ QVariantMap WirelessSecurityDbus::toMap()
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME), setting->leapusername());
   }
 
-  if (!setting->leappassword().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS), (int)setting->leappasswordflags());
-  }
+  map.unite(toSecretsMap());
 
-  // SECRET
-  if(!setting->wepkey0().isEmpty())
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0),  setting->wepkey0());
-
-  if (!setting->wepkey0().isEmpty() || !setting->wepkey1().isEmpty() ||  !setting->wepkey2().isEmpty() || !setting->wepkey3().isEmpty())
+  if (!setting->wepkey0().isEmpty() || !setting->wepkey1().isEmpty() ||  !setting->wepkey2().isEmpty() || !setting->wepkey3().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_FLAGS), (int)setting->wepkeyflags());
-
-  if (setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep ||
-      setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep) {
-    // SECRET
-    if(!setting->wepkey1().isEmpty())
-        map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1),  setting->wepkey1());
-
-    // SECRET
-    if(!setting->wepkey2().isEmpty())
-        map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2),  setting->wepkey2());
-
-    // SECRET
-    if(!setting->wepkey3().isEmpty())
-        map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3),  setting->wepkey3());
-
-    if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Hex)
-        map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE), 1);
-    else if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Passphrase)
-        map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE), 2);
-    else
-        kWarning() << "Wep key type is not set!";
   }
-
-  // SECRET
   if(!setting->psk().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK), setting->psk());
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK_FLAGS), (int)setting->pskflags());
   }
-
+  if (!setting->leappassword().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS), (int)setting->leappasswordflags());
+  }
 
   } // end of if not setting->clear()
   return map;
@@ -254,46 +219,39 @@ QVariantMap WirelessSecurityDbus::toSecretsMap()
   QVariantMap map;
   Knm::WirelessSecuritySetting * setting = static_cast<Knm::WirelessSecuritySetting *>(m_setting);
   if (setting->securityType() != Knm::WirelessSecuritySetting::EnumSecurityType::None) { // don't return anything if there is no security
-  if (!setting->weppassphrase().isEmpty()) {
-      QString key = hashWepPassphrase(setting->weppassphrase());
-      switch (setting->weptxkeyindex()) {
-          case 0:
-              setting->setWepkey0(key);
-              break;
-          case 1:
-              setting->setWepkey1(key);
-              break;
-          case 2:
-              setting->setWepkey2(key);
-              break;
-          case 3:
-              setting->setWepkey3(key);
-              break;
-      }
-  }
-  if (!setting->wepkey0().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), toHexKey(setting->wepkey0()));
-  }
-  if (!setting->wepkey1().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), toHexKey(setting->wepkey1()));
-  }
-  if (!setting->wepkey2().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), toHexKey(setting->wepkey2()));
-  }
-  if (!setting->wepkey3().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), toHexKey(setting->wepkey3()));
-  }
-  if (!setting->psk().isEmpty()) {
-      WpaSecretIdentifier::WpaSecretType secretType = WpaSecretIdentifier::identify(setting->psk());
-      if (secretType == WpaSecretIdentifier::Passphrase) {
-          map.insert("psk", hashWpaPsk(setting->psk()));
-      } else if (secretType == WpaSecretIdentifier::PreSharedKey) {
-          map.insert("psk", setting->psk());
-      }
-  }
-  if (!setting->leappassword().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
-  }
+    if (setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep ||
+        setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep) {
+        if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Hex)
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE), 1);
+        else if(setting->wepKeyType() == Knm::WirelessSecuritySetting::Passphrase)
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_TYPE), 2);
+        else
+        kWarning() << "Wep key type is not set!";
+        map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX), setting->weptxkeyindex());
+        if (!setting->wepkey0().isEmpty()) {
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), toHexKey(setting->wepkey0()));
+        }
+        if (!setting->wepkey1().isEmpty()) {
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), toHexKey(setting->wepkey1()));
+        }
+        if (!setting->wepkey2().isEmpty()) {
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), toHexKey(setting->wepkey2()));
+        }
+        if (!setting->wepkey3().isEmpty()) {
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), toHexKey(setting->wepkey3()));
+        }
+    } else if (setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk || setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::Wpa2Psk) {
+        if (!setting->psk().isEmpty()) {
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK), setting->psk());
+        }
+    } else if (setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::Leap) {
+        if (!setting->leappassword().isEmpty()) {
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD), setting->leappassword());
+        }
+    }
+
+
+
   } // end of if not clear
   return map;
 }

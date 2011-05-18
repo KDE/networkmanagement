@@ -30,12 +30,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionwidget.h"
 
 #include "connection.h"
-#include "connectionpersistence.h"
 #include "knmserviceprefs.h"
 
 ConnectionPreferences::ConnectionPreferences(const QVariantList &, QWidget * parent)
     : QWidget(parent),
-      m_contents(new ConnectionWidget(this)), m_connection(0), m_connectionPersistence(0)
+      m_contents(new ConnectionWidget(this)), m_connection(0)
 {
     QVBoxLayout * layout = new QVBoxLayout(this);
     layout->addWidget(m_contents);

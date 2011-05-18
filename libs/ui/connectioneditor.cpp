@@ -52,7 +52,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //storage
 #include "connection.h"
-#include "connectionpersistence.h"
 #include "knmserviceprefs.h"
 
 ConnectionEditor::ConnectionEditor(QObject * parent) : QObject(parent)

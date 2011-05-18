@@ -17,11 +17,14 @@ set(knmservice_SRCS
    # list of all connections, maintains connectionhandlers
    connectionlist.cpp
 
-   # loads/saves connections
-   connectionlistpersistence.cpp
+   # handles storage of secrets
+   secretstorage.cpp
+
+   #defines interface for objects storing secrets
+   secretsprovider.cpp
 
    # provides dbus configure() for config UI
-   connectionlistpersistencedbus.cpp
+   #connectionlistpersistencedbus.cpp
 
    # list of things that may be connected: connections and unconfigured networks
    activatablelist.cpp
@@ -132,7 +135,7 @@ qt4_add_dbus_adaptor(knmservice_SRCS
 
 kde4_add_library(knmservice SHARED ${knmservice_SRCS})
 
-target_link_libraries(knmservice knminternals solidcontrol solidcontrolnm09 solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS}
+target_link_libraries(knmservice knminternals knmui solidcontrol solidcontrolnm09 solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS}
    )
 
 set_target_properties(knmservice PROPERTIES

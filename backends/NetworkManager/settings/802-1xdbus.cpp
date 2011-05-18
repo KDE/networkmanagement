@@ -79,9 +79,6 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PIN))) {
         setting->setPin(map.value(QLatin1String(NM_SETTING_802_1X_PIN)).value<QString>());
     }
-    if (map.contains("psk")) {
-        setting->setPsk(map.value("psk").value<QString>());
-    }
     if (map.contains(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS))) {
         setting->setUseSystemCaCerts(map.value(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS)).value<bool>());
     }
@@ -94,6 +91,7 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS))) {
         setting->setPhase2privatekeypasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS)).value<int>());
     }
+    setting->setEnabled(true);
 }
 
 QVariantMap Security8021xDbus::toMap()
@@ -195,23 +193,19 @@ QVariantMap Security8021xDbus::toMap()
         if (!setting->pin().isEmpty()) {
             map.insert(QLatin1String(NM_SETTING_802_1X_PIN), setting->pin());
         }
-        if (!setting->psk().isEmpty()) {
-            map.insert("psk", setting->psk());
-        }
         if (!setting->eap().contains(QLatin1String("leap"))) {
             map.insert(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS), setting->useSystemCaCerts());
         }
 
+        map.unite(toSecretsMap());
+
         if (!setting->password().isEmpty()) {
-            map.insert(QLatin1String(NM_SETTING_802_1X_PASSWORD), setting->password());
             map.insert(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS), (int)setting->passwordflags());
         }
         if (!setting->privatekeypassword().isEmpty()) {
-            map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD), setting->privatekeypassword());
             map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD_FLAGS), (int)setting->privatekeypasswordflags());
         }
         if (!setting->phase2privatekeypassword().isEmpty()) {
-            map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD), setting->phase2privatekeypassword());
             map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS), (int)setting->phase2privatekeypasswordflags());
         }
     }
@@ -220,13 +214,14 @@ QVariantMap Security8021xDbus::toMap()
 
 QVariantMap Security8021xDbus::toSecretsMap()
 {
-  QVariantMap map;
-  Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
-  if (setting->enabled()) {
-      map.insert(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS), setting->password());
-      map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD), setting->privatekeypassword());
-      map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD), setting->phase2privatekeypassword());
-  }
-  return map;
+    QVariantMap map;
+    Knm::Security8021xSetting * setting = static_cast<Knm::Security8021xSetting *>(m_setting);
+    if (!setting->password().isEmpty())
+        map.insert(QLatin1String(NM_SETTING_802_1X_PASSWORD), setting->password());
+    if (!setting->privatekeypassword().isEmpty())
+        map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD), setting->privatekeypassword());
+    if (!setting->phase2privatekeypassword().isEmpty())
+        map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD), setting->phase2privatekeypassword());
+    return map;
 }
 

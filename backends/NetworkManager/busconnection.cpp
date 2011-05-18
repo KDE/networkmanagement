@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDBusMetaType>
 #include <KDebug>
 
-#include "connectionsecretsjob.h"
+//#include "connectionsecretsjob.h"
 
 #include "connection.h"
 #include "connectiondbus.h"
@@ -62,16 +62,16 @@ void BusConnection::Update(QVariantMapMap updates)
 
 void BusConnection::updateInternal(Knm::Connection * connection)
 {
-    if (m_job) {
+    /*if (m_job) {
         // the user updated the connection using the KCM, _while_ a CSJ
         // for another GetSecrets was running
-        ConnectionSecretsJob * newJob = new ConnectionSecretsJob(connection, m_job->settingName(), m_job->secrets().keys(), false /*request_new*/, m_job->requestMessage());
+        ConnectionSecretsJob * newJob = new ConnectionSecretsJob(connection, m_job->settingName(), m_job->secrets().keys(), false, m_job->requestMessage());
         m_job->kill(KJob::Quietly);
 
         m_job = newJob;
         connect(m_job, SIGNAL(finished(KJob*)), this, SLOT(gotSecrets(KJob*)));
         m_job->start();
-    }
+    }*/
     m_connection = connection;
     ConnectionDbus cd(m_connection);
     QVariantMapMap map = cd.toDbusMap();
@@ -82,9 +82,9 @@ void BusConnection::updateInternal(Knm::Connection * connection)
 void BusConnection::Delete()
 {
     kDebug();
-    if (m_job) {
+    /*if (m_job) {
         m_job->kill(KJob::Quietly);
-    }
+    }*/
     deleteLater();
 }
 
@@ -97,7 +97,7 @@ QVariantMapMap BusConnection::GetSettings() const
 
 QVariantMapMap BusConnection::GetSecrets(const QString &setting_name, const QStringList &hints, bool request_new, const QDBusMessage& message)
 {
-    if (m_job) {
+    /*if (m_job) {
         kDebug() << "existing job, ignoring";
         return QVariantMapMap();
     } else {
@@ -112,12 +112,13 @@ QVariantMapMap BusConnection::GetSecrets(const QString &setting_name, const QStr
         m_job->start();
 
         return QVariantMapMap();
-    } 
+    } */
+    return QVariantMapMap();
 }
 
 void BusConnection::gotSecrets(KJob *job)
 {
-    ConnectionSecretsJob * csj = static_cast<ConnectionSecretsJob*>(job);
+ /*   ConnectionSecretsJob * csj = static_cast<ConnectionSecretsJob*>(job);
     if (csj == m_job) {
         if (m_job->error() == ConnectionSecretsJob::NoError) {
             ConnectionDbus db(m_connection);
@@ -146,7 +147,7 @@ void BusConnection::gotSecrets(KJob *job)
             QDBusConnection::systemBus().send(reply);
         }
         m_job = 0;
-    }
+    }*/
 }
 
 QString BusConnection::uuid() const

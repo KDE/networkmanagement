@@ -122,14 +122,14 @@ Setting::Type Setting::typeFromString(const QString & typeString)
 }
 
 Setting::Setting(Setting::Type type)
-    : m_initialized(false), m_type(type), m_secretsAvailable(false)
+    : m_initialized(false), m_secretsObject(0), m_type(type), m_secretsAvailable(false)
 {
-
 }
 
 Setting::~Setting()
 {
-
+    if (m_secretsObject)
+        delete m_secretsObject;
 }
 
 bool Setting::isNull() const
@@ -159,17 +159,19 @@ void Setting::setSecretsAvailable(bool available)
 
 void Setting::setSecrets(Setting::secretsTypes)
 {
+}
 
+Secrets* Setting::getSecretsObject()
+{
+    return m_secretsObject;
 }
 
 void Setting::save(bool)
 {
-
 }
 
 void Setting::remove()
 {
-
 }
 
 // vim: sw=4 sts=4 et tw=100

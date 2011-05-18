@@ -23,12 +23,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QHBoxLayout>
 #include <QDBusInterface>
-#include <QDBusPendingReply>    				    
+#include <QDBusPendingReply>
 
 #include <KLocale>
 #include <KPluginFactory>
 
 #include "knmserviceprefs.h"
+#include "paths.h"
 #include <tooltips.h>
 
 
@@ -40,7 +41,7 @@ ManageTrayWidget::ManageTrayWidget(QWidget *parent, const QVariantList &args)
 {
 
     KGlobal::locale()->insertCatalog("libknmui");
-    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    KNetworkManagerServicePrefs::instance(NETWORKMANAGEMENT_RCFILE);
 
     QHBoxLayout * layout = new QHBoxLayout(this);
     ui = new OtherSettingsWidget(this);

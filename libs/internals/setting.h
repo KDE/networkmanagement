@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knminternals_export.h"
 #include <QObject>
+#include "secrets.h"
 
 namespace Knm
 {
@@ -46,6 +47,7 @@ public:
     virtual bool hasSecrets() const = 0;
     virtual bool hasVolatileSecrets() const { return false; }
     virtual void setSecrets(secretsTypes);
+    virtual Secrets* getSecretsObject();
     bool secretsAvailable() const;
     void setSecretsAvailable(bool secretsAvailable);
 
@@ -53,6 +55,7 @@ public:
     virtual void remove();
 protected:
     bool m_initialized;
+    Secrets *m_secretsObject;
 private:
     Setting::Type m_type;
     bool m_secretsAvailable;

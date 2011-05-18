@@ -233,6 +233,19 @@ QVariantMapMap ConnectionDbus::toDbusSecretsMap()
     return mapMap;
 }
 
+QVariantMapMap ConnectionDbus::toDbusSecretsMap(const QString &name)
+{
+    QVariantMapMap mapMap;
+    foreach (Setting * setting, m_connection->settings()) {
+        if (setting->name() == name) {
+            SettingDbus * sd = dbusFor(setting);
+        if (sd)
+            mapMap.insert(setting->name(), sd->toSecretsMap());
+        }
+    }
+    return mapMap;
+}
+
 void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
 {
     // connection settings
@@ -285,6 +298,7 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
         if (settings.contains(setting->name())) {
             SettingDbus * sd = dbusFor(setting);
             sd->fromMap(settings.value(setting->name()));
+            setting->setInitialized();
         }
     }
 }

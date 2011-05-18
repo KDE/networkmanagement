@@ -57,6 +57,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfacedetailswidget.h"
 #include "uiutils.h"
 #include "knmserviceprefs.h"
+#include "paths.h"
 
 NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* parent)
 : QGraphicsWidget(parent),
@@ -260,7 +261,7 @@ void NMPopup::init()
 void NMPopup::readConfig()
 {
     kDebug();
-    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    KNetworkManagerServicePrefs::instance(NETWORKMANAGEMENT_RCFILE);
     KNetworkManagerServicePrefs::self()->readConfig();
     KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("SystemTray"));
     if (config.exists()) {

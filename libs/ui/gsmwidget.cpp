@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -39,7 +39,6 @@ GsmWidget::GsmWidget(Knm::Connection * connection, QWidget * parent)
     d->setting = static_cast<Knm::GsmSetting *>(connection->setting(Knm::Setting::Gsm));
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
     d->ui.pin->setEchoMode(QLineEdit::Password);
-    d->ui.puk->setEchoMode(QLineEdit::Password);
     /* Not used yet*/
     d->ui.lblBand->setVisible(false);
     d->ui.band->setVisible(false);
@@ -69,7 +68,6 @@ void GsmWidget::chkShowPassToggled()
     bool on = d->ui.chkShowPass->isChecked();
     d->ui.password->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
     d->ui.pin->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
-    d->ui.puk->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
 }
 
 
@@ -84,7 +82,6 @@ void GsmWidget::writeConfig()
     d->setting->setNetworktype(d->ui.type->currentIndex() - 1);
     d->setting->setBand(d->ui.band->value());
     d->setting->setPin(d->ui.pin->text());
-    d->setting->setPuk(d->ui.puk->text());
 }
 
 void GsmWidget::readSecrets()
@@ -92,7 +89,6 @@ void GsmWidget::readSecrets()
     Q_D(GsmWidget);
     d->ui.password->setText(d->setting->password());
     d->ui.pin->setText(d->setting->pin());
-    d->ui.puk->setText(d->setting->puk());
 }
 
 void GsmWidget::validate()

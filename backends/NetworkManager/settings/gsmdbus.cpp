@@ -67,12 +67,12 @@ QVariantMap GsmDbus::toMap()
   if (setting->networktype() != NM_SETTING_GSM_NETWORK_TYPE_ANY) {
       map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_TYPE), setting->networktype());
   }
+
+  map.unite(toSecretsMap());
   if (!setting->password().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_GSM_PASSWORD), setting->password());
       map.insert(QLatin1String(NM_SETTING_GSM_PASSWORD_FLAGS), (int)setting->passwordflags());
   }
   if (!setting->pin().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_GSM_PIN), setting->pin());
       map.insert(QLatin1String(NM_SETTING_GSM_PIN_FLAGS), (int)setting->pinflags());
 }
 
@@ -85,11 +85,9 @@ QVariantMap GsmDbus::toSecretsMap()
   QVariantMap map;
   Knm::GsmSetting * setting = static_cast<Knm::GsmSetting *>(m_setting);
   if (!setting->password().isEmpty())
-      map.insert("password", setting->password());
+      map.insert(QLatin1String(NM_SETTING_GSM_PASSWORD), setting->password());
   if (!setting->pin().isEmpty())
-      map.insert("pin", setting->pin());
-  if (!setting->puk().isEmpty())
-      map.insert("puk", setting->puk());
+      map.insert(QLatin1String(NM_SETTING_GSM_PIN), setting->pin());
   return map;
 }
 

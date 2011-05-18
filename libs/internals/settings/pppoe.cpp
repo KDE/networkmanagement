@@ -2,11 +2,13 @@
 // All changes you do to this file will be lost.
 
 #include "pppoe.h"
+#include "pppoesecrets.h"
 
 using namespace Knm;
 
 PppoeSetting::PppoeSetting() : Setting(Setting::Pppoe)
 {
+    m_secretsObject = new PppoeSecrets(this);
 }
 
 PppoeSetting::~PppoeSetting()
