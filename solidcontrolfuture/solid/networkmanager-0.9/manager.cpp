@@ -198,9 +198,7 @@ void NMNetworkManager::setNetworkingEnabled(bool enabled)
     QDBusPendingReply<> reply = d->iface.Enable(enabled);
     reply.waitForFinished();
     if (reply.isError()) {
-        kDebug(1441) << "Enable() D-Bus method not available:" << reply.error();
-        kDebug(1441) << "Calling Sleep() instead";
-        d->iface.Sleep(!enabled);
+        kDebug(1441) << "Enable() D-Bus method return error:" << reply.error();
     }
 }
 
