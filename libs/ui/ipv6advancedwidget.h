@@ -37,8 +37,8 @@ public:
     IpV6AdvancedWidget(QWidget * parent = 0);
     virtual ~IpV6AdvancedWidget();
 
-    void setAdditionalAddresses(const QList<Solid::Control::IPv6Address> &list);
-    QList<Solid::Control::IPv6Address> additionalAddresses();
+    void setAdditionalAddresses(const QList<NetworkManager::IPv6Address> &list);
+    QList<NetworkManager::IPv6Address> additionalAddresses();
 
 protected slots:
     void addIPAddress();

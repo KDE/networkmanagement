@@ -44,10 +44,10 @@ configure_file(backends/NetworkManager/config-nm07backend.h.cmake ${CMAKE_CURREN
 set (CMAKE_REQUIRED_DEFINITIONS ${KDE4_DEFINITIONS})
 set (CMAKE_REQUIRED_INCLUDES ${KDE4_INCLUDES})
 set (CMAKE_REQUIRED_LIBRARIES -L${KDE4_LIB_DIR} -lnm-qt)
-#CHECK_CXX_SOURCE_COMPILES("#include <solid/control/networkmanager.h>
+#CHECK_CXX_SOURCE_COMPILES("#include <libnm-qt/manager.h>
 #int main()
 #{
-#    Solid::Control::NetworkManager::isWwanEnabled();
+#    NetworkManager::NetworkManager::isWwanEnabled();
 #    return 0;
 #}" NM_0_8)
 #if (NM_0_8)

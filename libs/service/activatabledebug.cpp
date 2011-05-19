@@ -21,8 +21,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatabledebug.h"
 
 #include <KDebug>
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/device.h>
 
 #include <activatable.h>
 #include <interfaceconnection.h>
@@ -53,7 +53,7 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
     QString string;
 
     QString identifier;
-    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable->deviceUni());
+    NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(activatable->deviceUni());
     if (iface) {
         identifier = iface->interfaceName();
     } else {

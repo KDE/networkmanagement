@@ -69,7 +69,7 @@ set(knmservice_SRCS
    sortedactivatablelist.cpp
 
    # dialog to ask for PIN code
-   pindialog.cpp
+   #pindialog.cpp
    )
 
 kde4_add_ui_files(knmservice_SRCS

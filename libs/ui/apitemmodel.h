@@ -26,10 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QModelIndex>
 #include <QVariant>
 
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirelessnetworkinterface.h>
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/wirelessdevice.h>
+#include <libnm-qt/accesspoint.h>
 #include "wirelessnetworkinterfaceenvironment.h"
 
 class ApItemModel : public QAbstractItemModel
@@ -58,7 +58,7 @@ class ApItemModel : public QAbstractItemModel
 
     private:
         QStringList m_accessPoints;
-        Solid::Control::WirelessNetworkInterface *m_networkInterface;
+        NetworkManager::WirelessDevice *m_networkInterface;
 
         static const int s_numColumns = 4;
 };

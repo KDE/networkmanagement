@@ -27,8 +27,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KTabWidget>
 
-#include <solid/control/networkmanager.h>
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/accesspoint.h>
 
 
 #include "802_11_wirelesswidget.h"
@@ -68,11 +68,11 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
         kWarning() << "Could not find deviceUni or AP UNI in args:" << args;
     }
 
-    Solid::Control::AccessPoint * ap = 0;
-    Solid::Control::WirelessNetworkInterface * iface = 0;
+    NetworkManager::AccessPoint * ap = 0;
+    NetworkManager::WirelessDevice * iface = 0;
 
     if (!deviceUni.isEmpty() && deviceUni != QLatin1String("/")) {
-        iface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(Solid::Control::NetworkManager::findNetworkInterface(deviceUni));
+        iface = qobject_cast<NetworkManager::WirelessDevice*>(NetworkManager::NetworkManager::findNetworkInterface(deviceUni));
         if (iface) {
             if ( !apUni.isEmpty() && apUni != QLatin1String("/")) {
                 ap = iface->findAccessPoint(apUni);
@@ -140,11 +140,11 @@ WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
         kWarning() << "Could not find deviceUni or AP UNI in args:" << args;
     }
 
-    Solid::Control::AccessPoint * ap = 0;
-    Solid::Control::WirelessNetworkInterface * iface = 0;
+    NetworkManager::AccessPoint * ap = 0;
+    NetworkManager::WirelessDevice * iface = 0;
 
     if (!deviceUni.isEmpty() && deviceUni != QLatin1String("/")) {
-        iface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(Solid::Control::NetworkManager::findNetworkInterface(deviceUni));
+        iface = qobject_cast<NetworkManager::WirelessDevice*>(NetworkManager::NetworkManager::findNetworkInterface(deviceUni));
         if (iface) {
             if ( !apUni.isEmpty() && apUni != QLatin1String("/")) {
                 ap = iface->findAccessPoint(apUni);
@@ -191,8 +191,8 @@ bool WirelessPreferences::needsEdits() const
 void WirelessPreferences::tabChanged(int index)
 {
     if (index == m_securityTabIndex && m_wirelessWidget->enteredSsidIsDirty()) {
-        Solid::Control::WirelessNetworkInterface * ifaceForSsid = 0;
-        Solid::Control::AccessPoint * apForSsid = 0;
+        NetworkManager::WirelessDevice * ifaceForSsid = 0;
+        NetworkManager::AccessPoint * apForSsid = 0;
         // look up AP given by m_wirelessWidget, and set it on m_securityWidget
         QByteArray hwAddr = m_wirelessWidget->selectedInterfaceHardwareAddress();
         QString ssid = m_wirelessWidget->enteredSsid();
@@ -200,17 +200,17 @@ void WirelessPreferences::tabChanged(int index)
             // find the S::C::WNI for this ssid
             // if hwAddr set, take that one
             // else, take the first one that can see this ssid
-            foreach (Solid::Control::NetworkInterface * iface,
-                    Solid::Control::NetworkManager::networkInterfaces()) {
-                if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-                    Solid::Control::WirelessNetworkInterface * candidate = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+            foreach (NetworkManager::Device * iface,
+                    NetworkManager::NetworkManager::networkInterfaces()) {
+                if (iface->type() == NetworkManager::Device::Ieee80211) {
+                    NetworkManager::WirelessDevice * candidate = static_cast<NetworkManager::WirelessDevice*>(iface);
                     if (candidate->hardwareAddress() == hwAddr) {
                         ifaceForSsid = candidate;
                         break;
                     }
-                    Solid::Control::WirelessNetworkInterfaceEnvironment env(candidate);
+                    NetworkManager::WirelessDeviceEnvironment env(candidate);
 
-                    Solid::Control::WirelessNetwork * net = 0;
+                    NetworkManager::WirelessNetwork * net = 0;
                     net = env.findNetwork(ssid);
                     if (net) {
                         QString apUni = net->referenceAccessPoint();

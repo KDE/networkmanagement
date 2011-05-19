@@ -168,7 +168,7 @@ void IpV6Widget::readConfig()
 
     // ip addresses
     if (advancedSettingsPartEnabled) {
-        QList<Solid::Control::IPv6Address> addrList = d->setting->addresses();
+        QList<NetworkManager::IPv6Address> addrList = d->setting->addresses();
         if (!addrList.isEmpty())
         {
             if (addressPartEnabled)
@@ -254,7 +254,7 @@ void IpV6Widget::writeConfig()
     }
 
     // addresses
-    QList<Solid::Control::IPv6Address> addresses = d->ui.advancedSettings->additionalAddresses();
+    QList<NetworkManager::IPv6Address> addresses = d->ui.advancedSettings->additionalAddresses();
     // update only the first item, the rest items are already updated
     QNetworkAddressEntry entry;
     // we need to set up IP before prefix/netmask manipulation
@@ -263,7 +263,7 @@ void IpV6Widget::writeConfig()
 
     QHostAddress gateway(d->ui.gateway->text());
     if (entry.ip() != QHostAddress::Null) {
-        Solid::Control::IPv6Address addr(entry.ip().toIPv6Address(),
+        NetworkManager::IPv6Address addr(entry.ip().toIPv6Address(),
                                          entry.prefixLength(), gateway.toIPv6Address());
             addresses.prepend(addr);
     }
@@ -321,7 +321,7 @@ void IpV6Widget::methodChanged(int currentIndex)
 
     if (!addressPartEnabled && advancedSettingsPartEnabled)
     {
-        QList<Solid::Control::IPv6Address> addresses = d->ui.advancedSettings->additionalAddresses();
+        QList<NetworkManager::IPv6Address> addresses = d->ui.advancedSettings->additionalAddresses();
         QNetworkAddressEntry entry;
         // we need to set up IP before prefix/netmask manipulation
         entry.setIp(QHostAddress(d->ui.address->text()));
@@ -329,7 +329,7 @@ void IpV6Widget::methodChanged(int currentIndex)
         QHostAddress gateway(d->ui.gateway->text());
         if (entry.ip() != QHostAddress::Null)
         {
-            Solid::Control::IPv6Address addr(entry.ip().toIPv6Address(),
+            NetworkManager::IPv6Address addr(entry.ip().toIPv6Address(),
                                          entry.prefixLength(), gateway.toIPv6Address());
             addresses.prepend(addr);
         }
@@ -337,10 +337,10 @@ void IpV6Widget::methodChanged(int currentIndex)
     }
     else if (addressPartEnabled && advancedSettingsPartEnabled)
     {
-        QList<Solid::Control::IPv6Address> addresses = d->ui.advancedSettings->additionalAddresses();
+        QList<NetworkManager::IPv6Address> addresses = d->ui.advancedSettings->additionalAddresses();
         if (!addresses.isEmpty())
         {
-            Solid::Control::IPv6Address addr = addresses.takeFirst();
+            NetworkManager::IPv6Address addr = addresses.takeFirst();
             QNetworkAddressEntry entry;
             // we need to set up IP before prefix/netmask manipulation
             entry.setIp(QHostAddress(addr.address()));
@@ -363,7 +363,7 @@ void IpV6Widget::methodChanged(int currentIndex)
     }
     if (!advancedSettingsPartEnabled)
     {
-        d->ui.advancedSettings->setAdditionalAddresses(QList<Solid::Control::IPv6Address>());
+        d->ui.advancedSettings->setAdditionalAddresses(QList<NetworkManager::IPv6Address>());
     }
 
     d->ui.advancedSettings->setEnabled(advancedSettingsPartEnabled);

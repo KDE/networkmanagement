@@ -29,8 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Solid/Device>
 
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/device.h>
 
 #include <unconfiguredinterface.h>
 #include <uiutils.h>
@@ -60,9 +60,9 @@ UnconfiguredInterfaceItem::UnconfiguredInterfaceItem(Knm::UnconfiguredInterface 
     d->activeIcon->show();
     // disconnects us from to the activatable's activate slot, because this is handled indirectly by
     // KnetworkManagerTrayIcon now.
-    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(unconfigured->deviceUni());
+    NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(unconfigured->deviceUni());
     if (iface) {
-        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+        if (iface->type() == NetworkManager::Device::Ieee80211) {
             disconnect(this, SIGNAL(clicked()), unconfigured, SLOT(activate()));
         }
     }
@@ -84,23 +84,23 @@ QString UnconfiguredInterfaceItem::iconName() const
 {
     // TODO a more specific icon could be identified using Solid eg external phones, pcmcia cards,
     // usb adaptors...
-    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable()->deviceUni());
+    NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(activatable()->deviceUni());
     QString icon;
     if (iface) {
         switch (iface->type()) {
-            case Solid::Control::NetworkInterface::Ieee8023:
+            case NetworkManager::Device::Ieee8023:
                 icon = QLatin1String("network-wired");
                 break;
-            case Solid::Control::NetworkInterface::Ieee80211:
+            case NetworkManager::Device::Ieee80211:
                 icon = QLatin1String("network-wireless");
                 break;
-            case Solid::Control::NetworkInterface::Serial:
+            case NetworkManager::Device::Serial:
                 icon = QLatin1String("modem");
                 break;
-            case Solid::Control::NetworkInterface::Gsm:
+            case NetworkManager::Device::Gsm:
                 icon = QLatin1String("phone");
                 break;
-            case Solid::Control::NetworkInterface::Cdma:
+            case NetworkManager::Device::Cdma:
                 icon = QLatin1String("phone");
                 break;
             default:

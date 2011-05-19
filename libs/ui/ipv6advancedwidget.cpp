@@ -79,10 +79,10 @@ IpV6AdvancedWidget::~IpV6AdvancedWidget()
     delete d;
 }
 
-void IpV6AdvancedWidget::setAdditionalAddresses(const QList<Solid::Control::IPv6Address> &list)
+void IpV6AdvancedWidget::setAdditionalAddresses(const QList<NetworkManager::IPv6Address> &list)
 {
     d->model.removeRows(0, d->model.rowCount());
-    foreach (const Solid::Control::IPv6Address &addr, list) {
+    foreach (const NetworkManager::IPv6Address &addr, list) {
         QList<QStandardItem *> item;
         QNetworkAddressEntry entry;
         // we need to set up IP before prefix/netmask manipulation
@@ -101,9 +101,9 @@ void IpV6AdvancedWidget::setAdditionalAddresses(const QList<Solid::Control::IPv6
     }
 }
 
-QList<Solid::Control::IPv6Address> IpV6AdvancedWidget::additionalAddresses()
+QList<NetworkManager::IPv6Address> IpV6AdvancedWidget::additionalAddresses()
 {
-    QList<Solid::Control::IPv6Address> list;
+    QList<NetworkManager::IPv6Address> list;
 
     for (int i = 0, rowCount = d->model.rowCount(); i < rowCount; i++) {
         QHostAddress ip, gw;
@@ -114,7 +114,7 @@ QList<Solid::Control::IPv6Address> IpV6AdvancedWidget::additionalAddresses()
         entry.setPrefixLength(d->model.item(i, 1)->text().toInt());
         gw.setAddress(d->model.item(i, 2)->text());
 
-        list.append(Solid::Control::IPv6Address(ip.toIPv6Address(),
+        list.append(NetworkManager::IPv6Address(ip.toIPv6Address(),
                                                 entry.prefixLength(),
                                                 gw.toIPv6Address()));
     }

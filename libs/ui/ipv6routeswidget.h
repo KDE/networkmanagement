@@ -36,8 +36,8 @@ public:
     IpV6RoutesWidget(QWidget * parent = 0);
     virtual ~IpV6RoutesWidget();
 
-    void setRoutes(const QList<Solid::Control::IPv6Route> &list);
-    QList<Solid::Control::IPv6Route> routes();
+    void setRoutes(const QList<NetworkManager::IPv6Route> &list);
+    QList<NetworkManager::IPv6Route> routes();
     void setNeverDefault(bool checked);
     bool neverdefault();
     void setIgnoreAutoRoutes(bool checked);

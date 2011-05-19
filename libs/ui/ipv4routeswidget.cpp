@@ -102,10 +102,10 @@ bool IpV4RoutesWidget::ignoreautoroutes()
     return d->ui.cbIgnoreAutoRoutes->isChecked();
 }
 
-void IpV4RoutesWidget::setRoutes(const QList<Solid::Control::IPv4Route> &list)
+void IpV4RoutesWidget::setRoutes(const QList<NetworkManager::IPv4Route> &list)
 {
     d->model.removeRows(0, d->model.rowCount());
-    foreach (const Solid::Control::IPv4Route &addr, list) {
+    foreach (const NetworkManager::IPv4Route &addr, list) {
         QList<QStandardItem *> item;
         QNetworkAddressEntry entry;
         QNetworkAddressEntry nexthop;
@@ -123,9 +123,9 @@ kDebug()<<entry.ip().toString();
     }
 }
 
-QList<Solid::Control::IPv4Route> IpV4RoutesWidget::routes()
+QList<NetworkManager::IPv4Route> IpV4RoutesWidget::routes()
 {
-    QList<Solid::Control::IPv4Route> list;
+    QList<NetworkManager::IPv4Route> list;
 
     for (int i = 0, rowCount = d->model.rowCount(); i < rowCount; i++) {
         QHostAddress ip, mask, nhop;
@@ -139,7 +139,7 @@ QList<Solid::Control::IPv4Route> IpV4RoutesWidget::routes()
         nhop.setAddress(d->model.item(i, 2)->text());
         metric = d->model.item(i, 3)->text().toUInt();
 
-        list.append(Solid::Control::IPv4Route(ip.toIPv4Address(),
+        list.append(NetworkManager::IPv4Route(ip.toIPv4Address(),
                                                 entry.prefixLength(),
                                                 nhop.toIPv4Address(),
                                                 metric));

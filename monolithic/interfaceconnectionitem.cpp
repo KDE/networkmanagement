@@ -30,8 +30,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.  */
 #include <KIcon>
 #include <KIconLoader>
 
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/device.h>
 
 #include "interfaceconnection.h"
 #include "tooltipbuilder.h"
@@ -128,7 +128,7 @@ void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::Activ
                 break;
             case Knm::InterfaceConnection::Activating:
             case Knm::InterfaceConnection::Activated:
-                Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable()->deviceUni());
+                NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(activatable()->deviceUni());
                 if (!d->connectionDetailsLabel) {
                     d->connectionDetailsLabel = new QLabel(this);
                     d->connectionLayout->addWidget(d->connectionDetailsLabel);

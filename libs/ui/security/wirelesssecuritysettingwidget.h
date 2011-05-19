@@ -51,15 +51,15 @@ public:
      * rsn
      */
     WirelessSecuritySettingWidget(Knm::Connection * connection,
-            Solid::Control::WirelessNetworkInterface * iface = 0,
-            Solid::Control::AccessPoint * ap = 0,
+            NetworkManager::WirelessDevice * iface = 0,
+            NetworkManager::AccessPoint * ap = 0,
             QWidget * parent = 0 );
     virtual ~WirelessSecuritySettingWidget();
     void readConfig();
     void writeConfig();
     void readSecrets();
 public Q_SLOTS:
-    void setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterface * iface, Solid::Control::AccessPoint * ap);
+    void setIfaceAndAccessPoint(NetworkManager::WirelessDevice * iface, NetworkManager::AccessPoint * ap);
 protected Q_SLOTS:
     void securityTypeChanged(int);
     void validate();

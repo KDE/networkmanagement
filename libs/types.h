@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <NetworkManager.h>
 
+/*
 Q_DECLARE_METATYPE(QList<uint>)
 Q_DECLARE_METATYPE(QList< QList<uint> >)
 typedef QList< QList<uint> > UintListList;
@@ -38,6 +39,7 @@ Q_DECLARE_METATYPE(QVariantMapMap)
 typedef QMap<QString, QString> QStringMap;
 typedef QMapIterator<QString, QString> QStringMapIterator;
 Q_DECLARE_METATYPE(QStringMap)
+*/
 
 // Device states of NM 0.9
 enum NM09DeviceState {

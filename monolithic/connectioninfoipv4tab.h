@@ -22,7 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtGui>
 
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/device.h>
 #include <solid/control/networkipv4config.h>
 
 /**
@@ -33,14 +33,14 @@ class ConnectionInfoIPv4Tab : public QWidget
     Q_OBJECT
 
 public:
-    ConnectionInfoIPv4Tab(Solid::Control::NetworkInterface *iface, QWidget *parent = 0);
+    ConnectionInfoIPv4Tab(NetworkManager::Device *iface, QWidget *parent = 0);
     ~ConnectionInfoIPv4Tab() { };
 
 public slots:
     void updateIpDetails();
 
 private:
-    Solid::Control::NetworkInterface *m_iface;
+    NetworkManager::Device *m_iface;
     QLabel *m_connectionStateLabel,
            *m_ipAddressesLabel,
            *m_netmasksLabel,

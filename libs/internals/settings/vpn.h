@@ -6,9 +6,9 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
+#include <libnm-qt/generic-types.h>
 #include "setting.h"
 #include "knminternals_export.h"
-#include "../types.h"
 
 #define NM_VPN_PW_TYPE_SAVE   "save"
 #define NM_VPN_PW_TYPE_ASK    "ask"

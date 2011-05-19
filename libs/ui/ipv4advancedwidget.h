@@ -38,8 +38,8 @@ public:
     IpV4AdvancedWidget(QWidget * parent = 0);
     virtual ~IpV4AdvancedWidget();
 
-    void setAdditionalAddresses(const QList<Solid::Control::IPv4Address> &list);
-    QList<Solid::Control::IPv4Address> additionalAddresses();
+    void setAdditionalAddresses(const QList<NetworkManager::IPv4Address> &list);
+    QList<NetworkManager::IPv4Address> additionalAddresses();
 
 protected slots:
     void addIPAddress();

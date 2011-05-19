@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectioninfowiredtab.h"
 #include "connectioninfowirelesstab.h"
 
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/manager.h>
 
 #include <uiutils.h>
 
@@ -70,7 +70,7 @@ void ConnectionInfoDialog::interfaceConnectionStateChanged(Knm::InterfaceConnect
 void ConnectionInfoDialog::buildGUI()
 {
     QString deviceUni = m_ic->deviceUni();
-    m_iface = Solid::Control::NetworkManager::findNetworkInterface(deviceUni);
+    m_iface = NetworkManager::NetworkManager::findNetworkInterface(deviceUni);
 
     if (m_iface == 0) {
         return;
@@ -81,14 +81,14 @@ void ConnectionInfoDialog::buildGUI()
     
     QString deviceType = UiUtils::interfaceTypeLabel(m_iface->type());
     switch (m_iface->type()) {
-    case Solid::Control::NetworkInterface::Ieee8023: {
-            ConnectionInfoWiredTab *wiredTab = new ConnectionInfoWiredTab(qobject_cast<Solid::Control::WiredNetworkInterface*>(m_iface), m_ui.infoTabWidget);
+    case NetworkManager::Device::Ieee8023: {
+            ConnectionInfoWiredTab *wiredTab = new ConnectionInfoWiredTab(qobject_cast<NetworkManager::WiredDevice*>(m_iface), m_ui.infoTabWidget);
             m_ui.infoTabWidget->addTab(wiredTab, deviceType);
             m_ui.connectionIcon->setPixmap(KIconLoader::global()->loadIcon("network-wired", KIconLoader::Panel));
             break;
         }
-    case Solid::Control::NetworkInterface::Ieee80211: {
-            ConnectionInfoWirelessTab *wirelessTab = new ConnectionInfoWirelessTab(qobject_cast<Solid::Control::WirelessNetworkInterface*>(m_iface), m_ui.infoTabWidget);
+    case NetworkManager::Device::Ieee80211: {
+            ConnectionInfoWirelessTab *wirelessTab = new ConnectionInfoWirelessTab(qobject_cast<NetworkManager::WirelessDevice*>(m_iface), m_ui.infoTabWidget);
             m_ui.infoTabWidget->addTab(wirelessTab, deviceType);
             m_ui.connectionIcon->setPixmap(KIconLoader::global()->loadIcon("network-wireless", KIconLoader::Panel));
             break;

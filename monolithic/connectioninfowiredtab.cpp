@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectioninfowiredtab.h"
 
-ConnectionInfoWiredTab::ConnectionInfoWiredTab(Solid::Control::WiredNetworkInterface *iface, QWidget *parent)
+ConnectionInfoWiredTab::ConnectionInfoWiredTab(NetworkManager::WiredDevice *iface, QWidget *parent)
     : QWidget(parent), m_iface(iface)
 {
     QFormLayout *layout = new QFormLayout(this);

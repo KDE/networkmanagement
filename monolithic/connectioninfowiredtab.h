@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtGui>
 
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirednetworkinterface.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/wireddevice.h>
 
 /**
  * Tab for ConnectionInfoDialog, that shows wired ethernet details
@@ -33,14 +33,14 @@ class ConnectionInfoWiredTab : public QWidget
     Q_OBJECT
 
 public:
-    ConnectionInfoWiredTab(Solid::Control::WiredNetworkInterface *iface, QWidget *parent = 0);
+    ConnectionInfoWiredTab(NetworkManager::WiredDevice *iface, QWidget *parent = 0);
     ~ConnectionInfoWiredTab() { };
 
 public slots:
     void updateBitRate(int rate);
 
 private:
-    Solid::Control::WiredNetworkInterface *m_iface;
+    NetworkManager::WiredDevice *m_iface;
     QLabel *m_bitRateLabel,
            *m_hardwareAddressLabel;
 };

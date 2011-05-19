@@ -25,8 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdeversion.h>
 
 #include <Solid/Device>
-#include <solid/control/networkmanager.h>
-#include <solid/control/wirelessnetworkinterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/wirelessdevice.h>
 
 #include <connection.h>
 #include <settings/802-11-wireless.h>
@@ -62,10 +62,10 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
 
     d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+    foreach (NetworkManager::Device * iface, NetworkManager::NetworkManager::networkInterfaces()) {
+        if (iface->type() == NetworkManager::Device::Ieee80211) {
 
-            Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+            NetworkManager::WirelessDevice * wiface = static_cast<NetworkManager::WirelessDevice*>(iface);
             d->ui.cmbMacAddress->addItem(UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames), wiface->hardwareAddress().toLatin1());
         }
     }
@@ -244,12 +244,12 @@ void Wireless80211Widget::bandChanged(int index)
 void Wireless80211Widget::copyToBssid()
 {
     Q_D(Wireless80211Widget);
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-            Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+    foreach (NetworkManager::Device * iface, NetworkManager::NetworkManager::networkInterfaces()) {
+        if (iface->type() == NetworkManager::Device::Ieee80211) {
+            NetworkManager::WirelessDevice * wiface = static_cast<NetworkManager::WirelessDevice*>(iface);
             QString activeAp = wiface->activeAccessPoint();
             if (!activeAp.isEmpty()) {
-                Solid::Control::AccessPoint * ap = wiface->findAccessPoint(wiface->activeAccessPoint());
+                NetworkManager::AccessPoint * ap = wiface->findAccessPoint(wiface->activeAccessPoint());
                 if (ap) {
                     d->ui.bssid->setText(ap->hardwareAddress());
                 }

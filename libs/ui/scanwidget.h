@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QItemSelectionModel>
 
 #include <KLocale>
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/accesspoint.h>
 
 #include "apitemview.h"
 #include "networkitemmodel.h"

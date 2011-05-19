@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QList>
 
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/device.h>
 
 #include "knm_export.h"
 
@@ -55,7 +55,7 @@ public:
      * to collect
      * @param parent the parent QObject
      */
-    SortedActivatableList(Solid::Control::NetworkInterface::Types types, QObject * parent = 0);
+    SortedActivatableList(NetworkManager::Device::Types types, QObject * parent = 0);
 
     // respond to activatable changes
     void handleAdd(Knm::Activatable *);

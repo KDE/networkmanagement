@@ -35,10 +35,10 @@ ScanWidget::ScanWidget(QWidget *parent)
     setupUi(this);
 
     //populate the interfaces combobox
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+    foreach (NetworkManager::Device * iface, NetworkManager::NetworkManager::networkInterfaces()) {
+        if (iface->type() == NetworkManager::Device::Ieee80211) {
 
-            Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+            NetworkManager::WirelessDevice * wiface = static_cast<NetworkManager::WirelessDevice*>(iface);
             m_interface->addItem(UiUtils::interfaceNameLabel(iface->uni()), wiface->uni());
         }
     }

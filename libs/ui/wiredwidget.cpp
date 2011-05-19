@@ -25,8 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <kdeversion.h>
 #include <Solid/Device>
-#include <solid/control/networkmanager.h>
-#include <solid/control/wirednetworkinterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/wireddevice.h>
 
 #include <connection.h>
 #include <settings/802-3-ethernet.h>
@@ -52,10 +52,10 @@ WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
     d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-        if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+    foreach (NetworkManager::Device * iface, NetworkManager::NetworkManager::networkInterfaces()) {
+        if (iface->type() == NetworkManager::Device::Ieee8023) {
             QString deviceText = UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames);
-            Solid::Control::WiredNetworkInterface * wired = static_cast<Solid::Control::WiredNetworkInterface*>(iface);
+            NetworkManager::WiredDevice * wired = static_cast<NetworkManager::WiredDevice*>(iface);
             d->ui.cmbMacAddress->addItem(deviceText, wired->hardwareAddress().toLatin1());
         }
     }

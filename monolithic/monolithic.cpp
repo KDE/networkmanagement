@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KStartupInfo>
 #include <KMenu>
 
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/device.h>
 
 #include <knmserviceprefs.h>
 #include <connectionlist.h>
@@ -205,7 +205,7 @@ void Monolithic::createTrayIcons()
     KNetworkManagerServicePrefs::self()->readConfig();
 
     for (uint i = 0; i < KNetworkManagerServicePrefs::self()->iconCount(); ++i) {
-        Solid::Control::NetworkInterface::Types types(KNetworkManagerServicePrefs::self()->iconTypes(i));
+        NetworkManager::Device::Types types(KNetworkManagerServicePrefs::self()->iconTypes(i));
 
         SortedActivatableList * sortedList = new SortedActivatableList(types, 0);
         d->activatableList->registerObserver(sortedList);

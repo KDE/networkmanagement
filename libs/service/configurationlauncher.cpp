@@ -29,8 +29,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KToolInvocation>
 #include <KStandardDirs>
 
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/device.h>
 #include <wirelessnetworkinterfaceenvironment.h>
 
 #include "unconfiguredinterface.h"
@@ -127,10 +127,10 @@ void ConfigurationLauncher::configureWirelessNetworkInternal(const QString & ssi
 
     QString apUni = QLatin1String("/");
 
-    Solid::Control::WirelessNetworkInterface * iface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(Solid::Control::NetworkManager::findNetworkInterface(deviceUni));
+    NetworkManager::WirelessDevice * iface = qobject_cast<NetworkManager::WirelessDevice*>(NetworkManager::NetworkManager::findNetworkInterface(deviceUni));
     if (iface) {
-        Solid::Control::WirelessNetworkInterfaceEnvironment envt(iface);
-        Solid::Control::WirelessNetwork * network = envt.findNetwork(ssid);
+        NetworkManager::WirelessDeviceEnvironment envt(iface);
+        NetworkManager::WirelessNetwork * network = envt.findNetwork(ssid);
         if (network) {
             apUni = network->referenceAccessPoint();
         }
@@ -180,25 +180,25 @@ void ConfigurationLauncher::unconfiguredInterfaceActivated()
         }
 
         //HACK - write proper AsString and FromString functions in the library somewhere
-        Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(unco->deviceUni());
+        NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(unco->deviceUni());
         QString typeString;
         QString editorArgs;
         if (iface) {
             switch (iface->type()) {
-                case Solid::Control::NetworkInterface::Ieee8023:
+                case NetworkManager::Device::Ieee8023:
                     typeString = QLatin1String("802-3-ethernet");
                     break;
-                case Solid::Control::NetworkInterface::Ieee80211:
+                case NetworkManager::Device::Ieee80211:
                     typeString = QLatin1String("802-11-wireless");
                     break;
-                case Solid::Control::NetworkInterface::Serial:
+                case NetworkManager::Device::Serial:
                     typeString = QLatin1String("pppoe");
                     break;
-                case Solid::Control::NetworkInterface::Gsm:
+                case NetworkManager::Device::Gsm:
                     typeString = QLatin1String("gsm");
                     editorArgs = QLatin1String("gsm");
                     break;
-                case Solid::Control::NetworkInterface::Cdma:
+                case NetworkManager::Device::Cdma:
                     typeString = QLatin1String("cdma");
                     editorArgs = QLatin1String("cdma");
                     break;

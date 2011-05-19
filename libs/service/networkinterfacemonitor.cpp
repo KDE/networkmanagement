@@ -24,8 +24,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkinterfacemonitor.h"
 
-#include <solid/control/networkinterface.h>
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/manager.h>
 
 #include <connection.h>
 #include "activatablelist.h"
@@ -42,13 +42,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/modemmanager.h>
 
 #include "gsmnetworkinterfaceactivatableprovider.h"
-#include "pindialog.h"
+##include "pindialog.h"
 #endif
 
 class NetworkInterfaceMonitorPrivate
 {
 public:
-    // relates Solid::Control::NetworkInterface identifiers to NetworkInterfaceActivatableProviders
+    // relates NetworkManager::Device identifiers to NetworkInterfaceActivatableProviders
     QHash<QString, NetworkInterfaceActivatableProvider *> providers;
     ConnectionList * connectionList;
     ActivatableList * activatableList;
@@ -61,14 +61,14 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
     d->connectionList = connectionList;
     d->activatableList = activatableList;
 
-    QObject::connect(Solid::Control::NetworkManager::notifier(),
+    QObject::connect(NetworkManager::NetworkManager::notifier(),
             SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
-    QObject::connect(Solid::Control::NetworkManager::notifier(),
+    QObject::connect(NetworkManager::NetworkManager::notifier(),
             SIGNAL(networkInterfaceRemoved(const QString&)),
             this, SLOT(networkInterfaceRemoved(const QString&)));
 
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+    foreach (NetworkManager::Device * iface, NetworkManager::NetworkManager::networkInterfaces()) {
         networkInterfaceAdded(iface->uni());
     }
 
@@ -78,7 +78,7 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
             SIGNAL(modemInterfaceAdded(const QString&)),
             this, SLOT(modemInterfaceAdded(const QString&)));
 
-    foreach (Solid::Control::ModemInterface * iface, Solid::Control::ModemManager::modemInterfaces()) {
+    foreach (NetworkManager::ModemDevice * iface, Solid::Control::ModemManager::modemInterfaces()) {
         modemInterfaceAdded(iface->udi());
     }
 #endif
@@ -93,24 +93,24 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
     Q_D(NetworkInterfaceMonitor);
     kDebug();
 
-    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(uni);
+    NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(uni);
     if (iface && !d->providers.contains(uni)) {
         NetworkInterfaceActivatableProvider * provider;
-        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+        if (iface->type() == NetworkManager::Device::Ieee80211) {
             kDebug() << "Wireless interface added";
-            provider = new WirelessNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::WirelessNetworkInterface*>(iface), this);
-        } else if (iface->type() == Solid::Control::NetworkInterface::Ieee8023) {
+            provider = new WirelessNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::WirelessDevice*>(iface), this);
+        } else if (iface->type() == NetworkManager::Device::Ieee8023) {
             kDebug() << "Wired interface added";
-            provider = new WiredNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::WiredNetworkInterface*>(iface), this);
+            provider = new WiredNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::WiredDevice*>(iface), this);
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
 #ifdef NM_0_8
-        } else if (iface->type() == Solid::Control::NetworkInterface::Bluetooth) {
+        } else if (iface->type() == NetworkManager::Device::Bluetooth) {
             kDebug() << "Bluetooth interface added";
-            provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::GsmNetworkInterface*>(iface), this);
+            provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::ModemDevice*>(iface), this);
 #endif
-        } else if (iface->type() == Solid::Control::NetworkInterface::Gsm) {
+        } else if (iface->type() == NetworkManager::Device::Gsm) {
             kDebug() << "Gsm interface added";
-            provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::GsmNetworkInterface*>(iface), this);
+            provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::ModemDevice*>(iface), this);
 #endif
         } else {
             kDebug() << "Unknown interface added: uni == " << uni << "(type == " << iface->type() << ")";
@@ -121,14 +121,14 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
         provider->init();
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
-        if (iface->type() == Solid::Control::NetworkInterface::Gsm ||
-            iface->type() == Solid::Control::NetworkInterface::Cdma) {
+        if (iface->type() == NetworkManager::Device::Gsm ||
+            iface->type() == NetworkManager::Device::Cdma) {
 
             bool hasCellular = false;
             foreach (const QString uuid, d->connectionList->connections()) {
                 const Knm::Connection *c = d->connectionList->findConnection(uuid);
-                if ((c->type() == Knm::Connection::Gsm && iface->type() == Solid::Control::NetworkInterface::Gsm) ||
-                    (c->type() == Knm::Connection::Cdma && iface->type() == Solid::Control::NetworkInterface::Cdma)) {
+                if ((c->type() == Knm::Connection::Gsm && iface->type() == NetworkManager::Device::Gsm) ||
+                    (c->type() == Knm::Connection::Cdma && iface->type() == NetworkManager::Device::Cdma)) {
                     hasCellular = true;
                     break;
                 }
@@ -155,7 +155,7 @@ void NetworkInterfaceMonitor::networkInterfaceRemoved(const QString & uni)
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
 void NetworkInterfaceMonitor::modemInterfaceAdded(const QString & udi)
 {
-    Solid::Control::ModemGsmCardInterface * modem = qobject_cast<Solid::Control::ModemGsmCardInterface *>(Solid::Control::ModemManager::findModemInterface(udi, Solid::Control::ModemInterface::GsmCard));
+    Solid::Control::ModemGsmCardInterface * modem = qobject_cast<Solid::Control::ModemGsmCardInterface *>(Solid::Control::ModemManager::findModemInterface(udi, NetworkManager::ModemDevice::GsmCard));
 
     if (!modem) {
         return;
@@ -174,6 +174,7 @@ void NetworkInterfaceMonitor::modemInterfaceAdded(const QString & udi)
 
 void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
 {
+    /*willtodo: reenable
     kDebug() << "unlockRequired == " << unlockRequired;
     if (unlockRequired.isEmpty()) {
         return;
@@ -224,6 +225,7 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
 OUT:
     delete dialog;
     dialog = 0;
+    */
 }
 #endif
 // vim: sw=4 sts=4 et tw=100

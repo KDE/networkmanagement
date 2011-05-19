@@ -22,9 +22,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtGui>
 
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirelessnetworkinterface.h>
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/wirelessdevice.h>
+#include <libnm-qt/accesspoint.h>
 
 /**
  * Tab for ConnectionInfoDialog, that shows Wi-Fi details
@@ -34,24 +34,24 @@ class ConnectionInfoWirelessTab : public QWidget
     Q_OBJECT
 
 public:
-    ConnectionInfoWirelessTab(Solid::Control::WirelessNetworkInterface *iface, QWidget *parent = 0);
+    ConnectionInfoWirelessTab(NetworkManager::WirelessDevice *iface, QWidget *parent = 0);
     ~ConnectionInfoWirelessTab() { };
 
 public slots:
     void updateAccessPoint(const QString &uni);
     void updateBitRate(int rate);
-    void updateOperationMode(Solid::Control::WirelessNetworkInterface::OperationMode mode);
+    void updateOperationMode(NetworkManager::WirelessDevice::OperationMode mode);
     void updateSsid(const QString& ssid);
     void updateSignalStrength(int signalStrength);
     void updateMaxBitRate(int bitRate);
     void updateFrequency(uint frequency);
-    void updateWpa(Solid::Control::AccessPoint::WpaFlags flags);
-    void updateRsn(Solid::Control::AccessPoint::WpaFlags flags);
+    void updateWpa(NetworkManager::AccessPoint::WpaFlags flags);
+    void updateRsn(NetworkManager::AccessPoint::WpaFlags flags);
     void clearFields();
     
 private:
-    Solid::Control::WirelessNetworkInterface *m_iface;
-    Solid::Control::AccessPoint *m_ap;
+    NetworkManager::WirelessDevice *m_iface;
+    NetworkManager::AccessPoint *m_ap;
     QLabel *m_ssidLabel,
            *m_signalStrengthLabel,
            *m_operationModeLabel,

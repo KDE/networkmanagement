@@ -5,9 +5,9 @@
 
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
+#include <libnm-qt/generic-types.h>
 #include "settingpersistence.h"
 #include "knminternals_export.h"
-#include "../types.h"
 
 namespace Knm {
 

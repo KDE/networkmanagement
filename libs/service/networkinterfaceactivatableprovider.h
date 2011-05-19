@@ -24,10 +24,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include "connectionhandler.h"
 
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirednetworkinterface.h>
-#include <solid/control/wirelessnetworkinterface.h>
-#include <solid/control/networkgsminterface.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/wireddevice.h>
+#include <libnm-qt/wirelessdevice.h>
+#include <libnm-qt/modemdevice.h>
 
 #include "connection.h"
 #include "setting.h"
@@ -42,13 +42,10 @@ namespace Knm
     class Activatable;
 } // namespace Knm
 
-namespace Solid
+namespace NetworkManager
 {
-    namespace Control
-    {
-        class NetworkInterface;
-    } // namespace Control
-} // namespace Solid
+        class Device;
+}
 
 class ConnectionList;
 class ActivatableList;
@@ -62,10 +59,10 @@ class KNM_EXPORT NetworkInterfaceActivatableProvider : public QObject, virtual p
 {
 Q_OBJECT
 public:
-    static bool hardwareAddressMatches(Knm::Connection * connection, Solid::Control::NetworkInterface * iface);
-    static bool matches(Knm::Connection::Type connType, Solid::Control::NetworkInterface::Type ifaceType);
+    static bool hardwareAddressMatches(Knm::Connection * connection, NetworkManager::Device * iface);
+    static bool matches(Knm::Connection::Type connType, NetworkManager::Device::Type ifaceType);
 
-    NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent);
+    NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::Device * interface, QObject * parent);
     virtual ~NetworkInterfaceActivatableProvider();
 
     /**

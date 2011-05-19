@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <uiutils.h>
 
 
-ConnectionInfoWirelessTab::ConnectionInfoWirelessTab(Solid::Control::WirelessNetworkInterface *iface, QWidget *parent)
+ConnectionInfoWirelessTab::ConnectionInfoWirelessTab(NetworkManager::WirelessDevice *iface, QWidget *parent)
     : QWidget(parent), m_iface(iface), m_ap(0), m_maxBitRate(0)
 {
     QFormLayout *layout = new QFormLayout(this);
@@ -60,7 +60,7 @@ ConnectionInfoWirelessTab::ConnectionInfoWirelessTab(Solid::Control::WirelessNet
 
     connect(iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
     
-    connect(iface, SIGNAL(modeChanged(Solid::Control::WirelessNetworkInterface::OperationMode)), this, SLOT(updateOperationMode(Solid::Control::WirelessNetworkInterface::OperationMode)));
+    connect(iface, SIGNAL(modeChanged(NetworkManager::WirelessDevice::OperationMode)), this, SLOT(updateOperationMode(NetworkManager::WirelessDevice::OperationMode)));
    
     // populate initial values
     updateAccessPoint(iface->activeAccessPoint());
@@ -72,7 +72,7 @@ ConnectionInfoWirelessTab::ConnectionInfoWirelessTab(Solid::Control::WirelessNet
 
 void ConnectionInfoWirelessTab::updateAccessPoint(const QString &uni)
 {
-    Solid::Control::AccessPoint *ap = m_iface->findAccessPoint(uni);
+    NetworkManager::AccessPoint *ap = m_iface->findAccessPoint(uni);
 
     // drop input from previous AP (if any)
     if (m_ap != 0) {
@@ -80,8 +80,8 @@ void ConnectionInfoWirelessTab::updateAccessPoint(const QString &uni)
         disconnect(m_ap, SIGNAL(signalStrengthChanged(int)), this, SLOT(updateSignalStrength(int)));
         disconnect(m_ap, SIGNAL(bitRateChanged(int)), this, SLOT(updateMaxBitRate(int)));
         disconnect(m_ap, SIGNAL(frequencyChanged(uint)), this, SLOT(updateFrequency(uint)));
-        disconnect(m_ap, SIGNAL(wpaFlagsChanged(Solid::Control::AccessPoint::WpaFlags)), this, SLOT(updateWpa(Solid::Control::AccessPoint::WpaFlags)));
-        disconnect(m_ap, SIGNAL(rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags)), this, SLOT(updateRsn(Solid::Control::AccessPoint::WpaFlags)));
+        disconnect(m_ap, SIGNAL(wpaFlagsChanged(NetworkManager::AccessPoint::WpaFlags)), this, SLOT(updateWpa(NetworkManager::AccessPoint::WpaFlags)));
+        disconnect(m_ap, SIGNAL(rsnFlagsChanged(NetworkManager::AccessPoint::WpaFlags)), this, SLOT(updateRsn(NetworkManager::AccessPoint::WpaFlags)));
     }
     m_ap = ap;
     
@@ -105,8 +105,8 @@ void ConnectionInfoWirelessTab::updateAccessPoint(const QString &uni)
     connect(ap, SIGNAL(signalStrengthChanged(int)), this, SLOT(updateSignalStrength(int)));
     connect(ap, SIGNAL(bitRateChanged(int)), this, SLOT(updateMaxBitRate(int)));
     connect(ap, SIGNAL(frequencyChanged(uint)), this, SLOT(updateFrequency(uint)));
-    connect(ap, SIGNAL(wpaFlagsChanged(Solid::Control::AccessPoint::WpaFlags)), this, SLOT(updateWpa(Solid::Control::AccessPoint::WpaFlags)));
-    connect(ap, SIGNAL(rsnFlagsChanged(Solid::Control::AccessPoint::WpaFlags)), this, SLOT(updateRsn(Solid::Control::AccessPoint::WpaFlags)));
+    connect(ap, SIGNAL(wpaFlagsChanged(NetworkManager::AccessPoint::WpaFlags)), this, SLOT(updateWpa(NetworkManager::AccessPoint::WpaFlags)));
+    connect(ap, SIGNAL(rsnFlagsChanged(NetworkManager::AccessPoint::WpaFlags)), this, SLOT(updateRsn(NetworkManager::AccessPoint::WpaFlags)));
 }
 
 void ConnectionInfoWirelessTab::updateBitRate(int rate)
@@ -114,7 +114,7 @@ void ConnectionInfoWirelessTab::updateBitRate(int rate)
     m_bitRateLabel->setText(i18nc("@item:intext bit rate value %1 of %2 maximum", "%1 / %2 Mbit/s", rate / 1000, m_maxBitRate / 1000));
 }
 
-void ConnectionInfoWirelessTab::updateOperationMode(Solid::Control::WirelessNetworkInterface::OperationMode mode)
+void ConnectionInfoWirelessTab::updateOperationMode(NetworkManager::WirelessDevice::OperationMode mode)
 {
     m_operationModeLabel->setText(UiUtils::operationModeToString(mode));
 }
@@ -140,12 +140,12 @@ void ConnectionInfoWirelessTab::updateFrequency(uint frequency)
     m_frequencyLabel->setText(i18nc("@item:intext Wi-Fi frequency", "%1 MHz", frequency));
 }
 
-void ConnectionInfoWirelessTab::updateWpa(Solid::Control::AccessPoint::WpaFlags flags)
+void ConnectionInfoWirelessTab::updateWpa(NetworkManager::AccessPoint::WpaFlags flags)
 {
     m_securityWpaLabel->setText(UiUtils::wpaFlagsToStringList(flags).join("\n"));
 }
 
-void ConnectionInfoWirelessTab::updateRsn(Solid::Control::AccessPoint::WpaFlags flags)
+void ConnectionInfoWirelessTab::updateRsn(NetworkManager::AccessPoint::WpaFlags flags)
 {
     m_securityRsnLabel->setText(UiUtils::wpaFlagsToStringList(flags).join("\n"));
 }

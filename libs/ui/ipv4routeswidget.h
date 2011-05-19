@@ -36,8 +36,8 @@ public:
     IpV4RoutesWidget(QWidget * parent = 0);
     virtual ~IpV4RoutesWidget();
 
-    void setRoutes(const QList<Solid::Control::IPv4Route> &list);
-    QList<Solid::Control::IPv4Route> routes();
+    void setRoutes(const QList<NetworkManager::IPv4Route> &list);
+    QList<NetworkManager::IPv4Route> routes();
     void setNeverDefault(bool checked);
     bool neverdefault();
     void setIgnoreAutoRoutes(bool checked);

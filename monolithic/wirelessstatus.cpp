@@ -29,8 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIconLoader>
 #include <KLocale>
 
-#include <solid/control/networkmanager.h>
-#include <solid/control/wirelessnetworkinterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/wirelessdevice.h>
 
 #include <activatable.h>
 #include <wirelessobject.h>
@@ -74,7 +74,7 @@ public:
 
     void init(Knm::WirelessObject * obj)
     {
-        if (obj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc) {
+        if (obj->operationMode() == NetworkManager::WirelessDevice::Adhoc) {
             adhoc = new QLabel(0);
             adhoc->setPixmap(SmallIcon("nm-adhoc")); //TODO real icon name
         }
@@ -90,7 +90,7 @@ public:
         item->addIcon(security);
         item->addIcon(strength);
 
-        Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(obj->interfaceCapabilities(), true, (obj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc), obj->apCapabilities(), obj->wpaFlags(), obj->rsnFlags());
+        Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(obj->interfaceCapabilities(), true, (obj->operationMode() == NetworkManager::WirelessDevice::Adhoc), obj->apCapabilities(), obj->wpaFlags(), obj->rsnFlags());
         security->setToolTip(Knm::WirelessSecurity::shortToolTip(best));
         security->setPixmap(SmallIcon(Knm::WirelessSecurity::iconName(best)));
     }

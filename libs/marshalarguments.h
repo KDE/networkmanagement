@@ -21,7 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef MARSHAL_ARGUMENTS_H
 #define MARSHAL_ARGUMENTS_H
 
-#include "types.h"
+#include <QtDBus/QtDBus>
+#include <QtDBus/QDBusArgument>
+#include <libnm-qt/generic-types.h>
 
 inline QDBusArgument &operator<<(QDBusArgument &argument, const QList< QList<uint> > &myarray)
 {

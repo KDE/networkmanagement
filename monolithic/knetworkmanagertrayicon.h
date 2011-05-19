@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStringList>
 
 #include <Solid/Networking>
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/device.h>
 
 class QAction;
 class QMenu;
@@ -66,13 +66,13 @@ Q_DECLARE_PRIVATE(KNetworkManagerTrayIcon)
 public:
     /**
      * Constructor
-     * @param types Set of Solid::Control::NetworkInterface::Type ORed together indicating which network interface types to show and offer status for.
+     * @param types Set of NetworkManager::Device::Type ORed together indicating which network interface types to show and offer status for.
      * @param id Unique identifier for KNotificationItem management
      * @param list List of Knm::Activatables to display
      * @param active If true, show activatables; if false, only show status in the tray and a minimal context menu
      * @param parent QObject owning this tray icon
      */
-    KNetworkManagerTrayIcon(Solid::Control::NetworkInterface::Types types, const QString & id, SortedActivatableList * list, bool serviceAvailable, QObject * parent = 0);
+    KNetworkManagerTrayIcon(NetworkManager::Device::Types types, const QString & id, SortedActivatableList * list, bool serviceAvailable, QObject * parent = 0);
     virtual ~KNetworkManagerTrayIcon();
     // respond to activatable changes
     void handleAdd(Knm::Activatable *);

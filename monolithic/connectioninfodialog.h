@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <interfaceconnection.h>
 
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/device.h>
 #include <solid/control/networkipv4config.h>
 
 #include "ui_connectioninfowidget.h"
@@ -51,7 +51,7 @@ private:
     void clearGUI();
     Ui_ConnectionInfoWidget m_ui;
     Knm::InterfaceConnection *m_ic;
-    Solid::Control::NetworkInterface *m_iface;
+    NetworkManager::Device *m_iface;
     bool m_guiMade;
 };
 

@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <uiutils.h>
 #include <arpa/inet.h>
 
-ConnectionInfoIPv4Tab::ConnectionInfoIPv4Tab(Solid::Control::NetworkInterface *iface, QWidget *parent)
+ConnectionInfoIPv4Tab::ConnectionInfoIPv4Tab(NetworkManager::Device *iface, QWidget *parent)
     : QWidget(parent), m_iface(iface)
 {
     QFormLayout *layout = new QFormLayout(this);
@@ -53,12 +53,12 @@ ConnectionInfoIPv4Tab::ConnectionInfoIPv4Tab(Solid::Control::NetworkInterface *i
 
 void ConnectionInfoIPv4Tab::updateIpDetails()
 {
-    const Solid::Control::IPv4Config &config = m_iface->ipV4Config();
+    const NetworkManager::IPv4Config &config = m_iface->ipV4Config();
 
     QStringList ipAddresses,
                 netmasks,
                 gateways;
-    foreach(const Solid::Control::IPv4Address &addr, config.addresses()) {
+    foreach(const NetworkManager::IPv4Address &addr, config.addresses()) {
         ipAddresses << QHostAddress(addr.address()).toString();
 #if KDE_IS_VERSION(4, 3, 67)
         netmasks << QHostAddress((0xffffffff) << (32 - addr.netMask())).toString();

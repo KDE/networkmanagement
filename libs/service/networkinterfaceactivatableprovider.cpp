@@ -34,7 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 /* Normal interfaceconnections are added to d->activatables on connection add, updated on update,
  * removed on remove
  */
-NetworkInterfaceActivatableProviderPrivate::NetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::NetworkInterface * theInterface)
+NetworkInterfaceActivatableProviderPrivate::NetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, NetworkManager::Device * theInterface)
 : interface(theInterface), connectionList(theConnectionList), unconfiguredActivatable(0)
 {
     activatableList = theActivatableList;
@@ -45,7 +45,7 @@ NetworkInterfaceActivatableProviderPrivate::~NetworkInterfaceActivatableProvider
 
 }
 
-NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent)
+NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::Device * interface, QObject * parent)
     : QObject(parent), d_ptr(new NetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface))
 {
 }
@@ -107,20 +107,20 @@ bool NetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() cons
     return d->activatables.isEmpty();
 }
 
-bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType, Solid::Control::NetworkInterface::Type ifaceType)
+bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType, NetworkManager::Device::Type ifaceType)
 {
-     return ( (connType == Knm::Connection::Wired && ifaceType == Solid::Control::NetworkInterface::Ieee8023)
-             || (connType == Knm::Connection::Wireless && ifaceType == Solid::Control::NetworkInterface::Ieee80211)
-             || (connType == Knm::Connection::Gsm && ifaceType == Solid::Control::NetworkInterface::Gsm)
-             || (connType == Knm::Connection::Cdma && ifaceType == Solid::Control::NetworkInterface::Cdma)
-             || (connType == Knm::Connection::Pppoe && ifaceType == Solid::Control::NetworkInterface::Serial)
+     return ( (connType == Knm::Connection::Wired && ifaceType == NetworkManager::Device::Ieee8023)
+             || (connType == Knm::Connection::Wireless && ifaceType == NetworkManager::Device::Ieee80211)
+             || (connType == Knm::Connection::Gsm && ifaceType == NetworkManager::Device::Gsm)
+             || (connType == Knm::Connection::Cdma && ifaceType == NetworkManager::Device::Cdma)
+             || (connType == Knm::Connection::Pppoe && ifaceType == NetworkManager::Device::Serial)
 #ifdef NM_0_8
-             || (connType == Knm::Connection::Bluetooth && ifaceType == Solid::Control::NetworkInterface::Bluetooth)
+             || (connType == Knm::Connection::Bluetooth && ifaceType == NetworkManager::Device::Bluetooth)
 #endif
              );
 }
 
-bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection * connection, Solid::Control::NetworkInterface * iface)
+bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection * connection, NetworkManager::Device * iface)
 {
     bool matches = true;
     Q_UNUSED(connection);
@@ -131,7 +131,7 @@ bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection
 #if 0
     if (connection->type() == Knm::Connection::Wired) {
         Knm::WiredSetting * wiredSetting = dynamic_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
-        Solid::Control::WiredNetworkInterface * wiredIface = dynamic_cast<Solid::Control::WiredNetworkInterface *>(iface);
+        NetworkManager::WiredDevice * wiredIface = dynamic_cast<NetworkManager::WiredDevice *>(iface);
 
         if (wiredSetting && wiredIface) {
 
@@ -142,7 +142,7 @@ bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection
         }
     } else if (connection->type() == Knm::Connection::Wireless) {
         Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
-        Solid::Control::WirelessNetworkInterface * wirelessIface = dynamic_cast<Solid::Control::WirelessNetworkInterface *>(iface);
+        NetworkManager::WirelessDevice * wirelessIface = dynamic_cast<NetworkManager::WirelessDevice *>(iface);
 
         if (wirelessSetting && wirelessIface) {
 

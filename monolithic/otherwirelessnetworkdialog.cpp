@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <activatablelist.h>
 #include <uiutils.h>
 #include <unconfiguredinterface.h>
-#include <solid/control/wirelessnetworkinterface.h>
+#include <libnm-qt/wirelessdevice.h>
 #include <wirelessnetwork.h>
 
 #include <hiddenwirelessinterfaceconnection.h>
@@ -70,7 +70,7 @@ void OtherWirelessNetworkDialog::handleAdd(Knm::Activatable * activatable)
     switch (activatable->activatableType()) {
         case Knm::Activatable::HiddenWirelessInterfaceConnection:
             wic = static_cast<Knm::HiddenWirelessInterfaceConnection*>(activatable);
-            best = Knm::WirelessSecurity::best(wic->interfaceCapabilities(), true, (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc), wic->apCapabilities(), wic->wpaFlags(), wic->rsnFlags());
+            best = Knm::WirelessSecurity::best(wic->interfaceCapabilities(), true, (wic->operationMode() == NetworkManager::WirelessDevice::Adhoc), wic->apCapabilities(), wic->wpaFlags(), wic->rsnFlags());
             if (wic->strength() >= 0) {
                 strengthString = QString::fromLatin1("%1%").arg(wic->strength());
             }
@@ -92,7 +92,7 @@ void OtherWirelessNetworkDialog::handleAdd(Knm::Activatable * activatable)
             break;
         case Knm::Activatable::WirelessNetwork:
             wn = static_cast<Knm::WirelessNetwork*>(activatable);
-            best = Knm::WirelessSecurity::best(wn->interfaceCapabilities(), true, (wn->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc), wn->apCapabilities(), wn->wpaFlags(), wn->rsnFlags());
+            best = Knm::WirelessSecurity::best(wn->interfaceCapabilities(), true, (wn->operationMode() == NetworkManager::WirelessDevice::Adhoc), wn->apCapabilities(), wn->wpaFlags(), wn->rsnFlags());
             itemStrings << wn->ssid() << QString::fromLatin1("%1%").arg(wn->strength()) << Knm::WirelessSecurity::label(best);
             item = new QTreeWidgetItem(itemStrings);
             item->setIcon(0, SmallIcon("network-wireless"));
@@ -101,8 +101,8 @@ void OtherWirelessNetworkDialog::handleAdd(Knm::Activatable * activatable)
             break;
         case Knm::Activatable::WirelessInterfaceConnection:
             wic = static_cast<Knm::WirelessInterfaceConnection*>(activatable);
-            best = Knm::WirelessSecurity::best(wic->interfaceCapabilities(), true, (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc), wic->apCapabilities(), wic->wpaFlags(), wic->rsnFlags());
-            if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc) {
+            best = Knm::WirelessSecurity::best(wic->interfaceCapabilities(), true, (wic->operationMode() == NetworkManager::WirelessDevice::Adhoc), wic->apCapabilities(), wic->wpaFlags(), wic->rsnFlags());
+            if (wic->operationMode() == NetworkManager::WirelessDevice::Adhoc) {
                 strengthString = i18nc("@item:inlist Signal strength replaced by description on ad-hoc", "create Ad-Hoc");
             }
             else
@@ -184,7 +184,7 @@ void OtherWirelessNetworkDialog::setActivationState(Knm::InterfaceConnection::Ac
         QTreeWidgetItem * item = m_ui.twNetworks->topLevelItem(i);
         if (item->data(0, ItemActivatableRole).value<Knm::Activatable*>() == static_cast<Knm::Activatable*>(wic)) {
             QString strengthString;
-            if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc)
+            if (wic->operationMode() == NetworkManager::WirelessDevice::Adhoc)
             {
                 strengthString = i18nc("@item:inlist Signal strength replaced by description on ad-hoc", "create Ad-Hoc");
             }
