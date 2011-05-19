@@ -324,6 +324,13 @@ void NMNetworkManager::nameOwnerChanged(QString name, QString oldOwner, QString 
             ;
         }
         if ( !oldOwner.isEmpty() && newOwner.isEmpty() ) {
+            Q_D(NMNetworkManager);
+            // In case NM has crashed and networkInterfaceRemoved signals have not being emitted.
+            foreach(const QString path, d->networkInterfaces) {
+                emit networkInterfaceRemoved(path);
+            }
+            d->networkInterfaces.clear();
+
             // NetworkManager stopped, set status Unknown for safety
             stateChanged(NM_STATE_UNKNOWN);
         }
