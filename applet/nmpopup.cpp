@@ -126,13 +126,13 @@ void NMPopup::init()
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
             this, SLOT(managerNetworkingEnabledChanged(bool)));
 
-#ifdef NM_0_8
     // flight-mode checkbox
     m_wwanCheckBox = new Plasma::CheckBox(m_leftWidget);
     m_wwanCheckBox->setText(i18nc("CheckBox to enable or disable wwan (mobile broadband) interface)", "Enable mobile broadband"));
     m_wwanCheckBox->hide();
     checkboxLayout->addItem(m_wwanCheckBox, 0, 1);
 
+#ifdef NM_0_8
     connect(m_wwanCheckBox, SIGNAL(toggled(bool)), SLOT(wwanEnabledToggled(bool)));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wwanEnabledChanged(bool)),
             this, SLOT(managerWwanEnabledChanged(bool)));

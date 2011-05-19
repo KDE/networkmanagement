@@ -128,9 +128,7 @@ private:
 
     Plasma::CheckBox* m_networkingCheckBox;
     Plasma::CheckBox* m_wifiCheckBox;
-#ifdef NM_0_8
     Plasma::CheckBox* m_wwanCheckBox;
-#endif
     Plasma::PushButton* m_connectionsButton;
     Plasma::PushButton* m_showMoreButton;
 
