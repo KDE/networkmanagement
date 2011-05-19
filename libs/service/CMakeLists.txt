@@ -4,7 +4,6 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}
    ${CMAKE_CURRENT_SOURCE_DIR}/..
    ${CMAKE_CURRENT_SOURCE_DIR}/../internals
-   ${CMAKE_CURRENT_SOURCE_DIR}/../../solidcontrolfuture
    ${CMAKE_CURRENT_BINARY_DIR}/../internals
    )
 
@@ -113,16 +112,17 @@ qt4_add_dbus_adaptor(
     WirelessNetworkAdaptor
 )
 
-if (KDE4_MM_BACKEND_FOUND)
-	qt4_add_dbus_adaptor(
-	    knmservice_SRCS
-	    interfaces/org.kde.networkmanagement.gsminterfaceconnection.xml
-	    gsminterfaceconnection.h
-	    Knm::GsmInterfaceConnection
-	    gsminterfaceconnectionadaptor
-	    GsmInterfaceConnectionAdaptor
-	)
-endif (KDE4_MM_BACKEND_FOUND)
+#willtodo: reenable
+#if (KDE4_MM_BACKEND_FOUND)
+#	qt4_add_dbus_adaptor(
+#	    knmservice_SRCS
+#	    interfaces/org.kde.networkmanagement.gsminterfaceconnection.xml
+#	    gsminterfaceconnection.h
+#	    Knm::GsmInterfaceConnection
+#	    gsminterfaceconnectionadaptor
+#	    GsmInterfaceConnectionAdaptor
+#	)
+#endif (KDE4_MM_BACKEND_FOUND)
 
 qt4_add_dbus_adaptor(knmservice_SRCS
    interfaces/org.kde.networkmanagement.xml
@@ -134,7 +134,7 @@ qt4_add_dbus_adaptor(knmservice_SRCS
 
 kde4_add_library(knmservice SHARED ${knmservice_SRCS})
 
-target_link_libraries(knmservice knminternals solidcontrol solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS}
+target_link_libraries(knmservice knminternals nm-qt solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS}
    )
 
 set_target_properties(knmservice PROPERTIES
