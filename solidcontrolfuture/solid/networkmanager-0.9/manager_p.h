@@ -39,7 +39,6 @@ public:
     bool isWwanHardwareEnabled;
 
     bool isNetworkingEnabled;
-    bool NetworkingEnabledPropertyAvailable;
     QStringList networkInterfaces;
     QStringList activeConnections;
 };

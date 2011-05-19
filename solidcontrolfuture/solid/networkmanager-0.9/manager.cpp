@@ -45,14 +45,7 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList &)
     d->isWirelessEnabled = d->iface.wirelessEnabled();
     d->isWwanHardwareEnabled = d->iface.wwanHardwareEnabled();
     d->isWwanEnabled = d->iface.wwanEnabled();
-    QVariant netEnabled = d->iface.property("NetworkingEnabled");
-    if (!netEnabled.isNull()) {
-        d->isNetworkingEnabled = netEnabled.toBool();
-        d->NetworkingEnabledPropertyAvailable = true;
-    } else {
-        d->isNetworkingEnabled = !(NM_STATE_UNKNOWN == d->nmState || NM_STATE_ASLEEP == d->nmState);
-        d->NetworkingEnabledPropertyAvailable = false;
-    }
+    d->isNetworkingEnabled = d->iface.networkingEnabled();
     connect( &d->iface, SIGNAL(DeviceAdded(const QDBusObjectPath &)),
                 this, SLOT(deviceAdded(const QDBusObjectPath &)));
     connect( &d->iface, SIGNAL(DeviceRemoved(const QDBusObjectPath &)),
@@ -234,14 +227,6 @@ void NMNetworkManager::stateChanged(uint state)
 {
     Q_D(NMNetworkManager);
     if ( d->nmState != state ) {
-
-        // When "NetworkingEnabled" property is not available, set isNetworkingEnabled flag and emit signal here.
-        // It has to be done before emitting statusChanged(), else it would cause infinite status switching.
-        if (!d->NetworkingEnabledPropertyAvailable) {
-            d->isNetworkingEnabled = !(NM_STATE_UNKNOWN == state || NM_STATE_ASLEEP == state);
-            emit networkingEnabledChanged(d->isNetworkingEnabled);
-        }
-
         // set new state
         d->nmState = state;
         emit statusChanged( convertNMState( state ) );
@@ -358,8 +343,8 @@ Solid::Control::NetworkInterfaceNm09::Types NMNetworkManager::supportedInterface
            Solid::Control::NetworkInterfaceNm09::Ethernet |
            Solid::Control::NetworkInterfaceNm09::Bluetooth |
            Solid::Control::NetworkInterfaceNm09::Modem
-	   /* TODO: implement those two and add them to this list.
-	   Solid::Control::NetworkInterfaceNm09::Wimax |
+           /* TODO: implement those two and add them to this list.
+           Solid::Control::NetworkInterfaceNm09::Wimax |
            Solid::Control::NetworkInterfaceNm09::Olpc */
            );
 }
