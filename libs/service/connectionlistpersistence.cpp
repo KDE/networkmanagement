@@ -159,6 +159,8 @@ KSharedConfig::Ptr ConnectionListPersistence::connectionFileForUuid(const QStrin
  */
 void ConnectionListPersistence::configure(const QStringList& changedConnections)
 {
+// TODO: I think this is not needed for NM-0.9 anymore.
+#if 0
     Q_D(ConnectionListPersistence);
     // start ignoring connection changes, so we don't write out things we have just read.
     d->ignoreChangedConnections = true;
@@ -214,12 +216,14 @@ void ConnectionListPersistence::configure(const QStringList& changedConnections)
     foreach (const QString &connectionId, addedConnections) {
         d->list->addConnection(restoreConnection(connectionId));
     }
+#endif
 }
 
 void ConnectionListPersistence::handleUpdate(Knm::Connection * connection)
 {
+// TODO: I think this is not needed for NM-0.9 anymore.
+#if 0
     Q_D(ConnectionListPersistence);
-
     if (connection && !d->ignoreChangedConnections && connection->origin() == QLatin1String("ConnectionListPersistence")) {
         QString uuid = connection->uuid();
 
@@ -238,6 +242,7 @@ void ConnectionListPersistence::handleUpdate(Knm::Connection * connection)
             KNetworkManagerServicePrefs::self()->config()->sync();
         }
     }
+#endif
 }
 
 void ConnectionListPersistence::handleAdd(Knm::Connection *)
