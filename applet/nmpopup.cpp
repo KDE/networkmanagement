@@ -597,39 +597,10 @@ void NMPopup::managerNetworkingEnabledChanged(bool enabled)
     m_networkingCheckBox->setChecked(enabled);
 }
 
-void NMPopup::enableWwan()
-{
-    Solid::Control::NetworkManagerNm09::setWwanEnabled(true);
-}
-
-void NMPopup::disableWwan()
-{
-    Solid::Control::NetworkManagerNm09::setWwanEnabled(false);
-}
-
 void NMPopup::managerWwanEnabledChanged(bool enabled)
 {
-    static bool first = true;
-
     kDebug() << "NM daemon changed wwan enable state" << enabled;
-
-    /*
-     * NetworkManager disables wwan everytime one wwan interface is attached.
-     * I am using this hack to force NM to re-enable wwan if wwanCheckBox
-     * is checked. The variable "first" is just to prevent infinity loop.
-     */
-    if (!enabled && m_wwanCheckBox->isChecked() && first) {
-        first = false;
-        QTimer::singleShot(2000, this, SLOT(enableWwan()));
-    } else if (enabled && !m_wwanCheckBox->isChecked() && first) {
-        first = false;
-        QTimer::singleShot(2000, this, SLOT(disableWwan()));
-    } else {
-        first = true;
-        // it might have changed because we toggled the switch,
-        // but it might have been changed externally, so set it anyway
-        m_wwanCheckBox->setChecked(enabled);
-    }
+    m_wwanCheckBox->setChecked(enabled);
 }
 
 void NMPopup::managerWwanHardwareEnabledChanged(bool enabled)

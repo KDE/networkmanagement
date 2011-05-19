@@ -82,8 +82,6 @@ Q_SIGNALS:
     void configNeedsSaving();
 
 private Q_SLOTS:
-    void enableWwan();
-    void disableWwan();
     void readConfig();
     void saveConfig();
     void checkShowMore(RemoteActivatable *);
