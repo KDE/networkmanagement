@@ -136,7 +136,8 @@ void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uin
                 break;
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
             case Knm::Activatable::GsmInterfaceConnection:
-                newActivatable = new RemoteGsmInterfaceConnection(addedPath, this);
+                //willtodo: fix
+                //newActivatable = new RemoteModemInterfaceConnection(addedPath, this);
                 //kDebug() << "gsminterfaceconnection at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
 #endif

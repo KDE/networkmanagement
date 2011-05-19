@@ -15,7 +15,7 @@ set(knmclient_SRCS
    remotewirelessinterfaceconnection.cpp
    remotewirelessnetwork.cpp
    remoteactivatablelist.cpp
-   remotegsminterfaceconnection.cpp
+   #remotegsminterfaceconnection.cpp
 )
 
 set_source_files_properties( ../service/interfaces/org.kde.networkmanagement.xml PROPERTIES NO_NAMESPACE TRUE CLASSNAME NetworkManagementInterface)

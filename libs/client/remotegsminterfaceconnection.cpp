@@ -25,37 +25,39 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remotegsminterfaceconnection.h"
 #include "remotegsminterfaceconnection_p.h"
 
-RemoteGsmInterfaceConnection::RemoteGsmInterfaceConnection(const QString &dbusPath, QObject * parent)
-: RemoteInterfaceConnection(*new RemoteGsmInterfaceConnectionPrivate, dbusPath, parent)
+RemoteModemInterfaceConnection::RemoteModemInterfaceConnection(const QString &dbusPath, QObject * parent)
+: RemoteInterfaceConnection(*new RemoteModemInterfaceConnectionPrivate, dbusPath, parent)
 {
-    Q_D(RemoteGsmInterfaceConnection);
-    d->gsmInterfaceConnectionIface = new GsmInterfaceConnectionInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
-    connect(d->gsmInterfaceConnectionIface, SIGNAL(signalQualityChanged(int)), this, SIGNAL(signalQualityChanged(int)));
+    Q_D(RemoteModemInterfaceConnection);
+    d->modemInterfaceConnectionIface = new ModemInterfaceConnectionInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
+    connect(d->modemInterfaceConnectionIface, SIGNAL(signalQualityChanged(int)), this, SIGNAL(signalQualityChanged(int)));
 
-    connect(d->gsmInterfaceConnectionIface, SIGNAL(accessTechnologyChanged(const int)), this, SIGNAL(accessTechnologyChanged(const int)));
+    connect(d->modemInterfaceConnectionIface, SIGNAL(accessTechnologyChanged(const int)), this, SIGNAL(accessTechnologyChanged(const int)));
 }
 
-RemoteGsmInterfaceConnection::~RemoteGsmInterfaceConnection()
+RemoteModemInterfaceConnection::~RemoteModemInterfaceConnection()
 {
 
 }
 
-int RemoteGsmInterfaceConnection::getAccessTechnology() const
+int RemoteModemInterfaceConnection::getAccessTechnology() const
 {
-    Q_D(const RemoteGsmInterfaceConnection);
-    QDBusReply<int> reply = d->gsmInterfaceConnectionIface->getAccessTechnology();
+    Q_D(const RemoteModemInterfaceConnection);
+    QDBusReply<int> reply = d->modemInterfaceConnectionIface->getAccessTechnology();
 
     if (reply.isValid()) {
         return reply.value();
     } else {
-        return Solid::Control::ModemInterface::UnknownTechnology;
+        //willtodo: fix
+        //return NetworkManager::ModemDevice::UnknownTechnology;
+        return 0;
     }
 }
 
-int RemoteGsmInterfaceConnection::getSignalQuality() const
+int RemoteModemInterfaceConnection::getSignalQuality() const
 {
-    Q_D(const RemoteGsmInterfaceConnection);
-    return d->gsmInterfaceConnectionIface->getSignalQuality();
+    Q_D(const RemoteModemInterfaceConnection);
+    return d->modemInterfaceConnectionIface->getSignalQuality();
 }
 
 #endif

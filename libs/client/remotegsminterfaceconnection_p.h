@@ -25,10 +25,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteinterfaceconnection_p.h"
 #include "gsminterfaceconnectioninterface.h"
 
-class RemoteGsmInterfaceConnectionPrivate : public RemoteInterfaceConnectionPrivate
+class RemoteModemInterfaceConnectionPrivate : public RemoteInterfaceConnectionPrivate
 {
 public:
-    GsmInterfaceConnectionInterface * gsmInterfaceConnectionIface;
+    ModemInterfaceConnectionInterface * modemInterfaceConnectionIface;
 };
 
 #endif // REMOTEGSMINTERFACECONNECTION_P_H

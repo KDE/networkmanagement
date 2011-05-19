@@ -26,13 +26,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "remoteinterfaceconnection.h"
 
-#include <solid/control/networkgsminterface.h>
+#include <libnm-qt/modemdevice.h>
 
 #include "knmclient_export.h"
 
-class RemoteGsmInterfaceConnectionPrivate;
+class RemoteModemInterfaceConnectionPrivate;
 
-class KNMCLIENT_EXPORT RemoteGsmInterfaceConnection : public RemoteInterfaceConnection
+class KNMCLIENT_EXPORT RemoteModemInterfaceConnection : public RemoteInterfaceConnection
 {
 Q_OBJECT
 Q_PROPERTY(int getAccessTechnology READ getAccessTechnology)
@@ -41,15 +41,15 @@ Q_PROPERTY(int getSignalQuality READ getSignalQuality)
 friend class RemoteActivatableList;
 
 public:
-    virtual ~RemoteGsmInterfaceConnection();
+    virtual ~RemoteModemInterfaceConnection();
     int getAccessTechnology() const;
     int getSignalQuality() const;
 Q_SIGNALS:
     void signalQualityChanged(int);
     void accessTechnologyChanged(const int);
 protected:
-    RemoteGsmInterfaceConnection(const QString & dbusPath, QObject * parent);
-    Q_DECLARE_PRIVATE(RemoteGsmInterfaceConnection)
+    RemoteModemInterfaceConnection(const QString & dbusPath, QObject * parent);
+    Q_DECLARE_PRIVATE(RemoteModemInterfaceConnection)
 };
 
 #endif // REMOTEGSMINTERFACECONNECTION_H
