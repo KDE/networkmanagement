@@ -49,10 +49,10 @@ ConnectionUsageMonitor::ConnectionUsageMonitor(ConnectionList * connectionList, 
     d->connectionList = connectionList;
     d->activatableList = activatableList;
 
-    QObject::connect(NetworkManager::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+    QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
 
-    NetworkManager::DeviceList allInterfaces = NetworkManager::NetworkManager::networkInterfaces();
+    NetworkManager::DeviceList allInterfaces = NetworkManager::networkInterfaces();
     foreach (NetworkManager::Device * interface, allInterfaces) {
         networkInterfaceAdded(interface->uni());
     }
@@ -92,9 +92,9 @@ void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnectio
                 connection->setTimestamp(QDateTime::currentDateTime());
                 // update with the BSSID of the device's AP
                 NetworkManager::Device * networkInterface
-                    = NetworkManager::NetworkManager::findNetworkInterface(ic->deviceUni());
+                    = NetworkManager::findNetworkInterface(ic->deviceUni());
                 if (networkInterface) {
-                    if (networkInterface->type() == NetworkManager::Device::Ieee80211) {
+                    if (networkInterface->type() == NetworkManager::Device::Wifi) {
                         NetworkManager::WirelessDevice * wifiDevice =
                             qobject_cast<NetworkManager::WirelessDevice *>(networkInterface);
 
@@ -121,9 +121,9 @@ void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnectio
 
 void ConnectionUsageMonitor::networkInterfaceAdded(const QString& uni)
 {
-    NetworkManager::Device * interface = NetworkManager::NetworkManager::findNetworkInterface(uni);
+    NetworkManager::Device * interface = NetworkManager::findNetworkInterface(uni);
 
-    if (interface && interface->type() == NetworkManager::Device::Ieee80211) {
+    if (interface && interface->type() == NetworkManager::Device::Wifi) {
         NetworkManager::WirelessDevice * wifiDevice =
             qobject_cast<NetworkManager::WirelessDevice *>(interface);
         if (wifiDevice)
@@ -136,7 +136,7 @@ void ConnectionUsageMonitor::networkInterfaceAccessPointChanged(const QString & 
 {
     Q_D(ConnectionUsageMonitor);
     NetworkManager::WirelessDevice * wifiDevice = qobject_cast<NetworkManager::WirelessDevice *>(sender());
-    if (wifiDevice && static_cast<NM09DeviceState>(wifiDevice->connectionState()) == Activated) {
+    if (wifiDevice && static_cast<NM09DeviceState>(wifiDevice->state()) == Activated) {
         NetworkManager::AccessPoint * ap = wifiDevice->findAccessPoint(apiUni);
         if (ap) {
             // find the activatable

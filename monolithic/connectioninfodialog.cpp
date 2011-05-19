@@ -70,7 +70,7 @@ void ConnectionInfoDialog::interfaceConnectionStateChanged(Knm::InterfaceConnect
 void ConnectionInfoDialog::buildGUI()
 {
     QString deviceUni = m_ic->deviceUni();
-    m_iface = NetworkManager::NetworkManager::findNetworkInterface(deviceUni);
+    m_iface = NetworkManager::findNetworkInterface(deviceUni);
 
     if (m_iface == 0) {
         return;
@@ -81,13 +81,13 @@ void ConnectionInfoDialog::buildGUI()
     
     QString deviceType = UiUtils::interfaceTypeLabel(m_iface->type());
     switch (m_iface->type()) {
-    case NetworkManager::Device::Ieee8023: {
+    case NetworkManager::Device::Ethernet: {
             ConnectionInfoWiredTab *wiredTab = new ConnectionInfoWiredTab(qobject_cast<NetworkManager::WiredDevice*>(m_iface), m_ui.infoTabWidget);
             m_ui.infoTabWidget->addTab(wiredTab, deviceType);
             m_ui.connectionIcon->setPixmap(KIconLoader::global()->loadIcon("network-wired", KIconLoader::Panel));
             break;
         }
-    case NetworkManager::Device::Ieee80211: {
+    case NetworkManager::Device::Wifi: {
             ConnectionInfoWirelessTab *wirelessTab = new ConnectionInfoWirelessTab(qobject_cast<NetworkManager::WirelessDevice*>(m_iface), m_ui.infoTabWidget);
             m_ui.infoTabWidget->addTab(wirelessTab, deviceType);
             m_ui.connectionIcon->setPixmap(KIconLoader::global()->loadIcon("network-wireless", KIconLoader::Panel));
@@ -96,16 +96,16 @@ void ConnectionInfoDialog::buildGUI()
     default: break;
     }
 
-    connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(updateConnectionState(int,int,int)));
+    connect(m_iface, SIGNAL(stateChanged(int,int,int)), this, SLOT(updateConnectionState(int,int,int)));
 
-    NM09DeviceState state = static_cast<NM09DeviceState>(m_iface->connectionState());
+    NM09DeviceState state = static_cast<NM09DeviceState>(m_iface->state());
     m_ui.connectionState->setText(UiUtils::connectionStateToString(state));
     m_guiMade = true;
 }
 
 void ConnectionInfoDialog::clearGUI()
 {
-    disconnect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(updateConnectionState(int,int,int)));
+    disconnect(m_iface, SIGNAL(stateChanged(int,int,int)), this, SLOT(updateConnectionState(int,int,int)));
     
     int tabCount = m_ui.infoTabWidget->count();
     while (tabCount--) {

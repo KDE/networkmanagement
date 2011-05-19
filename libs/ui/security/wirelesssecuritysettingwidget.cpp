@@ -158,8 +158,8 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(NetworkManager::Wirel
             apRsn = ap->rsnFlags();
         }
     } else {
-        foreach (NetworkManager::Device * candidate , NetworkManager::NetworkManager::networkInterfaces()) {
-            if (candidate->type() == NetworkManager::Device::Ieee80211) {
+        foreach (NetworkManager::Device * candidate , NetworkManager::networkInterfaces()) {
+            if (candidate->type() == NetworkManager::Device::Wifi) {
                 NetworkManager::WirelessDevice * wirelessIface = qobject_cast<NetworkManager::WirelessDevice*>(candidate);
                 if (wirelessIface) {
                     ifaceCaps |= wirelessIface->wirelessCapabilities();

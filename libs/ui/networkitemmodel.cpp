@@ -183,18 +183,18 @@ void NetworkItemModel::setNetworkInterface(const QString &uni)
     }
 
     kDebug() << "Requesting the interface: " << uni;
-    NetworkManager::Device *networkInterface = NetworkManager::NetworkManager::findNetworkInterface(uni);
+    NetworkManager::Device *networkInterface = NetworkManager::findNetworkInterface(uni);
     if (networkInterface == 0) {
         kDebug() << "Could not create a valid network interface.";
         m_networkInterface=0;
         return;
-    } else if (networkInterface->type() != NetworkManager::Device::Ieee80211) {
+    } else if (networkInterface->type() != NetworkManager::Device::Wifi) {
         kDebug() << "Network Interface is not of type IEEE 80211";
         m_networkInterface=0;
         return;
     }
     m_networkInterface = static_cast<NetworkManager::WirelessDevice*>(networkInterface);
-    m_environment = new NetworkManager::WirelessDeviceEnvironment(m_networkInterface);
+    m_environment = new NetworkManager::WirelessNetworkInterfaceEnvironment(m_networkInterface);
     scan();
 }
 

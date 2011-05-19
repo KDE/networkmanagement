@@ -39,10 +39,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <kauthactionreply.h>
 #include <KMessageBox>
 
-#include <solid/control/modemmanager.h>
+//willtodo: reenable
+//#include <solid/control/modemmanager.h>
 
 #include "gsmnetworkinterfaceactivatableprovider.h"
-##include "pindialog.h"
+//willtodo: reenable
+//#include "pindialog.h"
 #endif
 
 class NetworkInterfaceMonitorPrivate
@@ -61,14 +63,14 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
     d->connectionList = connectionList;
     d->activatableList = activatableList;
 
-    QObject::connect(NetworkManager::NetworkManager::notifier(),
+    QObject::connect(NetworkManager::notifier(),
             SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
-    QObject::connect(NetworkManager::NetworkManager::notifier(),
+    QObject::connect(NetworkManager::notifier(),
             SIGNAL(networkInterfaceRemoved(const QString&)),
             this, SLOT(networkInterfaceRemoved(const QString&)));
 
-    foreach (NetworkManager::Device * iface, NetworkManager::NetworkManager::networkInterfaces()) {
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
         networkInterfaceAdded(iface->uni());
     }
 
@@ -93,13 +95,13 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
     Q_D(NetworkInterfaceMonitor);
     kDebug();
 
-    NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(uni);
+    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
     if (iface && !d->providers.contains(uni)) {
         NetworkInterfaceActivatableProvider * provider;
-        if (iface->type() == NetworkManager::Device::Ieee80211) {
+        if (iface->type() == NetworkManager::Device::Ethernet) {
             kDebug() << "Wireless interface added";
             provider = new WirelessNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::WirelessDevice*>(iface), this);
-        } else if (iface->type() == NetworkManager::Device::Ieee8023) {
+        } else if (iface->type() == NetworkManager::Device::Wifi) {
             kDebug() << "Wired interface added";
             provider = new WiredNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::WiredDevice*>(iface), this);
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT

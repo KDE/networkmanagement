@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkinterfaceenvironment.h"
 
 /**
- * Uses NetworkManager::WirelessDeviceEnvironment to model logical networks,
+ * Uses NetworkManager::WirelessNetworkInterfaceEnvironment to model logical networks,
  * as opposed to Access Points
  */
 class NetworkItemModel : public QAbstractItemModel
@@ -63,7 +63,7 @@ class NetworkItemModel : public QAbstractItemModel
     private:
         QStringList m_networks;
         NetworkManager::WirelessDevice *m_networkInterface;
-        NetworkManager::WirelessDeviceEnvironment *m_environment;
+        NetworkManager::WirelessNetworkInterfaceEnvironment *m_environment;
 
         static const int s_numColumns = 4;
 };

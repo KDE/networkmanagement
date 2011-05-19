@@ -128,7 +128,7 @@ void InterfaceConnectionItem::setActivationState(Knm::InterfaceConnection::Activ
                 break;
             case Knm::InterfaceConnection::Activating:
             case Knm::InterfaceConnection::Activated:
-                NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(activatable()->deviceUni());
+                NetworkManager::Device * iface = NetworkManager::findNetworkInterface(activatable()->deviceUni());
                 if (!d->connectionDetailsLabel) {
                     d->connectionDetailsLabel = new QLabel(this);
                     d->connectionLayout->addWidget(d->connectionDetailsLabel);

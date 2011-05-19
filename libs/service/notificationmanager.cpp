@@ -33,11 +33,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <Solid/Device>
 #include <libnm-qt/manager.h>
 #include <libnm-qt/wirelessdevice.h>
+#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
 
 #include <interfaceconnection.h>
 #include <vpninterfaceconnection.h>
 #include <uiutils.h>
-#include <wirelessnetworkinterfaceenvironment.h>
 
 #include "events.h"
 #include "../internals/connection.h"
@@ -54,7 +54,7 @@ InterfaceNotificationHost::InterfaceNotificationHost(NetworkManager::Device * in
     // For the notification icon
     m_type = interface->type();
 
-    QObject::connect(interface, SIGNAL(connectionStateChanged(int,int,int)),
+    QObject::connect(interface, SIGNAL(stateChanged(int,int,int)),
             this, SLOT(interfaceConnectionStateChanged(int,int,int)));
 }
 
@@ -115,7 +115,7 @@ void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::I
             break;
         case Knm::InterfaceConnection::Unknown:
             m_activating.remove(ic);
-            if (ic->connectionType() != Knm::Connection::Wireless || NetworkManager::NetworkManager::isWirelessHardwareEnabled()) {
+            if (ic->connectionType() != Knm::Connection::Wireless || NetworkManager::isWirelessHardwareEnabled()) {
                 if (ic->oldActivationState() == Knm::InterfaceConnection::Activating)
                     KNotification::event(Event::ConnectFailed, m_interfaceNameLabel, i18nc("@info:status Notification text when connection has failed","Connection %1 failed", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
                 else
@@ -379,20 +379,20 @@ NotificationManager::NotificationManager(QObject * parent)
     connect(d->disappearedNetworkTimer, SIGNAL(timeout()), this, SLOT(notifyDisappearedNetworks()));
 
     // status
-    QObject::connect(NetworkManager::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
+    QObject::connect(NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
             this, SLOT(statusChanged(Solid::Networking::Status)));
 
     // rfkill
-    QObject::connect(NetworkManager::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
+    QObject::connect(NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
             this, SLOT(wirelessHardwareEnabledChanged(bool)));
 
     // interfaces
-    QObject::connect(NetworkManager::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+    QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
-    QObject::connect(NetworkManager::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+    QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             this, SLOT(networkInterfaceRemoved(const QString&)));
 
-    foreach (NetworkManager::Device* interface, NetworkManager::NetworkManager::networkInterfaces()) {
+    foreach (NetworkManager::Device* interface, NetworkManager::networkInterfaces()) {
         networkInterfaceAdded(interface->uni());
     }
     d->suppressHardwareEvents = false;
@@ -465,7 +465,7 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
     if (!d->interfaceHosts.contains(uni)) {
 
         kDebug() << "adding notification host";
-        NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(uni);
+        NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
         if (iface) {
             InterfaceNotificationHost * host = new InterfaceNotificationHost(iface, this);
 
@@ -477,13 +477,13 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
             }
 
             // if wireless, listen for new networks
-            if (iface->type() == NetworkManager::Device::Ieee80211) {
+            if (iface->type() == NetworkManager::Device::Wifi) {
                 NetworkManager::WirelessDevice * wireless = qobject_cast<NetworkManager::WirelessDevice*>(iface);
 
                 if (wireless) {
                     // this is a bit wasteful because WirelessNetworkInterfaceActivatableProvider is also
                     // creating these objects, but I expect these will move into Solid and become singletons
-                    NetworkManager::WirelessDeviceEnvironment * environment = new NetworkManager::WirelessDeviceEnvironment(wireless);
+                    NetworkManager::WirelessNetworkInterfaceEnvironment * environment = new NetworkManager::WirelessNetworkInterfaceEnvironment(wireless);
 
                     QObject::connect(environment, SIGNAL(networkAppeared(const QString &)),
                             this, SLOT(networkAppeared(const QString&)));
@@ -523,7 +523,7 @@ void NotificationManager::networkInterfaceRemoved(const QString &uni)
 void NotificationManager::networkAppeared(const QString & ssid)
 {
     Q_D(NotificationManager);
-    NetworkManager::WirelessDeviceEnvironment * environment = qobject_cast<NetworkManager::WirelessDeviceEnvironment *>(sender());
+    NetworkManager::WirelessNetworkInterfaceEnvironment * environment = qobject_cast<NetworkManager::WirelessNetworkInterfaceEnvironment *>(sender());
     if (environment && environment->interface()->activeAccessPoint() == "/") {
         d->newWirelessNetworks.append(ssid);
         d->newNetworkTimer->start(500);
@@ -533,7 +533,7 @@ void NotificationManager::networkAppeared(const QString & ssid)
 void NotificationManager::networkDisappeared(const QString & ssid)
 {
     Q_D(NotificationManager);
-    NetworkManager::WirelessDeviceEnvironment * environment = qobject_cast<NetworkManager::WirelessDeviceEnvironment *>(sender());
+    NetworkManager::WirelessNetworkInterfaceEnvironment * environment = qobject_cast<NetworkManager::WirelessNetworkInterfaceEnvironment *>(sender());
     if (environment && environment->interface()->activeAccessPoint() == "/") {
         d->disappearedWirelessNetworks.append(ssid);
         d->disappearedNetworkTimer->start(500);
@@ -596,9 +596,9 @@ void NotificationManager::statusChanged(Solid::Networking::Status status)
     if (status == Solid::Networking::Unknown) {
         KNotification::event(Event::NetworkingDisabled, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is disabled", "Networking system disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
     } else {
-        NetworkManager::NetworkManager::Notifier * n = qobject_cast<NetworkManager::NetworkManager::Notifier *>(sender());
+        NetworkManager::Notifier * n = qobject_cast<NetworkManager::Notifier *>(sender());
 
-        /* If the signal does not come from a NetworkManager::NetworkManager::Notifier object then it is from a Monolithic Knm object. */
+        /* If the signal does not come from a NetworkManager::Notifier object then it is from a Monolithic Knm object. */
         if (n == NULL and status == Solid::Networking::Connected)
             KNotification::event(Event::AlreadyRunning, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is already running", "Networking system already running"), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
     }

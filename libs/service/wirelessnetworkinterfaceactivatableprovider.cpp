@@ -30,7 +30,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <wirelessinterfaceconnection.h>
 #include <wirelessinterfaceconnectionhelpers.h>
 #include <wirelessnetwork.h>
-#include <wirelessnetworkinterfaceenvironment.h>
+#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
 
 #include "activatablelist.h"
 #include "connectionlist.h"
@@ -49,7 +49,7 @@ public:
         : NetworkInterfaceActivatableProviderPrivate(theConnectionList, theActivatableList, theInterface)
     { }
 
-    NetworkManager::WirelessDeviceEnvironment * environment;
+    NetworkManager::WirelessNetworkInterfaceEnvironment * environment;
 
     // essid to WirelessNetwork - only 1 exists per network
     QHash<QString, Knm::WirelessNetwork *> wirelessNetworks;
@@ -64,13 +64,13 @@ WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatable
 : NetworkInterfaceActivatableProvider(*new WirelessNetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface), parent)
 {
     Q_D(WirelessNetworkInterfaceActivatableProvider);
-    d->environment = new NetworkManager::WirelessDeviceEnvironment(interface);
+    d->environment = new NetworkManager::WirelessNetworkInterfaceEnvironment(interface);
 
     QObject::connect(d->environment, SIGNAL(networkAppeared(const QString &)), this, SLOT(networkAppeared(const QString&)));
     QObject::connect(d->environment, SIGNAL(networkDisappeared(const QString &)), this, SLOT(networkDisappeared(const QString&)));
-    connect(NetworkManager::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
+    connect(NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
                 this, SLOT(wirelessEnabledChanged(bool)));
-    connect(NetworkManager::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
+    connect(NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
                 this, SLOT(wirelessEnabledChanged(bool)));
     // try to create a connectable for each wireless network we can see
     // this is slightly inefficient because the NetworkInterfaceActivatableProvider ctor
@@ -317,8 +317,8 @@ void WirelessNetworkInterfaceActivatableProvider::wirelessEnabledChanged(bool st
 
 bool WirelessNetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() const
 {
-    bool needed =  NetworkManager::NetworkManager::isWirelessEnabled()
-        && NetworkManager::NetworkManager::isWirelessHardwareEnabled();
+    bool needed =  NetworkManager::isWirelessEnabled()
+        && NetworkManager::isWirelessHardwareEnabled();
     return needed;
 }
 

@@ -60,9 +60,9 @@ UnconfiguredInterfaceItem::UnconfiguredInterfaceItem(Knm::UnconfiguredInterface 
     d->activeIcon->show();
     // disconnects us from to the activatable's activate slot, because this is handled indirectly by
     // KnetworkManagerTrayIcon now.
-    NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(unconfigured->deviceUni());
+    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(unconfigured->deviceUni());
     if (iface) {
-        if (iface->type() == NetworkManager::Device::Ieee80211) {
+        if (iface->type() == NetworkManager::Device::Wifi) {
             disconnect(this, SIGNAL(clicked()), unconfigured, SLOT(activate()));
         }
     }
@@ -84,14 +84,14 @@ QString UnconfiguredInterfaceItem::iconName() const
 {
     // TODO a more specific icon could be identified using Solid eg external phones, pcmcia cards,
     // usb adaptors...
-    NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(activatable()->deviceUni());
+    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(activatable()->deviceUni());
     QString icon;
     if (iface) {
         switch (iface->type()) {
-            case NetworkManager::Device::Ieee8023:
+            case NetworkManager::Device::Ethernet:
                 icon = QLatin1String("network-wired");
                 break;
-            case NetworkManager::Device::Ieee80211:
+            case NetworkManager::Device::Wifi:
                 icon = QLatin1String("network-wireless");
                 break;
             case NetworkManager::Device::Serial:

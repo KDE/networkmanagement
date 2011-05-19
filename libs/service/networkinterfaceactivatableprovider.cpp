@@ -109,11 +109,10 @@ bool NetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() cons
 
 bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType, NetworkManager::Device::Type ifaceType)
 {
-     return ( (connType == Knm::Connection::Wired && ifaceType == NetworkManager::Device::Ieee8023)
-             || (connType == Knm::Connection::Wireless && ifaceType == NetworkManager::Device::Ieee80211)
-             || (connType == Knm::Connection::Gsm && ifaceType == NetworkManager::Device::Gsm)
-             || (connType == Knm::Connection::Cdma && ifaceType == NetworkManager::Device::Cdma)
-             || (connType == Knm::Connection::Pppoe && ifaceType == NetworkManager::Device::Serial)
+     return ( (connType == Knm::Connection::Wired && ifaceType == NetworkManager::Device::Ethernet)
+             || (connType == Knm::Connection::Wireless && ifaceType == NetworkManager::Device::Wifi)
+             || ((connType == Knm::Connection::Gsm || connType == Knm::Connection::Cdma || connType == Knm::Connection::Pppoe) && ifaceType == NetworkManager::Device::Modem)
+
 #ifdef NM_0_8
              || (connType == Knm::Connection::Bluetooth && ifaceType == NetworkManager::Device::Bluetooth)
 #endif

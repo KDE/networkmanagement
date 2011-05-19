@@ -62,8 +62,8 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
 
     d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
-    foreach (NetworkManager::Device * iface, NetworkManager::NetworkManager::networkInterfaces()) {
-        if (iface->type() == NetworkManager::Device::Ieee80211) {
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+        if (iface->type() == NetworkManager::Device::Wifi) {
 
             NetworkManager::WirelessDevice * wiface = static_cast<NetworkManager::WirelessDevice*>(iface);
             d->ui.cmbMacAddress->addItem(UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames), wiface->hardwareAddress().toLatin1());
@@ -244,8 +244,8 @@ void Wireless80211Widget::bandChanged(int index)
 void Wireless80211Widget::copyToBssid()
 {
     Q_D(Wireless80211Widget);
-    foreach (NetworkManager::Device * iface, NetworkManager::NetworkManager::networkInterfaces()) {
-        if (iface->type() == NetworkManager::Device::Ieee80211) {
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+        if (iface->type() == NetworkManager::Device::Wifi) {
             NetworkManager::WirelessDevice * wiface = static_cast<NetworkManager::WirelessDevice*>(iface);
             QString activeAp = wiface->activeAccessPoint();
             if (!activeAp.isEmpty()) {

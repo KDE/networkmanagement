@@ -76,7 +76,7 @@ QString ToolTipBuilder::toolTipForInterfaceConnection(Knm::InterfaceConnection *
         tipElements = KNetworkManagerServicePrefs::self()->toolTipKeys();
 
         QString deviceUni = interfaceConnection->deviceUni();
-        NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(deviceUni);
+        NetworkManager::Device * iface = NetworkManager::findNetworkInterface(deviceUni);
         NetworkManager::WirelessDevice * wliface = dynamic_cast<NetworkManager::WirelessDevice*> (iface);
         NetworkManager::WiredDevice * wdiface = dynamic_cast<NetworkManager::WiredDevice*> (iface);
 
@@ -134,7 +134,7 @@ QString interfaceTooltipHtmlPart(NetworkManager::Device * iface, const QString& 
     else if (requestedInfo == QLatin1String("status")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")
                 .arg(i18nc("@info:tooltip network interface status", "Status"))
-                .arg(UiUtils::connectionStateToString(static_cast<NM09DeviceState>(iface->connectionState())));
+                .arg(UiUtils::connectionStateToString(static_cast<NM09DeviceState>(iface->state())));
     }
     else if (requestedInfo == QLatin1String("designspeed")) {
         html += QString("<tr><td><b>%1:</b></td><td>&nbsp;%2</td></tr>")

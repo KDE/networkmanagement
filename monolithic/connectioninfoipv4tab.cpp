@@ -47,7 +47,7 @@ ConnectionInfoIPv4Tab::ConnectionInfoIPv4Tab(NetworkManager::Device *iface, QWid
     layout->addRow(i18nc("@label:textbox domains used by network interface", "Search domains:"), m_domainsLabel);
 
     connect(iface, SIGNAL(ipDetailsChanged()), this, SLOT(updateIpDetails()));
-    connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(updateIpDetails()));
+    connect(iface, SIGNAL(stateChanged(int,int,int)), this, SLOT(updateIpDetails()));
     updateIpDetails();
 }
 

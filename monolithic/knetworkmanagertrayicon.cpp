@@ -110,24 +110,24 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(NetworkManager::Device::Types t
     setIconByName(d->iconName);
 
     setAssociatedWidget(contextMenu());
-    setStatus( (!d->active || NetworkManager::NetworkManager::status() == Solid::Networking::Unknown )? PARENT_ICON_CLASS::Passive : PARENT_ICON_CLASS::Active);
+    setStatus( (!d->active || NetworkManager::status() == Solid::Networking::Unknown )? PARENT_ICON_CLASS::Passive : PARENT_ICON_CLASS::Active);
 
     d->networkingEnableAction = new KAction(i18nc("@action:inmenu turns off networking", "Enable networking"), this);
     d->networkingEnableAction->setCheckable(true);
-    d->networkingEnableAction->setChecked(NetworkManager::NetworkManager::isNetworkingEnabled());
+    d->networkingEnableAction->setChecked(NetworkManager::isNetworkingEnabled());
     connect(d->networkingEnableAction, SIGNAL(toggled(bool)), this, SLOT(enableNetworking(bool)));
-    connect(NetworkManager::NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
+    connect(NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
             this, SLOT(networkingEnabledChanged()));
 
-    if (types.testFlag(NetworkManager::Device::Ieee80211)) {
+    if (types.testFlag(NetworkManager::Device::Wifi)) {
         d->flightModeAction = new KAction(i18nc("@action:inmenu turns off wireless networking", "Enable wireless"), this);
         d->flightModeAction->setCheckable(true);
-        d->flightModeAction->setChecked(NetworkManager::NetworkManager::isWirelessEnabled());
-        d->flightModeAction->setEnabled(NetworkManager::NetworkManager::isWirelessHardwareEnabled());
+        d->flightModeAction->setChecked(NetworkManager::isWirelessEnabled());
+        d->flightModeAction->setEnabled(NetworkManager::isWirelessHardwareEnabled());
         connect(d->flightModeAction, SIGNAL(toggled(bool)), this, SLOT(enableWireless(bool)));
-        connect(NetworkManager::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
+        connect(NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
                 this, SLOT(wirelessEnabledChanged()));
-        connect(NetworkManager::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
+        connect(NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
                 this, SLOT(wirelessEnabledChanged()));
     }
 
@@ -146,28 +146,28 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(NetworkManager::Device::Types t
     fillPopup();
 
     // hide the icon when network management is unavailable
-    QObject::connect(NetworkManager::NetworkManager::notifier(),
+    QObject::connect(NetworkManager::notifier(),
                         SIGNAL(statusChanged(Solid::Networking::Status)),
                         this,
                         SLOT(networkingStatusChanged(Solid::Networking::Status)));
 
     // listen for new devices
-    QObject::connect(NetworkManager::NetworkManager::notifier(),
+    QObject::connect(NetworkManager::notifier(),
             SIGNAL(networkInterfaceAdded(const QString&)),
             this,
             SLOT(networkInterfaceAdded(const QString&)));
 
-    QObject::connect(NetworkManager::NetworkManager::notifier(),
+    QObject::connect(NetworkManager::notifier(),
             SIGNAL(networkInterfaceRemoved(const QString&)),
             this,
             SLOT(updateInterfaceToDisplay()));
 
     // listen to existing devices' state changes
     foreach (NetworkManager::Device * iface,
-            NetworkManager::NetworkManager::networkInterfaces()) {
+            NetworkManager::networkInterfaces()) {
         if (d->interfaceTypes.testFlag(iface->type())) {
             kDebug() << "connecting" << iface->interfaceName() << "'s signals";
-            QObject::connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+            QObject::connect(iface, SIGNAL(stateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
         }
     }
 
@@ -194,8 +194,8 @@ void KNetworkManagerTrayIcon::fillPopup()
 
     // build a list of wireless devices, so we can put its UnconfiguredInterface in the submenu
     QStringList wirelessDeviceUnis;
-    foreach (NetworkManager::Device * interface, NetworkManager::NetworkManager::networkInterfaces()) {
-        if (interface->type() == NetworkManager::Device::Ieee80211) {
+    foreach (NetworkManager::Device * interface, NetworkManager::networkInterfaces()) {
+        if (interface->type() == NetworkManager::Device::Wifi) {
             wirelessDeviceUnis.append(interface->uni());
         }
     }
@@ -210,7 +210,7 @@ void KNetworkManagerTrayIcon::fillPopup()
     }
 
     // if not active, add a warning notice, show Networking and Wireless check buttons and stop
-    if (NetworkManager::NetworkManager::status() == Solid::Networking::Unknown) {
+    if (NetworkManager::status() == Solid::Networking::Unknown) {
         QString passiveText = i18nc("@action:inmenu Disable action text used when the NetworkManager daemon is not running", "Network Management disabled");
         QString passiveTooltip = i18nc("@info:tooltip NetworkManager is not running, this client cannot do anything", "The system Network Management service is not running");
 
@@ -221,7 +221,7 @@ void KNetworkManagerTrayIcon::fillPopup()
 
         // show "Enable" check buttons
         contextMenu()->addAction(d->networkingEnableAction);
-        if (!wirelessDeviceUnis.isEmpty() /*TODO Bluetooth too */ && d->interfaceTypes.testFlag(NetworkManager::Device::Ieee80211)) {
+        if (!wirelessDeviceUnis.isEmpty() /*TODO Bluetooth too */ && d->interfaceTypes.testFlag(NetworkManager::Device::Wifi)) {
             contextMenu()->addAction(d->flightModeAction);
         }
         return;
@@ -268,9 +268,9 @@ void KNetworkManagerTrayIcon::fillPopup()
                 widget = new UnconfiguredInterfaceItem(unco, 0);
                 widget->setObjectName(unco->deviceUni());
                 NetworkManager::Device * iface
-                    = NetworkManager::NetworkManager::findNetworkInterface(unco->deviceUni());
+                    = NetworkManager::findNetworkInterface(unco->deviceUni());
                 if (iface) {
-                    if (iface->type() == NetworkManager::Device::Ieee80211) {
+                    if (iface->type() == NetworkManager::Device::Wifi) {
                         connect (widget, SIGNAL(clicked()), this, SLOT(showOtherWirelessDialog()));
                     }
                 }
@@ -317,17 +317,17 @@ void KNetworkManagerTrayIcon::fillPopup()
         }
     }
 
-    if (!wirelessInterfaceConnectionCount && NetworkManager::NetworkManager::isWirelessEnabled()
-            && NetworkManager::NetworkManager::isWirelessHardwareEnabled()) {
+    if (!wirelessInterfaceConnectionCount && NetworkManager::isWirelessEnabled()
+            && NetworkManager::isWirelessHardwareEnabled()) {
         foreach (QWidgetAction * action, wirelessUnconfiguredInterfaceItems) {
             contextMenu()->insertSeparator(insertionPointForConnectToOtherWireless);
             contextMenu()->insertAction(insertionPointForConnectToOtherWireless, action);
         }
     }
 
-    if (d->interfaceTypes.testFlag(NetworkManager::Device::Ieee80211)
-            && NetworkManager::NetworkManager::isWirelessEnabled()
-            && NetworkManager::NetworkManager::isWirelessHardwareEnabled() && wirelessInterfaceConnectionCount) {
+    if (d->interfaceTypes.testFlag(NetworkManager::Device::Wifi)
+            && NetworkManager::isWirelessEnabled()
+            && NetworkManager::isWirelessHardwareEnabled() && wirelessInterfaceConnectionCount) {
         contextMenu()->insertAction(insertionPointForConnectToOtherWireless, d->otherWirelessNetworksAction);
     }
 
@@ -335,7 +335,7 @@ void KNetworkManagerTrayIcon::fillPopup()
     contextMenu()->addSeparator();
 
     contextMenu()->addAction(d->networkingEnableAction);
-    if (!wirelessDeviceUnis.isEmpty() /*TODO Bluetooth too */ && d->interfaceTypes.testFlag(NetworkManager::Device::Ieee80211)) {
+    if (!wirelessDeviceUnis.isEmpty() /*TODO Bluetooth too */ && d->interfaceTypes.testFlag(NetworkManager::Device::Wifi)) {
         contextMenu()->addAction(d->flightModeAction);
     }
     contextMenu()->addSeparator();
@@ -374,11 +374,11 @@ void KNetworkManagerTrayIcon::slotPreferences()
 void KNetworkManagerTrayIcon::networkInterfaceAdded(const QString & uni)
 {
     Q_D(KNetworkManagerTrayIcon);
-    NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(uni);
+    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
     if (iface) {
         if (d->interfaceTypes.testFlag(iface->type())) {
             kDebug() << "connecting" << iface->interfaceName() << "'s signals";
-            QObject::connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+            QObject::connect(iface, SIGNAL(stateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
         }
     }
     //update our state
@@ -400,7 +400,7 @@ void KNetworkManagerTrayIcon::updateInterfaceToDisplay()
     kDebug();
     // update appearance
     // get current list of interfaces we are displaying
-    NetworkManager::DeviceList interfaces = NetworkManager::NetworkManager::networkInterfaces();
+    NetworkManager::DeviceList interfaces = NetworkManager::networkInterfaces();
     QMutableListIterator<NetworkManager::Device *> it(interfaces);
     while (it.hasNext()) {
         NetworkManager::Device * iface = it.next();
@@ -411,7 +411,7 @@ void KNetworkManagerTrayIcon::updateInterfaceToDisplay()
 
     kDebug() << "interfaces considered:";
     foreach (NetworkManager::Device * iface, interfaces) {
-        kDebug() << iface << iface->type() << iface->connectionState();
+        kDebug() << iface << iface->type() << iface->state();
 
     }
 
@@ -465,10 +465,10 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
     if (!d->displayedNetworkInterface.isNull()) {
 
         switch (d->displayedNetworkInterface->type() ) {
-            case NetworkManager::Device::Ieee8023:
+            case NetworkManager::Device::Ethernet:
                 iconName = QLatin1String("network-wired");
                 break;
-            case NetworkManager::Device::Ieee80211:
+            case NetworkManager::Device::Wifi:
                 if (!d->activeAccessPoint.isNull()) {
                     int strength = d->activeAccessPoint->signalStrength();
                     if ( strength > 80 )
@@ -498,7 +498,7 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
                 break;
         }
 
-        switch (d->displayedNetworkInterface->connectionState()) {
+        switch (d->displayedNetworkInterface->state()) {
             case NetworkManager::Device::Preparing:
                 overlayName = QLatin1String("busy-phase1");
                 overlayName = QLatin1String("emblem-link");
@@ -551,7 +551,7 @@ void KNetworkManagerTrayIcon::updateToolTip()
     Q_D(KNetworkManagerTrayIcon);
     QString tip;
     if (d->displayedNetworkInterface) {
-        tip = UiUtils::connectionStateToString(static_cast<NM09DeviceState>(d->displayedNetworkInterface->connectionState()));
+        tip = UiUtils::connectionStateToString(static_cast<NM09DeviceState>(d->displayedNetworkInterface->state()));
     } else {
         tip = "<qt>Networking <b>information</b> not available</qt>";
     }
@@ -571,28 +571,28 @@ void KNetworkManagerTrayIcon::networkingStatusChanged(Solid::Networking::Status 
 void KNetworkManagerTrayIcon::enableNetworking(bool enabled)
 {
     kDebug() << enabled;
-    NetworkManager::NetworkManager::setNetworkingEnabled(enabled);
+    NetworkManager::setNetworkingEnabled(enabled);
 }
 
 void KNetworkManagerTrayIcon::enableWireless(bool enabled)
 {
     kDebug() << enabled;
-    NetworkManager::NetworkManager::setWirelessEnabled(enabled);
+    NetworkManager::setWirelessEnabled(enabled);
 }
 
 void KNetworkManagerTrayIcon::wirelessEnabledChanged()
 {
     Q_D(KNetworkManagerTrayIcon);
-    d->flightModeAction->setEnabled(NetworkManager::NetworkManager::isWirelessHardwareEnabled());
+    d->flightModeAction->setEnabled(NetworkManager::isWirelessHardwareEnabled());
 
-    d->flightModeAction->setChecked(NetworkManager::NetworkManager::isWirelessEnabled());
+    d->flightModeAction->setChecked(NetworkManager::isWirelessEnabled());
     fillPopup();
 }
 
 void KNetworkManagerTrayIcon::networkingEnabledChanged()
 {
     Q_D(KNetworkManagerTrayIcon);
-    d->networkingEnableAction->setChecked(NetworkManager::NetworkManager::isNetworkingEnabled());
+    d->networkingEnableAction->setChecked(NetworkManager::isNetworkingEnabled());
 }
 
 void KNetworkManagerTrayIcon::setActive(bool active)
@@ -642,7 +642,7 @@ void KNetworkManagerTrayIcon::aboutToShowMenuContextMenu(KMenu * menu, QAction *
                     }
                     d->hoveredActionInterfaceConnection = ic;
                     QString deviceUni = ic->deviceUni();
-                    NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(deviceUni);
+                    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(deviceUni);
                     if (ic->activationState() == Knm::InterfaceConnection::Activated) {
                         QHostAddress addr;
                         if (iface) {
@@ -721,7 +721,7 @@ bool networkInterfaceLessThan(NetworkManager::Device *if1, NetworkManager::Devic
      *   - order as above
      */
     enum { Connecting, Connected, Disconnected } if2status = Disconnected, if1status = Disconnected;
-    switch (if1->connectionState()) {
+    switch (if1->state()) {
         case NetworkManager::Device::Preparing:
         case NetworkManager::Device::Configuring:
         case NetworkManager::Device::NeedAuth:
@@ -734,7 +734,7 @@ bool networkInterfaceLessThan(NetworkManager::Device *if1, NetworkManager::Devic
         default: // all kind of disconnected
             break;
     }
-    switch (if2->connectionState()) {
+    switch (if2->state()) {
         case NetworkManager::Device::Preparing:
         case NetworkManager::Device::Configuring:
         case NetworkManager::Device::NeedAuth:
@@ -770,12 +770,12 @@ bool networkInterfaceSameConnectionStateLessThan(NetworkManager::Device * if1, N
 {
     bool lessThan = false;
     switch (if1->type() ) {
-        case NetworkManager::Device::Ieee8023:
+        case NetworkManager::Device::Ethernet:
             switch (if2->type()) {
-                case NetworkManager::Device::Ieee8023:
+                case NetworkManager::Device::Ethernet:
                     lessThan = if1->uni() < if2->uni();
                     break;
-                case NetworkManager::Device::Ieee80211:
+                case NetworkManager::Device::Wifi:
                     lessThan = true;
                     break;
                 case NetworkManager::Device::Serial:
@@ -786,12 +786,12 @@ bool networkInterfaceSameConnectionStateLessThan(NetworkManager::Device * if1, N
                     break;
             }
             break;
-        case NetworkManager::Device::Ieee80211:
+        case NetworkManager::Device::Wifi:
             switch (if2->type()) {
-                case NetworkManager::Device::Ieee8023:
+                case NetworkManager::Device::Ethernet:
                     lessThan = false;
                     break;
-                case NetworkManager::Device::Ieee80211:
+                case NetworkManager::Device::Wifi:
                     lessThan = if1->uni() < if2->uni();
                     break;
                 case NetworkManager::Device::Serial:
@@ -806,8 +806,8 @@ bool networkInterfaceSameConnectionStateLessThan(NetworkManager::Device * if1, N
             break;
         case NetworkManager::Device::Serial:
             switch (if2->type()) {
-                case NetworkManager::Device::Ieee8023:
-                case NetworkManager::Device::Ieee80211:
+                case NetworkManager::Device::Ethernet:
+                case NetworkManager::Device::Wifi:
                     lessThan = true;
                     break;
                 case NetworkManager::Device::Serial:
@@ -824,8 +824,8 @@ bool networkInterfaceSameConnectionStateLessThan(NetworkManager::Device * if1, N
             break;
         case NetworkManager::Device::Gsm:
             switch (if2->type()) {
-                case NetworkManager::Device::Ieee8023:
-                case NetworkManager::Device::Ieee80211:
+                case NetworkManager::Device::Ethernet:
+                case NetworkManager::Device::Wifi:
                 case NetworkManager::Device::Serial:
                     lessThan = true;
                     break;
@@ -842,8 +842,8 @@ bool networkInterfaceSameConnectionStateLessThan(NetworkManager::Device * if1, N
             break;
         case NetworkManager::Device::Cdma:
             switch (if2->type()) {
-                case NetworkManager::Device::Ieee8023:
-                case NetworkManager::Device::Ieee80211:
+                case NetworkManager::Device::Ethernet:
+                case NetworkManager::Device::Wifi:
                 case NetworkManager::Device::Serial:
                 case NetworkManager::Device::Gsm:
                     lessThan = true;

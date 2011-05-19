@@ -31,7 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <libnm-qt/manager.h>
 #include <libnm-qt/device.h>
-#include <wirelessnetworkinterfaceenvironment.h>
+#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
 
 #include "unconfiguredinterface.h"
 #include "wirelessnetwork.h"
@@ -127,9 +127,9 @@ void ConfigurationLauncher::configureWirelessNetworkInternal(const QString & ssi
 
     QString apUni = QLatin1String("/");
 
-    NetworkManager::WirelessDevice * iface = qobject_cast<NetworkManager::WirelessDevice*>(NetworkManager::NetworkManager::findNetworkInterface(deviceUni));
+    NetworkManager::WirelessDevice * iface = qobject_cast<NetworkManager::WirelessDevice*>(NetworkManager::findNetworkInterface(deviceUni));
     if (iface) {
-        NetworkManager::WirelessDeviceEnvironment envt(iface);
+        NetworkManager::WirelessNetworkInterfaceEnvironment envt(iface);
         NetworkManager::WirelessNetwork * network = envt.findNetwork(ssid);
         if (network) {
             apUni = network->referenceAccessPoint();
@@ -180,28 +180,29 @@ void ConfigurationLauncher::unconfiguredInterfaceActivated()
         }
 
         //HACK - write proper AsString and FromString functions in the library somewhere
-        NetworkManager::Device * iface = NetworkManager::NetworkManager::findNetworkInterface(unco->deviceUni());
+        NetworkManager::Device * iface = NetworkManager::findNetworkInterface(unco->deviceUni());
         QString typeString;
         QString editorArgs;
         if (iface) {
             switch (iface->type()) {
-                case NetworkManager::Device::Ieee8023:
+                case NetworkManager::Device::Ethernet:
                     typeString = QLatin1String("802-3-ethernet");
                     break;
-                case NetworkManager::Device::Ieee80211:
+                case NetworkManager::Device::Wifi:
                     typeString = QLatin1String("802-11-wireless");
                     break;
-                case NetworkManager::Device::Serial:
+                case NetworkManager::Device::Modem:
+                //willtodo: determine typestring from currentCapabilities here
+                /*
                     typeString = QLatin1String("pppoe");
                     break;
-                case NetworkManager::Device::Gsm:
                     typeString = QLatin1String("gsm");
                     editorArgs = QLatin1String("gsm");
                     break;
-                case NetworkManager::Device::Cdma:
                     typeString = QLatin1String("cdma");
                     editorArgs = QLatin1String("cdma");
                     break;
+                    */
                 default:
                     break;
             }

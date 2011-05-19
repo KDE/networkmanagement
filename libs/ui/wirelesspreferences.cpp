@@ -72,7 +72,7 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
     NetworkManager::WirelessDevice * iface = 0;
 
     if (!deviceUni.isEmpty() && deviceUni != QLatin1String("/")) {
-        iface = qobject_cast<NetworkManager::WirelessDevice*>(NetworkManager::NetworkManager::findNetworkInterface(deviceUni));
+        iface = qobject_cast<NetworkManager::WirelessDevice*>(NetworkManager::findNetworkInterface(deviceUni));
         if (iface) {
             if ( !apUni.isEmpty() && apUni != QLatin1String("/")) {
                 ap = iface->findAccessPoint(apUni);
@@ -144,7 +144,7 @@ WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
     NetworkManager::WirelessDevice * iface = 0;
 
     if (!deviceUni.isEmpty() && deviceUni != QLatin1String("/")) {
-        iface = qobject_cast<NetworkManager::WirelessDevice*>(NetworkManager::NetworkManager::findNetworkInterface(deviceUni));
+        iface = qobject_cast<NetworkManager::WirelessDevice*>(NetworkManager::findNetworkInterface(deviceUni));
         if (iface) {
             if ( !apUni.isEmpty() && apUni != QLatin1String("/")) {
                 ap = iface->findAccessPoint(apUni);
@@ -201,14 +201,14 @@ void WirelessPreferences::tabChanged(int index)
             // if hwAddr set, take that one
             // else, take the first one that can see this ssid
             foreach (NetworkManager::Device * iface,
-                    NetworkManager::NetworkManager::networkInterfaces()) {
-                if (iface->type() == NetworkManager::Device::Ieee80211) {
+                    NetworkManager::networkInterfaces()) {
+                if (iface->type() == NetworkManager::Device::Wifi) {
                     NetworkManager::WirelessDevice * candidate = static_cast<NetworkManager::WirelessDevice*>(iface);
                     if (candidate->hardwareAddress() == hwAddr) {
                         ifaceForSsid = candidate;
                         break;
                     }
-                    NetworkManager::WirelessDeviceEnvironment env(candidate);
+                    NetworkManager::WirelessNetworkInterfaceEnvironment env(candidate);
 
                     NetworkManager::WirelessNetwork * net = 0;
                     net = env.findNetwork(ssid);

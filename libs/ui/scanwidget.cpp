@@ -35,8 +35,8 @@ ScanWidget::ScanWidget(QWidget *parent)
     setupUi(this);
 
     //populate the interfaces combobox
-    foreach (NetworkManager::Device * iface, NetworkManager::NetworkManager::networkInterfaces()) {
-        if (iface->type() == NetworkManager::Device::Ieee80211) {
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+        if (iface->type() == NetworkManager::Device::Wifi) {
 
             NetworkManager::WirelessDevice * wiface = static_cast<NetworkManager::WirelessDevice*>(iface);
             m_interface->addItem(UiUtils::interfaceNameLabel(iface->uni()), wiface->uni());
