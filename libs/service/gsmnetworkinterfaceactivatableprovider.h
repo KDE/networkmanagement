@@ -29,13 +29,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class ConnectionList;
 class ActivatableList;
 class GsmNetworkInterfaceActivatableProviderPrivate;
-namespace Solid
+namespace NetworkMangager
 {
-    namespace Control
-    {
-        class GsmNetworkInterface;
-    } // namespace Control
-} // namespace Solid
+    class ModemDevice;
+}
 
 /**
  * Specialized Activatable provider for gsm interfaces

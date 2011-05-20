@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStandardItem>
 #include <QStyledItemDelegate>
 
-#include "networkipv6config.h"
+#include <libnm-qt/ipv6config.h>
 
 class QStandardItem;
 class QItemSelection;

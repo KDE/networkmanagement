@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <libnm-qt/device.h>
 #include <libnm-qt/wirelessdevice.h>
 #include <libnm-qt/accesspoint.h>
-#include "wirelessnetworkinterfaceenvironment.h"
+#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
 
 class ApItemModel : public QAbstractItemModel
 {

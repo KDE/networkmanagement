@@ -26,13 +26,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class ConnectionList;
 class ActivatableList;
 class WiredNetworkInterfaceActivatableProviderPrivate;
-namespace Solid
+namespace NetworkManager
 {
-    namespace Control
-    {
-        class WiredNetworkInterface;
-    } // namespace Control
-} // namespace Solid
+    class WiredDevice;
+}
 
 /**
  * Specialized Activatable provider for wireless interfaces

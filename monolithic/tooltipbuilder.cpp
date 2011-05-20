@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <libnm-qt/wirelessdevice.h>
 #include <libnm-qt/accesspoint.h>
 #include <libnm-qt/wireddevice.h>
-#include <solid/control/networkipv4config.h>
+#include <libnm-qt/ipv4config.h>
 
 #include <interfaceconnection.h>
 #include <uiutils.h>

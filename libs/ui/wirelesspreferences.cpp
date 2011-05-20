@@ -44,7 +44,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-connection.h>
 #include <nm-setting-wireless.h>
 
-#include "wirelessnetworkinterfaceenvironment.h"
+#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
 
 WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &args, QWidget *parent)
 : ConnectionPreferences(args, parent), m_securityTabIndex(0)

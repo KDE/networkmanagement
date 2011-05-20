@@ -25,14 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-namespace Solid
-{
-namespace Control
+namespace NetworkManager
 {
 class AccessPoint;
-class WirelessNetworkInterface;
-} // namespace Control
-} // namespace Solid
+class WirelessDevice;
+}
 
 namespace Knm
 {

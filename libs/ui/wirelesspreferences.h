@@ -23,15 +23,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectionprefs.h"
 
-namespace Solid
-{
-namespace Control
+namespace NetworkManager
 {
 class AccessPoint;
-
-} // namespace Control
-
-} // namespace Solid
+}
 
 namespace Knm
 {

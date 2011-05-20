@@ -40,13 +40,6 @@ class SortedActivatableList;
 
 class KNetworkManagerTrayIconPrivate;
 
-namespace Solid
-{
-    namespace Control
-    {
-    } // namespace Control
-} // namespace Solid
-
 /**
  * Tray icon representing one or more network interfaces
  */
