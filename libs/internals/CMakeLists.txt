@@ -3,10 +3,6 @@ add_definitions(-DKDE_DEFAULT_DEBUG_AREA=51010)
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}
    ${CMAKE_CURRENT_BINARY_DIR}
-   ${CMAKE_CURRENT_SOURCE_DIR}/../../solidcontrolfuture
-   ${CMAKE_CURRENT_SOURCE_DIR}/../libs/client
-   ${CMAKE_CURRENT_SOURCE_DIR}/../../backends/NetworkManager
-   ${CMAKE_CURRENT_SOURCE_DIR}/../../libs
    )
 
 ## next target: internals layer library
@@ -98,8 +94,7 @@ set(knminternals_SRCS
    # helper functions for storing tooltip keys and UI strings
    tooltips.cpp
    # helper functions to obtain UI strings for various enums
-   # willtodo: move and reenable
-   #uiutils.cpp
+   uiutils.cpp
    )
 
 kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)

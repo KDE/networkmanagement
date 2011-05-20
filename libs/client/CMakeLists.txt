@@ -16,6 +16,7 @@ set(knmclient_SRCS
    remotewirelessnetwork.cpp
    remoteactivatablelist.cpp
    #remotegsminterfaceconnection.cpp
+   remoteutils.cpp
 )
 
 set_source_files_properties( ../service/interfaces/org.kde.networkmanagement.xml PROPERTIES NO_NAMESPACE TRUE CLASSNAME NetworkManagementInterface)
@@ -62,7 +63,7 @@ QT4_ADD_DBUS_INTERFACE(knmclient_SRCS
 
 kde4_add_library(knmclient SHARED ${knmclient_SRCS})
 
-target_link_libraries(knmclient ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${KDE4_KDECORE_LIBS})
+target_link_libraries(knmclient nm-qt ${QT_QTCORE_LIBRARY} ${QT_QTDBUS_LIBRARY} ${KDE4_KDECORE_LIBS})
 
 set_target_properties(knmclient PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}

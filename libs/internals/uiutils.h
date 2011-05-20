@@ -26,31 +26,29 @@ class QSizeF;
 
 #include "knmserviceprefs.h"
 #include "knminternals_export.h"
-#include "../client/remoteinterfaceconnection.h"
-#include "../client/remoteactivatablelist.h"
-#include "../libs/types.h"
 
-#include <libnm-qt/device.h>
 #include <libnm-qt/wirelessdevice.h>
 #include <libnm-qt/accesspoint.h>
-#include <Solid/Device>
 
-class KNMINTERNALS_EXPORT UiUtils
+namespace Solid
 {
-public:
+    class Device;
+} // namespace Solid
 
+namespace UiUtils
+{
     /**
      * @return a human-readable description for the network interface type for use as label
      * @param type the type of the network interface
      */
-    static QString interfaceTypeLabel(const NetworkManager::Device::Type type);
+    KNMINTERNALS_EXPORT QString interfaceTypeLabel(const NetworkManager::Device::Type type);
 
     /**
      * @return a human-readable name for a given network interface according to the configured
      * naming style
      * @param uni uni of the network interface
      */
-    static QString interfaceNameLabel(const QString & uni);
+    KNMINTERNALS_EXPORT QString interfaceNameLabel(const QString & uni);
 
     /**
      * @return a human-readable name for a given network interface according to the configured
@@ -58,32 +56,25 @@ public:
      * @param uni uni of the network interface
      * @param interfaceNamingStyle name style to use when generating the name
      */
-    static QString interfaceNameLabel(const QString & uni, const KNetworkManagerServicePrefs::InterfaceNamingChoices interfaceNamingStyle);
+    KNMINTERNALS_EXPORT QString interfaceNameLabel(const QString & uni, const KNetworkManagerServicePrefs::InterfaceNamingChoices interfaceNamingStyle);
 
     /**
      * @return a Solid::Device from a NetworkManager uni. The returned object must be deleted after use
      * @param type the type of the network interface
      */
-    static Solid::Device* findSolidDevice(const QString & uni);
+    KNMINTERNALS_EXPORT Solid::Device* findSolidDevice(const QString & uni);
 
     /**
      * @return a human-readable description of the connection state of a given network interface
      * @param state The connection state
      */
-    static QString connectionStateToString(NM09DeviceState state, const QString &connectionName = QString());
-
-    /**
-     * @return the RemoteInterfaceConnection for a given network interface
-     * @param interface the NetworkManager::Device state
-     * @param activatables the RemoteActivatableList of all connections
-     */
-    static RemoteInterfaceConnection* connectionForInterface(RemoteActivatableList* activatables, NetworkManager::Device *interface);
+    KNMINTERNALS_EXPORT QString connectionStateToString(NetworkManager::Device::State state, const QString &connectionName = QString());
 
     /**
      * @return an icon name suitable for the interface type
      * @param iface the network interface
      */
-    static QString iconName(NetworkManager::Device *iface);
+    KNMINTERNALS_EXPORT QString iconName(NetworkManager::Device *iface);
 
     /** This method can be used to retrieve an icon size that fits into a given size.
      * The resulting size can be used to render Pixmaps from KIconLoader without
@@ -92,7 +83,7 @@ public:
      * @return a size available in KIconLoader.
      * @param size The size of the rect it should fit in
      */
-    static int iconSize(const QSizeF size);
+     KNMINTERNALS_EXPORT int iconSize(const QSizeF size);
 
     /** This method can be used to retrieve the progress of a connection attempt
      * as a qreal, for painting progress bars.
@@ -100,25 +91,25 @@ public:
      * @return the progress between 0 (disconnected) and 1 (activated).
      * @param interface the network interface
      */
-    static qreal interfaceState(const NetworkManager::Device *interface);
+    KNMINTERNALS_EXPORT qreal interfaceState(const NetworkManager::Device *interface);
 
     /**
      * @return a human-readable description of operation mode. 
      * @param mode the operation mode
      */
-    static QString operationModeToString(NetworkManager::WirelessDevice::OperationMode mode);
+    KNMINTERNALS_EXPORT QString operationModeToString(NetworkManager::WirelessDevice::OperationMode mode);
 
     /**
      * @return string list with a human-readable description of wpa flags.
      * @param flags the wpa flags
      */
-    static QStringList wpaFlagsToStringList(NetworkManager::AccessPoint::WpaFlags flags);
+    KNMINTERNALS_EXPORT QStringList wpaFlagsToStringList(NetworkManager::AccessPoint::WpaFlags flags);
 
     /**
      * @return localized string showing a human-readable connection speed. 1000 is used as base.
      * @param bitrate bitrate of the connection per second
      */
-    static QString connectionSpeed(double bitrate);
+    KNMINTERNALS_EXPORT QString connectionSpeed(double bitrate);
 
-};
+} //namespace UiItils
 #endif // UIUTILS_H

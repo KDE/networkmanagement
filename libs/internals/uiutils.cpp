@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIconLoader>
 #include <KLocale>
 #include <kdeversion.h>
+#include <Solid/Device>
 
 #include <libnm-qt/manager.h>
 
@@ -130,51 +131,51 @@ int UiUtils::iconSize(const QSizeF size)
     return s;
 }
 
-QString UiUtils::connectionStateToString(NM09DeviceState state, const QString &connectionName)
+QString UiUtils::connectionStateToString(NetworkManager::Device::State state, const QString &connectionName)
 {
     QString stateString;
     switch (state) {
-        case UnknownState:
+        case NetworkManager::Device::UnknownState:
             stateString = i18nc("description of unknown network interface state", "Unknown");
             break;
-        case Unmanaged:
+        case NetworkManager::Device::Unmanaged:
             stateString = i18nc("description of unmanaged network interface state", "Unmanaged");
             break;
-        case Unavailable:
+        case NetworkManager::Device::Unavailable:
             stateString = i18nc("description of unavailable network interface state", "Unavailable");
             break;
-        case Disconnected:
+        case NetworkManager::Device::Disconnected:
             stateString = i18nc("description of unconnected network interface state", "Not connected");
             break;
-        case Preparing:
+        case NetworkManager::Device::Preparing:
             stateString = i18nc("description of preparing to connect network interface state", "Preparing to connect");
             break;
-        case Configuring:
+        case NetworkManager::Device::ConfiguringHardware:
             stateString = i18nc("description of configuring hardware network interface state", "Configuring interface");
             break;
-        case NeedAuth:
+        case NetworkManager::Device::NeedAuth:
             stateString = i18nc("description of waiting for authentication network interface state", "Waiting for authorization");
             break;
-        case IPConfig:
+        case NetworkManager::Device::ConfiguringIp:
             stateString = i18nc("network interface doing dhcp request in most cases", "Setting network address");
             break;
-        case IPCheck:
+        case NetworkManager::Device::CheckingIp:
             stateString = i18nc("is other action required to fully connect? captive portals, etc.", "Checking further connectivity");
             break;
-        case Secondaries:
+        case NetworkManager::Device::WaitingForSecondaries:
             stateString = i18nc("a secondary connection (e.g. VPN) has to be activated first to continue", "Waiting for a secondary connection");
             break;
-        case Activated:
+        case NetworkManager::Device::Activated:
             if (connectionName.isEmpty()) {
                 stateString = i18nc("network interface connected state label", "Connected");
             } else {
                 stateString = i18nc("network interface connected state label", "Connected to %1", connectionName);
             }
             break;
-        case Deactivating:
+        case NetworkManager::Device::Deactivating:
             stateString = i18nc("network interface disconnecting state label", "Deactivating connection");
             break;
-        case Failed:
+        case NetworkManager::Device::Failed:
             stateString = i18nc("network interface connection failed state label", "Connection Failed");
             break;
         default:
@@ -250,24 +251,6 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
 
     return interfaceNameLabel(uni, static_cast<KNetworkManagerServicePrefs::InterfaceNamingChoices>(KNetworkManagerServicePrefs::self()->interfaceNamingStyle()));
 }
-
-RemoteInterfaceConnection* UiUtils::connectionForInterface(RemoteActivatableList* activatables, NetworkManager::Device *interface)
-{
-    foreach (RemoteActivatable* activatable, activatables->activatables()) {
-        if (activatable->deviceUni() == interface->uni()) {
-            RemoteInterfaceConnection* remoteconnection = dynamic_cast<RemoteInterfaceConnection*>(activatable);
-            if (remoteconnection) {
-                if (remoteconnection->activationState() == Knm::InterfaceConnection::Activated
-                            || remoteconnection->activationState() == Knm::InterfaceConnection::Activating) {
-                    return remoteconnection;
-                }
-            }
-
-        }
-    }
-    return 0;
-}
-
 
 qreal UiUtils::interfaceState(const NetworkManager::Device *interface)
 {
