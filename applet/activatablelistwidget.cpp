@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // KDE
 #include <KDebug>
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/manager.h>
 #include <KToolInvocation>
 #include <KStandardDirs>
 
@@ -99,7 +99,7 @@ void ActivatableListWidget::removeType(Knm::Activatable::ActivatableType type)
     filter();
 }
 
-void ActivatableListWidget::addInterface(Solid::Control::NetworkInterface* iface)
+void ActivatableListWidget::addInterface(NetworkManager::Device* iface)
 {
     kDebug() << "interface added";
     if (iface) {
@@ -155,7 +155,7 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
         if (activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection)
         {
             RemoteWirelessInterfaceConnection * wic = qobject_cast<RemoteWirelessInterfaceConnection*>(activatable);
-            if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc && wic->activationState() == Knm::InterfaceConnection::Unknown)
+            if (wic->operationMode() == NetworkManager::WirelessDevice::Adhoc && wic->activationState() == Knm::InterfaceConnection::Unknown)
             {
                 return false;
             }
@@ -281,7 +281,7 @@ void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
     if (accept(added)) {
         createItem(added);
     }
-    if(added->activatableType() == Knm::Activatable::WirelessInterfaceConnection && static_cast<RemoteWirelessInterfaceConnection*>(added)->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc)
+    if(added->activatableType() == Knm::Activatable::WirelessInterfaceConnection && static_cast<RemoteWirelessInterfaceConnection*>(added)->operationMode() == NetworkManager::WirelessDevice::Adhoc)
         connect(added,SIGNAL(changed()),SLOT(filter()));
 }
 
@@ -309,7 +309,7 @@ void ActivatableListWidget::filter()
         bool found = false;
         foreach (QString uni, m_interfaces.keys())
         {
-            if (m_interfaces.value(uni) == Solid::Control::NetworkInterface::Ieee80211)
+            if (m_interfaces.value(uni) == NetworkManager::Device::Wifi)
             {
                 createHiddenItem();
                 found = true;

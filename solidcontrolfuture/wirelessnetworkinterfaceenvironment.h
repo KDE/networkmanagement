@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
  * Models the wireless environment as seen by a particular network interface.
- * This may be merged into Solid::Control::WirelessNetworkInterface
+ * This may be merged into NetworkManager::WirelessDevice
  */
 namespace Solid
 {
@@ -44,15 +44,15 @@ Q_OBJECT
 Q_DECLARE_PRIVATE(WirelessNetworkInterfaceEnvironment)
 public:
     /**
-     * Construct this using a Solid::Control::WirelessNetworkInterface * iface which is the QObject
+     * Construct this using a NetworkManager::WirelessDevice * iface which is the QObject
      * parent
      */
-    WirelessNetworkInterfaceEnvironment(Solid::Control::WirelessNetworkInterface * iface);
+    WirelessNetworkInterfaceEnvironment(NetworkManager::WirelessDevice * iface);
     virtual ~WirelessNetworkInterfaceEnvironment();
     virtual QStringList networks() const;
     virtual Solid::Control::WirelessNetwork * findNetwork(const QString&) const;
     void dump();
-    Solid::Control::WirelessNetworkInterface * interface() const;
+    NetworkManager::WirelessDevice * interface() const;
 
 private Q_SLOTS:
     void accessPointAppeared(const QString&);

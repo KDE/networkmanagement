@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "settingwidget.h"
 
-#include <types.h>
+#include <libnm-qt/generic-types.h>
 
 namespace Knm
 {

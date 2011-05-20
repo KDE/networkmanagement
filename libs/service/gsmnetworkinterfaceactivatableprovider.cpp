@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/modemmanager.h>
 #ifdef NM_0_8
-#include <solid/control/networkbtinterface.h>
+#include <libnm-qt/bluetoothdevice.h>
 #endif
 
 #include <gsminterfaceconnection.h>

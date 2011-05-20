@@ -25,7 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KNotification>
 #include <KLocale>
 
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/manager.h>
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
 
@@ -43,12 +43,12 @@ class WirelessNetworkInterfaceEnvironmentPrivate
 public:
     virtual ~WirelessNetworkInterfaceEnvironmentPrivate() {}
     QHash<QString, Solid::Control::WirelessNetwork*> networks;
-    Solid::Control::WirelessNetworkInterface * iface;
+    NetworkManager::WirelessDevice * iface;
 };
 } // namespace Control
 } // namespace Solid
 
-Solid::Control::WirelessNetworkInterfaceEnvironment::WirelessNetworkInterfaceEnvironment(Solid::Control::WirelessNetworkInterface * iface)
+NetworkManager::WirelessDeviceEnvironment::WirelessNetworkInterfaceEnvironment(NetworkManager::WirelessDevice * iface)
 : QObject(iface), d_ptr(new WirelessNetworkInterfaceEnvironmentPrivate)
 {
     Q_D(WirelessNetworkInterfaceEnvironment);
@@ -59,29 +59,29 @@ Solid::Control::WirelessNetworkInterfaceEnvironment::WirelessNetworkInterfaceEnv
     // for managing our list of wireless networks
     connect(iface, SIGNAL(accessPointAppeared(const QString&)),
             SLOT(accessPointAppeared(const QString&)));
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
+    connect(NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
             SLOT(wirelessEnabledChanged(bool)));
 }
 
-Solid::Control::WirelessNetworkInterfaceEnvironment::~WirelessNetworkInterfaceEnvironment()
+NetworkManager::WirelessDeviceEnvironment::~WirelessNetworkInterfaceEnvironment()
 {
     kDebug();
     delete d_ptr;
 }
 
-Solid::Control::WirelessNetworkInterface * Solid::Control::WirelessNetworkInterfaceEnvironment::interface() const
+NetworkManager::WirelessDevice * NetworkManager::WirelessDeviceEnvironment::interface() const
 {
     Q_D(const WirelessNetworkInterfaceEnvironment);
     return d->iface;
 }
 
-QStringList Solid::Control::WirelessNetworkInterfaceEnvironment::networks() const
+QStringList NetworkManager::WirelessDeviceEnvironment::networks() const
 {
     Q_D(const WirelessNetworkInterfaceEnvironment);
     return d->networks.keys();
 }
 
-Solid::Control::WirelessNetwork * Solid::Control::WirelessNetworkInterfaceEnvironment::findNetwork(const QString & ssid) const
+Solid::Control::WirelessNetwork * NetworkManager::WirelessDeviceEnvironment::findNetwork(const QString & ssid) const
 {
     Q_D(const WirelessNetworkInterfaceEnvironment);
     WirelessNetwork * net = 0;
@@ -91,17 +91,17 @@ Solid::Control::WirelessNetwork * Solid::Control::WirelessNetworkInterfaceEnviro
     return net;
 }
 
-void Solid::Control::WirelessNetworkInterfaceEnvironment::accessPointAppeared(const QString &uni)
+void NetworkManager::WirelessDeviceEnvironment::accessPointAppeared(const QString &uni)
 {
     Q_UNUSED(uni);
     //kDebug() << d->iface->interfaceName() << " found " << uni;
     accessPointAppearedInternal(uni);
 }
 
-void Solid::Control::WirelessNetworkInterfaceEnvironment::accessPointAppearedInternal(const QString &uni)
+void NetworkManager::WirelessDeviceEnvironment::accessPointAppearedInternal(const QString &uni)
 {
     Q_D(WirelessNetworkInterfaceEnvironment);
-    Solid::Control::AccessPoint * ap = d->iface->findAccessPoint(uni);
+    NetworkManager::AccessPoint * ap = d->iface->findAccessPoint(uni);
     QString ssid = ap->ssid();
     //kDebug() << ssid << d->networks.contains(ssid);
     if (ssid.isEmpty()) {
@@ -116,7 +116,7 @@ void Solid::Control::WirelessNetworkInterfaceEnvironment::accessPointAppearedInt
     //dump();
 }
 /*
-void Solid::Control::WirelessNetworkInterfaceEnvironment::dump()
+void NetworkManager::WirelessDeviceEnvironment::dump()
 {
    Q_D(WirelessNetworkInterfaceEnvironment);
    kDebug() << d->networks.count();
@@ -127,7 +127,7 @@ void Solid::Control::WirelessNetworkInterfaceEnvironment::dump()
    }
 }
 */
-void Solid::Control::WirelessNetworkInterfaceEnvironment::removeNetwork(const QString &ssid)
+void NetworkManager::WirelessDeviceEnvironment::removeNetwork(const QString &ssid)
 {
     Q_D(WirelessNetworkInterfaceEnvironment);
     //kDebug() << ssid;
@@ -143,7 +143,7 @@ void Solid::Control::WirelessNetworkInterfaceEnvironment::removeNetwork(const QS
     //dump();
 }
 
-void Solid::Control::WirelessNetworkInterfaceEnvironment::wirelessEnabledChanged(bool enabled)
+void NetworkManager::WirelessDeviceEnvironment::wirelessEnabledChanged(bool enabled)
 {
     Q_D(WirelessNetworkInterfaceEnvironment);
     if (!enabled) {

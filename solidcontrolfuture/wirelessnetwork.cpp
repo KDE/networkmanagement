@@ -54,14 +54,14 @@ void Solid::Control::WirelessNetwork::accessPointAppeared(const QString &uni)
 {
     Q_D(const WirelessNetwork);
     if (!d->aps.contains(uni)) {
-        Solid::Control::AccessPoint * ap = d->wirelessNetworkInterface->findAccessPoint(uni);
+        NetworkManager::AccessPoint * ap = d->wirelessNetworkInterface->findAccessPoint(uni);
         if (ap->ssid() == d->ssid) {
             addAccessPointInternal(ap);
         }
     }
 }
 
-void Solid::Control::WirelessNetwork::addAccessPointInternal(Solid::Control::AccessPoint * ap)
+void Solid::Control::WirelessNetwork::addAccessPointInternal(NetworkManager::AccessPoint * ap)
 {
     Q_D(WirelessNetwork);
     connect(ap, SIGNAL(signalStrengthChanged(int)),
@@ -85,7 +85,7 @@ void Solid::Control::WirelessNetwork::updateStrength()
 {
     Q_D(WirelessNetwork);
     int maximumStrength = -1;
-    foreach (Solid::Control::AccessPoint* iface, d->aps) {
+    foreach (NetworkManager::AccessPoint* iface, d->aps) {
         maximumStrength = qMax(maximumStrength, iface->signalStrength());
     }
     if (maximumStrength != d->strength) {
@@ -100,8 +100,8 @@ QString Solid::Control::WirelessNetwork::referenceAccessPoint() const
 {
     Q_D(const WirelessNetwork);
     int maximumStrength = -1;
-    Solid::Control::AccessPoint* strongest = 0;
-    foreach (Solid::Control::AccessPoint* iface, d->aps) {
+    NetworkManager::AccessPoint* strongest = 0;
+    foreach (NetworkManager::AccessPoint* iface, d->aps) {
         int oldMax = maximumStrength;
         maximumStrength = qMax(maximumStrength, iface->signalStrength());
         if ( oldMax <= maximumStrength ) {
@@ -111,11 +111,11 @@ QString Solid::Control::WirelessNetwork::referenceAccessPoint() const
     return strongest->uni();
 }
 
-Solid::Control::AccessPointList Solid::Control::WirelessNetwork::accessPoints() const
+NetworkManager::AccessPointList Solid::Control::WirelessNetwork::accessPoints() const
 {
     Q_D(const WirelessNetwork);
-    Solid::Control::AccessPointList aps;
-    foreach (Solid::Control::AccessPoint* iface, d->aps) {
+    NetworkManager::AccessPointList aps;
+    foreach (NetworkManager::AccessPoint* iface, d->aps) {
         aps.append(iface->uni());
     }
     return aps;

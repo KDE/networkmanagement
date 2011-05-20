@@ -27,13 +27,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsGridLayout>
 #include <QLabel>
 
-#include <solid/control/wirelessaccesspoint.h>
-#include <solid/control/wirelessnetworkinterface.h>
-#include <solid/control/networkinterface.h>
-#include <solid/control/networkipv4config.h>
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/accesspoint.h>
+#include <libnm-qt/wirelessdevice.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/ipv4.config.h>
+#include <libnm-qt/manager.h>
 
-WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
+WirelessInterfaceItem::WirelessInterfaceItem(NetworkManager::WirelessDevice * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
 : InterfaceItem(iface, activatables, mode, parent)
 {
     connect(iface, SIGNAL(activeAccessPointChanged(const QString&)),
@@ -62,8 +62,8 @@ void WirelessInterfaceItem::connectButtonClicked()
 void WirelessInterfaceItem::setConnectionInfo()
 {
     InterfaceItem::setConnectionInfo(); // Sets the labels
-    switch (m_iface->connectionState()) {
-        case Unavailable:
+    switch (m_iface->state()) {
+        case NetworkManager::Device::Unavailable:
         case Disconnected:
         case Failed:
             m_connectionInfoIcon->hide();

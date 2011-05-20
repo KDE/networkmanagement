@@ -63,15 +63,15 @@ include_directories(
    ${CMAKE_CURRENT_BUILD_DIR}
 )
 
-#add_subdirectory(applet)
+add_subdirectory(applet)
 add_subdirectory(backends)
-#add_subdirectory(dataengine)
+add_subdirectory(dataengine)
 add_subdirectory(libs)
 #add_subdirectory(tests)
 add_subdirectory(settings)
-#add_subdirectory(vpnplugins)
+add_subdirectory(vpnplugins)
 #add_subdirectory(solidcontrolfuture)
-#add_subdirectory(kded)
+add_subdirectory(kded)
 
 # This is unmaintained, do not use it.
 add_subdirectory(monolithic)

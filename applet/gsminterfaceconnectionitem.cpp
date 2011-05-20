@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Label>
 #include <Plasma/Meter>
 
-#include <solid/control/networkgsminterface.h>
+#include <libnm-qt/modemdevice.h>
 
 #include "activatable.h"
 

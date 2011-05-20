@@ -61,7 +61,7 @@ int HiddenWirelessNetworkItem::strength() const
     return -1;
 }
 
-Solid::Control::AccessPoint * HiddenWirelessNetworkItem::referenceAccessPoint() const
+NetworkManager::AccessPoint * HiddenWirelessNetworkItem::referenceAccessPoint() const
 {
     return 0;
 }

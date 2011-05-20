@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 
 // Network Management
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/device.h>
 #include "vpninterfaceitem.h"
 #include "activatableitem.h"
 #include "remoteactivatable.h"
@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteinterfaceconnection.h"
 
 
-VpnInterfaceItem::VpnInterfaceItem(Solid::Control::NetworkInterface * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
+VpnInterfaceItem::VpnInterfaceItem(NetworkManager::Device * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
 : InterfaceItem(iface, activatables, mode, parent)
 {
     m_icon->nativeWidget()->setPixmap(KIcon("secure-card").pixmap(48,48));

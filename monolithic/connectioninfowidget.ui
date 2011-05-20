@@ -58,9 +58,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="connectionState">
+        <widget class="QLabel" name="state">
          <property name="text">
-          <string notr="true">connectionState</string>
+          <string notr="true">state</string>
          </property>
         </widget>
        </item>

@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
 
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/manager.h>
 
 #include "remoteinterfaceconnection.h"
 

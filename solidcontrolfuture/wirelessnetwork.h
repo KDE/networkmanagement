@@ -53,8 +53,8 @@ namespace Control
         /**
          * The uni of the current 'best' (strongest) Access Point.  Note that this may change or disappear over time.
          * Get the Access Point object using @ref
-         * Solid::Control::WirelessNetworkInterface::findAccessPoint() on the NetworkInterface this network was obtained from.
-         * Use @ref Solid::Control::WirelessNetworkInterface::accessPointDisappeared() or
+         * NetworkManager::WirelessDevice::findAccessPoint() on the NetworkInterface this network was obtained from.
+         * Use @ref NetworkManager::WirelessDevice::accessPointDisappeared() or
          * Solid::Control::WirelessNetwork::referenceAccessPointChanged() to detect this.
          */
         QString referenceAccessPoint() const;
@@ -63,7 +63,7 @@ namespace Control
          * List of access points
          * Subject to change, do not store!
          */
-        Solid::Control::AccessPointList accessPoints() const;
+        NetworkManager::AccessPointList accessPoints() const;
 
     Q_SIGNALS:
         /**
@@ -88,7 +88,7 @@ namespace Control
         void updateStrength();
     private:
         WirelessNetwork(AccessPoint *, WirelessNetworkInterface *network, QObject * parent);
-        void addAccessPointInternal(Solid::Control::AccessPoint *ap);
+        void addAccessPointInternal(NetworkManager::AccessPoint *ap);
         WirelessNetworkPrivate * d_ptr;
     };
 } // namespace Control

@@ -25,13 +25,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsWidget>
 #include <QGraphicsLinearLayout>
 
-#include <solid/control/networkinterface.h>
-#include <solid/control/networkgsminterface.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/modemdevice.h>
 #include <Plasma/Label>
 #include <Plasma/PushButton>
 #include <Plasma/SignalPlotter>
 
-#include "types.h"
+#include <libnm-qt/generic-types.h>"
 
 class RemoteActivatable;
 class RemoteInterfaceConnection;
@@ -44,7 +44,7 @@ Q_OBJECT
     public:
         InterfaceDetailsWidget(QGraphicsItem* parent = 0);
         virtual ~InterfaceDetailsWidget();
-        void setInterface(Solid::Control::NetworkInterface* iface, bool disconnectOld = true);
+        void setInterface(NetworkManager::Device* iface, bool disconnectOld = true);
         void setUpdateEnabled(bool enable);
         void resetUi();
         QString getLastIfaceUni();
@@ -64,13 +64,13 @@ Q_OBJECT
         int bitRate();
         QString currentIpAddress();
         QString getMAC();
-        QString connectionStateToString(NM09DeviceState state, const QString &connectionName = QString());
+        QString connectionStateToString(NetworkManager::Device::State state, const QString &connectionName = QString());
         void getDetails();
         void showDetails(bool reset = false);
         void connectSignals();
         void disconnectSignals();
 
-        Solid::Control::NetworkInterface* m_iface;
+        NetworkManager::Device* m_iface;
         QString m_ifaceUni;
 
         QGraphicsGridLayout *m_gridLayout;

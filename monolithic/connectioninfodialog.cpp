@@ -60,7 +60,7 @@ void ConnectionInfoDialog::interfaceConnectionStateChanged(Knm::InterfaceConnect
     if (state == Knm::InterfaceConnection::Unknown) {
         if (m_guiMade)
             clearGUI();
-        m_ui.connectionState->setText(QString());
+        m_ui.state->setText(QString());
     } else {
         if (!m_guiMade)
             buildGUI();
@@ -99,7 +99,7 @@ void ConnectionInfoDialog::buildGUI()
     connect(m_iface, SIGNAL(stateChanged(int,int,int)), this, SLOT(updateConnectionState(int,int,int)));
 
     NetworkManager::Device::State state = static_cast<NetworkManager::Device::State>(m_iface->state());
-    m_ui.connectionState->setText(UiUtils::connectionStateToString(state));
+    m_ui.state->setText(UiUtils::connectionStateToString(state));
     m_guiMade = true;
 }
 
@@ -113,11 +113,11 @@ void ConnectionInfoDialog::clearGUI()
         m_ui.infoTabWidget->removeTab(0);
         delete w;
     }
-    m_ui.connectionState->setText(QString());
+    m_ui.state->setText(QString());
     m_guiMade = false;
 }
 
 void ConnectionInfoDialog::updateConnectionState(int new_state, int, int)
 {
-    m_ui.connectionState->setText(UiUtils::connectionStateToString((NetworkManager::Device::State)new_state));
+    m_ui.state->setText(UiUtils::connectionStateToString((NetworkManager::Device::State)new_state));
 }

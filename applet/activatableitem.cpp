@@ -33,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Animation>
 #include <Plasma/Animator>
 
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/manager.h>
 
 #include "../libs/service/events.h"
 
@@ -96,9 +96,9 @@ void ActivatableItem::emitClicked()
     }
     emit clicked(this);
 
-    if (!Solid::Control::NetworkManager::isNetworkingEnabled()) {
+    if (!NetworkManager::isNetworkingEnabled()) {
         KNotification::event(Event::NetworkingDisabled, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is disabled", "Networking system disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData)->sendEvent();
-    } else if (!Solid::Control::NetworkManager::isWirelessEnabled() &&
+    } else if (!NetworkManager::isWirelessEnabled() &&
                m_activatable &&
                m_activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
         KNotification::event(Event::RfOff, i18nc("@info:status Notification for radio kill switch turned off", "Wireless hardware disabled"), KIcon("network-wireless").pixmap(QSize(m_iconSize,m_iconSize)), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData)->sendEvent();

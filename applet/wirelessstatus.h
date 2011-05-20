@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define WIRELESSSTATUS_H
 
 #include <QObject>
-#include <solid/control/wirelessnetworkinterface.h>
+#include <libnm-qt/wirelessdevice.h>
 
 class RemoteActivatable;
 class RemoteWirelessNetwork;
@@ -45,7 +45,7 @@ Q_OBJECT
         * @param item takes ownership of the WirelessStatus
         */
         WirelessStatus(RemoteWirelessNetwork* remote);
-        WirelessStatus(Solid::Control::WirelessNetworkInterface* iface);
+        WirelessStatus(NetworkManager::WirelessDevice* iface);
         ~WirelessStatus();
         void init(RemoteWirelessObject* obj);
         RemoteActivatable* activatable();

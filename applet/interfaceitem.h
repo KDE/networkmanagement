@@ -25,11 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDBusObjectPath>
 #include <QGraphicsWidget>
 
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/device.h>
 
 #include "interfaceconnection.h"
 #include "remoteactivatable.h"
-#include "types.h"
+#include <libnm-qt/generic-types.h>
 
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
@@ -40,13 +40,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class QGraphicsGridLayout;
 class QGraphicsLinearLayout;
-namespace Solid
-{
-    namespace Control
-    {
-        class NetworkInterface;
-    }
-}
 
 class RemoteInterfaceConnection;
 class RemoteActivatableList;
@@ -62,12 +55,12 @@ class InterfaceItem : public Plasma::IconWidget
 Q_OBJECT
 public:
     enum NameDisplayMode {InterfaceName, HardwareName};
-    InterfaceItem(Solid::Control::NetworkInterface* iface, RemoteActivatableList* activatables, NameDisplayMode mode = InterfaceName,  QGraphicsWidget* parent = 0);
+    InterfaceItem(NetworkManager::Device* iface, RemoteActivatableList* activatables, NameDisplayMode mode = InterfaceName,  QGraphicsWidget* parent = 0);
     virtual ~InterfaceItem();
 
     void setNameDisplayMode(NameDisplayMode);
     NameDisplayMode nameDisplayMode() const;
-    Solid::Control::NetworkInterface* interface();
+    NetworkManager::Device* interface();
     virtual QString connectionName();
     QString label();
     virtual void setActivatableList(RemoteActivatableList* activatables);
@@ -76,7 +69,7 @@ public:
 
 public Q_SLOTS:
     void activeConnectionsChanged();
-    virtual void connectionStateChanged(NM09DeviceState);
+    virtual void connectionStateChanged(NetworkManager::Device::State);
     virtual void setEnabled(bool enable);
     // also updates the connection info
     virtual void setActive(bool active);
@@ -99,7 +92,7 @@ protected Q_SLOTS:
 Q_SIGNALS:
     void stateChanged();
     void disconnectInterfaceRequested(const QString& deviceUni);
-    void clicked(Solid::Control::NetworkInterface*);
+    void clicked(NetworkManager::Device*);
     void hoverEnter(const QString& uni);
     void hoverLeave(const QString& uni);
 
@@ -121,7 +114,7 @@ protected:
 
     RemoteInterfaceConnection* m_currentConnection;
 
-    Solid::Control::NetworkInterface* m_iface;
+    NetworkManager::Device* m_iface;
     RemoteActivatableList* m_activatables;
 
     QGraphicsGridLayout* m_layout;
@@ -137,7 +130,7 @@ protected:
     Plasma::Label* m_connectionInfoIcon;
     NameDisplayMode m_nameMode;
     bool m_enabled;
-    NM09DeviceState m_state;
+    NetworkManager::Device::State m_state;
     QString m_interfaceName;
     bool m_disconnect;
     bool m_hasDefaultRoute;

@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/TabBar>
 
 #include <solid/networking.h>
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/device.h>
 
 #include "activatable.h"
 
@@ -54,7 +54,7 @@ public:
     virtual ~NMPopup();
 
     void init();
-    Solid::Control::NetworkInterface* defaultInterface();
+    NetworkManager::Device* defaultInterface();
     bool available(int state);
     bool hasWireless();
 
@@ -94,7 +94,7 @@ private Q_SLOTS:
     void uncheckShowMore(RemoteActivatable *);
 
 private:
-    void addInterfaceInternal(Solid::Control::NetworkInterface *);
+    void addInterfaceInternal(NetworkManager::Device *);
     void addVpnInterface();
     void updateHasWireless(bool checked = true);
 #ifdef NM_0_8

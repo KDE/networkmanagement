@@ -623,7 +623,7 @@ void ManageConnectionWidget::activeConnectionsChanged()
 {
 #if 0
     // indicate which connections are in use right now
-    QStringList activeConnections = NetworkManager::::activeConnections();
+    QStringList activeConnections = NetworkManager::activeConnections();
     foreach (QString conn, activeConnections) {
         OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
                                                                         conn, QDBusConnection::systemBus(), 0);

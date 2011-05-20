@@ -26,15 +26,15 @@ class QAction;
 class KCModuleProxy;
 
 #include <kdeversion.h>
+#include <QTimeLine>
 
 #include <plasma/framesvg.h>
 #include <plasma/svg.h>
 #include <solid/networking.h>
-#include <solid/control/networking.h>
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/accesspoint.h>
 
-#include "../libs/types.h"
+#include <libnm-qt/generic-types.h>
 
 #include <Plasma/PopupApplet>
 
@@ -44,8 +44,6 @@ namespace Plasma
 {
     class Applet;
 } // namespace Plasma
-
-class QTimeLine;
 
 class NMPopup;
 class RemoteActivatableList;
@@ -114,10 +112,10 @@ private Q_SLOTS:
     void saveConfiguration();
 
 private:
-    bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
-    Solid::Control::NetworkInterface* activeInterface();
+    bool hasInterfaceOfType(NetworkManager::Device::Type type);
+    NetworkManager::Device* activeInterface();
     void setupInterfaceSignals();
-    QString svgElement(Solid::Control::NetworkInterface *iface);
+    QString svgElement(NetworkManager::Device *iface);
 
     void paintPixmap(QPainter* painter, QPixmap pixmap,
                      const QRectF &rect, qreal opacity = 1.0);
@@ -128,7 +126,7 @@ private:
     void setStatusOverlay(const QString&);
 
     bool m_iconPerDevice;
-    Solid::Control::NetworkInterfaceList m_interfaces;
+    NetworkManager::DeviceList m_interfaces;
     Plasma::ToolTipContent m_toolTip;
 
     RemoteActivatableList* m_activatables;
@@ -137,14 +135,14 @@ private:
     QPixmap m_pixmap;
 
     // For tracking which status we should show
-    Solid::Control::NetworkInterface* m_activeInterface;
-    Solid::Control::AccessPoint* m_accessPoint;
+    NetworkManager::Device* m_activeInterface;
+    NetworkManager::AccessPoint* m_accessPoint;
 
     // Timeline controlling a connection progress overlay on the main icon
     QTimeLine m_overlayTimeline;
     QPixmap m_previousStatusOverlay;
     QPixmap m_statusOverlay;
-    NM09DeviceState m_currentState;
+    NetworkManager::Device::State m_currentState;
 
     ///embedded KCM modules in the configuration dialog
     KCModuleProxy* m_kcmNM;
