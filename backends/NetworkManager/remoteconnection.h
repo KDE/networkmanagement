@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nm-exported-connectioninterface.h"
 
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/device.h>
 
 class KNM_EXPORT RemoteConnection : public OrgFreedesktopNetworkManagerSettingsConnectionInterface
 {
@@ -35,7 +35,7 @@ public:
     RemoteConnection(const QString &service, const QString &path, QObject * parent = 0);
     ~RemoteConnection();
     QString id() const;
-    Solid::Control::NetworkInterface::Type type() const;
+    NetworkManager::Device::Type type() const;
     QString path() const;
     QVariantMapMap settings() const;
     bool active() const;
@@ -43,7 +43,7 @@ public:
 //  settingsUpdated(const QVariantMapMap&);
 private:
     QString m_id;
-    Solid::Control::NetworkInterface::Type m_type;
+    NetworkManager::Device::Type m_type;
     QVariantMapMap m_connection;
     QString m_path;
 };

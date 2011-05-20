@@ -25,7 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 
 #include "knm_export.h"
-#include "types.h"
+#include <libnm-qt/generic-types.h>
 
 class SettingDbus;
 

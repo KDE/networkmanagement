@@ -4,6 +4,7 @@
 #define IPV4DBUS_H
 
 #include <nm-setting-ip4-config.h>
+#include <QDBusArgument>
 
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>

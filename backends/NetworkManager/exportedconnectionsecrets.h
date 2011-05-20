@@ -15,7 +15,7 @@
 #include <QtCore/QObject>
 #include <QtDBus/QtDBus>
 #include "marshalarguments.h"
-#include "types.h"
+#include <libnm-qt/generic-types.h>
 #include "busconnection.h"
 class QByteArray;
 template<class T> class QList;

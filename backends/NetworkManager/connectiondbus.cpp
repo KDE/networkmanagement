@@ -28,6 +28,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-pppoe.h>
 #include <nm-setting-vpn.h>
 
+#include <QtDBus>
+
 #include "internals/connection.h"
 #include "internals/setting.h"
 

@@ -19,7 +19,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
-#include "types.h"
+#include <libnm-qt/generic-types.h>
 
 #include "knm_export.h"
 
