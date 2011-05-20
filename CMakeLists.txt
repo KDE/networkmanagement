@@ -31,7 +31,7 @@ if (NETWORKMANAGER_FOUND)
     macro_ensure_version("0.8.998" ${NETWORKMANAGER_VERSION} NM_0_9)
     find_package(GLIB2 REQUIRED)
 
-    configure_file(backends/NetworkManager/config-nm09backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm07backend.h )
+    configure_file(backends/NetworkManager/config-nm09backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm09backend.h )
 
     if (NM_0_9)
         include_directories(
