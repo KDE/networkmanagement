@@ -44,8 +44,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
 #include <KToolInvocation>
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/device.h>
 
 #include "knmserviceprefs.h"
 #include "connection.h"
@@ -94,11 +94,11 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connectButtonSet(mConnEditUi.buttonSetCellular, mConnEditUi.listCellular);
     connectButtonSet(mConnEditUi.buttonSetVpn, mConnEditUi.listVpn);
     connectButtonSet(mConnEditUi.buttonSetPppoe, mConnEditUi.listPppoe);
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             SLOT(updateTabStates()));
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             SLOT(updateTabStates()));
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(activeConnectionsChanged()),
+    connect(NetworkManager::notifier(), SIGNAL(activeConnectionsChanged()),
             SLOT(activeConnectionsChanged()));
     connect(mConnEditUi.tabWidget, SIGNAL(currentChanged(int)), SLOT(tabChanged(int)));
 
@@ -284,21 +284,18 @@ void ManageConnectionWidget::restoreConnections()
 void ManageConnectionWidget::updateTabStates()
 {
     bool hasWired = false, hasWireless = false, hasCellular = false, hasDsl = false;
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
         switch (iface->type()) {
-            case Solid::Control::NetworkInterface::Ieee8023:
+            case NetworkManager::Device::Ethernet:
                 hasWired = true;
                 break;
-            case Solid::Control::NetworkInterface::Ieee80211:
+            case NetworkManager::Device::Wifi:
                 hasWireless = true;
                 break;
-            case Solid::Control::NetworkInterface::Serial:
-                hasDsl = true;
-                break;
-            case Solid::Control::NetworkInterface::Gsm:
-            case Solid::Control::NetworkInterface::Cdma:
+                //willtodo: handle different modem access techs
+            case NetworkManager::Device::Modem:
 #ifdef NM_0_8
-            case Solid::Control::NetworkInterface::Bluetooth:
+            case NetworkManager::Device::Bluetooth:
 #endif
                 hasCellular = true;
                 break;
@@ -626,7 +623,7 @@ void ManageConnectionWidget::activeConnectionsChanged()
 {
 #if 0
     // indicate which connections are in use right now
-    QStringList activeConnections = Solid::Control::NetworkManager::activeConnections();
+    QStringList activeConnections = NetworkManager::::activeConnections();
     foreach (QString conn, activeConnections) {
         OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
                                                                         conn, QDBusConnection::systemBus(), 0);
