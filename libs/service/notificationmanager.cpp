@@ -144,7 +144,7 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
     KNotification::NotificationFlag flag = KNotification::Persistent;
 
     QString identifier = UiUtils::interfaceNameLabel(m_interface->uni());
-    QString stateString = UiUtils::connectionStateToString((NM09DeviceState)new_state);
+    QString stateString = UiUtils::connectionStateToString((NetworkManager::Device::State)new_state);
     /*
     // need to keep the notification object around to reset it during connection cycles, but
     // delete it at the end of a connection cycle
@@ -178,12 +178,12 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
     //X         }
 
     switch (new_state) {
-        case Preparing:
-        case Configuring:
-        case NeedAuth:
-        case IPConfig:
-        case IPCheck:
-        case Secondaries:
+        case NetworkManager::Device::Preparing:
+        case NetworkManager::Device::ConfiguringHardware:
+        case NetworkManager::Device::NeedAuth:
+        case NetworkManager::Device::ConfiguringIp:
+        case NetworkManager::Device::CheckingIp:
+        case NetworkManager::Device::WaitingForSecondaries:
             if (activatingConnection) {
                 title = i18nc("@info:status interface (%2) status notification title when a connection (%1) is activating",
                         "Activating %1 on %2", activatingConnection->connectionName(), identifier);
@@ -192,7 +192,7 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
             }
             flag = KNotification::Persistent;
             break;
-        case Activated:
+        case NetworkManager::Device::Activated:
         default:
             if (activatingConnection) {
                 title = i18nc("@info:status interface (%2) status notification title when a connection (%1) has successfully activated",
