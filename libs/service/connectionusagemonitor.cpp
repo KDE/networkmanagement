@@ -33,7 +33,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelist.h"
 #include "connectionlist.h"
 
-#include "types.h"
+#include <libnm-qt/generic-types.h>
 
 class ConnectionUsageMonitorPrivate
 {
@@ -136,7 +136,7 @@ void ConnectionUsageMonitor::networkInterfaceAccessPointChanged(const QString & 
 {
     Q_D(ConnectionUsageMonitor);
     NetworkManager::WirelessDevice * wifiDevice = qobject_cast<NetworkManager::WirelessDevice *>(sender());
-    if (wifiDevice && static_cast<NM09DeviceState>(wifiDevice->state()) == Activated) {
+    if (wifiDevice && static_cast<NetworkManager::Device::State>(wifiDevice->state()) == NetworkManager::Device::Activated) {
         NetworkManager::AccessPoint * ap = wifiDevice->findAccessPoint(apiUni);
         if (ap) {
             // find the activatable

@@ -32,7 +32,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KSharedConfig>
 #include <KStandardDirs>
 
-#include "types.h"
+#include <libnm-qt/generic-types.h>
 // internals includes
 #include "connectionpersistence.h"
 #include "knmserviceprefs.h"
