@@ -136,14 +136,7 @@ void ManageConnectionWidget::createConnection(const QString &connectionType, con
 
     kDebug() << "con is " << con;
 
-    if (con)
-    {
-        // TODO: Check for scope and mUserUserSettings if necessary
-        /*
-        if (conScope == Knm::Connection::User)
-            mUserSettings->addConnection(con);
-        else
-        */
+    if (con) {
         mSystemSettings->addConnection(con);
     }
 
