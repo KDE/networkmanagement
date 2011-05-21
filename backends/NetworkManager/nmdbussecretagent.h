@@ -61,7 +61,8 @@ private:
     OrgFreedesktopNetworkManagerAgentManagerInterface *m_agentManager;
     QDBusServiceWatcher *m_watcher;
 
-    QMultiHash <QString,QPair<QString, QDBusMessage> > m_connectionsToRead;
+    QHash <QString,QPair<QString, QDBusMessage> > m_connectionsToRead;
+    QList <QString> m_objectPaths;
 private Q_SLOTS:
     void secretsReady(Knm::Connection *, const QString &);
     void deleteSavedConnection(Knm::Connection *);

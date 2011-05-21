@@ -77,9 +77,10 @@ QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, c
     ConnectionDbus * condbus = new ConnectionDbus(con);
     condbus->fromDbusMap(connection);
     QPair<QString,QDBusMessage> pair;
-    pair.first = setting_name;
+    pair.first = connection_path.path();
     pair.second = msg;
-    m_connectionsToRead.insert(con->uuid(),pair);
+    m_connectionsToRead.insert(con->uuid() + setting_name, pair);
+    m_objectPaths.append(connection_path.path() + setting_name);
 
     foreach (Knm::Setting * setting, con->settings()) {
         if (setting->name() == setting_name && m_secretsProvider) {
@@ -93,6 +94,7 @@ QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, c
 
 void NMDBusSecretAgent::SaveSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path)
 {
+    Q_UNUSED(connection_path)
     Knm::Connection * con = new Knm::Connection(QUuid(), Knm::Connection::Wired);
     ConnectionDbus * condbus = new ConnectionDbus(con);
     condbus->fromDbusMap(connection);
@@ -103,6 +105,7 @@ void NMDBusSecretAgent::SaveSecrets(const QVariantMapMap &connection, const QDBu
 
 void NMDBusSecretAgent::DeleteSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path)
 {
+    Q_UNUSED(connection_path)
     Knm::Connection * con = new Knm::Connection(QUuid(), Knm::Connection::Wired);
     ConnectionDbus * condbus = new ConnectionDbus(con);
     condbus->fromDbusMap(connection);
@@ -118,28 +121,24 @@ void NMDBusSecretAgent::deleteSavedConnection(Knm::Connection *con)
 
 void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name)
 {
-    QMultiHash<QString, QPair<QString,QDBusMessage> >::iterator i = m_connectionsToRead.find(con->uuid());
-    while (i != m_connectionsToRead.end() && i.key() == con->uuid()) {
-        if (i.value().first == name) {
-            QPair<QString,QDBusMessage> pair = i.value();
-            ConnectionDbus * condbus = new ConnectionDbus(con);
-            QVariantMapMap secrets = condbus->toDbusSecretsMap(pair.first);
+    QPair<QString, QDBusMessage> pair = m_connectionsToRead.take(con->uuid() + name);
+    if (m_objectPaths.removeOne(pair.first + name)) {
+        ConnectionDbus * condbus = new ConnectionDbus(con);
+        QVariantMapMap secrets = condbus->toDbusSecretsMap(name);
 
-            QDBusMessage reply = pair.second.createReply();
-            QVariant arg = QVariant::fromValue(secrets);
-            reply << arg;
-            QDBusConnection::systemBus().send(reply);
+        QDBusMessage reply = pair.second.createReply();
+        QVariant arg = QVariant::fromValue(secrets);
+        reply << arg;
+        QDBusConnection::systemBus().send(reply);
 
-            m_connectionsToRead.erase(i);
-            delete condbus;
-            break;
-        }
+        delete condbus;
     }
     delete con;
 }
 
 void NMDBusSecretAgent::CancelGetSecrets(const QDBusObjectPath &connection_path, const QString &setting_name)
 {
+    m_objectPaths.removeOne(connection_path.path() + setting_name);
 }
 
 void NMDBusSecretAgent::registerSecretsProvider(SecretsProvider * provider)
