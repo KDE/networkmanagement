@@ -41,7 +41,7 @@ ManageTrayWidget::ManageTrayWidget(QWidget *parent, const QVariantList &args)
 {
 
     KGlobal::locale()->insertCatalog("libknmui");
-    KNetworkManagerServicePrefs::instance(NETWORKMANAGEMENT_RCFILE);
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
 
     QHBoxLayout * layout = new QHBoxLayout(this);
     ui = new OtherSettingsWidget(this);

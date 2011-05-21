@@ -23,7 +23,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QString>
 
-static const QString NETWORKMANAGEMENT_RCFILE = QLatin1String("networkmanagementrc");
-static const QString SECRETS_PERSISTENCE_PATH = QLatin1String("networkmanagement/secrets/");
+namespace Knm
+{
+    static const QString NETWORKMANAGEMENT_RCFILE = QLatin1String("networkmanagementrc");
+    static const QString SECRETS_PERSISTENCE_PATH = QLatin1String("networkmanagement/secrets/");
+}
+
 
 #endif

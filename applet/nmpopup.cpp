@@ -261,7 +261,7 @@ void NMPopup::init()
 void NMPopup::readConfig()
 {
     kDebug();
-    KNetworkManagerServicePrefs::instance(NETWORKMANAGEMENT_RCFILE);
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     KNetworkManagerServicePrefs::self()->readConfig();
     KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("SystemTray"));
     if (config.exists()) {

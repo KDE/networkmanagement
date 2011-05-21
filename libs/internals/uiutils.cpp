@@ -264,7 +264,7 @@ QString UiUtils::interfaceNameLabel(const QString & uni, const KNetworkManagerSe
 
 QString UiUtils::interfaceNameLabel(const QString & uni)
 {
-    KNetworkManagerServicePrefs::instance(NETWORKMANAGEMENT_RCFILE);
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
 
     return interfaceNameLabel(uni, static_cast<KNetworkManagerServicePrefs::InterfaceNamingChoices>(KNetworkManagerServicePrefs::self()->interfaceNamingStyle()));
 }

@@ -44,7 +44,7 @@ WId SecretStorage::s_walletWId = 0;
 SecretStorage::SecretStorage()
     :SecretsProvider()
 {
-    KNetworkManagerServicePrefs::instance(NETWORKMANAGEMENT_RCFILE);
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     KNetworkManagerServicePrefs::self()->config()->reparseConfiguration();
     m_storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
 }
@@ -239,8 +239,7 @@ KSharedConfig::Ptr SecretStorage::secretsFileForUuid(const QString & uuid)
     KSharedConfig::Ptr config;
     if (!uuid.isEmpty()) {
         QString configFile;
-        configFile = KStandardDirs::locateLocal("data",
-                                             SECRETS_PERSISTENCE_PATH + uuid);
+        configFile = KStandardDirs::locateLocal("data", Knm::SECRETS_PERSISTENCE_PATH + uuid);
 
         kDebug() << "configFile:" << configFile;
         config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
