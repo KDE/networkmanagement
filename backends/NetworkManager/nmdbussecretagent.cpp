@@ -21,15 +21,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "nmdbussecretagent.h"
 
 #include <NetworkManager.h>
-#include <nm-setting-connection.h>
-#include <nm-setting-wired.h>
-#include <nm-setting-wireless.h>
-#include <nm-setting-wireless-security.h>
-#include <nm-setting-8021x.h>
-#include <nm-setting-gsm.h>
-#include <nm-setting-cdma.h>
-#include <nm-setting-pppoe.h>
-#include <nm-setting-vpn.h>
 
 #include <QHash>
 #include <QUuid>
@@ -38,7 +29,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDBusConnection>
 
 #include <KDebug>
-#include <KLocale>
 
 #include <connection.h>
 #include <interfaceconnection.h>
@@ -46,13 +36,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "secretsprovider.h"
 
-#include "secrets.h"
-#include "802-11-wireless-securitysecrets.h"
-#include "802-11-wireless.h"
-
 #include "connectiondbus.h"
-
-#include "802-11-wireless-securitydbus.h"
 
 #include "nm-secret-agentadaptor.h"
 

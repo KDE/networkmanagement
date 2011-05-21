@@ -25,6 +25,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <kstandarddirs.h>
 #include <KDebug>
 
+#include <QFile>
+
 #include "paths.h"
 
 #include "ui/connectionsecretsjob.h"
@@ -32,19 +34,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "knmserviceprefs.h"
 #include "connection.h"
 #include "setting.h"
-#include "settings/802-11-wireless.h"
-#include "settings/802-11-wireless-security.h"
-#include "settings/802-1x.h"
-#include "settings/802-3-ethernet.h"
-#include "settings/cdma.h"
-#include "settings/gsm.h"
-#include "settings/bluetooth.h"
-#include "settings/ipv4.h"
-#include "settings/ipv6.h"
-#include "settings/ppp.h"
-#include "settings/pppoe.h"
-#include "settings/serial.h"
-#include "settings/vpn.h"
 
 #include "secrets.h"
 
