@@ -25,7 +25,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "nm-secret-agentadaptor.h"
 #include "knm_export.h"
 
+#include <QObject>
 #include <QDBusContext>
+#include <QDBusServiceWatcher>
 
 namespace Knm
 {
@@ -57,11 +59,13 @@ private:
     SecretsProvider *m_secretsProvider;
     SecretAgentAdaptor *m_agent;
     OrgFreedesktopNetworkManagerAgentManagerInterface *m_agentManager;
+    QDBusServiceWatcher *m_watcher;
 
     QMultiHash <QString,QPair<QString, QDBusMessage> > m_connectionsToRead;
 private Q_SLOTS:
     void secretsReady(Knm::Connection *, const QString &);
     void deleteSavedConnection(Knm::Connection *);
+    void registerAgent();
 };
 
 #endif // NMDBUSSECRETAGENT_H

@@ -45,9 +45,9 @@ NMDBusSecretAgent::NMDBusSecretAgent(QObject * parent)
 {
     m_agent = new SecretAgentAdaptor(this);
     m_agentManager = new OrgFreedesktopNetworkManagerAgentManagerInterface(NM_DBUS_SERVICE, NM_DBUS_PATH_AGENT_MANAGER, QDBusConnection::systemBus(),this);
-    m_agentManager->connection().registerObject(NM_DBUS_PATH_SECRET_AGENT, m_agent, QDBusConnection::ExportAllSlots);
-    m_agentManager->Register("org.kde.networkmanagement");
-    kDebug() << "Agent registered";
+    m_watcher = new QDBusServiceWatcher(NM_DBUS_SERVICE, QDBusConnection::systemBus(), QDBusServiceWatcher::WatchForRegistration, this);
+    connect(m_watcher, SIGNAL(serviceRegistered(const QString &)), SLOT(registerAgent()));
+    registerAgent();
 }
 
 NMDBusSecretAgent::~NMDBusSecretAgent()
@@ -55,6 +55,14 @@ NMDBusSecretAgent::~NMDBusSecretAgent()
     m_agentManager->Unregister();
     delete m_agent;
     delete m_agentManager;
+    delete m_watcher;
+}
+
+void NMDBusSecretAgent::registerAgent()
+{
+    m_agentManager->connection().registerObject(NM_DBUS_PATH_SECRET_AGENT, m_agent, QDBusConnection::ExportAllSlots);
+    m_agentManager->Register("org.kde.networkmanagement");
+    kDebug() << "Agent registered";
 }
 
 QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path, const QString &setting_name, const QStringList &hints, uint flags)
