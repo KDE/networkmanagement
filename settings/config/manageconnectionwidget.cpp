@@ -479,7 +479,7 @@ void ManageConnectionWidget::loadConnection(Knm::Connection *con)
 {
     // restore the Connection if possible
     QString connectionFile(KStandardDirs::locateLocal("data",
-                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + con->uuid()));
+                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + QString(con->uuid())));
     connectionPersistence = new Knm::ConnectionPersistence(con, KSharedConfig::openConfig(connectionFile),
             (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
     connectionPersistence->load();
@@ -489,7 +489,7 @@ void ManageConnectionWidget::saveConnection(Knm::Connection *con)
 {
     // persist the Connection
     QString connectionFile = KStandardDirs::locateLocal("data",
-        Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + con->uuid());
+        Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + QString(con->uuid()));
 
     Knm::ConnectionPersistence cp(
             con,
@@ -502,7 +502,7 @@ void ManageConnectionWidget::saveConnection(Knm::Connection *con)
     QString name = con->name();
     QString type = Knm::Connection::typeAsString(con->type());
     KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
-    KConfigGroup config(prefs->config(), QLatin1String("Connection_") + con->uuid());
+    KConfigGroup config(prefs->config(), QLatin1String("Connection_") + QString(con->uuid()));
     QStringList connectionIds = prefs->connections();
     // check if already present, we may be editing an existing Connection
     if (!connectionIds.contains(con->uuid()))

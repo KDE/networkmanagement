@@ -90,7 +90,7 @@ void ConnectionSecretsJob::doWork()
         doAskUser();
     } else {
         QString configFile = KStandardDirs::locate("data",
-                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
+                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + QString(m_connection->uuid()));
         m_connectionPersistence = new Knm::ConnectionPersistence(m_connection,
                 KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
                 (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
@@ -141,7 +141,7 @@ void ConnectionSecretsJob::doAskUser()
     } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
         // get the type of vpn service
         QString configFile = KStandardDirs::locate("data",
-                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
+                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + QString(m_connection->uuid()));
         m_connectionPersistence = new Knm::ConnectionPersistence(m_connection,
                 KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
                 (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
@@ -189,7 +189,7 @@ void ConnectionSecretsJob::dialogAccepted()
     m_settingWidget->writeConfig();
     // persist the changes
     QString configFile = KStandardDirs::locate("data",
-            Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
+            Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + QString(m_connection->uuid()));
     Knm::ConnectionPersistence cp(m_connection,
             KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
             (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());

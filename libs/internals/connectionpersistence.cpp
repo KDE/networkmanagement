@@ -236,7 +236,7 @@ void ConnectionPersistence::load()
 
 QString ConnectionPersistence::walletKeyFor(const Setting * setting) const
 {
-    return m_connection->uuid() + ';' + setting->name();
+    return QString(m_connection->uuid()) + QLatin1Char(';') + setting->name();
 }
 
 void ConnectionPersistence::loadSecrets()
@@ -286,7 +286,7 @@ void ConnectionPersistence::walletOpenedForRead(bool success)
         if (wallet->isOpen() && wallet->hasFolder(s_walletFolderName) && wallet->setFolder(s_walletFolderName)) {
             kDebug() << "Reading all entries for connection";
             QMap<QString,QMap<QString,QString> > entries;
-            QString key = m_connection->uuid() + QLatin1String("*");
+            QString key = QString(m_connection->uuid()) + QLatin1String("*");
             bool missingEntry = false;
 
             if (wallet->readMapList(key, entries) == 0) {

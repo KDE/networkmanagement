@@ -198,7 +198,7 @@ void ConnectionEditor::persist(Knm::Connection* connection)
     QString name = connection->name();
     QString type = Knm::Connection::typeAsString(connection->type());
     KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
-    KConfigGroup config(prefs->config(), QLatin1String("Connection_") + connection->uuid());
+    KConfigGroup config(prefs->config(), QLatin1String("Connection_") + QString(connection->uuid()));
     QStringList connectionIds = prefs->connections();
     // check if already present, we may be editing an existing Connection
     if (!connectionIds.contains(connection->uuid()))

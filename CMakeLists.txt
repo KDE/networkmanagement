@@ -26,6 +26,7 @@ if (KDE4_MM_BACKEND_FOUND)
 endif (KDE4_MM_BACKEND_FOUND)
 
 add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+add_definitions(-DQT_USE_FAST_CONCATENATION -DQT_USE_FAST_OPERATOR_PLUS)
 include_directories (${KDE4_INCLUDES})
 
 #include(ConfigureChecks.cmake)
