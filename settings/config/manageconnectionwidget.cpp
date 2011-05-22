@@ -79,13 +79,11 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     mConnEditUi.listPppoe->sortByColumn(0, Qt::AscendingOrder);
 
     mConnections = new ConnectionList(this);
-    //mUserSettings = new NMDBusSettingsConnectionProvider(mConnections, NMDBusSettingsService::SERVICE_USER_SETTINGS, this);
-    mSystemSettings = new NMDBusSettingsConnectionProvider(mConnections, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, this);
+    mSystemSettings = new NMDBusSettingsConnectionProvider(mConnections, this);
 
     connect(mSystemSettings, SIGNAL(getConnectionSecretsCompleted(bool, const QString &)), this, SLOT(editGotSecrets(bool, const QString&)) );
     connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool, const QString &)), this, SLOT(addGotConnection(bool, const QString&)) );
 
-    //connect(mUserSettings, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
     connect(mSystemSettings, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
     connectButtonSet(mConnEditUi.buttonSetWired, mConnEditUi.listWired);

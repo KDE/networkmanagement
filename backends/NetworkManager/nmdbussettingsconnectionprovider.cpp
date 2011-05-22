@@ -36,6 +36,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 // knminternals includes
 #include "connection.h"
 #include "interfaceconnection.h"
+#include "vpninterfaceconnection.h"
 
 // knmservice includes
 #include "activatablelist.h"
@@ -47,6 +48,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 #include "nm-settingsinterface.h"
 #include "nm-exported-connectioninterface.h"
+#include "nm-active-connectioninterface.h"
+#include "nm-manager-interface.h"
+#include "nm-device-interface.h"
+
+#include <solid/control/networkmanager.h>
+#include <solid/control/networkmodeminterface.h>
+#include <solid/control/modeminterface.h>
 
 class NMDBusSettingsConnectionProviderPrivate
 {
@@ -59,7 +67,7 @@ public:
     QString serviceName;
 };
 
-NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionList * connectionList, const QString & service, QObject * parent)
+NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionList * connectionList, QObject * parent)
     : QObject(parent), d_ptr(new NMDBusSettingsConnectionProviderPrivate)
 {
     Q_D(NMDBusSettingsConnectionProvider);
@@ -68,10 +76,10 @@ NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionLis
     } else {
         d->connectionList = new ConnectionList(this);
     }
-    d->iface = new OrgFreedesktopNetworkManagerSettingsInterface(service,
+    d->iface = new OrgFreedesktopNetworkManagerSettingsInterface(NM_DBUS_SERVICE,
             NM_DBUS_PATH_SETTINGS,
             QDBusConnection::systemBus(), parent);
-    d->serviceName = service;
+    d->serviceName = NM_DBUS_SERVICE;
 
     // For VPN connections.
     qDBusRegisterMetaType<QStringMap>();
@@ -221,6 +229,8 @@ void NMDBusSettingsConnectionProvider::handleAdd(Knm::Activatable * added)
     Q_D(NMDBusSettingsConnectionProvider);
     Knm::InterfaceConnection * interfaceConnection = qobject_cast<Knm::InterfaceConnection*>(added);
     if (interfaceConnection) {
+        connect(interfaceConnection, SIGNAL(activated()), this, SLOT(interfaceConnectionActivated()));
+        connect(interfaceConnection, SIGNAL(deactivated()), this, SLOT(interfaceConnectionDeactivated()));
         // if derived from one of our connections, tag it with the service and object path of the
         // connection
         if (d->uuidToPath.contains(interfaceConnection->connectionUuid())) {
@@ -229,6 +239,69 @@ void NMDBusSettingsConnectionProvider::handleAdd(Knm::Activatable * added)
             interfaceConnection->setProperty("NMDBusObjectPath", d->uuidToPath[interfaceConnection->connectionUuid()].path());
         }
     }
+}
+
+void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
+{
+    Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
+    if (ic) {
+        QString deviceToActivateOn;
+        QVariantMap extraArguments;
+
+        Knm::VpnInterfaceConnection * vpn = qobject_cast<Knm::VpnInterfaceConnection*>(ic);
+        if (vpn) {
+            // look up the active connection (a real connection, not this vpn that is being activated)
+            // because NM needs its details to bring up the VPN
+            QString activeConnPath;
+            foreach (const QString &activeConnectionPath, Solid::Control::NetworkManagerNm09::activeConnections()) {
+                OrgFreedesktopNetworkManagerConnectionActiveInterface activeConnection(NM_DBUS_SERVICE, activeConnectionPath, QDBusConnection::systemBus());
+
+                if ( activeConnection.getDefault() && activeConnection.state() == NM_ACTIVE_CONNECTION_STATE_ACTIVATED) {
+                    activeConnPath = activeConnection.path();
+                    QList<QDBusObjectPath> devs = activeConnection.devices();
+                    if (!devs.isEmpty()) {
+                        deviceToActivateOn = devs.first().path();
+                    }
+                }
+            }
+
+            kDebug() << "active" << activeConnPath << "device" << deviceToActivateOn;
+
+            if ( activeConnPath.isEmpty() || deviceToActivateOn.isEmpty() )
+                return;
+
+            extraArguments.insert( "extra_connection_parameter", activeConnPath );
+        } else {
+            deviceToActivateOn = ic->deviceUni();
+        }
+
+        // Enable modem before connecting.
+        Solid::Control::ModemNetworkInterfaceNm09 *iface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09 *>(Solid::Control::NetworkManagerNm09::findNetworkInterface(deviceToActivateOn));
+        if (iface) {
+            Solid::Control::ModemGsmCardInterface *modem = iface->getModemCardIface();
+            if (modem && !modem->enabled()) {
+                // Try to pin-unlock the modem.
+                QMetaObject::invokeMethod(modem, "unlockRequiredChanged", Qt::DirectConnection,
+                                          Q_ARG(QString, modem->unlockRequired()));
+                kDebug() << "Trying to enable modem";
+                modem->enable(true);
+            }
+        }
+
+        // Now activate the connection
+        OrgFreedesktopNetworkManagerInterface nmIface(QLatin1String(NM_DBUS_SERVICE), QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus());
+        nmIface.ActivateConnection(QDBusObjectPath(ic->property("NMDBusObjectPath").toString()), QDBusObjectPath(deviceToActivateOn), QDBusObjectPath("/"));
+    }
+}
+
+void NMDBusSettingsConnectionProvider::interfaceConnectionDeactivated()
+{
+    // Solid::Control::NetworkInterface's disconnectInterface() is only available from KDE 4.7 -> use own proxy class
+    Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
+    OrgFreedesktopNetworkManagerDeviceInterface devIface(QLatin1String(NM_DBUS_SERVICE), ic->deviceUni(), QDBusConnection::systemBus());
+
+    // Now disconnect the interface (Disconnect() prevents an immediate auto-activation)
+    devIface.Disconnect();
 }
 
 void NMDBusSettingsConnectionProvider::handleUpdate(Knm::Activatable *)
