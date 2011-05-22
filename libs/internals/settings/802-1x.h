@@ -615,22 +615,6 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     }
 
     /**
-      Set PSK
-    */
-    void setPsk( const QString & v )
-    {
-        mPsk = v;
-    }
-
-    /**
-      Get PSK
-    */
-    QString psk() const
-    {
-      return mPsk;
-    }
-
-    /**
       Set Use System CA Certs
     */
     void setUseSystemCaCerts( bool v )
@@ -780,7 +764,6 @@ kDebug() << eap;
     QString mPhase2privatekeyToImport;
     QString mPhase2privatekeypassword;
     QString mPin;
-    QString mPsk;
     bool mEnabled;
     bool mUseSystemCaCerts;
     Certificates mCertificatesToDelete;

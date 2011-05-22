@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // Own
 #include "uiutils.h"
 
+#include "paths.h"
+
 // KDE
 #include <KDebug>
 #include <KIconLoader>
@@ -262,7 +264,7 @@ QString UiUtils::interfaceNameLabel(const QString & uni, const KNetworkManagerSe
 
 QString UiUtils::interfaceNameLabel(const QString & uni)
 {
-    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
 
     return interfaceNameLabel(uni, static_cast<KNetworkManagerServicePrefs::InterfaceNamingChoices>(KNetworkManagerServicePrefs::self()->interfaceNamingStyle()));
 }

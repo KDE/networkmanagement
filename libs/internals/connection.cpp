@@ -214,6 +214,7 @@ void Connection::setSecrets()
             break;
         case false:
             type |= Setting::AgentOwned;
+            //type |= Setting::NotSaved;
             break;
     }
     foreach (Setting * setting, m_settings) {

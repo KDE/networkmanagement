@@ -64,6 +64,10 @@ set(knm_nm_LIB_SRCS
    nm-vpn-connectioninterface.cpp
 
    nmdbussettingsconnectionprovider.cpp
+   nmdbussecretagent.cpp
+
+   nm-agent-manager.cpp
+   nm-secret-agentadaptor.cpp
 
    remoteconnection.cpp
    nm-settingsinterface.cpp

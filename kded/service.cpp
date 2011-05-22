@@ -24,8 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KCModuleInfo>
 
 #include <connectionlist.h>
-#include <connectionlistpersistence.h>
-#include <connectionlistpersistencedbus.h>
+#include <secretstorage.h>
 #include <activatablelist.h>
 #include <activatabledebug.h>
 #include <connectionusagemonitor.h>
@@ -36,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <notificationmanager.h>
 
 #include <nmdbussettingsservice.h>
+#include <nmdbussecretagent.h>
 #include <nmdbusactiveconnectionmonitor.h>
 #include <nmdbussettingsconnectionprovider.h>
 
@@ -51,10 +51,8 @@ class NetworkManagementServicePrivate
 public:
     // the most basic object
     ConnectionList * connectionList;
-    // its loader/saver
-    ConnectionListPersistence * listPersistence;
-    // its dbus presence
-    ConnectionListPersistenceDBus * sessionDbusConfigureInterface;
+    // secrets storage
+    SecretStorage * secretStorage;
     // list of things to show in the UI
     ActivatableList * activatableList;
     // creates Activatables based on the state of network interfaces
@@ -62,6 +60,8 @@ public:
     // NetworkManager settings service
     // also calls NetworkManager via Solid when connections clicked
     NMDBusSettingsService * nmSettingsService;
+    // NetworkManager secrets agent
+    NMDBusSecretAgent * nmDBusSecretAgent;
     // update interfaceconnections with status info from NetworkManager
     NMDBusActiveConnectionMonitor * nmActiveConnectionMonitor;
     // get connections from NM's service
@@ -86,17 +86,14 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 {
     Q_D(NetworkManagementService);
     d->connectionList = new ConnectionList(this);
-    d->listPersistence = new ConnectionListPersistence(d->connectionList);
+    d->secretStorage = new SecretStorage();
 
     d->nmSettingsService = new NMDBusSettingsService(d->connectionList);
 
-    d->connectionList->registerConnectionHandler(d->listPersistence);
     d->connectionList->registerConnectionHandler(d->nmSettingsService);
 
 
     d->activatableList = new ActivatableList(d->connectionList);
-
-    d->sessionDbusConfigureInterface = new ConnectionListPersistenceDBus(d->listPersistence, d->listPersistence);
 
     d->configurationLauncher = new ConfigurationLauncher(this);
     d->connectionUsageMonitor = new ConnectionUsageMonitor(d->connectionList, d->activatableList, d->activatableList);
@@ -108,6 +105,8 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->notificationManager = new NotificationManager(d->connectionList, this);
 
     d->nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(d->connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, d->connectionList);
+    d->nmDBusSecretAgent = new NMDBusSecretAgent(this);
+    d->nmDBusSecretAgent->registerSecretsProvider(d->secretStorage);
 
     // generic observers
     d->activatableList->registerObserver(d->configurationLauncher);
@@ -117,8 +116,8 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->activatableList->registerObserver(d->nmDBusConnectionProvider);
     d->activatableList->registerObserver(d->notificationManager);
 
-    // create ActiveConnectionMonitor after construction of NMDBusSettingsConnectionProvider and observer registrations 
-    // because, activatableList is filled in NetworkInterfaceMonitor and updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has 
+    // create ActiveConnectionMonitor after construction of NMDBusSettingsConnectionProvider and observer registrations
+    // because, activatableList is filled in NetworkInterfaceMonitor and updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has
     // Unknown activationState in its /org/kde/networkmanagement/Activatable interface
     d->nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(d->activatableList, d->nmSettingsService);
 
@@ -129,7 +128,7 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     // debug activatable changes
     //ActivatableDebug debug;
     //activatableList->registerObserver(&debug);
-    
+
     Solid::Control::NetworkInterfaceNm09::Types types =
         (Solid::Control::NetworkInterfaceNm09::Ethernet
          | Solid::Control::NetworkInterfaceNm09::Wifi

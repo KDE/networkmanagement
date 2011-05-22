@@ -69,7 +69,6 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
     d->hexKeyValidator = new QRegExpValidator(regExp, this);
 
     d->ui.setupUi(this);
-    d->ui.passphrase->setEchoMode(QLineEdit::Password);
     d->ui.key->setEchoMode(QLineEdit::Password);
     d->ui.key->setValidator(d->hexKeyValidator);
 
@@ -97,16 +96,12 @@ void WepWidget::keyTypeChanged(int index)
     switch (index) {
         case 0: //passphrase
             d->ui.passphraseLabel->show();
-            d->ui.passphrase->show();
             d->ui.keyLabel->hide();
-            d->ui.key->hide();
             d->format = WepWidget::Passphrase;
             break;
         case 1: //hex key
             d->ui.passphraseLabel->hide();
-            d->ui.passphrase->hide();
             d->ui.keyLabel->show();
-            d->ui.key->show();
             d->format = WepWidget::Hex;
             break;
     }
@@ -123,7 +118,6 @@ void WepWidget::keyIndexChanged(int index)
 
 void WepWidget::chkShowPassToggled(bool on)
 {
-    d->ui.passphrase->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
     d->ui.key->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
 }
 
@@ -167,25 +161,15 @@ void WepWidget::writeConfig()
 
     d->setting->setWeptxkeyindex(d->ui.weptxkeyindex->currentIndex());
 
-    //FIXME: Handling of hex/ascii and passphrase is wrong, users must be able to specify 4 different passphrases 
-    //       in wep-key[0-3]
-
     // keys
+    d->setting->setWepkey0(d->keys[0]);
+    d->setting->setWepkey1(d->keys[1]);
+    d->setting->setWepkey2(d->keys[2]);
+    d->setting->setWepkey3(d->keys[3]);
     if (d->format == WepWidget::Passphrase)
     {
-        QString passphrase = d->ui.passphrase->text();
-        d->setting->setWeppassphrase(passphrase);
-        d->setting->setWepkey0(QString());
-        d->setting->setWepkey1(QString());
-        d->setting->setWepkey2(QString());
-        d->setting->setWepkey3(QString());
         d->setting->setWepKeyType(Knm::WirelessSecuritySetting::Passphrase);
     } else {
-        d->setting->setWeppassphrase(QString());
-        d->setting->setWepkey0(d->keys[0]);
-        d->setting->setWepkey1(d->keys[1]);
-        d->setting->setWepkey2(d->keys[2]);
-        d->setting->setWepkey3(d->keys[3]);
         d->setting->setWepKeyType(Knm::WirelessSecuritySetting::Hex);
     }
 
@@ -213,7 +197,6 @@ void WepWidget::readSecrets()
     }
 
     d->ui.key->setText(d->keys.value(d->keyIndex));
-    d->ui.passphrase->setText(d->setting->weppassphrase());
 }
 
 // vim: sw=4 sts=4 et tw=100

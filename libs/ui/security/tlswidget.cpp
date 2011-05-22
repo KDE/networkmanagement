@@ -106,6 +106,7 @@ void TlsWidget::writeConfig()
         d->setting->setPhase2cacerttoimport("");
         d->setting->setPhase2clientcerttoimport("");
         d->setting->setPhase2privatekeytoimport("");
+        d->setting->setPrivatekeypassword(lePrivateKeyPassword->text());
     } else {
         d->setting->addToCertToDelete(Knm::Security8021xSetting::CACert);
         d->setting->addToCertToDelete(Knm::Security8021xSetting::ClientCert);
@@ -113,6 +114,7 @@ void TlsWidget::writeConfig()
         d->setting->setCacerttoimport("");
         d->setting->setClientcerttoimport("");
         d->setting->setPrivatekeytoimport("");
+        d->setting->setPhase2privatekeypassword(lePrivateKeyPassword->text());
     }
 
     // TLS specifics

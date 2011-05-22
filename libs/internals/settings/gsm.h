@@ -188,22 +188,6 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
         return mPinflags;
     }
 
-    /**
-      Set PUK
-    */
-    void setPuk( const QString & v )
-    {
-        mPuk = v;
-    }
-
-    /**
-      Get PUK
-    */
-    QString puk() const
-    {
-      return mPuk;
-    }
-
   protected:
 
     // gsm

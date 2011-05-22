@@ -2,12 +2,14 @@
 // All changes you do to this file will be lost.
 
 #include "802-11-wireless-security.h"
+#include "802-11-wireless-securitysecrets.h"
 
 using namespace Knm;
 
 WirelessSecuritySetting::WirelessSecuritySetting() : Setting(Setting::WirelessSecurity)
                                                      , mSecurityType(WirelessSecuritySetting::EnumSecurityType::None), mKeymgmt(0), mWeptxkeyindex(0), mAuthalg(0), mWepKeyType(None)
 {
+    m_secretsObject = new WirelessSecuritySecrets(this);
 }
 
 WirelessSecuritySetting::~WirelessSecuritySetting()
@@ -20,7 +22,20 @@ QString WirelessSecuritySetting::name() const
 }
 bool WirelessSecuritySetting::hasSecrets() const
 {
-  return true;
+    switch (mSecurityType)
+    {
+        case EnumSecurityType::None:
+        case EnumSecurityType::DynamicWep:
+        case EnumSecurityType::WpaEap:
+        case EnumSecurityType::Wpa2Eap:
+            return false;
+        case EnumSecurityType::StaticWep:
+        case EnumSecurityType::Leap:
+        case EnumSecurityType::WpaPsk:
+        case EnumSecurityType::Wpa2Psk:
+        default:
+            return true;
+    }
 }
 
 void WirelessSecuritySetting::reset()

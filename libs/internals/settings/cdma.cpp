@@ -2,11 +2,13 @@
 // All changes you do to this file will be lost.
 
 #include "cdma.h"
+#include "cdmasecrets.h"
 
 using namespace Knm;
 
 CdmaSetting::CdmaSetting() : Setting(Setting::Cdma)
 {
+    m_secretsObject = new CdmaSecrets(this);
 }
 
 CdmaSetting::~CdmaSetting()

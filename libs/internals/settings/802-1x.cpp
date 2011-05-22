@@ -2,6 +2,7 @@
 // All changes you do to this file will be lost.
 
 #include "802-1x.h"
+#include "802-1xsecrets.h"
 
 #include <QUuid>
 #include <kstandarddirs.h>
@@ -13,6 +14,7 @@ const QString Security8021xSetting::CERTIFICATE_PERSISTENCE_PATH = QLatin1String
 Security8021xSetting::Security8021xSetting() : Setting(Setting::Security8021x),
     mPhase1peapver(0), mPhase2auth(0), mPhase2autheap(0), mEnabled(false), mUseSystemCaCerts(false), mCertificatesToDelete(0)
 {
+    m_secretsObject = new Security8021xSecrets(this);
 }
 
 Security8021xSetting::~Security8021xSetting()

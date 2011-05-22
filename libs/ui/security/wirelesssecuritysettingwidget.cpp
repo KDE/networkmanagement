@@ -272,9 +272,11 @@ void WirelessSecuritySettingWidget::readConfig()
                 d->setCurrentSecurityWidget(d->dynamicWep.first);
                 break;
             case Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk:
+            case Knm::WirelessSecuritySetting::EnumSecurityType::Wpa2Psk:
                 d->setCurrentSecurityWidget(d->wpaPsk.first);
                 break;
             case Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap:
+            case Knm::WirelessSecuritySetting::EnumSecurityType::Wpa2Eap:
                 d->setCurrentSecurityWidget(d->wpaEap.first);
                 break;
         }

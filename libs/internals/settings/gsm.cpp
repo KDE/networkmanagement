@@ -2,11 +2,13 @@
 // All changes you do to this file will be lost.
 
 #include "gsm.h"
+#include "gsmsecrets.h"
 
 using namespace Knm;
 
 GsmSetting::GsmSetting() : Setting(Setting::Gsm), mNetworktype(-1), mBand(-1)
 {
+    m_secretsObject = new GsmSecrets(this);
 }
 
 GsmSetting::~GsmSetting()

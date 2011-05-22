@@ -315,22 +315,6 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     }
 
     /**
-      Set WEP Passphrase
-    */
-    void setWeppassphrase( const QString & v )
-    {
-        mWeppassphrase = v;
-    }
-
-    /**
-      Get WEP Passphrase
-    */
-    QString weppassphrase() const
-    {
-      return mWeppassphrase;
-    }
-
-    /**
       Set WEP Key Type
     */
     void setWepKeyType( WepKeyType t )

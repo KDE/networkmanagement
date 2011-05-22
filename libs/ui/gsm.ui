@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>492</width>
-    <height>510</height>
+    <height>322</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -204,13 +204,7 @@
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
-     <property name="buddy">
-      <cstring>puk</cstring>
-     </property>
     </widget>
-   </item>
-   <item row="11" column="1">
-    <widget class="KLineEdit" name="puk"/>
    </item>
    <item row="12" column="1">
     <spacer name="verticalSpacer_2">

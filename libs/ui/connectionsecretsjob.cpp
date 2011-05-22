@@ -24,8 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-connection.h>
 #include <nm-setting-wired.h>
 #include <nm-setting-ip4-config.h>
-// Removed in NM0.7rc1
-// #include <nm-setting-ip6-config.h>
+#include <nm-setting-ip6-config.h>
 #include <nm-setting-8021x.h>
 #include <nm-setting-gsm.h>
 #include <nm-setting-ppp.h>
@@ -47,6 +46,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "cdmawidget.h"
 #include "gsmwidget.h"
 #include "ipv4widget.h"
+#include "ipv6widget.h"
 #include "pppoewidget.h"
 #include "pppwidget.h"
 #include "settingwidget.h"
@@ -62,9 +62,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vpnuiplugin.h"
 
 ConnectionSecretsJob::ConnectionSecretsJob(Knm::Connection* connection, const QString &settingName,
-                                           const QStringList& secrets, bool requestNew, const QDBusMessage& request)
-    : m_connection(connection), m_connectionPersistence(0), mSettingName(settingName), mRequestNew(requestNew),
-      mRequest(request), m_askUserDialog(0), m_settingWidget(0)
+                                           const QStringList& secrets)
+    : m_connection(connection), mSettingName(settingName), m_askUserDialog(0), m_settingWidget(0)
 {
     // record the secrets that we are looking for
     foreach (const QString &secretKey, secrets) {
@@ -80,38 +79,7 @@ ConnectionSecretsJob::~ConnectionSecretsJob()
 
 void ConnectionSecretsJob::start()
 {
-    QTimer::singleShot(0, this, SLOT(doWork()));
-}
-
-void ConnectionSecretsJob::doWork()
-{
-    kDebug();
-    if (mRequestNew || KNetworkManagerServicePrefs::self()->secretStorageMode() == Knm::ConnectionPersistence::DontStore /*||  TODO add m_connection->secretStorageMode == Knm::ConnectionPersistence::DontStore*/ ) {
-        doAskUser();
-    } else {
-        QString configFile = KStandardDirs::locate("data",
-                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
-        m_connectionPersistence = new Knm::ConnectionPersistence(m_connection,
-                KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
-                (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
-
-        connect(m_connectionPersistence, SIGNAL(loadSecretsResult(uint)), this, SLOT(gotPersistedSecrets(uint)));
-        m_connectionPersistence->loadSecrets();
-    }
-}
-
-void ConnectionSecretsJob::gotPersistedSecrets(uint result)
-{
-    kDebug();
-    m_connectionPersistence->deleteLater();
-    m_connectionPersistence = 0;
-    setError(result);
-    if (result == Knm::ConnectionPersistence::EnumError::NoError &&
-        !m_connection->hasVolatileSecrets()) {
-        emitResult();
-    } else {
-        doAskUser();
-    }
+    QTimer::singleShot(0, this, SLOT(doAskUser()));
 }
 
 void ConnectionSecretsJob::doAskUser()
@@ -130,8 +98,8 @@ void ConnectionSecretsJob::doAskUser()
         m_settingWidget = new GsmWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_IP4_CONFIG_SETTING_NAME)) {
         m_settingWidget = new IpV4Widget(m_connection, 0);
-    //} else if ( mSettingName == QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME)) {
-        // not supported yet
+    } else if ( mSettingName == QLatin1String(NM_SETTING_IP6_CONFIG_SETTING_NAME)) {
+        m_settingWidget = new IpV6Widget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPP_SETTING_NAME)) {
         m_settingWidget = new PppWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
@@ -139,13 +107,6 @@ void ConnectionSecretsJob::doAskUser()
     } else if ( mSettingName == QLatin1String(NM_SETTING_SERIAL_SETTING_NAME)) {
         m_settingWidget = new PppWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
-        // get the type of vpn service
-        QString configFile = KStandardDirs::locate("data",
-                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
-        m_connectionPersistence = new Knm::ConnectionPersistence(m_connection,
-                KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
-                (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
-        m_connectionPersistence->load();
         Knm::VpnSetting * vpnSetting = static_cast<Knm::VpnSetting*>(m_connection->setting(Knm::Setting::Vpn));
         // load the plugin and get its setting widget
         QString error;
@@ -187,13 +148,6 @@ void ConnectionSecretsJob::dialogAccepted()
     kDebug();
     // m_connection is up to date again
     m_settingWidget->writeConfig();
-    // persist the changes
-    QString configFile = KStandardDirs::locate("data",
-            Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
-    Knm::ConnectionPersistence cp(m_connection,
-            KSharedConfig::openConfig(configFile, KConfig::NoGlobals),
-            (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
-    cp.save();
     setError(EnumError::NoError);
     m_settingWidget->deleteLater();
     m_askUserDialog->deleteLater();
@@ -216,11 +170,6 @@ QString ConnectionSecretsJob::settingName() const
 QVariantMap ConnectionSecretsJob::secrets() const
 {
     return mSecrets;
-}
-
-QDBusMessage ConnectionSecretsJob::requestMessage() const
-{
-    return mRequest;
 }
 
 Knm::Connection * ConnectionSecretsJob::connection() const
