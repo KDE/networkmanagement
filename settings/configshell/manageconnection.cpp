@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ManageConnection::ManageConnection(Knm::Connection *con): mSystemSettings(0)
 {
-    NMDBusSettingsConnectionProvider * mSystemSettings = new NMDBusSettingsConnectionProvider(0, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, 0);
+    NMDBusSettingsConnectionProvider * mSystemSettings = new NMDBusSettingsConnectionProvider(0, 0);
     connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool, const QString &)), SLOT(addConnectionCompleted(bool, const QString &)));
     mSystemSettings->addConnection(con);
     ConnectionEditor editor(0);

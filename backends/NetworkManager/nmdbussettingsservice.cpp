@@ -214,7 +214,7 @@ void NMDBusSettingsService::interfaceConnectionActivated()
             // because NM needs its details to bring up the VPN
             QString activeConnPath;
             foreach (const QString &activeConnectionPath, Solid::Control::NetworkManagerNm09::activeConnections()) {
-                OrgFreedesktopNetworkManagerConnectionActiveInterface activeConnection("org.freedesktop.NetworkManager", activeConnectionPath, QDBusConnection::systemBus());
+                OrgFreedesktopNetworkManagerConnectionActiveInterface activeConnection(NM_DBUS_SERVICE, activeConnectionPath, QDBusConnection::systemBus());
 
                 if ( activeConnection.getDefault() && activeConnection.state() == NM_ACTIVE_CONNECTION_STATE_ACTIVATED) {
                     activeConnPath = activeConnection.path();

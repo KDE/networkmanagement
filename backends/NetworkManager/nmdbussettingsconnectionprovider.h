@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define NMSYSTEMSETTINGSACTIVATABLEPROVIDER_H
 
 #include "activatableobserver.h"
+#include "connectionhandler.h"
 
 #include <QDBusObjectPath>
 #include <QDBusPendingCallWatcher>
@@ -50,7 +51,7 @@ class KNM_EXPORT NMDBusSettingsConnectionProvider : public QObject, public Activ
 {
 Q_OBJECT
 public:
-    NMDBusSettingsConnectionProvider(ConnectionList * connectionList, const QString & service, QObject * parent = 0);
+    NMDBusSettingsConnectionProvider(ConnectionList * connectionList, QObject * parent = 0);
     virtual ~NMDBusSettingsConnectionProvider();
 
     /**
@@ -79,6 +80,8 @@ private Q_SLOTS:
     void serviceOwnerChanged(const QString&, const QString&, const QString&);
     void onConnectionSecretsArrived(QDBusPendingCallWatcher *watcher);
     void onConnectionAddArrived(QDBusPendingCallWatcher *watcher);
+    void interfaceConnectionActivated();
+    void interfaceConnectionDeactivated();
 private:
     enum Operation {Add, Remove, Update};
 

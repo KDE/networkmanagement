@@ -34,7 +34,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <vpninterfaceconnectionprovider.h>
 #include <notificationmanager.h>
 
-#include <nmdbussettingsservice.h>
 #include <nmdbussecretagent.h>
 #include <nmdbusactiveconnectionmonitor.h>
 #include <nmdbussettingsconnectionprovider.h>
@@ -57,9 +56,6 @@ public:
     ActivatableList * activatableList;
     // creates Activatables based on the state of network interfaces
     NetworkInterfaceMonitor * networkInterfaceMonitor;
-    // NetworkManager settings service
-    // also calls NetworkManager via Solid when connections clicked
-    NMDBusSettingsService * nmSettingsService;
     // NetworkManager secrets agent
     NMDBusSecretAgent * nmDBusSecretAgent;
     // update interfaceconnections with status info from NetworkManager
@@ -88,11 +84,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->connectionList = new ConnectionList(this);
     d->secretStorage = new SecretStorage();
 
-    d->nmSettingsService = new NMDBusSettingsService(d->connectionList);
-
-    d->connectionList->registerConnectionHandler(d->nmSettingsService);
-
-
     d->activatableList = new ActivatableList(d->connectionList);
 
     d->configurationLauncher = new ConfigurationLauncher(this);
@@ -104,7 +95,7 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     // watches events and creates KNotifications
     d->notificationManager = new NotificationManager(d->connectionList, this);
 
-    d->nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(d->connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, d->connectionList);
+    d->nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(d->connectionList, d->connectionList);
     d->nmDBusSecretAgent = new NMDBusSecretAgent(this);
     d->nmDBusSecretAgent->registerSecretsProvider(d->secretStorage);
 
@@ -112,14 +103,13 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->activatableList->registerObserver(d->configurationLauncher);
     d->activatableList->registerObserver(d->connectionUsageMonitor);
 
-    d->activatableList->registerObserver(d->nmSettingsService);
     d->activatableList->registerObserver(d->nmDBusConnectionProvider);
     d->activatableList->registerObserver(d->notificationManager);
 
     // create ActiveConnectionMonitor after construction of NMDBusSettingsConnectionProvider and observer registrations
     // because, activatableList is filled in NetworkInterfaceMonitor and updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has
     // Unknown activationState in its /org/kde/networkmanagement/Activatable interface
-    d->nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(d->activatableList, d->nmSettingsService);
+    d->nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(d->activatableList, d->nmDBusConnectionProvider);
 
     // register after nmSettingsService and nmDBusConnectionProvider because it relies on changes they
     // make to interfaceconnections

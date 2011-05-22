@@ -48,8 +48,6 @@ set(knm_nm_LIB_SRCS
 
    settings/vpndbus.cpp
 
-   nmdbussettingsservice.cpp
-
    busconnection.cpp
 
    #org.freedesktop.NetworkManager.Settings.Connection

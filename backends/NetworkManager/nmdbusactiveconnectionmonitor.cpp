@@ -170,7 +170,7 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
         if (!d->activeConnections.contains(activeConnectionPath)) {
             kDebug() << "Adding active connection interface for " << activeConnectionPath;
 
-            OrgFreedesktopNetworkManagerConnectionActiveInterface * active = new OrgFreedesktopNetworkManagerConnectionActiveInterface("org.freedesktop.NetworkManager", activeConnectionPath, QDBusConnection::systemBus(), 0);
+            OrgFreedesktopNetworkManagerConnectionActiveInterface * active = new OrgFreedesktopNetworkManagerConnectionActiveInterface(NM_DBUS_INTERFACE, activeConnectionPath, QDBusConnection::systemBus(), 0);
 
             Knm::InterfaceConnection * ic = interfaceConnectionForConnectionActive(active);
             if (ic) {
