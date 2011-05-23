@@ -5,7 +5,7 @@
 
 #include <wpasecretidentifier.h>
 
-#include "config-nm07backend.h"
+#include "config-nm09backend.h"
 #include "802-11-wireless-security.h"
 #include "pbkdf2.h"
 #include "wephash.h"

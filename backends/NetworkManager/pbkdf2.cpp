@@ -17,7 +17,7 @@
 
 #include "pbkdf2.h"
 
-#include "config-nm07backend.h"
+#include "config-nm09backend.h"
 
 /* Define types for stupid code.  Userspace should
  * be using u_*_t rather than kernel-space u* types.
