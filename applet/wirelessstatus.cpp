@@ -82,7 +82,7 @@ public:
         if (!iface) {
             return retVal;
         }
-        AccessPointList aps = iface->accessPoints(); //NOTE: AccessPointList is a QStringList
+        NetworkManager::AccessPointList aps = iface->accessPoints(); //NOTE: AccessPointList is a QStringList
         foreach (const QString &ap, aps) {
             NetworkManager::AccessPoint *accesspoint = iface->findAccessPoint(ap);
             if(accesspoint) {
