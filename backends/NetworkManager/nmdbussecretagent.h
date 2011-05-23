@@ -65,6 +65,7 @@ private:
     QList <QString> m_objectPaths;
 private Q_SLOTS:
     void secretsReady(Knm::Connection *, const QString &);
+    void deleteSavedConnection(Knm::Connection *);
     void registerAgent();
 };
 
