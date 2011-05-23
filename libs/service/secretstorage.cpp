@@ -71,7 +71,6 @@ void SecretStorage::saveSecrets(Knm::Connection *con)
     } else if (m_storageMode == Secure) {
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Asynchronous );
         if (wallet) {
-            disconnect(wallet, SIGNAL(walletOpened(bool)), this, 0);
             connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForWrite(bool)));
             m_connectionsToWrite.append(con);
         }
@@ -89,8 +88,9 @@ void SecretStorage::walletOpenedForWrite(bool success)
             if ( wallet->setFolder( s_walletFolderName ) ) {
                 readyForWalletWrite = true;
             }
-            if (readyForWalletWrite && !m_connectionsToWrite.isEmpty()) {
-                while (Knm::Connection *con = m_connectionsToWrite.takeFirst()) {
+            if (readyForWalletWrite) {
+                while (!m_connectionsToWrite.isEmpty()) {
+                    Knm::Connection *con = m_connectionsToWrite.takeFirst();
                     foreach (Knm::Setting * setting, con->settings()) {
                         Knm::Secrets * secrets = setting->getSecretsObject();
                         if (secrets) {
@@ -103,6 +103,7 @@ void SecretStorage::walletOpenedForWrite(bool success)
                         }
                     }
                     emit connectionSaved(con);
+                    delete con;
                 }
             }
         }
@@ -118,8 +119,9 @@ void SecretStorage::walletOpenedForRead(bool success)
             if ( wallet->setFolder( s_walletFolderName ) ) {
                 readyForWalletRead = true;
             }
-            if (readyForWalletRead && !m_connectionsToRead.isEmpty()) {
-                while (Knm::Connection *con = m_connectionsToRead.takeFirst()) {
+            if (readyForWalletRead) {
+                while (!m_connectionsToRead.isEmpty()) {
+                    Knm::Connection *con = m_connectionsToRead.takeFirst();
                     QMultiHash<QString, QPair<QString,GetSecretsFlags> >::iterator i = m_settingsToRead.find(con->uuid());
                     while (i != m_settingsToRead.end() && i.key() == con->uuid()) {
                         QPair<QString,GetSecretsFlags> pair = i.value();
@@ -218,7 +220,6 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
                 walletWid(),KWallet::Wallet::Asynchronous);
         if (wallet) {
-            disconnect(wallet, SIGNAL(walletOpened(bool)), this, 0);
             connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
             m_connectionsToRead.append(con);
             QPair<QString,GetSecretsFlags> pair(name, flags);

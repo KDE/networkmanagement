@@ -74,8 +74,8 @@ QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, c
     QDBusMessage msg = message();
     msg.setDelayedReply(true);
     Knm::Connection * con = new Knm::Connection(QUuid(), Knm::Connection::Wired);
-    ConnectionDbus * condbus = new ConnectionDbus(con);
-    condbus->fromDbusMap(connection);
+    ConnectionDbus condbus(con);
+    condbus.fromDbusMap(connection);
     QPair<QString,QDBusMessage> pair;
     pair.first = connection_path.path();
     pair.second = msg;
@@ -88,7 +88,6 @@ QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, c
             break;
         }
     }
-    delete condbus;
     return map;
 }
 
@@ -96,42 +95,41 @@ void NMDBusSecretAgent::SaveSecrets(const QVariantMapMap &connection, const QDBu
 {
     Q_UNUSED(connection_path)
     Knm::Connection * con = new Knm::Connection(QUuid(), Knm::Connection::Wired);
-    ConnectionDbus * condbus = new ConnectionDbus(con);
-    condbus->fromDbusMap(connection);
-    kDebug()<<"Secrets are being saved for connection " << con->uuid();
-    m_secretsProvider->saveSecrets(con);
-    delete condbus;
+    ConnectionDbus condbus(con);
+    condbus.fromDbusMap(connection);
+    if (m_secretsProvider) {
+        kDebug()<< "Secrets are being saved for connection " << con->uuid();
+        m_secretsProvider->saveSecrets(con);
+    } else {
+        kDebug()<< "Secrets for" << con->uuid() << "not save because there is no m_secretsProvider registered.";
+    }
 }
 
 void NMDBusSecretAgent::DeleteSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path)
 {
     Q_UNUSED(connection_path)
     Knm::Connection * con = new Knm::Connection(QUuid(), Knm::Connection::Wired);
-    ConnectionDbus * condbus = new ConnectionDbus(con);
-    condbus->fromDbusMap(connection);
-    kDebug() << "Deleting secrets for connection " << con->uuid();
-    m_secretsProvider->deleteSecrets(con);
-    delete condbus;
-}
-
-void NMDBusSecretAgent::deleteSavedConnection(Knm::Connection *con)
-{
-    delete con;
+    ConnectionDbus condbus(con);
+    condbus.fromDbusMap(connection);
+    if (m_secretsProvider) {
+        kDebug() << "Deleting secrets for connection " << con->uuid();
+        m_secretsProvider->deleteSecrets(con);
+    } else {
+        kDebug()<< "Secrets for" << con->uuid() << "not deleted because there is no m_secretsProvider registered.";
+    }
 }
 
 void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name)
 {
     QPair<QString, QDBusMessage> pair = m_connectionsToRead.take(con->uuid() + name);
     if (m_objectPaths.removeOne(pair.first + name)) {
-        ConnectionDbus * condbus = new ConnectionDbus(con);
-        QVariantMapMap secrets = condbus->toDbusSecretsMap(name);
+        ConnectionDbus condbus(con);
+        QVariantMapMap secrets = condbus.toDbusSecretsMap(name);
 
         QDBusMessage reply = pair.second.createReply();
         QVariant arg = QVariant::fromValue(secrets);
         reply << arg;
         QDBusConnection::systemBus().send(reply);
-
-        delete condbus;
     }
     delete con;
 }
@@ -144,6 +142,5 @@ void NMDBusSecretAgent::CancelGetSecrets(const QDBusObjectPath &connection_path,
 void NMDBusSecretAgent::registerSecretsProvider(SecretsProvider * provider)
 {
     m_secretsProvider = provider;
-    connect(m_secretsProvider,SIGNAL(connectionSaved(Knm::Connection *)),SLOT(deleteSavedConnection(Knm::Connection *)));
     connect(m_secretsProvider,SIGNAL(connectionRead(Knm::Connection *, const QString&)),SLOT(secretsReady(Knm::Connection*, const QString&)));
 }
