@@ -69,26 +69,30 @@ QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, c
 {
     kDebug() << connection;
     kDebug() << setting_name << flags << hints;
-    QVariantMapMap map;
 
     QDBusMessage msg = message();
     msg.setDelayedReply(true);
+    QDBusMessage reply = msg.createReply();
+    QDBusConnection::systemBus().send(reply);
+
     Knm::Connection * con = new Knm::Connection(QUuid(), Knm::Connection::Wired);
     ConnectionDbus condbus(con);
     condbus.fromDbusMap(connection);
     QPair<QString,QDBusMessage> pair;
     pair.first = connection_path.path();
-    pair.second = msg;
+    pair.second = reply;
     m_connectionsToRead.insert(con->uuid() + setting_name, pair);
     m_objectPaths.append(connection_path.path() + setting_name);
 
-    foreach (Knm::Setting * setting, con->settings()) {
-        if (setting->name() == setting_name && m_secretsProvider) {
-            m_secretsProvider->loadSecrets(con, setting_name, (SecretsProvider::GetSecretsFlags)flags);
-            break;
+    if (m_secretsProvider) {
+        foreach (Knm::Setting * setting, con->settings()) {
+            if (setting->name() == setting_name) {
+                m_secretsProvider->loadSecrets(con, setting_name, (SecretsProvider::GetSecretsFlags)flags);
+                break;
+            }
         }
     }
-    return map;
+    return connection;
 }
 
 void NMDBusSecretAgent::SaveSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path)
@@ -126,7 +130,7 @@ void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name)
         ConnectionDbus condbus(con);
         QVariantMapMap secrets = condbus.toDbusSecretsMap(name);
 
-        QDBusMessage reply = pair.second.createReply();
+        QDBusMessage reply = pair.second;
         QVariant arg = QVariant::fromValue(secrets);
         reply << arg;
         QDBusConnection::systemBus().send(reply);
