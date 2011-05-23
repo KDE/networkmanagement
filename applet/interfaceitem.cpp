@@ -67,6 +67,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterfaceNm09 * iface, Remot
     m_hasDefaultRoute(false),
     m_starting(true)
 {
+    connect(m_activatables, SIGNAL(disappeared()), this, SLOT(serviceDisappeared()));
     setDrawBackground(true);
     setTextBackgroundColor(QColor(Qt::transparent));
     QString tt = i18nc("tooltip on the LHS widgets", "Click here for interface details");
@@ -495,6 +496,11 @@ void InterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
         emit hoverLeave(m_iface.data()->uni());
     }
     IconWidget::hoverLeaveEvent(event);
+}
+
+void InterfaceItem::serviceDisappeared()
+{
+    m_currentConnection = 0;
 }
 
 // vim: sw=4 sts=4 et tw=100

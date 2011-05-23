@@ -152,5 +152,6 @@ protected Q_SLOTS:
 
 private Q_SLOTS:
     void emitDisconnectInterfaceRequest();
+    void serviceDisappeared();
 };
 #endif // APPLET_INTERFACEWIDGET_H
