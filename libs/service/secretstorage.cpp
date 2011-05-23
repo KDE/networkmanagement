@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 
 #include <QFile>
+#include <QMutableHashIterator>
 
 #include "paths.h"
 
@@ -81,7 +82,7 @@ void SecretStorage::walletOpenedForWrite(bool success)
 {
     if (success) {
         KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
-        if (wallet->isOpen() && wallet->hasFolder(s_walletFolderName) && wallet->setFolder(s_walletFolderName)) {
+        if (wallet->isOpen()) {
             bool readyForWalletWrite = false;
             if( !wallet->hasFolder( s_walletFolderName ) )
                 wallet->createFolder( s_walletFolderName );
@@ -103,7 +104,6 @@ void SecretStorage::walletOpenedForWrite(bool success)
                         }
                     }
                     emit connectionSaved(con);
-                    delete con;
                 }
             }
         }
@@ -112,6 +112,7 @@ void SecretStorage::walletOpenedForWrite(bool success)
 
 void SecretStorage::walletOpenedForRead(bool success)
 {
+    bool retrievalSuccessful = true;
     if (success) {
         KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
         if (wallet->isOpen() && wallet->hasFolder(s_walletFolderName) && wallet->setFolder(s_walletFolderName)) {
@@ -122,8 +123,8 @@ void SecretStorage::walletOpenedForRead(bool success)
             if (readyForWalletRead) {
                 while (!m_connectionsToRead.isEmpty()) {
                     Knm::Connection *con = m_connectionsToRead.takeFirst();
-                    QMultiHash<QString, QPair<QString,GetSecretsFlags> >::iterator i = m_settingsToRead.find(con->uuid());
-                    while (i != m_settingsToRead.end() && i.key() == con->uuid()) {
+                    QMutableHashIterator<QString, QPair<QString,GetSecretsFlags> > i(m_settingsToRead);
+                    while (i.hasNext() && i.next().key() == con->uuid()) {
                         QPair<QString,GetSecretsFlags> pair = i.value();
                         Knm::Secrets * secrets = 0;
                         bool settingsFound = false;
@@ -149,13 +150,25 @@ void SecretStorage::walletOpenedForRead(bool success)
                             }
                         }
                         if (!settingsFound)
-                            emit connectionRead(con,pair.first);
+                            emit connectionRead(con, pair.first);
                         m_settingsToRead.remove(i.key(), i.value());
                     }
-
                 }
+            } else {
+               retrievalSuccessful = false;
             }
         }
+    }
+    if (!retrievalSuccessful || !success) {
+         while (!m_connectionsToRead.isEmpty()) {
+            Knm::Connection *con = m_connectionsToRead.takeFirst();
+            QMultiHash<QString, QPair<QString,GetSecretsFlags> >::iterator i = m_settingsToRead.find(con->uuid());
+            while (i != m_settingsToRead.end() && i.key() == con->uuid()) {
+                QPair<QString,GetSecretsFlags> pair = i.value();
+                emit connectionRead(con, pair.first);
+                m_settingsToRead.remove(i.key(), i.value());
+            }
+         }
     }
 }
 
@@ -215,7 +228,7 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
         } else {
             emit connectionRead(con, name);
         }
-    } else if (m_storageMode == Secure && KWallet::Wallet::isEnabled() && !flags & RequestNew) {
+    } else if (m_storageMode == Secure && !(flags & RequestNew)) {
         kDebug() << "opening wallet...";
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
                 walletWid(),KWallet::Wallet::Asynchronous);
@@ -224,6 +237,8 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
             m_connectionsToRead.append(con);
             QPair<QString,GetSecretsFlags> pair(name, flags);
             m_settingsToRead.insert(uuid, pair);
+        } else {
+            emit connectionRead(con, name);
         }
     }
 }
