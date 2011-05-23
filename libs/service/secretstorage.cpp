@@ -121,54 +121,48 @@ void SecretStorage::walletOpenedForRead(bool success)
     if (success) {
         KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
         if (wallet->isOpen() && wallet->hasFolder(s_walletFolderName) && wallet->setFolder(s_walletFolderName)) {
-            bool readyForWalletRead = false;
-            if ( wallet->setFolder( s_walletFolderName ) ) {
-                readyForWalletRead = true;
-            }
-            if (readyForWalletRead) {
-                while (!m_connectionsToRead.isEmpty()) {
-                    Knm::Connection *con = m_connectionsToRead.takeFirst();
-                    QMutableHashIterator<QString, QPair<QString,GetSecretsFlags> > i(m_settingsToRead);
-                    while (i.hasNext() && i.next().key() == con->uuid()) {
-                        QPair<QString,GetSecretsFlags> pair = i.value();
-                        Knm::Secrets * secrets = 0;
-                        bool settingsFound = false;
-                        foreach (Knm::Setting * setting, con->settings()) {
-                            if (setting->name() == pair.first) {
-                                secrets = setting->getSecretsObject();
-                                settingsFound = true;
-                                if (secrets) {
-                                    QMap<QString,QString> map;
-                                    if (wallet->readMap(walletKeyFor(con->uuid(), setting), map) == 0) {
-                                        secrets->secretsFromMap(map);
-                                    }
-                                    QStringList needSecretsList = secrets->needSecrets();
-                                    if (!needSecretsList.isEmpty() && (pair.second & AllowInteraction || pair.second & RequestNew)) {
-                                        askUser(con, pair.first, needSecretsList);
-                                    } else {
-                                        emit connectionRead(con, pair.first);
-                                    }
+            while (!m_connectionsToRead.isEmpty()) {
+                Knm::Connection *con = m_connectionsToRead.takeFirst();
+                QMutableHashIterator<QString, QPair<QString,GetSecretsFlags> > i(m_settingsToRead);
+                while (i.hasNext() && i.next().key() == con->uuid()) {
+                    QPair<QString,GetSecretsFlags> pair = i.value();
+                    Knm::Secrets * secrets = 0;
+                    bool settingsFound = false;
+                    foreach (Knm::Setting * setting, con->settings()) {
+                        if (setting->name() == pair.first) {
+                            secrets = setting->getSecretsObject();
+                            settingsFound = true;
+                            if (secrets) {
+                                QMap<QString,QString> map;
+                                if (wallet->readMap(walletKeyFor(con->uuid(), setting), map) == 0) {
+                                    secrets->secretsFromMap(map);
+                                }
+                                QStringList needSecretsList = secrets->needSecrets();
+                                if (!needSecretsList.isEmpty() && (pair.second & AllowInteraction || pair.second & RequestNew)) {
+                                    askUser(con, pair.first, needSecretsList);
                                 } else {
                                     emit connectionRead(con, pair.first);
                                 }
-                                break;
+                            } else {
+                                emit connectionRead(con, pair.first);
                             }
+                            break;
                         }
-                        if (!settingsFound)
-                            emit connectionRead(con, pair.first);
-                        m_settingsToRead.remove(i.key(), i.value());
                     }
+                    if (!settingsFound)
+                        emit connectionRead(con, pair.first);
+                    m_settingsToRead.remove(i.key(), i.value());
                 }
-            } else {
-               retrievalSuccessful = false;
             }
+        } else {
+            retrievalSuccessful = false;
         }
     }
     if (!retrievalSuccessful || !success) {
          while (!m_connectionsToRead.isEmpty()) {
             Knm::Connection *con = m_connectionsToRead.takeFirst();
-            QMultiHash<QString, QPair<QString,GetSecretsFlags> >::iterator i = m_settingsToRead.find(con->uuid());
-            while (i != m_settingsToRead.end() && i.key() == con->uuid()) {
+            QMutableHashIterator<QString, QPair<QString,GetSecretsFlags> > i(m_settingsToRead);
+            while (i.hasNext() && i.next().key() == con->uuid()) {
                 QPair<QString,GetSecretsFlags> pair = i.value();
                 emit connectionRead(con, pair.first);
                 m_settingsToRead.remove(i.key(), i.value());

@@ -69,7 +69,6 @@ QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, c
 {
     kDebug() << connection;
     kDebug() << setting_name << flags << hints;
-    QVariantMapMap map;
 
     QDBusMessage msg = message();
     msg.setDelayedReply(true);
@@ -82,13 +81,16 @@ QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, c
     m_connectionsToRead.insert(con->uuid() + setting_name, pair);
     m_objectPaths.append(connection_path.path() + setting_name);
 
-    foreach (Knm::Setting * setting, con->settings()) {
-        if (setting->name() == setting_name && m_secretsProvider) {
-            m_secretsProvider->loadSecrets(con, setting_name, (SecretsProvider::GetSecretsFlags)flags);
-            break;
+    if (m_secretsProvider) {
+        foreach (Knm::Setting * setting, con->settings()) {
+            if (setting->name() == setting_name) {
+                m_secretsProvider->loadSecrets(con, setting_name, (SecretsProvider::GetSecretsFlags)flags);
+                break;
+            }
         }
     }
-    return map;
+
+    return connection;
 }
 
 void NMDBusSecretAgent::SaveSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path)
