@@ -24,11 +24,11 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
 
   Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting*>(m_setting);
 
-  if (map.contains("method")) {
-      setting->setMethod(methodStringToEnum(map.value("method").value<QString>())); }
+  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_METHOD))) {
+      setting->setMethod(methodStringToEnum(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_METHOD)).value<QString>())); }
 
-  if (map.contains("dns")) {
-      QDBusArgument dnsArg = map.value("dns").value< QDBusArgument>();
+  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DNS))) {
+      QDBusArgument dnsArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS)).value< QDBusArgument>();
       QList<QHostAddress> dbusDns;
 
       dnsArg.beginArray();
@@ -51,8 +51,8 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
     setting->setDnssearch(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS_SEARCH)).value<QStringList>());
   }
 
-  if (map.contains("addresses")) {
-      QDBusArgument addressArg = map.value("addresses").value< QDBusArgument>();
+  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES))) {
+      QDBusArgument addressArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES)).value< QDBusArgument>();
       QList<Solid::Control::IPv4AddressNm09> addresses;
 
       addressArg.beginArray();
@@ -82,9 +82,9 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
       setting->setAddresses(addresses);
   }
 
-  if (map.contains("routes"))
+  if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)))
   {
-      QDBusArgument routeArg = map.value("routes").value< QDBusArgument>();
+      QDBusArgument routeArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)).value< QDBusArgument>();
       QList<Solid::Control::IPv4RouteNm09> routes;
 
       routeArg.beginArray();
@@ -133,15 +133,15 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
 
 Knm::Ipv4Setting::EnumMethod::type Ipv4Dbus::methodStringToEnum(QString method)
 {
-    if (method.toLower() == "automatic" || method.toLower() == "auto")
+    if (method.toLower() == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_AUTO))
         return Knm::Ipv4Setting::EnumMethod::Automatic;
-    else if (method.toLower() == "linklocal" || method.toLower() == "link-local")
+    else if (method.toLower() == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_LINK_LOCAL))
         return Knm::Ipv4Setting::EnumMethod::LinkLocal;
-    else if (method.toLower() == "manual")
+    else if (method.toLower() == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_MANUAL))
         return Knm::Ipv4Setting::EnumMethod::Manual;
-    else if (method.toLower() == "shared")
+    else if (method.toLower() == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_SHARED))
         return Knm::Ipv4Setting::EnumMethod::Shared;
-    else if (method.toLower() == "disabled")
+    else if (method.toLower() == QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_DISABLED))
         return Knm::Ipv4Setting::EnumMethod::Disabled;
     else
     {
@@ -156,19 +156,19 @@ QVariantMap Ipv4Dbus::toMap()
   Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting *>(m_setting);
   switch (setting->method()) {
       case Knm::Ipv4Setting::EnumMethod::Automatic:
-          map.insert("method", "auto");
+          map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_METHOD), QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_AUTO));
           break;
       case Knm::Ipv4Setting::EnumMethod::LinkLocal:
-          map.insert("method", "link-local");
+          map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_METHOD), QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_LINK_LOCAL));
           break;
       case Knm::Ipv4Setting::EnumMethod::Manual:
-          map.insert("method", "manual");
+          map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_METHOD), QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_MANUAL));
           break;
       case Knm::Ipv4Setting::EnumMethod::Shared:
-          map.insert("method", "shared");
+          map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_METHOD), QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_SHARED));
           break;
        case Knm::Ipv4Setting::EnumMethod::Disabled:
-          map.insert("method", "disabled");
+          map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_METHOD), QLatin1String(NM_SETTING_IP4_CONFIG_METHOD_DISABLED));
           break;
   }
 
@@ -177,7 +177,7 @@ QVariantMap Ipv4Dbus::toMap()
       foreach (const QHostAddress &dns, setting->dns()) {
           dbusDns << htonl(dns.toIPv4Address());
       }
-      map.insert("dns", QVariant::fromValue(dbusDns));
+      map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_DNS), QVariant::fromValue(dbusDns));
   }
 
   if (!setting->dnssearch().isEmpty()) {
@@ -192,7 +192,7 @@ QVariantMap Ipv4Dbus::toMap()
               << htonl(addr.gateway());
           dbusAddresses << dbusAddress;
       }
-      map.insert("addresses", QVariant::fromValue(dbusAddresses));
+      map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES), QVariant::fromValue(dbusAddresses));
   }
   if (!setting->routes().isEmpty()) {
       QList<QList<uint> > dbusRoutes;
@@ -205,7 +205,7 @@ QVariantMap Ipv4Dbus::toMap()
           dbusRoutes << dbusRoute;
       }
 
-      map.insert("routes", QVariant::fromValue(dbusRoutes));
+  map.insert(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES), QVariant::fromValue(dbusRoutes));
   }
 
 

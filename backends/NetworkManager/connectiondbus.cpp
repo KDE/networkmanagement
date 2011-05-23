@@ -239,8 +239,8 @@ QVariantMapMap ConnectionDbus::toDbusSecretsMap(const QString &name)
     foreach (Setting * setting, m_connection->settings()) {
         if (setting->name() == name) {
             SettingDbus * sd = dbusFor(setting);
-        if (sd)
-            mapMap.insert(setting->name(), sd->toSecretsMap());
+            if (sd)
+                mapMap.insert(setting->name(), sd->toSecretsMap());
         }
     }
     return mapMap;

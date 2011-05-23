@@ -16,8 +16,8 @@ PppDbus::~PppDbus()
 void PppDbus::fromMap(const QVariantMap & map)
 {
   Knm::PppSetting * setting = static_cast<Knm::PppSetting *>(m_setting);
-  if (map.contains("noauth")) {
-    setting->setNoauth(map.value("noauth").value<bool>());
+  if (map.contains(QLatin1String(NM_SETTING_PPP_NOAUTH))) {
+    setting->setNoauth(map.value(QLatin1String(NM_SETTING_PPP_NOAUTH)).value<bool>());
   }
   if (map.contains(QLatin1String(NM_SETTING_PPP_REFUSE_EAP))) {
     setting->setRefuseeap(map.value(QLatin1String(NM_SETTING_PPP_REFUSE_EAP)).value<bool>());
@@ -34,11 +34,11 @@ void PppDbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_PPP_REFUSE_MSCHAPV2))) {
     setting->setRefusemschapv2(map.value(QLatin1String(NM_SETTING_PPP_REFUSE_MSCHAPV2)).value<bool>());
   }
-  if (map.contains("nobsdcomp")) {
-    setting->setNobsdcomp(map.value("nobsdcomp").value<bool>());
+  if (map.contains(QLatin1String(NM_SETTING_PPP_NOBSDCOMP))) {
+    setting->setNobsdcomp(map.value(QLatin1String(NM_SETTING_PPP_NOBSDCOMP)).value<bool>());
   }
-  if (map.contains("nodeflate")) {
-    setting->setNodeflate(map.value("nodeflate").value<bool>());
+  if (map.contains(QLatin1String(NM_SETTING_PPP_NODEFLATE))) {
+      setting->setNodeflate(map.value(QLatin1String(NM_SETTING_PPP_NODEFLATE)).value<bool>());
   }
   if (map.contains(QLatin1String(NM_SETTING_PPP_NO_VJ_COMP))) {
     setting->setNovjcomp(map.value(QLatin1String(NM_SETTING_PPP_NO_VJ_COMP)).value<bool>());
@@ -52,17 +52,17 @@ void PppDbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_PPP_MPPE_STATEFUL))) {
     setting->setMppestateful(map.value(QLatin1String(NM_SETTING_PPP_MPPE_STATEFUL)).value<bool>());
   }
-  if (map.contains("crtscts")) {
-    setting->setCrtscts(map.value("crtscts").value<bool>());
+  if (map.contains(QLatin1String(NM_SETTING_PPP_CRTSCTS))) {
+    setting->setCrtscts(map.value(QLatin1String(NM_SETTING_PPP_CRTSCTS)).value<bool>());
   }
-  if (map.contains("baud")) {
-    setting->setBaud(map.value("baud").value<uint>());
+  if (map.contains(QLatin1String(NM_SETTING_PPP_BAUD))) {
+    setting->setBaud(map.value(QLatin1String(NM_SETTING_PPP_BAUD)).value<uint>());
   }
-  if (map.contains("mru")) {
-    setting->setMru(map.value("mru").value<uint>());
+  if (map.contains(QLatin1String(NM_SETTING_PPP_MRU))) {
+    setting->setMru(map.value(QLatin1String(NM_SETTING_PPP_MRU)).value<uint>());
   }
-  if (map.contains("mtu")) {
-    setting->setMtu(map.value("mtu").value<uint>());
+  if (map.contains(QLatin1String(NM_SETTING_PPP_MTU))) {
+    setting->setMtu(map.value(QLatin1String(NM_SETTING_PPP_MTU)).value<uint>());
   }
   if (map.contains(QLatin1String(NM_SETTING_PPP_LCP_ECHO_FAILURE))) {
     setting->setLcpechofailure(map.value(QLatin1String(NM_SETTING_PPP_LCP_ECHO_FAILURE)).value<uint>());
@@ -76,14 +76,14 @@ QVariantMap PppDbus::toMap()
 {
   QVariantMap map;
   Knm::PppSetting * setting = static_cast<Knm::PppSetting *>(m_setting);
-  insertIfTrue(map, "noauth", setting->noauth());
+  insertIfTrue(map, NM_SETTING_PPP_NOAUTH, setting->noauth());
   insertIfTrue(map, NM_SETTING_PPP_REFUSE_EAP, setting->refuseeap());
   insertIfTrue(map, NM_SETTING_PPP_REFUSE_PAP, setting->refusepap());
   insertIfTrue(map, NM_SETTING_PPP_REFUSE_CHAP, setting->refusechap());
   insertIfTrue(map, NM_SETTING_PPP_REFUSE_MSCHAP, setting->refusemschap());
   insertIfTrue(map, NM_SETTING_PPP_REFUSE_MSCHAPV2, setting->refusemschapv2());
-  insertIfTrue(map, "nobsdcomp", setting->nobsdcomp());
-  insertIfTrue(map, "nodeflate", setting->nodeflate());
+  insertIfTrue(map, NM_SETTING_PPP_NOBSDCOMP, setting->nobsdcomp());
+  insertIfTrue(map, NM_SETTING_PPP_NODEFLATE, setting->nodeflate());
   insertIfTrue(map, NM_SETTING_PPP_NO_VJ_COMP, setting->novjcomp());
   if (setting->requiremppe()) {
       map.insert(QLatin1String(NM_SETTING_PPP_REQUIRE_MPPE), true);
@@ -91,10 +91,10 @@ QVariantMap PppDbus::toMap()
           insertIfTrue(map, NM_SETTING_PPP_REQUIRE_MPPE_128, setting->requiremppe128());
           insertIfTrue(map, NM_SETTING_PPP_MPPE_STATEFUL, setting->mppestateful());
   }
-  insertIfTrue(map, "crtscts", setting->crtscts());
-  insertIfNonZero(map, "baud", setting->baud());
-  insertIfNonZero(map, "mru", setting->mru());
-  insertIfNonZero(map, "mtu", setting->mtu());
+  insertIfTrue(map, NM_SETTING_PPP_CRTSCTS, setting->crtscts());
+  insertIfNonZero(map, NM_SETTING_PPP_BAUD, setting->baud());
+  insertIfNonZero(map, NM_SETTING_PPP_MRU, setting->mru());
+  insertIfNonZero(map, NM_SETTING_PPP_MTU, setting->mtu());
   insertIfNonZero(map, NM_SETTING_PPP_LCP_ECHO_FAILURE, setting->lcpechofailure());
   insertIfNonZero(map, NM_SETTING_PPP_LCP_ECHO_INTERVAL, setting->lcpechointerval());
   return map;

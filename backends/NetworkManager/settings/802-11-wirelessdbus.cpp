@@ -16,23 +16,31 @@ WirelessDbus::~WirelessDbus()
 void WirelessDbus::fromMap(const QVariantMap & map)
 {
   Knm::WirelessSetting * setting = static_cast<Knm::WirelessSetting *>(m_setting);
-  if (map.contains("ssid")) {
-    setting->setSsid(map.value("ssid").value<QByteArray>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SSID))) {
+      setting->setSsid(map.value(QLatin1String(NM_SETTING_WIRELESS_SSID)).value<QByteArray>());
   }
-  if (map.contains("mode")) {
-    setting->setMode(map.value("mode").value<int>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_MODE))) {
+      QString mode = map.value(QLatin1String(NM_SETTING_WIRELESS_MODE)).value<QString>();
+      if (mode == QLatin1String(NM_SETTING_WIRELESS_MODE_ADHOC))
+          setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
+      else if (mode == QLatin1String(NM_SETTING_WIRELESS_MODE_INFRA))
+          setting->setMode(Knm::WirelessSetting::EnumMode::infrastructure);
   }
-  if (map.contains("band")) {
-    setting->setBand(map.value("band").value<int>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_BAND))) {
+      QString band = map.value(QLatin1String(NM_SETTING_WIRELESS_BAND)).value<QString>();
+      if (band == QLatin1String("a"))
+        setting->setBand(Knm::WirelessSetting::EnumBand::a);
+      else if (band == QLatin1String("bg"))
+        setting->setBand(Knm::WirelessSetting::EnumBand::bg);
   }
-  if (map.contains("channel")) {
-    setting->setChannel(map.value("channel").value<uint>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_CHANNEL))) {
+      setting->setChannel(map.value(QLatin1String(NM_SETTING_WIRELESS_CHANNEL)).value<uint>());
   }
-  if (map.contains("bssid")) {
-    setting->setBssid(SettingDbus::macBin2Hex(map.value("bssid").value<QByteArray>()));
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_BSSID))) {
+      setting->setBssid(SettingDbus::macBin2Hex(map.value(QLatin1String(NM_SETTING_WIRELESS_BSSID)).value<QByteArray>()));
   }
-  if (map.contains("rate")) {
-    setting->setRate(map.value("rate").value<uint>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_RATE))) {
+      setting->setRate(map.value(QLatin1String(NM_SETTING_WIRELESS_RATE)).value<uint>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_TX_POWER))) {
     setting->setTxpower(map.value(QLatin1String(NM_SETTING_WIRELESS_TX_POWER)).value<uint>());
@@ -40,14 +48,14 @@ void WirelessDbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS))) {
     setting->setMacaddress(map.value(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS)).value<QByteArray>());
   }
-  if (map.contains("mtu")) {
-    setting->setMtu(map.value("mtu").value<uint>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_MTU))) {
+      setting->setMtu(map.value(QLatin1String(NM_SETTING_WIRELESS_MTU)).value<uint>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS))) {
     setting->setSeenbssids(map.value(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS)).value<QStringList>());
   }
-  if (map.contains("security")) {
-    setting->setSecurity(map.value("security").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SEC))) {
+      setting->setSecurity(map.value(QLatin1String(NM_SETTING_WIRELESS_SEC)).value<QString>());
   }
 }
 
@@ -55,42 +63,45 @@ QVariantMap WirelessDbus::toMap()
 {
   QVariantMap map;
   Knm::WirelessSetting * setting = static_cast<Knm::WirelessSetting *>(m_setting);
-  map.insert("ssid", setting->ssid());
+  map.insert(QLatin1String(NM_SETTING_WIRELESS_SSID), setting->ssid());
   switch (setting->mode()) {
     case Knm::WirelessSetting::EnumMode::infrastructure:
-      map.insert("mode", "infrastructure");
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_MODE), QLatin1String(NM_SETTING_WIRELESS_MODE_INFRA));
       break;
     case Knm::WirelessSetting::EnumMode::adhoc:
-      map.insert("mode", "adhoc");
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_MODE), QLatin1String(NM_SETTING_WIRELESS_MODE_ADHOC));
       break;
   }
-  // leave out band, NM seems to work automatically without it
 
   switch (setting->band()) {
     case Knm::WirelessSetting::EnumBand::a:
-      map.insert("band", "a");
+        map.insert(QLatin1String(NM_SETTING_WIRELESS_BAND), "a");
       break;
     case Knm::WirelessSetting::EnumBand::bg:
-      map.insert("band", "bg");
+        map.insert(QLatin1String(NM_SETTING_WIRELESS_BAND), "bg");
       break;
   }
 
-  map.insert("channel", setting->channel());
+  map.insert(QLatin1String(NM_SETTING_WIRELESS_CHANNEL), setting->channel());
   if (!setting->bssid().isEmpty()) {
-      map.insert("bssid", SettingDbus::macHex2Bin(setting->bssid()));
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_BSSID), SettingDbus::macHex2Bin(setting->bssid()));
   }
-  //map.insert("rate", setting->rate());
-  //map.insert(QLatin1String(NM_SETTING_WIRELESS_TX_POWER), setting->txpower());
+  if (setting->rate()) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_RATE), setting->rate());
+  }
+  if (setting->txpower()) {
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_TX_POWER), setting->txpower());
+  }
   if (!setting->macaddress().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
   }
-  if (setting->mtu() > 0 )
-       map.insert("mtu", setting->mtu());
+  if (setting->mtu())
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_MTU), setting->mtu());
   if (!setting->seenbssids().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS), setting->seenbssids());
   }
   if (!setting->security().isEmpty()) {
-      map.insert("security", setting->security());
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_SEC), setting->security());
   }
   return map;
 }
