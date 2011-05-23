@@ -34,8 +34,8 @@ macro_optional_find_package(NetworkManager)
 
 macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.7" "Needed for NetworkManager support in Network Management")
 if (NETWORKMANAGER_FOUND)
-macro_ensure_version( "0.7.0" ${NETWORKMANAGER_VERSION} NM_0_7)
-macro_ensure_version( "0.7.1" ${NETWORKMANAGER_VERSION} NM_0_7_1)
+   #macro_ensure_version( "0.7.0" ${NETWORKMANAGER_VERSION} NM_0_7)
+   #macro_ensure_version( "0.7.1" ${NETWORKMANAGER_VERSION} NM_0_7_1)
 find_package(GLIB2 REQUIRED)
 
 configure_file(backends/NetworkManager/config-nm07backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm07backend.h )
@@ -54,7 +54,7 @@ set (CMAKE_REQUIRED_LIBRARIES -L${KDE4_LIB_DIR} -lnm-qt)
     add_definitions(-DNM_0_8=1)
     #endif (NM_0_8)
 
-if (NM_0_7)
+    #if (NM_0_7)
 
 include_directories(
    ${NETWORKMANAGER_INCLUDE_DIRS}
@@ -85,9 +85,9 @@ else (DBUS_SYSTEM_POLICY_DIR)
 message(STATUS "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
 endif (DBUS_SYSTEM_POLICY_DIR)
 
-else(NM_0_7)
+#else(NM_0_7)
       macro_log_feature(NM_0_7 "NetworkManager ${NETWORKMANAGER_VERSION}" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
-endif(NM_0_7)
+      #endif(NM_0_7)
 endif(NETWORKMANAGER_FOUND)
 
 if(INSTALL_KNM_AUTOSTART)
