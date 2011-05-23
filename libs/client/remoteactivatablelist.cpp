@@ -143,7 +143,12 @@ void RemoteActivatableList::clear()
     Q_D(RemoteActivatableList);
     foreach (RemoteActivatable * activatable, d->activatables) {
         emit activatableRemoved(activatable);
-        activatable->deleteLater();
+
+        // Hacky, I know, but even with deleteLater sometimes we get dangling pointers,
+        // so give more time for the emit above be processed before we delete the object.
+        // TODO: make sure all activatableRemoved signals were processed before deleting
+        // the object.
+        QTimer::singleShot(10000, activatable, SLOT(deleteLater()));
     }
     d->activatables.clear();
 }
@@ -211,7 +216,12 @@ void RemoteActivatableList::handleActivatableRemoved(const QString &removed)
     RemoteActivatable * removedActivatable = d->activatables.take(removed);
     if (removedActivatable) {
         emit activatableRemoved(removedActivatable);
-        removedActivatable->deleteLater();
+
+        // Hacky, I know, but even with deleteLater sometimes we get dangling pointers,
+        // so give more time for the emit above be processed before we delete the object.
+        // TODO: make sure all activatableRemoved signals were processed before deleting
+        // the object.
+        QTimer::singleShot(10000, removedActivatable, SLOT(deleteLater()));
     }
 }
 
