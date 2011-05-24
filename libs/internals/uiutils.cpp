@@ -44,6 +44,7 @@ QString UiUtils::interfaceTypeLabel(const NetworkManager::Device::Type type)
         case NetworkManager::Device::Wifi:
             deviceText = i18nc("title of the interface widget in nm's popup", "Wireless 802.11");
             break;
+            // willtodo: modem access type
         case NetworkManager::Device::Modem:
             deviceText = i18nc("title of the interface widget in nm's popup", "Serial Modem");
             break;
@@ -96,6 +97,7 @@ QString UiUtils::iconName(NetworkManager::Device *iface)
             }
             icon = "network-wireless-connected-" + strength;
             break;
+            //willtodo: modem access type
         case NetworkManager::Device::Modem:
             icon = "modem";
             break;

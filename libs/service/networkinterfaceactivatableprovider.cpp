@@ -114,6 +114,7 @@ bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType
              || ((connType == Knm::Connection::Gsm || connType == Knm::Connection::Cdma || connType == Knm::Connection::Pppoe) && ifaceType == NetworkManager::Device::Modem)
 
 #ifdef NM_0_8
+              //willtodo: modem access type
              || (connType == Knm::Connection::Bluetooth && ifaceType == NetworkManager::Device::Bluetooth)
 #endif
              );

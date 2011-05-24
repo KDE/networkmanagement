@@ -96,6 +96,7 @@ Connection::Type Connection::typeFromSolidType(const NetworkManager::Device::Typ
     switch (type) {
         case NetworkManager::Device::Ethernet: return Knm::Connection::Wired;
         case NetworkManager::Device::Wifi: return Knm::Connection::Wireless;
+        //willtodo: modem access type
         //case NetworkManager::Device::Gsm: return Knm::Connection::Gsm;
         case NetworkManager::Device::Modem: return Knm::Connection::Gsm;
 #ifdef NM_0_8

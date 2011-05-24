@@ -110,6 +110,7 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
             kDebug() << "Bluetooth interface added";
             provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::ModemDevice*>(iface), this);
 #endif
+                //willtodo: modem access type
         } else if (iface->type() == NetworkManager::Device::Gsm) {
             kDebug() << "Gsm interface added";
             provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::ModemDevice*>(iface), this);

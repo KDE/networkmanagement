@@ -192,7 +192,7 @@ void ConfigurationLauncher::unconfiguredInterfaceActivated()
                     typeString = QLatin1String("802-11-wireless");
                     break;
                 case NetworkManager::Device::Modem:
-                //willtodo: determine typestring from currentCapabilities here
+                //willtodo: modem access type - determine typestring from currentCapabilities here
                 /*
                     typeString = QLatin1String("pppoe");
                     break;
