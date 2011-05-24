@@ -98,10 +98,10 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
     NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
     if (iface && !d->providers.contains(uni)) {
         NetworkInterfaceActivatableProvider * provider;
-        if (iface->type() == NetworkManager::Device::Ethernet) {
+        if (iface->type() == NetworkManager::Device::Wifi) {
             kDebug() << "Wireless interface added";
             provider = new WirelessNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::WirelessDevice*>(iface), this);
-        } else if (iface->type() == NetworkManager::Device::Wifi) {
+        } else if (iface->type() == NetworkManager::Device::Ethernet) {
             kDebug() << "Wired interface added";
             provider = new WiredNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::WiredDevice*>(iface), this);
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
