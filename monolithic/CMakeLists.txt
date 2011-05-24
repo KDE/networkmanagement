@@ -71,7 +71,7 @@ target_link_libraries(knetworkmanager
    knmservice
    knm_nm
    solid
-   solidcontrol
+   nm-qt
    )
 
 install(TARGETS knetworkmanager ${INSTALL_TARGETS_DEFAULT_ARGS})
