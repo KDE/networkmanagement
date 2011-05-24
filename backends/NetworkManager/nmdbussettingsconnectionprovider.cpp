@@ -452,7 +452,7 @@ bool NMDBusSettingsConnectionProvider::getConnectionSecrets(Knm::Connection *con
 
     QString objPath = d->uuidToPath.value(uuid).path();
 
-    OrgFreedesktopNetworkManagerSettingsConnectionInterface *secretIface = new OrgFreedesktopNetworkManagerSettingsConnectionInterface(d->serviceName, objPath, QDBusConnection::systemBus(), this);
+    OrgFreedesktopNetworkManagerSettingsConnectionInterface secretIface(d->serviceName, objPath, QDBusConnection::systemBus(), this);
 
     kDebug() << "Getting connection secrets for " << uuid.toString();
 
@@ -464,7 +464,7 @@ bool NMDBusSettingsConnectionProvider::getConnectionSecrets(Knm::Connection *con
         kWarning() << "This connection has more than 1 secret setting, not supported yet :/";
 
 
-    QDBusPendingReply<QVariantMapMap> reply = secretIface->GetSecrets(secretSettings.at(0));
+    QDBusPendingReply<QVariantMapMap> reply = secretIface.GetSecrets(secretSettings.at(0));
     //do not check if reply is valid or not because it's an async call and invalid till reply is really arrived
 
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
