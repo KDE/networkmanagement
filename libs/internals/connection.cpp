@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <kdebug.h>
+#include <KUser>
 #include <solid/control/networkmodeminterface.h>
 
 #include "connection.h"
@@ -120,12 +121,14 @@ Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInte
 Connection::Connection(const QString & name, const Connection::Type type)
     : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false)
 {
+    addToPermissions(KUser().loginName());
     init();
 }
 
 Connection::Connection(const QUuid & uuid, const Connection::Type type)
     : m_uuid(uuid), m_type(type), m_autoConnect(false)
 {
+    addToPermissions(KUser().loginName());
     init();
 }
 
