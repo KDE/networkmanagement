@@ -329,7 +329,8 @@ void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
         if (origs.contains(secretName))
         {
             QVariantMap origSetting = origs.take(secretName);
-            kDebug() << "Uniting setting " << secret.keys() << " with values " << secret.values();
+            // WARNING: this print secrets, do not commit them uncommented.
+            //kDebug() << "Uniting setting " << secret.keys() << " with values " << secret.values();
             origSetting.unite(secret);
             origs.insert(secretName, origSetting);
 
@@ -337,11 +338,12 @@ void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
         else
         {
             origs.insert(secretName, secret);
-            kDebug() << "Inserted setting " << secretName<< " " << secret;
+            // WARNING: this print secrets, do not commit them uncommented.
+            //kDebug() << "Inserted setting " << secretName<< " " << secret;
         }
     }
 
-    kDebug() << "New settings: " << origs;
+    //kDebug() << "New settings: " << origs;
 
     fromDbusMap(origs);
 }
