@@ -92,6 +92,7 @@ void SecretStorage::walletOpenedForWrite(bool success)
             if (readyForWalletWrite) {
                 while (!m_connectionsToWrite.isEmpty()) {
                     Knm::Connection *con = m_connectionsToWrite.takeFirst();
+                    bool saved = false;
                     foreach (Knm::Setting * setting, con->settings()) {
                         Knm::Secrets * secrets = setting->getSecretsObject();
                         if (secrets) {
@@ -99,9 +100,13 @@ void SecretStorage::walletOpenedForWrite(bool success)
                             // Do not save pin.
                             map.take("pin");
                             if (!map.isEmpty()) {
+                                saved = true;
                                 wallet->writeMap(walletKeyFor(con->uuid(), setting), map);
                             }
                         }
+                    }
+                    if (!saved) {
+                        kWarning() << "No secret has been written to the kwallet.";
                     }
                     emit connectionSaved(con);
                 }
