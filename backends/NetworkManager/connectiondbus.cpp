@@ -310,9 +310,10 @@ void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
 {
     QVariantMapMap origs = toDbusMap();
 
-    kDebug() << "Printing connection map: ";
-    kDebug() << "Secrets:" << secrets;
-    kDebug() << "Original settings:" << origs;
+    // WARNING: those debug messages print secrets, do not commit them uncommented.
+    //kDebug() << "Printing connection map: ";
+    //kDebug() << "Secrets:" << secrets;
+    //kDebug() << "Original settings:" << origs;
 
     foreach(QString secretName, secrets.keys())
     {
