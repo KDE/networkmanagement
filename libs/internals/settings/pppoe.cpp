@@ -11,6 +11,15 @@ PppoeSetting::PppoeSetting() : Setting(Setting::Pppoe)
     m_secretsObject = new PppoeSecrets(this);
 }
 
+PppoeSetting::PppoeSetting(PppoeSetting *setting) : Setting(setting)
+{
+    m_secretsObject = new PppoeSecrets(static_cast<PppoeSecrets*>(setting->getSecretsObject()), this);
+    setService(setting->service());
+    setUsername(setting->username());
+    setPassword(setting->password());
+    setPasswordflags(setting->passwordflags());
+}
+
 PppoeSetting::~PppoeSetting()
 {
 }

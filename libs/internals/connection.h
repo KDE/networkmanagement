@@ -55,6 +55,7 @@ public:
      * Create a connection with a given Uuid
      */
     explicit Connection(const QUuid& uuid, Connection::Type type);
+    explicit Connection(Connection *con);
     virtual ~Connection();
 
     QString name() const;
@@ -129,6 +130,7 @@ private:
      * Set up internal structure, including all settings specific to this connection type
      */
     void init();
+    void init(Connection *con);
 
     /**
      * Add a setting to this connection.  The connection will delete the Setting

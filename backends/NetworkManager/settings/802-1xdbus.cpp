@@ -91,6 +91,9 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS))) {
         setting->setPhase2privatekeypasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS)).value<int>());
     }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PIN_FLAGS))) {
+        setting->setPinflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PIN_FLAGS)).value<int>());
+    }
     setting->setEnabled(true);
 }
 
@@ -192,6 +195,7 @@ QVariantMap Security8021xDbus::toMap()
         }
         if (!setting->pin().isEmpty()) {
             map.insert(QLatin1String(NM_SETTING_802_1X_PIN), setting->pin());
+            map.insert(QLatin1String(NM_SETTING_802_1X_PIN_FLAGS), (int)setting->pinflags());
         }
         if (!setting->eap().contains(QLatin1String("leap"))) {
             map.insert(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS), setting->useSystemCaCerts());

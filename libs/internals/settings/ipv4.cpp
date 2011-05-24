@@ -14,6 +14,21 @@ Ipv4Setting::Ipv4Setting() : Setting(Setting::Ipv4),
 {
 }
 
+Ipv4Setting::Ipv4Setting(Ipv4Setting *setting) : Setting(setting)
+{
+    setMethod(setting->method());
+    setDns(setting->dns());
+    setDnssearch(setting->dnssearch());
+    setAddresses(setting->addresses());
+    setIgnoredhcpdns(setting->ignoredhcpdns());
+    setIgnoreautoroute(setting->ignoreautoroute());
+    setNeverdefault(setting->neverdefault());
+    setDhcpclientid(setting->dhcpclientid());
+    setDhcphostname(setting->dhcphostname());
+    setRoutes(setting->routes());
+    setMayfail(setting->mayfail());
+}
+
 Ipv4Setting::~Ipv4Setting()
 {
 }

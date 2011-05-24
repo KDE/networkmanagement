@@ -9,6 +9,28 @@ PppSetting::PppSetting() : Setting(Setting::Ppp), mNoauth(false), mRefuseeap(fal
 {
 }
 
+PppSetting::PppSetting(PppSetting *setting) : Setting(setting)
+{
+    setNoauth(setting->noauth());
+    setRefuseeap(setting->refuseeap());
+    setRefusepap(setting->refusepap());
+    setRefusechap(setting->refusechap());
+    setRefusemschap(setting->refusemschap());
+    setRefusemschapv2(setting->refusemschapv2());
+    setNobsdcomp(setting->nobsdcomp());
+    setNodeflate(setting->nodeflate());
+    setNovjcomp(setting->novjcomp());
+    setRequiremppe(setting->requiremppe());
+    setRequiremppe128(setting->requiremppe128());
+    setMppestateful(setting->mppestateful());
+    setCrtscts(setting->crtscts());
+    setBaud(setting->baud());
+    setMru(setting->mru());
+    setMtu(setting->mtu());
+    setLcpechofailure(setting->lcpechofailure());
+    setLcpechointerval(setting->lcpechointerval());
+}
+
 PppSetting::~PppSetting()
 {
 }

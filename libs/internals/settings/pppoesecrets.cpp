@@ -26,6 +26,10 @@ PppoeSecrets::PppoeSecrets(PppoeSetting * setting) : Secrets(setting), m_setting
 {
 }
 
+PppoeSecrets::PppoeSecrets(PppoeSecrets * secrets, PppoeSetting * setting) : Secrets(secrets, setting), m_setting(setting)
+{
+}
+
 PppoeSecrets::~PppoeSecrets()
 {
 }

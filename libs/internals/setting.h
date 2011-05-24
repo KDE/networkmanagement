@@ -39,6 +39,7 @@ public:
     static Setting::Type typeFromString(const QString & type);
 
     Setting(Setting::Type type);
+    Setting(Setting *setting);
     virtual ~Setting();
     bool isNull() const;
     void setInitialized();

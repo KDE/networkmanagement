@@ -34,6 +34,7 @@ class KNMINTERNALS_EXPORT WirelessSecuritySecrets : public Secrets
 {
   public:
     WirelessSecuritySecrets(WirelessSecuritySetting *);
+    WirelessSecuritySecrets(WirelessSecuritySecrets *, WirelessSecuritySetting *);
     ~WirelessSecuritySecrets();
     QMap<QString,QString> secretsToMap() const;
     void secretsFromMap(QMap<QString,QString> secrets) const;

@@ -15,6 +15,7 @@ class KNMINTERNALS_EXPORT PppSetting : public Setting
   public:
 
     PppSetting( );
+    PppSetting(PppSetting *);
     ~PppSetting();
 
     QString name() const;

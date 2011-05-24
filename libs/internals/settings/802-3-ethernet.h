@@ -25,6 +25,7 @@ class KNMINTERNALS_EXPORT WiredSetting : public Setting
     };
 
     WiredSetting( );
+    WiredSetting(WiredSetting *);
     ~WiredSetting();
 
     QString name() const;

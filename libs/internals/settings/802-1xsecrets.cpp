@@ -26,6 +26,11 @@ Security8021xSecrets::Security8021xSecrets(Security8021xSetting * setting) : Sec
 {
 }
 
+Security8021xSecrets::Security8021xSecrets(Security8021xSecrets *secrets, Security8021xSetting * setting) : Secrets(secrets, setting), m_setting(setting)
+{
+}
+
+
 Security8021xSecrets::~Security8021xSecrets()
 {
 }

@@ -15,6 +15,7 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
   public:
 
     GsmSetting( );
+    GsmSetting(GsmSetting *);
     ~GsmSetting();
 
     QString name() const;

@@ -47,7 +47,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectiondbus.h"
 #include "remoteconnection.h"
 #include "nm-settingsinterface.h"
-#include "nm-exported-connectioninterface.h"
+#include "nm-settings-connectioninterface.h"
 #include "nm-active-connectioninterface.h"
 #include "nm-manager-interface.h"
 #include "nm-device-interface.h"
@@ -144,8 +144,8 @@ void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(con
 void NMDBusSettingsConnectionProvider::makeConnections(RemoteConnection * connectionIface)
 {
     connect(connectionIface, SIGNAL(Removed()), this, SLOT(onRemoteConnectionRemoved()));
-    connect(connectionIface, SIGNAL(Updated(const QVariantMapMap&)),
-            this, SLOT(onRemoteConnectionUpdated(const QVariantMapMap&)));
+    connect(connectionIface, SIGNAL(Updated()),
+            this, SLOT(onRemoteConnectionUpdated()));
 }
 
 void NMDBusSettingsConnectionProvider::onConnectionAdded(const QDBusObjectPath& op)
@@ -171,7 +171,7 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved()
     }
 }
 
-void NMDBusSettingsConnectionProvider::onRemoteConnectionUpdated(const QVariantMapMap& updatedSettings)
+void NMDBusSettingsConnectionProvider::onRemoteConnectionUpdated()
 {
     Q_D(NMDBusSettingsConnectionProvider);
     RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
@@ -179,7 +179,7 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionUpdated(const QVariantM
     if (d->connections.contains(connection->path())) {
         QPair<Knm::Connection *, RemoteConnection *> updated = d->connections.value(connection->path());
         ConnectionDbus dbusConverter(updated.first);
-        dbusConverter.fromDbusMap(updatedSettings);
+        dbusConverter.fromDbusMap(connection->GetSettings());
         d->connectionList->updateConnection(updated.first);
 
         emit connectionsChanged();
@@ -318,7 +318,7 @@ bool NMDBusSettingsConnectionProvider::checkAuthorization(const Operation oper)
     // See /usr/share/polkit-1/actions/org.freedesktop.network-manager-settings.system.policy (or
     // /usr/share/polkit-1/actions/org.freedesktop.NetworkManager.policy)
     // KAuth is the KDE's Polkit wrapper.
-    KAuth::Action action(QLatin1String("org.freedesktop.NetworkManager.settings.modify.own"));
+    KAuth::Action action(QLatin1String("org.freedesktop.NetworkManager.settings.modify.system"));
 
     QWidget *w = qobject_cast<QWidget *>(parent());
     if (w) {
@@ -358,19 +358,18 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
             return;
         }
 
+        if (newConnection->permissions().isEmpty() && getuid() != 0 && !checkAuthorization(Update)) {
+            return;
+        }
+
         QPair<Knm::Connection *, RemoteConnection *> pair = d->connections.value(objPath.path());
         RemoteConnection *remote = pair.second;
-
         kDebug() << "Updating connection "<< remote->id() << pair.first->uuid().toString();
 
         newConnection->saveCertificates();
         newConnection->setSecrets();
         ConnectionDbus converter(newConnection);
         QVariantMapMap map = converter.toDbusMap();
-
-        if (getuid() != 0 && !checkAuthorization(Update)) {
-            return;
-        }
 
         remote->Update(map);
 
@@ -393,6 +392,9 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
 void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnection)
 {
     Q_D(NMDBusSettingsConnectionProvider);
+    if (newConnection->permissions().isEmpty() && getuid() != 0 && !checkAuthorization(Add)) {
+        return;
+    }
     newConnection->saveCertificates();
     newConnection->setSecrets();
     ConnectionDbus converter(newConnection);
@@ -403,14 +405,12 @@ void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnect
     if(newConnection && newConnection->name().isEmpty())
         kWarning() << "Trying to add connection without a name!";
 
-    if (getuid() != 0 && !checkAuthorization(Add)) {
-        return;
-    }
+
 
     QDBusPendingCall reply = d->iface->AddConnection(map);
     //do not check if reply is valid or not because it's an async call and invalid till reply is really arrived
 
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, 0);
 
     connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(onConnectionAddArrived(QDBusPendingCallWatcher*)));
 }
@@ -526,12 +526,12 @@ void NMDBusSettingsConnectionProvider::removeConnection(const QString &uuid)
             return;
         }
 
-        if (getuid() != 0 && !checkAuthorization(Remove)) {
-            return;
-        }
-
         QPair<Knm::Connection *, RemoteConnection *> pair = d->connections.value(objPath.path());
         RemoteConnection *remote = pair.second;
+
+        if (pair.first->permissions().isEmpty() && getuid() != 0 && !checkAuthorization(Remove)) {
+            return;
+        }
 
         kDebug() << "Removing connection "<< remote->id() << uuid;
         remote->Delete();

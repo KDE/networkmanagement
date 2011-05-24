@@ -25,6 +25,7 @@ class KNMINTERNALS_EXPORT WirelessSetting : public Setting
     };
 
     WirelessSetting( );
+    WirelessSetting(WirelessSetting *);
     ~WirelessSetting();
 
     QString name() const;

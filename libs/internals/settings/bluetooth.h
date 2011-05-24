@@ -16,6 +16,7 @@ class KNMINTERNALS_EXPORT BluetoothSetting : public Setting
   public:
 
     BluetoothSetting( );
+    BluetoothSetting(BluetoothSetting *);
     ~BluetoothSetting();
 
     QString name() const;
@@ -55,7 +56,7 @@ class KNMINTERNALS_EXPORT BluetoothSetting : public Setting
         {
             ba.resize(6);
             int i = 0;
-    
+
             foreach (QString macPart, macStringList) {
                 ba[i++] = macPart.toUInt(0, 16);
             }

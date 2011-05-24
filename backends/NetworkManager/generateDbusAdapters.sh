@@ -5,7 +5,7 @@ qdbusxml2cpp -a exportedconnection -N -i marshalarguments.h -i types.h -i buscon
 
 #Proxies
 qdbusxml2cpp -N -i types.h -p nm-active-connectioninterface introspection/nm-active-connection.xml
-qdbusxml2cpp -i types.h -N -p nm-exported-connectioninterface introspection/nm-exported-connection.xml
+qdbusxml2cpp -i types.h -N -p nm-settings-connectioninterface introspection/nm-settings-connection.xml
 qdbusxml2cpp -N -i types.h -p nm-settingsinterface introspection/nm-settings.xml
 qdbusxml2cpp -m -p nm-vpn-connectioninterface introspection/nm-vpn-connection.xml
 qdbusxml2cpp -i types.h -N -p nm-manager-interface introspection/nm-manager.xml

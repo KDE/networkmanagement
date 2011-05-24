@@ -15,6 +15,7 @@ class KNMINTERNALS_EXPORT PppoeSetting : public Setting
   public:
 
     PppoeSetting( );
+    PppoeSetting(PppoeSetting *);
     ~PppoeSetting();
 
     QString name() const;

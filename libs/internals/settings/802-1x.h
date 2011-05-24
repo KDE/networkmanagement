@@ -39,6 +39,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     };
 
     Security8021xSetting( );
+    Security8021xSetting(Security8021xSetting *);
     ~Security8021xSetting();
 
     enum Certificate {CACert = 0x1, ClientCert = 0x2, Phase2CACert = 0x4, Phase2ClientCert = 0x8, PrivateKey = 0x10, Phase2PrivateKey = 0x20};
@@ -615,6 +616,22 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     }
 
     /**
+     * Set PIN flags
+     */
+    void setPinflags( Setting::secretsTypes types )
+    {
+        mPinflags = types;
+    }
+
+    /**
+     * Get PIN flags
+     */
+    Setting::secretsTypes pinflags()
+    {
+        return mPinflags;
+    }
+
+    /**
       Set Use System CA Certs
     */
     void setUseSystemCaCerts( bool v )
@@ -651,15 +668,15 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     /**
     Get Certs to delete
     */
-    bool certtodelete() const
+    Certificates certtodelete() const
     {
         return mCertificatesToDelete;
     }
 
     /**
-    Set Certificates to delete
+    Add to Certificates to delete
     */
-    void addToCertToDelete( Certificate v )
+    void addToCertToDelete( Certificates v )
     {
         mCertificatesToDelete |= v;
     }
@@ -770,6 +787,7 @@ kDebug() << eap;
     Setting::secretsTypes mPasswordflags;
     Setting::secretsTypes mPrivatekeypasswordflags;
     Setting::secretsTypes mPhase2privatekeypasswordflags;
+    Setting::secretsTypes mPinflags;
 
   private:
     static const QString CERTIFICATE_PERSISTENCE_PATH;

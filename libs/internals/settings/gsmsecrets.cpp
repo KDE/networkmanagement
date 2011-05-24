@@ -26,6 +26,10 @@ GsmSecrets::GsmSecrets(GsmSetting * setting) : Secrets(setting), m_setting(setti
 {
 }
 
+GsmSecrets::GsmSecrets(GsmSecrets * secrets, GsmSetting * setting) : Secrets(secrets, setting), m_setting(setting)
+{
+}
+
 GsmSecrets::~GsmSecrets()
 {
 }

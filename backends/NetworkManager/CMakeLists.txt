@@ -69,7 +69,7 @@ set(knm_nm_LIB_SRCS
 
    remoteconnection.cpp
    nm-settingsinterface.cpp
-   nm-exported-connectioninterface.cpp
+   nm-settings-connectioninterface.cpp
 
    nm-manager-interface.cpp
    nm-device-interface.cpp

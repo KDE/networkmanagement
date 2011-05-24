@@ -34,6 +34,7 @@ class KNMINTERNALS_EXPORT PppoeSecrets : public Secrets
 {
   public:
     PppoeSecrets(PppoeSetting *);
+    PppoeSecrets(PppoeSecrets *, PppoeSetting *);
     ~PppoeSecrets();
     QMap<QString,QString> secretsToMap() const;
     void secretsFromMap(QMap<QString,QString> secrets) const;

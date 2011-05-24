@@ -12,6 +12,29 @@ WirelessSecuritySetting::WirelessSecuritySetting() : Setting(Setting::WirelessSe
     m_secretsObject = new WirelessSecuritySecrets(this);
 }
 
+WirelessSecuritySetting::WirelessSecuritySetting(WirelessSecuritySetting *setting) : Setting(setting)
+{
+    m_secretsObject = new WirelessSecuritySecrets(static_cast<WirelessSecuritySecrets*>(setting->getSecretsObject()), this);
+    setSecurityType(setting->securityType());
+    setKeymgmt(setting->keymgmt());
+    setWeptxkeyindex(setting->weptxkeyindex());
+    setAuthalg(setting->authalg());
+    setProto(setting->proto());
+    setPairwise(setting->pairwise());
+    setGroup(setting->group());
+    setLeapusername(setting->leapusername());
+    setWepkey0(setting->wepkey0());
+    setWepkey1(setting->wepkey1());
+    setWepkey2(setting->wepkey2());
+    setWepkey3(setting->wepkey3());
+    setWepkeyflags(setting->wepkeyflags());
+    setPsk(setting->psk());
+    setPskflags(setting->pskflags());
+    setLeappassword(setting->leappassword());
+    setLeappasswordflags(setting->leappasswordflags());
+    setWepKeyType(setting->wepKeyType());
+}
+
 WirelessSecuritySetting::~WirelessSecuritySetting()
 {
 }

@@ -9,6 +9,15 @@ SerialSetting::SerialSetting() : Setting(Setting::Serial), mBaud(115200), mBits(
 {
 }
 
+SerialSetting::SerialSetting(SerialSetting *setting) : Setting(setting)
+{
+    setBaud(setting->baud());
+    setBits(setting->bits());
+    setParity(setting->parity());
+    setStopbits(setting->stopbits());
+    setSenddelay(setting->senddelay());
+}
+
 SerialSetting::~SerialSetting()
 {
 }

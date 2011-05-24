@@ -23,6 +23,7 @@ class KNMINTERNALS_EXPORT Ipv6Setting : public Setting
     };
 
     Ipv6Setting( );
+    Ipv6Setting(Ipv6Setting *);
     ~Ipv6Setting();
 
     QString name() const;
