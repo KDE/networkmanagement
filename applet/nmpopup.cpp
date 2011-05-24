@@ -597,7 +597,9 @@ void NMPopup::managerWirelessEnabledChanged(bool enabled)
     // it might have changed because we toggled the switch,
     // but it might have been changed externally, so set it anyway
     m_wifiCheckBox->setChecked(enabled);
-    m_wifiCheckBox->setEnabled(enabled);
+    if (enabled) {
+        m_wifiCheckBox->setEnabled(enabled);
+    }
 }
 
 void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
@@ -646,7 +648,9 @@ void NMPopup::managerWwanEnabledChanged(bool enabled)
         // it might have changed because we toggled the switch,
         // but it might have been changed externally, so set it anyway
         m_wwanCheckBox->setChecked(enabled);
-        m_wwanCheckBox->setEnabled(enabled);
+        if (enabled) {
+            m_wwanCheckBox->setEnabled(enabled);
+        }
     }
 }
 
