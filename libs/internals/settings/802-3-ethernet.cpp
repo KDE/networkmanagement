@@ -21,6 +21,7 @@ WiredSetting::WiredSetting(WiredSetting *setting) : Setting(setting)
     setDuplex(setting->duplex());
     setAutonegotiate(setting->autonegotiate());
     setMacaddress(setting->macaddress());
+    setClonedmacaddress(setting->clonedmacaddress());
     setMtu(setting->mtu());
 }
 
