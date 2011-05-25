@@ -370,11 +370,12 @@ QString InterfaceDetailsWidget::currentIpAddress()
 
     QHostAddress addr;
 
-    OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, m_ifaceUni, QDBusConnection::systemBus());
+    //willtodo: use Device api instead
+    OrgFreedesktopNetworkManagerDeviceInterface devIface("org.freedesktop.NetworkManager", m_ifaceUni, QDBusConnection::systemBus());
     if (devIface.isValid()) {
         QDBusObjectPath ip4ConfigPath = devIface.ip4Config();
 
-        OrgFreedesktopNetworkManagerIP4ConfigInterface ip4Iface(NM_DBUS_SERVICE, ip4ConfigPath.path(), QDBusConnection::systemBus());
+        OrgFreedesktopNetworkManagerIP4ConfigInterface ip4Iface("org.freedesktop.NetworkManager", ip4ConfigPath.path(), QDBusConnection::systemBus());
         if (ip4Iface.isValid()) {
             QDBusObjectPath ip4ConfigPath;
 

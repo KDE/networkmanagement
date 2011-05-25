@@ -284,14 +284,14 @@ QString InterfaceItem::currentIpAddress()
     if (static_cast<NetworkManager::Device::State>(m_iface->state()) != NetworkManager::Device::Activated) {
         return i18nc("label of the network interface", "No IP address.");
     }
-
+    //willtodo: use IPv4Config
     QHostAddress addr;
 
-    OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, m_iface->uni(), QDBusConnection::systemBus());
+    OrgFreedesktopNetworkManagerDeviceInterface devIface("org.freedesktop.NetworkManager", m_iface->uni(), QDBusConnection::systemBus());
     if (devIface.isValid()) {
         QDBusObjectPath ip4ConfigPath = devIface.ip4Config();
 
-        OrgFreedesktopNetworkManagerIP4ConfigInterface ip4Iface(NM_DBUS_SERVICE, ip4ConfigPath.path(), QDBusConnection::systemBus());
+        OrgFreedesktopNetworkManagerIP4ConfigInterface ip4Iface("org.freedesktop.NetworkManager", ip4ConfigPath.path(), QDBusConnection::systemBus());
         if (ip4Iface.isValid()) {
             QDBusObjectPath ip4ConfigPath;
 
