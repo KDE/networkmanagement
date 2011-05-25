@@ -57,9 +57,13 @@ void GsmSecrets::secretsToConfig(QMap<QString,QString> secrets, KSharedConfig::P
     KConfigGroup * config = new KConfigGroup(configptr, Setting::typeAsString(Setting::Gsm));
     if (m_setting->passwordflags() & Setting::AgentOwned) {
         config->writeEntry("password", secrets.value("password"));
+    } else {
+        config->deleteEntry("password");
     }
     if (m_setting->pinflags() & Setting::AgentOwned) {
         config->writeEntry("pin", secrets.value("pin"));
+    } else {
+        config->deleteEntry("pin");
     }
     delete config;
 }

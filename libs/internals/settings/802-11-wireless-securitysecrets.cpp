@@ -71,12 +71,21 @@ void WirelessSecuritySecrets::secretsToConfig(QMap<QString,QString> secrets, KSh
         config->writeEntry("wepkey1", secrets.value("wepkey1"));
         config->writeEntry("wepkey2", secrets.value("wepkey2"));
         config->writeEntry("wepkey3", secrets.value("wepkey3"));
+    } else {
+        config->deleteEntry("wepkey0");
+        config->deleteEntry("wepkey1");
+        config->deleteEntry("wepkey2");
+        config->deleteEntry("wepkey3");
     }
     if (m_setting->pskflags() & Setting::AgentOwned) {
         config->writeEntry("psk", secrets.value("psk"));
+    } else {
+        config->deleteEntry("psk");
     }
     if (m_setting->leappasswordflags() & Setting::AgentOwned) {
         config->writeEntry("leappassword", secrets.value("leappassword"));
+    } else {
+        config->deleteEntry("leappassword");
     }
     delete config;
 }

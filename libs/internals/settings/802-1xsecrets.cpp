@@ -62,12 +62,18 @@ void Security8021xSecrets::secretsToConfig(QMap<QString,QString> secrets, KShare
     KConfigGroup * config = new KConfigGroup(configptr, Setting::typeAsString(Setting::Security8021x));
     if (m_setting->passwordflags() & Setting::AgentOwned) {
         config->writeEntry("password", secrets.value("password"));
+    } else {
+        config->deleteEntry("password");
     }
     if (m_setting->privatekeypasswordflags() & Setting::AgentOwned) {
         config->writeEntry("private-key-password", secrets.value("private-key-password"));
+    } else {
+        config->deleteEntry("private-key-password");
     }
     if (m_setting->phase2privatekeypasswordflags() & Setting::AgentOwned) {
         config->writeEntry("phase2-private-key-password", secrets.value("phase2-private-key-password"));
+    } else {
+        config->deleteEntry("phase2-private-key-password");
     }
     delete config;
 }

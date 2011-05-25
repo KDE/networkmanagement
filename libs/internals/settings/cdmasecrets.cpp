@@ -53,6 +53,8 @@ void CdmaSecrets::secretsToConfig(QMap<QString,QString> secrets, KSharedConfig::
     KConfigGroup * config = new KConfigGroup(configptr, Setting::typeAsString(Setting::Cdma));
     if (m_setting->passwordflags() & Setting::AgentOwned) {
         config->writeEntry("password", secrets.value("password"));
+    } else {
+        config->deleteEntry("password");
     }
     delete config;
 }

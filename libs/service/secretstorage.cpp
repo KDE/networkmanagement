@@ -93,6 +93,10 @@ void SecretStorage::walletOpenedForWrite(bool success)
                 while (!m_connectionsToWrite.isEmpty()) {
                     Knm::Connection *con = m_connectionsToWrite.takeFirst();
                     bool saved = false;
+                    foreach (const QString & k, wallet->entryList()) {
+                        if (k.startsWith(con->uuid() + ';'))
+                            wallet->removeEntry(k);
+                    }
                     foreach (Knm::Setting * setting, con->settings()) {
                         Knm::Secrets * secrets = setting->getSecretsObject();
                         if (secrets) {

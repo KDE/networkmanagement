@@ -53,6 +53,8 @@ void PppoeSecrets::secretsToConfig(QMap<QString,QString> secrets, KSharedConfig:
     KConfigGroup * config = new KConfigGroup(configptr, Setting::typeAsString(Setting::Pppoe));
     if (m_setting->passwordflags() & Setting::AgentOwned) {
         config->writeEntry("password", secrets.value("password"));
+    } else {
+        config->deleteEntry("password");
     }
     delete config;
 }
