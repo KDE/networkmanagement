@@ -98,6 +98,8 @@ void ConnectionWidget::writeConfig()
     connection()->setAutoConnect(d->ui.autoconnect->isChecked());
     if (!d->ui.system->isChecked())
         connection()->addToPermissions(KUser().loginName());
+    else
+        connection()->setPermissions(QStringList());
     // connection()->setIconName(..) is already called from buttonChooseIconClicked()
 }
 

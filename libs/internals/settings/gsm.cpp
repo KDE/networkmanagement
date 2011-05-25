@@ -11,6 +11,21 @@ GsmSetting::GsmSetting() : Setting(Setting::Gsm), mNetworktype(-1), mBand(-1)
     m_secretsObject = new GsmSecrets(this);
 }
 
+GsmSetting::GsmSetting(GsmSetting *setting) : Setting(setting)
+{
+    m_secretsObject = new GsmSecrets(static_cast<GsmSecrets*>(setting->getSecretsObject()), this);
+    setNumber(setting->number());
+    setUsername(setting->username());
+    setPassword(setting->password());
+    setPasswordflags(setting->passwordflags());
+    setApn(setting->apn());
+    setNetworkid(setting->networkid());
+    setNetworktype(setting->networktype());
+    setBand(setting->band());
+    setPin(setting->pin());
+    setPinflags(setting->pinflags());
+}
+
 GsmSetting::~GsmSetting()
 {
 }

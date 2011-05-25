@@ -26,6 +26,10 @@ CdmaSecrets::CdmaSecrets(CdmaSetting * setting) : Secrets(setting), m_setting(se
 {
 }
 
+CdmaSecrets::CdmaSecrets(CdmaSecrets *secrets, CdmaSetting * setting) : Secrets(secrets, setting), m_setting(setting)
+{
+}
+
 CdmaSecrets::~CdmaSecrets()
 {
 }

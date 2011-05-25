@@ -40,6 +40,7 @@ public:
     enum SecretStorageMode { DontStore, PlainText, Secure};
 
     Secrets(Setting *);
+    Secrets(Secrets *, Setting *);
     virtual ~Secrets();
     virtual QMap<QString,QString> secretsToMap() const;
     virtual void secretsFromMap(QMap<QString,QString>) const;

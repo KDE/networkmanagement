@@ -10,6 +10,16 @@ VpnSetting::VpnSetting() : Setting(Setting::Vpn)
   mSecretsStorageType = QStringMap();
 }
 
+VpnSetting::VpnSetting(VpnSetting *setting) : Setting(setting)
+{
+    setServiceType(setting->serviceType());
+    setData(setting->data());
+    setUserName(setting->userName());
+    setVpnSecrets(setting->vpnSecrets());
+    setPluginName(setting->pluginName());
+    setSecretsStorageType(setting->secretsStorageType());
+}
+
 VpnSetting::~VpnSetting()
 {
 }

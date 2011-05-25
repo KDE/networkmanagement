@@ -17,6 +17,49 @@ Security8021xSetting::Security8021xSetting() : Setting(Setting::Security8021x),
     m_secretsObject = new Security8021xSecrets(this);
 }
 
+Security8021xSetting::Security8021xSetting(Security8021xSetting *setting) : Setting(setting)
+{
+    m_secretsObject = new Security8021xSecrets(static_cast<Security8021xSecrets*>(setting->getSecretsObject()), this);
+    setEap(setting->eap());
+    setIdentity(setting->identity());
+    setAnonymousidentity(setting->anonymousidentity());
+    setCacert(setting->cacert());
+    setCapath(setting->capath());
+    setCacerttoimport(setting->cacerttoimport());
+    setClientcert(setting->clientcert());
+    setClientcertpath(setting->clientcertpath());
+    setClientcerttoimport(setting->clientcerttoimport());
+    setPhase1peapver(setting->phase1peapver());
+    setPhase1peaplabel(setting->phase1peaplabel());
+    setPhase1fastprovisioning(setting->phase1fastprovisioning());
+    setPhase2auth(setting->phase2auth());
+    setPhase2autheap(setting->phase2autheap());
+    setPhase2cacert(setting->phase2cacert());
+    setPhase2capath(setting->phase2capath());
+    setPhase2cacerttoimport(setting->phase2cacerttoimport());
+    setPhase2clientcert(setting->phase2clientcert());
+    setPhase2clientcertpath(setting->phase2clientcertpath());
+    setPhase2clientcerttoimport(setting->phase2clientcerttoimport());
+    setPassword(setting->password());
+    setPasswordflags(setting->passwordflags());
+    setPrivatekey(setting->privatekey());
+    setPrivatekeypath(setting->privatekeypath());
+    setPrivatekeytoimport(setting->privatekeytoimport());
+    setPrivatekeypassword(setting->privatekeypassword());
+    setPrivatekeypasswordflags(setting->privatekeypasswordflags());
+    setPhase2privatekey(setting->phase2privatekey());
+    setPhase2privatekeypath(setting->phase2privatekeypath());
+    setPhase2privatekeytoimport(setting->phase2privatekeytoimport());
+    setPhase2privatekeypassword(setting->phase2privatekeypassword());
+    setPhase2privatekeypasswordflags(setting->phase2privatekeypasswordflags());
+    setPin(setting->pin());
+    setPinflags(setting->pinflags());
+    setUseSystemCaCerts(setting->useSystemCaCerts());
+    setEnabled(setting->enabled());
+    addToCertToDelete(setting->certtodelete());
+
+}
+
 Security8021xSetting::~Security8021xSetting()
 {
 }

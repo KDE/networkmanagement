@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <kdebug.h>
+#include <KUser>
 #include <solid/control/networkmodeminterface.h>
 
 #include "connection.h"
@@ -120,13 +121,28 @@ Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInte
 Connection::Connection(const QString & name, const Connection::Type type)
     : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false)
 {
+    addToPermissions(KUser().loginName());
     init();
 }
 
 Connection::Connection(const QUuid & uuid, const Connection::Type type)
     : m_uuid(uuid), m_type(type), m_autoConnect(false)
 {
+    addToPermissions(KUser().loginName());
     init();
+}
+
+Connection::Connection(Connection *con)
+{
+    setUuid(con->uuid());
+    setType(con->type());
+    setAutoConnect(con->autoConnect());
+    setPermissions(con->permissions());
+    setTimestamp(con->timestamp());
+    setName(con->name());
+    setOrigin(con->origin());
+    setIconName(con->iconName());
+    init(con);
 }
 
 Connection::~Connection()
@@ -136,6 +152,7 @@ Connection::~Connection()
 
 void Connection::init()
 {
+    qDeleteAll(m_settings);
     m_settings.clear();
 
     switch (m_type) {
@@ -184,6 +201,63 @@ void Connection::init()
             addSetting(new Security8021xSetting());
             addSetting(new WirelessSetting());
             addSetting(new WirelessSecuritySetting());
+            break;
+        default:
+            break;
+    }
+}
+
+void Connection::init(Connection *con)
+{
+    qDeleteAll(m_settings);
+    m_settings.clear();
+
+    switch (m_type) {
+        case Cdma:
+            addSetting(new CdmaSetting(static_cast<CdmaSetting*>(con->setting(Setting::Cdma))));
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new Ipv6Setting(static_cast<Ipv6Setting*>(con->setting(Setting::Ipv6))));
+            addSetting(new PppSetting(static_cast<PppSetting*>(con->setting(Setting::Ppp))));
+            addSetting(new SerialSetting(static_cast<SerialSetting*>(con->setting(Setting::Serial))));
+            break;
+        case Gsm:
+            addSetting(new GsmSetting(static_cast<GsmSetting*>(con->setting(Setting::Gsm))));
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new Ipv6Setting(static_cast<Ipv6Setting*>(con->setting(Setting::Ipv6))));
+            addSetting(new PppSetting(static_cast<PppSetting*>(con->setting(Setting::Ppp))));
+            addSetting(new SerialSetting(static_cast<SerialSetting*>(con->setting(Setting::Serial))));
+            break;
+        case Bluetooth:
+            addSetting(new BluetoothSetting(static_cast<BluetoothSetting*>(con->setting(Setting::Bluetooth))));
+            addSetting(new GsmSetting(static_cast<GsmSetting*>(con->setting(Setting::Gsm))));
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new PppSetting(static_cast<PppSetting*>(con->setting(Setting::Ppp))));
+            addSetting(new SerialSetting(static_cast<SerialSetting*>(con->setting(Setting::Serial))));
+            break;
+        case Pppoe:
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new Ipv6Setting(static_cast<Ipv6Setting*>(con->setting(Setting::Ipv6))));
+            addSetting(new PppSetting(static_cast<PppSetting*>(con->setting(Setting::Ppp))));
+            addSetting(new PppoeSetting(static_cast<PppoeSetting*>(con->setting(Setting::Pppoe))));
+            addSetting(new WiredSetting(static_cast<WiredSetting*>(con->setting(Setting::Wired))));
+            break;
+        case Vpn:
+            addSetting(new VpnSetting(static_cast<VpnSetting*>(con->setting(Setting::Vpn))));
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new Ipv6Setting(static_cast<Ipv6Setting*>(con->setting(Setting::Ipv6))));
+            break;
+        case Wired:
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new Ipv6Setting(static_cast<Ipv6Setting*>(con->setting(Setting::Ipv6))));
+            addSetting(new Security8021xSetting(static_cast<Security8021xSetting*>(con->setting(Setting::Security8021x))));
+            addSetting(new WiredSetting(static_cast<WiredSetting*>(con->setting(Setting::Wired))));
+            break;
+        case Wireless:
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new Ipv6Setting(static_cast<Ipv6Setting*>(con->setting(Setting::Ipv6))));
+            addSetting(new Security8021xSetting(static_cast<Security8021xSetting*>(con->setting(Setting::Security8021x))));
+            addSetting(new WirelessSetting(static_cast<WirelessSetting*>(con->setting(Setting::Wireless))));
+            addSetting(new WirelessSecuritySetting(static_cast<WirelessSecuritySetting*>(con->setting(Setting::WirelessSecurity))));
             break;
         default:
             break;

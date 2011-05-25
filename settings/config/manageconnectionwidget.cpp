@@ -368,7 +368,7 @@ void ManageConnectionWidget::editClicked()
     QTreeWidgetItem *item = selectedItem();
 
     if (item) {
-        Knm::Connection *con = NULL;
+        Knm::Connection *con = 0;
 
         QString connectionId = item->data(0, ConnectionIdRole).toString();
         //Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, ConnectionTypeRole).toUInt();
@@ -388,7 +388,7 @@ void ManageConnectionWidget::editClicked()
             return;
         }
 
-        mEditConnection = con;
+        mEditConnection = new Knm::Connection(con);
         if (con->hasSecrets())
         {
             bool rep = mSystemSettings->getConnectionSecrets(con);
@@ -438,7 +438,8 @@ void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMess
         //Enable this if connections do not updated in plasma-applet
         //mEditor->updateService();
     }
-    mEditConnection = NULL;
+    delete mEditConnection;
+    mEditConnection = 0;
 }
 
 void ManageConnectionWidget::addGotConnection(bool valid, const QString &errorMessage)

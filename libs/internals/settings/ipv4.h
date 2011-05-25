@@ -26,6 +26,7 @@ class KNMINTERNALS_EXPORT Ipv4Setting : public Setting
     };
 
     Ipv4Setting( );
+    Ipv4Setting(Ipv4Setting *);
     ~Ipv4Setting();
 
     QString name() const;

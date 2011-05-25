@@ -26,6 +26,10 @@ WirelessSecuritySecrets::WirelessSecuritySecrets(WirelessSecuritySetting * setti
 {
 }
 
+WirelessSecuritySecrets::WirelessSecuritySecrets(WirelessSecuritySecrets * secrets, WirelessSecuritySetting * setting) : Secrets(secrets, setting), m_setting(setting)
+{
+}
+
 WirelessSecuritySecrets::~WirelessSecuritySecrets()
 {
 }

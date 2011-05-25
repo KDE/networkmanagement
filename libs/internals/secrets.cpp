@@ -28,6 +28,10 @@ Secrets::Secrets(Setting * setting) : m_setting(setting)
 {
 }
 
+Secrets::Secrets(Secrets * secrets, Setting * setting) : m_setting(setting)
+{
+}
+
 Secrets::~Secrets()
 {
 }

@@ -34,6 +34,7 @@ class KNMINTERNALS_EXPORT Security8021xSecrets : public Secrets
 {
   public:
     Security8021xSecrets(Security8021xSetting *);
+    Security8021xSecrets(Security8021xSecrets *, Security8021xSetting *);
     ~Security8021xSecrets();
     QMap<QString,QString> secretsToMap() const;
     void secretsFromMap(QMap<QString,QString> secrets) const;

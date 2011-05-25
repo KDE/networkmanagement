@@ -25,6 +25,7 @@ class KNMINTERNALS_EXPORT WiredSetting : public Setting
     };
 
     WiredSetting( );
+    WiredSetting(WiredSetting *);
     ~WiredSetting();
 
     QString name() const;
@@ -103,7 +104,12 @@ class KNMINTERNALS_EXPORT WiredSetting : public Setting
         mMacaddress = v;
     }
 
-    void setMacaddressFromString( const QString & s)
+    void setMacaddress( const QString & v )
+    {
+        mMacaddress = macaddressFromString(v);
+    }
+
+    QByteArray macaddressFromString( const QString & s)
     {
         QStringList macStringList = s.split(":");
         QByteArray ba;
@@ -115,7 +121,7 @@ class KNMINTERNALS_EXPORT WiredSetting : public Setting
             foreach (QString macPart, macStringList)
                 ba[i++] = macPart.toUInt(0, 16);
         }
-        setMacaddress(ba);
+        return ba;
     }
 
     /**
@@ -126,18 +132,39 @@ class KNMINTERNALS_EXPORT WiredSetting : public Setting
       return mMacaddress;
     }
 
-    QString macaddressAsString() const
+    QString macaddressAsString(QByteArray & v) const
     {
      QStringList mac;
 
-     for (int i=0; i < mMacaddress.size(); i++)
+     for (int i=0; i < v.size(); i++)
      {
         mac << QString("%1").arg((quint8)mMacaddress[i], 2, 16, QLatin1Char('0')).toUpper();
      }
 
      return mac.join(":");
-
     }
+
+    /**
+     *  Set cloned MAC Address
+     */
+    void setClonedmacaddress( const QByteArray & v )
+    {
+        mClonedmacaddress = v;
+    }
+
+    void setClonedmacaddress( const QString & v )
+    {
+        mClonedmacaddress = macaddressFromString(v);
+    }
+
+    /**
+     *  Get cloned MAC Address
+     */
+    QByteArray clonedmacaddress()
+    {
+        return mClonedmacaddress;
+    }
+
 
     /**
       Set MTU
@@ -163,6 +190,7 @@ class KNMINTERNALS_EXPORT WiredSetting : public Setting
     int mDuplex;
     bool mAutonegotiate;
     QByteArray mMacaddress;
+    QByteArray mClonedmacaddress;
     uint mMtu;
 
   private:

@@ -32,6 +32,7 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     enum WepKeyType { None = 0, Hex, Passphrase, COUNT};
 
     WirelessSecuritySetting();
+    WirelessSecuritySetting(WirelessSecuritySetting *);
     ~WirelessSecuritySetting();
 
     void reset();

@@ -24,7 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "types.h"
 #include "knm_export.h"
 
-#include "nm-exported-connectioninterface.h"
+#include "nm-settings-connectioninterface.h"
 
 #include <solid/control/networkinterface.h>
 

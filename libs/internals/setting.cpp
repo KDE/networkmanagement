@@ -126,6 +126,15 @@ Setting::Setting(Setting::Type type)
 {
 }
 
+Setting::Setting(Setting *setting)
+    : m_secretsObject(0)
+{
+    if (!setting->isNull())
+        setInitialized();
+    m_type = setting->type();
+    setSecretsAvailable(setting->secretsAvailable());
+}
+
 Setting::~Setting()
 {
     if (m_secretsObject)

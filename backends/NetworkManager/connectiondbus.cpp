@@ -270,6 +270,8 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
 
     if (connectionSettings.contains(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS)))
         m_connection->setPermissions(connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS)).toStringList());
+    else
+        m_connection->setPermissions(QStringList());
 
     Connection::Type type = Connection::Wired;
     if (dbusConnectionType == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {

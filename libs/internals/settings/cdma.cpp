@@ -11,6 +11,15 @@ CdmaSetting::CdmaSetting() : Setting(Setting::Cdma)
     m_secretsObject = new CdmaSecrets(this);
 }
 
+CdmaSetting::CdmaSetting(CdmaSetting *setting) : Setting(setting)
+{
+    m_secretsObject = new CdmaSecrets(static_cast<CdmaSecrets*>(setting->getSecretsObject()), this);
+    setNumber(setting->number());
+    setUsername(setting->username());
+    setPassword(setting->password());
+    setPasswordflags(setting->passwordflags());
+}
+
 CdmaSetting::~CdmaSetting()
 {
 }

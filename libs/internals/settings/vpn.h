@@ -21,6 +21,7 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
   public:
 
     VpnSetting( );
+    VpnSetting(VpnSetting *);
     ~VpnSetting();
 
     QString name() const;

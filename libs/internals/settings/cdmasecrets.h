@@ -34,6 +34,7 @@ class KNMINTERNALS_EXPORT CdmaSecrets : public Secrets
 {
   public:
     CdmaSecrets(CdmaSetting *);
+    CdmaSecrets(CdmaSecrets *, CdmaSetting *);
     ~CdmaSecrets();
     QMap<QString,QString> secretsToMap() const;
     void secretsFromMap(QMap<QString,QString> secrets) const;

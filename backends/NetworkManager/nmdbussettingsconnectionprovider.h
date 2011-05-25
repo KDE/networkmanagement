@@ -76,7 +76,7 @@ private Q_SLOTS:
     // should probably be handled in RemoteConnection
     void onRemoteConnectionRemoved();
     // should probably be handled in RemoteConnection
-    void onRemoteConnectionUpdated(const QVariantMapMap&);
+    void onRemoteConnectionUpdated();
     void serviceOwnerChanged(const QString&, const QString&, const QString&);
     void onConnectionSecretsArrived(QDBusPendingCallWatcher *watcher);
     void onConnectionAddArrived(QDBusPendingCallWatcher *watcher);

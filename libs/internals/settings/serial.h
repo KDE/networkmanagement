@@ -20,6 +20,7 @@ class KNMINTERNALS_EXPORT SerialSetting : public Setting
     };
 
     SerialSetting( );
+    SerialSetting(SerialSetting *);
     ~SerialSetting();
 
     QString name() const;

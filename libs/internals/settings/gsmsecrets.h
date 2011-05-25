@@ -34,6 +34,7 @@ class KNMINTERNALS_EXPORT GsmSecrets : public Secrets
 {
   public:
     GsmSecrets(GsmSetting *);
+    GsmSecrets(GsmSecrets *, GsmSetting *);
     ~GsmSecrets();
     QMap<QString,QString> secretsToMap() const;
     void secretsFromMap(QMap<QString,QString> secrets) const;

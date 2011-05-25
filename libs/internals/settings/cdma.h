@@ -15,6 +15,7 @@ class KNMINTERNALS_EXPORT CdmaSetting : public Setting
   public:
 
     CdmaSetting( );
+    CdmaSetting(CdmaSetting *);
     ~CdmaSetting();
 
     QString name() const;
