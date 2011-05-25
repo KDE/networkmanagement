@@ -398,7 +398,8 @@ void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnect
     ConnectionDbus converter(newConnection);
     QVariantMapMap map = converter.toDbusMap();
     kDebug() << "Adding connection " << newConnection->name() << newConnection->uuid().toString();
-    kDebug() << "Here is the map: " << map;
+    // WARNING: this debug message print secrets, do not commit it uncommented.
+    //kDebug() << "Here is the map: " << map;
 
     if(newConnection && newConnection->name().isEmpty())
         kWarning() << "Trying to add connection without a name!";
@@ -417,7 +418,7 @@ void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnect
 
 void NMDBusSettingsConnectionProvider::onConnectionAddArrived(QDBusPendingCallWatcher *watcher)
 {
-    QDBusPendingReply<> reply = *watcher;
+    QDBusPendingReply<QDBusObjectPath> reply = *watcher;
 
     if (!reply.isValid())
     {
@@ -426,7 +427,10 @@ void NMDBusSettingsConnectionProvider::onConnectionAddArrived(QDBusPendingCallWa
     }
     else
     {
-        kDebug() << "Connection added successfully.";
+        Q_D(NMDBusSettingsConnectionProvider);
+        QDBusObjectPath objPath = reply.argumentAt<0>();
+        QUuid uuid = d->uuidToPath.key(objPath);
+        kDebug() << "Connection added successfully: " << objPath.path() << uuid;
         emit addConnectionCompleted(true, QString());
     }
 
