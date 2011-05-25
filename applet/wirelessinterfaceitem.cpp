@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <libnm-qt/accesspoint.h>
 #include <libnm-qt/wirelessdevice.h>
 #include <libnm-qt/device.h>
-#include <libnm-qt/ipv4.config.h>
+#include <libnm-qt/ipv4config.h>
 #include <libnm-qt/manager.h>
 
 WirelessInterfaceItem::WirelessInterfaceItem(NetworkManager::WirelessDevice * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
