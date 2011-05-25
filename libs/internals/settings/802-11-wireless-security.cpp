@@ -45,6 +45,8 @@ QString WirelessSecuritySetting::name() const
 }
 bool WirelessSecuritySetting::hasSecrets() const
 {
+    if (isNull())
+        return false;
     switch (mSecurityType)
     {
         case EnumSecurityType::None:

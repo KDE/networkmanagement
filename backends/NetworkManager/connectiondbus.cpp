@@ -302,7 +302,9 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
         if (settings.contains(setting->name())) {
             SettingDbus * sd = dbusFor(setting);
             sd->fromMap(settings.value(setting->name()));
-            setting->setInitialized();
+            setting->setInitialized(true);
+        } else {
+            setting->setInitialized(false);
         }
     }
 }

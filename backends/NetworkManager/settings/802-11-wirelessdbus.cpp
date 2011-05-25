@@ -55,7 +55,9 @@ void WirelessDbus::fromMap(const QVariantMap & map)
     setting->setSeenbssids(map.value(QLatin1String(NM_SETTING_WIRELESS_SEEN_BSSIDS)).value<QStringList>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SEC))) {
-      setting->setSecurity(map.value(QLatin1String(NM_SETTING_WIRELESS_SEC)).value<QString>());
+    setting->setSecurity(map.value(QLatin1String(NM_SETTING_WIRELESS_SEC)).value<QString>());
+  } else {
+    setting->setSecurity("");
   }
 }
 

@@ -331,8 +331,8 @@ void WirelessSecuritySettingWidget::writeConfig()
     if (sw) {
         sw->writeConfig();
     }
-    d->settingSecurity->setInitialized();
-    d->setting8021x->setInitialized();
+    d->settingSecurity->setInitialized(true);
+    d->setting8021x->setInitialized(true);
 }
 
 void WirelessSecuritySettingWidget::validate()

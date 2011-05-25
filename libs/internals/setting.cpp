@@ -130,7 +130,7 @@ Setting::Setting(Setting *setting)
     : m_secretsObject(0)
 {
     if (!setting->isNull())
-        setInitialized();
+        setInitialized(true);
     m_type = setting->type();
     setSecretsAvailable(setting->secretsAvailable());
 }
@@ -146,9 +146,9 @@ bool Setting::isNull() const
     return !m_initialized;
 }
 
-void Setting::setInitialized()
+void Setting::setInitialized(bool initialized)
 {
-    m_initialized = true;
+    m_initialized = initialized;
 }
 
 Setting::Type Setting::type() const

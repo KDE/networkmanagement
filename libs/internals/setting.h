@@ -42,7 +42,7 @@ public:
     Setting(Setting *setting);
     virtual ~Setting();
     bool isNull() const;
-    void setInitialized();
+    void setInitialized(bool);
     Setting::Type type() const;
     virtual QString name() const = 0;
     virtual bool hasSecrets() const = 0;
