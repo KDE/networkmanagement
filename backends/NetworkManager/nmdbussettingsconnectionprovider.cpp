@@ -63,6 +63,7 @@ public:
     // hash of object path to object
     QHash<QString, QPair<Knm::Connection*, RemoteConnection*> > connections;
     QHash<QUuid, QDBusObjectPath> uuidToPath;
+    QMap<QUuid, QVariantMapMap> secretsToSave;
     OrgFreedesktopNetworkManagerSettingsInterface * iface;
     QString serviceName;
 };
@@ -408,6 +409,7 @@ void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnect
         return;
     }
 
+    d->secretsToSave.insert(newConnection->uuid(), map);
     QDBusPendingCall reply = d->iface->AddConnection(map);
     //do not check if reply is valid or not because it's an async call and invalid till reply is really arrived
 
@@ -432,6 +434,14 @@ void NMDBusSettingsConnectionProvider::onConnectionAddArrived(QDBusPendingCallWa
         QUuid uuid = d->uuidToPath.key(objPath);
         kDebug() << "Connection added successfully: " << objPath.path() << uuid;
         emit addConnectionCompleted(true, QString());
+
+        // Hack to force NetworkManager to call the secrets agent to save this connections's secrets.
+        // This does not work for VPN connections.
+        // TODO: change this to a dbus call to the kded module.
+        QPair<Knm::Connection *, RemoteConnection *> pair = d->connections.value(objPath.path());
+        RemoteConnection *remote = pair.second;
+        QVariantMapMap map = d->secretsToSave.take(uuid);
+        remote->Update(map);
     }
 
     watcher->deleteLater();
