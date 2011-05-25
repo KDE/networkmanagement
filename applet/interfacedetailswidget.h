@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/PushButton>
 #include <Plasma/SignalPlotter>
 
-#include <libnm-qt/generic-types.h>"
+#include <libnm-qt/generic-types.h>
 
 class RemoteActivatable;
 class RemoteInterfaceConnection;
