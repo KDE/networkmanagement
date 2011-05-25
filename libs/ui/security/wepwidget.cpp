@@ -95,13 +95,11 @@ void WepWidget::keyTypeChanged(int index)
 {
     switch (index) {
         case 0: //passphrase
-            d->ui.passphraseLabel->show();
-            d->ui.keyLabel->hide();
+            d->ui.keyLabel->setText(i18n("&Passphrase:"));
             d->format = WepWidget::Passphrase;
             break;
         case 1: //hex key
-            d->ui.passphraseLabel->hide();
-            d->ui.keyLabel->show();
+            d->ui.keyLabel->setText(i18n("&Key:"));
             d->format = WepWidget::Hex;
             break;
     }
@@ -166,14 +164,12 @@ void WepWidget::writeConfig()
     d->setting->setWepkey1(d->keys[1]);
     d->setting->setWepkey2(d->keys[2]);
     d->setting->setWepkey3(d->keys[3]);
-    if (d->format == WepWidget::Passphrase)
-    {
+    if (d->format == WepWidget::Passphrase) {
         d->setting->setWepKeyType(Knm::WirelessSecuritySetting::Passphrase);
     } else {
         d->setting->setWepKeyType(Knm::WirelessSecuritySetting::Hex);
     }
 
-    QString authAlg;
     if (d->ui.authalg->currentIndex() == 0 ) {
         d->setting->setAuthalg(Knm::WirelessSecuritySetting::EnumAuthalg::open);
     } else {
