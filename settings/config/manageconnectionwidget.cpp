@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "manageconnectionwidget.h"
 
+#include <unistd.h>
+
 #include <nm-setting-cdma.h>
 #include <nm-setting-connection.h>
 #include <nm-setting-gsm.h>
@@ -137,6 +139,13 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
 ManageConnectionWidget::~ManageConnectionWidget()
 {
     QDBusConnection::sessionBus().unregisterService(QLatin1String("org.kde.NetworkManager.KCModule"));
+    //HACK: don't destroy until NMDBusSettingsConnectionProvider returns
+    //(prevents crashes when closing kcmshell too fast after adding/editing
+    //a connection, as this is then deleted from another thread)
+    usleep(100000);
+    delete mSystemSettings;
+    delete mConnections;
+    delete mEditor;
 }
 
 void ManageConnectionWidget::createConnection(const QString &connectionType, const QVariantList &args)
