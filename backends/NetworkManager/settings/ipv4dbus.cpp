@@ -28,20 +28,21 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
       setting->setMethod(methodStringToEnum(map.value(QLatin1String(NM_SETTING_IP4_CONFIG_METHOD)).value<QString>())); }
 
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_DNS))) {
-      QDBusArgument dnsArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS)).value< QDBusArgument>();
       QList<QHostAddress> dbusDns;
-
-      dnsArg.beginArray();
-      while(!dnsArg.atEnd())
-      {
-          uint utmp = 0;
-          dnsArg >> utmp;
+      QList<uint> temp;
+      if (map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS)).canConvert<QDBusArgument>()) {
+          QDBusArgument dnsArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS)).value<QDBusArgument>();
+          temp = qdbus_cast<QList<uint> >(dnsArg);
+      } else {
+          temp = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_DNS)).value<QList<uint> >();
+      }
+    
+      foreach(const uint utmp, temp) {
           QHostAddress tmpHost(ntohl(utmp));
           dbusDns << tmpHost;
           kDebug() << "DNS IP is " << tmpHost.toString();
       }
       //NO dnsArg.endArray(); it's fatal in debug builds.
-
       setting->setDns(dbusDns);
   }
 
@@ -52,15 +53,16 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
   }
 
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES))) {
-      QDBusArgument addressArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES)).value< QDBusArgument>();
       QList<Solid::Control::IPv4AddressNm09> addresses;
+      QList<QList<uint> > temp;
+      if (map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES)).canConvert< QDBusArgument>()) {
+          QDBusArgument addressArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES)).value<QDBusArgument>();
+          temp = qdbus_cast<QList<QList<uint> > >(addressArg);
+      } else {
+          temp = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES)).value<QList<QList<uint> > >();
+      }
 
-      addressArg.beginArray();
-      while(!addressArg.atEnd())
-      {
-          QList<uint> uintList;
-          addressArg >> uintList;
-
+      foreach(const QList<uint> uintList, temp) {
           if (uintList.count() != 3)
           {
             kWarning() << "Invalid address format detected. UInt count is " << uintList.count();
@@ -84,15 +86,16 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
 
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)))
   {
-      QDBusArgument routeArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)).value< QDBusArgument>();
       QList<Solid::Control::IPv4RouteNm09> routes;
+      QList<QList<uint> > temp;
+      if (map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)).canConvert< QDBusArgument>()) {
+          QDBusArgument routeArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)).value<QDBusArgument>();
+          temp = qdbus_cast<QList<QList<uint> > >(routeArg);
+      } else {
+          temp = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)).value<QList<QList<uint> > >();
+      }
 
-      routeArg.beginArray();
-      while(!routeArg.atEnd())
-      {
-          QList<uint> uintList;
-          routeArg >> uintList;
-
+      foreach(const QList<uint> uintList, temp) {
           if (uintList.count() != 4)
           {
               kWarning() << "Invalid route format detected. UInt count is " << uintList.count();
