@@ -47,7 +47,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <libnm-qt/accesspoint.h>
 #include <libnm-qt/wirelessdevice.h>
 #include <libnm-qt/wireddevice.h>
-#include <libnm-qt/ipv4.config.h>
+#include <libnm-qt/ipv4config.h>
 #include <libnm-qt/device.h>
 #include <libnm-qt/manager.h>
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT

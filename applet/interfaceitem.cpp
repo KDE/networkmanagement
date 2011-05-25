@@ -48,8 +48,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Solid/NetworkInterface>
 #include <libnm-qt/device.h>
 #include <libnm-qt/wireddevice.h>
-#include <libnm-qt/ipv4.config.h>
+#include <libnm-qt/ipv4config.h>
 #include <libnm-qt/manager.h>
+
 
 #include "knmserviceprefs.h"
 #include "nm-device-interface.cpp"
