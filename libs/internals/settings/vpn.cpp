@@ -3,15 +3,52 @@
 
 #include "vpn.h"
 
+QDBusArgument &operator<<(QDBusArgument &argument, const QStringMap & mydict)
+{
+    argument.beginMap( QVariant::String, QVariant::String );
+
+    QMapIterator<QString, QString> i(mydict);
+    while (i.hasNext()) {
+        i.next();
+        argument.beginMapEntry();
+        argument << i.key() << i.value();
+        argument.endMapEntry();
+    }
+    argument.endMap();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, QStringMap & mydict)
+{
+    argument.beginMap();
+    mydict.clear();
+
+    while (!argument.atEnd()) {
+        QString key;
+        QString value;
+        argument.beginMapEntry();
+        argument >> key >> value;
+        argument.endMapEntry();
+        mydict.insert(key, value);
+    }
+
+    argument.endMap();
+    return argument;
+}
+
 using namespace Knm;
 
 VpnSetting::VpnSetting() : Setting(Setting::Vpn)
 {
+  qDBusRegisterMetaType<QStringMap>();
+
   mSecretsStorageType = QStringMap();
 }
 
 VpnSetting::VpnSetting(VpnSetting *setting) : Setting(setting)
 {
+    qDBusRegisterMetaType<QStringMap>();
+
     setServiceType(setting->serviceType());
     setData(setting->data());
     setUserName(setting->userName());

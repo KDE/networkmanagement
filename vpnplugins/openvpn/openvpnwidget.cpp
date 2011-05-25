@@ -204,7 +204,7 @@ void OpenVpnSettingWidget::writeConfig()
     d->setting->setServiceType(QLatin1String(NM_DBUS_SERVICE_OPENVPN));
 
     QStringMap data;
-    QVariantMap secretData;
+    QStringMap secretData;
 
     // required settings
     data.insert(NM_OPENVPN_KEY_REMOTE, d->ui.gateway->text());
@@ -310,11 +310,11 @@ void OpenVpnSettingWidget::writeConfig()
 
 void OpenVpnSettingWidget::readSecrets()
 {
-    QVariantMap secrets = d->setting->vpnSecrets();
-    d->ui.x509PassPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)).toString());
-    d->ui.passPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)).toString());
-    d->ui.x509PassKeyPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_CERTPASS)).toString());
-    d->ui.x509KeyPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_CERTPASS)).toString());
+    QStringMap secrets = d->setting->vpnSecrets();
+    d->ui.x509PassPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)));
+    d->ui.passPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)));
+    d->ui.x509PassKeyPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_CERTPASS)));
+    d->ui.x509KeyPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_CERTPASS)));
 }
 
 void OpenVpnSettingWidget::validate()

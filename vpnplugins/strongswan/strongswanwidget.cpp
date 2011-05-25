@@ -131,7 +131,7 @@ void StrongswanSettingWidget::writeConfig()
     d->setting->setServiceType(QLatin1String(NM_DBUS_SERVICE_STRONGSWAN));
 
     QStringMap data;
-    QVariantMap secretData;
+    QStringMap secretData;
 
     // General settings
     // Gateway
@@ -193,9 +193,9 @@ uint StrongswanSettingWidget::handleOnePasswordType(const QComboBox * combo, con
 void StrongswanSettingWidget::readSecrets()
 {
     Q_D(StrongswanSettingWidget);
-    QVariantMap secrets = d->setting->vpnSecrets();
+    QStringMap secrets = d->setting->vpnSecrets();
     if (d->setting->data().value(NM_STRONGSWAN_SECRET_TYPE) == QLatin1String(NM_STRONGSWAN_PW_TYPE_SAVE)) {
-        d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_STRONGSWAN_SECRET)).toString());
+        d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_STRONGSWAN_SECRET)));
     }
     fillOnePasswordCombo(d->ui.cboUserPassOptions, NM_STRONGSWAN_SECRET_TYPE, d->setting->data(), !d->ui.leUserName->text().isEmpty());
 }

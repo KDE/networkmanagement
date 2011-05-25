@@ -57,7 +57,7 @@ void VpncAuthWidget::readConfig()
 void VpncAuthWidget::readSecrets()
 {
     Q_D(VpncAuthWidget);
-    QVariantMap secrets = d->setting->vpnSecrets();
+    QStringMap secrets = d->setting->vpnSecrets();
     QStringMap secretsType = d->setting->secretsStorageType();
     QString userType;
     QString groupType;
@@ -71,7 +71,7 @@ void VpncAuthWidget::readSecrets()
         userType = d->setting->data().value(NM_VPNC_KEY_XAUTH_PASSWORD_TYPE);
     }
     if (userType == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
-        d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_XAUTH_PASSWORD)).toString());
+        d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_XAUTH_PASSWORD)));
     }
 
     groupType = secretsType.value(NM_VPNC_KEY_SECRET);
@@ -79,7 +79,7 @@ void VpncAuthWidget::readSecrets()
         groupType = d->setting->data().value(NM_VPNC_KEY_SECRET_TYPE);
     }
     if (groupType == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
-        d->ui.leGroupPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_SECRET)).toString());
+        d->ui.leGroupPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_SECRET)));
     }
 
     if (d->ui.leUserPassword->text().isEmpty())
@@ -92,7 +92,7 @@ void VpncAuthWidget::writeConfig()
 {
     Q_D(VpncAuthWidget);
 
-    QVariantMap secretData;
+    QStringMap secretData;
 
     //   user password
     if (!d->ui.leUserPassword->text().isEmpty()) {

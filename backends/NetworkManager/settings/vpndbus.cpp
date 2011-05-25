@@ -5,8 +5,43 @@
 
 #include "vpn.h"
 
+QDBusArgument &operator<<(QDBusArgument &argument, const QStringMap & mydict)
+{
+    argument.beginMap( QVariant::String, QVariant::String );
+
+    QMapIterator<QString, QString> i(mydict);
+    while (i.hasNext()) {
+        i.next();
+        argument.beginMapEntry();
+        argument << i.key() << i.value();
+        argument.endMapEntry();
+    }
+    argument.endMap();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, QStringMap & mydict)
+{
+    argument.beginMap();
+    mydict.clear();
+
+    while (!argument.atEnd()) {
+        QString key;
+        QString value;
+        argument.beginMapEntry();
+        argument >> key >> value;
+        argument.endMapEntry();
+        mydict.insert(key, value);
+    }
+
+    argument.endMap();
+    return argument;
+}
+
 VpnDbus::VpnDbus(Knm::VpnSetting * setting) : SettingDbus(setting)
 {
+    qDBusRegisterMetaType<QStringMap>();
+    qRegisterMetaType<QStringMap>();
 }
 
 VpnDbus::~VpnDbus()
@@ -20,14 +55,14 @@ void VpnDbus::fromMap(const QVariantMap & map)
     setting->setServiceType(map.value(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE)).value<QString>());
   }
   if (map.contains(QLatin1String(NM_SETTING_VPN_DATA))) {
-    setting->setData(map.value(QLatin1String(NM_SETTING_VPN_DATA)).value<QStringMap>());
+      setting->setData(qdbus_cast<QStringMap>(map.value(QLatin1String(NM_SETTING_VPN_DATA))));
   }
   if (map.contains(QLatin1String(NM_SETTING_VPN_USER_NAME))) {
     setting->setUserName(map.value(QLatin1String(NM_SETTING_VPN_USER_NAME)).value<QString>());
   }
   // SECRET
   if (map.contains(QLatin1String(NM_SETTING_VPN_SECRETS))) {
-    setting->setVpnSecrets(map.value(QLatin1String(NM_SETTING_VPN_SECRETS)).value<QVariantMap>());
+      setting->setVpnSecrets(qdbus_cast<QStringMap>(map.value(QLatin1String(NM_SETTING_VPN_SECRETS))));
   }
 }
 
@@ -36,11 +71,16 @@ QVariantMap VpnDbus::toMap()
   QVariantMap map;
   Knm::VpnSetting * setting = static_cast<Knm::VpnSetting *>(m_setting);
   map.insert(QLatin1String(NM_SETTING_VPN_SERVICE_TYPE), setting->serviceType());
+
   if (!setting->data().isEmpty())
       map.insert(QLatin1String(NM_SETTING_VPN_DATA), QVariant::fromValue(setting->data()));
-  map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(QStringMap()));
+
+  if (!setting->vpnSecrets().isEmpty())
+      map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(setting->vpnSecrets()));
+
   if (!setting->userName().isEmpty())
       map.insert(QLatin1String(NM_SETTING_VPN_USER_NAME), setting->userName());
+
   return map;
 }
 
@@ -48,6 +88,7 @@ QVariantMap VpnDbus::toSecretsMap()
 {
   //assume that the settings's vpnSecrets are ready to go
   Knm::VpnSetting * setting = static_cast<Knm::VpnSetting *>(m_setting);
-  return setting->vpnSecrets();
+  QVariantMap result;
+  result.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(setting->vpnSecrets()));
+  return result;
 }
-
