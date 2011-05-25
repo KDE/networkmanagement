@@ -649,13 +649,13 @@ bool networkInterfaceLessThan(NetworkManager::Device *if1, NetworkManager::Devic
             if ( if2status == Disconnected) {
                 lessThan = networkInterfaceSameConnectionStateLessThan(if1, if2);
             }
-            if (if2status == NetworkManager::Device::Unavailable) {
+            if (if2status == Unavailable) {
                 lessThan = true;
             }
             break;
         case Unavailable:
             lessThan = false;
-            if ( if2status == NetworkManager::Device::Unavailable) {
+            if ( if2status == Unavailable) {
                 lessThan = networkInterfaceSameConnectionStateLessThan(if1, if2);
             }
             break;
