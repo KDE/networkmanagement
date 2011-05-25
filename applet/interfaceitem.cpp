@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteinterfaceconnection.h"
 #include "remoteactivatablelist.h"
 #include "remoteinterfaceconnection.h"
+#include "remoteutils.h"
 
 #include <arpa/inet.h>
 
@@ -261,7 +262,7 @@ InterfaceItem::NameDisplayMode InterfaceItem::nameDisplayMode() const
 QString InterfaceItem::connectionName()
 {
     // Default active connection's name is empty, room for improvement?
-    RemoteInterfaceConnection *conn = UiUtils::connectionForInterface(m_activatables, m_iface);
+    RemoteInterfaceConnection *conn = RemoteUtils::connectionForInterface(m_activatables, m_iface);
     if (conn) {
         return conn->connectionName();
     }
@@ -316,7 +317,7 @@ QString InterfaceItem::currentIpAddress()
 
 RemoteInterfaceConnection* InterfaceItem::currentConnection()
 {
-    RemoteInterfaceConnection* remoteconnection = UiUtils::connectionForInterface(m_activatables, m_iface);
+    RemoteInterfaceConnection* remoteconnection = RemoteUtils::connectionForInterface(m_activatables, m_iface);
     if (!remoteconnection) {
         m_currentConnection = 0;
         handleHasDefaultRouteChanged(false);
@@ -339,7 +340,7 @@ void InterfaceItem::setActivatableList(RemoteActivatableList* activatables)
 
 void InterfaceItem::currentConnectionChanged()
 {
-    RemoteInterfaceConnection* remoteconnection = UiUtils::connectionForInterface(m_activatables, m_iface);
+    RemoteInterfaceConnection* remoteconnection = RemoteUtils::connectionForInterface(m_activatables, m_iface);
     if (remoteconnection) {
         if (m_currentConnection) {
             QObject::disconnect(m_currentConnection, 0, this, 0);

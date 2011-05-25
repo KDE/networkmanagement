@@ -28,7 +28,7 @@ namespace NetworkManager
 
 namespace RemoteUtils
 {
-RemoteInterfaceConnection* connectionForInterface(RemoteActivatableList* activatables, NetworkManager::Device *interface);
+KNMCLIENT_EXPORT RemoteInterfaceConnection* connectionForInterface(RemoteActivatableList* activatables, NetworkManager::Device *interface);
 } // namespace RemoteUtils
 
 
