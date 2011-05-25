@@ -53,7 +53,7 @@ Q_OBJECT
         void dataUpdated(const QString &sourceName, const Plasma::DataEngine::Data &data);
         //void dataUpdated(const QString&, const Plasma::DataEngine::Data&);
         //void sourceAdded(const QString&);
-        void handleConnectionStateChange(int new_state, int old_state, int reason);
+        void handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason);
 
     Q_SIGNALS:
         void back();

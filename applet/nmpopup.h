@@ -76,7 +76,7 @@ public Q_SLOTS:
     void manageConnections();
     void showMore();
     void showMore(bool);
-    void handleConnectionStateChange(int new_state, int old_state, int reason);
+    void handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason);
     void toggleInterfaceTab();
     void deleteInterfaceItem();
 

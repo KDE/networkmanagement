@@ -523,7 +523,7 @@ void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma
     updateWidgets();
 }
 
-void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_state, int reason)
+void InterfaceDetailsWidget::handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason)
 {
     Q_UNUSED(old_state)
     if ((new_state == NetworkManager::Device::Unavailable || new_state == NetworkManager::Device::Unmanaged || new_state == NetworkManager::Device::UnknownState) &&
@@ -683,7 +683,7 @@ void InterfaceDetailsWidget::connectSignals()
     if (!m_iface) {
         return;
     }
-    connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+    connect(m_iface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
 
     if (m_iface->type() == NetworkManager::Device::Ethernet ||
         m_iface->type() == NetworkManager::Device::Wifi) {

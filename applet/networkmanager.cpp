@@ -201,16 +201,14 @@ void NetworkManagerApplet::setupInterfaceSignals()
 {
     foreach (NetworkManager::Device* interface, m_interfaces) {
         // be aware of state changes
-        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int, int, int)), this, SLOT(interfaceConnectionStateChanged()));
-        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
-        QObject::disconnect(interface, SIGNAL(linkUpChanged(bool)));
-
-        //connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
-        connect(interface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(interfaceConnectionStateChanged()));
-        //connect(iface, SIGNAL(linkUpChanged(bool)), this, SLOT(switchToDefaultTab()));
-
-        QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
-        QObject::connect(interface, SIGNAL(linkUpChanged(bool)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::disconnect(interface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(interfaceConnectionStateChanged()));
+        if (interface->type() == NetworkManager::Device::Ethernet) {
+            QObject::disconnect(interface, SIGNAL(carrierChanged(bool)));
+            QObject::connect(interface, SIGNAL(carrierChanged(bool)), this, SLOT(interfaceConnectionStateChanged()));
+        }
+        //connect(iface, SIGNAL(stateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+        connect(interface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
+                this, SLOT(interfaceConnectionStateChanged()));
 
         // Interface type-specific connections
         if (interface->type() == NetworkManager::Device::Ethernet) {
@@ -237,10 +235,10 @@ void NetworkManagerApplet::init()
     m_contentSquare = contentsRect().toRect();
     //kDebug();
     configChanged();
-    QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
-    QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
-            this, SLOT(networkInterfaceRemoved(const QString&)));
+    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString&)),
+            this, SLOT(deviceAdded(const QString&)));
+    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(const QString&)),
+            this, SLOT(deviceRemoved(const QString&)));
 
     QObject::connect(NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
@@ -415,7 +413,7 @@ void NetworkManagerApplet::repaint()
 }
 
 /* Slots to react to changes from the daemon */
-void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
+void NetworkManagerApplet::deviceAdded(const QString & uni)
 {
     Q_UNUSED(uni);
     // update the tray icon
@@ -426,7 +424,7 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
     updatePixmap();
 }
 
-void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
+void NetworkManagerApplet::deviceRemoved(const QString & uni)
 {
     Q_UNUSED(uni);
     // update the tray icon

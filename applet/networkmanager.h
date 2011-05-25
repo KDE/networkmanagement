@@ -102,8 +102,8 @@ protected Q_SLOTS:
     void toolTipAboutToShow();
 
 private Q_SLOTS:
-    void networkInterfaceAdded(const QString& = QString());
-    void networkInterfaceRemoved(const QString&);
+    void deviceAdded(const QString& = QString());
+    void deviceRemoved(const QString&);
     void interfaceConnectionStateChanged();
     void updatePixmap();
     void repaint();

@@ -260,9 +260,9 @@ QWizardPage * MobileConnectionWizard::createIntroPage()
         label->setBuddy(mDeviceComboBox);
         layout->addWidget(mDeviceComboBox);
     
-        QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString)),
+        QObject::connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString)),
                          this, SLOT(introDeviceAdded(const QString)));
-        QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString)),
+        QObject::connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(const QString)),
                          this, SLOT(introDeviceRemoved(const QString)));
         QObject::connect(NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                          this, SLOT(introStatusChanged(Solid::Networking::Status)));

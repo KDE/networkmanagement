@@ -136,9 +136,11 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
     m_layout->addItem(m_connectionInfoIcon, 1, 2, 1, 1, Qt::AlignRight); // check...
 
     if (m_iface) {
-        connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)),
-                this, SLOT(handleConnectionStateChange(int,int,int)));
-        connect(m_iface, SIGNAL(linkUpChanged(bool)), this, SLOT(setActive(bool)));
+        connect(m_iface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
+                this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
+        if (m_iface->type() == NetworkManager::Device::Ethernet) {
+            connect(m_iface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
+        }
     }
     setNameDisplayMode(mode);
 
@@ -149,7 +151,7 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
             connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
         }
         m_state = NetworkManager::Device::UnknownState;
-        connectionStateChanged(static_cast<NetworkManager::Device::State>(m_iface->state()));
+        connectionStateChanged(m_iface->state());
     }
 
     setLayout(m_layout);
@@ -210,7 +212,7 @@ void InterfaceItem::setActive(bool active)
 {
     Q_UNUSED(active);
     if (m_iface) {
-        connectionStateChanged(static_cast<NetworkManager::Device::State>(m_iface->state()));
+        connectionStateChanged(m_iface->state());
     }
 }
 
@@ -273,7 +275,7 @@ void InterfaceItem::setConnectionInfo()
 {
     if (m_iface) {
         currentConnectionChanged();
-        connectionStateChanged(static_cast<NetworkManager::Device::State>(m_iface->state()));
+        connectionStateChanged(m_iface->state());
     }
 }
 
@@ -386,16 +388,11 @@ void InterfaceItem::slotClicked()
     emit clicked(m_iface);
 }
 
-void InterfaceItem::handleConnectionStateChange(int new_state, int old_state, int reason)
+void InterfaceItem::handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason)
 {
     Q_UNUSED(old_state);
     Q_UNUSED(reason);
-    connectionStateChanged((NetworkManager::Device::State)new_state);
-}
-
-void InterfaceItem::handleConnectionStateChange(int new_state)
-{
-    connectionStateChanged((NetworkManager::Device::State)new_state);
+    connectionStateChanged(new_state);
 }
 
 void InterfaceItem::connectionStateChanged(NetworkManager::Device::State state)

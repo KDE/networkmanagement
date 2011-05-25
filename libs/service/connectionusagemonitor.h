@@ -66,7 +66,7 @@ protected Q_SLOTS:
     /**
      * Listen to interfaces' access point change signals
      */
-    void networkInterfaceAdded(const QString& uni);
+    void deviceAdded(const QString& uni);
     /**
      * When an interface roams, update seen-bssids
      */

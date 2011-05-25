@@ -82,8 +82,7 @@ protected Q_SLOTS:
      * Remove any connections that were provided by this service
      * from our active connection list
      */
-    void handleConnectionStateChange(int new_state);
-    void handleConnectionStateChange(int new_state, int old_state, int reason);
+    void handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason);
     void handleHasDefaultRouteChanged(bool);
     void pppStats(uint in, uint out);
     void slotClicked();

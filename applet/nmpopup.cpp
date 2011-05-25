@@ -235,9 +235,9 @@ void NMPopup::init()
     }
     addVpnInterface();
     // hook up signals to allow us to change the connection list depending on APs present, etc
-    connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString&)),
             SLOT(interfaceAdded(const QString&)));
-    connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(const QString&)),
             SLOT(interfaceRemoved(const QString&)));
 
     oldShowMore = true;
@@ -427,7 +427,7 @@ void NMPopup::addInterfaceInternal(NetworkManager::Device* iface)
         connect(ifaceItem, SIGNAL(hoverLeave(const QString&)), m_connectionList, SLOT(hoverLeave(const QString&)));
 
         // Catch connection changes
-        connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+        connect(iface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
         m_interfaceLayout->addItem(ifaceItem);
         m_interfaces.insert(iface->uni(), ifaceItem);
     }
@@ -448,8 +448,7 @@ void NMPopup::addVpnInterface()
 
     m_leftLayout->insertItem(2, m_vpnItem);
 }
-
-void NMPopup::handleConnectionStateChange(int new_state, int old_state, int reason)
+void NMPopup::handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason)
 {
     Q_UNUSED( reason );
     // Switch to default tab if an interface has become available, or unavailable

@@ -50,8 +50,8 @@ public:
 
     KComponentData componentData() const;
 protected Q_SLOTS:
-    void networkInterfaceAdded(const QString &);
-    void networkInterfaceRemoved(const QString &);
+    void deviceAdded(const QString &);
+    void deviceRemoved(const QString &);
     void networkAppeared(const QString &);
     void networkDisappeared(const QString &);
 
@@ -90,7 +90,7 @@ public Q_SLOTS:
     /*
      * Update notification with state changes for iface's active connections
      */
-    void interfaceConnectionStateChanged(int,int,int);
+    void interfaceConnectionStateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason);
     /*
      * So we know which ICs interface state changes refer to
      */

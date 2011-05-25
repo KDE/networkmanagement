@@ -49,12 +49,12 @@ ConnectionUsageMonitor::ConnectionUsageMonitor(ConnectionList * connectionList, 
     d->connectionList = connectionList;
     d->activatableList = activatableList;
 
-    QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
+    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString&)),
+            this, SLOT(deviceAdded(const QString&)));
 
     NetworkManager::DeviceList allInterfaces = NetworkManager::networkInterfaces();
     foreach (NetworkManager::Device * interface, allInterfaces) {
-        networkInterfaceAdded(interface->uni());
+        deviceAdded(interface->uni());
     }
 }
 
@@ -119,7 +119,7 @@ void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnectio
     }
 }
 
-void ConnectionUsageMonitor::networkInterfaceAdded(const QString& uni)
+void ConnectionUsageMonitor::deviceAdded(const QString& uni)
 {
     NetworkManager::Device * interface = NetworkManager::findNetworkInterface(uni);
 
