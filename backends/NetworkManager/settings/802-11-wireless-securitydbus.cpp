@@ -65,7 +65,7 @@ void WirelessSecurityDbus::fromMap(const QVariantMap & map)
     else if (map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_AUTH_ALG)) == "leap")
     {
         setting->setAuthalg(Knm::WirelessSecuritySetting::EnumAuthalg::leap);
-
+        setting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::Leap);
         if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME))) {
           setting->setLeapusername(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME)).value<QString>());
         }
