@@ -503,7 +503,9 @@ void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCa
     if (reply.isValid())
     {
         QVariantMapMap set = reply.argumentAt<0>();
-        kDebug() << "Got secrets, yay! " << set;
+        // WARNING: this print secrets, do not commit it uncommented.
+        //kDebug() << "Got secrets, yay! " << set;
+        kDebug() << "Got secrets, yay! ";
 
         Knm::Connection *con = d->connections.value(watcher->property("connection").toString()).first;
         if (!con)
@@ -514,13 +516,12 @@ void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCa
 
         ConnectionDbus dbusConverter(con);
         dbusConverter.fromDbusSecretsMap(set); //update secretSettings in connection
-
-        emit getConnectionSecretsCompleted(true, QString());
+        emit getConnectionSecretsCompleted(true, QString(), set);
     }
     else
     {
         kWarning () << "Secret fetching failed...";
-        emit getConnectionSecretsCompleted(false, reply.error().message());
+        emit getConnectionSecretsCompleted(false, reply.error().message(), QVariantMapMap());
     }
 
     watcher->deleteLater();

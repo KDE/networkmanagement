@@ -68,7 +68,7 @@ public:
 
 Q_SIGNALS:
     void connectionsChanged();
-    void getConnectionSecretsCompleted(bool, const QString &);
+    void getConnectionSecretsCompleted(bool, const QString &, QVariantMapMap);
     void addConnectionCompleted(bool, const QString &);
 
 private Q_SLOTS:

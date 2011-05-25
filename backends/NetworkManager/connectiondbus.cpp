@@ -251,7 +251,9 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
     // connection settings
     QVariantMap connectionSettings = settings.value(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
 
-    kDebug() << "Settings map is " << settings;
+    kDebug();
+    // WARNING: this print secrets, do not commit it uncommented.
+    //kDebug() << "Settings map is " << settings;
 
     QString connName = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_ID)).toString();
     QUuid uuid(connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_UUID)).toString());
