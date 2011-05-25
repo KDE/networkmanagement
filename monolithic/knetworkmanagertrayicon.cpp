@@ -37,6 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KToolInvocation>
 
 #include <libnm-qt/manager.h>
+#include <libnm-qt/modemdevice.h>
 
 #include <connectioninfodialog.h>
 
@@ -463,7 +464,7 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
     QString iconName, overlayName;
 
     if (!d->displayedNetworkInterface.isNull()) {
-
+        NetworkManager::ModemDevice * modemDev = 0;
         switch (d->displayedNetworkInterface->type() ) {
             case NetworkManager::Device::Ethernet:
                 iconName = QLatin1String("network-wired");
@@ -485,13 +486,14 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
                     iconName = QLatin1String("network-wireless");
                 }
                 break;
-            case NetworkManager::Device::Serial:
-                iconName = QLatin1String("modem");
-                break;
-            case NetworkManager::Device::Gsm:
-            case NetworkManager::Device::Cdma:
-                //TODO make this work for cellular signal strength
-                iconName = "phone";
+            case NetworkManager::Device::Modem:
+                modemDev = qobject_cast<NetworkManager::ModemDevice *>(d->displayedNetworkInterface);
+                if (modemDev) {
+                    if (modemDev->currentCapabilities() & NetworkManager::ModemDevice::CdmaEvdo || modemDev->currentCapabilities() & NetworkManager::ModemDevice::GsmUmts)
+                        iconName = QLatin1String("phone");
+                    else
+                        iconName = QLatin1String("modem");
+                }
                 break;
             default:
                 iconName = "network-wired";
@@ -778,9 +780,7 @@ bool networkInterfaceSameConnectionStateLessThan(NetworkManager::Device * if1, N
                 case NetworkManager::Device::Wifi:
                     lessThan = true;
                     break;
-                case NetworkManager::Device::Serial:
-                case NetworkManager::Device::Gsm:
-                case NetworkManager::Device::Cdma:
+                case NetworkManager::Device::Modem:
                 default:
                     lessThan = false;
                     break;
@@ -794,9 +794,7 @@ bool networkInterfaceSameConnectionStateLessThan(NetworkManager::Device * if1, N
                 case NetworkManager::Device::Wifi:
                     lessThan = if1->uni() < if2->uni();
                     break;
-                case NetworkManager::Device::Serial:
-                case NetworkManager::Device::Gsm:
-                case NetworkManager::Device::Cdma:
+                case NetworkManager::Device::Modem:
                     lessThan = false;
                     break;
                 default:
@@ -804,51 +802,13 @@ bool networkInterfaceSameConnectionStateLessThan(NetworkManager::Device * if1, N
                     break;
             }
             break;
-        case NetworkManager::Device::Serial:
+        case NetworkManager::Device::Modem:
             switch (if2->type()) {
                 case NetworkManager::Device::Ethernet:
                 case NetworkManager::Device::Wifi:
                     lessThan = true;
                     break;
-                case NetworkManager::Device::Serial:
-                    lessThan = if1->uni() < if2->uni();
-                    break;
-                case NetworkManager::Device::Gsm:
-                case NetworkManager::Device::Cdma:
-                    lessThan = false;
-                    break;
-                default:
-                    lessThan = true;
-                    break;
-            }
-            break;
-        case NetworkManager::Device::Gsm:
-            switch (if2->type()) {
-                case NetworkManager::Device::Ethernet:
-                case NetworkManager::Device::Wifi:
-                case NetworkManager::Device::Serial:
-                    lessThan = true;
-                    break;
-                case NetworkManager::Device::Gsm:
-                    lessThan = if1->uni() < if2->uni();
-                    break;
-                case NetworkManager::Device::Cdma:
-                    lessThan = false;
-                    break;
-                default:
-                    lessThan = true;
-                    break;
-            }
-            break;
-        case NetworkManager::Device::Cdma:
-            switch (if2->type()) {
-                case NetworkManager::Device::Ethernet:
-                case NetworkManager::Device::Wifi:
-                case NetworkManager::Device::Serial:
-                case NetworkManager::Device::Gsm:
-                    lessThan = true;
-                    break;
-                case NetworkManager::Device::Cdma:
+                case NetworkManager::Device::Modem:
                     lessThan = if1->uni() < if2->uni();
                     break;
                 default:

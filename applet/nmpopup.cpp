@@ -42,7 +42,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <libnm-qt/manager.h>
 #include <libnm-qt/wirelessdevice.h>
 #include <libnm-qt/wireddevice.h>
-#include <solid/control/networkserialinterface.h>
+#include <libnm-qt/modemdevice.h>
 
 // client lib
 #include "activatableitem.h"
@@ -586,8 +586,8 @@ void NMPopup::updateHasWwan()
 {
     bool hasWwan = false;
     foreach (InterfaceItem* ifaceitem, m_interfaces) {
-        Solid::Control::SerialNetworkInterface* iface = qobject_cast<Solid::Control::SerialNetworkInterface *>(ifaceitem->interface());
-        if (iface) {
+        NetworkManager::ModemDevice* iface = qobject_cast<NetworkManager::ModemDevice *>(ifaceitem->interface());
+        if (iface && (iface->currentCapabilities() & NetworkManager::ModemDevice::GsmUmts || iface->currentCapabilities() & NetworkManager::ModemDevice::CdmaEvdo)) {
             hasWwan = true;
             break;
         }

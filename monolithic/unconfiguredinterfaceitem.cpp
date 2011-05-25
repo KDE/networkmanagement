@@ -94,7 +94,7 @@ QString UnconfiguredInterfaceItem::iconName() const
             case NetworkManager::Device::Wifi:
                 icon = QLatin1String("network-wireless");
                 break;
-            case NetworkManager::Device::Serial:
+            case NetworkManager::Device::Modem:
                 icon = QLatin1String("modem");
                 break;
             case NetworkManager::Device::Gsm:
