@@ -130,14 +130,17 @@ QList<Solid::Control::IPv4Route> IpV4RoutesWidget::routes()
     for (int i = 0, rowCount = d->model.rowCount(); i < rowCount; i++) {
         QHostAddress ip, mask, nhop;
         QNetworkAddressEntry entry;
-        quint32 metric;
+        quint32 metric = 0;
 
         ip.setAddress(d->model.item(i, 0)->text());
         entry.setIp(ip);
         mask.setAddress(d->model.item(i, 1)->text());
         entry.setNetmask(mask);
         nhop.setAddress(d->model.item(i, 2)->text());
-        metric = d->model.item(i, 3)->text().toUInt();
+        QStandardItem *item = d->model.item(i, 3);
+        if (item) {
+            metric = item->text().toUInt();
+        }
 
         list.append(Solid::Control::IPv4Route(ip.toIPv4Address(),
                                                 entry.prefixLength(),

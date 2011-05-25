@@ -26,14 +26,16 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
       setting->setMethod(methodStringToEnum(map.value("method").value<QString>())); }
 
   if (map.contains("dns")) {
-      QDBusArgument dnsArg = map.value("dns").value< QDBusArgument>();
       QList<QHostAddress> dbusDns;
-
-      dnsArg.beginArray();
-      while(!dnsArg.atEnd())
-      {
-          uint utmp = 0;
-          dnsArg >> utmp;
+      QList<uint> temp;
+      if (map.value(QLatin1String("dns")).canConvert<QDBusArgument>()) {
+          QDBusArgument dnsArg = map.value(QLatin1String("dns")).value<QDBusArgument>();
+          temp = qdbus_cast<QList<uint> >(dnsArg);
+      } else {
+          temp = map.value(QLatin1String("dns")).value<QList<uint> >();
+      }
+    
+      foreach(const uint utmp, temp) {
           QHostAddress tmpHost(ntohl(utmp));
           dbusDns << tmpHost;
           kDebug() << "DNS IP is " << tmpHost.toString();
@@ -66,15 +68,16 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
   }
 
   if (map.contains("addresses")) {
-      QDBusArgument addressArg = map.value("addresses").value< QDBusArgument>();
       QList<Solid::Control::IPv4Address> addresses;
+      QList<QList<uint> > temp;
+      if (map.value("addresses").canConvert< QDBusArgument>()) {
+          QDBusArgument addressArg = map.value("addresses").value<QDBusArgument>();
+          temp = qdbus_cast<QList<QList<uint> > >(addressArg);
+      } else {
+          temp = map.value("addresses").value<QList<QList<uint> > >();
+      }
 
-      addressArg.beginArray();
-      while(!addressArg.atEnd())
-      {
-          QList<uint> uintList;
-          addressArg >> uintList;
-
+      foreach(const QList<uint> uintList, temp) {
           if (uintList.count() != 3)
           {
             kWarning() << "Invalid address format detected. UInt count is " << uintList.count();
@@ -122,15 +125,16 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
 
   if (map.contains("routes"))
   {
-      QDBusArgument routeArg = map.value("routes").value< QDBusArgument>();
       QList<Solid::Control::IPv4Route> routes;
+      QList<QList<uint> > temp;
+      if (map.value("routes").canConvert< QDBusArgument>()) {
+          QDBusArgument routeArg = map.value("routes").value<QDBusArgument>();
+          temp = qdbus_cast<QList<QList<uint> > >(routeArg);
+      } else {
+          temp = map.value("routes").value<QList<QList<uint> > >();
+      }
 
-      routeArg.beginArray();
-      while(!routeArg.atEnd())
-      {
-          QList<uint> uintList;
-          routeArg >> uintList;
-
+      foreach(const QList<uint> uintList, temp) {
           if (uintList.count() != 4)
           {
               kWarning() << "Invalid route format detected. UInt count is " << uintList.count();
