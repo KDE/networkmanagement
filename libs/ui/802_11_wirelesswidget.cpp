@@ -118,6 +118,7 @@ void Wireless80211Widget::readConfig()
             d->ui.cmbMacAddress->setCurrentIndex(i);
         }
     }
+    d->ui.clonedMacAddress->setText(QString::fromAscii(d->setting->clonedmacaddress()));kDebug() << d->setting->clonedmacaddress();
     d->ui.mtu->setValue(d->setting->mtu());
     d->ui.channel->setValue(d->ui.channel->posFromChannel(d->setting->channel()));
 }
@@ -161,6 +162,11 @@ void Wireless80211Widget::writeConfig()
         d->setting->setBssid(QByteArray());
     }
     d->setting->setMtu(d->ui.mtu->value());
+    if (d->ui.clonedMacAddress->text() != QString::fromLatin1(":::::")) {
+        d->setting->setClonedmacaddress(d->ui.clonedMacAddress->text().toAscii());
+    } else {
+        d->setting->setClonedmacaddress(QByteArray());
+    }
 }
 
 void Wireless80211Widget::scanClicked()

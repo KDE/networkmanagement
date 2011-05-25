@@ -153,6 +153,14 @@ class KNMINTERNALS_EXPORT WirelessSetting : public Setting
     }
 
     /**
+     * Set MAC Address
+     */
+    void setMacaddress( const QString & v )
+    {
+        mMacaddress = macaddressFromString(v);
+    }
+
+    /**
       Get MAC Address
     */
     QByteArray macaddress() const
@@ -172,7 +180,7 @@ class KNMINTERNALS_EXPORT WirelessSetting : public Setting
      return mac.join(":");
     }
 
-    void setMacaddressFromString( const QString & s)
+    QByteArray macaddressFromString( const QString & s)
     {
         QStringList macStringList = s.split(":");
         QByteArray ba;
@@ -184,7 +192,28 @@ class KNMINTERNALS_EXPORT WirelessSetting : public Setting
             foreach (QString macPart, macStringList)
                 ba[i++] = macPart.toUInt(0, 16);
         }
-        setMacaddress(ba);
+        return ba;
+    }
+
+    /**
+     *  Set cloned MAC Address
+     */
+    void setClonedmacaddress( const QByteArray & v )
+    {
+        mClonedmacaddress = v;
+    }
+
+    void setClonedmacaddress( const QString & v )
+    {
+        mClonedmacaddress = macaddressFromString(v);
+    }
+
+    /**
+     *  Get cloned MAC Address
+     */
+    QByteArray clonedmacaddress()
+    {
+        return mClonedmacaddress;
     }
 
     /**
@@ -246,6 +275,7 @@ class KNMINTERNALS_EXPORT WirelessSetting : public Setting
     uint mRate;
     uint mTxpower;
     QByteArray mMacaddress;
+    QByteArray mClonedmacaddress;
     uint mMtu;
     QStringList mSeenbssids;
     QString mSecurity;

@@ -20,6 +20,7 @@ WirelessSetting::WirelessSetting(WirelessSetting *setting) : Setting(setting)
     setRate(setting->rate());
     setTxpower(setting->txpower());
     setMacaddress(setting->macaddress());
+    setClonedmacaddress(setting->clonedmacaddress());
     setMtu(setting->mtu());
     setSeenbssids(setting->seenbssids());
     setSecurity(setting->security());

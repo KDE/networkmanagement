@@ -94,7 +94,7 @@ void WiredWidget::writeConfig()
         d->setting->setMacaddress(d->ui.cmbMacAddress->itemData(i).toByteArray());
     }
     if (d->ui.clonedMacAddress->text() != QString::fromLatin1(":::::")) {
-        d->setting->setClonedmacaddress(d->ui.clonedMacAddress->text().toAscii());kDebug() << d->ui.clonedMacAddress->text().toAscii() << d->setting->clonedmacaddress();
+        d->setting->setClonedmacaddress(d->ui.clonedMacAddress->text().toAscii());
     } else {
         d->setting->setClonedmacaddress(QByteArray());
     }
