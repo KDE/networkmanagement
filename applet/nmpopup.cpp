@@ -376,21 +376,21 @@ NetworkManager::Device* NMPopup::defaultInterface()
     NetworkManager::Device* iface = NetworkManager::networkInterfaces().first();
     foreach (NetworkManager::Device * _iface, NetworkManager::networkInterfaces()) {
         switch (_iface->state()) {
-            case Disconnected:
+            case NetworkManager::Device::Disconnected:
             case NetworkManager::Device::Preparing:
             case NetworkManager::Device::ConfiguringHardware:
-            case NeedAuth:
-            case IPConfig:
-            case IPCheck:
-            case WaitingForSecondaries:
-            case NetworkManager::Device:::
-            case Deactivating:
-            case Failed:
+            case NetworkManager::Device::NeedAuth:
+            case NetworkManager::Device::ConfiguringIp:
+            case NetworkManager::Device::CheckingIp:
+            case NetworkManager::Device::WaitingForSecondaries:
+        case NetworkManager::Device::Activated:
+            case NetworkManager::Device::Deactivating:
+            case NetworkManager::Device::Failed:
                 return _iface;
                 break;
             case NetworkManager::Device::Unavailable:
-            case Unmanaged:
-            case UnknownState:
+            case NetworkManager::Device::Unmanaged:
+            case NetworkManager::Device::UnknownState:
             default:
                 break;
         }
@@ -466,21 +466,21 @@ bool NMPopup::available(int state)
 {
     // Can an interface be used?
     switch (state) {
-        case Disconnected:
+        case NetworkManager::Device::Disconnected:
         case NetworkManager::Device::Preparing:
         case NetworkManager::Device::ConfiguringHardware:
-        case NeedAuth:
-        case IPConfig:
-        case IPCheck:
-        case WaitingForSecondaries:
-        case NetworkManager::Device:::
-        case Deactivating:
-        case Failed:
+        case NetworkManager::Device::NeedAuth:
+        case NetworkManager::Device::ConfiguringIp:
+        case NetworkManager::Device::CheckingIp:
+        case NetworkManager::Device::WaitingForSecondaries:
+        case NetworkManager::Device::Activated:
+        case NetworkManager::Device::Deactivating:
+        case NetworkManager::Device::Failed:
             return true;
             break;
         case NetworkManager::Device::Unavailable:
-        case Unmanaged:
-        case UnknownState:
+        case NetworkManager::Device::Unmanaged:
+        case NetworkManager::Device::UnknownState:
         default:
             return false;
             break;

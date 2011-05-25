@@ -147,7 +147,7 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
                             static_cast<NetworkManager::WiredDevice*>(m_iface);
             connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
         }
-        m_state = UnknownState;
+        m_state = NetworkManager::Device::UnknownState;
         connectionStateChanged(static_cast<NetworkManager::Device::State>(m_iface->state()));
     }
 
@@ -281,7 +281,7 @@ QString InterfaceItem::currentIpAddress()
     if (!m_iface)
         return QString();
 
-    if (static_cast<NetworkManager::Device::State>(m_iface->state()) != NetworkManager::Device::) {
+    if (static_cast<NetworkManager::Device::State>(m_iface->state()) != NetworkManager::Device::Activated) {
         return i18nc("label of the network interface", "No IP address.");
     }
 
@@ -421,27 +421,27 @@ void InterfaceItem::connectionStateChanged(NetworkManager::Device::State state)
             }
             setEnabled(false); // FIXME: tone down colors using an animation
             break;
-        case Disconnected:
+        case NetworkManager::Device::Disconnected:
             setEnabled(true);
             setEnabled(true);
             break;
         case NetworkManager::Device::Preparing:
         case NetworkManager::Device::ConfiguringHardware:
-        case NeedAuth:
-        case IPConfig:
-        case IPCheck:
-        case WaitingForSecondaries:
-        case Deactivating:
+        case NetworkManager::Device::NeedAuth:
+        case NetworkManager::Device::ConfiguringIp:
+        case NetworkManager::Device::CheckingIp:
+        case NetworkManager::Device::WaitingForSecondaries:
+        case NetworkManager::Device::Deactivating:
             setEnabled(true);
             m_disconnect = false;
             break;
-        case NetworkManager::Device:::
+        case NetworkManager::Device::Activated:
             m_disconnect = true;
             setEnabled(true);
             break;
-        case Unmanaged:
-        case Failed:
-        case UnknownState:
+        case NetworkManager::Device::Unmanaged:
+        case NetworkManager::Device::Failed:
+        case NetworkManager::Device::UnknownState:
             setEnabled(false);
             break;
     }

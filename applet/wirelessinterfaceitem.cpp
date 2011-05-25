@@ -64,8 +64,8 @@ void WirelessInterfaceItem::setConnectionInfo()
     InterfaceItem::setConnectionInfo(); // Sets the labels
     switch (m_iface->state()) {
         case NetworkManager::Device::Unavailable:
-        case Disconnected:
-        case Failed:
+        case NetworkManager::Device::Disconnected:
+        case NetworkManager::Device::Failed:
             m_connectionInfoIcon->hide();
             break;
         default:

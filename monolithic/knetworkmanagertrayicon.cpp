@@ -503,7 +503,7 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
                 overlayName = QLatin1String("busy-phase1");
                 overlayName = QLatin1String("emblem-link");
                 break;
-            case NetworkManager::Device::Configuring:
+            case NetworkManager::Device::ConfiguringHardware:
                 overlayName = QLatin1String("busy-phase2");
                 overlayName = QLatin1String("emblem-link");
                 break;
@@ -511,7 +511,7 @@ void KNetworkManagerTrayIcon::updateTrayIcon()
                 overlayName = QLatin1String("busy-phase2");
                 overlayName = QLatin1String("emblem-link");
                 break;
-            case NetworkManager::Device::IPConfig:
+            case NetworkManager::Device::ConfiguringIp:
                 overlayName = QLatin1String("busy-phase3");
                 overlayName = QLatin1String("emblem-link");
                 break;
@@ -723,9 +723,9 @@ bool networkInterfaceLessThan(NetworkManager::Device *if1, NetworkManager::Devic
     enum { Connecting, Connected, Disconnected } if2status = Disconnected, if1status = Disconnected;
     switch (if1->state()) {
         case NetworkManager::Device::Preparing:
-        case NetworkManager::Device::Configuring:
+        case NetworkManager::Device::ConfiguringHardware:
         case NetworkManager::Device::NeedAuth:
-        case NetworkManager::Device::IPConfig:
+        case NetworkManager::Device::ConfiguringIp:
             if1status = Connecting;
             break;
         case NetworkManager::Device::Activated:
@@ -736,9 +736,9 @@ bool networkInterfaceLessThan(NetworkManager::Device *if1, NetworkManager::Devic
     }
     switch (if2->state()) {
         case NetworkManager::Device::Preparing:
-        case NetworkManager::Device::Configuring:
+        case NetworkManager::Device::ConfiguringHardware:
         case NetworkManager::Device::NeedAuth:
-        case NetworkManager::Device::IPConfig:
+        case NetworkManager::Device::ConfiguringIp:
             if2status = Connecting;
             break;
         case NetworkManager::Device::Activated:

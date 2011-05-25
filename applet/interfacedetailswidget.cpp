@@ -364,7 +364,7 @@ QString InterfaceDetailsWidget::currentIpAddress()
     if (!m_iface)
         return QString();
 
-    if (static_cast<NetworkManager::Device::State>(m_iface->state()) != NetworkManager::Device::) {
+    if (static_cast<NetworkManager::Device::State>(m_iface->state()) != NetworkManager::Device::Activated) {
         return i18nc("label of the network interface", "No IP address.");
     }
 
@@ -525,7 +525,7 @@ void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma
 void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_state, int reason)
 {
     Q_UNUSED(old_state)
-    if ((new_state == NetworkManager::Device::Unavailable || new_state == Unmanaged || UnknownState) &&
+    if ((new_state == NetworkManager::Device::Unavailable || new_state == NetworkManager::Device::Unmanaged || new_state == NetworkManager::Device::UnknownState) &&
         (reason == NetworkManager::Device::UnknownReason ||
          reason == NetworkManager::Device::DeviceRemovedReason)) {
         setInterface(0, false);
