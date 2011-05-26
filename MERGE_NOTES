@@ -20,7 +20,7 @@ Date:   Sun May 8 15:01:17 2011 -0300
     BUG: 272774
     (cherry picked from commit 48c1c33f6713f910481d28cdf541fefcd2c5b6cb)
 
-commit b050c3cfc7007f6c84173d2fb3793ba8ece737dc
+DEF commit b050c3cfc7007f6c84173d2fb3793ba8ece737dc
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Sun May 8 16:19:54 2011 -0300
 
@@ -29,7 +29,7 @@ Date:   Sun May 8 16:19:54 2011 -0300
     CCBUG: 256400
     (cherry picked from commit 1bbf8f6b6c0569427bf2505893ad381d14228679)
 
-commit 4c943de2da5b865074cdf0e5cf1d1a5461f65fa3
+* commit 4c943de2da5b865074cdf0e5cf1d1a5461f65fa3
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Sun May 8 20:23:34 2011 -0300
 
@@ -42,7 +42,7 @@ Date:   Sun May 8 20:23:34 2011 -0300
     REVIEW: 101294
     BUG: 228298
 
-commit 309d98bb6bed23ee994a5c9b262630d980b7e2a3
+* commit 309d98bb6bed23ee994a5c9b262630d980b7e2a3
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Mon May 9 01:00:26 2011 -0300
 
@@ -52,7 +52,7 @@ Date:   Mon May 9 01:00:26 2011 -0300
     BUG: 254155
     (cherry picked from commit 869945fbbf8a5fca40aaa1cdb9059acd6919acc5)
 
-commit f9cba1c11c9e1528b48c322b5383f18207080700
+* commit f9cba1c11c9e1528b48c322b5383f18207080700
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Mon May 9 04:14:37 2011 -0300
 
@@ -60,20 +60,20 @@ Date:   Mon May 9 04:14:37 2011 -0300
     pointers. This is just the beginning, there will be more QWeakPointer
     conversions in the future.
 
-commit a46290bd95cc9313217da60205d04b0cef4df215
+* commit a46290bd95cc9313217da60205d04b0cef4df215
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Mon May 9 05:24:00 2011 -0300
 
     Do not insert wep data in non-wep connections or NetworkManager marks the
     connection as invalid.
 
-commit f6392ae67a0e6bb5e604ecddac1e82c304c12a88
+* commit f6392ae67a0e6bb5e604ecddac1e82c304c12a88
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Mon May 9 08:20:46 2011 -0300
 
     Fix compilation error.
 
-commit 890460fb15c77756a4b6c68d73ba6504470dbd49
+* commit 890460fb15c77756a4b6c68d73ba6504470dbd49
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Mon May 9 19:38:31 2011 -0300
 
@@ -83,27 +83,27 @@ Date:   Mon May 9 19:38:31 2011 -0300
     BUG: 272841
     (cherry picked from commit 9d079999862df7b0fc4412d87035558bcbd4da5a)
 
-commit aa438b69aab4f75b6049d858a3892396241b1244
+* commit aa438b69aab4f75b6049d858a3892396241b1244
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Mon May 9 21:55:55 2011 -0300
 
     This is redundant since accept() already tests for this.
 
-commit 625a10331f6aea7b730e1f12b250c42663efbbac
+* commit 625a10331f6aea7b730e1f12b250c42663efbbac
 Author: Ilia Kats <ilia-kats@gmx.net>
 Date:   Tue May 10 20:55:53 2011 +0200
 
     fix not inserting SSID in wirelesswidget if coming from scanwidget:details
     (cherry picked from commit 30ae7f9bf0a43ad468ecbd3ac82214dcedbb5112)
 
-commit 599ff24cecc5cc82e722e4f998c9762529de977b
+M commit 599ff24cecc5cc82e722e4f998c9762529de977b
 Merge: aa438b6 625a103
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Tue May 10 16:15:33 2011 -0300
 
     Merge branch 'nm09' of git://anongit.kde.org/networkmanagement into nm09
 
-commit bdcbd95b5ea9f388bbfdcd53b8c9077016a231ad
+* commit bdcbd95b5ea9f388bbfdcd53b8c9077016a231ad
 Author: Ilia Kats <ilia-kats@gmx.net>
 Date:   Tue May 10 21:30:43 2011 +0200
 
@@ -113,7 +113,7 @@ Date:   Tue May 10 21:30:43 2011 +0200
     BUG: 157384
     (cherry picked from commit 3b5f1db3beddaa33492e26a8fdce302313b5a4c1)
 
-commit 72835edb5ab99cef5f8bbe13e7bba266f719f04c
+* commit 72835edb5ab99cef5f8bbe13e7bba266f719f04c
 Author: Ilia Kats <ilia-kats@gmx.net>
 Date:   Tue May 10 21:45:55 2011 +0200
 
@@ -122,14 +122,14 @@ Date:   Tue May 10 21:45:55 2011 +0200
     multiple networks with the same SSID, but different BSSIDs)
     (cherry picked from commit 1b8dd66d6554ca36113568921182341690cf9291)
 
-commit 030ea6439ccf5e92381d269b6b5685ed4b95b505
+* commit 030ea6439ccf5e92381d269b6b5685ed4b95b505
 Author: Ilia Kats <ilia-kats@gmx.net>
 Date:   Tue May 10 23:15:27 2011 +0200
 
     fix typo
     (cherry picked from commit d1bf2971d8c8b4be80a0120f9dede6fb21c44301)
 
-commit d915d3e92f1347364f983c49efb7bda28f98d9bf
+* commit d915d3e92f1347364f983c49efb7bda28f98d9bf
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Tue May 10 18:23:18 2011 -0300
 
@@ -139,14 +139,14 @@ Date:   Tue May 10 18:23:18 2011 -0300
     CCBUG: 269853
     (cherry picked from commit 87b2038e204e566a6ea096110e0db5a80a78a1f6)
 
-commit ae044e1f2a1adf9a395a69ffbdb851eddd00d70b
+M commit ae044e1f2a1adf9a395a69ffbdb851eddd00d70b
 Merge: d915d3e 030ea64
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Tue May 10 18:26:00 2011 -0300
 
     Merge branch 'nm09' of git://anongit.kde.org/networkmanagement into nm09
 
-commit fb3770264e8b2871331a02bed1b5ec7a6d03a5e1
+* commit fb3770264e8b2871331a02bed1b5ec7a6d03a5e1
 Author: Albert Astals Cid <aacid@kde.org>
 Date:   Tue May 10 22:48:23 2011 +0100
 
@@ -158,7 +158,7 @@ Date:   Tue May 10 22:48:23 2011 +0100
     * KUIT markers (e.g. @label) need to be in comment
     (cherry picked from commit 1e797e6189b120064cd42cd45d6f912d40113eb6)
 
-commit a2312c26cf385a9fa9bfc014bdda4124f1ff3d15
+* commit a2312c26cf385a9fa9bfc014bdda4124f1ff3d15
 Author: Ilia Kats <ilia-kats@gmx.net>
 Date:   Wed May 11 20:26:10 2011 +0200
 
@@ -172,7 +172,7 @@ Date:   Wed May 11 20:26:10 2011 +0200
       from scratch, with no AP connected
     (cherry picked from commit ba9af8b8b5fe41a718f1a0436b22075068dae360)
 
-commit 507b125cf33a6c9444bd9e651c0f51f2420f6953
+* commit 507b125cf33a6c9444bd9e651c0f51f2420f6953
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Thu May 12 15:24:06 2011 -0300
 
@@ -180,28 +180,28 @@ Date:   Thu May 12 15:24:06 2011 -0300
     networkmanagement_configshell.
     (cherry picked from commit c50299efe8cd9fadb818a645fbc836085bfd55ca)
 
-commit 81b2547fd4787a18470047db1a00b73a6b490f04
+* commit 81b2547fd4787a18470047db1a00b73a6b490f04
 Author: Ilia Kats <ilia-kats@gmx.net>
 Date:   Fri May 13 09:07:33 2011 +0200
 
     fix hidden network item showing up when VPN details are activated
     (cherry picked from commit 1497178dd2fc6b4a64235448acdbb80e59111170)
 
-commit 628530313b975e89f02352901edf24e48aa5eded
+* commit 628530313b975e89f02352901edf24e48aa5eded
 Author: Ilia Kats <ilia-kats@gmx.net>
 Date:   Fri May 13 09:25:04 2011 +0200
 
     code cleanup
     (cherry picked from commit b28f605d9bd83c00009c286770eb6b7c59f9f8a2)
 
-commit c686957629fde58b598490bc3cff7a40b433e739
+* commit c686957629fde58b598490bc3cff7a40b433e739
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Fri May 13 14:47:29 2011 -0300
 
     Avoid compilation warning.
     (cherry picked from commit 52be05b761fb119a5ae77c019c015727eba2bffe)
 
-commit d811faebf77e9e30b40f95ca424e664ff970a7d9
+X commit d811faebf77e9e30b40f95ca424e664ff970a7d9
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Sat May 14 14:54:40 2011 -0300
 
@@ -210,21 +210,21 @@ Date:   Sat May 14 14:54:40 2011 -0300
     first appeared in 0.8.1.
     (cherry picked from commit 94b31e3a068b499bcac5d0d8d7fea66609bec167)
 
-commit 814db6dc31181f6198dda6b3ebdb2e229e50f120
+X commit 814db6dc31181f6198dda6b3ebdb2e229e50f120
 Author: Lamarque V. Souza <lamarque@gmail.com>
 Date:   Sat May 14 15:01:37 2011 -0300
 
     Update cherry-picked commit d811faebf77e9e30b40f95ca424e664ff970a7d9 to
     indicate we need at least NetworkManager-0.8.996.
 
-commit 3b5ba2488602f8036daa0420e8bb7f3739c21982
+* commit 3b5ba2488602f8036daa0420e8bb7f3739c21982
 Author: Ilia Kats <ilia-kats@gmx.net>
 Date:   Mon May 16 01:10:06 2011 +0200
 
     make double-click in scanwidget act as if OK was clicked.
     (cherry picked from commit c743c759ba80468100ca005176b3164b0e390e20)
 
-commit 1cd33648c7b3369c8534cf33bdf88d68448cf452
+* commit 1cd33648c7b3369c8534cf33bdf88d68448cf452
 Author: Sebastian Kügler <sebas@kde.org>
 Date:   Mon May 16 21:49:52 2011 +0200
 
@@ -237,13 +237,13 @@ Date:   Mon May 16 21:49:58 2011 +0200
 
     Merge branch 'nm09' of git.kde.org:networkmanagement into nm09
 
-commit e1e4b1f31088b757e2018b4f8c780a5a37dd33b1
+* commit e1e4b1f31088b757e2018b4f8c780a5a37dd33b1
 Author: Ilia Kats <ilia-kats@gmx.net>
 Date:   Mon May 16 22:46:25 2011 +0200
 
     add initial support for user-scope connections in NM 0.9
 
-commit 09efbd187b5b679de432625952249fbc61cfc18e
+* commit 09efbd187b5b679de432625952249fbc61cfc18e
 Author: Sebastian Kügler <sebas@kde.org>
 Date:   Mon May 16 21:49:52 2011 +0200
 
