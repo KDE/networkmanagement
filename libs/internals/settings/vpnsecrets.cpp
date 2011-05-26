@@ -35,42 +35,6 @@ VpnSecrets::~VpnSecrets()
 {
 }
 
-#if 0
-void VpnSecrets::load()
-{
-  VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
-  setting->setServiceType(m_config->readEntry("ServiceType", ""));
-  setting->setData(stringMapFromStringList(m_config->readEntry("Data", QStringList())));
-  setting->setSecretsStorageType(stringMapFromStringList(m_config->readEntry("SecretsStorageType", QStringList())));
-  setting->setUserName(KUser().loginName());
-  // SECRET
-  if (m_storageMode == ConnectionSecrets::PlainText) {
-      // the map is flattened to a list of key,value,key,value
-      setting->setVpnSecrets(variantMapFromStringList(m_config->readEntry("VpnSecrets", QStringList())));
-    setting->setSecretsAvailable(true);
-  }
-  setting->setPluginName(m_config->readEntry("PluginName", ""));
-  setting->setInitialized();
-}
-
-void VpnSecrets::save()
-{
-  VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
-  m_config->writeEntry("ServiceType", setting->serviceType());
-  m_config->writeEntry("Data", stringMapToStringList(setting->data()));
-  m_config->writeEntry("SecretsStorageType", stringMapToStringList(setting->secretsStorageType()));
-  // SECRET
-  if (m_storageMode == ConnectionSecrets::PlainText) {
-    /*
-     * Save only secrets with storage type == "save"
-     * For compatibility treat empty storage type as "save"
-     */
-    m_config->writeEntry("VpnSecrets", variantMapToStringList(secretsToSave(setting->secretsStorageType(), setting->vpnSecrets())));
-  }
-  m_config->writeEntry("PluginName", setting->pluginName());
-}
-#endif
-
 QVariantMap VpnSecrets::variantMapFromStringList(const QStringList & list)
 {
     QVariantMap secretsMap;
