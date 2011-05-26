@@ -60,7 +60,6 @@ class GsmInterfaceConnectionItem : public ActivatableItem
         QGraphicsGridLayout* m_layout;
         Plasma::Meter* m_strengthMeter;
         Plasma::IconWidget* m_connectButton;
-        RemoteGsmInterfaceConnection* m_remote;
 };
 
 #endif //#define APPLET_GSMCONNECTIONITEM_H
