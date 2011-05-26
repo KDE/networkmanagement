@@ -1,0 +1,805 @@
+Deferred commits:
+b050c3cfc7007f6c84173d2fb3793ba8ece737dc (because conflicts with RemoteUtils, and i'm not sure why it matters that interfaces change state faster than kded module can handle)
+
+* commit 2fbfb4c83ac9c63fe5dc2050b358bc384c22f3ad
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Fri May 6 16:07:00 2011 -0300
+
+    Make "Show More" button fit in KDE HIG.
+    
+    BUG: 272492
+    (cherry picked from commit 9057a6fa8fecb3e0377aef81045a3a5ac8c7922b)
+
+* commit fcb65711b92905ab006b2f716b862091f401a6f0
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Sun May 8 15:01:17 2011 -0300
+
+    Wrap interface label in InterfaceItem class, now only the first line is
+    displayed.
+    
+    BUG: 272774
+    (cherry picked from commit 48c1c33f6713f910481d28cdf541fefcd2c5b6cb)
+
+commit b050c3cfc7007f6c84173d2fb3793ba8ece737dc
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Sun May 8 16:19:54 2011 -0300
+
+    Try a little harder to find a remote connection for a network interface.
+    
+    CCBUG: 256400
+    (cherry picked from commit 1bbf8f6b6c0569427bf2505893ad381d14228679)
+
+commit 4c943de2da5b865074cdf0e5cf1d1a5461f65fa3
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Sun May 8 20:23:34 2011 -0300
+
+    Show correct WEP key type (Passphrase/Hex) when editing/showing the
+    connection secrets. Also set Hex as default key type.
+    Thanks Rajeesh K Nambiar for pointing this problem out. I changed the
+    original review request to save the wep key type, which is the correct
+    thing to do.
+    
+    REVIEW: 101294
+    BUG: 228298
+
+commit 309d98bb6bed23ee994a5c9b262630d980b7e2a3
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 9 01:00:26 2011 -0300
+
+    Hack to prevent graphical artifact during tab transition in
+    m_interfaceDetailsWidget.
+    
+    BUG: 254155
+    (cherry picked from commit 869945fbbf8a5fca40aaa1cdb9059acd6919acc5)
+
+commit f9cba1c11c9e1528b48c322b5383f18207080700
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 9 04:14:37 2011 -0300
+
+    Well, let's see if QWeakPointer can help us get rid of those dangling
+    pointers. This is just the beginning, there will be more QWeakPointer
+    conversions in the future.
+
+commit a46290bd95cc9313217da60205d04b0cef4df215
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 9 05:24:00 2011 -0300
+
+    Do not insert wep data in non-wep connections or NetworkManager marks the
+    connection as invalid.
+
+commit f6392ae67a0e6bb5e604ecddac1e82c304c12a88
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 9 08:20:46 2011 -0300
+
+    Fix compilation error.
+
+commit 890460fb15c77756a4b6c68d73ba6504470dbd49
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 9 19:38:31 2011 -0300
+
+    Prevents crash probably caused by the changes in
+    869945fbbf8a5fca40aaa1cdb9059acd6919acc5.
+    
+    BUG: 272841
+    (cherry picked from commit 9d079999862df7b0fc4412d87035558bcbd4da5a)
+
+commit aa438b69aab4f75b6049d858a3892396241b1244
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 9 21:55:55 2011 -0300
+
+    This is redundant since accept() already tests for this.
+
+commit 625a10331f6aea7b730e1f12b250c42663efbbac
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Tue May 10 20:55:53 2011 +0200
+
+    fix not inserting SSID in wirelesswidget if coming from scanwidget:details
+    (cherry picked from commit 30ae7f9bf0a43ad468ecbd3ac82214dcedbb5112)
+
+commit 599ff24cecc5cc82e722e4f998c9762529de977b
+Merge: aa438b6 625a103
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 10 16:15:33 2011 -0300
+
+    Merge branch 'nm09' of git://anongit.kde.org/networkmanagement into nm09
+
+commit bdcbd95b5ea9f388bbfdcd53b8c9077016a231ad
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Tue May 10 21:30:43 2011 +0200
+
+    Allow to automatically set the connection's BSSID to the BSSID of the
+    AP selected in the scanwidget.
+    
+    BUG: 157384
+    (cherry picked from commit 3b5f1db3beddaa33492e26a8fdce302313b5a4c1)
+
+commit 72835edb5ab99cef5f8bbe13e7bba266f719f04c
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Tue May 10 21:45:55 2011 +0200
+
+    make checkbox "use AP's BSSID" in scanwidget unchecked by default to avoid
+    confusion with public hotspots (which are used IMHO more frequently than
+    multiple networks with the same SSID, but different BSSIDs)
+    (cherry picked from commit 1b8dd66d6554ca36113568921182341690cf9291)
+
+commit 030ea6439ccf5e92381d269b6b5685ed4b95b505
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Tue May 10 23:15:27 2011 +0200
+
+    fix typo
+    (cherry picked from commit d1bf2971d8c8b4be80a0120f9dede6fb21c44301)
+
+commit d915d3e92f1347364f983c49efb7bda28f98d9bf
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 10 18:23:18 2011 -0300
+
+    Change the launch of Mobile Connection Wizard into a notification.
+    
+    BUG: 272942
+    CCBUG: 269853
+    (cherry picked from commit 87b2038e204e566a6ea096110e0db5a80a78a1f6)
+
+commit ae044e1f2a1adf9a395a69ffbdb851eddd00d70b
+Merge: d915d3e 030ea64
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 10 18:26:00 2011 -0300
+
+    Merge branch 'nm09' of git://anongit.kde.org/networkmanagement into nm09
+
+commit fb3770264e8b2871331a02bed1b5ec7a6d03a5e1
+Author: Albert Astals Cid <aacid@kde.org>
+Date:   Tue May 10 22:48:23 2011 +0100
+
+    Convert these extracomment to comment
+    
+    Because:
+    * We have a bug in our scripts that makes extracomment not work (will try to fix this asap)
+    * Makes sense to be a comment since we want it to be a disambiguation text
+    * KUIT markers (e.g. @label) need to be in comment
+    (cherry picked from commit 1e797e6189b120064cd42cd45d6f912d40113eb6)
+
+commit a2312c26cf385a9fa9bfc014bdda4124f1ff3d15
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Wed May 11 20:26:10 2011 +0200
+
+    tweak the "copy current AP's MAC to BSSID" function
+    
+    - only use the network interface the connection is restricted to
+    - only use the currently connected AP if the AP's SSID is the same as the
+      SSID in the input field, otherwise search the environment for a network
+      with this SSID and use it's BSSID
+    - above also enables the use of this function if creating a wireless connection
+      from scratch, with no AP connected
+    (cherry picked from commit ba9af8b8b5fe41a718f1a0436b22075068dae360)
+
+commit 507b125cf33a6c9444bd9e651c0f51f2420f6953
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Thu May 12 15:24:06 2011 -0300
+
+    Fix UUID check for DUN and NAP services in
+    networkmanagement_configshell.
+    (cherry picked from commit c50299efe8cd9fadb818a645fbc836085bfd55ca)
+
+commit 81b2547fd4787a18470047db1a00b73a6b490f04
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Fri May 13 09:07:33 2011 +0200
+
+    fix hidden network item showing up when VPN details are activated
+    (cherry picked from commit 1497178dd2fc6b4a64235448acdbb80e59111170)
+
+commit 628530313b975e89f02352901edf24e48aa5eded
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Fri May 13 09:25:04 2011 +0200
+
+    code cleanup
+    (cherry picked from commit b28f605d9bd83c00009c286770eb6b7c59f9f8a2)
+
+commit c686957629fde58b598490bc3cff7a40b433e739
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Fri May 13 14:47:29 2011 -0300
+
+    Avoid compilation warning.
+    (cherry picked from commit 52be05b761fb119a5ae77c019c015727eba2bffe)
+
+commit d811faebf77e9e30b40f95ca424e664ff970a7d9
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Sat May 14 14:54:40 2011 -0300
+
+    Update main CMakeLists.txt file to indicate that now we need at least
+    NetworkManager-0.8.1. That is because of the IPv6 implementation, which
+    first appeared in 0.8.1.
+    (cherry picked from commit 94b31e3a068b499bcac5d0d8d7fea66609bec167)
+
+commit 814db6dc31181f6198dda6b3ebdb2e229e50f120
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Sat May 14 15:01:37 2011 -0300
+
+    Update cherry-picked commit d811faebf77e9e30b40f95ca424e664ff970a7d9 to
+    indicate we need at least NetworkManager-0.8.996.
+
+commit 3b5ba2488602f8036daa0420e8bb7f3739c21982
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Mon May 16 01:10:06 2011 +0200
+
+    make double-click in scanwidget act as if OK was clicked.
+    (cherry picked from commit c743c759ba80468100ca005176b3164b0e390e20)
+
+commit 1cd33648c7b3369c8534cf33bdf88d68448cf452
+Author: Sebastian Kügler <sebas@kde.org>
+Date:   Mon May 16 21:49:52 2011 +0200
+
+    small copyright cleanup that was rotting on my disk
+
+commit 485d6b038679d97359bb4aa61af16f4e1b6ddfb5
+Merge: 1cd3364 3b5ba24
+Author: Sebastian Kügler <sebas@kde.org>
+Date:   Mon May 16 21:49:58 2011 +0200
+
+    Merge branch 'nm09' of git.kde.org:networkmanagement into nm09
+
+commit e1e4b1f31088b757e2018b4f8c780a5a37dd33b1
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Mon May 16 22:46:25 2011 +0200
+
+    add initial support for user-scope connections in NM 0.9
+
+commit 09efbd187b5b679de432625952249fbc61cfc18e
+Author: Sebastian Kügler <sebas@kde.org>
+Date:   Mon May 16 21:49:52 2011 +0200
+
+    small copyright cleanup that was rotting on my disk
+
+commit e91fd5cba1d7d315be79a250fc18cf18e427ede2
+Merge: 09efbd1 485d6b0
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Mon May 16 22:48:57 2011 +0200
+
+    Merge branch 'nm09' of git://anongit.kde.org/networkmanagement into nm09
+
+commit d9e214ce17ed2316dd2f5ceaaf282b9fd3430555
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 17 01:05:13 2011 -0300
+
+    1. Changes to make Plasma NM work with NetworkManager-0.8.999. I am able
+    to connect to my WPA wifi connection so I think it mostly works, so I am
+    commiting these changes.
+    
+    2. #ifdef COMPILE_MODEM_MANAGER_SUPPORT and NM_0_8 removed.
+    
+    3. User scope code from NM-0.8 support still needs to be removed.
+    
+    4. User connections are ignored, so you will have to recreate them all
+    from scratch. If you prefer you can convert them to system connection
+    using Plasma NM for NM-0.8 before installing this version.
+    
+    5. Expect some crashes when using this code, sometimes even
+    NetworkManager crashes when I logout. Restart NM it that happens.
+    
+    6. Thinks still needing to be done: Improve support for Pppoe (Pots in
+    NM-0.9 terminology), Cdma and IPv6. Implement the new interface types:
+    LTE, Wimax and OlpcMesh. More tests, a lot of tests and bugfixing.
+
+commit cf238f67421a5ac411df012b4fc05b1b5f82ba12
+Author: Lukas Tinkl <lukas@kde.org>
+Date:   Tue May 17 18:17:36 2011 +0200
+
+    make it link
+
+commit c2c38a896382a463d7055ed1a265b3bed880ea8f
+Author: Lukas Tinkl <lukas@kde.org>
+Date:   Tue May 17 18:56:11 2011 +0200
+
+    get rid of org.freedesktop.NetworkManager.Settings.Connection.Secrets which doesn't exist
+    in NM 0.9 anyway, fold GetSecrets back into org.freedesktop.NetworkManager.Settings.Connection
+    where it belongs
+    (in preparation for the SecretAgent)
+    
+    Now the Connection editor says "No secret agent available" instead of the previously reported
+    missing DBUS method
+
+commit b8966589f5611e069ebec74cc600cdc7157475a3
+Author: Lukas Tinkl <lukas@kde.org>
+Date:   Tue May 17 20:13:03 2011 +0200
+
+    don't use the Compat namespace
+    (and for a second I was looking for a brown paper bag ;)
+    
+    ... not that it makes the VPN connections work but it's a start
+
+commit 2fe16f48a9c9a022cc5ced19d33af02840db6ece
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 17 17:34:17 2011 -0300
+
+    Try to adjust size automatically when needed.
+    
+    BUG: 266268
+
+commit 38a0a2603f7bb8c15b5dd3e0492cfd5552a5dd6d
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Tue May 17 22:31:39 2011 +0200
+
+    add initial support for NM 0.9 secrets flags.
+    
+    Only system connections are now set to save secrets in NM, secrets with
+    user connections don't work as of yet.
+    TODO: user secrets agent
+    Tested with WPA-PSK and PPPOE. 802-1x doesn't work, since all kDebug output
+    of generated maps shows no anomalies, I am assuming this is a bug in NM
+    0.8.999
+    This also contains cleanup of NM-DBus code (using defines from NM includes
+    instead of hardcoded values now)
+
+commit fd0916e98e163e8c4aa29496dbdc0dacca6550f7
+Merge: 2fe16f4 38a0a26
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 17 17:37:59 2011 -0300
+
+    Merge branch 'nm09' of git://anongit.kde.org/networkmanagement into nm09
+
+commit df7f8d89dd112eacdd48071b39b028b3b0d814b9
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 17 17:47:31 2011 -0300
+
+    Remove duplicated method which is breaking compilation.
+
+commit 31d17d922769f76c19106436cdbe8ddea5ce53f1
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 17 19:09:38 2011 -0300
+
+    Rename Solid::Control::Ifaces::NetworkManagerNm09 to
+    Solid::Control::Ifaces::NetworkManager so that
+    Solid::Networking::status()
+    in kdelibs works.
+
+commit 7d1ccbc896160bed35546f17feccf378962a49b2
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 17 22:55:46 2011 -0300
+
+    Change networkmanagement_configshell to save connections with system
+    scope instead of user scope.
+
+commit 64f6ebab66cd9cf3da4b340c726eacd7f44ca0f8
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 17 23:47:36 2011 -0300
+
+    Removing old code.
+
+commit 9c91444e6d4774fa358ea36ee433cbffd0178c22
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Wed May 18 00:16:42 2011 -0300
+
+    Adding missing files from commit
+    7d1ccbc896160bed35546f17feccf378962a49b2.
+
+commit 163869fec9fc31fb1bb9e32e098a74c111feccce
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Wed May 18 00:39:43 2011 -0300
+
+    Fix creating bluetooth connections in networkmanagement_configshell.
+
+commit 03ee30332b8817fabc3e540db95a1255b35de45f
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Wed May 18 01:23:40 2011 -0300
+
+    Fix VPN connections creation in kcm module. VPN activation still does
+    not work because we still need to implement the authentication agent to
+    store the secrets.
+
+commit 802e0ab66c4d59a82527ea54b20f3330ad64739c
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Wed May 18 02:52:21 2011 -0300
+
+    Some small fixes.
+
+commit a2e0e444f8d0f2f95ef472bcd82e21f3f4ed0de1
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Wed May 18 03:28:52 2011 -0300
+
+    NM refuses to activate the old user connections, so there is not use to
+    list them in rightWidget.
+
+commit 244c13b32d7dc272c1f95f3ac9782402a609934c
+Author: Lukas Tinkl <lukas@kde.org>
+Date:   Wed May 18 12:16:54 2011 +0200
+
+    don't redefine global enums/values from NetworkManager.h
+
+commit c972647596d409f374ff68e095d47bcf405f5576
+Merge: a2e0e44 244c13b
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Wed May 18 10:33:26 2011 -0300
+
+    Merge branch 'nm09' of git://anongit.kde.org/networkmanagement into nm09
+
+commit a300c577c36189cff0fc9088567c49cf187623fa
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Wed May 18 18:45:05 2011 -0300
+
+    We do not need to use Sleep anymore. Sleep was the method used in
+    NM-0.7, from NM-0.8 and beyond we should use only Enable.
+
+commit 76478cce51a2f151ac6c62099caab354b4107053
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Wed May 18 18:46:46 2011 -0300
+
+    Revert "NM refuses to activate the old user connections, so there is not use to"
+    
+    Actually this commit breaks all non-autoconnect activations. We need
+    to think more about how to prevent user connections appearing in the
+    right widget.
+    
+    This reverts commit a2e0e444f8d0f2f95ef472bcd82e21f3f4ed0de1.
+
+commit 3d54486b131d708cc91977979882976346b8a55a
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Wed May 18 22:45:10 2011 -0300
+
+    Another try to prevent (non-working) user connections from appearing.
+
+commit ec660e8d99e6acc91bf646c18511c339c3a1edad
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Thu May 19 13:11:25 2011 -0300
+
+    NetworkingEnabled property is always available in NM-0.9. The removed
+    code was added so that the backend could handle both NM-0.7 and NM-0.8
+    at the same time. Only NM-0.7 does not provide NetworkingEnabled
+    property.
+
+commit fbfbf3a4833b0ae5f621ad3601c05644a8812ee8
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Thu May 19 13:14:00 2011 -0300
+
+    Clears network interfaces cache if NM does away, also emits the
+    networkInterfaceRemoved signals. It is possible NM has
+    just crashed and the signals have not been emitted. When NM goes back we
+    could end up with invalid entries in our cache or in somebody else's
+    cache (read Plasma NM).
+
+commit 32794f4f1b4bdc5f9177ed5847af3364221f8609
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Thu May 19 18:01:16 2011 -0300
+
+    This is not necessary with NM-0.9.
+
+commit 3193a7c523fd019fd1133ea55665392a17fa47a3
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Fri May 20 01:20:26 2011 -0300
+
+    Removing unused code not needed with NM-0.9.
+
+commit 5386cf9f12949245147acb14effcaa478ddd5121
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Fri May 20 16:31:24 2011 -0300
+
+    Fix typo.
+
+commit 8c9d69c3ea7e55a19fd78ef920e3e07dee1f0f70
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Thu May 19 00:45:57 2011 +0200
+
+    first implementation of a user secret agent.
+    
+    However, NM's support for user secret agents appears to be abysmal.
+    Secrets are not being saved when the connection is created, so
+    you have to create the connection, then edit it and type in your
+    passwords again to get them saved, as NM doesn't call the agent's
+    SaveSecrets method on connection creation, but only on edits. In
+    addition, connections with agent stored secrets can not be activated
+    (not even from nm-applet - yes, kded was running with the secret
+    agent at the same time), GetSecrets is not being called. Simply
+    nothing happens (tested with Wlan WPA2-PSK). NM crashes when trying
+    to create a connection which uses 802-1x-TLS, while nm-applet doesn't
+    even allow to do that, as no private key file can be selected
+    (gave it just a quick try, maybe I missed something).
+    
+    This fixes the issue that insecure Wlan connections could not be edited.
+    This fixes storage of 802-1x secrets systemwide.
+    
+    TODO: test it with KWallet
+    TODO: test GSM, CDMA and PPOE
+    TODO: major code cleanup (remove all settingpersistence etc)
+    TODO: someone should talk to the NetworkManager guys about secret agent support
+    	(event nm-applet stores everything in NM's systemwide storage)
+
+commit 1eb5d94aa29b6d0c926b586a9e0f47ab9cb46b8e
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Sat May 21 18:10:09 2011 +0200
+
+    remove useless includes
+
+commit 0d402243c1bf5412a864789569e117d96cf4486e
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Sat May 21 20:58:47 2011 +0200
+
+    watch for NM crashes, re-register secret agent when NM comes up
+
+commit d4f70789cc4a2f8cbe4379255969acea76c655c0
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Sat May 21 21:55:09 2011 +0200
+
+    move paths definitions to namespace Knm
+
+commit c4b66836d74f1aef39a82152418b7a7828316fb6
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Sun May 22 01:44:23 2011 +0200
+
+    implement CancelGetSecrets, prevent compilation warnings
+
+commit 3ab40a9276e716406c5e141c06b27a7718c564a2
+Merge: 5386cf9 c4b6683
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Sat May 21 21:04:57 2011 -0300
+
+    Merge branch 'nm09' of git://anongit.kde.org/networkmanagement into nm09
+
+commit 302b8b16f15aada683d64602b923cc54e11f2816
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Mon May 23 01:12:10 2011 +0200
+
+    Code cleanup:
+    
+    remove all *persistence, merge nmdbussettingsservice into
+    nmdbussettingsconnectionprovider and remove nmdbussettingsservice.
+    
+    This fixes the issue that connections could not be activated from
+    Plasma NM. WARNING: if kded is started after plasma/restarted while
+    plasma is running, plasma will crash when activating a connection.
+    kded has to be started before plasma.
+
+commit 0a0524235285b7747d62cf40cd32a86ba5f82ccc
+Merge: 3ab40a9 302b8b1
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Sun May 22 20:57:12 2011 -0300
+
+    Merge branch 'nm09' of git://anongit.kde.org/networkmanagement into nm09
+
+commit 2f23b0f1d16a2b63a13215cbe903f368e442c90a
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Sun May 22 22:36:36 2011 -0300
+
+    1. Use local variable for short lived classes instead of alocating them.
+    
+    2. Add a check for m_secretsProvider.
+    
+    3. Fix a memory corruption when using m_connectionsToWrite.takeFirst()
+    without checking if m_connectionsToWrite is empty.
+
+commit e428bf150989269ba0a7f9ab050cc76d6e1f6f2c
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 23 00:50:43 2011 -0300
+
+    Fix delayed DBus reply logic (I guess), but GetSecrets still does not
+    get the secrets.
+
+commit 93322e13815a92cf3357f38eb152cf3f456629f7
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 23 12:15:44 2011 -0300
+
+    Another hack to try to prevent dangling pointers. When I have more time
+    I will try to make things in the correct way, for now this will just
+    make the crashes much less likely to happen.
+    
+    CCBUG: 273955
+
+commit 61a1c70325603a7c1984af36a88d6d50f1455a3e
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Mon May 23 18:36:25 2011 +0200
+
+    Fix dangling pointer, causing crash in plasma when restarting kded, then
+    activating a connection
+
+commit 5b99518e2dcd2fe0c7ecc1d4ea6e5fc3ac40f799
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Mon May 23 19:42:34 2011 +0200
+
+    Further cleanup in DBus code
+
+commit 29382494fb910dcf323803eddb3bc756d87afc27
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Mon May 23 19:51:35 2011 +0200
+
+    Revert "Fix delayed DBus reply logic (I guess), but GetSecrets still does not"
+    
+    This reverts commit e428bf150989269ba0a7f9ab050cc76d6e1f6f2c.
+    
+    The whole SecretStorage/SecretsProvider class works asynchronously, so this breaks
+    more than it fixes (editing of connections for example, if you edit the connection
+    once the secrets are saved, on second edit they are retrieved - successfully, tested
+    with plain text storage). Besides, delayed reply logic was working in
+    backends/NetworkManager/busconnection.cpp, so it is highly unlikely that this is the
+    problem. Also, here the return value is the argument of the method, I don't think
+    that's what we want.
+
+commit 182e7040c1357611d57c45fe225926a26e3181aa
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Mon May 23 22:23:02 2011 +0200
+
+    fix kwallet
+    
+    CCMAIL: lamarque@gmail.com
+
+commit f006a1756a5d418a0c4540e908931cdf920a147f
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 23 19:04:37 2011 -0300
+
+    Fix compiling errors.
+
+commit d248d36f79ec81bdbfe11b6d7bcf4b5f9c155004
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 23 21:26:09 2011 -0300
+
+    In case we miss Hardware{Wireless,Wwan}EnableChanged signals.
+
+commit 964bcc3f944db88396fba0145af6b1ca3e52cd48
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 23 21:50:27 2011 -0300
+
+    Warns if kwallet was opened for write and nothing was written.
+
+commit a30d70bbc6ece74c31d674f458c5eb6da491525e
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 23 21:54:08 2011 -0300
+
+    Oops, fix for commit d248d36f79ec81bdbfe11b6d7bcf4b5f9c155004.
+
+commit 7fe9488dc9be27c211fde31c22de9a5685e8cef9
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 23 22:50:38 2011 -0300
+
+    Fix memory leak.
+
+commit e80345bd6926a0ba6e31fe7d4e4a1500cb17512b
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 23 23:21:42 2011 -0300
+
+    Add warning.
+
+commit b25b4a1b70c5269e77371dab091280d44b8510d4
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Mon May 23 23:24:01 2011 -0300
+
+    More warnings.
+
+commit f112886575a9c1fc8986f098db9ef84a6fb2e98e
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Tue May 24 00:56:15 2011 +0200
+
+    minor fixes to secret agent and kwallet support
+
+commit 4cb925241bb4ed4a439cf5a42714937bef7d3dea
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Wed May 25 01:10:01 2011 +0200
+
+    don't use a pointer to a connection in the list when editing a connection,
+    but make a copy of the connection instead. That way, if the edit fails
+    (the kauth dialog gets canceled, for example), the manageconnectionwidget
+    will still have the current connection settings, not the new ones that didn't
+    make it to NM. The connection list is updated by nmdbussettingsconnectionprovider
+    anyway.
+    
+    This implements copy constructors for Knm::Connection, Knm::Setting and
+    subclasses, Knm::Secrets and subclasses.
+    This adapts the DBus interface to NM 0.9 (the updated() signal does
+    no longer contain the connection map)
+    Some minor fixes to KAuth in nmdbussettingsconnectionprovider
+
+commit 7959f3f2b71f1a1d78f73960dda061c8fa9f84d0
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Wed May 25 01:27:21 2011 +0200
+
+    make new connections user-scope by default
+
+commit 4ac1e35660adec90df41a98e2484d47f0e6f9aa2
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Wed May 25 02:04:45 2011 +0200
+
+    Implement MAC spoofing
+
+commit 36f803df704de97391323c19af38bf598af2e164
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 24 21:13:11 2011 -0300
+
+    Some small changes, no real changes added.
+
+commit 2419336f75fbfaff377cd98c7fcd289ec8b09a7f
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 24 21:36:38 2011 -0300
+
+    Hack to force NM to call SaveSecrets on connection's creation.
+
+commit 48521b69ea6383eac0fff6aeeca521708718120d
+Merge: 2419336 4ac1e35
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Tue May 24 21:37:04 2011 -0300
+
+    Merge branch 'nm09' of git://anongit.kde.org/networkmanagement into nm09
+
+commit d7f8257851f8426f589fdfae21614c212d3e7cd1
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Wed May 25 00:43:55 2011 -0300
+
+    Get secrets at first try when editing.
+    
+    The problem was that NMDBusSettingsConnectionProvider maintains two list
+    of connections, one passed to the constructor and another created
+    in a private class (d class). When
+    NMDBusSettingsConnectionProvider::onConnectionSecretsArrived gets the
+    secrets it was updating only the connection in the d class class but
+    manageconnectionwidget uses the other connection list.
+    
+    To make things simpler I added the secrets to the signal
+    manageconnectionwidget already listen to.
+    
+    Maybe in the future we could use only one list of connections instead of
+    two.
+
+commit b9d088f5e0c0ff8485e1ce78fce1fcf962cb65b7
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Wed May 25 02:06:22 2011 -0300
+
+    Fix two crashes when editing IPv4 config.
+
+commit 374943fd59662aee0d42b6bd5a1cd80373c206cb
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Wed May 25 13:33:33 2011 +0200
+
+    fix switching from wpa2-psk to insecure and back
+
+commit 4b2b8efae4bc9fabdaf0d7e8beb6585453a272d8
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Wed May 25 13:39:01 2011 +0200
+
+    delete secrets from storage if they are no longer needed
+
+commit 398451cace79d180bc208c200fbc670e9e5ca969
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Wed May 25 14:01:46 2011 +0200
+
+    fix Leap not being correctly set in connection editor
+
+commit 9c4d7b49b691b6ba67b4cca0981bdabc847b675d
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Wed May 25 14:34:00 2011 +0200
+
+    Prevent crashes when closing kcmshell too fast after closing the connection
+    editor. Hacky, but seems to be the best option so far.
+    
+    BUG: 273894
+
+commit 869e3d52a29b9d884c598dfc556b43f27250125b
+Author: Ilia Kats <ilia-kats@gmx.net>
+Date:   Wed May 25 17:45:48 2011 +0200
+
+    MAC spoofing for wireless
+
+commit c1d1e80468a50dc76b15417950c1e53044f92037
+Author: Lukas Tinkl <lukas@kde.org>
+Date:   Wed May 25 18:03:56 2011 +0200
+
+    fix the WEP widget
+    
+    do not show/hide the key/pass labels (leads to broken layout),
+    reuse one label instead
+
+commit f840553a4a2a828a3d762800e727a5fbd1b3ad44
+Author: Lukas Tinkl <lukas@kde.org>
+Date:   Wed May 25 22:46:39 2011 +0200
+
+    fix loading/saving of VPN connections
+    
+    still can't be activated due to non-functional SecretAgent but we're
+    on the good path :)
+    
+    If you run nm-applet along with nm-plasma and try to activate a VPN connection
+    from our applet, nm-applet correctly asks for the passwords using its builtin
+    SecretAgent
+
+commit 228cc9162d8c59ce441cf45edd6e0c51838c64aa
+Author: Lamarque V. Souza <lamarque@gmail.com>
+Date:   Thu May 26 02:57:14 2011 -0300
+
+    Test the RemoteGsmInterfaceConnection object before using it.
+    
+    BUG: 274161
+    (cherry picked from commit 911025d81fdfbe09b64705e94e5411f521c38e3e)
+
