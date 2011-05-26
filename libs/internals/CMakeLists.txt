@@ -49,6 +49,7 @@ set(knminternals_SRCS
    settings/serial.cpp
 
    settings/vpn.cpp
+   settings/vpnsecrets.cpp
 
    settings/bluetooth.cpp
 

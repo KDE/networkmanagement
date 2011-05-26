@@ -297,12 +297,13 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
 
 void NMDBusSettingsConnectionProvider::interfaceConnectionDeactivated()
 {
-    // Solid::Control::NetworkInterface's disconnectInterface() is only available from KDE 4.7 -> use own proxy class
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
-    OrgFreedesktopNetworkManagerDeviceInterface devIface(QLatin1String(NM_DBUS_SERVICE), ic->deviceUni(), QDBusConnection::systemBus());
-
-    // Now disconnect the interface (Disconnect() prevents an immediate auto-activation)
-    devIface.Disconnect();
+    Solid::Control::NetworkInterfaceNm09 *iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(ic->deviceUni());
+    if (iface) {
+        iface->disconnectInterface();
+    } else { // VPN connections do have NetworkInterface objects.
+        Solid::Control::NetworkManagerNm09::deactivateConnection(ic->property("NMDBusActiveConnectionObject").toString());
+    }
 }
 
 void NMDBusSettingsConnectionProvider::handleUpdate(Knm::Activatable *)

@@ -2,6 +2,7 @@
 // All changes you do to this file will be lost.
 
 #include "vpn.h"
+#include "vpnsecrets.h"
 
 QDBusArgument &operator<<(QDBusArgument &argument, const QStringMap & mydict)
 {
@@ -42,12 +43,14 @@ VpnSetting::VpnSetting() : Setting(Setting::Vpn)
 {
   qDBusRegisterMetaType<QStringMap>();
 
+  m_secretsObject = new VpnSecrets(this);
   mSecretsStorageType = QStringMap();
 }
 
 VpnSetting::VpnSetting(VpnSetting *setting) : Setting(setting)
 {
     qDBusRegisterMetaType<QStringMap>();
+    m_secretsObject = new VpnSecrets(static_cast<VpnSecrets*>(setting->getSecretsObject()), this);
 
     setServiceType(setting->serviceType());
     setData(setting->data());
