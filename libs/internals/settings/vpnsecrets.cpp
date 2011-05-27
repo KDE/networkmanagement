@@ -52,7 +52,7 @@ QStringList VpnSecrets::variantMapToStringList(const QVariantMap & map)
     QMapIterator<QString,QVariant> i(map);
     while (i.hasNext()) {
         i.next();
-          rawSecrets << i.key() << i.value().toString();
+        rawSecrets << i.key() << i.value().toString();
     }
     return rawSecrets;
 }
@@ -74,38 +74,38 @@ QStringList VpnSecrets::stringMapToStringList(const QStringMap & map)
     QStringMapIterator i(map);
     while (i.hasNext()) {
         i.next();
-          rawSecrets << i.key() << i.value();
+        rawSecrets << i.key() << i.value();
     }
     return rawSecrets;
 }
 
 QMap<QString,QString> VpnSecrets::secretsToMap() const
 {
-  QMap<QString,QString> map;
-  map.insert(QLatin1String("VpnSecrets"), variantMapToStringList(secretsToSave(m_setting->secretsStorageType(), m_setting->vpnSecrets())).join(QLatin1String("%SEP%")));
-  return map;
+    QMap<QString,QString> map;
+    map.insert(QLatin1String("VpnSecrets"), variantMapToStringList(secretsToSave(m_setting->secretsStorageType(), m_setting->vpnSecrets())).join(QLatin1String("%SEP%")));
+    return map;
 }
 
 void VpnSecrets::secretsFromMap(QMap<QString,QString> secrets) const
 {
-//  if (m_storageMode == ConnectionSecrets::Secure) {
+    //  if (m_storageMode == ConnectionSecrets::Secure) {
     m_setting->setVpnSecrets(stringMapFromStringList(secrets.value("VpnSecrets").split("%SEP%")));
     m_setting->setSecretsAvailable(true);
-//  }
+    //  }
 }
 
 void VpnSecrets::secretsToConfig(QMap<QString,QString> secrets, KSharedConfig::Ptr configptr) const
 {
-  KConfigGroup * config = new KConfigGroup(configptr, Setting::typeAsString(Setting::Gsm));
-  // VPN does not have secret flag, assuming it is always AgentOwned.
-  config->writeEntry("VpnSecrets", secrets.value("VpnSecrets"));
-  delete config;
+    KConfigGroup * config = new KConfigGroup(configptr, Setting::typeAsString(Setting::Vpn));
+    // VPN does not have secret flag, assuming it is always AgentOwned.
+    config->writeEntry("VpnSecrets", secrets.value("VpnSecrets"));
+    delete config;
 }
 
 QMap<QString,QString> VpnSecrets::secretsFromConfig(KSharedConfig::Ptr configptr)
 {
     QMap<QString,QString> map;
-    KConfigGroup * config = new KConfigGroup(configptr, Setting::typeAsString(Setting::Gsm));
+    KConfigGroup * config = new KConfigGroup(configptr, Setting::typeAsString(Setting::Vpn));
     if (config->exists()) {
         map.insert(QLatin1String("VpnSecrets"), config->readEntry("VpnSecrets", ""));
     }
@@ -121,12 +121,12 @@ QStringList VpnSecrets::needSecrets()
 
 QVariantMap VpnSecrets::secretsToSave(const QStringMap & type, const QStringMap & secrets)
 {
-  QVariantMap toSave;
-  QMapIterator<QString,QString> i(secrets);
-  while (i.hasNext()) {
-      i.next();
-      if (type[i.key()].isNull() || type[i.key()] == QLatin1String(NM_VPN_PW_TYPE_SAVE))
-          toSave.insert( i.key(), i.value() );
-  }
-  return toSave;
+    QVariantMap toSave;
+    QMapIterator<QString,QString> i(secrets);
+    while (i.hasNext()) {
+        i.next();
+        if (type[i.key()].isNull() || type[i.key()] == QLatin1String(NM_VPN_PW_TYPE_SAVE))
+            toSave.insert( i.key(), i.value() );
+    }
+    return toSave;
 }
