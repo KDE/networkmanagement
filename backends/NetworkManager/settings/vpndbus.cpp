@@ -2,7 +2,6 @@
 // All changes you do to this file will be lost.
 
 #include "vpndbus.h"
-
 #include "vpn.h"
 
 QDBusArgument &operator<<(QDBusArgument &argument, const QStringMap & mydict)

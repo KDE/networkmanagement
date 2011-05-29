@@ -57,7 +57,30 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     */
     QStringMap data() const
     {
-      return mData;
+      QStringMap r = mData;
+      // Add secrets flags.
+      foreach (QString key, mSecretsStorageType.keys()) {
+          r.insert(key + "-flags", QString::number(storageTypeToSecretsType(mSecretsStorageType.value(key))));
+
+          // TODO: remove this when all vpnplugins/*/*widget.* are converted to use Settings::secretsTypes.
+          r.insert(key.replace(' ', "-").toLower() + "-type", mSecretsStorageType.value(key));
+      }
+
+      return r;
+    }
+
+    static secretsType storageTypeToSecretsType(const QString & storageType)
+    {
+      if (storageType == NM_VPN_PW_TYPE_SAVE) {
+        return None;
+      }
+      if (storageType == NM_VPN_PW_TYPE_ASK) {
+          return NotSaved;
+      }
+      if (storageType == NM_VPN_PW_TYPE_UNUSED) {
+          return NotRequired;
+      }
+      return AgentOwned;
     }
 
     /**

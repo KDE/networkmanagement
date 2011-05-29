@@ -153,8 +153,9 @@ void SecretStorage::walletOpenedForRead(bool success)
                             break;
                         }
                     }
-                    if (!settingsFound)
+                    if (!settingsFound) {
                         emit connectionRead(con, pair.first);
+                    }
                     m_settingsToRead.remove(i.key(), i.value());
                 }
             }

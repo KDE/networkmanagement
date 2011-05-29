@@ -82,22 +82,21 @@ QStringList VpnSecrets::stringMapToStringList(const QStringMap & map)
 QMap<QString,QString> VpnSecrets::secretsToMap() const
 {
     QMap<QString,QString> map;
+    // Assuming VPN secrets are always AgentOwned.
     map.insert(QLatin1String("VpnSecrets"), variantMapToStringList(secretsToSave(m_setting->secretsStorageType(), m_setting->vpnSecrets())).join(QLatin1String("%SEP%")));
     return map;
 }
 
 void VpnSecrets::secretsFromMap(QMap<QString,QString> secrets) const
 {
-    //  if (m_storageMode == ConnectionSecrets::Secure) {
     m_setting->setVpnSecrets(stringMapFromStringList(secrets.value("VpnSecrets").split("%SEP%")));
     m_setting->setSecretsAvailable(true);
-    //  }
 }
 
 void VpnSecrets::secretsToConfig(QMap<QString,QString> secrets, KSharedConfig::Ptr configptr) const
 {
     KConfigGroup * config = new KConfigGroup(configptr, Setting::typeAsString(Setting::Vpn));
-    // VPN does not have secret flag, assuming it is always AgentOwned.
+    // Assuming VPN secrets are always AgentOwned.
     config->writeEntry("VpnSecrets", secrets.value("VpnSecrets"));
     delete config;
 }
@@ -115,8 +114,9 @@ QMap<QString,QString> VpnSecrets::secretsFromConfig(KSharedConfig::Ptr configptr
 
 QStringList VpnSecrets::needSecrets()
 {
-    // TODO: implement.
-    return QStringList();
+    // VPN is a bit different from other connection types. We do not need to list the secrets we need,
+    // but this list cannot be empty or SecretStorage will not ask for the secrets.
+    return QStringList() << "VpnSecrets";
 }
 
 QVariantMap VpnSecrets::secretsToSave(const QStringMap & type, const QStringMap & secrets)

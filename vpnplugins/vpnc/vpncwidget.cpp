@@ -242,6 +242,7 @@ void VpncSettingWidget::readSecrets()
      */
     userType = secretsType.value(NM_VPNC_KEY_XAUTH_PASSWORD);
     if (userType.isNull()) {
+        // TODO: change this to use the new Setting::secretsType instead of NM_VPNC_KEY_XAUTH_PASSWORD_TYPE.
         userType = d->setting->data().value(NM_VPNC_KEY_XAUTH_PASSWORD_TYPE);
     }
     if (userType == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
@@ -251,6 +252,7 @@ void VpncSettingWidget::readSecrets()
 
     groupType = secretsType.value(NM_VPNC_KEY_SECRET);
     if (groupType.isNull()) {
+        // TODO: change this to use the new Setting::secretsType instead of NM_VPNC_KEY_SECRET_TYPE.
         groupType = d->setting->data().value(NM_VPNC_KEY_SECRET_TYPE);
     }
     if (groupType == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
