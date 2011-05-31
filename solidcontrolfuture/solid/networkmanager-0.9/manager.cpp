@@ -40,6 +40,7 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList &)
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
     d_ptr = new NMNetworkManagerPrivate;
     Q_D(NMNetworkManager);
+    d->version = d->iface.version();
     d->nmState = d->iface.state();
     d->isWirelessHardwareEnabled = d->iface.wirelessHardwareEnabled();
     d->isWirelessEnabled = d->iface.wirelessEnabled();
@@ -176,6 +177,12 @@ void NMNetworkManager::activateConnection(const QString & interfaceUni, const QS
     QDBusObjectPath interfacePath(interfaceUni);
     kDebug(1441) << "Activating connection" << connPath.path() << "on interface" << interfacePath.path() << "with extra" << extra_connection_parameter;
     d->iface.ActivateConnection(connPath, interfacePath, QDBusObjectPath(extra_connection_parameter));
+}
+
+QString NMNetworkManager::version() const
+{
+    Q_D(const NMNetworkManager);
+    return d->version;
 }
 
 void NMNetworkManager::deactivateConnection( const QString & activeConnectionPath )

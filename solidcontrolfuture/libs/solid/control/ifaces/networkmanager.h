@@ -56,6 +56,11 @@ namespace Ifaces
         virtual ~NetworkManager();
 
         /**
+         * Get the manager version 
+         */
+        virtual QString version() const = 0;
+
+        /**
          * Get the manager connection state
          */
         virtual Solid::Networking::Status status() const = 0;

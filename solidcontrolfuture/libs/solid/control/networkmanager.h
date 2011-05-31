@@ -52,6 +52,10 @@ namespace Control
     namespace NetworkManagerNm09
     {
         /**
+         * Get the manager version
+         */
+        SOLIDCONTROL_EXPORT QString version();
+        /**
          * Get the manager connection state
          */
         SOLIDCONTROL_EXPORT Solid::Networking::Status status();

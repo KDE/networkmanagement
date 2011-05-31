@@ -48,7 +48,8 @@ public:
     bool isWwanEnabled() const;
     bool isWwanHardwareEnabled() const;
     void activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters);
-    /* TODO: add methods addAndActivateConnection, isWimaxEnabled, isWimaxHardwareEnabled, version */
+    /* TODO: add methods addAndActivateConnection, isWimaxEnabled, isWimaxHardwareEnabled */
+    QString version() const;
     void deactivateConnection(const QString & activeConnection);
     QStringList activeConnections() const;
     Solid::Control::NetworkInterfaceNm09::Types supportedInterfaceTypes() const;

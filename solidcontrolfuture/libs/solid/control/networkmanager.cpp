@@ -159,6 +159,11 @@ void Solid::Control::NetworkManagerNm09::setWwanEnabled(bool enabled)
     SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), setWwanEnabled(enabled));
 }
 
+QString Solid::Control::NetworkManagerNm09::version()
+{
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), QString(), version());
+}
+
 Solid::Networking::Status Solid::Control::NetworkManagerNm09::status()
 {
     return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), Solid::Networking::Unknown, status());
