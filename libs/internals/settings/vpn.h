@@ -69,18 +69,20 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
       return r;
     }
 
-    static secretsType storageTypeToSecretsType(const QString & storageType)
+    static secretsTypes storageTypeToSecretsType(const QString & storageType)
     {
+      // Assuming VPN secrets are always AgentOwned.
+      secretsTypes s = AgentOwned;
       if (storageType == NM_VPN_PW_TYPE_SAVE) {
-        return None;
+        s |= None;
       }
       if (storageType == NM_VPN_PW_TYPE_ASK) {
-          return NotSaved;
+        s |= NotSaved;
       }
       if (storageType == NM_VPN_PW_TYPE_UNUSED) {
-          return NotRequired;
+        s |= NotRequired;
       }
-      return AgentOwned;
+      return s;
     }
 
     /**
