@@ -294,17 +294,36 @@ QString Wireless80211WidgetBand::textFromValue(int value) const
     return text;
 }
 
-uint Wireless80211WidgetBand::channelFromPos(int pos) const
+int Wireless80211WidgetBand::valueFromText(const QString &text) const
 {
-    QString text = QString::number(channels.at(selectedBand).at(pos),10);
-    bool ok;
-    return text.toUInt(&ok,10);
+    int channel = text.toInt();
+    int pos = posFromChannel(channel);
+    return (pos < 0) ? 0 : pos;
 }
 
-uint Wireless80211WidgetBand::posFromChannel(int channel) const
+QValidator::State Wireless80211WidgetBand::validate(QString &text, int &pos) const
+{
+    int channel = text.toInt();
+    int position = posFromChannel(channel);
+    int maxsize = QString::number(channels.at(selectedBand).last(),10).size();
+    if (position < 0 && pos < maxsize) {
+        return QValidator::Intermediate;
+    } else if (position < 0 ) {
+        return QValidator::Invalid;
+    } else {
+        return QValidator::Acceptable;
+    }
+}
+
+int Wireless80211WidgetBand::channelFromPos(int pos) const
+{
+    return channels.at(selectedBand).at(pos);
+}
+
+int Wireless80211WidgetBand::posFromChannel(int channel) const
 {
     int pos = channels.at(selectedBand).indexOf(channel);
-    return (pos < 0) ? 0 : static_cast<uint>(pos);
+    return pos;
 }
 
 void Wireless80211WidgetBand::setBand(int band)
