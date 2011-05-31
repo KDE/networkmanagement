@@ -27,15 +27,15 @@ void WiredDbus::fromMap(const QVariantMap & map)
     else if (value == "mii")
         setting->setPort(Knm::WiredSetting::EnumPort::mii);
   }
-  if (map.contains(QLatin1String(NM_SETTING_WIRED_SPEED))) {
-    QString value = map.value(QLatin1String(NM_SETTING_WIRED_SPEED)).value<QString>();
-    if (value == "half")
-        setting->setSpeed(Knm::WiredSetting::EnumDuplex::half);
-    else if (value == "full")
-        setting->setSpeed(Knm::WiredSetting::EnumDuplex::full);
-  }
   if (map.contains(QLatin1String(NM_SETTING_WIRED_DUPLEX))) {
-    setting->setDuplex(map.value(QLatin1String(NM_SETTING_WIRED_DUPLEX)).value<int>());
+    QString value = map.value(QLatin1String(NM_SETTING_WIRED_DUPLEX)).value<QString>();
+    if (value == "half")
+        setting->setDuplex(Knm::WiredSetting::EnumDuplex::half);
+    else if (value == "full")
+        setting->setDuplex(Knm::WiredSetting::EnumDuplex::full);
+  }
+  if (map.contains(QLatin1String(NM_SETTING_WIRED_SPEED))) {
+    setting->setSpeed(map.value(QLatin1String(NM_SETTING_WIRED_SPEED)).value<int>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE))) {
     setting->setAutonegotiate(map.value(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE)).value<bool>());
@@ -70,17 +70,19 @@ QVariantMap WiredDbus::toMap()
       map.insert(QLatin1String(NM_SETTING_WIRED_PORT), "mii");
       break;
   }
-  map.insert(QLatin1String(NM_SETTING_WIRED_SPEED), setting->speed());
-  switch (setting->duplex()) {
-    case Knm::WiredSetting::EnumDuplex::half:
-      map.insert(QLatin1String(NM_SETTING_WIRED_DUPLEX), "half");
-      break;
-    case Knm::WiredSetting::EnumDuplex::full:
-      map.insert(QLatin1String(NM_SETTING_WIRED_DUPLEX), "full");
-      break;
-  }
-  map.insert(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE), setting->autonegotiate());
 
+  map.insert(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE), setting->autonegotiate());
+  if (!setting->autonegotiate()) {
+    map.insert(QLatin1String(NM_SETTING_WIRED_SPEED), setting->speed());
+    switch (setting->duplex()) {
+      case Knm::WiredSetting::EnumDuplex::half:
+        map.insert(QLatin1String(NM_SETTING_WIRED_DUPLEX), "half");
+        break;
+      case Knm::WiredSetting::EnumDuplex::full:
+        map.insert(QLatin1String(NM_SETTING_WIRED_DUPLEX), "full");
+        break;
+    }
+  }
   if (!setting->macaddress().isEmpty()) {
     map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), setting->macaddress());
   }

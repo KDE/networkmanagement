@@ -43,6 +43,7 @@ class WiredWidgetPrivate : public SettingWidgetPrivate
 public:
     Ui_Settings8023Ethernet ui;
     Knm::WiredSetting * setting;
+    enum DuplexIndex {Half = 0, Full = 1};
 };
 
 WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
@@ -81,6 +82,18 @@ void WiredWidget::readConfig()
     if (d->setting->mtu()) {
         d->ui.mtu->setValue(d->setting->mtu());
     }
+    d->ui.speed->setValue(d->setting->speed());
+    switch (d->setting->duplex())
+    {
+        case Knm::WiredSetting::EnumDuplex::half:
+            d->ui.cmbDuplex->setCurrentIndex(WiredWidgetPrivate::Half);
+            break;
+        case Knm::WiredSetting::EnumDuplex::full:
+        default:
+            d->ui.cmbDuplex->setCurrentIndex(WiredWidgetPrivate::Full);
+            break;
+    }
+    d->ui.chkAutoNegotiate->setChecked(d->setting->autonegotiate());
 }
 
 void WiredWidget::writeConfig()
@@ -98,6 +111,18 @@ void WiredWidget::writeConfig()
     } else {
         d->setting->setClonedmacaddress(QByteArray());
     }
+    d->setting->setSpeed(d->ui.speed->value());
+    switch (d->ui.cmbDuplex->currentIndex())
+    {
+        case WiredWidgetPrivate::Half:
+            d->setting->setDuplex(Knm::WiredSetting::EnumDuplex::half);
+            break;
+        case WiredWidgetPrivate::Full:
+        default:
+            d->setting->setDuplex(Knm::WiredSetting::EnumDuplex::full);
+            break;
+    }
+    d->setting->setAutonegotiate(d->ui.chkAutoNegotiate->isChecked());
 }
 
 void WiredWidget::validate()
