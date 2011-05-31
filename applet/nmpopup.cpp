@@ -301,6 +301,18 @@ void NMPopup::readConfig()
     foreach(InterfaceItem * i, m_interfaces) {
         i->setNameDisplayMode(InterfaceItem::InterfaceName);
     }
+
+    QDBusInterface nmIface("org.freedesktop.NetworkManager", "/org/freedesktop/NetworkManager",
+                           "org.freedesktop.NetworkManager", QDBusConnection::systemBus());
+    QString nmVersion = qvariant_cast<QString>(nmIface.property("Version"));
+    if (!nmVersion.isEmpty()) {
+        QStringList v = nmVersion.split('.');
+        if (v.size() > 2 && v[2].toInt() > 10) {
+            Plasma::Label * warning = new Plasma::Label(this);
+            warning->setText(i18nc("Warning about wrong NetworkManager version", "We need NetworkManager version < 0.8.10 to work, found %1", nmVersion));
+            m_interfaceLayout->addItem(warning);
+        }
+    }
 }
 
 void NMPopup::saveConfig()
