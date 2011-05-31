@@ -31,7 +31,7 @@ include_directories (${KDE4_INCLUDES})
 
 #include(ConfigureChecks.cmake)
 
-macro_optional_find_package(NetworkManager)
+find_package(NetworkManager)
 
 macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.8.1" "Needed for NetworkManager support in Network Management")
 if (NETWORKMANAGER_FOUND)
@@ -85,7 +85,8 @@ if (NETWORKMANAGER_FOUND)
             message(STATUS "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
         endif (DBUS_SYSTEM_POLICY_DIR)
     else(NM_0_8_1)
-        macro_log_feature(NM_0_8_1 "NetworkManager version between 0.8.1 and 0.8.10" "NetworkManager is a daemon for user controlled networking" "http://www.gnome.org/projects/NetworkManager")
+        message("ERROR: NetworkManager version between 0.8.1 and 0.8.10 not found")
+        return()
     endif(NM_0_8_1)
 endif(NETWORKMANAGER_FOUND)
 
