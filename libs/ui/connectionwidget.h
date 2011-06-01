@@ -65,8 +65,9 @@ public:
 public Q_SLOTS:
     void setDefaultName(const QString & defaultName);
 
-private slots:
+private Q_SLOTS:
     void buttonChooseIconClicked();
+    void buttonPermissionsClicked();
 };
 
 #endif // CONNECTIONWIDGET_H

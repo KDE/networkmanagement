@@ -34,6 +34,7 @@ set(knmui_SRCS
    networkitemmodel.cpp
    apitemview.cpp
    scanwidget.cpp
+   advancedpermissionswidget.cpp
 
    # top level wireless security widget
    security/wirelesssecuritysettingwidget.cpp
@@ -98,6 +99,9 @@ kde4_add_ui_files(knmui_SRCS
 
    # Scan widget for wireless
    scanwidget.ui
+
+   # Advanced permissions editor
+   advancedpermissionswidget.ui
 
    # base wireless security type selector
    security/wirelesssecurity.ui

@@ -183,8 +183,14 @@ QVariantMapMap ConnectionDbus::toDbusMap()
         connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_TIMESTAMP), m_connection->timestamp().toTime_t());
     }
 
-    if (!m_connection->permissions().isEmpty())
-        connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS), m_connection->permissions());
+    if (!m_connection->permissions().isEmpty()) {
+        QStringList permissionsDbus;
+        QHash<QString,QString> permissions = m_connection->permissions();
+        foreach (const QString &user, permissions.keys()) {
+            permissionsDbus.append(QLatin1String("user:") + user + ":" + permissions.value(user));
+        }
+        connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS), permissionsDbus);
+    }
 
     //kDebug() << "Printing connection map: ";
     //foreach(QString key, connectionMap.keys())
@@ -270,10 +276,15 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
         m_connection->setTimestamp(dateTime);
     }
 
-    if (connectionSettings.contains(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS)))
-        m_connection->setPermissions(connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS)).toStringList());
-    else
-        m_connection->setPermissions(QStringList());
+    QHash<QString,QString> permissions;
+    if (connectionSettings.contains(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS))) {
+        QStringList permissionsDbus = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS)).toStringList();
+        foreach (const QString &permission, permissionsDbus) {
+            QStringList splitted = permission.split(QLatin1String(":"), QString::KeepEmptyParts);
+            permissions.insert(splitted.at(1),splitted.at(2));
+        }
+    }
+    m_connection->setPermissions(permissions);
 
     Connection::Type type = Connection::Wired;
     if (dbusConnectionType == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {

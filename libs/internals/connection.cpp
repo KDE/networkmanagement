@@ -121,14 +121,14 @@ Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInte
 Connection::Connection(const QString & name, const Connection::Type type)
     : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false)
 {
-    addToPermissions(KUser().loginName());
+    addToPermissions(KUser().loginName(),QString());
     init();
 }
 
 Connection::Connection(const QUuid & uuid, const Connection::Type type)
     : m_uuid(uuid), m_type(type), m_autoConnect(false)
 {
-    addToPermissions(KUser().loginName());
+    addToPermissions(KUser().loginName(),QString());
     init();
 }
 
@@ -454,23 +454,23 @@ QString Connection::origin() const
     return m_origin;
 }
 
-void Connection::addToPermissions(const QString &user)
+void Connection::addToPermissions(const QString &user, const QString &tags)
 {
-    if (!m_permissions.contains(QLatin1String("user:") + user + QLatin1String(":")))
-        m_permissions.append(QLatin1String("user:") + user + QLatin1String(":"));
+    if (!m_permissions.contains(user))
+        m_permissions.insert(user,tags);
 }
 
 void Connection::removeFromPermissions(const QString &user)
 {
-    m_permissions.removeAll(QLatin1String("user:") + user + QLatin1String(":"));
+    m_permissions.remove(user);
 }
 
-void Connection::setPermissions(const QStringList &permissions)
+void Connection::setPermissions(const QHash<QString,QString> &permissions)
 {
     m_permissions = permissions;
 }
 
-QStringList Connection::permissions() const
+QHash<QString,QString> Connection::permissions() const
 {
     return m_permissions;
 }

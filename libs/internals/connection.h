@@ -64,7 +64,7 @@ public:
     Connection::Type type() const;
     bool autoConnect() const;
     QDateTime timestamp() const;
-    QStringList permissions() const;
+    QHash<QString,QString> permissions() const;
 
     QString origin() const;
     void setOrigin(const QString &);
@@ -95,8 +95,8 @@ public:
      */
     void setType(Connection::Type type);
 
-    void setPermissions(const QStringList&);
-    void addToPermissions(const QString&);
+    void setPermissions(const QHash<QString,QString>&);
+    void addToPermissions(const QString&, const QString&);
     void removeFromPermissions(const QString&);
 
     /**
@@ -147,7 +147,7 @@ private:
     QDateTime m_timestamp;
     QString m_origin;
     QList<Setting*> m_settings;
-    QStringList m_permissions;
+    QHash<QString,QString> m_permissions;
 };
 } // namespace Knm
 
