@@ -1,5 +1,5 @@
 /*
-    Copyright 210 Sebastian Kügler <sebas@kde.org>
+    Copyright 2010 Sebastian Kügler <sebas@kde.org>
 
     This library is free software; you can redistribute it and/or modify it
     under the terms of the GNU Library General Public License as published by
@@ -33,7 +33,7 @@
 #include "remotevpninterfaceconnection.h"
 
 #include "../applet/wirelessstatus.h"
-
+#include "networkmanagementservice.h"
 
 class NetworkManagementEnginePrivate
 {
@@ -504,6 +504,13 @@ void NetworkManagementEngine::updateGsmInterfaceConnection(RemoteActivatable* re
 
 #endif
 
+Plasma::Service* NetworkManagementEngine::serviceForSource(const QString &source)
+{
+    // validate
+    NetworkManagementService* service = new NetworkManagementService(source);
+    service->setParent(this);
+    return service;
+}
 
 
 #include "networkmanagementengine.moc"
