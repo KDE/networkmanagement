@@ -60,8 +60,10 @@ Q_OBJECT
 public:
     Wireless80211WidgetBand(QWidget * parent = 0);
     QString textFromValue(int) const;
-    uint channelFromPos(int) const;
-    uint posFromChannel(int) const;
+    int valueFromText(const QString&) const;
+    QValidator::State validate(QString&, int&) const;
+    int channelFromPos(int) const;
+    int posFromChannel(int) const;
     void setBand(int);
 private:
     QList< QList<int> > channels;
