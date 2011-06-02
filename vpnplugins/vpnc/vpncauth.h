@@ -40,11 +40,12 @@ Q_DECLARE_PRIVATE(VpncAuthWidget)
 public:
     VpncAuthWidget(Knm::Connection *, QWidget * parent = 0);
     ~VpncAuthWidget();
-    void readConfig() {};
+    void readConfig() {}
     void readSecrets();
     void writeConfig();
 protected Q_SLOTS:
-    void validate() {};
+    void validate() {}
+    void showPasswords(bool on);
 
 private:
     VpncAuthWidgetPrivate * d_ptr;
