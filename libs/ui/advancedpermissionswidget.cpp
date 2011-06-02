@@ -82,7 +82,6 @@ void AdvancedPermissionsWidget::setupCommon()
     d->ui.arrowRight->setIcon(KIcon("arrow-right"));
     connect(d->ui.arrowLeft, SIGNAL(clicked()), this, SLOT(leftArrowClicked()));
     connect(d->ui.arrowRight, SIGNAL(clicked()), this, SLOT(rightArrowClicked()));
-    connect(d->ui.currentUsers, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(currentUserSelected(QTreeWidgetItem*)));
     d->ui.availUsers->sortByColumn(FullName, Qt::AscendingOrder);
     d->ui.currentUsers->sortByColumn(FullName, Qt::AscendingOrder);
     d->ui.availUsers->setSortingEnabled(true);
@@ -136,19 +135,11 @@ void AdvancedPermissionsWidget::leftArrowClicked()
 {
     Q_D(AdvancedPermissionsWidget);
     foreach (QTreeWidgetItem *item, d->ui.currentUsers->selectedItems()) {
-        int index = d->ui.currentUsers->indexOfTopLevelItem(item);
-        d->ui.currentUsers->takeTopLevelItem(index);
-        d->ui.availUsers->addTopLevelItem(item);
-    }
-}
-
-void AdvancedPermissionsWidget::currentUserSelected(QTreeWidgetItem *item)
-{
-    Q_D(AdvancedPermissionsWidget);
-    if (item->data(LoginName, Qt::DisplayRole) == KUser().loginName()) {
-        d->ui.arrowLeft->setEnabled(false);
-    } else {
-        d->ui.arrowLeft->setEnabled(true);
+        if (item->data(LoginName, Qt::DisplayRole) != KUser().loginName()) {
+            int index = d->ui.currentUsers->indexOfTopLevelItem(item);
+            d->ui.currentUsers->takeTopLevelItem(index);
+            d->ui.availUsers->addTopLevelItem(item);
+        }
     }
 }
 

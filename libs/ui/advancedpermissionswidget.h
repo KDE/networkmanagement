@@ -50,7 +50,6 @@ private:
 private Q_SLOTS:
     void leftArrowClicked();
     void rightArrowClicked();
-    void currentUserSelected(QTreeWidgetItem *);
 };
 
 #endif // ADVANCEDPERMISSIONSWIDGET_H
