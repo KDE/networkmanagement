@@ -241,7 +241,7 @@ QString UiUtils::interfaceNameLabel(const QString & uni, const KNetworkManagerSe
         case KNetworkManagerServicePrefs::VendorProductNames:
             if (dev) {
                 if (!dev->vendor().isEmpty() && !dev->product().isEmpty()) {
-                    label = QString(i18nc("Format for <Vendor> <Product>", "%1 - %2", dev->vendor(), dev->product()));
+                    label = i18nc("Format for <Vendor> <Product>", "%1 - %2", dev->vendor(), dev->product());
                 }
             }
             break;

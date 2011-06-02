@@ -289,22 +289,7 @@ QString InterfaceItem::currentIpAddress()
 
     OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, m_iface.data()->uni(), QDBusConnection::systemBus());
     if (devIface.isValid()) {
-        QDBusObjectPath ip4ConfigPath = devIface.ip4Config();
-
-        OrgFreedesktopNetworkManagerIP4ConfigInterface ip4Iface(NM_DBUS_SERVICE, ip4ConfigPath.path(), QDBusConnection::systemBus());
-        if (ip4Iface.isValid()) {
-            QDBusObjectPath ip4ConfigPath;
-
-            // get the first IP address
-            qDBusRegisterMetaType<QList<QList<uint> > >();
-            QList<QList<uint> > addresses = ip4Iface.addresses();
-            foreach (QList<uint> addressList, addresses) {
-               if (addressList.count() == 3) {
-                    addr.setAddress(ntohl(addressList[0]));
-                    break;
-                }
-            }
-        }
+        addr.setAddress(ntohl(devIface.ip4Address()));
     }
 
     if (addr.isNull()) {

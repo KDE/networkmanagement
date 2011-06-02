@@ -350,22 +350,7 @@ QString InterfaceDetailsWidget::currentIpAddress()
 
     OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, m_ifaceUni, QDBusConnection::systemBus());
     if (devIface.isValid()) {
-        QDBusObjectPath ip4ConfigPath = devIface.ip4Config();
-
-        OrgFreedesktopNetworkManagerIP4ConfigInterface ip4Iface(NM_DBUS_SERVICE, ip4ConfigPath.path(), QDBusConnection::systemBus());
-        if (ip4Iface.isValid()) {
-            QDBusObjectPath ip4ConfigPath;
-
-            // get the first IP address
-            qDBusRegisterMetaType<QList<QList<uint> > >();
-            QList<QList<uint> > addresses = ip4Iface.addresses();
-            foreach (QList<uint> addressList, addresses) {
-               if (addressList.count() == 3) {
-                    addr.setAddress(ntohl(addressList[0]));
-                    break;
-                }
-            }
-        }
+        addr.setAddress(ntohl(devIface.ip4Address()));
     }
 
     if (addr.isNull()) {
@@ -503,7 +488,7 @@ void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma
 void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_state, int reason)
 {
     Q_UNUSED(old_state)
-    if ((new_state == Solid::Control::NetworkInterfaceNm09::Unavailable || new_state == Solid::Control::NetworkInterfaceNm09::Unmanaged || Solid::Control::NetworkInterfaceNm09::UnknownState) &&
+    if ((new_state == Solid::Control::NetworkInterfaceNm09::Unavailable || new_state == Solid::Control::NetworkInterfaceNm09::Unmanaged || new_state == Solid::Control::NetworkInterfaceNm09::UnknownState) &&
         (reason == Solid::Control::NetworkInterfaceNm09::UnknownReason ||
          reason == Solid::Control::NetworkInterfaceNm09::DeviceRemovedReason)) {
         setInterface(0, false);
