@@ -37,7 +37,7 @@ void WirelessDbus::fromMap(const QVariantMap & map)
       setting->setChannel(map.value(QLatin1String(NM_SETTING_WIRELESS_CHANNEL)).value<uint>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_BSSID))) {
-      setting->setBssid(SettingDbus::macBin2Hex(map.value(QLatin1String(NM_SETTING_WIRELESS_BSSID)).value<QByteArray>()));
+      setting->setBssid(map.value(QLatin1String(NM_SETTING_WIRELESS_BSSID)).value<QByteArray>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_RATE))) {
       setting->setRate(map.value(QLatin1String(NM_SETTING_WIRELESS_RATE)).value<uint>());
@@ -49,7 +49,7 @@ void WirelessDbus::fromMap(const QVariantMap & map)
     setting->setMacaddress(map.value(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS)).value<QByteArray>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_CLONED_MAC_ADDRESS))) {
-      setting->setClonedmacaddress(SettingDbus::macBin2Hex(map.value(QLatin1String(NM_SETTING_WIRELESS_CLONED_MAC_ADDRESS)).value<QByteArray>()));
+      setting->setClonedmacaddress(map.value(QLatin1String(NM_SETTING_WIRELESS_CLONED_MAC_ADDRESS)).value<QByteArray>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_MTU))) {
       setting->setMtu(map.value(QLatin1String(NM_SETTING_WIRELESS_MTU)).value<uint>());
@@ -89,7 +89,7 @@ QVariantMap WirelessDbus::toMap()
 
   map.insert(QLatin1String(NM_SETTING_WIRELESS_CHANNEL), setting->channel());
   if (!setting->bssid().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_BSSID), SettingDbus::macHex2Bin(setting->bssid()));
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_BSSID), setting->bssid());
   }
   if (setting->rate()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_RATE), setting->rate());
@@ -101,7 +101,7 @@ QVariantMap WirelessDbus::toMap()
       map.insert(QLatin1String(NM_SETTING_WIRELESS_MAC_ADDRESS), setting->macaddress());
   }
   if (!setting->clonedmacaddress().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_CLONED_MAC_ADDRESS), SettingDbus::macHex2Bin(setting->clonedmacaddress()));
+      map.insert(QLatin1String(NM_SETTING_WIRELESS_CLONED_MAC_ADDRESS), setting->clonedmacaddress());
   }
   if (setting->mtu())
       map.insert(QLatin1String(NM_SETTING_WIRELESS_MTU), setting->mtu());

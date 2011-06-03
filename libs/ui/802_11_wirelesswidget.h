@@ -49,6 +49,7 @@ protected Q_SLOTS:
     void modeChanged(int);
     void bandChanged(int);
     void copyToBssid();
+    void generateRandomClonedMac();
 
 Q_SIGNALS:
     void ssidSelected(const QString & ssid);

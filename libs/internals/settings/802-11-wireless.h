@@ -153,46 +153,11 @@ class KNMINTERNALS_EXPORT WirelessSetting : public Setting
     }
 
     /**
-     * Set MAC Address
-     */
-    void setMacaddress( const QString & v )
-    {
-        mMacaddress = macaddressFromString(v);
-    }
-
-    /**
       Get MAC Address
     */
     QByteArray macaddress() const
     {
       return mMacaddress;
-    }
-
-    QString macaddressAsString() const
-    {
-     QStringList mac;
-
-     for (int i=0; i < mMacaddress.size(); i++)
-     {
-        mac << QString("%1").arg((quint8)mMacaddress[i], 2, 16, QLatin1Char('0')).toUpper();
-     }
-
-     return mac.join(":");
-    }
-
-    QByteArray macaddressFromString( const QString & s)
-    {
-        QStringList macStringList = s.split(":");
-        QByteArray ba;
-        if (!s.isEmpty())
-        {
-            ba.resize(6);
-            int i = 0;
-
-            foreach (QString macPart, macStringList)
-                ba[i++] = macPart.toUInt(0, 16);
-        }
-        return ba;
     }
 
     /**
@@ -201,11 +166,6 @@ class KNMINTERNALS_EXPORT WirelessSetting : public Setting
     void setClonedmacaddress( const QByteArray & v )
     {
         mClonedmacaddress = v;
-    }
-
-    void setClonedmacaddress( const QString & v )
-    {
-        mClonedmacaddress = macaddressFromString(v);
     }
 
     /**

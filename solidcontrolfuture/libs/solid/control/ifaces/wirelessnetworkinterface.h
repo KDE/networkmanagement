@@ -60,6 +60,10 @@ namespace Ifaces
          */
         virtual QString hardwareAddress() const = 0;
         /**
+         * The permanent hardware address assigned to the network interface
+         */
+        virtual QString permanentHardwareAddress() const = 0;
+        /**
          * Retrieves the operation mode of this network.
          *
          * @return the current mode

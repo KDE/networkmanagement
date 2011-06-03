@@ -383,4 +383,31 @@ QString UiUtils::connectionSpeed(double bitrate)
     return out;
 }
 
+QString UiUtils::macAddressAsString(const QByteArray & ba)
+{
+    QStringList mac;
+
+    for (int i=0; i < ba.size(); i++)
+    {
+        mac << QString("%1").arg((quint8)ba[i], 2, 16, QLatin1Char('0')).toUpper();
+    }
+
+    return mac.join(":");
+}
+
+QByteArray UiUtils::macAddressFromString( const QString & s)
+{
+    QStringList macStringList = s.split(":");
+    QByteArray ba;
+    if (!s.isEmpty())
+    {
+        ba.resize(6);
+        int i = 0;
+
+        foreach (QString macPart, macStringList)
+            ba[i++] = macPart.toUInt(0, 16);
+    }
+    return ba;
+}
+
 // vim: sw=4 sts=4 et tw=100

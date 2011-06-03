@@ -233,25 +233,42 @@
      </property>
     </widget>
    </item>
-   <item row="8" column="1">
-    <widget class="KLineEdit" name="clonedMacAddress">
-     <property name="toolTip">
-      <string>Custom MAC address for the hardware to use</string>
-     </property>
-     <property name="whatsThis">
-      <string>The MAC address entered here will be used as hardware address for the network device this connection is activated on. This feature is known as MAC cloning or spoofing.</string>
-     </property>
-     <property name="inputMask">
-      <string>HH:HH:HH:HH:HH:HH;_</string>
-     </property>
-    </widget>
-   </item>
    <item row="8" column="0">
     <widget class="QLabel" name="label_8">
      <property name="text">
       <string>Cloned MAC address</string>
      </property>
     </widget>
+   </item>
+   <item row="8" column="1">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <widget class="KLineEdit" name="clonedMacAddress">
+       <property name="toolTip">
+        <string>Custom MAC address for the hardware to use</string>
+       </property>
+       <property name="whatsThis">
+        <string>The MAC address entered here will be used as hardware address for the network device this connection is activated on. This feature is known as MAC cloning or spoofing.</string>
+       </property>
+       <property name="inputMask">
+        <string>HH:HH:HH:HH:HH:HH;_</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="KPushButton" name="clonedMacAddressRandom">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="text">
+        <string>Random</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>

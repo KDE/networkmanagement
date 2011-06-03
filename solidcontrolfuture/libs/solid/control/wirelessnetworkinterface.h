@@ -95,6 +95,11 @@ namespace Ifaces
         QString hardwareAddress() const;
 
         /**
+         * The pernament hardware address assigned to the network interface
+         */
+        QString permanentHardwareAddress() const;
+
+        /**
          * Retrieves the operation mode of this network.
          *
          * @return the current mode

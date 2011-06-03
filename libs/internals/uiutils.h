@@ -96,7 +96,7 @@ public:
     static qreal interfaceState(const Solid::Control::NetworkInterfaceNm09 *interface);
 
     /**
-     * @return a human-readable description of operation mode. 
+     * @return a human-readable description of operation mode.
      * @param mode the operation mode
      */
     static QString operationModeToString(Solid::Control::WirelessNetworkInterfaceNm09::OperationMode mode);
@@ -112,6 +112,18 @@ public:
      * @param bitrate bitrate of the connection per second
      */
     static QString connectionSpeed(double bitrate);
+
+    /**
+     * @return String representation of a mac address.
+     * @param ba byte array containing the binary repesentation of the address
+     */
+    static QString macAddressAsString(const QByteArray & ba);
+
+    /**
+     * @return binary repesentation of a mac address.
+     * @param s string representation of the address
+     */
+    static QByteArray macAddressFromString( const QString & s);
 
 };
 #endif // UIUTILS_H

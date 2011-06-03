@@ -6,7 +6,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ui_bluetooth.h"
 #include "connection.h"
 #include "settings/bluetooth.h"
+
+#include <uiutils.h>
 
 class BluetoothWidgetPrivate : public SettingWidgetPrivate
 {
@@ -55,7 +57,7 @@ void BluetoothWidget::readConfig()
 {
     Q_D(BluetoothWidget);
     d->ui.networkname->setText(d->setting->networkname());
-    d->ui.bdaddr->setText(d->setting->bdaddrAsString());
+    d->ui.bdaddr->setText(UiUtils::macAddressAsString(d->setting->bdaddr()));
     d->ui.networktype->setCurrentIndex(networktypeIndexFromString(d->setting->networktype()));
 }
 
@@ -63,7 +65,7 @@ void BluetoothWidget::writeConfig()
 {
     Q_D(BluetoothWidget);
     d->setting->setNetworkname(d->ui.networkname->text());
-    d->setting->setBdaddrFromString(d->ui.bdaddr->text());
+    d->setting->setBdaddr(UiUtils::macAddressFromString(d->ui.bdaddr->text()));
     d->setting->setNetworktype(d->ui.networktype->itemData(d->ui.networktype->currentIndex()).toString());
 }
 

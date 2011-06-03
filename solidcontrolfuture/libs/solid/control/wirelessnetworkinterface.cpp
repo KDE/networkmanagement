@@ -90,6 +90,12 @@ QString Solid::Control::WirelessNetworkInterfaceNm09::hardwareAddress() const
     return_SOLID_CALL(Ifaces::WirelessNetworkInterfaceNm09 *, d->backendObject(), QString(), hardwareAddress());
 }
 
+QString Solid::Control::WirelessNetworkInterfaceNm09::permanentHardwareAddress() const
+{
+    Q_D(const WirelessNetworkInterfaceNm09);
+    return_SOLID_CALL(Ifaces::WirelessNetworkInterfaceNm09 *, d->backendObject(), QString(), permanentHardwareAddress());
+}
+
 QString Solid::Control::WirelessNetworkInterfaceNm09::activeAccessPoint() const
 {
     Q_D(const WirelessNetworkInterfaceNm09);

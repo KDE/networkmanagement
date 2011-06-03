@@ -38,6 +38,7 @@ NMWirelessNetworkInterface::NMWirelessNetworkInterface(const QString & path, NMN
 {
     Q_D(NMWirelessNetworkInterface);
     d->hardwareAddress = d->wirelessIface.hwAddress();
+    d->permanentHardwareAddress = d->wirelessIface.permHwAddress();
     d->mode = convertOperationMode(d->wirelessIface.mode());
     d->bitRate = d->wirelessIface.bitrate();
     d->activeAccessPoint = d->wirelessIface.activeAccessPoint().path();
@@ -88,6 +89,12 @@ QString NMWirelessNetworkInterface::hardwareAddress() const
 {
     Q_D(const NMWirelessNetworkInterface);
     return d->hardwareAddress;
+}
+
+QString NMWirelessNetworkInterface::permanentHardwareAddress() const
+{
+    Q_D(const NMWirelessNetworkInterface);
+    return d->permanentHardwareAddress;
 }
 
 Solid::Control::WirelessNetworkInterfaceNm09::OperationMode NMWirelessNetworkInterface::mode() const

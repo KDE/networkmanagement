@@ -64,9 +64,8 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
     foreach (Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
         if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
-
             Solid::Control::WirelessNetworkInterfaceNm09 * wiface = static_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
-            d->ui.cmbMacAddress->addItem(UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames), wiface->hardwareAddress().toLatin1());
+            d->ui.cmbMacAddress->addItem(UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames), UiUtils::macAddressFromString(wiface->permanentHardwareAddress()));
         }
     }
 
@@ -74,6 +73,7 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
     connect(d->ui.cmbMode,SIGNAL(currentIndexChanged(int)),SLOT(modeChanged(int)));
     connect(d->ui.band,SIGNAL(currentIndexChanged(int)),SLOT(bandChanged(int)));
     connect(d->ui.useCurrentApAsBssid,SIGNAL(clicked()),SLOT(copyToBssid()));
+    connect(d->ui.clonedMacAddressRandom, SIGNAL(clicked()), this, SLOT(generateRandomClonedMac()));
 }
 
 Wireless80211Widget::~Wireless80211Widget()
@@ -108,17 +108,17 @@ void Wireless80211Widget::readConfig()
         d->ui.ssid->setText(QString::fromAscii(d->setting->ssid()));
         d->originalSsid = QString::fromAscii(d->setting->ssid());
     }
-    d->ui.bssid->setText(QString::fromAscii(d->setting->bssid()));
+    d->ui.bssid->setText(UiUtils::macAddressAsString(d->setting->bssid()));
     if (!d->setting->macaddress().isEmpty()) {
         int i = d->ui.cmbMacAddress->findData(d->setting->macaddress());
         if (i == -1) {
-            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist item for hardware that is currently not attached to the machine with MAC address", "Disconnected interface (%1)", QLatin1String(d->setting->macaddress())));
+            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist item for hardware that is currently not attached to the machine with MAC address", "Disconnected interface (%1)", UiUtils::macAddressAsString(d->setting->macaddress())));
             d->ui.cmbMacAddress->setCurrentIndex(d->ui.cmbMacAddress->count() - 1);
         } else {
             d->ui.cmbMacAddress->setCurrentIndex(i);
         }
     }
-    d->ui.clonedMacAddress->setText(QString::fromAscii(d->setting->clonedmacaddress()));kDebug() << d->setting->clonedmacaddress();
+    d->ui.clonedMacAddress->setText(UiUtils::macAddressAsString(d->setting->clonedmacaddress()));
     d->ui.mtu->setValue(d->setting->mtu());
     d->ui.channel->setValue(d->ui.channel->posFromChannel(d->setting->channel()));
 }
@@ -157,13 +157,13 @@ void Wireless80211Widget::writeConfig()
     }
 
     if (d->ui.bssid->text() != QString::fromLatin1(":::::")) {
-        d->setting->setBssid(d->ui.bssid->text().toAscii());
+        d->setting->setBssid(UiUtils::macAddressFromString(d->ui.bssid->text()));
     } else {
         d->setting->setBssid(QByteArray());
     }
     d->setting->setMtu(d->ui.mtu->value());
     if (d->ui.clonedMacAddress->text() != QString::fromLatin1(":::::")) {
-        d->setting->setClonedmacaddress(d->ui.clonedMacAddress->text().toAscii());
+        d->setting->setClonedmacaddress(UiUtils::macAddressFromString(d->ui.clonedMacAddress->text()));
     } else {
         d->setting->setClonedmacaddress(QByteArray());
     }
@@ -277,6 +277,18 @@ void Wireless80211Widget::copyToBssid()
             }
         }
     }
+}
+
+void Wireless80211Widget::generateRandomClonedMac()
+{
+    Q_D(Wireless80211Widget);
+    QByteArray mac;
+    mac.resize(6);
+    for (int i = 0; i < 6; i++) {
+        int random = qrand() % 255;
+        mac[i] = random;
+    }
+    d->ui.clonedMacAddress->setText(UiUtils::macAddressAsString(mac));
 }
 
 

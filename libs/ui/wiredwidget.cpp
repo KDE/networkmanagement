@@ -57,9 +57,10 @@ WiredWidget::WiredWidget(Knm::Connection * connection, QWidget * parent)
         if (iface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet) {
             QString deviceText = UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames);
             Solid::Control::WiredNetworkInterfaceNm09 * wired = static_cast<Solid::Control::WiredNetworkInterfaceNm09*>(iface);
-            d->ui.cmbMacAddress->addItem(deviceText, wired->hardwareAddress().toLatin1());
+            d->ui.cmbMacAddress->addItem(deviceText, UiUtils::macAddressFromString(wired->permanentHardwareAddress()));
         }
     }
+    connect(d->ui.clonedMacAddressRandom, SIGNAL(clicked()), this, SLOT(generateRandomClonedMac()));
 }
 
 WiredWidget::~WiredWidget()
@@ -72,13 +73,15 @@ void WiredWidget::readConfig()
     if (!d->setting->macaddress().isEmpty()) {
         int i = d->ui.cmbMacAddress->findData(d->setting->macaddress());
         if (i == -1) {
-            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist item for hardware that is currently not attached to the machine with MAC address", "Disconnected interface (%1)", QLatin1String(d->setting->macaddress())));
+            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist item for hardware that is currently not attached to the machine with MAC address", "Disconnected interface (%1)", UiUtils::macAddressAsString(d->setting->macaddress())));
             d->ui.cmbMacAddress->setCurrentIndex(d->ui.cmbMacAddress->count() - 1);
         } else {
             d->ui.cmbMacAddress->setCurrentIndex(i);
         }
     }
-    d->ui.clonedMacAddress->setText(QString::fromAscii(d->setting->clonedmacaddress()));kDebug() << d->setting->clonedmacaddress();
+    if (!d->setting->clonedmacaddress().isEmpty()) {
+        d->ui.clonedMacAddress->setText(UiUtils::macAddressAsString(d->setting->clonedmacaddress()));
+    }
     if (d->setting->mtu()) {
         d->ui.mtu->setValue(d->setting->mtu());
     }
@@ -107,7 +110,7 @@ void WiredWidget::writeConfig()
         d->setting->setMacaddress(d->ui.cmbMacAddress->itemData(i).toByteArray());
     }
     if (d->ui.clonedMacAddress->text() != QString::fromLatin1(":::::")) {
-        d->setting->setClonedmacaddress(d->ui.clonedMacAddress->text().toAscii());
+        d->setting->setClonedmacaddress(UiUtils::macAddressFromString(d->ui.clonedMacAddress->text()));
     } else {
         d->setting->setClonedmacaddress(QByteArray());
     }
@@ -129,4 +132,17 @@ void WiredWidget::validate()
 {
 
 }
+
+void WiredWidget::generateRandomClonedMac()
+{
+    Q_D(WiredWidget);
+    QByteArray mac;
+    mac.resize(6);
+    for (int i = 0; i < 6; i++) {
+        int random = qrand() % 255;
+        mac[i] = random;
+    }
+    d->ui.clonedMacAddress->setText(UiUtils::macAddressAsString(mac));
+}
+
 // vim: sw=4 sts=4 et tw=100
