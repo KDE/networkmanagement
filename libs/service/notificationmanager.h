@@ -101,6 +101,10 @@ public Q_SLOTS:
     void interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState);
 
     void strengthChanged(int strength);
+
+private Q_SLOTS:
+    void enableStrengthNotification();
+
 private:
     void performInterfaceNotification(const QString & title, const QString & text, const QPixmap & pixmap, KNotification::NotificationFlag flag);
 
@@ -112,6 +116,7 @@ private:
     QPointer<KNotification> m_notification;
     QSet<Knm::InterfaceConnection*> m_activating;
     QSet<Knm::InterfaceConnection*> m_interfaceConnections;
+    bool m_suppressStrengthNotification;
 };
 
 #endif // NOTIFICATIONMANAGER_H
