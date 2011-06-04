@@ -19,6 +19,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <KDebug>
+#include <KLocale>
+#include <KMessageBox>
 
 #include "manageconnection.h"
 
@@ -45,6 +47,13 @@ void ManageConnection::saveConnection(Knm::Connection *con)
 void ManageConnection::addConnectionCompleted(bool valid, const QString &errorMessage)
 {
     kDebug(KDE_DEFAULT_DEBUG_AREA);
+    if (!valid) {
+        if (errorMessage.isEmpty())
+            KMessageBox::error(0, i18n("Connection create operation failed."));
+        else
+            KMessageBox::error(0, errorMessage);
+    }
+
     deleteLater();
     kapp->quit();
 }
