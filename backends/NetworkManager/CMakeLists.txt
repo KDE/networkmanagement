@@ -48,11 +48,6 @@ set(knm_nm_LIB_SRCS
 
    settings/vpndbus.cpp
 
-   busconnection.cpp
-
-   #org.freedesktop.NetworkManager.Settings.Connection
-   exportedconnection.cpp
-
    nmdbusactiveconnectionmonitor.cpp
 
    #org.freedesktop.NetworkManager.Settings.Connection.Active

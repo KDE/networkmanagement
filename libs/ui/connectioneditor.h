@@ -48,7 +48,7 @@ public:
     Knm::Connection *createConnection(bool useDefaults, Knm::Connection::Type type,
             const QVariantList &otherArgs = QVariantList(), const bool autoAccept = false);
 
-    void editConnection(Knm::Connection::Type type,
+    Knm::Connection *editConnection(Knm::Connection::Type type,
             const QVariantList &otherArgs = QVariantList());
 
     Knm::Connection *editConnection(Knm::Connection *con);
@@ -62,15 +62,5 @@ public:
 
     ConnectionPreferences * editorForConnectionType(bool setDefaults, QWidget * parent,
                                                     Knm::Connection *con) const;
-
-    /**
-     * Tell the UserSettings service to reload its configuration (via DBUS)
-     * Provide a list of changed connection IDs so the service can notify NetworkManager
-     */
-    void updateService(const QStringList& changedConnections = QStringList()) const;
-Q_SIGNALS:
-    void connectionsChanged();
-private:
-    void persist(Knm::Connection*);
 };
 #endif // CONNECTIONEDITOR_H

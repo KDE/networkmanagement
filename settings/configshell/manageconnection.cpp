@@ -28,7 +28,6 @@ ManageConnection::ManageConnection(Knm::Connection *con): mSystemSettings(0)
     connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool, const QString &)), SLOT(addConnectionCompleted(bool, const QString &)));
     mSystemSettings->addConnection(con);
     ConnectionEditor editor(0);
-    editor.updateService(QStringList() << con->uuid().toString());
 }
 
 ManageConnection::~ManageConnection()

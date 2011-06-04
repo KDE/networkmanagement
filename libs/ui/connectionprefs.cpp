@@ -88,31 +88,12 @@ void ConnectionPreferences::validate()
 
 void ConnectionPreferences::load()
 {
-    // restore the Connection if possible
-    /*
-    QString connectionFile(KStandardDirs::locateLocal("data",
-                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid()));
-    m_connectionPersistence = new Knm::ConnectionPersistence(m_connection, KSharedConfig::openConfig(connectionFile),
-            (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
-    m_connectionPersistence->load();
-    */
-
-    // and initialise the UI from the Connection
+    // initialise the UI from the Connection
     m_contents->readConfig();
     foreach (SettingWidget * wid, m_settingWidgets.keys()) {
         wid->readConfig();
         wid->readSecrets(); //necessary to load secret info from connections
     }
-
-    /*
-    // asynchronously fetch secrets
-    if (m_connection->hasSecrets()) {
-        connect(m_connectionPersistence, SIGNAL(loadSecretsResult(uint)), SLOT(gotSecrets(uint)));
-        m_connectionPersistence->loadSecrets();
-    } else {
-        delete m_connectionPersistence;
-    }
-    */
 }
 
 void ConnectionPreferences::save()
@@ -122,35 +103,8 @@ void ConnectionPreferences::save()
     foreach (SettingWidget * wid, m_settingWidgets.keys()) {
         wid->writeConfig();
     }
-
-    //TODO: save secret info into connection!
-
-    // persist the Connection
-    /*
-    QString connectionFile = KStandardDirs::locateLocal("data",
-        Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + m_connection->uuid());
-
-    Knm::ConnectionPersistence cp(
-            m_connection,
-            KSharedConfig::openConfig(connectionFile),
-            (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode()
-            );
-    cp.save();
-    */
 }
 
-/*
-void ConnectionPreferences::gotSecrets(uint result)
-{
-    if (result == Knm::ConnectionPersistence::EnumError::NoError) {
-        foreach (SettingWidget * wid, m_settingWidgets.keys()) {
-            wid->readSecrets();
-        }
-    }
-    delete m_connectionPersistence;
-    m_connectionPersistence = 0;
-}
-*/
 // vim: sw=4 sts=4 et tw=100
 
 

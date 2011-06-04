@@ -34,8 +34,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatablelist.h"
 
-#include "nmdbussettingsservice.h"
-
 #include "nm-active-connectioninterface.h"
 #include "nm-vpn-connectioninterface.h"
 
