@@ -342,7 +342,7 @@ void ManageConnectionWidget::addClicked()
         if (mMobileConnectionWizard->exec() == QDialog::Accepted) {
             if (mMobileConnectionWizard->getError() == MobileProviders::Success) {
                 kDebug() << "Got no error, creating connection";
-                con = mEditor->createConnection(false, mMobileConnectionWizard->type(), mMobileConnectionWizard->args(), true);
+                con = mEditor->createConnection(false, mMobileConnectionWizard->type(), mMobileConnectionWizard->args(), false);
             } else { // fallback to old manual editing if something wrong happened with the wizard
                 kDebug() << "Got error, falling back to old method";
                 con = mEditor->createConnection(false, mMobileConnectionWizard->type());
