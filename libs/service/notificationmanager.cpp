@@ -49,7 +49,7 @@ static const int iconSize = 48;
 
 K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration))
 
-InterfaceNotificationHost::InterfaceNotificationHost(Solid::Control::NetworkInterfaceNm09 * interface, NotificationManager * manager) : QObject(manager), m_manager(manager), m_interface(interface)
+InterfaceNotificationHost::InterfaceNotificationHost(Solid::Control::NetworkInterfaceNm09 * interface, NotificationManager * manager) : QObject(manager), m_manager(manager), m_interface(interface), m_suppressStrengthNotification(false)
 {
     // Keep a record for when it is removed
     m_interfaceNameLabel = UiUtils::interfaceNameLabel(interface->uni());
@@ -130,13 +130,21 @@ void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::I
 
 void InterfaceNotificationHost::strengthChanged(int strength)
 {
-    if (strength < 30) {
-        Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(sender());
-
-        if (ic->activationState() == Knm::InterfaceConnection::Activated) {
-            KNotification::event(Event::LowSignal, m_interfaceNameLabel, i18nc("@info:status Notification text when wireless/gsm signal is low","Low signal on %1", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
-        }
+    if (m_suppressStrengthNotification || strength > 30) {
+        return;
     }
+    Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(sender());
+
+    if (ic->activationState() == Knm::InterfaceConnection::Activated) {
+        m_suppressStrengthNotification = true;
+        QTimer::singleShot(30000, this, SLOT(enableStrengthNotification()));
+        KNotification::event(Event::LowSignal, m_interfaceNameLabel, i18nc("@info:status Notification text when wireless/gsm signal is low","Low signal on %1", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
+    }
+}
+
+void InterfaceNotificationHost::enableStrengthNotification()
+{
+    m_suppressStrengthNotification = false;
 }
 
 void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, int, int reason)
