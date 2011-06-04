@@ -139,7 +139,8 @@ void InterfaceNotificationHost::strengthChanged(int strength)
 
     if (ic->activationState() == Knm::InterfaceConnection::Activated) {
         m_suppressStrengthNotification = true;
-        QTimer::singleShot(30000, this, SLOT(enableStrengthNotification()));
+	// ignore strengh notifications for 5 minutes.
+        QTimer::singleShot(5 * 60 * 1000, this, SLOT(enableStrengthNotification()));
         KNotification::event(Event::LowSignal, m_interfaceNameLabel, i18nc("@info:status Notification text when wireless/gsm signal is low","Low signal on %1", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
     }
 }
