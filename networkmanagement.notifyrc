@@ -758,7 +758,7 @@ Comment[tr]=Kablosuz ağ sinyal seviyesi düşük
 Comment[uk]=Занизька потужність радіосигналу
 Comment[x-test]=xxThe wireless signal strength is lowxx
 Comment[zh_TW]=無線網路信號強度偏低
-Action=Popup
+Action=
 
 [Event/ifacestatechange]
 Name=Interface changed state
