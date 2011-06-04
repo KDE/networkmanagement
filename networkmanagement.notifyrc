@@ -380,7 +380,7 @@ Comment[tr]=Ağa bağlanma girişimi başlatıldı
 Comment[uk]=Було розпочато спробу встановлення мережевого з’єднання
 Comment[x-test]=xxA network connection attempt was begunxx
 Comment[zh_TW]=已開始試著連接網路
-Action=Popup
+Action=
 
 [Event/disconnected]
 Name=Network Connection Disconnected
@@ -611,7 +611,7 @@ Comment[tr]=Kablosuz ağ aygıtı, donanım tuşu kullanılarak kapatıldı
 Comment[uk]=Бездротовий приймач-передавач було вимкнено апаратним тумблером
 Comment[x-test]=xxWireless transceivers disabled by hardware switchxx
 Comment[zh_TW]=無線傳輸器硬體已被關閉
-Action=Popup
+Action=
 
 [Event/rfon]
 Name=Radio Hardware Switched On
@@ -666,7 +666,7 @@ Comment[tr]=Kablosuz ağ donanımı etkin
 Comment[uk]=Увімкнено бездротовий приймач-передавач
 Comment[x-test]=xxWireless transceivers enabledxx
 Comment[zh_TW]=無線網路傳輸已開啟
-Action=Popup
+Action=
 
 [Event/lowsignal]
 Name=Low Wireless Signal Strength
