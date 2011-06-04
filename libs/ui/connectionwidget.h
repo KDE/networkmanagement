@@ -66,7 +66,6 @@ public Q_SLOTS:
     void setDefaultName(const QString & defaultName);
 
 private Q_SLOTS:
-    void buttonChooseIconClicked();
     void buttonPermissionsClicked();
 };
 

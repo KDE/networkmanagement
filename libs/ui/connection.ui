@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>423</width>
+    <width>445</width>
     <height>356</height>
    </rect>
   </property>
@@ -77,11 +77,11 @@
       </layout>
      </item>
      <item row="0" column="2" rowspan="2">
-      <widget class="QPushButton" name="pushButtonChooseIcon">
+      <widget class="QLabel" name="connectionIcon">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>48</horstretch>
+         <verstretch>48</verstretch>
         </sizepolicy>
        </property>
        <property name="minimumSize">
@@ -90,14 +90,8 @@
          <height>48</height>
         </size>
        </property>
-       <property name="maximumSize">
-        <size>
-         <width>48</width>
-         <height>48</height>
-        </size>
-       </property>
        <property name="text">
-        <string/>
+        <string notr="true"/>
        </property>
       </widget>
      </item>

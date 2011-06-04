@@ -48,10 +48,7 @@ ConnectionWidget::ConnectionWidget(QWidget * parent)
     layout()->setMargin(0);
     d->valid = false; // valid on creation because connection name (id) is empty
 
-    d->ui.pushButtonChooseIcon->setToolTip(i18nc("@info:tooltip user action", "Choose a connection icon"));
     d->ui.pushButtonPermissions->setIcon(KIcon("preferences-desktop-user"));
-    // it doesn't make a sense to set up an icon here, lets do it in readConfig
-    connect(d->ui.pushButtonChooseIcon, SIGNAL(clicked()), this, SLOT(buttonChooseIconClicked()));
     connect(d->ui.pushButtonPermissions, SIGNAL(clicked()), this, SLOT(buttonPermissionsClicked()));
     connect(d->ui.id, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
 }
@@ -93,7 +90,7 @@ void ConnectionWidget::readConfig()
 
     d->ui.id->setText(connection()->name());
     d->ui.autoconnect->setChecked(connection()->autoConnect());
-    d->ui.pushButtonChooseIcon->setIcon(KIcon(connection()->iconName()));
+    d->ui.connectionIcon->setPixmap(KIcon(connection()->iconName()).pixmap(QSize(48,48)));
     d->ui.system->setChecked(d->permissions.isEmpty());
 }
 
@@ -106,7 +103,6 @@ void ConnectionWidget::writeConfig()
         connection()->setPermissions(d->permissions);
     else
         connection()->setPermissions(QHash<QString,QString>());
-    // connection()->setIconName(..) is already called from buttonChooseIconClicked()
 }
 
 void ConnectionWidget::validate()
@@ -114,28 +110,6 @@ void ConnectionWidget::validate()
     Q_D(ConnectionWidget);
     d->valid = !d->ui.id->text().isEmpty();
     emit valid(d->valid);
-}
-
-void ConnectionWidget::buttonChooseIconClicked()
-{
-    Q_D(ConnectionWidget);
-    KIconDialog dlg(this);
-
-    // set customLocation to kdedir/share/apps/networkmanagement/icons
-    QString customLocation(KStandardDirs::locate("data", QLatin1String("networkmanagement/icons/")));
-    //qDebug() << "Custom location: " << customLocation;
-
-    dlg.setCustomLocation(customLocation);
-
-    dlg.setup(KIconLoader::NoGroup, KIconLoader::Any, false, 0, true, false, false);
-
-    QString iconName = dlg.openDialog();
-    if (!iconName.isEmpty())
-    {
-        //qDebug() << "Icon name: " << iconName;
-        d->ui.pushButtonChooseIcon->setIcon(KIcon(iconName));
-        connection()->setIconName(iconName);
-    }
 }
 
 void ConnectionWidget::buttonPermissionsClicked()
