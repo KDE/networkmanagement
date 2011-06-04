@@ -315,37 +315,6 @@ void NMDBusSettingsConnectionProvider::handleRemove(Knm::Activatable *)
 
 }
 
-bool NMDBusSettingsConnectionProvider::checkAuthorization(const Operation oper)
-{
-    // See /usr/share/polkit-1/actions/org.freedesktop.network-manager-settings.system.policy (or
-    // /usr/share/polkit-1/actions/org.freedesktop.NetworkManager.policy)
-    // KAuth is the KDE's Polkit wrapper.
-    KAuth::Action action(QLatin1String("org.freedesktop.NetworkManager.settings.modify.system"));
-
-    QWidget *w = qobject_cast<QWidget *>(parent());
-    if (w) {
-        action.setParentWidget(w);
-    }
-
-    KAuth::ActionReply reply = action.execute();
-    if (reply.failed()) {
-        QString errorMessage;
-        switch (oper) {
-            case Add: errorMessage = i18n("Adding connection failed. Error code is %1/%2 (%3).", QString::number(reply.type()), QString::number(reply.errorCode()), reply.errorDescription());
-            break;
-
-            case Remove: errorMessage = i18n("Removing connection failed. Error code is %1/%2 (%3).", QString::number(reply.type()), QString::number(reply.errorCode()), reply.errorDescription());
-            break;
-
-            case Update: errorMessage = i18n("Updating connection failed. Error code is %1/%2 (%3).", QString::number(reply.type()), QString::number(reply.errorCode()), reply.errorDescription());
-            break;
-        }
-        KMessageBox::error(0, errorMessage, i18n("Error"));
-        return false;
-    }
-    return true;
-}
-
 void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm::Connection *newConnection)
 {
     Q_D(NMDBusSettingsConnectionProvider);
@@ -357,10 +326,6 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
         if (!d->connections.contains(objPath.path()))
         {
             kWarning() << "Connection could not found!" << uuid << objPath.path();
-            return;
-        }
-
-        if (newConnection->permissions().isEmpty() && getuid() != 0 && !checkAuthorization(Update)) {
             return;
         }
 
@@ -394,9 +359,6 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
 void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnection)
 {
     Q_D(NMDBusSettingsConnectionProvider);
-    if (newConnection->permissions().isEmpty() && getuid() != 0 && !checkAuthorization(Add)) {
-        return;
-    }
     newConnection->saveCertificates();
     newConnection->setSecrets();
     ConnectionDbus converter(newConnection);
@@ -544,10 +506,6 @@ void NMDBusSettingsConnectionProvider::removeConnection(const QString &uuid)
 
         QPair<Knm::Connection *, RemoteConnection *> pair = d->connections.value(objPath.path());
         RemoteConnection *remote = pair.second;
-
-        if (pair.first->permissions().isEmpty() && getuid() != 0 && !checkAuthorization(Remove)) {
-            return;
-        }
 
         kDebug() << "Removing connection "<< remote->id() << uuid;
         remote->Delete();

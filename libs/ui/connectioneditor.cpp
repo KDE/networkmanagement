@@ -76,9 +76,6 @@ Knm::Connection *ConnectionEditor::editConnection(Knm::Connection::Type type, co
     cprefs->load();
     cprefs->validate();
 
-    // For KAuth (KDE's Polkit wrapper): this seems to have no effect in the Ok button though.
-    configDialog.button(KDialog::Ok)->setAuthAction(QLatin1String("org.freedesktop.network-manager-settings.system.modify"));
-
     if ( cprefs && configDialog.exec() == QDialog::Accepted ) {
         cprefs->save();
         return cprefs->connection();
