@@ -252,6 +252,12 @@ void NetworkManagerApplet::init()
                         QLatin1String("org.kde.kded"), QDBusConnection::sessionBus());
 
     kded.call(QLatin1String("loadModule"), QLatin1String("networkmanagement"));
+
+    // Import old connection files.
+    QDBusInterface networkmanagement(QLatin1String("org.kde.networkmanagement"), QLatin1String("/org/kde/networkmanagement"),
+                                     QLatin1String("org.kde.networkmanagement"), QDBusConnection::sessionBus());
+
+//    networkmanagement.call(QLatin1String("ImportNm08Connections"));
 }
 
 void NetworkManagerApplet::configChanged()
