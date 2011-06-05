@@ -108,15 +108,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->activatableList->registerObserver(d->nmDBusConnectionProvider);
     d->activatableList->registerObserver(d->notificationManager);
 
-    // create ActiveConnectionMonitor after construction of NMDBusSettingsConnectionProvider and observer registrations
-    // because, activatableList is filled in NetworkInterfaceMonitor and updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has
-    // Unknown activationState in its /org/kde/networkmanagement/Activatable interface
-    d->nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(d->activatableList, d->nmDBusConnectionProvider);
-
-    // register after nmSettingsService and nmDBusConnectionProvider because it relies on changes they
-    // make to interfaceconnections
-    d->activatableList->registerObserver(d->nmActiveConnectionMonitor);
-
     // debug activatable changes
     //ActivatableDebug debug;
     //activatableList->registerObserver(&debug);
@@ -139,6 +130,15 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     // in its dtor (needed so it cleans up when removed by the monitor)
     // ideally this will always be deleted before the other list
     d->networkInterfaceMonitor = new NetworkInterfaceMonitor(d->connectionList, d->activatableList, d->activatableList);
+
+    // create ActiveConnectionMonitor after construction of NMDBusSettingsConnectionProvider and observer registrations
+    // because, activatableList is filled in NetworkInterfaceMonitor and updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has
+    // Unknown activationState in its /org/kde/networkmanagement/Activatable interface
+    d->nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(d->activatableList, d->nmDBusConnectionProvider);
+
+    // register after nmSettingsService and nmDBusConnectionProvider because it relies on changes they
+    // make to interfaceconnections
+    d->activatableList->registerObserver(d->nmActiveConnectionMonitor);
 
     d->nm08Connections = new Nm08Connections(d->secretStorage, d->nmDBusConnectionProvider);
     connect(d->sessionAbstractedService, SIGNAL(DoImportNm08Connections()), d->nm08Connections, SLOT(importNextNm08Connection()));
