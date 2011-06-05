@@ -37,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <nmdbussecretagent.h>
 #include <nmdbusactiveconnectionmonitor.h>
 #include <nmdbussettingsconnectionprovider.h>
-
+#include <nm08connections.h>
 #include <sessionabstractedservice.h>
 
 K_PLUGIN_FACTORY(NetworkManagementServiceFactory,
@@ -75,6 +75,8 @@ public:
     SessionAbstractedService * sessionAbstractedService;
 
     NotificationManager * notificationManager;
+
+    Nm08Connections * nm08Connections;
 };
 
 NetworkManagementService::NetworkManagementService(QObject * parent, const QVariantList&)
@@ -132,14 +134,14 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->sessionAbstractedService = new SessionAbstractedService(d->sortedList, this);
     d->sortedList->registerObserver(d->sessionAbstractedService);
 
-    // load our local connections
-//    d->listPersistence->init();
-
     // there is a problem setting this as a child of connectionList or of activatableList since it has
     // references to both and NetworkInterfaceActivatableProvider touches the activatableList
     // in its dtor (needed so it cleans up when removed by the monitor)
     // ideally this will always be deleted before the other list
     d->networkInterfaceMonitor = new NetworkInterfaceMonitor(d->connectionList, d->activatableList, d->activatableList);
+
+    d->nm08Connections = new Nm08Connections(d->secretStorage, d->nmDBusConnectionProvider);
+    connect(d->sessionAbstractedService, SIGNAL(DoImportNm08Connections()), d->nm08Connections, SLOT(importNextNm08Connection()));
 }
 
 

@@ -138,8 +138,8 @@ void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name)
         QVariant arg = QVariant::fromValue(secrets);
         reply << arg;
         QDBusConnection::systemBus().send(reply);
+        delete con;
     }
-    delete con;
 }
 
 void NMDBusSecretAgent::CancelGetSecrets(const QDBusObjectPath &connection_path, const QString &setting_name)

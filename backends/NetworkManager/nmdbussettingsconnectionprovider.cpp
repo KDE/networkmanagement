@@ -365,7 +365,7 @@ void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnect
     QVariantMapMap map = converter.toDbusMap();
     kDebug() << "Adding connection " << newConnection->name() << newConnection->uuid().toString();
     // WARNING: this debug message print secrets, do not commit it uncommented.
-    //kDebug() << "Here is the map: " << map;
+    kDebug() << "Here is the map: " << map;
 
     if(newConnection && newConnection->name().isEmpty())
         kWarning() << "Trying to add connection without a name!";
@@ -467,8 +467,8 @@ void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCa
     {
         QVariantMapMap set = reply.argumentAt<0>();
         // WARNING: this print secrets, do not commit it uncommented.
-        //kDebug() << "Got secrets, yay! " << set;
-        kDebug() << "Got secrets, yay! ";
+        kDebug() << "Got secrets, yay! " << set;
+        //kDebug() << "Got secrets, yay! ";
 
         Knm::Connection *con = d->connections.value(watcher->property("connection").toString()).first;
         if (!con)
@@ -483,7 +483,7 @@ void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCa
     }
     else
     {
-        kWarning () << "Secret fetching failed...";
+        kWarning () << "Secret fetching failed:" << reply.error().message();
         emit getConnectionSecretsCompleted(false, reply.error().message(), QVariantMapMap());
     }
 

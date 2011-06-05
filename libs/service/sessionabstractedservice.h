@@ -53,10 +53,12 @@ public:
 public slots:
     Q_SCRIPTABLE QStringList ListActivatables() const;
     Q_SCRIPTABLE void ReadConfig();
+    Q_SCRIPTABLE void ImportNm08Connections();
 signals:
     Q_SCRIPTABLE void ActivatableAdded(const QString & path, uint type);
     Q_SCRIPTABLE void ActivatableRemoved(const QString &);
     Q_SCRIPTABLE void ReloadConfig();
+    void DoImportNm08Connections();
 private:
     Q_DECLARE_PRIVATE(SessionAbstractedService)
     QString nextObjectPath();

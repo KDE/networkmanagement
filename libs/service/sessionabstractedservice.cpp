@@ -139,6 +139,11 @@ void SessionAbstractedService::ReadConfig()
     emit ReloadConfig();
 }
 
+void SessionAbstractedService::ImportNm08Connections()
+{
+    emit DoImportNm08Connections();
+}
+
 QString SessionAbstractedService::nextObjectPath()
 {
     Q_D(SessionAbstractedService);
