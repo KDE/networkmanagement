@@ -44,6 +44,8 @@ using namespace Knm;
 #include "paths.h"
 #include "nm08connections.h"
 
+static const QString CONNECTION_PERSISTENCE_PATH = QLatin1String("networkmanagement/connections/");
+
 Nm08Connections::Nm08Connections(SecretStorage * secretStorage, NMDBusSettingsConnectionProvider * nmDBusConnectionProvider, QObject * parent)
     : QObject(parent), m_secretStorage(secretStorage), m_nmDBusConnectionProvider(nmDBusConnectionProvider)
 {
@@ -73,16 +75,19 @@ void Nm08Connections::importNextNm08Connection()
                 m_persistences.clear();
             }
             if (!m_connectionsBeingAdded.isEmpty()) {
+	        /*foreach (const Connection * con, m_connectionsBeingAdded) {
+                    QString configFile = KStandardDirs::locate("data", CONNECTION_PERSISTENCE_PATH + con->uuid());
+		    QFile::remove(configFile);
+		}*/
                 m_connectionsBeingAdded.clear();
             }
-                qDeleteAll(m_connectionsToDelete);
+            qDeleteAll(m_connectionsToDelete);
             m_connectionsToDelete.clear();
-                deleteLater();
+            deleteLater();
         }
         return;
     }
 
-    static const QString CONNECTION_PERSISTENCE_PATH = QLatin1String("networkmanagement/connections/");
     QString connectionId = m_connectionsToImport.takeFirst();
     QString configFile = KStandardDirs::locate("data", CONNECTION_PERSISTENCE_PATH + connectionId);
     Connection * connection = 0;
