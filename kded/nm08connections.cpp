@@ -104,11 +104,11 @@ void Nm08Connections::importNextNm08Connection()
         goto END;
     }
     
-    kDebug() << "Importing" << connectionId;
+    kWarning() << "Importing" << connectionId;
     config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
     
     if (config.isNull()) {
-        kDebug() << "Config not found at" << configFile;
+        kWarning() << "Config not found at" << configFile;
         goto END;
     }
     
@@ -117,7 +117,7 @@ void Nm08Connections::importNextNm08Connection()
     type = cg.readEntry("type");
     
     if (uuid.isEmpty() || type.isEmpty()) {
-        kDebug() << "Ignoring connection because uuid == '" << uuid << "' type == '" << type << "'";
+        kWarning() << "Ignoring connection because uuid == '" << uuid << "' type == '" << type << "'";
         goto END;
     } else {
         connection = new Connection(QUuid(uuid), Connection::typeFromString(type));
@@ -133,6 +133,8 @@ void Nm08Connections::importNextNm08Connection()
     foreach (Setting * setting, connection->settings()) {
         SettingPersistence * sp = persistenceFor(setting, config);
         sp->load();
+
+	// This is asynchronous, Nm08Connections::gotSecrets() is the callback.
         m_secretStorage->loadSecrets(connection, setting->name(), SecretsProvider::None);
     }
     return;
@@ -147,8 +149,10 @@ void Nm08Connections::gotSecrets(Knm::Connection * connection)
         return;
     }
     m_connectionsBeingAdded.append(connection);
+
+    // This is asynchronous, Nm08Connections::importNextNm08Connection() is the callback.
     m_nmDBusConnectionProvider->addConnection(connection);
-    kDebug() << "Importing" << connection->uuid() << "finished.";
+    kWarning() << "Importing" << connection->uuid() << "finished.";
 }
 
 Knm::SettingPersistence * Nm08Connections::persistenceFor(Knm::Setting * setting, KSharedConfig::Ptr config)
