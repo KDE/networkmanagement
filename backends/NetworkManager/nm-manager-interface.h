@@ -121,6 +121,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QLatin1String("Enable"), argumentList);
     }
 
+    inline QDBusPendingReply<QDBusObjectPath> GetDeviceByIpIface(const QString &iface)
+    {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(iface);
+        return asyncCallWithArgumentList(QLatin1String("GetDeviceByIpIface"), argumentList);
+    }
+
     inline QDBusPendingReply<QList<QDBusObjectPath> > GetDevices()
     {
         QList<QVariant> argumentList;

@@ -56,6 +56,10 @@ public:
     inline QDBusObjectPath specificObject() const
     { return qvariant_cast< QDBusObjectPath >(property("SpecificObject")); }
 
+    Q_PROPERTY(QString Uuid READ uuid)
+    inline QString uuid() const
+    { return qvariant_cast< QString >(property("Uuid")); }
+
     Q_PROPERTY(uint State READ state)
     inline uint state() const
     { return qvariant_cast< uint >(property("State")); }

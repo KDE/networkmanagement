@@ -44,6 +44,13 @@ public Q_SLOTS: // METHODS
         return asyncCallWithArgumentList(QLatin1String("AddConnection"), argumentList);
     }
 
+    inline QDBusPendingReply<QDBusObjectPath> GetConnectionByUuid(const QString &uuid)
+    {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(uuid);
+        return asyncCallWithArgumentList(QLatin1String("GetConnectionByUuid"), argumentList);
+    }
+
     inline QDBusPendingReply<QList<QDBusObjectPath> > ListConnections()
     {
         QList<QVariant> argumentList;
