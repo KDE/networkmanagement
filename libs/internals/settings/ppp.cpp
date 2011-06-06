@@ -5,7 +5,7 @@
 
 using namespace Knm;
 
-PppSetting::PppSetting() : Setting(Setting::Ppp), mNoauth(false), mRefuseeap(false), mRefusepap(false), mRefusechap(false), mRefusemschap(false), mRefusemschapv2(false), mNobsdcomp(false), mNodeflate(false), mNovjcomp(false), mRequiremppe(false), mRequiremppe128(false), mMppestateful(false), mCrtscts(false), mBaud(0), mMru(0), mMtu(0), mLcpechofailure(0), mLcpechointerval(0)
+PppSetting::PppSetting() : Setting(Setting::Ppp), mNoauth(true), mRefuseeap(false), mRefusepap(false), mRefusechap(false), mRefusemschap(false), mRefusemschapv2(false), mNobsdcomp(false), mNodeflate(false), mNovjcomp(false), mRequiremppe(false), mRequiremppe128(false), mMppestateful(false), mCrtscts(false), mBaud(0), mMru(0), mMtu(0), mLcpechofailure(0), mLcpechointerval(0)
 {
 }
 
