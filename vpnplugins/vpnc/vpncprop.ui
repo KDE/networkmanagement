@@ -253,7 +253,7 @@ p, li { white-space: pre-wrap; }
        </item>
       </widget>
      </item>
-     <item row="11" column="1">
+     <item row="12" column="1">
       <widget class="QCheckBox" name="chkDeadPeerDetection">
        <property name="text">
         <string>Enable Dead &amp;Peer Detection</string>
@@ -261,6 +261,32 @@ p, li { white-space: pre-wrap; }
        <property name="checked">
         <bool>true</bool>
        </property>
+      </widget>
+     </item>
+     <item row="11" column="0">
+      <widget class="QLabel" name="label_9">
+       <property name="text">
+        <string>IKE DH Group</string>
+       </property>
+      </widget>
+     </item>
+     <item row="11" column="1">
+      <widget class="QComboBox" name="cboDHGroup">
+       <item>
+        <property name="text">
+         <string>DH Group 1</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>DH Group 2 (default)</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>DH Group 5</string>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
@@ -281,7 +307,7 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
-  <customwidgets>
+ <customwidgets>
   <customwidget>
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>

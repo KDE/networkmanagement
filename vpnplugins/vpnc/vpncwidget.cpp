@@ -41,6 +41,7 @@ VpncSettingWidget::VpncSettingWidget(Knm::Connection * connection, QWidget * par
     Q_D(VpncSettingWidget);
     d->dpdTimeout = 0;
     d->ui.setupUi(this);
+    d->ui.cboDHGroup->setCurrentIndex(1);   // DH Group 2 default
     d->setting = static_cast<Knm::VpnSetting *>(connection->setting(Knm::Setting::Vpn));
     connect(d->ui.cboUserPassOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(userPasswordTypeChanged(int)));
     connect(d->ui.cboGroupPassOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(groupPasswordTypeChanged(int)));
@@ -113,6 +114,21 @@ void VpncSettingWidget::readConfig()
             d->ui.chkDeadPeerDetection->setChecked(false);
             d->dpdTimeout = dpdTimeout;
         }
+    }
+    //	dh group
+    if (dataMap.contains(NM_VPNC_KEY_DHGROUP)) {
+	uint dhGroup = dataMap.value(NM_VPNC_KEY_DHGROUP).toUInt();
+	switch (dhGroup) {
+	    case 1:	// DH Group 1
+		d->ui.cboDHGroup->setCurrentIndex(0);
+		break;
+	    case 2:	// DH Group 2
+		d->ui.cboDHGroup->setCurrentIndex(1);
+		break;
+	    case 5:	// DH Group 5
+		d->ui.cboDHGroup->setCurrentIndex(2);
+		break;
+	}
     }
 }
 
@@ -204,6 +220,19 @@ void VpncSettingWidget::writeConfig()
         }
     } else {
         data.insert(NM_VPNC_KEY_DPD_IDLE_TIMEOUT, QString::number(0));
+    }
+
+    // dh group
+    switch (d->ui.cboDHGroup->currentIndex()) {
+    case 0:	// DH Group 1
+	data.insert(NM_VPNC_KEY_DHGROUP, "1");
+	break;
+    case 1:	// DH Group 2
+	data.insert(NM_VPNC_KEY_DHGROUP, "2");
+	break;
+    case 2:	// DH Group 5
+	data.insert(NM_VPNC_KEY_DHGROUP, "5");
+	break;
     }
 
     d->setting->setData(data);

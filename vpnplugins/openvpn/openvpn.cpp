@@ -45,4 +45,22 @@ SettingWidget * OpenVpnUiPlugin::widget(Knm::Connection * connection, QWidget * 
     return wid;
 }
 
+QString OpenVpnUiPlugin::suggestedFileName(Knm::Connection *connection) const
+{
+    // TODO : implement suggested file name
+    return QString();
+}
+
+QVariantList OpenVpnUiPlugin::importConnectionSettings(const QString &fileName)
+{
+    // TODO : import the OpenVPN connection from file and return settings
+    return QVariantList();
+}
+
+void OpenVpnUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
+{
+    // TODO : export the OpenVPN connection to file
+    return;
+}
+
 // vim: sw=4 sts=4 et tw=100

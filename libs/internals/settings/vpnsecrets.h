@@ -41,15 +41,15 @@ class KNMINTERNALS_EXPORT VpnSecrets : public Secrets
     QMap<QString,QString> secretsToMap() const;
     void secretsFromMap(QMap<QString,QString>) const;
     static QStringList variantMapToStringList(const QVariantMap &);
+    static QVariantMap variantMapFromStringList(const QStringList & list);
+    static QStringMap stringMapFromStringList(const QStringList & list);
+    static QStringList stringMapToStringList(const QStringMap & map);
     void secretsToConfig(QMap<QString,QString> secrets, KSharedConfig::Ptr configptr) const;
     QMap<QString,QString> secretsFromConfig(KSharedConfig::Ptr configptr);
     QStringList needSecrets();
 
   protected:
     static QVariantMap secretsToSave(const QStringMap &, const QStringMap &);
-    static QVariantMap variantMapFromStringList(const QStringList & list);
-    static QStringMap stringMapFromStringList(const QStringList & list);
-    static QStringList stringMapToStringList(const QStringMap & map);
     VpnSetting * m_setting;
 };
 }

@@ -44,4 +44,22 @@ SettingWidget * NovellVpnUiPlugin::widget(Knm::Connection * connection, QWidget 
     return wid;
 }
 
+QString NovellVpnUiPlugin::suggestedFileName(Knm::Connection *connection) const
+{
+    // TODO : implement suggested file name
+    return QString();
+}
+
+QVariantList NovellVpnUiPlugin::importConnectionSettings(const QString &fileName)
+{
+    // TODO : import the Novell VPN connection from file and return settings
+    return QVariantList();
+}
+
+void NovellVpnUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
+{
+    // TODO : export Novell VPN connection to file
+    return;
+}
+
 // vim: sw=4 sts=4 et tw=100
