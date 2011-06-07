@@ -495,7 +495,7 @@ void ManageConnectionWidget::editClicked()
         else
         {
             kDebug() << "This connection has no secrets, good.";
-            editGotSecrets(true, QString(), QString());
+            editGotSecrets(true, QString(), mEditConnection->uuid());
         }
         //emit changed();
     }
