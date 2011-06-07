@@ -144,11 +144,6 @@ private:
     ConnectionList * mConnections;
 
     /**
-     * ConnectionProvider to add/remove/update user wide settings
-     */
-    NMDBusSettingsConnectionProvider *mUserSettings;
-
-    /**
      * ConnectionProvider to add/remove/update system wide settings
      */
     NMDBusSettingsConnectionProvider *mSystemSettings;
