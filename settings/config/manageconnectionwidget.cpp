@@ -405,9 +405,11 @@ void ManageConnectionWidget::importClicked()
 		// Assuming VPN secrets are always AgentOwned.
 		mSystemSettings->addConnection(con);
 		emit changed();
+		delete vpnUi;
 		break;
 	    }
 	}
+	delete vpnUi;
     }
     if (!con) {
 	kDebug() << "VPN import failed";
@@ -439,8 +441,10 @@ void ManageConnectionWidget::exportClicked()
     VpnUiPlugin * vpnUi = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-NetworkManager-Services]=='%1'" ).arg( serviceType ), this, QVariantList(), &pluginError );
     if (pluginError.isEmpty()) {
 	QString expFile = KFileDialog::getSaveFileName(KUser().homeDir().append("/" + vpnUi->suggestedFileName(con)),"",this,i18nc("File chooser dialog title for exporting VPN","Export VPN"));
-	if (expFile.isEmpty())
+	if (expFile.isEmpty()) {
+	    delete vpnUi;
 	    return;
+	}
 
 	vpnUi->exportConnectionSettings(con, expFile);
 
@@ -450,6 +454,7 @@ void ManageConnectionWidget::exportClicked()
 	KMessageBox::error(this, i18n("Could not export VPN connection settings"), i18n("Error"), KMessageBox::Notify);
     }
 
+    delete vpnUi;
     return;
 }
 
