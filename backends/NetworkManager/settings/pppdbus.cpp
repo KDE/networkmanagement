@@ -76,22 +76,21 @@ QVariantMap PppDbus::toMap()
 {
   QVariantMap map;
   Knm::PppSetting * setting = static_cast<Knm::PppSetting *>(m_setting);
-  insertIfTrue(map, NM_SETTING_PPP_NOAUTH, setting->noauth());
-  insertIfTrue(map, NM_SETTING_PPP_REFUSE_EAP, setting->refuseeap());
-  insertIfTrue(map, NM_SETTING_PPP_REFUSE_PAP, setting->refusepap());
-  insertIfTrue(map, NM_SETTING_PPP_REFUSE_CHAP, setting->refusechap());
-  insertIfTrue(map, NM_SETTING_PPP_REFUSE_MSCHAP, setting->refusemschap());
-  insertIfTrue(map, NM_SETTING_PPP_REFUSE_MSCHAPV2, setting->refusemschapv2());
-  insertIfTrue(map, NM_SETTING_PPP_NOBSDCOMP, setting->nobsdcomp());
-  insertIfTrue(map, NM_SETTING_PPP_NODEFLATE, setting->nodeflate());
-  insertIfTrue(map, NM_SETTING_PPP_NO_VJ_COMP, setting->novjcomp());
+  map.insert(QLatin1String(NM_SETTING_PPP_NOAUTH), setting->noauth());
+  map.insert(QLatin1String(NM_SETTING_PPP_REFUSE_EAP), setting->refuseeap());
+  map.insert(QLatin1String(NM_SETTING_PPP_REFUSE_PAP), setting->refusepap());
+  map.insert(QLatin1String(NM_SETTING_PPP_REFUSE_CHAP), setting->refusechap());
+  map.insert(QLatin1String(NM_SETTING_PPP_REFUSE_MSCHAP), setting->refusemschap());
+  map.insert(QLatin1String(NM_SETTING_PPP_REFUSE_MSCHAPV2), setting->refusemschapv2());
+  map.insert(QLatin1String(NM_SETTING_PPP_NOBSDCOMP), setting->nobsdcomp());
+  map.insert(QLatin1String(NM_SETTING_PPP_NODEFLATE), setting->nodeflate());
+  map.insert(QLatin1String(NM_SETTING_PPP_NO_VJ_COMP), setting->novjcomp());
   if (setting->requiremppe()) {
       map.insert(QLatin1String(NM_SETTING_PPP_REQUIRE_MPPE), true);
-
-          insertIfTrue(map, NM_SETTING_PPP_REQUIRE_MPPE_128, setting->requiremppe128());
-          insertIfTrue(map, NM_SETTING_PPP_MPPE_STATEFUL, setting->mppestateful());
+      map.insert(QLatin1String(NM_SETTING_PPP_REQUIRE_MPPE_128), setting->requiremppe128());
+      map.insert(QLatin1String(NM_SETTING_PPP_MPPE_STATEFUL), setting->mppestateful());
   }
-  insertIfTrue(map, NM_SETTING_PPP_CRTSCTS, setting->crtscts());
+  map.insert(QLatin1String(NM_SETTING_PPP_CRTSCTS), setting->crtscts());
   insertIfNonZero(map, NM_SETTING_PPP_BAUD, setting->baud());
   insertIfNonZero(map, NM_SETTING_PPP_MRU, setting->mru());
   insertIfNonZero(map, NM_SETTING_PPP_MTU, setting->mtu());

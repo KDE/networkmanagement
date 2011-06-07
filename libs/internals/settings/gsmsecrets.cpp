@@ -49,7 +49,7 @@ QMap<QString,QString> GsmSecrets::secretsToMap() const
 void GsmSecrets::secretsFromMap(QMap<QString,QString> secrets) const
 {
     m_setting->setPassword(secrets.value("password"));
-    m_setting->setPassword(secrets.value("pin"));
+    m_setting->setPin(secrets.value("pin"));
 }
 
 void GsmSecrets::secretsToConfig(QMap<QString,QString> secrets, KSharedConfig::Ptr configptr) const
