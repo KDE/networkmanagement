@@ -122,6 +122,11 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
             SLOT(editClicked()));
 
     restoreConnections();
+
+    if (!Solid::Control::NetworkManager::isWirelessEnabled()) {
+        mConnEditUi.tabWidget->setCurrentIndex(0);
+    }
+
     if (QDBusConnection::sessionBus().registerService(QLatin1String("org.kde.NetworkManager.KCModule"))) {
         bool result = QDBusConnection::sessionBus().registerObject(QLatin1String("/default"), this, QDBusConnection::ExportScriptableSlots);
         if (result)
