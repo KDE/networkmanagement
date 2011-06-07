@@ -61,9 +61,10 @@ class NMDBusSettingsConnectionProviderPrivate
 public:
     ConnectionList * connectionList;
     // hash of object path to object
-    QHash<QString, QPair<Knm::Connection*, RemoteConnection*> > connections;
-    QHash<QUuid, QDBusObjectPath> uuidToPath;
+    QHash<QString, RemoteConnection*> connections;
+    QHash<QUuid, QString> uuidToPath;
     QMap<QUuid, QVariantMapMap> secretsToSave;
+    QHash<QUuid, Knm::Connection *> secretsToGet;
     OrgFreedesktopNetworkManagerSettingsInterface * iface;
     QString serviceName;
 };
@@ -122,7 +123,7 @@ void NMDBusSettingsConnectionProvider::initConnections()
 void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(const QString & path)
 {
     Q_D(NMDBusSettingsConnectionProvider);
-    if (d->connections.contains(path)) {
+    if (!d->uuidToPath.key(path, QUuid()).isNull()) {
         kDebug() << "Service" << d->iface->service() << "is reporting the same connection more than once!";
     } else {
         RemoteConnection * connectionIface = new RemoteConnection(d->iface->service(), path, this);
@@ -131,8 +132,8 @@ void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(con
         ConnectionDbus dbusConverter(connection);
         dbusConverter.fromDbusMap(connectionIface->GetSettings());
 
-        d->connections.insert(path, QPair<Knm::Connection*, RemoteConnection*>(connection,connectionIface));
-        d->uuidToPath.insert(connection->uuid(), QDBusObjectPath(path));
+        d->connections.insert(connection->uuid(),connectionIface);
+        d->uuidToPath.insert(connection->uuid(), path);
 
         kDebug() << connection->uuid();
 
@@ -161,12 +162,14 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved()
     RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
     QString removedPath = connection->path();
     kDebug() << removedPath;
-    if (d->connections.contains(removedPath)) {
-        QPair<Knm::Connection *, RemoteConnection *> removed = d->connections.take(removedPath);
-        d->uuidToPath.remove(removed.first->uuid());
-        delete removed.second;
-        removed.first->removeCertificates();
-        d->connectionList->removeConnection(removed.first);
+    QUuid uuid = d->uuidToPath.key(removedPath, QUuid());
+    if (!uuid.isNull()) {
+        RemoteConnection *removed = d->connections.take(uuid.toString());
+        d->uuidToPath.remove(uuid.toString());
+        delete removed;
+        Knm::Connection *con = d->connectionList->findConnection(uuid.toString());
+        con->removeCertificates();
+        d->connectionList->removeConnection(con);
 
         emit connectionsChanged();
     }
@@ -177,11 +180,12 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionUpdated()
     Q_D(NMDBusSettingsConnectionProvider);
     RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
     kDebug() << connection->path();
-    if (d->connections.contains(connection->path())) {
-        QPair<Knm::Connection *, RemoteConnection *> updated = d->connections.value(connection->path());
-        ConnectionDbus dbusConverter(updated.first);
+    QUuid uuid = d->uuidToPath.key(connection->path(), QUuid());
+    if (!uuid.isNull() && d->connections.contains(uuid.toString())) {
+        Knm::Connection *con = d->connectionList->findConnection(uuid.toString());
+        ConnectionDbus dbusConverter(con);
         dbusConverter.fromDbusMap(connection->GetSettings());
-        d->connectionList->updateConnection(updated.first);
+        d->connectionList->updateConnection(con);
 
         emit connectionsChanged();
     }
@@ -215,9 +219,9 @@ void NMDBusSettingsConnectionProvider::clearConnections()
         // of the "delete toDelete.second" emmiting a Delete signal captured by
         // NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved(), which deletes
         // toDelete.second again.
-        QPair<Knm::Connection*, RemoteConnection*> toDelete = d->connections.take(key);
-        d->connectionList->removeConnection(toDelete.first);
-        delete toDelete.second;
+        RemoteConnection *toDelete = d->connections.take(key);
+        d->connectionList->removeConnection(key);
+        delete toDelete;
     }
     // Just to make sure d->connections is really clear.
     d->connections.clear();
@@ -235,9 +239,9 @@ void NMDBusSettingsConnectionProvider::handleAdd(Knm::Activatable * added)
         // if derived from one of our connections, tag it with the service and object path of the
         // connection
         if (d->uuidToPath.contains(interfaceConnection->connectionUuid())) {
-            kDebug() << "tagging InterfaceConnection " << interfaceConnection->connectionName() << "from" << d->serviceName << d->uuidToPath[interfaceConnection->connectionUuid()].path();
+            kDebug() << "tagging InterfaceConnection " << interfaceConnection->connectionName() << "from" << d->serviceName << d->uuidToPath[interfaceConnection->connectionUuid()];
             interfaceConnection->setProperty("NMDBusService", d->serviceName );
-            interfaceConnection->setProperty("NMDBusObjectPath", d->uuidToPath[interfaceConnection->connectionUuid()].path());
+            interfaceConnection->setProperty("NMDBusObjectPath", d->uuidToPath[interfaceConnection->connectionUuid()]);
         }
     }
 }
@@ -321,17 +325,16 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
 
     if ( d->uuidToPath.contains(QUuid(uuid))) {
 
-        QDBusObjectPath objPath = d->uuidToPath.value(QUuid(uuid));
+        QString objPath = d->uuidToPath.value(QUuid(uuid));
 
-        if (!d->connections.contains(objPath.path()))
+        if (!d->connections.contains(uuid))
         {
-            kWarning() << "Connection could not found!" << uuid << objPath.path();
+            kWarning() << "Connection could not found!" << uuid << objPath;
             return;
         }
 
-        QPair<Knm::Connection *, RemoteConnection *> pair = d->connections.value(objPath.path());
-        RemoteConnection *remote = pair.second;
-        kDebug() << "Updating connection "<< remote->id() << pair.first->uuid().toString();
+        RemoteConnection *remote = d->connections.value(uuid);
+        kDebug() << "Updating connection "<< remote->id() << objPath;
 
         newConnection->saveCertificates();
         newConnection->setSecrets();
@@ -394,17 +397,17 @@ void NMDBusSettingsConnectionProvider::onConnectionAddArrived(QDBusPendingCallWa
     {
         Q_D(NMDBusSettingsConnectionProvider);
         QDBusObjectPath objPath = reply.argumentAt<0>();
-        QUuid uuid = d->uuidToPath.key(objPath);
-        kDebug() << "Connection added successfully: " << objPath.path() << uuid;
         emit addConnectionCompleted(true, QString());
 
         // Hack to force NetworkManager to call the secrets agent to save this connections's secrets.
         // This does not work for VPN connections.
         // TODO: change this to a dbus call to the kded module.
-        QPair<Knm::Connection *, RemoteConnection *> pair = d->connections.value(objPath.path());
-        RemoteConnection *remote = pair.second;
+        QString uuid = d->uuidToPath.key(objPath.path(), QUuid()).toString();
+        RemoteConnection *remote = d->connections.value(uuid);
         QVariantMapMap map = d->secretsToSave.take(uuid);
         remote->Update(map);
+
+        kDebug() << "Connection added successfully: " << objPath.path() << uuid;
     }
 
     watcher->deleteLater();
@@ -427,7 +430,7 @@ bool NMDBusSettingsConnectionProvider::getConnectionSecrets(Knm::Connection *con
         return false;
     }
 
-    QString objPath = d->uuidToPath.value(uuid).path();
+    QString objPath = d->uuidToPath.value(uuid);
 
     OrgFreedesktopNetworkManagerSettingsConnectionInterface secretIface(d->serviceName, objPath, QDBusConnection::systemBus(), this);
 
@@ -447,7 +450,8 @@ bool NMDBusSettingsConnectionProvider::getConnectionSecrets(Knm::Connection *con
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
 
     //Ugly hack to access Knm::Connection pointer in the onConnectionSecretsArrived slot
-    watcher->setProperty("connection", d->uuidToPath.value(con->uuid()).path());
+    watcher->setProperty("connection", con->uuid().toString());
+    d->secretsToGet.insert(con->uuid(), con);
 
     connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(onConnectionSecretsArrived(QDBusPendingCallWatcher*)));
 
@@ -463,6 +467,7 @@ void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCa
 
     QDBusPendingReply<QVariantMapMap> reply = *watcher;
 
+    Knm::Connection *con = d->secretsToGet.value(watcher->property("connection").toString());
     if (reply.isValid())
     {
         QVariantMapMap set = reply.argumentAt<0>();
@@ -470,7 +475,7 @@ void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCa
         //kDebug() << "Got secrets, yay! " << set;
         kDebug() << "Got secrets, yay! ";
 
-        Knm::Connection *con = d->connections.value(watcher->property("connection").toString()).first;
+        Knm::Connection *con = d->secretsToGet.value(watcher->property("connection").toString());
         if (!con)
         {
             kWarning() << "Connection not found!" << watcher->property("connection").toString();
@@ -479,12 +484,12 @@ void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCa
 
         ConnectionDbus dbusConverter(con);
         dbusConverter.fromDbusSecretsMap(set); //update secretSettings in connection
-        emit getConnectionSecretsCompleted(true, QString(), set);
+        emit getConnectionSecretsCompleted(true, QString(), con->uuid());
     }
     else
     {
         kWarning () << "Secret fetching failed:" << reply.error().message();
-        emit getConnectionSecretsCompleted(false, reply.error().message(), QVariantMapMap());
+        emit getConnectionSecretsCompleted(false, reply.error().message(), con->uuid());
     }
 
     watcher->deleteLater();
@@ -496,16 +501,14 @@ void NMDBusSettingsConnectionProvider::removeConnection(const QString &uuid)
 
     if ( d->uuidToPath.contains(QUuid(uuid))) {
 
-        QDBusObjectPath objPath = d->uuidToPath.value(QUuid(uuid));
-
-        if (!d->connections.contains(objPath.path()))
+        if (!d->connections.contains(uuid))
         {
-            kWarning() << "Connection could not found!" << uuid << objPath.path();
+            QString objPath = d->uuidToPath.value(QUuid(uuid));
+            kWarning() << "Connection could not found!" << uuid << objPath;
             return;
         }
 
-        QPair<Knm::Connection *, RemoteConnection *> pair = d->connections.value(objPath.path());
-        RemoteConnection *remote = pair.second;
+        RemoteConnection *remote = d->connections.value(uuid);
 
         kDebug() << "Removing connection "<< remote->id() << uuid;
         remote->Delete();

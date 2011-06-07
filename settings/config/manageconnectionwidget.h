@@ -70,7 +70,7 @@ private slots:
     /**
      * Called when GetSecrets call of Connection.Secrets interface is arrived
      */
-    void editGotSecrets(bool valid, const QString &errorMessage, QVariantMapMap);
+    void editGotSecrets(bool valid, const QString &errorMessage, const QString &);
     void addGotConnection(bool valid, const QString &errorMessage);
     /**
      * Delete selected connection
