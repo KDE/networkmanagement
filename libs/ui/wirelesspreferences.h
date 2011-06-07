@@ -59,7 +59,6 @@ public:
 private Q_SLOTS:
     void tabChanged(int index);
 private:
-    bool m_hasSecrets;
     int m_securityTabIndex;
     Wireless80211Widget * m_wirelessWidget;
     WirelessSecuritySettingWidget * m_securityWidget;

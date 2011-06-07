@@ -46,6 +46,10 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     void setSecurityType( int v )
     {
         mSecurityType = v;
+
+        if (mSecurityType == None) {
+            mEnabled = false;
+        }
     }
 
     /**

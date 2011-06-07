@@ -22,18 +22,16 @@ WirelessSecurityDbus::~WirelessSecurityDbus()
 void WirelessSecurityDbus::fromMap(const QVariantMap & map)
 {
   Knm::WirelessSecuritySetting * setting = static_cast<Knm::WirelessSecuritySetting *>(m_setting);
-
-  setting->setEnabled(true); //since DBus map has 802-11-wireless-security key, this method is called so let's enable it
-  setting->setInitialized();
+  bool enabled = true;
 
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT))) {
-
       kDebug() << "Wireless security type in DBus map is " << map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT));
 
       if(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT)) == "none")
       {
           setting->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::None);
           setting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep);
+          enabled = false; // this is enabled only if at least one of the four possible secret keys is also available.
       }
       else if (map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT)) == "ieee8021x")
       {
@@ -105,32 +103,36 @@ void WirelessSecurityDbus::fromMap(const QVariantMap & map)
           // SECRET
           if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0))) {
               setting->setWepkey0(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0)).value<QString>());
+              enabled = true;
           }
           // SECRET
           if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1))) {
               setting->setWepkey1(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1)).value<QString>());
+              enabled = true;
           }
           // SECRET
           if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2))) {
               setting->setWepkey2(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2)).value<QString>());
+              enabled = true;
           }
           // SECRET
           if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3))) {
               setting->setWepkey3(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3)).value<QString>());
+              enabled = true;
           }
-
-      }
-      else
-      {
+      } else {
         setting->setWepKeyType(Knm::WirelessSecuritySetting::Passphrase);
 
         // SECRET
         if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0))) {
           setting->setWeppassphrase(map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0)).value<QString>());
+          enabled = true;
         }
       }
   }
 
+  setting->setEnabled(enabled);
+  setting->setInitialized();
 }
 
 QVariantMap WirelessSecurityDbus::toMap()
