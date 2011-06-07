@@ -91,7 +91,7 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     mConnections = new ConnectionList(this);
     mSystemSettings = new NMDBusSettingsConnectionProvider(mConnections, this);
 
-    connect(mSystemSettings, SIGNAL(getConnectionSecretsCompleted(bool, const QString &, QVariantMapMap)), this, SLOT(editGotSecrets(bool, const QString&, QVariantMapMap)) );
+    connect(mSystemSettings, SIGNAL(getConnectionSecretsCompleted(bool, const QString &, const QString &)), this, SLOT(editGotSecrets(bool, const QString&, const QString &)) );
     connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool, const QString &)), this, SLOT(addGotConnection(bool, const QString&)) );
 
     connect(mSystemSettings, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
@@ -484,10 +484,10 @@ void ManageConnectionWidget::editClicked()
             return;
         }
 
-        mEditConnection = con;
+        mEditConnection = new Knm::Connection(con);
         if (con->hasSecrets())
         {
-            bool rep = mSystemSettings->getConnectionSecrets(con);
+            bool rep = mSystemSettings->getConnectionSecrets(mEditConnection);
 
             if (!rep)
             {
@@ -500,13 +500,13 @@ void ManageConnectionWidget::editClicked()
         else
         {
             kDebug() << "This connection has no secrets, good.";
-            editGotSecrets(true, QString(), QVariantMapMap());
+            editGotSecrets(true, QString(), mEditConnection->uuid());
         }
         //emit changed();
     }
 }
 
-void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMessage, QVariantMapMap secrets)
+void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMessage, const QString &uuid)
 {
     if (!valid)
     {
@@ -514,29 +514,22 @@ void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMess
             KMessageBox::error(this, i18n("Error"));
         else
             KMessageBox::error(this, errorMessage);
+    }kDebug() << uuid << mEditConnection->uuid();
+
+    if (uuid != mEditConnection->uuid()) {
+        return;
     }
 
-    Knm::Connection *copy = new Knm::Connection(mEditConnection);
-    if (!secrets.empty()) {
-        ConnectionDbus dbusConverter(copy);
-        dbusConverter.fromDbusSecretsMap(secrets); //update secretSettings in connection
-    }
-
-    Knm::Connection *result = mEditor->editConnection(copy); //starts editor window
+    Knm::Connection *result = mEditor->editConnection(mEditConnection); //starts editor window
     if (result)
     {
-        // TODO: Check for scope and mUserUserSettings if necessary
-        /*
-           if (conScope == Knm::Connection::User)
-           mUserSettings->updateConnection(connectionId, result);
-           else
-           */
-        mSystemSettings->updateConnection(copy->uuid().toString(), result);
+        mSystemSettings->updateConnection(mEditConnection->uuid().toString(), result);
 
         //Enable this if connections do not updated in plasma-applet
         //mEditor->updateService();
     }
-    delete copy;
+    delete mEditConnection;
+    mEditConnection = 0;
 }
 
 void ManageConnectionWidget::addGotConnection(bool valid, const QString &errorMessage)
