@@ -145,8 +145,7 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
     // Policy whether an activatable should be shown or not.
     if (m_interfaces.count()) {
         // If interfaces are set, activatables for other interfaces are not shown
-        if (m_interfaces.contains(activatable->deviceUni())) {
-        } else {
+        if (!m_interfaces.contains(activatable->deviceUni())) {
             return false;
         }
     }
@@ -292,11 +291,12 @@ void ActivatableListWidget::setHasWireless(bool hasWireless)
 
 void ActivatableListWidget::filter()
 {
+    QList<RemoteActivatable *> oldList = m_itemIndex.keys();
     foreach (RemoteActivatable *act, m_activatables->activatables()) {
         if (accept(act)) {
             createItem(act);
         } else {
-            if (m_itemIndex.keys().contains(act)) {
+            if (oldList.contains(act)) {
                 activatableRemoved(act);
             }
         }
