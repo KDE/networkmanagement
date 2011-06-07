@@ -548,6 +548,7 @@ void NMPopup::updateHasWireless(bool checked)
             //kDebug() << "there's a wifi iface" << ifaceitem->connectionName() << iface->interfaceName();
             m_hasWirelessInterface = true; // at least one interface is wireless. We're happy.
             m_wifiCheckBox->show();
+            m_showMoreButton->show();
             break;
         }
     }
@@ -555,9 +556,9 @@ void NMPopup::updateHasWireless(bool checked)
         kDebug() << "no ifaces";
         hasWireless = false;
         m_wifiCheckBox->hide();
+        m_showMoreButton->hide();
     }
     m_connectionList->setHasWireless(hasWireless);
-    m_showMoreButton->setVisible(hasWireless);
 }
 
 void NMPopup::updateHasWwan()
