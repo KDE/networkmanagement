@@ -257,7 +257,7 @@ void NetworkManagerApplet::init()
     QDBusInterface networkmanagement(QLatin1String("org.kde.networkmanagement"), QLatin1String("/org/kde/networkmanagement"),
                                      QLatin1String("org.kde.networkmanagement"), QDBusConnection::sessionBus());
 
-//    networkmanagement.call(QLatin1String("ImportNm08Connections"));
+    networkmanagement.call(QLatin1String("ImportNm08Connections"));
 }
 
 void NetworkManagerApplet::configChanged()
