@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>464</width>
-    <height>419</height>
+    <width>402</width>
+    <height>401</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,281 +15,288 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout">
-     <item row="0" column="0">
-      <widget class="QLabel" name="label">
-       <property name="text">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;General&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="0">
-      <widget class="QLabel" name="textLabel3">
-       <property name="text">
-        <string>Gateway:</string>
-       </property>
-       <property name="wordWrap">
-        <bool>false</bool>
-       </property>
-       <property name="buddy">
-        <cstring>leGateway</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="KLineEdit" name="leGateway"/>
-     </item>
-     <item row="2" column="0">
-      <widget class="QLabel" name="labelGroup">
-       <property name="text">
-        <string>Group name:</string>
-       </property>
-       <property name="wordWrap">
-        <bool>false</bool>
-       </property>
-       <property name="buddy">
-        <cstring>leGroupName</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="2" column="1">
-      <widget class="KLineEdit" name="leGroupName"/>
-     </item>
-     <item row="3" column="0">
-      <widget class="QLabel" name="label_2">
-       <property name="text">
-        <string>User &amp;Password</string>
-       </property>
-       <property name="buddy">
-        <cstring>leUserPassword</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="KLineEdit" name="leUserPassword">
-         <property name="enabled">
-          <bool>false</bool>
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>General</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="textLabel3">
+        <property name="text">
+         <string>Gateway:</string>
+        </property>
+        <property name="wordWrap">
+         <bool>false</bool>
+        </property>
+        <property name="buddy">
+         <cstring>leGateway</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="KLineEdit" name="leGateway"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="labelGroup">
+        <property name="text">
+         <string>Group name:</string>
+        </property>
+        <property name="wordWrap">
+         <bool>false</bool>
+        </property>
+        <property name="buddy">
+         <cstring>leGroupName</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="KLineEdit" name="leGroupName"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>User &amp;Password</string>
+        </property>
+        <property name="buddy">
+         <cstring>leUserPassword</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="KLineEdit" name="leUserPassword">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="passwordMode">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="cboUserPassOptions">
+          <item>
+           <property name="text">
+            <string>Always Ask</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Store</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Not Required</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>&amp;Group Password:</string>
+        </property>
+        <property name="buddy">
+         <cstring>leGroupPassword</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="KLineEdit" name="leGroupPassword">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="passwordMode">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="cboGroupPassOptions">
+          <item>
+           <property name="text">
+            <string>Always Ask</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Store</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Not Required</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item row="4" column="1">
+       <widget class="QCheckBox" name="cbShowPasswords">
+        <property name="text">
+         <string>&amp;Hide passwords</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Optional</string>
+     </property>
+     <layout class="QFormLayout" name="formLayout_2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>&amp;Username:</string>
+        </property>
+        <property name="buddy">
+         <cstring>leUserName</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="KLineEdit" name="leUserName"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLabel" name="label_6">
+        <property name="text">
+         <string>&amp;Domain:</string>
+        </property>
+        <property name="buddy">
+         <cstring>leDomain</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="KLineEdit" name="leDomain"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>&amp;Encryption Method:</string>
+        </property>
+        <property name="buddy">
+         <cstring>cboEncryptionMethod</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="cboEncryptionMethod">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <item>
+         <property name="text">
+          <string>Secure</string>
          </property>
-         <property name="passwordMode">
-          <bool>true</bool>
+        </item>
+        <item>
+         <property name="text">
+          <string>Weak</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="cboUserPassOptions">
-         <item>
-          <property name="text">
-           <string>Always Ask</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Store</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Not Required</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="4" column="0">
-      <widget class="QLabel" name="label_3">
-       <property name="text">
-        <string>&amp;Group Password:</string>
-       </property>
-       <property name="buddy">
-        <cstring>leGroupPassword</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="KLineEdit" name="leGroupPassword">
-         <property name="enabled">
-          <bool>false</bool>
+        </item>
+        <item>
+         <property name="text">
+          <string>None</string>
          </property>
-         <property name="passwordMode">
-          <bool>true</bool>
+        </item>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLabel" name="label_8">
+        <property name="text">
+         <string>&amp;NAT Traversal:</string>
+        </property>
+        <property name="buddy">
+         <cstring>cboNatTraversal</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="cboNatTraversal">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <item>
+         <property name="text">
+          <string>Cisco UDP</string>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QComboBox" name="cboGroupPassOptions">
-         <item>
-          <property name="text">
-           <string>Always Ask</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Store</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Not Required</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="5" column="1">
-      <widget class="QCheckBox" name="cbShowPasswords">
-       <property name="text">
-        <string>&amp;Hide passwords</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="6" column="0">
-      <widget class="QLabel" name="label_4">
-       <property name="text">
-        <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Optional&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="textFormat">
-        <enum>Qt::RichText</enum>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
-      <widget class="QLabel" name="label_5">
-       <property name="text">
-        <string>&amp;Username:</string>
-       </property>
-       <property name="buddy">
-        <cstring>leUserName</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="1">
-      <widget class="KLineEdit" name="leUserName"/>
-     </item>
-     <item row="8" column="0">
-      <widget class="QLabel" name="label_6">
-       <property name="text">
-        <string>&amp;Domain:</string>
-       </property>
-       <property name="buddy">
-        <cstring>leDomain</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="8" column="1">
-      <widget class="KLineEdit" name="leDomain"/>
-     </item>
-     <item row="9" column="0">
-      <widget class="QLabel" name="label_7">
-       <property name="text">
-        <string>&amp;Encryption Method:</string>
-       </property>
-       <property name="buddy">
-        <cstring>cboEncryptionMethod</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="9" column="1">
-      <widget class="QComboBox" name="cboEncryptionMethod">
-       <item>
+        </item>
+        <item>
+         <property name="text">
+          <string>NAT-T</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Disabled</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>Secure</string>
+         <string>IKE DH Group</string>
         </property>
-       </item>
-       <item>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QComboBox" name="cboDHGroup">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <item>
+         <property name="text">
+          <string>DH Group 1</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>DH Group 2 (default)</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>DH Group 5</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QCheckBox" name="chkDeadPeerDetection">
         <property name="text">
-         <string>Weak</string>
+         <string>Enable Dead &amp;Peer Detection</string>
         </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>None</string>
+        <property name="checked">
+         <bool>true</bool>
         </property>
-       </item>
-      </widget>
-     </item>
-     <item row="10" column="0">
-      <widget class="QLabel" name="label_8">
-       <property name="text">
-        <string>&amp;NAT Traversal:</string>
-       </property>
-       <property name="buddy">
-        <cstring>cboNatTraversal</cstring>
-       </property>
-      </widget>
-     </item>
-     <item row="10" column="1">
-      <widget class="QComboBox" name="cboNatTraversal">
-       <item>
-        <property name="text">
-         <string>Cisco UDP</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>NAT-T</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>Disabled</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-     <item row="12" column="1">
-      <widget class="QCheckBox" name="chkDeadPeerDetection">
-       <property name="text">
-        <string>Enable Dead &amp;Peer Detection</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="0">
-      <widget class="QLabel" name="label_9">
-       <property name="text">
-        <string>IKE DH Group</string>
-       </property>
-      </widget>
-     </item>
-     <item row="11" column="1">
-      <widget class="QComboBox" name="cboDHGroup">
-       <item>
-        <property name="text">
-         <string>DH Group 1</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>DH Group 2 (default)</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>DH Group 5</string>
-        </property>
-       </item>
-      </widget>
-     </item>
-    </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
    <item>
     <spacer name="verticalSpacer">
