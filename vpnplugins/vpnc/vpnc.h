@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2011 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -30,6 +31,21 @@ namespace Knm
     class Connection;
 } // namespace Knm
 
+#include <KProcess>
+class VpncUiPluginPrivate:public QObject
+{
+Q_OBJECT
+public:
+    KProcess * ciscoDecrypt;
+    QString decryptedPasswd;
+    VpncUiPluginPrivate();
+    ~VpncUiPluginPrivate();
+protected Q_SLOTS:
+    void gotciscoDecryptOutput();
+    void ciscoDecryptError(QProcess::ProcessError pError);
+    void ciscoDecryptFinished(int exitCode, QProcess::ExitStatus exitStatus);
+};
+
 class VpncUiPlugin : public VpnUiPlugin
 {
 Q_OBJECT
@@ -38,6 +54,9 @@ public:
     virtual ~VpncUiPlugin();
     SettingWidget * widget(Knm::Connection *, QWidget * parent = 0);
     SettingWidget * askUser(Knm::Connection *, QWidget * parent = 0);
+    QString suggestedFileName(Knm::Connection *connection) const;
+    QVariantList importConnectionSettings(const QString &fileName);
+    void exportConnectionSettings(Knm::Connection * connection, const QString &fileName);
 };
 
 #endif //  KNM4_VPNC_H

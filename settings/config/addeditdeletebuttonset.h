@@ -1,5 +1,6 @@
 /*
 Copyright 2010 Aurélien Gâteau <aurelien.gateau@canonical.com>
+Copyright 2011 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -39,6 +40,8 @@ public:
     KPushButton* addButton() const { return mAddButton; }
     KPushButton* editButton() const { return mEditButton; }
     KPushButton* deleteButton() const { return mDeleteButton; }
+    KPushButton* importButton() const { return mImportButton; }
+    KPushButton* exportButton() const { return mExportButton; }
 
 private slots:
     void updateButtons();
@@ -47,6 +50,8 @@ private:
     KPushButton* mAddButton;
     KPushButton* mEditButton;
     KPushButton* mDeleteButton;
+    KPushButton* mImportButton;
+    KPushButton* mExportButton;
 
     QTreeWidget* mTree;
 };

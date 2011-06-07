@@ -45,4 +45,22 @@ SettingWidget * StrongswanUiPlugin::widget(Knm::Connection * connection, QWidget
     return new StrongswanSettingWidget(connection, parent);
 }
 
+QString StrongswanUiPlugin::suggestedFileName(Knm::Connection *connection) const
+{
+    // TODO : implement suggested file name
+    return QString();
+}
+
+QVariantList StrongswanUiPlugin::importConnectionSettings(const QString &fileName)
+{
+    // TODO : import the StrongSwan connection from file and return settings
+    return QVariantList();
+}
+
+void StrongswanUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
+{
+    // TODO : export StrongSwan connection to file
+    return;
+}
+
 // vim: sw=4 sts=4 et tw=100

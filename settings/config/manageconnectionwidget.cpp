@@ -1,5 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2011 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -46,6 +47,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KServiceTypeTrader>
 #include <KStandardDirs>
 #include <KToolInvocation>
+#include <kfiledialog.h>
+#include <KUser>
+
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
 
@@ -54,6 +58,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionlist.h"
 #include "connectionpersistence.h"
 #include "connectionprefs.h"
+#include "vpnuiplugin.h"
+#include "settings/vpn.h"
+
 #include <tooltips.h>
 
 #define ConnectionIdRole Qt::UserRole + 1
@@ -484,6 +491,93 @@ void ManageConnectionWidget::addClicked()
 
 }
 
+void ManageConnectionWidget::importClicked()
+{
+    //Get the file from which connection is to be imported
+    QString impFile = KFileDialog::getOpenFileName(KUser().homeDir(),"",this,i18nc("File chooser dialog title for importing VPN","Import VPN connection settings"));
+    if (impFile.isEmpty())
+	return;
+
+    //Try to import the connection with each VPN plugin found
+    Knm::Connection * con = 0;
+    QString pluginError;
+    KPluginInfo::List vpnServices = KPluginInfo::fromServices(KServiceTypeTrader::self()->query(QLatin1String("NetworkManagement/VpnUiPlugin")));
+    foreach (const KPluginInfo &pi, vpnServices) {
+	QString serviceType = pi.service()->property("X-NetworkManager-Services", QVariant::String).toString();
+	VpnUiPlugin * vpnUi = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-NetworkManager-Services]=='%1'" ).arg( serviceType ), this, QVariantList(), &pluginError );
+	if (pluginError.isEmpty()) {
+
+	    QVariantList conArgs = vpnUi->importConnectionSettings(impFile);
+	    if (!conArgs.isEmpty()) {
+		conArgs.insert(0, serviceType);	//VPN service
+		con = mEditor->createConnection(false, Knm::Connection::Vpn, conArgs);
+	    }
+	    if (con) {
+		kDebug() << "VPN Connection pointer is set, connection will be added.";
+
+		if (con->scope() == Knm::Connection::User)
+		    saveConnection(con);
+		else
+		    mSystemSettings->addConnection(con);
+
+		updateServiceAndUi(con);
+		break;
+	    }
+	}
+    }
+    if (!con) {
+	kDebug() << "VPN import failed";
+	KMessageBox::error(this, i18n("Could not import VPN connection settings"), i18n("Error"), KMessageBox::Notify) ;
+    }
+
+}
+
+void ManageConnectionWidget::exportClicked()
+{
+    QTreeWidgetItem * item = selectedItem();
+    Knm::Connection * con = 0;
+    QString connectionId = item->data(0, ConnectionIdRole).toString();
+    Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, ConnectionTypeRole).toUInt();
+    if (connectionId.isEmpty()) {
+	kDebug() << "selected item had no connectionId!";
+	return;
+    }
+
+    Knm::Connection::Scope scope = (Knm::Connection::Scope)item->data(0, ConnectionScopeRole).toUInt();
+    if (scope == Knm::Connection::User) {
+	con = new Knm::Connection(QUuid(connectionId), type);
+	loadConnection(con);
+
+    }
+    else {
+	//find clicked connection from our connection list
+	// FIXME: we should create a copy here like above instead of using the original.
+	con = mConnections->findConnection(connectionId);
+    }
+    if (!con) {
+	kWarning() << "Clicked connection with id" << connectionId << " could not be found in connection list!";
+	return;
+    }
+
+    QString serviceType = static_cast<Knm::VpnSetting*>(con->setting(Knm::Setting::Vpn))->serviceType();
+    QString pluginError;
+    VpnUiPlugin * vpnUi = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-NetworkManager-Services]=='%1'" ).arg( serviceType ), this, QVariantList(), &pluginError );
+    if (pluginError.isEmpty()) {
+	QString expFile = KFileDialog::getSaveFileName(KUser().homeDir().append("/" + vpnUi->suggestedFileName(con)),"",this,i18nc("File chooser dialog title for exporting VPN","Export VPN"));
+	if (expFile.isEmpty())
+	    return;
+
+	vpnUi->exportConnectionSettings(con, expFile);
+
+	KMessageBox::information(this, i18n("VPN connection successfully exported"), i18n("Success"), i18n("Do not show again"), KMessageBox::Notify);
+    }
+    else {
+	KMessageBox::error(this, i18n("Could not export VPN connection settings"), i18n("Error"), KMessageBox::Notify);
+    }
+
+    return;
+}
+
 void ManageConnectionWidget::loadConnection(Knm::Connection *con)
 {
     // restore the Connection if possible
@@ -812,6 +906,11 @@ void ManageConnectionWidget::tabChanged(int index)
             mConnEditUi.buttonSetVpn->addButton()->setMenu(mVpnMenu);
         }
         mConnEditUi.buttonSetVpn->addButton()->setEnabled(!mVpnMenu->isEmpty());
+        mConnEditUi.buttonSetVpn->importButton()->setEnabled(!mVpnMenu->isEmpty());
+        mConnEditUi.buttonSetVpn->importButton()->setVisible(!mVpnMenu->isEmpty());
+        mConnEditUi.buttonSetVpn->exportButton()->setVisible(!mVpnMenu->isEmpty());
+        connect(mConnEditUi.buttonSetVpn->importButton(),SIGNAL(clicked()),SLOT(importClicked()));
+        connect(mConnEditUi.buttonSetVpn->exportButton(),SIGNAL(clicked()),SLOT(exportClicked()));
     }
 }
 
@@ -846,7 +945,6 @@ void ManageConnectionWidget::connectionTypeMenuTriggered(QAction* action)
         updateServiceAndUi(con);
     }
 }
-
 
 void ManageConnectionWidget::activeConnectionsChanged()
 {

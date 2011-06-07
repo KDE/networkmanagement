@@ -84,6 +84,14 @@ private slots:
      */
     void tabChanged(int);
     /**
+     * Imports a connection of the selected subtype
+     */
+    void importClicked();
+    /**
+     * Exports a connection of the selected subtype
+     */
+    void exportClicked();
+    /**
      * adds a connection of the selected subtype
      */
     void connectionTypeMenuTriggered(QAction* action);

@@ -1,5 +1,6 @@
 /*
 Copyright 2010 Aurélien Gâteau <aurelien.gateau@canonical.com>
+Copyright 2011 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -32,6 +33,8 @@ AddEditDeleteButtonSet::AddEditDeleteButtonSet(QWidget* parent)
 , mAddButton(new KPushButton)
 , mEditButton(new KPushButton)
 , mDeleteButton(new KPushButton)
+, mImportButton(new KPushButton)
+, mExportButton(new KPushButton)
 , mTree(0)
 {
     mAddButton->setGuiItem(KGuiItem(i18n("Add..."), "list-add"));
@@ -42,11 +45,20 @@ AddEditDeleteButtonSet::AddEditDeleteButtonSet(QWidget* parent)
     mDeleteButton->setGuiItem(KStandardGuiItem::del());
     mDeleteButton->setEnabled(false);
 
+    mImportButton->setGuiItem(KGuiItem(i18n("Import"), "arrow-down"));
+    mExportButton->setGuiItem(KGuiItem(i18n("Export"), "arrow-up"));
+    mImportButton->setVisible(false);
+    mExportButton->setVisible(false);
+    mExportButton->setEnabled(false);
+
     QVBoxLayout* layout = new QVBoxLayout(this);
     layout->setMargin(0);
     layout->addWidget(mAddButton);
     layout->addWidget(mEditButton);
     layout->addWidget(mDeleteButton);
+    layout->addWidget(mImportButton);
+    layout->addWidget(mExportButton);
+
     layout->addStretch();
 }
 
@@ -62,4 +74,5 @@ void AddEditDeleteButtonSet::updateButtons()
     bool hasSelection = !mTree->selectedItems().isEmpty();
     mEditButton->setEnabled(hasSelection);
     mDeleteButton->setEnabled(hasSelection);
+    mExportButton->setEnabled(hasSelection);
 }

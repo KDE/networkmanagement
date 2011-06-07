@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define VPNUIPLUGIN_H
 
 #include <QObject>
+#include <QVariant>
 
 #include "settingwidget.h"
 
@@ -46,6 +47,9 @@ public:
 
     virtual SettingWidget * widget(Knm::Connection * connection, QWidget * parent = 0) = 0;
     virtual SettingWidget * askUser(Knm::Connection * connection, QWidget * parent = 0){ return widget(connection, parent); };
+    virtual QString suggestedFileName(Knm::Connection *connection) const = 0;
+    virtual QVariantList importConnectionSettings(const QString &fileName) = 0;
+    virtual void exportConnectionSettings(Knm::Connection * connection, const QString &fileName) = 0;
 private:
     class Private;
     Private * d;
