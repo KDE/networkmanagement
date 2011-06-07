@@ -178,6 +178,10 @@ void SecretStorage::walletOpenedForRead(bool success)
 
 void SecretStorage::deleteSecrets(Knm::Connection *con)
 {
+    if (!con->hasSecrets()) {
+        return;
+    }
+
     if (m_storageMode == PlainText) {
         KSharedConfig::Ptr ptr = secretsFileForUuid(con->uuid());
         QFile::remove(ptr->name());
