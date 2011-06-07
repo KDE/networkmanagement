@@ -753,9 +753,6 @@ bool ManageConnectionWidget::deleteConnection(QString id, Knm::Connection::Scope
     if (scope == Knm::Connection::System)
         mSystemSettings->removeConnection(id);
     else {
-        // remove secrets from wallet if using encrypted storage
-        Knm::ConnectionPersistence::deleteSecrets(id);
-
         // delete everything related, like certificates
         QFile connFile(KStandardDirs::locateLocal("data",
                     Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + id));
@@ -768,6 +765,12 @@ bool ManageConnectionWidget::deleteConnection(QString id, Knm::Connection::Scope
             (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
         connectionPersistence->load();
         con->removeCertificates();
+
+        if (con->hasSecrets()) {
+            // remove secrets from wallet if using encrypted storage
+            Knm::ConnectionPersistence::deleteSecrets(id);
+        }
+
         delete(connectionPersistence);
         delete(con);
 
