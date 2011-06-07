@@ -340,7 +340,6 @@ void ManageConnectionWidget::addClicked()
     kDebug() << "Add clicked, currentIndex is " << connectionTypeForCurrentIndex();
 
     if (connectionTypeForCurrentIndex() == Knm::Connection::Gsm) {
-
         kDebug() << "GSM tab selected, connection wizard will be shown.";
 
         delete mMobileConnectionWizard;
@@ -449,8 +448,7 @@ void ManageConnectionWidget::exportClicked()
 	vpnUi->exportConnectionSettings(con, expFile);
 
 	KMessageBox::information(this, i18n("VPN connection successfully exported"), i18n("Success"), i18n("Do not show again"), KMessageBox::Notify);
-    }
-    else {
+    } else {
 	KMessageBox::error(this, i18n("Could not export VPN connection settings"), i18n("Error"), KMessageBox::Notify);
     }
 
@@ -478,27 +476,22 @@ void ManageConnectionWidget::editClicked()
 
         //find clicked connection from our connection list
         con = mConnections->findConnection(connectionId);
-        if (!con)
-        {
+        if (!con) {
             kWarning() << "Clicked connection with id" << connectionId << " could not be found in connection list!";
             return;
         }
 
         mEditConnection = new Knm::Connection(con);
-        if (con->hasSecrets())
-        {
+        if (con->hasSecrets()) {
             bool rep = mSystemSettings->getConnectionSecrets(mEditConnection);
 
-            if (!rep)
-            {
+            if (!rep) {
                 KMessageBox::error(this, i18n("Connection edit option failed, make sure that NetworkManager is properly running."));
                 return;
             }
 
             kDebug() << "Get secrets " << rep;
-        }
-        else
-        {
+        } else {
             kDebug() << "This connection has no secrets, good.";
             editGotSecrets(true, QString(), mEditConnection->uuid());
         }
@@ -508,21 +501,21 @@ void ManageConnectionWidget::editClicked()
 
 void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMessage, const QString &uuid)
 {
-    if (!valid)
-    {
+    if (!valid) {
         if (errorMessage.isEmpty())
             KMessageBox::error(this, i18n("Error"));
         else
             KMessageBox::error(this, errorMessage);
-    }kDebug() << uuid << mEditConnection->uuid();
+    }
+    
+    kDebug() << uuid << mEditConnection->uuid();
 
     if (uuid != mEditConnection->uuid()) {
         return;
     }
 
     Knm::Connection *result = mEditor->editConnection(mEditConnection); //starts editor window
-    if (result)
-    {
+    if (result) {
         mSystemSettings->updateConnection(mEditConnection->uuid().toString(), result);
 
         //Enable this if connections do not updated in plasma-applet
@@ -534,8 +527,7 @@ void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMess
 
 void ManageConnectionWidget::addGotConnection(bool valid, const QString &errorMessage)
 {
-    if (!valid)
-    {
+    if (!valid) {
         if (errorMessage.isEmpty())
             KMessageBox::error(this, i18n("Connection create operation failed."));
         else
