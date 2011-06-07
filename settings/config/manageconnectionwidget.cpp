@@ -123,7 +123,7 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
 
     restoreConnections();
 
-    if (!Solid::Control::NetworkManager::isWirelessEnabled()) {
+    if (!Solid::Control::NetworkManagerNm09::isWirelessEnabled()) {
         mConnEditUi.tabWidget->setCurrentIndex(0);
     }
 
