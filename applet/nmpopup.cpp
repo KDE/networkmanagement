@@ -219,6 +219,7 @@ void NMPopup::init()
     m_rightLayout->addItem(connectionLayout);
 
     m_mainLayout->addItem(m_rightWidget, 1, 2);
+    m_mainLayout->setColumnFixedWidth(2, m_showMoreButton->size().rwidth() + m_connectionsButton->size().rwidth());
 
     //createTab(Knm::Activatable::WirelessInterfaceConnection);
     kDebug() << "Adding interfaces initially";
