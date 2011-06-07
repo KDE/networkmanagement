@@ -500,11 +500,6 @@ void NMPopup::wirelessEnabledToggled(bool checked)
     if (Solid::Control::NetworkManager::isWirelessEnabled() != checked) {
         Solid::Control::NetworkManager::setWirelessEnabled(checked);
     }
-    if (checked && Solid::Control::NetworkManager::isNetworkingEnabled()) {
-        m_showMoreButton->show();
-    } else {
-        m_showMoreButton->hide();
-    }
     updateHasWireless(checked);
     saveConfig();
 }
@@ -538,12 +533,6 @@ void NMPopup::networkingEnabledToggled(bool checked)
     m_wwanCheckBox->setEnabled(Solid::Control::NetworkManager::isWwanHardwareEnabled());
 
 #endif
-    if (checked && Solid::Control::NetworkManager::isWirelessHardwareEnabled() &&
-                   Solid::Control::NetworkManager::isWirelessEnabled()) {
-        m_showMoreButton->show();
-    } else {
-        m_showMoreButton->hide();
-    }
     updateHasWireless(checked);
     saveConfig();
 }
@@ -583,6 +572,7 @@ void NMPopup::updateHasWireless(bool checked)
         m_wifiCheckBox->hide();
     }
     m_connectionList->setHasWireless(hasWireless);
+    m_showMoreButton->setVisible(hasWireless);
 }
 
 #ifdef NM_0_8
