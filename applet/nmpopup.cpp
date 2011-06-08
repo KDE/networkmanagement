@@ -288,6 +288,9 @@ void NMPopup::readConfig()
     m_wifiCheckBox->setEnabled(true);
 #endif
 
+    m_showMoreButton->setEnabled(Solid::Control::NetworkManagerNm09::isNetworkingEnabled() &&
+                                 Solid::Control::NetworkManagerNm09::isWirelessEnabled());
+
     m_wwanCheckBox->setChecked(Solid::Control::NetworkManagerNm09::isWwanEnabled());
     m_wwanCheckBox->setEnabled(Solid::Control::NetworkManagerNm09::isWwanHardwareEnabled());
 
