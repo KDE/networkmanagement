@@ -83,7 +83,6 @@ Q_SIGNALS:
 
 private Q_SLOTS:
     void readConfig();
-    void saveConfig();
     void checkShowMore(RemoteActivatable *);
     void uncheckShowMore(RemoteActivatable *);
     void refresh();

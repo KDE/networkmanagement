@@ -250,6 +250,7 @@ void NMPopup::init()
     m_oldShowMoreChecked = false;
     showMore(m_oldShowMoreChecked);
 
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     readConfig();
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
@@ -262,21 +263,8 @@ void NMPopup::init()
 void NMPopup::readConfig()
 {
     kDebug();
-    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     KNetworkManagerServicePrefs::self()->readConfig();
-    KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("SystemTray"));
-    if (config.exists()) {
-        bool networkingEnabled = config.readEntry("NetworkingEnabled",
-                                                  Solid::Control::NetworkManagerNm09::isNetworkingEnabled());
-        bool wirelessEnabled = config.readEntry("WirelessEnabled",
-                                                Solid::Control::NetworkManagerNm09::isWirelessEnabled());
 
-        Solid::Control::NetworkManagerNm09::setNetworkingEnabled(networkingEnabled);
-        Solid::Control::NetworkManagerNm09::setWirelessEnabled(wirelessEnabled);
-        bool wwanEnabled = config.readEntry("WwanEnabled",
-                                            Solid::Control::NetworkManagerNm09::isWwanEnabled());
-        Solid::Control::NetworkManagerNm09::setWwanEnabled(wwanEnabled);
-    }
     m_networkingCheckBox->setChecked(Solid::Control::NetworkManagerNm09::isNetworkingEnabled());
     m_wifiCheckBox->setChecked(Solid::Control::NetworkManagerNm09::isWirelessEnabled());
 
@@ -306,22 +294,6 @@ void NMPopup::readConfig()
             warning->setText(i18nc("Warning about wrong NetworkManager version", "We need NetworkManager version > 0.8.990 to work, found %1", nmVersion));
             m_interfaceLayout->addItem(warning);
         }
-    }
-}
-
-void NMPopup::saveConfig()
-{
-    kDebug();
-    /* If networking is disabled system is probably suspending to ram/disk.
-       When it resumes we want to put NetworkManager at the same state as before the suspend,
-       so we do not save config now. */
-    if (Solid::Control::NetworkManagerNm09::isNetworkingEnabled()) {
-        kDebug() << "Saving config";
-        KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("SystemTray"));
-        config.writeEntry("NetworkingEnabled", m_networkingCheckBox->isChecked());
-        config.writeEntry("WirelessEnabled", m_wifiCheckBox->isChecked());
-        config.writeEntry("WwanEnabled", m_wwanCheckBox->isChecked());
-        KNetworkManagerServicePrefs::self()->writeConfig();
     }
 }
 
@@ -493,7 +465,6 @@ void NMPopup::wirelessEnabledToggled(bool checked)
         Solid::Control::NetworkManagerNm09::setWirelessEnabled(checked);
     }
     updateHasWireless(checked);
-    saveConfig();
 }
 
 void NMPopup::wwanEnabledToggled(bool checked)
@@ -502,7 +473,6 @@ void NMPopup::wwanEnabledToggled(bool checked)
     if (Solid::Control::NetworkManagerNm09::isWwanEnabled() != checked) {
         Solid::Control::NetworkManagerNm09::setWwanEnabled(checked);
     }
-    saveConfig();
 }
 
 void NMPopup::networkingEnabledToggled(bool checked)
@@ -522,7 +492,6 @@ void NMPopup::networkingEnabledToggled(bool checked)
     m_wwanCheckBox->setEnabled(Solid::Control::NetworkManagerNm09::isWwanHardwareEnabled());
 
     updateHasWireless(checked);
-    saveConfig();
 }
 
 void NMPopup::updateHasWireless(bool checked)
