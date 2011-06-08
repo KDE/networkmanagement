@@ -484,6 +484,8 @@ void NMPopup::networkingEnabledToggled(bool checked)
     // Update wireless checkbox
     m_wifiCheckBox->setChecked(Solid::Control::NetworkManagerNm09::isWirelessEnabled());
 
+kDebug() << "Wireless hardware enabled ==" << Solid::Control::NetworkManagerNm09::isWirelessHardwareEnabled();
+
 #if KDE_IS_VERSION(4,6,2)
     m_wifiCheckBox->setEnabled(Solid::Control::NetworkManagerNm09::isWirelessHardwareEnabled());
 #endif

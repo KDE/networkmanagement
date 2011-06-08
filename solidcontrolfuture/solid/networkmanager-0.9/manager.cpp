@@ -234,6 +234,14 @@ void NMNetworkManager::stateChanged(uint state)
 {
     Q_D(NMNetworkManager);
     if ( d->nmState != state ) {
+        if (d->nmState == NM_STATE_UNKNOWN) {
+            d->isWirelessHardwareEnabled = d->iface.wirelessHardwareEnabled();
+            d->isWirelessEnabled = d->iface.wirelessEnabled();
+            d->isWwanHardwareEnabled = d->iface.wwanHardwareEnabled();
+            d->isWwanEnabled = d->iface.wwanEnabled();
+            d->isNetworkingEnabled = d->iface.networkingEnabled();
+	}
+
         // set new state
         d->nmState = state;
         emit statusChanged( convertNMState( state ) );
