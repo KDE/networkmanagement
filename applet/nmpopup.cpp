@@ -300,8 +300,8 @@ void NMPopup::readConfig()
     m_wwanCheckBox->setEnabled(Solid::Control::NetworkManager::isWwanHardwareEnabled());
 #endif
 
-    m_showMoreButton->setEnabled(Solid::Control::NetworkManagerNm09::isNetworkingEnabled() &&
-                                 Solid::Control::NetworkManagerNm09::isWirelessEnabled());
+    m_showMoreButton->setEnabled(Solid::Control::NetworkManager::isNetworkingEnabled() &&
+                                 Solid::Control::NetworkManager::isWirelessEnabled());
 
     foreach(InterfaceItem * i, m_interfaces) {
         i->setNameDisplayMode(InterfaceItem::InterfaceName);
@@ -607,7 +607,7 @@ void NMPopup::managerWirelessEnabledChanged(bool enabled)
         m_wifiCheckBox->setEnabled(enabled);
     }
 
-    m_showMoreButton->setEnabled(enabled && Solid::Control::NetworkManagerNm09::isNetworkingEnabled());
+    m_showMoreButton->setEnabled(enabled && Solid::Control::NetworkManager::isNetworkingEnabled());
 }
 
 void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
@@ -615,7 +615,7 @@ void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
     m_wifiCheckBox->setEnabled(enabled);
     updateHasWireless(enabled);
-    m_showMoreButton->setEnabled(enabled && Solid::Control::NetworkManagerNm09::isNetworkingEnabled());
+    m_showMoreButton->setEnabled(enabled && Solid::Control::NetworkManager::isNetworkingEnabled());
 }
 
 void NMPopup::managerNetworkingEnabledChanged(bool enabled)
