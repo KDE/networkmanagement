@@ -548,7 +548,6 @@ void NMPopup::updateHasWireless(bool checked)
             //kDebug() << "there's a wifi iface" << ifaceitem->connectionName() << iface->interfaceName();
             m_hasWirelessInterface = true; // at least one interface is wireless. We're happy.
             m_wifiCheckBox->show();
-            m_showMoreButton->show();
             break;
         }
     }
@@ -556,7 +555,6 @@ void NMPopup::updateHasWireless(bool checked)
         kDebug() << "no ifaces";
         hasWireless = false;
         m_wifiCheckBox->hide();
-        m_showMoreButton->hide();
     }
     m_connectionList->setHasWireless(hasWireless);
 }
@@ -588,6 +586,8 @@ void NMPopup::managerWirelessEnabledChanged(bool enabled)
     if (enabled) {
         m_wifiCheckBox->setEnabled(enabled);
     }
+
+    m_showMoreButton->setEnabled(enabled && Solid::Control::NetworkManagerNm09::isNetworkingEnabled());
 }
 
 void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
@@ -595,12 +595,14 @@ void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
     m_wifiCheckBox->setEnabled(enabled);
     updateHasWireless(enabled);
+    m_showMoreButton->setEnabled(enabled && Solid::Control::NetworkManagerNm09::isNetworkingEnabled());
 }
 
 void NMPopup::managerNetworkingEnabledChanged(bool enabled)
 {
     kDebug() << "NM daemon changed networking enable state" << enabled;
     m_networkingCheckBox->setChecked(enabled);
+    m_showMoreButton->setEnabled(enabled);
 }
 
 void NMPopup::managerWwanEnabledChanged(bool enabled)
