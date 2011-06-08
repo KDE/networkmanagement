@@ -320,7 +320,7 @@ QString Connection::iconName(const Connection::Type type)
             iconName = QLatin1String("phone");
             break;
         case Connection::Vpn:
-            iconName = QLatin1String("network-server");
+            iconName = QLatin1String("secure-card");
 
         default:
             break;
