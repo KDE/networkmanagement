@@ -497,34 +497,20 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
                 if (iface->type() == Solid::Control::NetworkInterfaceNm09::Modem) {
                     Solid::Control::ModemNetworkInterfaceNm09 * nmModemIface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09 *>(iface);
                     if (nmModemIface) {
-                        bool hasCellular = false;
-                        Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities subType = nmModemIface->subType();
-                        foreach (const QString uuid, d->connectionList->connections()) {
-                            const Knm::Connection *c = d->connectionList->findConnection(uuid);
-                                /* TODO: add Solid::Control::ModemNetworkInterfaceNm09::Pots and Solid::Control::ModemNetworkInterfaceNm09::Lte */
-                            if ((c->type() == Knm::Connection::Gsm && subType == Solid::Control::ModemNetworkInterfaceNm09::GsmUmts) ||
-                                (c->type() == Knm::Connection::Cdma && subType == Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo)) {
-                                hasCellular = true;
-                                break;
-                            }
-                        }
-
-                        if (!hasCellular) {
-                            // KNotification::CloseOnTimeout sometimes breaks the activation of slot createCellularConnection,
-                            // so using Persistent here and closing the notification using QTimer::singleShot() below.
-                            KNotification *notification= new KNotification(Event::HwAdded, 0, KNotification::Persistent);
-                            notification->setComponentData(componentData());
-                            notification->setText(i18nc("@info:status Notification for hardware added", "%1 attached.<br />You do not have a cellular connection yet.", host->label()));
-                            notification->setActions(( QStringList() << i18nc("@action", "Create Connection" ) << i18nc("@action", "Ignore" )) );
-                            notification->setPixmap(KIcon(Knm::Connection::iconName(Knm::Connection::typeFromSolidType(iface))).pixmap(QSize(iconSize,iconSize)));
-                            QObject::connect(notification,SIGNAL(activated()), this , SLOT(createCellularConnection()) );
-                            QObject::connect(notification,SIGNAL(action1Activated()), this, SLOT(createCellularConnection()) );
-                            QObject::connect(notification,SIGNAL(action2Activated()), notification, SLOT(close()) );
-                            QObject::connect(notification,SIGNAL(ignored()), notification, SLOT(close()) );
-                            notification->sendEvent();
-                            QTimer::singleShot(10000, notification, SLOT(close()));
-                            return;
-                        }
+                        // KNotification::CloseOnTimeout sometimes breaks the activation of slot createCellularConnection,
+                        // so using Persistent here and closing the notification using QTimer::singleShot() below.
+                        KNotification *notification= new KNotification(Event::HwAdded, 0, KNotification::Persistent);
+                        notification->setComponentData(componentData());
+                        notification->setText(i18nc("@info:status Notification for hardware added", "%1 attached.<br />You do not have a cellular connection yet.", host->label()));
+                        notification->setActions(( QStringList() << i18nc("@action", "Create Connection" ) << i18nc("@action", "Ignore" )) );
+                        notification->setPixmap(KIcon(Knm::Connection::iconName(Knm::Connection::typeFromSolidType(iface))).pixmap(QSize(iconSize,iconSize)));
+                        QObject::connect(notification,SIGNAL(activated()), this , SLOT(createCellularConnection()) );
+                        QObject::connect(notification,SIGNAL(action1Activated()), this, SLOT(createCellularConnection()) );
+                        QObject::connect(notification,SIGNAL(action2Activated()), notification, SLOT(close()) );
+                        QObject::connect(notification,SIGNAL(ignored()), notification, SLOT(close()) );
+                        notification->sendEvent();
+                        QTimer::singleShot(10000, notification, SLOT(close()));
+                        return;
                     }
                 }
                 KNotification::event(Event::HwAdded, i18nc("@info:status Notification for hardware added", "%1 attached", host->label()), KIcon(Knm::Connection::iconName(Knm::Connection::typeFromSolidType(iface))).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
