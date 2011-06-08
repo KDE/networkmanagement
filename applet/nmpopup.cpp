@@ -300,6 +300,9 @@ void NMPopup::readConfig()
     m_wwanCheckBox->setEnabled(Solid::Control::NetworkManager::isWwanHardwareEnabled());
 #endif
 
+    m_showMoreButton->setEnabled(Solid::Control::NetworkManagerNm09::isNetworkingEnabled() &&
+                                 Solid::Control::NetworkManagerNm09::isWirelessEnabled());
+
     foreach(InterfaceItem * i, m_interfaces) {
         i->setNameDisplayMode(InterfaceItem::InterfaceName);
     }
