@@ -89,7 +89,6 @@ private Q_SLOTS:
     void disableWwan();
 #endif
     void readConfig();
-    void saveConfig();
     void checkShowMore(RemoteActivatable *);
     void uncheckShowMore(RemoteActivatable *);
     void refresh();
