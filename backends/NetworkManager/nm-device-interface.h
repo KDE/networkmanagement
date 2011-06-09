@@ -38,6 +38,10 @@ public:
 
     ~OrgFreedesktopNetworkManagerDeviceInterface();
 
+    Q_PROPERTY(QDBusObjectPath ActiveConnection READ activeConnection)
+    inline QDBusObjectPath activeConnection() const
+    { return qvariant_cast< QDBusObjectPath >(property("ActiveConnection")); }
+
     Q_PROPERTY(uint Capabilities READ capabilities)
     inline uint capabilities() const
     { return qvariant_cast< uint >(property("Capabilities")); }
