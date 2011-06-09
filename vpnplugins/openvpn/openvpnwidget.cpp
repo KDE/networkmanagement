@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 #include <KProcess>
+#include <KStandardDirs>
 #include <nm-setting-vpn.h>
 #include "settings/vpn.h"
 #include "connection.h"
@@ -52,7 +53,7 @@ OpenVpnSettingWidget::OpenVpnSettingWidget(Knm::Connection * connection, QWidget
     d->readConfig = false;
 
     // start openVPN process and get its cipher list
-    QString openVpnBinary = "/usr/sbin/openvpn";
+    QString openVpnBinary = KStandardDirs::findExe("openvpn", "/sbin:/usr/sbin");
     QStringList args(QLatin1String("--show-ciphers"));
     d->openvpnProcess = new KProcess(this);
     d->openvpnProcess->setOutputChannelMode(KProcess::OnlyStdoutChannel);
