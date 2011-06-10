@@ -467,7 +467,6 @@ void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCa
 
     QDBusPendingReply<QVariantMapMap> reply = *watcher;
 
-    Knm::Connection *con = d->secretsToGet.value(watcher->property("connection").toString());
     if (reply.isValid())
     {
         QVariantMapMap set = reply.argumentAt<0>();
@@ -475,21 +474,19 @@ void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCa
         //kDebug() << "Got secrets, yay! " << set;
         kDebug() << "Got secrets, yay! ";
 
-        Knm::Connection *con = d->secretsToGet.value(watcher->property("connection").toString());
-        if (!con)
-        {
+        Knm::Connection *con = d->secretsToGet.take(watcher->property("connection").toString());
+        if (con) {
+            ConnectionDbus dbusConverter(con);
+            dbusConverter.fromDbusSecretsMap(set); //update secretSettings in connection
+            emit getConnectionSecretsCompleted(true, QString(), con->uuid());
+        } else {
             kWarning() << "Connection not found!" << watcher->property("connection").toString();
-            return;
         }
-
-        ConnectionDbus dbusConverter(con);
-        dbusConverter.fromDbusSecretsMap(set); //update secretSettings in connection
-        emit getConnectionSecretsCompleted(true, QString(), con->uuid());
     }
     else
     {
         kWarning () << "Secret fetching failed:" << reply.error().message();
-        emit getConnectionSecretsCompleted(false, reply.error().message(), con->uuid());
+        emit getConnectionSecretsCompleted(false, reply.error().message(), watcher->property("connection").toString());
     }
 
     watcher->deleteLater();
