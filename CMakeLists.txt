@@ -1,7 +1,8 @@
 project(plasma-networkmanagement)
 
 option(INSTALL_KNM_AUTOSTART "Install the autostart file for knetworkmanager. Warning: This prevents the plasmoid from working properly")
-
+set (MINIMUM_NM_VERSION_REQUIRED "0.8.1")
+set (MAXIMUM_NM_VERSION_SUPPORTED "0.8.10")
 
 find_package(KDE4 REQUIRED)
 include (KDE4Defaults)
@@ -33,7 +34,7 @@ include_directories (${KDE4_INCLUDES})
 
 find_package(NetworkManager)
 
-macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.8.1" "Needed for NetworkManager support in Network Management")
+macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE ${MINIMUM_NM_VERSION_REQUIRED} "Needed for NetworkManager support in Network Management")
 if (NETWORKMANAGER_FOUND)
     # Check if Solid has been compiled with NetworkManager 0.8 support.
     set (CMAKE_REQUIRED_DEFINITIONS ${KDE4_DEFINITIONS})
@@ -50,12 +51,14 @@ if (NETWORKMANAGER_FOUND)
     endif (NM_0_8)
 
     # Check NetworkManager version found.
-    macro_ensure_version_range("0.8.1" ${NETWORKMANAGER_VERSION} "0.8.10" NM_0_8_1)
+    macro_ensure_version_range(${MINIMUM_NM_VERSION_REQUIRED} ${NETWORKMANAGER_VERSION} ${MAXIMUM_NM_VERSION_SUPPORTED} NM_0_8_1)
     find_package(GLIB2 REQUIRED)
 
     configure_file(backends/NetworkManager/config-nm07backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm07backend.h )
 
     if (NM_0_8_1)
+        add_definitions(-DMINIMUM_NM_VERSION_REQUIRED=\\"${MINIMUM_NM_VERSION_REQUIRED}\\")
+        add_definitions(-DMAXIMUM_NM_VERSION_SUPPORTED=\\"${MAXIMUM_NM_VERSION_SUPPORTED}\\")
         include_directories(
            ${NETWORKMANAGER_INCLUDE_DIRS}
            ${NM-UTIL_INCLUDE_DIRS}
@@ -85,7 +88,7 @@ if (NETWORKMANAGER_FOUND)
             message(STATUS "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
         endif (DBUS_SYSTEM_POLICY_DIR)
     else(NM_0_8_1)
-        message("ERROR: NetworkManager version between 0.8.1 and 0.8.10 not found")
+        message("ERROR: NetworkManager version between ${MINIMUM_NM_VERSION_REQUIRED} and ${MAXIMUM_NM_VERSION_SUPPORTED} not found")
         return()
     endif(NM_0_8_1)
 endif(NETWORKMANAGER_FOUND)

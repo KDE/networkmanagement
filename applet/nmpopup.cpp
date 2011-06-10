@@ -265,6 +265,15 @@ void NMPopup::init()
     adjustSize();
 }
 
+static int versionToInt(QString version)
+{
+    QStringList v = version.split('.');
+    if (v.size() > 2) {
+        return KDE_MAKE_VERSION(QString(v[0]).toInt(), QString(v[1]).toInt(), QString(v[2]).toInt());
+    }
+    return 0;
+}
+
 void NMPopup::readConfig()
 {
     kDebug();
@@ -295,12 +304,15 @@ void NMPopup::readConfig()
 
     QDBusInterface nmIface("org.freedesktop.NetworkManager", "/org/freedesktop/NetworkManager",
                            "org.freedesktop.NetworkManager", QDBusConnection::systemBus());
-    QString nmVersion = qvariant_cast<QString>(nmIface.property("Version"));
-    if (!nmVersion.isEmpty()) {
-        QStringList v = nmVersion.split('.');
-        if (v.size() > 2 && v[2].toInt() > 10) {
+    QString version = qvariant_cast<QString>(nmIface.property("Version"));
+    if (!version.isEmpty()) {
+        int nmVersion = versionToInt(version);
+        int nmMinimumVersion = versionToInt(QString(MINIMUM_NM_VERSION_REQUIRED));
+        int nmMaximumVersion = versionToInt(QString(MAXIMUM_NM_VERSION_SUPPORTED));
+
+        if (nmVersion < nmMinimumVersion || nmVersion < nmMaximumVersion) {
             Plasma::Label * warning = new Plasma::Label(this);
-            warning->setText(i18nc("Warning about wrong NetworkManager version", "We need NetworkManager version < 0.8.10 to work, found %1", nmVersion));
+            warning->setText(i18nc("Warning about wrong NetworkManager version", "We need NetworkManager version between %1 and %2 to work, found %1", QString(MINIMUM_NM_VERSION_REQUIRED), QString(MAXIMUM_NM_VERSION_SUPPORTED), version));
             m_interfaceLayout->addItem(warning);
         }
     }
