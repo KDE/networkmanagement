@@ -286,13 +286,22 @@ void NMPopup::readConfig()
         i->setNameDisplayMode(InterfaceItem::InterfaceName);
     }
 
-    QString nmVersion = Solid::Control::NetworkManagerNm09::version();
-    if (!nmVersion.isEmpty()) {
-        QStringList v = nmVersion.split('.');
-        if (v.size() > 2 && v[2].toInt() < 990) {
-            Plasma::Label * warning = new Plasma::Label(this);
-            warning->setText(i18nc("Warning about wrong NetworkManager version", "We need NetworkManager version > 0.8.990 to work, found %1", nmVersion));
-            m_interfaceLayout->addItem(warning);
+    QString version = Solid::Control::NetworkManagerNm09::version();
+    if (!version.isEmpty()) {
+        QStringList v = version.split('.');
+        if (v.size() > 2) {
+            int nmVersion = KDE_MAKE_VERSION(QString(v[0]).toInt(), QString(v[1]).toInt(), QString(v[2]).toInt());
+
+            QStringList v2 = QString(MINIMUM_NM_VERSION_REQUIRED).split('.');
+            if (v2.size() > 2) {
+                int nmMinimumVersion = KDE_MAKE_VERSION(QString(v2[0]).toInt(), QString(v2[1]).toInt(), QString(v2[2]).toInt());
+
+                if (nmVersion < nmMinimumVersion) {
+                    Plasma::Label * warning = new Plasma::Label(this);
+                    warning->setText(i18nc("Warning about wrong NetworkManager version", "We need NetworkManager version >= %1 to work, found %2", QString(MINIMUM_NM_VERSION_REQUIRED), version));
+                    m_interfaceLayout->addItem(warning);
+                }
+            }
         }
     }
 }

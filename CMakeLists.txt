@@ -1,7 +1,7 @@
 project(plasma-networkmanagement)
 
 option(INSTALL_KNM_AUTOSTART "Install the autostart file for knetworkmanager. Warning: This prevents the plasmoid from working properly")
-
+set (MINIMUM_NM_VERSION_REQUIRED "0.8.9997")
 
 find_package(KDE4 REQUIRED)
 include (KDE4Defaults)
@@ -24,16 +24,17 @@ include_directories (${KDE4_INCLUDES})
 
 #include(ConfigureChecks.cmake)
 
-find_package(NetworkManager 0.8.10)
+find_package(NetworkManager ${MINIMUM_NM_VERSION_REQUIRED})
 
 macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.9" "Needed for NetworkManager support in Network Management")
 if (NETWORKMANAGER_FOUND)
-    macro_ensure_version("0.8.998" ${NETWORKMANAGER_VERSION} NM_0_9)
+    macro_ensure_version(${MINIMUM_NM_VERSION_REQUIRED} ${NETWORKMANAGER_VERSION} NM_0_9)
     find_package(GLIB2 REQUIRED)
 
     configure_file(backends/NetworkManager/config-nm09backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm09backend.h )
 
     if (NM_0_9)
+        add_definitions(-DMINIMUM_NM_VERSION_REQUIRED=\\"${MINIMUM_NM_VERSION_REQUIRED}\\")
         include_directories(
            ${NETWORKMANAGER_INCLUDE_DIRS}
            ${NM-UTIL_INCLUDE_DIRS}
@@ -65,7 +66,7 @@ if (NETWORKMANAGER_FOUND)
             message(STATUS "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
         endif (DBUS_SYSTEM_POLICY_DIR)
     else(NM_0_9)
-        message("ERROR: NetworkManager version >= 0.8.998 not found")
+        message("ERROR: NetworkManager version '${NETWORKMANAGER_VERSION}' does not match minimum required (${MINIMUM_NM_VERSION_REQUIRED})")
         return()
     endif(NM_0_9)
 endif(NETWORKMANAGER_FOUND)
