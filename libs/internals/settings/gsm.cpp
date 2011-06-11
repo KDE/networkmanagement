@@ -6,7 +6,7 @@
 
 using namespace Knm;
 
-GsmSetting::GsmSetting() : Setting(Setting::Gsm), mNetworktype(-1), mBand(-1)
+GsmSetting::GsmSetting() : Setting(Setting::Gsm), mNetworktype(-1), mBand(-1), mPinflags(AgentOwned)
 {
     m_secretsObject = new GsmSecrets(this);
 }
@@ -42,6 +42,4 @@ void GsmSetting::setSecrets(Setting::secretsTypes types)
 {
     if (!mPassword.isEmpty())
         setPasswordflags(types);
-    if (!mPin.isEmpty())
-        setPinflags(types);
 }

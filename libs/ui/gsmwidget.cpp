@@ -29,6 +29,7 @@ class GsmWidgetPrivate : public SettingWidgetPrivate
 public:
     Ui_Gsm ui;
     Knm::GsmSetting * setting;
+    enum PinStorage {Save = 0, AlwaysAsk = 1};
 };
 
 GsmWidget::GsmWidget(Knm::Connection * connection, QWidget * parent)
@@ -60,6 +61,11 @@ void GsmWidget::readConfig()
     d->ui.type->setCurrentIndex(qBound(0, d->setting->networktype() + 1, d->ui.type->count() - 1));
     d->ui.band->setValue(d->setting->band());
     d->ui.password->setEchoMode(QLineEdit::Password);
+    if (d->setting->pinflags() & Knm::Setting::AgentOwned) {
+        d->ui.pinStorage->setCurrentIndex(GsmWidgetPrivate::Save);
+    } else if (d->setting->pinflags() & Knm::Setting::NotSaved) {
+        d->ui.pinStorage->setCurrentIndex(GsmWidgetPrivate::AlwaysAsk);
+    }
 }
 
 void GsmWidget::chkShowPassToggled()
@@ -82,6 +88,15 @@ void GsmWidget::writeConfig()
     d->setting->setNetworktype(d->ui.type->currentIndex() - 1);
     d->setting->setBand(d->ui.band->value());
     d->setting->setPin(d->ui.pin->text());
+    switch (d->ui.pinStorage->currentIndex())
+    {
+        case GsmWidgetPrivate::Save:
+            d->setting->setPinflags(Knm::Setting::AgentOwned);
+            break;
+        case GsmWidgetPrivate::AlwaysAsk:
+            d->setting->setPinflags(Knm::Setting::NotSaved);
+            break;
+    }
 }
 
 void GsmWidget::readSecrets()

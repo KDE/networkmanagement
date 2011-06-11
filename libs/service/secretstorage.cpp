@@ -101,8 +101,6 @@ void SecretStorage::walletOpenedForWrite(bool success)
                         Knm::Secrets * secrets = setting->getSecretsObject();
                         if (secrets) {
                             QMap<QString,QString> map = secrets->secretsToMap();
-                            // Do not save pin.
-                            map.take("pin");
                             if (!map.isEmpty()) {
                                 saved = true;
                                 wallet->writeMap(walletKeyFor(con->uuid(), setting), map);
