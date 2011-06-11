@@ -115,20 +115,19 @@ void VpncSettingWidget::readConfig()
             d->dpdTimeout = dpdTimeout;
         }
     }
-    //	dh group
+    //   dh group
     if (dataMap.contains(NM_VPNC_KEY_DHGROUP)) {
-	uint dhGroup = dataMap.value(NM_VPNC_KEY_DHGROUP).toUInt();
-	switch (dhGroup) {
-	    case 1:	// DH Group 1
-		d->ui.cboDHGroup->setCurrentIndex(0);
-		break;
-	    case 2:	// DH Group 2
-		d->ui.cboDHGroup->setCurrentIndex(1);
-		break;
-	    case 5:	// DH Group 5
-		d->ui.cboDHGroup->setCurrentIndex(2);
-		break;
-	}
+        QString dhGroup = dataMap.value(NM_VPNC_KEY_DHGROUP);
+        if (dhGroup == "dh1") {
+            // DH Group 1
+            d->ui.cboDHGroup->setCurrentIndex(0);
+        } else if (dhGroup == "dh2") {
+            // DH Group 2
+            d->ui.cboDHGroup->setCurrentIndex(1);
+        } else if (dhGroup == "dh5") {
+            // DH Group 5
+            d->ui.cboDHGroup->setCurrentIndex(2);
+        }
     }
 }
 
@@ -225,13 +224,13 @@ void VpncSettingWidget::writeConfig()
     // dh group
     switch (d->ui.cboDHGroup->currentIndex()) {
     case 0:	// DH Group 1
-	data.insert(NM_VPNC_KEY_DHGROUP, "1");
+	data.insert(NM_VPNC_KEY_DHGROUP, "dh1");
 	break;
     case 1:	// DH Group 2
-	data.insert(NM_VPNC_KEY_DHGROUP, "2");
+	data.insert(NM_VPNC_KEY_DHGROUP, "dh2");
 	break;
     case 2:	// DH Group 5
-	data.insert(NM_VPNC_KEY_DHGROUP, "5");
+	data.insert(NM_VPNC_KEY_DHGROUP, "dh5");
 	break;
     }
 
