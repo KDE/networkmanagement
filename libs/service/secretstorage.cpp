@@ -46,7 +46,7 @@ SecretStorage::SecretStorage()
     :SecretsProvider()
 {
     KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
-    KNetworkManagerServicePrefs::self()->config()->reparseConfiguration();
+    KNetworkManagerServicePrefs::self()->readConfig();
     m_storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
 }
 
@@ -56,7 +56,7 @@ SecretStorage::~SecretStorage()
 
 void SecretStorage::saveSecrets(Knm::Connection *con)
 {
-    KNetworkManagerServicePrefs::self()->config()->reparseConfiguration();
+    KNetworkManagerServicePrefs::self()->readConfig();
     m_storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
 
     if (m_storageMode == PlainText) {
@@ -178,6 +178,8 @@ void SecretStorage::walletOpenedForRead(bool success)
 
 void SecretStorage::deleteSecrets(Knm::Connection *con)
 {
+    KNetworkManagerServicePrefs::self()->readConfig();
+    m_storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
     if (!con->hasSecrets()) {
         return;
     }
@@ -208,7 +210,7 @@ QString SecretStorage::walletKeyFor(const QString &uuid, const QString &name) co
 
 void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSecretsFlags flags)
 {
-    KNetworkManagerServicePrefs::self()->config()->reparseConfiguration();
+    KNetworkManagerServicePrefs::self()->readConfig();
     m_storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
 
     QString uuid = con->uuid();
