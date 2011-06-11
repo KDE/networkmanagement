@@ -39,6 +39,7 @@ GsmWidget::GsmWidget(Knm::Connection * connection, QWidget * parent)
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::GsmSetting *>(connection->setting(Knm::Setting::Gsm));
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
+    connect(d->ui.pinStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(pinStorageTypeChanged(int)));
     d->ui.pin->setEchoMode(QLineEdit::Password);
     /* Not used yet*/
     d->ui.lblBand->setVisible(false);
@@ -145,6 +146,20 @@ void GsmWidget::setApnInfo(const QMap<QString, QVariant> apnInfo)
 
     readConfig();
     d->ui.password->setText(d->setting->password());
+}
+
+void GsmWidget::pinStorageTypeChanged(int type)
+{
+    Q_D(GsmWidget);
+    switch (type)
+    {
+        case GsmWidgetPrivate::Save:
+            d->ui.pin->setEnabled(true);
+            break;
+        case GsmWidgetPrivate::AlwaysAsk:
+            d->ui.pin->setEnabled(false);
+            break;
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100
