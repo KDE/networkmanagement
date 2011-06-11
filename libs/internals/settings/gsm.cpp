@@ -6,7 +6,7 @@
 
 using namespace Knm;
 
-GsmSetting::GsmSetting() : Setting(Setting::Gsm), mNetworktype(-1), mBand(-1), mPinflags(AgentOwned)
+GsmSetting::GsmSetting() : Setting(Setting::Gsm), mNetworktype(-1), mBand(-1), mPinflags(NotSaved)
 {
     m_secretsObject = new GsmSecrets(this);
 }
