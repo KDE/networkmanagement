@@ -265,11 +265,30 @@ void NMPopup::init()
     adjustSize();
 }
 
-static int versionToInt(QString version)
+static int compareVersions(const QString & version1, const QString & version2)
 {
-    QStringList v = version.split('.');
-    if (v.size() > 2) {
-        return KDE_MAKE_VERSION(QString(v[0]).toInt(), QString(v[1]).toInt(), QString(v[2]).toInt());
+    QStringList sl1 = version1.split('.');
+    QStringList sl2 = version2.split('.');
+
+    if (sl1.size() > 2 && sl2.size() > 2) {
+        int v1[3] = { QString(sl1[0]).toInt(), QString(sl1[1]).toInt(), QString(sl1[2]).toInt() };
+        int v2[3] = { QString(sl2[0]).toInt(), QString(sl2[1]).toInt(), QString(sl2[2]).toInt() };
+
+        if (v1[0] > v2[0]) {
+            return 1;
+        } else if (v1[0] < v2[0]) {
+            return -1;
+        } else if (v1[1] > v2[1]) {
+            return 1;
+        } else if (v1[1] < v2[1]) {
+            return -1;
+        } else if (v1[2] > v2[2]) {
+            return 1;
+        } else if (v1[2] < v2[2]) {
+            return -1;
+        } else {
+            return 0;
+        }
     }
     return 0;
 }
@@ -306,11 +325,7 @@ void NMPopup::readConfig()
                            "org.freedesktop.NetworkManager", QDBusConnection::systemBus());
     QString version = qvariant_cast<QString>(nmIface.property("Version"));
     if (!version.isEmpty()) {
-        int nmVersion = versionToInt(version);
-        int nmMinimumVersion = versionToInt(QString(MINIMUM_NM_VERSION_REQUIRED));
-        int nmMaximumVersion = versionToInt(QString(MAXIMUM_NM_VERSION_SUPPORTED));
-
-        if (nmVersion < nmMinimumVersion || nmVersion > nmMaximumVersion) {
+        if (compareVersions(version, QString(MINIMUM_NM_VERSION_REQUIRED)) < 0 || compareVersions(version, QString(MAXIMUM_NM_VERSION_SUPPORTED)) > 0) {
             Plasma::Label * warning = new Plasma::Label(this);
             warning->setText(i18nc("Warning about wrong NetworkManager version", "We need NetworkManager version between %1 and %2 to work, found %3", QString(MINIMUM_NM_VERSION_REQUIRED), QString(MAXIMUM_NM_VERSION_SUPPORTED), version));
             m_interfaceLayout->addItem(warning);
