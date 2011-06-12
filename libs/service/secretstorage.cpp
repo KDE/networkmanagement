@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 
 #include <QFile>
+#include <QDir>
 #include <QMutableHashIterator>
 
 #include "paths.h"
@@ -126,7 +127,10 @@ void SecretStorage::walletOpenedForRead(bool success)
             while (!m_connectionsToRead.isEmpty()) {
                 Knm::Connection *con = m_connectionsToRead.takeFirst();
                 QMutableHashIterator<QString, QPair<QString,GetSecretsFlags> > i(m_settingsToRead);
-                while (i.hasNext() && i.next().key() == con->uuid()) {
+                while (i.hasNext()) {
+                    if (i.next().key() != con->uuid())
+                        continue;
+
                     QPair<QString,GetSecretsFlags> pair = i.value();
                     Knm::Secrets * secrets = 0;
                     bool settingsFound = false;
@@ -154,7 +158,7 @@ void SecretStorage::walletOpenedForRead(bool success)
                     if (!settingsFound) {
                         emit connectionRead(con, pair.first);
                     }
-                    m_settingsToRead.remove(i.key(), i.value());
+                    i.remove();
                 }
             }
         } else {
@@ -165,10 +169,12 @@ void SecretStorage::walletOpenedForRead(bool success)
          while (!m_connectionsToRead.isEmpty()) {
             Knm::Connection *con = m_connectionsToRead.takeFirst();
             QMutableHashIterator<QString, QPair<QString,GetSecretsFlags> > i(m_settingsToRead);
-            while (i.hasNext() && i.next().key() == con->uuid()) {
+            while (i.hasNext()) {
+                if (i.next().key() != con->uuid())
+                    continue;
                 QPair<QString,GetSecretsFlags> pair = i.value();
                 emit connectionRead(con, pair.first);
-                m_settingsToRead.remove(i.key(), i.value());
+                i.remove();
             }
          }
     }
@@ -201,7 +207,7 @@ QString SecretStorage::walletKeyFor(const QString &uuid, const Knm::Setting * se
     return uuid + ';' + setting->name();
 }
 
-QString SecretStorage::walletKeyFor(const QString &uuid, const QString &name) const
+QString SecretStorage::walletKeyFor(const QString &uuid, const QString &name)
 {
     return uuid + ';' + name;
 }
@@ -278,4 +284,44 @@ void SecretStorage::gotSecrets(KJob *job)
 {
     ConnectionSecretsJob * csj = static_cast<ConnectionSecretsJob*>(job);
     emit connectionRead(csj->connection(), csj->settingName());
+}
+
+void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode newMode)
+{
+    // TODO: integrate DontStore with NM0.9 secret flags
+    if (oldMode == DontStore || newMode == DontStore)
+        return;
+
+    KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
+        walletWid(),KWallet::Wallet::Synchronous);
+    if (!wallet)
+        return;
+    if( !wallet->hasFolder( s_walletFolderName ) )
+        wallet->createFolder( s_walletFolderName );
+    wallet->setFolder( s_walletFolderName );
+    QString secretsDirectory = KStandardDirs::locateLocal("data", Knm::SECRETS_PERSISTENCE_PATH);
+
+    if (oldMode == PlainText && newMode == Secure) {
+        QDir dir(secretsDirectory);
+        foreach (const QString &file, dir.entryList()) {
+            KSharedConfig::Ptr config = KSharedConfig::openConfig(secretsDirectory + file, KConfig::SimpleConfig);
+            foreach (const QString &group, config->groupList()) {
+                KConfigGroup configGroup(config, group);
+                wallet->writeMap(walletKeyFor(file, group), configGroup.entryMap());
+            }
+            QFile::remove(secretsDirectory + file);
+        }
+    } else if (oldMode == Secure && newMode == PlainText) {
+        foreach (const QString &key, wallet->entryList()) {
+            QStringList parts = key.split(";");
+            KSharedConfig::Ptr config = KSharedConfig::openConfig(secretsDirectory + parts[0], KConfig::SimpleConfig);
+            KConfigGroup configGroup(config, parts[1]);
+            QMap<QString, QString> secrets;
+            wallet->readMap(key, secrets);
+            foreach (const QString &secret, secrets.keys()) {
+                configGroup.writeEntry(secret, secrets.value(secret));
+            }
+            wallet->removeEntry(key);
+        }
+    }
 }

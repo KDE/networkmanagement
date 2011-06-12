@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knmserviceprefs.h"
 #include "paths.h"
+#include "secretstorage.h"
 #include <tooltips.h>
 
 
@@ -42,6 +43,7 @@ ManageTrayWidget::ManageTrayWidget(QWidget *parent, const QVariantList &args)
 
     KGlobal::locale()->insertCatalog("libknmui");
     KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
+    secretStorageMode = KNetworkManagerServicePrefs::self()->secretStorageMode();
 
     QHBoxLayout * layout = new QHBoxLayout(this);
     ui = new OtherSettingsWidget(this);
@@ -63,6 +65,10 @@ void ManageTrayWidget::save()
     KNetworkManagerServicePrefs::self()->writeConfig();
     KCModule::save();
 
+    if (secretStorageMode != KNetworkManagerServicePrefs::self()->secretStorageMode()) {
+        SecretStorage::switchStorage((SecretStorage::SecretStorageMode)secretStorageMode, (SecretStorage::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode());
+    }
+    secretStorageMode = KNetworkManagerServicePrefs::self()->secretStorageMode();
     // To make the plasmoid reread the "Show network interface using:" property.
     QDBusInterface dbus("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement");
     dbus.asyncCall(QLatin1String("ReadConfig"));

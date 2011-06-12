@@ -70,6 +70,7 @@ public:
     void loadSecrets(Knm::Connection*, const QString &, GetSecretsFlags);
     void saveSecrets(Knm::Connection*);
     void deleteSecrets(Knm::Connection*);
+    static void switchStorage(SecretStorageMode, SecretStorageMode);
 Q_SIGNALS:
     void connectionSaved(Knm::Connection*);
 private Q_SLOTS:
@@ -78,7 +79,7 @@ private Q_SLOTS:
     void gotSecrets(KJob*);
 private:
     QString walletKeyFor(const QString &,const Knm::Setting *) const;
-    QString walletKeyFor(const QString &,const QString&) const;
+    static QString walletKeyFor(const QString &,const QString&);
     KSharedConfig::Ptr secretsFileForUuid(const QString &);
     void askUser(Knm::Connection*, const QString &, const QStringList &);
 
