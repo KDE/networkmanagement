@@ -6,7 +6,7 @@
       <arg type="as" direction="out"/>
     </method>
     <method name="ReadConfig" />
-    <method name="ImportNm08Connections" />
+    <method name="FinishInitialization" />
 
     <signal name="ActivatableAdded">
 	  <arg name="added" type="s" direction="out" />

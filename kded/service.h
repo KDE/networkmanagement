@@ -35,6 +35,8 @@ Q_DECLARE_PRIVATE(NetworkManagementService)
 public:
     NetworkManagementService(QObject * parent, const QVariantList&);
     virtual ~NetworkManagementService();
+private Q_SLOT:
+    void finishInitialization();
 private:
     NetworkManagementServicePrivate * d_ptr;
 };

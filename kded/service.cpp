@@ -94,9 +94,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->vpnInterfaceConnectionProvider = new VpnInterfaceConnectionProvider(d->connectionList, d->activatableList, d->activatableList);
     d->connectionList->registerConnectionHandler(d->vpnInterfaceConnectionProvider);
 
-    // watches events and creates KNotifications
-    d->notificationManager = new NotificationManager(d->connectionList, this);
-
     d->nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(d->connectionList, d->connectionList);
     d->nmDBusSecretAgent = new NMDBusSecretAgent(this);
     d->nmDBusSecretAgent->registerSecretsProvider(d->secretStorage);
@@ -106,7 +103,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->activatableList->registerObserver(d->connectionUsageMonitor);
 
     d->activatableList->registerObserver(d->nmDBusConnectionProvider);
-    d->activatableList->registerObserver(d->notificationManager);
 
     // debug activatable changes
     //ActivatableDebug debug;
@@ -141,10 +137,27 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->activatableList->registerObserver(d->nmActiveConnectionMonitor);
 
     d->nm08Connections = new Nm08Connections(d->secretStorage, d->nmDBusConnectionProvider);
-    connect(d->sessionAbstractedService, SIGNAL(DoImportNm08Connections()), d->nm08Connections, SLOT(importNextNm08Connection()));
+    d->notificationManager = 0;
+    connect(d->sessionAbstractedService, SIGNAL(DoFinishInitialization()), SLOT(finishInitialization()));
 }
 
 
 NetworkManagementService::~NetworkManagementService()
 {
+}
+
+void NetworkManagementService::finishInitialization()
+{
+    Q_D(NetworkManagementService);
+    QObject::disconnect(d->sessionAbstractedService, SIGNAL(DoFinishInitialization()), this, 0);
+
+    if (d->notificationManager) {
+        return;
+    }
+
+    // watches events and creates KNotifications
+    d->notificationManager = new NotificationManager(d->connectionList, this);
+    d->activatableList->registerObserver(d->notificationManager);
+
+    d->nm08Connections->importNextNm08Connection();
 }
