@@ -72,9 +72,7 @@ QVariantMap GsmDbus::toMap()
   if (!setting->password().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_GSM_PASSWORD_FLAGS), (int)setting->passwordflags());
   }
-  if (!setting->pin().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_GSM_PIN_FLAGS), (int)setting->pinflags());
-}
+  map.insert(QLatin1String(NM_SETTING_GSM_PIN_FLAGS), (int)setting->pinflags());
 
   //map.insert("band", setting->band());
   return map;
