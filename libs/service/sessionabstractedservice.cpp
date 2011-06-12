@@ -145,6 +145,11 @@ void SessionAbstractedService::ReadConfig()
     emit ReloadConfig();
 }
 
+void SessionAbstractedService::FinishInitialization()
+{
+    emit DoFinishInitialization();
+}
+ 
 QString SessionAbstractedService::nextObjectPath()
 {
     Q_D(SessionAbstractedService);

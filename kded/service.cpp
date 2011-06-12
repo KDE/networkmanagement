@@ -104,9 +104,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->vpnInterfaceConnectionProvider = new VpnInterfaceConnectionProvider(d->connectionList, d->activatableList, d->activatableList);
     d->connectionList->registerConnectionHandler(d->vpnInterfaceConnectionProvider);
 
-    // watches events and creates KNotifications
-    d->notificationManager = new NotificationManager(d->connectionList, this);
-
     d->nmDBusConnectionProvider = new NMDBusSettingsConnectionProvider(d->connectionList, NMDBusSettingsService::SERVICE_SYSTEM_SETTINGS, d->connectionList);
 
     // generic observers
@@ -115,7 +112,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 
     d->activatableList->registerObserver(d->nmSettingsService);
     d->activatableList->registerObserver(d->nmDBusConnectionProvider);
-    d->activatableList->registerObserver(d->notificationManager);
 
     // debug activatable changes
     //ActivatableDebug debug;
@@ -160,4 +156,18 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 
 NetworkManagementService::~NetworkManagementService()
 {
+}
+
+void NetworkManagementService::finishInitialization()
+{
+    Q_D(NetworkManagementService);
+    QObject::disconnect(d->sessionAbstractedService, SIGNAL(DoFinishInitialization()), this, 0);
+
+    if (d->notificationManager) {
+        return;
+    }
+
+    // watches events and creates KNotifications
+    d->notificationManager = new NotificationManager(d->connectionList, this);
+    d->activatableList->registerObserver(d->notificationManager);
 }
