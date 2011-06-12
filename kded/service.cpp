@@ -151,6 +151,9 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     // register after nmSettingsService and nmDBusConnectionProvider because it relies on changes they
     // make to interfaceconnections
     d->activatableList->registerObserver(d->nmActiveConnectionMonitor);
+
+    d->notificationManager = 0;
+    connect(d->sessionAbstractedService, SIGNAL(DoFinishInitialization()), SLOT(finishInitialization()));
 }
 
 
