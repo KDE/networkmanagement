@@ -310,7 +310,7 @@ void NMPopup::readConfig()
         int nmMinimumVersion = versionToInt(QString(MINIMUM_NM_VERSION_REQUIRED));
         int nmMaximumVersion = versionToInt(QString(MAXIMUM_NM_VERSION_SUPPORTED));
 
-        if (nmVersion < nmMinimumVersion || nmVersion < nmMaximumVersion) {
+        if (nmVersion < nmMinimumVersion || nmVersion > nmMaximumVersion) {
             Plasma::Label * warning = new Plasma::Label(this);
             warning->setText(i18nc("Warning about wrong NetworkManager version", "We need NetworkManager version between %1 and %2 to work, found %3", QString(MINIMUM_NM_VERSION_REQUIRED), QString(MAXIMUM_NM_VERSION_SUPPORTED), version));
             m_interfaceLayout->addItem(warning);
