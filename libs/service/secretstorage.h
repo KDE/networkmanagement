@@ -40,10 +40,12 @@ class Secrets;
 
 class ConnectionSecretsJob;
 class KJob;
+class SecretStoragePrivate;
 
 class KNMINTERNALS_EXPORT SecretStorage : public SecretsProvider
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(SecretStorage)
 public:
     enum SecretStorageMode { DontStore, PlainText, Secure};
     class EnumError
@@ -73,6 +75,8 @@ public:
     static void switchStorage(SecretStorageMode, SecretStorageMode);
 Q_SIGNALS:
     void connectionSaved(Knm::Connection*);
+protected:
+    SecretStoragePrivate *d_ptr;
 private Q_SLOTS:
     void walletOpenedForRead(bool);
     void walletOpenedForWrite(bool);
@@ -86,10 +90,7 @@ private:
     static QString s_walletFolderName;
     static WId s_walletWId;
 
-    SecretStorageMode m_storageMode;
-    QList<Knm::Connection*> m_connectionsToWrite;
-    QList<Knm::Connection*> m_connectionsToRead;
-    QMultiHash<QString,QPair<QString,GetSecretsFlags> > m_settingsToRead;
+
 };
 
 #endif // SECRETSTORAGE_H

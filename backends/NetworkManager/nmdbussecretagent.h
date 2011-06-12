@@ -37,11 +37,12 @@ namespace Knm
 }
 
 class SecretsProvider;
+class NMDBusSecretAgentPrivate;
 
 class KNM_EXPORT NMDBusSecretAgent : public QObject, protected QDBusContext
 {
 Q_OBJECT
-
+Q_DECLARE_PRIVATE(NMDBusSecretAgent)
 public:
     NMDBusSecretAgent(QObject * parent = 0);
     virtual ~NMDBusSecretAgent();
@@ -51,18 +52,11 @@ public Q_SLOTS:
     void SaveSecrets(const QVariantMapMap&, const QDBusObjectPath&);
     void DeleteSecrets(const QVariantMapMap &, const QDBusObjectPath &);
     void CancelGetSecrets(const QDBusObjectPath &, const QString &);
-
+protected:
+    NMDBusSecretAgentPrivate *d_ptr;
 private:
-    QVariantMap buildMap(const QString&, Knm::Connection*);
     void loadSecrets(Knm::Secrets*);
 
-    SecretsProvider *m_secretsProvider;
-    SecretAgentAdaptor *m_agent;
-    OrgFreedesktopNetworkManagerAgentManagerInterface *m_agentManager;
-    QDBusServiceWatcher *m_watcher;
-
-    QHash <QString,QPair<QString, QDBusMessage> > m_connectionsToRead;
-    QList <QString> m_objectPaths;
 private Q_SLOTS:
     void secretsReady(Knm::Connection *, const QString &);
     void deleteSavedConnection(Knm::Connection *);
