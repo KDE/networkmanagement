@@ -384,6 +384,7 @@ public:
 NotificationManager::NotificationManager(ConnectionList *connectionList, QObject * parent)
 : QObject(parent), d_ptr (new NotificationManagerPrivate)
 {
+kDebug() << "Lamarque";
     Q_D(NotificationManager);
     d->connectionList = connectionList;
     d->suppressHardwareEvents = true;

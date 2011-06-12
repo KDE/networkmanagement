@@ -136,7 +136,6 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     // make to interfaceconnections
     d->activatableList->registerObserver(d->nmActiveConnectionMonitor);
 
-    d->nm08Connections = new Nm08Connections(d->secretStorage, d->nmDBusConnectionProvider);
     d->notificationManager = 0;
     connect(d->sessionAbstractedService, SIGNAL(DoFinishInitialization()), SLOT(finishInitialization()));
 }
@@ -159,5 +158,6 @@ void NetworkManagementService::finishInitialization()
     d->notificationManager = new NotificationManager(d->connectionList, this);
     d->activatableList->registerObserver(d->notificationManager);
 
+    d->nm08Connections = new Nm08Connections(d->secretStorage, d->nmDBusConnectionProvider);
     d->nm08Connections->importNextNm08Connection();
 }
