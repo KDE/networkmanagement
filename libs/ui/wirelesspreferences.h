@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NM07_WIRELESS_CONNECTION_PREFERENCES_H
 #define NM07_WIRELESS_CONNECTION_PREFERENCES_H
 
+#include <solid/control/wirelessaccesspoint.h>
+
 #include "connectionprefs.h"
 
 namespace Solid
@@ -58,6 +60,7 @@ public:
     virtual bool needsEdits() const;
 private Q_SLOTS:
     void tabChanged(int index);
+    void setDefaultName(Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *);
 private:
     int m_securityTabIndex;
     Wireless80211Widget * m_wirelessWidget;

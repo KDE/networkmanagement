@@ -34,10 +34,10 @@ ScanWidget::ScanWidget(QWidget *parent)
     setupUi(this);
 
     //populate the interfaces combobox
-    foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
+    foreach (const Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
 
-            Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+            const Solid::Control::WirelessNetworkInterface * wiface = static_cast<const Solid::Control::WirelessNetworkInterface*>(iface);
             m_interface->addItem(UiUtils::interfaceNameLabel(iface->uni()), wiface->uni());
         }
     }
@@ -114,6 +114,46 @@ QPair<QString,QString> ScanWidget::currentAccessPoint() const
     }
 
     return accessPoint;
+}
+
+QPair<Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *> ScanWidget::currentAccessPointUni()
+{
+    QPair<Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *> pair(0, 0);
+    QModelIndex index;
+
+    switch (m_stack->currentIndex())
+    {
+        case Details:
+            index = m_proxyModel->mapToSource(m_scanProxySelectionModel->currentIndex());
+            break;
+        case Map:
+        default:
+            index = m_scanSelectionModel->currentIndex();
+            break;
+    }
+
+    if (!index.isValid()) {
+        return pair;
+    }
+
+    QString apMac = m_scanModel->data(m_scanModel->index(index.row(),3)).toString();
+    if (apMac.isEmpty()) {
+        return pair;
+    }
+
+    Solid::Control::WirelessNetworkInterface * wiface = qobject_cast<Solid::Control::WirelessNetworkInterface *>(Solid::Control::NetworkManager::findNetworkInterface(m_interface->itemData(m_interface->currentIndex()).toString()));
+    if (wiface) {
+        foreach(const QString & uni, wiface->accessPoints()) {
+            Solid::Control::AccessPoint * ap = wiface->findAccessPoint(uni);
+            if (ap->hardwareAddress() == apMac) {
+                pair.first = wiface;
+                pair.second = ap;
+                break;
+            }
+        }
+    }
+
+    return pair;
 }
 
 void ScanWidget::onInterfaceChanged(int index)

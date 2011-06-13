@@ -24,6 +24,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSpinBox>
 #include <QValidator>
 
+#include <solid/control/wirelessaccesspoint.h>
+
 #include "settingwidget.h"
 
 #include "knm_export.h"
@@ -51,7 +53,9 @@ protected Q_SLOTS:
     void copyToBssid();
 
 Q_SIGNALS:
-    void ssidSelected(const QString & ssid);
+    void ssidSelected(Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *);
+private:
+    void setAccessPointData(const Solid::Control::WirelessNetworkInterface *, const Solid::Control::AccessPoint *) const;
 };
 
 class Wireless80211WidgetBand : public QSpinBox
@@ -65,8 +69,11 @@ public:
     int channelFromPos(int) const;
     int posFromChannel(int) const;
     void setBand(int);
+    QPair<int, int> findBandAndChannel(int freq);
 private:
     QList< QList<int> > channels;
+    QList<int> freqs_bgn;
+    QList< QPair<int, int> > freqs_ahjn;
     int selectedBand;
 };
 
