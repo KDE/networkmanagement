@@ -37,6 +37,7 @@ public:
     QByteArray openVpnCiphers;
     bool gotOpenVpnCiphers;
     bool readConfig;
+    enum ProxyType {NotRequired = 0, HTTP = 1, SOCKS = 2};
 };
 
 
@@ -71,6 +72,9 @@ OpenVpnSettingWidget::OpenVpnSettingWidget(Knm::Connection * connection, QWidget
     foreach (const KUrlRequester * requester, requesters) {
         connect(requester, SIGNAL(urlSelected(const KUrl &)), this, SLOT(updateStartDir(const KUrl&)));
     }
+    connect(d->ui.chkShowPasswords, SIGNAL(toggled(bool)), this, SLOT(showPasswordsToggled(bool)));
+    connect(d->ui.chkProxyShowPassword, SIGNAL(toggled(bool)), this, SLOT(proxyPasswordToggled(bool)));
+    connect(d->ui.cmbProxyType, SIGNAL(currentIndexChanged(int)), this, SLOT(proxyTypeChanged(int)));
 }
 
 OpenVpnSettingWidget::~OpenVpnSettingWidget()
@@ -171,9 +175,27 @@ void OpenVpnSettingWidget::readConfig()
     } else {
         d->ui.sbCustomPort->setValue(0);
     }
+    if (dataMap.contains(NM_OPENVPN_KEY_TUNNEL_MTU)) {
+        d->ui.sbMtu->setValue(dataMap[NM_OPENVPN_KEY_TUNNEL_MTU].toUInt());
+    } else {
+        d->ui.sbMtu->setValue(0);
+    }
+    if (dataMap.contains(NM_OPENVPN_KEY_FRAGMENT_SIZE)) {
+        d->ui.sbUdpFragmentSize->setValue(dataMap[NM_OPENVPN_KEY_FRAGMENT_SIZE].toUInt());
+    } else {
+        d->ui.sbUdpFragmentSize->setValue(0);
+    }
+    if (dataMap.contains(NM_OPENVPN_KEY_RENEG_SECONDS)) {
+        d->ui.chkUseCustomReneg->setChecked(true);
+        d->ui.sbCustomReneg->setValue(dataMap[NM_OPENVPN_KEY_RENEG_SECONDS].toUInt());
+    } else {
+        d->ui.chkUseCustomReneg->setChecked(false);
+        d->ui.sbCustomReneg->setValue(0);
+    }
     d->ui.chkUseLZO->setChecked( dataMap[NM_OPENVPN_KEY_COMP_LZO] == "yes" );
     d->ui.chkUseTCP->setChecked( dataMap[NM_OPENVPN_KEY_PROTO_TCP] == "yes" );
     d->ui.chkUseTAP->setChecked( dataMap[NM_OPENVPN_KEY_TAP_DEV] == "yes" );
+    d->ui.chkMssRestrict->setChecked(dataMap[NM_OPENVPN_KEY_MSSFIX] == "yes");
     // Optional Security Settings
     QString hmacKeyAuth = dataMap[NM_OPENVPN_KEY_AUTH];
     if (hmacKeyAuth == QLatin1String(NM_OPENVPN_AUTH_NONE)) {
@@ -189,12 +211,32 @@ void OpenVpnSettingWidget::readConfig()
     }
 
     // Optional TLS
+    if (dataMap.contains(NM_OPENVPN_KEY_TLS_REMOTE)) {
+        d->ui.subjectMatch->setText(dataMap[NM_OPENVPN_KEY_TLS_REMOTE]);
+    }
     d->ui.useExtraTlsAuth->setChecked(!dataMap[NM_OPENVPN_KEY_TA].isEmpty());
     d->ui.kurlTlsAuthKey->setUrl(KUrl(dataMap[NM_OPENVPN_KEY_TA]) );
     if (dataMap.contains(NM_OPENVPN_KEY_TA_DIR)) {
         uint tlsAuthDirection = dataMap[NM_OPENVPN_KEY_TA_DIR].toUInt();
         d->ui.cboDirection->setCurrentIndex(tlsAuthDirection + 1);
     }
+    // Proxies
+    if (dataMap[NM_OPENVPN_KEY_PROXY_TYPE] == "http") {
+        d->ui.cmbProxyType->setCurrentIndex(Private::HTTP);
+    } else if (dataMap[NM_OPENVPN_KEY_PROXY_TYPE] == "socks") {
+        d->ui.cmbProxyType->setCurrentIndex(Private::SOCKS);
+    } else {
+        d->ui.cmbProxyType->setCurrentIndex(Private::NotRequired);
+    }
+    proxyTypeChanged(d->ui.cmbProxyType->currentIndex());
+    d->ui.proxyServerAddress->setText(dataMap[NM_OPENVPN_KEY_PROXY_SERVER]);
+    if (dataMap.contains(NM_OPENVPN_KEY_PROXY_PORT)) {
+        d->ui.sbProxyPort->setValue(dataMap[NM_OPENVPN_KEY_PROXY_PORT].toUInt());
+    } else {
+        d->ui.sbProxyPort->setValue(0);
+    }
+    d->ui.chkProxyRetry->setChecked(dataMap[NM_OPENVPN_KEY_PROXY_RETRY] == "yes");
+    d->ui.proxyUsername->setText(dataMap[NM_OPENVPN_KEY_HTTP_PROXY_USERNAME]);
     d->readConfig = true;
 }
 
@@ -266,13 +308,22 @@ void OpenVpnSettingWidget::writeConfig()
     data.insert( NM_OPENVPN_KEY_CONNECTION_TYPE, contype);
 
     // optional settings
-    if ( d->ui.sbCustomPort->value() > 0 )
-    {
+    if ( d->ui.sbCustomPort->value() > 0 ) {
         data.insert(NM_OPENVPN_KEY_PORT, QString::number(d->ui.sbCustomPort->value()));
+    }
+    if ( d->ui.sbMtu->value() > 0 ) {
+        data.insert(NM_OPENVPN_KEY_TUNNEL_MTU, QString::number(d->ui.sbMtu->value()));
+    }
+    if ( d->ui.sbUdpFragmentSize->value() > 0 ) {
+        data.insert(NM_OPENVPN_KEY_FRAGMENT_SIZE, QString::number(d->ui.sbUdpFragmentSize->value()));
+    }
+    if (d->ui.chkUseCustomReneg->isChecked()) {
+        data.insert(NM_OPENVPN_KEY_RENEG_SECONDS, QString::number(d->ui.sbCustomReneg->value()));
     }
     data.insert( NM_OPENVPN_KEY_PROTO_TCP, d->ui.chkUseTCP->isChecked() ? "yes" : "no" );
     data.insert( NM_OPENVPN_KEY_COMP_LZO, d->ui.chkUseLZO->isChecked() ? "yes" : "no" );
     data.insert( NM_OPENVPN_KEY_TAP_DEV, d->ui.chkUseTAP->isChecked() ? "yes" : "no" );
+    data.insert( NM_OPENVPN_KEY_MSSFIX, d->ui.chkMssRestrict->isChecked() ? "yes" : "no" );
 
     // Optional Security
     switch ( d->ui.cboHmac->currentIndex()) {
@@ -293,6 +344,9 @@ void OpenVpnSettingWidget::writeConfig()
     }
 
     // optional tls authentication
+    if (!d->ui.subjectMatch->text().isEmpty()) {
+        data.insert(NM_OPENVPN_KEY_TLS_REMOTE, d->ui.subjectMatch->text());
+    }
     if (d->ui.useExtraTlsAuth->isChecked()) {
         KUrl tlsAuthKeyUrl = d->ui.kurlTlsAuthKey->url();
         if (!tlsAuthKeyUrl.isEmpty()) {
@@ -303,6 +357,27 @@ void OpenVpnSettingWidget::writeConfig()
         }
     }
 
+    // Proxies
+    switch (d->ui.cmbProxyType->currentIndex()) {
+        case Private::NotRequired:
+            break;
+        case Private::HTTP:
+            data.insert(NM_OPENVPN_KEY_PROXY_TYPE, "http");
+            data.insert(NM_OPENVPN_KEY_PROXY_SERVER, d->ui.proxyServerAddress->text());
+            data.insert(NM_OPENVPN_KEY_PROXY_PORT, QString::number(d->ui.sbProxyPort->value()));
+            data.insert(NM_OPENVPN_KEY_PROXY_RETRY, d->ui.chkProxyRetry->isChecked() ? "yes" : "no");
+            if (!d->ui.proxyUsername->text().isEmpty()) {
+                data.insert(NM_OPENVPN_KEY_HTTP_PROXY_USERNAME, d->ui.proxyUsername->text());
+                secretData.insert(NM_OPENVPN_KEY_HTTP_PROXY_PASSWORD, d->ui.proxyPassword->text());
+            }
+            break;
+        case Private::SOCKS:
+            data.insert(NM_OPENVPN_KEY_PROXY_TYPE, "http");
+            data.insert(NM_OPENVPN_KEY_PROXY_SERVER, d->ui.proxyServerAddress->text());
+            data.insert(NM_OPENVPN_KEY_PROXY_PORT, QString::number(d->ui.sbProxyPort->value()));
+            data.insert(NM_OPENVPN_KEY_PROXY_RETRY, d->ui.chkProxyRetry->isChecked() ? "yes" : "no");
+            break;
+    }
     d->setting->setData(data);
     d->setting->setVpnSecrets(secretData);
 }
@@ -314,6 +389,7 @@ void OpenVpnSettingWidget::readSecrets()
     d->ui.passPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)));
     d->ui.x509PassKeyPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_CERTPASS)));
     d->ui.x509KeyPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_CERTPASS)));
+    d->ui.proxyPassword->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_HTTP_PROXY_PASSWORD)));
 }
 
 void OpenVpnSettingWidget::validate()
@@ -327,6 +403,61 @@ void OpenVpnSettingWidget::updateStartDir(const KUrl & url)
     requesters << d->ui.x509CaFile << d->ui.x509Cert << d->ui.x509Key << d->ui.pskSharedKey << d->ui.passCaFile << d->ui.x509PassCaFile << d->ui.x509PassCert << d->ui.x509PassKey << d->ui.kurlTlsAuthKey;
     foreach (KUrlRequester * requester, requesters) {
         requester->setStartDir(KUrl(url.directory()));
+    }
+}
+
+void OpenVpnSettingWidget::showPasswordsToggled(bool toggled)
+{
+    if (toggled) {
+        d->ui.x509KeyPassword->setEchoMode(QLineEdit::Normal);
+        d->ui.passPassword->setEchoMode(QLineEdit::Normal);
+        d->ui.x509PassKeyPassword->setEchoMode(QLineEdit::Normal);
+        d->ui.x509PassPassword->setEchoMode(QLineEdit::Normal);
+    } else {
+        d->ui.x509KeyPassword->setEchoMode(QLineEdit::Password);
+        d->ui.passPassword->setEchoMode(QLineEdit::Password);
+        d->ui.x509PassKeyPassword->setEchoMode(QLineEdit::Password);
+        d->ui.x509PassPassword->setEchoMode(QLineEdit::Password);
+    }
+}
+
+void OpenVpnSettingWidget::proxyPasswordToggled(bool toggled)
+{
+    if (toggled) {
+        d->ui.proxyPassword->setEchoMode(QLineEdit::Normal);
+    } else {
+        d->ui.proxyPassword->setEchoMode(QLineEdit::Password);
+    }
+}
+
+void OpenVpnSettingWidget::proxyTypeChanged(int type)
+{
+    switch (type)
+    {
+        case Private::NotRequired:
+            d->ui.proxyServerAddress->setEnabled(false);
+            d->ui.sbProxyPort->setEnabled(false);
+            d->ui.chkProxyRetry->setEnabled(false);
+            d->ui.proxyUsername->setEnabled(false);
+            d->ui.proxyPassword->setEnabled(false);
+            d->ui.chkProxyShowPassword->setEnabled(false);
+            break;
+        case Private::HTTP:
+            d->ui.proxyServerAddress->setEnabled(true);
+            d->ui.sbProxyPort->setEnabled(true);
+            d->ui.chkProxyRetry->setEnabled(true);
+            d->ui.proxyUsername->setEnabled(true);
+            d->ui.proxyPassword->setEnabled(true);
+            d->ui.chkProxyShowPassword->setEnabled(true);
+            break;
+        case Private::SOCKS:
+            d->ui.proxyServerAddress->setEnabled(true);
+            d->ui.sbProxyPort->setEnabled(true);
+            d->ui.chkProxyRetry->setEnabled(true);
+            d->ui.proxyUsername->setEnabled(false);
+            d->ui.proxyPassword->setEnabled(false);
+            d->ui.chkProxyShowPassword->setEnabled(false);
+            break;
     }
 }
 

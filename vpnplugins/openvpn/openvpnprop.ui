@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>418</width>
-    <height>423</height>
+    <height>360</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -171,7 +171,7 @@
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
-               <height>87</height>
+               <height>0</height>
               </size>
              </property>
             </spacer>
@@ -244,7 +244,7 @@
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
-               <height>85</height>
+               <height>0</height>
               </size>
              </property>
             </spacer>
@@ -323,7 +323,7 @@
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
-               <height>120</height>
+               <height>0</height>
               </size>
              </property>
             </spacer>
@@ -442,7 +442,7 @@
              <property name="sizeHint" stdset="0">
               <size>
                <width>20</width>
-               <height>52</height>
+               <height>0</height>
               </size>
              </property>
             </spacer>
@@ -450,6 +450,26 @@
           </layout>
          </widget>
         </widget>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="chkShowPasswords">
+         <property name="text">
+          <string>Show Passwords</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_8">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -483,6 +503,75 @@
         </layout>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QLabel" name="label_8">
+           <property name="text">
+            <string>Tunnel MTU</string>
+           </property>
+           <property name="buddy">
+            <cstring>sbMtu</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="KIntSpinBox" name="sbMtu">
+           <property name="specialValueText">
+            <string>Automatic</string>
+           </property>
+           <property name="maximum">
+            <number>65533</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_9">
+         <item>
+          <widget class="QLabel" name="label_9">
+           <property name="text">
+            <string>UDP fragment size</string>
+           </property>
+           <property name="buddy">
+            <cstring>sbUdpFragmentSize</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="KIntSpinBox" name="sbUdpFragmentSize">
+           <property name="specialValueText">
+            <string>Automatic</string>
+           </property>
+           <property name="maximum">
+            <number>65535</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_7">
+         <item>
+          <widget class="QCheckBox" name="chkUseCustomReneg">
+           <property name="text">
+            <string>Use custom renegotiation interval</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="KIntSpinBox" name="sbCustomReneg">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="maximum">
+            <number>604800</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <widget class="QCheckBox" name="chkUseLZO">
          <property name="text">
           <string>Use LZO compression</string>
@@ -504,6 +593,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="chkMssRestrict">
+         <property name="text">
+          <string>Restrict TCP maximum segment size (MSS)</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_5">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -511,7 +607,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>306</width>
-           <height>91</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -607,7 +703,7 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>302</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -619,6 +715,27 @@
        <string>Optional TLS Settings</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_9">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <item>
+          <widget class="QLabel" name="label_10">
+           <property name="text">
+            <string>Subject Match:</string>
+           </property>
+           <property name="buddy">
+            <cstring>subjectMatch</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="KLineEdit" name="subjectMatch">
+           <property name="whatsThis">
+            <string>Connect only to servers whose certificate matches the given subject. Example: /CN=myvpn.company.com</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
        <item>
         <widget class="QGroupBox" name="useExtraTlsAuth">
          <property name="title">
@@ -700,10 +817,138 @@
          <property name="sizeHint" stdset="0">
           <size>
            <width>20</width>
-           <height>260</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab_3">
+      <attribute name="title">
+       <string>Proxies</string>
+      </attribute>
+      <layout class="QFormLayout" name="formLayout_2">
+       <property name="fieldGrowthPolicy">
+        <enum>QFormLayout::ExpandingFieldsGrow</enum>
+       </property>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Proxy Type:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="KComboBox" name="cmbProxyType">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>Not Required</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>HTTP</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>SOCKS</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_12">
+         <property name="text">
+          <string>Server Address:</string>
+         </property>
+         <property name="buddy">
+          <cstring>proxyServerAddress</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="KLineEdit" name="proxyServerAddress"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_13">
+         <property name="text">
+          <string>Port:</string>
+         </property>
+         <property name="buddy">
+          <cstring>sbProxyPort</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="KIntSpinBox" name="sbProxyPort">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="maximum">
+          <number>65535</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QCheckBox" name="chkProxyRetry">
+         <property name="text">
+          <string>Retry indefinitely when errors occur</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_14">
+         <property name="text">
+          <string>Proxy Username</string>
+         </property>
+         <property name="buddy">
+          <cstring>proxyUsername</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_15">
+         <property name="text">
+          <string>Proxy Password</string>
+         </property>
+         <property name="buddy">
+          <cstring>proxyPassword</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="KLineEdit" name="proxyUsername"/>
+       </item>
+       <item row="5" column="1">
+        <widget class="KLineEdit" name="proxyPassword">
+         <property name="echoMode">
+          <enum>QLineEdit::Password</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QCheckBox" name="chkProxyShowPassword">
+         <property name="text">
+          <string>Show Password</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -713,6 +958,11 @@
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
+  </customwidget>
   <customwidget>
    <class>KUrlRequester</class>
    <extends>QFrame</extends>
@@ -774,6 +1024,22 @@
     <hint type="destinationlabel">
      <x>584</x>
      <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkUseCustomReneg</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>sbCustomReneg</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>121</x>
+     <y>70</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>319</x>
+     <y>70</y>
     </hint>
    </hints>
   </connection>

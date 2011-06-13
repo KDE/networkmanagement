@@ -48,6 +48,9 @@ protected Q_SLOTS:
     void gotOpenVpnOutput();
     void openVpnError(QProcess::ProcessError);
     void openVpnFinished(int, QProcess::ExitStatus);
+    void showPasswordsToggled(bool);
+    void proxyPasswordToggled(bool);
+    void proxyTypeChanged(int);
 private:
     class Private;
     Private * d;
