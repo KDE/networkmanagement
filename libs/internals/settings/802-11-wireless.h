@@ -21,7 +21,7 @@ class KNMINTERNALS_EXPORT WirelessSetting : public Setting
     class EnumBand
     {
       public:
-      enum type { a, bg, COUNT };
+      enum type { automatic, a, bg, COUNT };
     };
 
     WirelessSetting( );

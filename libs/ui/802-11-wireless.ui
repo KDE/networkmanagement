@@ -107,6 +107,11 @@
      </property>
      <item>
       <property name="text">
+       <string>Automatic</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>a</string>
       </property>
      </item>
@@ -137,6 +142,9 @@
      </property>
      <property name="whatsThis">
       <string>Sets the channel of the network.</string>
+     </property>
+     <property name="specialValueText">
+      <string>Automatic</string>
      </property>
      <property name="minimum">
       <number>0</number>
