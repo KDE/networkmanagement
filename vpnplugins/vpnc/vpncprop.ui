@@ -238,12 +238,17 @@
         </property>
         <item>
          <property name="text">
-          <string>Cisco UDP</string>
+          <string>NAT-T (if available)</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>NAT-T</string>
+          <string>Force NAT-T</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Cisco UDP</string>
          </property>
         </item>
         <item>
@@ -256,7 +261,10 @@
       <item row="4" column="0">
        <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>IKE DH Group</string>
+         <string>&amp;IKE DH Group</string>
+        </property>
+        <property name="buddy">
+         <cstring>cboDHGroup</cstring>
         </property>
        </widget>
       </item>
@@ -321,6 +329,21 @@
    <header>klineedit.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>leGateway</tabstop>
+  <tabstop>leGroupName</tabstop>
+  <tabstop>leUserPassword</tabstop>
+  <tabstop>cboUserPassOptions</tabstop>
+  <tabstop>leGroupPassword</tabstop>
+  <tabstop>cboGroupPassOptions</tabstop>
+  <tabstop>cbShowPasswords</tabstop>
+  <tabstop>leUserName</tabstop>
+  <tabstop>leDomain</tabstop>
+  <tabstop>cboEncryptionMethod</tabstop>
+  <tabstop>cboNatTraversal</tabstop>
+  <tabstop>cboDHGroup</tabstop>
+  <tabstop>chkDeadPeerDetection</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>

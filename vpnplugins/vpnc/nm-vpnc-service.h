@@ -15,7 +15,7 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- * (C) Copyright 2005 - 2008 Red Hat, Inc.
+ * (C) Copyright 2005 - 2011 Red Hat, Inc.
  * (C) Copyright 2007 - 2008 Novell, Inc.
  */
 
@@ -36,6 +36,7 @@
 #define NM_VPNC_KEY_DOMAIN "Domain"
 #define NM_VPNC_KEY_DHGROUP "IKE DH Group"
 #define NM_VPNC_KEY_PERFECT_FORWARD "Perfect Forward Secrecy"
+#define NM_VPNC_KEY_VENDOR "Vendor"
 #define NM_VPNC_KEY_APP_VERSION "Application Version"
 #define NM_VPNC_KEY_SINGLE_DES "Enable Single DES"
 #define NM_VPNC_KEY_NO_ENCRYPTION "Enable no encryption"
@@ -44,9 +45,17 @@
 #define NM_VPNC_KEY_CISCO_UDP_ENCAPS_PORT "Cisco UDP Encapsulation Port"
 #define NM_VPNC_KEY_LOCAL_PORT "Local Port"
 
-#define NM_VPNC_NATT_MODE_NATT "natt"
+#define NM_VPNC_NATT_MODE_NATT        "natt"
+#define NM_VPNC_NATT_MODE_NONE        "none"
 #define NM_VPNC_NATT_MODE_NATT_ALWAYS "force-natt"
-#define NM_VPNC_NATT_MODE_NONE "none"
-#define NM_VPNC_NATT_MODE_CISCO "cisco-udp"
+#define NM_VPNC_NATT_MODE_CISCO       "cisco-udp"
+
+#define NM_VPNC_PW_TYPE_SAVE   "save"
+#define NM_VPNC_PW_TYPE_ASK    "ask"
+#define NM_VPNC_PW_TYPE_UNUSED "unused"
+
+#define NM_VPNC_DHGROUP_DH1 "dh1"
+#define NM_VPNC_DHGROUP_DH2 "dh2"
+#define NM_VPNC_DHGROUP_DH5 "dh5"
 
 #endif /* NM_VPNC_PLUGIN_H */

@@ -49,7 +49,7 @@ VpncSettingWidget::VpncSettingWidget(Knm::Connection * connection, QWidget * par
 
 VpncSettingWidget::~VpncSettingWidget()
 {
-   delete d_ptr;
+    delete d_ptr;
 }
 
 void VpncSettingWidget::userPasswordTypeChanged(int index)
@@ -102,11 +102,15 @@ void VpncSettingWidget::readConfig()
     }
 
     //   nat traversal
-    if (dataMap[NM_VPNC_KEY_NAT_TRAVERSAL_MODE] == NM_VPNC_NATT_MODE_NATT) {
+    if (dataMap[NM_VPNC_KEY_NAT_TRAVERSAL_MODE] == NM_VPNC_NATT_MODE_NATT)
+        d->ui.cboNatTraversal->setCurrentIndex(0);
+    else if (dataMap[NM_VPNC_KEY_NAT_TRAVERSAL_MODE] == NM_VPNC_NATT_MODE_NATT_ALWAYS)
         d->ui.cboNatTraversal->setCurrentIndex(1);
-    } else if (dataMap[NM_VPNC_KEY_NAT_TRAVERSAL_MODE] == NM_VPNC_NATT_MODE_NONE) {
+    else if (dataMap[NM_VPNC_KEY_NAT_TRAVERSAL_MODE] == NM_VPNC_NATT_MODE_CISCO)
         d->ui.cboNatTraversal->setCurrentIndex(2);
-    }
+    else if (dataMap[NM_VPNC_KEY_NAT_TRAVERSAL_MODE] == NM_VPNC_NATT_MODE_NONE)
+        d->ui.cboNatTraversal->setCurrentIndex(3);
+
     //   dead peer detection
     if (dataMap.contains(NM_VPNC_KEY_DPD_IDLE_TIMEOUT)) {
         uint dpdTimeout = dataMap.value(NM_VPNC_KEY_DPD_IDLE_TIMEOUT).toUInt();
@@ -118,13 +122,13 @@ void VpncSettingWidget::readConfig()
     //   dh group
     if (dataMap.contains(NM_VPNC_KEY_DHGROUP)) {
         QString dhGroup = dataMap.value(NM_VPNC_KEY_DHGROUP);
-        if (dhGroup == "dh1") {
+        if (dhGroup == NM_VPNC_DHGROUP_DH1) {
             // DH Group 1
             d->ui.cboDHGroup->setCurrentIndex(0);
-        } else if (dhGroup == "dh2") {
+        } else if (dhGroup == NM_VPNC_DHGROUP_DH2) {
             // DH Group 2
             d->ui.cboDHGroup->setCurrentIndex(1);
-        } else if (dhGroup == "dh5") {
+        } else if (dhGroup == NM_VPNC_DHGROUP_DH5) {
             // DH Group 5
             d->ui.cboDHGroup->setCurrentIndex(2);
         }
@@ -202,14 +206,19 @@ void VpncSettingWidget::writeConfig()
 
     // nat traversal
     switch (d->ui.cboNatTraversal->currentIndex()) {
-        case 1:
-            data.insert(NM_VPNC_KEY_NAT_TRAVERSAL_MODE, QLatin1String(NM_VPNC_NATT_MODE_NATT));
-            break;
-        case 2:
-            data.insert(NM_VPNC_KEY_NAT_TRAVERSAL_MODE, QLatin1String(NM_VPNC_NATT_MODE_NONE));
-            break;
-        default:
-            break;
+    case 1:
+        data.insert(NM_VPNC_KEY_NAT_TRAVERSAL_MODE, QLatin1String(NM_VPNC_NATT_MODE_NATT_ALWAYS));
+        break;
+    case 2:
+        data.insert(NM_VPNC_KEY_NAT_TRAVERSAL_MODE, QLatin1String(NM_VPNC_NATT_MODE_CISCO));
+        break;
+    case 3:
+        data.insert(NM_VPNC_KEY_NAT_TRAVERSAL_MODE, QLatin1String(NM_VPNC_NATT_MODE_NONE));
+        break;
+    case 0:
+    default:
+        data.insert(NM_VPNC_KEY_NAT_TRAVERSAL_MODE, QLatin1String(NM_VPNC_NATT_MODE_NATT));
+        break;
     }
 
     // dead peer detection
@@ -224,14 +233,14 @@ void VpncSettingWidget::writeConfig()
     // dh group
     switch (d->ui.cboDHGroup->currentIndex()) {
     case 0:	// DH Group 1
-	data.insert(NM_VPNC_KEY_DHGROUP, "dh1");
-	break;
+        data.insert(NM_VPNC_KEY_DHGROUP, NM_VPNC_DHGROUP_DH1);
+        break;
     case 1:	// DH Group 2
-	data.insert(NM_VPNC_KEY_DHGROUP, "dh2");
-	break;
+        data.insert(NM_VPNC_KEY_DHGROUP, NM_VPNC_DHGROUP_DH2);
+        break;
     case 2:	// DH Group 5
-	data.insert(NM_VPNC_KEY_DHGROUP, "dh5");
-	break;
+        data.insert(NM_VPNC_KEY_DHGROUP, NM_VPNC_DHGROUP_DH5);
+        break;
     }
 
     d->setting->setData(data);
