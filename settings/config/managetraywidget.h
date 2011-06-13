@@ -35,6 +35,7 @@ public:
     virtual void save();
 private:
     OtherSettingsWidget* ui;
+    int secretStorageMode;
 };
 
 #endif // NM09_MANAGE_TRAY_WIDGET_H

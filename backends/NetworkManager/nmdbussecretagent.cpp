@@ -40,33 +40,51 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nm-secret-agentadaptor.h"
 
-NMDBusSecretAgent::NMDBusSecretAgent(QObject * parent)
-: QObject(parent), QDBusContext(), m_secretsProvider(0)
+class NMDBusSecretAgentPrivate
 {
-    m_agent = new SecretAgentAdaptor(this);
-    m_agentManager = new OrgFreedesktopNetworkManagerAgentManagerInterface(NM_DBUS_SERVICE, NM_DBUS_PATH_AGENT_MANAGER, QDBusConnection::systemBus(),this);
-    m_watcher = new QDBusServiceWatcher(NM_DBUS_SERVICE, QDBusConnection::systemBus(), QDBusServiceWatcher::WatchForRegistration, this);
-    connect(m_watcher, SIGNAL(serviceRegistered(const QString &)), SLOT(registerAgent()));
+public:
+    SecretsProvider *secretsProvider;
+    SecretAgentAdaptor *agent;
+    OrgFreedesktopNetworkManagerAgentManagerInterface *agentManager;
+    QDBusServiceWatcher *watcher;
+
+    QHash <QString,QPair<QString, QDBusMessage> > connectionsToRead;
+    QList <QString> objectPaths;
+};
+
+NMDBusSecretAgent::NMDBusSecretAgent(QObject * parent)
+: QObject(parent), QDBusContext(), d_ptr(new NMDBusSecretAgentPrivate)
+{
+    Q_D(NMDBusSecretAgent);
+    d->secretsProvider = 0;
+    d->agent = new SecretAgentAdaptor(this);
+    d->agentManager = new OrgFreedesktopNetworkManagerAgentManagerInterface(NM_DBUS_SERVICE, NM_DBUS_PATH_AGENT_MANAGER, QDBusConnection::systemBus(),this);
+    d->watcher = new QDBusServiceWatcher(NM_DBUS_SERVICE, QDBusConnection::systemBus(), QDBusServiceWatcher::WatchForRegistration, this);
+    connect(d->watcher, SIGNAL(serviceRegistered(const QString &)), SLOT(registerAgent()));
     registerAgent();
 }
 
 NMDBusSecretAgent::~NMDBusSecretAgent()
 {
-    m_agentManager->Unregister();
-    delete m_agent;
-    delete m_agentManager;
-    delete m_watcher;
+    Q_D(NMDBusSecretAgent);
+    d->agentManager->Unregister();
+    delete d->agent;
+    delete d->agentManager;
+    delete d->watcher;
+    delete d;
 }
 
 void NMDBusSecretAgent::registerAgent()
 {
-    m_agentManager->connection().registerObject(NM_DBUS_PATH_SECRET_AGENT, m_agent, QDBusConnection::ExportAllSlots);
-    m_agentManager->Register("org.kde.networkmanagement");
+    Q_D(NMDBusSecretAgent);
+    d->agentManager->connection().registerObject(NM_DBUS_PATH_SECRET_AGENT, d->agent, QDBusConnection::ExportAllSlots);
+    d->agentManager->Register("org.kde.networkmanagement");
     kDebug() << "Agent registered";
 }
 
 QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path, const QString &setting_name, const QStringList &hints, uint flags)
 {
+    Q_D(NMDBusSecretAgent);
     kDebug() << connection;
     kDebug() << setting_name << flags << hints;
 
@@ -78,13 +96,13 @@ QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, c
     QPair<QString,QDBusMessage> pair;
     pair.first = connection_path.path();
     pair.second = msg;
-    m_connectionsToRead.insert(con->uuid() + setting_name, pair);
-    m_objectPaths.append(connection_path.path() + setting_name);
+    d->connectionsToRead.insert(con->uuid() + setting_name, pair);
+    d->objectPaths.append(connection_path.path() + setting_name);
 
-    if (m_secretsProvider) {
+    if (d->secretsProvider) {
         foreach (Knm::Setting * setting, con->settings()) {
             if (setting->name() == setting_name) {
-                m_secretsProvider->loadSecrets(con, setting_name, (SecretsProvider::GetSecretsFlags)flags);
+                d->secretsProvider->loadSecrets(con, setting_name, (SecretsProvider::GetSecretsFlags)flags);
                 break;
             }
         }
@@ -96,28 +114,30 @@ QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, c
 void NMDBusSecretAgent::SaveSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path)
 {
     Q_UNUSED(connection_path)
+    Q_D(NMDBusSecretAgent);
     Knm::Connection * con = new Knm::Connection(QUuid(), Knm::Connection::Wired);
     ConnectionDbus condbus(con);
     condbus.fromDbusMap(connection);
-    if (m_secretsProvider) {
+    if (d->secretsProvider) {
         kDebug()<< "Secrets are being saved for connection " << con->uuid();
-        m_secretsProvider->saveSecrets(con);
+        d->secretsProvider->saveSecrets(con);
     } else {
-        kDebug()<< "Secrets for" << con->uuid() << "not save because there is no m_secretsProvider registered.";
+        kDebug()<< "Secrets for" << con->uuid() << "not save because there is no secretsProvider registered.";
     }
 }
 
 void NMDBusSecretAgent::DeleteSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path)
 {
     Q_UNUSED(connection_path)
+    Q_D(NMDBusSecretAgent);
     Knm::Connection * con = new Knm::Connection(QUuid(), Knm::Connection::Wired);
     ConnectionDbus condbus(con);
     condbus.fromDbusMap(connection);
-    if (m_secretsProvider) {
+    if (d->secretsProvider) {
         kDebug() << "Deleting secrets for connection " << con->uuid();
-        m_secretsProvider->deleteSecrets(con);
+        d->secretsProvider->deleteSecrets(con);
     } else {
-        kDebug()<< "Secrets for" << con->uuid() << "not deleted because there is no m_secretsProvider registered.";
+        kDebug()<< "Secrets for" << con->uuid() << "not deleted because there is no d->secretsProvider registered.";
     }
 }
 
@@ -129,8 +149,9 @@ void NMDBusSecretAgent::deleteSavedConnection(Knm::Connection *con)
 
 void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name)
 {
-    QPair<QString, QDBusMessage> pair = m_connectionsToRead.take(con->uuid() + name);
-    if (m_objectPaths.removeOne(pair.first + name)) {
+    Q_D(NMDBusSecretAgent);
+    QPair<QString, QDBusMessage> pair = d->connectionsToRead.take(con->uuid() + name);
+    if (d->objectPaths.removeOne(pair.first + name)) {
         ConnectionDbus condbus(con);
         QVariantMapMap secrets = condbus.toDbusSecretsMap(name);
 
@@ -144,12 +165,14 @@ void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name)
 
 void NMDBusSecretAgent::CancelGetSecrets(const QDBusObjectPath &connection_path, const QString &setting_name)
 {
-    m_objectPaths.removeOne(connection_path.path() + setting_name);
+    Q_D(NMDBusSecretAgent);
+    d->objectPaths.removeOne(connection_path.path() + setting_name);
 }
 
 void NMDBusSecretAgent::registerSecretsProvider(SecretsProvider * provider)
 {
-    m_secretsProvider = provider;
-    connect(m_secretsProvider,SIGNAL(connectionRead(Knm::Connection *, const QString&)),SLOT(secretsReady(Knm::Connection*, const QString&)));
-    connect(m_secretsProvider,SIGNAL(connectionSaved(Knm::Connection *)),SLOT(deleteSavedConnection(Knm::Connection *)));
+    Q_D(NMDBusSecretAgent);
+    d->secretsProvider = provider;
+    connect(d->secretsProvider,SIGNAL(connectionRead(Knm::Connection *, const QString&)),SLOT(secretsReady(Knm::Connection*, const QString&)));
+    connect(d->secretsProvider,SIGNAL(connectionSaved(Knm::Connection *)),SLOT(deleteSavedConnection(Knm::Connection *)));
 }

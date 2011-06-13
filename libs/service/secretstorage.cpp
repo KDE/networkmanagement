@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 
 #include <QFile>
+#include <QDir>
 #include <QMutableHashIterator>
 
 #include "paths.h"
@@ -38,28 +39,42 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "secrets.h"
 
+class SecretStoragePrivate
+{
+public:
+    SecretStorage::SecretStorageMode storageMode;
+    QList<Knm::Connection*> connectionsToWrite;
+    QList<Knm::Connection*> connectionsToRead;
+    QMultiHash<QString,QPair<QString,SecretsProvider::GetSecretsFlags> > settingsToRead;
+};
+
+
 QString SecretStorage::s_walletFolderName = QLatin1String("Network Management");
 
 WId SecretStorage::s_walletWId = 0;
 
 SecretStorage::SecretStorage()
-    :SecretsProvider()
+    :SecretsProvider(), d_ptr(new SecretStoragePrivate())
 {
+    Q_D(SecretStorage);
     KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     KNetworkManagerServicePrefs::self()->readConfig();
-    m_storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
+    d->storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
 }
 
 SecretStorage::~SecretStorage()
 {
+    Q_D(SecretStorage);
+    delete d;
 }
 
 void SecretStorage::saveSecrets(Knm::Connection *con)
 {
+    Q_D(SecretStorage);
     KNetworkManagerServicePrefs::self()->readConfig();
-    m_storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
+    d->storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
 
-    if (m_storageMode == PlainText) {
+    if (d->storageMode == PlainText) {
         KSharedConfig::Ptr ptr = secretsFileForUuid(con->uuid());
         foreach (Knm::Setting * setting, con->settings()) {
             Knm::Secrets * secrets = setting->getSecretsObject();
@@ -69,17 +84,18 @@ void SecretStorage::saveSecrets(Knm::Connection *con)
                     secrets->secretsToConfig(map, ptr);
             }
         }
-    } else if (m_storageMode == Secure) {
+    } else if (d->storageMode == Secure) {
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Asynchronous );
         if (wallet) {
             connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForWrite(bool)));
-            m_connectionsToWrite.append(con);
+            d->connectionsToWrite.append(con);
         }
     }
 }
 
 void SecretStorage::walletOpenedForWrite(bool success)
 {
+    Q_D(SecretStorage);
     if (success) {
         KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
         if (wallet->isOpen()) {
@@ -90,8 +106,8 @@ void SecretStorage::walletOpenedForWrite(bool success)
                 readyForWalletWrite = true;
             }
             if (readyForWalletWrite) {
-                while (!m_connectionsToWrite.isEmpty()) {
-                    Knm::Connection *con = m_connectionsToWrite.takeFirst();
+                while (!d->connectionsToWrite.isEmpty()) {
+                    Knm::Connection *con = d->connectionsToWrite.takeFirst();
                     bool saved = false;
                     foreach (const QString & k, wallet->entryList()) {
                         if (k.startsWith(con->uuid() + ';'))
@@ -119,14 +135,18 @@ void SecretStorage::walletOpenedForWrite(bool success)
 
 void SecretStorage::walletOpenedForRead(bool success)
 {
+    Q_D(SecretStorage);
     bool retrievalSuccessful = true;
     if (success) {
         KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
         if (wallet->isOpen() && wallet->hasFolder(s_walletFolderName) && wallet->setFolder(s_walletFolderName)) {
-            while (!m_connectionsToRead.isEmpty()) {
-                Knm::Connection *con = m_connectionsToRead.takeFirst();
-                QMutableHashIterator<QString, QPair<QString,GetSecretsFlags> > i(m_settingsToRead);
-                while (i.hasNext() && i.next().key() == con->uuid()) {
+            while (!d->connectionsToRead.isEmpty()) {
+                Knm::Connection *con = d->connectionsToRead.takeFirst();
+                QMutableHashIterator<QString, QPair<QString,GetSecretsFlags> > i(d->settingsToRead);
+                while (i.hasNext()) {
+                    if (i.next().key() != con->uuid())
+                        continue;
+
                     QPair<QString,GetSecretsFlags> pair = i.value();
                     Knm::Secrets * secrets = 0;
                     bool settingsFound = false;
@@ -154,7 +174,7 @@ void SecretStorage::walletOpenedForRead(bool success)
                     if (!settingsFound) {
                         emit connectionRead(con, pair.first);
                     }
-                    m_settingsToRead.remove(i.key(), i.value());
+                    i.remove();
                 }
             }
         } else {
@@ -162,13 +182,15 @@ void SecretStorage::walletOpenedForRead(bool success)
         }
     }
     if (!retrievalSuccessful || !success) {
-         while (!m_connectionsToRead.isEmpty()) {
-            Knm::Connection *con = m_connectionsToRead.takeFirst();
-            QMutableHashIterator<QString, QPair<QString,GetSecretsFlags> > i(m_settingsToRead);
-            while (i.hasNext() && i.next().key() == con->uuid()) {
+         while (!d->connectionsToRead.isEmpty()) {
+            Knm::Connection *con = d->connectionsToRead.takeFirst();
+            QMutableHashIterator<QString, QPair<QString,GetSecretsFlags> > i(d->settingsToRead);
+            while (i.hasNext()) {
+                if (i.next().key() != con->uuid())
+                    continue;
                 QPair<QString,GetSecretsFlags> pair = i.value();
                 emit connectionRead(con, pair.first);
-                m_settingsToRead.remove(i.key(), i.value());
+                i.remove();
             }
          }
     }
@@ -176,16 +198,17 @@ void SecretStorage::walletOpenedForRead(bool success)
 
 void SecretStorage::deleteSecrets(Knm::Connection *con)
 {
+    Q_D(SecretStorage);
     KNetworkManagerServicePrefs::self()->readConfig();
-    m_storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
+    d->storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
     if (!con->hasSecrets()) {
         return;
     }
 
-    if (m_storageMode == PlainText) {
+    if (d->storageMode == PlainText) {
         KSharedConfig::Ptr ptr = secretsFileForUuid(con->uuid());
         QFile::remove(ptr->name());
-    } else if (m_storageMode == Secure) {
+    } else if (d->storageMode == Secure) {
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Synchronous );
         if( wallet && wallet->isOpen() && wallet->hasFolder( s_walletFolderName ) && wallet->setFolder( s_walletFolderName )) {
             foreach (const QString & k, wallet->entryList()) {
@@ -201,19 +224,20 @@ QString SecretStorage::walletKeyFor(const QString &uuid, const Knm::Setting * se
     return uuid + ';' + setting->name();
 }
 
-QString SecretStorage::walletKeyFor(const QString &uuid, const QString &name) const
+QString SecretStorage::walletKeyFor(const QString &uuid, const QString &name)
 {
     return uuid + ';' + name;
 }
 
 void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSecretsFlags flags)
 {
+    Q_D(SecretStorage);
     KNetworkManagerServicePrefs::self()->readConfig();
-    m_storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
+    d->storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
 
     QString uuid = con->uuid();
 
-    if (m_storageMode == PlainText && !(flags & RequestNew)) {
+    if (d->storageMode == PlainText && !(flags & RequestNew)) {
         Knm::Secrets * secrets = 0;
         foreach (Knm::Setting * setting, con->settings()) {
             if (setting->name() == name) {
@@ -236,15 +260,15 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
         } else {
             emit connectionRead(con, name);
         }
-    } else if (m_storageMode == Secure && !(flags & RequestNew)) {
+    } else if (d->storageMode == Secure && !(flags & RequestNew)) {
         kDebug() << "opening wallet...";
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
                 walletWid(),KWallet::Wallet::Asynchronous);
         if (wallet) {
             connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
-            m_connectionsToRead.append(con);
+            d->connectionsToRead.append(con);
             QPair<QString,GetSecretsFlags> pair(name, flags);
-            m_settingsToRead.insert(uuid, pair);
+            d->settingsToRead.insert(uuid, pair);
         } else {
             emit connectionRead(con, name);
         }
@@ -278,4 +302,44 @@ void SecretStorage::gotSecrets(KJob *job)
 {
     ConnectionSecretsJob * csj = static_cast<ConnectionSecretsJob*>(job);
     emit connectionRead(csj->connection(), csj->settingName());
+}
+
+void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode newMode)
+{
+    // TODO: integrate DontStore with NM0.9 secret flags
+    if (oldMode == DontStore || newMode == DontStore)
+        return;
+
+    KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
+        walletWid(),KWallet::Wallet::Synchronous);
+    if (!wallet)
+        return;
+    if( !wallet->hasFolder( s_walletFolderName ) )
+        wallet->createFolder( s_walletFolderName );
+    wallet->setFolder( s_walletFolderName );
+    QString secretsDirectory = KStandardDirs::locateLocal("data", Knm::SECRETS_PERSISTENCE_PATH);
+
+    if (oldMode == PlainText && newMode == Secure) {
+        QDir dir(secretsDirectory);
+        foreach (const QString &file, dir.entryList()) {
+            KSharedConfig::Ptr config = KSharedConfig::openConfig(secretsDirectory + file, KConfig::SimpleConfig);
+            foreach (const QString &group, config->groupList()) {
+                KConfigGroup configGroup(config, group);
+                wallet->writeMap(walletKeyFor(file, group), configGroup.entryMap());
+            }
+            QFile::remove(secretsDirectory + file);
+        }
+    } else if (oldMode == Secure && newMode == PlainText) {
+        foreach (const QString &key, wallet->entryList()) {
+            QStringList parts = key.split(";");
+            KSharedConfig::Ptr config = KSharedConfig::openConfig(secretsDirectory + parts[0], KConfig::SimpleConfig);
+            KConfigGroup configGroup(config, parts[1]);
+            QMap<QString, QString> secrets;
+            wallet->readMap(key, secrets);
+            foreach (const QString &secret, secrets.keys()) {
+                configGroup.writeEntry(secret, secrets.value(secret));
+            }
+            wallet->removeEntry(key);
+        }
+    }
 }
