@@ -266,8 +266,8 @@ static int compareVersions(const QString & version1, const QString & version2)
     QStringList sl2 = version2.split('.');
 
     if (sl1.size() > 2 && sl2.size() > 2) {
-        int v1[3] = { QString(sl1[0]).toInt(), QString(sl1[1]).toInt(), QString(sl1[2]).toInt() };
-        int v2[3] = { QString(sl2[0]).toInt(), QString(sl2[1]).toInt(), QString(sl2[2]).toInt() };
+        int v1[3] = { sl1[0].toInt(), sl1[1].toInt(), sl1[2].toInt() };
+        int v2[3] = { sl2[0].toInt(), sl2[1].toInt(), sl2[2].toInt() };
 
         if (v1[0] > v2[0]) {
             return 1;
