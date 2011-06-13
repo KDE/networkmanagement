@@ -38,6 +38,11 @@ public:
     bool gotOpenVpnCiphers;
     bool readConfig;
     enum ProxyType {NotRequired = 0, HTTP = 1, SOCKS = 2};
+    class EnumHashingAlgorithms
+    {
+    public:
+        enum HashingAlgorithms {Default = 0, None, Md5, Sha1, Sha224, Sha256, Sha384, Sha512, Ripemd160};
+    };
 };
 
 
@@ -199,11 +204,23 @@ void OpenVpnSettingWidget::readConfig()
     // Optional Security Settings
     QString hmacKeyAuth = dataMap[NM_OPENVPN_KEY_AUTH];
     if (hmacKeyAuth == QLatin1String(NM_OPENVPN_AUTH_NONE)) {
-        d->ui.cboHmac->setCurrentIndex(1);
+        d->ui.cboHmac->setCurrentIndex(Private::EnumHashingAlgorithms::None);
     } else if (hmacKeyAuth == QLatin1String(NM_OPENVPN_AUTH_MD5)) {
-        d->ui.cboHmac->setCurrentIndex(2);
+        d->ui.cboHmac->setCurrentIndex(Private::EnumHashingAlgorithms::Md5);
     } else if (hmacKeyAuth == QLatin1String(NM_OPENVPN_AUTH_SHA1)) {
-        d->ui.cboHmac->setCurrentIndex(3);
+        d->ui.cboHmac->setCurrentIndex(Private::EnumHashingAlgorithms::Sha1);
+    } else if (hmacKeyAuth == QLatin1String(NM_OPENVPN_AUTH_SHA224)) {
+        d->ui.cboHmac->setCurrentIndex(Private::EnumHashingAlgorithms::Sha224);
+    } else if (hmacKeyAuth == QLatin1String(NM_OPENVPN_AUTH_SHA256)) {
+        d->ui.cboHmac->setCurrentIndex(Private::EnumHashingAlgorithms::Sha256);
+    } else if (hmacKeyAuth == QLatin1String(NM_OPENVPN_AUTH_SHA384)) {
+        d->ui.cboHmac->setCurrentIndex(Private::EnumHashingAlgorithms::Sha384);
+    } else if (hmacKeyAuth == QLatin1String(NM_OPENVPN_AUTH_SHA512)) {
+        d->ui.cboHmac->setCurrentIndex(Private::EnumHashingAlgorithms::Sha512);
+    } else if (hmacKeyAuth == QLatin1String(NM_OPENVPN_AUTH_RIPEMD160)) {
+        d->ui.cboHmac->setCurrentIndex(Private::EnumHashingAlgorithms::Ripemd160);
+    } else {
+        d->ui.cboHmac->setCurrentIndex(Private::EnumHashingAlgorithms::Default);
     }
     // ciphers populated above?
     if (d->gotOpenVpnCiphers && dataMap.contains(NM_OPENVPN_KEY_CIPHER)) {
@@ -327,16 +344,31 @@ void OpenVpnSettingWidget::writeConfig()
 
     // Optional Security
     switch ( d->ui.cboHmac->currentIndex()) {
-        case 0:
+        case Private::EnumHashingAlgorithms::Default:
             break;
-        case 1:
+        case Private::EnumHashingAlgorithms::None:
             data.insert(NM_OPENVPN_KEY_AUTH, NM_OPENVPN_AUTH_NONE);
             break;
-        case 2:
+        case Private::EnumHashingAlgorithms::Md5:
             data.insert(NM_OPENVPN_KEY_AUTH, NM_OPENVPN_AUTH_MD5);
             break;
-        case 3:
+        case Private::EnumHashingAlgorithms::Sha1:
             data.insert(NM_OPENVPN_KEY_AUTH, NM_OPENVPN_AUTH_SHA1);
+            break;
+        case Private::EnumHashingAlgorithms::Sha224:
+            data.insert(NM_OPENVPN_KEY_AUTH, NM_OPENVPN_AUTH_SHA224);
+            break;
+        case Private::EnumHashingAlgorithms::Sha256:
+            data.insert(NM_OPENVPN_KEY_AUTH, NM_OPENVPN_AUTH_SHA256);
+            break;
+        case Private::EnumHashingAlgorithms::Sha384:
+            data.insert(NM_OPENVPN_KEY_AUTH, NM_OPENVPN_AUTH_SHA384);
+            break;
+        case Private::EnumHashingAlgorithms::Sha512:
+            data.insert(NM_OPENVPN_KEY_AUTH, NM_OPENVPN_AUTH_SHA512);
+            break;
+        case Private::EnumHashingAlgorithms::Ripemd160:
+            data.insert(NM_OPENVPN_KEY_AUTH, NM_OPENVPN_AUTH_RIPEMD160);
             break;
     }
     if (d->ui.cboCipher->currentIndex() != 0) {

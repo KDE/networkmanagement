@@ -691,6 +691,31 @@
              <string>SHA-1</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>SHA-224</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>SHA-256</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>SHA-384</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>SHA-512</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>RIPEMD-160</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>
