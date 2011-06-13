@@ -47,6 +47,7 @@ class ScanWidget : public QWidget, public Ui::ScanWidget
 
         void setWirelessInterface(const QString &interface);
         QPair<QString,QString> currentAccessPoint() const;
+        QPair<Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *> currentAccessPointUni();
 
     private Q_SLOTS:
         void onInterfaceChanged(int index);
@@ -60,7 +61,6 @@ class ScanWidget : public QWidget, public Ui::ScanWidget
         QItemSelectionModel *m_scanSelectionModel;
         QItemSelectionModel *m_scanProxySelectionModel;
 
-        QStringList m_wirelessInterfaces;
         enum Views {Map = 0, Details};
 
     Q_SIGNALS:
