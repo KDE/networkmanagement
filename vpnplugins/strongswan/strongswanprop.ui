@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>464</width>
-    <height>373</height>
+    <height>402</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,19 +39,12 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Certificate</string>
+         <string>Certificate:</string>
         </property>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="KUrlComboRequester" name="leCertificate">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
+       <widget class="KUrlRequester" name="leGatewayCertificate"/>
       </item>
      </layout>
     </widget>
@@ -61,93 +54,157 @@
      <property name="title">
       <string>Authentication</string>
      </property>
-     <layout class="QFormLayout" name="formLayout_2">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>&amp;Username:</string>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <widget class="QComboBox" name="cmbMethod">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="buddy">
-         <cstring>leUserName</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="KLineEdit" name="leUserName"/>
-      </item>
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>User &amp;Password</string>
-        </property>
-        <property name="buddy">
-         <cstring>leUserPassword</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="KLineEdit" name="leUserPassword">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
-          <property name="passwordMode">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QComboBox" name="cboUserPassOptions">
-          <item>
-           <property name="text">
-            <string>Always Ask</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Store</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Not Required</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="2" column="1">
-       <widget class="QCheckBox" name="cbShowPasswords">
-        <property name="text">
-         <string>&amp;Hide passwords</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_6">
-        <property name="text">
-         <string>&amp;Method:</string>
-        </property>
-        <property name="buddy">
-         <cstring>leMethod</cstring>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QComboBox" name="leMethod">
         <property name="editable">
          <bool>false</bool>
         </property>
         <item>
          <property name="text">
+          <string>Certificate/private key</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Certificate/ssh-agent</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Smartcard</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
           <string>EAP</string>
          </property>
         </item>
+       </widget>
+      </item>
+      <item>
+       <widget class="QStackedWidget" name="swMethods">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <widget class="QWidget" name="page_4">
+         <layout class="QFormLayout" name="formLayout_4">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_4">
+            <property name="text">
+             <string>Certificate:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Private key:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="KUrlRequester" name="leAuthPrivatekeyCertificate"/>
+          </item>
+          <item row="1" column="1">
+           <widget class="KUrlRequester" name="leAuthPrivatekeyKey"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="page_3">
+         <layout class="QFormLayout" name="formLayout_3">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>Certificate:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="KUrlRequester" name="leAuthSshCertificate"/>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="page_2"/>
+        <widget class="QWidget" name="page">
+         <layout class="QFormLayout" name="formLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_5">
+            <property name="text">
+             <string>&amp;Username:</string>
+            </property>
+            <property name="buddy">
+             <cstring>leUserName</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="KLineEdit" name="leUserName"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>User &amp;Password</string>
+            </property>
+            <property name="buddy">
+             <cstring>leUserPassword</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="KLineEdit" name="leUserPassword">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="passwordMode">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="cboUserPassOptions">
+              <item>
+               <property name="text">
+                <string>Always Ask</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Store</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Not Required</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="1">
+           <widget class="QCheckBox" name="cbShowPasswords">
+            <property name="text">
+             <string>&amp;Hide passwords</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </widget>
       </item>
      </layout>
@@ -200,7 +257,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>
@@ -219,11 +276,6 @@
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
   </customwidget>
-  <customwidget>
-   <class>KUrlComboRequester</class>
-   <extends>KUrlRequester</extends>
-   <header>kurlrequester.h</header>
-  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -240,6 +292,22 @@
     <hint type="destinationlabel">
      <x>313</x>
      <y>108</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cmbMethod</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>swMethods</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>129</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>231</x>
+     <y>186</y>
     </hint>
    </hints>
   </connection>
