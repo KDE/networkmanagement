@@ -69,7 +69,7 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
         }
     }
 
-    connect(d->ui.band,SIGNAL(currentIndexChanged(int)),SLOT(bandChanged(int)));
+    connect(d->ui.band,SIGNAL(currentIndexChanged(int)),d->ui.channel,SLOT(setBand(int)));
     connect(d->ui.useCurrentApAsBssid,SIGNAL(clicked()),SLOT(copyToBssid()));
     connect(d->ui.clonedMacAddressRandom, SIGNAL(clicked()), this, SLOT(generateRandomClonedMac()));
 }
@@ -95,18 +95,20 @@ void Wireless80211Widget::readConfig()
     {
         case Knm::WirelessSetting::EnumBand::automatic:
             d->ui.band->setCurrentIndex(d->AutoIndex);
+            d->ui.channel->setBand(d->AutoIndex);
             break;
         case Knm::WirelessSetting::EnumBand::a:
             d->ui.band->setCurrentIndex(d->AIndex);
+            d->ui.channel->setBand(d->AIndex);
             d->ui.channel->setValue(d->ui.channel->posFromChannel(d->setting->channel()));
             break;
         case Knm::WirelessSetting::EnumBand::bg:
         default:
             d->ui.band->setCurrentIndex(d->BGIndex);
+            d->ui.channel->setBand(d->BGIndex);
             d->ui.channel->setValue(d->ui.channel->posFromChannel(d->setting->channel()));
             break;
     }
-    bandChanged(d->ui.band->currentIndex());
     // need to check that ssids containing international characters are restored correctly
     if (!d->setting->ssid().isEmpty()) {
         d->ui.ssid->setText(QString::fromAscii(d->setting->ssid()));
@@ -260,19 +262,6 @@ void Wireless80211Widget::validate()
     Q_D(Wireless80211Widget);
     d->valid = (d->ui.ssid->text().length() > 0 && d->ui.ssid->text().length() < 33);
     emit valid(d->valid);
-}
-
-void Wireless80211Widget::bandChanged(int index)
-{
-    Q_D(Wireless80211Widget);
-    if (index == Wireless80211WidgetPrivate::AutoIndex) {
-        d->ui.channel->setValue(0);
-        d->ui.channel->setEnabled(false);
-    } else {
-        d->ui.channel->setEnabled(true);
-        d->ui.channel->setBand(index);
-    }
-
 }
 
 void Wireless80211Widget::copyToBssid()
@@ -450,11 +439,16 @@ void Wireless80211WidgetBand::setBand(int band)
 {
     switch (band)
     {
+        case Wireless80211WidgetPrivate::AutoIndex:
+            setEnabled(false);
+            break;
         case Wireless80211WidgetPrivate::AIndex:
             selectedBand = a;
+            setEnabled(true);
             break;
         case Wireless80211WidgetPrivate::BGIndex:
             selectedBand = bg;
+            setEnabled(true);
             break;
     }
     setMaximum(channels.at(selectedBand).size()-1);

@@ -48,7 +48,6 @@ public:
 protected Q_SLOTS:
     void scanClicked();
     void validate();
-    void bandChanged(int);
     void copyToBssid();
     void generateRandomClonedMac();
 
@@ -68,8 +67,9 @@ public:
     QValidator::State validate(QString&, int&) const;
     int channelFromPos(int) const;
     int posFromChannel(int) const;
-    void setBand(int);
     QPair<int, int> findBandAndChannel(int freq);
+public Q_SLOTS:
+    void setBand(int);
 private:
     enum ChannelsFor { a = 0, bg = 1};
     QList< QList<int> > channels;
