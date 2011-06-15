@@ -46,6 +46,9 @@ StrongswanSettingWidget::StrongswanSettingWidget(Knm::Connection * connection, Q
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::VpnSetting *>(connection->setting(Knm::Setting::Vpn));
     connect(d->ui.cboUserPassOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(userPasswordTypeChanged(int)));
+    connect(d->ui.cboPrivateKeyPassOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(privateKeyPasswordTypeChanged(int)));
+    connect(d->ui.cboPinOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(pinTypeChanged(int)));
+    connect(d->ui.cmbMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(methodChanged(int)));
 }
 
 StrongswanSettingWidget::~StrongswanSettingWidget()
@@ -57,6 +60,24 @@ void StrongswanSettingWidget::userPasswordTypeChanged(int index)
 {
     Q_D(StrongswanSettingWidget);
     d->ui.leUserPassword->setEnabled(index == 1);
+}
+
+void StrongswanSettingWidget::privateKeyPasswordTypeChanged(int index)
+{
+    Q_D(StrongswanSettingWidget);
+    d->ui.lePrivateKeyPassword->setEnabled(index == 1);
+}
+
+void StrongswanSettingWidget::pinTypeChanged(int index)
+{
+    Q_D(StrongswanSettingWidget);
+    d->ui.lePin->setEnabled(index == 1);
+}
+
+void StrongswanSettingWidget::methodChanged(int index)
+{
+    Q_D(StrongswanSettingWidget);
+    d->ui.cbShowPasswords->setEnabled(index != StrongswanSettingWidgetPrivate::SshAgent);
 }
 
 
@@ -147,6 +168,7 @@ void StrongswanSettingWidget::writeConfig()
             data.insert(NM_STRONGSWAN_METHOD, NM_STRONGSWAN_AUTH_EAP);
             if (!d->ui.leUserName->text().isEmpty())
                 data.insert(NM_STRONGSWAN_USER, d->ui.leUserName->text());
+            //StrongSwan-nm 1.2 does not appear to be able to save secrets, the must be entered through the auth dialog
             if (!d->ui.leUserPassword->text().isEmpty() && d->ui.cboUserPassOptions->currentIndex() == 1)
                 secretData.insert(NM_STRONGSWAN_SECRET, d->ui.leUserPassword->text());
             handleOnePasswordType(d->ui.cboUserPassOptions, NM_STRONGSWAN_SECRET_TYPE, data);
@@ -185,9 +207,24 @@ void StrongswanSettingWidget::readSecrets()
     Q_D(StrongswanSettingWidget);
     QStringMap secrets = d->setting->vpnSecrets();
     if (d->setting->data().value(NM_STRONGSWAN_SECRET_TYPE) == QLatin1String(NM_STRONGSWAN_PW_TYPE_SAVE)) {
-        d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_STRONGSWAN_SECRET)));
+        switch (d->ui.cmbMethod->currentIndex())
+        {
+            case StrongswanSettingWidgetPrivate::PrivateKey:
+                d->ui.lePrivateKeyPassword->setText(secrets.value(QLatin1String(NM_STRONGSWAN_SECRET)));
+                fillOnePasswordCombo(d->ui.cboPrivateKeyPassOptions, NM_STRONGSWAN_SECRET_TYPE, d->setting->data(), !d->ui.leAuthPrivatekeyKey->url().isEmpty());
+                break;
+            case StrongswanSettingWidgetPrivate::Smartcard:
+                d->ui.lePin->setText(secrets.value(QLatin1String(NM_STRONGSWAN_SECRET)));
+                fillOnePasswordCombo(d->ui.cboPinOptions, NM_STRONGSWAN_SECRET_TYPE, d->setting->data(), true);
+                break;
+            case StrongswanSettingWidgetPrivate::Eap:
+                d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_STRONGSWAN_SECRET)));
+                fillOnePasswordCombo(d->ui.cboUserPassOptions, NM_STRONGSWAN_SECRET_TYPE, d->setting->data(), !d->ui.leUserName->text().isEmpty());
+                break;
+            default:
+                break;
+        }
     }
-    fillOnePasswordCombo(d->ui.cboUserPassOptions, NM_STRONGSWAN_SECRET_TYPE, d->setting->data(), !d->ui.leUserName->text().isEmpty());
 }
 
 void StrongswanSettingWidget::validate()

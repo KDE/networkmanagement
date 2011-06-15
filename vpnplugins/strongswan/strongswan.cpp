@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KPluginFactory>
 
 #include "strongswanwidget.h"
+#include "strongswanauth.h"
 #include "connection.h"
 
 
@@ -43,6 +44,10 @@ StrongswanUiPlugin::~StrongswanUiPlugin()
 SettingWidget * StrongswanUiPlugin::widget(Knm::Connection * connection, QWidget * parent)
 {
     return new StrongswanSettingWidget(connection, parent);
+}
+
+SettingWidget * StrongswanUiPlugin::askUser(Knm::Connection * connection, QWidget * parent) {
+    return new StrongswanAuthWidget(connection, parent);
 }
 
 QString StrongswanUiPlugin::suggestedFileName(Knm::Connection *connection) const

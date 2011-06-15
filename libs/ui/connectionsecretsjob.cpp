@@ -131,8 +131,8 @@ void ConnectionSecretsJob::doAskUser()
         m_askUserDialog->setMainWidget(m_settingWidget);
         m_askUserDialog->setButtons(KDialog::Ok | KDialog::Cancel);
 
-        connect(m_askUserDialog, SIGNAL(okClicked()), SLOT(dialogAccepted()));
-        connect(m_askUserDialog, SIGNAL(cancelClicked()), SLOT(dialogRejected()));
+        connect(m_askUserDialog, SIGNAL(accepted()), SLOT(dialogAccepted()));
+        connect(m_askUserDialog, SIGNAL(rejected()), SLOT(dialogRejected()));
 
         m_askUserDialog->show();
         KWindowSystem::forceActiveWindow(m_askUserDialog->winId());

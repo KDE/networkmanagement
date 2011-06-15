@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>464</width>
-    <height>402</height>
+    <width>474</width>
+    <height>408</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -96,14 +96,23 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="currentIndex">
+         <number>0</number>
+        </property>
         <widget class="QWidget" name="page_4">
          <layout class="QFormLayout" name="formLayout_4">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::ExpandingFieldsGrow</enum>
+          </property>
           <item row="0" column="0">
            <widget class="QLabel" name="label_4">
             <property name="text">
              <string>Certificate:</string>
             </property>
            </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="KUrlRequester" name="leAuthPrivatekeyCertificate"/>
           </item>
           <item row="1" column="0">
            <widget class="QLabel" name="label_6">
@@ -112,11 +121,57 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1">
-           <widget class="KUrlRequester" name="leAuthPrivatekeyCertificate"/>
-          </item>
           <item row="1" column="1">
            <widget class="KUrlRequester" name="leAuthPrivatekeyKey"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Private Key Password:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_3">
+            <item>
+             <widget class="KLineEdit" name="lePrivateKeyPassword">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+              <property name="passwordMode">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="KComboBox" name="cboPrivateKeyPassOptions">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToContents</enum>
+              </property>
+              <item>
+               <property name="text">
+                <string>Always Ask</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Store</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Not Required</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
         </widget>
@@ -134,9 +189,55 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="page_2"/>
+        <widget class="QWidget" name="page_2">
+         <layout class="QFormLayout" name="formLayout_5">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_8">
+            <property name="text">
+             <string>PIN:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="KLineEdit" name="lePin">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="KComboBox" name="cboPinOptions">
+              <property name="sizeAdjustPolicy">
+               <enum>QComboBox::AdjustToContents</enum>
+              </property>
+              <item>
+               <property name="text">
+                <string>Always Ask</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Store</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Not Required</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
         <widget class="QWidget" name="page">
          <layout class="QFormLayout" name="formLayout_2">
+          <property name="fieldGrowthPolicy">
+           <enum>QFormLayout::ExpandingFieldsGrow</enum>
+          </property>
           <item row="0" column="0">
            <widget class="QLabel" name="label_5">
             <property name="text">
@@ -149,16 +250,6 @@
           </item>
           <item row="0" column="1">
            <widget class="KLineEdit" name="leUserName"/>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_2">
-            <property name="text">
-             <string>User &amp;Password</string>
-            </property>
-            <property name="buddy">
-             <cstring>leUserPassword</cstring>
-            </property>
-           </widget>
           </item>
           <item row="1" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout">
@@ -193,18 +284,28 @@
             </item>
            </layout>
           </item>
-          <item row="2" column="1">
-           <widget class="QCheckBox" name="cbShowPasswords">
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
             <property name="text">
-             <string>&amp;Hide passwords</string>
+             <string>User &amp;Password</string>
             </property>
-            <property name="checked">
-             <bool>true</bool>
+            <property name="buddy">
+             <cstring>leUserPassword</cstring>
             </property>
            </widget>
           </item>
          </layout>
         </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="cbShowPasswords">
+        <property name="text">
+         <string>&amp;Hide passwords</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
      </layout>
@@ -276,9 +377,30 @@
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
   </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
+  <connection>
+   <sender>cmbMethod</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>swMethods</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>231</x>
+     <y>129</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>231</x>
+     <y>186</y>
+    </hint>
+   </hints>
+  </connection>
   <connection>
    <sender>cbShowPasswords</sender>
    <signal>toggled(bool)</signal>
@@ -296,18 +418,34 @@
    </hints>
   </connection>
   <connection>
-   <sender>cmbMethod</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>swMethods</receiver>
-   <slot>setCurrentIndex(int)</slot>
+   <sender>cbShowPasswords</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lePrivateKeyPassword</receiver>
+   <slot>setPasswordMode(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>231</x>
-     <y>129</y>
+     <x>236</x>
+     <y>243</y>
     </hint>
     <hint type="destinationlabel">
-     <x>231</x>
-     <y>186</y>
+     <x>246</x>
+     <y>212</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbShowPasswords</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>lePin</receiver>
+   <slot>setPasswordMode(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>236</x>
+     <y>243</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>194</x>
+     <y>160</y>
     </hint>
    </hints>
   </connection>

@@ -38,6 +38,7 @@ public:
     StrongswanUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
     virtual ~StrongswanUiPlugin();
     SettingWidget * widget(Knm::Connection *, QWidget * parent = 0);
+    SettingWidget * askUser(Knm::Connection *, QWidget * parent = 0);
     QString suggestedFileName(Knm::Connection *connection) const;
     QVariantList importConnectionSettings(const QString &fileName);
     void exportConnectionSettings(Knm::Connection * connection, const QString &fileName);
