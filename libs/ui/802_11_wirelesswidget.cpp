@@ -190,15 +190,6 @@ void Wireless80211Widget::setAccessPointData(const Solid::Control::WirelessNetwo
     }
 
     Q_D(const Wireless80211Widget);
-    switch (ap->mode()) {
-        case Solid::Control::WirelessNetworkInterface::Adhoc:
-            d->ui.cmbMode->setCurrentIndex(d->AdhocIndex);
-            break;
-        default:
-            d->ui.cmbMode->setCurrentIndex(d->InfrastructureIndex);
-            break;
-    }
-
     QPair<int, int> bandAndChannel = d->ui.channel->findBandAndChannel((int)ap->frequency());
 
     switch(bandAndChannel.first)
@@ -212,8 +203,18 @@ void Wireless80211Widget::setAccessPointData(const Solid::Control::WirelessNetwo
             break;
     }
 
-    // This one has to go after the d->ui.band->setCurrentIndex() above;
-    d->ui.channel->setValue(d->ui.channel->posFromChannel(bandAndChannel.second));
+    switch (ap->mode()) {
+        case Solid::Control::WirelessNetworkInterface::Adhoc:
+            d->ui.cmbMode->setCurrentIndex(d->AdhocIndex);
+
+            // This one has to go after the d->ui.band->setCurrentIndex() above;
+            d->ui.channel->setValue(d->ui.channel->posFromChannel(bandAndChannel.second));
+            break;
+        default:
+            d->ui.cmbMode->setCurrentIndex(d->InfrastructureIndex);
+            // Channel defaults to "automatic" in this case.
+            break;
+    }
 }
 
 QByteArray Wireless80211Widget::selectedInterfaceHardwareAddress() const
