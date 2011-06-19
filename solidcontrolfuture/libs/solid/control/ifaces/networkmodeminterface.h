@@ -74,14 +74,14 @@ namespace Ifaces
          *
          * @param caps the new capabilities
          */
-        void modemCapabilitiesChanged(const Solid::Control::ModemNetworkInterfaceNm09::Capabilities caps);
+        void modemCapabilitiesChanged(const Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities caps);
 
         /**
          * This signal is emitted when the current modem capabilities changes
          *
          * @param caps the new current capabilities
          */
-        void currentCapabilitiesChanged(const Solid::Control::ModemNetworkInterfaceNm09::Capabilities caps);
+        void currentCapabilitiesChanged(const Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities caps);
     };
 } //Ifaces
 } //Control
