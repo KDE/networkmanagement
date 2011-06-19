@@ -384,7 +384,6 @@ public:
 NotificationManager::NotificationManager(ConnectionList *connectionList, QObject * parent)
 : QObject(parent), d_ptr (new NotificationManagerPrivate)
 {
-kDebug() << "Lamarque";
     Q_D(NotificationManager);
     d->connectionList = connectionList;
     d->suppressHardwareEvents = true;
@@ -502,7 +501,7 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
                         // so using Persistent here and closing the notification using QTimer::singleShot() below.
                         KNotification *notification= new KNotification(Event::HwAdded, 0, KNotification::Persistent);
                         notification->setComponentData(componentData());
-                        notification->setText(i18nc("@info:status Notification for hardware added", "%1 attached.<br />You do not have a cellular connection yet.", host->label()));
+                        notification->setText(i18nc("@info:status Notification for hardware added", "%1 attached", host->label()));
                         notification->setActions(( QStringList() << i18nc("@action", "Create Connection" ) << i18nc("@action", "Ignore" )) );
                         notification->setPixmap(KIcon(Knm::Connection::iconName(Knm::Connection::typeFromSolidType(iface))).pixmap(QSize(iconSize,iconSize)));
                         QObject::connect(notification,SIGNAL(activated()), this , SLOT(createCellularConnection()) );
