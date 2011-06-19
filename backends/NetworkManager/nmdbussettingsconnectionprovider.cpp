@@ -289,7 +289,7 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
                 QMetaObject::invokeMethod(modem, "unlockRequiredChanged", Qt::DirectConnection,
                                           Q_ARG(QString, modem->unlockRequired()));
                 kDebug() << "Trying to enable modem";
-                modem->enable(true);
+                Solid::Control::NetworkManagerNm09::setWwanEnabled(true);
             }
         }
 
