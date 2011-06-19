@@ -74,7 +74,6 @@ RemoteConnection::RemoteConnection(const QString& service, const QString & path,
             m_type = Solid::Control::NetworkInterfaceNm09::Wifi;
         }
         /* TODO: add NM_SETTING_OLPC_MESH_SETTING_NAME, NM_SETTING_WIMAX_SETTING_NAME */
-        /* TODO2: check if we need to separate types Gsm, Cdma and Serial from Modem type. */
     }
 }
 
