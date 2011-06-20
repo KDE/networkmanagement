@@ -121,6 +121,10 @@
      </property>
     </spacer>
    </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="lblVersion">
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
