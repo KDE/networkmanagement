@@ -309,8 +309,6 @@ void Wireless80211Widget::generateRandomClonedMac()
 Wireless80211WidgetBand::Wireless80211WidgetBand(QWidget * parent)
     :QSpinBox(parent)
 {
-    selectedBand = a;
-
     QList<int> channels_a;
     QList<int> channels_b;
 
@@ -318,6 +316,8 @@ Wireless80211WidgetBand::Wireless80211WidgetBand(QWidget * parent)
     channels_b << 0 << 1 << 2 << 3 << 4 << 5 << 6 << 7 << 8 << 9 << 10 << 11 << 12 << 13;
 
     channels << channels_a << channels_b;
+    
+    setBand(Wireless80211WidgetPrivate::AIndex);
 
     freqs_bgn << 2412 << 2417 << 2422 << 2427 << 2432 << 2437 << 2442 << 2447 << 2452 << 2457 << 2462 << 2467 << 2472 << 2484;
     freqs_ahjn.append(QPair<int, int>(183, 4915));
