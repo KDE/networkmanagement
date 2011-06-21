@@ -86,6 +86,7 @@ void ConnectionSecretsJob::doAskUser()
 {
     // popup a dialog showing the appropriate UI for the type of connection
     kDebug();
+    KDialog::ButtonCodes buttonCodes = KDialog::Ok | KDialog::Cancel;
     if ( mSettingName == QLatin1String(NM_SETTING_802_1X_SETTING_NAME)) {
         if (m_connection->type() == Knm::Connection::Wired) {
             m_settingWidget = new SecurityWired8021x(m_connection);
@@ -113,6 +114,7 @@ void ConnectionSecretsJob::doAskUser()
         VpnUiPlugin * uiPlugin = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-NetworkManager-Services]=='%1'" ).arg(vpnSetting->serviceType() ), this, QVariantList(), &error );
         if (uiPlugin && error.isEmpty()) {
             m_settingWidget= uiPlugin->askUser(m_connection, 0);
+            buttonCodes = uiPlugin->suggestAuthDialogButtons();
         }
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
         m_settingWidget = new WiredWidget(m_connection, 0);
@@ -129,7 +131,7 @@ void ConnectionSecretsJob::doAskUser()
         m_askUserDialog->setCaption(i18nc("@title:window for network secrets request", "Secrets for %1", m_connection->name()));
         m_askUserDialog->setWindowIcon(KIcon("dialog-password"));
         m_askUserDialog->setMainWidget(m_settingWidget);
-        m_askUserDialog->setButtons(KDialog::Ok | KDialog::Cancel);
+        m_askUserDialog->setButtons(buttonCodes);
 
         connect(m_askUserDialog, SIGNAL(accepted()), SLOT(dialogAccepted()));
         connect(m_askUserDialog, SIGNAL(rejected()), SLOT(dialogRejected()));

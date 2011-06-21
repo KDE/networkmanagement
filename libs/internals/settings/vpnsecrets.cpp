@@ -89,7 +89,9 @@ QMap<QString,QString> VpnSecrets::secretsToMap() const
 
 void VpnSecrets::secretsFromMap(QMap<QString,QString> secrets) const
 {
-    m_setting->setVpnSecrets(stringMapFromStringList(secrets.value("VpnSecrets").split("%SEP%")));
+    QStringMap systemSecrets = m_setting->vpnSecrets();
+    systemSecrets.unite(stringMapFromStringList(secrets.value("VpnSecrets").split("%SEP%")));
+    m_setting->setVpnSecrets(systemSecrets);
     m_setting->setSecretsAvailable(true);
 }
 

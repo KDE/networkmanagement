@@ -16,4 +16,9 @@ VpnUiPlugin::~VpnUiPlugin()
     delete d;
 }
 
+KDialog::ButtonCodes VpnUiPlugin::suggestAuthDialogButtons()
+{
+    return KDialog::Ok | KDialog::Cancel;
+}
+
 // vim: sw=4 sts=4 et tw=100

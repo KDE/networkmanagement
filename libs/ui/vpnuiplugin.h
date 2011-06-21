@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 #include <QVariant>
+#include <KDialog>
 
 #include "settingwidget.h"
 
@@ -50,6 +51,7 @@ public:
     virtual QString suggestedFileName(Knm::Connection *connection) const = 0;
     virtual QVariantList importConnectionSettings(const QString &fileName) = 0;
     virtual void exportConnectionSettings(Knm::Connection * connection, const QString &fileName) = 0;
+    virtual KDialog::ButtonCodes suggestAuthDialogButtons();
 private:
     class Private;
     Private * d;
