@@ -215,15 +215,11 @@ void NMDBusSettingsConnectionProvider::clearConnections()
 {
     Q_D(NMDBusSettingsConnectionProvider);
     foreach (const QString &key, d->connections.keys()) {
-        // Remove it from d->connections first to prevent a crash because
-        // of the "delete toDelete.second" emmiting a Delete signal captured by
-        // NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved(), which deletes
-        // toDelete.second again.
-        RemoteConnection *toDelete = d->connections.take(key);
-        d->connectionList->removeConnection(key);
-        delete toDelete;
+        // Qt::DirectConnection makes this call synchronous.
+	// The connection will actually be deleted by NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved().
+        QMetaObject::invokeMethod(d->connections.value(key), "Removed", Qt::DirectConnection);
     }
-    // Just to make sure d->connections is really clear.
+    // Just to make sure they are really clear.
     d->connections.clear();
     d->uuidToPath.clear();
     emit connectionsChanged();
