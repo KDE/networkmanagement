@@ -214,10 +214,10 @@ void NMDBusSettingsConnectionProvider::serviceOwnerChanged(const QString & chang
 void NMDBusSettingsConnectionProvider::clearConnections()
 {
     Q_D(NMDBusSettingsConnectionProvider);
-    foreach (const QString &key, d->connections.keys()) {
+    foreach (RemoteConnection * conn, d->connections.values()) {
         // Qt::DirectConnection makes this call synchronous.
-	// The connection will actually be deleted by NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved().
-        QMetaObject::invokeMethod(d->connections.value(key), "Removed", Qt::DirectConnection);
+        // The connection will actually be deleted by NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved().
+        QMetaObject::invokeMethod(conn, "Removed", Qt::DirectConnection);
     }
     // Just to make sure they are really clear.
     d->connections.clear();
