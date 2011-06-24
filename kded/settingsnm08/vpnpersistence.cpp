@@ -21,9 +21,7 @@ void VpnPersistence::load()
   setting->setServiceType(m_config->readEntry("ServiceType", ""));
   setting->setData(stringMapFromStringList(m_config->readEntry("Data", QStringList())));
   setting->setSecretsStorageType(stringMapFromStringList(m_config->readEntry("SecretsStorageType", QStringList())));
-  // NM-0.8.9997's VPNC plugin refuses this property ("user-name"), so does OpenVPN plugin, so remove it.
-  // For now, if any other VPN plugin needs this property the user will have to added it manually.
-//  setting->setUserName(KUser().loginName());
+  setting->setUserName(m_config->readEntry("UserName", ""));
   // SECRET
   if (m_storageMode == SettingPersistence::PlainText) {
       // the map is flattened to a list of key,value,key,value
