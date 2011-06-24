@@ -23,7 +23,7 @@ void VpnPersistence::load()
   setting->setServiceType(m_config->readEntry("ServiceType", ""));
   setting->setData(stringMapFromStringList(m_config->readEntry("Data", QStringList())));
   setting->setSecretsStorageType(stringMapFromStringList(m_config->readEntry("SecretsStorageType", QStringList())));
-  setting->setUserName(KUser().loginName());
+  setting->setUserName(m_config->readEntry("UserName", ""));
   // SECRET
   if (m_storageMode == ConnectionPersistence::PlainText) {
       // the map is flattened to a list of key,value,key,value
@@ -40,6 +40,7 @@ void VpnPersistence::save()
   m_config->writeEntry("ServiceType", setting->serviceType());
   m_config->writeEntry("Data", stringMapToStringList(setting->data()));
   m_config->writeEntry("SecretsStorageType", stringMapToStringList(setting->secretsStorageType()));
+  m_config->writeEntry("UserName", setting->userName());
   // SECRET
   if (m_storageMode == ConnectionPersistence::PlainText) {
     /*
