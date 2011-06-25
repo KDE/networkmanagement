@@ -78,7 +78,6 @@ QVariantMap VpnDbus::toMap()
   if (!setting->vpnSecrets().isEmpty())
       map.insert(QLatin1String(NM_SETTING_VPN_SECRETS), QVariant::fromValue(setting->vpnSecrets()));
 
-// TODO: check if this property has been deprecated, VPNC and OpenVPN does not use it anymore;
   if (!setting->userName().isEmpty())
       map.insert(QLatin1String(NM_SETTING_VPN_USER_NAME), setting->userName());
 

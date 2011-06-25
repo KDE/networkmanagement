@@ -187,9 +187,13 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
 
 	// Optional settings
 	// username
-	data.insert(NM_VPNC_KEY_XAUTH_USER, cg.readEntry("Username"));
+	if (!cg.readEntry("Username").isEmpty()) {
+	    data.insert(NM_VPNC_KEY_XAUTH_USER, cg.readEntry("Username"));
+	}
 	// domain
-	data.insert(NM_VPNC_KEY_DOMAIN, cg.readEntry("NTDomain"));
+	if (!cg.readEntry("NTDomain").isEmpty()) {
+	    data.insert(NM_VPNC_KEY_DOMAIN, cg.readEntry("NTDomain"));
+	}
 	// encryption
 	if (!cg.readEntry("SingleDES").isEmpty() && cg.readEntry("SingleDES").toInt() != 0) {
 	    data.insert(NM_VPNC_KEY_SINGLE_DES, QLatin1String("yes"));

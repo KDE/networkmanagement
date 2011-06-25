@@ -336,7 +336,9 @@ void OpenVpnSettingWidget::writeConfig()
         case Private::EnumConnectionType::Password:
             contype = NM_OPENVPN_CONTYPE_PASSWORD;
             // username
-            data.insert( NM_OPENVPN_KEY_USERNAME, d->ui.passUserName->text());
+	    if (!d->ui.passUserName->text().isEmpty()) {
+                data.insert( NM_OPENVPN_KEY_USERNAME, d->ui.passUserName->text());
+	    }
             // password
             secretData.insert(QLatin1String( NM_OPENVPN_KEY_PASSWORD ), d->ui.passPassword->text());
             // ca
@@ -345,7 +347,9 @@ void OpenVpnSettingWidget::writeConfig()
         case Private::EnumConnectionType::CertsPassword:
             contype = NM_OPENVPN_CONTYPE_PASSWORD_TLS;
             // username
-            data.insert(NM_OPENVPN_KEY_USERNAME, d->ui.x509PassUsername->text());
+	    if (!d->ui.x509PassUsername->text().isEmpty()) {
+                data.insert(NM_OPENVPN_KEY_USERNAME, d->ui.x509PassUsername->text());
+	    }
             // ca
             data.insert(NM_OPENVPN_KEY_CA, d->ui.x509PassCaFile->url().path().toUtf8());
             // cert
