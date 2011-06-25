@@ -239,7 +239,7 @@ void OpenVpnSettingWidget::writeConfig()
     case 2:
         contype = NM_OPENVPN_CONTYPE_PASSWORD;
         // username
-        if (!d->ui.passUserName->text().isEmtpy()) {
+        if (!d->ui.passUserName->text().isEmpty()) {
             data.insert( NM_OPENVPN_KEY_USERNAME, d->ui.passUserName->text());
         }
         d->setting->setUserName(d->ui.passUserName->text());
