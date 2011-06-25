@@ -239,9 +239,9 @@ void OpenVpnSettingWidget::writeConfig()
     case 2:
         contype = NM_OPENVPN_CONTYPE_PASSWORD;
         // username
-	if (!d->ui.passUserName->text().isEmtpy()) {
+        if (!d->ui.passUserName->text().isEmtpy()) {
             data.insert( NM_OPENVPN_KEY_USERNAME, d->ui.passUserName->text());
-	}
+        }
         d->setting->setUserName(d->ui.passUserName->text());
         // password
         secretData.insert(QLatin1String( NM_OPENVPN_KEY_PASSWORD ), d->ui.passPassword->text());
@@ -251,9 +251,9 @@ void OpenVpnSettingWidget::writeConfig()
     case 3:
         contype = NM_OPENVPN_CONTYPE_PASSWORD_TLS;
         // username
-	if (!d->ui.x509PassUsername->text().isEmpty()) {
+        if (!d->ui.x509PassUsername->text().isEmpty()) {
             data.insert(NM_OPENVPN_KEY_USERNAME, d->ui.x509PassUsername->text());
-	}
+        }
         d->setting->setUserName(d->ui.x509PassUsername->text());
         // ca
         data.insert(NM_OPENVPN_KEY_CA, d->ui.x509PassCaFile->url().path().toUtf8());
