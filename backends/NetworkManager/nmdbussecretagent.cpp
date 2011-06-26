@@ -151,17 +151,21 @@ void NMDBusSecretAgent::deleteSavedConnection(Knm::Connection *con)
 }
 
 
-void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name)
+void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name, bool failed)
 {
     Q_D(NMDBusSecretAgent);
     QPair<QString, QDBusMessage> pair = d->connectionsToRead.take(con->uuid() + name);
     if (d->objectPaths.removeOne(pair.first + name)) {
-        ConnectionDbus condbus(con);
-        QVariantMapMap secrets = condbus.toDbusSecretsMap(name);
-
-        QDBusMessage reply = pair.second.createReply();
-        QVariant arg = QVariant::fromValue(secrets);
-        reply << arg;
+        QDBusMessage reply;
+        if (failed) {
+            reply = pair.second.createErrorReply(QDBusError::Failed, QString());
+        } else {
+            ConnectionDbus condbus(con);
+            QVariantMapMap secrets = condbus.toDbusSecretsMap(name);
+            reply = pair.second.createReply();
+            QVariant arg = QVariant::fromValue(secrets);
+            reply << arg;
+        }
         QDBusConnection::systemBus().send(reply);
         delete con;
     }
@@ -177,6 +181,6 @@ void NMDBusSecretAgent::registerSecretsProvider(SecretsProvider * provider)
 {
     Q_D(NMDBusSecretAgent);
     d->secretsProvider = provider;
-    connect(d->secretsProvider,SIGNAL(connectionRead(Knm::Connection *, const QString&)),SLOT(secretsReady(Knm::Connection*, const QString&)));
+    connect(d->secretsProvider,SIGNAL(connectionRead(Knm::Connection *, const QString&, bool)),SLOT(secretsReady(Knm::Connection*, const QString&, bool)));
     connect(d->secretsProvider,SIGNAL(connectionSaved(Knm::Connection *)),SLOT(deleteSavedConnection(Knm::Connection *)));
 }

@@ -170,16 +170,16 @@ void SecretStorage::walletOpenedForRead(bool success)
                                 if (!needSecretsList.isEmpty() && (pair.second & AllowInteraction || pair.second & RequestNew)) {
                                     askUser(con, pair.first, needSecretsList);
                                 } else {
-                                    emit connectionRead(con, pair.first);
+                                    emit connectionRead(con, pair.first, false);
                                 }
                             } else {
-                                emit connectionRead(con, pair.first);
+                                emit connectionRead(con, pair.first, false);
                             }
                             break;
                         }
                     }
                     if (!settingsFound) {
-                        emit connectionRead(con, pair.first);
+                        emit connectionRead(con, pair.first, true);
                     }
                     i.remove();
                 }
@@ -196,7 +196,7 @@ void SecretStorage::walletOpenedForRead(bool success)
                 if (i.next().key() != con->uuid())
                     continue;
                 QPair<QString,GetSecretsFlags> pair = i.value();
-                emit connectionRead(con, pair.first);
+                emit connectionRead(con, pair.first, true);
                 i.remove();
             }
          }
@@ -262,10 +262,10 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
             if (!needSecretsList.isEmpty() && (flags & AllowInteraction || flags & RequestNew)) {
                 askUser(con, name, needSecretsList);
             } else {
-                emit connectionRead(con, name);
+                emit connectionRead(con, name, false);
             }
         } else {
-            emit connectionRead(con, name);
+            emit connectionRead(con, name, false);
         }
     } else if (d->storageMode == Secure && !(flags & RequestNew)) {
         kDebug() << "opening wallet...";
@@ -277,7 +277,7 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
             QPair<QString,GetSecretsFlags> pair(name, flags);
             d->settingsToRead.insert(uuid, pair);
         } else {
-            emit connectionRead(con, name);
+            emit connectionRead(con, name, true);
         }
     }
 }
@@ -308,7 +308,10 @@ KSharedConfig::Ptr SecretStorage::secretsFileForUuid(const QString & uuid)
 void SecretStorage::gotSecrets(KJob *job)
 {
     ConnectionSecretsJob * csj = static_cast<ConnectionSecretsJob*>(job);
-    emit connectionRead(csj->connection(), csj->settingName());
+    bool failed = true;
+    if (csj->error() == ConnectionSecretsJob::EnumError::NoError)
+        failed = false;
+    emit connectionRead(csj->connection(), csj->settingName(), failed);
 }
 
 void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode newMode)

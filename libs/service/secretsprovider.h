@@ -51,7 +51,7 @@ class KNM_EXPORT SecretsProvider : public QObject
         virtual void deleteSecrets(Knm::Connection *) = 0;
     Q_SIGNALS:
         void connectionSaved(Knm::Connection *);
-        void connectionRead(Knm::Connection *, const QString&);
+        void connectionRead(Knm::Connection *, const QString&, bool);
 };
 
 #endif // SECRETSPROVIDER_H
