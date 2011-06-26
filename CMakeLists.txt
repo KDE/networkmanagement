@@ -1,7 +1,7 @@
 project(plasma-networkmanagement)
 
 option(INSTALL_KNM_AUTOSTART "Install the autostart file for knetworkmanager. Warning: This prevents the plasmoid from working properly")
-set (MINIMUM_NM_VERSION_REQUIRED "0.8.9997")
+set (MINIMUM_NM_VERSION_REQUIRED "0.8.999")
 
 find_package(KDE4 REQUIRED)
 include (KDE4Defaults)
