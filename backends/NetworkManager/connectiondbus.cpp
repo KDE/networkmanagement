@@ -259,7 +259,7 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
 
     kDebug();
     // WARNING: this print secrets, do not commit it uncommented.
-    //kDebug() << "Settings map is " << settings;
+    kDebug() << "Settings map is " << settings;
 
     QString connName = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_ID)).toString();
     QUuid uuid(connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_UUID)).toString());
@@ -328,9 +328,9 @@ void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
     QVariantMapMap origs = toDbusMap();
 
     // WARNING: those debug messages print secrets, do not commit them uncommented.
-    //kDebug() << "Printing connection map: ";
-    //kDebug() << "Secrets:" << secrets;
-    //kDebug() << "Original settings:" << origs;
+    kDebug() << "Printing connection map: ";
+    kDebug() << "Secrets:" << secrets;
+    kDebug() << "Original settings:" << origs;
 
     foreach(QString secretName, secrets.keys())
     {
@@ -347,7 +347,7 @@ void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
         {
             QVariantMap origSetting = origs.take(secretName);
             // WARNING: this print secrets, do not commit them uncommented.
-            //kDebug() << "Uniting setting " << secret.keys() << " with values " << secret.values();
+            kDebug() << "Uniting setting " << secret.keys() << " with values " << secret.values();
             origSetting.unite(secret);
             origs.insert(secretName, origSetting);
 
@@ -356,7 +356,7 @@ void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
         {
             origs.insert(secretName, secret);
             // WARNING: this print secrets, do not commit them uncommented.
-            //kDebug() << "Inserted setting " << secretName<< " " << secret;
+            kDebug() << "Inserted setting " << secretName<< " " << secret;
         }
     }
 

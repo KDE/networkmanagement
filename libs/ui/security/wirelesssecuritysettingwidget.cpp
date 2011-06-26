@@ -330,6 +330,8 @@ void WirelessSecuritySettingWidget::writeConfig()
     SecurityWidget * sw = d->currentSecurityWidget();
     if (sw) {
         sw->writeConfig();
+    } else {
+        kDebug() << "Lamarque SecurityWidget == 0";
     }
     d->settingSecurity->setInitialized(true);
     d->setting8021x->setInitialized(true);

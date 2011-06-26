@@ -180,11 +180,17 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionUpdated()
     Q_D(NMDBusSettingsConnectionProvider);
     RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
     kDebug() << connection->path();
+
     QUuid uuid = d->uuidToPath.key(connection->path(), QUuid());
     if (!uuid.isNull() && d->connections.contains(uuid.toString())) {
+        ConnectionDbus temp(new Knm::Connection(QUuid(), Knm::Connection::Wired));
+        temp.fromDbusMap(connection->GetSettings());
+        kDebug() << "Lamarque GetSettings: " << temp.toDbusSecretsMap();
         Knm::Connection *con = d->connectionList->findConnection(uuid.toString());
         ConnectionDbus dbusConverter(con);
         dbusConverter.fromDbusMap(connection->GetSettings());
+
+
         d->connectionList->updateConnection(con);
 
         emit connectionsChanged();
@@ -338,6 +344,7 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
         QVariantMapMap map = converter.toDbusMap();
 
         remote->Update(map);
+	kDebug() << "Lamarque updating map:" << map;
 
         // FIXME: if connection's name (id in NM termonology) changed in the Update call above,
         // NM will leave the old connection file intact and create/update a new connection file
@@ -364,7 +371,7 @@ void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnect
     QVariantMapMap map = converter.toDbusMap();
     kDebug() << "Adding connection " << newConnection->name() << newConnection->uuid().toString();
     // WARNING: this debug message print secrets, do not commit it uncommented.
-    //kDebug() << "Here is the map: " << map;
+    kDebug() << "Here is the map: " << map;
 
     if(newConnection && newConnection->name().isEmpty())
         kWarning() << "Trying to add connection without a name!";
@@ -467,8 +474,8 @@ void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCa
     {
         QVariantMapMap set = reply.argumentAt<0>();
         // WARNING: this print secrets, do not commit it uncommented.
-        //kDebug() << "Got secrets, yay! " << set;
-        kDebug() << "Got secrets, yay! ";
+        kDebug() << "Got secrets, yay! " << set;
+        //kDebug() << "Got secrets, yay! ";
 
         Knm::Connection *con = d->secretsToGet.take(watcher->property("connection").toString());
         if (con) {

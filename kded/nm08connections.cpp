@@ -77,13 +77,13 @@ void Nm08Connections::importNextNm08Connection()
             if (!m_connectionsBeingAdded.isEmpty()) {
                 KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
                 foreach (const Connection * con, m_connectionsBeingAdded) {
-                    prefs->config()->deleteGroup(QLatin1String("Connection_") + con->uuid());
-                    QString configFile = KStandardDirs::locate("data", CONNECTION_PERSISTENCE_PATH + con->uuid());
-                    QFile::remove(configFile);
+                    //prefs->config()->deleteGroup(QLatin1String("Connection_") + con->uuid());
+                    //QString configFile = KStandardDirs::locate("data", CONNECTION_PERSISTENCE_PATH + con->uuid());
+                    //File::remove(configFile);
 		    m_connectionsToImport.removeOne(con->uuid());
                 }
-                prefs->setConnections(m_connectionsToImport);
-                prefs->writeConfig();
+                //prefs->setConnections(m_connectionsToImport);
+                //prefs->writeConfig();
                 m_connectionsBeingAdded.clear();
             }
             qDeleteAll(m_connectionsToDelete);

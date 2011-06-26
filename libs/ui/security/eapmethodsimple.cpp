@@ -75,6 +75,7 @@ void EapMethodSimple::writeConfig()
     }
     d->setting->setIdentity(leUserName->text());
     d->setting->setPassword(lePassword->text());
+    kDebug() << "Lamarque" << lePassword->text();
 }
 
 void EapMethodSimple::readSecrets()

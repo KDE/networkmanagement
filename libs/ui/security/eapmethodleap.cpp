@@ -56,6 +56,7 @@ void EapMethodLeap::writeConfig()
     // LEAP stuff
     d->setting->setIdentity(leUsername->text());
     d->setting->setPassword(lePassword->text());
+    kDebug() << "Lamarque" << lePassword->text();
     d->setting->setUseSystemCaCerts(false);
     d->setting->remove();
 }
