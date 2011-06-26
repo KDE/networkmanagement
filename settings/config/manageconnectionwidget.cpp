@@ -74,8 +74,6 @@ K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_networkmanagement", "libkne
 ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantList &args)
 : KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mEditConnection(0), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this))
 {
-    connect(mEditor, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
-
     mConnEditUi.setupUi(this);
     mConnEditUi.listWired->setSortingEnabled(true);
     mConnEditUi.listWired->sortByColumn(0, Qt::AscendingOrder);
