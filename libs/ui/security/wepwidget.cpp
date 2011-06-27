@@ -155,7 +155,7 @@ void WepWidget::readConfig()
 
 void WepWidget::writeConfig()
 {
-    d->keys.insert(d->ui.weptxkeyindex->currentIndex(), d->ui.key->text());
+    d->keys[d->ui.weptxkeyindex->currentIndex()] = d->ui.key->text();
 
     d->setting->setWeptxkeyindex(d->ui.weptxkeyindex->currentIndex());
 
