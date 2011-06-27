@@ -55,6 +55,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectiondbus.h"
 #include "knmserviceprefs.h"
+#include "../../libs/internals/paths.h"
 #include "connection.h"
 #include "connectionlist.h"
 #include "connectionprefs.h"
@@ -134,6 +135,8 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
 
     setButtons(KCModule::Help | KCModule::Apply);
     mMobileConnectionWizard = 0;
+
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
 }
 
 ManageConnectionWidget::~ManageConnectionWidget()
