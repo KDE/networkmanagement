@@ -139,9 +139,10 @@ void MobileConnectionWizard::initializePage(int id)
             break;
 
         case 3: // Plans Page
+            disconnect(mPlanComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(slotEnablePlanEditBox(const QString &)));
             mPlanComboBox->clear();
             if (type() != Knm::Connection::Gsm) {
-                break;
+                goto OUT_3;
             }
             if (radioManualProvider->isChecked()) {
                 mPlanComboBox->insertSeparator(1);
@@ -163,6 +164,8 @@ void MobileConnectionWizard::initializePage(int id)
                 mPlanComboBox->insertSeparator(1);
                 mPlanComboBox->addItem(i18nc("Mobile Connection Wizard", "My plan is not listed..."));
             }
+OUT_3:
+            connect(mPlanComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(slotEnablePlanEditBox(const QString &)));
         break;
 
         case 4: // Confirm Page
@@ -488,7 +491,6 @@ QWizardPage * MobileConnectionWizard::createPlansPage()
 
     mPlanComboBox = new QComboBox();
     label->setBuddy(mPlanComboBox);
-    connect(mPlanComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(slotEnablePlanEditBox(const QString &)));
     layout->addWidget(mPlanComboBox);
 
     label = new QLabel("\n" + i18nc("Mobile Connection Wizard", "Selected plan &APN (Access Point Name):"));
@@ -509,7 +511,7 @@ QWizardPage * MobileConnectionWizard::createPlansPage()
     layout->addWidget(new QLabel(""));
     layout->addLayout(layout2);
 
-     page->setLayout(layout);
+    page->setLayout(layout);
 
     return page;
 }
