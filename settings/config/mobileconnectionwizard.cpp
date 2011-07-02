@@ -126,6 +126,8 @@ void MobileConnectionWizard::initializePage(int id)
             }
             mProvidersList->setCurrentRow(0);
             if (mProvidersList->count() > 0) {
+                mProvidersList->setEnabled(true);
+                radioAutoProvider->setEnabled(true);
                 mProvidersList->setFocus();
             } else {
                 mProvidersList->setEnabled(false);
