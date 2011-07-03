@@ -121,7 +121,6 @@ void NMDBusSecretAgent::SaveSecrets(const QVariantMapMap &connection, const QDBu
     if (d->secretsProvider) {
         ConnectionDbus condbus(con);
         QVariantMapMap secrets = condbus.toDbusSecretsMap();
-	kDebug() << "Lamarque" << secrets;
 
         kDebug()<< "Secrets are being saved for connection " << con->uuid();
         d->secretsProvider->saveSecrets(con);

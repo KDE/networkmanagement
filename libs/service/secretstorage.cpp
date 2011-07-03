@@ -96,7 +96,7 @@ void SecretStorage::saveSecrets(Knm::Connection *con)
 void SecretStorage::walletOpenedForWrite(bool success)
 {
     Q_D(SecretStorage);
-    kDebug() << "Lamarque 1";
+    kDebug();
     if (success) {
         KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
         if (wallet->isOpen()) {
@@ -112,27 +112,24 @@ void SecretStorage::walletOpenedForWrite(bool success)
                     bool saved = false;
                     foreach (const QString & k, wallet->entryList()) {
                         if (k.startsWith(con->uuid() + ';')) {
-                            kDebug() << "Lamarque 2: wallet->removeEntry(" << k << ")";
+                            kDebug() << "Removing entry " << k << ")";
                             wallet->removeEntry(k);
 			}
                     }
                     foreach (Knm::Setting * setting, con->settings()) {
                         Knm::Secrets * secrets = setting->getSecretsObject();
-			kDebug() << "Lamarque 4";
                         if (secrets) {
-			    kDebug() << "Lamarque 5";
                             QMap<QString,QString> map = secrets->secretsToMap();
                             if (!map.isEmpty()) {
                                 saved = true;
                                 wallet->writeMap(walletKeyFor(con->uuid(), setting), map);
-                                kDebug() << "Lamarque 3: wallet->writeMap" << map;
+                                kDebug() << "Writing entry " << walletKeyFor(con->uuid(), setting);
                             }
                         }
                     }
                     if (!saved) {
                         kWarning() << "No secret has been written to the kwallet.";
                     }
-		    kDebug() << "Lamarque: emit connectionSaved";
                     emit connectionSaved(con);
                 }
             }
