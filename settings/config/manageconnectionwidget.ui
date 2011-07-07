@@ -48,6 +48,11 @@
            <string>Last Used</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>State</string>
+          </property>
+         </column>
         </widget>
        </item>
        <item>
@@ -84,6 +89,11 @@
            <string>Last Used</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>State</string>
+          </property>
+         </column>
         </widget>
        </item>
        <item>
@@ -115,6 +125,11 @@
          <column>
           <property name="text">
            <string>Last Used</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>State</string>
           </property>
          </column>
         </widget>
@@ -150,6 +165,11 @@
            <string>Last Used</string>
           </property>
          </column>
+         <column>
+          <property name="text">
+           <string>State</string>
+          </property>
+         </column>
         </widget>
        </item>
        <item>
@@ -181,6 +201,11 @@
          <column>
           <property name="text">
            <string>Last Used</string>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>State</string>
           </property>
          </column>
         </widget>

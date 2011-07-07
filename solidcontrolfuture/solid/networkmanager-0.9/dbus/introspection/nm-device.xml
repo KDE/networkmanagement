@@ -41,7 +41,7 @@
         Flags describing the capabilities of the device.
       </tp:docstring>
     </property>
-    <property name="Ip4Address" type="i" access="read">
+    <property name="Ip4Address" type="u" access="read">
       <tp:docstring>
         The IPv4 address bound to the device. FIXME: what about devices with >1 IP address?
       </tp:docstring>
@@ -50,6 +50,14 @@
       <tp:docstring>
         The current state of the device.
       </tp:docstring>
+    </property>
+    <property name="ActiveConnection" type="o" access="read">
+       <tp:docstring>
+         Object path of an ActiveConnection object that "owns" this device during
+         activation. The ActiveConnection object tracks the life-cycle of a
+         connection to a specific network and implements the
+         org.freedesktop.NetworkManager.Connection.Active D-Bus interface.
+       </tp:docstring>
     </property>
     <property name="Ip4Config" type="o" access="read">
       <tp:docstring>

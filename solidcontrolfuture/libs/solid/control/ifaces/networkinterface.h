@@ -79,6 +79,11 @@ namespace Ifaces
         virtual bool firmwareMissing() const = 0;
 
         /**
+         * Current active connection.
+         */
+        virtual QString activeConnection() const = 0;
+
+        /**
          * Handle for the system driver controlling this network interface
          */
         virtual QString driver() const = 0;

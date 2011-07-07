@@ -157,6 +157,11 @@ namespace Control
         QStringList SOLIDCONTROL_EXPORT activeConnections();
 
         /**
+         * Access the list of any active connections
+         */
+        QStringList SOLIDCONTROL_EXPORT activeConnectionsUuid();
+
+        /**
          * Retrieves the interface types supported by this network manager.
          *
          * @return the interface types supported by the network manager

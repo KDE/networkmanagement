@@ -52,6 +52,7 @@ public:
     QString version() const;
     void deactivateConnection(const QString & activeConnection);
     QStringList activeConnections() const;
+    QStringList activeConnectionsUuid() const;
     Solid::Control::NetworkInterfaceNm09::Types supportedInterfaceTypes() const;
 public Q_SLOTS:
     void setNetworkingEnabled(bool enabled);

@@ -67,7 +67,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define ConnectionIdRole Qt::UserRole + 1
 #define ConnectionTypeRole Qt::UserRole + 2
 #define ConnectionLastUsedRole Qt::UserRole + 3
-#define ConnectionScopeRole Qt::UserRole + 4
+#define ConnectionStateRole Qt::UserRole + 4
+
+#define ConnectionNameColumn 0
+#define ConnectionLastUsedColumn 1
+#define ConnectionStateColumn 2
 
 K_PLUGIN_FACTORY( ManageConnectionWidgetFactory, registerPlugin<ManageConnectionWidget>();)
 K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_networkmanagement", "libknetworkmanager" ) )
@@ -245,6 +249,7 @@ void ManageConnectionWidget::restoreConnections()
         QStringList itemContents;
         itemContents << name;
         itemContents << formatDateRelative(lastUsed);
+        itemContents << QString();
 
         kDebug() << type << name << lastUsed;
         QTreeWidgetItem * item = 0;
@@ -288,6 +293,8 @@ void ManageConnectionWidget::restoreConnections()
     mConnEditUi.listVpn->resizeColumnToContents(0);
     mConnEditUi.listPppoe->insertTopLevelItems(0, pppoeItems);
     mConnEditUi.listPppoe->resizeColumnToContents(0);
+
+    activeConnectionsChanged();
 
     // check which tabs should be enabled depending on the existing hardware
     updateTabStates();
@@ -568,31 +575,7 @@ void ManageConnectionWidget::deleteClicked()
         mUuidItemHash.remove(connectionId);
         // remove secrets from wallet if using encrypted storage
         //Knm::ConnectionPersistence::deleteSecrets(connectionId);
-        // remove connection file
-        //QFile connFile(KStandardDirs::locateLocal("data",
-        //            Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId));
-        //if (!connFile.exists()) {
-        //    kDebug() << "Connection file not found: " << connFile.fileName();
-        //}
-        //connFile.remove();
 
-        // remove from networkmanagerrc
-        //KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
-        //prefs->config()->deleteGroup(QLatin1String("Connection_") + connectionId);
-
-        //QStringList connectionIds = prefs->connections();
-        //connectionIds.removeAll(connectionId);
-        //prefs->setConnections(connectionIds);
-        //prefs->writeConfig();
-
-
-        //Knm::Connection::Scope conScope = (Knm::Connection::Scope) item->data(0, ConnectionScopeRole).toUInt();
-
-        /*
-        if (conScope == Knm::Connection::User)
-            mUserSettings->removeConnection(connectionId);
-        else
-        */
         mSystemSettings->removeConnection(connectionId);
 
         //Enable this if connections is not removed from plasma-applet
@@ -716,52 +699,17 @@ void ManageConnectionWidget::connectionTypeMenuTriggered(QAction* action)
 
 void ManageConnectionWidget::activeConnectionsChanged()
 {
-#if 0
-    // indicate which connections are in use right now
-    QStringList activeConnections = Solid::Control::NetworkManagerNm09::activeConnections();
-    foreach (QString conn, activeConnections) {
-        OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
-                                                                        conn, QDBusConnection::systemBus(), 0);
-        // do we own the connection?
-        if (candidate.serviceName() == NM_DBUS_SERVICE_USER_SETTINGS) {
-            // get its UUID from our service
-            QDBusObjectPath connectionPath = candidate.connection();
-            OrgFreedesktopNetworkManagerSettingsConnectionInterface connection(NM_DBUS_SERVICE_USER_SETTINGS, connectionPath.path(), QDBusConnection::systemBus());
-            if (connection.isValid()) {
-                QVariantMapMap settings = connection.GetSettings();
-                QDBusError lastError = connection.lastError();
-                if (lastError.isValid()) {
-                    kDebug() << "Could not get settings for " << connectionPath.path();
-                }
-                QString connKey = QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME);
-                if (settings.contains(connKey))
-                {
-                    QVariantMap connectionSetting = settings.value(connKey);
-                    QString uuidKey = QLatin1String(NM_SETTING_CONNECTION_UUID);
-                    QString typeKey = QLatin1String(NM_SETTING_CONNECTION_TYPE);
-                    if (!connectionSetting.contains(uuidKey)) {
-                        kDebug() << "Settings does not contain UUID!";
-                    }
-                    if (!connectionSetting.contains(typeKey)) {
-                        kDebug() << "Settings does not contain UUID!";
-                    }
-                    QString uuid = connectionSetting.value(uuidKey).toString();
-                    QString type = connectionSetting.value(typeKey).toString();
-                    kDebug() << "Connection at " << connectionPath.path() << " has uuid '" << uuid << "' and type '" << type;
-                    QTreeWidgetItem * item = mUuidItemHash.value(uuid);
-                    if (item) {
-                        kDebug() << "Setting last used text to Now";
-                        item->setText(1, i18nc("Text for connection list entry that is currently in used", "Now"));
-                    }
-                } else {
-                    kDebug() << "No" << QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME) << "in settings from" << connectionPath.path() << ", keys: " << settings.keys();
-                }
-            } else {
-                kDebug() << "Connection '" << connectionPath.path() << "' is not valid!";
-            }
+    QTreeWidgetItem * item = 0;
+    foreach(QTreeWidgetItem * t, mUuidItemHash.values()) {
+        t->setText(ConnectionStateColumn, QString());
+    }
+    foreach(QString activeConnection, Solid::Control::NetworkManagerNm09::activeConnectionsUuid()) {
+        activeConnection = "{" + activeConnection + "}";
+        item = mUuidItemHash.value(activeConnection);
+        if (item != 0) {
+            item->setText(ConnectionStateColumn, i18n("Connected"));
         }
     }
-#endif
 }
 
 void ManageConnectionWidget::updateLastUsed()

@@ -134,6 +134,12 @@ bool NMNetworkInterface::firmwareMissing() const
     return d->firmwareMissing;
 }
 
+QString NMNetworkInterface::activeConnection() const
+{
+    Q_D(const NMNetworkInterface);
+    return d->deviceIface.activeConnection().path();
+}
+
 void NMNetworkInterface::setDriver(const QVariant & driver)
 {
     Q_D(NMNetworkInterface);
@@ -146,7 +152,7 @@ QString NMNetworkInterface::udi() const
     return d->udi;
 }
 
-int NMNetworkInterface::ipV4Address() const
+uint NMNetworkInterface::ipV4Address() const
 {
     Q_D(const NMNetworkInterface);
     return d->ipV4Address;

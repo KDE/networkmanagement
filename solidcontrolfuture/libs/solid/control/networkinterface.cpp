@@ -83,6 +83,12 @@ QString Solid::Control::NetworkInterfaceNm09::ipInterfaceName() const
     return_SOLID_CALL(Ifaces::NetworkInterfaceNm09 *, d->backendObject(), QString(), ipInterfaceName());
 }
 
+QString Solid::Control::NetworkInterfaceNm09::activeConnection() const
+{
+    Q_D(const NetworkInterfaceNm09);
+    return_SOLID_CALL(Ifaces::NetworkInterfaceNm09 *, d->backendObject(), QString(), activeConnection());
+}
+
 QString Solid::Control::NetworkInterfaceNm09::driver() const
 {
     Q_D(const NetworkInterfaceNm09);

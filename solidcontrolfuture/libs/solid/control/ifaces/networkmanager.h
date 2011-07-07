@@ -129,6 +129,11 @@ namespace Ifaces
         virtual QStringList activeConnections() const = 0;
 
         /**
+         * Access the list of active connection UUIDs
+         */
+        virtual QStringList activeConnectionsUuid() const = 0;
+
+        /**
          * Retrieves the interface types supported by this network manager.
          *
          * @return the interface types supported by the network manager

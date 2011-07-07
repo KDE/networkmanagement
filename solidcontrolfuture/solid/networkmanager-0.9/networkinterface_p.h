@@ -41,7 +41,7 @@ public:
     bool managed;
     Solid::Control::IPv4ConfigNm09 ipV4Config;
     QString driver;
-    int ipV4Address;
+    uint ipV4Address;
     QString interfaceName;
     bool firmwareMissing;
     NMNetworkManager * manager;

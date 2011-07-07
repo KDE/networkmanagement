@@ -172,6 +172,11 @@ namespace Control
         bool firmwareMissing() const;
 
         /**
+         * Current active connection.
+         */
+        QString activeConnection() const;
+
+        /**
          * Handle for the system driver controlling this network interface
          */
         QString driver() const;

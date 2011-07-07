@@ -60,7 +60,7 @@ public:
     QString driver() const;
     void setDriver(const QVariant&);
     void disconnectInterface();
-    int ipV4Address() const;
+    uint ipV4Address() const;
     Solid::Control::IPv4ConfigNm09 ipV4Config() const;
     // TODO: implement IPv6Config.
     bool isActive() const;
@@ -76,6 +76,7 @@ public:
     void setManaged(const QVariant&);
     QString udi() const;
     bool firmwareMissing() const;
+    QString activeConnection() const;
 
 Q_SIGNALS:
     void ipDetailsChanged();

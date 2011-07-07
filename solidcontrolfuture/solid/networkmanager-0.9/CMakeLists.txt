@@ -41,6 +41,7 @@ set( DBUS_INTERFACES_FILES
    dbus/nm-device-btinterface.cpp
    dbus/nm-ip4-configinterface.cpp
    dbus/nm-dhcp4-configinterface.cpp
+   dbus/nm-active-connectioninterface.cpp
 )
 
 

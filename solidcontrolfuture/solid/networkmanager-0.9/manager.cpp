@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkinterface.h"
 #include "networkmodeminterface.h"
 #include "networkbtinterface.h"
+#include "dbus/nm-active-connectioninterface.h"
 
 NMNetworkManagerPrivate::NMNetworkManagerPrivate()
     : iface(NM_DBUS_SERVICE, NM_DBUS_PATH, QDBusConnection::systemBus())
@@ -240,7 +241,7 @@ void NMNetworkManager::stateChanged(uint state)
             d->isWwanHardwareEnabled = d->iface.wwanHardwareEnabled();
             d->isWwanEnabled = d->iface.wwanEnabled();
             d->isNetworkingEnabled = d->iface.networkingEnabled();
-	}
+        }
 
         // set new state
         d->nmState = state;
@@ -356,6 +357,17 @@ QStringList NMNetworkManager::activeConnections() const
 {
     Q_D(const NMNetworkManager);
     return d->activeConnections;
+}
+
+QStringList NMNetworkManager::activeConnectionsUuid() const
+{
+    Q_D(const NMNetworkManager);
+    QStringList r;
+    foreach(const QString objPath, d->activeConnections) {
+        OrgFreedesktopNetworkManagerConnectionActiveInterface iface(NM_DBUS_SERVICE, objPath, QDBusConnection::systemBus());
+        r.append(iface.uuid());
+    }
+    return r;
 }
 
 Solid::Control::NetworkInterfaceNm09::Types NMNetworkManager::supportedInterfaceTypes() const

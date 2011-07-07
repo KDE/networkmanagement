@@ -309,5 +309,10 @@ QStringList Solid::Control::NetworkManagerNm09::activeConnections()
     return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), QStringList(), activeConnections());
 }
 
+QStringList Solid::Control::NetworkManagerNm09::activeConnectionsUuid()
+{
+    return_SOLID_CALL(Ifaces::NetworkManager *, globalNetworkManager->managerBackend(), QStringList(), activeConnectionsUuid());
+}
+
 #include "networkmanager_p.moc"
 #include "networkmanager.moc"

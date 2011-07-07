@@ -8,8 +8,8 @@
  * Do not edit! All changes made to it will be lost.
  */
 
-#ifndef NM_DEVICEINTERFACE_H_1305476817
-#define NM_DEVICEINTERFACE_H_1305476817
+#ifndef NM_DEVICEINTERFACE_H_1310067075
+#define NM_DEVICEINTERFACE_H_1310067075
 
 #include <QtCore/QObject>
 #include <QtCore/QByteArray>
@@ -34,6 +34,10 @@ public:
     OrgFreedesktopNetworkManagerDeviceInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
 
     ~OrgFreedesktopNetworkManagerDeviceInterface();
+
+    Q_PROPERTY(QDBusObjectPath ActiveConnection READ activeConnection)
+    inline QDBusObjectPath activeConnection() const
+    { return qvariant_cast< QDBusObjectPath >(property("ActiveConnection")); }
 
     Q_PROPERTY(uint Capabilities READ capabilities)
     inline uint capabilities() const
@@ -63,9 +67,9 @@ public:
     inline QString interface() const
     { return qvariant_cast< QString >(property("Interface")); }
 
-    Q_PROPERTY(int Ip4Address READ ip4Address)
-    inline int ip4Address() const
-    { return qvariant_cast< int >(property("Ip4Address")); }
+    Q_PROPERTY(uint Ip4Address READ ip4Address)
+    inline uint ip4Address() const
+    { return qvariant_cast< uint >(property("Ip4Address")); }
 
     Q_PROPERTY(QDBusObjectPath Ip4Config READ ip4Config)
     inline QDBusObjectPath ip4Config() const
