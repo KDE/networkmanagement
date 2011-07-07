@@ -32,6 +32,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/SignalPlotter>
 
 #include "types.h"
+#include "knmserviceprefs.h"
 
 class RemoteActivatable;
 class RemoteInterfaceConnection;
@@ -96,6 +97,7 @@ Q_OBJECT
 
         bool m_updateEnabled;
         InterfaceDetails * details;
+        int m_speedUnit;
 
     private Q_SLOTS:
         void resetInterfaceDetails();

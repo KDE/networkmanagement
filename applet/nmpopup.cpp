@@ -56,7 +56,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelistwidget.h"
 #include "interfacedetailswidget.h"
 #include "uiutils.h"
-#include "knmserviceprefs.h"
 #include "paths.h"
 
 NMPopup::NMPopup(RemoteActivatableList * activatableList, QGraphicsWidget* parent)

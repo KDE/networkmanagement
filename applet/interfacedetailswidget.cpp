@@ -424,18 +424,45 @@ void InterfaceDetailsWidget::updateWidgets()
     //kDebug() << s;
     //m_traffic->setText(s);
 
-    double _r = m_rx.toDouble();
-    double _t = m_tx.toDouble();
+    double _r;
+    double _t;
+    QString r, t;
+
+    if (m_speedUnit == KNetworkManagerServicePrefs::KBits_s) {
+        _r = m_rx.toInt() << 3;
+        _t = m_tx.toInt() << 3;
+
+        if (_r < 1000) {
+            m_rxUnit = "KBit/s";
+        } else if (_r < 1000000) {
+            m_rxUnit = "MBit/s";
+            _r /= 1000;
+            _t /= 1000;
+        } else {
+            m_rxUnit = "GBit/s";
+            _r /= 1000000;
+            _t /= 1000000;
+        }
+
+        m_txUnit = m_rxUnit;
+        r = QString("%1 %2").arg(QString::number(_r, 'f', 0), m_rxUnit);
+        t = QString("%1 %2").arg(QString::number(_t, 'f', 0), m_txUnit);
+    } else {
+        _r = m_rx.toDouble();
+        _t = m_tx.toDouble();
+
+        r = KGlobal::locale()->formatByteSize(_r*1024);
+        r.append("/s");
+        t = KGlobal::locale()->formatByteSize(_t*1024);
+        t.append("/s");
+    }
+
     QList<double> v;
     v << _r << _t;
     m_trafficPlotter->addSample(v);
     m_trafficPlotter->setUnit(m_rxUnit);
     //m_trafficPlotter->setTitle(i18nc("traffic, e.g. n KB/s / m KB/s", "%1 %2 %3 %4", m_rx, m_rxUnit, m_tx, m_txUnit));
 
-    QString r = KGlobal::locale()->formatByteSize(_r*1024);
-    r.append("/s");
-    QString t = KGlobal::locale()->formatByteSize(_t*1024);
-    t.append("/s");
     QString s = i18nc("traffic, e.g. n KB/s\n m KB/s", "%1 %2", r, t);
     m_trafficPlotter->setTitle(s);
 
@@ -515,6 +542,8 @@ void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_
 
 void InterfaceDetailsWidget::setInterface(Solid::Control::NetworkInterfaceNm09* iface, bool disconnectOld)
 {
+    m_speedUnit = KNetworkManagerServicePrefs::self()->networkSpeedUnit();
+
     if (m_iface == iface) {
         return;
     }

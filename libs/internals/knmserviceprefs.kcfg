@@ -32,6 +32,12 @@
         <choice name="TypeNames"/>
       </choices>
     </entry>
+    <entry name="NetworkSpeedUnit" type="Enum">
+      <choices name="NetworkSpeedUnitChoices">
+        <choice name="KBytes_s"/>
+        <choice name="KBits_s"/>
+      </choices>
+    </entry>
   </group>
   <group name="SystemTray">
       <entry name="IconCount" type="UInt">
