@@ -32,8 +32,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirednetworkinterfaceactivatableprovider.h"
 #include "wirelessnetworkinterfaceactivatableprovider.h"
 
-#include <KAuth/Action>
-#include <kauthactionreply.h>
 #include <KMessageBox>
 #include <kdeversion.h>
 
