@@ -433,13 +433,13 @@ void InterfaceDetailsWidget::updateWidgets()
         _t = m_tx.toInt() << 3;
 
         if (_r < 1000) {
-            m_rxUnit = "KBit/s";
+            m_rxUnit = i18n("KBit/s");
         } else if (_r < 1000000) {
-            m_rxUnit = "MBit/s";
+            m_rxUnit = i18n("MBit/s");
             _r /= 1000;
             _t /= 1000;
         } else {
-            m_rxUnit = "GBit/s";
+            m_rxUnit = i18n("GBit/s");
             _r /= 1000000;
             _t /= 1000000;
         }
