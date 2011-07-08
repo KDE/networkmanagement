@@ -22,6 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define NETWORKINTERFACEMONITOR_H
 
 #include <QObject>
+#include <QDBusPendingCallWatcher>
 
 #include "knm_export.h"
 
@@ -45,6 +46,7 @@ public Q_SLOTS:
     void networkInterfaceRemoved(const QString &);
     void modemInterfaceAdded(const QString&);
     void requestPin(const QString &);
+    void onSendPinArrived(QDBusPendingCallWatcher *);
 private:
     NetworkInterfaceMonitorPrivate * d_ptr;
     PinDialog * dialog;

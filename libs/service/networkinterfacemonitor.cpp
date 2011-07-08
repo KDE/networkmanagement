@@ -35,6 +35,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KAuth/Action>
 #include <kauthactionreply.h>
 #include <KMessageBox>
+#include <kdeversion.h>
 
 #include <solid/control/modemmanager.h>
 
@@ -169,28 +170,47 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
         goto OUT;
     }
 
-    {
-    // See /usr/share/polkit-1/actions/org.freedesktop.modem-manager.policy
-    // KAuth is the KDE's Polkit wrapper.
-    KAuth::Action action(QLatin1String("org.freedesktop.ModemManager.Device.Control"));
-
-    KAuth::ActionReply reply = action.execute(QLatin1String("org.freedesktop.ModemManager.Device"));
-    if (reply.failed()) {
-        KMessageBox::error(0, i18n("Unlock failed. Error code is %1/%2 (%3).").arg(QString::number(reply.type()), QString::number(reply.errorCode()), reply.errorDescription()), i18n("Error"));
-        goto OUT;
-    }
-    }
-
     kDebug() << "Sending unlock code";
+
+#if KDE_IS_VERSION(4,6,90)
+    {
+        QDBusPendingCallWatcher *watcher = 0;
+    
+        if (dialog->type() == PinDialog::Pin) {
+            QDBusPendingCall reply = modem->sendPin(dialog->pin());
+            watcher = new QDBusPendingCallWatcher(reply, modem);
+        } else if (dialog->type() == PinDialog::PinPuk) {
+            QDBusPendingCall reply = modem->sendPuk(dialog->puk(), dialog->pin());
+            watcher = new QDBusPendingCallWatcher(reply, modem);
+        }
+    
+        connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher *)), SLOT(onSendPinArrived(QDBusPendingCallWatcher *)));
+    }
+#else
     if (dialog->type() == PinDialog::Pin) {
         modem->sendPin(dialog->pin());
     } else if (dialog->type() == PinDialog::PinPuk) {
         modem->sendPuk(dialog->puk(), dialog->pin());
     }
+#endif
 
 OUT:
     delete dialog;
     dialog = 0;
+}
+
+void NetworkInterfaceMonitor::onSendPinArrived(QDBusPendingCallWatcher * watcher)
+{
+   QDBusPendingReply<> reply = *watcher;
+
+    if (reply.isValid()) {
+        // Automatically enabling this for cell phones with expensive data plans is not a good idea.
+        //Solid::Control::NetworkManagerNm09::setWwanEnabled(true);
+    } else {
+        KMessageBox::error(0, i18nc("Text in GSM PIN/PUK unlock error dialog", "Error unlocking modem: %1", reply.error().message()), i18nc("Title for GSM PIN/PUK unlock error dialog", "PIN/PUK unlock error"));
+    }
+
+    watcher->deleteLater();
 }
 
 // vim: sw=4 sts=4 et tw=100
