@@ -59,6 +59,7 @@ void saveConnection(Knm::Connection *con)
     config.writeEntry("Name", name);
     config.writeEntry("Type", type);
     prefs->writeConfig();
+    prefs->config()->sync();
 
     ConnectionEditor editor(0);
     editor.updateService(QStringList() << con->uuid().toString());
