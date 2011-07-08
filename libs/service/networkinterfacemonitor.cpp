@@ -33,10 +33,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkinterfaceactivatableprovider.h"
 
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
-#include <KAuth/Action>
-#include <kauthactionreply.h>
-#include <KMessageBox>
-
 #include <solid/control/modemmanager.h>
 
 #include "gsmnetworkinterfaceactivatableprovider.h"
@@ -176,18 +172,6 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
 
     if (dialog->exec() != QDialog::Accepted) {
         goto OUT;
-    }
-
-    {
-    // See /usr/share/polkit-1/actions/org.freedesktop.modem-manager.policy
-    // KAuth is the KDE's Polkit wrapper.
-    KAuth::Action action(QLatin1String("org.freedesktop.ModemManager.Device.Control"));
-
-    KAuth::ActionReply reply = action.execute(QLatin1String("org.freedesktop.ModemManager.Device"));
-    if (reply.failed()) {
-        KMessageBox::error(0, i18n("Unlock failed. Error code is %1/%2 (%3).").arg(QString::number(reply.type()), QString::number(reply.errorCode()), reply.errorDescription()), i18n("Error"));
-        goto OUT;
-    }
     }
 
     kDebug() << "Sending unlock code";
