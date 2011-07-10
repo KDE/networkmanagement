@@ -18,12 +18,12 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QDBusPendingReply>
+
 #include <KLocale>
-
-#include "networkinterfacemonitor.h"
-
-#include <solid/control/networkinterface.h>
-#include <solid/control/networkmanager.h>
+#include <KMessageBox>
+#include <kdeversion.h>
+#include <solid/control/modemmanager.h>
 
 #include <connection.h>
 #include "activatablelist.h"
@@ -31,14 +31,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkinterfaceactivatableprovider.h"
 #include "wirednetworkinterfaceactivatableprovider.h"
 #include "wirelessnetworkinterfaceactivatableprovider.h"
-
-#include <KMessageBox>
-#include <kdeversion.h>
-
-#include <solid/control/modemmanager.h>
-
 #include "gsmnetworkinterfaceactivatableprovider.h"
 #include "pindialog.h"
+#include "networkinterfacemonitor.h"
 
 class NetworkInterfaceMonitorPrivate
 {
