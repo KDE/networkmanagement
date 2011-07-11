@@ -630,7 +630,7 @@ void NMPopup::showMore()
 
 void NMPopup::showMore(bool more)
 {
-    if (!m_wifiCheckBox->isEnabled()) {
+    if (!Solid::Control::NetworkManagerNm09::isWirelessEnabled()) {
         more = false;
     }
 
