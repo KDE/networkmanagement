@@ -630,6 +630,10 @@ void NMPopup::showMore()
 
 void NMPopup::showMore(bool more)
 {
+    if (!m_wifiCheckBox->isEnabled()) {
+        more = false;
+    }
+
     if (more) {
         m_showMoreButton->setText(i18nc("pressed show more button", "Show Less..."));
         m_showMoreButton->setIcon(KIcon("list-remove"));
@@ -655,7 +659,7 @@ void NMPopup::checkShowMore(RemoteActivatable * ra)
         if (wicCount > 0) {
             wicCount--;
         }
-        if (wicCount == 0 &&  !m_showMoreChecked) {
+        if (wicCount == 0 && !m_showMoreChecked) {
             // There is no wireless network which the user had explicitly configured around,
             // so temporaly show all the others wireless networks available.
             showMore(true);
