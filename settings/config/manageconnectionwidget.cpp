@@ -394,7 +394,7 @@ void ManageConnectionWidget::addClicked()
 void ManageConnectionWidget::importClicked()
 {
     //Get the file from which connection is to be imported
-    QString impFile = KFileDialog::getOpenFileName(KUser().homeDir(),"",this,i18nc("File chooser dialog title for importing VPN","Import VPN connection settings"));
+    QString impFile = KFileDialog::getOpenFileName(KUser().homeDir(),"*.pcf",this,i18nc("File chooser dialog title for importing VPN","Import VPN connection settings"));
     if (impFile.isEmpty())
         return;
 
