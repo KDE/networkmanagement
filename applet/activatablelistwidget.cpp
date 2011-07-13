@@ -223,6 +223,8 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
 
 void ActivatableListWidget::createHiddenItem()
 {
+    return; // TODO: make hidden essid work first before enabling this again.
+
     if (m_hiddenItem) {
         return;
     }
