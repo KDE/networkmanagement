@@ -205,6 +205,7 @@ void ManageConnectionWidget::restoreConnections()
     static bool working = false;
 
     if (working) {
+        kDebug() << "Already restoring connections";
         return;
     }
     working = true;
