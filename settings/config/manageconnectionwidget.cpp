@@ -202,6 +202,13 @@ QString ManageConnectionWidget::formatDateRelative(const QDateTime & lastUsed)
 
 void ManageConnectionWidget::restoreConnections()
 {
+    static bool working = false;
+
+    if (working) {
+        return;
+    }
+    working = true;
+
     // clean up the lists
     mConnEditUi.listWired->clear();
     mConnEditUi.listWireless->clear();
@@ -298,6 +305,8 @@ void ManageConnectionWidget::restoreConnections()
 
     // check which tabs should be enabled depending on the existing hardware
     updateTabStates();
+
+    working = false;
 }
 
 void ManageConnectionWidget::updateTabStates()
