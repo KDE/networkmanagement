@@ -120,6 +120,12 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         // Setup cisco-decrypt binary to decrypt the passwords
         QStringList decrArgs;
         QString ciscoDecryptBinary = KStandardDirs::findExe("cisco-decrypt");
+        // at least on Debian, cisco-decrypt is in /usr/lib/vpnc
+        if (ciscoDecryptBinary.isEmpty()) {
+            QFileInfo suspectedBinary(QLatin1String("/usr/lib/vpnc/cisco-decrypt"));
+            if (suspectedBinary.exists() && suspectedBinary.isExecutable())
+                ciscoDecryptBinary = QLatin1String("/usr/lib/vpnc/cisco-decrypt");
+        }
 
         decrPlugin = new VpncUiPluginPrivate();
         decrPlugin->ciscoDecrypt = new KProcess(this);
@@ -184,6 +190,11 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
             }
         }
         delete decrPlugin;
+
+        // Auth Type
+        if (!cg.readEntry("AuthType").isEmpty() && cg.readEntry("AuthType").toInt() == 5) {
+            data.insert(NM_VPNC_KEY_AUTHMODE, QLatin1String("hybrid"));
+        }
 
         // Optional settings
         // username
@@ -267,7 +278,10 @@ void VpncUiPlugin::exportConnectionSettings(Knm::Connection * connection, const 
 
     cg.writeEntry("Description", connection->name());
     cg.writeEntry("Host", data.value(NM_VPNC_KEY_GATEWAY));
-    cg.writeEntry("AuthType", "1");
+    if (data.value(NM_VPNC_KEY_AUTHMODE) == QLatin1String("hybrid"))
+        cg.writeEntry("AuthType", "5");
+    else
+        cg.writeEntry("AuthType", "1");
     cg.writeEntry("GroupName", data.value(NM_VPNC_KEY_ID));
     //cg.writeEntry("GroupPwd", secretData.value(NM_VPNC_KEY_SECRET));
     //cg.writeEntry("UserPassword", secretData.value(NM_VPNC_KEY_XAUTH_PASSWORD));

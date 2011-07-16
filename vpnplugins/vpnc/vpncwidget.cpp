@@ -79,6 +79,11 @@ void VpncSettingWidget::readConfig()
     if (!group.isEmpty()) {
         d->ui.leGroupName->setText(group);
     }
+    // hybrid auth
+    if (dataMap[NM_VPNC_KEY_AUTHMODE] == QLatin1String("hybrid")) {
+        d->ui.cbUseHybridAuth->setChecked(true);
+        d->ui.leCaCertPath->setUrl(KUrl(dataMap[NM_VPNC_KEY_CA_FILE]));
+    }
     // password storage type is set in readSecrets
 
     // Optional settings
@@ -180,6 +185,12 @@ void VpncSettingWidget::writeConfig()
     }
     handleOnePasswordType(d->ui.cboUserPassOptions, NM_VPNC_KEY_XAUTH_PASSWORD, secretsType);
     handleOnePasswordType(d->ui.cboGroupPassOptions, NM_VPNC_KEY_SECRET, secretsType);
+
+    // hybrid auth
+    if (d->ui.cbUseHybridAuth->isChecked()) {
+        data.insert(NM_VPNC_KEY_AUTHMODE, QLatin1String("hybrid"));
+        data.insert(NM_VPNC_KEY_CA_FILE, d->ui.leCaCertPath->url().path().toUtf8());
+    }
 
     // Optional settings
     //   username
