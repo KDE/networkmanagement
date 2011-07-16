@@ -119,13 +119,10 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
     if (cg.exists()) {
         // Setup cisco-decrypt binary to decrypt the passwords
         QStringList decrArgs;
-        QString ciscoDecryptBinary = KStandardDirs::findExe("cisco-decrypt");
-        // at least on Debian, cisco-decrypt is in /usr/lib/vpnc
+        QString ciscoDecryptBinary = KStandardDirs::findExe("cisco-decrypt", QString::fromLocal8Bit(qgetenv("PATH")) + ":/usr/lib/vpnc");
         if (ciscoDecryptBinary.isEmpty()) {
-            QFileInfo suspectedBinary(QLatin1String("/usr/lib/vpnc/cisco-decrypt"));
-            if (suspectedBinary.exists() && suspectedBinary.isExecutable())
-                ciscoDecryptBinary = QLatin1String("/usr/lib/vpnc/cisco-decrypt");
-        }
+	    return QVariantList();
+	}
 
         decrPlugin = new VpncUiPluginPrivate();
         decrPlugin->ciscoDecrypt = new KProcess(this);
