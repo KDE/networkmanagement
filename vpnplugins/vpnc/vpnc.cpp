@@ -109,11 +109,19 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
     VpncUiPluginPrivate * decrPlugin = 0;
     QVariantList conSetting;
 
+    if (!fileName.endsWith(QLatin1String(".pcf"), Qt::CaseInsensitive)) {
+        return conSetting;
+    }
+
+    mError = VpnUiPlugin::Error;
+
     // NOTE: Cisco VPN pcf files follow ini style matching KConfig files
     // http://www.cisco.com/en/US/docs/security/vpn_client/cisco_vpn_client/vpn_client46/administration/guide/vcAch2.html#wp1155033
     KSharedConfig::Ptr config = KSharedConfig::openConfig(fileName);
-    if (!config)
+    if (!config) {
+        mErrorMessage = i18n("File %1 could not be opened.", fileName);
         return conSetting;
+    }
 
     KConfigGroup cg(config, "main");   // Keys&Values are stored under [main]
     if (cg.exists()) {
@@ -121,8 +129,9 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         QStringList decrArgs;
         QString ciscoDecryptBinary = KStandardDirs::findExe("cisco-decrypt", QString::fromLocal8Bit(qgetenv("PATH")) + ":/usr/lib/vpnc");
         if (ciscoDecryptBinary.isEmpty()) {
-	    return QVariantList();
-	}
+            mErrorMessage = i18n("Needed executable cisco-decrypt could not be found.");
+            return QVariantList();
+        }
 
         decrPlugin = new VpncUiPluginPrivate();
         decrPlugin->ciscoDecrypt = new KProcess(this);
@@ -255,8 +264,12 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         conSetting << Knm::VpnSecrets::variantMapFromStringList(Knm::VpnSecrets::stringMapToStringList(secretData));
         conSetting << Knm::VpnSecrets::variantMapFromStringList(Knm::VpnSecrets::stringMapToStringList(secretsType));
         conSetting << cg.readEntry("Description");
+    } else {
+        mErrorMessage = i18n("%1: file format error.", fileName);
+        return conSetting;
     }
 
+    mError = NoError;
     return conSetting;
 }
 

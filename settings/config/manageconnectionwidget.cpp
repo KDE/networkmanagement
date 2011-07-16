@@ -395,12 +395,14 @@ void ManageConnectionWidget::importClicked()
 {
     //Get the file from which connection is to be imported
     QString impFile = KFileDialog::getOpenFileName(KUser().homeDir(),"*.pcf",this,i18nc("File chooser dialog title for importing VPN","Import VPN connection settings"));
-    if (impFile.isEmpty())
+    if (impFile.isEmpty()) {
         return;
+    }
 
     //Try to import the connection with each VPN plugin found
     Knm::Connection * con = 0;
     QString pluginError;
+    QString lastErrorMessage;
     KPluginInfo::List vpnServices = KPluginInfo::fromServices(KServiceTypeTrader::self()->query(QLatin1String("NetworkManagement/VpnUiPlugin")));
     foreach (const KPluginInfo &pi, vpnServices) {
         QString serviceType = pi.service()->property("X-NetworkManager-Services", QVariant::String).toString();
@@ -408,24 +410,33 @@ void ManageConnectionWidget::importClicked()
         if (pluginError.isEmpty()) {
 
             QVariantList conArgs = vpnUi->importConnectionSettings(impFile);
-            if (!conArgs.isEmpty()) {
+            if (conArgs.isEmpty()) {
+                if (vpnUi->lastError() != VpnUiPlugin::NotImplemented) {
+                    lastErrorMessage = vpnUi->lastErrorMessage();
+                }
+            } else {
                 conArgs.insert(0, serviceType);        //VPN service
                 con = mEditor->createConnection(false, Knm::Connection::Vpn, conArgs);
-            }
-            if (con) {
-                kDebug() << "VPN Connection pointer is set, connection will be added.";
-                // Assuming VPN secrets are always AgentOwned.
-                mSystemSettings->addConnection(con);
-                emit changed();
-                delete vpnUi;
-                break;
+
+                if (con) {
+                    kDebug() << "VPN Connection pointer is set, connection will be added.";
+                    // Assuming VPN secrets are always AgentOwned.
+                    mSystemSettings->addConnection(con);
+                    emit changed();
+                    delete vpnUi;
+                    break;
+                }
             }
         }
         delete vpnUi;
     }
     if (!con) {
         kDebug() << "VPN import failed";
-        KMessageBox::error(this, i18n("Could not import VPN connection settings"), i18n("Error"), KMessageBox::Notify) ;
+        if (lastErrorMessage.isEmpty()) {
+            KMessageBox::error(this, i18n("None of the supported plugins implement importing operation for file %1.", impFile), i18n("Error importing VPN connection settings")) ;
+        } else {
+            KMessageBox::error(this, lastErrorMessage, i18n("Error importing VPN connection settings")) ;
+        }
     }
 
 }

@@ -43,15 +43,29 @@ class KNM_EXPORT VpnUiPlugin : public QObject
 {
 Q_OBJECT
 public:
+    enum ErrorType {NoError, NotImplemented, Error};
+
     VpnUiPlugin(QObject * parent = 0);
     virtual ~VpnUiPlugin();
 
     virtual SettingWidget * widget(Knm::Connection * connection, QWidget * parent = 0) = 0;
     virtual SettingWidget * askUser(Knm::Connection * connection, QWidget * parent = 0){ return widget(connection, parent); };
     virtual QString suggestedFileName(Knm::Connection *connection) const = 0;
+
+    /**
+     * If the plugin does not support fileName's extension it must just return an empty QVariantList.
+     * If it supports the extension and import has failed it must set mError with VpnUiPlugin::Error
+     * and mErrorMessage with a custom error message before returning an empty QVariantList.
+     */
     virtual QVariantList importConnectionSettings(const QString &fileName) = 0;
+
     virtual void exportConnectionSettings(Knm::Connection * connection, const QString &fileName) = 0;
     virtual KDialog::ButtonCodes suggestAuthDialogButtons();
+    ErrorType lastError();
+    QString lastErrorMessage();
+protected:
+    ErrorType mError;
+    QString mErrorMessage;
 private:
     class Private;
     Private * d;
