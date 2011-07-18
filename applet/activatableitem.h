@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteinterfaceconnection.h"
 
 class RemoteActivatable;
+extern int rowHeight;
 
 class ActivatableItem : public Plasma::IconWidget
 {
@@ -59,7 +60,6 @@ protected:
     bool m_hasDefaultRoute;
     Knm::InterfaceConnection::ActivationState m_state;
     bool m_deleting;
-    int rowHeight;
     int spacing;
 };
 

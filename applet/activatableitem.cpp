@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KIcon>
 #include <KNotification>
+#include <KGlobalSettings>
 
 #include <Plasma/Animation>
 #include <Plasma/Animator>
@@ -39,12 +40,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration))
 static const int m_iconSize = 48;
+int rowHeight = qMax(28, QFontMetrics(KGlobalSettings::generalFont()).height()+10);
 
 ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * parent) : Plasma::IconWidget(parent),
     m_activatable(remote),
     m_hasDefaultRoute(false),
     m_deleting(false),
-    rowHeight(28), // TODO: try not to use hard coded value.
     spacing(4)
 {
     setDrawBackground(true);
