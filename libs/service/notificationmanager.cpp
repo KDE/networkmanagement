@@ -502,7 +502,7 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
                         KNotification *notification= new KNotification(Event::HwAdded, 0, KNotification::Persistent);
                         notification->setComponentData(componentData());
                         notification->setText(i18nc("@info:status Notification for hardware added", "%1 attached", host->label()));
-                        notification->setActions(( QStringList() << i18nc("@action", "Create Connection" ) << i18nc("@action", "Ignore" )) );
+                        notification->setActions(( QStringList() << i18nc("@action", "Create Connection" ) << i18nc("@action", "Close" )) );
                         notification->setPixmap(KIcon(Knm::Connection::iconName(Knm::Connection::typeFromSolidType(iface))).pixmap(QSize(iconSize,iconSize)));
                         QObject::connect(notification,SIGNAL(activated()), this , SLOT(createCellularConnection()) );
                         QObject::connect(notification,SIGNAL(action1Activated()), this, SLOT(createCellularConnection()) );
