@@ -32,6 +32,37 @@ public:
     Ui_VpncProp ui;
     Knm::VpnSetting * setting;
     uint dpdTimeout;
+
+    class EnumPasswordStorage
+    {
+    public:
+        enum PasswordStorage {AlwaysAsk = 0, Save, NotRequired};
+    };
+    class EnumEncryptionMethod
+    {
+    public:
+        enum EncryptionMethod {Secure = 0, Weak, None};
+    };
+    class EnumNatt
+    {
+    public:
+        enum NatT {NattIfAvail = 0, Force, CiscoUdp, Disabled};
+    };
+    class EnumDh
+    {
+    public:
+        enum Dh {Dh1 = 0, Dh2, Dh5};
+    };
+    class EnumPerfectForwardSecrecy
+    {
+    public:
+        enum PFS {NoPfs = 0, Server, Dh1, Dh2, Dh5};
+    };
+    class EnumVendor
+    {
+    public:
+        enum Vendor {Cisco = 0, Netscreen};
+    };
 };
 
 VpncSettingWidget::VpncSettingWidget(Knm::Connection * connection, QWidget * parent)
@@ -40,8 +71,8 @@ VpncSettingWidget::VpncSettingWidget(Knm::Connection * connection, QWidget * par
     Q_D(VpncSettingWidget);
     d->dpdTimeout = 0;
     d->ui.setupUi(this);
-    d->ui.cboDHGroup->setCurrentIndex(1);   // DH Group 2 default
     d->setting = static_cast<Knm::VpnSetting *>(connection->setting(Knm::Setting::Vpn));
+    connect(d->ui.cboNatTraversal, SIGNAL(currentIndexChanged(int)), this, SLOT(natTraversalChanged(int)));
     connect(d->ui.cboUserPassOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(userPasswordTypeChanged(int)));
     connect(d->ui.cboGroupPassOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(groupPasswordTypeChanged(int)));
 }
@@ -54,13 +85,23 @@ VpncSettingWidget::~VpncSettingWidget()
 void VpncSettingWidget::userPasswordTypeChanged(int index)
 {
     Q_D(VpncSettingWidget);
-    d->ui.leUserPassword->setEnabled(index == 1);
+    d->ui.leUserPassword->setEnabled(index == VpncSettingWidgetPrivate::EnumPasswordStorage::Save);
 }
 
 void VpncSettingWidget::groupPasswordTypeChanged(int index)
 {
     Q_D(VpncSettingWidget);
-    d->ui.leGroupPassword->setEnabled(index == 1);
+    d->ui.leGroupPassword->setEnabled(index == VpncSettingWidgetPrivate::EnumPasswordStorage::Save);
+}
+
+void VpncSettingWidget::natTraversalChanged(int index)
+{
+    Q_D(VpncSettingWidget);
+    if (index == VpncSettingWidgetPrivate::EnumNatt::CiscoUdp) {
+        d->ui.spbCiscoUdpEncPort->setEnabled(true);
+    } else {
+        d->ui.spbCiscoUdpEncPort->setEnabled(false);
+    }
 }
 
 void VpncSettingWidget::readConfig()
@@ -72,6 +113,11 @@ void VpncSettingWidget::readConfig()
     QString gateway = dataMap[NM_VPNC_KEY_GATEWAY];
     if (!gateway.isEmpty()) {
         d->ui.leGateway->setText(gateway);
+    }
+    //   username
+    QString user = dataMap[NM_VPNC_KEY_XAUTH_USER];
+    if (!user.isEmpty()) {
+        d->ui.leUserName->setText(user);
     }
     //   group name
     QString group = dataMap[NM_VPNC_KEY_ID];
@@ -86,12 +132,6 @@ void VpncSettingWidget::readConfig()
     // password storage type is set in readSecrets
 
     // Optional settings
-    //   username
-    QString user = dataMap[NM_VPNC_KEY_XAUTH_USER];
-    if (!user.isEmpty()) {
-        d->ui.leUserName->setText(user);
-    }
-
     //   domain
     QString domain = dataMap[NM_VPNC_KEY_DOMAIN];
     if (!domain.isEmpty()) {
@@ -100,20 +140,20 @@ void VpncSettingWidget::readConfig()
 
     //   encryption
     if (dataMap[NM_VPNC_KEY_SINGLE_DES] == QLatin1String("yes")) {
-        d->ui.cboEncryptionMethod->setCurrentIndex(1);
+        d->ui.cboEncryptionMethod->setCurrentIndex(VpncSettingWidgetPrivate::EnumEncryptionMethod::Weak);
     } else if (dataMap[NM_VPNC_KEY_NO_ENCRYPTION] == QLatin1String("yes")) {
-        d->ui.cboEncryptionMethod->setCurrentIndex(2);
+        d->ui.cboEncryptionMethod->setCurrentIndex(VpncSettingWidgetPrivate::EnumEncryptionMethod::None);
     }
 
     //   nat traversal
     if (dataMap[NM_VPNC_KEY_NAT_TRAVERSAL_MODE] == NM_VPNC_NATT_MODE_NATT)
-        d->ui.cboNatTraversal->setCurrentIndex(0);
+        d->ui.cboNatTraversal->setCurrentIndex(VpncSettingWidgetPrivate::EnumNatt::NattIfAvail);
     else if (dataMap[NM_VPNC_KEY_NAT_TRAVERSAL_MODE] == NM_VPNC_NATT_MODE_NATT_ALWAYS)
-        d->ui.cboNatTraversal->setCurrentIndex(1);
+        d->ui.cboNatTraversal->setCurrentIndex(VpncSettingWidgetPrivate::EnumNatt::Force);
     else if (dataMap[NM_VPNC_KEY_NAT_TRAVERSAL_MODE] == NM_VPNC_NATT_MODE_CISCO)
-        d->ui.cboNatTraversal->setCurrentIndex(2);
+        d->ui.cboNatTraversal->setCurrentIndex(VpncSettingWidgetPrivate::EnumNatt::CiscoUdp);
     else if (dataMap[NM_VPNC_KEY_NAT_TRAVERSAL_MODE] == NM_VPNC_NATT_MODE_NONE)
-        d->ui.cboNatTraversal->setCurrentIndex(3);
+        d->ui.cboNatTraversal->setCurrentIndex(VpncSettingWidgetPrivate::EnumNatt::Disabled);
 
     //   dead peer detection
     if (dataMap.contains(NM_VPNC_KEY_DPD_IDLE_TIMEOUT)) {
@@ -128,25 +168,66 @@ void VpncSettingWidget::readConfig()
         QString dhGroup = dataMap.value(NM_VPNC_KEY_DHGROUP);
         if (dhGroup == NM_VPNC_DHGROUP_DH1) {
             // DH Group 1
-            d->ui.cboDHGroup->setCurrentIndex(0);
+            d->ui.cboDHGroup->setCurrentIndex(VpncSettingWidgetPrivate::EnumDh::Dh1);
         } else if (dhGroup == NM_VPNC_DHGROUP_DH2) {
             // DH Group 2
-            d->ui.cboDHGroup->setCurrentIndex(1);
+            d->ui.cboDHGroup->setCurrentIndex(VpncSettingWidgetPrivate::EnumDh::Dh2);
         } else if (dhGroup == NM_VPNC_DHGROUP_DH5) {
             // DH Group 5
-            d->ui.cboDHGroup->setCurrentIndex(2);
+            d->ui.cboDHGroup->setCurrentIndex(VpncSettingWidgetPrivate::EnumDh::Dh5);
         }
+    }
+
+    // Perfect Forward Secrecy
+    if (dataMap.contains(NM_VPNC_KEY_PERFECT_FORWARD)) {
+        QString forwardSecrecy = dataMap.value(NM_VPNC_KEY_PERFECT_FORWARD);
+        if (forwardSecrecy == QLatin1String("nopfs")) {
+            d->ui.cboPerfectForwardSecrecy->setCurrentIndex(VpncSettingWidgetPrivate::EnumPerfectForwardSecrecy::NoPfs);
+        } else if (forwardSecrecy == QLatin1String("server")) {
+            d->ui.cboPerfectForwardSecrecy->setCurrentIndex(VpncSettingWidgetPrivate::EnumPerfectForwardSecrecy::Server);
+        } else if (forwardSecrecy == QLatin1String("dh1")) {
+            d->ui.cboPerfectForwardSecrecy->setCurrentIndex(VpncSettingWidgetPrivate::EnumPerfectForwardSecrecy::Dh1);
+        } else if (forwardSecrecy == QLatin1String("dh2")) {
+            d->ui.cboPerfectForwardSecrecy->setCurrentIndex(VpncSettingWidgetPrivate::EnumPerfectForwardSecrecy::Dh2);
+        } else if (forwardSecrecy == QLatin1String("dh5")) {
+            d->ui.cboPerfectForwardSecrecy->setCurrentIndex(VpncSettingWidgetPrivate::EnumPerfectForwardSecrecy::Dh5);
+        }
+    }
+
+    // Vendor
+    if (dataMap.contains(NM_VPNC_KEY_VENDOR)) {
+        QString vendor = dataMap.value(NM_VPNC_KEY_VENDOR);
+        if (vendor == QLatin1String("cisco")) {
+            d->ui.cboVendor->setCurrentIndex(VpncSettingWidgetPrivate::EnumVendor::Cisco);
+        } else if (vendor == QLatin1String("netscreen")) {
+            d->ui.cboVendor->setCurrentIndex(VpncSettingWidgetPrivate::EnumVendor::Netscreen);
+        }
+    }
+
+    // Application Version
+    if (dataMap.contains(NM_VPNC_KEY_APP_VERSION)) {
+        d->ui.leApplicationVersion->setText(dataMap.value(NM_VPNC_KEY_APP_VERSION));
+    }
+
+    // Local Port
+    if (dataMap.contains(NM_VPNC_KEY_LOCAL_PORT)) {
+        d->ui.spbLocalPort->setValue(dataMap.value(NM_VPNC_KEY_LOCAL_PORT).toInt());
+    }
+
+    // Cisco UDP Encapsulation Port
+    if (dataMap.contains(NM_VPNC_KEY_CISCO_UDP_ENCAPS_PORT)) {
+        d->ui.spbCiscoUdpEncPort->setValue(dataMap.value(NM_VPNC_KEY_CISCO_UDP_ENCAPS_PORT).toInt());
     }
 }
 
 void VpncSettingWidget::fillOnePasswordCombo(QComboBox * combo, Knm::Setting::secretsTypes type)
 {
     if (type & Knm::Setting::AgentOwned || type & Knm::Setting::None) {
-        combo->setCurrentIndex(1);
+        combo->setCurrentIndex(VpncSettingWidgetPrivate::EnumPasswordStorage::Save);
     } else if (type & Knm::Setting::NotRequired) {
-        combo->setCurrentIndex(2);
+        combo->setCurrentIndex(VpncSettingWidgetPrivate::EnumPasswordStorage::NotRequired);
     } else if (type & Knm::Setting::NotSaved) {
-        combo->setCurrentIndex(0);
+        combo->setCurrentIndex(VpncSettingWidgetPrivate::EnumPasswordStorage::AlwaysAsk);
     }
 }
 
@@ -172,11 +253,11 @@ void VpncSettingWidget::writeConfig()
     }
 
     //   user password
-    if (!d->ui.leUserPassword->text().isEmpty() && d->ui.cboUserPassOptions->currentIndex() == 1) {
+    if (!d->ui.leUserPassword->text().isEmpty() && d->ui.cboUserPassOptions->currentIndex() == VpncSettingWidgetPrivate::EnumPasswordStorage::Save) {
         secretData.insert(NM_VPNC_KEY_XAUTH_PASSWORD, d->ui.leUserPassword->text());
     }
     //   group password
-    if (!d->ui.leGroupPassword->text().isEmpty() && d->ui.cboGroupPassOptions->currentIndex() == 1) {
+    if (!d->ui.leGroupPassword->text().isEmpty() && d->ui.cboGroupPassOptions->currentIndex() == VpncSettingWidgetPrivate::EnumPasswordStorage::Save) {
         secretData.insert(NM_VPNC_KEY_SECRET, d->ui.leGroupPassword->text());
     }
     handleOnePasswordType(d->ui.cboUserPassOptions, NM_VPNC_KEY_XAUTH_PASSWORD"-flags", data);
@@ -201,10 +282,10 @@ void VpncSettingWidget::writeConfig()
 
     //   encryption
     switch (d->ui.cboEncryptionMethod->currentIndex()) {
-        case 1:
+        case VpncSettingWidgetPrivate::EnumEncryptionMethod::Weak:
             data.insert(NM_VPNC_KEY_SINGLE_DES, QLatin1String("yes"));
             break;
-        case 2:
+        case VpncSettingWidgetPrivate::EnumEncryptionMethod::None:
             data.insert(NM_VPNC_KEY_NO_ENCRYPTION, QLatin1String("yes"));
             break;
         default:
@@ -213,16 +294,16 @@ void VpncSettingWidget::writeConfig()
 
     // nat traversal
     switch (d->ui.cboNatTraversal->currentIndex()) {
-    case 1:
+        case VpncSettingWidgetPrivate::EnumNatt::Force:
         data.insert(NM_VPNC_KEY_NAT_TRAVERSAL_MODE, QLatin1String(NM_VPNC_NATT_MODE_NATT_ALWAYS));
         break;
-    case 2:
+        case VpncSettingWidgetPrivate::EnumNatt::CiscoUdp:
         data.insert(NM_VPNC_KEY_NAT_TRAVERSAL_MODE, QLatin1String(NM_VPNC_NATT_MODE_CISCO));
         break;
-    case 3:
+        case VpncSettingWidgetPrivate::EnumNatt::Disabled:
         data.insert(NM_VPNC_KEY_NAT_TRAVERSAL_MODE, QLatin1String(NM_VPNC_NATT_MODE_NONE));
         break;
-    case 0:
+        case VpncSettingWidgetPrivate::EnumNatt::NattIfAvail:
     default:
         data.insert(NM_VPNC_KEY_NAT_TRAVERSAL_MODE, QLatin1String(NM_VPNC_NATT_MODE_NATT));
         break;
@@ -239,16 +320,56 @@ void VpncSettingWidget::writeConfig()
 
     // dh group
     switch (d->ui.cboDHGroup->currentIndex()) {
-    case 0:	// DH Group 1
+    case VpncSettingWidgetPrivate::EnumDh::Dh1:	// DH Group 1
         data.insert(NM_VPNC_KEY_DHGROUP, NM_VPNC_DHGROUP_DH1);
         break;
-    case 1:	// DH Group 2
+    case VpncSettingWidgetPrivate::EnumDh::Dh2:	// DH Group 2
         data.insert(NM_VPNC_KEY_DHGROUP, NM_VPNC_DHGROUP_DH2);
         break;
-    case 2:	// DH Group 5
+    case VpncSettingWidgetPrivate::EnumDh::Dh5:	// DH Group 5
         data.insert(NM_VPNC_KEY_DHGROUP, NM_VPNC_DHGROUP_DH5);
         break;
     }
+
+    // Perfect Forward Secrecy
+    switch (d->ui.cboPerfectForwardSecrecy->currentIndex()) {
+        case VpncSettingWidgetPrivate::EnumPerfectForwardSecrecy::NoPfs:
+            data.insert(NM_VPNC_KEY_PERFECT_FORWARD, QLatin1String("nopfs"));
+            break;
+        case VpncSettingWidgetPrivate::EnumPerfectForwardSecrecy::Server:
+            data.insert(NM_VPNC_KEY_PERFECT_FORWARD, QLatin1String("server"));
+            break;
+        case VpncSettingWidgetPrivate::EnumPerfectForwardSecrecy::Dh1:
+            data.insert(NM_VPNC_KEY_PERFECT_FORWARD, QLatin1String("dh1"));
+            break;
+        case VpncSettingWidgetPrivate::EnumPerfectForwardSecrecy::Dh2:
+            data.insert(NM_VPNC_KEY_PERFECT_FORWARD, QLatin1String("dh2"));
+            break;
+        case VpncSettingWidgetPrivate::EnumPerfectForwardSecrecy::Dh5:
+            data.insert(NM_VPNC_KEY_PERFECT_FORWARD, QLatin1String("dh5"));
+            break;
+    }
+
+    // Vendor
+    switch (d->ui.cboVendor->currentIndex()) {
+        case VpncSettingWidgetPrivate::EnumVendor::Cisco:
+            data.insert(NM_VPNC_KEY_VENDOR, QLatin1String("cisco"));
+            break;
+        case VpncSettingWidgetPrivate::EnumVendor::Netscreen:
+            data.insert(NM_VPNC_KEY_VENDOR, QLatin1String("netscreen"));
+            break;
+    }
+
+    // Application Version
+    if (!d->ui.leApplicationVersion->text().isEmpty()) {
+        data.insert(NM_VPNC_KEY_APP_VERSION, d->ui.leApplicationVersion->text());
+    }
+
+    // Local Port
+    data.insert(NM_VPNC_KEY_LOCAL_PORT, QString::number(d->ui.spbLocalPort->value()));
+
+    // Cisco UDP Encapsulation Port
+    data.insert(NM_VPNC_KEY_CISCO_UDP_ENCAPS_PORT, QString::number(d->ui.spbCiscoUdpEncPort->value()));
 
     d->setting->setData(data);
     d->setting->setVpnSecrets(secretData);
@@ -258,13 +379,13 @@ uint VpncSettingWidget::handleOnePasswordType(const QComboBox * combo, const QSt
 {
     uint type = combo->currentIndex();
     switch (type) {
-        case 0:
+        case VpncSettingWidgetPrivate::EnumPasswordStorage::AlwaysAsk:
             data.insert(key, QString::number(Knm::Setting::NotSaved));
             break;
-        case 1:
+        case VpncSettingWidgetPrivate::EnumPasswordStorage::Save:
             data.insert(key, QString::number(Knm::Setting::AgentOwned));
             break;
-        case 2:
+        case VpncSettingWidgetPrivate::EnumPasswordStorage::NotRequired:
             data.insert(key, QString::number(Knm::Setting::NotRequired));
             break;
     }

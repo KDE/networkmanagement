@@ -45,6 +45,7 @@ public:
 protected Q_SLOTS:
     void userPasswordTypeChanged(int);
     void groupPasswordTypeChanged(int);
+    void natTraversalChanged(int);
     void validate();
 private:
     void fillOnePasswordCombo(QComboBox * combo, Knm::Setting::secretsTypes type);
