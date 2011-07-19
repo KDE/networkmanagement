@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KPluginFactory>
 
 #include "pptpwidget.h"
+#include "pptpauth.h"
 #include "connection.h"
 
 K_PLUGIN_FACTORY( PptpUiPluginFactory, registerPlugin<PptpUiPlugin>(); )
@@ -41,6 +42,11 @@ PptpUiPlugin::~PptpUiPlugin()
 SettingWidget * PptpUiPlugin::widget(Knm::Connection * connection, QWidget * parent)
 {
     return new PptpSettingWidget(connection, parent);
+}
+
+SettingWidget * PptpUiPlugin::askUser(Knm::Connection * connection, QWidget * parent)
+{
+    return new PptpAuthWidget(connection, parent);
 }
 
 QString PptpUiPlugin::suggestedFileName(Knm::Connection *connection) const

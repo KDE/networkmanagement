@@ -18,7 +18,7 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="textLabel1">
+    <widget class="QLabel" name="userLabel">
      <property name="text">
       <string>&amp;User Password</string>
      </property>
@@ -31,7 +31,7 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="textLabel2">
+    <widget class="QLabel" name="groupLabel">
      <property name="text">
       <string>&amp;Group Password</string>
      </property>
@@ -61,7 +61,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>

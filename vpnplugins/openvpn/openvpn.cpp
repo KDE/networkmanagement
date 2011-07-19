@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KPluginFactory>
 
 #include "openvpnwidget.h"
+#include "openvpnauth.h"
 
 #include "connection.h"
 
@@ -43,6 +44,11 @@ SettingWidget * OpenVpnUiPlugin::widget(Knm::Connection * connection, QWidget * 
     OpenVpnSettingWidget * wid = new OpenVpnSettingWidget(connection, parent);
     wid->init();
     return wid;
+}
+
+SettingWidget * OpenVpnUiPlugin::askUser(Knm::Connection * connection, QWidget * parent)
+{
+    return new OpenVpnAuthWidget(connection, parent);
 }
 
 QString OpenVpnUiPlugin::suggestedFileName(Knm::Connection *connection) const

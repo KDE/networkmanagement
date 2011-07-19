@@ -1,5 +1,5 @@
 /*
-Copyright 2008 Will Stephenson <wstephenson@kde.org>
+Copyright 2011 Ilia Kats <ilia-kats@gmx.net>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,29 +18,36 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM4_OPENVPN_H
-#define KNM4_OPENVPN_H
+#ifndef PPTPAUTH_H
+#define PPTPAUTH_H
 
-#include "vpnuiplugin.h"
+#include "settingwidget.h"
 
-#include <QVariant>
+#include "settings/vpn.h"
 
 namespace Knm
 {
     class Connection;
 } // namespace Knm
 
-class OpenVpnUiPlugin : public VpnUiPlugin
+class PptpAuthWidgetPrivate;
+
+class PptpAuthWidget : public SettingWidget
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(PptpAuthWidget)
 public:
-    OpenVpnUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
-    virtual ~OpenVpnUiPlugin();
-    SettingWidget * widget(Knm::Connection *, QWidget * parent = 0);
-    SettingWidget * askUser(Knm::Connection *, QWidget * parent = 0);
-    QString suggestedFileName(Knm::Connection *connection) const;
-    QVariantList importConnectionSettings(const QString &fileName);
-    void exportConnectionSettings(Knm::Connection * connection, const QString &fileName);
+    PptpAuthWidget(Knm::Connection *, QWidget * parent = 0);
+    ~PptpAuthWidget();
+    void readConfig() {}
+    void readSecrets();
+    void writeConfig();
+protected Q_SLOTS:
+    void validate() {}
+    void showPasswordsToggled(bool);
+
+private:
+    PptpAuthWidgetPrivate * d_ptr;
 };
 
-#endif //  KNM4_OPENVPN_H
+#endif // PPTPAUTH_H

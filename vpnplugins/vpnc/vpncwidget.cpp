@@ -19,8 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "vpncwidget.h"
-
-#include <nm-setting-vpn.h>
+#include "ui_vpncprop.h"
 
 #include <QString>
 #include "nm-vpnc-service.h"
@@ -140,16 +139,14 @@ void VpncSettingWidget::readConfig()
     }
 }
 
-void VpncSettingWidget::fillOnePasswordCombo(QComboBox * combo, const QString & type, bool hasPassword)
+void VpncSettingWidget::fillOnePasswordCombo(QComboBox * combo, Knm::Setting::secretsTypes type)
 {
-    if (!type.isNull()) {
-        if (type == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
-            combo->setCurrentIndex(1);
-        } else if (type == QLatin1String(NM_VPN_PW_TYPE_UNUSED)) {
-            combo->setCurrentIndex(2);
-        }
-    } else if (!hasPassword) {
+    if (type & Knm::Setting::AgentOwned || type & Knm::Setting::None) {
         combo->setCurrentIndex(1);
+    } else if (type & Knm::Setting::NotRequired) {
+        combo->setCurrentIndex(2);
+    } else if (type & Knm::Setting::NotSaved) {
+        combo->setCurrentIndex(0);
     }
 }
 
@@ -162,7 +159,6 @@ void VpncSettingWidget::writeConfig()
 
     QStringMap data;
     QStringMap secretData;
-    QStringMap secretsType;
 
     // General settings
     //   gateway
@@ -183,8 +179,8 @@ void VpncSettingWidget::writeConfig()
     if (!d->ui.leGroupPassword->text().isEmpty() && d->ui.cboGroupPassOptions->currentIndex() == 1) {
         secretData.insert(NM_VPNC_KEY_SECRET, d->ui.leGroupPassword->text());
     }
-    handleOnePasswordType(d->ui.cboUserPassOptions, NM_VPNC_KEY_XAUTH_PASSWORD, secretsType);
-    handleOnePasswordType(d->ui.cboGroupPassOptions, NM_VPNC_KEY_SECRET, secretsType);
+    handleOnePasswordType(d->ui.cboUserPassOptions, NM_VPNC_KEY_XAUTH_PASSWORD"-flags", data);
+    handleOnePasswordType(d->ui.cboGroupPassOptions, NM_VPNC_KEY_SECRET"-flags", data);
 
     // hybrid auth
     if (d->ui.cbUseHybridAuth->isChecked()) {
@@ -256,7 +252,6 @@ void VpncSettingWidget::writeConfig()
 
     d->setting->setData(data);
     d->setting->setVpnSecrets(secretData);
-    d->setting->setSecretsStorageType(secretsType);
 }
 
 uint VpncSettingWidget::handleOnePasswordType(const QComboBox * combo, const QString & key, QStringMap & data)
@@ -264,13 +259,13 @@ uint VpncSettingWidget::handleOnePasswordType(const QComboBox * combo, const QSt
     uint type = combo->currentIndex();
     switch (type) {
         case 0:
-            data.insert(key, NM_VPN_PW_TYPE_ASK);
+            data.insert(key, QString::number(Knm::Setting::NotSaved));
             break;
         case 1:
-            data.insert(key, NM_VPN_PW_TYPE_SAVE);
+            data.insert(key, QString::number(Knm::Setting::AgentOwned));
             break;
         case 2:
-            data.insert(key, NM_VPN_PW_TYPE_UNUSED);
+            data.insert(key, QString::number(Knm::Setting::NotRequired));
             break;
     }
     return type;
@@ -280,33 +275,20 @@ void VpncSettingWidget::readSecrets()
 {
     Q_D(VpncSettingWidget);
     QStringMap secrets = d->setting->vpnSecrets();
-    QStringMap secretsType = d->setting->secretsStorageType();
-    QString userType;
-    QString groupType;
+    Knm::Setting::secretsTypes userType;
+    Knm::Setting::secretsTypes groupType;
 
-    /*
-     * First time "old" settings are loaded secretsType map is empty, so
-     * try to read from data as fallback
-     */
-    userType = secretsType.value(NM_VPNC_KEY_XAUTH_PASSWORD);
-    if (userType.isNull()) {
-        // TODO: change this to use the new Setting::secretsType instead of NM_VPNC_KEY_XAUTH_PASSWORD_TYPE.
-        userType = d->setting->data().value(NM_VPNC_KEY_XAUTH_PASSWORD_TYPE);
-    }
-    if (userType == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
+    userType = (Knm::Setting::secretsTypes)d->setting->data().value(NM_VPNC_KEY_XAUTH_PASSWORD"-flags").toInt();
+    if (userType & Knm::Setting::AgentOwned || userType & Knm::Setting::None) {
         d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_XAUTH_PASSWORD)));
     }
-    fillOnePasswordCombo(d->ui.cboUserPassOptions, userType, !d->ui.leUserName->text().isEmpty());
+    fillOnePasswordCombo(d->ui.cboUserPassOptions, userType);
 
-    groupType = secretsType.value(NM_VPNC_KEY_SECRET);
-    if (groupType.isNull()) {
-        // TODO: change this to use the new Setting::secretsType instead of NM_VPNC_KEY_SECRET_TYPE.
-        groupType = d->setting->data().value(NM_VPNC_KEY_SECRET_TYPE);
-    }
-    if (groupType == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
+    groupType = (Knm::Setting::secretsTypes)d->setting->data().value(NM_VPNC_KEY_SECRET"-flags").toInt();
+    if (groupType & Knm::Setting::AgentOwned || groupType & Knm::Setting::None) {
         d->ui.leGroupPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_SECRET)));
     }
-    fillOnePasswordCombo(d->ui.cboGroupPassOptions, groupType, !d->ui.leGroupPassword->text().isEmpty());
+    fillOnePasswordCombo(d->ui.cboGroupPassOptions, groupType);
 }
 
 void VpncSettingWidget::validate()

@@ -10,10 +10,6 @@
 #include "knminternals_export.h"
 #include "../types.h"
 
-#define NM_VPN_PW_TYPE_SAVE   "save"
-#define NM_VPN_PW_TYPE_ASK    "ask"
-#define NM_VPN_PW_TYPE_UNUSED "unused"
-
 namespace Knm {
 
 class KNMINTERNALS_EXPORT VpnSetting : public Setting
@@ -57,32 +53,7 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     */
     QStringMap data() const
     {
-      QStringMap r = mData;
-      // Add secrets flags.
-      foreach (QString key, mSecretsStorageType.keys()) {
-          r.insert(key + "-flags", QString::number(storageTypeToSecretsType(mSecretsStorageType.value(key))));
-
-          // TODO: remove this when all vpnplugins/*/*widget.* are converted to use Settings::secretsTypes.
-          r.insert(key.replace(' ', "-").toLower() + "-type", mSecretsStorageType.value(key));
-      }
-
-      return r;
-    }
-
-    static secretsTypes storageTypeToSecretsType(const QString & storageType)
-    {
-      // Assuming VPN secrets are always AgentOwned.
-      secretsTypes s = AgentOwned;
-      if (storageType == NM_VPN_PW_TYPE_SAVE) {
-        s |= None;
-      }
-      if (storageType == NM_VPN_PW_TYPE_ASK) {
-        s |= NotSaved;
-      }
-      if (storageType == NM_VPN_PW_TYPE_UNUSED) {
-        s |= NotRequired;
-      }
-      return s;
+      return mData;
     }
 
     /**
@@ -133,24 +104,6 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
       return mPluginName;
     }
 
-    /**
-      Set secret storage type
-    */
-    void setSecretsStorageType( const QStringMap & v )
-    {
-      mSecretsStorageType = v;
-    }
-
-    /**
-      Get secret storage type
-    */
-    QStringMap secretsStorageType() const
-    {
-      return mSecretsStorageType;
-    }
-
-    bool hasVolatileSecrets() const;
-
   protected:
 
     // vpn
@@ -159,7 +112,6 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     QString mUserName;
     QStringMap mVpnSecrets;
     QString mPluginName;
-    QStringMap mSecretsStorageType;
 
   private:
 };

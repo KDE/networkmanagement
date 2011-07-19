@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KSharedConfig>
 #include <KStandardDirs>
 #include <KMessageBox>
+#include <KLocale>
 #include "nm-vpnc-service.h"
 
 #include "vpncwidget.h"
@@ -143,7 +144,6 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
 
         QStringMap data;
         QStringMap secretData;
-        QStringMap secretsType;
 
         // gateway
         data.insert(NM_VPNC_KEY_GATEWAY, cg.readEntry("Host"));
@@ -167,21 +167,20 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         switch (cg.readEntry("SaveUserPassword").toInt())
         {
             case 0:
-                secretsType.insert(NM_VPNC_KEY_XAUTH_PASSWORD, NM_VPN_PW_TYPE_ASK);
+                data.insert(NM_VPNC_KEY_XAUTH_PASSWORD"-flags", QString::number(Knm::Setting::NotSaved));
                 break;
             case 1:
-                secretsType.insert(NM_VPNC_KEY_XAUTH_PASSWORD, NM_VPN_PW_TYPE_SAVE);
+                data.insert(NM_VPNC_KEY_XAUTH_PASSWORD"-flags", QString::number(Knm::Setting::AgentOwned));
                 break;
             case 2:
-                secretsType.insert(NM_VPNC_KEY_XAUTH_PASSWORD, NM_VPN_PW_TYPE_UNUSED);
+                data.insert(NM_VPNC_KEY_XAUTH_PASSWORD"-flags", QString::number(Knm::Setting::NotRequired));
                 break;
         }
 
         // group password
         if (!cg.readEntry("GroupPwd").isEmpty()) {
             secretData.insert(NM_VPNC_KEY_SECRET, cg.readEntry("GroupPwd"));
-            secretsType.insert(NM_VPNC_KEY_SECRET, NM_VPN_PW_TYPE_SAVE);
-            data.insert(NM_VPNC_KEY_SECRET_TYPE, NM_VPN_PW_TYPE_SAVE);
+            data.insert(NM_VPNC_KEY_SECRET"-flags", QString::number(Knm::Setting::AgentOwned));
         }
         else if (!cg.readEntry("enc_GroupPwd").isEmpty() && !ciscoDecryptBinary.isEmpty()) {
             //Decrypt the password and insert into map
@@ -191,8 +190,7 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
             decrPlugin->ciscoDecrypt->start();
             if (decrPlugin->ciscoDecrypt->waitForStarted() && decrPlugin->ciscoDecrypt->waitForFinished()) {
                 secretData.insert(NM_VPNC_KEY_SECRET, decrPlugin->decryptedPasswd);
-                secretsType.insert(NM_VPNC_KEY_SECRET, NM_VPN_PW_TYPE_SAVE);
-                data.insert(NM_VPNC_KEY_SECRET_TYPE, NM_VPN_PW_TYPE_SAVE);
+                data.insert(NM_VPNC_KEY_SECRET"-flags", QString::number(Knm::Setting::AgentOwned));
             }
         }
         delete decrPlugin;
@@ -255,14 +253,12 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         // Set the '...-type' and '...-flags' value also
         Knm::VpnSetting setting;
         setting.setData(data);
-        setting.setSecretsStorageType(secretsType);
         // get the filled data() back
         data.clear();
         data = setting.data();
 
         conSetting << Knm::VpnSecrets::variantMapFromStringList(Knm::VpnSecrets::stringMapToStringList(data));
         conSetting << Knm::VpnSecrets::variantMapFromStringList(Knm::VpnSecrets::stringMapToStringList(secretData));
-        conSetting << Knm::VpnSecrets::variantMapFromStringList(Knm::VpnSecrets::stringMapToStringList(secretsType));
         conSetting << cg.readEntry("Description");
     } else {
         mErrorMessage = i18n("%1: file format error.", fileName);
@@ -277,13 +273,11 @@ void VpncUiPlugin::exportConnectionSettings(Knm::Connection * connection, const 
 {
     QStringMap data;
     QStringMap secretData;
-    QStringMap secretsType;
     KSharedConfig::Ptr config = KSharedConfig::openConfig(fileName);
     KConfigGroup cg(config,"main");
 
     Knm::VpnSetting * vpnSetting = static_cast<Knm::VpnSetting*>(connection->setting(Knm::Setting::Vpn));
     data = vpnSetting->data();
-    secretsType = vpnSetting->secretsStorageType();
     secretData = vpnSetting->vpnSecrets();
 
     cg.writeEntry("Description", connection->name());
@@ -299,13 +293,13 @@ void VpncUiPlugin::exportConnectionSettings(Knm::Connection * connection, const 
     cg.writeEntry("UserPassword", "");
     cg.writeEntry("enc_GroupPwd", "");
     cg.writeEntry("enc_UserPassword", "");
-    if (secretsType.value(NM_VPNC_KEY_XAUTH_PASSWORD) == NM_VPN_PW_TYPE_ASK) {
+    if ((Knm::Setting::secretsTypes)data.value(NM_VPNC_KEY_XAUTH_PASSWORD"-flags").toInt() & Knm::Setting::NotSaved) {
         cg.writeEntry("SaveUserPassword", "0");
     }
-    if (secretsType.value(NM_VPNC_KEY_XAUTH_PASSWORD) == NM_VPN_PW_TYPE_SAVE) {
+    if ((Knm::Setting::secretsTypes)data.value(NM_VPNC_KEY_XAUTH_PASSWORD"-flags").toInt() & Knm::Setting::AgentOwned) {
         cg.writeEntry("SaveUserPassword", "1");
     }
-    if (secretsType.value(NM_VPNC_KEY_XAUTH_PASSWORD) == NM_VPN_PW_TYPE_UNUSED) {
+    if ((Knm::Setting::secretsTypes)data.value(NM_VPNC_KEY_XAUTH_PASSWORD"-flags").toInt() & Knm::Setting::NotRequired) {
         cg.writeEntry("SaveUserPassword", "2");
     }
     cg.writeEntry("Username", data.value(NM_VPNC_KEY_XAUTH_USER));

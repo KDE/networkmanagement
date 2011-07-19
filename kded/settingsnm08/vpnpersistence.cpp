@@ -20,7 +20,6 @@ void VpnPersistence::load()
   VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
   setting->setServiceType(m_config->readEntry("ServiceType", ""));
   setting->setData(stringMapFromStringList(m_config->readEntry("Data", QStringList())));
-  setting->setSecretsStorageType(stringMapFromStringList(m_config->readEntry("SecretsStorageType", QStringList())));
   setting->setUserName(m_config->readEntry("UserName", ""));
   // SECRET
   if (m_storageMode == SettingPersistence::PlainText) {

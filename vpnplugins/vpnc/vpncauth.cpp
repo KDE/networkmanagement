@@ -19,8 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "vpncauth.h"
-
-#include <nm-setting-vpn.h>
+#include "ui_vpncauth.h"
 
 #include <QString>
 #include "nm-vpnc-service.h"
@@ -58,29 +57,32 @@ void VpncAuthWidget::readConfig()
 void VpncAuthWidget::readSecrets()
 {
     Q_D(VpncAuthWidget);
+    QStringMap data = d->setting->data();
     QStringMap secrets = d->setting->vpnSecrets();
-    QStringMap secretsType = d->setting->secretsStorageType();
-    QString userType;
-    QString groupType;
-
-    /*
-     * First time "old" settings are loaded secretsType map is empty, so
-     * try to read from data as fallback
-     */
-    userType = secretsType.value(NM_VPNC_KEY_XAUTH_PASSWORD);
-    if (userType.isNull()) {
-        userType = d->setting->data().value(NM_VPNC_KEY_XAUTH_PASSWORD_TYPE);
+    Knm::Setting::secretsTypes userType;
+    Knm::Setting::secretsTypes groupType;
+    if (!data[NM_VPNC_KEY_XAUTH_PASSWORD"-flags"].isEmpty()) {
+        userType = (Knm::Setting::secretsTypes)data[NM_VPNC_KEY_XAUTH_PASSWORD"-flags"].toInt();
+    } else {
+        userType = (Knm::Setting::secretsTypes) Knm::Setting::NotRequired;
     }
-    if (userType == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
+    if (!(userType & Knm::Setting::NotRequired)) {
         d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_XAUTH_PASSWORD)));
+    } else {
+        d->ui.userLabel->setVisible(false);
+        d->ui.leUserPassword->setVisible(false);
     }
 
-    groupType = secretsType.value(NM_VPNC_KEY_SECRET);
-    if (groupType.isNull()) {
-        groupType = d->setting->data().value(NM_VPNC_KEY_SECRET_TYPE);
+    if (!data[NM_VPNC_KEY_SECRET"-flags"].isEmpty()) {
+        groupType = (Knm::Setting::secretsTypes)d->setting->data().value(NM_VPNC_KEY_SECRET"-flags").toInt();
+    } else {
+        groupType = (Knm::Setting::secretsTypes) Knm::Setting::NotRequired;
     }
-    if (groupType == QLatin1String(NM_VPN_PW_TYPE_SAVE)) {
+    if (!(groupType & Knm::Setting::NotRequired)) {
         d->ui.leGroupPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_SECRET)));
+    } else {
+        d->ui.groupLabel->setVisible(false);
+        d->ui.leGroupPassword->setVisible(false);
     }
 
     if (d->ui.leUserPassword->text().isEmpty())

@@ -29,7 +29,7 @@ namespace Knm
 {
     class Connection;
 } // namespace Knm
-
+class QComboBox;
 class PptpSettingWidgetPrivate;
 
 class PptpSettingWidget : public SettingWidget
@@ -44,10 +44,13 @@ public:
     void readSecrets();
 protected Q_SLOTS:
     void doAdvancedDialog();
+    void passwordTypeChanged(int);
     void setShowPassword(bool);
     void validate();
 protected:
     PptpSettingWidgetPrivate * d_ptr;
+    void fillOnePasswordCombo(QComboBox *, Knm::Setting::secretsTypes);
+    uint handleOnePasswordType(const QComboBox *, const QString &, QStringMap &);
 };
 
 #endif // PPTPWIDGET_H

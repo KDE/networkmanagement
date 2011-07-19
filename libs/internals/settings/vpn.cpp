@@ -44,7 +44,6 @@ VpnSetting::VpnSetting() : Setting(Setting::Vpn)
   qDBusRegisterMetaType<QStringMap>();
 
   m_secretsObject = new VpnSecrets(this);
-  mSecretsStorageType = QStringMap();
 }
 
 VpnSetting::VpnSetting(VpnSetting *setting) : Setting(setting)
@@ -57,7 +56,6 @@ VpnSetting::VpnSetting(VpnSetting *setting) : Setting(setting)
     setUserName(setting->userName());
     setVpnSecrets(setting->vpnSecrets());
     setPluginName(setting->pluginName());
-    setSecretsStorageType(setting->secretsStorageType());
 }
 
 VpnSetting::~VpnSetting()
@@ -71,13 +69,4 @@ QString VpnSetting::name() const
 bool VpnSetting::hasSecrets() const
 {
   return true;
-}
-
-bool VpnSetting::hasVolatileSecrets() const
-{
-  foreach(const QString & s, mSecretsStorageType.keys())
-    if (mSecretsStorageType.value(s) == QLatin1String(NM_VPN_PW_TYPE_ASK))
-      return true;
-
-  return false;
 }

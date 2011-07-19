@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>306</width>
+    <width>361</width>
     <height>341</height>
    </rect>
   </property>
@@ -109,9 +109,31 @@
           </item>
           <item>
            <widget class="KLineEdit" name="edt_password">
+            <property name="enabled">
+             <bool>false</bool>
+            </property>
             <property name="passwordMode">
              <bool>true</bool>
             </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="KComboBox" name="cmbPasswordStorage">
+            <item>
+             <property name="text">
+              <string>Always Ask</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Store</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Not Required</string>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>
@@ -204,6 +226,11 @@
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

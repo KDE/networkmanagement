@@ -82,8 +82,7 @@ QStringList VpnSecrets::stringMapToStringList(const QStringMap & map)
 QMap<QString,QString> VpnSecrets::secretsToMap() const
 {
     QMap<QString,QString> map;
-    // Assuming VPN secrets are always AgentOwned.
-    map.insert(QLatin1String("VpnSecrets"), variantMapToStringList(secretsToSave(m_setting->secretsStorageType(), m_setting->vpnSecrets())).join(QLatin1String("%SEP%")));
+    map.insert(QLatin1String("VpnSecrets"), variantMapToStringList(secretsToSave(m_setting->data(), m_setting->vpnSecrets())).join(QLatin1String("%SEP%")));
     return map;
 }
 
@@ -121,13 +120,13 @@ QStringList VpnSecrets::needSecrets()
     return QStringList() << "VpnSecrets";
 }
 
-QVariantMap VpnSecrets::secretsToSave(const QStringMap & type, const QStringMap & secrets)
+QVariantMap VpnSecrets::secretsToSave(const QStringMap & data, const QStringMap & secrets)
 {
     QVariantMap toSave;
     QMapIterator<QString,QString> i(secrets);
     while (i.hasNext()) {
         i.next();
-        if (type[i.key()].isNull() || type[i.key()] == QLatin1String(NM_VPN_PW_TYPE_SAVE))
+        if ((Knm::Setting::secretsTypes)data[i.key() + "-flags"].toInt() & Knm::Setting::AgentOwned)
             toSave.insert( i.key(), i.value() );
     }
     return toSave;

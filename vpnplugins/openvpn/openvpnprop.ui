@@ -155,17 +155,40 @@
                <property name="text">
                 <string>Key password:</string>
                </property>
-               <property name="buddy">
-                <cstring>x509KeyPassword</cstring>
-               </property>
               </widget>
              </item>
              <item row="3" column="1">
-              <widget class="KLineEdit" name="x509KeyPassword">
-               <property name="passwordMode">
-                <bool>true</bool>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_3">
+               <item>
+                <widget class="KLineEdit" name="x509KeyPassword">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="passwordMode">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="KComboBox" name="x509KeyPasswordStorage">
+                 <item>
+                  <property name="text">
+                   <string>Always Ask</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Store</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Not Required</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>
@@ -342,17 +365,40 @@
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
-               <property name="buddy">
-                <cstring>passPassword</cstring>
-               </property>
               </widget>
              </item>
              <item row="2" column="1">
-              <widget class="KLineEdit" name="passPassword">
-               <property name="passwordMode">
-                <bool>true</bool>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_11">
+               <item>
+                <widget class="KLineEdit" name="passPassword">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="passwordMode">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="KComboBox" name="passPasswordStorage">
+                 <item>
+                  <property name="text">
+                   <string>Always Ask</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Store</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Not Required</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>
@@ -428,16 +474,6 @@
                <property name="text">
                 <string>Key password</string>
                </property>
-               <property name="buddy">
-                <cstring>x509PassKeyPassword</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1">
-              <widget class="KLineEdit" name="x509PassKeyPassword">
-               <property name="passwordMode">
-                <bool>true</bool>
-               </property>
               </widget>
              </item>
              <item row="4" column="0">
@@ -461,17 +497,73 @@
                <property name="text">
                 <string>Password</string>
                </property>
-               <property name="buddy">
-                <cstring>x509PassPassword</cstring>
-               </property>
               </widget>
              </item>
+             <item row="3" column="1">
+              <layout class="QHBoxLayout" name="horizontalLayout_12">
+               <item>
+                <widget class="KLineEdit" name="x509PassKeyPassword">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="passwordMode">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="KComboBox" name="x509PassKeyPasswordStorage">
+                 <item>
+                  <property name="text">
+                   <string>Always Ask</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Store</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Not Required</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </item>
              <item row="5" column="1">
-              <widget class="KLineEdit" name="x509PassPassword">
-               <property name="echoMode">
-                <enum>QLineEdit::Password</enum>
-               </property>
-              </widget>
+              <layout class="QHBoxLayout" name="horizontalLayout_13">
+               <item>
+                <widget class="KLineEdit" name="x509PassPassword">
+                 <property name="enabled">
+                  <bool>false</bool>
+                 </property>
+                 <property name="echoMode">
+                  <enum>QLineEdit::Password</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="KComboBox" name="x509PassPasswordStorage">
+                 <item>
+                  <property name="text">
+                   <string>Always Ask</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Store</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Not Required</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
              </item>
             </layout>
            </item>
@@ -982,7 +1074,7 @@
        <item row="4" column="0">
         <widget class="QLabel" name="label_14">
          <property name="text">
-          <string>Proxy Username</string>
+          <string>Proxy Username:</string>
          </property>
          <property name="buddy">
           <cstring>proxyUsername</cstring>
@@ -992,22 +1084,12 @@
        <item row="5" column="0">
         <widget class="QLabel" name="label_15">
          <property name="text">
-          <string>Proxy Password</string>
-         </property>
-         <property name="buddy">
-          <cstring>proxyPassword</cstring>
+          <string>Proxy Password:</string>
          </property>
         </widget>
        </item>
        <item row="4" column="1">
         <widget class="KLineEdit" name="proxyUsername"/>
-       </item>
-       <item row="5" column="1">
-        <widget class="KLineEdit" name="proxyPassword">
-         <property name="echoMode">
-          <enum>QLineEdit::Password</enum>
-         </property>
-        </widget>
        </item>
        <item row="6" column="1">
         <widget class="QCheckBox" name="chkProxyShowPassword">
@@ -1015,6 +1097,39 @@
           <string>Show Password</string>
          </property>
         </widget>
+       </item>
+       <item row="5" column="1">
+        <layout class="QHBoxLayout" name="horizontalLayout_14">
+         <item>
+          <widget class="KLineEdit" name="proxyPassword">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="echoMode">
+            <enum>QLineEdit::Password</enum>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="KComboBox" name="proxyPasswordStorage">
+           <item>
+            <property name="text">
+             <string>Always Ask</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Store</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>Not Required</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -1052,7 +1167,6 @@
   <tabstop>x509CaFile</tabstop>
   <tabstop>x509Cert</tabstop>
   <tabstop>x509Key</tabstop>
-  <tabstop>x509KeyPassword</tabstop>
   <tabstop>sbCustomPort</tabstop>
   <tabstop>chkUseLZO</tabstop>
   <tabstop>chkUseTCP</tabstop>
@@ -1065,34 +1179,15 @@
   <tabstop>x509PassCaFile</tabstop>
   <tabstop>x509PassCert</tabstop>
   <tabstop>x509PassKey</tabstop>
-  <tabstop>x509PassKeyPassword</tabstop>
   <tabstop>x509PassUsername</tabstop>
-  <tabstop>x509PassPassword</tabstop>
   <tabstop>pskSharedKey</tabstop>
   <tabstop>pskLocalIp</tabstop>
   <tabstop>pskRemoteIp</tabstop>
   <tabstop>passCaFile</tabstop>
   <tabstop>passUserName</tabstop>
-  <tabstop>passPassword</tabstop>
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>cmbConnectionType</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>stackedWidget</receiver>
-   <slot>setCurrentIndex(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>111</x>
-     <y>67</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>584</x>
-     <y>150</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>chkUseCustomReneg</sender>
    <signal>toggled(bool)</signal>
@@ -1106,6 +1201,22 @@
     <hint type="destinationlabel">
      <x>319</x>
      <y>70</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cmbConnectionType</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>stackedWidget</receiver>
+   <slot>setCurrentIndex(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>584</x>
+     <y>150</y>
     </hint>
    </hints>
   </connection>

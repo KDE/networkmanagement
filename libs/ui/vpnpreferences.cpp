@@ -62,16 +62,12 @@ VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
             kDebug() << error;
         }
     }
-    // If additional settings are passed, populate them : data, secretsData and secretsType, connection name
+    // If additional settings are passed, populate them : data, secretsData, connection name
     // Connection Name
-    if (args.count() > 5) {
-        m_contents->setDefaultName(args[5].toString());
+    if (args.count() > 4) {
+        m_contents->setDefaultName(args[4].toString());
     }
     Knm::VpnSetting * conSetting = static_cast<Knm::VpnSetting*>(m_connection->setting(Knm::Setting::Vpn));
-    if (args.count() > 4) {
-        // Secret Storage Type
-	conSetting->setSecretsStorageType(Knm::VpnSecrets::stringMapFromStringList(Knm::VpnSecrets::variantMapToStringList(args[4].toMap())));
-    }
     if (args.count() > 3) {
         // VPN Secrets
 	conSetting->setVpnSecrets(Knm::VpnSecrets::stringMapFromStringList(Knm::VpnSecrets::variantMapToStringList(args[3].toMap())));
