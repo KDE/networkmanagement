@@ -49,13 +49,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 static const int iconSize = 48;
 
-K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration))
+K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "libknetworkmanager", KComponentData::SkipMainComponentRegistration))
 
 InterfaceNotificationHost::InterfaceNotificationHost(Solid::Control::NetworkInterface * interface, NotificationManager * manager) : QObject(manager), m_manager(manager), m_interface(interface), m_suppressStrengthNotification(false)
 {
     // Keep a record for when it is removed
     m_interfaceNameLabel = UiUtils::interfaceNameLabel(interface->uni());
-    
+
     // For the notification icon
     m_type = interface->type();
 
@@ -109,7 +109,7 @@ void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::I
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(sender());
 
     switch (state) {
-        case Knm::InterfaceConnection::Activating: 
+        case Knm::InterfaceConnection::Activating:
             kDebug() << ic->connectionName() << "is activating";
             m_activating.insert(ic);
             KNotification::event(Event::Connecting, m_interfaceNameLabel, i18nc("@info:status Notification text when connecting","Activating %1", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
@@ -163,7 +163,7 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
     // need to keep the notification object around to reset it during connection cycles, but
     // delete it at the end of a connection cycle
     // keep a map of interface to KNotification
-    // if not end of connection cycle, look for a 
+    // if not end of connection cycle, look for a
     // if set and not end of connection cycle, reuse this notification
     bool keepNotification = false;
 
@@ -183,7 +183,7 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
     }
 
     //X     QSetIterator<Knm::InterfaceConnection*> it(m_interfaceConnections);
-    //X 
+    //X
     //X     while (it.hasNext()) {
     //X         Knm::InterfaceConnection * ic = it.next();
     //X         if (ic->activationState() == Knm::InterfaceConnection::Activating) {
@@ -440,7 +440,7 @@ void NotificationManager::handleUpdate(Knm::Activatable *activatable)
         Knm::VpnInterfaceConnection * ic = qobject_cast<Knm::VpnInterfaceConnection *>(activatable);
         if (ic) {
             switch (ic->activationState()) {
-                case Knm::InterfaceConnection::Activating: 
+                case Knm::InterfaceConnection::Activating:
                     kDebug() << ic->connectionName() << "is activating";
                     KNotification::event(Event::Connecting, QString(), i18nc("@info:status Notification text when connecting","Activating %1", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
                     break;
@@ -584,7 +584,7 @@ void NotificationManager::networkDisappeared(const QString & ssid)
 
 void NotificationManager::notifyNewNetworks()
 {
-    Q_D(NotificationManager);    
+    Q_D(NotificationManager);
     if (d->newWirelessNetworks.count() == 0) {
         return;
     } else if (d->newWirelessNetworks.count() == 1) {
