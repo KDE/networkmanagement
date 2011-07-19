@@ -65,9 +65,11 @@ ConnectionEditor::~ConnectionEditor()
 
 Knm::Connection *ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariantList &args)
 {
-    KDialog configDialog(0);
+    QWidget *parentWidget = qobject_cast<QWidget*>(parent());
+    KDialog configDialog(parentWidget);
     configDialog.setCaption(i18nc("Edit connection dialog caption", "Edit Network Connection"));
     configDialog.setWindowIcon(KIcon("networkmanager"));
+    configDialog.setWindowModality(Qt::WindowModal);
 
     ConnectionPreferences * cprefs = editorForConnectionType(false, &configDialog, type, args);
     connect(cprefs, SIGNAL(valid(bool)), &configDialog, SLOT(enableButtonOk(bool)));
@@ -85,11 +87,12 @@ Knm::Connection *ConnectionEditor::editConnection(Knm::Connection::Type type, co
 
 Knm::Connection *ConnectionEditor::editConnection(Knm::Connection *con)
 {
-
     Knm::Connection *cprefsCon = NULL;
-    KDialog configDialog(0);
+    QWidget *parentWidget = qobject_cast<QWidget*>(parent());
+    KDialog configDialog(parentWidget);
     configDialog.setCaption(i18nc("Edit connection dialog caption", "Edit Network Connection"));
     configDialog.setWindowIcon(KIcon("networkmanager"));
+    configDialog.setWindowModality(Qt::WindowModal);
 
     ConnectionPreferences * cprefs = editorForConnectionType(false, &configDialog, con);
     connect(cprefs, SIGNAL(valid(bool)), &configDialog, SLOT(enableButtonOk(bool)));
@@ -117,9 +120,11 @@ Knm::Connection *ConnectionEditor::editConnection(Knm::Connection *con)
 Knm::Connection *ConnectionEditor::createConnection(bool useDefaults, Knm::Connection::Type type, const QVariantList &otherArgs, const bool autoAccept)
 {
     Knm::Connection *cprefsCon = NULL;
-    KDialog configDialog(0);
+    QWidget *parentWidget = qobject_cast<QWidget*>(parent());
+    KDialog configDialog(parentWidget);
     configDialog.setCaption(i18nc("Add connection dialog caption", "Add Network Connection"));
     configDialog.setWindowIcon(KIcon("networkmanager"));
+    configDialog.setWindowModality(Qt::WindowModal);
 
     QVariantList args;
 
