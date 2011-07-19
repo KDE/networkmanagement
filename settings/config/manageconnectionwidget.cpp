@@ -149,9 +149,7 @@ ManageConnectionWidget::~ManageConnectionWidget()
     //(prevents crashes when closing kcmshell too fast after adding/editing
     //a connection, as this is then deleted from another thread)
     usleep(100000);
-    delete mSystemSettings;
-    delete mConnections;
-    delete mEditor;
+    QDBusConnection::sessionBus().unregisterService(QLatin1String("org.kde.NetworkManager.KCModule"));
 }
 
 void ManageConnectionWidget::createConnection(const QString &connectionType, const QVariantList &args)
@@ -541,7 +539,7 @@ void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMess
         else
             KMessageBox::error(this, errorMessage);
     }
-    
+
     kDebug() << uuid << mEditConnection->uuid();
 
     if (uuid != mEditConnection->uuid()) {
