@@ -60,25 +60,9 @@ void OpenVpnAuthWidget::readSecrets()
     QLabel *label;
     KLineEdit *lineEdit;
 
-    Knm::Setting::secretsTypes certType;
-    Knm::Setting::secretsTypes passType;
-    Knm::Setting::secretsTypes proxyType;
-
-    if (!dataMap[NM_OPENVPN_KEY_CERTPASS"-flags"].isEmpty()) {
-        certType = (Knm::Setting::secretsTypes)dataMap[NM_OPENVPN_KEY_CERTPASS"-flags"].toInt();
-    } else {
-        certType = (Knm::Setting::secretsTypes)Knm::Setting::NotRequired;
-    }
-    if (!dataMap[NM_OPENVPN_KEY_PASSWORD"-flags"].isEmpty()) {
-        passType = (Knm::Setting::secretsTypes)dataMap[NM_OPENVPN_KEY_PASSWORD"-flags"].toInt();
-    } else {
-        passType = (Knm::Setting::secretsTypes)Knm::Setting::NotRequired;
-    }
-    if (!dataMap[NM_OPENVPN_KEY_HTTP_PROXY_PASSWORD"-flags"].isEmpty()) {
-        proxyType = (Knm::Setting::secretsTypes)dataMap[NM_OPENVPN_KEY_HTTP_PROXY_PASSWORD"-flags"].toInt();
-    } else {
-        proxyType = (Knm::Setting::secretsTypes)Knm::Setting::NotRequired;
-    }
+    Knm::Setting::secretsTypes certType = (Knm::Setting::secretsTypes)dataMap[NM_OPENVPN_KEY_CERTPASS"-flags"].toInt();
+    Knm::Setting::secretsTypes passType = (Knm::Setting::secretsTypes)dataMap[NM_OPENVPN_KEY_PASSWORD"-flags"].toInt();
+    Knm::Setting::secretsTypes proxyType = (Knm::Setting::secretsTypes)dataMap[NM_OPENVPN_KEY_HTTP_PROXY_PASSWORD"-flags"].toInt();
 
     if (cType == QLatin1String(NM_OPENVPN_CONTYPE_TLS) && !(certType & Knm::Setting::NotRequired)) {
         label = new QLabel(this);
