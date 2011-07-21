@@ -681,13 +681,13 @@ void ManageConnectionWidget::tabChanged(int index)
             }
             connect(mVpnMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
             mConnEditUi.buttonSetVpn->addButton()->setMenu(mVpnMenu);
+            mConnEditUi.buttonSetVpn->addButton()->setEnabled(!mVpnMenu->isEmpty());
+            mConnEditUi.buttonSetVpn->importButton()->setEnabled(!mVpnMenu->isEmpty());
+            mConnEditUi.buttonSetVpn->importButton()->setVisible(!mVpnMenu->isEmpty());
+            mConnEditUi.buttonSetVpn->exportButton()->setVisible(!mVpnMenu->isEmpty());
+            connect(mConnEditUi.buttonSetVpn->importButton(),SIGNAL(clicked()),SLOT(importClicked()));
+            connect(mConnEditUi.buttonSetVpn->exportButton(),SIGNAL(clicked()),SLOT(exportClicked()));
         }
-        mConnEditUi.buttonSetVpn->addButton()->setEnabled(!mVpnMenu->isEmpty());
-        mConnEditUi.buttonSetVpn->importButton()->setEnabled(!mVpnMenu->isEmpty());
-        mConnEditUi.buttonSetVpn->importButton()->setVisible(!mVpnMenu->isEmpty());
-        mConnEditUi.buttonSetVpn->exportButton()->setVisible(!mVpnMenu->isEmpty());
-        connect(mConnEditUi.buttonSetVpn->importButton(),SIGNAL(clicked()),SLOT(importClicked()));
-        connect(mConnEditUi.buttonSetVpn->exportButton(),SIGNAL(clicked()),SLOT(exportClicked()));
     }
 }
 
