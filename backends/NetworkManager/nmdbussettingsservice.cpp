@@ -247,10 +247,6 @@ void NMDBusSettingsService::interfaceConnectionActivated()
                 // Try to pin-unlock the modem.
                 QMetaObject::invokeMethod(modem, "unlockRequiredChanged", Qt::DirectConnection,
                                           Q_ARG(QString, modem->unlockRequired()));
-                kDebug() << "Trying to enable modem";
-#if NM_0_8
-                Solid::Control::NetworkManager::setWwanEnabled(true);
-#endif
             }
         }
 #endif
