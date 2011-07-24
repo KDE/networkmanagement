@@ -267,12 +267,20 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
         ConnectionDbus converter(newConnection);
         QVariantMapMap map = converter.toDbusMap();
 
-        remote->Update(map);
-
-        // FIXME: if connection's name (id in NM termonology) changed in the Update call above,
-        // NM will leave the old connection file intact and create/update a new connection file
-        // in /etc/NetworkManager/system-connections/ with the same uuid, which is wrong in my oppinion.
-        // Furthermore the old connection is not shown in kcm's because we use the uuid as connection identifier.
+        if (newConnection->name() == remote->id()) {
+            remote->Update(map);
+        } else {
+            /* If connection's name (id in NM's termonology) changes during an Update
+             * NM will leave the old connection file intact and create a new connection file
+             * in /etc/NetworkManager/system-connections/ with the same uuid, which is wrong in my oppinion.
+             * Furthermore the old connection will not be shown in connection list because we use the uuid
+             * as connection identifier.
+             * Deleting the old connection and creating a new one seems to work.
+             */
+            QDBusPendingCall reply = remote->Delete();
+            reply.waitForFinished();
+            addConnection(newConnection);
+        }
 
         // don't do any processing on d->connections and d->connectionList here
         // because onRemoteConnectionUpdated() method will take care of them
