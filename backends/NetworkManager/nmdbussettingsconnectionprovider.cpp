@@ -334,6 +334,7 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
         RemoteConnection *remote = d->connections.value(uuid);
         kDebug() << "Updating connection "<< remote->id() << objPath;
 
+        newConnection->setUuid(uuid);
         newConnection->saveCertificates();
         newConnection->setSecrets();
         ConnectionDbus converter(newConnection);
