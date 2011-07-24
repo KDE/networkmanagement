@@ -66,6 +66,7 @@ int main(int argc, char **argv)
 
     kDebug(KDE_DEFAULT_DEBUG_AREA) << specificArgs;
     kDebug(KDE_DEFAULT_DEBUG_AREA) << args;
+    QTextStream qout(stdout, QIODevice::WriteOnly);
 
     if (args->arg(0) == QLatin1String("create")) {
         if (args->isSet("type")) {
@@ -93,6 +94,7 @@ int main(int argc, char **argv)
                     new Bluetooth(specificArgs[0].toString(), specificArgs[1].toString());
                     return app.exec();
                 } else {
+                    qout << i18n("Expected two specific args, found %1: %2", specificArgs.count(), specifics) << "\n"; 
                     return -1;
                 }
             }
