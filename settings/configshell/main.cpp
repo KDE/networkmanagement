@@ -65,6 +65,7 @@ int main(int argc, char **argv)
 
     kDebug() << specificArgs;
 
+    QTextStream qout(stdout, QIODevice::WriteOnly);
     KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
     kDebug() << args;
 
@@ -95,6 +96,7 @@ int main(int argc, char **argv)
                     new Bluetooth(specificArgs[0].toString(), specificArgs[1].toString());
                     return app.exec();
                 } else {
+                    qout << i18n("Expected two specific args, found %1: %2", specificArgs.count(), specifics) << "\n"; 
                     return -1;
                 }
             }
