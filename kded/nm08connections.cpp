@@ -56,7 +56,7 @@ Nm08Connections::Nm08Connections(SecretStorage * secretStorage, NMDBusSettingsCo
     m_connectionsToImport = KNetworkManagerServicePrefs::self()->connections();
     kDebug() << "Connections to import:" << m_connectionsToImport;
 
-    connect(m_secretStorage, SIGNAL(connectionRead(Knm::Connection *, const QString&)), SLOT(gotSecrets(Knm::Connection *)));
+    connect(m_secretStorage, SIGNAL(connectionRead(Knm::Connection *, const QString&, bool)), SLOT(gotSecrets(Knm::Connection *, const QString&, bool)));
     connect(m_nmDBusConnectionProvider, SIGNAL(addConnectionCompleted(bool, const QString &)), SLOT(importNextNm08Connection()));
 }
 
@@ -88,8 +88,8 @@ void Nm08Connections::importNextNm08Connection()
             }
             qDeleteAll(m_connectionsToDelete);
             m_connectionsToDelete.clear();
-            deleteLater();
         }
+        deleteLater();
         return;
     }
 
@@ -144,7 +144,7 @@ END:
     QTimer::singleShot(0, this, SLOT(importNextNm08Connection()));
 }
 
-void Nm08Connections::gotSecrets(Knm::Connection * connection)
+void Nm08Connections::gotSecrets(Knm::Connection * connection, const QString & settingName, bool ok)
 {
     if (!m_connectionsToDelete.contains(connection) || m_connectionsBeingAdded.contains(connection)) {
         return;

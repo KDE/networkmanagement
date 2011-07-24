@@ -39,7 +39,7 @@ public Q_SLOTS:
     void importNextNm08Connection();
 
 private Q_SLOTS:
-    void gotSecrets(Knm::Connection *);
+    void gotSecrets(Knm::Connection *, const QString&, bool);
 
 private:
     Knm::SettingPersistence * persistenceFor(Knm::Setting * setting, KSharedConfig::Ptr config);
