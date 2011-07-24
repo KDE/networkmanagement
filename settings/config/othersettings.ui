@@ -104,7 +104,7 @@
    <item row="5" column="2">
     <widget class="QPushButton" name="notificationsButton">
      <property name="text">
-      <string>Configure notifications...</string>
+      <string>Configure Notifications...</string>
      </property>
     </widget>
    </item>
