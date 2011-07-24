@@ -33,6 +33,7 @@ public:
     static void saveConnection(Knm::Connection *con);
 private Q_SLOTS:
     void addConnectionCompleted(bool valid, const QString &errorMessage);
+    void updateConnectionCompleted();
 private:
     NMDBusSettingsConnectionProvider * mSystemSettings;
 };

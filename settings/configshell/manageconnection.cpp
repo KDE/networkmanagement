@@ -18,18 +18,43 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QTimer>
+
 #include <KDebug>
 #include <KLocale>
 #include <KMessageBox>
 
 #include "manageconnection.h"
+#include "settings/bluetooth.h"
 
-ManageConnection::ManageConnection(Knm::Connection *con): mSystemSettings(0)
+ManageConnection::ManageConnection(Knm::Connection *con)
 {
+    bool addConnection = true;
     NMDBusSettingsConnectionProvider * mSystemSettings = new NMDBusSettingsConnectionProvider(0, 0);
-    connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool, const QString &)), SLOT(addConnectionCompleted(bool, const QString &)));
-    mSystemSettings->addConnection(con);
-    ConnectionEditor editor(0);
+    Knm::BluetoothSetting * btSetting = static_cast<Knm::BluetoothSetting *>(con->setting(Knm::Setting::Bluetooth));
+
+    if (btSetting) {
+        foreach(const QString connectionId, mSystemSettings->connectionList()->connections()) {
+            Knm::Connection * c = mSystemSettings->connectionList()->findConnection(connectionId);
+            Knm::BluetoothSetting * setting = static_cast<Knm::BluetoothSetting *>(c->setting(Knm::Setting::Bluetooth));
+    
+            if (setting && setting->bdaddr() == btSetting->bdaddr()) {
+                kDebug() << "Updating existing bluetooth connection instead of creating one";
+                connect(mSystemSettings, SIGNAL(connectionsChanged()), SLOT(updateConnectionCompleted()));
+                mSystemSettings->updateConnection(c->uuid(), con);
+                addConnection = false;
+
+                // In case the connectionChanged signal never arrives.
+                QTimer::singleShot(60000, this, SLOT(updateConnectionCompleted()));
+                break;
+            }
+        }
+    }
+
+    if (addConnection) {
+        connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool, const QString &)), SLOT(addConnectionCompleted(bool, const QString &)));
+        mSystemSettings->addConnection(con);
+    }
 }
 
 ManageConnection::~ManageConnection()
@@ -54,6 +79,12 @@ void ManageConnection::addConnectionCompleted(bool valid, const QString &errorMe
             KMessageBox::error(0, errorMessage);
     }
 
+    deleteLater();
+    kapp->quit();
+}
+
+void ManageConnection::updateConnectionCompleted()
+{
     deleteLater();
     kapp->quit();
 }

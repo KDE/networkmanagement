@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatableobserver.h"
 #include "connectionhandler.h"
+#include "connectionlist.h"
 
 #include <QDBusObjectPath>
 #include <QDBusPendingCallWatcher>
@@ -65,6 +66,7 @@ public:
     void addConnection(Knm::Connection *newConnection);
     bool getConnectionSecrets(Knm::Connection *con);
     void removeConnection(const QString &uuid);
+    ConnectionList * connectionList();
 
 Q_SIGNALS:
     void connectionsChanged();
