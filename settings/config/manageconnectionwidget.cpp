@@ -289,6 +289,7 @@ void ManageConnectionWidget::restoreUserConnections()
 void ManageConnectionWidget::restoreConnections()
 {
     // clean up the lists
+    mUuidItemHash.clear();
     mConnEditUi.listWired->clear();
     mConnEditUi.listWireless->clear();
     mConnEditUi.listCellular->clear();
