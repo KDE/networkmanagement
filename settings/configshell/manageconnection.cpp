@@ -34,7 +34,7 @@ ManageConnection::ManageConnection(Knm::Connection *con)
     Knm::BluetoothSetting * btSetting = static_cast<Knm::BluetoothSetting *>(con->setting(Knm::Setting::Bluetooth));
 
     if (btSetting) {
-        foreach(const QString connectionId, mSystemSettings->connectionList()->connections()) {
+        foreach(const QString & connectionId, mSystemSettings->connectionList()->connections()) {
             Knm::Connection * c = mSystemSettings->connectionList()->findConnection(connectionId);
             Knm::BluetoothSetting * setting = static_cast<Knm::BluetoothSetting *>(c->setting(Knm::Setting::Bluetooth));
     
