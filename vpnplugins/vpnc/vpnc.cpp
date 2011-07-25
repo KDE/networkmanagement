@@ -103,6 +103,11 @@ QString VpncUiPlugin::suggestedFileName(Knm::Connection *connection) const
     return connection->name() + ".pcf";
 }
 
+QString VpncUiPlugin::supportedFileExtensions() const
+{
+    return "*.pcf";
+}
+
 QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
 {
     kDebug() << "Importing Cisco VPN connection from " << fileName;
@@ -269,12 +274,14 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
     return conSetting;
 }
 
-void VpncUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
+bool VpncUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
 {
     QStringMap data;
     QStringMap secretData;
     KSharedConfig::Ptr config = KSharedConfig::openConfig(fileName);
     KConfigGroup cg(config,"main");
+    if (!cg.exists())
+        return false;
 
     Knm::VpnSetting * vpnSetting = static_cast<Knm::VpnSetting*>(connection->setting(Knm::Setting::Vpn));
     data = vpnSetting->data();
@@ -344,7 +351,7 @@ void VpncUiPlugin::exportConnectionSettings(Knm::Connection * connection, const 
     }
     // TODO : export X-NM-Routes
 
-    return;
+    return true;
 }
 
 // vim: sw=4 sts=4 et tw=100

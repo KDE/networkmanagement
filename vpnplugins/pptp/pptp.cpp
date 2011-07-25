@@ -55,16 +55,22 @@ QString PptpUiPlugin::suggestedFileName(Knm::Connection *connection) const
     return QString();
 }
 
+QString PptpUiPlugin::supportedFileExtensions() const
+{
+    // TODO : return supported file extensions
+    return QString();
+}
+
 QVariantList PptpUiPlugin::importConnectionSettings(const QString &fileName)
 {
     // TODO : import the PPTP connection from file and return settings
     return QVariantList();
 }
 
-void PptpUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
+bool PptpUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
 {
     // TODO : export PPTP connection to file
-    return;
+    return false;
 }
 
 // vim: sw=4 sts=4 et tw=100

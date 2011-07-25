@@ -152,6 +152,13 @@ private:
      * Connect add/edit/delete button signals to relevant slots
      */
     void connectButtonSet(AddEditDeleteButtonSet*, QTreeWidget*);
+
+    /**
+     * This variable will contain all file extensions supported for
+     * import by all VPN plugins. The extensions are separated by space,
+     * e.g '*.pcf *.ovpn' and are used in KFileDialog on selecting file to import
+     */
+    QString mSupportedExtns;
 };
 
 #endif // NM09_MANAGE_CONNECTION_WIDGET_H

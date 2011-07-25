@@ -39,8 +39,9 @@ public:
     SettingWidget * widget(Knm::Connection *, QWidget * parent = 0);
     SettingWidget * askUser(Knm::Connection *, QWidget * parent = 0);
     QString suggestedFileName(Knm::Connection *connection) const;
+    QString supportedFileExtensions() const;
     QVariantList importConnectionSettings(const QString &fileName);
-    void exportConnectionSettings(Knm::Connection * connection, const QString &fileName);
+    bool exportConnectionSettings(Knm::Connection * connection, const QString &fileName);
 };
 
 #endif //  KNM4_OPENVPN_H

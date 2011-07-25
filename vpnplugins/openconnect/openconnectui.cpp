@@ -60,15 +60,21 @@ QString OpenconnectUiPlugin::suggestedFileName(Knm::Connection *connection) cons
     return QString();
 }
 
+QString OpenconnectUiPlugin::supportedFileExtenstions() const
+{
+    // TODO: return supported file extensions
+    return QString();
+}
+
 QVariantList OpenconnectUiPlugin::importConnectionSettings(const QString &fileName)
 {
     // TODO : import the Openconnect connection from file and return settings
     return QVariantList();
 }
 
-void OpenconnectUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
+bool OpenconnectUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
 {
     // TODO : export Openconnect connection to file
-    return;
+    return false;
 }
 

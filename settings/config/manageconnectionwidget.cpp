@@ -402,7 +402,7 @@ void ManageConnectionWidget::addClicked()
 void ManageConnectionWidget::importClicked()
 {
     //Get the file from which connection is to be imported
-    QString impFile = KFileDialog::getOpenFileName(KUser().homeDir(),"*.pcf",this,i18nc("File chooser dialog title for importing VPN","Import VPN connection settings"));
+    QString impFile = KFileDialog::getOpenFileName(KUser().homeDir(),mSupportedExtns,this,i18nc("File chooser dialog title for importing VPN","Import VPN connection settings"));
     if (impFile.isEmpty()) {
         return;
     }
@@ -416,7 +416,6 @@ void ManageConnectionWidget::importClicked()
         QString serviceType = pi.service()->property("X-NetworkManager-Services", QVariant::String).toString();
         VpnUiPlugin * vpnUi = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-NetworkManager-Services]=='%1'" ).arg( serviceType ), this, QVariantList(), &pluginError );
         if (pluginError.isEmpty()) {
-
             QVariantList conArgs = vpnUi->importConnectionSettings(impFile);
             if (conArgs.isEmpty()) {
                 if (vpnUi->lastError() != VpnUiPlugin::NotImplemented) {
@@ -670,6 +669,7 @@ void ManageConnectionWidget::tabChanged(int index)
 {
     if (index == 3) {
         if ( !mVpnMenu ) {
+            mSupportedExtns.clear();
             mVpnMenu = new QMenu(this);
             // foreach vpn service, add one of these
             KPluginInfo::List vpnServices = KPluginInfo::fromServices(KServiceTypeTrader::self()->query(QLatin1String("NetworkManagement/VpnUiPlugin")));
@@ -678,7 +678,17 @@ void ManageConnectionWidget::tabChanged(int index)
                 QAction * vpnAction = new QAction(pi.name(), this);
                 vpnAction->setData(serviceType);
                 mVpnMenu->addAction(vpnAction);
+                // Add supported file extensions for import
+                QString pluginError;
+                VpnUiPlugin * vpnUi = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-NetworkManager-Services]=='%1'" ).arg( serviceType ), this, QVariantList(), &pluginError );
+                if (pluginError.isEmpty()) {
+                    QString extn = vpnUi->supportedFileExtensions();
+                    if (!extn.isEmpty())
+                        mSupportedExtns +=  extn + ' '; // Separate by space
+                    delete vpnUi;
+                }
             }
+            mSupportedExtns = mSupportedExtns.trimmed();    // Remove redundant space, if any
             connect(mVpnMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
             mConnEditUi.buttonSetVpn->addButton()->setMenu(mVpnMenu);
             mConnEditUi.buttonSetVpn->addButton()->setEnabled(!mVpnMenu->isEmpty());
