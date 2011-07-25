@@ -92,5 +92,38 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cbShowPasswords</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>leGroupPassword</receiver>
+   <slot>setPasswordMode(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>143</x>
+     <y>39</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbShowPasswords</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>leUserPassword</receiver>
+   <slot>setPasswordMode(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>63</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>203</x>
+     <y>14</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
