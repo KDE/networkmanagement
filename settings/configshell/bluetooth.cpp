@@ -28,11 +28,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KApplication>
 #include <KStandardDirs>
 
+#include "settings/bluetooth.h"
 #include "bluetooth.h"
 
-// For now all connections are user scope. For NM-0.9 we will have to change that to system scope.
+// Connections are saved in user scope.
 void saveConnection(Knm::Connection *con)
 {
+    Knm::BluetoothSetting * btSetting = static_cast<Knm::BluetoothSetting *>(con->setting(Knm::Setting::Bluetooth));
+
+    if (btSetting) {
+        foreach (const QString &connectionId, KNetworkManagerServicePrefs::self()->connections()) {
+            QString connectionFile = KStandardDirs::locateLocal("data",
+                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId);
+            KSharedConfig::Ptr config = KSharedConfig::openConfig(connectionFile, KConfig::NoGlobals);
+    
+            if (config.isNull()) {
+                continue;
+            }
+    
+            KConfigGroup connection(config, "connection");
+            if (connection.readEntry("type") != QLatin1String("bluetooth")) {
+                continue;
+            }
+
+            Knm::ConnectionPersistence cp(config,
+                    (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode()
+                    );
+            cp.load();
+            Knm::Connection * c = cp.connection();
+            Knm::BluetoothSetting * setting = static_cast<Knm::BluetoothSetting *>(c->setting(Knm::Setting::Bluetooth));
+
+            // Set to update existing bluetooth connection instead of creating a new one.
+            if (setting && setting->bdaddr() == btSetting->bdaddr()) {
+                con->setUuid(c->uuid());
+                break;
+            }
+        }
+    }
+
     // persist the Connection
     QString connectionFile = KStandardDirs::locateLocal("data",
         Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + QString(con->uuid()));
