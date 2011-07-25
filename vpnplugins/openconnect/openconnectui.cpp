@@ -60,7 +60,7 @@ QString OpenconnectUiPlugin::suggestedFileName(Knm::Connection *connection) cons
     return QString();
 }
 
-QString OpenconnectUiPlugin::supportedFileExtenstions() const
+QString OpenconnectUiPlugin::supportedFileExtensions() const
 {
     // TODO: return supported file extensions
     return QString();
