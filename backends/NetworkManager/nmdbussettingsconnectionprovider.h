@@ -85,7 +85,6 @@ private:
 
     void initialiseAndRegisterRemoteConnection(const QString & path);
     void makeConnections(RemoteConnection*);
-    bool checkAuthorization(const Operation);
 
     void clearConnections();
     void initConnections();
