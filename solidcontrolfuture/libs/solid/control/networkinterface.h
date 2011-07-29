@@ -54,7 +54,7 @@ namespace Control
          * simplicity, states from several different layers are present -
          * this is a high level view
          */
-        enum ConnectionState{
+        enum ConnectionState {
             UnknownState = 0   /* NM_DEVICE_STATE_UNKNOWN */,
             Unmanaged    = 10  /* NM_DEVICE_STATE_UNMANAGED */,
             Unavailable  = 20  /* NM_DEVICE_STATE_UNAVAILABLE */,
@@ -92,17 +92,19 @@ namespace Control
          * Possible Device capabilities
          * - IsManageable: denotes that the device can be controlled by this API
          * - SupportsCarrierDetect: the device informs us when it is plugged in to the medium
-         * - SupportsWirelessScan: the device can scan for wireless networks
          */
         enum Capability { IsManageable = 0x1, SupportsCarrierDetect = 0x2 };
         /**
          * Device medium types
-         * - Ieee8023: wired ethernet
-         * - Ieee80211: the popular family of wireless networks
-         * - Serial: generic serial type for non-cellular ppp connections
-         * - Gsm: cellular device of the GSM family, used in Europe
-         * - Cdma: cellular device of the CDMA family, used in the USA
-         * - Bluetooth: network bluetooth device (usually a cell phone)
+         * - UnknownType: unknown device
+         * - Ethernet: a wired ethernet device
+         * - Wifi: an 802.11 WiFi device
+         * - Unused1: not used
+         * - Unused2: not used
+         * - Bluetooth: a Bluetooth device supporting PAN or DUN access protocols
+         * - OlpcMesh: an OLPC XO mesh networking device
+         * - Wimax: an 802.16e Mobile WiMAX broadband device
+         * - Modem: a modem supporting analog telephone, CDMA/EVDO, GSM/UMTS, or LTE network access protocols
          */
         enum Type { UnknownType = 0x0, Ethernet = 0x1, Wifi = 0x2, Unused1 = 0x3, Unused2 = 0x4, Bluetooth = 0x5, OlpcMesh = 0x6, Wimax = 0x7, Modem = 0x8 };
 
