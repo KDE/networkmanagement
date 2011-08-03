@@ -48,6 +48,7 @@ public:
 protected Q_SLOTS:
     void scanClicked();
     void validate();
+    void modeChanged(int);
     void copyToBssid();
     void generateRandomClonedMac();
 

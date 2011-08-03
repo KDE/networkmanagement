@@ -32,14 +32,11 @@ void WirelessDbus::fromMap(const QVariantMap & map)
         setting->setBand(Knm::WirelessSetting::EnumBand::a);
       else if (band == QLatin1String("bg"))
         setting->setBand(Knm::WirelessSetting::EnumBand::bg);
-  } else {
-      setting->setBand(Knm::WirelessSetting::EnumBand::automatic);
-  }
-  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_CHANNEL))) {
       setting->setChannel(map.value(QLatin1String(NM_SETTING_WIRELESS_CHANNEL)).value<uint>());
   } else {
-      setting->setChannel(0);
+    setting->setBand(Knm::WirelessSetting::EnumBand::automatic);
   }
+
   if (map.contains(QLatin1String(NM_SETTING_WIRELESS_BSSID))) {
       setting->setBssid(map.value(QLatin1String(NM_SETTING_WIRELESS_BSSID)).value<QByteArray>());
   }
@@ -79,23 +76,22 @@ QVariantMap WirelessDbus::toMap()
       break;
     case Knm::WirelessSetting::EnumMode::adhoc:
       map.insert(QLatin1String(NM_SETTING_WIRELESS_MODE), QLatin1String(NM_SETTING_WIRELESS_MODE_ADHOC));
+      if (setting->band() != Knm::WirelessSetting::EnumBand::automatic) {
+        switch (setting->band()) {
+          case Knm::WirelessSetting::EnumBand::a:
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_BAND), "a");
+            break;
+          case Knm::WirelessSetting::EnumBand::bg:
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_BAND), "bg");
+            break;
+        }
+        map.insert(QLatin1String(NM_SETTING_WIRELESS_CHANNEL), setting->channel());
+      }
       break;
   }
 
-  switch (setting->band()) {
-      case Knm::WirelessSetting::EnumBand::automatic:
-          break;
-      case Knm::WirelessSetting::EnumBand::a:
-          map.insert(QLatin1String(NM_SETTING_WIRELESS_BAND), "a");
-          break;
-      case Knm::WirelessSetting::EnumBand::bg:
-          map.insert(QLatin1String(NM_SETTING_WIRELESS_BAND), "bg");
-          break;
-  }
 
-  if (setting->channel()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_CHANNEL), setting->channel());
-  }
+
   if (!setting->bssid().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_BSSID), setting->bssid());
   }
