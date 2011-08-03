@@ -82,8 +82,8 @@ void Nm08Connections::importNextNm08Connection()
                     //File::remove(configFile);
 		    m_connectionsToImport.removeOne(con->uuid());
                 }
-                //prefs->setConnections(m_connectionsToImport);
-                //prefs->writeConfig();
+                prefs->setConnections(m_connectionsToImport);
+                prefs->writeConfig();
                 m_connectionsBeingAdded.clear();
             }
             qDeleteAll(m_connectionsToDelete);
