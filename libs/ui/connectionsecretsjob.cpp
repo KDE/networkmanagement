@@ -51,9 +51,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "pppwidget.h"
 #include "settingwidget.h"
 #include "wiredwidget.h"
-#include "security/wirelesssecuritysettingwidget.h"
+#include "security/wirelesssecurityauth.h"
 #include "security/securitywidget.h"
 #include "security/securitywired8021x.h"
+#include "security/security8021xauth.h"
 
 #include "settings/vpn.h"
 
@@ -63,12 +64,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 ConnectionSecretsJob::ConnectionSecretsJob(Knm::Connection* connection, const QString &settingName,
                                            const QStringList& secrets)
-    : m_connection(connection), mSettingName(settingName), m_askUserDialog(0), m_settingWidget(0)
+    : m_connection(connection), mSettingName(settingName), mSecrets(secrets), m_askUserDialog(0), m_settingWidget(0)
 {
-    // record the secrets that we are looking for
-    foreach (const QString &secretKey, secrets) {
-        mSecrets.insert(secretKey, QVariant());
-    }
 }
 
 ConnectionSecretsJob::~ConnectionSecretsJob()
@@ -88,11 +85,7 @@ void ConnectionSecretsJob::doAskUser()
     kDebug();
     KDialog::ButtonCodes buttonCodes = KDialog::Ok | KDialog::Cancel;
     if ( mSettingName == QLatin1String(NM_SETTING_802_1X_SETTING_NAME)) {
-        if (m_connection->type() == Knm::Connection::Wired) {
-            m_settingWidget = new SecurityWired8021x(m_connection);
-        } else if (m_connection->type() == Knm::Connection::Wireless) {
-            m_settingWidget = new WirelessSecuritySettingWidget(m_connection /*Need AP and iface here*/ ) ;
-        }
+        m_settingWidget = new Security8021xAuthWidget(m_connection, mSecrets, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
         m_settingWidget = new CdmaWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
@@ -119,7 +112,7 @@ void ConnectionSecretsJob::doAskUser()
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
         m_settingWidget = new WiredWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME)) {
-        m_settingWidget = new WirelessSecuritySettingWidget(m_connection, 0, 0, 0); // TODO: find out AP and device
+        m_settingWidget = new WirelessSecurityAuthWidget(m_connection, 0);
     } else if ( mSettingName == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
         m_settingWidget = new Wireless80211Widget(m_connection, 0);
     }
@@ -146,7 +139,6 @@ void ConnectionSecretsJob::doAskUser()
 
 void ConnectionSecretsJob::dialogAccepted()
 {
-    // get results from dialog, put them in mSecrets
     kDebug();
     // m_connection is up to date again
     m_settingWidget->writeConfig();
@@ -169,7 +161,7 @@ QString ConnectionSecretsJob::settingName() const
     return mSettingName;
 }
 
-QVariantMap ConnectionSecretsJob::secrets() const
+QStringList ConnectionSecretsJob::secrets() const
 {
     return mSecrets;
 }

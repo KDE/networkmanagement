@@ -227,7 +227,7 @@
          <widget class="KComboBox" name="pinStorage">
           <item>
            <property name="text">
-            <string>Save</string>
+            <string>Store</string>
            </property>
           </item>
           <item>

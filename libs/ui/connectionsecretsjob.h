@@ -64,7 +64,7 @@ public:
     void start();
     Knm::Connection * connection() const;
     QString settingName() const;
-    QVariantMap secrets() const;
+    QStringList secrets() const;
 
 private Q_SLOTS:
     void doAskUser();
@@ -78,7 +78,7 @@ private:
     Knm::Connection * m_connection;
 
     QString mSettingName;
-    QVariantMap mSecrets;
+    QStringList mSecrets;
     QPointer<KDialog> m_askUserDialog;
     QPointer<SettingWidget> m_settingWidget;
 };

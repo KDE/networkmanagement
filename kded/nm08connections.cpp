@@ -27,6 +27,7 @@ using namespace Knm;
 #include <kstandarddirs.h>
 #include <knmserviceprefs.h>
 
+#include "../libs/internals/connection.h"
 #include "settingsnm08/settingpersistence.cpp"
 #include "settingsnm08/802-11-wirelesspersistence.cpp"
 #include "settingsnm08/802-11-wireless-securitypersistence.cpp"
@@ -104,19 +105,19 @@ void Nm08Connections::importNextNm08Connection()
     if (!QFile::exists(configFile)) {
         goto END;
     }
-    
+
     kWarning() << "Importing" << connectionId;
     config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
-    
+
     if (config.isNull()) {
         kWarning() << "Config not found at" << configFile;
         goto END;
     }
-    
+
     cg = KConfigGroup(config, "connection");
     uuid = cg.readEntry("uuid");
     type = cg.readEntry("type");
-    
+
     if (uuid.isEmpty() || type.isEmpty()) {
         kWarning() << "Ignoring connection because uuid == '" << uuid << "' type == '" << type << "'";
         goto END;
@@ -124,12 +125,12 @@ void Nm08Connections::importNextNm08Connection()
         connection = new Connection(QUuid(uuid), Connection::typeFromString(type));
         m_connectionsToDelete.append(connection);
     }
-    
+
     connection->setName(cg.readEntry("id"));
     connection->setAutoConnect(cg.readEntry<bool>("autoconnect", false));
     connection->setTimestamp(cg.readEntry<QDateTime>("timestamp", QDateTime()));
     connection->setIconName(cg.readEntry("icon"));
-    
+
     // load each setting
     foreach (Setting * setting, connection->settings()) {
         SettingPersistence * sp = persistenceFor(setting, config);

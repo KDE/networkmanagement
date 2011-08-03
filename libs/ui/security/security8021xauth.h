@@ -1,5 +1,5 @@
 /*
-Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2011 Ilia Kats <ilia-kats@gmx.net>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,27 +18,32 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LEAPWIDGET_H
-#define LEAPWIDGET_H
+#ifndef SECURITY8021XWIDGET_H
+#define SECURITY8021XWIDGET_H
 
-#include "securitywidget.h"
+#include "settingwidget.h"
 
-class LeapWidget : public SecurityWidget
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
+class Security8021xAuthWidgetPrivate;
+
+class KNM_EXPORT Security8021xAuthWidget : public SettingWidget
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(Security8021xAuthWidget)
 public:
-    LeapWidget(Knm::Connection * connection, QWidget * parent = 0);
-    virtual ~LeapWidget();
-    bool validate() const;
-    void readConfig();
+    Security8021xAuthWidget(Knm::Connection* connection, QWidget * parent = 0 );
+    Security8021xAuthWidget(Knm::Connection* connection, const QStringList &secrets, QWidget * parent = 0 );
+    ~Security8021xAuthWidget();
+    void readConfig(){}
     void writeConfig();
-    void readSecrets();
+    void readSecrets(){}
+protected Q_SLOTS:
+    void validate() {}
 private Q_SLOTS:
-    void chkShowPassToggled(bool);
-    void passwordStorageChanged(int);
-private:
-    class Private;
-    Private * d;
+    void showPasswordsToggled(bool);
 };
 
-#endif // LEAPWIDGET_H
+#endif

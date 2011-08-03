@@ -12,7 +12,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
@@ -61,6 +61,13 @@
      <item row="2" column="1">
       <widget class="KUrlRequester" name="kurCaCert"/>
      </item>
+     <item row="3" column="1">
+      <widget class="QCheckBox" name="chkUseSystemCaCerts">
+       <property name="text">
+        <string>Use Syste&amp;m CA Certs</string>
+       </property>
+      </widget>
+     </item>
      <item row="4" column="0">
       <widget class="QLabel" name="label_4">
        <property name="text">
@@ -91,18 +98,34 @@
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="KLineEdit" name="lePrivateKeyPassword">
-       <property name="passwordMode">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QCheckBox" name="chkUseSystemCaCerts">
-       <property name="text">
-        <string>Use Syste&amp;m CA Certs</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="KLineEdit" name="lePrivateKeyPassword">
+         <property name="passwordMode">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="KComboBox" name="cmbPrivateKeyPasswordStorage">
+         <item>
+          <property name="text">
+           <string>Store</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Always Ask</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Not Required</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -131,6 +154,11 @@
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

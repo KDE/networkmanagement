@@ -59,6 +59,13 @@ set(knmui_SRCS
    security/peapwidget.cpp
    security/tlswidget.cpp
 
+   # auth widgets for interactive password retrieval
+   security/security8021xauth.cpp
+   security/wirelesssecurityauth.cpp
+   security/wepauthwidget.cpp
+   security/wpaauthwidget.cpp
+   security/leapauthwidget.cpp
+
    vpnuiplugin.cpp
    connectionprefs.cpp
    gsmconnectioneditor.cpp

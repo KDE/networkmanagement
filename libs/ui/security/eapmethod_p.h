@@ -35,6 +35,7 @@ class EapMethodPrivate
     public:
         Knm::Connection * connection;
         Knm::Security8021xSetting* setting;
+        enum PasswordStorage {Store = 0, AlwaysAsk, NotRequired};
     protected:
         EapMethod *q_ptr;
 };

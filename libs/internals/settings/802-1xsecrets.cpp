@@ -94,14 +94,14 @@ QMap<QString,QString> Security8021xSecrets::secretsFromConfig(KSharedConfig::Ptr
 QStringList Security8021xSecrets::needSecrets()
 {
     QStringList list;
-    if (m_setting->phase2auth() == Security8021xSetting::EnumPhase2auth::none) {
-        if (m_setting->privatekeypassword().isEmpty())
-                list.append("private-key-password");
-    } else {
-        if (m_setting->password().isEmpty())
-                list.append("password");
-        if (m_setting->phase2privatekeypassword().isEmpty())
-            list.append("phase2-private-key-password");
+    Security8021xSetting::EapMethods eap = m_setting->eapFlags();
+    if (eap.testFlag(Security8021xSetting::tls) && m_setting->privatekeypasswordflags().testFlag(Setting::NotSaved)) {
+        list.append("private-key-password");
+    } else if (eap.testFlag(Security8021xSetting::tls) && m_setting->phase2privatekeypasswordflags().testFlag(Setting::NotSaved)) {
+        list.append("phase2-private-key-password");
+    } else if ((eap.testFlag(Security8021xSetting::peap) || eap.testFlag(Security8021xSetting::ttls) || eap.testFlag(Security8021xSetting::leap)) && (m_setting->passwordflags().testFlag(Setting::None) || m_setting->passwordflags().testFlag(Setting::AgentOwned)) && m_setting->password().isEmpty() || m_setting->passwordflags().testFlag(Setting::NotSaved)) {
+        list.append("password");
     }
+
     return list;
 }

@@ -194,9 +194,7 @@ QVariantMap WirelessSecurityDbus::toMap()
   if(!setting->psk().isEmpty()) {
       map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK_FLAGS), (int)setting->pskflags());
   }
-  if (!setting->leappassword().isEmpty()) {
-      map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS), (int)setting->leappasswordflags());
-  }
+  map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS), (int)setting->leappasswordflags());
 
   } // end of if not setting->clear()
   return map;
@@ -229,16 +227,16 @@ QVariantMap WirelessSecurityDbus::toSecretsMap()
         kWarning() << "Wep key type is not set!";
         map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_TX_KEYIDX), setting->weptxkeyindex());
         if (!setting->wepkey0().isEmpty()) {
-            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), toHexKey(setting->wepkey0()));
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY0), setting->wepkey0());
         }
         if (!setting->wepkey1().isEmpty()) {
-            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), toHexKey(setting->wepkey1()));
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY1), setting->wepkey1());
         }
         if (!setting->wepkey2().isEmpty()) {
-            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), toHexKey(setting->wepkey2()));
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY2), setting->wepkey2());
         }
         if (!setting->wepkey3().isEmpty()) {
-            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), toHexKey(setting->wepkey3()));
+            map.insert(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY3), setting->wepkey3());
         }
     } else if (setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk || setting->securityType() == Knm::WirelessSecuritySetting::EnumSecurityType::Wpa2Psk) {
         if (!setting->psk().isEmpty()) {

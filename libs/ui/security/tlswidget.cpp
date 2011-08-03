@@ -41,6 +41,7 @@ TlsWidget::TlsWidget(bool isInnerMethod, Knm::Connection* connection, QWidget * 
 : EapMethod(*new TlsWidgetPrivate(isInnerMethod), connection, parent)
 {
     setupUi(this);
+    connect(cmbPrivateKeyPasswordStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(privateKeyPasswordStorageChanged(int)));
 }
 
 TlsWidget::~TlsWidget()
@@ -141,26 +142,58 @@ void TlsWidget::writeConfig()
             d->setting->setPrivatekey(path);
         }
     }
-    if (d->inner) {
-        d->setting->setPhase2privatekeypassword(lePrivateKeyPassword->text());
-    } else {
-        d->setting->setPrivatekeypassword(lePrivateKeyPassword->text());
+
+    switch (cmbPrivateKeyPasswordStorage->currentIndex()) {
+        case EapMethodPrivate::Store:
+            if (d->inner) {
+                d->setting->setPhase2privatekeypassword(lePrivateKeyPassword->text());
+                d->setting->setPhase2privatekeypasswordflags(Knm::Setting::AgentOwned);
+            } else {
+                d->setting->setPrivatekeypassword(lePrivateKeyPassword->text());
+                d->setting->setPrivatekeypasswordflags(Knm::Setting::AgentOwned);
+            }
+            break;
+        case EapMethodPrivate::AlwaysAsk:
+            d->inner ? d->setting->setPhase2privatekeypasswordflags(Knm::Setting::NotSaved) : d->setting->setPrivatekeypasswordflags(Knm::Setting::NotSaved);
+            break;
+        case EapMethodPrivate::NotRequired:
+            d->inner ? d->setting->setPhase2privatekeypasswordflags(Knm::Setting::NotRequired) : d->setting->setPrivatekeypasswordflags(Knm::Setting::NotRequired);
+            break;
     }
 }
 
 void TlsWidget::readSecrets()
 {
     Q_D(TlsWidget);
-    if (d->inner) {
+    if (d->inner && (d->setting->phase2privatekeypasswordflags() & Knm::Setting::AgentOwned || d->setting->phase2privatekeypasswordflags() & Knm::Setting::None)) {
         lePrivateKeyPassword->setText(d->setting->phase2privatekeypassword());
-    } else {
+        cmbPrivateKeyPasswordStorage->setCurrentIndex(EapMethodPrivate::Store);
+    } else if (d->setting->privatekeypasswordflags() & Knm::Setting::AgentOwned || d->setting->privatekeypasswordflags() & Knm::Setting::None) {
         lePrivateKeyPassword->setText(d->setting->privatekeypassword());
+        cmbPrivateKeyPasswordStorage->setCurrentIndex(EapMethodPrivate::Store);
+    } else if (d->setting->passwordflags() & Knm::Setting::NotSaved) {
+        cmbPrivateKeyPasswordStorage->setCurrentIndex(EapMethodPrivate::AlwaysAsk);
+    } else if (d->setting->passwordflags() & Knm::Setting::NotRequired){
+        cmbPrivateKeyPasswordStorage->setCurrentIndex(EapMethodPrivate::NotRequired);
     }
 }
 
 void TlsWidget::setShowPasswords(bool on)
 {
     lePrivateKeyPassword->setPasswordMode(!on);
+}
+
+void TlsWidget::privateKeyPasswordStorageChanged(int type)
+{
+    switch (type)
+    {
+        case EapMethodPrivate::Store:
+            lePrivateKeyPassword->setEnabled(true);
+            break;
+        default:
+            lePrivateKeyPassword->setEnabled(false);
+            break;
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

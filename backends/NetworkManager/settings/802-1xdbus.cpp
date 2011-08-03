@@ -81,19 +81,16 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
     }
     if (map.contains(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS))) {
         setting->setUseSystemCaCerts(map.value(QLatin1String(NM_SETTING_802_1X_SYSTEM_CA_CERTS)).value<bool>());
+    } else {
+        setting->setUseSystemCaCerts(false);
     }
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS))) {
         setting->setPasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS)).value<int>());
     }
-    if (map.contains(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD_FLAGS))) {
-        setting->setPrivatekeypasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD_FLAGS)).value<int>());
-    }
-    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS))) {
-        setting->setPhase2privatekeypasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS)).value<int>());
-    }
-    if (map.contains(QLatin1String(NM_SETTING_802_1X_PIN_FLAGS))) {
-        setting->setPinflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PIN_FLAGS)).value<int>());
-    }
+    setting->setPrivatekeypasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD_FLAGS)).value<int>());
+    setting->setPhase2privatekeypasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS)).value<int>());
+    setting->setPinflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PIN_FLAGS)).value<int>());
+
     setting->setEnabled(true);
 }
 
@@ -203,15 +200,9 @@ QVariantMap Security8021xDbus::toMap()
 
         map.unite(toSecretsMap());
 
-        if (!setting->password().isEmpty()) {
-            map.insert(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS), (int)setting->passwordflags());
-        }
-        if (!setting->privatekeypassword().isEmpty()) {
-            map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD_FLAGS), (int)setting->privatekeypasswordflags());
-        }
-        if (!setting->phase2privatekeypassword().isEmpty()) {
-            map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS), (int)setting->phase2privatekeypasswordflags());
-        }
+        map.insert(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS), (int)setting->passwordflags());
+        map.insert(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD_FLAGS), (int)setting->privatekeypasswordflags());
+        map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS), (int)setting->phase2privatekeypasswordflags());
     }
     return map;
 }

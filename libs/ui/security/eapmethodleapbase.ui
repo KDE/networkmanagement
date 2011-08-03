@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>269</width>
-    <height>260</height>
+    <height>111</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -15,7 +15,7 @@
     <number>0</number>
    </property>
    <item>
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
@@ -50,14 +50,37 @@
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="KLineEdit" name="lePassword">
-       <property name="toolTip">
-        <string>Password on this network</string>
-       </property>
-       <property name="echoMode">
-        <enum>QLineEdit::Password</enum>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="KLineEdit" name="lePassword">
+         <property name="toolTip">
+          <string>Password on this network</string>
+         </property>
+         <property name="echoMode">
+          <enum>QLineEdit::Password</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="KComboBox" name="cmbPasswordStorage">
+         <item>
+          <property name="text">
+           <string>Store</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Always Ask</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>Not Required</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -81,6 +104,11 @@
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

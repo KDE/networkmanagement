@@ -37,6 +37,8 @@ public:
     void writeConfig();
     void readSecrets();
     void setShowPasswords(bool on = true);
+private Q_SLOTS:
+    void passwordStorageChanged(int);
 private:
     Type m_type;
 };

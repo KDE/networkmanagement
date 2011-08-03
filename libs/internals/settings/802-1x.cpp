@@ -7,7 +7,7 @@
 using namespace Knm;
 
 Security8021xSetting::Security8021xSetting() : Setting(Setting::Security8021x),
-    mPhase1peapver(0), mPhase2auth(0), mPhase2autheap(0), mEnabled(false)
+    mPhase1peapver(0), mPhase2auth(0), mPhase2autheap(0), mEnabled(false), mPasswordflags(Setting::AgentOwned), mPrivatekeypasswordflags(Setting::AgentOwned), mPhase2privatekeypasswordflags(Setting::AgentOwned)
 {
     m_secretsObject = new Security8021xSecrets(this);
 }
@@ -20,10 +20,8 @@ Security8021xSetting::Security8021xSetting(Security8021xSetting *setting) : Sett
     setAnonymousidentity(setting->anonymousidentity());
     setCacert(setting->cacert());
     setCapath(setting->capath());
-    setCacerttoimport(setting->cacerttoimport());
     setClientcert(setting->clientcert());
     setClientcertpath(setting->clientcertpath());
-    setClientcerttoimport(setting->clientcerttoimport());
     setPhase1peapver(setting->phase1peapver());
     setPhase1peaplabel(setting->phase1peaplabel());
     setPhase1fastprovisioning(setting->phase1fastprovisioning());
@@ -31,28 +29,20 @@ Security8021xSetting::Security8021xSetting(Security8021xSetting *setting) : Sett
     setPhase2autheap(setting->phase2autheap());
     setPhase2cacert(setting->phase2cacert());
     setPhase2capath(setting->phase2capath());
-    setPhase2cacerttoimport(setting->phase2cacerttoimport());
     setPhase2clientcert(setting->phase2clientcert());
     setPhase2clientcertpath(setting->phase2clientcertpath());
-    setPhase2clientcerttoimport(setting->phase2clientcerttoimport());
     setPassword(setting->password());
     setPasswordflags(setting->passwordflags());
     setPrivatekey(setting->privatekey());
     setPrivatekeypath(setting->privatekeypath());
-    setPrivatekeytoimport(setting->privatekeytoimport());
     setPrivatekeypassword(setting->privatekeypassword());
     setPrivatekeypasswordflags(setting->privatekeypasswordflags());
     setPhase2privatekey(setting->phase2privatekey());
     setPhase2privatekeypath(setting->phase2privatekeypath());
-    setPhase2privatekeytoimport(setting->phase2privatekeytoimport());
     setPhase2privatekeypassword(setting->phase2privatekeypassword());
     setPhase2privatekeypasswordflags(setting->phase2privatekeypasswordflags());
-    setPin(setting->pin());
-    setPinflags(setting->pinflags());
     setUseSystemCaCerts(setting->useSystemCaCerts());
     setEnabled(setting->enabled());
-    addToCertToDelete(setting->certtodelete());
-
 }
 
 Security8021xSetting::~Security8021xSetting()
@@ -71,12 +61,6 @@ bool Security8021xSetting::hasSecrets() const
 
 void Security8021xSetting::setSecrets(Setting::secretsTypes types)
 {
-    if (!mPassword.isEmpty())
-        setPasswordflags(types);
-    if (!mPrivatekeypassword.isEmpty())
-        setPrivatekeypasswordflags(types);
-    if (!mPhase2privatekeypassword.isEmpty())
-        setPhase2privatekeypasswordflags(types);
 }
 
 QByteArray Security8021xSetting::getBytes(const QString & fileName)

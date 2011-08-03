@@ -30,6 +30,7 @@ EapMethodLeap::EapMethodLeap(Knm::Connection* connection, QWidget * parent)
 : EapMethod(connection, parent)
 {
     setupUi(this);
+    connect(cmbPasswordStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(passwordStorageChanged(int)));
 }
 
 EapMethodLeap::~EapMethodLeap()
@@ -55,19 +56,50 @@ void EapMethodLeap::writeConfig()
     d->setting->setEapFlags(Knm::Security8021xSetting::leap);
     // LEAP stuff
     d->setting->setIdentity(leUsername->text());
-    d->setting->setPassword(lePassword->text());
+    switch (cmbPasswordStorage->currentIndex()) {
+        case EapMethodPrivate::Store:
+            d->setting->setPassword(lePassword->text());
+            d->setting->setPasswordflags(Knm::Setting::AgentOwned);
+            break;
+        case EapMethodPrivate::AlwaysAsk:
+            d->setting->setPasswordflags(Knm::Setting::NotSaved);
+            break;
+        case EapMethodPrivate::NotRequired:
+            d->setting->setPasswordflags(Knm::Setting::NotRequired);
+            break;
+    }
     d->setting->setUseSystemCaCerts(false);
 }
 
 void EapMethodLeap::readSecrets()
 {
     Q_D(EapMethod);
-    lePassword->setText(d->setting->password());
+    if (d->setting->passwordflags() & Knm::Setting::AgentOwned || d->setting->passwordflags() & Knm::Setting::None) {
+        lePassword->setText(d->setting->password());
+        cmbPasswordStorage->setCurrentIndex(EapMethodPrivate::Store);
+    } else if (d->setting->passwordflags() & Knm::Setting::NotSaved) {
+        cmbPasswordStorage->setCurrentIndex(EapMethodPrivate::AlwaysAsk);
+    } else if (d->setting->passwordflags() & Knm::Setting::NotRequired){
+        cmbPasswordStorage->setCurrentIndex(EapMethodPrivate::NotRequired);
+    }
 }
 
 void EapMethodLeap::setShowPasswords(bool on)
 {
     lePassword->setPasswordMode(!on);
+}
+
+void EapMethodLeap::passwordStorageChanged(int type)
+{
+    switch (type)
+    {
+        case EapMethodPrivate::Store:
+            lePassword->setEnabled(true);
+            break;
+        default:
+            lePassword->setEnabled(false);
+            break;
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

@@ -44,7 +44,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 K_PLUGIN_FACTORY(NetworkManagementServiceFactory,
                  registerPlugin<NetworkManagementService>();
     )
-K_EXPORT_PLUGIN(NetworkManagementServiceFactory("networkmanagement"))
+K_EXPORT_PLUGIN(NetworkManagementServiceFactory("networkmanagement", "libknetworkmanager"))
 
 class NetworkManagementServicePrivate
 {

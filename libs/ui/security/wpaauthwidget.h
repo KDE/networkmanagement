@@ -1,5 +1,5 @@
 /*
-Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2011 Ilia Kats <ilia-kats@gmx.net>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -18,27 +18,34 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LEAPWIDGET_H
-#define LEAPWIDGET_H
+#ifndef WPAAUTHWIDGET_H
+#define WPAAUTHWIDGET_H
 
 #include "securitywidget.h"
 
-class LeapWidget : public SecurityWidget
+namespace Knm
+{
+    class Connection;
+} // namespace Knm
+class QFormLayout;
+
+class KNM_EXPORT WpaAuthWidget : public SecurityWidget
 {
 Q_OBJECT
 public:
-    LeapWidget(Knm::Connection * connection, QWidget * parent = 0);
-    virtual ~LeapWidget();
+    WpaAuthWidget(Knm::Connection* connection, QWidget * parent = 0);
+    WpaAuthWidget(Knm::Connection* connection, QFormLayout *layout, QWidget * parent = 0);
+    virtual ~WpaAuthWidget();
     bool validate() const;
-    void readConfig();
+    void readConfig() {}
     void writeConfig();
-    void readSecrets();
-private Q_SLOTS:
-    void chkShowPassToggled(bool);
-    void passwordStorageChanged(int);
+    void readSecrets() {}
+public Q_SLOTS:
+    virtual void setShowPasswords(bool);
 private:
     class Private;
     Private * d;
+    void setupUi();
 };
 
-#endif // LEAPWIDGET_H
+#endif

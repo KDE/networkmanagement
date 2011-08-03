@@ -28,6 +28,11 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "settingsnm08/settingpersistence.h"
 
+namespace Knm
+{
+    class Connection;
+}
+
 class Nm08Connections: public QObject
 {
 Q_OBJECT

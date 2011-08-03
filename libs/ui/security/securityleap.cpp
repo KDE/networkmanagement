@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //X #include <nm-setting-connection.h>
 //X #include <nm-setting-wireless.h>
 //X #include <nm-setting-8021x.h>
-//X 
+//X
 #include <KDebug>
 #include <wpasecretidentifier.h>
 
@@ -43,6 +43,7 @@ public:
     Ui_Leap ui;
     Knm::WirelessSetting* wsetting;
     Knm::WirelessSecuritySetting* setting;
+    enum PasswordStorage {Store = 0, AlwaysAsk, NotRequired};
 };
 
 LeapWidget::LeapWidget(Knm::Connection* connection, QWidget * parent)
@@ -53,6 +54,7 @@ LeapWidget::LeapWidget(Knm::Connection* connection, QWidget * parent)
     d->wsetting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
 
     connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
+    connect(d->ui.cmbPasswordStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(passwordStorageChanged(int)));
     d->ui.lePassword->setPasswordMode(true);
 }
 
@@ -64,6 +66,19 @@ LeapWidget::~LeapWidget()
 void LeapWidget::chkShowPassToggled(bool on)
 {
     d->ui.lePassword->setPasswordMode(!on);
+}
+
+void LeapWidget::passwordStorageChanged(int type)
+{
+    switch (type)
+    {
+        case Private::Store:
+            d->ui.lePassword->setEnabled(true);
+            break;
+        default:
+            d->ui.lePassword->setEnabled(false);
+            break;
+    }
 }
 
 bool LeapWidget::validate() const
@@ -80,14 +95,32 @@ void LeapWidget::readConfig()
 void LeapWidget::writeConfig()
 {
     d->setting->setLeapusername(d->ui.leUserName->text());
-    d->setting->setLeappassword(d->ui.lePassword->text());
     d->setting->setAuthalg(Knm::WirelessSecuritySetting::EnumAuthalg::leap);
     d->setting->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::Ieee8021x);
+    switch (d->ui.cmbPasswordStorage->currentIndex()) {
+        case Private::Store:
+            d->setting->setLeappassword(d->ui.lePassword->text());
+            d->setting->setLeappasswordflags(Knm::Setting::AgentOwned);
+            break;
+        case Private::AlwaysAsk:
+            d->setting->setLeappasswordflags(Knm::Setting::NotSaved);
+            break;
+        case Private::NotRequired:
+            d->setting->setLeappasswordflags(Knm::Setting::NotRequired);
+            break;
+    }
 }
 
 void LeapWidget::readSecrets()
 {
-    d->ui.lePassword->setText(d->setting->leappassword());
+    if (d->setting->leappasswordflags() & Knm::Setting::AgentOwned || d->setting->leappasswordflags() & Knm::Setting::None) {
+        d->ui.lePassword->setText(d->setting->leappassword());
+        d->ui.cmbPasswordStorage->setCurrentIndex(Private::Store);
+    } else if (d->setting->leappasswordflags() & Knm::Setting::NotSaved) {
+        d->ui.cmbPasswordStorage->setCurrentIndex(Private::AlwaysAsk);
+    } else if (d->setting->leappasswordflags() & Knm::Setting::NotRequired){
+        d->ui.cmbPasswordStorage->setCurrentIndex(Private::NotRequired);
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100
