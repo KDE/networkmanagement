@@ -44,8 +44,6 @@ public:
     static Connection::Type typeFromString(const QString & type);
     static Connection::Type typeFromSolidType(const Solid::Control::NetworkInterfaceNm09 * iface);
     static QString iconName(const Connection::Type type);
-    void saveCertificates();
-    void removeCertificates();
     void setSecrets();
     /**
      * Create a connection with a new Uuid

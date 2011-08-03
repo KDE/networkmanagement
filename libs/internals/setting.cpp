@@ -175,12 +175,4 @@ Secrets* Setting::getSecretsObject()
     return m_secretsObject;
 }
 
-void Setting::save(bool)
-{
-}
-
-void Setting::remove()
-{
-}
-
 // vim: sw=4 sts=4 et tw=100

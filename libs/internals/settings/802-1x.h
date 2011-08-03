@@ -4,18 +4,15 @@
 #define KNM_SECURITY8021XSETTING_H
 
 #include <QFile>
-#include <QFlags>
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "setting.h"
-#include "connection.h"
 #include "knminternals_export.h"
 namespace Knm {
 
 class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
 {
-  Q_FLAGS(Certificates)
   public:
     class EnumPhase1peapver
     {
@@ -41,9 +38,6 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     Security8021xSetting( );
     Security8021xSetting(Security8021xSetting *);
     ~Security8021xSetting();
-
-    enum Certificate {CACert = 0x1, ClientCert = 0x2, Phase2CACert = 0x4, Phase2ClientCert = 0x8, PrivateKey = 0x10, Phase2PrivateKey = 0x20};
-    Q_DECLARE_FLAGS(Certificates, Certificate)
 
     QString name() const;
 
@@ -120,6 +114,11 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     void setCapath( const QString & v )
     {
+        mCapath = certPathAsByteArray(v);
+    }
+
+    void setCapath( const QByteArray & v)
+    {
         mCapath = v;
     }
 
@@ -128,29 +127,12 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     QString capath() const
     {
-      return mCapath;
+      return QString(mCapath);
     }
 
-    void setCacertFromPath( const QString & v )
+    QByteArray capath() const
     {
-        setCapath(v);
-        setCacert(getBytes(v));
-    }
-
-    /**
-    Get CA Cert to import
-    */
-    QString cacerttoimport() const
-    {
-        return mCacertToImport;
-    }
-
-    /**
-    Set CA Cert to import
-    */
-    void setCacerttoimport( const QString & v )
-    {
-        mCacertToImport = v;
+        return mCapath;
     }
 
     /**
@@ -174,6 +156,11 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     void setClientcertpath( const QString & v )
     {
+        mClientcertpath = certPathAsByteArray(v);
+    }
+
+    void setClientcertpath( const QByteArray & v)
+    {
         mClientcertpath = v;
     }
 
@@ -182,29 +169,12 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     QString clientcertpath() const
     {
-      return mClientcertpath;
+      return QString(mClientcertpath);
     }
 
-    void setClientcertFromPath( const QString & v )
+    QByteArray clientcertpath() const
     {
-        setClientcertpath(v);
-        setClientcert(getBytes(v));
-    }
-
-    /**
-    Get client Cert to import
-    */
-    QString clientcerttoimport() const
-    {
-        return mClientcertToImport;
-    }
-
-    /**
-    Set client Cert to import
-    */
-    void setClientcerttoimport( const QString & v )
-    {
-        mClientcertToImport = v;
+        return mClientcertpath;
     }
 
     /**
@@ -308,6 +278,11 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     void setPhase2capath( const QString & v )
     {
+        mPhase2capath = certPathAsByteArray(v);
+    }
+
+    void setPhase2capath( const QByteArray & v)
+    {
         mPhase2capath = v;
     }
 
@@ -316,29 +291,12 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     QString phase2capath() const
     {
-      return mPhase2capath;
+      return QString(mPhase2capath);
     }
 
-    void setPhase2cacertFromPath( const QString & v)
+    QByteArray phase2capath() const
     {
-        setPhase2capath(v);
-        setPhase2cacert(getBytes(v));
-    }
-
-    /**
-    Get Phase2CA Cert to import
-    */
-    QString phase2cacerttoimport() const
-    {
-        return mPhase2cacertToImport;
-    }
-
-    /**
-    Set Phase2CA Cert to import
-    */
-    void setPhase2cacerttoimport( const QString & v )
-    {
-        mPhase2cacertToImport = v;
+        return mPhase2capath;
     }
 
     /**
@@ -362,6 +320,11 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     void setPhase2clientcertpath( const QString & v )
     {
+        mPhase2clientcertpath = certPathAsByteArray(v);
+    }
+
+    void setPhase2clientcertpath( const QByteArray & v)
+    {
         mPhase2clientcertpath = v;
     }
 
@@ -370,29 +333,12 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     QString phase2clientcertpath() const
     {
-      return mPhase2clientcertpath;
+      return QString(mPhase2clientcertpath);
     }
 
-    void setPhase2clientcertFromPath( const QString & v)
+    QByteArray phase2clientcertpath() const
     {
-        setPhase2clientcertpath(v);
-        setPhase2clientcert(getBytes(v));
-    }
-
-    /**
-    Get Phase2 client Cert to import
-    */
-    QString phase2clientcerttoimport() const
-    {
-        return mPhase2clientcertToImport;
-    }
-
-    /**
-    Set Phase2 client Cert to import
-    */
-    void setPhase2clientcerttoimport( const QString & v )
-    {
-        mPhase2clientcertToImport = v;
+        return mPhase2clientcertpath;
     }
 
     /**
@@ -448,6 +394,11 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     void setPrivatekeypath( const QString & v )
     {
+        mPrivatekeypath = certPathAsByteArray(v);
+    }
+
+    void setPrivatekeypath( const QByteArray & v)
+    {
         mPrivatekeypath = v;
     }
 
@@ -456,29 +407,12 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     QString privatekeypath() const
     {
-      return mPrivatekeypath;
+      return QString(mPrivatekeypath);
     }
 
-    void setPrivatekeyFromPath( const QString & v )
+    QByteArray privatekeypath() const
     {
-        setPrivatekeypath(v);
-        setPrivatekey(getBytes(v));
-    }
-
-    /**
-    Get private key to import
-    */
-    QString privatekeytoimport() const
-    {
-        return mPrivatekeyToImport;
-    }
-
-    /**
-    Set private key to import
-    */
-    void setPrivatekeytoimport( const QString & v )
-    {
-        mPrivatekeyToImport = v;
+        return mPrivatekeypath;
     }
 
     /**
@@ -534,6 +468,11 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     void setPhase2privatekeypath( const QString & v )
     {
+        mPhase2privatekeypath = certPathAsByteArray(v);
+    }
+
+    void setPhase2privatekeypath( const QByteArray & v )
+    {
         mPhase2privatekeypath = v;
     }
 
@@ -542,29 +481,12 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     */
     QString phase2privatekeypath() const
     {
-      return mPhase2privatekeypath;
+      return QString(mPhase2privatekeypath);
     }
 
-    void setPhase2privatekeyFromPath( const QString & v )
+    QByteArray phase2privatekeypath() const
     {
-        setPhase2privatekeypath(v);
-        setPhase2privatekey(getBytes(v));
-    }
-
-    /**
-    Get Phase2private key to import
-    */
-    QString phase2privatekeytoimport() const
-    {
-        return mPhase2privatekeyToImport;
-    }
-
-    /**
-    Set Phase2private key to import
-    */
-    void setPhase2privatekeytoimport( const QString & v )
-    {
-        mPhase2privatekeyToImport = v;
+        return mPhase2privatekeypath;
     }
 
     /**
@@ -600,38 +522,6 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     }
 
     /**
-      Set PIN
-    */
-    void setPin( const QString & v )
-    {
-        mPin = v;
-    }
-
-    /**
-      Get PIN
-    */
-    QString pin() const
-    {
-      return mPin;
-    }
-
-    /**
-     * Set PIN flags
-     */
-    void setPinflags( Setting::secretsTypes types )
-    {
-        mPinflags = types;
-    }
-
-    /**
-     * Get PIN flags
-     */
-    Setting::secretsTypes pinflags()
-    {
-        return mPinflags;
-    }
-
-    /**
       Set Use System CA Certs
     */
     void setUseSystemCaCerts( bool v )
@@ -653,8 +543,6 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     void setEnabled( bool v )
     {
         mEnabled = v;
-        if (!mEnabled)
-            remove();
     }
 
     /**
@@ -663,39 +551,6 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     bool enabled() const
     {
       return mEnabled;
-    }
-
-    /**
-    Get Certs to delete
-    */
-    Certificates certtodelete() const
-    {
-        return mCertificatesToDelete;
-    }
-
-    /**
-    Add to Certificates to delete
-    */
-    void addToCertToDelete( Certificates v )
-    {
-        mCertificatesToDelete |= v;
-    }
-
-    /**
-    Remove Certificates to delete
-    */
-    void removeFromCertToDelete( Certificate v )
-    {
-        mCertificatesToDelete &= !v;
-    }
-
-    QString pathFromCert(const QByteArray & cert)
-    {
-        int len =  cert.size() - 7;
-        if (len < 0)
-            return QString();
-        QString path = QString(cert.right(len));
-        return path;
     }
 
     QByteArray certPathAsByteArray(const QString & path)
@@ -744,10 +599,6 @@ kDebug() << eap;
         return eapFlags;
     }
 
-    QString importCertFromPath( const QString & oldpath, const QString & newpath = QString(), bool scope = true );
-    void save(bool scope);
-    void remove();
-
   protected:
 
     // 802-1x
@@ -755,42 +606,33 @@ kDebug() << eap;
     QString mIdentity;
     QString mAnonymousidentity;
     QByteArray mCacert;
-    QString mCapath;
-    QString mCacertToImport;
+    QByteArray mCapath;
     QByteArray mClientcert;
-    QString mClientcertpath;
-    QString mClientcertToImport;
+    QByteArray mClientcertpath;
     int mPhase1peapver;
     QString mPhase1peaplabel;
     QString mPhase1fastprovisioning;
     int mPhase2auth;
     int mPhase2autheap;
     QByteArray mPhase2cacert;
-    QString mPhase2capath;
-    QString mPhase2cacertToImport;
+    QByteArray mPhase2capath;
     QByteArray mPhase2clientcert;
-    QString mPhase2clientcertpath;
-    QString mPhase2clientcertToImport;
+    QByteArray mPhase2clientcertpath;
     QString mPassword;
     QByteArray mPrivatekey;
-    QString mPrivatekeypath;
-    QString mPrivatekeyToImport;
+    QByteArray mPrivatekeypath;
     QString mPrivatekeypassword;
     QByteArray mPhase2privatekey;
-    QString mPhase2privatekeypath;
-    QString mPhase2privatekeyToImport;
+    QByteArray mPhase2privatekeypath;
     QString mPhase2privatekeypassword;
     QString mPin;
     bool mEnabled;
     bool mUseSystemCaCerts;
-    Certificates mCertificatesToDelete;
     Setting::secretsTypes mPasswordflags;
     Setting::secretsTypes mPrivatekeypasswordflags;
     Setting::secretsTypes mPhase2privatekeypasswordflags;
-    Setting::secretsTypes mPinflags;
 
   private:
-    static const QString CERTIFICATE_PERSISTENCE_PATH;
     QByteArray getBytes(const QString & fileName);
 };
 

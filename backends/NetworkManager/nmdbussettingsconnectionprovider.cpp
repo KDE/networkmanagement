@@ -167,7 +167,6 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved()
         d->uuidToPath.remove(uuid.toString());
         delete removed;
         Knm::Connection *con = d->connectionList->findConnection(uuid.toString());
-        con->removeCertificates();
         d->connectionList->removeConnection(con);
 
         emit connectionsChanged();
@@ -333,7 +332,6 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
         kDebug() << "Updating connection "<< remote->id() << objPath;
 
         newConnection->setUuid(uuid);
-        newConnection->saveCertificates();
         newConnection->setSecrets();
         ConnectionDbus converter(newConnection);
         QVariantMapMap map = converter.toDbusMap();
@@ -371,8 +369,8 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
 void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnection)
 {
     Q_D(NMDBusSettingsConnectionProvider);
-    newConnection->saveCertificates();
     newConnection->setSecrets();
+
     ConnectionDbus converter(newConnection);
     QVariantMapMap map = converter.toDbusMap();
     kDebug() << "Adding connection " << newConnection->name() << newConnection->uuid().toString();

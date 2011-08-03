@@ -38,9 +38,12 @@
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="buddy">
-        <cstring>clientCertLoad</cstring>
+        <cstring>kurClientCert</cstring>
        </property>
       </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="KUrlRequester" name="kurClientCert"/>
      </item>
      <item row="2" column="0">
       <widget class="QLabel" name="label_3">
@@ -51,9 +54,12 @@
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="buddy">
-        <cstring>caCertLoad</cstring>
+        <cstring>kurCaCert</cstring>
        </property>
       </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="KUrlRequester" name="kurCaCert"/>
      </item>
      <item row="4" column="0">
       <widget class="QLabel" name="label_4">
@@ -64,9 +70,12 @@
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="buddy">
-        <cstring>privateKeyLoad</cstring>
+        <cstring>kurPrivateKey</cstring>
        </property>
       </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="KUrlRequester" name="kurPrivateKey"/>
      </item>
      <item row="5" column="0">
       <widget class="QLabel" name="label_5">
@@ -95,126 +104,6 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout">
-       <item>
-        <widget class="KLed" name="clientCertLed">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="state">
-          <enum>KLed::Off</enum>
-         </property>
-         <property name="look">
-          <enum>KLed::Flat</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="clientCertLoadedLabel">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="KPushButton" name="clientCertLoad">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Load</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="2" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="KLed" name="caCertLed">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="state">
-          <enum>KLed::Off</enum>
-         </property>
-         <property name="look">
-          <enum>KLed::Flat</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="caCertLoadedLabel">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="KPushButton" name="caCertLoad">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Load</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="4" column="1">
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <item>
-        <widget class="KLed" name="privateKeyLed">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="state">
-          <enum>KLed::Off</enum>
-         </property>
-         <property name="look">
-          <enum>KLed::Flat</enum>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="privateKeyLoadedLabel">
-         <property name="text">
-          <string/>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="KPushButton" name="privateKeyLoad">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="text">
-          <string>Load</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
     </layout>
    </item>
    <item>
@@ -234,14 +123,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KLed</class>
-   <extends>QWidget</extends>
-   <header>kled.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
+   <class>KUrlRequester</class>
+   <extends>QFrame</extends>
+   <header>kurlrequester.h</header>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
@@ -254,16 +138,16 @@
   <connection>
    <sender>chkUseSystemCaCerts</sender>
    <signal>toggled(bool)</signal>
-   <receiver>caCertLoad</receiver>
+   <receiver>kurCaCert</receiver>
    <slot>setDisabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>258</x>
-     <y>100</y>
+     <x>221</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
-     <x>352</x>
-     <y>72</y>
+     <x>224</x>
+     <y>84</y>
     </hint>
    </hints>
   </connection>

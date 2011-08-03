@@ -559,6 +559,7 @@ void ManageConnectionWidget::addGotConnection(bool valid, const QString &errorMe
     }
 }
 
+
 void ManageConnectionWidget::deleteClicked()
 {
     QTreeWidgetItem * item = selectedItem();
@@ -573,7 +574,7 @@ void ManageConnectionWidget::deleteClicked()
     }
     KMessageBox::Options options;
     options |= KMessageBox::Dangerous;
-    if ( KMessageBox::warningContinueCancel(this,
+    if ( KMessageBox::warningContinueCancel(this, 
         i18nc("Warning message on attempting to delete a connection", "Do you really want to delete the connection '%1'?",item->data(0, Qt::DisplayRole).toString()),
         i18n("Confirm Delete"),
         KStandardGuiItem::del())

@@ -57,7 +57,6 @@ void EapMethodLeap::writeConfig()
     d->setting->setIdentity(leUsername->text());
     d->setting->setPassword(lePassword->text());
     d->setting->setUseSystemCaCerts(false);
-    d->setting->remove();
 }
 
 void EapMethodLeap::readSecrets()

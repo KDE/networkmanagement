@@ -264,20 +264,6 @@ void Connection::init(Connection *con)
     }
 }
 
-void Connection::saveCertificates()
-{
-    foreach (Setting * setting, m_settings) {
-        setting->save(m_permissions.isEmpty());
-    }
-}
-
-void Connection::removeCertificates()
-{
-    foreach (Setting * setting, m_settings) {
-        setting->remove();
-    }
-}
-
 void Connection::setSecrets()
 {
     Setting::secretsTypes type = 0;

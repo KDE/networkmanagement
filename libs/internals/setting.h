@@ -51,9 +51,6 @@ public:
     virtual Secrets* getSecretsObject();
     bool secretsAvailable() const;
     void setSecretsAvailable(bool secretsAvailable);
-
-    virtual void save(bool);
-    virtual void remove();
 protected:
     bool m_initialized;
     Secrets *m_secretsObject;

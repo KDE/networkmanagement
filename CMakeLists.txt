@@ -58,7 +58,6 @@ if (NETWORKMANAGER_FOUND)
         #add_subdirectory(monolithic)
 
         install( FILES networkmanagement.notifyrc DESTINATION ${DATA_INSTALL_DIR}/networkmanagement )
-        install( DIRECTORY DESTINATION ${DATA_INSTALL_DIR}/networkmanagement/certificates)
 
         if (DBUS_SYSTEM_POLICY_DIR)
             install( FILES NetworkManager-kde4.conf DESTINATION ${DBUS_SYSTEM_POLICY_DIR})
