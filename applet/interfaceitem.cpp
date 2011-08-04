@@ -407,7 +407,7 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterfaceNm09:
             setEnabled(false); // FIXME: tone down colors using an animation
             break;
         case Solid::Control::NetworkInterfaceNm09::Disconnected:
-            setEnabled(true);
+        case Solid::Control::NetworkInterfaceNm09::Deactivating:
             setEnabled(true);
             break;
         case Solid::Control::NetworkInterfaceNm09::Preparing:
@@ -416,13 +416,9 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterfaceNm09:
         case Solid::Control::NetworkInterfaceNm09::IPConfig:
         case Solid::Control::NetworkInterfaceNm09::IPCheck:
         case Solid::Control::NetworkInterfaceNm09::Secondaries:
-        case Solid::Control::NetworkInterfaceNm09::Deactivating:
-            setEnabled(true);
-            m_disconnect = false;
-            break;
         case Solid::Control::NetworkInterfaceNm09::Activated:
-            m_disconnect = true;
             setEnabled(true);
+            m_disconnect = true;
             break;
         case Solid::Control::NetworkInterfaceNm09::Unmanaged:
         case Solid::Control::NetworkInterfaceNm09::Failed:
