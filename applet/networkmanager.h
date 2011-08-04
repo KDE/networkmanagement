@@ -110,6 +110,7 @@ private Q_SLOTS:
     void updatePixmap();
     void repaint();
     void clearActivatedOverlay();
+    void finishInitialization();
     // Request KCM module to persist changes
     void saveConfiguration();
 

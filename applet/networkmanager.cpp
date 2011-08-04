@@ -145,7 +145,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
         m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - s) / 2,
                                 contentsRect().y() + (contentsRect().height() - s) / 2,
                                 s, s);
-    } else { // .... otherwise, for free scaling, we just want a square that fits in 
+    } else { // .... otherwise, for free scaling, we just want a square that fits in
         m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - _s) / 2,
                                 contentsRect().y() + (contentsRect().height() - _s) / 2,
                                 _s, _s);
@@ -252,12 +252,9 @@ void NetworkManagerApplet::init()
                         QLatin1String("org.kde.kded"), QDBusConnection::sessionBus());
 
     kded.call(QLatin1String("loadModule"), QLatin1String("networkmanagement"));
+    QObject::connect(m_activatables, SIGNAL(appeared()), this, SLOT(finishInitialization()));
+    finishInitialization();
 
-    // Finishes kded module initialization.
-    QDBusInterface networkmanagement(QLatin1String("org.kde.networkmanagement"), QLatin1String("/org/kde/networkmanagement"),
-                                     QLatin1String("org.kde.networkmanagement"), QDBusConnection::sessionBus());
-
-    networkmanagement.call(QLatin1String("FinishInitialization"));
 }
 
 void NetworkManagerApplet::configChanged()
@@ -266,7 +263,14 @@ void NetworkManagerApplet::configChanged()
     m_iconPerDevice = cg.readEntry("IconPerDevice", false);
 }
 
+void NetworkManagerApplet::finishInitialization()
+{
+    // Finishes kded module initialization.
+    QDBusInterface networkmanagement(QLatin1String("org.kde.networkmanagement"), QLatin1String("/org/kde/networkmanagement"),
+                                     QLatin1String("org.kde.networkmanagement"), QDBusConnection::sessionBus());
 
+    networkmanagement.call(QLatin1String("FinishInitialization"));
+}
 
 QGraphicsWidget* NetworkManagerApplet::graphicsWidget()
 {
