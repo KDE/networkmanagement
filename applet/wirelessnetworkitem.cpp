@@ -102,7 +102,7 @@ void WirelessNetworkItem::setupItem()
         m_strengthMeter->setMinimum(0);
         m_strengthMeter->setMaximum(100);
         m_strengthMeter->setValue(m_wirelessStatus->strength());
-        m_strengthMeter->setToolTip(i18n("Strength: %1%").arg(m_wirelessStatus->strength()));
+        m_strengthMeter->setToolTip(i18n("Strength: %1%", m_wirelessStatus->strength()));
         m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
         m_strengthMeter->setPreferredSize(QSizeF(60, 12));
         m_strengthMeter->setMaximumHeight(12);
@@ -151,7 +151,7 @@ void WirelessNetworkItem::setStrength(int strength)
 {
     if (m_strengthMeter) {
         m_strengthMeter->setValue(strength);
-        m_strengthMeter->setToolTip(i18n("Strength: %1%").arg(strength));
+        m_strengthMeter->setToolTip(i18n("Strength: %1%", strength));
     }
 }
 
