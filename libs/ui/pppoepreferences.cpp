@@ -39,7 +39,7 @@ PppoePreferences::PppoePreferences(const QVariantList &args, QWidget *parent)
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Pppoe);
 
     m_contents->setConnection(m_connection);
-    m_contents->setDefaultName(i18n("New PPPoE Connection"));
+    m_contents->setDefaultName(i18n("New DSL Connection"));
 
     prepareSettings();
 }
@@ -56,10 +56,8 @@ PppoePreferences::PppoePreferences(Knm::Connection *con, QWidget *parent)
     else
         m_connection = con;
 
-    QString connectionId = m_connection->uuid().toString();
-
     m_contents->setConnection(m_connection);
-    m_contents->setDefaultName(i18n("New PPPoE Connection"));
+    m_contents->setDefaultName(i18n("New DSL Connection"));
 
     prepareSettings();
 }
