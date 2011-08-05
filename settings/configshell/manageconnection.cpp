@@ -30,7 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 ManageConnection::ManageConnection(Knm::Connection *con)
 {
     bool addConnection = true;
-    NMDBusSettingsConnectionProvider * mSystemSettings = new NMDBusSettingsConnectionProvider(0, 0);
+    mSystemSettings = new NMDBusSettingsConnectionProvider(0, 0);
     Knm::BluetoothSetting * btSetting = static_cast<Knm::BluetoothSetting *>(con->setting(Knm::Setting::Bluetooth));
 
     if (btSetting) {
