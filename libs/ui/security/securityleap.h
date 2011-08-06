@@ -29,13 +29,13 @@ Q_OBJECT
 public:
     LeapWidget(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~LeapWidget();
-    bool validate() const;
     void readConfig();
     void writeConfig();
     void readSecrets();
 private Q_SLOTS:
     void chkShowPassToggled(bool);
     void passwordStorageChanged(int);
+    bool validate() const;
 private:
     class Private;
     Private * d;

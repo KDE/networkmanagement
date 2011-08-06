@@ -36,12 +36,12 @@ public:
     WpaAuthWidget(Knm::Connection* connection, QWidget * parent = 0);
     WpaAuthWidget(Knm::Connection* connection, QFormLayout *layout, QWidget * parent = 0);
     virtual ~WpaAuthWidget();
-    bool validate() const;
     void readConfig() {}
     void writeConfig();
     void readSecrets() {}
 public Q_SLOTS:
     virtual void setShowPasswords(bool);
+    bool validate() const;
 private:
     class Private;
     Private * d;

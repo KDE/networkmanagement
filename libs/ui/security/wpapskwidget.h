@@ -31,10 +31,11 @@ Q_OBJECT
 public:
     WpaPskWidget(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~WpaPskWidget();
-    bool validate() const;
     void readConfig();
     void writeConfig();
     void readSecrets();
+public Q_SLOTS:
+    bool validate() const;
 private slots:
     void chkShowPassToggled();
 private:
