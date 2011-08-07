@@ -32,9 +32,9 @@ public:
     virtual void readConfig();
     virtual void writeConfig();
     virtual void readSecrets();
+    virtual bool validate() const;
 public Q_SLOTS:
     virtual void setShowPasswords(bool) {}
-    virtual bool validate() const;
 };
 
 #endif // NULLSECURITYWIDGET_H

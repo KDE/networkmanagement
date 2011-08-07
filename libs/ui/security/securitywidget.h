@@ -37,9 +37,9 @@ public:
     virtual void readConfig() = 0;
     virtual void writeConfig() = 0;
     virtual void readSecrets() = 0;
+    virtual bool validate() const = 0;
 public Q_SLOTS:
     virtual void setShowPasswords(bool) {}
-    virtual bool validate() const = 0;
 protected:
     SecurityWidget(SecurityWidgetPrivate &dd, Knm::Connection* connection, QWidget * parent = 0 );
     SecurityWidgetPrivate * d_ptr;

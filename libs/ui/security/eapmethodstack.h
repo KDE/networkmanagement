@@ -50,13 +50,11 @@ public:
     EapMethod * currentEapMethod() const;
     
     // SecurityWidget methods
+    virtual bool validate() const;
     virtual void readConfig();
     virtual void writeConfig();
     virtual void readSecrets();
     void setShowPasswords(bool on);
-
-public Q_SLOTS:
-    virtual bool validate() const;
 protected:
     EapMethodStack(EapMethodStackPrivate &dd, Knm::Connection* connection, QWidget * parent = 0);
 };
