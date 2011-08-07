@@ -908,5 +908,5 @@ Comment[tr]=Ağ yönetim altyapısı kapatıldı ya da yeniden başlatıldı
 Comment[uk]=Систему керування мережею було зупинено або перезапущено
 Comment[x-test]=xxThe network management subsystem was stopped or restartedxx
 Comment[zh_TW]=網路管理子系統已被關閉或重新啟動
-Action=Popup
+Action=
 
