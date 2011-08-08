@@ -222,7 +222,7 @@ void VpncSettingWidget::readConfig()
 
 void VpncSettingWidget::fillOnePasswordCombo(QComboBox * combo, Knm::Setting::secretsTypes type)
 {
-    if (type & Knm::Setting::AgentOwned || type & Knm::Setting::None) {
+    if (type & Knm::Setting::AgentOwned || type & Knm::Setting::None || !type) {
         combo->setCurrentIndex(VpncSettingWidgetPrivate::EnumPasswordStorage::Save);
     } else if (type & Knm::Setting::NotRequired) {
         combo->setCurrentIndex(VpncSettingWidgetPrivate::EnumPasswordStorage::NotRequired);
@@ -400,13 +400,15 @@ void VpncSettingWidget::readSecrets()
     Knm::Setting::secretsTypes groupType;
 
     userType = (Knm::Setting::secretsTypes)d->setting->data().value(NM_VPNC_KEY_XAUTH_PASSWORD"-flags").toInt();
-    if (userType & Knm::Setting::AgentOwned || userType & Knm::Setting::None) {
+
+    if (userType & Knm::Setting::AgentOwned || userType & Knm::Setting::None || !userType) {
         d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_XAUTH_PASSWORD)));
     }
     fillOnePasswordCombo(d->ui.cboUserPassOptions, userType);
 
     groupType = (Knm::Setting::secretsTypes)d->setting->data().value(NM_VPNC_KEY_SECRET"-flags").toInt();
-    if (groupType & Knm::Setting::AgentOwned || groupType & Knm::Setting::None) {
+
+    if (groupType & Knm::Setting::AgentOwned || groupType & Knm::Setting::None || !groupType) {
         d->ui.leGroupPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_SECRET)));
     }
     fillOnePasswordCombo(d->ui.cboGroupPassOptions, groupType);

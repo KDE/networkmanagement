@@ -271,7 +271,7 @@ void PptpSettingWidget::readSecrets()
     QStringMap data = d->setting->data();
     QStringMap secrets = d->setting->vpnSecrets();
     Knm::Setting::secretsTypes type = (Knm::Setting::secretsTypes)data[NM_PPTP_KEY_PASSWORD"-flags"].toInt();
-    if (type & Knm::Setting::AgentOwned || type & Knm::Setting::None) {
+    if (type & Knm::Setting::AgentOwned || type & Knm::Setting::None || !type) {
         d->ui.edt_password->setText(secrets.value(QLatin1String(NM_PPTP_KEY_PASSWORD)));
     }
     fillOnePasswordCombo(d->ui.cmbPasswordStorage, type);
@@ -279,7 +279,7 @@ void PptpSettingWidget::readSecrets()
 
 void PptpSettingWidget::fillOnePasswordCombo(QComboBox * combo, Knm::Setting::secretsTypes type)
 {
-    if (type & Knm::Setting::AgentOwned || type & Knm::Setting::None) {
+    if (type & Knm::Setting::AgentOwned || type & Knm::Setting::None || !type) {
         combo->setCurrentIndex(1);
     } else if (type & Knm::Setting::NotRequired) {
         combo->setCurrentIndex(2);
