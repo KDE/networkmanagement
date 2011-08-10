@@ -67,7 +67,7 @@
         </font>
        </property>
        <property name="text">
-        <string>The mobile broadband device '%s' requires a SIM PIN code before it can be used.</string>
+        <string>The mobile broadband device '%1' requires a SIM PIN code before it can be used.</string>
        </property>
        <property name="textFormat">
         <enum>Qt::RichText</enum>
