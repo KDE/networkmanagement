@@ -185,6 +185,8 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::Wirel
             d->leap.second = new LeapWidget(d->connection, this);
         }
         d->registerSecurityType(d->leap, i18nc("Label for LEAP wireless security", "LEAP"));
+        // SecurityWidget validation changes should notify SettingWidget
+        connect(d->leap.second, SIGNAL(valid(bool)), SLOT(validate()));
     }
 
     // Dynamic WEP
@@ -193,6 +195,8 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::Wirel
             d->dynamicWep.second = new SecurityDynamicWep(d->connection, this);
         }
         d->registerSecurityType(d->dynamicWep, i18nc("Label for Dynamic WEP wireless security", "Dynamic WEP (802.1x)"));
+        // SecurityWidget validation changes should notify SettingWidget
+        connect (d->dynamicWep.second, SIGNAL(valid(bool)), SLOT(validate()));
     }
 
     // WEP
@@ -201,6 +205,8 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::Wirel
             d->staticWep.second = new WepWidget(WepWidget::Hex, d->connection, this);
         }
         d->registerSecurityType(d->staticWep, i18nc("Label for WEP wireless security", "WEP"));
+        // SecurityWidget validation changes should notify SettingWidget
+        connect (d->staticWep.second, SIGNAL(valid(bool)), SLOT(validate()));
     }
 
     // WPA-PSK
@@ -211,6 +217,8 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::Wirel
             d->wpaPsk.second = new WpaPskWidget(d->connection, this);
         }
         d->registerSecurityType(d->wpaPsk, i18nc("Label for WPA-PSK wireless security", "WPA/WPA2 Personal"));
+        // SecurityWidget validation changes should notify SettingWidget
+        connect(d->wpaPsk.second, SIGNAL(valid(bool)), SLOT(validate()));
     }
     // WPA-EAP
     if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::WpaEap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
@@ -220,6 +228,8 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::Wirel
             d->wpaEap.second = new WpaEapWidget(d->connection, this);
         }
         d->registerSecurityType(d->wpaEap, i18nc("Label for WPA-EAP wireless security", "WPA/WPA2 Enterprise"));
+        // SecurityWidget validation changes should notify SettingWidget
+        connect(d->wpaEap.second, SIGNAL(valid(bool)), SLOT(validate()));
     }
 
     if (ap)
@@ -337,7 +347,8 @@ void WirelessSecuritySettingWidget::writeConfig()
 
 void WirelessSecuritySettingWidget::validate()
 {
-
+    Q_D(WirelessSecuritySettingWidget);
+    emit valid( d->currentSecurityWidget()->validate() );
 }
 
 // vim: sw=4 sts=4 et tw=100

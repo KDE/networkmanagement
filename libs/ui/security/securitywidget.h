@@ -38,6 +38,13 @@ public:
     virtual void writeConfig() = 0;
     virtual void readSecrets() = 0;
     virtual bool validate() const = 0;
+/**
+ * Emit this signal upon security validations. It is connected to the slot
+ * ConnectionPreferences::valid, which will enable/disable OK button
+ * of connection editor window
+ */
+Q_SIGNALS:
+    void valid(bool);
 public Q_SLOTS:
     virtual void setShowPasswords(bool) {}
 protected:

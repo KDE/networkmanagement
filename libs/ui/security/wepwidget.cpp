@@ -44,7 +44,7 @@ public:
     QStringList keys;
     int keyIndex;
     Knm::WirelessSecuritySetting * setting;
-    QRegExpValidator * hexKeyValidator;
+    QRegExpValidator * wepKeyValidator;
 };
 
 WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * parent)
@@ -54,7 +54,7 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
     d->keys << "" << "" << "" << "";
     d->keyIndex = 0;
     d->setting = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
-    QString hexRegExp = "([0-9]|[a-f]|[A-F]){10,26}";
+    QString hexRegExp = "([0-9]|[a-f]|[A-F]){10}|([0-9]|[a-f]|[A-F]){26}"; // 10 or 26 Hex digits
     QString asciiRegExp = "[-";
     for (char ch = ASCII_MIN; ch <= ASCII_MAX; ++ch) {
         if (ch != '-') {
@@ -64,13 +64,13 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
             asciiRegExp.append(ch);
         }
     }
-    asciiRegExp.append("]{5,13}");
+    asciiRegExp.append("]");
+    asciiRegExp = asciiRegExp + "{5}|" + asciiRegExp + "{13}";  // 5 or 13 ASCII characters
     QRegExp regExp(QString("^(%1|%2)$").arg(hexRegExp).arg(asciiRegExp));
-    d->hexKeyValidator = new QRegExpValidator(regExp, this);
+    d->wepKeyValidator = new QRegExpValidator(regExp, this);
 
     d->ui.setupUi(this);
     d->ui.key->setEchoMode(QLineEdit::Password);
-    d->ui.key->setValidator(d->hexKeyValidator);
 
     connect(d->ui.keyType, SIGNAL(currentIndexChanged(int)), this, SLOT(keyTypeChanged(int)));
 
@@ -84,6 +84,8 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
 
     connect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
     connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
+    // Validate the key when changed, which is used to enable/disable OK button
+    connect(d->ui.key, SIGNAL(textChanged(QString)), this, SLOT(validateKey(QString)));
 }
 
 WepWidget::~WepWidget()
@@ -97,12 +99,16 @@ void WepWidget::keyTypeChanged(int index)
         case 0: //passphrase
             d->ui.keyLabel->setText(i18n("&Passphrase:"));
             d->format = WepWidget::Passphrase;
+            d->ui.key->setValidator(0); // Clear the validator
             break;
-        case 1: //hex key
+        case 1: //hex/ascii key
             d->ui.keyLabel->setText(i18n("&Key:"));
             d->format = WepWidget::Hex;
+            d->ui.key->setValidator(d->wepKeyValidator);
             break;
     }
+    // Ensure any existing key is validated too
+    validateKey(d->ui.key->text());
 }
 
 void WepWidget::keyIndexChanged(int index)
@@ -114,6 +120,12 @@ void WepWidget::keyIndexChanged(int index)
     d->keyIndex = index;
 }
 
+void WepWidget::validateKey(QString key)
+{
+    Q_UNUSED(key);
+    emit valid( validate() );
+}
+
 void WepWidget::chkShowPassToggled(bool on)
 {
     d->ui.key->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
@@ -121,11 +133,11 @@ void WepWidget::chkShowPassToggled(bool on)
 
 bool WepWidget::validate() const
 {
-    if (d->ui.keyType->currentIndex() == 1) {
+    if (d->ui.keyType->currentIndex() == 1) {   // Hex/ASCII key
         return d->ui.key->hasAcceptableInput();
     }
-    else {
-        return true;
+    else {  // Passphrase
+        return (!d->ui.key->text().isEmpty() && d->ui.key->text().length() <= 64);
     }
 }
 
