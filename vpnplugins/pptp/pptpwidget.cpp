@@ -85,7 +85,7 @@ void PptpSettingWidget::readConfig()
     Q_D(PptpSettingWidget);
     // General settings
     QStringMap dataMap = d->setting->data();
-    QVariantMap vpnSecretsMap = d->setting->vpnSecrets();
+    QStringMap vpnSecretsMap = d->setting->vpnSecrets();
 
     // Authentication
     QString sGateway = dataMap[NM_PPTP_KEY_GATEWAY];
@@ -100,7 +100,7 @@ void PptpSettingWidget::readConfig()
         d->ui.edt_login->setText(sLogin);
     }
 
-    QString sPassword = vpnSecretsMap[NM_PPTP_KEY_PASSWORD].toString();
+    QString sPassword = vpnSecretsMap[NM_PPTP_KEY_PASSWORD];
     if (!sPassword.isEmpty()) {
         d->ui.edt_password->setText(sPassword);
     }
@@ -178,7 +178,7 @@ void PptpSettingWidget::writeConfig()
     // if the advanced dialog is dirty, save its data in the vpn setting too
     //
     QStringMap data;
-    QVariantMap secretData;
+    QStringMap secretData;
 
     data.insert(NM_PPTP_KEY_GATEWAY,  d->ui.edt_gateway->text().toUtf8());
     data.insert(NM_PPTP_KEY_USER, d->ui.edt_login->text().toUtf8());
@@ -268,9 +268,9 @@ void PptpSettingWidget::writeConfig()
 void PptpSettingWidget::readSecrets()
 {
     Q_D(PptpSettingWidget);
-    QVariantMap secrets = d->setting->vpnSecrets();
+    QStringMap secrets = d->setting->vpnSecrets();
 
-    d->ui.edt_password->setText(secrets.value(QLatin1String(NM_PPTP_KEY_PASSWORD)).toString());
+    d->ui.edt_password->setText(secrets.value(QLatin1String(NM_PPTP_KEY_PASSWORD)));
 }
 
 void PptpSettingWidget::validate()

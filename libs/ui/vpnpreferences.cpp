@@ -74,7 +74,7 @@ VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
     }
     if (args.count() > 3) {
         // VPN Secrets
-        conSetting->setVpnSecrets(args[3].toMap());
+        conSetting->setVpnSecrets(Knm::VpnPersistence::stringMapFromStringList(Knm::VpnPersistence::variantMapToStringList(args[3].toMap())));
     }
     if (args.count() > 2) {
         // VPN connection data

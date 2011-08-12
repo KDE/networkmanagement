@@ -27,7 +27,7 @@ void VpnPersistence::load()
   // SECRET
   if (m_storageMode == ConnectionPersistence::PlainText) {
       // the map is flattened to a list of key,value,key,value
-      setting->setVpnSecrets(variantMapFromStringList(m_config->readEntry("VpnSecrets", QStringList())));
+      setting->setVpnSecrets(stringMapFromStringList(m_config->readEntry("VpnSecrets", QStringList())));
     setting->setSecretsAvailable(true);
   }
   setting->setPluginName(m_config->readEntry("PluginName", ""));
@@ -108,15 +108,15 @@ void VpnPersistence::restoreSecrets(QMap<QString,QString> secrets) const
 {
   if (m_storageMode == ConnectionPersistence::Secure) {
     VpnSetting * setting = static_cast<VpnSetting *>(m_setting);
-    setting->setVpnSecrets(variantMapFromStringList(secrets.value("VpnSecrets").split("%SEP%")));
+    setting->setVpnSecrets(stringMapFromStringList(secrets.value("VpnSecrets").split("%SEP%")));
     setting->setSecretsAvailable(true);
   }
 }
 
-QVariantMap VpnPersistence::secretsToSave(const QStringMap & type, const QVariantMap & secrets)
+QVariantMap VpnPersistence::secretsToSave(const QStringMap & type, const QStringMap & secrets)
 {
   QVariantMap toSave;
-  QMapIterator<QString,QVariant> i(secrets);
+  QMapIterator<QString,QString> i(secrets);
   while (i.hasNext()) {
       i.next();
       if (type[i.key()].isNull() || type[i.key()] == QLatin1String(NM_VPN_PW_TYPE_SAVE))

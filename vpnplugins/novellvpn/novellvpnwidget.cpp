@@ -146,7 +146,7 @@ void NovellVpnSettingWidget::writeConfig()
     d->setting->setServiceType(QLatin1String(NM_DBUS_SERVICE_NOVELLVPN));
 
     QStringMap data;
-    QVariantMap secretData;
+    QStringMap secretData;
 
     // required settings
     data.insert(NM_NOVELLVPN_KEY_GATEWAY, d->ui.leGateway->text());
@@ -189,7 +189,7 @@ void NovellVpnSettingWidget::writeConfig()
     d->setting->setVpnSecrets(secretData);
 }
 
-void NovellVpnSettingWidget::writeX509Auth(QStringMap & data, QVariantMap & secretData)
+void NovellVpnSettingWidget::writeX509Auth(QStringMap & data, QStringMap & secretData)
 {
     data.insert(QLatin1String(NM_NOVELLVPN_KEY_AUTHTYPE), QLatin1String(NM_NOVELLVPN_CONTYPE_X509_STRING));
     data.insert(NM_NOVELLVPN_KEY_CERTIFICATE, d->ui.x509Cert->url().path().toUtf8());
@@ -198,11 +198,11 @@ void NovellVpnSettingWidget::writeX509Auth(QStringMap & data, QVariantMap & secr
 
 void NovellVpnSettingWidget::readSecrets()
 {
-    QVariantMap secrets = d->setting->vpnSecrets();
-    kDebug() << "Value of" << NM_NOVELLVPN_KEY_CERT_PWD << secrets.value(QLatin1String(NM_NOVELLVPN_KEY_CERT_PWD)).toString();
-    d->ui.x509CertPass->setText(secrets.value(QLatin1String(NM_NOVELLVPN_KEY_CERT_PWD)).toString());
-    d->ui.leUserPass->setText(secrets.value(QLatin1String(NM_NOVELLVPN_KEY_USER_PWD)).toString());
-    d->ui.leGroupPass->setText(secrets.value(QLatin1String(NM_NOVELLVPN_KEY_GRP_PWD)).toString());
+    QStringMap secrets = d->setting->vpnSecrets();
+    kDebug() << "Value of" << NM_NOVELLVPN_KEY_CERT_PWD << secrets.value(QLatin1String(NM_NOVELLVPN_KEY_CERT_PWD));
+    d->ui.x509CertPass->setText(secrets.value(QLatin1String(NM_NOVELLVPN_KEY_CERT_PWD)));
+    d->ui.leUserPass->setText(secrets.value(QLatin1String(NM_NOVELLVPN_KEY_USER_PWD)));
+    d->ui.leGroupPass->setText(secrets.value(QLatin1String(NM_NOVELLVPN_KEY_GRP_PWD)));
 }
 
 void NovellVpnSettingWidget::validate()

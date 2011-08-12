@@ -26,7 +26,7 @@ class KNMINTERNALS_EXPORT VpnPersistence : public SettingPersistence
     static QVariantMap variantMapFromStringList(const QStringList &);
     static QStringList stringMapToStringList(const QStringMap &);
     static QStringMap stringMapFromStringList(const QStringList &);
-    static QVariantMap secretsToSave(const QStringMap &, const QVariantMap &);
+    static QVariantMap secretsToSave(const QStringMap &, const QStringMap &);
 };
 }
 

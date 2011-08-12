@@ -244,7 +244,7 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
 void VpncUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
 {
     QStringMap data;
-    QVariantMap secretData;
+    QStringMap secretData;
     QStringMap secretsType;
     KSharedConfig::Ptr config = KSharedConfig::openConfig(fileName);
     KConfigGroup cg(config,"main");

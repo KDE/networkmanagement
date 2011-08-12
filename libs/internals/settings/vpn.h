@@ -78,7 +78,7 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     /**
       Set Vpnsecrets
     */
-    void setVpnSecrets( const QVariantMap & v )
+    void setVpnSecrets( const QStringMap & v )
     {
         mVpnSecrets = v;
     }
@@ -86,7 +86,7 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     /**
       Get Vpnsecrets
     */
-    QVariantMap vpnSecrets() const
+    QStringMap vpnSecrets() const
     {
       return mVpnSecrets;
     }
@@ -131,7 +131,7 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     QString mServiceType;
     QStringMap mData;
     QString mUserName;
-    QVariantMap mVpnSecrets;
+    QStringMap mVpnSecrets;
     QString mPluginName;
     QStringMap mSecretsStorageType;
 
