@@ -20,7 +20,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <kdebug.h>
-#include <KUser>
 #include <solid/control/networkmodeminterface.h>
 
 #include "connection.h"

@@ -99,9 +99,14 @@ void ConnectionWidget::writeConfig()
     Q_D(ConnectionWidget);
     connection()->setName(d->ui.id->text());
     connection()->setAutoConnect(d->ui.autoconnect->isChecked());
-    if (!d->ui.system->isChecked())
-        connection()->setPermissions(d->permissions);
-    else
+    if (!d->ui.system->isChecked()) {
+        if (d->permissions.isEmpty()) {
+            connection()->addToPermissions(KUser().loginName(),QString());
+            d->permissions = connection()->permissions();
+        } else {
+            connection()->setPermissions(d->permissions);
+        }
+    } else
         connection()->setPermissions(QHash<QString,QString>());
 }
 

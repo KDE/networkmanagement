@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QString>
 #include <QUuid>
 
+#include <KUser>
 #include <solid/control/networkinterface.h>
 
 #include "setting.h"
