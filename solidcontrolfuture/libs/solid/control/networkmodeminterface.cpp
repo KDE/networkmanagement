@@ -118,6 +118,16 @@ Solid::Control::ModemGsmCardInterface * Solid::Control::ModemNetworkInterfaceNm0
     return 0;
 }
 
+void Solid::Control::ModemNetworkInterfaceNm09::setModemCardIface(Solid::Control::ModemGsmCardInterface * iface)
+{
+    Q_D(const ModemNetworkInterfaceNm09);
+    Ifaces::ModemNetworkInterfaceNm09 *t = qobject_cast<Ifaces::ModemNetworkInterfaceNm09 *>(d->backendObject());
+    if (t != 0)
+    {
+        t->setModemCardIface(iface);
+    }
+}
+
 void Solid::Control::ModemNetworkInterfaceNm09::setModemNetworkIface(Solid::Control::ModemGsmNetworkInterface * iface)
 {
     Q_D(const ModemNetworkInterfaceNm09);

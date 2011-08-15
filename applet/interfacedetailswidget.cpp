@@ -203,6 +203,11 @@ void InterfaceDetailsWidget::resetInterfaceDetails()
 {
     delete details;
     details = new InterfaceDetails();
+    Solid::Control::ModemNetworkInterfaceNm09 *giface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(m_iface);
+    if (giface) {
+        giface->setModemCardIface(0);
+        giface->setModemNetworkIface(0);
+    }
     getDetails();
     showDetails();
 }
