@@ -210,6 +210,13 @@ void InterfaceDetailsWidget::resetInterfaceDetails()
 {
     delete details;
     details = new InterfaceDetails();
+    Solid::Control::ModemNetworkInterfaceNm09 *giface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(m_iface);
+    if (giface) {
+#if KDE_IS_VERSION(4, 7, 1)
+        giface->setModemCardIface(0);
+#endif
+        giface->setModemNetworkIface(0);
+    }
     getDetails();
     showDetails();
 }
