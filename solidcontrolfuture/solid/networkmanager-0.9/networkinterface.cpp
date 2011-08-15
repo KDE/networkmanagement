@@ -29,17 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "manager.h"
 #include "networkmanagerdefinitions.h"
 
-// lifted from libnm-glib/nm-device.h, remove when our NM packages have this version
-#define NM_DEVICE_UDI "udi"
-#define NM_DEVICE_INTERFACE "interface"
-#define NM_DEVICE_DRIVER "driver"
-#define NM_DEVICE_CAPABILITIES "capabilities"
-#define NM_DEVICE_MANAGED "managed"
-#define NM_DEVICE_IP4_CONFIG "ip4-config"
-#define NM_DEVICE_STATE "state"
-#define NM_DEVICE_VENDOR "vendor"
-#define NM_DEVICE_PRODUCT "product"
-
 NMNetworkInterfacePrivate::NMNetworkInterfacePrivate( const QString & path, QObject * owner ) : deviceIface(NM_DBUS_SERVICE, path, QDBusConnection::systemBus()), uni(path), designSpeed(0), manager(0)/*, propHelper(owner)*/
 {
     Q_UNUSED(owner);

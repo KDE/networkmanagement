@@ -36,7 +36,7 @@ namespace Control
 namespace Ifaces
 {
     /**
-     * Represents a wireless network interface
+     * Represents a modem network interface
      */
     class SOLIDCONTROLIFACES_EXPORT ModemNetworkInterfaceNm09 : virtual public NetworkInterfaceNm09
     {

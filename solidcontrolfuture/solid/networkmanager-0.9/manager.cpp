@@ -363,7 +363,7 @@ QStringList NMNetworkManager::activeConnectionsUuid() const
 {
     Q_D(const NMNetworkManager);
     QStringList r;
-    foreach(const QString objPath, d->activeConnections) {
+    foreach(const QString & objPath, d->activeConnections) {
         OrgFreedesktopNetworkManagerConnectionActiveInterface iface(NM_DBUS_SERVICE, objPath, QDBusConnection::systemBus());
         r.append(iface.uuid());
     }
