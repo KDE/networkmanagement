@@ -57,8 +57,8 @@ Solid::Control::WirelessNetworkInterfaceEnvironment::WirelessNetworkInterfaceEnv
         accessPointAppearedInternal(apUni);
     }
     // for managing our list of wireless networks
-    connect(iface, SIGNAL(accessPointAppeared(const QString&)),
-            SLOT(accessPointAppeared(const QString&)));
+    connect(iface, SIGNAL(accessPointAppeared(QString)),
+            SLOT(accessPointAppeared(QString)));
     connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
             SLOT(wirelessEnabledChanged(bool)));
 }
@@ -109,7 +109,7 @@ void Solid::Control::WirelessNetworkInterfaceEnvironment::accessPointAppearedInt
     } else if (!d->networks.contains(ssid)) {
         Solid::Control::WirelessNetwork * net = new Solid::Control::WirelessNetwork(ap, d->iface, this);
         d->networks.insert(ssid, net);
-        connect(net, SIGNAL(disappeared(const QString&)), SLOT(removeNetwork(const QString&)));
+        connect(net, SIGNAL(disappeared(QString)), SLOT(removeNetwork(QString)));
         emit networkAppeared(ssid);
     }
 

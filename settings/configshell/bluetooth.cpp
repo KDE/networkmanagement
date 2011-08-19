@@ -105,8 +105,8 @@ Bluetooth::Bluetooth(const QString bdaddr, const QString service): QObject(), mB
 {
     mService = mService.toLower();
     if (mService == "dun") {
-        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceAdded(const QString &)),
-                SLOT(modemAdded(const QString &)));
+        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceAdded(QString)),
+                SLOT(modemAdded(QString)));
     }
     QTimer::singleShot(0, this, SLOT(init()));
 }

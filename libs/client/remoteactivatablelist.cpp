@@ -49,14 +49,14 @@ RemoteActivatableList::RemoteActivatableList(QObject * parent)
 {
     Q_D(RemoteActivatableList);
     d->iface = new NetworkManagementInterface("org.kde.networkmanagement", "/org/kde/networkmanagement", QDBusConnection::sessionBus(), this);
-    connect(d->iface, SIGNAL(ActivatableAdded(const QString&,uint)),
-            this, SLOT(handleActivatableAdded(const QString&,uint)));
-    connect(d->iface, SIGNAL(ActivatableRemoved(const QString&)),
-            this, SLOT(handleActivatableRemoved(const QString &)));
+    connect(d->iface, SIGNAL(ActivatableAdded(QString,uint)),
+            this, SLOT(handleActivatableAdded(QString,uint)));
+    connect(d->iface, SIGNAL(ActivatableRemoved(QString)),
+            this, SLOT(handleActivatableRemoved(QString)));
     // clean our connections out if the service goes away
     connect(QDBusConnection::sessionBus().interface(),
-            SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)),
-            SLOT(serviceOwnerChanged(const QString&,const QString&,const QString&)));
+            SIGNAL(serviceOwnerChanged(QString,QString,QString)),
+            SLOT(serviceOwnerChanged(QString,QString,QString)));
 }
 
 void RemoteActivatableList::init()

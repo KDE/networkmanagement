@@ -40,7 +40,7 @@ GsmInterfaceConnection::GsmInterfaceConnection(ActivatableType type, const QStri
     connectMMSignals();
 
     // For bluetooth devices.
-    connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceAdded(const QString &)), this, SLOT(connectMMSignals()));
+    connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceAdded(QString)), this, SLOT(connectMMSignals()));
 }
 
 GsmInterfaceConnection::~GsmInterfaceConnection()
@@ -65,8 +65,8 @@ void GsmInterfaceConnection::connectMMSignals()
     if (modemNetworkIface) {
         kDebug() << "Connecting signals of " << modemNetworkIface->udi() << " to " << deviceUni();
         QObject::connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), this, SLOT(setSignalQuality(uint)));
-        QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(const Solid::Control::ModemInterface::AccessTechnology)), this, SLOT(setAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology)));
-        QObject::connect(modemNetworkIface, SIGNAL(enabledChanged(const bool)), this, SLOT(setEnabled(const bool)));
+        QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(Solid::Control::ModemInterface::AccessTechnology)), this, SLOT(setAccessTechnology(Solid::Control::ModemInterface::AccessTechnology)));
+        QObject::connect(modemNetworkIface, SIGNAL(enabledChanged(bool)), this, SLOT(setEnabled(bool)));
 
         m_signalQuality = modemNetworkIface->getSignalQuality();
         m_accessTechnology = modemNetworkIface->getAccessTechnology();

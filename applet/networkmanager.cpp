@@ -200,7 +200,7 @@ void NetworkManagerApplet::setupInterfaceSignals()
 {
     foreach (Solid::Control::NetworkInterface* interface, m_interfaces) {
         // be aware of state changes
-        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int, int, int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(interfaceConnectionStateChanged()));
         QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
         QObject::disconnect(interface, SIGNAL(linkUpChanged(bool)));
 
@@ -219,7 +219,7 @@ void NetworkManagerApplet::setupInterfaceSignals()
         } else if (interface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             Solid::Control::WirelessNetworkInterface* wirelessiface =
                             static_cast<Solid::Control::WirelessNetworkInterface*>(interface);
-            connect(wirelessiface, SIGNAL(activeAccessPointChanged(const QString&)), SLOT(interfaceConnectionStateChanged()));
+            connect(wirelessiface, SIGNAL(activeAccessPointChanged(QString)), SLOT(interfaceConnectionStateChanged()));
             QString uni = wirelessiface->activeAccessPoint();
             Solid::Control::AccessPoint *ap = wirelessiface->findAccessPoint(uni);
             if (ap) {
@@ -236,10 +236,10 @@ void NetworkManagerApplet::init()
     m_contentSquare = contentsRect().toRect();
     //kDebug();
     configChanged();
-    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
-    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
-            this, SLOT(networkInterfaceRemoved(const QString&)));
+    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(QString)),
+            this, SLOT(networkInterfaceAdded(QString)));
+    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(QString)),
+            this, SLOT(networkInterfaceRemoved(QString)));
 
     QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));

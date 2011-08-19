@@ -136,3 +136,4 @@ void Security8021xSetting::remove()
     if (!phase2privatekey().isEmpty())
         QFile::remove(pathFromCert(phase2privatekey()));
 }
+

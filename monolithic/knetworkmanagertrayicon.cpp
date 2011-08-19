@@ -153,12 +153,12 @@ KNetworkManagerTrayIcon::KNetworkManagerTrayIcon(Solid::Control::NetworkInterfac
 
     // listen for new devices
     QObject::connect(Solid::Control::NetworkManager::notifier(),
-            SIGNAL(networkInterfaceAdded(const QString&)),
+            SIGNAL(networkInterfaceAdded(QString)),
             this,
-            SLOT(networkInterfaceAdded(const QString&)));
+            SLOT(networkInterfaceAdded(QString)));
 
     QObject::connect(Solid::Control::NetworkManager::notifier(),
-            SIGNAL(networkInterfaceRemoved(const QString&)),
+            SIGNAL(networkInterfaceRemoved(QString)),
             this,
             SLOT(updateInterfaceToDisplay()));
 
@@ -429,9 +429,9 @@ void KNetworkManagerTrayIcon::updateInterfaceToDisplay()
                 = qobject_cast<Solid::Control::WirelessNetworkInterface*>(d->displayedNetworkInterface.data());
 
             QObject::disconnect(displayedWirelessIface,
-                    SIGNAL(activeAccessPointChanged(const QString &)),
+                    SIGNAL(activeAccessPointChanged(QString)),
                     this,
-                    SLOT(activeAccessPointChanged(const QString &)));
+                    SLOT(activeAccessPointChanged(QString)));
         }
         if (!d->activeAccessPoint.isNull()) {
             QObject::disconnect(d->activeAccessPoint.data(), 0, this, 0);
@@ -444,9 +444,9 @@ void KNetworkManagerTrayIcon::updateInterfaceToDisplay()
         // if wireless listen to its signal strength signals
         if (wirelessIface) {
             QObject::connect(wirelessIface,
-                    SIGNAL(activeAccessPointChanged(const QString &)),
+                    SIGNAL(activeAccessPointChanged(QString)),
                     this,
-                    SLOT(activeAccessPointChanged(const QString &)));
+                    SLOT(activeAccessPointChanged(QString)));
 
             activeAccessPointChanged(wirelessIface->activeAccessPoint());
         } else {

@@ -86,12 +86,12 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
     m_contents->setDefaultName(ssid.isEmpty() ? i18n("New Wireless Connection") : ssid);
 
     m_wirelessWidget = new Wireless80211Widget(m_connection, ssid, this);
-    connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *)),
-            this, SLOT(setDefaultName(Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *)));
+    connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterface*,Solid::Control::AccessPoint*)),
+            this, SLOT(setDefaultName(Solid::Control::WirelessNetworkInterface*,Solid::Control::AccessPoint*)));
 
     m_securityWidget = new WirelessSecuritySettingWidget(m_connection, iface, ap, this);
-    connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *)),
-            m_securityWidget, SLOT(setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *)));
+    connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterface*,Solid::Control::AccessPoint*)),
+            m_securityWidget, SLOT(setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterface*,Solid::Control::AccessPoint*)));
 
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
     IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
@@ -130,8 +130,8 @@ WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
     m_contents->setConnection(m_connection);
 
     m_wirelessWidget = new Wireless80211Widget(m_connection, NULL, this);
-    connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *)),
-            this, SLOT(setDefaultName(Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *)));
+    connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterface*,Solid::Control::AccessPoint*)),
+            this, SLOT(setDefaultName(Solid::Control::WirelessNetworkInterface*,Solid::Control::AccessPoint*)));
 
     m_securityWidget = new WirelessSecuritySettingWidget(m_connection, NULL, NULL, this);
 

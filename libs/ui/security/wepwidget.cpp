@@ -90,8 +90,8 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
     connect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
     connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
     connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
-    connect(d->ui.key, SIGNAL(textChanged(const QString &)), this, SLOT(secretTextChanged()));
-    connect(d->ui.passphrase, SIGNAL(textChanged(const QString &)), this, SLOT(secretTextChanged()));
+    connect(d->ui.key, SIGNAL(textChanged(QString)), this, SLOT(secretTextChanged()));
+    connect(d->ui.passphrase, SIGNAL(textChanged(QString)), this, SLOT(secretTextChanged()));
 }
 
 WepWidget::~WepWidget()

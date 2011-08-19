@@ -214,8 +214,8 @@ void NMPopup::init()
     m_showMoreButton->setMinimumSize(sMax);
     m_showMoreButton->setMaximumSize(sMax);
     connect(m_showMoreButton, SIGNAL(clicked()), this, SLOT(showMore()));
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable *)), this, SLOT(uncheckShowMore(RemoteActivatable *)));
-    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable *)), this, SLOT(checkShowMore(RemoteActivatable *)));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*)), this, SLOT(uncheckShowMore(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), this, SLOT(checkShowMore(RemoteActivatable*)));
 
     QGraphicsLinearLayout* connectionLayout = new QGraphicsLinearLayout;
     connectionLayout->addItem(m_showMoreButton);
@@ -234,10 +234,10 @@ void NMPopup::init()
     }
     addVpnInterface();
     // hook up signals to allow us to change the connection list depending on APs present, etc
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            SLOT(interfaceAdded(const QString&)));
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
-            SLOT(interfaceRemoved(const QString&)));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(QString)),
+            SLOT(interfaceAdded(QString)));
+    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(QString)),
+            SLOT(interfaceRemoved(QString)));
 
     m_showMoreChecked = false;
     m_oldShowMoreChecked = true;
@@ -421,17 +421,17 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterface* iface)
             //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
             wifiItem->setEnabled(Solid::Control::NetworkManager::isWirelessEnabled());
             kDebug() << "WiFi added";
-            connect(wifiItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
+            connect(wifiItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
         } else {
             // Create the interfaceitem
             ifaceItem = new InterfaceItem(static_cast<Solid::Control::WiredNetworkInterface *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
-            connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
+            connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
         }
         connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
         connect(ifaceItem, SIGNAL(clicked(Solid::Control::NetworkInterface*)),
                 m_connectionList,  SLOT(addInterface(Solid::Control::NetworkInterface*)));
-        connect(ifaceItem, SIGNAL(hoverEnter(const QString&)), m_connectionList, SLOT(hoverEnter(const QString&)));
-        connect(ifaceItem, SIGNAL(hoverLeave(const QString&)), m_connectionList, SLOT(hoverLeave(const QString&)));
+        connect(ifaceItem, SIGNAL(hoverEnter(QString)), m_connectionList, SLOT(hoverEnter(QString)));
+        connect(ifaceItem, SIGNAL(hoverLeave(QString)), m_connectionList, SLOT(hoverLeave(QString)));
 
         // Catch connection changes
         connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));

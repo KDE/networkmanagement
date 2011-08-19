@@ -131,8 +131,8 @@ WirelessStatus::WirelessStatus(Solid::Control::WirelessNetworkInterface * iface)
 {
     Q_D(WirelessStatus);
 
-    connect(iface, SIGNAL(activeAccessPointChanged(const QString&)),
-        SLOT(activeAccessPointChanged(const QString&)));
+    connect(iface, SIGNAL(activeAccessPointChanged(QString)),
+        SLOT(activeAccessPointChanged(QString)));
 
     d->init(iface);
     activeAccessPointChanged(d->iface->uni());

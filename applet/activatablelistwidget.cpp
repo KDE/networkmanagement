@@ -71,9 +71,9 @@ void ActivatableListWidget::init()
 {
     listAppeared();
     connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*)),
-            SLOT(activatableAdded(RemoteActivatable *)));
+            SLOT(activatableAdded(RemoteActivatable*)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
-            SLOT(activatableRemoved(RemoteActivatable *)));
+            SLOT(activatableRemoved(RemoteActivatable*)));
 
     connect(m_activatables, SIGNAL(appeared()), SLOT(listAppeared()));
     connect(m_activatables, SIGNAL(disappeared()), SLOT(listDisappeared()));
@@ -237,8 +237,8 @@ void ActivatableListWidget::createHiddenItem()
     //m_itemIndex[activatable] = ai;
     connect(m_hiddenItem, SIGNAL(disappearAnimationFinished()),
             this, SLOT(deleteItem()));
-    connect(m_hiddenItem, SIGNAL(connectToHiddenNetwork(const QString&)),
-            this, SLOT(connectToHiddenNetwork(const QString&)));
+    connect(m_hiddenItem, SIGNAL(connectToHiddenNetwork(QString)),
+            this, SLOT(connectToHiddenNetwork(QString)));
 }
 
 void ActivatableListWidget::listAppeared()

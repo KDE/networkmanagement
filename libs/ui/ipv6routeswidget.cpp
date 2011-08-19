@@ -72,10 +72,10 @@ IpV6RoutesWidget::IpV6RoutesWidget(QWidget * parent)
     connect(d->ui.pushButtonAdd, SIGNAL(clicked()), this, SLOT(addRoute()));
     connect(d->ui.pushButtonRemove, SIGNAL(clicked()), this, SLOT(removeRoute()));
 
-    connect(d->ui.tableViewAddresses->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
-            SLOT(selectionChanged(const QItemSelection&)));
+    connect(d->ui.tableViewAddresses->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
+            SLOT(selectionChanged(QItemSelection)));
 
-    connect(&d->model, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(tableViewItemChanged(QStandardItem *)));
+    connect(&d->model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(tableViewItemChanged(QStandardItem*)));
 }
 
 IpV6RoutesWidget::~IpV6RoutesWidget()
