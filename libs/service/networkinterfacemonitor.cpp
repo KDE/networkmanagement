@@ -56,11 +56,11 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
     d->activatableList = activatableList;
 
     QObject::connect(Solid::Control::NetworkManager::notifier(),
-            SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
+            SIGNAL(networkInterfaceAdded(QString)),
+            this, SLOT(networkInterfaceAdded(QString)));
     QObject::connect(Solid::Control::NetworkManager::notifier(),
-            SIGNAL(networkInterfaceRemoved(const QString&)),
-            this, SLOT(networkInterfaceRemoved(const QString&)));
+            SIGNAL(networkInterfaceRemoved(QString)),
+            this, SLOT(networkInterfaceRemoved(QString)));
 
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         networkInterfaceAdded(iface->uni());
@@ -69,8 +69,8 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
 #ifdef COMPILE_MODEM_MANAGER_SUPPORT
     dialog = 0;
     QObject::connect(Solid::Control::ModemManager::notifier(),
-            SIGNAL(modemInterfaceAdded(const QString&)),
-            this, SLOT(modemInterfaceAdded(const QString&)));
+            SIGNAL(modemInterfaceAdded(QString)),
+            this, SLOT(modemInterfaceAdded(QString)));
 
     foreach (Solid::Control::ModemInterface * iface, Solid::Control::ModemManager::modemInterfaces()) {
         modemInterfaceAdded(iface->udi());
@@ -133,7 +133,7 @@ void NetworkInterfaceMonitor::modemInterfaceAdded(const QString & udi)
         return;
     }
 
-    connect(modem, SIGNAL(unlockRequiredChanged(const QString &)), SLOT(requestPin(const QString &)));
+    connect(modem, SIGNAL(unlockRequiredChanged(QString)), SLOT(requestPin(QString)));
 
     if (dialog || modem->unlockRequired().isEmpty()) {
         return;

@@ -45,7 +45,7 @@ NMDBusActiveConnectionProxy::NMDBusActiveConnectionProxy(Knm::InterfaceConnectio
 {
     m_activeConnectionIface->setParent(this);
 
-    connect(m_activeConnectionIface, SIGNAL(PropertiesChanged(const QVariantMap&)), SLOT(handlePropertiesChanged(const QVariantMap &)));
+    connect(m_activeConnectionIface, SIGNAL(PropertiesChanged(QVariantMap)), SLOT(handlePropertiesChanged(QVariantMap)));
 
     m_interfaceConnection->setProperty("NMDBusActiveConnectionObject", m_activeConnectionIface->path());
     kDebug() << "default:" << m_activeConnectionIface->getDefault() << "state:" << m_activeConnectionIface->state();
@@ -86,7 +86,7 @@ NMDBusVPNConnectionProxy::NMDBusVPNConnectionProxy(Knm::InterfaceConnection * in
             activeConnectionIface->path(),
             QDBusConnection::systemBus(),
             this);
-    connect(m_vpnConnectionIface, SIGNAL(PropertiesChanged(const QVariantMap&)), this, SLOT(handleVPNPropertiesChanged(const QVariantMap&)));
+    connect(m_vpnConnectionIface, SIGNAL(PropertiesChanged(QVariantMap)), this, SLOT(handleVPNPropertiesChanged(QVariantMap)));
     setState(m_vpnConnectionIface->vpnState());
 }
 

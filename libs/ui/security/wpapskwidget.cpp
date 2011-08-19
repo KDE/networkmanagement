@@ -54,7 +54,7 @@ WpaPskWidget::WpaPskWidget(Knm::Connection* connection, QWidget * parent)
     d->wsetting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
 
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
-    connect(d->ui.psk, SIGNAL(textChanged ( const QString &)), this, SLOT(pskTextChanged()));
+    connect(d->ui.psk, SIGNAL(textChanged(QString)), this, SLOT(pskTextChanged()));
     d->ui.psk->setEchoMode(QLineEdit::Password);
 }
 

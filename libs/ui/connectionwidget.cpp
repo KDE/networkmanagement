@@ -48,7 +48,7 @@ ConnectionWidget::ConnectionWidget(QWidget * parent)
     d->ui.pushButtonChooseIcon->setToolTip(i18nc("@info:tooltip user action", "Choose a connection icon"));
     // it doesn't make a sense to set up an icon here, lets do it in readConfig
     connect(d->ui.pushButtonChooseIcon, SIGNAL(clicked()), this, SLOT(buttonChooseIconClicked()));
-    connect(d->ui.id, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
+    connect(d->ui.id, SIGNAL(textChanged(QString)), this, SLOT(validate()));
 }
 
 ConnectionWidget::~ConnectionWidget()

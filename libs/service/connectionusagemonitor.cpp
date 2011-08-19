@@ -47,8 +47,8 @@ ConnectionUsageMonitor::ConnectionUsageMonitor(ConnectionList * connectionList, 
     d->connectionList = connectionList;
     d->activatableList = activatableList;
 
-    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
+    QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(QString)),
+            this, SLOT(networkInterfaceAdded(QString)));
 
     Solid::Control::NetworkInterfaceList allInterfaces = Solid::Control::NetworkManager::networkInterfaces();
     foreach (Solid::Control::NetworkInterface * interface, allInterfaces) {
@@ -125,8 +125,8 @@ void ConnectionUsageMonitor::networkInterfaceAdded(const QString& uni)
         Solid::Control::WirelessNetworkInterface * wifiDevice =
             qobject_cast<Solid::Control::WirelessNetworkInterface *>(interface);
         if (wifiDevice)
-            connect(wifiDevice, SIGNAL(activeAccessPointChanged(const QString &)),
-                    this, SLOT(networkInterfaceAccessPointChanged(const QString &)));
+            connect(wifiDevice, SIGNAL(activeAccessPointChanged(QString)),
+                    this, SLOT(networkInterfaceAccessPointChanged(QString)));
     }
 }
 

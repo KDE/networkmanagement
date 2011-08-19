@@ -88,9 +88,9 @@ bool NetworkManagementEngine::sourceRequestEvent(const QString &name)
 
     if (name == "connections") {
         connect(d->activatables, SIGNAL(activatableAdded(RemoteActivatable*)),
-                SLOT(activatableAdded(RemoteActivatable *)));
+                SLOT(activatableAdded(RemoteActivatable*)));
         connect(d->activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
-                SLOT(activatableRemoved(RemoteActivatable *)));
+                SLOT(activatableRemoved(RemoteActivatable*)));
 
         connect(d->activatables, SIGNAL(appeared()), SLOT(listAppeared()));
         connect(d->activatables, SIGNAL(disappeared()), SLOT(listDisappeared()));

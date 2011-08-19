@@ -48,7 +48,7 @@ GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnect
     m_connectButton(0)
 {
     connect(remote, SIGNAL(signalQualityChanged(int)), this, SLOT(setQuality(int)));
-    connect(remote, SIGNAL(accessTechnologyChanged(const int)), this, SLOT(setAccessTechnology(const int)));
+    connect(remote, SIGNAL(accessTechnologyChanged(int)), this, SLOT(setAccessTechnology(int)));
     connect(remote, SIGNAL(changed()), SLOT(update()));
     connect(remote, SIGNAL(changed()), SLOT(stateChanged()));
     m_state = remote->activationState();
