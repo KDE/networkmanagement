@@ -1003,7 +1003,7 @@ void ManageConnectionWidget::updateLastUsed(QTreeWidget * list)
     QTreeWidgetItemIterator it(list);
     while (*it) {
         QDateTime lastUsed = (*it)->data(0, ConnectionLastUsedRole).toDateTime();
-        (*it)->setText(2, formatDateRelative(lastUsed));
+        (*it)->setText(1, formatDateRelative(lastUsed));
         ++it;
     }
 }
