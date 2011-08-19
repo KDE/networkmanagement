@@ -168,24 +168,31 @@
     </widget>
    </item>
    <item row="4" column="1">
-    <widget class="KLineEdit" name="bssid">
-     <property name="toolTip">
-      <string>Only connect to the station with this hardware address</string>
-     </property>
-     <property name="whatsThis">
-      <string>Setting a BSSID (hardware address) forces this connection to only connect to the station with this address, even if other stations are part of the same network.</string>
-     </property>
-     <property name="inputMask">
-      <string>HH:HH:HH:HH:HH:HH;_</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="1">
-    <widget class="QPushButton" name="useCurrentApAsBssid">
-     <property name="text">
-      <string>&amp;Copy current AP's MAC to BSSID</string>
-     </property>
-    </widget>
+    <layout class="QHBoxLayout" name="horizontalLayout1">
+     <item>
+      <widget class="KLineEdit" name="bssid">
+       <property name="toolTip">
+        <string>Only connect to the access point with this hardware address</string>
+       </property>
+       <property name="whatsThis">
+        <string>Setting a BSSID (hardware address) forces this connection to only connect to the access point with this address, even if other access points are part of the same network.</string>
+       </property>
+       <property name="inputMask">
+        <string>HH:HH:HH:HH:HH:HH;_</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QPushButton" name="btnSelectBssid">
+       <property name="text">
+        <string>&amp;Select</string>
+       </property>
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="7" column="0">
     <widget class="QLabel" name="label_6">

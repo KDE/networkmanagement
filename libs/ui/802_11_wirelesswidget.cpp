@@ -72,7 +72,7 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
     connect(d->ui.band,SIGNAL(currentIndexChanged(int)),d->ui.channel,SLOT(setBand(int)));
     modeChanged(d->ui.cmbMode->currentIndex());
     connect(d->ui.cmbMode,SIGNAL(currentIndexChanged(int)),SLOT(modeChanged(int)));
-    connect(d->ui.useCurrentApAsBssid,SIGNAL(clicked()),SLOT(copyToBssid()));
+    connect(d->ui.btnSelectBssid,SIGNAL(clicked()),SLOT(copyToBssid()));
     connect(d->ui.clonedMacAddressRandom, SIGNAL(clicked()), this, SLOT(generateRandomClonedMac()));
 }
 
@@ -263,7 +263,12 @@ void Wireless80211Widget::setEnteredSsidClean()
 void Wireless80211Widget::validate()
 {
     Q_D(Wireless80211Widget);
-    d->valid = (d->ui.ssid->text().length() > 0 && d->ui.ssid->text().length() < 33);
+    if (d->ui.ssid->text().length() > 0 && d->ui.ssid->text().length() < 33) {
+        d->valid = true;
+        d->ui.btnSelectBssid->setEnabled(true);
+    } else {
+        d->ui.btnSelectBssid->setEnabled(false);
+    }
     emit valid(d->valid);
 }
 
