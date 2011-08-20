@@ -39,6 +39,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 #include "settings/802-11-wireless-security.h"
 #include "settings/802-11-wireless.h"
+#include "settings/ipv4.h"
 
 #include <nm-setting-connection.h>
 #include <nm-setting-wireless.h>
@@ -58,11 +59,18 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
     QString ssid;
     QString deviceUni;
     QString apUni;
+    bool shared = false;
 
     if (args.count() >= 3) {
         deviceUni = args[1].toString();
         apUni = args[2].toString();
         kDebug() << "DeviceUni" << deviceUni << "AP UNI" << apUni;
+
+        if (args.count() > 3 && args[3].toString() == QLatin1String("shared")) {
+            static_cast<Knm::Ipv4Setting *>(m_connection->setting(Knm::Setting::Ipv4))->setMethod(Knm::Ipv4Setting::EnumMethod::Shared);
+            shared = true;
+            ssid = i18n("Shared_Wifi");
+        }
     } else {
         kWarning() << "Could not find deviceUni or AP UNI in args:" << args;
     }
@@ -83,9 +91,13 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
     }
 
     m_contents->setConnection(m_connection);
-    m_contents->setDefaultName(ssid.isEmpty() ? i18n("New Wireless Connection") : ssid);
+    if (shared) {
+        m_contents->setDefaultName(i18n("Shared Wireless Connection"));
+    } else {
+        m_contents->setDefaultName(ssid.isEmpty() ? i18n("New Wireless Connection") : ssid);
+    }
 
-    m_wirelessWidget = new Wireless80211Widget(m_connection, ssid, this);
+    m_wirelessWidget = new Wireless80211Widget(m_connection, ssid, shared, this);
     connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *)),
             this, SLOT(setDefaultName(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *)));
 
@@ -97,7 +109,6 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
     IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
 
     connect (m_contents->connectionSettingsWidget(), SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
-
     addToTabWidget(m_wirelessWidget);
     m_securityTabIndex = addToTabWidget(m_securityWidget);
     addToTabWidget(ipv4Widget);
@@ -129,7 +140,7 @@ WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
     QString connectionId = m_connection->uuid().toString();
     m_contents->setConnection(m_connection);
 
-    m_wirelessWidget = new Wireless80211Widget(m_connection, NULL, this);
+    m_wirelessWidget = new Wireless80211Widget(m_connection, NULL, false, this);
     connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *)),
             this, SLOT(setDefaultName(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *)));
 

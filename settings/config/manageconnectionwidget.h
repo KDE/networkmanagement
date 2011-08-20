@@ -125,6 +125,8 @@ private:
     Ui_ManageConnectionWidget mConnEditUi;
     QTreeWidget * mWiredList;
     Knm::Connection * mEditConnection;
+    QMenu * mWiredMenu;
+    QMenu * mWirelessMenu;
     QMenu * mCellularMenu;
     QMenu * mVpnMenu;
     ConnectionEditor * mEditor;

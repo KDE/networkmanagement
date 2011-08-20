@@ -48,7 +48,7 @@ public:
     enum ModeIndex { InfrastructureIndex = 0, AdhocIndex};
 };
 
-Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QString &ssid, QWidget * parent)
+Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QString &ssid, bool shared, QWidget * parent)
     : SettingWidget(*new Wireless80211WidgetPrivate, connection, parent)
 {
     Q_D(Wireless80211Widget);
@@ -70,10 +70,28 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
     }
 
     connect(d->ui.band,SIGNAL(currentIndexChanged(int)),d->ui.channel,SLOT(setBand(int)));
-    modeChanged(d->ui.cmbMode->currentIndex());
     connect(d->ui.cmbMode,SIGNAL(currentIndexChanged(int)),SLOT(modeChanged(int)));
     connect(d->ui.btnSelectBssid,SIGNAL(clicked()),SLOT(copyToBssid()));
     connect(d->ui.clonedMacAddressRandom, SIGNAL(clicked()), this, SLOT(generateRandomClonedMac()));
+
+    if (shared) {
+        d->ui.btnScan->hide();
+        d->ui.label_2->hide();
+        d->ui.cmbMode->hide();
+        d->ui.label_5->hide();
+        d->ui.bssid->hide();
+        d->ui.btnSelectBssid->hide();
+        d->ui.label_8->hide();
+        d->ui.clonedMacAddress->hide();
+        d->ui.clonedMacAddressRandom->hide();
+        d->ui.cmbMode->setCurrentIndex(1); // Ad-hoc mode
+
+        // To prevent Wireless80211Widget::readConfig() to change the mode
+        // back to infrastructure.
+        d->setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
+    } else {
+        modeChanged(d->ui.cmbMode->currentIndex());
+    }
 }
 
 Wireless80211Widget::~Wireless80211Widget()

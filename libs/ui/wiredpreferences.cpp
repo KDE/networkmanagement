@@ -34,6 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "ipv6widget.h"
 #include "connectionwidget.h"
 #include "security/securitywired8021x.h"
+#include "settings/ipv4.h"
 
 #include "connection.h"
 
@@ -43,8 +44,14 @@ WiredPreferences::WiredPreferences(const QVariantList &args, QWidget *parent)
     QString connectionId = args[0].toString();
     m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Wired);
 
-    m_contents->setConnection(m_connection);
-    m_contents->setDefaultName(i18n("New Wired Connection"));
+    if (args.count() > 1 && args[1].toString() == QLatin1String("shared")) {
+        static_cast<Knm::Ipv4Setting *>(m_connection->setting(Knm::Setting::Ipv4))->setMethod(Knm::Ipv4Setting::EnumMethod::Shared);
+        m_contents->setConnection(m_connection);
+        m_contents->setDefaultName(i18n("Shared Wired Connection"));
+    } else {
+        m_contents->setConnection(m_connection);
+        m_contents->setDefaultName(i18n("New Wired Connection"));
+    }
 
     prepareSettings();
 }
