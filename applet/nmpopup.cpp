@@ -194,6 +194,7 @@ void NMPopup::init()
     connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
 
     m_showMoreButton = new Plasma::PushButton(m_rightWidget);
+    m_showMoreButton->setToolTip(i18nc("@info:tooltip tooltip for the 'Show More' button", "List all networks available"));
     // Do not use this according to KDE HIG. Bug #272492
     //m_showMoreButton->setCheckable(true);
     m_showMoreButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
