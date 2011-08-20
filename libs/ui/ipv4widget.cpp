@@ -115,7 +115,11 @@ IpV4Widget::IpV4Widget(Knm::Connection * connection, QWidget * parent)
     kDebug() << "Method is" << d->setting->method() << d->setting->dhcpclientid();
 
     connect(d->ui.method, SIGNAL(currentIndexChanged(int)), this, SLOT(methodChanged(int)));
-    methodChanged(d->AutomaticMethodIndex);
+    if (d->setting->method() == Knm::Ipv4Setting::EnumMethod::Shared) {
+        methodChanged(d->SharedMethodIndex);
+    } else {
+        methodChanged(d->AutomaticMethodIndex);
+    }
 }
 
 IpV4Widget::~IpV4Widget()

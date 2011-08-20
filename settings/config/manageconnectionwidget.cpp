@@ -72,7 +72,7 @@ K_PLUGIN_FACTORY( ManageConnectionWidgetFactory, registerPlugin<ManageConnection
 K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_networkmanagement", "libknetworkmanager" ) )
 
 ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantList &args)
-: KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this)), mEditConnection(0)
+: KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mWiredMenu(0), mWirelessMenu(0), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this)), mEditConnection(0)
 {
     connect(mEditor, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
@@ -97,7 +97,27 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connect(mSystemSettings, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
     connectButtonSet(mConnEditUi.buttonSetWired, mConnEditUi.listWired);
+    mWiredMenu = new QMenu(this);
+    QAction * action = new QAction(i18nc("Like in 'add wired connection'", "Wired"), this);
+    action->setData(false);
+    mWiredMenu->addAction(action);
+    action = new QAction(i18nc("Like in 'add shared connection'", "Shared"), this);
+    action->setData(true);
+    mWiredMenu->addAction(action);
+    connect(mWiredMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
+    mConnEditUi.buttonSetWired->addButton()->setMenu(mWiredMenu);
+
     connectButtonSet(mConnEditUi.buttonSetWireless, mConnEditUi.listWireless);
+    mWirelessMenu = new QMenu(this);
+    action = new QAction(i18nc("Like in 'add wireless connection'", "Wireless"), this);
+    action->setData(false);
+    mWirelessMenu->addAction(action);
+    action = new QAction(i18nc("Like in 'add shared connection'", "Shared"), this);
+    action->setData(true);
+    mWirelessMenu->addAction(action);
+    connect(mWirelessMenu, SIGNAL(triggered(QAction*)), SLOT(connectionTypeMenuTriggered(QAction*)));
+    mConnEditUi.buttonSetWireless->addButton()->setMenu(mWirelessMenu);
+
     connectButtonSet(mConnEditUi.buttonSetCellular, mConnEditUi.listCellular);
     connectButtonSet(mConnEditUi.buttonSetVpn, mConnEditUi.listVpn);
     connectButtonSet(mConnEditUi.buttonSetPppoe, mConnEditUi.listPppoe);
@@ -452,7 +472,7 @@ void ManageConnectionWidget::addClicked()
     kDebug() << "Add clicked, currentIndex is " << connectionTypeForCurrentIndex();
 
     if (connectionTypeForCurrentIndex() == Knm::Connection::Gsm) {
-        kDebug() << "GSM tab selected, connection wizard will be shown.";
+        kDebug() << "GSM tab selected, launching mobile connection wizard...";
 
         delete mMobileConnectionWizard;
         mMobileConnectionWizard = new MobileConnectionWizard();
@@ -485,7 +505,6 @@ void ManageConnectionWidget::addClicked()
     }
     else
         kDebug() << "Connection pointer is not set, connection will not be added!";
-
 }
 
 void ManageConnectionWidget::importClicked()
@@ -909,32 +928,40 @@ void ManageConnectionWidget::tabChanged(int index)
 
 void ManageConnectionWidget::connectionTypeMenuTriggered(QAction* action)
 {
-    // HACK - tab 2 always reports GSM, tab 3 always reports VPN.
-    // NM uses plugins to handle different VPN types but has hardcoded different mobile broadband
-    // types.  However we don't want to blow up the UI so we merge GSM and VPN into one tab.
-    // Because of the inconsistent handling of sub-types, we need a hack here to figure out what to
-    // pass to the editor widget.
-
-    // If it is a cellular type, check the data() on the action for the real type
-    // If it is a VPN type, keep Vpn, but use the data() on the action for the plugin
     Knm::Connection::Type tabType = connectionTypeForCurrentIndex();
-    Knm::Connection *con = NULL;
-    if (tabType == Knm::Connection::Gsm) {
-        con = mEditor->createConnection(false, (Knm::Connection::Type)action->data().toUInt());
-    } else if (tabType == Knm::Connection::Vpn) {
-        QVariantList vl;
-        vl << action->data();
-        con = mEditor->createConnection(false, tabType, vl);
+    QVariantList args;
+
+    switch(tabType) {
+    case Knm::Connection::Wired:
+        if (action->data().toBool()) { // shared connection
+            args << QLatin1String("shared");
+        }
+        break;
+    case Knm::Connection::Wireless:
+        if (action->data().toBool()) { // shared connection
+            args << QString() << QString() << QLatin1String("shared");
+        }
+        break;
+    case Knm::Connection::Vpn:
+        // NM uses plugins to handle different VPN types, use the data() on the action to select
+        // the correct plugin
+        args << action->data();
+        break;
+    default:
+        return;
     }
+
+    Knm::Connection *con = mEditor->createConnection(false, tabType, args);
+
     if (con) {
         kDebug() << "Connection pointer is set, connection will be added.";
-
         if (con->scope() == Knm::Connection::User)
             saveConnection(con);
         else
             mSystemSettings->addConnection(con);
-
         updateServiceAndUi(con);
+    } else {
+        kDebug() << "Connection pointer is not set, connection will not be added!";
     }
 }
 

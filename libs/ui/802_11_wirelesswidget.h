@@ -36,7 +36,7 @@ class KNM_EXPORT Wireless80211Widget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(Wireless80211Widget)
 public:
-    Wireless80211Widget(Knm::Connection * connection, const QString &ssid = QString(), QWidget * parent = 0 );
+    Wireless80211Widget(Knm::Connection * connection, const QString &ssid = QString(), bool shared = false, QWidget * parent = 0);
     virtual ~Wireless80211Widget();
     QString settingName() const;
     void readConfig();
