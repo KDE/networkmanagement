@@ -29,7 +29,7 @@ class GsmWidgetPrivate : public SettingWidgetPrivate
 public:
     Ui_Gsm ui;
     Knm::GsmSetting * setting;
-    enum PinStorage {Store = 0, AlwaysAsk = 1};
+    enum PinStorage {Store = 0, AlwaysAsk, NotRequired};
 };
 
 GsmWidget::GsmWidget(Knm::Connection * connection, QWidget * parent)
@@ -66,6 +66,8 @@ void GsmWidget::readConfig()
         d->ui.pinStorage->setCurrentIndex(GsmWidgetPrivate::Store);
     } else if (d->setting->pinflags() & Knm::Setting::NotSaved) {
         d->ui.pinStorage->setCurrentIndex(GsmWidgetPrivate::AlwaysAsk);
+    } else if (d->setting->pinflags() & Knm::Setting::NotRequired) {
+        d->ui.pinStorage->setCurrentIndex(GsmWidgetPrivate::NotRequired);
     }
 }
 
@@ -96,6 +98,9 @@ void GsmWidget::writeConfig()
             break;
         case GsmWidgetPrivate::AlwaysAsk:
             d->setting->setPinflags(Knm::Setting::NotSaved);
+            break;
+        case GsmWidgetPrivate::NotRequired:
+            d->setting->setPinflags(Knm::Setting::NotRequired);
             break;
     }
 }
@@ -157,6 +162,7 @@ void GsmWidget::pinStorageTypeChanged(int type)
             d->ui.pin->setEnabled(true);
             break;
         case GsmWidgetPrivate::AlwaysAsk:
+        case GsmWidgetPrivate::NotRequired:
             d->ui.pin->setEnabled(false);
             break;
     }

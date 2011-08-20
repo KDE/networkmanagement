@@ -235,6 +235,11 @@
             <string>Always Ask</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Not Required</string>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>
