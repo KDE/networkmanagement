@@ -85,7 +85,7 @@ QStringList GsmSecrets::needSecrets()
     QStringList list;
     if (m_setting->password().isEmpty())
          list.append("password");
-    if (m_setting->pin().isEmpty())
+    if (m_setting->pin().isEmpty() && !(m_setting->pinflags() & Setting::NotRequired))
         list.append("pin");
     return list;
 }
