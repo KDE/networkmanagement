@@ -54,6 +54,12 @@
        <property name="text">
         <string>&amp;System connection</string>
        </property>
+       <property name="toolTip">
+        <string>Save the connection in system storage</string>
+       </property>
+       <property name="whatsThis">
+        <string>If checked, the connection settings and secrets will be saved in system storage, which allows the connection to work without a KDE session.</string>
+       </property>
       </widget>
      </item>
     </layout>
