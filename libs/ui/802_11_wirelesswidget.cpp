@@ -303,6 +303,9 @@ void Wireless80211Widget::bandChanged(int index)
 void Wireless80211Widget::copyToBssid()
 {
     Q_D(Wireless80211Widget);
+    QString hardwareAddress;
+    int maxSignalStrength = 0;
+
     foreach (Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
         if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
             Solid::Control::WirelessNetworkInterface * wiface = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
@@ -321,11 +324,16 @@ void Wireless80211Widget::copyToBssid()
                     if (network)
                         ap = wiface->findAccessPoint(network->referenceAccessPoint());
                 }
-                if (ap)
-                    d->ui.bssid->setText(ap->hardwareAddress());
-                return;
+                if (ap && ap->signalStrength() > maxSignalStrength) {
+                    maxSignalStrength = ap->signalStrength();
+                    hardwareAddress = ap->hardwareAddress();
+                }
             }
         }
+    }
+
+    if (maxSignalStrength > 0) {
+        d->ui.bssid->setText(hardwareAddress);
     }
 }
 
