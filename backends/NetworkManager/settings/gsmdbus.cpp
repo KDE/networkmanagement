@@ -43,6 +43,9 @@ void GsmDbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_GSM_ALLOWED_BANDS))) {
     setting->setBand(map.value(QLatin1String(NM_SETTING_GSM_ALLOWED_BANDS)).value<int>());
   }
+  if (map.contains(QLatin1String(NM_SETTING_GSM_HOME_ONLY))) {
+    setting->setHomeonly(map.value(QLatin1String(NM_SETTING_GSM_HOME_ONLY)).value<bool>());
+  }
   // SECRET
   if (map.contains(QLatin1String(NM_SETTING_GSM_PIN))) {
       setting->setPin(map.value(QLatin1String(NM_SETTING_GSM_PIN)).value<QString>());
@@ -65,6 +68,7 @@ QVariantMap GsmDbus::toMap()
   if (setting->networktype() != NM_SETTING_GSM_NETWORK_TYPE_ANY) {
       map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_TYPE), setting->networktype());
   }
+  insertIfTrue(map, NM_SETTING_GSM_HOME_ONLY, setting->homeonly());
 
   map.unite(toSecretsMap());
   if (!setting->password().isEmpty()) {

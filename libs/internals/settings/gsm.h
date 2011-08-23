@@ -159,6 +159,20 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     }
 
     /**
+      Set home only
+    */
+    void setHomeonly( bool b ) {
+        mHomeonly = b;
+    }
+
+    /**
+      Get home only
+    */
+    bool homeonly() const {
+        return mHomeonly;
+    }
+
+    /**
       Set PIN
     */
     void setPin( const QString & v )
@@ -200,6 +214,7 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     QString mNetworkid;
     int mNetworktype;
     int mBand;
+    bool mHomeonly;
     QString mPin;
     QString mPuk;
     Setting::secretsTypes mPasswordflags;

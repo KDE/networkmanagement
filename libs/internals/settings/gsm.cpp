@@ -5,7 +5,7 @@
 
 using namespace Knm;
 
-GsmSetting::GsmSetting() : Setting(Setting::Gsm), mNetworktype(-1), mBand(-1), mPasswordflags(Setting::AgentOwned), mPinflags(NotSaved)
+GsmSetting::GsmSetting() : Setting(Setting::Gsm), mNetworktype(-1), mBand(-1), mHomeonly(false), mPasswordflags(Setting::AgentOwned), mPinflags(NotSaved)
 {
 }
 
@@ -19,6 +19,7 @@ GsmSetting::GsmSetting(GsmSetting *setting) : Setting(setting)
     setNetworkid(setting->networkid());
     setNetworktype(setting->networktype());
     setBand(setting->band());
+    setHomeonly(setting->homeonly());
     setPin(setting->pin());
     setPinflags(setting->pinflags());
 }

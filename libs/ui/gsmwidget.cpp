@@ -61,6 +61,7 @@ void GsmWidget::readConfig()
     d->ui.network->setText(d->setting->networkid());
     d->ui.type->setCurrentIndex(qBound(0, d->setting->networktype() + 1, d->ui.type->count() - 1));
     d->ui.band->setValue(d->setting->band());
+    d->ui.chkAllowRoaming->setChecked(!d->setting->homeonly());
     d->ui.password->setPasswordMode(true);
 }
 
@@ -83,6 +84,7 @@ void GsmWidget::writeConfig()
     d->setting->setNetworkid(d->ui.network->text());
     d->setting->setNetworktype(d->ui.type->currentIndex() - 1);
     d->setting->setBand(d->ui.band->value());
+    d->setting->setHomeonly(!d->ui.chkAllowRoaming->isChecked());
     d->setting->setPin(d->ui.pin->text());
     switch (d->ui.pinStorage->currentIndex())
     {
