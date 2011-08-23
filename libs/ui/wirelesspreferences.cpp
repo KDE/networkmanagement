@@ -69,7 +69,7 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
         if (args.count() > 3 && args[3].toString() == QLatin1String("shared")) {
             static_cast<Knm::Ipv4Setting *>(m_connection->setting(Knm::Setting::Ipv4))->setMethod(Knm::Ipv4Setting::EnumMethod::Shared);
             shared = true;
-            ssid = i18n("Shared_Wifi");
+            ssid = i18n("Shared_Wireless_Connection");
         }
     } else {
         kWarning() << "Could not find deviceUni or AP UNI in args:" << args;
