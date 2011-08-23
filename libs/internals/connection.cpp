@@ -375,11 +375,11 @@ void Connection::addSetting(Setting * newSetting)
     m_settings.append(newSetting);
 }
 
-bool Connection::hasSecrets() const
+bool Connection::hasPersistentSecrets() const
 {
     bool connectionHasSecrets = false;
     foreach (Setting * setting, m_settings) {
-        if (setting->hasSecrets()) {
+        if (setting->hasPersistentSecrets()) {
             connectionHasSecrets = true;
             break;
         }
@@ -387,28 +387,16 @@ bool Connection::hasSecrets() const
     return connectionHasSecrets;
 }
 
-QStringList Connection::secretSettings() const
+QStringList Connection::hasPersistentSecretsSettings() const
 {
     QStringList settings;
     foreach (Setting * setting, m_settings) {
-        if (setting->hasSecrets()) {
+        if (setting->hasPersistentSecrets()) {
             settings << setting->name();
         }
     }
 
     return settings;
-}
-
-bool Connection::secretsAvailable() const
-{
-    bool allSecretsAvailable = true;
-    foreach (Setting * setting, m_settings) {
-        if (setting->hasSecrets() && !setting->secretsAvailable()) {
-            allSecretsAvailable = false;
-            break;
-        }
-    }
-    return allSecretsAvailable;
 }
 
 void Connection::setOrigin(const QString & origin)

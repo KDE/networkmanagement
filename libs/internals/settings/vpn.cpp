@@ -62,10 +62,6 @@ QString VpnSetting::name() const
 {
   return QLatin1String("vpn");
 }
-bool VpnSetting::hasSecrets() const
-{
-  return true;
-}
 
 QVariantMap VpnSetting::variantMapFromStringList(const QStringList & list)
 {
@@ -111,7 +107,7 @@ QStringList VpnSetting::stringMapToStringList(const QStringMap & map)
     return rawSecrets;
 }
 
-QMap<QString,QString> VpnSetting::secretsToMap()
+QMap<QString,QString> VpnSetting::secretsToMap() const
 {
     QMap<QString,QString> map;
     map.insert(QLatin1String("VpnSecrets"), variantMapToStringList(secretsToSave(data(), vpnSecrets())).join(QLatin1String("%SEP%")));
@@ -126,11 +122,16 @@ void VpnSetting::secretsFromMap(QMap<QString,QString> secrets)
     setSecretsAvailable(true);
 }
 
-QStringList VpnSetting::needSecrets()
+QStringList VpnSetting::needSecrets() const
 {
     // VPN is a bit different from other connection types. We do not need to list the secrets we need,
     // but this list cannot be empty or SecretStorage will not ask for the secrets.
     return QStringList() << "VpnSecrets";
+}
+
+bool VpnSetting::hasPersistentSecrets() const
+{
+    return true;
 }
 
 QVariantMap VpnSetting::secretsToSave(const QStringMap & data, const QStringMap & secrets)

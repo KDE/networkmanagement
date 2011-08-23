@@ -513,7 +513,7 @@ void ManageConnectionWidget::editClicked()
         }
 
         mEditConnection = new Knm::Connection(con);
-        if (con->hasSecrets()) {
+        if (con->hasPersistentSecrets()) {
             bool rep = mSystemSettings->getConnectionSecrets(mEditConnection);
 
             if (!rep) {
@@ -580,7 +580,7 @@ void ManageConnectionWidget::deleteClicked()
     }
     KMessageBox::Options options;
     options |= KMessageBox::Dangerous;
-    if ( KMessageBox::warningContinueCancel(this, 
+    if ( KMessageBox::warningContinueCancel(this,
         i18nc("Warning message on attempting to delete a connection", "Do you really want to delete the connection '%1'?",item->data(0, Qt::DisplayRole).toString()),
         i18n("Confirm Delete"),
         KStandardGuiItem::del())

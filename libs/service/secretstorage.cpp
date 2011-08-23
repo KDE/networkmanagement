@@ -196,7 +196,7 @@ void SecretStorage::deleteSecrets(Knm::Connection *con)
     Q_D(SecretStorage);
     KNetworkManagerServicePrefs::self()->readConfig();
     d->storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
-    if (!con->hasSecrets()) {
+    if (!con->hasPersistentSecrets()) {
         return;
     }
 

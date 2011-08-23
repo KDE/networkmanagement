@@ -20,11 +20,10 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
 
     QString name() const;
 
-    bool hasSecrets() const;
-
-    QMap<QString,QString> secretsToMap();
+    QMap<QString,QString> secretsToMap() const;
     void secretsFromMap(QMap<QString,QString> secrets);
-    QStringList needSecrets();
+    QStringList needSecrets() const;
+    bool hasPersistentSecrets() const;
 
     /**
       Set Number
@@ -85,7 +84,7 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     /**
      * Get Password flags
      */
-    Setting::secretsTypes passwordflags()
+    Setting::secretsTypes passwordflags() const
     {
         return mPasswordflags;
     }
@@ -186,7 +185,7 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     /**
      * Get PIN flags
      */
-    Setting::secretsTypes pinflags()
+    Setting::secretsTypes pinflags() const
     {
         return mPinflags;
     }

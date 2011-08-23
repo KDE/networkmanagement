@@ -105,7 +105,7 @@ public:
     /**
      * Check if any of the settings in this connection have secrets
      */
-    bool hasSecrets() const;
+    bool hasPersistentSecrets() const;
 
     /**
      * Check if this connection has volatile secrets; if yes,
@@ -114,14 +114,7 @@ public:
      */
     bool hasVolatileSecrets() const;
 
-    /**
-     * Check if this connection's secrets are currently loaded (secrets may be lazy loaded)
-     * If not, use @ref ConnectionPersistence::loadSecrets()
-     * Connections which have no secrets always return true
-     */
-    bool secretsAvailable() const;
-
-    QStringList secretSettings() const;
+    QStringList hasPersistentSecretsSettings() const;
 
 private:
     /**

@@ -39,11 +39,10 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
 
     QString name() const;
 
-    bool hasSecrets() const;
-
-    QMap<QString,QString> secretsToMap();
+    QMap<QString,QString> secretsToMap() const;
     void secretsFromMap(QMap<QString,QString> secrets);
-    QStringList needSecrets();
+    QStringList needSecrets() const;
+    bool hasPersistentSecrets() const;
 
     /**
       Set Security type
@@ -248,7 +247,7 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     /**
      * Get WEP key flags
      */
-    Setting::secretsTypes wepkeyflags()
+    Setting::secretsTypes wepkeyflags() const
     {
         return mWepkeyflags;
     }
@@ -280,7 +279,7 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     /**
      * Get PSK flags
      */
-    Setting::secretsTypes pskflags()
+    Setting::secretsTypes pskflags() const
     {
         return mPskflags;
     }
@@ -312,7 +311,7 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     /**
      * Get LEAP Password flags
      */
-    Setting::secretsTypes leappasswordflags()
+    Setting::secretsTypes leappasswordflags() const
     {
         return mLeappasswordflags;
     }

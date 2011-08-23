@@ -45,11 +45,11 @@ public:
     void setInitialized(bool);
     Setting::Type type() const;
     virtual QString name() const = 0;
-    virtual bool hasSecrets() const = 0;
     virtual bool hasVolatileSecrets() const { return false; }
-    virtual QMap<QString,QString> secretsToMap();
+    virtual QMap<QString,QString> secretsToMap() const;
     virtual void secretsFromMap(QMap<QString,QString>);
-    virtual QStringList needSecrets();
+    virtual QStringList needSecrets() const;
+    virtual bool hasPersistentSecrets() const;
     bool secretsAvailable() const;
     void setSecretsAvailable(bool secretsAvailable);
 protected:

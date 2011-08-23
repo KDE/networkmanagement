@@ -41,25 +41,6 @@ QString WirelessSecuritySetting::name() const
 {
   return QLatin1String("802-11-wireless-security");
 }
-bool WirelessSecuritySetting::hasSecrets() const
-{
-    if (isNull())
-        return false;
-    switch (mSecurityType)
-    {
-        case EnumSecurityType::None:
-        case EnumSecurityType::DynamicWep:
-        case EnumSecurityType::WpaEap:
-        case EnumSecurityType::Wpa2Eap:
-            return false;
-        case EnumSecurityType::StaticWep:
-        case EnumSecurityType::Leap:
-        case EnumSecurityType::WpaPsk:
-        case EnumSecurityType::Wpa2Psk:
-        default:
-            return true;
-    }
-}
 
 void WirelessSecuritySetting::reset()
 {
@@ -82,7 +63,7 @@ void WirelessSecuritySetting::reset()
     mWepKeyType = None;
 }
 
-QMap<QString,QString> WirelessSecuritySetting::secretsToMap()
+QMap<QString,QString> WirelessSecuritySetting::secretsToMap() const
 {
     QMap<QString,QString> map;
     if (wepkeyflags().testFlag(Setting::AgentOwned)) {
@@ -111,7 +92,7 @@ void WirelessSecuritySetting::secretsFromMap(QMap<QString,QString> secrets)
     setSecretsAvailable(true);
 }
 
-QStringList WirelessSecuritySetting::needSecrets()
+QStringList WirelessSecuritySetting::needSecrets() const
 {
     QStringList list;
     switch (securityType())
@@ -143,15 +124,40 @@ QStringList WirelessSecuritySetting::needSecrets()
             }
 
             break;
-                case WirelessSecuritySetting::EnumSecurityType::WpaPsk:
-                case WirelessSecuritySetting::EnumSecurityType::Wpa2Psk:
-                    if (psk().isEmpty())
-                        list.append("psk");
-                    break;
-                case WirelessSecuritySetting::EnumSecurityType::Leap:
-                    if (leappassword().isEmpty())
-                        list.append("leappassword");
-                    break;
+        case WirelessSecuritySetting::EnumSecurityType::WpaPsk:
+        case WirelessSecuritySetting::EnumSecurityType::Wpa2Psk:
+            if (psk().isEmpty() && !pskflags().testFlag(Setting::NotRequired))
+                list.append("psk");
+            break;
+        case WirelessSecuritySetting::EnumSecurityType::Leap:
+            if (leappassword().isEmpty() && !leappasswordflags().testFlag(Setting::NotRequired))
+                list.append("leappassword");
+            break;
     }
     return list;
+}
+
+bool WirelessSecuritySetting::hasPersistentSecrets() const
+{
+    bool hasSecrets = false;
+    switch (securityType())
+    {
+        case WirelessSecuritySetting::EnumSecurityType::None:
+        case WirelessSecuritySetting::EnumSecurityType::DynamicWep:
+            break;
+        case WirelessSecuritySetting::EnumSecurityType::StaticWep:
+            if (wepkeyflags().testFlag(Setting::None) || wepkeyflags().testFlag(Setting::AgentOwned))
+                hasSecrets = true;
+            break;
+        case WirelessSecuritySetting::EnumSecurityType::WpaPsk:
+        case WirelessSecuritySetting::EnumSecurityType::Wpa2Psk:
+            if (pskflags().testFlag(Setting::None) || pskflags().testFlag(Setting::AgentOwned))
+                hasSecrets = true;
+            break;
+        case WirelessSecuritySetting::EnumSecurityType::Leap:
+            if (leappasswordflags().testFlag(Setting::None) || leappasswordflags().testFlag(Setting::AgentOwned))
+                hasSecrets = true;
+            break;
+    }
+    return hasSecrets;
 }

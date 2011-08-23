@@ -164,7 +164,7 @@ void Setting::setSecretsAvailable(bool available)
     m_secretsAvailable = available;
 }
 
-QMap<QString,QString> Setting::secretsToMap()
+QMap<QString,QString> Setting::secretsToMap() const
 {
     return QMap<QString,QString>();
 }
@@ -173,7 +173,12 @@ void Setting::secretsFromMap(QMap<QString,QString> secrets)
 {
 }
 
-QStringList Setting::needSecrets()
+bool Setting::hasPersistentSecrets() const
+{
+    return false;
+}
+
+QStringList Setting::needSecrets() const
 {
     return QStringList();
 }

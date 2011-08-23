@@ -25,12 +25,8 @@ QString PppoeSetting::name() const
 {
   return QLatin1String("pppoe");
 }
-bool PppoeSetting::hasSecrets() const
-{
-  return true;
-}
 
-QMap<QString,QString> PppoeSetting::secretsToMap()
+QMap<QString,QString> PppoeSetting::secretsToMap() const
 {
     QMap<QString,QString> map;
     if (passwordflags().testFlag(Setting::AgentOwned)) {
@@ -44,10 +40,17 @@ void PppoeSetting::secretsFromMap(QMap<QString,QString> secrets)
     setPassword(secrets.value("password"));
 }
 
-QStringList PppoeSetting::needSecrets()
+QStringList PppoeSetting::needSecrets() const
 {
     QStringList list;
     if (password().isEmpty() && !passwordflags().testFlag(Setting::NotRequired))
         list.append("password");
     return list;
+}
+
+bool PppoeSetting::hasPersistentSecrets() const
+{
+    if (passwordflags().testFlag(Setting::None) || passwordflags().testFlag(Setting::AgentOwned))
+        return true;
+    return false;
 }

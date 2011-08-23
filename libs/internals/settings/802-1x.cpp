@@ -55,11 +55,6 @@ QString Security8021xSetting::name() const
     return QLatin1String("802-1x");
 }
 
-bool Security8021xSetting::hasSecrets() const
-{
-    return mEnabled;
-}
-
 QByteArray Security8021xSetting::getBytes(const QString & fileName)
 {
     QByteArray bytes;
@@ -71,7 +66,7 @@ QByteArray Security8021xSetting::getBytes(const QString & fileName)
     return bytes;
 }
 
-QMap<QString,QString> Security8021xSetting::secretsToMap()
+QMap<QString,QString> Security8021xSetting::secretsToMap() const
 {
     QMap<QString,QString> map;
     if (passwordflags().testFlag(Setting::AgentOwned)) {
@@ -93,18 +88,39 @@ void Security8021xSetting::secretsFromMap(QMap<QString,QString> secrets)
     setPhase2privatekeypassword(secrets.value("phase2-private-key-password"));
 }
 
-QStringList Security8021xSetting::needSecrets()
+QStringList Security8021xSetting::needSecrets() const
 {
     QStringList list;
-    Security8021xSetting::EapMethods eap = eapFlags();
-    if (eap.testFlag(Security8021xSetting::tls) && privatekeypassword().isEmpty() && !privatekeypasswordflags().testFlag(Setting::NotRequired)) {
-        list.append("private-key-password");
-    } else if ((eap.testFlag(Security8021xSetting::peap) || eap.testFlag(Security8021xSetting::ttls) || eap.testFlag(Security8021xSetting::leap)) && password().isEmpty() && !passwordflags().testFlag(Setting::NotRequired)) {
-        list.append("password");
+    if (mEnabled) {
+        Security8021xSetting::EapMethods eap = eapFlags();
+        if (eap.testFlag(Security8021xSetting::tls) && privatekeypassword().isEmpty() && !privatekeypasswordflags().testFlag(Setting::NotRequired)) {
+            list.append("private-key-password");
+        } else if ((eap.testFlag(Security8021xSetting::peap) || eap.testFlag(Security8021xSetting::ttls) || eap.testFlag(Security8021xSetting::leap))
+            && password().isEmpty() && !passwordflags().testFlag(Setting::NotRequired)) {
+            list.append("password");
+        }
+        if ((phase2auth() == EnumPhase2auth::tls || phase2autheap() == EnumPhase2autheap::tls) && phase2privatekeypassword().isEmpty()
+            && !phase2privatekeypasswordflags().testFlag(Setting::NotRequired)) {
+            list.append("phase2-private-key-password");
+        }
     }
-    if ((phase2auth() == EnumPhase2auth::tls || phase2autheap() == EnumPhase2autheap::tls) && phase2privatekeypassword().isEmpty() && !phase2privatekeypasswordflags().testFlag(Setting::NotRequired)) {
-        list.append("phase2-private-key-password");
-    }
-
     return list;
+}
+
+bool Security8021xSetting::hasPersistentSecrets() const
+{
+    if (mEnabled) {
+        Security8021xSetting::EapMethods eap = eapFlags();
+        if (eap.testFlag(Security8021xSetting::tls) && (privatekeypasswordflags().testFlag(Setting::None) || privatekeypasswordflags().testFlag(Setting::AgentOwned))) {
+            return true;
+        } else if ((eap.testFlag(Security8021xSetting::peap) || eap.testFlag(Security8021xSetting::ttls) || eap.testFlag(Security8021xSetting::leap))
+            && (passwordflags().testFlag(Setting::None) || passwordflags().testFlag(Setting::AgentOwned))) {
+            return true;
+        }
+        if ((phase2auth() == EnumPhase2auth::tls || phase2autheap() == EnumPhase2autheap::tls)
+            && (phase2privatekeypasswordflags().testFlag(Setting::None) || phase2privatekeypasswordflags().testFlag(Setting::AgentOwned))) {
+            return true;
+        }
+    }
+    return false;
 }

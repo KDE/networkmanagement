@@ -32,12 +32,7 @@ QString GsmSetting::name() const
   return QLatin1String("gsm");
 }
 
-bool GsmSetting::hasSecrets() const
-{
-  return true;
-}
-
-QMap<QString,QString> GsmSetting::secretsToMap()
+QMap<QString,QString> GsmSetting::secretsToMap() const
 {
     QMap<QString,QString> map;
     if (passwordflags().testFlag(Setting::AgentOwned)) {
@@ -55,7 +50,7 @@ void GsmSetting::secretsFromMap(QMap<QString,QString> secrets)
     setPin(secrets.value("pin"));
 }
 
-QStringList GsmSetting::needSecrets()
+QStringList GsmSetting::needSecrets() const
 {
     QStringList list;
     if (password().isEmpty() && !passwordflags().testFlag(Setting::NotRequired))
@@ -63,4 +58,13 @@ QStringList GsmSetting::needSecrets()
     if (pin().isEmpty() && !pinflags().testFlag(Setting::NotRequired))
         list.append("pin");
     return list;
+}
+
+bool GsmSetting::hasPersistentSecrets() const
+{
+    if (passwordflags().testFlag(Setting::None) || passwordflags().testFlag(Setting::AgentOwned))
+        return true;
+    if (pinflags().testFlag(Setting::None) || pinflags().testFlag(Setting::AgentOwned))
+        return true;
+    return false;
 }

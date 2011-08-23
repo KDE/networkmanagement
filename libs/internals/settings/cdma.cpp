@@ -25,12 +25,8 @@ QString CdmaSetting::name() const
 {
   return QLatin1String("cdma");
 }
-bool CdmaSetting::hasSecrets() const
-{
-  return true;
-}
 
-QMap<QString,QString> CdmaSetting::secretsToMap()
+QMap<QString,QString> CdmaSetting::secretsToMap() const
 {
     QMap<QString,QString> map;
     if (passwordflags().testFlag(Setting::AgentOwned)) {
@@ -44,10 +40,17 @@ void CdmaSetting::secretsFromMap(QMap<QString,QString> secrets)
     setPassword(secrets.value("password"));
 }
 
-QStringList CdmaSetting::needSecrets()
+QStringList CdmaSetting::needSecrets() const
 {
     QStringList list;
     if (password().isEmpty() && !passwordflags().testFlag(Setting::NotRequired))
         list.append("password");
     return list;
+}
+
+bool CdmaSetting::hasPersistentSecrets() const
+{
+    if (passwordflags().testFlag(Setting::None) || passwordflags().testFlag(Setting::AgentOwned))
+        return true;
+    return false;
 }

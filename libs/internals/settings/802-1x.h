@@ -41,11 +41,10 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
 
     QString name() const;
 
-    bool hasSecrets() const;
-
-    QMap<QString,QString> secretsToMap();
+    QMap<QString,QString> secretsToMap() const;
     void secretsFromMap(QMap<QString,QString> secrets);
-    QStringList needSecrets();
+    QStringList needSecrets() const;
+    bool hasPersistentSecrets() const;
 
     /**
       Set EAP
@@ -452,7 +451,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     /**
      * Get Password flags
      */
-    Setting::secretsTypes passwordflags()
+    Setting::secretsTypes passwordflags() const
     {
         return mPasswordflags;
     }
@@ -526,7 +525,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     /**
      * Get Private key password flags
      */
-    Setting::secretsTypes privatekeypasswordflags()
+    Setting::secretsTypes privatekeypasswordflags() const
     {
         return mPrivatekeypasswordflags;
     }
@@ -601,7 +600,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     /**
      * Get Phase 2 private key password flags
      */
-    Setting::secretsTypes phase2privatekeypasswordflags()
+    Setting::secretsTypes phase2privatekeypasswordflags() const
     {
         return mPhase2privatekeypasswordflags;
     }
@@ -633,7 +632,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     /**
      * Get PIN flags
      */
-    Setting::secretsTypes pinflags()
+    Setting::secretsTypes pinflags() const
     {
         return mPinflags;
     }

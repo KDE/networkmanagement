@@ -422,12 +422,6 @@ bool NMDBusSettingsConnectionProvider::getConnectionSecrets(Knm::Connection *con
 {
     Q_D(NMDBusSettingsConnectionProvider);
 
-    if (!con->hasSecrets())
-    {
-        kDebug() << "Connection seems not to have any secret information. Ignoring...";
-        return false;
-    }
-
     QUuid uuid = con->uuid();
     if ( !d->uuidToPath.contains(uuid)){
         kWarning() << "Secrets requested but connection not found!";
@@ -440,7 +434,7 @@ bool NMDBusSettingsConnectionProvider::getConnectionSecrets(Knm::Connection *con
 
     kDebug() << "Getting connection secrets for " << uuid.toString();
 
-    QStringList secretSettings = con->secretSettings();
+    QStringList secretSettings = con->hasPersistentSecretsSettings();
 
     kDebug() << "Settings containing secret values are " << secretSettings;
 
