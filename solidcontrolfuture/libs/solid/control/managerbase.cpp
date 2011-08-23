@@ -46,7 +46,7 @@ void Solid::Control::ManagerBaseNm09Private::loadBackend(const QString &descript
 
     QStringList error_msg;
 
-    KService::List offers = KServiceTypeTrader::self()->query(serviceName, "(Type == 'Service') and (not (Name == 'NetworkManager 0.7'))");
+    KService::List offers = KServiceTypeTrader::self()->query(serviceName, "(Type == 'Service') and (Name == 'NetworkManager 0.9')");
 
     foreach (const KService::Ptr &ptr, offers)
     {
