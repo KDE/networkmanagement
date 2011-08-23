@@ -62,21 +62,14 @@ void GsmWidget::readConfig()
     d->ui.type->setCurrentIndex(qBound(0, d->setting->networktype() + 1, d->ui.type->count() - 1));
     d->ui.band->setValue(d->setting->band());
     d->ui.password->setPasswordMode(true);
-    if (d->setting->pinflags() & Knm::Setting::AgentOwned) {
-        d->ui.pinStorage->setCurrentIndex(GsmWidgetPrivate::Store);
-    } else if (d->setting->pinflags() & Knm::Setting::NotSaved) {
-        d->ui.pinStorage->setCurrentIndex(GsmWidgetPrivate::AlwaysAsk);
-    } else if (d->setting->pinflags() & Knm::Setting::NotRequired) {
-        d->ui.pinStorage->setCurrentIndex(GsmWidgetPrivate::NotRequired);
-    }
 }
 
 void GsmWidget::chkShowPassToggled()
 {
     Q_D(GsmWidget);
     bool on = d->ui.chkShowPass->isChecked();
-    d->ui.password->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
-    d->ui.pin->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
+    d->ui.password->setPasswordMode(!on);
+    d->ui.pin->setPasswordMode(!on);
 }
 
 
@@ -109,7 +102,14 @@ void GsmWidget::readSecrets()
 {
     Q_D(GsmWidget);
     d->ui.password->setText(d->setting->password());
-    d->ui.pin->setText(d->setting->pin());
+    if (d->setting->pinflags().testFlag(Knm::Setting::AgentOwned) || d->setting->pinflags().testFlag(Knm::Setting::None)) {
+        d->ui.pinStorage->setCurrentIndex(GsmWidgetPrivate::Store);
+        d->ui.pin->setText(d->setting->pin());
+    } else if (d->setting->pinflags().testFlag(Knm::Setting::NotSaved)) {
+        d->ui.pinStorage->setCurrentIndex(GsmWidgetPrivate::AlwaysAsk);
+    } else if (d->setting->pinflags().testFlag(Knm::Setting::NotRequired)) {
+        d->ui.pinStorage->setCurrentIndex(GsmWidgetPrivate::NotRequired);
+    }
 }
 
 void GsmWidget::validate()

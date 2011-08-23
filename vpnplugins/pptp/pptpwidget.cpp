@@ -279,11 +279,11 @@ void PptpSettingWidget::readSecrets()
 
 void PptpSettingWidget::fillOnePasswordCombo(QComboBox * combo, Knm::Setting::secretsTypes type)
 {
-    if (type & Knm::Setting::AgentOwned || type & Knm::Setting::None || !type) {
+    if (type.testFlag(Knm::Setting::AgentOwned) || type.testFlag(Knm::Setting::None)) {
         combo->setCurrentIndex(1);
-    } else if (type & Knm::Setting::NotRequired) {
+    } else if (type.testFlag(Knm::Setting::NotRequired)) {
         combo->setCurrentIndex(2);
-    } else if (type & Knm::Setting::NotSaved) {
+    } else if (type.testFlag(Knm::Setting::NotSaved)) {
         combo->setCurrentIndex(0);
     }
 }

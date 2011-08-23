@@ -59,14 +59,14 @@ void VpncAuthWidget::readSecrets()
     QStringMap data = d->setting->data();
     QStringMap secrets = d->setting->vpnSecrets();
 
-    if (!((Knm::Setting::secretsTypes)data[NM_VPNC_KEY_XAUTH_PASSWORD"-flags"].toInt() & Knm::Setting::NotRequired)) {
+    if (!((Knm::Setting::secretsTypes)data[NM_VPNC_KEY_XAUTH_PASSWORD"-flags"].toInt()).testFlag(Knm::Setting::NotRequired)) {
         d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_XAUTH_PASSWORD)));
     } else {
         d->ui.userLabel->setVisible(false);
         d->ui.leUserPassword->setVisible(false);
     }
 
-    if (!((Knm::Setting::secretsTypes)d->setting->data().value(NM_VPNC_KEY_SECRET"-flags").toInt() & Knm::Setting::NotRequired)) {
+    if (!((Knm::Setting::secretsTypes)d->setting->data().value(NM_VPNC_KEY_SECRET"-flags").toInt()).testFlag(Knm::Setting::NotRequired)) {
         d->ui.leGroupPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_SECRET)));
     } else {
         d->ui.groupLabel->setVisible(false);

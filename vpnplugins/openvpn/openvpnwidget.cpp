@@ -565,11 +565,11 @@ void OpenVpnSettingWidget::setPasswordType(QLineEdit *edit, int type)
 
 void OpenVpnSettingWidget::fillOnePasswordCombo(QComboBox * combo, Knm::Setting::secretsTypes type)
 {
-    if (type & Knm::Setting::AgentOwned || type & Knm::Setting::None || !type) {
+    if (type.testFlag(Knm::Setting::AgentOwned) || type.testFlag(Knm::Setting::None)) {
         combo->setCurrentIndex(Private::EnumPasswordStorageType::Store);
-    } else if (type & Knm::Setting::NotRequired) {
+    } else if (type.testFlag(Knm::Setting::NotRequired)) {
         combo->setCurrentIndex(Private::EnumPasswordStorageType::NotRequired);
-    } else if (type & Knm::Setting::NotSaved) {
+    } else if (type.testFlag(Knm::Setting::NotSaved)) {
         combo->setCurrentIndex(Private::EnumPasswordStorageType::AlwaysAsk);
     }
 }

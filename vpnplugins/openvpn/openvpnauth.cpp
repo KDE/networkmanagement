@@ -81,7 +81,7 @@ void OpenVpnAuthWidget::readSecrets()
         lineEdit->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)));
         d->layout->addRow(label, lineEdit);
     } else if (cType == QLatin1String(NM_OPENVPN_CONTYPE_PASSWORD_TLS)) {
-        if (!(passType & Knm::Setting::NotRequired)) {
+        if (!(passType.testFlag(Knm::Setting::NotRequired))) {
             label = new QLabel(this);
             label->setText(i18n("Password:"));
             lineEdit = new KLineEdit(this);
@@ -90,7 +90,7 @@ void OpenVpnAuthWidget::readSecrets()
             lineEdit->setText(secrets.value(QLatin1String(NM_OPENVPN_KEY_PASSWORD)));
             d->layout->addRow(label, lineEdit);
         }
-        if (!(certType & Knm::Setting::NotRequired)) {
+        if (!(certType.testFlag(Knm::Setting::NotRequired))) {
             label = new QLabel(this);
             label->setText(i18n("Key Password:"));
             lineEdit = new KLineEdit(this);

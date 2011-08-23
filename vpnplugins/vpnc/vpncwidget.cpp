@@ -222,11 +222,11 @@ void VpncSettingWidget::readConfig()
 
 void VpncSettingWidget::fillOnePasswordCombo(QComboBox * combo, Knm::Setting::secretsTypes type)
 {
-    if (type & Knm::Setting::AgentOwned || type & Knm::Setting::None || !type) {
+    if (type.testFlag(Knm::Setting::AgentOwned) || type.testFlag(Knm::Setting::None)) {
         combo->setCurrentIndex(VpncSettingWidgetPrivate::EnumPasswordStorage::Save);
-    } else if (type & Knm::Setting::NotRequired) {
+    } else if (type.testFlag(Knm::Setting::NotRequired)) {
         combo->setCurrentIndex(VpncSettingWidgetPrivate::EnumPasswordStorage::NotRequired);
-    } else if (type & Knm::Setting::NotSaved) {
+    } else if (type.testFlag(Knm::Setting::NotSaved)) {
         combo->setCurrentIndex(VpncSettingWidgetPrivate::EnumPasswordStorage::AlwaysAsk);
     }
 }

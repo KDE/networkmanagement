@@ -119,15 +119,9 @@ if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PROTO))) {
       }
   }
 
-  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK_FLAGS))) {
-      setting->setPskflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK_FLAGS)).value<int>());
-  }
-  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_FLAGS))) {
-      setting->setWepkeyflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_FLAGS)).value<int>());
-  }
-  if (map.contains(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS))) {
-      setting->setLeappasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS)).value<int>());
-  }
+  setting->setPskflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_PSK_FLAGS)).value<int>());
+  setting->setWepkeyflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_WEP_KEY_FLAGS)).value<int>());
+  setting->setLeappasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_LEAP_PASSWORD_FLAGS)).value<int>());
 }
 
 QVariantMap WirelessSecurityDbus::toMap()

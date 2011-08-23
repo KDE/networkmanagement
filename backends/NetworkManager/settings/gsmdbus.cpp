@@ -47,9 +47,7 @@ void GsmDbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_GSM_PIN))) {
       setting->setPin(map.value(QLatin1String(NM_SETTING_GSM_PIN)).value<QString>());
   }
-  if (map.contains(QLatin1String(NM_SETTING_GSM_PIN_FLAGS))) {
-      setting->setPinflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_GSM_PIN_FLAGS)).value<int>());
-  }
+  setting->setPinflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_GSM_PIN_FLAGS)).value<int>());
 }
 
 QVariantMap GsmDbus::toMap()

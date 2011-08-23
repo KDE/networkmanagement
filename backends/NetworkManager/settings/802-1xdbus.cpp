@@ -122,9 +122,7 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
     } else {
         setting->setUseSystemCaCerts(false);
     }
-    if (map.contains(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS))) {
-        setting->setPasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS)).value<int>());
-    }
+    setting->setPasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PASSWORD_FLAGS)).value<int>());
     setting->setPrivatekeypasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PRIVATE_KEY_PASSWORD_FLAGS)).value<int>());
     setting->setPhase2privatekeypasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_PRIVATE_KEY_PASSWORD_FLAGS)).value<int>());
     setting->setPinflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_802_1X_PIN_FLAGS)).value<int>());

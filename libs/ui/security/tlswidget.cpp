@@ -235,15 +235,21 @@ void TlsWidget::writeConfig()
 void TlsWidget::readSecrets()
 {
     Q_D(TlsWidget);
-    if (d->inner && (d->setting->phase2privatekeypasswordflags() & Knm::Setting::AgentOwned || d->setting->phase2privatekeypasswordflags() & Knm::Setting::None)) {
-        lePrivateKeyPassword->setText(d->setting->phase2privatekeypassword());
+    QString password;
+    Knm::Setting::secretsTypes flags;
+    if (d->inner) {
+        password = d->setting->phase2privatekeypassword();
+        flags = d->setting->phase2privatekeypasswordflags();
+    } else {
+        password = d->setting->privatekeypassword();
+        flags = d->setting->privatekeypasswordflags();
+    }
+    if (flags.testFlag(Knm::Setting::AgentOwned) || flags.testFlag(Knm::Setting::None)) {
+        lePrivateKeyPassword->setText(password);
         cmbPrivateKeyPasswordStorage->setCurrentIndex(EapMethodPrivate::Store);
-    } else if (d->setting->privatekeypasswordflags() & Knm::Setting::AgentOwned || d->setting->privatekeypasswordflags() & Knm::Setting::None) {
-        lePrivateKeyPassword->setText(d->setting->privatekeypassword());
-        cmbPrivateKeyPasswordStorage->setCurrentIndex(EapMethodPrivate::Store);
-    } else if (d->setting->passwordflags() & Knm::Setting::NotSaved) {
+    } else if (flags.testFlag(Knm::Setting::NotSaved)) {
         cmbPrivateKeyPasswordStorage->setCurrentIndex(EapMethodPrivate::AlwaysAsk);
-    } else if (d->setting->passwordflags() & Knm::Setting::NotRequired){
+    } else if (flags.testFlag(Knm::Setting::NotRequired)) {
         cmbPrivateKeyPasswordStorage->setCurrentIndex(EapMethodPrivate::NotRequired);
     }
 }

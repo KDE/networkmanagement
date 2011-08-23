@@ -74,12 +74,12 @@ void EapMethodLeap::writeConfig()
 void EapMethodLeap::readSecrets()
 {
     Q_D(EapMethod);
-    if (d->setting->passwordflags() & Knm::Setting::AgentOwned || d->setting->passwordflags() & Knm::Setting::None) {
+    if (d->setting->passwordflags().testFlag(Knm::Setting::AgentOwned) || d->setting->passwordflags().testFlag(Knm::Setting::None)) {
         lePassword->setText(d->setting->password());
         cmbPasswordStorage->setCurrentIndex(EapMethodPrivate::Store);
-    } else if (d->setting->passwordflags() & Knm::Setting::NotSaved) {
+    } else if (d->setting->passwordflags().testFlag(Knm::Setting::NotSaved)) {
         cmbPasswordStorage->setCurrentIndex(EapMethodPrivate::AlwaysAsk);
-    } else if (d->setting->passwordflags() & Knm::Setting::NotRequired){
+    } else if (d->setting->passwordflags().testFlag(Knm::Setting::NotRequired)){
         cmbPasswordStorage->setCurrentIndex(EapMethodPrivate::NotRequired);
     }
 }

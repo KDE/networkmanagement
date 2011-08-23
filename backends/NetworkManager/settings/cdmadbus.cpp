@@ -26,9 +26,7 @@ void CdmaDbus::fromMap(const QVariantMap & map)
     if (map.contains(QLatin1String(NM_SETTING_CDMA_PASSWORD))) {
         setting->setPassword(map.value(QLatin1String(NM_SETTING_CDMA_PASSWORD)).value<QString>());
     }
-    if (map.contains(QLatin1String(NM_SETTING_CDMA_PASSWORD_FLAGS))) {
-        setting->setPasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_CDMA_PASSWORD_FLAGS)).value<int>());
-    }
+    setting->setPasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_CDMA_PASSWORD_FLAGS)).value<int>());
 }
 
 QVariantMap CdmaDbus::toMap()

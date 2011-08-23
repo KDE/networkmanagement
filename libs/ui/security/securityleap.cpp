@@ -113,12 +113,12 @@ void LeapWidget::writeConfig()
 
 void LeapWidget::readSecrets()
 {
-    if (d->setting->leappasswordflags() & Knm::Setting::AgentOwned || d->setting->leappasswordflags() & Knm::Setting::None) {
+    if (d->setting->leappasswordflags().testFlag(Knm::Setting::AgentOwned) || d->setting->leappasswordflags().testFlag(Knm::Setting::None)) {
         d->ui.lePassword->setText(d->setting->leappassword());
         d->ui.cmbPasswordStorage->setCurrentIndex(Private::Store);
-    } else if (d->setting->leappasswordflags() & Knm::Setting::NotSaved) {
+    } else if (d->setting->leappasswordflags().testFlag(Knm::Setting::NotSaved)) {
         d->ui.cmbPasswordStorage->setCurrentIndex(Private::AlwaysAsk);
-    } else if (d->setting->leappasswordflags() & Knm::Setting::NotRequired){
+    } else if (d->setting->leappasswordflags().testFlag(Knm::Setting::NotRequired)){
         d->ui.cmbPasswordStorage->setCurrentIndex(Private::NotRequired);
     }
 }
