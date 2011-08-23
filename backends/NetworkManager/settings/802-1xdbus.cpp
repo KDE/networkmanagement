@@ -31,6 +31,12 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
     if (map.contains(QLatin1String(NM_SETTING_802_1X_CA_PATH))) {
         setting->setCapath(map.value(QLatin1String(NM_SETTING_802_1X_CA_PATH)).value<QString>());
     }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_SUBJECT_MATCH))) {
+        setting->setSubjectmatch(map.value(QLatin1String(NM_SETTING_802_1X_SUBJECT_MATCH)).value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_ALTSUBJECT_MATCHES))) {
+        setting->setAltsubjectmatches(map.value(QLatin1String(NM_SETTING_802_1X_ALTSUBJECT_MATCHES)).value<QStringList>());
+    }
     if (map.contains(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT))) {
         setting->setClientcert(map.value(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT)).value<QByteArray>());
     }
@@ -44,16 +50,48 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
         setting->setPhase1fastprovisioning(map.value(QLatin1String(NM_SETTING_802_1X_PHASE1_FAST_PROVISIONING)).value<QString>());
     }
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH))) {
-        setting->setPhase2auth(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH)).value<int>());
+        QString auth = map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH)).value<QString>();
+        if (auth == QLatin1String("pap"))
+            setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::pap);
+        else if (auth == QLatin1String("mschap"))
+            setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::mschap);
+        else if (auth == QLatin1String("mschapv2"))
+            setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::mschapv2);
+        else if (auth == QLatin1String("chap"))
+            setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::chap);
+        else if (auth == QLatin1String("md5"))
+            setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::md5);
+        else if (auth == QLatin1String("gtc"))
+            setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::gtc);
+        else if (auth == QLatin1String("otp"))
+            setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::otp);
+        else if (auth == QLatin1String("tls"))
+            setting->setPhase2auth(Knm::Security8021xSetting::EnumPhase2auth::tls);
     }
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP))) {
-        setting->setPhase2autheap(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP)).value<int>());
+        QString eap = map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTHEAP)).value<QString>();
+        if (eap == QLatin1String("md5"))
+            setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::md5);
+        else if (eap == QLatin1String("gtc"))
+            setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::gtc);
+        else if (eap == QLatin1String("otp"))
+            setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::otp);
+        else if (eap == QLatin1String("mschapv2"))
+            setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::mschapv2);
+        else if (eap == QLatin1String("tls"))
+            setting->setPhase2autheap(Knm::Security8021xSetting::EnumPhase2autheap::tls);
     }
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT))) {
         setting->setPhase2cacert(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT)).value<QByteArray>());
     }
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH))) {
         setting->setPhase2capath(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH)).value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_SUBJECT_MATCH))) {
+        setting->setPhase2subjectmatch(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_SUBJECT_MATCH)).value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_ALTSUBJECT_MATCHES))) {
+        setting->setPhase2altsubjectmatches(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_ALTSUBJECT_MATCHES)).value<QStringList>());
     }
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT))) {
         setting->setPhase2clientcert(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT)).value<QByteArray>());
@@ -114,6 +152,12 @@ QVariantMap Security8021xDbus::toMap()
         if (!setting->capath().isEmpty()) {
             map.insert(QLatin1String(NM_SETTING_802_1X_CA_PATH), setting->capath());
         }
+        if (!setting->subjectmatch().isEmpty()) {
+            map.insert(QLatin1String(NM_SETTING_802_1X_SUBJECT_MATCH), setting->subjectmatch());
+        }
+        if (!setting->altsubjectmatches().isEmpty()) {
+            map.insert(QLatin1String(NM_SETTING_802_1X_ALTSUBJECT_MATCHES), setting->altsubjectmatches());
+        }
         if (!setting->clientcert().isEmpty()) {
             map.insert(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT), setting->clientcert());
         }
@@ -158,6 +202,9 @@ QVariantMap Security8021xDbus::toMap()
             case Knm::Security8021xSetting::EnumPhase2auth::otp:
                 map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), "otp");
                 break;
+            case Knm::Security8021xSetting::EnumPhase2auth::tls:
+                map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_AUTH), "tls");
+                break;
         }
         switch (setting->phase2autheap()) {
             case Knm::Security8021xSetting::EnumPhase2autheap::none:
@@ -183,6 +230,10 @@ QVariantMap Security8021xDbus::toMap()
             map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT), setting->phase2cacert());
         if (!setting->phase2capath().isEmpty())
             map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH), setting->phase2capath());
+        if (!setting->phase2subjectmatch().isEmpty())
+            map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_SUBJECT_MATCH), setting->phase2subjectmatch());
+        if (!setting->phase2altsubjectmatches().isEmpty())
+            map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_ALTSUBJECT_MATCHES), setting->phase2altsubjectmatches());
         if (!setting->phase2clientcert().isEmpty())
             map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT), setting->phase2clientcert());
         if (!setting->phase2privatekey().isEmpty())

@@ -1,9 +1,9 @@
 include(MacroEnsureVersion)
 macro_optional_find_package(NetworkManager)
-    
+
 set(HAVE_NETWORKMANAGER FALSE)
 if(NETWORKMANAGER_FOUND)
-  macro_ensure_version("0.8.996" ${NETWORKMANAGER_VERSION} NM_0_9)
+  macro_ensure_version("0.9.0" ${NETWORKMANAGER_VERSION} NM_0_9)
   if (NM_0_9)
     message(STATUS "Will build networkmanager-0.9")
     set(HAVE_NETWORKMANAGER TRUE)

@@ -136,6 +136,47 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     }
 
     /**
+      Set subject match
+    */
+    void setSubjectmatch( const QString & s)
+    {
+        mSubjectmatch = s;
+    }
+
+    /**
+      Get subject match
+    */
+    QString subjectmatch() const
+    {
+        return mSubjectmatch;
+    }
+
+    /**
+      set altsubject matches
+    */
+    void setAltsubjectmatches( const QStringList & v)
+    {
+        mAltsubjectmatches = v;
+    }
+
+    /**
+      add altsubject match
+    */
+    void addAltsubjectmatch( const QString & s)
+    {
+        if (!mAltsubjectmatches.contains(s))
+            mAltsubjectmatches.append(s);
+    }
+
+    /**
+      get altsubject matches
+    */
+    QStringList altsubjectmatches() const
+    {
+        return mAltsubjectmatches;
+    }
+
+    /**
       Set Client Cert
     */
     void setClientcert( const QByteArray & v )
@@ -297,6 +338,47 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     QString phase2capath() const
     {
       return mPhase2capath;
+    }
+
+    /**
+      Set Phase 2 subject match
+    */
+    void setPhase2subjectmatch( const QString & s)
+    {
+        mPhase2subjectmatch = s;
+    }
+
+    /**
+      Get Phase 2 subject match
+    */
+    QString phase2subjectmatch() const
+    {
+        return mPhase2subjectmatch;
+    }
+
+    /**
+      set Phase 2 altsubject matches
+    */
+    void setPhase2altsubjectmatches( const QStringList & v)
+    {
+        mPhase2altsubjectmatches = v;
+    }
+
+    /**
+      add Phase 2 altsubject match
+    */
+    void addPhase2altsubjectmatch( const QString & s)
+    {
+        if (!mPhase2altsubjectmatches.contains(s))
+            mPhase2altsubjectmatches.append(s);
+    }
+
+    /**
+      get Phase 2 altsubject matches
+    */
+    QStringList phase2altsubjectmatches() const
+    {
+        return mPhase2altsubjectmatches;
     }
 
     /**
@@ -653,6 +735,8 @@ kDebug() << eap;
     QString mAnonymousidentity;
     QByteArray mCacert;
     QString mCapath;
+    QString mSubjectmatch;
+    QStringList mAltsubjectmatches;
     QByteArray mClientcert;
     QString mClientcertpath;
     int mPhase1peapver;
@@ -662,6 +746,8 @@ kDebug() << eap;
     int mPhase2autheap;
     QByteArray mPhase2cacert;
     QString mPhase2capath;
+    QString mPhase2subjectmatch;
+    QStringList mPhase2altsubjectmatches;
     QByteArray mPhase2clientcert;
     QString mPhase2clientcertpath;
     QString mPassword;

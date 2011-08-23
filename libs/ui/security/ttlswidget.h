@@ -7,7 +7,7 @@ modify it under the terms of the GNU General Public License as
 published by the Free Software Foundation; either version 2 of
 the License or (at your option) version 3 or any later version
 accepted by the membership of KDE e.V. (or its successor approved
-by the membership of KDE e.V.), which shall act as a proxy 
+by the membership of KDE e.V.), which shall act as a proxy
 defined in Section 14 of version 3 of the license.
 
 This program is distributed in the hope that it will be useful,
@@ -30,7 +30,7 @@ class TtlsWidgetPrivate;
 class TtlsWidget : public EapMethodInnerAuth, public Ui_EapMethodTtlsBase
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(EapMethodInnerAuth)
+Q_DECLARE_PRIVATE(TtlsWidget)
 public:
     TtlsWidget(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~TtlsWidget();
@@ -40,6 +40,9 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
+private Q_SLOTS:
+    void showAltSubjectMatchesEditor();
+    void showServersEditor();
 };
 
 #endif

@@ -20,6 +20,8 @@ Security8021xSetting::Security8021xSetting(Security8021xSetting *setting) : Sett
     setAnonymousidentity(setting->anonymousidentity());
     setCacert(setting->cacert());
     setCapath(setting->capath());
+    setSubjectmatch(setting->subjectmatch());
+    setAltsubjectmatches(setting->altsubjectmatches());
     setClientcert(setting->clientcert());
     setClientcertpath(setting->clientcertpath());
     setPhase1peapver(setting->phase1peapver());
@@ -29,6 +31,8 @@ Security8021xSetting::Security8021xSetting(Security8021xSetting *setting) : Sett
     setPhase2autheap(setting->phase2autheap());
     setPhase2cacert(setting->phase2cacert());
     setPhase2capath(setting->phase2capath());
+    setPhase2subjectmatch(setting->phase2subjectmatch());
+    setPhase2altsubjectmatches(setting->phase2altsubjectmatches());
     setPhase2clientcert(setting->phase2clientcert());
     setPhase2clientcertpath(setting->phase2clientcertpath());
     setPassword(setting->password());

@@ -38,6 +38,9 @@
         <choice name="KBits_s"/>
       </choices>
     </entry>
+    <entry name="ShowAdvancedSettings" type="Bool">
+        <default>false</default>
+    </entry>
   </group>
   <group name="SystemTray">
       <entry name="IconCount" type="UInt">

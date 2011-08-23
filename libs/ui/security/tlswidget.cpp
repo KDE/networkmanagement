@@ -21,8 +21,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "tlswidget.h"
 
-#include "connection.h"
-#include "settings/802-1x.h"
+#include "editlistdialog.h"
+#include "listvalidator.h"
+
+#include <connection.h>
+#include <settings/802-1x.h>
+#include <knmserviceprefs.h>
 
 #include "eapmethod_p.h"
 
@@ -35,12 +39,43 @@ public:
 
     }
     bool inner;
+    bool showAdvancedSettings;
+    QRegExpValidator *altSubjectValidator;
+    QRegExpValidator *serversValidator;
 };
 
 TlsWidget::TlsWidget(bool isInnerMethod, Knm::Connection* connection, QWidget * parent)
 : EapMethod(*new TlsWidgetPrivate(isInnerMethod), connection, parent)
 {
+    Q_D(TlsWidget);
     setupUi(this);
+    d->altSubjectValidator = new QRegExpValidator(QRegExp(QLatin1String("^(DNS:[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|EMAIL:[a-zA-Z0-9._-]+@[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|URI:[a-zA-Z0-9._-]+:.+)$")), this);
+    d->serversValidator = new QRegExpValidator(QRegExp(QLatin1String("^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+$")), this);
+
+    ListValidator *altSubjectValidator = new ListValidator(this);
+    altSubjectValidator->setInnerValidator(d->altSubjectValidator);
+    leAltSubjectMatches->setValidator(altSubjectValidator);
+
+    ListValidator *serversValidator = new ListValidator(this);
+    serversValidator->setInnerValidator(d->serversValidator);
+    leConnectToTheseServers->setValidator(d->serversValidator);
+
+    KNetworkManagerServicePrefs::self()->readConfig();
+    d->showAdvancedSettings = KNetworkManagerServicePrefs::self()->showAdvancedSettings();
+    if (d->showAdvancedSettings) {
+        lblConnectToTheseServers->hide();
+        leConnectToTheseServers->hide();
+        connectToTheseServersMoreBtn->hide();
+        connect(altSubjectMatchesMoreBtn, SIGNAL(clicked()), this, SLOT(showAltSubjectMatchesEditor()));
+    } else {
+        lblSubjectMatch->hide();
+        leSubjectMatch->hide();
+        lblAltSubjectMatches->hide();
+        leAltSubjectMatches->hide();
+        altSubjectMatchesMoreBtn->hide();
+        connect(connectToTheseServersMoreBtn, SIGNAL(clicked()), this, SLOT(showServersEditor()));
+    }
+
     connect(cmbPrivateKeyPasswordStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(privateKeyPasswordStorageChanged(int)));
 }
 
@@ -89,6 +124,25 @@ void TlsWidget::readConfig()
     }
     if (!value.isEmpty())
         kurPrivateKey->setUrl(value);
+
+    QStringList altsubjectmatches;
+    if (d->inner) {
+        leSubjectMatch->setText(d->setting->phase2subjectmatch());
+        altsubjectmatches = d->setting->phase2altsubjectmatches();
+    }
+    else {
+        leSubjectMatch->setText(d->setting->subjectmatch());
+        altsubjectmatches = d->setting->altsubjectmatches();
+    }
+    leAltSubjectMatches->setText(altsubjectmatches.join(QLatin1String(", ")));
+    if (!d->showAdvancedSettings) {
+        QStringList servers;
+        foreach (const QString &match, altsubjectmatches) {
+            if (match.startsWith(QLatin1String("DNS:")))
+                servers.append(match.right(match.length()-4));
+        }
+        leConnectToTheseServers->setText(servers.join(QLatin1String(", ")));
+    }
 }
 
 void TlsWidget::writeConfig()
@@ -160,6 +214,22 @@ void TlsWidget::writeConfig()
             d->inner ? d->setting->setPhase2privatekeypasswordflags(Knm::Setting::NotRequired) : d->setting->setPrivatekeypasswordflags(Knm::Setting::NotRequired);
             break;
     }
+
+    QStringList altsubjectmatches = leAltSubjectMatches->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts);
+    if (!d->showAdvancedSettings) {
+        foreach (const QString &match, leConnectToTheseServers->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts)) {
+            QString tempstr = QLatin1String("DNS:") + match;
+            if (!altsubjectmatches.contains(tempstr))
+                altsubjectmatches.append(tempstr);
+        }
+    }
+    if (d->inner) {
+        d->setting->setPhase2subjectmatch(leSubjectMatch->text());
+        d->setting->setPhase2altsubjectmatches(altsubjectmatches);
+    } else {
+        d->setting->setSubjectmatch(leSubjectMatch->text());
+        d->setting->setAltsubjectmatches(altsubjectmatches);
+    }
 }
 
 void TlsWidget::readSecrets()
@@ -193,6 +263,30 @@ void TlsWidget::privateKeyPasswordStorageChanged(int type)
         default:
             lePrivateKeyPassword->setEnabled(false);
             break;
+    }
+}
+
+void TlsWidget::showAltSubjectMatchesEditor()
+{
+    Q_D(TlsWidget);
+    EditListDialog editor;
+    editor.setItems(leAltSubjectMatches->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts));
+    editor.setCaption(i18n("Alternative Subject Matches"));
+    editor.setValidator(d->altSubjectValidator);
+    if (editor.exec() == QDialog::Accepted) {
+        leAltSubjectMatches->setText(editor.items().join(QLatin1String(", ")));
+    }
+}
+
+void TlsWidget::showServersEditor()
+{
+    Q_D(TlsWidget);
+    EditListDialog editor;
+    editor.setItems(leConnectToTheseServers->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts));
+    editor.setCaption(i18n("Connect to these Servers"));
+    editor.setValidator(d->serversValidator);
+    if (editor.exec() == QDialog::Accepted) {
+        leConnectToTheseServers->setText(editor.items().join(QLatin1String(", ")));
     }
 }
 

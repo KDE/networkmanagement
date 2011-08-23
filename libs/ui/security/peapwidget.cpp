@@ -21,19 +21,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "peapwidget.h"
 
-#include <nm-setting-8021x.h>
 #include <connection.h>
+#include <settings/802-1x.h>
+#include <knmserviceprefs.h>
 
 #include "eapmethodstack.h"
 #include "eapmethodsimple.h"
 #include "eapmethodinnerauth_p.h"
-#include "settings/802-1x.h"
+
+#include "editlistdialog.h"
+#include "listvalidator.h"
+
+class PeapWidgetPrivate : public EapMethodInnerAuthPrivate
+{
+public:
+    bool showAdvancedSettings;
+    QRegExpValidator *altSubjectValidator;
+    QRegExpValidator *serversValidator;
+};
 
 PeapWidget::PeapWidget(Knm::Connection* connection, QWidget * parent)
-: EapMethodInnerAuth(connection, parent)
+: EapMethodInnerAuth(connection, *new PeapWidgetPrivate(), parent)
 {
-    Q_D(EapMethodInnerAuth);
+    Q_D(PeapWidget);
     setupUi(this);
+
+    d->altSubjectValidator = new QRegExpValidator(QRegExp(QLatin1String("^(DNS:[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|EMAIL:[a-zA-Z0-9._-]+@[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|URI:[a-zA-Z0-9._-]+:.+)$")), this);
+    d->serversValidator = new QRegExpValidator(QRegExp(QLatin1String("^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+$")), this);
+
+    ListValidator *altSubjectValidator = new ListValidator(this);
+    altSubjectValidator->setInnerValidator(d->altSubjectValidator);
+    leAltSubjectMatches->setValidator(altSubjectValidator);
+
+    ListValidator *serversValidator = new ListValidator(this);
+    serversValidator->setInnerValidator(d->serversValidator);
+    leConnectToTheseServers->setValidator(d->serversValidator);
+
+    KNetworkManagerServicePrefs::self()->readConfig();
+    d->showAdvancedSettings = KNetworkManagerServicePrefs::self()->showAdvancedSettings();
+    if (d->showAdvancedSettings) {
+        lblConnectToTheseServers->hide();
+        leConnectToTheseServers->hide();
+        connectToTheseServersMoreBtn->hide();
+        connect(altSubjectMatchesMoreBtn, SIGNAL(clicked()), this, SLOT(showAltSubjectMatchesEditor()));
+    } else {
+        lblSubjectMatch->hide();
+        leSubjectMatch->hide();
+        lblAltSubjectMatches->hide();
+        leAltSubjectMatches->hide();
+        altSubjectMatchesMoreBtn->hide();
+        connect(connectToTheseServersMoreBtn, SIGNAL(clicked()), this, SLOT(showServersEditor()));
+    }
 
     d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::mschapv2, new EapMethodSimple(EapMethodSimple::MsChapV2, connection, d->innerAuth),
             i18nc("MSCHAPv2 inner auth method", "MSCHAPv2"));
@@ -41,7 +79,7 @@ PeapWidget::PeapWidget(Knm::Connection* connection, QWidget * parent)
             i18nc("MD5 inner auth method", "MD5"));
     d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::gtc, new EapMethodSimple(EapMethodSimple::GTC, connection, d->innerAuth),
             i18nc("GTC inner auth method", "GTC"));
-    gridLayout->addWidget(d->innerAuth, 4, 0, 2, 2);
+    formLayout->addRow(d->innerAuth);
 
     kurCaCert->setMode(KFile::LocalOnly);
 }
@@ -57,7 +95,7 @@ bool PeapWidget::validate() const
 
 void PeapWidget::readConfig()
 {
-    Q_D(EapMethodInnerAuth);
+    Q_D(PeapWidget);
 
     leAnonIdentity->setText(d->setting->anonymousidentity());
 
@@ -75,6 +113,19 @@ void PeapWidget::readConfig()
     if (d->setting->phase2auth() != Knm::Security8021xSetting::EnumPhase2auth::none) {
         d->innerAuth->setCurrentEapMethod(d->setting->phase2auth());
     }
+
+    leSubjectMatch->setText(d->setting->subjectmatch());
+    QStringList altsubjectmatches = d->setting->altsubjectmatches();
+    leAltSubjectMatches->setText(altsubjectmatches.join(QLatin1String(", ")));
+    if (!d->showAdvancedSettings) {
+        QStringList servers;
+        foreach (const QString &match, altsubjectmatches) {
+            if (match.startsWith(QLatin1String("DNS:")))
+                servers.append(match.right(match.length()-4));
+        }
+        leConnectToTheseServers->setText(servers.join(QLatin1String(", ")));
+    }
+
     d->innerAuth->readConfig();
 
     if (d->setting->phase1peapver() == Knm::Security8021xSetting::EnumPhase1peapver::zero)
@@ -85,7 +136,7 @@ void PeapWidget::readConfig()
 
 void PeapWidget::writeConfig()
 {
-    Q_D(EapMethodInnerAuth);
+    Q_D(PeapWidget);
     // make the Setting PEAP
     d->setting->setEapFlags(Knm::Security8021xSetting::peap);
 
@@ -105,6 +156,17 @@ void PeapWidget::writeConfig()
         }
     }
 
+    QStringList altsubjectmatches = leAltSubjectMatches->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts);
+    if (!d->showAdvancedSettings) {
+        foreach (const QString &match, leConnectToTheseServers->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts)) {
+            QString tempstr = QLatin1String("DNS:") + match;
+            if (!altsubjectmatches.contains(tempstr))
+                altsubjectmatches.append(tempstr);
+        }
+    }
+    d->setting->setSubjectmatch(leSubjectMatch->text());
+    d->setting->setAltsubjectmatches(altsubjectmatches);
+
     d->innerAuth->writeConfig();
 
     d->setting->setPhase1peapver(cboPeapVersion->currentIndex());
@@ -112,8 +174,32 @@ void PeapWidget::writeConfig()
 
 void PeapWidget::readSecrets()
 {
-    Q_D(EapMethodInnerAuth);
+    Q_D(PeapWidget);
     d->innerAuth->readSecrets();
+}
+
+void PeapWidget::showAltSubjectMatchesEditor()
+{
+    Q_D(PeapWidget);
+    EditListDialog editor;
+    editor.setItems(leAltSubjectMatches->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts));
+    editor.setCaption(i18n("Alternative Subject Matches"));
+    editor.setValidator(d->altSubjectValidator);
+    if (editor.exec() == QDialog::Accepted) {
+        leAltSubjectMatches->setText(editor.items().join(QLatin1String(", ")));
+    }
+}
+
+void PeapWidget::showServersEditor()
+{
+    Q_D(PeapWidget);
+    EditListDialog editor;
+    editor.setItems(leConnectToTheseServers->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts));
+    editor.setCaption(i18n("Connect to these Servers"));
+    editor.setValidator(d->serversValidator);
+    if (editor.exec() == QDialog::Accepted) {
+        leConnectToTheseServers->setText(editor.items().join(QLatin1String(", ")));
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

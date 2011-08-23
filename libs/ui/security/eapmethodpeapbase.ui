@@ -7,12 +7,12 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>300</height>
+    <height>351</height>
    </rect>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <layout class="QGridLayout" name="gridLayout">
+    <layout class="QFormLayout" name="formLayout">
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
@@ -45,7 +45,14 @@
      <item row="1" column="1">
       <widget class="KUrlRequester" name="kurCaCert"/>
      </item>
-     <item row="3" column="0">
+     <item row="2" column="1">
+      <widget class="QCheckBox" name="chkUseSystemCaCerts">
+       <property name="text">
+        <string>Use Syste&amp;m CA Certs</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
       <widget class="QLabel" name="label_6">
        <property name="text">
         <string>PEAP &amp;Version:</string>
@@ -58,7 +65,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
+     <item row="6" column="1">
       <widget class="KComboBox" name="cboPeapVersion">
        <item>
         <property name="text">
@@ -77,12 +84,69 @@
        </item>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QCheckBox" name="chkUseSystemCaCerts">
+     <item row="3" column="0">
+      <widget class="QLabel" name="lblSubjectMatch">
        <property name="text">
-        <string>Use Syste&amp;m CA Certs</string>
+        <string>Subject Match:</string>
        </property>
       </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="KLineEdit" name="leSubjectMatch">
+       <property name="toolTip">
+        <string>Only connect to servers whose certficate subject matches this. For the syntax see the wpa_supplicant documentation.</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="lblAltSubjectMatches">
+       <property name="text">
+        <string>Alternative Subject Matches:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QLineEdit" name="leAltSubjectMatches">
+         <property name="toolTip">
+          <string>Only connect to servers whose certificate contains at least one of the entries. For the syntax see the wpa_supplicant documentation. Use ',' to separate entries.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="KPushButton" name="altSubjectMatchesMoreBtn">
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="lblConnectToTheseServers">
+       <property name="text">
+        <string>Connect to these Servers:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <widget class="KLineEdit" name="leConnectToTheseServers">
+         <property name="toolTip">
+          <string>Only connect to these servers. Use ',' to separate entries.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="KPushButton" name="connectToTheseServersMoreBtn">
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -106,6 +170,11 @@
    <class>KUrlRequester</class>
    <extends>QFrame</extends>
    <header>kurlrequester.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>

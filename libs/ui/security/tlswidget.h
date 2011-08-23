@@ -52,6 +52,8 @@ public Q_SLOTS:
     void setShowPasswords(bool b = true);
 private Q_SLOTS:
     void privateKeyPasswordStorageChanged(int);
+    void showAltSubjectMatchesEditor();
+    void showServersEditor();
 };
 
 #endif
