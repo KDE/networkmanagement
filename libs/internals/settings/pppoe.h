@@ -22,7 +22,9 @@ class KNMINTERNALS_EXPORT PppoeSetting : public Setting
 
     bool hasSecrets() const;
 
-    void setSecrets(Setting::secretsTypes);
+    QMap<QString,QString> secretsToMap();
+    void secretsFromMap(QMap<QString,QString> secrets);
+    QStringList needSecrets();
 
     /**
       Set Service

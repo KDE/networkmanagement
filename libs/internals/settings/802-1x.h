@@ -27,7 +27,7 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
     class EnumPhase2auth
     {
       public:
-      enum type { none, pap, mschap, mschapv2, chap, md5, gtc, otp, COUNT };
+      enum type { none, pap, mschap, mschapv2, chap, md5, gtc, otp, tls, COUNT };
     };
     class EnumPhase2autheap
     {
@@ -43,7 +43,9 @@ class KNMINTERNALS_EXPORT Security8021xSetting : public Setting
 
     bool hasSecrets() const;
 
-    void setSecrets(Setting::secretsTypes);
+    QMap<QString,QString> secretsToMap();
+    void secretsFromMap(QMap<QString,QString> secrets);
+    QStringList needSecrets();
 
     /**
       Set EAP

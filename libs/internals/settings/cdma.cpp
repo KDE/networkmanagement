@@ -2,18 +2,15 @@
 // All changes you do to this file will be lost.
 
 #include "cdma.h"
-#include "cdmasecrets.h"
 
 using namespace Knm;
 
 CdmaSetting::CdmaSetting() : Setting(Setting::Cdma)
 {
-    m_secretsObject = new CdmaSecrets(this);
 }
 
-CdmaSetting::CdmaSetting(CdmaSetting *setting) : Setting(setting)
+CdmaSetting::CdmaSetting(CdmaSetting *setting) : Setting(setting), mPasswordflags(Setting::AgentOwned)
 {
-    m_secretsObject = new CdmaSecrets(static_cast<CdmaSecrets*>(setting->getSecretsObject()), this);
     setNumber(setting->number());
     setUsername(setting->username());
     setPassword(setting->password());
@@ -32,8 +29,25 @@ bool CdmaSetting::hasSecrets() const
 {
   return true;
 }
-void CdmaSetting::setSecrets(Setting::secretsTypes types)
+
+QMap<QString,QString> CdmaSetting::secretsToMap()
 {
-    if (!mPassword.isEmpty())
-        setPasswordflags(types);
+    QMap<QString,QString> map;
+    if (passwordflags().testFlag(Setting::AgentOwned)) {
+        map.insert(QLatin1String("password"), password());
+    }
+    return map;
+}
+
+void CdmaSetting::secretsFromMap(QMap<QString,QString> secrets)
+{
+    setPassword(secrets.value("password"));
+}
+
+QStringList CdmaSetting::needSecrets()
+{
+    QStringList list;
+    if (password().isEmpty() && !passwordflags().testFlag(Setting::NotRequired))
+        list.append("password");
+    return list;
 }

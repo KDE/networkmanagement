@@ -16,26 +16,20 @@ set(knminternals_SRCS
 
    setting.cpp
 
-   secrets.cpp
-
    #settings/pbkdf2.cpp
    #settings/wephash.cpp
 
    settings/802-11-wireless-security.cpp
-   settings/802-11-wireless-securitysecrets.cpp
 
    settings/802-11-wireless.cpp
 
    settings/802-3-ethernet.cpp
 
    settings/802-1x.cpp
-   settings/802-1xsecrets.cpp
 
    settings/gsm.cpp
-   settings/gsmsecrets.cpp
 
    settings/cdma.cpp
-   settings/cdmasecrets.cpp
 
    settings/ipv4.cpp
 
@@ -44,12 +38,10 @@ set(knminternals_SRCS
    settings/ppp.cpp
 
    settings/pppoe.cpp
-   settings/pppoesecrets.cpp
 
    settings/serial.cpp
 
    settings/vpn.cpp
-   settings/vpnsecrets.cpp
 
    settings/bluetooth.cpp
 

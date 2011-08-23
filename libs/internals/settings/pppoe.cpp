@@ -2,18 +2,15 @@
 // All changes you do to this file will be lost.
 
 #include "pppoe.h"
-#include "pppoesecrets.h"
 
 using namespace Knm;
 
 PppoeSetting::PppoeSetting() : Setting(Setting::Pppoe)
 {
-    m_secretsObject = new PppoeSecrets(this);
 }
 
-PppoeSetting::PppoeSetting(PppoeSetting *setting) : Setting(setting)
+PppoeSetting::PppoeSetting(PppoeSetting *setting) : Setting(setting), mPasswordflags(Setting::AgentOwned)
 {
-    m_secretsObject = new PppoeSecrets(static_cast<PppoeSecrets*>(setting->getSecretsObject()), this);
     setService(setting->service());
     setUsername(setting->username());
     setPassword(setting->password());
@@ -32,8 +29,25 @@ bool PppoeSetting::hasSecrets() const
 {
   return true;
 }
-void PppoeSetting::setSecrets(Setting::secretsTypes types)
+
+QMap<QString,QString> PppoeSetting::secretsToMap()
 {
-    if (!mPassword.isEmpty())
-        setPasswordflags(types);
+    QMap<QString,QString> map;
+    if (passwordflags().testFlag(Setting::AgentOwned)) {
+        map.insert(QLatin1String("password"), password());
+    }
+    return map;
+}
+
+void PppoeSetting::secretsFromMap(QMap<QString,QString> secrets)
+{
+    setPassword(secrets.value("password"));
+}
+
+QStringList PppoeSetting::needSecrets()
+{
+    QStringList list;
+    if (password().isEmpty() && !passwordflags().testFlag(Setting::NotRequired))
+        list.append("password");
+    return list;
 }

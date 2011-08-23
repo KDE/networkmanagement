@@ -37,8 +37,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 #include "setting.h"
 
-#include "secrets.h"
-
 class SecretStoragePrivate
 {
 public:
@@ -77,11 +75,13 @@ void SecretStorage::saveSecrets(Knm::Connection *con)
     if (d->storageMode == PlainText) {
         KSharedConfig::Ptr ptr = secretsFileForUuid(con->uuid());
         foreach (Knm::Setting * setting, con->settings()) {
-            Knm::Secrets * secrets = setting->getSecretsObject();
-            if (secrets) {
-                QMap<QString,QString> map = secrets->secretsToMap();
-                if (ptr)
-                    secrets->secretsToConfig(map, ptr);
+            QMap<QString, QString> secrets = setting->secretsToMap();
+            KConfigGroup config(ptr, Knm::Setting::typeAsString(setting->type()));
+            config.deleteGroup();
+            if (!secrets.isEmpty()) {
+                foreach (const QString &secret, secrets.keys()) {
+                    config.writeEntry(secret, secrets.value(secret));
+                }
             }
         }
     } else if (d->storageMode == Secure) {
@@ -116,14 +116,11 @@ void SecretStorage::walletOpenedForWrite(bool success)
 			}
                     }
                     foreach (Knm::Setting * setting, con->settings()) {
-                        Knm::Secrets * secrets = setting->getSecretsObject();
-                        if (secrets) {
-                            QMap<QString,QString> map = secrets->secretsToMap();
-                            if (!map.isEmpty()) {
-                                saved = true;
-                                wallet->writeMap(walletKeyFor(con->uuid(), setting), map);
-                                kDebug() << "Writing entry " << walletKeyFor(con->uuid(), setting);
-                            }
+                        QMap<QString,QString> map = setting->secretsToMap();
+                        if (!map.isEmpty()) {
+                            saved = true;
+                            wallet->writeMap(walletKeyFor(con->uuid(), setting), map);
+                            kDebug() << "Writing entry " << walletKeyFor(con->uuid(), setting);
                         }
                     }
                     if (!saved) {
@@ -152,23 +149,17 @@ void SecretStorage::walletOpenedForRead(bool success)
                         continue;
 
                     QPair<QString,GetSecretsFlags> pair = i.value();
-                    Knm::Secrets * secrets = 0;
                     bool settingsFound = false;
                     foreach (Knm::Setting * setting, con->settings()) {
                         if (setting->name() == pair.first) {
-                            secrets = setting->getSecretsObject();
                             settingsFound = true;
-                            if (secrets) {
-                                QMap<QString,QString> map;
-                                if (wallet->readMap(walletKeyFor(con->uuid(), setting), map) == 0) {
-                                    secrets->secretsFromMap(map);
-                                }
-                                QStringList needSecretsList = secrets->needSecrets();
-                                if (!needSecretsList.isEmpty() && (pair.second & AllowInteraction || pair.second & RequestNew)) {
-                                    askUser(con, pair.first, needSecretsList);
-                                } else {
-                                    emit connectionRead(con, pair.first, false);
-                                }
+                            QMap<QString,QString> map;
+                            if (wallet->readMap(walletKeyFor(con->uuid(), setting), map) == 0) {
+                                setting->secretsFromMap(map);
+                            }
+                            QStringList needSecretsList = setting->needSecrets();
+                            if (!needSecretsList.isEmpty() && (pair.second & AllowInteraction || pair.second & RequestNew)) {
+                                askUser(con, pair.first, needSecretsList);
                             } else {
                                 emit connectionRead(con, pair.first, false);
                             }
@@ -242,25 +233,14 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
     QString uuid = con->uuid();
 
     if (d->storageMode == PlainText && !(flags & RequestNew)) {
-        Knm::Secrets * secrets = 0;
-        foreach (Knm::Setting * setting, con->settings()) {
-            if (setting->name() == name) {
-                secrets = setting->getSecretsObject();
-                break;
-            }
-        }
         KSharedConfig::Ptr ptr = secretsFileForUuid(uuid);
-        if (secrets) {
-            QMap<QString,QString> map;
-            if (ptr)
-                map = secrets->secretsFromConfig(ptr);
-            secrets->secretsFromMap(map);
-            QStringList needSecretsList = secrets->needSecrets();
-            if (!needSecretsList.isEmpty() && (flags & AllowInteraction || flags & RequestNew)) {
-                askUser(con, name, needSecretsList);
-            } else {
-                emit connectionRead(con, name, false);
-            }
+        KConfigGroup config(ptr, name);
+        QMap<QString,QString> map = config.entryMap();
+        Knm::Setting *setting = con->setting(Knm::Setting::typeFromString(name));
+        setting->secretsFromMap(map);
+        QStringList needSecretsList = setting->needSecrets();
+        if (!needSecretsList.isEmpty() && (flags & AllowInteraction || flags & RequestNew)) {
+            askUser(con, name, needSecretsList);
         } else {
             emit connectionRead(con, name, false);
         }
@@ -294,7 +274,7 @@ KSharedConfig::Ptr SecretStorage::secretsFileForUuid(const QString & uuid)
         configFile = KStandardDirs::locateLocal("data", Knm::SECRETS_PERSISTENCE_PATH + uuid);
 
         kDebug() << "configFile:" << configFile;
-        config = KSharedConfig::openConfig(configFile, KConfig::NoGlobals);
+        config = KSharedConfig::openConfig(configFile, KConfig::SimpleConfig);
         if (config.isNull()) {
             kDebug() << "Config not found at" << configFile;
         }

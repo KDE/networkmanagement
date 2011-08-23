@@ -2,18 +2,15 @@
 // All changes you do to this file will be lost.
 
 #include "gsm.h"
-#include "gsmsecrets.h"
 
 using namespace Knm;
 
-GsmSetting::GsmSetting() : Setting(Setting::Gsm), mNetworktype(-1), mBand(-1), mPinflags(NotSaved)
+GsmSetting::GsmSetting() : Setting(Setting::Gsm), mNetworktype(-1), mBand(-1), mPasswordflags(Setting::AgentOwned), mPinflags(NotSaved)
 {
-    m_secretsObject = new GsmSecrets(this);
 }
 
 GsmSetting::GsmSetting(GsmSetting *setting) : Setting(setting)
 {
-    m_secretsObject = new GsmSecrets(static_cast<GsmSecrets*>(setting->getSecretsObject()), this);
     setNumber(setting->number());
     setUsername(setting->username());
     setPassword(setting->password());
@@ -34,12 +31,36 @@ QString GsmSetting::name() const
 {
   return QLatin1String("gsm");
 }
+
 bool GsmSetting::hasSecrets() const
 {
   return true;
 }
-void GsmSetting::setSecrets(Setting::secretsTypes types)
+
+QMap<QString,QString> GsmSetting::secretsToMap()
 {
-    if (!mPassword.isEmpty())
-        setPasswordflags(types);
+    QMap<QString,QString> map;
+    if (passwordflags().testFlag(Setting::AgentOwned)) {
+        map.insert(QLatin1String("password"), password());
+    }
+    if (pinflags().testFlag(Setting::AgentOwned)) {
+        map.insert(QLatin1String("pin"), pin());
+    }
+    return map;
+}
+
+void GsmSetting::secretsFromMap(QMap<QString,QString> secrets)
+{
+    setPassword(secrets.value("password"));
+    setPin(secrets.value("pin"));
+}
+
+QStringList GsmSetting::needSecrets()
+{
+    QStringList list;
+    if (password().isEmpty() && !passwordflags().testFlag(Setting::NotRequired))
+        list.append("password");
+    if (pin().isEmpty() && !pinflags().testFlag(Setting::NotRequired))
+        list.append("pin");
+    return list;
 }

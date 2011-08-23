@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knminternals_export.h"
 #include <QObject>
-#include "secrets.h"
+#include <QMap>
 
 namespace Knm
 {
@@ -47,13 +47,13 @@ public:
     virtual QString name() const = 0;
     virtual bool hasSecrets() const = 0;
     virtual bool hasVolatileSecrets() const { return false; }
-    virtual void setSecrets(secretsTypes);
-    virtual Secrets* getSecretsObject();
+    virtual QMap<QString,QString> secretsToMap();
+    virtual void secretsFromMap(QMap<QString,QString>);
+    virtual QStringList needSecrets();
     bool secretsAvailable() const;
     void setSecretsAvailable(bool secretsAvailable);
 protected:
     bool m_initialized;
-    Secrets *m_secretsObject;
 private:
     Setting::Type m_type;
     bool m_secretsAvailable;

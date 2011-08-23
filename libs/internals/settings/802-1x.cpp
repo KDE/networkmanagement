@@ -2,19 +2,16 @@
 // All changes you do to this file will be lost.
 
 #include "802-1x.h"
-#include "802-1xsecrets.h"
 
 using namespace Knm;
 
 Security8021xSetting::Security8021xSetting() : Setting(Setting::Security8021x),
     mPhase1peapver(0), mPhase2auth(0), mPhase2autheap(0), mEnabled(false), mPasswordflags(Setting::AgentOwned), mPrivatekeypasswordflags(Setting::AgentOwned), mPhase2privatekeypasswordflags(Setting::AgentOwned)
 {
-    m_secretsObject = new Security8021xSecrets(this);
 }
 
 Security8021xSetting::Security8021xSetting(Security8021xSetting *setting) : Setting(setting)
 {
-    m_secretsObject = new Security8021xSecrets(static_cast<Security8021xSecrets*>(setting->getSecretsObject()), this);
     setEap(setting->eap());
     setIdentity(setting->identity());
     setAnonymousidentity(setting->anonymousidentity());
@@ -63,10 +60,6 @@ bool Security8021xSetting::hasSecrets() const
     return mEnabled;
 }
 
-void Security8021xSetting::setSecrets(Setting::secretsTypes types)
-{
-}
-
 QByteArray Security8021xSetting::getBytes(const QString & fileName)
 {
     QByteArray bytes;
@@ -76,4 +69,42 @@ QByteArray Security8021xSetting::getBytes(const QString & fileName)
         bytes = file.readAll();
     }
     return bytes;
+}
+
+QMap<QString,QString> Security8021xSetting::secretsToMap()
+{
+    QMap<QString,QString> map;
+    if (passwordflags().testFlag(Setting::AgentOwned)) {
+        map.insert(QLatin1String("password"), password());
+    }
+    if (privatekeypasswordflags().testFlag(Setting::AgentOwned)) {
+        map.insert(QLatin1String("private-key-password"), privatekeypassword());
+    }
+    if (phase2privatekeypasswordflags().testFlag(Setting::AgentOwned)) {
+        map.insert(QLatin1String("phase2-private-key-password"), phase2privatekeypassword());
+    }
+    return map;
+}
+
+void Security8021xSetting::secretsFromMap(QMap<QString,QString> secrets)
+{
+    setPassword(secrets.value("password"));
+    setPrivatekeypassword(secrets.value("private-key-password"));
+    setPhase2privatekeypassword(secrets.value("phase2-private-key-password"));
+}
+
+QStringList Security8021xSetting::needSecrets()
+{
+    QStringList list;
+    Security8021xSetting::EapMethods eap = eapFlags();
+    if (eap.testFlag(Security8021xSetting::tls) && privatekeypassword().isEmpty() && !privatekeypasswordflags().testFlag(Setting::NotRequired)) {
+        list.append("private-key-password");
+    } else if ((eap.testFlag(Security8021xSetting::peap) || eap.testFlag(Security8021xSetting::ttls) || eap.testFlag(Security8021xSetting::leap)) && password().isEmpty() && !passwordflags().testFlag(Setting::NotRequired)) {
+        list.append("password");
+    }
+    if ((phase2auth() == EnumPhase2auth::tls || phase2autheap() == EnumPhase2autheap::tls) && phase2privatekeypassword().isEmpty() && !phase2privatekeypasswordflags().testFlag(Setting::NotRequired)) {
+        list.append("phase2-private-key-password");
+    }
+
+    return list;
 }

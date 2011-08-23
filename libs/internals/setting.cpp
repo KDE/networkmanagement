@@ -36,6 +36,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-wireless-security.h>
 
 #include <QString>
+#include <QStringList>
 
 using namespace Knm;
 
@@ -122,12 +123,11 @@ Setting::Type Setting::typeFromString(const QString & typeString)
 }
 
 Setting::Setting(Setting::Type type)
-    : m_initialized(false), m_secretsObject(0), m_type(type), m_secretsAvailable(false)
+    : m_initialized(false), m_type(type), m_secretsAvailable(false)
 {
 }
 
 Setting::Setting(Setting *setting)
-    : m_secretsObject(0)
 {
     if (!setting->isNull())
         setInitialized(true);
@@ -137,8 +137,6 @@ Setting::Setting(Setting *setting)
 
 Setting::~Setting()
 {
-    if (m_secretsObject)
-        delete m_secretsObject;
 }
 
 bool Setting::isNull() const
@@ -166,13 +164,18 @@ void Setting::setSecretsAvailable(bool available)
     m_secretsAvailable = available;
 }
 
-void Setting::setSecrets(Setting::secretsTypes)
+QMap<QString,QString> Setting::secretsToMap()
+{
+    return QMap<QString,QString>();
+}
+
+void Setting::secretsFromMap(QMap<QString,QString> secrets)
 {
 }
 
-Secrets* Setting::getSecretsObject()
+QStringList Setting::needSecrets()
 {
-    return m_secretsObject;
+    return QStringList();
 }
 
 // vim: sw=4 sts=4 et tw=100

@@ -22,7 +22,9 @@ class KNMINTERNALS_EXPORT CdmaSetting : public Setting
 
     bool hasSecrets() const;
 
-    void setSecrets(Setting::secretsTypes);
+    QMap<QString,QString> secretsToMap();
+    void secretsFromMap(QMap<QString,QString> secrets);
+    QStringList needSecrets();
 
     /**
       Set Number

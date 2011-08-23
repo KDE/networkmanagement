@@ -32,7 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vpncauth.h"
 #include "connection.h"
 #include "settings/vpn.h"
-#include "settings/vpnsecrets.h"
 
 #define NM_VPNC_LOCAL_PORT_DEFAULT 500
 
@@ -262,8 +261,8 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         data.clear();
         data = setting.data();
 
-        conSetting << Knm::VpnSecrets::variantMapFromStringList(Knm::VpnSecrets::stringMapToStringList(data));
-        conSetting << Knm::VpnSecrets::variantMapFromStringList(Knm::VpnSecrets::stringMapToStringList(secretData));
+        conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(data));
+        conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(secretData));
         conSetting << cg.readEntry("Description");
     } else {
         mErrorMessage = i18n("%1: file format error.", fileName);

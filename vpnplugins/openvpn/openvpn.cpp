@@ -31,7 +31,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <types.h>
 #include "nm-openvpn-service.h"
 #include "settings/vpn.h"
-#include "settings/vpnsecrets.h"
 
 K_PLUGIN_FACTORY( OpenVpnUiPluginFactory, registerPlugin<OpenVpnUiPlugin>(); )
 K_EXPORT_PLUGIN( OpenVpnUiPluginFactory( "networkmanagement_openvpnui", "libknetworkmanager" ) )
@@ -482,8 +481,8 @@ QVariantList OpenVpnUiPlugin::importConnectionSettings(const QString &fileName)
         }
     }
 
-    conSetting << Knm::VpnSecrets::variantMapFromStringList(Knm::VpnSecrets::stringMapToStringList(dataMap));
-    conSetting << Knm::VpnSecrets::variantMapFromStringList(Knm::VpnSecrets::stringMapToStringList(secretData));
+    conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(dataMap));
+    conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(secretData));
     conSetting << QFileInfo(fileName).completeBaseName(); // Connection name
     return conSetting;
 }

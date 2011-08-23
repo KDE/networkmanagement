@@ -263,24 +263,6 @@ void Connection::init(Connection *con)
     }
 }
 
-void Connection::setSecrets()
-{
-    Setting::secretsTypes type = 0;
-    switch (m_permissions.isEmpty())
-    {
-        case true:
-            type |= Setting::None;
-            break;
-        case false:
-            type |= Setting::AgentOwned;
-            //type |= Setting::NotSaved;
-            break;
-    }
-    foreach (Setting * setting, m_settings) {
-        setting->setSecrets(type);
-    }
-}
-
 QString Connection::name() const
 {
     return m_name;

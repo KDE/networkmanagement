@@ -35,7 +35,6 @@ namespace Knm
 {
 class Connection;
 class Setting;
-class Secrets;
 }
 
 class ConnectionSecretsJob;

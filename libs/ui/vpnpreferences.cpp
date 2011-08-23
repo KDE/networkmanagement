@@ -40,7 +40,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connection.h"
 #include "settings/vpn.h"
-#include "settings/vpnsecrets.h"
 
 VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
 : ConnectionPreferences(args, parent ), m_uiPlugin(0)
@@ -70,11 +69,11 @@ VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
     Knm::VpnSetting * conSetting = static_cast<Knm::VpnSetting*>(m_connection->setting(Knm::Setting::Vpn));
     if (args.count() > 3) {
         // VPN Secrets
-	conSetting->setVpnSecrets(Knm::VpnSecrets::stringMapFromStringList(Knm::VpnSecrets::variantMapToStringList(args[3].toMap())));
+	conSetting->setVpnSecrets(Knm::VpnSetting::stringMapFromStringList(Knm::VpnSetting::variantMapToStringList(args[3].toMap())));
     }
     if (args.count() > 2) {
         // VPN connection data
-	conSetting->setData(Knm::VpnSecrets::stringMapFromStringList(Knm::VpnSecrets::variantMapToStringList(args[2].toMap())));
+	conSetting->setData(Knm::VpnSetting::stringMapFromStringList(Knm::VpnSetting::variantMapToStringList(args[2].toMap())));
     }
 
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);

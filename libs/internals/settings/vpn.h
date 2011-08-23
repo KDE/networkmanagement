@@ -24,6 +24,14 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
 
     bool hasSecrets() const;
 
+    QMap<QString,QString> secretsToMap();
+    void secretsFromMap(QMap<QString,QString>);
+    static QStringList variantMapToStringList(const QVariantMap &);
+    static QVariantMap variantMapFromStringList(const QStringList & list);
+    static QStringMap stringMapFromStringList(const QStringList & list);
+    static QStringList stringMapToStringList(const QStringMap & map);
+    QStringList needSecrets();
+
     /**
       Set Service Type
     */
@@ -105,7 +113,7 @@ class KNMINTERNALS_EXPORT VpnSetting : public Setting
     }
 
   protected:
-
+    static QVariantMap secretsToSave(const QStringMap &, const QStringMap &);
     // vpn
     QString mServiceType;
     QStringMap mData;
