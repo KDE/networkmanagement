@@ -341,12 +341,14 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
             /* If connection's name (id in NM's termonology) changes during an Update
              * NM will leave the old connection file intact and create a new connection file
              * in /etc/NetworkManager/system-connections/ with the same uuid, which is wrong in my oppinion.
-             * Furthermore the old connection will not be shown in connection list because we use the uuid
-             * as connection identifier.
+             * Furthermore the old connection will not be shown in Plasma NM's connection list
+             * because we use connection's uuid as connection identifier.
              * Deleting the old connection and creating a new one seems to work.
              */
+            kDebug() << "Renaming connection:" << remote->id() << " -> " << newConnection->name();
             QDBusPendingCall reply = remote->Delete();
             reply.waitForFinished();
+            sleep(1);
             addConnection(newConnection);
         }
 
@@ -358,7 +360,6 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
     }
 
     kWarning() << "Connection could not found!"<< uuid;
-
 }
 
 void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnection)
@@ -396,7 +397,6 @@ void NMDBusSettingsConnectionProvider::onConnectionAddArrived(QDBusPendingCallWa
     {
         Q_D(NMDBusSettingsConnectionProvider);
         QDBusObjectPath objPath = reply.argumentAt<0>();
-        emit addConnectionCompleted(true, QString());
 
         // Hack to force NetworkManager to call the secrets agent to save this connections's secrets.
         // This does not work for VPN connections.
@@ -404,7 +404,9 @@ void NMDBusSettingsConnectionProvider::onConnectionAddArrived(QDBusPendingCallWa
         QString uuid = d->uuidToPath.key(objPath.path(), QUuid()).toString();
         RemoteConnection *remote = d->connections.value(uuid);
         QVariantMapMap map = d->secretsToSave.take(uuid);
+        sleep(1);
         remote->Update(map);
+        emit addConnectionCompleted(true, QString());
 
         kDebug() << "Connection added successfully: " << objPath.path() << uuid;
     }
