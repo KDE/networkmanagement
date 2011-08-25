@@ -33,7 +33,7 @@ NMWirelessNetworkInterfacePrivate::NMWirelessNetworkInterfacePrivate(const QStri
 
 }
 
-NMWirelessNetworkInterface::NMWirelessNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent)
+NMWirelessNetworkInterface::NMWirelessNetworkInterface(const QString & path, NMNetworkManagerNm09 * manager, QObject * parent)
     : NMNetworkInterface(*new NMWirelessNetworkInterfacePrivate(path, this), manager, parent)
 {
     Q_D(NMWirelessNetworkInterface);

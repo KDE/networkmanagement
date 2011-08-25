@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NM09_BTNETWORKINTERFACE_H
 #define NM09_BTNETWORKINTERFACE_H
 
-class NMNetworkManager;
+class NMNetworkManagerNm09;
 class NMBtNetworkInterfacePrivate;
 
 class KDE_EXPORT NMBtNetworkInterface : public NMModemNetworkInterface, virtual public Solid::Control::Ifaces::BtNetworkInterfaceNm09
@@ -41,7 +41,7 @@ Q_PROPERTY(QString name READ name)
 
 Q_FLAGS(Solid::Control::BtNetworkInterfaceNm09::btCapabilities)
 public:
-    NMBtNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent);
+    NMBtNetworkInterface(const QString & path, NMNetworkManagerNm09 * manager, QObject * parent);
     virtual ~NMBtNetworkInterface();
 
     Solid::Control::BtNetworkInterfaceNm09::Capabilities btCapabilities() const;

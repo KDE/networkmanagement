@@ -37,7 +37,7 @@ QTEST_KDEMAIN_CORE(SolidNetTest)
 void SolidNetTest::initTestCase()
 {
     fakeManager = new FakeNetworkManager(0, QStringList(), FAKE_NETWORKING_XML);
-    Solid::Control::ManagerBasePrivate::_k_forcePreloadedBackend("Solid::Control::Ifaces::NetworkManager", fakeManager);
+    Solid::Control::ManagerBasePrivate::_k_forcePreloadedBackend("Solid::Control::Ifaces::NetworkManagerNm09", fakeManager);
 }
 
 void SolidNetTest::testNetworkInterfaces()

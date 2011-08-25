@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "solid/control/ifaces/networkinterface.h"
 
 class NMNetworkInterfacePrivate;
-class NMNetworkManager;
+class NMNetworkManagerNm09;
 
 class KDE_EXPORT NMNetworkInterface : public QObject, virtual public Solid::Control::Ifaces::NetworkInterfaceNm09
 {
@@ -49,8 +49,8 @@ Q_PROPERTY(Solid::Control::NetworkInterfaceNm09::ConnectionState connectionState
 Q_FLAGS(Solid::Control::NetworkInterfaceNm09::Capabilities)
 
 public:
-    NMNetworkInterface( const QString & path, NMNetworkManager * manager, QObject * parent );
-    NMNetworkInterface( NMNetworkInterfacePrivate &dd, NMNetworkManager * manager, QObject * parent );
+    NMNetworkInterface( const QString & path, NMNetworkManagerNm09 * manager, QObject * parent );
+    NMNetworkInterface( NMNetworkInterfacePrivate &dd, NMNetworkManagerNm09 * manager, QObject * parent );
     virtual ~NMNetworkInterface();
     QString uni() const;
     void setUni(const QVariant&);

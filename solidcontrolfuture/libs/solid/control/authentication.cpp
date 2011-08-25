@@ -314,7 +314,7 @@ Solid::Control::AuthenticationValidator::AuthenticationValidator()
     : d(new Private)
 {
 #if 0
-    Ifaces::NetworkManager *backend = qobject_cast<Ifaces::NetworkManager *>(NetworkManager::self().d->managerBackend());
+    Ifaces::NetworkManagerNm09 *backend = qobject_cast<Ifaces::NetworkManagerNm09 *>(NetworkManager::self().d->managerBackend());
 
     if (backend)
     {

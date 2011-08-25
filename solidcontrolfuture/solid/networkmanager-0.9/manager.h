@@ -28,17 +28,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdemacros.h>
 
 class NMNetworkInterface;
-class NMNetworkManagerPrivate;
+class NMNetworkManagerNm09Private;
 
-class KDE_EXPORT NMNetworkManager : public Solid::Control::Ifaces::NetworkManager
+class KDE_EXPORT NMNetworkManagerNm09 : public Solid::Control::Ifaces::NetworkManagerNm09
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(NMNetworkManager)
-Q_INTERFACES(Solid::Control::Ifaces::NetworkManager)
+Q_DECLARE_PRIVATE(NMNetworkManagerNm09)
+Q_INTERFACES(Solid::Control::Ifaces::NetworkManagerNm09)
 
 public:
-    NMNetworkManager(QObject * parent, const QVariantList & args);
-    ~NMNetworkManager();
+    NMNetworkManagerNm09(QObject * parent, const QVariantList & args);
+    ~NMNetworkManagerNm09();
     Solid::Networking::Status status() const;
     QStringList networkInterfaces() const;
     QObject *createNetworkInterface(const QString &uni);
@@ -70,7 +70,7 @@ protected Q_SLOTS:
     void nameOwnerChanged(QString, QString, QString);
 private:
     static Solid::Networking::Status convertNMState(uint state);
-    NMNetworkManagerPrivate * d_ptr;
+    NMNetworkManagerNm09Private * d_ptr;
 };
 
 #endif

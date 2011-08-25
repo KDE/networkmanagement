@@ -30,7 +30,7 @@
 #include "fakewirelessnetworkinterface.h"
 
 FakeNetworkManager::FakeNetworkManager(QObject * parent, const QVariantList  &)
-    : Solid::Control::Ifaces::NetworkManager(parent)
+    : Solid::Control::Ifaces::NetworkManagerNm09(parent)
 {
     mUserNetworkingEnabled = true;
     mUserWirelessEnabled = true;
@@ -44,7 +44,7 @@ FakeNetworkManager::FakeNetworkManager(QObject * parent, const QVariantList  &)
     parseNetworkingFile();
 }
 
-FakeNetworkManager::FakeNetworkManager(QObject * parent, const QStringList &, const QString &xmlFile) : Solid::Control::Ifaces::NetworkManager(parent)
+FakeNetworkManager::FakeNetworkManager(QObject * parent, const QStringList &, const QString &xmlFile) : Solid::Control::Ifaces::NetworkManagerNm09(parent)
 {
     mUserNetworkingEnabled = true;
     mUserWirelessEnabled = true;

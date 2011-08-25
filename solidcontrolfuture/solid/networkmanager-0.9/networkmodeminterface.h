@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NM09_NETWORKMODEMINTERFACE_H
 #define NM09_NETWORKMODEMINTERFACE_H
 
-class NMNetworkManager;
+class NMNetworkManagerNm09;
 class NMModemNetworkInterfacePrivate;
 
 class KDE_EXPORT NMModemNetworkInterface : public NMNetworkInterface, virtual public Solid::Control::Ifaces::ModemNetworkInterfaceNm09
@@ -39,8 +39,8 @@ Q_INTERFACES(Solid::Control::Ifaces::ModemNetworkInterfaceNm09)
 Q_FLAGS(Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities)
 Q_FLAGS(Solid::Control::ModemNetworkInterfaceNm09::CurrentCapabilities)
 public:
-    NMModemNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent);
-    NMModemNetworkInterface(NMModemNetworkInterfacePrivate &dd, NMNetworkManager * manager, QObject * parent);
+    NMModemNetworkInterface(const QString & path, NMNetworkManagerNm09 * manager, QObject * parent);
+    NMModemNetworkInterface(NMModemNetworkInterfacePrivate &dd, NMNetworkManagerNm09 * manager, QObject * parent);
     virtual ~NMModemNetworkInterface();
     Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities modemCapabilities() const;
     Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities currentCapabilities() const;

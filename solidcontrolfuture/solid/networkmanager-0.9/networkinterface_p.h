@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "dbus/nm-deviceinterface.h"
 #include "nmpropertyhelper.h"
 
-class NMNetworkManager;
+class NMNetworkManagerNm09;
 
 class NMNetworkInterfacePrivate
 {
@@ -44,7 +44,7 @@ public:
     uint ipV4Address;
     QString interfaceName;
     bool firmwareMissing;
-    NMNetworkManager * manager;
+    NMNetworkManagerNm09 * manager;
     //NMPropertyHelper propHelper;
 };
 

@@ -32,14 +32,14 @@ NMModemNetworkInterfacePrivate::NMModemNetworkInterfacePrivate(const QString & p
 {
 }
 
-NMModemNetworkInterface::NMModemNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent)
+NMModemNetworkInterface::NMModemNetworkInterface(const QString & path, NMNetworkManagerNm09 * manager, QObject * parent)
     : NMNetworkInterface(*new NMModemNetworkInterfacePrivate(path, this), manager, parent),
       modemGsmCardIface(0), modemGsmNetworkIface(0)
 {
     init();
 }
 
-NMModemNetworkInterface::NMModemNetworkInterface(NMModemNetworkInterfacePrivate & dd, NMNetworkManager * manager, QObject * parent) : NMNetworkInterface(dd, manager, parent),
+NMModemNetworkInterface::NMModemNetworkInterface(NMModemNetworkInterfacePrivate & dd, NMNetworkManagerNm09 * manager, QObject * parent) : NMNetworkInterface(dd, manager, parent),
       modemGsmCardIface(0), modemGsmNetworkIface(0)
 {
     init();

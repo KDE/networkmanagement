@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdemacros.h>
 #include "dbus/generic-types.h"
 
-class NMNetworkManager;
+class NMNetworkManagerNm09;
 class NMWirelessNetworkInterfacePrivate;
 
 class KDE_EXPORT NMWirelessNetworkInterface : public NMNetworkInterface, virtual public Solid::Control::Ifaces::WirelessNetworkInterfaceNm09
@@ -39,7 +39,7 @@ Q_DECLARE_PRIVATE(NMWirelessNetworkInterface)
 Q_INTERFACES(Solid::Control::Ifaces::WirelessNetworkInterfaceNm09)
 
 public:
-    NMWirelessNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent);
+    NMWirelessNetworkInterface(const QString & path, NMNetworkManagerNm09 * manager, QObject * parent);
     ~NMWirelessNetworkInterface();
     QStringList accessPoints() const;
     QString activeAccessPoint() const;

@@ -30,17 +30,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkbtinterface.h"
 #include "dbus/nm-active-connectioninterface.h"
 
-NMNetworkManagerPrivate::NMNetworkManagerPrivate()
+NMNetworkManagerNm09Private::NMNetworkManagerNm09Private()
     : iface(NM_DBUS_SERVICE, NM_DBUS_PATH, QDBusConnection::systemBus())
 {
     kDebug(1441) << NM_DBUS_SERVICE;
 }
 
-NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList &) 
+NMNetworkManagerNm09::NMNetworkManagerNm09(QObject * parent, const QVariantList &) 
 {
     qDBusRegisterMetaType<QList<QDBusObjectPath> >();
-    d_ptr = new NMNetworkManagerPrivate;
-    Q_D(NMNetworkManager);
+    d_ptr = new NMNetworkManagerNm09Private;
+    Q_D(NMNetworkManagerNm09);
     d->version = d->iface.version();
     d->nmState = d->iface.state();
     d->isWirelessHardwareEnabled = d->iface.wirelessHardwareEnabled();
@@ -85,24 +85,24 @@ NMNetworkManager::NMNetworkManager(QObject * parent, const QVariantList &)
     }
 }
 
-NMNetworkManager::~NMNetworkManager()
+NMNetworkManagerNm09::~NMNetworkManagerNm09()
 {
     delete d_ptr;
 }
 
-Solid::Networking::Status NMNetworkManager::status() const
+Solid::Networking::Status NMNetworkManagerNm09::status() const
 {
-    Q_D(const NMNetworkManager);
+    Q_D(const NMNetworkManagerNm09);
     return convertNMState(d->nmState);
 }
 
-QStringList NMNetworkManager::networkInterfaces() const
+QStringList NMNetworkManagerNm09::networkInterfaces() const
 {
-    Q_D(const NMNetworkManager);
+    Q_D(const NMNetworkManagerNm09);
     return d->networkInterfaces;
 }
 
-QObject *NMNetworkManager::createNetworkInterface(const QString &uni)
+QObject *NMNetworkManagerNm09::createNetworkInterface(const QString &uni)
 {
     kDebug(1441);
     OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, uni, QDBusConnection::systemBus());
@@ -131,39 +131,39 @@ QObject *NMNetworkManager::createNetworkInterface(const QString &uni)
     return createdInterface;
 }
 
-bool NMNetworkManager::isNetworkingEnabled() const
+bool NMNetworkManagerNm09::isNetworkingEnabled() const
 {
-    Q_D(const NMNetworkManager);
+    Q_D(const NMNetworkManagerNm09);
     return d->isNetworkingEnabled;
 }
 
-bool NMNetworkManager::isWirelessEnabled() const
+bool NMNetworkManagerNm09::isWirelessEnabled() const
 {
-    Q_D(const NMNetworkManager);
+    Q_D(const NMNetworkManagerNm09);
     return d->isWirelessEnabled;
 }
 
-bool NMNetworkManager::isWirelessHardwareEnabled() const
+bool NMNetworkManagerNm09::isWirelessHardwareEnabled() const
 {
-    Q_D(const NMNetworkManager);
+    Q_D(const NMNetworkManagerNm09);
     return d->isWirelessHardwareEnabled;
 }
 
-bool NMNetworkManager::isWwanEnabled() const
+bool NMNetworkManagerNm09::isWwanEnabled() const
 {
-    Q_D(const NMNetworkManager);
+    Q_D(const NMNetworkManagerNm09);
     return d->isWwanEnabled;
 }
 
-bool NMNetworkManager::isWwanHardwareEnabled() const
+bool NMNetworkManagerNm09::isWwanHardwareEnabled() const
 {
-    Q_D(const NMNetworkManager);
+    Q_D(const NMNetworkManagerNm09);
     return d->isWwanHardwareEnabled;
 }
 
-void NMNetworkManager::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters)
+void NMNetworkManagerNm09::activateConnection(const QString & interfaceUni, const QString & connectionUni, const QVariantMap & connectionParameters)
 {
-    Q_D(NMNetworkManager);
+    Q_D(NMNetworkManagerNm09);
     QString connectionPath = connectionUni.section(' ', 1, 1);
     // ### FIXME find a better name for the parameter needed for NM 0.7
     QString extra_connection_parameter = connectionParameters.value("extra_connection_parameter").toString();
@@ -180,21 +180,21 @@ void NMNetworkManager::activateConnection(const QString & interfaceUni, const QS
     d->iface.ActivateConnection(connPath, interfacePath, QDBusObjectPath(extra_connection_parameter));
 }
 
-QString NMNetworkManager::version() const
+QString NMNetworkManagerNm09::version() const
 {
-    Q_D(const NMNetworkManager);
+    Q_D(const NMNetworkManagerNm09);
     return d->version;
 }
 
-void NMNetworkManager::deactivateConnection( const QString & activeConnectionPath )
+void NMNetworkManagerNm09::deactivateConnection( const QString & activeConnectionPath )
 {
-    Q_D(NMNetworkManager);
+    Q_D(NMNetworkManagerNm09);
     d->iface.DeactivateConnection(QDBusObjectPath(activeConnectionPath));
 }
 
-void NMNetworkManager::setNetworkingEnabled(bool enabled)
+void NMNetworkManagerNm09::setNetworkingEnabled(bool enabled)
 {
-    Q_D(NMNetworkManager);
+    Q_D(NMNetworkManagerNm09);
 
     QDBusPendingReply<> reply = d->iface.Enable(enabled);
     reply.waitForFinished();
@@ -203,37 +203,37 @@ void NMNetworkManager::setNetworkingEnabled(bool enabled)
     }
 }
 
-void NMNetworkManager::setWirelessEnabled(bool enabled)
+void NMNetworkManagerNm09::setWirelessEnabled(bool enabled)
 {
-    Q_D(NMNetworkManager);
+    Q_D(NMNetworkManagerNm09);
     d->iface.setWirelessEnabled(enabled);
 }
 
-void NMNetworkManager::setWwanEnabled(bool enabled)
+void NMNetworkManagerNm09::setWwanEnabled(bool enabled)
 {
-    Q_D(NMNetworkManager);
+    Q_D(NMNetworkManagerNm09);
     d->iface.setWwanEnabled(enabled);
 }
 
-void NMNetworkManager::deviceAdded(const QDBusObjectPath & objpath)
+void NMNetworkManagerNm09::deviceAdded(const QDBusObjectPath & objpath)
 {
     kDebug(1441);
-    Q_D(NMNetworkManager);
+    Q_D(NMNetworkManagerNm09);
     d->networkInterfaces.append(objpath.path());
     emit networkInterfaceAdded(objpath.path());
 }
 
-void NMNetworkManager::deviceRemoved(const QDBusObjectPath & objpath)
+void NMNetworkManagerNm09::deviceRemoved(const QDBusObjectPath & objpath)
 {
     kDebug(1441);
-    Q_D(NMNetworkManager);
+    Q_D(NMNetworkManagerNm09);
     d->networkInterfaces.removeAll(objpath.path());
     emit networkInterfaceRemoved(objpath.path());
 }
 
-void NMNetworkManager::stateChanged(uint state)
+void NMNetworkManagerNm09::stateChanged(uint state)
 {
-    Q_D(NMNetworkManager);
+    Q_D(NMNetworkManagerNm09);
     if ( d->nmState != state ) {
         if (d->nmState == NM_STATE_UNKNOWN) {
             d->isWirelessHardwareEnabled = d->iface.wirelessHardwareEnabled();
@@ -250,9 +250,9 @@ void NMNetworkManager::stateChanged(uint state)
 
 }
 
-void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
+void NMNetworkManagerNm09::propertiesChanged(const QVariantMap &properties)
 {
-    Q_D(NMNetworkManager);
+    Q_D(NMNetworkManagerNm09);
     kDebug(1441) << properties.keys();
     QLatin1String activeConnKey("ActiveConnections");
     QLatin1String netEnabledKey("NetworkingEnabled");
@@ -305,7 +305,7 @@ void NMNetworkManager::propertiesChanged(const QVariantMap &properties)
     }
 }
 
-Solid::Networking::Status NMNetworkManager::convertNMState(uint state)
+Solid::Networking::Status NMNetworkManagerNm09::convertNMState(uint state)
 {
     Solid::Networking::Status status = Solid::Networking::Unknown;
     switch (state) {
@@ -331,7 +331,7 @@ Solid::Networking::Status NMNetworkManager::convertNMState(uint state)
     return status;
 }
 
-void NMNetworkManager::nameOwnerChanged(QString name, QString oldOwner, QString newOwner)
+void NMNetworkManagerNm09::nameOwnerChanged(QString name, QString oldOwner, QString newOwner)
 {
     if ( name == QLatin1String("org.freedesktop.NetworkManager") ) {
         kDebug(1441) << "name: " << name << ", old owner: " << oldOwner << ", new owner: " << newOwner;
@@ -341,7 +341,7 @@ void NMNetworkManager::nameOwnerChanged(QString name, QString oldOwner, QString 
             ;
         }
         if ( !oldOwner.isEmpty() && newOwner.isEmpty() ) {
-            Q_D(NMNetworkManager);
+            Q_D(NMNetworkManagerNm09);
             // In case NM has crashed and networkInterfaceRemoved signals have not being emitted.
             foreach(const QString path, d->networkInterfaces) {
                 emit networkInterfaceRemoved(path);
@@ -354,15 +354,15 @@ void NMNetworkManager::nameOwnerChanged(QString name, QString oldOwner, QString 
     }
 }
 
-QStringList NMNetworkManager::activeConnections() const
+QStringList NMNetworkManagerNm09::activeConnections() const
 {
-    Q_D(const NMNetworkManager);
+    Q_D(const NMNetworkManagerNm09);
     return d->activeConnections;
 }
 
-QStringList NMNetworkManager::activeConnectionsUuid() const
+QStringList NMNetworkManagerNm09::activeConnectionsUuid() const
 {
-    Q_D(const NMNetworkManager);
+    Q_D(const NMNetworkManagerNm09);
     QStringList r;
     foreach(const QString & objPath, d->activeConnections) {
         OrgFreedesktopNetworkManagerConnectionActiveInterface iface(NM_DBUS_SERVICE, objPath, QDBusConnection::systemBus());
@@ -371,7 +371,7 @@ QStringList NMNetworkManager::activeConnectionsUuid() const
     return r;
 }
 
-Solid::Control::NetworkInterfaceNm09::Types NMNetworkManager::supportedInterfaceTypes() const
+Solid::Control::NetworkInterfaceNm09::Types NMNetworkManagerNm09::supportedInterfaceTypes() const
 {
     return (Solid::Control::NetworkInterfaceNm09::Types) (
            Solid::Control::NetworkInterfaceNm09::Wifi |

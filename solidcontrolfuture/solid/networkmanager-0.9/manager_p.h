@@ -27,10 +27,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class NMNetworkInterface;
 
-class NMNetworkManagerPrivate
+class NMNetworkManagerNm09Private
 {
 public:
-    NMNetworkManagerPrivate();
+    NMNetworkManagerNm09Private();
     OrgFreedesktopNetworkManagerInterface iface;
     QString version;
     uint nmState;

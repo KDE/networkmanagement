@@ -22,6 +22,6 @@
 // KDE includes
 #include <kpluginfactory.h>
 
-K_PLUGIN_FACTORY(NetworkManagerBackendFactory, registerPlugin<NMNetworkManager>(); )
+K_PLUGIN_FACTORY(NetworkManagerBackendFactory, registerPlugin<NMNetworkManagerNm09>(); )
 K_EXPORT_PLUGIN(NetworkManagerBackendFactory("NetworkManagerbackend"))
 

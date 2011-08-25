@@ -32,7 +32,7 @@ NMWiredNetworkInterfacePrivate::~NMWiredNetworkInterfacePrivate()
 {
 }
 
-NMWiredNetworkInterface::NMWiredNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent)
+NMWiredNetworkInterface::NMWiredNetworkInterface(const QString & path, NMNetworkManagerNm09 * manager, QObject * parent)
     : NMNetworkInterface(*new NMWiredNetworkInterfacePrivate(path, this), manager, parent)
 {
     Q_D(NMWiredNetworkInterface);

@@ -34,7 +34,7 @@ NMBtNetworkInterfacePrivate::NMBtNetworkInterfacePrivate(const QString & path, Q
     name = btIface.name();
 }
 
-NMBtNetworkInterface::NMBtNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent)
+NMBtNetworkInterface::NMBtNetworkInterface(const QString & path, NMNetworkManagerNm09 * manager, QObject * parent)
     : NMModemNetworkInterface(*new NMBtNetworkInterfacePrivate(path, this), manager, parent)
 {
     Q_D(NMBtNetworkInterface);

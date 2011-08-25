@@ -38,7 +38,7 @@ namespace Solid {
     class Authentication;
 }
 
-class KDE_EXPORT FakeNetworkManager : public Solid::Control::Ifaces::NetworkManager
+class KDE_EXPORT FakeNetworkManager : public Solid::Control::Ifaces::NetworkManagerNm09
 {
 Q_OBJECT
     public:

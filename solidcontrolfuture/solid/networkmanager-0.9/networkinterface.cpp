@@ -51,14 +51,14 @@ NMNetworkInterfacePrivate::~NMNetworkInterfacePrivate()
 
 }
 
-NMNetworkInterface::NMNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent) : QObject(parent), d_ptr(new NMNetworkInterfacePrivate(path, this))
+NMNetworkInterface::NMNetworkInterface(const QString & path, NMNetworkManagerNm09 * manager, QObject * parent) : QObject(parent), d_ptr(new NMNetworkInterfacePrivate(path, this))
 {
     Q_D(NMNetworkInterface);
     init();
     d->manager = manager;
 }
 
-NMNetworkInterface::NMNetworkInterface(NMNetworkInterfacePrivate & dd, NMNetworkManager * manager, QObject * parent) : QObject(parent), d_ptr(&dd)
+NMNetworkInterface::NMNetworkInterface(NMNetworkInterfacePrivate & dd, NMNetworkManagerNm09 * manager, QObject * parent) : QObject(parent), d_ptr(&dd)
 {
     qDBusRegisterMetaType<UIntList>();
     qDBusRegisterMetaType<UIntListList>();

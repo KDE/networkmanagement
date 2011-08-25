@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include "dbus/generic-types.h"
 
-class NMNetworkManager;
+class NMNetworkManagerNm09;
 class NMWiredNetworkInterfacePrivate;
 
 class KDE_EXPORT NMWiredNetworkInterface : public NMNetworkInterface, virtual public Solid::Control::Ifaces::WiredNetworkInterfaceNm09
@@ -39,7 +39,7 @@ Q_PROPERTY(bool carrier READ carrier WRITE setCarrier NOTIFY carrierChanged)
 Q_PROPERTY(int bitRate READ bitRate WRITE setBitRate NOTIFY bitRateChanged)
 
 public:
-    NMWiredNetworkInterface(const QString & path, NMNetworkManager * manager, QObject * parent);
+    NMWiredNetworkInterface(const QString & path, NMNetworkManagerNm09 * manager, QObject * parent);
     virtual ~NMWiredNetworkInterface();
     QString hardwareAddress() const;
     QString permanentHardwareAddress() const;
