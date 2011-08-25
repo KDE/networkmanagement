@@ -311,6 +311,7 @@ Solid::Networking::Status NMNetworkManager::convertNMState(uint state)
     switch (state) {
         case NM_STATE_UNKNOWN:
         case NM_STATE_ASLEEP:
+            status = Solid::Networking::Unknown;
             break;
         case NM_STATE_DISCONNECTED:
             status = Solid::Networking::Unconnected;
