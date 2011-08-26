@@ -151,15 +151,6 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
         }
     }
     if (!m_showAllTypes) {
-        // hide unconnected adhoc networks
-        if (activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection)
-        {
-            RemoteWirelessInterfaceConnection * wic = qobject_cast<RemoteWirelessInterfaceConnection*>(activatable);
-            if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc && wic->activationState() == Knm::InterfaceConnection::Unknown)
-            {
-                return false;
-            }
-        }
         // when no filter is set, only show activatables of a certain type
         if (!(m_types.contains(activatable->activatableType()))) {
             return false;

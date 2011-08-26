@@ -219,12 +219,7 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
     foreach (Knm::InterfaceConnection * ic, d->activatables) {
         if (ic->activatableType() == Knm::Activatable::WirelessInterfaceConnection || ic->activatableType() == Knm::Activatable::HiddenWirelessInterfaceConnection) {
             Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(ic);
-            if (wic->operationMode() != Solid::Control::WirelessNetworkInterface::Adhoc && wic->ssid() == ssid) {
-                hasConnection = true;
-                break;
-            }
-            else if (wic->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc && wic->ssid() == ssid && (wic->activationState() == Knm::InterfaceConnection::Activated || wic->activationState() == Knm::InterfaceConnection::Activating))
-            {
+            if (wic->ssid() == ssid) {
                 hasConnection = true;
                 break;
             }
@@ -298,7 +293,7 @@ void WirelessNetworkInterfaceActivatableProvider::wirelessEnabledChanged(bool st
             Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
             if (wirelessSetting && wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc)
             {
-                networkDisappeared(wirelessSetting->ssid());
+                handleRemove(connection);
             }
         }
     }
@@ -309,7 +304,7 @@ void WirelessNetworkInterfaceActivatableProvider::wirelessEnabledChanged(bool st
             Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
             if (wirelessSetting && wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc)
             {
-                networkAppeared(wirelessSetting->ssid());
+                handleAdd(connection);
             }
         }
     }
