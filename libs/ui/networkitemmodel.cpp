@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 
 #include "wirelesssecurityidentifier.h"
+#include <uiutils.h>
 
 NetworkItemModel::NetworkItemModel(const QString & uni, QObject *parent)
     : QAbstractItemModel(parent),
@@ -116,6 +117,22 @@ QVariant NetworkItemModel::data(const QModelIndex &index, int role) const
                     } else {
                         return QVariant();
                     }
+                case Band:
+                    ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                    if (ap) {
+                        int freq = ap->frequency();
+                        return UiUtils::findBandAndChannel(freq).first;
+                    } else {
+                        return QVariant();
+                    }
+                case Channel:
+                    ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                    if (ap) {
+                        int freq = ap->frequency();
+                        return UiUtils::findBandAndChannel(freq).second;
+                    } else {
+                        return QVariant();
+                    }
                 default:
                     return QVariant();
             }
@@ -138,6 +155,18 @@ QVariant NetworkItemModel::data(const QModelIndex &index, int role) const
             else
                 return QVariant();
         case 3:
+            if (role == Qt::DisplayRole) {
+                ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                int freq = ap->frequency();
+                return UiUtils::wirelessBandToString(UiUtils::findBandAndChannel(freq).first);
+            }
+        case 4:
+            if (role == Qt::DisplayRole) {
+                ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
+                int freq = ap->frequency();
+                return QString("%1 (%2 MHz)").arg(UiUtils::findBandAndChannel(freq).second).arg(freq);
+            }
+        case 5:
             if (role ==  Qt::DisplayRole)
                 return m_networkInterface->findAccessPoint(network->referenceAccessPoint())->hardwareAddress();
             else
@@ -165,6 +194,10 @@ QVariant NetworkItemModel::headerData(int section, Qt::Orientation orientation, 
                     case 2:
                         return QVariant(i18nc("@item:intable wireless encryption type", "Encryption"));
                     case 3:
+                        return QVariant(i18nc("@item:intable wireless band", "Band"));
+                    case 4:
+                        return QVariant(i18nc("@item:intable wireless channel", "Channel"));
+                    case 5:
                         return QVariant(i18nc("@item:intable wireless access point hardware address", "MAC Address"));
                     default:
                         return QVariant();

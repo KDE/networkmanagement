@@ -222,7 +222,7 @@ void Wireless80211Widget::setAccessPointData(const Solid::Control::WirelessNetwo
     }
 
     Q_D(const Wireless80211Widget);
-    QPair<int, int> bandAndChannel = d->ui.channel->findBandAndChannel((int)ap->frequency());
+    QPair<int, int> bandAndChannel = UiUtils::findBandAndChannel((int)ap->frequency());
 
     switch(bandAndChannel.first)
     {
@@ -371,84 +371,6 @@ Wireless80211WidgetBand::Wireless80211WidgetBand(QWidget * parent)
     channels << channels_a << channels_b;
 
     setBand(Wireless80211WidgetPrivate::AIndex);
-
-    freqs_bgn << 2412 << 2417 << 2422 << 2427 << 2432 << 2437 << 2442 << 2447 << 2452 << 2457 << 2462 << 2467 << 2472 << 2484;
-    freqs_ahjn.append(QPair<int, int>(183, 4915));
-    freqs_ahjn.append(QPair<int, int>(184, 4920));
-    freqs_ahjn.append(QPair<int, int>(185, 4925));
-    freqs_ahjn.append(QPair<int, int>(187, 4935));
-    freqs_ahjn.append(QPair<int, int>(188, 4940));
-    freqs_ahjn.append(QPair<int, int>(189, 4945));
-    freqs_ahjn.append(QPair<int, int>(192, 4960));
-    freqs_ahjn.append(QPair<int, int>(196, 4980));
-    freqs_ahjn.append(QPair<int, int>(7, 5035));
-    freqs_ahjn.append(QPair<int, int>(8, 5040));
-    freqs_ahjn.append(QPair<int, int>(9, 5045));
-    freqs_ahjn.append(QPair<int, int>(11, 5055));
-    freqs_ahjn.append(QPair<int, int>(12, 5060));
-    freqs_ahjn.append(QPair<int, int>(16, 5080));
-    freqs_ahjn.append(QPair<int, int>(34, 5170));
-    freqs_ahjn.append(QPair<int, int>(36, 5180));
-    freqs_ahjn.append(QPair<int, int>(38, 5190));
-    freqs_ahjn.append(QPair<int, int>(40, 5200));
-    freqs_ahjn.append(QPair<int, int>(42, 5210));
-    freqs_ahjn.append(QPair<int, int>(44, 5220));
-    freqs_ahjn.append(QPair<int, int>(46, 5230));
-    freqs_ahjn.append(QPair<int, int>(48, 5240));
-    freqs_ahjn.append(QPair<int, int>(52, 5260));
-    freqs_ahjn.append(QPair<int, int>(56, 5280));
-    freqs_ahjn.append(QPair<int, int>(60, 5300));
-    freqs_ahjn.append(QPair<int, int>(64, 5320));
-    freqs_ahjn.append(QPair<int, int>(100, 5500));
-    freqs_ahjn.append(QPair<int, int>(104, 5520));
-    freqs_ahjn.append(QPair<int, int>(108, 5540));
-    freqs_ahjn.append(QPair<int, int>(112, 5560));
-    freqs_ahjn.append(QPair<int, int>(116, 5580));
-    freqs_ahjn.append(QPair<int, int>(120, 5600));
-    freqs_ahjn.append(QPair<int, int>(124, 5620));
-    freqs_ahjn.append(QPair<int, int>(128, 5640));
-    freqs_ahjn.append(QPair<int, int>(132, 5660));
-    freqs_ahjn.append(QPair<int, int>(136, 5680));
-    freqs_ahjn.append(QPair<int, int>(140, 5700));
-    freqs_ahjn.append(QPair<int, int>(149, 5745));
-    freqs_ahjn.append(QPair<int, int>(153, 5765));
-    freqs_ahjn.append(QPair<int, int>(157, 5785));
-    freqs_ahjn.append(QPair<int, int>(161, 5805));
-    freqs_ahjn.append(QPair<int, int>(165, 5825));
-}
-
-QPair<int, int> Wireless80211WidgetBand::findBandAndChannel(int freq)
-{
-    QPair<int, int> pair;
-
-    pair.second = 0;
-    foreach(const int f, freqs_bgn) {
-        if (f <= freq) {
-            pair.second++;
-        } else {
-            break;
-        }
-    }
-
-    if (freq < 2500) {
-        pair.first = Knm::WirelessSetting::EnumBand::bg;
-        return pair;
-    }
-
-    pair.second = 0;
-    int i = 0;
-    while (i < freqs_ahjn.size()) {
-        if (freqs_ahjn.at(i).second <= freq) {
-            pair.second = freqs_ahjn.at(i).first;
-        } else {
-            break;
-        }
-        i++;
-    }
-
-    pair.first = Knm::WirelessSetting::EnumBand::a;
-
-    return pair;
 }
 
 QString Wireless80211WidgetBand::textFromValue(int value) const

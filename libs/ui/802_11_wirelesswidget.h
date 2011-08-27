@@ -74,8 +74,6 @@ public Q_SLOTS:
 private:
     enum ChannelsFor { a = 0, bg = 1};
     QList< QList<int> > channels;
-    QList<int> freqs_bgn;
-    QList< QPair<int, int> > freqs_ahjn;
     int selectedBand;
 };
 

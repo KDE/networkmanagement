@@ -58,6 +58,7 @@ ScanWidget::ScanWidget(QWidget *parent)
     m_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
     m_scanProxySelectionModel = new QItemSelectionModel(m_proxyModel);
     m_detailsView = new QTreeView(this);
+    m_detailsView->sortByColumn(0, Qt::AscendingOrder);
     m_detailsView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_detailsView->setAllColumnsShowFocus(true);
     m_detailsView->setRootIsDecorated(false);
@@ -109,7 +110,7 @@ QPair<QString,QString> ScanWidget::currentAccessPoint() const
             break;
         case true:
         default:
-            accessPoint.second = m_scanModel->data(m_scanModel->index(index.row(),3)).toString();
+            accessPoint.second = m_scanModel->data(m_scanModel->index(index.row(),5)).toString();
             break;
     }
 
@@ -136,7 +137,7 @@ QPair<Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPoin
         return pair;
     }
 
-    QString apMac = m_scanModel->data(m_scanModel->index(index.row(),3)).toString();
+    QString apMac = m_scanModel->data(m_scanModel->index(index.row(),5)).toString();
     if (apMac.isEmpty()) {
         return pair;
     }

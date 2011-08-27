@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef APITEMVIEW_H
 #define APITEMVIEW_H
 
-#include "apitemmodel.h"
+#include "networkitemmodel.h"
 
 #include <QWidget>
 #include <QPoint>

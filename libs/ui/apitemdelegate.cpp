@@ -35,19 +35,20 @@ ApItemDelegate::~ApItemDelegate()
 
 void ApItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    KIcon encryptedIcon(index.data(ApItemModel::EncryptionRole).value<QIcon>());
+    KIcon encryptedIcon(index.data(NetworkItemModel::EncryptionRole).value<QIcon>());
     encryptedIcon.paint(painter, QRect(option.rect.topLeft(),option.decorationSize));
 
     QSize iconSize = encryptedIcon.actualSize(option.decorationSize);
     QStyleOptionViewItem delegateOption = option;
     delegateOption.rect.translate(iconSize.width(),0);
     delegateOption.rect.setWidth(option.rect.width() - iconSize.width());
+    delegateOption.decorationSize = QSize(-1, -1);
     QItemDelegate::paint(painter, delegateOption, index);
 }
 
 QSize ApItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
-    KIcon encryptedIcon = KIcon(index.data(ApItemModel::EncryptionRole).toString());
+    KIcon encryptedIcon = KIcon(index.data(NetworkItemModel::EncryptionRole).toString());
     QSize rect = encryptedIcon.actualSize(option.decorationSize);
 
     return rect;

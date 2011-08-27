@@ -41,7 +41,7 @@ class NetworkItemModel : public QAbstractItemModel
     Q_OBJECT
 
     public:
-        enum UserRoles { SignalStrength=Qt::UserRole, MacAddress, ConnectionType, EncryptionRole };
+        enum UserRoles { SignalStrength=Qt::UserRole, MacAddress, Band, Channel, ConnectionType, EncryptionRole };
 
         NetworkItemModel(const QString & uni, QObject *parent=0);
         ~NetworkItemModel();
@@ -65,7 +65,7 @@ class NetworkItemModel : public QAbstractItemModel
         Solid::Control::WirelessNetworkInterfaceNm09 *m_networkInterface;
         Solid::Control::WirelessNetworkInterfaceEnvironment *m_environment;
 
-        static const int s_numColumns = 4;
+        static const int s_numColumns = 6;
 };
 
 #endif

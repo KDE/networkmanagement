@@ -20,8 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Own
 #include "uiutils.h"
+#include "uiutils_p.h"
 
 #include "paths.h"
+
+#include "settings/802-11-wireless.h"
 
 // KDE
 #include <KDebug>
@@ -36,6 +39,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Qt
 #include <QSizeF>
+
+K_GLOBAL_STATIC(UiUtilsPrivate, s_UiUtilsPrivate)
 
 QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterfaceNm09::Type type, const Solid::Control::NetworkInterfaceNm09 *iface)
 {
@@ -408,6 +413,57 @@ QByteArray UiUtils::macAddressFromString( const QString & s)
             ba[i++] = macPart.toUInt(0, 16);
     }
     return ba;
+}
+
+QPair<int, int> UiUtils::findBandAndChannel(int freq)
+{
+    UiUtilsPrivate *priv = s_UiUtilsPrivate;
+    QPair<int, int> pair;
+
+    if (freq < 2500) {
+        pair.first = Knm::WirelessSetting::EnumBand::bg;
+        pair.second = 0;
+        int i = 0;
+        QList<QPair<int, int> > bFreqs = priv->getBFreqs();
+        while (i < bFreqs.size()) {
+            if (bFreqs.at(i).second <= freq) {
+                pair.second = bFreqs.at(i).first;
+            } else {
+                break;
+            }
+            i++;
+        }
+        return pair;
+    }
+    pair.second = 0;
+    int i = 0;
+    QList<QPair<int, int> > aFreqs = priv->getAFreqs();
+    while (i < aFreqs.size()) {
+        if (aFreqs.at(i).second <= freq) {
+            pair.second = aFreqs.at(i).first;
+        } else {
+            break;
+        }
+        i++;
+    }
+
+    pair.first = Knm::WirelessSetting::EnumBand::a;
+
+    return pair;
+}
+
+QString UiUtils::wirelessBandToString(int band)
+{
+    switch (band)
+    {
+        case Knm::WirelessSetting::EnumBand::a:
+            return QLatin1String("a");
+            break;
+        case Knm::WirelessSetting::EnumBand::bg:
+            return QLatin1String("b/g");
+            break;
+    }
+    return QString();
 }
 
 // vim: sw=4 sts=4 et tw=100
