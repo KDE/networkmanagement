@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <settings/802-1x.h>
 #include <knmserviceprefs.h>
 
+#include "../../../libs/internals/paths.h"
 #include "eapmethod_p.h"
 
 class TlsWidgetPrivate : public EapMethodPrivate
@@ -60,6 +61,7 @@ TlsWidget::TlsWidget(bool isInnerMethod, Knm::Connection* connection, QWidget * 
     serversValidator->setInnerValidator(d->serversValidator);
     leConnectToTheseServers->setValidator(d->serversValidator);
 
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     KNetworkManagerServicePrefs::self()->readConfig();
     d->showAdvancedSettings = KNetworkManagerServicePrefs::self()->showAdvancedSettings();
     if (d->showAdvancedSettings) {
