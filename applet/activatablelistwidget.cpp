@@ -284,14 +284,11 @@ void ActivatableListWidget::setHasWireless(bool hasWireless)
 
 void ActivatableListWidget::filter()
 {
-    QList<RemoteActivatable *> oldList = m_itemIndex.keys();
     foreach (RemoteActivatable *act, m_activatables->activatables()) {
         if (accept(act)) {
             createItem(act);
         } else {
-            if (oldList.contains(act)) {
-                activatableRemoved(act);
-            }
+            activatableRemoved(act);
         }
     }
 
