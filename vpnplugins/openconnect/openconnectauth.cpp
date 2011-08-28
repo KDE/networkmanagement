@@ -128,7 +128,7 @@ void OpenconnectAuthWidget::readConfig()
         int index = gw.indexOf(QLatin1String("/"));
         if (index > -1) {
             host.name = host.address = gw.left(index);
-            host.group = gw.right(index);
+            host.group = gw.right(gw.length() - index - 1);
         } else {
             host.name = host.address = gw;
         }
@@ -251,6 +251,7 @@ void OpenconnectAuthWidget::writeConfig()
 
     QStringMap secretData;
 
+    secretData.unite(d->secrets);
     QString host(openconnect_get_hostname(d->vpninfo));
     QString port = QString::number(openconnect_get_port(d->vpninfo));
     secretData.insert(QLatin1String(NM_OPENCONNECT_KEY_GATEWAY), host + ":" + port);
@@ -263,8 +264,15 @@ void OpenconnectAuthWidget::writeConfig()
     openconnect_get_cert_sha1(d->vpninfo, cert, fingerprint);
     secretData.insert(QLatin1String(NM_OPENCONNECT_KEY_GWCERT), QLatin1String(fingerprint));
     secretData.insert(QLatin1String("certsigs"), d->certificateFingerprints.join("\t"));
-    secretData.unite(d->secrets);
     secretData.insert(QLatin1String("autoconnect"), d->ui.chkAutoconnect->isChecked() ? "yes" : "no");
+
+    QStringMap::iterator i = secretData.begin();
+    while (i != secretData.end()) {
+        if (i.value().isEmpty())
+            i = secretData.erase(i);
+        else
+            i++;
+    }
     d->setting->setVpnSecrets(secretData);
 }
 
@@ -336,7 +344,7 @@ void OpenconnectAuthWidget::addFormInfo(const QString &iconName, const QString &
 
     QLabel *text = new QLabel();
     text->setAlignment(Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter);
-    text->setWordWrap(true);
+    text->setWordWrap(false);
     layout->addWidget(text);
 
     icon->setPixmap(KIcon(iconName).pixmap(QSize(16,16)));
@@ -365,6 +373,7 @@ void OpenconnectAuthWidget::processAuthForm(struct oc_auth_form *form)
     QCheckBox *togglePasswordMode = new QCheckBox(this);
     togglePasswordMode->setText(i18n("&Show password"));
     togglePasswordMode->setChecked(false);
+    connect(togglePasswordMode, SIGNAL(toggled(bool)), this, SLOT(passwordModeToggled(bool)));
     int passwordnumber = 0;
     bool focusSet = false;
     for (opt = form->opts; opt; opt = opt->next) {
@@ -380,7 +389,6 @@ void OpenconnectAuthWidget::processAuthForm(struct oc_auth_form *form)
             KLineEdit *le = new KLineEdit(this);
             if (opt->type == OC_FORM_OPT_PASSWORD) {
                 le->setPasswordMode(true);
-                connect(togglePasswordMode, SIGNAL(toggled(bool)), this, SLOT(passwordModeToggled(bool)));
                 passwordnumber++;
             }
             else {
@@ -526,7 +534,7 @@ void OpenconnectAuthWidget::workerFinished(const int &ret)
         QList<QPair<QString, int> >::const_iterator i;
         for (i = d->serverLog.constEnd()-1; i >= d->serverLog.constBegin(); --i) {
             QPair<QString, int> pair = *i;
-            if(pair.second <= PRG_ERR) {
+            if(pair.second <= OpenconnectAuthWidgetPrivate::Error) {
                 message = pair.first;
                 break;
             }
