@@ -31,12 +31,16 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
     if (map.contains(QLatin1String(NM_SETTING_802_1X_CA_PATH))) {
         setting->setCapath(map.value(QLatin1String(NM_SETTING_802_1X_CA_PATH)).value<QString>());
     }
+#if defined(NM_SETTING_802_1X_SUBJECT_MATCH)
     if (map.contains(QLatin1String(NM_SETTING_802_1X_SUBJECT_MATCH))) {
         setting->setSubjectmatch(map.value(QLatin1String(NM_SETTING_802_1X_SUBJECT_MATCH)).value<QString>());
     }
+#endif
+#if defined(NM_SETTING_802_1X_ALTSUBJECT_MATCHES)
     if (map.contains(QLatin1String(NM_SETTING_802_1X_ALTSUBJECT_MATCHES))) {
         setting->setAltsubjectmatches(map.value(QLatin1String(NM_SETTING_802_1X_ALTSUBJECT_MATCHES)).value<QStringList>());
     }
+#endif
     if (map.contains(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT))) {
         setting->setClientcert(map.value(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT)).value<QByteArray>());
     }
@@ -87,12 +91,16 @@ void Security8021xDbus::fromMap(const QVariantMap & map)
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH))) {
         setting->setPhase2capath(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH)).value<QString>());
     }
+#if defined(NM_SETTING_802_1X_PHASE2_SUBJECT_MATCH)
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_SUBJECT_MATCH))) {
         setting->setPhase2subjectmatch(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_SUBJECT_MATCH)).value<QString>());
     }
+#endif
+#if defined(NM_SETTING_802_1X_PHASE2_ALTSUBJECT_MATCHES)
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_ALTSUBJECT_MATCHES))) {
         setting->setPhase2altsubjectmatches(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_ALTSUBJECT_MATCHES)).value<QStringList>());
     }
+#endif
     if (map.contains(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT))) {
         setting->setPhase2clientcert(map.value(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT)).value<QByteArray>());
     }
@@ -150,12 +158,16 @@ QVariantMap Security8021xDbus::toMap()
         if (!setting->capath().isEmpty()) {
             map.insert(QLatin1String(NM_SETTING_802_1X_CA_PATH), setting->capath());
         }
+#if defined(NM_SETTING_802_1X_SUBJECT_MATCH)
         if (!setting->subjectmatch().isEmpty()) {
             map.insert(QLatin1String(NM_SETTING_802_1X_SUBJECT_MATCH), setting->subjectmatch());
         }
+#endif
+#if defined(NM_SETTING_802_1X_ALTSUBJECT_MATCHES)
         if (!setting->altsubjectmatches().isEmpty()) {
             map.insert(QLatin1String(NM_SETTING_802_1X_ALTSUBJECT_MATCHES), setting->altsubjectmatches());
         }
+#endif
         if (!setting->clientcert().isEmpty()) {
             map.insert(QLatin1String(NM_SETTING_802_1X_CLIENT_CERT), setting->clientcert());
         }
@@ -228,10 +240,14 @@ QVariantMap Security8021xDbus::toMap()
             map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_CERT), setting->phase2cacert());
         if (!setting->phase2capath().isEmpty())
             map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CA_PATH), setting->phase2capath());
+#if defined(NM_SETTING_802_1X_PHASE2_SUBJECT_MATCH)
         if (!setting->phase2subjectmatch().isEmpty())
             map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_SUBJECT_MATCH), setting->phase2subjectmatch());
+#endif
+#if defined(NM_SETTING_802_1X_PHASE2_ALTSUBJECT_MATCHES)
         if (!setting->phase2altsubjectmatches().isEmpty())
             map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_ALTSUBJECT_MATCHES), setting->phase2altsubjectmatches());
+#endif
         if (!setting->phase2clientcert().isEmpty())
             map.insert(QLatin1String(NM_SETTING_802_1X_PHASE2_CLIENT_CERT), setting->phase2clientcert());
         if (!setting->phase2privatekey().isEmpty())
