@@ -229,6 +229,8 @@ void NetworkItemModel::setNetworkInterface(const QString &uni)
     m_networkInterface = static_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(networkInterface);
     m_environment = new Solid::Control::WirelessNetworkInterfaceEnvironment(m_networkInterface);
     scan();
+    connect(m_environment, SIGNAL(networkAppeared(const QString &)), this, SLOT(networkAdded(const QString &)));
+    connect(m_environment, SIGNAL(networkDisappeared(const QString &)), this, SLOT(networkRemoved(const QString &)));
 }
 
 void NetworkItemModel::scan()
