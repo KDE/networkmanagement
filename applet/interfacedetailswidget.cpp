@@ -508,10 +508,10 @@ void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_
 {
     Q_UNUSED(old_state)
     if ((new_state == Solid::Control::NetworkInterface::Unavailable ||
-                     Solid::Control::NetworkInterface::Unmanaged ||
-                     Solid::Control::NetworkInterface::UnknownState) &&
-        reason == (Solid::Control::NetworkInterface::UnknownReason ||
-                   Solid::Control::NetworkInterface::DeviceRemovedReason)) {
+         new_state == Solid::Control::NetworkInterface::Unmanaged ||
+         new_state == Solid::Control::NetworkInterface::UnknownState) &&
+        (reason == Solid::Control::NetworkInterface::UnknownReason ||
+         reason == Solid::Control::NetworkInterface::DeviceRemovedReason)) {
         setInterface(0, false);
         emit back();
     } else {
