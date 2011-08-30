@@ -63,11 +63,11 @@ void ApItemView::initStyleOptions()
 
 void ApItemView::setModel(QAbstractItemModel *model)
 {
-    if (m_model)
-        disconnect(m_model, 0, this, 0);
     if (m_model == model) {
         return;
     }
+    if (m_model)
+        disconnect(m_model, 0, this, 0);
     m_model = model;
     connect(m_model, SIGNAL(rowsRemoved(const QModelIndex&, int, int)), this, SLOT(repaint()));
     connect(m_model, SIGNAL(rowsInserted(const QModelIndex&, int, int)), this, SLOT(repaint()));
