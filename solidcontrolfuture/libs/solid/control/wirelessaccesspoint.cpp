@@ -27,11 +27,11 @@ namespace Solid
 {
 namespace Control
 {
-    class AccessPointNm09Private : public FrontendObjectPrivate
+    class AccessPointNm09Private : public FrontendObjectNm09Private
     {
     public:
         AccessPointNm09Private(QObject *parent)
-            : FrontendObjectPrivate(parent) { }
+            : FrontendObjectNm09Private(parent) { }
 
         void setBackendObject(QObject *object);
     };
@@ -144,7 +144,7 @@ int Solid::Control::AccessPointNm09::signalStrength() const
 
 void Solid::Control::AccessPointNm09Private::setBackendObject(QObject *object)
 {
-    FrontendObjectPrivate::setBackendObject(object);
+    FrontendObjectNm09Private::setBackendObject(object);
 
     if (object) {
         QObject::connect(object, SIGNAL(signalStrengthChanged(int)),

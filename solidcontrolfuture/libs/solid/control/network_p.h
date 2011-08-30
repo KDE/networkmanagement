@@ -27,11 +27,11 @@ namespace Solid
 {
 namespace Control
 {
-    class NetworkPrivate : public FrontendObjectPrivate
+    class NetworkPrivate : public FrontendObjectNm09Private
     {
     public:
         explicit NetworkPrivate(QObject *parent)
-            : FrontendObjectPrivate(parent) { }
+            : FrontendObjectNm09Private(parent) { }
 
         void setBackendObject(QObject *object);
     };

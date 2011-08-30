@@ -139,7 +139,7 @@ Solid::Control::NetworkInterfaceNm09::Capabilities Solid::Control::NetworkInterf
 
 void Solid::Control::NetworkInterfaceNm09Private::setBackendObject(QObject *object)
 {
-    FrontendObjectPrivate::setBackendObject(object);
+    FrontendObjectNm09Private::setBackendObject(object);
 
     if (object) {
         QObject::connect(object, SIGNAL(connectionStateChanged(int)),

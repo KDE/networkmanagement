@@ -53,6 +53,6 @@ namespace Ifaces
 } // Control
 } // Solid
 
-Q_DECLARE_INTERFACE(Solid::Control::Ifaces::AuthenticationValidatorNm09, "org.kde.Solid.Control.Ifaces.AuthenticationValidator/0.1")
+Q_DECLARE_INTERFACE(Solid::Control::Ifaces::AuthenticationValidatorNm09, "org.kde.Solid.Control.Ifaces.AuthenticationValidatorNm09/0.1")
 
 #endif /* SOLID_IFACES_AUTHENTICATION_H */

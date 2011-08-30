@@ -26,11 +26,11 @@ namespace Solid
 {
 namespace Control
 {
-    class FrontendObjectPrivate
+    class FrontendObjectNm09Private
     {
     public:
-        FrontendObjectPrivate(QObject *parent);
-        virtual ~FrontendObjectPrivate();
+        FrontendObjectNm09Private(QObject *parent);
+        virtual ~FrontendObjectNm09Private();
 
         QObject *parent() const;
 
