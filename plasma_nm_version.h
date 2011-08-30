@@ -1,4 +1,4 @@
 #ifndef PLASMA_NM_VERSION_H
 #define PLASMA_NM_VERSION_H
-static const char * plasmaNmVersion = "nm09-20110829";
+static const char * plasmaNmVersion = "nm09-20110830";
 #endif

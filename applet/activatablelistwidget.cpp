@@ -158,14 +158,18 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
     return true;
 }
 
-void ActivatableListWidget::createItem(RemoteActivatable * activatable)
+void ActivatableListWidget::createItem(RemoteActivatable * activatable, const bool addIfAlreadyCached)
 {
-    if (m_itemIndex.contains(activatable)) {
+    ActivatableItem* ai = m_itemIndex.value(activatable, 0);
+    if (ai) {
+        if (addIfAlreadyCached) {
+            m_layout->addItem(ai);
+            ai->show();
+        }
         //kDebug() << "activatable already in the layout, not creating an item" << a;
         return;
     }
 
-    ActivatableItem* ai = 0;
     switch (activatable->activatableType()) {
         case Knm::Activatable::WirelessNetwork:
         case Knm::Activatable::WirelessInterfaceConnection:
@@ -209,7 +213,6 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
     m_itemIndex[activatable] = ai;
     connect(ai, SIGNAL(disappearAnimationFinished()),
             this, SLOT(deleteItem()));
-
 }
 
 void ActivatableListWidget::createHiddenItem()
@@ -284,9 +287,21 @@ void ActivatableListWidget::setHasWireless(bool hasWireless)
 
 void ActivatableListWidget::filter()
 {
+    // Clear connection list first, but do not delete the items.
+    foreach (ActivatableItem* item, m_itemIndex) {
+        if (!item) { // the item might be gone here
+            continue;
+        }
+
+        // Hide them first to prevent glitches in GUI.
+        item->hide();
+        m_layout->removeItem(item);
+    }
+
     foreach (RemoteActivatable *act, m_activatables->activatables()) {
         if (accept(act)) {
-            createItem(act);
+            // The "true" parameter means add the item to m_layout if it is already cached in m_itemIndex.
+            createItem(act, true);
         } else {
             activatableRemoved(act);
         }

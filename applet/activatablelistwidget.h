@@ -65,7 +65,7 @@ private Q_SLOTS:
     void filter();
 
 private:
-    void createItem(RemoteActivatable* conn);
+    void createItem(RemoteActivatable* conn, const bool addIfAlreadyCached = false);
     void createHiddenItem();
     int m_connectionType;
     QList<Knm::Activatable::ActivatableType> m_types;

@@ -158,10 +158,28 @@ RemoteActivatableList::~RemoteActivatableList()
     delete d_ptr;
 }
 
+/* Sort first by type and then by activation state. */
+static bool lessThan(RemoteActivatable * a, RemoteActivatable * b)
+{
+    if (a->activatableType() == b->activatableType()) {
+        RemoteInterfaceConnection * aic = qobject_cast<RemoteInterfaceConnection*>(a);
+        RemoteInterfaceConnection * bic = qobject_cast<RemoteInterfaceConnection*>(b);
+
+        if (aic && bic) {
+            return (aic->activationState() > bic->activationState());
+        }
+    } else {
+        return (a->activatableType() < b->activatableType());
+    }
+    return false;
+}
+
 QList<RemoteActivatable *> RemoteActivatableList::activatables() const
 {
     Q_D(const RemoteActivatableList);
-    return d->activatables.values();
+    QList<RemoteActivatable *> list = d->activatables.values();
+    qSort(list.begin(), list.end(), lessThan);
+    return list;
 }
 
 void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uint type)
