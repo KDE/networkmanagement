@@ -166,7 +166,18 @@ static bool lessThan(RemoteActivatable * a, RemoteActivatable * b)
         RemoteInterfaceConnection * bic = qobject_cast<RemoteInterfaceConnection*>(b);
 
         if (aic && bic) {
-            return (aic->activationState() > bic->activationState());
+            if (aic->activationState() == bic->activationState()) {
+                return (QString::localeAwareCompare(aic->connectionName(), bic->connectionName()) < 0);
+            } else {
+                return (aic->activationState() > bic->activationState());
+            }
+        } else {
+            RemoteWirelessNetwork * arwn = qobject_cast<RemoteWirelessNetwork*>(a);
+            RemoteWirelessNetwork * brwn = qobject_cast<RemoteWirelessNetwork*>(b);
+
+            if (arwn && brwn) {
+                return (QString::localeAwareCompare(arwn->ssid(), brwn->ssid()) < 0);
+            }
         }
     } else {
         return (a->activatableType() < b->activatableType());
