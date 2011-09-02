@@ -26,7 +26,7 @@ qt4_add_dbus_interface(solidcontrolnm09_LIB_SRCS org.kde.Solid.Networking.xml or
 
 kde4_add_library(solidcontrolnm09 SHARED ${solidcontrolnm09_LIB_SRCS})
 
-target_link_libraries(solidcontrolnm09 ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTNETWORK_LIBRARY} solidcontrolnm09ifaces ${X11_Xrandr_LIB} ${X11_X11_LIB} ${QT_QTGUI_LIBRARY} )
+target_link_libraries(solidcontrolnm09 ${KDE4_KDECORE_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTNETWORK_LIBRARY} solidcontrolnm09ifaces ${QT_QTGUI_LIBRARY} )
 
 set_target_properties(solidcontrolnm09 PROPERTIES VERSION ${GENERIC_LIB_VERSION} SOVERSION ${GENERIC_LIB_SOVERSION} )
 install(TARGETS solidcontrolnm09 EXPORT kdeworkspaceLibraryTargets ${INSTALL_TARGETS_DEFAULT_ARGS} )
