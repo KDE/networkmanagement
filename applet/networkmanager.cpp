@@ -382,7 +382,6 @@ void NetworkManagerApplet::paintStatusOverlay(QPainter *p)
     }
 
     // search for VPN connections
-    int vpns = 0;
     foreach (RemoteActivatable* activatable, m_activatables->vpnActivatables()) {
         RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
         if (remoteconnection && remoteconnection->activationState() == Knm::InterfaceConnection::Activated) {
