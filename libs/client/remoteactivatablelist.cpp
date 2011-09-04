@@ -41,6 +41,7 @@ class RemoteActivatableListPrivate
 public:
     NetworkManagementInterface * iface;
     QHash<QString, RemoteActivatable *> activatables;
+    QMap<QString, RemoteActivatable *> vpnActivatables;
 };
 
 
@@ -64,6 +65,7 @@ void RemoteActivatableList::init()
     Q_D(RemoteActivatableList);
     if (d->iface->isValid()) {
         if (d->activatables.isEmpty()) {
+            d->vpnActivatables.clear();
             QDBusReply<QStringList> rv = d->iface->ListActivatables();
             if (rv.isValid()) {
                 foreach (const QString &activatable, rv.value()) {
@@ -151,6 +153,7 @@ void RemoteActivatableList::clear()
         QTimer::singleShot(10000, activatable, SLOT(deleteLater()));
     }
     d->activatables.clear();
+    d->vpnActivatables.clear();
 }
 
 RemoteActivatableList::~RemoteActivatableList()
@@ -193,6 +196,14 @@ QList<RemoteActivatable *> RemoteActivatableList::activatables() const
     return list;
 }
 
+QList<RemoteActivatable *> RemoteActivatableList::vpnActivatables() const
+{
+    Q_D(const RemoteActivatableList);
+    QList<RemoteActivatable *> list = d->vpnActivatables.values();
+    qSort(list.begin(), list.end(), lessThan);
+    return list;
+}
+
 void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uint type)
 {
     if (!addedPath.startsWith('/')) {
@@ -221,6 +232,7 @@ void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uin
                 break;
             case Knm::Activatable::VpnInterfaceConnection:
                 newActivatable = new RemoteVpnInterfaceConnection(addedPath, this);
+                d->vpnActivatables.insert(addedPath, newActivatable);
                 //kDebug() << "vpnconnection at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
             case Knm::Activatable::GsmInterfaceConnection:
@@ -241,6 +253,7 @@ void RemoteActivatableList::handleActivatableRemoved(const QString &removed)
     Q_D(RemoteActivatableList);
     kDebug() << "removed" << removed;
     RemoteActivatable * removedActivatable = d->activatables.take(removed);
+    d->vpnActivatables.remove(removed);
     if (removedActivatable) {
         emit activatableRemoved(removedActivatable);
 

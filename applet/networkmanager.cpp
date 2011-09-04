@@ -380,6 +380,20 @@ void NetworkManagerApplet::paintStatusOverlay(QPainter *p)
         p->setOpacity(opacity);
         p->drawPixmap(contentsRect().left(), contentsRect().bottom() - m_statusOverlay.height(), m_statusOverlay);
     }
+
+    // search for VPN connections
+    int vpns = 0;
+    foreach (RemoteActivatable* activatable, m_activatables->vpnActivatables()) {
+        RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
+        if (remoteconnection && remoteconnection->activationState() == Knm::InterfaceConnection::Activated) {
+            int i_s = (int)contentsRect().width()/4;
+            int size = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
+            QPixmap pix = KIcon("object-locked").pixmap(size);
+            p->drawPixmap(contentsRect().right() - pix.width(), contentsRect().bottom() - pix.height(), pix);
+            break;
+        }
+    }
+
     p->setOpacity(oldOpacity);
 }
 
@@ -557,9 +571,25 @@ void NetworkManagerApplet::toolTipAboutToShow()
                 }
             }
         }
+
         QString subText;
         QString text;
         if (hasActive) {
+            // search for VPN connections
+            int vpns = 0;
+            foreach (RemoteActivatable* activatable, m_activatables->vpnActivatables()) {
+                RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
+                if (remoteconnection && (remoteconnection->activationState() == Knm::InterfaceConnection::Activated ||
+                                         remoteconnection->activationState() == Knm::InterfaceConnection::Activating)) {
+                    if (vpns == 0) {
+                        lines << QString();
+                        lines << QString::fromLatin1("<b>%1</b>").arg(i18n("Vpn Connections"));
+                        vpns++;
+                    }
+                    lines << QString("%1").arg(UiUtils::connectionStateToString(remoteconnection->activationState(), remoteconnection->connectionName()));
+                }
+            }
+
             subText = lines.join(QLatin1String("<br>"));
         } else {
             text = i18nc("tooltip, all interfaces are down", "Disconnected");

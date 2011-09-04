@@ -36,6 +36,7 @@ public:
     RemoteActivatableList(QObject * parent = 0);
     ~RemoteActivatableList();
     QList<RemoteActivatable *> activatables() const;
+    QList<RemoteActivatable *> vpnActivatables() const;
     void init();
 
     /**

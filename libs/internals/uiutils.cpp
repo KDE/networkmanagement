@@ -206,6 +206,25 @@ QString UiUtils::connectionStateToString(Solid::Control::NetworkInterfaceNm09::C
     return stateString;
 }
 
+QString UiUtils::connectionStateToString(Knm::InterfaceConnection::ActivationState state, const QString &connectionName)
+{
+    Solid::Control::NetworkInterfaceNm09::ConnectionState s = Solid::Control::NetworkInterfaceNm09::UnknownState;
+
+    switch(state) {
+    case Knm::InterfaceConnection::Unknown:
+        s = Solid::Control::NetworkInterfaceNm09::UnknownState;
+        break;
+    case Knm::InterfaceConnection::Activating:
+        s = Solid::Control::NetworkInterfaceNm09::Configuring;
+        break;
+    case Knm::InterfaceConnection::Activated:
+        s = Solid::Control::NetworkInterfaceNm09::Activated;
+        break;
+    }
+
+    return connectionStateToString(s, connectionName);
+}
+
 Solid::Device* UiUtils::findSolidDevice(const QString & uni)
 {
     Solid::Control::NetworkInterfaceNm09 * iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(uni);

@@ -73,6 +73,12 @@ public:
     static QString connectionStateToString(Solid::Control::NetworkInterfaceNm09::ConnectionState state, const QString &connectionName = QString());
 
     /**
+     * @return a human-readable description of the connection state of a given interface connection
+     * @param state The connection state
+     */
+    static QString connectionStateToString(Knm::InterfaceConnection::ActivationState state, const QString &connectionName = QString());
+
+    /**
      * @return an icon name suitable for the interface type
      * @param iface the network interface
      */
