@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include <QTimer>
+#include <QDBusReply>
 
 #include <KDebug>
 #include <KLocale>
@@ -27,7 +28,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "manageconnection.h"
 #include "settings/bluetooth.h"
 
-ManageConnection::ManageConnection(Knm::Connection *con)
+ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.networkmanagement",
+                                                                    "/org/kde/networkmanagement",
+                                                                    "org.kde.networkmanagement",
+                                                                    QDBusConnection::sessionBus())
 {
     bool addConnection = true;
     mSystemSettings = new NMDBusSettingsConnectionProvider(0, 0);
@@ -53,6 +57,7 @@ ManageConnection::ManageConnection(Knm::Connection *con)
 
     if (addConnection) {
         connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool, const QString &)), SLOT(addConnectionCompleted(bool, const QString &)));
+        connect(&m_manager, SIGNAL(ActivatableAdded(QString, uint)), this, SLOT(activatableAdded(QString, uint)));
         mSystemSettings->addConnection(con);
     }
 }
@@ -77,8 +82,27 @@ void ManageConnection::addConnectionCompleted(bool valid, const QString &errorMe
             KMessageBox::error(0, i18n("Connection create operation failed."));
         else
             KMessageBox::error(0, errorMessage);
+
+        deleteLater();
+        kapp->quit();
+    }
+}
+
+void ManageConnection::activatableAdded(QString path, uint type)
+{
+    QDBusInterface activatable("org.kde.networkmanagement",
+                               path,
+                               "org.kde.networkmanagement.Activatable",
+                               QDBusConnection::sessionBus());
+
+    if (!activatable.isValid()) {
+        goto OUT;
     }
 
+    // Activate the connection. This step is required to make hidden wifi networks work.
+    activatable.call("activate");
+
+OUT:
     deleteLater();
     kapp->quit();
 }

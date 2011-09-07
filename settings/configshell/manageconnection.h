@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QDBusInterface>
+
 #include <KApplication>
 
 #include "nmdbussettingsconnectionprovider.h"
@@ -34,6 +36,8 @@ public:
 private Q_SLOTS:
     void addConnectionCompleted(bool valid, const QString &errorMessage);
     void updateConnectionCompleted();
+    void activatableAdded(QString, uint);
 private:
     NMDBusSettingsConnectionProvider * mSystemSettings;
+    QDBusInterface m_manager;
 };

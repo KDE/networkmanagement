@@ -85,6 +85,8 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
                 ap = iface->findAccessPoint(apUni);
                 if (ap) {
                     ssid = ap->ssid();
+                } else {
+                    ssid = apUni;
                 }
             }
         }

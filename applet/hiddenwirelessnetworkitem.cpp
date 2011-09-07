@@ -75,16 +75,17 @@ void HiddenWirelessNetworkItem::setupItem()
         m_connect = new Plasma::IconWidget(this);
         m_connect->setDrawBackground(false);
         m_connect->setOrientation(Qt::Horizontal);
-        m_connect->setIcon("network-wireless");
-        m_connect->setText(i18nc("label for creating a connection to a hidden wireless network", "<hidden network>"));
         m_layout->addItem(m_connect);
         connect(m_connect, SIGNAL(activated()), SLOT(connectClicked()));
 
         m_ssidEdit = new Plasma::LineEdit(this);
-        m_ssidEdit->nativeWidget()->setClickMessage(s_defaultText);
-        m_ssidEdit->hide();
         connect(m_ssidEdit->nativeWidget(), SIGNAL(returnPressed()), SLOT(ssidEntered()));
     }
+    m_connect->show();
+    m_connect->setIcon("network-wireless");
+    m_connect->setText(i18nc("label for creating a connection to a hidden wireless network", "<hidden network>"));
+    m_ssidEdit->hide();
+    m_ssidEdit->nativeWidget()->setClickMessage(s_defaultText);
 }
 
 void HiddenWirelessNetworkItem::connectClicked()

@@ -97,23 +97,18 @@ int main(int argc, char **argv)
                     qout << i18n("Expected two specific args, found %1: %2", specificArgs.count(), specifics) << "\n"; 
                     return -1;
                 }
-            }
-            else {
+            } else {
                 con = editor.createConnection(true, Knm::Connection::typeFromString(type), specificArgs);
             }
 
-            if(!con)
-            {
+            if (!con) {
                 kDebug(KDE_DEFAULT_DEBUG_AREA) << Knm::Connection::typeFromString(type) << "type connection cannot be created.";
                 return -1;
             }
 
+            /* TODO: test if connection already exists and in case affirmative do not add it. */
             ManageConnection::saveConnection(con);
             return app.exec();
-        } else if (args->isSet("hiddennetwork")) {
-            QString ssidOfHiddenNetwork = args->getOption("hiddennetwork");
-            kDebug(KDE_DEFAULT_DEBUG_AREA) << "I have been told to setup a connection to a hidden network..." << ssidOfHiddenNetwork;
-            return 0;
         } else {
             args->usage();
             return -1;
