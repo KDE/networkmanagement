@@ -92,6 +92,7 @@ void HiddenWirelessNetworkItem::connectClicked()
 {
     m_connect->hide();
     m_ssidEdit->show();
+    m_ssidEdit->setFocus();
     //workarounds for QGraphicsLayout not being able to layout hidden widgets with a 0 size
     m_layout->removeAt(0);
     m_layout->addItem(m_ssidEdit);
@@ -99,6 +100,11 @@ void HiddenWirelessNetworkItem::connectClicked()
 
 void HiddenWirelessNetworkItem::ssidEntered()
 {
+    if (m_ssid.isEmpty()) {
+        setupItem();
+	return;
+    }
+
     kDebug() << "... ssid is now" << m_ssid;
     setSsid(m_ssidEdit->text());
     emitClicked();

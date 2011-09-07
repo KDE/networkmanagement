@@ -307,7 +307,6 @@ void ActivatableListWidget::filter()
     }
 
     if (m_interfaces.count() && m_hasWireless) {
-        kDebug() << "Lamarque 1";
         bool found = false;
         foreach (QString uni, m_interfaces.keys())
         {
