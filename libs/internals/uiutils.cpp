@@ -134,18 +134,17 @@ QString UiUtils::iconName(Solid::Control::NetworkInterfaceNm09 *iface)
 
 int UiUtils::iconSize(const QSizeF size)
 {
-    int c = qMin(size.width(), size.height());
+    int s = qMin(size.width(), size.height());
     // return the biggest fitting icon size from KIconLoader
-    int s;
-    if (c >= KIconLoader::SizeEnormous) { // 128
+    if (s >= KIconLoader::SizeEnormous) { // 128
         s = KIconLoader::SizeEnormous;
-    } else if (c >= KIconLoader::SizeHuge) { // 64
+    } else if (s >= KIconLoader::SizeHuge) { // 64
         s = KIconLoader::SizeHuge;
-    } else if (c >= KIconLoader::SizeLarge) { // 48
+    } else if (s >= KIconLoader::SizeLarge) { // 48
         s = KIconLoader::SizeLarge;
-    } else if (c >= KIconLoader::SizeMedium) { // 32
+    } else if (s >= KIconLoader::SizeMedium) { // 32
         s = KIconLoader::SizeMedium;
-    } else if (c >= KIconLoader::SizeSmallMedium) { // 22
+    } else if (s >= KIconLoader::SizeSmallMedium) { // 22
         s = KIconLoader::SizeSmallMedium;
     } else { // 16
         s = KIconLoader::SizeSmall;

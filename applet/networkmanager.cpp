@@ -357,7 +357,7 @@ void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p)
     if (activeInterface() && activeInterface()->connectionState() == Solid::Control::NetworkInterfaceNm09::NeedAuth) {
         //kDebug() << "Needing auth ...>";
         int i_s = (int)contentsRect().width()/4;
-        int iconsize = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
+        int iconsize = UiUtils::iconSize(QSizeF(i_s, i_s));
 
         //kDebug() << "Security:iconsize" << iconsize;
         QPixmap icon = KIcon("dialog-password").pixmap(iconsize);
@@ -386,7 +386,7 @@ void NetworkManagerApplet::paintStatusOverlay(QPainter *p)
         RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
         if (remoteconnection && remoteconnection->activationState() == Knm::InterfaceConnection::Activated) {
             int i_s = (int)contentsRect().width()/4;
-            int size = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
+            int size = UiUtils::iconSize(QSizeF(i_s, i_s));
             QPixmap pix = KIcon("object-locked").pixmap(size);
             p->drawPixmap(contentsRect().right() - pix.width(), contentsRect().bottom() - pix.height(), pix);
             break;
@@ -576,7 +576,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
         if (hasActive) {
             // search for VPN connections
             int vpns = 0;
-            foreach (RemoteActivatable* activatable, m_activatables->vpnActivatables()) {
+            foreach (RemoteActivatable* activatable, m_activatables->sortedVpnActivatables()) {
                 RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
                 if (remoteconnection && (remoteconnection->activationState() == Knm::InterfaceConnection::Activated ||
                                          remoteconnection->activationState() == Knm::InterfaceConnection::Activating)) {
@@ -819,7 +819,7 @@ void NetworkManagerApplet::setStatusOverlay(const QPixmap& pix)
 void NetworkManagerApplet::setStatusOverlay(const QString& name)
 {
     int i_s = (int)contentsRect().width()/4;
-    int size = qMax(UiUtils::iconSize(QSizeF(i_s, i_s)), 8);
+    int size = UiUtils::iconSize(QSizeF(i_s, i_s));
     QPixmap pix = KIcon(name).pixmap(size);
     setStatusOverlay(pix);
 }

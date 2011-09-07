@@ -236,7 +236,7 @@ void ActivatableListWidget::createHiddenItem()
 
 void ActivatableListWidget::listAppeared()
 {
-    foreach (RemoteActivatable* remote, m_activatables->activatables()) {
+    foreach (RemoteActivatable* remote, m_activatables->sortedActivatables()) {
         activatableAdded(remote);
     }
     filter();
@@ -298,7 +298,7 @@ void ActivatableListWidget::filter()
         m_layout->removeItem(item);
     }
 
-    foreach (RemoteActivatable *act, m_activatables->activatables()) {
+    foreach (RemoteActivatable *act, m_activatables->sortedActivatables()) {
         if (accept(act)) {
             // The "true" parameter means add the item to m_layout if it is already cached in m_itemIndex.
             createItem(act, true);

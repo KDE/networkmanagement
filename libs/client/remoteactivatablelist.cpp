@@ -191,12 +191,24 @@ static bool lessThan(RemoteActivatable * a, RemoteActivatable * b)
 QList<RemoteActivatable *> RemoteActivatableList::activatables() const
 {
     Q_D(const RemoteActivatableList);
+    return d->activatables.values();
+}
+
+QList<RemoteActivatable *> RemoteActivatableList::sortedActivatables() const
+{
+    Q_D(const RemoteActivatableList);
     QList<RemoteActivatable *> list = d->activatables.values();
     qSort(list.begin(), list.end(), lessThan);
     return list;
 }
 
 QList<RemoteActivatable *> RemoteActivatableList::vpnActivatables() const
+{
+    Q_D(const RemoteActivatableList);
+    return d->vpnActivatables.values();
+}
+
+QList<RemoteActivatable *> RemoteActivatableList::sortedVpnActivatables() const
 {
     Q_D(const RemoteActivatableList);
     QList<RemoteActivatable *> list = d->vpnActivatables.values();
