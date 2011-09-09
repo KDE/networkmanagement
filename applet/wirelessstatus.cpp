@@ -59,6 +59,9 @@ public:
 
     void init(RemoteWirelessObject* wobj)
     {
+        if (!wobj)
+            return;
+
         if (wobj->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc) {
             adhoc = true;
             //adhoc->setIcon(QIcon("nm-adhoc"));
