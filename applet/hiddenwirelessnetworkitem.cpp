@@ -100,13 +100,13 @@ void HiddenWirelessNetworkItem::connectClicked()
 
 void HiddenWirelessNetworkItem::ssidEntered()
 {
-    if (m_ssid.isEmpty()) {
+    if (m_ssidEdit->text().isEmpty()) {
         setupItem();
-	return;
+        return;
     }
 
-    kDebug() << "... ssid is now" << m_ssid;
     setSsid(m_ssidEdit->text());
+    kDebug() << "... ssid is now" << m_ssid;
     emitClicked();
     emit connectToHiddenNetwork(m_ssid);
 }
