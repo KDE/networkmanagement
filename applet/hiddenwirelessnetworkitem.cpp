@@ -39,7 +39,7 @@ HiddenWirelessNetworkItem::HiddenWirelessNetworkItem(QGraphicsWidget *parent) : 
     m_connect(0),
     m_ssidEdit(0)
 {
-    kDebug() << "HiddenWirelessNetworkItem";
+    //kDebug() << "HiddenWirelessNetworkItem";
 }
 
 HiddenWirelessNetworkItem::~HiddenWirelessNetworkItem()
@@ -66,8 +66,6 @@ Solid::Control::AccessPointNm09 * HiddenWirelessNetworkItem::referenceAccessPoin
     return 0;
 }
 
-QString HiddenWirelessNetworkItem::s_defaultText = i18nc("default KLineEdit::clickMessage() for hidden wireless network SSID entry", "Enter network name and press <enter>");
-
 void HiddenWirelessNetworkItem::setupItem()
 {
     if (!m_layout) {
@@ -75,24 +73,26 @@ void HiddenWirelessNetworkItem::setupItem()
         m_connect = new Plasma::IconWidget(this);
         m_connect->setDrawBackground(false);
         m_connect->setOrientation(Qt::Horizontal);
-        m_layout->addItem(m_connect);
+        m_connect->setIcon("network-wireless");
+        m_connect->setText(i18nc("label for creating a connection to a hidden wireless network", "<hidden network>"));
         connect(m_connect, SIGNAL(activated()), SLOT(connectClicked()));
 
         m_ssidEdit = new Plasma::LineEdit(this);
+        m_ssidEdit->nativeWidget()->setClickMessage(i18nc("default KLineEdit::clickMessage() for hidden wireless network SSID entry", "Enter network name and press <enter>"));
+        m_ssidEdit->setToolTip(i18nc("@info:tooltip for hidden wireless network SSID entry", "Enter network name and press <enter>"));
         connect(m_ssidEdit->nativeWidget(), SIGNAL(returnPressed()), SLOT(ssidEntered()));
     }
-    m_connect->show();
-    m_connect->setIcon("network-wireless");
-    m_connect->setText(i18nc("label for creating a connection to a hidden wireless network", "<hidden network>"));
-    m_ssidEdit->hide();
-    m_ssidEdit->nativeWidget()->setClickMessage(s_defaultText);
+    resetSsidEntry();
 }
 
 void HiddenWirelessNetworkItem::connectClicked()
 {
     m_connect->hide();
     m_ssidEdit->show();
+
+    // OBS: m_ssidEdit->nativeWidget()->setClickMessage(...) has no effect if nativeWidget() has focus.
     m_ssidEdit->setFocus();
+
     //workarounds for QGraphicsLayout not being able to layout hidden widgets with a 0 size
     m_layout->removeAt(0);
     m_layout->addItem(m_ssidEdit);
@@ -100,15 +100,18 @@ void HiddenWirelessNetworkItem::connectClicked()
 
 void HiddenWirelessNetworkItem::ssidEntered()
 {
-    if (m_ssidEdit->text().isEmpty()) {
-        setupItem();
-        return;
+    setSsid(m_ssidEdit->text());
+    //kDebug() << "... ssid is now" << m_ssid;
+
+    if (m_ssid.isEmpty()) {
+        goto OUT;
     }
 
-    setSsid(m_ssidEdit->text());
-    kDebug() << "... ssid is now" << m_ssid;
     emitClicked();
     emit connectToHiddenNetwork(m_ssid);
+
+OUT:
+    resetSsidEntry();
 }
 
 void HiddenWirelessNetworkItem::resetSsidEntry()

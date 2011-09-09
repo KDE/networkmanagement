@@ -411,6 +411,5 @@ void ActivatableListWidget::connectToHiddenNetwork(const QString &ssid)
     kDebug() << "invoking networkmanagement_configshell" << args;
     int ret = KToolInvocation::kdeinitExec(KGlobal::dirs()->findResource("exe", "networkmanagement_configshell"), args);
     kDebug() << ret << args;
-    m_hiddenItem->setupItem();
 }
 // vim: sw=4 sts=4 et tw=100
