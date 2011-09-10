@@ -103,14 +103,11 @@ void HiddenWirelessNetworkItem::ssidEntered()
     setSsid(m_ssidEdit->text());
     //kDebug() << "... ssid is now" << m_ssid;
 
-    if (m_ssid.isEmpty()) {
-        goto OUT;
+    if (!m_ssid.isEmpty()) {
+        emitClicked();
+        emit connectToHiddenNetwork(m_ssid);
     }
 
-    emitClicked();
-    emit connectToHiddenNetwork(m_ssid);
-
-OUT:
     resetSsidEntry();
 }
 

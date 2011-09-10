@@ -225,7 +225,7 @@ void ActivatableListWidget::createHiddenItem()
     m_hiddenItem = new HiddenWirelessNetworkItem(m_widget);
     Q_ASSERT(m_hiddenItem);
     m_hiddenItem->setupItem();
-    m_layout->addItem(m_hiddenItem);
+    m_layout->insertItem(0, m_hiddenItem);
     //m_itemIndex[activatable] = ai;
     connect(m_hiddenItem, SIGNAL(disappearAnimationFinished()),
             this, SLOT(deleteItem()));

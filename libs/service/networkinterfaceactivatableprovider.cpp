@@ -110,6 +110,7 @@ bool NetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() cons
 bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType, Solid::Control::NetworkInterfaceNm09::Type ifaceType, Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities modemCaps)
 {
      return ( (connType == Knm::Connection::Wired && ifaceType == Solid::Control::NetworkInterfaceNm09::Ethernet)
+           || (connType == Knm::Connection::Pppoe && ifaceType == Solid::Control::NetworkInterfaceNm09::Ethernet)
            || (connType == Knm::Connection::Wireless && ifaceType == Solid::Control::NetworkInterfaceNm09::Wifi)
            || (connType == Knm::Connection::Bluetooth && ifaceType == Solid::Control::NetworkInterfaceNm09::Bluetooth)
            || (ifaceType == Solid::Control::NetworkInterfaceNm09::Modem && (
@@ -117,7 +118,6 @@ bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType
               (connType == Knm::Connection::Cdma && modemCaps & Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo) ||
               (connType == Knm::Connection::Pppoe && modemCaps & Solid::Control::ModemNetworkInterfaceNm09::Pots)
               ))
-           || (connType == Knm::Connection::Pppoe && ifaceType == Solid::Control::NetworkInterfaceNm09::Ethernet)
             ); /* TODO: implement Bluetooth Cdma, Wimax, LTE */
 }
 
