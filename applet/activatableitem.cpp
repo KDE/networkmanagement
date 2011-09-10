@@ -93,9 +93,15 @@ void ActivatableItem::disappear()
 void ActivatableItem::emitClicked()
 {
     if (m_activatable) {
-        m_activatable->activate();
+        RemoteInterfaceConnection * remote = interfaceConnection();
+        if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
+                       remote->activationState() == Knm::InterfaceConnection::Activated)) {
+            remote->deactivate();
+        } else {
+            m_activatable->activate();
+        }
+        emit clicked(this);
     }
-    emit clicked(this);
 
     if (!Solid::Control::NetworkManagerNm09::isNetworkingEnabled()) {
         KNotification::event(Event::NetworkingDisabled, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is disabled", "Networking system disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData)->sendEvent();
