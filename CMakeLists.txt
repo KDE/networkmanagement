@@ -28,12 +28,13 @@ find_package(NetworkManager ${MINIMUM_NM_VERSION_REQUIRED})
 
 macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.9" "Needed for NetworkManager support in Network Management")
 if (NETWORKMANAGER_FOUND)
-    macro_ensure_version(${MINIMUM_NM_VERSION_REQUIRED} ${NETWORKMANAGER_VERSION} NM_0_9)
     find_package(GLIB2 REQUIRED)
 
     configure_file(backends/NetworkManager/config-nm09backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm09backend.h )
 
-    if (NM_0_9)
+    if (${NETWORKMANAGER_VERSION} VERSION_GREATER ${MINIMUM_NM_VERSION_REQUIRED} OR
+        ${NETWORKMANAGER_VERSION} VERSION_EQUAL ${MINIMUM_NM_VERSION_REQUIRED})
+        set(NM_0_9 TRUE)
         add_definitions(-DMINIMUM_NM_VERSION_REQUIRED=\\"${MINIMUM_NM_VERSION_REQUIRED}\\")
         include_directories(
            ${NETWORKMANAGER_INCLUDE_DIRS}
@@ -64,10 +65,10 @@ if (NETWORKMANAGER_FOUND)
         else (DBUS_SYSTEM_POLICY_DIR)
             message(STATUS "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
         endif (DBUS_SYSTEM_POLICY_DIR)
-    else(NM_0_9)
+    else()
         message("ERROR: NetworkManager version '${NETWORKMANAGER_VERSION}' does not match minimum required (${MINIMUM_NM_VERSION_REQUIRED})")
         return()
-    endif(NM_0_9)
+    endif()
 endif(NETWORKMANAGER_FOUND)
 
 if(INSTALL_KNM_AUTOSTART)
