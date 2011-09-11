@@ -29,5 +29,5 @@ install(TARGETS solidcontrolnm09ifaces EXPORT kdeworkspaceLibraryTargets ${INSTA
 
 ########### install files ###############
 
-install( FILES networkmanager.h networkinterface.h networkmodeminterface.h networkbtinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/controlnm09/ifaces COMPONENT Devel)
+install( FILES networkmanager.h networkinterface.h networkmodeminterface.h networkbtinterface.h wirednetworkinterface.h wirelessnetworkinterface.h wirelessaccesspoint.h authentication.h DESTINATION ${INCLUDE_INSTALL_DIR}/solid/controlnm09/ifaces COMPONENT Devel)
 
