@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "wpapskwidget.h"
+#include "securitywidget_p.h"
 
 #include <QWidget>
 
@@ -37,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 
 
-class WpaPskWidget::Private
+class WpaPskWidgetPrivate : public SecurityWidgetPrivate
 {
 public:
     Ui_WpaPsk ui;
@@ -46,8 +47,9 @@ public:
 };
 
 WpaPskWidget::WpaPskWidget(Knm::Connection* connection, QWidget * parent)
-: SecurityWidget(connection, parent), d(new WpaPskWidget::Private)
+: SecurityWidget(*new WpaPskWidgetPrivate, connection, parent)
 {
+    Q_D(WpaPskWidget);
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
     d->wsetting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
@@ -58,35 +60,41 @@ WpaPskWidget::WpaPskWidget(Knm::Connection* connection, QWidget * parent)
 
 WpaPskWidget::~WpaPskWidget()
 {
-    delete d;
 }
 
 void WpaPskWidget::chkShowPassToggled()
 {
+    Q_D(WpaPskWidget);
     bool on = d->ui.chkShowPass->isChecked();
     d->ui.psk->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
 }
 
 bool WpaPskWidget::validate() const
 {
+    Q_D(const WpaPskWidget);
     WpaSecretIdentifier::WpaSecretType secretType = WpaSecretIdentifier::identify(d->ui.psk->text());
     return (secretType == WpaSecretIdentifier::Passphrase || secretType == WpaSecretIdentifier::PreSharedKey);
 }
 
 void WpaPskWidget::readConfig()
 {
+    Q_D(WpaPskWidget);
     d->ui.chkShowPass->setChecked(false);
     chkShowPassToggled();
 }
 
 void WpaPskWidget::writeConfig()
 {
+    Q_D(WpaPskWidget);
     d->setting->setPsk(d->ui.psk->text());
+    if (d->connection->permissions().count() != 1)
+        d->setting->setPskflags(Knm::Setting::None);
     d->wsetting->setSecurity(NM_SETTING_WIRELESS_SECURITY_SETTING_NAME);
 }
 
 void WpaPskWidget::readSecrets()
 {
+    Q_D(WpaPskWidget);
     d->ui.psk->setText(d->setting->psk());
 }
 

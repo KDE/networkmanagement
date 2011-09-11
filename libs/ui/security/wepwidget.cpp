@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 
 #include "wepwidget.h"
+#include "securitywidget_p.h"
 
 #include <nm-setting-wireless-security.h>
 
@@ -36,7 +37,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 static const int ASCII_MIN = ' ';
 static const int ASCII_MAX = '~';
 
-class WepWidget::Private
+class WepWidgetPrivate : public SecurityWidgetPrivate
 {
 public:
     WepWidget::KeyFormat format;
@@ -48,8 +49,9 @@ public:
 };
 
 WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * parent)
-: SecurityWidget(connection, parent), d(new WepWidget::Private)
+: SecurityWidget(*new WepWidgetPrivate, connection, parent)
 {
+    Q_D(WepWidget);
     d->format = format;
     d->keys << "" << "" << "" << "";
     d->keyIndex = 0;
@@ -90,11 +92,11 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
 
 WepWidget::~WepWidget()
 {
-    delete d;
 }
 
 void WepWidget::keyTypeChanged(int index)
 {
+    Q_D(WepWidget);
     switch (index) {
         case 0: //passphrase
             d->ui.keyLabel->setText(i18n("&Passphrase:"));
@@ -113,6 +115,7 @@ void WepWidget::keyTypeChanged(int index)
 
 void WepWidget::keyIndexChanged(int index)
 {
+    Q_D(WepWidget);
     d->keys.replace(d->keyIndex, d->ui.key->text());
     if (d->keys.count() > index) {
         d->ui.key->setText(d->keys[index]);
@@ -128,11 +131,13 @@ void WepWidget::validateKey(QString key)
 
 void WepWidget::chkShowPassToggled(bool on)
 {
+    Q_D(WepWidget);
     d->ui.key->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
 }
 
 bool WepWidget::validate() const
 {
+    Q_D(const WepWidget);
     if (d->ui.keyType->currentIndex() == 1) {   // Hex/ASCII key
         return d->ui.key->hasAcceptableInput();
     }
@@ -143,6 +148,7 @@ bool WepWidget::validate() const
 
 void WepWidget::readConfig()
 {
+    Q_D(WepWidget);
     // tx index
     d->keyIndex = d->setting->weptxkeyindex();
     disconnect(d->ui.weptxkeyindex, SIGNAL(currentIndexChanged(int)), this, SLOT(keyIndexChanged(int)));
@@ -167,6 +173,7 @@ void WepWidget::readConfig()
 
 void WepWidget::writeConfig()
 {
+    Q_D(WepWidget);
     d->keys[d->ui.weptxkeyindex->currentIndex()] = d->ui.key->text();
 
     d->setting->setWeptxkeyindex(d->ui.weptxkeyindex->currentIndex());
@@ -176,6 +183,8 @@ void WepWidget::writeConfig()
     d->setting->setWepkey1(d->keys[1]);
     d->setting->setWepkey2(d->keys[2]);
     d->setting->setWepkey3(d->keys[3]);
+    if (d->connection->permissions().count() != 1)
+        d->setting->setWepkeyflags(Knm::Setting::None);
     if (d->format == WepWidget::Passphrase) {
         d->setting->setWepKeyType(Knm::WirelessSecuritySetting::Passphrase);
     } else {
@@ -192,6 +201,7 @@ void WepWidget::writeConfig()
 
 void WepWidget::readSecrets()
 {
+    Q_D(WepWidget);
     // keys
     d->keys.replace(0, d->setting->wepkey0());
     d->keys.replace(1, d->setting->wepkey1());

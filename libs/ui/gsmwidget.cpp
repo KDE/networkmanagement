@@ -89,7 +89,10 @@ void GsmWidget::writeConfig()
     switch (d->ui.pinStorage->currentIndex())
     {
         case GsmWidgetPrivate::Store:
-            d->setting->setPinflags(Knm::Setting::AgentOwned);
+            if (d->connection->permissions().count() == 1)
+                d->setting->setPinflags(Knm::Setting::AgentOwned);
+            else
+                d->setting->setPinflags(Knm::Setting::None);
             break;
         case GsmWidgetPrivate::AlwaysAsk:
             d->setting->setPinflags(Knm::Setting::NotSaved);

@@ -59,7 +59,10 @@ void EapMethodLeap::writeConfig()
     switch (cmbPasswordStorage->currentIndex()) {
         case EapMethodPrivate::Store:
             d->setting->setPassword(lePassword->text());
-            d->setting->setPasswordflags(Knm::Setting::AgentOwned);
+            if (d->connection->permissions().count() == 1)
+                d->setting->setPasswordflags(Knm::Setting::AgentOwned);
+            else
+                d->setting->setPasswordflags(Knm::Setting::None);
             break;
         case EapMethodPrivate::AlwaysAsk:
             d->setting->setPasswordflags(Knm::Setting::NotSaved);

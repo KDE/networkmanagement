@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "securityleap.h"
+#include "securitywidget_p.h"
 
 #include <QWidget>
 
@@ -37,7 +38,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 
 
-class LeapWidget::Private
+class LeapWidgetPrivate : public SecurityWidgetPrivate
 {
 public:
     Ui_Leap ui;
@@ -47,8 +48,9 @@ public:
 };
 
 LeapWidget::LeapWidget(Knm::Connection* connection, QWidget * parent)
-: SecurityWidget(connection, parent), d(new LeapWidget::Private)
+: SecurityWidget(*new LeapWidgetPrivate, connection, parent)
 {
+    Q_D(LeapWidget);
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
     d->wsetting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
@@ -60,19 +62,20 @@ LeapWidget::LeapWidget(Knm::Connection* connection, QWidget * parent)
 
 LeapWidget::~LeapWidget()
 {
-    delete d;
 }
 
 void LeapWidget::chkShowPassToggled(bool on)
 {
+    Q_D(LeapWidget);
     d->ui.lePassword->setPasswordMode(!on);
 }
 
 void LeapWidget::passwordStorageChanged(int type)
 {
+    Q_D(LeapWidget);
     switch (type)
     {
-        case Private::Store:
+        case LeapWidgetPrivate::Store:
             d->ui.lePassword->setEnabled(true);
             break;
         default:
@@ -83,29 +86,35 @@ void LeapWidget::passwordStorageChanged(int type)
 
 bool LeapWidget::validate() const
 {
+    Q_D(const LeapWidget);
     return !(d->ui.lePassword->text().isEmpty() || d->ui.leUserName->text().isEmpty());
 }
 
 void LeapWidget::readConfig()
 {
+    Q_D(LeapWidget);
     d->ui.leUserName->setText(d->setting->leapusername());
     d->ui.chkShowPass->setChecked(false);
 }
 
 void LeapWidget::writeConfig()
 {
+    Q_D(LeapWidget);
     d->setting->setLeapusername(d->ui.leUserName->text());
     d->setting->setAuthalg(Knm::WirelessSecuritySetting::EnumAuthalg::leap);
     d->setting->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::Ieee8021x);
     switch (d->ui.cmbPasswordStorage->currentIndex()) {
-        case Private::Store:
+        case LeapWidgetPrivate::Store:
             d->setting->setLeappassword(d->ui.lePassword->text());
-            d->setting->setLeappasswordflags(Knm::Setting::AgentOwned);
+            if (d->connection->permissions().count() == 1)
+                d->setting->setLeappasswordflags(Knm::Setting::AgentOwned);
+            else
+                d->setting->setLeappasswordflags(Knm::Setting::None);
             break;
-        case Private::AlwaysAsk:
+        case LeapWidgetPrivate::AlwaysAsk:
             d->setting->setLeappasswordflags(Knm::Setting::NotSaved);
             break;
-        case Private::NotRequired:
+        case LeapWidgetPrivate::NotRequired:
             d->setting->setLeappasswordflags(Knm::Setting::NotRequired);
             break;
     }
@@ -113,13 +122,14 @@ void LeapWidget::writeConfig()
 
 void LeapWidget::readSecrets()
 {
+    Q_D(LeapWidget);
     if (d->setting->leappasswordflags().testFlag(Knm::Setting::AgentOwned) || d->setting->leappasswordflags().testFlag(Knm::Setting::None)) {
         d->ui.lePassword->setText(d->setting->leappassword());
-        d->ui.cmbPasswordStorage->setCurrentIndex(Private::Store);
+        d->ui.cmbPasswordStorage->setCurrentIndex(LeapWidgetPrivate::Store);
     } else if (d->setting->leappasswordflags().testFlag(Knm::Setting::NotSaved)) {
-        d->ui.cmbPasswordStorage->setCurrentIndex(Private::AlwaysAsk);
+        d->ui.cmbPasswordStorage->setCurrentIndex(LeapWidgetPrivate::AlwaysAsk);
     } else if (d->setting->leappasswordflags().testFlag(Knm::Setting::NotRequired)){
-        d->ui.cmbPasswordStorage->setCurrentIndex(Private::NotRequired);
+        d->ui.cmbPasswordStorage->setCurrentIndex(LeapWidgetPrivate::NotRequired);
     }
 }
 

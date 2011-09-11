@@ -203,10 +203,16 @@ void TlsWidget::writeConfig()
         case EapMethodPrivate::Store:
             if (d->inner) {
                 d->setting->setPhase2privatekeypassword(lePrivateKeyPassword->text());
-                d->setting->setPhase2privatekeypasswordflags(Knm::Setting::AgentOwned);
+                if (d->connection->permissions().count() == 1)
+                    d->setting->setPhase2privatekeypasswordflags(Knm::Setting::AgentOwned);
+                else
+                    d->setting->setPhase2privatekeypasswordflags(Knm::Setting::None);
             } else {
                 d->setting->setPrivatekeypassword(lePrivateKeyPassword->text());
-                d->setting->setPrivatekeypasswordflags(Knm::Setting::AgentOwned);
+                if (d->connection->permissions().count() == 1)
+                    d->setting->setPrivatekeypasswordflags(Knm::Setting::AgentOwned);
+                else
+                    d->setting->setPrivatekeypasswordflags(Knm::Setting::None);
             }
             break;
         case EapMethodPrivate::AlwaysAsk:

@@ -23,9 +23,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "securitywidget.h"
 
+class LeapWidgetPrivate;
 class LeapWidget : public SecurityWidget
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(LeapWidget)
 public:
     LeapWidget(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~LeapWidget();
@@ -36,9 +38,6 @@ public:
 private Q_SLOTS:
     void chkShowPassToggled(bool);
     void passwordStorageChanged(int);
-private:
-    class Private;
-    Private * d;
 };
 
 #endif // LEAPWIDGET_H

@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "eapmethod_p.h"
 
 #include <settings/802-1x.h>
+#include <connection.h>
 EapMethodSimple::EapMethodSimple(Type type, Knm::Connection * connection, QWidget * parent)
     : EapMethod(connection, parent), m_type(type)
 {
@@ -91,7 +92,10 @@ void EapMethodSimple::writeConfig()
     switch (cmbPasswordStorage->currentIndex()) {
         case EapMethodPrivate::Store:
             d->setting->setPassword(lePassword->text());
-            d->setting->setPasswordflags(Knm::Setting::AgentOwned);
+            if (d->connection->permissions().count() == 1)
+                d->setting->setPasswordflags(Knm::Setting::AgentOwned);
+            else
+                d->setting->setPasswordflags(Knm::Setting::None);
             break;
         case EapMethodPrivate::AlwaysAsk:
             d->setting->setPasswordflags(Knm::Setting::NotSaved);
