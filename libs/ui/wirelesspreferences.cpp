@@ -29,7 +29,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkmanager.h>
 
-
 #include "802_11_wirelesswidget.h"
 #include "security/wirelesssecuritysettingwidget.h"
 #include "ipv4widget.h"
@@ -85,6 +84,17 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
                 ap = iface->findAccessPoint(apUni);
                 if (ap) {
                     ssid = ap->ssid();
+
+                    /* To prevent Wireless80211Widget::readConfig() from changing mode
+                       back to infrastructure. */
+                    Knm::WirelessSetting * setting = static_cast<Knm::WirelessSetting *>(m_connection->setting(Knm::Setting::Wireless));
+                    switch (ap->mode()) {
+                    case Solid::Control::WirelessNetworkInterfaceNm09::Adhoc:
+                        setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
+                        break;
+                    default: 
+                        setting->setMode(Knm::WirelessSetting::EnumMode::infrastructure);
+                    }
                 } else {
                     ssid = apUni;
                 }
@@ -108,7 +118,6 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
         m_contents->setDefaultName(i18n("Shared Wireless Connection"));
     } else {
         m_contents->setDefaultName(ssid.isEmpty() ? i18n("New Wireless Connection") : ssid);
-        m_wirelessWidget->setAccessPointData(iface, ap);
     }
 
     connect (m_contents->connectionSettingsWidget(), SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
