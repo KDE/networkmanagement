@@ -183,8 +183,11 @@ void WepWidget::writeConfig()
     d->setting->setWepkey1(d->keys[1]);
     d->setting->setWepkey2(d->keys[2]);
     d->setting->setWepkey3(d->keys[3]);
-    if (d->connection->permissions().count() != 1)
+    if (d->connection->permissions().count() > 0) {
+        d->setting->setWepkeyflags(Knm::Setting::AgentOwned);
+    } else {
         d->setting->setWepkeyflags(Knm::Setting::None);
+    }
     if (d->format == WepWidget::Passphrase) {
         d->setting->setWepKeyType(Knm::WirelessSecuritySetting::Passphrase);
     } else {

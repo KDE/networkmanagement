@@ -92,7 +92,7 @@ void EapMethodSimple::writeConfig()
     switch (cmbPasswordStorage->currentIndex()) {
         case EapMethodPrivate::Store:
             d->setting->setPassword(lePassword->text());
-            if (d->connection->permissions().count() == 1)
+            if (d->connection->permissions().count() > 0)
                 d->setting->setPasswordflags(Knm::Setting::AgentOwned);
             else
                 d->setting->setPasswordflags(Knm::Setting::None);

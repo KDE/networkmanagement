@@ -237,8 +237,8 @@ void Wireless80211Widget::setAccessPointData(const Solid::Control::WirelessNetwo
 
     switch (ap->mode()) {
         case Solid::Control::WirelessNetworkInterfaceNm09::Adhoc:
-           // To prevent Wireless80211Widget::readConfig() to change the mode
-           // back to infrastructure.
+            // To prevent Wireless80211Widget::readConfig() to change the mode
+            // back to infrastructure.
             d->setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
 
             d->ui.cmbMode->setCurrentIndex(d->AdhocIndex);

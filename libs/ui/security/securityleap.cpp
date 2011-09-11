@@ -106,7 +106,7 @@ void LeapWidget::writeConfig()
     switch (d->ui.cmbPasswordStorage->currentIndex()) {
         case LeapWidgetPrivate::Store:
             d->setting->setLeappassword(d->ui.lePassword->text());
-            if (d->connection->permissions().count() == 1)
+            if (d->connection->permissions().count() > 0)
                 d->setting->setLeappasswordflags(Knm::Setting::AgentOwned);
             else
                 d->setting->setLeappasswordflags(Knm::Setting::None);
