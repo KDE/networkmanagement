@@ -92,13 +92,6 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
         }
     }
 
-    m_contents->setConnection(m_connection);
-    if (shared) {
-        m_contents->setDefaultName(i18n("Shared Wireless Connection"));
-    } else {
-        m_contents->setDefaultName(ssid.isEmpty() ? i18n("New Wireless Connection") : ssid);
-    }
-
     m_wirelessWidget = new Wireless80211Widget(m_connection, ssid, shared, this);
     connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *)),
             this, SLOT(setDefaultName(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *)));
@@ -109,6 +102,14 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
 
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
     IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
+
+    m_contents->setConnection(m_connection);
+    if (shared) {
+        m_contents->setDefaultName(i18n("Shared Wireless Connection"));
+    } else {
+        m_contents->setDefaultName(ssid.isEmpty() ? i18n("New Wireless Connection") : ssid);
+        m_wirelessWidget->setAccessPointData(iface, ap);
+    }
 
     connect (m_contents->connectionSettingsWidget(), SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
     addToTabWidget(m_wirelessWidget);
