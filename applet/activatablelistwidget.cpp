@@ -217,6 +217,9 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable)
 
 void ActivatableListWidget::createHiddenItem()
 {
+    /* Disable this since it does not work and I do not plan
+       to port the working implementation from branch nm09. */
+#if 0
     if (m_hiddenItem) {
         return;
     }
@@ -230,6 +233,7 @@ void ActivatableListWidget::createHiddenItem()
             this, SLOT(deleteItem()));
     connect(m_hiddenItem, SIGNAL(connectToHiddenNetwork(QString)),
             this, SLOT(connectToHiddenNetwork(QString)));
+#endif
 }
 
 void ActivatableListWidget::listAppeared()
