@@ -167,7 +167,7 @@ QStringList MobileProviders::getProvidersList(QString country, const Knm::Connec
     return temp;
 }
 
-QStringList MobileProviders::getApns(const QString provider)
+QStringList MobileProviders::getApns(const QString & provider)
 {
     mApns.clear();
     mNetworkIds.clear();
@@ -203,7 +203,7 @@ QStringList MobileProviders::getApns(const QString provider)
 }
 
 
-QStringList MobileProviders::getNetworkIds(const QString provider)
+QStringList MobileProviders::getNetworkIds(const QString & provider)
 {
     if (mNetworkIds.isEmpty()) {
         getApns(provider);
@@ -211,7 +211,7 @@ QStringList MobileProviders::getNetworkIds(const QString provider)
     return mNetworkIds;
 }
 
-QVariantMap MobileProviders::getApnInfo(const QString apn)
+QVariantMap MobileProviders::getApnInfo(const QString & apn)
 {
     QVariantMap temp;
     QDomNode n = mApns[apn];
@@ -242,7 +242,7 @@ QVariantMap MobileProviders::getApnInfo(const QString apn)
     return temp;
 }
 
-QVariantMap MobileProviders::getCdmaInfo(const QString provider)
+QVariantMap MobileProviders::getCdmaInfo(const QString & provider)
 {
     if (!mProvidersCdma.contains(provider)) {
         return QVariantMap();
