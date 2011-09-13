@@ -59,6 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceitem.h"
 #include "nm-device-interface.h"
 #include "nm-ip4-config-interface.h"
+#include "../libs/internals/settings/802-11-wireless.h"
 
 class InterfaceDetails
 {
@@ -71,6 +72,9 @@ class InterfaceDetails
         QString mac;
         QString driver;
         QString activeAccessPoint;
+        uint wifiChannelFrequency;
+        int wifiChannel;
+        int wifiBand;
 
         /* ModemManager */
         Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType registrationInfo;
@@ -232,6 +236,17 @@ void InterfaceDetailsWidget::getDetails()
     Solid::Control::WirelessNetworkInterfaceNm09 *wiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(m_iface);
     if (wiface) {
         details->activeAccessPoint = wiface->activeAccessPoint();
+        Solid::Control::AccessPointNm09 *ap = wiface->findAccessPoint(details->activeAccessPoint);
+        if (ap) {
+            details->wifiChannelFrequency = ap->frequency();
+            QPair<int, int> bandAndChannel = UiUtils::findBandAndChannel(details->wifiChannelFrequency);
+            details->wifiBand = bandAndChannel.first;
+            details->wifiChannel = bandAndChannel.second;
+        } else {
+            details->wifiChannelFrequency = 0;
+            details->wifiBand = Knm::WirelessSetting::EnumBand::bg;
+            details->wifiChannel = -1;
+        }
     } else {
         details->activeAccessPoint = QString();
     }
@@ -301,6 +316,15 @@ void InterfaceDetailsWidget::showDetails(bool reset)
             if (ap) {
                 info += QString(format).arg(i18nc("interface details", "Access Point (SSID)"), ap->ssid());
                 info += QString(format).arg(i18nc("interface details", "Access Point (MAC)"), ap->hardwareAddress());
+
+                if (details->wifiChannelFrequency != ap->frequency()) {
+                    details->wifiChannelFrequency = ap->frequency();
+                    QPair<int, int> bandAndChannel = UiUtils::findBandAndChannel(details->wifiChannelFrequency);
+                    details->wifiBand = bandAndChannel.first;
+                    details->wifiChannel = bandAndChannel.second;
+                }
+                info += QString(format).arg(i18nc("@item:intable wireless band", "Band"), UiUtils::wirelessBandToString(details->wifiBand));
+                info += QString(format).arg(i18nc("@item:intable wireless channel", "Channel"), QString("%1 (%2 MHz)").arg(details->wifiChannel).arg(details->wifiChannelFrequency));
             }
         }
 
