@@ -315,9 +315,13 @@ void NMPopup::readConfig()
     }
 
     QString version = Solid::Control::NetworkManagerNm09::version();
-    if (version.isEmpty() || compareVersions(version, QString(MINIMUM_NM_VERSION_REQUIRED)) < 0) {
+    if (version.isEmpty()) {
         Plasma::Label * warning = new Plasma::Label(this);
-        warning->setText(i18nc("Warning about wrong NetworkManager version", "We need NetworkManager version >= %1 to work, found '%2'", QString(MINIMUM_NM_VERSION_REQUIRED), version));
+        warning->setText(i18nc("Warning about wrong NetworkManager version", "NetworkManager is not running. Please start it."));
+        m_interfaceLayout->addItem(warning);
+    } else if (compareVersions(version, QString(MINIMUM_NM_VERSION_REQUIRED)) < 0) {
+        Plasma::Label * warning = new Plasma::Label(this);
+        warning->setText(i18nc("Warning about wrong NetworkManager version", "We need at least NetworkManager-%1 to work properly, found '%2'. Please upgrade to a newer version.", QString(MINIMUM_NM_VERSION_REQUIRED), version));
         m_interfaceLayout->addItem(warning);
     }
 }
