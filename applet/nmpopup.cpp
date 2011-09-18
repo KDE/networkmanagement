@@ -180,7 +180,7 @@ void NMPopup::init()
 
     m_connectionList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_connectionList->setPreferredHeight(240);
-    m_connectionList->setShowAllTypes(false, true);
+    m_connectionList->setShowAllTypes(true, true);
     connect(m_connectionList, SIGNAL(showInterfaceDetails(QString)), SLOT(showInterfaceDetails(QString)));
 
     m_rightLayout->addItem(m_connectionList);
@@ -247,10 +247,12 @@ void NMPopup::init()
             uncheckShowMore(ra);
         }
     }
-    m_oldShowMoreChecked = false;
-    showMore(m_oldShowMoreChecked);
 
     KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
+    KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("General"));
+    m_oldShowMoreChecked = config.readEntry(QLatin1String("ShowAllConnections"), true);
+    showMore(m_oldShowMoreChecked);
+
     readConfig();
 
     QDBusConnection dbus = QDBusConnection::sessionBus();
@@ -638,6 +640,10 @@ void NMPopup::showMore()
     m_showMoreChecked = !m_showMoreChecked;
     m_oldShowMoreChecked = m_showMoreChecked;
     showMore(m_oldShowMoreChecked);
+
+    KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("General"));
+    config.writeEntry(QLatin1String("ShowAllConnections"), m_oldShowMoreChecked);
+    config.sync();
 }
 
 void NMPopup::showMore(bool more)
