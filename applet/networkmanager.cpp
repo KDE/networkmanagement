@@ -79,7 +79,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     KGlobal::locale()->insertCatalog("solidcontrol");
 
     setHasConfigurationInterface(true);
-    setPopupIcon(QIcon());
+    setPopupIcon("networkmanager");
     //setPassivePopup(true); // FIXME: disable, only true for testing ...
     m_overlayTimeline.setEasingCurve(QEasingCurve::OutExpo);
     m_currentState = Solid::Control::NetworkInterfaceNm09::UnknownState;
@@ -106,7 +106,6 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_activatables = new RemoteActivatableList(this);
     setMinimumSize(16, 16);
     updatePixmap();
-    //(void)graphicsWidget();
 }
 
 NetworkManagerApplet::~NetworkManagerApplet()
@@ -335,10 +334,12 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     }
 
     if (useSvg) {
-        QString el = svgElement(interface);
-        m_svg->paint(p, m_contentSquare, el);
+        setPopupIcon(svgElement(interface));
+        /*QString el = svgElement(interface);
+        m_svg->paint(p, m_contentSquare, el);*/
     } else {
-        paintPixmap(p, m_pixmap, contentsRect);
+        //paintPixmap(p, m_pixmap, contentsRect);
+        setPopupIcon(m_pixmap);
     }
     paintStatusOverlay(p);
     paintNeedAuthOverlay(p);
