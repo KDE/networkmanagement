@@ -96,7 +96,7 @@ void ActivatableItem::emitClicked()
         RemoteInterfaceConnection * remote = interfaceConnection();
         if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
                        remote->activationState() == Knm::InterfaceConnection::Activated)) {
-            remote->deactivate();
+            emit showInterfaceDetails(remote->deviceUni());
         } else {
             m_activatable->activate();
         }

@@ -214,6 +214,7 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable, const bo
     m_itemIndex[activatable] = ai;
     connect(ai, SIGNAL(disappearAnimationFinished()),
             this, SLOT(deleteItem()));
+    connect(ai, SIGNAL(showInterfaceDetails(QString)), SIGNAL(showInterfaceDetails(QString)));
 }
 
 void ActivatableListWidget::createHiddenItem()

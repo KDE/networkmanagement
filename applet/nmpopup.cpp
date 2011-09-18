@@ -180,8 +180,8 @@ void NMPopup::init()
 
     m_connectionList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_connectionList->setPreferredHeight(240);
-
     m_connectionList->setShowAllTypes(false, true);
+    connect(m_connectionList, SIGNAL(showInterfaceDetails(QString)), SLOT(showInterfaceDetails(QString)));
 
     m_rightLayout->addItem(m_connectionList);
 
@@ -434,6 +434,15 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterfaceNm09* iface)
     }
     updateHasWireless();
     updateHasWwan();
+}
+
+void NMPopup::showInterfaceDetails(const QString uni)
+{
+    InterfaceItem * ifaceItem = m_interfaces.value(uni, 0);
+    if (!ifaceItem) {
+        return;
+    }
+    QMetaObject::invokeMethod(ifaceItem, "clicked", Qt::QueuedConnection);
 }
 
 void NMPopup::addVpnInterface()

@@ -48,6 +48,7 @@ Q_SIGNALS:
     void clicked(ActivatableItem *);
     void hasDefaultRouteChanged(bool);
     void disappearAnimationFinished();
+    void showInterfaceDetails(QString);
 
 protected Q_SLOTS:
     void emitClicked();

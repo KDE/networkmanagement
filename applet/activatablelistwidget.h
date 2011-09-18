@@ -47,6 +47,9 @@ public:
     void setShowAllTypes(bool show, bool refresh = false);
     void setHasWireless(bool hasWireless); // Used to decide wether or not to show the hidden item
 
+Q_SIGNALS:
+    void showInterfaceDetails(QString);
+
 public Q_SLOTS:
     void activatableAdded(RemoteActivatable*);
     void activatableRemoved(RemoteActivatable*);
