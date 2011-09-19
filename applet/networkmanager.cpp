@@ -53,7 +53,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Plasma/Animator>
 #include <Plasma/CheckBox>
-#include <Plasma/Theme>
+#include <Plasma/Containment>
 
 #include "../libs/types.h"
 #include "knmserviceprefs.h"
@@ -73,6 +73,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     : Plasma::PopupApplet(parent, args),
         m_iconPerDevice(false),
         m_popup(0),
+        m_panelContainment(true),
         m_activeInterface(0)
 {
     KGlobal::locale()->insertCatalog("libknetworkmanager");
@@ -85,8 +86,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_currentState = Solid::Control::NetworkInterfaceNm09::UnknownState;
     connect(&m_overlayTimeline, SIGNAL(valueChanged(qreal)), this, SLOT(repaint()));
 
-    Plasma::ToolTipManager::self()->registerWidget(this);
-    setAspectRatioMode(Plasma::ConstrainedSquare);
+    setAspectRatioMode(Plasma::IgnoreAspectRatio);
 
     m_svg = new Plasma::Svg(this);
     m_svg->setImagePath("icons/network");
@@ -231,6 +231,17 @@ void NetworkManagerApplet::setupInterfaceSignals()
 
 void NetworkManagerApplet::init()
 {
+    Plasma::Containment * c = containment();
+
+    /* When applet is not in panel the tooltip always appears when hovering
+       any point of the popup's area, which is annoying. */
+    if (c && c->containmentType() == Plasma::Containment::PanelContainment) {
+        Plasma::ToolTipManager::self()->registerWidget(this);
+        m_panelContainment = true;
+    } else {
+        m_panelContainment = false;
+    }
+
     // bogus, just to make sure we have some remotely sensible value
     m_contentSquare = contentsRect().toRect();
     //kDebug();
@@ -253,7 +264,6 @@ void NetworkManagerApplet::init()
     kded.call(QLatin1String("loadModule"), QLatin1String("networkmanagement"));
     QObject::connect(m_activatables, SIGNAL(appeared()), this, SLOT(finishInitialization()));
     finishInitialization();
-
 }
 
 void NetworkManagerApplet::configChanged()
@@ -326,6 +336,12 @@ void NetworkManagerApplet::updatePixmap()
 void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
     Q_UNUSED( option );
+    
+    if (!m_panelContainment) {
+        /* To make applet's size matches the popup's size. The applet is the tray icon, which is 16x16 pixels size by default.*/
+        adjustSize();
+        return;
+    }
 
     Solid::Control::NetworkInterfaceNm09* interface = activeInterface();
     bool useSvg = false;
@@ -345,7 +361,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     paintNeedAuthOverlay(p);
 }
 
-void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p)
+inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p)
 {
     // Needs authentication, show this in the panel
     if (!activeInterface()) {
@@ -369,7 +385,7 @@ void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p)
     }
 }
 
-void NetworkManagerApplet::paintStatusOverlay(QPainter *p)
+inline void NetworkManagerApplet::paintStatusOverlay(QPainter *p)
 {
     int oldOpacity = p->opacity();
     qreal opacity = m_overlayTimeline.currentValue();
@@ -382,7 +398,7 @@ void NetworkManagerApplet::paintStatusOverlay(QPainter *p)
         p->drawPixmap(contentsRect().left(), contentsRect().bottom() - m_statusOverlay.height(), m_statusOverlay);
     }
 
-    // search for VPN connections
+    // search for active VPN connections
     foreach (RemoteActivatable* activatable, m_activatables->vpnActivatables()) {
         RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
         if (remoteconnection && remoteconnection->activationState() == Knm::InterfaceConnection::Activated) {
@@ -575,7 +591,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
         QString subText;
         QString text;
         if (hasActive) {
-            // search for VPN connections
+            // search for active VPN connections
             int vpns = 0;
             foreach (RemoteActivatable* activatable, m_activatables->sortedVpnActivatables()) {
                 RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);

@@ -134,6 +134,7 @@ private:
 
     RemoteActivatableList* m_activatables;
     NMPopup* m_popup;
+    bool m_panelContainment;
 
     QPixmap m_pixmap;
 
