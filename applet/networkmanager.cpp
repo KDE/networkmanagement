@@ -71,7 +71,6 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
 
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
     : Plasma::PopupApplet(parent, args),
-        m_iconPerDevice(false),
         m_popup(0),
         m_panelContainment(true),
         m_activeInterface(0)
@@ -245,7 +244,6 @@ void NetworkManagerApplet::init()
     // bogus, just to make sure we have some remotely sensible value
     m_contentSquare = contentsRect().toRect();
     //kDebug();
-    configChanged();
     QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
     QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
@@ -264,12 +262,6 @@ void NetworkManagerApplet::init()
     kded.call(QLatin1String("loadModule"), QLatin1String("networkmanagement"));
     QObject::connect(m_activatables, SIGNAL(appeared()), this, SLOT(finishInitialization()));
     finishInitialization();
-}
-
-void NetworkManagerApplet::configChanged()
-{
-    KConfigGroup cg = config();
-    m_iconPerDevice = cg.readEntry("IconPerDevice", false);
 }
 
 void NetworkManagerApplet::finishInitialization()

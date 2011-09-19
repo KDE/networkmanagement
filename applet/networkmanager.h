@@ -94,7 +94,6 @@ public Q_SLOTS:
      * React to manager status changes
      */
     void managerStatusChanged(Solid::Networking::Status);
-    void configChanged();
 
 protected:
     void createConfigurationInterface(KConfigDialog *parent);
@@ -128,7 +127,6 @@ private:
     void setStatusOverlay(const QPixmap&);
     void setStatusOverlay(const QString&);
 
-    bool m_iconPerDevice;
     Solid::Control::NetworkInterfaceNm09List m_interfaces;
     Plasma::ToolTipContent m_toolTip;
 
