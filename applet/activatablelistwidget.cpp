@@ -56,7 +56,8 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_activatables(activatables),
     m_layout(0),
     m_showAllTypes(true),
-    m_vpn(false)
+    m_vpn(false),
+    m_hasWireless(false)
 {
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
