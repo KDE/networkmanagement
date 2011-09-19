@@ -442,7 +442,11 @@ void NMPopup::showInterfaceDetails(const QString uni)
 {
     InterfaceItem * ifaceItem = m_interfaces.value(uni, 0);
     if (!ifaceItem) {
-        return;
+        if (m_vpnItem) {
+            ifaceItem = m_vpnItem;
+        } else {
+            return;
+        }
     }
     QMetaObject::invokeMethod(ifaceItem, "clicked", Qt::QueuedConnection);
 }
