@@ -90,6 +90,11 @@ void OpenconnectSettingWidget::writeConfig()
         data.insert(QLatin1String(NM_OPENCONNECT_KEY_PRIVKEY), d->ui.leUserPrivateKey->url().path().toUtf8());
     data.insert(QLatin1String(NM_OPENCONNECT_KEY_PEM_PASSPHRASE_FSID), d->ui.chkUseFsid->isChecked() ? "yes" : "no");
 
+    /* These are different for every login session, and should not be stored */
+    data.insert(QLatin1String(NM_OPENCONNECT_KEY_COOKIE"-flags"), QString::number(Knm::Setting::NotSaved));
+    data.insert(QLatin1String(NM_OPENCONNECT_KEY_GWCERT"-flags"), QString::number(Knm::Setting::NotSaved));
+    data.insert(QLatin1String(NM_OPENCONNECT_KEY_GATEWAY"-flags"), QString::number(Knm::Setting::NotSaved));
+
     d->setting->setData(data);
 
     //VpnSecrets empty so far, they will be acquired by the auth dialog
