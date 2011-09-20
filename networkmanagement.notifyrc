@@ -551,7 +551,7 @@ Comment[tr]=Yeni bir ağ bağlantısı kuruldu
 Comment[uk]=Було встановлено з’єднання з мережею
 Comment[x-test]=xxA network connection was establishedxx
 Comment[zh_TW]=網路連線已建立。
-Action=Popup
+Action=
 
 [Event/connfailed]
 Name=Network Connection Failed
@@ -616,7 +616,7 @@ Comment[tr]=Ağa bağlanma girişimi başarısız oldu
 Comment[uk]=Спроба встановлення з’єднання зазнала невдачі
 Comment[x-test]=xxA network connection attempt failedxx
 Comment[zh_TW]=網路連線失敗
-Action=Popup
+Action=
 
 [Event/rfoff]
 Name=Radio Hardware Switched Off
