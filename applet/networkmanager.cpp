@@ -278,7 +278,6 @@ QGraphicsWidget* NetworkManagerApplet::graphicsWidget()
         connect(m_popup, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
     }
     return m_popup;
-
 }
 
 void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
@@ -382,13 +381,12 @@ inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p, QRect &rect)
     */
     if (activeInterface() && activeInterface()->connectionState() == Solid::Control::NetworkInterfaceNm09::NeedAuth) {
         //kDebug() << "Needing auth ...>";
-        int i_s = (int)2*(rect.width()/3);
-        int iconsize = UiUtils::iconSize(QSizeF(i_s, i_s));
+        int iconSize = (int)2*(rect.width()/3);
 
-        //kDebug() << "Security:iconsize" << iconsize;
-        QPixmap icon = KIcon("dialog-password").pixmap(iconsize);
-        QPoint pos = QPoint(rect.right() - iconsize,
-                            rect.bottom() - iconsize);
+        //kDebug() << "Security:iconSize" << iconSize;
+        QPixmap icon = KIcon("dialog-password").pixmap(iconSize);
+        QPoint pos = QPoint(rect.right() - iconSize,
+                            rect.bottom() - iconSize);
 
         p->drawPixmap(pos, icon);
     }
@@ -400,8 +398,8 @@ inline void NetworkManagerApplet::paintStatusOverlay(QPainter *p, QRect &rect)
     foreach (RemoteActivatable* activatable, m_activatables->vpnActivatables()) {
         RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
         if (remoteconnection && remoteconnection->activationState() == Knm::InterfaceConnection::Activated) {
-            int i_s = (int)2*(rect.width()/3);
-            QPixmap pix = KIcon("object-locked").pixmap(i_s);
+            int iconSize = (int)2*(rect.width()/3);
+            QPixmap pix = KIcon("object-locked").pixmap(iconSize);
             p->drawPixmap(rect.right() - pix.width(), rect.bottom() - pix.height(), pix);
             break;
         }
