@@ -85,7 +85,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_currentState = Solid::Control::NetworkInterfaceNm09::UnknownState;
     connect(&m_overlayTimeline, SIGNAL(valueChanged(qreal)), this, SLOT(repaint()));
 
-    setAspectRatioMode(Plasma::IgnoreAspectRatio);
+    setAspectRatioMode(Plasma::Square);
 
     m_svg = new Plasma::Svg(this);
     m_svg->setImagePath("icons/network");
@@ -103,7 +103,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     }
     interfaceConnectionStateChanged();
     m_activatables = new RemoteActivatableList(this);
-    setMinimumSize(16, 16);
+    setMinimumSize(22, 22);
     updatePixmap();
 }
 
@@ -327,6 +327,7 @@ void NetworkManagerApplet::updatePixmap()
 
 void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphicsItem *option, const QRect &contentsRect)
 {
+    Q_UNUSED( p );
     Q_UNUSED( option );
     
     if (!m_panelContainment) {
@@ -341,16 +342,29 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
         useSvg = interface->type() == Solid::Control::NetworkInterfaceNm09::Wifi || interface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet;
     }
 
+    /* I am using setPopupIcon at the end of this method to make the usual system tray icon's hover and click
+     * effects work. However, setPopupIcon creates a Plasma::IconWidget object that draws itself over
+     * contentsRect and, consequentely, over the overlays created by paintStatusOverlay and paintNeedAuthOverlay.
+     * I am creating a new icon with the overlays applied to overcome this problem.
+     * TODO: I have not done any performance test, but it is pretty clear this needs improvements.
+     *       At least valgrind does not indicate any memory leak in plasma-desktop because of this code.
+     *       smem also does not indicate visible memory leak in Xorg process, which is where the pixmap cache is
+     *       stored.
+     **/
+    QPixmap newIcon(contentsRect.size());
+    newIcon.fill(Qt::transparent);
+    QPainter painter(&newIcon);
+
     if (useSvg) {
-        setPopupIcon(svgElement(interface));
-        /*QString el = svgElement(interface);
-        m_svg->paint(p, m_contentSquare, el);*/
+        QString el = svgElement(interface);
+        m_svg->paint(&painter, m_contentSquare, el);
     } else {
-        //paintPixmap(p, m_pixmap, contentsRect);
-        setPopupIcon(m_pixmap);
+        painter.drawPixmap(contentsRect, m_pixmap);
     }
-    paintStatusOverlay(p);
-    paintNeedAuthOverlay(p);
+
+    paintStatusOverlay(&painter);
+    paintNeedAuthOverlay(&painter);
+    setPopupIcon(newIcon);
 }
 
 inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p)
@@ -403,41 +417,6 @@ inline void NetworkManagerApplet::paintStatusOverlay(QPainter *p)
     }
 
     p->setOpacity(oldOpacity);
-}
-
-void NetworkManagerApplet::paintPixmap(QPainter *painter, QPixmap pixmap, const QRectF &rect, qreal opacity)
-{
-    int size = pixmap.size().width();
-    QPointF iconOrigin = QPointF(rect.left() + (rect.width() - size) / 2,
-                                 rect.top() + (rect.height() - size) / 2);
-
-    painter->setRenderHint(QPainter::SmoothPixmapTransform);
-    painter->setRenderHint(QPainter::Antialiasing);
-
-    if (painter->paintEngine()->hasFeature(QPaintEngine::ConstantOpacity)) {
-        // NOTE: Works, but makes hw acceleration impossible, use below code path
-        //kWarning() << "You don't really want to hit this path, it means slow painting. Your paintengine is not good enough.";
-        qreal old = painter->opacity();
-        painter->setOpacity(opacity);
-        painter->drawPixmap(iconOrigin, pixmap);
-        painter->setOpacity(old);
-    } else {
-        QPixmap temp(QSize(size, size));
-        temp.fill(Qt::transparent);
-
-        QPainter p;
-        p.begin(&temp);
-
-        p.setCompositionMode(QPainter::CompositionMode_Source);
-        p.drawPixmap(QPoint(0,0), pixmap);
-
-        p.setCompositionMode(QPainter::CompositionMode_DestinationIn);
-        p.fillRect(pixmap.rect(), QColor(0, 0, 0, opacity * 254));
-        p.end();
-
-        // draw the pixmap
-        painter->drawPixmap(iconOrigin, temp);
-    }
 }
 
 void NetworkManagerApplet::repaint()
