@@ -119,10 +119,8 @@ private:
     void setupInterfaceSignals();
     QString svgElement(Solid::Control::NetworkInterfaceNm09 *iface);
 
-    void paintPixmap(QPainter* painter, QPixmap pixmap,
-                     const QRectF &rect, qreal opacity = 1.0);
-    void paintStatusOverlay(QPainter* p);
-    void paintNeedAuthOverlay(QPainter* p);
+    void paintStatusOverlay(QPainter* p, QRect & rect);
+    void paintNeedAuthOverlay(QPainter* p, QRect & rect);
     QPixmap generateProgressStatusOverlay();
     void setStatusOverlay(const QPixmap&);
     void setStatusOverlay(const QString&);
@@ -154,11 +152,6 @@ private:
     Plasma::FrameSvg* m_meterBgSvg;
     Plasma::FrameSvg* m_meterFgSvg;
     QRect m_contentSquare;
-
 };
 
 #endif
-
-
-
-

@@ -85,8 +85,6 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_currentState = Solid::Control::NetworkInterfaceNm09::UnknownState;
     connect(&m_overlayTimeline, SIGNAL(valueChanged(qreal)), this, SLOT(repaint()));
 
-    setAspectRatioMode(Plasma::Square);
-
     m_svg = new Plasma::Svg(this);
     m_svg->setImagePath("icons/network");
     m_svg->setContainsMultipleImages(true);
@@ -103,7 +101,6 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     }
     interfaceConnectionStateChanged();
     m_activatables = new RemoteActivatableList(this);
-    setMinimumSize(22, 22);
     updatePixmap();
 }
 
@@ -234,7 +231,8 @@ void NetworkManagerApplet::init()
 
     /* When applet is not in panel the tooltip always appears when hovering
        any point of the popup's area, which is annoying. */
-    if (c && c->containmentType() == Plasma::Containment::PanelContainment) {
+    if (c && (c->containmentType() == Plasma::Containment::PanelContainment ||
+              c->containmentType() == Plasma::Containment::CustomPanelContainment)) {
         Plasma::ToolTipManager::self()->registerWidget(this);
         m_panelContainment = true;
     } else {
@@ -312,6 +310,7 @@ void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
     // icon is only displayed in sizes provides by KIconLoader, so we don't get blurry
     // icons
     if (constraints & (Plasma::SizeConstraint | Plasma::FormFactorConstraint)) {
+        setAspectRatioMode(Plasma::Square);
         if (UiUtils::iconSize(contentsRect().size()) != UiUtils::iconSize(m_pixmap.size())) {
             updatePixmap();
         }
@@ -351,23 +350,27 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
      *       smem also does not indicate visible memory leak in Xorg process, which is where the pixmap cache is
      *       stored.
      **/
-    QPixmap newIcon(contentsRect.size());
+    int s = qMin(contentsRect.width(), contentsRect.height());
+    QRect rect(0, 0, s, s);
+    QPixmap newIcon(QSize(s, s));
     newIcon.fill(Qt::transparent);
-    QPainter painter(&newIcon);
+    QPainter painter;
+    painter.begin(&newIcon);
 
     if (useSvg) {
         QString el = svgElement(interface);
-        m_svg->paint(&painter, m_contentSquare, el);
+        m_svg->paint(&painter, rect, el);
     } else {
-        painter.drawPixmap(contentsRect, m_pixmap);
+        painter.drawPixmap(QPoint(0,0), m_pixmap);
     }
 
-    paintStatusOverlay(&painter);
-    paintNeedAuthOverlay(&painter);
+    paintStatusOverlay(&painter, rect);
+    paintNeedAuthOverlay(&painter, rect);
+    painter.end();
     setPopupIcon(newIcon);
 }
 
-inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p)
+inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p, QRect &rect)
 {
     // Needs authentication, show this in the panel
     if (!activeInterface()) {
@@ -379,43 +382,41 @@ inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p)
     */
     if (activeInterface() && activeInterface()->connectionState() == Solid::Control::NetworkInterfaceNm09::NeedAuth) {
         //kDebug() << "Needing auth ...>";
-        int i_s = (int)contentsRect().width()/4;
+        int i_s = (int)2*(rect.width()/3);
         int iconsize = UiUtils::iconSize(QSizeF(i_s, i_s));
 
         //kDebug() << "Security:iconsize" << iconsize;
         QPixmap icon = KIcon("dialog-password").pixmap(iconsize);
-        QPoint pos = QPoint(contentsRect().right() - iconsize,
-                            contentsRect().bottom() - iconsize);
+        QPoint pos = QPoint(rect.right() - iconsize,
+                            rect.bottom() - iconsize);
 
         p->drawPixmap(pos, icon);
     }
 }
 
-inline void NetworkManagerApplet::paintStatusOverlay(QPainter *p)
+inline void NetworkManagerApplet::paintStatusOverlay(QPainter *p, QRect &rect)
 {
-    int oldOpacity = p->opacity();
-    qreal opacity = m_overlayTimeline.currentValue();
-    if (!qFuzzyCompare(opacity, 1) && !m_previousStatusOverlay.isNull()) {
-        p->setOpacity(1 - opacity);
-        p->drawPixmap(contentsRect().left(), contentsRect().bottom() - m_previousStatusOverlay.height(), m_previousStatusOverlay);
-    }
-    if (!m_statusOverlay.isNull()) {
-        p->setOpacity(opacity);
-        p->drawPixmap(contentsRect().left(), contentsRect().bottom() - m_statusOverlay.height(), m_statusOverlay);
-    }
-
     // search for active VPN connections
     foreach (RemoteActivatable* activatable, m_activatables->vpnActivatables()) {
         RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
         if (remoteconnection && remoteconnection->activationState() == Knm::InterfaceConnection::Activated) {
-            int i_s = (int)contentsRect().width()/4;
-            int size = UiUtils::iconSize(QSizeF(i_s, i_s));
-            QPixmap pix = KIcon("object-locked").pixmap(size);
-            p->drawPixmap(contentsRect().right() - pix.width(), contentsRect().bottom() - pix.height(), pix);
+            int i_s = (int)2*(rect.width()/3);
+            QPixmap pix = KIcon("object-locked").pixmap(i_s);
+            p->drawPixmap(rect.right() - pix.width(), rect.bottom() - pix.height(), pix);
             break;
         }
     }
 
+    int oldOpacity = p->opacity();
+    qreal opacity = m_overlayTimeline.currentValue();
+    if (!qFuzzyCompare(opacity, 1) && !m_previousStatusOverlay.isNull()) {
+        p->setOpacity(1 - opacity);
+        p->drawPixmap(rect.left(), rect.bottom() - m_previousStatusOverlay.height(), m_previousStatusOverlay);
+    }
+    if (!m_statusOverlay.isNull()) {
+        p->setOpacity(opacity);
+        p->drawPixmap(rect.left(), rect.bottom() - m_statusOverlay.height(), m_statusOverlay);
+    }
     p->setOpacity(oldOpacity);
 }
 
