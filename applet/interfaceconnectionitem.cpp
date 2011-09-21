@@ -32,7 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 InterfaceConnectionItem::InterfaceConnectionItem(RemoteInterfaceConnection* conn, QGraphicsItem* parent)
 : ActivatableItem(conn, parent)
 {
-    connect(conn, SIGNAL(changed()), SLOT(stateChanged()));
 }
 
 void InterfaceConnectionItem::setupItem()
@@ -60,24 +59,11 @@ void InterfaceConnectionItem::setupItem()
     connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
     connect(this, SIGNAL(pressed(bool)), m_connectButton, SLOT(setPressed(bool)));
     connect(m_connectButton, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
-
-    stateChanged();
-
 }
 
 InterfaceConnectionItem::~InterfaceConnectionItem()
 {
 
 }
-
-void InterfaceConnectionItem::stateChanged()
-{
-    //kDebug() << "activatable State Changed!" << interfaceConnection()->connectionName();
-    RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(m_activatable);
-    if (remoteconnection) {
-        activationStateChanged(remoteconnection->activationState());
-    }
-}
-
 
 // vim: sw=4 sts=4 et tw=100

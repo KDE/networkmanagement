@@ -67,8 +67,8 @@ void ConnectionUsageMonitor::handleAdd(Knm::Activatable * added)
 {
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(added);
     if (ic) {
-        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
-                this, SLOT(handleActivationStateChange(Knm::InterfaceConnection::ActivationState)));
+        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
+                this, SLOT(handleActivationStateChange(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
     }
 }
 
@@ -80,12 +80,13 @@ void ConnectionUsageMonitor::handleRemove(Knm::Activatable *)
 {
 }
 
-void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnection::ActivationState state)
+void ConnectionUsageMonitor::handleActivationStateChange(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
 {
+    Q_UNUSED(oldState)
     Q_D(ConnectionUsageMonitor);
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
     if (ic) {
-        if (state == Knm::InterfaceConnection::Activated) {
+        if (newState == Knm::InterfaceConnection::Activated) {
             Knm::Connection * connection = d->connectionList->findConnection(ic->connectionUuid());
             if (connection) {
                 // update timestamp

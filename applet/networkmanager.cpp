@@ -73,6 +73,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     : Plasma::PopupApplet(parent, args),
         m_popup(0),
         m_panelContainment(true),
+        m_totalActiveVpnConnections(0),
         m_activeInterface(0)
 {
     KGlobal::locale()->insertCatalog("libknetworkmanager");
@@ -101,6 +102,9 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     }
     interfaceConnectionStateChanged();
     m_activatables = new RemoteActivatableList(this);
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*)), this, SLOT(activatableAdded(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), this, SLOT(activatableRemoved(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(disappeared()), this, SLOT(activatablesDisappeared()));
     updatePixmap();
 }
 
@@ -327,7 +331,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 {
     Q_UNUSED( p );
     Q_UNUSED( option );
-    
+
     if (!m_panelContainment) {
         /* To make applet's size matches the popup's size. The applet is the tray icon, which is 16x16 pixels size by default.*/
         adjustSize();
@@ -394,15 +398,10 @@ inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p, QRect &rect)
 
 inline void NetworkManagerApplet::paintStatusOverlay(QPainter *p, QRect &rect)
 {
-    // search for active VPN connections
-    foreach (RemoteActivatable* activatable, m_activatables->vpnActivatables()) {
-        RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
-        if (remoteconnection && remoteconnection->activationState() == Knm::InterfaceConnection::Activated) {
-            int iconSize = (int)2*(rect.width()/3);
-            QPixmap pix = KIcon("object-locked").pixmap(iconSize);
-            p->drawPixmap(rect.right() - pix.width(), rect.bottom() - pix.height(), pix);
-            break;
-        }
+    if (m_totalActiveVpnConnections > 0) {
+        int iconSize = (int)2*(rect.width()/3);
+        QPixmap pix = KIcon("object-locked").pixmap(iconSize);
+        p->drawPixmap(rect.right() - pix.width(), rect.bottom() - pix.height(), pix);
     }
 
     int oldOpacity = p->opacity();
@@ -560,22 +559,21 @@ void NetworkManagerApplet::toolTipAboutToShow()
 
         QString subText;
         QString text;
-        if (hasActive) {
-            // search for active VPN connections
-            int vpns = 0;
-            foreach (RemoteActivatable* activatable, m_activatables->sortedVpnActivatables()) {
-                RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(activatable);
-                if (remoteconnection && (remoteconnection->activationState() == Knm::InterfaceConnection::Activated ||
-                                         remoteconnection->activationState() == Knm::InterfaceConnection::Activating)) {
-                    if (vpns == 0) {
-                        lines << QString();
-                        lines << QString::fromLatin1("<b>%1</b>").arg(i18n("Vpn Connections"));
-                        vpns++;
-                    }
-                    lines << QString("%1").arg(UiUtils::connectionStateToString(remoteconnection->activationState(), remoteconnection->connectionName()));
+        if (m_activeVpnConnections.count() > 0) {
+            lines << QString();
+            lines << QString::fromLatin1("<b>%1</b>").arg(i18n("Vpn Connections"));
+            QMap<QUuid, QWeakPointer<RemoteInterfaceConnection> >::iterator i = m_activeVpnConnections.begin();
+            while (i != m_activeVpnConnections.end()) {
+                RemoteInterfaceConnection *ic = i.value().data();
+                if (!ic) {
+                    i = m_activeVpnConnections.erase(i);
+                } else {
+                    lines << QString("%1").arg(UiUtils::connectionStateToString(ic->activationState(), ic->connectionName()));
+                    i++;
                 }
             }
-
+        }
+        if (hasActive) {
             subText = lines.join(QLatin1String("<br>"));
         } else {
             text = i18nc("tooltip, all interfaces are down", "Disconnected");
@@ -839,6 +837,55 @@ void NetworkManagerApplet::clearActivatedOverlay()
         // Clear the overlay, but only if we are still activated
         setStatusOverlay(QPixmap());
     }
+}
+
+void NetworkManagerApplet::activatableAdded(RemoteActivatable *activatable)
+{
+    if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+        RemoteInterfaceConnection *ic = static_cast<RemoteInterfaceConnection*>(activatable);
+        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
+                this, SLOT(vpnActivationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
+        QMetaObject::invokeMethod(ic, "activationStateChanged", Q_ARG(Knm::InterfaceConnection::ActivationState, ic->oldActivationState()), Q_ARG(Knm::InterfaceConnection::ActivationState, ic->activationState()));
+    }
+}
+
+void NetworkManagerApplet::vpnActivationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
+{
+    RemoteInterfaceConnection *ic = static_cast<RemoteInterfaceConnection*>(sender());
+    QUuid id = ic->connectionUuid();
+    switch (newState)
+    {
+        case Knm::InterfaceConnection::Activated:
+            m_totalActiveVpnConnections++;
+            if (!m_activeVpnConnections.contains(id))
+                m_activeVpnConnections.insert(id, QWeakPointer<RemoteInterfaceConnection>(ic));
+            break;
+        case Knm::InterfaceConnection::Activating:
+            m_activeVpnConnections.insert(id, QWeakPointer<RemoteInterfaceConnection>(ic));
+            break;
+        case Knm::InterfaceConnection::Unknown:
+            m_activeVpnConnections.remove(id);
+            if (oldState == Knm::InterfaceConnection::Activated)
+                m_totalActiveVpnConnections--;
+            break;
+    }
+    kDebug() << newState << m_totalActiveVpnConnections;
+    update();
+}
+
+void NetworkManagerApplet::activatableRemoved(RemoteActivatable *activatable)
+{
+    if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
+        RemoteInterfaceConnection *ic = static_cast<RemoteInterfaceConnection*>(activatable);
+        m_activeVpnConnections.remove(ic->connectionUuid());
+        kDebug() << "activatable removed" << m_activeVpnConnections.count();
+    }
+}
+
+void NetworkManagerApplet::activatablesDisappeared()
+{
+    m_totalActiveVpnConnections = 0;
+    update();
 }
 
 #include "networkmanager.moc"

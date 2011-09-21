@@ -40,7 +40,8 @@ Q_PROPERTY(uint type READ connectionType)
 Q_PROPERTY(QString uuid READ connectionUuid)
 Q_PROPERTY(QString name READ connectionName)
 Q_PROPERTY(QString iconName READ iconName WRITE setIconName)
-Q_PROPERTY(uint activationState READ activationState)
+Q_PROPERTY(int activationState READ activationState)
+Q_PROPERTY(int oldActivationState READ oldActivationState)
 Q_PROPERTY(bool hasDefaultRoute READ hasDefaultRoute WRITE setHasDefaultRoute)
 
 public:
@@ -77,7 +78,9 @@ public:
     void deactivate();
 
 Q_SIGNALS:
-    void activationStateChanged(Knm::InterfaceConnection::ActivationState);
+    void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
+    // this one is for the DBus adaptor, as autorelaying signals only works if the the type signature is the same
+    void activationStateChanged(uint, uint);
     void hasDefaultRouteChanged(bool);
     void deactivated();
 protected:

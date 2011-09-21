@@ -81,7 +81,8 @@ void InterfaceConnection::setActivationState(InterfaceConnection::ActivationStat
         m_oldState = m_state;
         m_state = state;
         emit changed();
-        emit activationStateChanged(m_state);
+        emit activationStateChanged(m_oldState, m_state);
+        emit activationStateChanged((uint)m_oldState, (uint)m_state);
     }
 }
 

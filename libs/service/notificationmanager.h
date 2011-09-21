@@ -96,7 +96,7 @@ public Q_SLOTS:
     /*
      * So we know which ICs interface state changes refer to
      */
-    void interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState);
+    void interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState);
 
     void strengthChanged(int strength);
 

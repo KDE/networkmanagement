@@ -56,7 +56,7 @@ class NetworkManagementEngine : public Plasma::DataEngine
         void activatableRemoved(RemoteActivatable*);
         void listDisappeared();
         void listAppeared();
-        void activationStateChanged(Knm::InterfaceConnection::ActivationState); // for debugging
+        void activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState); // for debugging
 
         void addActivatable(RemoteActivatable* remote);
         void updateActivatable(RemoteActivatable* remote = 0);
@@ -102,7 +102,7 @@ class NetworkManagementEngine : public Plasma::DataEngine
             HiddenWirelessInterfaceConnection,
             GsmInterfaceConnection = RemoteInterfaceConnection
 
-            WirelessObject = 
+            WirelessObject =
         };
         */
 

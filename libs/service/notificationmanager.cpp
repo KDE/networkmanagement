@@ -69,8 +69,8 @@ void InterfaceNotificationHost::addInterfaceConnection(Knm::InterfaceConnection 
 {
     if (ic) {
         m_interfaceConnections.insert(ic);
-        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
-                this, SLOT(interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState)));
+        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
+                this, SLOT(interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
 
         switch (ic->connectionType()) {
             case Knm::Connection::Wireless: connect(ic, SIGNAL(strengthChanged(int)), this, SLOT(strengthChanged(int))); break;
@@ -100,13 +100,14 @@ void InterfaceNotificationHost::removeInterfaceConnection(Knm::InterfaceConnecti
     m_activating.remove(ic);
 }
 
-void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState state)
+void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
 {
-    kDebug() << state;
+    Q_UNUSED(oldState)
+    kDebug() << newState;
 
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection *>(sender());
 
-    switch (state) {
+    switch (newState) {
         case Knm::InterfaceConnection::Activating:
             kDebug() << ic->connectionName() << "is activating";
             m_activating.insert(ic);

@@ -35,6 +35,7 @@ class KCModuleProxy;
 #include <solid/control/wirelessaccesspoint.h>
 
 #include "../libs/types.h"
+#include <interfaceconnection.h>
 
 #include <Plasma/PopupApplet>
 
@@ -48,7 +49,9 @@ namespace Plasma
 class QTimeLine;
 
 class NMPopup;
+class RemoteActivatable;
 class RemoteActivatableList;
+class RemoteInterfaceConnection;
 
 class NetworkManagerApplet : public Plasma::PopupApplet
 {
@@ -110,6 +113,10 @@ private Q_SLOTS:
     void repaint();
     void clearActivatedOverlay();
     void finishInitialization();
+    void activatableAdded(RemoteActivatable*);
+    void activatableRemoved(RemoteActivatable*);
+    void vpnActivationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState);
+    void activatablesDisappeared();
     // Request KCM module to persist changes
     void saveConfiguration();
 
@@ -133,6 +140,8 @@ private:
     bool m_panelContainment;
 
     QPixmap m_pixmap;
+    QMap<QUuid, QWeakPointer<RemoteInterfaceConnection> > m_activeVpnConnections;
+    int m_totalActiveVpnConnections;
 
     // For tracking which status we should show
     Solid::Control::NetworkInterfaceNm09* m_activeInterface;

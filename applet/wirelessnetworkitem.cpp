@@ -54,13 +54,14 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
     m_wirelessStatus = new WirelessStatus(remote);
     connect(m_wirelessStatus, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
     connect(m_remote, SIGNAL(changed()), SLOT(update()));
-    connect(m_remote, SIGNAL(changed()), SLOT(stateChanged()));
     m_state = Knm::InterfaceConnection::Unknown;
     RemoteWirelessInterfaceConnection* remoteconnection = static_cast<RemoteWirelessInterfaceConnection*>(m_activatable);
     if (remoteconnection) {
+        connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
+                this, SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
         m_state = remoteconnection->activationState();
+        activationStateChanged(remoteconnection->oldActivationState(), m_state);
     }
-    stateChanged();
     update();
 
 }
@@ -130,21 +131,13 @@ void WirelessNetworkItem::setupItem()
     connect(m_connectButton, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
-    activationStateChanged(m_state);
+    activationStateChanged(Knm::InterfaceConnection::Unknown, m_state);
 
     update();
 }
 
 WirelessNetworkItem::~WirelessNetworkItem()
 {
-}
-
-void WirelessNetworkItem::stateChanged()
-{
-    RemoteWirelessInterfaceConnection* remoteconnection = static_cast<RemoteWirelessInterfaceConnection*>(m_activatable);
-    if (remoteconnection) {
-        activationStateChanged(remoteconnection->activationState());
-    }
 }
 
 void WirelessNetworkItem::setStrength(int strength)
@@ -155,7 +148,7 @@ void WirelessNetworkItem::setStrength(int strength)
     }
 }
 
-void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
+void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
 {
     if (!m_connectButton) {
         return;
@@ -176,9 +169,8 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
         m_connectButton->setText(t);
     }
     handleHasDefaultRouteChanged(interfaceConnection()->hasDefaultRoute());
-    m_state = state;
+    m_state = newState;
     update();
-    ActivatableItem::activationStateChanged(state);
 }
 
 void WirelessNetworkItem::update()

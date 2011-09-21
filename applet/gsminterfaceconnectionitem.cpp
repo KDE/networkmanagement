@@ -48,9 +48,10 @@ GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnect
     connect(remote, SIGNAL(signalQualityChanged(int)), this, SLOT(setQuality(int)));
     connect(remote, SIGNAL(accessTechnologyChanged(const int)), this, SLOT(setAccessTechnology(const int)));
     connect(remote, SIGNAL(changed()), SLOT(update()));
-    connect(remote, SIGNAL(changed()), SLOT(stateChanged()));
+    connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
+            this, SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
     m_state = remote->activationState();
-    stateChanged();
+    activationStateChanged(remote->oldActivationState(), m_state);
     update();
 }
 
@@ -104,8 +105,6 @@ void GsmInterfaceConnectionItem::setupItem()
     connect(m_connectButton, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
-    activationStateChanged(m_state);
-
     update();
 }
 
@@ -136,15 +135,7 @@ void GsmInterfaceConnectionItem::setAccessTechnology(const int tech)
     }
 }
 
-void GsmInterfaceConnectionItem::stateChanged()
-{
-    RemoteGsmInterfaceConnection* remoteconnection = static_cast<RemoteGsmInterfaceConnection*>(m_activatable);
-    if (remoteconnection) {
-        activationStateChanged(remoteconnection->activationState());
-    }
-}
-
-void GsmInterfaceConnectionItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
+void GsmInterfaceConnectionItem::activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
 {
     if (!m_connectButton) {
         return;
@@ -155,9 +146,9 @@ void GsmInterfaceConnectionItem::activationStateChanged(Knm::InterfaceConnection
     if (remote) {
         handleHasDefaultRouteChanged(remote->hasDefaultRoute());
     }
-    m_state = state;
+    m_state = newState;
     update();
-    ActivatableItem::activationStateChanged(state);
+    ActivatableItem::activationStateChanged(oldState, newState);
 }
 
 void GsmInterfaceConnectionItem::update()

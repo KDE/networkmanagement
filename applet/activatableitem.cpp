@@ -55,8 +55,8 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
     if (remoteconnection) {
         connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)),
                 SLOT(handleHasDefaultRouteChanged(bool)));
-        connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
-                SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
+        connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
+                SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
     }
 
     // Fade in when this widget appears
@@ -132,12 +132,12 @@ void ActivatableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* o
     }
 }
 
-void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
+void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
 {
     // Update the view of the connection, manipulate font based on activation state.
-    kDebug() << state;
+    kDebug() << newState;
     QFont f = font();
-    switch (state) {
+    switch (newState) {
         //Knm::InterfaceConnectihon::ActivationState
         case Knm::InterfaceConnection::Activated:
             kDebug() << "activated";

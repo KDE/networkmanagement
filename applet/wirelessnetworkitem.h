@@ -51,8 +51,7 @@ class WirelessNetworkItem : public ActivatableItem
     private Q_SLOTS:
         void setStrength(int strength);
         void update();
-        void activationStateChanged(Knm::InterfaceConnection::ActivationState state);
-        void stateChanged();
+        void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
 
     private:
         //bool readSettings();

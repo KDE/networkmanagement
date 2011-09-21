@@ -15,11 +15,15 @@
       <arg name="iconName" type="s" direction="out" />
     </method>
     <method name="activationState">
-      <arg name="uni" type="i" direction="out" />
+      <arg name="uni" type="u" direction="out" />
+    </method>
+    <method name="oldActivationState">
+        <arg name="uni" type="u" direction="out" />
     </method>
     <method name="deactivate"/>
     <signal name="activationStateChanged">
-      <arg name="state" type="u" direction="out" />
+      <arg name="oldState" type="u" direction="out" />
+      <arg name="newState" type="u" direction="out" />
     </signal>
     <signal name="hasDefaultRouteChanged">
       <arg name="hasDefaultRoute" type="b" direction="out"/>

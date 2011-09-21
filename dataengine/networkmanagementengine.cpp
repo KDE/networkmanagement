@@ -157,15 +157,15 @@ void NetworkManagementEngine::activatableAdded(RemoteActivatable* remote)
     scheduleSourcesUpdated();
 }
 
-void NetworkManagementEngine::activationStateChanged(Knm::InterfaceConnection::ActivationState s)
+void NetworkManagementEngine::activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
 {
     // FIXME: never trigged... ???
     kDebug() << "actstatechange";
-    if (s == Knm::InterfaceConnection::Activating) {
+    if (newState == Knm::InterfaceConnection::Activating) {
         kDebug() << "1ACTIVATING:";
     }
     RemoteInterfaceConnection* remote = static_cast<RemoteInterfaceConnection*>(sender());
-    if (remote && s == Knm::InterfaceConnection::Activating) {
+    if (remote && newState == Knm::InterfaceConnection::Activating) {
         kDebug() << "2ACTIVATING:" << remote->connectionName();
     }
 }
@@ -236,13 +236,13 @@ void NetworkManagementEngine::addInterfaceConnection(RemoteActivatable* remote)
     }
 
     // this one's just for debugging, seems to get never called
-    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
-            SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
+    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
+            SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
 
     // connect remoteinterface for updates
     connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)),
             SLOT(updateInterfaceConnection()));
-    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
+    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
             SLOT(updateInterfaceConnection()));
 
     updateActivatable(remote);
