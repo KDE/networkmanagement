@@ -232,7 +232,10 @@ void OpenconnectAuthWidget::connectHost()
     d->worker->wait();
     d->userQuit = false;
     deleteAllFromLayout(d->ui.loginBoxLayout);
-    int i = d->ui.cmbHosts->itemData(d->ui.cmbHosts->currentIndex()).toInt();
+    int i = d->ui.cmbHosts->currentIndex();
+    if (i == -1)
+        return;
+    i = d->ui.cmbHosts->itemData(i).toInt();
     const VPNHost &host = d->hosts.at(i);
     if (openconnect_parse_url(d->vpninfo, host.address.toAscii().data())) {
         kWarning() << "Failed to parse server URL" << host.address;
