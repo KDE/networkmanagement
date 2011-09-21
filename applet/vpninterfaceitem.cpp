@@ -110,7 +110,7 @@ void VpnInterfaceItem::setConnectionInfo()
         m_connectionNameLabel->setText(i18nc("VPN state label", "Not Connected..."));
     }
     m_disconnectButton->setVisible(showDisconnect);
-    if (m_vpnActivatables.count()) {
+    if (!m_vpnActivatables.isEmpty()) {
         //kDebug() << m_vpnActivatables.count() << "VPN connections have become available!";
         show();
     } else {
@@ -181,5 +181,21 @@ bool VpnInterfaceItem::accept(RemoteActivatable * activatable) const
         return true;
     }
     return false;
+}
+
+void VpnInterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    if (!m_vpnActivatables.isEmpty())
+        emit hoverEnter();
+
+    InterfaceItem::hoverEnterEvent(event);
+}
+
+void VpnInterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    if (!m_vpnActivatables.isEmpty())
+        emit hoverLeave();
+
+    InterfaceItem::hoverLeaveEvent(event);
 }
 // vim: sw=4 sts=4 et tw=100

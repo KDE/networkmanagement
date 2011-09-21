@@ -56,6 +56,9 @@ Q_OBJECT
         virtual RemoteInterfaceConnection* currentConnection();
         virtual void currentConnectionChanged();
 
+        virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+        virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+
     private:
         QList<RemoteActivatable*> m_vpnActivatables;
         bool accept(RemoteActivatable* activatable) const;

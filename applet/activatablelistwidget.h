@@ -64,6 +64,8 @@ private Q_SLOTS:
     void deleteItem();
     void hoverEnter(const QString& uni);
     void hoverLeave(const QString& uni);
+    void vpnHoverEnter();
+    void vpnHoverLeave();
     void connectToHiddenNetwork(const QString &ssid);
     void filter();
 

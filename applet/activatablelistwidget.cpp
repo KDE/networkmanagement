@@ -145,7 +145,7 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
         }
     }
     // Policy whether an activatable should be shown or not.
-    if (m_interfaces.count()) {
+    if (!m_interfaces.isEmpty()) {
         // If interfaces are set, activatables for other interfaces are not shown
         if (!m_interfaces.contains(activatable->deviceUni())) {
             return false;
@@ -308,9 +308,9 @@ void ActivatableListWidget::filter()
         }
     }
 
-    if (m_interfaces.count() && m_hasWireless) {
+    if (!m_interfaces.isEmpty() && m_hasWireless) {
         bool found = false;
-        foreach (QString uni, m_interfaces.keys())
+        foreach (const QString & uni, m_interfaces.keys())
         {
             if (m_interfaces.value(uni) == Solid::Control::NetworkInterfaceNm09::Wifi) {
                 createHiddenItem();
@@ -377,6 +377,32 @@ void ActivatableListWidget::hoverLeave(const QString& uni)
     }
 }
 
+void ActivatableListWidget::vpnHoverEnter()
+{
+    foreach (ActivatableItem* item, m_itemIndex) {
+        if (!item) { // the item might be gone here
+            continue;
+        }
+
+        RemoteInterfaceConnection * conn = item->interfaceConnection();
+        if (conn && conn->connectionType() == Knm::Connection::Vpn)
+            item->hoverEnter();
+    }
+}
+
+void ActivatableListWidget::vpnHoverLeave()
+{
+    foreach (ActivatableItem* item, m_itemIndex) {
+        if (!item) { // the item might be gone here
+            continue;
+        }
+
+        RemoteInterfaceConnection * conn = item->interfaceConnection();
+        if (conn && conn->connectionType() == Knm::Connection::Vpn)
+            item->hoverLeave();
+    }
+}
+
 void ActivatableListWidget::connectToHiddenNetwork(const QString &ssid)
 {
     Solid::Control::WirelessNetworkInterfaceNm09 * wiface = 0;
@@ -414,4 +440,5 @@ void ActivatableListWidget::connectToHiddenNetwork(const QString &ssid)
     int ret = KToolInvocation::kdeinitExec(KGlobal::dirs()->findResource("exe", "networkmanagement_configshell"), args);
     kDebug() << ret << args;
 }
+
 // vim: sw=4 sts=4 et tw=100

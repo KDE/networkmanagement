@@ -470,6 +470,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
             case Solid::Control::NetworkInterfaceNm09::IPConfig:
             case Solid::Control::NetworkInterfaceNm09::IPCheck:
             case Solid::Control::NetworkInterfaceNm09::Secondaries:
+            case Solid::Control::NetworkInterfaceNm09::Deactivating:
                 if (m_currentState != state) {
                     setStatusOverlay(generateProgressStatusOverlay());
                 }
@@ -530,9 +531,8 @@ void NetworkManagerApplet::toolTipAboutToShow()
                 hasActive = true;
 
                 QString deviceText = UiUtils::interfaceNameLabel(iface->uni());
-
-                QString ifaceName = iface->interfaceName();
                 lines << QString::fromLatin1("<b>%1</b>").arg(deviceText);
+
                 QString connectionName;
                 RemoteInterfaceConnection *conn = m_activatables->connectionForInterface(iface);
                 if (conn) {
