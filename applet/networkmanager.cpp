@@ -564,9 +564,9 @@ void NetworkManagerApplet::toolTipAboutToShow()
         /* VPN connections require at least one non-vpn active connection.
            If there is no non-vpn active connection then there is no active VPN connection too.*/
         if (hasActive) {
-            if (m_activeVpnConnections.count() > 0) {
+            if (!m_activeVpnConnections.isEmpty()) {
                 lines << QString();
-                lines << QString::fromLatin1("<b>%1</b>").arg(i18n("Vpn Connections"));
+                lines << QString::fromLatin1("<b>%1</b>").arg(i18n("VPN Connections"));
                 QMap<QUuid, QWeakPointer<RemoteInterfaceConnection> >::iterator i = m_activeVpnConnections.begin();
                 while (i != m_activeVpnConnections.end()) {
                     RemoteInterfaceConnection *ic = i.value().data();
