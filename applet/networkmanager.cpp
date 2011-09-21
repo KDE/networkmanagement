@@ -71,6 +71,7 @@ bool networkInterfaceSameConnectionStateLessThan(Solid::Control::NetworkInterfac
 
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
     : Plasma::PopupApplet(parent, args),
+        m_activatables(0),
         m_popup(0),
         m_panelContainment(true),
         m_totalActiveVpnConnections(0),
@@ -559,21 +560,24 @@ void NetworkManagerApplet::toolTipAboutToShow()
 
         QString subText;
         QString text;
-        if (m_activeVpnConnections.count() > 0) {
-            lines << QString();
-            lines << QString::fromLatin1("<b>%1</b>").arg(i18n("Vpn Connections"));
-            QMap<QUuid, QWeakPointer<RemoteInterfaceConnection> >::iterator i = m_activeVpnConnections.begin();
-            while (i != m_activeVpnConnections.end()) {
-                RemoteInterfaceConnection *ic = i.value().data();
-                if (!ic) {
-                    i = m_activeVpnConnections.erase(i);
-                } else {
-                    lines << QString("%1").arg(UiUtils::connectionStateToString(ic->activationState(), ic->connectionName()));
-                    i++;
+
+        /* VPN connections require at least one non-vpn active connection.
+           If there is no non-vpn active connection then there is no active VPN connection too.*/
+        if (hasActive) {
+            if (m_activeVpnConnections.count() > 0) {
+                lines << QString();
+                lines << QString::fromLatin1("<b>%1</b>").arg(i18n("Vpn Connections"));
+                QMap<QUuid, QWeakPointer<RemoteInterfaceConnection> >::iterator i = m_activeVpnConnections.begin();
+                while (i != m_activeVpnConnections.end()) {
+                    RemoteInterfaceConnection *ic = i.value().data();
+                    if (!ic) {
+                        i = m_activeVpnConnections.erase(i);
+                    } else {
+                        lines << QString("%1").arg(UiUtils::connectionStateToString(ic->activationState(), ic->connectionName()));
+                        i++;
+                    }
                 }
             }
-        }
-        if (hasActive) {
             subText = lines.join(QLatin1String("<br>"));
         } else {
             text = i18nc("tooltip, all interfaces are down", "Disconnected");
