@@ -471,6 +471,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
             case Solid::Control::NetworkInterfaceNm09::IPConfig:
             case Solid::Control::NetworkInterfaceNm09::IPCheck:
             case Solid::Control::NetworkInterfaceNm09::Secondaries:
+            case Solid::Control::NetworkInterfaceNm09::Deactivating:
                 if (m_currentState != state) {
                     setStatusOverlay(generateProgressStatusOverlay());
                 }
@@ -531,9 +532,8 @@ void NetworkManagerApplet::toolTipAboutToShow()
                 hasActive = true;
 
                 QString deviceText = UiUtils::interfaceNameLabel(iface->uni());
-
-                QString ifaceName = iface->interfaceName();
                 lines << QString::fromLatin1("<b>%1</b>").arg(deviceText);
+
                 QString connectionName;
                 RemoteInterfaceConnection *conn = m_activatables->connectionForInterface(iface);
                 if (conn) {
@@ -569,7 +569,7 @@ void NetworkManagerApplet::toolTipAboutToShow()
                                          remoteconnection->activationState() == Knm::InterfaceConnection::Activating)) {
                     if (vpns == 0) {
                         lines << QString();
-                        lines << QString::fromLatin1("<b>%1</b>").arg(i18n("Vpn Connections"));
+                        lines << QString::fromLatin1("<b>%1</b>").arg(i18n("VPN Connections"));
                         vpns++;
                     }
                     lines << QString("%1").arg(UiUtils::connectionStateToString(remoteconnection->activationState(), remoteconnection->connectionName()));

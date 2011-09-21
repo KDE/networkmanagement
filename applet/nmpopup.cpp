@@ -373,7 +373,7 @@ Solid::Control::NetworkInterfaceNm09* NMPopup::defaultInterface()
     // In fact we're returning the first available interface,
     // and if there is none available just the first one we have
     // and if we don't have one, 0. Make sure you check though.
-    if (!Solid::Control::NetworkManagerNm09::networkInterfaces().count()) {
+    if (Solid::Control::NetworkManagerNm09::networkInterfaces().isEmpty()) {
         return 0;
     }
     Solid::Control::NetworkInterfaceNm09* iface = Solid::Control::NetworkManagerNm09::networkInterfaces().first();
@@ -438,7 +438,7 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterfaceNm09* iface)
     updateHasWwan();
 }
 
-void NMPopup::showInterfaceDetails(const QString uni)
+void NMPopup::showInterfaceDetails(const QString & uni)
 {
     InterfaceItem * ifaceItem = m_interfaces.value(uni, 0);
     if (!ifaceItem) {
@@ -457,6 +457,8 @@ void NMPopup::addVpnInterface()
     connect(m_vpnItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
     connect(m_vpnItem, SIGNAL(clicked(Solid::Control::NetworkInterfaceNm09*)),
             m_connectionList,  SLOT(addInterface(Solid::Control::NetworkInterfaceNm09*)));
+    connect(m_vpnItem, SIGNAL(hoverEnter()), m_connectionList, SLOT(vpnHoverEnter()));
+    connect(m_vpnItem, SIGNAL(hoverLeave()), m_connectionList, SLOT(vpnHoverLeave()));
 
     connect(m_vpnItem, SIGNAL(clicked()), m_connectionList, SLOT(toggleVpn()));
 

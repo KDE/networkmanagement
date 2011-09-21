@@ -100,8 +100,8 @@ Q_SIGNALS:
     void stateChanged();
     void disconnectInterfaceRequested(const QString& deviceUni);
     void clicked(Solid::Control::NetworkInterfaceNm09*);
-    void hoverEnter(const QString& uni);
-    void hoverLeave(const QString& uni);
+    void hoverEnter(const QString& uni = QString());
+    void hoverLeave(const QString& uni = QString());
 
 protected:
     /**
@@ -144,8 +144,8 @@ protected:
     QSize m_pixmapSize;
     bool m_starting;
 
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 protected Q_SLOTS:
     virtual void currentConnectionChanged();
