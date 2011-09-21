@@ -727,13 +727,18 @@ void NMPopup::toggleInterfaceTab()
         // Enable / disable updating of the details widget
         m_interfaceDetailsWidget->setUpdateEnabled(true);
 
-        if (item && item->interface()) {
-            // Temporaly disables hightlight for all connections of this interface.
-            QMetaObject::invokeMethod(item, "hoverLeave", Qt::QueuedConnection,
-                                      Q_ARG(QString, item->interface()->uni()));
+        if (item) {
+            if (item->interface()) {
+                // Temporaly disables hightlight for all connections of this interface.
+                QMetaObject::invokeMethod(item, "hoverLeave", Qt::QueuedConnection,
+                                          Q_ARG(QString, item->interface()->uni()));
 
-            m_leftLabel->setText(QString("<h3>%1</h3>").arg(
-                                UiUtils::interfaceNameLabel(item->interface()->uni())));
+                m_leftLabel->setText(QString("<h3>%1</h3>").arg(
+                                    UiUtils::interfaceNameLabel(item->interface()->uni())));
+            } else {
+                // Temporaly disables hightlight for all VPN connections.
+                QMetaObject::invokeMethod(item, "hoverLeave", Qt::QueuedConnection);
+            }
         }
         showMore(true);
 
