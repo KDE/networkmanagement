@@ -238,11 +238,9 @@ void NMDBusActiveConnectionMonitor::networkingStatusChanged(Solid::Networking::S
 {
     if (status == Solid::Networking::Unknown) {
         Q_D(NMDBusActiveConnectionMonitor);
-        if (status == Solid::Networking::Unknown) {
-            // the manager probably exited, clean our state
-            qDeleteAll(d->activeConnections);
-            d->activeConnections.clear();
-        }
+        // the manager probably exited, clean our state
+        qDeleteAll(d->activeConnections);
+        d->activeConnections.clear();
     }
 }
 
