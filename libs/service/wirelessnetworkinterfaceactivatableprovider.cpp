@@ -198,7 +198,7 @@ void WirelessNetworkInterfaceActivatableProvider::handleRemove(Knm::Connection *
     // still exist
     Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(removedConnection->setting(Knm::Setting::Wireless));
     // d->interface may be null if NM has just stopped and this provider has not been unregistered yet.
-    // d->environment is a child of d->interface, so it is a valid pointer in that situation.
+    // d->environment is a child of d->interface, so it is an invalid pointer in that situation.
     if (wirelessSetting && d->interface) {
         if (d->environment->networks().contains(wirelessSetting->ssid())) {
             networkAppeared(wirelessSetting->ssid());
