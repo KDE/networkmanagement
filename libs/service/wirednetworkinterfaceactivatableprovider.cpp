@@ -85,7 +85,12 @@ void WiredNetworkInterfaceActivatableProvider::handleCarrierChange(bool carrier)
 bool WiredNetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() const
 {
     Q_D(const WiredNetworkInterfaceActivatableProvider);
-    return d->activatables.isEmpty() && d->wiredInterface()->carrier();
+    // wiredInterface() can be null if NetworkManager has just stopped and this provider
+    // has not been unregistered yet.
+    if (d->wiredInterface()) {
+        return d->activatables.isEmpty() && d->wiredInterface()->carrier();
+    }
+    return false;
 }
 
 // vim: sw=4 sts=4 et tw=100
