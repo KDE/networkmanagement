@@ -95,7 +95,7 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
     //m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", ssid));
-    m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
+    m_layout->addItem(m_connectButton, 0, 0, 1, 1, Qt::AlignCenter);
 
     if (m_remote->strength()>=0)
     {
