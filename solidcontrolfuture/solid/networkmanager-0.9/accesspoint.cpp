@@ -59,7 +59,6 @@ NMAccessPoint::NMAccessPoint( const QString& path, QObject * parent ) : Solid::C
         d->frequency = d->iface.frequency();
         d->hardwareAddress = d->iface.hwAddress();
         d->maxBitRate = d->iface.maxBitrate();
-        // make this a static on WirelessNetworkInterface
         d->mode = NMWirelessNetworkInterface::convertOperationMode(d->iface.mode());
         connect( &d->iface, SIGNAL(PropertiesChanged(const QVariantMap &)),
                 this, SLOT(propertiesChanged(const QVariantMap &)));
@@ -191,7 +190,7 @@ void NMAccessPoint::propertiesChanged(const QVariantMap &properties)
         emit signalStrengthChanged(d->signalStrength);
         propKeys.removeOne(strengthKey);
     }
-    if (propKeys.count()) {
+    if (!propKeys.isEmpty()) {
         kDebug(1441) << "Unhandled properties: " << propKeys;
     }
 }
@@ -204,15 +203,6 @@ Solid::Control::AccessPointNm09::Capabilities NMAccessPoint::convertCapabilities
         return 0;
     }
 }
-// Copied from wireless.h
-// /* Modes of operation */
-#define IW_MODE_AUTO    0   /* Let the driver decides */
-#define IW_MODE_ADHOC   1   /* Single cell network */
-#define IW_MODE_INFRA   2   /* Multi cell network, roaming, ... */
-#define IW_MODE_MASTER  3   /* Synchronization master or Access Point */
-#define IW_MODE_REPEAT  4   /* Wireless Repeater (forwarder) */
-#define IW_MODE_SECOND  5   /* Secondary master/repeater (backup) */
-#define IW_MODE_MONITOR 6   /* Passive monitor (listen only) */
 
 Solid::Control::AccessPointNm09::WpaFlags NMAccessPoint::convertWpaFlags(uint theirFlags)
 {

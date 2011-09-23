@@ -66,7 +66,7 @@ void PppoeWidget::writeConfig()
     d->setting->setService(d->ui.service->text());
     d->setting->setUsername(d->ui.username->text());
     d->setting->setPassword(d->ui.password->text());
-    if (d->connection->permissions().count() > 0) {
+    if (!d->connection->permissions().isEmpty()) {
         d->setting->setPasswordflags(Knm::Setting::AgentOwned);
     } else {
         d->setting->setPasswordflags(Knm::Setting::None);

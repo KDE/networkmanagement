@@ -160,7 +160,7 @@ Solid::Control::IPv4ConfigNm09 NMNetworkInterface::ipV4Config() const
             //convert ipaddresses into object
             UIntListList addresses = iface.addresses();
             QList<Solid::Control::IPv4AddressNm09> addressObjects;
-            foreach (UIntList addressList, addresses) {
+            foreach (const UIntList & addressList, addresses) {
                 if ( addressList.count() == 3 ) {
                     Solid::Control::IPv4AddressNm09 addr(htonl(addressList[0]), addressList[1], htonl(addressList[2]));
                     addressObjects.append(addr);
@@ -169,7 +169,7 @@ Solid::Control::IPv4ConfigNm09 NMNetworkInterface::ipV4Config() const
             //convert routes into objects
             UIntListList routes = iface.routes();
             QList<Solid::Control::IPv4RouteNm09> routeObjects;
-            foreach (UIntList routeList, routes) {
+            foreach (const UIntList & routeList, routes) {
                 if ( routeList.count() == 4 ) {
                     Solid::Control::IPv4RouteNm09 addr(routeList[0], routeList[1], routeList[2], routeList[3]);
                     routeObjects.append(addr);

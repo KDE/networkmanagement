@@ -89,7 +89,7 @@ void GsmWidget::writeConfig()
     switch (d->ui.pinStorage->currentIndex())
     {
         case GsmWidgetPrivate::Store:
-            if (d->connection->permissions().count() > 0)
+            if (!d->connection->permissions().isEmpty())
                 d->setting->setPinflags(Knm::Setting::AgentOwned);
             else
                 d->setting->setPinflags(Knm::Setting::None);
