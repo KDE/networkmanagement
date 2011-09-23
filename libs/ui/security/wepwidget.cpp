@@ -183,7 +183,7 @@ void WepWidget::writeConfig()
     d->setting->setWepkey1(d->keys[1]);
     d->setting->setWepkey2(d->keys[2]);
     d->setting->setWepkey3(d->keys[3]);
-    if (d->connection->permissions().count() > 0) {
+    if (!d->connection->permissions().isEmpty()) {
         d->setting->setWepkeyflags(Knm::Setting::AgentOwned);
     } else {
         d->setting->setWepkeyflags(Knm::Setting::None);

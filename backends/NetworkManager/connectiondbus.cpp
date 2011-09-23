@@ -332,12 +332,12 @@ void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
     //kDebug() << "Secrets:" << secrets;
     //kDebug() << "Original settings:" << origs;
 
-    foreach(QString secretName, secrets.keys())
+    foreach(const QString & secretName, secrets.keys())
     {
         //kDebug() << "Secret setting name " << secretName;
         QVariantMap secret = secrets.value(secretName);
 
-        if (secret.count() == 0)
+        if (secret.isEmpty())
         {
             kDebug() << "Empty secret setting found '" << secretName << "', skipping...";
             continue;

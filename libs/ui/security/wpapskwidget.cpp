@@ -87,7 +87,7 @@ void WpaPskWidget::writeConfig()
 {
     Q_D(WpaPskWidget);
     d->setting->setPsk(d->ui.psk->text());
-    if (d->connection->permissions().count() > 0) {
+    if (!d->connection->permissions().isEmpty()) {
         d->setting->setPskflags(Knm::Setting::AgentOwned);
     } else {
         d->setting->setPskflags(Knm::Setting::None);

@@ -584,7 +584,7 @@ void NotificationManager::networkDisappeared(const QString & ssid)
 void NotificationManager::notifyNewNetworks()
 {
     Q_D(NotificationManager);
-    if (d->newWirelessNetworks.count() == 0) {
+    if (d->newWirelessNetworks.isEmpty()) {
         return;
     } else if (d->newWirelessNetworks.count() == 1) {
         KNotification::event(Event::NetworkAppeared, i18nc("@info:status Notification text when a single wireless network was found","Wireless network %1 found", d->newWirelessNetworks[0]), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));
@@ -602,7 +602,7 @@ void NotificationManager::notifyNewNetworks()
 void NotificationManager::notifyDisappearedNetworks()
 {
     Q_D(NotificationManager);
-    if (d->disappearedWirelessNetworks.count() == 0) {
+    if (d->disappearedWirelessNetworks.isEmpty()) {
         return;
     } else if (d->disappearedWirelessNetworks.count() == 1) {
         KNotification::event(Event::NetworkDisappeared, i18nc("@info:status Notification text when a single wireless network disappeared","Wireless network %1 disappeared", d->disappearedWirelessNetworks[0]), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, KComponentData("knetworkmanager", "knetworkmanager", KComponentData::SkipMainComponentRegistration));

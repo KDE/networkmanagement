@@ -133,7 +133,6 @@ void OpenVpnSettingWidget::openVpnFinished(int exitCode, QProcess::ExitStatus ex
     if (!exitCode && exitStatus == QProcess::NormalExit) {
         d->ui.cboCipher->addItem(i18nc("@item::inlist Default openvpn cipher item", "Default"));
         QList<QByteArray> rawOutputLines = d->openVpnCiphers.split('\n');
-        QStringList ciphers;
         bool foundFirstSpace = false;;
         foreach (const QByteArray &cipher, rawOutputLines) {
             if (cipher.length() == 0) {

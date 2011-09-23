@@ -19,7 +19,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
 {
 
   kDebug() << "IPv4 map: ";
-  foreach(QString key, map.keys())
+  foreach(const QString & key, map.keys())
       kDebug() << key << " : " << map.value(key);
 
   Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting*>(m_setting);
@@ -62,7 +62,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
           temp = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES)).value<QList<QList<uint> > >();
       }
 
-      foreach(const QList<uint> uintList, temp) {
+      foreach(const QList<uint> & uintList, temp) {
           if (uintList.count() != 3)
           {
             kWarning() << "Invalid address format detected. UInt count is " << uintList.count();
@@ -95,7 +95,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
           temp = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)).value<QList<QList<uint> > >();
       }
 
-      foreach(const QList<uint> uintList, temp) {
+      foreach(const QList<uint> & uintList, temp) {
           if (uintList.count() != 4)
           {
               kWarning() << "Invalid route format detected. UInt count is " << uintList.count();
