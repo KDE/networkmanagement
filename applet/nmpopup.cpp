@@ -737,7 +737,7 @@ void NMPopup::toggleInterfaceTab()
                                     UiUtils::interfaceNameLabel(item->interface()->uni())));
             } else {
                 // Temporaly disables hightlight for all VPN connections.
-                //QMetaObject::invokeMethod(item, "hoverLeave", Qt::QueuedConnection);
+                QMetaObject::invokeMethod(item, "hoverLeave", Qt::QueuedConnection);
             }
         }
         showMore(true);
