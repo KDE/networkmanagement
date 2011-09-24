@@ -119,6 +119,7 @@ private Q_SLOTS:
     void activatablesDisappeared();
     // Request KCM module to persist changes
     void saveConfiguration();
+    void updateActiveInterface(bool);
 
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterfaceNm09::Type type);

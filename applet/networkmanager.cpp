@@ -252,6 +252,9 @@ void NetworkManagerApplet::init()
 
     m_activatables->init();
     setupInterfaceSignals();
+    foreach (RemoteActivatable * activatable, m_activatables->activatables()) {
+        activatableAdded(activatable);
+    }
     interfaceConnectionStateChanged();
 
     // Just to make sure the kded module is loaded.
@@ -446,13 +449,7 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
 
 Solid::Control::NetworkInterfaceNm09* NetworkManagerApplet::activeInterface()
 {
-    if (!m_interfaces.isEmpty()) {
-        qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
-        return m_interfaces.first();
-    } else {
-        return 0;
-    }
-
+    return m_activeInterface;
 }
 
 void NetworkManagerApplet::interfaceConnectionStateChanged()
@@ -841,11 +838,14 @@ void NetworkManagerApplet::clearActivatedOverlay()
 
 void NetworkManagerApplet::activatableAdded(RemoteActivatable *activatable)
 {
+    RemoteInterfaceConnection *ic = qobject_cast<RemoteInterfaceConnection*>(activatable);
     if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
-        RemoteInterfaceConnection *ic = static_cast<RemoteInterfaceConnection*>(activatable);
         connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
                 this, SLOT(vpnActivationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
         QMetaObject::invokeMethod(ic, "activationStateChanged", Q_ARG(Knm::InterfaceConnection::ActivationState, ic->oldActivationState()), Q_ARG(Knm::InterfaceConnection::ActivationState, ic->activationState()));
+    } else if (ic) {
+        connect(ic, SIGNAL(hasDefaultRouteChanged(bool)), SLOT(updateActiveInterface(bool)));
+        QMetaObject::invokeMethod(ic, "hasDefaultRouteChanged", Q_ARG(bool, ic->hasDefaultRoute()));
     }
 }
 
@@ -865,12 +865,23 @@ void NetworkManagerApplet::vpnActivationStateChanged(Knm::InterfaceConnection::A
             break;
         case Knm::InterfaceConnection::Unknown:
             m_activeVpnConnections.remove(id);
-            if (oldState == Knm::InterfaceConnection::Activated)
+            if (oldState == Knm::InterfaceConnection::Activated && m_totalActiveVpnConnections > 0)
                 m_totalActiveVpnConnections--;
             break;
     }
     kDebug() << newState << m_totalActiveVpnConnections;
     update();
+}
+
+void NetworkManagerApplet::updateActiveInterface(bool hasDefaultRoute)
+{
+    RemoteInterfaceConnection *ic = qobject_cast<RemoteInterfaceConnection*>(sender());
+    if (hasDefaultRoute) {
+        m_activeInterface = Solid::Control::NetworkManager::findNetworkInterface(ic->deviceUni());
+        // TODO: add support for VpnRemoteInterfaceConnection's, which have "any" as ic->deviceUni().
+    } else if (m_activeInterface && m_activeInterface->uni() == ic->deviceUni()) {
+        m_activeInterface = 0;
+    }
 }
 
 void NetworkManagerApplet::activatableRemoved(RemoteActivatable *activatable)
