@@ -46,6 +46,8 @@ public:
      */
     RemoteInterfaceConnection* connectionForInterface(Solid::Control::NetworkInterfaceNm09 *interface);
 
+    static bool isConnectionForInterface(RemoteActivatable *activatable, Solid::Control::NetworkInterfaceNm09 *interface);
+
 Q_SIGNALS:
     void activatableAdded(RemoteActivatable*);
     void activatableRemoved(RemoteActivatable*);

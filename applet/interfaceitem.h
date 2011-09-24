@@ -76,7 +76,7 @@ public:
 
 public Q_SLOTS:
     void activeConnectionsChanged();
-    virtual void connectionStateChanged(Solid::Control::NetworkInterfaceNm09::ConnectionState);
+    virtual void connectionStateChanged(Solid::Control::NetworkInterfaceNm09::ConnectionState, bool updateConnection = true);
     virtual void setEnabled(bool enable);
     // also updates the connection info
     virtual void setActive(bool active);
@@ -153,6 +153,8 @@ protected Q_SLOTS:
 private Q_SLOTS:
     void emitDisconnectInterfaceRequest();
     void serviceDisappeared();
+    void activatableAdded(RemoteActivatable*);
     void activatableRemoved(RemoteActivatable*);
+    void updateCurrentConnection(RemoteInterfaceConnection *);
 };
 #endif // APPLET_INTERFACEWIDGET_H
