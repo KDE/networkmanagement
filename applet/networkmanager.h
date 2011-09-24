@@ -120,6 +120,7 @@ private Q_SLOTS:
     // Request KCM module to persist changes
     void saveConfiguration();
     void updateActiveInterface(bool);
+    void _k_destroyed(QObject *);
 
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterfaceNm09::Type type);

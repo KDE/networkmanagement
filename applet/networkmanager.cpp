@@ -877,11 +877,18 @@ void NetworkManagerApplet::updateActiveInterface(bool hasDefaultRoute)
 {
     RemoteInterfaceConnection *ic = qobject_cast<RemoteInterfaceConnection*>(sender());
     if (hasDefaultRoute) {
-        m_activeInterface = Solid::Control::NetworkManager::findNetworkInterface(ic->deviceUni());
+        m_activeInterface = Solid::Control::NetworkManagerNm09::findNetworkInterface(ic->deviceUni());
+        connect(m_activeInterface, SIGNAL(destroyed(QObject *)), SLOT(_k_destroyed(QObject *)));
         // TODO: add support for VpnRemoteInterfaceConnection's, which have "any" as ic->deviceUni().
     } else if (m_activeInterface && m_activeInterface->uni() == ic->deviceUni()) {
         m_activeInterface = 0;
     }
+}
+
+void NetworkManagerApplet::_k_destroyed(QObject *object)
+{
+    Q_UNUSED(object);
+    m_activeInterface = 0;
 }
 
 void NetworkManagerApplet::activatableRemoved(RemoteActivatable *activatable)
