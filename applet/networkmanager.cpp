@@ -98,6 +98,10 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_meterFgSvg->setElementPrefix("bar-active");
     setStatus(Plasma::ActiveStatus);
     m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
+    if (!m_interfaces.isEmpty()) {
+        qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
+        m_activeInterface = m_interfaces.first();
+    }
     m_activatables = new RemoteActivatableList(this);
     connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*)), this, SLOT(activatableAdded(RemoteActivatable*)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), this, SLOT(activatableRemoved(RemoteActivatable*)));
