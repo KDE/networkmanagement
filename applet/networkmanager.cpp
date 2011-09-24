@@ -327,7 +327,7 @@ void NetworkManagerApplet::constraintsEvent(Plasma::Constraints constraints)
 void NetworkManagerApplet::updatePixmap()
 {
     int s = UiUtils::iconSize(contentsRect().size());
-    m_pixmap = KIcon(UiUtils::iconName(activeInterface())).pixmap(s, s);
+    m_pixmap = KIcon(UiUtils::iconName(m_activeInterface)).pixmap(s, s);
     update();
 }
 
@@ -342,10 +342,9 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
         return;
     }
 
-    Solid::Control::NetworkInterfaceNm09* interface = activeInterface();
     bool useSvg = false;
-    if (interface) {
-        useSvg = interface->type() == Solid::Control::NetworkInterfaceNm09::Wifi || interface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet;
+    if (m_activeInterface) {
+        useSvg = m_activeInterface->type() == Solid::Control::NetworkInterfaceNm09::Wifi || m_activeInterface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet;
     }
 
     /* I am using setPopupIcon at the end of this method to make the usual system tray icon's hover and click
@@ -365,7 +364,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     painter.begin(&newIcon);
 
     if (useSvg) {
-        QString el = svgElement(interface);
+        QString el = svgElement(m_activeInterface);
         m_svg->paint(&painter, rect, el);
     } else {
         painter.drawPixmap(QPoint(0,0), m_pixmap);
@@ -380,14 +379,14 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 inline void NetworkManagerApplet::paintNeedAuthOverlay(QPainter *p, QRect &rect)
 {
     // Needs authentication, show this in the panel
-    if (!activeInterface()) {
+    if (!m_activeInterface) {
         kDebug() << "No active interface";
         return;
     }
     /*
-    kDebug() << "Painting overlay ...>" << activeInterface()->connectionState();
+    kDebug() << "Painting overlay ...>" << m_activeInterface->connectionState();
     */
-    if (activeInterface() && activeInterface()->connectionState() == Solid::Control::NetworkInterfaceNm09::NeedAuth) {
+    if (m_activeInterface && m_activeInterface->connectionState() == Solid::Control::NetworkInterfaceNm09::NeedAuth) {
         //kDebug() << "Needing auth ...>";
         int iconSize = (int)2*(rect.width()/3);
 
@@ -451,17 +450,12 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
     // kill any animations involving this interface
 }
 
-Solid::Control::NetworkInterfaceNm09* NetworkManagerApplet::activeInterface()
-{
-    return m_activeInterface;
-}
-
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
     //kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
-    if (activeInterface()) {
+    if (m_activeInterface) {
         //kDebug() << "busy ... ?";
-        Solid::Control::NetworkInterfaceNm09::ConnectionState state = static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(activeInterface()->connectionState());
+        Solid::Control::NetworkInterfaceNm09::ConnectionState state = static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_activeInterface->connectionState());
         switch (state) {
             case Solid::Control::NetworkInterfaceNm09::Preparing:
             case Solid::Control::NetworkInterfaceNm09::Configuring:
@@ -817,7 +811,7 @@ QPixmap NetworkManagerApplet::generateProgressStatusOverlay()
 
     QPixmap pix(width, height);
     pix.fill(Qt::transparent);
-    qreal state = UiUtils::interfaceState(activeInterface());
+    qreal state = UiUtils::interfaceState(m_activeInterface);
 
     QPainter p(&pix);
     p.setRenderHint(QPainter::Antialiasing);
@@ -834,7 +828,7 @@ QPixmap NetworkManagerApplet::generateProgressStatusOverlay()
 
 void NetworkManagerApplet::clearActivatedOverlay()
 {
-    if (activeInterface() && static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(activeInterface()->connectionState()) == Solid::Control::NetworkInterfaceNm09::Activated) {
+    if (m_activeInterface && static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_activeInterface->connectionState()) == Solid::Control::NetworkInterfaceNm09::Activated) {
         // Clear the overlay, but only if we are still activated
         setStatusOverlay(QPixmap());
     }

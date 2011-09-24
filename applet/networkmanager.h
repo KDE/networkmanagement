@@ -124,7 +124,6 @@ private Q_SLOTS:
 
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterfaceNm09::Type type);
-    Solid::Control::NetworkInterfaceNm09* activeInterface();
     void setupInterfaceSignals();
     QString svgElement(Solid::Control::NetworkInterfaceNm09 *iface);
 
