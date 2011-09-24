@@ -237,16 +237,6 @@ void NMPopup::init()
     m_showMoreChecked = false;
     m_oldShowMoreChecked = true;
     wicCount = 0; // number of wireless networks which user explicitly configured using the kcm module.
-    foreach (RemoteActivatable *ra, m_activatables->activatables()) {
-        RemoteWirelessInterfaceConnection * wic = qobject_cast<RemoteWirelessInterfaceConnection*>(ra);
-        if (wic) {
-            if (wic->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc &&
-                wic->activationState() == Knm::InterfaceConnection::Unknown) {
-                continue;
-            }
-            uncheckShowMore(ra);
-        }
-    }
 
     KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("General"));

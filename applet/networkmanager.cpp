@@ -254,12 +254,25 @@ void NetworkManagerApplet::init()
     QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
 
-    m_activatables->init();
     setupInterfaceSignals();
-    foreach (RemoteActivatable * activatable, m_activatables->activatables()) {
-        activatableAdded(activatable);
+
+    if (!m_popup) {
+        m_popup = new NMPopup(m_activatables, this);
+        connect(m_popup, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
     }
+
+    // m_activatables->init() must be called after SLOT(activatableAdded(RemoteActivatable*)) has been connected and
+    // NMPopup has been allocated.
+    m_activatables->init();
     interfaceConnectionStateChanged();
+
+    // to force InterfaceItems to update their hasDefaultRoute state.
+    if (m_activeInterface) {
+        QMetaObject::invokeMethod(m_activeInterface, "connectionStateChanged",
+                                  Q_ARG(int, m_activeInterface->connectionState()),
+                                  Q_ARG(int, Solid::Control::NetworkInterfaceNm09::UnknownState),
+                                  Q_ARG(int, Solid::Control::NetworkInterfaceNm09::NoReason));
+    }
 
     // Just to make sure the kded module is loaded.
     QDBusInterface kded(QLatin1String("org.kde.kded"), QLatin1String("/kded"),
