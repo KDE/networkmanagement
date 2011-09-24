@@ -344,14 +344,9 @@ void InterfaceItem::currentConnectionChanged()
 
 void InterfaceItem::handleHasDefaultRouteChanged(bool changed)
 {
-    if (m_hasDefaultRoute == changed) {
-        //return;
-    }
     m_hasDefaultRoute = changed;
     //kDebug() << "Default Route changed!!" << changed;
-    if (m_icon) {
-        m_icon->nativeWidget()->setPixmap(interfacePixmap());
-    }
+    m_icon->nativeWidget()->setPixmap(interfacePixmap());
     update();
 }
 
