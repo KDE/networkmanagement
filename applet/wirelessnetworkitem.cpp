@@ -55,7 +55,7 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
     connect(m_wirelessStatus, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
     connect(m_remote, SIGNAL(changed()), SLOT(update()));
     m_state = Knm::InterfaceConnection::Unknown;
-    RemoteWirelessInterfaceConnection* remoteconnection = static_cast<RemoteWirelessInterfaceConnection*>(m_activatable);
+    RemoteWirelessInterfaceConnection* remoteconnection = qobject_cast<RemoteWirelessInterfaceConnection*>(m_activatable);
     if (remoteconnection) {
         connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
                 this, SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
