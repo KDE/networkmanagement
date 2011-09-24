@@ -226,6 +226,8 @@ void Solid::Control::NetworkManagerNm09Private::_k_networkInterfaceAdded(const Q
 
 void Solid::Control::NetworkManagerNm09Private::_k_networkInterfaceRemoved(const QString &uni)
 {
+    emit networkInterfaceRemoved(uni);
+
     QPair<NetworkInterfaceNm09 *, QObject *> pair = m_networkInterfaceMap.take(uni);
 
     if (pair.first!= 0)
@@ -233,8 +235,6 @@ void Solid::Control::NetworkManagerNm09Private::_k_networkInterfaceRemoved(const
         delete pair.first;
         delete pair.second;
     }
-
-    emit networkInterfaceRemoved(uni);
 }
 
 void Solid::Control::NetworkManagerNm09Private::_k_destroyed(QObject *object)
