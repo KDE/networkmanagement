@@ -157,6 +157,10 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
             return false;
         }
     }
+    if (activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection &&
+        !Solid::Control::NetworkManagerNm09::isWirelessEnabled()) {
+        return false;
+    }
     return true;
 }
 
@@ -310,19 +314,20 @@ void ActivatableListWidget::filter()
 
     if (!m_interfaces.isEmpty() && m_hasWireless) {
         bool found = false;
-        foreach (const QString & uni, m_interfaces.keys())
-        {
-            if (m_interfaces.value(uni) == Solid::Control::NetworkInterfaceNm09::Wifi) {
-                createHiddenItem();
-                found = true;
-                break;
+        if (Solid::Control::NetworkManagerNm09::isWirelessEnabled()) {
+            foreach (const QString & uni, m_interfaces.keys()) {
+                if (m_interfaces.value(uni) == Solid::Control::NetworkInterfaceNm09::Wifi) {
+                    createHiddenItem();
+                    found = true;
+                    break;
+                }
             }
         }
         if (!found && m_hiddenItem) {
             m_hiddenItem->disappear();
             m_hiddenItem = 0;
         }
-    } else if (m_hasWireless && !m_vpn) {
+    } else if (m_hasWireless && Solid::Control::NetworkManagerNm09::isWirelessEnabled() && !m_vpn) {
         createHiddenItem();
     } else if (m_hiddenItem) {
         m_hiddenItem->disappear();
