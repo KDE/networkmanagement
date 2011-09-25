@@ -120,6 +120,7 @@ private Q_SLOTS:
     // Request KCM module to persist changes
     void saveConfiguration();
     void updateActiveInterface(bool);
+    void resetActiveSystrayInterface();
     void _k_destroyed(QObject *);
 
 private:
@@ -144,15 +145,23 @@ private:
     QMap<QUuid, QWeakPointer<RemoteInterfaceConnection> > m_activeVpnConnections;
     int m_totalActiveVpnConnections;
 
-    // For tracking which status we should show
+    // For tracking which status we should show.
+    // This one is always the interface which has the default route
+    // or the first interface selected after sorting the current
+    // interface list using networkInterfaceLessThan().
     Solid::Control::NetworkInterfaceNm09* m_activeInterface;
+    // Interface used to update system tray icon. If we have only one interface
+    // then this one is always equals to m_activeInterfaceState.
+    Solid::Control::NetworkInterfaceNm09* m_activeSystrayInterface;
     Solid::Control::AccessPointNm09* m_accessPoint;
 
     // Timeline controlling a connection progress overlay on the main icon
     QTimeLine m_overlayTimeline;
     QPixmap m_previousStatusOverlay;
     QPixmap m_statusOverlay;
-    Solid::Control::NetworkInterfaceNm09::ConnectionState m_currentState;
+
+    Solid::Control::NetworkInterfaceNm09::ConnectionState m_activeInterfaceState;
+    Solid::Control::NetworkInterfaceNm09::ConnectionState m_activeSystrayInterfaceState;
 
     ///embedded KCM modules in the configuration dialog
     KCModuleProxy* m_kcmNM;
