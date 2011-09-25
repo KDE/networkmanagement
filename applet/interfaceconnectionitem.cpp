@@ -40,11 +40,12 @@ void InterfaceConnectionItem::setupItem()
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
+    m_connectButton->setMaximumWidth(maxConnectionNameWidth);
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
     m_connectButton->setZValue(100); // FIXME: doesn't work
 
-    m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
+    m_layout->addItem(m_connectButton, 0, 0, 1, 1, Qt::AlignVCenter | Qt::AlignLeft);
 
     if (interfaceConnection()) {
         m_connectButton->setIcon(interfaceConnection()->iconName());

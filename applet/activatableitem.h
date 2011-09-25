@@ -28,6 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 class RemoteActivatable;
 extern int rowHeight;
+extern int maxConnectionNameWidth;
 
 class ActivatableItem : public Plasma::IconWidget
 {

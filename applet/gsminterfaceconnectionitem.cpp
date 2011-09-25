@@ -72,6 +72,7 @@ void GsmInterfaceConnectionItem::setupItem()
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
+    m_connectButton->setMaximumWidth(maxConnectionNameWidth);
     m_connectButton->setAcceptsHoverEvents(false);
     RemoteGsmInterfaceConnection * remote = qobject_cast<RemoteGsmInterfaceConnection*>(m_activatable);
     if (remote) {
@@ -86,7 +87,7 @@ void GsmInterfaceConnectionItem::setupItem()
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
     //m_connectButton->setToolTip(i18nc("icon to connect to mobile broadband network", "Connect to mobile broadband network %1", ssid));
-    m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
+    m_layout->addItem(m_connectButton, 0, 0, 1, 1, Qt::AlignVCenter | Qt::AlignLeft);
 
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);
@@ -96,7 +97,7 @@ void GsmInterfaceConnectionItem::setupItem()
     m_strengthMeter->setPreferredSize(QSizeF(60, 12));
     m_strengthMeter->setMaximumHeight(12);
     m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
+    m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignVCenter | Qt::AlignRight);
 
     connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
 

@@ -83,6 +83,7 @@ void WirelessNetworkItem::setupItem()
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
+    m_connectButton->setMaximumWidth(maxConnectionNameWidth);
     m_connectButton->setAcceptsHoverEvents(false);
     m_connectButton->setIcon("network-wireless"); // Known connection, we probably have credentials
     if (interfaceConnection()) {
@@ -95,7 +96,7 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
     //m_connectButton->setToolTip(i18nc("icon to connect to wireless network", "Connect to wireless network %1", ssid));
-    m_layout->addItem(m_connectButton, 0, 0, 1, 1, Qt::AlignCenter);
+    m_layout->addItem(m_connectButton, 0, 0, 1, 1, Qt::AlignVCenter | Qt::AlignLeft);
 
     if (m_remote->strength()>=0)
     {
@@ -108,7 +109,7 @@ void WirelessNetworkItem::setupItem()
         m_strengthMeter->setPreferredSize(QSizeF(60, 12));
         m_strengthMeter->setMaximumHeight(12);
         m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignCenter);
+        m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignVCenter | Qt::AlignRight);
     }
     else
     {
@@ -116,13 +117,13 @@ void WirelessNetworkItem::setupItem()
         widget->setPreferredSize(QSizeF(60, 12));
         widget->setMaximumHeight(12);
         widget->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-        m_layout->addItem(widget, 0, 1, 1, 1, Qt::AlignCenter);
+        m_layout->addItem(widget, 0, 1, 1, 1, Qt::AlignVCenter | Qt::AlignRight);
     }
 
     m_securityIcon = new Plasma::Label(this);
     m_securityIcon->nativeWidget()->setPixmap(KIcon(m_wirelessStatus->securityIcon()).pixmap(22,22));
     m_securityIcon->setToolTip(m_wirelessStatus->securityTooltip());
-    m_layout->addItem(m_securityIcon, 0, 2, 1, 1, Qt::AlignLeft);
+    m_layout->addItem(m_securityIcon, 0, 2, 1, 1, Qt::AlignVCenter | Qt::AlignRight);
 
     connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
