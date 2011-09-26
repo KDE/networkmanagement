@@ -448,9 +448,13 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
     // update the tray icon
     m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
 
+    if (!m_activeInterface) {
+        m_activeInterface = m_interfaces.first();
+        m_activeSystrayInterface = m_activeInterface;
+    }
+
     setupInterfaceSignals();
     interfaceConnectionStateChanged();
-    updatePixmap();
 }
 
 void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
