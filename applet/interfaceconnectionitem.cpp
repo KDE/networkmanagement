@@ -37,15 +37,19 @@ InterfaceConnectionItem::InterfaceConnectionItem(RemoteInterfaceConnection* conn
 void InterfaceConnectionItem::setupItem()
 {
     m_layout = new QGraphicsGridLayout(this);
+    m_layout->setColumnPreferredWidth(0, 150);
+    m_layout->setColumnFixedWidth(1, 60);
+    m_layout->setColumnFixedWidth(2, rowHeight);
+    m_layout->setColumnSpacing(1, spacing);
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setMaximumWidth(maxConnectionNameWidth);
+    //m_connectButton->setMaximumWidth(maxConnectionNameWidth);
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
-    m_connectButton->setZValue(100); // FIXME: doesn't work
+    //m_connectButton->setZValue(100); // FIXME: doesn't work
 
-    m_layout->addItem(m_connectButton, 0, 0, 1, 1, Qt::AlignVCenter | Qt::AlignLeft);
+    m_layout->addItem(m_connectButton, 0, 0, 3, 3, Qt::AlignVCenter | Qt::AlignLeft);
 
     if (interfaceConnection()) {
         m_connectButton->setIcon(interfaceConnection()->iconName());

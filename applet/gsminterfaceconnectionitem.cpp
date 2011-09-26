@@ -66,8 +66,8 @@ void GsmInterfaceConnectionItem::setupItem()
     m_layout = new QGraphicsGridLayout(this);
     // First, third and fourth colunm are fixed width for the icons
     m_layout->setColumnPreferredWidth(0, 150);
-    m_layout->setColumnFixedWidth(1, 60);
-    m_layout->setColumnFixedWidth(2, rowHeight);
+    m_layout->setColumnFixedWidth(2, 60);
+    m_layout->setColumnFixedWidth(3, rowHeight);
     m_layout->setColumnSpacing(1, spacing);
 
     // icon on the left
@@ -87,7 +87,12 @@ void GsmInterfaceConnectionItem::setupItem()
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
     //m_connectButton->setToolTip(i18nc("icon to connect to mobile broadband network", "Connect to mobile broadband network %1", ssid));
-    m_layout->addItem(m_connectButton, 0, 0, 1, 1, Qt::AlignVCenter | Qt::AlignLeft);
+    m_layout->addItem(m_connectButton, 0, 0, 2, 2, Qt::AlignVCenter | Qt::AlignLeft);
+
+    // spacer to force the strength meter to the right.
+    QGraphicsWidget *widget = new QGraphicsWidget(this);
+    widget->setMaximumHeight(12);
+    m_layout->addItem(widget, 0, 1);
 
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);
@@ -97,7 +102,7 @@ void GsmInterfaceConnectionItem::setupItem()
     m_strengthMeter->setPreferredSize(QSizeF(60, 12));
     m_strengthMeter->setMaximumHeight(12);
     m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    m_layout->addItem(m_strengthMeter, 0, 1, 1, 1, Qt::AlignVCenter | Qt::AlignRight);
+    m_layout->addItem(m_strengthMeter, 0, 2, 1, 1, Qt::AlignVCenter | Qt::AlignRight);
 
     connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
