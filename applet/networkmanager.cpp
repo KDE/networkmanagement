@@ -104,6 +104,12 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
         m_activeInterface = m_interfaces.first();
         m_activeSystrayInterface = m_activeInterface;
     }
+
+    // Just to make sure the kded module is loaded before initializing the activatables.
+    QDBusInterface kded(QLatin1String("org.kde.kded"), QLatin1String("/kded"),
+                        QLatin1String("org.kde.kded"), QDBusConnection::sessionBus());
+    kded.call(QLatin1String("loadModule"), QLatin1String("networkmanagement"));
+
     m_activatables = new RemoteActivatableList(this);
     connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*)), this, SLOT(activatableAdded(RemoteActivatable*)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), this, SLOT(activatableRemoved(RemoteActivatable*)));
@@ -276,12 +282,7 @@ void NetworkManagerApplet::init()
                                   Q_ARG(int, Solid::Control::NetworkInterfaceNm09::NoReason));
     }
 
-    // Just to make sure the kded module is loaded.
-    QDBusInterface kded(QLatin1String("org.kde.kded"), QLatin1String("/kded"),
-                        QLatin1String("org.kde.kded"), QDBusConnection::sessionBus());
-
-    kded.call(QLatin1String("loadModule"), QLatin1String("networkmanagement"));
-    QObject::connect(m_activatables, SIGNAL(appeared()), this, SLOT(finishInitialization()));
+    connect(m_activatables, SIGNAL(appeared()), SLOT(finishInitialization()));
     finishInitialization();
 }
 
