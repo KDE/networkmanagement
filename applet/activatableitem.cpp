@@ -129,6 +129,8 @@ void ActivatableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* o
 {
     Plasma::IconWidget::paint(painter, option, widget);
     if (m_hasDefaultRoute) {
+        // TODO: this draws the pixmap behind the connection icon. This is the same
+        // problem described in a comment in networkmanager.cpp:NetworkManagerApplet::paintInterface.
         painter->drawPixmap(QRect(4,4,12,12), KIcon("network-defaultroute").pixmap(QSize(16,16)));
     }
 }

@@ -194,7 +194,7 @@ void NMPopup::init()
     connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
 
     m_showMoreButton = new Plasma::PushButton(m_rightWidget);
-    m_showMoreButton->setToolTip(i18nc("@info:tooltip tooltip for the 'Show More' button", "List all networks available"));
+    m_showMoreButton->setToolTip(i18nc("@info:tooltip tooltip for the 'Show More' button", "Show all available networks"));
     // Do not use this according to KDE HIG. Bug #272492
     //m_showMoreButton->setCheckable(true);
     m_showMoreButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -674,8 +674,8 @@ void NMPopup::checkShowMore(RemoteActivatable * ra)
             wicCount--;
         }
         if (wicCount == 0 && !m_showMoreChecked) {
-            // There is no wireless network which the user had explicitly configured around,
-            // so temporaly show all the others wireless networks available.
+            // There is no wireless network around which the user has explicitly configured
+            // so temporaly show all wifi available networks.
             showMore(true);
         }
     }
