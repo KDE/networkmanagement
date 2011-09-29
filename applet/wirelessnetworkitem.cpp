@@ -66,6 +66,13 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
 
 }
 
+void WirelessNetworkItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+    m_layout->invalidate();
+    m_layout->activate();
+    ActivatableItem::paint(painter, option, widget);
+}
+
 void WirelessNetworkItem::setupItem()
 {
     // painting of a wifi network, known connection or available access point

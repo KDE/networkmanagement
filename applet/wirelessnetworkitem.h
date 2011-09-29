@@ -25,6 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatableitem.h"
 
 class QGraphicsGridLayout;
+class QPainter;
+class QStyleOptionGraphicsItem;
+class QWidget;
 
 namespace Plasma
 {
@@ -47,6 +50,7 @@ class WirelessNetworkItem : public ActivatableItem
         virtual ~WirelessNetworkItem();
         void setupItem();
         QString ssid();
+        void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
 
     private Q_SLOTS:
         void setStrength(int strength);
