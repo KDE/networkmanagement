@@ -66,6 +66,7 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
 
 }
 
+//HACK: hack to avoid misplacing of security icon. Check with Qt5 if still needed
 void WirelessNetworkItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
     m_layout->invalidate();
