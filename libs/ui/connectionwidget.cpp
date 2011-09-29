@@ -57,12 +57,6 @@ ConnectionWidget::~ConnectionWidget()
 {
 }
 
-void ConnectionWidget::setConnection(Knm::Connection * connection)
-{
-    kDebug() << "Connection id is " << connection->uuid();
-    d_ptr->connection = connection;
-}
-
 void ConnectionWidget::setDefaultName(const QString & defaultName)
 {
     Q_D(ConnectionWidget);

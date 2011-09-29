@@ -95,8 +95,6 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setIcon("network-wireless"); // Known connection, we probably have credentials
     if (interfaceConnection()) {
         m_connectButton->setText(interfaceConnection()->connectionName());
-        QAction *a = new QAction(KIcon("emblem-favorite"), QString(), m_connectButton);
-        m_connectButton->addIconAction(a);
     } else {
         m_connectButton->setText(m_wirelessStatus->ssid());
     }
