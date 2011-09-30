@@ -51,7 +51,7 @@ Q_SIGNALS:
     void showInterfaceDetails(QString);
 
 public Q_SLOTS:
-    void activatableAdded(RemoteActivatable*);
+    void activatableAdded(RemoteActivatable*, int);
     void activatableRemoved(RemoteActivatable*);
     void listDisappeared();
     void listAppeared();
@@ -70,7 +70,7 @@ private Q_SLOTS:
     void filter();
 
 private:
-    void createItem(RemoteActivatable* conn, const bool addIfAlreadyCached = false);
+    void createItem(RemoteActivatable* conn, int index);
     void createHiddenItem();
     int m_connectionType;
     QList<Knm::Activatable::ActivatableType> m_types;

@@ -39,6 +39,7 @@ class SortedActivatableListPrivate : public ActivatableListPrivate
 {
 public:
     Solid::Control::NetworkInterfaceNm09::Types types;
+    QHash<Solid::Control::NetworkInterfaceNm09::Type, int> solidTypesToOrder;
 };
 
 // sorting activatables
@@ -56,7 +57,7 @@ public:
 // QAction::addAction/removeAction
 // resort everything or just find correct place for changed item?
 //   (save pointer to last active connection?)
-// make lists of 
+// make lists of
 // k
 
 bool activatableLessThan(const Knm::Activatable * first, const Knm::Activatable * second);
@@ -76,12 +77,19 @@ int compareSsid(const Knm::WirelessObject * first, const Knm::WirelessObject * s
 /* SortedActivatableList */
 
 SortedActivatableList::WirelessSortPolicy SortedActivatableList::s_wirelessSortPolicy = SortedActivatableList::WirelessSortByStrength;
+QHash<Solid::Control::NetworkInterfaceNm09::Types, int> SortedActivatableList::s_solidTypesToOrder = QHash<Solid::Control::NetworkInterfaceNm09::Types, int>();
 
 SortedActivatableList::SortedActivatableList(Solid::Control::NetworkInterfaceNm09::Types types, QObject * parent)
     : ActivatableList(*new SortedActivatableListPrivate, parent)
 {
     Q_D(SortedActivatableList);
     d->types = types;
+    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Wifi, 0);
+    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Wimax, 1);
+    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Bluetooth, 2);
+    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Ethernet, 3);
+    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Modem, 4);
+    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::OlpcMesh, 5);
 }
 
 void SortedActivatableList::handleAdd(Knm::Activatable * activatable)
@@ -247,16 +255,8 @@ int compareDevices(const Knm::Activatable * first, const Knm::Activatable * seco
         return 0;
     }
 
-    // VPN workaround for not having a real device
-    uint firstDevWeight = 0, secondDevWeight = 0;
-    if (first->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
-        firstDevWeight = 1;
-    }
-    if (second->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
-        secondDevWeight = 1;
-    }
-    if (firstDevWeight || secondDevWeight) {
-        return firstDevWeight - secondDevWeight;
+    if (first->activatableType() == Knm::Activatable::VpnInterfaceConnection || second->activatableType() == Knm::Activatable::VpnInterfaceConnection || first->activatableType() == Knm::Activatable::WirelessNetwork || second->activatableType() == Knm::Activatable::WirelessNetwork || first->activatableType() == Knm::Activatable::UnconfiguredInterface || second->activatableType() == Knm::Activatable::UnconfiguredInterface) {
+        return 0;
     }
 
     // not VPN, therefore use the real logic
@@ -267,7 +267,7 @@ int compareDevices(const Knm::Activatable * first, const Knm::Activatable * seco
         if (firstIface->type() == secondIface->type()) {
             return firstIface->interfaceName().compare(secondIface->interfaceName());
         } else {
-            return (int)firstIface->type() - (int)secondIface->type();
+            return SortedActivatableList::s_solidTypesToOrder.value(firstIface->type()) - SortedActivatableList::s_solidTypesToOrder.value(secondIface->type());
         }
     }
     return 0;

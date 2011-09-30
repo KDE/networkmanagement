@@ -209,7 +209,7 @@ void NMPopup::init()
     m_showMoreButton->setMinimumSize(sMax);
     m_showMoreButton->setMaximumSize(sMax);
     connect(m_showMoreButton, SIGNAL(clicked()), this, SLOT(showMore()));
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable *)), this, SLOT(uncheckShowMore(RemoteActivatable *)));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable *, int)), this, SLOT(uncheckShowMore(RemoteActivatable *)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable *)), this, SLOT(checkShowMore(RemoteActivatable *)));
 
     QGraphicsLinearLayout* connectionLayout = new QGraphicsLinearLayout;

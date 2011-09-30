@@ -55,7 +55,7 @@ public slots:
     Q_SCRIPTABLE void ReadConfig();
     Q_SCRIPTABLE void FinishInitialization();
 signals:
-    Q_SCRIPTABLE void ActivatableAdded(const QString & path, uint type);
+    Q_SCRIPTABLE void ActivatableAdded(const QString & path, uint type, int index);
     Q_SCRIPTABLE void ActivatableRemoved(const QString &);
     Q_SCRIPTABLE void ReloadConfig();
     void DoFinishInitialization();

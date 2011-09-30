@@ -72,8 +72,8 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
 void ActivatableListWidget::init()
 {
     listAppeared();
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*)),
-            SLOT(activatableAdded(RemoteActivatable *)));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*, int)),
+            SLOT(activatableAdded(RemoteActivatable *, int)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
             SLOT(activatableRemoved(RemoteActivatable *)));
 
@@ -164,14 +164,12 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
     return true;
 }
 
-void ActivatableListWidget::createItem(RemoteActivatable * activatable, const bool addIfAlreadyCached)
+void ActivatableListWidget::createItem(RemoteActivatable * activatable, int index)
 {
     ActivatableItem* ai = m_itemIndex.value(activatable, 0);
     if (ai) {
-        if (addIfAlreadyCached) {
-            m_layout->addItem(ai);
-            ai->show();
-        }
+        m_layout->addItem(ai);
+        ai->show();
         //kDebug() << "activatable already in the layout, not creating an item" << a;
         return;
     }
@@ -215,7 +213,7 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable, const bo
 
     Q_ASSERT(ai);
     ai->setupItem();
-    m_layout->addItem(ai);
+    m_layout->insertItem(index + 1, ai);
     m_itemIndex[activatable] = ai;
     connect(ai, SIGNAL(disappearAnimationFinished()),
             this, SLOT(deleteItem()));
@@ -241,8 +239,10 @@ void ActivatableListWidget::createHiddenItem()
 
 void ActivatableListWidget::listAppeared()
 {
-    foreach (RemoteActivatable* remote, m_activatables->sortedActivatables()) {
-        activatableAdded(remote);
+    int i = 0;
+    foreach (RemoteActivatable* remote, m_activatables->activatables()) {
+        activatableAdded(remote, i);
+        i++;
     }
     filter();
 }
@@ -250,9 +250,6 @@ void ActivatableListWidget::listAppeared()
 void ActivatableListWidget::deactivateConnection(const QString& deviceUni)
 {
     foreach (ActivatableItem* item, m_itemIndex) {
-        if (!item) { // the item might be gone here
-            continue;
-        }
         RemoteInterfaceConnection *conn = item->interfaceConnection();
         if (conn && conn->deviceUni() == deviceUni) {
             //kDebug() << "deactivating" << conn->connectionName();
@@ -273,11 +270,11 @@ void ActivatableListWidget::listDisappeared()
     m_hiddenItem = 0;
 }
 
-void ActivatableListWidget::activatableAdded(RemoteActivatable * added)
+void ActivatableListWidget::activatableAdded(RemoteActivatable * added, int index)
 {
-    //kDebug();
+    kDebug();
     if (accept(added)) {
-        createItem(added);
+        createItem(added, index);
     }
     if(added->activatableType() == Knm::Activatable::WirelessInterfaceConnection && static_cast<RemoteWirelessInterfaceConnection*>(added)->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc)
         connect(added,SIGNAL(changed()),SLOT(filter()));
@@ -294,22 +291,20 @@ void ActivatableListWidget::filter()
 {
     // Clear connection list first, but do not delete the items.
     foreach (ActivatableItem* item, m_itemIndex) {
-        if (!item) { // the item might be gone here
-            continue;
-        }
-
         // Hide them first to prevent glitches in GUI.
         item->hide();
         m_layout->removeItem(item);
     }
 
-    foreach (RemoteActivatable *act, m_activatables->sortedActivatables()) {
+    int i = 0;
+    foreach (RemoteActivatable *act, m_activatables->activatables()) {
         if (accept(act)) {
             // The "true" parameter means add the item to m_layout if it is already cached in m_itemIndex.
-            createItem(act, true);
+            createItem(act, i);
         } else {
             activatableRemoved(act);
         }
+        i++;
     }
 
     if (!m_interfaces.isEmpty() && m_hasWireless) {
@@ -338,7 +333,7 @@ void ActivatableListWidget::filter()
 
 void ActivatableListWidget::activatableRemoved(RemoteActivatable * removed)
 {
-    ActivatableItem *it = m_itemIndex[removed];
+    ActivatableItem *it = m_itemIndex.value(removed, 0);
     if (!it) {
         return;
     }

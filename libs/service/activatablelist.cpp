@@ -128,4 +128,10 @@ void ActivatableList::activatableChanged()
     }
 }
 
+int ActivatableList::activatableIndex(Knm::Activatable *activatable)
+{
+    Q_D(ActivatableList);
+    return d->activatables.indexOf(activatable);
+}
+
 // vim: sw=4 sts=4 et tw=100

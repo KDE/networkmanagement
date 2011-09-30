@@ -41,6 +41,7 @@ class RemoteActivatableListPrivate
 public:
     NetworkManagementInterface * iface;
     QHash<QString, RemoteActivatable *> activatables;
+    QList<RemoteActivatable*> sortedActivatables;
 };
 
 
@@ -59,21 +60,23 @@ void RemoteActivatableList::init()
 {
     Q_D(RemoteActivatableList);
     if (d->iface->isValid()) {
-        connect(d->iface, SIGNAL(ActivatableAdded(const QString&,uint)),
-                this, SLOT(handleActivatableAdded(const QString&,uint)));
+        connect(d->iface, SIGNAL(ActivatableAdded(const QString&,uint, int)),
+                this, SLOT(handleActivatableAdded(const QString&,uint, int)));
         connect(d->iface, SIGNAL(ActivatableRemoved(const QString&)),
                 this, SLOT(handleActivatableRemoved(const QString &)));
 
         if (d->activatables.isEmpty()) {
             QDBusReply<QStringList> rv = d->iface->ListActivatables();
             if (rv.isValid()) {
+                int i = 0;
                 foreach (const QString &activatable, rv.value()) {
                     // messy, I know, but making ListActivatables return a(si) is boring
                     QDBusInterface iface(QLatin1String("org.kde.networkmanagement"),
                             activatable, "org.kde.networkmanagement.Activatable", QDBusConnection::sessionBus());
                     QDBusReply<uint> type = iface.call("activatableType");
                     if (type.isValid())
-                        handleActivatableAdded(activatable, type.value());
+                        handleActivatableAdded(activatable, type.value(), i);
+                    i++;
                 }
             }
             else
@@ -113,6 +116,7 @@ void RemoteActivatableList::clear()
     QHash<QString, RemoteActivatable*>::iterator i = d->activatables.begin();
     while(i != d->activatables.end()) {
         RemoteActivatable *activatable = i.value();
+        d->sortedActivatables.removeOne(activatable);
         i = d->activatables.erase(i);
         emit activatableRemoved(activatable);
         // Hacky, I know, but even with deleteLater sometimes we get dangling pointers,
@@ -128,48 +132,13 @@ RemoteActivatableList::~RemoteActivatableList()
     delete d_ptr;
 }
 
-/* Sort first by type and then by activation state. */
-static bool lessThan(RemoteActivatable * a, RemoteActivatable * b)
-{
-    if (a->activatableType() == b->activatableType()) {
-        RemoteInterfaceConnection * aic = qobject_cast<RemoteInterfaceConnection*>(a);
-        RemoteInterfaceConnection * bic = qobject_cast<RemoteInterfaceConnection*>(b);
-
-        if (aic && bic) {
-            if (aic->activationState() == bic->activationState()) {
-                return (QString::localeAwareCompare(aic->connectionName(), bic->connectionName()) < 0);
-            } else {
-                return (aic->activationState() > bic->activationState());
-            }
-        } else {
-            RemoteWirelessNetwork * arwn = qobject_cast<RemoteWirelessNetwork*>(a);
-            RemoteWirelessNetwork * brwn = qobject_cast<RemoteWirelessNetwork*>(b);
-
-            if (arwn && brwn) {
-                return (QString::localeAwareCompare(arwn->ssid(), brwn->ssid()) < 0);
-            }
-        }
-    } else {
-        return (a->activatableType() < b->activatableType());
-    }
-    return false;
-}
-
 QList<RemoteActivatable *> RemoteActivatableList::activatables() const
 {
     Q_D(const RemoteActivatableList);
-    return d->activatables.values();
+    return d->sortedActivatables;
 }
 
-QList<RemoteActivatable *> RemoteActivatableList::sortedActivatables() const
-{
-    Q_D(const RemoteActivatableList);
-    QList<RemoteActivatable *> list = d->activatables.values();
-    qSort(list.begin(), list.end(), lessThan);
-    return list;
-}
-
-void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uint type)
+void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uint type, int index)
 {
     if (!addedPath.startsWith('/')) {
         kDebug() << "Invalid path:" << addedPath << type;
@@ -207,7 +176,8 @@ void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uin
         if (newActivatable) {
             kDebug() << "RemoteActivatable Added " << addedPath;
             d->activatables.insert(addedPath, newActivatable);
-            emit activatableAdded(newActivatable);
+            d->sortedActivatables.insert(index, newActivatable);
+            emit activatableAdded(newActivatable, index);
         }
     }
 }
@@ -218,6 +188,7 @@ void RemoteActivatableList::handleActivatableRemoved(const QString &removed)
     kDebug() << "removed" << removed;
     RemoteActivatable * removedActivatable = d->activatables.take(removed);
     if (removedActivatable) {
+        d->sortedActivatables.removeOne(removedActivatable);
         emit activatableRemoved(removedActivatable);
 
         // Hacky, I know, but even with deleteLater sometimes we get dangling pointers,

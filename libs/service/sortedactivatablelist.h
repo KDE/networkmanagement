@@ -25,6 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <activatablelist.h>
 
 #include <QList>
+#include <QHash>
 
 #include <solid/control/networkinterface.h>
 
@@ -49,6 +50,7 @@ public:
     enum WirelessSortPolicy {WirelessSortAlphabetical = 1, WirelessSortByStrength };
 
     static WirelessSortPolicy s_wirelessSortPolicy;
+    static QHash<Solid::Control::NetworkInterfaceNm09::Types, int> s_solidTypesToOrder;
 
     /**
      * @param types a set of interface types ORed together defining which interface types

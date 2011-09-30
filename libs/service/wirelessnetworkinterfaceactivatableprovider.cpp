@@ -170,7 +170,7 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                     d->activatables.insert(addedConnection->uuid().toString(), ifaceConnection);
                     d->activatableList->addActivatable(ifaceConnection);
                 }
-                else if (!ourHiddenWicFound) {
+                /*else if (!ourHiddenWicFound) {
                     // create a HiddenWirelessInterfaceConnection for this connection as well
                     // this allows adhoc and hidden wireless networks' connections to be activated
                     // see HiddenWIC's docu for why this is needed
@@ -180,7 +180,7 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                                 d->wirelessInterface(), addedConnection, d->interface->uni(), this);
                     d->activatables.insert(addedConnection->uuid().toString(), hiddenWic);
                     d->activatableList->addActivatable(hiddenWic);
-                }
+                }*/
             }
         }
         maintainActivatableForUnconfigured();
