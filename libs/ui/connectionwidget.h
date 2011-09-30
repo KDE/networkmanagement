@@ -46,7 +46,6 @@ public:
     ConnectionWidget(QWidget * parent = 0);
     ~ConnectionWidget();
 
-    void setConnection(Knm::Connection * connection);
     QTabWidget * connectionSettingsWidget();
     QString settingName() const;
 
