@@ -67,6 +67,7 @@ class WirelessNetworkItem : public ActivatableItem
         Plasma::Label* m_securityIcon;
         RemoteWirelessNetwork* m_remote;
         WirelessStatus* m_wirelessStatus;
+        bool m_layoutIsDirty;
 };
 
 #endif //#define APPLET_WIRELESSCONNECTIONITEM_H

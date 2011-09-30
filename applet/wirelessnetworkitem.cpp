@@ -48,7 +48,8 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
     m_connectButton(0),
     m_securityIcon(0),
     m_remote(remote),
-    m_wirelessStatus(0)
+    m_wirelessStatus(0),
+    m_layoutIsDirty(true)
 {
     //m_strength = 0;
     m_wirelessStatus = new WirelessStatus(remote);
@@ -69,8 +70,11 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
 //HACK: hack to avoid misplacing of security icon. Check with Qt5 if still needed
 void WirelessNetworkItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
 {
-    m_layout->invalidate();
-    m_layout->activate();
+    if (m_layoutIsDirty) {
+        m_layout->invalidate();
+        m_layout->activate();
+        m_layoutIsDirty = false;
+    }
     ActivatableItem::paint(painter, option, widget);
 }
 
@@ -144,7 +148,7 @@ void WirelessNetworkItem::setupItem()
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
     activationStateChanged(Knm::InterfaceConnection::Unknown, m_state);
-
+    m_layoutIsDirty = true;
     update();
 }
 
