@@ -45,6 +45,8 @@ void InterfaceConnectionItem::setupItem()
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
     m_connectButton->setMaximumWidth(maxConnectionNameWidth);
+    // to make default route overlay really be over the connection's icon.
+    m_connectButton->setFlags(ItemStacksBehindParent);
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
     //m_connectButton->setZValue(100); // FIXME: doesn't work

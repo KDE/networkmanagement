@@ -96,8 +96,8 @@ void SecretStorage::saveSecrets(Knm::Connection *con)
 void SecretStorage::walletOpenedForWrite(bool success)
 {
     Q_D(SecretStorage);
+    KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
     if (success) {
-        KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
         if (wallet->isOpen()) {
             bool readyForWalletWrite = false;
             if( !wallet->hasFolder( s_walletFolderName ) )
@@ -113,7 +113,7 @@ void SecretStorage::walletOpenedForWrite(bool success)
                         if (k.startsWith(con->uuid() + ';')) {
                             kDebug() << "Removing entry " << k << ")";
                             wallet->removeEntry(k);
-			}
+                        }
                     }
                     foreach (Knm::Setting * setting, con->settings()) {
                         QMap<QString,QString> map = setting->secretsToMap();
@@ -131,6 +131,7 @@ void SecretStorage::walletOpenedForWrite(bool success)
             }
         }
     }
+    delete wallet;
 }
 
 void SecretStorage::walletOpenedForRead(bool success)
@@ -138,8 +139,8 @@ void SecretStorage::walletOpenedForRead(bool success)
     Q_D(SecretStorage);
     kDebug();
     bool retrievalSuccessful = true;
+    KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
     if (success) {
-        KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
         if (wallet->isOpen() && wallet->hasFolder(s_walletFolderName) && wallet->setFolder(s_walletFolderName)) {
             while (!d->connectionsToRead.isEmpty()) {
                 Knm::Connection *con = d->connectionsToRead.takeFirst();
@@ -176,6 +177,8 @@ void SecretStorage::walletOpenedForRead(bool success)
             retrievalSuccessful = false;
         }
     }
+    delete wallet;
+
     if (!retrievalSuccessful || !success) {
          while (!d->connectionsToRead.isEmpty()) {
             Knm::Connection *con = d->connectionsToRead.takeFirst();
@@ -210,6 +213,10 @@ void SecretStorage::deleteSecrets(Knm::Connection *con)
                 if (k.startsWith(con->uuid() + ';'))
                     wallet->removeEntry(k);
             }
+        }
+        
+        if (wallet) {
+            delete wallet;
         }
     }
 }
@@ -329,4 +336,5 @@ void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode n
             wallet->removeEntry(key);
         }
     }
+    delete wallet;
 }
