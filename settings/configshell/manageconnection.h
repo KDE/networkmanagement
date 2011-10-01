@@ -36,7 +36,7 @@ public:
 private Q_SLOTS:
     void addConnectionCompleted(bool valid, const QString &errorMessage);
     void updateConnectionCompleted();
-    void activatableAdded(QString, uint);
+    void activatableAdded(QString, uint, int);
 private:
     NMDBusSettingsConnectionProvider * mSystemSettings;
     QDBusInterface m_manager;

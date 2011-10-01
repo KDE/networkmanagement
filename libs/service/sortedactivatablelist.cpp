@@ -177,13 +177,13 @@ bool activatableLessThan(const Knm::Activatable * first, const Knm::Activatable 
     // debug ends
 #endif
 
-    // order by device
-    int i = compareDevices(first, second);
+    // order by activatable type
+    int i = compareActivatableType(first, second);
 
-    // then by activatable type
-    if (i == 0) {
+    // then by device
+    if (i == 0 && !first->activatableType() != Knm::Activatable::VpnInterfaceConnection && !second->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
 //X         kDebug() << s1 << "and" << s2 << "are on the same device, comparing activatable type";
-        i = compareActivatableType(first, second);
+        i = compareDevices(first, second);
     }
 
     // then by state
@@ -255,11 +255,6 @@ int compareDevices(const Knm::Activatable * first, const Knm::Activatable * seco
         return 0;
     }
 
-    if (first->activatableType() == Knm::Activatable::VpnInterfaceConnection || second->activatableType() == Knm::Activatable::VpnInterfaceConnection || first->activatableType() == Knm::Activatable::WirelessNetwork || second->activatableType() == Knm::Activatable::WirelessNetwork || first->activatableType() == Knm::Activatable::UnconfiguredInterface || second->activatableType() == Knm::Activatable::UnconfiguredInterface) {
-        return 0;
-    }
-
-    // not VPN, therefore use the real logic
     Solid::Control::NetworkInterfaceNm09 * firstIface = Solid::Control::NetworkManagerNm09::findNetworkInterface(first->deviceUni());
     Solid::Control::NetworkInterfaceNm09 * secondIface = Solid::Control::NetworkManagerNm09::findNetworkInterface(second->deviceUni());
 
@@ -267,9 +262,10 @@ int compareDevices(const Knm::Activatable * first, const Knm::Activatable * seco
         if (firstIface->type() == secondIface->type()) {
             return firstIface->interfaceName().compare(secondIface->interfaceName());
         } else {
-            return SortedActivatableList::s_solidTypesToOrder.value(firstIface->type()) - SortedActivatableList::s_solidTypesToOrder.value(secondIface->type());
+            return (int)firstIface->type() - (int)secondIface->type();
         }
     }
+
     return 0;
 }
 

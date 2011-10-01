@@ -41,11 +41,11 @@ public:
      */
     enum ActivatableType {
         WirelessInterfaceConnection,
-        HiddenWirelessInterfaceConnection,
         VpnInterfaceConnection,
         GsmInterfaceConnection,
         InterfaceConnection,
         WirelessNetwork,
+        HiddenWirelessInterfaceConnection,
         UnconfiguredInterface
     };
 

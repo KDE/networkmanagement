@@ -41,7 +41,7 @@ ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.net
         foreach(const QString & connectionId, mSystemSettings->connectionList()->connections()) {
             Knm::Connection * c = mSystemSettings->connectionList()->findConnection(connectionId);
             Knm::BluetoothSetting * setting = static_cast<Knm::BluetoothSetting *>(c->setting(Knm::Setting::Bluetooth));
-    
+
             if (setting && setting->bdaddr() == btSetting->bdaddr()) {
                 kDebug() << "Updating existing bluetooth connection instead of creating one";
                 connect(mSystemSettings, SIGNAL(connectionsChanged()), SLOT(updateConnectionCompleted()));
@@ -57,7 +57,7 @@ ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.net
 
     if (addConnection) {
         connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool, const QString &)), SLOT(addConnectionCompleted(bool, const QString &)));
-        connect(&m_manager, SIGNAL(ActivatableAdded(QString, uint)), this, SLOT(activatableAdded(QString, uint)));
+        connect(&m_manager, SIGNAL(ActivatableAdded(QString, uint, int)), this, SLOT(activatableAdded(QString, uint, int)));
         mSystemSettings->addConnection(con);
     }
 }
@@ -88,8 +88,9 @@ void ManageConnection::addConnectionCompleted(bool valid, const QString &errorMe
     }
 }
 
-void ManageConnection::activatableAdded(QString path, uint type)
+void ManageConnection::activatableAdded(QString path, uint type, int index)
 {
+    Q_UNUSED(index)
     QDBusInterface activatable("org.kde.networkmanagement",
                                path,
                                "org.kde.networkmanagement.Activatable",
