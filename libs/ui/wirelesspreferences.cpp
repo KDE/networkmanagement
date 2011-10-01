@@ -69,6 +69,7 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
             static_cast<Knm::Ipv4Setting *>(m_connection->setting(Knm::Setting::Ipv4))->setMethod(Knm::Ipv4Setting::EnumMethod::Shared);
             shared = true;
             ssid = i18n("Shared_Wireless_Connection");
+            m_connection->setAutoConnect(false);
         }
     } else {
         kWarning() << "Could not find deviceUni or AP UNI in args:" << args;
@@ -92,7 +93,7 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
                     case Solid::Control::WirelessNetworkInterfaceNm09::Adhoc:
                         setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
                         break;
-                    default: 
+                    default:
                         setting->setMode(Knm::WirelessSetting::EnumMode::infrastructure);
                     }
                 } else {

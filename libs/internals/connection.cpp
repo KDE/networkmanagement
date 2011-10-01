@@ -200,6 +200,7 @@ void Connection::init()
             addSetting(new Security8021xSetting());
             addSetting(new WirelessSetting());
             addSetting(new WirelessSecuritySetting());
+            setAutoConnect(true);
             break;
         default:
             break;
