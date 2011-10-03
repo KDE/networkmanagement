@@ -181,12 +181,6 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable, int inde
             WirelessNetworkItem* wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetwork*>(activatable), m_widget);
             ai = wni;
             QString ssid = wni->ssid();
-            if (m_hiddenConnectionInProgress.contains(ssid)) {
-                kDebug() << "hidden network" << ssid << "appeared, connecting ...";
-                activatable->activate();
-            }
-            m_hiddenConnectionInProgress.removeAll(ssid);
-
             break;
         }
         case Knm::Activatable::InterfaceConnection:
@@ -417,7 +411,6 @@ void ActivatableListWidget::connectToHiddenNetwork(const QString &ssid)
         return;
     }
 
-    m_hiddenConnectionInProgress << ssid;
     QStringList args;
     QString moduleArgs;
 

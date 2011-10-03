@@ -85,8 +85,5 @@ private:
     bool m_showAllTypes;
     bool m_vpn;
     bool m_hasWireless; // Used to determine wether or not to show hidden config
-
-    QStringList m_hiddenConnectionInProgress;
-
 };
 #endif // ACTIVATABLELISTWIDGET_H
