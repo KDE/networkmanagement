@@ -142,7 +142,6 @@ void GsmWidget::setNetworkIds(const QList<QVariant> networkIds)
 void GsmWidget::setApnInfo(const QMap<QString, QVariant> apnInfo)
 {
     Q_D(GsmWidget);
-
     d->setting->setNumber(apnInfo["number"].toString());
 
     if (!apnInfo["username"].isNull()) {
@@ -150,6 +149,7 @@ void GsmWidget::setApnInfo(const QMap<QString, QVariant> apnInfo)
     }
     if (!apnInfo["password"].isNull()) {
         d->setting->setPassword(apnInfo["password"].toString());
+        d->setting->setPasswordflags(Knm::Setting::AgentOwned);
     }
 
     d->setting->setApn(apnInfo["apn"].toString());
