@@ -94,7 +94,7 @@
      <item row="3" column="1">
       <widget class="KLineEdit" name="leSubjectMatch">
        <property name="toolTip">
-        <string>Only connect to servers whose certficate subject matches this. For the syntax see the wpa_supplicant documentation.</string>
+        <string>Only connect to servers whose certificate subject matches this. For the syntax see the wpa_supplicant documentation.</string>
        </property>
       </widget>
      </item>

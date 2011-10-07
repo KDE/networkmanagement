@@ -175,7 +175,7 @@
         <string>Only connect to the access point with this hardware address</string>
        </property>
        <property name="whatsThis">
-        <string>Setting a BSSID (Basic Service Set Identification) forces this connection to connect only to the access point with the specified hardwared address, even if other access points are part of the same network.</string>
+        <string>Setting a BSSID (Basic Service Set Identification) forces this connection to connect only to the access point with the specified hardware address, even if other access points are part of the same network.</string>
        </property>
        <property name="inputMask">
         <string>HH:HH:HH:HH:HH:HH;_</string>
