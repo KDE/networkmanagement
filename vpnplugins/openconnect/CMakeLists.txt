@@ -1,8 +1,8 @@
 set (MINIMUM_OPENCONNECT_VERSION_REQUIRED "3.03")
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_MODULE_PATH})
-find_package(OpenConnect ${MINIMUM_OPENCONNECT_VERSION_REQUIRED})
-find_package(OpenSSL)
+macro_optional_find_package(OpenConnect ${MINIMUM_OPENCONNECT_VERSION_REQUIRED})
+macro_optional_find_package(OpenSSL)
 macro_log_feature(OPENCONNECT_FOUND "OpenConnect headers and library" "Cisco AnyConnect compatible VPN client" "http://www.infradead.org/openconnect.html" FALSE ${MINIMUM_OPENCONNECT_VERSION_REQUIRED} "Needed for OpenConnect support in Network Management")
 macro_log_feature(OPENSSL_FOUND "OpenSSL headers" "Encryption suite" "http://www.openssl.org" FALSE "" "Needed for OpenConnect support in Network Management")
 
