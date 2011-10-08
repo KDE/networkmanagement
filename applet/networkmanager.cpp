@@ -80,6 +80,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 {
     KGlobal::locale()->insertCatalog("libknetworkmanager");
     KGlobal::locale()->insertCatalog("solidcontrolnm09");
+    KGlobal::locale()->insertCatalog("solidcontrol");
 
     setHasConfigurationInterface(true);
     setPopupIcon("networkmanager");
