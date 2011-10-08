@@ -1,8 +1,17 @@
 [Desktop Entry]
 Comment=Connect to the Internet
+Comment[de]=Mit dem Internet verbinden
+Comment[pt]=Ligar-se à Internet
+Comment[uk]=Встановити з’єднання з мережею Інтернет
+Comment[x-test]=xxConnect to the Internetxx
 Encoding=UTF-8
 Keywords=
 Name=Network Connections
+Name[de]=Netzwerkverbindungen
+Name[nds]=Nettwarkverbinnen
+Name[pt]=Ligações de Rede
+Name[uk]=Мережеві з'єднання
+Name[x-test]=xxNetwork Connectionsxx
 Type=Service
 X-KDE-ParentApp=
 X-KDE-PluginInfo-Author=Sebastian Kügler

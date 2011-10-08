@@ -3,6 +3,10 @@ Type=ServiceType
 X-KDE-ServiceType=SolidNetworkManager
 
 Comment=Network Management Backend
+Comment[de]=Backend zur Netzwerkverwaltung
+Comment[pt]=Infra-Estrutura de Gestão da Rede
+Comment[uk]=Програма керування мережею
+Comment[x-test]=xxNetwork Management Backendxx
 
 [PropertyDef::X-KDE-SolidBackendInfo-Version]
 Type=QString

@@ -1,68 +1,213 @@
 [Global]
 Name=Network Management
+Name[de]=Netzwerkverwaltung
+Name[nds]=Nettwarkpleeg
+Name[pt]=Gestão de Rede
+Name[uk]=Керування мережею
+Name[x-test]=xxNetwork Managementxx
 IconName=networkmanager
 Comment=Network Management
+Comment[de]=Netzwerkverwaltung
+Comment[nds]=Nettwarkpleeg
+Comment[pt]=Gestão de Rede
+Comment[uk]=Керування мережею
+Comment[x-test]=xxNetwork Managementxx
 Version=3
 
 [Context/connectiontype]
 Name=Network Connection Type
+Name[de]=Art der Netzwerkverbindung
+Name[nds]=Nettwarkverbinnentyp
+Name[pt]=Tipo da Ligação de Rede
+Name[uk]=Тип мережевого з'єднання
+Name[x-test]=xxNetwork Connection Typexx
 
 [Event/hwadded]
 Name=Network Interface Attached
+Name[de]=Netzwerkschnittstelle angeschlossen
+Name[nds]=Nettwarkkoppelsteed toföögt
+Name[pt]=Interface de Rede Ligada
+Name[uk]=Доданий інтерфейс мережі
+Name[x-test]=xxNetwork Interface Attachedxx
 Comment=A network interface was attached
+Comment[de]=Eine Netzwerkschnittstelle ist angeschlossen worden
+Comment[nds]=En Nettwarkkoppelsteed wöör toföögt.
+Comment[pt]=Foi ligada uma interface de rede
+Comment[uk]=Було додано інтерфейс мережі
+Comment[x-test]=xxA network interface was attachedxx
 
 [Event/hwremoved]
 Name=Network Interface Removed
+Name[de]=Netzwerkschnittstelle entfernt
+Name[nds]=Nettwark-Koppelsteed wegdaan
+Name[pt]=Interface de Rede Removida
+Name[uk]=Вилучено інтерфейс мережі
+Name[x-test]=xxNetwork Interface Removedxx
 Comment=A network interface was removed
+Comment[de]=Eine Netzwerkschnittstelle ist entfernt worden
+Comment[nds]=En Nettwark-Koppelsteed wöör wegdaan.
+Comment[pt]=Foi removida uma interface de rede
+Comment[uk]=Було вилучено інтерфейс мережі
+Comment[x-test]=xxA network interface was removedxx
 
 [Event/networkappeared]
 Name=Found Wireless Network
+Name[de]=Drahtloses Netzwerk gefunden
+Name[nds]=Funknettwark opdeckt
+Name[pt]=Rede Sem-Fios Descoberta
+Name[uk]=Знайдено бездротову мережу
+Name[x-test]=xxFound Wireless Networkxx
 Comment=A wireless network appeared
+Comment[de]=Ein drahtloses Netzwerk ist entdeckt worden
+Comment[nds]=En Funknettwark is opdukt.
+Comment[pt]=Apareceu uma rede sem-fios
+Comment[uk]=Встановлено зв’язок з бездротовою мережею
+Comment[x-test]=xxA wireless network appearedxx
 
 [Event/networkdisappeared]
 Name=Lost Wireless Network
+Name[de]=Drahtloses Netzwerk verloren
+Name[nds]=Funknettwark wegkamen
+Name[pt]=Rede Sem-Fios Perdida
+Name[uk]=Втрачено зв’язок з радіомережею
+Name[x-test]=xxLost Wireless Networkxx
 Comment=A wireless network disappeared
+Comment[de]=Ein drahtloses Netzwerk ist nicht mehr vorhanden
+Comment[nds]=En Funknettwark is wegkamen.
+Comment[pt]=Desapareceu uma rede sem-fios
+Comment[uk]=Зв’язок з бездротовою мережею увірвався
+Comment[x-test]=xxA wireless network disappearedxx
 
 [Event/connecting]
 Name=Establishing Network Connection
+Name[de]=Netzwerkverbindung wird hergestellt
+Name[nds]=Tokoppeln na Nettwark
+Name[pt]=A Estabelecer a Ligação à Rede
+Name[uk]=Встановлення мережевого з'єднання
+Name[x-test]=xxEstablishing Network Connectionxx
 Comment=A network connection attempt was begun
+Comment[de]=Ein Verbindungsversuch ist begonnen worden
+Comment[nds]=Mit Tokoppeln na en Nettwark anfungen
+Comment[pt]=Iniciou-se uma tentativa de ligação à rede
+Comment[uk]=Було розпочато спробу встановлення мережевого з’єднання
+Comment[x-test]=xxA network connection attempt was begunxx
 Action=
 
 [Event/disconnected]
 Name=Network Connection Disconnected
+Name[de]=Netzwerkverbindung getrennt
+Name[nds]=Vun Nettwark afkoppelt
+Name[pt]=Ligação de Rede Desligada
+Name[uk]=Мережеве з’єднання розірвано
+Name[x-test]=xxNetwork Connection Disconnectedxx
 Comment=A network connection was disconnected
+Comment[de]=Eine Netzwerkverbindung ist getrennt worden
+Comment[nds]=En Nettwark-Verbinnen wöör afkoppelt.
+Comment[pt]=A ligação de rede terminou
+Comment[uk]=Мережеве з’єднання було розірвано
+Comment[x-test]=xxA network connection was disconnectedxx
 
 [Event/connected]
 Name=Network Connection Succeeded
+Name[de]=Netzwerkverbindung erfolgreich hergestellt
+Name[nds]=Mit Spood na Nettwark tokoppelt
+Name[pt]=Ligação à Rede com Sucesso
+Name[uk]=Успішне з’єднання з мережею
+Name[x-test]=xxNetwork Connection Succeededxx
 Comment=A network connection was established
+Comment[de]=Eine Netzwerkverbindung ist erfolgreich hergestellt worden
+Comment[nds]=En Nettwark-Verbinnen wöör opstellt.
+Comment[pt]=Foi estabelecida uma ligação à rede
+Comment[uk]=Було встановлено з’єднання з мережею
+Comment[x-test]=xxA network connection was establishedxx
 Action=Popup
 
 [Event/connfailed]
 Name=Network Connection Failed
+Name[de]=Netzwerkverbindung fehlgeschlagen
+Name[nds]=Tokoppeln na Nettwark fehlslaan
+Name[pt]=Ligação à Rede sem Sucesso
+Name[uk]=Спроба встановлення з'єднання зазнала невдачі
+Name[x-test]=xxNetwork Connection Failedxx
 Comment=A network connection attempt failed
+Comment[de]=Ein Verbindungsversuch ist fehlgeschlagen
+Comment[nds]=Dat Tokoppeln na en Nettwark is fehlslaan.
+Comment[pt]=A tentativa de ligação à rede foi mal-sucedida
+Comment[uk]=Спроба встановлення з’єднання зазнала невдачі
+Comment[x-test]=xxA network connection attempt failedxx
 Action=Popup
 
 [Event/rfoff]
 Name=Radio Hardware Switched Off
+Name[de]=Hardware für drahtlose Verbindungen ausgeschaltet
+Name[nds]=Funkreedschap utmaakt
+Name[pt]='Hardware' de Rádio Desligado
+Name[uk]=Радіозв’язок апаратно вимкнено
+Name[x-test]=xxRadio Hardware Switched Offxx
 Comment=Wireless transceivers disabled by hardware switch
+Comment[de]=Die Hardware für drahtlose Verbindungen ist am Gerät ausgeschaltet worden
+Comment[nds]=Funkreedschap mit Hardwareschalter utmaakt
+Comment[pt]=Os receptores/transmissores sem-fios foram desligados pelo interruptor
+Comment[uk]=Бездротовий приймач-передавач було вимкнено апаратним тумблером
+Comment[x-test]=xxWireless transceivers disabled by hardware switchxx
 Action=
 
 [Event/rfon]
 Name=Radio Hardware Switched On
+Name[de]=Hardware für drahtlose Verbindungen eingeschaltet
+Name[nds]=Funkreedschap anmaakt
+Name[pt]='Hardware' de Rádio Ligado
+Name[uk]=Радіозв’язок апаратно увімкнено
+Name[x-test]=xxRadio Hardware Switched Onxx
 Comment=Wireless transceivers enabled
+Comment[de]=Hardware für drahtlose Verbindungen aktiviert
+Comment[nds]=Funkreedschap wöör anmaakt
+Comment[pt]=Os receptores/transmissores sem-fios foram ligados
+Comment[uk]=Увімкнено бездротовий приймач-передавач
+Comment[x-test]=xxWireless transceivers enabledxx
 Action=
 
 [Event/lowsignal]
 Name=Low Wireless Signal Strength
+Name[de]=Niedrige Signalstärke
+Name[nds]=Minn Funksignaalstärk
+Name[pt]=Potência do Sinal Sem-Fios Fraca
+Name[uk]=Низька потужність радіосигналу
+Name[x-test]=xxLow Wireless Signal Strengthxx
 Comment=The wireless signal strength is low
+Comment[de]=Die Signalstärke der drahtlosen Verbindung ist niedrig
+Comment[nds]=De Stärk vun't Funksignaal is minn.
+Comment[pt]=A potência do sinal sem-fios é fraca
+Comment[uk]=Занизька потужність радіосигналу
+Comment[x-test]=xxThe wireless signal strength is lowxx
 Action=
 
 [Event/ifacestatechange]
 Name=Interface changed state
+Name[de]=Schnittstellenstatus geändert
+Name[nds]=Koppelsteed hett Status wesselt
+Name[pt]=A interface mudou de estado
+Name[uk]=Змінений стан інтерфейсу
+Name[x-test]=xxInterface changed statexx
 Comment=An interface changed state
+Comment[de]=Der Status einer Schnittstelle hat sich geändert
+Comment[nds]=En Koppelsteed hett den Status wesselt.
+Comment[pt]=Uma interface de rede mudou de estado
+Comment[uk]=Змінений стан інтерфейсу
+Comment[x-test]=xxAn interface changed statexx
 
 [Event/networkingdisabled]
 Name=Network management disabled
+Name[de]=Netzwerkverwaltung deaktiviert
+Name[nds]=Nettwarkpleeg utmaakt
+Name[pt]=Gestão de rede desactivada
+Name[uk]=Керування мережею вимкнено
+Name[x-test]=xxNetwork management disabledxx
 Comment=The network management subsystem was stopped or restarted
+Comment[de]=Die Netzwerkverwaltung ist angehalten oder neu gestartet worden
+Comment[nds]=Dat Nettwarkpleeg-Ünnersysteem wöör anhollen oder nieg opropen.
+Comment[pt]=O sub-sistema de gestão da rede foi parado ou reiniciado
+Comment[uk]=Систему керування мережею було зупинено або перезапущено
+Comment[x-test]=xxThe network management subsystem was stopped or restartedxx
 Action=
 

@@ -1,6 +1,16 @@
 [Desktop Entry]
 Name=Network Management
+Name[de]=Netzwerkverwaltung
+Name[nds]=Nettwarkpleeg
+Name[pt]=Gestão de Rede
+Name[uk]=Керування мережею
+Name[x-test]=xxNetwork Managementxx
 Comment=Network status and control utility
+Comment[de]=Dienstprogramm für Netzwerkstatus und -kontrolle
+Comment[nds]=Warktüüch för den Nettwarkstatus un sien Kuntrull
+Comment[pt]=Utilitário de estado e controlo da rede
+Comment[uk]=Інструмент стеження за станом і керування мережею
+Comment[x-test]=xxNetwork status and control utilityxx
 Type=Service
 X-KDE-ServiceTypes=Plasma/Applet
 Icon=networkmanager
