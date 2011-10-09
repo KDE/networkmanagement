@@ -1,14 +1,22 @@
 [Desktop Entry]
 Name=Network Connections
+Name[ca]=Connexions de xarxa
 Name[de]=Netzwerkverbindungen
 Name[nds]=Nettwarkverbinnen
+Name[nl]=Netwerkverbindingen
 Name[pt]=Ligações de Rede
+Name[pt_BR]=Conexões de rede
+Name[sv]=Nätverksanslutningar
 Name[uk]=Мережеві з'єднання
 Name[x-test]=xxNetwork Connectionsxx
 Comment=Add, Edit and Remove network connections
+Comment[ca]=Afegeix, edita o elimina connexions de xarxa
 Comment[de]=Netzwerkverbindungen hinzufügen, bearbeiten und entfernen
 Comment[nds]=Nettwark-Verbinnen tofögen, bewerken un wegmaken
+Comment[nl]=Netwerkverbindingen toevoegen, bewerken en verwijderen
 Comment[pt]=Adicionar, Editar e Remover as Ligações de Rede
+Comment[pt_BR]=Adiciona, edita e remove conexões de rede
+Comment[sv]=Lägg till, redigera och ta bort nätverksanslutningar
 Comment[uk]=Додати, змінити або вилучити мережеві з’єднання
 Comment[x-test]=xxAdd, Edit and Remove network connectionsxx
 Type=Service

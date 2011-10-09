@@ -1,15 +1,23 @@
 [Desktop Entry]
 Comment=Connect to the Internet
+Comment[ca]=Connecta a Internet
 Comment[de]=Mit dem Internet verbinden
+Comment[nl]=Met internet verbinden
 Comment[pt]=Ligar-se à Internet
+Comment[pt_BR]=Conectar à Internet
+Comment[sv]=Anslut till Internet
 Comment[uk]=Встановити з’єднання з мережею Інтернет
 Comment[x-test]=xxConnect to the Internetxx
 Encoding=UTF-8
 Keywords=
 Name=Network Connections
+Name[ca]=Connexions de xarxa
 Name[de]=Netzwerkverbindungen
 Name[nds]=Nettwarkverbinnen
+Name[nl]=Netwerkverbindingen
 Name[pt]=Ligações de Rede
+Name[pt_BR]=Conexões de rede
+Name[sv]=Nätverksanslutningar
 Name[uk]=Мережеві з'єднання
 Name[x-test]=xxNetwork Connectionsxx
 Type=Service

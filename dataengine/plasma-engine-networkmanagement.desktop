@@ -1,14 +1,22 @@
 [Desktop Entry]
 Name=Network Manager
+Name[ca]=Gestor de xarxa
 Name[de]=Netzwerkverwaltung
 Name[nds]=Nettwarkpleger
+Name[nl]=Netwerkbeheerder
 Name[pt]=Gestor da Rede
+Name[pt_BR]=Gerenciador de redes
+Name[sv]=Nätverkshanterare
 Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managerxx
 Comment=Network Manager data engine
+Comment[ca]=Motor de dades del gestor de xarxa
 Comment[de]=Datenmodul der Netzwerkverwaltung
 Comment[nds]=Nettwarkpleger-Datenkarn
+Comment[nl]=Gegevens-engine van netwerkbeheerder
 Comment[pt]=Motor de dados da Gestão da Rede
+Comment[pt_BR]=Mecanismo de dados do gerenciador de redes
+Comment[sv]=Nätverkshanterarens datagränssnitt
 Comment[uk]=Рушій даних керування мережею
 Comment[x-test]=xxNetwork Manager data enginexx
 X-KDE-ServiceTypes=Plasma/DataEngine

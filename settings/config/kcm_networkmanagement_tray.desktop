@@ -1,14 +1,22 @@
 [Desktop Entry]
 Name=Other
+Name[ca]=Altra
 Name[de]=Sonstiges
 Name[nds]=Anner
+Name[nl]=Overig
 Name[pt]=Outra
+Name[pt_BR]=Outra
+Name[sv]=Övriga
 Name[uk]=Інше
 Name[x-test]=xxOtherxx
 Comment=Configure the Network Management tool
+Comment[ca]=Configura l'eina de gestió de xarxa
 Comment[de]=Die Netzwerkverwaltung einrichten
 Comment[nds]=Dat Nettwark-Pleegwarktüüch instellen
+Comment[nl]=Hulpmiddel voor netwerkbeheer instellen
 Comment[pt]=Configurar a ferramenta de Gestão da Rede
+Comment[pt_BR]=Configura a ferramenta de gerenciamento de redes
+Comment[sv]=Anpassa nätverkshanteringsverktyget
 Comment[uk]=Налаштувати інструмент керування мережею
 Comment[x-test]=xxConfigure the Network Management toolxx
 Type=Service

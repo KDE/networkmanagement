@@ -1,14 +1,22 @@
 [Desktop Entry]
 Name=Network Management
+Name[ca]=Gestió de xarxa
 Name[de]=Netzwerkverwaltung
 Name[nds]=Nettwarkpleeg
+Name[nl]=Netwerkbeheer
 Name[pt]=Gestão de Rede
+Name[pt_BR]=Gerenciamento de redes
+Name[sv]=Nätverkshantering
 Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managementxx
 Comment=Network status and control utility
+Comment[ca]=Utilitat de control i estat de la xarxa
 Comment[de]=Dienstprogramm für Netzwerkstatus und -kontrolle
 Comment[nds]=Warktüüch för den Nettwarkstatus un sien Kuntrull
+Comment[nl]=Netwerkstatus en besturingsprogramma
 Comment[pt]=Utilitário de estado e controlo da rede
+Comment[pt_BR]=Utilitário de controle e status da rede
+Comment[sv]=Verktyg för nätverksstatus och kontroll
 Comment[uk]=Інструмент стеження за станом і керування мережею
 Comment[x-test]=xxNetwork status and control utilityxx
 Type=Service
