@@ -43,7 +43,8 @@ using namespace Solid::Control;
 GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnection * remote, QGraphicsItem * parent)
 : ActivatableItem(remote, parent),
     m_strengthMeter(0),
-    m_connectButton(0)
+    m_connectButton(0),
+    m_layoutIsDirty(true)
 {
     connect(remote, SIGNAL(signalQualityChanged(int)), this, SLOT(setQuality(int)));
     connect(remote, SIGNAL(accessTechnologyChanged(const int)), this, SLOT(setAccessTechnology(const int)));
@@ -55,12 +56,23 @@ GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnect
     update();
 }
 
+//HACK: hack to avoid misplacing of security icon. Check with Qt5 if still needed
+void GsmInterfaceConnectionItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget)
+{
+    if (m_layoutIsDirty) {
+        m_layout->invalidate();
+        m_layout->activate();
+        m_layoutIsDirty = false;
+    }
+    ActivatableItem::paint(painter, option, widget);
+}
+
 void GsmInterfaceConnectionItem::setupItem()
 {
     // painting of a wifi network, known connection or available access point
     /*
     +----+-------------+-----+---+
-    |icon essid        |meter|sec|
+    |icon essid        |meter|   |
     +----+-------------+-----+---+
     */
     m_layout = new QGraphicsGridLayout(this);
@@ -68,7 +80,7 @@ void GsmInterfaceConnectionItem::setupItem()
     m_layout->setColumnPreferredWidth(0, 150);
     m_layout->setColumnFixedWidth(2, 60);
     m_layout->setColumnFixedWidth(3, rowHeight);
-    m_layout->setColumnSpacing(1, spacing);
+    m_layout->setColumnSpacing(2, spacing);
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
@@ -81,8 +93,6 @@ void GsmInterfaceConnectionItem::setupItem()
         m_connectButton->setIcon(remote->iconName());
         setAccessTechnology(remote->getAccessTechnology());
         handleHasDefaultRouteChanged(remote->hasDefaultRoute());
-        QAction *a = new QAction(KIcon("emblem-favorite"), QString(), m_connectButton);
-        m_connectButton->addIconAction(a);
     } else {
         m_connectButton->setIcon("network-wired");
     }
@@ -99,12 +109,20 @@ void GsmInterfaceConnectionItem::setupItem()
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);
-    if (remote) m_strengthMeter->setValue(remote->getSignalQuality());
+    if (remote) {
+        m_strengthMeter->setValue(remote->getSignalQuality());
+        m_strengthMeter->setToolTip(i18n("Signal quality: %1%", remote->getSignalQuality()));
+    }
     m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
     m_strengthMeter->setPreferredSize(QSizeF(60, 12));
     m_strengthMeter->setMaximumHeight(12);
     m_strengthMeter->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_layout->addItem(m_strengthMeter, 0, 2, 1, 1, Qt::AlignVCenter | Qt::AlignRight);
+
+    widget = new Plasma::Label(this);
+    widget->setMaximumHeight(22);
+    widget->setMaximumWidth(22);
+    m_layout->addItem(widget, 0, 3, 1, 1, Qt::AlignVCenter | Qt::AlignRight);
 
     connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
@@ -113,6 +131,7 @@ void GsmInterfaceConnectionItem::setupItem()
     connect(m_connectButton, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
+    m_layoutIsDirty = true;
     update();
 }
 
@@ -124,6 +143,7 @@ void GsmInterfaceConnectionItem::setQuality(int quality)
 {
     if (m_strengthMeter) {
         m_strengthMeter->setValue(quality);
+        m_strengthMeter->setToolTip(i18n("Signal quality: %1%", quality));
     }
 }
 

@@ -50,7 +50,6 @@ class WirelessNetworkItem : public ActivatableItem
         virtual ~WirelessNetworkItem();
         void setupItem();
         QString ssid();
-        void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
 
     private Q_SLOTS:
         void setStrength(int strength);
@@ -58,6 +57,8 @@ class WirelessNetworkItem : public ActivatableItem
         void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
 
     private:
+        void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
+
         //bool readSettings();
         QGraphicsGridLayout* m_layout;
         Plasma::Label* m_ssidLabel;

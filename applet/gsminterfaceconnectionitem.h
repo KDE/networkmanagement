@@ -54,10 +54,13 @@ class GsmInterfaceConnectionItem : public ActivatableItem
         void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
 
     private:
+        void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
+
         //bool readSettings();
         QGraphicsGridLayout* m_layout;
         Plasma::Meter* m_strengthMeter;
         Plasma::IconWidget* m_connectButton;
+        bool m_layoutIsDirty;
 };
 
 #endif //#define APPLET_GSMCONNECTIONITEM_H
