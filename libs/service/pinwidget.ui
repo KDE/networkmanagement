@@ -121,9 +121,6 @@
      </item>
      <item row="0" column="1">
       <widget class="KLineEdit" name="puk">
-       <property name="inputMask">
-        <string>99999999; </string>
-       </property>
        <property name="showClearButton" stdset="0">
         <bool>true</bool>
        </property>
@@ -144,9 +141,6 @@
      </item>
      <item row="1" column="1">
       <widget class="KLineEdit" name="pin">
-       <property name="inputMask">
-        <string>99990000; </string>
-       </property>
        <property name="showClearButton" stdset="0">
         <bool>true</bool>
        </property>
@@ -167,9 +161,6 @@
      </item>
      <item row="2" column="1">
       <widget class="KLineEdit" name="pin2">
-       <property name="inputMask">
-        <string>99990000; </string>
-       </property>
        <property name="showClearButton" stdset="0">
         <bool>true</bool>
        </property>

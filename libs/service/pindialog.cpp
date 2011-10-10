@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <QIntValidator>
+
 #include "pindialog.h"
 #include "ui_pinwidget.h"
 
@@ -46,6 +48,16 @@ PinDialog::PinDialog(Solid::Control::ModemGsmCardInterface *modem, const Type ty
     ui = new Ui::PinWidget();
     ui->setupUi(w);
     ui->pin->setEchoMode(QLineEdit::Password);
+
+    QIntValidator * validator = new QIntValidator(this);
+    validator->setRange(1000, 99999999);
+    ui->pin->setValidator(validator);
+    ui->pin2->setValidator(validator);
+
+    QIntValidator * validator2 = new QIntValidator(this);
+    validator2->setRange(10000000, 99999999);
+    ui->puk->setValidator(validator2);
+
     ui->errorMessage->setHidden(true);
     QRect desktop = KGlobalSettings::desktopGeometry(topLevelWidget());
     setMinimumWidth(qMin(1000, qMax(sizeHint().width(), desktop.width() / 4)));
