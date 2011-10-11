@@ -1,6 +1,7 @@
 [Desktop Entry]
 Comment=Connect to the Internet
 Comment[ca]=Connecta a Internet
+Comment[cs]=Připojit se na Internet
 Comment[de]=Mit dem Internet verbinden
 Comment[nl]=Met internet verbinden
 Comment[pt]=Ligar-se à Internet
@@ -12,6 +13,7 @@ Encoding=UTF-8
 Keywords=
 Name=Network Connections
 Name[ca]=Connexions de xarxa
+Name[cs]=Síťová spojení
 Name[de]=Netzwerkverbindungen
 Name[nds]=Nettwarkverbinnen
 Name[nl]=Netwerkverbindingen

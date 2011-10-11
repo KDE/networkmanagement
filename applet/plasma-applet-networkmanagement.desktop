@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Network Management
 Name[ca]=Gestió de xarxa
+Name[cs]=Správa sítě
 Name[de]=Netzwerkverwaltung
 Name[nds]=Nettwarkpleeg
 Name[nl]=Netwerkbeheer
@@ -11,6 +12,7 @@ Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managementxx
 Comment=Network status and control utility
 Comment[ca]=Utilitat de control i estat de la xarxa
+Comment[cs]=Nástroj stavu a ovládání sítě
 Comment[de]=Dienstprogramm für Netzwerkstatus und -kontrolle
 Comment[nds]=Warktüüch för den Nettwarkstatus un sien Kuntrull
 Comment[nl]=Netwerkstatus en besturingsprogramma

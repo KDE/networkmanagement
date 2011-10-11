@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Network Connections
 Name[ca]=Connexions de xarxa
+Name[cs]=Síťová spojení
 Name[de]=Netzwerkverbindungen
 Name[nds]=Nettwarkverbinnen
 Name[nl]=Netwerkverbindingen
@@ -11,6 +12,7 @@ Name[uk]=Мережеві з'єднання
 Name[x-test]=xxNetwork Connectionsxx
 Comment=Add, Edit and Remove network connections
 Comment[ca]=Afegeix, edita o elimina connexions de xarxa
+Comment[cs]=Přidejte, upravte nebo odstraňte síťová spojení
 Comment[de]=Netzwerkverbindungen hinzufügen, bearbeiten und entfernen
 Comment[nds]=Nettwark-Verbinnen tofögen, bewerken un wegmaken
 Comment[nl]=Netwerkverbindingen toevoegen, bewerken en verwijderen

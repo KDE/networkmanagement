@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=Network Manager
 Name[ca]=Gestor de xarxa
+Name[cs]=Správce sítě
 Name[de]=Netzwerkverwaltung
 Name[nds]=Nettwarkpleger
 Name[nl]=Netwerkbeheerder
@@ -11,6 +12,7 @@ Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managerxx
 Comment=Network Manager data engine
 Comment[ca]=Motor de dades del gestor de xarxa
+Comment[cs]=Datový nástroj Správce sítě
 Comment[de]=Datenmodul der Netzwerkverwaltung
 Comment[nds]=Nettwarkpleger-Datenkarn
 Comment[nl]=Gegevens-engine van netwerkbeheerder

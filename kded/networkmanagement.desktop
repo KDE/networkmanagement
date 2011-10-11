@@ -1,6 +1,7 @@
 [Desktop Entry]
 Name=NetworkManager User Settings Service
 Name[ca]=Servei d'arranjament de l'usuari del NetworkManager
+Name[cs]=Služba uživatelského nastavení NetworkManageru
 Name[de]=Benutzereinstellungsdienst für NetworkManager
 Name[nds]=Brukerinstellen-Deenst för Nettwarkpleeg
 Name[nl]=Gebruikersinstellingenservice van netwerkbeheer
@@ -11,6 +12,7 @@ Name[uk]=Служба параметрів користувача NetworkManager
 Name[x-test]=xxNetworkManager User Settings Servicexx
 Comment=Provides network configuration to the NetworkManager daemon
 Comment[ca]=Proporciona la configuració de xarxa al dimoni del Gestor de xarxa
+Comment[cs]=Poskytuje síťovou konfiguraci démona NetworkManageru
 Comment[de]=Stellt dem NetworkManager-Dienst eine Netzwerkeinrichtung zur Verfügung
 Comment[nds]=Stellt Nettwarkinstellen över den Nettwarkpleger-Dämoon praat
 Comment[nl]=Levert de netwerkconfiguratie voor de NetworkManager-daemon
