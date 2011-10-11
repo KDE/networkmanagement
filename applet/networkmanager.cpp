@@ -227,14 +227,20 @@ void NetworkManagerApplet::setupInterfaceSignals()
         } else if (interface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
             Solid::Control::WirelessNetworkInterfaceNm09* wirelessiface =
                             static_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(interface);
-            connect(wirelessiface, SIGNAL(activeAccessPointChanged(const QString&)), SLOT(interfaceConnectionStateChanged()));
-            QString uni = wirelessiface->activeAccessPoint();
-            Solid::Control::AccessPointNm09 *ap = wirelessiface->findAccessPoint(uni);
-            if (ap) {
-                connect(ap, SIGNAL(signalStrengthChanged(int)), SLOT(interfaceConnectionStateChanged()));
-                connect(ap, SIGNAL(destroyed(QObject*)), SLOT(interfaceConnectionStateChanged()));
-            }
+            connect(wirelessiface, SIGNAL(activeAccessPointChanged(const QString&)), SLOT(setupAccessPointSignals(const QString&)));
+            QMetaObject::invokeMethod(wirelessiface, "activeAccessPointChanged",
+                                      Q_ARG(QString, wirelessiface->activeAccessPoint()));
         }
+    }
+}
+
+void NetworkManagerApplet::setupAccessPointSignals(const QString & uni)
+{
+    Solid::Control::WirelessNetworkInterfaceNm09 * wirelessiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09 *>(sender());
+    Solid::Control::AccessPointNm09 * ap = wirelessiface->findAccessPoint(uni);
+    if (ap) {
+        connect(ap, SIGNAL(signalStrengthChanged(int)), SLOT(interfaceConnectionStateChanged()));
+        connect(ap, SIGNAL(destroyed(QObject*)), SLOT(interfaceConnectionStateChanged()));
     }
 }
 

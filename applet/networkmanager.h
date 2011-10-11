@@ -122,6 +122,7 @@ private Q_SLOTS:
     void updateActiveInterface(bool);
     void resetActiveSystrayInterface();
     void _k_destroyed(QObject *);
+    void setupAccessPointSignals(const QString &);
 
 private:
     bool hasInterfaceOfType(Solid::Control::NetworkInterfaceNm09::Type type);
