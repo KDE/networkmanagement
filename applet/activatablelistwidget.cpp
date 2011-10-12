@@ -178,9 +178,7 @@ void ActivatableListWidget::createItem(RemoteActivatable * activatable, int inde
         case Knm::Activatable::WirelessNetwork:
         case Knm::Activatable::WirelessInterfaceConnection:
         { // Wireless
-            WirelessNetworkItem* wni = new WirelessNetworkItem(static_cast<RemoteWirelessNetwork*>(activatable), m_widget);
-            ai = wni;
-            QString ssid = wni->ssid();
+            ai = new WirelessNetworkItem(static_cast<RemoteWirelessNetwork*>(activatable), m_widget);
             break;
         }
         case Knm::Activatable::InterfaceConnection:
