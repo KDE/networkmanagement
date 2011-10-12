@@ -59,7 +59,6 @@ class GsmInterfaceConnectionItem : public ActivatableItem
         //bool readSettings();
         QGraphicsGridLayout* m_layout;
         Plasma::Meter* m_strengthMeter;
-        Plasma::IconWidget* m_connectButton;
         bool m_layoutIsDirty;
 };
 

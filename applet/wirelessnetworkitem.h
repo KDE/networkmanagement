@@ -63,7 +63,6 @@ class WirelessNetworkItem : public ActivatableItem
         QGraphicsGridLayout* m_layout;
         Plasma::Label* m_ssidLabel;
         Plasma::Meter* m_strengthMeter;
-        Plasma::IconWidget* m_connectButton;
         QString m_security;
         Plasma::Label* m_securityIcon;
         RemoteWirelessNetwork* m_remote;

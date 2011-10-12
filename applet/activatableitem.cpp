@@ -47,7 +47,8 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
     m_activatable(remote),
     m_hasDefaultRoute(false),
     m_deleting(false),
-    spacing(4)
+    spacing(4),
+    m_connectButton(0)
 {
     setDrawBackground(true);
     setTextBackgroundColor(QColor(Qt::transparent));
@@ -137,9 +138,16 @@ void ActivatableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* o
 
 void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
 {
+    Q_UNUSED(oldState);
+    m_state = newState;
+
+    if (!m_connectButton) {
+        return;
+    }
+
     // Update the view of the connection, manipulate font based on activation state.
     kDebug() << newState;
-    QFont f = font();
+    QFont f = m_connectButton->font();
     switch (newState) {
         //Knm::InterfaceConnectihon::ActivationState
         case Knm::InterfaceConnection::Activated:
@@ -157,7 +165,7 @@ void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::Activatio
             f.setBold(false);
             f.setItalic(true);
     }
-    setFont(f);
+    m_connectButton->setFont(f);
 }
 
 void ActivatableItem::hoverEnter()

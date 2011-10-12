@@ -43,7 +43,6 @@ using namespace Solid::Control;
 GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnection * remote, QGraphicsItem * parent)
 : ActivatableItem(remote, parent),
     m_strengthMeter(0),
-    m_connectButton(0),
     m_layoutIsDirty(true)
 {
     connect(remote, SIGNAL(signalQualityChanged(int)), this, SLOT(setQuality(int)));
@@ -51,9 +50,7 @@ GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnect
     connect(remote, SIGNAL(changed()), SLOT(update()));
     connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
             this, SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
-    m_state = remote->activationState();
-    activationStateChanged(remote->oldActivationState(), m_state);
-    update();
+    m_state = Knm::InterfaceConnection::Unknown;
 }
 
 //HACK: hack to avoid misplacing of security icon. Check with Qt5 if still needed
@@ -88,14 +85,6 @@ void GsmInterfaceConnectionItem::setupItem()
     // to make default route overlay really be over the connection's icon.
     m_connectButton->setFlags(ItemStacksBehindParent);
     m_connectButton->setAcceptsHoverEvents(false);
-    RemoteGsmInterfaceConnection * remote = qobject_cast<RemoteGsmInterfaceConnection*>(m_activatable);
-    if (remote) {
-        m_connectButton->setIcon(remote->iconName());
-        setAccessTechnology(remote->getAccessTechnology());
-        handleHasDefaultRouteChanged(remote->hasDefaultRoute());
-    } else {
-        m_connectButton->setIcon("network-wired");
-    }
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
     //m_connectButton->setToolTip(i18nc("icon to connect to mobile broadband network", "Connect to mobile broadband network %1", ssid));
@@ -109,10 +98,18 @@ void GsmInterfaceConnectionItem::setupItem()
     m_strengthMeter = new Plasma::Meter(this);
     m_strengthMeter->setMinimum(0);
     m_strengthMeter->setMaximum(100);
-    if (remote) {
-        m_strengthMeter->setValue(remote->getSignalQuality());
-        m_strengthMeter->setToolTip(i18n("Signal quality: %1%", remote->getSignalQuality()));
+
+    RemoteGsmInterfaceConnection * remoteconnection = qobject_cast<RemoteGsmInterfaceConnection*>(m_activatable);
+    if (remoteconnection) {
+        m_connectButton->setIcon(remoteconnection->iconName());
+        setAccessTechnology(remoteconnection->getAccessTechnology());
+        m_strengthMeter->setValue(remoteconnection->getSignalQuality());
+        m_strengthMeter->setToolTip(i18n("Signal quality: %1%", remoteconnection->getSignalQuality()));
+        activationStateChanged(Knm::InterfaceConnection::Unknown, remoteconnection->activationState());
+    } else {
+        m_connectButton->setIcon("network-wired");
     }
+
     m_strengthMeter->setMeterType(Plasma::Meter::BarMeterHorizontal);
     m_strengthMeter->setPreferredSize(QSizeF(60, 12));
     m_strengthMeter->setMaximumHeight(12);
@@ -174,9 +171,8 @@ void GsmInterfaceConnectionItem::activationStateChanged(Knm::InterfaceConnection
     if (remote) {
         handleHasDefaultRouteChanged(remote->hasDefaultRoute());
     }
-    m_state = newState;
-    update();
     ActivatableItem::activationStateChanged(oldState, newState);
+    update();
 }
 
 void GsmInterfaceConnectionItem::update()

@@ -63,6 +63,7 @@ protected:
     Knm::InterfaceConnection::ActivationState m_state;
     bool m_deleting;
     int spacing;
+    Plasma::IconWidget* m_connectButton;
 };
 
 #endif // ABSTRACTCONNECTABLEITEM_H

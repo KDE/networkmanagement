@@ -58,11 +58,13 @@ void InterfaceConnectionItem::setupItem()
     widget->setMaximumHeight(12);
     m_layout->addItem(widget, 0, 1, 3, 3);
 
-    if (interfaceConnection()) {
-        m_connectButton->setIcon(interfaceConnection()->iconName());
-        m_connectButton->setText(interfaceConnection()->connectionName());
-        //kDebug() << interfaceConnection()->connectionName() << interfaceConnection()->iconName();
-        handleHasDefaultRouteChanged(interfaceConnection()->hasDefaultRoute());
+    RemoteInterfaceConnection *remoteconnection = interfaceConnection();
+    if (remoteconnection) {
+        m_connectButton->setIcon(remoteconnection->iconName());
+        m_connectButton->setText(remoteconnection->connectionName());
+        //kDebug() << remoteconnection->connectionName() << remoteconnection->iconName();
+        handleHasDefaultRouteChanged(remoteconnection->hasDefaultRoute());
+        activationStateChanged(Knm::InterfaceConnection::Unknown, remoteconnection->activationState());
     } else {
         m_connectButton->setIcon("network-wired");
         m_connectButton->setText(i18nc("name of the connection not known", "Unknown"));

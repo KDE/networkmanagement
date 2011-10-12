@@ -45,7 +45,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent)
 : ActivatableItem(remote, parent),
     m_strengthMeter(0),
-    m_connectButton(0),
     m_securityIcon(0),
     m_remote(remote),
     m_wirelessStatus(0),
@@ -55,16 +54,9 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
     m_wirelessStatus = new WirelessStatus(remote);
     connect(m_wirelessStatus, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
     connect(m_remote, SIGNAL(changed()), SLOT(update()));
+    connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
+            this, SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
     m_state = Knm::InterfaceConnection::Unknown;
-    RemoteWirelessInterfaceConnection* remoteconnection = qobject_cast<RemoteWirelessInterfaceConnection*>(m_activatable);
-    if (remoteconnection) {
-        connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
-                this, SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
-        m_state = remoteconnection->activationState();
-        activationStateChanged(remoteconnection->oldActivationState(), m_state);
-    }
-    update();
-
 }
 
 //HACK: hack to avoid misplacing of security icon. Check with Qt5 if still needed
@@ -100,8 +92,10 @@ void WirelessNetworkItem::setupItem()
     m_connectButton->setFlags(ItemStacksBehindParent);
     m_connectButton->setAcceptsHoverEvents(false);
     m_connectButton->setIcon("network-wireless"); // Known connection, we probably have credentials
-    if (interfaceConnection()) {
-        m_connectButton->setText(interfaceConnection()->connectionName());
+    RemoteInterfaceConnection *remoteconnection = interfaceConnection();
+    if (remoteconnection) {
+        m_connectButton->setText(remoteconnection->connectionName());
+        activationStateChanged(Knm::InterfaceConnection::Unknown, remoteconnection->activationState());
     } else {
         m_connectButton->setText(m_wirelessStatus->ssid());
     }
@@ -149,7 +143,6 @@ void WirelessNetworkItem::setupItem()
     connect(m_connectButton, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
-    activationStateChanged(Knm::InterfaceConnection::Unknown, m_state);
     m_layoutIsDirty = true;
     update();
 }
@@ -187,7 +180,7 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
         m_connectButton->setText(t);
     }
     handleHasDefaultRouteChanged(interfaceConnection()->hasDefaultRoute());
-    m_state = newState;
+    ActivatableItem::activationStateChanged(oldState, newState);
     update();
 }
 
