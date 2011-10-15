@@ -90,7 +90,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     connect(&m_overlayTimeline, SIGNAL(valueChanged(qreal)), this, SLOT(repaint()));
 
     m_svg = new Plasma::Svg(this);
-    m_svg->setImagePath("icons/network");
+    m_svg->setImagePath("icons/network2");
     m_svg->setContainsMultipleImages(true);
     m_meterBgSvg = new Plasma::FrameSvg(this);
     m_meterBgSvg->setImagePath("widgets/bar_meter_horizontal");
@@ -124,7 +124,8 @@ NetworkManagerApplet::~NetworkManagerApplet()
 QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *iface)
 {
     if (iface->type() != Solid::Control::NetworkInterfaceNm09::Wifi
-        && iface->type() != Solid::Control::NetworkInterfaceNm09::Ethernet) {
+        && iface->type() != Solid::Control::NetworkInterfaceNm09::Ethernet
+        && iface->type() != Solid::Control::NetworkInterfaceNm09::Modem) {
         return QString();
     }
     QString icon;
@@ -168,40 +169,89 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
         return icon;
     }
 
-    // Now figure out which exact element we'll use
-    QString strength = "00";
-    Solid::Control::WirelessNetworkInterfaceNm09 *wiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
+    if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+        // Now figure out which exact element we'll use
+        QString strength = "00";
+        Solid::Control::WirelessNetworkInterfaceNm09 *wiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
 
-    if (wiface) {
-        QString uni = wiface->activeAccessPoint();
-        Solid::Control::AccessPointNm09 *ap = wiface->findAccessPoint(uni);
-        if (ap) {
-            int str = ap->signalStrength();
-            if (str < 13) {
-                strength = '0';
-            } else if (str < 30) {
-                strength = "20";
-            } else if (str < 50) {
-                strength = "40";
-            } else if (str < 70) {
-                strength = "60";
-            } else if (str < 90) {
-                strength = "80";
+        if (wiface) {
+            QString uni = wiface->activeAccessPoint();
+            Solid::Control::AccessPointNm09 *ap = wiface->findAccessPoint(uni);
+            if (ap) {
+                int str = ap->signalStrength();
+                if (str < 13) {
+                    strength = '0';
+                } else if (str < 30) {
+                    strength = "20";
+                } else if (str < 50) {
+                    strength = "40";
+                } else if (str < 70) {
+                    strength = "60";
+                } else if (str < 90) {
+                    strength = "80";
+                } else {
+                    strength = "100";
+                }
             } else {
-                strength = "100";
+                    strength = '0';
             }
         } else {
-                strength = '0';
+            return QString("dialog-error");
         }
-    } else {
-        return QString("dialog-error");
-    }
-    QString w = QString::number(s);
+        QString w = QString::number(s);
 
-    // The format in the SVG looks like this: wireless-signal-<strenght>
-    icon = QString("network-wireless-%1").arg(strength);
-    //kDebug() << "Icon:" << icon;
-    return icon;
+        // The format in the SVG looks like this: wireless-signal-<strength>
+        icon = QString("network-wireless-%1").arg(strength);
+        //kDebug() << "Icon:" << icon;
+        return icon;
+    } else if (iface->type() == Solid::Control::NetworkInterfaceNm09::Modem) {
+        Solid::Control::ModemNetworkInterfaceNm09 *giface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(iface);
+
+        if (giface) {
+            Solid::Control::ModemGsmNetworkInterface *modemNetworkIface = giface->getModemNetworkIface();
+
+            if (modemNetworkIface) {
+                int str = modemNetworkIface->getSignalQuality();
+                QString strength = "00";
+
+                if (str < 13) {
+                    strength = '0';
+                } else if (str < 30) {
+                    strength = "20";
+                } else if (str < 50) {
+                    strength = "40";
+                } else if (str < 70) {
+                    strength = "60";
+                } else if (str < 90) {
+                    strength = "80";
+                } else {
+                    strength = "100";
+                }
+
+                switch(modemNetworkIface->getAccessTechnology()) {
+                    case Solid::Control::ModemInterface::UnknownTechnology:
+                    case Solid::Control::ModemInterface::Gsm:
+                    case Solid::Control::ModemInterface::GsmCompact:
+                        return QString("network-mobile-%1").arg(strength);
+                    case Solid::Control::ModemInterface::Gprs:
+                        return QString("network-mobile-%1-gprs").arg(strength);
+                    case Solid::Control::ModemInterface::Edge:
+                        return QString("network-mobile-%1-edge").arg(strength);
+                    case Solid::Control::ModemInterface::Umts:
+                        return QString("network-mobile-%1-umts").arg(strength);
+                    case Solid::Control::ModemInterface::Hsdpa:
+                        return QString("network-mobile-%1-hsdpa").arg(strength);
+                    case Solid::Control::ModemInterface::Hsupa:
+                        return QString("network-mobile-%1-hsdua").arg(strength);
+                    case Solid::Control::ModemInterface::Hspa:
+                        return QString("network-mobile-%1-hspa").arg(strength);
+                }
+            }
+        }
+        return QString("network-mobile");
+    }
+
+    return QString("dialog-error");
 }
 
 void NetworkManagerApplet::setupInterfaceSignals()
@@ -230,6 +280,15 @@ void NetworkManagerApplet::setupInterfaceSignals()
             connect(wirelessiface, SIGNAL(activeAccessPointChanged(const QString&)), SLOT(setupAccessPointSignals(const QString&)));
             QMetaObject::invokeMethod(wirelessiface, "activeAccessPointChanged",
                                       Q_ARG(QString, wirelessiface->activeAccessPoint()));
+        } else if (interface->type() == Solid::Control::NetworkInterfaceNm09::Modem) {
+            Solid::Control::ModemNetworkInterfaceNm09* modemiface =
+                            static_cast<Solid::Control::ModemNetworkInterfaceNm09*>(interface);
+
+            Solid::Control::ModemGsmNetworkInterface *modemNetworkIface = modemiface->getModemNetworkIface();
+            if (modemNetworkIface) {
+                connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), this, SLOT(interfaceConnectionStateChanged()));
+                connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(Solid::Control::ModemNetworkInterfaceNm09::AccessTechnology)), this, SLOT(interfaceConnectionStateChanged()));
+            }
         }
     }
 }
@@ -367,7 +426,7 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 
     bool useSvg = false;
     if (m_activeSystrayInterface) {
-        useSvg = m_activeSystrayInterface->type() == Solid::Control::NetworkInterfaceNm09::Wifi || m_activeSystrayInterface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet;
+        useSvg = m_activeSystrayInterface->type() == Solid::Control::NetworkInterfaceNm09::Wifi || m_activeSystrayInterface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet || m_activeSystrayInterface->type() == Solid::Control::NetworkInterfaceNm09::Modem;
     }
 
     /* I am using setPopupIcon at the end of this method to make the usual system tray icon's hover and click
@@ -388,7 +447,13 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
 
     if (useSvg) {
         QString el = svgElement(m_activeSystrayInterface);
-        m_svg->paint(&painter, rect, el);
+
+        // icon network-mobile-0 is totally transparent, that is, invisible :-)
+        if (el == "network-mobile-0") {
+            painter.drawPixmap(QPoint(0,0), m_pixmap);
+        } else {
+            m_svg->paint(&painter, rect, el);
+        }
     } else {
         painter.drawPixmap(QPoint(0,0), m_pixmap);
     }
@@ -930,7 +995,7 @@ void NetworkManagerApplet::vpnActivationStateChanged(Knm::InterfaceConnection::A
                 m_totalActiveVpnConnections--;
             break;
     }
-    kDebug() << newState << m_totalActiveVpnConnections;
+    //kDebug() << newState << m_totalActiveVpnConnections;
     update();
 }
 

@@ -37,4 +37,8 @@ install(FILES plasma-applet-networkmanagement.desktop DESTINATION ${SERVICES_INS
 
 add_subdirectory(icons)
 
+install(FILES
+        network2.svgz
+        DESTINATION ${DATA_INSTALL_DIR}/desktoptheme/default/icons/)
+
 target_link_libraries(plasma_applet_networkmanagement ${KDE4_KCMUTILS_LIBS})
