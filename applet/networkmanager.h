@@ -171,7 +171,6 @@ private:
     Plasma::Svg* m_svg;
     Plasma::FrameSvg* m_meterBgSvg;
     Plasma::FrameSvg* m_meterFgSvg;
-    QRect m_contentSquare;
 };
 
 #endif

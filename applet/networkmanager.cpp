@@ -128,37 +128,6 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
         && iface->type() != Solid::Control::NetworkInterfaceNm09::Modem) {
         return QString(); // this means: use pixmap icons instead of svg icons.
     }
-    QString icon;
-
-    int _s = qMin(contentsRect().width(), contentsRect().height());
-    int s;
-    // Figure out the maximum size of the element
-    // those pixelsizes are taken from the svg
-    if (_s >= 19) {
-        s = 19;
-    }
-    if (_s >= 24) {
-        s = 24;
-    }
-    if (_s >= 38) {
-        s = 38;
-    }
-    if (_s >= 50) {
-        s = 50;
-    }
-    if (_s >= 76) {
-        s = 76;
-    }
-    // For our fixed sizes, we want a fixed rect to render into
-    if (_s >= 19 && _s <= 76) {
-        m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - s) / 2,
-                                contentsRect().y() + (contentsRect().height() - s) / 2,
-                                s, s);
-    } else { // .... otherwise, for free scaling, we just want a square that fits in
-        m_contentSquare = QRect(contentsRect().x() + (contentsRect().width() - _s) / 2,
-                                contentsRect().y() + (contentsRect().height() - _s) / 2,
-                                _s, _s);
-    }
 
     if (iface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet) {
         if (iface->connectionState() == Solid::Control::NetworkInterfaceNm09::Activated) {
@@ -197,12 +166,9 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
         } else {
             return QString("dialog-error");
         }
-        QString w = QString::number(s);
 
         // The format in the SVG looks like this: wireless-signal-<strength>
-        icon = QString("network-wireless-%1").arg(strength);
-        //kDebug() << "Icon:" << icon;
-        return icon;
+        return QString("network-wireless-%1").arg(strength);
     } else if (iface->type() == Solid::Control::NetworkInterfaceNm09::Modem) {
         Solid::Control::ModemNetworkInterfaceNm09 *giface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(iface);
 
@@ -320,8 +286,6 @@ void NetworkManagerApplet::init()
         m_panelContainment = false;
     }
 
-    // bogus, just to make sure we have some remotely sensible value
-    m_contentSquare = contentsRect().toRect();
     //kDebug();
     QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
