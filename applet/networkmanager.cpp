@@ -126,7 +126,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
     if (iface->type() != Solid::Control::NetworkInterfaceNm09::Wifi
         && iface->type() != Solid::Control::NetworkInterfaceNm09::Ethernet
         && iface->type() != Solid::Control::NetworkInterfaceNm09::Modem) {
-        return QString();
+        return QString(); // this means: use pixmap icons instead of svg icons.
     }
     QString icon;
 
@@ -162,11 +162,10 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
 
     if (iface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet) {
         if (iface->connectionState() == Solid::Control::NetworkInterfaceNm09::Activated) {
-            icon = "network-wired-activated";
+            return QString("network-wired-activated");
         } else {
-            icon = "network-wired";
+            return QString("network-wired");
         }
-        return icon;
     }
 
     if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
@@ -232,7 +231,11 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
                     case Solid::Control::ModemInterface::UnknownTechnology:
                     case Solid::Control::ModemInterface::Gsm:
                     case Solid::Control::ModemInterface::GsmCompact:
-                        return QString("network-mobile-%1").arg(strength);
+                        if (strength == QString("0")) {
+                            return QString(); // this means: use KIcon("phone") instead of svg icon.
+                        } else {
+                            return QString("network-mobile-%1").arg(strength);
+                        }
                     case Solid::Control::ModemInterface::Gprs:
                         return QString("network-mobile-%1-gprs").arg(strength);
                     case Solid::Control::ModemInterface::Edge:
@@ -248,7 +251,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
                 }
             }
         }
-        return QString("network-mobile");
+        return QString(); // this means: use KIcon("phone") instead of svg icon.
     }
 
     return QString("dialog-error");
@@ -424,11 +427,6 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
         return;
     }
 
-    bool useSvg = false;
-    if (m_activeSystrayInterface) {
-        useSvg = m_activeSystrayInterface->type() == Solid::Control::NetworkInterfaceNm09::Wifi || m_activeSystrayInterface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet || m_activeSystrayInterface->type() == Solid::Control::NetworkInterfaceNm09::Modem;
-    }
-
     /* I am using setPopupIcon at the end of this method to make the usual system tray icon's hover and click
      * effects work. However, setPopupIcon creates a Plasma::IconWidget object that draws itself over
      * contentsRect and, consequentely, over the overlays created by paintStatusOverlay and paintNeedAuthOverlay.
@@ -445,17 +443,11 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     QPainter painter;
     painter.begin(&newIcon);
 
-    if (useSvg) {
-        QString el = svgElement(m_activeSystrayInterface);
-
-        // icon network-mobile-0 is totally transparent, that is, invisible :-)
-        if (el == "network-mobile-0") {
-            painter.drawPixmap(QPoint(0,0), m_pixmap);
-        } else {
-            m_svg->paint(&painter, rect, el);
-        }
-    } else {
+    QString el = svgElement(m_activeSystrayInterface);
+    if (el.isEmpty()) {
         painter.drawPixmap(QPoint(0,0), m_pixmap);
+    } else {
+        m_svg->paint(&painter, rect, el);
     }
 
     paintStatusOverlay(&painter, rect);
