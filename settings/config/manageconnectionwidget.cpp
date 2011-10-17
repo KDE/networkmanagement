@@ -754,14 +754,13 @@ void ManageConnectionWidget::updateLastUsed()
     updateLastUsed(mConnEditUi.listCellular);
     updateLastUsed(mConnEditUi.listVpn);
     updateLastUsed(mConnEditUi.listPppoe);
-
 }
 
 void ManageConnectionWidget::updateLastUsed(QTreeWidget * list)
 {
     QTreeWidgetItemIterator it(list);
     while (*it) {
-        QDateTime lastUsed = (*it)->data(ConnectionNameColumn, ConnectionLastUsedRole).toDateTime();
+        QDateTime lastUsed = (*it)->data(ConnectionLastUsedColumn, ConnectionLastUsedRole).toDateTime();
         (*it)->setText(ConnectionLastUsedColumn, formatDateRelative(lastUsed));
         ++it;
     }
