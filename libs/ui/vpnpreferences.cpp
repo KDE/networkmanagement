@@ -111,7 +111,7 @@ VpnPreferences::VpnPreferences(Knm::Connection *con, QWidget *parent)
             SettingWidget * vpnWidget = m_uiPlugin->widget(m_connection, this);
             addToTabWidget(vpnWidget);
         } else {
-            kDebug() << error;
+            kDebug() << error << ". serviceType == " << serviceType;
         }
     }
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
