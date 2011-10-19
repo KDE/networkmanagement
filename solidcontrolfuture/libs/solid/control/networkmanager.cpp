@@ -110,7 +110,7 @@ Solid::Control::NetworkInterfaceNm09List Solid::Control::NetworkManagerNm09Priva
     }
     else
     {
-        kWarning() << "Lamarque: NetworkManager backend not found" << managerBackend() << managerBackend()->inherits("Solid::Control::Ifaces::NetworkManagerNm09") << managerBackend()->metaObject()->className();
+        kWarning() << "NetworkManager backend not found" << managerBackend() << managerBackend()->inherits("Solid::Control::Ifaces::NetworkManagerNm09") << managerBackend()->metaObject()->className();
         return NetworkInterfaceNm09List();
     }
 }
