@@ -22,8 +22,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define SOLID_CONTROL_MODEMNETWORKINTERFACE_H
 
 #include "networkinterface.h"
-#include <solid/control/modemgsmcardinterface.h>
-#include <solid/control/modemgsmnetworkinterface.h>
+#include "modemgsmcardinterface.h"
+#include "modemgsmnetworkinterface.h"
 
 namespace Solid
 {

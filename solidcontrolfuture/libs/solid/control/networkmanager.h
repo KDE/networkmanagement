@@ -26,7 +26,7 @@
 
 #include <solid/networking.h>
 #include "solid_control_export.h"
-#include <solid/control/networkinterface.h>
+#include "networkinterface.h"
 
 namespace Solid
 {
