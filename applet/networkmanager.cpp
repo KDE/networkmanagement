@@ -123,9 +123,9 @@ NetworkManagerApplet::~NetworkManagerApplet()
 
 QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *iface)
 {
-    if (iface->type() != Solid::Control::NetworkInterfaceNm09::Wifi
-        && iface->type() != Solid::Control::NetworkInterfaceNm09::Ethernet
-        && iface->type() != Solid::Control::NetworkInterfaceNm09::Modem) {
+    if (!iface || (iface->type() != Solid::Control::NetworkInterfaceNm09::Wifi &&
+                   iface->type() != Solid::Control::NetworkInterfaceNm09::Ethernet &&
+                   iface->type() != Solid::Control::NetworkInterfaceNm09::Modem)) {
         return QString(); // this means: use pixmap icons instead of svg icons.
     }
 
