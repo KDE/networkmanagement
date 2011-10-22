@@ -851,10 +851,15 @@ void NetworkManagerApplet::userWirelessEnabledChanged(bool enabled)
 void NetworkManagerApplet::managerStatusChanged(Solid::Networking::Status status)
 {
     //kDebug() << "managerstatuschanged";
-    if (Solid::Networking::Unknown == status ) {
-        // FIXME: Do something smart
+    m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
+    if (status == Solid::Networking::Unknown) {
+        m_activeInterface = m_activeSystrayInterface = 0;
     } else {
-        // ...
+        if (!m_interfaces.isEmpty()) {
+            qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
+            m_activeInterface = m_interfaces.first();
+            m_activeSystrayInterface = m_activeInterface;
+        }
     }
     setupInterfaceSignals();
     updatePixmap();
