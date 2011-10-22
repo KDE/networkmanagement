@@ -984,7 +984,7 @@ void NetworkManagerApplet::_k_destroyed(QObject *object)
 
 void NetworkManagerApplet::resetActiveSystrayInterface()
 {
-    if (m_activeSystrayInterface && m_activeSystrayInterface->uni() == m_activeInterface->uni()) {
+    if (m_activeInterface && m_activeSystrayInterface && m_activeSystrayInterface->uni() == m_activeInterface->uni()) {
         return;
     }
     m_activeSystrayInterface = m_activeInterface;
