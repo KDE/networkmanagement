@@ -453,7 +453,6 @@ void ManageConnectionWidget::exportClicked()
     QTreeWidgetItem * item = selectedItem();
     Knm::Connection * con = 0;
     QString connectionId = item->data(0, ConnectionIdRole).toString();
-    Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, ConnectionTypeRole).toUInt();
     if (connectionId.isEmpty()) {
         kDebug() << "selected item had no connectionId!";
         return;
