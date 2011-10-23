@@ -68,7 +68,9 @@ void VpnInterfaceConnectionProvider::init()
 void VpnInterfaceConnectionProvider::handleAdd(Knm::Connection * addedConnection)
 {
     Q_D(VpnInterfaceConnectionProvider);
-    if (NetworkManager::status() == Solid::Networking::Connected) {
+    if (NetworkManager::status() == NetworkManager::ConnectedLinkLocal ||
+        NetworkManager::status() == NetworkManager::ConnectedSiteOnly ||
+        NetworkManager::status() == NetworkManager::Connected) {
         if (!d->vpns.contains(addedConnection->uuid())) {
             if (addedConnection->type() == Knm::Connection::Vpn) {
                 Knm::VpnInterfaceConnection * vpnConnection =
