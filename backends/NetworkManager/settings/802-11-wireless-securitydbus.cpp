@@ -197,14 +197,14 @@ QVariantMap WirelessSecurityDbus::toMap()
 /**
  * Turns a key that may be ascii into the equivalent hex string
  */
-static QString toHexKey(const QString & key)
+/*static QString toHexKey(const QString & key)
 {
     if (key.length() == 5 || key.length() == 13) {
         return key.toAscii().toHex();
     } else {
         return key;
     }
-}
+}*/
 
 QVariantMap WirelessSecurityDbus::toSecretsMap()
 {
