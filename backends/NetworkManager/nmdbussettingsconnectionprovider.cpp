@@ -332,23 +332,7 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
         newConnection->setUuid(uuid);
         ConnectionDbus converter(newConnection);
         QVariantMapMap map = converter.toDbusMap();
-
-        if (newConnection->name() == remote->id()) {
-            remote->Update(map);
-        } else {
-            /* If connection's name (id in NM's termonology) changes during an Update
-             * NM will leave the old connection file intact and create a new connection file
-             * in /etc/NetworkManager/system-connections/ with the same uuid, which is wrong in my oppinion.
-             * Furthermore the old connection will not be shown in Plasma NM's connection list
-             * because we use connection's uuid as connection identifier.
-             * Deleting the old connection and creating a new one seems to work.
-             */
-            kDebug() << "Renaming connection:" << remote->id() << " -> " << newConnection->name();
-            QDBusPendingCall reply = remote->Delete();
-            reply.waitForFinished();
-            sleep(1);
-            addConnection(newConnection);
-        }
+        remote->Update(map);
 
         // don't do any processing on d->connections and d->connectionList here
         // because onRemoteConnectionUpdated() method will take care of them
