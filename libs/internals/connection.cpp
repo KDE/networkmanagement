@@ -106,6 +106,11 @@ Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInte
                      case Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo: return Knm::Connection::Cdma;
                      case Solid::Control::ModemNetworkInterfaceNm09::Pots: return Knm::Connection::Pppoe;
                      /* TODO: add Solid::Control::ModemNetworkInterfaceNm09::Lte */
+                     case Solid::Control::ModemNetworkInterfaceNm09::Lte: kWarning() << "Unhandled modem sub type: LTE";
+                          break;
+                     case Solid::Control::ModemNetworkInterfaceNm09::None:
+                          kWarning() << "Unhandled modem sub type: Solid::Control::ModemNetworkInterfaceNm09::None";
+                          break;
                  }
              }
         }
@@ -113,6 +118,9 @@ Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInte
         case Solid::Control::NetworkInterfaceNm09::Unused1:
         case Solid::Control::NetworkInterfaceNm09::Unused2:
             return Knm::Connection::Unknown;
+        default:
+            kWarning() << "Unhandled type:" << iface->type();
+            break;
     }
     return Knm::Connection::Wired;
 }

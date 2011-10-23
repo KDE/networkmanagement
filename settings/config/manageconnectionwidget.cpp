@@ -339,8 +339,11 @@ void ManageConnectionWidget::updateTabStates()
                             break;
                         case Solid::Control::ModemNetworkInterfaceNm09::GsmUmts:
                         case Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo:
-                        /* TODO: case Solid::Control::ModemNetworkInterfaceNm09::Lte: */
+                        case Solid::Control::ModemNetworkInterfaceNm09::Lte:
                             hasCellular = true;
+                            break;
+                        case Solid::Control::ModemNetworkInterfaceNm09::None:
+                            kWarning() << "Unhandled modem sub type: Solid::Control::ModemNetworkInterfaceNm09::None";
                             break;
                     }
                 }

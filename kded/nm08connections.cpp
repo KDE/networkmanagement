@@ -147,6 +147,9 @@ END:
 
 void Nm08Connections::gotSecrets(Knm::Connection * connection, const QString & settingName, bool ok)
 {
+    Q_UNUSED(settingName);
+    Q_UNUSED(ok);
+ 
     if (!m_connectionsToDelete.contains(connection) || m_connectionsBeingAdded.contains(connection)) {
         return;
     }

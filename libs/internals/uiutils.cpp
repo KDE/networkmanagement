@@ -68,6 +68,9 @@ QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterfaceNm09::
                     case Solid::Control::ModemNetworkInterfaceNm09::Lte:
                          deviceText = i18nc("title of the interface widget in nm's popup", "Mobile Broadband");
                          break;
+                    case Solid::Control::ModemNetworkInterfaceNm09::None:
+                         kWarning() << "Unhandled modem sub type: Solid::Control::ModemNetworkInterfaceNm09::None";
+                         break;
                 }
             }
         }

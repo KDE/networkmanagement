@@ -96,6 +96,9 @@ void WepAuthWidget::readConfig()
             label->setText(i18n("Key:"));
             regExp = QRegExp("([0-9]|[a-f]|[A-F]){10,26}");
             break;
+        case Knm::WirelessSecuritySetting::None:
+        case Knm::WirelessSecuritySetting::COUNT:
+            break;
     }
     d->pw->setValidator(new QRegExpValidator(regExp, this));
 

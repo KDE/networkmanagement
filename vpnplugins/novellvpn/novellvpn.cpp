@@ -46,6 +46,8 @@ SettingWidget * NovellVpnUiPlugin::widget(Knm::Connection * connection, QWidget 
 
 QString NovellVpnUiPlugin::suggestedFileName(Knm::Connection *connection) const
 {
+    Q_UNUSED(connection);
+
     // TODO : implement suggested file name
     return QString();
 }
@@ -58,12 +60,17 @@ QString NovellVpnUiPlugin::supportedFileExtensions() const
 
 QVariantList NovellVpnUiPlugin::importConnectionSettings(const QString &fileName)
 {
+    Q_UNUSED(fileName);
+
     // TODO : import the Novell VPN connection from file and return settings
     return QVariantList();
 }
 
 bool NovellVpnUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
 {
+    Q_UNUSED(connection);
+    Q_UNUSED(fileName);
+
     // TODO : export Novell VPN connection to file
     return false;
 }

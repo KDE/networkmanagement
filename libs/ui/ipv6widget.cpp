@@ -389,6 +389,8 @@ void IpV6Widget::methodChanged(int currentIndex)
 
 quint32 suggestNetmask(Q_IPV6ADDR ip)
 {
+    Q_UNUSED(ip);
+
     /*
     TODO: find out common IPv6-netmasks and make a complete function
 
