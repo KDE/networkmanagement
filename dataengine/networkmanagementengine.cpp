@@ -159,6 +159,8 @@ void NetworkManagementEngine::activatableAdded(RemoteActivatable* remote)
 
 void NetworkManagementEngine::activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
 {
+    Q_UNUSED(oldState);
+
     // FIXME: never trigged... ???
     kDebug() << "actstatechange";
     if (newState == Knm::InterfaceConnection::Activating) {
@@ -306,6 +308,13 @@ void NetworkManagementEngine::updateInterfaceConnection(RemoteActivatable* remot
             break;
         case Knm::Connection::Pppoe:
             _type = "Pppoe";
+            break;
+        case Knm::Connection::Bluetooth:
+            /* TODO */
+            kWarning() << "Unhandled type: Bluetooth";
+            break;
+        default:
+            kWarning() << "Unhandled type" << remoteconnection->connectionType();
             break;
     }
 

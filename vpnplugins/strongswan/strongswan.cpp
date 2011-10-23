@@ -52,6 +52,8 @@ SettingWidget * StrongswanUiPlugin::askUser(Knm::Connection * connection, QWidge
 
 QString StrongswanUiPlugin::suggestedFileName(Knm::Connection *connection) const
 {
+    Q_UNUSED(connection);
+
     // TODO : implement suggested file name
     return QString();
 }
@@ -64,12 +66,17 @@ QString StrongswanUiPlugin::supportedFileExtensions() const
 
 QVariantList StrongswanUiPlugin::importConnectionSettings(const QString &fileName)
 {
+    Q_UNUSED(fileName);
+
     // TODO : import the StrongSwan connection from file and return settings
     return QVariantList();
 }
 
 bool StrongswanUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
 {
+    Q_UNUSED(connection);
+    Q_UNUSED(fileName);
+
     // TODO : export StrongSwan connection to file
     return false;
 }

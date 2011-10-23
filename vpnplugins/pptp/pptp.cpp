@@ -51,6 +51,8 @@ SettingWidget * PptpUiPlugin::askUser(Knm::Connection * connection, QWidget * pa
 
 QString PptpUiPlugin::suggestedFileName(Knm::Connection *connection) const
 {
+    Q_UNUSED(connection);
+
     // TODO : implement suggested file name
     return QString();
 }
@@ -63,12 +65,17 @@ QString PptpUiPlugin::supportedFileExtensions() const
 
 QVariantList PptpUiPlugin::importConnectionSettings(const QString &fileName)
 {
+    Q_UNUSED(fileName);
+
     // TODO : import the PPTP connection from file and return settings
     return QVariantList();
 }
 
 bool PptpUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
 {
+    Q_UNUSED(connection);
+    Q_UNUSED(fileName);
+
     // TODO : export PPTP connection to file
     return false;
 }

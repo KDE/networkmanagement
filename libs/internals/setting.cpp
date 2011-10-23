@@ -171,6 +171,7 @@ QMap<QString,QString> Setting::secretsToMap() const
 
 void Setting::secretsFromMap(QMap<QString,QString> secrets)
 {
+    Q_UNUSED(secrets);
 }
 
 bool Setting::hasPersistentSecrets() const

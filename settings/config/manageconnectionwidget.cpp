@@ -342,8 +342,11 @@ void ManageConnectionWidget::updateTabStates()
                             break;
                         case NetworkManager::ModemDevice::GsmUmts:
                         case NetworkManager::ModemDevice::CdmaEvdo:
-                        /* TODO: case NetworkManager::ModemDevice::Lte: */
+                        case NetworkManager::ModemDevice::Lte:
                             hasCellular = true;
+                            break;
+                        case NetworkManager::ModemDevice::NoCapability:
+                            kWarning() << "Unhandled modem sub type: NetworkManager::ModemDevice::NoCapability";
                             break;
                     }
                 }

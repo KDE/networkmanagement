@@ -90,6 +90,7 @@ void ManageConnection::addConnectionCompleted(bool valid, const QString &errorMe
 
 void ManageConnection::activatableAdded(QString path, uint type, int index)
 {
+    Q_UNUSED(type)
     Q_UNUSED(index)
     QDBusInterface activatable("org.kde.networkmanagement",
                                path,

@@ -204,6 +204,13 @@ void ConfigurationLauncher::unconfiguredInterfaceActivated()
                                  typeString = QLatin1String("cdma");
                                  editorArgs = QLatin1String("cdma");
                                  break;
+                            case NetworkManager::ModemDevice::Lte:
+                                 /* TODO */
+                                 kWarning() << "Unhandled modem sub type: LTE"; break;
+                                 break;
+                            case NetworkManager::ModemDevice::NoCapability:
+                                 kWarning() << "Unhandled modem sub type: NetworkManager::ModemDevice::NoCapability";
+                                 break;
                         }
                     }
                     break;
