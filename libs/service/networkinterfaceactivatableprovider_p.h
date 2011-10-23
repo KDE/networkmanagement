@@ -35,9 +35,9 @@ class NetworkInterfaceActivatableProviderPrivate
 {
 Q_DECLARE_PUBLIC(NetworkInterfaceActivatableProvider)
 public:
-    NetworkInterfaceActivatableProviderPrivate(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterfaceNm09 * interface);
+    NetworkInterfaceActivatableProviderPrivate(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::Device * interface);
     virtual ~NetworkInterfaceActivatableProviderPrivate();
-    Solid::Control::NetworkInterfaceNm09 * interface;
+    NetworkManager::Device * interface;
     ConnectionList * connectionList;
     QPointer<ActivatableList> activatableList;
     // map connection UUID to activatable

@@ -20,7 +20,7 @@
 
 #include "networkmanagementengine.h"
 
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/manager.h>
 
 // networkmanagement lib
 #include "remoteactivatable.h"

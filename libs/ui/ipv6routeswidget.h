@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #include <QStyledItemDelegate>
 
-#include "networkipv6config.h"
+#include "libnm-qt/ipv6config.h"
 
 class QStandardItem;
 class QItemSelection;
@@ -36,8 +36,8 @@ public:
     IpV6RoutesWidget(QWidget * parent = 0);
     virtual ~IpV6RoutesWidget();
 
-    void setRoutes(const QList<Solid::Control::IPv6Route> &list);
-    QList<Solid::Control::IPv6Route> routes();
+    void setRoutes(const QList<NetworkManager::IPv6Route> &list);
+    QList<NetworkManager::IPv6Route> routes();
     void setNeverDefault(bool checked);
     bool neverdefault();
     void setIgnoreAutoRoutes(bool checked);

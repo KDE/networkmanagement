@@ -32,40 +32,40 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <kdeversion.h>
 
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirelessaccesspoint.h>
-#include <solid/control/wirelessnetworkinterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/accesspoint.h>
+#include <libnm-qt/wirelessdevice.h>
 
 // Qt
 #include <QSizeF>
 
 K_GLOBAL_STATIC(UiUtilsPrivate, s_UiUtilsPrivate)
 
-QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterfaceNm09::Type type, const Solid::Control::NetworkInterfaceNm09 *iface)
+QString UiUtils::interfaceTypeLabel(const NetworkManager::Device::Type type, const NetworkManager::Device *iface)
 {
     QString deviceText;
     switch (type) {
-        case Solid::Control::NetworkInterfaceNm09::Ethernet:
+        case NetworkManager::Device::Ethernet:
             deviceText = i18nc("title of the interface widget in nm's popup", "Wired Ethernet");
             break;
-        case Solid::Control::NetworkInterfaceNm09::Wifi:
+        case NetworkManager::Device::Wifi:
             deviceText = i18nc("title of the interface widget in nm's popup", "Wireless 802.11");
             break;
-        case Solid::Control::NetworkInterfaceNm09::Bluetooth:
+        case NetworkManager::Device::Bluetooth:
             deviceText = i18nc("title of the interface widget in nm's popup", "Mobile Broadband");
             break;
-        case Solid::Control::NetworkInterfaceNm09::Modem: {
-            const Solid::Control::ModemNetworkInterfaceNm09 *nmModemIface = qobject_cast<const Solid::Control::ModemNetworkInterfaceNm09 *>(iface);
+        case NetworkManager::Device::Modem: {
+            const NetworkManager::ModemDevice *nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(iface);
             if (nmModemIface) {
-                Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities subType = nmModemIface->subType();
+                NetworkManager::ModemDevice::Capability subType = nmModemIface->subType();
                 switch(subType) {
-                    case Solid::Control::ModemNetworkInterfaceNm09::Pots:
+                    case NetworkManager::ModemDevice::Pots:
                          deviceText = i18nc("title of the interface widget in nm's popup", "Serial Modem");
                          break;
-                    case Solid::Control::ModemNetworkInterfaceNm09::GsmUmts:
-                    case Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo:
-                    case Solid::Control::ModemNetworkInterfaceNm09::Lte:
+                    case NetworkManager::ModemDevice::GsmUmts:
+                    case NetworkManager::ModemDevice::CdmaEvdo:
+                    case NetworkManager::ModemDevice::Lte:
                          deviceText = i18nc("title of the interface widget in nm's popup", "Mobile Broadband");
                          break;
                 }
@@ -79,26 +79,26 @@ QString UiUtils::interfaceTypeLabel(const Solid::Control::NetworkInterfaceNm09::
     return deviceText;
 }
 
-QString UiUtils::iconName(Solid::Control::NetworkInterfaceNm09 *iface)
+QString UiUtils::iconName(NetworkManager::Device *iface)
 {
     if (!iface) {
         return QString("dialog-error");
     }
     QString icon;
     QString strength = "00";
-    Solid::Control::WirelessNetworkInterfaceNm09 *wiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
+    NetworkManager::WirelessDevice *wiface = qobject_cast<NetworkManager::WirelessDevice*>(iface);
 
     switch (iface->type()) {
-        case Solid::Control::NetworkInterfaceNm09::Ethernet:
+        case NetworkManager::Device::Ethernet:
             icon = "network-wired";
             break;
-        case Solid::Control::NetworkInterfaceNm09::Wifi:
+        case NetworkManager::Device::Wifi:
 
             if (wiface) {
                 QString uni = wiface->activeAccessPoint();
                 //QString uni = wiface->activeAccessPoint()->signalStrength();
                 //int s =
-                Solid::Control::AccessPointNm09 *ap = wiface->findAccessPoint(uni);
+                NetworkManager::AccessPoint *ap = wiface->findAccessPoint(uni);
                 if (ap) {
                     int s = ap->signalStrength();
                     if (s < 13) {
@@ -118,10 +118,10 @@ QString UiUtils::iconName(Solid::Control::NetworkInterfaceNm09 *iface)
             }
             icon = "network-wireless-connected-" + strength;
             break;
-        case Solid::Control::NetworkInterfaceNm09::Bluetooth:
+        case NetworkManager::Device::Bluetooth:
             icon = "bluetooth";
             break;
-        case Solid::Control::NetworkInterfaceNm09::Modem:
+        case NetworkManager::Device::Modem:
             icon = "phone";
             break;
         default:
@@ -152,51 +152,51 @@ int UiUtils::iconSize(const QSizeF size)
     return s;
 }
 
-QString UiUtils::connectionStateToString(Solid::Control::NetworkInterfaceNm09::ConnectionState state, const QString &connectionName)
+QString UiUtils::connectionStateToString(NetworkManager::Device::State state, const QString &connectionName)
 {
     QString stateString;
     switch (state) {
-        case Solid::Control::NetworkInterfaceNm09::UnknownState:
+        case NetworkManager::Device::UnknownState:
             stateString = i18nc("description of unknown network interface state", "Unknown");
             break;
-        case Solid::Control::NetworkInterfaceNm09::Unmanaged:
+        case NetworkManager::Device::Unmanaged:
             stateString = i18nc("description of unmanaged network interface state", "Unmanaged");
             break;
-        case Solid::Control::NetworkInterfaceNm09::Unavailable:
+        case NetworkManager::Device::Unavailable:
             stateString = i18nc("description of unavailable network interface state", "Unavailable");
             break;
-        case Solid::Control::NetworkInterfaceNm09::Disconnected:
+        case NetworkManager::Device::Disconnected:
             stateString = i18nc("description of unconnected network interface state", "Not connected");
             break;
-        case Solid::Control::NetworkInterfaceNm09::Preparing:
+        case NetworkManager::Device::Preparing:
             stateString = i18nc("description of preparing to connect network interface state", "Preparing to connect");
             break;
-        case Solid::Control::NetworkInterfaceNm09::Configuring:
+        case NetworkManager::Device::ConfiguringHardware:
             stateString = i18nc("description of configuring hardware network interface state", "Configuring interface");
             break;
-        case Solid::Control::NetworkInterfaceNm09::NeedAuth:
+        case NetworkManager::Device::NeedAuth:
             stateString = i18nc("description of waiting for authentication network interface state", "Waiting for authorization");
             break;
-        case Solid::Control::NetworkInterfaceNm09::IPConfig:
+        case NetworkManager::Device::ConfiguringIp:
             stateString = i18nc("network interface doing dhcp request in most cases", "Setting network address");
             break;
-        case Solid::Control::NetworkInterfaceNm09::IPCheck:
+        case NetworkManager::Device::CheckingIp:
             stateString = i18nc("is other action required to fully connect? captive portals, etc.", "Checking further connectivity");
             break;
-        case Solid::Control::NetworkInterfaceNm09::Secondaries:
+        case NetworkManager::Device::WaitingForSecondaries:
             stateString = i18nc("a secondary connection (e.g. VPN) has to be activated first to continue", "Waiting for a secondary connection");
             break;
-        case Solid::Control::NetworkInterfaceNm09::Activated:
+        case NetworkManager::Device::Activated:
             if (connectionName.isEmpty()) {
                 stateString = i18nc("network interface connected state label", "Connected");
             } else {
                 stateString = i18nc("network interface connected state label", "Connected to %1", connectionName);
             }
             break;
-        case Solid::Control::NetworkInterfaceNm09::Deactivating:
+        case NetworkManager::Device::Deactivating:
             stateString = i18nc("network interface disconnecting state label", "Deactivating connection");
             break;
-        case Solid::Control::NetworkInterfaceNm09::Failed:
+        case NetworkManager::Device::Failed:
             stateString = i18nc("network interface connection failed state label", "Connection Failed");
             break;
         default:
@@ -207,17 +207,17 @@ QString UiUtils::connectionStateToString(Solid::Control::NetworkInterfaceNm09::C
 
 QString UiUtils::connectionStateToString(Knm::InterfaceConnection::ActivationState state, const QString &connectionName)
 {
-    Solid::Control::NetworkInterfaceNm09::ConnectionState s = Solid::Control::NetworkInterfaceNm09::UnknownState;
+    NetworkManager::Device::State s = NetworkManager::Device::UnknownState;
 
     switch(state) {
     case Knm::InterfaceConnection::Unknown:
-        s = Solid::Control::NetworkInterfaceNm09::UnknownState;
+        s = NetworkManager::Device::UnknownState;
         break;
     case Knm::InterfaceConnection::Activating:
-        s = Solid::Control::NetworkInterfaceNm09::Configuring;
+        s = NetworkManager::Device::ConfiguringHardware;
         break;
     case Knm::InterfaceConnection::Activated:
-        s = Solid::Control::NetworkInterfaceNm09::Activated;
+        s = NetworkManager::Device::Activated;
         break;
     }
 
@@ -226,13 +226,13 @@ QString UiUtils::connectionStateToString(Knm::InterfaceConnection::ActivationSta
 
 Solid::Device* UiUtils::findSolidDevice(const QString & uni)
 {
-    Solid::Control::NetworkInterfaceNm09 * iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(uni);
+    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
 
     if (!iface) {
         return 0;
     }
 
-    QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkInterface.ifaceName == '%1'").arg(iface->interfaceName()));
+    QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkManager::Device.ifaceName == '%1'").arg(iface->interfaceName()));
     QList<Solid::Device>::iterator it = list.begin();
 
     if (it != list.end()) {
@@ -246,7 +246,7 @@ Solid::Device* UiUtils::findSolidDevice(const QString & uni)
 QString UiUtils::interfaceNameLabel(const QString & uni, const KNetworkManagerServicePrefs::InterfaceNamingChoices interfaceNamingStyle)
 {
     QString label;
-    Solid::Control::NetworkInterfaceNm09 * iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(uni);
+    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
     Solid::Device* dev = findSolidDevice(uni);
 
     switch (interfaceNamingStyle) {
@@ -292,33 +292,33 @@ QString UiUtils::interfaceNameLabel(const QString & uni)
     return interfaceNameLabel(uni, static_cast<KNetworkManagerServicePrefs::InterfaceNamingChoices>(KNetworkManagerServicePrefs::self()->interfaceNamingStyle()));
 }
 
-qreal UiUtils::interfaceState(const Solid::Control::NetworkInterfaceNm09 *interface)
+qreal UiUtils::interfaceState(const NetworkManager::Device *interface)
 {
     if (!interface) {
         return 0;
     }
 
     // from libs/types.h
-    switch (interface->connectionState()) {
-        case Solid::Control::NetworkInterfaceNm09::Preparing:
+    switch (interface->state()) {
+        case NetworkManager::Device::Preparing:
             return 0.15;
             break;
-        case Solid::Control::NetworkInterfaceNm09::Configuring:
+        case NetworkManager::Device::ConfiguringHardware:
             return 0.30;
             break;
-        case Solid::Control::NetworkInterfaceNm09::NeedAuth:
+        case NetworkManager::Device::NeedAuth:
             return 0.45;
             break;
-        case Solid::Control::NetworkInterfaceNm09::IPConfig:
+        case NetworkManager::Device::ConfiguringIp:
             return 0.60;
             break;
-        case Solid::Control::NetworkInterfaceNm09::IPCheck:
+        case NetworkManager::Device::CheckingIp:
             return 0.75;
             break;
-        case Solid::Control::NetworkInterfaceNm09::Secondaries:
+        case NetworkManager::Device::WaitingForSecondaries:
             return 0.90;
             break;
-        case Solid::Control::NetworkInterfaceNm09::Activated:
+        case NetworkManager::Device::Activated:
             return 1.0;
             break;
         default:
@@ -328,23 +328,23 @@ qreal UiUtils::interfaceState(const Solid::Control::NetworkInterfaceNm09 *interf
     return 0;
 }
 
-QString UiUtils::operationModeToString(Solid::Control::WirelessNetworkInterfaceNm09::OperationMode mode)
+QString UiUtils::operationModeToString(NetworkManager::WirelessDevice::OperationMode mode)
 {
     QString modeString;
     switch (mode) {
-        case Solid::Control::WirelessNetworkInterfaceNm09::Unassociated:
+        case NetworkManager::WirelessDevice::Unassociated:
             modeString = i18nc("wireless network operation mode", "Unassociated");
             break;
-        case Solid::Control::WirelessNetworkInterfaceNm09::Adhoc:
+        case NetworkManager::WirelessDevice::Adhoc:
             modeString = i18nc("wireless network operation mode", "Adhoc");
             break;
-        case Solid::Control::WirelessNetworkInterfaceNm09::Managed:
+        case NetworkManager::WirelessDevice::Managed:
             modeString = i18nc("wireless network operation mode", "Managed");
             break;
-        case Solid::Control::WirelessNetworkInterfaceNm09::Master:
+        case NetworkManager::WirelessDevice::Master:
             modeString = i18nc("wireless network operation mode", "Master");
             break;
-        case Solid::Control::WirelessNetworkInterfaceNm09::Repeater:
+        case NetworkManager::WirelessDevice::Repeater:
             modeString = i18nc("wireless network operation mode", "Repeater");
             break;
         default:
@@ -353,41 +353,41 @@ QString UiUtils::operationModeToString(Solid::Control::WirelessNetworkInterfaceN
     return modeString;
 }
 
-QStringList UiUtils::wpaFlagsToStringList(Solid::Control::AccessPointNm09::WpaFlags flags)
+QStringList UiUtils::wpaFlagsToStringList(NetworkManager::AccessPoint::WpaFlags flags)
 {
     /* for testing purposes
-    flags = Solid::Control::AccessPointNm09::PairWep40
-            | Solid::Control::AccessPointNm09::PairWep104
-            | Solid::Control::AccessPointNm09::PairTkip
-            | Solid::Control::AccessPointNm09::PairCcmp
-            | Solid::Control::AccessPointNm09::GroupWep40
-            | Solid::Control::AccessPointNm09::GroupWep104
-            | Solid::Control::AccessPointNm09::GroupTkip
-            | Solid::Control::AccessPointNm09::GroupCcmp
-            | Solid::Control::AccessPointNm09::KeyMgmtPsk
-            | Solid::Control::AccessPointNm09::KeyMgmt8021x; */
+    flags = NetworkManager::AccessPoint::PairWep40
+            | NetworkManager::AccessPoint::PairWep104
+            | NetworkManager::AccessPoint::PairTkip
+            | NetworkManager::AccessPoint::PairCcmp
+            | NetworkManager::AccessPoint::GroupWep40
+            | NetworkManager::AccessPoint::GroupWep104
+            | NetworkManager::AccessPoint::GroupTkip
+            | NetworkManager::AccessPoint::GroupCcmp
+            | NetworkManager::AccessPoint::KeyMgmtPsk
+            | NetworkManager::AccessPoint::KeyMgmt8021x; */
 
     QStringList flagList;
 
-    if (flags.testFlag(Solid::Control::AccessPointNm09::PairWep40))
+    if (flags.testFlag(NetworkManager::AccessPoint::PairWep40))
         flagList.append(i18nc("wireless network cipher", "Pairwise WEP40"));
-    if (flags.testFlag(Solid::Control::AccessPointNm09::PairWep104))
+    if (flags.testFlag(NetworkManager::AccessPoint::PairWep104))
         flagList.append(i18nc("wireless network cipher", "Pairwise WEP104"));
-    if (flags.testFlag(Solid::Control::AccessPointNm09::PairTkip))
+    if (flags.testFlag(NetworkManager::AccessPoint::PairTkip))
         flagList.append(i18nc("wireless network cipher", "Pairwise TKIP"));
-    if (flags.testFlag(Solid::Control::AccessPointNm09::PairCcmp))
+    if (flags.testFlag(NetworkManager::AccessPoint::PairCcmp))
         flagList.append(i18nc("wireless network cipher", "Pairwise CCMP"));
-    if (flags.testFlag(Solid::Control::AccessPointNm09::GroupWep40))
+    if (flags.testFlag(NetworkManager::AccessPoint::GroupWep40))
         flagList.append(i18nc("wireless network cipher", "Group WEP40"));
-    if (flags.testFlag(Solid::Control::AccessPointNm09::GroupWep104))
+    if (flags.testFlag(NetworkManager::AccessPoint::GroupWep104))
         flagList.append(i18nc("wireless network cipher", "Group WEP104"));
-    if (flags.testFlag(Solid::Control::AccessPointNm09::GroupTkip))
+    if (flags.testFlag(NetworkManager::AccessPoint::GroupTkip))
         flagList.append(i18nc("wireless network cipher", "Group TKIP"));
-    if (flags.testFlag(Solid::Control::AccessPointNm09::GroupCcmp))
+    if (flags.testFlag(NetworkManager::AccessPoint::GroupCcmp))
         flagList.append(i18nc("wireless network cipher", "Group CCMP"));
-    if (flags.testFlag(Solid::Control::AccessPointNm09::KeyMgmtPsk))
+    if (flags.testFlag(NetworkManager::AccessPoint::KeyMgmtPsk))
         flagList.append(i18nc("wireless network cipher", "PSK"));
-    if (flags.testFlag(Solid::Control::AccessPointNm09::KeyMgmt8021x))
+    if (flags.testFlag(NetworkManager::AccessPoint::KeyMgmt8021x))
         flagList.append(i18nc("wireless network cipher", "802.1x"));
 
     return flagList;
@@ -482,6 +482,69 @@ QString UiUtils::wirelessBandToString(int band)
             break;
     }
     return QString();
+}
+
+QString UiUtils::convertTypeToString(const ModemManager::ModemInterface::Type type)
+{
+    switch (type) {
+        case ModemManager::ModemInterface::UnknownType: return i18nc("Unknown cellular type","Unknown");
+        case ModemManager::ModemInterface::GsmType: return i18nc("Gsm cellular type","Gsm");
+        case ModemManager::ModemInterface::CdmaType: return i18nc("Cdma cellular type","Cdma");
+    }
+
+    return i18nc("Unknown cellular type","Unknown");
+}
+
+QString UiUtils::convertBandToString(const ModemManager::ModemInterface::Band band)
+{
+    switch (band) {
+        case ModemManager::ModemInterface::UnknownBand: return i18nc("Unknown cellular frequency band","Unknown");
+        case ModemManager::ModemInterface::AnyBand: return i18nc("Any cellular frequency band","Any");
+        case ModemManager::ModemInterface::Egsm: return i18nc("Cellular frequency band","GSM/GPRS/EDGE 900 MHz");
+        case ModemManager::ModemInterface::Dcs: return i18nc("Cellular frequency band","GSM/GPRS/EDGE 1800 MHz");
+        case ModemManager::ModemInterface::Pcs: return i18nc("Cellular frequency band","GSM/GPRS/EDGE 1900 MHz");
+        case ModemManager::ModemInterface::G850: return i18nc("Cellular frequency band","GSM/GPRS/EDGE 850 MHz");
+        case ModemManager::ModemInterface::U2100: return i18nc("Cellular frequency band","WCDMA 2100 MHz (Class I)");
+        case ModemManager::ModemInterface::U1800: return i18nc("Cellular frequency band","WCDMA 3GPP 1800 MHz (Class III)");
+        case ModemManager::ModemInterface::U17IV: return i18nc("Cellular frequency band","WCDMA 3GPP AWS 1700/2100 MHz (Class IV)");
+        case ModemManager::ModemInterface::U800: return i18nc("Cellular frequency band","WCDMA 3GPP UMTS 800 MHz (Class VI)");
+        case ModemManager::ModemInterface::U850: return i18nc("Cellular frequency band","WCDMA 3GPP UMTS 850 MHz (Class V)");
+        case ModemManager::ModemInterface::U900: return i18nc("Cellular frequency band","WCDMA 3GPP UMTS 900 MHz (Class VIII)");
+        case ModemManager::ModemInterface::U17IX: return i18nc("Cellular frequency band","WCDMA 3GPP UMTS 1700 MHz (Class IX)");
+        case ModemManager::ModemInterface::U19IX: return i18nc("Cellular frequency band","WCDMA 3GPP UMTS 1900 MHz (Class II)");
+    }
+
+    return i18nc("Unknown cellular frequency band","Unknown");
+}
+
+QString UiUtils::convertAllowedModeToString(const ModemManager::ModemInterface::AllowedMode mode)
+{
+    switch (mode) {
+        case ModemManager::ModemInterface::AnyModeAllowed: return i18nc("Allowed Gsm modes (2G/3G/any)","Any");
+        case ModemManager::ModemInterface::Prefer2g: return i18nc("Allowed Gsm modes (2G/3G/any)","Prefer 2G");
+        case ModemManager::ModemInterface::Prefer3g: return i18nc("Allowed Gsm modes (2G/3G/any)","Prefer 3G");
+        case ModemManager::ModemInterface::UseOnly2g: return i18nc("Allowed Gsm modes (2G/3G/any)","Only 2G");
+        case ModemManager::ModemInterface::UseOnly3g: return i18nc("Allowed Gsm modes (2G/3G/any)","Only 3G");
+    }
+
+    return i18nc("Allowed Gsm modes (2G/3G/any)","Any");
+}
+
+QString UiUtils::convertAccessTechnologyToString(const ModemManager::ModemInterface::AccessTechnology tech)
+{
+    switch (tech) {
+        case ModemManager::ModemInterface::UnknownTechnology: return i18nc("Unknown cellular access technology","Unknown");
+        case ModemManager::ModemInterface::Gsm: return i18nc("Cellular access technology","GSM");
+        case ModemManager::ModemInterface::GsmCompact: return i18nc("Cellular access technology","Compact GSM");
+        case ModemManager::ModemInterface::Gprs: return i18nc("Cellular access technology","GPRS");
+        case ModemManager::ModemInterface::Edge: return i18nc("Cellular access technology","EDGE");
+        case ModemManager::ModemInterface::Umts: return i18nc("Cellular access technology","UMTS");
+        case ModemManager::ModemInterface::Hsdpa: return i18nc("Cellular access technology","HSDPA");
+        case ModemManager::ModemInterface::Hsupa: return i18nc("Cellular access technology","HSUPA");
+        case ModemManager::ModemInterface::Hspa: return i18nc("Cellular access technology","HSPA");
+    }
+
+    return i18nc("Unknown cellular access technology","Unknown");
 }
 
 // vim: sw=4 sts=4 et tw=100

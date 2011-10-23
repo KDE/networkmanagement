@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatableobserver.h"
 
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/accesspoint.h>
 
 #include "knm_export.h"
 

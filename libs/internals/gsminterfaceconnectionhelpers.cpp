@@ -19,8 +19,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <solid/control/modemmanager.h>
-#include <solid/control/modemgsmnetworkinterface.h>
+#include <libmm-qt/manager.h>
+#include <libmm-qt/modemgsmnetworkinterface.h>
 
 #include "gsminterfaceconnectionhelpers.h"
 #include "gsminterfaceconnectionhelpers_p.h"
@@ -34,7 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 Knm::GsmInterfaceConnection* GsmInterfaceConnectionHelpers::buildGsmInterfaceConnection(
-        Solid::Control::ModemNetworkInterfaceNm09 *interface,
+        NetworkManager::ModemDevice *interface,
         Knm::Connection *connection, const QString & deviceUni, QObject * parent)
 {
     GsmInterfaceConnectionBuilder builder(interface, connection, deviceUni, parent);
@@ -50,7 +50,7 @@ void GsmInterfaceConnectionHelpers::syncGsmInterfaceConnection(GsmInterfaceConne
 }
 
 GsmInterfaceConnectionBuilder::GsmInterfaceConnectionBuilder(
-                    Solid::Control::ModemNetworkInterfaceNm09 *interface,
+                    NetworkManager::ModemDevice *interface,
                     Knm::Connection *connection,
                     const QString &deviceUni,
                     QObject *parent)
@@ -80,15 +80,15 @@ void GsmInterfaceConnectionBuilder::init(GsmInterfaceConnection *ic)
     InterfaceConnectionBuilder::init(ic);
 
     // To force loading ModemManager backend
-    if (Solid::Control::ModemManager::notifier()) {
+    if (ModemManager::notifier()) {
         kDebug() << "Loading ModemManager backend";
     }
 
-    Solid::Control::ModemGsmNetworkInterface * modemNetworkIface = m_interface->getModemNetworkIface();
+    ModemManager::ModemGsmNetworkInterface * modemNetworkIface = m_interface->getModemNetworkIface();
 
     if (modemNetworkIface) {
         QObject::connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), ic, SLOT(setSignalQuality(uint)));
-        QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(const Solid::Control::ModemInterface::AccessTechnology)), ic, SLOT(setAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology)));
+        QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(const ModemInterface::AccessTechnology)), ic, SLOT(setAccessTechnology(const ModemInterface::AccessTechnology)));
         QObject::connect(modemNetworkIface, SIGNAL(enabledChanged(const bool)), ic, SLOT(setEnabled(const bool)));
 
         ic->m_signalQuality = modemNetworkIface->getSignalQuality();

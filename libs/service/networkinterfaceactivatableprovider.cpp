@@ -34,7 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 /* Normal interfaceconnections are added to d->activatables on connection add, updated on update,
  * removed on remove
  */
-NetworkInterfaceActivatableProviderPrivate::NetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::NetworkInterfaceNm09 * theInterface)
+NetworkInterfaceActivatableProviderPrivate::NetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, NetworkManager::Device * theInterface)
 : interface(theInterface), connectionList(theConnectionList), unconfiguredActivatable(0)
 {
     activatableList = theActivatableList;
@@ -45,7 +45,7 @@ NetworkInterfaceActivatableProviderPrivate::~NetworkInterfaceActivatableProvider
 
 }
 
-NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterfaceNm09 * interface, QObject * parent)
+NetworkInterfaceActivatableProvider::NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::Device * interface, QObject * parent)
     : QObject(parent), d_ptr(new NetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface))
 {
 }
@@ -68,7 +68,7 @@ void NetworkInterfaceActivatableProvider::init()
      * ConnectionList { connHandler->handleRemove(connection) }
      * handleRemove() -> maintainActivatableForUnconfigured() ->
      * WiredNetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() ->
-     * d->wiredInterface() -> qobject_cast<Solid::Control::WiredNetworkInterfaceNm09*>(interface).
+     * d->wiredInterface() -> qobject_cast<NetworkManager::WiredDevice*>(interface).
      * interface is an invalid pointer and crashes the kded module.
      * Actually Solid::Control::NetworkManagerNm09::notifier()'s networkInterfaceRemoved signal should
      * triggers the removing of WiredNetworkInterfaceActivatableProvider before
@@ -134,21 +134,21 @@ bool NetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() cons
     return d->activatables.isEmpty();
 }
 
-bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType, Solid::Control::NetworkInterfaceNm09::Type ifaceType, Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities modemCaps)
+bool NetworkInterfaceActivatableProvider::matches(Knm::Connection::Type connType, NetworkManager::Device::Type ifaceType, NetworkManager::ModemDevice::Capabilities modemCaps)
 {
-     return ( (connType == Knm::Connection::Wired && ifaceType == Solid::Control::NetworkInterfaceNm09::Ethernet)
-           || (connType == Knm::Connection::Pppoe && ifaceType == Solid::Control::NetworkInterfaceNm09::Ethernet)
-           || (connType == Knm::Connection::Wireless && ifaceType == Solid::Control::NetworkInterfaceNm09::Wifi)
-           || (connType == Knm::Connection::Bluetooth && ifaceType == Solid::Control::NetworkInterfaceNm09::Bluetooth)
-           || (ifaceType == Solid::Control::NetworkInterfaceNm09::Modem && (
-              (connType == Knm::Connection::Gsm && modemCaps & Solid::Control::ModemNetworkInterfaceNm09::GsmUmts) ||
-              (connType == Knm::Connection::Cdma && modemCaps & Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo) ||
-              (connType == Knm::Connection::Pppoe && modemCaps & Solid::Control::ModemNetworkInterfaceNm09::Pots)
+     return ( (connType == Knm::Connection::Wired && ifaceType == NetworkManager::Device::Ethernet)
+           || (connType == Knm::Connection::Pppoe && ifaceType == NetworkManager::Device::Ethernet)
+           || (connType == Knm::Connection::Wireless && ifaceType == NetworkManager::Device::Wifi)
+           || (connType == Knm::Connection::Bluetooth && ifaceType == NetworkManager::Device::Bluetooth)
+           || (ifaceType == NetworkManager::Device::Modem && (
+              (connType == Knm::Connection::Gsm && modemCaps & NetworkManager::ModemDevice::GsmUmts) ||
+              (connType == Knm::Connection::Cdma && modemCaps & NetworkManager::ModemDevice::CdmaEvdo) ||
+              (connType == Knm::Connection::Pppoe && modemCaps & NetworkManager::ModemDevice::Pots)
               ))
             ); /* TODO: implement Bluetooth Cdma, Wimax, LTE */
 }
 
-bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection * connection, Solid::Control::NetworkInterfaceNm09 * iface)
+bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection * connection, NetworkManager::Device * iface)
 {
     bool matches = true;
     Q_UNUSED(connection);
@@ -159,7 +159,7 @@ bool NetworkInterfaceActivatableProvider::hardwareAddressMatches(Knm::Connection
 #if 0
     if (connection->type() == Knm::Connection::Wired) {
         Knm::WiredSetting * wiredSetting = dynamic_cast<Knm::WiredSetting *>(connection->setting(Knm::Setting::Wired));
-        Solid::Control::WiredNetworkInterface * wiredIface = dynamic_cast<Solid::Control::WiredNetworkInterface *>(iface);
+        NetworkManager::WiredDevice * wiredIface = dynamic_cast<NetworkManager::WiredDevice *>(iface);
 
         if (wiredSetting && wiredIface) {
 

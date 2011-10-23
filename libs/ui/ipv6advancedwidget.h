@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QStandardItem>
 #include <QStyledItemDelegate>
 
-#include "networkipv6config.h"
+#include "libnm-qt/ipv6config.h"
 
 class QStandardItem;
 class QItemSelection;
@@ -37,8 +37,8 @@ public:
     IpV6AdvancedWidget(QWidget * parent = 0);
     virtual ~IpV6AdvancedWidget();
 
-    void setAdditionalAddresses(const QList<Solid::Control::IPv6Address> &list);
-    QList<Solid::Control::IPv6Address> additionalAddresses();
+    void setAdditionalAddresses(const QList<NetworkManager::IPv6Address> &list);
+    QList<NetworkManager::IPv6Address> additionalAddresses();
 
 protected slots:
     void addIPAddress();

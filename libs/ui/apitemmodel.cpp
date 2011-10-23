@@ -73,7 +73,7 @@ QVariant ApItemModel::data(const QModelIndex &index, int role) const
     if (index.row() >= m_accessPoints.size() || index.row() < 0 || index.column() >= s_numColumns || index.column() < 0)
         return QVariant();
 
-    Solid::Control::AccessPointNm09 *accessPoint = m_networkInterface->findAccessPoint(m_accessPoints.value(index.row()));
+    NetworkManager::AccessPoint *accessPoint = m_networkInterface->findAccessPoint(m_accessPoints.value(index.row()));
     if (!accessPoint) {
         kDebug() << "Access point could not be found.";
         return QVariant();
@@ -141,17 +141,17 @@ void ApItemModel::setNetworkInterface(const QString &uni)
     }
 
     kDebug() << "Requesting the interface: " << uni;
-    Solid::Control::NetworkInterfaceNm09 *networkInterface = Solid::Control::NetworkManagerNm09::findNetworkInterface(uni);
+    NetworkManager::Device *networkInterface = NetworkManager::findNetworkInterface(uni);
     if (networkInterface == 0) {
         kDebug() << "Could not create a valid network interface.";
         m_networkInterface=0;
         return;
-    } else if (networkInterface->type() != Solid::Control::NetworkInterfaceNm09::Wifi) {
+    } else if (networkInterface->type() != NetworkManager::Device::Wifi) {
         kDebug() << "Network Interface is not of type IEEE 80211";
         m_networkInterface=0;
         return;
     }
-    m_networkInterface = static_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(networkInterface);
+    m_networkInterface = static_cast<NetworkManager::WirelessDevice*>(networkInterface);
     scan();
 }
 

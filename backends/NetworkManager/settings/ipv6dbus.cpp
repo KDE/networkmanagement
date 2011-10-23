@@ -4,7 +4,7 @@
 #include "ipv6dbus.h"
 
 #include <arpa/inet.h>
-#include "../../types.h"
+#include <libnm-qt/generic-types.h>
 #include "ipv6.h"
 
 Ipv6Dbus::Ipv6Dbus(Knm::Ipv6Setting * setting) : SettingDbus(setting)
@@ -56,7 +56,7 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
 
   if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_ADDRESSES))) {
       QDBusArgument addressArg = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ADDRESSES)).value< QDBusArgument>();
-      QList<Solid::Control::IPv6Address> addresses;
+      QList<NetworkManager::IPv6Address> addresses;
 
       addressArg.beginArray();
       while(!addressArg.atEnd())
@@ -79,7 +79,7 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
               gateway[i] = addressMap.gateway[i];
           }
 
-          Solid::Control::IPv6Address addr(ip, addressMap.netMask, gateway);
+          NetworkManager::IPv6Address addr(ip, addressMap.netMask, gateway);
           if (!addr.isValid())
           {
             kWarning() << "Invalid address format detected.";
@@ -96,7 +96,7 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_ROUTES)))
   {
       QDBusArgument routeArg = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ROUTES)).value< QDBusArgument>();
-      QList<Solid::Control::IPv6Route> routes;
+      QList<NetworkManager::IPv6Route> routes;
 
       routeArg.beginArray();
       while(!routeArg.atEnd())
@@ -119,7 +119,7 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
               nexthop[i] = routeMap.nextHop[i];
           }
 
-          Solid::Control::IPv6Route route(addr, routeMap.prefix, nexthop, routeMap.metric);
+          NetworkManager::IPv6Route route(addr, routeMap.prefix, nexthop, routeMap.metric);
           if (!route.isValid())
           {
               kWarning() << "Invalid route format detected.";
@@ -210,7 +210,7 @@ QVariantMap Ipv6Dbus::toMap()
   }
   if (!setting->addresses().isEmpty()) {
       QList<IpV6AddressMap> dbusAddresses;
-      foreach (const Solid::Control::IPv6Address &addr, setting->addresses()) {
+      foreach (const NetworkManager::IPv6Address &addr, setting->addresses()) {
           IpV6AddressMap dbusAddress;
           Q_IPV6ADDR address = addr.address();
           QList<quint8> assembledAddress;
@@ -235,7 +235,7 @@ QVariantMap Ipv6Dbus::toMap()
   }
   if (!setting->routes().isEmpty()) {
       QList<IpV6RouteMap> dbusRoutes;
-      foreach (const Solid::Control::IPv6Route &route, setting->routes()) {
+      foreach (const NetworkManager::IPv6Route &route, setting->routes()) {
           IpV6RouteMap dbusRoute;
 
           Q_IPV6ADDR Route = route.route();

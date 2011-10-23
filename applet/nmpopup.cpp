@@ -39,9 +39,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Separator>
 
 // Solid::Control
-#include <solid/control/networkmanager.h>
-#include <solid/control/wirelessnetworkinterface.h>
-#include <solid/control/wirednetworkinterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/wirelessdevice.h>
+#include <libnm-qt/wireddevice.h>
 
 // client lib
 #include "activatableitem.h"
@@ -122,7 +122,7 @@ void NMPopup::init()
     checkboxLayout->addItem(m_networkingCheckBox, 0, 0);
     connect(m_networkingCheckBox, SIGNAL(toggled(bool)),
             this, SLOT(networkingEnabledToggled(bool)));
-    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkingEnabledChanged(bool)),
+    connect(NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
             this, SLOT(managerNetworkingEnabledChanged(bool)));
 
     // flight-mode checkbox
@@ -132,9 +132,9 @@ void NMPopup::init()
     checkboxLayout->addItem(m_wwanCheckBox, 0, 1);
 
     connect(m_wwanCheckBox, SIGNAL(toggled(bool)), SLOT(wwanEnabledToggled(bool)));
-    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(wwanEnabledChanged(bool)),
+    connect(NetworkManager::notifier(), SIGNAL(wwanEnabledChanged(bool)),
             this, SLOT(managerWwanEnabledChanged(bool)));
-    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(wwanHardwareEnabledChanged(bool)),
+    connect(NetworkManager::notifier(), SIGNAL(wwanHardwareEnabledChanged(bool)),
             this, SLOT(managerWwanHardwareEnabledChanged(bool)));
 
     // flight-mode checkbox
@@ -144,9 +144,9 @@ void NMPopup::init()
     checkboxLayout->addItem(m_wifiCheckBox, 1, 0);
 
     connect(m_wifiCheckBox, SIGNAL(toggled(bool)), SLOT(wirelessEnabledToggled(bool)));
-    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
+    connect(NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
             this, SLOT(managerWirelessEnabledChanged(bool)));
-    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
+    connect(NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
             this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
 
     m_leftLayout->addItem(checkboxWidget);
@@ -223,15 +223,15 @@ void NMPopup::init()
 
     //createTab(Knm::Activatable::WirelessInterfaceConnection);
     kDebug() << "Adding interfaces initially";
-    foreach (Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
         addInterfaceInternal(iface);
         kDebug() << "Network Interface:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
     }
     addVpnInterface();
     // hook up signals to allow us to change the connection list depending on APs present, etc
-    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             SLOT(interfaceAdded(const QString&)));
-    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             SLOT(interfaceRemoved(const QString&)));
 
     m_showMoreChecked = false;
@@ -285,28 +285,28 @@ void NMPopup::readConfig()
     kDebug();
     KNetworkManagerServicePrefs::self()->readConfig();
 
-    m_networkingCheckBox->setChecked(Solid::Control::NetworkManagerNm09::isNetworkingEnabled());
-    m_wifiCheckBox->setChecked(Solid::Control::NetworkManagerNm09::isWirelessEnabled());
+    m_networkingCheckBox->setChecked(NetworkManager::isNetworkingEnabled());
+    m_wifiCheckBox->setChecked(NetworkManager::isWirelessEnabled());
 
     /* There is a bug in Solid < 4.6.2 where it does not emit the wirelessHardwareEnabledChanged signal.
      * So we always enable the wireless checkbox for versions below 4.6.2. */
 #if KDE_IS_VERSION(4,6,2)
-    m_wifiCheckBox->setEnabled(Solid::Control::NetworkManagerNm09::isWirelessHardwareEnabled());
+    m_wifiCheckBox->setEnabled(NetworkManager::isWirelessHardwareEnabled());
 #else
     m_wifiCheckBox->setEnabled(true);
 #endif
 
-    m_showMoreButton->setEnabled(Solid::Control::NetworkManagerNm09::isNetworkingEnabled() &&
-                                 Solid::Control::NetworkManagerNm09::isWirelessEnabled());
+    m_showMoreButton->setEnabled(NetworkManager::isNetworkingEnabled() &&
+                                 NetworkManager::isWirelessEnabled());
 
-    m_wwanCheckBox->setChecked(Solid::Control::NetworkManagerNm09::isWwanEnabled());
-    m_wwanCheckBox->setEnabled(Solid::Control::NetworkManagerNm09::isWwanHardwareEnabled());
+    m_wwanCheckBox->setChecked(NetworkManager::isWwanEnabled());
+    m_wwanCheckBox->setEnabled(NetworkManager::isWwanHardwareEnabled());
 
     foreach(InterfaceItem * i, m_interfaces) {
         i->setNameDisplayMode(InterfaceItem::InterfaceName);
     }
 
-    QString version = Solid::Control::NetworkManagerNm09::version();
+    QString version = NetworkManager::version();
     if (version.isEmpty()) {
         Plasma::Label * warning = new Plasma::Label(this);
         warning->setText(i18nc("Warning about wrong NetworkManager version", "NetworkManager is not running. Please start it."));
@@ -324,7 +324,7 @@ void NMPopup::interfaceAdded(const QString& uni)
     if (m_interfaces.contains(uni)) {
         return;
     }
-    Solid::Control::NetworkInterfaceNm09 * iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(uni);
+    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
     if (iface) {
         kDebug() << "Interface Added:" << iface->interfaceName() << iface->driver() << iface->designSpeed();
         addInterfaceInternal(iface);
@@ -358,32 +358,32 @@ void NMPopup::deleteInterfaceItem()
     delete item;
 }
 
-Solid::Control::NetworkInterfaceNm09* NMPopup::defaultInterface()
+NetworkManager::Device* NMPopup::defaultInterface()
 {
     // In fact we're returning the first available interface,
     // and if there is none available just the first one we have
     // and if we don't have one, 0. Make sure you check though.
-    if (Solid::Control::NetworkManagerNm09::networkInterfaces().isEmpty()) {
+    if (NetworkManager::networkInterfaces().isEmpty()) {
         return 0;
     }
-    Solid::Control::NetworkInterfaceNm09* iface = Solid::Control::NetworkManagerNm09::networkInterfaces().first();
-    foreach (Solid::Control::NetworkInterfaceNm09 * _iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
-        switch (_iface->connectionState()) {
-            case Solid::Control::NetworkInterfaceNm09::Disconnected:
-            case Solid::Control::NetworkInterfaceNm09::Preparing:
-            case Solid::Control::NetworkInterfaceNm09::Configuring:
-            case Solid::Control::NetworkInterfaceNm09::NeedAuth:
-            case Solid::Control::NetworkInterfaceNm09::IPConfig:
-            case Solid::Control::NetworkInterfaceNm09::IPCheck:
-            case Solid::Control::NetworkInterfaceNm09::Secondaries:
-            case Solid::Control::NetworkInterfaceNm09::Activated:
-            case Solid::Control::NetworkInterfaceNm09::Deactivating:
-            case Solid::Control::NetworkInterfaceNm09::Failed:
+    NetworkManager::Device* iface = NetworkManager::networkInterfaces().first();
+    foreach (NetworkManager::Device * _iface, NetworkManager::networkInterfaces()) {
+        switch (_iface->state()) {
+            case NetworkManager::Device::Disconnected:
+            case NetworkManager::Device::Preparing:
+            case NetworkManager::Device::ConfiguringHardware:
+            case NetworkManager::Device::NeedAuth:
+            case NetworkManager::Device::ConfiguringIp:
+            case NetworkManager::Device::CheckingIp:
+            case NetworkManager::Device::WaitingForSecondaries:
+            case NetworkManager::Device::Activated:
+            case NetworkManager::Device::Deactivating:
+            case NetworkManager::Device::Failed:
                 return _iface;
                 break;
-            case Solid::Control::NetworkInterfaceNm09::Unavailable:
-            case Solid::Control::NetworkInterfaceNm09::Unmanaged:
-            case Solid::Control::NetworkInterfaceNm09::UnknownState:
+            case NetworkManager::Device::Unavailable:
+            case NetworkManager::Device::Unmanaged:
+            case NetworkManager::Device::UnknownState:
             default:
                 break;
         }
@@ -391,7 +391,7 @@ Solid::Control::NetworkInterfaceNm09* NMPopup::defaultInterface()
     return iface;
 }
 
-void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterfaceNm09* iface)
+void NMPopup::addInterfaceInternal(NetworkManager::Device* iface)
 {
     if (!iface) {
         // the interface might be gone in the meantime...
@@ -399,23 +399,23 @@ void NMPopup::addInterfaceInternal(Solid::Control::NetworkInterfaceNm09* iface)
     }
     if (!m_interfaces.contains(iface->uni())) {
         InterfaceItem * ifaceItem = 0;
-        if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+        if (iface->type() == NetworkManager::Device::Wifi) {
             // Create the wireless interface item
             WirelessInterfaceItem* wifiItem = 0;
-            wifiItem = new WirelessInterfaceItem(static_cast<Solid::Control::WirelessNetworkInterfaceNm09 *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
+            wifiItem = new WirelessInterfaceItem(static_cast<NetworkManager::WirelessDevice *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
             ifaceItem = wifiItem;
             //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
-            wifiItem->setEnabled(Solid::Control::NetworkManagerNm09::isWirelessEnabled());
+            wifiItem->setEnabled(NetworkManager::isWirelessEnabled());
             kDebug() << "WiFi added";
             connect(wifiItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
         } else {
             // Create the interfaceitem
-            ifaceItem = new InterfaceItem(static_cast<Solid::Control::WiredNetworkInterfaceNm09 *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
+            ifaceItem = new InterfaceItem(static_cast<NetworkManager::WiredDevice *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
             connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
         }
         connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
-        connect(ifaceItem, SIGNAL(clicked(Solid::Control::NetworkInterfaceNm09*)),
-                m_connectionList,  SLOT(addInterface(Solid::Control::NetworkInterfaceNm09*)));
+        connect(ifaceItem, SIGNAL(clicked(NetworkManager::Device*)),
+                m_connectionList,  SLOT(addInterface(NetworkManager::Device*)));
         connect(ifaceItem, SIGNAL(hoverEnter(const QString&)), m_connectionList, SLOT(hoverEnter(const QString&)));
         connect(ifaceItem, SIGNAL(hoverLeave(const QString&)), m_connectionList, SLOT(hoverLeave(const QString&)));
 
@@ -445,8 +445,8 @@ void NMPopup::addVpnInterface()
 {
     m_vpnItem = new VpnInterfaceItem(0, m_activatables, InterfaceItem::InterfaceName, this);
     connect(m_vpnItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
-    connect(m_vpnItem, SIGNAL(clicked(Solid::Control::NetworkInterfaceNm09*)),
-            m_connectionList,  SLOT(addInterface(Solid::Control::NetworkInterfaceNm09*)));
+    connect(m_vpnItem, SIGNAL(clicked(NetworkManager::Device*)),
+            m_connectionList,  SLOT(addInterface(NetworkManager::Device*)));
     connect(m_vpnItem, SIGNAL(hoverEnter()), m_connectionList, SLOT(vpnHoverEnter()));
     connect(m_vpnItem, SIGNAL(hoverLeave()), m_connectionList, SLOT(vpnHoverLeave()));
 
@@ -472,21 +472,21 @@ bool NMPopup::available(int state)
 {
     // Can an interface be used?
     switch (state) {
-        case Solid::Control::NetworkInterfaceNm09::Disconnected:
-        case Solid::Control::NetworkInterfaceNm09::Preparing:
-        case Solid::Control::NetworkInterfaceNm09::Configuring:
-        case Solid::Control::NetworkInterfaceNm09::NeedAuth:
-        case Solid::Control::NetworkInterfaceNm09::IPConfig:
-        case Solid::Control::NetworkInterfaceNm09::IPCheck:
-        case Solid::Control::NetworkInterfaceNm09::Secondaries:
-        case Solid::Control::NetworkInterfaceNm09::Activated:
-        case Solid::Control::NetworkInterfaceNm09::Deactivating:
-        case Solid::Control::NetworkInterfaceNm09::Failed:
+        case NetworkManager::Device::Disconnected:
+        case NetworkManager::Device::Preparing:
+        case NetworkManager::Device::ConfiguringHardware:
+        case NetworkManager::Device::NeedAuth:
+        case NetworkManager::Device::ConfiguringIp:
+        case NetworkManager::Device::CheckingIp:
+        case NetworkManager::Device::WaitingForSecondaries:
+        case NetworkManager::Device::Activated:
+        case NetworkManager::Device::Deactivating:
+        case NetworkManager::Device::Failed:
             return true;
             break;
-        case Solid::Control::NetworkInterfaceNm09::Unavailable:
-        case Solid::Control::NetworkInterfaceNm09::Unmanaged:
-        case Solid::Control::NetworkInterfaceNm09::UnknownState:
+        case NetworkManager::Device::Unavailable:
+        case NetworkManager::Device::Unmanaged:
+        case NetworkManager::Device::UnknownState:
         default:
             return false;
             break;
@@ -497,8 +497,8 @@ bool NMPopup::available(int state)
 void NMPopup::wirelessEnabledToggled(bool checked)
 {
     kDebug() << "Applet wireless enable switch toggled" << checked;
-    if (Solid::Control::NetworkManagerNm09::isWirelessEnabled() != checked) {
-        Solid::Control::NetworkManagerNm09::setWirelessEnabled(checked);
+    if (NetworkManager::isWirelessEnabled() != checked) {
+        NetworkManager::setWirelessEnabled(checked);
     }
     updateHasWireless(checked);
 }
@@ -506,28 +506,28 @@ void NMPopup::wirelessEnabledToggled(bool checked)
 void NMPopup::wwanEnabledToggled(bool checked)
 {
     kDebug() << "Applet wwan enable switch toggled" << checked;
-    if (Solid::Control::NetworkManagerNm09::isWwanEnabled() != checked) {
-        Solid::Control::NetworkManagerNm09::setWwanEnabled(checked);
+    if (NetworkManager::isWwanEnabled() != checked) {
+        NetworkManager::setWwanEnabled(checked);
     }
 }
 
 void NMPopup::networkingEnabledToggled(bool checked)
 {
     // Switch networking on / off
-    if (Solid::Control::NetworkManagerNm09::isNetworkingEnabled() != checked) {
-        Solid::Control::NetworkManagerNm09::setNetworkingEnabled(checked);
+    if (NetworkManager::isNetworkingEnabled() != checked) {
+        NetworkManager::setNetworkingEnabled(checked);
     }
     // Update wireless checkbox
-    m_wifiCheckBox->setChecked(Solid::Control::NetworkManagerNm09::isWirelessEnabled());
+    m_wifiCheckBox->setChecked(NetworkManager::isWirelessEnabled());
 
-kDebug() << "Wireless hardware enabled ==" << Solid::Control::NetworkManagerNm09::isWirelessHardwareEnabled();
+kDebug() << "Wireless hardware enabled ==" << NetworkManager::isWirelessHardwareEnabled();
 
 #if KDE_IS_VERSION(4,6,2)
-    m_wifiCheckBox->setEnabled(Solid::Control::NetworkManagerNm09::isWirelessHardwareEnabled() || Solid::Control::NetworkManagerNm09::isWirelessEnabled());
+    m_wifiCheckBox->setEnabled(NetworkManager::isWirelessHardwareEnabled() || NetworkManager::isWirelessEnabled());
 #endif
 
-    m_wwanCheckBox->setChecked(Solid::Control::NetworkManagerNm09::isWwanEnabled());
-    m_wwanCheckBox->setEnabled(Solid::Control::NetworkManagerNm09::isWwanHardwareEnabled() || Solid::Control::NetworkManagerNm09::isWwanEnabled());
+    m_wwanCheckBox->setChecked(NetworkManager::isWwanEnabled());
+    m_wwanCheckBox->setEnabled(NetworkManager::isWwanHardwareEnabled() || NetworkManager::isWwanEnabled());
 
     updateHasWireless(checked);
 }
@@ -536,13 +536,13 @@ void NMPopup::updateHasWireless(bool checked)
 {
     //kDebug() << "UPDATE!!!!!!!!!!!!";
     bool hasWireless = true;
-    if (!Solid::Control::NetworkManagerNm09::isWirelessHardwareEnabled() ||
-        !Solid::Control::NetworkManagerNm09::isNetworkingEnabled() ||
-        !Solid::Control::NetworkManagerNm09::isWirelessEnabled() || !checked) {
+    if (!NetworkManager::isWirelessHardwareEnabled() ||
+        !NetworkManager::isNetworkingEnabled() ||
+        !NetworkManager::isWirelessEnabled() || !checked) {
 
-        //kDebug () << "networking enabled?" << Solid::Control::NetworkManagerNm09::isNetworkingEnabled();
-        //kDebug () << "wireless hardware enabled?" << Solid::Control::NetworkManagerNm09::isWirelessHardwareEnabled();
-        //kDebug () << "wireless enabled?" << Solid::Control::NetworkManagerNm09::isWirelessEnabled();
+        //kDebug () << "networking enabled?" << NetworkManager::isNetworkingEnabled();
+        //kDebug () << "wireless hardware enabled?" << NetworkManager::isWirelessHardwareEnabled();
+        //kDebug () << "wireless enabled?" << NetworkManager::isWirelessEnabled();
 
         // either networking is disabled, or wireless is disabled
         hasWireless = false;
@@ -553,8 +553,8 @@ void NMPopup::updateHasWireless(bool checked)
     kDebug() << "After chckboxn" << hasWireless;
 
     foreach (InterfaceItem* ifaceitem, m_interfaces) {
-        Solid::Control::NetworkInterfaceNm09* iface = ifaceitem->interface();
-        if (iface && iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+        NetworkManager::Device* iface = ifaceitem->interface();
+        if (iface && iface->type() == NetworkManager::Device::Wifi) {
             //kDebug() << "there's a wifi iface" << ifaceitem->connectionName() << iface->interfaceName();
             m_hasWirelessInterface = true; // at least one interface is wireless. We're happy.
             m_wifiCheckBox->show();
@@ -573,7 +573,7 @@ void NMPopup::updateHasWwan()
 {
     bool hasWwan = false;
     foreach (InterfaceItem* ifaceitem, m_interfaces) {
-        Solid::Control::ModemNetworkInterfaceNm09* iface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09 *>(ifaceitem->interface());
+        NetworkManager::ModemDevice* iface = qobject_cast<NetworkManager::ModemDevice *>(ifaceitem->interface());
         if (iface) {
             hasWwan = true;
             break;
@@ -597,7 +597,7 @@ void NMPopup::managerWirelessEnabledChanged(bool enabled)
         m_wifiCheckBox->setEnabled(enabled);
     }
 
-    m_showMoreButton->setEnabled(enabled && Solid::Control::NetworkManagerNm09::isNetworkingEnabled());
+    m_showMoreButton->setEnabled(enabled && NetworkManager::isNetworkingEnabled());
 }
 
 void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
@@ -605,7 +605,7 @@ void NMPopup::managerWirelessHardwareEnabledChanged(bool enabled)
     kDebug() << "Hardware wireless enable switch state changed" << enabled;
     m_wifiCheckBox->setEnabled(enabled);
     updateHasWireless(enabled);
-    m_showMoreButton->setEnabled(enabled && Solid::Control::NetworkManagerNm09::isNetworkingEnabled());
+    m_showMoreButton->setEnabled(enabled && NetworkManager::isNetworkingEnabled());
 }
 
 void NMPopup::managerNetworkingEnabledChanged(bool enabled)
@@ -644,7 +644,7 @@ void NMPopup::showMore()
 
 void NMPopup::showMore(bool more)
 {
-    if (!Solid::Control::NetworkManagerNm09::isWirelessEnabled()) {
+    if (!NetworkManager::isWirelessEnabled()) {
         more = false;
     }
 
@@ -666,7 +666,7 @@ void NMPopup::checkShowMore(RemoteActivatable * ra)
 {
     RemoteWirelessInterfaceConnection * wic = qobject_cast<RemoteWirelessInterfaceConnection*>(ra);
     if (wic) {
-        if (wic->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc &&
+        if (wic->operationMode() == NetworkManager::WirelessDevice::Adhoc &&
             wic->activationState() == Knm::InterfaceConnection::Unknown) {
             return;
         }
@@ -685,7 +685,7 @@ void NMPopup::uncheckShowMore(RemoteActivatable *ra)
 {
     RemoteWirelessInterfaceConnection * wic = qobject_cast<RemoteWirelessInterfaceConnection*>(ra);
     if (wic) {
-        if (wic->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc &&
+        if (wic->operationMode() == NetworkManager::WirelessDevice::Adhoc &&
             wic->activationState() == Knm::InterfaceConnection::Unknown) {
             return;
         }

@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QHash>
 #include <QPointer>
 
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/manager.h>
 
 #include <connection.h>
 #include <vpninterfaceconnection.h>
@@ -46,7 +46,7 @@ VpnInterfaceConnectionProvider::VpnInterfaceConnectionProvider(ConnectionList * 
     Q_D(VpnInterfaceConnectionProvider);
     d->connectionList = connectionList;
     d->activatableList = activatableList;
-    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
+    connect(NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
             this, SLOT(statusChanged(Solid::Networking::Status)));
 }
 
@@ -68,7 +68,7 @@ void VpnInterfaceConnectionProvider::init()
 void VpnInterfaceConnectionProvider::handleAdd(Knm::Connection * addedConnection)
 {
     Q_D(VpnInterfaceConnectionProvider);
-    if (Solid::Control::NetworkManagerNm09::status() == Solid::Networking::Connected) {
+    if (NetworkManager::status() == Solid::Networking::Connected) {
         if (!d->vpns.contains(addedConnection->uuid())) {
             if (addedConnection->type() == Knm::Connection::Vpn) {
                 Knm::VpnInterfaceConnection * vpnConnection =

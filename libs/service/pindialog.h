@@ -28,7 +28,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KPushButton>
 #include <solid/device.h>
-#include <solid/control/modemgsmcardinterface.h>
+#include <libmm-qt/modemgsmcardinterface.h>
 
 class PinWidget;
 
@@ -39,7 +39,7 @@ public:
     enum Type {Pin, PinPuk};
     enum ErrorCode {PinCodeTooShort, PinCodesDoNotMatch, PukCodeTooShort};
 
-    PinDialog(Solid::Control::ModemGsmCardInterface *modem, const Type type = Pin, QWidget *parent=0);
+    PinDialog(ModemManager::ModemGsmCardInterface *modem, const Type type = Pin, QWidget *parent=0);
     ~PinDialog();
 
     Type type() const;

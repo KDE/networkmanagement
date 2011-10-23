@@ -7,7 +7,7 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
-#include "networkipv6config.h"
+#include "libnm-qt/ipv6config.h"
 #include "setting.h"
 #include "knminternals_export.h"
 
@@ -81,7 +81,7 @@ class KNMINTERNALS_EXPORT Ipv6Setting : public Setting
     /**
       Set IP Addresses
     */
-    void setAddresses( const QList<Solid::Control::IPv6Address> & v )
+    void setAddresses( const QList<NetworkManager::IPv6Address> & v )
     {
         mAddresses = v;
     }
@@ -89,7 +89,7 @@ class KNMINTERNALS_EXPORT Ipv6Setting : public Setting
     /**
       Get IP Addresses
     */
-    QList<Solid::Control::IPv6Address> addresses() const
+    QList<NetworkManager::IPv6Address> addresses() const
     {
       return mAddresses;
     }
@@ -142,12 +142,12 @@ class KNMINTERNALS_EXPORT Ipv6Setting : public Setting
       return mNeverdefault;
     }
 
-    QList<Solid::Control::IPv6Route> routes() const
+    QList<NetworkManager::IPv6Route> routes() const
     {
         return mRoutes;
     }
 
-    void setRoutes(QList<Solid::Control::IPv6Route> routes)
+    void setRoutes(QList<NetworkManager::IPv6Route> routes)
     {
         mRoutes = routes;
     }
@@ -175,8 +175,8 @@ class KNMINTERNALS_EXPORT Ipv6Setting : public Setting
     int mMethod;
     QList<QHostAddress> mDns;
     QStringList mDnssearch;
-    QList<Solid::Control::IPv6Address> mAddresses;
-    QList<Solid::Control::IPv6Route> mRoutes;
+    QList<NetworkManager::IPv6Address> mAddresses;
+    QList<NetworkManager::IPv6Route> mRoutes;
     bool mIgnoredhcpdns;
     bool mIgnoreautoroute;
     bool mNeverdefault;

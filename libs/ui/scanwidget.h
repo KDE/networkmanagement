@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSortFilterProxyModel>
 
 #include <KLocale>
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/accesspoint.h>
 
 #include "apitemview.h"
 #include "networkitemmodel.h"
@@ -47,7 +47,7 @@ class ScanWidget : public QWidget, public Ui::ScanWidget
 
         void setWirelessInterface(const QString &interface);
         QPair<QString,QString> currentAccessPoint() const;
-        QPair<Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *> currentAccessPointUni();
+        QPair<NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *> currentAccessPointUni();
 
     private Q_SLOTS:
         void onInterfaceChanged(int index);

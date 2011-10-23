@@ -26,14 +26,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QModelIndex>
 #include <QVariant>
 
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirelessnetworkinterface.h>
-#include <solid/control/wirelessaccesspoint.h>
-#include "wirelessnetworkinterfaceenvironment.h"
+#include <libnm-qt/manager.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/wirelessdevice.h>
+#include <libnm-qt/accesspoint.h>
+#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
 
 /**
- * Uses Solid::Control::WirelessNetworkInterfaceNm09Environment to model logical networks,
+ * Uses NetworkManager::WirelessNetworkInterfaceEnvironment to model logical networks,
  * as opposed to Access Points
  */
 class NetworkItemModel : public QAbstractItemModel
@@ -62,8 +62,8 @@ class NetworkItemModel : public QAbstractItemModel
 
     private:
         QStringList m_networks;
-        Solid::Control::WirelessNetworkInterfaceNm09 *m_networkInterface;
-        Solid::Control::WirelessNetworkInterfaceEnvironment *m_environment;
+        NetworkManager::WirelessDevice *m_networkInterface;
+        NetworkManager::WirelessNetworkInterfaceEnvironment *m_environment;
 
         static const int s_numColumns = 6;
 };

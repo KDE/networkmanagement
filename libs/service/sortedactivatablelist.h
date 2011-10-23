@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QList>
 #include <QHash>
 
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/device.h>
 
 #include "knm_export.h"
 
@@ -50,14 +50,14 @@ public:
     enum WirelessSortPolicy {WirelessSortAlphabetical = 1, WirelessSortByStrength };
 
     static WirelessSortPolicy s_wirelessSortPolicy;
-    static QHash<Solid::Control::NetworkInterfaceNm09::Types, int> s_solidTypesToOrder;
+    static QHash<NetworkManager::Device::Types, int> s_solidTypesToOrder;
 
     /**
      * @param types a set of interface types ORed together defining which interface types
      * to collect
      * @param parent the parent QObject
      */
-    SortedActivatableList(Solid::Control::NetworkInterfaceNm09::Types types, QObject * parent = 0);
+    SortedActivatableList(NetworkManager::Device::Types types, QObject * parent = 0);
 
     // respond to activatable changes
     void handleAdd(Knm::Activatable *);

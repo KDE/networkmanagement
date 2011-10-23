@@ -31,17 +31,17 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class WiredNetworkInterfaceActivatableProviderPrivate : public NetworkInterfaceActivatableProviderPrivate
 {
 public:
-    WiredNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::WiredNetworkInterfaceNm09 * theInterface)
+    WiredNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, NetworkManager::WiredDevice * theInterface)
         : NetworkInterfaceActivatableProviderPrivate(theConnectionList, theActivatableList, theInterface)
     { }
 
-    Solid::Control::WiredNetworkInterfaceNm09 * wiredInterface() const
+    NetworkManager::WiredDevice * wiredInterface() const
     {
-        return qobject_cast<Solid::Control::WiredNetworkInterfaceNm09*>(interface);
+        return qobject_cast<NetworkManager::WiredDevice*>(interface);
     }
 };
 
-WiredNetworkInterfaceActivatableProvider::WiredNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::WiredNetworkInterfaceNm09 * interface, QObject * parent)
+WiredNetworkInterfaceActivatableProvider::WiredNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::WiredDevice * interface, QObject * parent)
 : NetworkInterfaceActivatableProvider(*new WiredNetworkInterfaceActivatableProviderPrivate( connectionList, activatableList, interface), parent)
 {
     connect(interface, SIGNAL(carrierChanged(bool)), this, SLOT(handleCarrierChange(bool)));

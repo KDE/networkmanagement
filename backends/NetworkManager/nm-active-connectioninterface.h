@@ -19,7 +19,6 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
-#include "types.h"
 
 /*
  * Proxy class for interface org.freedesktop.NetworkManager.Connection.Active

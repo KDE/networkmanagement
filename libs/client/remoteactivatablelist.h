@@ -40,12 +40,12 @@ public:
 
     /**
      * @return the RemoteInterfaceConnection for a given network interface
-     * @param interface the Solid::Control::NetworkInterface state
+     * @param interface the NetworkManager::Device state
      * @param activatables the RemoteActivatableList of all connections
      */
-    RemoteInterfaceConnection* connectionForInterface(Solid::Control::NetworkInterfaceNm09 *interface);
+    RemoteInterfaceConnection* connectionForInterface(NetworkManager::Device *interface);
 
-    static bool isConnectionForInterface(RemoteActivatable *activatable, Solid::Control::NetworkInterfaceNm09 *interface);
+    static bool isConnectionForInterface(RemoteActivatable *activatable, NetworkManager::Device *interface);
 
 Q_SIGNALS:
     void activatableAdded(RemoteActivatable*, int);

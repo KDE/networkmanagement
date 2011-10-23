@@ -7,7 +7,6 @@
 #include "settingpersistence.h"
 #include "internals/settings/vpn.h"
 
-#include "../types.h"
 
 namespace Knm {
 

@@ -1199,7 +1199,6 @@ diff -ur origsettings//ipv4dbus.cpp settings/ipv4dbus.cpp
  #include "ipv4dbus.h"
  
 +#include <arpa/inet.h>
-+#include "../../types.h"
  #include "ipv4.h"
  
  Ipv4Dbus::Ipv4Dbus(Knm::Ipv4Setting * setting) : SettingDbus(setting)
@@ -1764,7 +1763,6 @@ diff -ur origsettings//vpn.h settings/vpn.h
  #include <kcoreconfigskeleton.h>
  #include "setting.h"
  #include "knminternals_export.h"
-+#include "../types.h"
  namespace Knm {
  
  class KNMINTERNALS_EXPORT VpnSetting : public Setting
@@ -1930,7 +1928,6 @@ diff -ur origsettings//vpnpersistence.h settings/vpnpersistence.h
  #include <kcoreconfigskeleton.h>
  #include "settingpersistence.h"
  #include "knminternals_export.h"
-+#include "../types.h"
 +
  namespace Knm {
  

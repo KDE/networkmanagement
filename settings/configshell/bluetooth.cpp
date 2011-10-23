@@ -35,7 +35,7 @@ Bluetooth::Bluetooth(const QString bdaddr, const QString service): QObject(), mB
 {
     mService = mService.toLower();
     if (mService == "dun") {
-        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceAdded(const QString &)),
+        connect(ModemManager::notifier(), SIGNAL(modemInterfaceAdded(const QString &)),
                 SLOT(modemAdded(const QString &)));
     }
     QTimer::singleShot(0, this, SLOT(init()));
@@ -180,11 +180,11 @@ void Bluetooth::init()
 void Bluetooth::modemAdded(const QString &udi)
 {
     kDebug(KDE_DEFAULT_DEBUG_AREA);
-    Solid::Control::ModemInterface *modem = Solid::Control::ModemManager::findModemInterface(udi, Solid::Control::ModemInterface::GsmCard);
+    ModemManager::ModemInterface *modem = ModemManager::findModemInterface(udi, ModemManager::ModemInterface::GsmCard);
 
     if (!modem) {
         // Try CDMA if no GSM device has been found.
-        modem = Solid::Control::ModemManager::findModemInterface(udi, Solid::Control::ModemInterface::NotGsm);
+        modem = ModemManager::findModemInterface(udi, ModemManager::ModemInterface::NotGsm);
     }
 
     QStringList temp = mDunDevice.split("/");
@@ -204,8 +204,8 @@ void Bluetooth::modemAdded(const QString &udi)
 
     Knm::Connection::Type type;
     switch (modem->type()) {
-        case Solid::Control::ModemInterface::GsmType: type = Knm::Connection::Gsm; break;
-        case Solid::Control::ModemInterface::CdmaType: type = Knm::Connection::Cdma; break;
+        case ModemManager::ModemInterface::GsmType: type = Knm::Connection::Gsm; break;
+        case ModemManager::ModemInterface::CdmaType: type = Knm::Connection::Cdma; break;
         default: type = Knm::Connection::Unknown;
     }
 

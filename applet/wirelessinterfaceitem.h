@@ -26,13 +26,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QString>
 #include "interfaceitem.h"
 
-namespace Solid
+namespace NetworkManager
 {
-namespace Control
-{
-    class AccessPointNm09;
-    class WirelessNetworkInterfaceNm09;
-}
+    class AccessPoint;
+    class WirelessDevice;
 }
 class WirelessStatus;
 
@@ -45,7 +42,7 @@ class WirelessInterfaceItem : public InterfaceItem
 {
 Q_OBJECT
 public:
-    WirelessInterfaceItem(Solid::Control::WirelessNetworkInterfaceNm09 * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent = 0);
+    WirelessInterfaceItem(NetworkManager::WirelessDevice * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent = 0);
     virtual ~WirelessInterfaceItem();
 
 public Q_SLOTS:

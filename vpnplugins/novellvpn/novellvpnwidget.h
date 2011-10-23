@@ -21,9 +21,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NOVELLVPNWIDGET_H
 #define NOVELLVPNWIDGET_H
 
-#include "settingwidget.h"
+#include <libnm-qt/generic-types.h>
 
-#include <types.h>
+#include "settingwidget.h"
 
 namespace Knm
 {

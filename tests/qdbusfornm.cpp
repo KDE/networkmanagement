@@ -47,6 +47,8 @@
 #include <QtXml/QDomElement>
 #include <QtDBus/QtDBus>
 
+#include <libnm-qt/generic-types.h>
+
 typedef QPair<int,int> IntPair;
 
 Q_DECLARE_METATYPE(IntPair)
@@ -72,7 +74,6 @@ namespace QDBusUtil
     Q_DECL_IMPORT bool isValidSingleSignature(const QString &signature);
 }
 
-#include "../libs/types.h"
 
 static QDBusConnection connection(QLatin1String(""));
 

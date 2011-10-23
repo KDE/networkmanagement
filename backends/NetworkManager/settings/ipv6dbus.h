@@ -14,7 +14,7 @@
 #include "nm09dbus_export.h"
 
 #include "settings/ipv6.h"
-#include "networkipv6config.h"
+#include <libnm-qt/ipv6config.h>
 
 typedef struct
 {
@@ -42,8 +42,6 @@ Q_DECLARE_METATYPE(QList<IpV6RouteMap>)
 
 QDBusArgument &operator<<(QDBusArgument &argument, const IpV6RouteMap &map);
 const QDBusArgument &operator>>(const QDBusArgument &argument, IpV6RouteMap &map);
-
-Q_DECLARE_METATYPE(QList<QByteArray>)
 
 class NM09DBUS_EXPORT Ipv6Dbus : public SettingDbus
 {

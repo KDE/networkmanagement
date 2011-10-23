@@ -3,7 +3,6 @@ add_definitions(-DKDE_DEFAULT_DEBUG_AREA=51010)
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}
    ${CMAKE_CURRENT_BINARY_DIR}
-   ${CMAKE_CURRENT_SOURCE_DIR}/../../solidcontrolfuture
    ${CMAKE_CURRENT_SOURCE_DIR}/../libs/client
    ${CMAKE_CURRENT_SOURCE_DIR}/../../backends/NetworkManager
    ${CMAKE_CURRENT_SOURCE_DIR}/../../libs
@@ -75,7 +74,7 @@ kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)
 
 kde4_add_library(knminternals SHARED ${knminternals_SRCS})
 
-target_link_libraries(knminternals knmclient solidcontrolfuture ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_SOLID_LIBS} solidcontrol solidcontrolnm09 ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(knminternals knmclient mm-qt nm-qt ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_SOLID_LIBS} ${QT_QTNETWORK_LIBRARY})
 
 set_target_properties(knminternals PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}

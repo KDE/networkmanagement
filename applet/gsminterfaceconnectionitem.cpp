@@ -34,11 +34,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Label>
 #include <Plasma/Meter>
 
-#include <solid/control/networkmodeminterface.h>
+#include <libnm-qt/modemdevice.h>
 
+#include <uiutils.h>
 #include "activatable.h"
 
-using namespace Solid::Control;
+using namespace ModemManager;
 
 GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnection * remote, QGraphicsItem * parent)
 : ActivatableItem(remote, parent),
@@ -154,7 +155,7 @@ void GsmInterfaceConnectionItem::setAccessTechnology(const int tech)
     if (tech != ModemInterface::UnknownTechnology) {
         m_connectButton->setText(QString("%1 (%2)").
                                  arg(remote->connectionName(),
-                                     ModemInterface::convertAccessTechnologyToString(static_cast<ModemInterface::AccessTechnology>(tech))));
+                                     UiUtils::convertAccessTechnologyToString(static_cast<ModemInterface::AccessTechnology>(tech))));
     } else {
         m_connectButton->setText(remote->connectionName());
     }

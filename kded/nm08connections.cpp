@@ -24,6 +24,8 @@ namespace Knm {
 
 using namespace Knm;
 
+#include <QTimer>
+
 #include <kstandarddirs.h>
 #include <knmserviceprefs.h>
 

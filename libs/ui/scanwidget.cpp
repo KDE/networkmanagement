@@ -34,10 +34,10 @@ ScanWidget::ScanWidget(QWidget *parent)
     setupUi(this);
 
     //populate the interfaces combobox
-    foreach (const Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
-        if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+    foreach (const NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+        if (iface->type() == NetworkManager::Device::Wifi) {
 
-            const Solid::Control::WirelessNetworkInterfaceNm09 * wiface = static_cast<const Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
+            const NetworkManager::WirelessDevice * wiface = static_cast<const NetworkManager::WirelessDevice*>(iface);
             m_interface->addItem(UiUtils::interfaceNameLabel(iface->uni()), wiface->uni());
         }
     }
@@ -117,9 +117,9 @@ QPair<QString,QString> ScanWidget::currentAccessPoint() const
     return accessPoint;
 }
 
-QPair<Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *> ScanWidget::currentAccessPointUni()
+QPair<NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *> ScanWidget::currentAccessPointUni()
 {
-    QPair<Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *> pair(0, 0);
+    QPair<NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *> pair(0, 0);
     QModelIndex index;
 
     switch (m_stack->currentIndex())
@@ -142,10 +142,10 @@ QPair<Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPoin
         return pair;
     }
 
-    Solid::Control::WirelessNetworkInterfaceNm09 * wiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09 *>(Solid::Control::NetworkManagerNm09::findNetworkInterface(m_interface->itemData(m_interface->currentIndex()).toString()));
+    NetworkManager::WirelessDevice * wiface = qobject_cast<NetworkManager::WirelessDevice *>(NetworkManager::findNetworkInterface(m_interface->itemData(m_interface->currentIndex()).toString()));
     if (wiface) {
         foreach(const QString & uni, wiface->accessPoints()) {
-            Solid::Control::AccessPointNm09 * ap = wiface->findAccessPoint(uni);
+            NetworkManager::AccessPoint * ap = wiface->findAccessPoint(uni);
             if (ap->hardwareAddress() == apMac) {
                 pair.first = wiface;
                 pair.second = ap;

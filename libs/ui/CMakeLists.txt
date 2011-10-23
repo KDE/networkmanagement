@@ -2,7 +2,6 @@ add_definitions(-DKDE_DEFAULT_DEBUG_AREA=51012)
 
 include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/..
-   ${CMAKE_CURRENT_SOURCE_DIR}/../../solidcontrolfuture
    ${CMAKE_CURRENT_SOURCE_DIR}/../internals
    ${CMAKE_CURRENT_BINARY_DIR}/security
    ${CMAKE_CURRENT_BINARY_DIR}/../internals
@@ -133,7 +132,8 @@ kde4_add_ui_files(knmui_SRCS
    )
 
 kde4_add_library(knmui SHARED ${knmui_SRCS})
-target_link_libraries(knmui knminternals ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} solidcontrol solidcontrolnm09 solidcontrolfuture)
+target_link_libraries(knmui knminternals ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS}
+        ${KDE4_SOLID_LIBS} nm-qt)
 
 set_target_properties(knmui PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}

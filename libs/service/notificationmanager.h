@@ -32,7 +32,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatableobserver.h"
 #include <Solid/Networking>
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/device.h>
 
 #include "knm_export.h"
 
@@ -80,7 +80,7 @@ class InterfaceNotificationHost : public QObject
 {
 Q_OBJECT
 public:
-    InterfaceNotificationHost(Solid::Control::NetworkInterfaceNm09 * iface, NotificationManager * parent);
+    InterfaceNotificationHost(NetworkManager::Device * iface, NotificationManager * parent);
     ~InterfaceNotificationHost();
 
     void addInterfaceConnection(Knm::InterfaceConnection* added);
@@ -107,7 +107,7 @@ private:
     void performInterfaceNotification(const QString & title, const QString & text, const QPixmap & pixmap, KNotification::NotificationFlag flag);
 
     NotificationManager * m_manager;
-    Solid::Control::NetworkInterfaceNm09 * m_interface;
+    NetworkManager::Device * m_interface;
     // used to refer to the interface if it is removed
     QString m_interfaceNameLabel;
     Knm::Connection::Type m_type;

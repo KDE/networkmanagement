@@ -50,8 +50,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kfiledialog.h>
 #include <KUser>
 
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkmodeminterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/modemdevice.h>
+#include <libnm-qt/activeconnection.h>
+#include <libnm-qt/connection.h>
 
 #include "connectiondbus.h"
 #include "knmserviceprefs.h"
@@ -124,11 +126,11 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connectButtonSet(mConnEditUi.buttonSetCellular, mConnEditUi.listCellular);
     connectButtonSet(mConnEditUi.buttonSetVpn, mConnEditUi.listVpn);
     connectButtonSet(mConnEditUi.buttonSetPppoe, mConnEditUi.listPppoe);
-    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             SLOT(updateTabStates()));
-    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             SLOT(updateTabStates()));
-    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(activeConnectionsChanged()),
+    connect(NetworkManager::notifier(), SIGNAL(activeConnectionsChanged()),
             SLOT(activeConnectionsChanged()));
     connect(mConnEditUi.tabWidget, SIGNAL(currentChanged(int)), SLOT(tabChanged(int)));
 
@@ -146,7 +148,7 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
 
     restoreConnections();
 
-    if (!Solid::Control::NetworkManagerNm09::isWirelessEnabled()) {
+    if (!NetworkManager::isWirelessEnabled()) {
         mConnEditUi.tabWidget->setCurrentIndex(0);
     }
 
@@ -322,30 +324,30 @@ void ManageConnectionWidget::restoreConnections()
 void ManageConnectionWidget::updateTabStates()
 {
     bool hasWired = false, hasWireless = false, hasCellular = false, hasDsl = false;
-    foreach (Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
         switch (iface->type()) {
-            case Solid::Control::NetworkInterfaceNm09::Ethernet:
+            case NetworkManager::Device::Ethernet:
                 hasWired = true;
                 break;
-            case Solid::Control::NetworkInterfaceNm09::Wifi:
+            case NetworkManager::Device::Wifi:
                 hasWireless = true;
                 break;
-            case Solid::Control::NetworkInterfaceNm09::Modem: {
-                const Solid::Control::ModemNetworkInterfaceNm09 * nmModemIface = qobject_cast<const Solid::Control::ModemNetworkInterfaceNm09 *>(iface);
+            case NetworkManager::Device::Modem: {
+                const NetworkManager::ModemDevice * nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(iface);
                 if (nmModemIface) {
                     switch(nmModemIface->subType()) {
-                        case Solid::Control::ModemNetworkInterfaceNm09::Pots:
+                        case NetworkManager::ModemDevice::Pots:
                             hasDsl = true;
                             break;
-                        case Solid::Control::ModemNetworkInterfaceNm09::GsmUmts:
-                        case Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo:
-                        /* TODO: case Solid::Control::ModemNetworkInterfaceNm09::Lte: */
+                        case NetworkManager::ModemDevice::GsmUmts:
+                        case NetworkManager::ModemDevice::CdmaEvdo:
+                        /* TODO: case NetworkManager::ModemDevice::Lte: */
                             hasCellular = true;
                             break;
                     }
                 }
             }
-            case Solid::Control::NetworkInterfaceNm09::Bluetooth:
+            case NetworkManager::Device::Bluetooth:
                 hasCellular = true;
                 break;
             default:
@@ -738,10 +740,10 @@ void ManageConnectionWidget::activeConnectionsChanged()
     foreach(QTreeWidgetItem * t, mUuidItemHash.values()) {
         t->setText(ConnectionStateColumn, QString());
     }
-    foreach(QString activeConnection, Solid::Control::NetworkManagerNm09::activeConnectionsUuid()) {
-        activeConnection = "{" + activeConnection + "}";
+    foreach(const NetworkManager::ActiveConnection * ac, NetworkManager::activeConnections()) {
+        QString activeConnection = "{" + ac->connection()->uuid() + "}";
         item = mUuidItemHash.value(activeConnection);
-        if (item != 0) {
+        if (item != 0 && ac->state() == NetworkManager::ActiveConnection::Activated) {
             item->setText(ConnectionStateColumn, i18n("Connected"));
         }
     }

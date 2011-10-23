@@ -20,7 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <kdebug.h>
-#include <solid/control/networkmodeminterface.h>
+#include <libnm-qt/modemdevice.h>
 
 #include "connection.h"
 
@@ -92,26 +92,26 @@ Connection::Type Connection::typeFromString(const QString & typeString)
     return type;
 }
 
-Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInterfaceNm09 *iface)
+Connection::Type Connection::typeFromSolidType(const NetworkManager::Device *iface)
 {
     switch (iface->type()) {
-        case Solid::Control::NetworkInterfaceNm09::Ethernet: return Knm::Connection::Wired;
-        case Solid::Control::NetworkInterfaceNm09::Wifi: return Knm::Connection::Wireless;
-        case Solid::Control::NetworkInterfaceNm09::Bluetooth: return Knm::Connection::Bluetooth;
-        case Solid::Control::NetworkInterfaceNm09::Modem: {
-             const Solid::Control::ModemNetworkInterfaceNm09 * nmModemIface = qobject_cast<const Solid::Control::ModemNetworkInterfaceNm09 *>(iface);
+        case NetworkManager::Device::Ethernet: return Knm::Connection::Wired;
+        case NetworkManager::Device::Wifi: return Knm::Connection::Wireless;
+        case NetworkManager::Device::Bluetooth: return Knm::Connection::Bluetooth;
+        case NetworkManager::Device::Modem: {
+             const NetworkManager::ModemDevice * nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(iface);
              if (nmModemIface) {
                  switch(nmModemIface->subType()) {
-                     case Solid::Control::ModemNetworkInterfaceNm09::GsmUmts: return Knm::Connection::Gsm;
-                     case Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo: return Knm::Connection::Cdma;
-                     case Solid::Control::ModemNetworkInterfaceNm09::Pots: return Knm::Connection::Pppoe;
-                     /* TODO: add Solid::Control::ModemNetworkInterfaceNm09::Lte */
+                     case NetworkManager::ModemDevice::GsmUmts: return Knm::Connection::Gsm;
+                     case NetworkManager::ModemDevice::CdmaEvdo: return Knm::Connection::Cdma;
+                     case NetworkManager::ModemDevice::Pots: return Knm::Connection::Pppoe;
+                     /* TODO: add NetworkManager::ModemDevice::Lte */
                  }
              }
         }
-        case Solid::Control::NetworkInterfaceNm09::UnknownType:
-        case Solid::Control::NetworkInterfaceNm09::Unused1:
-        case Solid::Control::NetworkInterfaceNm09::Unused2:
+        case NetworkManager::Device::UnknownType:
+        case NetworkManager::Device::Unused1:
+        case NetworkManager::Device::Unused2:
             return Knm::Connection::Unknown;
     }
     return Knm::Connection::Wired;

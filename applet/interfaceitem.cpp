@@ -45,18 +45,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Meter>
 
 #include <Solid/Device>
-#include <Solid/NetworkInterface>
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirednetworkinterface.h>
-#include <solid/control/networkipv4confignm09.h>
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/wireddevice.h>
+#include <libnm-qt/ipv4config.h>
+#include <libnm-qt/manager.h>
+#include <NetworkManager/NetworkManager.h>
 
 #include "knmserviceprefs.h"
 #include "nm-device-interface.cpp"
 #include "nm-ip4-config-interface.cpp"
 
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterfaceNm09 * iface, RemoteActivatableList* activatables,  NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::IconWidget(parent),
+InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableList* activatables,  NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::IconWidget(parent),
     m_currentConnection(0),
     m_iface(iface),
     m_activatables(activatables),
@@ -144,13 +143,13 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterfaceNm09 * iface, Remot
     setNameDisplayMode(mode);
 
     if (m_iface) {
-        if (m_iface.data()->type() == Solid::Control::NetworkInterfaceNm09::Ethernet) {
-            Solid::Control::WiredNetworkInterfaceNm09* wirediface =
-                            static_cast<Solid::Control::WiredNetworkInterfaceNm09*>(m_iface.data());
+        if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
+            NetworkManager::WiredDevice* wirediface =
+                            static_cast<NetworkManager::WiredDevice*>(m_iface.data());
             connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
         }
-        m_state = Solid::Control::NetworkInterfaceNm09::UnknownState;
-        connectionStateChanged(static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface.data()->connectionState()));
+        m_state = NetworkManager::Device::UnknownState;
+        connectionStateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
     }
 
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -202,7 +201,7 @@ QString InterfaceItem::label()
     return m_ifaceNameLabel->text();
 }
 
-Solid::Control::NetworkInterfaceNm09* InterfaceItem::interface()
+NetworkManager::Device* InterfaceItem::interface()
 {
     return m_iface.data();
 }
@@ -211,7 +210,7 @@ void InterfaceItem::setActive(bool active)
 {
     Q_UNUSED(active);
     if (m_iface) {
-        connectionStateChanged(static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface.data()->connectionState()));
+        connectionStateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
     }
 }
 
@@ -273,7 +272,7 @@ void InterfaceItem::setConnectionInfo()
 {
     if (m_iface) {
         currentConnectionChanged();
-        connectionStateChanged(static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface.data()->connectionState()));
+        connectionStateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
     }
 }
 
@@ -282,7 +281,7 @@ QString InterfaceItem::currentIpAddress()
     if (!m_iface)
         return QString();
 
-    if (static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface.data()->connectionState()) != Solid::Control::NetworkInterfaceNm09::Activated) {
+    if (static_cast<NetworkManager::Device::State>(m_iface.data()->state()) != NetworkManager::Device::Activated) {
         return i18nc("label of the network interface", "No IP address.");
     }
 
@@ -360,15 +359,15 @@ void InterfaceItem::handleConnectionStateChange(int new_state, int old_state, in
 {
     Q_UNUSED(old_state);
     Q_UNUSED(reason);
-    connectionStateChanged((Solid::Control::NetworkInterfaceNm09::ConnectionState)new_state);
+    connectionStateChanged((NetworkManager::Device::State)new_state);
 }
 
 void InterfaceItem::handleConnectionStateChange(int new_state)
 {
-    connectionStateChanged((Solid::Control::NetworkInterfaceNm09::ConnectionState)new_state);
+    connectionStateChanged((NetworkManager::Device::State)new_state);
 }
 
-void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterfaceNm09::ConnectionState state, bool updateConnection)
+void InterfaceItem::connectionStateChanged(NetworkManager::Device::State state, bool updateConnection)
 {
     if (m_state == state) {
         return;
@@ -393,33 +392,33 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterfaceNm09:
         lname = UiUtils::connectionStateToString(state, QString());
         // to allow updating connection's name in the next call of connectionStateChanged()
         // even if the state has not changed.
-        m_state = Solid::Control::NetworkInterfaceNm09::UnknownState;
+        m_state = NetworkManager::Device::UnknownState;
     }
 
     switch (state) {
-        case Solid::Control::NetworkInterfaceNm09::Unavailable:
-            if (m_iface.data()->type() == Solid::Control::NetworkInterfaceNm09::Ethernet) {
+        case NetworkManager::Device::Unavailable:
+            if (m_iface.data()->type() == NetworkManager::Device::Ethernet) {
                 lname = i18nc("wired interface network cable unplugged", "Cable Unplugged");
             }
             setEnabled(false); // FIXME: tone down colors using an animation
             break;
-        case Solid::Control::NetworkInterfaceNm09::Disconnected:
-        case Solid::Control::NetworkInterfaceNm09::Deactivating:
+        case NetworkManager::Device::Disconnected:
+        case NetworkManager::Device::Deactivating:
             setEnabled(true);
             break;
-        case Solid::Control::NetworkInterfaceNm09::Preparing:
-        case Solid::Control::NetworkInterfaceNm09::Configuring:
-        case Solid::Control::NetworkInterfaceNm09::NeedAuth:
-        case Solid::Control::NetworkInterfaceNm09::IPConfig:
-        case Solid::Control::NetworkInterfaceNm09::IPCheck:
-        case Solid::Control::NetworkInterfaceNm09::Secondaries:
-        case Solid::Control::NetworkInterfaceNm09::Activated:
+        case NetworkManager::Device::Preparing:
+        case NetworkManager::Device::ConfiguringHardware:
+        case NetworkManager::Device::NeedAuth:
+        case NetworkManager::Device::ConfiguringIp:
+        case NetworkManager::Device::CheckingIp:
+        case NetworkManager::Device::WaitingForSecondaries:
+        case NetworkManager::Device::Activated:
             setEnabled(true);
             m_disconnect = true;
             break;
-        case Solid::Control::NetworkInterfaceNm09::Unmanaged:
-        case Solid::Control::NetworkInterfaceNm09::Failed:
-        case Solid::Control::NetworkInterfaceNm09::UnknownState:
+        case NetworkManager::Device::Unmanaged:
+        case NetworkManager::Device::Failed:
+        case NetworkManager::Device::UnknownState:
             setEnabled(false);
             break;
     }
@@ -488,7 +487,7 @@ void InterfaceItem::activatableAdded(RemoteActivatable * activatable)
         /* Sometimes the activatableAdded signal arrives after the connectionStateChanged
            signal, so update the interface state here but do not search for current connection
            since it is already known. */
-        connectionStateChanged(m_iface.data()->connectionState(), false);
+        connectionStateChanged(m_iface.data()->state(), false);
     }
 }
 

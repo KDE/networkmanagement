@@ -25,16 +25,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class QAction;
 class KCModuleProxy;
 
+#include <QTimeLine>
+
 #include <kdeversion.h>
 
 #include <plasma/framesvg.h>
 #include <plasma/svg.h>
 #include <solid/networking.h>
 #include <solid/control/networking.h>
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/accesspoint.h>
 
-#include "../libs/types.h"
 #include <interfaceconnection.h>
 
 #include <Plasma/PopupApplet>
@@ -45,8 +46,6 @@ namespace Plasma
 {
     class Applet;
 } // namespace Plasma
-
-class QTimeLine;
 
 class NMPopup;
 class RemoteActivatable;
@@ -125,9 +124,9 @@ private Q_SLOTS:
     void setupAccessPointSignals(const QString &);
 
 private:
-    bool hasInterfaceOfType(Solid::Control::NetworkInterfaceNm09::Type type);
+    bool hasInterfaceOfType(NetworkManager::Device::Type type);
     void setupInterfaceSignals();
-    QString svgElement(Solid::Control::NetworkInterfaceNm09 *iface);
+    QString svgElement(NetworkManager::Device *iface);
 
     void paintStatusOverlay(QPainter* p, QRect & rect);
     void paintNeedAuthOverlay(QPainter* p, QRect & rect);
@@ -135,7 +134,7 @@ private:
     void setStatusOverlay(const QPixmap&);
     void setStatusOverlay(const QString&);
 
-    Solid::Control::NetworkInterfaceNm09List m_interfaces;
+    NetworkManager::DeviceList m_interfaces;
     Plasma::ToolTipContent m_toolTip;
 
     RemoteActivatableList* m_activatables;
@@ -150,19 +149,19 @@ private:
     // This one is always the interface which has the default route
     // or the first interface selected after sorting the current
     // interface list using networkInterfaceLessThan().
-    Solid::Control::NetworkInterfaceNm09* m_activeInterface;
+    NetworkManager::Device* m_activeInterface;
     // Interface used to update system tray icon. If we have only one interface
     // then this one is always equals to m_activeInterfaceState.
-    Solid::Control::NetworkInterfaceNm09* m_activeSystrayInterface;
-    Solid::Control::AccessPointNm09* m_accessPoint;
+    NetworkManager::Device* m_activeSystrayInterface;
+    NetworkManager::AccessPoint* m_accessPoint;
 
     // Timeline controlling a connection progress overlay on the main icon
     QTimeLine m_overlayTimeline;
     QPixmap m_previousStatusOverlay;
     QPixmap m_statusOverlay;
 
-    Solid::Control::NetworkInterfaceNm09::ConnectionState m_activeInterfaceState;
-    Solid::Control::NetworkInterfaceNm09::ConnectionState m_activeSystrayInterfaceState;
+    NetworkManager::Device::State m_activeInterfaceState;
+    NetworkManager::Device::State m_activeSystrayInterfaceState;
 
     ///embedded KCM modules in the configuration dialog
     KCModuleProxy* m_kcmNM;

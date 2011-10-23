@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QUuid>
 
 #include <KUser>
-#include <solid/control/networkinterface.h>
+#include <libnm-qt/device.h>
 
 #include "setting.h"
 
@@ -43,7 +43,7 @@ public:
     enum Type { Unknown = 0, Wired, Wireless, Gsm, Cdma, Vpn, Pppoe, Bluetooth };
     static QString typeAsString(Connection::Type);
     static Connection::Type typeFromString(const QString & type);
-    static Connection::Type typeFromSolidType(const Solid::Control::NetworkInterfaceNm09 * iface);
+    static Connection::Type typeFromSolidType(const NetworkManager::Device * iface);
     static QString iconName(const Connection::Type type);
     /**
      * Create a connection with a new Uuid

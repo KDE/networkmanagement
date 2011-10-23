@@ -26,13 +26,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class ConnectionList;
 class ActivatableList;
 class WirelessNetworkInterfaceActivatableProviderPrivate;
-namespace Solid
+namespace NetworkManager
 {
-    namespace Control
-    {
-        class WirelessNetworkInterfaceNm09;
-    } // namespace Control
-} // namespace Solid
+    class Device;
+} // namespace NetworkManager
 
 /**
  * Specialized Activatable provider for wireless interfaces
@@ -42,7 +39,7 @@ class KNM_EXPORT WirelessNetworkInterfaceActivatableProvider : public NetworkInt
 {
 Q_OBJECT
 public:
-    WirelessNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::WirelessNetworkInterfaceNm09 * interface, QObject * parent);
+    WirelessNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::WirelessDevice * interface, QObject * parent);
     virtual ~WirelessNetworkInterfaceActivatableProvider();
 public slots:
     /**

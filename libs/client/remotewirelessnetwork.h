@@ -26,7 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 #include <QString>
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/accesspoint.h>
 
 #include "knmclient_export.h"
 
@@ -49,11 +49,11 @@ public:
     virtual ~RemoteWirelessNetwork();
     QString ssid() const;
     int strength() const;
-    Solid::Control::WirelessNetworkInterfaceNm09::Capabilities interfaceCapabilities() const;
-    Solid::Control::AccessPointNm09::Capabilities apCapabilities() const;
-    Solid::Control::AccessPointNm09::WpaFlags wpaFlags() const;
-    Solid::Control::AccessPointNm09::WpaFlags rsnFlags() const;
-    Solid::Control::WirelessNetworkInterfaceNm09::OperationMode operationMode() const;
+    NetworkManager::WirelessDevice::Capabilities interfaceCapabilities() const;
+    NetworkManager::AccessPoint::Capabilities apCapabilities() const;
+    NetworkManager::AccessPoint::WpaFlags wpaFlags() const;
+    NetworkManager::AccessPoint::WpaFlags rsnFlags() const;
+    NetworkManager::WirelessDevice::OperationMode operationMode() const;
 Q_SIGNALS:
     void strengthChanged(int);
 protected:

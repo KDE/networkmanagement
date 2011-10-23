@@ -34,13 +34,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIconLoader>
 
 #include <Solid/Device>
-#include <solid/control/networkmanager.h>
-#include <solid/control/wirelessnetworkinterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/wirelessdevice.h>
 
 #include <interfaceconnection.h>
 #include <vpninterfaceconnection.h>
 #include <uiutils.h>
-#include <wirelessnetworkinterfaceenvironment.h>
+#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
 
 #include "events.h"
 #include "../internals/connection.h"
@@ -49,7 +49,7 @@ static const int iconSize = 48;
 
 K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "libknetworkmanager", KComponentData::SkipMainComponentRegistration))
 
-InterfaceNotificationHost::InterfaceNotificationHost(Solid::Control::NetworkInterfaceNm09 * interface, NotificationManager * manager) : QObject(manager), m_manager(manager), m_interface(interface), m_suppressStrengthNotification(false)
+InterfaceNotificationHost::InterfaceNotificationHost(NetworkManager::Device * interface, NotificationManager * manager) : QObject(manager), m_manager(manager), m_interface(interface), m_suppressStrengthNotification(false)
 {
     // Keep a record for when it is removed
     m_interfaceNameLabel = UiUtils::interfaceNameLabel(interface->uni());
@@ -119,7 +119,7 @@ void InterfaceNotificationHost::interfaceConnectionActivationStateChanged(Knm::I
             break;
         case Knm::InterfaceConnection::Unknown:
             m_activating.remove(ic);
-            if (ic->connectionType() != Knm::Connection::Wireless || Solid::Control::NetworkManagerNm09::isWirelessHardwareEnabled()) {
+            if (ic->connectionType() != Knm::Connection::Wireless || NetworkManager::isWirelessHardwareEnabled()) {
                 if (ic->oldActivationState() == Knm::InterfaceConnection::Activating)
                     KNotification::event(Event::ConnectFailed, m_interfaceNameLabel, i18nc("@info:status Notification text when connection has failed","Connection %1 failed", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
                 else
@@ -157,7 +157,7 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
     KNotification::NotificationFlag flag = KNotification::Persistent;
 
     QString identifier = UiUtils::interfaceNameLabel(m_interface->uni());
-    QString stateString = UiUtils::connectionStateToString((Solid::Control::NetworkInterfaceNm09::ConnectionState)new_state);
+    QString stateString = UiUtils::connectionStateToString((NetworkManager::Device::State)new_state);
     /*
     // need to keep the notification object around to reset it during connection cycles, but
     // delete it at the end of a connection cycle
@@ -166,10 +166,10 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
     // if set and not end of connection cycle, reuse this notification
     bool keepNotification = false;
 
-    if (new_state == Solid::Control::NetworkInterfaceNm09::Preparing
-    || new_state == Solid::Control::NetworkInterfaceNm09::Configuring
-    || new_state == Solid::Control::NetworkInterfaceNm09::NeedAuth
-    || new_state == Solid::Control::NetworkInterfaceNm09::IPConfig) {
+    if (new_state == NetworkManager::Device::Preparing
+    || new_state == NetworkManager::Device::Configuring
+    || new_state == NetworkManager::Device::NeedAuth
+    || new_state == NetworkManager::Device::IPConfig) {
     keepNotification = true;
     }
     */
@@ -191,12 +191,12 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
     //X         }
 
     switch (new_state) {
-        case Solid::Control::NetworkInterfaceNm09::Preparing:
-        case Solid::Control::NetworkInterfaceNm09::Configuring:
-        case Solid::Control::NetworkInterfaceNm09::NeedAuth:
-        case Solid::Control::NetworkInterfaceNm09::IPConfig:
-        case Solid::Control::NetworkInterfaceNm09::IPCheck:
-        case Solid::Control::NetworkInterfaceNm09::Secondaries:
+        case NetworkManager::Device::Preparing:
+        case NetworkManager::Device::ConfiguringHardware:
+        case NetworkManager::Device::NeedAuth:
+        case NetworkManager::Device::ConfiguringIp:
+        case NetworkManager::Device::CheckingIp:
+        case NetworkManager::Device::WaitingForSecondaries:
             if (activatingConnection) {
                 title = i18nc("@info:status interface (%2) status notification title when a connection (%1) is activating",
                         "Activating %1 on %2", activatingConnection->connectionName(), identifier);
@@ -205,7 +205,7 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
             }
             flag = KNotification::Persistent;
             break;
-        case Solid::Control::NetworkInterfaceNm09::Activated:
+        case NetworkManager::Device::Activated:
         default:
             if (activatingConnection) {
                 title = i18nc("@info:status interface (%2) status notification title when a connection (%1) has successfully activated",
@@ -218,122 +218,122 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, i
     }
 
     switch (reason) {
-        case Solid::Control::NetworkInterfaceNm09::NoReason:
-        case Solid::Control::NetworkInterfaceNm09::UnknownReason:
+        case NetworkManager::Device::NoReason:
+        case NetworkManager::Device::UnknownReason:
             text = stateString;
             break;
-        case Solid::Control::NetworkInterfaceNm09::NowManagedReason:
+        case NetworkManager::Device::NowManagedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to NowManagedReason","%1 because it is now being managed", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::NowUnmanagedReason:
+        case NetworkManager::Device::NowUnmanagedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to NowUnmanagedReason","%1 because it is no longer being managed", stateString );
             break;
-        case Solid::Control::NetworkInterfaceNm09::ConfigFailedReason:
+        case NetworkManager::Device::ConfigFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ConfigFailedReason","%1 because configuration failed", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::ConfigUnavailableReason:
+        case NetworkManager::Device::ConfigUnavailableReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ConfigUnavailableReason","%1 because the configuration is unavailable", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::ConfigExpiredReason:
+        case NetworkManager::Device::ConfigExpiredReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ConfigExpiredReason","%1 because the configuration has expired", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::NoSecretsReason:
+        case NetworkManager::Device::NoSecretsReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to NoSecretsReason","%1 because secrets were not provided", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::AuthSupplicantDisconnectReason:
+        case NetworkManager::Device::AuthSupplicantDisconnectReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to AuthSupplicantDisconnectReason","%1 because the authorization supplicant disconnected", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::AuthSupplicantConfigFailedReason:
+        case NetworkManager::Device::AuthSupplicantConfigFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to AuthSupplicantConfigFailedReason","%1 because the authorization supplicant's configuration failed", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::AuthSupplicantFailedReason:
+        case NetworkManager::Device::AuthSupplicantFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to AuthSupplicantFailedReason","%1 because the authorization supplicant failed", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::AuthSupplicantTimeoutReason:
+        case NetworkManager::Device::AuthSupplicantTimeoutReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to AuthSupplicantTimeoutReason","%1 because the authorization supplicant timed out", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::PppStartFailedReason:
+        case NetworkManager::Device::PppStartFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to PppStartFailedReason","%1 because PPP failed to start", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::PppDisconnectReason:
+        case NetworkManager::Device::PppDisconnectReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to PppDisconnectReason","%1 because PPP disconnected", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::PppFailedReason:
+        case NetworkManager::Device::PppFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to PppFailedReason","%1 because PPP failed", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::DhcpStartFailedReason:
+        case NetworkManager::Device::DhcpStartFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to DhcpStartFailedReason","%1 because DHCP failed to start", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::DhcpErrorReason:
+        case NetworkManager::Device::DhcpErrorReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to DhcpErrorReason","%1 because a DHCP error occurred", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::DhcpFailedReason:
+        case NetworkManager::Device::DhcpFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to DhcpFailedReason","%1 because DHCP failed ", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::SharedStartFailedReason:
+        case NetworkManager::Device::SharedStartFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to SharedStartFailedReason","%1 because the shared service failed to start", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::SharedFailedReason:
+        case NetworkManager::Device::SharedFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to SharedFailedReason","%1 because the shared service failed", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::AutoIpStartFailedReason:
+        case NetworkManager::Device::AutoIpStartFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to AutoIpStartFailedReason","%1 because the auto IP service failed to start", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::AutoIpErrorReason:
+        case NetworkManager::Device::AutoIpErrorReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to AutoIpErrorReason","%1 because the auto IP service reported an error", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::AutoIpFailedReason:
+        case NetworkManager::Device::AutoIpFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to AutoIpFailedReason","%1 because the auto IP service failed", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::ModemBusyReason:
+        case NetworkManager::Device::ModemBusyReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ModemBusyReason","%1 because the modem is busy", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::ModemNoDialToneReason:
+        case NetworkManager::Device::ModemNoDialToneReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ModemNoDialToneReason","%1 because the modem has no dial tone", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::ModemNoCarrierReason:
+        case NetworkManager::Device::ModemNoCarrierReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ModemNoCarrierReason","%1 because the modem shows no carrier", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::ModemDialTimeoutReason:
+        case NetworkManager::Device::ModemDialTimeoutReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ModemDialTimeoutReason","%1 because the modem dial timed out", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::ModemInitFailedReason:
+        case NetworkManager::Device::ModemInitFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ModemInitFailedReason","%1 because the modem could not be initialized", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::GsmApnSelectFailedReason:
+        case NetworkManager::Device::GsmApnSelectFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to GsmApnSelectFailedReason","%1 because the GSM APN could not be selected", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::GsmNotSearchingReason:
+        case NetworkManager::Device::GsmNotSearchingReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to GsmNotSearchingReason","%1 because the GSM modem is not searching", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::GsmRegistrationDeniedReason:
+        case NetworkManager::Device::GsmRegistrationDeniedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to GsmRegistrationDeniedReason","%1 because GSM network registration was denied", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::GsmRegistrationTimeoutReason:
+        case NetworkManager::Device::GsmRegistrationTimeoutReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to GsmRegistrationTimeoutReason","%1 because GSM network registration timed out", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::GsmRegistrationFailedReason:
+        case NetworkManager::Device::GsmRegistrationFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to GsmRegistrationFailedReason","%1 because GSM registration failed", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::GsmPinCheckFailedReason:
+        case NetworkManager::Device::GsmPinCheckFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to GsmPinCheckFailedReason","%1 because the GSM PIN check failed", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::FirmwareMissingReason:
+        case NetworkManager::Device::FirmwareMissingReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to FirmwareMissingReason","%1 because firmware is missing", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::DeviceRemovedReason:
+        case NetworkManager::Device::DeviceRemovedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to DeviceRemovedReason","%1 because the device was removed", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::SleepingReason:
+        case NetworkManager::Device::SleepingReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to SleepingReason","%1 because the networking system is now sleeping", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::ConnectionRemovedReason:
+        case NetworkManager::Device::ConnectionRemovedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ConnectionRemovedReason","%1 because the connection was removed", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::UserRequestedReason:
+        case NetworkManager::Device::UserRequestedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to UserRequestedReason","%1 by request", stateString);
             break;
-        case Solid::Control::NetworkInterfaceNm09::CarrierReason:
+        case NetworkManager::Device::CarrierReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to CarrierReason","%1 because the cable was disconnected", stateString);
             break;
     }
@@ -394,20 +394,20 @@ NotificationManager::NotificationManager(ConnectionList *connectionList, QObject
     connect(d->disappearedNetworkTimer, SIGNAL(timeout()), this, SLOT(notifyDisappearedNetworks()));
 
     // status
-    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
+    QObject::connect(NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
             this, SLOT(statusChanged(Solid::Networking::Status)));
 
     // rfkill
-    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
+    QObject::connect(NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
             this, SLOT(wirelessHardwareEnabledChanged(bool)));
 
     // interfaces
-    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+    QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
-    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+    QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
             this, SLOT(networkInterfaceRemoved(const QString&)));
 
-    foreach (Solid::Control::NetworkInterfaceNm09* interface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+    foreach (NetworkManager::Device* interface, NetworkManager::networkInterfaces()) {
         networkInterfaceAdded(interface->uni());
     }
     d->suppressHardwareEvents = false;
@@ -487,7 +487,7 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
     if (!d->interfaceHosts.contains(uni)) {
 
         kDebug() << "adding notification host";
-        Solid::Control::NetworkInterfaceNm09 * iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(uni);
+        NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
         if (iface) {
             InterfaceNotificationHost * host = new InterfaceNotificationHost(iface, this);
 
@@ -495,8 +495,8 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
 
             // notify hardware added
             if (!d->suppressHardwareEvents) {
-                if (iface->type() == Solid::Control::NetworkInterfaceNm09::Modem) {
-                    Solid::Control::ModemNetworkInterfaceNm09 * nmModemIface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09 *>(iface);
+                if (iface->type() == NetworkManager::Device::Modem) {
+                    NetworkManager::ModemDevice * nmModemIface = qobject_cast<NetworkManager::ModemDevice *>(iface);
                     if (nmModemIface) {
                         // KNotification::CloseOnTimeout sometimes breaks the activation of slot createCellularConnection,
                         // so using Persistent here and closing the notification using QTimer::singleShot() below.
@@ -518,13 +518,13 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
             }
 
             // if wireless, listen for new networks
-            if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
-                Solid::Control::WirelessNetworkInterfaceNm09 * wireless = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
+            if (iface->type() == NetworkManager::Device::Wifi) {
+                NetworkManager::WirelessDevice * wireless = qobject_cast<NetworkManager::WirelessDevice*>(iface);
 
                 if (wireless) {
-                    // this is a bit wasteful because WirelessNetworkInterfaceActivatableProvider is also
+                    // this is a bit wasteful because NetworkManager::WirelessDeviceActivatableProvider is also
                     // creating these objects, but I expect these will move into Solid and become singletons
-                    Solid::Control::WirelessNetworkInterfaceEnvironment * environment = new Solid::Control::WirelessNetworkInterfaceEnvironment(wireless);
+                    NetworkManager::WirelessNetworkInterfaceEnvironment * environment = new NetworkManager::WirelessNetworkInterfaceEnvironment(wireless);
 
                     QObject::connect(environment, SIGNAL(networkAppeared(const QString &)),
                             this, SLOT(networkAppeared(const QString&)));
@@ -564,7 +564,7 @@ void NotificationManager::networkInterfaceRemoved(const QString &uni)
 void NotificationManager::networkAppeared(const QString & ssid)
 {
     Q_D(NotificationManager);
-    Solid::Control::WirelessNetworkInterfaceEnvironment * environment = qobject_cast<Solid::Control::WirelessNetworkInterfaceEnvironment *>(sender());
+    NetworkManager::WirelessNetworkInterfaceEnvironment * environment = qobject_cast<NetworkManager::WirelessNetworkInterfaceEnvironment *>(sender());
     if (environment && environment->interface()->activeAccessPoint() == "/") {
         d->newWirelessNetworks.append(ssid);
         d->newNetworkTimer->start(500);
@@ -574,7 +574,7 @@ void NotificationManager::networkAppeared(const QString & ssid)
 void NotificationManager::networkDisappeared(const QString & ssid)
 {
     Q_D(NotificationManager);
-    Solid::Control::WirelessNetworkInterfaceEnvironment * environment = qobject_cast<Solid::Control::WirelessNetworkInterfaceEnvironment *>(sender());
+    NetworkManager::WirelessNetworkInterfaceEnvironment * environment = qobject_cast<NetworkManager::WirelessNetworkInterfaceEnvironment *>(sender());
     if (environment && environment->interface()->activeAccessPoint() == "/") {
         d->disappearedWirelessNetworks.append(ssid);
         d->disappearedNetworkTimer->start(500);
@@ -636,12 +636,6 @@ void NotificationManager::statusChanged(Solid::Networking::Status status)
 {
     if (status == Solid::Networking::Unknown) {
         KNotification::event(Event::NetworkingDisabled, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is disabled", "Networking system disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
-    } else {
-        Solid::Control::NetworkManagerNm09::Notifier * n = qobject_cast<Solid::Control::NetworkManagerNm09::Notifier *>(sender());
-
-        /* If the signal does not come from a Solid::Control::NetworkManager::Notifier object then it is from a Monolithic Knm object. */
-        if (n == NULL and status == Solid::Networking::Connected)
-            KNotification::event(Event::AlreadyRunning, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is already running", "Networking system already running"), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
     }
 }
 

@@ -26,10 +26,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class QObject;
 class QString;
 
-namespace Solid {
-    namespace Control {
-        class WirelessNetworkInterfaceNm09;
-    }
+namespace NetworkManager {
+    class WirelessDevice;
 }
 
 namespace Knm {
@@ -45,7 +43,7 @@ public:
      * the corresponding Connection object.
      */
     static Knm::WirelessInterfaceConnection * buildWirelessInterfaceConnection(
-                       Solid::Control::WirelessNetworkInterfaceNm09 *interface,
+                       NetworkManager::WirelessDevice *interface,
                        Knm::Connection * connection,
                        const QString & deviceUni,
                        QObject * parent);
@@ -55,7 +53,7 @@ public:
      * the corresponding Connection object.
      */
     static Knm::HiddenWirelessInterfaceConnection * buildHiddenWirelessInterfaceConnection(
-                       Solid::Control::WirelessNetworkInterfaceNm09 *interface,
+                       NetworkManager::WirelessDevice *interface,
                        Knm::Connection * connection,
                        const QString & deviceUni,
                        QObject * parent);

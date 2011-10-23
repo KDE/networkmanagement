@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../config/mobileconnectionwizard.h"
 
 #include <QDBusObjectPath>
-#include <solid/control/modemmanager.h>
+#include <libmm-qt/manager.h>
 
 class Bluetooth: public QObject
 {

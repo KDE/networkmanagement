@@ -26,8 +26,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KGlobal>
 #include <KIconLoader>
-#include <solid/control/modemmanager.h>
-#include <solid/control/networkmodeminterface.h>
+#include <libmm-qt/manager.h>
+#include <libnm-qt/modemdevice.h>
 #include <solid/device.h>
 
 #include "mobileconnectionwizard.h"
@@ -88,10 +88,10 @@ void MobileConnectionWizard::initializePage(int id)
             }
 
             if (!mInitialMethodType) {
-                Solid::Control::NetworkInterfaceNm09 *iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(mDeviceComboBox->itemData(mDeviceComboBox->currentIndex()).toString());
+                NetworkManager::Device *iface = NetworkManager::findNetworkInterface(mDeviceComboBox->itemData(mDeviceComboBox->currentIndex()).toString());
                 if (iface) {
-                    const Solid::Control::ModemNetworkInterfaceNm09 * nmModemIface = qobject_cast<const Solid::Control::ModemNetworkInterfaceNm09 *>(iface);
-                    if (nmModemIface && nmModemIface->subType() == Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo) {
+                    const NetworkManager::ModemDevice * nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(iface);
+                    if (nmModemIface && nmModemIface->subType() == NetworkManager::ModemDevice::CdmaEvdo) {
                         mType = Knm::Connection::Cdma;
                     } else {
                         mType = Knm::Connection::Gsm;
@@ -269,11 +269,11 @@ QWizardPage * MobileConnectionWizard::createIntroPage()
         label->setBuddy(mDeviceComboBox);
         layout->addWidget(mDeviceComboBox);
     
-        QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(const QString)),
+        QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString)),
                          this, SLOT(introDeviceAdded(const QString)));
-        QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceRemoved(const QString)),
+        QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString)),
                          this, SLOT(introDeviceRemoved(const QString)));
-        QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
+        QObject::connect(NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                          this, SLOT(introStatusChanged(Solid::Networking::Status)));
     
         introAddInitialDevices();
@@ -284,11 +284,11 @@ QWizardPage * MobileConnectionWizard::createIntroPage()
     return page;
 }
 
-void MobileConnectionWizard::introAddDevice(Solid::Control::NetworkInterfaceNm09 *device)
+void MobileConnectionWizard::introAddDevice(NetworkManager::Device *device)
 {
     QString desc;
 
-    Solid::Control::ModemInterface *modem = Solid::Control::ModemManager::findModemInterface(device->udi(), Solid::Control::ModemInterface::GsmCard);
+    ModemManager::ModemInterface *modem = ModemManager::findModemInterface(device->udi(), ModemManager::ModemInterface::GsmCard);
     if (modem) {
         if (modem->enabled()) {
             desc.append(modem->getInfo().manufacturer);
@@ -309,16 +309,16 @@ void MobileConnectionWizard::introAddDevice(Solid::Control::NetworkInterfaceNm09
         }
     }
 
-    const Solid::Control::ModemNetworkInterfaceNm09 * nmModemIface = qobject_cast<const Solid::Control::ModemNetworkInterfaceNm09 *>(device);
+    const NetworkManager::ModemDevice * nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(device);
     if (!nmModemIface) {
         return;
     }
 
-    if (nmModemIface->subType() == Solid::Control::ModemNetworkInterfaceNm09::GsmUmts) {
+    if (nmModemIface->subType() == NetworkManager::ModemDevice::GsmUmts) {
         if (desc.isEmpty()) {
             desc.append(i18nc("Mobile Connection Wizard", "Installed GSM device"));    
         }
-    } else if (nmModemIface->subType() == Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo) {
+    } else if (nmModemIface->subType() == NetworkManager::ModemDevice::CdmaEvdo) {
         if (desc.isEmpty()) {
             desc.append(i18nc("Mobile Connection Wizard", "Installed CDMA device"));    
         }
@@ -339,7 +339,7 @@ void MobileConnectionWizard::introAddDevice(Solid::Control::NetworkInterfaceNm09
 
 void MobileConnectionWizard::introDeviceAdded(const QString uni)
 {
-    introAddDevice(Solid::Control::NetworkManagerNm09::findNetworkInterface(uni));
+    introAddDevice(NetworkManager::findNetworkInterface(uni));
 }
 
 void MobileConnectionWizard::introDeviceRemoved(const QString uni)
@@ -377,7 +377,7 @@ void MobileConnectionWizard::introStatusChanged(Solid::Networking::Status status
 
 void MobileConnectionWizard::introAddInitialDevices()
 {
-    foreach(Solid::Control::NetworkInterfaceNm09 *n, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+    foreach(NetworkManager::Device *n, NetworkManager::networkInterfaces()) {
         introAddDevice(n);
     }
 

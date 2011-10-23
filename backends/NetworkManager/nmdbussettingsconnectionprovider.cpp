@@ -51,9 +51,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "nm-manager-interface.h"
 #include "nm-device-interface.h"
 
-#include <solid/control/networkmanager.h>
-#include <solid/control/networkmodeminterface.h>
-#include <solid/control/modeminterface.h>
+#include <libnm-qt/modemdevice.h>
+#include <libnm-qt/activeconnection.h>
+#include <libmm-qt/modeminterface.h>
 
 class NMDBusSettingsConnectionProviderPrivate
 {
@@ -255,14 +255,12 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
             // look up the active connection (a real connection, not this vpn that is being activated)
             // because NM needs its details to bring up the VPN
             QString activeConnPath;
-            foreach (const QString &activeConnectionPath, Solid::Control::NetworkManagerNm09::activeConnections()) {
-                OrgFreedesktopNetworkManagerConnectionActiveInterface activeConnection(NM_DBUS_SERVICE, activeConnectionPath, QDBusConnection::systemBus());
-
-                if ( activeConnection.getDefault() && activeConnection.state() == NM_ACTIVE_CONNECTION_STATE_ACTIVATED) {
-                    activeConnPath = activeConnection.path();
-                    QList<QDBusObjectPath> devs = activeConnection.devices();
+            foreach (const NetworkManager::ActiveConnection * ac, NetworkManager::activeConnections()) {
+                if ( ac->default4() && ac->state() == NetworkManager::ActiveConnection::Activated) {
+                    activeConnPath = ac->path();
+                    QList<NetworkManager::Device *> devs = ac->devices();
                     if (!devs.isEmpty()) {
-                        deviceToActivateOn = devs.first().path();
+                        deviceToActivateOn = devs.first()->uni();
                     }
                 }
             }
@@ -278,9 +276,9 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
         }
 
         // Enable modem before connecting.
-        Solid::Control::ModemNetworkInterfaceNm09 *iface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09 *>(Solid::Control::NetworkManagerNm09::findNetworkInterface(deviceToActivateOn));
+        NetworkManager::ModemDevice *iface = qobject_cast<NetworkManager::ModemDevice *>(NetworkManager::findNetworkInterface(deviceToActivateOn));
         if (iface) {
-            Solid::Control::ModemGsmCardInterface *modem = iface->getModemCardIface();
+            ModemManager::ModemGsmCardInterface *modem = iface->getModemCardIface();
             if (modem && !modem->enabled()) {
                 // Try to pin-unlock the modem.
                 QMetaObject::invokeMethod(modem, "unlockRequiredChanged", Qt::DirectConnection,
@@ -297,11 +295,11 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
 void NMDBusSettingsConnectionProvider::interfaceConnectionDeactivated()
 {
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
-    Solid::Control::NetworkInterfaceNm09 *iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(ic->deviceUni());
+    NetworkManager::Device *iface = NetworkManager::findNetworkInterface(ic->deviceUni());
     if (iface) {
         iface->disconnectInterface();
     } else { // VPN connections do have NetworkInterface objects.
-        Solid::Control::NetworkManagerNm09::deactivateConnection(ic->property("NMDBusActiveConnectionObject").toString());
+        NetworkManager::deactivateConnection(ic->property("NMDBusActiveConnectionObject").toString());
     }
 }
 

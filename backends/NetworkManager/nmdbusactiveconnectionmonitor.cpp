@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QUuid>
 
 #include <KDebug>
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/activeconnection.h>
 
 #include <interfaceconnection.h>
 #include <vpninterfaceconnection.h>
@@ -130,11 +130,11 @@ NMDBusActiveConnectionMonitor::NMDBusActiveConnectionMonitor(ActivatableList * a
     Q_D(NMDBusActiveConnectionMonitor);
     d->activatableList = activatables;
 
-    connect(Solid::Control::NetworkManagerNm09::notifier(),
+    connect(NetworkManager::notifier(),
             SIGNAL(activeConnectionsChanged()),
             this, SLOT(activeConnectionListChanged()));
 
-    connect(Solid::Control::NetworkManagerNm09::notifier(),
+    connect(NetworkManager::notifier(),
             SIGNAL(statusChanged(Solid::Networking::Status)),
             this, SLOT(networkingStatusChanged(Solid::Networking::Status)));
 
@@ -151,15 +151,16 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
     // update all InterfaceConnections we know about
     Q_D(NMDBusActiveConnectionMonitor);
 
-    QStringList currentActiveConnections = Solid::Control::NetworkManagerNm09::activeConnections();
+    QStringList currentActiveConnections;
 
     // delete any stale interfaces
-    foreach (const QString &key, d->activeConnections.keys()) {
-        if (!currentActiveConnections.contains(key)) {
-            NMDBusActiveConnectionProxy * stale = d->activeConnections.take(key);
-            kDebug() << "removing stale active connection" << key;
+    foreach (const NetworkManager::ActiveConnection *ac, NetworkManager::activeConnections()) {
+        if (!currentActiveConnections.contains(ac->path())) {
+            NMDBusActiveConnectionProxy * stale = d->activeConnections.take(ac->path());
+            kDebug() << "removing stale active connection" << ac->path();
             delete stale;
         }
+        currentActiveConnections.append(ac->path());
     }
 
     // create an interface to any active connections we're not already tracking

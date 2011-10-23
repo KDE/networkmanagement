@@ -33,4 +33,3 @@ const QString Event::RfOn = QLatin1String("rfon");
 const QString Event::LowSignal = QLatin1String("lowsignal");
 const QString Event::NetworkingDisabled = QLatin1String("networkingdisabled");
 const QString Event::InterfaceStateChange = QLatin1String("ifacestatechange");
-const QString Event::AlreadyRunning = QLatin1String("alreadyrunning");

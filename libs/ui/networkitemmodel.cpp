@@ -85,12 +85,12 @@ QVariant NetworkItemModel::data(const QModelIndex &index, int role) const
     if (index.row() >= m_networks.size() || index.row() < 0 || index.column() >= s_numColumns || index.column() < 0)
         return QVariant();
 
-    Solid::Control::WirelessNetwork * network  = m_environment->findNetwork(m_networks.value(index.row()));
+    NetworkManager::WirelessNetwork * network  = m_environment->findNetwork(m_networks.value(index.row()));
     if (!network) {
         kDebug() << "Network could not be found.";
         return QVariant();
     }
-    Solid::Control::AccessPointNm09 * ap = 0;
+    NetworkManager::AccessPoint * ap = 0;
     switch (index.column()) {
         case 0:
             switch (role){
@@ -102,11 +102,11 @@ QVariant NetworkItemModel::data(const QModelIndex &index, int role) const
                     return network->signalStrength();
                 case EncryptionRole:
                     ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
-                    return KIcon(Knm::WirelessSecurity::iconName(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags())));
+                    return KIcon(Knm::WirelessSecurity::iconName(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == NetworkManager::WirelessDevice::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags())));
                 case Qt::ToolTipRole:
                     ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
                     if (ap) {
-                        return Knm::WirelessSecurity::label(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags()));
+                        return Knm::WirelessSecurity::label(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == NetworkManager::WirelessDevice::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags()));
                     } else {
                         return QVariant();
                     }
@@ -145,12 +145,12 @@ QVariant NetworkItemModel::data(const QModelIndex &index, int role) const
             ap = m_networkInterface->findAccessPoint(network->referenceAccessPoint());
             if (role == Qt::DisplayRole) {
                     if (ap) {
-                        return Knm::WirelessSecurity::label(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags()));
+                        return Knm::WirelessSecurity::label(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == NetworkManager::WirelessDevice::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags()));
                     } else {
                         return QVariant();
                     }
             } else if (role ==  Qt::DecorationRole) {
-                return KIcon(Knm::WirelessSecurity::iconName(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags())));
+                return KIcon(Knm::WirelessSecurity::iconName(Knm::WirelessSecurity::best(m_networkInterface->wirelessCapabilities(), true, (ap->mode() == NetworkManager::WirelessDevice::Adhoc), ap->capabilities(), ap->wpaFlags(), ap->rsnFlags())));
             }
             else
                 return QVariant();
@@ -216,18 +216,18 @@ void NetworkItemModel::setNetworkInterface(const QString &uni)
     }
 
     kDebug() << "Requesting the interface: " << uni;
-    Solid::Control::NetworkInterfaceNm09 *networkInterface = Solid::Control::NetworkManagerNm09::findNetworkInterface(uni);
+    NetworkManager::Device *networkInterface = NetworkManager::findNetworkInterface(uni);
     if (networkInterface == 0) {
         kDebug() << "Could not create a valid network interface.";
         m_networkInterface=0;
         return;
-    } else if (networkInterface->type() != Solid::Control::NetworkInterfaceNm09::Wifi) {
+    } else if (networkInterface->type() != NetworkManager::Device::Wifi) {
         kDebug() << "Network Interface is not of type IEEE 80211";
         m_networkInterface=0;
         return;
     }
-    m_networkInterface = static_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(networkInterface);
-    m_environment = new Solid::Control::WirelessNetworkInterfaceEnvironment(m_networkInterface);
+    m_networkInterface = static_cast<NetworkManager::WirelessDevice*>(networkInterface);
+    m_environment = new NetworkManager::WirelessNetworkInterfaceEnvironment(m_networkInterface);
     scan();
     connect(m_environment, SIGNAL(networkAppeared(const QString &)), this, SLOT(networkAdded(const QString &)));
     connect(m_environment, SIGNAL(networkDisappeared(const QString &)), this, SLOT(networkRemoved(const QString &)));

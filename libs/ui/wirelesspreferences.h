@@ -21,19 +21,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NM09_WIRELESS_CONNECTION_PREFERENCES_H
 #define NM09_WIRELESS_CONNECTION_PREFERENCES_H
 
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/accesspoint.h>
 
 #include "connectionprefs.h"
 
-namespace Solid
+namespace NetworkManager
 {
-namespace Control
-{
-class AccessPoint;
-
-} // namespace Control
-
-} // namespace Solid
+    class AccessPoint;
+} // namespace NetworkManager
 
 namespace Knm
 {
@@ -60,7 +55,7 @@ public:
     virtual bool needsEdits() const;
 private Q_SLOTS:
     void tabChanged(int index);
-    void setDefaultName(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *);
+    void setDefaultName(NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *);
 private:
     bool m_hasSecrets;
     int m_securityTabIndex;

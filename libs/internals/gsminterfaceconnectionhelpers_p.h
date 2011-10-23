@@ -27,10 +27,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceconnectionhelpers_p.h"
 
 class QObject;
-namespace Solid {
-    namespace Control {
-        class GsmNetworkInterfaceNm09;
-    }
+namespace ModemManager {
+    class GsmNetworkInterface;
 }
 
 namespace Knm {
@@ -41,7 +39,7 @@ class GsmInterfaceConnection;
 class GsmInterfaceConnectionBuilder : public InterfaceConnectionBuilder
 {
 public:
-    GsmInterfaceConnectionBuilder(Solid::Control::ModemNetworkInterfaceNm09 * interface,
+    GsmInterfaceConnectionBuilder(NetworkManager::ModemDevice * interface,
                                        Knm::Connection *connection,
                                        const QString & deviceUni,
                                        QObject * parent);
@@ -56,7 +54,7 @@ private:
     Q_DISABLE_COPY(GsmInterfaceConnectionBuilder)
 
 protected:
-    Solid::Control::ModemNetworkInterfaceNm09 *m_interface;
+    NetworkManager::ModemDevice *m_interface;
 };
 
 

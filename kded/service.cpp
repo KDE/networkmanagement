@@ -35,6 +35,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <vpninterfaceconnectionprovider.h>
 #include <notificationmanager.h>
 
+#include <libnm-qt/manager.h>
+#include <libnm-qt/secretagent.h>
+
 #include <nmdbussecretagent.h>
 #include <nmdbusactiveconnectionmonitor.h>
 #include <nmdbussettingsconnectionprovider.h>
@@ -109,11 +112,11 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     //ActivatableDebug debug;
     //activatableList->registerObserver(&debug);
 
-    Solid::Control::NetworkInterfaceNm09::Types types =
-        (Solid::Control::NetworkInterfaceNm09::Ethernet
-         | Solid::Control::NetworkInterfaceNm09::Wifi
-         | Solid::Control::NetworkInterfaceNm09::Modem
-         | Solid::Control::NetworkInterfaceNm09::Bluetooth
+    NetworkManager::Device::Types types =
+        (NetworkManager::Device::Ethernet
+         | NetworkManager::Device::Wifi
+         | NetworkManager::Device::Modem
+         | NetworkManager::Device::Bluetooth
          );
 
     d->sortedList = new SortedActivatableList(types, this);
@@ -123,13 +126,13 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
     d->sortedList->registerObserver(d->sessionAbstractedService);
 
     // there is a problem setting this as a child of connectionList or of activatableList since it has
-    // references to both and NetworkInterfaceActivatableProvider touches the activatableList
+    // references to both and NetworkManager::DeviceActivatableProvider touches the activatableList
     // in its dtor (needed so it cleans up when removed by the monitor)
     // ideally this will always be deleted before the other list
     d->networkInterfaceMonitor = new NetworkInterfaceMonitor(d->connectionList, d->activatableList, d->activatableList);
 
     // create ActiveConnectionMonitor after construction of NMDBusSettingsConnectionProvider and observer registrations
-    // because, activatableList is filled in NetworkInterfaceMonitor and updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has
+    // because, activatableList is filled in NetworkManager::DeviceMonitor and updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has
     // Unknown activationState in its /org/kde/networkmanagement/Activatable interface
     d->nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(d->activatableList, d->nmDBusConnectionProvider);
 

@@ -3,12 +3,12 @@
 #ifndef KNM_VPNSETTING_H
 #define KNM_VPNSETTING_H
 
+#include <libnm-qt/generic-types.h>
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "setting.h"
 #include "knminternals_export.h"
-#include "../types.h"
 
 namespace Knm {
 

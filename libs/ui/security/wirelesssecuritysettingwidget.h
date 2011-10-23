@@ -25,14 +25,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-namespace Solid
+namespace NetworkManager
 {
-namespace Control
-{
-class AccessPointNm09;
-class WirelessNetworkInterfaceNm09;
-} // namespace Control
-} // namespace Solid
+    class AccessPoint;
+    class WirelessDevice;
+} // namespace NetworkManager
 
 namespace Knm
 {
@@ -51,15 +48,15 @@ public:
      * rsn
      */
     WirelessSecuritySettingWidget(Knm::Connection * connection,
-            Solid::Control::WirelessNetworkInterfaceNm09 * iface = 0,
-            Solid::Control::AccessPointNm09 * ap = 0,
+            NetworkManager::WirelessDevice * iface = 0,
+            NetworkManager::AccessPoint * ap = 0,
             QWidget * parent = 0 );
     virtual ~WirelessSecuritySettingWidget();
     void readConfig();
     void writeConfig();
     void readSecrets();
 public Q_SLOTS:
-    void setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterfaceNm09 * iface, Solid::Control::AccessPointNm09 * ap);
+    void setIfaceAndAccessPoint(NetworkManager::WirelessDevice * iface, NetworkManager::AccessPoint * ap);
 protected Q_SLOTS:
     void securityTypeChanged(int);
     void validate();

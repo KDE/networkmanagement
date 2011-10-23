@@ -25,12 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QString>
 #include "interfaceitem.h"
 
-namespace Solid
+namespace NetworkManager
 {
-    namespace Control
-    {
-        class NetworkInterface;
-    }
+    class Device;
 }
 
 class RemoteActivatable;
@@ -39,7 +36,7 @@ class VpnInterfaceItem : public InterfaceItem
 {
 Q_OBJECT
     public:
-        VpnInterfaceItem(Solid::Control::NetworkInterfaceNm09 * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent = 0);
+        VpnInterfaceItem(NetworkManager::Device * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent = 0);
         virtual ~VpnInterfaceItem();
         virtual QString connectionName();
         virtual QString currentIpAddress();

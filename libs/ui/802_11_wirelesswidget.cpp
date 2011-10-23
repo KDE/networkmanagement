@@ -25,8 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdeversion.h>
 
 #include <Solid/Device>
-#include <solid/control/networkmanager.h>
-#include <solid/control/wirelessnetworkinterface.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/wirelessdevice.h>
 
 #include <connection.h>
 #include <settings/802-11-wireless.h>
@@ -62,9 +62,9 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
 
     d->ui.mtu->setSuffix(ki18np(" byte", " bytes"));
     connect(d->ui.btnScan, SIGNAL(clicked()), SLOT(scanClicked()));
-    foreach (Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
-        if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
-            Solid::Control::WirelessNetworkInterfaceNm09 * wiface = static_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+        if (iface->type() == NetworkManager::Device::Wifi) {
+            NetworkManager::WirelessDevice * wiface = static_cast<NetworkManager::WirelessDevice*>(iface);
             d->ui.cmbMacAddress->addItem(UiUtils::interfaceNameLabel(iface->uni(), KNetworkManagerServicePrefs::SystemNames), UiUtils::macAddressFromString(wiface->permanentHardwareAddress()));
         }
     }
@@ -209,13 +209,13 @@ void Wireless80211Widget::scanClicked()
         QPair<QString,QString> accessPoint = scanWid.currentAccessPoint();
         d->ui.ssid->setText(accessPoint.first);
         d->ui.bssid->setText(accessPoint.second);
-        const QPair<Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *> pair = scanWid.currentAccessPointUni();
+        const QPair<NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *> pair = scanWid.currentAccessPointUni();
         emit ssidSelected(pair.first, pair.second);
         setAccessPointData(pair.first, pair.second);
     }
 }
 
-void Wireless80211Widget::setAccessPointData(const Solid::Control::WirelessNetworkInterfaceNm09 *wiface, const Solid::Control::AccessPointNm09 * ap) const
+void Wireless80211Widget::setAccessPointData(const NetworkManager::WirelessDevice *wiface, const NetworkManager::AccessPoint * ap) const
 {
     if (!wiface || !ap) {
         return;
@@ -236,7 +236,7 @@ void Wireless80211Widget::setAccessPointData(const Solid::Control::WirelessNetwo
     }
 
     switch (ap->mode()) {
-        case Solid::Control::WirelessNetworkInterfaceNm09::Adhoc:
+        case NetworkManager::WirelessDevice::Adhoc:
             d->ui.cmbMode->setCurrentIndex(d->AdhocIndex);
 
             // This one has to go after the d->ui.band->setCurrentIndex() above;
@@ -316,21 +316,21 @@ void Wireless80211Widget::copyToBssid()
     Q_D(Wireless80211Widget);
     QString hardwareAddress;
     int maxSignalStrength = 0;
-    foreach (Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
-        if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
-            Solid::Control::WirelessNetworkInterfaceNm09 * wiface = static_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+        if (iface->type() == NetworkManager::Device::Wifi) {
+            NetworkManager::WirelessDevice * wiface = static_cast<NetworkManager::WirelessDevice*>(iface);
             int i = d->ui.cmbMacAddress->currentIndex();
             if (i == 0 || d->ui.cmbMacAddress->itemData(i).toString() == wiface->hardwareAddress()){
                 QString activeAp = wiface->activeAccessPoint();
-                Solid::Control::AccessPointNm09 * ap = 0;
+                NetworkManager::AccessPoint * ap = 0;
                 if (!activeAp.isEmpty() && activeAp != QLatin1String("/")) {
                     ap = wiface->findAccessPoint(activeAp);
                     if (ap && ap->ssid() != d->ui.ssid->text())
                         ap = 0;
                 }
                 if (!ap && !d->ui.ssid->text().isEmpty()) {
-                    Solid::Control::WirelessNetworkInterfaceEnvironment environment(wiface);
-                    Solid::Control::WirelessNetwork * network = environment.findNetwork(d->ui.ssid->text());
+                    NetworkManager::WirelessNetworkInterfaceEnvironment environment(wiface);
+                    NetworkManager::WirelessNetwork * network = environment.findNetwork(d->ui.ssid->text());
                     if (network)
                         ap = wiface->findAccessPoint(network->referenceAccessPoint());
                 }

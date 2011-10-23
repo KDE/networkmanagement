@@ -28,12 +28,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/802-11-wireless-security.h"
 #include "hiddenwirelessinterfaceconnection.h"
 #include "wirelessinterfaceconnection.h"
-#include "wirelessnetworkinterfaceenvironment.h"
+#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
 
 using namespace Knm;
 
 Knm::WirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildWirelessInterfaceConnection(
-        Solid::Control::WirelessNetworkInterfaceNm09 *interface,
+        NetworkManager::WirelessDevice *interface,
         Knm::Connection *connection, const QString & deviceUni, QObject * parent)
 {
     WirelessInterfaceConnectionBuilder builder(interface, connection, deviceUni, parent);
@@ -42,7 +42,7 @@ Knm::WirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildWirel
 }
 
 Knm::HiddenWirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildHiddenWirelessInterfaceConnection(
-        Solid::Control::WirelessNetworkInterfaceNm09 *interface,
+        NetworkManager::WirelessDevice *interface,
         Knm::Connection *connection, const QString & deviceUni, QObject * parent)
 {
     HiddenWirelessInterfaceConnectionBuilder builder(interface, connection, deviceUni, parent);
@@ -58,7 +58,7 @@ void WirelessInterfaceConnectionHelpers::syncWirelessInterfaceConnection(Wireles
 }
 
 WirelessInterfaceConnectionBuilder::WirelessInterfaceConnectionBuilder(
-                    Solid::Control::WirelessNetworkInterfaceNm09 *interface,
+                    NetworkManager::WirelessDevice *interface,
                     Knm::Connection *connection,
                     const QString &deviceUni,
                     QObject *parent)
@@ -89,24 +89,24 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
 
     Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(m_connection->setting(Knm::Setting::Wireless));
     if (wirelessSetting) {
-        std::auto_ptr<Solid::Control::WirelessNetworkInterfaceEnvironment> apEnvironment(
-                new Solid::Control::WirelessNetworkInterfaceEnvironment(m_interface));
+        std::auto_ptr<NetworkManager::WirelessNetworkInterfaceEnvironment> apEnvironment(
+                new NetworkManager::WirelessNetworkInterfaceEnvironment(m_interface));
 
         int strength = -1;
-        Solid::Control::AccessPointNm09::Capabilities caps = 0;
-        Solid::Control::AccessPointNm09::WpaFlags wpaFlags = 0;
-        Solid::Control::AccessPointNm09::WpaFlags rsnFlags = 0;
-        Solid::Control::WirelessNetworkInterfaceNm09::OperationMode mode
-            = Solid::Control::WirelessNetworkInterfaceNm09::Master;
+        NetworkManager::AccessPoint::Capabilities caps = 0;
+        NetworkManager::AccessPoint::WpaFlags wpaFlags = 0;
+        NetworkManager::AccessPoint::WpaFlags rsnFlags = 0;
+        NetworkManager::WirelessDevice::OperationMode mode
+            = NetworkManager::WirelessDevice::Master;
 
         // show connections where the network is present OR adhoc connections
         if (apEnvironment->networks().contains(wirelessSetting->ssid())) {
             // get the info on the network
-            Solid::Control::WirelessNetwork *network = apEnvironment->findNetwork(wirelessSetting->ssid());
+            NetworkManager::WirelessNetwork *network = apEnvironment->findNetwork(wirelessSetting->ssid());
 
             if (network) {
                 strength = network->signalStrength();
-                Solid::Control::AccessPointNm09 * ap = m_interface->findAccessPoint(network->referenceAccessPoint());
+                NetworkManager::AccessPoint * ap = m_interface->findAccessPoint(network->referenceAccessPoint());
                 if (ap) {
                     caps = ap->capabilities();
                     wpaFlags = ap->wpaFlags();
@@ -116,26 +116,26 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
             }
         }
         else if (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc) {
-                mode = Solid::Control::WirelessNetworkInterfaceNm09::Adhoc;
+                mode = NetworkManager::WirelessDevice::Adhoc;
                 Knm::WirelessSecuritySetting * wirelessSecuritySetting = dynamic_cast<Knm::WirelessSecuritySetting *>(m_connection->setting(Knm::Setting::WirelessSecurity));
                 switch( wirelessSecuritySetting->securityType())
                 {
                     case Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep:
                     case Knm::WirelessSecuritySetting::EnumSecurityType::Leap:
                     case Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep:
-                        caps |= Solid::Control::AccessPointNm09::Privacy;
+                        caps |= NetworkManager::AccessPoint::Privacy;
                         break;
                     case Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk:
-                        wpaFlags |= Solid::Control::AccessPointNm09::KeyMgmtPsk | Solid::Control::AccessPointNm09::PairTkip | Solid::Control::AccessPointNm09::PairCcmp;
+                        wpaFlags |= NetworkManager::AccessPoint::KeyMgmtPsk | NetworkManager::AccessPoint::PairTkip | NetworkManager::AccessPoint::PairCcmp;
                         break;
                     case Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap:
-                        wpaFlags |= Solid::Control::AccessPointNm09::KeyMgmt8021x;
+                        wpaFlags |= NetworkManager::AccessPoint::KeyMgmt8021x;
                         break;
                     case Knm::WirelessSecuritySetting::EnumSecurityType::Wpa2Psk:
-                        rsnFlags |= Solid::Control::AccessPointNm09::KeyMgmtPsk | Solid::Control::AccessPointNm09::PairTkip | Solid::Control::AccessPointNm09::PairCcmp;
+                        rsnFlags |= NetworkManager::AccessPoint::KeyMgmtPsk | NetworkManager::AccessPoint::PairTkip | NetworkManager::AccessPoint::PairCcmp;
                         break;
                     case Knm::WirelessSecuritySetting::EnumSecurityType::Wpa2Eap:
-                        rsnFlags |= Solid::Control::AccessPointNm09::KeyMgmt8021x;
+                        rsnFlags |= NetworkManager::AccessPoint::KeyMgmt8021x;
                         break;
                     case Knm::WirelessSecuritySetting::EnumSecurityType::None:
                     default:
@@ -154,7 +154,7 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
 }
 
 HiddenWirelessInterfaceConnectionBuilder::HiddenWirelessInterfaceConnectionBuilder(
-                    Solid::Control::WirelessNetworkInterfaceNm09 *interface,
+                    NetworkManager::WirelessDevice *interface,
                     Knm::Connection *connection,
                     const QString &deviceUni,
                     QObject *parent)

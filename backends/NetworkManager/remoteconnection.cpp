@@ -34,7 +34,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/manager.h>
+#include <libnm-qt/activeconnection.h>
+#include <libnm-qt/connection.h>
 
 #include "nm-active-connectioninterface.h"
 
@@ -46,7 +48,7 @@ RemoteConnection::RemoteConnection(const QString& service, const QString & path,
 
     m_connection = GetSettings();
     m_path = path;
-    m_type = Solid::Control::NetworkInterfaceNm09::UnknownType;
+    m_type = NetworkManager::Device::UnknownType;
 
     //kDebug() << m_connection;
 
@@ -61,17 +63,17 @@ RemoteConnection::RemoteConnection(const QString& service, const QString & path,
         }
         //kDebug() << nmType;
         if (nmType == QLatin1String(NM_SETTING_CDMA_SETTING_NAME)) {
-            m_type = Solid::Control::NetworkInterfaceNm09::Modem;
+            m_type = NetworkManager::Device::Modem;
         } else if (nmType == QLatin1String(NM_SETTING_GSM_SETTING_NAME)) {
-            m_type = Solid::Control::NetworkInterfaceNm09::Modem;
+            m_type = NetworkManager::Device::Modem;
         } else if (nmType == QLatin1String(NM_SETTING_BLUETOOTH_SETTING_NAME)) {
-            m_type = Solid::Control::NetworkInterfaceNm09::Bluetooth;
+            m_type = NetworkManager::Device::Bluetooth;
         } else if (nmType == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
-            m_type = Solid::Control::NetworkInterfaceNm09::Modem;
+            m_type = NetworkManager::Device::Modem;
         } else if (nmType == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
-            m_type = Solid::Control::NetworkInterfaceNm09::Ethernet;
+            m_type = NetworkManager::Device::Ethernet;
         } else if (nmType == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
-            m_type = Solid::Control::NetworkInterfaceNm09::Wifi;
+            m_type = NetworkManager::Device::Wifi;
         }
         /* TODO: add NM_SETTING_OLPC_MESH_SETTING_NAME, NM_SETTING_WIMAX_SETTING_NAME */
     }
@@ -86,7 +88,7 @@ QString RemoteConnection::id() const
     return m_id;
 }
 
-Solid::Control::NetworkInterfaceNm09::Type RemoteConnection::type() const
+NetworkManager::Device::Type RemoteConnection::type() const
 {
     return m_type;
 }
@@ -98,11 +100,9 @@ QVariantMapMap RemoteConnection::settings() const
 
 bool RemoteConnection::active() const
 {
-    QStringList activeConnections = Solid::Control::NetworkManagerNm09::activeConnections();
-    foreach (const QString &conn, activeConnections) {
-        OrgFreedesktopNetworkManagerConnectionActiveInterface candidate(NM_DBUS_SERVICE,
-                conn, QDBusConnection::systemBus(), 0);
-        if (candidate.connection().path() == path()) {
+    QList<NetworkManager::ActiveConnection *> activeConnections = NetworkManager::activeConnections();
+    foreach (const NetworkManager::ActiveConnection *ac, activeConnections) {
+        if (ac->connection()->path() == path()) {
             return true;
         }
     }

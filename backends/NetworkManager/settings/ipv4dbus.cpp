@@ -4,7 +4,8 @@
 #include "ipv4dbus.h"
 
 #include <arpa/inet.h>
-#include "../../types.h"
+#include <libnm-qt/generic-types.h>
+
 #include "ipv4.h"
 
 Ipv4Dbus::Ipv4Dbus(Knm::Ipv4Setting * setting) : SettingDbus(setting)
@@ -53,7 +54,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
   }
 
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES))) {
-      QList<Solid::Control::IPv4AddressNm09> addresses;
+      QList<NetworkManager::IPv4Address> addresses;
       QList<QList<uint> > temp;
       if (map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES)).canConvert< QDBusArgument>()) {
           QDBusArgument addressArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ADDRESSES)).value<QDBusArgument>();
@@ -69,7 +70,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
             continue;
           }
 
-          Solid::Control::IPv4AddressNm09 addr((quint32)ntohl(uintList.at(0)), (quint32)uintList.at(1), (quint32) ntohl(uintList.at(2)));
+          NetworkManager::IPv4Address addr((quint32)ntohl(uintList.at(0)), (quint32)uintList.at(1), (quint32) ntohl(uintList.at(2)));
           if (!addr.isValid())
           {
             kWarning() << "Invalid address format detected.";
@@ -86,7 +87,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
 
   if (map.contains(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)))
   {
-      QList<Solid::Control::IPv4RouteNm09> routes;
+      QList<NetworkManager::IPv4Route> routes;
       QList<QList<uint> > temp;
       if (map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)).canConvert< QDBusArgument>()) {
           QDBusArgument routeArg = map.value(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES)).value<QDBusArgument>();
@@ -102,7 +103,7 @@ void Ipv4Dbus::fromMap(const QVariantMap & map)
               continue;
           }
 
-          Solid::Control::IPv4RouteNm09 route((quint32)ntohl(uintList.at(0)), (quint32)uintList.at(1), (quint32)ntohl(uintList.at(2)), (quint32)uintList.at(3));
+          NetworkManager::IPv4Route route((quint32)ntohl(uintList.at(0)), (quint32)uintList.at(1), (quint32)ntohl(uintList.at(2)), (quint32)uintList.at(3));
           if (!route.isValid())
           {
               kWarning() << "Invalid route format detected.";
@@ -188,7 +189,7 @@ QVariantMap Ipv4Dbus::toMap()
   }
   if (!setting->addresses().isEmpty()) {
       QList<QList<uint> > dbusAddresses;
-      foreach (const Solid::Control::IPv4AddressNm09 &addr, setting->addresses()) {
+      foreach (const NetworkManager::IPv4Address &addr, setting->addresses()) {
           QList<uint> dbusAddress;
           dbusAddress << htonl(addr.address())
               << addr.netMask()
@@ -199,7 +200,7 @@ QVariantMap Ipv4Dbus::toMap()
   }
   if (!setting->routes().isEmpty()) {
       QList<QList<uint> > dbusRoutes;
-      foreach (const Solid::Control::IPv4RouteNm09 &route, setting->routes()) {
+      foreach (const NetworkManager::IPv4Route &route, setting->routes()) {
           QList<uint> dbusRoute;
           dbusRoute << htonl(route.route())
               << route.prefix()

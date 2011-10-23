@@ -44,7 +44,7 @@ Q_OBJECT
         QString ssid() const;
         void setSsid(const QString & ssid);
         int strength() const;
-        Solid::Control::AccessPointNm09 * referenceAccessPoint() const;
+        NetworkManager::AccessPoint * referenceAccessPoint() const;
 
     public Q_SLOTS:
         /*

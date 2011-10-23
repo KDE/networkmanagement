@@ -22,17 +22,15 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KNM_EXTERNALS_GSMINTERFACECONNECTIONHELPERS_H
 #define KNM_EXTERNALS_GSMINTERFACECONNECTIONHELPERS_H
 
-#include <solid/control/networkmodeminterface.h>
+#include <libnm-qt/modemdevice.h>
 
 #include "knminternals_export.h"
 
 class QObject;
 class QString;
 
-namespace Solid {
-    namespace Control {
-        class ModemNetworkInterface;
-    }
+namespace ModemManager {
+    class ModemInterface;
 }
 
 namespace Knm {
@@ -47,7 +45,7 @@ public:
      * the corresponding Connection object.
      */
     static Knm::GsmInterfaceConnection * buildGsmInterfaceConnection(
-                       Solid::Control::ModemNetworkInterfaceNm09 *interface,
+                       NetworkManager::ModemDevice *interface,
                        Knm::Connection * connection,
                        const QString & deviceUni,
                        QObject * parent);

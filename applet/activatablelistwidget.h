@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatable.h"
 #include <Plasma/ScrollWidget>
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/manager.h>
 
 class QGraphicsLinearLayout;
 class ActivatableItem;
@@ -56,7 +56,7 @@ public Q_SLOTS:
     void listDisappeared();
     void listAppeared();
     void deactivateConnection(const QString& deviceUni);
-    void addInterface(Solid::Control::NetworkInterfaceNm09*);
+    void addInterface(NetworkManager::Device*);
     void clearInterfaces();
     void toggleVpn();
 
@@ -74,7 +74,7 @@ private:
     void createHiddenItem();
     int m_connectionType;
     QList<Knm::Activatable::ActivatableType> m_types;
-    QHash<QString, Solid::Control::NetworkInterfaceNm09::Type> m_interfaces;
+    QHash<QString, NetworkManager::Device::Type> m_interfaces;
 
     QHash<RemoteActivatable*, ActivatableItem*> m_itemIndex;
     HiddenWirelessNetworkItem* m_hiddenItem;

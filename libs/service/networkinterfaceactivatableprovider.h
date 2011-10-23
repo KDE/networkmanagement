@@ -24,10 +24,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QObject>
 #include "connectionhandler.h"
 
-#include <solid/control/networkinterface.h>
-#include <solid/control/wirednetworkinterface.h>
-#include <solid/control/wirelessnetworkinterface.h>
-#include <solid/control/networkmodeminterface.h>
+#include <libnm-qt/device.h>
+#include <libnm-qt/wireddevice.h>
+#include <libnm-qt/wirelessdevice.h>
+#include <libnm-qt/modemdevice.h>
 
 #include "connection.h"
 #include "setting.h"
@@ -42,13 +42,10 @@ namespace Knm
     class Activatable;
 } // namespace Knm
 
-namespace Solid
+namespace NetworkManager
 {
-    namespace Control
-    {
-        class NetworkInterface;
-    } // namespace Control
-} // namespace Solid
+    class Device;
+} // namespace NetworkManager
 
 class ConnectionList;
 class ActivatableList;
@@ -62,10 +59,10 @@ class KNM_EXPORT NetworkInterfaceActivatableProvider : public QObject, virtual p
 {
 Q_OBJECT
 public:
-    static bool hardwareAddressMatches(Knm::Connection * connection, Solid::Control::NetworkInterfaceNm09 * iface);
-    static bool matches(Knm::Connection::Type connType, Solid::Control::NetworkInterfaceNm09::Type ifaceType, Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities modemCaps = Solid::Control::ModemNetworkInterfaceNm09::None);
+    static bool hardwareAddressMatches(Knm::Connection * connection, NetworkManager::Device * iface);
+    static bool matches(Knm::Connection::Type connType, NetworkManager::Device::Type ifaceType, NetworkManager::ModemDevice::Capabilities modemCaps = NetworkManager::ModemDevice::NoCapability);
 
-    NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterfaceNm09 * interface, QObject * parent);
+    NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::Device * interface, QObject * parent);
     virtual ~NetworkInterfaceActivatableProvider();
 
     /**

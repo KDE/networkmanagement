@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/manager.h>
 
 #include <activatable.h>
 //debug
@@ -38,8 +38,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class SortedActivatableListPrivate : public ActivatableListPrivate
 {
 public:
-    Solid::Control::NetworkInterfaceNm09::Types types;
-    QHash<Solid::Control::NetworkInterfaceNm09::Type, int> solidTypesToOrder;
+    NetworkManager::Device::Types types;
+    QHash<NetworkManager::Device::Type, int> solidTypesToOrder;
 };
 
 // sorting activatables
@@ -77,26 +77,26 @@ int compareSsid(const Knm::WirelessObject * first, const Knm::WirelessObject * s
 /* SortedActivatableList */
 
 SortedActivatableList::WirelessSortPolicy SortedActivatableList::s_wirelessSortPolicy = SortedActivatableList::WirelessSortByStrength;
-QHash<Solid::Control::NetworkInterfaceNm09::Types, int> SortedActivatableList::s_solidTypesToOrder = QHash<Solid::Control::NetworkInterfaceNm09::Types, int>();
+QHash<NetworkManager::Device::Types, int> SortedActivatableList::s_solidTypesToOrder = QHash<NetworkManager::Device::Types, int>();
 
-SortedActivatableList::SortedActivatableList(Solid::Control::NetworkInterfaceNm09::Types types, QObject * parent)
+SortedActivatableList::SortedActivatableList(NetworkManager::Device::Types types, QObject * parent)
     : ActivatableList(*new SortedActivatableListPrivate, parent)
 {
     Q_D(SortedActivatableList);
     d->types = types;
-    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Wifi, 0);
-    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Wimax, 1);
-    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Bluetooth, 2);
-    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Ethernet, 3);
-    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Modem, 4);
-    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::OlpcMesh, 5);
+    s_solidTypesToOrder.insert(NetworkManager::Device::Wifi, 0);
+    s_solidTypesToOrder.insert(NetworkManager::Device::Wimax, 1);
+    s_solidTypesToOrder.insert(NetworkManager::Device::Bluetooth, 2);
+    s_solidTypesToOrder.insert(NetworkManager::Device::Ethernet, 3);
+    s_solidTypesToOrder.insert(NetworkManager::Device::Modem, 4);
+    s_solidTypesToOrder.insert(NetworkManager::Device::OlpcMesh, 5);
 }
 
 void SortedActivatableList::handleAdd(Knm::Activatable * activatable)
 {
     Q_D(SortedActivatableList);
     if (!d->activatables.contains(activatable)) {
-        Solid::Control::NetworkInterfaceNm09 * iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(activatable->deviceUni());
+        NetworkManager::Device * iface = NetworkManager::findNetworkInterface(activatable->deviceUni());
         // add all vpn connections
         if ((iface && (d->types.testFlag(iface->type())))
                 || (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection)) {
@@ -255,8 +255,8 @@ int compareDevices(const Knm::Activatable * first, const Knm::Activatable * seco
         return 0;
     }
 
-    Solid::Control::NetworkInterfaceNm09 * firstIface = Solid::Control::NetworkManagerNm09::findNetworkInterface(first->deviceUni());
-    Solid::Control::NetworkInterfaceNm09 * secondIface = Solid::Control::NetworkManagerNm09::findNetworkInterface(second->deviceUni());
+    NetworkManager::Device * firstIface = NetworkManager::findNetworkInterface(first->deviceUni());
+    NetworkManager::Device * secondIface = NetworkManager::findNetworkInterface(second->deviceUni());
 
     if (firstIface != 0 && secondIface != 0) {
         if (firstIface->type() == secondIface->type()) {

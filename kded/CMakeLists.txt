@@ -6,7 +6,6 @@ include_directories(
    ${CMAKE_CURRENT_SOURCE_DIR}/../backends/NetworkManager
 
    # for ImportNm08Connections
-   ${CMAKE_CURRENT_SOURCE_DIR}/../solidcontrolfuture
    ${CMAKE_CURRENT_BINARY_DIR}/../libs/internals
    )
    ## next target: test service
@@ -23,10 +22,8 @@ target_link_libraries(kded_networkmanagement
    knminternals
    knmservice
    knm_nm
-   solidcontrolnm09
+   nm-qt
 
-   # for ImportNm08Connections
-   solidcontrolfuture
    ${QT_QTNETWORK_LIBRARY}
    )
 

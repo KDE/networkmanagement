@@ -47,7 +47,7 @@ int RemoteGsmInterfaceConnection::getAccessTechnology() const
     if (reply.isValid()) {
         return reply.value();
     } else {
-        return Solid::Control::ModemInterface::UnknownTechnology;
+        return ModemManager::ModemInterface::UnknownTechnology;
     }
 }
 

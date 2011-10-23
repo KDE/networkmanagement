@@ -21,8 +21,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef REMOTEWIRELESSOBJECT_H
 #define REMOTEWIRELESSOBJECT_H
 
-#include <solid/control/wirelessnetworkinterface.h>
-#include <solid/control/wirelessaccesspoint.h>
+#include <libnm-qt/wirelessdevice.h>
+#include <libnm-qt/accesspoint.h>
 
 class RemoteWirelessObject
 {
@@ -30,11 +30,11 @@ public:
     virtual ~RemoteWirelessObject();
     virtual QString ssid() const = 0;
     virtual int strength() const = 0;
-    virtual Solid::Control::WirelessNetworkInterfaceNm09::Capabilities interfaceCapabilities() const = 0;
-    virtual Solid::Control::AccessPointNm09::Capabilities apCapabilities() const = 0;
-    virtual Solid::Control::AccessPointNm09::WpaFlags wpaFlags() const = 0;
-    virtual Solid::Control::AccessPointNm09::WpaFlags rsnFlags() const = 0;
-    virtual Solid::Control::WirelessNetworkInterfaceNm09::OperationMode operationMode() const = 0;
+    virtual NetworkManager::WirelessDevice::Capabilities interfaceCapabilities() const = 0;
+    virtual NetworkManager::AccessPoint::Capabilities apCapabilities() const = 0;
+    virtual NetworkManager::AccessPoint::WpaFlags wpaFlags() const = 0;
+    virtual NetworkManager::AccessPoint::WpaFlags rsnFlags() const = 0;
+    virtual NetworkManager::WirelessDevice::OperationMode operationMode() const = 0;
     virtual void strengthChanged(int) = 0;
 };
 

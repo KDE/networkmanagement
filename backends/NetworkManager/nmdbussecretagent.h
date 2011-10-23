@@ -21,13 +21,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NMDBUSSECRETAGENT_H
 #define NMDBUSSECRETAGENT_H
 
-#include "nm-agent-manager.h"
-#include "nm-secret-agentadaptor.h"
 #include "knm_export.h"
 
 #include <QObject>
 #include <QDBusContext>
 #include <QDBusServiceWatcher>
+
+#include <libnm-qt/secretagent.h>
 
 namespace Knm
 {
@@ -39,7 +39,7 @@ namespace Knm
 class SecretsProvider;
 class NMDBusSecretAgentPrivate;
 
-class KNM_EXPORT NMDBusSecretAgent : public QObject, protected QDBusContext
+class KNM_EXPORT NMDBusSecretAgent : public NetworkManager::SecretAgent
 {
 Q_OBJECT
 Q_DECLARE_PRIVATE(NMDBusSecretAgent)
@@ -60,7 +60,6 @@ private:
 private Q_SLOTS:
     void secretsReady(Knm::Connection *, const QString &, bool);
     void deleteSavedConnection(Knm::Connection *);
-    void registerAgent();
 };
 
 #endif // NMDBUSSECRETAGENT_H

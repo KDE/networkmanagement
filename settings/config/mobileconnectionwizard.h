@@ -27,7 +27,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QRadioButton>
 #include <QLabel>
 
-#include <solid/control/networkmanager.h>
+#include <solid/networking.h>
+
+#include <libnm-qt/manager.h>
 
 #include "mobileproviders.h"
 #include "../../libs/internals/connection.h"
@@ -86,7 +88,7 @@ private:
     QComboBox * mDeviceComboBox;
     void introAddInitialDevices();
     void introRemoveAllDevices();
-    void introAddDevice(Solid::Control::NetworkInterfaceNm09 *device);
+    void introAddDevice(NetworkManager::Device *device);
 
     // Country page
     QListWidget * mCountryList;

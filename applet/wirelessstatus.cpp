@@ -28,9 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //#include <Plasma/IconWidget>
 //#include <Plasma/Meter>
 
-#include <solid/control/networkmanager.h>
-#include <solid/control/wirelessaccesspoint.h>
-
+#include <libnm-qt/manager.h>
+#include <libnm-qt/wirelessdevice.h>
 
 #include <activatable.h>
 #include <remotewirelessobject.h>
@@ -62,32 +61,32 @@ public:
         if (!wobj)
             return;
 
-        if (wobj->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc) {
+        if (wobj->operationMode() == NetworkManager::WirelessDevice::Adhoc) {
             adhoc = true;
             //adhoc->setIcon(QIcon("nm-adhoc"));
         }
         ssid = wobj->ssid();
-        Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(wobj->interfaceCapabilities(), true, (wobj->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc), wobj->apCapabilities(), wobj->wpaFlags(), wobj->rsnFlags());
+        Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(wobj->interfaceCapabilities(), true, (wobj->operationMode() == NetworkManager::WirelessDevice::Adhoc), wobj->apCapabilities(), wobj->wpaFlags(), wobj->rsnFlags());
         //security->setToolTip(Knm::WirelessSecurity::shortToolTip(best));
         securityIcon = Knm::WirelessSecurity::iconName(best);
         securityTooltip = Knm::WirelessSecurity::shortToolTip(best);
 
     }
 
-    void init(Solid::Control::WirelessNetworkInterfaceNm09 * wiface)
+    void init(NetworkManager::WirelessDevice * wiface)
     {
         iface = wiface;
     }
 
-    QList<Solid::Control::AccessPointNm09*> availableAccessPoints() const
+    QList<NetworkManager::AccessPoint*> availableAccessPoints() const
     {
-        QList<Solid::Control::AccessPointNm09*> retVal;
+        QList<NetworkManager::AccessPoint*> retVal;
         if (!iface) {
             return retVal;
         }
-        AccessPointNm09List aps = iface->accessPoints(); //NOTE: AccessPointList is a QStringList
+        NetworkManager::AccessPointList aps = iface->accessPoints(); //NOTE: AccessPointList is a QStringList
         foreach (const QString &ap, aps) {
-            Solid::Control::AccessPointNm09 *accesspoint = iface->findAccessPoint(ap);
+            NetworkManager::AccessPoint *accesspoint = iface->findAccessPoint(ap);
             if(accesspoint) {
                 retVal << accesspoint;
             }
@@ -101,8 +100,8 @@ public:
     int strength;
     bool adhoc;
 
-    Solid::Control::WirelessNetworkInterfaceNm09 * iface;
-    Solid::Control::AccessPointNm09 * activeAccessPoint;
+    NetworkManager::WirelessDevice * iface;
+    NetworkManager::AccessPoint * activeAccessPoint;
     RemoteActivatable* activatable;
 };
 
@@ -112,10 +111,8 @@ WirelessStatus::WirelessStatus(RemoteWirelessNetwork * remote)
 {
     Q_D(WirelessStatus);
     d->activatable = remote;
-    RemoteWirelessObject * wobj  = dynamic_cast<RemoteWirelessObject*>(remote);
-    if (wobj) {
-        d->init(wobj);
-    }
+    RemoteWirelessObject * wobj  = static_cast<RemoteWirelessObject*>(remote);
+    d->init(wobj);
 
     setStrength(remote->strength());
     //connect(m_remote, SIGNAL(changed()), SLOT(update()));
@@ -131,7 +128,7 @@ void WirelessStatus::init(RemoteWirelessObject* wobj)
     d->init(wobj);
 }
 
-WirelessStatus::WirelessStatus(Solid::Control::WirelessNetworkInterfaceNm09 * iface)
+WirelessStatus::WirelessStatus(NetworkManager::WirelessDevice * iface)
 : QObject(), d_ptr(new WirelessStatusPrivate())
 {
     Q_D(WirelessStatus);

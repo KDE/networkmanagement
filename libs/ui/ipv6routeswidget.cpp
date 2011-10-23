@@ -103,10 +103,10 @@ bool IpV6RoutesWidget::ignoreautoroutes()
     return d->ui.cbIgnoreAutoRoutes->isChecked();
 }
 
-void IpV6RoutesWidget::setRoutes(const QList<Solid::Control::IPv6Route> &list)
+void IpV6RoutesWidget::setRoutes(const QList<NetworkManager::IPv6Route> &list)
 {
     d->model.removeRows(0, d->model.rowCount());
-    foreach (const Solid::Control::IPv6Route &addr, list) {
+    foreach (const NetworkManager::IPv6Route &addr, list) {
         QList<QStandardItem *> item;
         QNetworkAddressEntry entry;
         QNetworkAddressEntry nexthop;
@@ -123,9 +123,9 @@ kDebug()<<entry.ip().toString();
     }
 }
 
-QList<Solid::Control::IPv6Route> IpV6RoutesWidget::routes()
+QList<NetworkManager::IPv6Route> IpV6RoutesWidget::routes()
 {
-    QList<Solid::Control::IPv6Route> list;
+    QList<NetworkManager::IPv6Route> list;
 
     for (int i = 0, rowCount = d->model.rowCount(); i < rowCount; i++) {
         QHostAddress ip, nhop;
@@ -138,7 +138,7 @@ QList<Solid::Control::IPv6Route> IpV6RoutesWidget::routes()
         netmask = d->model.item(i, 1)->text().toUInt();
         metric = d->model.item(i, 3)->text().toUInt();
 
-        list.append(Solid::Control::IPv6Route(ip.toIPv6Address(),
+        list.append(NetworkManager::IPv6Route(ip.toIPv6Address(),
                                                 netmask,
                                                 nhop.toIPv6Address(),
                                                 metric));

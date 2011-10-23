@@ -41,7 +41,7 @@ void Ipv6Persistence::load()
   setting->setDnssearch(m_config->readEntry("dnssearch", QStringList()));
 
   // addresses
-  QList<Solid::Control::IPv6Address> addresses;
+  QList<NetworkManager::IPv6Address> addresses;
   QStringList rawAddresses = m_config->readEntry("addresses", QStringList());
   foreach (const QString &rawAddress, rawAddresses) {
       QStringList parts = rawAddress.split(';');
@@ -50,13 +50,13 @@ void Ipv6Persistence::load()
       }
       QHostAddress ip(parts[0]);
       QHostAddress gateway(parts[2]);
-      Solid::Control::IPv6Address addr(ip.toIPv6Address(), parts[1].toUInt(), gateway.toIPv6Address());
+      NetworkManager::IPv6Address addr(ip.toIPv6Address(), parts[1].toUInt(), gateway.toIPv6Address());
       addresses.append(addr);
   }
   setting->setAddresses(addresses);
 
   // routes
-  QList<Solid::Control::IPv6Route> routes;
+  QList<NetworkManager::IPv6Route> routes;
   QStringList rawRoutes = m_config->readEntry("routes", QStringList());
   foreach (const QString &rawRoute, rawRoutes) {
       QStringList parts = rawRoute.split(';');
@@ -67,7 +67,7 @@ void Ipv6Persistence::load()
       quint32 prefix = parts[1].toUInt();
       QHostAddress nextHop(parts[2]);
       quint32 metric = parts[3].toUInt();
-      Solid::Control::IPv6Route route(address.toIPv6Address(), prefix, nextHop.toIPv6Address(), metric);
+      NetworkManager::IPv6Route route(address.toIPv6Address(), prefix, nextHop.toIPv6Address(), metric);
       routes.append(route);
   }
   setting->setRoutes(routes);

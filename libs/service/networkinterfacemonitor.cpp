@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KMessageBox>
 #include <kdeversion.h>
-#include <solid/control/modemmanager.h>
+#include <libmm-qt/manager.h>
 
 #include <connection.h>
 #include "activatablelist.h"
@@ -38,7 +38,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class NetworkInterfaceMonitorPrivate
 {
 public:
-    // relates Solid::Control::NetworkInterface identifiers to NetworkInterfaceActivatableProviders
+    // relates NetworkManager::Device identifiers to NetworkInterfaceActivatableProviders
     QHash<QString, NetworkInterfaceActivatableProvider *> providers;
     ConnectionList * connectionList;
     ActivatableList * activatableList;
@@ -51,23 +51,23 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
     d->connectionList = connectionList;
     d->activatableList = activatableList;
 
-    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(),
+    QObject::connect(NetworkManager::notifier(),
             SIGNAL(networkInterfaceAdded(const QString&)),
             this, SLOT(networkInterfaceAdded(const QString&)));
-    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(),
+    QObject::connect(NetworkManager::notifier(),
             SIGNAL(networkInterfaceRemoved(const QString&)),
             this, SLOT(networkInterfaceRemoved(const QString&)));
 
-    foreach (Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
         networkInterfaceAdded(iface->uni());
     }
 
     dialog = 0;
-    QObject::connect(Solid::Control::ModemManager::notifier(),
+    QObject::connect(ModemManager::notifier(),
             SIGNAL(modemInterfaceAdded(const QString&)),
             this, SLOT(modemInterfaceAdded(const QString&)));
 
-    foreach (Solid::Control::ModemInterface * iface, Solid::Control::ModemManager::modemInterfaces()) {
+    foreach (ModemManager::ModemInterface * iface, ModemManager::modemInterfaces()) {
         modemInterfaceAdded(iface->udi());
     }
 }
@@ -81,21 +81,21 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
     Q_D(NetworkInterfaceMonitor);
     kDebug();
 
-    Solid::Control::NetworkInterfaceNm09 * iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(uni);
+    NetworkManager::Device * iface = NetworkManager::findNetworkInterface(uni);
     if (iface && !d->providers.contains(uni)) {
         NetworkInterfaceActivatableProvider * provider;
-        if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+        if (iface->type() == NetworkManager::Device::Wifi) {
             kDebug() << "Wireless interface added";
-            provider = new WirelessNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface), this);
-        } else if (iface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet) {
+            provider = new WirelessNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::WirelessDevice*>(iface), this);
+        } else if (iface->type() == NetworkManager::Device::Ethernet) {
             kDebug() << "Wired interface added";
-            provider = new WiredNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::WiredNetworkInterfaceNm09*>(iface), this);
-        } else if (iface->type() == Solid::Control::NetworkInterfaceNm09::Bluetooth) {
+            provider = new WiredNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::WiredDevice*>(iface), this);
+        } else if (iface->type() == NetworkManager::Device::Bluetooth) {
             kDebug() << "Bluetooth interface added";
-            provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(iface), this);
-        } else if (iface->type() == Solid::Control::NetworkInterfaceNm09::Modem) {
+            provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::ModemDevice*>(iface), this);
+        } else if (iface->type() == NetworkManager::Device::Modem) {
             kDebug() << "Gsm interface added";
-            provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(iface), this);
+            provider = new GsmNetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, qobject_cast<NetworkManager::ModemDevice*>(iface), this);
         } else {
             kDebug() << "Unknown interface added: uni == " << uni << "(type == " << iface->type() << ")";
             provider = new NetworkInterfaceActivatableProvider(d->connectionList, d->activatableList, iface, this);
@@ -116,7 +116,7 @@ void NetworkInterfaceMonitor::networkInterfaceRemoved(const QString & uni)
 
 void NetworkInterfaceMonitor::modemInterfaceAdded(const QString & udi)
 {
-    Solid::Control::ModemGsmCardInterface * modem = qobject_cast<Solid::Control::ModemGsmCardInterface *>(Solid::Control::ModemManager::findModemInterface(udi, Solid::Control::ModemInterface::GsmCard));
+    ModemManager::ModemGsmCardInterface * modem = qobject_cast<ModemManager::ModemGsmCardInterface *>(ModemManager::findModemInterface(udi, ModemManager::ModemInterface::GsmCard));
 
     if (!modem) {
         return;
@@ -140,7 +140,7 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
         return;
     }
 
-    Solid::Control::ModemGsmCardInterface * modem = qobject_cast<Solid::Control::ModemGsmCardInterface *>(sender());
+    ModemManager::ModemGsmCardInterface * modem = qobject_cast<ModemManager::ModemGsmCardInterface *>(sender());
     if (!modem) {
         return;
     }
@@ -198,7 +198,7 @@ void NetworkInterfaceMonitor::onSendPinArrived(QDBusPendingCallWatcher * watcher
 
     if (reply.isValid()) {
         // Automatically enabling this for cell phones with expensive data plans is not a good idea.
-        //Solid::Control::NetworkManagerNm09::setWwanEnabled(true);
+        //NetworkManager::setWwanEnabled(true);
     } else {
         KMessageBox::error(0, i18nc("Text in GSM PIN/PUK unlock error dialog", "Error unlocking modem: %1", reply.error().message()), i18nc("Title for GSM PIN/PUK unlock error dialog", "PIN/PUK unlock error"));
     }

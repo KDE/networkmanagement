@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KNM_EXTERNALS_GSMINTERFACECONNECTION_H
 #define KNM_EXTERNALS_GSMINTERFACECONNECTION_H
 
-#include <solid/control/networkmodeminterface.h>
+#include <libnm-qt/modemdevice.h>
 
 #include "interfaceconnection.h"
 
@@ -51,7 +51,7 @@ Q_SIGNALS:
     void enabledChanged(const bool enabled);
 public Q_SLOTS:
     void setSignalQuality(uint signalQuality);
-    void setAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology accessTechnology);
+    void setAccessTechnology(const ModemManager::ModemInterface::AccessTechnology accessTechnology);
     void setEnabled(const bool enabled);
     void connectMMSignals();
 protected:

@@ -41,11 +41,9 @@ if (NETWORKMANAGER_FOUND)
            ${NM-UTIL_INCLUDE_DIRS}
            ${GLIB2_INCLUDE_DIR}
            ${CMAKE_CURRENT_BUILD_DIR}
-           solidcontrolfuture/libs
            ${KDE4_INCLUDE_DIR}/solid/control
         )
 
-        add_subdirectory(solidcontrolfuture)
         add_subdirectory(applet)
         add_subdirectory(backends)
         add_subdirectory(dataengine)
@@ -54,9 +52,6 @@ if (NETWORKMANAGER_FOUND)
         add_subdirectory(settings)
         add_subdirectory(vpnplugins)
         add_subdirectory(kded)
-
-        # This is unmaintained, do not use it.
-        #add_subdirectory(monolithic)
 
         install( FILES networkmanagement.notifyrc DESTINATION ${DATA_INSTALL_DIR}/networkmanagement )
 
@@ -71,9 +66,17 @@ if (NETWORKMANAGER_FOUND)
     endif()
 endif(NETWORKMANAGER_FOUND)
 
-if(INSTALL_KNM_AUTOSTART)
-    message("Installing autostart file for knm, use cmake -DINSTALL_KNM_AUTOSTART=ON to switch it on. Note that this will break the plasmoid. For this to work, make sure the kded DBus service is NOT loaded.")
-endif(INSTALL_KNM_AUTOSTART)
+find_file(LIBMM_FOUND libmm-qt/manager.h /usr/include NO_DEFAULT_PATH)
+if (NOT LIBMM_FOUND)
+    message("ERROR: libmm not found")
+    return()
+endif (NOT LIBMM_FOUND)
+
+find_file(LIBNM_FOUND libnm-qt/manager.h /usr/include NO_DEFAULT_PATH)
+if (NOT LIBNM_FOUND)
+    message("ERROR: libnm not found")
+    return()
+endif (NOT LIBNM_FOUND)
 
 macro_display_feature_log()
 

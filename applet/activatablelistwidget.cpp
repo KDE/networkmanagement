@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // KDE
 #include <KDebug>
-#include <solid/control/networkmanager.h>
+#include <libnm-qt/manager.h>
 #include <KToolInvocation>
 #include <KStandardDirs>
 
@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkitem.h"
 #include "hiddenwirelessnetworkitem.h"
 #include "gsminterfaceconnectionitem.h"
-#include "../solidcontrolfuture/wirelessnetworkinterfaceenvironment.h"
+#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
 
 ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent) : Plasma::ScrollWidget(parent),
     m_hiddenItem(0),
@@ -101,7 +101,7 @@ void ActivatableListWidget::removeType(Knm::Activatable::ActivatableType type)
     filter();
 }
 
-void ActivatableListWidget::addInterface(Solid::Control::NetworkInterfaceNm09* iface)
+void ActivatableListWidget::addInterface(NetworkManager::Device* iface)
 {
     kDebug() << "interface added";
     if (iface) {
@@ -158,7 +158,7 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
         }
     }
     if (activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection &&
-        !Solid::Control::NetworkManagerNm09::isWirelessEnabled()) {
+        !NetworkManager::isWirelessEnabled()) {
         return false;
     }
     return true;
@@ -268,7 +268,7 @@ void ActivatableListWidget::activatableAdded(RemoteActivatable * added, int inde
     if (accept(added)) {
         createItem(added, index);
     }
-    if(added->activatableType() == Knm::Activatable::WirelessInterfaceConnection && static_cast<RemoteWirelessInterfaceConnection*>(added)->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc)
+    if(added->activatableType() == Knm::Activatable::WirelessInterfaceConnection && static_cast<RemoteWirelessInterfaceConnection*>(added)->operationMode() == NetworkManager::WirelessDevice::Adhoc)
         connect(added,SIGNAL(changed()),SLOT(filter()));
 }
 
@@ -301,9 +301,9 @@ void ActivatableListWidget::filter()
 
     if (!m_interfaces.isEmpty() && m_hasWireless) {
         bool found = false;
-        if (Solid::Control::NetworkManagerNm09::isWirelessEnabled()) {
+        if (NetworkManager::isWirelessEnabled()) {
             foreach (const QString & uni, m_interfaces.keys()) {
-                if (m_interfaces.value(uni) == Solid::Control::NetworkInterfaceNm09::Wifi) {
+                if (m_interfaces.value(uni) == NetworkManager::Device::Wifi) {
                     createHiddenItem();
                     found = true;
                     break;
@@ -314,7 +314,7 @@ void ActivatableListWidget::filter()
             m_hiddenItem->disappear();
             m_hiddenItem = 0;
         }
-    } else if (m_hasWireless && Solid::Control::NetworkManagerNm09::isWirelessEnabled() && !m_vpn) {
+    } else if (m_hasWireless && NetworkManager::isWirelessEnabled() && !m_vpn) {
         createHiddenItem();
     } else if (m_hiddenItem) {
         m_hiddenItem->disappear();
@@ -397,10 +397,10 @@ void ActivatableListWidget::vpnHoverLeave()
 
 void ActivatableListWidget::connectToHiddenNetwork(const QString &ssid)
 {
-    Solid::Control::WirelessNetworkInterfaceNm09 * wiface = 0;
-    foreach (Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
-        if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi && iface->connectionState() > Solid::Control::NetworkInterfaceNm09::Unavailable) {
-            wiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09 *>(iface);
+    NetworkManager::WirelessDevice * wiface = 0;
+    foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
+        if (iface->type() == NetworkManager::Device::Wifi && iface->state() > NetworkManager::Device::Unavailable) {
+            wiface = qobject_cast<NetworkManager::WirelessDevice *>(iface);
             break;
         }
     }
@@ -412,8 +412,8 @@ void ActivatableListWidget::connectToHiddenNetwork(const QString &ssid)
     QStringList args;
     QString moduleArgs;
 
-    Solid::Control::WirelessNetworkInterfaceEnvironment envt(wiface);
-    Solid::Control::WirelessNetwork * network = envt.findNetwork(ssid);
+    NetworkManager::WirelessNetworkInterfaceEnvironment envt(wiface);
+    NetworkManager::WirelessNetwork * network = envt.findNetwork(ssid);
 
     if (network) {
         moduleArgs = QString::fromLatin1("%1 %2")

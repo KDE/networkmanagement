@@ -27,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDBusArgument>
 #include <QDBusConnection>
+#include <QDBusMessage>
 
 #include <KDebug>
 
@@ -38,48 +39,25 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connectiondbus.h"
 
-#include "nm-secret-agentadaptor.h"
-
 class NMDBusSecretAgentPrivate
 {
 public:
     SecretsProvider *secretsProvider;
-    SecretAgentAdaptor *agent;
-    OrgFreedesktopNetworkManagerAgentManagerInterface *agentManager;
-    QDBusServiceWatcher *watcher;
-
     QHash <QString,QPair<QString, QDBusMessage> > connectionsToRead;
     QList <QString> objectPaths;
 };
 
 NMDBusSecretAgent::NMDBusSecretAgent(QObject * parent)
-: QObject(parent), QDBusContext(), d_ptr(new NMDBusSecretAgentPrivate)
+: NetworkManager::SecretAgent("org.kde.networkmanagement", parent), d_ptr(new NMDBusSecretAgentPrivate)
 {
     Q_D(NMDBusSecretAgent);
     d->secretsProvider = 0;
-    d->agent = new SecretAgentAdaptor(this);
-    d->agentManager = new OrgFreedesktopNetworkManagerAgentManagerInterface(NM_DBUS_SERVICE, NM_DBUS_PATH_AGENT_MANAGER, QDBusConnection::systemBus(),this);
-    d->watcher = new QDBusServiceWatcher(NM_DBUS_SERVICE, QDBusConnection::systemBus(), QDBusServiceWatcher::WatchForRegistration, this);
-    connect(d->watcher, SIGNAL(serviceRegistered(const QString &)), SLOT(registerAgent()));
-    registerAgent();
 }
 
 NMDBusSecretAgent::~NMDBusSecretAgent()
 {
     Q_D(NMDBusSecretAgent);
-    d->agentManager->Unregister();
-    delete d->agent;
-    delete d->agentManager;
-    delete d->watcher;
     delete d;
-}
-
-void NMDBusSecretAgent::registerAgent()
-{
-    Q_D(NMDBusSecretAgent);
-    d->agentManager->connection().registerObject(NM_DBUS_PATH_SECRET_AGENT, d->agent, QDBusConnection::ExportAllSlots);
-    d->agentManager->Register("org.kde.networkmanagement");
-    kDebug() << "Agent registered";
 }
 
 QVariantMapMap NMDBusSecretAgent::GetSecrets(const QVariantMapMap &connection, const QDBusObjectPath &connection_path, const QString &setting_name, const QStringList &hints, uint flags)

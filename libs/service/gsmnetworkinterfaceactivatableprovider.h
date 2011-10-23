@@ -27,13 +27,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class ConnectionList;
 class ActivatableList;
 class GsmNetworkInterfaceActivatableProviderPrivate;
-namespace Solid
+namespace NetworkManager
 {
-    namespace Control
-    {
-        class ModemNetworkInterface;
-    } // namespace Control
-} // namespace Solid
+    class ModemDevice;
+} // namespace NetworkManager
 
 /**
  * Specialized Activatable provider for gsm interfaces
@@ -43,7 +40,7 @@ class KNM_EXPORT GsmNetworkInterfaceActivatableProvider : public NetworkInterfac
 {
 Q_OBJECT
 public:
-    GsmNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::ModemNetworkInterfaceNm09 * interface, QObject * parent);
+    GsmNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::ModemDevice * interface, QObject * parent);
     virtual ~GsmNetworkInterfaceActivatableProvider();
 public slots:
     /**

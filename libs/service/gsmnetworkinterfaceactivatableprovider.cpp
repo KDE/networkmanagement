@@ -22,8 +22,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "gsmnetworkinterfaceactivatableprovider.h"
 #include "networkinterfaceactivatableprovider_p.h"
 
-#include <solid/control/modemmanager.h>
-#include <solid/control/networkbtinterface.h>
+#include <libmm-qt/manager.h>
+#include <libnm-qt/bluetoothdevice.h>
 
 #include <gsminterfaceconnection.h>
 #include <gsminterfaceconnectionhelpers.h>
@@ -35,17 +35,17 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class GsmNetworkInterfaceActivatableProviderPrivate : public NetworkInterfaceActivatableProviderPrivate
 {
 public:
-    GsmNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::ModemNetworkInterfaceNm09 * theInterface)
+    GsmNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, NetworkManager::ModemDevice * theInterface)
         : NetworkInterfaceActivatableProviderPrivate(theConnectionList, theActivatableList, theInterface)
     { }
 
-    Solid::Control::ModemNetworkInterfaceNm09 * gsmInterface() const
+    NetworkManager::ModemDevice * gsmInterface() const
     {
-        return qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(interface);
+        return qobject_cast<NetworkManager::ModemDevice*>(interface);
     }
 };
 
-GsmNetworkInterfaceActivatableProvider::GsmNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::ModemNetworkInterfaceNm09 * interface, QObject * parent)
+GsmNetworkInterfaceActivatableProvider::GsmNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, NetworkManager::ModemDevice * interface, QObject * parent)
 : NetworkInterfaceActivatableProvider(*new GsmNetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface), parent)
 {
 }

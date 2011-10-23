@@ -25,9 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 #include <kwindowsystem.h>
-#include <solid/control/modemmanager.h>
+#include <libmm-qt/manager.h>
 
-PinDialog::PinDialog(Solid::Control::ModemGsmCardInterface *modem, const Type type, QWidget *parent)
+PinDialog::PinDialog(ModemManager::ModemGsmCardInterface *modem, const Type type, QWidget *parent)
     : KDialog(parent), m_type(type)
 {
     if (modem) {
@@ -113,7 +113,7 @@ PinDialog::PinDialog(Solid::Control::ModemGsmCardInterface *modem, const Type ty
 
     move((desktop.width() - width()) / 2, (desktop.height() - height()) / 2);
     connect(ui->chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
-    connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), SLOT(modemInterfaceRemoved(const QString &)));
+    connect(ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), SLOT(modemInterfaceRemoved(const QString &)));
 }
 
 PinDialog::~PinDialog()
