@@ -14,6 +14,19 @@ Ipv6Setting::Ipv6Setting() : Setting(Setting::Ipv6),
 {
 }
 
+Ipv6Setting::Ipv6Setting(Ipv6Setting *setting) : Setting(setting)
+{
+    setMethod(setting->method());
+    setDns(setting->dns());
+    setDnssearch(setting->dnssearch());
+    setAddresses(setting->addresses());
+    setIgnoredhcpdns(setting->ignoredhcpdns());
+    setIgnoreautoroute(setting->ignoreautoroute());
+    setNeverdefault(setting->neverdefault());
+    setRoutes(setting->routes());
+    setMayfail(setting->mayfail());
+}
+
 Ipv6Setting::~Ipv6Setting()
 {
 }

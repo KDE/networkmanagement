@@ -34,6 +34,14 @@ EapMethodInnerAuth::EapMethodInnerAuth(Knm::Connection* connection, QWidget * pa
     d->innerAuth->label->setText(i18nc("Label for inner auth combobox", "&Inner Authentication:"));
 }
 
+EapMethodInnerAuth::EapMethodInnerAuth(Knm::Connection* connection, EapMethodInnerAuthPrivate &dd, QWidget * parent)
+: EapMethod(dd, connection, parent)
+{
+    Q_D(EapMethodInnerAuth);
+    d->innerAuth = new EapMethodStack(connection, this);
+    d->innerAuth->label->setText(i18nc("Label for inner auth combobox", "&Inner Authentication:"));
+}
+
 EapMethodInnerAuth::~EapMethodInnerAuth()
 {
 }

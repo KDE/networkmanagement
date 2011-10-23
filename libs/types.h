@@ -19,13 +19,15 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM07_TYPES_H
-#define KNM07_TYPES_H
+#ifndef KNM09_TYPES_H
+#define KNM09_TYPES_H
 
 #include <QMap>
 #include <QVariant>
 #include <QtDBus/QtDBus>
 #include <QtDBus/QDBusArgument>
+
+#include <NetworkManager.h>
 
 Q_DECLARE_METATYPE(QList<uint>)
 Q_DECLARE_METATYPE(QList< QList<uint> >)

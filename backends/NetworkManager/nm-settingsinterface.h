@@ -22,14 +22,14 @@
 #include "types.h"
 
 /*
- * Proxy class for interface org.freedesktop.NetworkManagerSettings
+ * Proxy class for interface org.freedesktop.NetworkManager.Settings
  */
 class OrgFreedesktopNetworkManagerSettingsInterface: public QDBusAbstractInterface
 {
     Q_OBJECT
 public:
     static inline const char *staticInterfaceName()
-    { return "org.freedesktop.NetworkManagerSettings"; }
+    { return "org.freedesktop.NetworkManager.Settings"; }
 
 public:
     OrgFreedesktopNetworkManagerSettingsInterface(const QString &service, const QString &path, const QDBusConnection &connection, QObject *parent = 0);
@@ -42,6 +42,13 @@ public Q_SLOTS: // METHODS
         QList<QVariant> argumentList;
         argumentList << qVariantFromValue(connection);
         return asyncCallWithArgumentList(QLatin1String("AddConnection"), argumentList);
+    }
+
+    inline QDBusPendingReply<QDBusObjectPath> GetConnectionByUuid(const QString &uuid)
+    {
+        QList<QVariant> argumentList;
+        argumentList << qVariantFromValue(uuid);
+        return asyncCallWithArgumentList(QLatin1String("GetConnectionByUuid"), argumentList);
     }
 
     inline QDBusPendingReply<QList<QDBusObjectPath> > ListConnections()

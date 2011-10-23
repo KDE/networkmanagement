@@ -46,7 +46,7 @@ VpnInterfaceConnectionProvider::VpnInterfaceConnectionProvider(ConnectionList * 
     Q_D(VpnInterfaceConnectionProvider);
     d->connectionList = connectionList;
     d->activatableList = activatableList;
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
+    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
             this, SLOT(statusChanged(Solid::Networking::Status)));
 }
 
@@ -68,7 +68,7 @@ void VpnInterfaceConnectionProvider::init()
 void VpnInterfaceConnectionProvider::handleAdd(Knm::Connection * addedConnection)
 {
     Q_D(VpnInterfaceConnectionProvider);
-    if (Solid::Control::NetworkManager::status() == Solid::Networking::Connected) {
+    if (Solid::Control::NetworkManagerNm09::status() == Solid::Networking::Connected) {
         if (!d->vpns.contains(addedConnection->uuid())) {
             if (addedConnection->type() == Knm::Connection::Vpn) {
                 Knm::VpnInterfaceConnection * vpnConnection =

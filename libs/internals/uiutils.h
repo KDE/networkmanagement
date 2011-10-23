@@ -27,8 +27,10 @@ class QSizeF;
 #include "knminternals_export.h"
 #include "../client/remoteinterfaceconnection.h"
 #include "../client/remoteactivatablelist.h"
+#include "../libs/types.h"
 
 #include <solid/control/networkinterface.h>
+#include <solid/control/networkmodeminterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/wirelessaccesspoint.h>
 #include <Solid/Device>
@@ -41,7 +43,7 @@ public:
      * @return a human-readable description for the network interface type for use as label
      * @param type the type of the network interface
      */
-    static QString interfaceTypeLabel(const Solid::Control::NetworkInterface::Type type);
+    static QString interfaceTypeLabel(const Solid::Control::NetworkInterfaceNm09::Type type, const Solid::Control::NetworkInterfaceNm09 * iface);
 
     /**
      * @return a human-readable name for a given network interface according to the configured
@@ -68,13 +70,19 @@ public:
      * @return a human-readable description of the connection state of a given network interface
      * @param state The connection state
      */
-    static QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState state, const QString &connectionName = QString());
+    static QString connectionStateToString(Solid::Control::NetworkInterfaceNm09::ConnectionState state, const QString &connectionName = QString());
+
+    /**
+     * @return a human-readable description of the connection state of a given interface connection
+     * @param state The connection state
+     */
+    static QString connectionStateToString(Knm::InterfaceConnection::ActivationState state, const QString &connectionName = QString());
 
     /**
      * @return an icon name suitable for the interface type
      * @param iface the network interface
      */
-    static QString iconName(Solid::Control::NetworkInterface *iface);
+    static QString iconName(Solid::Control::NetworkInterfaceNm09 *iface);
 
     /** This method can be used to retrieve an icon size that fits into a given size.
      * The resulting size can be used to render Pixmaps from KIconLoader without
@@ -91,25 +99,50 @@ public:
      * @return the progress between 0 (disconnected) and 1 (activated).
      * @param interface the network interface
      */
-    static qreal interfaceState(const Solid::Control::NetworkInterface *interface);
+    static qreal interfaceState(const Solid::Control::NetworkInterfaceNm09 *interface);
 
     /**
-     * @return a human-readable description of operation mode. 
+     * @return a human-readable description of operation mode.
      * @param mode the operation mode
      */
-    static QString operationModeToString(Solid::Control::WirelessNetworkInterface::OperationMode mode);
+    static QString operationModeToString(Solid::Control::WirelessNetworkInterfaceNm09::OperationMode mode);
 
     /**
      * @return string list with a human-readable description of wpa flags.
      * @param flags the wpa flags
      */
-    static QStringList wpaFlagsToStringList(Solid::Control::AccessPoint::WpaFlags flags);
+    static QStringList wpaFlagsToStringList(Solid::Control::AccessPointNm09::WpaFlags flags);
 
     /**
      * @return localized string showing a human-readable connection speed. 1000 is used as base.
      * @param bitrate bitrate of the connection per second
      */
     static QString connectionSpeed(double bitrate);
+
+    /**
+     * @return String representation of a mac address.
+     * @param ba byte array containing the binary repesentation of the address
+     */
+    static QString macAddressAsString(const QByteArray & ba);
+
+    /**
+     * @return binary repesentation of a mac address.
+     * @param s string representation of the address
+     */
+    static QByteArray macAddressFromString( const QString & s);
+
+    /**
+     * @param freq frequency of a wireless network
+     * @return The frequency translated into band (first element of the QPair) and channel. The band value is
+     * corresponding to the type enum in Knm::WirelessSetting::EnumBand
+     */
+    static QPair<int, int> findBandAndChannel(int freq);
+
+    /**
+     * @param band The band of a wireless network. The value corresponds to the type enum in Knm::WirelessSetting::EnumBand
+     * @return A string representation
+     */
+    static QString wirelessBandToString(int band);
 
 };
 #endif // UIUTILS_H

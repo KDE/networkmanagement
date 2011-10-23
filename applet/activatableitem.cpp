@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KIcon>
 #include <KNotification>
+#include <KGlobalSettings>
 
 #include <Plasma/Animation>
 #include <Plasma/Animator>
@@ -39,13 +40,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 K_GLOBAL_STATIC_WITH_ARGS(KComponentData, s_networkManagementComponentData, ("networkmanagement", "networkmanagement", KComponentData::SkipMainComponentRegistration))
 static const int m_iconSize = 48;
+int rowHeight = qMax(28, QFontMetrics(KGlobalSettings::generalFont()).height()+10);
+int maxConnectionNameWidth = QFontMetrics(KGlobalSettings::generalFont()).width("12345678901234567890123");
 
 ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * parent) : Plasma::IconWidget(parent),
     m_activatable(remote),
     m_hasDefaultRoute(false),
     m_deleting(false),
-    rowHeight(28), // TODO: try not to use hard coded value.
-    spacing(4)
+    spacing(4),
+    m_connectButton(0)
 {
     setDrawBackground(true);
     setTextBackgroundColor(QColor(Qt::transparent));
@@ -54,8 +57,8 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
     if (remoteconnection) {
         connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)),
                 SLOT(handleHasDefaultRouteChanged(bool)));
-        connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
-                SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
+        connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
+                SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
     }
 
     // Fade in when this widget appears
@@ -92,13 +95,19 @@ void ActivatableItem::disappear()
 void ActivatableItem::emitClicked()
 {
     if (m_activatable) {
-        m_activatable->activate();
+        RemoteInterfaceConnection * remote = interfaceConnection();
+        if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
+                       remote->activationState() == Knm::InterfaceConnection::Activated)) {
+            emit showInterfaceDetails(remote->deviceUni());
+        } else {
+            m_activatable->activate();
+        }
+        emit clicked(this);
     }
-    emit clicked(this);
 
-    if (!Solid::Control::NetworkManager::isNetworkingEnabled()) {
+    if (!Solid::Control::NetworkManagerNm09::isNetworkingEnabled()) {
         KNotification::event(Event::NetworkingDisabled, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is disabled", "Networking system disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData)->sendEvent();
-    } else if (!Solid::Control::NetworkManager::isWirelessEnabled() &&
+    } else if (!Solid::Control::NetworkManagerNm09::isWirelessEnabled() &&
                m_activatable &&
                m_activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection) {
         KNotification::event(Event::RfOff, i18nc("@info:status Notification for radio kill switch turned off", "Wireless hardware disabled"), KIcon("network-wireless").pixmap(QSize(m_iconSize,m_iconSize)), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData)->sendEvent();
@@ -121,16 +130,25 @@ void ActivatableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* o
 {
     Plasma::IconWidget::paint(painter, option, widget);
     if (m_hasDefaultRoute) {
+        // TODO: this draws the pixmap behind the connection icon. This is the same
+        // problem described in a comment in networkmanager.cpp:NetworkManagerApplet::paintInterface.
         painter->drawPixmap(QRect(4,4,12,12), KIcon("network-defaultroute").pixmap(QSize(16,16)));
     }
 }
 
-void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::ActivationState state)
+void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
 {
+    Q_UNUSED(oldState);
+    m_state = newState;
+
+    if (!m_connectButton) {
+        return;
+    }
+
     // Update the view of the connection, manipulate font based on activation state.
-    kDebug() << state;
-    QFont f = font();
-    switch (state) {
+    kDebug() << newState;
+    QFont f = m_connectButton->font();
+    switch (newState) {
         //Knm::InterfaceConnectihon::ActivationState
         case Knm::InterfaceConnection::Activated:
             kDebug() << "activated";
@@ -147,7 +165,7 @@ void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::Activatio
             f.setBold(false);
             f.setItalic(true);
     }
-    setFont(f);
+    m_connectButton->setFont(f);
 }
 
 void ActivatableItem::hoverEnter()

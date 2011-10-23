@@ -30,7 +30,7 @@ class TtlsWidgetPrivate;
 class TtlsWidget : public EapMethodInnerAuth, public Ui_EapMethodTtlsBase
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(EapMethodInnerAuth)
+Q_DECLARE_PRIVATE(TtlsWidget)
 public:
     TtlsWidget(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~TtlsWidget();
@@ -40,10 +40,9 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
-    void setText(bool);
 private Q_SLOTS:
-    void loadCert();
-    void toggleSystemCa(bool);
+    void showAltSubjectMatchesEditor();
+    void showServersEditor();
 };
 
 #endif

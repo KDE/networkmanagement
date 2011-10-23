@@ -1,5 +1,5 @@
 /*
-    Copyright 2010 Sebastian Kügler <sebas@kde.org>
+    Copyright 210 Sebastian Kügler <sebas@kde.org>
 
     This library is free software; you can redistribute it and/or modify it
     under the terms of the GNU Library General Public License as published by
@@ -33,7 +33,7 @@
 #include "remotevpninterfaceconnection.h"
 
 #include "../applet/wirelessstatus.h"
-#include "networkmanagementservice.h"
+
 
 class NetworkManagementEnginePrivate
 {
@@ -75,22 +75,21 @@ NetworkManagementEngine::~NetworkManagementEngine()
 
 QStringList NetworkManagementEngine::sources() const
 {
-    return QStringList("connections");
-    //return QStringList() << "networkStatus" << "connections";
+    return QStringList() << "networkStatus" << "connections";
 }
 
 bool NetworkManagementEngine::sourceRequestEvent(const QString &name)
 {
     kDebug() << "Source requested:" << name << sources();
     setData(name, DataEngine::Data());
-    setData("networkStatus", "isConnected", true);
+    //setData("networkStatus", "isConnected", true);
     //scheduleSourcesUpdated();
 
     if (name == "connections") {
         connect(d->activatables, SIGNAL(activatableAdded(RemoteActivatable*)),
-                SLOT(activatableAdded(RemoteActivatable*)));
+                SLOT(activatableAdded(RemoteActivatable *)));
         connect(d->activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
-                SLOT(activatableRemoved(RemoteActivatable*)));
+                SLOT(activatableRemoved(RemoteActivatable *)));
 
         connect(d->activatables, SIGNAL(appeared()), SLOT(listAppeared()));
         connect(d->activatables, SIGNAL(disappeared()), SLOT(listDisappeared()));
@@ -143,13 +142,11 @@ void NetworkManagementEngine::activatableAdded(RemoteActivatable* remote)
             addHiddenWirelessInterfaceConnection(remote);
             break;
         }
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         case Knm::Activatable::GsmInterfaceConnection:
         { // Gsm (2G, 3G, etc)
             addGsmInterfaceConnection(remote);
             break;
         }
-#endif
         default:
         {
             addActivatable(remote);
@@ -160,15 +157,15 @@ void NetworkManagementEngine::activatableAdded(RemoteActivatable* remote)
     scheduleSourcesUpdated();
 }
 
-void NetworkManagementEngine::activationStateChanged(Knm::InterfaceConnection::ActivationState s)
+void NetworkManagementEngine::activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState)
 {
     // FIXME: never trigged... ???
     kDebug() << "actstatechange";
-    if (s == Knm::InterfaceConnection::Activating) {
+    if (newState == Knm::InterfaceConnection::Activating) {
         kDebug() << "1ACTIVATING:";
     }
     RemoteInterfaceConnection* remote = static_cast<RemoteInterfaceConnection*>(sender());
-    if (remote && s == Knm::InterfaceConnection::Activating) {
+    if (remote && newState == Knm::InterfaceConnection::Activating) {
         kDebug() << "2ACTIVATING:" << remote->connectionName();
     }
 }
@@ -239,13 +236,13 @@ void NetworkManagementEngine::addInterfaceConnection(RemoteActivatable* remote)
     }
 
     // this one's just for debugging, seems to get never called
-    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
-            SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState)));
+    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
+            SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
 
     // connect remoteinterface for updates
     connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)),
             SLOT(updateInterfaceConnection()));
-    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState)),
+    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
             SLOT(updateInterfaceConnection()));
 
     updateActivatable(remote);
@@ -309,9 +306,6 @@ void NetworkManagementEngine::updateInterfaceConnection(RemoteActivatable* remot
             break;
         case Knm::Connection::Pppoe:
             _type = "Pppoe";
-            break;
-        default:
-            _type = "I don't know.";
             break;
     }
 
@@ -422,8 +416,6 @@ void NetworkManagementEngine::updateWirelessStatus(const QString &source, Wirele
     setData(source, "securityToolTip", wirelessStatus->securityTooltip());
     setData(source, "securityIcon", wirelessStatus->securityIcon());
     setData(source, "adhoc", wirelessStatus->isAdhoc());
-    setData(source, "iconName", "network-wireless");
-
     scheduleSourcesUpdated();
 }
 
@@ -447,7 +439,6 @@ void NetworkManagementEngine::updateUnconfiguredInterface(RemoteActivatable* rem
     }
     updateActivatable(remote);
     setData(source(remote), "activatableType", "UnconfiguredInterface");
-    setData(source(remote), "securityIcon", "security-low");
 
     scheduleSourcesUpdated();
 }
@@ -476,8 +467,6 @@ void NetworkManagementEngine::updateVpnInterfaceConnection(RemoteActivatable* re
 }
 
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-
 void NetworkManagementEngine::addGsmInterfaceConnection(RemoteActivatable* remote)
 {
     addInterfaceConnection(remote);
@@ -496,21 +485,8 @@ void NetworkManagementEngine::updateGsmInterfaceConnection(RemoteActivatable* re
     }
     updateInterfaceConnection(remote);
     setData(source(remote), "activatableType", "GsmInterfaceConnection");
-    setData(source(remote), "connectionName", " generic activatable");
-    setData(source(remote), "securityIcon", "security-low");
 
     scheduleSourcesUpdated();
 }
-
-#endif
-
-Plasma::Service* NetworkManagementEngine::serviceForSource(const QString &source)
-{
-    // validate
-    NetworkManagementService* service = new NetworkManagementService(source);
-    service->setParent(this);
-    return service;
-}
-
 
 #include "networkmanagementengine.moc"

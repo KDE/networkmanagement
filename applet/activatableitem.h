@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteinterfaceconnection.h"
 
 class RemoteActivatable;
+extern int rowHeight;
+extern int maxConnectionNameWidth;
 
 class ActivatableItem : public Plasma::IconWidget
 {
@@ -47,20 +49,21 @@ Q_SIGNALS:
     void clicked(ActivatableItem *);
     void hasDefaultRouteChanged(bool);
     void disappearAnimationFinished();
+    void showInterfaceDetails(QString);
 
 protected Q_SLOTS:
     void emitClicked();
     void handleHasDefaultRouteChanged(bool);
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
-    void activationStateChanged(Knm::InterfaceConnection::ActivationState state);
+    void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
 
 protected:
     RemoteActivatable *m_activatable;
     bool m_hasDefaultRoute;
     Knm::InterfaceConnection::ActivationState m_state;
     bool m_deleting;
-    int rowHeight;
     int spacing;
+    Plasma::IconWidget* m_connectButton;
 };
 
 #endif // ABSTRACTCONNECTABLEITEM_H

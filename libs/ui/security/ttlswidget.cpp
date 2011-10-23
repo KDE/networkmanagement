@@ -21,22 +21,57 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ttlswidget.h"
 
-#include <nm-setting-8021x.h>
-
 #include <connection.h>
-#include <kfiledialog.h>
-#include <KUser>
+#include <settings/802-1x.h>
+#include <knmserviceprefs.h>
 
 #include "eapmethodstack.h"
 #include "eapmethodsimple.h"
 #include "eapmethodinnerauth_p.h"
-#include "settings/802-1x.h"
+
+#include "editlistdialog.h"
+#include "listvalidator.h"
+
+class TtlsWidgetPrivate : public EapMethodInnerAuthPrivate
+{
+public:
+    bool showAdvancedSettings;
+    QRegExpValidator *altSubjectValidator;
+    QRegExpValidator *serversValidator;
+};
 
 TtlsWidget::TtlsWidget(Knm::Connection* connection, QWidget * parent)
-: EapMethodInnerAuth(connection, parent)
+: EapMethodInnerAuth(connection, *new TtlsWidgetPrivate(), parent)
 {
-    Q_D(EapMethodInnerAuth);
+    Q_D(TtlsWidget);
     setupUi(this);
+
+    d->altSubjectValidator = new QRegExpValidator(QRegExp(QLatin1String("^(DNS:[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|EMAIL:[a-zA-Z0-9._-]+@[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|URI:[a-zA-Z0-9._-]+:.+)$")), this);
+    d->serversValidator = new QRegExpValidator(QRegExp(QLatin1String("^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+$")), this);
+
+    ListValidator *altSubjectValidator = new ListValidator(this);
+    altSubjectValidator->setInnerValidator(d->altSubjectValidator);
+    leAltSubjectMatches->setValidator(altSubjectValidator);
+
+    ListValidator *serversValidator = new ListValidator(this);
+    serversValidator->setInnerValidator(d->serversValidator);
+    leConnectToTheseServers->setValidator(d->serversValidator);
+
+    KNetworkManagerServicePrefs::self()->readConfig();
+    d->showAdvancedSettings = KNetworkManagerServicePrefs::self()->showAdvancedSettings();
+    if (d->showAdvancedSettings) {
+        lblConnectToTheseServers->hide();
+        leConnectToTheseServers->hide();
+        connectToTheseServersMoreBtn->hide();
+        connect(altSubjectMatchesMoreBtn, SIGNAL(clicked()), this, SLOT(showAltSubjectMatchesEditor()));
+    } else {
+        lblSubjectMatch->hide();
+        leSubjectMatch->hide();
+        lblAltSubjectMatches->hide();
+        leAltSubjectMatches->hide();
+        altSubjectMatchesMoreBtn->hide();
+        connect(connectToTheseServersMoreBtn, SIGNAL(clicked()), this, SLOT(showServersEditor()));
+    }
 
     d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::pap,
             new EapMethodSimple(EapMethodSimple::Pap, connection, d->innerAuth),
@@ -50,11 +85,7 @@ TtlsWidget::TtlsWidget(Knm::Connection* connection, QWidget * parent)
     d->innerAuth->registerEapMethod(Knm::Security8021xSetting::EnumPhase2auth::chap,
             new EapMethodSimple(EapMethodSimple::Chap, connection, d->innerAuth),
             i18nc("CHAP inner auth method", "CHAP"));
-    gridLayout->addWidget(d->innerAuth, 3, 0, 2, 2);
-
-    connect(chkUseSystemCaCerts,SIGNAL(toggled(bool)),this,SLOT(toggleSystemCa(bool)));
-    connect(caCertLoad,SIGNAL(clicked()),this,SLOT(loadCert()));
-    caCertLoad->setIcon(KIcon("document-open"));
+    formLayout->addRow(d->innerAuth);
 }
 
 TtlsWidget::~TtlsWidget()
@@ -68,19 +99,18 @@ bool TtlsWidget::validate() const
 
 void TtlsWidget::readConfig()
 {
-    Q_D(EapMethodInnerAuth);
+    Q_D(TtlsWidget);
     leAnonIdentity->setText(d->setting->anonymousidentity());
 
     if (d->setting->useSystemCaCerts()) {
         chkUseSystemCaCerts->setChecked(true);
-        caCertLoad->setEnabled(false);
+        kurCaCert->setEnabled(false);
+        kurCaCert->clear();
     } else {
         chkUseSystemCaCerts->setChecked(false);
-        if (!d->setting->cacert().isEmpty()) {
-            setText(true);
-        } else {
-            setText(false);
-        }
+        QString capath = d->setting->cacertasstring();
+        if (!capath.isEmpty())
+            kurCaCert->setUrl(capath);
     }
 
     if (d->setting->phase2autheap() != Knm::Security8021xSetting::EnumPhase2autheap::none) {
@@ -88,12 +118,25 @@ void TtlsWidget::readConfig()
     } else {
         d->innerAuth->setCurrentEapMethod(d->setting->phase2auth());
     }
+
+    leSubjectMatch->setText(d->setting->subjectmatch());
+    QStringList altsubjectmatches = d->setting->altsubjectmatches();
+    leAltSubjectMatches->setText(altsubjectmatches.join(QLatin1String(", ")));
+    if (!d->showAdvancedSettings) {
+        QStringList servers;
+        foreach (const QString &match, altsubjectmatches) {
+            if (match.startsWith(QLatin1String("DNS:")))
+                servers.append(match.right(match.length()-4));
+        }
+        leConnectToTheseServers->setText(servers.join(QLatin1String(", ")));
+    }
+
     d->innerAuth->readConfig();
 }
 
 void TtlsWidget::writeConfig()
 {
-    Q_D(EapMethodInnerAuth);
+    Q_D(TtlsWidget);
     // make the Setting TTLS
     d->setting->setEapFlags(Knm::Security8021xSetting::ttls);
     // TTLS specific config
@@ -103,51 +146,56 @@ void TtlsWidget::writeConfig()
 
     if (chkUseSystemCaCerts->isChecked()) {
         d->setting->setUseSystemCaCerts(true);
-        d->setting->addToCertToDelete(Knm::Security8021xSetting::CACert);
+        d->setting->setCapath(QByteArray());
     } else {
         d->setting->setUseSystemCaCerts(false);
+        url = kurCaCert->url();
+        if (!url.directory().isEmpty() && !url.fileName().isEmpty())
+            d->setting->setCacert(url.path());
     }
+
+    QStringList altsubjectmatches = leAltSubjectMatches->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts);
+    if (!d->showAdvancedSettings) {
+        foreach (const QString &match, leConnectToTheseServers->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts)) {
+            QString tempstr = QLatin1String("DNS:") + match;
+            if (!altsubjectmatches.contains(tempstr))
+                altsubjectmatches.append(tempstr);
+        }
+    }
+    d->setting->setSubjectmatch(leSubjectMatch->text());
+    d->setting->setAltsubjectmatches(altsubjectmatches);
 
     d->innerAuth->writeConfig();
 }
 
 void TtlsWidget::readSecrets()
 {
-    Q_D(EapMethodInnerAuth);
+    Q_D(TtlsWidget);
     d->innerAuth->readSecrets();
 }
 
-void TtlsWidget::loadCert()
+void TtlsWidget::showAltSubjectMatchesEditor()
 {
-    Q_D(EapMethodInnerAuth);
-    QString newcert = KFileDialog::getOpenFileName(KUser().homeDir(),"",this,i18nc("File chooser dialog title for certificate loading","Load Certificate"));
-    if (!newcert.isEmpty()) {
-        d->setting->setCacerttoimport(newcert);
-        setText(true);
+    Q_D(TtlsWidget);
+    EditListDialog editor;
+    editor.setItems(leAltSubjectMatches->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts));
+    editor.setCaption(i18n("Alternative Subject Matches"));
+    editor.setValidator(d->altSubjectValidator);
+    if (editor.exec() == QDialog::Accepted) {
+        leAltSubjectMatches->setText(editor.items().join(QLatin1String(", ")));
     }
 }
 
-void TtlsWidget::toggleSystemCa(bool toggled)
+void TtlsWidget::showServersEditor()
 {
-    Q_D(EapMethodInnerAuth);
-    if (toggled)
-        setText(false);
-    else if (!d->setting->cacert().isEmpty() || !d->setting->cacerttoimport().isEmpty())
-        setText(true);
-}
-
-void TtlsWidget::setText(bool loaded)
-{
-    if (loaded) {
-        caCertLoad->setText(i18nc("Text to display on certificate button a certificate is already loaded","Load new"));
-        caCertLoadedLabel->setText(i18nc("Text to display on CA certificate LED label when certificate is already loaded","Loaded"));
-        caCertLed->setState(KLed::On);
-    } else {
-        caCertLoad->setText(i18nc("Text to display on CA certificate button when no certificate is loaded yet","Load"));
-        caCertLoadedLabel->setText("");
-        caCertLed->setState(KLed::Off);
+    Q_D(TtlsWidget);
+    EditListDialog editor;
+    editor.setItems(leConnectToTheseServers->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts));
+    editor.setCaption(i18n("Connect to these Servers"));
+    editor.setValidator(d->serversValidator);
+    if (editor.exec() == QDialog::Accepted) {
+        leConnectToTheseServers->setText(editor.items().join(QLatin1String(", ")));
     }
 }
-
 
 // vim: sw=4 sts=4 et tw=100

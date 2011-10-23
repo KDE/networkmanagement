@@ -11,7 +11,7 @@
 #include <QDBusArgument>
 
 #include "settingdbus.h"
-#include "nm07dbus_export.h"
+#include "nm09dbus_export.h"
 
 #include "settings/ipv6.h"
 #include "networkipv6config.h"
@@ -45,7 +45,7 @@ const QDBusArgument &operator>>(const QDBusArgument &argument, IpV6RouteMap &map
 
 Q_DECLARE_METATYPE(QList<QByteArray>)
 
-class NM07DBUS_EXPORT Ipv6Dbus : public SettingDbus
+class NM09DBUS_EXPORT Ipv6Dbus : public SettingDbus
 {
   public:
     Ipv6Dbus(Knm::Ipv6Setting * setting);

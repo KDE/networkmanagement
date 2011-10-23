@@ -63,7 +63,7 @@ namespace Control
          * List of access points
          * Subject to change, do not store!
          */
-        Solid::Control::AccessPointList accessPoints() const;
+        Solid::Control::AccessPointNm09List accessPoints() const;
 
     Q_SIGNALS:
         /**
@@ -87,8 +87,8 @@ namespace Control
         void accessPointDisappeared(const QString &);
         void updateStrength();
     private:
-        WirelessNetwork(AccessPoint *, WirelessNetworkInterface *network, QObject * parent);
-        void addAccessPointInternal(Solid::Control::AccessPoint *ap);
+        WirelessNetwork(AccessPointNm09 *, WirelessNetworkInterfaceNm09 *network, QObject * parent);
+        void addAccessPointInternal(Solid::Control::AccessPointNm09 *ap);
         WirelessNetworkPrivate * d_ptr;
     };
 } // namespace Control

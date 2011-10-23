@@ -29,7 +29,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkmanager.h>
 
-
 #include "802_11_wirelesswidget.h"
 #include "security/wirelesssecuritysettingwidget.h"
 #include "ipv4widget.h"
@@ -70,16 +69,17 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
             static_cast<Knm::Ipv4Setting *>(m_connection->setting(Knm::Setting::Ipv4))->setMethod(Knm::Ipv4Setting::EnumMethod::Shared);
             shared = true;
             ssid = i18n("Shared_Wireless_Connection");
+            m_connection->setAutoConnect(false);
         }
     } else {
         kWarning() << "Could not find deviceUni or AP UNI in args:" << args;
     }
 
-    Solid::Control::AccessPoint * ap = 0;
-    Solid::Control::WirelessNetworkInterface * iface = 0;
+    Solid::Control::AccessPointNm09 * ap = 0;
+    Solid::Control::WirelessNetworkInterfaceNm09 * iface = 0;
 
     if (!deviceUni.isEmpty() && deviceUni != QLatin1String("/")) {
-        iface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(Solid::Control::NetworkManager::findNetworkInterface(deviceUni));
+        iface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(Solid::Control::NetworkManagerNm09::findNetworkInterface(deviceUni));
         if (iface) {
             if ( !apUni.isEmpty() && apUni != QLatin1String("/")) {
                 ap = iface->findAccessPoint(apUni);
@@ -90,16 +90,29 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
                        back to infrastructure. */
                     Knm::WirelessSetting * setting = static_cast<Knm::WirelessSetting *>(m_connection->setting(Knm::Setting::Wireless));
                     switch (ap->mode()) {
-                    case Solid::Control::WirelessNetworkInterface::Adhoc:
+                    case Solid::Control::WirelessNetworkInterfaceNm09::Adhoc:
                         setting->setMode(Knm::WirelessSetting::EnumMode::adhoc);
                         break;
-                    default: 
+                    default:
                         setting->setMode(Knm::WirelessSetting::EnumMode::infrastructure);
                     }
+                } else {
+                    ssid = apUni;
                 }
             }
         }
     }
+
+    m_wirelessWidget = new Wireless80211Widget(m_connection, ssid, shared, this);
+    connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *)),
+            this, SLOT(setDefaultName(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *)));
+
+    m_securityWidget = new WirelessSecuritySettingWidget(m_connection, iface, ap, this);
+    connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *)),
+            m_securityWidget, SLOT(setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *)));
+
+    IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
+    IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
 
     m_contents->setConnection(m_connection);
     if (shared) {
@@ -107,17 +120,6 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
     } else {
         m_contents->setDefaultName(ssid.isEmpty() ? i18n("New Wireless Connection") : ssid);
     }
-
-    m_wirelessWidget = new Wireless80211Widget(m_connection, ssid, shared, this);
-    connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterface*,Solid::Control::AccessPoint*)),
-            this, SLOT(setDefaultName(Solid::Control::WirelessNetworkInterface*,Solid::Control::AccessPoint*)));
-
-    m_securityWidget = new WirelessSecuritySettingWidget(m_connection, iface, ap, this);
-    connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterface*,Solid::Control::AccessPoint*)),
-            m_securityWidget, SLOT(setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterface*,Solid::Control::AccessPoint*)));
-
-    IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
-    IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
 
     connect (m_contents->connectionSettingsWidget(), SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
     addToTabWidget(m_wirelessWidget);
@@ -152,8 +154,8 @@ WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
     m_contents->setConnection(m_connection);
 
     m_wirelessWidget = new Wireless80211Widget(m_connection, NULL, false, this);
-    connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterface*,Solid::Control::AccessPoint*)),
-            this, SLOT(setDefaultName(Solid::Control::WirelessNetworkInterface*,Solid::Control::AccessPoint*)));
+    connect(m_wirelessWidget, SIGNAL(ssidSelected(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *)),
+            this, SLOT(setDefaultName(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *)));
 
     m_securityWidget = new WirelessSecuritySettingWidget(m_connection, NULL, NULL, this);
 
@@ -176,7 +178,7 @@ WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
     */
 }
 
-void WirelessPreferences::setDefaultName(Solid::Control::WirelessNetworkInterface * wiface, Solid::Control::AccessPoint * ap)
+void WirelessPreferences::setDefaultName(Solid::Control::WirelessNetworkInterfaceNm09 * wiface, Solid::Control::AccessPointNm09 * ap)
 {
     Q_UNUSED(wiface);
     if(ap) {
@@ -192,8 +194,8 @@ bool WirelessPreferences::needsEdits() const
 void WirelessPreferences::tabChanged(int index)
 {
     if (index == m_securityTabIndex && m_wirelessWidget->enteredSsidIsDirty()) {
-        Solid::Control::WirelessNetworkInterface * ifaceForSsid = 0;
-        Solid::Control::AccessPoint * apForSsid = 0;
+        Solid::Control::WirelessNetworkInterfaceNm09 * ifaceForSsid = 0;
+        Solid::Control::AccessPointNm09 * apForSsid = 0;
         // look up AP given by m_wirelessWidget, and set it on m_securityWidget
         QByteArray hwAddr = m_wirelessWidget->selectedInterfaceHardwareAddress();
         QString ssid = m_wirelessWidget->enteredSsid();
@@ -201,10 +203,10 @@ void WirelessPreferences::tabChanged(int index)
             // find the S::C::WNI for this ssid
             // if hwAddr set, take that one
             // else, take the first one that can see this ssid
-            foreach (Solid::Control::NetworkInterface * iface,
-                    Solid::Control::NetworkManager::networkInterfaces()) {
-                if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
-                    Solid::Control::WirelessNetworkInterface * candidate = static_cast<Solid::Control::WirelessNetworkInterface*>(iface);
+            foreach (Solid::Control::NetworkInterfaceNm09 * iface,
+                    Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+                if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+                    Solid::Control::WirelessNetworkInterfaceNm09 * candidate = static_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
                     if (candidate->hardwareAddress() == hwAddr) {
                         ifaceForSsid = candidate;
                         break;
@@ -224,7 +226,7 @@ void WirelessPreferences::tabChanged(int index)
         }
 
         // Ignore that in edit mode
-        m_securityWidget->setIfaceAndAccessPoint(ifaceForSsid, apForSsid);
+        // m_securityWidget->setIfaceAndAccessPoint(ifaceForSsid, apForSsid);
         m_wirelessWidget->setEnteredSsidClean();
     }
 }

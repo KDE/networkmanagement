@@ -46,12 +46,6 @@ class InterfaceConnectionItem : public ActivatableItem
 
     protected:
         QGraphicsGridLayout * m_layout;
-        Plasma::IconWidget * m_connectButton;
-
-    private Q_SLOTS:
-        void stateChanged();
-
 };
 
 #endif //#define APPLET_CONNECTIONITEM_H
-

@@ -9,6 +9,14 @@ PppoeSetting::PppoeSetting() : Setting(Setting::Pppoe)
 {
 }
 
+PppoeSetting::PppoeSetting(PppoeSetting *setting) : Setting(setting), mPasswordflags(Setting::AgentOwned)
+{
+    setService(setting->service());
+    setUsername(setting->username());
+    setPassword(setting->password());
+    setPasswordflags(setting->passwordflags());
+}
+
 PppoeSetting::~PppoeSetting()
 {
 }
@@ -17,7 +25,32 @@ QString PppoeSetting::name() const
 {
   return QLatin1String("pppoe");
 }
-bool PppoeSetting::hasSecrets() const
+
+QMap<QString,QString> PppoeSetting::secretsToMap() const
 {
-  return true;
+    QMap<QString,QString> map;
+    if (passwordflags().testFlag(Setting::AgentOwned)) {
+        map.insert(QLatin1String("password"), password());
+    }
+    return map;
+}
+
+void PppoeSetting::secretsFromMap(QMap<QString,QString> secrets)
+{
+    setPassword(secrets.value("password"));
+}
+
+QStringList PppoeSetting::needSecrets() const
+{
+    QStringList list;
+    if (password().isEmpty() && !passwordflags().testFlag(Setting::NotRequired))
+        list.append("password");
+    return list;
+}
+
+bool PppoeSetting::hasPersistentSecrets() const
+{
+    if (passwordflags().testFlag(Setting::None) || passwordflags().testFlag(Setting::AgentOwned))
+        return true;
+    return false;
 }

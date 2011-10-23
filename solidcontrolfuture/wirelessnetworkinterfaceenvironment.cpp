@@ -43,12 +43,12 @@ class WirelessNetworkInterfaceEnvironmentPrivate
 public:
     virtual ~WirelessNetworkInterfaceEnvironmentPrivate() {}
     QHash<QString, Solid::Control::WirelessNetwork*> networks;
-    Solid::Control::WirelessNetworkInterface * iface;
+    Solid::Control::WirelessNetworkInterfaceNm09 * iface;
 };
 } // namespace Control
 } // namespace Solid
 
-Solid::Control::WirelessNetworkInterfaceEnvironment::WirelessNetworkInterfaceEnvironment(Solid::Control::WirelessNetworkInterface * iface)
+Solid::Control::WirelessNetworkInterfaceEnvironment::WirelessNetworkInterfaceEnvironment(Solid::Control::WirelessNetworkInterfaceNm09 * iface)
 : QObject(iface), d_ptr(new WirelessNetworkInterfaceEnvironmentPrivate)
 {
     Q_D(WirelessNetworkInterfaceEnvironment);
@@ -57,9 +57,9 @@ Solid::Control::WirelessNetworkInterfaceEnvironment::WirelessNetworkInterfaceEnv
         accessPointAppearedInternal(apUni);
     }
     // for managing our list of wireless networks
-    connect(iface, SIGNAL(accessPointAppeared(QString)),
-            SLOT(accessPointAppeared(QString)));
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
+    connect(iface, SIGNAL(accessPointAppeared(const QString&)),
+            SLOT(accessPointAppeared(const QString&)));
+    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
             SLOT(wirelessEnabledChanged(bool)));
 }
 
@@ -69,7 +69,7 @@ Solid::Control::WirelessNetworkInterfaceEnvironment::~WirelessNetworkInterfaceEn
     delete d_ptr;
 }
 
-Solid::Control::WirelessNetworkInterface * Solid::Control::WirelessNetworkInterfaceEnvironment::interface() const
+Solid::Control::WirelessNetworkInterfaceNm09 * Solid::Control::WirelessNetworkInterfaceEnvironment::interface() const
 {
     Q_D(const WirelessNetworkInterfaceEnvironment);
     return d->iface;
@@ -101,7 +101,7 @@ void Solid::Control::WirelessNetworkInterfaceEnvironment::accessPointAppeared(co
 void Solid::Control::WirelessNetworkInterfaceEnvironment::accessPointAppearedInternal(const QString &uni)
 {
     Q_D(WirelessNetworkInterfaceEnvironment);
-    Solid::Control::AccessPoint * ap = d->iface->findAccessPoint(uni);
+    Solid::Control::AccessPointNm09 * ap = d->iface->findAccessPoint(uni);
     QString ssid = ap->ssid();
     //kDebug() << ssid << d->networks.contains(ssid);
     if (ssid.isEmpty()) {
@@ -109,7 +109,7 @@ void Solid::Control::WirelessNetworkInterfaceEnvironment::accessPointAppearedInt
     } else if (!d->networks.contains(ssid)) {
         Solid::Control::WirelessNetwork * net = new Solid::Control::WirelessNetwork(ap, d->iface, this);
         d->networks.insert(ssid, net);
-        connect(net, SIGNAL(disappeared(QString)), SLOT(removeNetwork(QString)));
+        connect(net, SIGNAL(disappeared(const QString&)), SLOT(removeNetwork(const QString&)));
         emit networkAppeared(ssid);
     }
 

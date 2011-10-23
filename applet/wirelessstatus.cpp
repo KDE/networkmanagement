@@ -59,32 +59,35 @@ public:
 
     void init(RemoteWirelessObject* wobj)
     {
-        if (wobj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc) {
+        if (!wobj)
+            return;
+
+        if (wobj->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc) {
             adhoc = true;
             //adhoc->setIcon(QIcon("nm-adhoc"));
         }
         ssid = wobj->ssid();
-        Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(wobj->interfaceCapabilities(), true, (wobj->operationMode() == Solid::Control::WirelessNetworkInterface::Adhoc), wobj->apCapabilities(), wobj->wpaFlags(), wobj->rsnFlags());
+        Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(wobj->interfaceCapabilities(), true, (wobj->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc), wobj->apCapabilities(), wobj->wpaFlags(), wobj->rsnFlags());
         //security->setToolTip(Knm::WirelessSecurity::shortToolTip(best));
         securityIcon = Knm::WirelessSecurity::iconName(best);
         securityTooltip = Knm::WirelessSecurity::shortToolTip(best);
 
     }
 
-    void init(Solid::Control::WirelessNetworkInterface * wiface)
+    void init(Solid::Control::WirelessNetworkInterfaceNm09 * wiface)
     {
         iface = wiface;
     }
 
-    QList<Solid::Control::AccessPoint*> availableAccessPoints() const
+    QList<Solid::Control::AccessPointNm09*> availableAccessPoints() const
     {
-        QList<Solid::Control::AccessPoint*> retVal;
+        QList<Solid::Control::AccessPointNm09*> retVal;
         if (!iface) {
             return retVal;
         }
-        AccessPointList aps = iface->accessPoints(); //NOTE: AccessPointList is a QStringList
+        AccessPointNm09List aps = iface->accessPoints(); //NOTE: AccessPointList is a QStringList
         foreach (const QString &ap, aps) {
-            Solid::Control::AccessPoint *accesspoint = iface->findAccessPoint(ap);
+            Solid::Control::AccessPointNm09 *accesspoint = iface->findAccessPoint(ap);
             if(accesspoint) {
                 retVal << accesspoint;
             }
@@ -98,8 +101,8 @@ public:
     int strength;
     bool adhoc;
 
-    Solid::Control::WirelessNetworkInterface * iface;
-    Solid::Control::AccessPoint * activeAccessPoint;
+    Solid::Control::WirelessNetworkInterfaceNm09 * iface;
+    Solid::Control::AccessPointNm09 * activeAccessPoint;
     RemoteActivatable* activatable;
 };
 
@@ -109,8 +112,10 @@ WirelessStatus::WirelessStatus(RemoteWirelessNetwork * remote)
 {
     Q_D(WirelessStatus);
     d->activatable = remote;
-    RemoteWirelessObject * wobj  = static_cast<RemoteWirelessObject*>(remote);
-    d->init(wobj);
+    RemoteWirelessObject * wobj  = dynamic_cast<RemoteWirelessObject*>(remote);
+    if (wobj) {
+        d->init(wobj);
+    }
 
     setStrength(remote->strength());
     //connect(m_remote, SIGNAL(changed()), SLOT(update()));
@@ -126,13 +131,13 @@ void WirelessStatus::init(RemoteWirelessObject* wobj)
     d->init(wobj);
 }
 
-WirelessStatus::WirelessStatus(Solid::Control::WirelessNetworkInterface * iface)
+WirelessStatus::WirelessStatus(Solid::Control::WirelessNetworkInterfaceNm09 * iface)
 : QObject(), d_ptr(new WirelessStatusPrivate())
 {
     Q_D(WirelessStatus);
 
-    connect(iface, SIGNAL(activeAccessPointChanged(QString)),
-        SLOT(activeAccessPointChanged(QString)));
+    connect(iface, SIGNAL(activeAccessPointChanged(const QString&)),
+        SLOT(activeAccessPointChanged(const QString&)));
 
     d->init(iface);
     activeAccessPointChanged(d->iface->uni());

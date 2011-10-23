@@ -30,13 +30,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/networkinterface.h>
-#include <solid/control/networkipv4config.h>
+#include <solid/control/networkipv4confignm09.h>
 #include <solid/control/networkmanager.h>
 
-WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInterface * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
+WirelessInterfaceItem::WirelessInterfaceItem(Solid::Control::WirelessNetworkInterfaceNm09 * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
 : InterfaceItem(iface, activatables, mode, parent)
 {
-    connect(iface, SIGNAL(activeAccessPointChanged(QString)),
+    connect(iface, SIGNAL(activeAccessPointChanged(const QString&)),
             SLOT(updateInfo()));
 
     m_wirelessStatus = new WirelessStatus(iface);
@@ -63,9 +63,9 @@ void WirelessInterfaceItem::setConnectionInfo()
 {
     InterfaceItem::setConnectionInfo(); // Sets the labels
     switch (m_iface.data()->connectionState()) {
-        case Solid::Control::NetworkInterface::Unavailable:
-        case Solid::Control::NetworkInterface::Disconnected:
-        case Solid::Control::NetworkInterface::Failed:
+        case Solid::Control::NetworkInterfaceNm09::Unavailable:
+        case Solid::Control::NetworkInterfaceNm09::Disconnected:
+        case Solid::Control::NetworkInterfaceNm09::Failed:
             m_connectionInfoIcon->hide();
             break;
         default:

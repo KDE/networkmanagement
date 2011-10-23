@@ -1,7 +1,7 @@
 /*
 Copyright 2008-2010 Sebastian Kügler <sebas@kde.org>
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2010 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -20,8 +20,6 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-
 #ifndef APPLET_GSMINTERFACECONNECTIONITEM_H
 #define APPLET_GSMINTERFACECONNECTIONITEM_H
 
@@ -33,6 +31,7 @@ class QGraphicsGridLayout;
 namespace Plasma
 {
     class IconWidget;
+    class Label;
     class Meter;
 }
 
@@ -51,17 +50,16 @@ class GsmInterfaceConnectionItem : public ActivatableItem
     private Q_SLOTS:
         void setQuality(int quality);
         void setAccessTechnology(const int tech);
-	void update();
-        void activationStateChanged(Knm::InterfaceConnection::ActivationState state);
-	void stateChanged();
+        void update();
+        void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
 
     private:
+        void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
+
         //bool readSettings();
         QGraphicsGridLayout* m_layout;
         Plasma::Meter* m_strengthMeter;
-        Plasma::IconWidget* m_connectButton;
+        bool m_layoutIsDirty;
 };
 
 #endif //#define APPLET_GSMCONNECTIONITEM_H
-
-#endif

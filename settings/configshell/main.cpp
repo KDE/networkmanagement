@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <kdebug.h>
 
 #include "bluetooth.h"
+#include "manageconnection.h"
 
 int main(int argc, char **argv)
 {
@@ -63,11 +64,9 @@ int main(int argc, char **argv)
         specificArgs << QVariant(arg);
     }
 
-    kDebug() << specificArgs;
-
+    kDebug(KDE_DEFAULT_DEBUG_AREA) << specificArgs;
+    kDebug(KDE_DEFAULT_DEBUG_AREA) << args;
     QTextStream qout(stdout, QIODevice::WriteOnly);
-    KNetworkManagerServicePrefs::instance(Knm::ConnectionPersistence::NETWORKMANAGEMENT_RCFILE);
-    kDebug() << args;
 
     if (args->arg(0) == QLatin1String("create")) {
         if (args->isSet("type")) {
@@ -82,7 +81,6 @@ int main(int argc, char **argv)
                 }
                 delete mobileConnectionWizard;
             }
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
             /* To create a bluetooth DUN connection:
              * networkmanagement_configshell create --type bluetooth --specific-args "00:11:22:33:44:55 dun"
              *     or
@@ -99,23 +97,18 @@ int main(int argc, char **argv)
                     qout << i18n("Expected two specific args, found %1: %2", specificArgs.count(), specifics) << "\n"; 
                     return -1;
                 }
-            }
-#endif
-            else {
+            } else {
                 con = editor.createConnection(true, Knm::Connection::typeFromString(type), specificArgs);
             }
 
-            if(!con)
-            {
-                kDebug() << Knm::Connection::typeFromString(type) << "type connection cannot be created.";
+            if (!con) {
+                kDebug(KDE_DEFAULT_DEBUG_AREA) << Knm::Connection::typeFromString(type) << "type connection cannot be created.";
                 return -1;
             }
 
-            saveConnection(con);
-        } else if (args->isSet("hiddennetwork")) {
-            QString ssidOfHiddenNetwork = args->getOption("hiddennetwork");
-            kDebug() << "I have been told to setup a connection to a hidden network..." << ssidOfHiddenNetwork;
-            return 0;
+            /* TODO: test if connection already exists and in case affirmative do not add it. */
+            ManageConnection::saveConnection(con);
+            return app.exec();
         } else {
             args->usage();
             return -1;
@@ -123,7 +116,7 @@ int main(int argc, char **argv)
     } else {
         if (args->isSet("connection")) {
             QString connectionId = args->getOption("connection");
-            kDebug() << "Editing connections is not yet implemented";
+            kDebug(KDE_DEFAULT_DEBUG_AREA) << "Editing connections is not yet implemented";
             return 0;
             // do edit
         } else {
@@ -133,6 +126,5 @@ int main(int argc, char **argv)
     }
     return 0;
 }
-
 // vim: sw=4 et sts=4
 

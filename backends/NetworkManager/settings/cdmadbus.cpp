@@ -15,33 +15,38 @@ CdmaDbus::~CdmaDbus()
 
 void CdmaDbus::fromMap(const QVariantMap & map)
 {
-  Knm::CdmaSetting * setting = static_cast<Knm::CdmaSetting *>(m_setting);
-  if (map.contains("number")) {
-    setting->setNumber(map.value("number").value<QString>());
-  }
-  if (map.contains("username")) {
-    setting->setUsername(map.value("username").value<QString>());
-  }
-  // SECRET
-  if (map.contains("password")) {
-    setting->setPassword(map.value("password").value<QString>());
-  }
+    Knm::CdmaSetting * setting = static_cast<Knm::CdmaSetting *>(m_setting);
+    if (map.contains(QLatin1String(NM_SETTING_CDMA_NUMBER))) {
+        setting->setNumber(map.value(QLatin1String(NM_SETTING_CDMA_NUMBER)).value<QString>());
+    }
+    if (map.contains(QLatin1String(NM_SETTING_CDMA_USERNAME))) {
+        setting->setUsername(map.value(QLatin1String(NM_SETTING_CDMA_USERNAME)).value<QString>());
+    }
+    // SECRET
+    if (map.contains(QLatin1String(NM_SETTING_CDMA_PASSWORD))) {
+        setting->setPassword(map.value(QLatin1String(NM_SETTING_CDMA_PASSWORD)).value<QString>());
+    }
+    setting->setPasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_CDMA_PASSWORD_FLAGS)).value<int>());
 }
 
 QVariantMap CdmaDbus::toMap()
 {
-  QVariantMap map;
-  Knm::CdmaSetting * setting = static_cast<Knm::CdmaSetting *>(m_setting);
-  map.insert("number", setting->number());
-  map.insert("username", setting->username());
-  return map;
+    QVariantMap map;
+    Knm::CdmaSetting * setting = static_cast<Knm::CdmaSetting *>(m_setting);
+    map.insert(QLatin1String(NM_SETTING_CDMA_NUMBER), setting->number());
+    map.insert(QLatin1String(NM_SETTING_CDMA_USERNAME), setting->username());
+    map.unite(toSecretsMap());
+    if (!setting->password().isEmpty())
+        map.insert(QLatin1String(QLatin1String(NM_SETTING_CDMA_PASSWORD_FLAGS)), (int)setting->passwordflags());
+    return map;
 }
 
 QVariantMap CdmaDbus::toSecretsMap()
 {
-  QVariantMap map;
-  Knm::CdmaSetting * setting = static_cast<Knm::CdmaSetting *>(m_setting);
-  map.insert("password", setting->password());
-  return map;
+    QVariantMap map;
+    Knm::CdmaSetting * setting = static_cast<Knm::CdmaSetting *>(m_setting);
+    if (!setting->password().isEmpty())
+        map.insert(QLatin1String(NM_SETTING_CDMA_PASSWORD), setting->password());
+    return map;
 }
 

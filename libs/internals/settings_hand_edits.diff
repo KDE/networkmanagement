@@ -320,7 +320,7 @@ diff -ur origsettings//802-11-wireless-securitydbus.h settings/802-11-wireless-s
  #include <kdebug.h>
  #include <kcoreconfigskeleton.h>
 @@ -16,11 +16,15 @@
- class NM07DBUS_EXPORT WirelessSecurityDbus : public SettingDbus
+ class NM09DBUS_EXPORT WirelessSecurityDbus : public SettingDbus
  {
    public:
 -    WirelessSecurityDbus(Knm::WirelessSecuritySetting * setting);

@@ -86,7 +86,7 @@ void SecurityEap::registerEapMethod(int key, EapMethod * eapMethod, const QStrin
     EapMethodStack::registerEapMethod(key, eapMethod, theLabel);
 }
 
-bool SecurityEap::validate()
+bool SecurityEap::validate() const
 {
     return true;
 }

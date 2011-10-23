@@ -33,7 +33,7 @@ Q_DECLARE_PRIVATE(SecurityEap)
 public:
     SecurityEap(Knm::Connection* connection, bool wireless = true, QWidget * parent = 0);
     virtual ~SecurityEap();
-    virtual bool validate();
+    virtual bool validate() const;
     virtual void readConfig();
     virtual void writeConfig();
     virtual void readSecrets();

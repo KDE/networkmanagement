@@ -49,11 +49,11 @@ public:
     virtual ~RemoteWirelessNetwork();
     QString ssid() const;
     int strength() const;
-    Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities() const;
-    Solid::Control::AccessPoint::Capabilities apCapabilities() const;
-    Solid::Control::AccessPoint::WpaFlags wpaFlags() const;
-    Solid::Control::AccessPoint::WpaFlags rsnFlags() const;
-    Solid::Control::WirelessNetworkInterface::OperationMode operationMode() const;
+    Solid::Control::WirelessNetworkInterfaceNm09::Capabilities interfaceCapabilities() const;
+    Solid::Control::AccessPointNm09::Capabilities apCapabilities() const;
+    Solid::Control::AccessPointNm09::WpaFlags wpaFlags() const;
+    Solid::Control::AccessPointNm09::WpaFlags rsnFlags() const;
+    Solid::Control::WirelessNetworkInterfaceNm09::OperationMode operationMode() const;
 Q_SIGNALS:
     void strengthChanged(int);
 protected:

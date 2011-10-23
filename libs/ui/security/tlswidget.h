@@ -48,13 +48,12 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
-private:
-    void setText(int,bool);
 public Q_SLOTS:
     void setShowPasswords(bool b = true);
 private Q_SLOTS:
-    void loadCert();
-    void toggleSystemCa(bool);
+    void privateKeyPasswordStorageChanged(int);
+    void showAltSubjectMatchesEditor();
+    void showServersEditor();
 };
 
 #endif

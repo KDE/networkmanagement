@@ -22,11 +22,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "securitywidget_p.h"
 
-SecurityWidgetPrivate::SecurityWidgetPrivate()
-: valid(true)
-{
-}
-
 SecurityWidget::SecurityWidget(Knm::Connection* connection,  QWidget * parent)
 : QWidget(parent), d_ptr(new SecurityWidgetPrivate)
 {
@@ -43,18 +38,5 @@ SecurityWidget::~SecurityWidget()
 {
     delete d_ptr;
 }
-
-bool SecurityWidget::isValid() const
-{
-    Q_D(const SecurityWidget);
-    return d->valid;
-}
-
-void SecurityWidget::setValid(bool valid)
-{
-    Q_D(SecurityWidget);
-    d->valid = valid;
-}
-
 
 // vim: sw=4 sts=4 et tw=100

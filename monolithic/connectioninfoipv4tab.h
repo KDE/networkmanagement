@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtGui>
 
 #include <solid/control/networkinterface.h>
-#include <solid/control/networkipv4config.h>
+#include <solid/control/networkipv4confignm09.h>
 
 /**
  * Tab for ConnectionInfoDialog, that shows IP details

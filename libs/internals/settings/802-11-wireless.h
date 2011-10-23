@@ -21,10 +21,11 @@ class KNMINTERNALS_EXPORT WirelessSetting : public Setting
     class EnumBand
     {
       public:
-      enum type { a, bg, COUNT };
+      enum type { automatic, a, bg, COUNT };
     };
 
     WirelessSetting( );
+    WirelessSetting(WirelessSetting *);
     ~WirelessSetting();
 
     QString name() const;
@@ -159,31 +160,20 @@ class KNMINTERNALS_EXPORT WirelessSetting : public Setting
       return mMacaddress;
     }
 
-    QString macaddressAsString() const
+    /**
+     *  Set cloned MAC Address
+     */
+    void setClonedmacaddress( const QByteArray & v )
     {
-     QStringList mac;
-
-     for (int i=0; i < mMacaddress.size(); i++)
-     {
-        mac << QString("%1").arg((quint8)mMacaddress[i], 2, 16, QLatin1Char('0')).toUpper();
-     }
-
-     return mac.join(":");
+        mClonedmacaddress = v;
     }
 
-    void setMacaddressFromString( const QString & s)
+    /**
+     *  Get cloned MAC Address
+     */
+    QByteArray clonedmacaddress()
     {
-        QStringList macStringList = s.split(":");
-        QByteArray ba;
-        if (!s.isEmpty())
-        {
-            ba.resize(6);
-            int i = 0;
-
-            foreach (QString macPart, macStringList)
-                ba[i++] = macPart.toUInt(0, 16);
-        }
-        setMacaddress(ba);
+        return mClonedmacaddress;
     }
 
     /**
@@ -245,6 +235,7 @@ class KNMINTERNALS_EXPORT WirelessSetting : public Setting
     uint mRate;
     uint mTxpower;
     QByteArray mMacaddress;
+    QByteArray mClonedmacaddress;
     uint mMtu;
     QStringList mSeenbssids;
     QString mSecurity;

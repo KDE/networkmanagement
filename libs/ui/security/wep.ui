@@ -38,7 +38,7 @@
      </item>
     </widget>
    </item>
-   <item row="2" column="2">
+   <item row="1" column="2">
     <widget class="KLineEdit" name="key">
      <property name="inputMask">
       <string notr="true"/>
@@ -48,7 +48,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
+   <item row="3" column="0" colspan="2">
     <widget class="QLabel" name="weptxkeyindexLabel">
      <property name="text">
       <string>&amp;WEP index:</string>
@@ -61,7 +61,7 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="2">
+   <item row="3" column="2">
     <widget class="KComboBox" name="weptxkeyindex">
      <item>
       <property name="text">
@@ -85,7 +85,7 @@
      </item>
     </widget>
    </item>
-   <item row="5" column="0" colspan="2">
+   <item row="4" column="0" colspan="2">
     <widget class="QLabel" name="authalgLabel">
      <property name="text">
       <string>&amp;Authentication:</string>
@@ -98,7 +98,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="2">
+   <item row="4" column="2">
     <widget class="KComboBox" name="authalg">
      <item>
       <property name="text">
@@ -112,7 +112,7 @@
      </item>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="1" column="1">
     <widget class="QLabel" name="keyLabel">
      <property name="text">
       <string>&amp;Key:</string>
@@ -125,7 +125,7 @@
      </property>
     </widget>
    </item>
-   <item row="7" column="2">
+   <item row="6" column="2">
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -138,23 +138,7 @@
      </property>
     </spacer>
    </item>
-   <item row="1" column="0" colspan="2">
-    <widget class="QLabel" name="passphraseLabel">
-     <property name="text">
-      <string>&amp;Passphrase:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>passphrase</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="2">
-    <widget class="QLineEdit" name="passphrase"/>
-   </item>
-   <item row="3" column="2">
+   <item row="2" column="2">
     <widget class="QCheckBox" name="chkShowPass">
      <property name="text">
       <string>&amp;Show password</string>
@@ -177,7 +161,6 @@
  </customwidgets>
  <tabstops>
   <tabstop>keyType</tabstop>
-  <tabstop>passphrase</tabstop>
   <tabstop>key</tabstop>
   <tabstop>chkShowPass</tabstop>
   <tabstop>weptxkeyindex</tabstop>

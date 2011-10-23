@@ -38,7 +38,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class SortedActivatableListPrivate : public ActivatableListPrivate
 {
 public:
-    Solid::Control::NetworkInterface::Types types;
+    Solid::Control::NetworkInterfaceNm09::Types types;
+    QHash<Solid::Control::NetworkInterfaceNm09::Type, int> solidTypesToOrder;
 };
 
 // sorting activatables
@@ -56,7 +57,7 @@ public:
 // QAction::addAction/removeAction
 // resort everything or just find correct place for changed item?
 //   (save pointer to last active connection?)
-// make lists of 
+// make lists of
 // k
 
 bool activatableLessThan(const Knm::Activatable * first, const Knm::Activatable * second);
@@ -76,19 +77,26 @@ int compareSsid(const Knm::WirelessObject * first, const Knm::WirelessObject * s
 /* SortedActivatableList */
 
 SortedActivatableList::WirelessSortPolicy SortedActivatableList::s_wirelessSortPolicy = SortedActivatableList::WirelessSortByStrength;
+QHash<Solid::Control::NetworkInterfaceNm09::Types, int> SortedActivatableList::s_solidTypesToOrder = QHash<Solid::Control::NetworkInterfaceNm09::Types, int>();
 
-SortedActivatableList::SortedActivatableList(Solid::Control::NetworkInterface::Types types, QObject * parent)
+SortedActivatableList::SortedActivatableList(Solid::Control::NetworkInterfaceNm09::Types types, QObject * parent)
     : ActivatableList(*new SortedActivatableListPrivate, parent)
 {
     Q_D(SortedActivatableList);
     d->types = types;
+    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Wifi, 0);
+    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Wimax, 1);
+    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Bluetooth, 2);
+    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Ethernet, 3);
+    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::Modem, 4);
+    s_solidTypesToOrder.insert(Solid::Control::NetworkInterfaceNm09::OlpcMesh, 5);
 }
 
 void SortedActivatableList::handleAdd(Knm::Activatable * activatable)
 {
     Q_D(SortedActivatableList);
     if (!d->activatables.contains(activatable)) {
-        Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable->deviceUni());
+        Solid::Control::NetworkInterfaceNm09 * iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(activatable->deviceUni());
         // add all vpn connections
         if ((iface && (d->types.testFlag(iface->type())))
                 || (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection)) {
@@ -169,13 +177,13 @@ bool activatableLessThan(const Knm::Activatable * first, const Knm::Activatable 
     // debug ends
 #endif
 
-    // order by device
-    int i = compareDevices(first, second);
+    // order by activatable type
+    int i = compareActivatableType(first, second);
 
-    // then by activatable type
-    if (i == 0) {
+    // then by device
+    if (i == 0 && !first->activatableType() != Knm::Activatable::VpnInterfaceConnection && !second->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
 //X         kDebug() << s1 << "and" << s2 << "are on the same device, comparing activatable type";
-        i = compareActivatableType(first, second);
+        i = compareDevices(first, second);
     }
 
     // then by state
@@ -247,21 +255,8 @@ int compareDevices(const Knm::Activatable * first, const Knm::Activatable * seco
         return 0;
     }
 
-    // VPN workaround for not having a real device
-    uint firstDevWeight = 0, secondDevWeight = 0;
-    if (first->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
-        firstDevWeight = 1;
-    }
-    if (second->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
-        secondDevWeight = 1;
-    }
-    if (firstDevWeight || secondDevWeight) {
-        return firstDevWeight - secondDevWeight;
-    }
-
-    // not VPN, therefore use the real logic
-    Solid::Control::NetworkInterface * firstIface = Solid::Control::NetworkManager::findNetworkInterface(first->deviceUni());
-    Solid::Control::NetworkInterface * secondIface = Solid::Control::NetworkManager::findNetworkInterface(second->deviceUni());
+    Solid::Control::NetworkInterfaceNm09 * firstIface = Solid::Control::NetworkManagerNm09::findNetworkInterface(first->deviceUni());
+    Solid::Control::NetworkInterfaceNm09 * secondIface = Solid::Control::NetworkManagerNm09::findNetworkInterface(second->deviceUni());
 
     if (firstIface != 0 && secondIface != 0) {
         if (firstIface->type() == secondIface->type()) {
@@ -270,6 +265,7 @@ int compareDevices(const Knm::Activatable * first, const Knm::Activatable * seco
             return (int)firstIface->type() - (int)secondIface->type();
         }
     }
+
     return 0;
 }
 

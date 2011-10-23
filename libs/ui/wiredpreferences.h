@@ -18,18 +18,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM07_WIRED_CONNECTION_PREFERENCES_H
-#define NM07_WIRED_CONNECTION_PREFERENCES_H
+#ifndef NM09_WIRED_CONNECTION_PREFERENCES_H
+#define NM09_WIRED_CONNECTION_PREFERENCES_H
 
 #include "connectionprefs.h"
 
 #include "knm_export.h"
-
-namespace Knm {
-
-    class Connection;
-} // namespace Knm
-
 
 /**
  * Configuration module for wired connections

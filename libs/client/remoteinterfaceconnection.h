@@ -40,7 +40,8 @@ Q_PROPERTY(uint type READ connectionType)
 Q_PROPERTY(QString uuid READ connectionUuid)
 Q_PROPERTY(QString name READ connectionName)
 Q_PROPERTY(uint activationState READ activationState)
-Q_PROPERTY(uint hasDefaultRoute READ hasDefaultRoute)
+Q_PROPERTY(uint oldActivationState READ oldActivationState)
+Q_PROPERTY(bool hasDefaultRoute READ hasDefaultRoute)
 
 friend class RemoteActivatableList;
 
@@ -59,12 +60,14 @@ public:
 
     Knm::InterfaceConnection::ActivationState activationState() const;
 
+    Knm::InterfaceConnection::ActivationState oldActivationState() const;
+
     void deactivate();
 Q_SIGNALS:
-    void activationStateChanged(Knm::InterfaceConnection::ActivationState);
+    void activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState);
     void hasDefaultRouteChanged(bool);
 protected Q_SLOTS:
-    void handleActivationStateChange(uint);
+    void handleActivationStateChange(uint, uint);
 protected:
     RemoteInterfaceConnection(const QString &dbusPath, QObject * parent);
     RemoteInterfaceConnection(RemoteInterfaceConnectionPrivate &dd, const QString &dbusPath, QObject * parent);

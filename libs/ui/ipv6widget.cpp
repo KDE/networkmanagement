@@ -78,9 +78,9 @@ IpV6Widget::IpV6Widget(Knm::Connection * connection, QWidget * parent)
     }
     else if (Knm::Connection::Pppoe == connType) {
         str_auto = i18nc("@item:inlistbox IPv6 settings configuration method",
-                         "Automatic (PPPoE)");
+                         "Automatic (DSL)");
         str_auto_only = i18nc("@item:inlistbox IPv6 settings configuration method",
-                              "Automatic (PPPoE) addresses only");
+                              "Automatic (DSL) addresses only");
     }
     else {
         str_auto = i18nc("@item:inlistbox IPv6 settings configuration method",

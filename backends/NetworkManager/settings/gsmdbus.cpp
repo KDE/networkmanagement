@@ -16,18 +16,21 @@ GsmDbus::~GsmDbus()
 void GsmDbus::fromMap(const QVariantMap & map)
 {
   Knm::GsmSetting * setting = static_cast<Knm::GsmSetting *>(m_setting);
-  if (map.contains("number")) {
-    setting->setNumber(map.value("number").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_GSM_NUMBER))) {
+    setting->setNumber(map.value(QLatin1String(NM_SETTING_GSM_NUMBER)).value<QString>());
   }
-  if (map.contains("username")) {
-    setting->setUsername(map.value("username").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_GSM_USERNAME))) {
+    setting->setUsername(map.value(QLatin1String(NM_SETTING_GSM_USERNAME)).value<QString>());
   }
   // SECRET
-  if (map.contains("password")) {
-    setting->setPassword(map.value("password").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_GSM_PASSWORD))) {
+    setting->setPassword(map.value(QLatin1String(NM_SETTING_GSM_PASSWORD)).value<QString>());
   }
-  if (map.contains("apn")) {
-    setting->setApn(map.value("apn").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_GSM_PASSWORD_FLAGS))) {
+      setting->setPasswordflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_GSM_PASSWORD_FLAGS)).value<int>());
+  }
+  if (map.contains(QLatin1String(NM_SETTING_GSM_APN))) {
+      setting->setApn(map.value(QLatin1String(NM_SETTING_GSM_APN)).value<QString>());
   }
   if (map.contains(QLatin1String(NM_SETTING_GSM_NETWORK_ID))) {
     setting->setNetworkid(map.value(QLatin1String(NM_SETTING_GSM_NETWORK_ID)).value<QString>());
@@ -35,15 +38,19 @@ void GsmDbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_GSM_NETWORK_TYPE))) {
     setting->setNetworktype(map.value(QLatin1String(NM_SETTING_GSM_NETWORK_TYPE)).value<int>());
   } else {
-      setting->setNetworktype(NM_GSM_NETWORK_ANY);
+    setting->setNetworktype(NM_SETTING_GSM_NETWORK_TYPE_ANY);
   }
-  if (map.contains("band")) {
-    setting->setBand(map.value("band").value<int>());
+  if (map.contains(QLatin1String(NM_SETTING_GSM_ALLOWED_BANDS))) {
+    setting->setBand(map.value(QLatin1String(NM_SETTING_GSM_ALLOWED_BANDS)).value<int>());
+  }
+  if (map.contains(QLatin1String(NM_SETTING_GSM_HOME_ONLY))) {
+    setting->setHomeonly(map.value(QLatin1String(NM_SETTING_GSM_HOME_ONLY)).value<bool>());
   }
   // SECRET
-  if (map.contains("pin")) {
-    setting->setPin(map.value("pin").value<QString>());
+  if (map.contains(QLatin1String(NM_SETTING_GSM_PIN))) {
+      setting->setPin(map.value(QLatin1String(NM_SETTING_GSM_PIN)).value<QString>());
   }
+  setting->setPinflags((Knm::Setting::secretsTypes)map.value(QLatin1String(NM_SETTING_GSM_PIN_FLAGS)).value<int>());
 }
 
 QVariantMap GsmDbus::toMap()
@@ -51,24 +58,23 @@ QVariantMap GsmDbus::toMap()
   QVariantMap map;
   Knm::GsmSetting * setting = static_cast<Knm::GsmSetting *>(m_setting);
   if (!setting->number().isEmpty())
-      map.insert("number", setting->number());
+      map.insert(QLatin1String(NM_SETTING_GSM_NUMBER), setting->number());
   if (!setting->username().isEmpty())
-      map.insert("username", setting->username());
+      map.insert(QLatin1String(NM_SETTING_GSM_USERNAME), setting->username());
   if (!setting->apn().isEmpty())
-      map.insert("apn", setting->apn());
+      map.insert(QLatin1String(NM_SETTING_GSM_APN), setting->apn());
   if (!setting->networkid().isEmpty())
       map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_ID), setting->networkid());
-  if (setting->networktype() != NM_GSM_NETWORK_ANY) {
+  if (setting->networktype() != NM_SETTING_GSM_NETWORK_TYPE_ANY) {
       map.insert(QLatin1String(NM_SETTING_GSM_NETWORK_TYPE), setting->networktype());
   }
+  insertIfTrue(map, NM_SETTING_GSM_HOME_ONLY, setting->homeonly());
 
-  // SECRET
-  if(!setting->pin().isEmpty())
-      map.insert("pin", setting->pin());
-
-  // SECRET
-  if(!setting->password().isEmpty())
-      map.insert("password", setting->password());
+  map.unite(toSecretsMap());
+  if (!setting->password().isEmpty()) {
+      map.insert(QLatin1String(NM_SETTING_GSM_PASSWORD_FLAGS), (int)setting->passwordflags());
+  }
+  map.insert(QLatin1String(NM_SETTING_GSM_PIN_FLAGS), (int)setting->pinflags());
 
   //map.insert("band", setting->band());
   return map;
@@ -79,9 +85,9 @@ QVariantMap GsmDbus::toSecretsMap()
   QVariantMap map;
   Knm::GsmSetting * setting = static_cast<Knm::GsmSetting *>(m_setting);
   if (!setting->password().isEmpty())
-      map.insert("password", setting->password());
+      map.insert(QLatin1String(NM_SETTING_GSM_PASSWORD), setting->password());
   if (!setting->pin().isEmpty())
-      map.insert("pin", setting->pin());
+      map.insert(QLatin1String(NM_SETTING_GSM_PIN), setting->pin());
   return map;
 }
 

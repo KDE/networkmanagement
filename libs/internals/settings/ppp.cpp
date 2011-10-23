@@ -5,8 +5,30 @@
 
 using namespace Knm;
 
-PppSetting::PppSetting() : Setting(Setting::Ppp), mNoauth(false), mRefuseeap(false), mRefusepap(false), mRefusechap(false), mRefusemschap(false), mRefusemschapv2(false), mNobsdcomp(false), mNodeflate(false), mNovjcomp(false), mRequiremppe(false), mRequiremppe128(false), mMppestateful(false), mCrtscts(false), mBaud(0), mMru(0), mMtu(0), mLcpechofailure(0), mLcpechointerval(0)
+PppSetting::PppSetting() : Setting(Setting::Ppp), mNoauth(true), mRefuseeap(false), mRefusepap(false), mRefusechap(false), mRefusemschap(false), mRefusemschapv2(false), mNobsdcomp(false), mNodeflate(false), mNovjcomp(false), mRequiremppe(false), mRequiremppe128(false), mMppestateful(false), mCrtscts(false), mBaud(0), mMru(0), mMtu(0), mLcpechofailure(0), mLcpechointerval(0)
 {
+}
+
+PppSetting::PppSetting(PppSetting *setting) : Setting(setting)
+{
+    setNoauth(setting->noauth());
+    setRefuseeap(setting->refuseeap());
+    setRefusepap(setting->refusepap());
+    setRefusechap(setting->refusechap());
+    setRefusemschap(setting->refusemschap());
+    setRefusemschapv2(setting->refusemschapv2());
+    setNobsdcomp(setting->nobsdcomp());
+    setNodeflate(setting->nodeflate());
+    setNovjcomp(setting->novjcomp());
+    setRequiremppe(setting->requiremppe());
+    setRequiremppe128(setting->requiremppe128());
+    setMppestateful(setting->mppestateful());
+    setCrtscts(setting->crtscts());
+    setBaud(setting->baud());
+    setMru(setting->mru());
+    setMtu(setting->mtu());
+    setLcpechofailure(setting->lcpechofailure());
+    setLcpechointerval(setting->lcpechointerval());
 }
 
 PppSetting::~PppSetting()

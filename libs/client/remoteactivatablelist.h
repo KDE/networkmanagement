@@ -43,15 +43,17 @@ public:
      * @param interface the Solid::Control::NetworkInterface state
      * @param activatables the RemoteActivatableList of all connections
      */
-    RemoteInterfaceConnection* connectionForInterface(Solid::Control::NetworkInterface *interface);
+    RemoteInterfaceConnection* connectionForInterface(Solid::Control::NetworkInterfaceNm09 *interface);
+
+    static bool isConnectionForInterface(RemoteActivatable *activatable, Solid::Control::NetworkInterfaceNm09 *interface);
 
 Q_SIGNALS:
-    void activatableAdded(RemoteActivatable*);
+    void activatableAdded(RemoteActivatable*, int);
     void activatableRemoved(RemoteActivatable*);
     void appeared();
     void disappeared();
 protected Q_SLOTS:
-    void handleActivatableAdded(const QString &, uint);
+    void handleActivatableAdded(const QString &, uint, int);
     void handleActivatableRemoved(const QString &);
     void serviceOwnerChanged(const QString&, const QString&, const QString&);
 private:

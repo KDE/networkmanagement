@@ -13,67 +13,37 @@ include_directories(
 
 set(knminternals_SRCS
    connection.cpp
-   #connectiondbus.cpp
-   connectionpersistence.cpp
 
    setting.cpp
-   #settingdbus.cpp
-   settingpersistence.cpp
 
    #settings/pbkdf2.cpp
    #settings/wephash.cpp
 
    settings/802-11-wireless-security.cpp
-   #settings/802-11-wireless-securitydbus.cpp
-   settings/802-11-wireless-securitypersistence.cpp
 
    settings/802-11-wireless.cpp
-   #settings/802-11-wirelessdbus.cpp
-   settings/802-11-wirelesspersistence.cpp
 
    settings/802-3-ethernet.cpp
-   #settings/802-3-ethernetdbus.cpp
-   settings/802-3-ethernetpersistence.cpp
 
    settings/802-1x.cpp
-   #settings/802-1xdbus.cpp
-   settings/802-1xpersistence.cpp
 
    settings/gsm.cpp
-   #settings/gsmdbus.cpp
-   settings/gsmpersistence.cpp
 
    settings/cdma.cpp
-   #settings/cdmadbus.cpp
-   settings/cdmapersistence.cpp
 
    settings/ipv4.cpp
-   #settings/ipv4dbus.cpp
-   settings/ipv4persistence.cpp
 
    settings/ipv6.cpp
-   #settings/ipv6dbus.cpp
-   settings/ipv6persistence.cpp
 
    settings/ppp.cpp
-   #settings/pppdbus.cpp
-   settings/ppppersistence.cpp
 
    settings/pppoe.cpp
-   #settings/pppoedbus.cpp
-   settings/pppoepersistence.cpp
 
    settings/serial.cpp
-   #settings/serialdbus.cpp
-   settings/serialpersistence.cpp
 
    settings/vpn.cpp
-   #settings/vpndbus.cpp
-   settings/vpnpersistence.cpp
 
    settings/bluetooth.cpp
-   #settings/bluetoothdbus.cpp
-   settings/bluetoothpersistence.cpp
 
    activatable.cpp
    interfaceconnection.cpp
@@ -105,7 +75,7 @@ kde4_add_kcfg_files(knminternals_SRCS knmserviceprefs.kcfgc)
 
 kde4_add_library(knminternals SHARED ${knminternals_SRCS})
 
-target_link_libraries(knminternals knmclient solidcontrolfuture ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_SOLID_LIBS} solidcontrol ${QT_QTNETWORK_LIBRARY})
+target_link_libraries(knminternals knmclient solidcontrolfuture ${KDE4_KDEUI_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_SOLID_LIBS} solidcontrol solidcontrolnm09 ${QT_QTNETWORK_LIBRARY})
 
 set_target_properties(knminternals PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}

@@ -18,18 +18,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM07_MANAGE_CONNECTION_WIDGET_H
-#define NM07_MANAGE_CONNECTION_WIDGET_H
+#ifndef NM09_MANAGE_CONNECTION_WIDGET_H
+#define NM09_MANAGE_CONNECTION_WIDGET_H
 
 #include <QHash>
 
 #include <KCModule>
 
-#include "connectionpersistence.h"
 #include "connectioneditor.h"
 #include "connectionlist.h"
 #include "nmdbussettingsconnectionprovider.h"
-#include "nmdbussettingsservice.h"
 
 #include "internals/settings/ipv4.h"
 
@@ -61,8 +59,8 @@ public slots:
      */
     void activeConnectionsChanged();
 private slots:
-    /**
-     * Add a new connection
+    /** 
+     * Add a new connection 
      */
     void addClicked();
     /**
@@ -72,7 +70,7 @@ private slots:
     /**
      * Called when GetSecrets call of Connection.Secrets interface is arrived
      */
-    void editGotSecrets(bool valid, const QString &errorMessage);
+    void editGotSecrets(bool valid, const QString &errorMessage, const QString &);
     void addGotConnection(bool valid, const QString &errorMessage);
     /**
      * Delete selected connection
@@ -104,7 +102,6 @@ private slots:
      */
     void updateLastUsed();
 
-    void gotSecrets(uint result);
 private:
     /**
      * Get the connection type of the currently selected index
@@ -125,16 +122,14 @@ private:
 
     bool event(QEvent *ev);
 
-    void restoreUserConnections();
-
     Ui_ManageConnectionWidget mConnEditUi;
     QTreeWidget * mWiredList;
+    Knm::Connection * mEditConnection;
     QMenu * mWiredMenu;
     QMenu * mWirelessMenu;
     QMenu * mCellularMenu;
     QMenu * mVpnMenu;
     ConnectionEditor * mEditor;
-    Knm::Connection * mEditConnection;
     QHash<QString,QTreeWidgetItem*> mUuidItemHash;
     QTimer * mLastUsedTimer;
     MobileConnectionWizard * mMobileConnectionWizard;
@@ -146,6 +141,11 @@ private:
     ConnectionList * mConnections;
 
     /**
+     * ConnectionProvider to add/remove/update user wide settings
+     */
+    NMDBusSettingsConnectionProvider *mUserSettings;
+
+    /**
      * ConnectionProvider to add/remove/update system wide settings
      */
     NMDBusSettingsConnectionProvider *mSystemSettings;
@@ -154,18 +154,13 @@ private:
      * Connect add/edit/delete button signals to relevant slots
      */
     void connectButtonSet(AddEditDeleteButtonSet*, QTreeWidget*);
-    Knm::ConnectionPersistence *connectionPersistence;
-    void loadConnection(Knm::Connection *con);
-    void saveConnection(Knm::Connection *con);
-    bool deleteConnection(QString id, Knm::Connection::Scope scope, Knm::Connection::Type type);
 
     /**
-     * Inform kded module about changed connection and update our
-     * connections list in UI
+     * This variable will contain all file extensions supported for
+     * import by all VPN plugins. The extensions are separated by space,
+     * e.g '*.pcf *.ovpn' and are used in KFileDialog on selecting file to import
      */
-    void updateServiceAndUi(QString id, Knm::Connection::Scope scope);
-    void updateServiceAndUi(Knm::Connection *con);
-    Knm::Connection::Scope oldScope;
+    QString mSupportedExtns;
 };
 
-#endif // NM07_MANAGE_CONNECTION_WIDGET_H
+#endif // NM09_MANAGE_CONNECTION_WIDGET_H

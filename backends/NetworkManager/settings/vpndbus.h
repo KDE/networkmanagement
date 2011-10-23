@@ -8,12 +8,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
-#include "nm07dbus_export.h"
+#include "nm09dbus_export.h"
 namespace Knm{
     class VpnSetting;
 }
 
-class NM07DBUS_EXPORT VpnDbus : public SettingDbus
+class NM09DBUS_EXPORT VpnDbus : public SettingDbus
 {
   public:
     VpnDbus(Knm::VpnSetting * setting);

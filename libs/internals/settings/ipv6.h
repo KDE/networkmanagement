@@ -19,10 +19,11 @@ class KNMINTERNALS_EXPORT Ipv6Setting : public Setting
     class EnumMethod
     {
       public:
-      enum type { Automatic, LinkLocal, Manual, Shared, Ignore, COUNT };
+      enum type { Automatic, LinkLocal, Manual, Shared, Ignore, Dhcp, COUNT };
     };
 
     Ipv6Setting( );
+    Ipv6Setting(Ipv6Setting *);
     ~Ipv6Setting();
 
     QString name() const;

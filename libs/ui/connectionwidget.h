@@ -46,7 +46,6 @@ public:
     ConnectionWidget(QWidget * parent = 0);
     ~ConnectionWidget();
 
-    void setConnection(Knm::Connection * connection);
     QTabWidget * connectionSettingsWidget();
     QString settingName() const;
 
@@ -65,8 +64,8 @@ public:
 public Q_SLOTS:
     void setDefaultName(const QString & defaultName);
 
-private slots:
-    void buttonChooseIconClicked();
+private Q_SLOTS:
+    void buttonPermissionsClicked();
 };
 
 #endif // CONNECTIONWIDGET_H

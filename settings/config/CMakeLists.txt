@@ -22,14 +22,7 @@ set(kcm_networkmanagement_SRCS
 kde4_add_ui_files(kcm_networkmanagement_SRCS manageconnectionwidget.ui)
 kde4_add_plugin(kcm_networkmanagement ${kcm_networkmanagement_SRCS})
 
-target_link_libraries(kcm_networkmanagement knm_nm knmui knminternals knmservice solidcontrol ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_KNOTIFYCONFIG_LIBRARY} ${KDE4_KIO_LIBS})
-
-macro_ensure_version("4.4.76" ${KDE_VERSION} IS45)
-if (IS45)
-   target_link_libraries(kcm_networkmanagement ${KDE4_KCMUTILS_LIBS})
-else (IS45)
-   target_link_libraries(kcm_networkmanagement ${KDE4_KUTILS_LIBS})
-endif (IS45)
+target_link_libraries(kcm_networkmanagement knm_nm knmui knminternals knmservice solidcontrol solidcontrolnm09 ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS} ${QT_QTXML_LIBRARY} ${KDE4_KNOTIFYCONFIG_LIBRARY} ${KDE4_KIO_LIBS} ${KDE4_KCMUTILS_LIBS})
 
 ## next target: tray config KCM
 
@@ -42,7 +35,7 @@ set(kcm_networkmanagement_tray_SRCS
 kde4_add_ui_files(kcm_networkmanagement_tray_SRCS othersettings.ui othersettings.ui)
 kde4_add_plugin(kcm_networkmanagement_tray ${kcm_networkmanagement_tray_SRCS})
 
-target_link_libraries(kcm_networkmanagement_tray knminternals ${KDE4_KDEUI_LIBS} ${KDE4_KNOTIFYCONFIG_LIBRARY})
+target_link_libraries(kcm_networkmanagement_tray knminternals knmservice ${KDE4_KDEUI_LIBS} ${KDE4_KNOTIFYCONFIG_LIBRARY})
 
 install(TARGETS kcm_networkmanagement kcm_networkmanagement_tray DESTINATION ${PLUGIN_INSTALL_DIR})
 

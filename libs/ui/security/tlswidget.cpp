@@ -21,13 +21,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "tlswidget.h"
 
-#include "connection.h"
-#include "settings/802-1x.h"
+#include "editlistdialog.h"
+#include "listvalidator.h"
 
+#include <connection.h>
+#include <settings/802-1x.h>
+#include <knmserviceprefs.h>
+
+#include "../../../libs/internals/paths.h"
 #include "eapmethod_p.h"
-
-#include <kfiledialog.h>
-#include <KUser>
 
 class TlsWidgetPrivate : public EapMethodPrivate
 {
@@ -38,21 +40,45 @@ public:
 
     }
     bool inner;
-    enum Certs {ClientCert = 0, CACert, PrivateKey};
+    bool showAdvancedSettings;
+    QRegExpValidator *altSubjectValidator;
+    QRegExpValidator *serversValidator;
 };
 
 TlsWidget::TlsWidget(bool isInnerMethod, Knm::Connection* connection, QWidget * parent)
 : EapMethod(*new TlsWidgetPrivate(isInnerMethod), connection, parent)
 {
+    Q_D(TlsWidget);
     setupUi(this);
-    connect(chkUseSystemCaCerts,SIGNAL(toggled(bool)),this,SLOT(toggleSystemCa(bool)));
+    d->altSubjectValidator = new QRegExpValidator(QRegExp(QLatin1String("^(DNS:[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|EMAIL:[a-zA-Z0-9._-]+@[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+|URI:[a-zA-Z0-9._-]+:.+)$")), this);
+    d->serversValidator = new QRegExpValidator(QRegExp(QLatin1String("^[a-zA-Z0-9_-]+\\.[a-zA-Z0-9_.-]+$")), this);
 
-    connect(clientCertLoad,SIGNAL(clicked()),this,SLOT(loadCert()));
-    connect(caCertLoad,SIGNAL(clicked()),this,SLOT(loadCert()));
-    connect(privateKeyLoad,SIGNAL(clicked()),this,SLOT(loadCert()));
-    clientCertLoad->setIcon(KIcon("document-open"));
-    caCertLoad->setIcon(KIcon("document-open"));
-    privateKeyLoad->setIcon(KIcon("document-open"));
+    ListValidator *altSubjectValidator = new ListValidator(this);
+    altSubjectValidator->setInnerValidator(d->altSubjectValidator);
+    leAltSubjectMatches->setValidator(altSubjectValidator);
+
+    ListValidator *serversValidator = new ListValidator(this);
+    serversValidator->setInnerValidator(d->serversValidator);
+    leConnectToTheseServers->setValidator(d->serversValidator);
+
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
+    KNetworkManagerServicePrefs::self()->readConfig();
+    d->showAdvancedSettings = KNetworkManagerServicePrefs::self()->showAdvancedSettings();
+    if (d->showAdvancedSettings) {
+        lblConnectToTheseServers->hide();
+        leConnectToTheseServers->hide();
+        connectToTheseServersMoreBtn->hide();
+        connect(altSubjectMatchesMoreBtn, SIGNAL(clicked()), this, SLOT(showAltSubjectMatchesEditor()));
+    } else {
+        lblSubjectMatch->hide();
+        leSubjectMatch->hide();
+        lblAltSubjectMatches->hide();
+        leAltSubjectMatches->hide();
+        altSubjectMatchesMoreBtn->hide();
+        connect(connectToTheseServersMoreBtn, SIGNAL(clicked()), this, SLOT(showServersEditor()));
+    }
+
+    connect(cmbPrivateKeyPasswordStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(privateKeyPasswordStorageChanged(int)));
 }
 
 TlsWidget::~TlsWidget()
@@ -72,25 +98,52 @@ void TlsWidget::readConfig()
     QString value;
     if (d->setting->useSystemCaCerts()) {
         chkUseSystemCaCerts->setChecked(true);
-        caCertLoad->setEnabled(false);
+        kurCaCert->setEnabled(false);
+        kurClientCert->clear();
     } else {
-        if (!d->setting->cacert().isEmpty()) {
-            setText(d->CACert,true);
+
+        if (d->inner) {
+            value = d->setting->phase2cacertasstring();
         } else {
-            setText(d->CACert,false);
+            value = d->setting->cacertasstring();
         }
+        if (!value.isEmpty())
+            kurCaCert->setUrl(value);
     }
 
-    if (!d->setting->clientcert().isEmpty()) {
-        setText(d->ClientCert,true);
+    if (d->inner) {
+        value = d->setting->phase2clientcertasstring();
     } else {
-        setText(d->ClientCert,false);
+        value = d->setting->clientcertasstring();
     }
+    if (!value.isEmpty())
+        kurClientCert->setUrl(value);
 
-    if (!d->setting->privatekey().isEmpty()) {
-        setText(d->PrivateKey,true);
+    if (d->inner) {
+        value = d->setting->phase2privatekeyasstring();
     } else {
-        setText(d->PrivateKey,false);
+        value = d->setting->privatekeyasstring();
+    }
+    if (!value.isEmpty())
+        kurPrivateKey->setUrl(value);
+
+    QStringList altsubjectmatches;
+    if (d->inner) {
+        leSubjectMatch->setText(d->setting->phase2subjectmatch());
+        altsubjectmatches = d->setting->phase2altsubjectmatches();
+    }
+    else {
+        leSubjectMatch->setText(d->setting->subjectmatch());
+        altsubjectmatches = d->setting->altsubjectmatches();
+    }
+    leAltSubjectMatches->setText(altsubjectmatches.join(QLatin1String(", ")));
+    if (!d->showAdvancedSettings) {
+        QStringList servers;
+        foreach (const QString &match, altsubjectmatches) {
+            if (match.startsWith(QLatin1String("DNS:")))
+                servers.append(match.right(match.length()-4));
+        }
+        leConnectToTheseServers->setText(servers.join(QLatin1String(", ")));
     }
 }
 
@@ -100,19 +153,9 @@ void TlsWidget::writeConfig()
     if (!d->inner) {
         // make it TLS
         d->setting->setEapFlags(Knm::Security8021xSetting::tls);
-        d->setting->addToCertToDelete(Knm::Security8021xSetting::Phase2CACert);
-        d->setting->addToCertToDelete(Knm::Security8021xSetting::Phase2ClientCert);
-        d->setting->addToCertToDelete(Knm::Security8021xSetting::Phase2PrivateKey);
-        d->setting->setPhase2cacerttoimport("");
-        d->setting->setPhase2clientcerttoimport("");
-        d->setting->setPhase2privatekeytoimport("");
+        d->setting->setPrivatekeypassword(lePrivateKeyPassword->text());
     } else {
-        d->setting->addToCertToDelete(Knm::Security8021xSetting::CACert);
-        d->setting->addToCertToDelete(Knm::Security8021xSetting::ClientCert);
-        d->setting->addToCertToDelete(Knm::Security8021xSetting::PrivateKey);
-        d->setting->setCacerttoimport("");
-        d->setting->setClientcerttoimport("");
-        d->setting->setPrivatekeytoimport("");
+        d->setting->setPhase2privatekeypassword(lePrivateKeyPassword->text());
     }
 
     // TLS specifics
@@ -122,20 +165,100 @@ void TlsWidget::writeConfig()
     KUrl url;
     if (chkUseSystemCaCerts->isChecked()) {
         d->setting->setUseSystemCaCerts(true);
-        d->setting->addToCertToDelete(Knm::Security8021xSetting::CACert);
-        d->setting->addToCertToDelete(Knm::Security8021xSetting::Phase2CACert);
+        d->setting->setPhase2capath(QByteArray());
+        d->setting->setCapath(QByteArray());
     } else {
-        d->setting->setUseSystemCaCerts(false);
+        url = kurCaCert->url();
+        if (!url.directory().isEmpty() && !url.fileName().isEmpty()) {
+            QString path = url.path();
+            if (d->inner) {
+                d->setting->setPhase2cacert(path);
+            } else {
+                d->setting->setCacert(path);
+            }
+        }
+    }
+
+    url = kurClientCert->url();
+    if (!url.directory().isEmpty() && !url.fileName().isEmpty()) {
+        QString path = url.path();
+        if (d->inner) {
+            d->setting->setPhase2clientcert(path);
+        } else {
+            d->setting->setClientcert(path);
+        }
+    }
+
+    url = kurPrivateKey->url();
+    if (!url.directory().isEmpty() && !url.fileName().isEmpty()) {
+        QString path = url.path();
+        if (d->inner) {
+            d->setting->setPhase2privatekey(path);
+        } else {
+            d->setting->setPrivatekey(path);
+        }
+    }
+
+    switch (cmbPrivateKeyPasswordStorage->currentIndex()) {
+        case EapMethodPrivate::Store:
+            if (d->inner) {
+                d->setting->setPhase2privatekeypassword(lePrivateKeyPassword->text());
+                if (!d->connection->permissions().isEmpty())
+                    d->setting->setPhase2privatekeypasswordflags(Knm::Setting::AgentOwned);
+                else
+                    d->setting->setPhase2privatekeypasswordflags(Knm::Setting::None);
+            } else {
+                d->setting->setPrivatekeypassword(lePrivateKeyPassword->text());
+                if (!d->connection->permissions().isEmpty())
+                    d->setting->setPrivatekeypasswordflags(Knm::Setting::AgentOwned);
+                else
+                    d->setting->setPrivatekeypasswordflags(Knm::Setting::None);
+            }
+            break;
+        case EapMethodPrivate::AlwaysAsk:
+            d->inner ? d->setting->setPhase2privatekeypasswordflags(Knm::Setting::NotSaved) : d->setting->setPrivatekeypasswordflags(Knm::Setting::NotSaved);
+            break;
+        case EapMethodPrivate::NotRequired:
+            d->inner ? d->setting->setPhase2privatekeypasswordflags(Knm::Setting::NotRequired) : d->setting->setPrivatekeypasswordflags(Knm::Setting::NotRequired);
+            break;
+    }
+
+    QStringList altsubjectmatches = leAltSubjectMatches->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts);
+    if (!d->showAdvancedSettings) {
+        foreach (const QString &match, leConnectToTheseServers->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts)) {
+            QString tempstr = QLatin1String("DNS:") + match;
+            if (!altsubjectmatches.contains(tempstr))
+                altsubjectmatches.append(tempstr);
+        }
+    }
+    if (d->inner) {
+        d->setting->setPhase2subjectmatch(leSubjectMatch->text());
+        d->setting->setPhase2altsubjectmatches(altsubjectmatches);
+    } else {
+        d->setting->setSubjectmatch(leSubjectMatch->text());
+        d->setting->setAltsubjectmatches(altsubjectmatches);
     }
 }
 
 void TlsWidget::readSecrets()
 {
     Q_D(TlsWidget);
+    QString password;
+    Knm::Setting::secretsTypes flags;
     if (d->inner) {
-        lePrivateKeyPassword->setText(d->setting->phase2privatekeypassword());
+        password = d->setting->phase2privatekeypassword();
+        flags = d->setting->phase2privatekeypasswordflags();
     } else {
-        lePrivateKeyPassword->setText(d->setting->privatekeypassword());
+        password = d->setting->privatekeypassword();
+        flags = d->setting->privatekeypasswordflags();
+    }
+    if (flags.testFlag(Knm::Setting::AgentOwned) || flags.testFlag(Knm::Setting::None)) {
+        lePrivateKeyPassword->setText(password);
+        cmbPrivateKeyPasswordStorage->setCurrentIndex(EapMethodPrivate::Store);
+    } else if (flags.testFlag(Knm::Setting::NotSaved)) {
+        cmbPrivateKeyPasswordStorage->setCurrentIndex(EapMethodPrivate::AlwaysAsk);
+    } else if (flags.testFlag(Knm::Setting::NotRequired)) {
+        cmbPrivateKeyPasswordStorage->setCurrentIndex(EapMethodPrivate::NotRequired);
     }
 }
 
@@ -144,96 +267,40 @@ void TlsWidget::setShowPasswords(bool on)
     lePrivateKeyPassword->setPasswordMode(!on);
 }
 
-void TlsWidget::loadCert()
+void TlsWidget::privateKeyPasswordStorageChanged(int type)
 {
-    Q_D(TlsWidget);
-    QString objectname = sender()->objectName();
-    if (d->inner) {
-        if (objectname == QLatin1String("clientCertLoad")) {
-            QString newcert = KFileDialog::getOpenFileName(KUser().homeDir(),"",this,i18nc("File chooser dialog title for certificate loading","Load Certificate"));
-            if (!newcert.isEmpty()) {
-                d->setting->setPhase2clientcerttoimport(newcert);
-                setText(d->ClientCert,true);
-            }
-        } else if (objectname == QLatin1String("caCertLoad")) {
-            QString newcert = KFileDialog::getOpenFileName(KUser().homeDir(),"",this,i18nc("File chooser dialog title for certificate loading","Load Certificate"));
-            if (!newcert.isEmpty()) {
-                d->setting->setPhase2cacerttoimport(newcert);
-                setText(d->CACert,true);
-            }
-        } else if (objectname == QLatin1String("privateKeyLoad")) {
-            QString newcert = KFileDialog::getOpenFileName(KUser().homeDir(),"",this,i18nc("File chooser dialog title for certificate loading","Load Certificate"));
-            if (!newcert.isEmpty()) {
-                d->setting->setPhase2privatekeytoimport(newcert);
-                setText(d->PrivateKey,true);
-            }
-        }
-    } else {
-        if (objectname == QLatin1String("clientCertLoad")) {
-            QString newcert = KFileDialog::getOpenFileName(KUser().homeDir(),"",this,i18nc("File chooser dialog title for certificate loading","Load Certificate"));
-            if (!newcert.isEmpty()) {
-                d->setting->setClientcerttoimport(newcert);
-                setText(d->ClientCert,true);
-            }
-        } else if (objectname == QLatin1String("caCertLoad")) {
-            QString newcert = KFileDialog::getOpenFileName(KUser().homeDir(),"",this,i18nc("File chooser dialog title for certificate loading","Load Certificate"));
-            if (!newcert.isEmpty()) {
-                d->setting->setCacerttoimport(newcert);
-                setText(d->CACert,true);
-            }
-        } else if (objectname == QLatin1String("privateKeyLoad")) {
-            QString newcert = KFileDialog::getOpenFileName(KUser().homeDir(),"",this,i18nc("File chooser dialog title for certificate loading","Load Certificate"));
-            if (!newcert.isEmpty()) {
-                d->setting->setPrivatekeytoimport(newcert);
-                setText(d->PrivateKey,true);
-            }
-        }
-    }
-}
-
-void TlsWidget::toggleSystemCa(bool toggled)
-{
-    Q_D(TlsWidget);
-    if (toggled)
-        setText(TlsWidgetPrivate::CACert,false);
-    else if (d->inner && !d->setting->phase2cacert().isEmpty())
-        setText(TlsWidgetPrivate::CACert,true);
-    else if (!d->setting->cacert().isEmpty())
-        setText(TlsWidgetPrivate::CACert,true);
-}
-
-void TlsWidget::setText(int cert, bool loaded)
-{
-    KPushButton *button;
-    QLabel *label;
-    KLed *led;
-    switch (cert)
+    switch (type)
     {
-        case TlsWidgetPrivate::ClientCert:
-            button = clientCertLoad;
-            label = clientCertLoadedLabel;
-            led = clientCertLed;
+        case EapMethodPrivate::Store:
+            lePrivateKeyPassword->setEnabled(true);
             break;
-        case TlsWidgetPrivate::CACert:
-            button = caCertLoad;
-            label = caCertLoadedLabel;
-            led = caCertLed;
-            break;
-        case TlsWidgetPrivate::PrivateKey:
         default:
-            button = privateKeyLoad;
-            label = privateKeyLoadedLabel;
-            led = privateKeyLed;
+            lePrivateKeyPassword->setEnabled(false);
             break;
     }
-    if (loaded) {
-        button->setText(i18nc("Text to display on certificate button a certificate is already loaded","Load new"));
-        label->setText(i18nc("Text to display on CA certificate LED label when certificate is already loaded","Loaded"));
-        led->setState(KLed::On);
-    } else {
-        button->setText(i18nc("Text to display on CA certificate button when no certificate is loaded yet","Load"));
-        label->setText("");
-        led->setState(KLed::Off);
+}
+
+void TlsWidget::showAltSubjectMatchesEditor()
+{
+    Q_D(TlsWidget);
+    EditListDialog editor;
+    editor.setItems(leAltSubjectMatches->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts));
+    editor.setCaption(i18n("Alternative Subject Matches"));
+    editor.setValidator(d->altSubjectValidator);
+    if (editor.exec() == QDialog::Accepted) {
+        leAltSubjectMatches->setText(editor.items().join(QLatin1String(", ")));
+    }
+}
+
+void TlsWidget::showServersEditor()
+{
+    Q_D(TlsWidget);
+    EditListDialog editor;
+    editor.setItems(leConnectToTheseServers->text().remove(QLatin1Char(' ')).split(QLatin1Char(','), QString::SkipEmptyParts));
+    editor.setCaption(i18n("Connect to these Servers"));
+    editor.setValidator(d->serversValidator);
+    if (editor.exec() == QDialog::Accepted) {
+        leConnectToTheseServers->setText(editor.items().join(QLatin1String(", ")));
     }
 }
 

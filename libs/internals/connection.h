@@ -26,8 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QString>
 #include <QUuid>
 
-#include <klocalizedstring.h>
-
+#include <KUser>
 #include <solid/control/networkinterface.h>
 
 #include "setting.h"
@@ -42,34 +41,28 @@ class KNMINTERNALS_EXPORT Connection
 
 public:
     enum Type { Unknown = 0, Wired, Wireless, Gsm, Cdma, Vpn, Pppoe, Bluetooth };
-    enum Scope { User = 1, System };
     static QString typeAsString(Connection::Type);
     static Connection::Type typeFromString(const QString & type);
-    static Connection::Type typeFromSolidType(const Solid::Control::NetworkInterface::Type type);
-    static QString scopeAsLocalizedString(Connection::Scope);
-    static QString scopeAsString(Connection::Scope);
-    static Connection::Scope scopeFromString(const QString & scope);
+    static Connection::Type typeFromSolidType(const Solid::Control::NetworkInterfaceNm09 * iface);
     static QString iconName(const Connection::Type type);
-    void saveCertificates();
-    void removeCertificates();
     /**
      * Create a connection with a new Uuid
      */
-    Connection(const QString & name, Connection::Type type, Connection::Scope = User);
+    Connection(const QString & name, Connection::Type type);
     /**
      * Create a connection with a given Uuid
      */
     explicit Connection(const QUuid& uuid, Connection::Type type);
+    explicit Connection(Connection *con);
     virtual ~Connection();
 
     QString name() const;
     QString iconName() const;
     QUuid uuid() const;
     Connection::Type type() const;
-    Connection::Scope scope() const;
     bool autoConnect() const;
-    bool originalAutoConnect() const;
     QDateTime timestamp() const;
+    QHash<QString,QString> permissions() const;
 
     QString origin() const;
     void setOrigin(const QString &);
@@ -90,7 +83,6 @@ public:
     void setIconName(const QString &);
     void setUuid(const QUuid &);
     void setAutoConnect(bool);
-    void setOriginalAutoConnect(bool);
     void setTimestamp(const QDateTime&);
 
     /**
@@ -101,8 +93,9 @@ public:
      */
     void setType(Connection::Type type);
 
-
-    void setScope(Connection::Scope scope);
+    void setPermissions(const QHash<QString,QString>&);
+    void addToPermissions(const QString&, const QString&);
+    void removeFromPermissions(const QString&);
 
     /**
      *  Syntactic sugar for setTimestamp(QDateTime::currentDateTime())
@@ -112,7 +105,7 @@ public:
     /**
      * Check if any of the settings in this connection have secrets
      */
-    bool hasSecrets() const;
+    bool hasPersistentSecrets() const;
 
     /**
      * Check if this connection has volatile secrets; if yes,
@@ -121,20 +114,14 @@ public:
      */
     bool hasVolatileSecrets() const;
 
-    /**
-     * Check if this connection's secrets are currently loaded (secrets may be lazy loaded)
-     * If not, use @ref ConnectionPersistence::loadSecrets()
-     * Connections which have no secrets always return true
-     */
-    bool secretsAvailable() const;
-
-    QStringList secretSettings() const;
+    QStringList hasPersistentSecretsSettings() const;
 
 private:
     /**
      * Set up internal structure, including all settings specific to this connection type
      */
     void init();
+    void init(Connection *con);
 
     /**
      * Add a setting to this connection.  The connection will delete the Setting
@@ -143,17 +130,15 @@ private:
      */
     void addSetting(Setting*);
 
-
     QString m_name;
     QString m_iconName;
     QUuid m_uuid;
     Connection::Type m_type;
-    Connection::Scope m_scope;
     bool m_autoConnect;
-    bool m_originalAutoConnect;
     QDateTime m_timestamp;
     QString m_origin;
     QList<Setting*> m_settings;
+    QHash<QString,QString> m_permissions;
 };
 } // namespace Knm
 

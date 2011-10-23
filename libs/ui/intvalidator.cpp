@@ -65,4 +65,3 @@ QValidator::State IntValidator::validate(QString &value, int &pos) const
 
     return v->validate(value,pos);
 }
-

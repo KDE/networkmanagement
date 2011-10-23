@@ -62,7 +62,7 @@ UnconfiguredInterfaceItem::UnconfiguredInterfaceItem(Knm::UnconfiguredInterface 
     // KnetworkManagerTrayIcon now.
     Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(unconfigured->deviceUni());
     if (iface) {
-        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+        if (iface->type() == Solid::Control::NetworkInterface::Wifi) {
             disconnect(this, SIGNAL(clicked()), unconfigured, SLOT(activate()));
         }
     }
@@ -88,10 +88,10 @@ QString UnconfiguredInterfaceItem::iconName() const
     QString icon;
     if (iface) {
         switch (iface->type()) {
-            case Solid::Control::NetworkInterface::Ieee8023:
+            case Solid::Control::NetworkInterface::Ethernet:
                 icon = QLatin1String("network-wired");
                 break;
-            case Solid::Control::NetworkInterface::Ieee80211:
+            case Solid::Control::NetworkInterface::Wifi:
                 icon = QLatin1String("network-wireless");
                 break;
             case Solid::Control::NetworkInterface::Serial:

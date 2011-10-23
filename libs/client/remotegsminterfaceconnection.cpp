@@ -1,6 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2010 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,6 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
 #include <QDBusReply>
 
 #include "remotegsminterfaceconnection.h"
@@ -32,7 +31,7 @@ RemoteGsmInterfaceConnection::RemoteGsmInterfaceConnection(const QString &dbusPa
     d->gsmInterfaceConnectionIface = new GsmInterfaceConnectionInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
     connect(d->gsmInterfaceConnectionIface, SIGNAL(signalQualityChanged(int)), this, SIGNAL(signalQualityChanged(int)));
 
-    connect(d->gsmInterfaceConnectionIface, SIGNAL(accessTechnologyChanged(int)), this, SIGNAL(accessTechnologyChanged(int)));
+    connect(d->gsmInterfaceConnectionIface, SIGNAL(accessTechnologyChanged(const int)), this, SIGNAL(accessTechnologyChanged(const int)));
 }
 
 RemoteGsmInterfaceConnection::~RemoteGsmInterfaceConnection()
@@ -44,6 +43,7 @@ int RemoteGsmInterfaceConnection::getAccessTechnology() const
 {
     Q_D(const RemoteGsmInterfaceConnection);
     QDBusReply<int> reply = d->gsmInterfaceConnectionIface->getAccessTechnology();
+
     if (reply.isValid()) {
         return reply.value();
     } else {
@@ -57,5 +57,4 @@ int RemoteGsmInterfaceConnection::getSignalQuality() const
     return d->gsmInterfaceConnectionIface->getSignalQuality();
 }
 
-#endif
 // vim: sw=4 sts=4 et tw=100

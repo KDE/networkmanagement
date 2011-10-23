@@ -20,6 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <kdebug.h>
+#include <solid/control/networkmodeminterface.h>
 
 #include "connection.h"
 
@@ -91,72 +92,56 @@ Connection::Type Connection::typeFromString(const QString & typeString)
     return type;
 }
 
-Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInterface::Type type)
+Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInterfaceNm09 *iface)
 {
-    switch (type) {
-        case Solid::Control::NetworkInterface::Ieee8023: return Knm::Connection::Wired;
-        case Solid::Control::NetworkInterface::Ieee80211: return Knm::Connection::Wireless;
-        case Solid::Control::NetworkInterface::Gsm: return Knm::Connection::Gsm;
-        case Solid::Control::NetworkInterface::Cdma: return Knm::Connection::Cdma;
-#ifdef NM_0_8
-        case Solid::Control::NetworkInterface::Bluetooth: return Knm::Connection::Bluetooth;
-#endif
-        case Solid::Control::NetworkInterface::Serial: return Knm::Connection::Pppoe;
-        case Solid::Control::NetworkInterface::UnknownType: return Knm::Connection::Unknown;
+    switch (iface->type()) {
+        case Solid::Control::NetworkInterfaceNm09::Ethernet: return Knm::Connection::Wired;
+        case Solid::Control::NetworkInterfaceNm09::Wifi: return Knm::Connection::Wireless;
+        case Solid::Control::NetworkInterfaceNm09::Bluetooth: return Knm::Connection::Bluetooth;
+        case Solid::Control::NetworkInterfaceNm09::Modem: {
+             const Solid::Control::ModemNetworkInterfaceNm09 * nmModemIface = qobject_cast<const Solid::Control::ModemNetworkInterfaceNm09 *>(iface);
+             if (nmModemIface) {
+                 switch(nmModemIface->subType()) {
+                     case Solid::Control::ModemNetworkInterfaceNm09::GsmUmts: return Knm::Connection::Gsm;
+                     case Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo: return Knm::Connection::Cdma;
+                     case Solid::Control::ModemNetworkInterfaceNm09::Pots: return Knm::Connection::Pppoe;
+                     /* TODO: add Solid::Control::ModemNetworkInterfaceNm09::Lte */
+                 }
+             }
+        }
+        case Solid::Control::NetworkInterfaceNm09::UnknownType:
+        case Solid::Control::NetworkInterfaceNm09::Unused1:
+        case Solid::Control::NetworkInterfaceNm09::Unused2:
+            return Knm::Connection::Unknown;
     }
     return Knm::Connection::Wired;
 }
 
-QString Connection::scopeAsLocalizedString(Connection::Scope scope)
+Connection::Connection(const QString & name, const Connection::Type type)
+    : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false)
 {
-    QString scopeString;
-    switch (scope) {
-        case User:
-            scopeString = i18n("User");
-            break;
-        case System:
-            scopeString = i18n("System");
-            break;
-        default:
-            break;
-    }
-    return scopeString;
-}
-
-QString Connection::scopeAsString(Connection::Scope scope)
-{
-    QString scopeString;
-    switch (scope) {
-        case User:
-            scopeString = QLatin1String("User");
-            break;
-        case System:
-            scopeString = QLatin1String("System");
-            break;
-        default:
-            break;
-    }
-    return scopeString;
-}
-
-Connection::Scope Connection::scopeFromString(const QString & scopeString)
-{
-    if (scopeString == QLatin1String("User")) {
-        return Connection::User;
-    }
-    return Connection::System;
-}
-
-Connection::Connection(const QString & name, const Connection::Type type, const Connection::Scope scope)
-    : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_scope(scope), m_autoConnect(true)
-{
+    addToPermissions(KUser().loginName(),QString());
     init();
 }
 
 Connection::Connection(const QUuid & uuid, const Connection::Type type)
-    : m_uuid(uuid), m_type(type), m_autoConnect(true)
+    : m_uuid(uuid), m_type(type), m_autoConnect(false)
 {
+    addToPermissions(KUser().loginName(),QString());
     init();
+}
+
+Connection::Connection(Connection *con)
+{
+    setUuid(con->uuid());
+    setType(con->type());
+    setAutoConnect(con->autoConnect());
+    setPermissions(con->permissions());
+    setTimestamp(con->timestamp());
+    setName(con->name());
+    setOrigin(con->origin());
+    setIconName(con->iconName());
+    init(con);
 }
 
 Connection::~Connection()
@@ -166,6 +151,7 @@ Connection::~Connection()
 
 void Connection::init()
 {
+    qDeleteAll(m_settings);
     m_settings.clear();
 
     switch (m_type) {
@@ -214,23 +200,67 @@ void Connection::init()
             addSetting(new Security8021xSetting());
             addSetting(new WirelessSetting());
             addSetting(new WirelessSecuritySetting());
+            setAutoConnect(true);
             break;
         default:
             break;
     }
 }
 
-void Connection::saveCertificates()
+void Connection::init(Connection *con)
 {
-    foreach (Setting * setting, m_settings) {
-        setting->save((int)m_scope);
-    }
-}
+    qDeleteAll(m_settings);
+    m_settings.clear();
 
-void Connection::removeCertificates()
-{
-    foreach (Setting * setting, m_settings) {
-        setting->remove();
+    switch (m_type) {
+        case Cdma:
+            addSetting(new CdmaSetting(static_cast<CdmaSetting*>(con->setting(Setting::Cdma))));
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new Ipv6Setting(static_cast<Ipv6Setting*>(con->setting(Setting::Ipv6))));
+            addSetting(new PppSetting(static_cast<PppSetting*>(con->setting(Setting::Ppp))));
+            addSetting(new SerialSetting(static_cast<SerialSetting*>(con->setting(Setting::Serial))));
+            break;
+        case Gsm:
+            addSetting(new GsmSetting(static_cast<GsmSetting*>(con->setting(Setting::Gsm))));
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new Ipv6Setting(static_cast<Ipv6Setting*>(con->setting(Setting::Ipv6))));
+            addSetting(new PppSetting(static_cast<PppSetting*>(con->setting(Setting::Ppp))));
+            addSetting(new SerialSetting(static_cast<SerialSetting*>(con->setting(Setting::Serial))));
+            break;
+        case Bluetooth:
+            addSetting(new BluetoothSetting(static_cast<BluetoothSetting*>(con->setting(Setting::Bluetooth))));
+            addSetting(new GsmSetting(static_cast<GsmSetting*>(con->setting(Setting::Gsm))));
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new PppSetting(static_cast<PppSetting*>(con->setting(Setting::Ppp))));
+            addSetting(new SerialSetting(static_cast<SerialSetting*>(con->setting(Setting::Serial))));
+            break;
+        case Pppoe:
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new Ipv6Setting(static_cast<Ipv6Setting*>(con->setting(Setting::Ipv6))));
+            addSetting(new PppSetting(static_cast<PppSetting*>(con->setting(Setting::Ppp))));
+            addSetting(new PppoeSetting(static_cast<PppoeSetting*>(con->setting(Setting::Pppoe))));
+            addSetting(new WiredSetting(static_cast<WiredSetting*>(con->setting(Setting::Wired))));
+            break;
+        case Vpn:
+            addSetting(new VpnSetting(static_cast<VpnSetting*>(con->setting(Setting::Vpn))));
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new Ipv6Setting(static_cast<Ipv6Setting*>(con->setting(Setting::Ipv6))));
+            break;
+        case Wired:
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new Ipv6Setting(static_cast<Ipv6Setting*>(con->setting(Setting::Ipv6))));
+            addSetting(new Security8021xSetting(static_cast<Security8021xSetting*>(con->setting(Setting::Security8021x))));
+            addSetting(new WiredSetting(static_cast<WiredSetting*>(con->setting(Setting::Wired))));
+            break;
+        case Wireless:
+            addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
+            addSetting(new Ipv6Setting(static_cast<Ipv6Setting*>(con->setting(Setting::Ipv6))));
+            addSetting(new Security8021xSetting(static_cast<Security8021xSetting*>(con->setting(Setting::Security8021x))));
+            addSetting(new WirelessSetting(static_cast<WirelessSetting*>(con->setting(Setting::Wireless))));
+            addSetting(new WirelessSecuritySetting(static_cast<WirelessSecuritySetting*>(con->setting(Setting::WirelessSecurity))));
+            break;
+        default:
+            break;
     }
 }
 
@@ -258,7 +288,7 @@ QString Connection::iconName(const Connection::Type type)
             iconName = QLatin1String("phone");
             break;
         case Connection::Vpn:
-            iconName = QLatin1String("network-server");
+            iconName = QLatin1String("secure-card");
 
         default:
             break;
@@ -284,19 +314,9 @@ Connection::Type Connection::type() const
     return m_type;
 }
 
-Connection::Scope Connection::scope() const
-{
-    return m_scope;
-}
-
 bool Connection::autoConnect() const
 {
     return m_autoConnect;
-}
-
-bool Connection::originalAutoConnect() const
-{
-    return m_originalAutoConnect;
 }
 
 QDateTime Connection::timestamp() const
@@ -346,11 +366,6 @@ void Connection::setAutoConnect(bool autoConnect)
     m_autoConnect = autoConnect;
 }
 
-void Connection::setOriginalAutoConnect(bool autoConnect)
-{
-    m_originalAutoConnect = autoConnect;
-}
-
 void Connection::updateTimestamp()
 {
     m_timestamp = QDateTime::currentDateTime();
@@ -361,42 +376,28 @@ void Connection::addSetting(Setting * newSetting)
     m_settings.append(newSetting);
 }
 
-bool Connection::hasSecrets() const
+bool Connection::hasPersistentSecrets() const
 {
     bool connectionHasSecrets = false;
     foreach (Setting * setting, m_settings) {
-        if (setting->hasSecrets()) {
+        if (setting->hasPersistentSecrets()) {
             connectionHasSecrets = true;
             break;
         }
     }
-    kDebug() << "These settings seems to provide secret info:" << secretSettings();
-
     return connectionHasSecrets;
 }
 
-QStringList Connection::secretSettings() const
+QStringList Connection::hasPersistentSecretsSettings() const
 {
     QStringList settings;
     foreach (Setting * setting, m_settings) {
-        if (setting->hasSecrets()) {
+        if (setting->hasPersistentSecrets()) {
             settings << setting->name();
         }
     }
 
     return settings;
-}
-
-bool Connection::secretsAvailable() const
-{
-    bool allSecretsAvailable = true;
-    foreach (Setting * setting, m_settings) {
-        if (setting->hasSecrets() && !setting->secretsAvailable()) {
-            allSecretsAvailable = false;
-            break;
-        }
-    }
-    return allSecretsAvailable;
 }
 
 void Connection::setOrigin(const QString & origin)
@@ -409,9 +410,25 @@ QString Connection::origin() const
     return m_origin;
 }
 
-void Connection::setScope(Connection::Scope scope)
+void Connection::addToPermissions(const QString &user, const QString &tags)
 {
-    m_scope = scope;
+    if (!m_permissions.contains(user))
+        m_permissions.insert(user,tags);
+}
+
+void Connection::removeFromPermissions(const QString &user)
+{
+    m_permissions.remove(user);
+}
+
+void Connection::setPermissions(const QHash<QString,QString> &permissions)
+{
+    m_permissions = permissions;
+}
+
+QHash<QString,QString> Connection::permissions() const
+{
+    return m_permissions;
 }
 
 void Connection::setType(Connection::Type type)

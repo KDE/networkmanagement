@@ -15,11 +15,15 @@ class KNMINTERNALS_EXPORT PppoeSetting : public Setting
   public:
 
     PppoeSetting( );
+    PppoeSetting(PppoeSetting *);
     ~PppoeSetting();
 
     QString name() const;
 
-    bool hasSecrets() const;
+    QMap<QString,QString> secretsToMap() const;
+    void secretsFromMap(QMap<QString,QString> secrets);
+    QStringList needSecrets() const;
+    bool hasPersistentSecrets() const;
 
     /**
       Set Service
@@ -69,12 +73,29 @@ class KNMINTERNALS_EXPORT PppoeSetting : public Setting
       return mPassword;
     }
 
+    /**
+     * Set Password flags
+     */
+    void setPasswordflags( Setting::secretsTypes types )
+    {
+        mPasswordflags = types;
+    }
+
+    /**
+     * Get Password flags
+     */
+    Setting::secretsTypes passwordflags() const
+    {
+        return mPasswordflags;
+    }
+
   protected:
 
     // pppoe
     QString mService;
     QString mUsername;
     QString mPassword;
+    Setting::secretsTypes mPasswordflags;
 
   private:
 };

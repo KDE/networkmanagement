@@ -30,6 +30,7 @@ EapMethodLeap::EapMethodLeap(Knm::Connection* connection, QWidget * parent)
 : EapMethod(connection, parent)
 {
     setupUi(this);
+    connect(cmbPasswordStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(passwordStorageChanged(int)));
 }
 
 EapMethodLeap::~EapMethodLeap()
@@ -55,20 +56,53 @@ void EapMethodLeap::writeConfig()
     d->setting->setEapFlags(Knm::Security8021xSetting::leap);
     // LEAP stuff
     d->setting->setIdentity(leUsername->text());
-    d->setting->setPassword(lePassword->text());
+    switch (cmbPasswordStorage->currentIndex()) {
+        case EapMethodPrivate::Store:
+            d->setting->setPassword(lePassword->text());
+            if (!d->connection->permissions().isEmpty())
+                d->setting->setPasswordflags(Knm::Setting::AgentOwned);
+            else
+                d->setting->setPasswordflags(Knm::Setting::None);
+            break;
+        case EapMethodPrivate::AlwaysAsk:
+            d->setting->setPasswordflags(Knm::Setting::NotSaved);
+            break;
+        case EapMethodPrivate::NotRequired:
+            d->setting->setPasswordflags(Knm::Setting::NotRequired);
+            break;
+    }
     d->setting->setUseSystemCaCerts(false);
-    d->setting->remove();
 }
 
 void EapMethodLeap::readSecrets()
 {
     Q_D(EapMethod);
-    lePassword->setText(d->setting->password());
+    if (d->setting->passwordflags().testFlag(Knm::Setting::AgentOwned) || d->setting->passwordflags().testFlag(Knm::Setting::None)) {
+        lePassword->setText(d->setting->password());
+        cmbPasswordStorage->setCurrentIndex(EapMethodPrivate::Store);
+    } else if (d->setting->passwordflags().testFlag(Knm::Setting::NotSaved)) {
+        cmbPasswordStorage->setCurrentIndex(EapMethodPrivate::AlwaysAsk);
+    } else if (d->setting->passwordflags().testFlag(Knm::Setting::NotRequired)){
+        cmbPasswordStorage->setCurrentIndex(EapMethodPrivate::NotRequired);
+    }
 }
 
 void EapMethodLeap::setShowPasswords(bool on)
 {
     lePassword->setPasswordMode(!on);
+}
+
+void EapMethodLeap::passwordStorageChanged(int type)
+{
+    switch (type)
+    {
+        case EapMethodPrivate::Store:
+            lePassword->setEnabled(true);
+            break;
+        default:
+            lePassword->setEnabled(false);
+            break;
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

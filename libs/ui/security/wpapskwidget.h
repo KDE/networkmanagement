@@ -25,22 +25,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KSharedConfig>
 
+class WpaPskWidgetPrivate;
 class WpaPskWidget : public SecurityWidget
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(WpaPskWidget)
 public:
     WpaPskWidget(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~WpaPskWidget();
-    bool validate();
+    bool validate() const;
     void readConfig();
     void writeConfig();
     void readSecrets();
 private slots:
     void chkShowPassToggled();
-    void pskTextChanged();
-private:
-    class Private;
-    Private * d;
 };
 
 #endif // WPAPSKWIDGET_H

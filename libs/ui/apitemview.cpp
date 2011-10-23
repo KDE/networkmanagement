@@ -66,7 +66,11 @@ void ApItemView::setModel(QAbstractItemModel *model)
     if (m_model == model) {
         return;
     }
+    if (m_model)
+        disconnect(m_model, 0, this, 0);
     m_model = model;
+    connect(m_model, SIGNAL(rowsRemoved(const QModelIndex&, int, int)), this, SLOT(repaint()));
+    connect(m_model, SIGNAL(rowsInserted(const QModelIndex&, int, int)), this, SLOT(repaint()));
 }
 
 QAbstractItemModel * ApItemView::model()
@@ -156,7 +160,7 @@ void ApItemView::layoutItems()
     int numRows = m_model->rowCount();
     for (int ctr=0; ctr < numRows; ctr++) {
         QModelIndex index = m_model->index(ctr,0);
-        int strength = m_model->data(index,ApItemModel::SignalStrength).toInt();
+        int strength = m_model->data(index,NetworkItemModel::SignalStrength).toInt();
         int x = (geometry().width()-m_itemWidth)-(geometry().width()-m_itemWidth-computerHeight)*strength/100;
         QPoint topLeft = QPoint(x,0);
         m_apLayout[index] = QRect(topLeft,QSize(m_itemWidth, m_itemHeight));

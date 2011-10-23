@@ -25,12 +25,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "eapmethodinnerauth.h"
 #include "ui_eapmethodpeapbase.h"
 
-#include <KSharedConfig>
+class PeapWidgetPrivate;
 
 class PeapWidget : public EapMethodInnerAuth, public Ui_EapMethodPeapBase
 {
 Q_OBJECT
-Q_DECLARE_PRIVATE(EapMethodInnerAuth)
+Q_DECLARE_PRIVATE(PeapWidget)
 public:
     PeapWidget(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~PeapWidget();
@@ -40,11 +40,9 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
-private:
-     void setText(bool);
 private Q_SLOTS:
-    void loadCert();
-    void toggleSystemCa(bool);
+    void showAltSubjectMatchesEditor();
+    void showServersEditor();
 };
 
 #endif

@@ -14,7 +14,7 @@ but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 Lesser General Public License for more details.
 
-You should have received a copy of the GNU Lesser General Public 
+You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
@@ -37,6 +37,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connection.h"
 
+#include <uiutils.h>
+
 using namespace Knm;
 
 BluetoothConnectionEditor::BluetoothConnectionEditor(const QVariantList &args, QWidget *parent)
@@ -55,7 +57,7 @@ BluetoothConnectionEditor::BluetoothConnectionEditor(const QVariantList &args, Q
     if (args.count() > 3) {
         b->setNetworkname(args[1].toString());
         b->setNetworktype(args[2].toString());
-        b->setBdaddrFromString(args[3].toString());
+        b->setBdaddr(UiUtils::macAddressFromString(args[3].toString()));
         defaultName = i18n("%1 Network", args[1].toString());
     } else {
         defaultName = i18n("New Bluetooth Connection");

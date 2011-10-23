@@ -61,7 +61,7 @@ protected Q_SLOTS:
     /**
      * When an activatable goes Active, update the timestamp on the corresponding connection
      */
-    void handleActivationStateChange(Knm::InterfaceConnection::ActivationState);
+    void handleActivationStateChange(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState);
 
     /**
      * Listen to interfaces' access point change signals

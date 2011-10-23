@@ -1,6 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2010 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -19,15 +19,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-
 #include "gsmnetworkinterfaceactivatableprovider.h"
 #include "networkinterfaceactivatableprovider_p.h"
 
 #include <solid/control/modemmanager.h>
-#ifdef NM_0_8
 #include <solid/control/networkbtinterface.h>
-#endif
 
 #include <gsminterfaceconnection.h>
 #include <gsminterfaceconnectionhelpers.h>
@@ -39,17 +35,17 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class GsmNetworkInterfaceActivatableProviderPrivate : public NetworkInterfaceActivatableProviderPrivate
 {
 public:
-    GsmNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::GsmNetworkInterface * theInterface)
+    GsmNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::ModemNetworkInterfaceNm09 * theInterface)
         : NetworkInterfaceActivatableProviderPrivate(theConnectionList, theActivatableList, theInterface)
     { }
 
-    Solid::Control::GsmNetworkInterface * gsmInterface() const
+    Solid::Control::ModemNetworkInterfaceNm09 * gsmInterface() const
     {
-        return qobject_cast<Solid::Control::GsmNetworkInterface*>(interface);
+        return qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(interface);
     }
 };
 
-GsmNetworkInterfaceActivatableProvider::GsmNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::GsmNetworkInterface * interface, QObject * parent)
+GsmNetworkInterfaceActivatableProvider::GsmNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::ModemNetworkInterfaceNm09 * interface, QObject * parent)
 : NetworkInterfaceActivatableProvider(*new GsmNetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface), parent)
 {
 }
@@ -66,7 +62,7 @@ void GsmNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedCo
     kDebug() << addedConnection->uuid();
     if (!d->activatables.contains(addedConnection->uuid())) {
         if (hardwareAddressMatches(addedConnection, d->interface)) {
-            if (matches(addedConnection->type(), d->interface->type())) {
+            if (matches(addedConnection->type(), d->interface->type(), d->gsmInterface()->currentCapabilities())) {
                 Knm::GsmInterfaceConnection * ifaceConnection =
                     Knm::GsmInterfaceConnectionHelpers::buildGsmInterfaceConnection(
                             d->gsmInterface(), addedConnection, d->interface->uni(), this);
@@ -83,5 +79,4 @@ void GsmNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * addedCo
     maintainActivatableForUnconfigured();
 }
 
-#endif
 // vim: sw=4 sts=4 et tw=100

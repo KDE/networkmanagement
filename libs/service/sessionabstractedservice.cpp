@@ -31,10 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceconnectionadaptor.h"
 #include "wirelessinterfaceconnectionadaptor.h"
 #include "wirelessnetworkadaptor.h"
-
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
 #include "gsminterfaceconnectionadaptor.h"
-#endif
 
 class SessionAbstractedServicePrivate
 {
@@ -59,7 +56,6 @@ SessionAbstractedService::SessionAbstractedService(ActivatableList * list, QObje
 
 SessionAbstractedService::~SessionAbstractedService()
 {
-    delete d_ptr;
 }
 
 void SessionAbstractedService::handleAdd(Knm::Activatable * added)
@@ -83,13 +79,11 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
                 = static_cast<Knm::WirelessNetwork*>(added);
             new WirelessNetworkAdaptor(realObj);
             new ActivatableAdaptor(realObj);
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         } else if (added->activatableType() == Knm::Activatable::GsmInterfaceConnection) {
             Knm::GsmInterfaceConnection * realObj = static_cast<Knm::GsmInterfaceConnection*>(added);
             new GsmInterfaceConnectionAdaptor(realObj);
             new InterfaceConnectionAdaptor(realObj);
             new ActivatableAdaptor(realObj);
-#endif
         } else {
             // do not put any other types on the bus
             return;
@@ -99,7 +93,7 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
         d->adaptors.insert(added, path);
         QDBusConnection::sessionBus().registerObject(path, added);
         //kDebug() << "registering object at " << path;
-        emit ActivatableAdded(path, added->activatableType());
+        emit ActivatableAdded(path, added->activatableType(), d->list->activatableIndex(added));
     }
 }
 
@@ -149,7 +143,7 @@ void SessionAbstractedService::FinishInitialization()
 {
     emit DoFinishInitialization();
 }
- 
+
 QString SessionAbstractedService::nextObjectPath()
 {
     Q_D(SessionAbstractedService);

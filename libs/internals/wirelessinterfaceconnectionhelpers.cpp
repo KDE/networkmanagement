@@ -33,7 +33,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 Knm::WirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildWirelessInterfaceConnection(
-        Solid::Control::WirelessNetworkInterface *interface,
+        Solid::Control::WirelessNetworkInterfaceNm09 *interface,
         Knm::Connection *connection, const QString & deviceUni, QObject * parent)
 {
     WirelessInterfaceConnectionBuilder builder(interface, connection, deviceUni, parent);
@@ -42,7 +42,7 @@ Knm::WirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildWirel
 }
 
 Knm::HiddenWirelessInterfaceConnection* WirelessInterfaceConnectionHelpers::buildHiddenWirelessInterfaceConnection(
-        Solid::Control::WirelessNetworkInterface *interface,
+        Solid::Control::WirelessNetworkInterfaceNm09 *interface,
         Knm::Connection *connection, const QString & deviceUni, QObject * parent)
 {
     HiddenWirelessInterfaceConnectionBuilder builder(interface, connection, deviceUni, parent);
@@ -58,7 +58,7 @@ void WirelessInterfaceConnectionHelpers::syncWirelessInterfaceConnection(Wireles
 }
 
 WirelessInterfaceConnectionBuilder::WirelessInterfaceConnectionBuilder(
-                    Solid::Control::WirelessNetworkInterface *interface,
+                    Solid::Control::WirelessNetworkInterfaceNm09 *interface,
                     Knm::Connection *connection,
                     const QString &deviceUni,
                     QObject *parent)
@@ -93,11 +93,11 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
                 new Solid::Control::WirelessNetworkInterfaceEnvironment(m_interface));
 
         int strength = -1;
-        Solid::Control::AccessPoint::Capabilities caps = 0;
-        Solid::Control::AccessPoint::WpaFlags wpaFlags = 0;
-        Solid::Control::AccessPoint::WpaFlags rsnFlags = 0;
-        Solid::Control::WirelessNetworkInterface::OperationMode mode
-            = Solid::Control::WirelessNetworkInterface::Master;
+        Solid::Control::AccessPointNm09::Capabilities caps = 0;
+        Solid::Control::AccessPointNm09::WpaFlags wpaFlags = 0;
+        Solid::Control::AccessPointNm09::WpaFlags rsnFlags = 0;
+        Solid::Control::WirelessNetworkInterfaceNm09::OperationMode mode
+            = Solid::Control::WirelessNetworkInterfaceNm09::Master;
 
         // show connections where the network is present OR adhoc connections
         if (apEnvironment->networks().contains(wirelessSetting->ssid())) {
@@ -106,7 +106,7 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
 
             if (network) {
                 strength = network->signalStrength();
-                Solid::Control::AccessPoint * ap = m_interface->findAccessPoint(network->referenceAccessPoint());
+                Solid::Control::AccessPointNm09 * ap = m_interface->findAccessPoint(network->referenceAccessPoint());
                 if (ap) {
                     caps = ap->capabilities();
                     wpaFlags = ap->wpaFlags();
@@ -116,26 +116,26 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
             }
         }
         else if (wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc) {
-                mode = Solid::Control::WirelessNetworkInterface::Adhoc;
+                mode = Solid::Control::WirelessNetworkInterfaceNm09::Adhoc;
                 Knm::WirelessSecuritySetting * wirelessSecuritySetting = dynamic_cast<Knm::WirelessSecuritySetting *>(m_connection->setting(Knm::Setting::WirelessSecurity));
                 switch( wirelessSecuritySetting->securityType())
                 {
                     case Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep:
                     case Knm::WirelessSecuritySetting::EnumSecurityType::Leap:
                     case Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep:
-                        caps |= Solid::Control::AccessPoint::Privacy;
+                        caps |= Solid::Control::AccessPointNm09::Privacy;
                         break;
                     case Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk:
-                        wpaFlags |= Solid::Control::AccessPoint::KeyMgmtPsk | Solid::Control::AccessPoint::PairTkip | Solid::Control::AccessPoint::PairCcmp;
+                        wpaFlags |= Solid::Control::AccessPointNm09::KeyMgmtPsk | Solid::Control::AccessPointNm09::PairTkip | Solid::Control::AccessPointNm09::PairCcmp;
                         break;
                     case Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap:
-                        wpaFlags |= Solid::Control::AccessPoint::KeyMgmt8021x;
+                        wpaFlags |= Solid::Control::AccessPointNm09::KeyMgmt8021x;
                         break;
                     case Knm::WirelessSecuritySetting::EnumSecurityType::Wpa2Psk:
-                        rsnFlags |= Solid::Control::AccessPoint::KeyMgmtPsk | Solid::Control::AccessPoint::PairTkip | Solid::Control::AccessPoint::PairCcmp;
+                        rsnFlags |= Solid::Control::AccessPointNm09::KeyMgmtPsk | Solid::Control::AccessPointNm09::PairTkip | Solid::Control::AccessPointNm09::PairCcmp;
                         break;
                     case Knm::WirelessSecuritySetting::EnumSecurityType::Wpa2Eap:
-                        rsnFlags |= Solid::Control::AccessPoint::KeyMgmt8021x;
+                        rsnFlags |= Solid::Control::AccessPointNm09::KeyMgmt8021x;
                         break;
                     case Knm::WirelessSecuritySetting::EnumSecurityType::None:
                     default:
@@ -154,7 +154,7 @@ void WirelessInterfaceConnectionBuilder::init(WirelessInterfaceConnection *ic)
 }
 
 HiddenWirelessInterfaceConnectionBuilder::HiddenWirelessInterfaceConnectionBuilder(
-                    Solid::Control::WirelessNetworkInterface *interface,
+                    Solid::Control::WirelessNetworkInterfaceNm09 *interface,
                     Knm::Connection *connection,
                     const QString &deviceUni,
                     QObject *parent)

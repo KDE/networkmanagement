@@ -16,14 +16,26 @@ WiredDbus::~WiredDbus()
 void WiredDbus::fromMap(const QVariantMap & map)
 {
   Knm::WiredSetting * setting = static_cast<Knm::WiredSetting *>(m_setting);
-  if (map.contains("port")) {
-    setting->setPort(map.value("port").value<int>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRED_PORT))) {
+    QString value = map.value(QLatin1String(NM_SETTING_WIRED_PORT)).value<QString>();
+    if (value == "tp")
+        setting->setPort(Knm::WiredSetting::EnumPort::tp);
+    else if (value == "aui")
+        setting->setPort(Knm::WiredSetting::EnumPort::aui);
+    else if (value == "bnc")
+        setting->setPort(Knm::WiredSetting::EnumPort::bnc);
+    else if (value == "mii")
+        setting->setPort(Knm::WiredSetting::EnumPort::mii);
   }
-  if (map.contains("speed")) {
-    setting->setSpeed(map.value("speed").value<uint>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRED_DUPLEX))) {
+    QString value = map.value(QLatin1String(NM_SETTING_WIRED_DUPLEX)).value<QString>();
+    if (value == "half")
+        setting->setDuplex(Knm::WiredSetting::EnumDuplex::half);
+    else if (value == "full")
+        setting->setDuplex(Knm::WiredSetting::EnumDuplex::full);
   }
-  if (map.contains("duplex")) {
-    setting->setDuplex(map.value("duplex").value<int>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRED_SPEED))) {
+    setting->setSpeed(map.value(QLatin1String(NM_SETTING_WIRED_SPEED)).value<int>());
   }
   if (map.contains(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE))) {
     setting->setAutonegotiate(map.value(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE)).value<bool>());
@@ -31,8 +43,11 @@ void WiredDbus::fromMap(const QVariantMap & map)
   if (map.contains(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS))) {
     setting->setMacaddress(map.value(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS)).value<QByteArray>());
   }
-  if (map.contains("mtu")) {
-    setting->setMtu(map.value("mtu").value<uint>());
+  if (map.contains(QLatin1String(NM_SETTING_WIRED_CLONED_MAC_ADDRESS))) {
+    setting->setClonedmacaddress(map.value(QLatin1String(NM_SETTING_WIRED_CLONED_MAC_ADDRESS)).value<QByteArray>());
+  }
+  if (map.contains(QLatin1String(NM_SETTING_WIRED_MTU))) {
+    setting->setMtu(map.value(QLatin1String(NM_SETTING_WIRED_MTU)).value<uint>());
   }
 }
 
@@ -40,38 +55,42 @@ QVariantMap WiredDbus::toMap()
 {
   QVariantMap map;
   Knm::WiredSetting * setting = static_cast<Knm::WiredSetting *>(m_setting);
-// not in UI yet
-#if 0
+
   switch (setting->port()) {
     case Knm::WiredSetting::EnumPort::tp:
-      map.insert("port", "tp");
+      map.insert(QLatin1String(NM_SETTING_WIRED_PORT), "tp");
       break;
     case Knm::WiredSetting::EnumPort::aui:
-      map.insert("port", "aui");
+      map.insert(QLatin1String(NM_SETTING_WIRED_PORT), "aui");
       break;
     case Knm::WiredSetting::EnumPort::bnc:
-      map.insert("port", "bnc");
+      map.insert(QLatin1String(NM_SETTING_WIRED_PORT), "bnc");
       break;
     case Knm::WiredSetting::EnumPort::mii:
-      map.insert("port", "mii");
+      map.insert(QLatin1String(NM_SETTING_WIRED_PORT), "mii");
       break;
   }
-  map.insert("speed", setting->speed());
-  switch (setting->duplex()) {
-    case Knm::WiredSetting::EnumDuplex::half:
-      map.insert("duplex", "half");
-      break;
-    case Knm::WiredSetting::EnumDuplex::full:
-      map.insert("duplex", "full");
-      break;
-  }
+
   map.insert(QLatin1String(NM_SETTING_WIRED_AUTO_NEGOTIATE), setting->autonegotiate());
-#endif
+  if (!setting->autonegotiate()) {
+    map.insert(QLatin1String(NM_SETTING_WIRED_SPEED), setting->speed());
+    switch (setting->duplex()) {
+      case Knm::WiredSetting::EnumDuplex::half:
+        map.insert(QLatin1String(NM_SETTING_WIRED_DUPLEX), "half");
+        break;
+      case Knm::WiredSetting::EnumDuplex::full:
+        map.insert(QLatin1String(NM_SETTING_WIRED_DUPLEX), "full");
+        break;
+    }
+  }
   if (!setting->macaddress().isEmpty()) {
     map.insert(QLatin1String(NM_SETTING_WIRED_MAC_ADDRESS), setting->macaddress());
   }
+  if (!setting->clonedmacaddress().isEmpty()) {
+    map.insert(QLatin1String(NM_SETTING_WIRED_CLONED_MAC_ADDRESS), setting->clonedmacaddress());
+  }
   if (setting->mtu() > 0) {
-    map.insert("mtu", setting->mtu());
+    map.insert(QLatin1String(NM_SETTING_WIRED_MTU), setting->mtu());
   }
   return map;
 }

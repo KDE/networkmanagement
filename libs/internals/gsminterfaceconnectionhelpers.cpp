@@ -1,6 +1,6 @@
 /*
 Copyright 2009 Paul Marchouk <pmarchouk@gmail.com>
-Copyright 2010 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -19,8 +19,6 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-
 #include <solid/control/modemmanager.h>
 #include <solid/control/modemgsmnetworkinterface.h>
 
@@ -36,7 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 Knm::GsmInterfaceConnection* GsmInterfaceConnectionHelpers::buildGsmInterfaceConnection(
-        Solid::Control::GsmNetworkInterface *interface,
+        Solid::Control::ModemNetworkInterfaceNm09 *interface,
         Knm::Connection *connection, const QString & deviceUni, QObject * parent)
 {
     GsmInterfaceConnectionBuilder builder(interface, connection, deviceUni, parent);
@@ -52,7 +50,7 @@ void GsmInterfaceConnectionHelpers::syncGsmInterfaceConnection(GsmInterfaceConne
 }
 
 GsmInterfaceConnectionBuilder::GsmInterfaceConnectionBuilder(
-                    Solid::Control::GsmNetworkInterface *interface,
+                    Solid::Control::ModemNetworkInterfaceNm09 *interface,
                     Knm::Connection *connection,
                     const QString &deviceUni,
                     QObject *parent)
@@ -90,8 +88,8 @@ void GsmInterfaceConnectionBuilder::init(GsmInterfaceConnection *ic)
 
     if (modemNetworkIface) {
         QObject::connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), ic, SLOT(setSignalQuality(uint)));
-        QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(Solid::Control::ModemInterface::AccessTechnology)), ic, SLOT(setAccessTechnology(Solid::Control::ModemInterface::AccessTechnology)));
-        QObject::connect(modemNetworkIface, SIGNAL(enabledChanged(bool)), ic, SLOT(setEnabled(bool)));
+        QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(const Solid::Control::ModemInterface::AccessTechnology)), ic, SLOT(setAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology)));
+        QObject::connect(modemNetworkIface, SIGNAL(enabledChanged(const bool)), ic, SLOT(setEnabled(const bool)));
 
         ic->m_signalQuality = modemNetworkIface->getSignalQuality();
         ic->m_accessTechnology = modemNetworkIface->getAccessTechnology();
@@ -112,5 +110,3 @@ void GsmInterfaceConnectionSync::sync(Knm::GsmInterfaceConnection * interfaceCon
 {
     InterfaceConnectionSync::sync(interfaceConnection, connection);
 }
-
-#endif

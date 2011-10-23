@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "othersettingswidget.h"
 #include "knmserviceprefs.h"
+#include "../../plasma_nm_version.h"
 
 class OtherSettingsWidgetPrivate
 {
@@ -37,6 +38,7 @@ OtherSettingsWidget::OtherSettingsWidget(QWidget * parent)
 {
     Q_D(OtherSettingsWidget);
     d->ui.setupUi(this);
+    d->ui.lblVersion->setText(i18nc("Version text", "<b>Version %1</b>", plasmaNmVersion));
     d->ui.notificationsButton->setIcon(KIcon("preferences-desktop-notification"));
     connect(d->ui.notificationsButton, SIGNAL(clicked()), SLOT(configureNotifications()));
 }

@@ -27,14 +27,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KSharedConfig>
 
+class WepWidgetPrivate;
 class WepWidget : public SecurityWidget
 {
 Q_OBJECT
+Q_DECLARE_PRIVATE(WepWidget)
 public:
     enum KeyFormat { Hex, Passphrase };
     WepWidget(KeyFormat keyFormat, Knm::Connection* connectionId, QWidget * parent = 0);
     virtual ~WepWidget();
-    bool validate();
+    bool validate() const;
     void readConfig();
     void writeConfig();
     void readSecrets();
@@ -42,10 +44,7 @@ private slots:
     void keyTypeChanged(int);
     void chkShowPassToggled(bool);
     void keyIndexChanged(int);
-    void secretTextChanged();
-private:
-    class Private;
-    Private * d;
+    void validateKey(QString);
 };
 
 #endif // WEPWIDGET_H

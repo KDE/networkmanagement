@@ -58,7 +58,7 @@ class ApItemModel : public QAbstractItemModel
 
     private:
         QStringList m_accessPoints;
-        Solid::Control::WirelessNetworkInterface *m_networkInterface;
+        Solid::Control::WirelessNetworkInterfaceNm09 *m_networkInterface;
 
         static const int s_numColumns = 4;
 };

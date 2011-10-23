@@ -32,26 +32,39 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 InterfaceConnectionItem::InterfaceConnectionItem(RemoteInterfaceConnection* conn, QGraphicsItem* parent)
 : ActivatableItem(conn, parent)
 {
-    connect(conn, SIGNAL(changed()), SLOT(stateChanged()));
 }
 
 void InterfaceConnectionItem::setupItem()
 {
     m_layout = new QGraphicsGridLayout(this);
+    m_layout->setColumnPreferredWidth(0, 150);
+    m_layout->setColumnFixedWidth(2, 60);
+    m_layout->setColumnFixedWidth(3, rowHeight);
+    m_layout->setColumnSpacing(2, spacing);
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
+    m_connectButton->setMaximumWidth(maxConnectionNameWidth);
+    // to make default route overlay really be over the connection's icon.
+    m_connectButton->setFlags(ItemStacksBehindParent);
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
-    m_connectButton->setZValue(100); // FIXME: doesn't work
+    //m_connectButton->setZValue(100); // FIXME: doesn't work
 
-    m_layout->addItem(m_connectButton, 0, 0, 1, 1 );
+    m_layout->addItem(m_connectButton, 0, 0, 1, 1, Qt::AlignVCenter | Qt::AlignLeft);
 
-    if (interfaceConnection()) {
-        m_connectButton->setIcon(interfaceConnection()->iconName());
-        m_connectButton->setText(interfaceConnection()->connectionName());
-        //kDebug() << interfaceConnection()->connectionName() << interfaceConnection()->iconName();
-        handleHasDefaultRouteChanged(interfaceConnection()->hasDefaultRoute());
+    // spacer to make highlighting's borders to expand to the maximum.
+    QGraphicsWidget *widget = new QGraphicsWidget(this);
+    widget->setMaximumHeight(12);
+    m_layout->addItem(widget, 0, 1, 3, 3);
+
+    RemoteInterfaceConnection *remoteconnection = interfaceConnection();
+    if (remoteconnection) {
+        m_connectButton->setIcon(remoteconnection->iconName());
+        m_connectButton->setText(remoteconnection->connectionName());
+        //kDebug() << remoteconnection->connectionName() << remoteconnection->iconName();
+        handleHasDefaultRouteChanged(remoteconnection->hasDefaultRoute());
+        activationStateChanged(Knm::InterfaceConnection::Unknown, remoteconnection->activationState());
     } else {
         m_connectButton->setIcon("network-wired");
         m_connectButton->setText(i18nc("name of the connection not known", "Unknown"));
@@ -60,24 +73,11 @@ void InterfaceConnectionItem::setupItem()
     connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
     connect(this, SIGNAL(pressed(bool)), m_connectButton, SLOT(setPressed(bool)));
     connect(m_connectButton, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
-
-    stateChanged();
-
 }
 
 InterfaceConnectionItem::~InterfaceConnectionItem()
 {
 
 }
-
-void InterfaceConnectionItem::stateChanged()
-{
-    //kDebug() << "activatable State Changed!" << interfaceConnection()->connectionName();
-    RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(m_activatable);
-    if (remoteconnection) {
-        activationStateChanged(remoteconnection->activationState());
-    }
-}
-
 
 // vim: sw=4 sts=4 et tw=100

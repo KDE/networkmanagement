@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM07_WIRELESS_CONNECTION_PREFERENCES_H
-#define NM07_WIRELESS_CONNECTION_PREFERENCES_H
+#ifndef NM09_WIRELESS_CONNECTION_PREFERENCES_H
+#define NM09_WIRELESS_CONNECTION_PREFERENCES_H
 
 #include <solid/control/wirelessaccesspoint.h>
 
@@ -60,8 +60,9 @@ public:
     virtual bool needsEdits() const;
 private Q_SLOTS:
     void tabChanged(int index);
-    void setDefaultName(Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *);
+    void setDefaultName(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *);
 private:
+    bool m_hasSecrets;
     int m_securityTabIndex;
     Wireless80211Widget * m_wirelessWidget;
     WirelessSecuritySettingWidget * m_securityWidget;

@@ -26,11 +26,17 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsLinearLayout>
 
 #include <solid/control/networkinterface.h>
-#include <solid/control/networkgsminterface.h>
+#include <solid/control/networkmodeminterface.h>
 #include <Plasma/Label>
 #include <Plasma/PushButton>
 #include <Plasma/SignalPlotter>
 
+#include "types.h"
+#include "knmserviceprefs.h"
+
+class RemoteActivatable;
+class RemoteInterfaceConnection;
+class RemoteInterfaceList;
 class InterfaceDetails;
 
 class InterfaceDetailsWidget : public QGraphicsWidget
@@ -39,7 +45,7 @@ Q_OBJECT
     public:
         InterfaceDetailsWidget(QGraphicsItem* parent = 0);
         virtual ~InterfaceDetailsWidget();
-        void setInterface(Solid::Control::NetworkInterface* iface, bool disconnectOld = true);
+        void setInterface(Solid::Control::NetworkInterfaceNm09* iface, bool disconnectOld = true);
         void setUpdateEnabled(bool enable);
         void resetUi();
         QString getLastIfaceUni();
@@ -59,13 +65,13 @@ Q_OBJECT
         int bitRate();
         QString currentIpAddress();
         QString getMAC();
-        QString connectionStateToString(Solid::Control::NetworkInterface::ConnectionState connectionState);
+        QString connectionStateToString(Solid::Control::NetworkInterfaceNm09::ConnectionState state, const QString &connectionName = QString());
         void getDetails();
         void showDetails(bool reset = false);
         void connectSignals();
         void disconnectSignals();
 
-        Solid::Control::NetworkInterface* m_iface;
+        Solid::Control::NetworkInterfaceNm09* m_iface;
         QString m_ifaceUni;
 
         QGraphicsGridLayout *m_gridLayout;
@@ -91,13 +97,13 @@ Q_OBJECT
 
         bool m_updateEnabled;
         InterfaceDetails * details;
+        int m_speedUnit;
 
     private Q_SLOTS:
         void resetInterfaceDetails();
         void updateIpAddress();
         void updateBitRate(int bitRate);
         void updateActiveAccessPoint(const QString &ap);
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         void modemUpdateEnabled(const bool enabled);
         void modemUpdateBand();
         void modemUpdateUnlockRequired(const QString &);
@@ -105,7 +111,6 @@ Q_OBJECT
         void modemUpdateAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology & tech);
         void modemUpdateSignalQuality(const uint signalQuality);
         void modemUpdateAllowedMode(const Solid::Control::ModemInterface::AllowedMode mode);
-#endif
 };
 
 #endif // INTERFACEDETAILSWIDGET_H

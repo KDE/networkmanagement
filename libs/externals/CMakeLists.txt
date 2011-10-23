@@ -50,7 +50,7 @@ kde4_add_library(
     knmexternals SHARED ${knmconnection_SRCS}
 )
 
-target_link_libraries(knmexternals ${KDE4_KDECORE_LIBS} solidcontrol)
+target_link_libraries(knmexternals ${KDE4_KDECORE_LIBS} solidcontrol solidcontrolnm09)
 
 set_target_properties(knmexternals PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}

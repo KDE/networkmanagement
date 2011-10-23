@@ -50,16 +50,22 @@ QString NovellVpnUiPlugin::suggestedFileName(Knm::Connection *connection) const
     return QString();
 }
 
+QString NovellVpnUiPlugin::supportedFileExtensions() const
+{
+    // TODO : return supported file extensions
+    return QString();
+}
+
 QVariantList NovellVpnUiPlugin::importConnectionSettings(const QString &fileName)
 {
     // TODO : import the Novell VPN connection from file and return settings
     return QVariantList();
 }
 
-void NovellVpnUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
+bool NovellVpnUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
 {
     // TODO : export Novell VPN connection to file
-    return;
+    return false;
 }
 
 // vim: sw=4 sts=4 et tw=100

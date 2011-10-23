@@ -12,9 +12,6 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../libs/client
 set(networkmanagement_engine_srcs
     ../applet/wirelessstatus.cpp
     networkmanagementengine.cpp
-     networkmanagementjob.cpp
-    networkmanagementservice.cpp
-
 )
 
 kde4_add_plugin(plasma_engine_networkmanagement ${networkmanagement_engine_srcs})
@@ -25,6 +22,7 @@ target_link_libraries(plasma_engine_networkmanagement
     knmclient knminternals
     ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS}
     solidcontrol
+    solidcontrolnm09
     ${KDE4_KCMUTILS_LIBS}
 )
 

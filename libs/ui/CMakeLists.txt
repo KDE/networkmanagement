@@ -34,6 +34,7 @@ set(knmui_SRCS
    networkitemmodel.cpp
    apitemview.cpp
    scanwidget.cpp
+   advancedpermissionswidget.cpp
 
    # top level wireless security widget
    security/wirelesssecuritysettingwidget.cpp
@@ -57,6 +58,13 @@ set(knmui_SRCS
    security/ttlswidget.cpp
    security/peapwidget.cpp
    security/tlswidget.cpp
+
+   # auth widgets for interactive password retrieval
+   security/security8021xauth.cpp
+   security/wirelesssecurityauth.cpp
+   security/wepauthwidget.cpp
+   security/wpaauthwidget.cpp
+   security/leapauthwidget.cpp
 
    vpnuiplugin.cpp
    connectionprefs.cpp
@@ -99,6 +107,9 @@ kde4_add_ui_files(knmui_SRCS
    # Scan widget for wireless
    scanwidget.ui
 
+   # Advanced permissions editor
+   advancedpermissionswidget.ui
+
    # base wireless security type selector
    security/wirelesssecurity.ui
    # wireless security type specific UIs
@@ -122,7 +133,7 @@ kde4_add_ui_files(knmui_SRCS
    )
 
 kde4_add_library(knmui SHARED ${knmui_SRCS})
-target_link_libraries(knmui knminternals ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} solidcontrol solidcontrolfuture)
+target_link_libraries(knmui knminternals ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS} solidcontrol solidcontrolnm09 solidcontrolfuture)
 
 set_target_properties(knmui PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}

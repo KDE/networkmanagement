@@ -3,11 +3,55 @@
 
 #include "vpn.h"
 
+QDBusArgument &operator<<(QDBusArgument &argument, const QStringMap & mydict)
+{
+    argument.beginMap( QVariant::String, QVariant::String );
+
+    QMapIterator<QString, QString> i(mydict);
+    while (i.hasNext()) {
+        i.next();
+        argument.beginMapEntry();
+        argument << i.key() << i.value();
+        argument.endMapEntry();
+    }
+    argument.endMap();
+    return argument;
+}
+
+const QDBusArgument &operator>>(const QDBusArgument &argument, QStringMap & mydict)
+{
+    argument.beginMap();
+    mydict.clear();
+
+    while (!argument.atEnd()) {
+        QString key;
+        QString value;
+        argument.beginMapEntry();
+        argument >> key >> value;
+        argument.endMapEntry();
+        mydict.insert(key, value);
+    }
+
+    argument.endMap();
+    return argument;
+}
+
 using namespace Knm;
 
 VpnSetting::VpnSetting() : Setting(Setting::Vpn)
 {
-  mSecretsStorageType = QStringMap();
+  qDBusRegisterMetaType<QStringMap>();
+}
+
+VpnSetting::VpnSetting(VpnSetting *setting) : Setting(setting)
+{
+    qDBusRegisterMetaType<QStringMap>();
+
+    setServiceType(setting->serviceType());
+    setData(setting->data());
+    setUserName(setting->userName());
+    setVpnSecrets(setting->vpnSecrets());
+    setPluginName(setting->pluginName());
 }
 
 VpnSetting::~VpnSetting()
@@ -18,16 +62,86 @@ QString VpnSetting::name() const
 {
   return QLatin1String("vpn");
 }
-bool VpnSetting::hasSecrets() const
+
+QVariantMap VpnSetting::variantMapFromStringList(const QStringList & list)
 {
-  return true;
+    QVariantMap secretsMap;
+    if (list.count() % 2 == 0) {
+        for ( int i = 0; i < list.count(); i += 2 ) {
+            secretsMap.insert( list[i], list[i+1] );
+        }
+    }
+    return secretsMap;
 }
 
-bool VpnSetting::hasVolatileSecrets() const
+QStringList VpnSetting::variantMapToStringList(const QVariantMap & map)
 {
-  foreach(const QString & s, mSecretsStorageType.keys())
-    if (mSecretsStorageType.value(s) == QLatin1String(NM_VPN_PW_TYPE_ASK))
-      return true;
+    QStringList rawSecrets;
+    QMapIterator<QString,QVariant> i(map);
+    while (i.hasNext()) {
+        i.next();
+        rawSecrets << i.key() << i.value().toString();
+    }
+    return rawSecrets;
+}
 
-  return false;
+QStringMap VpnSetting::stringMapFromStringList(const QStringList & list)
+{
+    QStringMap map;
+    if (list.count() % 2 == 0) {
+        for ( int i = 0; i < list.count(); i += 2 ) {
+            map.insert( list[i], list[i+1] );
+        }
+    }
+    return map;
+}
+
+QStringList VpnSetting::stringMapToStringList(const QStringMap & map)
+{
+    QStringList rawSecrets;
+    QStringMapIterator i(map);
+    while (i.hasNext()) {
+        i.next();
+        rawSecrets << i.key() << i.value();
+    }
+    return rawSecrets;
+}
+
+QMap<QString,QString> VpnSetting::secretsToMap() const
+{
+    QMap<QString,QString> map;
+    map.insert(QLatin1String("VpnSecrets"), variantMapToStringList(secretsToSave(data(), vpnSecrets())).join(QLatin1String("%SEP%")));
+    return map;
+}
+
+void VpnSetting::secretsFromMap(QMap<QString,QString> secrets)
+{
+    QStringMap systemSecrets = vpnSecrets();
+    systemSecrets.unite(stringMapFromStringList(secrets.value("VpnSecrets").split("%SEP%")));
+    setVpnSecrets(systemSecrets);
+    setSecretsAvailable(true);
+}
+
+QStringList VpnSetting::needSecrets() const
+{
+    // VPN is a bit different from other connection types. We do not need to list the secrets we need,
+    // but this list cannot be empty or SecretStorage will not ask for the secrets.
+    return QStringList() << "VpnSecrets";
+}
+
+bool VpnSetting::hasPersistentSecrets() const
+{
+    return true;
+}
+
+QVariantMap VpnSetting::secretsToSave(const QStringMap & data, const QStringMap & secrets)
+{
+    QVariantMap toSave;
+    QMapIterator<QString,QString> i(secrets);
+    while (i.hasNext()) {
+        i.next();
+        if ((Knm::Setting::secretsTypes)data[i.key() + "-flags"].toInt() & Knm::Setting::AgentOwned)
+            toSave.insert( i.key(), i.value() );
+    }
+    return toSave;
 }

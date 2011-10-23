@@ -58,4 +58,3 @@ void Delegate::updateEditorGeometry(QWidget *editor,
     editor->setGeometry(option.rect);
 
 }
-

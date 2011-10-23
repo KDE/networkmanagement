@@ -183,6 +183,15 @@ QVariantMapMap ConnectionDbus::toDbusMap()
         connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_TIMESTAMP), m_connection->timestamp().toTime_t());
     }
 
+    if (!m_connection->permissions().isEmpty()) {
+        QStringList permissionsDbus;
+        QHash<QString,QString> permissions = m_connection->permissions();
+        foreach (const QString &user, permissions.keys()) {
+            permissionsDbus.append(QLatin1String("user:") + user + ":" + permissions.value(user));
+        }
+        connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS), permissionsDbus);
+    }
+
     //kDebug() << "Printing connection map: ";
     //foreach(QString key, connectionMap.keys())
         //kDebug() << key << " : " << connectionMap.value(key);
@@ -230,12 +239,27 @@ QVariantMapMap ConnectionDbus::toDbusSecretsMap()
     return mapMap;
 }
 
+QVariantMapMap ConnectionDbus::toDbusSecretsMap(const QString &name)
+{
+    QVariantMapMap mapMap;
+    foreach (Setting * setting, m_connection->settings()) {
+        if (setting->name() == name) {
+            SettingDbus * sd = dbusFor(setting);
+            if (sd)
+                mapMap.insert(setting->name(), sd->toSecretsMap());
+        }
+    }
+    return mapMap;
+}
+
 void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
 {
     // connection settings
     QVariantMap connectionSettings = settings.value(QLatin1String(NM_SETTING_CONNECTION_SETTING_NAME));
 
-    kDebug() << "Settings map is " << settings;
+    kDebug();
+    // WARNING: this print secrets, do not commit it uncommented.
+    //kDebug() << "Settings map is " << settings;
 
     QString connName = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_ID)).toString();
     QUuid uuid(connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_UUID)).toString());
@@ -251,6 +275,16 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
         dateTime.setTime_t(timestamp);
         m_connection->setTimestamp(dateTime);
     }
+
+    QHash<QString,QString> permissions;
+    if (connectionSettings.contains(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS))) {
+        QStringList permissionsDbus = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS)).toStringList();
+        foreach (const QString &permission, permissionsDbus) {
+            QStringList splitted = permission.split(QLatin1String(":"), QString::KeepEmptyParts);
+            permissions.insert(splitted.at(1),splitted.at(2));
+        }
+    }
+    m_connection->setPermissions(permissions);
 
     Connection::Type type = Connection::Wired;
     if (dbusConnectionType == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
@@ -279,6 +313,9 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
         if (settings.contains(setting->name())) {
             SettingDbus * sd = dbusFor(setting);
             sd->fromMap(settings.value(setting->name()));
+            setting->setInitialized(true);
+        } else {
+            setting->setInitialized(false);
         }
     }
 }
@@ -290,16 +327,17 @@ void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
 {
     QVariantMapMap origs = toDbusMap();
 
-    kDebug() << "Printing connection map: ";
-    kDebug() << "Secrets:" << secrets;
-    kDebug() << "Original settings:" << origs;
+    // WARNING: those debug messages print secrets, do not commit them uncommented.
+    //kDebug() << "Printing connection map: ";
+    //kDebug() << "Secrets:" << secrets;
+    //kDebug() << "Original settings:" << origs;
 
-    foreach(QString secretName, secrets.keys())
+    foreach(const QString & secretName, secrets.keys())
     {
         //kDebug() << "Secret setting name " << secretName;
-        QVariantMap secret = secrets.value(secretName); // Example secret is QMap(("wep-key0", QVariant(QString, "pardusman")))
+        QVariantMap secret = secrets.value(secretName);
 
-        if (secret.count() == 0)
+        if (secret.isEmpty())
         {
             kDebug() << "Empty secret setting found '" << secretName << "', skipping...";
             continue;
@@ -308,26 +346,21 @@ void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
         if (origs.contains(secretName))
         {
             QVariantMap origSetting = origs.take(secretName);
-
-            foreach(QString k, secret.keys())
-            {
-                if (origSetting.contains(k))
-                    origSetting.remove(k); //override the map key given by GetSecrets method of NM
-
-                origSetting.insert(k, secret.value(k));
-                kDebug() << "Adding setting " << k << " with value " << secret.value(k) ;
-            }
-
+            // WARNING: this print secrets, do not commit them uncommented.
+            //kDebug() << "Uniting setting " << secret.keys() << " with values " << secret.values();
+            origSetting.unite(secret);
             origs.insert(secretName, origSetting);
+
         }
         else
         {
             origs.insert(secretName, secret);
-            kDebug() << "Inserted setting " << secretName<< " " << secret;
+            // WARNING: this print secrets, do not commit them uncommented.
+            //kDebug() << "Inserted setting " << secretName<< " " << secret;
         }
     }
 
-    kDebug() << "New settings: " << origs;
+    //kDebug() << "New settings: " << origs;
 
     fromDbusMap(origs);
 }

@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "interfaceconnection.h"
 #include "remoteactivatable.h"
+#include "types.h"
 
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
@@ -61,12 +62,12 @@ class InterfaceItem : public Plasma::IconWidget
 Q_OBJECT
 public:
     enum NameDisplayMode {InterfaceName, HardwareName};
-    InterfaceItem(Solid::Control::NetworkInterface* iface, RemoteActivatableList* activatables, NameDisplayMode mode = InterfaceName,  QGraphicsWidget* parent = 0);
+    InterfaceItem(Solid::Control::NetworkInterfaceNm09* iface, RemoteActivatableList* activatables, NameDisplayMode mode = InterfaceName,  QGraphicsWidget* parent = 0);
     virtual ~InterfaceItem();
 
     void setNameDisplayMode(NameDisplayMode);
     NameDisplayMode nameDisplayMode() const;
-    Solid::Control::NetworkInterface* interface();
+    Solid::Control::NetworkInterfaceNm09* interface();
     virtual QString connectionName();
     QString label();
     virtual void setActivatableList(RemoteActivatableList* activatables);
@@ -75,7 +76,7 @@ public:
 
 public Q_SLOTS:
     void activeConnectionsChanged();
-    virtual void connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState);
+    virtual void connectionStateChanged(Solid::Control::NetworkInterfaceNm09::ConnectionState, bool updateConnection = true);
     virtual void setEnabled(bool enable);
     // also updates the connection info
     virtual void setActive(bool active);
@@ -98,9 +99,9 @@ protected Q_SLOTS:
 Q_SIGNALS:
     void stateChanged();
     void disconnectInterfaceRequested(const QString& deviceUni);
-    void clicked(Solid::Control::NetworkInterface*);
-    void hoverEnter(const QString& uni);
-    void hoverLeave(const QString& uni);
+    void clicked(Solid::Control::NetworkInterfaceNm09*);
+    void hoverEnter(const QString& uni = QString());
+    void hoverLeave(const QString& uni = QString());
 
 protected:
     /**
@@ -120,7 +121,7 @@ protected:
 
     RemoteInterfaceConnection* m_currentConnection;
 
-    QWeakPointer<Solid::Control::NetworkInterface> m_iface;
+    QWeakPointer<Solid::Control::NetworkInterfaceNm09> m_iface;
     RemoteActivatableList* m_activatables;
 
     QGraphicsGridLayout* m_layout;
@@ -136,15 +137,15 @@ protected:
     Plasma::Label* m_connectionInfoIcon;
     NameDisplayMode m_nameMode;
     bool m_enabled;
-    Solid::Control::NetworkInterface::ConnectionState m_state;
+    Solid::Control::NetworkInterfaceNm09::ConnectionState m_state;
     QString m_interfaceName;
     bool m_disconnect;
     bool m_hasDefaultRoute;
     QSize m_pixmapSize;
     bool m_starting;
 
-    void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
-    void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
+    virtual void hoverEnterEvent(QGraphicsSceneHoverEvent *event);
+    virtual void hoverLeaveEvent(QGraphicsSceneHoverEvent *event);
 
 protected Q_SLOTS:
     virtual void currentConnectionChanged();
@@ -152,6 +153,8 @@ protected Q_SLOTS:
 private Q_SLOTS:
     void emitDisconnectInterfaceRequest();
     void serviceDisappeared();
+    void activatableAdded(RemoteActivatable*);
     void activatableRemoved(RemoteActivatable*);
+    void updateCurrentConnection(RemoteInterfaceConnection *);
 };
 #endif // APPLET_INTERFACEWIDGET_H

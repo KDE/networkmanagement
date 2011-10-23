@@ -5,9 +5,32 @@
 
 using namespace Knm;
 
-WirelessSecuritySetting::WirelessSecuritySetting() : Setting(Setting::WirelessSecurity)
-                                                     , mSecurityType(WirelessSecuritySetting::EnumSecurityType::None), mKeymgmt(0), mWeptxkeyindex(0), mAuthalg(0), mWepKeyType(None), mEnabled(false)
+WirelessSecuritySetting::WirelessSecuritySetting()
+    : Setting(Setting::WirelessSecurity), mSecurityType(WirelessSecuritySetting::EnumSecurityType::None), mKeymgmt(0),
+    mWeptxkeyindex(0), mAuthalg(0), mWepKeyType(None), mWepkeyflags(Setting::AgentOwned), mPskflags(Setting::AgentOwned), mLeappasswordflags(Setting::AgentOwned)
 {
+}
+
+WirelessSecuritySetting::WirelessSecuritySetting(WirelessSecuritySetting *setting) : Setting(setting)
+{
+    setSecurityType(setting->securityType());
+    setKeymgmt(setting->keymgmt());
+    setWeptxkeyindex(setting->weptxkeyindex());
+    setAuthalg(setting->authalg());
+    setProto(setting->proto());
+    setPairwise(setting->pairwise());
+    setGroup(setting->group());
+    setLeapusername(setting->leapusername());
+    setWepkey0(setting->wepkey0());
+    setWepkey1(setting->wepkey1());
+    setWepkey2(setting->wepkey2());
+    setWepkey3(setting->wepkey3());
+    setWepkeyflags(setting->wepkeyflags());
+    setPsk(setting->psk());
+    setPskflags(setting->pskflags());
+    setLeappassword(setting->leappassword());
+    setLeappasswordflags(setting->leappasswordflags());
+    setWepKeyType(setting->wepKeyType());
 }
 
 WirelessSecuritySetting::~WirelessSecuritySetting()
@@ -17,10 +40,6 @@ WirelessSecuritySetting::~WirelessSecuritySetting()
 QString WirelessSecuritySetting::name() const
 {
   return QLatin1String("802-11-wireless-security");
-}
-bool WirelessSecuritySetting::hasSecrets() const
-{
-  return mEnabled;
 }
 
 void WirelessSecuritySetting::reset()
@@ -42,4 +61,103 @@ void WirelessSecuritySetting::reset()
     mLeappassword = QString();
     mWeppassphrase = QString();
     mWepKeyType = None;
+}
+
+QMap<QString,QString> WirelessSecuritySetting::secretsToMap() const
+{
+    QMap<QString,QString> map;
+    if (wepkeyflags().testFlag(Setting::AgentOwned)) {
+        map.insert(QLatin1String("wepkey0"), wepkey0());
+        map.insert(QLatin1String("wepkey1"), wepkey1());
+        map.insert(QLatin1String("wepkey2"), wepkey2());
+        map.insert(QLatin1String("wepkey3"), wepkey3());
+    }
+    if (pskflags().testFlag(Setting::AgentOwned)) {
+        map.insert(QLatin1String("psk"), psk());
+    }
+    if (leappasswordflags().testFlag(Setting::AgentOwned)) {
+        map.insert(QLatin1String("leappassword"), leappassword());
+    }
+    return map;
+}
+
+void WirelessSecuritySetting::secretsFromMap(QMap<QString,QString> secrets)
+{
+    setWepkey0(secrets.value("wepkey0"));
+    setWepkey1(secrets.value("wepkey1"));
+    setWepkey2(secrets.value("wepkey2"));
+    setWepkey3(secrets.value("wepkey3"));
+    setPsk(secrets.value("psk"));
+    setLeappassword(secrets.value("leappassword"));
+    setSecretsAvailable(true);
+}
+
+QStringList WirelessSecuritySetting::needSecrets() const
+{
+    QStringList list;
+    switch (securityType())
+    {
+        case WirelessSecuritySetting::EnumSecurityType::None:
+        case WirelessSecuritySetting::EnumSecurityType::DynamicWep:
+            break;
+        case WirelessSecuritySetting::EnumSecurityType::StaticWep:
+            if (!wepkeyflags().testFlag(Setting::NotRequired)) {
+                switch (weptxkeyindex())
+                {
+                    case 0:
+                        if (wepkey0().isEmpty())
+                            list.append("wepkey0");
+                        break;
+                    case 1:
+                        if (wepkey1().isEmpty())
+                            list.append("wepkey1");
+                        break;
+                    case 2:
+                        if (wepkey2().isEmpty())
+                            list.append("wepkey2");
+                        break;
+                    case 3:
+                        if (wepkey3().isEmpty())
+                            list.append("wepkey3");
+                        break;
+                }
+            }
+
+            break;
+        case WirelessSecuritySetting::EnumSecurityType::WpaPsk:
+        case WirelessSecuritySetting::EnumSecurityType::Wpa2Psk:
+            if (psk().isEmpty() && !pskflags().testFlag(Setting::NotRequired))
+                list.append("psk");
+            break;
+        case WirelessSecuritySetting::EnumSecurityType::Leap:
+            if (leappassword().isEmpty() && !leappasswordflags().testFlag(Setting::NotRequired))
+                list.append("leappassword");
+            break;
+    }
+    return list;
+}
+
+bool WirelessSecuritySetting::hasPersistentSecrets() const
+{
+    bool hasSecrets = false;
+    switch (securityType())
+    {
+        case WirelessSecuritySetting::EnumSecurityType::None:
+        case WirelessSecuritySetting::EnumSecurityType::DynamicWep:
+            break;
+        case WirelessSecuritySetting::EnumSecurityType::StaticWep:
+            if (wepkeyflags().testFlag(Setting::None) || wepkeyflags().testFlag(Setting::AgentOwned))
+                hasSecrets = true;
+            break;
+        case WirelessSecuritySetting::EnumSecurityType::WpaPsk:
+        case WirelessSecuritySetting::EnumSecurityType::Wpa2Psk:
+            if (pskflags().testFlag(Setting::None) || pskflags().testFlag(Setting::AgentOwned))
+                hasSecrets = true;
+            break;
+        case WirelessSecuritySetting::EnumSecurityType::Leap:
+            if (leappasswordflags().testFlag(Setting::None) || leappasswordflags().testFlag(Setting::AgentOwned))
+                hasSecrets = true;
+            break;
+    }
+    return hasSecrets;
 }

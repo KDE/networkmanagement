@@ -81,13 +81,13 @@ void ConnectionInfoDialog::buildGUI()
     
     QString deviceType = UiUtils::interfaceTypeLabel(m_iface->type());
     switch (m_iface->type()) {
-    case Solid::Control::NetworkInterface::Ieee8023: {
+    case Solid::Control::NetworkInterface::Ethernet: {
             ConnectionInfoWiredTab *wiredTab = new ConnectionInfoWiredTab(qobject_cast<Solid::Control::WiredNetworkInterface*>(m_iface), m_ui.infoTabWidget);
             m_ui.infoTabWidget->addTab(wiredTab, deviceType);
             m_ui.connectionIcon->setPixmap(KIconLoader::global()->loadIcon("network-wired", KIconLoader::Panel));
             break;
         }
-    case Solid::Control::NetworkInterface::Ieee80211: {
+    case Solid::Control::NetworkInterface::Wifi: {
             ConnectionInfoWirelessTab *wirelessTab = new ConnectionInfoWirelessTab(qobject_cast<Solid::Control::WirelessNetworkInterface*>(m_iface), m_ui.infoTabWidget);
             m_ui.infoTabWidget->addTab(wirelessTab, deviceType);
             m_ui.connectionIcon->setPixmap(KIconLoader::global()->loadIcon("network-wireless", KIconLoader::Panel));
@@ -98,7 +98,7 @@ void ConnectionInfoDialog::buildGUI()
 
     connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(updateConnectionState(int,int,int)));
 
-    Solid::Control::NetworkInterface::ConnectionState state = m_iface->connectionState();
+    Solid::Control::NetworkInterfaceNm09::ConnectionState state = static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface->connectionState());
     m_ui.connectionState->setText(UiUtils::connectionStateToString(state));
     m_guiMade = true;
 }
@@ -119,5 +119,5 @@ void ConnectionInfoDialog::clearGUI()
 
 void ConnectionInfoDialog::updateConnectionState(int new_state, int, int)
 {
-    m_ui.connectionState->setText(UiUtils::connectionStateToString((Solid::Control::NetworkInterface::ConnectionState)new_state));
+    m_ui.connectionState->setText(UiUtils::connectionStateToString((Solid::Control::NetworkInterfaceNm09::ConnectionState)new_state));
 }

@@ -19,6 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "securityleap.h"
+#include "securitywidget_p.h"
 
 #include <QWidget>
 
@@ -26,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //X #include <nm-setting-connection.h>
 //X #include <nm-setting-wireless.h>
 //X #include <nm-setting-8021x.h>
-//X 
+//X
 #include <KDebug>
 #include <wpasecretidentifier.h>
 
@@ -37,57 +38,99 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connection.h"
 
 
-class LeapWidget::Private
+class LeapWidgetPrivate : public SecurityWidgetPrivate
 {
 public:
     Ui_Leap ui;
     Knm::WirelessSetting* wsetting;
     Knm::WirelessSecuritySetting* setting;
+    enum PasswordStorage {Store = 0, AlwaysAsk, NotRequired};
 };
 
 LeapWidget::LeapWidget(Knm::Connection* connection, QWidget * parent)
-: SecurityWidget(connection, parent), d(new LeapWidget::Private)
+: SecurityWidget(*new LeapWidgetPrivate, connection, parent)
 {
+    Q_D(LeapWidget);
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::WirelessSecuritySetting *>(connection->setting(Knm::Setting::WirelessSecurity));
     d->wsetting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
 
     connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(chkShowPassToggled(bool)));
+    connect(d->ui.cmbPasswordStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(passwordStorageChanged(int)));
     d->ui.lePassword->setPasswordMode(true);
 }
 
 LeapWidget::~LeapWidget()
 {
-    delete d;
 }
 
 void LeapWidget::chkShowPassToggled(bool on)
 {
+    Q_D(LeapWidget);
     d->ui.lePassword->setPasswordMode(!on);
 }
 
-bool LeapWidget::validate()
+void LeapWidget::passwordStorageChanged(int type)
 {
+    Q_D(LeapWidget);
+    switch (type)
+    {
+        case LeapWidgetPrivate::Store:
+            d->ui.lePassword->setEnabled(true);
+            break;
+        default:
+            d->ui.lePassword->setEnabled(false);
+            break;
+    }
+}
+
+bool LeapWidget::validate() const
+{
+    Q_D(const LeapWidget);
     return !(d->ui.lePassword->text().isEmpty() || d->ui.leUserName->text().isEmpty());
 }
 
 void LeapWidget::readConfig()
 {
+    Q_D(LeapWidget);
     d->ui.leUserName->setText(d->setting->leapusername());
     d->ui.chkShowPass->setChecked(false);
 }
 
 void LeapWidget::writeConfig()
 {
+    Q_D(LeapWidget);
     d->setting->setLeapusername(d->ui.leUserName->text());
-    d->setting->setLeappassword(d->ui.lePassword->text());
     d->setting->setAuthalg(Knm::WirelessSecuritySetting::EnumAuthalg::leap);
     d->setting->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::Ieee8021x);
+    switch (d->ui.cmbPasswordStorage->currentIndex()) {
+        case LeapWidgetPrivate::Store:
+            d->setting->setLeappassword(d->ui.lePassword->text());
+            if (!d->connection->permissions().isEmpty())
+                d->setting->setLeappasswordflags(Knm::Setting::AgentOwned);
+            else
+                d->setting->setLeappasswordflags(Knm::Setting::None);
+            break;
+        case LeapWidgetPrivate::AlwaysAsk:
+            d->setting->setLeappasswordflags(Knm::Setting::NotSaved);
+            break;
+        case LeapWidgetPrivate::NotRequired:
+            d->setting->setLeappasswordflags(Knm::Setting::NotRequired);
+            break;
+    }
 }
 
 void LeapWidget::readSecrets()
 {
-    d->ui.lePassword->setText(d->setting->leappassword());
+    Q_D(LeapWidget);
+    if (d->setting->leappasswordflags().testFlag(Knm::Setting::AgentOwned) || d->setting->leappasswordflags().testFlag(Knm::Setting::None)) {
+        d->ui.lePassword->setText(d->setting->leappassword());
+        d->ui.cmbPasswordStorage->setCurrentIndex(LeapWidgetPrivate::Store);
+    } else if (d->setting->leappasswordflags().testFlag(Knm::Setting::NotSaved)) {
+        d->ui.cmbPasswordStorage->setCurrentIndex(LeapWidgetPrivate::AlwaysAsk);
+    } else if (d->setting->leappasswordflags().testFlag(Knm::Setting::NotRequired)){
+        d->ui.cmbPasswordStorage->setCurrentIndex(LeapWidgetPrivate::NotRequired);
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

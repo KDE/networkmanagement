@@ -46,14 +46,12 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
     Knm::WirelessInterfaceConnection * wic;
     Knm::WirelessNetwork * wni;
     Knm::VpnInterfaceConnection * vpn;
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
     Knm::GsmInterfaceConnection * gsm;
-#endif
 
     QString string;
 
     QString identifier;
-    Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(activatable->deviceUni());
+    Solid::Control::NetworkInterfaceNm09 * iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(activatable->deviceUni());
     if (iface) {
         identifier = iface->interfaceName();
     } else {
@@ -84,12 +82,10 @@ QString ActivatableDebug::activatableToString(Knm::Activatable* activatable)
             vpn = qobject_cast<Knm::VpnInterfaceConnection*>(activatable);
             string = QString::fromLatin1("VpnInterfaceConnection %1 (%2) on %3").arg(vpn->connectionName(), vpn->connectionUuid(), identifier);
             break;
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         case Knm::Activatable::GsmInterfaceConnection:
             gsm = qobject_cast<Knm::GsmInterfaceConnection*>(activatable);
             string = QString::fromLatin1("GsmInterfaceConnection %1 (%2) on %3 with state %4 with signal quality %5").arg(gsm->connectionName(), gsm->connectionUuid(), identifier, QString::number(gsm->activationState()), QString::number(gsm->getSignalQuality()));
             break;
-#endif
     }
 
     return string;

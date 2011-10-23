@@ -23,10 +23,12 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "eapmethod_p.h"
 
 #include <settings/802-1x.h>
+#include <connection.h>
 EapMethodSimple::EapMethodSimple(Type type, Knm::Connection * connection, QWidget * parent)
     : EapMethod(connection, parent), m_type(type)
 {
     setupUi(this);
+    connect(cmbPasswordStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(passwordStorageChanged(int)));
 }
 
 EapMethodSimple::~EapMethodSimple()
@@ -37,6 +39,19 @@ EapMethodSimple::~EapMethodSimple()
 void EapMethodSimple::setShowPasswords(bool on)
 {
     lePassword->setPasswordMode(!on);
+}
+
+void EapMethodSimple::passwordStorageChanged(int type)
+{
+    switch (type)
+    {
+        case EapMethodPrivate::Store:
+            lePassword->setEnabled(true);
+            break;
+        default:
+            lePassword->setEnabled(false);
+            break;
+    }
 }
 
 bool EapMethodSimple::validate() const
@@ -74,13 +89,34 @@ void EapMethodSimple::writeConfig()
             break;
     }
     d->setting->setIdentity(leUserName->text());
-    d->setting->setPassword(lePassword->text());
+    switch (cmbPasswordStorage->currentIndex()) {
+        case EapMethodPrivate::Store:
+            d->setting->setPassword(lePassword->text());
+            if (!d->connection->permissions().isEmpty())
+                d->setting->setPasswordflags(Knm::Setting::AgentOwned);
+            else
+                d->setting->setPasswordflags(Knm::Setting::None);
+            break;
+        case EapMethodPrivate::AlwaysAsk:
+            d->setting->setPasswordflags(Knm::Setting::NotSaved);
+            break;
+        case EapMethodPrivate::NotRequired:
+            d->setting->setPasswordflags(Knm::Setting::NotRequired);
+            break;
+    }
 }
 
 void EapMethodSimple::readSecrets()
 {
     Q_D(EapMethod);
-    lePassword->setText(d->setting->password());
+    if (d->setting->passwordflags().testFlag(Knm::Setting::AgentOwned) || d->setting->passwordflags().testFlag(Knm::Setting::None)) {
+        lePassword->setText(d->setting->password());
+        cmbPasswordStorage->setCurrentIndex(EapMethodPrivate::Store);
+    } else if (d->setting->passwordflags().testFlag(Knm::Setting::NotSaved)) {
+        cmbPasswordStorage->setCurrentIndex(EapMethodPrivate::AlwaysAsk);
+    } else if (d->setting->passwordflags().testFlag(Knm::Setting::NotRequired)){
+        cmbPasswordStorage->setCurrentIndex(EapMethodPrivate::NotRequired);
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

@@ -31,6 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/control/networkmanager.h>
 #include <solid/control/networkinterface.h>
+#include <solid/control/networkmodeminterface.h>
 #include <wirelessnetworkinterfaceenvironment.h>
 
 #include "unconfiguredinterface.h"
@@ -55,16 +56,13 @@ ConfigurationLauncher::ConfigurationLauncher(QObject * parent)
 
 ConfigurationLauncher::~ConfigurationLauncher()
 {
-    delete d_ptr;
 }
 
 void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
 {
     Q_D(ConfigurationLauncher);
     Knm::WirelessNetwork * wni = 0;
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
     Knm::InterfaceConnection * ic = 0;
-#endif
     Knm::WirelessInterfaceConnection * wic = 0;
     Knm::UnconfiguredInterface * unco = 0;
     switch (added->activatableType()) {
@@ -73,7 +71,6 @@ void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
             connect(wni, SIGNAL(activated()), this, SLOT(wirelessNetworkActivated()));
             break;
         case Knm::Activatable::InterfaceConnection:
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
         case Knm::Activatable::GsmInterfaceConnection:
             ic = qobject_cast<Knm::InterfaceConnection*>(added);
             if (d->pendingDevices.contains(ic->deviceUni())) {
@@ -82,7 +79,6 @@ void ConfigurationLauncher::handleAdd(Knm::Activatable *added)
                 d->pendingDevices.removeOne(ic->deviceUni());
             }
             break;
-#endif
         case Knm::Activatable::WirelessInterfaceConnection:
             wic = qobject_cast<Knm::WirelessInterfaceConnection*>(added);
             foreach (const PendingNetwork &pending, d->pendingNetworks) {
@@ -128,7 +124,7 @@ void ConfigurationLauncher::configureWirelessNetworkInternal(const QString & ssi
 
     QString apUni = QLatin1String("/");
 
-    Solid::Control::WirelessNetworkInterface * iface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(Solid::Control::NetworkManager::findNetworkInterface(deviceUni));
+    Solid::Control::WirelessNetworkInterfaceNm09 * iface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(Solid::Control::NetworkManagerNm09::findNetworkInterface(deviceUni));
     if (iface) {
         Solid::Control::WirelessNetworkInterfaceEnvironment envt(iface);
         Solid::Control::WirelessNetwork * network = envt.findNetwork(ssid);
@@ -181,28 +177,37 @@ void ConfigurationLauncher::unconfiguredInterfaceActivated()
         }
 
         //HACK - write proper AsString and FromString functions in the library somewhere
-        Solid::Control::NetworkInterface * iface = Solid::Control::NetworkManager::findNetworkInterface(unco->deviceUni());
+        Solid::Control::NetworkInterfaceNm09 * iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(unco->deviceUni());
         QString typeString;
         QString editorArgs;
         if (iface) {
             switch (iface->type()) {
-                case Solid::Control::NetworkInterface::Ieee8023:
+                case Solid::Control::NetworkInterfaceNm09::Ethernet:
                     typeString = QLatin1String("802-3-ethernet");
                     break;
-                case Solid::Control::NetworkInterface::Ieee80211:
+                case Solid::Control::NetworkInterfaceNm09::Wifi:
                     typeString = QLatin1String("802-11-wireless");
                     break;
-                case Solid::Control::NetworkInterface::Serial:
-                    typeString = QLatin1String("pppoe");
+                case Solid::Control::NetworkInterfaceNm09::Modem: {
+                    Solid::Control::ModemNetworkInterfaceNm09 * nmModemIface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09 *>(iface);
+                    if (nmModemIface) {
+                        Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities subType = nmModemIface->subType();
+                        switch(subType) {
+                            case Solid::Control::ModemNetworkInterfaceNm09::Pots:
+                                 typeString = QLatin1String("pppoe");
+                                 break;
+                            case Solid::Control::ModemNetworkInterfaceNm09::GsmUmts:
+                                 typeString = QLatin1String("gsm");
+                                 editorArgs = QLatin1String("gsm");
+                                 break;
+                            case Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo:
+                                 typeString = QLatin1String("cdma");
+                                 editorArgs = QLatin1String("cdma");
+                                 break;
+                        }
+                    }
                     break;
-                case Solid::Control::NetworkInterface::Gsm:
-                    typeString = QLatin1String("gsm");
-                    editorArgs = QLatin1String("gsm");
-                    break;
-                case Solid::Control::NetworkInterface::Cdma:
-                    typeString = QLatin1String("cdma");
-                    editorArgs = QLatin1String("cdma");
-                    break;
+                }
                 default:
                     break;
             }

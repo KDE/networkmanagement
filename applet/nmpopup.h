@@ -54,7 +54,7 @@ public:
     virtual ~NMPopup();
 
     void init();
-    Solid::Control::NetworkInterface* defaultInterface();
+    Solid::Control::NetworkInterfaceNm09* defaultInterface();
     bool available(int state);
     bool hasWireless();
 
@@ -66,11 +66,9 @@ public Q_SLOTS:
     void managerWirelessEnabledChanged(bool);
     void managerWirelessHardwareEnabledChanged(bool);
     void wirelessEnabledToggled(bool checked);
-#ifdef NM_0_8
     void managerWwanEnabledChanged(bool);
     void managerWwanHardwareEnabledChanged(bool);
     void wwanEnabledToggled(bool checked);
-#endif
     void networkingEnabledToggled(bool checked);
     void managerNetworkingEnabledChanged(bool);
     void manageConnections();
@@ -84,22 +82,17 @@ Q_SIGNALS:
     void configNeedsSaving();
 
 private Q_SLOTS:
-#ifdef NM_0_8
-    void enableWwan();
-    void disableWwan();
-#endif
     void readConfig();
     void checkShowMore(RemoteActivatable *);
     void uncheckShowMore(RemoteActivatable *);
     void refresh();
+    void showInterfaceDetails(const QString & uni);
 
 private:
-    void addInterfaceInternal(Solid::Control::NetworkInterface *);
+    void addInterfaceInternal(Solid::Control::NetworkInterfaceNm09 *);
     void addVpnInterface();
     void updateHasWireless(bool checked = true);
-#ifdef NM_0_8
     void updateHasWwan();
-#endif
 
     RemoteActivatableList* m_activatables;
     bool m_hasWirelessInterface;

@@ -31,6 +31,7 @@ Q_OBJECT
 Q_DECLARE_PRIVATE(EapMethodInnerAuth)
 public:
     EapMethodInnerAuth(Knm::Connection* connection, QWidget * parent = 0);
+    EapMethodInnerAuth(Knm::Connection* connection, EapMethodInnerAuthPrivate &dd, QWidget * parent = 0);
     virtual ~EapMethodInnerAuth();
 
 public Q_SLOTS:

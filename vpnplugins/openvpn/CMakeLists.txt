@@ -5,6 +5,7 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals)
 set(openvpn_SRCS
    openvpn.cpp
    openvpnwidget.cpp
+   openvpnauth.cpp
    )
 
 kde4_add_ui_files(openvpn_SRCS openvpnprop.ui)

@@ -5,8 +5,17 @@
 
 using namespace Knm;
 
-SerialSetting::SerialSetting() : Setting(Setting::Serial), mBaud(115200), mBits(0), mParity(EnumParity::None), mStopbits(0), mSenddelay(0)
+SerialSetting::SerialSetting() : Setting(Setting::Serial), mBaud(57600), mBits(8), mParity(EnumParity::None), mStopbits(1), mSenddelay(0)
 {
+}
+
+SerialSetting::SerialSetting(SerialSetting *setting) : Setting(setting)
+{
+    setBaud(setting->baud());
+    setBits(setting->bits());
+    setParity(setting->parity());
+    setStopbits(setting->stopbits());
+    setSenddelay(setting->senddelay());
 }
 
 SerialSetting::~SerialSetting()

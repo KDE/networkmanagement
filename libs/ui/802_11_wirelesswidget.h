@@ -35,6 +35,7 @@ class KNM_EXPORT Wireless80211Widget : public SettingWidget
 {
 Q_OBJECT
 Q_DECLARE_PRIVATE(Wireless80211Widget)
+    friend class WirelessPreferences;
 public:
     Wireless80211Widget(Knm::Connection * connection, const QString &ssid = QString(), bool shared = false, QWidget * parent = 0);
     virtual ~Wireless80211Widget();
@@ -49,13 +50,13 @@ protected Q_SLOTS:
     void scanClicked();
     void validate();
     void modeChanged(int);
-    void bandChanged(int);
     void copyToBssid();
+    void generateRandomClonedMac();
 
 Q_SIGNALS:
-    void ssidSelected(Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *);
+    void ssidSelected(Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *);
 private:
-    void setAccessPointData(const Solid::Control::WirelessNetworkInterface *, const Solid::Control::AccessPoint *) const;
+    void setAccessPointData(const Solid::Control::WirelessNetworkInterfaceNm09 *, const Solid::Control::AccessPointNm09 *) const;
 };
 
 class Wireless80211WidgetBand : public QSpinBox
@@ -68,12 +69,12 @@ public:
     QValidator::State validate(QString&, int&) const;
     int channelFromPos(int) const;
     int posFromChannel(int) const;
-    void setBand(int);
     QPair<int, int> findBandAndChannel(int freq);
+public Q_SLOTS:
+    void setBand(int);
 private:
+    enum ChannelsFor { a = 0, bg = 1};
     QList< QList<int> > channels;
-    QList<int> freqs_bgn;
-    QList< QPair<int, int> > freqs_ahjn;
     int selectedBand;
 };
 

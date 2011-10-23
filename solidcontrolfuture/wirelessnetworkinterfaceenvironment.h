@@ -47,12 +47,12 @@ public:
      * Construct this using a Solid::Control::WirelessNetworkInterface * iface which is the QObject
      * parent
      */
-    WirelessNetworkInterfaceEnvironment(Solid::Control::WirelessNetworkInterface * iface);
+    WirelessNetworkInterfaceEnvironment(Solid::Control::WirelessNetworkInterfaceNm09 * iface);
     virtual ~WirelessNetworkInterfaceEnvironment();
     virtual QStringList networks() const;
     virtual Solid::Control::WirelessNetwork * findNetwork(const QString&) const;
     void dump();
-    Solid::Control::WirelessNetworkInterface * interface() const;
+    Solid::Control::WirelessNetworkInterfaceNm09 * interface() const;
 
 private Q_SLOTS:
     void accessPointAppeared(const QString&);

@@ -33,16 +33,16 @@ class KNM_EXPORT WirelessSecurity
 public:
     enum Type { Unknown, None, StaticWep, Leap, DynamicWep, WpaPsk, WpaEap, Wpa2Psk, Wpa2Eap };
 
-    static bool possible(WirelessSecurity::Type, Solid::Control::WirelessNetworkInterface::Capabilities, bool haveAp, bool adHoc, Solid::Control::AccessPoint::Capabilities apCaps, Solid::Control::AccessPoint::WpaFlags apWpa, Solid::Control::AccessPoint::WpaFlags apRsn);
+    static bool possible(WirelessSecurity::Type, Solid::Control::WirelessNetworkInterfaceNm09::Capabilities, bool haveAp, bool adHoc, Solid::Control::AccessPointNm09::Capabilities apCaps, Solid::Control::AccessPointNm09::WpaFlags apWpa, Solid::Control::AccessPointNm09::WpaFlags apRsn);
 
     static QString shortToolTip(WirelessSecurity::Type);
     static QString label(WirelessSecurity::Type);
 
     static QString iconName(WirelessSecurity::Type);
 
-    static WirelessSecurity::Type best(Solid::Control::WirelessNetworkInterface::Capabilities, bool haveAp, bool adHoc, Solid::Control::AccessPoint::Capabilities apCaps, Solid::Control::AccessPoint::WpaFlags apWpa, Solid::Control::AccessPoint::WpaFlags apRsn);
+    static WirelessSecurity::Type best(Solid::Control::WirelessNetworkInterfaceNm09::Capabilities, bool haveAp, bool adHoc, Solid::Control::AccessPointNm09::Capabilities apCaps, Solid::Control::AccessPointNm09::WpaFlags apWpa, Solid::Control::AccessPointNm09::WpaFlags apRsn);
 private:
-    static bool interfaceSupportsApCiphers(Solid::Control::WirelessNetworkInterface::Capabilities, Solid::Control::AccessPoint::WpaFlags ciphers, WirelessSecurity::Type);
+    static bool interfaceSupportsApCiphers(Solid::Control::WirelessNetworkInterfaceNm09::Capabilities, Solid::Control::AccessPointNm09::WpaFlags ciphers, WirelessSecurity::Type);
 };
 
 } // namespace Knm

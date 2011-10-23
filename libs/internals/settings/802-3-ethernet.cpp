@@ -14,6 +14,17 @@ WiredSetting::WiredSetting() : Setting(Setting::Wired),
 {
 }
 
+WiredSetting::WiredSetting(WiredSetting *setting) : Setting(setting)
+{
+    setPort(setting->port());
+    setSpeed(setting->speed());
+    setDuplex(setting->duplex());
+    setAutonegotiate(setting->autonegotiate());
+    setMacaddress(setting->macaddress());
+    setClonedmacaddress(setting->clonedmacaddress());
+    setMtu(setting->mtu());
+}
+
 WiredSetting::~WiredSetting()
 {
 }

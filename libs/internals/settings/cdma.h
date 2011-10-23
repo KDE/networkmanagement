@@ -15,11 +15,15 @@ class KNMINTERNALS_EXPORT CdmaSetting : public Setting
   public:
 
     CdmaSetting( );
+    CdmaSetting(CdmaSetting *);
     ~CdmaSetting();
 
     QString name() const;
 
-    bool hasSecrets() const;
+    QMap<QString,QString> secretsToMap() const;
+    void secretsFromMap(QMap<QString,QString> secrets);
+    QStringList needSecrets() const;
+    bool hasPersistentSecrets() const;
 
     /**
       Set Number
@@ -69,12 +73,29 @@ class KNMINTERNALS_EXPORT CdmaSetting : public Setting
       return mPassword;
     }
 
+    /**
+     * Set Password flags
+     */
+    void setPasswordflags( Setting::secretsTypes types )
+    {
+        mPasswordflags = types;
+    }
+
+    /**
+     * Get Password flags
+     */
+    Setting::secretsTypes passwordflags() const
+    {
+        return mPasswordflags;
+    }
+
   protected:
 
     // cdma
     QString mNumber;
     QString mUsername;
     QString mPassword;
+    Setting::secretsTypes mPasswordflags;
 
   private:
 };

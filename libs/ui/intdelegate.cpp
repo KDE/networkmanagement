@@ -36,4 +36,3 @@ QWidget * IntDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem 
 
     return editor;
 }
-

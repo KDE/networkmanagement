@@ -26,8 +26,8 @@ RemoteInterfaceConnection::RemoteInterfaceConnection(RemoteInterfaceConnectionPr
 {
     Q_D(RemoteInterfaceConnection);
     d->interfaceConnectionIface = new InterfaceConnectionInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
-    connect(d->interfaceConnectionIface, SIGNAL(activationStateChanged(uint)),
-            this, SLOT(handleActivationStateChange(uint)));
+    connect(d->interfaceConnectionIface, SIGNAL(activationStateChanged(uint, uint)),
+            this, SLOT(handleActivationStateChange(uint, uint)));
     connect(d->interfaceConnectionIface, SIGNAL(hasDefaultRouteChanged(bool)),
             this, SIGNAL(hasDefaultRouteChanged(bool)));
 }
@@ -37,8 +37,8 @@ RemoteInterfaceConnection::RemoteInterfaceConnection(const QString &dbusPath, QO
 {
     Q_D(RemoteInterfaceConnection);
     d->interfaceConnectionIface = new InterfaceConnectionInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
-    connect(d->interfaceConnectionIface, SIGNAL(activationStateChanged(uint)),
-            this, SLOT(handleActivationStateChange(uint)));
+    connect(d->interfaceConnectionIface, SIGNAL(activationStateChanged(uint, uint)),
+            this, SLOT(handleActivationStateChange(uint, uint)));
     connect(d->interfaceConnectionIface, SIGNAL(hasDefaultRouteChanged(bool)),
             this, SIGNAL(hasDefaultRouteChanged(bool)));
 }
@@ -80,15 +80,22 @@ Knm::InterfaceConnection::ActivationState RemoteInterfaceConnection::activationS
     return (Knm::InterfaceConnection::ActivationState)aState;
 }
 
+Knm::InterfaceConnection::ActivationState RemoteInterfaceConnection::oldActivationState() const
+{
+    Q_D(const RemoteInterfaceConnection);
+    uint aState = d->interfaceConnectionIface->oldActivationState();
+    return (Knm::InterfaceConnection::ActivationState)aState;
+}
+
 bool RemoteInterfaceConnection::hasDefaultRoute() const
 {
     Q_D(const RemoteInterfaceConnection);
     return d->interfaceConnectionIface->hasDefaultRoute();
 }
 
-void RemoteInterfaceConnection::handleActivationStateChange(uint state)
+void RemoteInterfaceConnection::handleActivationStateChange(uint oldState, uint newState)
 {
-    emit activationStateChanged((Knm::InterfaceConnection::ActivationState)state);
+    emit activationStateChanged((Knm::InterfaceConnection::ActivationState)oldState, (Knm::InterfaceConnection::ActivationState)newState);
 }
 
 

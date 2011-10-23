@@ -31,14 +31,18 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
 
     enum WepKeyType { None = 0, Hex, Passphrase, COUNT};
 
-    WirelessSecuritySetting( );
+    WirelessSecuritySetting();
+    WirelessSecuritySetting(WirelessSecuritySetting *);
     ~WirelessSecuritySetting();
 
     void reset();
 
     QString name() const;
 
-    bool hasSecrets() const;
+    QMap<QString,QString> secretsToMap() const;
+    void secretsFromMap(QMap<QString,QString> secrets);
+    QStringList needSecrets() const;
+    bool hasPersistentSecrets() const;
 
     /**
       Set Security type
@@ -46,10 +50,6 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     void setSecurityType( int v )
     {
         mSecurityType = v;
-
-        if (mSecurityType == None) {
-            mEnabled = false;
-        }
     }
 
     /**
@@ -237,6 +237,22 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     }
 
     /**
+     * Set WEP key flags
+     */
+    void setWepkeyflags( Setting::secretsTypes types )
+    {
+        mWepkeyflags = types;
+    }
+
+    /**
+     * Get WEP key flags
+     */
+    Setting::secretsTypes wepkeyflags() const
+    {
+        return mWepkeyflags;
+    }
+
+    /**
       Set PSK
     */
     void setPsk( const QString & v )
@@ -250,6 +266,22 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     QString psk() const
     {
       return mPsk;
+    }
+
+    /**
+     * Set PSK flags
+     */
+    void setPskflags( Setting::secretsTypes types )
+    {
+        mPskflags = types;
+    }
+
+    /**
+     * Get PSK flags
+     */
+    Setting::secretsTypes pskflags() const
+    {
+        return mPskflags;
     }
 
     /**
@@ -269,19 +301,19 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     }
 
     /**
-      Set WEP Passphrase
-    */
-    void setWeppassphrase( const QString & v )
+     * Set LEAP Password flags
+     */
+    void setLeappasswordflags( Setting::secretsTypes types )
     {
-        mWeppassphrase = v;
+        mLeappasswordflags = types;
     }
 
     /**
-      Get WEP Passphrase
-    */
-    QString weppassphrase() const
+     * Get LEAP Password flags
+     */
+    Setting::secretsTypes leappasswordflags() const
     {
-      return mWeppassphrase;
+        return mLeappasswordflags;
     }
 
     /**
@@ -298,16 +330,6 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     WepKeyType wepKeyType() const
     {
       return mWepKeyType;
-    }
-
-    void setEnabled(bool b)
-    {
-        mEnabled = b;
-    }
-
-    bool enabled()
-    {
-        return mEnabled;
     }
 
   protected:
@@ -329,7 +351,9 @@ class KNMINTERNALS_EXPORT WirelessSecuritySetting : public Setting
     QString mLeappassword;
     QString mWeppassphrase;
     WepKeyType mWepKeyType;
-    bool mEnabled;
+    Setting::secretsTypes mWepkeyflags;
+    Setting::secretsTypes mPskflags;
+    Setting::secretsTypes mLeappasswordflags;
 
   private:
 };

@@ -18,9 +18,9 @@
     <number>0</number>
    </property>
    <item row="0" column="0">
-    <widget class="QLabel" name="textLabel1">
+    <widget class="QLabel" name="userLabel">
      <property name="text">
-      <string>User Password</string>
+      <string>User &amp;Password:</string>
      </property>
      <property name="wordWrap">
       <bool>false</bool>
@@ -31,9 +31,9 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="textLabel2">
+    <widget class="QLabel" name="groupLabel">
      <property name="text">
-      <string>Group Password</string>
+      <string>&amp;Group Password:</string>
      </property>
      <property name="wordWrap">
       <bool>false</bool>
@@ -50,7 +50,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="1">
+   <item row="3" column="1">
     <spacer name="spacer1">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -61,7 +61,7 @@
      <property name="sizeHint" stdset="0">
       <size>
        <width>20</width>
-       <height>40</height>
+       <height>0</height>
       </size>
      </property>
     </spacer>
@@ -69,6 +69,16 @@
    <item row="1" column="2">
     <widget class="KLineEdit" name="leGroupPassword">
      <property name="passwordMode">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QCheckBox" name="cbShowPasswords">
+     <property name="text">
+      <string>&amp;Hide passwords</string>
+     </property>
+     <property name="checked">
       <bool>true</bool>
      </property>
     </widget>
@@ -85,5 +95,38 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cbShowPasswords</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>leGroupPassword</receiver>
+   <slot>setPasswordMode(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>141</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>143</x>
+     <y>39</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbShowPasswords</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>leUserPassword</receiver>
+   <slot>setPasswordMode(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>216</x>
+     <y>63</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>203</x>
+     <y>14</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

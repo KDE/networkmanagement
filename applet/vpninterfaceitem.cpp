@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteinterfaceconnection.h"
 
 
-VpnInterfaceItem::VpnInterfaceItem(Solid::Control::NetworkInterface * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
+VpnInterfaceItem::VpnInterfaceItem(Solid::Control::NetworkInterfaceNm09 * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
 : InterfaceItem(iface, activatables, mode, parent)
 {
     m_icon->nativeWidget()->setPixmap(KIcon("secure-card").pixmap(48,48));
@@ -42,10 +42,10 @@ VpnInterfaceItem::VpnInterfaceItem(Solid::Control::NetworkInterface * iface, Rem
 
     // Catch all kinds of signals to update the VPN widget
 
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*)),
-            SLOT(activatableAdded(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*, int)),
+            SLOT(activatableAdded(RemoteActivatable *)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
-            SLOT(activatableRemoved(RemoteActivatable*)));
+            SLOT(activatableRemoved(RemoteActivatable *)));
 
     connect(m_activatables, SIGNAL(appeared()), SLOT(listAppeared()));
     connect(m_activatables, SIGNAL(disappeared()), SLOT(listDisappeared()));
@@ -110,7 +110,7 @@ void VpnInterfaceItem::setConnectionInfo()
         m_connectionNameLabel->setText(i18nc("VPN state label", "Not Connected..."));
     }
     m_disconnectButton->setVisible(showDisconnect);
-    if (m_vpnActivatables.count()) {
+    if (!m_vpnActivatables.isEmpty()) {
         //kDebug() << m_vpnActivatables.count() << "VPN connections have become available!";
         show();
     } else {
@@ -181,5 +181,21 @@ bool VpnInterfaceItem::accept(RemoteActivatable * activatable) const
         return true;
     }
     return false;
+}
+
+void VpnInterfaceItem::hoverEnterEvent(QGraphicsSceneHoverEvent *event)
+{
+    if (!m_vpnActivatables.isEmpty())
+        emit hoverEnter();
+
+    InterfaceItem::hoverEnterEvent(event);
+}
+
+void VpnInterfaceItem::hoverLeaveEvent(QGraphicsSceneHoverEvent *event)
+{
+    if (!m_vpnActivatables.isEmpty())
+        emit hoverLeave();
+
+    InterfaceItem::hoverLeaveEvent(event);
 }
 // vim: sw=4 sts=4 et tw=100

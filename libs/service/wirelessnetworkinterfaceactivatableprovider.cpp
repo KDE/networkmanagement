@@ -45,7 +45,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class WirelessNetworkInterfaceActivatableProviderPrivate : public NetworkInterfaceActivatableProviderPrivate
 {
 public:
-    WirelessNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::WirelessNetworkInterface * theInterface)
+    WirelessNetworkInterfaceActivatableProviderPrivate(ConnectionList * theConnectionList, ActivatableList * theActivatableList, Solid::Control::WirelessNetworkInterfaceNm09 * theInterface)
         : NetworkInterfaceActivatableProviderPrivate(theConnectionList, theActivatableList, theInterface)
     { }
 
@@ -54,23 +54,23 @@ public:
     // essid to WirelessNetwork - only 1 exists per network
     QHash<QString, Knm::WirelessNetwork *> wirelessNetworks;
 
-    Solid::Control::WirelessNetworkInterface * wirelessInterface() const
+    Solid::Control::WirelessNetworkInterfaceNm09 * wirelessInterface() const
     {
-        return qobject_cast<Solid::Control::WirelessNetworkInterface*>(interface);
+        return qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(interface);
     }
 };
 
-WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::WirelessNetworkInterface * interface, QObject * parent)
+WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::WirelessNetworkInterfaceNm09 * interface, QObject * parent)
 : NetworkInterfaceActivatableProvider(*new WirelessNetworkInterfaceActivatableProviderPrivate(connectionList, activatableList, interface), parent)
 {
     Q_D(WirelessNetworkInterfaceActivatableProvider);
     d->environment = new Solid::Control::WirelessNetworkInterfaceEnvironment(interface);
 
-    QObject::connect(d->environment, SIGNAL(networkAppeared(QString)), this, SLOT(networkAppeared(QString)));
-    QObject::connect(d->environment, SIGNAL(networkDisappeared(QString)), this, SLOT(networkDisappeared(QString)));
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
+    QObject::connect(d->environment, SIGNAL(networkAppeared(const QString &)), this, SLOT(networkAppeared(const QString&)));
+    QObject::connect(d->environment, SIGNAL(networkDisappeared(const QString &)), this, SLOT(networkDisappeared(const QString&)));
+    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
                 this, SLOT(wirelessEnabledChanged(bool)));
-    connect(Solid::Control::NetworkManager::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
+    connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(wirelessEnabledChanged(bool)),
                 this, SLOT(wirelessEnabledChanged(bool)));
     // try to create a connectable for each wireless network we can see
     // this is slightly inefficient because the NetworkInterfaceActivatableProvider ctor
@@ -198,7 +198,7 @@ void WirelessNetworkInterfaceActivatableProvider::handleRemove(Knm::Connection *
     // still exist
     Knm::WirelessSetting * wirelessSetting = dynamic_cast<Knm::WirelessSetting *>(removedConnection->setting(Knm::Setting::Wireless));
     // d->interface may be null if NM has just stopped and this provider has not been unregistered yet.
-    // d->environment is a child of d->interface, so it is a valid pointer in that situation.
+    // d->environment is a child of d->interface, so it is an invalid pointer in that situation.
     if (wirelessSetting && d->interface) {
         if (d->environment->networks().contains(wirelessSetting->ssid())) {
             networkAppeared(wirelessSetting->ssid());
@@ -233,12 +233,12 @@ void WirelessNetworkInterfaceActivatableProvider::networkAppeared(const QString 
         // get the info on the network
         Solid::Control::WirelessNetwork * network = d->environment->findNetwork(ssid);
         int strength = 0;
-        Solid::Control::AccessPoint::Capabilities caps = 0;
-        Solid::Control::AccessPoint::WpaFlags wpaFlags = 0;
-        Solid::Control::AccessPoint::WpaFlags rsnFlags = 0;
+        Solid::Control::AccessPointNm09::Capabilities caps = 0;
+        Solid::Control::AccessPointNm09::WpaFlags wpaFlags = 0;
+        Solid::Control::AccessPointNm09::WpaFlags rsnFlags = 0;
         if (network) {
             strength = network->signalStrength();
-            Solid::Control::AccessPoint * ap = d->wirelessInterface()->findAccessPoint(network->referenceAccessPoint());
+            Solid::Control::AccessPointNm09 * ap = d->wirelessInterface()->findAccessPoint(network->referenceAccessPoint());
             if (ap) {
                 caps = ap->capabilities();
                 wpaFlags = ap->wpaFlags();
@@ -265,7 +265,7 @@ void WirelessNetworkInterfaceActivatableProvider::networkDisappeared(const QStri
         if (ic->activatableType() == Knm::Activatable::WirelessInterfaceConnection ) {
             Knm::WirelessInterfaceConnection * wic = static_cast<Knm::WirelessInterfaceConnection*>(ic);
 
-            if (wic->ssid() == ssid && wic->operationMode() != Solid::Control::WirelessNetworkInterface::Adhoc) {
+            if (wic->ssid() == ssid && wic->operationMode() != Solid::Control::WirelessNetworkInterfaceNm09::Adhoc) {
                 d->activatableList->removeActivatable(ic);
                 i = d->activatables.erase(i);
                 delete wic;
@@ -314,8 +314,8 @@ void WirelessNetworkInterfaceActivatableProvider::wirelessEnabledChanged(bool st
 
 bool WirelessNetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() const
 {
-    bool needed =  Solid::Control::NetworkManager::isWirelessEnabled()
-        && Solid::Control::NetworkManager::isWirelessHardwareEnabled();
+    bool needed =  Solid::Control::NetworkManagerNm09::isWirelessEnabled()
+        && Solid::Control::NetworkManagerNm09::isWirelessHardwareEnabled();
     return needed;
 }
 

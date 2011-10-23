@@ -6,80 +6,224 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>275</width>
-    <height>173</height>
+    <width>322</width>
+    <height>208</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Ethernet</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
-   <property name="fieldGrowthPolicy">
-    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-   </property>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="toolTip">
-      <string>Example: 11:22:33:44:55:66</string>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
      </property>
-     <property name="text">
-      <string>&amp;Restrict To Interface:</string>
-     </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-     <property name="buddy">
-      <cstring>cmbMacAddress</cstring>
-     </property>
-    </widget>
-   </item>
-   <item row="0" column="1">
-    <widget class="KComboBox" name="cmbMacAddress">
-     <item>
-      <property name="text">
-       <string>Any</string>
-      </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label">
+       <property name="toolTip">
+        <string>Example: 11:22:33:44:55:66</string>
+       </property>
+       <property name="text">
+        <string>&amp;Restrict To Interface:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>cmbMacAddress</cstring>
+       </property>
+      </widget>
      </item>
-    </widget>
+     <item row="0" column="1">
+      <widget class="KComboBox" name="cmbMacAddress">
+       <item>
+        <property name="text">
+         <string>Any</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>Cloned MAC address</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="toolTip">
+        <string>Maximum Transfer Unit (bytes)</string>
+       </property>
+       <property name="text">
+        <string>M&amp;TU:</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy">
+        <cstring>mtu</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="KIntSpinBox" name="mtu">
+       <property name="toolTip">
+        <string>Maximum Transmission Unit</string>
+       </property>
+       <property name="whatsThis">
+        <string>Sets the size of the largest packet that can be transmitted on this network. '0' sets the MTU automatically.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="specialValueText">
+        <string>Automatic</string>
+       </property>
+       <property name="maximum">
+        <number>10000</number>
+       </property>
+       <property name="singleStep">
+        <number>10</number>
+       </property>
+       <property name="value">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="labelSpeed">
+       <property name="text">
+        <string>Speed</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="KIntSpinBox" name="speed">
+       <property name="toolTip">
+        <string>Use the specified speed</string>
+       </property>
+       <property name="whatsThis">
+        <string>Request that the device use only the specified speed.</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="specialValueText">
+        <string>Automatic</string>
+       </property>
+       <property name="suffix">
+        <string> MBit/s</string>
+       </property>
+       <property name="maximum">
+        <number>1000000000</number>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="labelDuplex">
+       <property name="text">
+        <string>Duplex</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="KComboBox" name="cmbDuplex">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>22</height>
+        </size>
+       </property>
+       <property name="toolTip">
+        <string>Use the specified duplex mode</string>
+       </property>
+       <property name="whatsThis">
+        <string>Request that the device use only the specified duplex mode. A device in full duplex mode can send and receive data at the same time, while a device in half duplex mode can either send or receive data, but not both at the same time.</string>
+       </property>
+       <property name="currentIndex">
+        <number>1</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>Half</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Full</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="KLineEdit" name="clonedMacAddress">
+         <property name="toolTip">
+          <string>Custom MAC address for the hardware to use</string>
+         </property>
+         <property name="whatsThis">
+          <string>The MAC address entered here will be used as hardware address for the network device this connection is activated on. This feature is known as MAC cloning or spoofing.</string>
+         </property>
+         <property name="inputMask">
+          <string>HH:HH:HH:HH:HH:HH;_</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="KPushButton" name="clonedMacAddressRandom">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="text">
+          <string>Random</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="toolTip">
-      <string>Maximum Transfer Unit (bytes)</string>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
      </property>
-     <property name="text">
-      <string>M&amp;TU:</string>
+     <property name="sizeType">
+      <enum>QSizePolicy::Expanding</enum>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
      </property>
-     <property name="buddy">
-      <cstring>mtu</cstring>
-     </property>
-    </widget>
+    </spacer>
    </item>
-   <item row="1" column="1">
-    <widget class="KIntSpinBox" name="mtu">
+   <item>
+    <widget class="QCheckBox" name="chkAutoNegotiate">
      <property name="toolTip">
-      <string>Maximum Transmission Unit</string>
+      <string>Allow auto-negotiation of port speed and duplex mode</string>
      </property>
      <property name="whatsThis">
-      <string>Sets the size of the largest packet that can be transmitted on this network. '0' sets the MTU automatically.</string>
+      <string>Allow auto-negotiation of port speed and duplex mode</string>
      </property>
-     <property name="alignment">
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
      </property>
-     <property name="specialValueText">
-      <string>Automatic</string>
-     </property>
-     <property name="maximum">
-      <number>10000</number>
-     </property>
-     <property name="singleStep">
-      <number>10</number>
-     </property>
-     <property name="value">
-      <number>0</number>
+     <property name="text">
+      <string>Autonegotiate</string>
      </property>
     </widget>
    </item>
@@ -92,11 +236,86 @@
    <header>knuminput.h</header>
   </customwidget>
   <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>KComboBox</class>
    <extends>QComboBox</extends>
    <header>kcombobox.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>chkAutoNegotiate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelSpeed</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>169</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>103</x>
+     <y>96</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkAutoNegotiate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>speed</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>169</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>230</x>
+     <y>96</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkAutoNegotiate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>labelDuplex</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>169</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>102</x>
+     <y>122</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>chkAutoNegotiate</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>cmbDuplex</receiver>
+   <slot>setHidden(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>169</x>
+     <y>162</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>230</x>
+     <y>122</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

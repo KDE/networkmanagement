@@ -8,7 +8,8 @@ include_directories(
    ${CMAKE_CURRENT_BINARY_DIR}/../internals
    )
 
-add_subdirectory(tests)
+# Disabled until someone updates them to use the new NM-0.9 code
+#add_subdirectory(tests)
 
 set(knmservice_SRCS
    # defines interface for objects observing connections
@@ -17,11 +18,14 @@ set(knmservice_SRCS
    # list of all connections, maintains connectionhandlers
    connectionlist.cpp
 
-   # loads/saves connections
-   connectionlistpersistence.cpp
+   # handles storage of secrets
+   secretstorage.cpp
+
+   #defines interface for objects storing secrets
+   secretsprovider.cpp
 
    # provides dbus configure() for config UI
-   connectionlistpersistencedbus.cpp
+   #connectionlistpersistencedbus.cpp
 
    # list of things that may be connected: connections and unconfigured networks
    activatablelist.cpp
@@ -113,16 +117,14 @@ qt4_add_dbus_adaptor(
     WirelessNetworkAdaptor
 )
 
-if (KDE4_MM_BACKEND_FOUND)
-	qt4_add_dbus_adaptor(
-	    knmservice_SRCS
-	    interfaces/org.kde.networkmanagement.gsminterfaceconnection.xml
-	    gsminterfaceconnection.h
-	    Knm::GsmInterfaceConnection
-	    gsminterfaceconnectionadaptor
-	    GsmInterfaceConnectionAdaptor
-	)
-endif (KDE4_MM_BACKEND_FOUND)
+qt4_add_dbus_adaptor(
+    knmservice_SRCS
+    interfaces/org.kde.networkmanagement.gsminterfaceconnection.xml
+    gsminterfaceconnection.h
+    Knm::GsmInterfaceConnection
+    gsminterfaceconnectionadaptor
+    GsmInterfaceConnectionAdaptor
+)
 
 qt4_add_dbus_adaptor(knmservice_SRCS
    interfaces/org.kde.networkmanagement.xml
@@ -134,7 +136,7 @@ qt4_add_dbus_adaptor(knmservice_SRCS
 
 kde4_add_library(knmservice SHARED ${knmservice_SRCS})
 
-target_link_libraries(knmservice knminternals solidcontrol solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS}
+target_link_libraries(knmservice knminternals knmui solidcontrol solidcontrolnm09 solidcontrolfuture ${KDE4_KDECORE_LIBS} ${KDE4_KDEUI_LIBS} ${KDE4_SOLID_LIBS}
    )
 
 set_target_properties(knmservice PROPERTIES

@@ -28,81 +28,101 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QUuid>
 
 #include <KDebug>
+#include <KAuth/Action>
+#include <kauthactionreply.h>
 #include <KMessageBox>
 #include <KLocale>
 
 // knminternals includes
 #include "connection.h"
 #include "interfaceconnection.h"
+#include "vpninterfaceconnection.h"
 
 // knmservice includes
 #include "activatablelist.h"
-#include "connectionlist.h"
 
 #include "settings/ipv4.h"
 
 #include "connectiondbus.h"
 #include "remoteconnection.h"
 #include "nm-settingsinterface.h"
-#include "nm-exported-connectioninterface.h"
-#include "nm-exported-connection-secrets-interface.h"
+#include "nm-settings-connectioninterface.h"
+#include "nm-active-connectioninterface.h"
+#include "nm-manager-interface.h"
+#include "nm-device-interface.h"
+
+#include <solid/control/networkmanager.h>
+#include <solid/control/networkmodeminterface.h>
+#include <solid/control/modeminterface.h>
 
 class NMDBusSettingsConnectionProviderPrivate
 {
 public:
     ConnectionList * connectionList;
     // hash of object path to object
-    QHash<QString, QPair<Knm::Connection*, RemoteConnection*> > connections;
-    QHash<QUuid, QDBusObjectPath> uuidToPath;
+    QHash<QString, RemoteConnection*> connections;
+    QHash<QUuid, QString> uuidToPath;
+    QMap<QUuid, QVariantMapMap> secretsToSave;
+    QHash<QUuid, Knm::Connection *> secretsToGet;
     OrgFreedesktopNetworkManagerSettingsInterface * iface;
     QString serviceName;
 };
 
-NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionList * connectionList, const QString & service, QObject * parent)
+NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionList * connectionList, QObject * parent)
     : QObject(parent), d_ptr(new NMDBusSettingsConnectionProviderPrivate)
 {
     Q_D(NMDBusSettingsConnectionProvider);
-    d->connectionList = connectionList;
-    d->iface = new OrgFreedesktopNetworkManagerSettingsInterface(service,
-            QLatin1String(NM_DBUS_PATH_SETTINGS),
+    if (connectionList) {
+        d->connectionList = connectionList;
+    } else {
+        d->connectionList = new ConnectionList(this);
+    }
+    d->iface = new OrgFreedesktopNetworkManagerSettingsInterface(NM_DBUS_SERVICE,
+            NM_DBUS_PATH_SETTINGS,
             QDBusConnection::systemBus(), parent);
-    d->serviceName = service;
+    d->serviceName = NM_DBUS_SERVICE;
+
+    // For VPN connections.
+    qDBusRegisterMetaType<QStringMap>();
 
     initConnections();
     // signal is from parent class
-    connect(d->iface, SIGNAL(NewConnection(QDBusObjectPath)),
-            this, SLOT(onConnectionAdded(QDBusObjectPath)));
+    connect(d->iface, SIGNAL(NewConnection(const QDBusObjectPath&)),
+            this, SLOT(onConnectionAdded(const QDBusObjectPath&)));
     // clean our connections out if the service goes away
     connect(QDBusConnection::systemBus().interface(),
-            SIGNAL(serviceOwnerChanged(QString,QString,QString)),
-            SLOT(serviceOwnerChanged(QString,QString,QString)));
+            SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)),
+            SLOT(serviceOwnerChanged(const QString&,const QString&,const QString&)));
 }
 
 NMDBusSettingsConnectionProvider::~NMDBusSettingsConnectionProvider()
 {
-   delete d_ptr;
 }
 
 void NMDBusSettingsConnectionProvider::initConnections()
 {
     kDebug();
     Q_D(NMDBusSettingsConnectionProvider);
+    // ListConnections() is asynchronous; we need to wait until completion, else it won't work
     QDBusPendingReply<QList<QDBusObjectPath> > reply = d->iface->ListConnections();
     reply.waitForFinished();
-    if (reply.isValid()) {
+    if (!reply.isError()) {
         QList<QDBusObjectPath> connections = reply.value();
         foreach (const QDBusObjectPath &op, connections) {
             kDebug() << op.path();
             initialiseAndRegisterRemoteConnection(op.path());
         }
-    } else
-        kDebug() << "reply is not valid!";
+    } else {
+        kDebug() << "Error in ListConnections() D-Bus call:" << reply.error();
+    }
+
+
 }
 
 void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(const QString & path)
 {
     Q_D(NMDBusSettingsConnectionProvider);
-    if (d->connections.contains(path)) {
+    if (!d->uuidToPath.key(path, QUuid()).isNull()) {
         kDebug() << "Service" << d->iface->service() << "is reporting the same connection more than once!";
     } else {
         RemoteConnection * connectionIface = new RemoteConnection(d->iface->service(), path, this);
@@ -111,18 +131,12 @@ void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(con
         ConnectionDbus dbusConverter(connection);
         dbusConverter.fromDbusMap(connectionIface->GetSettings());
 
-        d->connections.insert(path, QPair<Knm::Connection*, RemoteConnection*>(connection,connectionIface));
-        d->uuidToPath.insert(connection->uuid(), QDBusObjectPath(path));
+        d->connections.insert(connection->uuid(),connectionIface);
+        d->uuidToPath.insert(connection->uuid(), path);
 
         kDebug() << connection->uuid();
 
         connection->setOrigin(QLatin1String("NMDBusSettingsConnectionProvider"));
-
-        //TODO: make a better check here
-        if (d->serviceName.contains("NetworkManagerUserSettings"))
-            connection->setScope(Knm::Connection::User);
-        else if (d->serviceName.contains("NetworkManagerSystemSettings"))
-            connection->setScope(Knm::Connection::System);
 
         d->connectionList->addConnection(connection);
     }
@@ -131,8 +145,8 @@ void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(con
 void NMDBusSettingsConnectionProvider::makeConnections(RemoteConnection * connectionIface)
 {
     connect(connectionIface, SIGNAL(Removed()), this, SLOT(onRemoteConnectionRemoved()));
-    connect(connectionIface, SIGNAL(Updated(QVariantMapMap)),
-            this, SLOT(onRemoteConnectionUpdated(QVariantMapMap)));
+    connect(connectionIface, SIGNAL(Updated()),
+            this, SLOT(onRemoteConnectionUpdated()));
 }
 
 void NMDBusSettingsConnectionProvider::onConnectionAdded(const QDBusObjectPath& op)
@@ -147,31 +161,32 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved()
     RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
     QString removedPath = connection->path();
     kDebug() << removedPath;
-    if (d->connections.contains(removedPath)) {
-        QPair<Knm::Connection *, RemoteConnection *> removed = d->connections.take(removedPath);
-        d->uuidToPath.remove(removed.first->uuid());
-        delete removed.second;
-        // If connection changed scope do not delete it because it is still needed in the other scope.
-        if ((d->serviceName.contains("NetworkManagerSystemSettings") && removed.first->scope() == Knm::Connection::System) ||
-            (d->serviceName.contains("NetworkManagerUserSettings") && removed.first->scope() == Knm::Connection::User)) {
-            removed.first->removeCertificates();
-            d->connectionList->removeConnection(removed.first);
-        }
+    QUuid uuid = d->uuidToPath.key(removedPath, QUuid());
+    if (!uuid.isNull()) {
+        RemoteConnection *removed = d->connections.take(uuid.toString());
+        d->uuidToPath.remove(uuid.toString());
+        delete removed;
+        Knm::Connection *con = d->connectionList->findConnection(uuid.toString());
+        d->connectionList->removeConnection(con);
 
         emit connectionsChanged();
     }
 }
 
-void NMDBusSettingsConnectionProvider::onRemoteConnectionUpdated(const QVariantMapMap& updatedSettings)
+void NMDBusSettingsConnectionProvider::onRemoteConnectionUpdated()
 {
     Q_D(NMDBusSettingsConnectionProvider);
     RemoteConnection * connection = static_cast<RemoteConnection*>(sender());
     kDebug() << connection->path();
-    if (d->connections.contains(connection->path())) {
-        QPair<Knm::Connection *, RemoteConnection *> updated = d->connections.value(connection->path());
-        ConnectionDbus dbusConverter(updated.first);
-        dbusConverter.fromDbusMap(updatedSettings);
-        d->connectionList->updateConnection(updated.first);
+
+    QUuid uuid = d->uuidToPath.key(connection->path(), QUuid());
+    if (!uuid.isNull() && d->connections.contains(uuid.toString())) {
+        ConnectionDbus temp(new Knm::Connection(QUuid(), Knm::Connection::Wired));
+        Knm::Connection *con = d->connectionList->findConnection(uuid.toString());
+        ConnectionDbus dbusConverter(con);
+        dbusConverter.fromDbusMap(connection->GetSettings());
+
+        d->connectionList->updateConnection(con);
 
         emit connectionsChanged();
     }
@@ -200,21 +215,12 @@ void NMDBusSettingsConnectionProvider::serviceOwnerChanged(const QString & chang
 void NMDBusSettingsConnectionProvider::clearConnections()
 {
     Q_D(NMDBusSettingsConnectionProvider);
-    foreach (const QString &key, d->connections.keys()) {
-        // Remove it from d->connections first to prevent a crash because
-        // of the "delete toDelete.second" emmiting a Delete signal captured by
-        // NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved(), which deletes
-        // toDelete.second again.
-        QPair<Knm::Connection*, RemoteConnection*> toDelete = d->connections.take(key);
-
-        // If connection changed scope do not delete it because it is still needed in the other scope.
-        if ((d->serviceName.contains("NetworkManagerSystemSettings") && toDelete.first->scope() == Knm::Connection::System) ||
-            (d->serviceName.contains("NetworkManagerUserSettings") && toDelete.first->scope() == Knm::Connection::User)) {
-            d->connectionList->removeConnection(toDelete.first);
-        }
-        delete toDelete.second;
+    foreach (RemoteConnection * conn, d->connections.values()) {
+        // Qt::DirectConnection makes this call synchronous.
+        // The connection will actually be deleted by NMDBusSettingsConnectionProvider::onRemoteConnectionRemoved().
+        QMetaObject::invokeMethod(conn, "Removed", Qt::DirectConnection);
     }
-    // Just to make sure d->connections is really clear.
+    // Just to make sure they are really clear.
     d->connections.clear();
     d->uuidToPath.clear();
     emit connectionsChanged();
@@ -225,13 +231,77 @@ void NMDBusSettingsConnectionProvider::handleAdd(Knm::Activatable * added)
     Q_D(NMDBusSettingsConnectionProvider);
     Knm::InterfaceConnection * interfaceConnection = qobject_cast<Knm::InterfaceConnection*>(added);
     if (interfaceConnection) {
+        connect(interfaceConnection, SIGNAL(activated()), this, SLOT(interfaceConnectionActivated()));
+        connect(interfaceConnection, SIGNAL(deactivated()), this, SLOT(interfaceConnectionDeactivated()));
         // if derived from one of our connections, tag it with the service and object path of the
         // connection
         if (d->uuidToPath.contains(interfaceConnection->connectionUuid())) {
-            kDebug() << "tagging InterfaceConnection " << interfaceConnection->connectionName() << "from" << d->serviceName << d->uuidToPath[interfaceConnection->connectionUuid()].path();
+            kDebug() << "tagging InterfaceConnection " << interfaceConnection->connectionName() << "from" << d->serviceName << d->uuidToPath[interfaceConnection->connectionUuid()];
             interfaceConnection->setProperty("NMDBusService", d->serviceName );
-            interfaceConnection->setProperty("NMDBusObjectPath", d->uuidToPath[interfaceConnection->connectionUuid()].path());
+            interfaceConnection->setProperty("NMDBusObjectPath", d->uuidToPath[interfaceConnection->connectionUuid()]);
         }
+    }
+}
+
+void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
+{
+    Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
+    if (ic) {
+        QString deviceToActivateOn;
+        QVariantMap extraArguments;
+
+        Knm::VpnInterfaceConnection * vpn = qobject_cast<Knm::VpnInterfaceConnection*>(ic);
+        if (vpn) {
+            // look up the active connection (a real connection, not this vpn that is being activated)
+            // because NM needs its details to bring up the VPN
+            QString activeConnPath;
+            foreach (const QString &activeConnectionPath, Solid::Control::NetworkManagerNm09::activeConnections()) {
+                OrgFreedesktopNetworkManagerConnectionActiveInterface activeConnection(NM_DBUS_SERVICE, activeConnectionPath, QDBusConnection::systemBus());
+
+                if ( activeConnection.getDefault() && activeConnection.state() == NM_ACTIVE_CONNECTION_STATE_ACTIVATED) {
+                    activeConnPath = activeConnection.path();
+                    QList<QDBusObjectPath> devs = activeConnection.devices();
+                    if (!devs.isEmpty()) {
+                        deviceToActivateOn = devs.first().path();
+                    }
+                }
+            }
+
+            kDebug() << "active" << activeConnPath << "device" << deviceToActivateOn;
+
+            if ( activeConnPath.isEmpty() || deviceToActivateOn.isEmpty() )
+                return;
+
+            extraArguments.insert( "extra_connection_parameter", activeConnPath );
+        } else {
+            deviceToActivateOn = ic->deviceUni();
+        }
+
+        // Enable modem before connecting.
+        Solid::Control::ModemNetworkInterfaceNm09 *iface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09 *>(Solid::Control::NetworkManagerNm09::findNetworkInterface(deviceToActivateOn));
+        if (iface) {
+            Solid::Control::ModemGsmCardInterface *modem = iface->getModemCardIface();
+            if (modem && !modem->enabled()) {
+                // Try to pin-unlock the modem.
+                QMetaObject::invokeMethod(modem, "unlockRequiredChanged", Qt::DirectConnection,
+                                          Q_ARG(QString, modem->unlockRequired()));
+            }
+        }
+
+        // Now activate the connection
+        OrgFreedesktopNetworkManagerInterface nmIface(QLatin1String(NM_DBUS_SERVICE), QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus());
+        nmIface.ActivateConnection(QDBusObjectPath(ic->property("NMDBusObjectPath").toString()), QDBusObjectPath(deviceToActivateOn), QDBusObjectPath("/"));
+    }
+}
+
+void NMDBusSettingsConnectionProvider::interfaceConnectionDeactivated()
+{
+    Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(sender());
+    Solid::Control::NetworkInterfaceNm09 *iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(ic->deviceUni());
+    if (iface) {
+        iface->disconnectInterface();
+    } else { // VPN connections do have NetworkInterface objects.
+        Solid::Control::NetworkManagerNm09::deactivateConnection(ic->property("NMDBusActiveConnectionObject").toString());
     }
 }
 
@@ -249,21 +319,19 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
     Q_D(NMDBusSettingsConnectionProvider);
 
     if ( d->uuidToPath.contains(QUuid(uuid))) {
-        QDBusObjectPath objPath = d->uuidToPath.value(QUuid(uuid));
 
-        if (!d->connections.contains(objPath.path()))
+        QString objPath = d->uuidToPath.value(QUuid(uuid));
+
+        if (!d->connections.contains(uuid))
         {
-            kWarning() << "Connection not found!" << uuid << objPath.path();
+            kWarning() << "Connection could not found!" << uuid << objPath;
             return;
         }
 
-        QPair<Knm::Connection *, RemoteConnection *> pair = d->connections.value(objPath.path());
-        RemoteConnection *remote = pair.second;
-
-        kDebug() << "Updating connection "<< remote->id() << pair.first->uuid().toString();
+        RemoteConnection *remote = d->connections.value(uuid);
+        kDebug() << "Updating connection "<< remote->id() << objPath;
 
         newConnection->setUuid(uuid);
-        newConnection->saveCertificates();
         ConnectionDbus converter(newConnection);
         QVariantMapMap map = converter.toDbusMap();
 
@@ -273,87 +341,52 @@ void NMDBusSettingsConnectionProvider::updateConnection(const QString &uuid, Knm
             /* If connection's name (id in NM's termonology) changes during an Update
              * NM will leave the old connection file intact and create a new connection file
              * in /etc/NetworkManager/system-connections/ with the same uuid, which is wrong in my oppinion.
-             * Furthermore the old connection will not be shown in connection list because we use the uuid
-             * as connection identifier.
+             * Furthermore the old connection will not be shown in Plasma NM's connection list
+             * because we use connection's uuid as connection identifier.
              * Deleting the old connection and creating a new one seems to work.
              */
+            kDebug() << "Renaming connection:" << remote->id() << " -> " << newConnection->name();
             QDBusPendingCall reply = remote->Delete();
             reply.waitForFinished();
+            sleep(1);
             addConnection(newConnection);
         }
 
         // don't do any processing on d->connections and d->connectionList here
         // because onRemoteConnectionUpdated() method will take care of them
+        //
+
         return;
     }
 
-    kWarning() << "Connection not found!"<< uuid;
+    kWarning() << "Connection could not found!"<< uuid;
 }
 
-void NMDBusSettingsConnectionProvider::checkConnectionAdded()
+void NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnection)
 {
     Q_D(NMDBusSettingsConnectionProvider);
-    kDebug() << d->connections;
-    QDBusPendingReply<QList<QDBusObjectPath> > reply = d->iface->ListConnections();
-    reply.waitForFinished();
-    if (reply.isValid()) {
-        QList<QDBusObjectPath> connections = reply.value();
-        foreach (const QDBusObjectPath &op, connections) {
-            kDebug() << op.path();
-            if (!d->connections.contains(op.path())) {
-                kDebug() << "Adding missing connection.";
-                initialiseAndRegisterRemoteConnection(op.path());
-            }
-        }
-    }
-}
 
-bool NMDBusSettingsConnectionProvider::addConnection(Knm::Connection *newConnection)
-{
-    Q_D(NMDBusSettingsConnectionProvider);
-    newConnection->saveCertificates();
     ConnectionDbus converter(newConnection);
     QVariantMapMap map = converter.toDbusMap();
     kDebug() << "Adding connection " << newConnection->name() << newConnection->uuid().toString();
-    kDebug() << "Here is the map: " << map;
+    // WARNING: this debug message print secrets, do not commit it uncommented.
+    //kDebug() << "Here is the map: " << map;
 
     if(newConnection && newConnection->name().isEmpty())
         kWarning() << "Trying to add connection without a name!";
 
+    d->secretsToSave.insert(newConnection->uuid(), map);
     QDBusPendingCall reply = d->iface->AddConnection(map);
-    reply.waitForFinished();
-
-    if (reply.isError())
-    {
-        kWarning() << "Adding connection failed:" << reply.error().message();
-        emit addConnectionCompleted(false, reply.error().message());
-        return false;
-    }
-    else
-    {
-        kDebug() << "Connection added successfully.";
-
-        // NM's ifnet plugin does not emit the changed signal for a connection that has been updated
-        // and kept its uuid. As consequency the onConnectionAdded is not ativated.
-        // So check here if our connection was added.
-        QTimer::singleShot(2000, this, SLOT(checkConnectionAdded()));
-
-        emit addConnectionCompleted(true, QString());
-        return true;
-    }
-
-/*
     //do not check if reply is valid or not because it's an async call and invalid till reply is really arrived
 
-    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
+    QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, 0);
 
     connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(onConnectionAddArrived(QDBusPendingCallWatcher*)));
-*/
 }
 
 void NMDBusSettingsConnectionProvider::onConnectionAddArrived(QDBusPendingCallWatcher *watcher)
 {
-    QDBusPendingReply<> reply = *watcher;
+    QDBusPendingReply<QDBusObjectPath> reply = *watcher;
 
     if (!reply.isValid())
     {
@@ -362,22 +395,29 @@ void NMDBusSettingsConnectionProvider::onConnectionAddArrived(QDBusPendingCallWa
     }
     else
     {
-        kDebug() << "Connection added successfully.";
+        Q_D(NMDBusSettingsConnectionProvider);
+        QDBusObjectPath objPath = reply.argumentAt<0>();
+
+        // Hack to force NetworkManager to call the secrets agent to save this connections's secrets.
+        // This does not work for VPN connections.
+        // TODO: change this to a dbus call to the kded module.
+        QString uuid = d->uuidToPath.key(objPath.path(), QUuid()).toString();
+        RemoteConnection *remote = d->connections.value(uuid);
+        QVariantMapMap map = d->secretsToSave.take(uuid);
+        sleep(1);
+        remote->Update(map);
         emit addConnectionCompleted(true, QString());
+
+        kDebug() << "Connection added successfully: " << objPath.path() << uuid;
     }
 
     watcher->deleteLater();
 }
 
+
 bool NMDBusSettingsConnectionProvider::getConnectionSecrets(Knm::Connection *con)
 {
     Q_D(NMDBusSettingsConnectionProvider);
-
-    if (!con->hasSecrets())
-    {
-        kDebug() << "Connection seems not to have any secret information. Ignoring...";
-        return false;
-    }
 
     QUuid uuid = con->uuid();
     if ( !d->uuidToPath.contains(uuid)){
@@ -385,13 +425,13 @@ bool NMDBusSettingsConnectionProvider::getConnectionSecrets(Knm::Connection *con
         return false;
     }
 
-    QString objPath = d->uuidToPath.value(uuid).path();
+    QString objPath = d->uuidToPath.value(uuid);
 
-    OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface *secretIface = new OrgFreedesktopNetworkManagerSettingsConnectionSecretsInterface(d->serviceName, objPath, QDBusConnection::systemBus(), this);
+    OrgFreedesktopNetworkManagerSettingsConnectionInterface secretIface(d->serviceName, objPath, QDBusConnection::systemBus(), this);
 
     kDebug() << "Getting connection secrets for " << uuid.toString();
 
-    QStringList secretSettings = con->secretSettings();
+    QStringList secretSettings = con->hasPersistentSecretsSettings();
 
     kDebug() << "Settings containing secret values are " << secretSettings;
 
@@ -399,13 +439,14 @@ bool NMDBusSettingsConnectionProvider::getConnectionSecrets(Knm::Connection *con
         kWarning() << "This connection has more than 1 secret setting, not supported yet :/";
 
 
-    QDBusPendingReply<QVariantMapMap> reply = secretIface->GetSecrets( secretSettings.at(0), QStringList(), false);
+    QDBusPendingReply<QVariantMapMap> reply = secretIface.GetSecrets(secretSettings.at(0));
     //do not check if reply is valid or not because it's an async call and invalid till reply is really arrived
 
     QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, this);
 
     //Ugly hack to access Knm::Connection pointer in the onConnectionSecretsArrived slot
-    watcher->setProperty("connection", d->uuidToPath.value(con->uuid()).path());
+    watcher->setProperty("connection", con->uuid().toString());
+    d->secretsToGet.insert(con->uuid(), con);
 
     connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(onConnectionSecretsArrived(QDBusPendingCallWatcher*)));
 
@@ -424,45 +465,42 @@ void NMDBusSettingsConnectionProvider::onConnectionSecretsArrived(QDBusPendingCa
     if (reply.isValid())
     {
         QVariantMapMap set = reply.argumentAt<0>();
-        kDebug() << "Got secrets, yay! " << set;
+        // WARNING: this print secrets, do not commit it uncommented.
+        //kDebug() << "Got secrets, yay! " << set;
+        kDebug() << "Got secrets, yay! ";
 
-        Knm::Connection *con = d->connections.value(watcher->property("connection").toString()).first;
-        if (!con)
-        {
+        Knm::Connection *con = d->secretsToGet.take(watcher->property("connection").toString());
+        if (con) {
+            ConnectionDbus dbusConverter(con);
+            dbusConverter.fromDbusSecretsMap(set); //update secretSettings in connection
+            emit getConnectionSecretsCompleted(true, QString(), con->uuid());
+        } else {
             kWarning() << "Connection not found!" << watcher->property("connection").toString();
-            return;
         }
-
-        ConnectionDbus dbusConverter(con);
-        dbusConverter.fromDbusSecretsMap(set); //update secretSettings in connection
-
-        emit getConnectionSecretsCompleted(true, QString());
     }
     else
     {
-        kWarning () << "Secret fetching failed...";
-        emit getConnectionSecretsCompleted(false, reply.error().message());
+        kWarning () << "Secret fetching failed:" << reply.error().message();
+        emit getConnectionSecretsCompleted(false, reply.error().message(), watcher->property("connection").toString());
     }
 
     watcher->deleteLater();
 }
 
-bool NMDBusSettingsConnectionProvider::removeConnection(const QString &uuid)
+void NMDBusSettingsConnectionProvider::removeConnection(const QString &uuid)
 {
     Q_D(NMDBusSettingsConnectionProvider);
 
     if ( d->uuidToPath.contains(QUuid(uuid))) {
 
-        QDBusObjectPath objPath = d->uuidToPath.value(QUuid(uuid));
-
-        if (!d->connections.contains(objPath.path()))
+        if (!d->connections.contains(uuid))
         {
-            kWarning() << "Connection not found!" << uuid << objPath.path();
-            return false;
+            QString objPath = d->uuidToPath.value(QUuid(uuid));
+            kWarning() << "Connection could not found!" << uuid << objPath;
+            return;
         }
 
-        QPair<Knm::Connection *, RemoteConnection *> pair = d->connections.value(objPath.path());
-        RemoteConnection *remote = pair.second;
+        RemoteConnection *remote = d->connections.value(uuid);
 
         kDebug() << "Removing connection "<< remote->id() << uuid;
         remote->Delete();
@@ -471,10 +509,15 @@ bool NMDBusSettingsConnectionProvider::removeConnection(const QString &uuid)
         // because onRemoteConnectionRemoved() method will take care of them
         //
 
-        return true;
+        return;
     }
-    return false;
+
     kWarning() << "Connection could not found!"<< uuid;
 }
 
+ConnectionList * NMDBusSettingsConnectionProvider::connectionList()
+{
+    Q_D(NMDBusSettingsConnectionProvider);
+    return d->connectionList;
+}
 // vim: sw=4 sts=4 et tw=100

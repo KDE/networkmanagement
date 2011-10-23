@@ -40,7 +40,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connection.h"
 #include "settings/vpn.h"
-#include "settings/vpnpersistence.h"
 
 VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
 : ConnectionPreferences(args, parent ), m_uiPlugin(0)
@@ -62,23 +61,19 @@ VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
             kDebug() << error;
         }
     }
-    // If additional settings are passed, populate them : data, secretsData and secretsType, connection name
+    // If additional settings are passed, populate them : data, secretsData, connection name
     // Connection Name
-    if (args.count() > 5) {
-        m_contents->setDefaultName(args[5].toString());
+    if (args.count() > 4) {
+        m_contents->setDefaultName(args[4].toString());
     }
     Knm::VpnSetting * conSetting = static_cast<Knm::VpnSetting*>(m_connection->setting(Knm::Setting::Vpn));
-    if (args.count() > 4) {
-        // Secret Storage Type
-        conSetting->setSecretsStorageType(Knm::VpnPersistence::stringMapFromStringList(Knm::VpnPersistence::variantMapToStringList(args[4].toMap())));
-    }
     if (args.count() > 3) {
         // VPN Secrets
-        conSetting->setVpnSecrets(Knm::VpnPersistence::stringMapFromStringList(Knm::VpnPersistence::variantMapToStringList(args[3].toMap())));
+        conSetting->setVpnSecrets(Knm::VpnSetting::stringMapFromStringList(Knm::VpnSetting::variantMapToStringList(args[3].toMap())));
     }
     if (args.count() > 2) {
         // VPN connection data
-        conSetting->setData(Knm::VpnPersistence::stringMapFromStringList(Knm::VpnPersistence::variantMapToStringList(args[2].toMap())));
+        conSetting->setData(Knm::VpnSetting::stringMapFromStringList(Knm::VpnSetting::variantMapToStringList(args[2].toMap())));
     }
 
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
@@ -116,7 +111,7 @@ VpnPreferences::VpnPreferences(Knm::Connection *con, QWidget *parent)
             SettingWidget * vpnWidget = m_uiPlugin->widget(m_connection, this);
             addToTabWidget(vpnWidget);
         } else {
-            kDebug() << error;
+            kDebug() << error << ". serviceType == " << serviceType;
         }
     }
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);

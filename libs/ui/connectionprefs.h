@@ -34,7 +34,6 @@ class SettingInterface;
 namespace Knm
 {
     class Connection;
-    class ConnectionPersistence;
 } // namespace Knm
 
 /**
@@ -82,7 +81,6 @@ protected:
     /** Main widget for connection info UI, common to all connections **/
     ConnectionWidget * m_contents;
     Knm::Connection * m_connection;
-    Knm::ConnectionPersistence * m_connectionPersistence;
     /** All setting widgets except m_contents, including connectionTypeWidget, mapped to their
      * validation state*/
     QHash<SettingWidget *,bool> m_settingWidgets;

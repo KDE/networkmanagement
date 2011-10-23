@@ -21,15 +21,15 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetwork.h"
 #include "wirelessnetwork_p.h"
 
-Solid::Control::WirelessNetwork::WirelessNetwork(AccessPoint *ap, WirelessNetworkInterface *wni, QObject * parent)
+Solid::Control::WirelessNetwork::WirelessNetwork(AccessPointNm09 *ap, WirelessNetworkInterfaceNm09 *wni, QObject * parent)
     : QObject(parent), d_ptr(new WirelessNetworkPrivate)
 {
     Q_D(WirelessNetwork);
     d->ssid = ap->ssid();
     d->strength = -1;
     d->wirelessNetworkInterface = wni;
-    connect(d->wirelessNetworkInterface, SIGNAL(accessPointAppeared(QString)), this, SLOT(accessPointAppeared(QString)));
-    connect(d->wirelessNetworkInterface, SIGNAL(accessPointDisappeared(QString)), this, SLOT(accessPointDisappeared(QString)));
+    connect(d->wirelessNetworkInterface, SIGNAL(accessPointAppeared(const QString&)), this, SLOT(accessPointAppeared(const QString&)));
+    connect(d->wirelessNetworkInterface, SIGNAL(accessPointDisappeared(const QString&)), this, SLOT(accessPointDisappeared(const QString&)));
     addAccessPointInternal(ap);
 }
 
@@ -54,14 +54,14 @@ void Solid::Control::WirelessNetwork::accessPointAppeared(const QString &uni)
 {
     Q_D(const WirelessNetwork);
     if (!d->aps.contains(uni)) {
-        Solid::Control::AccessPoint * ap = d->wirelessNetworkInterface->findAccessPoint(uni);
+        Solid::Control::AccessPointNm09 * ap = d->wirelessNetworkInterface->findAccessPoint(uni);
         if (ap->ssid() == d->ssid) {
             addAccessPointInternal(ap);
         }
     }
 }
 
-void Solid::Control::WirelessNetwork::addAccessPointInternal(Solid::Control::AccessPoint * ap)
+void Solid::Control::WirelessNetwork::addAccessPointInternal(Solid::Control::AccessPointNm09 * ap)
 {
     Q_D(WirelessNetwork);
     connect(ap, SIGNAL(signalStrengthChanged(int)),
@@ -85,7 +85,7 @@ void Solid::Control::WirelessNetwork::updateStrength()
 {
     Q_D(WirelessNetwork);
     int maximumStrength = -1;
-    foreach (Solid::Control::AccessPoint* iface, d->aps) {
+    foreach (Solid::Control::AccessPointNm09* iface, d->aps) {
         maximumStrength = qMax(maximumStrength, iface->signalStrength());
     }
     if (maximumStrength != d->strength) {
@@ -100,8 +100,8 @@ QString Solid::Control::WirelessNetwork::referenceAccessPoint() const
 {
     Q_D(const WirelessNetwork);
     int maximumStrength = -1;
-    Solid::Control::AccessPoint* strongest = 0;
-    foreach (Solid::Control::AccessPoint* iface, d->aps) {
+    Solid::Control::AccessPointNm09* strongest = 0;
+    foreach (Solid::Control::AccessPointNm09* iface, d->aps) {
         int oldMax = maximumStrength;
         maximumStrength = qMax(maximumStrength, iface->signalStrength());
         if ( oldMax <= maximumStrength ) {
@@ -111,11 +111,11 @@ QString Solid::Control::WirelessNetwork::referenceAccessPoint() const
     return strongest->uni();
 }
 
-Solid::Control::AccessPointList Solid::Control::WirelessNetwork::accessPoints() const
+Solid::Control::AccessPointNm09List Solid::Control::WirelessNetwork::accessPoints() const
 {
     Q_D(const WirelessNetwork);
-    Solid::Control::AccessPointList aps;
-    foreach (Solid::Control::AccessPoint* iface, d->aps) {
+    Solid::Control::AccessPointNm09List aps;
+    foreach (Solid::Control::AccessPointNm09* iface, d->aps) {
         aps.append(iface->uni());
     }
     return aps;

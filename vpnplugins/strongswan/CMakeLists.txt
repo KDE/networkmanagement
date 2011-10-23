@@ -8,12 +8,13 @@ include_directories(${CMAKE_CURRENT_BINARY_DIR}/../../libs/internals)
 set(strongswan_SRCS
    strongswan.cpp
    strongswanwidget.cpp
+   strongswanauth.cpp
    )
 
 
 
 
-kde4_add_ui_files(strongswan_SRCS strongswanprop.ui)
+kde4_add_ui_files(strongswan_SRCS strongswanprop.ui strongswanauth.ui)
 
 kde4_add_plugin(networkmanagement_strongswanui ${strongswan_SRCS})
 

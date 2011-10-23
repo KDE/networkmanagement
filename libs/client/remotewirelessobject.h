@@ -29,12 +29,12 @@ class RemoteWirelessObject
 public:
     virtual ~RemoteWirelessObject();
     virtual QString ssid() const = 0;
-    virtual Solid::Control::AccessPoint::Capabilities apCapabilities() const = 0;
-    virtual Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities() const = 0;
     virtual int strength() const = 0;
-    virtual Solid::Control::AccessPoint::WpaFlags wpaFlags() const = 0;
-    virtual Solid::Control::AccessPoint::WpaFlags rsnFlags() const = 0;
-    virtual Solid::Control::WirelessNetworkInterface::OperationMode operationMode() const = 0;
+    virtual Solid::Control::WirelessNetworkInterfaceNm09::Capabilities interfaceCapabilities() const = 0;
+    virtual Solid::Control::AccessPointNm09::Capabilities apCapabilities() const = 0;
+    virtual Solid::Control::AccessPointNm09::WpaFlags wpaFlags() const = 0;
+    virtual Solid::Control::AccessPointNm09::WpaFlags rsnFlags() const = 0;
+    virtual Solid::Control::WirelessNetworkInterfaceNm09::OperationMode operationMode() const = 0;
     virtual void strengthChanged(int) = 0;
 };
 

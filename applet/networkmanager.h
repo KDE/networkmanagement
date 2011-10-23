@@ -22,6 +22,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef PLASMA_NETWORKMANAGER_APPLET_H
 #define PLASMA_NETWORKMANAGER_APPLET_H
 
+class QAction;
 class KCModuleProxy;
 
 #include <kdeversion.h>
@@ -34,6 +35,7 @@ class KCModuleProxy;
 #include <solid/control/wirelessaccesspoint.h>
 
 #include "../libs/types.h"
+#include <interfaceconnection.h>
 
 #include <Plasma/PopupApplet>
 
@@ -47,7 +49,9 @@ namespace Plasma
 class QTimeLine;
 
 class NMPopup;
+class RemoteActivatable;
 class RemoteActivatableList;
+class RemoteInterfaceConnection;
 
 class NetworkManagerApplet : public Plasma::PopupApplet
 {
@@ -93,7 +97,6 @@ public Q_SLOTS:
      * React to manager status changes
      */
     void managerStatusChanged(Solid::Networking::Status);
-    void configChanged();
 
 protected:
     void createConfigurationInterface(KConfigDialog *parent);
@@ -109,41 +112,57 @@ private Q_SLOTS:
     void updatePixmap();
     void repaint();
     void clearActivatedOverlay();
+    void finishInitialization();
+    void activatableAdded(RemoteActivatable*);
+    void activatableRemoved(RemoteActivatable*);
+    void vpnActivationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState);
+    void activatablesDisappeared();
     // Request KCM module to persist changes
     void saveConfiguration();
+    void updateActiveInterface(bool);
+    void resetActiveSystrayInterface();
+    void _k_destroyed(QObject *);
+    void setupAccessPointSignals(const QString &);
 
 private:
-    bool hasInterfaceOfType(Solid::Control::NetworkInterface::Type type);
-    Solid::Control::NetworkInterface* activeInterface();
+    bool hasInterfaceOfType(Solid::Control::NetworkInterfaceNm09::Type type);
     void setupInterfaceSignals();
-    QString svgElement(Solid::Control::NetworkInterface *iface);
+    QString svgElement(Solid::Control::NetworkInterfaceNm09 *iface);
 
-    void paintPixmap(QPainter* painter, QPixmap pixmap,
-                     const QRectF &rect, qreal opacity = 1.0);
-    void paintStatusOverlay(QPainter* p);
-    void paintNeedAuthOverlay(QPainter* p);
+    void paintStatusOverlay(QPainter* p, QRect & rect);
+    void paintNeedAuthOverlay(QPainter* p, QRect & rect);
     QPixmap generateProgressStatusOverlay();
     void setStatusOverlay(const QPixmap&);
     void setStatusOverlay(const QString&);
 
-    bool m_iconPerDevice;
-    Solid::Control::NetworkInterfaceList m_interfaces;
+    Solid::Control::NetworkInterfaceNm09List m_interfaces;
     Plasma::ToolTipContent m_toolTip;
 
     RemoteActivatableList* m_activatables;
     NMPopup* m_popup;
+    bool m_panelContainment;
 
     QPixmap m_pixmap;
+    QMap<QUuid, QWeakPointer<RemoteInterfaceConnection> > m_activeVpnConnections;
+    int m_totalActiveVpnConnections;
 
-    // For tracking which status we should show
-    Solid::Control::NetworkInterface* m_activeInterface;
-    Solid::Control::AccessPoint* m_accessPoint;
+    // For tracking which status we should show.
+    // This one is always the interface which has the default route
+    // or the first interface selected after sorting the current
+    // interface list using networkInterfaceLessThan().
+    Solid::Control::NetworkInterfaceNm09* m_activeInterface;
+    // Interface used to update system tray icon. If we have only one interface
+    // then this one is always equals to m_activeInterfaceState.
+    Solid::Control::NetworkInterfaceNm09* m_activeSystrayInterface;
+    Solid::Control::AccessPointNm09* m_accessPoint;
 
     // Timeline controlling a connection progress overlay on the main icon
     QTimeLine m_overlayTimeline;
     QPixmap m_previousStatusOverlay;
     QPixmap m_statusOverlay;
-    Solid::Control::NetworkInterface::ConnectionState m_currentState;
+
+    Solid::Control::NetworkInterfaceNm09::ConnectionState m_activeInterfaceState;
+    Solid::Control::NetworkInterfaceNm09::ConnectionState m_activeSystrayInterfaceState;
 
     ///embedded KCM modules in the configuration dialog
     KCModuleProxy* m_kcmNM;
@@ -152,12 +171,6 @@ private:
     Plasma::Svg* m_svg;
     Plasma::FrameSvg* m_meterBgSvg;
     Plasma::FrameSvg* m_meterFgSvg;
-    QRect m_contentSquare;
-
 };
 
 #endif
-
-
-
-

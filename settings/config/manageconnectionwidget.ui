@@ -45,12 +45,12 @@
          </column>
          <column>
           <property name="text">
-           <string>Scope</string>
+           <string>Last Used</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Last Used</string>
+           <string>State</string>
           </property>
          </column>
         </widget>
@@ -86,12 +86,12 @@
          </column>
          <column>
           <property name="text">
-           <string>Scope</string>
+           <string>Last Used</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Last Used</string>
+           <string>State</string>
           </property>
          </column>
         </widget>
@@ -124,12 +124,12 @@
          </column>
          <column>
           <property name="text">
-           <string>Scope</string>
+           <string>Last Used</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Last Used</string>
+           <string>State</string>
           </property>
          </column>
         </widget>
@@ -162,12 +162,12 @@
          </column>
          <column>
           <property name="text">
-           <string>Scope</string>
+           <string>Last Used</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Last Used</string>
+           <string>State</string>
           </property>
          </column>
         </widget>
@@ -200,12 +200,12 @@
          </column>
          <column>
           <property name="text">
-           <string>Scope</string>
+           <string>Last Used</string>
           </property>
          </column>
          <column>
           <property name="text">
-           <string>Last Used</string>
+           <string>State</string>
           </property>
          </column>
         </widget>

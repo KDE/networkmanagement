@@ -6,13 +6,13 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>468</width>
-    <height>348</height>
+    <width>445</width>
+    <height>356</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" rowspan="2">
-    <layout class="QFormLayout" name="formLayout">
+    <layout class="QGridLayout" name="gridLayout_2">
      <item row="0" column="0">
       <widget class="QLabel" name="label">
        <property name="text">
@@ -46,64 +46,62 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="1">
-      <widget class="QCheckBox" name="system">
-       <property name="enabled">
-        <bool>true</bool>
+     <item row="2" column="1" colspan="2">
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QCheckBox" name="system">
+         <property name="text">
+          <string>&amp;System connection</string>
+         </property>
+         <property name="toolTip">
+          <string>Save secrets in system storage</string>
+         </property>
+         <property name="whatsThis">
+          <string>If checked, secrets (passwords and encryption keys) will be saved in system storage, which allows the connection to work without a KDE session.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="KPushButton" name="pushButtonPermissions">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="toolTip">
+          <string>Edit advanced permissions for this connection</string>
+         </property>
+         <property name="whatsThis">
+          <string>Fine-grained permissions editor for this connection. It lets you choose which users can activate/modify/delete this connection.</string>
+         </property>
+         <property name="text">
+          <string>Advanced Permissions</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="2" rowspan="2">
+      <widget class="QLabel" name="connectionIcon">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+         <horstretch>48</horstretch>
+         <verstretch>48</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>48</width>
+         <height>48</height>
+        </size>
        </property>
        <property name="text">
-        <string>&amp;System connection</string>
-       </property>
-       <property name="toolTip">
-        <string>Save the connection in system storage</string>
-       </property>
-       <property name="whatsThis">
-        <string>If checked, the connection settings and secrets will be saved in system storage, which allows the connection to work without a KDE session.</string>
+        <string notr="true"/>
        </property>
       </widget>
      </item>
     </layout>
-   </item>
-   <item row="0" column="1">
-    <widget class="QPushButton" name="pushButtonChooseIcon">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>48</width>
-       <height>48</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>48</width>
-       <height>48</height>
-      </size>
-     </property>
-     <property name="text">
-      <string/>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="1">
-    <spacer name="verticalSpacer">
-     <property name="orientation">
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType">
-      <enum>QSizePolicy::Preferred</enum>
-     </property>
-     <property name="sizeHint" stdset="0">
-      <size>
-       <width>20</width>
-       <height>29</height>
-      </size>
-     </property>
-    </spacer>
    </item>
    <item row="2" column="0" colspan="2">
     <widget class="KTabWidget" name="tabwidget"/>
@@ -111,6 +109,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
   <customwidget>
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
@@ -124,5 +127,22 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>system</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>pushButtonPermissions</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>183</x>
+     <y>68</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>335</x>
+     <y>68</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

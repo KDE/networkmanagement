@@ -46,39 +46,39 @@ int RemoteWirelessInterfaceConnection::strength() const
     return d->wirelessInterfaceConnectionIface->strength();
 }
 
-Solid::Control::WirelessNetworkInterface::Capabilities RemoteWirelessInterfaceConnection::interfaceCapabilities() const
+Solid::Control::WirelessNetworkInterfaceNm09::Capabilities RemoteWirelessInterfaceConnection::interfaceCapabilities() const
 {
     Q_D(const RemoteWirelessInterfaceConnection);
     uint caps = d->wirelessInterfaceConnectionIface->interfaceCapabilities();
-    return (Solid::Control::WirelessNetworkInterface::Capabilities)caps;
+    return (Solid::Control::WirelessNetworkInterfaceNm09::Capabilities)caps;
 }
 
-Solid::Control::AccessPoint::Capabilities RemoteWirelessInterfaceConnection::apCapabilities() const
+Solid::Control::AccessPointNm09::Capabilities RemoteWirelessInterfaceConnection::apCapabilities() const
 {
     Q_D(const RemoteWirelessInterfaceConnection);
     uint caps = d->wirelessInterfaceConnectionIface->apCapabilities();
-    return (Solid::Control::AccessPoint::Capabilities)caps;
+    return (Solid::Control::AccessPointNm09::Capabilities)caps;
 }
 
-Solid::Control::AccessPoint::WpaFlags RemoteWirelessInterfaceConnection::wpaFlags() const
+Solid::Control::AccessPointNm09::WpaFlags RemoteWirelessInterfaceConnection::wpaFlags() const
 {
     Q_D(const RemoteWirelessInterfaceConnection);
     uint wpaflags = d->wirelessInterfaceConnectionIface->wpaFlags();
-    return (Solid::Control::AccessPoint::WpaFlags)wpaflags;
+    return (Solid::Control::AccessPointNm09::WpaFlags)wpaflags;
 }
 
-Solid::Control::AccessPoint::WpaFlags RemoteWirelessInterfaceConnection::rsnFlags() const
+Solid::Control::AccessPointNm09::WpaFlags RemoteWirelessInterfaceConnection::rsnFlags() const
 {
     Q_D(const RemoteWirelessInterfaceConnection);
     uint rsnflags = d->wirelessInterfaceConnectionIface->rsnFlags();
-    return (Solid::Control::AccessPoint::WpaFlags)rsnflags;
+    return (Solid::Control::AccessPointNm09::WpaFlags)rsnflags;
 }
 
-Solid::Control::WirelessNetworkInterface::OperationMode RemoteWirelessInterfaceConnection::operationMode() const
+Solid::Control::WirelessNetworkInterfaceNm09::OperationMode RemoteWirelessInterfaceConnection::operationMode() const
 {
     Q_D(const RemoteWirelessInterfaceConnection);
     uint rsnflags = d->wirelessInterfaceConnectionIface->operationMode();
-    return (Solid::Control::WirelessNetworkInterface::OperationMode)rsnflags;
+    return (Solid::Control::WirelessNetworkInterfaceNm09::OperationMode)rsnflags;
 }
 
 // vim: sw=4 sts=4 et tw=100

@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KPluginFactory>
 
 #include "pptpwidget.h"
+#include "pptpauth.h"
 #include "connection.h"
 
 K_PLUGIN_FACTORY( PptpUiPluginFactory, registerPlugin<PptpUiPlugin>(); )
@@ -43,9 +44,20 @@ SettingWidget * PptpUiPlugin::widget(Knm::Connection * connection, QWidget * par
     return new PptpSettingWidget(connection, parent);
 }
 
+SettingWidget * PptpUiPlugin::askUser(Knm::Connection * connection, QWidget * parent)
+{
+    return new PptpAuthWidget(connection, parent);
+}
+
 QString PptpUiPlugin::suggestedFileName(Knm::Connection *connection) const
 {
     // TODO : implement suggested file name
+    return QString();
+}
+
+QString PptpUiPlugin::supportedFileExtensions() const
+{
+    // TODO : return supported file extensions
     return QString();
 }
 
@@ -55,10 +67,10 @@ QVariantList PptpUiPlugin::importConnectionSettings(const QString &fileName)
     return QVariantList();
 }
 
-void PptpUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
+bool PptpUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
 {
     // TODO : export PPTP connection to file
-    return;
+    return false;
 }
 
 // vim: sw=4 sts=4 et tw=100

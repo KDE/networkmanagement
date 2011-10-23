@@ -8,11 +8,11 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
-#include "nm07dbus_export.h"
+#include "nm09dbus_export.h"
 
 #include "settings/ipv4.h"
 
-class NM07DBUS_EXPORT Ipv4Dbus : public SettingDbus
+class NM09DBUS_EXPORT Ipv4Dbus : public SettingDbus
 {
   public:
     Ipv4Dbus(Knm::Ipv4Setting * setting);

@@ -25,6 +25,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatableitem.h"
 
 class QGraphicsGridLayout;
+class QPainter;
+class QStyleOptionGraphicsItem;
+class QWidget;
 
 namespace Plasma
 {
@@ -51,19 +54,20 @@ class WirelessNetworkItem : public ActivatableItem
     private Q_SLOTS:
         void setStrength(int strength);
         void update();
-        void activationStateChanged(Knm::InterfaceConnection::ActivationState state);
-        void stateChanged();
+        void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
 
     private:
+        void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);
+
         //bool readSettings();
         QGraphicsGridLayout* m_layout;
         Plasma::Label* m_ssidLabel;
         Plasma::Meter* m_strengthMeter;
-        Plasma::IconWidget* m_connectButton;
         QString m_security;
         Plasma::Label* m_securityIcon;
         RemoteWirelessNetwork* m_remote;
         WirelessStatus* m_wirelessStatus;
+        bool m_layoutIsDirty;
 };
 
 #endif //#define APPLET_WIRELESSCONNECTIONITEM_H

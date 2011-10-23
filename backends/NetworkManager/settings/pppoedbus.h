@@ -8,12 +8,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
-#include "nm07dbus_export.h"
+#include "nm09dbus_export.h"
 namespace Knm{
     class PppoeSetting;
 }
 
-class NM07DBUS_EXPORT PppoeDbus : public SettingDbus
+class NM09DBUS_EXPORT PppoeDbus : public SettingDbus
 {
   public:
     PppoeDbus(Knm::PppoeSetting * setting);

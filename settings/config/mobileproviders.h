@@ -1,5 +1,5 @@
 /*
-Copyright 2010 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -41,15 +41,15 @@ public:
 
     QStringList getCountryList();
     QString countryFromLocale();
-    QString getCountryName(const QString key) { return mCountries[key]; }
+    QString getCountryName(const QString & key) { return mCountries[key]; }
     QStringList getProvidersList(QString country, const Knm::Connection::Type type);
-    QStringList getApns(const QString provider);
-    QStringList getNetworkIds(const QString provider);
-    QVariantMap getApnInfo(const QString apn);
-    QVariantMap getCdmaInfo(const QString provider);
-    const QString getGsmNumber() { return QString("*99#"); };
-    const QString getCdmaNumber() { return QString("#777"); };
-    inline ErrorCodes getError() { return mError; };
+    QStringList getApns(const QString & provider);
+    QStringList getNetworkIds(const QString & provider);
+    QVariantMap getApnInfo(const QString & apn);
+    QVariantMap getCdmaInfo(const QString & provider);
+    const QString getGsmNumber() { return QString("*99#"); }
+    const QString getCdmaNumber() { return QString("#777"); }
+    inline ErrorCodes getError() { return mError; }
 
 private:
     QHash<QString, QString> mCountries;

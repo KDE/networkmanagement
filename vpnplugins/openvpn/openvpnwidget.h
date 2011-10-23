@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QProcess>
 
 #include "ui_openvpnprop.h"
+#include "settings/vpn.h"
 
 namespace Knm
 {
@@ -48,9 +49,20 @@ protected Q_SLOTS:
     void gotOpenVpnOutput();
     void openVpnError(QProcess::ProcessError);
     void openVpnFinished(int, QProcess::ExitStatus);
+    void x509KeyPasswordStorageChanged(int);
+    void passPasswordStorageChanged(int);
+    void x509PassKeyPasswordStorageChanged(int);
+    void x509PassPasswordStorageChanged(int);
+    void proxyPasswordStorageChanged(int);
+    void showPasswordsToggled(bool);
+    void proxyPasswordToggled(bool);
+    void proxyTypeChanged(int);
 private:
     class Private;
     Private * d;
+    void setPasswordType(QLineEdit *, int);
+    void fillOnePasswordCombo(QComboBox *, Knm::Setting::secretsTypes);
+    uint handleOnePasswordType(const QComboBox *, const QString &, QStringMap &);
 };
 
 #endif // OPENVPNWIDGET_H

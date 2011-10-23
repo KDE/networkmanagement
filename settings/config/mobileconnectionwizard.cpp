@@ -26,10 +26,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KGlobal>
 #include <KIconLoader>
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
 #include <solid/control/modemmanager.h>
+#include <solid/control/networkmodeminterface.h>
 #include <solid/device.h>
-#endif
 
 #include "mobileconnectionwizard.h"
 
@@ -89,9 +88,15 @@ void MobileConnectionWizard::initializePage(int id)
             }
 
             if (!mInitialMethodType) {
-                Solid::Control::NetworkInterface *iface = Solid::Control::NetworkManager::findNetworkInterface(mDeviceComboBox->itemData(mDeviceComboBox->currentIndex()).toString());
-                if (iface && iface->type() == Solid::Control::NetworkInterface::Cdma) {
-                    mType = Knm::Connection::Cdma;
+                Solid::Control::NetworkInterfaceNm09 *iface = Solid::Control::NetworkManagerNm09::findNetworkInterface(mDeviceComboBox->itemData(mDeviceComboBox->currentIndex()).toString());
+                if (iface) {
+                    const Solid::Control::ModemNetworkInterfaceNm09 * nmModemIface = qobject_cast<const Solid::Control::ModemNetworkInterfaceNm09 *>(iface);
+                    if (nmModemIface && nmModemIface->subType() == Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo) {
+                        mType = Knm::Connection::Cdma;
+                    } else {
+                        mType = Knm::Connection::Gsm;
+                    }
+                    /* TODO: test for Lte */
                 } else {
                     mType = Knm::Connection::Gsm;
                 }
@@ -134,7 +139,7 @@ void MobileConnectionWizard::initializePage(int id)
             break;
 
         case 3: // Plans Page
-            disconnect(mPlanComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(slotEnablePlanEditBox(QString)));
+            disconnect(mPlanComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(slotEnablePlanEditBox(const QString &)));
             mPlanComboBox->clear();
             if (type() != Knm::Connection::Gsm) {
                 goto OUT_3;
@@ -160,7 +165,7 @@ void MobileConnectionWizard::initializePage(int id)
                 mPlanComboBox->addItem(i18nc("Mobile Connection Wizard", "My plan is not listed..."));
             }
 OUT_3:
-            connect(mPlanComboBox, SIGNAL(currentIndexChanged(QString)), this, SLOT(slotEnablePlanEditBox(QString)));
+            connect(mPlanComboBox, SIGNAL(currentIndexChanged(const QString &)), this, SLOT(slotEnablePlanEditBox(const QString &)));
         break;
 
         case 4: // Confirm Page
@@ -264,11 +269,11 @@ QWizardPage * MobileConnectionWizard::createIntroPage()
         label->setBuddy(mDeviceComboBox);
         layout->addWidget(mDeviceComboBox);
     
-        QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(QString)),
-                         this, SLOT(introDeviceAdded(QString)));
-        QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(QString)),
-                         this, SLOT(introDeviceRemoved(QString)));
-        QObject::connect(Solid::Control::NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
+        QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(const QString)),
+                         this, SLOT(introDeviceAdded(const QString)));
+        QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceRemoved(const QString)),
+                         this, SLOT(introDeviceRemoved(const QString)));
+        QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                          this, SLOT(introStatusChanged(Solid::Networking::Status)));
     
         introAddInitialDevices();
@@ -279,11 +284,10 @@ QWizardPage * MobileConnectionWizard::createIntroPage()
     return page;
 }
 
-void MobileConnectionWizard::introAddDevice(Solid::Control::NetworkInterface *device)
+void MobileConnectionWizard::introAddDevice(Solid::Control::NetworkInterfaceNm09 *device)
 {
     QString desc;
 
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
     Solid::Control::ModemInterface *modem = Solid::Control::ModemManager::findModemInterface(device->udi(), Solid::Control::ModemInterface::GsmCard);
     if (modem) {
         if (modem->enabled()) {
@@ -304,13 +308,17 @@ void MobileConnectionWizard::introAddDevice(Solid::Control::NetworkInterface *de
             }
         }
     }
-#endif
 
-    if (device->type() == Solid::Control::NetworkInterface::Gsm) {
+    const Solid::Control::ModemNetworkInterfaceNm09 * nmModemIface = qobject_cast<const Solid::Control::ModemNetworkInterfaceNm09 *>(device);
+    if (!nmModemIface) {
+        return;
+    }
+
+    if (nmModemIface->subType() == Solid::Control::ModemNetworkInterfaceNm09::GsmUmts) {
         if (desc.isEmpty()) {
             desc.append(i18nc("Mobile Connection Wizard", "Installed GSM device"));    
         }
-    } else if (device->type() == Solid::Control::NetworkInterface::Cdma) {
+    } else if (nmModemIface->subType() == Solid::Control::ModemNetworkInterfaceNm09::CdmaEvdo) {
         if (desc.isEmpty()) {
             desc.append(i18nc("Mobile Connection Wizard", "Installed CDMA device"));    
         }
@@ -331,7 +339,7 @@ void MobileConnectionWizard::introAddDevice(Solid::Control::NetworkInterface *de
 
 void MobileConnectionWizard::introDeviceAdded(const QString uni)
 {
-    introAddDevice(Solid::Control::NetworkManager::findNetworkInterface(uni));
+    introAddDevice(Solid::Control::NetworkManagerNm09::findNetworkInterface(uni));
 }
 
 void MobileConnectionWizard::introDeviceRemoved(const QString uni)
@@ -369,7 +377,7 @@ void MobileConnectionWizard::introStatusChanged(Solid::Networking::Status status
 
 void MobileConnectionWizard::introAddInitialDevices()
 {
-    foreach(Solid::Control::NetworkInterface *n, Solid::Control::NetworkManager::networkInterfaces()) {
+    foreach(Solid::Control::NetworkInterfaceNm09 *n, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
         introAddDevice(n);
     }
 
@@ -430,7 +438,7 @@ QWizardPage * MobileConnectionWizard::createProvidersPage()
 
     mProvidersList = new QListWidget();
     connect(mProvidersList, SIGNAL(itemSelectionChanged()), this, SLOT(slotCheckProviderList()));
-    connect(mProvidersList, SIGNAL(itemClicked(QListWidgetItem*)), this, SLOT(slotCheckProviderList()));
+    connect(mProvidersList, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(slotCheckProviderList()));
     layout->addWidget(mProvidersList);
 
     radioManualProvider = new QRadioButton(i18nc("Mobile Connection Wizard", "I can't find my provider and I wish to enter it &manually:"));
@@ -439,7 +447,7 @@ QWizardPage * MobileConnectionWizard::createProvidersPage()
 
     lineEditProvider = new QLineEdit();
     layout->addWidget(lineEditProvider);
-    connect(lineEditProvider, SIGNAL(textEdited(QString)), this, SLOT(slotCheckProviderEdit()));
+    connect(lineEditProvider, SIGNAL(textEdited(const QString)), this, SLOT(slotCheckProviderEdit()));
 
     page->setLayout(layout);
 

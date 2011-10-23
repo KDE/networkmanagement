@@ -29,11 +29,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ui_connection.h"
 #include "connection.h"
 
+#include "advancedpermissionswidget.h"
+
 class ConnectionWidgetPrivate : public SettingWidgetPrivate
 {
 public:
     Ui_ConnectionSettings ui;
     QString defaultName;
+    QHash<QString, QString> permissions;
 };
 
 ConnectionWidget::ConnectionWidget(QWidget * parent)
@@ -45,20 +48,13 @@ ConnectionWidget::ConnectionWidget(QWidget * parent)
     layout()->setMargin(0);
     d->valid = false; // valid on creation because connection name (id) is empty
 
-    d->ui.pushButtonChooseIcon->setToolTip(i18nc("@info:tooltip user action", "Choose a connection icon"));
-    // it doesn't make a sense to set up an icon here, lets do it in readConfig
-    connect(d->ui.pushButtonChooseIcon, SIGNAL(clicked()), this, SLOT(buttonChooseIconClicked()));
-    connect(d->ui.id, SIGNAL(textChanged(QString)), this, SLOT(validate()));
+    d->ui.pushButtonPermissions->setIcon(KIcon("preferences-desktop-user"));
+    connect(d->ui.pushButtonPermissions, SIGNAL(clicked()), this, SLOT(buttonPermissionsClicked()));
+    connect(d->ui.id, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
 }
 
 ConnectionWidget::~ConnectionWidget()
 {
-}
-
-void ConnectionWidget::setConnection(Knm::Connection * connection)
-{
-    kDebug() << "Connection id is " << connection->uuid();
-    d_ptr->connection = connection;
 }
 
 void ConnectionWidget::setDefaultName(const QString & defaultName)
@@ -80,24 +76,32 @@ QTabWidget * ConnectionWidget::connectionSettingsWidget()
 void ConnectionWidget::readConfig()
 {
     Q_D(ConnectionWidget);
+    d->permissions = connection()->permissions();
+
     if (connection()->name().isEmpty()) {
         connection()->setName(d->defaultName);
     }
 
     d->ui.id->setText(connection()->name());
-    d->ui.system->setChecked(connection()->scope() == Knm::Connection::System);
     d->ui.autoconnect->setChecked(connection()->autoConnect());
-    d->ui.pushButtonChooseIcon->setIcon(KIcon(connection()->iconName()));
+    d->ui.connectionIcon->setPixmap(KIcon(connection()->iconName()).pixmap(QSize(48,48)));
+    d->ui.system->setChecked(d->permissions.isEmpty());
 }
 
 void ConnectionWidget::writeConfig()
 {
     Q_D(ConnectionWidget);
     connection()->setName(d->ui.id->text());
-    connection()->setScope(d->ui.system->isChecked() ? Knm::Connection::System : Knm::Connection::User);
     connection()->setAutoConnect(d->ui.autoconnect->isChecked());
-    connection()->setOriginalAutoConnect(d->ui.autoconnect->isChecked());
-    // connection()->setIconName(..) is already called from buttonChooseIconClicked()
+    if (!d->ui.system->isChecked()) {
+        if (d->permissions.isEmpty()) {
+            connection()->addToPermissions(KUser().loginName(),QString());
+            d->permissions = connection()->permissions();
+        } else {
+            connection()->setPermissions(d->permissions);
+        }
+    } else
+        connection()->setPermissions(QHash<QString,QString>());
 }
 
 void ConnectionWidget::validate()
@@ -107,25 +111,18 @@ void ConnectionWidget::validate()
     emit valid(d->valid);
 }
 
-void ConnectionWidget::buttonChooseIconClicked()
+void ConnectionWidget::buttonPermissionsClicked()
 {
     Q_D(ConnectionWidget);
-    KIconDialog dlg(this);
-
-    // set customLocation to kdedir/share/apps/networkmanagement/icons
-    QString customLocation(KStandardDirs::locate("data", QLatin1String("networkmanagement/icons/")));
-    //kDebug() << "Custom location: " << customLocation;
-    
-    dlg.setCustomLocation(customLocation);
-
-    dlg.setup(KIconLoader::NoGroup, KIconLoader::Any, false, 0, true, false, false);
-
-    QString iconName = dlg.openDialog();
-    if (!iconName.isEmpty())
-    {
-        //kDebug() << "Icon name: " << iconName;
-        d->ui.pushButtonChooseIcon->setIcon(KIcon(iconName));
-        connection()->setIconName(iconName);
+    kDebug() << "advanced permissions dialog clicked";
+    KDialog dialog(this);
+    dialog.setCaption(i18nc("@title:window advanced permissions editor",
+                                "Advanced Permissions Editor"));
+    dialog.setButtons( KDialog::Ok | KDialog::Cancel);
+    AdvancedPermissionsWidget permissionsWid(d->permissions);
+    dialog.setMainWidget(&permissionsWid);
+    if (dialog.exec() == QDialog::Accepted) {
+        d->permissions = permissionsWid.currentUsers();
     }
 }
 

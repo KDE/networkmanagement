@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QDBusConnection>
 
-#include "connectionlistpersistence.h"
+#include "secretstorage.h"
 
 class ConnectionListPersistenceDBusPrivate
 {
@@ -43,5 +43,4 @@ ConnectionListPersistenceDBus::~ConnectionListPersistenceDBus()
 {
     QDBusConnection::sessionBus().unregisterObject("/connections");
     QDBusConnection::sessionBus().unregisterService("org.kde.networkmanagement");
-    delete d_ptr;
 }

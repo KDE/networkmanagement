@@ -1,5 +1,5 @@
 /*
-Copyright 2010 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -86,7 +86,7 @@ private:
     QComboBox * mDeviceComboBox;
     void introAddInitialDevices();
     void introRemoveAllDevices();
-    void introAddDevice(Solid::Control::NetworkInterface *device);
+    void introAddDevice(Solid::Control::NetworkInterfaceNm09 *device);
 
     // Country page
     QListWidget * mCountryList;

@@ -119,8 +119,8 @@ public:
 
 WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
         Knm::Connection * connection,
-        Solid::Control::WirelessNetworkInterface * iface,
-        Solid::Control::AccessPoint * ap,
+        Solid::Control::WirelessNetworkInterfaceNm09 * iface,
+        Solid::Control::AccessPointNm09 * ap,
         QWidget * parent)
 : SettingWidget(*new WirelessSecuritySettingWidgetPrivate, connection, parent)
 {
@@ -136,31 +136,31 @@ WirelessSecuritySettingWidget::WirelessSecuritySettingWidget(
     setIfaceAndAccessPoint(iface, ap);
 }
 
-void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterface * iface, Solid::Control::AccessPoint * ap)
+void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::WirelessNetworkInterfaceNm09 * iface, Solid::Control::AccessPointNm09 * ap)
 {
     Q_D(WirelessSecuritySettingWidget);
     d->clearSecurityWidgets();
 
     // cache ap and device capabilities here
-    Solid::Control::WirelessNetworkInterface::Capabilities ifaceCaps(0);
+    Solid::Control::WirelessNetworkInterfaceNm09::Capabilities ifaceCaps(0);
     bool adhoc = false;
-    Solid::Control::AccessPoint::Capabilities apCaps(0);
-    Solid::Control::AccessPoint::WpaFlags apWpa(0);
-    Solid::Control::AccessPoint::WpaFlags apRsn(0);
+    Solid::Control::AccessPointNm09::Capabilities apCaps(0);
+    Solid::Control::AccessPointNm09::WpaFlags apWpa(0);
+    Solid::Control::AccessPointNm09::WpaFlags apRsn(0);
 
 
     if (iface) {
         ifaceCaps = iface->wirelessCapabilities();
         if (ap) {
             apCaps = ap->capabilities();
-            adhoc = (ap->mode() == Solid::Control::WirelessNetworkInterface::Adhoc);
+            adhoc = (ap->mode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc);
             apWpa = ap->wpaFlags();
             apRsn = ap->rsnFlags();
         }
     } else {
-        foreach (Solid::Control::NetworkInterface * candidate , Solid::Control::NetworkManager::networkInterfaces()) {
-            if (candidate->type() == Solid::Control::NetworkInterface::Ieee80211) {
-                Solid::Control::WirelessNetworkInterface * wirelessIface = qobject_cast<Solid::Control::WirelessNetworkInterface*>(candidate);
+        foreach (Solid::Control::NetworkInterfaceNm09 * candidate , Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+            if (candidate->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
+                Solid::Control::WirelessNetworkInterfaceNm09 * wirelessIface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(candidate);
                 if (wirelessIface) {
                     ifaceCaps |= wirelessIface->wirelessCapabilities();
                 }
@@ -171,65 +171,65 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::Wirel
     // populate cboType with appropriate wireless security types
     // Note: security types are populated even if ap == NULL, since we don't know which sec. type is the right one
 
-    bool noDevice = (ifaceCaps == Solid::Control::WirelessNetworkInterface::NoCapability); //set this if we couldn't find any wireless device
-
-    // If we do not have wireless device but we're able to edit wireless profiles, then we must enable all types of security settings otherwise just None option is seen in ComboBox
-
     // insecure
-    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::None, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn) || noDevice ) {
+    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::None, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
         if (!d->nullSecurity.second) {
             d->nullSecurity.second = new NullSecurityWidget(d->connection, this);
-            connect(d->nullSecurity.second, SIGNAL(valid(bool)), this, SLOT(validate()));
         }
         d->registerSecurityType( d->nullSecurity, i18nc("Label for no wireless security", "None"));
     }
 
     // LEAP
-    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Leap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn) || noDevice ) {
+    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Leap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
         if (!d->leap.second) {
             d->leap.second = new LeapWidget(d->connection, this);
-            connect(d->leap.second, SIGNAL(valid(bool)), this, SLOT(validate()));
         }
         d->registerSecurityType(d->leap, i18nc("Label for LEAP wireless security", "LEAP"));
+        // SecurityWidget validation changes should notify SettingWidget
+        connect(d->leap.second, SIGNAL(valid(bool)), SLOT(validate()));
     }
 
     // Dynamic WEP
-    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::DynamicWep, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn) || noDevice ) {
+    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::DynamicWep, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
         if (!d->dynamicWep.second) {
             d->dynamicWep.second = new SecurityDynamicWep(d->connection, this);
-            connect(d->dynamicWep.second, SIGNAL(valid(bool)), this, SLOT(validate()));
         }
         d->registerSecurityType(d->dynamicWep, i18nc("Label for Dynamic WEP wireless security", "Dynamic WEP (802.1x)"));
+        // SecurityWidget validation changes should notify SettingWidget
+        connect (d->dynamicWep.second, SIGNAL(valid(bool)), SLOT(validate()));
     }
 
     // WEP
-    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::StaticWep, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn) || noDevice ) {
+    if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::StaticWep, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)) {
         if (!d->staticWep.second) {
             d->staticWep.second = new WepWidget(WepWidget::Hex, d->connection, this);
-            connect(d->staticWep.second, SIGNAL(valid(bool)), this, SLOT(validate()));
         }
         d->registerSecurityType(d->staticWep, i18nc("Label for WEP wireless security", "WEP"));
+        // SecurityWidget validation changes should notify SettingWidget
+        connect (d->staticWep.second, SIGNAL(valid(bool)), SLOT(validate()));
     }
 
     // WPA-PSK
     if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::WpaPsk, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
-            || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Wpa2Psk, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn) || noDevice
+            || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Wpa2Psk, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
        ) {
         if (!d->wpaPsk.second) {
             d->wpaPsk.second = new WpaPskWidget(d->connection, this);
-            connect(d->wpaPsk.second, SIGNAL(valid(bool)), this, SLOT(validate()));
         }
         d->registerSecurityType(d->wpaPsk, i18nc("Label for WPA-PSK wireless security", "WPA/WPA2 Personal"));
+        // SecurityWidget validation changes should notify SettingWidget
+        connect(d->wpaPsk.second, SIGNAL(valid(bool)), SLOT(validate()));
     }
     // WPA-EAP
     if (Knm::WirelessSecurity::possible(Knm::WirelessSecurity::WpaEap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
-            || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Wpa2Eap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn) || noDevice 
+            || Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Wpa2Eap, ifaceCaps, (ap != 0), adhoc, apCaps, apWpa, apRsn)
                 ) {
         if (!d->wpaEap.second) {
             d->wpaEap.second = new WpaEapWidget(d->connection, this);
-            connect(d->wpaEap.second, SIGNAL(valid(bool)), this, SLOT(validate()));
         }
         d->registerSecurityType(d->wpaEap, i18nc("Label for WPA-EAP wireless security", "WPA/WPA2 Enterprise"));
+        // SecurityWidget validation changes should notify SettingWidget
+        connect(d->wpaEap.second, SIGNAL(valid(bool)), SLOT(validate()));
     }
 
     if (ap)
@@ -247,7 +247,6 @@ void WirelessSecuritySettingWidget::securityTypeChanged(int index)
     Q_D(WirelessSecuritySettingWidget);
     d->settingSecurity->reset();
     d->ui.securityWidgets->setCurrentIndex(index);
-    validate();
 }
 
 void WirelessSecuritySettingWidget::readConfig()
@@ -283,9 +282,11 @@ void WirelessSecuritySettingWidget::readConfig()
                 d->setCurrentSecurityWidget(d->dynamicWep.first);
                 break;
             case Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk:
+            case Knm::WirelessSecuritySetting::EnumSecurityType::Wpa2Psk:
                 d->setCurrentSecurityWidget(d->wpaPsk.first);
                 break;
             case Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap:
+            case Knm::WirelessSecuritySetting::EnumSecurityType::Wpa2Eap:
                 d->setCurrentSecurityWidget(d->wpaEap.first);
                 break;
         }
@@ -313,30 +314,25 @@ void WirelessSecuritySettingWidget::writeConfig()
     }
     else if (d->ui.cboType->currentIndex() == d->staticWep.first) {
         d->setting8021x->setEnabled(false);
-        d->settingSecurity->setEnabled(true);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::StaticWep); // FIXME
         d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::None);
     }
     else if (d->ui.cboType->currentIndex() == d->leap.first) {
         d->setting8021x->setEnabled(false);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::Leap); // FIXME
-        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::Ieee8021x);
     }
     else if (d->ui.cboType->currentIndex() == d->dynamicWep.first) {
         d->setting8021x->setEnabled(true);
-        d->settingSecurity->setEnabled(true);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::DynamicWep); // FIXME
         d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::Ieee8021x);
     }
     else if (d->ui.cboType->currentIndex() == d->wpaPsk.first) {
         d->setting8021x->setEnabled(false);
-        d->settingSecurity->setEnabled(true);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk); // FIXME
         d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAPSK);
     }
     else if (d->ui.cboType->currentIndex() == d->wpaEap.first) {
         d->setting8021x->setEnabled(true);
-        d->settingSecurity->setEnabled(true);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaEap); // FIXME
         d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAEAP);
     }
@@ -345,19 +341,14 @@ void WirelessSecuritySettingWidget::writeConfig()
     if (sw) {
         sw->writeConfig();
     }
-    d->settingSecurity->setInitialized();
-    d->setting8021x->setInitialized();
+    d->settingSecurity->setInitialized(true);
+    d->setting8021x->setInitialized(true);
 }
 
 void WirelessSecuritySettingWidget::validate()
 {
     Q_D(WirelessSecuritySettingWidget);
-    SecurityWidget *sw = d->currentSecurityWidget();
-
-    if (sw)
-    {
-        emit valid(sw->isValid());
-    }
+    emit valid( d->currentSecurityWidget()->validate() );
 }
 
 // vim: sw=4 sts=4 et tw=100

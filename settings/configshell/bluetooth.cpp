@@ -23,90 +23,20 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDBusInterface>
 #include <QDBusReply>
 #include <QUuid>
+#include <QTimer>
 
 #include <KDebug>
-#include <KApplication>
 #include <KStandardDirs>
 
-#include "settings/bluetooth.h"
 #include "bluetooth.h"
-
-// Connections are saved in user scope.
-void saveConnection(Knm::Connection *con)
-{
-    Knm::BluetoothSetting * btSetting = static_cast<Knm::BluetoothSetting *>(con->setting(Knm::Setting::Bluetooth));
-
-    if (btSetting) {
-        foreach (const QString &connectionId, KNetworkManagerServicePrefs::self()->connections()) {
-            QString connectionFile = KStandardDirs::locateLocal("data",
-                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + connectionId);
-            KSharedConfig::Ptr config = KSharedConfig::openConfig(connectionFile, KConfig::NoGlobals);
-    
-            if (config.isNull()) {
-                continue;
-            }
-    
-            KConfigGroup connection(config, "connection");
-            if (connection.readEntry("type") != QLatin1String("bluetooth")) {
-                continue;
-            }
-
-            Knm::ConnectionPersistence cp(config,
-                    (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode()
-                    );
-            cp.load();
-            Knm::Connection * c = cp.connection();
-            Knm::BluetoothSetting * setting = static_cast<Knm::BluetoothSetting *>(c->setting(Knm::Setting::Bluetooth));
-
-            // Set to update existing bluetooth connection instead of creating a new one.
-            if (setting && setting->bdaddr() == btSetting->bdaddr()) {
-                con->setUuid(c->uuid());
-                break;
-            }
-        }
-    }
-
-    // persist the Connection
-    QString connectionFile = KStandardDirs::locateLocal("data",
-        Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH + QString(con->uuid()));
-
-    Knm::ConnectionPersistence cp(
-            con,
-            KSharedConfig::openConfig(connectionFile),
-            (Knm::ConnectionPersistence::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode()
-            );
-    cp.save();
-
-    // add to the service prefs
-    QString name = con->name();
-    QString type = Knm::Connection::typeAsString(con->type());
-    KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
-    KConfigGroup config(prefs->config(), QLatin1String("Connection_") + QString(con->uuid()));
-    QStringList connectionIds = prefs->connections();
-    // check if already present, we may be editing an existing Connection
-    if (!connectionIds.contains(con->uuid()))
-    {
-        connectionIds << con->uuid();
-        prefs->setConnections(connectionIds);
-    }
-    config.writeEntry("Name", name);
-    config.writeEntry("Type", type);
-    prefs->writeConfig();
-    prefs->config()->sync();
-
-    ConnectionEditor editor(0);
-    editor.updateService(QStringList() << con->uuid().toString());
-}
-
-#ifdef COMPILE_MODEM_MANAGER_SUPPORT
-#include <QTimer>
+#include "manageconnection.h"
 
 Bluetooth::Bluetooth(const QString bdaddr, const QString service): QObject(), mBdaddr(bdaddr), mService(service), mobileConnectionWizard(0)
 {
     mService = mService.toLower();
     if (mService == "dun") {
-        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceAdded(QString)),
-                SLOT(modemAdded(QString)));
+        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceAdded(const QString &)),
+                SLOT(modemAdded(const QString &)));
     }
     QTimer::singleShot(0, this, SLOT(init()));
 }
@@ -221,9 +151,8 @@ void Bluetooth::init()
         ConnectionEditor editor(0);
         Knm::Connection *con = editor.createConnection(true, Knm::Connection::Bluetooth, QVariantList() << mDeviceName << QLatin1String(NM_SETTING_BLUETOOTH_TYPE_PANU) << mBdaddr, false);
         if (con) {
-            saveConnection(con);
+            ManageConnection::saveConnection(con);
         }
-        kapp->quit();
         return;
     } else if (mService != QLatin1String("dun")) {
         mDunDevice = mService;
@@ -297,11 +226,8 @@ void Bluetooth::modemAdded(const QString &udi)
         mobileConnectionWizard->getError() == MobileProviders::Success) {
         con = editor.createConnection(true, Knm::Connection::Bluetooth, QVariantList() << mDeviceName << QLatin1String(NM_SETTING_BLUETOOTH_TYPE_DUN) << mBdaddr << mobileConnectionWizard->args(), false);
         if (con) {
-            saveConnection(con);
+            ManageConnection::saveConnection(con);
         }
     }
     delete mobileConnectionWizard;
-    kapp->quit();
 }
-
-#endif

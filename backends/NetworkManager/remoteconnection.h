@@ -24,7 +24,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "types.h"
 #include "knm_export.h"
 
-#include "nm-exported-connectioninterface.h"
+#include "nm-settings-connectioninterface.h"
 
 #include <solid/control/networkinterface.h>
 
@@ -35,7 +35,7 @@ public:
     RemoteConnection(const QString &service, const QString &path, QObject * parent = 0);
     ~RemoteConnection();
     QString id() const;
-    Solid::Control::NetworkInterface::Type type() const;
+    Solid::Control::NetworkInterfaceNm09::Type type() const;
     QString path() const;
     QVariantMapMap settings() const;
     bool active() const;
@@ -43,7 +43,7 @@ public:
 //  settingsUpdated(const QVariantMapMap&);
 private:
     QString m_id;
-    Solid::Control::NetworkInterface::Type m_type;
+    Solid::Control::NetworkInterfaceNm09::Type m_type;
     QVariantMapMap m_connection;
     QString m_path;
 };

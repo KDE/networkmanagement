@@ -23,11 +23,11 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
 
   Knm::Ipv6Setting * setting = static_cast<Knm::Ipv6Setting*>(m_setting);
 
-  if (map.contains("method")) {
-      setting->setMethod(methodStringToEnum(map.value("method").value<QString>())); }
+  if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD))) {
+      setting->setMethod(methodStringToEnum(map.value(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD)).value<QString>())); }
 
-  if (map.contains("dns")) {
-      QDBusArgument dnsArg = map.value("dns").value< QDBusArgument>();
+  if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_DNS))) {
+      QDBusArgument dnsArg = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_DNS)).value< QDBusArgument>();
       QList<QHostAddress> dbusDns;
 
       dnsArg.beginArray();
@@ -54,8 +54,8 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
     setting->setDnssearch(map.value(QLatin1String(NM_SETTING_IP6_CONFIG_DNS_SEARCH)).value<QStringList>());
   }
 
-  if (map.contains("addresses")) {
-      QDBusArgument addressArg = map.value("addresses").value< QDBusArgument>();
+  if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_ADDRESSES))) {
+      QDBusArgument addressArg = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ADDRESSES)).value< QDBusArgument>();
       QList<Solid::Control::IPv6Address> addresses;
 
       addressArg.beginArray();
@@ -93,9 +93,9 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
       setting->setAddresses(addresses);
   }
 
-  if (map.contains("routes"))
+  if (map.contains(QLatin1String(NM_SETTING_IP6_CONFIG_ROUTES)))
   {
-      QDBusArgument routeArg = map.value("routes").value< QDBusArgument>();
+      QDBusArgument routeArg = map.value(QLatin1String(NM_SETTING_IP6_CONFIG_ROUTES)).value< QDBusArgument>();
       QList<Solid::Control::IPv6Route> routes;
 
       routeArg.beginArray();
@@ -147,15 +147,17 @@ void Ipv6Dbus::fromMap(const QVariantMap & map)
 
 Knm::Ipv6Setting::EnumMethod::type Ipv6Dbus::methodStringToEnum(QString method)
 {
-    if (method.toLower() == "automatic" || method.toLower() == "auto")
+    if (method.toLower() == QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_AUTO))
         return Knm::Ipv6Setting::EnumMethod::Automatic;
-    else if (method.toLower() == "linklocal" || method.toLower() == "link-local")
+    else if (method.toLower() == QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_DHCP))
+        return Knm::Ipv6Setting::EnumMethod::Dhcp;
+    else if (method.toLower() == QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_LINK_LOCAL))
         return Knm::Ipv6Setting::EnumMethod::LinkLocal;
-    else if (method.toLower() == "manual")
+    else if (method.toLower() == QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_MANUAL))
         return Knm::Ipv6Setting::EnumMethod::Manual;
-    else if (method.toLower() == "shared")
+    else if (method.toLower() == QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_SHARED))
         return Knm::Ipv6Setting::EnumMethod::Shared;
-    else if (method.toLower() == "ignore")
+    else if (method.toLower() == QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_IGNORE))
         return Knm::Ipv6Setting::EnumMethod::Ignore;
     else
     {
@@ -170,19 +172,21 @@ QVariantMap Ipv6Dbus::toMap()
   Knm::Ipv6Setting * setting = static_cast<Knm::Ipv6Setting *>(m_setting);
   switch (setting->method()) {
       case Knm::Ipv6Setting::EnumMethod::Automatic:
-          map.insert("method", "auto");
+          map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD), QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_AUTO));
           break;
+      case Knm::Ipv6Setting::EnumMethod::Dhcp:
+          map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD), QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_DHCP));
       case Knm::Ipv6Setting::EnumMethod::LinkLocal:
-          map.insert("method", "link-local");
+          map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD), QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_LINK_LOCAL));
           break;
       case Knm::Ipv6Setting::EnumMethod::Manual:
-          map.insert("method", "manual");
+          map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD), QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_MANUAL));
           break;
       case Knm::Ipv6Setting::EnumMethod::Shared:
-          map.insert("method", "shared");
+          map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD), QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_SHARED));
           break;
       case Knm::Ipv6Setting::EnumMethod::Ignore:
-          map.insert("method", "ignore");
+          map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_METHOD), QLatin1String(NM_SETTING_IP6_CONFIG_METHOD_IGNORE));
           break;
   }
 
@@ -198,7 +202,7 @@ QVariantMap Ipv6Dbus::toMap()
 
           dbusDns << assembledDnsAddress;
       }
-      map.insert("dns", QVariant::fromValue(dbusDns));
+      map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_DNS), QVariant::fromValue(dbusDns));
   }
 
   if (!setting->dnssearch().isEmpty()) {
@@ -227,7 +231,7 @@ QVariantMap Ipv6Dbus::toMap()
           dbusAddress.gateway = assembledGateway;
           dbusAddresses << dbusAddress;
       }
-      map.insert("addresses", QVariant::fromValue(dbusAddresses));
+      map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_ADDRESSES), QVariant::fromValue(dbusAddresses));
   }
   if (!setting->routes().isEmpty()) {
       QList<IpV6RouteMap> dbusRoutes;
@@ -255,7 +259,7 @@ QVariantMap Ipv6Dbus::toMap()
           dbusRoutes << dbusRoute;
       }
 
-      map.insert("routes", QVariant::fromValue(dbusRoutes));
+      map.insert(QLatin1String(NM_SETTING_IP6_CONFIG_ROUTES), QVariant::fromValue(dbusRoutes));
   }
 
 

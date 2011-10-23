@@ -16,6 +16,7 @@ class KNMINTERNALS_EXPORT BluetoothSetting : public Setting
   public:
 
     BluetoothSetting( );
+    BluetoothSetting(BluetoothSetting *);
     ~BluetoothSetting();
 
     QString name() const;
@@ -47,22 +48,6 @@ class KNMINTERNALS_EXPORT BluetoothSetting : public Setting
         mBdaddr = v;
     }
 
-    void setBdaddrFromString( const QString & s)
-    {
-        QStringList macStringList = s.split(":");
-        QByteArray ba;
-        if (!s.isEmpty())
-        {
-            ba.resize(6);
-            int i = 0;
-    
-            foreach (QString macPart, macStringList) {
-                ba[i++] = macPart.toUInt(0, 16);
-            }
-    	}
-        setBdaddr(ba);
-    }
-
     /**
       Get Bdaddr
     */
@@ -71,17 +56,6 @@ class KNMINTERNALS_EXPORT BluetoothSetting : public Setting
       return mBdaddr;
     }
 
-    QString bdaddrAsString() const
-    {
-     QStringList mac;
-
-     for (int i=0; i < mBdaddr.size(); i++)
-     {
-        mac << QString("%1").arg((quint8)mBdaddr[i], 2, 16, QLatin1Char('0')).toUpper();
-     }
-
-     return mac.join(":");
-    }
 
     /**
       Set Network Type

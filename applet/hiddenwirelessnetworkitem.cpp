@@ -39,7 +39,7 @@ HiddenWirelessNetworkItem::HiddenWirelessNetworkItem(QGraphicsWidget *parent) : 
     m_connect(0),
     m_ssidEdit(0)
 {
-    kDebug() << "HiddenWirelessNetworkItem";
+    //kDebug() << "HiddenWirelessNetworkItem";
 }
 
 HiddenWirelessNetworkItem::~HiddenWirelessNetworkItem()
@@ -61,12 +61,10 @@ int HiddenWirelessNetworkItem::strength() const
     return -1;
 }
 
-Solid::Control::AccessPoint * HiddenWirelessNetworkItem::referenceAccessPoint() const
+Solid::Control::AccessPointNm09 * HiddenWirelessNetworkItem::referenceAccessPoint() const
 {
     return 0;
 }
-
-QString HiddenWirelessNetworkItem::s_defaultText = i18nc("default KLineEdit::clickMessage() for hidden wireless network SSID entry", "Enter network name and press <enter>");
 
 void HiddenWirelessNetworkItem::setupItem()
 {
@@ -77,20 +75,24 @@ void HiddenWirelessNetworkItem::setupItem()
         m_connect->setOrientation(Qt::Horizontal);
         m_connect->setIcon("network-wireless");
         m_connect->setText(i18nc("label for creating a connection to a hidden wireless network", "<hidden network>"));
-        m_layout->addItem(m_connect);
         connect(m_connect, SIGNAL(activated()), SLOT(connectClicked()));
 
         m_ssidEdit = new Plasma::LineEdit(this);
-        m_ssidEdit->nativeWidget()->setClickMessage(s_defaultText);
-        m_ssidEdit->hide();
+        m_ssidEdit->nativeWidget()->setClickMessage(i18nc("default KLineEdit::clickMessage() for hidden wireless network SSID entry", "Enter network name and press <enter>"));
+        m_ssidEdit->setToolTip(i18nc("@info:tooltip for hidden wireless network SSID entry", "Enter network name and press <enter>"));
         connect(m_ssidEdit->nativeWidget(), SIGNAL(returnPressed()), SLOT(ssidEntered()));
     }
+    resetSsidEntry();
 }
 
 void HiddenWirelessNetworkItem::connectClicked()
 {
     m_connect->hide();
     m_ssidEdit->show();
+
+    // OBS: m_ssidEdit->nativeWidget()->setClickMessage(...) has no effect if nativeWidget() has focus.
+    m_ssidEdit->setFocus();
+
     //workarounds for QGraphicsLayout not being able to layout hidden widgets with a 0 size
     m_layout->removeAt(0);
     m_layout->addItem(m_ssidEdit);
@@ -98,10 +100,15 @@ void HiddenWirelessNetworkItem::connectClicked()
 
 void HiddenWirelessNetworkItem::ssidEntered()
 {
-    kDebug() << "... ssid is now" << m_ssid;
     setSsid(m_ssidEdit->text());
-    emitClicked();
-    emit connectToHiddenNetwork(m_ssid);
+    //kDebug() << "... ssid is now" << m_ssid;
+
+    if (!m_ssid.isEmpty()) {
+        emitClicked();
+        emit connectToHiddenNetwork(m_ssid);
+    }
+
+    resetSsidEntry();
 }
 
 void HiddenWirelessNetworkItem::resetSsidEntry()

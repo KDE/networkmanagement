@@ -52,7 +52,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 //storage
 #include "connection.h"
-#include "connectionpersistence.h"
 #include "knmserviceprefs.h"
 
 ConnectionEditor::ConnectionEditor(QObject * parent) : QObject(parent)
@@ -64,7 +63,7 @@ ConnectionEditor::~ConnectionEditor()
 {
 }
 
-void ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariantList &args)
+Knm::Connection *ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariantList &args)
 {
     QWidget *parentWidget = qobject_cast<QWidget*>(parent());
     KDialog configDialog(parentWidget);
@@ -80,13 +79,10 @@ void ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariant
     cprefs->validate();
 
     if ( cprefs && configDialog.exec() == QDialog::Accepted ) {
-        QStringList changedConnections;
-        changedConnections << cprefs->connection()->uuid();
         cprefs->save();
-        persist(cprefs->connection());
-        updateService(changedConnections);
-        emit connectionsChanged();
+        return cprefs->connection();
     }
+    return 0;
 }
 
 Knm::Connection *ConnectionEditor::editConnection(Knm::Connection *con)
@@ -98,7 +94,7 @@ Knm::Connection *ConnectionEditor::editConnection(Knm::Connection *con)
     configDialog.setWindowIcon(KIcon("networkmanager"));
     configDialog.setWindowModality(Qt::WindowModal);
 
-    ConnectionPreferences * cprefs = editorForConnectionType(&configDialog, con);
+    ConnectionPreferences * cprefs = editorForConnectionType(false, &configDialog, con);
     connect(cprefs, SIGNAL(valid(bool)), &configDialog, SLOT(enableButtonOk(bool)));
     configDialog.setMainWidget(cprefs);
 
@@ -117,7 +113,7 @@ Knm::Connection *ConnectionEditor::editConnection(Knm::Connection *con)
         return cprefs->connection();
     }
 
-    return NULL;
+    return 0;
 }
 
 
@@ -134,37 +130,12 @@ Knm::Connection *ConnectionEditor::createConnection(bool useDefaults, Knm::Conne
 
     QString connectionId = QUuid::createUuid().toString();
 
-#if 0
-    // Check if there is already a connection with this uuid, if so, pick a new uuid
-    // If 50 runs have passed, something is really fishy as we only get existing uuid
-    // try at max
-    // We check the newly created uuid against the list of configured connections
-    QString connectionPath(KStandardDirs::locateLocal("data",
-                Knm::ConnectionPersistence::CONNECTION_PERSISTENCE_PATH));
-    const QStringList connectionFiles = QDir(connectionPath).entryList();
-
-    // try really hard to get a unique id
-    for (int i = 0; i < 999; i++) {
-        if (connectionFiles.contains(connectionId)) {
-            //kDebug() << i << "Woops, duplicate connnection ID" << connectionId << ". Creating another one.";
-            connectionId = QUuid::createUuid().toString();
-            if (i > 50) {
-                kWarning() << "We have " << i << " times gotten existing uuids, QUuid QUuid::createUuid() something is fishy here: " << connectionId;
-            }
-        } else {
-            kDebug() << "found new uuid which is not used yet:" << connectionId;
-            break; // stop searching
-        }
-    }
-    // Let's hope the connection ID is unique now...
-#endif
-
     args << connectionId;
     args += otherArgs;
     ConnectionPreferences * cprefs = editorForConnectionType(useDefaults, &configDialog, type, args);
 
     if (!cprefs) {
-        return NULL;
+        return 0;
     }
 
     connect(cprefs, SIGNAL(valid(bool)), &configDialog, SLOT(enableButtonOk(bool)));
@@ -174,14 +145,9 @@ Knm::Connection *ConnectionEditor::createConnection(bool useDefaults, Knm::Conne
     configDialog.setMainWidget(cprefs);
 
     if ( autoAccept || configDialog.exec() == QDialog::Accepted ) {
-        // update the connection from the UI and save it to a file in appdata/connections
+        // update the connection from the UI
         cprefs->save();
 
-        // update our rcfile (Must happen after cprefs->save())
-        //persist(cprefs->connection());
-        //updateService();
-        //emit connectionsChanged();
-        //
         cprefsCon = cprefs->connection();
 
         kDebug() << "Add dialog accepted: Connection name: " << cprefsCon->name() << "type: " << cprefsCon->typeAsString(cprefsCon->type()) << "uuid: " << cprefsCon->uuid().toString() << "iconname: "<< cprefsCon->iconName();
@@ -191,26 +157,7 @@ Knm::Connection *ConnectionEditor::createConnection(bool useDefaults, Knm::Conne
 
         return cprefs->connection();
     }
-    return NULL;
-}
-
-void ConnectionEditor::persist(Knm::Connection* connection)
-{
-    // add to the service prefs
-    QString name = connection->name();
-    QString type = Knm::Connection::typeAsString(connection->type());
-    KNetworkManagerServicePrefs * prefs = KNetworkManagerServicePrefs::self();
-    KConfigGroup config(prefs->config(), QLatin1String("Connection_") + QString(connection->uuid()));
-    QStringList connectionIds = prefs->connections();
-    // check if already present, we may be editing an existing Connection
-    if (!connectionIds.contains(connection->uuid()))
-    {
-        connectionIds << connection->uuid();
-        prefs->setConnections(connectionIds);
-    }
-    config.writeEntry("Name", name);
-    config.writeEntry("Type", type);
-    prefs->writeConfig();
+    return 0;
 }
 
 ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaults, QWidget * parent,
@@ -247,8 +194,10 @@ ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaul
     return wid;
 }
 
-ConnectionPreferences * ConnectionEditor::editorForConnectionType(QWidget * parent, Knm::Connection *con) const
+ConnectionPreferences * ConnectionEditor::editorForConnectionType(bool setDefaults, QWidget * parent,
+                                                                  Knm::Connection *con) const
 {
+    Q_UNUSED(setDefaults);
     ConnectionPreferences * wid = 0;
     switch (con->type()) {
         case Knm::Connection::Wired:
@@ -277,18 +226,5 @@ ConnectionPreferences * ConnectionEditor::editorForConnectionType(QWidget * pare
     }
     return wid;
 }
-
-void ConnectionEditor::updateService(const QStringList & changedConnections) const
-{
-    kDebug() << changedConnections;
-    QDBusInterface iface(QLatin1String("org.kde.networkmanagement"),
-            QLatin1String("/connections"),
-            QLatin1String("org.kde.networkmanagement"), QDBusConnection::sessionBus());
-    if (!iface.isValid()) {
-        kError() << "KDED Module is not running!";
-    }
-    iface.call(QLatin1String("configure"), changedConnections);
-}
-
 
 // vim: sw=4 sts=4 et tw=100

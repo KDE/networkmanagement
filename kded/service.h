@@ -19,8 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM08_KDED_SERVICE_H
-#define KNM08_KDED_SERVICE_H
+#ifndef KNM09_KDED_SERVICE_H
+#define KNM09_KDED_SERVICE_H
 
 #include <KDEDModule>
 
@@ -41,4 +41,4 @@ private:
     NetworkManagementServicePrivate * d_ptr;
 };
 
-#endif // KNM08_KDED_SERVICE_H
+#endif // KNM09_KDED_SERVICE_H

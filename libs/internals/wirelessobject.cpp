@@ -20,7 +20,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelessobject.h"
 
-Knm::WirelessObject::WirelessObject(const QString & ssid, int strength, Solid::Control::WirelessNetworkInterface::Capabilities interfaceCapabilities, Solid::Control::AccessPoint::Capabilities apCapabilities, Solid::Control::AccessPoint::WpaFlags wpaFlags, Solid::Control::AccessPoint::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterface::OperationMode mode)
+Knm::WirelessObject::WirelessObject(const QString & ssid, int strength, Solid::Control::WirelessNetworkInterfaceNm09::Capabilities interfaceCapabilities, Solid::Control::AccessPointNm09::Capabilities apCapabilities, Solid::Control::AccessPointNm09::WpaFlags wpaFlags, Solid::Control::AccessPointNm09::WpaFlags rsnFlags, Solid::Control::WirelessNetworkInterfaceNm09::OperationMode mode)
 : m_ssid(ssid),
     m_strength(strength),
     m_interfaceCapabilities(interfaceCapabilities),
@@ -55,28 +55,28 @@ void Knm::WirelessObject::setStrength(int strength)
     m_strength = strength;
 }
 
-Solid::Control::WirelessNetworkInterface::Capabilities Knm::WirelessObject::interfaceCapabilities() const
+Solid::Control::WirelessNetworkInterfaceNm09::Capabilities Knm::WirelessObject::interfaceCapabilities() const
 {
     return m_interfaceCapabilities;
 }
 
-Solid::Control::AccessPoint::Capabilities Knm::WirelessObject::apCapabilities() const
+Solid::Control::AccessPointNm09::Capabilities Knm::WirelessObject::apCapabilities() const
 {
     return m_apCapabilities;
 }
 
 
-Solid::Control::AccessPoint::WpaFlags Knm::WirelessObject::wpaFlags() const
+Solid::Control::AccessPointNm09::WpaFlags Knm::WirelessObject::wpaFlags() const
 {
     return m_wpaFlags;
 }
 
-Solid::Control::AccessPoint::WpaFlags Knm::WirelessObject::rsnFlags() const
+Solid::Control::AccessPointNm09::WpaFlags Knm::WirelessObject::rsnFlags() const
 {
     return m_rsnFlags;
 }
 
-Solid::Control::WirelessNetworkInterface::OperationMode Knm::WirelessObject::operationMode() const
+Solid::Control::WirelessNetworkInterfaceNm09::OperationMode Knm::WirelessObject::operationMode() const
 {
     return m_operationMode;
 }

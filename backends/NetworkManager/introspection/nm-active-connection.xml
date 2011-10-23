@@ -2,14 +2,17 @@
 
 <node name="/" xmlns:tp="http://telepathy.freedesktop.org/wiki/DbusSpec#extensions-v0">
   <interface name="org.freedesktop.NetworkManager.Connection.Active">
-    <property name="ServiceName" type="s" access="read">
-      <tp:docstring>The D-Bus service name providing this connection.</tp:docstring>
-    </property>
     <property name="Connection" type="o" access="read">
       <tp:docstring>The path of the connection.</tp:docstring>
     </property>
     <property name="SpecificObject" type="o" access="read">
       <tp:docstring>A specific object associated with the active connection.</tp:docstring>
+    </property>
+    <property name="Uuid" type="s" access="read">
+      <tp:docstring>
+        The UUID of the connection, provided as a convenience so that clients
+        do not have to retrieve all connection details.
+      </tp:docstring>
     </property>
     <property name="Devices" type="ao" access="read">
       <tp:docstring>Array of object paths representing devices which are part of this active connection.</tp:docstring>
@@ -29,7 +32,6 @@
 
     <signal name="PropertiesChanged">
         <arg name="properties" type="a{sv}" tp:type="String_Variant_Map">
-          <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QVariantMap"/>
             <tp:docstring>
                 A dictionary mapping property names to variant boxed values
             </tp:docstring>
@@ -50,6 +52,11 @@
       <tp:enumvalue suffix="ACTIVATED" value="2">
         <tp:docstring>
           The connection is activated.
+        </tp:docstring>
+      </tp:enumvalue>
+      <tp:enumvalue suffix="DEACTIVATING" value="3">
+        <tp:docstring>
+          The connection is being torn down and cleaned up.
         </tp:docstring>
       </tp:enumvalue>
     </tp:enum>

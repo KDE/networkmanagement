@@ -8,12 +8,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
-#include "nm07dbus_export.h"
+#include "nm09dbus_export.h"
 namespace Knm{
     class BluetoothSetting;
 }
 
-class NM07DBUS_EXPORT BluetoothDbus : public SettingDbus
+class NM09DBUS_EXPORT BluetoothDbus : public SettingDbus
 {
   public:
     BluetoothDbus(Knm::BluetoothSetting * setting);

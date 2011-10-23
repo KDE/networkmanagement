@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirednetworkinterface.h>
 #include <solid/control/wirelessnetworkinterface.h>
-#include <solid/control/networkgsminterface.h>
+#include <solid/control/networkmodeminterface.h>
 
 #include "connection.h"
 #include "setting.h"
@@ -62,10 +62,10 @@ class KNM_EXPORT NetworkInterfaceActivatableProvider : public QObject, virtual p
 {
 Q_OBJECT
 public:
-    static bool hardwareAddressMatches(Knm::Connection * connection, Solid::Control::NetworkInterface * iface);
-    static bool matches(Knm::Connection::Type connType, Solid::Control::NetworkInterface::Type ifaceType);
+    static bool hardwareAddressMatches(Knm::Connection * connection, Solid::Control::NetworkInterfaceNm09 * iface);
+    static bool matches(Knm::Connection::Type connType, Solid::Control::NetworkInterfaceNm09::Type ifaceType, Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities modemCaps = Solid::Control::ModemNetworkInterfaceNm09::None);
 
-    NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterface * interface, QObject * parent);
+    NetworkInterfaceActivatableProvider(ConnectionList * connectionList, ActivatableList * activatableList, Solid::Control::NetworkInterfaceNm09 * interface, QObject * parent);
     virtual ~NetworkInterfaceActivatableProvider();
 
     /**

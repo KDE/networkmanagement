@@ -22,6 +22,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define NMSYSTEMSETTINGSACTIVATABLEPROVIDER_H
 
 #include "activatableobserver.h"
+#include "connectionhandler.h"
+#include "connectionlist.h"
 
 #include <QDBusObjectPath>
 #include <QDBusPendingCallWatcher>
@@ -50,7 +52,7 @@ class KNM_EXPORT NMDBusSettingsConnectionProvider : public QObject, public Activ
 {
 Q_OBJECT
 public:
-    NMDBusSettingsConnectionProvider(ConnectionList * connectionList, const QString & service, QObject * parent = 0);
+    NMDBusSettingsConnectionProvider(ConnectionList * connectionList, QObject * parent = 0);
     virtual ~NMDBusSettingsConnectionProvider();
 
     /**
@@ -61,13 +63,14 @@ public:
     void handleRemove(Knm::Activatable * activatable);
 
     void updateConnection(const QString &uuid, Knm::Connection *newConnection);
-    bool addConnection(Knm::Connection *newConnection);
+    void addConnection(Knm::Connection *newConnection);
     bool getConnectionSecrets(Knm::Connection *con);
-    bool removeConnection(const QString &uuid);
+    void removeConnection(const QString &uuid);
+    ConnectionList * connectionList();
 
 Q_SIGNALS:
     void connectionsChanged();
-    void getConnectionSecretsCompleted(bool, const QString &);
+    void getConnectionSecretsCompleted(bool, const QString &, const QString &);
     void addConnectionCompleted(bool, const QString &);
 
 private Q_SLOTS:
@@ -75,11 +78,12 @@ private Q_SLOTS:
     // should probably be handled in RemoteConnection
     void onRemoteConnectionRemoved();
     // should probably be handled in RemoteConnection
-    void onRemoteConnectionUpdated(const QVariantMapMap&);
+    void onRemoteConnectionUpdated();
     void serviceOwnerChanged(const QString&, const QString&, const QString&);
     void onConnectionSecretsArrived(QDBusPendingCallWatcher *watcher);
     void onConnectionAddArrived(QDBusPendingCallWatcher *watcher);
-    void checkConnectionAdded();
+    void interfaceConnectionActivated();
+    void interfaceConnectionDeactivated();
 private:
     enum Operation {Add, Remove, Update};
 

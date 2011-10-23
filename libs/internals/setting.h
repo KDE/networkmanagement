@@ -22,33 +22,36 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define KNM_INTERNALS_SETTING_H
 
 #include "knminternals_export.h"
-
+#include <QObject>
+#include <QMap>
 
 namespace Knm
 {
 
-class KNMINTERNALS_EXPORT Setting
+class KNMINTERNALS_EXPORT Setting: public QObject
 {
 public:
+    Q_FLAGS(secretsTypes)
+    enum secretsType { None = 0, AgentOwned = 0x01, NotSaved = 0x02, NotRequired = 0x04 };
+    Q_DECLARE_FLAGS(secretsTypes, secretsType)
     enum Type { Cdma, Gsm, Ipv4, Ipv6, Ppp, Pppoe, Security8021x, Serial, Vpn, Wired, Wireless, WirelessSecurity, Bluetooth };
     static QString typeAsString(Setting::Type);
     static Setting::Type typeFromString(const QString & type);
 
     Setting(Setting::Type type);
+    Setting(Setting *setting);
     virtual ~Setting();
     bool isNull() const;
-    void setInitialized();
+    void setInitialized(bool);
     Setting::Type type() const;
     virtual QString name() const = 0;
-    virtual bool hasSecrets() const = 0;
     virtual bool hasVolatileSecrets() const { return false; }
+    virtual QMap<QString,QString> secretsToMap() const;
+    virtual void secretsFromMap(QMap<QString,QString>);
+    virtual QStringList needSecrets() const;
+    virtual bool hasPersistentSecrets() const;
     bool secretsAvailable() const;
     void setSecretsAvailable(bool secretsAvailable);
-
-    /*scope must be one of Knm::Connection::Scope, cant't include connection.h
-    here because it is already including setting.h */
-    virtual void save(int scope);
-    virtual void remove();
 protected:
     bool m_initialized;
 private:

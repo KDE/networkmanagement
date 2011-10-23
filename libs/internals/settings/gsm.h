@@ -15,11 +15,15 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
   public:
 
     GsmSetting( );
+    GsmSetting(GsmSetting *);
     ~GsmSetting();
 
     QString name() const;
 
-    bool hasSecrets() const;
+    QMap<QString,QString> secretsToMap() const;
+    void secretsFromMap(QMap<QString,QString> secrets);
+    QStringList needSecrets() const;
+    bool hasPersistentSecrets() const;
 
     /**
       Set Number
@@ -67,6 +71,22 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     QString password() const
     {
       return mPassword;
+    }
+
+    /**
+     * Set Password flags
+     */
+    void setPasswordflags( Setting::secretsTypes types )
+    {
+        mPasswordflags = types;
+    }
+
+    /**
+     * Get Password flags
+     */
+    Setting::secretsTypes passwordflags() const
+    {
+        return mPasswordflags;
     }
 
     /**
@@ -139,6 +159,20 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     }
 
     /**
+      Set home only
+    */
+    void setHomeonly( bool b ) {
+        mHomeonly = b;
+    }
+
+    /**
+      Get home only
+    */
+    bool homeonly() const {
+        return mHomeonly;
+    }
+
+    /**
       Set PIN
     */
     void setPin( const QString & v )
@@ -154,6 +188,22 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
       return mPin;
     }
 
+    /**
+     * Set PIN flags
+     */
+    void setPinflags( Setting::secretsTypes types )
+    {
+        mPinflags = types;
+    }
+
+    /**
+     * Get PIN flags
+     */
+    Setting::secretsTypes pinflags() const
+    {
+        return mPinflags;
+    }
+
   protected:
 
     // gsm
@@ -164,7 +214,11 @@ class KNMINTERNALS_EXPORT GsmSetting : public Setting
     QString mNetworkid;
     int mNetworktype;
     int mBand;
+    bool mHomeonly;
     QString mPin;
+    QString mPuk;
+    Setting::secretsTypes mPasswordflags;
+    Setting::secretsTypes mPinflags;
 
   private:
 };

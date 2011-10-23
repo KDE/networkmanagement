@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KPluginFactory>
 
 #include "strongswanwidget.h"
+#include "strongswanauth.h"
 #include "connection.h"
 
 
@@ -45,9 +46,19 @@ SettingWidget * StrongswanUiPlugin::widget(Knm::Connection * connection, QWidget
     return new StrongswanSettingWidget(connection, parent);
 }
 
+SettingWidget * StrongswanUiPlugin::askUser(Knm::Connection * connection, QWidget * parent) {
+    return new StrongswanAuthWidget(connection, parent);
+}
+
 QString StrongswanUiPlugin::suggestedFileName(Knm::Connection *connection) const
 {
     // TODO : implement suggested file name
+    return QString();
+}
+
+QString StrongswanUiPlugin::supportedFileExtensions() const
+{
+    // TODO : return supported file extensions
     return QString();
 }
 
@@ -57,10 +68,10 @@ QVariantList StrongswanUiPlugin::importConnectionSettings(const QString &fileNam
     return QVariantList();
 }
 
-void StrongswanUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
+bool StrongswanUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
 {
     // TODO : export StrongSwan connection to file
-    return;
+    return false;
 }
 
 // vim: sw=4 sts=4 et tw=100

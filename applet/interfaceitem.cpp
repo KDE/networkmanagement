@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteactivatablelist.h"
 #include "remoteinterfaceconnection.h"
 
+#include <arpa/inet.h>
+
 #include <QGraphicsGridLayout>
 #include <QLabel>
 #include <QPainter>
@@ -46,13 +48,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Solid/NetworkInterface>
 #include <solid/control/networkinterface.h>
 #include <solid/control/wirednetworkinterface.h>
-#include <solid/control/networkipv4config.h>
+#include <solid/control/networkipv4confignm09.h>
 #include <solid/control/networkmanager.h>
 
 #include "knmserviceprefs.h"
+#include "nm-device-interface.cpp"
+#include "nm-ip4-config-interface.cpp"
 
 
-InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteActivatableList* activatables,  NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::IconWidget(parent),
+InterfaceItem::InterfaceItem(Solid::Control::NetworkInterfaceNm09 * iface, RemoteActivatableList* activatables,  NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::IconWidget(parent),
     m_currentConnection(0),
     m_iface(iface),
     m_activatables(activatables),
@@ -64,7 +68,8 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     m_starting(true)
 {
     connect(m_activatables, SIGNAL(disappeared()), this, SLOT(serviceDisappeared()));
-    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), this, SLOT(activatableRemoved(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*, int)), SLOT(activatableAdded(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), SLOT(activatableRemoved(RemoteActivatable*)));
     setDrawBackground(true);
     setTextBackgroundColor(QColor(Qt::transparent));
     QString tt = i18nc("tooltip on the LHS widgets", "Click here for interface details");
@@ -139,13 +144,13 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterface * iface, RemoteAct
     setNameDisplayMode(mode);
 
     if (m_iface) {
-        if (m_iface.data()->type() == Solid::Control::NetworkInterface::Ieee8023) {
-            Solid::Control::WiredNetworkInterface* wirediface =
-                            static_cast<Solid::Control::WiredNetworkInterface*>(m_iface.data());
+        if (m_iface.data()->type() == Solid::Control::NetworkInterfaceNm09::Ethernet) {
+            Solid::Control::WiredNetworkInterfaceNm09* wirediface =
+                            static_cast<Solid::Control::WiredNetworkInterfaceNm09*>(m_iface.data());
             connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
         }
-        m_state = Solid::Control::NetworkInterface::UnknownState;
-        connectionStateChanged(m_iface.data()->connectionState());
+        m_state = Solid::Control::NetworkInterfaceNm09::UnknownState;
+        connectionStateChanged(static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface.data()->connectionState()));
     }
 
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -197,7 +202,7 @@ QString InterfaceItem::label()
     return m_ifaceNameLabel->text();
 }
 
-Solid::Control::NetworkInterface* InterfaceItem::interface()
+Solid::Control::NetworkInterfaceNm09* InterfaceItem::interface()
 {
     return m_iface.data();
 }
@@ -206,7 +211,7 @@ void InterfaceItem::setActive(bool active)
 {
     Q_UNUSED(active);
     if (m_iface) {
-        connectionStateChanged(m_iface.data()->connectionState());
+        connectionStateChanged(static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface.data()->connectionState()));
     }
 }
 
@@ -258,9 +263,8 @@ InterfaceItem::NameDisplayMode InterfaceItem::nameDisplayMode() const
 QString InterfaceItem::connectionName()
 {
     // Default active connection's name is empty, room for improvement?
-    RemoteInterfaceConnection *conn = m_activatables->connectionForInterface(m_iface.data());
-    if (conn) {
-        return conn->connectionName();
+    if (m_currentConnection) {
+        return m_currentConnection->connectionName();
     }
     return QString();
 }
@@ -269,44 +273,36 @@ void InterfaceItem::setConnectionInfo()
 {
     if (m_iface) {
         currentConnectionChanged();
-        connectionStateChanged(m_iface.data()->connectionState());
+        connectionStateChanged(static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface.data()->connectionState()));
     }
 }
 
 QString InterfaceItem::currentIpAddress()
 {
-    if (!m_iface) {
+    if (!m_iface)
         return QString();
-    }
-    if (m_iface.data()->connectionState() != Solid::Control::NetworkInterface::Activated) {
+
+    if (static_cast<Solid::Control::NetworkInterfaceNm09::ConnectionState>(m_iface.data()->connectionState()) != Solid::Control::NetworkInterfaceNm09::Activated) {
         return i18nc("label of the network interface", "No IP address.");
     }
-    Solid::Control::IPv4Config ip4Config = m_iface.data()->ipV4Config();
-    QList<Solid::Control::IPv4Address> addresses = ip4Config.addresses();
-    if (addresses.isEmpty()) {
+
+    QHostAddress addr;
+
+    OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, m_iface.data()->uni(), QDBusConnection::systemBus());
+    if (devIface.isValid()) {
+        addr.setAddress(ntohl(devIface.ip4Address()));
+    }
+
+    if (addr.isNull()) {
         return i18nc("label of the network interface", "IP display error.");
     }
-    QHostAddress addr(addresses.first().address());
     return addr.toString();
 }
 
 
 RemoteInterfaceConnection* InterfaceItem::currentConnection()
 {
-    RemoteInterfaceConnection* remoteconnection = m_activatables->connectionForInterface(m_iface.data());
-    if (!remoteconnection) {
-        m_currentConnection = 0;
-        handleHasDefaultRouteChanged(false);
-        return m_currentConnection;
-    }
-
-    //kDebug() << m_currentConnection;
-    if (m_currentConnection && m_currentConnection->activationState() != Knm::InterfaceConnection::Unknown) {
-        return m_currentConnection;
-    } else {
-        currentConnectionChanged();
-        return m_currentConnection;
-    }
+    return m_currentConnection;
 }
 
 void InterfaceItem::setActivatableList(RemoteActivatableList* activatables)
@@ -316,15 +312,19 @@ void InterfaceItem::setActivatableList(RemoteActivatableList* activatables)
 
 void InterfaceItem::currentConnectionChanged()
 {
-    RemoteInterfaceConnection* remoteconnection = m_activatables->connectionForInterface(m_iface.data());
-    if (remoteconnection) {
+    updateCurrentConnection(m_activatables->connectionForInterface(m_iface.data()));
+}
+
+void InterfaceItem::updateCurrentConnection(RemoteInterfaceConnection * ic)
+{
+    if (ic) {
         if (m_currentConnection) {
             QObject::disconnect(m_currentConnection, 0, this, 0);
         }
-        m_currentConnection = remoteconnection;
+        m_currentConnection = ic;
 
         connect(m_currentConnection, SIGNAL(hasDefaultRouteChanged(bool)),
-                                        SLOT(handleHasDefaultRouteChanged(bool)));
+                                     SLOT(handleHasDefaultRouteChanged(bool)));
         handleHasDefaultRouteChanged(m_currentConnection->hasDefaultRoute());
         return;
     }
@@ -335,17 +335,11 @@ void InterfaceItem::currentConnectionChanged()
 
 void InterfaceItem::handleHasDefaultRouteChanged(bool changed)
 {
-    if (m_hasDefaultRoute == changed) {
-        //return;
-    }
     m_hasDefaultRoute = changed;
     //kDebug() << "Default Route changed!!" << changed;
-    if (m_icon) {
-        m_icon->nativeWidget()->setPixmap(interfacePixmap());
-    }
+    m_icon->nativeWidget()->setPixmap(interfacePixmap());
     update();
 }
-
 
 void InterfaceItem::pppStats(uint in, uint out)
 {
@@ -366,15 +360,15 @@ void InterfaceItem::handleConnectionStateChange(int new_state, int old_state, in
 {
     Q_UNUSED(old_state);
     Q_UNUSED(reason);
-    connectionStateChanged((Solid::Control::NetworkInterface::ConnectionState)new_state);
+    connectionStateChanged((Solid::Control::NetworkInterfaceNm09::ConnectionState)new_state);
 }
 
 void InterfaceItem::handleConnectionStateChange(int new_state)
 {
-    connectionStateChanged((Solid::Control::NetworkInterface::ConnectionState)new_state);
+    connectionStateChanged((Solid::Control::NetworkInterfaceNm09::ConnectionState)new_state);
 }
 
-void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::ConnectionState state)
+void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterfaceNm09::ConnectionState state, bool updateConnection)
 {
     if (m_state == state) {
         return;
@@ -389,33 +383,43 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
 
     m_disconnect = false;
     // Name and info labels
-    QString lname = UiUtils::connectionStateToString(state, connectionName());
+    QString lname;
+    if (updateConnection) {
+        currentConnectionChanged();
+    }
+    if (m_currentConnection) {
+        lname = UiUtils::connectionStateToString(state, m_currentConnection->connectionName());
+    } else {
+        lname = UiUtils::connectionStateToString(state, QString());
+        // to allow updating connection's name in the next call of connectionStateChanged()
+        // even if the state has not changed.
+        m_state = Solid::Control::NetworkInterfaceNm09::UnknownState;
+    }
 
     switch (state) {
-        case Solid::Control::NetworkInterface::Unavailable:
-            if (m_iface.data()->type() == Solid::Control::NetworkInterface::Ieee8023) {
+        case Solid::Control::NetworkInterfaceNm09::Unavailable:
+            if (m_iface.data()->type() == Solid::Control::NetworkInterfaceNm09::Ethernet) {
                 lname = i18nc("wired interface network cable unplugged", "Cable Unplugged");
             }
             setEnabled(false); // FIXME: tone down colors using an animation
             break;
-        case Solid::Control::NetworkInterface::Disconnected:
-            setEnabled(true);
+        case Solid::Control::NetworkInterfaceNm09::Disconnected:
+        case Solid::Control::NetworkInterfaceNm09::Deactivating:
             setEnabled(true);
             break;
-        case Solid::Control::NetworkInterface::Preparing:
-        case Solid::Control::NetworkInterface::Configuring:
-        case Solid::Control::NetworkInterface::NeedAuth:
-        case Solid::Control::NetworkInterface::IPConfig:
+        case Solid::Control::NetworkInterfaceNm09::Preparing:
+        case Solid::Control::NetworkInterfaceNm09::Configuring:
+        case Solid::Control::NetworkInterfaceNm09::NeedAuth:
+        case Solid::Control::NetworkInterfaceNm09::IPConfig:
+        case Solid::Control::NetworkInterfaceNm09::IPCheck:
+        case Solid::Control::NetworkInterfaceNm09::Secondaries:
+        case Solid::Control::NetworkInterfaceNm09::Activated:
             setEnabled(true);
-            m_disconnect = false;
-            break;
-        case Solid::Control::NetworkInterface::Activated:
             m_disconnect = true;
-            setEnabled(true);
             break;
-        case Solid::Control::NetworkInterface::Unmanaged:
-        case Solid::Control::NetworkInterface::Failed:
-        case Solid::Control::NetworkInterface::UnknownState:
+        case Solid::Control::NetworkInterfaceNm09::Unmanaged:
+        case Solid::Control::NetworkInterfaceNm09::Failed:
+        case Solid::Control::NetworkInterfaceNm09::UnknownState:
             setEnabled(false);
             break;
     }
@@ -428,7 +432,6 @@ void InterfaceItem::connectionStateChanged(Solid::Control::NetworkInterface::Con
     m_icon->nativeWidget()->setPixmap(interfacePixmap());
 
     //kDebug() << "State changed" << lname;
-    currentConnectionChanged();
     emit stateChanged();
 }
 
@@ -477,11 +480,22 @@ void InterfaceItem::serviceDisappeared()
     m_currentConnection = 0;
 }
 
+void InterfaceItem::activatableAdded(RemoteActivatable * activatable)
+{
+    if (m_iface && RemoteActivatableList::isConnectionForInterface(activatable, m_iface.data())) {
+        updateCurrentConnection(qobject_cast<RemoteInterfaceConnection*>(activatable));
+
+        /* Sometimes the activatableAdded signal arrives after the connectionStateChanged
+           signal, so update the interface state here but do not search for current connection
+           since it is already known. */
+        connectionStateChanged(m_iface.data()->connectionState(), false);
+    }
+}
+
 void InterfaceItem::activatableRemoved(RemoteActivatable * activatable)
 {
     if (activatable == m_currentConnection) {
         m_currentConnection = 0;
     }
 }
-
 // vim: sw=4 sts=4 et tw=100

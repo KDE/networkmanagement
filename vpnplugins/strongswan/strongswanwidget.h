@@ -47,6 +47,9 @@ public:
     void readSecrets();
 protected Q_SLOTS:
     void userPasswordTypeChanged(int);
+    void privateKeyPasswordTypeChanged(int);
+    void pinTypeChanged(int);
+    void methodChanged(int);
     void validate();
 private:
     void fillOnePasswordCombo(QComboBox * combo, const QString & key, const QStringMap & data, bool hasPassword);

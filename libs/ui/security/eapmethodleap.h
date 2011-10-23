@@ -38,6 +38,8 @@ public:
     void readSecrets();
 public Q_SLOTS:
     void setShowPasswords(bool b = true);
+private Q_SLOTS:
+    void passwordStorageChanged(int);
 };
 
 #endif // EAPMETHODLEAP_H

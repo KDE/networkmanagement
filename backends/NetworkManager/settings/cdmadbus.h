@@ -8,12 +8,12 @@
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
 #include "settingdbus.h"
-#include "nm07dbus_export.h"
+#include "nm09dbus_export.h"
 namespace Knm{
     class CdmaSetting;
 }
 
-class NM07DBUS_EXPORT CdmaDbus : public SettingDbus
+class NM09DBUS_EXPORT CdmaDbus : public SettingDbus
 {
   public:
     CdmaDbus(Knm::CdmaSetting * setting);

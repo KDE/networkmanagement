@@ -34,10 +34,10 @@ ScanWidget::ScanWidget(QWidget *parent)
     setupUi(this);
 
     //populate the interfaces combobox
-    foreach (const Solid::Control::NetworkInterface * iface, Solid::Control::NetworkManager::networkInterfaces()) {
-        if (iface->type() == Solid::Control::NetworkInterface::Ieee80211) {
+    foreach (const Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
+        if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
 
-            const Solid::Control::WirelessNetworkInterface * wiface = static_cast<const Solid::Control::WirelessNetworkInterface*>(iface);
+            const Solid::Control::WirelessNetworkInterfaceNm09 * wiface = static_cast<const Solid::Control::WirelessNetworkInterfaceNm09*>(iface);
             m_interface->addItem(UiUtils::interfaceNameLabel(iface->uni()), wiface->uni());
         }
     }
@@ -58,6 +58,7 @@ ScanWidget::ScanWidget(QWidget *parent)
     m_proxyModel->setSortCaseSensitivity(Qt::CaseInsensitive);
     m_scanProxySelectionModel = new QItemSelectionModel(m_proxyModel);
     m_detailsView = new QTreeView(this);
+    m_detailsView->sortByColumn(0, Qt::AscendingOrder);
     m_detailsView->setSelectionBehavior(QAbstractItemView::SelectRows);
     m_detailsView->setAllColumnsShowFocus(true);
     m_detailsView->setRootIsDecorated(false);
@@ -69,8 +70,8 @@ ScanWidget::ScanWidget(QWidget *parent)
     m_stack->setCurrentWidget(m_scanView);
     connect(m_view, SIGNAL(currentIndexChanged(int)), m_stack, SLOT(setCurrentIndex(int)));
 
-    connect(m_scanView, SIGNAL(doubleClicked(QModelIndex)), SIGNAL(doubleClicked()));
-    connect(m_detailsView, SIGNAL(doubleClicked(QModelIndex)), SIGNAL(doubleClicked()));
+    connect(m_scanView, SIGNAL(doubleClicked(const QModelIndex&)), SIGNAL(doubleClicked()));
+    connect(m_detailsView, SIGNAL(doubleClicked(const QModelIndex&)), SIGNAL(doubleClicked()));
 }
 
 ScanWidget::~ScanWidget()
@@ -109,16 +110,16 @@ QPair<QString,QString> ScanWidget::currentAccessPoint() const
             break;
         case true:
         default:
-            accessPoint.second = m_scanModel->data(m_scanModel->index(index.row(),3)).toString();
+            accessPoint.second = m_scanModel->data(m_scanModel->index(index.row(),5)).toString();
             break;
     }
 
     return accessPoint;
 }
 
-QPair<Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *> ScanWidget::currentAccessPointUni()
+QPair<Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *> ScanWidget::currentAccessPointUni()
 {
-    QPair<Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *> pair(0, 0);
+    QPair<Solid::Control::WirelessNetworkInterfaceNm09 *, Solid::Control::AccessPointNm09 *> pair(0, 0);
     QModelIndex index;
 
     switch (m_stack->currentIndex())
@@ -136,15 +137,15 @@ QPair<Solid::Control::WirelessNetworkInterface *, Solid::Control::AccessPoint *>
         return pair;
     }
 
-    QString apMac = m_scanModel->data(m_scanModel->index(index.row(),3)).toString();
+    QString apMac = m_scanModel->data(m_scanModel->index(index.row(),5)).toString();
     if (apMac.isEmpty()) {
         return pair;
     }
 
-    Solid::Control::WirelessNetworkInterface * wiface = qobject_cast<Solid::Control::WirelessNetworkInterface *>(Solid::Control::NetworkManager::findNetworkInterface(m_interface->itemData(m_interface->currentIndex()).toString()));
+    Solid::Control::WirelessNetworkInterfaceNm09 * wiface = qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09 *>(Solid::Control::NetworkManagerNm09::findNetworkInterface(m_interface->itemData(m_interface->currentIndex()).toString()));
     if (wiface) {
         foreach(const QString & uni, wiface->accessPoints()) {
-            Solid::Control::AccessPoint * ap = wiface->findAccessPoint(uni);
+            Solid::Control::AccessPointNm09 * ap = wiface->findAccessPoint(uni);
             if (ap->hardwareAddress() == apMac) {
                 pair.first = wiface;
                 pair.second = ap;

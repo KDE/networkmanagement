@@ -43,6 +43,7 @@ public:
 
     QVariantMapMap toDbusMap();
     QVariantMapMap toDbusSecretsMap();
+    QVariantMapMap toDbusSecretsMap(const QString &);
     void fromDbusMap(const QVariantMapMap&);
     void fromDbusSecretsMap(const QVariantMapMap&);
 private:

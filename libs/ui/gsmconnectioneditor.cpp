@@ -62,7 +62,7 @@ GsmConnectionEditor::GsmConnectionEditor(const QVariantList &args, QWidget *pare
                 m_contents->setDefaultName(args[1].toString() + " - " + apnInfo["name"].toString());
             }
             gsmWidget->setApnInfo(apnInfo);
-
+    
             if (!apnInfo["dnsList"].isNull()) {
                 ipV4Widget->setDns(apnInfo["dnsList"].toList());
             }

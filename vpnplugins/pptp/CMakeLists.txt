@@ -5,9 +5,10 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../libs/internals)
 set(pptp_SRCS
    pptp.cpp
    pptpwidget.cpp
+   pptpauth.cpp
    )
 
-kde4_add_ui_files(pptp_SRCS pptpprop.ui pptpadvanced.ui)
+kde4_add_ui_files(pptp_SRCS pptpprop.ui pptpadvanced.ui pptpauth.ui)
 
 kde4_add_plugin(networkmanagement_pptpui ${pptp_SRCS})
 

@@ -47,6 +47,7 @@ public:
 
     virtual void addActivatable(Knm::Activatable *);
     virtual void removeActivatable(Knm::Activatable *);
+    virtual int activatableIndex(Knm::Activatable *);
     /**
      * Register an activatable observer.  ActivatableObservers encapsulate peripheral functionality.
      * ActivatableObservers are called in a defined order.

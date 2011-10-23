@@ -9,6 +9,13 @@ BluetoothSetting::BluetoothSetting() : Setting(Setting::Bluetooth)
 {
 }
 
+BluetoothSetting::BluetoothSetting(BluetoothSetting *setting) : Setting(setting)
+{
+    setNetworkname(setting->networkname());
+    setBdaddr(setting->bdaddr());
+    setNetworktype(setting->networktype());
+}
+
 BluetoothSetting::~BluetoothSetting()
 {
 }

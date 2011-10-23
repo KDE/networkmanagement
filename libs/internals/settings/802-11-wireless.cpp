@@ -6,8 +6,24 @@
 using namespace Knm;
 
 WirelessSetting::WirelessSetting() : Setting(Setting::Wireless),
-    mMode(0), mBand(-1), mChannel(0), mRate(0), mTxpower(0), mMtu(0)
+    mMode(0), mBand(WirelessSetting::EnumBand::automatic), mChannel(0), mRate(0), mTxpower(0), mMtu(0)
 {
+}
+
+WirelessSetting::WirelessSetting(WirelessSetting *setting) : Setting(setting)
+{
+    setSsid(setting->ssid());
+    setMode(setting->mode());
+    setBand(setting->band());
+    setChannel(setting->channel());
+    setBssid(setting->bssid());
+    setRate(setting->rate());
+    setTxpower(setting->txpower());
+    setMacaddress(setting->macaddress());
+    setClonedmacaddress(setting->clonedmacaddress());
+    setMtu(setting->mtu());
+    setSeenbssids(setting->seenbssids());
+    setSecurity(setting->security());
 }
 
 WirelessSetting::~WirelessSetting()
