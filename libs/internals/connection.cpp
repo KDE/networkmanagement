@@ -23,6 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <libnm-qt/modemdevice.h>
 
 #include "connection.h"
+#include "uiutils.h"
 
 #include "settings/802-11-wireless-security.h"
 #include "settings/802-11-wireless.h"
@@ -101,7 +102,7 @@ Connection::Type Connection::typeFromSolidType(const NetworkManager::Device *ifa
         case NetworkManager::Device::Modem: {
              const NetworkManager::ModemDevice * nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(iface);
              if (nmModemIface) {
-                 switch(nmModemIface->subType()) {
+                 switch(UiUtils::modemSubType(nmModemIface->currentCapabilities())) {
                      case NetworkManager::ModemDevice::GsmUmts: return Knm::Connection::Gsm;
                      case NetworkManager::ModemDevice::CdmaEvdo: return Knm::Connection::Cdma;
                      case NetworkManager::ModemDevice::Pots: return Knm::Connection::Pppoe;

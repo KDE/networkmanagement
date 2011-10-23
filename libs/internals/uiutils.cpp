@@ -58,8 +58,7 @@ QString UiUtils::interfaceTypeLabel(const NetworkManager::Device::Type type, con
         case NetworkManager::Device::Modem: {
             const NetworkManager::ModemDevice *nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(iface);
             if (nmModemIface) {
-                NetworkManager::ModemDevice::Capability subType = nmModemIface->subType();
-                switch(subType) {
+                switch(modemSubType(nmModemIface->currentCapabilities())) {
                     case NetworkManager::ModemDevice::Pots:
                          deviceText = i18nc("title of the interface widget in nm's popup", "Serial Modem");
                          break;
@@ -545,6 +544,20 @@ QString UiUtils::convertAccessTechnologyToString(const ModemManager::ModemInterf
     }
 
     return i18nc("Unknown cellular access technology","Unknown");
+}
+
+NetworkManager::ModemDevice::Capability UiUtils::modemSubType(NetworkManager::ModemDevice::Capabilities modemCaps)
+{
+    if (modemCaps & NetworkManager::ModemDevice::Lte) {
+        return NetworkManager::ModemDevice::Lte;
+    } else if (modemCaps & NetworkManager::ModemDevice::CdmaEvdo) {
+        return NetworkManager::ModemDevice::CdmaEvdo;
+    } else if (modemCaps & NetworkManager::ModemDevice::GsmUmts) {
+        return NetworkManager::ModemDevice::GsmUmts;
+    } else if (modemCaps & NetworkManager::ModemDevice::Pots) {
+        return NetworkManager::ModemDevice::Pots;
+    }
+    return NetworkManager::ModemDevice::NoCapability;
 }
 
 // vim: sw=4 sts=4 et tw=100

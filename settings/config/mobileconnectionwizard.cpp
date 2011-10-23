@@ -30,6 +30,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <libnm-qt/modemdevice.h>
 #include <solid/device.h>
 
+#include "uiutils.h"
 #include "mobileconnectionwizard.h"
 
 MobileConnectionWizard::MobileConnectionWizard(Knm::Connection::Type connectionType, QWidget * parent): QWizard(parent)
@@ -91,7 +92,7 @@ void MobileConnectionWizard::initializePage(int id)
                 NetworkManager::Device *iface = NetworkManager::findNetworkInterface(mDeviceComboBox->itemData(mDeviceComboBox->currentIndex()).toString());
                 if (iface) {
                     const NetworkManager::ModemDevice * nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(iface);
-                    if (nmModemIface && nmModemIface->subType() == NetworkManager::ModemDevice::CdmaEvdo) {
+                    if (nmModemIface && UiUtils::modemSubType(nmModemIface->currentCapabilities()) == NetworkManager::ModemDevice::CdmaEvdo) {
                         mType = Knm::Connection::Cdma;
                     } else {
                         mType = Knm::Connection::Gsm;
@@ -314,11 +315,11 @@ void MobileConnectionWizard::introAddDevice(NetworkManager::Device *device)
         return;
     }
 
-    if (nmModemIface->subType() == NetworkManager::ModemDevice::GsmUmts) {
+    if (UiUtils::modemSubType(nmModemIface->currentCapabilities()) == NetworkManager::ModemDevice::GsmUmts) {
         if (desc.isEmpty()) {
             desc.append(i18nc("Mobile Connection Wizard", "Installed GSM device"));    
         }
-    } else if (nmModemIface->subType() == NetworkManager::ModemDevice::CdmaEvdo) {
+    } else if (UiUtils::modemSubType(nmModemIface->currentCapabilities()) == NetworkManager::ModemDevice::CdmaEvdo) {
         if (desc.isEmpty()) {
             desc.append(i18nc("Mobile Connection Wizard", "Installed CDMA device"));    
         }

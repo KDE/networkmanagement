@@ -34,6 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <libnm-qt/modemdevice.h>
 #include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
 
+#include "uiutils.h"
 #include "unconfiguredinterface.h"
 #include "wirelessnetwork.h"
 #include "wirelessinterfaceconnection.h"
@@ -191,8 +192,7 @@ void ConfigurationLauncher::unconfiguredInterfaceActivated()
                 case NetworkManager::Device::Modem: {
                     NetworkManager::ModemDevice * nmModemIface = qobject_cast<NetworkManager::ModemDevice *>(iface);
                     if (nmModemIface) {
-                        NetworkManager::ModemDevice::Capabilities subType = nmModemIface->subType();
-                        switch(subType) {
+                        switch(UiUtils::modemSubType(nmModemIface->currentCapabilities())) {
                             case NetworkManager::ModemDevice::Pots:
                                  typeString = QLatin1String("pppoe");
                                  break;

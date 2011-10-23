@@ -63,6 +63,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionprefs.h"
 #include "vpnuiplugin.h"
 #include "settings/vpn.h"
+#include "uiutils.h"
 
 #include <tooltips.h>
 
@@ -335,7 +336,7 @@ void ManageConnectionWidget::updateTabStates()
             case NetworkManager::Device::Modem: {
                 const NetworkManager::ModemDevice * nmModemIface = qobject_cast<const NetworkManager::ModemDevice *>(iface);
                 if (nmModemIface) {
-                    switch(nmModemIface->subType()) {
+                    switch(UiUtils::modemSubType(nmModemIface->currentCapabilities())) {
                         case NetworkManager::ModemDevice::Pots:
                             hasDsl = true;
                             break;
