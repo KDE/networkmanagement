@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QObject>
 
-#include <Solid/Networking>
+#include <libnm-qt/manager.h>
 
 #include "connectionhandler.h"
 
@@ -49,7 +49,7 @@ public:
     void handleUpdate(Knm::Connection *);
     void handleRemove(Knm::Connection *);
 protected Q_SLOTS:
-    void statusChanged(Solid::Networking::Status status);
+    void statusChanged(NetworkManager::Status status);
 private:
     VpnInterfaceConnectionProviderPrivate * d_ptr;
 };

@@ -31,8 +31,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <connectionlist.h>
 
 #include "activatableobserver.h"
-#include <Solid/Networking>
-#include <libnm-qt/device.h>
+#include <libnm-qt/manager.h>
 
 #include "knm_export.h"
 
@@ -51,8 +50,8 @@ public:
 
     KComponentData componentData() const;
 protected Q_SLOTS:
-    void networkInterfaceAdded(const QString &);
-    void networkInterfaceRemoved(const QString &);
+    void deviceAdded(const QString &);
+    void deviceRemoved(const QString &);
     void networkAppeared(const QString &);
     void networkDisappeared(const QString &);
 
@@ -60,7 +59,7 @@ protected Q_SLOTS:
     void notifyDisappearedNetworks();
 
     void wirelessHardwareEnabledChanged(bool);
-    void statusChanged(Solid::Networking::Status);
+    void statusChanged(NetworkManager::Status);
     void createCellularConnection();
 private:
     NotificationManagerPrivate * d_ptr;
@@ -92,7 +91,7 @@ public Q_SLOTS:
     /*
      * Update notification with state changes for iface's active connections
      */
-    void interfaceConnectionStateChanged(int,int,int);
+    void interfaceConnectionStateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason);
     /*
      * So we know which ICs interface state changes refer to
      */

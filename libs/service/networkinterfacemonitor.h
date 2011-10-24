@@ -42,8 +42,8 @@ public:
     NetworkInterfaceMonitor(ConnectionList * connectionList, ActivatableList * activatableList, QObject * parent);
     ~NetworkInterfaceMonitor();
 public Q_SLOTS:
-    void networkInterfaceAdded(const QString &);
-    void networkInterfaceRemoved(const QString &);
+    void deviceAdded(const QString &);
+    void deviceRemoved(const QString &);
     void modemInterfaceAdded(const QString&);
     void requestPin(const QString &);
     void onSendPinArrived(QDBusPendingCallWatcher *);

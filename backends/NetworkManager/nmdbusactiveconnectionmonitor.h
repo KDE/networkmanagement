@@ -25,7 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QVariantMap>
 
-#include <Solid/Networking>
+#include <libnm-qt/manager.h>
 
 #include "knm_export.h"
 
@@ -75,7 +75,7 @@ private Q_SLOTS:
     /**
      * Clean state if NetworkManager exits
      */
-    void networkingStatusChanged(Solid::Networking::Status);
+    void networkingStatusChanged(NetworkManager::Status);
 
 private:
     // locate the interfaceconnection object for a remote active connection (that has signalled)

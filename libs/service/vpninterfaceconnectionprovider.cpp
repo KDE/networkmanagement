@@ -46,8 +46,8 @@ VpnInterfaceConnectionProvider::VpnInterfaceConnectionProvider(ConnectionList * 
     Q_D(VpnInterfaceConnectionProvider);
     d->connectionList = connectionList;
     d->activatableList = activatableList;
-    connect(NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
-            this, SLOT(statusChanged(Solid::Networking::Status)));
+    connect(NetworkManager::notifier(), SIGNAL(statusChanged(NetworkManager::Status)),
+            this, SLOT(statusChanged(NetworkManager::Status)));
 }
 
 VpnInterfaceConnectionProvider::~VpnInterfaceConnectionProvider()
@@ -103,10 +103,12 @@ void VpnInterfaceConnectionProvider::handleRemove(Knm::Connection * removedConne
     }
 }
 
-void VpnInterfaceConnectionProvider::statusChanged(Solid::Networking::Status status)
+void VpnInterfaceConnectionProvider::statusChanged(NetworkManager::Status status)
 {
     Q_D(VpnInterfaceConnectionProvider);
-    if (status == Solid::Networking::Connected) {
+    if (status == NetworkManager::ConnectedLinkLocal ||
+        status == NetworkManager::ConnectedSiteOnly ||
+        status == NetworkManager::Connected) {
         init();
     } else {
         foreach (Knm::VpnInterfaceConnection * vpnConnection, d->vpns) {

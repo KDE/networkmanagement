@@ -223,15 +223,13 @@ void NetworkManagerApplet::setupInterfaceSignals()
 {
     foreach (NetworkManager::Device* interface, m_interfaces) {
         // be aware of state changes
-        QObject::disconnect(interface, SIGNAL(stateChanged(int, int, int)), this, SLOT(interfaceConnectionStateChanged()));
-        QObject::disconnect(interface, SIGNAL(stateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::disconnect(interface, SIGNAL(stateChanged(NetworkManager::Device::State, NetworkManager::Device::State, NetworkManager::Device::StateChangeReason)), this, SLOT(interfaceConnectionStateChanged()));
         QObject::disconnect(interface, SIGNAL(linkUpChanged(bool)));
 
-        //connect(iface, SIGNAL(stateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
-        connect(interface, SIGNAL(stateChanged(int,int,int)), this, SLOT(interfaceConnectionStateChanged()));
+        //connect(iface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
+        connect(interface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(interfaceConnectionStateChanged()));
         //connect(iface, SIGNAL(linkUpChanged(bool)), this, SLOT(switchToDefaultTab()));
 
-        QObject::connect(interface, SIGNAL(stateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
         QObject::connect(interface, SIGNAL(linkUpChanged(bool)), this, SLOT(interfaceConnectionStateChanged()));
 
         // Interface type-specific connections
@@ -283,13 +281,13 @@ void NetworkManagerApplet::init()
     }
 
     //kDebug();
-    QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
-    QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
-            this, SLOT(networkInterfaceRemoved(const QString&)));
+    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString&)),
+            this, SLOT(deviceAdded(const QString&)));
+    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(const QString&)),
+            this, SLOT(deviceRemoved(const QString&)));
 
-    QObject::connect(NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
-                     this, SLOT(managerStatusChanged(Solid::Networking::Status)));
+    QObject::connect(NetworkManager::notifier(), SIGNAL(statusChanged(NetworkManager::Status)),
+                     this, SLOT(managerStatusChanged(NetworkManager::Status)));
 
     setupInterfaceSignals();
 
@@ -466,7 +464,7 @@ void NetworkManagerApplet::repaint()
 }
 
 /* Slots to react to changes from the daemon */
-void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
+void NetworkManagerApplet::deviceAdded(const QString & uni)
 {
     Q_UNUSED(uni);
     // update the tray icon
@@ -481,7 +479,7 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
     interfaceConnectionStateChanged();
 }
 
-void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
+void NetworkManagerApplet::deviceRemoved(const QString & uni)
 {
     // update the tray icon
     m_interfaces = NetworkManager::networkInterfaces();
@@ -844,11 +842,11 @@ void NetworkManagerApplet::userWirelessEnabledChanged(bool enabled)
     setupInterfaceSignals();
 }
 
-void NetworkManagerApplet::managerStatusChanged(Solid::Networking::Status status)
+void NetworkManagerApplet::managerStatusChanged(NetworkManager::Status status)
 {
     //kDebug() << "managerstatuschanged";
     m_interfaces = NetworkManager::networkInterfaces();
-    if (status == Solid::Networking::Unknown) {
+    if (status == NetworkManager::Unknown) {
         m_activeInterface = m_activeSystrayInterface = 0;
     } else {
         if (!m_interfaces.isEmpty()) {

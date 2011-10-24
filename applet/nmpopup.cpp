@@ -229,9 +229,9 @@ void NMPopup::init()
     }
     addVpnInterface();
     // hook up signals to allow us to change the connection list depending on APs present, etc
-    connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString&)),
             SLOT(interfaceAdded(const QString&)));
-    connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(const QString&)),
             SLOT(interfaceRemoved(const QString&)));
 
     m_showMoreChecked = false;
@@ -404,7 +404,6 @@ void NMPopup::addInterfaceInternal(NetworkManager::Device* iface)
             WirelessInterfaceItem* wifiItem = 0;
             wifiItem = new WirelessInterfaceItem(static_cast<NetworkManager::WirelessDevice *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
             ifaceItem = wifiItem;
-            //connect(wirelessinterface, SIGNAL(stateChanged()), this, SLOT(updateNetworks()));
             wifiItem->setEnabled(NetworkManager::isWirelessEnabled());
             kDebug() << "WiFi added";
             connect(wifiItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
@@ -420,7 +419,7 @@ void NMPopup::addInterfaceInternal(NetworkManager::Device* iface)
         connect(ifaceItem, SIGNAL(hoverLeave(const QString&)), m_connectionList, SLOT(hoverLeave(const QString&)));
 
         // Catch connection changes
-        connect(iface, SIGNAL(stateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+        connect(iface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
         m_interfaceLayout->addItem(ifaceItem);
         m_interfaces.insert(iface->uni(), ifaceItem);
     }

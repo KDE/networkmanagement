@@ -52,14 +52,14 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
     d->activatableList = activatableList;
 
     QObject::connect(NetworkManager::notifier(),
-            SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
+            SIGNAL(deviceAdded(const QString&)),
+            this, SLOT(deviceAdded(const QString&)));
     QObject::connect(NetworkManager::notifier(),
-            SIGNAL(networkInterfaceRemoved(const QString&)),
-            this, SLOT(networkInterfaceRemoved(const QString&)));
+            SIGNAL(deviceRemoved(const QString&)),
+            this, SLOT(deviceRemoved(const QString&)));
 
     foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
-        networkInterfaceAdded(iface->uni());
+        deviceAdded(iface->uni());
     }
 
     dialog = 0;
@@ -76,7 +76,7 @@ NetworkInterfaceMonitor::~NetworkInterfaceMonitor()
 {
 }
 
-void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
+void NetworkInterfaceMonitor::deviceAdded(const QString & uni)
 {
     Q_D(NetworkInterfaceMonitor);
     kDebug();
@@ -106,7 +106,7 @@ void NetworkInterfaceMonitor::networkInterfaceAdded(const QString & uni)
     }
 }
 
-void NetworkInterfaceMonitor::networkInterfaceRemoved(const QString & uni)
+void NetworkInterfaceMonitor::deviceRemoved(const QString & uni)
 {
     Q_D(NetworkInterfaceMonitor);
     NetworkInterfaceActivatableProvider * provider = d->providers.take(uni);

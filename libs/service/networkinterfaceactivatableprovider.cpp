@@ -70,7 +70,7 @@ void NetworkInterfaceActivatableProvider::init()
      * WiredNetworkInterfaceActivatableProvider::needsActivatableForUnconfigured() ->
      * d->wiredInterface() -> qobject_cast<NetworkManager::WiredDevice*>(interface).
      * interface is an invalid pointer and crashes the kded module.
-     * Actually Solid::Control::NetworkManagerNm09::notifier()'s networkInterfaceRemoved signal should
+     * Actually Solid::Control::NetworkManagerNm09::notifier()'s deviceRemoved signal should
      * triggers the removing of WiredNetworkInterfaceActivatableProvider before
      * NMDBusSettingsConnectionProvider::clearConnections() is called, but it seems sometimes, and only sometimes,
      * that does not happen.

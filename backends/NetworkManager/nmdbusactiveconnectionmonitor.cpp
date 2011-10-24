@@ -135,8 +135,8 @@ NMDBusActiveConnectionMonitor::NMDBusActiveConnectionMonitor(ActivatableList * a
             this, SLOT(activeConnectionListChanged()));
 
     connect(NetworkManager::notifier(),
-            SIGNAL(statusChanged(Solid::Networking::Status)),
-            this, SLOT(networkingStatusChanged(Solid::Networking::Status)));
+            SIGNAL(statusChanged(NetworkManager::Status)),
+            this, SLOT(networkingStatusChanged(NetworkManager::Status)));
 
     activeConnectionListChanged();
 }
@@ -235,9 +235,9 @@ void NMDBusActiveConnectionMonitor::handleRemove(Knm::Activatable * removed)
     }
 }
 
-void NMDBusActiveConnectionMonitor::networkingStatusChanged(Solid::Networking::Status status)
+void NMDBusActiveConnectionMonitor::networkingStatusChanged(NetworkManager::Status status)
 {
-    if (status == Solid::Networking::Unknown) {
+    if (status == NetworkManager::Unknown) {
         Q_D(NMDBusActiveConnectionMonitor);
         // the manager probably exited, clean our state
         qDeleteAll(d->activeConnections);

@@ -127,9 +127,9 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connectButtonSet(mConnEditUi.buttonSetCellular, mConnEditUi.listCellular);
     connectButtonSet(mConnEditUi.buttonSetVpn, mConnEditUi.listVpn);
     connectButtonSet(mConnEditUi.buttonSetPppoe, mConnEditUi.listPppoe);
-    connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString&)),
             SLOT(updateTabStates()));
-    connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(const QString&)),
             SLOT(updateTabStates()));
     connect(NetworkManager::notifier(), SIGNAL(activeConnectionsChanged()),
             SLOT(activeConnectionsChanged()));

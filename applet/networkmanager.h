@@ -31,9 +31,7 @@ class KCModuleProxy;
 
 #include <plasma/framesvg.h>
 #include <plasma/svg.h>
-#include <solid/networking.h>
-#include <solid/control/networking.h>
-#include <libnm-qt/device.h>
+#include <libnm-qt/manager.h>
 #include <libnm-qt/accesspoint.h>
 
 #include <interfaceconnection.h>
@@ -95,7 +93,7 @@ public Q_SLOTS:
     /**
      * React to manager status changes
      */
-    void managerStatusChanged(Solid::Networking::Status);
+    void managerStatusChanged(NetworkManager::Status);
 
 protected:
     void createConfigurationInterface(KConfigDialog *parent);
@@ -105,8 +103,8 @@ protected Q_SLOTS:
     void toolTipAboutToShow();
 
 private Q_SLOTS:
-    void networkInterfaceAdded(const QString& = QString());
-    void networkInterfaceRemoved(const QString&);
+    void deviceAdded(const QString& = QString());
+    void deviceRemoved(const QString&);
     void interfaceConnectionStateChanged();
     void updatePixmap();
     void repaint();

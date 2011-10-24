@@ -57,8 +57,8 @@ InterfaceNotificationHost::InterfaceNotificationHost(NetworkManager::Device * in
     // For the notification icon
     m_type = Knm::Connection::typeFromSolidType(interface);
 
-    QObject::connect(interface, SIGNAL(stateChanged(int,int,int)),
-            this, SLOT(interfaceConnectionStateChanged(int,int,int)));
+    QObject::connect(interface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
+            this, SLOT(interfaceConnectionStateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
 }
 
 InterfaceNotificationHost::~InterfaceNotificationHost()
@@ -149,7 +149,7 @@ void InterfaceNotificationHost::enableStrengthNotification()
     m_suppressStrengthNotification = false;
 }
 
-void InterfaceNotificationHost::interfaceConnectionStateChanged(int new_state, int, int reason)
+void InterfaceNotificationHost::interfaceConnectionStateChanged(NetworkManager::Device::State new_state, NetworkManager::Device::State, NetworkManager::Device::StateChangeReason reason)
 {
     kDebug() << new_state << reason;
     QString title;
@@ -394,21 +394,21 @@ NotificationManager::NotificationManager(ConnectionList *connectionList, QObject
     connect(d->disappearedNetworkTimer, SIGNAL(timeout()), this, SLOT(notifyDisappearedNetworks()));
 
     // status
-    QObject::connect(NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
-            this, SLOT(statusChanged(Solid::Networking::Status)));
+    QObject::connect(NetworkManager::notifier(), SIGNAL(statusChanged(NetworkManager::Status)),
+            this, SLOT(statusChanged(NetworkManager::Status)));
 
     // rfkill
     QObject::connect(NetworkManager::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
             this, SLOT(wirelessHardwareEnabledChanged(bool)));
 
     // interfaces
-    QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
-    QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
-            this, SLOT(networkInterfaceRemoved(const QString&)));
+    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString&)),
+            this, SLOT(deviceAdded(const QString&)));
+    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(const QString&)),
+            this, SLOT(deviceRemoved(const QString&)));
 
     foreach (NetworkManager::Device* interface, NetworkManager::networkInterfaces()) {
-        networkInterfaceAdded(interface->uni());
+        deviceAdded(interface->uni());
     }
     d->suppressHardwareEvents = false;
 }
@@ -480,7 +480,7 @@ void NotificationManager::createCellularConnection()
     KToolInvocation::kdeinitExec(KGlobal::dirs()->findResource("exe", "networkmanagement_configshell"), args);
 }
 
-void NotificationManager::networkInterfaceAdded(const QString & uni)
+void NotificationManager::deviceAdded(const QString & uni)
 {
     Q_D(NotificationManager);
     kDebug() << uni;
@@ -536,7 +536,7 @@ void NotificationManager::networkInterfaceAdded(const QString & uni)
     }
 }
 
-void NotificationManager::networkInterfaceRemoved(const QString &uni)
+void NotificationManager::deviceRemoved(const QString &uni)
 {
     Q_D(NotificationManager);
 
@@ -632,9 +632,9 @@ void NotificationManager::wirelessHardwareEnabledChanged(bool enabled)
     }
 }
 
-void NotificationManager::statusChanged(Solid::Networking::Status status)
+void NotificationManager::statusChanged(NetworkManager::Status status)
 {
-    if (status == Solid::Networking::Unknown) {
+    if (status == NetworkManager::Unknown) {
         KNotification::event(Event::NetworkingDisabled, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is disabled", "Networking system disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, componentData());
     }
 }

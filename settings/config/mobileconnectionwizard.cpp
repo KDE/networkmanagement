@@ -270,12 +270,12 @@ QWizardPage * MobileConnectionWizard::createIntroPage()
         label->setBuddy(mDeviceComboBox);
         layout->addWidget(mDeviceComboBox);
     
-        QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceAdded(const QString)),
+        QObject::connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString)),
                          this, SLOT(introDeviceAdded(const QString)));
-        QObject::connect(NetworkManager::notifier(), SIGNAL(networkInterfaceRemoved(const QString)),
+        QObject::connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(const QString)),
                          this, SLOT(introDeviceRemoved(const QString)));
-        QObject::connect(NetworkManager::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
-                         this, SLOT(introStatusChanged(Solid::Networking::Status)));
+        QObject::connect(NetworkManager::notifier(), SIGNAL(statusChanged(NetworkManager::Status)),
+                         this, SLOT(introStatusChanged(NetworkManager::Status)));
     
         introAddInitialDevices();
     }
@@ -361,16 +361,19 @@ void MobileConnectionWizard::introDeviceRemoved(const QString uni)
     }
 }
 
-void MobileConnectionWizard::introStatusChanged(Solid::Networking::Status status)
+void MobileConnectionWizard::introStatusChanged(NetworkManager::Status status)
 {
     switch (status) {
-        case Solid::Networking::Unknown:
-        case Solid::Networking::Unconnected:
-        case Solid::Networking::Disconnecting:
+        case NetworkManager::Unknown:
+        case NetworkManager::Asleep:
+        case NetworkManager::Disconnected:
+        case NetworkManager::Disconnecting:
             introRemoveAllDevices();
             break;
-        case Solid::Networking::Connecting:
-        case Solid::Networking::Connected:
+        case NetworkManager::Connecting:
+        case NetworkManager::ConnectedLinkLocal:
+        case NetworkManager::ConnectedSiteOnly:
+        case NetworkManager::Connected:
             introAddInitialDevices();
             break;
     }
