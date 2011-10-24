@@ -652,7 +652,7 @@ QString InterfaceDetailsWidget::getMAC()
         } else {
             // prevent crash for unconnected devices
             if (m_iface) { // last resort, although using ifaceName is not portable
-                QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkManager::Device.ifaceName == '%1'").arg(m_iface->interfaceName()));
+                QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkInterface.ifaceName == '%1'").arg(m_iface->interfaceName()));
                 QList<Solid::Device>::iterator it = list.begin();
             
                 if (it != list.end()) {
