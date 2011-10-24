@@ -138,7 +138,6 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
     if (m_iface) {
         connect(m_iface.data(), SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
                 this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
-        connect(m_iface.data(), SIGNAL(linkUpChanged(bool)), this, SLOT(setActive(bool)));
     }
     setNameDisplayMode(mode);
 

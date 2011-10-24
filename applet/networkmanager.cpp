@@ -224,13 +224,10 @@ void NetworkManagerApplet::setupInterfaceSignals()
     foreach (NetworkManager::Device* interface, m_interfaces) {
         // be aware of state changes
         QObject::disconnect(interface, SIGNAL(stateChanged(NetworkManager::Device::State, NetworkManager::Device::State, NetworkManager::Device::StateChangeReason)), this, SLOT(interfaceConnectionStateChanged()));
-        QObject::disconnect(interface, SIGNAL(linkUpChanged(bool)));
 
         //connect(iface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
         connect(interface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(interfaceConnectionStateChanged()));
-        //connect(iface, SIGNAL(linkUpChanged(bool)), this, SLOT(switchToDefaultTab()));
 
-        QObject::connect(interface, SIGNAL(linkUpChanged(bool)), this, SLOT(interfaceConnectionStateChanged()));
 
         // Interface type-specific connections
         if (interface->type() == NetworkManager::Device::Ethernet) {
