@@ -454,7 +454,7 @@ void NMPopup::addVpnInterface()
     m_leftLayout->insertItem(2, m_vpnItem);
 }
 
-void NMPopup::handleConnectionStateChange(int new_state, int old_state, int reason)
+void NMPopup::handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason)
 {
     Q_UNUSED( reason );
     // Switch to default tab if an interface has become available, or unavailable

@@ -136,8 +136,8 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
     m_layout->addItem(m_connectionInfoIcon, 1, 2, 1, 1, Qt::AlignRight); // check...
 
     if (m_iface) {
-        connect(m_iface.data(), SIGNAL(connectionStateChanged(int,int,int)),
-                this, SLOT(handleConnectionStateChange(int,int,int)));
+        connect(m_iface.data(), SIGNAL(connectionStateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
+                this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
         connect(m_iface.data(), SIGNAL(linkUpChanged(bool)), this, SLOT(setActive(bool)));
     }
     setNameDisplayMode(mode);
@@ -355,15 +355,10 @@ void InterfaceItem::slotClicked()
     emit clicked(m_iface.data());
 }
 
-void InterfaceItem::handleConnectionStateChange(int new_state, int old_state, int reason)
+void InterfaceItem::handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason)
 {
     Q_UNUSED(old_state);
     Q_UNUSED(reason);
-    connectionStateChanged((NetworkManager::Device::State)new_state);
-}
-
-void InterfaceItem::handleConnectionStateChange(int new_state)
-{
     connectionStateChanged((NetworkManager::Device::State)new_state);
 }
 

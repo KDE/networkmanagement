@@ -542,7 +542,7 @@ void InterfaceDetailsWidget::dataUpdated(const QString &sourceName, const Plasma
     updateWidgets();
 }
 
-void InterfaceDetailsWidget::handleConnectionStateChange(int new_state, int old_state, int reason)
+void InterfaceDetailsWidget::handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason)
 {
     Q_UNUSED(old_state)
     if ((new_state == NetworkManager::Device::Unavailable || new_state == NetworkManager::Device::Unmanaged || new_state == NetworkManager::Device::UnknownState) &&
