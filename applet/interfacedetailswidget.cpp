@@ -689,7 +689,7 @@ void InterfaceDetailsWidget::connectSignals()
     if (!m_iface) {
         return;
     }
-    connect(m_iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+    connect(m_iface, SIGNAL(stateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
 
     if (m_iface->type() == NetworkManager::Device::Ethernet ||
         m_iface->type() == NetworkManager::Device::Wifi) {

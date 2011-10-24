@@ -223,15 +223,15 @@ void NetworkManagerApplet::setupInterfaceSignals()
 {
     foreach (NetworkManager::Device* interface, m_interfaces) {
         // be aware of state changes
-        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int, int, int)), this, SLOT(interfaceConnectionStateChanged()));
-        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::disconnect(interface, SIGNAL(stateChanged(int, int, int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::disconnect(interface, SIGNAL(stateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
         QObject::disconnect(interface, SIGNAL(linkUpChanged(bool)));
 
-        //connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
-        connect(interface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(interfaceConnectionStateChanged()));
+        //connect(iface, SIGNAL(stateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+        connect(interface, SIGNAL(stateChanged(int,int,int)), this, SLOT(interfaceConnectionStateChanged()));
         //connect(iface, SIGNAL(linkUpChanged(bool)), this, SLOT(switchToDefaultTab()));
 
-        QObject::connect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::connect(interface, SIGNAL(stateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
         QObject::connect(interface, SIGNAL(linkUpChanged(bool)), this, SLOT(interfaceConnectionStateChanged()));
 
         // Interface type-specific connections
@@ -305,7 +305,7 @@ void NetworkManagerApplet::init()
 
     // to force InterfaceItems to update their hasDefaultRoute state.
     if (m_activeInterface) {
-        QMetaObject::invokeMethod(m_activeInterface, "connectionStateChanged",
+        QMetaObject::invokeMethod(m_activeInterface, "stateChanged",
                                   Q_ARG(int, m_activeInterface->state()),
                                   Q_ARG(int, NetworkManager::Device::UnknownState),
                                   Q_ARG(int, NetworkManager::Device::NoReason));

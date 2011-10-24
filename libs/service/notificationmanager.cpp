@@ -57,7 +57,7 @@ InterfaceNotificationHost::InterfaceNotificationHost(NetworkManager::Device * in
     // For the notification icon
     m_type = Knm::Connection::typeFromSolidType(interface);
 
-    QObject::connect(interface, SIGNAL(connectionStateChanged(int,int,int)),
+    QObject::connect(interface, SIGNAL(stateChanged(int,int,int)),
             this, SLOT(interfaceConnectionStateChanged(int,int,int)));
 }
 

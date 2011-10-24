@@ -420,7 +420,7 @@ void NMPopup::addInterfaceInternal(NetworkManager::Device* iface)
         connect(ifaceItem, SIGNAL(hoverLeave(const QString&)), m_connectionList, SLOT(hoverLeave(const QString&)));
 
         // Catch connection changes
-        connect(iface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
+        connect(iface, SIGNAL(stateChanged(int,int,int)), this, SLOT(handleConnectionStateChange(int,int,int)));
         m_interfaceLayout->addItem(ifaceItem);
         m_interfaces.insert(iface->uni(), ifaceItem);
     }

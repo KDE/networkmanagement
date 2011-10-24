@@ -234,7 +234,7 @@ Solid::Device* UiUtils::findSolidDevice(const QString & uni)
         return 0;
     }
 
-    QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkManager::Device.ifaceName == '%1'").arg(iface->interfaceName()));
+    QList<Solid::Device> list = Solid::Device::listFromQuery(QString::fromLatin1("NetworkInterface.ifaceName == '%1'").arg(iface->interfaceName()));
     QList<Solid::Device>::iterator it = list.begin();
 
     if (it != list.end()) {
