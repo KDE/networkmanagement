@@ -37,7 +37,7 @@ GsmInterfaceConnection::GsmInterfaceConnection(ActivatableType type, const QStri
     connectMMSignals();
 
     // For bluetooth devices.
-    connect(ModemManager::notifier(), SIGNAL(modemInterfaceAdded(const QString &)), this, SLOT(connectMMSignals()));
+    connect(ModemManager::notifier(), SIGNAL(modemAdded(const QString &)), this, SLOT(connectMMSignals()));
 }
 
 GsmInterfaceConnection::~GsmInterfaceConnection()

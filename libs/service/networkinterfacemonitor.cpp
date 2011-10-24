@@ -64,11 +64,11 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
 
     dialog = 0;
     QObject::connect(ModemManager::notifier(),
-            SIGNAL(modemInterfaceAdded(const QString&)),
-            this, SLOT(modemInterfaceAdded(const QString&)));
+            SIGNAL(modemAdded(const QString&)),
+            this, SLOT(modemAdded(const QString&)));
 
     foreach (ModemManager::ModemInterface * iface, ModemManager::modemInterfaces()) {
-        modemInterfaceAdded(iface->udi());
+        modemAdded(iface->udi());
     }
 }
 
@@ -114,7 +114,7 @@ void NetworkInterfaceMonitor::deviceRemoved(const QString & uni)
     delete provider;
 }
 
-void NetworkInterfaceMonitor::modemInterfaceAdded(const QString & udi)
+void NetworkInterfaceMonitor::modemAdded(const QString & udi)
 {
     ModemManager::ModemGsmCardInterface * modem = qobject_cast<ModemManager::ModemGsmCardInterface *>(ModemManager::findModemInterface(udi, ModemManager::ModemInterface::GsmCard));
 

@@ -21,7 +21,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "hiddenwirelessnetwork.h"
 
 HiddenWirelessNetwork::HiddenWirelessNetwork(const QString & deviceUni, QObject * parent)
-: WirelessNetwork(QString(), -1, (Solid::Control::AccessPoint::Capabilities)0,(Solid::Control::AccessPoint::WpaFlags)0, (Solid::Control::AccessPoint::WpaFlags)0, deviceUni, parent)
+: WirelessNetwork(QString(), -1, (NetworkManager::AccessPoint::Capabilities)0,(NetworkManager::AccessPoint::WpaFlags)0, (NetworkManager::AccessPoint::WpaFlags)0, deviceUni, parent)
 {
 }
 

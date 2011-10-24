@@ -44,7 +44,7 @@ public:
 public Q_SLOTS:
     void deviceAdded(const QString &);
     void deviceRemoved(const QString &);
-    void modemInterfaceAdded(const QString&);
+    void modemAdded(const QString&);
     void requestPin(const QString &);
     void onSendPinArrived(QDBusPendingCallWatcher *);
 private:
