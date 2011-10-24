@@ -151,16 +151,15 @@ void NMDBusActiveConnectionMonitor::activeConnectionListChanged()
     // update all InterfaceConnections we know about
     Q_D(NMDBusActiveConnectionMonitor);
 
-    QStringList currentActiveConnections;
+    QStringList currentActiveConnections = NetworkManager::activeConnectionsPaths();
 
     // delete any stale interfaces
-    foreach (const NetworkManager::ActiveConnection *ac, NetworkManager::activeConnections()) {
-        if (!currentActiveConnections.contains(ac->path())) {
-            NMDBusActiveConnectionProxy * stale = d->activeConnections.take(ac->path());
-            kDebug() << "removing stale active connection" << ac->path();
+    foreach (const QString &key, d->activeConnections.keys()) {
+        if (!currentActiveConnections.contains(key)) {
+            NMDBusActiveConnectionProxy * stale = d->activeConnections.take(key);
+            kDebug() << "removing stale active connection" << key;
             delete stale;
         }
-        currentActiveConnections.append(ac->path());
     }
 
     // create an interface to any active connections we're not already tracking
