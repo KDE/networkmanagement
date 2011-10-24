@@ -35,6 +35,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KPushButton>
 #include <KComboBox>
 #include <QDomDocument>
+#include <QMutex>
+#include <QWaitCondition>
 
 #include "nm-openconnect-service.h"
 

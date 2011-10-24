@@ -56,6 +56,8 @@ KDialog::ButtonCodes OpenconnectUiPlugin::suggestAuthDialogButtons()
 
 QString OpenconnectUiPlugin::suggestedFileName(Knm::Connection *connection) const
 {
+    Q_UNUSED(connection);
+
     // TODO : implement suggested file name
     return QString();
 }
@@ -68,12 +70,17 @@ QString OpenconnectUiPlugin::supportedFileExtensions() const
 
 QVariantList OpenconnectUiPlugin::importConnectionSettings(const QString &fileName)
 {
+    Q_UNUSED(fileName);
+
     // TODO : import the Openconnect connection from file and return settings
     return QVariantList();
 }
 
 bool OpenconnectUiPlugin::exportConnectionSettings(Knm::Connection * connection, const QString &fileName)
 {
+    Q_UNUSED(connection);
+    Q_UNUSED(fileName);
+
     // TODO : export Openconnect connection to file
     return false;
 }
