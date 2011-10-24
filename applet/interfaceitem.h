@@ -72,7 +72,7 @@ public:
 
 public Q_SLOTS:
     void activeConnectionsChanged();
-    virtual void connectionStateChanged(NetworkManager::Device::State, bool updateConnection = true);
+    virtual void stateChanged(NetworkManager::Device::State, bool updateConnection = true);
     virtual void setEnabled(bool enable);
     // also updates the connection info
     virtual void setActive(bool active);

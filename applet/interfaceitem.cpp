@@ -136,7 +136,7 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
     m_layout->addItem(m_connectionInfoIcon, 1, 2, 1, 1, Qt::AlignRight); // check...
 
     if (m_iface) {
-        connect(m_iface.data(), SIGNAL(connectionStateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
+        connect(m_iface.data(), SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)),
                 this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
         connect(m_iface.data(), SIGNAL(linkUpChanged(bool)), this, SLOT(setActive(bool)));
     }
@@ -149,7 +149,7 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
             connect(wirediface, SIGNAL(carrierChanged(bool)), this, SLOT(setActive(bool)));
         }
         m_state = NetworkManager::Device::UnknownState;
-        connectionStateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
+        stateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
     }
 
     m_layout->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -210,7 +210,7 @@ void InterfaceItem::setActive(bool active)
 {
     Q_UNUSED(active);
     if (m_iface) {
-        connectionStateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
+        stateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
     }
 }
 
@@ -272,7 +272,7 @@ void InterfaceItem::setConnectionInfo()
 {
     if (m_iface) {
         currentConnectionChanged();
-        connectionStateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
+        stateChanged(static_cast<NetworkManager::Device::State>(m_iface.data()->state()));
     }
 }
 
@@ -359,10 +359,10 @@ void InterfaceItem::handleConnectionStateChange(NetworkManager::Device::State ne
 {
     Q_UNUSED(old_state);
     Q_UNUSED(reason);
-    connectionStateChanged((NetworkManager::Device::State)new_state);
+    stateChanged((NetworkManager::Device::State)new_state);
 }
 
-void InterfaceItem::connectionStateChanged(NetworkManager::Device::State state, bool updateConnection)
+void InterfaceItem::stateChanged(NetworkManager::Device::State state, bool updateConnection)
 {
     if (m_state == state) {
         return;
@@ -385,7 +385,7 @@ void InterfaceItem::connectionStateChanged(NetworkManager::Device::State state, 
         lname = UiUtils::connectionStateToString(state, m_currentConnection->connectionName());
     } else {
         lname = UiUtils::connectionStateToString(state, QString());
-        // to allow updating connection's name in the next call of connectionStateChanged()
+        // to allow updating connection's name in the next call of stateChanged()
         // even if the state has not changed.
         m_state = NetworkManager::Device::UnknownState;
     }
@@ -479,10 +479,10 @@ void InterfaceItem::activatableAdded(RemoteActivatable * activatable)
     if (m_iface && RemoteActivatableList::isConnectionForInterface(activatable, m_iface.data())) {
         updateCurrentConnection(qobject_cast<RemoteInterfaceConnection*>(activatable));
 
-        /* Sometimes the activatableAdded signal arrives after the connectionStateChanged
+        /* Sometimes the activatableAdded signal arrives after the stateChanged
            signal, so update the interface state here but do not search for current connection
            since it is already known. */
-        connectionStateChanged(m_iface.data()->state(), false);
+        stateChanged(m_iface.data()->state(), false);
     }
 }
 
