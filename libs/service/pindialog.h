@@ -52,7 +52,7 @@ public Q_SLOTS:
 
 protected Q_SLOTS:
     void chkShowPassToggled();
-    void modemInterfaceRemoved(const QString &udi);
+    void modemRemoved(const QString &udi);
 
 private:
     void showErrorMessage(const PinDialog::ErrorCode);

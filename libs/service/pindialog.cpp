@@ -113,7 +113,7 @@ PinDialog::PinDialog(ModemManager::ModemGsmCardInterface *modem, const Type type
 
     move((desktop.width() - width()) / 2, (desktop.height() - height()) / 2);
     connect(ui->chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
-    connect(ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), SLOT(modemInterfaceRemoved(const QString &)));
+    connect(ModemManager::notifier(), SIGNAL(modemRemoved(const QString &)), SLOT(modemRemoved(const QString &)));
 }
 
 PinDialog::~PinDialog()
@@ -139,7 +139,7 @@ void PinDialog::chkShowPassToggled()
     }
 }
 
-void PinDialog::modemInterfaceRemoved(const QString &udi)
+void PinDialog::modemRemoved(const QString &udi)
 {
     if (udi == m_udi) {
         reject();
