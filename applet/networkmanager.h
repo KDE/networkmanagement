@@ -169,6 +169,7 @@ private:
     KCModuleProxy* m_kcmNMTray;
 
     Plasma::Svg* m_svg;
+    Plasma::Svg* m_svgMobile;
     Plasma::FrameSvg* m_meterBgSvg;
     Plasma::FrameSvg* m_meterFgSvg;
 };
