@@ -86,8 +86,11 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     connect(&m_overlayTimeline, SIGNAL(valueChanged(qreal)), this, SLOT(repaint()));
 
     m_svg = new Plasma::Svg(this);
-    m_svg->setImagePath("icons/network2");
+    m_svg->setImagePath("icons/network");
     m_svg->setContainsMultipleImages(true);
+    m_svgMobile = new Plasma::Svg(this);
+    m_svgMobile->setImagePath("icons/network2");
+    m_svgMobile->setContainsMultipleImages(true);
     m_meterBgSvg = new Plasma::FrameSvg(this);
     m_meterBgSvg->setImagePath("widgets/bar_meter_horizontal");
     m_meterBgSvg->setElementPrefix("bar-inactive");
@@ -402,7 +405,11 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     if (el.isEmpty()) {
         painter.drawPixmap(QPoint(0,0), m_pixmap);
     } else {
-        m_svg->paint(&painter, rect, el);
+        if (el.startsWith("network-mobile")) {
+            m_svgMobile->paint(&painter, rect, el);
+	} else {
+            m_svg->paint(&painter, rect, el);
+	}
     }
 
     paintStatusOverlay(&painter, rect);
