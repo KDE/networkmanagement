@@ -68,13 +68,13 @@ endif(NETWORKMANAGER_FOUND)
 
 find_file(LIBMM_FOUND libmm-qt/manager.h /usr/include NO_DEFAULT_PATH)
 if (NOT LIBMM_FOUND)
-    message("ERROR: libmm not found")
+    message("ERROR: libmm-qt not found")
     return()
 endif (NOT LIBMM_FOUND)
 
 find_file(LIBNM_FOUND libnm-qt/manager.h /usr/include NO_DEFAULT_PATH)
 if (NOT LIBNM_FOUND)
-    message("ERROR: libnm not found")
+    message("ERROR: libnm-qt not found")
     return()
 endif (NOT LIBNM_FOUND)
 
