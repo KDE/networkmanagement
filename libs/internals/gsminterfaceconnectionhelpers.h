@@ -1,6 +1,6 @@
 /*
 Copyright 2009 Paul Marchouk <pmarchouk@gmail.com>
-Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2011 Lamarque Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public

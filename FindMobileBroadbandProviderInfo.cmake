@@ -4,7 +4,7 @@
 #  MOBILEBROADBANDPROVIDERINFO_FOUND - system has mobile-broadband-provider-info
 #  MOBILEBROADBANDPROVIDERINFO_CFLAGS - the mobile-broadband-provider-info directory
 
-# Copyright (c) 2011, Lamarque Souza <lamarque@gmail.com>
+# Copyright (c) 2011, Lamarque Souza <lamarque@kde.org>
 #
 # Redistribution and use is allowed according to the terms of the BSD license.
 # For details see the accompanying COPYING-CMAKE-SCRIPTS file.
