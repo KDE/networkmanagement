@@ -709,7 +709,7 @@ void InterfaceDetailsWidget::connectSignals()
 
                 if (modemNetworkIface) {
                     // this one is for bluetooth devices, which always have a NetworkManager object but do not always have a ModemManager object.
-                    connect(ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(resetInterfaceDetails()));
+                    connect(ModemManager::notifier(), SIGNAL(modemRemoved(const QString &)), this, SLOT(resetInterfaceDetails()));
                     connect(modemNetworkIface, SIGNAL(enabledChanged(const bool)), this, SLOT(modemUpdateEnabled(const bool)));
                     connect(modemNetworkIface, SIGNAL(unlockRequiredChanged(const QString &)), this, SLOT(modemUpdateUnlockRequired(const QString &)));
 
