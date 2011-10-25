@@ -55,7 +55,8 @@ Q_SIGNALS:
 protected Q_SLOTS:
     void handleActivatableAdded(const QString &, uint, int);
     void handleActivatableRemoved(const QString &);
-    void serviceOwnerChanged(const QString&, const QString&, const QString&);
+    void serviceRegistered();
+    void serviceUnregistered();
 private:
     void clear();
     Q_DECLARE_PRIVATE(RemoteActivatableList)

@@ -79,7 +79,8 @@ private Q_SLOTS:
     void onRemoteConnectionRemoved();
     // should probably be handled in RemoteConnection
     void onRemoteConnectionUpdated();
-    void serviceOwnerChanged(const QString&, const QString&, const QString&);
+    void serviceRegistered();
+    void serviceUnregistered();
     void onConnectionSecretsArrived(QDBusPendingCallWatcher *watcher);
     void onConnectionAddArrived(QDBusPendingCallWatcher *watcher);
     void interfaceConnectionActivated();

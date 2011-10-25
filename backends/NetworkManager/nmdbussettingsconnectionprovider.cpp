@@ -66,6 +66,8 @@ public:
     QHash<QUuid, Knm::Connection *> secretsToGet;
     OrgFreedesktopNetworkManagerSettingsInterface * iface;
     QString serviceName;
+    QDBusServiceWatcher * registrationWatcher;
+    QDBusServiceWatcher * unregistrationWatcher;
 };
 
 NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionList * connectionList, QObject * parent)
@@ -90,9 +92,17 @@ NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionLis
     connect(d->iface, SIGNAL(NewConnection(const QDBusObjectPath&)),
             this, SLOT(onConnectionAdded(const QDBusObjectPath&)));
     // clean our connections out if the service goes away
-    connect(QDBusConnection::systemBus().interface(),
-            SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)),
-            SLOT(serviceOwnerChanged(const QString&,const QString&,const QString&)));
+    d->registrationWatcher = new QDBusServiceWatcher(this);
+    d->registrationWatcher->setConnection(QDBusConnection::systemBus());
+    d->registrationWatcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration);
+    d->registrationWatcher->addWatchedService(d->iface->service());
+    connect(d->registrationWatcher, SIGNAL(serviceRegistered(const QString &)), SLOT(serviceRegistered()));
+
+    d->unregistrationWatcher = new QDBusServiceWatcher(this);
+    d->unregistrationWatcher->setConnection(QDBusConnection::systemBus());
+    d->unregistrationWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
+    d->unregistrationWatcher->addWatchedService(d->iface->service());
+    connect(d->unregistrationWatcher, SIGNAL(serviceUnregistered(const QString &)), SLOT(serviceUnregistered()));
 }
 
 NMDBusSettingsConnectionProvider::~NMDBusSettingsConnectionProvider()
@@ -115,8 +125,6 @@ void NMDBusSettingsConnectionProvider::initConnections()
     } else {
         kDebug() << "Error in ListConnections() D-Bus call:" << reply.error();
     }
-
-
 }
 
 void NMDBusSettingsConnectionProvider::initialiseAndRegisterRemoteConnection(const QString & path)
@@ -192,24 +200,16 @@ void NMDBusSettingsConnectionProvider::onRemoteConnectionUpdated()
     }
 }
 
-void NMDBusSettingsConnectionProvider::serviceOwnerChanged(const QString & changedService, const QString & oldOwner, const QString & newOwner)
+void NMDBusSettingsConnectionProvider::serviceRegistered()
 {
-    Q_D(NMDBusSettingsConnectionProvider);
-    //kDebug() << changedService << service() << oldOwner << newOwner;
-    if (changedService == d->iface->service()) {
-        if (!oldOwner.isEmpty() && newOwner.isEmpty()) {
-            clearConnections();
-            //emit disappeared(this);
-        } else if (oldOwner.isEmpty() && !newOwner.isEmpty()) {
-            initConnections();
-            //emit appeared(this);
-        } else if (!oldOwner.isEmpty() && !newOwner.isEmpty()) {
-            clearConnections();
-            //emit disappeared(this);
-            initConnections();
-            //emit appeared(this);
-        }
-    }
+    initConnections();
+    //emit appeared(this);
+}
+
+void NMDBusSettingsConnectionProvider::serviceUnregistered()
+{
+    clearConnections();
+    //emit disappeared(this);
 }
 
 void NMDBusSettingsConnectionProvider::clearConnections()

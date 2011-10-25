@@ -42,6 +42,8 @@ public:
     NetworkManagementInterface * iface;
     QHash<QString, RemoteActivatable *> activatables;
     QList<RemoteActivatable*> sortedActivatables;
+    QDBusServiceWatcher * registrationWatcher;
+    QDBusServiceWatcher * unregistrationWatcher;
 };
 
 
@@ -51,9 +53,17 @@ RemoteActivatableList::RemoteActivatableList(QObject * parent)
     Q_D(RemoteActivatableList);
     d->iface = new NetworkManagementInterface("org.kde.networkmanagement", "/org/kde/networkmanagement", QDBusConnection::sessionBus(), this);
     // clean our connections out if the service goes away
-    connect(QDBusConnection::sessionBus().interface(),
-            SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)),
-            SLOT(serviceOwnerChanged(const QString&,const QString&,const QString&)));
+    d->registrationWatcher = new QDBusServiceWatcher(this);
+    d->registrationWatcher->setConnection(QDBusConnection::sessionBus());
+    d->registrationWatcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration);
+    d->registrationWatcher->addWatchedService(d->iface->service());
+    connect(d->registrationWatcher, SIGNAL(serviceRegistered(const QString &)), SLOT(serviceRegistered()));
+
+    d->unregistrationWatcher = new QDBusServiceWatcher(this);
+    d->unregistrationWatcher->setConnection(QDBusConnection::sessionBus());
+    d->unregistrationWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
+    d->unregistrationWatcher->addWatchedService(d->iface->service());
+    connect(d->unregistrationWatcher, SIGNAL(serviceUnregistered(const QString &)), SLOT(serviceUnregistered()));
 }
 
 void RemoteActivatableList::init()
@@ -199,22 +209,15 @@ void RemoteActivatableList::handleActivatableRemoved(const QString &removed)
     }
 }
 
-void RemoteActivatableList::serviceOwnerChanged(const QString & changedService, const QString & oldOwner, const QString & newOwner)
+void RemoteActivatableList::serviceRegistered()
 {
-    Q_D(RemoteActivatableList);
-    //kDebug() << changedService << changedService << oldOwner << newOwner;
-    if (changedService == d->iface->service()) {
-        if (!oldOwner.isEmpty() && newOwner.isEmpty()) {
-            clear();
-            emit disappeared();
-        } else if (oldOwner.isEmpty() && !newOwner.isEmpty()) {
-            init();
-            emit appeared();
-        } else if (!oldOwner.isEmpty() && !newOwner.isEmpty()) {
-            clear();
-            emit disappeared();
-            init();
-            emit appeared();
-        }
-    }
-}// vim: sw=4 sts=4 et tw=100
+    init();
+    emit appeared();
+}
+
+void RemoteActivatableList::serviceUnregistered()
+{
+    clear();
+    emit disappeared();
+}
+// vim: sw=4 sts=4 et tw=100
