@@ -304,9 +304,9 @@ void NetworkManagerApplet::init()
     // to force InterfaceItems to update their hasDefaultRoute state.
     if (m_activeInterface) {
         QMetaObject::invokeMethod(m_activeInterface, "stateChanged",
-                                  Q_ARG(int, m_activeInterface->state()),
-                                  Q_ARG(int, NetworkManager::Device::UnknownState),
-                                  Q_ARG(int, NetworkManager::Device::NoReason));
+                                  Q_ARG(NetworkManager::Device::State, m_activeInterface->state()),
+                                  Q_ARG(NetworkManager::Device::State, NetworkManager::Device::UnknownState),
+                                  Q_ARG(NetworkManager::Device::StateChangeReason, NetworkManager::Device::NoReason));
     }
 
     connect(m_activatables, SIGNAL(appeared()), SLOT(finishInitialization()));
