@@ -238,7 +238,6 @@ void NMPopup::init()
     m_oldShowMoreChecked = true;
     wicCount = 0; // number of wireless networks which user explicitly configured using the kcm module.
 
-    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("General"));
     m_oldShowMoreChecked = config.readEntry(QLatin1String("ShowAllConnections"), true);
     showMore(m_oldShowMoreChecked);

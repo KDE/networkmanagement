@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "bluetooth.h"
 #include "manageconnection.h"
+#include "paths.h"
+#include "knmserviceprefs.h"
 
 int main(int argc, char **argv)
 {
@@ -55,6 +57,7 @@ int main(int argc, char **argv)
         return -1;
     }
 
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     ConnectionEditor editor(0);
     QString specifics = args->getOption("specific-args");
     QString ssid;

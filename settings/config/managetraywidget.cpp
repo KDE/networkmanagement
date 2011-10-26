@@ -40,9 +40,8 @@ K_EXPORT_PLUGIN( ManageTrayWidgetFactory( "kcm_networkmanagement_tray", "libknet
 ManageTrayWidget::ManageTrayWidget(QWidget *parent, const QVariantList &args)
 : KCModule( ManageTrayWidgetFactory::componentData(), parent, args )
 {
-
-    KGlobal::locale()->insertCatalog("libknmui");
     KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
+    KGlobal::locale()->insertCatalog("libknmui");
     secretStorageMode = KNetworkManagerServicePrefs::self()->secretStorageMode();
 
     QHBoxLayout * layout = new QHBoxLayout(this);

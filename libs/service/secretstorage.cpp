@@ -55,7 +55,6 @@ SecretStorage::SecretStorage()
     :SecretsProvider(), d_ptr(new SecretStoragePrivate())
 {
     Q_D(SecretStorage);
-    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     KNetworkManagerServicePrefs::self()->readConfig();
     d->storageMode = (SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
 }

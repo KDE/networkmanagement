@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "networkmanager.h"
+#include "paths.h"
 
 #include <QAction>
 #include <QIcon>
@@ -76,6 +77,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
         m_activeInterface(0),
         m_activeSystrayInterface(0)
 {
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     KGlobal::locale()->insertCatalog("libknetworkmanager");
 
     setHasConfigurationInterface(true);

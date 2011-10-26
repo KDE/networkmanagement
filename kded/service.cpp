@@ -20,6 +20,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "service.h"
+#include "paths.h"
+#include "knmserviceprefs.h"
 
 #include <KCModuleInfo>
 #include <KDebug>
@@ -87,6 +89,7 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
         : KDEDModule(parent), d_ptr(new NetworkManagementServicePrivate)
 {
     Q_D(NetworkManagementService);
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     d->connectionList = new ConnectionList(this);
     d->secretStorage = new SecretStorage();
 

@@ -52,7 +52,6 @@ static const QString CONNECTION_PERSISTENCE_PATH = QLatin1String("networkmanagem
 Nm08Connections::Nm08Connections(SecretStorage * secretStorage, NMDBusSettingsConnectionProvider * nmDBusConnectionProvider, QObject * parent)
     : QObject(parent), m_secretStorage(secretStorage), m_nmDBusConnectionProvider(nmDBusConnectionProvider)
 {
-    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     KNetworkManagerServicePrefs::self()->config()->reparseConfiguration();
     m_storageMode = (SecretStorage::SecretStorageMode)KNetworkManagerServicePrefs::self()->secretStorageMode();
 

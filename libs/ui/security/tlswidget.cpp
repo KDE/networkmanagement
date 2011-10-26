@@ -61,7 +61,6 @@ TlsWidget::TlsWidget(bool isInnerMethod, Knm::Connection* connection, QWidget * 
     serversValidator->setInnerValidator(d->serversValidator);
     leConnectToTheseServers->setValidator(d->serversValidator);
 
-    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     KNetworkManagerServicePrefs::self()->readConfig();
     d->showAdvancedSettings = KNetworkManagerServicePrefs::self()->showAdvancedSettings();
     if (d->showAdvancedSettings) {
