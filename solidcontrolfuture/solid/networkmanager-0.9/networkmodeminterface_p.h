@@ -31,6 +31,7 @@ public:
     OrgFreedesktopNetworkManagerDeviceModemInterface modemIface;
     Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities modemCapabilities;
     Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities currentCapabilities;
+    QString m_modemUdi;
 };
 
 #endif // NETWORKMODEMINTERFACE_P_H
