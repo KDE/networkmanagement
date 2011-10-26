@@ -62,7 +62,7 @@ void GsmInterfaceConnection::connectMMSignals()
     if (modemNetworkIface) {
         kDebug() << "Connecting signals of " << modemNetworkIface->udi() << " to " << deviceUni();
         QObject::connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), this, SLOT(setSignalQuality(uint)));
-        QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(const ModemInterface::AccessTechnology)), this, SLOT(setAccessTechnology(const ModemInterface::AccessTechnology)));
+        QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(const ModemManager::ModemInterface::AccessTechnology)), this, SLOT(setAccessTechnology(const ModemManager::ModemInterface::AccessTechnology)));
         QObject::connect(modemNetworkIface, SIGNAL(enabledChanged(const bool)), this, SLOT(setEnabled(const bool)));
 
         m_signalQuality = modemNetworkIface->getSignalQuality();
