@@ -265,16 +265,15 @@ void NMDBusSettingsService::interfaceConnectionDeactivated()
     Solid::Control::NetworkInterface *iface = Solid::Control::NetworkManager::findNetworkInterface(ic->deviceUni());
     if (iface) {
         iface->disconnectInterface();
-    } else { // VPN connections do have NetworkInterface objects.
-        Solid::Control::NetworkManager::deactivateConnection(ic->property("NMDBusActiveConnectionObject").toString());
-    }
 #else
     QDBusInterface devIface(QLatin1String(NM_DBUS_SERVICE), ic->deviceUni(), "org.freedesktop.NetworkManager.Device", QDBusConnection::systemBus());
-    devIface.call("Disconnect");
-
-    // The command above does not work for VPN connections, this one does.
-    Solid::Control::NetworkManager::deactivateConnection(ic->property("NMDBusActiveConnectionObject").toString());
+    if (devIface.isValid()) {
+        devIface.call("Disconnect");
 #endif
+    } else {
+        // The command above does not work for VPN connections, this one does.
+        Solid::Control::NetworkManager::deactivateConnection(ic->property("NMDBusActiveConnectionObject").toString());
+    }
 }
 
 void NMDBusSettingsService::handleUpdate(Knm::Activatable *)
