@@ -107,6 +107,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
         qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
         m_activeInterface = m_interfaces.first();
         m_activeSystrayInterface = m_activeInterface;
+        m_activeSystrayInterfaceState = Solid::Control::NetworkInterfaceNm09::UnknownState;
     }
 
     // Just to make sure the kded module is loaded before initializing the activatables.
@@ -416,9 +417,9 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     } else {
         if (el.startsWith("network-mobile")) {
             m_svgMobile->paint(&painter, rect, el);
-	} else {
+        } else {
             m_svg->paint(&painter, rect, el);
-	}
+        }
     }
 
     paintStatusOverlay(&painter, rect);

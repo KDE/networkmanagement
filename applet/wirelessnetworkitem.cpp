@@ -50,7 +50,6 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
     m_wirelessStatus(0),
     m_layoutIsDirty(true)
 {
-    //m_strength = 0;
     m_wirelessStatus = new WirelessStatus(remote);
     connect(m_wirelessStatus, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
     connect(m_remote, SIGNAL(changed()), SLOT(update()));
