@@ -35,6 +35,7 @@ public:
     QStringList items() const;
     void setValidator(const QValidator *validator);
     const QValidator* validator() const;
+    void setToolTip(const QString toolTip);
 
 Q_SIGNALS:
     void itemsEdited(QStringList items);
