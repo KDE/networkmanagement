@@ -92,3 +92,7 @@ const QValidator* EditListDialog::validator() const
     return d->editListWidget->lineEdit()->validator();
 }
 
+void EditListDialog::setToolTip(const QString toolTip)
+{
+    d->editListWidget->lineEdit()->setToolTip(toolTip);
+}
