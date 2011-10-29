@@ -105,8 +105,8 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
     if (!m_interfaces.isEmpty()) {
         qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
-        m_activeInterface = m_interfaces.first();
-        m_activeSystrayInterface = m_activeInterface;
+        setActiveInterface(m_interfaces.first());
+        setActiveSystrayInterface(m_activeInterface);
         m_activeSystrayInterfaceState = Solid::Control::NetworkInterfaceNm09::UnknownState;
     }
 
@@ -485,8 +485,8 @@ void NetworkManagerApplet::networkInterfaceAdded(const QString & uni)
     m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
 
     if (!m_activeInterface) {
-        m_activeInterface = m_interfaces.first();
-        m_activeSystrayInterface = m_activeInterface;
+        setActiveInterface(m_interfaces.first());
+        setActiveSystrayInterface(m_activeInterface);
     }
 
     setupInterfaceSignals();
@@ -498,18 +498,18 @@ void NetworkManagerApplet::networkInterfaceRemoved(const QString & uni)
     // update the tray icon
     m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
 
-    if (uni == m_activeInterface->uni()) {
+    if (uni == m_lastActiveInterfaceUni) {
         if (m_interfaces.isEmpty()) {
-            m_activeInterface = 0;
+            setActiveInterface(0);
         } else {
             qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
-            m_activeInterface = m_interfaces.first();
+            setActiveInterface(m_interfaces.first());
             m_activeInterfaceState = Solid::Control::NetworkInterfaceNm09::UnknownState;
         }
     }
     setupInterfaceSignals();
-    if (uni == m_activeSystrayInterface->uni()) {
-        m_activeSystrayInterface = 0;
+    if (uni == m_lastActiveSystrayInterfaceUni) {
+        setActiveSystrayInterface(0);
         resetActiveSystrayInterface();
     } else {
         interfaceConnectionStateChanged();
@@ -529,7 +529,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
             case Solid::Control::NetworkInterfaceNm09::IPConfig:
             case Solid::Control::NetworkInterfaceNm09::IPCheck:
             case Solid::Control::NetworkInterfaceNm09::Secondaries:
-                m_activeSystrayInterface = interface;
+                setActiveSystrayInterface(interface);
                 m_activeSystrayInterfaceState = Solid::Control::NetworkInterfaceNm09::UnknownState;
                 break;
             default:
@@ -537,7 +537,7 @@ void NetworkManagerApplet::interfaceConnectionStateChanged()
             }
         }
     } else if (!m_activeSystrayInterface) {
-        m_activeSystrayInterface = m_activeInterface;
+        setActiveSystrayInterface(m_activeInterface);
         m_activeSystrayInterfaceState = m_activeInterfaceState;
     }
     if (m_activeSystrayInterface) {
@@ -861,12 +861,13 @@ void NetworkManagerApplet::managerStatusChanged(Solid::Networking::Status status
     //kDebug() << "managerstatuschanged";
     m_interfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
     if (status == Solid::Networking::Unknown) {
-        m_activeInterface = m_activeSystrayInterface = 0;
+        setActiveInterface(0);
+        setActiveSystrayInterface(0);
     } else {
         if (!m_interfaces.isEmpty()) {
             qSort(m_interfaces.begin(), m_interfaces.end(), networkInterfaceLessThan);
-            m_activeInterface = m_interfaces.first();
-            m_activeSystrayInterface = m_activeInterface;
+            setActiveInterface(m_interfaces.first());
+            setActiveSystrayInterface(m_activeInterface);
         }
     }
     setupInterfaceSignals();
@@ -973,7 +974,7 @@ void NetworkManagerApplet::updateActiveInterface(bool hasDefaultRoute)
     RemoteInterfaceConnection *ic = qobject_cast<RemoteInterfaceConnection*>(sender());
     if (hasDefaultRoute) {
         // TODO: add support for VpnRemoteInterfaceConnection's, which have "any" as ic->deviceUni().
-        m_activeInterface = Solid::Control::NetworkManagerNm09::findNetworkInterface(ic->deviceUni());
+        setActiveInterface(Solid::Control::NetworkManagerNm09::findNetworkInterface(ic->deviceUni()));
         connect(m_activeInterface, SIGNAL(destroyed(QObject *)), SLOT(_k_destroyed(QObject *)));
         resetActiveSystrayInterface();
     }
@@ -983,10 +984,10 @@ void NetworkManagerApplet::_k_destroyed(QObject *object)
 {
     Q_UNUSED(object);
     if (object == m_activeInterface) {
-        m_activeInterface = 0;
+        setActiveInterface(0);
     }
     if (object == m_activeSystrayInterface) {
-        m_activeSystrayInterface = 0;
+        setActiveSystrayInterface(0);
     }
 }
 
@@ -995,7 +996,7 @@ void NetworkManagerApplet::resetActiveSystrayInterface()
     if (m_activeInterface && m_activeSystrayInterface && m_activeSystrayInterface->uni() == m_activeInterface->uni()) {
         return;
     }
-    m_activeSystrayInterface = m_activeInterface;
+    setActiveSystrayInterface(m_activeInterface);
     m_activeSystrayInterfaceState = m_activeInterfaceState;
     if (m_activeSystrayInterfaceState == Solid::Control::NetworkInterfaceNm09::Activated) {
         setStatusOverlay(QPixmap());
@@ -1016,6 +1017,28 @@ void NetworkManagerApplet::activatablesDisappeared()
 {
     m_totalActiveVpnConnections = 0;
     update();
+}
+
+void NetworkManagerApplet::setActiveInterface(Solid::Control::NetworkInterfaceNm09 * iface)
+{
+    m_activeInterface = iface;
+
+    if (m_activeInterface) {
+        m_lastActiveInterfaceUni = m_activeInterface->uni();
+    } else {
+        m_lastActiveInterfaceUni.clear();
+    }
+}
+
+void NetworkManagerApplet::setActiveSystrayInterface(Solid::Control::NetworkInterfaceNm09 * iface)
+{
+    m_activeSystrayInterface = iface;
+
+    if (m_activeSystrayInterface) {
+        m_lastActiveSystrayInterfaceUni = m_activeSystrayInterface->uni();
+    } else {
+        m_lastActiveSystrayInterfaceUni.clear();
+    }
 }
 
 #include "networkmanager.moc"

@@ -134,6 +134,8 @@ private:
     QPixmap generateProgressStatusOverlay();
     void setStatusOverlay(const QPixmap&);
     void setStatusOverlay(const QString&);
+    inline void setActiveInterface(Solid::Control::NetworkInterfaceNm09 * iface);
+    inline void setActiveSystrayInterface(Solid::Control::NetworkInterfaceNm09 * iface);
 
     Solid::Control::NetworkInterfaceNm09List m_interfaces;
     Plasma::ToolTipContent m_toolTip;
@@ -150,9 +152,11 @@ private:
     // This one is always the interface which has the default route
     // or the first interface selected after sorting the current
     // interface list using networkInterfaceLessThan().
+    // WARNING: do not directly assign this pointer, use setActiveInterface instead.
     Solid::Control::NetworkInterfaceNm09* m_activeInterface;
     // Interface used to update system tray icon. If we have only one interface
     // then this one is always equals to m_activeInterfaceState.
+    // WARNING: do not directly assign this pointer, use setActiveSystrayInterface instead.
     Solid::Control::NetworkInterfaceNm09* m_activeSystrayInterface;
     Solid::Control::AccessPointNm09* m_accessPoint;
 
@@ -163,6 +167,9 @@ private:
 
     Solid::Control::NetworkInterfaceNm09::ConnectionState m_activeInterfaceState;
     Solid::Control::NetworkInterfaceNm09::ConnectionState m_activeSystrayInterfaceState;
+
+    QString m_lastActiveInterfaceUni;
+    QString m_lastActiveSystrayInterfaceUni;
 
     ///embedded KCM modules in the configuration dialog
     KCModuleProxy* m_kcmNM;
