@@ -364,6 +364,7 @@ void InterfaceDetailsWidget::showDetails(bool reset)
 
     info += QLatin1String("</table></qt>");
     m_info->setText(info);
+    update();
 }
 
 QString InterfaceDetailsWidget::currentIpAddress()

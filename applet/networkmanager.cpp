@@ -1025,8 +1025,6 @@ void NetworkManagerApplet::setActiveInterface(Solid::Control::NetworkInterfaceNm
 
     if (m_activeInterface) {
         m_lastActiveInterfaceUni = m_activeInterface->uni();
-    } else {
-        m_lastActiveInterfaceUni.clear();
     }
 }
 
@@ -1036,8 +1034,6 @@ void NetworkManagerApplet::setActiveSystrayInterface(Solid::Control::NetworkInte
 
     if (m_activeSystrayInterface) {
         m_lastActiveSystrayInterfaceUni = m_activeSystrayInterface->uni();
-    } else {
-        m_lastActiveSystrayInterfaceUni.clear();
     }
 }
 
