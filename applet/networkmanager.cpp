@@ -1018,8 +1018,6 @@ void NetworkManagerApplet::setActiveInterface(NetworkManager::Device * device)
 
     if (m_activeInterface) {
         m_lastActiveInterfaceUni = m_activeInterface->uni();
-    } else {
-        m_lastActiveInterfaceUni.clear();
     }
 }
 
@@ -1029,8 +1027,6 @@ void NetworkManagerApplet::setActiveSystrayInterface(NetworkManager::Device * de
 
     if (m_activeSystrayInterface) {
         m_lastActiveSystrayInterfaceUni = m_activeSystrayInterface->uni();
-    } else {
-        m_lastActiveSystrayInterfaceUni.clear();
     }
 }
 
