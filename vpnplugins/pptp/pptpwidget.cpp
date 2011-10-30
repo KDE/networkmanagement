@@ -114,7 +114,7 @@ void PptpSettingWidget::readConfig()
 
     // Options below is belongs to "Advanced" dialog
 
-    // Authentification options
+    // Authentication options
     QString yesString = QLatin1String("yes");
     bool refuse_pap = (dataMap[NM_PPTP_KEY_REFUSE_PAP] == yesString);
     bool refuse_chap = (dataMap[NM_PPTP_KEY_REFUSE_CHAP] == yesString);
