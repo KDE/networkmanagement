@@ -101,7 +101,7 @@ QString unQuote(QString &certVal, const QString &fileName)
     return certFile;
 }
 
-bool isEncrypted(QString &fileName)
+bool isEncrypted(const QString &fileName)
 {
     bool encrypted = false;
     // TODO: if is_pkcs12(fileName) return true;
