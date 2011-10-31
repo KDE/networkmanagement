@@ -110,6 +110,7 @@ void VpnInterfaceItem::setConnectionInfo()
         m_connectionNameLabel->setText(i18nc("VPN state label", "Not Connected..."));
     }
     m_disconnectButton->setVisible(showDisconnect);
+    setEnabled(showDisconnect);
     if (!m_vpnActivatables.isEmpty()) {
         //kDebug() << m_vpnActivatables.count() << "VPN connections have become available!";
         show();
