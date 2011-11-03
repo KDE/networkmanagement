@@ -36,6 +36,7 @@ public:
     virtual NetworkManager::AccessPoint::WpaFlags rsnFlags() const = 0;
     virtual NetworkManager::WirelessDevice::OperationMode operationMode() const = 0;
     virtual void strengthChanged(int) = 0;
+    virtual bool isValid() const = 0;
 };
 
 #endif // REMOTEWIRELESSOBJECT_H

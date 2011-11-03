@@ -54,6 +54,7 @@ public:
     NetworkManager::AccessPoint::WpaFlags wpaFlags() const;
     NetworkManager::AccessPoint::WpaFlags rsnFlags() const;
     NetworkManager::WirelessDevice::OperationMode operationMode() const;
+    bool isValid() const;
 Q_SIGNALS:
     void strengthChanged(int);
 protected:
