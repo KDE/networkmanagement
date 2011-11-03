@@ -36,6 +36,7 @@ public:
     virtual Solid::Control::AccessPointNm09::WpaFlags rsnFlags() const = 0;
     virtual Solid::Control::WirelessNetworkInterfaceNm09::OperationMode operationMode() const = 0;
     virtual void strengthChanged(int) = 0;
+    virtual bool isValid() const = 0;
 };
 
 #endif // REMOTEWIRELESSOBJECT_H

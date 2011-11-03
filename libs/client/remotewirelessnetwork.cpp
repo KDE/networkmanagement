@@ -84,4 +84,10 @@ Solid::Control::WirelessNetworkInterfaceNm09::OperationMode RemoteWirelessNetwor
     return (Solid::Control::WirelessNetworkInterfaceNm09::OperationMode)rsnflags;
 }
 
+bool RemoteWirelessNetwork::isValid() const
+{
+    Q_D(const RemoteWirelessNetwork);
+    return d->wirelessNetworkItemInterface->isValid();
+}
+
 // vim: sw=4 sts=4 et tw=100

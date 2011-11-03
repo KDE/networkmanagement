@@ -53,6 +53,7 @@ public:
     Solid::Control::AccessPointNm09::WpaFlags wpaFlags() const;
     Solid::Control::AccessPointNm09::WpaFlags rsnFlags() const;
     Solid::Control::WirelessNetworkInterfaceNm09::OperationMode operationMode() const;
+    bool isValid() const;
 Q_SIGNALS:
     void strengthChanged(int);
 protected:
