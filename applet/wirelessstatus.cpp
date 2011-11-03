@@ -64,7 +64,7 @@ public:
             return;
         }
 
-        if (!wobj || !wobj->isValid()) {
+        if (!wobj->isValid()) {
             kDebug() << "wobj is invalid";
             return;
         }
