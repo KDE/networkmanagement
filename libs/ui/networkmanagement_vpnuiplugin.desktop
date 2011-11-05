@@ -32,6 +32,7 @@ Name[th]=โปรแกรมเสริมส่วนติดต่อผ�
 Name[tr]=Ağ Yönetimi VPN Göresel Arayüz Eklentisi
 Name[uk]=Додаток інтерфейсу користувача керування VPN
 Name[x-test]=xxNetwork Management VPN UI Pluginxx
+Name[zh_CN]=网络管理 VPN 用户界面插件
 Name[zh_TW]=網路管理 VPN 使用者介面外掛程式
 Comment=Defines KDE Network Management UI Plugins
 Comment[ca]=Defineix els connector de la IU del Gestor de xarxa del KDE
@@ -62,6 +63,7 @@ Comment[th]=กำหนดโปรแกรมเสริมส่วนต�
 Comment[tr]=Ağ Yönetimi Görsel Arayüz Eklentilerini Tanımlar
 Comment[uk]=Визначає додатки інтерфейсу користувача керування мережею KDE
 Comment[x-test]=xxDefines KDE Network Management UI Pluginsxx
+Comment[zh_CN]=定义 KDE 网络管理用户界面插件
 Comment[zh_TW]=定義 KDE 網路管理介面外掛程式
 
 [PropertyDef::X-NetworkManager-Services]

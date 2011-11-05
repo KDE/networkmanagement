@@ -33,6 +33,7 @@ Name[tr]=Ağ Yönetimi
 Name[ug]=تور باشقۇرۇش
 Name[uk]=Керування мережею
 Name[x-test]=xxNetwork Managementxx
+Name[zh_CN]=网络管理
 Name[zh_TW]=網路管理
 IconName=networkmanager
 Comment=Network Management
@@ -67,6 +68,7 @@ Comment[tr]=Ağ Yönetimi
 Comment[ug]=تور باشقۇرۇش
 Comment[uk]=Керування мережею
 Comment[x-test]=xxNetwork Managementxx
+Comment[zh_CN]=网络管理
 Comment[zh_TW]=網路管理
 Version=3
 
@@ -102,6 +104,7 @@ Name[th]=ชนิดการเชื่อมต่อเครือข่�
 Name[tr]=Ağ Bağlantı Türü
 Name[uk]=Тип мережевого з'єднання
 Name[x-test]=xxNetwork Connection Typexx
+Name[zh_CN]=网络连接类型
 Name[zh_TW]=網路連線型態
 
 [Event/hwadded]
@@ -136,6 +139,7 @@ Name[th]=ส่วนติดต่อเครือข่ายที่เ�
 Name[tr]=Ağ Arayüzü Eklendi
 Name[uk]=Доданий інтерфейс мережі
 Name[x-test]=xxNetwork Interface Attachedxx
+Name[zh_CN]=网络接口插入
 Name[zh_TW]=網路介面已接上
 Comment=A network interface was attached
 Comment[ca]=S'ha connectat una interfície de xarxa
@@ -168,6 +172,7 @@ Comment[th]=ส่วนติดต่อเครือข่ายถูก�
 Comment[tr]=Bir ağ arayüzü eklendi
 Comment[uk]=Було додано інтерфейс мережі
 Comment[x-test]=xxA network interface was attachedxx
+Comment[zh_CN]=插入了一个网络接口
 Comment[zh_TW]=網路介面已接上
 
 [Event/hwremoved]
@@ -202,6 +207,7 @@ Name[th]=ส่วนติดต่อเครือข่ายที่เ�
 Name[tr]=Ağ Arayüzü Çıkarıldı
 Name[uk]=Вилучено інтерфейс мережі
 Name[x-test]=xxNetwork Interface Removedxx
+Name[zh_CN]=网络接口断开
 Name[zh_TW]=網路介面已移除
 Comment=A network interface was removed
 Comment[ca]=S'ha eliminat una interfície de xarxa
@@ -234,6 +240,7 @@ Comment[th]=ส่วนติดต่อเครือข่ายถูก�
 Comment[tr]=Bir ağ arayüzü çıkarıldı
 Comment[uk]=Було вилучено інтерфейс мережі
 Comment[x-test]=xxA network interface was removedxx
+Comment[zh_CN]=一个网络接口已经断开
 Comment[zh_TW]=網路介面已移除
 
 [Event/networkappeared]
@@ -268,6 +275,7 @@ Name[th]=พบเครือข่ายไร้สาย
 Name[tr]=Kablosuz Ağ Bulundu
 Name[uk]=Знайдено бездротову мережу
 Name[x-test]=xxFound Wireless Networkxx
+Name[zh_CN]=找到无线网络
 Name[zh_TW]=找到無線網路
 Comment=A wireless network appeared
 Comment[ca]=Ha aparegut una xarxa sense fils
@@ -300,6 +308,7 @@ Comment[th]=มีเครือข่ายไร้สายหนึ่ง�
 Comment[tr]=Yeni bir kablosuz ağ algılandı
 Comment[uk]=Встановлено зв’язок з бездротовою мережею
 Comment[x-test]=xxA wireless network appearedxx
+Comment[zh_CN]=找到一个无线网络
 Comment[zh_TW]=找到無線網路
 
 [Event/networkdisappeared]
@@ -930,6 +939,7 @@ Name[th]=การจัดการเครือข่ายหยุดท�
 Name[tr]=Ağ yönetimi etkin değil
 Name[uk]=Керування мережею вимкнено
 Name[x-test]=xxNetwork management disabledxx
+Name[zh_CN]=网络管理器已经禁用
 Name[zh_TW]=網路管理已關閉
 Comment=The network management subsystem was stopped or restarted
 Comment[ca]=El subsistema de gestió de la xarxa s'ha aturat o s'ha reiniciat
