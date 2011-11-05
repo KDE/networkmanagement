@@ -100,6 +100,15 @@ public:
      */
     static qreal interfaceState(const NetworkManager::Device *interface);
 
+    /** This method can be used to retrieve the progress of a connection attempt
+     * as a qreal, for painting progress bars. This is mostly used by VPN connections,
+     * which do not have NetworkManager::Device associated to them.
+     *
+     * @return the progress between 0 (unknown) and 1 (activated).
+     * @param remote interface connection
+     */
+    static qreal interfaceConnectionState(const RemoteInterfaceConnection *ic);
+
     /**
      * @return a human-readable description of operation mode.
      * @param mode the operation mode

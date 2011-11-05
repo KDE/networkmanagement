@@ -917,6 +917,28 @@ QPixmap NetworkManagerApplet::generateProgressStatusOverlay()
     return pix;
 }
 
+QPixmap NetworkManagerApplet::generateVpnProgressStatusOverlay(const RemoteInterfaceConnection *ic)
+{
+    int width = contentsRect().width();
+    int height = qMax(width / 4, 4);
+
+    QPixmap pix(width, height);
+    pix.fill(Qt::transparent);
+    qreal state = UiUtils::interfaceConnectionState(ic);
+
+    QPainter p(&pix);
+    p.setRenderHint(QPainter::Antialiasing);
+    m_meterBgSvg->resizeFrame(pix.size());
+    m_meterBgSvg->paintFrame(&p, pix.rect());
+
+    QRectF innerRect = pix.rect();
+    innerRect.setWidth(innerRect.width() * state);
+    m_meterFgSvg->resizeFrame(innerRect.size());
+    m_meterFgSvg->paintFrame(&p, innerRect);
+
+    return pix;
+}
+
 void NetworkManagerApplet::clearActivatedOverlay()
 {
     if (m_activeInterface && static_cast<NetworkManager::Device::State>(m_activeInterface->state()) == NetworkManager::Device::Activated) {
@@ -946,16 +968,22 @@ void NetworkManagerApplet::vpnActivationStateChanged(Knm::InterfaceConnection::A
     {
         case Knm::InterfaceConnection::Activated:
             m_totalActiveVpnConnections++;
+            setStatusOverlay(generateVpnProgressStatusOverlay(ic));
+            setStatusOverlay("task-complete");
+            QTimer::singleShot(4000, this, SLOT(clearActivatedOverlay()));
             if (!m_activeVpnConnections.contains(id))
                 m_activeVpnConnections.insert(id, QWeakPointer<RemoteInterfaceConnection>(ic));
             break;
         case Knm::InterfaceConnection::Activating:
+            setStatusOverlay(generateVpnProgressStatusOverlay(ic));
             m_activeVpnConnections.insert(id, QWeakPointer<RemoteInterfaceConnection>(ic));
             break;
         case Knm::InterfaceConnection::Unknown:
             m_activeVpnConnections.remove(id);
-            if (oldState == Knm::InterfaceConnection::Activated && m_totalActiveVpnConnections > 0)
+            if (oldState == Knm::InterfaceConnection::Activated && m_totalActiveVpnConnections > 0) {
                 m_totalActiveVpnConnections--;
+                QTimer::singleShot(2000, this, SLOT(resetActiveSystrayInterface()));
+            }
             break;
     }
     //kDebug() << newState << m_totalActiveVpnConnections;

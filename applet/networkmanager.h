@@ -129,6 +129,7 @@ private:
     void paintStatusOverlay(QPainter* p, QRect & rect);
     void paintNeedAuthOverlay(QPainter* p, QRect & rect);
     QPixmap generateProgressStatusOverlay();
+    QPixmap generateVpnProgressStatusOverlay(const RemoteInterfaceConnection *ic);
     void setStatusOverlay(const QPixmap&);
     void setStatusOverlay(const QString&);
     inline void setActiveInterface(NetworkManager::Device * device);

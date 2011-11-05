@@ -328,6 +328,26 @@ qreal UiUtils::interfaceState(const NetworkManager::Device *interface)
     return 0;
 }
 
+qreal UiUtils::interfaceConnectionState(const RemoteInterfaceConnection *ic)
+{
+    if (!ic) {
+        return 0;
+    }
+    switch (ic->activationState()) {
+    case Knm::InterfaceConnection::Activating:
+        return 0.33;
+        break;
+    case Knm::InterfaceConnection::Activated:
+        return 1.0;
+        break;
+    case Knm::InterfaceConnection::Unknown:
+    default:
+        return 0;
+        break;
+    }
+    return 0;
+}
+
 QString UiUtils::operationModeToString(NetworkManager::WirelessDevice::OperationMode mode)
 {
     QString modeString;
