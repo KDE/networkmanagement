@@ -979,10 +979,10 @@ void NetworkManagerApplet::vpnActivationStateChanged(Knm::InterfaceConnection::A
             m_activeVpnConnections.insert(id, QWeakPointer<RemoteInterfaceConnection>(ic));
             break;
         case Knm::InterfaceConnection::Unknown:
+            setStatusOverlay(QPixmap());
             m_activeVpnConnections.remove(id);
             if (oldState == Knm::InterfaceConnection::Activated && m_totalActiveVpnConnections > 0) {
                 m_totalActiveVpnConnections--;
-                QTimer::singleShot(2000, this, SLOT(resetActiveSystrayInterface()));
             }
             break;
     }
