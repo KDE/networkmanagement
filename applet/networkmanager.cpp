@@ -895,14 +895,13 @@ void NetworkManagerApplet::setStatusOverlay(const QString& name)
     setStatusOverlay(pix);
 }
 
-QPixmap NetworkManagerApplet::generateProgressStatusOverlay()
+QPixmap NetworkManagerApplet::generateProgressStatusOverlay(const qreal state)
 {
     int width = contentsRect().width();
     int height = qMax(width / 4, 4);
 
     QPixmap pix(width, height);
     pix.fill(Qt::transparent);
-    qreal state = UiUtils::interfaceState(m_activeSystrayInterface);
 
     QPainter p(&pix);
     p.setRenderHint(QPainter::Antialiasing);
@@ -917,26 +916,14 @@ QPixmap NetworkManagerApplet::generateProgressStatusOverlay()
     return pix;
 }
 
+QPixmap NetworkManagerApplet::generateProgressStatusOverlay()
+{
+    return generateProgressStatusOverlay(UiUtils::interfaceState(m_activeSystrayInterface));
+}
+
 QPixmap NetworkManagerApplet::generateVpnProgressStatusOverlay(const RemoteInterfaceConnection *ic)
 {
-    int width = contentsRect().width();
-    int height = qMax(width / 4, 4);
-
-    QPixmap pix(width, height);
-    pix.fill(Qt::transparent);
-    qreal state = UiUtils::interfaceConnectionState(ic);
-
-    QPainter p(&pix);
-    p.setRenderHint(QPainter::Antialiasing);
-    m_meterBgSvg->resizeFrame(pix.size());
-    m_meterBgSvg->paintFrame(&p, pix.rect());
-
-    QRectF innerRect = pix.rect();
-    innerRect.setWidth(innerRect.width() * state);
-    m_meterFgSvg->resizeFrame(innerRect.size());
-    m_meterFgSvg->paintFrame(&p, innerRect);
-
-    return pix;
+    return generateProgressStatusOverlay(UiUtils::interfaceConnectionState(ic));
 }
 
 void NetworkManagerApplet::clearActivatedOverlay()
