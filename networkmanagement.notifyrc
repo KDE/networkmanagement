@@ -347,7 +347,7 @@ Comment[sv]=En nätverksanslutning har upprättats
 Comment[uk]=Було встановлено з’єднання з мережею
 Comment[x-test]=xxA network connection was establishedxx
 Comment[zh_TW]=網路連線已建立。
-Action=Popup
+Action=
 
 [Event/connfailed]
 Name=Network Connection Failed
