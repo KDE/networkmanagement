@@ -39,7 +39,7 @@ namespace Knm
 /**
  * Base class for connection configuration widgets.  Exists to provide
  * name() and type() so these values can be cached in the main
- * knetworkmanagerrc file
+ * networkmanagementrc file
  */
 class KNM_EXPORT ConnectionPreferences : public QWidget
 {

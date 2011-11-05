@@ -94,7 +94,7 @@ private slots:
      */
     void connectionTypeMenuTriggered(QAction* action);
     /**
-     * Reparse knetworkmanagerrc (the main connection file) and rebuild the list of connections
+     * Re-populate GUI from NetworkManager's connection list.
      */
     void restoreConnections();
     /**
