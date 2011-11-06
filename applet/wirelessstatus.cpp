@@ -58,15 +58,8 @@ public:
 
     void init(RemoteWirelessObject* wobj)
     {
-        if (!wobj) {
-            kDebug() << "wobj is null";
+        if (!wobj)
             return;
-        }
-
-        if (!wobj || !wobj->isValid()) {
-            kDebug() << "wobj is invalid";
-            return;
-        }
 
         if (wobj->operationMode() == NetworkManager::WirelessDevice::Adhoc) {
             adhoc = true;

@@ -81,9 +81,4 @@ NetworkManager::WirelessDevice::OperationMode RemoteWirelessInterfaceConnection:
     return (NetworkManager::WirelessDevice::OperationMode)rsnflags;
 }
 
-bool RemoteWirelessInterfaceConnection::isValid() const
-{
-    Q_D(const RemoteWirelessInterfaceConnection);
-    return d->wirelessInterfaceConnectionIface->isValid();
-}
 // vim: sw=4 sts=4 et tw=100
