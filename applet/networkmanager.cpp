@@ -311,9 +311,6 @@ void NetworkManagerApplet::init()
                                   Q_ARG(NetworkManager::Device::State, NetworkManager::Device::UnknownState),
                                   Q_ARG(NetworkManager::Device::StateChangeReason, NetworkManager::Device::NoReason));
     }
-
-    connect(m_activatables, SIGNAL(appeared()), SLOT(finishInitialization()));
-    finishInitialization();
 }
 
 void NetworkManagerApplet::finishInitialization()
@@ -331,6 +328,10 @@ QGraphicsWidget* NetworkManagerApplet::graphicsWidget()
         m_popup = new NMPopup(m_activatables, this);
         connect(m_popup, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
     }
+
+    connect(m_activatables, SIGNAL(appeared()), SLOT(finishInitialization()));
+    QTimer::singleShot(5000, this, SLOT(finishInitialization()));;
+
     return m_popup;
 }
 
