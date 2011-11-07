@@ -138,7 +138,7 @@ void InterfaceNotificationHost::strengthChanged(int strength)
 
     if (ic->activationState() == Knm::InterfaceConnection::Activated) {
         m_suppressStrengthNotification = true;
-	// ignore strengh notifications for 5 minutes.
+        // ignore strengh notifications for 5 minutes.
         QTimer::singleShot(5 * 60 * 1000, this, SLOT(enableStrengthNotification()));
         KNotification::event(Event::LowSignal, m_interfaceNameLabel, i18nc("@info:status Notification text when wireless/gsm signal is low","Low signal on %1", ic->connectionName()), KIcon(Knm::Connection::iconName(ic->connectionType())).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, m_manager->componentData());
     }
@@ -297,6 +297,9 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(NetworkManager::
         case NetworkManager::Device::ModemDialTimeoutReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ModemDialTimeoutReason","%1 because the modem dial timed out", stateString);
             break;
+        case NetworkManager::Device::ModemDialFailedReason:
+            text = i18nc("@info:status Notification when an interface changes state (%1) due to ModemDialFailedReason","%1 because the modem dial failed", stateString);
+            break;
         case NetworkManager::Device::ModemInitFailedReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to ModemInitFailedReason","%1 because the modem could not be initialized", stateString);
             break;
@@ -336,8 +339,24 @@ void InterfaceNotificationHost::interfaceConnectionStateChanged(NetworkManager::
         case NetworkManager::Device::CarrierReason:
             text = i18nc("@info:status Notification when an interface changes state (%1) due to CarrierReason","%1 because the cable was disconnected", stateString);
             break;
+        case NetworkManager::Device::ConnectionAssumedReason:
+            text = i18nc("@info:status Notification when an interface changes state (%1) due to ConnectionAssumedReason","%1 because the device's existing connection was assumed", stateString);
+            break;
+        case NetworkManager::Device::SupplicantAvailableReason:
+            text = i18nc("@info:status Notification when an interface changes state (%1) due to SupplicantAvailableReason","%1 because the supplicant is now available", stateString);
+            break;
+        case NetworkManager::Device::ModemNotFoundReason:
+            text = i18nc("@info:status Notification when an interface changes state (%1) due to ModemNotFoundReason","%1 because the modem could not be found", stateString);
+            break;
+        case NetworkManager::Device::BluetoothFailedReason:
+            text = i18nc("@info:status Notification when an interface changes state (%1) due to BluetoothFailedReason","%1 because the bluetooth connection failed or timed out", stateString);
+            break;
+        case NetworkManager::Device::Reserved:
+            break;
     }
-    performInterfaceNotification(title, text, KIcon(Knm::Connection::iconName(m_type)).pixmap(QSize(iconSize,iconSize)), flag);
+    if (!text.isEmpty()) {
+        performInterfaceNotification(title, text, KIcon(Knm::Connection::iconName(m_type)).pixmap(QSize(iconSize,iconSize)), flag);
+    }
 }
 
 void InterfaceNotificationHost::performInterfaceNotification(const QString & title, const QString & text, const QPixmap & pixmap, KNotification::NotificationFlag flag)
@@ -590,10 +609,10 @@ void NotificationManager::notifyNewNetworks()
         KNotification::event(Event::NetworkAppeared, i18nc("@info:status Notification text when a single wireless network was found","Wireless network %1 found", d->newWirelessNetworks[0]), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData);
     } else {
         KNotification::event(Event::NetworkAppeared, i18ncp("@info:status Notification text when multiple wireless networks are found. %2 is a list of networks, and the %1 value (not printed) is just used to determine the plural form of network.",
-							    "<b>New wireless network:</b><br /> %2",
-							    "<b>New wireless networks:</b><br /> %2",
-							    d->newWirelessNetworks.count(), // the %1 parameter, used only to choose between plural forms on the word network
-							    d->newWirelessNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
+                                                            "<b>New wireless network:</b><br /> %2",
+                                                            "<b>New wireless networks:</b><br /> %2",
+                                                            d->newWirelessNetworks.count(), // the %1 parameter, used only to choose between plural forms on the word network
+                                                            d->newWirelessNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
     }
     d->newNetworkTimer->stop();
     d->newWirelessNetworks.clear();
@@ -609,10 +628,10 @@ void NotificationManager::notifyDisappearedNetworks()
 
     } else {
         KNotification::event(Event::NetworkDisappeared, i18ncp("@info:status Notification text when multiple wireless networks have disappeared.  %2 is a list of networks, and the %1 value (not printed) is just used to determine the plural form of network.",
-							       "<b>Wireless network disappeared:</b><br /> %2",
-							       "<b>Wireless networks disappeared:</b><br /> %2",
-							       d->disappearedWirelessNetworks.count(), // the %1 parameter, used only to choose between plural forms on the word network
-							       d->disappearedWirelessNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
+                                                               "<b>Wireless network disappeared:</b><br /> %2",
+                                                               "<b>Wireless networks disappeared:</b><br /> %2",
+                                                               d->disappearedWirelessNetworks.count(), // the %1 parameter, used only to choose between plural forms on the word network
+                                                               d->disappearedWirelessNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
     }
     d->disappearedNetworkTimer->stop();
     d->disappearedWirelessNetworks.clear();
