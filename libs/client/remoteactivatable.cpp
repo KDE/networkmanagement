@@ -57,14 +57,21 @@ RemoteActivatable::~RemoteActivatable()
 Knm::Activatable::ActivatableType RemoteActivatable::activatableType() const
 {
     Q_D(const RemoteActivatable);
-    uint aType = d->activatableIface->activatableType();
-    return (Knm::Activatable::ActivatableType)aType;
+    QDBusReply<uint> reply = d->activatableIface->activatableType();
+    if (reply.isValid()) {
+        return (Knm::Activatable::ActivatableType)reply.value();
+    }
+    return Knm::Activatable::InterfaceConnection;
 }
 
 QString RemoteActivatable::deviceUni() const
 {
     Q_D(const RemoteActivatable);
-    return d->activatableIface->deviceUni();
+    QDBusReply<QString> reply = d->activatableIface->activatableType();
+    if (reply.isValid()) {
+        return reply.value();
+    }
+    return QString();
 }
 
 void RemoteActivatable::activate()
