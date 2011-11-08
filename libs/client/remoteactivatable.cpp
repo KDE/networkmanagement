@@ -67,7 +67,7 @@ Knm::Activatable::ActivatableType RemoteActivatable::activatableType() const
 QString RemoteActivatable::deviceUni() const
 {
     Q_D(const RemoteActivatable);
-    QDBusReply<QString> reply = d->activatableIface->activatableType();
+    QDBusReply<QString> reply = d->activatableIface->deviceUni();
     if (reply.isValid()) {
         return reply.value();
     }
