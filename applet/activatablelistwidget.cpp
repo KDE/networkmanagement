@@ -344,10 +344,6 @@ void ActivatableListWidget::deleteItem()
 void ActivatableListWidget::hoverEnter(const QString& uni)
 {
     foreach (ActivatableItem* item, m_itemIndex) {
-        if (!item) { // the item might be gone here
-            continue;
-        }
-
         RemoteInterfaceConnection *conn = item->interfaceConnection();
         if (conn && conn->deviceUni() == uni) {
             item->hoverEnter();
@@ -358,10 +354,6 @@ void ActivatableListWidget::hoverEnter(const QString& uni)
 void ActivatableListWidget::hoverLeave(const QString& uni)
 {
     foreach (ActivatableItem* item, m_itemIndex) {
-        if (!item) { // the item might be gone here
-            continue;
-        }
-
         RemoteInterfaceConnection *conn = item->interfaceConnection();
         if (conn && conn->deviceUni() == uni) {
             item->hoverLeave();
@@ -372,10 +364,6 @@ void ActivatableListWidget::hoverLeave(const QString& uni)
 void ActivatableListWidget::vpnHoverEnter()
 {
     foreach (ActivatableItem* item, m_itemIndex) {
-        if (!item) { // the item might be gone here
-            continue;
-        }
-
         RemoteInterfaceConnection * conn = item->interfaceConnection();
         if (conn && conn->connectionType() == Knm::Connection::Vpn)
             item->hoverEnter();
@@ -385,10 +373,6 @@ void ActivatableListWidget::vpnHoverEnter()
 void ActivatableListWidget::vpnHoverLeave()
 {
     foreach (ActivatableItem* item, m_itemIndex) {
-        if (!item) { // the item might be gone here
-            continue;
-        }
-
         RemoteInterfaceConnection * conn = item->interfaceConnection();
         if (conn && conn->connectionType() == Knm::Connection::Vpn)
             item->hoverLeave();
