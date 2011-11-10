@@ -336,7 +336,7 @@ void ActivatableListWidget::deleteItem()
 {
     ActivatableItem* ai = dynamic_cast<ActivatableItem*>(sender());
     m_layout->removeItem(ai);
-    if (m_itemIndex.key(ai))
+    if (m_itemIndex.key(ai, 0))
         m_itemIndex.remove(m_itemIndex.key(ai));
     delete ai;
 }
