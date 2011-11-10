@@ -150,7 +150,7 @@ void NMDBusSecretAgent::deleteSavedConnection(Knm::Connection *con)
 }
 
 
-void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name, bool failed)
+void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name, bool failed, bool needsSaving)
 {
     Q_D(NMDBusSecretAgent);
     QPair<QString, QDBusMessage> pair = d->connectionsToRead.take(con->uuid() + name);
@@ -166,7 +166,11 @@ void NMDBusSecretAgent::secretsReady(Knm::Connection *con, const QString &name, 
             reply << arg;
         }
         QDBusConnection::systemBus().send(reply);
-        delete con;
+        if (needsSaving) {
+            d->secretsProvider->saveSecrets(con);
+        } else {
+            delete con;
+        }
     }
 }
 
@@ -180,6 +184,6 @@ void NMDBusSecretAgent::registerSecretsProvider(SecretsProvider * provider)
 {
     Q_D(NMDBusSecretAgent);
     d->secretsProvider = provider;
-    connect(d->secretsProvider,SIGNAL(connectionRead(Knm::Connection *, const QString&, bool)),SLOT(secretsReady(Knm::Connection*, const QString&, bool)));
+    connect(d->secretsProvider,SIGNAL(connectionRead(Knm::Connection *, const QString&, bool, bool)),SLOT(secretsReady(Knm::Connection*, const QString&, bool, bool)));
     connect(d->secretsProvider,SIGNAL(connectionSaved(Knm::Connection *)),SLOT(deleteSavedConnection(Knm::Connection *)));
 }

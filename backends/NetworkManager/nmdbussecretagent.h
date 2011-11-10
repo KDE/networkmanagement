@@ -58,7 +58,7 @@ private:
     void loadSecrets(Knm::Secrets*);
 
 private Q_SLOTS:
-    void secretsReady(Knm::Connection *, const QString &, bool);
+    void secretsReady(Knm::Connection *, const QString &, bool, bool);
     void deleteSavedConnection(Knm::Connection *);
     void registerAgent();
 };
