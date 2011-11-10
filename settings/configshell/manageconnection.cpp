@@ -81,11 +81,13 @@ void ManageConnection::addConnectionCompleted(bool valid, const QString &errorMe
 {
     kDebug(KDE_DEFAULT_DEBUG_AREA);
     if (!valid) {
+        QString msg;
         if (errorMessage.isEmpty())
-            KMessageBox::error(0, i18n("Connection create operation failed."));
+            msg = i18n("unknown error");
         else
-            KMessageBox::error(0, errorMessage);
+            msg = errorMessage;
 
+        KMessageBox::error(0, i18n("Error adding connection: %s", msg));
         deleteLater();
         kapp->quit();
     }
