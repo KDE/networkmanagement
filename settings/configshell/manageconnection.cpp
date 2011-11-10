@@ -53,6 +53,8 @@ ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.net
                 break;
             }
         }
+    } else {
+        kError(KDE_DEFAULT_DEBUG_AREA) << "bluetooth setting not found";
     }
 
     if (addConnection) {
@@ -71,6 +73,7 @@ ManageConnection::~ManageConnection()
 
 void ManageConnection::saveConnection(Knm::Connection *con)
 {
+    kDebug() << "Saving connection" << con->name();
     ManageConnection *ptr = new ManageConnection(con);
 }
 
