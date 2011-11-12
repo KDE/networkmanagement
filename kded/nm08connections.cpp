@@ -58,7 +58,7 @@ Nm08Connections::Nm08Connections(SecretStorage * secretStorage, NMDBusSettingsCo
     m_connectionsToImport = KNetworkManagerServicePrefs::self()->connections();
     kDebug() << "Connections to import:" << m_connectionsToImport;
 
-    connect(m_secretStorage, SIGNAL(connectionRead(Knm::Connection *, const QString&, bool)), SLOT(gotSecrets(Knm::Connection *, const QString&, bool)));
+    connect(m_secretStorage, SIGNAL(connectionRead(Knm::Connection *, const QString&, bool, bool)), SLOT(gotSecrets(Knm::Connection *, const QString&, bool)));
     connect(m_nmDBusConnectionProvider, SIGNAL(addConnectionCompleted(bool, const QString &)), SLOT(importNextNm08Connection()));
 }
 
