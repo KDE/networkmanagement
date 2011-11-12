@@ -43,13 +43,10 @@ ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.net
             Knm::BluetoothSetting * setting = static_cast<Knm::BluetoothSetting *>(c->setting(Knm::Setting::Bluetooth));
 
             if (setting && setting->bdaddr() == btSetting->bdaddr()) {
-                kDebug() << "Updating existing bluetooth connection instead of creating one";
+                kDebug(KDE_DEFAULT_DEBUG_AREA) << "Updating existing bluetooth connection instead of creating one";
                 connect(mSystemSettings, SIGNAL(connectionsChanged()), SLOT(updateConnectionCompleted()));
                 mSystemSettings->updateConnection(c->uuid(), con);
                 addConnection = false;
-
-                // In case the connectionChanged signal never arrives.
-                QTimer::singleShot(60000, this, SLOT(updateConnectionCompleted()));
                 break;
             }
         }
@@ -62,6 +59,9 @@ ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.net
         connect(&m_manager, SIGNAL(ActivatableAdded(QString, uint, int)), this, SLOT(activatableAdded(QString, uint, int)));
         mSystemSettings->addConnection(con);
     }
+
+    // To prevent stale networkmanagement_configshell processes.
+    QTimer::singleShot(30000, this, SLOT(updateConnectionCompleted()));
 }
 
 ManageConnection::~ManageConnection()
@@ -73,7 +73,7 @@ ManageConnection::~ManageConnection()
 
 void ManageConnection::saveConnection(Knm::Connection *con)
 {
-    kDebug() << "Saving connection" << con->name();
+    kDebug(KDE_DEFAULT_DEBUG_AREA) << "Saving connection" << con->name();
     ManageConnection *ptr = new ManageConnection(con);
 }
 
