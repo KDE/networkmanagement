@@ -56,6 +56,7 @@ protected Q_SLOTS:
     void handleHasDefaultRouteChanged(bool);
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
     void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
+    void notifyNetworkingState();
 
 protected:
     RemoteActivatable *m_activatable;
