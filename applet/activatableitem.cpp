@@ -100,11 +100,15 @@ void ActivatableItem::emitClicked()
                        remote->activationState() == Knm::InterfaceConnection::Activated)) {
             emit showInterfaceDetails(remote->deviceUni());
         } else {
-            m_activatable->activate();
+            QTimer::singleShot(0, m_activatable, SLOT(activate()));
         }
         emit clicked(this);
     }
+    QTimer::singleShot(0, this, SLOT(notifyNetworkingState()));
+}
 
+void ActivatableItem::notifyNetworkingState()
+{
     if (!NetworkManager::isNetworkingEnabled()) {
         KNotification::event(Event::NetworkingDisabled, i18nc("@info:status Notification when the networking subsystem (NetworkManager, etc) is disabled", "Networking system disabled"), QPixmap(), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData)->sendEvent();
     } else if (!NetworkManager::isWirelessEnabled() &&
