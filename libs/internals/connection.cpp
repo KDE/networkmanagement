@@ -385,6 +385,19 @@ void Connection::addSetting(Setting * newSetting)
     m_settings.append(newSetting);
 }
 
+void Connection::removeSetting(Setting::Type type)
+{
+    QMutableListIterator<Setting *> iter(m_settings);
+    while(iter.hasNext()) {
+        Setting * setting = iter.next();
+        if (setting->type() == type) {
+            iter.remove();
+            delete setting;
+            break;
+        }
+    }
+}
+
 bool Connection::hasPersistentSecrets() const
 {
     bool connectionHasSecrets = false;
