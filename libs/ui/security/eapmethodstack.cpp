@@ -33,7 +33,7 @@ EapMethodStack::EapMethodStack(EapMethodStackPrivate &dd, Knm::Connection* conne
     QWidget * wid = eapMethods->currentWidget();
     eapMethods->removeWidget(wid);
     delete wid;
-    connect(cboEapMethod, SIGNAL(currentIndexChanged(int)), eapMethods, SLOT(setCurrentIndex(int)));
+    connect(cboEapMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(setCurrentEapMethodInternal(int)));
 }
 
 EapMethodStack::EapMethodStack(Knm::Connection* connection, QWidget * parent)
@@ -43,7 +43,7 @@ EapMethodStack::EapMethodStack(Knm::Connection* connection, QWidget * parent)
     QWidget * wid = eapMethods->currentWidget();
     eapMethods->removeWidget(wid);
     delete wid;
-    connect(cboEapMethod, SIGNAL(currentIndexChanged(int)), eapMethods, SLOT(setCurrentIndex(int)));
+    connect(cboEapMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(setCurrentEapMethodInternal(int)));
 }
 
 EapMethodStack::~EapMethodStack()
@@ -74,6 +74,14 @@ void EapMethodStack::setCurrentEapMethod(int key)
     } else {
         kDebug() << "Unknown key!";
     }
+}
+
+/* Triggered when the user changes the EAP method using the cboEapMethod combo box. */
+void EapMethodStack::setCurrentEapMethodInternal(int index)
+{
+    eapMethods->setCurrentIndex(index);
+    readConfig();
+    readSecrets();
 }
 
 EapMethod * EapMethodStack::currentEapMethod() const
