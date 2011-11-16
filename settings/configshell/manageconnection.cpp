@@ -87,7 +87,7 @@ void ManageConnection::addConnectionCompleted(bool valid, const QString &errorMe
         else
             msg = errorMessage;
 
-        KMessageBox::error(0, i18n("Error adding connection: %s", msg));
+        KMessageBox::error(0, i18n("Error adding connection: %1", msg));
         deleteLater();
         kapp->quit();
     }
