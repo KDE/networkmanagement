@@ -19,6 +19,7 @@ Comment[sv]=Nätverkshanteringsgränssnitt
 Comment[tr]=Ağ Yönetim Arkaucu
 Comment[uk]=Програма керування мережею
 Comment[x-test]=xxNetwork Management Backendxx
+Comment[zh_TW]=網路管理後端介面
 
 [PropertyDef::X-KDE-SolidBackendInfo-Version]
 Type=QString
