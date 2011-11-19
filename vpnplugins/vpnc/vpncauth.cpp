@@ -39,6 +39,7 @@ VpncAuthWidget::VpncAuthWidget(Knm::Connection * connection, QWidget * parent)
     Q_D(VpncAuthWidget);
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::VpnSetting *>(connection->setting(Knm::Setting::Vpn));
+    connect(d->ui.cbShowPasswords, SIGNAL(toggled(bool)), this, SLOT(showPasswordsChanged(bool)));
 }
 
 VpncAuthWidget::~VpncAuthWidget()
@@ -95,6 +96,13 @@ void VpncAuthWidget::writeConfig()
     }
 
     d->setting->setVpnSecrets(secretData);
+}
+
+void VpncAuthWidget::showPasswordsChanged(bool show)
+{
+    Q_D(VpncAuthWidget);
+    d->ui.leUserPassword->setPasswordMode(!show);
+    d->ui.leGroupPassword->setPasswordMode(!show);
 }
 
 // vim: sw=4 sts=4 et tw=100

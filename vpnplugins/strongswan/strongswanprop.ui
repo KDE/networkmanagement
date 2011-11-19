@@ -301,10 +301,10 @@
       <item>
        <widget class="QCheckBox" name="cbShowPasswords">
         <property name="text">
-         <string>&amp;Hide passwords</string>
+         <string>&amp;Show passwords</string>
         </property>
         <property name="checked">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
        </widget>
       </item>

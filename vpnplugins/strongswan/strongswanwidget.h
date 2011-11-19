@@ -51,6 +51,7 @@ protected Q_SLOTS:
     void pinTypeChanged(int);
     void methodChanged(int);
     void validate();
+    void showPasswordsChanged(bool show);
 private:
     void fillOnePasswordCombo(QComboBox * combo, const QString & key, const QStringMap & data, bool hasPassword);
     uint handleOnePasswordType(const QComboBox * combo, const QString & key, QStringMap & data);

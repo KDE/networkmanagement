@@ -44,6 +44,7 @@ public:
     void writeConfig();
 protected Q_SLOTS:
     void validate() {}
+    void showPasswordsChanged(bool);
 
 private:
     VpncAuthWidgetPrivate * d_ptr;

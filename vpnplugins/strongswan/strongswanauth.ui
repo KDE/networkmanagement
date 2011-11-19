@@ -34,7 +34,7 @@
    <item row="1" column="1">
     <widget class="QCheckBox" name="chkShowPass">
      <property name="text">
-      <string>&amp;Hide passwords</string>
+      <string>&amp;Show passwords</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -64,22 +64,4 @@
   </customwidget>
  </customwidgets>
  <resources/>
- <connections>
-  <connection>
-   <sender>chkShowPass</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>password</receiver>
-   <slot>setPasswordMode(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>118</x>
-     <y>40</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>227</x>
-     <y>14</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
 </ui>
