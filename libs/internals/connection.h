@@ -33,10 +33,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knminternals_export.h"
 
-class BluetoothConnectionEditor;
-
 namespace Knm
 {
+
 class KNMINTERNALS_EXPORT Connection
 {
 
@@ -130,7 +129,6 @@ private:
      * Setting of this type.
      */
     void addSetting(Setting*);
-    void removeSetting(Setting::Type);
 
     QString m_name;
     QString m_iconName;
@@ -141,8 +139,6 @@ private:
     QString m_origin;
     QList<Setting*> m_settings;
     QHash<QString,QString> m_permissions;
-
-    friend class ::BluetoothConnectionEditor;
 };
 } // namespace Knm
 

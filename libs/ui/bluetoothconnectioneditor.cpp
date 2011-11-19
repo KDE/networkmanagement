@@ -67,11 +67,6 @@ BluetoothConnectionEditor::BluetoothConnectionEditor(const QVariantList &args, Q
         m_contents->setDefaultName(defaultName);
         addToTabWidget(bluetoothWidget);
         addToTabWidget(ipV4Widget);
-
-        // We need to remove this or NM refuses to add the connection.
-        m_connection->removeSetting(Setting::Gsm);
-        m_connection->removeSetting(Setting::Ppp);
-        m_connection->removeSetting(Setting::Serial);
         return;
     }
 
@@ -134,11 +129,6 @@ BluetoothConnectionEditor::BluetoothConnectionEditor(Knm::Connection *con, QWidg
     if (b->networktype() == NM_SETTING_BLUETOOTH_TYPE_PANU) {
         addToTabWidget(bluetoothWidget);
         addToTabWidget(ipv4Widget);
-
-        // We need to remove this or NM refuses to add the connection.
-        m_connection->removeSetting(Setting::Gsm);
-        m_connection->removeSetting(Setting::Ppp);
-        m_connection->removeSetting(Setting::Serial);
     } else if (b->networktype() == NM_SETTING_BLUETOOTH_TYPE_DUN){
         GsmWidget * gsmWidget = new GsmWidget(m_connection, this);
         PppWidget * pppWidget = new PppWidget(m_connection, this);
