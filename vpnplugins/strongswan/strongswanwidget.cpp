@@ -49,6 +49,7 @@ StrongswanSettingWidget::StrongswanSettingWidget(Knm::Connection * connection, Q
     connect(d->ui.cboPrivateKeyPassOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(privateKeyPasswordTypeChanged(int)));
     connect(d->ui.cboPinOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(pinTypeChanged(int)));
     connect(d->ui.cmbMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(methodChanged(int)));
+    connect(d->ui.cbShowPasswords, SIGNAL(toggled(bool)), this, SLOT(showPasswordsChanged(bool)));
 }
 
 StrongswanSettingWidget::~StrongswanSettingWidget()
@@ -230,5 +231,12 @@ void StrongswanSettingWidget::readSecrets()
 void StrongswanSettingWidget::validate()
 {
 
+}
+
+void StrongswanSettingWidget::showPasswordsChanged(bool show)
+{
+    Q_D(StrongswanSettingWidget);
+    d->ui.lePrivateKeyPassword->setPasswordMode(!show);
+    d->ui.leUserPassword->setPasswordMode(!show);
 }
 // vim: sw=4 sts=4 et tw=100

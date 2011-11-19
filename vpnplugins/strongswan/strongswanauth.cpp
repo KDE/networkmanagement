@@ -46,6 +46,7 @@ StrongswanAuthWidget::StrongswanAuthWidget(Knm::Connection * connection, QWidget
     d->setting = static_cast<Knm::VpnSetting *>(connection->setting(Knm::Setting::Vpn));
     d->ui.setupUi(this);
     d->acceptOnShow = false;
+    connect(d->ui.chkShowPass, SIGNAL(toggled(bool)), this, SLOT(showPasswordsChanged(bool)));
 }
 
 StrongswanAuthWidget::~StrongswanAuthWidget()
@@ -114,4 +115,10 @@ void StrongswanAuthWidget::writeConfig()
     }
 
     d->setting->setVpnSecrets(secretData);
+}
+
+void StrongswanAuthWidget::showPasswordsChanged(bool show)
+{
+    Q_D(StrongswanAuthWidget);
+    d->ui.password->setPasswordMode(!show);
 }

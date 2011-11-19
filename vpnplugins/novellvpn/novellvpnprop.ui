@@ -198,7 +198,7 @@
       <item row="2" column="0">
        <widget class="QCheckBox" name="cbShowPasswords">
         <property name="text">
-         <string>Show Passwords</string>
+         <string>&amp;Show Passwords</string>
         </property>
        </widget>
       </item>

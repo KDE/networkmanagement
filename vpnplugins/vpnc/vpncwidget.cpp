@@ -75,6 +75,7 @@ VpncSettingWidget::VpncSettingWidget(Knm::Connection * connection, QWidget * par
     connect(d->ui.cboNatTraversal, SIGNAL(currentIndexChanged(int)), this, SLOT(natTraversalChanged(int)));
     connect(d->ui.cboUserPassOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(userPasswordTypeChanged(int)));
     connect(d->ui.cboGroupPassOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(groupPasswordTypeChanged(int)));
+    connect(d->ui.cbShowPasswords, SIGNAL(toggled(bool)), this, SLOT(showPasswordsChanged(bool)));
 }
 
 VpncSettingWidget::~VpncSettingWidget()
@@ -418,4 +419,12 @@ void VpncSettingWidget::validate()
 {
 
 }
+
+void VpncSettingWidget::showPasswordsChanged(bool show)
+{
+    Q_D(VpncSettingWidget);
+    d->ui.leUserPassword->setPasswordMode(!show);
+    d->ui.leGroupPassword->setPasswordMode(!show);
+}
+
 // vim: sw=4 sts=4 et tw=100

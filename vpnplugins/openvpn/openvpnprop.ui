@@ -587,7 +587,7 @@
        <item>
         <widget class="QCheckBox" name="chkShowPasswords">
          <property name="text">
-          <string>Show Passwords</string>
+          <string>&amp;Show Passwords</string>
          </property>
         </widget>
        </item>
