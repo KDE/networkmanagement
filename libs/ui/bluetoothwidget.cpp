@@ -41,7 +41,7 @@ BluetoothWidget::BluetoothWidget(Knm::Connection * connection, QWidget * parent)
     Q_D(BluetoothWidget);
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::BluetoothSetting *>(connection->setting(Knm::Setting::Bluetooth));
-    d->ui.networkname->setEnabled(false);
+    //d->ui.networkname->setEnabled(false);
     d->ui.bdaddr->setEnabled(false);
     d->ui.networktype->setEnabled(false);
 
@@ -56,7 +56,7 @@ BluetoothWidget::~BluetoothWidget()
 void BluetoothWidget::readConfig()
 {
     Q_D(BluetoothWidget);
-    d->ui.networkname->setText(d->setting->networkname());
+    //d->ui.networkname->setText(d->setting->networkname());
     d->ui.bdaddr->setText(UiUtils::macAddressAsString(d->setting->bdaddr()));
     d->ui.networktype->setCurrentIndex(networktypeIndexFromString(d->setting->networktype()));
 }
@@ -64,7 +64,7 @@ void BluetoothWidget::readConfig()
 void BluetoothWidget::writeConfig()
 {
     Q_D(BluetoothWidget);
-    d->setting->setNetworkname(d->ui.networkname->text());
+    //d->setting->setNetworkname(d->ui.networkname->text());
     d->setting->setBdaddr(UiUtils::macAddressFromString(d->ui.bdaddr->text()));
     d->setting->setNetworktype(d->ui.networktype->itemData(d->ui.networktype->currentIndex()).toString());
 }
