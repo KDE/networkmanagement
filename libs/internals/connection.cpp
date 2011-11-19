@@ -125,18 +125,18 @@ Connection::Type Connection::typeFromSolidType(const Solid::Control::NetworkInte
     return Knm::Connection::Wired;
 }
 
-Connection::Connection(const QString & name, const Connection::Type type)
+Connection::Connection(const QString & name, const Connection::Type type, NMBluetoothCapabilities bt_cap)
     : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false)
 {
     addToPermissions(KUser().loginName(),QString());
-    init();
+    init(bt_cap);
 }
 
-Connection::Connection(const QUuid & uuid, const Connection::Type type)
+Connection::Connection(const QUuid & uuid, const Connection::Type type, NMBluetoothCapabilities bt_cap)
     : m_uuid(uuid), m_type(type), m_autoConnect(false)
 {
     addToPermissions(KUser().loginName(),QString());
-    init();
+    init(bt_cap);
 }
 
 Connection::Connection(Connection *con)
@@ -157,7 +157,7 @@ Connection::~Connection()
     qDeleteAll(m_settings);
 }
 
-void Connection::init()
+void Connection::init(NMBluetoothCapabilities bt_cap)
 {
     qDeleteAll(m_settings);
     m_settings.clear();
@@ -179,10 +179,13 @@ void Connection::init()
             break;
         case Bluetooth:
             addSetting(new BluetoothSetting());
-            addSetting(new GsmSetting());
             addSetting(new Ipv4Setting());
-            addSetting(new PppSetting());
-            addSetting(new SerialSetting());
+            // Gsm, Ppp and Serial settings are not needed for PAN
+            if (bt_cap == NM_BT_CAPABILITY_DUN) {
+                addSetting(new GsmSetting());
+                addSetting(new PppSetting());
+                addSetting(new SerialSetting());
+            }
             break;
         case Pppoe:
             addSetting(new Ipv4Setting());
@@ -237,10 +240,13 @@ void Connection::init(Connection *con)
             break;
         case Bluetooth:
             addSetting(new BluetoothSetting(static_cast<BluetoothSetting*>(con->setting(Setting::Bluetooth))));
-            addSetting(new GsmSetting(static_cast<GsmSetting*>(con->setting(Setting::Gsm))));
             addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
-            addSetting(new PppSetting(static_cast<PppSetting*>(con->setting(Setting::Ppp))));
-            addSetting(new SerialSetting(static_cast<SerialSetting*>(con->setting(Setting::Serial))));
+            // Gsm, Ppp and Serial settings are not present for PAN, only for DUN
+            if (con->setting(Setting::Gsm) && con->setting(Setting::Ppp) && con->setting(Setting::Serial)) {
+                addSetting(new GsmSetting(static_cast<GsmSetting*>(con->setting(Setting::Gsm))));
+                addSetting(new PppSetting(static_cast<PppSetting*>(con->setting(Setting::Ppp))));
+                addSetting(new SerialSetting(static_cast<SerialSetting*>(con->setting(Setting::Serial))));
+            }
             break;
         case Pppoe:
             addSetting(new Ipv4Setting(static_cast<Ipv4Setting*>(con->setting(Setting::Ipv4))));
@@ -439,14 +445,14 @@ QHash<QString,QString> Connection::permissions() const
     return m_permissions;
 }
 
-void Connection::setType(Connection::Type type)
+void Connection::setType(Connection::Type type, NMBluetoothCapabilities bt_cap)
 {
     if (type == m_type)
         return;
 
     m_type = type;
 
-    init();
+    init(bt_cap);     // Ensure we add only relevant settings back
 
     kDebug() << "Connection type is set as " << typeAsString(type) << ". Settings of the connection removed since its type has been changed.";
 }

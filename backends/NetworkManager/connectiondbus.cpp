@@ -287,6 +287,7 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
     m_connection->setPermissions(permissions);
 
     Connection::Type type = Connection::Wired;
+    NMBluetoothCapabilities bt_cap = NM_BT_CAPABILITY_NONE;
     if (dbusConnectionType == QLatin1String(NM_SETTING_WIRED_SETTING_NAME)) {
         type = Connection::Wired;
     } else if (dbusConnectionType == QLatin1String(NM_SETTING_WIRELESS_SETTING_NAME)) {
@@ -297,6 +298,10 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
         type = Connection::Cdma;
     } else if (dbusConnectionType == QLatin1String(NM_SETTING_BLUETOOTH_SETTING_NAME)) {
         type = Connection::Bluetooth;
+        if (settings.value(dbusConnectionType).value(NM_SETTING_CONNECTION_TYPE) == QLatin1String(NM_SETTING_BLUETOOTH_TYPE_PANU))
+            bt_cap = NM_BT_CAPABILITY_NAP;
+        else
+            bt_cap = NM_BT_CAPABILITY_DUN;
     } else if (dbusConnectionType == QLatin1String(NM_SETTING_VPN_SETTING_NAME)) {
         type = Connection::Vpn;
     } else if (dbusConnectionType == QLatin1String(NM_SETTING_PPPOE_SETTING_NAME)) {
@@ -305,7 +310,7 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
 
     m_connection->setName(connName);
     m_connection->setUuid(uuid);
-    m_connection->setType(type);
+    m_connection->setType(type, bt_cap);
     m_connection->setAutoConnect(autoconnect);
 
     // all other settings
