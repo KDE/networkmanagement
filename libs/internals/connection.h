@@ -32,6 +32,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "setting.h"
 
 #include "knminternals_export.h"
+#include <NetworkManager.h>
 
 namespace Knm
 {
@@ -48,11 +49,11 @@ public:
     /**
      * Create a connection with a new Uuid
      */
-    Connection(const QString & name, Connection::Type type);
+    Connection(const QString & name, Connection::Type type, NMBluetoothCapabilities bt_cap = NM_BT_CAPABILITY_DUN);
     /**
      * Create a connection with a given Uuid
      */
-    explicit Connection(const QUuid& uuid, Connection::Type type);
+    explicit Connection(const QUuid& uuid, Connection::Type type, NMBluetoothCapabilities bt_cap = NM_BT_CAPABILITY_DUN );
     explicit Connection(Connection *con);
     virtual ~Connection();
 
@@ -90,8 +91,9 @@ public:
      * same, then this method will do nothing, otherwise m_settings will be cleared and
      * m_type will be set as given parameter.
      * @param type Type of the connection to be set
+     * @param bt_cap Bluetooth Capability (DUN or PAN) if @type is Knm::Connection::Bluetooth
      */
-    void setType(Connection::Type type);
+    void setType(Connection::Type type, NMBluetoothCapabilities bt_cap = NM_BT_CAPABILITY_DUN);
 
     void setPermissions(const QHash<QString,QString>&);
     void addToPermissions(const QString&, const QString&);
@@ -120,7 +122,7 @@ private:
     /**
      * Set up internal structure, including all settings specific to this connection type
      */
-    void init();
+    void init(NMBluetoothCapabilities bt_cap = NM_BT_CAPABILITY_DUN);
     void init(Connection *con);
 
     /**

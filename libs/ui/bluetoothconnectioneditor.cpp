@@ -46,7 +46,14 @@ BluetoothConnectionEditor::BluetoothConnectionEditor(const QVariantList &args, Q
 {
     Q_ASSERT(args.count());
     QString connectionId = args[0].toString();
-    m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Bluetooth);
+    if (args.count() > 2) {
+        if (args[2].toString() == NM_SETTING_BLUETOOTH_TYPE_PANU)
+            m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Bluetooth, NM_BT_CAPABILITY_NAP);
+        else
+            m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Bluetooth, NM_BT_CAPABILITY_DUN);
+    } else {
+        m_connection = new Knm::Connection(QUuid(connectionId), Knm::Connection::Bluetooth);
+    }
     m_contents->setConnection(m_connection);
     BluetoothSetting *b = static_cast<BluetoothSetting *>(m_connection->setting(Setting::Bluetooth));
     BluetoothWidget * bluetoothWidget = new BluetoothWidget(m_connection, this);
