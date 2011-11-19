@@ -101,6 +101,7 @@ void GsmWidget::writeConfig()
             d->setting->setPinflags(Knm::Setting::NotRequired);
             break;
     }
+    d->setting->setPasswordflags(Knm::Setting::AgentOwned);
 }
 
 void GsmWidget::readSecrets()
