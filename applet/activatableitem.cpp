@@ -60,6 +60,7 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
                 SLOT(handleHasDefaultRouteChanged(bool)));
         connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
                 SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
+        connect(remoteconnection, SIGNAL(changed()), SLOT(connectionChanged()));
     }
 
     // Fade in when this widget appears
@@ -172,6 +173,15 @@ void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::Activatio
             f.setItalic(true);
     }
     m_connectButton->setFont(f);
+}
+
+void ActivatableItem::connectionChanged()
+{
+    if (!m_connectButton || !interfaceConnection()) {
+        return;
+    }
+
+    m_connectButton->setText(interfaceConnection()->connectionName());
 }
 
 void ActivatableItem::hoverEnter()
