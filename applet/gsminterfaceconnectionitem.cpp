@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QAction>
 #include <QLabel>
 #include <QGraphicsGridLayout>
+#include <QTimer>
 
 #include <KGlobalSettings>
 #include <KIcon>
@@ -48,7 +49,7 @@ GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnect
 {
     connect(remote, SIGNAL(signalQualityChanged(int)), this, SLOT(setQuality(int)));
     connect(remote, SIGNAL(accessTechnologyChanged(const int)), this, SLOT(setAccessTechnology(const int)));
-    connect(remote, SIGNAL(changed()), SLOT(update()));
+    connect(remote, SIGNAL(changed()), SLOT(updateGsmInfo()));
     connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
             this, SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
     m_state = Knm::InterfaceConnection::Unknown;
@@ -103,9 +104,8 @@ void GsmInterfaceConnectionItem::setupItem()
     RemoteGsmInterfaceConnection * remoteconnection = qobject_cast<RemoteGsmInterfaceConnection*>(m_activatable);
     if (remoteconnection) {
         m_connectButton->setIcon(remoteconnection->iconName());
-        setAccessTechnology(remoteconnection->getAccessTechnology());
+        m_connectButton->setText(remoteconnection->connectionName());
         m_strengthMeter->setValue(remoteconnection->getSignalQuality());
-        m_strengthMeter->setToolTip(i18n("Signal quality: %1%", remoteconnection->getSignalQuality()));
         activationStateChanged(Knm::InterfaceConnection::Unknown, remoteconnection->activationState());
     } else {
         m_connectButton->setIcon("network-wired");
@@ -130,7 +130,7 @@ void GsmInterfaceConnectionItem::setupItem()
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
     m_layoutIsDirty = true;
-    update();
+    QTimer::singleShot(0, this, SLOT(updateGsmInfo()));
 }
 
 GsmInterfaceConnectionItem::~GsmInterfaceConnectionItem()
@@ -176,12 +176,13 @@ void GsmInterfaceConnectionItem::activationStateChanged(Knm::InterfaceConnection
     update();
 }
 
-void GsmInterfaceConnectionItem::update()
+void GsmInterfaceConnectionItem::updateGsmInfo()
 {
     RemoteGsmInterfaceConnection * remote = qobject_cast<RemoteGsmInterfaceConnection*>(m_activatable);
     if (remote) {
         setQuality(remote->getSignalQuality());
         setAccessTechnology(remote->getAccessTechnology());
+        update();
     }
 }
 

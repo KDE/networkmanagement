@@ -50,7 +50,7 @@ class GsmInterfaceConnectionItem : public ActivatableItem
     private Q_SLOTS:
         void setQuality(int quality);
         void setAccessTechnology(const int tech);
-        void update();
+        void updateGsmInfo();
         void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
 
     private:

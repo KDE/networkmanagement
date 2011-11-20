@@ -25,6 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QAction>
 #include <QLabel>
 #include <QGraphicsGridLayout>
+#include <QTimer>
 
 #include <KGlobalSettings>
 #include <KIcon>
@@ -52,7 +53,7 @@ WirelessNetworkItem::WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphi
 {
     m_wirelessStatus = new WirelessStatus(remote);
     connect(m_wirelessStatus, SIGNAL(strengthChanged(int)), this, SLOT(setStrength(int)));
-    connect(m_remote, SIGNAL(changed()), SLOT(update()));
+    connect(m_remote, SIGNAL(changed()), SLOT(updateWifiInfo()));
     connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
             this, SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
     m_state = Knm::InterfaceConnection::Unknown;
@@ -143,7 +144,7 @@ void WirelessNetworkItem::setupItem()
     connect(m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
     m_layoutIsDirty = true;
-    update();
+    QTimer::singleShot(0, this, SLOT(updateWifiInfo()));
 }
 
 WirelessNetworkItem::~WirelessNetworkItem()
@@ -183,14 +184,13 @@ void WirelessNetworkItem::activationStateChanged(Knm::InterfaceConnection::Activ
     update();
 }
 
-void WirelessNetworkItem::update()
+void WirelessNetworkItem::updateWifiInfo()
 {
     //kDebug() << "updating" << m_wirelessStatus->ssid() << wirelessNetworkItem()->strength();
     if (m_activatable) {
         setStrength((static_cast<RemoteWirelessNetwork*>(m_activatable))->strength());
+        update();
     }
-
-    return;
 }
 
 QString WirelessNetworkItem::ssid()
