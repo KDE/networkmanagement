@@ -129,7 +129,8 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
 {
     if (!iface || (iface->type() != Solid::Control::NetworkInterfaceNm09::Wifi &&
                    iface->type() != Solid::Control::NetworkInterfaceNm09::Ethernet &&
-                   iface->type() != Solid::Control::NetworkInterfaceNm09::Modem)) {
+                   iface->type() != Solid::Control::NetworkInterfaceNm09::Modem &&
+                   iface->type() != Solid::Control::NetworkInterfaceNm09::Bluetooth)) {
         return QString(); // this means: use pixmap icons instead of svg icons.
     }
 
@@ -173,7 +174,7 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
 
         // The format in the SVG looks like this: wireless-signal-<strength>
         return QString("network-wireless-%1").arg(strength);
-    } else if (iface->type() == Solid::Control::NetworkInterfaceNm09::Modem) {
+    } else if (iface->type() == Solid::Control::NetworkInterfaceNm09::Modem || iface->type() == Solid::Control::NetworkInterfaceNm09::Bluetooth) {
         Solid::Control::ModemNetworkInterfaceNm09 *giface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(iface);
 
         if (giface) {

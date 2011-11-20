@@ -122,7 +122,7 @@ QString UiUtils::iconName(Solid::Control::NetworkInterfaceNm09 *iface)
             icon = "network-wireless-connected-" + strength;
             break;
         case Solid::Control::NetworkInterfaceNm09::Bluetooth:
-            icon = "bluetooth";
+            icon = "preferences-system-bluetooth";
             break;
         case Solid::Control::NetworkInterfaceNm09::Modem:
             icon = "phone";
