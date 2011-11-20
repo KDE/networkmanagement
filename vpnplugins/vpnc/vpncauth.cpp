@@ -60,14 +60,25 @@ void VpncAuthWidget::readSecrets()
     QStringMap data = d->setting->data();
     QStringMap secrets = d->setting->vpnSecrets();
 
-    if (!((Knm::Setting::secretsTypes)data[NM_VPNC_KEY_XAUTH_PASSWORD"-flags"].toInt()).testFlag(Knm::Setting::NotRequired)) {
+    //   username
+    QString user = data.value(NM_VPNC_KEY_XAUTH_USER);
+    if (!user.isEmpty()) {
+        d->ui.leUserName->setText(user);
+    }
+    //   group name
+    QString group = data.value(NM_VPNC_KEY_ID);
+    if (!group.isEmpty()) {
+        d->ui.leGroupName->setText(group);
+    }
+
+    if (!((Knm::Setting::secretsTypes)data.value(NM_VPNC_KEY_XAUTH_PASSWORD"-flags").toInt()).testFlag(Knm::Setting::NotRequired)) {
         d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_XAUTH_PASSWORD)));
     } else {
         d->ui.userLabel->setVisible(false);
         d->ui.leUserPassword->setVisible(false);
     }
 
-    if (!((Knm::Setting::secretsTypes)d->setting->data().value(NM_VPNC_KEY_SECRET"-flags").toInt()).testFlag(Knm::Setting::NotRequired)) {
+    if (!((Knm::Setting::secretsTypes)data.value(NM_VPNC_KEY_SECRET"-flags").toInt()).testFlag(Knm::Setting::NotRequired)) {
         d->ui.leGroupPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_SECRET)));
     } else {
         d->ui.groupLabel->setVisible(false);
