@@ -121,7 +121,7 @@ QString UiUtils::iconName(NetworkManager::Device *iface)
             icon = "network-wireless-connected-" + strength;
             break;
         case NetworkManager::Device::Bluetooth:
-            icon = "bluetooth";
+            icon = "preferences-system-bluetooth";
             break;
         case NetworkManager::Device::Modem:
             icon = "phone";
