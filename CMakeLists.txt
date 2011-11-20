@@ -18,9 +18,19 @@ set(CMAKE_MODULE_PATH ${CMAKE_SOURCE_DIR} ${CMAKE_MODULE_PATH})
 macro_optional_find_package(MobileBroadbandProviderInfo)
 macro_log_feature(MOBILEBROADBANDPROVIDERINFO_FOUND "mobile-broadband-provider-info" "Database of mobile broadband service providers" "http://live.gnome.org/NetworkManager/MobileBroadband/ServiceProviders" FALSE "" "Needed for Mobile Connection Wizard support in Broadband Modem Management")
 
-add_definitions (${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
-include_directories (${KDE4_INCLUDES} ${CMAKE_INCLUDE_PATH})
-link_directories(${CMAKE_LIBRARY_PATH})
+pkg_check_modules(LIBMMQT REQUIRED libmm-qt)
+if (NOT LIBMMQT_FOUND)
+    message(FATAL_ERROR "ERROR: libmm-qt not found")
+endif (NOT LIBMMQT_FOUND)
+
+pkg_check_modules(LIBNMQT REQUIRED libnm-qt)
+if (NOT LIBNMQT_FOUND)
+    message(FATAL_ERROR "ERROR: libnm-qt not found")
+endif (NOT LIBNMQT_FOUND)
+
+add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
+include_directories(${KDE4_INCLUDES} ${LIBMMQT_INCLUDE_DIRS} ${LIBNMQT_INCLUDE_DIRS} ${CMAKE_INCLUDE_PATH})
+link_directories(${LIBMMQT_LIBRARY_DIRS} ${LIBNMQT_LIBRARY_DIRS} ${CMAKE_LIBRARY_PATH})
 
 #include(ConfigureChecks.cmake)
 
@@ -65,16 +75,6 @@ if (NETWORKMANAGER_FOUND)
         return()
     endif()
 endif(NETWORKMANAGER_FOUND)
-
-find_file(LIBMM_FOUND libmm-qt/manager.h /usr/include ${CMAKE_INCLUDE_PATH})
-if (NOT LIBMM_FOUND)
-    message(FATAL_ERROR "ERROR: libmm-qt not found")
-endif (NOT LIBMM_FOUND)
-
-find_file(LIBNM_FOUND libnm-qt/manager.h /usr/include ${CMAKE_INCLUDE_PATH})
-if (NOT LIBNM_FOUND)
-    message(FATAL_ERROR "ERROR: libnm-qt not found")
-endif (NOT LIBNM_FOUND)
 
 macro_display_feature_log()
 
