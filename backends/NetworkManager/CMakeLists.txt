@@ -66,6 +66,7 @@ set(knm_nm_LIB_SRCS
    nm-manager-interface.cpp
    nm-device-interface.cpp
    nm-ip4-config-interface.cpp
+   ../../libs/service/events.cpp
 )
 
 kde4_add_library(knm_nm SHARED ${knm_nm_LIB_SRCS})
