@@ -19,48 +19,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "networkmanager.h"
-#include "paths.h"
-
-#include <QAction>
-#include <QIcon>
-#include <QPaintEngine>
 #include <QPainter>
-#include <QDesktopWidget>
-#include <QGraphicsPixmapItem>
-#include <QTimeLine>
 
-#include <QGraphicsBlurEffect>
-
-#include <KCModuleProxy>
 #include <KCModuleInfo>
-#include <KIcon>
-#include <KIconLoader>
-#include <KToolInvocation>
 #include <KConfigDialog>
-#include <KDebug>
-#include <KLocale>
-#include <KNotification>
-#include <KPushButton>
-#include <kdeversion.h>
+#include <KCModuleProxy>
 
-#include <solid/device.h>
-#include <solid/networking.h>
-#include <libnm-qt/device.h>
-#include <libnm-qt/wireddevice.h>
-#include <libnm-qt/wirelessdevice.h>
-#include <libnm-qt/manager.h>
-
-#include <Plasma/Animator>
-#include <Plasma/CheckBox>
 #include <Plasma/Containment>
 
-#include "knmserviceprefs.h"
-#include "remoteactivatablelist.h"
+#include <libnm-qt/manager.h>
+#include <libnm-qt/wireddevice.h>
+
 #include "nmpopup.h"
 #include "uiutils.h"
-
-
+#include "remoteactivatablelist.h"
+#include "paths.h"
+#include "knmserviceprefs.h"
+#include "networkmanager.h"
 
 K_EXPORT_PLASMA_APPLET(networkmanagement, NetworkManagerApplet)
 
