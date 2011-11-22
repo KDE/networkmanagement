@@ -84,6 +84,7 @@ private Q_SLOTS:
     void onConnectionAddArrived(QDBusPendingCallWatcher *watcher);
     void interfaceConnectionActivated();
     void interfaceConnectionDeactivated();
+    void onVpnConnectionActivated(QDBusPendingCallWatcher *watcher);
 private:
     enum Operation {Add, Remove, Update};
 

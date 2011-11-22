@@ -40,6 +40,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 // knmservice includes
 #include "activatablelist.h"
+#include "notificationmanager.h"
+#include "events.h"
 
 #include "settings/ipv4.h"
 
@@ -290,8 +292,42 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
 
         // Now activate the connection
         OrgFreedesktopNetworkManagerInterface nmIface(QLatin1String(NM_DBUS_SERVICE), QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus());
-        nmIface.ActivateConnection(QDBusObjectPath(ic->property("NMDBusObjectPath").toString()), QDBusObjectPath(deviceToActivateOn), QDBusObjectPath("/"));
+        if (vpn) {
+            // to report error messages in notification manager
+            QDBusPendingCall reply = nmIface.ActivateConnection(QDBusObjectPath(ic->property("NMDBusObjectPath").toString()), QDBusObjectPath(deviceToActivateOn), QDBusObjectPath("/"));
+            QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, 0);
+            watcher->setProperty("interfaceConnection", qVariantFromValue((void *)ic));
+            connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(onVpnConnectionActivated(QDBusPendingCallWatcher*)));
+        } else {
+            // regular connections already report error messages.
+            nmIface.ActivateConnection(QDBusObjectPath(ic->property("NMDBusObjectPath").toString()), QDBusObjectPath(deviceToActivateOn), QDBusObjectPath("/"));
+        }
     }
+}
+
+void NMDBusSettingsConnectionProvider::onVpnConnectionActivated(QDBusPendingCallWatcher *watcher)
+{
+    if (!watcher) {
+        return;
+    }
+
+    QDBusPendingReply<QVariantMapMap> reply = *watcher;
+
+    // Report errors only.
+    if (reply.isValid()) {
+        watcher->deleteLater();
+        return;
+    }
+
+    Knm::VpnInterfaceConnection *ic = (Knm::VpnInterfaceConnection *)watcher->property("interfaceConnection").value<void *>();
+    QString errorMsg = reply.error().message();
+    if (errorMsg.isEmpty()) {
+        NotificationManager::performNotification(Event::ConnectFailed, QString(), i18nc("@info:status Notification text when connection has failed","Connection %1 failed", ic->connectionName()), Knm::Connection::iconName(ic->connectionType()));
+    } else {
+        NotificationManager::performNotification(Event::ConnectFailed, QString(), i18nc("@info:status Notification text when connection has failed","<p>Connection %1 failed:</p><p>%2</p>", ic->connectionName(), errorMsg), Knm::Connection::iconName(ic->connectionType()));
+    }
+
+    watcher->deleteLater();
 }
 
 void NMDBusSettingsConnectionProvider::interfaceConnectionDeactivated()

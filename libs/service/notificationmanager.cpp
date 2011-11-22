@@ -645,4 +645,8 @@ void NotificationManager::statusChanged(Solid::Networking::Status status)
     }
 }
 
+void NotificationManager::performNotification(const QString &eventId, const QString &title, const QString &text, const QString &icon)
+{
+    KNotification::event(eventId, title, text, KIcon(icon).pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData);
+}
 // vim: sw=4 sts=4 et tw=100

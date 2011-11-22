@@ -48,6 +48,7 @@ public:
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);
     void handleRemove(Knm::Activatable *);
+    static void performNotification(const QString &eventId, const QString &title, const QString &text, const QString &icon);
 
     KComponentData componentData() const;
 protected Q_SLOTS:
