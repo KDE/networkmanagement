@@ -539,18 +539,24 @@ void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMess
             KMessageBox::error(this, i18n("Error"));
         else
             KMessageBox::error(this, errorMessage);
+
+        if (mEditConnection && mEditConnection->uuid() == uuid) {
+            delete mEditConnection;
+            mEditConnection = 0;
+            return;
+        }
     }
 
-    kDebug() << uuid << mEditConnection->uuid();
-
-    if (uuid != mEditConnection->uuid()) {
+    if (!mEditConnection || mEditConnection->uuid() != uuid) {
         return;
     }
 
+    kDebug() << uuid << mEditConnection->uuid();
     Knm::Connection *result = mEditor->editConnection(mEditConnection); //starts editor window
     if (result) {
         mSystemSettings->updateConnection(mEditConnection->uuid().toString(), result);
     }
+
     delete mEditConnection;
     mEditConnection = 0;
 }
