@@ -69,6 +69,7 @@ VpncSettingWidget::VpncSettingWidget(Knm::Connection * connection, QWidget * par
 : SettingWidget(connection, parent), d_ptr(new VpncSettingWidgetPrivate)
 {
     Q_D(VpncSettingWidget);
+    setValid(false);
     d->dpdTimeout = 0;
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::VpnSetting *>(connection->setting(Knm::Setting::Vpn));
@@ -76,6 +77,8 @@ VpncSettingWidget::VpncSettingWidget(Knm::Connection * connection, QWidget * par
     connect(d->ui.cboUserPassOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(userPasswordTypeChanged(int)));
     connect(d->ui.cboGroupPassOptions, SIGNAL(currentIndexChanged(int)), this, SLOT(groupPasswordTypeChanged(int)));
     connect(d->ui.cbShowPasswords, SIGNAL(toggled(bool)), this, SLOT(showPasswordsChanged(bool)));
+    connect(d->ui.leUserName, SIGNAL(textChanged(QString)), SLOT(validate()));
+    connect(d->ui.leGroupName, SIGNAL(textChanged(QString)), SLOT(validate()));
 }
 
 VpncSettingWidget::~VpncSettingWidget()
@@ -87,12 +90,14 @@ void VpncSettingWidget::userPasswordTypeChanged(int index)
 {
     Q_D(VpncSettingWidget);
     d->ui.leUserPassword->setEnabled(index == VpncSettingWidgetPrivate::EnumPasswordStorage::Save);
+    validate();
 }
 
 void VpncSettingWidget::groupPasswordTypeChanged(int index)
 {
     Q_D(VpncSettingWidget);
     d->ui.leGroupPassword->setEnabled(index == VpncSettingWidgetPrivate::EnumPasswordStorage::Save);
+    validate();
 }
 
 void VpncSettingWidget::natTraversalChanged(int index)
@@ -417,7 +422,14 @@ void VpncSettingWidget::readSecrets()
 
 void VpncSettingWidget::validate()
 {
-
+    Q_D(VpncSettingWidget);
+    // vpnc-0.5.3 refuses to connect without username (Xauth) and group (IPSec) options.
+    bool v = !d->ui.leUserName->text().isEmpty() &&
+             (d->ui.cboUserPassOptions->currentIndex() != VpncSettingWidgetPrivate::EnumPasswordStorage::NotRequired) &&
+             !d->ui.leGroupName->text().isEmpty() &&
+             (d->ui.cboGroupPassOptions->currentIndex() != VpncSettingWidgetPrivate::EnumPasswordStorage::NotRequired);
+    setValid(v);
+    emit valid(v);
 }
 
 void VpncSettingWidget::showPasswordsChanged(bool show)
