@@ -61,7 +61,7 @@ ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.net
     }
 
     // To prevent stale networkmanagement_configshell processes.
-    QTimer::singleShot(30000, this, SLOT(updateConnectionCompleted()));
+    QTimer::singleShot(60000, this, SLOT(updateConnectionCompleted()));
 }
 
 ManageConnection::~ManageConnection()
