@@ -74,18 +74,22 @@ void VpncAuthWidget::readSecrets()
     if (!((Knm::Setting::secretsTypes)data.value(NM_VPNC_KEY_XAUTH_PASSWORD"-flags").toInt()).testFlag(Knm::Setting::NotRequired)) {
         d->ui.leUserPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_XAUTH_PASSWORD)));
     } else {
-        d->ui.userLabel->setVisible(false);
+        d->ui.userNameLabel->setVisible(false);
+        d->ui.leUserName->setVisible(false);
+        d->ui.userPasswordLabel->setVisible(false);
         d->ui.leUserPassword->setVisible(false);
     }
 
     if (!((Knm::Setting::secretsTypes)data.value(NM_VPNC_KEY_SECRET"-flags").toInt()).testFlag(Knm::Setting::NotRequired)) {
         d->ui.leGroupPassword->setText(secrets.value(QLatin1String(NM_VPNC_KEY_SECRET)));
     } else {
-        d->ui.groupLabel->setVisible(false);
+        d->ui.groupNameLabel->setVisible(false);
+        d->ui.leGroupName->setVisible(false);
+        d->ui.groupPasswordLabel->setVisible(false);
         d->ui.leGroupPassword->setVisible(false);
     }
 
-    if (d->ui.leUserPassword->text().isEmpty())
+    if (d->ui.userPasswordLabel->isVisible() && d->ui.leUserPassword->text().isEmpty())
         d->ui.leUserPassword->setFocus(Qt::OtherFocusReason);
     else if (d->ui.leGroupPassword->text().isEmpty())
         d->ui.leGroupPassword->setFocus(Qt::OtherFocusReason);
