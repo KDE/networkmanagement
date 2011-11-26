@@ -309,7 +309,7 @@ void NMDBusSettingsConnectionProvider::onVpnConnectionActivated(QDBusPendingCall
         return;
     }
 
-    QDBusPendingReply<QVariantMapMap> reply = *watcher;
+    QDBusPendingReply<QDBusObjectPath> reply = *watcher;
 
     // Report errors only.
     if (reply.isValid()) {
