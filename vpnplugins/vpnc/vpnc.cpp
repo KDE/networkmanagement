@@ -250,7 +250,7 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         data.insert(NM_VPNC_KEY_DHGROUP, cg.readEntry("DHGroup"));
         // Tunneling Mode - not supported by vpnc
         if (cg.readEntry("TunnelingMode").toInt() == 1) {
-            KMessageBox::error(0, i18n("The VPN settings file '%1' specifies that VPN traffic should be tunneled through TCP which is currently not supported in the vpnc software.\n\nThe connection can still be created, with TCP tunneling disabled, however it may not work as expected.").arg(fileName), i18n("Not supported"), KMessageBox::Notify);
+            KMessageBox::error(0, i18n("The VPN settings file '%1' specifies that VPN traffic should be tunneled through TCP which is currently not supported in the vpnc software.\n\nThe connection can still be created, with TCP tunneling disabled, however it may not work as expected.", fileName), i18n("Not supported"), KMessageBox::Notify);
         }
         // TODO : EnableLocalLAN and X-NM-Routes are to be added to IPv4Setting
 

@@ -475,7 +475,7 @@ void OpenconnectAuthWidget::validatePeerCert(const QString &fingerprint,
 
         icon->setPixmap(KIcon("dialog-information").pixmap(QSize(48,48)));
         infoText->setText(i18n("Check failed for certificate from VPN server \"%1\".\n"
-            "Reason: %2\nAccept it anyway?").arg(openconnect_get_hostname(d->vpninfo),reason));
+            "Reason: %2\nAccept it anyway?", openconnect_get_hostname(d->vpninfo),reason));
         infoText->setWordWrap(true);
         certificate->setText(peerCert);
 
