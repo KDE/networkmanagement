@@ -76,13 +76,13 @@ int main(int argc, char **argv)
             const QString type = args->getOption("type");
             Knm::Connection *con = 0;
             if (type == QLatin1String("cellular")) {
-                MobileConnectionWizard *mobileConnectionWizard = new MobileConnectionWizard();
+                QWeakPointer<MobileConnectionWizard> mobileConnectionWizard = new MobileConnectionWizard();
 
-                if (mobileConnectionWizard->exec() == QDialog::Accepted &&
-                    mobileConnectionWizard->getError() == MobileProviders::Success) {
-                    con = editor.createConnection(true, mobileConnectionWizard->type(), mobileConnectionWizard->args(), false);
+                if (mobileConnectionWizard.data()->exec() == QDialog::Accepted &&
+                    mobileConnectionWizard.data()->getError() == MobileProviders::Success) {
+                    con = editor.createConnection(true, mobileConnectionWizard.data()->type(), mobileConnectionWizard.data()->args(), false);
                 }
-                delete mobileConnectionWizard;
+                delete mobileConnectionWizard.data();
             }
             /* To create a bluetooth DUN connection:
              * networkmanagement_configshell create --type bluetooth --specific-args "00:11:22:33:44:55 dun"

@@ -115,15 +115,16 @@ void ConnectionWidget::buttonPermissionsClicked()
 {
     Q_D(ConnectionWidget);
     kDebug() << "advanced permissions dialog clicked";
-    KDialog dialog(this);
-    dialog.setCaption(i18nc("@title:window advanced permissions editor",
+    QWeakPointer<KDialog> dialog = new KDialog(this);
+    dialog.data()->setCaption(i18nc("@title:window advanced permissions editor",
                                 "Advanced Permissions Editor"));
-    dialog.setButtons( KDialog::Ok | KDialog::Cancel);
+    dialog.data()->setButtons( KDialog::Ok | KDialog::Cancel);
     AdvancedPermissionsWidget permissionsWid(d->permissions);
-    dialog.setMainWidget(&permissionsWid);
-    if (dialog.exec() == QDialog::Accepted) {
+    dialog.data()->setMainWidget(&permissionsWid);
+    if (dialog.data()->exec() == QDialog::Accepted) {
         d->permissions = permissionsWid.currentUsers();
     }
+    delete dialog.data();
 }
 
 // vim: sw=4 sts=4 et tw=100

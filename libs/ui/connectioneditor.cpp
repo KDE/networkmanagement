@@ -66,22 +66,23 @@ ConnectionEditor::~ConnectionEditor()
 Knm::Connection *ConnectionEditor::editConnection(Knm::Connection::Type type, const QVariantList &args)
 {
     QWidget *parentWidget = qobject_cast<QWidget*>(parent());
-    KDialog configDialog(parentWidget);
-    configDialog.setCaption(i18nc("Edit connection dialog caption", "Edit Network Connection"));
-    configDialog.setWindowIcon(KIcon("networkmanager"));
-    configDialog.setWindowModality(Qt::WindowModal);
+    QWeakPointer<KDialog> configDialog = new KDialog(parentWidget);
+    configDialog.data()->setCaption(i18nc("Edit connection dialog caption", "Edit Network Connection"));
+    configDialog.data()->setWindowIcon(KIcon("networkmanager"));
+    configDialog.data()->setWindowModality(Qt::WindowModal);
 
-    ConnectionPreferences * cprefs = editorForConnectionType(false, &configDialog, type, args);
-    connect(cprefs, SIGNAL(valid(bool)), &configDialog, SLOT(enableButtonOk(bool)));
-    configDialog.setMainWidget(cprefs);
+    ConnectionPreferences * cprefs = editorForConnectionType(false, configDialog.data(), type, args);
+    connect(cprefs, SIGNAL(valid(bool)), configDialog.data(), SLOT(enableButtonOk(bool)));
+    configDialog.data()->setMainWidget(cprefs);
 
     cprefs->load();
     cprefs->validate();
 
-    if ( cprefs && configDialog.exec() == QDialog::Accepted ) {
+    if ( cprefs && configDialog.data()->exec() == QDialog::Accepted ) {
         cprefs->save();
         return cprefs->connection();
     }
+    delete configDialog.data();
     return 0;
 }
 

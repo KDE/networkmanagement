@@ -479,16 +479,17 @@ void OpenconnectAuthWidget::validatePeerCert(const QString &fingerprint,
         infoText->setWordWrap(true);
         certificate->setText(peerCert);
 
-        KDialog dialog(this);
-        dialog.setWindowModality(Qt::WindowModal);
-        dialog.setButtons(KDialog::Yes | KDialog::No);
-        dialog.setMainWidget(widget);
-        if(dialog.exec() == KDialog::Yes) {
+        QWeakPointer<KDialog> dialog = new KDialog(this);
+        dialog.data()->setWindowModality(Qt::WindowModal);
+        dialog.data()->setButtons(KDialog::Yes | KDialog::No);
+        dialog.data()->setMainWidget(widget);
+        if(dialog.data()->exec() == KDialog::Yes) {
             d->certificateFingerprints.append(fingerprint);
             *accepted = true;
         } else {
             *accepted = false;
         }
+	delete dialog.data();
         delete widget;
     } else {
         *accepted = true;
