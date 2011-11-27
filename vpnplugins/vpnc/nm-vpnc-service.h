@@ -19,8 +19,8 @@
  * (C) Copyright 2007 - 2008 Novell, Inc.
  */
 
-#ifndef NM_VPNC_PLUGIN_H
-#define NM_VPNC_PLUGIN_H
+#ifndef NM_VPNC_SERVICE_H
+#define NM_VPNC_SERVICE_H
 
 #define NM_DBUS_SERVICE_VPNC    "org.freedesktop.NetworkManager.vpnc"
 #define NM_DBUS_INTERFACE_VPNC  "org.freedesktop.NetworkManager.vpnc"

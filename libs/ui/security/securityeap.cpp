@@ -20,6 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "securityeap.h"
+#include "securityeap_p.h"
 
 #include <KDebug>
 
@@ -31,7 +32,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "ttlswidget.h"
 #include "tlswidget.h"
 #include "connection.h"
-#include "securityeap_p.h"
 
 SecurityEap::SecurityEap(Knm::Connection* connection, bool wireless, QWidget * parent)
 : EapMethodStack(*new SecurityEapPrivate, connection, parent)

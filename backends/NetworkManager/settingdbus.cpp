@@ -18,9 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "ctype.h"
-
 #include "settingdbus.h"
+#include "ctype.h"
 
 using namespace Knm;
 

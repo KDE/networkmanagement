@@ -18,9 +18,9 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <nm-setting-bluetooth.h>
-
 #include "bluetoothconnectioneditor.h"
+
+#include <nm-setting-bluetooth.h>
 
 #include <QMap>
 

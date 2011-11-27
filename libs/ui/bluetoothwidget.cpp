@@ -18,9 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "bluetoothwidget.h"
+
 #include <nm-setting-bluetooth.h>
 
-#include "bluetoothwidget.h"
 #include "settingwidget_p.h"
 #include "ui_bluetooth.h"
 #include "connection.h"

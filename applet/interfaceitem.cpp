@@ -23,7 +23,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "uiutils.h"
 #include "remoteinterfaceconnection.h"
 #include "remoteactivatablelist.h"
-#include "remoteinterfaceconnection.h"
 
 #include <arpa/inet.h>
 

@@ -18,6 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "nm08connections.h"
+
 namespace Knm {
     class Setting;
 }
@@ -45,7 +47,6 @@ using namespace Knm;
 #include "settingsnm08/serialpersistence.cpp"
 #include "settingsnm08/vpnpersistence.cpp"
 #include "paths.h"
-#include "nm08connections.h"
 
 static const QString CONNECTION_PERSISTENCE_PATH = QLatin1String("networkmanagement/connections/");
 

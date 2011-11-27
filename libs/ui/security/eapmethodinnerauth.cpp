@@ -19,10 +19,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "eapmethodinnerauth.h"
+#include "eapmethodinnerauth_p.h"
 
 #include <KLocale>
-
-#include "eapmethodinnerauth_p.h"
 
 #include "eapmethodstack.h"
 

@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "vpninterfaceitem.h"
+
 // Qt
 #include <QLabel>
 #include <QTimer>
@@ -27,7 +29,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // Network Management
 #include <libnm-qt/device.h>
-#include "vpninterfaceitem.h"
 #include "activatableitem.h"
 #include "remoteactivatable.h"
 #include "remoteactivatablelist.h"

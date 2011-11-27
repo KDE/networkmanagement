@@ -18,11 +18,11 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "connection.h"
 
 #include <kdebug.h>
 #include <libnm-qt/modemdevice.h>
 
-#include "connection.h"
 #include "uiutils.h"
 
 #include "settings/802-11-wireless-security.h"

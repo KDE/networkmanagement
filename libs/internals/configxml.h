@@ -18,6 +18,9 @@
  *   51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+#ifndef CONFIG_XML_H
+#define CONFIG_XML_H
+
 #include <KDE/KConfigGroup>
 #include <KDE/KConfigSkeleton>
 #include <KDE/KSharedConfig>
@@ -145,4 +148,4 @@ public:
 private:
     Private * const d;
 };
-
+#endif

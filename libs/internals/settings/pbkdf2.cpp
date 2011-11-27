@@ -12,10 +12,10 @@
  * See README and COPYING for more details.
  */
 
+#include "pbkdf2.h"
+
 #include <stdlib.h>
 #include <string.h>
-
-#include "pbkdf2.h"
 
 #include "config-knmstorage.h"
 

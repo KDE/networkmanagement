@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ipv6advancedwidget.h"
+
 #include <QLineEdit>
 #include <QStandardItemModel>
 #include <QNetworkAddressEntry>
@@ -26,7 +28,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ui_ipv6advanced.h"
 
-#include "ipv6advancedwidget.h"
 #include "simpleipv6addressvalidator.h"
 #include "intdelegate.h"
 #include "ipv6delegate.h"

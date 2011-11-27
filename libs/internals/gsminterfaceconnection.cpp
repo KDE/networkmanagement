@@ -20,13 +20,13 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "gsminterfaceconnection.h"
+
 #include <KDebug>
 
 #include <libnm-qt/manager.h>
 #include <libmm-qt/manager.h>
 #include <libmm-qt/modemgsmnetworkinterface.h>
-
-#include "gsminterfaceconnection.h"
 
 using namespace Knm;
 

@@ -19,8 +19,8 @@
  * (C) Copyright 2007 - 2008 Novell, Inc.
  */
 
-#ifndef NM_STRONGSWAN_PLUGIN_H
-#define NM_STRONGSWAN_PLUGIN_H
+#ifndef NM_STRONGSWAN_SERVICE_H
+#define NM_STRONGSWAN_SERVICE_H
 
 #define NM_DBUS_SERVICE_STRONGSWAN    "org.freedesktop.NetworkManager.strongswan"
 #define NM_DBUS_INTERFACE_STRONGSWAN  "org.freedesktop.NetworkManager.strongswan"

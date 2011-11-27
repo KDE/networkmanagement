@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "bluetooth.h"
+
 #include <nm-setting-bluetooth.h>
 
 #include <QDBusInterface>
@@ -28,7 +30,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KStandardDirs>
 
-#include "bluetooth.h"
 #include "manageconnection.h"
 
 Bluetooth::Bluetooth(const QString bdaddr, const QString service): QObject(), mBdaddr(bdaddr), mService(service), mobileConnectionWizard(0)

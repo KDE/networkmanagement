@@ -19,6 +19,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "networkmanager.h"
+
 #include <QPainter>
 
 #include <KCModuleInfo>
@@ -35,7 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteactivatablelist.h"
 #include "paths.h"
 #include "knmserviceprefs.h"
-#include "networkmanager.h"
 
 K_EXPORT_PLASMA_APPLET(networkmanagement, NetworkManagerApplet)
 

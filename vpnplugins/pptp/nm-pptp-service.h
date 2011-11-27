@@ -20,8 +20,8 @@
  * (C) Copyright 2008 Red Hat, Inc.
  */
 
-#ifndef NM_PPTP_PLUGIN_H
-#define NM_PPTP_PLUGIN_H
+#ifndef NM_PPTP_SERVICE_H
+#define NM_PPTP_SERVICE_H
 
 #define NM_DBUS_SERVICE_PPTP_PPP    "org.freedesktop.NetworkManager.pptp-ppp"
 #define NM_DBUS_PATH_PPTP_PPP       "/org/freedesktop/NetworkManager/pptp/ppp"

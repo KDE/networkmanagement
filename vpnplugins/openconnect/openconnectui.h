@@ -18,8 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef KNM_OPENCONNECT_H
-#define KNM_OPENCONNECT_H
+#ifndef OPENCONNECT_UI_H
+#define OPENCONNECT_UI_H
 
 #include "vpnuiplugin.h"
 
@@ -46,4 +46,4 @@ public:
     KDialog::ButtonCodes suggestAuthDialogButtons();
 };
 
-#endif //  KNM_OPENCONNECT_H
+#endif //  OPENCONNECT_UI_H

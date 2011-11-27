@@ -18,8 +18,8 @@
  */
 
 
-#ifndef NM_SERVICE_H
-#define NM_SERVICE_H
+#ifndef NETWORKMANAGEMENT_SERVICE_H
+#define NETWORKMANAGEMENT_SERVICE_H
 
 
 #include <Plasma/Service>
@@ -40,4 +40,4 @@ private:
     QString m_id;
 };
 
-#endif // NM_SERVICE_H
+#endif // NETWORKMANAGEMENT_SERVICE_H

@@ -18,6 +18,9 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef SECRET_STORAGE_HELPER_H
+#define SECRET_STORAGE_HELPER_H
+
 #include <QString>
 
 #include "knminternals_export.h"
@@ -46,4 +49,4 @@ private:
     static WId s_walletWId;
 };
 
-
+#endif

@@ -22,8 +22,8 @@
  *   Copyright © 2007 - 2008 Novell, Inc.
  */
 
-#ifndef NM_OPENCONNECT_PLUGIN_H
-#define NM_OPENCONNECT_PLUGIN_H
+#ifndef NM_OPENCONNECT_SERVICE_H
+#define NM_OPENCONNECT_SERVICE_H
 
 #define NM_DBUS_SERVICE_OPENCONNECT    "org.freedesktop.NetworkManager.openconnect"
 #define NM_DBUS_INTERFACE_OPENCONNECT  "org.freedesktop.NetworkManager.openconnect"

@@ -18,12 +18,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "mobileproviders.h"
+
 #include <QFile>
 #include <QTextStream>
 
 #include <KDebug>
-
-#include "mobileproviders.h"
 
 const QString MobileProviders::CountryCodesFile = "/usr/share/zoneinfo/iso3166.tab";
 const QString MobileProviders::ProvidersFile = "/usr/share/mobile-broadband-provider-info/serviceproviders.xml";

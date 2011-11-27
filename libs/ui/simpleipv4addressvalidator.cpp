@@ -18,10 +18,10 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "simpleipv4addressvalidator.h"
+
 #include <KDebug>
 #include <QStringList>
-
-#include "simpleipv4addressvalidator.h"
 
 SimpleIpV4AddressValidator::SimpleIpV4AddressValidator(QObject *parent)
  : QValidator(parent)

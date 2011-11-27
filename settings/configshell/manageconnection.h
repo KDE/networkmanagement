@@ -18,6 +18,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef CONFIGSHELL_MANAGE_CONNECTION_H
+#define CONFIGSHELL_MANAGE_CONNECTION_H
+
 #include <QDBusInterface>
 
 #include <KApplication>
@@ -41,3 +44,4 @@ private:
     NMDBusSettingsConnectionProvider * mSystemSettings;
     QDBusInterface m_manager;
 };
+#endif

@@ -18,6 +18,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#ifndef CONFIGSHELL_BLUETOOTH_H
+#define CONFIGSHELL_BLUETOOTH_H
+
 #include "../config/mobileconnectionwizard.h"
 
 #include <QDBusObjectPath>
@@ -44,3 +47,4 @@ private:
 
     QString deviceName();
 };
+#endif

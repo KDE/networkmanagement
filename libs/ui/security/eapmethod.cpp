@@ -20,11 +20,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "eapmethod.h"
+#include "eapmethod_p.h"
 
 #include <connection.h>
 #include <settings/802-1x.h>
-
-#include "eapmethod_p.h"
 
 EapMethod::EapMethod(EapMethodPrivate &dd, Knm::Connection * connection, QWidget * parent)
 : QWidget(parent), d_ptr(&dd)

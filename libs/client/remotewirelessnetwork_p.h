@@ -18,8 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REMOTEWIRELESSNETWORKITEM_P_H
-#define REMOTEWIRELESSNETWORKITEM_P_H
+#ifndef REMOTE_WIRELESS_NETWORK_P_H
+#define REMOTE_WIRELESS_NETWORK_P_H
 
 #include "remoteactivatable_p.h"
 
@@ -31,4 +31,4 @@ public:
     WirelessNetworkInterface * wirelessNetworkItemInterface;
 };
 
-#endif // REMOTEWIRELESSNETWORKITEM_P_H
+#endif // REMOTE_WIRELESS_NETWORK_P_H

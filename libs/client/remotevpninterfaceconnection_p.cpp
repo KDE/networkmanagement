@@ -1,4 +1,3 @@
-#include "remotevpninterfaceconnection_p.h"
 /*
 // vim: sw=4 sts=4 et tw=100
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
@@ -33,7 +32,5 @@ RemoteVpnInterfaceConnection::~RemoteVpnInterfaceConnection()
 {
 
 }
-
-#include "remotevpninterfaceconnection_p.h"
 
 // vim: sw=4 sts=4 et tw=100

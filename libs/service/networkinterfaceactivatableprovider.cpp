@@ -19,6 +19,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "networkinterfaceactivatableprovider.h"
+#include "networkinterfaceactivatableprovider_p.h"
 
 #include "connection.h"
 #include "connectionlist.h"
@@ -28,8 +29,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatablelist.h"
 
 #include "interfaceconnectionhelpers.h"
-
-#include "networkinterfaceactivatableprovider_p.h"
 
 /* Normal interfaceconnections are added to d->activatables on connection add, updated on update,
  * removed on remove

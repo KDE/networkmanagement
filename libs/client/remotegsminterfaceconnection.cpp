@@ -19,10 +19,10 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <QDBusReply>
-
 #include "remotegsminterfaceconnection.h"
 #include "remotegsminterfaceconnection_p.h"
+
+#include <QDBusReply>
 
 RemoteGsmInterfaceConnection::RemoteGsmInterfaceConnection(const QString &dbusPath, QObject * parent)
 : RemoteInterfaceConnection(*new RemoteGsmInterfaceConnectionPrivate, dbusPath, parent)

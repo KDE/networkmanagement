@@ -1,6 +1,6 @@
-#include <KLocale>
-
 #include "vpnuiplugin.h"
+
+#include <KLocale>
 
 class VpnUiPlugin::Private
 {

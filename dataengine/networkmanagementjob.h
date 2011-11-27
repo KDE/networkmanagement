@@ -18,8 +18,8 @@
  */
 
 
-#ifndef NM_JOB_H
-#define NM_JOB_H
+#ifndef NETWORKMANAGEMENT_JOB_H
+#define NETWORKMANAGEMENT_JOB_H
 
 // plasma
 #include <Plasma/ServiceJob>
@@ -42,4 +42,4 @@ class NetworkManagementJob : public Plasma::ServiceJob
         QString m_id;
 };
 
-#endif // NM_JOB_H
+#endif // NETWORKMANAGEMENT_JOB_H

@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM09_VPN_CONNECTION_PREFERENCES_H
-#define NM09_VPN_CONNECTION_PREFERENCES_H
+#ifndef VPN_PREFERENCES_H
+#define VPN_PREFERENCES_H
 
 #include "connectionprefs.h"
 

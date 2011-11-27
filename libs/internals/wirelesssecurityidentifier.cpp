@@ -24,9 +24,9 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <KLocale>
-
 #include "wirelesssecurityidentifier.h"
+
+#include <KLocale>
 
 bool Knm::WirelessSecurity::interfaceSupportsApCiphers(NetworkManager::WirelessDevice::Capabilities interfaceCaps, NetworkManager::AccessPoint::WpaFlags apCiphers, Knm::WirelessSecurity::Type type )
 {

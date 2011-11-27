@@ -18,14 +18,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef APPLET_CONNECTIONITEM_H
-#define APPLET_CONNECTIONITEM_H
+#ifndef INTERFACE_CONNECTION_ITEM_H
+#define INTERFACE_CONNECTION_ITEM_H
 
 #include "activatableitem.h"
 
 class QGraphicsGridLayout;
-
-
 
 namespace Plasma
 {

@@ -37,7 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDialog>
 #include <KSharedConfig>
 #include <KStandardDirs>
-#include <KSharedConfig>
 #include <KLocale>
 #include <KPushButton>
 

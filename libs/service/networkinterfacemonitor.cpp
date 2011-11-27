@@ -18,6 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "networkinterfacemonitor.h"
+
 #include <QDBusPendingReply>
 
 #include <KLocale>
@@ -33,7 +35,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkinterfaceactivatableprovider.h"
 #include "gsmnetworkinterfaceactivatableprovider.h"
 #include "pindialog.h"
-#include "networkinterfacemonitor.h"
 
 class NetworkInterfaceMonitorPrivate
 {

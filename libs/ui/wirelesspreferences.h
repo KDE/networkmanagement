@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NM09_WIRELESS_CONNECTION_PREFERENCES_H
-#define NM09_WIRELESS_CONNECTION_PREFERENCES_H
+#ifndef WIRELESS_PREFERENCES_H
+#define WIRELESS_PREFERENCES_H
 
 #include <libnm-qt/accesspoint.h>
 

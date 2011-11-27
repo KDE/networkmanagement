@@ -18,12 +18,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "wepwidget.h"
+
 #include <QWidget>
 #include <QValidator>
 
 #include <KDebug>
 
-#include "wepwidget.h"
 #include "securitywidget_p.h"
 
 #include <nm-setting-wireless-security.h>

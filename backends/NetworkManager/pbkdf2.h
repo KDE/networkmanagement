@@ -12,8 +12,8 @@
  * See README and COPYING for more details.
  */
 
-#ifndef SHA1_H
-#define SHA1_H
+#ifndef PBKDF2_H
+#define PBKDF2_H
 
 #include <sys/types.h>
 
@@ -31,4 +31,4 @@ void sha1_prf(const u_int8_t *key, size_t key_len, const char *label,
 void pbkdf2_sha1(const char *passphrase, const char *ssid, size_t ssid_len,
 		 int iterations, u_int8_t *buf, size_t buflen);
 
-#endif /* SHA1_H */
+#endif /* PBKDF2_H */

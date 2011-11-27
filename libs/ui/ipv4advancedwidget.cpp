@@ -19,16 +19,16 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "ipv4advancedwidget.h"
+
 #include <QLineEdit>
 #include <QStandardItemModel>
 #include <QNetworkAddressEntry>
-//#include <QHostAddress>
 
 #include <KDebug>
 
 #include "ui_ipv4advanced.h"
 
-#include "ipv4advancedwidget.h"
 #include "simpleipv4addressvalidator.h"
 #include "ipv4delegate.h"
 

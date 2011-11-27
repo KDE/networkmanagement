@@ -18,6 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "manageconnection.h"
+
 #include <QTimer>
 #include <QDBusReply>
 
@@ -25,7 +27,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KMessageBox>
 
-#include "manageconnection.h"
 #include "settings/bluetooth.h"
 
 ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.networkmanagement",

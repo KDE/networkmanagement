@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef LEAPWIDGET_H
-#define LEAPWIDGET_H
+#ifndef SECURITY_LEAP_H
+#define SECURITY_LEAP_H
 
 #include "securitywidget.h"
 
@@ -40,4 +40,4 @@ private Q_SLOTS:
     void passwordStorageChanged(int);
 };
 
-#endif // LEAPWIDGET_H
+#endif // SECURITY_LEAP_H

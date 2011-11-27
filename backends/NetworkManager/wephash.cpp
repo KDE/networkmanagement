@@ -19,10 +19,10 @@
 
 */
 
+#include "wephash.h"
+
 #include <QByteArray>
 #include <QCryptographicHash>
-
-#include "wephash.h"
 
 QByteArray wep128PassphraseHash(QByteArray input)
 {

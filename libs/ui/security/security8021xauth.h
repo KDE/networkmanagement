@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef SECURITY8021XWIDGET_H
-#define SECURITY8021XWIDGET_H
+#ifndef SECURITY_8021X_AUTH_WIDGET_H
+#define SECURITY_8021X_AUTH_WIDGET_H
 
 #include "settingwidget.h"
 
