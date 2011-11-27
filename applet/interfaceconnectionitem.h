@@ -40,7 +40,7 @@ class InterfaceConnectionItem : public ActivatableItem
     Q_OBJECT
 
     public:
-        InterfaceConnectionItem(RemoteInterfaceConnection *, QGraphicsItem * parent = 0);
+        explicit InterfaceConnectionItem(RemoteInterfaceConnection *, QGraphicsItem * parent = 0);
         virtual ~InterfaceConnectionItem();
         void setupItem();
 

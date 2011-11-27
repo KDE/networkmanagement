@@ -40,7 +40,7 @@ class StrongswanSettingWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(StrongswanSettingWidget)
 public:
-    StrongswanSettingWidget(Knm::Connection *, QWidget * parent = 0);
+    explicit StrongswanSettingWidget(Knm::Connection *, QWidget * parent = 0);
     ~StrongswanSettingWidget();
     void readConfig();
     void writeConfig();

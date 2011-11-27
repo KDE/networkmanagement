@@ -32,7 +32,7 @@ class KNM_EXPORT SecurityWidget : public QWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(SecurityWidget)
 public:
-    SecurityWidget(Knm::Connection* connection, QWidget * parent = 0 );
+    explicit SecurityWidget(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~SecurityWidget();
     virtual void readConfig() = 0;
     virtual void writeConfig() = 0;

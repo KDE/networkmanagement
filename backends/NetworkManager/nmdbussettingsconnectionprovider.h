@@ -52,7 +52,7 @@ class KNM_EXPORT NMDBusSettingsConnectionProvider : public QObject, public Activ
 {
 Q_OBJECT
 public:
-    NMDBusSettingsConnectionProvider(ConnectionList * connectionList, QObject * parent = 0);
+    explicit NMDBusSettingsConnectionProvider(ConnectionList * connectionList, QObject * parent = 0);
     virtual ~NMDBusSettingsConnectionProvider();
 
     /**

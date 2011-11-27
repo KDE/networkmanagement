@@ -34,7 +34,7 @@ class NovellVpnUiPlugin : public VpnUiPlugin
 {
 Q_OBJECT
 public:
-    NovellVpnUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
+    explicit NovellVpnUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
     virtual ~NovellVpnUiPlugin();
     SettingWidget * widget(Knm::Connection *, QWidget * parent = 0);
     QString suggestedFileName(Knm::Connection *connection) const;

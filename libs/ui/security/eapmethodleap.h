@@ -29,7 +29,7 @@ class EapMethodLeap : public EapMethod, public Ui_EapMethodLeapBase
 Q_OBJECT
 Q_DECLARE_PRIVATE(EapMethod)
 public:
-    EapMethodLeap(Knm::Connection* connection, QWidget * parent = 0 );
+    explicit EapMethodLeap(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~EapMethodLeap();
 
     bool validate() const;

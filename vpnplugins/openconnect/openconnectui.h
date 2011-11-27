@@ -35,7 +35,7 @@ class OpenconnectUiPlugin : public VpnUiPlugin
 {
 Q_OBJECT
 public:
-    OpenconnectUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
+    explicit OpenconnectUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
     virtual ~OpenconnectUiPlugin();
     SettingWidget * widget(Knm::Connection *, QWidget * parent = 0);
     SettingWidget * askUser(Knm::Connection *, QWidget * parent = 0);

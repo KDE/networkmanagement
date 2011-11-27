@@ -42,7 +42,7 @@ class KNM_EXPORT NotificationManager : public QObject, public ActivatableObserve
 Q_OBJECT
 Q_DECLARE_PRIVATE(NotificationManager)
 public:
-    NotificationManager(ConnectionList *connectionList, QObject * parent = 0);
+    explicit NotificationManager(ConnectionList *connectionList, QObject * parent = 0);
     virtual ~NotificationManager();
     void handleAdd(Knm::Activatable *);
     void handleUpdate(Knm::Activatable *);

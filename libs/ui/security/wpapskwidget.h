@@ -31,7 +31,7 @@ class WpaPskWidget : public SecurityWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(WpaPskWidget)
 public:
-    WpaPskWidget(Knm::Connection * connection, QWidget * parent = 0);
+    explicit WpaPskWidget(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~WpaPskWidget();
     bool validate() const;
     void readConfig();

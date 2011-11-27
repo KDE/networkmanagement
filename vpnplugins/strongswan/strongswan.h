@@ -35,7 +35,7 @@ class StrongswanUiPlugin : public VpnUiPlugin
 {
 Q_OBJECT
 public:
-    StrongswanUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
+    explicit StrongswanUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
     virtual ~StrongswanUiPlugin();
     SettingWidget * widget(Knm::Connection *, QWidget * parent = 0);
     SettingWidget * askUser(Knm::Connection *, QWidget * parent = 0);

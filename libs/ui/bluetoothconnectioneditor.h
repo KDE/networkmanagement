@@ -35,7 +35,7 @@ class KNM_EXPORT BluetoothConnectionEditor : public ConnectionPreferences
 {
 Q_OBJECT
 public:
-    BluetoothConnectionEditor(const QVariantList & args = QVariantList(), QWidget * parent = 0);
+    explicit BluetoothConnectionEditor(const QVariantList & args = QVariantList(), QWidget * parent = 0);
     BluetoothConnectionEditor(Knm::Connection *con, QWidget * parent);
     virtual ~BluetoothConnectionEditor();
     virtual bool needsEdits() const { return true; }

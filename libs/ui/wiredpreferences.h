@@ -32,8 +32,8 @@ class KNM_EXPORT WiredPreferences : public ConnectionPreferences
 {
 Q_OBJECT
 public:
-    WiredPreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
-    WiredPreferences(Knm::Connection *con, QWidget * parent = 0);
+    explicit WiredPreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
+    explicit WiredPreferences(Knm::Connection *con, QWidget * parent = 0);
     virtual ~WiredPreferences();
     virtual bool needsEdits() const { return true; /*TODO until auto connection name generation code is in place*/ }
 

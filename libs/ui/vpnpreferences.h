@@ -37,7 +37,7 @@ class KNM_EXPORT VpnPreferences : public ConnectionPreferences
 {
 Q_OBJECT
 public:
-    VpnPreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
+    explicit VpnPreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
     VpnPreferences(Knm::Connection *con, QWidget * parent);
     virtual ~VpnPreferences();
     virtual void load();

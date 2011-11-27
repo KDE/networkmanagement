@@ -43,7 +43,7 @@ class OpenconnectAuthWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(OpenconnectAuthWidget)
 public:
-    OpenconnectAuthWidget(Knm::Connection *, QWidget * parent = 0);
+    explicit OpenconnectAuthWidget(Knm::Connection *, QWidget * parent = 0);
     ~OpenconnectAuthWidget();
     void readSecrets();
     void readConfig();

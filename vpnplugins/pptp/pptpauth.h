@@ -37,7 +37,7 @@ class PptpAuthWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(PptpAuthWidget)
 public:
-    PptpAuthWidget(Knm::Connection *, QWidget * parent = 0);
+    explicit PptpAuthWidget(Knm::Connection *, QWidget * parent = 0);
     ~PptpAuthWidget();
     void readConfig() {}
     void readSecrets();

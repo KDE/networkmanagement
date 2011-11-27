@@ -34,7 +34,7 @@ class NovellVpnSettingWidget : public SettingWidget
 {
 Q_OBJECT
 public:
-    NovellVpnSettingWidget(Knm::Connection *,  QWidget * parent = 0);
+    explicit NovellVpnSettingWidget(Knm::Connection *,  QWidget * parent = 0);
     ~NovellVpnSettingWidget();
     void readConfig();
     void writeConfig();

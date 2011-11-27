@@ -33,7 +33,7 @@ class KNM_EXPORT CdmaWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(CdmaWidget)
 public:
-    CdmaWidget(Knm::Connection * connection, QWidget * parent = 0 );
+    explicit CdmaWidget(Knm::Connection * connection, QWidget * parent = 0 );
     virtual ~CdmaWidget();
     void readConfig();
     void writeConfig();

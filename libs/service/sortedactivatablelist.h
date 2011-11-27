@@ -57,7 +57,7 @@ public:
      * to collect
      * @param parent the parent QObject
      */
-    SortedActivatableList(NetworkManager::Device::Types types, QObject * parent = 0);
+    explicit SortedActivatableList(NetworkManager::Device::Types types, QObject * parent = 0);
 
     // respond to activatable changes
     void handleAdd(Knm::Activatable *);

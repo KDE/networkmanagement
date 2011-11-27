@@ -43,7 +43,7 @@ class NetworkItemModel : public QAbstractItemModel
     public:
         enum UserRoles { SignalStrength=Qt::UserRole, MacAddress, Band, Channel, ConnectionType, EncryptionRole };
 
-        NetworkItemModel(const QString & uni, QObject *parent=0);
+        explicit NetworkItemModel(const QString & uni, QObject *parent=0);
         ~NetworkItemModel();
 
         QModelIndex index(int row, int column, const QModelIndex &parent=QModelIndex()) const;

@@ -50,7 +50,7 @@ class NMPopup: public QGraphicsWidget
 {
 Q_OBJECT
 public:
-    NMPopup(RemoteActivatableList *, QGraphicsWidget* parent = 0);
+    explicit NMPopup(RemoteActivatableList *, QGraphicsWidget* parent = 0);
     virtual ~NMPopup();
 
     void init();

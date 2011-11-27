@@ -37,7 +37,7 @@ class OpenconnectSettingWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(OpenconnectSettingWidget)
 public:
-    OpenconnectSettingWidget(Knm::Connection *, QWidget * parent = 0);
+    explicit OpenconnectSettingWidget(Knm::Connection *, QWidget * parent = 0);
     ~OpenconnectSettingWidget();
     void readConfig();
     void writeConfig();

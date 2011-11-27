@@ -35,7 +35,7 @@ class KNM_EXPORT GsmConnectionEditor : public ConnectionPreferences
 {
 Q_OBJECT
 public:
-    GsmConnectionEditor(const QVariantList & args = QVariantList(), QWidget * parent = 0);
+    explicit GsmConnectionEditor(const QVariantList & args = QVariantList(), QWidget * parent = 0);
     GsmConnectionEditor(Knm::Connection *con, QWidget * parent);
     virtual ~GsmConnectionEditor();
     virtual bool needsEdits() const { return true; }

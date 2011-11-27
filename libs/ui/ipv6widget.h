@@ -31,7 +31,7 @@ class KNM_EXPORT IpV6Widget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(IpV6Widget)
 public:
-    IpV6Widget(Knm::Connection * connection, QWidget * parent = 0 );
+    explicit IpV6Widget(Knm::Connection * connection, QWidget * parent = 0 );
     virtual ~IpV6Widget();
     void readConfig();
     void writeConfig();

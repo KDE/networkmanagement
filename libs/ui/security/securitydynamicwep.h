@@ -28,7 +28,7 @@ class SecurityDynamicWep : public SecurityEap
 Q_OBJECT
 Q_DECLARE_PRIVATE(SecurityEap)
 public:
-    SecurityDynamicWep(Knm::Connection* connection, QWidget * parent = 0);
+    explicit SecurityDynamicWep(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~SecurityDynamicWep();
     void writeConfig();
 };

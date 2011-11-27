@@ -35,7 +35,7 @@ class KNM_EXPORT WirelessSecurityAuthWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(WirelessSecurityAuthWidget)
 public:
-    WirelessSecurityAuthWidget(Knm::Connection * connection, QWidget * parent = 0 );
+    explicit WirelessSecurityAuthWidget(Knm::Connection * connection, QWidget * parent = 0 );
     virtual ~WirelessSecurityAuthWidget();
     void readConfig();
     void writeConfig();

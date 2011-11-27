@@ -37,7 +37,7 @@ class PptpSettingWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(PptpSettingWidget)
 public:
-    PptpSettingWidget(Knm::Connection *, QWidget * parent = 0);
+    explicit PptpSettingWidget(Knm::Connection *, QWidget * parent = 0);
     ~PptpSettingWidget();
     void readConfig();
     void writeConfig();

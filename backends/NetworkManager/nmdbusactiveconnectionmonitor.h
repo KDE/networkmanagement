@@ -53,7 +53,7 @@ class KNM_EXPORT NMDBusActiveConnectionMonitor : public QObject, public Activata
 {
 Q_OBJECT
 public:
-    NMDBusActiveConnectionMonitor(ActivatableList * activatables, QObject * parent = 0);
+    explicit NMDBusActiveConnectionMonitor(ActivatableList * activatables, QObject * parent = 0);
     ~NMDBusActiveConnectionMonitor();
     /**
      * Used to keep track of InterfaceConnections

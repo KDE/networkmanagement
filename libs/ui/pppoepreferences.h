@@ -35,7 +35,7 @@ class KNM_EXPORT PppoePreferences : public ConnectionPreferences
 {
 Q_OBJECT
 public:
-    PppoePreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
+    explicit PppoePreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
     PppoePreferences(Knm::Connection *con, QWidget * parent);
     virtual ~PppoePreferences();
     virtual bool needsEdits() const { return true; /*TODO until auto connection name generation code is in place*/ }

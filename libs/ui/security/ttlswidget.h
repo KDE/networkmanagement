@@ -32,7 +32,7 @@ class TtlsWidget : public EapMethodInnerAuth, public Ui_EapMethodTtlsBase
 Q_OBJECT
 Q_DECLARE_PRIVATE(TtlsWidget)
 public:
-    TtlsWidget(Knm::Connection* connection, QWidget * parent = 0);
+    explicit TtlsWidget(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~TtlsWidget();
 
     // implementation of EapMethod methods

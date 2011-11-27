@@ -34,7 +34,7 @@ class PptpUiPlugin : public VpnUiPlugin
 {
 Q_OBJECT
 public:
-    PptpUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
+    explicit PptpUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
     virtual ~PptpUiPlugin();
     SettingWidget * widget(Knm::Connection *, QWidget * parent = 0);
     SettingWidget * askUser(Knm::Connection *, QWidget * parent = 0);

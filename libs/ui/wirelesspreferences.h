@@ -49,7 +49,7 @@ public:
      * @param setDefaults if set, the widget and its children should preset any defaults using the
      * information encoded in args
      */
-    WirelessPreferences(bool setDefaults, const QVariantList & args = QVariantList(), QWidget * parent = 0);
+    explicit WirelessPreferences(bool setDefaults, const QVariantList & args = QVariantList(), QWidget * parent = 0);
     WirelessPreferences(Knm::Connection *con, QWidget * parent);
     virtual ~WirelessPreferences();
     virtual bool needsEdits() const;

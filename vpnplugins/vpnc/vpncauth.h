@@ -37,7 +37,7 @@ class VpncAuthWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(VpncAuthWidget)
 public:
-    VpncAuthWidget(Knm::Connection *, QWidget * parent = 0);
+    explicit VpncAuthWidget(Knm::Connection *, QWidget * parent = 0);
     ~VpncAuthWidget();
     void readConfig() {}
     void readSecrets();

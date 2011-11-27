@@ -27,7 +27,7 @@ class WpaEapWidget : public SecurityEap
 {
 Q_OBJECT
 public:
-    WpaEapWidget(Knm::Connection* connection, QWidget * parent = 0);
+    explicit WpaEapWidget(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~WpaEapWidget();
 };
 

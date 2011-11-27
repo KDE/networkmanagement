@@ -37,7 +37,7 @@ class OpenVpnAuthWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(OpenVpnAuthWidget)
 public:
-    OpenVpnAuthWidget(Knm::Connection *, QWidget * parent = 0);
+    explicit OpenVpnAuthWidget(Knm::Connection *, QWidget * parent = 0);
     ~OpenVpnAuthWidget();
     void readConfig() {}
     void readSecrets();

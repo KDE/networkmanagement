@@ -29,7 +29,7 @@ class LeapWidget : public SecurityWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(LeapWidget)
 public:
-    LeapWidget(Knm::Connection * connection, QWidget * parent = 0);
+    explicit LeapWidget(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~LeapWidget();
     bool validate() const;
     void readConfig();

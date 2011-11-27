@@ -33,7 +33,7 @@ class KNM_EXPORT WpaAuthWidget : public SecurityWidget
 {
 Q_OBJECT
 public:
-    WpaAuthWidget(Knm::Connection* connection, QWidget * parent = 0);
+    explicit WpaAuthWidget(Knm::Connection* connection, QWidget * parent = 0);
     WpaAuthWidget(Knm::Connection* connection, QFormLayout *layout, QWidget * parent = 0);
     virtual ~WpaAuthWidget();
     bool validate() const;

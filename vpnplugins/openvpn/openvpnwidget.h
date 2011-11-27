@@ -37,7 +37,7 @@ class OpenVpnSettingWidget : public SettingWidget
 {
 Q_OBJECT
 public:
-    OpenVpnSettingWidget(Knm::Connection *,  QWidget * parent = 0);
+    explicit OpenVpnSettingWidget(Knm::Connection *,  QWidget * parent = 0);
     ~OpenVpnSettingWidget();
     void init();
     void readConfig();

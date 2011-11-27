@@ -31,7 +31,7 @@ class SecurityEap : public EapMethodStack
 Q_OBJECT
 Q_DECLARE_PRIVATE(SecurityEap)
 public:
-    SecurityEap(Knm::Connection* connection, bool wireless = true, QWidget * parent = 0);
+    explicit SecurityEap(Knm::Connection* connection, bool wireless = true, QWidget * parent = 0);
     virtual ~SecurityEap();
     virtual bool validate() const;
     virtual void readConfig();

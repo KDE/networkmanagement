@@ -33,7 +33,7 @@ class KNM_EXPORT WepAuthWidget : public SecurityWidget
 {
 Q_OBJECT
 public:
-    WepAuthWidget(Knm::Connection* connection, QWidget * parent = 0);
+    explicit WepAuthWidget(Knm::Connection* connection, QWidget * parent = 0);
     WepAuthWidget(Knm::Connection* connection, QFormLayout *layout, QWidget * parent = 0);
     virtual ~WepAuthWidget();
     bool validate() const;

@@ -32,7 +32,7 @@ class PeapWidget : public EapMethodInnerAuth, public Ui_EapMethodPeapBase
 Q_OBJECT
 Q_DECLARE_PRIVATE(PeapWidget)
 public:
-    PeapWidget(Knm::Connection* connection, QWidget * parent = 0 );
+    explicit PeapWidget(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~PeapWidget();
 
     // implementation of EapWidget methods

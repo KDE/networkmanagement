@@ -31,7 +31,7 @@ class KNM_EXPORT PppWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(PppWidget)
 public:
-    PppWidget(Knm::Connection *, QWidget * parent = 0 );
+    explicit PppWidget(Knm::Connection *, QWidget * parent = 0 );
     virtual ~PppWidget();
     void readConfig();
     void writeConfig();

@@ -39,7 +39,7 @@ Q_OBJECT
 Q_DECLARE_PRIVATE(SettingWidget)
 public:
     SettingWidget(QWidget * parent = 0);
-    SettingWidget(Knm::Connection * connection, QWidget * parent = 0);
+    explicit SettingWidget(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~SettingWidget();
 
     void setConnection(Knm::Connection *);

@@ -27,7 +27,7 @@ class NullSecurityWidget : public SecurityWidget
 {
 Q_OBJECT
 public:
-    NullSecurityWidget(Knm::Connection* connection, QWidget * parent = 0 );
+    explicit NullSecurityWidget(Knm::Connection* connection, QWidget * parent = 0 );
     virtual ~NullSecurityWidget();
     virtual void readConfig();
     virtual void writeConfig();

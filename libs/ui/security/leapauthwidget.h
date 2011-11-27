@@ -33,7 +33,7 @@ class KNM_EXPORT LeapAuthWidget : public SecurityWidget
 {
 Q_OBJECT
 public:
-    LeapAuthWidget(Knm::Connection* connection, QWidget * parent = 0);
+    explicit LeapAuthWidget(Knm::Connection* connection, QWidget * parent = 0);
     LeapAuthWidget(Knm::Connection* connection, QFormLayout *layout, QWidget * parent = 0);
     virtual ~LeapAuthWidget();
     bool validate() const;

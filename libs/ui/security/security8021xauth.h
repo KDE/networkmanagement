@@ -34,7 +34,7 @@ class KNM_EXPORT Security8021xAuthWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(Security8021xAuthWidget)
 public:
-    Security8021xAuthWidget(Knm::Connection* connection, QWidget * parent = 0 );
+    explicit Security8021xAuthWidget(Knm::Connection* connection, QWidget * parent = 0 );
     Security8021xAuthWidget(Knm::Connection* connection, const QStringList &secrets, QWidget * parent = 0 );
     ~Security8021xAuthWidget();
     void readConfig(){}

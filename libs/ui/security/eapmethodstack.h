@@ -38,7 +38,7 @@ class EapMethodStack : public SecurityWidget, public Ui_EapMethodStackBase
 Q_OBJECT
 Q_DECLARE_PRIVATE(EapMethodStack)
 public:
-    EapMethodStack(Knm::Connection* connection, QWidget * parent = 0);
+    explicit EapMethodStack(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~EapMethodStack();
 
     /**

@@ -50,7 +50,7 @@ public:
      * Subsequent args are type dependent.
      * Hint: @see WirelessPreferences
      */
-    ConnectionPreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
+    explicit ConnectionPreferences(const QVariantList & args = QVariantList(), QWidget * parent = 0);
     virtual ~ConnectionPreferences();
 
     Knm::Connection * connection() const;

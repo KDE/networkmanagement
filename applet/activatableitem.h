@@ -34,7 +34,7 @@ class ActivatableItem : public Plasma::IconWidget
 {
 Q_OBJECT
 public:
-    ActivatableItem(RemoteActivatable *remote, QGraphicsItem * parent = 0);
+    explicit ActivatableItem(RemoteActivatable *remote, QGraphicsItem * parent = 0);
     virtual ~ActivatableItem();
     virtual void setupItem() = 0;
     RemoteInterfaceConnection* interfaceConnection() const;

@@ -50,7 +50,7 @@ class VpncUiPlugin : public VpnUiPlugin
 {
 Q_OBJECT
 public:
-    VpncUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
+    explicit VpncUiPlugin(QObject * parent = 0, const QVariantList& = QVariantList());
     virtual ~VpncUiPlugin();
     SettingWidget * widget(Knm::Connection *, QWidget * parent = 0);
     SettingWidget * askUser(Knm::Connection *, QWidget * parent = 0);

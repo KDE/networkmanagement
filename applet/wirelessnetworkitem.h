@@ -46,7 +46,7 @@ class WirelessNetworkItem : public ActivatableItem
 {
     Q_OBJECT
     public:
-        WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent = 0);
+        explicit WirelessNetworkItem(RemoteWirelessNetwork * remote, QGraphicsItem * parent = 0);
         virtual ~WirelessNetworkItem();
         void setupItem();
         QString ssid();

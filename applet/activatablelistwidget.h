@@ -37,7 +37,7 @@ class ActivatableListWidget: public Plasma::ScrollWidget
 {
 Q_OBJECT
 public:
-    ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent = 0);
+    explicit ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent = 0);
     virtual ~ActivatableListWidget();
 
     void init();

@@ -31,7 +31,7 @@ class KNM_EXPORT PppoeWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(PppoeWidget)
 public:
-    PppoeWidget(Knm::Connection *, QWidget * parent = 0 );
+    explicit PppoeWidget(Knm::Connection *, QWidget * parent = 0 );
     virtual ~PppoeWidget();
     QString settingName() const;
     void readConfig();

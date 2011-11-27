@@ -31,7 +31,7 @@ class KNM_EXPORT HiddenWirelessNetwork : public Knm::WirelessNetwork
 {
 Q_OBJECT
 public:
-    HiddenWirelessNetwork(const QString & deviceUni, QObject * parent = 0);
+    explicit HiddenWirelessNetwork(const QString & deviceUni, QObject * parent = 0);
     void setSsid(const QString &ssid);
 };
 

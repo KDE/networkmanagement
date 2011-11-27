@@ -39,7 +39,7 @@ public:
     enum Type {Pin, PinPuk};
     enum ErrorCode {PinCodeTooShort, PinCodesDoNotMatch, PukCodeTooShort};
 
-    PinDialog(ModemManager::ModemGsmCardInterface *modem, const Type type = Pin, QWidget *parent=0);
+    explicit PinDialog(ModemManager::ModemGsmCardInterface *modem, const Type type = Pin, QWidget *parent=0);
     ~PinDialog();
 
     Type type() const;

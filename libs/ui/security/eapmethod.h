@@ -38,7 +38,7 @@ class KNM_EXPORT EapMethod : public QWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(EapMethod)
 public:
-    EapMethod(Knm::Connection * connection, QWidget * parent = 0);
+    explicit EapMethod(Knm::Connection * connection, QWidget * parent = 0);
     virtual ~EapMethod();
 
     virtual bool validate() const = 0;

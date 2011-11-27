@@ -47,7 +47,7 @@ public:
      * @param setDefaults if set, the widget sets its individual members according to caps, wpa and
      * rsn
      */
-    WirelessSecuritySettingWidget(Knm::Connection * connection,
+    explicit WirelessSecuritySettingWidget(Knm::Connection * connection,
             NetworkManager::WirelessDevice * iface = 0,
             NetworkManager::AccessPoint * ap = 0,
             QWidget * parent = 0 );

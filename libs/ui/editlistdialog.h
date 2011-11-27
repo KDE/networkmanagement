@@ -29,7 +29,7 @@ class EditListDialog : public KDialog
 {
 Q_OBJECT
 public:
-    EditListDialog(QWidget *parent=0, Qt::WFlags flags=0);
+    explicit EditListDialog(QWidget *parent=0, Qt::WFlags flags=0);
     virtual ~EditListDialog();
     void setItems(const QStringList &items);
     QStringList items() const;

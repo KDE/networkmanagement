@@ -27,7 +27,7 @@ class SecurityWired8021x : public SettingWidget
 {
 Q_OBJECT
 public:
-    SecurityWired8021x(Knm::Connection* connection, QWidget * parent = 0);
+    explicit SecurityWired8021x(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~SecurityWired8021x();
     void readConfig();
     void writeConfig();

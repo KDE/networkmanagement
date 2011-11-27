@@ -37,7 +37,7 @@ class StrongswanAuthWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(StrongswanAuthWidget)
 public:
-    StrongswanAuthWidget(Knm::Connection *, QWidget * parent = 0);
+    explicit StrongswanAuthWidget(Knm::Connection *, QWidget * parent = 0);
     ~StrongswanAuthWidget();
     void readSecrets();
     void readConfig() {};

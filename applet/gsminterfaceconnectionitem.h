@@ -43,7 +43,7 @@ class GsmInterfaceConnectionItem : public ActivatableItem
 {
     Q_OBJECT
     public:
-        GsmInterfaceConnectionItem(RemoteGsmInterfaceConnection * remote, QGraphicsItem * parent = 0);
+        explicit GsmInterfaceConnectionItem(RemoteGsmInterfaceConnection * remote, QGraphicsItem * parent = 0);
         virtual ~GsmInterfaceConnectionItem();
         void setupItem();
 

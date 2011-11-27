@@ -31,7 +31,7 @@ class KNM_EXPORT BluetoothWidget : public SettingWidget
 Q_OBJECT
 Q_DECLARE_PRIVATE(BluetoothWidget)
 public:
-    BluetoothWidget(Knm::Connection *, QWidget * parent = 0 );
+    explicit BluetoothWidget(Knm::Connection *, QWidget * parent = 0 );
     virtual ~BluetoothWidget();
     QString settingName() const;
     void readConfig();

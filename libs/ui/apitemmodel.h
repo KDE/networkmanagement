@@ -39,7 +39,7 @@ class ApItemModel : public QAbstractItemModel
     public:
         enum UserRoles { SignalStrength=Qt::UserRole, MacAddress, ConnectionType, EncryptionRole };
 
-        ApItemModel(QString uni, QObject *parent=0);
+        explicit ApItemModel(QString uni, QObject *parent=0);
         ~ApItemModel();
 
         QModelIndex index(int row, int column, const QModelIndex &parent=QModelIndex()) const;
