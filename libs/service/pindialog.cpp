@@ -37,7 +37,7 @@ PinDialog::PinDialog(ModemManager::ModemGsmCardInterface *modem, const Type type
             if (d.udi().contains(m_name, Qt::CaseInsensitive)) {
                 m_name = d.product();
                 if (!m_name.startsWith(d.vendor())) {
-                    m_name = d.vendor() + " " + m_name;
+                    m_name = d.vendor() + ' ' + m_name;
                 }
                 break;
             }

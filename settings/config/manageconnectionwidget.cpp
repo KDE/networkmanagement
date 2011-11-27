@@ -474,7 +474,7 @@ void ManageConnectionWidget::exportClicked()
     QString pluginError;
     VpnUiPlugin * vpnUi = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-NetworkManager-Services]=='%1'" ).arg( serviceType ), this, QVariantList(), &pluginError );
     if (pluginError.isEmpty()) {
-        QString expFile = KFileDialog::getSaveFileName(KUser().homeDir().append("/" + vpnUi->suggestedFileName(con)),"",this,i18nc("File chooser dialog title for exporting VPN","Export VPN"));
+        QString expFile = KFileDialog::getSaveFileName(KUser().homeDir().append('/' + vpnUi->suggestedFileName(con)),"",this,i18nc("File chooser dialog title for exporting VPN","Export VPN"));
         if (expFile.isEmpty()) {
             delete vpnUi;
             return;
@@ -749,7 +749,7 @@ void ManageConnectionWidget::activeConnectionsChanged()
         t->setText(ConnectionStateColumn, QString());
     }
     foreach(const NetworkManager::ActiveConnection * ac, NetworkManager::activeConnections()) {
-        QString activeConnection = "{" + ac->connection()->uuid() + "}";
+        QString activeConnection = '{' + ac->connection()->uuid() + '}';
         item = mUuidItemHash.value(activeConnection);
         if (item != 0 && ac->state() == NetworkManager::ActiveConnection::Activated) {
             item->setText(ConnectionStateColumn, i18n("Connected"));

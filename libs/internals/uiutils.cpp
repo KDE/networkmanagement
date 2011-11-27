@@ -440,7 +440,7 @@ QString UiUtils::macAddressAsString(const QByteArray & ba)
 
 QByteArray UiUtils::macAddressFromString( const QString & s)
 {
-    QStringList macStringList = s.split(":");
+    QStringList macStringList = s.split(':');
     QByteArray ba;
     if (!s.isEmpty())
     {

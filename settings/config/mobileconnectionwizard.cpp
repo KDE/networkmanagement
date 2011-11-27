@@ -251,7 +251,7 @@ QWizardPage * MobileConnectionWizard::createIntroPage()
     label->setWordWrap(true);
     layout->addWidget(label);
 
-    label = new QLabel("\n" + i18nc("Mobile Connection Wizard", "You will need the following information:"));
+    label = new QLabel('\n' + i18nc("Mobile Connection Wizard", "You will need the following information:"));
     layout->addWidget(label);
 
     label = new QLabel(QString("  . %1\n  . %2\n  . %3").
@@ -261,7 +261,7 @@ QWizardPage * MobileConnectionWizard::createIntroPage()
     layout->addWidget(label);
 
     if (!mInitialMethodType) {
-        label = new QLabel("\n" + i18nc("Mobile Connection Wizard", "Create a connection for &this mobile broadband device:"));
+        label = new QLabel('\n' + i18nc("Mobile Connection Wizard", "Create a connection for &this mobile broadband device:"));
         layout->addWidget(label);
     
         mDeviceComboBox = new QComboBox();
@@ -301,7 +301,7 @@ void MobileConnectionWizard::introAddDevice(NetworkManager::Device *device)
                 if (d.udi().contains(deviceName, Qt::CaseInsensitive)) {
                     deviceName = d.product();
                     if (!deviceName.startsWith(d.vendor())) {
-                        deviceName = d.vendor() + " " + deviceName;
+                        deviceName = d.vendor() + ' ' + deviceName;
                     }
                     desc.append(deviceName);
                     break;
@@ -497,7 +497,7 @@ QWizardPage * MobileConnectionWizard::createPlansPage()
     label->setBuddy(mPlanComboBox);
     layout->addWidget(mPlanComboBox);
 
-    label = new QLabel("\n" + i18nc("Mobile Connection Wizard", "Selected plan &APN (Access Point Name):"));
+    label = new QLabel('\n' + i18nc("Mobile Connection Wizard", "Selected plan &APN (Access Point Name):"));
     layout->addWidget(label);
 
     userApn = new QLineEdit();
@@ -551,12 +551,12 @@ QWizardPage * MobileConnectionWizard::createConfirmPage()
     label->setWordWrap(true);
     layout->addWidget(label);
 
-    label = new QLabel("\n" + i18nc("Mobile Connection Wizard", "Your Provider:"));
+    label = new QLabel('\n' + i18nc("Mobile Connection Wizard", "Your Provider:"));
     layout->addWidget(label);
     labelProvider = new QLabel();
     layout->addWidget(labelProvider);
 
-    labelPlanLabel = new QLabel("\n" + i18nc("Mobile Connection Wizard", "Your Plan:"));
+    labelPlanLabel = new QLabel('\n' + i18nc("Mobile Connection Wizard", "Your Plan:"));
     layout->addWidget(labelPlanLabel);
     labelPlan = new QLabel();
     layout->addWidget(labelPlan);

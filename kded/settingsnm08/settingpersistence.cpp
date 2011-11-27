@@ -37,7 +37,7 @@ SettingPersistence::~SettingPersistence()
 
 QByteArray SettingPersistence::macaddressFromString( const QString & s)
 {
-    QStringList macStringList = s.split(":");
+    QStringList macStringList = s.split(':');
     QByteArray ba;
     if (!s.isEmpty())
     {

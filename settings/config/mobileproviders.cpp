@@ -188,7 +188,7 @@ QStringList MobileProviders::getApns(const QString & provider)
                 if (!e2.isNull() && e2.tagName().toLower() == "apn") {
                     mApns.insert(e2.attribute("value"), e2.firstChild());
                 } else if (!e2.isNull() && e2.tagName().toLower() == "network-id") {
-                    mNetworkIds.append(e2.attribute("mcc") + "-" + e2.attribute("mnc"));
+                    mNetworkIds.append(e2.attribute("mcc") + '-' + e2.attribute("mnc"));
                 }
 
                 n2 = n2.nextSibling();

@@ -189,7 +189,7 @@ QVariantMapMap ConnectionDbus::toDbusMap()
         QStringList permissionsDbus;
         QHash<QString,QString> permissions = m_connection->permissions();
         foreach (const QString &user, permissions.keys()) {
-            permissionsDbus.append(QLatin1String("user:") + user + ":" + permissions.value(user));
+            permissionsDbus.append(QLatin1String("user:") + user + ':' + permissions.value(user));
         }
         connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS), permissionsDbus);
     }

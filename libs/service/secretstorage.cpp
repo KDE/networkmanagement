@@ -325,7 +325,7 @@ void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode n
         }
     } else if (oldMode == Secure && newMode == PlainText) {
         foreach (const QString &key, wallet->entryList()) {
-            QStringList parts = key.split(";");
+            QStringList parts = key.split(';');
             KSharedConfig::Ptr config = KSharedConfig::openConfig(secretsDirectory + parts[0], KConfig::SimpleConfig);
             KConfigGroup configGroup(config, parts[1]);
             QMap<QString, QString> secrets;

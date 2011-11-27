@@ -130,7 +130,7 @@ void GsmWidget::setNetworkIds(const QList<QVariant> networkIds)
     QString temp;
 
     foreach (const QVariant &v, networkIds) {
-        temp.append(v.toString() + ",");
+        temp.append(v.toString() + ',');
     }
     temp.remove(temp.size()-1, 1);
 

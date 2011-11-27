@@ -187,7 +187,7 @@ void Bluetooth::modemAdded(const QString &udi)
         modem = ModemManager::findModemInterface(udi, ModemManager::ModemInterface::NotGsm);
     }
 
-    QStringList temp = mDunDevice.split("/");
+    QStringList temp = mDunDevice.split('/');
     if (temp.count() == 3) {
         mDunDevice = temp[2];
     }

@@ -86,7 +86,7 @@ BluetoothConnectionEditor::BluetoothConnectionEditor(const QVariantList &args, Q
     }
 
     if (args.count() > 4) {
-        defaultName += " " + args[4].toString();
+        defaultName += ' ' + args[4].toString();
 
         if (args.count() > 5) {
             QList<QVariant> networkIds = args[5].toList();

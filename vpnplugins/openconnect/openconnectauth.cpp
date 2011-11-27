@@ -211,7 +211,7 @@ void OpenconnectAuthWidget::readSecrets()
         connectHost();
     }
     if (!d->secrets["certsigs"].isEmpty()) {
-        d->certificateFingerprints.append(d->secrets["certsigs"].split("\t"));
+        d->certificateFingerprints.append(d->secrets["certsigs"].split('\t'));
     }
     d->certificateFingerprints.removeDuplicates();
 }
@@ -259,7 +259,7 @@ void OpenconnectAuthWidget::writeConfig()
     secretData.unite(d->secrets);
     QString host(openconnect_get_hostname(d->vpninfo));
     QString port = QString::number(openconnect_get_port(d->vpninfo));
-    secretData.insert(QLatin1String(NM_OPENCONNECT_KEY_GATEWAY), host + ":" + port);
+    secretData.insert(QLatin1String(NM_OPENCONNECT_KEY_GATEWAY), host + ':' + port);
 
     secretData.insert(QLatin1String(NM_OPENCONNECT_KEY_COOKIE), QLatin1String(openconnect_get_cookie(d->vpninfo)));
     openconnect_clear_cookie(d->vpninfo);
