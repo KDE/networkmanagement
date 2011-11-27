@@ -28,6 +28,8 @@ class RemoteActivatablePrivate
 public:
     virtual ~RemoteActivatablePrivate();
     ActivatableInterface * activatableIface;
+    QString deviceUni;
+    Knm::Activatable::ActivatableType activatableType;
 };
 
 #endif // REMOTEACTIVATABLE_P_H
