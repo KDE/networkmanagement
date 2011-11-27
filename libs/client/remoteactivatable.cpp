@@ -18,6 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <KDebug>
+
 #include "remoteactivatable.h"
 #include "remoteactivatable_p.h"
 
@@ -31,11 +33,7 @@ RemoteActivatable::RemoteActivatable(RemoteActivatablePrivate & dd, const QStrin
 {
     Q_D(RemoteActivatable);
     d->activatableIface = new ActivatableInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
-    //kDebug() << "ActivatableInterface is (" << d->activatableIface << ") on" << d_ptr;
-    connect(d->activatableIface, SIGNAL(activated()),
-            this, SIGNAL(activated()));
-    connect(d->activatableIface, SIGNAL(changed()),
-            this, SIGNAL(changed()));
+    init();
 }
 
 RemoteActivatable::RemoteActivatable(const QString &dbusPath, QObject * parent)
@@ -43,10 +41,7 @@ RemoteActivatable::RemoteActivatable(const QString &dbusPath, QObject * parent)
 {
     Q_D(RemoteActivatable);
     d->activatableIface = new ActivatableInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
-    connect(d->activatableIface, SIGNAL(activated()),
-            this, SIGNAL(activated()));
-    connect(d->activatableIface, SIGNAL(changed()),
-            this, SIGNAL(changed()));
+    init();
 }
 
 RemoteActivatable::~RemoteActivatable()
@@ -54,24 +49,41 @@ RemoteActivatable::~RemoteActivatable()
     delete d_ptr;
 }
 
+void RemoteActivatable::init()
+{
+    Q_D(RemoteActivatable);
+    //kDebug() << "ActivatableInterface is (" << d->activatableIface << ") on" << d_ptr;
+    connect(d->activatableIface, SIGNAL(activated()),
+            this, SIGNAL(activated()));
+    connect(d->activatableIface, SIGNAL(changed()),
+            this, SIGNAL(changed()));
+
+    QDBusReply<QString> reply = d->activatableIface->deviceUni();
+    if (reply.isValid()) {
+        d->deviceUni = reply.value();
+    } else {
+        kDebug() << "deviceUni reply is invalid";
+    }
+
+    QDBusReply<uint> reply2 = d->activatableIface->activatableType();
+    if (reply2.isValid()) {
+        d->activatableType = (Knm::Activatable::ActivatableType)reply2.value();
+    } else {
+        d->activatableType = Knm::Activatable::InterfaceConnection;
+        kDebug() << "activatableType reply is invalid";
+    }
+}
+
 Knm::Activatable::ActivatableType RemoteActivatable::activatableType() const
 {
     Q_D(const RemoteActivatable);
-    QDBusReply<uint> reply = d->activatableIface->activatableType();
-    if (reply.isValid()) {
-        return (Knm::Activatable::ActivatableType)reply.value();
-    }
-    return Knm::Activatable::InterfaceConnection;
+    return d->activatableType;
 }
 
 QString RemoteActivatable::deviceUni() const
 {
     Q_D(const RemoteActivatable);
-    QDBusReply<QString> reply = d->activatableIface->deviceUni();
-    if (reply.isValid()) {
-        return reply.value();
-    }
-    return QString();
+    return d->deviceUni;
 }
 
 void RemoteActivatable::activate()

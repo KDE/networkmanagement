@@ -54,6 +54,8 @@ protected:
     RemoteActivatable(const QString &dbusPath, QObject * parent);
     RemoteActivatable(RemoteActivatablePrivate & dd, const QString &dbusPath, QObject * parent);
     RemoteActivatablePrivate * d_ptr;
+private:
+    void init();
 };
 
 #endif // REMOTEACTIVATABLE_H
