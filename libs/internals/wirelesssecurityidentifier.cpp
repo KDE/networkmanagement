@@ -69,7 +69,7 @@ bool Knm::WirelessSecurity::interfaceSupportsApCiphers(NetworkManager::WirelessD
 
 bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkManager::WirelessDevice::Capabilities interfaceCaps, bool haveAp, bool adhoc, NetworkManager::AccessPoint::Capabilities apCaps, NetworkManager::AccessPoint::WpaFlags apWpa, NetworkManager::AccessPoint::WpaFlags apRsn)
 {
-    bool good = TRUE;
+    bool good = true;
 
     if (!haveAp) {
         if (type == Knm::WirelessSecurity::None)
