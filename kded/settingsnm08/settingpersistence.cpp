@@ -44,7 +44,7 @@ QByteArray SettingPersistence::macaddressFromString( const QString & s)
         ba.resize(6);
         int i = 0;
 
-        foreach (QString macPart, macStringList)
+        foreach (const QString &macPart, macStringList)
             ba[i++] = macPart.toUInt(0, 16);
     }
     return ba;

@@ -81,7 +81,7 @@ static QDBusConnection connection(QLatin1String(""));
 static void printArg(const QVariant &v)
 {
     if (v.userType() == QVariant::StringList) {
-        foreach (QString s, v.toStringList())
+        foreach (const QString &s, v.toStringList())
             printf("%s\n", qPrintable(s));
     } else if (v.userType() == QVariant::List) {
         foreach (const QVariant &var, v.toList())
@@ -401,7 +401,7 @@ static void placeCall(const QString &service, const QString &path, const QString
         exit(1);
     }
 
-    foreach (QVariant v, reply.arguments())
+    foreach (const QVariant &v, reply.arguments())
         printArg(v);
 
     exit(0);
@@ -427,7 +427,7 @@ static void printAllServices(QDBusConnectionInterface *bus)
     const QStringList services = bus->registeredServiceNames();
     QMap<QString, QStringList> servicesWithAliases;
 
-    foreach (QString serviceName, services) {
+    foreach (const QString &serviceName, services) {
         QDBusReply<QString> reply = bus->serviceOwner(serviceName);
         QString owner = reply;
         if (owner.isEmpty())
