@@ -82,13 +82,13 @@ void hmac_sha1_vector(const u8 *key, size_t key_len, size_t num_elem,
 	memset(k_pad, 0, sizeof(k_pad));
 	memcpy(k_pad, key, key_len);
 	/* XOR key with ipad values */
-	for (i = 0; i < 64; i++)
+	for (i = 0; i < 64; ++i)
 		k_pad[i] ^= 0x36;
 
 	/* perform inner SHA1 */
 	_addr[0] = k_pad;
 	_len[0] = 64;
-	for (i = 0; i < num_elem; i++) {
+	for (i = 0; i < num_elem; ++i) {
 		_addr[i + 1] = addr[i];
 		_len[i + 1] = len[i];
 	}
@@ -97,7 +97,7 @@ void hmac_sha1_vector(const u8 *key, size_t key_len, size_t num_elem,
 	memset(k_pad, 0, sizeof(k_pad));
 	memcpy(k_pad, key, key_len);
 	/* XOR key with opad values */
-	for (i = 0; i < 64; i++)
+	for (i = 0; i < 64; ++i)
 		k_pad[i] ^= 0x5c;
 
 	/* perform outer SHA1 */
@@ -182,11 +182,11 @@ static void pbkdf2_sha1_f(const char *passphrase, const char *ssid,
 	hmac_sha1_vector((u8 *) passphrase, passphrase_len, 2, addr, len, tmp);
 	memcpy(digest, tmp, SHA1_MAC_LEN);
 
-	for (i = 1; i < iterations; i++) {
+	for (i = 1; i < iterations; ++i) {
 		hmac_sha1((u8 *) passphrase, passphrase_len, tmp, SHA1_MAC_LEN,
 			  tmp2);
 		memcpy(tmp, tmp2, SHA1_MAC_LEN);
-		for (j = 0; j < SHA1_MAC_LEN; j++)
+		for (j = 0; j < SHA1_MAC_LEN; ++j)
 			digest[j] ^= tmp2[j];
 	}
 }
@@ -497,7 +497,7 @@ static void SHA1Final(unsigned char digest[20], SHA1_CTX* context)
 	u32 i;
 	unsigned char finalcount[8];
 
-	for (i = 0; i < 8; i++) {
+	for (i = 0; i < 8; ++i) {
 		finalcount[i] = (unsigned char)
 			((context->count[(i >= 4 ? 0 : 1)] >>
 			  ((3-(i & 3)) * 8) ) & 255);  /* Endian independent */
@@ -508,7 +508,7 @@ static void SHA1Final(unsigned char digest[20], SHA1_CTX* context)
 	}
 	SHA1Update(context, finalcount, 8);  /* Should cause a SHA1Transform()
 					      */
-	for (i = 0; i < 20; i++) {
+	for (i = 0; i < 20; ++i) {
 		digest[i] = (unsigned char)
 			((context->state[i >> 2] >> ((3 - (i & 3)) * 8)) &
 			 255);
@@ -672,7 +672,7 @@ int main(int argc, char *argv[])
 	ret += test_eap_fast();
 
 	printf("PBKDF2-SHA1 Passphrase test cases:\n");
-	for (i = 0; i < NUM_PASSPHRASE_TESTS; i++) {
+	for (i = 0; i < NUM_PASSPHRASE_TESTS; ++i) {
 		u8 psk[32];
 		struct passphrase_test *test = &passphrase_tests[i];
 		pbkdf2_sha1(test->passphrase,

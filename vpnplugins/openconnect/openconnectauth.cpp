@@ -183,7 +183,7 @@ void OpenconnectAuthWidget::readSecrets()
         EVP_Digest (config.data(), config.size(), sha1, NULL, EVP_sha1(), NULL);
         EVP_MD_CTX_cleanup (&c);
 
-        for (i = 0; i < SHA_DIGEST_LENGTH; i++)
+        for (i = 0; i < SHA_DIGEST_LENGTH; ++i)
             sprintf (&sha1_text[i*2], "%02x", sha1[i]);
 
         openconnect_set_xmlsha1 (d->vpninfo, sha1_text, sizeof(sha1_text));

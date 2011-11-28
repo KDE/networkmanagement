@@ -51,7 +51,7 @@ QValidator::State ListValidator::validate(QString &text, int &/*pos*/) const
     QStringList strings = text.split(QLatin1Char(','));
     int trash;
     QValidator::State state = Acceptable;
-    for (QStringList::iterator i = strings.begin(); i != strings.end(); i++) {
+    for (QStringList::iterator i = strings.begin(); i != strings.end(); ++i) {
         QString string = i->trimmed();
         int position = i->indexOf(string);
         int size = string.size();
