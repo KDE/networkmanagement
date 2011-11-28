@@ -302,8 +302,8 @@ void ActivatableListWidget::filter()
     if (!m_interfaces.isEmpty() && m_hasWireless) {
         bool found = false;
         if (NetworkManager::isWirelessEnabled()) {
-            foreach (const QString &uni, m_interfaces.keys()) {
-                if (m_interfaces.value(uni) == NetworkManager::Device::Wifi) {
+            foreach (const NetworkManager::Device::Type type, m_interfaces) {
+                if (type == NetworkManager::Device::Wifi) {
                     createHiddenItem();
                     found = true;
                     break;
