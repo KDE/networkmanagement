@@ -41,7 +41,7 @@ public:
     /*
      * Do not use Knm::Connection::Bluetooth here, use either Knm::Connection::Gsm or Knm::Connection::Cdma.
      */
-    MobileConnectionWizard(Knm::Connection::Type connectionType = Knm::Connection::Unknown, QWidget * parent = 0);
+    explicit MobileConnectionWizard(Knm::Connection::Type connectionType = Knm::Connection::Unknown, QWidget * parent = 0);
     ~MobileConnectionWizard();
 
     /*

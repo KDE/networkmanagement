@@ -43,7 +43,7 @@ class ManageConnectionWidget : public KCModule
 {
 Q_OBJECT
 public:
-    ManageConnectionWidget(QWidget * parent = 0, const QVariantList & args = QVariantList());
+    explicit ManageConnectionWidget(QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~ManageConnectionWidget();
     virtual void save();
     virtual void load();

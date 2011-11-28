@@ -31,7 +31,7 @@ class Bluetooth: public QObject
 Q_OBJECT
 public:
     // dunDevice must be empty for PANU connections.
-    Bluetooth(const QString bdaddr, const QString service = QString("dun"));
+    explicit Bluetooth(const QString bdaddr, const QString service = QString("dun"));
     ~Bluetooth();
 
 private Q_SLOTS:

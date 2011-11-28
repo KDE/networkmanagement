@@ -30,7 +30,7 @@ class ManageTrayWidget : public KCModule
 {
 Q_OBJECT
 public:
-    ManageTrayWidget(QWidget * parent = 0, const QVariantList & args = QVariantList());
+    explicit ManageTrayWidget(QWidget * parent = 0, const QVariantList & args = QVariantList());
     virtual ~ManageTrayWidget();
     virtual void save();
 private:
