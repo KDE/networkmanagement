@@ -106,7 +106,7 @@ QPair<QString,QString> ScanWidget::currentAccessPoint() const
     switch (m_useBssid->isChecked())
     {
         case false:
-            accessPoint.second = QString();
+            accessPoint.second.clear();
             break;
         case true:
         default:

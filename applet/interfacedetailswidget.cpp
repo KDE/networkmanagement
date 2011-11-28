@@ -249,7 +249,7 @@ void InterfaceDetailsWidget::getDetails()
             details->wifiChannel = -1;
         }
     } else {
-        details->activeAccessPoint = QString();
+        details->activeAccessPoint.clear();
     }
 
     NetworkManager::ModemDevice *giface = qobject_cast<NetworkManager::ModemDevice*>(m_iface);
