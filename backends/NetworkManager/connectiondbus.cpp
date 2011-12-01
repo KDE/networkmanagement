@@ -188,7 +188,7 @@ QVariantMapMap ConnectionDbus::toDbusMap()
     if (!m_connection->permissions().isEmpty()) {
         QStringList permissionsDbus;
         QHash<QString,QString> permissions = m_connection->permissions();
-        foreach (const QString &user, permissions.keys()) {
+        foreach (const QString &user, permissions) {
             permissionsDbus.append(QLatin1String("user:") + user + ':' + permissions.value(user));
         }
         connectionMap.insert(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS), permissionsDbus);
@@ -282,8 +282,8 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
     if (connectionSettings.contains(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS))) {
         QStringList permissionsDbus = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS)).toStringList();
         foreach (const QString &permission, permissionsDbus) {
-            QStringList splitted = permission.split(QLatin1String(":"), QString::KeepEmptyParts);
-            permissions.insert(splitted.at(1),splitted.at(2));
+            QStringList split = permission.split(QLatin1String(":"), QString::KeepEmptyParts);
+            permissions.insert(split.at(1),split.at(2));
         }
     }
     m_connection->setPermissions(permissions);
@@ -339,31 +339,26 @@ void ConnectionDbus::fromDbusSecretsMap(const QVariantMapMap &secrets)
     //kDebug() << "Secrets:" << secrets;
     //kDebug() << "Original settings:" << origs;
 
-    foreach(const QString & secretName, secrets.keys())
-    {
-        //kDebug() << "Secret setting name " << secretName;
-        QVariantMap secret = secrets.value(secretName);
+    QVariantMapMap::const_iterator i;
+    for (i = secrets.constBegin(); i != secrets.constEnd(); ++i) {
+        //kDebug() << "Secret setting name " << i.key();
+        QVariantMap secret = i.value();
 
-        if (secret.isEmpty())
-        {
-            kDebug() << "Empty secret setting found '" << secretName << "', skipping...";
+        if (secret.isEmpty()) {
+            kDebug() << "Empty secret setting found '" << i.key() << "', skipping...";
             continue;
         }
 
-        if (origs.contains(secretName))
-        {
-            QVariantMap origSetting = origs.take(secretName);
+        if (origs.contains(i.key())) {
+            QVariantMap origSetting = origs.take(i.key());
             // WARNING: this print secrets, do not commit them uncommented.
             //kDebug() << "Uniting setting " << secret.keys() << " with values " << secret.values();
             origSetting.unite(secret);
-            origs.insert(secretName, origSetting);
-
-        }
-        else
-        {
-            origs.insert(secretName, secret);
+            origs.insert(i.key(), origSetting);
+        } else {
+            origs.insert(i.key(), secret);
             // WARNING: this print secrets, do not commit them uncommented.
-            //kDebug() << "Inserted setting " << secretName<< " " << secret;
+            //kDebug() << "Inserted setting " << i.key() << " " << secret;
         }
     }
 

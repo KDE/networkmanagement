@@ -110,10 +110,10 @@ void ApItemView::setCurrentIndex(const QModelIndex &index)
 
 QModelIndex ApItemView::indexAt(const QPoint &p) const
 {
-    foreach (const QModelIndex &index, m_apLayout.keys()) {
-        QRect rect = m_apLayout[index];
-        if (rect.contains(p)) {
-            return index;
+    QMap<QModelIndex, QRect>::const_iterator i;
+    for (i = m_apLayout.constBegin(); i != m_apLayout.constEnd(); ++i) {
+        if (i.value().contains(p)) {
+            return i.key();
         }
     }
     return QModelIndex();

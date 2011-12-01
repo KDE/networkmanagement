@@ -78,7 +78,7 @@ void SecretStorage::saveSecrets(Knm::Connection *con)
             KConfigGroup config(ptr, Knm::Setting::typeAsString(setting->type()));
             config.deleteGroup();
             if (!secrets.isEmpty()) {
-                foreach (const QString &secret, secrets.keys()) {
+                foreach (const QString &secret, secrets) {
                     config.writeEntry(secret, secrets.value(secret));
                 }
             }
@@ -330,7 +330,7 @@ void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode n
             KConfigGroup configGroup(config, parts[1]);
             QMap<QString, QString> secrets;
             wallet->readMap(key, secrets);
-            foreach (const QString &secret, secrets.keys()) {
+            foreach (const QString &secret, secrets) {
                 configGroup.writeEntry(secret, secrets.value(secret));
             }
             wallet->removeEntry(key);
