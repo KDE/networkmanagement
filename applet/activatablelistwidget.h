@@ -45,7 +45,7 @@ public:
     void removeType(Knm::Activatable::ActivatableType type);
     bool accept(RemoteActivatable* activatable) const;
     void setShowAllTypes(bool show, bool refresh = false);
-    void setHasWireless(bool hasWireless); // Used to decide wether or not to show the hidden item
+    void setHasWireless(bool hasWireless); // Used to decide whether or not to show the hidden item
 
 Q_SIGNALS:
     void showInterfaceDetails(QString);
@@ -84,6 +84,6 @@ private:
 
     bool m_showAllTypes;
     bool m_vpn;
-    bool m_hasWireless; // Used to determine wether or not to show hidden config
+    bool m_hasWireless; // Used to determine whether or not to show hidden config
 };
 #endif // ACTIVATABLELISTWIDGET_H
