@@ -79,9 +79,15 @@ void EapMethodStack::setCurrentEapMethod(int key)
 /* Triggered when the user changes the EAP method using the cboEapMethod combo box. */
 void EapMethodStack::setCurrentEapMethodInternal(int index)
 {
+    // Save old eap method's data into this connection's settings.
+    qobject_cast<EapMethod *>(eapMethods->currentWidget())->writeConfig();
+
+    // Change to the chosen epa method.
     eapMethods->setCurrentIndex(index);
-    readConfig();
-    readSecrets();
+
+    // Load this connection's setting into the chosen epa method.
+    qobject_cast<EapMethod *>(eapMethods->widget(index))->readConfig();
+    qobject_cast<EapMethod *>(eapMethods->widget(index))->readSecrets();
 }
 
 EapMethod * EapMethodStack::currentEapMethod() const
@@ -120,8 +126,8 @@ void EapMethodStack::readSecrets()
 
 void EapMethodStack::setShowPasswords(bool on)
 {
-    if (eapMethods->count()) {
-        qobject_cast<EapMethod *>( eapMethods->currentWidget())->setShowPasswords(on);
+    for (int i = 0; i < eapMethods->count(); ++i) {
+        qobject_cast<EapMethod *>( eapMethods->widget(i))->setShowPasswords(on);
     }
 }
 
