@@ -57,23 +57,23 @@ RemoteActivatableList::RemoteActivatableList(QObject * parent)
     d->registrationWatcher->setConnection(QDBusConnection::sessionBus());
     d->registrationWatcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration);
     d->registrationWatcher->addWatchedService(d->iface->service());
-    connect(d->registrationWatcher, SIGNAL(serviceRegistered(const QString &)), SLOT(serviceRegistered()));
+    connect(d->registrationWatcher, SIGNAL(serviceRegistered(QString)), SLOT(serviceRegistered()));
 
     d->unregistrationWatcher = new QDBusServiceWatcher(this);
     d->unregistrationWatcher->setConnection(QDBusConnection::sessionBus());
     d->unregistrationWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
     d->unregistrationWatcher->addWatchedService(d->iface->service());
-    connect(d->unregistrationWatcher, SIGNAL(serviceUnregistered(const QString &)), SLOT(serviceUnregistered()));
+    connect(d->unregistrationWatcher, SIGNAL(serviceUnregistered(QString)), SLOT(serviceUnregistered()));
 }
 
 void RemoteActivatableList::init()
 {
     Q_D(RemoteActivatableList);
     if (d->iface->isValid()) {
-        connect(d->iface, SIGNAL(ActivatableAdded(const QString&,uint, int)),
-                this, SLOT(handleActivatableAdded(const QString&,uint, int)));
-        connect(d->iface, SIGNAL(ActivatableRemoved(const QString&)),
-                this, SLOT(handleActivatableRemoved(const QString &)));
+        connect(d->iface, SIGNAL(ActivatableAdded(QString,uint,int)),
+                this, SLOT(handleActivatableAdded(QString,uint,int)));
+        connect(d->iface, SIGNAL(ActivatableRemoved(QString)),
+                this, SLOT(handleActivatableRemoved(QString)));
 
         if (d->activatables.isEmpty()) {
             QDBusReply<QStringList> rv = d->iface->ListActivatables();

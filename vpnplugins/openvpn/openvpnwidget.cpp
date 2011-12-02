@@ -92,7 +92,7 @@ OpenVpnSettingWidget::OpenVpnSettingWidget(Knm::Connection * connection, QWidget
     QList<const KUrlRequester *> requesters;
     requesters << d->ui.x509CaFile << d->ui.x509Cert << d->ui.x509Key << d->ui.pskSharedKey << d->ui.passCaFile << d->ui.x509PassCaFile << d->ui.x509PassCert << d->ui.x509PassKey << d->ui.kurlTlsAuthKey;
     foreach (const KUrlRequester * requester, requesters) {
-        connect(requester, SIGNAL(urlSelected(const KUrl &)), this, SLOT(updateStartDir(const KUrl&)));
+        connect(requester, SIGNAL(urlSelected(KUrl)), this, SLOT(updateStartDir(KUrl)));
     }
 
     connect(d->ui.x509KeyPasswordStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(x509KeyPasswordStorageChanged(int)));

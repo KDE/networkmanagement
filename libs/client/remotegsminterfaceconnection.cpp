@@ -31,7 +31,7 @@ RemoteGsmInterfaceConnection::RemoteGsmInterfaceConnection(const QString &dbusPa
     d->gsmInterfaceConnectionIface = new GsmInterfaceConnectionInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
     connect(d->gsmInterfaceConnectionIface, SIGNAL(signalQualityChanged(int)), this, SIGNAL(signalQualityChanged(int)));
 
-    connect(d->gsmInterfaceConnectionIface, SIGNAL(accessTechnologyChanged(const int)), this, SIGNAL(accessTechnologyChanged(const int)));
+    connect(d->gsmInterfaceConnectionIface, SIGNAL(accessTechnologyChanged(int)), this, SIGNAL(accessTechnologyChanged(int)));
 }
 
 RemoteGsmInterfaceConnection::~RemoteGsmInterfaceConnection()

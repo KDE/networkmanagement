@@ -209,8 +209,8 @@ void NMPopup::init()
     m_showMoreButton->setMinimumSize(sMax);
     m_showMoreButton->setMaximumSize(sMax);
     connect(m_showMoreButton, SIGNAL(clicked()), this, SLOT(showMore()));
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable *, int)), this, SLOT(uncheckShowMore(RemoteActivatable *)));
-    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable *)), this, SLOT(checkShowMore(RemoteActivatable *)));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*, int)), this, SLOT(uncheckShowMore(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), this, SLOT(checkShowMore(RemoteActivatable*)));
 
     QGraphicsLinearLayout* connectionLayout = new QGraphicsLinearLayout;
     connectionLayout->addItem(m_showMoreButton);
@@ -229,10 +229,10 @@ void NMPopup::init()
     }
     addVpnInterface();
     // hook up signals to allow us to change the connection list depending on APs present, etc
-    connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString&)),
-            SLOT(interfaceAdded(const QString&)));
-    connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(const QString&)),
-            SLOT(interfaceRemoved(const QString&)));
+    connect(NetworkManager::notifier(), SIGNAL(deviceAdded(QString)),
+            SLOT(interfaceAdded(QString)));
+    connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(QString)),
+            SLOT(interfaceRemoved(QString)));
 
     m_showMoreChecked = false;
     m_oldShowMoreChecked = true;
@@ -405,17 +405,17 @@ void NMPopup::addInterfaceInternal(NetworkManager::Device* iface)
             ifaceItem = wifiItem;
             wifiItem->setEnabled(NetworkManager::isWirelessEnabled());
             kDebug() << "WiFi added";
-            connect(wifiItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
+            connect(wifiItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
         } else {
             // Create the interfaceitem
             ifaceItem = new InterfaceItem(static_cast<NetworkManager::WiredDevice *>(iface), m_activatables, InterfaceItem::InterfaceName, this);
-            connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(const QString&)), m_connectionList, SLOT(deactivateConnection(const QString&)));
+            connect(ifaceItem, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
         }
         connect(ifaceItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
         connect(ifaceItem, SIGNAL(clicked(NetworkManager::Device*)),
                 m_connectionList,  SLOT(addInterface(NetworkManager::Device*)));
-        connect(ifaceItem, SIGNAL(hoverEnter(const QString&)), m_connectionList, SLOT(hoverEnter(const QString&)));
-        connect(ifaceItem, SIGNAL(hoverLeave(const QString&)), m_connectionList, SLOT(hoverLeave(const QString&)));
+        connect(ifaceItem, SIGNAL(hoverEnter(QString)), m_connectionList, SLOT(hoverEnter(QString)));
+        connect(ifaceItem, SIGNAL(hoverLeave(QString)), m_connectionList, SLOT(hoverLeave(QString)));
 
         // Catch connection changes
         connect(iface, SIGNAL(stateChanged(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)), this, SLOT(handleConnectionStateChange(NetworkManager::Device::State,NetworkManager::Device::State,NetworkManager::Device::StateChangeReason)));
@@ -689,7 +689,7 @@ void NMPopup::uncheckShowMore(RemoteActivatable *ra)
         }
         wicCount++;
         if (m_oldShowMoreChecked != m_showMoreChecked) {
-            // One wireless network explicity configured by the user appeared, reset "Show More" button
+            // One wireless network explicitly configured by the user appeared, reset "Show More" button
             // state to the value before the checkShowMore method above took action.
             showMore(m_oldShowMoreChecked);
         }

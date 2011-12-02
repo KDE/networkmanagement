@@ -69,8 +69,8 @@ void InterfaceNotificationHost::addInterfaceConnection(Knm::InterfaceConnection 
 {
     if (ic) {
         m_interfaceConnections.insert(ic);
-        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
-                this, SLOT(interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
+        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
+                this, SLOT(interfaceConnectionActivationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
 
         switch (ic->connectionType()) {
             case Knm::Connection::Wireless: connect(ic, SIGNAL(strengthChanged(int)), this, SLOT(strengthChanged(int))); break;
@@ -421,10 +421,10 @@ NotificationManager::NotificationManager(ConnectionList *connectionList, QObject
             this, SLOT(wirelessHardwareEnabledChanged(bool)));
 
     // interfaces
-    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString&)),
-            this, SLOT(deviceAdded(const QString&)));
-    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(const QString&)),
-            this, SLOT(deviceRemoved(const QString&)));
+    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceAdded(QString)),
+            this, SLOT(deviceAdded(QString)));
+    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(QString)),
+            this, SLOT(deviceRemoved(QString)));
 
     foreach (NetworkManager::Device* interface, NetworkManager::networkInterfaces()) {
         deviceAdded(interface->uni());
@@ -545,10 +545,10 @@ void NotificationManager::deviceAdded(const QString & uni)
                     // creating these objects, but I expect these will move into Solid and become singletons
                     NetworkManager::WirelessNetworkInterfaceEnvironment * environment = new NetworkManager::WirelessNetworkInterfaceEnvironment(wireless);
 
-                    QObject::connect(environment, SIGNAL(networkAppeared(const QString &)),
-                            this, SLOT(networkAppeared(const QString&)));
-                    QObject::connect(environment, SIGNAL(networkDisappeared(const QString &)),
-                            this, SLOT(networkDisappeared(const QString&)));
+                    QObject::connect(environment, SIGNAL(networkAppeared(QString)),
+                            this, SLOT(networkAppeared(QString)));
+                    QObject::connect(environment, SIGNAL(networkDisappeared(QString)),
+                            this, SLOT(networkDisappeared(QString)));
                 }
             }
         }

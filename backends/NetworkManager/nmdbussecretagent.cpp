@@ -162,6 +162,6 @@ void NMDBusSecretAgent::registerSecretsProvider(SecretsProvider * provider)
 {
     Q_D(NMDBusSecretAgent);
     d->secretsProvider = provider;
-    connect(d->secretsProvider,SIGNAL(connectionRead(Knm::Connection *, const QString&, bool, bool)),SLOT(secretsReady(Knm::Connection*, const QString&, bool, bool)));
-    connect(d->secretsProvider,SIGNAL(connectionSaved(Knm::Connection *)),SLOT(deleteSavedConnection(Knm::Connection *)));
+    connect(d->secretsProvider,SIGNAL(connectionRead(Knm::Connection*,QString,bool,bool)),SLOT(secretsReady(Knm::Connection*,QString,bool,bool)));
+    connect(d->secretsProvider,SIGNAL(connectionSaved(Knm::Connection*)),SLOT(deleteSavedConnection(Knm::Connection*)));
 }

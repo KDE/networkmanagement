@@ -55,7 +55,7 @@ Wireless80211Widget::Wireless80211Widget(Knm::Connection* connection, const QStr
     d->ui.setupUi(this);
     d->valid = false; //until there is a SSID at least
     // setup validation
-    connect(d->ui.ssid, SIGNAL(textChanged(const QString&)), SLOT(validate()));
+    connect(d->ui.ssid, SIGNAL(textChanged(QString)), SLOT(validate()));
     d->proposedSsid = ssid;
     d->setting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
     d->ui.ssid->setText(d->proposedSsid);

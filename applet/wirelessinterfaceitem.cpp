@@ -36,7 +36,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 WirelessInterfaceItem::WirelessInterfaceItem(NetworkManager::WirelessDevice * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
 : InterfaceItem(iface, activatables, mode, parent)
 {
-    connect(iface, SIGNAL(activeAccessPointChanged(const QString&)),
+    connect(iface, SIGNAL(activeAccessPointChanged(QString)),
             SLOT(updateInfo()));
 
     m_wirelessStatus = new WirelessStatus(iface);

@@ -88,8 +88,8 @@ void GsmInterfaceConnectionBuilder::init(GsmInterfaceConnection *ic)
 
     if (modemNetworkIface) {
         QObject::connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), ic, SLOT(setSignalQuality(uint)));
-        QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(const ModemManager::ModemInterface::AccessTechnology)), ic, SLOT(setAccessTechnology(const ModemManager::ModemInterface::AccessTechnology)));
-        QObject::connect(modemNetworkIface, SIGNAL(enabledChanged(const bool)), ic, SLOT(setEnabled(const bool)));
+        QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), ic, SLOT(setAccessTechnology(ModemManager::ModemInterface::AccessTechnology)));
+        QObject::connect(modemNetworkIface, SIGNAL(enabledChanged(bool)), ic, SLOT(setEnabled(bool)));
 
         ic->m_signalQuality = modemNetworkIface->getSignalQuality();
         ic->m_accessTechnology = modemNetworkIface->getAccessTechnology();

@@ -50,7 +50,7 @@ ConnectionWidget::ConnectionWidget(QWidget * parent)
 
     d->ui.pushButtonPermissions->setIcon(KIcon("preferences-desktop-user"));
     connect(d->ui.pushButtonPermissions, SIGNAL(clicked()), this, SLOT(buttonPermissionsClicked()));
-    connect(d->ui.id, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
+    connect(d->ui.id, SIGNAL(textChanged(QString)), this, SLOT(validate()));
 }
 
 ConnectionWidget::~ConnectionWidget()

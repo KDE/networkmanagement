@@ -697,7 +697,7 @@ void InterfaceDetailsWidget::connectSignals()
         connect(m_iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
 
         if (m_iface->type() == NetworkManager::Device::Wifi) {
-            connect(m_iface, SIGNAL(activeAccessPointChanged(const QString &)), this, SLOT(updateActiveAccessPoint(const QString &)));
+            connect(m_iface, SIGNAL(activeAccessPointChanged(QString)), this, SLOT(updateActiveAccessPoint(QString)));
         }
     }
     if (m_iface->type() == NetworkManager::Device::Modem ||
@@ -710,14 +710,14 @@ void InterfaceDetailsWidget::connectSignals()
 
                 if (modemNetworkIface) {
                     // this one is for bluetooth devices, which always have a NetworkManager object but do not always have a ModemManager object.
-                    connect(ModemManager::notifier(), SIGNAL(modemRemoved(const QString &)), this, SLOT(resetInterfaceDetails()));
-                    connect(modemNetworkIface, SIGNAL(enabledChanged(const bool)), this, SLOT(modemUpdateEnabled(const bool)));
-                    connect(modemNetworkIface, SIGNAL(unlockRequiredChanged(const QString &)), this, SLOT(modemUpdateUnlockRequired(const QString &)));
+                    connect(ModemManager::notifier(), SIGNAL(modemRemoved(QString)), this, SLOT(resetInterfaceDetails()));
+                    connect(modemNetworkIface, SIGNAL(enabledChanged(bool)), this, SLOT(modemUpdateEnabled(bool)));
+                    connect(modemNetworkIface, SIGNAL(unlockRequiredChanged(QString)), this, SLOT(modemUpdateUnlockRequired(QString)));
 
-                    connect(modemNetworkIface, SIGNAL(registrationInfoChanged(const ModemManager::ModemGsmNetworkInterface::RegistrationInfoType &)), this, SLOT(modemUpdateRegistrationInfo(const ModemManager::ModemGsmNetworkInterface::RegistrationInfoType &)));
-                    connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), this, SLOT(modemUpdateAccessTechnology(const ModemManager::ModemInterface::AccessTechnology &)));
-                    connect(modemNetworkIface, SIGNAL(signalQualityChanged(const uint)), this, SLOT(modemUpdateSignalQuality(const uint)));
-                    connect(modemNetworkIface, SIGNAL(allowedModeChanged(const ModemManager::ModemInterface::AllowedMode)), this, SLOT(modemUpdateAllowedMode(const ModemManager::ModemInterface::AllowedMode)));
+                    connect(modemNetworkIface, SIGNAL(registrationInfoChanged(ModemManager::ModemGsmNetworkInterface::RegistrationInfoType)), this, SLOT(modemUpdateRegistrationInfo(ModemManager::ModemGsmNetworkInterface::RegistrationInfoType)));
+                    connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), this, SLOT(modemUpdateAccessTechnology(ModemManager::ModemInterface::AccessTechnology)));
+                    connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), this, SLOT(modemUpdateSignalQuality(uint)));
+                    connect(modemNetworkIface, SIGNAL(allowedModeChanged(ModemManager::ModemInterface::AllowedMode)), this, SLOT(modemUpdateAllowedMode(ModemManager::ModemInterface::AllowedMode)));
                 }
             }
     }

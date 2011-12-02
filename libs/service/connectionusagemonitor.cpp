@@ -48,8 +48,8 @@ ConnectionUsageMonitor::ConnectionUsageMonitor(ConnectionList * connectionList, 
     d->connectionList = connectionList;
     d->activatableList = activatableList;
 
-    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString&)),
-            this, SLOT(deviceAdded(const QString&)));
+    QObject::connect(NetworkManager::notifier(), SIGNAL(deviceAdded(QString)),
+            this, SLOT(deviceAdded(QString)));
 
     NetworkManager::DeviceList allInterfaces = NetworkManager::networkInterfaces();
     foreach (NetworkManager::Device * interface, allInterfaces) {
@@ -66,8 +66,8 @@ void ConnectionUsageMonitor::handleAdd(Knm::Activatable * added)
 {
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(added);
     if (ic) {
-        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
-                this, SLOT(handleActivationStateChange(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
+        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
+                this, SLOT(handleActivationStateChange(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
     }
 }
 
@@ -127,8 +127,8 @@ void ConnectionUsageMonitor::deviceAdded(const QString& uni)
         NetworkManager::WirelessDevice * wifiDevice =
             qobject_cast<NetworkManager::WirelessDevice *>(interface);
         if (wifiDevice)
-            connect(wifiDevice, SIGNAL(activeAccessPointChanged(const QString &)),
-                    this, SLOT(networkInterfaceAccessPointChanged(const QString &)));
+            connect(wifiDevice, SIGNAL(activeAccessPointChanged(QString)),
+                    this, SLOT(networkInterfaceAccessPointChanged(QString)));
     }
 }
 

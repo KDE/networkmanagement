@@ -48,10 +48,10 @@ GsmInterfaceConnectionItem::GsmInterfaceConnectionItem(RemoteGsmInterfaceConnect
     m_layoutIsDirty(true)
 {
     connect(remote, SIGNAL(signalQualityChanged(int)), this, SLOT(setQuality(int)));
-    connect(remote, SIGNAL(accessTechnologyChanged(const int)), this, SLOT(setAccessTechnology(const int)));
+    connect(remote, SIGNAL(accessTechnologyChanged(int)), this, SLOT(setAccessTechnology(int)));
     connect(remote, SIGNAL(changed()), SLOT(updateGsmInfo()));
-    connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
-            this, SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
+    connect(remote, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
+            this, SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
     m_state = Knm::InterfaceConnection::Unknown;
 }
 

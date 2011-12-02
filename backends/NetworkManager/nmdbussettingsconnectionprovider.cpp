@@ -91,20 +91,20 @@ NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionLis
 
     initConnections();
     // signal is from parent class
-    connect(d->iface, SIGNAL(NewConnection(const QDBusObjectPath&)),
-            this, SLOT(onConnectionAdded(const QDBusObjectPath&)));
+    connect(d->iface, SIGNAL(NewConnection(QDBusObjectPath)),
+            this, SLOT(onConnectionAdded(QDBusObjectPath)));
     // clean our connections out if the service goes away
     d->registrationWatcher = new QDBusServiceWatcher(this);
     d->registrationWatcher->setConnection(QDBusConnection::systemBus());
     d->registrationWatcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration);
     d->registrationWatcher->addWatchedService(d->iface->service());
-    connect(d->registrationWatcher, SIGNAL(serviceRegistered(const QString &)), SLOT(serviceRegistered()));
+    connect(d->registrationWatcher, SIGNAL(serviceRegistered(QString)), SLOT(serviceRegistered()));
 
     d->unregistrationWatcher = new QDBusServiceWatcher(this);
     d->unregistrationWatcher->setConnection(QDBusConnection::systemBus());
     d->unregistrationWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
     d->unregistrationWatcher->addWatchedService(d->iface->service());
-    connect(d->unregistrationWatcher, SIGNAL(serviceUnregistered(const QString &)), SLOT(serviceUnregistered()));
+    connect(d->unregistrationWatcher, SIGNAL(serviceUnregistered(QString)), SLOT(serviceUnregistered()));
 }
 
 NMDBusSettingsConnectionProvider::~NMDBusSettingsConnectionProvider()

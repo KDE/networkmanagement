@@ -56,8 +56,8 @@ ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.net
     }
 
     if (addConnection) {
-        connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool, const QString &)), SLOT(addConnectionCompleted(bool, const QString &)));
-        connect(&m_manager, SIGNAL(ActivatableAdded(QString, uint, int)), this, SLOT(activatableAdded(QString, uint, int)));
+        connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool,QString)), SLOT(addConnectionCompleted(bool,QString)));
+        connect(&m_manager, SIGNAL(ActivatableAdded(QString,uint,int)), this, SLOT(activatableAdded(QString,uint,int)));
         mSystemSettings->addConnection(con);
     }
 

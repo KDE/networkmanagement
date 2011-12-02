@@ -104,12 +104,12 @@ WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &a
     }
 
     m_wirelessWidget = new Wireless80211Widget(m_connection, ssid, shared, this);
-    connect(m_wirelessWidget, SIGNAL(ssidSelected(NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *)),
-            this, SLOT(setDefaultName(NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *)));
+    connect(m_wirelessWidget, SIGNAL(ssidSelected(NetworkManager::WirelessDevice*,NetworkManager::AccessPoint*)),
+            this, SLOT(setDefaultName(NetworkManager::WirelessDevice*,NetworkManager::AccessPoint*)));
 
     m_securityWidget = new WirelessSecuritySettingWidget(m_connection, iface, ap, this);
-    connect(m_wirelessWidget, SIGNAL(ssidSelected(NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *)),
-            m_securityWidget, SLOT(setIfaceAndAccessPoint(NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *)));
+    connect(m_wirelessWidget, SIGNAL(ssidSelected(NetworkManager::WirelessDevice*,NetworkManager::AccessPoint*)),
+            m_securityWidget, SLOT(setIfaceAndAccessPoint(NetworkManager::WirelessDevice*,NetworkManager::AccessPoint*)));
 
     IpV4Widget * ipv4Widget = new IpV4Widget(m_connection, this);
     IpV6Widget * ipv6Widget = new IpV6Widget(m_connection, this);
@@ -154,8 +154,8 @@ WirelessPreferences::WirelessPreferences(Knm::Connection *con, QWidget *parent)
     m_contents->setConnection(m_connection);
 
     m_wirelessWidget = new Wireless80211Widget(m_connection, NULL, false, this);
-    connect(m_wirelessWidget, SIGNAL(ssidSelected(NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *)),
-            this, SLOT(setDefaultName(NetworkManager::WirelessDevice *, NetworkManager::AccessPoint *)));
+    connect(m_wirelessWidget, SIGNAL(ssidSelected(NetworkManager::WirelessDevice*,NetworkManager::AccessPoint*)),
+            this, SLOT(setDefaultName(NetworkManager::WirelessDevice*,NetworkManager::AccessPoint*)));
 
     m_securityWidget = new WirelessSecuritySettingWidget(m_connection, NULL, NULL, this);
 

@@ -87,9 +87,9 @@ bool NetworkManagementEngine::sourceRequestEvent(const QString &name)
 
     if (name == "connections") {
         connect(d->activatables, SIGNAL(activatableAdded(RemoteActivatable*)),
-                SLOT(activatableAdded(RemoteActivatable *)));
+                SLOT(activatableAdded(RemoteActivatable*)));
         connect(d->activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
-                SLOT(activatableRemoved(RemoteActivatable *)));
+                SLOT(activatableRemoved(RemoteActivatable*)));
 
         connect(d->activatables, SIGNAL(appeared()), SLOT(listAppeared()));
         connect(d->activatables, SIGNAL(disappeared()), SLOT(listDisappeared()));
@@ -238,13 +238,13 @@ void NetworkManagementEngine::addInterfaceConnection(RemoteActivatable* remote)
     }
 
     // this one's just for debugging, seems to get never called
-    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
-            SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
+    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
+            SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
 
     // connect remoteinterface for updates
     connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)),
             SLOT(updateInterfaceConnection()));
-    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
+    connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
             SLOT(updateInterfaceConnection()));
 
     updateActivatable(remote);

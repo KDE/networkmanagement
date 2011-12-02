@@ -69,10 +69,10 @@ IpV6AdvancedWidget::IpV6AdvancedWidget(QWidget * parent)
     connect(d->ui.pushButtonAdd, SIGNAL(clicked()), this, SLOT(addIPAddress()));
     connect(d->ui.pushButtonRemove, SIGNAL(clicked()), this, SLOT(removeIPAddress()));
 
-    connect(d->ui.tableViewAddresses->selectionModel(), SIGNAL(selectionChanged(const QItemSelection &, const QItemSelection &)), this,
-            SLOT(selectionChanged(const QItemSelection&)));
+    connect(d->ui.tableViewAddresses->selectionModel(), SIGNAL(selectionChanged(QItemSelection,QItemSelection)), this,
+            SLOT(selectionChanged(QItemSelection)));
 
-    connect(&d->model, SIGNAL(itemChanged(QStandardItem *)), this, SLOT(tableViewItemChanged(QStandardItem *)));
+    connect(&d->model, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(tableViewItemChanged(QStandardItem*)));
 }
 
 IpV6AdvancedWidget::~IpV6AdvancedWidget()

@@ -53,11 +53,11 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
     d->activatableList = activatableList;
 
     QObject::connect(NetworkManager::notifier(),
-            SIGNAL(deviceAdded(const QString&)),
-            this, SLOT(deviceAdded(const QString&)));
+            SIGNAL(deviceAdded(QString)),
+            this, SLOT(deviceAdded(QString)));
     QObject::connect(NetworkManager::notifier(),
-            SIGNAL(deviceRemoved(const QString&)),
-            this, SLOT(deviceRemoved(const QString&)));
+            SIGNAL(deviceRemoved(QString)),
+            this, SLOT(deviceRemoved(QString)));
 
     foreach (NetworkManager::Device * iface, NetworkManager::networkInterfaces()) {
         deviceAdded(iface->uni());
@@ -65,8 +65,8 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
 
     dialog = 0;
     QObject::connect(ModemManager::notifier(),
-            SIGNAL(modemAdded(const QString&)),
-            this, SLOT(modemAdded(const QString&)));
+            SIGNAL(modemAdded(QString)),
+            this, SLOT(modemAdded(QString)));
 
     foreach (ModemManager::ModemInterface * iface, ModemManager::modemInterfaces()) {
         modemAdded(iface->udi());
@@ -123,7 +123,7 @@ void NetworkInterfaceMonitor::modemAdded(const QString & udi)
         return;
     }
 
-    connect(modem, SIGNAL(unlockRequiredChanged(const QString &)), SLOT(requestPin(const QString &)));
+    connect(modem, SIGNAL(unlockRequiredChanged(QString)), SLOT(requestPin(QString)));
 
     if (dialog || modem->unlockRequired().isEmpty()) {
         return;
@@ -178,7 +178,7 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
             watcher = new QDBusPendingCallWatcher(reply, modem);
         }
     
-        connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher *)), SLOT(onSendPinArrived(QDBusPendingCallWatcher *)));
+        connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), SLOT(onSendPinArrived(QDBusPendingCallWatcher*)));
     }
 #else
     if (dialog->type() == PinDialog::Pin) {

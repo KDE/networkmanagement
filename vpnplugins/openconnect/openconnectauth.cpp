@@ -100,11 +100,11 @@ OpenconnectAuthWidget::OpenconnectAuthWidget(Knm::Connection * connection, QWidg
     // and which needs to be populated with settings we get from NM, like host, certificate or private key
     d->vpninfo = d->worker->getOpenconnectInfo();
 
-    connect(d->worker, SIGNAL(validatePeerCert(const QString&, const QString&, const QString&, bool*)), this, SLOT(validatePeerCert(const QString&, const QString&, const QString &, bool*)));
-    connect(d->worker, SIGNAL(processAuthForm(struct oc_auth_form*)), this, SLOT(processAuthForm(struct oc_auth_form*)));
-    connect(d->worker, SIGNAL(updateLog(const QString&, const int&)), this, SLOT(updateLog(const QString &, const int&)));
-    connect(d->worker, SIGNAL(writeNewConfig(const QString&)), this, SLOT(writeNewConfig(const QString&)));
-    connect(d->worker, SIGNAL(cookieObtained(const int &)), this, SLOT(workerFinished(const int &)));
+    connect(d->worker, SIGNAL(validatePeerCert(QString,QString,QString,bool*)), this, SLOT(validatePeerCert(QString,QString,QString,bool*)));
+    connect(d->worker, SIGNAL(processAuthForm(oc_auth_form*)), this, SLOT(processAuthForm(oc_auth_form*)));
+    connect(d->worker, SIGNAL(updateLog(QString,int)), this, SLOT(updateLog(QString,int)));
+    connect(d->worker, SIGNAL(writeNewConfig(QString)), this, SLOT(writeNewConfig(QString)));
+    connect(d->worker, SIGNAL(cookieObtained(int)), this, SLOT(workerFinished(int)));
 }
 
 OpenconnectAuthWidget::~OpenconnectAuthWidget()

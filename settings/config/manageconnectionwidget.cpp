@@ -98,8 +98,8 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     mConnections = new ConnectionList(this);
     mSystemSettings = new NMDBusSettingsConnectionProvider(mConnections, this);
 
-    connect(mSystemSettings, SIGNAL(getConnectionSecretsCompleted(bool, const QString &, const QString &)), this, SLOT(editGotSecrets(bool, const QString&, const QString &)) );
-    connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool, const QString &)), this, SLOT(addGotConnection(bool, const QString&)) );
+    connect(mSystemSettings, SIGNAL(getConnectionSecretsCompleted(bool,QString,QString)), this, SLOT(editGotSecrets(bool,QString,QString)) );
+    connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool,QString)), this, SLOT(addGotConnection(bool,QString)) );
 
     connect(mSystemSettings, SIGNAL(connectionsChanged()), this, SLOT(restoreConnections()));
 
@@ -128,9 +128,9 @@ ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantLi
     connectButtonSet(mConnEditUi.buttonSetCellular, mConnEditUi.listCellular);
     connectButtonSet(mConnEditUi.buttonSetVpn, mConnEditUi.listVpn);
     connectButtonSet(mConnEditUi.buttonSetPppoe, mConnEditUi.listPppoe);
-    connect(NetworkManager::notifier(), SIGNAL(deviceAdded(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(deviceAdded(QString)),
             SLOT(updateTabStates()));
-    connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(const QString&)),
+    connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(QString)),
             SLOT(updateTabStates()));
     connect(NetworkManager::notifier(), SIGNAL(activeConnectionsChanged()),
             SLOT(activeConnectionsChanged()));

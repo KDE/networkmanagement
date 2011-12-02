@@ -114,7 +114,7 @@ PinDialog::PinDialog(ModemManager::ModemGsmCardInterface *modem, const Type type
 
     move((desktop.width() - width()) / 2, (desktop.height() - height()) / 2);
     connect(ui->chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
-    connect(ModemManager::notifier(), SIGNAL(modemRemoved(const QString &)), SLOT(modemRemoved(const QString &)));
+    connect(ModemManager::notifier(), SIGNAL(modemRemoved(QString)), SLOT(modemRemoved(QString)));
 }
 
 PinDialog::~PinDialog()
