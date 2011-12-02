@@ -90,7 +90,7 @@ void StrongswanSettingWidget::readConfig()
     Q_D(StrongswanSettingWidget);
     // General settings
     QStringMap dataMap = d->setting->data();
-    // Gateway Adress
+    // Gateway Address
     QString gateway = dataMap[NM_STRONGSWAN_GATEWAY];
     if (!gateway.isEmpty()) {
         d->ui.leGateway->setText(gateway);

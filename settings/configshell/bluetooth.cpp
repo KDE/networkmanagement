@@ -74,7 +74,7 @@ void Bluetooth::init()
     QDBusReply<QDBusObjectPath> adapterPath = bluez.call(QLatin1String("DefaultAdapter"));
 
     if (!adapterPath.isValid()) {
-        kError(KDE_DEFAULT_DEBUG_AREA) << "Error: default bluetooth adapter not found. Quiting.";
+        kError(KDE_DEFAULT_DEBUG_AREA) << "Error: default bluetooth adapter not found. Exiting.";
         kapp->quit();
         return;
     }
@@ -170,7 +170,7 @@ void Bluetooth::init()
    
     QDBusReply<QString> reply = serial.call(QLatin1String("Connect"), mService);
     if (!reply.isValid()) {
-        kError(KDE_DEFAULT_DEBUG_AREA) << "Error: org.bluez.Serial.Connect did not work. Quiting.";
+        kError(KDE_DEFAULT_DEBUG_AREA) << "Error: org.bluez.Serial.Connect did not work. Exiting.";
         kapp->quit();
         return;
     }
