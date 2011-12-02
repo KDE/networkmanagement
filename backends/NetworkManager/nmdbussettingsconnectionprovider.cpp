@@ -438,12 +438,18 @@ void NMDBusSettingsConnectionProvider::onConnectionAddArrived(QDBusPendingCallWa
         // This does not work for VPN connections.
         // TODO: change this to a dbus call to the kded module.
         QString uuid = d->uuidToPath.key(objPath.path(), QUuid()).toString();
-        RemoteConnection *remote = d->connections.value(uuid);
+        if (uuid.isNull()) {
+            initialiseAndRegisterRemoteConnection(objPath.path());
+        }
+        uuid = d->uuidToPath.key(objPath.path(), QUuid()).toString();
         QVariantMapMap map = d->secretsToSave.take(uuid);
-        sleep(1);
-        remote->Update(map);
-        emit addConnectionCompleted(true, QString());
+        RemoteConnection *remote = d->connections.value(uuid);
+        if (remote) {
+            sleep(1);
+            remote->Update(map);
+        }
 
+        emit addConnectionCompleted(true, QString());
         kDebug() << "Connection added successfully: " << objPath.path() << uuid;
     }
 
