@@ -27,6 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsGridLayout>
 #include <QTimer>
 #include <QDBusConnection>
+#include <QCheckBox>
 
 // KDE
 #include <KDebug>
@@ -129,6 +130,7 @@ void NMPopup::init()
     m_wwanCheckBox = new Plasma::CheckBox(m_leftWidget);
     m_wwanCheckBox->setText(i18nc("CheckBox to enable or disable wwan (mobile broadband) interface)", "Enable mobile broadband"));
     m_wwanCheckBox->hide();
+    m_wwanCheckBox->nativeWidget()->setTristate(true);
     checkboxLayout->addItem(m_wwanCheckBox, 0, 1);
 
     connect(m_wwanCheckBox, SIGNAL(toggled(bool)), SLOT(wwanEnabledToggled(bool)));
@@ -298,7 +300,7 @@ void NMPopup::readConfig()
     m_showMoreButton->setEnabled(NetworkManager::isNetworkingEnabled() &&
                                  NetworkManager::isWirelessEnabled());
 
-    m_wwanCheckBox->setChecked(NetworkManager::isWwanEnabled());
+    m_wwanCheckBox->nativeWidget()->setCheckState(NetworkManager::isWwanEnabled() ? Qt::Checked : Qt::Unchecked);
     m_wwanCheckBox->setEnabled(NetworkManager::isWwanHardwareEnabled());
 
     foreach(InterfaceItem * i, m_interfaces) {
@@ -524,7 +526,7 @@ kDebug() << "Wireless hardware enabled ==" << NetworkManager::isWirelessHardware
     m_wifiCheckBox->setEnabled(NetworkManager::isWirelessHardwareEnabled() || NetworkManager::isWirelessEnabled());
 #endif
 
-    m_wwanCheckBox->setChecked(NetworkManager::isWwanEnabled());
+    m_wwanCheckBox->nativeWidget()->setCheckState(NetworkManager::isWwanEnabled() ? Qt::Checked : Qt::Unchecked);
     m_wwanCheckBox->setEnabled(NetworkManager::isWwanHardwareEnabled() || NetworkManager::isWwanEnabled());
 
     updateHasWireless(checked);
@@ -616,7 +618,7 @@ void NMPopup::managerNetworkingEnabledChanged(bool enabled)
 void NMPopup::managerWwanEnabledChanged(bool enabled)
 {
     kDebug() << "NM daemon changed wwan enable state" << enabled;
-    m_wwanCheckBox->setChecked(enabled);
+    m_wwanCheckBox->nativeWidget()->setCheckState(enabled ? Qt::Checked : Qt::Unchecked);
     if (enabled) {
         m_wwanCheckBox->setEnabled(enabled);
     }
