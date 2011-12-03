@@ -19,15 +19,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "manageconnection.h"
+#include "settings/bluetooth.h"
 
 #include <QTimer>
-#include <QDBusReply>
 
 #include <KDebug>
 #include <KLocale>
 #include <KMessageBox>
-
-#include "settings/bluetooth.h"
 
 ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.networkmanagement",
                                                                     "/org/kde/networkmanagement",
@@ -36,9 +34,9 @@ ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.net
 {
     bool addConnection = true;
     mSystemSettings = new NMDBusSettingsConnectionProvider(0, 0);
-    Knm::BluetoothSetting * btSetting = static_cast<Knm::BluetoothSetting *>(con->setting(Knm::Setting::Bluetooth));
 
-    if (btSetting) {
+    if (con->type() == Knm::Connection::Bluetooth) {
+        Knm::BluetoothSetting * btSetting = static_cast<Knm::BluetoothSetting *>(con->setting(Knm::Setting::Bluetooth));
         foreach(const QString & connectionId, mSystemSettings->connectionList()->connections()) {
             Knm::Connection * c = mSystemSettings->connectionList()->findConnection(connectionId);
             Knm::BluetoothSetting * setting = static_cast<Knm::BluetoothSetting *>(c->setting(Knm::Setting::Bluetooth));
@@ -51,8 +49,6 @@ ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.net
                 break;
             }
         }
-    } else {
-        kError(KDE_DEFAULT_DEBUG_AREA) << "bluetooth setting not found";
     }
 
     if (addConnection) {
