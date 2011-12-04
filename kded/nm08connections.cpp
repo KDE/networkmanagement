@@ -48,7 +48,7 @@ using namespace Knm;
 #include "settingsnm08/vpnpersistence.cpp"
 #include "paths.h"
 
-static const QString CONNECTION_PERSISTENCE_PATH = QLatin1String("networkmanagement/connections/");
+const QString Nm08Connections::CONNECTION_PERSISTENCE_PATH = QLatin1String("networkmanagement/connections/");
 
 Nm08Connections::Nm08Connections(SecretStorage * secretStorage, NMDBusSettingsConnectionProvider * nmDBusConnectionProvider, QObject * parent)
     : QObject(parent), m_secretStorage(secretStorage), m_nmDBusConnectionProvider(nmDBusConnectionProvider)

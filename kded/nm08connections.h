@@ -40,6 +40,7 @@ public:
     Nm08Connections(SecretStorage * secretStorage, NMDBusSettingsConnectionProvider * nmDBusConnectionProvider, QObject * parent = 0);
     ~Nm08Connections();
 
+    static const QString CONNECTION_PERSISTENCE_PATH;
 public Q_SLOTS:
     void importNextNm08Connection();
 
