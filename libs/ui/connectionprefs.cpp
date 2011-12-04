@@ -77,7 +77,7 @@ void ConnectionPreferences::updateSettingValidation(bool valid)
 void ConnectionPreferences::validate()
 {
     bool isValid = true;
-    foreach (const bool validity, m_settingWidgets) {
+    foreach (bool validity, m_settingWidgets) {
         isValid &= validity;
     }
     if (m_contents)
