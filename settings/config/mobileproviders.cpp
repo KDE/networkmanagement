@@ -92,10 +92,10 @@ QStringList MobileProviders::getCountryList()
 
 QString MobileProviders::countryFromLocale()
 {
-    QString lang(getenv("LC_ALL"));
+    QString lang = qgetenv("LC_ALL");
 
     if (lang.isEmpty()) {
-        lang = QString(getenv("LANG"));
+        lang = qgetenv("LANG");
     }
     if (lang.contains('_')) {
         lang = lang.section('_', 1);
