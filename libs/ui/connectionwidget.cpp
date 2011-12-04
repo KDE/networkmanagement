@@ -124,7 +124,9 @@ void ConnectionWidget::buttonPermissionsClicked()
     if (dialog.data()->exec() == QDialog::Accepted) {
         d->permissions = permissionsWid.currentUsers();
     }
-    delete dialog.data();
+    if (dialog) {
+        dialog.data()->deleteLater();
+    }
 }
 
 // vim: sw=4 sts=4 et tw=100

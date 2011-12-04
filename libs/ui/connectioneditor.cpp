@@ -81,7 +81,9 @@ Knm::Connection *ConnectionEditor::editConnection(Knm::Connection::Type type, co
         cprefs->save();
         return cprefs->connection();
     }
-    delete configDialog.data();
+    if (configDialog) {
+        configDialog.data()->deleteLater();
+    }
     return 0;
 }
 
@@ -112,7 +114,9 @@ Knm::Connection *ConnectionEditor::editConnection(Knm::Connection *con)
 
         return cprefs->connection();
     }
-    delete configDialog.data();
+    if (configDialog) {
+        configDialog.data()->deleteLater();
+    }
 
     return 0;
 }

@@ -489,8 +489,10 @@ void OpenconnectAuthWidget::validatePeerCert(const QString &fingerprint,
         } else {
             *accepted = false;
         }
-	delete dialog.data();
-        delete widget;
+        if (dialog) {
+            dialog.data()->deleteLater();
+        }
+        widget->deleteLater();
     } else {
         *accepted = true;
     }
