@@ -195,10 +195,10 @@ QVariantList OpenVpnUiPlugin::importConnectionSettings(const QString &fileName)
         }
         if (key_value[0] == DEV_TAG) {
             if (key_value.count() == 2) {
-                if (key_value[1].startsWith("tun")) {
+                if (key_value[1].startsWith(QLatin1String("tun"))) {
                     // ignore; default is tun
                 }
-                else if (key_value[1].startsWith("tap")) {
+                else if (key_value[1].startsWith(QLatin1String("tap"))) {
                     dataMap.insert(QLatin1String(NM_OPENVPN_KEY_TAP_DEV), "yes");
                 }
                 else {

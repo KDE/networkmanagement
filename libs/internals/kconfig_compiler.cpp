@@ -56,7 +56,7 @@ static void parseArgs(const QStringList &args, QString &directory, QString &file
                 exit(1);
             }
             directory = args.at(++i);
-        } else if (args.at(i).startsWith("-d")) {
+        } else if (args.at(i).startsWith(QLatin1String("-d"))) {
             directory = args.at(i).mid(2);
         } else if (args.at(i) == "--help" || args.at(i) == "-h") {
             std::cout << "Options:" << std::endl;
@@ -1204,7 +1204,7 @@ int main( int argc, char **argv )
 #endif
     baseDir.append("/");
 
-  if (!codegenFilename.endsWith(".kcfgc"))
+  if (!codegenFilename.endsWith(QLatin1String(".kcfgc")))
   {
     std::cerr << "Codegen options file must have extension .kcfgc" << std::endl;
     return 1;
