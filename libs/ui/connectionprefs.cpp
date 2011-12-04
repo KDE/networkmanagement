@@ -77,8 +77,9 @@ void ConnectionPreferences::updateSettingValidation(bool valid)
 void ConnectionPreferences::validate()
 {
     bool isValid = true;
-    foreach (bool validity, m_settingWidgets) {
-        isValid &= validity;
+    QHash<SettingWidget *,bool>::const_iterator i;
+    for (i = m_settingWidgets.constBegin(); i != m_settingWidgets.constEnd(); ++i) {
+        isValid &= i.value();
     }
     if (m_contents)
         isValid &= m_contents->isValid();
