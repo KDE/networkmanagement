@@ -47,7 +47,7 @@
 #include <QtXml/QDomElement>
 #include <QtDBus/QtDBus>
 
-#include <libnm-qt/generic-types.h>
+#include <QtNetworkManager/generic-types.h>
 
 typedef QPair<int,int> IntPair;
 
@@ -75,7 +75,7 @@ namespace QDBusUtil
 }
 
 
-static QDBusConnection connection(QLatin1String(""));
+static QDBusConnection connection(QLatin1String("")); // krazy:exclude=staticobjects
 
 
 static void printArg(const QVariant &v)

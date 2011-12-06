@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectionlistpersistence.h"
 
 // TODO pass this path in from CMake
-static const QString TEST_DATA_PATH = "/space/kde/sources/trunk/playground/base/plasma/applets/networkmanager/libs/service/tests/data/";
+static const QString TEST_DATA_PATH = "/space/kde/sources/trunk/playground/base/plasma/applets/networkmanager/libs/service/tests/data/"; // krazy:exclude=staticobjects
 
 class TestConnectionListPersistence : public QObject
 {
