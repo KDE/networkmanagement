@@ -62,33 +62,33 @@ ToolTipsPrivate::ToolTipsPrivate()
     tipKeysToToolTips[QLatin1String("wireless:rsnflags")] = i18nc("@info:tooltip", "Flags describing the access point's capabilities according to RSN (Robust Secure Network)");
 
     /* now the labels */
-    tipKeysToLabels[QLatin1String("interface:type")] = i18nc(" interface type", "Type");
-    tipKeysToLabels[QLatin1String("interface:name")] = i18nc(" network device name eg eth0", "Interface");
-    tipKeysToLabels[QLatin1String("interface:driver")] = i18nc(" system driver name", "Driver");
-    tipKeysToLabels[QLatin1String("interface:status")] = i18nc(" network interface status", "Status");
-    tipKeysToLabels[QLatin1String("interface:hardwareaddress")] = i18nc(" this is the hardware address of a network interface",
+    tipKeysToLabels[QLatin1String("interface:type")] = i18nc("@label interface type", "Type");
+    tipKeysToLabels[QLatin1String("interface:name")] = i18nc("@label network device name eg eth0", "Interface");
+    tipKeysToLabels[QLatin1String("interface:driver")] = i18nc("@label system driver name", "Driver");
+    tipKeysToLabels[QLatin1String("interface:status")] = i18nc("@label network interface status", "Status");
+    tipKeysToLabels[QLatin1String("interface:hardwareaddress")] = i18nc("@label this is the hardware address of a network interface",
             "Hardware address (Wired)");
-    tipKeysToLabels[QLatin1String("interface:bitrate")] = i18nc(" network connection bit rate","Bit rate");
-    tipKeysToLabels[QLatin1String("interface:designspeed")] = i18nc(" The network device's maximum speed",
+    tipKeysToLabels[QLatin1String("interface:bitrate")] = i18nc("@label network connection bit rate","Bit rate");
+    tipKeysToLabels[QLatin1String("interface:designspeed")] = i18nc("@label The network device's maximum speed",
             "Max speed");
-    tipKeysToLabels[QLatin1String("ipv4:address")] = i18nc(" IPv4 address", "IP address");
-    tipKeysToLabels[QLatin1String("ipv4:nameservers")] = i18nc(" network name servers", "Name servers");
-    tipKeysToLabels[QLatin1String("ipv4:domains")] = i18nc(" network domains", "Domains");
-    tipKeysToLabels[QLatin1String("ipv4:routes")] = i18nc(" network routes", "Routes");
+    tipKeysToLabels[QLatin1String("ipv4:address")] = i18nc("@label IPv4 address", "IP address");
+    tipKeysToLabels[QLatin1String("ipv4:nameservers")] = i18nc("@label network name servers", "Name servers");
+    tipKeysToLabels[QLatin1String("ipv4:domains")] = i18nc("@label network domains", "Domains");
+    tipKeysToLabels[QLatin1String("ipv4:routes")] = i18nc("@label network routes", "Routes");
     //tipKeysToLabels[QLatin1String("wired:carrier")] =
-    tipKeysToLabels[QLatin1String("wireless:strength")] = i18nc(" The signal strength of the wifi network",
+    tipKeysToLabels[QLatin1String("wireless:strength")] = i18nc("@label The signal strength of the wifi network",
             "Strength");
-    tipKeysToLabels[QLatin1String("wireless:ssid")] = i18nc(" SSID is a friendly name that identifies a 802.11 WLAN.",
+    tipKeysToLabels[QLatin1String("wireless:ssid")] = i18nc("@label SSID is a friendly name that identifies a 802.11 WLAN.",
             "SSID");
-    tipKeysToLabels[QLatin1String("wireless:mode")] = i18nc(" the operation mode of wi-fi network","Mode");
-    tipKeysToLabels[QLatin1String("wireless:accesspoint")] = i18nc(" Active access point MAC address",
+    tipKeysToLabels[QLatin1String("wireless:mode")] = i18nc("@label the operation mode of wi-fi network","Mode");
+    tipKeysToLabels[QLatin1String("wireless:accesspoint")] = i18nc("@label Active access point MAC address",
             "Access point");
-    tipKeysToLabels[QLatin1String("wireless:frequency")] = i18nc(" the frequency of the radio channel that the access point is operating on",
+    tipKeysToLabels[QLatin1String("wireless:frequency")] = i18nc("@label the frequency of the radio channel that the access point is operating on",
             "Frequency");
-    tipKeysToLabels[QLatin1String("wireless:security")] = i18nc(" network security level, e.g. high, low", "Security");
-    tipKeysToLabels[QLatin1String("wireless:wpaflags")] = i18nc(" Flags describing the access point's capabilities according to WPA (Wifi Protected Access)",
+    tipKeysToLabels[QLatin1String("wireless:security")] = i18nc("@label network security level, e.g. high, low", "Security");
+    tipKeysToLabels[QLatin1String("wireless:wpaflags")] = i18nc("@label Flags describing the access point's capabilities according to WPA (Wifi Protected Access)",
             "WPA flags");
-    tipKeysToLabels[QLatin1String("wireless:rsnflags")] = i18nc("Flags describing the access point's capabilities according to RSN (Robust Secure Network)",
+    tipKeysToLabels[QLatin1String("wireless:rsnflags")] = i18nc("@label Flags describing the access point's capabilities according to RSN (Robust Secure Network)",
             "RSN(WPA2) flags");
 }
 

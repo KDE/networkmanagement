@@ -60,7 +60,7 @@ NovellVpnSettingWidget::NovellVpnSettingWidget(Knm::Connection * connection, QWi
 
     d->advancedDialog = new KDialog(this);
     d->advancedDialog->setButtons(KDialog::Ok);
-    d->advancedDialog->setCaption(i18nc("@window:title NovellVPN advanced connection options", "NovellVPN advanced options"));
+    d->advancedDialog->setCaption(i18nc("@title:window NovellVPN advanced connection options", "NovellVPN advanced options"));
     QWidget * advWid = new QWidget(d->advancedDialog);
     d->advUi.setupUi(advWid);
     d->advancedDialog->setMainWidget(advWid);

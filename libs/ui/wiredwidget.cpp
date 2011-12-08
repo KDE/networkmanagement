@@ -73,7 +73,7 @@ void WiredWidget::readConfig()
     if (!d->setting->macaddress().isEmpty()) {
         int i = d->ui.cmbMacAddress->findData(d->setting->macaddress());
         if (i == -1) {
-            d->ui.cmbMacAddress->addItem(i18nc("@item:inlist item for hardware that is currently not attached to the machine with MAC address", "Disconnected interface (%1)", UiUtils::macAddressAsString(d->setting->macaddress())));
+            d->ui.cmbMacAddress->addItem(i18nc("@item:inlistbox item for hardware that is currently not attached to the machine with MAC address", "Disconnected interface (%1)", UiUtils::macAddressAsString(d->setting->macaddress())));
             d->ui.cmbMacAddress->setCurrentIndex(d->ui.cmbMacAddress->count() - 1);
         } else {
             d->ui.cmbMacAddress->setCurrentIndex(i);

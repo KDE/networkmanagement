@@ -74,12 +74,12 @@ void HiddenWirelessNetworkItem::setupItem()
         m_connect->setDrawBackground(false);
         m_connect->setOrientation(Qt::Horizontal);
         m_connect->setIcon("network-wireless");
-        m_connect->setText(i18nc("label for creating a connection to a hidden wireless network", "<hidden network>"));
+        m_connect->setText(i18nc("@action for creating a connection to a hidden wireless network", "<placeholder>hidden network</placeholder>"));
         connect(m_connect, SIGNAL(activated()), SLOT(connectClicked()));
 
         m_ssidEdit = new Plasma::LineEdit(this);
-        m_ssidEdit->nativeWidget()->setClickMessage(i18nc("default KLineEdit::clickMessage() for hidden wireless network SSID entry", "Enter network name and press <enter>"));
-        m_ssidEdit->setToolTip(i18nc("@info:tooltip for hidden wireless network SSID entry", "Enter network name and press <enter>"));
+        m_ssidEdit->nativeWidget()->setClickMessage(i18nc("@label for hidden wireless network SSID entry", "Enter network name and press <placeholder>enter</placeholder>"));
+        m_ssidEdit->setToolTip(i18nc("@info:tooltip for hidden wireless network SSID entry", "Enter network name and press <placeholder>enter</placeholder>"));
         connect(m_ssidEdit->nativeWidget(), SIGNAL(returnPressed()), SLOT(ssidEntered()));
     }
     resetSsidEntry();

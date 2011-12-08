@@ -609,8 +609,8 @@ void NotificationManager::notifyNewNetworks()
         KNotification::event(Event::NetworkAppeared, i18nc("@info:status Notification text when a single wireless network was found","Wireless network %1 found", d->newWirelessNetworks[0]), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, *s_networkManagementComponentData);
     } else {
         KNotification::event(Event::NetworkAppeared, i18ncp("@info:status Notification text when multiple wireless networks are found. %2 is a list of networks, and the %1 value (not printed) is just used to determine the plural form of network.",
-                                                            "<b>New wireless network:</b><br /> %2",
-                                                            "<b>New wireless networks:</b><br /> %2",
+                                                            "<title>New wireless network:</title><para>%2</para>",
+                                                            "<title>New wireless networks:</title><para>%2</para>",
                                                             d->newWirelessNetworks.count(), // the %1 parameter, used only to choose between plural forms on the word network
                                                             d->newWirelessNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
     }
@@ -628,8 +628,8 @@ void NotificationManager::notifyDisappearedNetworks()
 
     } else {
         KNotification::event(Event::NetworkDisappeared, i18ncp("@info:status Notification text when multiple wireless networks have disappeared.  %2 is a list of networks, and the %1 value (not printed) is just used to determine the plural form of network.",
-                                                               "<b>Wireless network disappeared:</b><br /> %2",
-                                                               "<b>Wireless networks disappeared:</b><br /> %2",
+                                                               "<title>Wireless network disappeared:</title><para>%2</para>",
+                                                               "<title>Wireless networks disappeared:</title><para>%2</para>",
                                                                d->disappearedWirelessNetworks.count(), // the %1 parameter, used only to choose between plural forms on the word network
                                                                d->disappearedWirelessNetworks.join(", ")), KIcon("network-wireless").pixmap(QSize(iconSize,iconSize)), 0, KNotification::CloseOnTimeout, componentData());
     }

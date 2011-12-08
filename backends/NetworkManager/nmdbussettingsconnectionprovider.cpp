@@ -322,7 +322,7 @@ void NMDBusSettingsConnectionProvider::onVpnConnectionActivated(QDBusPendingCall
     if (errorMsg.isEmpty()) {
         NotificationManager::performNotification(Event::ConnectFailed, QString(), i18nc("@info:status Notification text when connection has failed","Connection %1 failed", ic->connectionName()), Knm::Connection::iconName(ic->connectionType()));
     } else {
-        NotificationManager::performNotification(Event::ConnectFailed, QString(), i18nc("@info:status Notification text when connection has failed","<p>Connection %1 failed:</p><p>%2</p>", ic->connectionName(), errorMsg), Knm::Connection::iconName(ic->connectionType()));
+        NotificationManager::performNotification(Event::ConnectFailed, QString(), i18nc("@info:status Notification text when connection has failed","<para>Connection %1 failed:</para><para>%2</para>", ic->connectionName(), errorMsg), Knm::Connection::iconName(ic->connectionType()));
     }
 
     watcher->deleteLater();

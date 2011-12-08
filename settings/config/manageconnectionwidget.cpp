@@ -752,7 +752,7 @@ void ManageConnectionWidget::activeConnectionsChanged()
         QString activeConnection = '{' + ac->connection()->uuid() + '}';
         item = mUuidItemHash.value(activeConnection);
         if (item != 0 && ac->state() == NetworkManager::ActiveConnection::Activated) {
-            item->setText(ConnectionStateColumn, i18n("Connected"));
+            item->setText(ConnectionStateColumn, i18nc("this connection is connected/activated", "Connected"));
         }
     }
 }

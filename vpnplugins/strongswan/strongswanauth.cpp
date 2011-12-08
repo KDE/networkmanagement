@@ -108,7 +108,7 @@ void StrongswanAuthWidget::writeConfig()
         if (!agent.isEmpty()) {
             secretData.insert(NM_STRONGSWAN_AUTH_AGENT, agent);
         } else {
-            KMessageBox::error(this, i18n("Configuration uses ssh-agent for authentication, but no ssh-agent found running."));
+            KMessageBox::error(this, i18nc("@label:textbox error message while saving configuration", "Configuration uses ssh-agent for authentication, but no ssh-agent found running."));
         }
     } else {
         secretData.insert(NM_STRONGSWAN_SECRET, d->ui.password->text());

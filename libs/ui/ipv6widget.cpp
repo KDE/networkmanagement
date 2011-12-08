@@ -432,7 +432,7 @@ void IpV6Widget::showDnsEditor()
     QString dnsEntries = d->ui.dns->text().remove(QLatin1Char(' '));
     dnsEditor->setItems(dnsEntries.split(QLatin1Char(','), QString::SkipEmptyParts));
     connect(dnsEditor, SIGNAL(itemsEdited(QStringList)), this, SLOT(dnsEdited(QStringList)));
-    dnsEditor->setCaption(i18n("DNS Servers"));
+    dnsEditor->setCaption(i18nc("@title:window", "DNS Servers"));
     dnsEditor->setModal(true);
     dnsEditor->setValidator(new SimpleIpV6AddressValidator(dnsEditor));
     dnsEditor->show();
@@ -446,7 +446,7 @@ void IpV6Widget::showDnsSearchEditor()
     QString dnsSearchEntries = d->ui.dnsSearch->text().remove(QLatin1Char(' '));
     dnsSearchEditor->setItems(dnsSearchEntries.split(QLatin1Char(','), QString::SkipEmptyParts));
     connect(dnsSearchEditor, SIGNAL(itemsEdited(QStringList)), this, SLOT(dnsSearchEdited(QStringList)));
-    dnsSearchEditor->setCaption(i18n("Search domains"));
+    dnsSearchEditor->setCaption(i18nc("@title:window", "Search domains"));
     dnsSearchEditor->setModal(true);
     dnsSearchEditor->show();
 }

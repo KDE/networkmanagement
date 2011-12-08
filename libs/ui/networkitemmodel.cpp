@@ -138,7 +138,7 @@ QVariant NetworkItemModel::data(const QModelIndex &index, int role) const
             }
         case 1:
             if (role == Qt::DisplayRole)
-                return i18nc("@item:inlist signal strength percentage", "%1%", network->signalStrength());
+                return i18nc("@item:inlistbox signal strength percentage", "%1%", network->signalStrength());
             else
                 return QVariant();
         case 2:
