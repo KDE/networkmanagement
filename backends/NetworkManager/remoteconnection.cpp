@@ -34,9 +34,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
-#include <libnm-qt/manager.h>
-#include <libnm-qt/activeconnection.h>
-#include <libnm-qt/connection.h>
+#include <QtNetworkManager/manager.h>
+#include <QtNetworkManager/activeconnection.h>
+#include <QtNetworkManager/connection.h>
 
 #include "nm-active-connectioninterface.h"
 

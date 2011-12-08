@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <QList>
 #include <QHash>
 
-#include <libnm-qt/device.h>
+#include <QtNetworkManager/device.h>
 
 #include "knm_export.h"
 

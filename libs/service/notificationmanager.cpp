@@ -34,13 +34,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KIconLoader>
 
 #include <Solid/Device>
-#include <libnm-qt/manager.h>
-#include <libnm-qt/wirelessdevice.h>
+#include <QtNetworkManager/manager.h>
+#include <QtNetworkManager/wirelessdevice.h>
 
 #include <interfaceconnection.h>
 #include <vpninterfaceconnection.h>
 #include <uiutils.h>
-#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
+#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 #include "events.h"
 #include "../internals/connection.h"

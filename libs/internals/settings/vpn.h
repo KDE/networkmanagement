@@ -3,7 +3,7 @@
 #ifndef KNM_VPNSETTING_H
 #define KNM_VPNSETTING_H
 
-#include <libnm-qt/generic-types.h>
+#include <QtNetworkManager/generic-types.h>
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>

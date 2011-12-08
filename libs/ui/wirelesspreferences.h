@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef WIRELESS_PREFERENCES_H
 #define WIRELESS_PREFERENCES_H
 
-#include <libnm-qt/accesspoint.h>
+#include <QtNetworkManager/accesspoint.h>
 
 #include "connectionprefs.h"
 

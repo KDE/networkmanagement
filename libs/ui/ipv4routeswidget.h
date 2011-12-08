@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QWidget>
 #include <QStyledItemDelegate>
 
-#include <libnm-qt/ipv4config.h>
+#include <QtNetworkManager/ipv4config.h>
 
 class QStandardItem;
 class QItemSelection;

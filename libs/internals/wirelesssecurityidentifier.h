@@ -21,8 +21,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef WIRELESSSECURITYIDENTIFIER_H
 #define WIRELESSSECURITYIDENTIFIER_H
 
-#include <libnm-qt/accesspoint.h>
-#include <libnm-qt/wirelessdevice.h>
+#include <QtNetworkManager/accesspoint.h>
+#include <QtNetworkManager/wirelessdevice.h>
 
 #include "../knm_export.h"
 

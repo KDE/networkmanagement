@@ -53,9 +53,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "nm-manager-interface.h"
 #include "nm-device-interface.h"
 
-#include <libnm-qt/modemdevice.h>
-#include <libnm-qt/activeconnection.h>
-#include <libmm-qt/modeminterface.h>
+#include <QtNetworkManager/modemdevice.h>
+#include <QtNetworkManager/activeconnection.h>
+#include <QtModemManager/modeminterface.h>
 
 class NMDBusSettingsConnectionProviderPrivate
 {

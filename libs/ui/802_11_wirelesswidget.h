@@ -24,7 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QSpinBox>
 #include <QValidator>
 
-#include <libnm-qt/accesspoint.h>
+#include <QtNetworkManager/accesspoint.h>
 
 #include "settingwidget.h"
 

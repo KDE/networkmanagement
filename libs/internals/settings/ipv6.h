@@ -7,7 +7,7 @@
 #include <kglobal.h>
 #include <kdebug.h>
 #include <kcoreconfigskeleton.h>
-#include "libnm-qt/ipv6config.h"
+#include "QtNetworkManager/ipv6config.h"
 #include "setting.h"
 #include "knminternals_export.h"
 

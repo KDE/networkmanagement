@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
-#include <libnm-qt/manager.h>
+#include <QtNetworkManager/manager.h>
 
 #include <activatable.h>
 //debug

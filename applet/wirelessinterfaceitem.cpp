@@ -27,11 +27,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsGridLayout>
 #include <QLabel>
 
-#include <libnm-qt/accesspoint.h>
-#include <libnm-qt/wirelessdevice.h>
-#include <libnm-qt/device.h>
-#include <libnm-qt/ipv4config.h>
-#include <libnm-qt/manager.h>
+#include <QtNetworkManager/accesspoint.h>
+#include <QtNetworkManager/wirelessdevice.h>
+#include <QtNetworkManager/device.h>
+#include <QtNetworkManager/ipv4config.h>
+#include <QtNetworkManager/manager.h>
 
 WirelessInterfaceItem::WirelessInterfaceItem(NetworkManager::WirelessDevice * iface, RemoteActivatableList* activatables, InterfaceItem::NameDisplayMode mode, QGraphicsWidget* parent)
 : InterfaceItem(iface, activatables, mode, parent)

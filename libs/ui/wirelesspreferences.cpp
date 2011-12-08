@@ -27,7 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KTabWidget>
 
-#include <libnm-qt/manager.h>
+#include <QtNetworkManager/manager.h>
 
 #include "802_11_wirelesswidget.h"
 #include "security/wirelesssecuritysettingwidget.h"
@@ -43,7 +43,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <nm-setting-connection.h>
 #include <nm-setting-wireless.h>
 
-#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
+#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 WirelessPreferences::WirelessPreferences(bool setDefaults, const QVariantList &args, QWidget *parent)
 : ConnectionPreferences(args, parent), m_securityTabIndex(0)

@@ -133,7 +133,7 @@ kde4_add_ui_files(knmui_SRCS
 
 kde4_add_library(knmui SHARED ${knmui_SRCS})
 target_link_libraries(knmui knminternals ${KDE4_KDEUI_LIBS} ${KDE4_KIO_LIBS}
-        ${KDE4_SOLID_LIBS} nm-qt)
+        ${KDE4_SOLID_LIBS} QtNetworkManager)
 
 set_target_properties(knmui PROPERTIES
    VERSION ${GENERIC_LIB_VERSION}

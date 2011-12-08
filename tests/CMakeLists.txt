@@ -24,6 +24,6 @@ set(testconfigxml_SRCS
 ## next target: hacked up qdbus that can display NM data types
 
 kde4_add_executable(qdbusfornm qdbusfornm.cpp )
-target_link_libraries(qdbusfornm knminternals nm-qt ${QT_QTDBUS_LIBRARY} ${QT_QTXML_LIBRARY}
+target_link_libraries(qdbusfornm knminternals QtNetworkManager ${QT_QTDBUS_LIBRARY} ${QT_QTXML_LIBRARY}
                       ${KDE4_KDECORE_LIBS})
 

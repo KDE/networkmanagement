@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define ACTIVATABLELIST_H
 
 #include <QObject>
-#include <libnm-qt/manager.h>
+#include <QtNetworkManager/manager.h>
 #include "knm_export.h"
 
 namespace Knm

@@ -35,8 +35,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Label>
 #include <Plasma/Meter>
 
-#include <libnm-qt/accesspoint.h>
-#include <libnm-qt/wirelessdevice.h>
+#include <QtNetworkManager/accesspoint.h>
+#include <QtNetworkManager/wirelessdevice.h>
 
 #include "remotewirelessnetwork.h"
 #include "remotewirelessinterfaceconnection.h"

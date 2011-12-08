@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef NOVELLVPNWIDGET_H
 #define NOVELLVPNWIDGET_H
 
-#include <libnm-qt/generic-types.h>
+#include <QtNetworkManager/generic-types.h>
 
 #include "settingwidget.h"
 

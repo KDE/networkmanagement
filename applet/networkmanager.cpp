@@ -29,8 +29,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <Plasma/Containment>
 
-#include <libnm-qt/manager.h>
-#include <libnm-qt/wireddevice.h>
+#include <QtNetworkManager/manager.h>
+#include <QtNetworkManager/wireddevice.h>
 
 #include "nmpopup.h"
 #include "uiutils.h"

@@ -40,9 +40,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Separator>
 
 // Solid::Control
-#include <libnm-qt/manager.h>
-#include <libnm-qt/wirelessdevice.h>
-#include <libnm-qt/wireddevice.h>
+#include <QtNetworkManager/manager.h>
+#include <QtNetworkManager/wirelessdevice.h>
+#include <QtNetworkManager/wireddevice.h>
 
 // client lib
 #include "activatableitem.h"

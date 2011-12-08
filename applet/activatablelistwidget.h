@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "activatable.h"
 #include <Plasma/ScrollWidget>
-#include <libnm-qt/manager.h>
+#include <QtNetworkManager/manager.h>
 
 class QGraphicsLinearLayout;
 class ActivatableItem;

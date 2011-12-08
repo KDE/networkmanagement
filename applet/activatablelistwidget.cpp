@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // KDE
 #include <KDebug>
-#include <libnm-qt/manager.h>
+#include <QtNetworkManager/manager.h>
 #include <KToolInvocation>
 #include <KStandardDirs>
 
@@ -49,7 +49,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkitem.h"
 #include "hiddenwirelessnetworkitem.h"
 #include "gsminterfaceconnectionitem.h"
-#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
+#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent) : Plasma::ScrollWidget(parent),
     m_hiddenItem(0),

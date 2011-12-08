@@ -28,10 +28,10 @@ class QSizeF;
 #include "../client/remoteinterfaceconnection.h"
 #include "../client/remoteactivatablelist.h"
 
-#include <libnm-qt/device.h>
-#include <libnm-qt/modemdevice.h>
-#include <libnm-qt/wirelessdevice.h>
-#include <libnm-qt/accesspoint.h>
+#include <QtNetworkManager/device.h>
+#include <QtNetworkManager/modemdevice.h>
+#include <QtNetworkManager/wirelessdevice.h>
+#include <QtNetworkManager/accesspoint.h>
 #include <Solid/Device>
 
 class KNMINTERNALS_EXPORT UiUtils

@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define WIRELESSOBJECT_H
 
 #include <QString>
-#include <libnm-qt/accesspoint.h>
+#include <QtNetworkManager/accesspoint.h>
 
 #include "knminternals_export.h"
 

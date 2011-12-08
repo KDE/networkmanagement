@@ -22,7 +22,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef KNM_EXTERNALS_GSMINTERFACECONNECTIONHELPERS_H
 #define KNM_EXTERNALS_GSMINTERFACECONNECTIONHELPERS_H
 
-#include <libnm-qt/modemdevice.h>
+#include <QtNetworkManager/modemdevice.h>
 
 #include "knminternals_export.h"
 

@@ -32,10 +32,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <kdeversion.h>
 
-#include <libnm-qt/manager.h>
-#include <libnm-qt/device.h>
-#include <libnm-qt/accesspoint.h>
-#include <libnm-qt/wirelessdevice.h>
+#include <QtNetworkManager/manager.h>
+#include <QtNetworkManager/device.h>
+#include <QtNetworkManager/accesspoint.h>
+#include <QtNetworkManager/wirelessdevice.h>
 
 // Qt
 #include <QSizeF>

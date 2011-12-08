@@ -19,7 +19,7 @@
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>
 #include <QtDBus/QtDBus>
-#include <libnm-qt/generic-types.h>
+#include <QtNetworkManager/generic-types.h>
 
 // Need ito export the class to use it externally (in the applet)
 #include "knm_export.h"

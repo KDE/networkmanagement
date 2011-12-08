@@ -25,7 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QVariantMap>
 
-#include <libnm-qt/manager.h>
+#include <QtNetworkManager/manager.h>
 
 #include "knm_export.h"
 

@@ -23,7 +23,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 
 #include <QHash>
-#include <libnm-qt/generic-types.h>
+#include <QtNetworkManager/generic-types.h>
 
 #include "knm_export.h"
 

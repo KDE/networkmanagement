@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDBusObjectPath>
 #include <QGraphicsWidget>
 
-#include <libnm-qt/device.h>
+#include <QtNetworkManager/device.h>
 
 #include "interfaceconnection.h"
 #include "remoteactivatable.h"

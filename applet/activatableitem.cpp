@@ -34,7 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Animation>
 #include <Plasma/Animator>
 
-#include <libnm-qt/manager.h>
+#include <QtNetworkManager/manager.h>
 
 #include "../libs/service/events.h"
 

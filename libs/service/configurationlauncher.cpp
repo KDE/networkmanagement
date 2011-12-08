@@ -29,10 +29,10 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KToolInvocation>
 #include <KStandardDirs>
 
-#include <libnm-qt/manager.h>
-#include <libnm-qt/device.h>
-#include <libnm-qt/modemdevice.h>
-#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
+#include <QtNetworkManager/manager.h>
+#include <QtNetworkManager/device.h>
+#include <QtNetworkManager/modemdevice.h>
+#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 #include "uiutils.h"
 #include "unconfiguredinterface.h"

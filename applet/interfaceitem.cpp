@@ -44,9 +44,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Meter>
 
 #include <Solid/Device>
-#include <libnm-qt/wireddevice.h>
-#include <libnm-qt/ipv4config.h>
-#include <libnm-qt/manager.h>
+#include <QtNetworkManager/wireddevice.h>
+#include <QtNetworkManager/ipv4config.h>
+#include <QtNetworkManager/manager.h>
 #include <NetworkManager/NetworkManager.h>
 
 #include "knmserviceprefs.h"

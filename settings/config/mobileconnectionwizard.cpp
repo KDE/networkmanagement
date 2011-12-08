@@ -28,8 +28,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KDebug>
 #include <KGlobal>
 #include <KIconLoader>
-#include <libmm-qt/manager.h>
-#include <libnm-qt/modemdevice.h>
+#include <QtModemManager/manager.h>
+#include <QtNetworkManager/modemdevice.h>
 #include <solid/device.h>
 
 #include "uiutils.h"

@@ -26,11 +26,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QModelIndex>
 #include <QVariant>
 
-#include <libnm-qt/manager.h>
-#include <libnm-qt/device.h>
-#include <libnm-qt/wirelessdevice.h>
-#include <libnm-qt/accesspoint.h>
-#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
+#include <QtNetworkManager/manager.h>
+#include <QtNetworkManager/device.h>
+#include <QtNetworkManager/wirelessdevice.h>
+#include <QtNetworkManager/accesspoint.h>
+#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 /**
  * Uses NetworkManager::WirelessNetworkInterfaceEnvironment to model logical networks,

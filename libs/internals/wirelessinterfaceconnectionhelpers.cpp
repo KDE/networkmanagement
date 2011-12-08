@@ -28,7 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "settings/802-11-wireless-security.h"
 #include "hiddenwirelessinterfaceconnection.h"
 #include "wirelessinterfaceconnection.h"
-#include <libnm-qt/wirelessnetworkinterfaceenvironment.h>
+#include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 using namespace Knm;
 

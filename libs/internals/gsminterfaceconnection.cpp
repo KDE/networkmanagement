@@ -24,9 +24,9 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <KDebug>
 
-#include <libnm-qt/manager.h>
-#include <libmm-qt/manager.h>
-#include <libmm-qt/modemgsmnetworkinterface.h>
+#include <QtNetworkManager/manager.h>
+#include <QtModemManager/manager.h>
+#include <QtModemManager/modemgsmnetworkinterface.h>
 
 using namespace Knm;
 

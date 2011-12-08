@@ -22,8 +22,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "gsmnetworkinterfaceactivatableprovider.h"
 #include "networkinterfaceactivatableprovider_p.h"
 
-#include <libmm-qt/manager.h>
-#include <libnm-qt/bluetoothdevice.h>
+#include <QtModemManager/manager.h>
+#include <QtNetworkManager/bluetoothdevice.h>
 
 #include <gsminterfaceconnection.h>
 #include <gsminterfaceconnectionhelpers.h>

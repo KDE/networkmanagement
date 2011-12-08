@@ -25,7 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "nm-settings-connectioninterface.h"
 
-#include <libnm-qt/device.h>
+#include <QtNetworkManager/device.h>
 
 class KNM_EXPORT RemoteConnection : public OrgFreedesktopNetworkManagerSettingsConnectionInterface
 {

@@ -22,8 +22,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "gsminterfaceconnectionhelpers.h"
 #include "gsminterfaceconnectionhelpers_p.h"
 
-#include <libmm-qt/manager.h>
-#include <libmm-qt/modemgsmnetworkinterface.h>
+#include <QtModemManager/manager.h>
+#include <QtModemManager/modemgsmnetworkinterface.h>
 
 #include <memory>
 

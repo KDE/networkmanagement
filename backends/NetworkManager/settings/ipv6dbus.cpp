@@ -4,7 +4,7 @@
 #include "ipv6dbus.h"
 
 #include <arpa/inet.h>
-#include <libnm-qt/generic-types.h>
+#include <QtNetworkManager/generic-types.h>
 #include "ipv6.h"
 
 Ipv6Dbus::Ipv6Dbus(Knm::Ipv6Setting * setting) : SettingDbus(setting)

@@ -31,7 +31,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/TabBar>
 
 #include <solid/networking.h>
-#include <libnm-qt/device.h>
+#include <QtNetworkManager/device.h>
 
 #include "activatable.h"
 

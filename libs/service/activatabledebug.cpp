@@ -21,8 +21,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatabledebug.h"
 
 #include <KDebug>
-#include <libnm-qt/manager.h>
-#include <libnm-qt/device.h>
+#include <QtNetworkManager/manager.h>
+#include <QtNetworkManager/device.h>
 
 #include <activatable.h>
 #include <interfaceconnection.h>

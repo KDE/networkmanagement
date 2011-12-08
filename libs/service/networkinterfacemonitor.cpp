@@ -25,7 +25,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include <KLocale>
 #include <KMessageBox>
 #include <kdeversion.h>
-#include <libmm-qt/manager.h>
+#include <QtModemManager/manager.h>
 
 #include <connection.h>
 #include "activatablelist.h"

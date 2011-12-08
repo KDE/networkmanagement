@@ -44,13 +44,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/SignalPlotter>
 
 //Solid
-#include <libnm-qt/accesspoint.h>
-#include <libnm-qt/wirelessdevice.h>
-#include <libnm-qt/wireddevice.h>
-#include <libnm-qt/bluetoothdevice.h>
-#include <libnm-qt/ipv4config.h>
-#include <libnm-qt/manager.h>
-#include <libmm-qt/manager.h>
+#include <QtNetworkManager/accesspoint.h>
+#include <QtNetworkManager/wirelessdevice.h>
+#include <QtNetworkManager/wireddevice.h>
+#include <QtNetworkManager/bluetoothdevice.h>
+#include <QtNetworkManager/ipv4config.h>
+#include <QtNetworkManager/manager.h>
+#include <QtModemManager/manager.h>
 #include <Solid/Device>
 
 #include <NetworkManager/NetworkManager.h>

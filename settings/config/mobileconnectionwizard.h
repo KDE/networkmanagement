@@ -29,7 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <solid/networking.h>
 
-#include <libnm-qt/manager.h>
+#include <QtNetworkManager/manager.h>
 
 #include "mobileproviders.h"
 #include "../../libs/internals/connection.h"

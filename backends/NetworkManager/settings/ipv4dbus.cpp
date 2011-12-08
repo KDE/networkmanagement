@@ -4,7 +4,7 @@
 #include "ipv4dbus.h"
 
 #include <arpa/inet.h>
-#include <libnm-qt/generic-types.h>
+#include <QtNetworkManager/generic-types.h>
 
 #include "ipv4.h"
 
