@@ -121,7 +121,7 @@ void StrongswanSettingWidget::readConfig()
 
 }
 
-void StrongswanSettingWidget::fillOnePasswordCombo(QComboBox * combo, const QString & key, const QStringMap & data, bool hasPassword)
+void StrongswanSettingWidget::fillOnePasswordCombo(KComboBox * combo, const QString & key, const QStringMap & data, bool hasPassword)
 {
     if (data.contains(key)) {
         if (data.value(key) == NM_STRONGSWAN_PW_TYPE_SAVE) {
@@ -186,7 +186,7 @@ void StrongswanSettingWidget::writeConfig()
     d->setting->setVpnSecrets(secretData);
 }
 
-uint StrongswanSettingWidget::handleOnePasswordType(const QComboBox * combo, const QString & key, QStringMap & data)
+uint StrongswanSettingWidget::handleOnePasswordType(const KComboBox * combo, const QString & key, QStringMap & data)
 {
     uint type = combo->currentIndex();
     switch (type) {

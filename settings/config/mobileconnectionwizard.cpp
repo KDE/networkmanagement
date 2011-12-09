@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "mobileconnectionwizard.h"
 
-#include <QLineEdit>
+#include <KLineEdit>
 #include <QVBoxLayout>
 
 #include <KLocale>
@@ -265,7 +265,7 @@ QWizardPage * MobileConnectionWizard::createIntroPage()
         label = new QLabel('\n' + i18nc("Mobile Connection Wizard", "Create a connection for &this mobile broadband device:"));
         layout->addWidget(label);
     
-        mDeviceComboBox = new QComboBox();
+        mDeviceComboBox = new KComboBox();
         mDeviceComboBox->addItem(i18nc("Mobile Connection Wizard", "Any device"));
         mDeviceComboBox->insertSeparator(1);
         label->setBuddy(mDeviceComboBox);
@@ -450,7 +450,7 @@ QWizardPage * MobileConnectionWizard::createProvidersPage()
     layout->addWidget(radioManualProvider);
     connect(radioManualProvider, SIGNAL(toggled(bool)), this, SLOT(slotEnableProviderEdit(bool)));
 
-    lineEditProvider = new QLineEdit();
+    lineEditProvider = new KLineEdit();
     layout->addWidget(lineEditProvider);
     connect(lineEditProvider, SIGNAL(textEdited(QString)), this, SLOT(slotCheckProviderEdit()));
 
@@ -494,14 +494,14 @@ QWizardPage * MobileConnectionWizard::createPlansPage()
     QLabel *label = new QLabel(i18nc("Mobile Connection Wizard", "&Select your plan:"));
     layout->addWidget(label);
 
-    mPlanComboBox = new QComboBox();
+    mPlanComboBox = new KComboBox();
     label->setBuddy(mPlanComboBox);
     layout->addWidget(mPlanComboBox);
 
     label = new QLabel('\n' + i18nc("Mobile Connection Wizard", "Selected plan &APN (Access Point Name):"));
     layout->addWidget(label);
 
-    userApn = new QLineEdit();
+    userApn = new KLineEdit();
     userApn->setEnabled(false);
     label->setBuddy(userApn);
     layout->addWidget(userApn);

@@ -53,8 +53,8 @@ protected Q_SLOTS:
     void validate();
     void showPasswordsChanged(bool show);
 private:
-    void fillOnePasswordCombo(QComboBox * combo, const QString & key, const QStringMap & data, bool hasPassword);
-    uint handleOnePasswordType(const QComboBox * combo, const QString & key, QStringMap & data);
+    void fillOnePasswordCombo(KComboBox * combo, const QString & key, const QStringMap & data, bool hasPassword);
+    uint handleOnePasswordType(const KComboBox * combo, const QString & key, QStringMap & data);
     StrongswanSettingWidgetPrivate * d_ptr;
 };
 

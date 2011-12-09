@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ipv4routeswidget.h"
 
-#include <QLineEdit>
+#include <KLineEdit>
 #include <QStandardItem>
 #include <QStandardItemModel>
 #include <QNetworkAddressEntry>

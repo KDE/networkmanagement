@@ -39,7 +39,7 @@ CdmaWidget::CdmaWidget(Knm::Connection * connection, QWidget * parent)
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::CdmaSetting *>(connection->setting(Knm::Setting::Cdma));
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
-    d->ui.password->setEchoMode(QLineEdit::Password);
+    d->ui.password->setEchoMode(KLineEdit::Password);
 }
 
 CdmaWidget::~CdmaWidget()
@@ -50,7 +50,7 @@ void CdmaWidget::chkShowPassToggled()
 {
     Q_D(CdmaWidget);
     bool on = d->ui.chkShowPass->isChecked();
-    d->ui.password->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
+    d->ui.password->setEchoMode(on ? KLineEdit::Normal : KLineEdit::Password);
 }
 
 void CdmaWidget::readConfig()

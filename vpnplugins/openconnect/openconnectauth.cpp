@@ -218,7 +218,7 @@ void OpenconnectAuthWidget::readSecrets()
 
 void OpenconnectAuthWidget::acceptDialog()
 {
-    QDialog *dialog = qobject_cast<QDialog*>(parentWidget());
+    KDialog *dialog = qobject_cast<KDialog*>(parentWidget());
     if (dialog) {
         dialog->accept();
     }

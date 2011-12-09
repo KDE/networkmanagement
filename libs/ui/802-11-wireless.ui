@@ -182,11 +182,8 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
+     <item>
       <widget class="QPushButton" name="btnSelectBssid">
-       <property name="text">
-        <string>&amp;Select</string>
-       </property>
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -195,6 +192,9 @@
        </property>
        <property name="whatsThis">
         <string>This button will select the access point with the ssid specified in the field above and with the strongest signal.</string>
+       </property>
+       <property name="text">
+        <string>&amp;Select</string>
        </property>
       </widget>
      </item>
@@ -295,14 +295,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KIntSpinBox</class>
-   <extends>QSpinBox</extends>
-   <header>knuminput.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
@@ -310,9 +305,14 @@
    <header>klineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KIntSpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>knuminput.h</header>
   </customwidget>
   <customwidget>
    <class>Wireless80211WidgetBand</class>

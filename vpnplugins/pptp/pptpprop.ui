@@ -39,7 +39,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QLineEdit" name="edt_gateway"/>
+         <widget class="KLineEdit" name="edt_gateway"/>
         </item>
        </layout>
       </item>
@@ -79,7 +79,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="edt_login"/>
+           <widget class="KLineEdit" name="edt_login"/>
           </item>
          </layout>
         </item>
@@ -170,7 +170,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="edt_ntDomain"/>
+           <widget class="KLineEdit" name="edt_ntDomain"/>
           </item>
          </layout>
         </item>
@@ -223,14 +223,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>KComboBox</class>
    <extends>QComboBox</extends>
    <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

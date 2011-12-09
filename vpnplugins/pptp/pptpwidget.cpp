@@ -277,7 +277,7 @@ void PptpSettingWidget::readSecrets()
     fillOnePasswordCombo(d->ui.cmbPasswordStorage, type);
 }
 
-void PptpSettingWidget::fillOnePasswordCombo(QComboBox * combo, Knm::Setting::secretsTypes type)
+void PptpSettingWidget::fillOnePasswordCombo(KComboBox * combo, Knm::Setting::secretsTypes type)
 {
     if (type.testFlag(Knm::Setting::AgentOwned) || type.testFlag(Knm::Setting::None)) {
         combo->setCurrentIndex(1);
@@ -288,7 +288,7 @@ void PptpSettingWidget::fillOnePasswordCombo(QComboBox * combo, Knm::Setting::se
     }
 }
 
-uint PptpSettingWidget::handleOnePasswordType(const QComboBox * combo, const QString & key, QStringMap & data)
+uint PptpSettingWidget::handleOnePasswordType(const KComboBox * combo, const QString & key, QStringMap & data)
 {
     uint type = combo->currentIndex();
     switch (type) {

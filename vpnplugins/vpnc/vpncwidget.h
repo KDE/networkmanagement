@@ -29,7 +29,7 @@ namespace Knm
 {
     class Connection;
 } // namespace Knm
-class QComboBox;
+class KComboBox;
 class VpncSettingWidgetPrivate;
 
 class VpncSettingWidget : public SettingWidget
@@ -49,8 +49,8 @@ protected Q_SLOTS:
     void validate();
     void showPasswordsChanged(bool);
 private:
-    void fillOnePasswordCombo(QComboBox * combo, Knm::Setting::secretsTypes type);
-    uint handleOnePasswordType(const QComboBox * combo, const QString & key, QStringMap & data);
+    void fillOnePasswordCombo(KComboBox * combo, Knm::Setting::secretsTypes type);
+    uint handleOnePasswordType(const KComboBox * combo, const QString & key, QStringMap & data);
     VpncSettingWidgetPrivate * d_ptr;
 };
 

@@ -40,7 +40,7 @@ GsmWidget::GsmWidget(Knm::Connection * connection, QWidget * parent)
     d->setting = static_cast<Knm::GsmSetting *>(connection->setting(Knm::Setting::Gsm));
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
     connect(d->ui.pinStorage, SIGNAL(currentIndexChanged(int)), this, SLOT(pinStorageTypeChanged(int)));
-    d->ui.pin->setEchoMode(QLineEdit::Password);
+    d->ui.pin->setEchoMode(KLineEdit::Password);
     /* Not used yet*/
     d->ui.lblBand->setVisible(false);
     d->ui.band->setVisible(false);

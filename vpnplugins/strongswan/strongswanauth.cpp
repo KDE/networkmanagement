@@ -23,7 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <nm-setting-vpn.h>
 
-#include <QDialog>
+#include <KDialog>
 #include <KMessageBox>
 #include <QString>
 #include <QProcessEnvironment>
@@ -92,7 +92,7 @@ void StrongswanAuthWidget::setVisible(bool visible)
 
 void StrongswanAuthWidget::acceptDialog()
 {
-    QDialog *dialog = qobject_cast<QDialog*>(parentWidget());
+    KDialog *dialog = qobject_cast<KDialog*>(parentWidget());
     if (dialog) {
         dialog->accept();
     }

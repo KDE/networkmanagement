@@ -22,10 +22,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define MOBILECONNECTIONWIZARD_H
 
 #include <QWizardPage>
-#include <QComboBox>
 #include <QListWidget>
 #include <QRadioButton>
 #include <QLabel>
+
+#include <KComboBox>
+#include <KLineEdit>
 
 #include <solid/networking.h>
 
@@ -85,7 +87,7 @@ private:
     bool mInitialMethodType;
 
     // Intro page
-    QComboBox * mDeviceComboBox;
+    KComboBox * mDeviceComboBox;
     void introAddInitialDevices();
     void introRemoveAllDevices();
     void introAddDevice(NetworkManager::Device *device);
@@ -97,11 +99,11 @@ private:
     QListWidget * mProvidersList;
     QRadioButton * radioAutoProvider;
     QRadioButton * radioManualProvider;
-    QLineEdit * lineEditProvider;
+    KLineEdit * lineEditProvider;
 
     // Plan page
-    QComboBox * mPlanComboBox;
-    QLineEdit * userApn;
+    KComboBox * mPlanComboBox;
+    KLineEdit * userApn;
 
     // Confirm page
     QLabel * labelProvider;

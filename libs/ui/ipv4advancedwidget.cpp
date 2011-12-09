@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "ipv4advancedwidget.h"
 
-#include <QLineEdit>
+#include <KLineEdit>
 #include <QStandardItemModel>
 #include <QNetworkAddressEntry>
 

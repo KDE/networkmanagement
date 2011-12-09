@@ -226,7 +226,7 @@ void VpncSettingWidget::readConfig()
     }
 }
 
-void VpncSettingWidget::fillOnePasswordCombo(QComboBox * combo, Knm::Setting::secretsTypes type)
+void VpncSettingWidget::fillOnePasswordCombo(KComboBox * combo, Knm::Setting::secretsTypes type)
 {
     if (type.testFlag(Knm::Setting::AgentOwned) || type.testFlag(Knm::Setting::None)) {
         combo->setCurrentIndex(VpncSettingWidgetPrivate::EnumPasswordStorage::Save);
@@ -381,7 +381,7 @@ void VpncSettingWidget::writeConfig()
     d->setting->setVpnSecrets(secretData);
 }
 
-uint VpncSettingWidget::handleOnePasswordType(const QComboBox * combo, const QString & key, QStringMap & data)
+uint VpncSettingWidget::handleOnePasswordType(const KComboBox * combo, const QString & key, QStringMap & data)
 {
     uint type = combo->currentIndex();
     switch (type) {

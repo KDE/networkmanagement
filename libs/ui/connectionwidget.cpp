@@ -67,7 +67,7 @@ void ConnectionWidget::setDefaultName(const QString & defaultName)
     d->defaultName = defaultName;
 }
 
-QTabWidget * ConnectionWidget::connectionSettingsWidget()
+KTabWidget * ConnectionWidget::connectionSettingsWidget()
 {
     Q_D(ConnectionWidget);
     return d->ui.tabwidget;

@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "knm_export.h"
 
-class QTabWidget;
+class KTabWidget;
 namespace Knm
 {
     class Connection;
@@ -46,7 +46,7 @@ public:
     ConnectionWidget(QWidget * parent = 0);
     ~ConnectionWidget();
 
-    QTabWidget * connectionSettingsWidget();
+    KTabWidget * connectionSettingsWidget();
     QString settingName() const;
 
     void readConfig();

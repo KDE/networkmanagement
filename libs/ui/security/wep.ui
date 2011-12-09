@@ -25,7 +25,7 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QComboBox" name="keyType">
+    <widget class="KComboBox" name="keyType">
      <item>
       <property name="text">
        <string>Passphrase (for 128 bit)</string>
@@ -44,7 +44,7 @@
       <string notr="true"/>
      </property>
      <property name="echoMode">
-      <enum>QLineEdit::PasswordEchoOnEdit</enum>
+      <enum>QLineEdit::Normal</enum>
      </property>
     </widget>
    </item>
@@ -149,14 +149,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>KComboBox</class>
    <extends>QComboBox</extends>
    <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

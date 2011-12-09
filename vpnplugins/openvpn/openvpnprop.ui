@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="_2">
    <item row="0" column="0">
-    <widget class="QTabWidget" name="kTabWidget1">
+    <widget class="KTabWidget" name="kTabWidget1">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -540,7 +540,7 @@
                   <bool>false</bool>
                  </property>
                  <property name="echoMode">
-                  <enum>QLineEdit::Password</enum>
+                  <enum>QLineEdit::Normal</enum>
                  </property>
                 </widget>
                </item>
@@ -1106,7 +1106,7 @@
             <bool>false</bool>
            </property>
            <property name="echoMode">
-            <enum>QLineEdit::Password</enum>
+            <enum>QLineEdit::Normal</enum>
            </property>
           </widget>
          </item>
@@ -1140,6 +1140,16 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>KIntSpinBox</class>
    <extends>QSpinBox</extends>
    <header>knuminput.h</header>
@@ -1150,14 +1160,10 @@
    <header>kurlrequester.h</header>
   </customwidget>
   <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
+   <class>KTabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>ktabwidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <tabstops>

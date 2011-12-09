@@ -39,7 +39,7 @@ PppoeWidget::PppoeWidget(Knm::Connection * connection, QWidget * parent)
     d->ui.setupUi(this);
     d->setting = static_cast<Knm::PppoeSetting *>(connection->setting(Knm::Setting::Pppoe));
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
-    d->ui.password->setEchoMode(QLineEdit::Password);
+    d->ui.password->setEchoMode(KLineEdit::Password);
 }
 
 PppoeWidget::~PppoeWidget()
@@ -50,7 +50,7 @@ void PppoeWidget::chkShowPassToggled()
 {
     Q_D(PppoeWidget);
     bool on = d->ui.chkShowPass->isChecked();
-    d->ui.password->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
+    d->ui.password->setEchoMode(on ? KLineEdit::Normal : KLineEdit::Password);
 }
 
 void PppoeWidget::readConfig()

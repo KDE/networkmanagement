@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>436</width>
-    <height>180</height>
+    <height>215</height>
    </rect>
   </property>
   <layout class="QGridLayout" name="gridLayout">
@@ -32,7 +32,7 @@
     </widget>
    </item>
    <item row="1" column="2">
-    <widget class="QComboBox" name="kcfg_SecretStorageMode">
+    <widget class="KComboBox" name="kcfg_SecretStorageMode">
      <property name="currentIndex">
       <number>2</number>
      </property>
@@ -71,7 +71,7 @@
     </widget>
    </item>
    <item row="3" column="2">
-    <widget class="QComboBox" name="kcfg_InterfaceNamingStyle">
+    <widget class="KComboBox" name="kcfg_InterfaceNamingStyle">
      <item>
       <property name="text">
        <string>Descriptive Name</string>
@@ -105,7 +105,7 @@
     </widget>
    </item>
    <item row="4" column="2">
-    <widget class="QComboBox" name="kcfg_NetworkSpeedUnit">
+    <widget class="KComboBox" name="kcfg_NetworkSpeedUnit">
      <item>
       <property name="text">
        <string>KBytes/s</string>
@@ -159,7 +159,7 @@
     </widget>
    </item>
    <item row="5" column="2">
-    <widget class="QComboBox" name="kcfg_ShowAdvancedSettings">
+    <widget class="KComboBox" name="kcfg_ShowAdvancedSettings">
      <item>
       <property name="text">
        <string>Basic</string>
@@ -174,6 +174,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -23,7 +23,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QComboBox" name="kcfg_InterfaceNamingStyle">
+        <widget class="KComboBox" name="kcfg_InterfaceNamingStyle">
          <item>
           <property name="text">
            <string>Descriptive Name</string>
@@ -130,6 +130,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

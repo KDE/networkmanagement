@@ -33,7 +33,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QComboBox" name="cmbSettingsMode">
+      <widget class="KComboBox" name="cmbSettingsMode">
        <item>
         <property name="text">
          <string>Basic settings</string>
@@ -427,9 +427,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
@@ -437,9 +437,9 @@
    <header>klineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
   </customwidget>
   <customwidget>
    <class>IpV4AdvancedWidget</class>

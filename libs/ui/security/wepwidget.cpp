@@ -73,7 +73,7 @@ WepWidget::WepWidget(KeyFormat format, Knm::Connection * connection, QWidget * p
     d->wepKeyValidator = new QRegExpValidator(regExp, this);
 
     d->ui.setupUi(this);
-    d->ui.key->setEchoMode(QLineEdit::Password);
+    d->ui.key->setEchoMode(KLineEdit::Password);
 
     connect(d->ui.keyType, SIGNAL(currentIndexChanged(int)), this, SLOT(keyTypeChanged(int)));
 
@@ -133,7 +133,7 @@ void WepWidget::validateKey(QString key)
 void WepWidget::chkShowPassToggled(bool on)
 {
     Q_D(WepWidget);
-    d->ui.key->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
+    d->ui.key->setEchoMode(on ? KLineEdit::Normal : KLineEdit::Password);
 }
 
 bool WepWidget::validate() const

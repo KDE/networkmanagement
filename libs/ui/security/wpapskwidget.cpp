@@ -55,7 +55,7 @@ WpaPskWidget::WpaPskWidget(Knm::Connection* connection, QWidget * parent)
     d->wsetting = static_cast<Knm::WirelessSetting *>(connection->setting(Knm::Setting::Wireless));
 
     connect(d->ui.chkShowPass, SIGNAL(stateChanged(int)), this, SLOT(chkShowPassToggled()));
-    d->ui.psk->setEchoMode(QLineEdit::Password);
+    d->ui.psk->setEchoMode(KLineEdit::Password);
 }
 
 WpaPskWidget::~WpaPskWidget()
@@ -66,7 +66,7 @@ void WpaPskWidget::chkShowPassToggled()
 {
     Q_D(WpaPskWidget);
     bool on = d->ui.chkShowPass->isChecked();
-    d->ui.psk->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
+    d->ui.psk->setEchoMode(on ? KLineEdit::Normal : KLineEdit::Password);
 }
 
 bool WpaPskWidget::validate() const

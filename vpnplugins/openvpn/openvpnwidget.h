@@ -60,9 +60,9 @@ protected Q_SLOTS:
 private:
     class Private;
     Private * d;
-    void setPasswordType(QLineEdit *, int);
-    void fillOnePasswordCombo(QComboBox *, Knm::Setting::secretsTypes);
-    uint handleOnePasswordType(const QComboBox *, const QString &, QStringMap &);
+    void setPasswordType(KLineEdit *, int);
+    void fillOnePasswordCombo(KComboBox *, Knm::Setting::secretsTypes);
+    uint handleOnePasswordType(const KComboBox *, const QString &, QStringMap &);
 };
 
 #endif // OPENVPNWIDGET_H

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>445</width>
+    <width>448</width>
     <height>356</height>
    </rect>
   </property>
@@ -50,14 +50,14 @@
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="QCheckBox" name="system">
-         <property name="text">
-          <string>&amp;System connection</string>
-         </property>
          <property name="toolTip">
           <string>Save secrets in system storage</string>
          </property>
          <property name="whatsThis">
           <string>If checked, secrets (passwords and encryption keys) will be saved in system storage, which allows the connection to work without a KDE session.</string>
+         </property>
+         <property name="text">
+          <string>&amp;System connection</string>
          </property>
         </widget>
        </item>
@@ -110,14 +110,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>KPushButton</class>
-   <extends>QPushButton</extends>
-   <header>kpushbutton.h</header>
-  </customwidget>
-  <customwidget>
    <class>KLineEdit</class>
    <extends>QLineEdit</extends>
    <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KPushButton</class>
+   <extends>QPushButton</extends>
+   <header>kpushbutton.h</header>
   </customwidget>
   <customwidget>
    <class>KTabWidget</class>

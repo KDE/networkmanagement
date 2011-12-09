@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>398</width>
+    <width>417</width>
     <height>355</height>
    </rect>
   </property>
@@ -76,7 +76,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="cboUserPassOptions">
+          <widget class="KComboBox" name="cboUserPassOptions">
            <item>
             <property name="text">
              <string>Always Ask</string>
@@ -135,7 +135,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QComboBox" name="cboGroupPassOptions">
+          <widget class="KComboBox" name="cboGroupPassOptions">
            <item>
             <property name="text">
              <string>Always Ask</string>
@@ -220,7 +220,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QComboBox" name="cboEncryptionMethod">
+        <widget class="KComboBox" name="cboEncryptionMethod">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -255,7 +255,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QComboBox" name="cboNatTraversal">
+        <widget class="KComboBox" name="cboNatTraversal">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -295,7 +295,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QComboBox" name="cboDHGroup">
+        <widget class="KComboBox" name="cboDHGroup">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -506,6 +506,16 @@
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
+   <class>KComboBox</class>
+   <extends>QComboBox</extends>
+   <header>kcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>KLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>klineedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>KIntSpinBox</class>
    <extends>QSpinBox</extends>
    <header>knuminput.h</header>
@@ -514,16 +524,6 @@
    <class>KUrlRequester</class>
    <extends>QFrame</extends>
    <header>kurlrequester.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>klineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>KComboBox</class>
-   <extends>QComboBox</extends>
-   <header>kcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>KTabWidget</class>

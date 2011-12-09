@@ -34,7 +34,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QLineEdit" name="leGateway"/>
+       <widget class="KLineEdit" name="leGateway"/>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label">
@@ -150,7 +150,7 @@
   </customwidget>
   <customwidget>
    <class>KLineEdit</class>
-   <extends>QLineEdit</extends>
+   <extends>KLineEdit</extends>
    <header>klineedit.h</header>
   </customwidget>
  </customwidgets>

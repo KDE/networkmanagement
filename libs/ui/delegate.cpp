@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "delegate.h"
 
-#include <QLineEdit>
+#include <KLineEdit>
 #include <QStandardItem>
 #include <QStandardItemModel>
 
@@ -31,7 +31,7 @@ Delegate::~Delegate() {}
 QWidget * Delegate::createEditor(QWidget *parent, const QStyleOptionViewItem &,
         const QModelIndex &) const
 {
-    QLineEdit *editor = new QLineEdit(parent);
+    KLineEdit *editor = new KLineEdit(parent);
 
     return editor;
 }
@@ -40,14 +40,14 @@ void Delegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     QString value = index.model()->data(index, Qt::EditRole).toString();
 
-    QLineEdit *le = static_cast<QLineEdit*>(editor);
+    KLineEdit *le = static_cast<KLineEdit*>(editor);
     le->setText(value);
 }
 
 void Delegate::setModelData(QWidget *editor, QAbstractItemModel *model,
         const QModelIndex &index) const
 {
-    QLineEdit *le = static_cast<QLineEdit*>(editor);
+    KLineEdit *le = static_cast<KLineEdit*>(editor);
 
     model->setData(index, le->text(), Qt::EditRole);
 }

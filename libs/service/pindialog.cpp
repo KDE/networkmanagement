@@ -48,7 +48,7 @@ PinDialog::PinDialog(ModemManager::ModemGsmCardInterface *modem, const Type type
     QWidget *w = new QWidget();
     ui = new Ui::PinWidget();
     ui->setupUi(w);
-    ui->pin->setEchoMode(QLineEdit::Password);
+    ui->pin->setEchoMode(KLineEdit::Password);
 
     QIntValidator * validator = new QIntValidator(this);
     validator->setRange(1000, 99999999);
@@ -125,9 +125,9 @@ PinDialog::~PinDialog()
 void PinDialog::chkShowPassToggled()
 {
     bool on = ui->chkShowPass->isChecked();
-    ui->pin->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
-    ui->pin2->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
-    ui->puk->setEchoMode(on ? QLineEdit::Normal : QLineEdit::Password);
+    ui->pin->setEchoMode(on ? KLineEdit::Normal : KLineEdit::Password);
+    ui->pin2->setEchoMode(on ? KLineEdit::Normal : KLineEdit::Password);
+    ui->puk->setEchoMode(on ? KLineEdit::Normal : KLineEdit::Password);
 
     ui->puk->setCursorPosition(0);
     ui->pin->setCursorPosition(0);
