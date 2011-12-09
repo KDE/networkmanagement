@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef WIRELESS802_11_WIDGET_H
-#define WIRELESS802_11_WIDGET_H
+#ifndef W802_11_WIRELESS_WIDGET_H
+#define W802_11_WIRELESS_WIDGET_H
 
 #include <QSpinBox>
 #include <QValidator>

@@ -21,7 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 // own
-#include <interfacedetailswidget.h>
+#include "interfacedetailswidget.h"
 
 // system
 #include <arpa/inet.h>
@@ -59,7 +59,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "interfaceitem.h"
 #include "nm-device-interface.h"
-#include "nm-ip4-config-interface.h"
+#include "nm-ip4-config-interface.h" // krazy:exclude=includes
 #include "../libs/internals/settings/802-11-wireless.h"
 
 class InterfaceDetails

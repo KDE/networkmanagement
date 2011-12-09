@@ -18,8 +18,8 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef NMDBUS_SYSTEM_SETTINGS_CONNECTION_PROVIDER_H
-#define NMDBUS_SYSTEM_SETTINGS_CONNECTION_PROVIDER_H
+#ifndef NMDBUS_SETTINGS_CONNECTION_PROVIDER_H
+#define NMDBUS_SETTINGS_CONNECTION_PROVIDER_H
 
 #include "activatableobserver.h"
 #include "connectionhandler.h"
@@ -98,4 +98,4 @@ private:
     NMDBusSettingsConnectionProviderPrivate * d_ptr;
 };
 
-#endif // NMSYSTEMSETTINGSACTIVATABLEPROVIDER_H
+#endif // NMDBUS_SETTINGS_CONNECTION_PROVIDER_H
