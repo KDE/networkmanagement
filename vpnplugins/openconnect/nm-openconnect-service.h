@@ -15,11 +15,11 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
- *   Copyright © 2008 - 2009 Intel Corporation.
+ *   Copyright © 2008 - 2009 Intel Corporation. //krazy:exclude=copyright
  *
  * Based on nm-openconnect-vpnc.h:
- *   Copyright © 2005 - 2008 Red Hat, Inc.
- *   Copyright © 2007 - 2008 Novell, Inc.
+ *   Copyright © 2005 - 2008 Red Hat, Inc. //krazy:exclude=copyright
+ *   Copyright © 2007 - 2008 Novell, Inc. //krazy:exclude=copyright
  */
 
 #ifndef NM_OPENCONNECT_SERVICE_H

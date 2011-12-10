@@ -5,7 +5,7 @@ Copyright 2009 Will Stephenson <wstephenson@kde.org>
  Ray Strode <rstrode@redhat.com>
  Dan Williams <dcbw@redhat.com>
  Tambet Ingo <tambet@gmail.com>
- (C) Copyright 2005 - 2008 Red Hat, Inc.
+ (C) Copyright 2005 - 2008 Red Hat, Inc. //krazy:exclude=copyright
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
