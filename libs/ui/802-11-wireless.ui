@@ -107,7 +107,7 @@
      </property>
      <item>
       <property name="text">
-       <string>Automatic</string>
+       <string comment="like in Automatic radio frequency selection">Automatic</string>
       </property>
      </item>
      <item>
@@ -144,7 +144,7 @@
       <string>Sets the channel of the network.</string>
      </property>
      <property name="specialValueText">
-      <string>Automatic</string>
+      <string comment="like in Automatic wifi channel selection">Automatic</string>
      </property>
      <property name="minimum">
       <number>0</number>
@@ -217,7 +217,7 @@
     <widget class="KComboBox" name="cmbMacAddress">
      <item>
       <property name="text">
-       <string>Any</string>
+       <string comment="like in Use this connection with any network device">Any</string>
       </property>
      </item>
     </widget>
@@ -244,7 +244,7 @@
       <string>Sets the size of the largest packet that can be transmitted on this network. '0' sets the MTU automatically.</string>
      </property>
      <property name="specialValueText">
-      <string>Automatic</string>
+      <string comment="like in Automatic MTU selection">Automatic</string>
      </property>
      <property name="maximum">
       <number>10000</number>
@@ -285,7 +285,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>Random</string>
+        <string comment="like in Use random MAC address generation">Random</string>
        </property>
       </widget>
      </item>

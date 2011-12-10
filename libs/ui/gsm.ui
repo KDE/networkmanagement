@@ -23,7 +23,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>Basic</string>
+      <string comment="like in Basic settings">Basic</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -96,7 +96,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string>Advanced</string>
+      <string comment="like in Advanced settings">Advanced</string>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
       <property name="fieldGrowthPolicy">
@@ -157,7 +157,7 @@
         </property>
         <item>
          <property name="text">
-          <string>Any</string>
+          <string comment="like in Use any configuration">Any</string>
          </property>
         </item>
         <item>

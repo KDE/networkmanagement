@@ -32,7 +32,7 @@
      <item row="0" column="1">
       <widget class="KLineEdit" name="leUsername">
        <property name="toolTip">
-        <string>User name on this network</string>
+        <string>Username on this network</string>
        </property>
       </widget>
      </item>

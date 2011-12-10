@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="grp_general">
      <property name="title">
-      <string>General</string>
+      <string comment="like in Geral Settings">General</string>
      </property>
      <layout class="QFormLayout" name="formLayout">
       <property name="fieldGrowthPolicy">

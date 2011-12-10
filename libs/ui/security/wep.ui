@@ -65,7 +65,7 @@
     <widget class="KComboBox" name="weptxkeyindex">
      <item>
       <property name="text">
-       <string>1 (Default)</string>
+       <string comment="Default WEP key index to use. WEP supports four keys, the key with index number one is the default">1 (Default)</string>
       </property>
      </item>
      <item>

@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>General</string>
+      <string comment="like in General Settings">General</string>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
       <item row="0" column="0">
@@ -85,7 +85,9 @@
         </item>
         <item>
          <property name="text">
-          <string>X.509</string>
+          <string comment="X.509 is an ITU-T standard for a public key infrastructure (PKI) and Privilege Management Infrastructure (PMI)">
+	  X.509
+	  </string>
          </property>
         </item>
        </widget>

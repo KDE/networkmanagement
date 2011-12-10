@@ -117,7 +117,7 @@
            <widget class="KComboBox" name="cb_MPPECrypto">
             <item>
              <property name="text">
-              <string>Any</string>
+              <string comment="like in Use any encryption method">Any</string>
              </property>
             </item>
             <item>

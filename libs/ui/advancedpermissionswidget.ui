@@ -80,7 +80,7 @@
        </column>
        <column>
         <property name="text">
-         <string>User Name</string>
+         <string comment="like in Username for athentication">Username</string>
         </property>
        </column>
       </widget>
@@ -194,7 +194,7 @@
        </column>
        <column>
         <property name="text">
-         <string>User Name</string>
+         <string comment="like in Username for athentication">Username</string>
         </property>
        </column>
       </widget>

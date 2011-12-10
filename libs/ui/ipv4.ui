@@ -119,7 +119,7 @@
          </item>
          <item>
           <property name="text">
-           <string>Manual</string>
+           <string comment="like in Use manual IPv4 configuration">Manual</string>
           </property>
          </item>
          <item>
@@ -134,7 +134,7 @@
          </item>
          <item>
           <property name="text">
-           <string>Disabled</string>
+           <string comment="like in IPv4 configuration disabled">Disabled</string>
           </property>
          </item>
         </widget>
