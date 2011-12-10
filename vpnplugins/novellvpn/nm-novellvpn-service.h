@@ -1,7 +1,7 @@
 /* nm-novellvpn-service - novellvpn integration with NetworkManager
  *
  * Authors:
- *          Bin Li <bili@novell.com> krazy:exlude=copyright
+ *          Bin Li <bili@novell.com> // krazy:exlude=copyright
  *          Sureshkumar T <tsureshkumar@novell.com>
  * 
  * Based on work by Dan Williams <dcbw@redhat.com>

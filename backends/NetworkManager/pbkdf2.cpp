@@ -22,10 +22,10 @@
 /* Define types for stupid code.  Userspace should
  * be using u_*_t rather than kernel-space u* types.
  */
-typedef u_int8_t u8;
-typedef u_int16_t u16;
-typedef u_int32_t u32;
-typedef u_int64_t u64;
+typedef u_int8_t u8; // krazy:exclude=typedefs
+typedef u_int16_t u16; // krazy:exclude=typedefs
+typedef u_int32_t u32; // krazy:exclude=typedefs
+typedef u_int64_t u64; // krazy:exclude=typedefs
 
 void sha1_vector(size_t num_elem, const u8 *addr[], const size_t *len, u8 *mac);
 void sha1_transform(u8 *state, const u8 data[64]);
