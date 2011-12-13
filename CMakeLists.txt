@@ -26,7 +26,6 @@ include_directories (${KDE4_INCLUDES})
 
 find_package(NetworkManager ${MINIMUM_NM_VERSION_REQUIRED})
 
-macro_log_feature(NETWORKMANAGER_FOUND "NetworkManager headers" "User controllable networking" "http://projects.gnome.org/NetworkManager" FALSE "0.9" "Needed for NetworkManager support in Network Management")
 if (NETWORKMANAGER_FOUND)
     find_package(GLIB2 REQUIRED)
 
@@ -66,9 +65,10 @@ if (NETWORKMANAGER_FOUND)
             message(STATUS "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
         endif (DBUS_SYSTEM_POLICY_DIR)
     else()
-        message("ERROR: NetworkManager version '${NETWORKMANAGER_VERSION}' does not match minimum required (${MINIMUM_NM_VERSION_REQUIRED})")
-        return()
+        message(FATAL_ERROR "ERROR: NetworkManager version '${NETWORKMANAGER_VERSION}' does not match minimum required (${MINIMUM_NM_VERSION_REQUIRED})")
     endif()
+else(NETWORKMANAGER_FOUND)
+    message(FATAL_ERROR "ERROR: NetworkManager headers >= ${MINIMUM_NM_VERSION_REQUIRED} not installed")
 endif(NETWORKMANAGER_FOUND)
 
 if(INSTALL_KNM_AUTOSTART)
