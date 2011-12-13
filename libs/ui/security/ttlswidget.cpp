@@ -199,4 +199,16 @@ void TtlsWidget::showServersEditor()
     }
 }
 
+void TtlsWidget::syncWidgetData(const QPair<QString, QString> &widgetData)
+{
+    Q_D(TtlsWidget);
+    d->innerAuth->syncWidgetData(widgetData);
+}
+
+QPair<QString, QString> TtlsWidget::widgetData()
+{
+    Q_D(TtlsWidget);
+    return d->innerAuth->widgetData();
+}
+
 // vim: sw=4 sts=4 et tw=100

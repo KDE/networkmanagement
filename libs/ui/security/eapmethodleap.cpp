@@ -105,4 +105,15 @@ void EapMethodLeap::passwordStorageChanged(int type)
     }
 }
 
+void EapMethodLeap::syncWidgetData(const QPair<QString, QString> &widgetData)
+{
+    leUsername->setText(widgetData.first);
+    lePassword->setText(widgetData.second);
+}
+
+QPair<QString, QString> EapMethodLeap::widgetData()
+{
+    return QPair<QString, QString>(leUsername->text(), lePassword->text());
+}
+
 // vim: sw=4 sts=4 et tw=100

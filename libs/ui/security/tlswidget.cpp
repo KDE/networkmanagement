@@ -305,4 +305,15 @@ void TlsWidget::showServersEditor()
     }
 }
 
+void TlsWidget::syncWidgetData(const QPair<QString, QString> &widgetData)
+{
+    kurPrivateKey->setUrl(widgetData.first);
+    lePrivateKeyPassword->setText(widgetData.second);
+}
+
+QPair<QString, QString> TlsWidget::widgetData()
+{
+    return QPair<QString, QString>(kurPrivateKey->text(), lePrivateKeyPassword->text());
+}
+
 // vim: sw=4 sts=4 et tw=100

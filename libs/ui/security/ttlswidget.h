@@ -40,6 +40,8 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
+    void syncWidgetData(const QPair<QString, QString> &widgetData);
+    QPair<QString, QString> widgetData();
 private Q_SLOTS:
     void showAltSubjectMatchesEditor();
     void showServersEditor();

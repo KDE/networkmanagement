@@ -79,15 +79,14 @@ void EapMethodStack::setCurrentEapMethod(int key)
 /* Triggered when the user changes the EAP method using the cboEapMethod combo box. */
 void EapMethodStack::setCurrentEapMethodInternal(int index)
 {
-    // Save old eap method's data into this connection's settings.
-    qobject_cast<EapMethod *>(eapMethods->currentWidget())->writeConfig();
+    // Get old eap method's data.
+    QPair<QString, QString> pair = qobject_cast<EapMethod *>(eapMethods->currentWidget())->widgetData();
 
     // Change to the chosen epa method.
     eapMethods->setCurrentIndex(index);
 
-    // Load this connection's setting into the chosen epa method.
-    qobject_cast<EapMethod *>(eapMethods->widget(index))->readConfig();
-    qobject_cast<EapMethod *>(eapMethods->widget(index))->readSecrets();
+    // Load data into the chosen epa method.
+    qobject_cast<EapMethod *>(eapMethods->widget(index))->syncWidgetData(pair);
 }
 
 EapMethod * EapMethodStack::currentEapMethod() const
@@ -129,6 +128,21 @@ void EapMethodStack::setShowPasswords(bool on)
     for (int i = 0; i < eapMethods->count(); ++i) {
         qobject_cast<EapMethod *>( eapMethods->widget(i))->setShowPasswords(on);
     }
+}
+
+void EapMethodStack::syncWidgetData(const QPair<QString, QString> &widgetData)
+{
+    if (eapMethods->count()) {
+        qobject_cast<EapMethod *>(eapMethods->currentWidget())->syncWidgetData(widgetData);
+    }
+}
+
+QPair<QString, QString> EapMethodStack::widgetData()
+{
+    if (eapMethods->count()) {
+        return qobject_cast<EapMethod *>(eapMethods->currentWidget())->widgetData();
+    }
+    return QPair<QString, QString>();
 }
 
 // vim: sw=4 sts=4 et tw=100

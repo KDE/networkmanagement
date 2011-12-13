@@ -57,4 +57,14 @@ void SecurityDynamicWep::writeConfig()
     d->settingSecurity->setGroup(group);
 }
 
+void SecurityDynamicWep::syncWidgetData(const QPair<QString, QString> &widgetData)
+{
+    Q_UNUSED(widgetData);
+}
+
+QPair<QString, QString> SecurityDynamicWep::widgetData()
+{
+    return QPair<QString, QString>();
+}
+
 // vim: sw=4 sts=4 et tw=100

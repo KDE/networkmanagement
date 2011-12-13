@@ -31,4 +31,14 @@ WpaEapWidget::~WpaEapWidget()
 
 }
 
+void WpaEapWidget::syncWidgetData(const QPair<QString, QString> &widgetData)
+{
+    Q_UNUSED(widgetData);
+}
+
+QPair<QString, QString> WpaEapWidget::widgetData()
+{
+    return QPair<QString, QString>();
+}
+
 // vim: sw=4 sts=4 et tw=100
