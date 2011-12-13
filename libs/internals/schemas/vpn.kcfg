@@ -14,7 +14,7 @@
       <whatsthis></whatsthis>
     </entry>
     <entry name="UserName" type="String" dbuskey="NM_SETTING_VPN_USER_NAME">
-      <label>Username</label>
+      <label comment="like in Username for authentication">Username</label>
       <whatsthis>System username, not stored</whatsthis>
     </entry>
     <entry name="VpnSecrets" type="StringList" dbuskey="NM_SETTING_VPN_SECRETS" secret="true">

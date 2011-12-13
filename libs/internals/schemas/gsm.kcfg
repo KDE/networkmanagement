@@ -11,7 +11,7 @@
       <default>*99#</default>
     </entry>
     <entry name="username" type="String">
-      <label>Username</label>
+      <label comment="like in Username for authentication">Username</label>
       <whatsthis></whatsthis>
     </entry>
     <entry name="password" type="String" secret="true">

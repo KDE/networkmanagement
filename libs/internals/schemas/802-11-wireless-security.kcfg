@@ -55,7 +55,7 @@
       <whatsthis></whatsthis>
     </entry>
     <entry name="group" type="StringList">
-      <label>Group</label>
+      <label comment="encryption capabilities group (one of 'wep40', 'wep104', 'tkip', or 'ccmp')">Group</label>
       <whatsthis></whatsthis>
     </entry>
     <entry name="leapusername" type="String" dbuskey="NM_SETTING_WIRELESS_SECURITY_LEAP_USERNAME">

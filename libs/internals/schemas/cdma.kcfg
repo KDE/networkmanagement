@@ -10,7 +10,7 @@
       <whatsthis></whatsthis>
     </entry>
     <entry name="username" type="String">
-      <label>Username</label>
+      <label comment="like in Username for authenticaton">Username</label>
       <whatsthis></whatsthis>
     </entry>
     <entry name="password" type="String" secret="true">

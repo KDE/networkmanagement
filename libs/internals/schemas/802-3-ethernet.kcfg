@@ -20,7 +20,7 @@
       <whatsthis></whatsthis>
     </entry>
     <entry name="duplex" key="duplex" type="Enum">
-      <label>Duplex</label>
+      <label comment="like in Ethernet duplex mode (half or full)">Duplex</label>
       <whatsthis>Whether the Ethernet interface should use duplex communications</whatsthis>
       <choices>
         <choice name="half"/>
