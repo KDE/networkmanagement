@@ -31,6 +31,8 @@ public:
     explicit SecurityDynamicWep(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~SecurityDynamicWep();
     void writeConfig();
+    void syncWidgetData(const QPair<QString, QString> &widgetData);
+    QPair<QString, QString> widgetData();
 };
 
 #endif // SECURITYDYNAMICWEP_H

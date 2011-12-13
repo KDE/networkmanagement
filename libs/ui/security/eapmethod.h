@@ -46,6 +46,8 @@ public:
     virtual void writeConfig() = 0;
     virtual void readSecrets() = 0;
     virtual void setShowPasswords(bool b = true) = 0;
+    virtual void syncWidgetData(const QPair<QString, QString> &widgetData) = 0;
+    virtual QPair<QString, QString> widgetData() = 0;
 protected:
     EapMethod(EapMethodPrivate &dd, Knm::Connection * connection, QWidget * parent = 0);
     EapMethodPrivate * d_ptr;

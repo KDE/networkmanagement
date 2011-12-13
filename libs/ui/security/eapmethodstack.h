@@ -55,6 +55,8 @@ public:
     virtual void writeConfig();
     virtual void readSecrets();
     void setShowPasswords(bool on);
+    void syncWidgetData(const QPair<QString, QString> &widgetData);
+    QPair<QString, QString> widgetData();
 private Q_SLOTS:
     void setCurrentEapMethodInternal(int);
 protected:

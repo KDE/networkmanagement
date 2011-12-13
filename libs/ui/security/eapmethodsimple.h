@@ -37,6 +37,9 @@ public:
     void writeConfig();
     void readSecrets();
     void setShowPasswords(bool on = true);
+    void syncWidgetData(const QPair<QString, QString> &widgetData);
+    QPair<QString, QString> widgetData();
+
 private Q_SLOTS:
     void passwordStorageChanged(int);
 private:

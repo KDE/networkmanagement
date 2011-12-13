@@ -119,4 +119,15 @@ void EapMethodSimple::readSecrets()
     }
 }
 
+void EapMethodSimple::syncWidgetData(const QPair<QString, QString> &widgetData)
+{
+    leUserName->setText(widgetData.first);
+    lePassword->setText(widgetData.second);
+}
+
+QPair<QString, QString> EapMethodSimple::widgetData()
+{
+    return QPair<QString, QString>(leUserName->text(), lePassword->text());
+}
+
 // vim: sw=4 sts=4 et tw=100

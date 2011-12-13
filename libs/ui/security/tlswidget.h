@@ -48,6 +48,8 @@ public:
     void readConfig();
     void writeConfig();
     void readSecrets();
+    void syncWidgetData(const QPair<QString, QString> &widgetData);
+    QPair<QString, QString> widgetData();
 public Q_SLOTS:
     void setShowPasswords(bool b = true);
 private Q_SLOTS:

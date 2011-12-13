@@ -203,4 +203,16 @@ void PeapWidget::showServersEditor()
     }
 }
 
+void PeapWidget::syncWidgetData(const QPair<QString, QString> &widgetData)
+{
+    Q_D(PeapWidget);
+    d->innerAuth->syncWidgetData(widgetData);
+}
+
+QPair<QString, QString> PeapWidget::widgetData()
+{
+    Q_D(PeapWidget);
+    return d->innerAuth->widgetData();
+}
+
 // vim: sw=4 sts=4 et tw=100

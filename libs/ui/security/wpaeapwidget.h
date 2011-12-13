@@ -29,6 +29,8 @@ Q_OBJECT
 public:
     explicit WpaEapWidget(Knm::Connection* connection, QWidget * parent = 0);
     virtual ~WpaEapWidget();
+    void syncWidgetData(const QPair<QString, QString> &widgetData);
+    QPair<QString, QString> widgetData();
 };
 
 #endif // WPAEAPWIDGET_H
