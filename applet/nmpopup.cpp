@@ -693,7 +693,7 @@ void NMPopup::uncheckShowMore(RemoteActivatable *ra)
         }
         wicCount++;
         if (m_oldShowMoreChecked != m_showMoreChecked) {
-            // One wireless network explicity configured by the user appeared, reset "Show More" button
+            // One wireless network explicitly configured by the user appeared, reset "Show More" button
             // state to the value before the checkShowMore method above took action.
             showMore(m_oldShowMoreChecked);
         }

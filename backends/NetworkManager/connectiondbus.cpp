@@ -280,8 +280,8 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
     if (connectionSettings.contains(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS))) {
         QStringList permissionsDbus = connectionSettings.value(QLatin1String(NM_SETTING_CONNECTION_PERMISSIONS)).toStringList();
         foreach (const QString &permission, permissionsDbus) {
-            QStringList splitted = permission.split(QLatin1String(":"), QString::KeepEmptyParts);
-            permissions.insert(splitted.at(1),splitted.at(2));
+            QStringList split = permission.split(QLatin1String(":"), QString::KeepEmptyParts);
+            permissions.insert(split.at(1),split.at(2));
         }
     }
     m_connection->setPermissions(permissions);

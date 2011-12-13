@@ -56,7 +56,7 @@ public:
      */
     virtual QString suggestedFileName(Knm::Connection *connection) const = 0;
     /**
-     * File extention to be used in KFileDialog when selecting the file to import.
+     * File extension to be used in KFileDialog when selecting the file to import.
      * The format is: *.<extension> [*.<extension> ...]. For instance: '*.pcf'
      */
     virtual QString supportedFileExtensions() const = 0;

@@ -128,7 +128,7 @@ void NetworkInterfaceMonitor::modemInterfaceAdded(const QString & udi)
         return;
     }
 
-    // Using queued invokation to prevent kded stalling here until user enter the pin.
+    // Using queued invocation to prevent kded stalling here until user enter the pin.
     QMetaObject::invokeMethod(modem, "unlockRequiredChanged", Qt::QueuedConnection,
                               Q_ARG(QString, modem->unlockRequired()));
 }
