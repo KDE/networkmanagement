@@ -20,12 +20,12 @@ macro_log_feature(MOBILEBROADBANDPROVIDERINFO_FOUND "mobile-broadband-provider-i
 
 pkg_check_modules(QTMODEMMANAGER REQUIRED QtModemManager)
 if (NOT QTMODEMMANAGER_FOUND)
-    message(FATAL_ERROR "ERROR: QtModemManager not found")
+    message(FATAL_ERROR "ERROR: QtModemManager not found. http://projects.kde.org/search?q=modemmanager&scope=all&all_words=1&projects=1&submit=Submit")
 endif (NOT QTMODEMMANAGER_FOUND)
 
 pkg_check_modules(QTNETWORKMANAGER REQUIRED QtNetworkManager)
 if (NOT QTNETWORKMANAGER_FOUND)
-    message(FATAL_ERROR "ERROR: QtNetworkManager not found")
+    message(FATAL_ERROR "ERROR: QtNetworkManager not found. http://projects.kde.org/search?q=networkmanager&scope=all&all_words=1&projects=1&submit=Submit")
 endif (NOT QTNETWORKMANAGER_FOUND)
 
 add_definitions(${QT_DEFINITIONS} ${KDE4_DEFINITIONS})
@@ -73,7 +73,7 @@ if (NETWORKMANAGER_FOUND)
         message(FATAL_ERROR "ERROR: NetworkManager version '${NETWORKMANAGER_VERSION}' does not match minimum required (${MINIMUM_NM_VERSION_REQUIRED})")
     endif()
 else(NETWORKMANAGER_FOUND)
-    message(FATAL_ERROR "ERROR: NetworkManager headers >= ${MINIMUM_NM_VERSION_REQUIRED} not installed")
+    message(FATAL_ERROR "ERROR: NetworkManager headers >= ${MINIMUM_NM_VERSION_REQUIRED} not installed. http://projects.gnome.org/NetworkManager/")
 endif(NETWORKMANAGER_FOUND)
 
 macro_display_feature_log()
