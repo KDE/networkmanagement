@@ -44,6 +44,7 @@ public:
     QList<Knm::Connection*> connectionsToWrite;
     QList<Knm::Connection*> connectionsToRead;
     QMultiHash<QString,QPair<QString,SecretsProvider::GetSecretsFlags> > settingsToRead;
+    QList<QString> userAskRequestsInProgress;
 };
 
 
@@ -267,6 +268,11 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
 
 void SecretStorage::askUser(Knm::Connection *con, const QString & name, const QStringList &secrets)
 {
+    Q_D(SecretStorage);
+    if (d->userAskRequestsInProgress.contains(con->uuid().toString())) {
+        return;
+    }
+    d->userAskRequestsInProgress.append(con->uuid().toString());
     ConnectionSecretsJob *job = new ConnectionSecretsJob(con, name, secrets);
     connect(job, SIGNAL(finished(KJob*)), this, SLOT(gotSecrets(KJob*)));
     job->start();
@@ -290,12 +296,18 @@ KSharedConfig::Ptr SecretStorage::secretsFileForUuid(const QString & uuid)
 
 void SecretStorage::gotSecrets(KJob *job)
 {
+    Q_D(SecretStorage);
     ConnectionSecretsJob * csj = static_cast<ConnectionSecretsJob*>(job);
     bool failed = true;
     if (csj->error() == ConnectionSecretsJob::EnumError::NoError) {
         failed = false;
     }
-    emit connectionRead(csj->connection(), csj->settingName(), failed, true);
+    Knm::Connection * con = csj->connection();
+
+    if (con) {
+        d->userAskRequestsInProgress.removeAll(con->uuid().toString());
+    }
+    emit connectionRead(con, csj->settingName(), failed, true);
 }
 
 void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode newMode)
