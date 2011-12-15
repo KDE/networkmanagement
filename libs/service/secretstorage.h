@@ -88,8 +88,6 @@ private:
 
     static QString s_walletFolderName;
     static WId s_walletWId;
-
-
 };
 
 #endif // SECRETSTORAGE_H
