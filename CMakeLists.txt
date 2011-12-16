@@ -62,7 +62,7 @@ if (NETWORKMANAGER_FOUND)
         message(FATAL_ERROR "ERROR: NetworkManager version '${NETWORKMANAGER_VERSION}' does not match minimum required (${MINIMUM_NM_VERSION_REQUIRED})")
     endif()
 else(NETWORKMANAGER_FOUND)
-    message(FATAL_ERROR "ERROR: NetworkManager headers >= ${MINIMUM_NM_VERSION_REQUIRED} not installed")
+    message(FATAL_ERROR "ERROR: NetworkManager headers >= ${MINIMUM_NM_VERSION_REQUIRED} not installed. http://projects.gnome.org/NetworkManager/")
 endif(NETWORKMANAGER_FOUND)
 
 if(INSTALL_KNM_AUTOSTART)
