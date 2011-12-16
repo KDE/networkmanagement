@@ -63,12 +63,6 @@ if (NETWORKMANAGER_FOUND)
         add_subdirectory(kded)
 
         install( FILES networkmanagement.notifyrc DESTINATION ${DATA_INSTALL_DIR}/networkmanagement )
-
-        if (DBUS_SYSTEM_POLICY_DIR)
-            install( FILES NetworkManager-kde4.conf DESTINATION ${DBUS_SYSTEM_POLICY_DIR})
-        else (DBUS_SYSTEM_POLICY_DIR)
-            message(STATUS "It is necessary to specify the directory where the client policy file for NetworkManager-kde4 is installed as DBUS_SYSTEM_POLICY_DIR.  Normally this is /etc/dbus-1/system.d on a Linux system")
-        endif (DBUS_SYSTEM_POLICY_DIR)
     else()
         message(FATAL_ERROR "ERROR: NetworkManager version '${NETWORKMANAGER_VERSION}' does not match minimum required (${MINIMUM_NM_VERSION_REQUIRED})")
     endif()
