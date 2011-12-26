@@ -143,11 +143,10 @@ void WirelessSecuritySettingWidget::setIfaceAndAccessPoint(Solid::Control::Wirel
 
     // cache ap and device capabilities here
     Solid::Control::WirelessNetworkInterfaceNm09::Capabilities ifaceCaps(0);
-    bool adhoc = false;
+    bool adhoc = d->settingWireless->mode() == Knm::WirelessSetting::EnumMode::adhoc;
     Solid::Control::AccessPointNm09::Capabilities apCaps(0);
     Solid::Control::AccessPointNm09::WpaFlags apWpa(0);
     Solid::Control::AccessPointNm09::WpaFlags apRsn(0);
-
 
     if (iface) {
         ifaceCaps = iface->wirelessCapabilities();
