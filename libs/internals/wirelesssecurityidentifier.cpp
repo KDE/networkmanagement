@@ -81,13 +81,13 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkMa
                 return true;
         }
         if (type == Knm::WirelessSecurity::WpaPsk
-                ||type == Knm::WirelessSecurity::WpaEap) {
+                || ((type == Knm::WirelessSecurity::WpaEap) && !adhoc)) {
             if (interfaceCaps & (NetworkManager::WirelessDevice::Wpa)) {
                 return true;
             }
         }
         if (type == Knm::WirelessSecurity::Wpa2Psk
-                ||type == Knm::WirelessSecurity::Wpa2Eap) {
+                || ((type == Knm::WirelessSecurity::Wpa2Eap) && !adhoc)) {
             if (interfaceCaps & (NetworkManager::WirelessDevice::Rsn)) {
                 return true;
             }
