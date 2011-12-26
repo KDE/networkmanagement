@@ -328,7 +328,14 @@ void WirelessSecuritySettingWidget::writeConfig()
     else if (d->ui.cboType->currentIndex() == d->wpaPsk.first) {
         d->setting8021x->setEnabled(false);
         d->settingSecurity->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk); // FIXME
-        d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAPSK);
+        if (d->settingWireless->mode() == Knm::WirelessSetting::EnumMode::adhoc) {
+            d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPANone);
+            d->settingSecurity->setProto(QStringList() << "wpa");
+            d->settingSecurity->setPairwise(QStringList() << "none");
+            d->settingSecurity->setGroup(QStringList() << "tkip");
+        } else {
+            d->settingSecurity->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPAPSK);
+        }
     }
     else if (d->ui.cboType->currentIndex() == d->wpaEap.first) {
         d->setting8021x->setEnabled(true);
