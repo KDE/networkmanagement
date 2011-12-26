@@ -541,12 +541,6 @@ void ManageConnectionWidget::editGotSecrets(bool valid, const QString &errorMess
             KMessageBox::error(this, i18n("Error"));
         else
             KMessageBox::error(this, errorMessage);
-
-        if (mEditConnection && mEditConnection->uuid() == uuid) {
-            delete mEditConnection;
-            mEditConnection = 0;
-            return;
-        }
     }
 
     if (!mEditConnection || mEditConnection->uuid() != uuid) {
