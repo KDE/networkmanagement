@@ -38,6 +38,7 @@ void WirelessSecurityDbus::fromMap(const QVariantMap & map)
       else if (map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT)) == "wpa-none")
       {
           setting->setKeymgmt(Knm::WirelessSecuritySetting::EnumKeymgmt::WPANone);
+          setting->setSecurityType(Knm::WirelessSecuritySetting::EnumSecurityType::WpaPsk);
       }
       else if (map.value(QLatin1String(NM_SETTING_WIRELESS_SECURITY_KEY_MGMT)) == "wpa-psk")
       {
