@@ -115,7 +115,7 @@ private:
     // Container for connection List and interface details widgets
     Plasma::TabBar* m_mainTabBar;
     ConnectionsTabBar* m_connectionsTabBar;
-    Plasma::Label* m_title;
+//    Plasma::Label* m_title;
 
     Plasma::CheckBox* m_wifiCheckBox;
     Plasma::CheckBox* m_wwanCheckBox;

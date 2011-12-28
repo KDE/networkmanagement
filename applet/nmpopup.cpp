@@ -111,14 +111,14 @@ void NMPopup::init()
      **************************/
     m_tab1Layout = new QGraphicsGridLayout;
 
-    m_title = new Plasma::Label(this);
+    /*m_title = new Plasma::Label(this);
     m_title->setText(i18nc("title", "<h3>Manage your network connections</h3>"));
-    m_tab1Layout->addItem(m_title, 0, 0);
+    m_tab1Layout->addItem(m_title, 0, 0);*/
     m_tab1Layout->setRowMaximumHeight(rowMain++, rowHeight);
 
     /*** Inner TabBar ***/
-    m_connectionsTabBar = new ConnectionsTabBar(this);
-    Plasma::Frame * connectionsFrame = new Plasma::Frame(this);
+    //Plasma::Frame * connectionsFrame = new Plasma::Frame(this);
+    QGraphicsWidget * connectionsFrame = new QGraphicsWidget(this);
 //    connectionsFrame->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
     m_connectionTabLayout = new QGraphicsGridLayout(connectionsFrame);
     int innerRow = 0;
@@ -136,6 +136,10 @@ void NMPopup::init()
     connect(m_connectionList, SIGNAL(showInterfaceDetails(QString)), SLOT(showInterfaceDetails(QString)));
     m_connectionTabLayout->addItem(m_connectionList, innerRow++, 0, 1, 2);
 
+    // TODO: add an item in the connection list to replace the "Show all" checkbox with the text "Show more %1 networks".
+    // TODO: make this work. Change it to always be the last item in the connection list.
+    //       Only visible when "Show all" is activated (?).
+#if 0
     // Connect to another connection button
     m_connectToAnotherNetwork = new Plasma::IconWidget(connectionsFrame);
     m_connectToAnotherNetwork->setDrawBackground(true);
@@ -148,7 +152,10 @@ void NMPopup::init()
     m_connectToAnotherNetwork->setMaximumHeight(rowHeight);
     connect(m_connectToAnotherNetwork, SIGNAL(clicked()), this, SLOT(connectToAnotherNetwork()));
     m_connectionTabLayout->addItem(m_connectToAnotherNetwork, innerRow, 0, 1, 2);
+#endif
 
+    m_connectionsTabBar = new ConnectionsTabBar(this);
+    m_connectionsTabBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     m_connectionsTabBar->addTab(i18nc("connection list", "Connections"), 0);
     m_connectionsTabBar->nativeWidget()->setTabToolTip(0, i18nc("@info:tooltip", "Connections"));
     m_connectionsTabBar->addTab(i18nc("connection list", "VPN"), 0);
@@ -174,10 +181,12 @@ void NMPopup::init()
     connect(NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
             this, SLOT(managerNetworkingEnabledChanged(bool)));
 
+#if 0
     Plasma::Separator * sep = new Plasma::Separator(this);
     //sep->hide();
     m_tab1Layout->setRowMinimumHeight(rowMain, rowHeight);
     m_tab1Layout->addItem(sep, rowMain++, 0, 1, 1, Qt::AlignCenter);
+#endif
 
     // flight-mode checkbox
     m_wifiCheckBox = new Plasma::CheckBox(this);
@@ -214,7 +223,7 @@ void NMPopup::init()
     m_advancedSettingsButton->setAcceptsHoverEvents(true);
     //m_advancedSettingsButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_advancedSettingsButton->setIcon(KIcon("configure"));
-    m_advancedSettingsButton->setText(i18nc("Advanced settings button in the applet's popup", "Advanced Settings..."));
+    m_advancedSettingsButton->setText(i18nc("settings button in applet's popup window", "Settings..."));
     m_advancedSettingsButton->setMinimumHeight(28);
     m_advancedSettingsButton->setMaximumHeight(28);
     connect(m_advancedSettingsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
@@ -771,7 +780,7 @@ void NMPopup::currentInnerTabChanged(int index)
 {
     switch (index) {
     case ConnectionListTabIndex:
-        m_connectToAnotherNetwork->setText(i18nc("button", "Connect to Another Network..."));
+        //m_connectToAnotherNetwork->setText(i18nc("button", "Connect to Another Network..."));
         if (m_showAllChecked) {
             m_connectionList->setFilter(ActivatableListWidget::NormalConnections);
         } else {
@@ -779,15 +788,15 @@ void NMPopup::currentInnerTabChanged(int index)
         }
         break;
     case VPNConnectionListTabIndex:
-        m_connectToAnotherNetwork->setText(i18nc("button", "Connect to Another VPN Network..."));
+        //m_connectToAnotherNetwork->setText(i18nc("button", "Connect to Another VPN Network..."));
         m_connectionList->setFilter(ActivatableListWidget::VPNConnections);
         break;
     case SharedConnectionListTabIndex:
-        m_connectToAnotherNetwork->setText(i18nc("button", "Share Another Network Interface..."));
+        //m_connectToAnotherNetwork->setText(i18nc("button", "Share Another Network Interface..."));
         m_connectionList->setFilter(ActivatableListWidget::SharedConnections);
         break;
     }
-    m_connectToAnotherNetwork->update();
+    //m_connectToAnotherNetwork->update();
 }
 // vim: sw=4 sts=4 et tw=100
 
