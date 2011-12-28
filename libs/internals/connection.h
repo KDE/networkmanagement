@@ -62,6 +62,7 @@ public:
     QUuid uuid() const;
     Connection::Type type() const;
     bool autoConnect() const;
+    bool isShared() const;
     QDateTime timestamp() const;
     QHash<QString,QString> permissions() const;
 
@@ -137,6 +138,7 @@ private:
     QUuid m_uuid;
     Connection::Type m_type;
     bool m_autoConnect;
+    bool m_shared;
     QDateTime m_timestamp;
     QString m_origin;
     QList<Setting*> m_settings;

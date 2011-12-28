@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "networkmanager.h"
 
+#include <QAction>
 #include <QPainter>
 
 #include <KCModuleInfo>
@@ -44,6 +45,15 @@ K_EXPORT_PLASMA_APPLET(networkmanagement, NetworkManagerApplet)
 bool networkInterfaceLessThan(NetworkManager::Device * if1, NetworkManager::Device * if2);
 bool networkInterfaceSameConnectionStateLessThan(NetworkManager::Device * if1, NetworkManager::Device * if2);
 
+class NetworkManagerApplet::Private
+{
+public:
+    Private() { }
+    ~Private() { }
+
+    QList<QAction*> actions;
+};
+
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
     : Plasma::PopupApplet(parent, args),
         m_activatables(0),
@@ -51,7 +61,8 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
         m_panelContainment(true),
         m_totalActiveVpnConnections(0),
         m_activeInterface(0),
-        m_activeSystrayInterface(0)
+        m_activeSystrayInterface(0),
+        d(new Private())
 {
     KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     KGlobal::locale()->insertCatalog("libknetworkmanager");
@@ -97,6 +108,11 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
 
 NetworkManagerApplet::~NetworkManagerApplet()
 {
+}
+
+QList<QAction*> NetworkManagerApplet::contextualActions()
+{
+    return d->actions;
 }
 
 QString NetworkManagerApplet::svgElement(NetworkManager::Device *iface)
@@ -274,6 +290,25 @@ void NetworkManagerApplet::init()
     if (!m_popup) {
         m_popup = new NMPopup(m_activatables, this);
         connect(m_popup, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
+
+        QAction* action = new QAction(i18nc("CheckBox to enable or disable networking completely", "Enable networking"), this);
+        action->setToolTip(i18nc("@info:tooltip tooltip for the 'Enable networking' checkbox", "Enable or disable the networking system"));
+        action->setCheckable(true);
+        action->setChecked(NetworkManager::isNetworkingEnabled());
+        connect(action, SIGNAL(triggered(bool)), m_popup, SLOT(networkingEnabledToggled(bool)));
+        connect(NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
+                action, SLOT(setChecked(bool)));
+
+        d->actions.append(action);
+
+        // TODO: change this to 'Hide unsaved networks'
+        action = new QAction(i18n("Show unsaved networks"), this);
+        action->setToolTip(i18nc("@info:tooltip tooltip for the 'Show unsaved' checkbox", "Show unsaved networks"));
+        action->setCheckable(true);
+        action->setChecked(m_popup->m_showAllChecked);
+        connect(action, SIGNAL(triggered(bool)), m_popup, SLOT(showAll()));
+        connect(m_popup, SIGNAL(showAllChecked(bool)), action, SLOT(setChecked(bool)));
+        d->actions.append(action);
     }
 
     // m_activatables->init() must be called after SLOT(activatableAdded(RemoteActivatable*)) has been connected and

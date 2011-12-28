@@ -1,5 +1,6 @@
 /*
 Copyright 2010 Sebastian Kügler <sebas@kde.org>
+Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -37,6 +38,7 @@ class RemoteActivatable;
 class RemoteInterfaceConnection;
 class RemoteInterfaceList;
 class InterfaceDetails;
+class InterfaceItem;
 
 class InterfaceDetailsWidget : public QGraphicsWidget
 {
@@ -45,6 +47,7 @@ Q_OBJECT
         InterfaceDetailsWidget(QGraphicsItem* parent = 0);
         virtual ~InterfaceDetailsWidget();
         void setInterface(NetworkManager::Device* iface, bool disconnectOld = true);
+        void setInterfaceItem(InterfaceItem* item, bool disconnectOld = true);
         void setUpdateEnabled(bool enable);
         void resetUi();
         QString getLastIfaceUni();
@@ -70,6 +73,7 @@ Q_OBJECT
         void connectSignals();
         void disconnectSignals();
 
+        InterfaceItem * m_ifaceItem;
         NetworkManager::Device* m_iface;
         QString m_ifaceUni;
 

@@ -12,6 +12,8 @@ set(networkmanager_SRCS
 
     nmpopup.cpp
     activatablelistwidget.cpp
+    typelistwidget.cpp
+    connectionstabbar.cpp
 
     interfaceitem.cpp
     wirelessinterfaceitem.cpp

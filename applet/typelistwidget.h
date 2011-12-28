@@ -1,6 +1,5 @@
 /*
-Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
+Copyright 2011 Lamarque Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -19,35 +18,27 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INTERFACE_CONNECTION_ITEM_H
-#define INTERFACE_CONNECTION_ITEM_H
+#ifndef TYPELISTWIDGET_H
+#define TYPELISTWIDGET_H
 
-#include "activatableitem.h"
+#include <QGraphicsWidget>
 
-class QGraphicsGridLayout;
-
-namespace Plasma
-{
-    class IconWidget;
+namespace Plasma {
+    class PushButton;
 }
 
-/**
- * Represents an inactive connection
- */
-class InterfaceConnectionItem : public ActivatableItem
+class TypeListWidget : public QGraphicsWidget
 {
-    Q_OBJECT
-
+Q_OBJECT
     public:
-        explicit InterfaceConnectionItem(RemoteInterfaceConnection *, QGraphicsItem * parent = 0);
-        virtual ~InterfaceConnectionItem();
-        void setupItem();
+        TypeListWidget(QGraphicsItem* parent = 0);
+        virtual ~TypeListWidget();
 
-    protected:
-        QGraphicsGridLayout * m_layout;
+    Q_SIGNALS:
+        void back();
 
-    private Q_SLOTS:
-        void stateChanged();
+    private:
+        Plasma::PushButton * m_backButton;
 };
 
-#endif //#define APPLET_CONNECTIONITEM_H
+#endif // TYPELISTWIDGET_H

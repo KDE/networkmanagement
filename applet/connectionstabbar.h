@@ -1,5 +1,4 @@
 /*
-Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
@@ -19,35 +18,23 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef INTERFACE_CONNECTION_ITEM_H
-#define INTERFACE_CONNECTION_ITEM_H
+#ifndef CONNECTIONSTABBAR_H
+#define CONNECTIONSTABBAR_H
 
-#include "activatableitem.h"
+#include <Plasma/TabBar>
 
-class QGraphicsGridLayout;
-
-namespace Plasma
+class ConnectionsTabBar: public Plasma::TabBar
 {
-    class IconWidget;
-}
+Q_OBJECT
+public:
+    ConnectionsTabBar(QGraphicsWidget * parent = 0);
 
-/**
- * Represents an inactive connection
- */
-class InterfaceConnectionItem : public ActivatableItem
-{
-    Q_OBJECT
-
-    public:
-        explicit InterfaceConnectionItem(RemoteInterfaceConnection *, QGraphicsItem * parent = 0);
-        virtual ~InterfaceConnectionItem();
-        void setupItem();
-
-    protected:
-        QGraphicsGridLayout * m_layout;
-
-    private Q_SLOTS:
-        void stateChanged();
+private:
+    bool event(QEvent *);
+    bool sceneEvent(QEvent *);
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event);
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 };
 
-#endif //#define APPLET_CONNECTIONITEM_H
+#endif

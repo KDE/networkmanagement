@@ -28,7 +28,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 using namespace Knm;
 
 Activatable::Activatable(ActivatableType type, const QString & deviceUni, QObject * parent)
-: QObject(parent), m_type(type), m_deviceUni(deviceUni)
+: QObject(parent), m_type(type), m_deviceUni(deviceUni), m_shared(false)
 {
 }
 
@@ -49,6 +49,16 @@ void Activatable::setDeviceUni(const QString& deviceUni)
 QString Activatable::deviceUni() const
 {
     return m_deviceUni;
+}
+
+bool Activatable::isShared() const
+{
+    return m_shared;
+}
+
+void Activatable::setShared(const bool shared)
+{
+    m_shared = shared;
 }
 
 void Activatable::activate()

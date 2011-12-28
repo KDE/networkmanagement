@@ -94,18 +94,19 @@ class InterfaceDetails
 };
 
 InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphicsWidget(parent, 0),
-    m_iface(0), m_updateEnabled(false)
+    m_ifaceItem(0), m_iface(0), m_updateEnabled(false)
 {
     m_gridLayout = new QGraphicsGridLayout(this);
 
     int row = 0;
+    m_gridLayout->addItem(m_ifaceItem, row, 0);
     //Info
-    //row++;
+    row++;
     m_info = new Plasma::Label(this);
     m_info->nativeWidget()->setTextFormat(Qt::RichText);
     m_info->setFont(KGlobalSettings::smallestReadableFont());
     m_info->setTextSelectable(true);
-    m_info->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    m_info->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_gridLayout->addItem(m_info, row, 0);
 
     // Traffic
@@ -134,7 +135,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_trafficPlotter->setHorizontalLinesCount(2);
     m_trafficPlotter->setUseAutoRange(true);
     m_trafficPlotter->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_trafficPlotter->setMinimumHeight(4 * QFontMetrics(KGlobalSettings::smallestReadableFont()).height());
+    m_trafficPlotter->setMinimumHeight(5 * QFontMetrics(KGlobalSettings::smallestReadableFont()).height());
 
     m_gridLayout->addItem(m_trafficPlotter, row, 0, 1, 2);
 
@@ -304,7 +305,7 @@ void InterfaceDetailsWidget::showDetails(bool reset)
 
     if (!reset && m_iface) {
         info += QString(format).arg(i18nc("interface details", "Type"), UiUtils::interfaceTypeLabel(details->type, m_iface));
-        info += QString(format).arg(i18nc("interface details", "Connection State"), connectionStateToString(details->connectionState));
+//        info += QString(format).arg(i18nc("interface details", "Connection State"), connectionStateToString(details->connectionState));
         info += QString(format).arg(i18nc("interface details", "IP Address"), details->ipAddress);
         info += QString(format).arg(i18nc("interface details", "Connection Speed"), details->bitRate ? UiUtils::connectionSpeed(details->bitRate) : i18nc("bitrate", "Unknown"));
         info += QString(format).arg(i18nc("interface details", "System Name"), details->interfaceName);
@@ -351,7 +352,7 @@ void InterfaceDetailsWidget::showDetails(bool reset)
         }
     } else {
         info += QString(format).arg(i18nc("interface details", "Type"), na);
-        info += QString(format).arg(i18nc("interface details", "Connection State"), na);
+//        info += QString(format).arg(i18nc("interface details", "Connection State"), na);
         info += QString(format).arg(i18nc("interface details", "Network Address (IP)"), na);
         info += QString(format).arg(i18nc("interface details", "Connection Speed"), na);
         info += QString(format).arg(i18nc("interface details", "System Name"), na);
@@ -569,6 +570,20 @@ void InterfaceDetailsWidget::handleConnectionStateChange(NetworkManager::Device:
         } else
             showDetails();
     }
+}
+
+void InterfaceDetailsWidget::setInterfaceItem(InterfaceItem* item, bool disconnectOld)
+{
+    NetworkManager::Device * iface = 0;
+    m_ifaceItem = item;
+
+    if (item) {
+        iface = item->interface();
+    }
+
+    //m_gridLayout->removeAt(0);
+    m_gridLayout->addItem(m_ifaceItem, 0, 0);
+    setInterface(iface, disconnectOld);
 }
 
 void InterfaceDetailsWidget::setInterface(NetworkManager::Device* iface, bool disconnectOld)

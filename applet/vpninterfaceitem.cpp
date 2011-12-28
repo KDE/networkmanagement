@@ -53,7 +53,7 @@ VpnInterfaceItem::VpnInterfaceItem(NetworkManager::Device * iface, RemoteActivat
 
     //connect(this, SIGNAL(stateChanged()), this, SLOT(currentConnectionChanged()));
 
-    connect(m_disconnectButton, SIGNAL(clicked()), this, SLOT(disconnectCurrentConnection()));
+    //connect(m_disconnectButton, SIGNAL(clicked()), this, SLOT(disconnectCurrentConnection()));
 
     // Update state
     listAppeared();
@@ -110,8 +110,6 @@ void VpnInterfaceItem::setConnectionInfo()
         m_ifaceNameLabel->setText(i18nc("VPN connections interface", "<b>Virtual Private Network</b>"));
         m_connectionNameLabel->setText(i18nc("VPN state label", "Not Connected..."));
     }
-    m_disconnectButton->setVisible(showDisconnect);
-    setEnabled(showDisconnect);
     if (!m_vpnActivatables.isEmpty()) {
         //kDebug() << m_vpnActivatables.count() << "VPN connections have become available!";
         show();

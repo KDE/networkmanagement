@@ -55,6 +55,7 @@ class WirelessNetworkItem : public ActivatableItem
         void setStrength(int strength);
         void updateWifiInfo();
         void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
+        void stateChanged();
 
     private:
         void paint(QPainter * painter, const QStyleOptionGraphicsItem * option, QWidget * widget = 0);

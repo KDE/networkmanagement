@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2011 Lamarque Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -34,6 +35,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtNetworkManager/device.h>
 
 #include "activatable.h"
+#include "connectionstabbar.h"
 
 class QGraphicsLinearLayout;
 class QGraphicsGridLayout;
@@ -44,6 +46,7 @@ class RemoteActivatableList;
 class ActivatableListWidget;
 class InterfaceItem;
 class InterfaceDetailsWidget;
+class TypeListWidget;
 class VpnInterfaceItem;
 
 class NMPopup: public QGraphicsWidget
@@ -72,21 +75,25 @@ public Q_SLOTS:
     void networkingEnabledToggled(bool checked);
     void managerNetworkingEnabledChanged(bool);
     void manageConnections();
-    void showMore();
-    void showMore(bool);
+    void showAll();
+    void showAll(bool);
     void handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason);
     void toggleInterfaceTab();
+    void untoggleInterfaceTab();
+    void currentTabChanged(int);
+    void currentInnerTabChanged(int);
     void deleteInterfaceItem();
 
 Q_SIGNALS:
     void configNeedsSaving();
+    void showAllChecked(bool);
 
 private Q_SLOTS:
     void readConfig();
-    void checkShowMore(RemoteActivatable *);
-    void uncheckShowMore(RemoteActivatable *);
-    void refresh();
-    void showInterfaceDetails(const QString & uni);
+    void checkShowAll(RemoteActivatable *);
+    void uncheckShowAll(RemoteActivatable *);
+    void showInterfaceDetails(const QString &);
+    void connectToAnotherNetwork();
 
 private:
     void addInterfaceInternal(NetworkManager::Device *);
@@ -96,36 +103,33 @@ private:
 
     RemoteActivatableList* m_activatables;
     bool m_hasWirelessInterface;
-    bool m_showMoreChecked, m_oldShowMoreChecked;
+    bool m_showAllChecked, m_oldShowAllChecked;
     int wicCount;
     QGraphicsWidget* m_widget;
-    QGraphicsGridLayout* m_mainLayout;
-    // Interfaces label
-    Plasma::Label* m_leftLabel;
-    // Container for interface overview and interface details widgets
-    Plasma::TabBar* m_leftWidget;
-    // Overall layout for interface overview
-    QGraphicsLinearLayout* m_leftLayout;
-    // Inner layout for interface list
-    QGraphicsLinearLayout* m_interfaceLayout;
+    QGraphicsLinearLayout* m_mainLayout;
+    QGraphicsGridLayout* m_tab1Layout;
+    QGraphicsGridLayout* m_connectionTabLayout;
 
     InterfaceDetailsWidget* m_interfaceDetailsWidget;
+    TypeListWidget * m_typeListWidget;
+    // Container for connection List and interface details widgets
+    Plasma::TabBar* m_mainTabBar;
+    ConnectionsTabBar* m_connectionsTabBar;
+    Plasma::Label* m_title;
 
-    // Connections Label
-    Plasma::Label* m_rightLabel;
-    // Container for connection List
-    QGraphicsWidget* m_rightWidget;
-
-    QGraphicsLinearLayout* m_rightLayout;
-
-    Plasma::CheckBox* m_networkingCheckBox;
     Plasma::CheckBox* m_wifiCheckBox;
     Plasma::CheckBox* m_wwanCheckBox;
     Plasma::PushButton* m_connectionsButton;
-    Plasma::PushButton* m_showMoreButton;
+    Plasma::PushButton* m_showAllButton;
+    Plasma::IconWidget* m_advancedSettingsButton;
+    Plasma::IconWidget* m_connectToAnotherNetwork;
 
     ActivatableListWidget* m_connectionList;
+    InterfaceItem* m_currentIfaceItem;
     VpnInterfaceItem* m_vpnItem;
+    QGraphicsWidget * m_typeListWiget;
+
+    friend class NetworkManagerApplet;
 };
 
 #endif // NMPOPUP_H

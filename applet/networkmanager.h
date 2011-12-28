@@ -73,6 +73,8 @@ public:
 
     //void loadExtender();
 
+    QList<QAction*> contextualActions();
+
 public Q_SLOTS:
     /**
      * Handle signals from NM if wireless was disabled in software
@@ -178,6 +180,9 @@ private:
     Plasma::Svg* m_svgMobile;
     Plasma::FrameSvg* m_meterBgSvg;
     Plasma::FrameSvg* m_meterFgSvg;
+
+    class Private;
+    Private * const d;
 };
 
 #endif

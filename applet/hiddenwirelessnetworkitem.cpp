@@ -1,6 +1,7 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
 Copyright 2009-2010 Sebastian Kügler <sebas@kde.org>
+Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -36,7 +37,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 HiddenWirelessNetworkItem::HiddenWirelessNetworkItem(QGraphicsWidget *parent) : ActivatableItem(0, parent),
     m_layout(0),
-    m_connect(0),
     m_ssidEdit(0)
 {
     //kDebug() << "HiddenWirelessNetworkItem";
@@ -70,12 +70,12 @@ void HiddenWirelessNetworkItem::setupItem()
 {
     if (!m_layout) {
         m_layout = new QGraphicsLinearLayout(this);
-        m_connect = new Plasma::IconWidget(this);
-        m_connect->setDrawBackground(false);
-        m_connect->setOrientation(Qt::Horizontal);
-        m_connect->setIcon("network-wireless");
-        m_connect->setText(i18nc("@action for creating a connection to a hidden wireless network", "<placeholder>hidden network</placeholder>"));
-        connect(m_connect, SIGNAL(activated()), SLOT(connectClicked()));
+        m_connectButton = new Plasma::IconWidget(this);
+        m_connectButton->setDrawBackground(false);
+        m_connectButton->setOrientation(Qt::Horizontal);
+        m_connectButton->setIcon("network-wireless");
+        m_connectButton->setText(i18nc("@action for creating a connection to a hidden wireless network", "<placeholder>hidden network</placeholder>"));
+        connect(m_connectButton, SIGNAL(activated()), SLOT(connectClicked()));
 
         m_ssidEdit = new Plasma::LineEdit(this);
         m_ssidEdit->nativeWidget()->setClickMessage(i18nc("@label for hidden wireless network SSID entry", "Enter network name and press <placeholder>enter</placeholder>"));
@@ -87,7 +87,7 @@ void HiddenWirelessNetworkItem::setupItem()
 
 void HiddenWirelessNetworkItem::connectClicked()
 {
-    m_connect->hide();
+    m_connectButton->hide();
     m_ssidEdit->show();
 
     // OBS: m_ssidEdit->nativeWidget()->setClickMessage(...) has no effect if nativeWidget() has focus.
@@ -104,7 +104,6 @@ void HiddenWirelessNetworkItem::ssidEntered()
     //kDebug() << "... ssid is now" << m_ssid;
 
     if (!m_ssid.isEmpty()) {
-        emitClicked();
         emit connectToHiddenNetwork(m_ssid);
     }
 
@@ -116,10 +115,10 @@ void HiddenWirelessNetworkItem::resetSsidEntry()
     m_ssidEdit->nativeWidget()->clearFocus();
     m_ssidEdit->nativeWidget()->clear();
     m_ssidEdit->hide();
-    m_connect->show();
+    m_connectButton->show();
     //workarounds for QGraphicsLayout not being able to layout hidden widgets with a 0 size
     m_layout->removeAt(0);
-    m_layout->addItem(m_connect);
+    m_layout->addItem(m_connectButton);
 }
 
 // vim: sw=4 sts=4 et tw=100

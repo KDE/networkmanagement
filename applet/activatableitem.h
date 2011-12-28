@@ -1,6 +1,7 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
 Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
+Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -52,7 +53,8 @@ Q_SIGNALS:
     void showInterfaceDetails(QString);
 
 protected Q_SLOTS:
-    void emitClicked();
+    void connectClicked();
+    void disconnectClicked();
     void handleHasDefaultRouteChanged(bool);
     virtual void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0);
     void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
@@ -66,6 +68,9 @@ protected:
     bool m_deleting;
     int spacing;
     Plasma::IconWidget* m_connectButton;
+    Plasma::IconWidget* m_disconnectButton;
+
+    void showItem(QGraphicsWidget* widget, bool show);
 };
 
 #endif // ABSTRACTCONNECTABLEITEM_H

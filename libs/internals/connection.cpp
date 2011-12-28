@@ -127,14 +127,16 @@ Connection::Type Connection::typeFromSolidType(const NetworkManager::Device *ifa
 }
 
 Connection::Connection(const QString & name, const Connection::Type type, NMBluetoothCapabilities bt_cap)
-    : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false)
+    : m_name(name), m_uuid(QUuid::createUuid()), m_type(type), m_autoConnect(false),
+      m_shared(false)
 {
     addToPermissions(KUser().loginName(),QString());
     init(bt_cap);
 }
 
 Connection::Connection(const QUuid & uuid, const Connection::Type type, NMBluetoothCapabilities bt_cap)
-    : m_uuid(uuid), m_type(type), m_autoConnect(false)
+    : m_uuid(uuid), m_type(type), m_autoConnect(false),
+      m_shared(false)
 {
     addToPermissions(KUser().loginName(),QString());
     init(bt_cap);
@@ -332,6 +334,12 @@ Connection::Type Connection::type() const
 bool Connection::autoConnect() const
 {
     return m_autoConnect;
+}
+
+bool Connection::isShared() const
+{
+    Ipv4Setting * ipv4 = static_cast<Ipv4Setting *>(setting(Setting::Ipv4));
+    return (ipv4 && ipv4->method() == Ipv4Setting::EnumMethod::Shared);
 }
 
 QDateTime Connection::timestamp() const

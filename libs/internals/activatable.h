@@ -54,6 +54,8 @@ public:
     ActivatableType activatableType() const;
     void setDeviceUni(const QString& deviceUni);
     QString deviceUni() const;
+    bool isShared() const;
+    void setShared(const bool);
 public Q_SLOTS:
     void activate();
 Q_SIGNALS:
@@ -65,6 +67,7 @@ protected:
 private:
     ActivatableType m_type;
     QString m_deviceUni;
+    bool m_shared;
 };
 
 } // namespace

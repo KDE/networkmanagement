@@ -1,5 +1,6 @@
 /*
 Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
+Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -57,7 +58,8 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_layout(0),
     m_showAllTypes(true),
     m_vpn(false),
-    m_hasWireless(false)
+    m_hasWireless(false),
+    m_filter(NormalConnections)
 {
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
     //setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -72,8 +74,8 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
 void ActivatableListWidget::init()
 {
     listAppeared();
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*, int)),
-            SLOT(activatableAdded(RemoteActivatable*, int)));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)),
+            SLOT(activatableAdded(RemoteActivatable*,int)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
             SLOT(activatableRemoved(RemoteActivatable*)));
 
@@ -137,28 +139,22 @@ void ActivatableListWidget::toggleVpn()
 
 bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
 {
-    if (m_vpn) {
-        if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
-            return true;
-        } else {
+    if (m_filter & NormalConnections) {
+        if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection ||
+            activatable->isShared()) {
             return false;
+        } else if (activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection ||
+                   activatable->activatableType() == Knm::Activatable::WirelessNetwork) {
+            if (!NetworkManager::isWirelessEnabled()) {
+                return false;
+            }
+            if ((m_filter & SavedConnections) && activatable->activatableType() == Knm::Activatable::WirelessNetwork) {
+                return false;
+            }
         }
-    }
-    // Policy whether an activatable should be shown or not.
-    if (!m_interfaces.isEmpty()) {
-        // If interfaces are set, activatables for other interfaces are not shown
-        if (!m_interfaces.contains(activatable->deviceUni())) {
-            return false;
-        }
-    }
-    if (!m_showAllTypes) {
-        // when no filter is set, only show activatables of a certain type
-        if (!(m_types.contains(activatable->activatableType()))) {
-            return false;
-        }
-    }
-    if (activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection &&
-        !NetworkManager::isWirelessEnabled()) {
+    } else if ((m_filter & VPNConnections) && activatable->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
+        return false;
+    } else if ((m_filter & SharedConnections) && !activatable->isShared()) {
         return false;
     }
     return true;
@@ -275,8 +271,18 @@ void ActivatableListWidget::activatableAdded(RemoteActivatable * added, int inde
 void ActivatableListWidget::setHasWireless(bool hasWireless)
 {
     kDebug() << "++++++++++++++" << hasWireless;
-    m_hasWireless = hasWireless;
-    filter();
+    if (m_hasWireless != hasWireless) {
+        m_hasWireless = hasWireless;
+        filter();
+    }
+}
+
+void ActivatableListWidget::setFilter(FilterTypes f)
+{
+    if (f != m_filter) {
+        m_filter = f;
+        filter();
+    }
 }
 
 void ActivatableListWidget::filter()
@@ -291,7 +297,6 @@ void ActivatableListWidget::filter()
     int i = 0;
     foreach (RemoteActivatable *act, m_activatables->activatables()) {
         if (accept(act)) {
-            // The "true" parameter means add the item to m_layout if it is already cached in m_itemIndex.
             createItem(act, i);
         } else {
             activatableRemoved(act);
@@ -299,23 +304,28 @@ void ActivatableListWidget::filter()
         i++;
     }
 
-    if (!m_interfaces.isEmpty() && m_hasWireless) {
-        bool found = false;
-        if (NetworkManager::isWirelessEnabled()) {
-            foreach (const NetworkManager::Device::Type type, m_interfaces) {
-                if (type == NetworkManager::Device::Wifi) {
-                    createHiddenItem();
-                    found = true;
-                    break;
+    if (m_filter & NormalConnections) {
+        if (!m_interfaces.isEmpty() && m_hasWireless) {
+            bool found = false;
+            if (NetworkManager::isWirelessEnabled()) {
+                foreach (const NetworkManager::Device::Type type, m_interfaces) {
+                    if (type == NetworkManager::Device::Wifi) {
+                        createHiddenItem();
+                        found = true;
+                        break;
+                    }
                 }
             }
-        }
-        if (!found && m_hiddenItem) {
+            if (!found && m_hiddenItem) {
+                m_hiddenItem->disappear();
+                m_hiddenItem = 0;
+            }
+        } else if (m_hasWireless && NetworkManager::isWirelessEnabled() && !m_vpn) {
+            createHiddenItem();
+        } else if (m_hiddenItem) {
             m_hiddenItem->disappear();
             m_hiddenItem = 0;
         }
-    } else if (m_hasWireless && NetworkManager::isWirelessEnabled() && !m_vpn) {
-        createHiddenItem();
     } else if (m_hiddenItem) {
         m_hiddenItem->disappear();
         m_hiddenItem = 0;

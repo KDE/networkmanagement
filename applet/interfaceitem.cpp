@@ -1,6 +1,7 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 Copyright 2008, 2009 Sebastian Kügler <sebas@kde.org>
+Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -103,7 +104,7 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
     m_ifaceNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
 
-    m_disconnectButton = new Plasma::PushButton(this);
+    /*m_disconnectButton = new Plasma::PushButton(this);
     m_disconnectButton->setMaximumHeight(16);
     m_disconnectButton->setMaximumWidth(16);
     m_disconnectButton->setIcon(KIcon("dialog-close"));
@@ -113,7 +114,7 @@ InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableLi
     // forward disconnect signal
     connect(m_disconnectButton, SIGNAL(clicked()), this, SLOT(emitDisconnectInterfaceRequest()));
 
-    m_layout->addItem(m_disconnectButton, 0, 2, 1, 1, Qt::AlignRight);
+    m_layout->addItem(m_disconnectButton, 0, 2, 1, 1, Qt::AlignRight);*/
 
     //     active connection name
     m_connectionNameLabel = new Plasma::Label(this);
@@ -417,9 +418,9 @@ void InterfaceItem::stateChanged(NetworkManager::Device::State state, bool updat
     }
 
     // Update connect button
-    if (old_disco != m_disconnect) {
+    /*if (old_disco != m_disconnect) {
         showItem(m_disconnectButton, m_disconnect);
-    }
+    }*/
     m_connectionNameLabel->setText(lname);
     m_icon->nativeWidget()->setPixmap(interfacePixmap());
 

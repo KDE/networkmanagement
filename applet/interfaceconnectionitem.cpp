@@ -1,5 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -41,15 +42,15 @@ void InterfaceConnectionItem::setupItem()
     m_layout->setColumnFixedWidth(2, 60);
     m_layout->setColumnFixedWidth(3, rowHeight);
     m_layout->setColumnSpacing(2, spacing);
+    m_layout->addItem(m_disconnectButton, 0, 4, 1, 1, Qt::AlignCenter);
 
     // icon on the left
     m_connectButton = new Plasma::IconWidget(this);
-    m_connectButton->setMaximumWidth(maxConnectionNameWidth);
+    //m_connectButton->setMaximumWidth(maxConnectionNameWidth);
     // to make default route overlay really be over the connection's icon.
     m_connectButton->setFlags(ItemStacksBehindParent);
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
-    //m_connectButton->setZValue(100); // FIXME: doesn't work
 
     m_layout->addItem(m_connectButton, 0, 0, 1, 1, Qt::AlignVCenter | Qt::AlignLeft);
 
@@ -70,9 +71,9 @@ void InterfaceConnectionItem::setupItem()
         m_connectButton->setText(i18nc("name of the connection not known", "Unknown"));
     }
     connect(m_connectButton, SIGNAL(clicked()), this, SIGNAL(clicked()));
-    connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
     connect(this, SIGNAL(pressed(bool)), m_connectButton, SLOT(setPressed(bool)));
     connect(m_connectButton, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
+    stateChanged();
 }
 
 InterfaceConnectionItem::~InterfaceConnectionItem()
@@ -80,4 +81,12 @@ InterfaceConnectionItem::~InterfaceConnectionItem()
 
 }
 
+void InterfaceConnectionItem::stateChanged()
+{
+    //kDebug() << "activatable State Changed!" << interfaceConnection()->connectionName();
+    RemoteInterfaceConnection* remoteconnection = static_cast<RemoteInterfaceConnection*>(m_activatable);
+    if (remoteconnection) {
+        activationStateChanged(remoteconnection->oldActivationState(), remoteconnection->activationState());
+    }
+}
 // vim: sw=4 sts=4 et tw=100

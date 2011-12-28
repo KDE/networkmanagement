@@ -1,6 +1,7 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
 Copyright 2008, 2009 Sebastian K?gler <sebas@kde.org>
+Copyright 2011 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -32,7 +33,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KGlobalSettings>
 
 #include <Plasma/Animation>
-#include <Plasma/Animator>
+#include <Plasma/PushButton>
 
 #include <QtNetworkManager/manager.h>
 
@@ -48,7 +49,8 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
     m_hasDefaultRoute(false),
     m_deleting(false),
     spacing(4),
-    m_connectButton(0)
+    m_connectButton(0),
+    m_disconnectButton(0)
 {
     setDrawBackground(true);
     setTextBackgroundColor(QColor(Qt::transparent));
@@ -70,6 +72,18 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
     fadeAnimation->start();
     setMinimumHeight(rowHeight);
     setMaximumHeight(rowHeight);
+
+    // disconnect button
+    m_disconnectButton = new Plasma::IconWidget(this);
+    m_disconnectButton->setMaximumHeight(22);
+    m_disconnectButton->setMaximumWidth(22);
+    m_disconnectButton->setIcon(KIcon("network-disconnect"));
+    m_disconnectButton->setToolTip(i18nc("@info:tooltip", "Click here to disconnect"));
+    m_disconnectButton->hide();
+
+    // forward disconnect signal
+    connect(m_disconnectButton, SIGNAL(clicked()), this, SLOT(disconnectClicked()));
+    connect(this, SIGNAL(clicked()), this, SLOT(connectClicked()));
 }
 
 ActivatableItem::~ActivatableItem()
@@ -93,7 +107,7 @@ void ActivatableItem::disappear()
     connect(disappearAnimation, SIGNAL(finished()), this, SIGNAL(disappearAnimationFinished()));
 }
 
-void ActivatableItem::emitClicked()
+void ActivatableItem::connectClicked()
 {
     if (m_activatable) {
         RemoteInterfaceConnection * remote = interfaceConnection();
@@ -119,6 +133,32 @@ void ActivatableItem::notifyNetworkingState()
     }
 }
 
+void ActivatableItem::disconnectClicked()
+{
+    if (m_activatable) {
+        RemoteInterfaceConnection * remote = interfaceConnection();
+        if (remote && (remote->activationState() == Knm::InterfaceConnection::Activating ||
+                       remote->activationState() == Knm::InterfaceConnection::Activated)) {
+            remote->deactivate();
+        }
+    }
+}
+
+void ActivatableItem::showItem(QGraphicsWidget* widget, bool show)
+{
+    Plasma::Animation* fadeAnimation = Plasma::Animator::create(Plasma::Animator::FadeAnimation);
+    fadeAnimation->setTargetWidget(widget);
+    widget->show();
+    if (show) {
+        fadeAnimation->setProperty("startOpacity", 0.0);
+        fadeAnimation->setProperty("targetOpacity", 1.0);
+    } else {
+        fadeAnimation->setProperty("startOpacity", 1.0);
+        fadeAnimation->setProperty("targetOpacity", 0.0);
+    }
+    fadeAnimation->start();
+}
+
 RemoteInterfaceConnection* ActivatableItem::interfaceConnection() const
 {
     return qobject_cast<RemoteInterfaceConnection*>(m_activatable);
@@ -137,7 +177,7 @@ void ActivatableItem::paint(QPainter* painter, const QStyleOptionGraphicsItem* o
     if (m_hasDefaultRoute) {
         // TODO: this draws the pixmap behind the connection icon. This is the same
         // problem described in a comment in networkmanager.cpp:NetworkManagerApplet::paintInterface.
-        painter->drawPixmap(QRect(4,4,12,12), KIcon("network-defaultroute").pixmap(QSize(16,16)));
+        painter->drawPixmap(QRect(5,5,12,12), KIcon("network-defaultroute").pixmap(QSize(16,16)));
     }
 }
 
@@ -159,11 +199,13 @@ void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::Activatio
             kDebug() << "activated";
             f.setBold(true);
             f.setItalic(false);
+            showItem(m_disconnectButton, true);
             break;
         case Knm::InterfaceConnection::Unknown:
             kDebug() << "unknown";
             f.setBold(false);
             f.setItalic(false);
+            showItem(m_disconnectButton, false);
             break;
         case Knm::InterfaceConnection::Activating:
             kDebug() << "activatING....";

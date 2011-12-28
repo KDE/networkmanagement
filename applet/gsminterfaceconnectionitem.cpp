@@ -70,12 +70,14 @@ void GsmInterfaceConnectionItem::setupItem()
 {
     // painting of a wifi network, known connection or available access point
     /*
-    +----+-------------+-----+---+
-    |icon essid        |meter|   |
-    +----+-------------+-----+---+
+    +----+---------+-------+-----+------+----------+
+    |icon essid    |spacer |meter|spacer|disconnect|
+    +----+---------+-------+-----+------+----------+
     */
     m_layout = new QGraphicsGridLayout(this);
-    // First, third and fourth colunm are fixed width for the icons
+    m_layout->addItem(m_disconnectButton, 0, 4, 1, 1, Qt::AlignCenter);
+
+    // First, third and forth colunms are fixed width for the icons
     m_layout->setColumnPreferredWidth(0, 150);
     m_layout->setColumnFixedWidth(2, 60);
     m_layout->setColumnFixedWidth(3, rowHeight);
@@ -122,12 +124,9 @@ void GsmInterfaceConnectionItem::setupItem()
     widget->setMaximumWidth(22);
     m_layout->addItem(widget, 0, 3, 1, 1, Qt::AlignVCenter | Qt::AlignRight);
 
-    connect(this, SIGNAL(clicked()), this, SLOT(emitClicked()));
-
     // Forward clicks and presses between our widgets and this
     connect(this, SIGNAL(pressed(bool)), m_connectButton, SLOT(setPressed(bool)));
     connect(m_connectButton, SIGNAL(pressed(bool)), this, SLOT(setPressed(bool)));
-    connect(m_connectButton, SIGNAL(clicked()), this, SLOT(emitClicked()));
 
     m_layoutIsDirty = true;
     QTimer::singleShot(0, this, SLOT(updateGsmInfo()));
