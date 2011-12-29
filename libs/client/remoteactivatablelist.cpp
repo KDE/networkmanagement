@@ -53,16 +53,16 @@ RemoteActivatableList::RemoteActivatableList(QObject * parent)
     Q_D(RemoteActivatableList);
     d->iface = new NetworkManagementInterface("org.kde.networkmanagement", "/org/kde/networkmanagement", QDBusConnection::sessionBus(), this);
     // clean our connections out if the service goes away
-    d->registrationWatcher = new QDBusServiceWatcher(this);
-    d->registrationWatcher->setConnection(QDBusConnection::sessionBus());
-    d->registrationWatcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration);
-    d->registrationWatcher->addWatchedService(d->iface->service());
+    d->registrationWatcher = new QDBusServiceWatcher(d->iface->service(),
+                                                     QDBusConnection::sessionBus(),
+                                                     QDBusServiceWatcher::WatchForRegistration,
+                                                     this);
     connect(d->registrationWatcher, SIGNAL(serviceRegistered(QString)), SLOT(serviceRegistered()));
 
-    d->unregistrationWatcher = new QDBusServiceWatcher(this);
-    d->unregistrationWatcher->setConnection(QDBusConnection::sessionBus());
-    d->unregistrationWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
-    d->unregistrationWatcher->addWatchedService(d->iface->service());
+    d->unregistrationWatcher = new QDBusServiceWatcher(d->iface->service(),
+                                                       QDBusConnection::sessionBus(),
+                                                       QDBusServiceWatcher::WatchForUnregistration,
+                                                       this);
     connect(d->unregistrationWatcher, SIGNAL(serviceUnregistered(QString)), SLOT(serviceUnregistered()));
 }
 

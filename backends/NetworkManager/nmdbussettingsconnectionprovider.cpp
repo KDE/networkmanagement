@@ -94,16 +94,16 @@ NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionLis
     connect(d->iface, SIGNAL(NewConnection(QDBusObjectPath)),
             this, SLOT(onConnectionAdded(QDBusObjectPath)));
     // clean our connections out if the service goes away
-    d->registrationWatcher = new QDBusServiceWatcher(this);
-    d->registrationWatcher->setConnection(QDBusConnection::systemBus());
-    d->registrationWatcher->setWatchMode(QDBusServiceWatcher::WatchForRegistration);
-    d->registrationWatcher->addWatchedService(d->iface->service());
+    d->registrationWatcher = new QDBusServiceWatcher(d->iface->service(),
+                                                     QDBusConnection::systemBus(),
+                                                     QDBusServiceWatcher::WatchForRegistration,
+                                                     this);
     connect(d->registrationWatcher, SIGNAL(serviceRegistered(QString)), SLOT(serviceRegistered()));
 
-    d->unregistrationWatcher = new QDBusServiceWatcher(this);
-    d->unregistrationWatcher->setConnection(QDBusConnection::systemBus());
-    d->unregistrationWatcher->setWatchMode(QDBusServiceWatcher::WatchForUnregistration);
-    d->unregistrationWatcher->addWatchedService(d->iface->service());
+    d->unregistrationWatcher = new QDBusServiceWatcher(d->iface->service(),
+                                                       QDBusConnection::systemBus(),
+                                                       QDBusServiceWatcher::WatchForUnregistration,
+                                                       this);
     connect(d->unregistrationWatcher, SIGNAL(serviceUnregistered(QString)), SLOT(serviceUnregistered()));
 }
 
