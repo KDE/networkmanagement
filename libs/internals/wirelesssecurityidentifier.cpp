@@ -132,17 +132,29 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkMa
             }
             break;
         case Knm::WirelessSecurity::WpaPsk:
-            if (!(interfaceCaps & NetworkManager::WirelessDevice::Wpa))
+            if (!(interfaceCaps & NetworkManager::WirelessDevice::Wpa)) {
                 return false;
+            }
             if (haveAp) {
                 /* Ad-Hoc WPA APs won't necessarily have the PSK flag set */
-                if ((apWpa & NetworkManager::AccessPoint::KeyMgmtPsk) || adhoc) {
-                    if (   (apWpa & NetworkManager::AccessPoint::PairTkip)
-                            && (interfaceCaps & NetworkManager::WirelessDevice::Tkip))
+                if (adhoc) {
+                    if ((apWpa & NetworkManager::AccessPoint::GroupTkip) &&
+                        (interfaceCaps & NetworkManager::WirelessDevice::Tkip)) {
                         return true;
-                    if (   (apWpa & NetworkManager::AccessPoint::PairCcmp)
-                            && (interfaceCaps & NetworkManager::WirelessDevice::Ccmp))
+                    }
+                    if ((apWpa & NetworkManager::AccessPoint::GroupCcmp) &&
+                        (interfaceCaps & NetworkManager::WirelessDevice::Ccmp)) {
                         return true;
+                    }
+                } else if (apWpa & NetworkManager::AccessPoint::KeyMgmtPsk) {
+                    if ((apWpa & NetworkManager::AccessPoint::PairTkip) &&
+                        (interfaceCaps & NetworkManager::WirelessDevice::Tkip)) {
+                        return true;
+                    }
+                    if ((apWpa & NetworkManager::AccessPoint::PairCcmp) &&
+                        (interfaceCaps & NetworkManager::WirelessDevice::Ccmp)) {
+                        return true;
+                    }
                 }
                 return false;
             }
