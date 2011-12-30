@@ -300,7 +300,9 @@ void WirelessSecuritySettingWidget::readSecrets()
 {
     Q_D(WirelessSecuritySettingWidget);
     SecurityWidget * sw = d->currentSecurityWidget();
-    sw->readSecrets();
+    if (sw) {
+        sw->readSecrets();
+    }
 }
 
 void WirelessSecuritySettingWidget::writeConfig()
@@ -355,7 +357,11 @@ void WirelessSecuritySettingWidget::writeConfig()
 void WirelessSecuritySettingWidget::validate()
 {
     Q_D(WirelessSecuritySettingWidget);
-    emit valid( d->currentSecurityWidget()->validate() );
+    SecurityWidget * sw = d->currentSecurityWidget();
+    if (!sw) {
+        return;
+    }
+    emit valid( sw->validate() );
 }
 
 // vim: sw=4 sts=4 et tw=100
