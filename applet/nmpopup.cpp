@@ -109,8 +109,8 @@ void NMPopup::init()
 
     /*m_title = new Plasma::Label(this);
     m_title->setText(i18nc("title", "<h3>Manage your network connections</h3>"));
-    m_tab1Layout->addItem(m_title, 0, 0);*/
-    m_tab1Layout->setRowMaximumHeight(rowMain++, rowHeight);
+    m_tab1Layout->addItem(m_title, 0, 0);
+    m_tab1Layout->setRowMaximumHeight(rowMain++, rowHeight);*/
 
     /*** Inner TabBar ***/
     //Plasma::Frame * connectionsFrame = new Plasma::Frame(this);
@@ -162,7 +162,7 @@ void NMPopup::init()
     connect(m_connectionsTabBar, SIGNAL(currentChanged(int)), SLOT(currentInnerTabChanged(int)));
     /*** Inner TabBar: end ***/
 
-    m_tab1Layout->setRowMaximumHeight(rowMain, rowHeight);
+    //m_tab1Layout->setRowMaximumHeight(rowMain, rowHeight);
     m_tab1Layout->addItem(m_connectionsTabBar, rowMain++, 0);
     m_tab1Layout->addItem(connectionsFrame, rowMain++, 0);
 
@@ -341,11 +341,11 @@ void NMPopup::readConfig()
     if (version.isEmpty()) {
         Plasma::Label * warning = new Plasma::Label(this);
         warning->setText(i18nc("Warning about wrong NetworkManager version", "NetworkManager is not running. Please start it."));
-        m_tab1Layout->addItem(warning, 1, 0);
+        m_tab1Layout->addItem(warning, 10, 0);
     } else if (compareVersions(version, QString(MINIMUM_NM_VERSION_REQUIRED)) < 0) {
         Plasma::Label * warning = new Plasma::Label(this);
         warning->setText(i18nc("Warning about wrong NetworkManager version", "We need at least NetworkManager-%1 to work properly, found '%2'. Please upgrade to a newer version.", QString(MINIMUM_NM_VERSION_REQUIRED), version));
-        m_tab1Layout->addItem(warning, 1, 0);
+        m_tab1Layout->addItem(warning, 10, 0);
     }
 }
 
