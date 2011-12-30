@@ -152,6 +152,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_backButton->setMaximumWidth(22);
     m_backButton->setIcon(KIcon("go-previous"));
     m_backButton->setToolTip(i18n("Go Back"));
+    m_backButton->setZValue(100);
 
     connect(m_backButton, SIGNAL(clicked()), this, SIGNAL(back()));
 
@@ -574,14 +575,18 @@ void InterfaceDetailsWidget::handleConnectionStateChange(NetworkManager::Device:
 
 void InterfaceDetailsWidget::setInterfaceItem(InterfaceItem* item, bool disconnectOld)
 {
+    if (m_ifaceItem) {
+        m_ifaceItem->hide();
+    }
+
     NetworkManager::Device * iface = 0;
     m_ifaceItem = item;
 
     if (item) {
         iface = item->interface();
+        item->show();
     }
 
-    //m_gridLayout->removeAt(0);
     m_gridLayout->addItem(m_ifaceItem, 0, 0);
     setInterface(iface, disconnectOld);
 }
