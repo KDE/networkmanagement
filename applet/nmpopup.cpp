@@ -100,11 +100,6 @@ void NMPopup::init()
     m_mainLayout = new QGraphicsLinearLayout(this);
     m_mainLayout->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-    m_mainTabBar = new Plasma::TabBar(this);
-    m_mainTabBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    m_mainTabBar->nativeWidget()->setAttribute(Qt::WA_NoSystemBackground);
-    m_mainTabBar->nativeWidget()->setMouseTracking(true);
-    m_mainLayout->addItem(m_mainTabBar);
     int rowMain = 0;
 
     /**************************
@@ -157,14 +152,13 @@ void NMPopup::init()
 #endif
 
     m_connectionsTabBar = new ConnectionsTabBar(this);
-    m_connectionsTabBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
     m_connectionsTabBar->addTab(i18nc("connection list", "Connections"), 0);
     m_connectionsTabBar->nativeWidget()->setTabToolTip(0, i18nc("@info:tooltip", "Connections"));
     m_connectionsTabBar->addTab(i18nc("connection list", "VPN"), 0);
     m_connectionsTabBar->nativeWidget()->setTabToolTip(1, i18nc("@info:tooltip", "VPN Connections"));
     m_connectionsTabBar->addTab(i18nc("connection list", "Shared Connections"), 0);
     m_connectionsTabBar->nativeWidget()->setTabToolTip(3, i18nc("@info:tooltip", "Shared Connections"));
-    m_connectionsTabBar->setCurrentIndex(ConnectionsTabIndex);
+    m_connectionsTabBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     connect(m_connectionsTabBar, SIGNAL(currentChanged(int)), SLOT(currentInnerTabChanged(int)));
     /*** Inner TabBar: end ***/
 
@@ -244,11 +238,16 @@ void NMPopup::init()
 //    TypeListWidget * m_typeListWidget = new TypeListWidget(this);
 //    connect(m_typeListWidget, SIGNAL(back()), this, SLOT(untoggleInterfaceTab()));
 
+    m_mainTabBar = new Plasma::TabBar(this);
+    m_mainTabBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    m_mainTabBar->nativeWidget()->setAttribute(Qt::WA_NoSystemBackground);
+    m_mainTabBar->nativeWidget()->setMouseTracking(true);
     m_mainTabBar->setTabBarShown(false);
     m_mainTabBar->addTab(i18nc("main window", "Manage your network connections"), m_tab1Layout);
     m_mainTabBar->addTab(i18nc("details for the interface", "Details"), m_interfaceDetailsWidget);
 //    m_mainTabBar->addTab(i18nc("connect to another connection window", "Connect to another network"), m_typeListWidget);
     connect(m_mainTabBar, SIGNAL(currentChanged(int)), SLOT(currentTabChanged(int)));
+    m_mainLayout->addItem(m_mainTabBar);
 
     /******************
      * Initialization *
@@ -281,6 +280,7 @@ void NMPopup::init()
     dbus.connect("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement", "ReloadConfig", this, SLOT(readConfig()));
 
     adjustSize();
+    m_connectionsTabBar->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
 
 static int compareVersions(const QString & version1, const QString & version2)
