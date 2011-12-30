@@ -132,17 +132,29 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Co
             }
             break;
         case Knm::WirelessSecurity::WpaPsk:
-            if (!(interfaceCaps & Solid::Control::WirelessNetworkInterfaceNm09::Wpa))
+            if (!(interfaceCaps & Solid::Control::WirelessNetworkInterfaceNm09::Wpa)) {
                 return false;
+            }
             if (haveAp) {
                 /* Ad-Hoc WPA APs won't necessarily have the PSK flag set */
-                if ((apWpa & Solid::Control::AccessPointNm09::KeyMgmtPsk) || adhoc) {
-                    if (   (apWpa & Solid::Control::AccessPointNm09::PairTkip)
-                            && (interfaceCaps & Solid::Control::WirelessNetworkInterfaceNm09::Tkip))
+                if (adhoc) {
+                    if ((apWpa & Solid::Control::AccessPointNm09::GroupTkip) &&
+                        (interfaceCaps & Solid::Control::WirelessNetworkInterfaceNm09::Tkip)) {
                         return true;
-                    if (   (apWpa & Solid::Control::AccessPointNm09::PairCcmp)
-                            && (interfaceCaps & Solid::Control::WirelessNetworkInterfaceNm09::Ccmp))
+                    }
+                    if ((apWpa & Solid::Control::AccessPointNm09::GroupCcmp) &&
+                        (interfaceCaps & Solid::Control::WirelessNetworkInterfaceNm09::Ccmp)) {
                         return true;
+                    }
+                } else if (apWpa & Solid::Control::AccessPointNm09::KeyMgmtPsk) {
+                    if ((apWpa & Solid::Control::AccessPointNm09::PairTkip) &&
+                        (interfaceCaps & Solid::Control::WirelessNetworkInterfaceNm09::Tkip)) {
+                        return true;
+                    }
+                    if ((apWpa & Solid::Control::AccessPointNm09::PairCcmp) &&
+                        (interfaceCaps & Solid::Control::WirelessNetworkInterfaceNm09::Ccmp)) {
+                        return true;
+                    }
                 }
                 return false;
             }
