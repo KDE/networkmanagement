@@ -49,11 +49,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "interfaceconnectionitem.h"
 #include "wirelessnetworkitem.h"
 #include "hiddenwirelessnetworkitem.h"
+#include "showmoreitem.h"
 #include "gsminterfaceconnectionitem.h"
 #include <QtNetworkManager/wirelessnetworkinterfaceenvironment.h>
 
 ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent) : Plasma::ScrollWidget(parent),
     m_hiddenItem(0),
+    m_showMoreItem(0),
     m_activatables(activatables),
     m_layout(0),
     m_showAllTypes(true),
@@ -225,6 +227,24 @@ void ActivatableListWidget::createHiddenItem()
             this, SLOT(connectToHiddenNetwork(QString)));
 }
 
+void ActivatableListWidget::updateShowMoreItem()
+{
+    if (m_showMoreItem) {
+        m_layout->removeItem(m_showMoreItem);
+        m_layout->insertItem(100, m_showMoreItem);
+        m_showMoreItem->setChecked((m_filter & SavedConnections) == 0);
+        return;
+    }
+    m_showMoreItem = new ShowMoreItem(m_widget);
+    Q_ASSERT(m_showMoreItem);
+    m_showMoreItem->setupItem();
+    m_layout->insertItem(100, m_showMoreItem);
+    m_showMoreItem->setChecked((m_filter & SavedConnections) == 0);
+    connect(m_showMoreItem, SIGNAL(disappearAnimationFinished()),
+            this, SLOT(deleteItem()));
+    connect(m_showMoreItem, SIGNAL(clicked()), this, SIGNAL(showMoreClicked()));
+}
+
 void ActivatableListWidget::listAppeared()
 {
     int i = 0;
@@ -263,6 +283,7 @@ void ActivatableListWidget::activatableAdded(RemoteActivatable * added, int inde
     kDebug();
     if (accept(added)) {
         createItem(added, index);
+        updateShowMoreItem();
     }
     if(added->activatableType() == Knm::Activatable::WirelessInterfaceConnection && static_cast<RemoteWirelessInterfaceConnection*>(added)->operationMode() == NetworkManager::WirelessDevice::Adhoc)
         connect(added,SIGNAL(changed()),SLOT(filter()));
@@ -279,10 +300,10 @@ void ActivatableListWidget::setHasWireless(bool hasWireless)
 
 void ActivatableListWidget::setFilter(FilterTypes f)
 {
-    if (f != m_filter) {
+//    if (f != m_filter) {
         m_filter = f;
         filter();
-    }
+//    }
 }
 
 void ActivatableListWidget::filter()
@@ -330,6 +351,7 @@ void ActivatableListWidget::filter()
         m_hiddenItem->disappear();
         m_hiddenItem = 0;
     }
+    updateShowMoreItem();
     m_layout->invalidate();
 }
 

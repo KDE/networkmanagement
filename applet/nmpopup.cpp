@@ -95,7 +95,8 @@ void NMPopup::init()
 {
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 //    setMaximumWidth(QFontMetrics(KGlobalSettings::generalFont()).width("123456789012345678901234567890"));
-    setMaximumHeight(10 * rowHeight);
+    setMinimumHeight(10 * rowHeight);
+    setMaximumHeight(15 * rowHeight);
     m_mainLayout = new QGraphicsLinearLayout(this);
     m_mainLayout->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
@@ -126,7 +127,7 @@ void NMPopup::init()
     // List with activatables
     m_connectionList = new ActivatableListWidget(m_activatables, connectionsFrame);
 //    m_connectionList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
-    m_connectionList->setPreferredHeight(5 * rowHeight); // height of 5 activatableItems.
+    m_connectionList->setPreferredHeight(10 * rowHeight); // height of 10 activatableItems.
     m_connectionList->addType(Knm::Activatable::InterfaceConnection);
     m_connectionList->addType(Knm::Activatable::WirelessInterfaceConnection);
     m_connectionList->addType(Knm::Activatable::VpnInterfaceConnection);
@@ -134,6 +135,7 @@ void NMPopup::init()
     m_connectionList->init();
     m_connectionList->setFilter(ActivatableListWidget::NormalConnections);
     connect(m_connectionList, SIGNAL(showInterfaceDetails(QString)), SLOT(showInterfaceDetails(QString)));
+    connect(m_connectionList, SIGNAL(showMoreClicked()), SLOT(showMore()));
     m_connectionTabLayout->addItem(m_connectionList, innerRow++, 0, 1, 2);
 
     // TODO: add an item in the connection list to replace the "Show all" checkbox with the text "Show more %1 networks".
@@ -201,8 +203,8 @@ void NMPopup::init()
             this, SLOT(managerWirelessHardwareEnabledChanged(bool)));
 
     // show all connections checkbox
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)), this, SLOT(uncheckShowAll(RemoteActivatable*)));
-    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), this, SLOT(checkShowAll(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)), this, SLOT(uncheckShowMore(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), this, SLOT(checkShowMore(RemoteActivatable*)));
 
     // flight-mode checkbox
     m_wwanCheckBox = new Plasma::CheckBox(this);
@@ -264,13 +266,13 @@ void NMPopup::init()
     connect(NetworkManager::notifier(), SIGNAL(deviceRemoved(QString)),
             SLOT(interfaceRemoved(QString)));
 
-    m_showAllChecked = false;
-    m_oldShowAllChecked = true;
+    m_showMoreChecked = false;
+    m_oldShowMoreChecked = true;
     wicCount = 0; // number of wireless networks which user explicitly configured using the kcm module.
 
     KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("General"));
-    m_oldShowAllChecked = config.readEntry(QLatin1String("ShowAllConnections"), true);
-    showAll(m_oldShowAllChecked);
+    m_oldShowMoreChecked = config.readEntry(QLatin1String("ShowMoreConnections"), true);
+    showMore(m_oldShowMoreChecked);
 
     readConfig();
 
@@ -644,19 +646,19 @@ void NMPopup::managerWwanHardwareEnabledChanged(bool enabled)
     m_wwanCheckBox->setEnabled(enabled);
 }
 
-void NMPopup::showAll()
+void NMPopup::showMore()
 {
     // Simulate button toggling.
-    m_showAllChecked = !m_showAllChecked;
-    m_oldShowAllChecked = m_showAllChecked;
-    showAll(m_oldShowAllChecked);
+    m_showMoreChecked = !m_showMoreChecked;
+    m_oldShowMoreChecked = m_showMoreChecked;
+    showMore(m_oldShowMoreChecked);
 
     KConfigGroup config(KNetworkManagerServicePrefs::self()->config(), QLatin1String("General"));
-    config.writeEntry(QLatin1String("ShowAllConnections"), m_oldShowAllChecked);
+    config.writeEntry(QLatin1String("ShowMoreConnections"), m_oldShowMoreChecked);
     config.sync();
 }
 
-void NMPopup::showAll(bool show)
+void NMPopup::showMore(bool show)
 {
     if (!NetworkManager::isWirelessEnabled()) {
         show = false;
@@ -665,18 +667,19 @@ void NMPopup::showAll(bool show)
     }
 
     if (show) {
-        m_connectionList->setFilter(ActivatableListWidget::NormalConnections);
+        m_connectionList->getFilter() &= ~ActivatableListWidget::SavedConnections;
     } else {
-        m_connectionList->setFilter(ActivatableListWidget::NormalConnections | ActivatableListWidget::SavedConnections);
+        m_connectionList->getFilter() |= ActivatableListWidget::SavedConnections;
     }
-    m_showAllChecked = show;
+    m_connectionList->filter();
+    m_showMoreChecked = show;
     if (wicCount > 0) {
-        emit showAllChecked(m_showAllChecked);
+        emit showMoreChecked(m_showMoreChecked);
     }
     kDebug() << "Show == " << show << " wicCount == " << wicCount;
 }
 
-void NMPopup::checkShowAll(RemoteActivatable * ra)
+void NMPopup::checkShowMore(RemoteActivatable * ra)
 {
     RemoteWirelessInterfaceConnection * wic = qobject_cast<RemoteWirelessInterfaceConnection*>(ra);
     if (wic) {
@@ -687,15 +690,15 @@ void NMPopup::checkShowAll(RemoteActivatable * ra)
         if (wicCount > 0) {
             wicCount--;
         }
-        if (wicCount == 0 && !m_showAllChecked) {
+        if (wicCount == 0 && !m_showMoreChecked) {
             // There is no wireless network around which the user has explicitly configured
             // so temporaly show all wifi available networks.
-            showAll(true);
+            showMore(true);
         }
     }
 }
 
-void NMPopup::uncheckShowAll(RemoteActivatable *ra)
+void NMPopup::uncheckShowMore(RemoteActivatable *ra)
 {
     RemoteWirelessInterfaceConnection * wic = qobject_cast<RemoteWirelessInterfaceConnection*>(ra);
     if (wic) {
@@ -704,10 +707,10 @@ void NMPopup::uncheckShowAll(RemoteActivatable *ra)
             return;
         }
         wicCount++;
-        if (m_oldShowAllChecked != m_showAllChecked) {
+        if (m_oldShowMoreChecked != m_showMoreChecked) {
             // One wireless network explicitly configured by the user appeared, reset "Show More" button
             // state to the value before the checkShowMore method above took action.
-            showAll(m_oldShowAllChecked);
+            showMore(m_oldShowMoreChecked);
         }
     }
 }
@@ -759,7 +762,7 @@ void NMPopup::currentTabChanged(int index)
     switch (index) {
     case ConnectionsTabIndex:
         m_connectionList->clearInterfaces();
-        //showAll(m_oldShowAllChecked);
+        //showMore(m_oldShowMoreChecked);
         m_interfaceDetailsWidget->setUpdateEnabled(false);
         break;
 
@@ -778,22 +781,24 @@ void NMPopup::currentTabChanged(int index)
 
 void NMPopup::currentInnerTabChanged(int index)
 {
+    ActivatableListWidget::FilterTypes filter;
+    if (m_showMoreChecked) {
+        filter = 0;
+    } else {
+        filter = ActivatableListWidget::SavedConnections;
+    }
     switch (index) {
     case ConnectionListTabIndex:
         //m_connectToAnotherNetwork->setText(i18nc("button", "Connect to Another Network..."));
-        if (m_showAllChecked) {
-            m_connectionList->setFilter(ActivatableListWidget::NormalConnections);
-        } else {
-            m_connectionList->setFilter(ActivatableListWidget::NormalConnections | ActivatableListWidget::SavedConnections);
-        }
+        m_connectionList->setFilter(filter | ActivatableListWidget::NormalConnections);
         break;
     case VPNConnectionListTabIndex:
         //m_connectToAnotherNetwork->setText(i18nc("button", "Connect to Another VPN Network..."));
-        m_connectionList->setFilter(ActivatableListWidget::VPNConnections);
+        m_connectionList->setFilter(filter | ActivatableListWidget::VPNConnections);
         break;
     case SharedConnectionListTabIndex:
         //m_connectToAnotherNetwork->setText(i18nc("button", "Share Another Network Interface..."));
-        m_connectionList->setFilter(ActivatableListWidget::SharedConnections);
+        m_connectionList->setFilter(filter | ActivatableListWidget::SharedConnections);
         break;
     }
     //m_connectToAnotherNetwork->update();

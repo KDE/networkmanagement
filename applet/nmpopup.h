@@ -75,8 +75,8 @@ public Q_SLOTS:
     void networkingEnabledToggled(bool checked);
     void managerNetworkingEnabledChanged(bool);
     void manageConnections();
-    void showAll();
-    void showAll(bool);
+    void showMore();
+    void showMore(bool);
     void handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason);
     void toggleInterfaceTab();
     void untoggleInterfaceTab();
@@ -86,12 +86,12 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void configNeedsSaving();
-    void showAllChecked(bool);
+    void showMoreChecked(bool);
 
 private Q_SLOTS:
     void readConfig();
-    void checkShowAll(RemoteActivatable *);
-    void uncheckShowAll(RemoteActivatable *);
+    void checkShowMore(RemoteActivatable *);
+    void uncheckShowMore(RemoteActivatable *);
     void showInterfaceDetails(const QString &);
     void connectToAnotherNetwork();
 
@@ -103,7 +103,7 @@ private:
 
     RemoteActivatableList* m_activatables;
     bool m_hasWirelessInterface;
-    bool m_showAllChecked, m_oldShowAllChecked;
+    bool m_showMoreChecked, m_oldShowMoreChecked;
     int wicCount;
     QGraphicsWidget* m_widget;
     QGraphicsLinearLayout* m_mainLayout;
@@ -120,7 +120,7 @@ private:
     Plasma::CheckBox* m_wifiCheckBox;
     Plasma::CheckBox* m_wwanCheckBox;
     Plasma::PushButton* m_connectionsButton;
-    Plasma::PushButton* m_showAllButton;
+    Plasma::PushButton* m_showMoreButton;
     Plasma::IconWidget* m_advancedSettingsButton;
     Plasma::IconWidget* m_connectToAnotherNetwork;
 

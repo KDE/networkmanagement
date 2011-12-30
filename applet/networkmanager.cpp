@@ -300,15 +300,6 @@ void NetworkManagerApplet::init()
                 action, SLOT(setChecked(bool)));
 
         d->actions.append(action);
-
-        // TODO: change this to 'Hide unsaved networks'
-        action = new QAction(i18n("Show unsaved networks"), this);
-        action->setToolTip(i18nc("@info:tooltip tooltip for the 'Show unsaved' checkbox", "Show unsaved networks"));
-        action->setCheckable(true);
-        action->setChecked(m_popup->m_showAllChecked);
-        connect(action, SIGNAL(triggered(bool)), m_popup, SLOT(showAll()));
-        connect(m_popup, SIGNAL(showAllChecked(bool)), action, SLOT(setChecked(bool)));
-        d->actions.append(action);
     }
 
     // m_activatables->init() must be called after SLOT(activatableAdded(RemoteActivatable*)) has been connected and

@@ -24,6 +24,7 @@ set(networkmanager_SRCS
     interfaceconnectionitem.cpp
     wirelessnetworkitem.cpp
     hiddenwirelessnetworkitem.cpp
+    showmoreitem.cpp
     wirelessstatus.cpp
     gsminterfaceconnectionitem.cpp
 
