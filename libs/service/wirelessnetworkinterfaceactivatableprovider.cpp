@@ -142,7 +142,7 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                 }
 
                 // create WirelessInterfaceConnections only where the network is present
-                if (!ourWicFound && (d->environment->networks().contains(wirelessSetting->ssid()) || wirelessSetting->mode() == Knm::WirelessSetting::EnumMode::adhoc)) {
+                if (!ourWicFound && (d->environment->networks().contains(wirelessSetting->ssid()) || addedConnection->isShared())) {
                     kDebug() << "Adding WIC:" << wirelessSetting->ssid() <<  addedConnection->uuid() << addedConnection->name() << d->interface->uni() << wirelessSetting->channel();
 
                     Knm::WirelessInterfaceConnection * ifaceConnection =
