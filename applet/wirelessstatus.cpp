@@ -66,7 +66,7 @@ public:
             //adhoc->setIcon(QIcon("nm-adhoc"));
         }
         ssid = wobj->ssid();
-        Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(wobj->interfaceCapabilities(), true, (wobj->operationMode() == NetworkManager::WirelessDevice::Adhoc), wobj->apCapabilities(), wobj->wpaFlags(), wobj->rsnFlags());
+        Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(wobj->interfaceCapabilities(), !activatable->isShared(), (wobj->operationMode() == NetworkManager::WirelessDevice::Adhoc), wobj->apCapabilities(), wobj->wpaFlags(), wobj->rsnFlags());
         //security->setToolTip(Knm::WirelessSecurity::shortToolTip(best));
         securityIcon = Knm::WirelessSecurity::iconName(best);
         securityTooltip = Knm::WirelessSecurity::shortToolTip(best);
