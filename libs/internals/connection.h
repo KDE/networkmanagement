@@ -62,6 +62,7 @@ public:
     QUuid uuid() const;
     Connection::Type type() const;
     bool autoConnect() const;
+    bool isShared() const;
     QDateTime timestamp() const;
     QHash<QString,QString> permissions() const;
 

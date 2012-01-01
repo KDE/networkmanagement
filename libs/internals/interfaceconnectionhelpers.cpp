@@ -69,6 +69,7 @@ void InterfaceConnectionBuilder::init(InterfaceConnection *ic)
     ic->setConnectionType(m_connection->type());
     ic->setConnectionName(m_connection->name());
     ic->setIconName(m_connection->iconName());
+    ic->setShared(m_connection->isShared());
 }
 
 InterfaceConnectionSync::InterfaceConnectionSync()
@@ -84,4 +85,5 @@ void InterfaceConnectionSync::sync(Knm::InterfaceConnection * interfaceConnectio
 {
     interfaceConnection->setConnectionName(connection->name());
     interfaceConnection->setIconName(connection->iconName());
+    interfaceConnection->setShared(connection->isShared());
 }

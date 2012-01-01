@@ -37,6 +37,7 @@ class KNMCLIENT_EXPORT RemoteActivatable : public QObject
 Q_OBJECT
 Q_PROPERTY(QString deviceUni READ deviceUni)
 Q_PROPERTY(QString type READ activatableType)
+Q_PROPERTY(bool isShared READ isShared)
 
 friend class RemoteActivatableList;
 
@@ -44,6 +45,7 @@ public:
     virtual ~RemoteActivatable();
     Knm::Activatable::ActivatableType activatableType() const;
     QString deviceUni() const;
+    bool isShared() const;
 public Q_SLOTS:
     void activate();
 Q_SIGNALS:

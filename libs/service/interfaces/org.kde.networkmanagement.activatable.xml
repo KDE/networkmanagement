@@ -8,6 +8,9 @@
     <method name="deviceUni">
       <arg name="uni" type="s" direction="out" />
     </method>
+    <method name="isShared">
+      <arg name="shared" type="b" direction="out" />
+    </method>
     <method name="activate"/>
     <signal name="activated"/>
     <signal name="changed"/>
