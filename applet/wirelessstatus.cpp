@@ -53,7 +53,8 @@ public:
         strength(-1),
         adhoc(false),
         iface(0),
-        activeAccessPoint(0)
+        activeAccessPoint(0),
+        activatable(0)
     {
     }
 
@@ -67,7 +68,11 @@ public:
             //adhoc->setIcon(QIcon("nm-adhoc"));
         }
         ssid = wobj->ssid();
-        Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(wobj->interfaceCapabilities(), !activatable->isShared(), (wobj->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc), wobj->apCapabilities(), wobj->wpaFlags(), wobj->rsnFlags());
+        bool isShared = false;
+        if (activatable) {
+            isShared = activatable->isShared();
+        }
+        Knm::WirelessSecurity::Type best = Knm::WirelessSecurity::best(wobj->interfaceCapabilities(), isShared, (wobj->operationMode() == Solid::Control::WirelessNetworkInterfaceNm09::Adhoc), wobj->apCapabilities(), wobj->wpaFlags(), wobj->rsnFlags());
         //security->setToolTip(Knm::WirelessSecurity::shortToolTip(best));
         securityIcon = Knm::WirelessSecurity::iconName(best);
         securityTooltip = Knm::WirelessSecurity::shortToolTip(best);
