@@ -89,6 +89,9 @@ QString RemoteActivatable::deviceUni() const
 bool RemoteActivatable::isShared() const
 {
     Q_D(const RemoteActivatable);
+    if (!d->activatableIface->isValid()) {
+        return false;
+    }
     QDBusReply<bool> reply = d->activatableIface->isShared();
     if (reply.isValid()) {
         return reply.value();
