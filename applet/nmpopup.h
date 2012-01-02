@@ -37,6 +37,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "activatable.h"
 #include "connectionstabbar.h"
 
+namespace Plasma {
+    class Separator;
+}
+
 class QGraphicsLinearLayout;
 class QGraphicsGridLayout;
 
@@ -94,6 +98,7 @@ private Q_SLOTS:
     void uncheckShowMore(RemoteActivatable *);
     void showInterfaceDetails(const QString &);
     void connectToAnotherNetwork();
+    void toggleInterfaceList();
 
 private:
     void addInterfaceInternal(NetworkManager::Device *);
@@ -104,9 +109,10 @@ private:
     RemoteActivatableList* m_activatables;
     bool m_hasWirelessInterface;
     bool m_showMoreChecked, m_oldShowMoreChecked;
+    bool m_oldShowInterfaceList;
     int wicCount;
     QGraphicsWidget* m_widget;
-    QGraphicsLinearLayout* m_mainLayout;
+    QGraphicsGridLayout* m_mainLayout;
     QGraphicsGridLayout* m_tab1Layout;
     QGraphicsGridLayout* m_connectionTabLayout;
 
@@ -115,13 +121,23 @@ private:
     // Container for connection List and interface details widgets
     Plasma::TabBar* m_mainTabBar;
     ConnectionsTabBar* m_connectionsTabBar;
-//    Plasma::Label* m_title;
+    Plasma::Label* m_leftLabel;
+    // Container for interface overview and interface details widgets
+    Plasma::TabBar* m_leftWidget;
+    // Overall layout for interface overview
+    QGraphicsGridLayout* m_leftLayout;
+    QGraphicsLinearLayout* m_interfaceLayout;
+    QGraphicsWidget * m_connectionsFrame;
+    Plasma::Separator * m_sep;
+    int m_leftWidgetWidth;
+    qreal m_sepWidth;
 
     Plasma::CheckBox* m_wifiCheckBox;
     Plasma::CheckBox* m_wwanCheckBox;
     Plasma::PushButton* m_connectionsButton;
     Plasma::PushButton* m_showMoreButton;
     Plasma::IconWidget* m_advancedSettingsButton;
+    Plasma::IconWidget* m_showInterfacesButton;
     Plasma::IconWidget* m_connectToAnotherNetwork;
 
     ActivatableListWidget* m_connectionList;
