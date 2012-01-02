@@ -29,6 +29,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QtNetworkManager/device.h>
 #include <QtNetworkManager/modemdevice.h>
 #include <Plasma/Label>
+#include <Plasma/IconWidget>
 #include <Plasma/PushButton>
 #include <Plasma/SignalPlotter>
 
@@ -83,6 +84,8 @@ Q_OBJECT
         Plasma::SignalPlotter *m_trafficPlotter;
         Plasma::Label* m_traffic;
 
+        //Plasma::PushButton* m_disconnectButton;
+        Plasma::IconWidget* m_disconnectButton;
         Plasma::PushButton* m_backButton;
 
         QString m_tx;

@@ -98,7 +98,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
 {
     m_gridLayout = new QGraphicsGridLayout(this);
 
-    int row = 0;
+    int row = 1;
     m_gridLayout->addItem(m_ifaceItem, row, 0);
     //Info
     row++;
@@ -145,6 +145,31 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_traffic->nativeWidget()->setWordWrap(false);
     m_traffic->nativeWidget()->setTextInteractionFlags(Qt::TextSelectableByMouse);
     m_gridLayout->addItem(m_traffic, row, 0);
+
+#if 0
+    // add pushbutton for "disconnect" action
+    m_disconnectButton = new Plasma::PushButton(this);
+    m_disconnectButton->setMaximumHeight(22);
+    //m_disconnectButton->setMaximumWidth(22);
+    m_disconnectButton->setIcon(KIcon("user-offline"));
+    m_disconnectButton->setText(i18n("Disconnect"));
+    m_disconnectButton->setToolTip(i18nc("@info:tooltip", "Click here to disconnect"));
+    m_disconnectButton->setZValue(100);
+#else
+    m_disconnectButton = new Plasma::IconWidget(this);
+    m_disconnectButton->setDrawBackground(true);
+    m_disconnectButton->setOrientation(Qt::Horizontal);
+    m_disconnectButton->setAcceptsHoverEvents(true);
+    m_disconnectButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+    m_disconnectButton->setIcon(KIcon("user-offline"));
+    m_disconnectButton->setText(i18nc("disconnect button in interface details window", "Disconnect"));
+    m_disconnectButton->setMinimumHeight(28);
+    m_disconnectButton->setMaximumHeight(28);
+#endif
+
+    connect(m_disconnectButton, SIGNAL(clicked()), this, SIGNAL(back()));
+
+    m_gridLayout->addItem(m_disconnectButton, 0, 0, 2, 1, Qt::AlignLeft | Qt::AlignVCenter);
 
     // add pushbutton for "back" action
     m_backButton = new Plasma::PushButton(this);
@@ -304,6 +329,7 @@ void InterfaceDetailsWidget::showDetails(bool reset)
     // generate html table header
     info = QString("<qt><table align=\"center\" border=\"0\">");
 
+    m_disconnectButton->setVisible(details->connectionState == NetworkManager::Device::Activated);
     if (!reset && m_iface) {
         info += QString(format).arg(i18nc("interface details", "Type"), UiUtils::interfaceTypeLabel(details->type, m_iface));
         info += QString(format).arg(i18nc("interface details", "Connection State"), connectionStateToString(details->connectionState));
