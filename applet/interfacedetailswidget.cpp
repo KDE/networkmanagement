@@ -306,7 +306,7 @@ void InterfaceDetailsWidget::showDetails(bool reset)
 
     if (!reset && m_iface) {
         info += QString(format).arg(i18nc("interface details", "Type"), UiUtils::interfaceTypeLabel(details->type, m_iface));
-//        info += QString(format).arg(i18nc("interface details", "Connection State"), connectionStateToString(details->connectionState));
+        info += QString(format).arg(i18nc("interface details", "Connection State"), connectionStateToString(details->connectionState));
         info += QString(format).arg(i18nc("interface details", "IP Address"), details->ipAddress);
         info += QString(format).arg(i18nc("interface details", "Connection Speed"), details->bitRate ? UiUtils::connectionSpeed(details->bitRate) : i18nc("bitrate", "Unknown"));
         info += QString(format).arg(i18nc("interface details", "System Name"), details->interfaceName);
@@ -353,7 +353,7 @@ void InterfaceDetailsWidget::showDetails(bool reset)
         }
     } else {
         info += QString(format).arg(i18nc("interface details", "Type"), na);
-//        info += QString(format).arg(i18nc("interface details", "Connection State"), na);
+        info += QString(format).arg(i18nc("interface details", "Connection State"), na);
         info += QString(format).arg(i18nc("interface details", "Network Address (IP)"), na);
         info += QString(format).arg(i18nc("interface details", "Connection Speed"), na);
         info += QString(format).arg(i18nc("interface details", "System Name"), na);

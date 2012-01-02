@@ -523,7 +523,7 @@ void NMPopup::addVpnInterface()
     connect(m_vpnItem, SIGNAL(clicked()), this, SLOT(toggleInterfaceTab()));
     connect(m_vpnItem, SIGNAL(hoverEnter()), m_connectionList, SLOT(vpnHoverEnter()));
     connect(m_vpnItem, SIGNAL(hoverLeave()), m_connectionList, SLOT(vpnHoverLeave()));
-    m_interfaceLayout->insertItem(10, m_vpnItem);
+    m_leftLayout->addItem(m_vpnItem, 2, 0);
 }
 
 void NMPopup::handleConnectionStateChange(NetworkManager::Device::State new_state, NetworkManager::Device::State old_state, NetworkManager::Device::StateChangeReason reason)
