@@ -147,10 +147,6 @@ void NMPopup::init()
     m_connectionList = new ActivatableListWidget(m_activatables, connectionsFrame);
     m_connectionList->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     m_connectionList->setPreferredHeight(5 * rowHeight); // height of 5 activatableItems.
-    m_connectionList->addType(Knm::Activatable::InterfaceConnection);
-    m_connectionList->addType(Knm::Activatable::WirelessInterfaceConnection);
-    m_connectionList->addType(Knm::Activatable::VpnInterfaceConnection);
-    m_connectionList->addType(Knm::Activatable::GsmInterfaceConnection);
     m_connectionList->init();
     m_connectionList->setFilter(ActivatableListWidget::NormalConnections);
     connect(m_connectionList, SIGNAL(showInterfaceDetails(QString)), SLOT(showInterfaceDetails(QString)));
@@ -531,7 +527,7 @@ void NMPopup::handleConnectionStateChange(NetworkManager::Device::State new_stat
     Q_UNUSED( reason );
     // Switch to default tab if an interface has become available, or unavailable
     if (available(new_state) != available(old_state)) {
-        m_connectionList->clearInterfaces();
+        m_connectionList->setDeviceToFilter(0);
     }
 }
 
@@ -791,7 +787,9 @@ void NMPopup::toggleInterfaceTab()
     m_leftWidgetWidth = (int)m_interfaceDetailsWidget->size().rwidth();
 
     if (m_currentIfaceItem) {
-        m_interfaceDetailsWidget->setInterface(m_currentIfaceItem->interface());
+        NetworkManager::Device * device = m_currentIfaceItem->interface();
+        m_interfaceDetailsWidget->setInterface(device);
+        m_connectionList->setDeviceToFilter(device, qobject_cast<VpnInterfaceItem *>(m_currentIfaceItem) != 0);
     }
 
     m_leftWidget->setCurrentIndex(DetailsTabIndex);
@@ -808,6 +806,7 @@ void NMPopup::untoggleInterfaceTab()
         toggleInterfaceList();
     }
 
+    m_connectionList->setDeviceToFilter(0);
     m_leftWidget->setCurrentIndex(ConnectionsTabIndex);
 }
 
@@ -832,7 +831,6 @@ void NMPopup::currentTabChanged(int index)
 {
     switch (index) {
     case ConnectionsTabIndex:
-        m_connectionList->clearInterfaces();
         //showMore(m_oldShowMoreChecked);
         m_interfaceDetailsWidget->setUpdateEnabled(false);
         break;
@@ -853,24 +851,33 @@ void NMPopup::currentTabChanged(int index)
 
 void NMPopup::currentInnerTabChanged(int index)
 {
-    ActivatableListWidget::FilterTypes filter;
+    ActivatableListWidget::FilterTypes filter = m_connectionList->getFilter();
     if (m_showMoreChecked) {
-        filter = 0;
+        filter &= ~ActivatableListWidget::SavedConnections;
     } else {
-        filter = ActivatableListWidget::SavedConnections;
+        filter |= ActivatableListWidget::SavedConnections;
     }
     switch (index) {
     case ConnectionListTabIndex:
         //m_connectToAnotherNetwork->setText(i18nc("button", "Connect to Another Network..."));
-        m_connectionList->setFilter(filter | ActivatableListWidget::NormalConnections);
+        filter |= ActivatableListWidget::NormalConnections;
+        filter &= ~ActivatableListWidget::VPNConnections;
+        filter &= ~ActivatableListWidget::SharedConnections;
+        m_connectionList->setFilter(filter);
         break;
     case VPNConnectionListTabIndex:
         //m_connectToAnotherNetwork->setText(i18nc("button", "Connect to Another VPN Network..."));
-        m_connectionList->setFilter(filter | ActivatableListWidget::VPNConnections);
+        filter &= ~ActivatableListWidget::NormalConnections;
+        filter |= ActivatableListWidget::VPNConnections;
+        filter &= ~ActivatableListWidget::SharedConnections;
+        m_connectionList->setFilter(filter);
         break;
     case SharedConnectionListTabIndex:
         //m_connectToAnotherNetwork->setText(i18nc("button", "Share Another Network Interface..."));
-        m_connectionList->setFilter(filter | ActivatableListWidget::SharedConnections);
+        filter &= ~ActivatableListWidget::NormalConnections;
+        filter &= ~ActivatableListWidget::VPNConnections;
+        filter |= ActivatableListWidget::SharedConnections;
+        m_connectionList->setFilter(filter);
         break;
     }
     //m_connectToAnotherNetwork->update();

@@ -39,20 +39,18 @@ class ActivatableListWidget: public Plasma::ScrollWidget
 {
 Q_OBJECT
 public:
-    enum FilterType {NormalConnections = 0x1, VPNConnections = 0x2, SharedConnections = 0x4, SavedConnections = 0x8};
+    enum FilterType {NormalConnections = 0x1, VPNConnections = 0x2, SharedConnections = 0x4, SavedConnections = 0x8, FilterDevice = 0x10};
     Q_DECLARE_FLAGS(FilterTypes, FilterType)
 
     explicit ActivatableListWidget(RemoteActivatableList* activatables, QGraphicsWidget* parent = 0);
     virtual ~ActivatableListWidget();
 
     void init();
-    void addType(Knm::Activatable::ActivatableType type);
-    void removeType(Knm::Activatable::ActivatableType type);
     bool accept(RemoteActivatable* activatable) const;
-    void setShowAllTypes(bool show, bool refresh = false);
     void setHasWireless(bool hasWireless); // Used to decide whether or not to show the hidden item
     void setFilter(FilterTypes);
     FilterTypes& getFilter() { return m_filter; }
+    void setDeviceToFilter(NetworkManager::Device* device, const bool vpn = false);
 
 Q_SIGNALS:
     void showInterfaceDetails(QString);
@@ -64,9 +62,6 @@ public Q_SLOTS:
     void listDisappeared();
     void listAppeared();
     void deactivateConnection(const QString& deviceUni);
-    void addInterface(NetworkManager::Device*);
-    void clearInterfaces();
-    void toggleVpn();
     void filter();
 
 private Q_SLOTS:
@@ -96,6 +91,7 @@ private:
     bool m_vpn;
     bool m_hasWireless; // Used to determine whether or not to show hidden config
     FilterTypes m_filter;
+    NetworkManager::Device * m_device;
 };
 Q_DECLARE_OPERATORS_FOR_FLAGS(ActivatableListWidget::FilterTypes)
 #endif // ACTIVATABLELISTWIDGET_H

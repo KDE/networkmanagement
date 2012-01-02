@@ -58,7 +58,6 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_showMoreItem(0),
     m_activatables(activatables),
     m_layout(0),
-    m_showAllTypes(true),
     m_vpn(false),
     m_hasWireless(false),
     m_filter(NormalConnections)
@@ -89,58 +88,14 @@ ActivatableListWidget::~ActivatableListWidget()
 {
 }
 
-void ActivatableListWidget::addType(Knm::Activatable::ActivatableType type)
-{
-    if (!(m_types.contains(type))) {
-        m_types.append(type);
-    }
-    filter();
-}
-
-void ActivatableListWidget::removeType(Knm::Activatable::ActivatableType type)
-{
-    if (m_types.contains(type)) {
-        m_types.removeAll(type);
-    }
-    filter();
-}
-
-void ActivatableListWidget::addInterface(NetworkManager::Device* iface)
-{
-    kDebug() << "interface added";
-    if (iface) {
-        m_interfaces.insert(iface->uni(), iface->type());
-        m_showAllTypes = true;
-        filter();
-    }
-}
-
-void ActivatableListWidget::clearInterfaces()
-{
-    m_interfaces.clear();
-    m_vpn = false;
-}
-
-void ActivatableListWidget::setShowAllTypes(bool show, bool refresh)
-{
-    m_showAllTypes = show;
-    if (show) {
-        m_vpn = false;
-    }
-    if (refresh) {
-        filter();
-    }
-}
-
-void ActivatableListWidget::toggleVpn()
-{
-    kDebug() << "VPN toggled";
-    m_vpn = true;
-    filter();
-}
-
 bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
 {
+    if ((m_filter & FilterDevice) && m_device && activatable->deviceUni() != m_device->uni()) {
+        return false;
+    }
+    if (m_vpn && activatable->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
+        return false;
+    }
     if (m_filter & NormalConnections) {
         if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection ||
             activatable->isShared()) {
@@ -149,8 +104,7 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
                    activatable->activatableType() == Knm::Activatable::WirelessNetwork) {
             if (!NetworkManager::isWirelessEnabled()) {
                 return false;
-            }
-            if ((m_filter & SavedConnections) && activatable->activatableType() == Knm::Activatable::WirelessNetwork) {
+            } else if ((m_filter & SavedConnections) && activatable->activatableType() == Knm::Activatable::WirelessNetwork) {
                 return false;
             }
         }
@@ -306,6 +260,18 @@ void ActivatableListWidget::setFilter(FilterTypes f)
 //    }
 }
 
+void ActivatableListWidget::setDeviceToFilter(NetworkManager::Device* device, const bool vpn)
+{
+    m_device = device;
+    if (m_device || vpn) {
+        m_filter |= ActivatableListWidget::FilterDevice;
+    } else {
+        m_filter &= ~ActivatableListWidget::FilterDevice;
+    }
+    m_vpn = vpn;
+    filter();
+}
+
 void ActivatableListWidget::filter()
 {
     // Clear connection list first, but do not delete the items.
@@ -326,18 +292,10 @@ void ActivatableListWidget::filter()
     }
 
     if (m_filter & NormalConnections) {
-        if (!m_interfaces.isEmpty() && m_hasWireless) {
-            bool found = false;
-            if (NetworkManager::isWirelessEnabled()) {
-                foreach (const NetworkManager::Device::Type type, m_interfaces) {
-                    if (type == NetworkManager::Device::Wifi) {
-                        createHiddenItem();
-                        found = true;
-                        break;
-                    }
-                }
-            }
-            if (!found && m_hiddenItem) {
+        if ((m_filter & FilterDevice) && m_hasWireless) {
+            if (NetworkManager::isWirelessEnabled() && m_device && m_device->type() == NetworkManager::Device::Wifi) {
+                createHiddenItem();
+            } else if (m_hiddenItem) {
                 m_hiddenItem->disappear();
                 m_hiddenItem = 0;
             }
