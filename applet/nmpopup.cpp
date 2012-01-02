@@ -808,7 +808,6 @@ void NMPopup::untoggleInterfaceTab()
     }
 
     m_leftWidget->setCurrentIndex(ConnectionsTabIndex);
-    update();
 }
 
 void NMPopup::connectToAnotherNetwork()
@@ -846,9 +845,9 @@ void NMPopup::currentTabChanged(int index)
             QMetaObject::invokeMethod(m_currentIfaceItem, "hoverLeave", Qt::QueuedConnection,
                                       Q_ARG(QString, m_currentIfaceItem->interface()->uni()));
         }
-        update();
         break;
     }
+    update();
 }
 
 void NMPopup::currentInnerTabChanged(int index)
