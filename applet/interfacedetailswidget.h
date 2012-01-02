@@ -61,6 +61,7 @@ Q_OBJECT
 
     Q_SIGNALS:
         void back();
+        void disconnectInterfaceRequested(const QString& deviceUni);
 
     private:
         Plasma::DataEngine* engine();
@@ -106,6 +107,7 @@ Q_OBJECT
         int m_speedUnit;
 
     private Q_SLOTS:
+        void emitDisconnectInterfaceRequest();
         void resetInterfaceDetails();
         void updateIpAddress();
         void updateBitRate(int bitRate);

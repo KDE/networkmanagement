@@ -167,7 +167,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_disconnectButton->setMaximumHeight(28);
 #endif
 
-    connect(m_disconnectButton, SIGNAL(clicked()), this, SIGNAL(back()));
+    connect(m_disconnectButton, SIGNAL(clicked()), this, SLOT(emitDisconnectInterfaceRequest()));
 
     m_gridLayout->addItem(m_disconnectButton, 0, 0, 2, 1, Qt::AlignLeft | Qt::AlignVCenter);
 
@@ -197,6 +197,14 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     //connect(e, SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
 
     details = new InterfaceDetails();
+}
+
+void InterfaceDetailsWidget::emitDisconnectInterfaceRequest()
+{
+    if (m_iface) {
+        //kDebug() << m_iface->uni();
+        emit disconnectInterfaceRequested(m_iface->uni());
+    }
 }
 
 void InterfaceDetailsWidget::resetUi()

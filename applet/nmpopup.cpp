@@ -783,6 +783,7 @@ void NMPopup::toggleInterfaceTab()
         m_interfaceDetailsWidget = new InterfaceDetailsWidget(m_leftWidget);
         m_interfaceDetailsWidget->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
         connect(m_interfaceDetailsWidget, SIGNAL(back()), this, SLOT(untoggleInterfaceTab()));
+        connect(m_interfaceDetailsWidget, SIGNAL(disconnectInterfaceRequested(QString)), m_connectionList, SLOT(deactivateConnection(QString)));
         m_leftWidget->addTab(i18nc("details for the interface", "Details"), m_interfaceDetailsWidget);
         m_interfaceDetailsWidget->adjustSize();
         m_leftWidget->adjustSize();
