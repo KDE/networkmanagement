@@ -75,10 +75,11 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
 
     // disconnect button
     m_disconnectButton = new Plasma::IconWidget(this);
-    m_disconnectButton->setMaximumHeight(22);
-    m_disconnectButton->setMaximumWidth(22);
+    m_disconnectButton->setMaximumHeight(16);
+    m_disconnectButton->setMaximumWidth(16);
     //m_disconnectButton->setIcon(KIcon("network-disconnect"));
-    m_disconnectButton->setIcon(KIcon("call-stop"));
+    //m_disconnectButton->setIcon(KIcon("call-stop"));
+    m_disconnectButton->setIcon(KIcon("user-offline"));
     m_disconnectButton->setToolTip(i18nc("@info:tooltip", "Click here to disconnect"));
     m_disconnectButton->hide();
 
