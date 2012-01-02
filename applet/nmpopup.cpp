@@ -253,7 +253,8 @@ void NMPopup::init()
     m_showInterfacesButton->setOrientation(Qt::Horizontal);
     m_showInterfacesButton->setAcceptsHoverEvents(true);
     m_showInterfacesButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-    m_showInterfacesButton->setIcon(KIcon("run-build"));
+    //m_showInterfacesButton->setIcon(KIcon("run-build"));
+    m_showInterfacesButton->setIcon(KIcon("format-list-unordered"));
     m_showInterfacesButton->setText(i18nc("show interface list in applet's popup window", "Show Interfaces"));
     m_showInterfacesButton->setMinimumHeight(28);
     m_showInterfacesButton->setMaximumHeight(28);
