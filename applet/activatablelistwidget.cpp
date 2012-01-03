@@ -60,6 +60,7 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_layout(0),
     m_vpn(false),
     m_hasWireless(false),
+    m_moreNetworks(0),
     m_filter(NormalConnections)
 {
     setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
@@ -88,15 +89,21 @@ ActivatableListWidget::~ActivatableListWidget()
 {
 }
 
-bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
+bool ActivatableListWidget::accept(RemoteActivatable * activatable)
 {
-    if ((m_filter & FilterDevice) && m_device && activatable->deviceUni() != m_device->uni()) {
+    // Filter for this interface only. The interface is selected by clicking on the plasmoids's interface list.
+    if (m_filter.testFlag(FilterDevice) && m_device && activatable->deviceUni() != m_device->uni()) {
         return false;
     }
+
+    // Some as above but for VPN interfaces, which does not have a real NetworkManager::Device associated to them.
     if (m_vpn && activatable->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
         return false;
     }
-    if (m_filter & NormalConnections) {
+
+    // The code below is executed when no interface is selected.
+
+    if (m_filter.testFlag(NormalConnections)) {
         if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection ||
             activatable->isShared()) {
             return false;
@@ -104,13 +111,16 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable) const
                    activatable->activatableType() == Knm::Activatable::WirelessNetwork) {
             if (!NetworkManager::isWirelessEnabled()) {
                 return false;
-            } else if ((m_filter & SavedConnections) && activatable->activatableType() == Knm::Activatable::WirelessNetwork) {
-                return false;
+            } else if (m_filter.testFlag(SavedConnections)) {
+                if (activatable->activatableType() == Knm::Activatable::WirelessNetwork) {
+                    m_moreNetworks++; // number of suppressed networks in m_showMoreItem.
+                    return false;
+                }
             }
         }
-    } else if ((m_filter & VPNConnections) && activatable->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
+    } else if (m_filter.testFlag(VPNConnections) && activatable->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
         return false;
-    } else if ((m_filter & SharedConnections) && !activatable->isShared()) {
+    } else if (m_filter.testFlag(SharedConnections) && !activatable->isShared()) {
         return false;
     }
     return true;
@@ -183,17 +193,30 @@ void ActivatableListWidget::createHiddenItem()
 
 void ActivatableListWidget::updateShowMoreItem()
 {
-    if (m_showMoreItem) {
-        m_layout->removeItem(m_showMoreItem);
-        m_layout->insertItem(100, m_showMoreItem);
-        m_showMoreItem->setChecked((m_filter & SavedConnections) == 0);
+    /* m_showMoreItem only makes sense for NormalConnections, so disabled it for VPN and Shared connections.
+     * Also disables it when there is no more connections to show and when the m_showMoreItem is not toggled.
+     * When m_showMoreItem is toggled m_moreNetworks is zero, so do not hide m_showMoreItem in that case. */
+    if (!m_filter.testFlag(NormalConnections) || (m_moreNetworks == 0 && m_filter.testFlag(SavedConnections))) {
+        if (m_showMoreItem) {
+            m_showMoreItem->disappear();
+            m_showMoreItem = 0;
+        }
         return;
     }
-    m_showMoreItem = new ShowMoreItem(m_widget);
+    if (m_showMoreItem) {
+        m_layout->removeItem(m_showMoreItem);
+        m_layout->insertItem(100, m_showMoreItem); // append to connection list.
+
+        // If SavedConnection is set then m_showMoreItem is *not* toggled.
+        m_showMoreItem->setChecked(!m_filter.testFlag(SavedConnections));
+        m_showMoreItem->setNetworkCount(m_moreNetworks);
+        return;
+    }
+    m_showMoreItem = new ShowMoreItem(m_moreNetworks, m_widget);
     Q_ASSERT(m_showMoreItem);
     m_showMoreItem->setupItem();
     m_layout->insertItem(100, m_showMoreItem);
-    m_showMoreItem->setChecked((m_filter & SavedConnections) == 0);
+    m_showMoreItem->setChecked(!m_filter.testFlag(SavedConnections));
     connect(m_showMoreItem, SIGNAL(disappearAnimationFinished()),
             this, SLOT(deleteItem()));
     connect(m_showMoreItem, SIGNAL(clicked()), this, SIGNAL(showMoreClicked()));
@@ -237,8 +260,8 @@ void ActivatableListWidget::activatableAdded(RemoteActivatable * added, int inde
     kDebug();
     if (accept(added)) {
         createItem(added, index);
-        updateShowMoreItem();
     }
+    updateShowMoreItem();
     if(added->activatableType() == Knm::Activatable::WirelessInterfaceConnection && static_cast<RemoteWirelessInterfaceConnection*>(added)->operationMode() == NetworkManager::WirelessDevice::Adhoc)
         connect(added,SIGNAL(changed()),SLOT(filter()));
 }
@@ -263,6 +286,8 @@ void ActivatableListWidget::setFilter(FilterTypes f)
 void ActivatableListWidget::setDeviceToFilter(NetworkManager::Device* device, const bool vpn)
 {
     m_device = device;
+
+    // VpnInterfaceItems do not have NetworkManager::Device associated to them.
     if (m_device || vpn) {
         m_filter |= ActivatableListWidget::FilterDevice;
     } else {
@@ -282,6 +307,7 @@ void ActivatableListWidget::filter()
     }
 
     int i = 0;
+    m_moreNetworks = 0;
     foreach (RemoteActivatable *act, m_activatables->activatables()) {
         if (accept(act)) {
             createItem(act, i);
@@ -291,21 +317,27 @@ void ActivatableListWidget::filter()
         i++;
     }
 
-    if (m_filter & NormalConnections) {
-        if ((m_filter & FilterDevice) && m_hasWireless) {
+    if (m_filter.testFlag(NormalConnections)) {
+        if (m_filter.testFlag(FilterDevice) && m_hasWireless) {
             if (NetworkManager::isWirelessEnabled() && m_device && m_device->type() == NetworkManager::Device::Wifi) {
                 createHiddenItem();
             } else if (m_hiddenItem) {
+                m_hiddenItem->hide();
+                m_layout->removeItem(m_hiddenItem);
                 m_hiddenItem->disappear();
                 m_hiddenItem = 0;
             }
         } else if (m_hasWireless && NetworkManager::isWirelessEnabled() && !m_vpn) {
             createHiddenItem();
         } else if (m_hiddenItem) {
+            m_hiddenItem->hide();
+            m_layout->removeItem(m_hiddenItem);
             m_hiddenItem->disappear();
             m_hiddenItem = 0;
         }
     } else if (m_hiddenItem) {
+        m_hiddenItem->hide();
+        m_layout->removeItem(m_hiddenItem);
         m_hiddenItem->disappear();
         m_hiddenItem = 0;
     }

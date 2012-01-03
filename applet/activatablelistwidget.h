@@ -46,7 +46,7 @@ public:
     virtual ~ActivatableListWidget();
 
     void init();
-    bool accept(RemoteActivatable* activatable) const;
+    bool accept(RemoteActivatable* activatable);
     void setHasWireless(bool hasWireless); // Used to decide whether or not to show the hidden item
     void setFilter(FilterTypes);
     FilterTypes& getFilter() { return m_filter; }
@@ -90,6 +90,7 @@ private:
     bool m_showAllTypes;
     bool m_vpn;
     bool m_hasWireless; // Used to determine whether or not to show hidden config
+    int m_moreNetworks;
     FilterTypes m_filter;
     NetworkManager::Device * m_device;
 };

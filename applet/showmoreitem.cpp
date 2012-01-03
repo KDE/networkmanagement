@@ -33,8 +33,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/IconWidget>
 #include <Plasma/LineEdit>
 
-ShowMoreItem::ShowMoreItem(QGraphicsWidget *parent) : ActivatableItem(0, parent),
-    m_layout(0)
+ShowMoreItem::ShowMoreItem(const int count, QGraphicsWidget *parent) : ActivatableItem(0, parent),
+    m_layout(0), m_networkCount(count), m_checked(false)
 {
     //kDebug() << "ShowMoreItem";
 }
@@ -53,7 +53,6 @@ void ShowMoreItem::setupItem()
     m_connectButton->setDrawBackground(false);
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setIcon("list-add");
-    m_connectButton->setText(i18nc("show more item in the applet's connection list", "Show more networks..."));
     connect(m_connectButton, SIGNAL(activated()), SLOT(emitClicked()));
     m_layout->addItem(m_connectButton);
 }
@@ -65,13 +64,20 @@ void ShowMoreItem::emitClicked()
 
 void ShowMoreItem::setChecked(bool checked)
 {
-    if (checked) {
+    m_checked = checked;
+    if (m_checked) {
         m_connectButton->setText(i18nc("show more item in the applet's connection list", "Show less networks..."));
         m_connectButton->setIcon("list-remove");
     } else {
-        m_connectButton->setText(i18nc("show more item in the applet's connection list", "Show more networks..."));
+        m_connectButton->setText(i18ncp("show more item in the applet's connection list", "Show one more network", "Show %1 more networks...", m_networkCount));
         m_connectButton->setIcon("list-add");
     }
+}
+
+void ShowMoreItem::setNetworkCount(const int count)
+{
+    m_networkCount = count;
+    setChecked(m_checked);
 }
 
 // vim: sw=4 sts=4 et tw=100

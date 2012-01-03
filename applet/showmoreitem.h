@@ -36,9 +36,10 @@ class ShowMoreItem : public ActivatableItem
 Q_OBJECT
 
 public:
-    ShowMoreItem(QGraphicsWidget *parent = 0);
+    explicit ShowMoreItem(const int count = 0, QGraphicsWidget *parent = 0);
     virtual ~ShowMoreItem();
     void setupItem();
+    void setNetworkCount(const int count);
 
 public Q_SLOTS:
     void setChecked(bool);
@@ -51,5 +52,7 @@ private Q_SLOTS:
 
 private:
     QGraphicsLinearLayout * m_layout;
+    int m_networkCount;
+    bool m_checked;
 };
 #endif // SHOWMOREITEM_H
