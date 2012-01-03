@@ -322,7 +322,7 @@
              <item row="0" column="0">
               <widget class="QLabel" name="textLabel8">
                <property name="text">
-                <string>CA file:</string>
+                <string>CA File:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -626,7 +626,7 @@
          <item>
           <widget class="QSpinBox" name="sbCustomPort">
            <property name="specialValueText">
-            <string comment="like in Automatic network port selection">Automatic</string>
+            <string comment="like in use Automatic configuration">Automatic</string>
            </property>
            <property name="maximum">
             <number>65536</number>
@@ -650,7 +650,7 @@
          <item>
           <widget class="KIntSpinBox" name="sbMtu">
            <property name="specialValueText">
-            <string comment="like in Automatic network port selection">Automatic</string>
+            <string comment="like in use Automatic configuration">Automatic</string>
            </property>
            <property name="maximum">
             <number>65533</number>
@@ -674,7 +674,7 @@
          <item>
           <widget class="KIntSpinBox" name="sbUdpFragmentSize">
            <property name="specialValueText">
-            <string comment="like in Automatic network port selection">Automatic</string>
+            <string comment="like in use Automatic configuration">Automatic</string>
            </property>
            <property name="maximum">
             <number>65535</number>
@@ -806,12 +806,12 @@
            </property>
            <item>
             <property name="text">
-             <string comment="like in Use default configuration">Default</string>
+             <string comment="like in use Default configuration">Default</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string comment="like in No authentication method required">None</string>
+             <string comment="like in None setting selected">None</string>
             </property>
            </item>
            <item>

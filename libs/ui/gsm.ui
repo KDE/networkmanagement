@@ -157,7 +157,7 @@
         </property>
         <item>
          <property name="text">
-          <string comment="like in Use any configuration">Any</string>
+          <string comment="like in use Any configuration">Any</string>
          </property>
         </item>
         <item>

@@ -162,12 +162,12 @@
     <widget class="KComboBox" name="kcfg_ShowAdvancedSettings">
      <item>
       <property name="text">
-       <string comment="like in Show basic settings only">Basic</string>
+       <string comment="like in show Basic settings only">Basic</string>
       </property>
      </item>
      <item>
       <property name="text">
-       <string comment="like in Show advanced settings">Advanced</string>
+       <string comment="like in show Advanced settings">Advanced</string>
       </property>
      </item>
     </widget>

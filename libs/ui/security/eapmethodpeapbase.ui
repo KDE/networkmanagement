@@ -69,7 +69,7 @@
       <widget class="KComboBox" name="cboPeapVersion">
        <item>
         <property name="text">
-         <string comment="like in Automatic version selection">Automatic</string>
+         <string comment="like in use Automatic configuration">Automatic</string>
         </property>
        </item>
        <item>

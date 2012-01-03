@@ -50,7 +50,7 @@
          </column>
          <column>
           <property name="text">
-           <string comment="like in Current connection state (connected or disconnected)">State</string>
+           <string comment="like in current connection State (connected or disconnected)">State</string>
           </property>
          </column>
         </widget>
@@ -91,7 +91,7 @@
          </column>
          <column>
           <property name="text">
-           <string comment="like in Current connection state (connected or disconnected)">State</string>
+           <string comment="like in current connection State (connected or disconnected)">State</string>
           </property>
          </column>
         </widget>
@@ -129,7 +129,7 @@
          </column>
          <column>
           <property name="text">
-           <string comment="like in Current connection state (connected or disconnected)">State</string>
+           <string comment="like in current connection State (connected or disconnected)">State</string>
           </property>
          </column>
         </widget>
@@ -167,7 +167,7 @@
          </column>
          <column>
           <property name="text">
-           <string comment="like in Current connection state (connected or disconnected)">State</string>
+           <string comment="like in current connection State (connected or disconnected)">State</string>
           </property>
          </column>
         </widget>
@@ -205,7 +205,7 @@
          </column>
          <column>
           <property name="text">
-           <string comment="like in Current connection state (connected or disconnected)">State</string>
+           <string comment="like in current connection State (connected or disconnected)">State</string>
           </property>
          </column>
         </widget>

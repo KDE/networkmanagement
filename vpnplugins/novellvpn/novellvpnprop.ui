@@ -17,7 +17,7 @@
    <item>
     <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string comment="like in General Settings">General</string>
+      <string comment="like in General settings">General</string>
      </property>
      <layout class="QFormLayout" name="formLayout_2">
       <item row="0" column="0">

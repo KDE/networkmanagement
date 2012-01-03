@@ -21,7 +21,7 @@
      </property>
      <widget class="QWidget" name="tab">
       <attribute name="title">
-       <string comment="like in General Settings">General</string>
+       <string comment="like in General settings">General</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout">
        <item row="0" column="0">
@@ -190,7 +190,7 @@
      </widget>
      <widget class="QWidget" name="tab_2">
       <attribute name="title">
-       <string comment="like in Advanced Settings">Advanced</string>
+       <string comment="like in Advanced settings">Advanced</string>
       </attribute>
       <layout class="QFormLayout" name="formLayout_2">
        <property name="fieldGrowthPolicy">
@@ -279,7 +279,7 @@
          </item>
          <item>
           <property name="text">
-           <string comment="like in Nat Traversal Disabled">Disabled</string>
+           <string comment="like in this setting is Disabled">Disabled</string>
           </property>
          </item>
         </widget>
@@ -442,7 +442,7 @@
           </sizepolicy>
          </property>
          <property name="specialValueText">
-          <string comment="like in Automatic network port selection">Automatic</string>
+          <string comment="like in use Automatic configuration">Automatic</string>
          </property>
          <property name="accelerated">
           <bool>true</bool>
@@ -464,7 +464,7 @@
           </sizepolicy>
          </property>
          <property name="specialValueText">
-          <string comment="like in Automatic network port selection">Automatic</string>
+          <string comment="like in use Automatic configuration">Automatic</string>
          </property>
          <property name="accelerated">
           <bool>true</bool>
