@@ -322,7 +322,7 @@
              <item row="0" column="0">
               <widget class="QLabel" name="textLabel8">
                <property name="text">
-                <string>CA file:</string>
+                <string>CA File:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
