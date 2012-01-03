@@ -260,8 +260,9 @@ void ActivatableListWidget::activatableAdded(RemoteActivatable * added, int inde
     kDebug();
     if (accept(added)) {
         createItem(added, index);
+    } else {
+        updateShowMoreItem();
     }
-    updateShowMoreItem();
     if(added->activatableType() == Knm::Activatable::WirelessInterfaceConnection && static_cast<RemoteWirelessInterfaceConnection*>(added)->operationMode() == NetworkManager::WirelessDevice::Adhoc)
         connect(added,SIGNAL(changed()),SLOT(filter()));
 }
