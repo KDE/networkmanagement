@@ -23,7 +23,7 @@
       </sizepolicy>
      </property>
      <property name="title">
-      <string comment="like in Basic settings">Basic</string>
+      <string comment="like in show Basic settings only">Basic</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
