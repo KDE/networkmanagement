@@ -482,7 +482,11 @@ void NetworkManagerApplet::deviceAdded(const QString & uni)
     m_interfaces = NetworkManager::networkInterfaces();
 
     if (!m_activeInterface) {
-        setActiveInterface(m_interfaces.first());
+        if (m_interfaces.isEmpty()) {
+            setActiveInterface(0);
+        } else {
+            setActiveInterface(m_interfaces.first());
+        }
         setActiveSystrayInterface(m_activeInterface);
     }
 
