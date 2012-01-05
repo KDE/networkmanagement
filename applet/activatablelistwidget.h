@@ -90,6 +90,7 @@ private:
     bool m_showAllTypes;
     bool m_vpn;
     bool m_hasWireless; // Used to determine whether or not to show hidden config
+    bool m_supressRemoveNetworks;
     int m_moreNetworks;
     FilterTypes m_filter;
     NetworkManager::Device * m_device;

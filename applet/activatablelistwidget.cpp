@@ -60,6 +60,7 @@ ActivatableListWidget::ActivatableListWidget(RemoteActivatableList* activatables
     m_layout(0),
     m_vpn(false),
     m_hasWireless(false),
+    m_supressRemoveNetworks(false),
     m_moreNetworks(0),
     m_filter(NormalConnections)
 {
@@ -309,6 +310,7 @@ void ActivatableListWidget::filter()
 
     int i = 0;
     m_moreNetworks = 0;
+    m_supressRemoveNetworks = true;
     foreach (RemoteActivatable *act, m_activatables->activatables()) {
         if (accept(act)) {
             createItem(act, i);
@@ -317,6 +319,7 @@ void ActivatableListWidget::filter()
         }
         i++;
     }
+    m_supressRemoveNetworks = false;
 
     if (m_filter.testFlag(NormalConnections)) {
         if (m_filter.testFlag(FilterDevice) && m_hasWireless) {
@@ -350,6 +353,9 @@ void ActivatableListWidget::activatableRemoved(RemoteActivatable * removed)
 {
     ActivatableItem *it = m_itemIndex.value(removed, 0);
     if (!it) {
+        if (!m_supressRemoveNetworks) {
+            m_moreNetworks--;
+        }
         return;
     }
     it->disappear();
