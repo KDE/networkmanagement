@@ -194,10 +194,12 @@ void ActivatableListWidget::createHiddenItem()
 
 void ActivatableListWidget::updateShowMoreItem()
 {
-    /* m_showMoreItem only makes sense for NormalConnections, so disabled it for VPN and Shared connections.
+    /* m_showMoreItem only makes sense for wifi and NormalConnections, so disabled it for VPN and Shared connections.
      * Also disables it when there is no more connections to show and when the m_showMoreItem is not toggled.
      * When m_showMoreItem is toggled m_moreNetworks is zero, so do not hide m_showMoreItem in that case. */
-    if (!m_filter.testFlag(NormalConnections) || (m_moreNetworks == 0 && m_filter.testFlag(SavedConnections))) {
+    if (!m_filter.testFlag(NormalConnections) ||
+        (m_moreNetworks == 0 && m_filter.testFlag(SavedConnections)) ||
+        !m_hasWireless) {
         if (m_showMoreItem) {
             m_showMoreItem->disappear();
             m_showMoreItem = 0;
