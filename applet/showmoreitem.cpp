@@ -66,10 +66,10 @@ void ShowMoreItem::setChecked(bool checked)
 {
     m_checked = checked;
     if (m_checked) {
-        m_connectButton->setText(i18nc("show more item in the applet's connection list", "Show less networks..."));
+        m_connectButton->setText(i18nc("text when this item is toggled", "Show less networks..."));
         m_connectButton->setIcon("list-remove");
     } else {
-        m_connectButton->setText(i18ncp("show more item in the applet's connection list", "Show one more network", "Show %1 more networks...", m_networkCount));
+        m_connectButton->setText(i18ncp("text when this item not toggled", "Show one more network", "Show %1 more networks...", m_networkCount));
         m_connectButton->setIcon("list-add");
     }
 }
