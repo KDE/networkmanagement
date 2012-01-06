@@ -77,18 +77,19 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkMa
         if ((type == Knm::WirelessSecurity::StaticWep)
                 || ((type == Knm::WirelessSecurity::DynamicWep) && !adhoc)
                 || ((type == Knm::WirelessSecurity::Leap) && !adhoc)) {
-            if (interfaceCaps & (NetworkManager::WirelessDevice::Wep40 | NetworkManager::WirelessDevice::Wep104))
+            if (interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wep40) ||
+                interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wep104))
                 return true;
         }
         if (type == Knm::WirelessSecurity::WpaPsk
                 || ((type == Knm::WirelessSecurity::WpaEap) && !adhoc)) {
-            if (interfaceCaps & (NetworkManager::WirelessDevice::Wpa)) {
+            if (interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wpa)) {
                 return true;
             }
         }
         if (type == Knm::WirelessSecurity::Wpa2Psk
                 || ((type == Knm::WirelessSecurity::Wpa2Eap) && !adhoc)) {
-            if (interfaceCaps & (NetworkManager::WirelessDevice::Rsn)) {
+            if (interfaceCaps.testFlag(NetworkManager::WirelessDevice::Rsn)) {
                 return true;
             }
         }
@@ -98,7 +99,7 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkMa
     switch (type) {
         case Knm::WirelessSecurity::None:
             Q_ASSERT (haveAp);
-            if (apCaps & NetworkManager::AccessPoint::Privacy)
+            if (apCaps.testFlag(NetworkManager::AccessPoint::Privacy))
                 return false;
             if (apWpa || apRsn)
                 return false;
@@ -109,7 +110,7 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkMa
             /* Fall through */
         case Knm::WirelessSecurity::StaticWep:
             Q_ASSERT (haveAp);
-            if (!(apCaps & NetworkManager::AccessPoint::Privacy))
+            if (!apCaps.testFlag(NetworkManager::AccessPoint::Privacy))
                 return false;
             if (apWpa || apRsn) {
                 if (!interfaceSupportsApCiphers (interfaceCaps, apWpa, StaticWep))
@@ -121,38 +122,38 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkMa
             if (adhoc)
                 return false;
             Q_ASSERT (haveAp);
-            if (apRsn || !(apCaps & NetworkManager::AccessPoint::Privacy))
+            if (apRsn || !(apCaps.testFlag(NetworkManager::AccessPoint::Privacy)))
                 return false;
             /* Some APs broadcast minimal WPA-enabled beacons that must be handled */
             if (apWpa) {
-                if (!(apWpa & NetworkManager::AccessPoint::KeyMgmt8021x))
+                if (!apWpa.testFlag(NetworkManager::AccessPoint::KeyMgmt8021x))
                     return false;
                 if (!interfaceSupportsApCiphers (interfaceCaps, apWpa, DynamicWep))
                     return false;
             }
             break;
         case Knm::WirelessSecurity::WpaPsk:
-            if (!(interfaceCaps & NetworkManager::WirelessDevice::Wpa)) {
+            if (!interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wpa)) {
                 return false;
             }
             if (haveAp) {
                 /* Ad-Hoc WPA APs won't necessarily have the PSK flag set */
                 if (adhoc) {
-                    if ((apWpa & NetworkManager::AccessPoint::GroupTkip) &&
-                        (interfaceCaps & NetworkManager::WirelessDevice::Tkip)) {
+                    if (apWpa.testFlag(NetworkManager::AccessPoint::GroupTkip) &&
+                        interfaceCaps.testFlag(NetworkManager::WirelessDevice::Tkip)) {
                         return true;
                     }
-                    if ((apWpa & NetworkManager::AccessPoint::GroupCcmp) &&
-                        (interfaceCaps & NetworkManager::WirelessDevice::Ccmp)) {
+                    if (apWpa.testFlag(NetworkManager::AccessPoint::GroupCcmp) &&
+                        interfaceCaps.testFlag(NetworkManager::WirelessDevice::Ccmp)) {
                         return true;
                     }
-                } else if (apWpa & NetworkManager::AccessPoint::KeyMgmtPsk) {
-                    if ((apWpa & NetworkManager::AccessPoint::PairTkip) &&
-                        (interfaceCaps & NetworkManager::WirelessDevice::Tkip)) {
+                } else if (apWpa.testFlag(NetworkManager::AccessPoint::KeyMgmtPsk)) {
+                    if (apWpa.testFlag(NetworkManager::AccessPoint::PairTkip) &&
+                        interfaceCaps.testFlag(NetworkManager::WirelessDevice::Tkip)) {
                         return true;
                     }
-                    if ((apWpa & NetworkManager::AccessPoint::PairCcmp) &&
-                        (interfaceCaps & NetworkManager::WirelessDevice::Ccmp)) {
+                    if (apWpa.testFlag(NetworkManager::AccessPoint::PairCcmp) &&
+                        interfaceCaps.testFlag(NetworkManager::WirelessDevice::Ccmp)) {
                         return true;
                     }
                 }
@@ -160,17 +161,19 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkMa
             }
             break;
         case Knm::WirelessSecurity::Wpa2Psk:
-            if (!(interfaceCaps & NetworkManager::WirelessDevice::Rsn))
+            if (!interfaceCaps.testFlag(NetworkManager::WirelessDevice::Rsn))
                 return false;
             if (haveAp) {
                 /* Ad-Hoc WPA APs won't necessarily have the PSK flag set */
-                if ((apRsn & NetworkManager::AccessPoint::KeyMgmtPsk) || adhoc) {
-                    if (   (apRsn & NetworkManager::AccessPoint::PairTkip)
-                            && (interfaceCaps & NetworkManager::WirelessDevice::Tkip))
+                if (apRsn.testFlag(NetworkManager::AccessPoint::KeyMgmtPsk) || adhoc) {
+                    if (apRsn.testFlag(NetworkManager::AccessPoint::PairTkip) &&
+                        interfaceCaps.testFlag(NetworkManager::WirelessDevice::Tkip)) {
                         return true;
-                    if (   (apRsn & NetworkManager::AccessPoint::PairCcmp)
-                            && (interfaceCaps & NetworkManager::WirelessDevice::Ccmp))
+                    }
+                    if (apRsn.testFlag(NetworkManager::AccessPoint::PairCcmp) &&
+                        interfaceCaps.testFlag(NetworkManager::WirelessDevice::Ccmp)) {
                         return true;
+                    }
                 }
                 return false;
             }
@@ -178,10 +181,10 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkMa
         case Knm::WirelessSecurity::WpaEap:
             if (adhoc)
                 return false;
-            if (!(interfaceCaps & NetworkManager::WirelessDevice::Wpa))
+            if (!interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wpa))
                 return false;
             if (haveAp) {
-                if (!(apWpa & NetworkManager::AccessPoint::KeyMgmt8021x))
+                if (!apWpa.testFlag(NetworkManager::AccessPoint::KeyMgmt8021x))
                     return false;
                 /* Ensure at least one WPA cipher is supported */
                 if (!interfaceSupportsApCiphers (interfaceCaps, apWpa, WpaEap))
@@ -191,10 +194,10 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkMa
         case Knm::WirelessSecurity::Wpa2Eap:
             if (adhoc)
                 return false;
-            if (!(interfaceCaps & NetworkManager::WirelessDevice::Rsn))
+            if (!interfaceCaps.testFlag(NetworkManager::WirelessDevice::Rsn))
                 return false;
             if (haveAp) {
-                if (!(apRsn & NetworkManager::AccessPoint::KeyMgmt8021x))
+                if (!apRsn.testFlag(NetworkManager::AccessPoint::KeyMgmt8021x))
                     return false;
                 /* Ensure at least one WPA cipher is supported */
                 if (!interfaceSupportsApCiphers (interfaceCaps, apRsn, Wpa2Eap))
