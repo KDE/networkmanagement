@@ -135,6 +135,11 @@ void WirelessNetworkInterfaceActivatableProvider::handleAdd(Knm::Connection * ad
                     if (ic->activatableType() == Knm::Activatable::WirelessInterfaceConnection && ic->connectionUuid() == addedConnection->uuid()) {
                         ourWicFound = true;
                         ourHiddenWicFound = true;
+
+                        // TODO: NM creates a new AccessPoint object when the AP's settings change (from WPA to WEP for instance).
+                        //       We need to check if that happened and update our settings accordingly instead of just ignoring a new
+                        //       Wic because it has the same type, uuid and essid.
+
                     }
                     else if (ic->activatableType() == Knm::Activatable::HiddenWirelessInterfaceConnection && ic->connectionUuid() == addedConnection->uuid()) {
                         ourHiddenWicFound = true;
