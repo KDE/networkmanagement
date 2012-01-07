@@ -192,7 +192,7 @@ void NovellVpnSettingWidget::writeConfig()
 void NovellVpnSettingWidget::writeX509Auth(QStringMap & data, QStringMap & secretData)
 {
     data.insert(QLatin1String(NM_NOVELLVPN_KEY_AUTHTYPE), QLatin1String(NM_NOVELLVPN_CONTYPE_X509_STRING));
-    data.insert(NM_NOVELLVPN_KEY_CERTIFICATE, d->ui.x509Cert->url().path().toUtf8());
+    data.insert(NM_NOVELLVPN_KEY_CERTIFICATE, d->ui.x509Cert->url().path());
     secretData.insert(QLatin1String(NM_NOVELLVPN_KEY_CERT_PWD), d->ui.x509CertPass->text());
 }
 
