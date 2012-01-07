@@ -148,19 +148,19 @@ void StrongswanSettingWidget::writeConfig()
     if (!d->ui.leGateway->text().isEmpty()) {
         data.insert(NM_STRONGSWAN_GATEWAY, d->ui.leGateway->text());
     }
-    data.insert( NM_STRONGSWAN_CERTIFICATE, d->ui.leGatewayCertificate->url().path().toUtf8());
+    data.insert( NM_STRONGSWAN_CERTIFICATE, d->ui.leGatewayCertificate->url().path());
 
     // Authentication
     switch (d->ui.cmbMethod->currentIndex())
     {
         case StrongswanSettingWidgetPrivate::PrivateKey:
             data.insert(NM_STRONGSWAN_METHOD, NM_STRONGSWAN_AUTH_KEY);
-            data.insert(NM_STRONGSWAN_USERCERT, d->ui.leAuthPrivatekeyCertificate->url().path().toUtf8());
-            data.insert(NM_STRONGSWAN_USERKEY, d->ui.leAuthPrivatekeyKey->url().path().toUtf8());
+            data.insert(NM_STRONGSWAN_USERCERT, d->ui.leAuthPrivatekeyCertificate->url().path());
+            data.insert(NM_STRONGSWAN_USERKEY, d->ui.leAuthPrivatekeyKey->url().path());
             break;
         case StrongswanSettingWidgetPrivate::SshAgent:
             data.insert(NM_STRONGSWAN_METHOD, NM_STRONGSWAN_AUTH_AGENT);
-            data.insert(NM_STRONGSWAN_USERCERT, d->ui.leAuthSshCertificate->url().path().toUtf8());
+            data.insert(NM_STRONGSWAN_USERCERT, d->ui.leAuthSshCertificate->url().path());
             break;
         case StrongswanSettingWidgetPrivate::Smartcard:
             data.insert(NM_STRONGSWAN_METHOD, NM_STRONGSWAN_AUTH_SMARTCARD);

@@ -272,7 +272,7 @@ void VpncSettingWidget::writeConfig()
     // hybrid auth
     if (d->ui.cbUseHybridAuth->isChecked()) {
         data.insert(NM_VPNC_KEY_AUTHMODE, QLatin1String("hybrid"));
-        data.insert(NM_VPNC_KEY_CA_FILE, d->ui.leCaCertPath->url().path().toUtf8());
+        data.insert(NM_VPNC_KEY_CA_FILE, d->ui.leCaCertPath->url().path());
     }
 
     // Optional settings

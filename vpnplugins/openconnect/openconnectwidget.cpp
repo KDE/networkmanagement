@@ -78,16 +78,16 @@ void OpenconnectSettingWidget::writeConfig()
 
     data.insert(QLatin1String(NM_OPENCONNECT_KEY_GATEWAY), d->ui.leGateway->text().toUtf8());
     if (!d->ui.leCaCertificate->url().isEmpty())
-        data.insert(QLatin1String(NM_OPENCONNECT_KEY_CACERT), d->ui.leCaCertificate->url().path().toUtf8());
+        data.insert(QLatin1String(NM_OPENCONNECT_KEY_CACERT), d->ui.leCaCertificate->url().path());
     if (!d->ui.leProxy->text().isEmpty())
         data.insert(QLatin1String(NM_OPENCONNECT_KEY_PROXY), d->ui.leProxy->text().toUtf8());
     data.insert(QLatin1String(NM_OPENCONNECT_KEY_CSD_ENABLE), d->ui.chkAllowTrojan->isChecked() ? "yes" : "no");
     if (!d->ui.leCsdWrapperScript->url().isEmpty())
-        data.insert(QLatin1String(NM_OPENCONNECT_KEY_CSD_WRAPPER), d->ui.leCsdWrapperScript->url().path().toUtf8());
+        data.insert(QLatin1String(NM_OPENCONNECT_KEY_CSD_WRAPPER), d->ui.leCsdWrapperScript->url().path());
     if (!d->ui.leUserCert->url().isEmpty())
-        data.insert(QLatin1String(NM_OPENCONNECT_KEY_USERCERT), d->ui.leUserCert->url().path().toUtf8());
+        data.insert(QLatin1String(NM_OPENCONNECT_KEY_USERCERT), d->ui.leUserCert->url().path());
     if (!d->ui.leUserPrivateKey->url().isEmpty())
-        data.insert(QLatin1String(NM_OPENCONNECT_KEY_PRIVKEY), d->ui.leUserPrivateKey->url().path().toUtf8());
+        data.insert(QLatin1String(NM_OPENCONNECT_KEY_PRIVKEY), d->ui.leUserPrivateKey->url().path());
     data.insert(QLatin1String(NM_OPENCONNECT_KEY_PEM_PASSPHRASE_FSID), d->ui.chkUseFsid->isChecked() ? "yes" : "no");
 
     /* These are different for every login session, and should not be stored */

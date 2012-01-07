@@ -311,9 +311,9 @@ void OpenVpnSettingWidget::writeConfig()
         case Private::EnumConnectionType::Certificates:
             contype = QLatin1String(NM_OPENVPN_CONTYPE_TLS);
             kDebug() << "saving VPN TLS settings as urls:" << d->ui.x509CaFile->url().path() << d->ui.x509Cert->url().path() << d->ui.x509Key->url().path();
-            data.insert( QLatin1String(NM_OPENVPN_KEY_CA), d->ui.x509CaFile->url().path().toUtf8());
-            data.insert( QLatin1String(NM_OPENVPN_KEY_CERT), d->ui.x509Cert->url().path().toUtf8());
-            data.insert( QLatin1String(NM_OPENVPN_KEY_KEY), d->ui.x509Key->url().path().toUtf8());
+            data.insert( QLatin1String(NM_OPENVPN_KEY_CA), d->ui.x509CaFile->url().path());
+            data.insert( QLatin1String(NM_OPENVPN_KEY_CERT), d->ui.x509Cert->url().path());
+            data.insert( QLatin1String(NM_OPENVPN_KEY_KEY), d->ui.x509Key->url().path());
             // key password
             if (!d->ui.x509KeyPassword->text().isEmpty()) {
                 secretData.insert(QLatin1String(NM_OPENVPN_KEY_CERTPASS), d->ui.x509KeyPassword->text());
@@ -322,7 +322,7 @@ void OpenVpnSettingWidget::writeConfig()
             break;
         case Private::EnumConnectionType::Psk:
             contype = QLatin1String(NM_OPENVPN_CONTYPE_STATIC_KEY);
-            data.insert( QLatin1String(NM_OPENVPN_KEY_STATIC_KEY), d->ui.pskSharedKey->url().path().toUtf8());
+            data.insert( QLatin1String(NM_OPENVPN_KEY_STATIC_KEY), d->ui.pskSharedKey->url().path());
             switch (d->ui.cmbKeyDirection->currentIndex())
             {
                 case Private::EnumKeyDirection::None:
@@ -350,7 +350,7 @@ void OpenVpnSettingWidget::writeConfig()
             }
             handleOnePasswordType(d->ui.passPasswordStorage, QLatin1String(NM_OPENVPN_KEY_PASSWORD"-flags"), data);
             // ca
-            data.insert(QLatin1String(NM_OPENVPN_KEY_CA), d->ui.passCaFile->url().path().toUtf8());
+            data.insert(QLatin1String(NM_OPENVPN_KEY_CA), d->ui.passCaFile->url().path());
             break;
         case Private::EnumConnectionType::CertsPassword:
             contype = QLatin1String(NM_OPENVPN_CONTYPE_PASSWORD_TLS);
@@ -359,11 +359,11 @@ void OpenVpnSettingWidget::writeConfig()
                 data.insert(QLatin1String(NM_OPENVPN_KEY_USERNAME), d->ui.x509PassUsername->text());
             }
             // ca
-            data.insert(QLatin1String(NM_OPENVPN_KEY_CA), d->ui.x509PassCaFile->url().path().toUtf8());
+            data.insert(QLatin1String(NM_OPENVPN_KEY_CA), d->ui.x509PassCaFile->url().path());
             // cert
-            data.insert(QLatin1String(NM_OPENVPN_KEY_CERT), d->ui.x509PassCert->url().path().toUtf8());
+            data.insert(QLatin1String(NM_OPENVPN_KEY_CERT), d->ui.x509PassCert->url().path());
             // key file
-            data.insert(QLatin1String(NM_OPENVPN_KEY_KEY), d->ui.x509PassKey->url().path().toUtf8());
+            data.insert(QLatin1String(NM_OPENVPN_KEY_KEY), d->ui.x509PassKey->url().path());
             // key password
             if (!d->ui.x509PassKeyPassword->text().isEmpty()) {
                 secretData.insert(QLatin1String(NM_OPENVPN_KEY_CERTPASS), d->ui.x509PassKeyPassword->text());
