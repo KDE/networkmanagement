@@ -58,8 +58,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <uiutils.h>
 
 #include "interfaceitem.h"
-#include "nm-device-interface.h"
-#include "nm-ip4-config-interface.h" // krazy:exclude=includes
 #include "../libs/internals/settings/802-11-wireless.h"
 
 class InterfaceDetails
@@ -414,11 +412,7 @@ QString InterfaceDetailsWidget::currentIpAddress()
     }
 
     QHostAddress addr;
-
-    OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, m_ifaceUni, QDBusConnection::systemBus());
-    if (devIface.isValid()) {
-        addr.setAddress(ntohl(devIface.ip4Address()));
-    }
+    addr.setAddress(ntohl(m_iface->ipV4Address()));
 
     if (addr.isNull()) {
         return i18nc("label of the network interface", "IP display error.");

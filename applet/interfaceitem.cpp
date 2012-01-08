@@ -51,8 +51,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <NetworkManager/NetworkManager.h>
 
 #include "knmserviceprefs.h"
-#include "nm-device-interface.cpp"
-#include "nm-ip4-config-interface.cpp"
 
 
 InterfaceItem::InterfaceItem(NetworkManager::Device * iface, RemoteActivatableList* activatables,  NameDisplayMode mode, QGraphicsWidget * parent) : Plasma::IconWidget(parent),
@@ -285,11 +283,7 @@ QString InterfaceItem::currentIpAddress()
     }
 
     QHostAddress addr;
-
-    OrgFreedesktopNetworkManagerDeviceInterface devIface(NM_DBUS_SERVICE, m_iface.data()->uni(), QDBusConnection::systemBus());
-    if (devIface.isValid()) {
-        addr.setAddress(ntohl(devIface.ip4Address()));
-    }
+    addr.setAddress(ntohl(m_iface.data()->ipV4Address()));
 
     if (addr.isNull()) {
         return i18nc("label of the network interface", "IP display error.");
