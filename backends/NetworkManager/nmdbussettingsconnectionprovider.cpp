@@ -49,7 +49,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteconnection.h"
 #include "nm-settingsinterface.h"
 #include "nm-active-connectioninterface.h"
-#include "nm-manager-interface.h"
 
 #include <QtNetworkManager/modemdevice.h>
 #include <QtNetworkManager/activeconnection.h>
@@ -287,16 +286,15 @@ void NMDBusSettingsConnectionProvider::interfaceConnectionActivated()
         }
 
         // Now activate the connection
-        OrgFreedesktopNetworkManagerInterface nmIface(QLatin1String(NM_DBUS_SERVICE), QLatin1String(NM_DBUS_PATH), QDBusConnection::systemBus());
         if (vpn) {
             // to report error messages in notification manager
-            QDBusPendingCall reply = nmIface.ActivateConnection(QDBusObjectPath(ic->property("NMDBusObjectPath").toString()), QDBusObjectPath(deviceToActivateOn), QDBusObjectPath("/"));
+            QDBusPendingCall reply = NetworkManager::activateConnection(ic->property("NMDBusObjectPath").toString(), deviceToActivateOn, QLatin1String("/"));
             QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(reply, 0);
             watcher->setProperty("interfaceConnection", qVariantFromValue((void *)ic));
             connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), this, SLOT(onVpnConnectionActivated(QDBusPendingCallWatcher*)));
         } else {
             // regular connections already report error messages.
-            nmIface.ActivateConnection(QDBusObjectPath(ic->property("NMDBusObjectPath").toString()), QDBusObjectPath(deviceToActivateOn), QDBusObjectPath("/"));
+            NetworkManager::activateConnection(ic->property("NMDBusObjectPath").toString(), deviceToActivateOn, QLatin1String("/"));
         }
     }
 }
