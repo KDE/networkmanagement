@@ -48,10 +48,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "connectiondbus.h"
 #include "remoteconnection.h"
 #include "nm-settingsinterface.h"
-#include "nm-settings-connectioninterface.h"
 #include "nm-active-connectioninterface.h"
 #include "nm-manager-interface.h"
-#include "nm-device-interface.h"
 
 #include <QtNetworkManager/modemdevice.h>
 #include <QtNetworkManager/activeconnection.h>
