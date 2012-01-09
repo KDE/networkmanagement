@@ -152,7 +152,7 @@ void SecretStorage::walletOpenedForRead(bool success)
                     QPair<QString,GetSecretsFlags> pair = i.value();
                     bool settingsFound = false;
                     foreach (Knm::Setting * setting, con->settings()) {
-                        if (setting->name() == pair.first) {
+                        if (setting && setting->name() == pair.first) {
                             settingsFound = true;
                             QMap<QString,QString> map;
                             if (wallet->readMap(walletKeyFor(con->uuid(), setting), map) == 0) {
