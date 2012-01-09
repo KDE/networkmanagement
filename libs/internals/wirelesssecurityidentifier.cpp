@@ -24,9 +24,10 @@ You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <KLocale>
-
 #include "wirelesssecurityidentifier.h"
+
+#include <KDebug>
+#include <KLocale>
 
 bool Knm::WirelessSecurity::interfaceSupportsApCiphers(Solid::Control::WirelessNetworkInterfaceNm09::Capabilities interfaceCaps, Solid::Control::AccessPointNm09::WpaFlags apCiphers, Knm::WirelessSecurity::Type type )
 {
@@ -64,12 +65,15 @@ bool Knm::WirelessSecurity::interfaceSupportsApCiphers(Solid::Control::WirelessN
         }
     }
 
-    return havePair && haveGroup;
+    return (havePair && haveGroup);
 }
 
+// Keep this in sync with NetworkManager/libnm-util/nm-utils.c:nm_utils_security_valid()
 bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Control::WirelessNetworkInterfaceNm09::Capabilities interfaceCaps, bool haveAp, bool adhoc, Solid::Control::AccessPointNm09::Capabilities apCaps, Solid::Control::AccessPointNm09::WpaFlags apWpa, Solid::Control::AccessPointNm09::WpaFlags apRsn)
 {
     bool good = TRUE;
+
+    //kDebug() << "type(" << type << ") interfaceCaps(" << interfaceCaps << ") haveAp(" << haveAp << ") adhoc(" << adhoc << ") apCaps(" << apCaps << ") apWpa(" << apWpa << " apRsn(" << apRsn << ")";
 
     if (!haveAp) {
         if (type == Knm::WirelessSecurity::None)
@@ -78,18 +82,24 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, Solid::Co
                 || ((type == Knm::WirelessSecurity::DynamicWep) && !adhoc)
                 || ((type == Knm::WirelessSecurity::Leap) && !adhoc)) {
             if (interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterfaceNm09::Wep40) ||
-                interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterfaceNm09::Wep104))
+                interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterfaceNm09::Wep104)) {
                 return true;
+            }
         }
+
+        // apCaps.testFlag(Privacy) == true for StaticWep, Leap and DynamicWep
+        // see libs/internals/wirelessinterfaceconnectionhelpers.cpp
         if (type == Knm::WirelessSecurity::WpaPsk
                 || ((type == Knm::WirelessSecurity::WpaEap) && !adhoc)) {
-            if (interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterfaceNm09::Wpa)) {
+            if (interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterfaceNm09::Wpa) &&
+                !apCaps.testFlag(Solid::Control::AccessPointNm09::Privacy)) {
                 return true;
             }
         }
         if (type == Knm::WirelessSecurity::Wpa2Psk
                 || ((type == Knm::WirelessSecurity::Wpa2Eap) && !adhoc)) {
-            if (interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterfaceNm09::Rsn)) {
+            if (interfaceCaps.testFlag(Solid::Control::WirelessNetworkInterfaceNm09::Rsn) &&
+                !apCaps.testFlag(Solid::Control::AccessPointNm09::Privacy)) {
                 return true;
             }
         }
