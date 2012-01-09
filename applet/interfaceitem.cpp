@@ -366,7 +366,7 @@ void InterfaceItem::stateChanged(NetworkManager::Device::State state, bool updat
     // check if any of them affect our interface
     // setActiveConnection on ourself
     // button to connect, disconnect
-    bool old_disco = m_disconnect;
+    //bool old_disco = m_disconnect;
 
     m_disconnect = false;
     // Name and info labels
