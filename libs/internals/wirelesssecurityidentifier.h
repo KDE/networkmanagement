@@ -31,7 +31,7 @@ namespace Knm
 class KNM_EXPORT WirelessSecurity
 {
 public:
-    enum Type { Unknown, None, StaticWep, Leap, DynamicWep, WpaPsk, WpaEap, Wpa2Psk, Wpa2Eap };
+    enum Type { Unknown = -1, None, StaticWep, Leap, DynamicWep, WpaPsk, WpaEap, Wpa2Psk, Wpa2Eap };
 
     static bool possible(WirelessSecurity::Type, NetworkManager::WirelessDevice::Capabilities, bool haveAp, bool adHoc, NetworkManager::AccessPoint::Capabilities apCaps, NetworkManager::AccessPoint::WpaFlags apWpa, NetworkManager::AccessPoint::WpaFlags apRsn);
 

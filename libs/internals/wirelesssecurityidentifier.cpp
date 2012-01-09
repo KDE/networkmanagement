@@ -26,6 +26,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "wirelesssecurityidentifier.h"
 
+#include <KDebug>
 #include <KLocale>
 
 bool Knm::WirelessSecurity::interfaceSupportsApCiphers(NetworkManager::WirelessDevice::Capabilities interfaceCaps, NetworkManager::AccessPoint::WpaFlags apCiphers, Knm::WirelessSecurity::Type type )
@@ -64,12 +65,15 @@ bool Knm::WirelessSecurity::interfaceSupportsApCiphers(NetworkManager::WirelessD
         }
     }
 
-    return havePair && haveGroup;
+    return (havePair && haveGroup);
 }
 
+// Keep this in sync with NetworkManager/libnm-util/nm-utils.c:nm_utils_security_valid()
 bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkManager::WirelessDevice::Capabilities interfaceCaps, bool haveAp, bool adhoc, NetworkManager::AccessPoint::Capabilities apCaps, NetworkManager::AccessPoint::WpaFlags apWpa, NetworkManager::AccessPoint::WpaFlags apRsn)
 {
     bool good = true;
+
+    //kDebug() << "type(" << type << ") interfaceCaps(" << interfaceCaps << ") haveAp(" << haveAp << ") adhoc(" << adhoc << ") apCaps(" << apCaps << ") apWpa(" << apWpa << " apRsn(" << apRsn << ")";
 
     if (!haveAp) {
         if (type == Knm::WirelessSecurity::None)
@@ -78,18 +82,24 @@ bool Knm::WirelessSecurity::possible(Knm::WirelessSecurity::Type type, NetworkMa
                 || ((type == Knm::WirelessSecurity::DynamicWep) && !adhoc)
                 || ((type == Knm::WirelessSecurity::Leap) && !adhoc)) {
             if (interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wep40) ||
-                interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wep104))
+                interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wep104)) {
                 return true;
+            }
         }
+
+        // apCaps.testFlag(Privacy) == true for StaticWep, Leap and DynamicWep
+        // see libs/internals/wirelessinterfaceconnectionhelpers.cpp
         if (type == Knm::WirelessSecurity::WpaPsk
                 || ((type == Knm::WirelessSecurity::WpaEap) && !adhoc)) {
-            if (interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wpa)) {
+            if (interfaceCaps.testFlag(NetworkManager::WirelessDevice::Wpa) &&
+                !apCaps.testFlag(NetworkManager::AccessPoint::Privacy)) {
                 return true;
             }
         }
         if (type == Knm::WirelessSecurity::Wpa2Psk
                 || ((type == Knm::WirelessSecurity::Wpa2Eap) && !adhoc)) {
-            if (interfaceCaps.testFlag(NetworkManager::WirelessDevice::Rsn)) {
+            if (interfaceCaps.testFlag(NetworkManager::WirelessDevice::Rsn) &&
+                !apCaps.testFlag(NetworkManager::AccessPoint::Privacy)) {
                 return true;
             }
         }
