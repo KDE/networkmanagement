@@ -186,7 +186,23 @@ QStringList MobileProviders::getApns(const QString & provider)
                 QDomElement e2 = n2.toElement(); // <apn | network-id>
 
                 if (!e2.isNull() && e2.tagName().toLower() == "apn") {
-                    mApns.insert(e2.attribute("value"), e2.firstChild());
+                    bool isInternet = true;
+                    QDomNode n3 = e2.firstChild();
+                    while (!n3.isNull()) {
+                        QDomElement e3 = n3.toElement(); // <usage>
+                        if (!e3.isNull() &&
+                            e3.tagName().toLower() == "usage" &&
+                            !e3.attribute("type").isNull() &&
+                            e3.attribute("type").toLower() != "internet") {
+                            //kDebug() << "apn" << e2.attribute("value") << "ignored because of usage" << e3.attribute("type");
+                            isInternet = false;
+                            break;
+                        }
+                        n3 = n3.nextSibling();
+                    }
+                    if (isInternet) {
+                        mApns.insert(e2.attribute("value"), e2.firstChild());
+                    }
                 } else if (!e2.isNull() && e2.tagName().toLower() == "network-id") {
                     mNetworkIds.append(e2.attribute("mcc") + "-" + e2.attribute("mnc"));
                 }
