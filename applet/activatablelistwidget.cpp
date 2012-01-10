@@ -121,8 +121,12 @@ bool ActivatableListWidget::accept(RemoteActivatable * activatable)
         }
     } else if (m_filter.testFlag(VPNConnections) && activatable->activatableType() != Knm::Activatable::VpnInterfaceConnection) {
         return false;
-    } else if (m_filter.testFlag(SharedConnections) && !activatable->isShared()) {
-        return false;
+    } else if (m_filter.testFlag(SharedConnections)) {
+        if (!activatable->isShared() ||
+            ((activatable->activatableType() == Knm::Activatable::WirelessInterfaceConnection ||
+              activatable->activatableType() == Knm::Activatable::WirelessNetwork) && !NetworkManager::isWirelessEnabled())) {
+            return false;
+        }
     }
     return true;
 }
