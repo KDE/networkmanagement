@@ -57,7 +57,7 @@ void InterfaceConnectionItem::setupItem()
     // spacer to make highlighting's borders to expand to the maximum.
     QGraphicsWidget *widget = new QGraphicsWidget(this);
     widget->setMaximumHeight(12);
-    m_layout->addItem(widget, 0, 1, 3, 3);
+    m_layout->addItem(widget, 0, 1, 1, 3);
 
     RemoteInterfaceConnection *remoteconnection = interfaceConnection();
     if (remoteconnection) {

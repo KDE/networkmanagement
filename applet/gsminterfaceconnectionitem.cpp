@@ -92,7 +92,7 @@ void GsmInterfaceConnectionItem::setupItem()
     m_connectButton->setOrientation(Qt::Horizontal);
     m_connectButton->setTextBackgroundColor(QColor(Qt::transparent));
     //m_connectButton->setToolTip(i18nc("icon to connect to mobile broadband network", "Connect to mobile broadband network %1", ssid));
-    m_layout->addItem(m_connectButton, 0, 0, 2, 2, Qt::AlignVCenter | Qt::AlignLeft);
+    m_layout->addItem(m_connectButton, 0, 0, 1, 2, Qt::AlignVCenter | Qt::AlignLeft);
 
     // spacer to force the strength meter to the right.
     QGraphicsWidget *widget = new QGraphicsWidget(this);
