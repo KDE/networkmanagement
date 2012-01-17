@@ -531,8 +531,10 @@ void MobileConnectionWizard::slotEnablePlanEditBox(const QString & text)
         userApn->setEnabled(true);
     } else {
         if (mProvidersList->currentItem() != 0) {
+            int i = mPlanComboBox->currentIndex();
+            if (i>0) i=i-1; // Skiping the separator (i==1)
             QStringList mApns = mProviders->getApns(mProvidersList->currentItem()->text());
-            userApn->setText(mApns.at(0));
+            userApn->setText(mApns.at(i));
         }
         userApn->setEnabled(false);
     }
