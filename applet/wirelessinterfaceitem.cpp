@@ -61,6 +61,9 @@ void WirelessInterfaceItem::connectButtonClicked()
 
 void WirelessInterfaceItem::setConnectionInfo()
 {
+    if (!m_iface) {
+        return;
+    }
     InterfaceItem::setConnectionInfo(); // Sets the labels
     switch (m_iface.data()->state()) {
         case NetworkManager::Device::Unavailable:
