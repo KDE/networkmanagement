@@ -37,6 +37,7 @@ Comment[nl]=Levert de netwerkconfiguratie voor de NetworkManager-daemon
 Comment[pl]=Zapewnia konfigurację sieci dla demona Menadżera sieci
 Comment[pt]=Oferece a configuração da rede ao servidor do NetworkManager
 Comment[pt_BR]=Fornece a configuração da rede ao daemon do NetworkManager
+Comment[sk]=Poskytuje nastavenie siete pre démona NetworkManager
 Comment[sv]=Tillhandahåller nätverksinställning för nätverkshanteringsdemonen
 Comment[uk]=Надає налаштування мережі фоновій службі NetworkManager
 Comment[x-test]=xxProvides network configuration to the NetworkManager daemonxx
