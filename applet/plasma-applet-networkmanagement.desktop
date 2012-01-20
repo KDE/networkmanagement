@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Network Management
+Name[ar]=إدارة الشبكة
 Name[bs]=Upravljanje mrežom
 Name[ca]=Gestió de xarxa
 Name[ca@valencia]=Gestió de xarxa
@@ -37,6 +38,7 @@ Name[x-test]=xxNetwork Managementxx
 Name[zh_CN]=网络管理
 Name[zh_TW]=網路管理
 Comment=Network status and control utility
+Comment[ar]=أداة للتحكم و مراقبة الشبكة
 Comment[bs]=Mrežni status i kontrolni alat
 Comment[ca]=Utilitat de control i estat de la xarxa
 Comment[ca@valencia]=Utilitat de control i estat de la xarxa

@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=Network Connections
+Name[ar]=وصلات الشبكة
 Name[ca]=Connexions de xarxa
 Name[ca@valencia]=Connexions de xarxa
 Name[cs]=Síťová spojení
@@ -35,6 +36,7 @@ Name[x-test]=xxNetwork Connectionsxx
 Name[zh_CN]=网络连接
 Name[zh_TW]=網路連線
 Comment=Add, Edit and Remove network connections
+Comment[ar]=أضف، وحرر، وأزل وصلات الشبكة
 Comment[ca]=Afegeix, edita o elimina connexions de xarxa
 Comment[ca@valencia]=Afig, edita o elimina connexions de xarxa
 Comment[cs]=Přidejte, upravte nebo odstraňte síťová spojení
