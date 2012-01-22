@@ -95,7 +95,7 @@ QString unQuote(QString &certVal, const QString &fileName)
         }
     }
     certFile.replace("\\\\", "\\");     // Replace '\\' with '\'
-    certFile.replace("\ ", " ");        // Replace escaped space with space
+    certFile.replace("\\ ", " ");        // Replace escaped space with space
     if (QFileInfo(certFile).isRelative())
         certFile = QFileInfo(fileName).dir().absolutePath() + '/' + certFile;
     return certFile;
