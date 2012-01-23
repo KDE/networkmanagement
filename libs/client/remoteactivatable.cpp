@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -28,20 +29,16 @@ RemoteActivatablePrivate::~RemoteActivatablePrivate()
 
 }
 
-RemoteActivatable::RemoteActivatable(RemoteActivatablePrivate & dd, const QString &dbusPath, QObject * parent)
+RemoteActivatable::RemoteActivatable(RemoteActivatablePrivate & dd, const QVariantMap &properties, QObject * parent)
 : QObject(parent), d_ptr(&dd)
 {
-    Q_D(RemoteActivatable);
-    d->activatableIface = new ActivatableInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
-    init();
+    init(properties);
 }
 
-RemoteActivatable::RemoteActivatable(const QString &dbusPath, QObject * parent)
+RemoteActivatable::RemoteActivatable(const QVariantMap &properties, QObject * parent)
 : QObject(parent), d_ptr(new RemoteActivatablePrivate)
 {
-    Q_D(RemoteActivatable);
-    d->activatableIface = new ActivatableInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
-    init();
+    init(properties);
 }
 
 RemoteActivatable::~RemoteActivatable()
@@ -49,28 +46,44 @@ RemoteActivatable::~RemoteActivatable()
     delete d_ptr;
 }
 
-void RemoteActivatable::init()
+void RemoteActivatable::init(const QVariantMap & properties)
 {
     Q_D(RemoteActivatable);
+    d->activatableIface = new ActivatableInterface("org.kde.networkmanagement", properties["path"].toString(), QDBusConnection::sessionBus(), this);
     //kDebug() << "ActivatableInterface is (" << d->activatableIface << ") on" << d_ptr;
     connect(d->activatableIface, SIGNAL(activated()),
             this, SIGNAL(activated()));
     connect(d->activatableIface, SIGNAL(changed()),
             this, SIGNAL(changed()));
+    connect(d->activatableIface, SIGNAL(propertiesChanged(QVariantMap)), SLOT(propertiesChanged(QVariantMap)));
 
-    QDBusReply<QString> reply = d->activatableIface->deviceUni();
-    if (reply.isValid()) {
-        d->deviceUni = reply.value();
-    } else {
-        kDebug() << "deviceUni reply is invalid";
+    propertiesChanged(properties);
+}
+
+void RemoteActivatable::propertiesChanged(const QVariantMap &changedProperties)
+{
+    Q_D(RemoteActivatable);
+    QStringList propKeys = changedProperties.keys();
+    QLatin1String deviceUniKey("deviceUni"),
+                  activatableTypeKey("activatableType"),
+                  sharedKey("shared");
+    QVariantMap::const_iterator it = changedProperties.find(deviceUniKey);
+    if (it != changedProperties.end()) {
+        d->deviceUni = it->toString();
+        propKeys.removeOne(deviceUniKey);
     }
-
-    QDBusReply<uint> reply2 = d->activatableIface->activatableType();
-    if (reply2.isValid()) {
-        d->activatableType = (Knm::Activatable::ActivatableType)reply2.value();
-    } else {
-        d->activatableType = Knm::Activatable::InterfaceConnection;
-        kDebug() << "activatableType reply is invalid";
+    it = changedProperties.find(activatableTypeKey);
+    if (it != changedProperties.end()) {
+        d->activatableType = (Knm::Activatable::ActivatableType)it->toUInt();
+        propKeys.removeOne(activatableTypeKey);
+    }
+    it = changedProperties.find(sharedKey);
+    if (it != changedProperties.end()) {
+        d->shared = it->toBool();
+        propKeys.removeOne(sharedKey);
+    }
+    if (propKeys.count()) {
+        kDebug() << "Unhandled properties: " << propKeys;
     }
 }
 
@@ -89,14 +102,7 @@ QString RemoteActivatable::deviceUni() const
 bool RemoteActivatable::isShared() const
 {
     Q_D(const RemoteActivatable);
-    if (!d->activatableIface->isValid()) {
-        return false;
-    }
-    QDBusReply<bool> reply = d->activatableIface->isShared();
-    if (reply.isValid()) {
-        return reply.value();
-    }
-    return false;
+    return d->shared;
 }
 
 void RemoteActivatable::activate()

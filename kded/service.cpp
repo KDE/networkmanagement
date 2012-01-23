@@ -1,6 +1,7 @@
 /*
 Copyright 2009 Dario Freddi <drf54321@gmail.com>
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -158,6 +159,18 @@ void NetworkManagementService::finishInitialization()
     // ideally this will always be deleted before the other list
     d->networkInterfaceMonitor = new NetworkInterfaceMonitor(d->connectionList, d->activatableList, d->activatableList);
 
+    d->nm08Connections = new Nm08Connections(d->secretStorage, d->nmDBusConnectionProvider);
+    d->nm08Connections->importNextNm08Connection();
+
+    // give some time for the ActivatableAdded signal be processed before we emit the activationStateChanged
+    // and hasDefaultRouteChanged signals from d->nmActiveConnectionMonitor.
+    QTimer::singleShot(1000, this, SLOT(delayedRegisterObservers()));
+}
+
+void NetworkManagementService::delayedRegisterObservers()
+{
+    Q_D(NetworkManagementService);
+
     // create ActiveConnectionMonitor after construction of NMDBusSettingsConnectionProvider and observer registrations
     // because, activatableList is filled in NetworkManager::DeviceMonitor and updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has
     // Unknown activationState in its /org/kde/networkmanagement/Activatable interface
@@ -166,7 +179,4 @@ void NetworkManagementService::finishInitialization()
     // register after nmSettingsService and nmDBusConnectionProvider because it relies on changes they
     // make to interfaceconnections
     d->activatableList->registerObserver(d->nmActiveConnectionMonitor);
-
-    d->nm08Connections = new Nm08Connections(d->secretStorage, d->nmDBusConnectionProvider);
-    d->nm08Connections->importNextNm08Connection();
 }

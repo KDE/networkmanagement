@@ -34,5 +34,13 @@
     <property name="iconName" type="s" access="read"/>
     <property name="activationState" type="u" access="read"/>
     <property name="hasDefaultRoute" type="b" access="read"/>
+    <signal name="icPropertiesChanged">
+      <arg name="properties" type="a{sv}" tp:type="String_Variant_Map">
+        <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+        <tp:docstring>
+          A dictionary mapping property names to variant boxed values
+        </tp:docstring>
+      </arg>
+    </signal>
   </interface>
 </node>

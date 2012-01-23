@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -17,6 +18,8 @@ Lesser General Public License for more details.
 You should have received a copy of the GNU Lesser General Public
 License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 */
+
+// TODO: check if this class is really used, remove it if not.
 
 #ifndef REMOTEUNCONFIGUREDINTERFACE_H
 #define REMOTEUNCONFIGUREDINTERFACE_H
@@ -38,11 +41,11 @@ Q_OBJECT
 friend class RemoteActivatableList;
 
 public:
-    RemoteUnconfiguredInterface(const QString &dbusPath, QObject * parent);
+    RemoteUnconfiguredInterface(const QVariantMap &properties, QObject * parent);
     virtual ~RemoteUnconfiguredInterface();
 
 protected:
-    RemoteUnconfiguredInterface(RemoteUnconfiguredInterfacePrivate &dd, const QString &dbusPath, QObject * parent);
+    RemoteUnconfiguredInterface(RemoteUnconfiguredInterfacePrivate &dd, const QVariantMap &properties, QObject * parent);
 private:
     Q_DECLARE_PRIVATE(RemoteUnconfiguredInterface)
 };

@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -21,8 +22,8 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remotevpninterfaceconnection.h"
 #include "remotevpninterfaceconnection_p.h"
 
-RemoteVpnInterfaceConnection::RemoteVpnInterfaceConnection(const QString &dbusPath, QObject * parent)
-: RemoteInterfaceConnection(*new RemoteVpnInterfaceConnectionPrivate, dbusPath, parent)
+RemoteVpnInterfaceConnection::RemoteVpnInterfaceConnection(const QVariantMap &properties, QObject * parent)
+: RemoteInterfaceConnection(*new RemoteVpnInterfaceConnectionPrivate, properties, parent)
 {
 }
 

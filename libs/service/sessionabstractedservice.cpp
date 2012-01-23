@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -62,11 +63,13 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
 {
     Q_D(SessionAbstractedService);
     if (added) {
+        QVariantMap properties;
         if (added->activatableType() == Knm::Activatable::InterfaceConnection
                 || added->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
             Knm::InterfaceConnection * realObj = static_cast<Knm::InterfaceConnection*>(added);
             new InterfaceConnectionAdaptor(realObj);
             new ActivatableAdaptor(realObj);
+            properties = realObj->toMap();
         } else if (added->activatableType() == Knm::Activatable::WirelessInterfaceConnection
                 || added->activatableType() == Knm::Activatable::HiddenWirelessInterfaceConnection ) {
             Knm::WirelessInterfaceConnection * realObj
@@ -74,16 +77,19 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
             new WirelessInterfaceConnectionAdaptor(realObj);
             new InterfaceConnectionAdaptor(realObj);
             new ActivatableAdaptor(realObj);
+            properties = realObj->toMap();
         } else if (added->activatableType() == Knm::Activatable::WirelessNetwork) {
             Knm::WirelessNetwork * realObj
                 = static_cast<Knm::WirelessNetwork*>(added);
             new WirelessNetworkAdaptor(realObj);
             new ActivatableAdaptor(realObj);
+            properties = realObj->toMap();
         } else if (added->activatableType() == Knm::Activatable::GsmInterfaceConnection) {
             Knm::GsmInterfaceConnection * realObj = static_cast<Knm::GsmInterfaceConnection*>(added);
             new GsmInterfaceConnectionAdaptor(realObj);
             new InterfaceConnectionAdaptor(realObj);
             new ActivatableAdaptor(realObj);
+            properties = realObj->toMap();
         } else {
             // do not put any other types on the bus
             return;
@@ -93,7 +99,9 @@ void SessionAbstractedService::handleAdd(Knm::Activatable * added)
         d->adaptors.insert(added, path);
         QDBusConnection::sessionBus().registerObject(path, added);
         //kDebug() << "registering object at " << path;
-        emit ActivatableAdded(path, added->activatableType(), d->list->activatableIndex(added));
+        properties.insert("path", path);
+        properties.insert("activatableIndex", d->list->activatableIndex(added));
+        emit ActivatableAdded(properties);
     }
 }
 
@@ -132,6 +140,19 @@ QStringList SessionAbstractedService::ListActivatables() const
         }
     }
     return sortedPaths;
+}
+
+void SessionAbstractedService::ReEmitActivatableList()
+{
+    Q_D(const SessionAbstractedService);
+    foreach (Knm::Activatable * a, d->list->activatables()) {
+        if (d->adaptors.contains(a)) {
+            QVariantMap properties = a->toMap();
+            properties.insert("path", d->adaptors[a]);
+            properties.insert("activatableIndex", d->list->activatableIndex(a));
+            emit ActivatableAdded(properties);
+        }
+    }
 }
 
 void SessionAbstractedService::ReadConfig()

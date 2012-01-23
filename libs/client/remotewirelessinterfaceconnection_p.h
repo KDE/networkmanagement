@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyrignt 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -28,6 +29,13 @@ class RemoteWirelessInterfaceConnectionPrivate : public RemoteInterfaceConnectio
 {
 public:
     WirelessInterfaceConnectionInterface * wirelessInterfaceConnectionIface;
+    QString ssid;
+    int signalStrength;
+    NetworkManager::WirelessDevice::Capabilities interfaceCapabilities;
+    NetworkManager::AccessPoint::Capabilities apCapabilities;
+    NetworkManager::AccessPoint::WpaFlags wpaFlags;
+    NetworkManager::AccessPoint::WpaFlags rsnFlags;
+    NetworkManager::WirelessDevice::OperationMode operationMode;
 };
 
 #endif // REMOTEWIRELESSINTERFACECONNECTION_P_H

@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -51,13 +52,15 @@ public Q_SLOTS:
 Q_SIGNALS:
     void activated();
     void changed();
+protected Q_SLOTS:
+    void propertiesChanged(const QVariantMap &properties);
 protected:
     Q_DECLARE_PRIVATE(RemoteActivatable)
-    RemoteActivatable(const QString &dbusPath, QObject * parent);
-    RemoteActivatable(RemoteActivatablePrivate & dd, const QString &dbusPath, QObject * parent);
+    RemoteActivatable(const QVariantMap &properties, QObject * parent);
+    RemoteActivatable(RemoteActivatablePrivate & dd, const QVariantMap &properties, QObject * parent);
     RemoteActivatablePrivate * d_ptr;
 private:
-    void init();
+    void init(const QVariantMap & properties);
 };
 
 #endif // REMOTEACTIVATABLE_H

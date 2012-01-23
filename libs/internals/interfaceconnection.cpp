@@ -1,6 +1,7 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -51,10 +52,14 @@ QUuid InterfaceConnection::connectionUuid() const
 
 void InterfaceConnection::setConnectionName(const QString& name)
 {
-    if (name != m_name) {
-        m_name = name;
-        emit changed();
+    if (name == m_name) {
+        return;
     }
+    m_name = name;
+    emit changed();
+    QVariantMap map;
+    map.insert("name", m_name);
+    emit icPropertiesChanged(map);
 }
 
 QString InterfaceConnection::connectionName() const
@@ -64,10 +69,14 @@ QString InterfaceConnection::connectionName() const
 
 void InterfaceConnection::setIconName(const QString & iconName)
 {
-    if (iconName != m_iconName) {
-        m_iconName = iconName;
-        emit changed();
+    if (iconName == m_iconName) {
+        return;
     }
+    m_iconName = iconName;
+    emit changed();
+    QVariantMap map;
+    map.insert("iconName", m_iconName);
+    emit icPropertiesChanged(map);
 }
 
 QString InterfaceConnection::iconName() const
@@ -77,13 +86,17 @@ QString InterfaceConnection::iconName() const
 
 void InterfaceConnection::setActivationState(InterfaceConnection::ActivationState state)
 {
-    if (m_state != state) {
-        m_oldState = m_state;
-        m_state = state;
-        emit changed();
-        emit activationStateChanged(m_oldState, m_state);
-        emit activationStateChanged((uint)m_oldState, (uint)m_state);
+    if (m_state == state) {
+        return;
     }
+    m_oldState = m_state;
+    m_state = state;
+    emit changed();
+    emit activationStateChanged(m_oldState, m_state);
+    emit activationStateChanged((uint)m_oldState, (uint)m_state);
+    QVariantMap map;
+    map.insert("activationState", m_state);
+    emit icPropertiesChanged(map);
 }
 
 InterfaceConnection::ActivationState InterfaceConnection::activationState() const
@@ -98,10 +111,14 @@ InterfaceConnection::ActivationState InterfaceConnection::oldActivationState() c
 
 void InterfaceConnection::setHasDefaultRoute(bool hasDefault)
 {
-    if (m_hasDefaultRoute != hasDefault) {
-        m_hasDefaultRoute = hasDefault;
-        emit hasDefaultRouteChanged(m_hasDefaultRoute);
+    if (m_hasDefaultRoute == hasDefault) {
+        return;
     }
+    m_hasDefaultRoute = hasDefault;
+    emit hasDefaultRouteChanged(m_hasDefaultRoute);
+    QVariantMap map;
+    map.insert("hasDefaultRoute", m_hasDefaultRoute);
+    emit icPropertiesChanged(map);
 }
 
 bool InterfaceConnection::hasDefaultRoute() const
@@ -112,4 +129,16 @@ bool InterfaceConnection::hasDefaultRoute() const
 void InterfaceConnection::deactivate()
 {
     emit deactivated();
+}
+
+QVariantMap InterfaceConnection::toMap()
+{
+    QVariantMap map = Activatable::toMap();
+    map.insert("connectionType", m_type);
+    map.insert("uuid", m_uuid.toString());
+    map.insert("name", m_name);
+    map.insert("iconName", m_iconName);
+    map.insert("activationState", m_state);
+    map.insert("hasDefaultRoute", m_hasDefaultRoute);
+    return map;
 }

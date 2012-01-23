@@ -45,8 +45,10 @@ public:
 Q_SIGNALS:
     void signalQualityChanged(int);
     void accessTechnologyChanged(const int);
+protected Q_SLOTS:
+    void gsmPropertiesChanged(const QVariantMap &properties);
 protected:
-    RemoteGsmInterfaceConnection(const QString & dbusPath, QObject * parent);
+    RemoteGsmInterfaceConnection(const QVariantMap & properties, QObject * parent);
     Q_DECLARE_PRIVATE(RemoteGsmInterfaceConnection)
 };
 

@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -67,11 +68,12 @@ Q_SIGNALS:
     void activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState);
     void hasDefaultRouteChanged(bool);
 protected Q_SLOTS:
-    void handleActivationStateChange(uint, uint);
+    void icPropertiesChanged(const QVariantMap &properties);
 protected:
-    RemoteInterfaceConnection(const QString &dbusPath, QObject * parent);
-    RemoteInterfaceConnection(RemoteInterfaceConnectionPrivate &dd, const QString &dbusPath, QObject * parent);
+    RemoteInterfaceConnection(const QVariantMap &properties, QObject * parent);
+    RemoteInterfaceConnection(RemoteInterfaceConnectionPrivate &dd, const QVariantMap &properties, QObject * parent);
 private:
+    void init(const QVariantMap & properties);
     Q_DECLARE_PRIVATE(RemoteInterfaceConnection)
 };
 

@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -53,7 +54,7 @@ Q_SIGNALS:
     void appeared();
     void disappeared();
 protected Q_SLOTS:
-    void handleActivatableAdded(const QString &, uint, int);
+    void handleActivatableAdded(const QVariantMap &properties);
     void handleActivatableRemoved(const QString &);
     void serviceRegistered();
     void serviceUnregistered();

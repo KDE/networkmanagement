@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -36,7 +37,7 @@ friend class RemoteActivatableList;
 public:
     virtual ~RemoteVpnInterfaceConnection();
 protected:
-    RemoteVpnInterfaceConnection(const QString & dbusPath, QObject * parent);
+    RemoteVpnInterfaceConnection(const QVariantMap & properties, QObject * parent);
     Q_DECLARE_PRIVATE(RemoteVpnInterfaceConnection)
 };
 

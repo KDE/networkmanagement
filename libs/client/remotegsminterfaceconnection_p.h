@@ -29,6 +29,8 @@ class RemoteGsmInterfaceConnectionPrivate : public RemoteInterfaceConnectionPriv
 {
 public:
     GsmInterfaceConnectionInterface * gsmInterfaceConnectionIface;
+    int signalQuality;
+    int accessTechnology;
 };
 
 #endif // REMOTEGSMINTERFACECONNECTION_P_H

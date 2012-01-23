@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -41,8 +42,10 @@ Q_PROPERTY(uint rsnFlags READ rsnFlags)
 public:
     WirelessNetwork(const QString & ssid, int strength, NetworkManager::WirelessDevice::Capabilities interfaceCapabilities, NetworkManager::AccessPoint::Capabilities apCapabilities, NetworkManager::AccessPoint::WpaFlags wpaFlags, NetworkManager::AccessPoint::WpaFlags rsnFlags, NetworkManager::WirelessDevice::OperationMode mode, const QString & deviceUni, QObject * parent);
     virtual ~WirelessNetwork();
+    QVariantMap toMap();
 signals:
     void strengthChanged(int);
+    void wnPropertiesChanged(const QVariantMap & properties);
 public Q_SLOTS:
     void setStrength(int);
 };

@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyrignt 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -29,6 +30,13 @@ class RemoteWirelessNetworkPrivate : public RemoteActivatablePrivate
 {
 public:
     WirelessNetworkInterface * wirelessNetworkItemInterface;
+    QString ssid;
+    int signalStrength;
+    NetworkManager::WirelessDevice::Capabilities interfaceCapabilities;
+    NetworkManager::AccessPoint::Capabilities apCapabilities;
+    NetworkManager::AccessPoint::WpaFlags wpaFlags;
+    NetworkManager::AccessPoint::WpaFlags rsnFlags;
+    NetworkManager::WirelessDevice::OperationMode operationMode;
 };
 
 #endif // REMOTE_WIRELESS_NETWORK_P_H

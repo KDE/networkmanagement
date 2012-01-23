@@ -1,7 +1,7 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2010-2011 Lamarque Souza <lamarque@kde.org>
+Copyright 2010-2012 Lamarque Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -45,10 +45,12 @@ public:
     virtual ~GsmInterfaceConnection();
     int getSignalQuality() const;
     int getAccessTechnology() const;
+    QVariantMap toMap();
 Q_SIGNALS:
     void signalQualityChanged(int);
     void accessTechnologyChanged(const int);
     void enabledChanged(const bool enabled);
+    void gsmPropertiesChanged(const QVariantMap & properties);
 public Q_SLOTS:
     void setSignalQuality(uint signalQuality);
     void setAccessTechnology(const ModemManager::ModemInterface::AccessTechnology accessTechnology);

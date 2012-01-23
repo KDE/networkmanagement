@@ -1,6 +1,7 @@
 /*
 Copyright 2009 Dario Freddi <drf54321@gmail.com>
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -37,6 +38,7 @@ public:
     virtual ~NetworkManagementService();
 private Q_SLOTS:
     void finishInitialization();
+    void delayedRegisterObservers();
 private:
     NetworkManagementServicePrivate * d_ptr;
 };

@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -55,8 +56,10 @@ public:
     NetworkManager::WirelessDevice::OperationMode operationMode() const;
 Q_SIGNALS:
     void strengthChanged(int);
+protected Q_SLOTS:
+    void wicPropertiesChanged(const QVariantMap &properties);
 protected:
-    RemoteWirelessInterfaceConnection(const QString & dbusPath, QObject * parent);
+    RemoteWirelessInterfaceConnection(const QVariantMap & properties, QObject * parent);
     Q_DECLARE_PRIVATE(RemoteWirelessInterfaceConnection)
 };
 

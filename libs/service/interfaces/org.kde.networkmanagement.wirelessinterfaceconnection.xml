@@ -33,5 +33,13 @@
     <signal name="strengthChanged">
       <arg name="strength" type="i" direction="out"/>
     </signal>
+    <signal name="wicPropertiesChanged">
+      <arg name="properties" type="a{sv}" tp:type="String_Variant_Map">
+        <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+        <tp:docstring>
+          A dictionary mapping property names to variant boxed values
+        </tp:docstring>
+      </arg>
+    </signal>
   </interface>
 </node>
