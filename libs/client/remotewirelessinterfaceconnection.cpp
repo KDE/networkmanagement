@@ -85,9 +85,9 @@ void RemoteWirelessInterfaceConnection::wicPropertiesChanged(const QVariantMap &
         d->operationMode = static_cast<NetworkManager::WirelessDevice::OperationMode>(it->toUInt());
         propKeys.removeOne(operationModeKey);
     }
-    if (propKeys.count()) {
+    /*if (propKeys.count()) {
         kDebug() << "Unhandled properties: " << propKeys;
-    }
+    }*/
 }
 
 QString RemoteWirelessInterfaceConnection::ssid() const

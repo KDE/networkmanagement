@@ -82,9 +82,9 @@ void RemoteActivatable::propertiesChanged(const QVariantMap &changedProperties)
         d->shared = it->toBool();
         propKeys.removeOne(sharedKey);
     }
-    if (propKeys.count()) {
+    /*if (propKeys.count()) {
         kDebug() << "Unhandled properties: " << propKeys;
-    }
+    }*/
 }
 
 Knm::Activatable::ActivatableType RemoteActivatable::activatableType() const

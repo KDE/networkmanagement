@@ -93,9 +93,9 @@ void RemoteInterfaceConnection::icPropertiesChanged(const QVariantMap &changedPr
         emit hasDefaultRouteChanged(d->hasDefaultRoute);
         propKeys.removeOne(hasDefaultRouteKey);
     }
-    if (propKeys.count()) {
+    /*if (propKeys.count()) {
         kDebug() << "Unhandled properties: " << propKeys;
-    }
+    }*/
 }
 
 Knm::Connection::Type RemoteInterfaceConnection::connectionType() const

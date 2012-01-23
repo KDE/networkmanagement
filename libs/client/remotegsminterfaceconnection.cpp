@@ -56,9 +56,9 @@ void RemoteGsmInterfaceConnection::gsmPropertiesChanged(const QVariantMap &chang
         emit accessTechnologyChanged(d->accessTechnology);
         propKeys.removeOne(accessTechnologyKey);
     }
-    if (propKeys.count()) {
+    /*if (propKeys.count()) {
         kDebug() << "Unhandled properties: " << propKeys;
-    }
+    }*/
 }
 int RemoteGsmInterfaceConnection::getAccessTechnology() const
 {
