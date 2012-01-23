@@ -7,15 +7,20 @@
     </method>
     <method name="ReadConfig" />
     <method name="FinishInitialization" />
+    <method name="ReEmitActivatableList" />
 
     <signal name="ActivatableAdded">
-	  <arg name="added" type="s" direction="out" />
-	  <arg name="type" type="u" direction="out" />
-      <arg name="index" type="i" direction="out" />
+      <arg name="properties" type="a{sv}" tp:type="String_Variant_Map">
+        <annotation name="com.trolltech.QtDBus.QtTypeName.In0" value="QVariantMap"/>
+        <tp:docstring>
+          A dictionary mapping property names to variant boxed values
+        </tp:docstring>
+      </arg>
     </signal>
     <signal name="ActivatableRemoved">
-	  <arg name="removed" type="s" direction="out" />
+      <arg name="removed" type="s" direction="out" />
     </signal>
     <signal name="ReloadConfig" />
+    <signal name="ModuleReady" />
   </interface>
 </node>

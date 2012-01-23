@@ -1,7 +1,7 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2012 Lamarque Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -74,21 +74,29 @@ void GsmInterfaceConnection::connectMMSignals()
 
 void GsmInterfaceConnection::setSignalQuality(uint signalQuality)
 {
-    if ((int)signalQuality != m_signalQuality) {
-        m_signalQuality = (int)signalQuality;
-        emit signalQualityChanged(m_signalQuality);
+    if ((int)signalQuality == m_signalQuality) {
+        return;
     }
+    m_signalQuality = (int)signalQuality;
+    emit signalQualityChanged(m_signalQuality);
+    QVariantMap map;
+    map.insert("signalQuality", m_signalQuality);
+    emit gsmPropertiesChanged(map);
 }
 
 void GsmInterfaceConnection::setAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology accessTechnology)
 {
-    int temp =accessTechnology;
+    int temp = accessTechnology;
 
-    if (temp != m_accessTechnology) {
-        setSignalQuality(0);
-        m_accessTechnology = temp;
-        emit accessTechnologyChanged(m_accessTechnology);
+    if (temp == m_accessTechnology) {
+        return;
     }
+    setSignalQuality(0);
+    m_accessTechnology = temp;
+    emit accessTechnologyChanged(m_accessTechnology);
+    QVariantMap map;
+    map.insert("accessTechnology", m_accessTechnology);
+    emit gsmPropertiesChanged(map);
 }
 
 int GsmInterfaceConnection::getSignalQuality() const
@@ -103,10 +111,26 @@ int GsmInterfaceConnection::getAccessTechnology() const
 
 void GsmInterfaceConnection::setEnabled(const bool enabled)
 {
+    if (enabled == m_enabled) {
+        return;
+    }
     m_enabled = enabled;
     emit enabledChanged(m_enabled);
+    QVariantMap map;
+    map.insert("enabled", m_enabled);
+    emit gsmPropertiesChanged(map);
 
     if (!enabled) {
         setSignalQuality(0);
     }
+}
+
+
+QVariantMap GsmInterfaceConnection::toMap()
+{
+    QVariantMap map = InterfaceConnection::toMap();
+    map.insert("signalQuality", m_signalQuality);
+    map.insert("accessTechnology", m_accessTechnology);
+    map.insert("enabled", m_enabled);
+    return map;
 }

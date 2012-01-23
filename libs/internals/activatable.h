@@ -1,6 +1,7 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -26,6 +27,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtCore/QObject>
 #include <QMetaType>
+#include <QVariantMap>
 
 namespace Knm {
 
@@ -56,11 +58,13 @@ public:
     QString deviceUni() const;
     bool isShared() const;
     void setShared(const bool);
+    virtual QVariantMap toMap();
 public Q_SLOTS:
     void activate();
 Q_SIGNALS:
     void activated();
     void changed();
+    void propertiesChanged(const QVariantMap & properties);
 protected:
     Activatable(ActivatableType type, const QString &deviceUni, QObject * parent);
 

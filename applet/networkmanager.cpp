@@ -320,8 +320,12 @@ void NetworkManagerApplet::init()
                                   Q_ARG(int, Solid::Control::NetworkInterfaceNm09::NoReason));
     }
 
-    connect(m_activatables, SIGNAL(appeared()), SLOT(finishInitialization()));
-    finishInitialization();
+    QDBusConnection dbus = QDBusConnection::sessionBus();
+    dbus.connect("org.kde.kded", "/org/kde/networkmanagement", "org.kde.networkmanagement", "ModuleReady", this, SLOT(finishInitialization()));
+
+    if (QDBusConnection::sessionBus().interface()->isServiceRegistered("org.kde.networkmanagement")) {
+        QTimer::singleShot(0, this, SLOT(finishInitialization()));
+    }
 }
 
 void NetworkManagerApplet::finishInitialization()
@@ -337,7 +341,6 @@ QGraphicsWidget* NetworkManagerApplet::graphicsWidget()
 {
     if (!m_popup) {
         m_popup = new NMPopup(m_activatables, this);
-        connect(m_popup, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
     }
     return m_popup;
 }

@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -30,6 +31,7 @@ public:
     ActivatableInterface * activatableIface;
     QString deviceUni;
     Knm::Activatable::ActivatableType activatableType;
+    bool shared;
 };
 
 #endif // REMOTEACTIVATABLE_P_H

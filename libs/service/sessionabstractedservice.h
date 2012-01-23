@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -54,10 +55,12 @@ public slots:
     Q_SCRIPTABLE QStringList ListActivatables() const;
     Q_SCRIPTABLE void ReadConfig();
     Q_SCRIPTABLE void FinishInitialization();
+    Q_SCRIPTABLE void ReEmitActivatableList();
 signals:
-    Q_SCRIPTABLE void ActivatableAdded(const QString & path, uint type, int index);
+    Q_SCRIPTABLE void ActivatableAdded(const QVariantMap & properties);
     Q_SCRIPTABLE void ActivatableRemoved(const QString &);
     Q_SCRIPTABLE void ReloadConfig();
+    Q_SCRIPTABLE void ModuleReady();
     void DoFinishInitialization();
 private:
     Q_DECLARE_PRIVATE(SessionAbstractedService)

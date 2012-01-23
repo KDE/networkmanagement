@@ -1,5 +1,6 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -34,8 +35,25 @@ WirelessNetwork::~WirelessNetwork()
 
 void WirelessNetwork::setStrength(int strength)
 {
-    if (strength != m_strength) {
-        WirelessObject::setStrength(strength);
-        emit strengthChanged(strength);
+    if (strength == m_strength) {
+        return;
     }
+    WirelessObject::setStrength(strength);
+    emit strengthChanged(strength);
+    QVariantMap map;
+    map.insert("signalStrength", m_strength);
+    emit wnPropertiesChanged(map);
+}
+
+QVariantMap WirelessNetwork::toMap()
+{
+    QVariantMap map = Activatable::toMap();
+    map.insert("ssid", m_ssid);
+    map.insert("signalStrength", m_strength);
+    map.insert("interfaceCapabilities", (uint)m_interfaceCapabilities);
+    map.insert("apCapabilities", (uint)m_apCapabilities);
+    map.insert("wpaFlags", (uint)m_wpaFlags);
+    map.insert("rsnFlags", (uint)m_rsnFlags);
+    map.insert("operationMode", (uint)m_operationMode);
+    return map;
 }

@@ -1,6 +1,7 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -76,6 +77,7 @@ public:
     void setHasDefaultRoute(bool hasDefault);
     bool hasDefaultRoute() const;
     void deactivate();
+    QVariantMap toMap();
 
 Q_SIGNALS:
     void activationStateChanged(Knm::InterfaceConnection::ActivationState oldState, Knm::InterfaceConnection::ActivationState newState);
@@ -83,6 +85,7 @@ Q_SIGNALS:
     void activationStateChanged(uint, uint);
     void hasDefaultRouteChanged(bool);
     void deactivated();
+    void icPropertiesChanged(const QVariantMap & properties);
 protected:
     InterfaceConnection(ActivatableType type, const QString & deviceUni, QObject * parent);
 

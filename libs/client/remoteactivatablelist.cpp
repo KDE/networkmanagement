@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -60,27 +61,13 @@ void RemoteActivatableList::init()
 {
     Q_D(RemoteActivatableList);
     if (d->iface->isValid()) {
-        connect(d->iface, SIGNAL(ActivatableAdded(const QString&,uint, int)),
-                this, SLOT(handleActivatableAdded(const QString&,uint, int)));
-        connect(d->iface, SIGNAL(ActivatableRemoved(const QString&)),
-                this, SLOT(handleActivatableRemoved(const QString &)));
+        connect(d->iface, SIGNAL(ActivatableAdded(QVariantMap)),
+                this, SLOT(handleActivatableAdded(QVariantMap)));
+        connect(d->iface, SIGNAL(ActivatableRemoved(QString)),
+                this, SLOT(handleActivatableRemoved(QString)));
 
         if (d->activatables.isEmpty()) {
-            QDBusReply<QStringList> rv = d->iface->ListActivatables();
-            if (rv.isValid()) {
-                int i = 0;
-                foreach (const QString &activatable, rv.value()) {
-                    // messy, I know, but making ListActivatables return a(si) is boring
-                    QDBusInterface iface(QLatin1String("org.kde.networkmanagement"),
-                            activatable, "org.kde.networkmanagement.Activatable", QDBusConnection::sessionBus());
-                    QDBusReply<uint> type = iface.call("activatableType");
-                    if (type.isValid())
-                        handleActivatableAdded(activatable, type.value(), i);
-                    i++;
-                }
-            }
-            else
-                kWarning() << "ListActivatables method of KDED module is not available!";
+            d->iface->ReEmitActivatableList();
         }
     }
 }
@@ -138,8 +125,12 @@ QList<RemoteActivatable *> RemoteActivatableList::activatables() const
     return d->sortedActivatables;
 }
 
-void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uint type, int index)
+void RemoteActivatableList::handleActivatableAdded(const QVariantMap & properties)
 {
+    QString addedPath = properties["path"].toString();
+    uint type = properties["activatableType"].toUInt();
+    int index = properties["activatableIndex"].toInt();
+
     if (!addedPath.startsWith('/')) {
         kDebug() << "Invalid path:" << addedPath << type;
         return;
@@ -149,27 +140,27 @@ void RemoteActivatableList::handleActivatableAdded(const QString &addedPath, uin
         RemoteActivatable * newActivatable = 0;
         switch (type) {
             case Knm::Activatable::InterfaceConnection:
-                newActivatable = new RemoteInterfaceConnection(addedPath, this);
+                newActivatable = new RemoteInterfaceConnection(properties, this);
                 //kDebug() << "interfaceconnection at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
             case Knm::Activatable::WirelessInterfaceConnection:
-                newActivatable = new RemoteWirelessInterfaceConnection(addedPath, this);
+                newActivatable = new RemoteWirelessInterfaceConnection(properties, this);
                 //kDebug() << "wirelessconnection at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
             case Knm::Activatable::WirelessNetwork:
-                newActivatable = new RemoteWirelessNetwork(addedPath, this);
+                newActivatable = new RemoteWirelessNetwork(properties, this);
                 //kDebug() << "wirelessnetwork at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
             case Knm::Activatable::UnconfiguredInterface:
-                newActivatable = new RemoteUnconfiguredInterface(addedPath, this);
+                newActivatable = new RemoteUnconfiguredInterface(properties, this);
                 //kDebug() << "unconfiguredinterface at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
             case Knm::Activatable::VpnInterfaceConnection:
-                newActivatable = new RemoteVpnInterfaceConnection(addedPath, this);
+                newActivatable = new RemoteVpnInterfaceConnection(properties, this);
                 //kDebug() << "vpnconnection at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
             case Knm::Activatable::GsmInterfaceConnection:
-                newActivatable = new RemoteGsmInterfaceConnection(addedPath, this);
+                newActivatable = new RemoteGsmInterfaceConnection(properties, this);
                 //kDebug() << "gsminterfaceconnection at" << addedPath << "with type" << newActivatable->activatableType();
                 break;
         }

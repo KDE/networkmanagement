@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyrignt 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -24,10 +25,19 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteinterfaceconnection_p.h"
 #include "wirelessinterfaceconnectioninterface.h"
 
+#include "solid/control/wirelessnetworkinterface.h"
+
 class RemoteWirelessInterfaceConnectionPrivate : public RemoteInterfaceConnectionPrivate
 {
 public:
     WirelessInterfaceConnectionInterface * wirelessInterfaceConnectionIface;
+    QString ssid;
+    int signalStrength;
+    Solid::Control::WirelessNetworkInterfaceNm09::Capabilities interfaceCapabilities;
+    Solid::Control::AccessPointNm09::Capabilities apCapabilities;
+    Solid::Control::AccessPointNm09::WpaFlags wpaFlags;
+    Solid::Control::AccessPointNm09::WpaFlags rsnFlags;
+    Solid::Control::WirelessNetworkInterfaceNm09::OperationMode operationMode;
 };
 
 #endif // REMOTEWIRELESSINTERFACECONNECTION_P_H

@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -29,6 +30,13 @@ class RemoteInterfaceConnectionPrivate : public RemoteActivatablePrivate
 {
 public:
     InterfaceConnectionInterface * interfaceConnectionIface;
+    Knm::Connection::Type connectionType;
+    QString uuid;
+    QString name;
+    QString iconName;
+    Knm::InterfaceConnection::ActivationState activationState;
+    Knm::InterfaceConnection::ActivationState oldActivationState;
+    bool hasDefaultRoute;
 };
 
 #endif // REMOTEINTERFACECONNECTION_P_H

@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyrignt 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -22,13 +23,21 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #define REMOTEWIRELESSNETWORKITEM_P_H
 
 #include "remoteactivatable_p.h"
-
 #include "wirelessnetworkinterface.h"
+
+#include "solid/control/wirelessnetworkinterface.h"
 
 class RemoteWirelessNetworkPrivate : public RemoteActivatablePrivate
 {
 public:
     WirelessNetworkInterface * wirelessNetworkItemInterface;
+    QString ssid;
+    int signalStrength;
+    Solid::Control::WirelessNetworkInterfaceNm09::Capabilities interfaceCapabilities;
+    Solid::Control::AccessPointNm09::Capabilities apCapabilities;
+    Solid::Control::AccessPointNm09::WpaFlags wpaFlags;
+    Solid::Control::AccessPointNm09::WpaFlags rsnFlags;
+    Solid::Control::WirelessNetworkInterfaceNm09::OperationMode operationMode;
 };
 
 #endif // REMOTEWIRELESSNETWORKITEM_P_H

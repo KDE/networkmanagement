@@ -24,14 +24,15 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remotegsminterfaceconnection.h"
 #include "remotegsminterfaceconnection_p.h"
 
-RemoteGsmInterfaceConnection::RemoteGsmInterfaceConnection(const QString &dbusPath, QObject * parent)
-: RemoteInterfaceConnection(*new RemoteGsmInterfaceConnectionPrivate, dbusPath, parent)
+#include <KDebug>
+
+RemoteGsmInterfaceConnection::RemoteGsmInterfaceConnection(const QVariantMap &properties, QObject * parent)
+: RemoteInterfaceConnection(*new RemoteGsmInterfaceConnectionPrivate, properties, parent)
 {
     Q_D(RemoteGsmInterfaceConnection);
-    d->gsmInterfaceConnectionIface = new GsmInterfaceConnectionInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
-    connect(d->gsmInterfaceConnectionIface, SIGNAL(signalQualityChanged(int)), this, SIGNAL(signalQualityChanged(int)));
-
-    connect(d->gsmInterfaceConnectionIface, SIGNAL(accessTechnologyChanged(const int)), this, SIGNAL(accessTechnologyChanged(const int)));
+    d->gsmInterfaceConnectionIface = new GsmInterfaceConnectionInterface("org.kde.networkmanagement", properties["path"].toString(), QDBusConnection::sessionBus(), this);
+    connect(d->gsmInterfaceConnectionIface, SIGNAL(gsmPropertiesChanged(QVariantMap)), SLOT(gsmPropertiesChanged(QVariantMap)));
+    gsmPropertiesChanged(properties);
 }
 
 RemoteGsmInterfaceConnection::~RemoteGsmInterfaceConnection()
@@ -39,22 +40,38 @@ RemoteGsmInterfaceConnection::~RemoteGsmInterfaceConnection()
 
 }
 
+void RemoteGsmInterfaceConnection::gsmPropertiesChanged(const QVariantMap &changedProperties)
+{
+    Q_D(RemoteGsmInterfaceConnection);
+    QStringList propKeys = changedProperties.keys();
+    QLatin1String signalQualityKey("signalQuality"),
+                  accessTechnologyKey("accessTechnology");
+    QVariantMap::const_iterator it = changedProperties.find(signalQualityKey);
+    if (it != changedProperties.end()) {
+        d->signalQuality = it->toInt();
+        emit signalQualityChanged(d->signalQuality);
+        propKeys.removeOne(signalQualityKey);
+    }
+    it = changedProperties.find(accessTechnologyKey);
+    if (it != changedProperties.end()) {
+        d->accessTechnology = it->toInt();
+        emit accessTechnologyChanged(d->accessTechnology);
+        propKeys.removeOne(accessTechnologyKey);
+    }
+    if (propKeys.count()) {
+        kDebug() << "Unhandled properties: " << propKeys;
+    }
+}
 int RemoteGsmInterfaceConnection::getAccessTechnology() const
 {
     Q_D(const RemoteGsmInterfaceConnection);
-    QDBusReply<int> reply = d->gsmInterfaceConnectionIface->getAccessTechnology();
-
-    if (reply.isValid()) {
-        return reply.value();
-    } else {
-        return Solid::Control::ModemInterface::UnknownTechnology;
-    }
+    return d->accessTechnology;
 }
 
 int RemoteGsmInterfaceConnection::getSignalQuality() const
 {
     Q_D(const RemoteGsmInterfaceConnection);
-    return d->gsmInterfaceConnectionIface->getSignalQuality();
+    return d->signalQuality;
 }
 
 // vim: sw=4 sts=4 et tw=100

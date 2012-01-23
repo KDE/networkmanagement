@@ -1,6 +1,7 @@
 /*
 Copyright 2008 Frederik Gladhorn <gladhorn@kde.org>
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -43,7 +44,13 @@ Activatable::ActivatableType Activatable::activatableType() const
 
 void Activatable::setDeviceUni(const QString& deviceUni)
 {
+    if (deviceUni == m_deviceUni) {
+        return;
+    }
     m_deviceUni = deviceUni;
+    QVariantMap map;
+    map.insert("deviceUni", deviceUni);
+    emit propertiesChanged(map);
 }
 
 QString Activatable::deviceUni() const
@@ -58,7 +65,13 @@ bool Activatable::isShared() const
 
 void Activatable::setShared(const bool shared)
 {
+    if (shared == m_shared) {
+        return;
+    }
     m_shared = shared;
+    QVariantMap map;
+    map.insert("shared", m_shared);
+    emit propertiesChanged(map);
 }
 
 void Activatable::activate()
@@ -67,3 +80,11 @@ void Activatable::activate()
     emit activated();
 }
 
+QVariantMap Activatable::toMap()
+{
+    QVariantMap map;
+    map.insert("activatableType", m_type);
+    map.insert("deviceUni", m_deviceUni);
+    map.insert("shared", m_shared);
+    return map;
+}

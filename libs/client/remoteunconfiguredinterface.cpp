@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -21,13 +22,13 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteunconfiguredinterface.h"
 #include "remoteunconfiguredinterface_p.h"
 
-RemoteUnconfiguredInterface::RemoteUnconfiguredInterface(RemoteUnconfiguredInterfacePrivate &dd, const QString &dbusPath, QObject * parent)
-: RemoteActivatable(dd, dbusPath, parent)
+RemoteUnconfiguredInterface::RemoteUnconfiguredInterface(RemoteUnconfiguredInterfacePrivate &dd, const QVariantMap &properties, QObject * parent)
+: RemoteActivatable(dd, properties, parent)
 {
 }
 
-RemoteUnconfiguredInterface::RemoteUnconfiguredInterface(const QString &dbusPath, QObject * parent)
-: RemoteActivatable(*new RemoteUnconfiguredInterfacePrivate, dbusPath, parent)
+RemoteUnconfiguredInterface::RemoteUnconfiguredInterface(const QVariantMap &properties, QObject * parent)
+: RemoteActivatable(*new RemoteUnconfiguredInterfacePrivate, properties, parent)
 {
 }
 

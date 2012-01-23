@@ -1,5 +1,6 @@
 /*
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -21,83 +22,123 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteinterfaceconnection.h"
 #include "remoteinterfaceconnection_p.h"
 
-RemoteInterfaceConnection::RemoteInterfaceConnection(RemoteInterfaceConnectionPrivate &dd, const QString &dbusPath, QObject * parent)
-: RemoteActivatable(dd, dbusPath, parent)
+#include <KDebug>
+
+RemoteInterfaceConnection::RemoteInterfaceConnection(RemoteInterfaceConnectionPrivate &dd, const QVariantMap &properties, QObject * parent)
+: RemoteActivatable(dd, properties, parent)
 {
-    Q_D(RemoteInterfaceConnection);
-    d->interfaceConnectionIface = new InterfaceConnectionInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
-    connect(d->interfaceConnectionIface, SIGNAL(activationStateChanged(uint, uint)),
-            this, SLOT(handleActivationStateChange(uint, uint)));
-    connect(d->interfaceConnectionIface, SIGNAL(hasDefaultRouteChanged(bool)),
-            this, SIGNAL(hasDefaultRouteChanged(bool)));
+    init(properties);
 }
 
-RemoteInterfaceConnection::RemoteInterfaceConnection(const QString &dbusPath, QObject * parent)
-: RemoteActivatable(*new RemoteInterfaceConnectionPrivate, dbusPath, parent)
+RemoteInterfaceConnection::RemoteInterfaceConnection(const QVariantMap &properties, QObject * parent)
+: RemoteActivatable(*new RemoteInterfaceConnectionPrivate, properties, parent)
+{
+    init(properties);
+}
+
+void RemoteInterfaceConnection::init(const QVariantMap &properties)
 {
     Q_D(RemoteInterfaceConnection);
-    d->interfaceConnectionIface = new InterfaceConnectionInterface("org.kde.networkmanagement", dbusPath, QDBusConnection::sessionBus(), this);
-    connect(d->interfaceConnectionIface, SIGNAL(activationStateChanged(uint, uint)),
-            this, SLOT(handleActivationStateChange(uint, uint)));
-    connect(d->interfaceConnectionIface, SIGNAL(hasDefaultRouteChanged(bool)),
-            this, SIGNAL(hasDefaultRouteChanged(bool)));
+    d->interfaceConnectionIface = new InterfaceConnectionInterface("org.kde.networkmanagement", properties["path"].toString(), QDBusConnection::sessionBus(), this);
+    connect(d->interfaceConnectionIface, SIGNAL(icPropertiesChanged(QVariantMap)), SLOT(icPropertiesChanged(QVariantMap)));
+
+    d->activationState = Knm::InterfaceConnection::Unknown;
+    icPropertiesChanged(properties);
 }
 
 RemoteInterfaceConnection::~RemoteInterfaceConnection()
 {
 }
 
+void RemoteInterfaceConnection::icPropertiesChanged(const QVariantMap &changedProperties)
+{
+    Q_D(RemoteInterfaceConnection);
+    QStringList propKeys = changedProperties.keys();
+    QLatin1String connectionTypeKey("connectionType"),
+                  uuidKey("uuid"),
+                  nameKey("name"),
+                  iconNameKey("iconName"),
+                  activationStateKey("activationState"),
+                  hasDefaultRouteKey("hasDefaultRoute");
+    QVariantMap::const_iterator it = changedProperties.find(connectionTypeKey);
+    if (it != changedProperties.end()) {
+        d->connectionType = (Knm::Connection::Type)it->toUInt();
+        propKeys.removeOne(connectionTypeKey);
+    }
+    it = changedProperties.find(uuidKey);
+    if (it != changedProperties.end()) {
+        d->uuid = it->toString();
+        propKeys.removeOne(uuidKey);
+    }
+    it = changedProperties.find(nameKey);
+    if (it != changedProperties.end()) {
+        d->name = it->toString();
+        propKeys.removeOne(nameKey);
+    }
+    it = changedProperties.find(iconNameKey);
+    if (it != changedProperties.end()) {
+        d->iconName = it->toString();
+        propKeys.removeOne(iconNameKey);
+    }
+    it = changedProperties.find(activationStateKey);
+    if (it != changedProperties.end()) {
+        d->oldActivationState = d->activationState;
+        d->activationState = (Knm::InterfaceConnection::ActivationState)it->toUInt();
+        emit activationStateChanged(d->oldActivationState, d->activationState);
+        propKeys.removeOne(activationStateKey);
+    }
+    it = changedProperties.find(hasDefaultRouteKey);
+    if (it != changedProperties.end()) {
+        d->hasDefaultRoute = it->toBool();
+        emit hasDefaultRouteChanged(d->hasDefaultRoute);
+        propKeys.removeOne(hasDefaultRouteKey);
+    }
+    if (propKeys.count()) {
+        kDebug() << "Unhandled properties: " << propKeys;
+    }
+}
+
 Knm::Connection::Type RemoteInterfaceConnection::connectionType() const
 {
     Q_D(const RemoteInterfaceConnection);
-    uint cType = d->interfaceConnectionIface->connectionType();
-    return (Knm::Connection::Type)cType;
+    return d->connectionType;
 }
 
 QUuid RemoteInterfaceConnection::connectionUuid() const
 {
     Q_D(const RemoteInterfaceConnection);
-    QString uuid = d->interfaceConnectionIface->connectionUuid();
-    return QUuid(uuid);
+    return d->uuid;
 }
 
 QString RemoteInterfaceConnection::connectionName() const
 {
     Q_D(const RemoteInterfaceConnection);
-    return d->interfaceConnectionIface->connectionName();
+    return d->name;
 }
 
 QString RemoteInterfaceConnection::iconName() const
 {
     Q_D(const RemoteInterfaceConnection);
-    return d->interfaceConnectionIface->iconName();
+    return d->iconName;
 }
 
 Knm::InterfaceConnection::ActivationState RemoteInterfaceConnection::activationState() const
 {
     Q_D(const RemoteInterfaceConnection);
-    uint aState = d->interfaceConnectionIface->activationState();
-    return (Knm::InterfaceConnection::ActivationState)aState;
+    return d->activationState;
 }
 
 Knm::InterfaceConnection::ActivationState RemoteInterfaceConnection::oldActivationState() const
 {
     Q_D(const RemoteInterfaceConnection);
-    uint aState = d->interfaceConnectionIface->oldActivationState();
-    return (Knm::InterfaceConnection::ActivationState)aState;
+    return d->oldActivationState;
 }
 
 bool RemoteInterfaceConnection::hasDefaultRoute() const
 {
     Q_D(const RemoteInterfaceConnection);
-    return d->interfaceConnectionIface->hasDefaultRoute();
+    return d->hasDefaultRoute;
 }
-
-void RemoteInterfaceConnection::handleActivationStateChange(uint oldState, uint newState)
-{
-    emit activationStateChanged((Knm::InterfaceConnection::ActivationState)oldState, (Knm::InterfaceConnection::ActivationState)newState);
-}
-
 
 void RemoteInterfaceConnection::deactivate()
 {

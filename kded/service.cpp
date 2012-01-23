@@ -1,6 +1,7 @@
 /*
 Copyright 2009 Dario Freddi <drf54321@gmail.com>
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -20,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "service.h"
+#include "paths.h"
+#include "knmserviceprefs.h"
 
 #include <KCModuleInfo>
 #include <KDebug>
@@ -84,11 +87,53 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
         : KDEDModule(parent), d_ptr(new NetworkManagementServicePrivate)
 {
     Q_D(NetworkManagementService);
-    d->connectionList = new ConnectionList(this);
-    d->secretStorage = new SecretStorage();
+    KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
 
+    Solid::Control::NetworkInterfaceNm09::Types types =
+        (Solid::Control::NetworkInterfaceNm09::Ethernet
+         | Solid::Control::NetworkInterfaceNm09::Wifi
+         | Solid::Control::NetworkInterfaceNm09::Modem
+         | Solid::Control::NetworkInterfaceNm09::Bluetooth
+         );
+
+    d->sortedList = new SortedActivatableList(types, this);
+
+    d->sessionAbstractedService = new SessionAbstractedService(d->sortedList, this);
+    d->sortedList->registerObserver(d->sessionAbstractedService);
+
+    d->notificationManager = 0;
+    connect(d->sessionAbstractedService, SIGNAL(DoFinishInitialization()), SLOT(finishInitialization()));
+    QTimer::singleShot(1000, d->sessionAbstractedService, SIGNAL(ModuleReady()));
+}
+
+NetworkManagementService::~NetworkManagementService()
+{
+}
+
+void NetworkManagementService::finishInitialization()
+{
+    Q_D(NetworkManagementService);
+
+    if (d->notificationManager) {
+        return;
+    }
+
+    QObject::disconnect(d->sessionAbstractedService, SIGNAL(DoFinishInitialization()), this, 0);
+
+    d->connectionList = new ConnectionList(this);
+ 
+    // watches events and creates KNotifications
+    d->notificationManager = new NotificationManager(d->connectionList, this);
     d->activatableList = new ActivatableList(d->connectionList);
 
+    d->activatableList->registerObserver(d->notificationManager);
+    d->activatableList->registerObserver(d->sortedList);
+
+    // debug activatable changes
+    //ActivatableDebug debug;
+    //activatableList->registerObserver(&debug);
+
+    d->secretStorage = new SecretStorage();
     d->configurationLauncher = new ConfigurationLauncher(this);
     d->connectionUsageMonitor = new ConnectionUsageMonitor(d->connectionList, d->activatableList, d->activatableList);
 
@@ -105,60 +150,30 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 
     d->activatableList->registerObserver(d->nmDBusConnectionProvider);
 
-    // debug activatable changes
-    //ActivatableDebug debug;
-    //activatableList->registerObserver(&debug);
-
-    Solid::Control::NetworkInterfaceNm09::Types types =
-        (Solid::Control::NetworkInterfaceNm09::Ethernet
-         | Solid::Control::NetworkInterfaceNm09::Wifi
-         | Solid::Control::NetworkInterfaceNm09::Modem
-         | Solid::Control::NetworkInterfaceNm09::Bluetooth
-         );
-
-    d->sortedList = new SortedActivatableList(types, this);
-    d->activatableList->registerObserver(d->sortedList);
-
-    d->sessionAbstractedService = new SessionAbstractedService(d->sortedList, this);
-    d->sortedList->registerObserver(d->sessionAbstractedService);
-
     // there is a problem setting this as a child of connectionList or of activatableList since it has
     // references to both and NetworkInterfaceActivatableProvider touches the activatableList
     // in its dtor (needed so it cleans up when removed by the monitor)
     // ideally this will always be deleted before the other list
     d->networkInterfaceMonitor = new NetworkInterfaceMonitor(d->connectionList, d->activatableList, d->activatableList);
 
+    d->nm08Connections = new Nm08Connections(d->secretStorage, d->nmDBusConnectionProvider);
+    d->nm08Connections->importNextNm08Connection();
+
+    // give some time for the ActivatableAdded signal be processed before we emit the activationStateChanged
+    // and hasDefaultRouteChanged signals from d->nmActiveConnectionMonitor.
+    QTimer::singleShot(1000, this, SLOT(delayedRegisterObservers()));
+}
+
+void NetworkManagementService::delayedRegisterObservers()
+{
+    Q_D(NetworkManagementService);
+
     // create ActiveConnectionMonitor after construction of NMDBusSettingsConnectionProvider and observer registrations
-    // because, activatableList is filled in NetworkInterfaceMonitor and updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has
+    // because, activatableList is filled in NetworkManager::DeviceMonitor and updated in registerObservers above. This is why "Auto eth0" connection created automatically by NM has
     // Unknown activationState in its /org/kde/networkmanagement/Activatable interface
     d->nmActiveConnectionMonitor = new NMDBusActiveConnectionMonitor(d->activatableList, d->nmDBusConnectionProvider);
 
     // register after nmSettingsService and nmDBusConnectionProvider because it relies on changes they
     // make to interfaceconnections
     d->activatableList->registerObserver(d->nmActiveConnectionMonitor);
-
-    d->notificationManager = 0;
-    connect(d->sessionAbstractedService, SIGNAL(DoFinishInitialization()), SLOT(finishInitialization()));
-}
-
-
-NetworkManagementService::~NetworkManagementService()
-{
-}
-
-void NetworkManagementService::finishInitialization()
-{
-    Q_D(NetworkManagementService);
-    QObject::disconnect(d->sessionAbstractedService, SIGNAL(DoFinishInitialization()), this, 0);
-
-    if (d->notificationManager) {
-        return;
-    }
-
-    // watches events and creates KNotifications
-    d->notificationManager = new NotificationManager(d->connectionList, this);
-    d->activatableList->registerObserver(d->notificationManager);
-
-    d->nm08Connections = new Nm08Connections(d->secretStorage, d->nmDBusConnectionProvider);
-    d->nm08Connections->importNextNm08Connection();
 }
