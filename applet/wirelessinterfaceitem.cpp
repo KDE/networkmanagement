@@ -27,6 +27,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QGraphicsGridLayout>
 #include <QLabel>
 
+#include <KIcon> 
+
 #include <solid/control/wirelessaccesspoint.h>
 #include <solid/control/wirelessnetworkinterface.h>
 #include <solid/control/networkinterface.h>

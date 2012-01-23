@@ -1,6 +1,7 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 Copyright 2008-2010 Sebastian Kügler <sebas@kde.org>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -187,15 +188,19 @@ void NMPopup::init()
 
     m_rightLayout->addItem(m_connectionList);
 
-    m_connectionsButton = new Plasma::PushButton(m_rightWidget);
-    m_connectionsButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    m_connectionsButton = new Plasma::IconWidget(m_rightWidget);
+    m_connectionsButton->setDrawBackground(true);
+    m_connectionsButton->setOrientation(Qt::Horizontal);
+    //m_connectionsButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
     m_connectionsButton->setIcon(KIcon("configure"));
     m_connectionsButton->setText(i18nc("manage connections button in the applet's popup", "Manage Connections..."));
     m_connectionsButton->setMinimumHeight(28);
     m_connectionsButton->setMaximumHeight(28);
     connect(m_connectionsButton, SIGNAL(clicked()), this, SLOT(manageConnections()));
 
-    m_showMoreButton = new Plasma::PushButton(m_rightWidget);
+    m_showMoreButton = new Plasma::IconWidget(this);
+    m_showMoreButton->setDrawBackground(true);
+    m_showMoreButton->setOrientation(Qt::Horizontal);
     m_showMoreButton->setToolTip(i18nc("@info:tooltip tooltip for the 'Show More' button", "Show all available networks"));
     // Do not use this according to KDE HIG. Bug #272492
     //m_showMoreButton->setCheckable(true);

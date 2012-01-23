@@ -27,7 +27,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <Plasma/Frame>
 #include <Plasma/IconWidget>
 #include <Plasma/Label>
-#include <Plasma/PushButton>
+#include <Plasma/IconWidget>
 #include <Plasma/TabBar>
 
 #include <solid/networking.h>
@@ -121,8 +121,8 @@ private:
     Plasma::CheckBox* m_networkingCheckBox;
     Plasma::CheckBox* m_wifiCheckBox;
     Plasma::CheckBox* m_wwanCheckBox;
-    Plasma::PushButton* m_connectionsButton;
-    Plasma::PushButton* m_showMoreButton;
+    Plasma::IconWidget* m_connectionsButton;
+    Plasma::IconWidget* m_showMoreButton;
 
     ActivatableListWidget* m_connectionList;
     VpnInterfaceItem* m_vpnItem;

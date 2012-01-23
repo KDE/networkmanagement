@@ -150,10 +150,11 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
     m_backButton->setMaximumWidth(22);
     m_backButton->setIcon(KIcon("go-previous"));
     m_backButton->setToolTip(i18n("Go Back"));
+    m_backButton->setZValue(100);
 
     connect(m_backButton, SIGNAL(clicked()), this, SIGNAL(back()));
 
-    m_gridLayout->addItem(m_backButton, 0, 1, 2, 1);
+    m_gridLayout->addItem(m_backButton, 0, 1, 1, 1);
     setLayout(m_gridLayout);
 
     // Add spacer to push content to the top

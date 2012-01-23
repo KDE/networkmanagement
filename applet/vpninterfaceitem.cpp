@@ -24,6 +24,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // KDE
 #include <KDebug>
+#include <KIcon>
 
 // Network Management
 #include <solid/control/networkinterface.h>

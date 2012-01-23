@@ -105,7 +105,7 @@ InterfaceItem::InterfaceItem(Solid::Control::NetworkInterfaceNm09 * iface, Remot
     m_ifaceNameLabel->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
     m_layout->addItem(m_ifaceNameLabel, 0, 1, 1, 1);
 
-    m_disconnectButton = new Plasma::PushButton(this);
+    m_disconnectButton = new Plasma::IconWidget(this);
     m_disconnectButton->setMaximumHeight(16);
     m_disconnectButton->setMaximumWidth(16);
     m_disconnectButton->setIcon(KIcon("dialog-close"));
