@@ -17,9 +17,9 @@ Ipv6Dbus::~Ipv6Dbus()
 
 void Ipv6Dbus::fromMap(const QVariantMap & map)
 {
-  kDebug() << "IPv6 map: ";
+  /*kDebug() << "IPv6 map: ";
   foreach(const QString &key, map.keys())
-      kDebug() << key << " : " << map.value(key);
+      kDebug() << key << " : " << map.value(key);*/
 
   Knm::Ipv6Setting * setting = static_cast<Knm::Ipv6Setting*>(m_setting);
 
