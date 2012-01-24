@@ -44,7 +44,6 @@ public:
     QHash<QString, RemoteActivatable *> activatables;
     QList<RemoteActivatable*> sortedActivatables;
     QDBusServiceWatcher * registrationWatcher;
-    QDBusServiceWatcher * unregistrationWatcher;
 };
 
 
@@ -56,15 +55,10 @@ RemoteActivatableList::RemoteActivatableList(QObject * parent)
     // clean our connections out if the service goes away
     d->registrationWatcher = new QDBusServiceWatcher(d->iface->service(),
                                                      QDBusConnection::sessionBus(),
-                                                     QDBusServiceWatcher::WatchForRegistration,
+                                                     QDBusServiceWatcher::WatchForRegistration | QDBusServiceWatcher::WatchForUnregistration,
                                                      this);
     connect(d->registrationWatcher, SIGNAL(serviceRegistered(QString)), SLOT(serviceRegistered()));
-
-    d->unregistrationWatcher = new QDBusServiceWatcher(d->iface->service(),
-                                                       QDBusConnection::sessionBus(),
-                                                       QDBusServiceWatcher::WatchForUnregistration,
-                                                       this);
-    connect(d->unregistrationWatcher, SIGNAL(serviceUnregistered(QString)), SLOT(serviceUnregistered()));
+    connect(d->registrationWatcher, SIGNAL(serviceUnregistered(QString)), SLOT(serviceUnregistered()));
 }
 
 void RemoteActivatableList::init()
