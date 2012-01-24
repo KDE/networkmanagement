@@ -18,9 +18,9 @@ Ipv4Dbus::~Ipv4Dbus()
 void Ipv4Dbus::fromMap(const QVariantMap & map)
 {
 
-  kDebug() << "IPv4 map: ";
+  /*kDebug() << "IPv4 map: ";
   foreach(const QString & key, map.keys())
-      kDebug() << key << " : " << map.value(key);
+      kDebug() << key << " : " << map.value(key);*/
 
   Knm::Ipv4Setting * setting = static_cast<Knm::Ipv4Setting*>(m_setting);
 
