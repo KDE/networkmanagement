@@ -60,6 +60,7 @@ signals:
     Q_SCRIPTABLE void ActivatableAdded(const QVariantMap & properties);
     Q_SCRIPTABLE void ActivatableRemoved(const QString &);
     Q_SCRIPTABLE void ReloadConfig();
+    Q_SCRIPTABLE void ModuleReady();
     void DoFinishInitialization();
 private:
     Q_DECLARE_PRIVATE(SessionAbstractedService)

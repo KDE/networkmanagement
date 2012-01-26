@@ -21,5 +21,6 @@
       <arg name="removed" type="s" direction="out" />
     </signal>
     <signal name="ReloadConfig" />
+    <signal name="ModuleReady" />
   </interface>
 </node>

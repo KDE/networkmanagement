@@ -106,8 +106,8 @@ NetworkManagementService::NetworkManagementService(QObject * parent, const QVari
 
     d->notificationManager = 0;
     connect(d->sessionAbstractedService, SIGNAL(DoFinishInitialization()), SLOT(finishInitialization()));
+    QTimer::singleShot(1000, d->sessionAbstractedService, SIGNAL(ModuleReady()));
 }
-
 
 NetworkManagementService::~NetworkManagementService()
 {
