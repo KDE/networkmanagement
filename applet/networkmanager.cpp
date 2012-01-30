@@ -421,7 +421,18 @@ void NetworkManagerApplet::paintInterface(QPainter * p, const QStyleOptionGraphi
     QPainter painter;
     painter.begin(&newIcon);
 
+#if 1
     QString el = svgElement(m_activeSystrayInterface);
+#else
+    QString el;
+    foreach (NetworkManager::Device *d, NetworkManager::networkInterfaces()) {
+        if (d->type() == NetworkManager::Device::Modem) {
+            el = svgElement(d);
+            break;
+        }
+    }
+#endif
+
     if (el.isEmpty()) {
         painter.drawPixmap(QPoint(0,0), m_pixmap);
     } else {
