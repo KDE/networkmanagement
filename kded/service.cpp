@@ -1,7 +1,7 @@
 /*
 Copyright 2009 Dario Freddi <drf54321@gmail.com>
 Copyright 2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2012 Lamarque V. Souza <lamarque@kde.org>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -154,7 +154,7 @@ void NetworkManagementService::finishInitialization()
     d->activatableList->registerObserver(d->nmDBusConnectionProvider);
 
     // there is a problem setting this as a child of connectionList or of activatableList since it has
-    // references to both and NetworkManager::DeviceActivatableProvider touches the activatableList
+    // references to both and NetworkInterfaceActivatableProvider touches the activatableList
     // in its dtor (needed so it cleans up when removed by the monitor)
     // ideally this will always be deleted before the other list
     d->networkInterfaceMonitor = new NetworkInterfaceMonitor(d->connectionList, d->activatableList, d->activatableList);
