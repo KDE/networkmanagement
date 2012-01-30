@@ -207,7 +207,7 @@ QString NetworkManagerApplet::svgElement(NetworkManager::Device *iface)
                     case ModemManager::ModemInterface::Hsdpa:
                         return QString("network-mobile-%1-hsdpa").arg(strength);
                     case ModemManager::ModemInterface::Hsupa:
-                        return QString("network-mobile-%1-hsdua").arg(strength);
+                        return QString("network-mobile-%1-hsupa").arg(strength);
                     case ModemManager::ModemInterface::Hspa:
                         return QString("network-mobile-%1-hspa").arg(strength);
                 }
