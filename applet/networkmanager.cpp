@@ -134,14 +134,6 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
         return QString(); // this means: use pixmap icons instead of svg icons.
     }
 
-    if (iface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet) {
-        if (iface->connectionState() == Solid::Control::NetworkInterfaceNm09::Activated) {
-            return QString("network-wired-activated");
-        } else {
-            return QString("network-wired");
-        }
-    }
-
     if (iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
         // Now figure out which exact element we'll use
         QString strength = "00";
@@ -168,13 +160,17 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
             } else {
                     strength = '0';
             }
+
+            // The format in the SVG looks like this: wireless-signal-<strength>
+            return QString("network-wireless-%1").arg(strength);
         } else {
             return QString("dialog-error");
         }
-
-        // The format in the SVG looks like this: wireless-signal-<strength>
-        return QString("network-wireless-%1").arg(strength);
     } else if (iface->type() == Solid::Control::NetworkInterfaceNm09::Modem || iface->type() == Solid::Control::NetworkInterfaceNm09::Bluetooth) {
+        if (iface->connectionState() == Solid::Control::NetworkInterfaceNm09::Disconnected) {
+            return QString(); // this means: use KIcon("phone") instead of svg icon.
+        }
+
         Solid::Control::ModemNetworkInterfaceNm09 *giface = qobject_cast<Solid::Control::ModemNetworkInterfaceNm09*>(iface);
 
         if (giface) {
@@ -198,7 +194,12 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
                     strength = "100";
                 }
 
-                switch(modemNetworkIface->getAccessTechnology()) {
+                int accesstechnology = modemNetworkIface->getAccessTechnology();
+                if (iface->connectionState() != Solid::Control::NetworkInterfaceNm09::Activated) {
+                    accesstechnology = -1;
+                }
+
+                switch(accesstechnology) {
                     case Solid::Control::ModemInterface::UnknownTechnology:
                     case Solid::Control::ModemInterface::Gsm:
                     case Solid::Control::ModemInterface::GsmCompact:
@@ -219,10 +220,18 @@ QString NetworkManagerApplet::svgElement(Solid::Control::NetworkInterfaceNm09 *i
                         return QString("network-mobile-%1-hsupa").arg(strength);
                     case Solid::Control::ModemInterface::Hspa:
                         return QString("network-mobile-%1-hspa").arg(strength);
+                    default:
+                        return QString("network-mobile-%1-none").arg(strength);
                 }
             }
         }
         return QString(); // this means: use KIcon("phone") instead of svg icon.
+    } else if (iface->type() == Solid::Control::NetworkInterfaceNm09::Ethernet) {
+        if (iface->connectionState() == Solid::Control::NetworkInterfaceNm09::Activated) {
+            return QString("network-wired-activated");
+        } else {
+            return QString("network-wired");
+        }
     }
 
     return QString("dialog-error");
