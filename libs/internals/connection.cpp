@@ -356,6 +356,10 @@ Setting * Connection::setting(Setting::Type settingType) const
 {
     Setting * foundSetting = 0;
     foreach (Setting * setting, m_settings) {
+        if (!setting) {
+            kWarning() << "Setting is null. That should not happen.";
+            continue;
+        }
         if (setting->type() == settingType) {
             foundSetting = setting;
             break;
