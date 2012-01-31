@@ -153,6 +153,10 @@ void SecretStorage::walletOpenedForRead(bool success)
                     QPair<QString,GetSecretsFlags> pair = i.value();
                     bool settingsFound = false;
                     foreach (Knm::Setting * setting, con->settings()) {
+                        if (!setting) {
+                            kWarning() << "Setting for " << con->uuid() << " is null. That should not happen.";
+                            continue;
+                        }
                         if (setting->name() == pair.first) {
                             settingsFound = true;
                             QMap<QString,QString> map;
@@ -215,7 +219,7 @@ void SecretStorage::deleteSecrets(Knm::Connection *con)
                     wallet->removeEntry(k);
             }
         }
-        
+
         if (wallet) {
             delete wallet;
         }
