@@ -323,6 +323,7 @@ void ConnectionDbus::fromDbusMap(const QVariantMapMap &settings)
             sd->fromMap(settings.value(setting->name()));
             setting->setInitialized(true);
         } else {
+            kWarning() << "Setting " << setting->name() << "not initialized";
             setting->setInitialized(false);
         }
     }
