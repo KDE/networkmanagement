@@ -1,5 +1,5 @@
 /*
-Copyright 2011 Lamarque Souza <lamarque@gmail.com>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -90,12 +90,10 @@ void ManageConnection::addConnectionCompleted(bool valid, const QString &errorMe
     }
 }
 
-void ManageConnection::activatableAdded(QString path, uint type, int index)
+void ManageConnection::activatableAdded(const QVariantMap &properties)
 {
-    Q_UNUSED(type)
-    Q_UNUSED(index)
     QDBusInterface activatable("org.kde.networkmanagement",
-                               path,
+                               properties["path"].toString(),
                                "org.kde.networkmanagement.Activatable",
                                QDBusConnection::sessionBus());
 
