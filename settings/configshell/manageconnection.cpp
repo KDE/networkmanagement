@@ -1,5 +1,5 @@
 /*
-Copyright 2011 Lamarque Souza <lamarque@kde.org>
+Copyright 2011-212 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -53,7 +53,7 @@ ManageConnection::ManageConnection(Knm::Connection *con): m_manager("org.kde.net
 
     if (addConnection) {
         connect(mSystemSettings, SIGNAL(addConnectionCompleted(bool,QString)), SLOT(addConnectionCompleted(bool,QString)));
-        connect(&m_manager, SIGNAL(ActivatableAdded(QString,uint,int)), this, SLOT(activatableAdded(QString,uint,int)));
+        connect(&m_manager, SIGNAL(ActivatableAdded(QVariantMap)), this, SLOT(activatableAdded(QVariantMap)));
         mSystemSettings->addConnection(con);
     }
 
@@ -90,12 +90,10 @@ void ManageConnection::addConnectionCompleted(bool valid, const QString &errorMe
     }
 }
 
-void ManageConnection::activatableAdded(QString path, uint type, int index)
+void ManageConnection::activatableAdded(const QVariantMap &properties)
 {
-    Q_UNUSED(type)
-    Q_UNUSED(index)
     QDBusInterface activatable("org.kde.networkmanagement",
-                               path,
+                               properties["path"].toString(),
                                "org.kde.networkmanagement.Activatable",
                                QDBusConnection::sessionBus());
 

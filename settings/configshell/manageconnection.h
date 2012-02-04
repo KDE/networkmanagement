@@ -1,5 +1,5 @@
 /*
-Copyright 2011 Lamarque Souza <lamarque@kde.org>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -39,7 +39,7 @@ public:
 private Q_SLOTS:
     void addConnectionCompleted(bool valid, const QString &errorMessage);
     void updateConnectionCompleted();
-    void activatableAdded(QString, uint, int);
+    void activatableAdded(const QVariantMap &properties);
 private:
     NMDBusSettingsConnectionProvider * mSystemSettings;
     QDBusInterface m_manager;
