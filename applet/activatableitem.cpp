@@ -213,6 +213,8 @@ void ActivatableItem::activationStateChanged(Knm::InterfaceConnection::Activatio
             kDebug() << "activatING....";
             f.setBold(false);
             f.setItalic(true);
+            showItem(m_disconnectButton, true);
+            break;
     }
     m_connectButton->setFont(f);
 }
