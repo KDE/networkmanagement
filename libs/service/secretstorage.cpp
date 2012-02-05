@@ -251,7 +251,7 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
         Knm::Setting *setting = con->setting(Knm::Setting::typeFromString(name));
         setting->secretsFromMap(map);
         QStringList needSecretsList = setting->needSecrets();
-        if (!needSecretsList.isEmpty() && (flags & AllowInteraction || flags & RequestNew)) {
+        if ((flags & RequestNew) || (!needSecretsList.isEmpty() && (flags & AllowInteraction))) {
             askUser(con, name, needSecretsList);
         } else {
             emit connectionRead(con, name, false, false);
