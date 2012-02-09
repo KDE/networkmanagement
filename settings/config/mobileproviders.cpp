@@ -1,5 +1,5 @@
 /*
-Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2012 Lamarque Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -22,6 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QTextStream>
 
 #include <KDebug>
+#include <KLocale>
+#include <KGlobal>
 
 #include "mobileproviders.h"
 
@@ -126,28 +128,37 @@ QStringList MobileProviders::getProvidersList(QString country, const Knm::Connec
 
                 if (!e2.isNull() && e2.tagName().toLower() == "provider") {
                     QDomNode n3 = e2.firstChild();
-                    QString m_provider;
-                    QDomNode m_sibling;
-                    bool localized = false;
+                    bool hasGsm = false;
+                    bool hasCdma = false;
+                    QMap<QString, QString> localizedProviderNames;
+
                     while (!n3.isNull()) {
                         QDomElement e3 = n3.toElement(); // <name | gsm | cdma>
 
                         if (!e3.isNull()) {
                             if (e3.tagName().toLower() == "gsm") {
-                                mProvidersGsm.insert(m_provider, m_sibling);
+                                hasGsm = true;
                             } else if (e3.tagName().toLower() == "cdma") {
-                                mProvidersCdma.insert(m_provider, m_sibling);
+                                hasCdma = true;
                             } else if (e3.tagName().toLower() == "name") {
-                                if (e3.attribute("xml:lang", "") == country.toLower()) {
-                                    m_provider = e3.text();
-                                    localized = true;
-                                } else if (!localized) {
-                                    m_provider = e3.text();
+                                QString lang = e3.attribute("xml:lang");
+                                if (lang.isEmpty()) {
+                                    lang = "en";     // English is default
+                                } else {
+                                    lang = lang.toLower();
+                                    lang.remove(QRegExp("\\-.*$"));  // Remove everything after '-' in xml:lang attribute.
                                 }
-                                m_sibling = n3.nextSibling();
+                                localizedProviderNames.insert(lang, e3.text());
                             }
                         }
                         n3 = n3.nextSibling();
+                    }
+                    QString name = getProviderNameByLocale(localizedProviderNames);
+                    if (hasGsm) {
+                        mProvidersGsm.insert(name, e2.firstChild());
+                    }
+                    if (hasCdma) {
+                        mProvidersCdma.insert(name, e2.firstChild());
                     }
                 }
                 n2 = n2.nextSibling();
@@ -232,13 +243,21 @@ QVariantMap MobileProviders::getApnInfo(const QString & apn)
     QVariantMap temp;
     QDomNode n = mApns[apn];
     QStringList dnsList;
+    QMap<QString, QString> localizedProviderNames;
 
     while (!n.isNull()) {
         QDomElement e = n.toElement(); // <name|username|password|dns(*)>
 
         if (!e.isNull()) {
             if (e.tagName().toLower() == "name") {
-                temp.insert("name", e.text());
+                QString lang = e.attribute("xml:lang");
+                if (lang.isEmpty()) {
+                    lang = "en";     // English is default
+                } else {
+                    lang = lang.toLower();
+                    lang.remove(QRegExp("\\-.*$"));  // Remove everything after '-' in xml:lang attribute.
+                }
+                localizedProviderNames.insert(lang, e.text());
             } else if (e.tagName().toLower() == "username") {
                 temp.insert("username", e.text());
             } else if (e.tagName().toLower() == "password") {
@@ -251,6 +270,10 @@ QVariantMap MobileProviders::getApnInfo(const QString & apn)
         n = n.nextSibling();
     }
 
+    QString name = getProviderNameByLocale(localizedProviderNames);
+    if (!name.isEmpty()) {
+        temp.insert("name", QVariant::fromValue(name));
+    }
     temp.insert("number", getGsmNumber());
     temp.insert("apn", apn);
     temp.insert("dnsList", dnsList);
@@ -277,7 +300,7 @@ QVariantMap MobileProviders::getCdmaInfo(const QString & provider)
                 QDomElement e2 = n2.toElement(); // <name | username | password | sid>
 
                 if (!e2.isNull()) {
-                    if (e2.tagName().toLower() == "name") {
+                    if (e2.tagName().toLower() == "name") {  // FIXME: name is not really used anywhere in the interface, might be better to remove it
                         temp.insert("name", e2.text());
                     } if (e2.tagName().toLower() == "username") {
                         temp.insert("username", e2.text());
@@ -297,4 +320,26 @@ QVariantMap MobileProviders::getCdmaInfo(const QString & provider)
     temp.insert("number", getCdmaNumber());
     temp.insert("sidList", sidList);
     return temp;
+}
+
+QString MobileProviders::getProviderNameByLocale(const QMap<QString, QString> & localizedProviderNames) const
+{
+    QString name;
+    QStringList locales = KGlobal::locale()->languageList();
+    foreach(const QString & locale, locales) {
+        QString language, country, modifier, charset;
+        KLocale::splitLocale(locale, language, country, modifier, charset);
+
+        if (localizedProviderNames.contains(language)) {
+            return localizedProviderNames[language];
+        }
+    }
+
+    name = localizedProviderNames["en"];
+
+    // Use any language if no proper localized name were found.
+    if (name.isEmpty() && !localizedProviderNames.isEmpty()) {
+        name = localizedProviderNames.constBegin().value();
+    }
+    return name;
 }
