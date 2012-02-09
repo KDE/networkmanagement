@@ -25,12 +25,14 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <QDBusInterface>
 #include <QDBusPendingReply>
 
+#include <KAboutData>
 #include <KLocale>
 #include <KPluginFactory>
 
 #include "knmserviceprefs.h"
 #include "paths.h"
 #include "secretstorage.h"
+#include "../../plasma_nm_version.h"
 #include <tooltips.h>
 
 
@@ -40,6 +42,14 @@ K_EXPORT_PLUGIN( ManageTrayWidgetFactory( "kcm_networkmanagement_tray", "libknet
 ManageTrayWidget::ManageTrayWidget(QWidget *parent, const QVariantList &args)
 : KCModule( ManageTrayWidgetFactory::componentData(), parent, args )
 {
+    KAboutData* ab = new KAboutData("kcm_networkmanagement", "networkmanagement", ki18n("Manage Connections"), plasmaNmVersion,
+        ki18n("Manage Connections Control Panel Module"),
+        KAboutData::License_GPL, ki18n("(c) 2008-2009 Will Stephenson<p>(c) 2010 Sebastian Kügler</p><p>(c) 2011-2012 Lamarque V. Souza</p>"));
+
+    ab->addAuthor(ki18n("Lamarque V. Souza"), ki18n("Developer and Maintainer"), "lamarque@kde.org");
+    ab->addAuthor(ki18n("Will Stephenson"), ki18n("Developer"), "wstephenson@kde.org");
+    ab->addAuthor(ki18n("Sebastian Kügler"), ki18n("Developer"), "sebas@kde.org");
+    setAboutData(ab);
 
     KGlobal::locale()->insertCatalog("libknmui");
     KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
