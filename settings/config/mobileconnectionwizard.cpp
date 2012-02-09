@@ -1,6 +1,6 @@
 
 /*
-Copyright 2010-2011 Lamarque Souza <lamarque@gmail.com>
+Copyright 2010-2012 Lamarque Souza <lamarque@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -31,6 +31,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <solid/device.h>
 
 #include "mobileconnectionwizard.h"
+
+#define NUMBER_OF_STATIC_ENTRIES 3
 
 MobileConnectionWizard::MobileConnectionWizard(Knm::Connection::Type connectionType, QWidget * parent): QWizard(parent)
 {
@@ -98,7 +100,7 @@ void MobileConnectionWizard::initializePage(int id)
                     }
                     /* TODO: test for Lte */
                 } else {
-                    mType = Knm::Connection::Gsm;
+                    mType = static_cast<Knm::Connection::Type>(mDeviceComboBox->itemData(mDeviceComboBox->currentIndex()).toUInt());
                 }
             }
 
@@ -264,8 +266,11 @@ QWizardPage * MobileConnectionWizard::createIntroPage()
         layout->addWidget(label);
     
         mDeviceComboBox = new QComboBox();
-        mDeviceComboBox->addItem(i18nc("Mobile Connection Wizard", "Any device"));
-        mDeviceComboBox->insertSeparator(1);
+        mDeviceComboBox->addItem(i18nc("Mobile Connection Wizard", "Any GSM device"));
+        mDeviceComboBox->setItemData(0, Knm::Connection::Gsm);
+        mDeviceComboBox->addItem(i18nc("Mobile Connection Wizard", "Any CDMA device"));
+        mDeviceComboBox->setItemData(1, Knm::Connection::Cdma);
+        mDeviceComboBox->insertSeparator(NUMBER_OF_STATIC_ENTRIES-1);
         label->setBuddy(mDeviceComboBox);
         layout->addWidget(mDeviceComboBox);
     
@@ -328,12 +333,10 @@ void MobileConnectionWizard::introAddDevice(Solid::Control::NetworkInterfaceNm09
 
     mDeviceComboBox->addItem(desc, device->uni());
 
-    if (mDeviceComboBox->count() == 2) {
+    if (mDeviceComboBox->count() == NUMBER_OF_STATIC_ENTRIES) {
         mDeviceComboBox->setCurrentIndex(0);
-        mDeviceComboBox->setEnabled(false);
     } else {
-        mDeviceComboBox->setCurrentIndex(2);
-        mDeviceComboBox->setEnabled(true);
+        mDeviceComboBox->setCurrentIndex(NUMBER_OF_STATIC_ENTRIES);
     }
 }
 
@@ -348,15 +351,13 @@ void MobileConnectionWizard::introDeviceRemoved(const QString uni)
 
     mDeviceComboBox->removeItem(index);
 
-    if (mDeviceComboBox->count() == 2) {
+    if (mDeviceComboBox->count() == NUMBER_OF_STATIC_ENTRIES) {
         mDeviceComboBox->setCurrentIndex(0);
-        mDeviceComboBox->setEnabled(false);
         if (currentId() > 0) {
             close();
         }
     } else {
-        mDeviceComboBox->setCurrentIndex(2);
-        mDeviceComboBox->setEnabled(true);
+        mDeviceComboBox->setCurrentIndex(NUMBER_OF_STATIC_ENTRIES);
     }
 }
 
@@ -381,22 +382,22 @@ void MobileConnectionWizard::introAddInitialDevices()
         introAddDevice(n);
     }
 
-    if (mDeviceComboBox->count() == 2) {
+    if (mDeviceComboBox->count() == NUMBER_OF_STATIC_ENTRIES) {
         mDeviceComboBox->setCurrentIndex(0);
-        mDeviceComboBox->setEnabled(false);
     } else {
-        mDeviceComboBox->setCurrentIndex(2);
-        mDeviceComboBox->setEnabled(true);
+        mDeviceComboBox->setCurrentIndex(NUMBER_OF_STATIC_ENTRIES);
     }
 }
 
 void MobileConnectionWizard::introRemoveAllDevices()
 {
     mDeviceComboBox->clear();
-    mDeviceComboBox->addItem(i18nc("Mobile Connection Wizard", "Any device"));
-    mDeviceComboBox->insertSeparator(1);
+    mDeviceComboBox->addItem(i18nc("Mobile Connection Wizard", "Any GSM device"));
+    mDeviceComboBox->setItemData(0, Knm::Connection::Gsm);
+    mDeviceComboBox->addItem(i18nc("Mobile Connection Wizard", "Any CDMA device"));
+    mDeviceComboBox->setItemData(1, Knm::Connection::Cdma);
+    mDeviceComboBox->insertSeparator(NUMBER_OF_STATIC_ENTRIES-1);
     mDeviceComboBox->setCurrentIndex(0);
-    mDeviceComboBox->setEnabled(false);
 }
 
 /**********************************************************/

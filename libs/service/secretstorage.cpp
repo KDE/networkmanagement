@@ -153,6 +153,10 @@ void SecretStorage::walletOpenedForRead(bool success)
                     QPair<QString,GetSecretsFlags> pair = i.value();
                     bool settingsFound = false;
                     foreach (Knm::Setting * setting, con->settings()) {
+                        if (!setting) {
+                            kWarning() << "Setting for " << con->uuid() << " is null. That should not happen.";
+                            continue;
+                        }
                         if (setting->name() == pair.first) {
                             settingsFound = true;
                             QMap<QString,QString> map;
@@ -215,7 +219,7 @@ void SecretStorage::deleteSecrets(Knm::Connection *con)
                     wallet->removeEntry(k);
             }
         }
-        
+
         if (wallet) {
             delete wallet;
         }
@@ -247,7 +251,7 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
         Knm::Setting *setting = con->setting(Knm::Setting::typeFromString(name));
         setting->secretsFromMap(map);
         QStringList needSecretsList = setting->needSecrets();
-        if (!needSecretsList.isEmpty() && (flags & AllowInteraction || flags & RequestNew)) {
+        if ((flags & RequestNew) || (!needSecretsList.isEmpty() && (flags & AllowInteraction))) {
             askUser(con, name, needSecretsList);
         } else {
             emit connectionRead(con, name, false, false);

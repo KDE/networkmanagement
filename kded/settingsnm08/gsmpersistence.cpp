@@ -25,10 +25,19 @@ void GsmPersistence::load()
   // SECRETS
   if (m_storageMode == SettingPersistence::PlainText) {
     setting->setPassword(m_config->readEntry("password", ""));
+    if (setting->password().isEmpty()) {
+      setting->setPasswordflags(Setting::NotRequired);
+    } else {
+      setting->setPasswordflags(Setting::AgentOwned);
+    }
+
     // Do not read pin.
     //setting->setPin(m_config->readEntry("pin", ""));
+    if (setting->pin().isEmpty()) {
+      setting->setPinflags(Setting::NotRequired);
+    } else {
+      setting->setPinflags(Setting::AgentOwned);
+    }
     setting->setSecretsAvailable(true);
   }
-  setting->setPasswordflags(Setting::AgentOwned);
-  setting->setPinflags(Setting::AgentOwned);
 }
