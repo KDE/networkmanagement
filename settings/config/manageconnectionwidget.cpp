@@ -1,6 +1,7 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
 Copyright 2011 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
+Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -64,6 +65,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vpnuiplugin.h"
 #include "settings/vpn.h"
 #include "uiutils.h"
+#include "../../plasma_nm_version.h"
 
 #include <tooltips.h>
 
@@ -82,6 +84,14 @@ K_EXPORT_PLUGIN( ManageConnectionWidgetFactory( "kcm_networkmanagement", "libkne
 ManageConnectionWidget::ManageConnectionWidget(QWidget *parent, const QVariantList &args)
 : KCModule( ManageConnectionWidgetFactory::componentData(), parent, args ), mEditConnection(0), mWiredMenu(0), mWirelessMenu(0), mCellularMenu(0), mVpnMenu(0), mEditor(new ConnectionEditor(this))
 {
+    KAboutData* ab = new KAboutData("kcm_networkmanagement", "networkmanagement", ki18n("Manage Connections"), plasmaNmVersion,
+        ki18n("Manage Connections Control Panel Module"),
+        KAboutData::License_GPL, ki18n("(c) 2008-2009 Will Stephenson<p>(c) 2011-2012 Lamarque V. Souza</p>"));
+
+    ab->addAuthor(ki18n("Lamarque V. Souza"), ki18n("Developer and Maintainer"), "lamarque@kde.org");
+    ab->addAuthor(ki18n("Will Stephenson"), ki18n("Developer"), "wstephenson@kde.org");
+    setAboutData(ab);
+
     KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     mConnEditUi.setupUi(this);
     mConnEditUi.listWired->setSortingEnabled(true);
