@@ -1,5 +1,5 @@
 /*
-Copyright 2010-2011 Lamarque Souza <lamarque@kde.org>
+Copyright 2010-2012 Lamarque Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -60,6 +60,7 @@ private:
     QDomDocument mDocProviders;
     QDomElement docElement;
     ErrorCodes mError;
+    QString getProviderNameByLocale(const QMap<QString, QString> & names) const;
 };
 
 #endif
