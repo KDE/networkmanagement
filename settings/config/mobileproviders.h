@@ -60,7 +60,7 @@ private:
     QDomDocument mDocProviders;
     QDomElement docElement;
     ErrorCodes mError;
-    QString getProviderNameByLocale(const QMap<QString, QString> & names) const;
+    QString getNameByLocale(const QMap<QString, QString> & names) const;
 };
 
 #endif

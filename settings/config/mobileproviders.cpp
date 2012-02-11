@@ -153,7 +153,7 @@ QStringList MobileProviders::getProvidersList(QString country, const Knm::Connec
                         }
                         n3 = n3.nextSibling();
                     }
-                    QString name = getProviderNameByLocale(localizedProviderNames);
+                    QString name = getNameByLocale(localizedProviderNames);
                     if (hasGsm) {
                         mProvidersGsm.insert(name, e2.firstChild());
                     }
@@ -243,7 +243,7 @@ QVariantMap MobileProviders::getApnInfo(const QString & apn)
     QVariantMap temp;
     QDomNode n = mApns[apn];
     QStringList dnsList;
-    QMap<QString, QString> localizedProviderNames;
+    QMap<QString, QString> localizedPlanNames;
 
     while (!n.isNull()) {
         QDomElement e = n.toElement(); // <name|username|password|dns(*)>
@@ -257,7 +257,7 @@ QVariantMap MobileProviders::getApnInfo(const QString & apn)
                     lang = lang.toLower();
                     lang.remove(QRegExp("\\-.*$"));  // Remove everything after '-' in xml:lang attribute.
                 }
-                localizedProviderNames.insert(lang, e.text());
+                localizedPlanNames.insert(lang, e.text());
             } else if (e.tagName().toLower() == "username") {
                 temp.insert("username", e.text());
             } else if (e.tagName().toLower() == "password") {
@@ -270,7 +270,7 @@ QVariantMap MobileProviders::getApnInfo(const QString & apn)
         n = n.nextSibling();
     }
 
-    QString name = getProviderNameByLocale(localizedProviderNames);
+    QString name = getNameByLocale(localizedPlanNames);
     if (!name.isEmpty()) {
         temp.insert("name", QVariant::fromValue(name));
     }
@@ -322,7 +322,7 @@ QVariantMap MobileProviders::getCdmaInfo(const QString & provider)
     return temp;
 }
 
-QString MobileProviders::getProviderNameByLocale(const QMap<QString, QString> & localizedProviderNames) const
+QString MobileProviders::getNameByLocale(const QMap<QString, QString> & localizedNames) const
 {
     QString name;
     QStringList locales = KGlobal::locale()->languageList();
@@ -330,16 +330,16 @@ QString MobileProviders::getProviderNameByLocale(const QMap<QString, QString> & 
         QString language, country, modifier, charset;
         KLocale::splitLocale(locale, language, country, modifier, charset);
 
-        if (localizedProviderNames.contains(language)) {
-            return localizedProviderNames[language];
+        if (localizedNames.contains(language)) {
+            return localizedNames[language];
         }
     }
 
-    name = localizedProviderNames["en"];
+    name = localizedNames["en"];
 
     // Use any language if no proper localized name were found.
-    if (name.isEmpty() && !localizedProviderNames.isEmpty()) {
-        name = localizedProviderNames.constBegin().value();
+    if (name.isEmpty() && !localizedNames.isEmpty()) {
+        name = localizedNames.constBegin().value();
     }
     return name;
 }
