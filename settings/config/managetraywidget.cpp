@@ -47,6 +47,8 @@ ManageTrayWidget::ManageTrayWidget(QWidget *parent, const QVariantList &args)
         KAboutData::License_GPL, ki18n("(c) 2008-2009 Will Stephenson<p>(c) 2010 Sebastian Kügler</p><p>(c) 2011-2012 Lamarque V. Souza</p>"));
 
     ab->addAuthor(ki18n("Lamarque V. Souza"), ki18n("Developer and Maintainer"), "lamarque@kde.org");
+    ab->addAuthor(ki18n("Ilia Kats"), ki18n("Developer"));
+    ab->addAuthor(ki18n("Rajeesh K Nambiar"), ki18n("Developer"));
     ab->addAuthor(ki18n("Will Stephenson"), ki18n("Developer"), "wstephenson@kde.org");
     ab->addAuthor(ki18n("Sebastian Kügler"), ki18n("Developer"), "sebas@kde.org");
     setAboutData(ab);
