@@ -42,6 +42,7 @@ public:
     void readSecrets() {}
 public Q_SLOTS:
     virtual void setShowPasswords(bool);
+    void validateKey(const QString&);
 private:
     class Private;
     Private * d;
