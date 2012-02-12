@@ -91,9 +91,14 @@ void GsmInterfaceConnectionBuilder::init(GsmInterfaceConnection *ic)
         QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), ic, SLOT(setAccessTechnology(ModemManager::ModemInterface::AccessTechnology)));
         QObject::connect(modemNetworkIface, SIGNAL(enabledChanged(bool)), ic, SLOT(setEnabled(bool)));
 
-        ic->m_signalQuality = modemNetworkIface->getSignalQuality();
-        ic->m_accessTechnology = modemNetworkIface->getAccessTechnology();
         ic->m_enabled = modemNetworkIface->enabled();
+        if (ic->m_enabled) {
+            ic->m_signalQuality = modemNetworkIface->getSignalQuality();
+            ic->m_accessTechnology = modemNetworkIface->getAccessTechnology();
+        } else {
+            ic->m_signalQuality = 0;
+            ic->m_accessTechnology = ModemManager::ModemInterface::UnknownTechnology;
+        }
     }
 }
 

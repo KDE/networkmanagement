@@ -65,9 +65,14 @@ void GsmInterfaceConnection::connectMMSignals()
         QObject::connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(ModemManager::ModemInterface::AccessTechnology)), this, SLOT(setAccessTechnology(ModemManager::ModemInterface::AccessTechnology)));
         QObject::connect(modemNetworkIface, SIGNAL(enabledChanged(bool)), this, SLOT(setEnabled(bool)));
 
-        m_signalQuality = modemNetworkIface->getSignalQuality();
-        m_accessTechnology = modemNetworkIface->getAccessTechnology();
         m_enabled = modemNetworkIface->enabled();
+        if (m_enabled) {
+            m_signalQuality = modemNetworkIface->getSignalQuality();
+            m_accessTechnology = modemNetworkIface->getAccessTechnology();
+        } else {
+            m_signalQuality = 0;
+            m_accessTechnology = ModemManager::ModemInterface::UnknownTechnology;
+        }
     }
 }
 
