@@ -88,13 +88,14 @@ void WepAuthWidget::readConfig()
                     asciiRegExp.append(ch);
                 }
             }
-            asciiRegExp.append("]{5,13}");
+            asciiRegExp.append(']');
+            asciiRegExp = asciiRegExp + "{5}|" + asciiRegExp + "{13}"; // 5 or 13 ASCII chars
             regExp = QRegExp(asciiRegExp);
             break;
         }
         case Knm::WirelessSecuritySetting::Hex:
             label->setText(i18n("Key:"));
-            regExp = QRegExp("([0-9]|[a-f]|[A-F]){10,26}");
+            regExp = QRegExp("([0-9]|[a-f]|[A-F]){10}|([0-9]|[a-f]|[A-F]){26}"); // 10 or 26 Hex
             break;
         case Knm::WirelessSecuritySetting::None:
         case Knm::WirelessSecuritySetting::COUNT:
@@ -104,6 +105,8 @@ void WepAuthWidget::readConfig()
 
     d->layout->addRow(label, d->pw);
     d->pw->setFocus(Qt::OtherFocusReason);
+    //Validate the keys when changed, required to channel validation back to ConnectionSecretsJob::Ok button
+    connect(d->pw, SIGNAL(textChanged(QString)), SLOT(validateKey(QString)));
 }
 
 void WepAuthWidget::writeConfig()
@@ -127,4 +130,10 @@ void WepAuthWidget::writeConfig()
 void WepAuthWidget::setShowPasswords(bool on)
 {
     d->pw->setPasswordMode(!on);
+}
+
+void WepAuthWidget::validateKey(const QString &key)
+{
+    Q_UNUSED(key);
+    emit valid(validate());
 }

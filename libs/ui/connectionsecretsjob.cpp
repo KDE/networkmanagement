@@ -125,9 +125,11 @@ void ConnectionSecretsJob::doAskUser()
         m_askUserDialog->setWindowIcon(KIcon("dialog-password"));
         m_askUserDialog->setMainWidget(m_settingWidget);
         m_askUserDialog->setButtons(buttonCodes);
+        m_askUserDialog->enableButtonOk(m_settingWidget->isValid());
 
         connect(m_askUserDialog, SIGNAL(accepted()), SLOT(dialogAccepted()));
         connect(m_askUserDialog, SIGNAL(rejected()), SLOT(dialogRejected()));
+        connect(m_settingWidget, SIGNAL(valid(bool)), m_askUserDialog, SLOT(enableButtonOk(bool)));
 
         m_askUserDialog->show();
         KWindowSystem::forceActiveWindow(m_askUserDialog->winId());
