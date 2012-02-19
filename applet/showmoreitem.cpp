@@ -76,6 +76,10 @@ void ShowMoreItem::setChecked(bool checked)
 
 void ShowMoreItem::setNetworkCount(const int count)
 {
+    if (count < 0 ) {
+        kDebug() << "count == " << count;
+        return;
+    }
     m_networkCount = count;
     setChecked(m_checked);
 }
