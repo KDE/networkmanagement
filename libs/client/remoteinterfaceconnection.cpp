@@ -96,6 +96,7 @@ void RemoteInterfaceConnection::icPropertiesChanged(const QVariantMap &changedPr
     /*if (propKeys.count()) {
         kDebug() << "Unhandled properties: " << propKeys;
     }*/
+    emit changed();
 }
 
 Knm::Connection::Type RemoteInterfaceConnection::connectionType() const

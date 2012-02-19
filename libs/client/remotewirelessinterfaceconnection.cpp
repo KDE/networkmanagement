@@ -88,6 +88,7 @@ void RemoteWirelessInterfaceConnection::wicPropertiesChanged(const QVariantMap &
     /*if (propKeys.count()) {
         kDebug() << "Unhandled properties: " << propKeys;
     }*/
+    emit changed();
 }
 
 QString RemoteWirelessInterfaceConnection::ssid() const
