@@ -21,6 +21,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "networkmanager.h"
+#include "nmpopup.h"
+#include "uiutils.h"
+#include "remoteactivatablelist.h"
+#include "paths.h"
+#include "knmserviceprefs.h"
 
 #include <QAction>
 #include <QPainter>
@@ -28,17 +33,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KCModuleInfo>
 #include <KConfigDialog>
 #include <KCModuleProxy>
+#include <KStandardDirs>
 
 #include <Plasma/Containment>
+#include <Plasma/DeclarativeWidget>
 
 #include <QtNetworkManager/manager.h>
 #include <QtNetworkManager/wireddevice.h>
 
-#include "nmpopup.h"
-#include "uiutils.h"
-#include "remoteactivatablelist.h"
-#include "paths.h"
-#include "knmserviceprefs.h"
+//#define USE_QML
 
 K_EXPORT_PLASMA_APPLET(networkmanagement, NetworkManagerApplet)
 
@@ -49,16 +52,19 @@ bool networkInterfaceSameConnectionStateLessThan(NetworkManager::Device * if1, N
 class NetworkManagerApplet::Private
 {
 public:
-    Private() { }
-    ~Private() { }
+    Private(): m_popup(0) { }
 
+#ifdef USE_QML
+    Plasma::DeclarativeWidget * m_popup;
+#else
+    NMPopup * m_popup;
+#endif
     QList<QAction*> actions;
 };
 
 NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList & args)
     : Plasma::PopupApplet(parent, args),
         m_activatables(0),
-        m_popup(0),
         m_panelContainment(true),
         m_totalActiveVpnConnections(0),
         m_activeInterface(0),
@@ -297,20 +303,26 @@ void NetworkManagerApplet::init()
 
     setupInterfaceSignals();
 
-    if (!m_popup) {
-        m_popup = new NMPopup(m_activatables, this);
-        connect(m_popup, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
+#ifdef USE_QML
+    d->m_popup = new Plasma::DeclarativeWidget(this);
+    d->m_popup->setInitializationDelayed(true);
+    d->m_popup->setQmlPath(KStandardDirs::locate("data",
+                                                 "networkmanagement/qml/NMPopup.qml"));
+#else
+    d->m_popup = new NMPopup(m_activatables, this);
+#endif
+    connect(d->m_popup, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
 
-        QAction* action = new QAction(i18nc("CheckBox to enable or disable networking completely", "Enable networking"), this);
-        action->setToolTip(i18nc("@info:tooltip tooltip for the 'Enable networking' checkbox", "Enable or disable the networking system"));
-        action->setCheckable(true);
-        action->setChecked(NetworkManager::isNetworkingEnabled());
-        connect(action, SIGNAL(triggered(bool)), m_popup, SLOT(networkingEnabledToggled(bool)));
-        connect(NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
-                action, SLOT(setChecked(bool)));
+    QAction* action = new QAction(i18nc("CheckBox to enable or disable networking completely", "Enable networking"), this);
+    action->setToolTip(i18nc("@info:tooltip tooltip for the 'Enable networking' checkbox", "Enable or disable the networking system"));
+    action->setCheckable(true);
+    action->setChecked(NetworkManager::isNetworkingEnabled());
+    connect(action, SIGNAL(triggered(bool)), d->m_popup, SLOT(networkingEnabledToggled(bool)));
+    connect(NetworkManager::notifier(), SIGNAL(networkingEnabledChanged(bool)),
+            action, SLOT(setChecked(bool)));
 
-        d->actions.append(action);
-    }
+    d->actions.append(action);
+    setGraphicsWidget(d->m_popup);
 
     // m_activatables->init() must be called after SLOT(activatableAdded(RemoteActivatable*)) has been connected and
     // NMPopup has been allocated.
@@ -340,15 +352,6 @@ void NetworkManagerApplet::finishInitialization()
                                      QLatin1String("org.kde.networkmanagement"), QDBusConnection::sessionBus());
 
     networkmanagement.call(QLatin1String("FinishInitialization"));
-}
-
-QGraphicsWidget* NetworkManagerApplet::graphicsWidget()
-{
-    if (!m_popup) {
-        m_popup = new NMPopup(m_activatables, this);
-    }
-
-    return m_popup;
 }
 
 void NetworkManagerApplet::createConfigurationInterface(KConfigDialog *parent)
@@ -690,13 +693,13 @@ void NetworkManagerApplet::toolTipAboutToShow()
         } else {
             text = i18nc("tooltip, all interfaces are down", "Disconnected");
 
-            if (m_popup->hasWireless() && !NetworkManager::isWirelessEnabled()) {
+            if (d->m_popup->property("hasWireless").toBool() && !NetworkManager::isWirelessEnabled()) {
                 subText = i18nc("tooltip, wireless is disabled in software", "Wireless disabled in software");
             }
             if (!NetworkManager::isNetworkingEnabled()) {
                 subText = i18nc("tooltip, all interfaces are down", "Networking disabled");
             }
-            if (m_popup->hasWireless() && !NetworkManager::isWirelessHardwareEnabled()) {
+            if (d->m_popup->property("hasWireless").toBool() && !NetworkManager::isWirelessHardwareEnabled()) {
                 subText = i18nc("tooltip, wireless is disabled by hardware", "Wireless disabled by hardware");
             }
 

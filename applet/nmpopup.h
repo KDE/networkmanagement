@@ -56,6 +56,7 @@ class VpnInterfaceItem;
 class NMPopup: public QGraphicsWidget
 {
 Q_OBJECT
+Q_PROPERTY(bool hasWireless READ hasWireless)
 public:
     explicit NMPopup(RemoteActivatableList *, QGraphicsWidget* parent = 0);
     virtual ~NMPopup();

@@ -39,6 +39,7 @@ target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS}
 
 install(TARGETS plasma_applet_networkmanagement DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-networkmanagement.desktop DESTINATION ${SERVICES_INSTALL_DIR})
+install(DIRECTORY qml/ DESTINATION ${DATA_INSTALL_DIR}/networkmanagement/qml)
 
 add_subdirectory(icons)
 

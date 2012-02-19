@@ -45,7 +45,6 @@ namespace Plasma
     class Applet;
 } // namespace Plasma
 
-class NMPopup;
 class RemoteActivatable;
 class RemoteActivatableList;
 class RemoteInterfaceConnection;
@@ -67,7 +66,6 @@ public:
     //Qt::Orientations expandingDirections() const;
     /* reimp Plasma::Applet */
     void constraintsEvent(Plasma::Constraints constraints);
-    QGraphicsWidget *graphicsWidget();
 
     //virtual void initExtenderItem(Plasma::ExtenderItem *);
 
@@ -142,7 +140,6 @@ private:
     Plasma::ToolTipContent m_toolTip;
 
     RemoteActivatableList* m_activatables;
-    NMPopup* m_popup;
     bool m_panelContainment;
 
     QPixmap m_pixmap;
