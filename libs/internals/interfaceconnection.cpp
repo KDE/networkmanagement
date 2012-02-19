@@ -56,10 +56,10 @@ void InterfaceConnection::setConnectionName(const QString& name)
         return;
     }
     m_name = name;
-    emit changed();
     QVariantMap map;
     map.insert("name", m_name);
     emit icPropertiesChanged(map);
+    emit changed();
 }
 
 QString InterfaceConnection::connectionName() const
@@ -73,10 +73,10 @@ void InterfaceConnection::setIconName(const QString & iconName)
         return;
     }
     m_iconName = iconName;
-    emit changed();
     QVariantMap map;
     map.insert("iconName", m_iconName);
     emit icPropertiesChanged(map);
+    emit changed();
 }
 
 QString InterfaceConnection::iconName() const
@@ -91,12 +91,12 @@ void InterfaceConnection::setActivationState(InterfaceConnection::ActivationStat
     }
     m_oldState = m_state;
     m_state = state;
-    emit changed();
-    emit activationStateChanged(m_oldState, m_state);
-    emit activationStateChanged((uint)m_oldState, (uint)m_state);
     QVariantMap map;
     map.insert("activationState", m_state);
     emit icPropertiesChanged(map);
+    emit activationStateChanged(m_oldState, m_state);
+    emit activationStateChanged((uint)m_oldState, (uint)m_state);
+    emit changed();
 }
 
 InterfaceConnection::ActivationState InterfaceConnection::activationState() const

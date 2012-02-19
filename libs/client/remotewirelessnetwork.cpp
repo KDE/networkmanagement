@@ -88,6 +88,7 @@ void RemoteWirelessNetwork::wnPropertiesChanged(const QVariantMap &changedProper
     /*if (propKeys.count()) {
         kDebug() << "Unhandled properties: " << propKeys;
     }*/
+    emit changed();
 }
 
 QString RemoteWirelessNetwork::ssid() const

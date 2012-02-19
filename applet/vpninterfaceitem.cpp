@@ -119,6 +119,7 @@ void VpnInterfaceItem::setConnectionInfo()
         //kDebug() << "hiding VPN widget:" << m_vpnActivatables.count();
         hide();
     }
+    setEnabled(showDisconnect);
 }
 
 void VpnInterfaceItem::currentConnectionChanged()
