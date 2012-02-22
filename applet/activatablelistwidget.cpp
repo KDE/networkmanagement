@@ -358,7 +358,7 @@ void ActivatableListWidget::activatableRemoved(RemoteActivatable * removed)
 {
     ActivatableItem *it = m_itemIndex.value(removed, 0);
     if (!it) {
-        if (!m_supressRemoveNetworks) {
+        if (!m_supressRemoveNetworks && m_moreNetworks > 1) {
             m_moreNetworks--;
         }
         return;
