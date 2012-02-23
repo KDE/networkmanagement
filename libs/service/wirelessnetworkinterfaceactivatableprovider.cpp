@@ -23,8 +23,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QMultiHash>
 
-#include <solid/control/networkmanager.h>
-
 #include <hiddenwirelessinterfaceconnection.h>
 #include <interfaceconnection.h>
 #include <wirelessinterfaceconnection.h>
