@@ -22,7 +22,6 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "networkinterfaceactivatableprovider_p.h"
 
 #include <QHash>
-#include <solid/control/wirednetworkinterface.h>
 
 #include "activatablelist.h"
 #include "connectionlist.h"
