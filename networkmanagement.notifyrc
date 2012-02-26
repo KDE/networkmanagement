@@ -1,5 +1,6 @@
 [Global]
 Name=Network Management
+Name[ar]=إدارة الشبكة
 Name[ca]=Gestió de xarxa
 Name[cs]=Správa sítě
 Name[da]=Netværkshåndtering
@@ -26,6 +27,7 @@ Name[x-test]=xxNetwork Managementxx
 Name[zh_TW]=網路管理
 IconName=networkmanager
 Comment=Network Management
+Comment[ar]=إدارة الشبكة
 Comment[ca]=Gestió de xarxa
 Comment[cs]=Správa sítě
 Comment[da]=Netværkshåndtering
@@ -54,6 +56,7 @@ Version=3
 
 [Context/connectiontype]
 Name=Network Connection Type
+Name[ar]=نوع وصلات الشبكة
 Name[ca]=Tipus de connexió de xarxa
 Name[cs]=Typ síťového připojení
 Name[da]=Type af netværksforbindelse
@@ -79,6 +82,7 @@ Name[zh_TW]=網路連線型態
 
 [Event/hwadded]
 Name=Network Interface Attached
+Name[ar]=أضيفت واجهة للشبكة
 Name[ca]=Interfície de xarxa connectada
 Name[cs]=Síťové rozhraní připojeno
 Name[da]=Netkort tilsluttet
@@ -101,6 +105,7 @@ Name[uk]=Доданий інтерфейс мережі
 Name[x-test]=xxNetwork Interface Attachedxx
 Name[zh_TW]=網路介面已接上
 Comment=A network interface was attached
+Comment[ar]=أضيفت واجهة شبكة
 Comment[ca]=S'ha connectat una interfície de xarxa
 Comment[cs]=Síťové rozhraní bylo připojeno
 Comment[da]=Et netkort blev tilsluttet
@@ -126,6 +131,7 @@ Comment[zh_TW]=網路介面已接上
 
 [Event/hwremoved]
 Name=Network Interface Removed
+Name[ar]=واجهة شبكة أزيلت
 Name[ca]=Interfície de xarxa eliminada
 Name[cs]=Síťové zařízení odstraněno
 Name[da]=Netkort fjernet
@@ -150,6 +156,7 @@ Name[uk]=Вилучено інтерфейс мережі
 Name[x-test]=xxNetwork Interface Removedxx
 Name[zh_TW]=網路介面已移除
 Comment=A network interface was removed
+Comment[ar]=أزيلت واجهة شبكة
 Comment[ca]=S'ha eliminat una interfície de xarxa
 Comment[cs]=Síťové zařízení odstraněno
 Comment[da]=Et netkort blev fjernet
@@ -175,6 +182,7 @@ Comment[zh_TW]=網路介面已移除
 
 [Event/networkappeared]
 Name=Found Wireless Network
+Name[ar]=وجدت شبكة لاسلكية
 Name[ca]=Xarxa sense fils trobada
 Name[cs]=Nalezena bezdrátová síť
 Name[da]=Fandt trådløst netværk
@@ -198,6 +206,7 @@ Name[uk]=Знайдено бездротову мережу
 Name[x-test]=xxFound Wireless Networkxx
 Name[zh_TW]=找到無線網路
 Comment=A wireless network appeared
+Comment[ar]=ظهرت شبكة لاسلكية
 Comment[ca]=Ha aparegut una xarxa sense fils
 Comment[cs]=Objevila se bezdrátová síť
 Comment[da]=Et trådløst netværk er dukket op
@@ -222,6 +231,7 @@ Comment[zh_TW]=找到無線網路
 
 [Event/networkdisappeared]
 Name=Lost Wireless Network
+Name[ar]=فقدت شبكة لاسلكية
 Name[ca]=Xarxa sense fils perduda
 Name[cs]=Bezdrátová síť ztracena
 Name[da]=Mistede trådløst netværk
@@ -245,6 +255,7 @@ Name[uk]=Втрачено зв’язок з радіомережею
 Name[x-test]=xxLost Wireless Networkxx
 Name[zh_TW]=遺失無線網路
 Comment=A wireless network disappeared
+Comment[ar]=اختفت شبكة لاسلكية
 Comment[ca]=Ha desaparegut una xarxa sense fils
 Comment[cs]=Bezdrátová síť zmizela
 Comment[da]=Et trådløst netværk forsvandt
@@ -269,6 +280,7 @@ Comment[zh_TW]=遺失無線網路
 
 [Event/connecting]
 Name=Establishing Network Connection
+Name[ar]=محاولة بدء الاتصال بالشبكة
 Name[ca]=S'està establint la connexió de xarxa
 Name[cs]=Navazuje se síťové spojení
 Name[da]=Opretter netværksforbindelse
@@ -292,6 +304,7 @@ Name[uk]=Встановлення мережевого з'єднання
 Name[x-test]=xxEstablishing Network Connectionxx
 Name[zh_TW]=建立網路連線中
 Comment=A network connection attempt was begun
+Comment[ar]=بدأت محاولة الاتصال بالشبكة
 Comment[ca]=L'intent de connectar-se a la xarxa ha començat
 Comment[cs]=Zahájen pokus o síťové spojení
 Comment[da]=Et netværksforbindelsesforsøg er påbegyndt
@@ -317,6 +330,7 @@ Action=
 
 [Event/disconnected]
 Name=Network Connection Disconnected
+Name[ar]=انقطع الاتصال بالشبكة
 Name[ca]=Connexió de xarxa desconnectada
 Name[cs]=Síťové spojení odpojeno
 Name[da]=Netværksforbindelse afbrudt
@@ -339,6 +353,7 @@ Name[uk]=Мережеве з’єднання розірвано
 Name[x-test]=xxNetwork Connection Disconnectedxx
 Name[zh_TW]=網路連線已中斷
 Comment=A network connection was disconnected
+Comment[ar]=انقطع الاتصال بالشبكة
 Comment[ca]=S'ha desconnectat la connexió de xarxa
 Comment[cs]=Síťové spojení bylo odpojeno
 Comment[da]=En netværksforbindelse blev afbrudt
@@ -363,6 +378,7 @@ Comment[zh_TW]=網路連線已中斷
 
 [Event/connected]
 Name=Network Connection Succeeded
+Name[ar]=نحج الاتصال بالشبكة
 Name[ca]=Connexió de xarxa correcte
 Name[cs]=Připojení k síti bylo úspěšné
 Name[da]=Netværksforbindelse gennemført
@@ -386,6 +402,7 @@ Name[uk]=Успішне з’єднання з мережею
 Name[x-test]=xxNetwork Connection Succeededxx
 Name[zh_TW]=網路連線已成功
 Comment=A network connection was established
+Comment[ar]=نحج الاتصال بالشبكة
 Comment[ca]=S'ha establert una connexió de xarxa
 Comment[cs]=Síťové spojení bylo navázáno
 Comment[da]=En netværksforbindelse blev oprettet
@@ -412,6 +429,7 @@ Action=
 
 [Event/connfailed]
 Name=Network Connection Failed
+Name[ar]=فشل الاتصال بالشبكة
 Name[ca]=Connexió de xarxa fallida
 Name[cs]=Připojení k síti selhalo
 Name[da]=Netværksforbindelse mislykkedes
@@ -435,6 +453,7 @@ Name[uk]=Спроба встановлення з'єднання зазнала 
 Name[x-test]=xxNetwork Connection Failedxx
 Name[zh_TW]=網路連線失敗
 Comment=A network connection attempt failed
+Comment[ar]=فشلت محاولة الاتصال بالشبكة
 Comment[ca]=L'intent de connexió a la xarxa ha fallat
 Comment[cs]=Pokus o připojení k síti selhal
 Comment[da]=Et netværksforbindelsesforsøg mislykkedes
@@ -460,6 +479,7 @@ Action=Popup
 
 [Event/rfoff]
 Name=Radio Hardware Switched Off
+Name[ar]=أطفئ عتاد الشبكة اللاسلكية
 Name[ca]=El maquinari de radio està apagat
 Name[cs]=Hardware rádia vypnut
 Name[da]=Radio-hardware slået fra
@@ -482,6 +502,7 @@ Name[uk]=Радіозв’язок апаратно вимкнено
 Name[x-test]=xxRadio Hardware Switched Offxx
 Name[zh_TW]=無線網路硬體已關閉
 Comment=Wireless transceivers disabled by hardware switch
+Comment[ar]=أطفئ عتاد الشبكة اللاسلكية
 Comment[ca]=Els transceptors de la sense fils han estat deshabilitats per l'interruptor del maquinari
 Comment[cs]=Bezdrátové příjímače vypnuty hardwarovým přepínačem
 Comment[da]=Trådløs-transceivere deaktiveret af hardware-kontakt
@@ -507,6 +528,7 @@ Action=
 
 [Event/rfon]
 Name=Radio Hardware Switched On
+Name[ar]=شغل عتاد الشبكة اللاسلكية
 Name[ca]=El maquinari de radio està engegat
 Name[cs]=Hardware rádia zapnut
 Name[da]=Radio-hardware slået til
@@ -529,6 +551,7 @@ Name[uk]=Радіозв’язок апаратно увімкнено
 Name[x-test]=xxRadio Hardware Switched Onxx
 Name[zh_TW]=無線網路硬體已開啟
 Comment=Wireless transceivers enabled
+Comment[ar]=شغل عتاد الشبكة اللاسلكية
 Comment[ca]=Transceptors sense fils habilitats
 Comment[cs]=Bezdrátové příjímače zapnuty
 Comment[da]=Trådløs-transceivere aktiveret
@@ -554,6 +577,7 @@ Action=
 
 [Event/lowsignal]
 Name=Low Wireless Signal Strength
+Name[ar]=قوة إشارة الشبكة اللاسلكية ضعيفة
 Name[ca]=Baixa potència del senyal de la sense fils
 Name[cs]=Slabý bezdrátový signál
 Name[da]=Lav signalstyrke på trådløst
@@ -576,6 +600,7 @@ Name[uk]=Низька потужність радіосигналу
 Name[x-test]=xxLow Wireless Signal Strengthxx
 Name[zh_TW]=無線網路信號強度偏低
 Comment=The wireless signal strength is low
+Comment[ar]=قوة إشارة الشبكة اللاسلكية ضعيفة
 Comment[ca]=La potència del senya de la sense fils és baixa
 Comment[cs]=Síla bezdrátového signálu je slabá
 Comment[da]=Den trådløse signalstyrke er lav
@@ -601,6 +626,7 @@ Action=
 
 [Event/ifacestatechange]
 Name=Interface changed state
+Name[ar]=تغيرت حالة الواجهة
 Name[ca]=Estat de la interfície canviat
 Name[cs]=Rozhraní změnilo stav
 Name[da]=Netkort ændrede tilstand
@@ -623,6 +649,7 @@ Name[uk]=Змінений стан інтерфейсу
 Name[x-test]=xxInterface changed statexx
 Name[zh_TW]=介面已變更狀態
 Comment=An interface changed state
+Comment[ar]=تغيرت حالة الواجهة
 Comment[ca]=Una interfície ha canviat d'estat
 Comment[cs]=Stav rozhraní se změnil
 Comment[da]=Et netkort ændrede tilstand
@@ -647,6 +674,7 @@ Comment[zh_TW]=介面已變更狀態
 
 [Event/networkingdisabled]
 Name=Network management disabled
+Name[ar]=مدير الشبكة معطل
 Name[ca]=S'ha deshabilitat la gestió de la xarxa
 Name[cs]=Správa sítě zakázána
 Name[da]=Netværkshåndtering deaktiveret
@@ -670,6 +698,7 @@ Name[uk]=Керування мережею вимкнено
 Name[x-test]=xxNetwork management disabledxx
 Name[zh_TW]=網路管理已關閉
 Comment=The network management subsystem was stopped or restarted
+Comment[ar]=مدير الشبكة معطل
 Comment[ca]=El subsistema de gestió de la xarxa s'ha aturat o s'ha reiniciat
 Comment[cs]=Podsystém správy sítě byl zastaven nebo restartován
 Comment[da]=Undersystemet til netværkshåndtering blev stoppet eller genstartet
