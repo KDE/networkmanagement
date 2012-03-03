@@ -26,10 +26,9 @@
     </entry>
     <entry name="InterfaceNamingStyle" type="Enum">
       <choices name="InterfaceNamingChoices">
-        <choice name="DescriptiveNames"/>
+        <choice name="TypeNames"/>
         <choice name="SystemNames"/>
         <choice name="VendorProductNames"/>
-        <choice name="TypeNames"/>
       </choices>
     </entry>
     <entry name="NetworkSpeedUnit" type="Enum">

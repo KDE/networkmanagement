@@ -26,7 +26,7 @@
         <widget class="KComboBox" name="kcfg_InterfaceNamingStyle">
          <item>
           <property name="text">
-           <string>Descriptive Name</string>
+           <string>Type Name</string>
           </property>
          </item>
          <item>
@@ -37,11 +37,6 @@
          <item>
           <property name="text">
            <string>Vendor's Name</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Type Name</string>
           </property>
          </item>
         </widget>
