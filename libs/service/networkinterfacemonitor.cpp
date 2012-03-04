@@ -35,6 +35,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "wirelessnetworkinterfaceactivatableprovider.h"
 #include "gsmnetworkinterfaceactivatableprovider.h"
 #include "pindialog.h"
+#include "knmserviceprefs.h"
 
 class NetworkInterfaceMonitorPrivate
 {
@@ -126,6 +127,11 @@ void NetworkInterfaceMonitor::modemAdded(const QString & udi)
     connect(modem, SIGNAL(unlockRequiredChanged(QString)), SLOT(requestPin(QString)));
 
     if (dialog || modem->unlockRequired().isEmpty()) {
+        return;
+    }
+
+    KNetworkManagerServicePrefs::self()->readConfig();
+    if (KNetworkManagerServicePrefs::self()->askForGsmPin() != KNetworkManagerServicePrefs::OnModemDetection) {
         return;
     }
 
