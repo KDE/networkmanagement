@@ -34,6 +34,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 #include "gsmnetworkinterfaceactivatableprovider.h"
 #include "pindialog.h"
 #include "networkinterfacemonitor.h"
+#include "knmserviceprefs.h"
 
 class NetworkInterfaceMonitorPrivate
 {
@@ -128,7 +129,12 @@ void NetworkInterfaceMonitor::modemInterfaceAdded(const QString & udi)
         return;
     }
 
-    // Using queued invocation to prevent kded stalling here until user enter the pin.
+    KNetworkManagerServicePrefs::self()->readConfig();
+    if (KNetworkManagerServicePrefs::self()->askForGsmPin() != KNetworkManagerServicePrefs::OnModemDetection) {
+        return;
+    }
+
+    // Using queued invocation to prevent kded stalling here until user enters the pin.
     QMetaObject::invokeMethod(modem, "unlockRequiredChanged", Qt::QueuedConnection,
                               Q_ARG(QString, modem->unlockRequired()));
 }
