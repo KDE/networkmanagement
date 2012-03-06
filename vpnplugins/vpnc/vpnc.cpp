@@ -1,6 +1,6 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
-Copyright 2011 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
+Copyright 2011-2012 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -21,6 +21,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "vpnc.h"
 
+#include <nm-setting-ip4-config.h>
+
 #include <KPluginFactory>
 #include <KSharedConfig>
 #include <KStandardDirs>
@@ -32,6 +34,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "vpncauth.h"
 #include "connection.h"
 #include "settings/vpn.h"
+#include "settings/ipv4.h"
 
 #define NM_VPNC_LOCAL_PORT_DEFAULT 500
 
@@ -148,6 +151,7 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
 
         QStringMap data;
         QStringMap secretData;
+        QStringMap ipv4Data;
 
         // gateway
         data.insert(NM_VPNC_KEY_GATEWAY, cg.readEntry("Host"));
@@ -252,7 +256,13 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         if (cg.readEntry("TunnelingMode").toInt() == 1) {
             KMessageBox::error(0, i18n("The VPN settings file '%1' specifies that VPN traffic should be tunneled through TCP which is currently not supported in the vpnc software.\n\nThe connection can still be created, with TCP tunneling disabled, however it may not work as expected.", fileName), i18n("Not supported"), KMessageBox::Notify);
         }
-        // TODO : EnableLocalLAN and X-NM-Routes are to be added to IPv4Setting
+        // EnableLocalLAN and X-NM-Routes are to be added to IPv4Setting
+        if (!cg.readEntry("EnableLocalLAN").isEmpty()) {
+            ipv4Data.insert(NM_SETTING_IP4_CONFIG_NEVER_DEFAULT, cg.readEntry("EnableLocalLAN"));
+        }
+        if (!cg.readEntry("X-NM-Routes").isEmpty()) {
+            ipv4Data.insert(NM_SETTING_IP4_CONFIG_ROUTES, cg.readEntry("X-NM-Routes"));
+        }
 
         // Set the '...-type' and '...-flags' value also
         Knm::VpnSetting setting;
@@ -264,12 +274,15 @@ QVariantList VpncUiPlugin::importConnectionSettings(const QString &fileName)
         conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(data));
         conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(secretData));
         conSetting << cg.readEntry("Description");
+        if (!ipv4Data.isEmpty()) {
+            conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(ipv4Data));
+        }
     } else {
         mErrorMessage = i18n("%1: file format error.", fileName);
         return conSetting;
     }
 
-    mError = NoError;
+    mError = VpncUiPlugin::NoError;
     return conSetting;
 }
 
@@ -277,14 +290,17 @@ bool VpncUiPlugin::exportConnectionSettings(Knm::Connection * connection, const 
 {
     QStringMap data;
     QStringMap secretData;
-    KSharedConfig::Ptr config = KSharedConfig::openConfig(fileName);
-    KConfigGroup cg(config,"main");
-    if (!cg.exists())
-        return false;
 
     Knm::VpnSetting * vpnSetting = static_cast<Knm::VpnSetting*>(connection->setting(Knm::Setting::Vpn));
     data = vpnSetting->data();
     secretData = vpnSetting->vpnSecrets();
+
+    KSharedConfig::Ptr config = KSharedConfig::openConfig(fileName);
+    if (!config) {
+        mErrorMessage = i18n("%1: file could not be created", fileName);
+        return false;
+    }
+    KConfigGroup cg(config,"main");
 
     cg.writeEntry("Description", connection->name());
     cg.writeEntry("Host", data.value(NM_VPNC_KEY_GATEWAY));
@@ -348,8 +364,17 @@ bool VpncUiPlugin::exportConnectionSettings(Knm::Connection * connection, const 
         cg.writeEntry("EnableNat", "1");
         cg.writeEntry("X-NM-Force-NAT-T", "1");
     }
-    // TODO : export X-NM-Routes
+    // Export X-NM-Routes
+    Knm::Ipv4Setting *ipv4Setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
+    if (!ipv4Setting->routes().isEmpty()) {
+        QString routes;
+        foreach(const NetworkManager::IPv4Route &oneRoute, ipv4Setting->routes()) {
+            routes += QHostAddress(oneRoute.route()).toString() + '/' + QString::number(oneRoute.prefix()) + ' ';
+        }
+        cg.writeEntry("X-NM-Routes", routes.trimmed());
+    }
 
+    mError = VpncUiPlugin::NoError;
     return true;
 }
 
