@@ -1,5 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
+Copyright 2012 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
 
 This library is free software; you can redistribute it and/or
 modify it under the terms of the GNU Lesser General Public
@@ -32,6 +33,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <nm-setting-connection.h>
 #include <nm-setting-vpn.h>
+#include <nm-setting-ip4-config.h>
 
 #include "ipv4widget.h"
 #include "ipv6widget.h"
@@ -40,6 +42,7 @@ License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "connection.h"
 #include "settings/vpn.h"
+#include "settings/ipv4.h"
 
 VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
 : ConnectionPreferences(args, parent ), m_uiPlugin(0)
@@ -61,6 +64,28 @@ VpnPreferences::VpnPreferences(const QVariantList &args, QWidget *parent)
             kDebug() << error;
         }
     }
+    // IpV4Setting
+    if (args.count() > 5 ) {
+        Knm::Ipv4Setting * ipv4Setting = static_cast<Knm::Ipv4Setting*>(m_connection->setting(Knm::Setting::Ipv4));
+        QList <Solid::Control::IPv4RouteNm09> routes;
+        QStringMap ipv4Data = Knm::VpnSetting::stringMapFromStringList(Knm::VpnSetting::variantMapToStringList(args[5].toMap()));
+        if (ipv4Data.contains(QLatin1String(NM_SETTING_IP4_CONFIG_NEVER_DEFAULT))) {
+            ipv4Setting->setNeverdefault( static_cast<bool>(ipv4Data[QLatin1String(NM_SETTING_IP4_CONFIG_NEVER_DEFAULT)].toUInt()) );
+        }
+        if (ipv4Data.contains(QLatin1String(NM_SETTING_IP4_CONFIG_ROUTES))) {
+            foreach(const QString &oneRoute, ipv4Data[NM_SETTING_IP4_CONFIG_ROUTES].split(' ')) { // Split at whitespace
+                QStringList routeData = oneRoute.split('/');    // Host + Prefix (e.g: 192.168.2.0/24)
+                if (routeData.count() == 2) {
+                    Solid::Control::IPv4RouteNm09 route(QHostAddress(routeData[0]).toIPv4Address(), routeData[1].toUInt(),0,0);
+                    routes.append(route);
+                }
+            }
+            if (!routes.isEmpty()) {
+                ipv4Setting->setRoutes(routes);
+            }
+        }
+    }
+
     // If additional settings are passed, populate them : data, secretsData, connection name
     // Connection Name
     if (args.count() > 4) {
