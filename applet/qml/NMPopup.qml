@@ -63,13 +63,28 @@ Item {
     Column {
         anchors.right: parent.right
         anchors.rightMargin: 20
-        spacing: 10
+        spacing: 2
 
         ConnectionsTabWidget {}
 
         PlasmaComponents.CheckBox {
             height: 30
             text: i18n("Enable Wireless")
+
+            onCheckedChanged: {
+                if (checked)
+                    console.log("CheckBox checked");
+                else
+                    console.log("CheckBox unchecked");
+            }
+            onClicked: {
+                console.log("CheckBox clicked");
+            }
+        }
+
+        PlasmaComponents.CheckBox {
+            height: 30
+            text: i18n("Enable Mobile Broadband")
 
             onCheckedChanged: {
                 if (checked)
