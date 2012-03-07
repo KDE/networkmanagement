@@ -83,7 +83,7 @@ Item {
             Column {
                 spacing: 10
                 PlasmaComponents.Label {
-                    text: "Wired Ethernet"
+                    text: i18n("Wired Ethernet")
                     font.weight: Font.Bold
                 }
                 PlasmaComponents.Label {

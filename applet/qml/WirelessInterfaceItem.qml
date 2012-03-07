@@ -83,7 +83,7 @@ Item {
             Column {
                 spacing: 10
                 PlasmaComponents.Label {
-                    text: "Wireless 802.11"
+                    text: i18n("Wireless 802.11")
                     font.weight: Font.Bold
                 }
                 PlasmaComponents.Label {

@@ -85,12 +85,12 @@ Item {
         Row {
             spacing: 10
             PlasmaComponents.ToolButton {
-                text: i18n("  Settings...")
+                text: i18n("Settings...")
                 iconSource: "configure"
             }
             PlasmaComponents.ToolButton {
                 id: showConnectionButton
-                text: i18n("  Show Connections")
+                text: i18n("Show Connections")
                 iconSource: "format-list-unordered"
                 onClicked: {
                     if(parent.parent.parent.state != "State1") {
@@ -111,7 +111,7 @@ Item {
 
             PropertyChanges {
                 target: showConnectionButton
-                text: i18n("   Hide Connections")
+                text: i18n("Hide Connections")
             }
 
             PropertyChanges {

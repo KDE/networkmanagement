@@ -83,7 +83,7 @@ Item {
             Column {
                 spacing: 10
                 PlasmaComponents.Label {
-                    text: "Virtual Private Network"
+                    text: i18n("Virtual Private Network")
                     font.weight: Font.Bold
                 }
                 PlasmaComponents.Label {

@@ -28,9 +28,9 @@ Column {
         width: 300
         height: 30
         anchors.horizontalCenter: parent.horizontalCenter
-        PlasmaComponents.TabButton { tab: tab1content; text: "Connections"}
-        PlasmaComponents.TabButton { tab: tab2content; text: "VPN"}
-        PlasmaComponents.TabButton { tab: tab3content; text: "Shared Connections"}
+        PlasmaComponents.TabButton { tab: tab1content; text: i18n("Connections")}
+        PlasmaComponents.TabButton { tab: tab2content; text: i18n("VPN")}
+        PlasmaComponents.TabButton { tab: tab3content; text: i18n("Shared Connections")}
     }
     
     PlasmaComponents.TabGroup {
@@ -48,13 +48,13 @@ Column {
         }
         PlasmaComponents.Label {
             id: tab2content
-            text: "VPN Tab"
+            text: i18n("VPN Tab")
             horizontalAlignment: "AlignHCenter"
             verticalAlignment: "AlignVCenter"
         }
         PlasmaComponents.Label {
             id: tab3content
-            text: "Shared Connections Tab"
+            text: i18n("Shared Connections Tab")
             horizontalAlignment: "AlignHCenter"
             verticalAlignment: "AlignVCenter"
         }
