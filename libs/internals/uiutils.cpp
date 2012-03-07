@@ -257,12 +257,6 @@ QString UiUtils::interfaceNameLabel(const QString & uni, const KNetworkManagerSe
                 label = iface->interfaceName();
             }
             break;
-        case KNetworkManagerServicePrefs::DescriptiveNames:
-            if (dev) {
-                label = dev->description();
-                //kDebug() << "Vendor, Product:" << dev->vendor() << dev->product();
-            }
-            break;
         case KNetworkManagerServicePrefs::VendorProductNames:
             if (dev) {
                 if (!dev->vendor().isEmpty() && !dev->product().isEmpty()) {
@@ -271,6 +265,7 @@ QString UiUtils::interfaceNameLabel(const QString & uni, const KNetworkManagerSe
             }
             break;
         case KNetworkManagerServicePrefs::TypeNames:
+        default:
             break;
     }
 

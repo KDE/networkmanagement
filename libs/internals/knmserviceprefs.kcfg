@@ -26,10 +26,9 @@
     </entry>
     <entry name="InterfaceNamingStyle" type="Enum">
       <choices name="InterfaceNamingChoices">
-        <choice name="DescriptiveNames"/>
+        <choice name="TypeNames"/>
         <choice name="SystemNames"/>
         <choice name="VendorProductNames"/>
-        <choice name="TypeNames"/>
       </choices>
     </entry>
     <entry name="NetworkSpeedUnit" type="Enum">
@@ -40,6 +39,12 @@
     </entry>
     <entry name="ShowAdvancedSettings" type="Bool">
         <default>false</default>
+    </entry>
+    <entry name="AskForGsmPin" type="Enum">
+      <choices name="AskForGsmPinChoices">
+        <choice name="OnModemDetection"/>
+        <choice name="WhenActivatingConnection"/>
+      </choices>
     </entry>
   </group>
   <group name="SystemTray">

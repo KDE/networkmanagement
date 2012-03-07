@@ -1,6 +1,6 @@
 /*
 Copyright 2008,2009 Will Stephenson <wstephenson@kde.org>
-Copyright 2011 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
+Copyright 2011-2012 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
 Copyright 2011-2012 Lamarque V. Souza <lamarque@kde.org>
 
 This program is free software; you can redistribute it and/or
@@ -487,15 +487,17 @@ void ManageConnectionWidget::exportClicked()
     QString pluginError;
     VpnUiPlugin * vpnUi = KServiceTypeTrader::createInstanceFromQuery<VpnUiPlugin>( QString::fromLatin1( "NetworkManagement/VpnUiPlugin" ), QString::fromLatin1( "[X-NetworkManager-Services]=='%1'" ).arg( serviceType ), this, QVariantList(), &pluginError );
     if (pluginError.isEmpty()) {
-        QString expFile = KFileDialog::getSaveFileName(KUser().homeDir().append('/' + vpnUi->suggestedFileName(con)),"",this,i18nc("File chooser dialog title for exporting VPN","Export VPN"));
+        QString expFile = KFileDialog::getSaveFileName(KUser().homeDir().append('/' + vpnUi->suggestedFileName(con)),"",this,i18nc("File chooser dialog title for exporting VPN","Export VPN"), KFileDialog::ConfirmOverwrite);
         if (expFile.isEmpty()) {
             delete vpnUi;
             return;
         }
 
-        vpnUi->exportConnectionSettings(con, expFile);
-
-        KMessageBox::information(this, i18n("VPN connection successfully exported"), i18n("Success"), i18n("Do not show again"), KMessageBox::Notify);
+        if (vpnUi->exportConnectionSettings(con, expFile)) {
+            KMessageBox::information(this, i18n("VPN connection successfully exported"), i18n("Success"), i18n("Do not show again"), KMessageBox::Notify);
+        } else {
+            KMessageBox::error(this, vpnUi->lastErrorMessage(), i18n("Error exporting VPN connection settings"), KMessageBox::Notify);
+        }
     } else {
         KMessageBox::error(this, i18n("Could not export VPN connection settings"), i18n("Error"), KMessageBox::Notify);
     }

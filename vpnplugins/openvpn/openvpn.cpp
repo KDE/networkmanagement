@@ -1,6 +1,6 @@
 /*
 Copyright 2008 Will Stephenson <wstephenson@kde.org>
-Copyright 2011 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
+Copyright 2011-2012 Rajeesh K Nambiar <rajeeshknambiar@gmail.com>
 
 This program is free software; you can redistribute it and/or
 modify it under the terms of the GNU General Public License as
@@ -24,12 +24,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include <KPluginFactory>
 #include <KMessageBox>
 
+#include <nm-setting-ip4-config.h>
+
 #include "openvpnwidget.h"
 #include "openvpnauth.h"
 
 #include "connection.h"
 #include "nm-openvpn-service.h"
 #include "settings/vpn.h"
+#include "settings/ipv4.h"
 
 K_PLUGIN_FACTORY( OpenVpnUiPluginFactory, registerPlugin<OpenVpnUiPlugin>(); )
 K_EXPORT_PLUGIN( OpenVpnUiPluginFactory( "networkmanagement_openvpnui", "libknetworkmanager" ) )
@@ -165,6 +168,7 @@ QVariantList OpenVpnUiPlugin::importConnectionSettings(const QString &fileName)
     QVariantList conSetting;
     QStringMap dataMap;
     QStringMap secretData;
+    QStringMap ipv4Data;
 
     QString proxy_type;
     QString proxy_user;
@@ -435,6 +439,11 @@ QVariantList OpenVpnUiPlugin::importConnectionSettings(const QString &fileName)
             }
             continue;
         }
+        // Import X-NM-Routes if present
+        if (key_value[0] == "X-NM-Routes") {
+            ipv4Data.insert(NM_SETTING_IP4_CONFIG_ROUTES, key_value[1]);
+            continue;
+        }
     }
     if (!have_client && !have_sk) {
         mError = VpnUiPlugin::Error;
@@ -483,6 +492,9 @@ QVariantList OpenVpnUiPlugin::importConnectionSettings(const QString &fileName)
     conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(dataMap));
     conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(secretData));
     conSetting << QFileInfo(fileName).completeBaseName(); // Connection name
+    if (!ipv4Data.isEmpty()) {
+        conSetting << Knm::VpnSetting::variantMapFromStringList(Knm::VpnSetting::stringMapToStringList(ipv4Data));
+    }
     return conSetting;
 }
 
@@ -625,6 +637,18 @@ bool OpenVpnUiPlugin::exportConnectionSettings(Knm::Connection * connection, con
                 line = QString(SOCKS_PROXY_RETRY_TAG) + '\n';
                 expFile.write(line.toLatin1());
             }
+        }
+    }
+    // Export X-NM-Routes
+    Knm::Ipv4Setting *ipv4Setting = static_cast<Knm::Ipv4Setting*>(connection->setting(Knm::Setting::Ipv4));
+    if (!ipv4Setting->routes().isEmpty()) {
+        QString routes;
+        foreach(const NetworkManager::IPv4Route &oneRoute, ipv4Setting->routes()) {
+            routes += QHostAddress(oneRoute.route()).toString() + '/' + QString::number(oneRoute.prefix()) + ' ';
+        }
+        if (!routes.isEmpty()) {
+            routes = "X-NM-Routes " + routes.trimmed();
+            expFile.write(routes.toLatin1());
         }
     }
     // Add hard-coded stuff
