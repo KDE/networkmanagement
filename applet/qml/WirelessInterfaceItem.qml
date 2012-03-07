@@ -82,11 +82,11 @@ Item {
 
             Column {
                 spacing: 10
-                Text {
+                PlasmaComponents.Label {
                     text: "Wireless 802.11"
-                    font.bold: true
+                    font.weight: Font.Bold
                 }
-                Text {
+                PlasmaComponents.Label {
                     text: i18n("Not connected")
                 }
             }

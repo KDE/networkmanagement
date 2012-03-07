@@ -84,7 +84,7 @@ Item {
                 anchors.verticalCenter: parent.verticalCenter
             }
 
-            Text {
+            PlasmaComponents.Label {
                 text: networkName
             }
         }

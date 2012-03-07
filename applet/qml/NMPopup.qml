@@ -50,10 +50,10 @@ Item {
         spacing: 10
         opacity: 0
 
-        Text {
+        PlasmaComponents.Label {
             text: i18n("Interfaces")
-            font.bold : true
-            font.pixelSize: 16
+            font.weight : Font.Bold
+            font.pixelSize: theme.defaultFont.pointSize + 6
         }
         WirelessInterfaceItem{}
         WiredInterfaceItem{}

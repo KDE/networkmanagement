@@ -46,13 +46,13 @@ Column {
             }
 
         }
-        Text {
+        PlasmaComponents.Label {
             id: tab2content
             text: "VPN Tab"
             horizontalAlignment: "AlignHCenter"
             verticalAlignment: "AlignVCenter"
         }
-        Text {
+        PlasmaComponents.Label {
             id: tab3content
             text: "Shared Connections Tab"
             horizontalAlignment: "AlignHCenter"

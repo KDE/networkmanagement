@@ -24,7 +24,7 @@ import org.kde.plasma.core 0.1 as PlasmaCore
 import org.kde.qtextracomponents 0.1
 
 Item {
-    id: vpnInterfaceItem
+    id: wiredInterfaceItem
     width: 240
     height: 50
 
@@ -82,11 +82,11 @@ Item {
 
             Column {
                 spacing: 10
-                Text {
+                PlasmaComponents.Label {
                     text: "Wired Ethernet"
-                    font.bold: true
+                    font.weight: Font.Bold
                 }
-                Text {
+                PlasmaComponents.Label {
                     text: i18n("Cable Unplugged")
                 }
             }
