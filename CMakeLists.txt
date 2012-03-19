@@ -27,7 +27,13 @@ include_directories (${KDE4_INCLUDES})
 find_package(NetworkManager ${MINIMUM_NM_VERSION_REQUIRED})
 
 if (NETWORKMANAGER_FOUND)
-    find_package(GLIB2 REQUIRED)
+    find_package(PkgConfig)
+    PKG_SEARCH_MODULE( NM-UTIL libnm-util )
+    PKG_SEARCH_MODULE( NM-GLIB libnm-glib )
+
+    if (NOT (NM-UTIL_FOUND AND NM-GLIB_FOUND))
+        message(FATAL_ERROR "Could NOT find libnm-util or libnm-glib, check FindPkgConfig output above!")
+    endif (NOT (NM-UTIL_FOUND AND NM-GLIB_FOUND))
 
     configure_file(backends/NetworkManager/config-nm09backend.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/backends/NetworkManager/config-nm09backend.h )
 
@@ -38,7 +44,7 @@ if (NETWORKMANAGER_FOUND)
         include_directories(
            ${NETWORKMANAGER_INCLUDE_DIRS}
            ${NM-UTIL_INCLUDE_DIRS}
-           ${GLIB2_INCLUDE_DIR}
+           ${NM-GLIB_INCLUDE_DIRS}
            ${CMAKE_CURRENT_BUILD_DIR}
            solidcontrolfuture/libs
            ${KDE4_INCLUDE_DIR}/solid/control
