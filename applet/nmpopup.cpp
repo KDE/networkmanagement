@@ -171,6 +171,7 @@ void NMPopup::init()
 #endif
 
     m_connectionsTabBar = new ConnectionsTabBar(this);
+    m_connectionsTabBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     m_connectionsTabBar->addTab(i18nc("connection list", "Connections"), 0);
     m_connectionsTabBar->nativeWidget()->setTabToolTip(0, i18nc("@info:tooltip", "Connections"));
     m_connectionsTabBar->addTab(i18nc("connection list", "VPN"), 0);
