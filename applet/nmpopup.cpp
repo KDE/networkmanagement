@@ -171,7 +171,6 @@ void NMPopup::init()
 #endif
 
     m_connectionsTabBar = new ConnectionsTabBar(this);
-    m_connectionsTabBar->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
     m_connectionsTabBar->addTab(i18nc("connection list", "Connections"), 0);
     m_connectionsTabBar->nativeWidget()->setTabToolTip(0, i18nc("@info:tooltip", "Connections"));
     m_connectionsTabBar->addTab(i18nc("connection list", "VPN"), 0);
@@ -184,6 +183,7 @@ void NMPopup::init()
     //m_tab1Layout->setRowMaximumHeight(rowMain, rowHeight);
     m_tab1Layout->addItem(m_connectionsTabBar, rowMain++, 0, 1, 2, Qt::AlignCenter);
     m_tab1Layout->addItem(connectionsFrame, rowMain++, 0, 1, 2, Qt::AlignCenter);
+    m_tab1Layout->setRowFixedHeight(0, QFontMetrics(KGlobalSettings::generalFont()).height()*2.2);
 
     // flight-mode checkbox
 /*   m_networkingCheckBox = new Plasma::CheckBox(this);
