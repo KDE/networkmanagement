@@ -53,7 +53,6 @@ ManageTrayWidget::ManageTrayWidget(QWidget *parent, const QVariantList &args)
     ab->addAuthor(ki18n("Sebastian Kügler"), ki18n("Developer"), "sebas@kde.org");
     setAboutData(ab);
 
-    KGlobal::locale()->insertCatalog("libknmui");
     KNetworkManagerServicePrefs::instance(Knm::NETWORKMANAGEMENT_RCFILE);
     secretStorageMode = KNetworkManagerServicePrefs::self()->secretStorageMode();
 
