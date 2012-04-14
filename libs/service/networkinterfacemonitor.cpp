@@ -114,7 +114,7 @@ void NetworkInterfaceMonitor::deviceRemoved(const QString & uni)
     Q_D(NetworkInterfaceMonitor);
     NetworkInterfaceActivatableProvider * provider = d->providers.take(uni);
     d->connectionList->unregisterConnectionHandler(provider);
-    delete provider;
+    provider->deleteLater();
 }
 
 void NetworkInterfaceMonitor::modemAdded(const QString & udi)
@@ -198,7 +198,7 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
 #endif
 
 OUT:
-    delete d->dialog;
+    d->dialog->deleteLater();
     d->dialog = 0;
 }
 
