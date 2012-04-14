@@ -21,6 +21,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "manageconnectionwidget.h"
+#include "treewidgetitem.h"
 
 #include <unistd.h>
 
@@ -65,11 +66,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "../../plasma_nm_version.h"
 
 #include <tooltips.h>
-
-#define ConnectionIdRole Qt::UserRole + 1
-#define ConnectionTypeRole Qt::UserRole + 2
-#define ConnectionLastUsedRole Qt::UserRole + 3
-#define ConnectionStateRole Qt::UserRole + 4
 
 #define ConnectionNameColumn 0
 #define ConnectionLastUsedColumn 1
@@ -284,35 +280,35 @@ void ManageConnectionWidget::restoreConnections()
         itemContents << QString();
 
         kDebug() << type << name << lastUsed;
-        QTreeWidgetItem * item = 0;
+        TreeWidgetItem * item = 0;
         if (type == Knm::Connection::typeAsString(Knm::Connection::Wired)) {
-            item = new QTreeWidgetItem(mConnEditUi.listWired, itemContents);
+            item = new TreeWidgetItem(mConnEditUi.listWired, itemContents);
             wiredItems.append(item);
         } else if (type == Knm::Connection::typeAsString(Knm::Connection::Wireless)) {
-            item = new QTreeWidgetItem(mConnEditUi.listWireless, itemContents);
+            item = new TreeWidgetItem(mConnEditUi.listWireless, itemContents);
             wirelessItems.append(item);
         } else if (type == Knm::Connection::typeAsString(Knm::Connection::Gsm)) {
-            item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
+            item = new TreeWidgetItem(mConnEditUi.listCellular, itemContents);
             cellularItems.append(item);
         } else if (type == Knm::Connection::typeAsString(Knm::Connection::Cdma)) {
-            item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
+            item = new TreeWidgetItem(mConnEditUi.listCellular, itemContents);
             cellularItems.append(item);
         } else if (type == Knm::Connection::typeAsString(Knm::Connection::Bluetooth)) {
-            item = new QTreeWidgetItem(mConnEditUi.listCellular, itemContents);
+            item = new TreeWidgetItem(mConnEditUi.listCellular, itemContents);
             cellularItems.append(item);
         } else if (type == Knm::Connection::typeAsString(Knm::Connection::Vpn)) {
-            item = new QTreeWidgetItem(mConnEditUi.listVpn, itemContents);
+            item = new TreeWidgetItem(mConnEditUi.listVpn, itemContents);
             vpnItems.append(item);
         } else if (type == Knm::Connection::typeAsString(Knm::Connection::Pppoe)) {
-            item = new QTreeWidgetItem(mConnEditUi.listPppoe, itemContents);
+            item = new TreeWidgetItem(mConnEditUi.listPppoe, itemContents);
             pppoeItems.append(item);
         }
 
         if (item) {
             mUuidItemHash.insert(connectionId, item);
-            item->setData(0, ConnectionIdRole, connectionId);
-            item->setData(0, ConnectionTypeRole, Knm::Connection::typeFromString(type));
-            item->setData(0, ConnectionLastUsedRole, lastUsed);
+            item->setData(0, TreeWidgetItem::ConnectionIdRole, connectionId);
+            item->setData(0, TreeWidgetItem::ConnectionTypeRole, Knm::Connection::typeFromString(type));
+            item->setData(0, TreeWidgetItem::ConnectionLastUsedRole, lastUsed);
         }
     }
     mConnEditUi.listWired->insertTopLevelItems(0, wiredItems);
@@ -468,7 +464,7 @@ void ManageConnectionWidget::exportClicked()
 {
     QTreeWidgetItem * item = selectedItem();
     Knm::Connection * con = 0;
-    QString connectionId = item->data(0, ConnectionIdRole).toString();
+    QString connectionId = item->data(0, TreeWidgetItem::ConnectionIdRole).toString();
     if (connectionId.isEmpty()) {
         kDebug() << "selected item had no connectionId!";
         return;
@@ -512,8 +508,8 @@ void ManageConnectionWidget::editClicked()
     if (item) {
         Knm::Connection *con = 0;
 
-        QString connectionId = item->data(0, ConnectionIdRole).toString();
-        //Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, ConnectionTypeRole).toUInt();
+        QString connectionId = item->data(0, TreeWidgetItem::ConnectionIdRole).toString();
+        //Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, TreeWidgetItem::ConnectionTypeRole).toUInt();
         if (connectionId.isEmpty()) {
             kDebug() << "selected item had no connectionId!";
             return;
@@ -590,7 +586,7 @@ void ManageConnectionWidget::deleteClicked()
         kDebug() << "delete clicked, but no selection!";
         return;
     }
-    QString connectionId = item->data(0, ConnectionIdRole).toString();
+    QString connectionId = item->data(0, TreeWidgetItem::ConnectionIdRole).toString();
     if (connectionId.isEmpty()) {
         kDebug() << "item to be deleted had no connectionId!";
         return;
@@ -777,7 +773,7 @@ void ManageConnectionWidget::updateLastUsed(QTreeWidget * list)
 {
     QTreeWidgetItemIterator it(list);
     while (*it) {
-        QDateTime lastUsed = (*it)->data(0, ConnectionLastUsedRole).toDateTime();
+        QDateTime lastUsed = (*it)->data(0, TreeWidgetItem::ConnectionLastUsedRole).toDateTime();
         (*it)->setText(ConnectionLastUsedColumn, formatDateRelative(lastUsed));
         ++it;
     }
