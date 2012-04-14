@@ -86,6 +86,8 @@ void SecretStorage::saveSecrets(Knm::Connection *con)
         }
     } else if (d->storageMode == Secure) {
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Asynchronous );
+	Q_ASSERT(wallet);
+
         if (wallet) {
             connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForWrite(bool)));
             d->connectionsToWrite.append(con);
@@ -96,7 +98,9 @@ void SecretStorage::saveSecrets(Knm::Connection *con)
 void SecretStorage::walletOpenedForWrite(bool success)
 {
     Q_D(SecretStorage);
-    KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
+    KWallet::Wallet * wallet = qobject_cast<KWallet::Wallet*>(sender());
+    Q_ASSERT(wallet);
+
     if (success) {
         if (wallet->isOpen()) {
             bool readyForWalletWrite = false;
@@ -131,7 +135,7 @@ void SecretStorage::walletOpenedForWrite(bool success)
             }
         }
     }
-    delete wallet;
+    wallet->deleteLater();
 }
 
 void SecretStorage::walletOpenedForRead(bool success)
@@ -140,6 +144,8 @@ void SecretStorage::walletOpenedForRead(bool success)
     kDebug();
     bool retrievalSuccessful = true;
     KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
+    Q_ASSERT(wallet);
+
     if (success) {
         if (wallet->isOpen() && wallet->hasFolder(s_walletFolderName) && wallet->setFolder(s_walletFolderName)) {
             while (!d->connectionsToRead.isEmpty()) {
@@ -181,7 +187,7 @@ void SecretStorage::walletOpenedForRead(bool success)
             retrievalSuccessful = false;
         }
     }
-    delete wallet;
+    wallet->deleteLater();
 
     if (!retrievalSuccessful || !success) {
          while (!d->connectionsToRead.isEmpty()) {
@@ -212,6 +218,8 @@ void SecretStorage::deleteSecrets(Knm::Connection *con)
         QFile::remove(ptr->name());
     } else if (d->storageMode == Secure) {
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Synchronous );
+        Q_ASSERT(wallet);
+
         if( wallet && wallet->isOpen() && wallet->hasFolder( s_walletFolderName ) && wallet->setFolder( s_walletFolderName )) {
             foreach (const QString & k, wallet->entryList()) {
                 if (k.startsWith(con->uuid() + ';'))
@@ -220,7 +228,7 @@ void SecretStorage::deleteSecrets(Knm::Connection *con)
         }
 
         if (wallet) {
-            delete wallet;
+            wallet->deleteLater();
         }
     }
 }
@@ -259,6 +267,8 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
         kDebug() << "opening wallet...";
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
                 walletWid(),KWallet::Wallet::Asynchronous);
+        Q_ASSERT(wallet);
+
         if (wallet) {
             connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
             d->connectionsToRead.append(con);
@@ -322,6 +332,8 @@ void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode n
 
     KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
         walletWid(),KWallet::Wallet::Synchronous);
+    Q_ASSERT(wallet);
+
     if (!wallet)
         return;
     if( !wallet->hasFolder( s_walletFolderName ) )
@@ -352,5 +364,5 @@ void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode n
             wallet->removeEntry(key);
         }
     }
-    delete wallet;
+    wallet->deleteLater();
 }
