@@ -44,7 +44,7 @@ class KNM_EXPORT SecretsProvider : public QObject
         enum GetSecretsFlag { None = 0, AllowInteraction = 0x01, RequestNew = 0x02};
         Q_DECLARE_FLAGS(GetSecretsFlags, GetSecretsFlag)
 
-        SecretsProvider();
+        SecretsProvider(QObject * parent);
         virtual ~SecretsProvider();
         virtual void loadSecrets(Knm::Connection *, const QString &, GetSecretsFlags) = 0;
         virtual void saveSecrets(Knm::Connection *) = 0;

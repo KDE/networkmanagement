@@ -133,7 +133,7 @@ void NetworkManagementService::finishInitialization()
     //ActivatableDebug debug;
     //activatableList->registerObserver(&debug);
 
-    d->secretStorage = new SecretStorage();
+    d->secretStorage = new SecretStorage(this);
     d->configurationLauncher = new ConfigurationLauncher(this);
     d->connectionUsageMonitor = new ConnectionUsageMonitor(d->connectionList, d->activatableList, d->activatableList);
 
