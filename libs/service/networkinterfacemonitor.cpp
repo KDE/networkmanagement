@@ -44,6 +44,7 @@ public:
     QHash<QString, NetworkInterfaceActivatableProvider *> providers;
     ConnectionList * connectionList;
     ActivatableList * activatableList;
+    PinDialog * dialog;
 };
 
 NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList, ActivatableList * activatableList, QObject * parent)
@@ -52,6 +53,7 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
     Q_D(NetworkInterfaceMonitor);
     d->connectionList = connectionList;
     d->activatableList = activatableList;
+    d->dialog = 0;
 
     QObject::connect(NetworkManager::notifier(),
             SIGNAL(deviceAdded(QString)),
@@ -64,7 +66,6 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
         deviceAdded(iface->uni());
     }
 
-    dialog = 0;
     QObject::connect(ModemManager::notifier(),
             SIGNAL(modemAdded(QString)),
             this, SLOT(modemAdded(QString)));
@@ -118,6 +119,7 @@ void NetworkInterfaceMonitor::deviceRemoved(const QString & uni)
 
 void NetworkInterfaceMonitor::modemAdded(const QString & udi)
 {
+    Q_D(NetworkInterfaceMonitor);
     ModemManager::ModemGsmCardInterface * modem = qobject_cast<ModemManager::ModemGsmCardInterface *>(ModemManager::findModemInterface(udi, ModemManager::ModemInterface::GsmCard));
 
     if (!modem) {
@@ -126,7 +128,7 @@ void NetworkInterfaceMonitor::modemAdded(const QString & udi)
 
     connect(modem, SIGNAL(unlockRequiredChanged(QString)), SLOT(requestPin(QString)));
 
-    if (dialog || modem->unlockRequired().isEmpty()) {
+    if (d->dialog || modem->unlockRequired().isEmpty()) {
         return;
     }
 
@@ -142,6 +144,7 @@ void NetworkInterfaceMonitor::modemAdded(const QString & udi)
 
 void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
 {
+    Q_D(NetworkInterfaceMonitor);
     kDebug() << "unlockRequired == " << unlockRequired;
     if (unlockRequired.isEmpty()) {
         return;
@@ -152,21 +155,21 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
         return;
     }
 
-    if (dialog) {
+    if (d->dialog) {
         kDebug() << "PinDialog already running";
         return;
     }
 
     if (unlockRequired == QLatin1String("sim-pin")) {
-        dialog = new PinDialog(modem, PinDialog::Pin);
+        d->dialog = new PinDialog(modem, PinDialog::Pin);
     } else if (unlockRequired == QLatin1String("sim-puk")) {
-        dialog = new PinDialog(modem, PinDialog::PinPuk);
+        d->dialog = new PinDialog(modem, PinDialog::PinPuk);
     } else {
         kWarning() << "Unhandled unlock request for '" << unlockRequired << "'";
         return;
     }
 
-    if (dialog->exec() != QDialog::Accepted) {
+    if (d->dialog->exec() != QDialog::Accepted) {
         goto OUT;
     }
 
@@ -176,27 +179,27 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
     {
         QDBusPendingCallWatcher *watcher = 0;
     
-        if (dialog->type() == PinDialog::Pin) {
-            QDBusPendingCall reply = modem->sendPin(dialog->pin());
+        if (d->dialog->type() == PinDialog::Pin) {
+            QDBusPendingCall reply = modem->sendPin(d->dialog->pin());
             watcher = new QDBusPendingCallWatcher(reply, modem);
-        } else if (dialog->type() == PinDialog::PinPuk) {
-            QDBusPendingCall reply = modem->sendPuk(dialog->puk(), dialog->pin());
+        } else if (d->dialog->type() == PinDialog::PinPuk) {
+            QDBusPendingCall reply = modem->sendPuk(d->dialog->puk(), d->dialog->pin());
             watcher = new QDBusPendingCallWatcher(reply, modem);
         }
     
         connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), SLOT(onSendPinArrived(QDBusPendingCallWatcher*)));
     }
 #else
-    if (dialog->type() == PinDialog::Pin) {
-        modem->sendPin(dialog->pin());
-    } else if (dialog->type() == PinDialog::PinPuk) {
-        modem->sendPuk(dialog->puk(), dialog->pin());
+    if (d->dialog->type() == PinDialog::Pin) {
+        modem->sendPin(d->dialog->pin());
+    } else if (d->dialog->type() == PinDialog::PinPuk) {
+        modem->sendPuk(d->dialog->puk(), d->dialog->pin());
     }
 #endif
 
 OUT:
-    delete dialog;
-    dialog = 0;
+    delete d->dialog;
+    d->dialog = 0;
 }
 
 void NetworkInterfaceMonitor::onSendPinArrived(QDBusPendingCallWatcher * watcher)
