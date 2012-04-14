@@ -143,7 +143,7 @@ void SecretStorage::walletOpenedForRead(bool success)
     Q_D(SecretStorage);
     kDebug();
     bool retrievalSuccessful = true;
-    KWallet::Wallet * wallet = static_cast<KWallet::Wallet*>(sender());
+    KWallet::Wallet * wallet = qobject_cast<KWallet::Wallet*>(sender());
     Q_ASSERT(wallet);
 
     if (success) {
@@ -311,7 +311,7 @@ KSharedConfig::Ptr SecretStorage::secretsFileForUuid(const QString & uuid)
 void SecretStorage::gotSecrets(KJob *job)
 {
     Q_D(SecretStorage);
-    ConnectionSecretsJob * csj = static_cast<ConnectionSecretsJob*>(job);
+    ConnectionSecretsJob * csj = qobject_cast<ConnectionSecretsJob*>(job);
     bool failed = true;
     if (csj->error() == ConnectionSecretsJob::EnumError::NoError) {
         failed = false;
