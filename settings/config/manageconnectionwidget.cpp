@@ -309,7 +309,6 @@ void ManageConnectionWidget::restoreConnections()
         if (item) {
             mUuidItemHash.insert(connectionId, item);
             item->setData(0, TreeWidgetItem::ConnectionIdRole, connectionId);
-            item->setData(0, TreeWidgetItem::ConnectionTypeRole, Knm::Connection::typeFromString(type));
             item->setData(0, TreeWidgetItem::ConnectionLastUsedRole, lastUsed);
         }
     }
@@ -511,7 +510,6 @@ void ManageConnectionWidget::editClicked()
         Knm::Connection *con = 0;
 
         QString connectionId = item->data(0, TreeWidgetItem::ConnectionIdRole).toString();
-        //Knm::Connection::Type type = (Knm::Connection::Type)item->data(0, TreeWidgetItem::ConnectionTypeRole).toUInt();
         if (connectionId.isEmpty()) {
             kDebug() << "selected item had no connectionId!";
             return;

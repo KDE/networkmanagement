@@ -28,6 +28,15 @@ TreeWidgetItem::TreeWidgetItem(QTreeWidget *view, const QStringList &strings, in
 
 bool TreeWidgetItem::operator<(const QTreeWidgetItem &other) const
 {
+    QTreeWidget * view = treeWidget();
+    int column = view ? view->sortColumn() : 0;
+
+    if ((column + Qt::UserRole + 1) != ConnectionLastUsedRole) {
+	QString a = data(column, Qt::DisplayRole).toString();
+	QString b = other.data(column, Qt::DisplayRole).toString();
+	return (QString::localeAwareCompare(a, b) < 0);
+    }
+
     QDateTime a = data(0, ConnectionLastUsedRole).toDateTime();
     QDateTime b = other.data(0, ConnectionLastUsedRole).toDateTime();
     return (a < b);

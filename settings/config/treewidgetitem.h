@@ -26,7 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 class TreeWidgetItem: public QTreeWidgetItem
 {
 public:
-    enum {ConnectionIdRole = (Qt::UserRole + 1), ConnectionTypeRole, ConnectionLastUsedRole, ConnectionStateRole};
+    enum {ConnectionIdRole = (Qt::UserRole + 1), ConnectionLastUsedRole, ConnectionStateRole};
 
     TreeWidgetItem(QTreeWidget *view, const QStringList &strings, int type = Type);
 
