@@ -40,7 +40,7 @@ Q_OBJECT
 Q_DECLARE_PRIVATE(NetworkInterfaceMonitor)
 public:
     NetworkInterfaceMonitor(ConnectionList * connectionList, ActivatableList * activatableList, QObject * parent);
-    ~NetworkInterfaceMonitor();
+    virtual ~NetworkInterfaceMonitor();
 public Q_SLOTS:
     void networkInterfaceAdded(const QString &);
     void networkInterfaceRemoved(const QString &);

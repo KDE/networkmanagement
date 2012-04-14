@@ -55,7 +55,7 @@ public:
 
     SecretStorage(QObject * parent = 0);
 
-    ~SecretStorage();
+    virtual ~SecretStorage();
 
     Knm::Connection * connection() const;
 
