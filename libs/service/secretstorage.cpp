@@ -52,8 +52,8 @@ QString SecretStorage::s_walletFolderName = QLatin1String("Network Management");
 
 WId SecretStorage::s_walletWId = 0;
 
-SecretStorage::SecretStorage()
-    :SecretsProvider(), d_ptr(new SecretStoragePrivate())
+SecretStorage::SecretStorage(QObject * parent)
+    :SecretsProvider(parent), d_ptr(new SecretStoragePrivate())
 {
     Q_D(SecretStorage);
     KNetworkManagerServicePrefs::self()->readConfig();
