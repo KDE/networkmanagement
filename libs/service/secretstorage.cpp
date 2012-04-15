@@ -89,10 +89,8 @@ void SecretStorage::saveSecrets(Knm::Connection *con)
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Asynchronous );
         Q_ASSERT(wallet);
 
-        if (wallet) {
-            connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForWrite(bool)));
-            d->connectionsToWrite.append(con);
-        }
+        connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForWrite(bool)));
+        d->connectionsToWrite.append(con);
     }
 }
 
@@ -221,16 +219,13 @@ void SecretStorage::deleteSecrets(Knm::Connection *con)
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Synchronous );
         Q_ASSERT(wallet);
 
-        if( wallet && wallet->isOpen() && wallet->hasFolder( s_walletFolderName ) && wallet->setFolder( s_walletFolderName )) {
+        if( wallet->isOpen() && wallet->hasFolder( s_walletFolderName ) && wallet->setFolder( s_walletFolderName )) {
             foreach (const QString & k, wallet->entryList()) {
                 if (k.startsWith(con->uuid() + ';'))
                     wallet->removeEntry(k);
             }
         }
-
-        if (wallet) {
-            wallet->deleteLater();
-        }
+        wallet->deleteLater();
     }
 }
 
@@ -289,14 +284,10 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
             }
         }
 
-        if (wallet) {
-            connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
-            d->connectionsToRead.append(con);
-            QPair<QString,GetSecretsFlags> pair(name, flags);
-            d->settingsToRead.insert(uuid, pair);
-        } else {
-            emit connectionRead(con, name, true, false);
-        }
+        connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
+        d->connectionsToRead.append(con);
+        QPair<QString,GetSecretsFlags> pair(name, flags);
+        d->settingsToRead.insert(uuid, pair);
     }
 }
 
@@ -354,8 +345,6 @@ void SecretStorage::switchStorage(SecretStorageMode oldMode, SecretStorageMode n
         walletWid(),KWallet::Wallet::Synchronous);
     Q_ASSERT(wallet);
 
-    if (!wallet)
-        return;
     if( !wallet->hasFolder( s_walletFolderName ) )
         wallet->createFolder( s_walletFolderName );
     wallet->setFolder( s_walletFolderName );
