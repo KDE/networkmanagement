@@ -86,7 +86,7 @@ void SecretStorage::saveSecrets(Knm::Connection *con)
         }
     } else if (d->storageMode == Secure) {
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(), walletWid(), KWallet::Wallet::Asynchronous );
-	Q_ASSERT(wallet);
+        Q_ASSERT(wallet);
 
         if (wallet) {
             connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForWrite(bool)));
@@ -268,6 +268,25 @@ void SecretStorage::loadSecrets(Knm::Connection *con, const QString &name, GetSe
         KWallet::Wallet * wallet = KWallet::Wallet::openWallet(KWallet::Wallet::LocalWallet(),
                 walletWid(),KWallet::Wallet::Asynchronous);
         Q_ASSERT(wallet);
+
+        // remove stale request to prevent crashes.
+        // https://bugs.kde.org/show_bug.cgi?id=283105
+        QMutableListIterator<Knm::Connection *> conIter(d->connectionsToRead);
+        while (conIter.hasNext()) {
+            Knm::Connection * c = conIter.next();
+            if (c->uuid() == con->uuid()) {
+                QMutableHashIterator<QString, QPair<QString,GetSecretsFlags> > i(d->settingsToRead);
+                while (i.hasNext()) {
+                    if (i.next().key() != c->uuid())
+                        continue;
+                    QPair<QString,GetSecretsFlags> pair = i.value();
+                    i.remove();
+                    kDebug() << "Removing stale request" << c->uuid() << pair.first;
+                }
+                delete c;
+                conIter.remove();
+            }
+        }
 
         if (wallet) {
             connect(wallet, SIGNAL(walletOpened(bool)), this, SLOT(walletOpenedForRead(bool)));
