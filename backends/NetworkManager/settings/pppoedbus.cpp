@@ -33,8 +33,11 @@ QVariantMap PppoeDbus::toMap()
 {
     QVariantMap map;
     Knm::PppoeSetting * setting = static_cast<Knm::PppoeSetting *>(m_setting);
-    map.insert(QLatin1String(NM_SETTING_PPPOE_SERVICE), setting->service());
     map.insert(QLatin1String(NM_SETTING_PPPOE_USERNAME), setting->username());
+
+    if (!setting->service().isEmpty()) {
+        map.insert(QLatin1String(NM_SETTING_PPPOE_SERVICE), setting->service());
+    }
 
     map.unite(toSecretsMap());
     if (!setting->password().isEmpty()) {
