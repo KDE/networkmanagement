@@ -66,8 +66,8 @@ WirelessNetworkInterfaceActivatableProvider::WirelessNetworkInterfaceActivatable
     Q_D(WirelessNetworkInterfaceActivatableProvider);
     d->environment = new Solid::Control::WirelessNetworkInterfaceEnvironment(interface);
 
-    QObject::connect(d->environment, SIGNAL(networkAppeared(const QString &)), this, SLOT(networkAppeared(const QString&)));
-    QObject::connect(d->environment, SIGNAL(networkDisappeared(const QString &)), this, SLOT(networkDisappeared(const QString&)));
+    QObject::connect(d->environment, SIGNAL(networkAppeared(QString)), this, SLOT(networkAppeared(QString)));
+    QObject::connect(d->environment, SIGNAL(networkDisappeared(QString)), this, SLOT(networkDisappeared(QString)));
     connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(wirelessHardwareEnabledChanged(bool)),
                 this, SLOT(wirelessEnabledChanged(bool)));
     connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(wirelessEnabledChanged(bool)),

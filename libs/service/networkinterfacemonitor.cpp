@@ -55,19 +55,19 @@ NetworkInterfaceMonitor::NetworkInterfaceMonitor(ConnectionList * connectionList
     d->dialog.clear();
 
     QObject::connect(Solid::Control::NetworkManagerNm09::notifier(),
-            SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
+            SIGNAL(networkInterfaceAdded(QString)),
+            this, SLOT(networkInterfaceAdded(QString)));
     QObject::connect(Solid::Control::NetworkManagerNm09::notifier(),
-            SIGNAL(networkInterfaceRemoved(const QString&)),
-            this, SLOT(networkInterfaceRemoved(const QString&)));
+            SIGNAL(networkInterfaceRemoved(QString)),
+            this, SLOT(networkInterfaceRemoved(QString)));
 
     foreach (Solid::Control::NetworkInterfaceNm09 * iface, Solid::Control::NetworkManagerNm09::networkInterfaces()) {
         networkInterfaceAdded(iface->uni());
     }
 
     QObject::connect(Solid::Control::ModemManager::notifier(),
-            SIGNAL(modemInterfaceAdded(const QString&)),
-            this, SLOT(modemInterfaceAdded(const QString&)));
+            SIGNAL(modemInterfaceAdded(QString)),
+            this, SLOT(modemInterfaceAdded(QString)));
 
     foreach (Solid::Control::ModemInterface * iface, Solid::Control::ModemManager::modemInterfaces()) {
         modemInterfaceAdded(iface->udi());
@@ -125,7 +125,7 @@ void NetworkInterfaceMonitor::modemInterfaceAdded(const QString & udi)
         return;
     }
 
-    connect(modem, SIGNAL(unlockRequiredChanged(const QString &)), SLOT(requestPin(const QString &)));
+    connect(modem, SIGNAL(unlockRequiredChanged(QString)), SLOT(requestPin(QString)));
 
     if (d->dialog || modem->unlockRequired().isEmpty()) {
         return;
@@ -186,7 +186,7 @@ void NetworkInterfaceMonitor::requestPin(const QString & unlockRequired)
             watcher = new QDBusPendingCallWatcher(reply, modem);
         }
     
-        connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher *)), SLOT(onSendPinArrived(QDBusPendingCallWatcher *)));
+        connect(watcher, SIGNAL(finished(QDBusPendingCallWatcher*)), SLOT(onSendPinArrived(QDBusPendingCallWatcher*)));
     }
 #else
     if (d->dialog.data()->type() == PinDialog::Pin) {

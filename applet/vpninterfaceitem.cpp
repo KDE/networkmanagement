@@ -43,10 +43,10 @@ VpnInterfaceItem::VpnInterfaceItem(Solid::Control::NetworkInterfaceNm09 * iface,
 
     // Catch all kinds of signals to update the VPN widget
 
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*, int)),
-            SLOT(activatableAdded(RemoteActivatable *)));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)),
+            SLOT(activatableAdded(RemoteActivatable*)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)),
-            SLOT(activatableRemoved(RemoteActivatable *)));
+            SLOT(activatableRemoved(RemoteActivatable*)));
 
     connect(m_activatables, SIGNAL(appeared()), SLOT(listAppeared()));
     connect(m_activatables, SIGNAL(disappeared()), SLOT(listDisappeared()));

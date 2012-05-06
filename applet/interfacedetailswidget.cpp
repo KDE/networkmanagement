@@ -167,7 +167,7 @@ InterfaceDetailsWidget::InterfaceDetailsWidget(QGraphicsItem * parent) : QGraphi
 
     Plasma::DataEngineManager::self()->loadEngine("systemmonitor");
 
-    //connect(e, SIGNAL(sourceAdded(const QString&)), this, SLOT(sourceAdded(const QString&)));
+    //connect(e, SIGNAL(sourceAdded(QString)), this, SLOT(sourceAdded(QString)));
 
     details = new InterfaceDetails();
 }
@@ -697,7 +697,7 @@ void InterfaceDetailsWidget::connectSignals()
         connect(m_iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
 
         if (m_iface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
-            connect(m_iface, SIGNAL(activeAccessPointChanged(const QString &)), this, SLOT(updateActiveAccessPoint(const QString &)));
+            connect(m_iface, SIGNAL(activeAccessPointChanged(QString)), this, SLOT(updateActiveAccessPoint(QString)));
         }
     }
     if (m_iface->type() == Solid::Control::NetworkInterfaceNm09::Modem ||
@@ -710,14 +710,14 @@ void InterfaceDetailsWidget::connectSignals()
 
                 if (modemNetworkIface) {
                     // this one is for bluetooth devices, which always have a NetworkManager object but do not always have a ModemManager object.
-                    connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(resetInterfaceDetails()));
-                    connect(modemNetworkIface, SIGNAL(enabledChanged(const bool)), this, SLOT(modemUpdateEnabled(const bool)));
-                    connect(modemNetworkIface, SIGNAL(unlockRequiredChanged(const QString &)), this, SLOT(modemUpdateUnlockRequired(const QString &)));
+                    connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(QString)), this, SLOT(resetInterfaceDetails()));
+                    connect(modemNetworkIface, SIGNAL(enabledChanged(bool)), this, SLOT(modemUpdateEnabled(bool)));
+                    connect(modemNetworkIface, SIGNAL(unlockRequiredChanged(QString)), this, SLOT(modemUpdateUnlockRequired(QString)));
 
-                    connect(modemNetworkIface, SIGNAL(registrationInfoChanged(const Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType &)), this, SLOT(modemUpdateRegistrationInfo(const Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType &)));
-                    connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(Solid::Control::ModemInterface::AccessTechnology)), this, SLOT(modemUpdateAccessTechnology(const Solid::Control::ModemInterface::AccessTechnology &)));
-                    connect(modemNetworkIface, SIGNAL(signalQualityChanged(const uint)), this, SLOT(modemUpdateSignalQuality(const uint)));
-                    connect(modemNetworkIface, SIGNAL(allowedModeChanged(const Solid::Control::ModemInterface::AllowedMode)), this, SLOT(modemUpdateAllowedMode(const Solid::Control::ModemInterface::AllowedMode)));
+                    connect(modemNetworkIface, SIGNAL(registrationInfoChanged(Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType)), this, SLOT(modemUpdateRegistrationInfo(Solid::Control::ModemGsmNetworkInterface::RegistrationInfoType)));
+                    connect(modemNetworkIface, SIGNAL(accessTechnologyChanged(Solid::Control::ModemInterface::AccessTechnology)), this, SLOT(modemUpdateAccessTechnology(Solid::Control::ModemInterface::AccessTechnology)));
+                    connect(modemNetworkIface, SIGNAL(signalQualityChanged(uint)), this, SLOT(modemUpdateSignalQuality(uint)));
+                    connect(modemNetworkIface, SIGNAL(allowedModeChanged(Solid::Control::ModemInterface::AllowedMode)), this, SLOT(modemUpdateAllowedMode(Solid::Control::ModemInterface::AllowedMode)));
                 }
             }
     }

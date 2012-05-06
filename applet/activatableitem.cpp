@@ -58,8 +58,8 @@ ActivatableItem::ActivatableItem(RemoteActivatable *remote, QGraphicsItem * pare
     if (remoteconnection) {
         connect(remoteconnection, SIGNAL(hasDefaultRouteChanged(bool)),
                 SLOT(handleHasDefaultRouteChanged(bool)));
-        connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
-                SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
+        connect(remoteconnection, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
+                SLOT(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
         connect(remoteconnection, SIGNAL(changed()), SLOT(connectionChanged()));
     }
 

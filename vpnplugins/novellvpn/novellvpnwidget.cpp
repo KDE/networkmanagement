@@ -51,7 +51,7 @@ NovellVpnSettingWidget::NovellVpnSettingWidget(Knm::Connection * connection, QWi
     d->ui.x509Cert->setMode(KFile::LocalOnly);
     d->setting = static_cast<Knm::VpnSetting *>(connection->setting(Knm::Setting::Vpn));
 
-    connect(d->ui.leGateway, SIGNAL(textChanged(const QString&)), this, SLOT(validate()));
+    connect(d->ui.leGateway, SIGNAL(textChanged(QString)), this, SLOT(validate()));
     connect(d->ui.cbShowPasswords, SIGNAL(toggled(bool)), this, SLOT(showPasswordsChanged(bool)));
 
     connect(d->ui.cmbGwType, SIGNAL(currentIndexChanged(int)), this, SLOT(gatewayTypeChanged(int)));

@@ -49,8 +49,8 @@ ConnectionUsageMonitor::ConnectionUsageMonitor(ConnectionList * connectionList, 
     d->connectionList = connectionList;
     d->activatableList = activatableList;
 
-    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
+    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(QString)),
+            this, SLOT(networkInterfaceAdded(QString)));
 
     Solid::Control::NetworkInterfaceNm09List allInterfaces = Solid::Control::NetworkManagerNm09::networkInterfaces();
     foreach (Solid::Control::NetworkInterfaceNm09 * interface, allInterfaces) {
@@ -67,8 +67,8 @@ void ConnectionUsageMonitor::handleAdd(Knm::Activatable * added)
 {
     Knm::InterfaceConnection * ic = qobject_cast<Knm::InterfaceConnection*>(added);
     if (ic) {
-        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
-                this, SLOT(handleActivationStateChange(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
+        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
+                this, SLOT(handleActivationStateChange(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
     }
 }
 
@@ -128,8 +128,8 @@ void ConnectionUsageMonitor::networkInterfaceAdded(const QString& uni)
         Solid::Control::WirelessNetworkInterfaceNm09 * wifiDevice =
             qobject_cast<Solid::Control::WirelessNetworkInterfaceNm09 *>(interface);
         if (wifiDevice)
-            connect(wifiDevice, SIGNAL(activeAccessPointChanged(const QString &)),
-                    this, SLOT(networkInterfaceAccessPointChanged(const QString &)));
+            connect(wifiDevice, SIGNAL(activeAccessPointChanged(QString)),
+                    this, SLOT(networkInterfaceAccessPointChanged(QString)));
     }
 }
 

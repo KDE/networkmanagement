@@ -48,12 +48,12 @@ NMNetworkManagerNm09::NMNetworkManagerNm09(QObject * parent, const QVariantList 
     d->isWwanHardwareEnabled = d->iface.wwanHardwareEnabled();
     d->isWwanEnabled = d->iface.wwanEnabled();
     d->isNetworkingEnabled = d->iface.networkingEnabled();
-    connect( &d->iface, SIGNAL(DeviceAdded(const QDBusObjectPath &)),
-                this, SLOT(deviceAdded(const QDBusObjectPath &)));
-    connect( &d->iface, SIGNAL(DeviceRemoved(const QDBusObjectPath &)),
-                this, SLOT(deviceRemoved(const QDBusObjectPath &)));
-    connect( &d->iface, SIGNAL(PropertiesChanged(const QVariantMap &)),
-                this, SLOT(propertiesChanged(const QVariantMap &)));
+    connect( &d->iface, SIGNAL(DeviceAdded(QDBusObjectPath)),
+                this, SLOT(deviceAdded(QDBusObjectPath)));
+    connect( &d->iface, SIGNAL(DeviceRemoved(QDBusObjectPath)),
+                this, SLOT(deviceRemoved(QDBusObjectPath)));
+    connect( &d->iface, SIGNAL(PropertiesChanged(QVariantMap)),
+                this, SLOT(propertiesChanged(QVariantMap)));
     connect( &d->iface, SIGNAL(StateChanged(uint)),
                 this, SLOT(stateChanged(uint)));
 

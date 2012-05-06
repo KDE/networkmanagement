@@ -56,7 +56,7 @@ ConnectionInfoWirelessTab::ConnectionInfoWirelessTab(Solid::Control::WirelessNet
     m_hardwareAddressLabel = new QLabel(this);
     layout->addRow(i18nc("@label:textbox MAC address of network interface", "Hardware address:"), m_hardwareAddressLabel);
 
-    connect(iface, SIGNAL(activeAccessPointChanged(const QString &)), this, SLOT(updateAccessPoint(const QString &)));
+    connect(iface, SIGNAL(activeAccessPointChanged(QString)), this, SLOT(updateAccessPoint(QString)));
 
     connect(iface, SIGNAL(bitRateChanged(int)), this, SLOT(updateBitRate(int)));
     
@@ -76,7 +76,7 @@ void ConnectionInfoWirelessTab::updateAccessPoint(const QString &uni)
 
     // drop input from previous AP (if any)
     if (m_ap != 0) {
-        disconnect(m_ap, SIGNAL(ssidChanged(const QString &)), this, SLOT(updateSsid(const QString&)));
+        disconnect(m_ap, SIGNAL(ssidChanged(QString)), this, SLOT(updateSsid(QString)));
         disconnect(m_ap, SIGNAL(signalStrengthChanged(int)), this, SLOT(updateSignalStrength(int)));
         disconnect(m_ap, SIGNAL(bitRateChanged(int)), this, SLOT(updateMaxBitRate(int)));
         disconnect(m_ap, SIGNAL(frequencyChanged(uint)), this, SLOT(updateFrequency(uint)));
@@ -101,7 +101,7 @@ void ConnectionInfoWirelessTab::updateAccessPoint(const QString &uni)
     updateWpa(ap->wpaFlags());
     updateRsn(ap->rsnFlags());
 
-    connect(ap, SIGNAL(ssidChanged(const QString &)), this, SLOT(updateSsid(const QString&)));
+    connect(ap, SIGNAL(ssidChanged(QString)), this, SLOT(updateSsid(QString)));
     connect(ap, SIGNAL(signalStrengthChanged(int)), this, SLOT(updateSignalStrength(int)));
     connect(ap, SIGNAL(bitRateChanged(int)), this, SLOT(updateMaxBitRate(int)));
     connect(ap, SIGNAL(frequencyChanged(uint)), this, SLOT(updateFrequency(uint)));

@@ -51,8 +51,8 @@ void NMModemNetworkInterface::init()
     d->modemCapabilities = convertModemCapabilities(d->modemIface.modemCapabilities());
     d->currentCapabilities = convertModemCapabilities(d->modemIface.currentCapabilities());
     d->m_modemUdi = getUdiForModemManager();
-    connect( &d->modemIface, SIGNAL(PropertiesChanged(const QVariantMap &)),
-                this, SLOT(modemPropertiesChanged(const QVariantMap &)));
+    connect( &d->modemIface, SIGNAL(PropertiesChanged(QVariantMap)),
+                this, SLOT(modemPropertiesChanged(QVariantMap)));
 }
 
 NMModemNetworkInterface::~NMModemNetworkInterface()
@@ -130,7 +130,7 @@ Solid::Control::ModemGsmCardInterface * NMModemNetworkInterface::getModemCardIfa
     }
     if (modemGsmCardIface == 0) {
         modemGsmCardIface = qobject_cast<Solid::Control::ModemGsmCardInterface*> (Solid::Control::ModemManager::findModemInterface(d->m_modemUdi, Solid::Control::ModemInterface::GsmCard));
-        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(modemRemoved(const QString &)));
+        connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(QString)), this, SLOT(modemRemoved(QString)));
     }
 
     return modemGsmCardIface;
@@ -146,7 +146,7 @@ Solid::Control::ModemGsmNetworkInterface * NMModemNetworkInterface::getModemNetw
     if (modemGsmNetworkIface == 0) {
         modemGsmNetworkIface = qobject_cast<Solid::Control::ModemGsmNetworkInterface*> (Solid::Control::ModemManager::findModemInterface(d->m_modemUdi, Solid::Control::ModemInterface::GsmNetwork));
         if (modemGsmNetworkIface) {
-            connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(const QString &)), this, SLOT(modemRemoved(const QString &)));
+            connect(Solid::Control::ModemManager::notifier(), SIGNAL(modemInterfaceRemoved(QString)), this, SLOT(modemRemoved(QString)));
         }
     }
 

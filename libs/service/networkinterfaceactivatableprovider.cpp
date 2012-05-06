@@ -76,7 +76,7 @@ void NetworkInterfaceActivatableProvider::init()
      * that does not happen.
      * I am using the destroyed signal to set the pointer to 0 and prevent the crash.
      */
-    connect(d->interface, SIGNAL(destroyed(QObject *)), SLOT(_k_destroyed(QObject *)));
+    connect(d->interface, SIGNAL(destroyed(QObject*)), SLOT(_k_destroyed(QObject*)));
 
     // assess all connections
     foreach (const QString &uuid, d->connectionList->connections()) {

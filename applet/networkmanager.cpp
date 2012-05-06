@@ -116,7 +116,7 @@ NetworkManagerApplet::NetworkManagerApplet(QObject * parent, const QVariantList 
     kded.call(QLatin1String("loadModule"), QLatin1String("networkmanagement"));
 
     m_activatables = new RemoteActivatableList(this);
-    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*, int)), this, SLOT(activatableAdded(RemoteActivatable*)));
+    connect(m_activatables, SIGNAL(activatableAdded(RemoteActivatable*,int)), this, SLOT(activatableAdded(RemoteActivatable*)));
     connect(m_activatables, SIGNAL(activatableRemoved(RemoteActivatable*)), this, SLOT(activatableRemoved(RemoteActivatable*)));
     connect(m_activatables, SIGNAL(disappeared()), this, SLOT(activatablesDisappeared()));
 }
@@ -241,7 +241,7 @@ void NetworkManagerApplet::setupInterfaceSignals()
 {
     foreach (Solid::Control::NetworkInterfaceNm09* interface, m_interfaces) {
         // be aware of state changes
-        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int, int, int)), this, SLOT(interfaceConnectionStateChanged()));
+        QObject::disconnect(interface, SIGNAL(connectionStateChanged(int,int,int)), this, SLOT(interfaceConnectionStateChanged()));
         QObject::disconnect(interface, SIGNAL(connectionStateChanged(int)), this, SLOT(interfaceConnectionStateChanged()));
         QObject::disconnect(interface, SIGNAL(linkUpChanged(bool)));
 
@@ -260,7 +260,7 @@ void NetworkManagerApplet::setupInterfaceSignals()
         } else if (interface->type() == Solid::Control::NetworkInterfaceNm09::Wifi) {
             Solid::Control::WirelessNetworkInterfaceNm09* wirelessiface =
                             static_cast<Solid::Control::WirelessNetworkInterfaceNm09*>(interface);
-            connect(wirelessiface, SIGNAL(activeAccessPointChanged(const QString&)), SLOT(setupAccessPointSignals(const QString&)));
+            connect(wirelessiface, SIGNAL(activeAccessPointChanged(QString)), SLOT(setupAccessPointSignals(QString)));
             QMetaObject::invokeMethod(wirelessiface, "activeAccessPointChanged",
                                       Q_ARG(QString, wirelessiface->activeAccessPoint()));
         } else if (interface->type() == Solid::Control::NetworkInterfaceNm09::Modem) {
@@ -301,10 +301,10 @@ void NetworkManagerApplet::init()
     }
 
     //kDebug();
-    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(const QString&)),
-            this, SLOT(networkInterfaceAdded(const QString&)));
-    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceRemoved(const QString&)),
-            this, SLOT(networkInterfaceRemoved(const QString&)));
+    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceAdded(QString)),
+            this, SLOT(networkInterfaceAdded(QString)));
+    QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(networkInterfaceRemoved(QString)),
+            this, SLOT(networkInterfaceRemoved(QString)));
 
     QObject::connect(Solid::Control::NetworkManagerNm09::notifier(), SIGNAL(statusChanged(Solid::Networking::Status)),
                      this, SLOT(managerStatusChanged(Solid::Networking::Status)));
@@ -953,8 +953,8 @@ void NetworkManagerApplet::activatableAdded(RemoteActivatable *activatable)
 {
     RemoteInterfaceConnection *ic = qobject_cast<RemoteInterfaceConnection*>(activatable);
     if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
-        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)),
-                this, SLOT(vpnActivationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState)));
+        connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
+                this, SLOT(vpnActivationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
         QMetaObject::invokeMethod(ic, "activationStateChanged", Q_ARG(Knm::InterfaceConnection::ActivationState, ic->oldActivationState()), Q_ARG(Knm::InterfaceConnection::ActivationState, ic->activationState()));
     } else if (ic) {
         connect(ic, SIGNAL(hasDefaultRouteChanged(bool)), SLOT(updateActiveInterface(bool)));
@@ -992,7 +992,7 @@ void NetworkManagerApplet::updateActiveInterface(bool hasDefaultRoute)
     if (hasDefaultRoute) {
         // TODO: add support for VpnRemoteInterfaceConnection's, which have "any" as ic->deviceUni().
         setActiveInterface(Solid::Control::NetworkManagerNm09::findNetworkInterface(ic->deviceUni()));
-        connect(m_activeInterface, SIGNAL(destroyed(QObject *)), SLOT(_k_destroyed(QObject *)));
+        connect(m_activeInterface, SIGNAL(destroyed(QObject*)), SLOT(_k_destroyed(QObject*)));
         resetActiveSystrayInterface();
     }
 }

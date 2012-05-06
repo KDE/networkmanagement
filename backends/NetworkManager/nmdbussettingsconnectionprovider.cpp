@@ -89,12 +89,12 @@ NMDBusSettingsConnectionProvider::NMDBusSettingsConnectionProvider(ConnectionLis
 
     initConnections();
     // signal is from parent class
-    connect(d->iface, SIGNAL(NewConnection(const QDBusObjectPath&)),
-            this, SLOT(onConnectionAdded(const QDBusObjectPath&)));
+    connect(d->iface, SIGNAL(NewConnection(QDBusObjectPath)),
+            this, SLOT(onConnectionAdded(QDBusObjectPath)));
     // clean our connections out if the service goes away
     connect(QDBusConnection::systemBus().interface(),
-            SIGNAL(serviceOwnerChanged(const QString&,const QString&,const QString&)),
-            SLOT(serviceOwnerChanged(const QString&,const QString&,const QString&)));
+            SIGNAL(serviceOwnerChanged(QString,QString,QString)),
+            SLOT(serviceOwnerChanged(QString,QString,QString)));
 }
 
 NMDBusSettingsConnectionProvider::~NMDBusSettingsConnectionProvider()

@@ -146,10 +146,10 @@ void Solid::Control::ModemNetworkInterfaceNm09Private::setBackendObject(QObject 
 {
     NetworkInterfaceNm09Private::setBackendObject(object);
     if (object) {
-        QObject::connect(object, SIGNAL(modemCapabilitiesChanged(const Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities)),
-                         parent(), SIGNAL(modemCapabilitiesChanged(const Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities)));
-        QObject::connect(object, SIGNAL(currentCapabilitiesChanged(const Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities)),
-                         parent(), SIGNAL(currentCapabilitiesChanged(const Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities)));
+        QObject::connect(object, SIGNAL(modemCapabilitiesChanged(Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities)),
+                         parent(), SIGNAL(modemCapabilitiesChanged(Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities)));
+        QObject::connect(object, SIGNAL(currentCapabilitiesChanged(Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities)),
+                         parent(), SIGNAL(currentCapabilitiesChanged(Solid::Control::ModemNetworkInterfaceNm09::ModemCapabilities)));
     }
 }
 
