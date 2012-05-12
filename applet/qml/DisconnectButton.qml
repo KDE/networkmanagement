@@ -29,6 +29,8 @@ Item {
     width: 16
     height: 16
     
+    property alias showIcon: menuIconElement.visible
+
     signal hoverButton()
     
     QIconItem {
@@ -37,7 +39,6 @@ Item {
         icon: QIcon("user-offline")
         width: parent.width
         height: parent.height
-        visible: true
 
     }
     

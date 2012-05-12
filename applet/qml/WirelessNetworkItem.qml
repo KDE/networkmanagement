@@ -125,7 +125,7 @@ Item {
                 onHoverButton: {
                     shadow.state = "hover"
                 }
-                visible: connected
+                showIcon: connected
             }
 
         }
