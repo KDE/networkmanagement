@@ -36,9 +36,9 @@ class RemoteActivatablePrivate;
 class KNMCLIENT_EXPORT RemoteActivatable : public QObject
 {
 Q_OBJECT
-Q_PROPERTY(QString deviceUni READ deviceUni)
-Q_PROPERTY(QString type READ activatableType)
-Q_PROPERTY(bool isShared READ isShared)
+Q_PROPERTY(QString deviceUni READ deviceUni NOTIFY deviceUniChanged)
+Q_PROPERTY(QString type READ activatableType NOTIFY activatableTypeChanged)
+Q_PROPERTY(bool isShared READ isShared NOTIFY isSharedChanged)
 
 friend class RemoteActivatableList;
 
@@ -47,11 +47,17 @@ public:
     Knm::Activatable::ActivatableType activatableType() const;
     QString deviceUni() const;
     bool isShared() const;
+
 public Q_SLOTS:
     void activate();
+
 Q_SIGNALS:
     void activated();
     void changed();
+    void deviceUniChanged();
+    void activatableTypeChanged();
+    void isSharedChanged();
+
 protected Q_SLOTS:
     void propertiesChanged(const QVariantMap &properties);
 protected:

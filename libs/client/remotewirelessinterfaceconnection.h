@@ -35,13 +35,13 @@ class RemoteWirelessInterfaceConnectionPrivate;
 class KNMCLIENT_EXPORT RemoteWirelessInterfaceConnection : public RemoteInterfaceConnection, public RemoteWirelessObject
 {
 Q_OBJECT
-Q_PROPERTY(QString ssid READ ssid)
-Q_PROPERTY(int strength READ strength)
-Q_PROPERTY(uint interfaceCapabilities READ interfaceCapabilities)
-Q_PROPERTY(uint apCapabilities READ apCapabilities)
-Q_PROPERTY(uint wpaFlags READ wpaFlags)
-Q_PROPERTY(uint rsnFlags READ rsnFlags)
-Q_PROPERTY(uint operationMode READ operationMode)
+Q_PROPERTY(QString ssid READ ssid NOTIFY ssidChanged)
+Q_PROPERTY(int strength READ strength NOTIFY strengthChanged)
+Q_PROPERTY(uint interfaceCapabilities READ interfaceCapabilities NOTIFY interfaceCapabilitiesChanged)
+Q_PROPERTY(uint apCapabilities READ apCapabilities NOTIFY apCapabilitiesChanged)
+Q_PROPERTY(uint wpaFlags READ wpaFlags NOTIFY wpaFlagsChanged)
+Q_PROPERTY(uint rsnFlags READ rsnFlags NOTIFY rsnFlagsChanged)
+Q_PROPERTY(uint operationMode READ operationMode NOTIFY operationModeChanged)
 
 friend class RemoteActivatableList;
 
@@ -56,6 +56,12 @@ public:
     NetworkManager::WirelessDevice::OperationMode operationMode() const;
 Q_SIGNALS:
     void strengthChanged(int);
+    void ssidChanged();
+    void interfaceCapabilitiesChanged();
+    void apCapabilitiesChanged();
+    void wpaFlagsChanged();
+    void rsnFlagsChanged();
+    void operationModeChanged();
 protected Q_SLOTS:
     void wicPropertiesChanged(const QVariantMap &properties);
 protected:

@@ -37,7 +37,7 @@ class KNMCLIENT_EXPORT RemoteWirelessNetwork : public RemoteActivatable, public 
 {
 Q_OBJECT
 Q_PROPERTY(QString ssid READ ssid)
-Q_PROPERTY(int strength READ strength)
+Q_PROPERTY(int strength READ strength NOTIFY strengthChanged)
 Q_PROPERTY(uint interfaceCapabilities READ interfaceCapabilities)
 Q_PROPERTY(uint apCapabilities READ apCapabilities)
 Q_PROPERTY(uint wpaFlags READ wpaFlags)

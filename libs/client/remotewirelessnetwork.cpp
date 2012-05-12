@@ -57,6 +57,7 @@ void RemoteWirelessNetwork::wnPropertiesChanged(const QVariantMap &changedProper
     it = changedProperties.find(signalStrengthKey);
     if (it != changedProperties.end()) {
         d->signalStrength = it->toInt();
+        kDebug() << "opaopa";
         emit strengthChanged(d->signalStrength);
         propKeys.removeOne(signalStrengthKey);
     }

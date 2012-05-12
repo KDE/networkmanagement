@@ -37,10 +37,10 @@ class RemoteInterfaceConnectionPrivate;
 class KNMCLIENT_EXPORT RemoteInterfaceConnection : public RemoteActivatable
 {
 Q_OBJECT
-Q_PROPERTY(uint type READ connectionType)
-Q_PROPERTY(QString uuid READ connectionUuid)
-Q_PROPERTY(QString name READ connectionName)
-Q_PROPERTY(uint activationState READ activationState)
+Q_PROPERTY(uint type READ connectionType NOTIFY changed)
+Q_PROPERTY(QString uuid READ connectionUuid NOTIFY changed)
+Q_PROPERTY(QString name READ connectionName NOTIFY changed)
+Q_PROPERTY(uint activationState READ activationState )
 Q_PROPERTY(uint oldActivationState READ oldActivationState)
 Q_PROPERTY(bool hasDefaultRoute READ hasDefaultRoute)
 
@@ -64,11 +64,15 @@ public:
     Knm::InterfaceConnection::ActivationState oldActivationState() const;
 
     void deactivate();
+
 Q_SIGNALS:
     void activationStateChanged(Knm::InterfaceConnection::ActivationState, Knm::InterfaceConnection::ActivationState);
     void hasDefaultRouteChanged(bool);
+    void changed();
+
 protected Q_SLOTS:
     void icPropertiesChanged(const QVariantMap &properties);
+
 protected:
     RemoteInterfaceConnection(const QVariantMap &properties, QObject * parent);
     RemoteInterfaceConnection(RemoteInterfaceConnectionPrivate &dd, const QVariantMap &properties, QObject * parent);
