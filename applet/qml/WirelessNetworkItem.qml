@@ -28,8 +28,9 @@ Item {
     width: 300
     height: 30
     
-    property string networkName: "Wireless Network 1"
-    property double signalStrengthValue: 0
+    property string networkName;
+    property double signalStrengthValue;
+    property bool connected;
     property bool protectedNetwork: true
     
     Rectangle {
@@ -101,7 +102,7 @@ Item {
                 
                 orientation: Qt.Horizontal
                 minimumValue: 0
-                maximumValue: 100
+                maximumValue: 120
                 value: signalStrengthValue
                 height: 10
                 width: 68
@@ -124,6 +125,7 @@ Item {
                 onHoverButton: {
                     shadow.state = "hover"
                 }
+                visible: connected
             }
 
         }

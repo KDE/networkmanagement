@@ -15,6 +15,9 @@ set(networkmanager_SRCS
     typelistwidget.cpp
     connectionstabbar.cpp
 
+    connectionslistmodel.cpp
+    connectionitem.cpp
+
     interfaceitem.cpp
     wirelessinterfaceitem.cpp
     vpninterfaceitem.cpp
@@ -35,7 +38,7 @@ kde4_add_plugin(plasma_applet_networkmanagement ${networkmanager_SRCS})
 
 target_link_libraries(plasma_applet_networkmanagement ${KDE4_PLASMA_LIBS}
         knmclient knminternals knm_nm ${KDE4_KIO_LIBS} ${KDE4_SOLID_LIBS}
-        QtModemManager QtNetworkManager)
+        ${QT_QTDECLARATIVE_LIBRARY} QtModemManager QtNetworkManager)
 
 install(TARGETS plasma_applet_networkmanagement DESTINATION ${PLUGIN_INSTALL_DIR})
 install(FILES plasma-applet-networkmanagement.desktop DESTINATION ${SERVICES_INSTALL_DIR})

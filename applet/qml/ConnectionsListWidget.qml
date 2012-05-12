@@ -38,12 +38,13 @@ Item {
         width: parent.width
         height: parent.height
         clip: true
-        model: WirelessNetworkModel {}
+        model: connectionsListModel
         delegate: WirelessNetworkItem {
             width: parent.width - 10
-            networkName: modelNetworkName;
-            signalStrengthValue: modelValue;
-            protectedNetwork: modelProtectedNetwork
+            networkName: ssid;
+            signalStrengthValue: strength;
+            protectedNetwork: modelProtectedNetwork;
+            connected: connectedNetwork;
         }
 
         Rectangle {

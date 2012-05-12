@@ -140,6 +140,7 @@ private:
     Plasma::ToolTipContent m_toolTip;
 
     RemoteActivatableList* m_activatables;
+
     bool m_panelContainment;
 
     QPixmap m_pixmap;

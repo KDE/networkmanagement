@@ -26,6 +26,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #include "remoteactivatablelist.h"
 #include "paths.h"
 #include "knmserviceprefs.h"
+#include "connectionslistmodel.h"
 
 #include <QAction>
 #include <QPainter>
@@ -40,8 +41,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include <QtNetworkManager/manager.h>
 #include <QtNetworkManager/wireddevice.h>
+#include <QtDeclarative/QDeclarativeEngine>
+#include <QtDeclarative/QDeclarativeContext>
 
-//#define USE_QML
+#define USE_QML
 
 K_EXPORT_PLASMA_APPLET(networkmanagement, NetworkManagerApplet)
 
@@ -59,6 +62,7 @@ public:
 #else
     NMPopup * m_popup;
 #endif
+    ConnectionsListModel *listModel;
     QList<QAction*> actions;
 };
 
@@ -303,14 +307,19 @@ void NetworkManagerApplet::init()
 
     setupInterfaceSignals();
 
+
+
 #ifdef USE_QML
+    d->listModel = new ConnectionsListModel(this);
     d->m_popup = new Plasma::DeclarativeWidget(this);
     d->m_popup->setInitializationDelayed(true);
+    d->m_popup->engine()->rootContext()->setContextProperty("connectionsListModel", d->listModel);
     d->m_popup->setQmlPath(KStandardDirs::locate("data",
                                                  "networkmanagement/qml/NMPopup.qml"));
 #else
     d->m_popup = new NMPopup(m_activatables, this);
 #endif
+    kError() << "entrou";
     connect(d->m_popup, SIGNAL(configNeedsSaving()), this, SIGNAL(configNeedsSaving()));
 
     QAction* action = new QAction(i18nc("CheckBox to enable or disable networking completely", "Enable networking"), this);
@@ -547,7 +556,7 @@ void NetworkManagerApplet::deviceRemoved(const QString & uni)
 
 void NetworkManagerApplet::interfaceConnectionStateChanged()
 {
-    //kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
+    kDebug() << " +++ +++ +++ Connection State Changed +++ +++ +++";
     NetworkManager::Device * interface = qobject_cast<NetworkManager::Device *>(sender());
     if (interface) {
         if (m_activeSystrayInterface && m_activeSystrayInterface->uni() != interface->uni()) {
@@ -972,6 +981,21 @@ void NetworkManagerApplet::clearActivatedOverlay()
 void NetworkManagerApplet::activatableAdded(RemoteActivatable *activatable)
 {
     RemoteInterfaceConnection *ic = qobject_cast<RemoteInterfaceConnection*>(activatable);
+    #ifdef USE_QML
+    ConnectionItem *listItem = new ConnectionItem(activatable);
+    d->listModel->appendRow(listItem);
+
+    RemoteWirelessNetwork *rwic;
+    RemoteWirelessInterfaceConnection *rwic2;
+    rwic = qobject_cast<RemoteWirelessNetwork *> (static_cast<RemoteActivatable *> (activatable));
+    if(rwic) {
+        kDebug() << "added network " + rwic->ssid();
+    }
+    rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(static_cast<RemoteActivatable *>(activatable));
+    if(rwic2) {
+        kDebug() << "added network " + rwic2->ssid();
+    }
+    #endif
     if (activatable->activatableType() == Knm::Activatable::VpnInterfaceConnection) {
         connect(ic, SIGNAL(activationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)),
                 this, SLOT(vpnActivationStateChanged(Knm::InterfaceConnection::ActivationState,Knm::InterfaceConnection::ActivationState)));
@@ -1054,6 +1078,21 @@ void NetworkManagerApplet::activatableRemoved(RemoteActivatable *activatable)
         m_activeVpnConnections.remove(ic->connectionUuid());
         kDebug() << "activatable removed" << m_activeVpnConnections.count();
     }
+#ifdef USE_QML
+    RemoteWirelessNetwork *rwic;
+    RemoteWirelessInterfaceConnection *rwic2;
+    rwic = qobject_cast<RemoteWirelessNetwork *> (static_cast<RemoteActivatable *> (activatable));
+    if(rwic) {
+        kDebug() << "removed network " + rwic->ssid();
+    }
+    rwic2 = qobject_cast<RemoteWirelessInterfaceConnection *>(static_cast<RemoteActivatable *>(activatable));
+    if(rwic2) {
+        kDebug() << "removed network " + rwic2->ssid();
+    }
+
+    ConnectionItem *connection = new ConnectionItem(activatable);
+    d->listModel->removeItem(connection);
+#endif
 }
 
 void NetworkManagerApplet::activatablesDisappeared()
