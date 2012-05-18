@@ -89,9 +89,9 @@ OpenconnectAuthWidget::OpenconnectAuthWidget(Knm::Connection * connection, QWidg
     d->ui.setupUi(this);
     d->userQuit = false;
     if (pipe2(d->cancelPipes, O_NONBLOCK|O_CLOEXEC)) {
-	    // Should never happen. Just don't do real cancellation if it does
-	    d->cancelPipes[0] = -1;
-	    d->cancelPipes[1] = -1;
+            // Should never happen. Just don't do real cancellation if it does
+            d->cancelPipes[0] = -1;
+            d->cancelPipes[1] = -1;
     }
 
     connect(d->ui.cmbLogLevel, SIGNAL(currentIndexChanged(int)), this, SLOT(logLevelChanged(int)));
@@ -212,9 +212,9 @@ void OpenconnectAuthWidget::readSecrets()
             host.name = entry.firstChildElement(QLatin1String("HostName")).text();
             host.group = entry.firstChildElement(QLatin1String("UserGroup")).text();
             host.address = entry.firstChildElement(QLatin1String("HostAddress")).text();
-	    // We added the originally configured host in readConfig(). But if
-	    // it matches one of the ones in the XML config (as presumably it
-	    // should), remove the original and use the one with the pretty name.
+            // We added the originally configured host in readConfig(). But if
+            // it matches one of the ones in the XML config (as presumably it
+            // should), remove the original and use the one with the pretty name.
             if (!matchedGw && host.address == d->hosts.at(0).address) {
                 d->hosts.removeFirst();
                 matchedGw = true;
