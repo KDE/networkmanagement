@@ -210,6 +210,9 @@ void OpenconnectAuthWidget::readSecrets()
             host.name = entry.firstChildElement(QLatin1String("HostName")).text();
             host.group = entry.firstChildElement(QLatin1String("UserGroup")).text();
             host.address = entry.firstChildElement(QLatin1String("HostAddress")).text();
+	    // We added the originally configured host in readConfig(). But if
+	    // it matches one of the ones in the XML config (as presumably it
+	    // should), remove the original and use the one with the pretty name.
             if (!matchedGw && host.address == d->hosts.at(0).address) {
                 d->hosts.removeFirst();
                 matchedGw = true;
