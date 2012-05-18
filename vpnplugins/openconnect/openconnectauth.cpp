@@ -47,6 +47,8 @@ extern "C"
 #include <string.h>
 #include <openssl/ssl.h>
 #include <openconnect.h>
+#include <unistd.h>
+#include <fcntl.h>
 }
 
 // name/address: IP/domain name of the host (OpenConnect accepts both, so no difference here)
@@ -70,6 +72,7 @@ public:
     OpenconnectAuthWorkerThread *worker;
     QList<VPNHost> hosts;
     bool userQuit;
+    int cancelPipes[2];
     QList<QPair<QString, int> > serverLog;
 
     enum LogLevels {Error = 0, Info, Debug, Trace};
@@ -83,6 +86,11 @@ OpenconnectAuthWidget::OpenconnectAuthWidget(Knm::Connection * connection, QWidg
     d->setting = static_cast<Knm::VpnSetting *>(connection->setting(Knm::Setting::Vpn));
     d->ui.setupUi(this);
     d->userQuit = false;
+    if (pipe2(d->cancelPipes, O_NONBLOCK|O_CLOEXEC)) {
+	    // Should never happen. Just don't do real cancellation if it does
+	    d->cancelPipes[0] = -1;
+	    d->cancelPipes[1] = -1;
+    }
 
     connect(d->ui.cmbLogLevel, SIGNAL(currentIndexChanged(int)), this, SLOT(logLevelChanged(int)));
     connect(d->ui.viewServerLog, SIGNAL(toggled(bool)), this, SLOT(viewServerLogToggled(bool)));
@@ -92,7 +100,7 @@ OpenconnectAuthWidget::OpenconnectAuthWidget(Knm::Connection * connection, QWidg
     d->ui.btnConnect->setIcon(KIcon("network-connect"));
     d->ui.viewServerLog->setChecked(false);
 
-    d->worker = new OpenconnectAuthWorkerThread(&d->mutex, &d->workerWaiting, &d->userQuit);
+    d->worker = new OpenconnectAuthWorkerThread(&d->mutex, &d->workerWaiting, &d->userQuit, d->cancelPipes[0]);
 
     // gets the pointer to struct openconnect_info (defined in openconnect.h), which contains data that OpenConnect needs,
     // and which needs to be populated with settings we get from NM, like host, certificate or private key
@@ -109,8 +117,13 @@ OpenconnectAuthWidget::~OpenconnectAuthWidget()
 {
     Q_D(OpenconnectAuthWidget);
     d->userQuit = true;
+    if (write(d->cancelPipes[1], "x", 1)) {
+        // not a lot we can do
+    }
     d->workerWaiting.wakeAll();
     d->worker->wait();
+    ::close(d->cancelPipes[0]);
+    ::close(d->cancelPipes[1]);
     deleteAllFromLayout(d->ui.loginBoxLayout);
     delete d->worker;
     delete d;
@@ -228,9 +241,17 @@ void OpenconnectAuthWidget::connectHost()
 {
     Q_D(OpenconnectAuthWidget);
     d->userQuit = true;
+    if (write(d->cancelPipes[1], "x", 1)) {
+        // not a lot we can do
+    }
     d->workerWaiting.wakeAll();
     d->worker->wait();
     d->userQuit = false;
+
+    /* Suck out the cancel byte(s) */
+    char buf;
+    while (read(d->cancelPipes[0], &buf, 1) == 1)
+        ;
     deleteAllFromLayout(d->ui.loginBoxLayout);
     int i = d->ui.cmbHosts->currentIndex();
     if (i == -1)
