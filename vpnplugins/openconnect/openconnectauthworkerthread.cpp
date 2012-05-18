@@ -69,8 +69,10 @@ public:
     }
 };
 
-
-OpenconnectAuthWorkerThread::OpenconnectAuthWorkerThread(QMutex *mutex, QWaitCondition *waitForUserInput, bool *userDecidedToQuit)
+#ifndef OPENCONNECT_CHECK_VER
+#define OPENCONNECT_CHECK_VER(x,y) 0
+#endif
+OpenconnectAuthWorkerThread::OpenconnectAuthWorkerThread(QMutex *mutex, QWaitCondition *waitForUserInput, bool *userDecidedToQuit, int cancelFd)
 : QThread(), m_mutex(mutex), m_waitForUserInput(waitForUserInput), m_userDecidedToQuit(userDecidedToQuit)
 {
     m_openconnectInfo = openconnect_vpninfo_new_with_cbdata((char*)"OpenConnect VPN Agent (NetworkManager - running on KDE)",
@@ -79,6 +81,12 @@ OpenconnectAuthWorkerThread::OpenconnectAuthWorkerThread(QMutex *mutex, QWaitCon
                                          OpenconnectAuthStaticWrapper::processAuthForm,
                                          OpenconnectAuthStaticWrapper::writeProgress,
                                          this);
+#if OPENCONNECT_CHECK_VER(1,4)
+    openconnect_set_cancel_fd(m_openconnectInfo, cancelFd);
+#else
+    // Silence warning about unused parameter
+    cancelFd = cancelFd;
+#endif
 }
 
 OpenconnectAuthWorkerThread::~OpenconnectAuthWorkerThread()
