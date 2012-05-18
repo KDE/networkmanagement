@@ -201,19 +201,25 @@ void OpenconnectAuthWidget::readSecrets()
 
         QDomDocument xmlconfig;
         xmlconfig.setContent(config);
-        QDomNode serverList = xmlconfig.elementsByTagName(QLatin1String("ServerList")).at(0);
+        QDomNode anyConnectProfile = xmlconfig.elementsByTagName(QLatin1String("AnyConnectProfile")).at(0);
+        bool matchedGw = false;
+        QDomNode serverList = anyConnectProfile.firstChildElement(QLatin1String("ServerList"));
         for (QDomElement entry = serverList.firstChildElement(QLatin1String("HostEntry")); !entry.isNull(); entry = entry.nextSiblingElement(QLatin1String("HostEntry"))) {
             VPNHost host;
-            host.name = entry.namedItem(QLatin1String("HostName")).toText().data();
-            host.group = entry.namedItem(QLatin1String("UserGroup")).toText().data();
-            host.address = entry.namedItem(QLatin1String("HostAddress")).toText().data();
+            host.name = entry.firstChildElement(QLatin1String("HostName")).text();
+            host.group = entry.firstChildElement(QLatin1String("UserGroup")).text();
+            host.address = entry.firstChildElement(QLatin1String("HostAddress")).text();
+            if (!matchedGw && host.address == d->hosts.at(0).address) {
+                d->hosts.removeFirst();
+                matchedGw = true;
+            }
             d->hosts.append(host);
         }
     }
 
     for (int i = 0; i < d->hosts.size(); i++) {
         d->ui.cmbHosts->addItem(d->hosts.at(i).name, i);
-        if (d->secrets["lasthost"] == d->hosts.at(i).name)
+        if (d->secrets["lasthost"] == d->hosts.at(i).name || d->secrets["lasthost"] == d->hosts.at(i).address)
             d->ui.cmbHosts->setCurrentIndex(i);
     }
 
