@@ -85,7 +85,7 @@ OpenconnectAuthWorkerThread::OpenconnectAuthWorkerThread(QMutex *mutex, QWaitCon
     openconnect_set_cancel_fd(m_openconnectInfo, cancelFd);
 #else
     // Silence warning about unused parameter
-    cancelFd = cancelFd;
+    Q_UNUSED(cancelFd);
 #endif
 }
 
