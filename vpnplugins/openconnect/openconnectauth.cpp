@@ -97,6 +97,7 @@ OpenconnectAuthWidget::OpenconnectAuthWidget(Knm::Connection * connection, QWidg
     connect(d->ui.cmbLogLevel, SIGNAL(currentIndexChanged(int)), this, SLOT(logLevelChanged(int)));
     connect(d->ui.viewServerLog, SIGNAL(toggled(bool)), this, SLOT(viewServerLogToggled(bool)));
     connect(d->ui.btnConnect, SIGNAL(clicked()), this, SLOT(connectHost()));
+    connect(d->ui.cmbHosts, SIGNAL(currentIndexChanged(int)), this, SLOT(connectHost()));
 
     d->ui.cmbLogLevel->setCurrentIndex(OpenconnectAuthWidgetPrivate::Debug);
     d->ui.btnConnect->setIcon(KIcon("network-connect"));
